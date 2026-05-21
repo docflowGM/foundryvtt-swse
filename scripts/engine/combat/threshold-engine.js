@@ -36,6 +36,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 /* -------------------------------------------------------------------------- */
 /*  COMBAT END HOOKS (Per-encounter feat flags)                              */
@@ -329,17 +330,18 @@ export class ThresholdEngine {
     const persistentShift = result.ctShifts.reduce((sum, shift) => sum + (shift?.persistent ? Math.abs(Number(shift?.steps || 0)) : 0), 0);
     const shouldPersist = persistentShift > 0;
 
+    const conditionStepCap = ConditionTrackRules.getConditionStepCap();
     if (result.stunKnockout) {
-      await ActorEngine.setConditionStep(target, 5, 'threshold');
+      await ActorEngine.setConditionStep(target, conditionStepCap, 'threshold');
       if (shouldPersist) await ActorEngine.setConditionPersistent(target, true, 'threshold');
-      await this._postChatMessage(target, result, 5);
+      await this._postChatMessage(target, result, conditionStepCap);
       return;
     }
 
     let newCT = currentCT;
     if (totalShift > 0) {
       await ActorEngine.applyConditionShift(target, totalShift, 'threshold');
-      newCT = Math.min(currentCT + totalShift, 5);
+      newCT = Math.min(currentCT + totalShift, conditionStepCap);
     }
     if (shouldPersist) {
       await ActorEngine.setConditionPersistent(target, true, 'threshold');

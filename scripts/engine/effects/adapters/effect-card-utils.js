@@ -5,6 +5,8 @@
  * These functions perform lightweight normalization and text generation without semantic changes.
  */
 
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+
 /**
  * Normalize a name into a kebab-case id.
  * @param {*} value - Any value to normalize
@@ -61,7 +63,7 @@ export function getConditionStep(actor) {
   ];
   for (const value of candidates) {
     const numeric = Number(value);
-    if (Number.isFinite(numeric)) return Math.max(0, Math.min(5, numeric));
+    if (Number.isFinite(numeric)) return Math.max(0, Math.min(ConditionTrackRules.getConditionStepCap(), numeric));
   }
   return 0;
 }

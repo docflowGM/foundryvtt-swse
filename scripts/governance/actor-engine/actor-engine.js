@@ -16,6 +16,10 @@ import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydration
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
+import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-normalization-service.js";
 
 /**
  * ActorEngine
@@ -1473,11 +1477,11 @@ export const ActorEngine = {
   /**
    * setConditionStep() — Set condition track to exact step
    *
-   * Sets actor's condition track to specific step (0-5).
+   * Sets actor's condition track to specific step (0 to cap).
    * Used by UI components for direct condition selection.
    *
    * @param {Actor} actor - target actor
-   * @param {number} step - condition step (0-5, clamped)
+   * @param {number} step - condition step (0 to cap, clamped via ConditionTrackRules)
    * @param {string} source - reason for change
    */
   async setConditionStep(actor, step, source = 'manual') {
@@ -1487,7 +1491,8 @@ export const ActorEngine = {
         throw new Error(`Invalid condition step: ${step}`);
       }
 
-      const clampedStep = Math.min(5, Math.max(0, step));
+      const conditionCap = ConditionTrackRules.getConditionStepCap();
+      const clampedStep = Math.min(conditionCap, Math.max(0, step));
       const current = actor.system.conditionTrack?.current || 0;
 
       if (clampedStep === current) {
@@ -1591,8 +1596,10 @@ export const ActorEngine = {
         source
       });
 
+      const conditionCapVariant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
+      const conditionCap = ({ STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 })[conditionCapVariant?.toUpperCase?.()] ?? 5;
       const currentCondition = Number(actor.system.conditionTrack?.current || 0);
-      const newCondition = Math.min(5, Math.max(0, currentCondition + direction));
+      const newCondition = Math.min(conditionCap, Math.max(0, currentCondition + direction));
 
       if (newCondition === currentCondition) {
         SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
@@ -1812,10 +1819,8 @@ export const ActorEngine = {
         throw new Error(`Invalid force point amount: ${amount}`);
       }
 
-      const currentFP = actor.system.forcePoints?.value || 0;
-      const maxFP = actor.system.forcePoints?.max || 10;
-      const newFP = Math.min(maxFP, currentFP + amount);
-      const actualGain = newFP - currentFP;
+      // Delegate calculation to ForcePointsService; mutation stays here
+      const { newValue: newFP, actualGain, maxFP } = ForcePointsService.calcGain(actor, amount);
 
       if (actualGain === 0) {
         SWSELogger.debug(`${actor.name} force points already at max`);
@@ -1854,9 +1859,8 @@ export const ActorEngine = {
         throw new Error(`Invalid force point amount: ${amount}`);
       }
 
-      const currentFP = actor.system.forcePoints?.value || 0;
-      const newFP = Math.max(0, currentFP - amount);
-      const actualSpent = currentFP - newFP;
+      // Delegate calculation to ForcePointsService; mutation stays here
+      const { newValue: newFP, actualSpent } = ForcePointsService.calcSpend(actor, amount);
 
       if (actualSpent === 0) {
         SWSELogger.debug(`${actor.name} has no force points to spend`);
@@ -1895,9 +1899,8 @@ export const ActorEngine = {
         throw new Error(`Invalid destiny point amount: ${amount}`);
       }
 
-      const currentDP = actor.system.destinyPoints?.value || 0;
-      const newDP = Math.max(0, currentDP - amount);
-      const actualSpent = currentDP - newDP;
+      // Delegate calculation to ForcePointsService; mutation stays here
+      const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
 
       if (actualSpent === 0) {
         SWSELogger.debug(`${actor.name} has no destiny points to spend`);
@@ -1937,71 +1940,35 @@ export const ActorEngine = {
     try {
       if (!actor) {throw new Error('applySecondWind() requires actor');}
 
-      const heroicLevel = Number(actor.system?.heroicLevel ?? actor.system?.level ?? 0);
       const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
-      const hasExtraSecondWindFeat = secondWindFeatRules.extraUseMultiplier > 0;
       const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
-      const isHeroic = actor.type === 'character' || heroicLevel > 0;
-      const canNonHeroicSecondWind = hasExtraSecondWindFeat === true;
 
-      if (!isHeroic && !canNonHeroicSecondWind) {
-        SWSELogger.warn(`Second Wind attempt on non-heroic actor: ${actor.name}`);
-        return {
-          success: false,
-          reason: `${actor.name} is not eligible to use Second Wind`
-        };
+      // Eligibility check (pure calculation delegated to SecondWindRules)
+      const eligibility = SecondWindRules.canUseSecondWind(actor, options, secondWindFeatRules);
+      if (!eligibility.allowed) {
+        SWSELogger.warn(`Second Wind attempt blocked for ${actor.name}: ${eligibility.reason}`);
+        return { success: false, reason: eligibility.reason };
       }
 
-      // RAW: You may only catch a second wind at half HP or below.
       const currentHP = SchemaAdapters.getHP(actor);
       const maxHP = SchemaAdapters.getMaxHP(actor);
-      if (currentHP > Math.floor(maxHP / 2) && !secondWindFeatRules.allowAboveHalfHp) {
-        return {
-          success: false,
-          reason: 'Second Wind may only be used at half Hit Points or lower'
-        };
-      }
-
-      // Once per encounter cap.
       const activeCombatId = game.combat?.started ? game.combat.id : null;
-      const encounterFlag = actor.getFlag?.('foundryvtt-swse', 'secondWindEncounterUsed') ?? null;
-      if (activeCombatId && encounterFlag === activeCombatId && !secondWindFeatRules.ignoreEncounterCap) {
-        return {
-          success: false,
-          reason: 'Second Wind can only be used once per encounter'
-        };
-      }
-
-      // Swift action validation while in combat.
-      if (options.validateCombat !== false) {
-        const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
-        if (inCombat) {
-          const combatant = game.combat.combatants.find(c => c.actor?.id === actor.id);
-          if (!secondWindFeatRules.freeAction && !combatant?.resources?.swift) {
-            return {
-              success: false,
-              reason: 'Cannot use Second Wind: no swift action available'
-            };
-          }
-        }
-      }
 
       const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
       const conScore = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.total ?? actor.system?.attributes?.con?.base ?? 10);
       const conMod = isDroidActor ? 0 : this._getCanonicalAbilityMod(actor, 'con');
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
-      const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
-        ? Math.max(1, 1 + fortClassBonus + conMod)
-        : 1;
-      const extraUseMultiplier = Number(secondWindFeatRules.extraUseMultiplier || 0) + (hasToughAsNails ? 1 : 0);
-      const computedMaxUses = Math.max(1, baseDailyUses + (baseDailyUses * extraUseMultiplier));
+
+      // Uses calculation delegated to SecondWindRules
+      const computedMaxUses = SecondWindRules.calculateMaxUses(conMod, fortClassBonus, secondWindFeatRules, hasToughAsNails);
       const storedUses = Number(actor.system.secondWind?.uses ?? 0);
       const uses = Math.max(0, Math.min(storedUses, computedMaxUses));
       if (uses < 1) {
         return { success: false, reason: 'No Second Wind uses remaining' };
       }
 
-      const heal = Math.max(Math.floor(maxHP / 4), conScore);
+      // Healing amount delegated to SecondWindRules
+      const heal = SecondWindRules.calculateHealingAmount(maxHP, conScore);
 
       const newHP = Math.min(currentHP + heal, maxHP);
       const actualHealing = newHP - currentHP;
@@ -2016,11 +1983,11 @@ export const ActorEngine = {
       };
 
       const improvedSecondWind = HouseRuleService.isEnabled('secondWindImproved');
-      const featConditionRecoverySteps = Math.max(0, Number(secondWindFeatRules.conditionRecoverySteps || 0));
-      if (improvedSecondWind || featConditionRecoverySteps > 0) {
+      // Condition recovery steps delegated to SecondWindRules
+      const recoverySteps = SecondWindRules.calculateConditionRecovery(secondWindFeatRules, improvedSecondWind);
+      if (recoverySteps > 0) {
         // Also move up condition track (+1 improvement = -1 on numeric scale)
         const currentCT = actor.system.conditionTrack?.current ?? 0;
-        const recoverySteps = (improvedSecondWind ? 1 : 0) + featConditionRecoverySteps;
         improvements['system.conditionTrack.current'] = Math.max(0, currentCT - recoverySteps);
 
         SWSELogger.debug(`Second Wind condition recovery: moving condition track from ${currentCT} to ${Math.max(0, currentCT - recoverySteps)}`);
@@ -2098,12 +2065,9 @@ export const ActorEngine = {
       const conMod = isDroidActor ? 0 : this._getCanonicalAbilityMod(actor, 'con');
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
       const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
-      const hasExtraSecondWindFeat = secondWindFeatRules.extraUseMultiplier > 0;
       const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
-      const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
-        ? Math.max(1, 1 + fortClassBonus + conMod)
-        : 1;
-      const maxUses = Math.max(1, baseDailyUses + (baseDailyUses * (Number(secondWindFeatRules.extraUseMultiplier || 0) + (hasToughAsNails ? 1 : 0))));
+      // Max uses calculation delegated to SecondWindRules
+      const maxUses = SecondWindRules.calculateMaxUses(conMod, fortClassBonus, secondWindFeatRules, hasToughAsNails);
 
       await this.updateActor(actor, {
         'system.secondWind.max': maxUses,
@@ -2148,48 +2112,16 @@ export const ActorEngine = {
     try {
       if (!actor) {throw new Error('applySecondWindEdgeOfExhaustion() requires actor');}
 
-      // Check: Must have 0 uses (no regular uses remaining)
-      const uses = actor.system.secondWind?.uses ?? 0;
-      if (uses > 0) {
-        return {
-          success: false,
-          reason: 'Second Wind uses still available (not at edge of exhaustion)'
-        };
-      }
-
-      // Check: Heroic only (same as regular Second Wind)
-      const isHeroic = actor.type === 'character' ||
-                       (actor.type === 'npc' && actor.system.class);
-
-      if (!isHeroic) {
-        return {
-          success: false,
-          reason: `${actor.name} is not heroic and cannot use Edge of Exhaustion`
-        };
-      }
-
-      // Check: Must be in active combat (combat restriction)
-      const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
-      if (!inCombat) {
-        return {
-          success: false,
-          reason: 'Edge of Exhaustion can only be used in active combat'
-        };
-      }
-
-      // Check: Condition track not at helpless (step 5 is the max)
-      const ct = actor.system.conditionTrack ?? {};
-      const currentCT = Number(ct.current ?? 0);
-
-      if (currentCT >= 5) {
-        return {
-          success: false,
-          reason: 'Cannot accept condition penalty when already at helpless'
-        };
+      // Eligibility check delegated to SecondWindRules
+      const eligibility = SecondWindRules.canUseEdgeOfExhaustion(actor);
+      if (!eligibility.allowed) {
+        return { success: false, reason: eligibility.reason };
       }
 
       // Trade: Worsen condition by 1, gain 1 Second Wind use
-      const newCT = Math.min(5, currentCT + 1);
+      const currentCT = Number(actor.system.conditionTrack?.current ?? 0);
+      const conditionStepCap = ConditionTrackRules.getConditionStepCap();
+      const newCT = Math.min(conditionStepCap, currentCT + 1);
 
       await this.updateActor(actor, {
         'system.secondWind.uses': 1,
@@ -2639,89 +2571,9 @@ export const ActorEngine = {
    * @param {Object} [options={}] - mutation options
    */
   async restoreFromSnapshot(actor, snapshot, options = {}) {
-    try {
-      if (!actor) {throw new Error('restoreFromSnapshot() requires actor');}
-      if (!snapshot) {throw new Error('restoreFromSnapshot() requires snapshot');}
-
-      SWSELogger.log(`[SNAPSHOT] Restoring ${actor.name} from snapshot`, {
-        systemFieldCount: Object.keys(snapshot.system || {}).length,
-        itemCount: (snapshot.items || []).length,
-        effectCount: (snapshot.effects || []).length
-      });
-
-      // ====================================================================
-      // PHASE 1: ROOT UPDATE (system, name, img, prototypeToken)
-      // ====================================================================
-      const system = foundry.utils.deepClone(snapshot.system ?? {});
-      const name = snapshot.name ?? actor.name;
-      const img = snapshot.img ?? actor.img;
-      const prototypeToken = foundry.utils.deepClone(snapshot.prototypeToken ?? {});
-
-      await this.updateActor(actor, {
-        name,
-        img,
-        system,
-        prototypeToken
-      }, options);
-
-      // ====================================================================
-      // PHASE 2: ITEM RESTORATION (delete all, recreate from snapshot)
-      // ====================================================================
-      const currentItemIds = actor.items?.map?.(i => i.id) ?? [];
-      if (currentItemIds.length > 0) {
-        await this.deleteEmbeddedDocuments(actor, 'Item', currentItemIds, options);
-      }
-
-      const itemsToCreate = (snapshot.items ?? []).map(i => {
-        const copy = foundry.utils.deepClone(i);
-        delete copy._id;
-        return copy;
-      });
-      if (itemsToCreate.length > 0) {
-        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate, options);
-      }
-
-      // ====================================================================
-      // PHASE 3: EFFECT RESTORATION (delete all, recreate from snapshot)
-      // ====================================================================
-      const currentEffectIds = actor.effects?.map?.(e => e.id) ?? [];
-      if (currentEffectIds.length > 0) {
-        await this.deleteEmbeddedDocuments(actor, 'ActiveEffect', currentEffectIds, options);
-      }
-
-      const effectsToCreate = (snapshot.effects ?? []).map(e => {
-        const copy = foundry.utils.deepClone(e);
-        delete copy._id;
-        return copy;
-      });
-      if (effectsToCreate.length > 0) {
-        await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate, options);
-      }
-
-      SWSELogger.log(`[SNAPSHOT] ✅ Restoration complete for ${actor.name}`, {
-        itemsDeleted: currentItemIds.length,
-        itemsCreated: itemsToCreate.length,
-        effectsDeleted: currentEffectIds.length,
-        effectsCreated: effectsToCreate.length
-      });
-
-      return {
-        success: true,
-        actor,
-        itemsDeleted: currentItemIds.length,
-        itemsCreated: itemsToCreate.length,
-        effectsDeleted: currentEffectIds.length,
-        effectsCreated: effectsToCreate.length,
-        timestamp: new Date().toISOString()
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.restoreFromSnapshot failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        snapshotItemCount: (snapshot?.items || []).length
-      });
-      throw err;
-    }
+    // Dynamic import avoids a static circular dependency (SnapshotService imports ActorEngine).
+    const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
+    return SnapshotService.restoreFromSnapshot(actor, snapshot, options);
   },
 
   // ========================================================================
@@ -4040,42 +3892,7 @@ export const ActorEngine = {
    * @private
    */
   _normalizeMutationForContract(updateData, actor) {
-    if (!updateData || typeof updateData !== 'object') {
-      return { normalizedUpdateData: updateData, warnings: [] };
-    }
-
-    const warnings = [];
-    const normalized = foundry.utils.deepClone(updateData);
-    const flat = foundry.utils.flattenObject(normalized);
-
-    // ========================================
-    // Normalize Phase 3 domains
-    // ========================================
-
-    // 1. Abilities: .value → .base
-    const abilityWarnings = this._normalizeAbilityPathsForContract(flat);
-    warnings.push(...abilityWarnings);
-
-    // 2. Class: Remove redundant scalar paths
-    const classWarnings = this._normalizeClassPathsForContract(flat);
-    warnings.push(...classWarnings);
-
-    // 3. Skills: Ensure complete structure
-    const skillWarnings = this._normalizeSkillStructureForContract(flat, actor);
-    warnings.push(...skillWarnings);
-
-    // 4. Defenses: normalize short aliases and legacy misc paths
-    const defenseWarnings = this._normalizeDefensePathsForContract(flat);
-    warnings.push(...defenseWarnings);
-
-    // 5. XP: Normalize naming
-    const xpWarnings = this._normalizeXpPathsForContract(flat);
-    warnings.push(...xpWarnings);
-
-    // Unflatten back to nested form
-    const normalizedUpdateData = foundry.utils.expandObject(flat);
-
-    return { normalizedUpdateData, warnings };
+    return MutationNormalizationService.normalizePayload(updateData, actor);
   },
 
   /**
@@ -4491,208 +4308,29 @@ export const ActorEngine = {
    * Normalize ability paths: .value → .base with warnings
    * @private
    */
+  /** @private — delegates to MutationNormalizationService */
   _normalizeAbilityPathsForContract(flat) {
-    const warnings = [];
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const toDelete = [];
-
-    for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
-      if (match && abilityKeys.includes(match[1])) {
-        const abilityKey = match[1];
-        const newPath = `system.abilities.${abilityKey}.base`;
-
-        if (!(newPath in flat)) {
-          flat[newPath] = flat[key];
-          warnings.push(
-            `[NORMALIZE] Deprecated ability path ${key} → ${newPath} ` +
-            `(value=${flat[key]})`
-          );
-        } else {
-          warnings.push(
-            `[CONFLICT] Both ${key} and ${newPath} present; using .base`
-          );
-        }
-        toDelete.push(key);
-      }
-    }
-
-    for (const path of toDelete) {
-      delete flat[path];
-    }
-
-    return warnings;
+    return MutationNormalizationService._normalizeAbilityPaths(flat);
   },
 
-  /**
-   * Normalize class paths: remove redundant scalar paths
-   * @private
-   */
+  /** @private — delegates to MutationNormalizationService */
   _normalizeClassPathsForContract(flat) {
-    const warnings = [];
-
-    // If system.className is present without system.class, that's a legacy-only write
-    // We'll keep it for now but warn
-    if (flat['system.className'] && !flat['system.class']) {
-      warnings.push(
-        `[LEGACY] system.className write without system.class (deprecated scalar path)`
-      );
-    }
-
-    if (flat['system.classes'] && !flat['system.class']) {
-      warnings.push(
-        `[LEGACY] system.classes write without system.class (deprecated array path)`
-      );
-    }
-
-    return warnings;
+    return MutationNormalizationService._normalizeClassPaths(flat);
   },
 
-  /**
-   * Normalize skill structure for live, narrow mutations.
-   *
-   * IMPORTANT:
-   * - Do NOT auto-fill untouched canonical skill properties here.
-   * - Live sheet edits frequently mutate only one leaf such as:
-   *   system.skills.acrobatics.trained or system.skills.acrobatics.miscMod
-   * - Expanding that into a full pseudo-initialization corrupts partial edits
-   *   and causes unrelated skill fields to revert or disappear.
-   *
-   * This helper now coerces only the explicitly touched leaf paths.
-   * Canonical container initialization is handled separately by
-   * _ensureCanonicalSkillShapes() only when an entire skill object is missing.
-   *
-   * @private
-   */
+  /** @private — delegates to MutationNormalizationService */
   _normalizeSkillStructureForContract(flat, actor) {
-    const warnings = [];
-    const canonicalProps = new Set(['trained', 'miscMod', 'focused', 'selectedAbility', 'favorite']);
-
-    for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.skills\.([^.]+)\.([^.]+)$/);
-      if (!match) continue;
-
-      const skillKey = match[1];
-      const prop = match[2];
-      if (!canonicalProps.has(prop)) continue;
-
-      const currentSkill = actor?.system?.skills?.[skillKey] ?? {};
-
-      if (prop === 'miscMod') {
-        const coerced = Number(flat[key]);
-        const fallback = Number.isFinite(Number(currentSkill.miscMod)) ? Number(currentSkill.miscMod) : 0;
-        if (!Number.isFinite(coerced)) {
-          warnings.push(
-            `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[key]}); preserving current value`
-          );
-          flat[key] = fallback;
-        } else if (typeof flat[key] !== 'number') {
-          warnings.push(
-            `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[key])} -> ${coerced}`
-          );
-          flat[key] = coerced;
-        }
-        continue;
-      }
-
-      if (prop === 'trained' || prop === 'focused' || prop === 'favorite') {
-        if (typeof flat[key] !== 'boolean') {
-          const raw = flat[key];
-          flat[key] = raw === true || raw == 'true' || raw == 1 || raw == '1' || raw === 'on';
-          warnings.push(
-            `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[key]}`
-          );
-        }
-        continue;
-      }
-
-      if (prop === 'selectedAbility' && typeof flat[key] !== 'string') {
-        const raw = flat[key];
-        flat[key] = raw == null ? '' : String(raw);
-        warnings.push(
-          `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[key])}`
-        );
-      }
-    }
-
-    return warnings;
+    return MutationNormalizationService._normalizeSkillStructure(flat, actor);
   },
 
-
-  /**
-   * Normalize defense paths to canonical schema.
-   *
-   * Supported legacy aliases:
-   * - system.defenses.fort.*   -> system.defenses.fortitude.*
-   * - system.defenses.ref.*    -> system.defenses.reflex.*
-   * - *.miscMod               -> *.misc.user.extra
-   * - system.defenses.reflex.armorBonus -> system.defenses.reflex.armor
-   *
-   * @private
-   */
+  /** @private — delegates to MutationNormalizationService */
   _normalizeDefensePathsForContract(flat) {
-    const warnings = [];
-    const aliasMap = {
-      fort: 'fortitude',
-      ref: 'reflex',
-      will: 'will'
-    };
-    const remaps = [];
-
-    for (const [key, value] of Object.entries(flat)) {
-      const match = key.match(/^system\.defenses\.([^.]+)\.(.+)$/);
-      if (!match) continue;
-
-      const rawDefenseKey = match[1];
-      const remainder = match[2];
-      const canonicalDefenseKey = aliasMap[rawDefenseKey] || rawDefenseKey;
-      let canonicalRemainder = remainder;
-
-      if (canonicalRemainder === 'miscMod') {
-        canonicalRemainder = 'misc.user.extra';
-      } else if (canonicalRemainder === 'armorBonus' && canonicalDefenseKey === 'reflex') {
-        canonicalRemainder = 'armor';
-      }
-
-      const canonicalPath = `system.defenses.${canonicalDefenseKey}.${canonicalRemainder}`;
-      if (canonicalPath === key) continue;
-
-      remaps.push([key, canonicalPath, value]);
-      warnings.push(`[NORMALIZE] Defense path ${key} -> ${canonicalPath}`);
-    }
-
-    for (const [oldPath, newPath, value] of remaps) {
-      if (!(newPath in flat)) {
-        flat[newPath] = value;
-      }
-      delete flat[oldPath];
-    }
-
-    return warnings;
+    return MutationNormalizationService._normalizeDefensePaths(flat);
   },
 
-  /**
-   * Normalize XP paths: system.experience → system.xp.total
-   * @private
-   */
+  /** @private — delegates to MutationNormalizationService */
   _normalizeXpPathsForContract(flat) {
-    const warnings = [];
-
-    if ('system.experience' in flat && !('system.xp.total' in flat)) {
-      flat['system.xp.total'] = flat['system.experience'];
-      warnings.push(
-        `[NORMALIZE] Legacy XP path system.experience → system.xp.total ` +
-        `(value=${flat['system.experience']})`
-      );
-      delete flat['system.experience'];
-    } else if ('system.experience' in flat && 'system.xp.total' in flat) {
-      warnings.push(
-        `[CONFLICT] Both system.experience and system.xp.total present; using xp.total`
-      );
-      delete flat['system.experience'];
-    }
-
-    return warnings;
+    return MutationNormalizationService._normalizeXpPaths(flat);
   },
 
   // ========================================

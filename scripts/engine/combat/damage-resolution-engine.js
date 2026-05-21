@@ -3,6 +3,7 @@ import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/
 import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 /**
  * DamageResolutionEngine — Unified damage orchestration
@@ -275,7 +276,7 @@ export class DamageResolutionEngine {
       }
 
       result.conditionDelta = thresholdShift;
-      result.conditionAfter = Math.min(5, result.conditionBefore + thresholdShift);
+      result.conditionAfter = Math.min(ConditionTrackRules.getConditionStepCap(), result.conditionBefore + thresholdShift);
       result.conditionPersistent = (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
     }
 
@@ -286,8 +287,8 @@ export class DamageResolutionEngine {
     if (result.hpAfter <= 0) {
       result.unconscious = actor.type === 'character' || actor.type === 'npc' || actor.type === 'beast';
       result.disabled = actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle';
-      result.conditionDelta = Math.max(0, 5 - result.conditionBefore);
-      result.conditionAfter = 5; // Bottom of the track / helpless or disabled
+      result.conditionDelta = Math.max(0, ConditionTrackRules.getConditionStepCap() - result.conditionBefore);
+      result.conditionAfter = ConditionTrackRules.getConditionStepCap(); // Bottom of the track / helpless or disabled
 
       if (result.thresholdExceeded) {
         const preventInstantDeath = result.thresholdRuleResult?.preventInstantDeath === true;
