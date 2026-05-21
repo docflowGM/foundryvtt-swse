@@ -1594,8 +1594,10 @@ export const ActorEngine = {
         source
       });
 
+      const conditionCapVariant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
+      const conditionCap = ({ STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 })[conditionCapVariant?.toUpperCase?.()] ?? 5;
       const currentCondition = Number(actor.system.conditionTrack?.current || 0);
-      const newCondition = Math.min(5, Math.max(0, currentCondition + direction));
+      const newCondition = Math.min(conditionCap, Math.max(0, currentCondition + direction));
 
       if (newCondition === currentCondition) {
         SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
@@ -2638,89 +2640,9 @@ export const ActorEngine = {
    * @param {Object} [options={}] - mutation options
    */
   async restoreFromSnapshot(actor, snapshot, options = {}) {
-    try {
-      if (!actor) {throw new Error('restoreFromSnapshot() requires actor');}
-      if (!snapshot) {throw new Error('restoreFromSnapshot() requires snapshot');}
-
-      SWSELogger.log(`[SNAPSHOT] Restoring ${actor.name} from snapshot`, {
-        systemFieldCount: Object.keys(snapshot.system || {}).length,
-        itemCount: (snapshot.items || []).length,
-        effectCount: (snapshot.effects || []).length
-      });
-
-      // ====================================================================
-      // PHASE 1: ROOT UPDATE (system, name, img, prototypeToken)
-      // ====================================================================
-      const system = foundry.utils.deepClone(snapshot.system ?? {});
-      const name = snapshot.name ?? actor.name;
-      const img = snapshot.img ?? actor.img;
-      const prototypeToken = foundry.utils.deepClone(snapshot.prototypeToken ?? {});
-
-      await this.updateActor(actor, {
-        name,
-        img,
-        system,
-        prototypeToken
-      }, options);
-
-      // ====================================================================
-      // PHASE 2: ITEM RESTORATION (delete all, recreate from snapshot)
-      // ====================================================================
-      const currentItemIds = actor.items?.map?.(i => i.id) ?? [];
-      if (currentItemIds.length > 0) {
-        await this.deleteEmbeddedDocuments(actor, 'Item', currentItemIds, options);
-      }
-
-      const itemsToCreate = (snapshot.items ?? []).map(i => {
-        const copy = foundry.utils.deepClone(i);
-        delete copy._id;
-        return copy;
-      });
-      if (itemsToCreate.length > 0) {
-        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate, options);
-      }
-
-      // ====================================================================
-      // PHASE 3: EFFECT RESTORATION (delete all, recreate from snapshot)
-      // ====================================================================
-      const currentEffectIds = actor.effects?.map?.(e => e.id) ?? [];
-      if (currentEffectIds.length > 0) {
-        await this.deleteEmbeddedDocuments(actor, 'ActiveEffect', currentEffectIds, options);
-      }
-
-      const effectsToCreate = (snapshot.effects ?? []).map(e => {
-        const copy = foundry.utils.deepClone(e);
-        delete copy._id;
-        return copy;
-      });
-      if (effectsToCreate.length > 0) {
-        await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate, options);
-      }
-
-      SWSELogger.log(`[SNAPSHOT] ✅ Restoration complete for ${actor.name}`, {
-        itemsDeleted: currentItemIds.length,
-        itemsCreated: itemsToCreate.length,
-        effectsDeleted: currentEffectIds.length,
-        effectsCreated: effectsToCreate.length
-      });
-
-      return {
-        success: true,
-        actor,
-        itemsDeleted: currentItemIds.length,
-        itemsCreated: itemsToCreate.length,
-        effectsDeleted: currentEffectIds.length,
-        effectsCreated: effectsToCreate.length,
-        timestamp: new Date().toISOString()
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.restoreFromSnapshot failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        snapshotItemCount: (snapshot?.items || []).length
-      });
-      throw err;
-    }
+    // Dynamic import avoids a static circular dependency (SnapshotService imports ActorEngine).
+    const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
+    return SnapshotService.restoreFromSnapshot(actor, snapshot, options);
   },
 
   // ========================================================================
