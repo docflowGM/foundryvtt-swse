@@ -17,6 +17,7 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 /**
  * ActorEngine
@@ -1474,11 +1475,11 @@ export const ActorEngine = {
   /**
    * setConditionStep() — Set condition track to exact step
    *
-   * Sets actor's condition track to specific step (0-5).
+   * Sets actor's condition track to specific step (0 to cap).
    * Used by UI components for direct condition selection.
    *
    * @param {Actor} actor - target actor
-   * @param {number} step - condition step (0-5, clamped)
+   * @param {number} step - condition step (0 to cap, clamped via ConditionTrackRules)
    * @param {string} source - reason for change
    */
   async setConditionStep(actor, step, source = 'manual') {
@@ -1488,8 +1489,7 @@ export const ActorEngine = {
         throw new Error(`Invalid condition step: ${step}`);
       }
 
-      const conditionCapVariant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
-      const conditionCap = ({ STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 })[conditionCapVariant?.toUpperCase?.()] ?? 5;
+      const conditionCap = ConditionTrackRules.getConditionStepCap();
       const clampedStep = Math.min(conditionCap, Math.max(0, step));
       const current = actor.system.conditionTrack?.current || 0;
 

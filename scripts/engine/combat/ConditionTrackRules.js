@@ -35,6 +35,16 @@ export class ConditionTrackRules {
     return HouseRuleService.getNumber('conditionTrackCap', 0);
   }
 
+  /**
+   * Returns the maximum condition step for the active conditionCapVariant house rule.
+   * STANDARD→5, VARIANT_6→6, VARIANT_UNLIMITED→999.
+   */
+  static getConditionStepCap() {
+    const variant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
+    const caps = { STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 };
+    return caps[variant?.toUpperCase?.()] ?? 5;
+  }
+
   static conditionTrackAutoApplyEnabled() {
     return HouseRuleService.getBoolean('conditionTrackAutoApply', false);
   }
