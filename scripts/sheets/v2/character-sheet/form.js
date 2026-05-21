@@ -29,25 +29,25 @@ const FORM_FIELD_SCHEMA = {
   'system.secondWind.uses': 'number',
   'system.secondWind.max': 'number',
 
-  // Abilities
-  'system.abilities.str.base': 'number',
-  'system.abilities.str.racial': 'number',
-  'system.abilities.str.temp': 'number',
-  'system.abilities.dex.base': 'number',
-  'system.abilities.dex.racial': 'number',
-  'system.abilities.dex.temp': 'number',
-  'system.abilities.con.base': 'number',
-  'system.abilities.con.racial': 'number',
-  'system.abilities.con.temp': 'number',
-  'system.abilities.int.base': 'number',
-  'system.abilities.int.racial': 'number',
-  'system.abilities.int.temp': 'number',
-  'system.abilities.wis.base': 'number',
-  'system.abilities.wis.racial': 'number',
-  'system.abilities.wis.temp': 'number',
-  'system.abilities.cha.base': 'number',
-  'system.abilities.cha.racial': 'number',
-  'system.abilities.cha.temp': 'number',
+  // Abilities — canonical paths (system.attributes is persisted; system.abilities is a read-only mirror)
+  'system.attributes.str.base': 'number',
+  'system.attributes.str.racial': 'number',
+  'system.attributes.str.temp': 'number',
+  'system.attributes.dex.base': 'number',
+  'system.attributes.dex.racial': 'number',
+  'system.attributes.dex.temp': 'number',
+  'system.attributes.con.base': 'number',
+  'system.attributes.con.racial': 'number',
+  'system.attributes.con.temp': 'number',
+  'system.attributes.int.base': 'number',
+  'system.attributes.int.racial': 'number',
+  'system.attributes.int.temp': 'number',
+  'system.attributes.wis.base': 'number',
+  'system.attributes.wis.racial': 'number',
+  'system.attributes.wis.temp': 'number',
+  'system.attributes.cha.base': 'number',
+  'system.attributes.cha.racial': 'number',
+  'system.attributes.cha.temp': 'number',
 
   // Defense modifiers (PHASE 8: Canonical edit paths)
   // Display totals come from system.derived.defenses.{fortitude|reflex|will}.total
@@ -121,7 +121,7 @@ function getFieldType(fieldName) {
     return 'boolean';
   }
 
-  if (/^system\.abilities\.[^.]+\.(base|racial|species|enhancement|misc|temp)$/.test(fieldName)) {
+  if (/^system\.attributes\.[^.]+\.(base|racial|species|enhancement|misc|temp)$/.test(fieldName)) {
     return 'number';
   }
 
