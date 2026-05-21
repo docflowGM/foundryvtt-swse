@@ -364,12 +364,12 @@ export class DropHandler {
     if (!confirm) {return false;}
 
     const updates = {
-      'system.abilities.str.base': chassis.system.abilities?.str?.base || chassis.system.attributes?.str || 10,
-      'system.abilities.dex.base': chassis.system.abilities?.dex?.base || chassis.system.attributes?.dex || 10,
-      'system.abilities.con.base': chassis.system.abilities?.con?.base || chassis.system.attributes?.con || 10,
-      'system.abilities.int.base': chassis.system.abilities?.int?.base || chassis.system.attributes?.int || 10,
-      'system.abilities.wis.base': chassis.system.abilities?.wis?.base || chassis.system.attributes?.wis || 10,
-      'system.abilities.cha.base': chassis.system.abilities?.cha?.base || chassis.system.attributes?.cha || 10,
+      'system.attributes.str.base': chassis.system.abilities?.str?.base || chassis.system.attributes?.str || 10,
+      'system.attributes.dex.base': chassis.system.abilities?.dex?.base || chassis.system.attributes?.dex || 10,
+      'system.attributes.con.base': chassis.system.abilities?.con?.base || chassis.system.attributes?.con || 10,
+      'system.attributes.int.base': chassis.system.abilities?.int?.base || chassis.system.attributes?.int || 10,
+      'system.attributes.wis.base': chassis.system.abilities?.wis?.base || chassis.system.attributes?.wis || 10,
+      'system.attributes.cha.base': chassis.system.abilities?.cha?.base || chassis.system.attributes?.cha || 10,
       'system.hp.max': chassis.system.hp || 30,
       'system.hp.value': chassis.system.hp || 30,
       'system.speed': parseInt(chassis.system.speed, 10) || 6
