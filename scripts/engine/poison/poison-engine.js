@@ -584,7 +584,7 @@ export class PoisonEngine {
       changes: data.changes || [],
       flags: data.flags || {}
     };
-    if (typeof actor?.createEmbeddedDocuments === 'function') return actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    if (typeof actor?.createEmbeddedDocuments === 'function') return ActorEngine.createActiveEffects(actor, [effectData], { source: 'PoisonEngine._createEffect' });
     return null;
   }
 
