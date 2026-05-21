@@ -251,12 +251,12 @@ export class DropHandler {
     const abilityMods = species.system.abilityMods || this._parseAbilityString(species.system.abilities || species.system.attributes || 'None');
 
     const updates = {
-      'system.abilities.str.racial': abilityMods.str || 0,
-      'system.abilities.dex.racial': abilityMods.dex || 0,
-      'system.abilities.con.racial': abilityMods.con || 0,
-      'system.abilities.int.racial': abilityMods.int || 0,
-      'system.abilities.wis.racial': abilityMods.wis || 0,
-      'system.abilities.cha.racial': abilityMods.cha || 0,
+      'system.attributes.str.racial': abilityMods.str || 0,
+      'system.attributes.dex.racial': abilityMods.dex || 0,
+      'system.attributes.con.racial': abilityMods.con || 0,
+      'system.attributes.int.racial': abilityMods.int || 0,
+      'system.attributes.wis.racial': abilityMods.wis || 0,
+      'system.attributes.cha.racial': abilityMods.cha || 0,
       'system.size': species.system.size || 'Medium',
       'system.speed': parseInt(species.system.speed, 10) || 6,
       'system.race': species.name  // Store species name for display
