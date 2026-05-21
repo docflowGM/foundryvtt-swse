@@ -3912,10 +3912,12 @@ export const ActorEngine = {
     const flat = foundry.utils.flattenObject(updateData);
     const touched = new Set();
 
-    // Detect which domains are being touched
+    // Detect which domains are being touched.
+    // system.attributes is canonical persisted ability storage; system.abilities is the
+    // read-only compat mirror. Both must trigger ability shape initialization so that the
+    // container exists before Foundry merges either write path.
     for (const key of Object.keys(flat)) {
-      if (key.startsWith('system.abilities.')) touched.add('abilities');
-      if (key.startsWith('system.class')) touched.add('class');
+      if (key.startsWith('system.attributes.') || key.startsWith('system.abilities.')) touched.add('abilities');
       if (key.startsWith('system.skills.')) touched.add('skills');
       if (key.startsWith('system.defenses.')) touched.add('defenses');
       if (key.startsWith('system.xp.') || key.startsWith('system.experience')) touched.add('xp');
