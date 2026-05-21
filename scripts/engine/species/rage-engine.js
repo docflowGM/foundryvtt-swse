@@ -8,6 +8,7 @@
  */
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 const RAGE_FLAG_PATH = "swse";
 const RAGE_BASE_BONUS = 2;
@@ -109,7 +110,7 @@ function getConditionStep(actor) {
   ];
   for (const value of candidates) {
     const numeric = Number(value);
-    if (Number.isFinite(numeric)) return Math.max(0, Math.min(5, numeric));
+    if (Number.isFinite(numeric)) return Math.max(0, Math.min(ConditionTrackRules.getConditionStepCap(), numeric));
   }
   return 0;
 }
@@ -285,7 +286,7 @@ export class RageEngine {
 
     if (wasRaging) {
       const current = getConditionStep(actor);
-      updates["system.conditionTrack.current"] = Math.min(5, current + 1);
+      updates["system.conditionTrack.current"] = Math.min(ConditionTrackRules.getConditionStepCap(), current + 1);
       updates["system.conditionTrack.persistent"] = true;
       updates["flags.swse.rageAftereffectActive"] = true;
       updates["flags.swse.rageAftereffectSource"] = RAGE_AFTEREFFECT_SOURCE;

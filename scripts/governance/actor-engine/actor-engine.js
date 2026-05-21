@@ -2182,7 +2182,8 @@ export const ActorEngine = {
       const ct = actor.system.conditionTrack ?? {};
       const currentCT = Number(ct.current ?? 0);
 
-      if (currentCT >= 5) {
+      const conditionStepCap = ConditionTrackRules.getConditionStepCap();
+      if (currentCT >= conditionStepCap) {
         return {
           success: false,
           reason: 'Cannot accept condition penalty when already at helpless'
@@ -2190,7 +2191,7 @@ export const ActorEngine = {
       }
 
       // Trade: Worsen condition by 1, gain 1 Second Wind use
-      const newCT = Math.min(5, currentCT + 1);
+      const newCT = Math.min(conditionStepCap, currentCT + 1);
 
       await this.updateActor(actor, {
         'system.secondWind.uses': 1,
