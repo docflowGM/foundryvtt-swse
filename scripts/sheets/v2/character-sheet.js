@@ -4673,7 +4673,7 @@ const forcePoints = [];
             },
             delete: {
               label: "Delete",
-              callback: () => item.delete()
+              callback: () => ActorEngine.deleteEmbeddedDocuments(this.actor, 'Item', [item.id])
             },
             close: {
               label: "Close"

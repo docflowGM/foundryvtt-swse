@@ -423,7 +423,7 @@ export function activateForceUI(sheet, html, { signal } = {}) {
           },
           delete: {
             label: "Delete",
-            callback: () => item.delete()
+            callback: () => ActorEngine.deleteEmbeddedDocuments(sheet.actor, 'Item', [item.id])
           },
           close: {
             label: "Close"
