@@ -129,8 +129,8 @@ export class StarshipManeuverManager {
    */
   static async handleStartshipTactics(actor) {
     // Starship Tactics grants 1 + WIS modifier maneuvers
-    const wisValue = actor.system?.abilities?.wis?.value ?? 10;
-    const wisModifier = Math.floor((wisValue - 10) / 2);
+    const wisModifier = actor.system?.derived?.attributes?.wis?.mod
+      ?? Math.floor(((actor.system?.attributes?.wis?.base ?? 10) - 10) / 2);
     const maneuverCount = 1 + Math.max(0, wisModifier);
 
     const selectedManeuvers = await this.selectManeuvers(
@@ -172,8 +172,8 @@ export class StarshipManeuverManager {
    * @returns {Promise<void>}
    */
   static async handleAbilityIncrease(actor, oldAbilities, newAbilities) {
-    const oldMod = Math.floor(((oldAbilities.wis?.value ?? 10) - 10) / 2);
-    const newMod = Math.floor(((newAbilities.wis?.value ?? 10) - 10) / 2);
+    const oldMod = Math.floor(((oldAbilities.wis?.base ?? oldAbilities.wis?.value ?? 10) - 10) / 2);
+    const newMod = Math.floor(((newAbilities.wis?.base ?? newAbilities.wis?.value ?? 10) - 10) / 2);
 
     // Check if WIS modifier increased
     if (newMod > oldMod) {
@@ -214,8 +214,8 @@ export class StarshipManeuverManager {
    * @returns {Number} Max maneuvers in suite
    */
   static calculateManeuverSuiteSize(actor) {
-    const wisValue = actor.system?.abilities?.wis?.value ?? 10;
-    const wisModifier = Math.floor((wisValue - 10) / 2);
+    const wisModifier = actor.system?.derived?.attributes?.wis?.mod
+      ?? Math.floor(((actor.system?.attributes?.wis?.base ?? 10) - 10) / 2);
     const baseFromWis = 1 + Math.max(0, wisModifier);
 
     // Multiply by number of Starship Tactics feats
@@ -246,8 +246,8 @@ export class StarshipManeuverManager {
    * @returns {Number} WIS modifier
    */
   static getManeuverAbilityModifier(actor) {
-    const wis = actor.system.attributes.wis?.value || 10;
-    return Math.floor((wis - 10) / 2);
+    return actor.system?.derived?.attributes?.wis?.mod
+      ?? Math.floor(((actor.system?.attributes?.wis?.base ?? 10) - 10) / 2);
   }
 
   /**
