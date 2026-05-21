@@ -1488,7 +1488,9 @@ export const ActorEngine = {
         throw new Error(`Invalid condition step: ${step}`);
       }
 
-      const clampedStep = Math.min(5, Math.max(0, step));
+      const conditionCapVariant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
+      const conditionCap = ({ STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 })[conditionCapVariant?.toUpperCase?.()] ?? 5;
+      const clampedStep = Math.min(conditionCap, Math.max(0, step));
       const current = actor.system.conditionTrack?.current || 0;
 
       if (clampedStep === current) {

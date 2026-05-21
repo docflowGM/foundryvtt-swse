@@ -332,6 +332,7 @@ export class ConditionEngine {
 
       swseLogger.debug(`[ConditionEngine] Setting persistent condition to ${persistent} for ${actor.name}`);
 
+      // Delegating clears persistentSteps to 0 when toggling off (side effect in ActorEngine).
       await ActorEngine.setConditionPersistent(actor, persistent, options.source || 'ConditionEngine');
 
       swseLogger.log(`[ConditionEngine] Persistent condition set to ${persistent} for ${actor.name}`);
