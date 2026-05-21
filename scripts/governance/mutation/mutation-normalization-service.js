@@ -76,10 +76,12 @@ export class MutationNormalizationService {
     const toDelete = [];
 
     for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
+      // Catch both system.abilities.<key>.value and system.attributes.<key>.value
+      const match = key.match(/^system\.(?:abilities|attributes)\.([a-z]+)\.value$/);
       if (match && abilityKeys.includes(match[1])) {
         const abilityKey = match[1];
-        const newPath = `system.abilities.${abilityKey}.base`;
+        // Always redirect to canonical system.attributes.<key>.base
+        const newPath = `system.attributes.${abilityKey}.base`;
 
         if (!(newPath in flat)) {
           flat[newPath] = flat[key];
