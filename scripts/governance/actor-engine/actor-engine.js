@@ -3912,10 +3912,12 @@ export const ActorEngine = {
     const flat = foundry.utils.flattenObject(updateData);
     const touched = new Set();
 
-    // Detect which domains are being touched
+    // Detect which domains are being touched.
+    // system.attributes is canonical persisted ability storage; system.abilities is the
+    // read-only compat mirror. Both must trigger ability shape initialization so that the
+    // container exists before Foundry merges either write path.
     for (const key of Object.keys(flat)) {
-      if (key.startsWith('system.abilities.')) touched.add('abilities');
-      if (key.startsWith('system.class')) touched.add('class');
+      if (key.startsWith('system.attributes.') || key.startsWith('system.abilities.')) touched.add('abilities');
       if (key.startsWith('system.skills.')) touched.add('skills');
       if (key.startsWith('system.defenses.')) touched.add('defenses');
       if (key.startsWith('system.xp.') || key.startsWith('system.experience')) touched.add('xp');
@@ -4107,34 +4109,56 @@ export const ActorEngine = {
   // ========================================
 
   /**
-   * Ensure actor has canonical ability object shapes
+   * Ensure canonical ability/attribute containers exist in memory before an update merge.
+   *
+   * Two separate storage surfaces:
+   *   system.attributes  — canonical persisted ability scores { base, racial, enhancement, temp }.
+   *                        Defined in SWSECharacterDataModel schema; schema guarantees existence
+   *                        for fully-initialized actors. Initialized here as a defensive backstop
+   *                        for mid-creation actors only. Do NOT include derived fields (total, mod).
+   *   system.abilities   — read-only compatibility mirror. Rebuilt from system.attributes on every
+   *                        prepareDerivedData() call. Initialized here for non-character actor types
+   *                        that lack system.attributes in their schema, and as a compat backstop.
+   *
    * @private
    */
   _ensureCanonicalAbilityShapes(actor) {
     if (!actor.system) actor.system = {};
-    if (!actor.system.abilities) actor.system.abilities = {};
 
     const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+
+    // 1. Canonical persisted storage: system.attributes
+    //    Only initialize when the actor already has this namespace (character-type actors).
+    //    Non-character actors (vehicles, objects) do not have system.attributes in their schema
+    //    and must not have it implicitly created here.
+    if (actor.system.attributes !== undefined) {
+      if (typeof actor.system.attributes !== 'object' || Array.isArray(actor.system.attributes)) {
+        actor.system.attributes = {};
+      }
+      for (const key of abilityKeys) {
+        if (!actor.system.attributes[key] || typeof actor.system.attributes[key] !== 'object') {
+          actor.system.attributes[key] = { base: 10, racial: 0, enhancement: 0, temp: 0 };
+        } else {
+          actor.system.attributes[key].base        ??= 10;
+          actor.system.attributes[key].racial      ??= 0;
+          actor.system.attributes[key].enhancement ??= 0;
+          actor.system.attributes[key].temp        ??= 0;
+        }
+      }
+    }
+
+    // 2. Compatibility mirror: system.abilities
+    //    Rebuilt from system.attributes on every prepareDerivedData(); treat as a compat backstop.
+    if (!actor.system.abilities) actor.system.abilities = {};
     for (const key of abilityKeys) {
       if (!actor.system.abilities[key]) {
-        actor.system.abilities[key] = {
-          base: 10,
-          racial: 0,
-          temp: 0,
-          total: 10,
-          mod: 0
-        };
+        actor.system.abilities[key] = { base: 10, racial: 0, temp: 0, total: 10, mod: 0 };
       } else {
-        // Ensure all expected properties exist
         if (actor.system.abilities[key].base === undefined) {
           actor.system.abilities[key].base = actor.system.abilities[key].value || 10;
         }
-        if (actor.system.abilities[key].racial === undefined) {
-          actor.system.abilities[key].racial = 0;
-        }
-        if (actor.system.abilities[key].temp === undefined) {
-          actor.system.abilities[key].temp = 0;
-        }
+        actor.system.abilities[key].racial ??= 0;
+        actor.system.abilities[key].temp   ??= 0;
       }
     }
   },

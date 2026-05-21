@@ -482,7 +482,7 @@ async function createStatusEffect(actor, data = {}) {
 
   if (typeof actor?.createEmbeddedDocuments === 'function') {
     try {
-      return actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      return ActorEngine.createActiveEffects(actor, [effectData], { source: 'SpeciesActivatedAbilityEngine.createStatusEffect' });
     } catch (err) {
       SWSELogger.warn?.('[SpeciesActivatedAbilityEngine] ActiveEffect creation failed; falling back to system.activeEffects.', err);
     }

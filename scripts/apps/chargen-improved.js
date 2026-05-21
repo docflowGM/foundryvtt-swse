@@ -350,7 +350,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
         isDroid: this.characterData.isDroid || false,
         droidDegree: this.characterData.droidDegree || '',
         species: this.characterData.isDroid ? this.characterData.droidDegree : this.characterData.species,
-        abilities: {
+        attributes: {
           str: { base: this.characterData.abilities.str.base || 10, racial: this.characterData.abilities.str.racial || 0 },
           dex: { base: this.characterData.abilities.dex.base || 10, racial: this.characterData.abilities.dex.racial || 0 },
           con: { base: this.characterData.isDroid ? 0 : (this.characterData.abilities.con.base || 10), racial: 0 },

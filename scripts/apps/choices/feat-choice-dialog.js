@@ -1,4 +1,5 @@
 import { FeatChoiceResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 function escapeHtml(value) {
   const div = document.createElement('div');
@@ -131,7 +132,11 @@ export class FeatChoiceDialog {
     if (!selected) return false;
     const patch = FeatChoiceResolver.buildChoicePatch(item, selected);
     if (!patch) return false;
-    await item.update(patch);
+    if (item.isEmbedded && item.actor) {
+      await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [{ _id: item.id, ...patch }]);
+    } else {
+      await item.update(patch);
+    }
     return true;
   }
 }

@@ -9,6 +9,7 @@
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const RAGE_FLAG_PATH = "swse";
 const RAGE_BASE_BONUS = 2;
@@ -293,7 +294,7 @@ export class RageEngine {
       updates["flags.swse.rageAftereffectNote"] = "Persistent -1 condition step from Rage; remove after 10 minutes of non-strenuous recuperation.";
     }
 
-    await actor.update(updates);
+    await ActorEngine.updateActor(actor, updates, { source: 'RageEngine.endRage' });
     return { ended: true, appliedAftereffect: wasRaging };
   }
 
