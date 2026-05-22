@@ -46,7 +46,7 @@ export function registerActorHooks() {
     // Runs after any actor update that changes skill training state.
     // setTimeout(0) defers until after the full ActorEngine.updateActor + recalcAll
     // microtask chain completes, so actor state is current when requirements are evaluated.
-    // The _touchesSkillTraining guard prevents re-entry on the flag-clear write that follows.
+    // The _touchesRelevantDomains guard prevents re-entry on the flag-clear write that follows.
     Hooks.on('updateActor', (actor, changes, options) => {
         if (options?.meta?.guardKey === 'species-conditional-reconciliation') return;
         if (!_touchesRelevantDomains(changes)) return;
