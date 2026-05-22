@@ -717,39 +717,58 @@ export class SpeciesGrantLedgerBuilder {
       classified.classification = 'reroll';
     }
 
-    // Text-based fallback classification when no structured rules resolved it.
+    // Text-based fallback: accumulate all passive bonus/penalty entries from description.
     // Only fires for traits that remain 'unresolved' after rule/id checks above.
+    // Runs ALL pattern extractors (not early-exit) so one trait can yield multiple passive[].
+    // Example: Aleena Small Size grants both a Stealth skill bonus AND a Reflex defense bonus.
     if (classified.classification === 'unresolved' && trait.description) {
       const desc = trait.description;
+      let foundAny = false;
 
-      // Skill bonus: "+N species bonus on/to SKILL checks"
-      const skillMatch = desc.match(/\+(\d+)\s+species\s+bonus\s+(?:on|to)\s+([\w\s]+?)\s+checks?/i);
-      if (skillMatch) {
-        classified.classification = 'bonus';
+      // 1. Skill bonus: "+N species bonus on/to SKILL checks"
+      //    Uses matchAll so a single description can contribute multiple skill bonuses.
+      for (const m of desc.matchAll(/([+-]\d+)\s+species\s+bonus\s+(?:on|to)\s+([\w\s]+?)\s+checks?/gi)) {
         classified.passive.push({
           targetType: 'skill',
-          target: this._normalizeSkillKey(skillMatch[2].trim()),
-          value: parseInt(skillMatch[1], 10),
+          target: this._normalizeSkillKey(m[2].trim()),
+          value: parseInt(m[1], 10),
           bonusType: 'species',
         });
+        foundAny = true;
       }
 
-      // Natural armor / defense bonus: "+N Natural Armor bonus to DEFENSE Defense"
-      if (classified.classification === 'unresolved') {
-        const naturalArmorMatch = desc.match(/\+(\d+)\s+natural\s+armor\s+bonus\s+to\s+(\w+)\s+defense/i);
-        if (naturalArmorMatch) {
-          classified.classification = 'bonus';
-          classified.passive.push({
-            targetType: 'defense',
-            target: naturalArmorMatch[2].toLowerCase(),
-            value: parseInt(naturalArmorMatch[1], 10),
-            bonusType: 'naturalArmor',
-          });
-        }
+      // 2. Natural armor defense bonus: "+N Natural Armor bonus to DEFENSE Defense"
+      for (const m of desc.matchAll(/([+-]\d+)\s+natural\s+armor\s+bonus\s+to\s+(\w+)\s+defense/gi)) {
+        classified.passive.push({
+          targetType: 'defense',
+          target: m[2].toLowerCase(),
+          value: parseInt(m[1], 10),
+          bonusType: 'naturalArmor',
+        });
+        foundAny = true;
       }
 
-      // Reroll: "may reroll any SKILL check" / "choose to reroll any SKILL check, must accept"
-      if (classified.classification === 'unresolved') {
+      // 3. General species defense bonus/penalty: "+/-N species bonus/penalty to/on [their] DEFENSE Defense"
+      //    Supported targets: Reflex, Fortitude, Will.
+      //    Conditional variants ("against X", "to resist X") are excluded — they cannot be applied
+      //    unconditionally and are left as 'unresolved' for manual review.
+      const defPat = /([+-]\d+)\s+species\s+(?:bonus|penalty)\s+(?:to|on)\s+(?:their\s+)?(reflex|fortitude|will)\s+defense/gi;
+      for (const m of desc.matchAll(defPat)) {
+        const rest = desc.slice(m.index + m[0].length);
+        if (/^\s*(?:against|to\s+resist)/i.test(rest)) continue; // conditional — skip
+        classified.passive.push({
+          targetType: 'defense',
+          target: m[2].toLowerCase(),
+          value: parseInt(m[1], 10),
+          bonusType: 'species',
+        });
+        foundAny = true;
+      }
+
+      if (foundAny) {
+        classified.classification = 'bonus';
+      } else {
+        // 4. Reroll: "may/choose to reroll any SKILL check"
         const rerollMatch = desc.match(/(?:may\s+)?(?:choose\s+to\s+)?reroll\s+any\s+([\w\s]+?)\s+check/i);
         if (rerollMatch) {
           classified.classification = 'reroll';
