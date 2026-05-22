@@ -753,16 +753,28 @@ export class SpeciesGrantLedgerBuilder {
       //    Conditional variants ("against X", "to resist X") are excluded — they cannot be applied
       //    unconditionally and are left as 'unresolved' for manual review.
       const defPat = /([+-]\d+)\s+species\s+(?:bonus|penalty)\s+(?:to|on)\s+(?:their\s+)?(reflex|fortitude|will)\s+defense/gi;
+      const addedDefenseTargets = new Set();
       for (const m of desc.matchAll(defPat)) {
         const rest = desc.slice(m.index + m[0].length);
         if (/^\s*(?:against|to\s+resist)/i.test(rest)) continue; // conditional — skip
-        classified.passive.push({
-          targetType: 'defense',
-          target: m[2].toLowerCase(),
-          value: parseInt(m[1], 10),
-          bonusType: 'species',
-        });
-        foundAny = true;
+        const value = parseInt(m[1], 10);
+        const target = m[2].toLowerCase();
+        if (!addedDefenseTargets.has(target)) {
+          classified.passive.push({ targetType: 'defense', target, value, bonusType: 'species' });
+          addedDefenseTargets.add(target);
+          foundAny = true;
+        }
+        // Shared-value phrase: "+N species bonus to Will Defense and Reflex Defense"
+        // The second (and third) defense target inherits the same value without repeating "+N".
+        const sharedMatch = rest.match(/^\s+and\s+(reflex|fortitude|will)\s+defense/i);
+        if (sharedMatch) {
+          const sharedTarget = sharedMatch[1].toLowerCase();
+          if (!addedDefenseTargets.has(sharedTarget)) {
+            classified.passive.push({ targetType: 'defense', target: sharedTarget, value, bonusType: 'species' });
+            addedDefenseTargets.add(sharedTarget);
+            foundAny = true;
+          }
+        }
       }
 
       if (foundAny) {
