@@ -923,6 +923,14 @@ export class ProgressionFinalizer {
       set['flags.swse.suppressedClassAutoGrants'] = classAutoGrantItems.suppressed;
     }
 
+    if (sessionState.mode === 'chargen') {
+      const speciesBonusFeatResult = await this._compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState);
+      add.items.push(...speciesBonusFeatResult.items);
+      if (speciesBonusFeatResult.deferred?.length) {
+        set['flags.swse.deferredSpeciesBonusFeats'] = speciesBonusFeatResult.deferred;
+      }
+    }
+
     const compiledAbilityItems = await this._compileProgressionAbilityItems(actor, selections, sessionState);
     add.items.push(...compiledAbilityItems.items);
     if (Array.isArray(compiledAbilityItems.deleteItems) && compiledAbilityItems.deleteItems.length) {
@@ -1729,6 +1737,71 @@ export class ProgressionFinalizer {
     }
 
     return { items, suppressed: ledger.suppressedGrants || [] };
+  }
+
+
+  /**
+   * Compile feat items from species-level bonus feat grants.
+   * Unconditional grants (no condition string) are created as items.
+   * Conditional freeform grants are deferred — stored in flags, not auto-granted.
+   * Duplicate protection: skips any feat already on the actor by name.
+   */
+  static async _compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState) {
+    const items = [];
+    const deferred = [];
+    if (!pendingSpeciesContext || !actor) return { items, deferred };
+
+    const sessionId = sessionState?.sessionId || 'unknown';
+    const speciesName = pendingSpeciesContext.identity?.name || 'Unknown';
+
+    const existingByTypeAndName = new Set(
+      (actor.items || []).map((item) => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`)
+    );
+    const seen = new Set();
+
+    const bonusFeatGrants = (pendingSpeciesContext.traits || [])
+      .filter((t) => t.classification === 'grant' && t.source === 'bonusFeat')
+      .flatMap((t) => t.grants || [])
+      .filter((g) => g.grantType === 'feat' && g.target);
+
+    for (const grant of bonusFeatGrants) {
+      const name = grant.target;
+      const dedupeKey = `feat::${String(name).toLowerCase()}`;
+
+      if (grant.condition) {
+        // Conditional freeform — defer, do not auto-grant.
+        deferred.push({ name, condition: grant.condition, frequency: grant.frequency, species: speciesName });
+        continue;
+      }
+
+      if (existingByTypeAndName.has(dedupeKey) || seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+
+      const resolvedDoc = await ProgressionContentAuthority.getFeatDocument({ name, id: name });
+      const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
+      const baseItem = resolvedData || { name, type: 'feat', system: {} };
+      baseItem.name = baseItem.name || name;
+      baseItem.type = baseItem.type || 'feat';
+      baseItem.system = foundry.utils.mergeObject(baseItem.system || {}, {
+        sourceType: 'species',
+        locked: true,
+        autoGranted: true,
+      }, { inplace: false, recursive: true, overwrite: false });
+      baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
+        swse: {
+          progression: {
+            sourceSession: sessionId,
+            selectionKey: 'species-auto-grants',
+            selectionId: name,
+          },
+          speciesGranted: true,
+          sourceSpecies: speciesName,
+        },
+      }, { inplace: false, recursive: true });
+      items.push(baseItem);
+    }
+
+    return { items, deferred };
   }
 
 
