@@ -584,18 +584,15 @@ export class SpeciesGrantLedgerBuilder {
     }
 
     // From canonical trait blocks, when available from the sanitized species pack/registry.
+    // Route through _classifyTrait (not _classifySpecial) so text-based fallback detection
+    // for skill bonuses, natural armor, and rerolls applies to structured canonicalTrait objects.
     const canonicalTraits = Array.isArray(system.canonicalTraits)
       ? system.canonicalTraits
       : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
     for (const canonicalTrait of canonicalTraits) {
       if (!canonicalTrait?.name) continue;
-      const trait = this._classifySpecial(`${canonicalTrait.name}: ${canonicalTrait.description || ''}`);
-      if (trait) {
-        trait.id = canonicalTrait.id || trait.id;
-        trait.name = canonicalTrait.name;
-        trait.description = canonicalTrait.description || trait.description;
-        ledger.traits.push(trait);
-      }
+      const trait = this._classifyTrait(canonicalTrait, 'json');
+      if (trait) ledger.traits.push(trait);
     }
 
     this._populateRuleFlags(ledger, doc);
@@ -698,9 +695,70 @@ export class SpeciesGrantLedgerBuilder {
       }
     }
 
-    // Detect conditional traits
+    // Detect conditional traits by id convention
     if (trait.id && trait.id.includes('reroll')) {
       classified.classification = 'reroll';
+    }
+
+    // Text-based fallback classification when no structured rules resolved it.
+    // Only fires for traits that remain 'unresolved' after rule/id checks above.
+    if (classified.classification === 'unresolved' && trait.description) {
+      const desc = trait.description;
+
+      // Skill bonus: "+N species bonus on/to SKILL checks"
+      const skillMatch = desc.match(/\+(\d+)\s+species\s+bonus\s+(?:on|to)\s+([\w\s]+?)\s+checks?/i);
+      if (skillMatch) {
+        classified.classification = 'bonus';
+        classified.passive.push({
+          targetType: 'skill',
+          target: this._normalizeSkillKey(skillMatch[2].trim()),
+          value: parseInt(skillMatch[1], 10),
+          bonusType: 'species',
+        });
+      }
+
+      // Natural armor / defense bonus: "+N Natural Armor bonus to DEFENSE Defense"
+      if (classified.classification === 'unresolved') {
+        const naturalArmorMatch = desc.match(/\+(\d+)\s+natural\s+armor\s+bonus\s+to\s+(\w+)\s+defense/i);
+        if (naturalArmorMatch) {
+          classified.classification = 'bonus';
+          classified.passive.push({
+            targetType: 'defense',
+            target: naturalArmorMatch[2].toLowerCase(),
+            value: parseInt(naturalArmorMatch[1], 10),
+            bonusType: 'naturalArmor',
+          });
+        }
+      }
+
+      // Reroll: "may reroll any SKILL check" / "choose to reroll any SKILL check, must accept"
+      if (classified.classification === 'unresolved') {
+        const rerollMatch = desc.match(/(?:may\s+)?(?:choose\s+to\s+)?reroll\s+any\s+([\w\s]+?)\s+check/i);
+        if (rerollMatch) {
+          classified.classification = 'reroll';
+          classified.rerolls.push({
+            scope: 'skill',
+            target: this._normalizeSkillKey(rerollMatch[1].trim()),
+            frequency: 'atWill',
+            outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+          });
+        }
+      }
+    }
+
+    // Reroll extraction for traits already classified as reroll but with no rerolls populated.
+    // Handles id-convention reroll traits (e.g. "silver-tongue-reroll") that have no rules[].
+    if (classified.classification === 'reroll' && classified.rerolls.length === 0 && trait.description) {
+      const desc = trait.description;
+      const rerollMatch = desc.match(/(?:may\s+)?(?:choose\s+to\s+)?reroll\s+any\s+([\w\s]+?)\s+check/i);
+      if (rerollMatch) {
+        classified.rerolls.push({
+          scope: 'skill',
+          target: this._normalizeSkillKey(rerollMatch[1].trim()),
+          frequency: 'atWill',
+          outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+        });
+      }
     }
 
     return classified;

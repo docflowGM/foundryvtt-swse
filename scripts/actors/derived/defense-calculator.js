@@ -106,6 +106,13 @@ export class DefenseCalculator {
       }
     }
 
+    // Phase 3 canonical materialization: passive defense bonuses stored in actor flags
+    // (e.g. natural armor → flags.swse.speciesPassiveBonuses.reflex)
+    const passiveBonuses = actor?.flags?.swse?.speciesPassiveBonuses || {};
+    const passiveEntries = passiveBonuses[key] || [];
+    const passiveTotal = passiveEntries.reduce((sum, b) => sum + (Number(b.value) || 0), 0);
+    if (passiveTotal !== 0) return passiveTotal;
+
     return 0;
   }
 
