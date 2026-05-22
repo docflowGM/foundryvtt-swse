@@ -924,7 +924,7 @@ export class ProgressionFinalizer {
     }
 
     if (sessionState.mode === 'chargen') {
-      const speciesBonusFeatResult = await this._compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState);
+      const speciesBonusFeatResult = await this._compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState, selections);
       add.items.push(...speciesBonusFeatResult.items);
       if (speciesBonusFeatResult.deferred?.length) {
         set['flags.swse.deferredSpeciesBonusFeats'] = speciesBonusFeatResult.deferred;
@@ -1741,12 +1741,33 @@ export class ProgressionFinalizer {
 
 
   /**
+   * Evaluate structured species bonus feat requirements against chargen selections.
+   * Returns { met: bool } — false if any requirement is unmet or the type is unknown.
+   * Only supports requirement types implemented in this phase; unknown types → not met.
+   */
+  static _evaluateSpeciesBonusFeatRequirements(requirements, selections) {
+    if (!requirements || requirements.length === 0) return { met: true };
+    const skillEntries = this._normalizeSkillSelectionEntries(selections?.skills || []);
+    const trainedKeys = new Set(skillEntries.map((e) => e.key));
+    for (const req of requirements) {
+      if (req.type === 'skillTrained') {
+        if (!trainedKeys.has(this._canonicalSkillKey(req.skill))) return { met: false };
+      } else {
+        // Unknown requirement type — do not auto-grant.
+        return { met: false };
+      }
+    }
+    return { met: true };
+  }
+
+  /**
    * Compile feat items from species-level bonus feat grants.
-   * Unconditional grants (no condition string) are created as items.
-   * Conditional freeform grants are deferred — stored in flags, not auto-granted.
+   * Grants with no condition and no requirements are always created.
+   * Grants with structured requirements are evaluated against chargen selections.
+   * Grants with only freeform condition text (no structured requirements) are deferred.
    * Duplicate protection: skips any feat already on the actor by name.
    */
-  static async _compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState) {
+  static async _compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState, selections = {}) {
     const items = [];
     const deferred = [];
     if (!pendingSpeciesContext || !actor) return { items, deferred };
@@ -1767,11 +1788,22 @@ export class ProgressionFinalizer {
     for (const grant of bonusFeatGrants) {
       const name = grant.target;
       const dedupeKey = `feat::${String(name).toLowerCase()}`;
+      const hasStructuredRequirements = Array.isArray(grant.requirements) && grant.requirements.length > 0;
+      const hasFreeformOnly = grant.condition && !hasStructuredRequirements;
 
-      if (grant.condition) {
-        // Conditional freeform — defer, do not auto-grant.
-        deferred.push({ name, condition: grant.condition, frequency: grant.frequency, species: speciesName });
+      if (hasFreeformOnly) {
+        // Freeform condition text with no structured requirements — defer, do not auto-grant.
+        deferred.push({ name, condition: grant.condition, requirements: grant.requirements || [], frequency: grant.frequency, species: speciesName });
         continue;
+      }
+
+      if (hasStructuredRequirements) {
+        const { met } = this._evaluateSpeciesBonusFeatRequirements(grant.requirements, selections);
+        if (!met) {
+          deferred.push({ name, condition: grant.condition, requirements: grant.requirements, frequency: grant.frequency, species: speciesName });
+          continue;
+        }
+        // Requirements met — fall through to grant.
       }
 
       if (existingByTypeAndName.has(dedupeKey) || seen.has(dedupeKey)) continue;

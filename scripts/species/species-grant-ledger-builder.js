@@ -539,8 +539,9 @@ export class SpeciesGrantLedgerBuilder {
             grants: [{
               grantType: 'feat',
               target,
-              frequency: entry.condition ? 'conditional' : 'always',
+              frequency: (entry.condition || entry.requirements?.length) ? 'conditional' : 'always',
               condition: entry.condition || null,
+              requirements: Array.isArray(entry.requirements) ? entry.requirements : [],
             }],
             activated: [],
             prerequisites: [],
