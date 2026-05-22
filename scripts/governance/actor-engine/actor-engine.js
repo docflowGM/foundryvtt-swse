@@ -1661,7 +1661,22 @@ export const ActorEngine = {
 
   /**
    * Offer Force Point rescue for lethal/destructive threshold hits.
-   * Mutates only the in-memory resolution packet plus FP state; caller persists actor state.
+   *
+   * Mutation contract — fields written to resolution on success:
+   *   resolution.forceRescueUsed     = true
+   *   resolution.forceRescueEligible = false
+   *   resolution.dead                = false
+   *   resolution.destroyed           = false
+   *   resolution.unconscious         = true  (character/npc/beast)
+   *   resolution.disabled            = true  (droid/object/device/vehicle)
+   *   resolution.hpAfter             = 0
+   *   resolution.conditionAfter      = 5
+   *   resolution.conditionDelta      = max(0, 5 - conditionBefore)
+   *   resolution.resolutionNote      = 'force-point-rescue'
+   *
+   * applyDamage() reads the mutated resolution to build its update dict.
+   * No actor.update() is called here — caller owns persistence.
+   *
    * @private
    */
   async _maybeResolveForcePointRescue(actor, resolution, damagePacket = {}) {
@@ -1669,12 +1684,12 @@ export const ActorEngine = {
       if (!actor || !resolution?.forceRescueEligible || (!resolution.dead && !resolution.destroyed)) return false;
 
       const { ForcePointsService } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js');
-      const canRescue = ForcePointsService.canRescue(actor, {
+      const rescueContext = {
         damage: resolution.thresholdMeasuredDamage ?? damagePacket.amount ?? 0,
         hp: resolution.hpAfter,
         threshold: resolution.thresholdTotal
-      });
-      if (!canRescue) return false;
+      };
+      if (!ForcePointsService.canRescue(actor, rescueContext)) return false;
 
       const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js');
       const label = resolution.destroyed ? 'destruction' : 'death';
@@ -1686,8 +1701,17 @@ export const ActorEngine = {
       });
       if (!yes) return false;
 
+      // Post-dialog re-check: FP may have been spent elsewhere while the dialog was open.
+      if (!ForcePointsService.canRescue(actor, rescueContext)) {
+        ui.notifications?.warn?.(`${actor.name}: Force Point rescue is no longer available — a Force Point may have been spent while the dialog was open.`);
+        return false;
+      }
+
       const spend = await this.spendForcePoints(actor, 1);
-      if (!spend?.spent) return false;
+      if (!spend?.spent) {
+        ui.notifications?.warn?.(`${actor.name}: Force Point rescue failed — no Force Points remaining.`);
+        return false;
+      }
       await actor.setFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
 
       resolution.forceRescueUsed = true;

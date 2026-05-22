@@ -10,6 +10,8 @@ import { ProficiencySelectionDialog } from "/systems/foundryvtt-swse/scripts/app
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { buildPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
+import { applyCanonicalSpeciesToActor } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js";
 
 export class DropHandler {
 
@@ -244,25 +246,60 @@ export class DropHandler {
       await existingSpecies.delete();
     }
 
-    // PHASE 8: Use ActorEngine for atomic creation
+    // Create the species embedded item first (species document on the actor).
     await ActorEngine.createEmbeddedDocuments(actor, 'Item', [species.toObject()]);
 
-    // Parse racial ability bonuses from string format (e.g., "+2 Dex, -2 Con")
-    const abilityMods = species.system.abilityMods || this._parseAbilityString(species.system.abilities || species.system.attributes || 'None');
+    // Route through the canonical species materialization pipeline so drag/drop gets the
+    // same full package as chargen finalization: attributes, movement, languages, passive
+    // skill bonuses (flags.swse.speciesPassiveBonuses), reroll rights
+    // (flags.swse.speciesRerolls), natural weapons, and activated ability items.
+    let canonicalApplied = false;
+    try {
+      const pendingContext = await buildPendingSpeciesContext(actor, species.name, { source: 'drag-drop' });
+      if (pendingContext) {
+        const materialization = await applyCanonicalSpeciesToActor(actor, pendingContext);
+        if (materialization.success) {
+          const mutations = materialization.mutations;
 
-    const updates = {
-      'system.attributes.str.racial': abilityMods.str || 0,
-      'system.attributes.dex.racial': abilityMods.dex || 0,
-      'system.attributes.con.racial': abilityMods.con || 0,
-      'system.attributes.int.racial': abilityMods.int || 0,
-      'system.attributes.wis.racial': abilityMods.wis || 0,
-      'system.attributes.cha.racial': abilityMods.cha || 0,
-      'system.size': species.system.size || 'Medium',
-      'system.speed': parseInt(species.system.speed, 10) || 6,
-      'system.race': species.name  // Store species name for display
-    };
+          // Apply system/flags mutations through ActorEngine.
+          const fieldMutations = {};
+          for (const [key, value] of Object.entries(mutations)) {
+            if (key.startsWith('system.') || key.startsWith('flags.')) {
+              fieldMutations[key] = value;
+            }
+          }
+          if (Object.keys(fieldMutations).length > 0) {
+            await ActorEngine.updateActor(actor, fieldMutations, { source: 'species-drop' });
+          }
 
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+          // Create natural weapons and activated ability items.
+          if (mutations.itemsToCreate?.length > 0) {
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', mutations.itemsToCreate, { source: 'species-drop' });
+          }
+
+          canonicalApplied = true;
+        }
+      }
+    } catch (err) {
+      // Canonical materialization failed — fall back to legacy attribute writes.
+      console.warn(`[DropHandler] Species canonical materialization failed for ${species.name}:`, err);
+    }
+
+    if (!canonicalApplied) {
+      // Legacy fallback: apply attribute modifiers only (no rerolls/bonuses/natural weapons).
+      const abilityMods = species.system.abilityMods || this._parseAbilityString(species.system.abilities || species.system.attributes || 'None');
+      await ActorEngine.updateActor(actor, {
+        'system.attributes.str.racial': abilityMods.str || 0,
+        'system.attributes.dex.racial': abilityMods.dex || 0,
+        'system.attributes.con.racial': abilityMods.con || 0,
+        'system.attributes.int.racial': abilityMods.int || 0,
+        'system.attributes.wis.racial': abilityMods.wis || 0,
+        'system.attributes.cha.racial': abilityMods.cha || 0,
+        'system.size': species.system.size || 'Medium',
+        'system.speed': parseInt(species.system.speed, 10) || 6,
+        'system.race': species.name
+      }, { source: 'species-drop-legacy-fallback' });
+    }
 
     ui.notifications.info(game.i18n.format('SWSE.Notifications.Items.SpeciesApplied', { species: species.name, actor: actor.name }));
     return true;

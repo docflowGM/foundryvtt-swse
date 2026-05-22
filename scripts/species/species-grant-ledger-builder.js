@@ -521,6 +521,34 @@ export class SpeciesGrantLedgerBuilder {
           ...(supplementaryTraits.activatedAbilities || []),
           ...(supplementaryTraits.conditionalTraits || [])
         ];
+
+        // Ingest species-level bonusFeats as normalized grant traits.
+        // These are top-level on the species entry (e.g. Miraluka Force Training),
+        // not inside individual trait objects, so they are handled separately.
+        for (const entry of (supplementaryTraits.bonusFeats || [])) {
+          const target = entry.grantedFeat || entry.name;
+          if (!target || typeof target !== 'string') continue;
+          ledger.traits.push({
+            id: entry.id || `bonus-feat-${String(target).toLowerCase().replace(/\s+/g, '-')}`,
+            name: target,
+            description: entry.condition || `Bonus feat: ${target}`,
+            type: 'bonusFeat',
+            classification: 'grant',
+            passive: [],
+            rerolls: [],
+            grants: [{
+              grantType: 'feat',
+              target,
+              frequency: (entry.condition || entry.requirements?.length) ? 'conditional' : 'always',
+              condition: entry.condition || null,
+              requirements: Array.isArray(entry.requirements) ? entry.requirements : [],
+            }],
+            activated: [],
+            prerequisites: [],
+            rules: [],
+            source: 'bonusFeat',
+          });
+        }
       }
     }
 

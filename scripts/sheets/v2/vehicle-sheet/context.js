@@ -284,13 +284,13 @@ function buildCargo(system) {
 }
 
 function buildCondition(system) {
-  const step = numberOrNull(system.conditionTrack?.current) ?? numberOrNull(system.condition) ?? 0;
-  const clamped = Math.max(0, Math.min(5, step));
-  const labels = ["Normal", "-1", "-2", "-5", "-10", "Disabled"];
+  const step = Math.max(0, numberOrNull(system.conditionTrack?.current) ?? numberOrNull(system.condition) ?? 0);
+  const labels = ["Normal", "-1", "-2", "-5", "-10", "Disabled", "Critical"];
+  const stepLabel = labels[step] ?? `Step ${step}`;
   return {
-    step: clamped,
-    label: labels[clamped] || label(step),
-    penalty: clamped > 0 && clamped < 5 ? labels[clamped] : EMPTY
+    step,
+    label: stepLabel,
+    penalty: step > 0 && step < 5 ? stepLabel : EMPTY
   };
 }
 

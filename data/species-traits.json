@@ -7219,7 +7219,8 @@
       {
         "id": "bonus-force-training",
         "condition": "A Miraluka who has Use the Force as a Trained Skill",
-        "grantedFeat": "Force Training"
+        "grantedFeat": "Force Training",
+        "requirements": [{ "type": "skillTrained", "skill": "useTheForce" }]
       }
     ],
     "equipmentGrants": [],

@@ -355,7 +355,7 @@ export class SWSEActorSheet extends ActorSheet {
   async _onAddTalent(event) { event.preventDefault(); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.push({ name: "New Talent", description: "" }); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.talents": talents}); }
   async _onRemoveTalent(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.splice(idx, 1); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.talents": talents}); }
   async _onAddForcePower(event) { event.preventDefault(); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.createEmbeddedDocuments("Item", [{ name: "New Force Power", type: "force-power", system: { uses: { current: 1, max: 1 } } }]); }
-  async _onRemoveForcePower(event) { event.preventDefault(); const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; if (itemId) { const item = this.actor.items.get(itemId); if (item) await item.delete(); } }
+  async _onRemoveForcePower(event) { event.preventDefault(); const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; if (itemId) { const item = this.actor.items.get(itemId); /* @mutation-exception legacy-disabled-character-sheet */ if (item) await item.delete(); } }
   async _onRollForcePower(event) {
     event.preventDefault();
     const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId;

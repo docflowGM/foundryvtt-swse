@@ -343,6 +343,15 @@ export class SpeciesRerollHandler {
     return { actor, skillKey, trait, message, originalTotal, newRoll, finalRoll };
   }
 
+  /**
+   * Collect reroll grants from embedded items (e.g. talents, feats with reroll metadata).
+   * Currently no item schema exposes reroll grants — returns empty array as safe stub.
+   * @private
+   */
+  static _getItemGrantedRerolls(_actor) {
+    return [];
+  }
+
 }
 
 /**

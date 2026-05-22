@@ -923,6 +923,14 @@ export class ProgressionFinalizer {
       set['flags.swse.suppressedClassAutoGrants'] = classAutoGrantItems.suppressed;
     }
 
+    if (sessionState.mode === 'chargen') {
+      const speciesBonusFeatResult = await this._compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState, selections);
+      add.items.push(...speciesBonusFeatResult.items);
+      if (speciesBonusFeatResult.deferred?.length) {
+        set['flags.swse.deferredSpeciesBonusFeats'] = speciesBonusFeatResult.deferred;
+      }
+    }
+
     const compiledAbilityItems = await this._compileProgressionAbilityItems(actor, selections, sessionState);
     add.items.push(...compiledAbilityItems.items);
     if (Array.isArray(compiledAbilityItems.deleteItems) && compiledAbilityItems.deleteItems.length) {
@@ -1729,6 +1737,108 @@ export class ProgressionFinalizer {
     }
 
     return { items, suppressed: ledger.suppressedGrants || [] };
+  }
+
+
+  /**
+   * Evaluate structured species bonus feat requirements against chargen selections.
+   * Returns { met: bool } — false if any requirement is unmet or the type is unknown.
+   * Only supports requirement types implemented in this phase; unknown types → not met.
+   */
+  static _evaluateSpeciesBonusFeatRequirements(requirements, selections) {
+    if (!requirements || requirements.length === 0) return { met: true };
+    const skillEntries = this._normalizeSkillSelectionEntries(selections?.skills || []);
+    const trainedKeys = new Set(skillEntries.map((e) => e.key));
+    for (const req of requirements) {
+      if (req.type === 'skillTrained') {
+        if (!trainedKeys.has(this._canonicalSkillKey(req.skill))) return { met: false };
+      } else if (req.type === 'attributeMin' || req.type === 'baseAttackMin') {
+        // Attribute totals and BAB are not reliable at chargen finalization time —
+        // the actor holds pre-commit state. Defer these to post-commit reconciliation
+        // where recalcAll has run and derived values are current.
+        return { met: false };
+      } else {
+        // Unknown requirement type — do not auto-grant.
+        return { met: false };
+      }
+    }
+    return { met: true };
+  }
+
+  /**
+   * Compile feat items from species-level bonus feat grants.
+   * Grants with no condition and no requirements are always created.
+   * Grants with structured requirements are evaluated against chargen selections.
+   * Grants with only freeform condition text (no structured requirements) are deferred.
+   * Duplicate protection: skips any feat already on the actor by name.
+   */
+  static async _compileSpeciesBonusFeatItems(actor, pendingSpeciesContext, sessionState, selections = {}) {
+    const items = [];
+    const deferred = [];
+    if (!pendingSpeciesContext || !actor) return { items, deferred };
+
+    const sessionId = sessionState?.sessionId || 'unknown';
+    const speciesName = pendingSpeciesContext.identity?.name || 'Unknown';
+
+    const existingByTypeAndName = new Set(
+      (actor.items || []).map((item) => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`)
+    );
+    const seen = new Set();
+
+    const bonusFeatGrants = (pendingSpeciesContext.traits || [])
+      .filter((t) => t.classification === 'grant' && t.source === 'bonusFeat')
+      .flatMap((t) => t.grants || [])
+      .filter((g) => g.grantType === 'feat' && g.target);
+
+    for (const grant of bonusFeatGrants) {
+      const name = grant.target;
+      const dedupeKey = `feat::${String(name).toLowerCase()}`;
+      const hasStructuredRequirements = Array.isArray(grant.requirements) && grant.requirements.length > 0;
+      const hasFreeformOnly = grant.condition && !hasStructuredRequirements;
+
+      if (hasFreeformOnly) {
+        // Freeform condition text with no structured requirements — defer, do not auto-grant.
+        deferred.push({ name, condition: grant.condition, requirements: grant.requirements || [], frequency: grant.frequency, species: speciesName });
+        continue;
+      }
+
+      if (hasStructuredRequirements) {
+        const { met } = this._evaluateSpeciesBonusFeatRequirements(grant.requirements, selections);
+        if (!met) {
+          deferred.push({ name, condition: grant.condition, requirements: grant.requirements, frequency: grant.frequency, species: speciesName });
+          continue;
+        }
+        // Requirements met — fall through to grant.
+      }
+
+      if (existingByTypeAndName.has(dedupeKey) || seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+
+      const resolvedDoc = await ProgressionContentAuthority.getFeatDocument({ name, id: name });
+      const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
+      const baseItem = resolvedData || { name, type: 'feat', system: {} };
+      baseItem.name = baseItem.name || name;
+      baseItem.type = baseItem.type || 'feat';
+      baseItem.system = foundry.utils.mergeObject(baseItem.system || {}, {
+        sourceType: 'species',
+        locked: true,
+        autoGranted: true,
+      }, { inplace: false, recursive: true, overwrite: false });
+      baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
+        swse: {
+          progression: {
+            sourceSession: sessionId,
+            selectionKey: 'species-auto-grants',
+            selectionId: name,
+          },
+          speciesGranted: true,
+          sourceSpecies: speciesName,
+        },
+      }, { inplace: false, recursive: true });
+      items.push(baseItem);
+    }
+
+    return { items, deferred };
   }
 
 

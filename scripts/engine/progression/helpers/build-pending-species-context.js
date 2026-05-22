@@ -101,7 +101,7 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
       : null;
     const effectiveSpeciesEntry = _applyAbilityChoiceProfile(variantAppliedSpeciesEntry, selectedAbilityChoice);
 
-    const ledger = await SpeciesGrantLedgerBuilder.build(effectiveSpeciesEntry);
+    const ledger = await SpeciesGrantLedgerBuilder.build(effectiveSpeciesEntry, effectiveSpeciesEntry.supplementaryTraits || null);
     if (!ledger) {
       SWSELogger.warn('[PendingSpeciesContext] Failed to build ledger for:', speciesEntry.name);
       return null;

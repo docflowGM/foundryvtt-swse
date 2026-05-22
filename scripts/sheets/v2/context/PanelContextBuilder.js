@@ -137,12 +137,19 @@ export class PanelContextBuilder {
       { step: 2, label: '-2', description: 'Def • Atk • Skill • Ability', severityClass: 'severity-mid', penalty: -2 },
       { step: 3, label: '-5', description: 'Def • Atk • Skill • Ability', severityClass: 'severity-high', penalty: -5 },
       { step: 4, label: '-10', description: 'Def • Atk • Skill • Ability • Half speed', severityClass: 'severity-critical', penalty: -10 },
-      { step: 5, label: 'Helpless', description: 'Unconscious / disabled', severityClass: 'severity-helpless', penalty: null }
+      { step: 5, label: 'Helpless', description: 'Unconscious / disabled', severityClass: 'severity-helpless', penalty: null },
+      { step: 6, label: 'Critical', description: 'Critically incapacitated', severityClass: 'severity-helpless', penalty: null }
     ];
 
-    const conditionSlots = conditionDefinitions.map(def => ({
-      ...def,
-      active: ctCurrent === def.step,
+    // For unlimited-cap variants, generate a synthetic entry for any step beyond the hardcoded definitions.
+    const _conditionDefFor = (step) => conditionDefinitions[step]
+      ?? { step, label: `Step ${step}`, description: 'Severely incapacitated', severityClass: 'severity-helpless', penalty: null };
+
+    // Build slots for steps 0–max(5, ctCurrent) so the active step always has a slot.
+    const ctSlotCount = Math.max(6, ctCurrent + 1);
+    const conditionSlots = Array.from({ length: ctSlotCount }, (_, i) => ({
+      ..._conditionDefFor(i),
+      active: ctCurrent === i,
       canEdit: this.sheet.isEditable
     }));
 
@@ -160,7 +167,7 @@ export class PanelContextBuilder {
       };
     });
 
-    const currentConditionPenalty = conditionDefinitions.find(def => def.step === ctCurrent) ?? conditionDefinitions[0];
+    const currentConditionPenalty = _conditionDefFor(ctCurrent);
     const currentConditions = CurrentConditionResolver.build(this.actor);
     const currentConditionNotes = currentConditions.notes;
 

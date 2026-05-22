@@ -21,6 +21,7 @@ import { ForceDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastru
 import { registerTelekineticProdigyHook } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/telekinetic-prodigy-hook.js";
 import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SpeciesConditionalGrantResolver } from "/systems/foundryvtt-swse/scripts/engine/species/SpeciesConditionalGrantResolver.js";
 
 /**
  * Register all actor-related hooks
@@ -39,6 +40,22 @@ export function registerActorHooks() {
         } catch (err) {
             SWSELogger.warn(`[PASSIVE] Error registering abilities for ${actor?.name}:`, err);
         }
+    });
+
+    // Deferred species bonus feat reconciliation.
+    // Runs after any actor update that changes skill training state.
+    // setTimeout(0) defers until after the full ActorEngine.updateActor + recalcAll
+    // microtask chain completes, so actor state is current when requirements are evaluated.
+    // The _touchesRelevantDomains guard prevents re-entry on the flag-clear write that follows.
+    Hooks.on('updateActor', (actor, changes, options) => {
+        if (options?.meta?.guardKey === 'species-conditional-reconciliation') return;
+        if (!_touchesRelevantDomains(changes)) return;
+        if (!actor?.flags?.swse?.deferredSpeciesBonusFeats?.length) return;
+        setTimeout(() => {
+            SpeciesConditionalGrantResolver.reconcile(actor).catch((err) => {
+                SWSELogger.warn(`[SpeciesGrants] Reconciliation error for ${actor?.name}:`, err);
+            });
+        }, 0);
     });
 
     // Pre-update actor validation
@@ -645,4 +662,33 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
         width: 400,
         classes: ['swse', 'int-increase-dialog']
     }).render(true);
+}
+
+
+/**
+ * Check whether an actor update delta touches any domain that could satisfy a deferred
+ * species bonus feat requirement:
+ *   - skill training (skillTrained requirements)
+ *   - ability attribute scores (attributeMin requirements)
+ *   - level/class (baseAttackMin requirements — BAB changes when level changes)
+ *
+ * Foundry delivers changes as an expanded object, e.g.:
+ *   { system: { skills: { useTheForce: { trained: true } } } }
+ *   { system: { attributes: { dex: { base: 14 } } } }
+ *   { system: { level: 2 } }
+ *
+ * @param {Object} changes
+ * @returns {boolean}
+ */
+function _touchesRelevantDomains(changes) {
+    const sys = changes?.system;
+    if (!sys) return false;
+    // Skill training changes (skillTrained requirements)
+    const skills = sys.skills;
+    if (skills && typeof skills === 'object' && Object.values(skills).some((s) => s !== null && typeof s === 'object' && 'trained' in s)) return true;
+    // Ability attribute changes (attributeMin requirements)
+    if (sys.attributes && typeof sys.attributes === 'object') return true;
+    // Level changes → BAB recalculated (baseAttackMin requirements)
+    if (sys.level !== undefined) return true;
+    return false;
 }
