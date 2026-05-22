@@ -1752,6 +1752,11 @@ export class ProgressionFinalizer {
     for (const req of requirements) {
       if (req.type === 'skillTrained') {
         if (!trainedKeys.has(this._canonicalSkillKey(req.skill))) return { met: false };
+      } else if (req.type === 'attributeMin' || req.type === 'baseAttackMin') {
+        // Attribute totals and BAB are not reliable at chargen finalization time —
+        // the actor holds pre-commit state. Defer these to post-commit reconciliation
+        // where recalcAll has run and derived values are current.
+        return { met: false };
       } else {
         // Unknown requirement type — do not auto-grant.
         return { met: false };

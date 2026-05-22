@@ -15,6 +15,24 @@ function _evaluateRequirement(req, actorSystem) {
   if (req.type === 'skillTrained') {
     return actorSystem.skills?.[req.skill]?.trained === true;
   }
+  if (req.type === 'attributeMin') {
+    const key = req.attribute;
+    if (!key) return false;
+    // Prefer post-recalcAll derived total; fall back to summing canonical stored fields.
+    const derivedTotal = actorSystem.derived?.attributes?.[key]?.total;
+    const total = derivedTotal !== undefined
+      ? derivedTotal
+      : ((actorSystem.attributes?.[key]?.base ?? 10)
+        + (actorSystem.attributes?.[key]?.racial ?? 0)
+        + (actorSystem.attributes?.[key]?.enhancement ?? 0)
+        + (actorSystem.attributes?.[key]?.temp ?? 0));
+    return Number.isFinite(total) && total >= (req.min ?? 0);
+  }
+  if (req.type === 'baseAttackMin') {
+    // system.derived.bab is a scalar written by BABCalculator after recalcAll.
+    const bab = actorSystem.derived?.bab;
+    return Number.isFinite(bab) && bab >= (req.min ?? 0);
+  }
   // Unknown type — leave deferred.
   return false;
 }

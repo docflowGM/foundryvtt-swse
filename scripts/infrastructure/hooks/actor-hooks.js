@@ -49,7 +49,7 @@ export function registerActorHooks() {
     // The _touchesSkillTraining guard prevents re-entry on the flag-clear write that follows.
     Hooks.on('updateActor', (actor, changes, options) => {
         if (options?.meta?.guardKey === 'species-conditional-reconciliation') return;
-        if (!_touchesSkillTraining(changes)) return;
+        if (!_touchesRelevantDomains(changes)) return;
         if (!actor?.flags?.swse?.deferredSpeciesBonusFeats?.length) return;
         setTimeout(() => {
             SpeciesConditionalGrantResolver.reconcile(actor).catch((err) => {
@@ -666,13 +666,29 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
 
 
 /**
- * Check whether an actor update delta touches any skill training field.
- * Foundry delivers changes as an expanded object: { system: { skills: { useTheForce: { trained: true } } } }.
+ * Check whether an actor update delta touches any domain that could satisfy a deferred
+ * species bonus feat requirement:
+ *   - skill training (skillTrained requirements)
+ *   - ability attribute scores (attributeMin requirements)
+ *   - level/class (baseAttackMin requirements — BAB changes when level changes)
+ *
+ * Foundry delivers changes as an expanded object, e.g.:
+ *   { system: { skills: { useTheForce: { trained: true } } } }
+ *   { system: { attributes: { dex: { base: 14 } } } }
+ *   { system: { level: 2 } }
+ *
  * @param {Object} changes
  * @returns {boolean}
  */
-function _touchesSkillTraining(changes) {
-    const skills = changes?.system?.skills;
-    if (!skills || typeof skills !== 'object') return false;
-    return Object.values(skills).some((s) => s !== null && typeof s === 'object' && 'trained' in s);
+function _touchesRelevantDomains(changes) {
+    const sys = changes?.system;
+    if (!sys) return false;
+    // Skill training changes (skillTrained requirements)
+    const skills = sys.skills;
+    if (skills && typeof skills === 'object' && Object.values(skills).some((s) => s !== null && typeof s === 'object' && 'trained' in s)) return true;
+    // Ability attribute changes (attributeMin requirements)
+    if (sys.attributes && typeof sys.attributes === 'object') return true;
+    // Level changes → BAB recalculated (baseAttackMin requirements)
+    if (sys.level !== undefined) return true;
+    return false;
 }
