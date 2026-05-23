@@ -28,6 +28,8 @@
  * - flags.swse.speciesLanguages: array - species-granted languages
  * - flags.swse.speciesPassiveBonuses: object - passive bonus registry
  * - flags.swse.speciesRerolls: array - reroll rights registration
+ * - flags.swse.speciesImmunities: array - immunity metadata { key, label, sourceTrait, notes }
+ * - flags.swse.speciesResistances: array - resistance metadata { key, label, sourceTrait, value, notes }
  *
  * NATURAL WEAPON ITEM FLAGS (identification):
  * - flags.swse.isNaturalWeapon: true - marks as natural weapon
@@ -48,6 +50,7 @@
  *   ├─ _materializePassiveBonuses()
  *   ├─ _materializeTraitFlags()
  *   ├─ _materializeRerolls()
+ *   ├─ _materializeImmunities()
  *   ├─ _reconcileOldSpeciesItems()
  *   └─ _ensureIdempotence()
  */
@@ -122,6 +125,10 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
     // PHASE 9: Rerolls (durable registration)
     const rerollMutations = _materializeRerolls(actor, pendingContext);
     Object.assign(mutations, rerollMutations);
+
+    // PHASE 9B: Immunities and resistances (metadata-only, no mechanic enforcement)
+    const immunityMutations = _materializeImmunities(actor, pendingContext);
+    Object.assign(mutations, immunityMutations);
 
     // PHASE 10: Items (natural weapons + activated species abilities) - async
     const naturalWeaponMutations = await _materializeNaturalWeapons(actor, pendingContext);
@@ -578,6 +585,68 @@ function _materializeRerolls(actor, pendingContext) {
   // Store reroll registry for roll hooks to consume
   if (rerolls.length > 0) {
     mutations['flags.swse.speciesRerolls'] = rerolls;
+  }
+
+  return mutations;
+}
+
+/**
+ * Materialize species immunities and resistances as durable actor flags.
+ *
+ * Phase 10G: Metadata-only. Writes flags.swse.speciesImmunities and
+ * flags.swse.speciesResistances. No mechanic enforcement — these flags
+ * exist for GM visibility, sheet display, and future consumer integration.
+ *
+ * Normalized entry schema:
+ *   immune:    { key, label, sourceTrait, notes }
+ *   resistant: { key, label, sourceTrait, value, notes }
+ *
+ * Balosar "Toxic Resistance" stays as a passive bonus (+5 Fortitude vs Poisons/
+ * Toxic Atmospheres) handled by the passive bonus pipeline — NOT an immunity here.
+ * @private
+ */
+function _materializeImmunities(actor, pendingContext) {
+  const mutations = {};
+  const ledger = pendingContext.ledger || {};
+  const ledgerImmunities = ledger.immunities || {};
+
+  const immune = Array.isArray(ledgerImmunities.immune) ? ledgerImmunities.immune : [];
+  const resistant = Array.isArray(ledgerImmunities.resistant) ? ledgerImmunities.resistant : [];
+
+  // Deduplicate by key, keeping first occurrence
+  const dedupedImmune = [];
+  const seenImmuneKeys = new Set();
+  for (const entry of immune) {
+    if (!entry?.key || seenImmuneKeys.has(entry.key)) continue;
+    seenImmuneKeys.add(entry.key);
+    dedupedImmune.push({
+      key: entry.key,
+      label: entry.label || entry.key,
+      sourceTrait: entry.sourceTrait || null,
+      notes: entry.notes || ''
+    });
+  }
+
+  const dedupedResistant = [];
+  const seenResistantKeys = new Set();
+  for (const entry of resistant) {
+    const dedupeKey = `${entry?.key}|${entry?.sourceTrait}`;
+    if (!entry?.key || seenResistantKeys.has(dedupeKey)) continue;
+    seenResistantKeys.add(dedupeKey);
+    dedupedResistant.push({
+      key: entry.key,
+      label: entry.label || entry.key,
+      sourceTrait: entry.sourceTrait || null,
+      value: entry.value ?? null,
+      notes: entry.notes || ''
+    });
+  }
+
+  if (dedupedImmune.length > 0) {
+    mutations['flags.swse.speciesImmunities'] = dedupedImmune;
+  }
+  if (dedupedResistant.length > 0) {
+    mutations['flags.swse.speciesResistances'] = dedupedResistant;
   }
 
   return mutations;
