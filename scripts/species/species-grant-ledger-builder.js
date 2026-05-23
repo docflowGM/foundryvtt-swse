@@ -1440,8 +1440,8 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('bellow')) {
-      const trait = traitMap.get('bellow');
+    if (traitMap.has('sonic-bellow')) {
+      const trait = traitMap.get('sonic-bellow');
       addAbility({
         id: 'bellow',
         name: 'Bellow',
@@ -1520,8 +1520,8 @@ export class SpeciesGrantLedgerBuilder {
       });
     }
 
-    if (traitMap.has('shapeshift')) {
-      const trait = traitMap.get('shapeshift');
+    if (traitMap.has('shapeshifter')) {
+      const trait = traitMap.get('shapeshifter');
       addAbility({
         id: 'shapeshift',
         name: 'Shapeshift',
