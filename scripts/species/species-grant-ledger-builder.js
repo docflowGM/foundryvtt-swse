@@ -163,8 +163,10 @@ export class SpeciesGrantLedgerBuilder {
       // Populate identity from document
       this._populateIdentity(ledger, doc);
 
-      // Extract and normalize physical traits
-      this._populatePhysical(ledger, doc);
+      // Extract and normalize physical traits (pass supplementaryTraits so canonical movement
+      // data from species-traits-migrated.json canonicalStats.movement is used as a fallback
+      // for species whose compendium document lacks explicit swim/fly/climb/hover values).
+      this._populatePhysical(ledger, doc, supplementaryTraits);
 
       // Extract senses from structured rules and prose fallback
       this._populateSenses(ledger, doc, supplementaryTraits);
@@ -308,9 +310,12 @@ export class SpeciesGrantLedgerBuilder {
 
   /**
    * Populate physical traits (size, speed)
+   * @param {Object} supplementaryTraits - Optional supplementary traits from species-traits-migrated.json
+   *   Used as a secondary source for canonicalStats.movement when the compendium document does not
+   *   carry explicit swim/fly/climb/hover values (e.g. Gungan swim=4 is only in the JSON).
    * @private
    */
-  static _populatePhysical(ledger, doc) {
+  static _populatePhysical(ledger, doc, supplementaryTraits = null) {
     const system = doc.system || {};
 
     // Size. Support both compendium Item.system and normalized SpeciesRegistryEntry shapes.
@@ -323,46 +328,76 @@ export class SpeciesGrantLedgerBuilder {
     const explicitMovement = (system.movement && typeof system.movement === 'object')
       ? system.movement
       : (doc.movement && typeof doc.movement === 'object' ? doc.movement : {});
+
+    // Phase 10F: Also read canonical movement from supplementaryTraits.canonicalStats.movement.
+    // This covers species whose compendium document lacks non-walk speeds but whose structured
+    // JSON entry (species-traits-migrated.json) carries them (e.g. Gungan swim=4, Selkath swim=4).
+    // structured rules and movement-type trait rules are also checked below.
+    const jsonCanonicalMovement = (
+      supplementaryTraits?.canonicalStats?.movement &&
+      typeof supplementaryTraits.canonicalStats.movement === 'object'
+    ) ? supplementaryTraits.canonicalStats.movement : {};
+
+    // Phase 10F: Collect movement values from structured trait rules (type='movement').
+    // These exist for Geonosian (Wings), Nautolan, Toydarian, Nyriaanan, Vurk.
+    const structuredMovementRules = {};
+    if (supplementaryTraits) {
+      const allTraits = [
+        ...(supplementaryTraits.structuralTraits || []),
+        ...(supplementaryTraits.conditionalTraits || [])
+      ];
+      for (const trait of allTraits) {
+        for (const rule of trait.rules || []) {
+          if (rule.type === 'movement' && rule.mode && rule.speed != null) {
+            const speed = Number(rule.speed);
+            if (Number.isFinite(speed)) {
+              structuredMovementRules[rule.mode] = speed;
+            }
+          }
+        }
+      }
+    }
+
     const maybeNumber = value => {
       if (value === null || value === undefined || value === '') return null;
       const number = Number(value);
       return Number.isFinite(number) ? number : null;
     };
 
-    const walk = maybeNumber(explicitMovement.walk ?? system.walkSpeed ?? system.speed ?? doc.speed);
-    const swim = maybeNumber(explicitMovement.swim ?? system.swimSpeed ?? doc.swimSpeed);
-    const fly = maybeNumber(explicitMovement.fly ?? system.flySpeed ?? doc.flySpeed);
-    const climb = maybeNumber(explicitMovement.climb ?? system.climbSpeed ?? doc.climbSpeed);
-    const hover = maybeNumber(explicitMovement.hover ?? system.hoverSpeed ?? doc.hoverSpeed);
+    // Priority: compendium doc movement > structured trait rules > JSON canonicalStats.movement
+    const walk = maybeNumber(explicitMovement.walk ?? system.walkSpeed ?? system.speed ?? doc.speed ?? jsonCanonicalMovement.walk);
+    const swim = maybeNumber(explicitMovement.swim ?? system.swimSpeed ?? doc.swimSpeed ?? structuredMovementRules.swim ?? jsonCanonicalMovement.swim);
+    const fly  = maybeNumber(explicitMovement.fly  ?? system.flySpeed  ?? doc.flySpeed  ?? structuredMovementRules.fly  ?? jsonCanonicalMovement.fly);
+    const climb = maybeNumber(explicitMovement.climb ?? system.climbSpeed ?? doc.climbSpeed ?? structuredMovementRules.climb ?? jsonCanonicalMovement.climb);
+    const hover = maybeNumber(explicitMovement.hover ?? system.hoverSpeed ?? doc.hoverSpeed ?? structuredMovementRules.hover ?? jsonCanonicalMovement.hover);
+    const glide = maybeNumber(explicitMovement.glide ?? structuredMovementRules.glide ?? jsonCanonicalMovement.glide);
+    const burrow = maybeNumber(explicitMovement.burrow ?? structuredMovementRules.burrow ?? jsonCanonicalMovement.burrow);
 
     if (walk !== null) ledger.physical.movements.walk = walk;
     if (swim !== null) ledger.physical.movements.swim = swim;
     if (fly !== null) ledger.physical.movements.fly = fly;
     if (climb !== null) ledger.physical.movements.climb = climb;
     if (hover !== null) ledger.physical.movements.hover = hover;
+    if (glide !== null) ledger.physical.movements.glide = glide;
+    if (burrow !== null) ledger.physical.movements.burrow = burrow;
 
     if (explicitMovement.bySize && typeof explicitMovement.bySize === 'object') {
       ledger.physical.movements.bySize = explicitMovement.bySize;
     }
 
-    // Try to extract other movement modes from special traits
-    // This is parsed from descriptions for now
+    // Text heuristic fallback: only triggers if compendium and JSON both lack explicit values.
+    // Assigns walk speed as a coarse approximation — prefer adding structured data to JSON instead.
     const specialList = Array.isArray(system.special)
       ? system.special
       : (Array.isArray(doc.abilities) ? doc.abilities : []);
     if (specialList.length) {
       for (const special of specialList) {
         const text = String(special).toLowerCase();
-        // Heuristic: if mentions fly/flight, assume has fly speed
-        if (text.includes('fly') || text.includes('flight')) {
-          if (!ledger.physical.movements.fly) {
-            ledger.physical.movements.fly = ledger.physical.movements.walk;
-          }
+        if ((text.includes('fly') || text.includes('flight')) && !ledger.physical.movements.fly) {
+          ledger.physical.movements.fly = ledger.physical.movements.walk;
         }
-        if (text.includes('swim')) {
-          if (!ledger.physical.movements.swim) {
-            ledger.physical.movements.swim = ledger.physical.movements.walk;
-          }
+        if (text.includes('swim') && !ledger.physical.movements.swim) {
+          ledger.physical.movements.swim = ledger.physical.movements.walk;
         }
       }
     }
