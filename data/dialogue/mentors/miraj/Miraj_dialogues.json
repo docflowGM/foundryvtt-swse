@@ -93,6 +93,38 @@
             "5": "You have become a Master in every sense, and a friend I am honored to call peer. May our paths continue to guide the Order together."
           }
         }
+      },
+      "workshop": {
+        "lightsaber": {
+          "default": [
+            "A lightsaber on a workbench is not a lesson in building. It is a conversation with what already wants to become precise.",
+            "The hilt, crystal, and fittings each speak with a different pressure. Attend to the imbalance before you reach for a tool."
+          ],
+          "bench": [
+            "This bench asks for patience before choice. Examine the chassis, crystal, and accessories as relationships, not decorations.",
+            "Do not rush to complete the form. First, understand what each component is asking from the hand that will carry it."
+          ],
+          "customize": [
+            "This blade is already bound to a purpose. Adjust the parts that cloud that purpose, and leave the rest undisturbed.",
+            "Refinement is quieter than creation. Listen for the part that resists harmony, then answer only that part."
+          ],
+          "chassis": [
+            "The hilt must guide the hand without commanding it. If the grip interrupts your motion, the blade will inherit the hesitation.",
+            "Balance begins before ignition. The chassis should disappear into your stance, not argue with it."
+          ],
+          "crystal": [
+            "The crystal is not color and spectacle. It is focus under pressure. Choose the resonance you can carry without forcing it.",
+            "A crystal that gleams beautifully but refuses your rhythm is still the wrong answer. Listen past the shine."
+          ],
+          "accessory": [
+            "Every fitting adds a voice. Too many voices become noise; choose only what deepens control.",
+            "An accessory should serve the blade's discipline. If it merely flatters the design, set it aside."
+          ],
+          "blocked": [
+            "The configuration is resisting you. That is not failure; it is information. Remove what does not belong.",
+            "When the parts disagree, forcing them teaches nothing. Step back and let the pattern become clear."
+          ]
+        }
       }
     },
     "guidance": {

@@ -198,20 +198,22 @@ function buildHotCardHTML(item, slot, index) {
   const img = item.img
     ? `<img src="${escapeHtml(item.img)}" alt="" loading="lazy"/>`
     : `<span class="ren-hot-card__glyph">${slot.icon}</span>`;
+  const displayCategory = item.displayCategory || item.storeCategory || item.categoryKey || slot.label;
   return `<button type="button"
     class="ren-hot-card"
     data-action="store-hot-deal-open"
     data-item-id="${escapeHtml(item.id || '')}"
     data-item-name="${escapeHtml(item.name || '')}"
     data-category="${escapeHtml(item.categoryKey || '')}"
+    data-store-category="${escapeHtml(item.storeCategory || item.categoryKey || '')}"
     style="animation-delay:${index * 60}ms">
     <span class="ren-hot-card__rank">№${String(index + 1).padStart(2, '0')}</span>
     <span class="ren-hot-card__tag">${escapeHtml(item.tag || item.rarity || 'CATALOG')}</span>
     <div class="ren-hot-card__glyph-panel">${img}</div>
     <div class="ren-hot-card__name">${escapeHtml(item.name || 'Unknown')}</div>
-    <div class="ren-hot-card__meta"><span class="ren-hot-card__cat">${escapeHtml(slot.label.toUpperCase())}</span></div>
+    <div class="ren-hot-card__meta"><span class="ren-hot-card__cat">${escapeHtml(String(displayCategory).toUpperCase())}</span></div>
     <div class="ren-hot-card__row">
-      <span class="ren-hot-card__price">${escapeHtml(item.priceLabel || '—')}</span>
+      <span class="ren-hot-card__price">${escapeHtml(String(item.priceLabel || '—').replace(/\s*cr$/i, ''))}</span>
     </div>
   </button>`;
 }
@@ -224,46 +226,81 @@ function buildComingSoonCardHTML(slot, index) {
   </div>`;
 }
 
+function getHotDeckForSlot(groups, slot) {
+  const matchedItems = groups
+    .filter(g => slot.keys.some(k => (g.categoryKey || '').toLowerCase() === k
+      || (g.categoryKey || '').toLowerCase().includes(k)))
+    .flatMap(group => (group.items || []).map(item => ({
+      ...item,
+      displayCategory: item.displayCategory || group.category || slot.label,
+      categoryKey: item.categoryKey || group.categoryKey,
+      storeCategory: item.storeCategory || item.categoryKey || group.categoryKey
+    })));
+
+  if (matchedItems.length > 1) return matchedItems;
+
+  // If a slot only has one exact match, use the wider hot catalog as a fallback
+  // so the showcase visibly rotates instead of looking frozen in sparse packs.
+  const fallbackItems = groups.flatMap(group => (group.items || []).map(item => ({
+    ...item,
+    displayCategory: item.displayCategory || group.category || slot.label,
+    categoryKey: item.categoryKey || group.categoryKey,
+    storeCategory: item.storeCategory || item.categoryKey || group.categoryKey
+  })));
+  return matchedItems.length ? [...matchedItems, ...fallbackItems.filter(item => item.id !== matchedItems[0].id)] : fallbackItems;
+}
+
 function renderHotGrid(splash, state) {
   const grid = splash.querySelector('[data-hot-grid]');
   if (!grid) return;
 
   const groups = state.hotDeals.groups ?? [];
   const cards = HOT_SLOTS.map((slot, i) => {
-    const group = groups.find(g =>
-      slot.keys.some(k => (g.categoryKey || '').toLowerCase() === k
-        || (g.categoryKey || '').toLowerCase().includes(k))
-    );
-    if (!group || !group.items?.length) return buildComingSoonCardHTML(slot, i);
-    const cursor = (state.hotCursors[i] ?? 0) % group.items.length;
-    return buildHotCardHTML(group.items[cursor], slot, i);
+    const deck = getHotDeckForSlot(groups, slot);
+    if (!deck.length) return buildComingSoonCardHTML(slot, i);
+    const cursor = (state.hotCursors[i] ?? 0) % deck.length;
+    return buildHotCardHTML(deck[cursor], slot, i);
   });
 
   grid.style.transition = 'none';
   grid.innerHTML = cards.join('');
 }
 
-function startHotGridRotation(splash, state, signal) {
+function startHotGridRotation(splash, state, signal, options = {}) {
   const grid = splash.querySelector('[data-hot-grid]');
   if (!grid) return;
-  const INTERVAL = 12000;
+  const INTERVAL = Number(options?.hotRotationMs ?? splash.dataset.hotRotationMs ?? 7000) || 7000;
+  const animate = options.motionOff !== true;
+
+  const advance = () => {
+    const groups = state.hotDeals.groups ?? [];
+    let changed = false;
+    HOT_SLOTS.forEach((slot, i) => {
+      const deck = getHotDeckForSlot(groups, slot);
+      if (deck.length > 1) {
+        state.hotCursors[i] = ((state.hotCursors[i] ?? 0) + 1) % deck.length;
+        changed = true;
+      }
+    });
+    return changed;
+  };
+
   const id = window.setInterval(() => {
     if (signal?.aborted) return;
     if (!isOpen(splash)) return;
+
+    if (!animate) {
+      if (advance()) renderHotGrid(splash, state);
+      return;
+    }
+
     // Slide out
     grid.style.transition = 'transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.24s ease';
     grid.style.transform = 'translateX(-110%)';
     grid.style.opacity = '0';
     window.setTimeout(() => {
       if (signal?.aborted) return;
-      // Advance cursors
-      const groups = state.hotDeals.groups ?? [];
-      HOT_SLOTS.forEach((slot, i) => {
-        const group = groups.find(g => slot.keys.some(k => (g.categoryKey || '').toLowerCase().includes(k)));
-        if (group && group.items?.length > 1) {
-          state.hotCursors[i] = ((state.hotCursors[i] ?? 0) + 1) % group.items.length;
-        }
-      });
+      if (!advance()) return;
       grid.style.transition = 'none';
       grid.style.transform = 'translateX(110%)';
       grid.style.opacity = '0';
@@ -346,7 +383,8 @@ export function initRendarrStoreSplash(root, options = {}) {
     await options.onHotDealOpen?.({
       id: target.dataset.itemId,
       name: target.dataset.itemName,
-      category: target.dataset.category
+      category: target.dataset.storeCategory || target.dataset.category,
+      normalizedCategory: target.dataset.category
     }, event);
   }, { signal });
 
@@ -363,8 +401,8 @@ export function initRendarrStoreSplash(root, options = {}) {
   startClock(splash, signal);
   updateRateCard(splash);
   renderHotGrid(splash, state);
+  startHotGridRotation(splash, state, signal, { ...options, motionOff });
   if (!motionOff) {
-    startHotGridRotation(splash, state, signal);
     startGreetingRotation(splash, signal);
   }
 

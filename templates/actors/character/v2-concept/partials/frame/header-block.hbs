@@ -110,9 +110,13 @@
         <span class="swse-concept-stat-card__label">Credits</span>
         <strong>{{numberFormat conceptLayout.gear.credits decimals=0}}</strong>
       </div>
-      <div class="swse-concept-stat-card">
+      <div class="swse-concept-stat-card swse-concept-stat-card--force-points">
         <span class="swse-concept-stat-card__label">Force Points</span>
         <strong>{{forcePointsValue}} / {{forcePointsMax}}</strong>
+        <div class="swse-concept-stat-card__actions">
+          <button type="button" class="swse-concept-mini-btn" data-action="spend-force-point" {{#unless forcePointsValue}}disabled{{/unless}} title="Spend 1 Force Point">Spend</button>
+          <button type="button" class="swse-concept-mini-btn" data-action="gain-force-point" {{#if (gte forcePointsValue forcePointsMax)}}disabled{{/if}} title="Restore 1 Force Point">+1</button>
+        </div>
       </div>
       <div class="swse-concept-stat-card">
         <span class="swse-concept-stat-card__label">Destiny</span>

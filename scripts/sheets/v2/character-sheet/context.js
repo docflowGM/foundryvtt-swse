@@ -55,10 +55,20 @@ export function buildAttributesViewModel(actor) {
   const result = {};
 
   for (const key of abilityKeys) {
-    const baseAbility = system.abilities?.[key] ?? {};
+    const storedAttribute = system.attributes?.[key] ?? {};
+    const legacyAbility = system.abilities?.[key] ?? {};
+    const baseAbility = Object.keys(storedAttribute).length ? storedAttribute : legacyAbility;
     const derivedAttr = derived.attributes?.[key] ?? { total: 10, mod: 0 };
-    const value = Number(derivedAttr.total ?? 10) || 10;
-    const modifier = Number(derivedAttr.mod ?? Math.floor((value - 10) / 2)) || 0;
+    const base = Number(baseAbility.base ?? legacyAbility.base ?? 10);
+    const racial = Number(baseAbility.racial ?? baseAbility.species ?? legacyAbility.racial ?? 0);
+    const enhancement = Number(baseAbility.enhancement ?? baseAbility.misc ?? legacyAbility.enhancement ?? legacyAbility.misc ?? 0);
+    const temp = Number(baseAbility.temp ?? legacyAbility.temp ?? 0);
+    const fallbackTotal = (Number.isFinite(base) ? base : 10)
+      + (Number.isFinite(racial) ? racial : 0)
+      + (Number.isFinite(enhancement) ? enhancement : 0)
+      + (Number.isFinite(temp) ? temp : 0);
+    const value = Number.isFinite(Number(derivedAttr.total)) ? Number(derivedAttr.total) : fallbackTotal;
+    const modifier = Number.isFinite(Number(derivedAttr.mod)) ? Number(derivedAttr.mod) : Math.floor((value - 10) / 2);
     const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
     const modClass = modifier > 0 ? 'mod--positive' : modifier < 0 ? 'mod--negative' : 'mod--zero';
 
@@ -71,9 +81,10 @@ export function buildAttributesViewModel(actor) {
       mod: modifier,
       modifierClass,
       modClass,
-      base: Number(baseAbility.base ?? 10) || 0,
-      racial: Number(baseAbility.racial ?? 0) || 0,
-      temp: Number(baseAbility.temp ?? 0) || 0
+      base: Number.isFinite(base) ? base : 10,
+      racial: Number.isFinite(racial) ? racial : 0,
+      enhancement: Number.isFinite(enhancement) ? enhancement : 0,
+      temp: Number.isFinite(temp) ? temp : 0
     };
   }
 

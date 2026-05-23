@@ -7,6 +7,26 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 
+function collectDialogFormData(form) {
+  if (!form) return {};
+  const FormDataExtended = foundry?.applications?.ux?.FormDataExtended
+    ?? foundry?.applications?.forms?.FormDataExtended
+    ?? foundry?.applications?.FormDataExtended
+    ?? globalThis.FormDataExtended
+    ?? null;
+
+  if (typeof FormDataExtended === 'function') {
+    try {
+      return new FormDataExtended(form).object ?? {};
+    } catch (_err) {
+      // Fall back to native FormData below; v13 builds differ on where the helper lives.
+    }
+  }
+
+  return Object.fromEntries(new FormData(form).entries());
+}
+
+
 export class CustomItemDialog {
 
   /**
@@ -119,7 +139,7 @@ export class CustomItemDialog {
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
-              const formData = new FormDataExtended(form).object;
+              const formData = collectDialogFormData(form);
 
               // Parse properties from comma-separated string
               const properties = formData.properties
@@ -271,7 +291,7 @@ export class CustomItemDialog {
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
-              const formData = new FormDataExtended(form).object;
+              const formData = collectDialogFormData(form);
 
               // Handle maxDexBonus - null if blank, otherwise parse as number
               let maxDexBonus = null;
@@ -378,7 +398,7 @@ export class CustomItemDialog {
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
-              const formData = new FormDataExtended(form).object;
+              const formData = collectDialogFormData(form);
 
               const itemData = createSafeItemData('equipment', {
                 name: formData.name || 'Custom Equipment',
@@ -489,7 +509,7 @@ export class CustomItemDialog {
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
-              const formData = new FormDataExtended(form).object;
+              const formData = collectDialogFormData(form);
 
               // Parse bonus feat classes from comma-separated string
               const bonusFeatFor = formData.bonusFeatFor
@@ -601,7 +621,7 @@ export class CustomItemDialog {
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
-              const formData = new FormDataExtended(form).object;
+              const formData = collectDialogFormData(form);
 
               const itemData = createSafeItemData('talent', {
                 name: formData.name || 'Custom Talent',
@@ -837,7 +857,7 @@ export class CustomItemDialog {
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
-              const formData = new FormDataExtended(form).object;
+              const formData = collectDialogFormData(form);
 
               // Gather tags from checkboxes
               const tags = [];

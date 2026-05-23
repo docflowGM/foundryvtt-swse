@@ -24,13 +24,10 @@ import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage
 export async function rollSkill(actor, skillKey, options = {}) {
   const utils = game.swse.utils;
   // === READ FROM DERIVED (SSOT) ===
-  const derivedSkill = actor.system.derived?.skills?.[skillKey];
-
-  if (!derivedSkill) {
-    swseLogger.warn(`[Skills] Derived skill ${skillKey} not found for actor ${actor.id} - falling back to system.skills`);
-    ui.notifications.warn(`Skill ${skillKey} not found or not initialized`);
-    return null;
-  }
+  const derivedSkills = actor.system.derived?.skills;
+  const derivedSkill = Array.isArray(derivedSkills?.list)
+    ? derivedSkills.list.find((row) => row?.key === skillKey)
+    : derivedSkills?.[skillKey];
 
   // Get skill metadata from raw system.skills for training check
   const skill = actor.system.skills?.[skillKey];
@@ -39,8 +36,20 @@ export async function rollSkill(actor, skillKey, options = {}) {
     return null;
   }
 
+  const abilityKey = derivedSkill?.ability || derivedSkill?.selectedAbility || skill.selectedAbility || CONFIG?.SWSE?.skills?.[skillKey]?.ability || 'str';
+  const abilityMod = Number.isFinite(Number(derivedSkill?.abilityMod))
+    ? Number(derivedSkill.abilityMod)
+    : Number(actor.system?.derived?.attributes?.[abilityKey]?.mod ?? 0) || 0;
+  const halfLevel = Number(actor.system?.derived?.identity?.halfLevel ?? Math.floor((Number(actor.system?.level) || 1) / 2)) || 0;
+  const fallbackTotal = abilityMod
+    + halfLevel
+    + (skill.trained ? 5 : 0)
+    + (skill.focused ? 5 : 0)
+    + (Number(skill.miscMod) || 0);
+  const canonicalTotal = Number.isFinite(Number(derivedSkill?.total)) ? Number(derivedSkill.total) : fallbackTotal;
+
   // Check trained-only enforcement
-  const isTrained = derivedSkill.trained === true;
+  const isTrained = derivedSkill?.trained === true || skill.trained === true;
   const skillDef = CONFIG?.SWSE?.skills?.[skillKey] || {};
   const permission = SkillEnforcementEngine.evaluate({ actor, skillKey, actionType: 'check', context: { isTrained, skillDef } });
 
@@ -66,7 +75,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: derivedSkill.total + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0),
+    baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0),
     rollOptions: {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true
@@ -252,11 +261,15 @@ export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   const key = String(abilityKey || '').toLowerCase();
 
   // Verify ability exists in derived (canonical source)
-  const ability = actor.system.derived?.attributes?.[key];
+  const ability = actor.system.derived?.attributes?.[key]
+    ?? actor.system.attributes?.[key]
+    ?? actor.system.abilities?.[key];
   if (!ability) {
     ui.notifications.warn(`Ability ${abilityKey} not found in derived attributes`);
     return null;
   }
+  const abilityTotal = Number.isFinite(Number(ability.total)) ? Number(ability.total) : Number(ability.base ?? 10);
+  const abilityMod = Number.isFinite(Number(ability.mod)) ? Number(ability.mod) : Math.floor((abilityTotal - 10) / 2);
 
   // === UNIFIED ROLL EXECUTION via RollCore ===
   // This ensures ModifierEngine applies all bonuses (species traits, feats, effects, conditions)
@@ -264,7 +277,7 @@ export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: Number(options?.customModifier || 0),
+    baseBonus: abilityMod + Number(options?.customModifier || 0),
     rollOptions: {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true,

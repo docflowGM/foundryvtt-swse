@@ -2,6 +2,7 @@
          data-splash="store"
          data-store-status="{{#if storeOpen}}open{{else}}closed{{/if}}"
          data-store-motion="{{sheetMotionStyle}}"
+         data-hot-rotation-ms="7000"
          data-theme="{{sheetTheme}}"
          tabindex="0"
          aria-label="Rendarr's Outfitters market splash screen">
@@ -20,6 +21,11 @@
       <span class="ren-hud__app">RENDARR // OUTFITTERS <span class="ren-hud__ver">v3.41 · holo</span></span>
     </div>
     <div class="ren-hud__right">
+      <button type="button"
+              class="ren-hud-home"
+              data-shell-action="return-to-home"
+              title="Return to Holopad Home"
+              aria-label="Return to Holopad Home">⌂ HOME</button>
       <span><span class="ren-dot"></span>HOLONET · 4 bars</span>
       <span><span class="ren-dot ren-dot--warn"></span>encrypted · class 3</span>
       <span data-ren-clock>00:00:00 · GST</span>

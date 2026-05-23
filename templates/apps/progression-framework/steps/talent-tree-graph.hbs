@@ -8,7 +8,7 @@
         <span>{{selectedTreeName}}</span>
       </h3>
       <p class="talent-graph-header__subtitle">
-{{visualSignal}} · {{visualMotion}} · Legal nodes glow with this tree's local spectrum.
+{{visualSignal}} · {{visualMotion}} · Drag the map to move. Scroll to zoom. Legal nodes glow when they can be activated.
       </p>
     </div>
 
@@ -78,8 +78,8 @@
       {{/if}}
 
       {{#if lockedTalents}}
-      <div class="talent-choice-section talent-choice-section--locked">
-        <h5><i class="fa-solid fa-lock"></i> Locked / Future</h5>
+      <details class="talent-choice-section talent-choice-section--locked" {{#unless availableTalents}}open{{/unless}}>
+        <summary class="talent-choice-section__summary"><i class="fa-solid fa-lock"></i> Locked / Future <span>{{lockedTalentCount}}</span></summary>
         <div class="talent-choice-list" data-prog-scroll-key="talent-locked-list">
           {{#each lockedTalents}}
           <article class="talent-choice-card talent-choice-card--locked {{#if isFocused}}is-focused{{/if}}"
@@ -101,7 +101,7 @@
           </article>
           {{/each}}
         </div>
-      </div>
+      </details>
       {{/if}}
 
       {{#unless availableTalents}}
@@ -118,7 +118,7 @@
       <div class="talent-map-panel__header">
         <div>
           <h4>Tree Holomap</h4>
-          <p>{{visualKicker}} · {{visualRole}} · Hover to reveal prerequisite flow. Double-click a legal node to activate.</p>
+          <p>Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.</p>
         </div>
         <button class="talent-planner-control" data-action="center-talent-node" type="button" title="Refocus the selected or inspected node">
           <i class="fa-solid fa-crosshairs"></i> Center

@@ -89,6 +89,44 @@
             "mod": 0
           }
         },
+        "attributes": {
+          "str": {
+            "base": 10,
+            "racial": 0,
+            "enhancement": 0,
+            "temp": 0
+          },
+          "dex": {
+            "base": 10,
+            "racial": 0,
+            "enhancement": 0,
+            "temp": 0
+          },
+          "con": {
+            "base": 10,
+            "racial": 0,
+            "enhancement": 0,
+            "temp": 0
+          },
+          "int": {
+            "base": 10,
+            "racial": 0,
+            "enhancement": 0,
+            "temp": 0
+          },
+          "wis": {
+            "base": 10,
+            "racial": 0,
+            "enhancement": 0,
+            "temp": 0
+          },
+          "cha": {
+            "base": 10,
+            "racial": 0,
+            "enhancement": 0,
+            "temp": 0
+          }
+        },
         "level": 1,
         "race": "custom",
         "size": "medium",

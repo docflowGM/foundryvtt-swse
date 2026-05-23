@@ -51,12 +51,47 @@ export class ActorItemIndex {
       }
     }
 
-    // Extract classes from system.classes array
+    const normalizeClassKey = (value) => String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+
+    const addClass = (raw, source = 'unknown') => {
+      if (!raw) return;
+      const classId = raw.classId || raw.id || raw.sourceId || raw.name || raw.class || raw.className;
+      const key = normalizeClassKey(classId);
+      if (!key) return;
+      const level = Number(raw.level ?? raw.system?.level ?? raw.system?.levels ?? raw.system?.rank ?? 0) || 0;
+      index.classes.set(key, {
+        ...raw,
+        classId: key,
+        name: raw.name || raw.className || raw.class || raw.system?.className || raw.system?.name || classId,
+        level: Math.max(0, level),
+        source,
+      });
+    };
+
+    // Extract classes from all canonical/current shapes. Level-up writes
+    // system.progression.classLevels and class items; older code only read
+    // system.classes, which left BAB readers blind after multiclassing.
     if (actor.system?.classes && Array.isArray(actor.system.classes)) {
-      for (const cls of actor.system.classes) {
-        if (cls.classId) {
-          index.classes.set(cls.classId, cls);
-        }
+      for (const cls of actor.system.classes) addClass(cls, 'system.classes');
+    }
+
+    if (actor.system?.progression?.classLevels && Array.isArray(actor.system.progression.classLevels)) {
+      for (const cls of actor.system.progression.classLevels) addClass(cls, 'system.progression.classLevels');
+    }
+
+    if (actor.items) {
+      for (const item of actor.items) {
+        if (item.type !== 'class') continue;
+        addClass({
+          id: item.system?.classId || item.system?.sourceId || item.id || item.name,
+          name: item.name,
+          level: item.system?.level ?? item.system?.levels ?? item.system?.rank ?? 0,
+        }, 'items');
       }
     }
 

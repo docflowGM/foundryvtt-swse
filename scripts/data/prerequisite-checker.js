@@ -1027,6 +1027,16 @@ export class PrerequisiteChecker {
                 return this._checkFeatLegacy(prereq, actor, pending);
             case 'talent':
                 return this._checkTalentLegacy(prereq, actor, pending);
+            case 'weapon_proficiency':
+            case 'weaponProficiency':
+                return this._checkWeaponProficiencyCondition(prereq, actor, pending);
+            case 'weapon_focus':
+                return this._checkWeaponFocusCondition(prereq, actor, pending);
+            case 'weapon_specialization':
+                return this._checkWeaponSpecializationCondition(prereq, actor, pending);
+            case 'armor_proficiency':
+            case 'armorProficiency':
+                return this._checkArmorProficiencyCondition(prereq, actor, pending);
             default:
                 return { met: true, message: '' };
         }
@@ -1321,26 +1331,62 @@ export class PrerequisiteChecker {
     }
 
     static _checkArmorProficiencyCondition(prereq, actor, pending) {
-        const armorTarget = String(prereq.armor || '').toLowerCase().trim();
-        const proficiencies = actor.system?.armorProficiencies || [];
-        if (proficiencies.some(p => String(p || '').toLowerCase() === armorTarget)) {
-            return { met: true, message: '' };
-        }
-        // Also check pending grantedProficiencies (during chargen, before finalization).
-        // Stacking rule: heavy satisfies all; medium satisfies light+medium; light satisfies light.
-        const grantedMet = (pending?.grantedProficiencies || [])
-            .filter(p => p.type === 'armor')
-            .some(p => {
-                const grantName = String(p.name || '').toLowerCase();
-                if (grantName.includes('heavy')) return true;
-                if (grantName.includes('medium') && (armorTarget === 'light' || armorTarget === 'medium')) return true;
-                if (grantName.includes('light') && armorTarget === 'light') return true;
-                return false;
-            });
-        return {
-            met: grantedMet,
-            message: !grantedMet ? `Requires proficiency with ${prereq.armor}` : ''
+        const armorTarget = this._normalizeArmorProficiencyTarget(prereq.armor || prereq.name || prereq.value || prereq.proficiency || '');
+        if (!armorTarget) return { met: true, message: '' };
+
+        const labels = [];
+        const add = (value) => {
+            if (!value) return;
+            if (Array.isArray(value) || value instanceof Set) {
+                for (const entry of value) add(entry);
+                return;
+            }
+            if (typeof value === 'object') {
+                [value.name, value.label, value.armor, value.proficiency, value.value, value.id, value.system?.name, value.system?.armor]
+                    .filter(Boolean)
+                    .forEach(add);
+                return;
+            }
+            labels.push(String(value));
         };
+
+        add(actor?.system?.armorProficiencies);
+        add(actor?._unlockGrants?.proficiencies?.armor);
+        for (const item of actor?.items || []) {
+            if (item?.type === 'feat' || item?.type === 'class') add(item.name);
+        }
+        add(pending?.selectedFeats);
+        add(pending?.grantedFeats);
+        add(pending?.grantedProficiencies);
+
+        const met = labels.some(label => this._armorProficiencyCovers(label, armorTarget));
+        return {
+            met,
+            message: !met ? `Requires proficiency with ${armorTarget} armor` : ''
+        };
+    }
+
+    static _normalizeArmorProficiencyTarget(value) {
+        const text = String(value || '').toLowerCase();
+        if (/heavy/.test(text)) return 'heavy';
+        if (/medium/.test(text)) return 'medium';
+        if (/light/.test(text)) return 'light';
+        return '';
+    }
+
+    static _armorProficiencyRank(value) {
+        const target = this._normalizeArmorProficiencyTarget(value);
+        if (target === 'light') return 1;
+        if (target === 'medium') return 2;
+        if (target === 'heavy') return 3;
+        return 0;
+    }
+
+    static _armorProficiencyCovers(value, required) {
+        const haveRank = this._armorProficiencyRank(value);
+        const requiredRank = this._armorProficiencyRank(required);
+        if (!haveRank || !requiredRank) return false;
+        return haveRank >= requiredRank;
     }
 
     static _checkClassLevelCondition(prereq, actor, pending) {
@@ -1413,6 +1459,27 @@ export class PrerequisiteChecker {
 
     static _parseLegacyPrerequisitePart(part, owningType = 'feat') {
         part = part.trim();
+
+        // Choice/proficiency prose must be parsed before registry-backed feat-name
+        // lookup, otherwise strings like "Armor Proficiency (Light)" are treated
+        // as ordinary feat requirements and pending class proficiency grants are ignored.
+        const earlyArmorProfPattern = /^armor\s+proficiency\s*(?:\(\s*(light|medium|heavy)\s*\)|[-: ]\s*(light|medium|heavy))$/i;
+        const earlyArmorProfMatch = part.match(earlyArmorProfPattern) || part.match(/^proficiency\s+with\s+(light|medium|heavy)\s+armor$/i);
+        if (earlyArmorProfMatch) {
+            return {
+                type: 'armor_proficiency',
+                armor: String(earlyArmorProfMatch[1] || earlyArmorProfMatch[2] || earlyArmorProfMatch[3] || '').toLowerCase()
+            };
+        }
+
+        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?selected\s+weapon\s+group$/i.test(part)) {
+            return { type: 'weapon_proficiency' };
+        }
+
+        const earlyWeaponProfMatch = part.match(/^(?:proficient|proficiency)\s+with\s+(.+)$/i);
+        if (earlyWeaponProfMatch && /weapon|pistol|rifle|lightsaber|melee|simple|advanced|heavy|exotic/i.test(earlyWeaponProfMatch[1])) {
+            return { type: 'weapon_proficiency', weaponGroup: earlyWeaponProfMatch[1].trim() };
+        }
 
         const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
         if (registryParsed) {
@@ -1520,6 +1587,32 @@ export class PrerequisiteChecker {
         // Force Sensitive
         if (part.toLowerCase().includes('force sensitive') || part.toLowerCase().includes('force sensitivity')) {
             return { type: 'force_sensitive' };
+        }
+
+        // Armor proficiency prerequisite strings, e.g. "Armor Proficiency (Light)".
+        // These are not generic feat-name requirements during choice evaluation: the
+        // actor may have the proficiency from a class grant or pending multiclass
+        // grant, and Medium must not be legal unless Light is already available.
+        const armorProfPattern = /^armor\s+proficiency\s*(?:\(\s*(light|medium|heavy)\s*\)|[-: ]\s*(light|medium|heavy))$/i;
+        const armorProfMatch = part.match(armorProfPattern) || part.match(/^proficiency\s+with\s+(light|medium|heavy)\s+armor$/i);
+        if (armorProfMatch) {
+            return {
+                type: 'armor_proficiency',
+                armor: String(armorProfMatch[1] || armorProfMatch[2] || armorProfMatch[3] || '').toLowerCase()
+            };
+        }
+
+        // Weapon Focus/Specialization choice dependencies often use prose like
+        // "Proficient with selected weapon group". Parse that as a real
+        // proficiency check against the current candidate choice instead of a
+        // phantom feat called "Proficient with selected weapon group".
+        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?selected\s+weapon\s+group$/i.test(part)) {
+            return { type: 'weapon_proficiency' };
+        }
+
+        const weaponProfMatch = part.match(/^(?:proficient|proficiency)\s+with\s+(.+)$/i);
+        if (weaponProfMatch && /weapon|pistol|rifle|lightsaber|melee|simple|advanced|heavy|exotic/i.test(weaponProfMatch[1])) {
+            return { type: 'weapon_proficiency', weaponGroup: weaponProfMatch[1].trim() };
         }
 
         if (owningType === 'talent') {

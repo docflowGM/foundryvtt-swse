@@ -91,6 +91,14 @@ function safeNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function isTruthyEquipState(value) {
+  if (value === true) return true;
+  if (typeof value === 'string') {
+    return ['true', '1', 'yes', 'equipped', 'on'].includes(value.toLowerCase());
+  }
+  return Number(value) === 1;
+}
+
 /**
  * PHASE 7: Build canonical class display string (multiclass format: "Jedi 3 / Soldier 2")
  *
@@ -322,13 +330,13 @@ function normalizeAttackEntry(attack = {}, actor = null) {
 }
 
 function mirrorAttacks(actor, system) {
-  const weapons = (actor?.items ?? []).filter(i => i.type === 'weapon');
+  const weapons = (actor?.items ?? []).filter(i => ['weapon', 'lightsaber'].includes(i?.type));
   const list = [];
 
   for (const w of weapons) {
     // PHASE 4: Include equipped weapons OR natural weapons with autoEquipped flag
-    const equipped = w.system?.equipped === true;
-    const isAutoEquipped = w.flags?.swse?.autoEquipped === true;
+    const equipped = isTruthyEquipState(w.system?.equipped);
+    const isAutoEquipped = isTruthyEquipState(w.flags?.swse?.autoEquipped);
     if (!equipped && !isAutoEquipped) continue;
 
     const data = w.system ?? {};
@@ -862,20 +870,30 @@ function mirrorEncumbrance(actor, system) {
  * Pre-index species traits for O(1) lookup
  * Built once at module load
  */
-const speciesMap = new Map(
-  speciesTraits.map(s => [s.name.toLowerCase(), s])
-);
+const normalizeSpeciesLookupKey = (value) => String(value || '')
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, ' ')
+  .trim();
+
+const speciesMap = new Map();
+for (const species of speciesTraits) {
+  for (const key of [species.name, species.canonicalName, species.id, species.packId]) {
+    const normalized = normalizeSpeciesLookupKey(key);
+    if (normalized && !speciesMap.has(normalized)) speciesMap.set(normalized, species);
+  }
+}
 
 function mirrorRacialAbilities(system) {
-  const raceKey = system.race ?? '';
+  const rawSpecies = system.species?.name ?? system.species ?? system.race ?? '';
+  const raceKey = normalizeSpeciesLookupKey(rawSpecies);
 
   if (!raceKey) {
     system.derived.racialAbilities = [];
     return;
   }
 
-  // O(1) lookup by species name (case-insensitive)
-  const speciesData = speciesMap.get(raceKey.toLowerCase());
+  // O(1) lookup by species name/canonicalName/id (case-insensitive)
+  const speciesData = speciesMap.get(raceKey);
 
   if (!speciesData) {
     system.derived.racialAbilities = [];
@@ -889,14 +907,16 @@ function mirrorRacialAbilities(system) {
       abilities.push({
         id: ability.id ?? `${raceKey}-${ability.name}`,
         name: ability.name,
-        summary: ability.description ?? "",
-        source: "racial",
-        race: raceKey
+        summary: ability.description ?? ability.summary ?? "",
+        description: ability.description ?? ability.summary ?? "",
+        source: speciesData.canonicalName || speciesData.name || "Species",
+        race: speciesData.canonicalName || speciesData.name || rawSpecies
       });
     }
   };
 
   addAbilities(speciesData.structuralTraits ?? []);
+  addAbilities(speciesData.canonicalTraits ?? []);
   addAbilities(speciesData.activatedAbilities ?? []);
   addAbilities(speciesData.conditionalTraits ?? []);
 

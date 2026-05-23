@@ -21,12 +21,12 @@ function computePositions(graphData) {
   // Concept-inspired holomap layout: circular nodes, broad spacing, curved conduits.
   // The outer viewport fits this SVG, so the whole constellation is visible first.
   const nodeRadius = 42;
-  const horizontalGap = 190;
-  const verticalGap = 118;
-  const paddingX = 96;
-  const paddingY = 82;
-  const width = Math.max(820, paddingX * 2 + levelNumbers.length * nodeRadius * 2 + Math.max(0, levelNumbers.length - 1) * horizontalGap);
-  const height = Math.max(460, paddingY * 2 + maxPerLevel * nodeRadius * 2 + Math.max(0, maxPerLevel - 1) * verticalGap);
+  const horizontalGap = 150;
+  const verticalGap = 92;
+  const paddingX = 42;
+  const paddingY = 46;
+  const width = Math.max(680, paddingX * 2 + levelNumbers.length * nodeRadius * 2 + Math.max(0, levelNumbers.length - 1) * horizontalGap);
+  const height = Math.max(360, paddingY * 2 + maxPerLevel * nodeRadius * 2 + Math.max(0, maxPerLevel - 1) * verticalGap);
   const positions = new Map();
 
   levelNumbers.forEach((level, levelIndex) => {
@@ -245,6 +245,76 @@ function createDefs(documentRef) {
   return defs;
 }
 
+function attachPanZoom(svg, width, height) {
+  const minViewWidth = Math.max(260, width * 0.38);
+  const maxViewWidth = Math.max(width, width * 1.55);
+  let viewBox = { x: 0, y: 0, width, height };
+  let dragging = false;
+  let last = null;
+
+  const apply = () => {
+    svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+  };
+
+  const clientPoint = (event) => {
+    const rect = svg.getBoundingClientRect();
+    const xRatio = rect.width ? (event.clientX - rect.left) / rect.width : 0.5;
+    const yRatio = rect.height ? (event.clientY - rect.top) / rect.height : 0.5;
+    return {
+      x: viewBox.x + xRatio * viewBox.width,
+      y: viewBox.y + yRatio * viewBox.height,
+      xRatio,
+      yRatio,
+    };
+  };
+
+  svg.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    const point = clientPoint(event);
+    const factor = event.deltaY > 0 ? 1.12 : 0.88;
+    const nextWidth = Math.min(maxViewWidth, Math.max(minViewWidth, viewBox.width * factor));
+    const aspect = height / Math.max(1, width);
+    const nextHeight = nextWidth * aspect;
+    viewBox = {
+      x: point.x - point.xRatio * nextWidth,
+      y: point.y - point.yRatio * nextHeight,
+      width: nextWidth,
+      height: nextHeight,
+    };
+    apply();
+  }, { passive: false });
+
+  svg.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return;
+    dragging = true;
+    last = { x: event.clientX, y: event.clientY };
+    svg.classList.add('is-panning');
+    svg.setPointerCapture?.(event.pointerId);
+  });
+
+  svg.addEventListener('pointermove', (event) => {
+    if (!dragging || !last) return;
+    const rect = svg.getBoundingClientRect();
+    const dx = rect.width ? (event.clientX - last.x) * (viewBox.width / rect.width) : 0;
+    const dy = rect.height ? (event.clientY - last.y) * (viewBox.height / rect.height) : 0;
+    viewBox.x -= dx;
+    viewBox.y -= dy;
+    last = { x: event.clientX, y: event.clientY };
+    apply();
+  });
+
+  const stopDrag = (event) => {
+    dragging = false;
+    last = null;
+    svg.classList.remove('is-panning');
+    if (event?.pointerId != null) svg.releasePointerCapture?.(event.pointerId);
+  };
+
+  svg.addEventListener('pointerup', stopDrag);
+  svg.addEventListener('pointercancel', stopDrag);
+  svg.addEventListener('mouseleave', stopDrag);
+}
+
 function createEdgePath(documentRef, edge, fromPos, toPos, childState) {
   const sx = fromPos.cx + fromPos.r * 0.72;
   const sy = fromPos.cy;
@@ -326,6 +396,7 @@ export function renderProgressionTalentTree(container, options = {}) {
   }
 
   svg.appendChild(nodesGroup);
+  attachPanZoom(svg, width, height);
   svg.addEventListener('mouseleave', () => clearHoverState(svg));
   container.replaceChildren(svg);
 }

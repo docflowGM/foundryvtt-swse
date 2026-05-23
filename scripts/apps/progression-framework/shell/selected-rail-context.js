@@ -455,7 +455,7 @@ export class SelectedRailContext {
   }
 
   /**
-   * Build feats section (count and category breakdown).
+   * Build feats section with concrete feat names.
    * @private
    */
   static _buildFeatsSection(projection, currentStepId) {
@@ -464,24 +464,18 @@ export class SelectedRailContext {
     }
 
     const featList = projection.abilities.feats;
-    const generalFeats = featList.filter(f => !f.isClassSpecific).length;
-    const classFeats = featList.filter(f => f.isClassSpecific).length;
-
-    const items = [];
-    if (generalFeats > 0) {
-      items.push({
-        label: 'General',
-        value: `${generalFeats}`,
-        isCurrent: currentStepId === 'general-feat',
-      });
-    }
-    if (classFeats > 0) {
-      items.push({
-        label: 'Class',
-        value: `${classFeats}`,
-        isCurrent: currentStepId === 'class-feat',
-      });
-    }
+    const items = featList
+      .map(feat => {
+        const label = this._getFeatSourceLabel(feat);
+        const value = this._formatFeatSummaryValue(feat);
+        if (!value) return null;
+        return {
+          label,
+          value,
+          isCurrent: label === 'Class' ? currentStepId === 'class-feat' : currentStepId === 'general-feat',
+        };
+      })
+      .filter(Boolean);
 
     return items.length > 0
       ? {
@@ -491,6 +485,28 @@ export class SelectedRailContext {
           isCurrent: currentStepId === 'general-feat' || currentStepId === 'class-feat',
         }
       : null;
+  }
+
+  static _formatFeatSummaryValue(feat) {
+    if (typeof feat === 'string') return feat.trim();
+    const value = feat?.displayName
+      || feat?.name
+      || feat?.label
+      || feat?.featName
+      || feat?.system?.name
+      || feat?.system?.title
+      || feat?.id
+      || feat?.slug
+      || '';
+    const text = String(value || '').trim();
+    return text && text !== '[object Object]' ? text : '';
+  }
+
+  static _getFeatSourceLabel(feat) {
+    const source = String(feat?.slotType || feat?.sourceType || feat?.system?.sourceType || feat?.source || '').toLowerCase();
+    if (feat?.isClassSpecific || source.includes('class') || source.includes('multiclass')) return 'Class';
+    if (source.includes('grant') || source.includes('species')) return 'Granted';
+    return 'General';
   }
 
   /**

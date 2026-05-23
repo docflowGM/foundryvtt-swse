@@ -1,15 +1,16 @@
-.swse-item-customization-workbench {
-  --icw-cyan: oklch(0.85 0.18 200);
-  --icw-pink: oklch(0.72 0.26 350);
-  --icw-purple: oklch(0.55 0.20 300);
-  --icw-bg: oklch(0.10 0.03 285);
-  --icw-panel: oklch(0.14 0.05 280 / 0.94);
-  --icw-panel-soft: oklch(0.11 0.04 280 / 0.84);
-  --icw-ink: oklch(0.94 0.03 220);
-  --icw-dim: oklch(0.72 0.05 220);
-  --icw-border: oklch(0.85 0.18 200 / 0.24);
-  --icw-positive: oklch(0.82 0.19 145);
-  --icw-negative: oklch(0.70 0.22 25);
+.swse-item-customization-workbench,
+.swse-customization-stage {
+  --icw-cyan: var(--swse-accent, oklch(0.85 0.18 200));
+  --icw-pink: var(--swse-accent-2, oklch(0.72 0.26 350));
+  --icw-purple: var(--swse-secondary, oklch(0.55 0.20 300));
+  --icw-bg: var(--swse-bg-dark, oklch(0.10 0.03 285));
+  --icw-panel: color-mix(in oklch, var(--swse-surface-2, oklch(0.14 0.05 280)) 90%, transparent);
+  --icw-panel-soft: color-mix(in oklch, var(--swse-surface-1, oklch(0.11 0.04 280)) 84%, transparent);
+  --icw-ink: var(--swse-text-strong, oklch(0.94 0.03 220));
+  --icw-dim: var(--swse-text-secondary, oklch(0.72 0.05 220));
+  --icw-border: var(--swse-border-default, oklch(0.85 0.18 200 / 0.24));
+  --icw-positive: var(--pos, oklch(0.82 0.19 145));
+  --icw-negative: var(--neg, oklch(0.70 0.22 25));
 }
 
 .swse-item-customization-workbench .window-content,
@@ -20,9 +21,9 @@
 
 .swse-customization-stage {
   min-height: 100%;
-  background: radial-gradient(circle at top left, oklch(0.18 0.10 320 / 0.36), transparent 28%),
-              radial-gradient(circle at bottom right, oklch(0.18 0.10 200 / 0.32), transparent 32%),
-              linear-gradient(180deg, #060612 0%, #020205 100%);
+  background: radial-gradient(circle at top left, color-mix(in oklch, var(--icw-pink) 30%, transparent), transparent 28%),
+              radial-gradient(circle at bottom right, color-mix(in oklch, var(--icw-cyan) 26%, transparent), transparent 32%),
+              linear-gradient(180deg, var(--icw-bg) 0%, color-mix(in oklch, var(--icw-bg) 70%, black) 100%);
   color: var(--icw-ink);
   font-family: var(--swse-font-body, 'Space Grotesk', system-ui, sans-serif);
 }
@@ -39,8 +40,8 @@
   gap: 14px;
   padding: 18px;
   border-radius: 16px;
-  background: linear-gradient(140deg, #141522 0%, #0a0b14 55%, #11121a 100%);
-  box-shadow: inset 0 0 0 1px oklch(0.35 0.04 270 / 0.45), 0 30px 80px oklch(0 0 0 / 0.65);
+  background: linear-gradient(140deg, var(--icw-panel) 0%, var(--icw-panel-soft) 55%, color-mix(in oklch, var(--icw-bg) 88%, var(--icw-cyan)) 100%);
+  box-shadow: inset 0 0 0 1px var(--icw-border), 0 30px 80px oklch(0 0 0 / 0.65);
 }
 
 .swse-customization-hud,
@@ -66,7 +67,7 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   border: 1px solid var(--icw-border);
-  background: linear-gradient(180deg, oklch(0.18 0.07 280 / 0.92), oklch(0.10 0.03 285 / 0.96));
+  background: linear-gradient(180deg, var(--icw-panel), color-mix(in oklch, var(--icw-bg) 82%, transparent));
 }
 
 .hud-title {
@@ -75,7 +76,7 @@
   font-size: 14px;
   letter-spacing: 0.18em;
   color: var(--icw-cyan);
-  text-shadow: 0 0 10px oklch(0.85 0.18 200 / 0.5);
+  text-shadow: 0 0 10px color-mix(in oklch, var(--icw-cyan) 55%, transparent);
 }
 
 .hud-side { display: flex; gap: 14px; color: var(--icw-dim); }
@@ -88,7 +89,7 @@
   padding: 12px 14px;
   border: 1px solid var(--icw-border);
   border-left: 3px solid var(--icw-pink);
-  background: linear-gradient(90deg, oklch(0.72 0.26 350 / 0.10) 0%, oklch(0.85 0.18 200 / 0.06) 60%, transparent 100%);
+  background: linear-gradient(90deg, color-mix(in oklch, var(--icw-pink) 14%, transparent) 0%, color-mix(in oklch, var(--icw-cyan) 10%, transparent) 60%, transparent 100%);
 }
 
 .mentor-avatar {
@@ -97,10 +98,10 @@
   justify-content: center;
   width: 72px;
   height: 72px;
-  border: 1px solid oklch(0.85 0.18 200 / 0.45);
+  border: 1px solid color-mix(in oklch, var(--icw-cyan) 55%, transparent);
   font-size: 32px;
   color: var(--icw-cyan);
-  background: radial-gradient(circle at center, oklch(0.85 0.18 200 / 0.14), transparent 70%), oklch(0 0 0 / 0.4);
+  background: radial-gradient(circle at center, color-mix(in oklch, var(--icw-cyan) 18%, transparent), transparent 70%), color-mix(in oklch, var(--icw-bg) 70%, black);
 }
 
 .mentor-head {

@@ -80,14 +80,27 @@ export class ItemProfileResolver {
   }
 
   _resolveCategory(item) {
-    const type = normalizeLower(item?.type);
-    const subtype = normalizeLower(item?.system?.weaponSubtype || item?.system?.weaponType);
-    if (type === 'lightsaber' || subtype === 'lightsaber') return 'lightsaber';
-    if (type === 'blaster') return 'blaster';
-    if (type === 'weapon') return 'weapon';
-    if (type === 'armor' || type === 'bodysuit') return 'armor';
-    if (type === 'gear' || type === 'equipment') return 'gear';
-    if (type === 'droid') return 'droid';
+    const candidates = [
+      item?.system?.category,
+      item?.system?.itemType,
+      item?.system?.equipmentType,
+      item?.system?.weaponType,
+      item?.system?.weaponSubtype,
+      item?.system?.armorType,
+      item?.system?.subtype,
+      item?.system?.type,
+      item?.type
+    ];
+    for (const value of candidates) {
+      const key = normalizeLower(value).replace(/[_-]+/g, ' ');
+      if (!key) continue;
+      if (key === 'lightsaber' || key === 'light saber') return 'lightsaber';
+      if (key === 'blaster') return 'blaster';
+      if (['weapon', 'weapons', 'melee', 'melee weapon', 'ranged', 'ranged weapon', 'pistol', 'rifle', 'heavy weapon'].includes(key)) return 'weapon';
+      if (['armor', 'armour', 'bodysuit', 'body suit'].includes(key)) return 'armor';
+      if (['gear', 'equipment', 'equip', 'tool', 'tools', 'tech', 'utility', 'item'].includes(key)) return 'gear';
+      if (key === 'droid') return 'droid';
+    }
     return 'unknown';
   }
 

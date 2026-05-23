@@ -4,7 +4,7 @@
       <header class="swse-customization-hud">
         <div class="hud-side left">
           <span>WORKBENCH-LINK</span>
-          <span>QUARTERMASTER</span>
+          <span>{{#if mentorName}}{{mentorName}}{{else}}WORKSHOP{{/if}}</span>
         </div>
         <div class="hud-title">ARMORY // CUSTOMIZATION</div>
         <div class="hud-side right">
@@ -16,8 +16,8 @@
       <section class="swse-customization-mentor">
         <div class="mentor-avatar">⌬</div>
         <div class="mentor-copy">
-          <div class="mentor-head">{{#if isLightsaber}}MIRAJ · CRYSTAL-SINGER{{else}}RYNN-K7 · QUARTERMASTER{{/if}}</div>
-          <div class="mentor-text">{{mentorText}}</div>
+          <div class="mentor-head">{{mentorHead}}</div>
+          <div class="mentor-text" data-workbench-mentor-text data-mentor="{{mentorKey}}" data-raw-text="{{mentorText}}">{{mentorText}}</div>
         </div>
       </section>
 

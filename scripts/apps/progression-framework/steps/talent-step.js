@@ -121,6 +121,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._renderAbort = null;
     this._isDroidProgression = false;
     this._lastMentorTreeSpeechId = null;
+    this._treeDescriptionFallbacks = null;
   }
 
   _captureStepScroll(shell) {
@@ -210,6 +211,8 @@ export class TalentStep extends ProgressionStepPlugin {
         availableCount: availableTrees.length,
         availableTreeIds: availableTrees.map(t => t?.id || t?.name || '(unknown)'),
       });
+
+      await this._loadTreeDescriptionFallbacks();
 
       // Get suggested trees (pass shell so suggestion engine sees chargen choices)
       this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
@@ -1219,7 +1222,7 @@ export class TalentStep extends ProgressionStepPlugin {
           // Use canonical tree.id field (normalized trees always have this)
           id: tree.id,
           name: tree.name,
-          summary: this._truncateDisplayText(tree.description || tree.system?.description || 'No archive summary is available for this discipline yet.', 160),
+          summary: this._truncateDisplayText(this._getTreeDescription(tree) || `${tree.name} talent tree. Open the holomap to inspect legal talents and prerequisite paths.`, 160),
           // Prefer audited membership count when available; compendium talentIds may be stale.
           nodeCount,
           investmentCount,
@@ -1254,6 +1257,53 @@ export class TalentStep extends ProgressionStepPlugin {
       // PHASE 2 UX: Slot progress
       slotProgress,
     };
+  }
+
+  async _loadTreeDescriptionFallbacks() {
+    if (this._treeDescriptionFallbacks) return this._treeDescriptionFallbacks;
+    try {
+      const response = await fetch('/systems/foundryvtt-swse/data/talent-tree-descriptions.json');
+      this._treeDescriptionFallbacks = response?.ok ? await response.json() : {};
+    } catch (_err) {
+      this._treeDescriptionFallbacks = {};
+    }
+    return this._treeDescriptionFallbacks;
+  }
+
+  _normalizeTalentTreeNameKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+
+  _getTreeDescriptionFallback(tree) {
+    const fallbacks = this._treeDescriptionFallbacks || {};
+    const candidates = [tree?.name, tree?.id, tree?._id, tree?.slug, tree?.key]
+      .map(value => String(value || '').trim())
+      .filter(Boolean);
+    for (const candidate of candidates) {
+      if (fallbacks[candidate]) return fallbacks[candidate];
+    }
+    const normalizedCandidates = new Set(candidates.map(value => this._normalizeTalentTreeNameKey(value)));
+    for (const [key, description] of Object.entries(fallbacks)) {
+      if (normalizedCandidates.has(this._normalizeTalentTreeNameKey(key))) return description;
+    }
+    return '';
+  }
+
+  _getTreeDescription(tree) {
+    return firstDisplayText(
+      tree?.description,
+      tree?.summary,
+      tree?.system?.description,
+      tree?.system?.summary,
+      tree?.details,
+      tree?.system?.details,
+      this._getTreeDescriptionFallback(tree)
+    );
   }
 
   _getTalentId(talent) {
@@ -1673,6 +1723,7 @@ export class TalentStep extends ProgressionStepPlugin {
       viewMode: this._viewMode,
       availableTalents,
       lockedTalents,
+      lockedTalentCount: lockedTalents.length,
       selectedTalent,
       recommendedTalentCount,
       // PHASE 2 UX: Slot progress
@@ -1746,7 +1797,7 @@ export class TalentStep extends ProgressionStepPlugin {
           tree,
           treeId: tree.id,
           treeName: tree.name,
-          summary: this._truncateDisplayText(tree.description || tree.system?.description || 'No archive summary is available for this discipline yet.', 320),
+          summary: this._truncateDisplayText(this._getTreeDescription(tree) || `${tree.name} talent tree. Open the holomap to inspect legal talents and prerequisite paths.`, 320),
           nodeCount,
           investmentCount,
           isSuggested,
@@ -1764,7 +1815,7 @@ export class TalentStep extends ProgressionStepPlugin {
           visualSignal: visual.signal,
           visualThemeClass: visual.themeClass,
           statusText: isSuggested
-            ? `Your mentor currently sees this tree as a strong fit. ${treeRecommendation?.topTalentName ? `${treeRecommendation.topTalentName} is the current leading legal pick.` : ''}`
+            ? `Your mentor currently sees this tree as a strong fit. ${treeRecommendation?.topTalentName ? `${treeRecommendation.topTalentName} is the cleanest legal next pick from this tree.` : ''}`
             : (investmentCount > 0
               ? 'You already have momentum in this discipline. Opening the holomap will show the next legal branches.'
               : 'This discipline is available. Opening the holomap will reveal legal activations and locked future branches.'),

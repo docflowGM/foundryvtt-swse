@@ -16,6 +16,8 @@ import { CustomizationCostEngine } from "/systems/foundryvtt-swse/scripts/engine
 import { UpgradeSlotEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/upgrade-slot-engine.js";
 import { SafetyEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/safety-engine.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
+import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 
 const APP_ID = 'swse-item-customization-workbench';
 const CATEGORY_ORDER = [
@@ -59,6 +61,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this._slotEngine = new UpgradeSlotEngine(this._profileResolver);
     this._drafts = new Map();
     this._catalogs = { chassis: [], crystals: [], accessories: [] };
+    this._workbenchDialogueCache = new Map();
     this._lightsaber = {
       selectedChassisId: null,
       selectedCrystalId: null,
@@ -545,18 +548,120 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return stats;
   }
 
-  _getMentorText(item) {
+  async _getWorkbenchDialogue(mentorKey, path, fallback = '') {
+    const cacheKey = `${mentorKey}:${path.join('.')}`;
+    if (this._workbenchDialogueCache.has(cacheKey)) return this._workbenchDialogueCache.get(cacheKey);
+    let value = fallback;
+    try {
+      const mentor = await getMentor(mentorKey);
+      value = path.reduce((node, key) => node?.[key], mentor?.[mentorKey]?.dialogues || mentor?.dialogues) || fallback;
+      if (Array.isArray(value)) value = value[Math.floor(Math.random() * value.length)] || fallback;
+      if (value && typeof value === 'object') {
+        const defaultValue = value.default;
+        value = Array.isArray(defaultValue) ? defaultValue[Math.floor(Math.random() * defaultValue.length)] : defaultValue;
+      }
+    } catch (error) {
+      console.warn('[ItemCustomizationWorkbench] Failed to load workshop mentor dialogue', { mentorKey, path, error });
+    }
+    this._workbenchDialogueCache.set(cacheKey, value || fallback);
+    return value || fallback;
+  }
+
+  _getItemSubtypeKey(item) {
+    const raw = [
+      item?.system?.weaponSubtype,
+      item?.system?.weaponType,
+      item?.system?.group,
+      item?.system?.armorType,
+      item?.system?.subtype,
+      item?.system?.category,
+      item?.type
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+    if (/blaster/.test(raw)) return 'blaster';
+    if (/pistol/.test(raw)) return 'pistol';
+    if (/rifle/.test(raw)) return 'rifle';
+    if (/carbine/.test(raw)) return 'carbine';
+    if (/heavy|cannon|launcher/.test(raw)) return 'heavy';
+    if (/vibro/.test(raw)) return 'vibro';
+    if (/grenade|explosive|thrown/.test(raw)) return 'grenade';
+    if (/melee|simple|advanced/.test(raw)) return 'melee';
+    if (/powered/.test(raw)) return 'powered';
+    if (/heavy/.test(raw)) return 'heavy';
+    if (/medium/.test(raw)) return 'medium';
+    if (/light/.test(raw)) return 'light';
+    if (/body|suit/.test(raw)) return 'bodysuit';
+    if (/medical|medpac|medkit|surgery/.test(raw)) return 'medical';
+    if (/stealth|cloak|conceal|shadow/.test(raw)) return 'stealth';
+    if (/comm|comlink|communication/.test(raw)) return 'communications';
+    if (/sensor|scanner|detector/.test(raw)) return 'sensor';
+    if (/survival|field|ration|environment/.test(raw)) return 'survival';
+    if (/computer|datapad|slicer|security/.test(raw)) return 'computer';
+    if (/tool|kit/.test(raw)) return 'tool';
+    return 'default';
+  }
+
+  async _getWorkshopMentorContext(item) {
     const category = this._getCategoryForItem(item);
-    if (category === 'weapons' && item.type === 'blaster') {
-      return `Blaster frame on the slab. Tune the bolt package, fit the right internals, and keep an eye on your slot budget before you start bolting on extras.`;
+    const subtype = this._getItemSubtypeKey(item);
+    const categoryPath = category === 'weapons' ? 'weapons' : (category === 'armor' ? 'armor' : 'gear');
+    const fallback = category === 'weapons'
+      ? `Weapon on the bench. Good. We tune the frame, keep the slots honest, and make sure it does what you need when the room gets ugly.`
+      : category === 'armor'
+        ? `Armor is a platform. Plate, flex, seals, weight — every change makes a trade, so we make the trade on purpose.`
+        : `Utility gear is where clever people become problems. Pick the mod that solves the job, not the one that only looks fancy.`;
+    const mentorText = await this._getWorkbenchDialogue('delta', ['workshop', categoryPath, subtype], fallback)
+      || await this._getWorkbenchDialogue('delta', ['workshop', categoryPath, 'default'], fallback)
+      || await this._getWorkbenchDialogue('delta', ['workshop', 'default'], fallback);
+    return {
+      mentorKey: 'delta',
+      mentorName: 'Delta',
+      mentorTitle: 'FIELD MOD SPECIALIST',
+      mentorHead: 'DELTA · FIELD MOD SPECIALIST',
+      mentorText
+    };
+  }
+
+  async _getLightsaberMentorContext(editItem) {
+    const path = editItem ? ['workshop', 'lightsaber', 'customize'] : ['workshop', 'lightsaber', 'bench'];
+    const fallback = editItem
+      ? 'This blade is already yours. We are not remaking it; we are listening for what no longer fits, then correcting with care.'
+      : 'This is the saber bench, not a ceremony. Study the hilt, crystal, and fittings as separate choices before you commit to the whole.';
+    const mentorText = await this._getWorkbenchDialogue('miraj', path, fallback)
+      || await this._getWorkbenchDialogue('miraj', ['workshop', 'lightsaber', 'default'], fallback);
+    return {
+      mentorKey: 'miraj',
+      mentorName: 'Miraj',
+      mentorTitle: 'SABER WORKBENCH GUIDE',
+      mentorHead: 'MIRAJ · SABER WORKBENCH GUIDE',
+      mentorText
+    };
+  }
+
+  async _renderMentorTranslation() {
+    const container = this.element?.querySelector?.('[data-workbench-mentor-text]');
+    if (!container) return;
+    const text = container.dataset.rawText || container.textContent || '';
+    const mentor = container.dataset.mentor || 'delta';
+    try {
+      await MentorTranslationIntegration.render({
+        text,
+        container,
+        mentor,
+        topic: 'workshop',
+        force: false
+      });
+    } catch (error) {
+      console.warn('[ItemCustomizationWorkbench] Mentor translation failed', error);
+      container.textContent = text;
     }
-    if (category === 'weapons') {
-      return `Close-combat weapons reward restraint. Balance, edge work, and grip discipline matter more than piling on every trick in the catalog.`;
-    }
-    if (category === 'armor') {
-      return `Armor is a platform. Every plate and joint you change trades comfort, protection, or utility somewhere else — check the slot bar before you lock it in.`;
-    }
-    return `Utility gear is where over-engineering starts. Pick the upgrades that match the job, not the ones that just look clever on the bench.`;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    await this._renderMentorTranslation();
   }
 
   _getItemSummary(item, draft, preview) {
@@ -616,7 +721,19 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       return { ...shellContext, ...(await this._prepareLightsaberContext(visibleCategories)) };
     }
     if (!item) {
-      return { ...shellContext, actor: this.actor, categories: visibleCategories, hasItems: false, isStoreStageMode: this._isStoreStageMode() };
+      const mentorText = await this._getWorkbenchDialogue('delta', ['workshop', 'empty'], `Can't tune air, genius. Get a weapon, armor plate, or a piece of gear in your inventory, then we'll make somethin' useful outta it.`);
+      return {
+        ...shellContext,
+        actor: this.actor,
+        categories: visibleCategories,
+        hasItems: false,
+        isStoreStageMode: this._isStoreStageMode(),
+        mentorKey: 'delta',
+        mentorName: 'Delta',
+        mentorTitle: 'FIELD MOD SPECIALIST',
+        mentorHead: 'DELTA · FIELD MOD SPECIALIST',
+        mentorText
+      };
     }
 
     const draft = this._getDraft(item);
@@ -650,7 +767,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       hasInventoryResults: inventoryItems.length > 0,
       inventoryItems,
       currentItem: this._getItemSummary(item, draft, preview),
-      mentorText: this._getMentorText(item),
+      ...(await this._getWorkshopMentorContext(item)),
       upgrades: this._getUpgradeCatalog(item, draft),
       templates: this._getTemplateCards(item, draft),
       structuralActions: {
@@ -1308,9 +1425,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           { key: 'Slots', value: `${slotState.usedSlots}/${slotState.totalAvailable}` }
         ]
       },
-      mentorText: editItem
-        ? 'Miraj runs a hand over the emitter and listens. Existing blades can be tuned, not reborn — crystal, color, and fittings only.'
-        : 'Miraj opens the forge. Chassis first, crystal second, accessories last. The blade in the center tells you when the kyber starts singing.',
+      ...(await this._getLightsaberMentorContext(editItem)),
       lightsaber: {
         mode: editItem ? 'edit' : 'construct',
         bladeHex,

@@ -165,7 +165,9 @@ function _buildHotDealsFromItems(allItems = []) {
       id: item.id,
       name: item.name,
       img: item.img || '',
-      categoryKey: item.category || categoryKey,
+      categoryKey,
+      storeCategory: item.category || categoryKey,
+      displayCategory: _categoryLabel(categoryKey),
       price: Number(price) || 0,
       priceLabel: _formatCredits(price),
       rarity: item.rarityLabel || item.availability || '',
@@ -288,18 +290,30 @@ export class StoreSurfaceService {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'Store unavailable' };
       }
 
-      // Sync navigation state from shell options
-      if (options.currentCategory !== undefined) storeInstance.currentCategory = options.currentCategory ?? '';
-      // Phase 2: Sync subcategory/family state
-      if (options.currentSubcategory !== undefined) storeInstance.currentSubcategory = options.currentSubcategory ?? null;
-      if (options.currentFamily !== undefined) storeInstance.currentFamily = options.currentFamily ?? null;
-      // When category changes, clear stale subcategory/family state
-      if (options.currentCategory !== undefined && options.currentCategory !== storeInstance.currentCategory) {
+      // Sync navigation state from shell options.
+      // The splash is a full-catalog entry point; never let stale browse filters
+      // from an earlier store session starve hot-item hydration before the user
+      // has even entered the store.
+      if (!options.splashComplete) {
+        storeInstance.currentCategory = '';
         storeInstance.currentSubcategory = null;
         storeInstance.currentFamily = null;
+        storeInstance.currentView = 'browse';
+        storeInstance.selectedProductId = null;
+      } else {
+        const previousCategory = storeInstance.currentCategory ?? '';
+        if (options.currentCategory !== undefined) storeInstance.currentCategory = options.currentCategory ?? '';
+        // Phase 2: Sync subcategory/family state
+        if (options.currentSubcategory !== undefined) storeInstance.currentSubcategory = options.currentSubcategory ?? null;
+        if (options.currentFamily !== undefined) storeInstance.currentFamily = options.currentFamily ?? null;
+        // When category changes, clear stale subcategory/family state
+        if (options.currentCategory !== undefined && options.currentCategory !== previousCategory) {
+          storeInstance.currentSubcategory = null;
+          storeInstance.currentFamily = null;
+        }
+        if (options.currentView) storeInstance.currentView = options.currentView;
+        if (options.selectedProductId !== undefined) storeInstance.selectedProductId = options.selectedProductId ?? null;
       }
-      if (options.currentView) storeInstance.currentView = options.currentView;
-      if (options.selectedProductId !== undefined) storeInstance.selectedProductId = options.selectedProductId ?? null;
 
       // Reload cart from actor flags (reflects any controller mutations)
       storeInstance.cart = storeInstance._loadCartFromActor();

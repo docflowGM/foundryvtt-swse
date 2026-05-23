@@ -2932,3 +2932,54 @@
   font-size: 0.78rem;
   line-height: 1.45;
 }
+
+
+/* Alpha feedback polish: keep locked/future talents from squeezing legal choices. */
+.talent-choice-section--locked {
+  flex: 0 0 auto;
+}
+
+.talent-choice-section--locked:not([open]) {
+  padding-bottom: 0.55rem;
+}
+
+.talent-choice-section__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--sheet-text-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.talent-choice-section--locked[open] .talent-choice-list {
+  margin-top: 0.65rem;
+  max-height: 42vh;
+}
+
+.talent-tree-card__quickline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.75rem;
+  color: var(--sheet-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  margin: 0.35rem 0 0.7rem;
+}
+
+.talent-tree-card__quickline strong {
+  color: var(--sheet-text-heading);
+}
+
+.prog-talent-tree-svg--holomap {
+  cursor: grab;
+  touch-action: none;
+}
+
+.prog-talent-tree-svg--holomap.is-panning {
+  cursor: grabbing;
+}

@@ -4152,10 +4152,11 @@ export const ActorEngine = {
     const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
     // 1. Canonical persisted storage: system.attributes
-    //    Only initialize when the actor already has this namespace (character-type actors).
-    //    Non-character actors (vehicles, objects) do not have system.attributes in their schema
-    //    and must not have it implicitly created here.
-    if (actor.system.attributes !== undefined) {
+    //    Character-type actors own this namespace. Initialize it for newly-created or
+    //    partially-migrated characters so ability edits and progression writes never
+    //    fall back to the read-only system.abilities mirror.
+    const shouldOwnAttributes = actor.type === 'character' || actor.system.attributes !== undefined;
+    if (shouldOwnAttributes) {
       if (typeof actor.system.attributes !== 'object' || Array.isArray(actor.system.attributes)) {
         actor.system.attributes = {};
       }

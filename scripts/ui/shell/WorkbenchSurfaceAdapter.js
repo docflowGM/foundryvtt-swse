@@ -15,6 +15,7 @@
  */
 
 import { ItemCustomizationWorkbench } from '/systems/foundryvtt-swse/scripts/apps/customization/item-customization-workbench.js';
+import { MentorTranslationIntegration } from '/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 export class WorkbenchSurfaceAdapter {
@@ -96,6 +97,37 @@ export class WorkbenchSurfaceAdapter {
     } catch (err) {
       SWSELogger.error('[WorkbenchSurfaceAdapter] buildViewModel failed:', err);
       return { id: 'workbench', title: 'Armory // Customization', error: err.message };
+    }
+  }
+
+
+  /**
+   * Hydrate DOM-only affordances after the inline shell injects the workbench.
+   * Keeps AppV2 rendering pure while letting the hosted surface use the same
+   * mentor translation pipeline as progression/mentor panels.
+   *
+   * @param {Element} surfaceRoot
+   * @returns {Promise<void>}
+   */
+  async afterInlineRender(surfaceRoot) {
+    const mentorNode = surfaceRoot?.querySelector?.('[data-workbench-mentor-text]');
+    if (!mentorNode || mentorNode.dataset.translationHydrated === 'true') return;
+
+    const text = mentorNode.dataset.workbenchMentorText || mentorNode.textContent || '';
+    const mentor = mentorNode.dataset.mentor || 'delta';
+    mentorNode.dataset.translationHydrated = 'true';
+
+    try {
+      await MentorTranslationIntegration.render({
+        text,
+        container: mentorNode,
+        mentor,
+        topic: 'workbench',
+        force: true
+      });
+    } catch (err) {
+      SWSELogger.error('[WorkbenchSurfaceAdapter] Mentor translation failed:', err);
+      mentorNode.textContent = text;
     }
   }
 

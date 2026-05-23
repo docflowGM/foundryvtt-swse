@@ -265,16 +265,44 @@ export class StoreSurfaceController {
     if (!splash) return false;
 
     // Belt-and-suspenders inline routing: the splash initializer also wires the
-    // CTA, but the shell surface owns navigation state. Capture the enter action
-    // at the surface controller level so the button cannot become inert if AppV2
-    // action dispatch or template rehydration misses the direct listener.
+    // CTA, but the shell surface owns navigation state. Capture the enter/home
+    // actions at the surface controller level so the splash cannot become inert
+    // if AppV2 action dispatch or template rehydration misses a direct listener.
     const enterSelector = '[data-action="store-splash-continue"], [data-store-splash-enter]';
+    const homeSelector = '[data-shell-action="return-to-home"], [data-shell-action="open-home"]';
+    const hotDealSelector = '[data-action="store-hot-deal-open"]';
+
     root.addEventListener('click', (ev) => {
-      const target = ev.target instanceof Element ? ev.target.closest(enterSelector) : null;
+      const target = ev.target instanceof Element ? ev.target : null;
       if (!target) return;
-      ev.preventDefault();
-      ev.stopImmediatePropagation?.();
-      this._enterStore();
+
+      const homeTarget = target.closest(homeSelector);
+      if (homeTarget) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation?.();
+        this._returnHome();
+        return;
+      }
+
+      const enterTarget = target.closest(enterSelector);
+      if (enterTarget) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation?.();
+        this._enterStore();
+        return;
+      }
+
+      const hotDealTarget = target.closest(hotDealSelector);
+      if (hotDealTarget) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation?.();
+        this._openHotDeal({
+          id: hotDealTarget.dataset.itemId,
+          name: hotDealTarget.dataset.itemName,
+          category: hotDealTarget.dataset.storeCategory || hotDealTarget.dataset.category,
+          normalizedCategory: hotDealTarget.dataset.category
+        });
+      }
     }, { signal, capture: true });
 
     root.addEventListener('keydown', (ev) => {
@@ -294,18 +322,37 @@ export class StoreSurfaceController {
     return true;
   }
 
-  _enterStore(patch = {}) {
-    this._setOptions({ splashComplete: true, currentView: 'browse', selectedProductId: null, ...patch });
+  async _returnHome() {
+    await this._host.setSurface?.('home');
+    this._host.render(false);
   }
 
-  _openHotDeal({ id, name, category } = {}) {
+  _enterStore(patch = {}) {
+    this._setOptions({
+      splashComplete: true,
+      currentView: 'browse',
+      currentCategory: '',
+      currentSubcategory: null,
+      currentFamily: null,
+      selectedProductId: null,
+      search: '',
+      availability: 'all',
+      sort: 'default',
+      ...patch
+    });
+  }
+
+  _openHotDeal({ id, name, category, normalizedCategory } = {}) {
     if (!id && !name) {
       this._enterStore();
       return;
     }
     this._enterStore({
       selectedProductId: id || null,
-      currentCategory: category || '',
+      // Prefer the real store category for filtering. The normalized category is
+      // retained only as a fallback because values like "ranged-weapons" are
+      // splash buckets, not always actual store category keys.
+      currentCategory: category || normalizedCategory || '',
       search: name || '',
       hotDealFocusId: id || null
     });

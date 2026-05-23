@@ -583,6 +583,8 @@ renderDetailsPanel(focusedItem) {
   const skillKey = skill.key || skill.id || skill._id;
   const skillUses = this._getExtraSkillUses(skillKey);
   const normalized = normalizeDetailPanelData(skill, 'skill', { otherUses: skillUses });
+  const abilityLabel = this._coerceDisplayName(skill.abilityLabel || normalized.mechanics?.defaultAbilityLabel || this._abilityLabel(skill.ability));
+  const category = this._coerceDisplayName(skill.category || abilityLabel || 'Skill');
 
   return {
     template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/skill-details.hbs',
@@ -591,8 +593,8 @@ renderDetailsPanel(focusedItem) {
       skillName: this._coerceDisplayName(skill.name || skill.label || skillKey),
       skillSlug: skillKey,
       description: normalized.description || extractDescriptionText(skill) || '',
-      abilityLabel: skill.abilityLabel || normalized.mechanics?.defaultAbilityLabel || 'Unknown',
-      category: skill.category || null,
+      abilityLabel,
+      category,
       isClassSkill: !!skill.isClassSkill,
       isBackgroundSkill: !!skill.isBackgroundSkill,
       isSpeciesClassSkill: !!skill.isSpeciesClassSkill,
@@ -623,8 +625,10 @@ renderDetailsPanel(focusedItem) {
   }
 
   async onAskMentor(shell) {
-    if (this._suggestedSkills?.length) {
-      await handleAskMentorWithPicker(shell.actor, 'skills', this._suggestedSkills, shell, {
+    await this._getSuggestedSkills(shell.actor, shell);
+    const mentorSuggestions = (this._suggestedSkills || []).filter(skill => !this._isSkillAlreadySelected(skill));
+    if (mentorSuggestions.length) {
+      await handleAskMentorWithPicker(shell.actor, 'skills', mentorSuggestions, shell, {
         domain: 'skills_l1',
         archetype: 'your early training',
         stepLabel: 'skills'
@@ -669,16 +673,18 @@ renderDetailsPanel(focusedItem) {
       // NOTE: Domain is 'skills_l1' per canonical domain registry (not 'skills')
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'skills_l1',
-        available: this._allSkills,
+        available: (this._availableSkills || this._allSkills).filter(skill => !this._isSkillAlreadySelected(skill)),
         pendingData: { ...SuggestionContextBuilder.buildPendingData(actor, characterData), slotContext: { slotKind: 'skill', slotType: 'heroic', classId: null } },
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
 
       const rankedSuggestions = SuggestionService.sortBySuggestion((suggested || []))
-        .filter(skill => (skill?.suggestion?.tier ?? skill?.tier ?? 0) > 0);
+        .filter(skill => (skill?.suggestion?.tier ?? skill?.tier ?? 0) > 0)
+        .filter(skill => !this._isSkillAlreadySelected(skill));
 
-      this._suggestedSkills = rankedSuggestions.slice(0, 3);
+      const remaining = Math.max(0, Number(this._allowedCount || 0) - Number(this._trainedCount || 0));
+      this._suggestedSkills = remaining > 0 ? rankedSuggestions.slice(0, Math.min(3, remaining)) : [];
     } catch (err) {
       swseLogger.warn('[SkillsStep] Suggestion service error:', err);
       this._suggestedSkills = [];
@@ -994,16 +1000,31 @@ renderDetailsPanel(focusedItem) {
 
   _getExtraSkillUses(skillKey) {
     const normalized = this._skillLookupKey(skillKey);
+    const normalizeUses = (uses) => uses.slice(0, 8).map(use => this._formatSkillUseForDetails(use));
     const direct = this._extraSkillUsesBySkill?.[normalized];
-    if (Array.isArray(direct)) return direct.slice(0, 8);
+    if (Array.isArray(direct)) return normalizeUses(direct);
 
     for (const [key, uses] of Object.entries(this._extraSkillUsesBySkill || {})) {
       if (this._skillLookupKey(key) === normalized && Array.isArray(uses)) {
-        return uses.slice(0, 8);
+        return normalizeUses(uses);
       }
     }
 
     return [];
+  }
+
+  _formatSkillUseForDetails(use) {
+    const label = this._coerceDisplayName(use?.label || use?.name || use?.title || use?.id || 'Skill Use');
+    const effect = this._coerceDetailText(use?.effect || use?.benefit || use?.result || '');
+    const description = this._coerceDetailText(use?.description || use?.summary || '');
+    return {
+      ...use,
+      label,
+      dc: this._coerceDetailText(use?.dc || use?.DC || ''),
+      time: this._coerceDetailText(use?.time || use?.action || use?.actionType || ''),
+      effect,
+      description,
+    };
   }
 
   _pruneInvalidTrainedSkills(shell) {
@@ -1411,6 +1432,30 @@ _getSkillSelectionState(skillOrKey) {
   }
 
   return null;
+}
+
+_isSkillAlreadySelected(skillOrKey) {
+  const state = this._getSkillSelectionState(skillOrKey);
+  if (state?.trained === true) return true;
+
+  const candidates = typeof skillOrKey === 'string'
+    ? [skillOrKey]
+    : [skillOrKey?.key, skillOrKey?.id, skillOrKey?._id, skillOrKey?.name];
+
+  return candidates.some(candidate => {
+    const key = this._skillLookupKey(candidate);
+    return key && this._actorTrainedSkillKeys?.has?.(key);
+  });
+}
+
+_coerceDetailText(value) {
+  if (value && typeof value === 'object') {
+    const nested = value.text || value.label || value.name || value.value || value.summary || value.description;
+    if (nested && typeof nested !== 'object') return String(nested).trim();
+    return '';
+  }
+  const text = String(value || '').trim();
+  return text && text !== '[object Object]' ? text : '';
 }
 
 _skillLookupKey(value) {

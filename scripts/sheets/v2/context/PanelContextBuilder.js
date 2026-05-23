@@ -38,6 +38,12 @@ function safePanelNumber(value, fallback = 0) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
+function isTruthyEquipState(value) {
+  if (value === true) return true;
+  if (typeof value === 'string') return ['true', '1', 'yes', 'equipped', 'on'].includes(value.toLowerCase());
+  return Number(value) === 1;
+}
+
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
     this.actor = actor;
@@ -260,7 +266,13 @@ export class PanelContextBuilder {
       const defenseViewModel = defensesViewModel?.[systemKey] ?? {};
       const derivedDefense = this.derived?.defenses?.[systemKey] ?? {};
       const abilityKey = String(defenseData.ability || derivedDefense.abilityKey || defaultAbility || '').toLowerCase();
-      const abilityMod = Number(derivedAttributes?.[abilityKey]?.mod ?? derivedDefense?.abilityMod ?? 0) || 0;
+      const derivedDefenseAbilityMod = Number(derivedDefense?.abilityMod);
+      const derivedAttributeAbilityMod = Number(derivedAttributes?.[abilityKey]?.mod);
+      const abilityMod = Number.isFinite(derivedDefenseAbilityMod)
+        ? derivedDefenseAbilityMod
+        : Number.isFinite(derivedAttributeAbilityMod)
+          ? derivedAttributeAbilityMod
+          : 0;
       const miscMod = Number(derivedDefense?.miscBonus ?? defenseData.misc?.user?.extra ?? defenseData.miscMod ?? 0) || 0;
       const classDef = Number(derivedDefense?.classBonus ?? defenseData.classBonus ?? 0) || 0;
       const heroicLevel = Number(derivedDefense?.heroicLevel ?? this.derived?.heroicLevel ?? system?.level ?? 0) || 0;
@@ -402,7 +414,7 @@ export class PanelContextBuilder {
 
     // Normalize all inventory rows
     const entries = items
-      .filter(item => ['weapon', 'lightsaber', 'equipment', 'armor'].includes(item.type))
+      .filter(item => ['weapon', 'lightsaber', 'equipment', 'armor', 'gear'].includes(item.type))
       .map(item => RowTransformers.toInventoryRow(item, this.sheet.isEditable));
 
     // Group entries by type category for card-based display
@@ -410,7 +422,8 @@ export class PanelContextBuilder {
       weapon: 'Weapons',
       lightsaber: 'Weapons',
       armor: 'Armor',
-      equipment: 'Equipment'
+      equipment: 'Equipment',
+      gear: 'Equipment'
     };
 
     const grouped = {};
@@ -435,7 +448,7 @@ export class PanelContextBuilder {
 
     // Find equipped armor
     const equippedArmorItem = items.find(item =>
-      item.type === 'armor' && item.system?.equipped === true
+      item.type === 'armor' && isTruthyEquipState(item.system?.equipped)
     );
     const equippedArmor = equippedArmorItem
       ? RowTransformers.toArmorSummaryRow(equippedArmorItem)

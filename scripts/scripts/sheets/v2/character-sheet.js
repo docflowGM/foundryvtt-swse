@@ -620,21 +620,12 @@ export class SWSEV2CharacterSheet extends
       this.close();
     }, { signal });
 
-    root.querySelectorAll('[data-action="tablet-home"]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        if (this._shellSurface !== 'home') {
-          await this.setSurface('home');
-          this.render(false);
-        }
-      }, { signal });
-    });
-
-    root.querySelector('[data-shell-chrome="top"]')?.addEventListener('dblclick', async (ev) => {
-      if (ev.target?.closest?.('button, input, select, textarea, a, [contenteditable="true"]')) return;
+    root.querySelector('[data-action="tablet-home"]')?.addEventListener('click', async (ev) => {
       ev.preventDefault();
-      ev.stopPropagation();
-      await this._minimizeTabletWindow();
+      if (this._shellSurface !== 'home') {
+        await this.setSurface('home');
+        this.render(false);
+      }
     }, { signal });
 
     this._wireTabletWindowDrag(root, signal);
@@ -791,27 +782,6 @@ export class SWSEV2CharacterSheet extends
     }
   }
 
-  /** Minimize the frameless datapad from its custom top bezel. */
-  async _minimizeTabletWindow() {
-    try {
-      if (typeof this.minimize === 'function') {
-        await this.minimize();
-        return;
-      }
-
-      const appRoot = this.element?.closest?.('.application') || this.element;
-      const nativeMinimize = appRoot?.querySelector?.('[data-action="minimize"], .window-header .header-button.minimize');
-      if (nativeMinimize) {
-        nativeMinimize.click();
-        return;
-      }
-
-      swseLogger.warn('[SWSEV2CharacterSheet] Minimize requested, but no ApplicationV2 minimize handler was available.');
-    } catch (err) {
-      swseLogger.warn('[SWSEV2CharacterSheet] Failed to minimize datapad shell.', err);
-    }
-  }
-
   /**
    * Frameless tablet drag support.
    *
@@ -840,12 +810,6 @@ export class SWSEV2CharacterSheet extends
       if (ev.button !== 0) return;
       if (isInteractiveTarget(ev.target)) return;
       if (!isBezelDragTarget(ev.target)) return;
-
-      if (ev.detail >= 2) {
-        ev.preventDefault();
-        void this._minimizeTabletWindow();
-        return;
-      }
 
       ev.preventDefault();
       shell.setPointerCapture?.(ev.pointerId);
@@ -1451,8 +1415,6 @@ export class SWSEV2CharacterSheet extends
     const surfaceRoot = root.querySelector('[data-shell-region="surface-workbench"]');
     if (!surfaceRoot) return;
 
-    void this._hydrateInlineWorkbenchSurface(surfaceRoot);
-
     // Click delegation for button actions
     surfaceRoot.addEventListener('click', async (ev) => {
       const btn = ev.target.closest('[data-action]');
@@ -1493,19 +1455,6 @@ export class SWSEV2CharacterSheet extends
         swseLogger.error('[CharacterSheet] Workbench search failed:', err);
       }
     }, { signal });
-  }
-
-
-  async _hydrateInlineWorkbenchSurface(surfaceRoot) {
-    try {
-      const { WorkbenchSurfaceAdapter } = await import(
-        '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
-      );
-      const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
-      await adapter?.afterInlineRender?.(surfaceRoot);
-    } catch (err) {
-      swseLogger.error('[CharacterSheet] Inline workbench hydration failed:', err);
-    }
   }
 
   /**
@@ -2148,8 +2097,7 @@ export class SWSEV2CharacterSheet extends
     // The actor stores base/species/misc/temp in system.abilities, while the live
     // modifier/total contract is emitted by the derived engine. If derived is late
     // during a repaint, compute from stored components instead of defaulting to 10/+0.
-    const abilitiesMap = system.attributes ?? system.abilities ?? {};
-    const legacyAbilitiesMap = system.abilities ?? {};
+    const abilitiesMap = system.abilities ?? {};
     const abilityMap = {
       'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution',
       'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma'
@@ -2162,12 +2110,11 @@ export class SWSEV2CharacterSheet extends
 
     const abilities = ABILITY_KEYS.map(key => {
       const ability = abilitiesMap[key] ?? {};
-      const legacyAbility = legacyAbilitiesMap[key] ?? {};
       const derivedAbility = derivedAttributesMap[key] ?? {};
-      const base = toFiniteNumber(ability.base ?? legacyAbility.base ?? derivedAbility.base, 10);
-      const racial = toFiniteNumber(ability.racial ?? ability.species ?? legacyAbility.racial ?? legacyAbility.species ?? derivedAbility.racial ?? derivedAbility.species, 0);
-      const enhancement = toFiniteNumber(ability.enhancement ?? ability.misc ?? legacyAbility.enhancement ?? legacyAbility.misc ?? derivedAbility.enhancement ?? derivedAbility.misc, 0);
-      const temp = toFiniteNumber(ability.temp ?? legacyAbility.temp ?? derivedAbility.temp, 0);
+      const base = toFiniteNumber(ability.base ?? derivedAbility.base, 10);
+      const racial = toFiniteNumber(ability.racial ?? ability.species ?? derivedAbility.racial ?? derivedAbility.species, 0);
+      const enhancement = toFiniteNumber(ability.enhancement ?? ability.misc ?? derivedAbility.enhancement ?? derivedAbility.misc, 0);
+      const temp = toFiniteNumber(ability.temp ?? derivedAbility.temp, 0);
       const total = Number.isFinite(Number(derivedAbility.total))
         ? Number(derivedAbility.total)
         : Number.isFinite(Number(ability.total))
@@ -2432,12 +2379,8 @@ export class SWSEV2CharacterSheet extends
     // derived-attacks failure.
     const attacksBundle = derived?.attacks;
     let attacksList = Array.isArray(attacksBundle?.list) ? attacksBundle.list : [];
-    const isEquippedForAttack = (item) => {
-      const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on'].includes(String(value || '').toLowerCase());
-      return truthy(item?.system?.equipped) || truthy(item?.flags?.swse?.autoEquipped);
-    };
     const expectedItemBackedAttackCount = Array.from(actor?.items ?? []).filter(item =>
-      ['weapon', 'lightsaber'].includes(item?.type) && isEquippedForAttack(item)
+      item?.type === 'weapon' && (item.system?.equipped === true || item.flags?.swse?.autoEquipped === true)
     ).length;
     const missingAttackBundle = !attacksBundle || !Array.isArray(attacksBundle.list);
     const missingExpectedItemBackedAttacks = expectedItemBackedAttackCount > 0 && attacksList.length === 0;
@@ -3375,6 +3318,10 @@ const forcePoints = [];
         ev.preventDefault();
         ev.stopPropagation();
 
+        if (ev.target?.closest?.('[data-shell-region="surface-messenger"], [data-holonet-action]')) {
+          return;
+        }
+
         // swseLogger.debug('[PERSISTENCE] defaultPrevented AFTER:', ev.defaultPrevented);
         // swseLogger.debug('[PERSISTENCE] Calling _onSubmitForm now');
 
@@ -3655,6 +3602,8 @@ const forcePoints = [];
       const input = ev.target.closest("input[name], textarea[name], select[name]");
       if (!input) return;
 
+      if (input.closest('[data-shell-region="surface-messenger"], [data-holonet-action]')) return;
+
       swseLogger.debug('[PERSISTENCE] ─── CHANGE EVENT FIRED (debounced 500ms) ───');
       ev.preventDefault();
 
@@ -3735,38 +3684,13 @@ const forcePoints = [];
       const skillKey = button.dataset.skill;
       if (skillKey) {
         const currentFavorite = this.actor.system.skills?.[skillKey]?.favorite ?? false;
-        const nextFavorite = !currentFavorite;
-        button.classList.toggle('favorited', nextFavorite);
-        const row = button.closest('.skill-row-container');
-        if (row) {
-          row.dataset.favorite = nextFavorite ? 'true' : 'false';
-          const meta = row.querySelector('.swse-concept-ledger-row__meta');
-          let favoriteChip = meta?.querySelector('[data-skill-favorite-chip]');
-          if (nextFavorite && meta && !favoriteChip) {
-            favoriteChip = document.createElement('span');
-            favoriteChip.dataset.skillFavoriteChip = 'true';
-            favoriteChip.textContent = 'Favorite';
-            meta.appendChild(favoriteChip);
-          } else if (!nextFavorite && favoriteChip) {
-            favoriteChip.remove();
-          }
-          const filterControl = html.querySelector('[data-action="filter-skills"]');
-          if (filterControl?.value === 'favorited') {
-            row.style.display = nextFavorite ? '' : 'none';
-            const escapedSkill = globalThis.CSS?.escape ? globalThis.CSS.escape(skillKey) : skillKey;
-            const extraUsesSection = html.querySelector(`.skill-extra-uses[data-skill="${escapedSkill}"]`);
-            if (extraUsesSection) extraUsesSection.style.display = nextFavorite ? '' : 'none';
-          }
-        }
-        button.setAttribute('aria-pressed', nextFavorite ? 'true' : 'false');
-
         const plan = {
           update: {
-            [`system.skills.${skillKey}.favorite`]: nextFavorite
+            [`system.skills.${skillKey}.favorite`]: !currentFavorite
           }
         };
         await ActorEngine.apply(this.actor, plan);
-      }
+}
     }, { signal, capture: false });
 
     // DELEGATED: Unified Skill Roll Entry Point
@@ -5387,12 +5311,7 @@ const forcePoints = [];
     }
 
     const equippedWeapons = (actor?.items ?? []).filter(item =>
-      ['weapon', 'lightsaber'].includes(item?.type) && (
-        item.system?.equipped === true
-        || Number(item.system?.equipped) === 1
-        || ['true', '1', 'yes', 'equipped', 'on'].includes(String(item.system?.equipped || '').toLowerCase())
-        || item.flags?.swse?.autoEquipped === true
-      )
+      item.type === 'weapon' && item.system?.equipped === true
     );
 
     return equippedWeapons.map(weapon => ({

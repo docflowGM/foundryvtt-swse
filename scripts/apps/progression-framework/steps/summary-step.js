@@ -587,7 +587,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     };
 
     pushStat('HP', beforeHP, afterHP, { pending: this._hpGainState.needsResolution && !this._hpGainState.resolved });
-    pushStat('BaB', beforeBAB, afterBAB);
+    pushStat('BAB', beforeBAB, afterBAB);
     pushStat('Reflex Total', beforeReflex, afterReflex);
     pushStat('Fortitude Total', beforeFort, afterFort);
     pushStat('Will Total', beforeWill, afterWill);
@@ -772,14 +772,21 @@ export class SummaryStep extends ProgressionStepPlugin {
       error: null,
       validationErrors,
       warnings,
+      validationWarnings: warnings,
       planValid: validation.isValid !== false,
       actorUpdateCount: Object.keys(setPatches).length,
       itemGrantCount: addItems.length,
       itemUpdateCount: updateItems.length,
       itemDeleteCount: deleteItems.length,
       patchRows,
+      setFields: patchRows,
       itemGrantRows,
+      addedItems: itemGrantRows,
       itemUpdateRows,
+      updatedItems: itemUpdateRows.map(row => ({
+        ...row,
+        label: `${row.id} (${row.changes} change${row.changes === 1 ? '' : 's'})`,
+      })),
     };
   }
 
@@ -792,7 +799,7 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   _getCurrentBAB(actor) {
-    return Number(actor?.system?.derived?.bab ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0);
+    return Number(actor?.system?.derived?.bab ?? actor?.system?.bab?.total ?? actor?.system?.bab ?? actor?.system?.baseAttackBonus ?? 0);
   }
 
   _getCurrentGrapple(actor) {
@@ -842,19 +849,40 @@ export class SummaryStep extends ProgressionStepPlugin {
 
   async _computeProjectedBAB(actor, selectedClass) {
     const { calculateTotalBAB } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
+    const clone = globalThis.foundry?.utils?.deepClone || ((value) => JSON.parse(JSON.stringify(value || {})));
     const synthetic = {
-      items: actor.items.map(i => ({ type: i.type, name: i.name, system: foundry.utils.deepClone(i.system || {}) }))
+      system: clone(actor?.system || {}),
+      items: Array.from(actor?.items || []).map(i => ({ type: i.type, name: i.name, id: i.id, system: clone(i.system || {}) }))
     };
-    const className = selectedClass?.name || selectedClass?.id;
+    const className = selectedClass?.name || selectedClass?.className || selectedClass?.id;
     if (className) {
-      const existing = synthetic.items.find(i => i.type === 'class' && i.name === className);
+      const selectedKey = this._normalizeSummaryKey(className);
+      const existing = synthetic.items.find(i => i.type === 'class' && (this._normalizeSummaryKey(i.name) === selectedKey || this._normalizeSummaryKey(i.system?.classId) === selectedKey));
       if (existing) {
-        existing.system.level = Number(existing.system.level || 1) + 1;
+        existing.system.level = Number(existing.system.level || existing.system.levels || existing.system.rank || 0) + 1;
       } else {
-        synthetic.items.push({ type: 'class', name: className, system: foundry.utils.deepClone(selectedClass?.system || {}) });
+        synthetic.items.push({
+          type: 'class',
+          name: className,
+          system: {
+            ...clone(selectedClass?.system || {}),
+            level: 1,
+            classId: selectedClass?.id || selectedClass?.classId || selectedClass?.sourceId || className,
+          }
+        });
       }
     }
-    return Number(calculateTotalBAB(synthetic) || this._getCurrentBAB(actor));
+    const projected = Number(calculateTotalBAB(synthetic));
+    return Number.isFinite(projected) ? projected : this._getCurrentBAB(actor);
+  }
+
+  _normalizeSummaryKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
   }
 
   async _getMaxDefenseBonuses(classEntries) {
@@ -1153,7 +1181,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     const grapple = bab + strMod;
     return [
       { label: 'HP', value: hp, toneClass: hp > 0 ? 'prog-number-positive' : 'prog-number-zero' },
-      { label: 'BaB', value: `+${bab}`, toneClass: bab > 0 ? 'prog-number-positive' : 'prog-number-zero' },
+      { label: 'BAB', value: `+${bab}`, toneClass: bab > 0 ? 'prog-number-positive' : 'prog-number-zero' },
       { label: 'Reflex', value: reflex, toneClass: 'prog-number-positive' },
       { label: 'Fortitude', value: fortitude, toneClass: 'prog-number-positive' },
       { label: 'Will', value: will, toneClass: 'prog-number-positive' },

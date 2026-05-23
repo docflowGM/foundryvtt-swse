@@ -31,7 +31,7 @@
         <div class="talent-tree-card__backplate" aria-hidden="true"></div>
         <div class="talent-tree-card__scan" aria-hidden="true"></div>
         <div class="talent-tree-card__topline">
-          <span class="talent-tree-card__kicker">{{visualKicker}}</span>
+          <span class="talent-tree-card__kicker">Talent Tree</span>
           {{#if isSuggested}}
           <span class="talent-tree-card__recommendation"><i class="fa-solid fa-star"></i> Suggested</span>
           {{/if}}
@@ -45,23 +45,10 @@
           </div>
         </div>
 
-        <div class="talent-tree-card__telemetry" aria-label="Talent tree telemetry">
-          <span class="talent-tree-card__readout">
-            <strong>{{nodeCount}}</strong>
-            <em>nodes</em>
-          </span>
-          <span class="talent-tree-card__readout">
-            <strong>{{investmentCount}}</strong>
-            <em>owned</em>
-          </span>
-          <span class="talent-tree-card__readout">
-            <strong>{{slotTypeLabel}}</strong>
-            <em>access</em>
-          </span>
-          <span class="talent-tree-card__readout talent-tree-card__readout--legal">
-            <strong>{{#if legalChoiceCount}}{{legalChoiceCount}}{{else}}0{{/if}}</strong>
-            <em>legal</em>
-          </span>
+        <div class="talent-tree-card__quickline" aria-label="Talent tree quick summary">
+          <span><strong>{{nodeCount}}</strong> talents</span>
+          {{#if investmentCount}}<span><strong>{{investmentCount}}</strong> known/pending</span>{{/if}}
+          {{#if recommendationTalentName}}<span>Mentor lead: {{recommendationTalentName}}</span>{{/if}}
         </div>
 
         {{#if recommendationReason}}
@@ -75,18 +62,6 @@
           {{/if}}
         </div>
         {{/if}}
-
-        <div class="talent-tree-card__meta">
-          <span class="talent-tree-badge talent-tree-badge--role">
-            <i class="fa-solid fa-fingerprint"></i> {{visualRole}}
-          </span>
-          <span class="talent-tree-badge talent-tree-badge--readiness">
-            <i class="fa-solid fa-circle-nodes"></i> {{readinessLabel}}
-          </span>
-          <span class="talent-tree-badge talent-tree-badge--theme">
-            <i class="fa-solid fa-wave-square"></i> {{visualSignal}}
-          </span>
-        </div>
 
         <button type="button" class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
           <span>Explore Holomap</span>

@@ -88,6 +88,114 @@
           "greeting": "They argue if you were real.",
           "confirmation": "That’s success."
         }
+      },
+      "workshop": {
+        "default": [
+          "Workbench is hot, tools are clean, and nobody's yellin' yet. Pick a piece and we'll make it earn its keep.",
+          "You bring me the kit, I bring the bad ideas that somehow pass inspection. Let's see what we're fixin'."
+        ],
+        "empty": [
+          "Can't tune air, genius. Get a weapon, armor plate, or a piece of gear in your inventory, then we'll make somethin' useful outta it.",
+          "Bench is ready, shelves are empty. Real tragic. Bring me hardware and I'll stop starin' at you like this."
+        ],
+        "weapons": {
+          "default": [
+            "Weapon on the bench. Good. First rule: don't bolt on every shiny part just because it winks at ya. Slots are rent, and rent is expensive.",
+            "A weapon's gotta match the hand holdin' it. We tune the frame, check the balance, then make sure it doesn't betray you when things get loud."
+          ],
+          "blaster": [
+            "Blaster frame, huh? Bolt package, heat bleed, trigger feel. Keep it tight or you'll cook the shot before it leaves the barrel.",
+            "Blasters are all attitude until the power cell hiccups. We tune the guts first, style second. Usually."
+          ],
+          "pistol": [
+            "Pistol work is all draw, snap, and not snaggin' on your coat. Little frame, little tolerance for dumb choices.",
+            "Compact blaster, close problems. We keep it quick, clean, and rude."
+          ],
+          "rifle": [
+            "Rifle's a patient weapon. Optics, stock, barrel harmonics—yeah, I know big words. Don't look so surprised.",
+            "Long gun on the table. Give it stability and it gives you answers from way over there."
+          ],
+          "carbine": [
+            "Carbine wants to do two jobs and complain about neither. We keep it light enough to move and mean enough to matter.",
+            "Short barrel, fast corners. Don't overbuild it or it'll handle like a drunk bantha."
+          ],
+          "heavy": [
+            "Heavy weapon. Subtle as a rancor in a lift. Reinforce the frame before you ask it to make thunder.",
+            "Big hardware means big recoil, big heat, big bills. I love it already."
+          ],
+          "melee": [
+            "Melee work is balance and grip. If your wrist hates you after one swing, the weapon's tellin' on us.",
+            "Edge, haft, weight, follow-through. Close-combat gear rewards restraint, which is annoyin' but true."
+          ],
+          "vibro": [
+            "Vibroblade on the slab. Edge frequency's the song; grip and balance are the dance. Don't make either one ugly.",
+            "Vibro work is delicate until it ain't. Tune the emitter wrong and the blade screams louder than the target."
+          ],
+          "grenade": [
+            "Explosives are not a personality, but sure, let's pretend. Fuse discipline, casing integrity, then we keep our eyebrows.",
+            "Thrown ordnance? Keep it reliable. If it gets clever after it leaves your hand, that's how stories end."
+          ]
+        },
+        "armor": {
+          "default": [
+            "Armor's a deal with your future bruises. Plate here, flex there, don't seal the joints like you're tryin' to become furniture.",
+            "Armor ain't just protection. It's heat, weight, noise, and whether you can still climb a ladder without beggin' for mercy."
+          ],
+          "light": [
+            "Light armor's gotta move like clothing and lie like armor. Thin plates, smart padding, no drama.",
+            "Light kit means you trust your feet. Fine by me. We keep the protection where the pain likes to land."
+          ],
+          "medium": [
+            "Medium armor's the compromise nobody admits they love. Enough plate to matter, enough flex to keep you useful.",
+            "Medium kit needs clean joint work. Otherwise you get protected from blaster fire and defeated by stairs."
+          ],
+          "heavy": [
+            "Heavy armor walks into a room before you do. Make the seals strong, vents clean, and the weight worth carryin'.",
+            "Heavy plate is a promise: you're gonna get hit and keep movin'. Let's make sure the armor keeps its end."
+          ],
+          "powered": [
+            "Powered armor? Now we're talkin'. Servos, seals, power draw. Treat it like a machine or it'll treat you like cargo.",
+            "Exosystems need respect. One lazy calibration and suddenly your suit thinks kneecaps bend sideways."
+          ],
+          "bodysuit": [
+            "Bodysuit work is all comfort until it saves your hide. Stitch the layers right and nobody knows why you're still standin'.",
+            "Soft armor, sneaky armor. Keep the seams quiet and the fit mean."
+          ]
+        },
+        "gear": {
+          "default": [
+            "Gear is where clever people become problems. Pick the mod that solves the job, not the one that makes the bench look fancy.",
+            "Utility kit, my favorite kind of trouble. Small changes, big consequences, and somehow always missing one screw."
+          ],
+          "tool": [
+            "Tools should feel like an extra hand, not a committee meeting. We tune access, grip, and not droppin' it into a reactor shaft.",
+            "Tool kit on the bench. Make it reliable first. Fancy comes after it stops embarrassin' you."
+          ],
+          "medical": [
+            "Medical gear gets no jokes from me. Fast access, clean storage, clear readouts. Panic hates good layout.",
+            "Med kit work is about seconds. If you gotta search for the right vial, the kit already failed."
+          ],
+          "stealth": [
+            "Stealth gear should disappear before you do. Quiet fasteners, dull finish, nothing janglin' like a tourist.",
+            "Sneaky kit, finally. We cut shine, cut noise, and cut the odds of you makin' me deny I know you."
+          ],
+          "communications": [
+            "Comms gear needs range, clarity, and fewer mystery squeals. If it sounds haunted, I'm billing extra.",
+            "Signal kit on the slab. Boost it wrong and every security tech in three sectors hears you breathe."
+          ],
+          "sensor": [
+            "Sensor package? Good. Eyes first, assumptions second. Calibrate it right and it catches lies before you do.",
+            "Scanners love clean power and hate impatience. Lucky for them, I got one of those two things."
+          ],
+          "survival": [
+            "Survival gear's gotta work when everything else is on fire, frozen, flooded, or actively tryin' to eat you.",
+            "Field kit rule: if it needs perfect conditions, it's decoration. We build for ugly."
+          ],
+          "computer": [
+            "Computer gear, slicer toys, little blinking headaches. Secure the ports, harden the casing, don't brag in the access logs.",
+            "Data kit on the table. Fast is nice. Quiet is better. Not getting traced is what we call art."
+          ]
+        }
       }
     },
     "guidance": {

@@ -63,11 +63,8 @@
                         data-skill="{{skill.key}}"
                         aria-expanded="false"
                         title="Expand extra uses">
-                  {{#if (gte skill.extraUsesCount 3)}}
-                    <span class="expand-count">{{skill.extraUsesCount}}</span>
-                  {{else}}
-                    ▶
-                  {{/if}}
+                  <span class="expand-chevron" aria-hidden="true">▾</span>
+                  <span class="expand-count">{{skill.extraUsesCount}}</span>
                 </button>
               {{/if}}
 

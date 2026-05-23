@@ -220,16 +220,38 @@ export class UpgradeService {
            record.document?.flags?.['foundryvtt-swse']?.isLightsaber === true;
   }
 
+  static #normalizedType(record) {
+    const candidates = [
+      record?.system?.category,
+      record?.system?.itemType,
+      record?.system?.equipmentType,
+      record?.system?.weaponType,
+      record?.system?.weaponSubtype,
+      record?.system?.armorType,
+      record?.system?.subtype,
+      record?.system?.type,
+      record?.rawType
+    ];
+    for (const value of candidates) {
+      const key = String(value ?? '').trim().toLowerCase().replace(/[_-]+/g, ' ');
+      if (!key) continue;
+      if (['blaster', 'weapon', 'weapons', 'melee', 'melee weapon', 'ranged', 'ranged weapon', 'pistol', 'rifle', 'heavy weapon'].includes(key)) return 'weapon';
+      if (['armor', 'armour', 'bodysuit', 'body suit'].includes(key)) return 'armor';
+      if (['gear', 'equipment', 'equip', 'tool', 'tools', 'tech', 'utility', 'item'].includes(key)) return 'gear';
+    }
+    return '';
+  }
+
   static isWeapon(record) {
-    return record.rawType === 'weapon' && !this.isLightsaber(record);
+    return this.#normalizedType(record) === 'weapon' && !this.isLightsaber(record);
   }
 
   static isArmor(record) {
-    return record.rawType === 'armor';
+    return this.#normalizedType(record) === 'armor';
   }
 
   static isGear(record) {
-    return record.rawType === 'equipment';
+    return this.#normalizedType(record) === 'gear';
   }
 
   static isDroid(record) {

@@ -429,10 +429,38 @@ export class FeatChoiceResolver {
         editable: !locked
       });
     };
+    const coerceWeaponGroupGrant = (entry) => {
+      const raw = typeof entry === 'string'
+        ? entry
+        : entry?.group || entry?.weaponGroup || entry?.proficiency || entry?.name || entry?.label || entry?.value || '';
+      const text = String(raw || '').trim();
+      if (!text) return '';
+      const parenthetical = text.match(/weapon\s+proficiency\s*\(([^)]+)\)/i)?.[1];
+      const withoutPrefix = (parenthetical || text)
+        .replace(/^proficien(?:t|cy)\s+(?:with|in)\s+/i, '')
+        .replace(/^weapon\s+proficiency\s*[-:]?\s*/i, '')
+        .trim();
+      const aliasKey = stableKey(withoutPrefix);
+      const aliases = {
+        simple_weapons: 'simple',
+        advanced_melee_weapons: 'advanced-melee',
+        heavy_weapons: 'heavy-weapons',
+      };
+      return aliases[aliasKey] || withoutPrefix;
+    };
 
     for (const value of asArray(actor?.system?.weaponProficiencies)) addGroup(value, 'system.weaponProficiencies', true);
     for (const value of asArray(actor?._unlockGrants?.proficiencies?.weapon)) addGroup(value, '_unlockGrants.weapon', true);
     for (const value of asArray(actor?._unlockGrants?.proficiencies?.exotic)) addExotic(value, '_unlockGrants.exotic', true);
+
+    for (const entry of asArray(pending?.grantedProficiencies)) {
+      const type = String(entry?.type || entry?.kind || entry?.proficiencyType || '').toLowerCase();
+      const label = entry?.weapon || entry?.group || entry?.name || entry?.label || entry?.value || entry;
+      const text = String(label || '').toLowerCase();
+      if (!label || type === 'armor' || /armor proficiency|light armor|medium armor|heavy armor/.test(text)) continue;
+      if (type === 'exotic' || entry?.branch === 'exotic' || entry?.weapon) addExotic(entry, 'pending.grantedProficiencies', true);
+      else addGroup(coerceWeaponGroupGrant(entry), 'pending.grantedProficiencies', true);
+    }
 
     for (const item of this.getAvailableFeatItems(actor, pending)) {
       const meta = this.getChoiceMeta(item);

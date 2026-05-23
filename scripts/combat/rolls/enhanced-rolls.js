@@ -1271,7 +1271,9 @@ export class SWSERoll {
    * @returns {Promise<Object|null>} Ability roll result
    */
   static async rollAbility(actor, abilityKey, options = {}) {
-    const ability = actor?.system?.abilities?.[abilityKey];
+    const ability = actor?.system?.derived?.attributes?.[abilityKey]
+      ?? actor?.system?.attributes?.[abilityKey]
+      ?? actor?.system?.abilities?.[abilityKey];
     if (!actor || !ability) {
       ui.notifications.warn(`Ability ${abilityKey} not found.`);
       return null;
@@ -1288,7 +1290,11 @@ export class SWSERoll {
     const abilityLabel = abilityLabels[abilityKey] || abilityKey.toUpperCase();
 
     try {
-      const abilityMod = Number(ability.mod ?? 0);
+      const abilityMod = Number.isFinite(Number(ability.mod))
+        ? Number(ability.mod)
+        : Number.isFinite(Number(actor?.system?.derived?.attributes?.[abilityKey]?.mod))
+          ? Number(actor.system.derived.attributes[abilityKey].mod)
+          : Math.floor((Number(ability.total ?? ability.value ?? ability.base ?? 10) - 10) / 2);
       const rollResult = await RollCore.execute({
         actor,
         domain: `ability.${abilityKey}`,

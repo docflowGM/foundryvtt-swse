@@ -7518,3 +7518,168 @@ form[id^="SWSEV2CharacterSheet"] .extra-use-time {
   color: var(--swse-concept-text, #f2fbff) !important;
   font-size: 1rem !important;
 }
+
+
+/* ─── Shell Chrome Usability Pass: Larger controls + engraved home ──────── */
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware-rail,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+  top: 5px !important;
+  right: 14px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  gap: 9px !important;
+  padding: 3px 8px !important;
+  border-radius: 8px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+  width: 28px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  border-radius: 7px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  touch-action: manipulation !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control--close {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  padding-bottom: 2px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control--expand {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control:hover,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control:focus-visible,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home:hover,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home:focus-visible {
+  outline: none !important;
+  border-color: var(--vapor-cyan, #00f0ff) !important;
+  box-shadow:
+    inset 0 0 12px rgba(0, 240, 255, 0.14),
+    0 0 14px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 44%, transparent) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home {
+  position: absolute !important;
+  z-index: 430 !important;
+  left: 50% !important;
+  bottom: 5px !important;
+  transform: translateX(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-width: 92px !important;
+  height: 26px !important;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(0, 240, 255, 0.16) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.025), rgba(0,0,0,0.34)),
+    rgba(3, 8, 14, 0.74) !important;
+  color: color-mix(in srgb, var(--ink, #dff8ff) 76%, black) !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.95) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.72),
+    inset 0 -1px 0 rgba(255,255,255,0.04),
+    0 1px 0 rgba(255,255,255,0.025) !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home__glyph {
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  opacity: 0.76 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+  right: 62px !important;
+  max-width: 190px !important;
+}
+
+
+.swse-concept-expand-toggle .expand-chevron {
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1;
+  transform: rotate(-90deg);
+  transition: transform 120ms ease;
+}
+
+.swse-concept-expand-toggle[aria-expanded="true"] .expand-chevron {
+  transform: rotate(0deg);
+}
+
+.swse-concept-expand-toggle .expand-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25em;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.swse-concept-expand-toggle {
+  gap: 2px;
+}
+
+
+.swse-concept-stat-card--force-points {
+  gap: 6px;
+}
+
+.swse-concept-stat-card__actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.swse-concept-mini-btn {
+  border: 1px solid rgba(111, 215, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(5, 11, 18, 0.66);
+  color: var(--swse-concept-text);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.swse-concept-mini-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+
+.swse-concept-action-reference-note {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(111, 215, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(5, 11, 18, 0.46);
+  color: var(--swse-concept-text-dim);
+}
+
+.swse-concept-action-reference-note strong {
+  color: var(--swse-concept-text);
+}

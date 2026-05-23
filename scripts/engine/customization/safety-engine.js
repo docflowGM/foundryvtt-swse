@@ -28,6 +28,52 @@ const SAFE_DEFAULTS = {
   strippedAreaTypes: ['damage', 'range', 'design', 'stun_setting', 'autofire', 'defensive_material', 'joint_protection']
 };
 
+const CATEGORY_ALIASES = Object.freeze({
+  weapons: 'weapon',
+  melee: 'weapon',
+  'melee weapon': 'weapon',
+  ranged: 'weapon',
+  'ranged weapon': 'weapon',
+  pistol: 'weapon',
+  rifle: 'weapon',
+  'heavy weapon': 'weapon',
+  armour: 'armor',
+  bodysuit: 'armor',
+  'body suit': 'armor',
+  equipment: 'gear',
+  equip: 'gear',
+  tool: 'gear',
+  tools: 'gear',
+  tech: 'gear',
+  utility: 'gear',
+  item: 'gear'
+});
+
+function normalizeCategory(category) {
+  const key = String(category ?? '').trim().toLowerCase().replace(/[_-]+/g, ' ');
+  if (!key) return '';
+  return CATEGORY_ALIASES[key] || key;
+}
+
+function getItemCategory(item) {
+  const rawCandidates = [
+    item?.system?.category,
+    item?.system?.itemType,
+    item?.system?.equipmentType,
+    item?.system?.weaponType,
+    item?.system?.weaponSubtype,
+    item?.system?.armorType,
+    item?.system?.subtype,
+    item?.system?.type,
+    item?.type
+  ];
+  for (const raw of rawCandidates) {
+    const normalized = normalizeCategory(raw);
+    if (normalized) return normalized;
+  }
+  return '';
+}
+
 export class SafetyEngine {
   /**
    * Normalize customization state from potentially malformed item data
@@ -105,9 +151,9 @@ export class SafetyEngine {
     let blockingReason = null;
 
     // Check if this item's category is supported
-    const category = item.type || item.system?.category;
+    const category = getItemCategory(item);
     if (!SAFE_DEFAULTS.supportedCategories.includes(category)) {
-      blockingReason = `Category '${category}' is not supported for this customization system`;
+      blockingReason = `Category '${category || 'unknown'}' is not supported for this customization system`;
       return { success: false, warnings, validationErrors: [blockingReason], blockingReason };
     }
 
@@ -173,10 +219,9 @@ export class SafetyEngine {
    * Check if a category is supported for first-wave customization
    */
   static isCategorySupported(categoryOrItem) {
-    let category = categoryOrItem;
-    if (categoryOrItem && typeof categoryOrItem === 'object') {
-      category = categoryOrItem.type || categoryOrItem.system?.category;
-    }
+    const category = categoryOrItem && typeof categoryOrItem === 'object'
+      ? getItemCategory(categoryOrItem)
+      : normalizeCategory(categoryOrItem);
     return SAFE_DEFAULTS.supportedCategories.includes(category);
   }
 
@@ -184,14 +229,14 @@ export class SafetyEngine {
    * Get category validation result with message
    */
   static validateCategory(item) {
-    const category = item?.type || item?.system?.category;
+    const category = getItemCategory(item);
     if (!category) {
       return { allowed: false, reason: 'unknown_category', blockingReason: 'Item category is not defined' };
     }
     if (!this.isCategorySupported(category)) {
       return { allowed: false, reason: `unsupported_category_${category}`, blockingReason: `Category '${category}' is not supported for customization` };
     }
-    return { allowed: true };
+    return { allowed: true, category };
   }
 
   /**

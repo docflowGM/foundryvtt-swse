@@ -27,7 +27,7 @@ import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system
 
 const CATEGORY_LABELS = {
   event: 'Event',
-  occupation: 'Occupation',
+  occupation: 'Profession',
   planet: 'Planet',
 };
 
@@ -566,12 +566,35 @@ getUtilityBarConfig() {
         persist: true
       });
 
-      // Store top suggestions
-      this._suggestedBackgrounds = (suggested || []).slice(0, 3);
+      // Store one best recommendation per background family so the mentor
+      // does not over-weight planetary entries just because there are more of them.
+      this._suggestedBackgrounds = this._selectBestBackgroundSuggestionByCategory(suggested || []);
     } catch (err) {
       console.warn('[BackgroundStep] Suggestion service error:', err);
       this._suggestedBackgrounds = [];
     }
+  }
+
+  _selectBestBackgroundSuggestionByCategory(suggestions = []) {
+    const wantedOrder = ['event', 'occupation', 'planet'];
+    const byCategory = new Map();
+
+    const sorted = SuggestionService.sortBySuggestion?.(suggestions || []) || [...(suggestions || [])];
+    for (const background of sorted) {
+      const category = String(background?.category || background?.system?.category || 'event').toLowerCase();
+      if (!wantedOrder.includes(category)) continue;
+      if (byCategory.has(category)) continue;
+      byCategory.set(category, background);
+    }
+
+    // Fallback per category if the suggestion service returns sparse data.
+    for (const category of wantedOrder) {
+      if (byCategory.has(category)) continue;
+      const fallback = (this._groupedBackgrounds?.[category] || [])[0];
+      if (fallback) byCategory.set(category, fallback);
+    }
+
+    return wantedOrder.map(category => byCategory.get(category)).filter(Boolean);
   }
 
   /**
