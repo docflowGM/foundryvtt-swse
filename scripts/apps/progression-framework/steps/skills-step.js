@@ -813,7 +813,22 @@ renderDetailsPanel(focusedItem) {
       || speciesName === 'near-human'
     ) ? 1 : 0;
 
-    return Math.max(1, classTrainedSkills + intMod + humanBonus);
+    // Phase 10A: Detect bonus-trained-skill-choice from species ledger for non-Human species.
+    // Species such as Altiri, Vultan, Republic Clone, and Mandalorian (Human Variant) grant
+    // one extra player-chosen trained skill via a bonus-trained-skill trait (frequency='choice').
+    // Human is already covered by humanBonus above; avoid double-counting.
+    const pendingSpeciesContext = shell?.progressionSession?.getSelection?.('pendingSpeciesContext')
+      || speciesSelection?.pendingContext
+      || shell?.progressionSession?.pendingState?.species
+      || null;
+    const hasBonusTrainedSkillChoiceTrait = humanBonus === 0 && (pendingSpeciesContext?.traits || []).some(
+      t => t.classification === 'grant'
+        && t.source === 'bonusTrainedSkill'
+        && (t.grants || []).some(g => g.grantType === 'trainedSkill' && g.frequency === 'choice')
+    );
+    const speciesBonusSkill = hasBonusTrainedSkillChoiceTrait ? 1 : 0;
+
+    return Math.max(1, classTrainedSkills + intMod + humanBonus + speciesBonusSkill);
   }
 
   _countActorTrainedSkills(character) {

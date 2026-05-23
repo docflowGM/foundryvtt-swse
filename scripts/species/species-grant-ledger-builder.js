@@ -696,6 +696,22 @@ export class SpeciesGrantLedgerBuilder {
           classified.classification = 'identity';
         } else if (rule.type === 'reroll') {
           classified.classification = 'reroll';
+        } else if (rule.type === 'featGrant') {
+          // featGrant rules are handled via the entitlement system (featsRequired)
+          // or bonusFeat source grant pipeline. Classify as grant to prevent false
+          // unresolved diagnostic flags. The actual item creation is handled
+          // by _compileSpeciesBonusFeatItems (progression-finalizer).
+          classified.classification = 'grant';
+          classified.source = 'bonusFeat';
+          if (rule.featId && rule.featId !== 'bonus-feat') {
+            classified.grants.push({
+              grantType: 'feat',
+              target: rule.featId,
+              frequency: 'always',
+              condition: null,
+              requirements: [],
+            });
+          }
         }
       }
     }
@@ -715,6 +731,156 @@ export class SpeciesGrantLedgerBuilder {
     // Detect conditional traits by id convention
     if (trait.id && trait.id.includes('reroll')) {
       classified.classification = 'reroll';
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 10A: Species bonus feat / bonus trained skill / bonus class skill
+    // classification. These traits have well-known canonical IDs in the JSON
+    // (bonus-feat, bonus-trained-skill, bonus-class-skill, bonus-class-skills,
+    // conditional-bonus-feat) but no rules[] array, so the rule-based classifier
+    // above cannot handle them. Narrow pattern matching on id + description is
+    // used to classify them as 'grant' with structured grants[] entries.
+    //
+    // Permitted here:
+    //   bonus-feat: specific (always) or generic choice (deferred to player)
+    //   bonus-trained-skill: specific (always) or generic choice (deferred)
+    //   bonus-class-skill/skills: specific class skill override (always)
+    //   conditional-bonus-feat: conditional on a trained skill (structured req)
+    //
+    // Not permitted: new UI, auto-picking player choices, broad freeform parse.
+    // -------------------------------------------------------------------------
+    if (classified.classification === 'unresolved' && trait.id) {
+      const traitId = String(trait.id);
+      const desc = trait.description || '';
+
+      if (traitId === 'bonus-feat') {
+        classified.classification = 'grant';
+        classified.source = 'bonusFeat';
+        // Try to extract a specific feat name. Known narrow patterns:
+        //   "gain[s] [the] FEAT [as a bonus Feat]"
+        //   "receive[s] [the] FEAT [as a bonus Feat / at 1st level]"
+        // Exclude generic phrases: "one bonus Feat", "a bonus Feat"
+        const specificFeatMatch = desc.match(
+          /(?:gain(?:s)?|receive(?:s)?)\s+(?:the\s+)?([A-Z][A-Za-z (),']+?)\s+(?:feat|as a bonus)/i
+        );
+        const featName = specificFeatMatch ? specificFeatMatch[1].trim() : null;
+        const isGenericChoice = !featName
+          || /^(?:one\s+bonus|a\s+bonus)/i.test(featName)
+          || featName.toLowerCase() === 'one bonus';
+        // Multi-choice case: "can take either X or Y" — defer, no auto-pick
+        const isMultiChoice = /can take either/i.test(desc);
+
+        if (!isGenericChoice && !isMultiChoice && featName) {
+          classified.grants.push({
+            grantType: 'feat',
+            target: featName,
+            frequency: 'always',
+            condition: null,
+            requirements: [],
+          });
+        } else {
+          // Generic choice: record a placeholder — player must pick.
+          // frequency 'choice' signals the progression UI to offer a feat picker.
+          classified.grants.push({
+            grantType: 'feat',
+            target: null,
+            frequency: 'choice',
+            condition: isMultiChoice ? desc : null,
+            requirements: [],
+          });
+        }
+      } else if (traitId === 'bonus-trained-skill') {
+        classified.classification = 'grant';
+        classified.source = 'bonusTrainedSkill';
+        // Try to extract a specific skill name. Known narrow pattern:
+        //   "gain[s] SKILL as a [bonus] Trained Skill[, regardless of their Class]"
+        const specificSkillMatch = desc.match(
+          /gain(?:s)?\s+([A-Z][A-Za-z ()]+?)\s+as a (?:bonus )?[Tt]rained [Ss]kill/
+        );
+        const skillName = specificSkillMatch ? specificSkillMatch[1].trim() : null;
+        if (skillName) {
+          classified.grants.push({
+            grantType: 'trainedSkill',
+            target: this._normalizeSkillKey(skillName),
+            targetDisplay: skillName,
+            frequency: 'always',
+            condition: null,
+            requirements: [],
+          });
+        } else {
+          // Generic choice: player picks one trained skill from class skills.
+          classified.grants.push({
+            grantType: 'trainedSkill',
+            target: null,
+            frequency: 'choice',
+            condition: null,
+            requirements: [],
+          });
+        }
+      } else if (traitId === 'bonus-class-skill' || traitId === 'bonus-class-skills') {
+        classified.classification = 'grant';
+        classified.source = 'bonusClassSkill';
+        // Extract specific skill names. Known patterns:
+        //   "X is always a Class Skill for Y"
+        //   "X and Y are always Class Skills for Z"
+        //   "X treats the Y skill as a Class Skill"
+        //   "A Z treats X skills as Class Skills"
+        const skillNames = this._extractClassSkillsFromDescription(desc);
+        for (const skillName of skillNames) {
+          classified.grants.push({
+            grantType: 'classSkill',
+            target: this._normalizeSkillKey(skillName),
+            targetDisplay: skillName,
+            frequency: 'always',
+            condition: null,
+            requirements: [],
+          });
+        }
+        if (skillNames.length === 0) {
+          // Could not parse specific skills — defer for manual review.
+          classified.classification = 'unresolved';
+          classified.source = undefined;
+        }
+      } else if (traitId === 'conditional-bonus-feat') {
+        classified.classification = 'grant';
+        classified.source = 'bonusFeat';
+        // Extract: feat name + conditioning skill.
+        // Primary patterns:
+        //   "with SKILL as a Trained Skill gains FEAT as a bonus Feat"
+        //   "who has SKILL as a Trained Skill gains FEAT"
+        //   "Trained in [the] SKILL [skill] gains FEAT"
+        //   "Trained in [the] SKILL gains FEAT"
+        const condFeatMatch = desc.match(
+          /(?:(?:with|has)\s+([A-Za-z ()]+?)\s+as a [Tt]rained [Ss]kill|[Tt]rained\s+in\s+(?:the\s+)?([A-Za-z ()]+?)(?:\s+[Ss]kill)?)\s+gain[s]?\s+(?:the\s+)?([A-Z][A-Za-z (),']+?)\s+(?:feat|as a bonus)/i
+        );
+        // Alternative: "gains FEAT as a bonus Feat[, provided [prerequisites]]"
+        const altFeatMatch = !condFeatMatch && desc.match(
+          /gain[s]?\s+(?:the\s+)?([A-Z][A-Za-z (),']+?)\s+(?:feat|as a bonus)/i
+        );
+        const condSkillRaw = condFeatMatch
+          ? (condFeatMatch[1] || condFeatMatch[2] || '').trim()
+          : null;
+        const grantedFeat = condFeatMatch
+          ? condFeatMatch[3]?.trim()
+          : altFeatMatch?.[1]?.trim();
+
+        if (grantedFeat) {
+          const requirements = condSkillRaw
+            ? [{ type: 'skillTrained', skill: this._canonicalSkillKeyForCondition(condSkillRaw) }]
+            : [];
+          classified.grants.push({
+            grantType: 'feat',
+            target: grantedFeat,
+            frequency: condSkillRaw ? 'conditional' : 'conditional',
+            condition: desc,
+            requirements,
+          });
+        } else {
+          // Cannot parse the conditional feat — leave as unresolved.
+          classified.classification = 'unresolved';
+          classified.source = undefined;
+        }
+      }
     }
 
     // Text-based fallback: accumulate all passive bonus/penalty entries from description.
@@ -1373,6 +1539,57 @@ export class SpeciesGrantLedgerBuilder {
         }
       }
     }
+  }
+
+  /**
+   * Extract skill names mentioned as class skills from a description string.
+   * Handles patterns like:
+   *   "Stealth and Survival are always Class Skills for X"
+   *   "X treats the Climb skill as a Class Skill"
+   *   "Gather Information is always a Class Skill for Y"
+   *   "Mechanics is always a Class Skill for Z"
+   * @private
+   */
+  static _extractClassSkillsFromDescription(desc) {
+    if (!desc) return [];
+    const found = new Set();
+
+    // Pattern 1: "SKILL [and SKILL] are always Class Skills"
+    const listPattern = /([A-Z][A-Za-z ()]+?)(?:\s+and\s+([A-Za-z ()]+?))?\s+are always [Cc]lass [Ss]kills/gi;
+    for (const m of desc.matchAll(listPattern)) {
+      if (m[1]) found.add(m[1].trim());
+      if (m[2]) found.add(m[2].trim());
+    }
+
+    // Pattern 2: "SKILL is always a Class Skill"
+    const singlePattern = /([A-Z][A-Za-z ()]+?)\s+is always (?:a |considered a )[Cc]lass [Ss]kill/gi;
+    for (const m of desc.matchAll(singlePattern)) {
+      found.add(m[1].trim());
+    }
+
+    // Pattern 3: "treats the SKILL [and SKILL] skill[s] as [a] Class Skill[s]"
+    const treatsPattern = /treats\s+the\s+([A-Za-z ()]+?)(?:\s+and\s+([A-Za-z ()]+?))?\s+skills?\s+as (?:a )?[Cc]lass [Ss]kills?/gi;
+    for (const m of desc.matchAll(treatsPattern)) {
+      if (m[1]) found.add(m[1].trim());
+      if (m[2]) found.add(m[2].trim());
+    }
+
+    // Filter out noise
+    const filtered = Array.from(found).filter(name => name.length > 2 && !/^(the|a|an|its|always|class|for)$/i.test(name));
+    return filtered;
+  }
+
+  /**
+   * Map a raw skill name from a conditional-bonus-feat description to a canonical skill key.
+   * Uses the existing _normalizeSkillKey with fallback to simplified matching.
+   * @private
+   */
+  static _canonicalSkillKeyForCondition(rawSkillName) {
+    if (!rawSkillName) return rawSkillName;
+    // Strip parenthetical sub-skill for conditions when the full canonical key is known
+    const withParen = rawSkillName.toLowerCase().trim();
+    const normalized = this._normalizeSkillKey(withParen);
+    return normalized || this._slugify(withParen);
   }
 
   /**
