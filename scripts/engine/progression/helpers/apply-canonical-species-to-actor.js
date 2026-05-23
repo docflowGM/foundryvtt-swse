@@ -393,22 +393,22 @@ function _materializePassiveBonuses(actor, pendingContext) {
   const traits = pendingContext.traits || [];
   const passiveBonuses = {};
 
-  // Extract passive bonuses from trait classifications
+  // Extract passive bonuses from trait classifications.
+  // trait.passive is an array of bonus entries (one trait may grant multiple bonuses).
   for (const trait of traits) {
-    if (trait.classification === 'bonus' && trait.passive) {
-      const passive = trait.passive;
-      const bonusKey = `${passive.target}`;
-
-      if (!passiveBonuses[bonusKey]) {
-        passiveBonuses[bonusKey] = [];
+    if (trait.classification === 'bonus' && Array.isArray(trait.passive)) {
+      for (const passive of trait.passive) {
+        const bonusKey = `${passive.target}`;
+        if (!passiveBonuses[bonusKey]) {
+          passiveBonuses[bonusKey] = [];
+        }
+        passiveBonuses[bonusKey].push({
+          value: passive.value,
+          type: passive.bonusType,
+          trait: trait.name,
+          conditions: passive.conditions,
+        });
       }
-
-      passiveBonuses[bonusKey].push({
-        value: passive.value,
-        type: passive.bonusType,
-        trait: trait.name,
-        conditions: passive.conditions,
-      });
     }
   }
 

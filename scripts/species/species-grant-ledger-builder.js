@@ -584,19 +584,33 @@ export class SpeciesGrantLedgerBuilder {
     }
 
     // From canonical trait blocks, when available from the sanitized species pack/registry.
+    // Route through _classifyTrait (not _classifySpecial) so text-based fallback detection
+    // for skill bonuses, natural armor, and rerolls applies to structured canonicalTrait objects.
+    // Guard: skip entries already present from structuralTraits/conditionalTraits to prevent
+    // double-counting for species (e.g. Barabel, Verpine, Bothan) where both arrays are identical.
     const canonicalTraits = Array.isArray(system.canonicalTraits)
       ? system.canonicalTraits
       : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
+    const existingTraitIds = new Set(ledger.traits.map(t => t.id));
+    const existingTraitNames = new Set(ledger.traits.map(t => t.name?.toLowerCase()).filter(Boolean));
     for (const canonicalTrait of canonicalTraits) {
       if (!canonicalTrait?.name) continue;
-      const trait = this._classifySpecial(`${canonicalTrait.name}: ${canonicalTrait.description || ''}`);
-      if (trait) {
-        trait.id = canonicalTrait.id || trait.id;
-        trait.name = canonicalTrait.name;
-        trait.description = canonicalTrait.description || trait.description;
-        ledger.traits.push(trait);
-      }
+      const candidateId = canonicalTrait.id || this._slugify(canonicalTrait.name);
+      if (existingTraitIds.has(candidateId) || existingTraitNames.has(canonicalTrait.name.toLowerCase())) continue;
+      const trait = this._classifyTrait(canonicalTrait, 'json');
+      if (trait) ledger.traits.push(trait);
     }
+
+    // Final deduplication: some species JSON files list the same trait in multiple
+    // source arrays (e.g. Duros Expert Pilot in both structuralTraits and conditionalTraits).
+    // Deduplicate by id, keeping the first occurrence.
+    const seenIds = new Set();
+    ledger.traits = ledger.traits.filter(t => {
+      if (!t?.id) return true;
+      if (seenIds.has(t.id)) return false;
+      seenIds.add(t.id);
+      return true;
+    });
 
     this._populateRuleFlags(ledger, doc);
   }
@@ -698,9 +712,101 @@ export class SpeciesGrantLedgerBuilder {
       }
     }
 
-    // Detect conditional traits
+    // Detect conditional traits by id convention
     if (trait.id && trait.id.includes('reroll')) {
       classified.classification = 'reroll';
+    }
+
+    // Text-based fallback: accumulate all passive bonus/penalty entries from description.
+    // Only fires for traits that remain 'unresolved' after rule/id checks above.
+    // Runs ALL pattern extractors (not early-exit) so one trait can yield multiple passive[].
+    // Example: Aleena Small Size grants both a Stealth skill bonus AND a Reflex defense bonus.
+    if (classified.classification === 'unresolved' && trait.description) {
+      const desc = trait.description;
+      let foundAny = false;
+
+      // 1. Skill bonus: "+N species bonus on/to SKILL checks"
+      //    Uses matchAll so a single description can contribute multiple skill bonuses.
+      for (const m of desc.matchAll(/([+-]\d+)\s+species\s+bonus\s+(?:on|to)\s+([\w\s]+?)\s+checks?/gi)) {
+        classified.passive.push({
+          targetType: 'skill',
+          target: this._normalizeSkillKey(m[2].trim()),
+          value: parseInt(m[1], 10),
+          bonusType: 'species',
+        });
+        foundAny = true;
+      }
+
+      // 2. Natural armor defense bonus: "+N Natural Armor bonus to DEFENSE Defense"
+      for (const m of desc.matchAll(/([+-]\d+)\s+natural\s+armor\s+bonus\s+to\s+(\w+)\s+defense/gi)) {
+        classified.passive.push({
+          targetType: 'defense',
+          target: m[2].toLowerCase(),
+          value: parseInt(m[1], 10),
+          bonusType: 'naturalArmor',
+        });
+        foundAny = true;
+      }
+
+      // 3. General species defense bonus/penalty: "+/-N species bonus/penalty to/on [their] DEFENSE Defense"
+      //    Supported targets: Reflex, Fortitude, Will.
+      //    Conditional variants ("against X", "to resist X") are excluded — they cannot be applied
+      //    unconditionally and are left as 'unresolved' for manual review.
+      const defPat = /([+-]\d+)\s+species\s+(?:bonus|penalty)\s+(?:to|on)\s+(?:their\s+)?(reflex|fortitude|will)\s+defense/gi;
+      const addedDefenseTargets = new Set();
+      for (const m of desc.matchAll(defPat)) {
+        const rest = desc.slice(m.index + m[0].length);
+        if (/^\s*(?:against|to\s+resist)/i.test(rest)) continue; // conditional — skip
+        const value = parseInt(m[1], 10);
+        const target = m[2].toLowerCase();
+        if (!addedDefenseTargets.has(target)) {
+          classified.passive.push({ targetType: 'defense', target, value, bonusType: 'species' });
+          addedDefenseTargets.add(target);
+          foundAny = true;
+        }
+        // Shared-value phrase: "+N species bonus to Will Defense and Reflex Defense"
+        // The second (and third) defense target inherits the same value without repeating "+N".
+        const sharedMatch = rest.match(/^\s+and\s+(reflex|fortitude|will)\s+defense/i);
+        if (sharedMatch) {
+          const sharedTarget = sharedMatch[1].toLowerCase();
+          if (!addedDefenseTargets.has(sharedTarget)) {
+            classified.passive.push({ targetType: 'defense', target: sharedTarget, value, bonusType: 'species' });
+            addedDefenseTargets.add(sharedTarget);
+            foundAny = true;
+          }
+        }
+      }
+
+      if (foundAny) {
+        classified.classification = 'bonus';
+      } else {
+        // 4. Reroll: "may/choose to reroll any SKILL check"
+        const rerollMatch = desc.match(/(?:may\s+)?(?:choose\s+to\s+)?reroll\s+any\s+([\w\s]+?)\s+check/i);
+        if (rerollMatch) {
+          classified.classification = 'reroll';
+          classified.rerolls.push({
+            scope: 'skill',
+            target: this._normalizeSkillKey(rerollMatch[1].trim()),
+            frequency: 'atWill',
+            outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+          });
+        }
+      }
+    }
+
+    // Reroll extraction for traits already classified as reroll but with no rerolls populated.
+    // Handles id-convention reroll traits (e.g. "silver-tongue-reroll") that have no rules[].
+    if (classified.classification === 'reroll' && classified.rerolls.length === 0 && trait.description) {
+      const desc = trait.description;
+      const rerollMatch = desc.match(/(?:may\s+)?(?:choose\s+to\s+)?reroll\s+any\s+([\w\s]+?)\s+check/i);
+      if (rerollMatch) {
+        classified.rerolls.push({
+          scope: 'skill',
+          target: this._normalizeSkillKey(rerollMatch[1].trim()),
+          frequency: 'atWill',
+          outcome: /must accept/i.test(desc) ? 'mustAccept' : 'keepBetter',
+        });
+      }
     }
 
     return classified;
@@ -1324,17 +1430,106 @@ export class SpeciesGrantLedgerBuilder {
    * @private
    */
   static _validateLedger(ledger) {
-    // Mark unresolved traits if classification still unresolved
+    const speciesName = ledger.identity?.name || 'Unknown';
+
     for (const trait of ledger.traits) {
       if (trait.classification === 'unresolved') {
+        const mechanical = this._looksMechanical(trait.name, trait.description);
         ledger.unresolved.push({
           id: trait.id,
           name: trait.name,
           description: trait.description,
-          reason: 'Unable to classify trait automatically - needs manual review'
+          reason: mechanical
+            ? 'Trait appears mechanical but was not classified — parser gap or manual wiring needed'
+            : 'Unable to classify trait automatically - needs manual review',
+          mechanicalRisk: mechanical,
+          source: 'unresolved',
         });
+        if (mechanical) {
+          SWSELogger.debug(
+            `[SpeciesLedger] ${speciesName} — "${trait.name}" looks mechanical but is unresolved.`,
+            { id: trait.id, description: trait.description?.slice(0, 120) }
+          );
+        }
+      } else if (trait.classification === 'identity') {
+        // identity = display-only (senses, flavor). Warn if it looks mechanical to catch
+        // misclassified traits that should have been bonus/reroll/grant.
+        const mechanical = this._looksMechanical(trait.name, trait.description);
+        if (mechanical) {
+          ledger.unresolved.push({
+            id: trait.id,
+            name: trait.name,
+            description: trait.description,
+            reason: 'Trait classified as identity but text looks mechanical — may need parser support',
+            mechanicalRisk: true,
+            source: 'identity-mismatch',
+          });
+          SWSELogger.debug(
+            `[SpeciesLedger] ${speciesName} — "${trait.name}" is identity-classified but looks mechanical.`,
+            { id: trait.id, description: trait.description?.slice(0, 120) }
+          );
+        }
       }
     }
+  }
+
+  /**
+   * Return true if a trait name or description contains known mechanical-keyword signals.
+   * Used only for diagnostics — does not affect classification.
+   * @private
+   */
+  static _looksMechanical(name = '', description = '') {
+    const text = `${name} ${description}`.toLowerCase();
+    // Numeric bonus/penalty signal
+    if (/[+-]\d+/.test(text)) return true;
+    // Explicit mechanical keywords
+    const keywords = [
+      'bonus', 'penalty', 'reroll', 'defense', 'checks', 'skill check',
+      'feat', 'trained in', 'immune', 'immunity', 'resistance',
+      'speed', 'damage', 'attack roll', 'threshold', 'proficiency',
+      'force point', 'condition track',
+    ];
+    return keywords.some(kw => text.includes(kw));
+  }
+
+  /**
+   * Build a compact coverage report from a finalized ledger.
+   * Useful for pre-release audits: run for every species and spot gaps.
+   *
+   * Returns:
+   *   {
+   *     species: string,
+   *     bonuses: number,           // passive[] entries across all bonus traits
+   *     rerolls: number,           // rerolls[] entries across all reroll traits
+   *     grants: number,            // grants[] entries across all grant traits
+   *     naturalWeapons: number,
+   *     activatedAbilities: number,
+   *     unresolvedMechanical: [{id, name, reason, source}],
+   *     unresolvedAll: number,
+   *   }
+   */
+  static buildCoverageReport(ledger) {
+    if (!ledger) return null;
+    const bonuses = ledger.traits
+      .filter(t => t.classification === 'bonus')
+      .reduce((n, t) => n + (t.passive?.length || 0), 0);
+    const rerolls = ledger.traits
+      .filter(t => t.classification === 'reroll')
+      .reduce((n, t) => n + (t.rerolls?.length || 0), 0);
+    const grants = ledger.traits
+      .filter(t => t.classification === 'grant')
+      .reduce((n, t) => n + (t.grants?.length || 0), 0);
+    const unresolvedMechanical = (ledger.unresolved || []).filter(u => u.mechanicalRisk);
+    return {
+      species: ledger.identity?.name || 'Unknown',
+      bonuses,
+      rerolls,
+      grants,
+      naturalWeapons: ledger.naturalWeapons?.length || 0,
+      activatedAbilities: ledger.activatedAbilities?.length || 0,
+      unresolvedMechanical,
+      unresolvedAll: ledger.unresolved?.length || 0,
+    };
   }
 }
 
