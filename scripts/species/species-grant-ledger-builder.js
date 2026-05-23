@@ -166,8 +166,11 @@ export class SpeciesGrantLedgerBuilder {
       // Extract and normalize physical traits
       this._populatePhysical(ledger, doc);
 
-      // Extract senses
-      this._populateSenses(ledger, doc);
+      // Extract senses from structured rules and prose fallback
+      this._populateSenses(ledger, doc, supplementaryTraits);
+
+      // Extract environment/breathing from structured rules and prose fallback
+      this._populateEnvironment(ledger, doc, supplementaryTraits);
 
       // Extract ability modifiers
       this._populateAbilities(ledger, doc);
@@ -182,7 +185,7 @@ export class SpeciesGrantLedgerBuilder {
       this._populateNaturalWeapons(ledger, doc);
 
       // Extract activated species abilities as actor-ingestible actions
-      this._populateActivatedSpeciesAbilities(ledger, doc);
+      this._populateActivatedSpeciesAbilities(ledger, doc, supplementaryTraits);
 
       // Extract advisory immunity/resistance metadata for actor/system fields
       this._populateImmunities(ledger, doc);
@@ -254,6 +257,7 @@ export class SpeciesGrantLedgerBuilder {
         vision: [],
         other: []
       },
+      environment: [],
       abilities: {
         str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0
       },
@@ -365,13 +369,47 @@ export class SpeciesGrantLedgerBuilder {
   }
 
   /**
-   * Populate senses
+   * Populate senses from both prose fallback and structured rules
    * @private
    */
-  static _populateSenses(ledger, doc) {
+  static _populateSenses(ledger, doc, supplementaryTraits) {
     const system = doc.system || {};
 
-    // Check special for vision traits
+    // Process structured sense rules from supplementaryTraits
+    if (supplementaryTraits && typeof supplementaryTraits === 'object') {
+      const traits = [
+        ...(supplementaryTraits.structuralTraits || []),
+        ...(supplementaryTraits.conditionalTraits || [])
+      ];
+
+      for (const trait of traits) {
+        const rules = trait.rules || [];
+        for (const rule of rules) {
+          if (rule.type !== 'sense') continue;
+
+          const senseType = rule.senseType;
+          if (!senseType) continue;
+
+          const entry = {
+            type: this._normalizeSenseType(senseType),
+            range: rule.range ?? null,
+            description: rule.description || '',
+            sourceTraitId: trait.id || null,
+            sourceTraitName: trait.name || null
+          };
+
+          // Classify into vision or other
+          const visionTypes = ['darkvision', 'lowlight', 'low-light', 'low light', 'force-sight'];
+          if (visionTypes.includes(senseType.toLowerCase().replace(/[-\s]/g, ''))) {
+            ledger.senses.vision.push(entry);
+          } else {
+            ledger.senses.other.push(entry);
+          }
+        }
+      }
+    }
+
+    // Process prose fallback from doc.system.special
     if (system.special && Array.isArray(system.special)) {
       for (const special of system.special) {
         const text = String(special).toLowerCase();
@@ -406,6 +444,120 @@ export class SpeciesGrantLedgerBuilder {
         }
       }
     }
+
+    // Deduplicate senses by type and range
+    const deduped = {
+      vision: this._dedupeSenses(ledger.senses.vision),
+      other: this._dedupeSenses(ledger.senses.other)
+    };
+    ledger.senses = deduped;
+  }
+
+  /**
+   * Normalize sense type names (senseType field values → canonical types)
+   * @private
+   */
+  static _normalizeSenseType(senseType) {
+    const normalized = String(senseType || '').toLowerCase().replace(/[-\s]/g, '');
+    const map = {
+      'darkvision': 'darkvision',
+      'lowlight': 'lowLight',
+      'lowlightvision': 'lowLight',
+      'blindsense': 'blindsense',
+      'blindsight': 'blindsight',
+      'scent': 'scent',
+      'tremorsense': 'tremorsense',
+      'forcesight': 'force-sight',
+      'forcesensitivity': 'force-sight'
+    };
+    return map[normalized] || senseType;
+  }
+
+  /**
+   * Deduplicate senses by type and range, keeping first occurrence
+   * @private
+   */
+  static _dedupeSenses(senses) {
+    const seen = new Set();
+    return (senses || []).filter(sense => {
+      const key = `${sense.type}|${sense.range}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  /**
+   * Populate environment/breathing traits from structured rules and prose fallback
+   * @private
+   */
+  static _populateEnvironment(ledger, doc, supplementaryTraits) {
+    const system = doc.system || {};
+    const environment = [];
+
+    // Process structured breathing rules from supplementaryTraits
+    if (supplementaryTraits && typeof supplementaryTraits === 'object') {
+      const traits = [
+        ...(supplementaryTraits.structuralTraits || []),
+        ...(supplementaryTraits.conditionalTraits || [])
+      ];
+
+      for (const trait of traits) {
+        const rules = trait.rules || [];
+        for (const rule of rules) {
+          if (rule.type !== 'breathing') continue;
+
+          const breathType = rule.breathType;
+          if (!breathType) continue;
+
+          environment.push({
+            type: breathType,
+            immune: !!rule.immune,
+            description: rule.description || '',
+            sourceTraitId: trait.id || null,
+            sourceTraitName: trait.name || null
+          });
+        }
+      }
+    }
+
+    // Process prose fallback from doc.system.special
+    if (system.special && Array.isArray(system.special)) {
+      for (const special of system.special) {
+        const text = String(special).toLowerCase();
+        if (text.includes('amphibious') || text.includes('water breathing')) {
+          environment.push({
+            type: 'aquatic',
+            immune: false,
+            description: special
+          });
+        }
+        if (text.includes('vacuum') || text.includes('breathe')) {
+          environment.push({
+            type: 'vacuum-adapted',
+            immune: true,
+            description: special
+          });
+        }
+      }
+    }
+
+    // Deduplicate by breathType
+    ledger.environment = this._dedupeEnvironment(environment);
+  }
+
+  /**
+   * Deduplicate environment traits by breathType, keeping first occurrence
+   * @private
+   */
+  static _dedupeEnvironment(envTraits) {
+    const seen = new Set();
+    return (envTraits || []).filter(env => {
+      const key = env.type;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
   /**
@@ -1162,16 +1314,50 @@ export class SpeciesGrantLedgerBuilder {
    * Populate activated species abilities that should become actor actions.
    * These entries are intentionally structured and feat-aware so runtime engines
    * can modify behavior without re-parsing prose.
+   * Checks three sources in order: supplementaryTraits.activatedAbilities,
+   * supplementaryTraits.conditionalTraits, then doc.canonicalTraits (fallback).
    * @private
    */
-  static _populateActivatedSpeciesAbilities(ledger, doc) {
+  static _populateActivatedSpeciesAbilities(ledger, doc, supplementaryTraits = null) {
     const system = doc.system || {};
+    const traitMap = new Map();
+
+    // Primary: Check supplementaryTraits.activatedAbilities (structured rules)
+    if (supplementaryTraits?.activatedAbilities) {
+      for (const ability of supplementaryTraits.activatedAbilities) {
+        if (ability?.name) {
+          const slug = this._slugify(ability.name);
+          if (!traitMap.has(slug)) {
+            traitMap.set(slug, ability);
+          }
+        }
+      }
+    }
+
+    // Secondary: Check supplementaryTraits.conditionalTraits (for conditional abilities like Rage)
+    if (supplementaryTraits?.conditionalTraits) {
+      for (const trait of supplementaryTraits.conditionalTraits) {
+        if (trait?.name) {
+          const slug = this._slugify(trait.name);
+          if (!traitMap.has(slug)) {
+            traitMap.set(slug, trait);
+          }
+        }
+      }
+    }
+
+    // Fallback: Check canonicalTraits from compendium (existing behavior)
     const canonicalTraits = Array.isArray(system.canonicalTraits)
       ? system.canonicalTraits
       : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
-    const traitMap = new Map(canonicalTraits
-      .filter(trait => trait?.name)
-      .map(trait => [this._slugify(trait.name), trait]));
+    for (const trait of canonicalTraits) {
+      if (trait?.name) {
+        const slug = this._slugify(trait.name);
+        if (!traitMap.has(slug)) {
+          traitMap.set(slug, trait);
+        }
+      }
+    }
 
     const addAbility = ability => {
       if (!ability?.id) return;
