@@ -103,6 +103,10 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
     const senseMutations = _materializeSenses(actor, pendingContext);
     Object.assign(mutations, senseMutations);
 
+    // PHASE 5C: Environment/Breathing (aquatic, vacuum-adapted, etc.)
+    const environmentMutations = _materializeEnvironment(actor, pendingContext);
+    Object.assign(mutations, environmentMutations);
+
     // PHASE 6: Entitlements (feats, bonuses)
     const entitlementMutations = _materializeEntitlements(actor, pendingContext);
     Object.assign(mutations, entitlementMutations);
@@ -355,6 +359,44 @@ function _materializeSenses(actor, pendingContext) {
   // Store in flags if any senses exist
   if (allSenses.length > 0) {
     mutations['flags.swse.speciesSenses'] = allSenses;
+  }
+
+  return mutations;
+}
+
+/**
+ * Materialize environment/breathing traits (aquatic, vacuum-adapted, etc.) from species.
+ * PHASE 10C: Materialize structured breathing rules to durable actor flags.
+ * @private
+ */
+function _materializeEnvironment(actor, pendingContext) {
+  const mutations = {};
+
+  const ledger = pendingContext.ledger || {};
+  const environment = ledger.environment || [];
+
+  if (environment.length > 0) {
+    // Normalize entries and deduplicate by breathType
+    const deduped = [];
+    const seenTypes = new Set();
+
+    for (const env of environment) {
+      const breathType = env.type;
+      if (seenTypes.has(breathType)) continue;
+      seenTypes.add(breathType);
+
+      deduped.push({
+        type: env.type,
+        immune: env.immune ?? false,
+        description: env.description || '',
+        sourceTraitId: env.sourceTraitId || null,
+        sourceTraitName: env.sourceTraitName || null
+      });
+    }
+
+    if (deduped.length > 0) {
+      mutations['flags.swse.speciesEnvironment'] = deduped;
+    }
   }
 
   return mutations;

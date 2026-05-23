@@ -169,6 +169,9 @@ export class SpeciesGrantLedgerBuilder {
       // Extract senses from structured rules and prose fallback
       this._populateSenses(ledger, doc, supplementaryTraits);
 
+      // Extract environment/breathing from structured rules and prose fallback
+      this._populateEnvironment(ledger, doc, supplementaryTraits);
+
       // Extract ability modifiers
       this._populateAbilities(ledger, doc);
 
@@ -254,6 +257,7 @@ export class SpeciesGrantLedgerBuilder {
         vision: [],
         other: []
       },
+      environment: [],
       abilities: {
         str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0
       },
@@ -477,6 +481,79 @@ export class SpeciesGrantLedgerBuilder {
     const seen = new Set();
     return (senses || []).filter(sense => {
       const key = `${sense.type}|${sense.range}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  /**
+   * Populate environment/breathing traits from structured rules and prose fallback
+   * @private
+   */
+  static _populateEnvironment(ledger, doc, supplementaryTraits) {
+    const system = doc.system || {};
+    const environment = [];
+
+    // Process structured breathing rules from supplementaryTraits
+    if (supplementaryTraits && typeof supplementaryTraits === 'object') {
+      const traits = [
+        ...(supplementaryTraits.structuralTraits || []),
+        ...(supplementaryTraits.conditionalTraits || [])
+      ];
+
+      for (const trait of traits) {
+        const rules = trait.rules || [];
+        for (const rule of rules) {
+          if (rule.type !== 'breathing') continue;
+
+          const breathType = rule.breathType;
+          if (!breathType) continue;
+
+          environment.push({
+            type: breathType,
+            immune: !!rule.immune,
+            description: rule.description || '',
+            sourceTraitId: trait.id || null,
+            sourceTraitName: trait.name || null
+          });
+        }
+      }
+    }
+
+    // Process prose fallback from doc.system.special
+    if (system.special && Array.isArray(system.special)) {
+      for (const special of system.special) {
+        const text = String(special).toLowerCase();
+        if (text.includes('amphibious') || text.includes('water breathing')) {
+          environment.push({
+            type: 'aquatic',
+            immune: false,
+            description: special
+          });
+        }
+        if (text.includes('vacuum') || text.includes('breathe')) {
+          environment.push({
+            type: 'vacuum-adapted',
+            immune: true,
+            description: special
+          });
+        }
+      }
+    }
+
+    // Deduplicate by breathType
+    ledger.environment = this._dedupeEnvironment(environment);
+  }
+
+  /**
+   * Deduplicate environment traits by breathType, keeping first occurrence
+   * @private
+   */
+  static _dedupeEnvironment(envTraits) {
+    const seen = new Set();
+    return (envTraits || []).filter(env => {
+      const key = env.type;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
