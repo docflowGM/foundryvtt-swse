@@ -185,7 +185,7 @@ export class SpeciesGrantLedgerBuilder {
       this._populateNaturalWeapons(ledger, doc);
 
       // Extract activated species abilities as actor-ingestible actions
-      this._populateActivatedSpeciesAbilities(ledger, doc);
+      this._populateActivatedSpeciesAbilities(ledger, doc, supplementaryTraits);
 
       // Extract advisory immunity/resistance metadata for actor/system fields
       this._populateImmunities(ledger, doc);
@@ -1314,16 +1314,50 @@ export class SpeciesGrantLedgerBuilder {
    * Populate activated species abilities that should become actor actions.
    * These entries are intentionally structured and feat-aware so runtime engines
    * can modify behavior without re-parsing prose.
+   * Checks three sources in order: supplementaryTraits.activatedAbilities,
+   * supplementaryTraits.conditionalTraits, then doc.canonicalTraits (fallback).
    * @private
    */
-  static _populateActivatedSpeciesAbilities(ledger, doc) {
+  static _populateActivatedSpeciesAbilities(ledger, doc, supplementaryTraits = null) {
     const system = doc.system || {};
+    const traitMap = new Map();
+
+    // Primary: Check supplementaryTraits.activatedAbilities (structured rules)
+    if (supplementaryTraits?.activatedAbilities) {
+      for (const ability of supplementaryTraits.activatedAbilities) {
+        if (ability?.name) {
+          const slug = this._slugify(ability.name);
+          if (!traitMap.has(slug)) {
+            traitMap.set(slug, ability);
+          }
+        }
+      }
+    }
+
+    // Secondary: Check supplementaryTraits.conditionalTraits (for conditional abilities like Rage)
+    if (supplementaryTraits?.conditionalTraits) {
+      for (const trait of supplementaryTraits.conditionalTraits) {
+        if (trait?.name) {
+          const slug = this._slugify(trait.name);
+          if (!traitMap.has(slug)) {
+            traitMap.set(slug, trait);
+          }
+        }
+      }
+    }
+
+    // Fallback: Check canonicalTraits from compendium (existing behavior)
     const canonicalTraits = Array.isArray(system.canonicalTraits)
       ? system.canonicalTraits
       : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
-    const traitMap = new Map(canonicalTraits
-      .filter(trait => trait?.name)
-      .map(trait => [this._slugify(trait.name), trait]));
+    for (const trait of canonicalTraits) {
+      if (trait?.name) {
+        const slug = this._slugify(trait.name);
+        if (!traitMap.has(slug)) {
+          traitMap.set(slug, trait);
+        }
+      }
+    }
 
     const addAbility = ability => {
       if (!ability?.id) return;
