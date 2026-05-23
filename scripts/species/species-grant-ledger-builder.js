@@ -1430,17 +1430,106 @@ export class SpeciesGrantLedgerBuilder {
    * @private
    */
   static _validateLedger(ledger) {
-    // Mark unresolved traits if classification still unresolved
+    const speciesName = ledger.identity?.name || 'Unknown';
+
     for (const trait of ledger.traits) {
       if (trait.classification === 'unresolved') {
+        const mechanical = this._looksMechanical(trait.name, trait.description);
         ledger.unresolved.push({
           id: trait.id,
           name: trait.name,
           description: trait.description,
-          reason: 'Unable to classify trait automatically - needs manual review'
+          reason: mechanical
+            ? 'Trait appears mechanical but was not classified — parser gap or manual wiring needed'
+            : 'Unable to classify trait automatically - needs manual review',
+          mechanicalRisk: mechanical,
+          source: 'unresolved',
         });
+        if (mechanical) {
+          SWSELogger.debug(
+            `[SpeciesLedger] ${speciesName} — "${trait.name}" looks mechanical but is unresolved.`,
+            { id: trait.id, description: trait.description?.slice(0, 120) }
+          );
+        }
+      } else if (trait.classification === 'identity') {
+        // identity = display-only (senses, flavor). Warn if it looks mechanical to catch
+        // misclassified traits that should have been bonus/reroll/grant.
+        const mechanical = this._looksMechanical(trait.name, trait.description);
+        if (mechanical) {
+          ledger.unresolved.push({
+            id: trait.id,
+            name: trait.name,
+            description: trait.description,
+            reason: 'Trait classified as identity but text looks mechanical — may need parser support',
+            mechanicalRisk: true,
+            source: 'identity-mismatch',
+          });
+          SWSELogger.debug(
+            `[SpeciesLedger] ${speciesName} — "${trait.name}" is identity-classified but looks mechanical.`,
+            { id: trait.id, description: trait.description?.slice(0, 120) }
+          );
+        }
       }
     }
+  }
+
+  /**
+   * Return true if a trait name or description contains known mechanical-keyword signals.
+   * Used only for diagnostics — does not affect classification.
+   * @private
+   */
+  static _looksMechanical(name = '', description = '') {
+    const text = `${name} ${description}`.toLowerCase();
+    // Numeric bonus/penalty signal
+    if (/[+-]\d+/.test(text)) return true;
+    // Explicit mechanical keywords
+    const keywords = [
+      'bonus', 'penalty', 'reroll', 'defense', 'checks', 'skill check',
+      'feat', 'trained in', 'immune', 'immunity', 'resistance',
+      'speed', 'damage', 'attack roll', 'threshold', 'proficiency',
+      'force point', 'condition track',
+    ];
+    return keywords.some(kw => text.includes(kw));
+  }
+
+  /**
+   * Build a compact coverage report from a finalized ledger.
+   * Useful for pre-release audits: run for every species and spot gaps.
+   *
+   * Returns:
+   *   {
+   *     species: string,
+   *     bonuses: number,           // passive[] entries across all bonus traits
+   *     rerolls: number,           // rerolls[] entries across all reroll traits
+   *     grants: number,            // grants[] entries across all grant traits
+   *     naturalWeapons: number,
+   *     activatedAbilities: number,
+   *     unresolvedMechanical: [{id, name, reason, source}],
+   *     unresolvedAll: number,
+   *   }
+   */
+  static buildCoverageReport(ledger) {
+    if (!ledger) return null;
+    const bonuses = ledger.traits
+      .filter(t => t.classification === 'bonus')
+      .reduce((n, t) => n + (t.passive?.length || 0), 0);
+    const rerolls = ledger.traits
+      .filter(t => t.classification === 'reroll')
+      .reduce((n, t) => n + (t.rerolls?.length || 0), 0);
+    const grants = ledger.traits
+      .filter(t => t.classification === 'grant')
+      .reduce((n, t) => n + (t.grants?.length || 0), 0);
+    const unresolvedMechanical = (ledger.unresolved || []).filter(u => u.mechanicalRisk);
+    return {
+      species: ledger.identity?.name || 'Unknown',
+      bonuses,
+      rerolls,
+      grants,
+      naturalWeapons: ledger.naturalWeapons?.length || 0,
+      activatedAbilities: ledger.activatedAbilities?.length || 0,
+      unresolvedMechanical,
+      unresolvedAll: ledger.unresolved?.length || 0,
+    };
   }
 }
 
