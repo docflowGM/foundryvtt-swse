@@ -7683,3 +7683,76 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
 .swse-concept-action-reference-note strong {
   color: var(--swse-concept-text);
 }
+
+/* Character sheet stabilization batch: editable dossier metadata, XP/credit adjusters, status feed. */
+.swse-concept-info-card input,
+.swse-concept-inline-adjuster input {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent);
+  border-radius: 10px;
+  background: rgba(3, 9, 16, 0.72);
+  color: var(--swse-concept-text, #e9fbff);
+  padding: 6px 9px;
+  font-family: var(--swse-font-mono, monospace);
+}
+
+.swse-concept-info-card input:focus,
+.swse-concept-inline-adjuster input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 70%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+}
+
+.swse-concept-inline-adjuster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.swse-concept-inline-adjuster label {
+  display: grid;
+  gap: 5px;
+  color: var(--swse-concept-text-dim, #a7c9d4);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.swse-concept-status-feed {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.swse-concept-status-feed__entry {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.65fr) 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 215, 255, 0.14);
+  background: rgba(4, 10, 18, 0.64);
+}
+
+.swse-concept-status-feed__entry strong {
+  color: var(--swse-concept-text, #e9fbff);
+}
+
+.swse-concept-status-feed__entry span,
+.swse-concept-status-feed__entry em {
+  color: var(--swse-concept-text-dim, #a7c9d4);
+  font-style: normal;
+}
+
+.swse-concept-status-feed__entry--ok { border-color: rgba(92, 255, 173, 0.28); }
+.swse-concept-status-feed__entry--accent { border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 38%, transparent); }
+.swse-concept-status-feed__entry--warn { border-color: rgba(255, 210, 111, 0.3); }
+
+.swse-concept-btn--mentor,
+.swse-concept-btn--help {
+  white-space: nowrap;
+}

@@ -315,6 +315,14 @@ const FORM_FIELD_SCHEMA = {
   // Biography and Notes
   'system.notes': 'string',
   'system.biography': 'string',
+  'flags.swse.character.player': 'string',
+  'flags.swse.character.age': 'string',
+  'flags.swse.character.gender': 'string',
+  'flags.swse.character.height': 'string',
+  'flags.swse.character.weight': 'string',
+  'flags.swse.character.biography': 'string',
+  'flags.swse.character.campaignLog': 'string',
+  'flags.swse.character.profileSummary': 'string',
 
   // Identity Fields
   'system.species': 'string',
@@ -2473,7 +2481,16 @@ export class SWSEV2CharacterSheet extends
     const destinyPointsValue = Number(system.destinyPoints?.value ?? 0) || 0;
     const destinyPointsMax = Number(system.destinyPoints?.max ?? 0) || 0;
 
-    const speed = typeof system.speed === "number" ? system.speed : (system.speed?.value ?? 0);
+    const speed = Number(
+      derived?.speed?.total ??
+      derived?.identity?.speed ??
+      system.speed?.total ??
+      system.speed?.value ??
+      system.speed ??
+      system.movement?.walk ??
+      system.movement?.speed ??
+      0
+    ) || 0;
 
     const perceptionTotal = Number(
       canonicalDerivedSkills?.perception?.total ??
@@ -2847,7 +2864,10 @@ const forcePoints = [];
       'armorSummaryPanel',
       'equipmentLedgerPanel',
       'forcePowersPanel',
-      'starshipManeuversPanel'
+      'starshipManeuversPanel',
+      'languagesPanel',
+      'darkSidePanel',
+      'resourcesPanel'
     ];
     for (const requiredPanel of alwaysHydratedPanels) {
       if (!panelsToBuild.includes(requiredPanel)) panelsToBuild.push(requiredPanel);

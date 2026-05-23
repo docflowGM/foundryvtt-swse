@@ -93,6 +93,16 @@ const FORM_FIELD_SCHEMA = {
   'system.skills.useComputer.miscMod': 'number',
   'system.skills.useTheForce.miscMod': 'number',
 
+  // Biography metadata flags (player-editable dossier metadata)
+  'flags.swse.character.player': 'string',
+  'flags.swse.character.age': 'string',
+  'flags.swse.character.gender': 'string',
+  'flags.swse.character.height': 'string',
+  'flags.swse.character.weight': 'string',
+  'flags.swse.character.biography': 'string',
+  'flags.swse.character.campaignLog': 'string',
+  'flags.swse.character.profileSummary': 'string',
+
   // Progression and Resources (PHASE 7: Canonical edit paths)
   'system.level': 'number',
   // Phase 3D: Canonical XP path is system.xp.total (not deprecated system.experience)
@@ -210,6 +220,7 @@ export function isDirectFieldMutationPath(fieldName) {
   // this allow-list, which let stale display mirrors overwrite unrelated actor
   // domains during repaint.
   if (fieldName === 'name') return true;
+  if (fieldName.startsWith('flags.swse.character.')) return true;
   if (!fieldName.startsWith('system.')) return false;
   if (fieldName.startsWith('system.derived.')) return false;
 

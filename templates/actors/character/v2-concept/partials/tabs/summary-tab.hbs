@@ -50,11 +50,39 @@
     </div>
   </section>
 
+  <div class="swse-concept-grid swse-concept-grid--two">
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/xp-panel.hbs"}}
+
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Credits Ledger</h3>
+          <p class="swse-concept-panel__hint">Current credits and quick credit adjustments.</p>
+        </div>
+        <div class="swse-concept-ledger-row__actions">
+          <span class="swse-concept-chip swse-concept-chip--neutral">{{numberFormat conceptLayout.gear.credits decimals=0}} cr</span>
+        </div>
+      </header>
+
+      <div class="swse-concept-inline-adjuster swse-concept-inline-adjuster--credits">
+        <label>
+          <span>Set Credits</span>
+          <input type="number" name="system.credits" value="{{conceptLayout.gear.credits}}" min="0" step="1" />
+        </label>
+        <label>
+          <span>Add Credits</span>
+          <input type="number" data-role="credits-add-amount" step="1" placeholder="0" />
+        </label>
+        <button type="button" class="swse-concept-btn" data-action="add-credits-to-actor">Add Credits</button>
+      </div>
+    </section>
+  </div>
+
   <section class="swse-concept-panel">
     <header class="swse-concept-panel__header">
       <div>
         <h3 class="swse-concept-panel__title">Status Feed</h3>
-        <p class="swse-concept-panel__hint">Persistent conditions, shields, and readiness markers.</p>
+        <p class="swse-concept-panel__hint">Persistent conditions, shields, XP awards, credit adjustments, and readiness markers.</p>
       </div>
     </header>
 
@@ -72,44 +100,17 @@
         </div>
       {{/each}}
     </div>
-  </section>
 
-  <div class="swse-concept-grid swse-concept-grid--two">
-    <section class="swse-concept-panel">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">Character Notes</h3>
-          <p class="swse-concept-panel__hint">General dossier notes and table-facing reminders.</p>
-        </div>
-      </header>
-
-      <textarea name="system.notes"
-                class="swse-concept-textarea swse-concept-textarea--lg"
-                placeholder="Add character notes here...">{{biographyPanel.biography}}</textarea>
-    </section>
-
-    <section class="swse-concept-panel">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">Bio Snapshot</h3>
-          <p class="swse-concept-panel__hint">Current narrative summary sourced from biography fields.</p>
-        </div>
-      </header>
-
-      <p class="swse-concept-body-copy">{{conceptLayout.summary.biographyPreview}}</p>
-
-      <div class="swse-concept-subsection">
-        <span class="swse-concept-subsection__label">Known Languages</span>
-        <div class="swse-concept-chip-row">
-          {{#if conceptLayout.summary.languages.length}}
-            {{#each conceptLayout.summary.languages as |language|}}
-              <span class="swse-concept-chip swse-concept-chip--neutral">{{language}}</span>
-            {{/each}}
-          {{else}}
-            <span class="swse-concept-chip swse-concept-chip--neutral">No languages recorded</span>
-          {{/if}}
-        </div>
+    {{#if conceptLayout.summary.statusFeedEntries.length}}
+      <div class="swse-concept-status-feed">
+        {{#each conceptLayout.summary.statusFeedEntries as |entry|}}
+          <article class="swse-concept-status-feed__entry swse-concept-status-feed__entry--{{entry.tone}}">
+            <strong>{{entry.label}}</strong>
+            {{#if entry.detail}}<span>{{entry.detail}}</span>{{/if}}
+            {{#if entry.value}}<em>{{entry.value}}</em>{{/if}}
+          </article>
+        {{/each}}
       </div>
-    </section>
-  </div>
+    {{/if}}
+  </section>
 </div>

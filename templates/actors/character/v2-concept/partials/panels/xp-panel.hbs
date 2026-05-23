@@ -26,4 +26,12 @@
       <span>{{#if xpLevelReady}}Promotion Ready{{else}}{{xpData.percentRounded}}% to next level{{/if}}</span>
     </div>
   </div>
+
+  <div class="swse-concept-inline-adjuster swse-concept-inline-adjuster--xp">
+    <label>
+      <span>Add XP</span>
+      <input type="number" data-role="xp-add-amount" min="0" step="1" placeholder="0" />
+    </label>
+    <button type="button" class="swse-concept-btn" data-action="add-xp-to-actor">Add to Status Feed</button>
+  </div>
 </section>

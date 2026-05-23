@@ -367,10 +367,15 @@ export class PanelContextBuilder {
     // All identity displays use the same prepared bundle
     const identityViewModel = buildIdentityViewModel(this.actor);
 
+    const characterFlags = this.actor?.flags?.swse?.character ?? {};
     const identity = {
       ...identityViewModel,
       class: String(identityViewModel.classDisplay || identityViewModel.className || '—'),
-      player: this.system.flags?.swse?.character?.player || '—',
+      player: characterFlags.player || this.system.details?.player || '—',
+      age: characterFlags.age ?? identityViewModel.age ?? '—',
+      gender: characterFlags.gender ?? identityViewModel.gender ?? '—',
+      height: characterFlags.height ?? identityViewModel.height ?? '—',
+      weight: characterFlags.weight ?? identityViewModel.weight ?? '—',
       canEdit: this.sheet.isEditable
     };
 
@@ -1230,9 +1235,19 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildCombatStatsPanel() {
+    const speedValue = Number(
+      this.derived.speed?.total ??
+      this.derived.identity?.speed ??
+      this.system.speed?.total ??
+      this.system.speed?.value ??
+      this.system.speed ??
+      this.system.movement?.walk ??
+      this.system.movement?.speed ??
+      0
+    ) || 0;
     const speed = {
-      value: Number(this.system.speed?.value) || 0,
-      label: `${this.system.speed?.value || 0} ft.`
+      value: speedValue,
+      label: `${speedValue} sq`
     };
 
     // Initiative: derived.initiative.total (from DerivedCalculator)
@@ -1285,7 +1300,16 @@ export class PanelContextBuilder {
     const derived = this.derived;
 
     // COMBAT METRICS - engine-owned sources
-    const speed = Number(system.speed) || 0;
+    const speed = Number(
+      derived.speed?.total ??
+      derived.identity?.speed ??
+      system.speed?.total ??
+      system.speed?.value ??
+      system.speed ??
+      system.movement?.walk ??
+      system.movement?.speed ??
+      0
+    ) || 0;
     const initiativeTotal = Number(derived.initiative?.total) || 0;
     const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
 

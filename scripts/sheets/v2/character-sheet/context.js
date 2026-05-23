@@ -115,13 +115,13 @@ export function buildIdentityViewModel(actor) {
     species: identity.species ?? system.species?.name ?? system.species ?? system.race ?? '—',
     level: Number(system.level) || 1,
     size: identity.size ?? system.size ?? '—',
-    gender: identity.gender ?? flags.gender ?? system.gender ?? '—',
+    gender: flags.gender ?? identity.gender ?? system.gender ?? '—',
     background: identity.background ?? system.background?.name ?? system.background ?? system.event ?? '—',
     homeworld: identity.homeworld ?? system.planetOfOrigin ?? '—',
     profession: identity.profession ?? system.profession ?? '—',
-    age: identity.age ?? flags.age ?? '—',
-    height: identity.height ?? flags.height ?? '—',
-    weight: identity.weight ?? flags.weight ?? '—',
+    age: flags.age ?? identity.age ?? '—',
+    height: flags.height ?? identity.height ?? '—',
+    weight: flags.weight ?? identity.weight ?? '—',
     destinyPoints: identity.destinyPoints ?? system.destinyPoints ?? { value: 0, max: 0 },
     forcePoints: identity.forcePoints ?? system.forcePoints ?? { value: 0, max: 0 }
   };

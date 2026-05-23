@@ -125,10 +125,10 @@ export class HelpModeManager {
    */
   static getHelpLevelLabel(helpLevel) {
     const labels = {
-      OFF: 'Help: OFF',
-      CORE: 'Help: CORE',
-      STANDARD: 'Help: STANDARD',
-      ADVANCED: 'Help: ADVANCED'
+      OFF: 'Help: Off',
+      CORE: 'Help: Basics',
+      STANDARD: 'Help: Guided',
+      ADVANCED: 'Help: Deep Rules'
     };
 
     return labels[helpLevel] || 'Help: ?';
@@ -142,10 +142,10 @@ export class HelpModeManager {
    */
   static getHelpLevelDescription(helpLevel) {
     const descriptions = {
-      OFF: 'Help mode off. Only icon tooltips available.',
-      CORE: 'Core help. Tier1 (abilities, skills, core stats) discoverable.',
-      STANDARD: 'Standard help. Tier1 + Tier2 (situational stats) discoverable.',
-      ADVANCED: 'Advanced help. All tiers (expert mechanics) discoverable.'
+      OFF: 'Turns sheet guidance off except for normal browser titles and explicit help icons.',
+      CORE: 'Shows basic sheet guidance for everyday play: attributes, skills, defenses, HP, Force Points, and common buttons.',
+      STANDARD: 'Adds guided context for situational play: derived bonuses, resource timing, combat actions, gear states, and advancement cues.',
+      ADVANCED: 'Shows the deepest rules context: detailed breakdowns, edge-case mechanics, hidden prerequisites, and expert system notes.'
     };
 
     return descriptions[helpLevel] || 'Unknown help level.';

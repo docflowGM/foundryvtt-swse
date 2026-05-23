@@ -32,6 +32,14 @@ export function computeCharacterDerived(actor, system) {
   system.derived.starshipManeuvers ??= {};
   system.derived.actions ??= {};
   system.derived.encumbrance ??= {};
+  const baseSpeed = safeNumber(system.speed?.base ?? system.speed?.value ?? system.speed ?? system.movement?.walk ?? system.movement?.speed, 6);
+  if (!system.derived.speed || typeof system.derived.speed !== 'object') {
+    system.derived.speed = { base: baseSpeed, total: baseSpeed, adjustment: 0 };
+  } else {
+    system.derived.speed.base = safeNumber(system.derived.speed.base ?? baseSpeed, baseSpeed);
+    system.derived.speed.total = safeNumber(system.derived.speed.total ?? system.derived.speed.base, system.derived.speed.base);
+    system.derived.speed.adjustment = safeNumber(system.derived.speed.adjustment, system.derived.speed.total - system.derived.speed.base);
+  }
   system.derived.racialAbilities ??= [];
   system.derived.inventory ??= {
     weapons: [],
@@ -163,7 +171,7 @@ function mirrorIdentity(actor, system) {
   i.destinyPointsDisplay = buildTickDisplay(i.destinyPoints.value, i.destinyPoints.max, RESOURCE_TICK_CAP);
   i.forcePointsDisplay = buildTickDisplay(i.forcePoints.value, i.forcePoints.max, RESOURCE_TICK_CAP);
   i.bab = safeNumber(system.bab?.total ?? system.bab ?? system.baseAttackBonus, 0);
-  i.speed = safeNumber(system.speed?.total ?? system.speed ?? system.movement?.speed, 0);
+  i.speed = safeNumber(system.derived?.speed?.total ?? system.speed?.total ?? system.speed?.value ?? system.speed ?? system.movement?.walk ?? system.movement?.speed, 0);
   i.darkSideScore = DSPEngine.getValue(actor);
 
   // Abilities (total + mod) are already prepared by the legacy data model.

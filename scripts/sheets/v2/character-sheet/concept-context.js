@@ -828,6 +828,17 @@ export function buildConceptSheetViewModel(context = {}) {
   const talentEntries = asArray(context.talentPanel?.entries);
   const featEntries = asArray(context.featPanel?.entries);
   const relationshipEntries = asArray(context.relationshipsPanel?.relationships);
+  const statusFeedEntries = asArray(flags?.statusFeed)
+    .map((entry, index) => ({
+      id: entry?.id || `status-${index}`,
+      label: normalizeText(entry?.label || entry?.title || 'Status Update'),
+      detail: normalizeText(entry?.detail || entry?.message || ''),
+      value: normalizeText(entry?.value || ''),
+      timestamp: normalizeText(entry?.timestamp || entry?.time || ''),
+      tone: entry?.tone || 'neutral'
+    }))
+    .filter((entry) => entry.label)
+    .slice(0, 8);
   const attackEntries = asArray(context.combat?.attacks);
   const unarmedAttack = context.combat?.unarmedAttack ?? null;
   const unarmedAttackEntry = unarmedAttack ? {
@@ -895,11 +906,13 @@ export function buildConceptSheetViewModel(context = {}) {
       : isWounded
         ? 'Health integrity is below optimal combat readiness.'
         : 'Telemetry reports stable vitals and no immediate advancement triggers.';
+  const homeworldText = normalizeText(identity.homeworld);
+  const hasKnownHomeworld = !!homeworldText && !['unknown', '—', '-', 'none', 'n/a'].includes(homeworldText.toLowerCase());
   const dossierTags = [
     { label: context.classDisplay || identity.class || 'Unclassified', tone: 'accent' },
     { label: identity.species || 'Unknown Species', tone: 'neutral' },
     { label: identity.background || 'Unrecorded Background', tone: 'accent-soft' },
-    { label: identity.homeworld ? `Origin ${identity.homeworld}` : 'Origin Unknown', tone: 'neutral' },
+    { label: hasKnownHomeworld ? `From ${homeworldText}` : 'From Parts Unknown', tone: 'neutral' },
     { label: `Level ${Number(identity.level) || Number(actor?.system?.level) || 1}`, tone: 'ok' }
   ];
 
@@ -916,8 +929,7 @@ export function buildConceptSheetViewModel(context = {}) {
     { id: 'combat', label: 'Combat', icon: 'fa-solid fa-burst', count: toCountBadge(attackEntries.length + (unarmedAttackEntry ? 1 : 0) || actionGroups.length) },
     { id: 'talents', label: 'Abilities', icon: 'fa-solid fa-diagram-project', count: toCountBadge(talentEntries.length + featEntries.length + speciesAbilityCount) },
     { id: 'gear', label: 'Gear', icon: 'fa-solid fa-toolbox', count: toCountBadge(inventoryEntries.length) },
-    { id: 'biography', label: 'Biography', icon: 'fa-solid fa-book-open' },
-    { id: 'relationships', label: 'Relationships', icon: 'fa-solid fa-network-wired', count: toCountBadge(relationshipEntries.length) }
+    { id: 'biography', label: 'Biography', icon: 'fa-solid fa-book-open' }
   ];
 
   let suiteInsertIndex = 5;
@@ -980,7 +992,8 @@ export function buildConceptSheetViewModel(context = {}) {
       fpMax,
       dpValue,
       dpMax,
-      conditionLabel: context.healthPanel?.currentConditionPenalty?.label || 'Normal'
+      conditionLabel: context.healthPanel?.currentConditionPenalty?.label || 'Normal',
+      speed: Number(context.speed) || 0
     },
     summary: {
       cards: [
@@ -1008,10 +1021,11 @@ export function buildConceptSheetViewModel(context = {}) {
       languages,
       quickReadouts: [
         { label: 'Credits', value: credits.toLocaleString() },
+        { label: 'XP', value: (Number(context.xpData?.total) || 0).toLocaleString() },
         { label: 'Encumbrance', value: totalWeight > 0 ? `${totalWeight.toFixed(1)} kg` : 'Untracked' },
-        { label: 'Equipped', value: String(equippedEntries.length) },
-        { label: 'Allies', value: String(relationshipEntries.length) }
-      ]
+        { label: 'Equipped', value: String(equippedEntries.length) }
+      ],
+      statusFeedEntries
     },
     skills,
     talents,

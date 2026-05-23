@@ -3,17 +3,47 @@
     <header class="swse-concept-panel__header">
       <div>
         <h3 class="swse-concept-panel__title">Identity Record</h3>
-        <p class="swse-concept-panel__hint">Reference metadata for the character dossier.</p>
+        <p class="swse-concept-panel__hint">Reference metadata for the character dossier. Origin, species, and class are progression-owned; personal metadata is editable here.</p>
       </div>
     </header>
 
     <div class="swse-concept-card-grid swse-concept-card-grid--bio">
-      {{#each conceptLayout.biography.profileCards as |card|}}
-        <article class="swse-concept-info-card">
-          <span>{{card.label}}</span>
-          <strong>{{card.value}}</strong>
-        </article>
-      {{/each}}
+      <article class="swse-concept-info-card">
+        <span>Player</span>
+        <input type="text" name="flags.swse.character.player" value="{{conceptLayout.identity.player}}" placeholder="Player" />
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Age</span>
+        <input type="text" name="flags.swse.character.age" value="{{conceptLayout.identity.age}}" placeholder="Age" />
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Gender</span>
+        <input type="text" name="flags.swse.character.gender" value="{{conceptLayout.identity.gender}}" placeholder="Gender" />
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Height</span>
+        <input type="text" name="flags.swse.character.height" value="{{conceptLayout.identity.height}}" placeholder="Height" />
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Weight</span>
+        <input type="text" name="flags.swse.character.weight" value="{{conceptLayout.identity.weight}}" placeholder="Weight" />
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Species</span>
+        <strong>{{conceptLayout.identity.species}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Homeworld</span>
+        <strong>{{conceptLayout.identity.homeworld}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Background</span>
+        <strong>{{conceptLayout.identity.background}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Profession</span>
+        <strong>{{conceptLayout.identity.profession}}</strong>
+      </article>
     </div>
 
     <div class="swse-concept-subsection">
@@ -29,8 +59,6 @@
       </div>
     </div>
   </section>
-
-  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/racial-ability-panel.hbs"}}
 
   {{#if darkSidePanel}}
     {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/dark-side-panel.hbs"}}
@@ -62,15 +90,29 @@
     </section>
   </div>
 
-  <section class="swse-concept-panel">
-    <header class="swse-concept-panel__header">
-      <div>
-        <h3 class="swse-concept-panel__title">Profile & Beliefs</h3>
-        <p class="swse-concept-panel__hint">Goals, code of honor, quirks, ambitions, and roleplaying notes.</p>
-      </div>
-    </header>
-    <textarea name="flags.swse.character.profileSummary"
-              class="swse-concept-textarea swse-concept-textarea--lg"
-              placeholder="Character goals, beliefs, code of honor, quirks, ambitions...">{{flags.swse.character.profileSummary}}</textarea>
-  </section>
+  <div class="swse-concept-grid swse-concept-grid--two">
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Profile & Beliefs</h3>
+          <p class="swse-concept-panel__hint">Goals, code of honor, quirks, ambitions, and roleplaying notes.</p>
+        </div>
+      </header>
+      <textarea name="flags.swse.character.profileSummary"
+                class="swse-concept-textarea swse-concept-textarea--lg"
+                placeholder="Character goals, beliefs, code of honor, quirks, ambitions...">{{flags.swse.character.profileSummary}}</textarea>
+    </section>
+
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">General Notes</h3>
+          <p class="swse-concept-panel__hint">Table-facing notes and reminders that used to live on the Summary tab.</p>
+        </div>
+      </header>
+      <textarea name="system.notes"
+                class="swse-concept-textarea swse-concept-textarea--lg"
+                placeholder="Add character notes here...">{{biographyPanel.biography}}</textarea>
+    </section>
+  </div>
 </div>

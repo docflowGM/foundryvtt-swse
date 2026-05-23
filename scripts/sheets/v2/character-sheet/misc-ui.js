@@ -19,6 +19,20 @@ function openMentorConversation(sheet) {
   new MentorChatDialog(actor).render(true);
 }
 
+function getStatusFeed(actor) {
+  const direct = actor?.flags?.swse?.character?.statusFeed;
+  return Array.isArray(direct) ? [...direct] : [];
+}
+
+function prependStatusFeed(actor, entry) {
+  return [entry, ...getStatusFeed(actor)].slice(0, 20);
+}
+
+function findNearestNumericInput(button, selector) {
+  const panel = button.closest?.('.swse-concept-panel') || button.closest?.('.swse-concept-dashboard') || button.parentElement;
+  return panel?.querySelector?.(selector) || null;
+}
+
 /**
  * Activate miscellaneous UI listeners
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
@@ -139,6 +153,82 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
       } catch (err) {
         // console.error("Second Wind use failed:", err);
         ui?.notifications?.error?.(`Second Wind use failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Add XP button: increments canonical XP and records the award in the dossier status feed.
+  html.querySelectorAll('[data-action="add-xp-to-actor"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const input = findNearestNumericInput(button, '[data-role="xp-add-amount"]');
+      const amount = Math.max(0, Number(input?.value ?? 0) || 0);
+      if (amount <= 0) {
+        ui?.notifications?.warn?.('Enter an XP amount greater than 0.');
+        return;
+      }
+
+      const current = Number(sheet.actor.system?.xp?.total ?? 0) || 0;
+      const next = current + amount;
+      const statusFeed = prependStatusFeed(sheet.actor, {
+        id: `xp-${Date.now()}`,
+        label: 'XP Awarded',
+        detail: `Added ${amount.toLocaleString()} XP`,
+        value: `${next.toLocaleString()} total XP`,
+        tone: 'ok',
+        timestamp: new Date().toISOString()
+      });
+
+      try {
+        await ActorEngine.updateActor(sheet.actor, {
+          'system.xp.total': next,
+          'flags.swse.character.statusFeed': statusFeed
+        }, {
+          source: 'character-sheet-add-xp',
+          meta: { guardKey: 'character-sheet-add-xp' }
+        });
+        if (input) input.value = '';
+        ui?.notifications?.info?.(`Added ${amount.toLocaleString()} XP.`);
+      } catch (err) {
+        ui?.notifications?.error?.(`Failed to add XP: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Add credits button: adjusts the current credit ledger and records it in the status feed.
+  html.querySelectorAll('[data-action="add-credits-to-actor"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const input = findNearestNumericInput(button, '[data-role="credits-add-amount"]');
+      const amount = Number(input?.value ?? 0) || 0;
+      if (amount === 0) {
+        ui?.notifications?.warn?.('Enter a credit adjustment other than 0.');
+        return;
+      }
+
+      const current = Number(sheet.actor.system?.credits ?? 0) || 0;
+      const next = Math.max(0, current + amount);
+      const statusFeed = prependStatusFeed(sheet.actor, {
+        id: `credits-${Date.now()}`,
+        label: amount > 0 ? 'Credits Added' : 'Credits Spent',
+        detail: `${amount > 0 ? 'Added' : 'Removed'} ${Math.abs(amount).toLocaleString()} credits`,
+        value: `${next.toLocaleString()} current credits`,
+        tone: amount > 0 ? 'accent' : 'warn',
+        timestamp: new Date().toISOString()
+      });
+
+      try {
+        await ActorEngine.updateActor(sheet.actor, {
+          'system.credits': next,
+          'flags.swse.character.statusFeed': statusFeed
+        }, {
+          source: 'character-sheet-add-credits',
+          meta: { guardKey: 'character-sheet-add-credits' }
+        });
+        if (input) input.value = '';
+        ui?.notifications?.info?.(`${amount > 0 ? 'Added' : 'Removed'} ${Math.abs(amount).toLocaleString()} credits.`);
+      } catch (err) {
+        ui?.notifications?.error?.(`Failed to adjust credits: ${err.message}`);
       }
     }, { signal });
   });
