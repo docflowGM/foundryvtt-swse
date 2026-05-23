@@ -350,15 +350,35 @@ async function _resolveSpeciesEntry(speciesIdentity) {
  * Extract species-based entitlements from ledger and identity.
  * Computes feats, languages, and special bonuses.
  *
+ * Phase 10A: Also accounts for species that have a bonus-feat choice trait
+ * (id === 'bonus-feat' with frequency === 'choice') in their ledger — these
+ * species get an extra feat entitlement beyond the base RAW count just like
+ * Humans do, because the rule grants them one additional player-chosen feat.
+ *
  * @private
  */
 function _extractEntitlements(speciesName, actorType, isDroid, ledger) {
+  // Base feat count from RAW species+actorType rules.
+  const baseFeatCount = computeStartingFeatsRequired({
+    isHuman: speciesName === 'Human',
+    isNPC: actorType === 'npc',
+    isDroid,
+  });
+
+  // Phase 10A: Check for bonus-feat-choice grants from ledger traits.
+  // If a non-Human species has a bonus-feat choice (frequency='choice') trait,
+  // it grants one additional player-chosen feat beyond the RAW base count.
+  // Human already gets the +1 via isHuman=true in computeStartingFeatsRequired.
+  // Specific feat grants (frequency='always') are materialized as items, not choices.
+  const hasBonusFeatChoiceTrait = !isDroid && speciesName !== 'Human' && (ledger?.traits || []).some(
+    t => t.classification === 'grant'
+      && t.source === 'bonusFeat'
+      && (t.grants || []).some(g => g.grantType === 'feat' && g.frequency === 'choice')
+  );
+  const featsRequired = hasBonusFeatChoiceTrait ? baseFeatCount + 1 : baseFeatCount;
+
   const entitlements = {
-    featsRequired: computeStartingFeatsRequired({
-      isHuman: speciesName === 'Human',
-      isNPC: actorType === 'npc',
-      isDroid,
-    }),
+    featsRequired,
     languages: [],
     skills: [],
     bonusSpeed: 0,

@@ -305,6 +305,8 @@ function _materializeLanguages(actor, pendingContext) {
 
 /**
  * Materialize entitlements (feats required, bonuses).
+ * Phase 10A: also materializes species bonus trained skills (specific grants)
+ * and species bonus class skills into durable actor state.
  * @private
  */
 function _materializeEntitlements(actor, pendingContext) {
@@ -321,6 +323,34 @@ function _materializeEntitlements(actor, pendingContext) {
   // Bonus speed (if any - movement modes beyond standard 6)
   if (entitlements.bonusSpeed && entitlements.bonusSpeed !== 0) {
     mutations['flags.swse.speciesBonusSpeed'] = entitlements.bonusSpeed;
+  }
+
+  // Phase 10A: Bonus trained skills (specific/always grants).
+  // Only wire skills with an explicit target (choice grants are deferred to the UI).
+  const traits = pendingContext.traits || [];
+  const specificTrainedSkills = traits
+    .filter(t => t.classification === 'grant' && t.source === 'bonusTrainedSkill')
+    .flatMap(t => t.grants || [])
+    .filter(g => g.grantType === 'trainedSkill' && g.frequency === 'always' && g.target);
+
+  for (const grant of specificTrainedSkills) {
+    mutations[`system.skills.${grant.target}.trained`] = true;
+  }
+
+  // Phase 10A: Bonus class skills (specific/always grants).
+  // Store as flags.swse.speciesBonusClassSkills for downstream consumption
+  // and also set system.skills.<key>.classSkill = true on each named skill.
+  const bonusClassSkillGrants = traits
+    .filter(t => t.classification === 'grant' && t.source === 'bonusClassSkill')
+    .flatMap(t => t.grants || [])
+    .filter(g => g.grantType === 'classSkill' && g.frequency === 'always' && g.target);
+
+  if (bonusClassSkillGrants.length > 0) {
+    const classSkillTargets = bonusClassSkillGrants.map(g => g.target);
+    mutations['flags.swse.speciesBonusClassSkills'] = classSkillTargets;
+    for (const skillKey of classSkillTargets) {
+      mutations[`system.skills.${skillKey}.classSkill`] = true;
+    }
   }
 
   return mutations;
