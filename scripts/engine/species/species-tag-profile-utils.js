@@ -1,4 +1,5 @@
 import speciesTraitsData from "/systems/foundryvtt-swse/data/species-traits.json" with { type: "json" };
+import speciesTraitsMigratedData from "/systems/foundryvtt-swse/data/species-traits-migrated.json" with { type: "json" };
 
 const ABILITY_ROLE_TAGS = {
   str: ['ability_str', 'offense_melee', 'melee', 'damage', 'grapple', 'athletics', 'jump', 'strength_synergy'],
@@ -81,11 +82,27 @@ function addMany(target, values = []) {
 
 function getTraitRecordMap() {
   const map = new Map();
-  for (const record of speciesTraitsData || []) {
-    const names = [record?.name, record?.renameTo].filter(Boolean);
+  // Load from migrated data FIRST (structured rules are primary)
+  for (const record of speciesTraitsMigratedData || []) {
+    const names = [record?.name, record?.canonicalName].filter(Boolean);
     for (const name of names) {
       map.set(normalizeKey(name), record);
       map.set(compactKey(name), record);
+    }
+  }
+  // Fall back to original traits for any species not in migrated data
+  for (const record of speciesTraitsData || []) {
+    const names = [record?.name, record?.renameTo].filter(Boolean);
+    for (const name of names) {
+      const key = normalizeKey(name);
+      const compKey = compactKey(name);
+      // Only set if not already present from migrated data
+      if (!map.has(key)) {
+        map.set(key, record);
+      }
+      if (!map.has(compKey)) {
+        map.set(compKey, record);
+      }
     }
   }
   return map;
