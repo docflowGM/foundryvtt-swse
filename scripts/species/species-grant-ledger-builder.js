@@ -166,8 +166,8 @@ export class SpeciesGrantLedgerBuilder {
       // Extract and normalize physical traits
       this._populatePhysical(ledger, doc);
 
-      // Extract senses
-      this._populateSenses(ledger, doc);
+      // Extract senses from structured rules and prose fallback
+      this._populateSenses(ledger, doc, supplementaryTraits);
 
       // Extract ability modifiers
       this._populateAbilities(ledger, doc);
@@ -365,13 +365,47 @@ export class SpeciesGrantLedgerBuilder {
   }
 
   /**
-   * Populate senses
+   * Populate senses from both prose fallback and structured rules
    * @private
    */
-  static _populateSenses(ledger, doc) {
+  static _populateSenses(ledger, doc, supplementaryTraits) {
     const system = doc.system || {};
 
-    // Check special for vision traits
+    // Process structured sense rules from supplementaryTraits
+    if (supplementaryTraits && typeof supplementaryTraits === 'object') {
+      const traits = [
+        ...(supplementaryTraits.structuralTraits || []),
+        ...(supplementaryTraits.conditionalTraits || [])
+      ];
+
+      for (const trait of traits) {
+        const rules = trait.rules || [];
+        for (const rule of rules) {
+          if (rule.type !== 'sense') continue;
+
+          const senseType = rule.senseType;
+          if (!senseType) continue;
+
+          const entry = {
+            type: this._normalizeSenseType(senseType),
+            range: rule.range ?? null,
+            description: rule.description || '',
+            sourceTraitId: trait.id || null,
+            sourceTraitName: trait.name || null
+          };
+
+          // Classify into vision or other
+          const visionTypes = ['darkvision', 'lowlight', 'low-light', 'low light', 'force-sight'];
+          if (visionTypes.includes(senseType.toLowerCase().replace(/[-\s]/g, ''))) {
+            ledger.senses.vision.push(entry);
+          } else {
+            ledger.senses.other.push(entry);
+          }
+        }
+      }
+    }
+
+    // Process prose fallback from doc.system.special
     if (system.special && Array.isArray(system.special)) {
       for (const special of system.special) {
         const text = String(special).toLowerCase();
@@ -406,6 +440,47 @@ export class SpeciesGrantLedgerBuilder {
         }
       }
     }
+
+    // Deduplicate senses by type and range
+    const deduped = {
+      vision: this._dedupeSenses(ledger.senses.vision),
+      other: this._dedupeSenses(ledger.senses.other)
+    };
+    ledger.senses = deduped;
+  }
+
+  /**
+   * Normalize sense type names (senseType field values → canonical types)
+   * @private
+   */
+  static _normalizeSenseType(senseType) {
+    const normalized = String(senseType || '').toLowerCase().replace(/[-\s]/g, '');
+    const map = {
+      'darkvision': 'darkvision',
+      'lowlight': 'lowLight',
+      'lowlightvision': 'lowLight',
+      'blindsense': 'blindsense',
+      'blindsight': 'blindsight',
+      'scent': 'scent',
+      'tremorsense': 'tremorsense',
+      'forcesight': 'force-sight',
+      'forcesensitivity': 'force-sight'
+    };
+    return map[normalized] || senseType;
+  }
+
+  /**
+   * Deduplicate senses by type and range, keeping first occurrence
+   * @private
+   */
+  static _dedupeSenses(senses) {
+    const seen = new Set();
+    return (senses || []).filter(sense => {
+      const key = `${sense.type}|${sense.range}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
   /**

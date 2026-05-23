@@ -99,6 +99,10 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
     const languageMutations = _materializeLanguages(actor, pendingContext);
     Object.assign(mutations, languageMutations);
 
+    // PHASE 5B: Senses (vision, blindsense, scent, etc.)
+    const senseMutations = _materializeSenses(actor, pendingContext);
+    Object.assign(mutations, senseMutations);
+
     // PHASE 6: Entitlements (feats, bonuses)
     const entitlementMutations = _materializeEntitlements(actor, pendingContext);
     Object.assign(mutations, entitlementMutations);
@@ -298,6 +302,59 @@ function _materializeLanguages(actor, pendingContext) {
     // Store in flags for now - sheet integration handles system.languages
     // This marks them as species-granted for later differentiation
     mutations['flags.swse.speciesLanguages'] = languages;
+  }
+
+  return mutations;
+}
+
+/**
+ * Materialize senses (darkvision, blindsense, scent, etc.) from species.
+ * PHASE 10B: Materialize structured sense rules to durable actor flags.
+ * @private
+ */
+function _materializeSenses(actor, pendingContext) {
+  const mutations = {};
+
+  const ledger = pendingContext.ledger || {};
+  const senses = ledger.senses || {};
+
+  // Collect all senses (vision and other) and deduplicate
+  const allSenses = [];
+  const seenKeys = new Set();
+
+  // Process vision senses (darkvision, low-light, etc.)
+  for (const sense of senses.vision || []) {
+    const key = `${sense.type}|${sense.range}`;
+    if (seenKeys.has(key)) continue;
+    seenKeys.add(key);
+
+    allSenses.push({
+      type: sense.type,
+      range: sense.range ?? null,
+      description: sense.description || '',
+      sourceTraitId: sense.sourceTraitId || null,
+      sourceTraitName: sense.sourceTraitName || null
+    });
+  }
+
+  // Process other senses (blindsense, scent, tremorsense, etc.)
+  for (const sense of senses.other || []) {
+    const key = `${sense.type}|${sense.range}`;
+    if (seenKeys.has(key)) continue;
+    seenKeys.add(key);
+
+    allSenses.push({
+      type: sense.type,
+      range: sense.range ?? null,
+      description: sense.description || '',
+      sourceTraitId: sense.sourceTraitId || null,
+      sourceTraitName: sense.sourceTraitName || null
+    });
+  }
+
+  // Store in flags if any senses exist
+  if (allSenses.length > 0) {
+    mutations['flags.swse.speciesSenses'] = allSenses;
   }
 
   return mutations;
