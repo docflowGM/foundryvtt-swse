@@ -22,6 +22,7 @@
  */
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
+import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
@@ -283,6 +284,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.mentorCollapsed = false;
     this.utilityBarCollapsed = false;
     this.talentTreeStage = 'browser'; // 'browser' | 'graph' — for talent two-stage flow
+
+    // Step-scoped auto-advance state. Individual steps opt in via
+    // getAutoAdvanceConfig(); the shell only schedules navigation after an
+    // explicit commit/toggle and always re-validates before moving.
+    this._autoAdvanceTimer = null;
+    this._autoAdvanceToken = 0;
+    this._autoAdvanceNotice = null;
 
     // Mentor state — initialize with Ol' Salty portrait loaded from mentor data
     this._initializeMentorState();
@@ -599,6 +607,132 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
   }
 
+
+  _selectionKeyForStep(stepId) {
+    const aliases = {
+      species: 'species',
+      attributes: 'attributes',
+      attribute: 'attributes',
+      class: 'class',
+      background: 'background',
+      skills: 'skills',
+      languages: 'languages',
+      language: 'languages',
+      survey: 'survey',
+      'l1-survey': 'survey',
+      'base-class-survey': 'classSurveys',
+      'prestige-survey': 'prestigeSurvey',
+      droid: 'droid',
+      'droid-model': 'droid',
+      'droid-degree': 'droid',
+      'droid-builder': 'droid',
+      'final-droid-configuration': 'droid',
+      'general-feat': 'feats',
+      'heroic-feat': 'feats',
+      'class-feat': 'feats',
+      'nonheroic-starting-feats': 'feats',
+      'general-talent': 'talents',
+      'heroic-talent': 'talents',
+      'class-talent': 'talents',
+      'force-powers': 'forcePowers',
+      'force-power': 'forcePowers',
+      'force-secrets': 'forceSecrets',
+      'force-secret': 'forceSecrets',
+      'force-techniques': 'forceTechniques',
+      'force-technique': 'forceTechniques',
+      'medical-secrets': 'medicalSecrets',
+      'medical-secret': 'medicalSecrets',
+      'starship-maneuver': 'starshipManeuvers',
+      'starship-maneuvers': 'starshipManeuvers',
+    };
+    return aliases[stepId] || stepId || null;
+  }
+
+  _isEmptySelectionValue(value) {
+    if (value === null || value === undefined) return true;
+    if (Array.isArray(value)) return value.length === 0;
+    if (value instanceof Map || value instanceof Set) return value.size === 0;
+    if (typeof value === 'object') return Object.keys(value).length === 0;
+    if (typeof value === 'string') return value.trim().length === 0;
+    return false;
+  }
+
+  _hasCommittedSelectionForStep(stepId, plugin = null) {
+    if (!stepId) return false;
+    if (this.committedSelections?.has?.(stepId)) return !this._isEmptySelectionValue(this.committedSelections.get(stepId));
+
+    const selectionKey = this._selectionKeyForStep(stepId);
+    if (selectionKey) {
+      const draftValue = this.progressionSession?.draftSelections?.[selectionKey];
+      if (!this._isEmptySelectionValue(draftValue)) return true;
+      if (this.committedSelections?.has?.(selectionKey)) {
+        return !this._isEmptySelectionValue(this.committedSelections.get(selectionKey));
+      }
+    }
+
+    try {
+      const selection = plugin?.getSelection?.(this);
+      if (selection?.isComplete === true) return true;
+      if (Array.isArray(selection?.selected) && selection.selected.length > 0) return true;
+      if (Number(selection?.count || 0) > 0) return true;
+    } catch (_err) {
+      // Non-fatal; status should never break navigation.
+    }
+
+    return false;
+  }
+
+  _markStepCompleted(stepId) {
+    if (!stepId || !this.progressionSession?.completedStepIds) return false;
+
+    const stepIndex = this.steps.findIndex(descriptor => descriptor.stepId === stepId);
+    const status = stepIndex >= 0 ? this._evaluateStepStatus(stepId, stepIndex) : null;
+    const canMarkComplete = status?.canonical === 'complete';
+
+    if (!canMarkComplete) {
+      const existingIndex = this.progressionSession.completedStepIds.indexOf(stepId);
+      if (existingIndex >= 0) {
+        this.progressionSession.completedStepIds.splice(existingIndex, 1);
+        this.progressionSession.lastModifiedAt = Date.now();
+      }
+      return false;
+    }
+
+    if (!this.progressionSession.completedStepIds.includes(stepId)) {
+      this.progressionSession.completedStepIds.push(stepId);
+      this.progressionSession.lastModifiedAt = Date.now();
+      return true;
+    }
+    return false;
+  }
+
+  _remainingChoiceCount(remainingChoices = []) {
+    if (!Array.isArray(remainingChoices) || remainingChoices.length === 0) return 0;
+
+    return remainingChoices.reduce((total, choice) => {
+      if (!choice || typeof choice !== 'object') return total;
+      const rawCount = choice.count ?? choice.remaining ?? choice.remainingCount ?? choice.needed ?? 0;
+      const count = Number(rawCount);
+      return total + (Number.isFinite(count) && count > 0 ? count : 0);
+    }, 0);
+  }
+
+  _normalizeCompletedStepIds() {
+    if (!Array.isArray(this.progressionSession?.completedStepIds)) return false;
+    let changed = false;
+
+    this.progressionSession.completedStepIds = this.progressionSession.completedStepIds.filter(stepId => {
+      const stepIndex = this.steps.findIndex(descriptor => descriptor.stepId === stepId);
+      const status = stepIndex >= 0 ? this._evaluateStepStatus(stepId, stepIndex) : null;
+      const keep = status?.canonical === 'complete';
+      if (!keep) changed = true;
+      return keep;
+    });
+
+    if (changed) this.progressionSession.lastModifiedAt = Date.now();
+    return changed;
+  }
+
   _mergeCheckpointIntoRecoveredSession(checkpoint) {
     if (!checkpoint || !this.progressionSession?.draftSelections) return false;
 
@@ -801,6 +935,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {string} e.g. "READY" or "2 picks remaining"
    */
   _buildFooterStatus(footerData) {
+    if (this._autoAdvanceNotice?.text) return this._autoAdvanceNotice.text;
     if (!footerData) return 'Ready';
     if (footerData.status?.text) return footerData.status.text;
     if (footerData.blockingIssues?.length > 0) return 'Blocked';
@@ -809,6 +944,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   _buildFooterStatusState(footerData) {
+    if (this._autoAdvanceNotice?.text) {
+      return {
+        isComplete: true,
+        remaining: 0,
+        total: Number(footerData?.status?.total || 0),
+        label: footerData?.status?.label || null,
+      };
+    }
     return {
       isComplete: !!footerData?.status?.isComplete,
       remaining: Number(footerData?.status?.remaining || 0),
@@ -1000,16 +1143,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.currentStepIndex = stepIndex;
     this.focusedItem = null;
     this.progressionSession.currentStepId = descriptor.stepId ?? null;
+    this._syncLegacyCommittedSelectionsFromSession();
+    this._activeStepEnterContext = {
+      source,
+      stepId: descriptor.stepId ?? null,
+      previousStepId: previousDescriptor?.stepId ?? null,
+      previousIndex,
+      stepIndex,
+      direction: stepIndex < previousIndex ? 'backward' : (stepIndex > previousIndex ? 'forward' : 'refresh'),
+    };
 
     const plugin = this.stepPlugins.get(descriptor.stepId);
     if (!plugin) {
       swseLogger.warn(`[ProgressionShell] No plugin found for step ${descriptor.stepId} via ${source}`);
       this.utilityBar.setConfig({ mode: 'minimal' });
+      this._activeStepEnterContext = null;
       return true;
     }
 
     try {
       await plugin.onStepEnter(this);
+      this._syncLegacyCommittedSelectionsFromSession();
 
       if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
@@ -1019,6 +1173,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       this.mentor.currentDialogue = plugin.getMentorContext(this);
       this._syncAskMentorState(plugin, descriptor);
       this.utilityBar.setConfig(plugin.getUtilityBarConfig());
+      this._activeStepEnterContext = null;
       return true;
     } catch (err) {
       swseLogger.error(`[ProgressionShell] Error entering step ${descriptor.stepId} via ${source}:`, err);
@@ -1056,6 +1211,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
           || `Failed to load ${descriptor?.label || descriptor?.stepId}. Returning to previous step.`
         );
       }
+      this._activeStepEnterContext = null;
       return false;
     }
   }
@@ -1429,7 +1585,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Recovery: skip plugin, show details panel as null
     }
 
-    // Step progress for progress rail — derived from canonical status evaluator
+    // Step progress for progress rail — derived from canonical status evaluator.
+    // First prune stale completion bookkeeping so restored sessions cannot make
+    // unvisited or still-incomplete steps appear finished.
+    this._normalizeCompletedStepIds();
+
     const stepProgress = this.steps.map((descriptor, idx) => {
       const status = this._evaluateStepStatus(descriptor.stepId, idx);
       return {
@@ -1939,6 +2099,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
             event,
             target,
           });
+          if (this._shouldScheduleAutoAdvanceForAction(action)) {
+            await this._maybeScheduleAutoAdvance({ source: `plugin-action:${action}`, event });
+          } else if (/remove|untrain|reset|back|clear|toggle|focus|filter|search|sort|exit/i.test(String(action || ''))) {
+            this._cancelAutoAdvance(`plugin-action:${action}`);
+          }
         }
       } catch (err) {
         swseLogger.error(`[ProgressionShell] Plugin action "${action}" failed:`, err);
@@ -2203,9 +2368,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const descriptor = this.steps[stepIndex];
     const plugin = this.stepPlugins.get(stepId);
     const isVisible = stepIndex < this.steps.length;
-    const isVisited = this.progressionSession.visitedStepIds.includes(stepId);
+    const visitedIds = Array.isArray(this.progressionSession?.visitedStepIds) ? this.progressionSession.visitedStepIds : [];
+    const isVisited = visitedIds.includes(stepId);
     const isCurrent = stepIndex === this.currentStepIndex;
-    const hasSelection = this.committedSelections.has(stepId);
+    const hasSelection = this._hasCommittedSelectionForStep(stepId, plugin);
 
     // Only visited steps can have completion/error/caution status
     if (!isVisible) {
@@ -2216,16 +2382,28 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return { canonical: 'neutral', isVisible, isVisited, isCurrent, hasSelection };
     }
 
-    // Visited step — evaluate completion + validity
+    // Visited step — evaluate completion + validity.
+    // IMPORTANT: a step is complete only after the player has entered it and
+    // its remaining required selection count is zero. Many steps return a
+    // getRemainingPicks() row even when count=0, so array length alone is not
+    // a valid completion test.
     const validation = plugin?.validate?.() ?? { isValid: true, errors: [], warnings: [] };
     const blockingIssues = plugin?.getBlockingIssues?.() ?? [];
     const warnings = plugin?.getWarnings?.() ?? [];
     const remainingChoices = plugin?.getRemainingPicks?.() ?? [];
+    const remainingChoiceCount = this._remainingChoiceCount(remainingChoices);
+    let selectionState = null;
+    try {
+      selectionState = plugin?.getSelection?.(this) ?? null;
+    } catch (_err) {
+      selectionState = null;
+    }
 
     const hasErrors = blockingIssues.length > 0 || validation.errors?.length > 0;
+    const selectionIncomplete = selectionState?.isComplete === false;
     const hasWarnings = warnings.length > 0 || validation.warnings?.length > 0;
     const isStale = this.progressionSession.invalidatedStepIds.includes(stepId);
-    const hasRequiredChoices = remainingChoices.length > 0;
+    const hasRequiredChoices = remainingChoiceCount > 0;
 
     // State precedence: error > caution > complete > in_progress > neutral
     if (hasErrors) {
@@ -2251,16 +2429,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
       };
     }
 
-    if (isVisited && hasSelection && !hasRequiredChoices && !hasErrors) {
-      return {
-        canonical: 'complete',
-        isVisible,
-        isVisited,
-        isCurrent,
-        hasSelection,
-      };
-    }
-
     if (isVisited && hasRequiredChoices) {
       return {
         canonical: 'in_progress',
@@ -2269,17 +2437,172 @@ export class ProgressionShell extends SWSEApplicationV2 {
         isCurrent,
         hasSelection,
         remainingChoices,
+        remainingChoiceCount,
       };
     }
 
-    // Fallback: visited but no data and no required choices (empty optional step)
+    const selectionExplicitlyComplete = selectionState?.isComplete === true;
+    const selectionStateIsSilent = selectionState === null || selectionState === undefined || selectionState?.isComplete === undefined;
+    const selectionSatisfied = selectionExplicitlyComplete || selectionStateIsSilent;
+
+    if (isVisited && !hasRequiredChoices && !hasErrors && !selectionIncomplete && selectionSatisfied) {
+      return {
+        canonical: 'complete',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        remainingChoiceCount,
+      };
+    }
+
+    // Fallback: visited but not complete because validation did not pass.
     return {
-      canonical: 'complete',
+      canonical: 'in_progress',
       isVisible,
       isVisited,
       isCurrent,
       hasSelection,
+      remainingChoices,
+      remainingChoiceCount,
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Step-scoped Auto-Advance
+  // ---------------------------------------------------------------------------
+
+  _cancelAutoAdvance(reason = 'cancelled') {
+    if (this._autoAdvanceTimer) {
+      clearTimeout(this._autoAdvanceTimer);
+      this._autoAdvanceTimer = null;
+    }
+    this._autoAdvanceToken += 1;
+    if (this._autoAdvanceNotice) {
+      swseLogger.debug('[ProgressionShell] Auto-advance cancelled', { reason, stepId: this._autoAdvanceNotice.stepId });
+    }
+    this._autoAdvanceNotice = null;
+  }
+
+  _getAutoAdvanceReadiness(plugin, { stepId = null } = {}) {
+    if (!plugin || this.isProcessing) return { ready: false, reason: 'no-plugin-or-processing' };
+
+    let config = null;
+    try {
+      config = plugin.getAutoAdvanceConfig?.(this) ?? { enabled: false };
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] getAutoAdvanceConfig failed', { stepId, err });
+      return { ready: false, reason: 'config-error' };
+    }
+
+    if (!config?.enabled) return { ready: false, reason: 'disabled' };
+    if (this.currentStepIndex >= this.steps.length - 1) return { ready: false, reason: 'last-step' };
+
+    try {
+      const blockingIssues = plugin.getBlockingIssues?.(this) ?? [];
+      if (blockingIssues.length > 0) {
+        return { ready: false, reason: 'blocking-issues', blockingIssues };
+      }
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] Auto-advance blocking check failed', { stepId, err });
+      return { ready: false, reason: 'blocking-check-error' };
+    }
+
+    try {
+      const validation = plugin.validate?.(this) ?? { isValid: true, errors: [] };
+      if (Array.isArray(validation?.errors) && validation.errors.length > 0) {
+        return { ready: false, reason: 'validation-errors', errors: validation.errors };
+      }
+      if (validation?.isValid === false) return { ready: false, reason: 'validation-invalid' };
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] Auto-advance validation check failed', { stepId, err });
+      return { ready: false, reason: 'validation-error' };
+    }
+
+    try {
+      const selection = plugin.getSelection?.(this) ?? null;
+      if (selection?.isComplete !== true) {
+        return { ready: false, reason: 'selection-incomplete', selection };
+      }
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] Auto-advance selection check failed', { stepId, err });
+      return { ready: false, reason: 'selection-error' };
+    }
+
+    const requireNoRemainingPicks = config.requireNoRemainingPicks !== false;
+    if (requireNoRemainingPicks) {
+      try {
+        const remainingPicks = plugin.getRemainingPicks?.(this) ?? [];
+        const positiveRequired = remainingPicks.filter((pick) => {
+          const count = Math.max(0, Number(pick?.count || 0));
+          return count > 0;
+        });
+        if (positiveRequired.length > 0) {
+          return { ready: false, reason: 'remaining-picks', remainingPicks: positiveRequired };
+        }
+      } catch (err) {
+        swseLogger.warn('[ProgressionShell] Auto-advance remaining-picks check failed', { stepId, err });
+        return { ready: false, reason: 'remaining-check-error' };
+      }
+    }
+
+    return { ready: true, config };
+  }
+
+  _shouldScheduleAutoAdvanceForAction(actionName) {
+    const commitActions = new Set([
+      'skill-train',
+      'select-language',
+      'add-language',
+      'select-species-variant',
+      'confirm-near-human',
+    ]);
+    return commitActions.has(String(actionName || ''));
+  }
+
+  async _maybeScheduleAutoAdvance({ source = 'interaction', event = null } = {}) {
+    const descriptor = this.steps[this.currentStepIndex];
+    const stepId = descriptor?.stepId || null;
+    const plugin = this.stepPlugins.get(stepId);
+    const readiness = this._getAutoAdvanceReadiness(plugin, { stepId });
+
+    if (!readiness.ready) {
+      this._cancelAutoAdvance(`not-ready:${readiness.reason}`);
+      return false;
+    }
+
+    const delayMs = Math.max(150, Number(readiness.config?.delayMs ?? 700) || 700);
+    const token = ++this._autoAdvanceToken;
+    if (this._autoAdvanceTimer) clearTimeout(this._autoAdvanceTimer);
+
+    this._autoAdvanceNotice = {
+      stepId,
+      source,
+      text: readiness.config?.statusText || 'Selection complete — advancing…',
+    };
+
+    swseLogger.debug('[ProgressionShell] Auto-advance scheduled', { stepId, source, delayMs });
+    this.requestRender?.({ preserveScroll: true, reason: `auto-advance-scheduled:${stepId}` });
+
+    this._autoAdvanceTimer = setTimeout(async () => {
+      this._autoAdvanceTimer = null;
+      if (token !== this._autoAdvanceToken) return;
+      if (this.steps[this.currentStepIndex]?.stepId !== stepId) return;
+
+      const latestPlugin = this.stepPlugins.get(stepId);
+      const latestReadiness = this._getAutoAdvanceReadiness(latestPlugin, { stepId });
+      if (!latestReadiness.ready) {
+        this._autoAdvanceNotice = null;
+        this.requestRender?.({ preserveScroll: true, reason: `auto-advance-cancelled:${stepId}` });
+        return;
+      }
+
+      this._autoAdvanceNotice = null;
+      swseLogger.debug('[ProgressionShell] Auto-advancing completed step', { stepId, source });
+      await this._onNextStep(event, null);
+    }, delayMs);
+
+    return true;
   }
 
   // ---------------------------------------------------------------------------
@@ -2293,6 +2616,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {HTMLElement} target — the step chip button
    */
   async _onJumpStep(event, target) {
+    this._cancelAutoAdvance('jump-step');
     if (this.isProcessing) return;
     const stepId = target?.dataset?.stepId;
     if (!stepId) return;
@@ -2302,6 +2626,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onNextStep(event, target) {
+    if (target) this._cancelAutoAdvance('manual-next');
     if (this.isProcessing) return;
     if (this.currentStepIndex >= this.steps.length - 1) {
       await this._onConfirmStep(event, target);
@@ -2324,6 +2649,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
         return;
       }
       await currentPlugin.onStepExit(this, { direction: 'forward' });
+      this._syncLegacyCommittedSelectionsFromSession();
+      this._markStepCompleted(currentDescriptor?.stepId);
 
       // Phase 3: Auto-save checkpoint after step exit (chargen only)
       if (this.persistenceEnabled && currentDescriptor?.stepId) {
@@ -2355,6 +2682,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onPreviousStep(event, target) {
+    this._cancelAutoAdvance('previous-step');
     // Prevent back-navigation past first step
     if (this.currentStepIndex <= 0) {
       swseLogger.log('[ProgressionShell] Back-navigation blocked at first active step');
@@ -2367,6 +2695,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (currentPlugin) {
       try {
         await currentPlugin.onStepExit(this, { direction: 'backward' });
+        this._syncLegacyCommittedSelectionsFromSession();
       } catch (err) {
         swseLogger.warn('[ProgressionShell] Error in backward step exit:', err);
       }
@@ -2392,6 +2721,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onConfirmStep(event, target) {
+    this._cancelAutoAdvance('confirm-step');
     if (this.isProcessing) return;
 
     swseLogger.info('ProgressionShell._onConfirmStep: Confirm button clicked', {
@@ -2728,6 +3058,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
         event,
         target: row || element,
       });
+
+      await this._maybeScheduleAutoAdvance({ source: 'commit-item', event });
     }
   }
 
@@ -2759,6 +3091,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         event,
         target: row || element,
       });
+      await this._maybeScheduleAutoAdvance({ source: 'increment-quantity', event });
     }
   }
 
@@ -2790,6 +3123,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         event,
         target: row || element,
       });
+      this._cancelAutoAdvance('decrement-quantity');
     }
   }
 
@@ -2804,10 +3138,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.confirmNearHuman) {
       await plugin.confirmNearHuman(this);
+      await this._maybeScheduleAutoAdvance({ source: 'confirm-near-human', event });
     }
   }
 
   async _onBackToSpecies(event, target) {
+    this._cancelAutoAdvance('back-to-species');
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.exitNearHumanMode) {
       await plugin.exitNearHumanMode(this);
@@ -2905,55 +3241,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {Promise<boolean>} - true if user confirms, false otherwise
    */
   async _confirmStartOver() {
-    // Use Foundry v13 DialogV2 if available, fall back to v1 Dialog for compatibility
-    const hasDialogV2 = typeof foundry !== 'undefined' &&
-                        foundry?.applications?.api?.DialogV2;
-
-    if (hasDialogV2) {
-      // Foundry v13 DialogV2 approach
-      return new Promise((resolve) => {
-        foundry.applications.api.DialogV2.confirm({
-          title: 'Warning: Start Over?',
-          content: `<p>Warning, doing this will send you back to the beginning and all of your progress will be lost. This is not recoverable. Continue?</p>`,
-          yes: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'Yes, Start Over',
-            callback: () => resolve(true),
-          },
-          no: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'No, Cancel',
-            callback: () => resolve(false),
-          },
-          default: 'no',
-          rejectClose: false, // Allow closing without explicit button click
-          onClose: () => resolve(false), // Close/Escape returns false
-        });
-      });
-    } else {
-      // Fallback to v1 Dialog for older versions
-      return new Promise((resolve) => {
-        const dialog = new Dialog({
-          title: 'Warning: Start Over?',
-          content: `<p>Warning, doing this will send you back to the beginning and all of your progress will be lost. This is not recoverable. Continue?</p>`,
-          buttons: {
-            yes: {
-              icon: '<i class="fas fa-check"></i>',
-              label: 'Yes, Start Over',
-              callback: () => resolve(true),
-            },
-            no: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'No, Cancel',
-              callback: () => resolve(false),
-            },
-          },
-          default: 'no',
-          close: () => resolve(false), // Escape or X button closes as Cancel
-        });
-        dialog.render(true);
-      });
-    }
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Warning: Start Over?',
+      content: `<p>Warning, doing this will send you back to the beginning and all of your progress will be lost. This is not recoverable. Continue?</p>`,
+      defaultYes: false,
+      yes: () => true,
+      no: () => false
+    });
+    return confirmed === true;
   }
 
   /**
@@ -2982,6 +3277,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
           event,
           target,
         });
+        if (this._shouldScheduleAutoAdvanceForAction(actionName)) {
+          await this._maybeScheduleAutoAdvance({ source: `step-action:${actionName}`, event });
+        } else if (/remove|untrain|reset|back|clear|toggle|focus|filter|search|sort|exit/i.test(String(actionName || ''))) {
+          this._cancelAutoAdvance(`step-action:${actionName}`);
+        }
         return;
       }
     }
@@ -3032,6 +3332,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     await this._recomputeActiveStepsIfNeeded();
 
     this.requestRender({ preserveScroll: true, reason: `commit-selection:${stepId}` });
+    void this._maybeScheduleAutoAdvance({ source: `commit-selection:${stepId}` });
   }
 
   /**
@@ -3092,13 +3393,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   async _showPreviewConfirmationDialog(selection, preview, options = {}) {
     const label = options.label || selection.name || 'this selection';
+    const content = InvalidationPreview.formatPreviewForDialog(preview);
 
-    return new Promise((resolve) => {
-      const content = InvalidationPreview.formatPreviewForDialog(preview);
-
-      const dialog = new Dialog({
-        title: `Confirm: ${label}`,
-        content: `
+    const confirmed = await SWSEDialogV2.confirm({
+      title: `Confirm: ${label}`,
+      content: `
           <div style="margin-bottom: 1.5em;">
             <p><strong>Making this change will affect:</strong></p>
             ${content}
@@ -3107,21 +3406,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
             Would you like to proceed?
           </p>
         `,
-        buttons: {
-          proceed: {
-            label: 'Confirm',
-            callback: () => resolve(true),
-          },
-          cancel: {
-            label: 'Cancel',
-            callback: () => resolve(false),
-          },
-        },
-        default: 'proceed',
-      });
-
-      dialog.render(true);
+      defaultYes: true,
+      yes: () => true,
+      no: () => false
     });
+
+    return confirmed === true;
   }
 
   /**
@@ -3456,6 +3746,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   async close(options = {}) {
     // Cleanup centering state
+    this._cancelAutoAdvance('close');
     clearTimeout(this._centerTimer);
     this._centerTimer = null;
     this._openedAt = null;

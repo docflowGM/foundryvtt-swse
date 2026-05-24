@@ -154,13 +154,16 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Initial filter
     this._applyFilters();
 
-    // HYDRATION: Restore draft selection if navigating backward
+    // HYDRATION: Restore the canonical draft selection when navigating back.
+    // Normalized species selections store `id`/`name`, while older step-local
+    // payloads used `speciesId`/`speciesName`. Accept both so Back never makes
+    // the player's already-locked choice look empty.
     const draftSpecies = shell?.progressionSession?.draftSelections?.species;
     if (draftSpecies) {
-      const speciesId = draftSpecies.speciesId;
+      const speciesId = draftSpecies.speciesId || draftSpecies.id || draftSpecies.sourceId || draftSpecies.name;
       if (speciesId) {
         this._committedSpeciesId = speciesId;
-        this._committedSpeciesName = draftSpecies.speciesName || draftSpecies.name;
+        this._committedSpeciesName = draftSpecies.speciesName || draftSpecies.name || speciesId;
         console.log('[SpeciesStep] Hydrated draft species selection:', {
           speciesId,
           speciesName: this._committedSpeciesName,
@@ -948,6 +951,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
         { id: 'source', label: 'Source', isDefault: true },
         { id: 'alpha', label: 'A–Z' },
       ],
+    };
+  }
+
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
     };
   }
 

@@ -46,6 +46,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       }
 
       this._allSecrets = ForceRegistry.byType('secret') || [];
+      this._hydrateCommittedFromSession(shell);
 
       // PHASE 3: Determine picks available using class progression features + engine choice budget
       const entitlements = await this._resolveSecretEntitlements(shell);
@@ -67,6 +68,17 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       swseLogger.error('[ForceSecretStep.onStepEnter]', e);
       this._allSecrets = [];
       this._remainingPicks = 0;
+    }
+  }
+
+  _hydrateCommittedFromSession(shell) {
+    this._committedSecretCounts.clear();
+    const values = shell?.progressionSession?.draftSelections?.forceSecrets || [];
+    if (!Array.isArray(values)) return;
+    for (const entry of values) {
+      const id = entry?.id || entry?._id || entry?.secretId || entry?.name || entry;
+      const count = Math.max(0, Number(entry?.count ?? 1) || 0);
+      if (id && count > 0) this._committedSecretCounts.set(id, count);
     }
   }
 
@@ -453,4 +465,12 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }

@@ -236,6 +236,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/chargen-droid-import.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen-feat-suggestions-dialog.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen-skill-focus.hbs',
+  'systems/foundryvtt-swse/templates/apps/choices/feat-choice-dialog.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen-template-selection.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs',
 
@@ -252,6 +253,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/attribute-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/background-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/custom-planet-background-dialog.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/background-choice-dialog.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/class-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/confirm-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-work-surface.hbs',

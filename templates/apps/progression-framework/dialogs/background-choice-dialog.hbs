@@ -1,0 +1,49 @@
+<form class="swse-background-choice-dialog" data-background-choice-form>
+  <header class="swse-background-choice-dialog__header">
+    <div>
+      <div class="swse-background-choice-dialog__eyebrow">Background Grant</div>
+      <h2>{{title}}</h2>
+    </div>
+  </header>
+
+  <section class="swse-background-choice-dialog__body">
+    <p class="swse-background-choice-dialog__copy">
+      <strong>{{backgroundName}}</strong> {{prompt}}
+    </p>
+    <p class="swse-background-choice-dialog__requirement">{{requiredText}}</p>
+
+    <div class="swse-background-choice-dialog__list" role="group" aria-label="{{title}}">
+      {{#each choices}}
+        <label class="swse-background-choice-dialog__row">
+          <input
+            type="{{../inputType}}"
+            name="{{../fieldName}}"
+            value="{{value}}"
+            {{#if checked}}checked{{/if}}
+          />
+          <span class="swse-background-choice-dialog__label">
+            {{#if ability}}
+              <span class="prog-skill-token {{abilityClass}}" data-ability="{{ability}}" title="{{abilityLabel}}">{{label}}</span>
+            {{else}}
+              <span>{{label}}</span>
+            {{/if}}
+            {{#if hint}}
+              <span class="swse-background-choice-dialog__hint">{{hint}}</span>
+            {{/if}}
+          </span>
+        </label>
+      {{/each}}
+    </div>
+  </section>
+
+  <footer class="swse-background-choice-dialog__actions">
+    <button type="button" class="swse-btn swse-btn--ghost" data-action="cancel-choice">
+      <i class="fas fa-ban"></i>
+      {{cancelLabel}}
+    </button>
+    <button type="submit" class="swse-btn swse-btn--primary" data-action="confirm-choice">
+      <i class="fas fa-check"></i>
+      {{confirmLabel}}
+    </button>
+  </footer>
+</form>

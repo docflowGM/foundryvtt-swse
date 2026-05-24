@@ -39,6 +39,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       }
 
       this._allTechniques = ForceRegistry.byType('technique') || [];
+      this._hydrateCommittedFromSession(shell);
       // PHASE 3: Resolve from class progression features + engine choice budget
       const entitlements = await this._resolveTechniqueEntitlements(shell);
       this._remainingPicks = entitlements.remaining;
@@ -56,6 +57,17 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     } catch (e) {
       swseLogger.error('[ForceTechniqueStep.onStepEnter]', e);
       this._allTechniques = [];
+    }
+  }
+
+  _hydrateCommittedFromSession(shell) {
+    this._committedTechniqueCounts.clear();
+    const values = shell?.progressionSession?.draftSelections?.forceTechniques || [];
+    if (!Array.isArray(values)) return;
+    for (const entry of values) {
+      const id = entry?.id || entry?._id || entry?.techniqueId || entry?.name || entry;
+      const count = Math.max(0, Number(entry?.count ?? 1) || 0);
+      if (id && count > 0) this._committedTechniqueCounts.set(id, count);
     }
   }
 
@@ -431,4 +443,12 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }

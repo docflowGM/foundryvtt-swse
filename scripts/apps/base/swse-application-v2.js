@@ -33,6 +33,16 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
     return foundry.utils.mergeObject(base, o);
   }
 
+  /**
+   * Compatibility wrapper for older call sites that still use render(true).
+   * ApplicationV2 expects an options object; normalizing here keeps every SWSE
+   * V2 modal/window on the same Foundry v13/v14-safe path.
+   */
+  render(force = false, options = {}) {
+    if (typeof force === 'boolean') return super.render({ force, ...options });
+    return super.render(force);
+  }
+
   async _prepareContext(options) {
     return {};
   }

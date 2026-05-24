@@ -461,13 +461,30 @@ export class TalentStep extends ProgressionStepPlugin {
             nodeStates: this._lastGraphNodeStates || this._buildNodeStates(),
             focusedTalentId: this._focusedTalentId,
             onFocus: async (talentId) => {
-              this._focusedTalentId = talentId;
+              await this.onItemFocused(talentId, shell);
               this._renderPreservingScroll(shell);
             },
             onCommit: async (talentId) => {
-              await this.onItemCommitted(talentId, shell);
+              await this.onItemCommitted(this._resolveTalentFocusId(talentId), shell);
             }
           });
+
+          canvas.addEventListener('click', async (event) => {
+            const node = event.target?.closest?.('.prog-talent-orb-node[data-node-id]');
+            if (!node || !canvas.contains(node)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            await this.onItemFocused(node.dataset.nodeId, shell);
+            this._renderPreservingScroll(shell);
+          }, { signal: this._renderAbort?.signal });
+
+          canvas.addEventListener('dblclick', async (event) => {
+            const node = event.target?.closest?.('.prog-talent-orb-node[data-node-id]');
+            if (!node || !canvas.contains(node)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            await this.onItemCommitted(this._resolveTalentFocusId(node.dataset.nodeId), shell);
+          }, { signal: this._renderAbort?.signal });
 
           if (this._centerGraphAfterRender) {
             const targetId = this._focusedTalentId || this._selectedTalentId;
@@ -1123,8 +1140,91 @@ export class TalentStep extends ProgressionStepPlugin {
   /**
    * Get a talent by ID
    */
+  _normalizeTalentLookupKey(value) {
+    if (value === null || value === undefined) return '';
+    const raw = typeof value === 'object'
+      ? value.id || value._id || value.uuid || value.key || value.slug || value.name || value.label || ''
+      : value;
+    return String(raw || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+
+  _getTalentIdentityCandidates(talent) {
+    if (!talent) return [];
+    return [
+      talent.id,
+      talent._id,
+      talent.uuid,
+      talent.key,
+      talent.slug,
+      talent.name,
+      talent.label,
+      talent.system?.slug,
+      talent.system?.key,
+      talent.system?.id,
+      talent.flags?.swse?.id,
+    ].filter(Boolean);
+  }
+
+  _resolveTalentFocusId(talentId) {
+    if (!talentId) return null;
+    const directNode = this._graphData?.nodes?.get?.(talentId);
+    const directTalent = directNode?.talent || directNode;
+    const directId = this._getTalentIdentityCandidates(directTalent)[0];
+    if (directId) return directId;
+
+    const lookup = this._normalizeTalentLookupKey(talentId);
+    for (const talent of this._selectedTreeTalents || []) {
+      const match = this._getTalentIdentityCandidates(talent)
+        .some(candidate => this._normalizeTalentLookupKey(candidate) === lookup);
+      if (match) return this._getTalentIdentityCandidates(talent)[0] || talentId;
+    }
+
+    for (const [nodeId, node] of this._graphData?.nodes || []) {
+      const talent = node?.talent || node;
+      const match = [nodeId, ...(this._getTalentIdentityCandidates(talent))]
+        .some(candidate => this._normalizeTalentLookupKey(candidate) === lookup);
+      if (match) return this._getTalentIdentityCandidates(talent)[0] || nodeId;
+    }
+
+    return talentId;
+  }
+
+  /**
+   * Get a talent by ID, graph node id, source id, slug, or name.
+   */
   _getTalent(talentId) {
-    return TalentRegistry.getById?.(talentId) || TalentRegistry.getByName?.(talentId) || null;
+    if (!talentId) return null;
+    const direct = TalentRegistry.getById?.(talentId) || TalentRegistry.getByName?.(talentId);
+    if (direct) return direct;
+
+    const graphNode = this._graphData?.nodes?.get?.(talentId);
+    if (graphNode?.talent) return graphNode.talent;
+    if (graphNode?.name) {
+      const registryTalent = TalentRegistry.getByName?.(graphNode.name);
+      if (registryTalent) return registryTalent;
+      return graphNode.talent || graphNode;
+    }
+
+    const lookup = this._normalizeTalentLookupKey(talentId);
+    for (const talent of this._selectedTreeTalents || []) {
+      const match = this._getTalentIdentityCandidates(talent)
+        .some(candidate => this._normalizeTalentLookupKey(candidate) === lookup);
+      if (match) return talent;
+    }
+
+    for (const [, node] of this._graphData?.nodes || []) {
+      const talent = node?.talent || node;
+      const match = this._getTalentIdentityCandidates(talent)
+        .some(candidate => this._normalizeTalentLookupKey(candidate) === lookup);
+      if (match) return talent;
+    }
+
+    return null;
   }
 
   /**
@@ -1946,13 +2046,27 @@ export class TalentStep extends ProgressionStepPlugin {
   // Focus/Commit
   // ---------------------------------------------------------------------------
 
-  async onItemFocused(item) {
+  _buildFocusedTalentPayload(talentId) {
+    const resolvedId = this._resolveTalentFocusId(talentId);
+    const talent = this._getTalent(resolvedId);
+    if (!talent) return resolvedId ? { id: resolvedId, _id: resolvedId } : null;
+    return {
+      ...talent,
+      id: talent.id || talent._id || resolvedId,
+      _id: talent._id || talent.id || resolvedId,
+    };
+  }
+
+  async onItemFocused(item, shell = null) {
     if (this._stage === 'graph') {
-      // item is a string ID from the shell event extraction
-      this._focusedTalentId = item;
+      // item is a string ID from the shell event extraction or graph node id.
+      this._focusedTalentId = this._resolveTalentFocusId(item);
+      const focusedTalent = this._buildFocusedTalentPayload(this._focusedTalentId);
+      shell?.setFocusedItem?.(focusedTalent);
       emitTalentStepTrace('ITEM_FOCUSED', {
         stage: this._stage,
         focusedTalentId: this._focusedTalentId,
+        focusedTalentName: focusedTalent?.name || null,
       });
     }
   }
@@ -1971,7 +2085,7 @@ export class TalentStep extends ProgressionStepPlugin {
       this._enterTree(item, shell);
     } else if (this._stage === 'graph') {
       // Toggle selection in graph (item is a talent ID string)
-      const talentId = item;
+      const talentId = this._resolveTalentFocusId(item);
       const talent = this._getTalent(talentId);
       emitTalentStepTrace('ITEM_COMMIT_TALENT_START', {
         stage: this._stage,
@@ -2139,6 +2253,14 @@ export class TalentStep extends ProgressionStepPlugin {
       sorts: [
         { id: 'alpha', label: 'A–Z' },
       ],
+    };
+  }
+
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
     };
   }
 

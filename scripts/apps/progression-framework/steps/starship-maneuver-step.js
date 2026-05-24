@@ -202,6 +202,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       }
 
       this._allManeuvers = maneuverPool;
+      this._hydrateCommittedFromSession(shell);
 
       // Calculate remaining picks from capacity and shell selections
       try {
@@ -747,6 +748,23 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     return Array.from(counts.entries()).map(([id, count]) => ({ id, count }));
   }
 
+  _hydrateCommittedFromSession(shell) {
+    this._committedManeuverCounts.clear();
+    this._removedManeuverCounts.clear();
+    const values = shell?.progressionSession?.draftSelections?.starshipManeuvers || [];
+    if (!Array.isArray(values)) return;
+    for (const entry of values) {
+      const rawId = entry?.id || entry?._id || entry?.maneuverId || entry?.name || entry;
+      if (!rawId) continue;
+      const resolved = this._resolveManeuver(rawId);
+      const id = this._normalizeManeuverId(resolved || rawId);
+      const count = Math.max(0, Number(entry?.count ?? 1) || 0);
+      const removeCount = Math.max(0, Number(entry?.removeCount ?? 0) || 0);
+      if (count > 0) this._committedManeuverCounts.set(id, count);
+      if (removeCount > 0) this._removedManeuverCounts.set(id, removeCount);
+    }
+  }
+
   _getActorManeuverCount(actor, maneuverId) {
     if (!this._actorManeuverCounts?.size) {
       this._actorManeuverCounts = new Map(this._getActorManeuverEntries(actor).map((entry) => [entry.id, entry.count]));
@@ -791,4 +809,12 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }

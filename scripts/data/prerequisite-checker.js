@@ -1232,8 +1232,29 @@ export class PrerequisiteChecker {
     }
 
 
+    static _isPlaceholderWeaponTarget(value) {
+        const key = normalizeFeatChoiceKey(value);
+        return [
+            'chosen_weapon',
+            'selected_weapon',
+            'selected_weapon_group',
+            'chosen_weapon_group',
+            'particular_weapon',
+            'one_weapon'
+        ].includes(key);
+    }
+
     static _getPrereqWeaponTarget(prereq, pending = {}) {
-        return pending?.selectedChoice || pending?.candidateChoice || prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
+        const explicitChoice = pending?.selectedChoice || pending?.candidateChoice;
+        if (explicitChoice) return explicitChoice;
+
+        const target = prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
+        // Printed prerequisites such as "Proficient with Chosen Weapon" are not
+        // a literal weapon group. During list legality they mean "any weapon
+        // proficiency exists"; during choice validation the selected choice above
+        // is used instead.
+        if (this._isPlaceholderWeaponTarget(target)) return null;
+        return target;
     }
 
     static _choiceKeyFromPrereqTarget(target) {
@@ -1472,13 +1493,24 @@ export class PrerequisiteChecker {
             };
         }
 
-        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?selected\s+weapon\s+group$/i.test(part)) {
+        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?(?:selected|chosen)\s+weapon(?:\s+group)?$/i.test(part)) {
             return { type: 'weapon_proficiency' };
         }
 
         const earlyWeaponProfMatch = part.match(/^(?:proficient|proficiency)\s+with\s+(.+)$/i);
         if (earlyWeaponProfMatch && /weapon|pistol|rifle|lightsaber|melee|simple|advanced|heavy|exotic/i.test(earlyWeaponProfMatch[1])) {
-            return { type: 'weapon_proficiency', weaponGroup: earlyWeaponProfMatch[1].trim() };
+            const weaponGroup = earlyWeaponProfMatch[1].trim();
+            return this._isPlaceholderWeaponTarget(weaponGroup)
+                ? { type: 'weapon_proficiency' }
+                : { type: 'weapon_proficiency', weaponGroup };
+        }
+
+        const explicitWeaponProficiencyChoice = part.match(/^weapon\s+proficiency\s*\(([^)]+)\)$/i);
+        if (explicitWeaponProficiencyChoice) {
+            const weaponGroup = explicitWeaponProficiencyChoice[1].trim();
+            return this._isPlaceholderWeaponTarget(weaponGroup)
+                ? { type: 'weapon_proficiency' }
+                : { type: 'weapon_proficiency', weaponGroup };
         }
 
         const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
@@ -1606,13 +1638,24 @@ export class PrerequisiteChecker {
         // "Proficient with selected weapon group". Parse that as a real
         // proficiency check against the current candidate choice instead of a
         // phantom feat called "Proficient with selected weapon group".
-        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?selected\s+weapon\s+group$/i.test(part)) {
+        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?(?:selected|chosen)\s+weapon(?:\s+group)?$/i.test(part)) {
             return { type: 'weapon_proficiency' };
         }
 
         const weaponProfMatch = part.match(/^(?:proficient|proficiency)\s+with\s+(.+)$/i);
         if (weaponProfMatch && /weapon|pistol|rifle|lightsaber|melee|simple|advanced|heavy|exotic/i.test(weaponProfMatch[1])) {
-            return { type: 'weapon_proficiency', weaponGroup: weaponProfMatch[1].trim() };
+            const weaponGroup = weaponProfMatch[1].trim();
+            return this._isPlaceholderWeaponTarget(weaponGroup)
+                ? { type: 'weapon_proficiency' }
+                : { type: 'weapon_proficiency', weaponGroup };
+        }
+
+        const explicitWeaponProficiencyChoice = part.match(/^weapon\s+proficiency\s*\(([^)]+)\)$/i);
+        if (explicitWeaponProficiencyChoice) {
+            const weaponGroup = explicitWeaponProficiencyChoice[1].trim();
+            return this._isPlaceholderWeaponTarget(weaponGroup)
+                ? { type: 'weapon_proficiency' }
+                : { type: 'weapon_proficiency', weaponGroup };
         }
 
         if (owningType === 'talent') {

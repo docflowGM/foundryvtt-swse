@@ -507,18 +507,26 @@ export class PassiveAdapter {
    * @param {Object} ability - The ability item
    */
   static handleState(actor, ability) {
-    // PHASE 4: Stub implementation - validate structure only
+    // PHASE 4: Stub implementation - validate structure only.
+    // Metadata-only STATE entries are intentionally accepted as no-ops so a
+    // single feat/talent that exposes future automation hooks cannot break actor
+    // preparation, chargen finalization, or sheet rendering.
     const meta = ability.system.abilityMeta;
-    if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
-      throw new Error(
-        `PASSIVE STATE ${ability.name} missing or invalid modifiers array`
-      );
-    }
+    const modifiers = Array.isArray(meta?.modifiers) ? meta.modifiers : [];
+
+    if (!actor._passiveStateNotes) actor._passiveStateNotes = {};
+    actor._passiveStateNotes[ability.id] = {
+      id: ability.id,
+      name: ability.name,
+      status: meta?.status || null,
+      description: meta?.description || '',
+      hasExecutableStateModifiers: modifiers.length > 0
+    };
 
     // Future phases: integrate with ConditionEvaluator and state tracking
     swseLogger.debug(
       `[PassiveAdapter] STATE ${ability.name} ` +
-      `registered for ${actor.name} (${meta.modifiers.length} state predicates)`
+      `registered for ${actor.name} (${modifiers.length} state predicates)`
     );
   }
 

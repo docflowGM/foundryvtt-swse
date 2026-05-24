@@ -674,13 +674,15 @@ export class SelectedRailContext {
    * @private
    */
   static _formatSkillSummaryValue(skill) {
-    if (skill === null || skill === undefined) return '';
-    if (typeof skill === 'string' || typeof skill === 'number') return String(skill).trim();
-    if (typeof skill === 'object') {
-      const candidate = skill.name || skill.label || skill.id;
-      if (candidate !== null && candidate !== undefined) return String(candidate).trim();
-    }
-    return String(skill).trim();
+    const coerce = (value) => {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'object') {
+        return coerce(value.displayName || value.name || value.label || value.title || value.key || value.slug || value.id || value._id || value.skill);
+      }
+      const text = String(value).trim();
+      return text && text !== '[object Object]' ? text : '';
+    };
+    return coerce(skill);
   }
 
   /**

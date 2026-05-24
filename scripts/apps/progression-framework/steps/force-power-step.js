@@ -75,6 +75,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
       // Get all force powers from registry
       this._allPowers = ForceRegistry.byType('power') || [];
+      this._hydrateCommittedFromSession(shell);
 
       // GUARDRAIL (Wave 10): Compute total force power entitlements from ALL sources:
       // 1. Standard Force Training path (1 + WIS mod)
@@ -760,6 +761,23 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     return String(power?.id || power?._id || power?.uuid || this._normalizePowerLookupKey(power?.name || powerOrId));
   }
 
+  _hydrateCommittedFromSession(shell) {
+    this._committedPowerCounts.clear();
+    this._removedPowerCounts.clear();
+    const values = shell?.progressionSession?.draftSelections?.forcePowers || [];
+    if (!Array.isArray(values)) return;
+    for (const entry of values) {
+      const rawId = entry?.id || entry?._id || entry?.powerId || entry?.name || entry;
+      if (!rawId) continue;
+      const resolved = this._resolvePower(rawId);
+      const id = this._normalizePowerId(resolved || rawId);
+      const count = Math.max(0, Number(entry?.count ?? 1) || 0);
+      const removeCount = Math.max(0, Number(entry?.removeCount ?? 0) || 0);
+      if (count > 0) this._committedPowerCounts.set(id, count);
+      if (removeCount > 0) this._removedPowerCounts.set(id, removeCount);
+    }
+  }
+
   _getEffectiveSelectionBudget() {
     return Math.max(0, Number(this._baseRemainingPicks ?? this._remainingPicks) || 0) + this._sumCounts(this._removedPowerCounts);
   }
@@ -957,4 +975,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     };
     return formatted;
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }

@@ -265,6 +265,21 @@ export class ProgressionStepPlugin {
     return null;
   }
 
+  /**
+   * Step-scoped auto-advance configuration.
+   *
+   * Returning enabled: true tells the shell that this step may advance itself
+   * after an explicit player commit/toggle when the step is complete and has
+   * no blocking issues. This is intentionally opt-in so oddball or summary
+   * steps never get skipped by a global click handler.
+   *
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {{ enabled?: boolean, delayMs?: number, requireNoRemainingPicks?: boolean }}
+   */
+  getAutoAdvanceConfig(shell) {
+    return { enabled: false };
+  }
+
   // ---------------------------------------------------------------------------
   // Mentor
   // ---------------------------------------------------------------------------

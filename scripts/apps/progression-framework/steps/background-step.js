@@ -23,6 +23,7 @@ import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/s
 import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays } from '../utils/skill-display.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
+import { BackgroundChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/background-choice-dialog.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 
 const CATEGORY_LABELS = {
@@ -83,19 +84,28 @@ export class BackgroundStep extends ProgressionStepPlugin {
     // Phase 5: Get suggested backgrounds from SuggestionService
     await this._getSuggestedBackgrounds(shell.actor, shell);
 
-    // HYDRATION: Restore draft selection if navigating backward
+    // HYDRATION: Restore the canonical draft selection when navigating back.
+    // Normalized backgrounds store `id` plus `backgroundIds`; older payloads used
+    // `backgroundId`. Accept all known shapes so Back preserves the locked answer.
     const draftBackground = shell?.progressionSession?.draftSelections?.background;
     if (draftBackground) {
-      // Background can be a single object or array of objects depending on house rule
+      const toBackgroundId = (bg) => bg?.backgroundId || bg?.id || bg?.sourceId || bg?.name || bg;
       if (Array.isArray(draftBackground)) {
-        this._committedBackgroundIds = draftBackground.map(bg => bg.backgroundId).filter(Boolean);
-      } else if (draftBackground.backgroundId) {
-        this._committedBackgroundIds = [draftBackground.backgroundId];
+        this._committedBackgroundIds = draftBackground.map(toBackgroundId).filter(Boolean);
+      } else if (Array.isArray(draftBackground.backgroundIds) && draftBackground.backgroundIds.length) {
+        this._committedBackgroundIds = draftBackground.backgroundIds.map(toBackgroundId).filter(Boolean);
+      } else {
+        const id = toBackgroundId(draftBackground);
+        this._committedBackgroundIds = id ? [id] : [];
       }
       if (this._committedBackgroundIds.length > 0) {
-        const pendingChoices = shell?.progressionSession?.currentPendingBackgroundContext?.pendingChoices || draftBackground?.pendingContext?.pendingChoices || [];
+        const pendingContext = shell?.progressionSession?.draftSelections?.pendingBackgroundContext
+          || shell?.progressionSession?.currentPendingBackgroundContext
+          || draftBackground?.pendingContext
+          || null;
+        const pendingChoices = pendingContext?.pendingChoices || [];
         for (const choice of pendingChoices) {
-          const bgId = choice?.sourceBackgroundId || choice?.backgroundId;
+          const bgId = choice?.sourceBackgroundId || choice?.backgroundId || choice?.id;
           if (bgId && Array.isArray(choice?.resolved)) this._backgroundSkillChoices[bgId] = [...choice.resolved];
         }
         console.log('[BackgroundStep] Hydrated draft background selection:', {
@@ -781,59 +791,37 @@ _getCategoryChips() {
 
 
   async _promptForBackgroundSkillChoices(background, count, options) {
-    const safeName = String(background?.name || 'Background').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-    const rows = options.map((skill, index) => {
-      const display = buildSkillDisplay(skill);
-      const safeSkill = String(display.label || skill).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-      const ability = display.ability ? ` data-ability="${display.ability}"` : '';
-      const abilityClass = display.ability ? ` prog-skill-token--${display.ability} swse-ability-label swse-ability-label--${display.ability}` : '';
-      return `<label class="swse-background-skill-choice__row"><input type="checkbox" name="backgroundSkill" value="${safeSkill}" ${index < count ? 'checked' : ''}/> <span class="prog-skill-token ${abilityClass}"${ability}>${safeSkill}</span></label>`;
-    }).join('');
-    const content = `<form class="swse-background-skill-choice"><p><strong>${safeName}</strong> grants class-skill training access. Pick exactly ${count} skill${count === 1 ? '' : 's'}.</p><div class="swse-background-skill-choice__list">${rows}</div></form>`;
+    const requiredCount = Math.max(1, Number(count || 1));
+    const inputType = requiredCount === 1 ? 'radio' : 'checkbox';
+    const choices = (Array.isArray(options) ? options : [])
+      .map((skill, index) => {
+        const display = buildSkillDisplay(skill);
+        const label = display.label || String(skill || '').trim();
+        if (!label) return null;
+        return {
+          value: label,
+          label,
+          ability: display.ability,
+          abilityLabel: display.abilityLabel,
+          abilityClass: display.abilityClass,
+          checked: inputType === 'radio' ? index === 0 : index < requiredCount
+        };
+      })
+      .filter(Boolean);
 
-    return new Promise((resolve) => {
-      let settled = false;
-      const finish = (value) => {
-        if (settled) return;
-        settled = true;
-        resolve(value);
-      };
-      const dialog = new Dialog({
-        title: `Pick ${count} Background Skill${count === 1 ? '' : 's'}`,
-        content,
-        buttons: {
-          confirm: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'Confirm Skills',
-            callback: (html) => {
-              const root = html?.[0] || html;
-              const checked = Array.from(root.querySelectorAll('input[name="backgroundSkill"]:checked')).map(input => input.value);
-              if (checked.length !== count) {
-                ui.notifications?.warn?.(`Pick exactly ${count} skill${count === 1 ? '' : 's'}.`);
-                finish(null);
-                return;
-              }
-              finish(checked);
-            }
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
-            callback: () => finish(null)
-          }
-        },
-        close: () => finish(null),
-        default: 'confirm'
-      });
-      dialog.render(true);
-      window.setTimeout(() => {
-        const appEl = dialog.element?.[0] || dialog.element || document.querySelector(`.app[data-appid="${dialog.appId}"]`);
-        if (appEl?.style) {
-          appEl.style.zIndex = '120000';
-          appEl.style.position = appEl.style.position || 'fixed';
-        }
-      }, 0);
+    const result = await BackgroundChoiceDialog.prompt({
+      title: `Pick ${requiredCount} Background Skill${requiredCount === 1 ? '' : 's'}`,
+      backgroundName: String(background?.name || 'Background'),
+      prompt: `grants class-skill training access.`,
+      choices,
+      requiredCount,
+      inputType,
+      fieldName: 'backgroundSkill',
+      confirmLabel: 'Confirm Skills',
+      cancelLabel: 'Cancel'
     });
+
+    return Array.isArray(result) ? result : null;
   }
 
   _extractBackgroundLanguageChoiceOptions(background) {
@@ -852,51 +840,31 @@ _getCategoryChips() {
   }
 
   async _promptForBackgroundLanguageChoice(background, options) {
-    const safeName = String(background?.name || 'Background').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-    const rows = options.map((language, index) => {
-      const safeLanguage = String(language).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-      return `<label class="swse-background-skill-choice__row"><input type="radio" name="backgroundLanguage" value="${safeLanguage}" ${index === 0 ? 'checked' : ''}/> <span>${safeLanguage}</span></label>`;
-    }).join('');
-    const content = `<form class="swse-background-skill-choice"><p><strong>${safeName}</strong> grants a background language. Pick one.</p><div class="swse-background-skill-choice__list">${rows}</div></form>`;
+    const choices = (Array.isArray(options) ? options : [])
+      .map((language, index) => {
+        const label = String(language || '').trim();
+        if (!label) return null;
+        return {
+          value: label,
+          label,
+          checked: index === 0
+        };
+      })
+      .filter(Boolean);
 
-    return new Promise((resolve) => {
-      let settled = false;
-      const finish = (value) => {
-        if (settled) return;
-        settled = true;
-        resolve(value);
-      };
-      const dialog = new Dialog({
-        title: 'Pick Background Language',
-        content,
-        buttons: {
-          confirm: {
-            icon: '<i class="fas fa-check"></i>',
-            label: 'Confirm Language',
-            callback: (html) => {
-              const root = html?.[0] || html;
-              const checked = root.querySelector('input[name="backgroundLanguage"]:checked');
-              finish(checked?.value || null);
-            }
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
-            callback: () => finish(null)
-          }
-        },
-        close: () => finish(null),
-        default: 'confirm'
-      });
-      dialog.render(true);
-      window.setTimeout(() => {
-        const appEl = dialog.element?.[0] || dialog.element || document.querySelector(`.app[data-appid="${dialog.appId}"]`);
-        if (appEl?.style) {
-          appEl.style.zIndex = '120000';
-          appEl.style.position = appEl.style.position || 'fixed';
-        }
-      }, 0);
+    const result = await BackgroundChoiceDialog.prompt({
+      title: 'Pick Background Language',
+      backgroundName: String(background?.name || 'Background'),
+      prompt: 'grants a background language.',
+      choices,
+      requiredCount: 1,
+      inputType: 'radio',
+      fieldName: 'backgroundLanguage',
+      confirmLabel: 'Confirm Language',
+      cancelLabel: 'Cancel'
     });
+
+    return Array.isArray(result) ? (result[0] || null) : null;
   }
 
   _getMentorFlavorForBackground(background) {
@@ -1012,6 +980,14 @@ _getCategoryChips() {
 
     const flavorText = `A custom homeworld then: ${planetName}. That gives you 2 class skills from ${relevantSkills.join(', ')} and ${bonusLanguage} as its language.`;
     void shell.mentorRail?.speak?.(flavorText, 'neutral');
+  }
+
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
   }
 
 }

@@ -20,6 +20,7 @@ import { ProgressionAdapter } from "./progression/progression-adapter.js";
 import { ForceAdapter } from "./force-power/force-power-adapter.js";
 import { RuleCollector } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-collector.js";
 import { SpeciesTraitPassiveAdapter } from "./passive/species-trait-passive-adapter.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class AbilityExecutionCoordinator {
 
@@ -48,6 +49,7 @@ export class AbilityExecutionCoordinator {
     // Ensures we rebuild from scratch, not accumulate
     // ========================================
     actor._passiveModifiers = {};
+    actor._passiveStateNotes = {};
     actor._ruleTokens = [];
     actor._unlockGrants = { systemAccess: new Set(), proficiencies: { weapon: new Set(), armor: new Set(), exotic: new Set(), shield: new Set() }, skills: { training: new Set(), classSkills: new Set() } };
     // (Other execution models will add their resets here in future phases)
@@ -61,18 +63,25 @@ export class AbilityExecutionCoordinator {
     );
 
     for (const ability of abilities) {
-      if (ability.system.executionModel === "PASSIVE") {
-        PassiveAdapter.register(actor, ability, ruleCollector);
-      } else if (ability.system.executionModel === "ACTIVE") {
-        ActiveAdapter.register(actor, ability);
-      } else if (ability.system.executionModel === "ATTACK_OPTION") {
-        AttackOptionAdapter.register(actor, ability);
-      } else if (ability.system.executionModel === "UNLOCK") {
-        UnlockAdapter.register(actor, ability);
-      } else if (ability.system.executionModel === "PROGRESSION") {
-        ProgressionAdapter.register(actor, ability);
-      } else if (ability.system.executionModel === "FORCE_POWER") {
-        ForceAdapter.register(actor, ability);
+      try {
+        if (ability.system.executionModel === "PASSIVE") {
+          PassiveAdapter.register(actor, ability, ruleCollector);
+        } else if (ability.system.executionModel === "ACTIVE") {
+          ActiveAdapter.register(actor, ability);
+        } else if (ability.system.executionModel === "ATTACK_OPTION") {
+          AttackOptionAdapter.register(actor, ability);
+        } else if (ability.system.executionModel === "UNLOCK") {
+          UnlockAdapter.register(actor, ability);
+        } else if (ability.system.executionModel === "PROGRESSION") {
+          ProgressionAdapter.register(actor, ability);
+        } else if (ability.system.executionModel === "FORCE_POWER") {
+          ForceAdapter.register(actor, ability);
+        }
+      } catch (err) {
+        SWSELogger.warn(
+          `[AbilityExecutionCoordinator] Skipping invalid ability ${ability?.name || ability?.id || 'unknown'} ` +
+          `on ${actor?.name || 'actor'}: ${err?.message || err}`
+        );
       }
     }
 

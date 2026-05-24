@@ -38,8 +38,8 @@
     </div>
 
     <div class="sw-uses-tracker">
-      {{#each (range 0 secondWindPanel.max) as |i|}}
-        <div class="sw-charge {{#if (lt i ../secondWindPanel.uses)}}active{{/if}}"></div>
+      {{#each secondWindPanel.pips as |pip|}}
+        <div class="sw-charge {{#if pip.active}}active{{/if}}" title="{{pip.label}}"></div>
       {{/each}}
     </div>
 

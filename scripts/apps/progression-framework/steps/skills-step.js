@@ -580,17 +580,18 @@ renderDetailsPanel(focusedItem) {
   const skill = this._resolveFocusedSkill(focusedItem);
   if (!skill) return this.renderDetailsPanelEmptyState();
 
-  const skillKey = skill.key || skill.id || skill._id;
+  const skillKey = this._coerceSkillIdentity(skill.key || skill.id || skill._id || skill.name || skill.label);
   const skillUses = this._getExtraSkillUses(skillKey);
   const normalized = normalizeDetailPanelData(skill, 'skill', { otherUses: skillUses });
   const abilityLabel = this._coerceDisplayName(skill.abilityLabel || normalized.mechanics?.defaultAbilityLabel || this._abilityLabel(skill.ability));
   const category = this._coerceDisplayName(skill.category || abilityLabel || 'Skill');
+  const skillName = this._coerceDisplayName(skill.name || skill.label || skill.displayName || skillKey);
 
   return {
     template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/skill-details.hbs',
     data: {
       skill,
-      skillName: this._coerceDisplayName(skill.name || skill.label || skillKey),
+      skillName,
       skillSlug: skillKey,
       description: normalized.description || extractDescriptionText(skill) || '',
       abilityLabel,
@@ -1048,14 +1049,15 @@ renderDetailsPanel(focusedItem) {
 
     if (pruned > 0) {
       this._trainedCount = Array.from(this._trainedSkills.values()).filter(s => s.trained).length;
-      const trainedList = Array.from(this._trainedSkills.entries())
-        .filter(([_, data]) => data.trained)
-        .map(([key]) => key);
-      const normalizedSkills = normalizeSkills(trainedList);
-      if (normalizedSkills && shell) {
-        shell.progressionSession?.commitSelection?.(this.descriptor.stepId, 'skills', normalizedSkills);
-        shell.committedSelections?.set?.('skills', normalizedSkills);
-      }
+      // Preserve the canonical draft when the player is merely revisiting the
+      // step. Pruning is a presentation safety valve for impossible choices,
+      // not an implicit override of a locked selection. A later explicit
+      // untrain/reset click will commit the new skill list normally.
+      swseLogger.warn('[SkillsStep] Preserved canonical skill draft after local trainability prune', {
+        pruned,
+        stepId: this.descriptor?.stepId || null,
+        navigation: shell?._activeStepEnterContext || null,
+      });
     }
 
     return pruned;
@@ -1458,8 +1460,36 @@ _coerceDetailText(value) {
   return text && text !== '[object Object]' ? text : '';
 }
 
+_coerceSkillIdentity(value) {
+  if (value && typeof value === 'object') {
+    const nested = value.key
+      || value.slug
+      || value.system?.key
+      || value.skillKey
+      || value.skillId
+      || value.skill
+      || value.name
+      || value.label
+      || value.displayName
+      || value.value?.key
+      || value.value?.name
+      || value.value?.label
+      || value.value
+      || value.id
+      || value._id;
+    if (nested && typeof nested !== 'object') {
+      const text = String(nested).trim();
+      return text && text !== '[object Object]' ? text : '';
+    }
+    if (nested && typeof nested === 'object') return this._coerceSkillIdentity(nested);
+    return '';
+  }
+  const text = String(value || '').trim();
+  return text && text !== '[object Object]' ? text : '';
+}
+
 _skillLookupKey(value) {
-    return String(value || '')
+    return this._coerceSkillIdentity(value)
       .toLowerCase()
       .replace(/\s+/g, '')
       .replace(/[()[\]{}]/g, '')
@@ -1468,8 +1498,8 @@ _skillLookupKey(value) {
 
 _normalizeSkillRecord(skill) {
   if (!skill) return null;
-  const name = this._coerceDisplayName(skill.name || skill.label || skill.id || skill._id || 'Unknown Skill');
-  const sourceKey = skill.key || skill.slug || skill.system?.key || name;
+  const name = this._coerceDisplayName(skill.name || skill.label || skill.displayName || skill.id || skill._id || 'Unknown Skill');
+  const sourceKey = this._coerceSkillIdentity(skill.key || skill.slug || skill.system?.key || skill.id || skill._id || name);
   const key = this._skillLookupKey(sourceKey);
   const id = skill.id || skill._id || key;
   const ability = String(skill.system?.ability || skill.ability || '').toLowerCase();
@@ -1496,8 +1526,25 @@ _normalizeSkillRecord(skill) {
 
 _coerceDisplayName(value) {
   if (value && typeof value === 'object') {
-    const nested = value.name || value.label || value.value || value.key || value.id;
-    if (nested && typeof nested !== 'object') return String(nested).trim();
+    const nested = value.name
+      || value.label
+      || value.displayName
+      || value.skillName
+      || value.skillLabel
+      || value.value?.name
+      || value.value?.label
+      || value.value?.key
+      || value.system?.name
+      || value.system?.label
+      || value.system?.key
+      || value.value
+      || value.key
+      || value.id;
+    if (nested && typeof nested !== 'object') {
+      const text = String(nested).trim();
+      return text && text !== '[object Object]' ? text : 'Skill';
+    }
+    if (nested && typeof nested === 'object') return this._coerceDisplayName(nested);
     return 'Skill';
   }
   const text = String(value || '').trim();
@@ -1517,9 +1564,13 @@ _abilityLabel(ability) {
 }
 
 _resolveFocusedSkill(focusedItem) {
-  const focusedId = focusedItem?.id || this._focusedSkillId;
-  if (!focusedId) return null;
-  return this._availableSkills.find((skill) => skill.id === focusedId || skill._id === focusedId || skill.key === focusedId) || null;
+  const focusedId = this._coerceSkillIdentity(focusedItem?.id || focusedItem?._id || focusedItem?.key || focusedItem?.name || focusedItem || this._focusedSkillId);
+  const focusedKey = this._skillLookupKey(focusedId);
+  if (!focusedKey) return null;
+  return this._availableSkills.find((skill) => {
+    const ids = [skill.id, skill._id, skill.key, skill.slug, skill.name, skill.label].map(value => this._skillLookupKey(value));
+    return ids.includes(focusedKey);
+  }) || null;
 }
 
 async onItemFocused(id, shell) {
@@ -1541,5 +1592,13 @@ _formatSkillCard(skill, suggestedIds = new Set()) {
     isTrained: !!this._getSkillSelectionState(normalized)?.trained,
   };
 }
+
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
 
 }

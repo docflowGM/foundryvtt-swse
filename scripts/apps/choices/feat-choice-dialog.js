@@ -1,59 +1,198 @@
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 import { FeatChoiceResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
-function escapeHtml(value) {
-  const div = document.createElement('div');
-  div.textContent = String(value ?? '');
-  return div.innerHTML;
+function getAppRoot(app) {
+  if (app?.element instanceof HTMLElement) return app.element;
+  if (app?.element?.[0] instanceof HTMLElement) return app.element[0];
+  return document.getElementById?.(app?.id) || null;
 }
 
-function optionValue(option) {
-  return JSON.stringify(option || {});
+function optionKey(option, index = 0) {
+  return String(
+    FeatChoiceResolver.getSelectedChoiceKey(option) ||
+    option?.id ||
+    option?.value ||
+    option?.key ||
+    index
+  );
 }
 
-function renderOptions(options, selectedKey = '') {
-  if (!options?.length) {
-    return '<p class="notes">No legal choices are currently available for this actor.</p>';
+function optionLabel(option) {
+  return String(option?.label || option?.name || option?.value || option?.id || 'Choice');
+}
+
+function optionSource(option) {
+  return String(option?.locked ? 'Locked' : (option?.source || option?.prerequisiteSource || 'Available'));
+}
+
+class FeatChoiceAppV2 extends SWSEApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    ...SWSEApplicationV2.DEFAULT_OPTIONS,
+    id: 'swse-feat-choice-dialog',
+    classes: [
+      ...(SWSEApplicationV2.DEFAULT_OPTIONS?.classes || []),
+      'swse-feat-choice-dialog-app'
+    ],
+    position: {
+      width: 540,
+      height: 'auto'
+    },
+    window: {
+      title: 'Feat Choice',
+      resizable: false,
+      draggable: true,
+      frame: true
+    }
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/choices/feat-choice-dialog.hbs'
+    }
+  };
+
+  constructor({
+    title = 'Feat Choice',
+    heading = 'Choose one option',
+    message = '',
+    helper = '',
+    options = [],
+    selectedKey = '',
+    confirmLabel = 'Save Choice',
+    cancelLabel = 'Cancel',
+    fieldName = 'swseFeatChoice'
+  } = {}) {
+    super({});
+    this.dialogTitle = title;
+    this.heading = heading;
+    this.message = message;
+    this.helper = helper;
+    this.optionsList = Array.isArray(options) ? options : [];
+    this.selectedKey = String(selectedKey || '');
+    this.confirmLabel = confirmLabel;
+    this.cancelLabel = cancelLabel;
+    this.fieldName = fieldName;
+    this.result = null;
+    this.onDecision = null;
+    this._settled = false;
+    this._choiceMap = new Map();
   }
-  return `<div class="swse-feat-choice-options">
-    ${options.map((option, index) => {
-      const key = FeatChoiceResolver.getSelectedChoiceKey(option) || option.id || option.value || String(index);
-      const source = option.locked ? 'Locked' : (option.source || option.prerequisiteSource || 'Available');
-      return `<label class="swse-feat-choice-option" style="display:block;margin:.35rem 0;">
-        <input type="radio" name="swseFeatChoice" value="${escapeHtml(optionValue(option))}" ${selectedKey && selectedKey === key ? 'checked' : ''}>
-        <strong>${escapeHtml(option.label || option.name || option.value || option.id)}</strong>
-        <span class="notes">${escapeHtml(source)}</span>
-      </label>`;
-    }).join('')}
-  </div>`;
-}
 
+  static async prompt(options = {}) {
+    const dialog = new this(options);
+    return new Promise((resolve) => {
+      dialog.onDecision = resolve;
+      dialog.render(true);
+    });
+  }
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    this._choiceMap = new Map();
+    const choices = this.optionsList.map((option, index) => {
+      const key = optionKey(option, index);
+      this._choiceMap.set(key, option);
+      return {
+        key,
+        label: optionLabel(option),
+        source: optionSource(option),
+        locked: Boolean(option?.locked),
+        checked: this.selectedKey && this.selectedKey === key
+      };
+    });
+
+    return {
+      ...context,
+      title: this.dialogTitle,
+      heading: this.heading,
+      message: this.message,
+      helper: this.helper,
+      confirmLabel: this.confirmLabel,
+      cancelLabel: this.cancelLabel,
+      fieldName: this.fieldName,
+      hasChoices: choices.length > 0,
+      choices
+    };
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const root = getAppRoot(this);
+    if (!root) {
+      console.warn('[FeatChoiceAppV2] Unable to bind modal controls: root element missing');
+      return;
+    }
+    root.style.zIndex = String(Math.max(Number(root.style.zIndex || 0), 120000));
+
+    const form = root.querySelector('[data-feat-choice-form]');
+    const confirm = root.querySelector('[data-action="confirm-feat-choice"]');
+    const cancel = root.querySelector('[data-action="cancel-feat-choice"]');
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      await this.#submit(root);
+    });
+
+    confirm?.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await this.#submit(root);
+    });
+
+    cancel?.addEventListener('click', async (event) => {
+      event.preventDefault();
+      this.#settle(null);
+      await this.close();
+    });
+
+    window.requestAnimationFrame(() => {
+      root.querySelector(`input[name="${this.fieldName}"]`)?.focus?.();
+    });
+  }
+
+  async #submit(root) {
+    const input = root.querySelector(`input[name="${this.fieldName}"]:checked`);
+    if (!input) {
+      ui.notifications?.warn?.('Choose an option before saving.');
+      return;
+    }
+
+    const selected = this._choiceMap.get(String(input.value));
+    this.#settle(selected ?? null);
+    await this.close();
+  }
+
+  #settle(value) {
+    if (this._settled) return;
+    this._settled = true;
+    this.result = value;
+    if (typeof this.onDecision === 'function') {
+      const resolve = this.onDecision;
+      this.onDecision = null;
+      resolve(this.result);
+    }
+  }
+
+  async close(options = {}) {
+    if (!this._settled) this.#settle(null);
+    return super.close(options);
+  }
+}
 
 async function promptOption(title, message, options) {
-  const content = `<form class="swse-feat-choice-dialog"><p>${escapeHtml(message || '')}</p>${renderOptions(options)}</form>`;
-  return new Promise((resolve) => {
-    new Dialog({
-      title,
-      content,
-      buttons: {
-        confirm: {
-          label: 'Continue',
-          callback: (html) => {
-            const input = html[0]?.querySelector('input[name="swseFeatChoice"]:checked');
-            if (!input) { resolve(null); return; }
-            try { resolve(JSON.parse(input.value)); } catch (_err) { resolve(input.value); }
-          }
-        },
-        cancel: { label: 'Cancel', callback: () => resolve(null) }
-      },
-      default: 'confirm',
-      close: () => resolve(null)
-    }).render(true);
+  return FeatChoiceAppV2.prompt({
+    title,
+    heading: title,
+    message: message || '',
+    options,
+    confirmLabel: 'Continue',
+    cancelLabel: 'Cancel',
+    fieldName: `swseFeatChoice-${Math.random().toString(36).slice(2)}`
   });
 }
 
 export class FeatChoiceDialog {
-  static async prompt(actor, itemOrFeat, { title = null, allowCancel = true } = {}) {
+  static async prompt(actor, itemOrFeat, { title = null, allowCancel = true, context = {}, pending = null } = {}) {
     const meta = FeatChoiceResolver.getChoiceMeta(itemOrFeat);
     if (!meta?.required) return null;
     if (FeatChoiceResolver.isClassGrantedItem(itemOrFeat)) {
@@ -61,70 +200,61 @@ export class FeatChoiceDialog {
       return null;
     }
 
-    const options = await FeatChoiceResolver.resolveOptions(actor, itemOrFeat);
+    const resolutionContext = pending ? { ...context, pending } : (context || {});
+    let options = await FeatChoiceResolver.resolveOptions(actor, itemOrFeat, resolutionContext);
+    if (meta.choiceKind === 'skill_focus') {
+      options = options.filter(option => option?.trained === true || String(option?.source || '').toLowerCase().includes('trained'));
+      if (!options.length) {
+        ui.notifications?.warn?.('Skill Focus requires a trained skill. Train a skill before choosing this feat.');
+        return null;
+      }
+    }
     const current = FeatChoiceResolver.getStoredChoice(actor, itemOrFeat);
     const selectedKey = FeatChoiceResolver.getSelectedChoiceKey(current);
-    const content = `<form class="swse-feat-choice-dialog">
-      <p><strong>${escapeHtml(itemOrFeat?.name || 'Feat')}</strong> requires a choice.</p>
-      ${meta.choiceSource === 'grantPool' || FeatChoiceResolver.inferChoiceSource(itemOrFeat) === 'grantPool'
-        ? '<p class="notes">This feat unlocks progression slots. The dedicated progression step resolves the granted selections later.</p>'
-        : ''}
-      ${renderOptions(options, selectedKey)}
-    </form>`;
+    const helper = meta.choiceSource === 'grantPool' || FeatChoiceResolver.inferChoiceSource(itemOrFeat) === 'grantPool'
+      ? 'This feat unlocks progression slots. The dedicated progression step resolves the granted selections later.'
+      : '';
 
-    return new Promise((resolve) => {
-      new Dialog({
-        title: title || `Choose: ${itemOrFeat?.name || 'Feat Choice'}`,
-        content,
-        buttons: {
-          confirm: {
-            label: 'Save Choice',
-            callback: async (html) => {
-              const input = html[0]?.querySelector('input[name="swseFeatChoice"]:checked');
-              if (!input) {
-                ui.notifications?.warn?.('Choose an option before saving.');
-                resolve(null);
-                return;
-              }
-              let selected = null;
-              try { selected = JSON.parse(input.value); } catch (_err) { selected = input.value; }
-              if (selected?.id === 'exotic' || selected?.branch === 'exoticWeapons') {
-                const registry = await FeatChoiceResolver.loadRegistry();
-                const category = await promptOption('Choose Exotic Weapon Category', 'Choose the kind of exotic weapon proficiency.', [
-                  { id: 'melee', value: 'melee', label: 'Exotic Melee Weapons' },
-                  { id: 'ranged', value: 'ranged', label: 'Exotic Ranged Weapons' }
-                ]);
-                if (!category) { resolve(null); return; }
-                const weaponOptions = (registry.exoticWeapons?.[category.value] || []).map((name) => ({
-                  id: `exotic:${category.value}:${String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-                  value: String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                  label: name,
-                  group: 'exotic',
-                  category: category.value,
-                  weapon: name
-                }));
-                const weapon = await promptOption('Choose Exotic Weapon', `Choose the specific ${category.label}.`, weaponOptions);
-                if (!weapon) { resolve(null); return; }
-                selected = weapon;
-              }
-              const validation = await FeatChoiceResolver.validateSelectedChoice(actor, itemOrFeat, selected);
-              if (!validation.valid) {
-                ui.notifications?.error?.(validation.errors.join(' '));
-                resolve(null);
-                return;
-              }
-              resolve(selected);
-            }
-          },
-          cancel: {
-            label: allowCancel ? 'Cancel' : 'Later',
-            callback: () => resolve(null)
-          }
-        },
-        default: 'confirm',
-        close: () => resolve(null)
-      }).render(true);
+    let selected = await FeatChoiceAppV2.prompt({
+      title: title || `Choose: ${itemOrFeat?.name || 'Feat Choice'}`,
+      heading: `${itemOrFeat?.name || 'Feat'} requires a choice.`,
+      message: 'Pick the option this feat should apply to.',
+      helper,
+      options,
+      selectedKey,
+      confirmLabel: 'Save Choice',
+      cancelLabel: allowCancel ? 'Cancel' : 'Later'
     });
+
+    if (!selected) return null;
+
+    if (selected?.id === 'exotic' || selected?.branch === 'exoticWeapons') {
+      const registry = await FeatChoiceResolver.loadRegistry();
+      const category = await promptOption('Choose Exotic Weapon Category', 'Choose the kind of exotic weapon proficiency.', [
+        { id: 'melee', value: 'melee', label: 'Exotic Melee Weapons' },
+        { id: 'ranged', value: 'ranged', label: 'Exotic Ranged Weapons' }
+      ]);
+      if (!category) return null;
+      const weaponOptions = (registry.exoticWeapons?.[category.value] || []).map((name) => ({
+        id: `exotic:${category.value}:${String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        value: String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        label: name,
+        group: 'exotic',
+        category: category.value,
+        weapon: name
+      }));
+      const weapon = await promptOption('Choose Exotic Weapon', `Choose the specific ${category.label}.`, weaponOptions);
+      if (!weapon) return null;
+      selected = weapon;
+    }
+
+    const validation = await FeatChoiceResolver.validateSelectedChoice(actor, itemOrFeat, selected, resolutionContext);
+    if (!validation.valid) {
+      ui.notifications?.error?.(validation.errors.join(' '));
+      return null;
+    }
+
+    return selected;
   }
 
   static async promptAndApply(actor, item) {
@@ -140,5 +270,3 @@ export class FeatChoiceDialog {
     return true;
   }
 }
-
-export default FeatChoiceDialog;

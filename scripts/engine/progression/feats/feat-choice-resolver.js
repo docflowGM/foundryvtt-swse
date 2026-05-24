@@ -33,6 +33,79 @@ function nameKey(value) {
     .replace(/^-+|-+$/g, '');
 }
 
+function firstScalar(...values) {
+  for (const value of values) {
+    if (value === null || value === undefined) continue;
+    if (typeof value === 'object') {
+      const nested = firstScalar(
+        value.key, value.slug, value.system?.key, value.name, value.label, value.displayName,
+        value.value, value.id, value._id, value.internalId, value.skill, value.skillKey, value.skillId
+      );
+      if (nested) return nested;
+      continue;
+    }
+    const text = String(value).trim();
+    if (text && text !== '[object Object]') return text;
+  }
+  return '';
+}
+
+function normalizeSkillChoiceKey(value) {
+  return stableKey(firstScalar(value) || value);
+}
+
+const SKILL_LABELS = Object.freeze({
+  acrobatics: 'Acrobatics',
+  climb: 'Climb',
+  deception: 'Deception',
+  endurance: 'Endurance',
+  gather_information: 'Gather Information',
+  gatherinformation: 'Gather Information',
+  initiative: 'Initiative',
+  jump: 'Jump',
+  knowledge_bureaucracy: 'Knowledge (Bureaucracy)',
+  knowledge_galactic_lore: 'Knowledge (Galactic Lore)',
+  knowledge_life_sciences: 'Knowledge (Life Sciences)',
+  knowledge_physical_sciences: 'Knowledge (Physical Sciences)',
+  knowledge_social_sciences: 'Knowledge (Social Sciences)',
+  knowledge_tactics: 'Knowledge (Tactics)',
+  knowledge_technology: 'Knowledge (Technology)',
+  mechanics: 'Mechanics',
+  perception: 'Perception',
+  persuasion: 'Persuasion',
+  pilot: 'Pilot',
+  ride: 'Ride',
+  stealth: 'Stealth',
+  survival: 'Survival',
+  swim: 'Swim',
+  treat_injury: 'Treat Injury',
+  treatinjury: 'Treat Injury',
+  use_computer: 'Use Computer',
+  usecomputer: 'Use Computer',
+  use_the_force: 'Use the Force',
+  usetheforce: 'Use the Force'
+});
+
+function labelForSkill(key, fallback = '') {
+  const normalized = normalizeSkillChoiceKey(key || fallback);
+  return SKILL_LABELS[normalized] || firstScalar(fallback, key)
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function isTrainedSkillRecord(record) {
+  if (!record) return false;
+  if (record === true) return true;
+  if (typeof record !== 'object') return false;
+  return Boolean(
+    record.trained === true ||
+    record.isTrained === true ||
+    record.value?.trained === true ||
+    record.system?.trained === true ||
+    record.system?.value?.trained === true
+  );
+}
+
 function getPropertySafe(source, path) {
   if (!source || !path) return undefined;
   if (globalThis.foundry?.utils?.getProperty) {
@@ -61,7 +134,16 @@ function setPropertySafe(target, path, value) {
 function asArray(value) {
   if (!value) return [];
   if (Array.isArray(value)) return value;
-  if (value instanceof Set) return Array.from(value);
+  if (value instanceof Set || value instanceof Map) return Array.from(value.values());
+  if (Array.isArray(value.contents)) return value.contents;
+  if (typeof value.values === 'function' && typeof value !== 'string') {
+    try {
+      const entries = Array.from(value.values());
+      if (entries.length || value.size === 0) return entries;
+    } catch (_err) {
+      // Fall through to scalar wrapper.
+    }
+  }
   return [value];
 }
 
@@ -90,6 +172,32 @@ function normalizeChoiceEntry(entry) {
     label: String(label || id),
     value: entry.value || String(id)
   };
+}
+
+function findWeaponGroup(registry, value) {
+  const key = stableKey(value);
+  if (!key) return null;
+  return (registry?.weaponGroups || []).find((entry) => {
+    const ids = [entry?.id, entry?.proficiencyValue, entry?.label, entry?.name].map(stableKey);
+    return ids.includes(key);
+  }) || null;
+}
+
+function weaponGroupCanonicalValue(registry, value) {
+  const group = findWeaponGroup(registry, value);
+  return group?.id || group?.proficiencyValue || stableKey(value);
+}
+
+function isPlaceholderWeaponChoice(value) {
+  const key = stableKey(firstScalar(value));
+  return [
+    'chosen_weapon',
+    'selected_weapon',
+    'selected_weapon_group',
+    'chosen_weapon_group',
+    'particular_weapon',
+    'one_weapon'
+  ].includes(key);
 }
 
 export class FeatChoiceResolver {
@@ -282,19 +390,70 @@ export class FeatChoiceResolver {
         .filter(option => !owned.has(this.getSelectedChoiceKey(option)));
     }
 
-    if (kind === 'skill_focus' || kind === 'skill_training') {
-      const skills = actor?.system?.skills || {};
-      return Object.entries(skills).map(([key, skill]) => normalizeChoiceEntry({
-        id: key,
-        value: key,
-        label: skill?.label || skill?.name || key,
-        trained: Boolean(skill?.trained || skill?.value?.trained)
-      })).filter(Boolean);
+    if (kind === 'skill_focus') {
+      return this._resolveSkillChoiceOptions(actor, context, { trainedOnly: true });
+    }
+
+    if (kind === 'skill_training') {
+      return this._resolveSkillChoiceOptions(actor, context, { excludeTrained: true });
     }
 
     const def = registry.choiceKinds?.[kind];
     const options = def?.options || def?.fixedOptions || [];
     return uniqueById(options.map(normalizeChoiceEntry).filter(Boolean));
+  }
+
+  static _resolveSkillChoiceOptions(actor, context = {}, { trainedOnly = false, excludeTrained = false } = {}) {
+    const pending = context?.pending || context || {};
+    const entries = new Map();
+
+    const add = (keyLike, record = {}, source = 'actor', forceTrained = null) => {
+      const rawKey = firstScalar(keyLike, record?.key, record?.slug, record?.id, record?._id, record?.name, record?.label);
+      const id = normalizeSkillChoiceKey(rawKey);
+      if (!id) return;
+      const trained = forceTrained === null ? isTrainedSkillRecord(record) : Boolean(forceTrained);
+      const previous = entries.get(id) || {};
+      entries.set(id, {
+        id,
+        value: id,
+        label: previous.label || labelForSkill(id, firstScalar(record?.label, record?.name, rawKey)),
+        trained: Boolean(previous.trained || trained),
+        source: previous.source || source
+      });
+    };
+
+    const actorSkills = actor?.system?.skills || {};
+    if (Array.isArray(actorSkills)) {
+      for (const skill of actorSkills) add(skill, skill, 'actor.system.skills');
+    } else {
+      for (const [key, skill] of Object.entries(actorSkills)) add(key, skill, 'actor.system.skills');
+    }
+
+    const selectedSkillPools = [
+      pending?.selectedSkills,
+      pending?.trainedSkills,
+      pending?.skills?.trained,
+      pending?.characterData?.skills?.trained
+    ];
+    for (const pool of selectedSkillPools) {
+      for (const entry of asArray(pool)) add(entry, entry, 'pending.selectedSkills', true);
+    }
+
+    const pendingSkillsObject = pending?.skills && !Array.isArray(pending.skills) ? pending.skills : null;
+    if (pendingSkillsObject) {
+      for (const [key, value] of Object.entries(pendingSkillsObject)) {
+        if (key === 'trained' && Array.isArray(value)) continue;
+        add(key, value, 'pending.skills', isTrainedSkillRecord(value));
+      }
+    }
+
+    let options = Array.from(entries.values());
+    if (trainedOnly) options = options.filter(option => option.trained);
+    if (excludeTrained) options = options.filter(option => !option.trained);
+
+    return uniqueById(options
+      .map(option => normalizeChoiceEntry({ ...option, source: option.trained ? 'Trained' : option.source }))
+      .filter(Boolean));
   }
 
   static _resolvePrerequisiteDerivedOptions(actor, registry, meta, kind, context = {}) {
@@ -399,12 +558,15 @@ export class FeatChoiceResolver {
   static getWeaponProficiencyChoices(actor, registry = this._registry || {}, pending = {}) {
     const results = [];
     const addGroup = (value, source = 'actor', locked = false) => {
-      const id = stableKey(value);
+      if (isPlaceholderWeaponChoice(value)) return;
+      const canonical = weaponGroupCanonicalValue(registry, value);
+      const id = stableKey(canonical);
       if (!id) return;
-      const group = (registry.weaponGroups || []).find((entry) => entry.id === id || entry.proficiencyValue === id);
+      const group = findWeaponGroup(registry, canonical) || findWeaponGroup(registry, value);
       results.push({
         id,
         value: id,
+        group: group?.id || canonical,
         label: group?.label || String(value),
         kind: 'weapon_group',
         source,
@@ -439,12 +601,21 @@ export class FeatChoiceResolver {
       const withoutPrefix = (parenthetical || text)
         .replace(/^proficien(?:t|cy)\s+(?:with|in)\s+/i, '')
         .replace(/^weapon\s+proficiency\s*[-:]?\s*/i, '')
+        .replace(/^advanced\s+melee\s+weapon\s+proficiency$/i, 'advanced melee weapons')
+        .replace(/^heavy\s+weapon\s+proficiency$/i, 'heavy weapons')
         .trim();
+      if (isPlaceholderWeaponChoice(withoutPrefix)) return '';
       const aliasKey = stableKey(withoutPrefix);
       const aliases = {
         simple_weapons: 'simple',
+        simple_weapon: 'simple',
         advanced_melee_weapons: 'advanced-melee',
+        advanced_melee_weapon: 'advanced-melee',
         heavy_weapons: 'heavy-weapons',
+        heavy_weapon: 'heavy-weapons',
+        light_melee_weapons: 'simple',
+        simple_melee_weapons: 'simple',
+        simple_ranged_weapons: 'simple',
       };
       return aliases[aliasKey] || withoutPrefix;
     };

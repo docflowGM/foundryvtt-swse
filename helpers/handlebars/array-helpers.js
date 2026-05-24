@@ -9,6 +9,30 @@ export const arrayHelpers = {
   array: (...args) => args.slice(0, -1),
 
   /**
+   * Create a numeric range for templates without depending on legacy init files.
+   * Usage: {{#each (range 0 3)}}...{{/each}}
+   * Also supports {{#each (range 3)}} as 0..2.
+   */
+  range: (start, end, step = 1) => {
+    let from = Number(start ?? 0);
+    let to = Number(end ?? start ?? 0);
+    if (end === undefined || typeof end === 'object') {
+      from = 0;
+      to = Number(start ?? 0);
+      step = 1;
+    }
+    const by = Math.max(1, Math.abs(Number(step ?? 1) || 1));
+    if (!Number.isFinite(from) || !Number.isFinite(to)) return [];
+    const values = [];
+    if (from <= to) {
+      for (let i = from; i < to; i += by) values.push(i);
+    } else {
+      for (let i = from; i > to; i -= by) values.push(i);
+    }
+    return values;
+  },
+
+  /**
    * Map over an array with a transformation function.
    * Since Handlebars doesn't support inline lambda functions natively,
    * the transformation should be computed in the context and passed pre-transformed.

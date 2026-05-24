@@ -857,8 +857,17 @@ export class FeatStep extends ProgressionStepPlugin {
     return extractDescriptionText(feat);
   }
 
+  _formatChoicePrerequisiteText(feat, text = '') {
+    const featName = String(feat?.name || '').trim().toLowerCase();
+    const raw = String(text || '').trim();
+    if (featName === 'weapon focus' && /proficient\s+with\s+(?:chosen|selected)\s+weapon/i.test(raw)) {
+      return 'Weapon Proficiency with chosen weapon group or exotic weapon';
+    }
+    return raw;
+  }
+
   _getFeatPrerequisites(feat) {
-    const text = String(feat?.prerequisiteText || '').trim();
+    const text = this._formatChoicePrerequisiteText(feat, feat?.prerequisiteText || feat?.system?.prerequisite || '');
     return text ? [text] : [];
   }
 
@@ -866,7 +875,7 @@ export class FeatStep extends ProgressionStepPlugin {
    * Get prerequisite line for compact middle-panel display
    */
   _getPrerequisiteLine(feat) {
-    const cleaned = String(feat?.prerequisiteText || '').trim();
+    const cleaned = this._formatChoicePrerequisiteText(feat, feat?.prerequisiteText || feat?.system?.prerequisite || '');
     return cleaned || 'No prerequisite';
   }
 
@@ -1183,7 +1192,10 @@ export class FeatStep extends ProgressionStepPlugin {
       if (choiceMeta?.required && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = slotSelections;
-        const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, { title: `Choose: ${feat.name}` });
+        const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, {
+          title: `Choose: ${feat.name}`,
+          context: { pending: pendingForChoice }
+        });
         if (!selectedChoice) {
           emitFeatStepTrace('ITEM_COMMIT_CANCELLED_FOR_CHOICE', {
             featId,
@@ -1487,6 +1499,14 @@ export class FeatStep extends ProgressionStepPlugin {
         { id: 'alpha-asc',  label: 'Name A→Z' },
         { id: 'alpha-desc', label: 'Name Z→A' },
       ],
+    };
+  }
+
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
     };
   }
 

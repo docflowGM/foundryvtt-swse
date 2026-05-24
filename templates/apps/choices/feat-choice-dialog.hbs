@@ -1,0 +1,50 @@
+<form class="swse-feat-choice-dialog" data-feat-choice-form>
+  <header class="swse-feat-choice-dialog__header">
+    <div>
+      <div class="swse-feat-choice-dialog__eyebrow">Feat Configuration</div>
+      <h2>{{heading}}</h2>
+    </div>
+  </header>
+
+  <section class="swse-feat-choice-dialog__body">
+    {{#if message}}
+      <p class="swse-feat-choice-dialog__copy">{{message}}</p>
+    {{/if}}
+    {{#if helper}}
+      <p class="swse-feat-choice-dialog__helper">{{helper}}</p>
+    {{/if}}
+
+    {{#if hasChoices}}
+      <div class="swse-feat-choice-dialog__list" role="radiogroup" aria-label="{{title}}">
+        {{#each choices}}
+          <label class="swse-feat-choice-dialog__row {{#if locked}}is-locked{{/if}}">
+            <input
+              type="radio"
+              name="{{../fieldName}}"
+              value="{{key}}"
+              {{#if checked}}checked{{/if}}
+              {{#if locked}}disabled{{/if}}
+            />
+            <span class="swse-feat-choice-dialog__label">
+              <strong>{{label}}</strong>
+              <small>{{source}}</small>
+            </span>
+          </label>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="swse-feat-choice-dialog__empty">No legal choices are currently available for this actor.</p>
+    {{/if}}
+  </section>
+
+  <footer class="swse-feat-choice-dialog__actions">
+    <button type="button" class="swse-btn swse-btn--ghost" data-action="cancel-feat-choice">
+      <i class="fas fa-ban"></i>
+      {{cancelLabel}}
+    </button>
+    <button type="submit" class="swse-btn swse-btn--primary" data-action="confirm-feat-choice" {{#unless hasChoices}}disabled{{/unless}}>
+      <i class="fas fa-check"></i>
+      {{confirmLabel}}
+    </button>
+  </footer>
+</form>

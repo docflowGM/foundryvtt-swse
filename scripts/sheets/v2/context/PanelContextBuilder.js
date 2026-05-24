@@ -798,8 +798,15 @@ export class PanelContextBuilder {
     const baseHealing = Math.ceil(maxHp * 0.25);
     const storedHealing = Number(this.system.secondWind?.healing) || 0;
     const healing = storedHealing > 0 ? storedHealing : baseHealing;
-    const uses = Number(this.system.secondWind?.uses) || 0;
-    const max = Number(this.system.secondWind?.max) || 1;
+    const rawUses = Number(this.system.secondWind?.uses);
+    const rawMax = Number(this.system.secondWind?.max);
+    const max = Math.max(0, Number.isFinite(rawMax) ? rawMax : 1);
+    const uses = Math.max(0, Math.min(max, Number.isFinite(rawUses) ? rawUses : 0));
+    const pips = Array.from({ length: max }, (_, index) => ({
+      index,
+      active: index < uses,
+      label: `Second Wind ${index + 1} of ${max}`
+    }));
 
     const panel = {
       baseHealing,
@@ -807,6 +814,7 @@ export class PanelContextBuilder {
       totalHealing: healing,
       uses,
       max,
+      pips,
       hasUses: uses > 0,
       canEdit: this.sheet.isEditable
     };

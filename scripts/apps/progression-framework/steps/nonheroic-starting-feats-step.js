@@ -345,4 +345,12 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
       ),
     }));
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }

@@ -173,8 +173,13 @@ export class PassiveContractValidator {
    * @throws {Error}
    */
   static validateState(meta) {
+    // A large portion of the current data pack uses PASSIVE/STATE as a
+    // metadata-only marker for rerolls, skill-use substitutions, attack options,
+    // rule hooks, and GM-enforced notes. Those entries are valid content, but
+    // they do not participate in the predicate-modifier path yet. Treat missing
+    // modifiers as a no-op state passive instead of aborting actor preparation.
     if (!meta?.modifiers) {
-      throw new Error("PASSIVE STATE missing modifiers array");
+      return true;
     }
 
     if (!Array.isArray(meta.modifiers)) {

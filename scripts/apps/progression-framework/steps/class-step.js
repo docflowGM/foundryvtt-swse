@@ -99,13 +99,16 @@ export class ClassStep extends ProgressionStepPlugin {
     // Initial filter
     this._applyFilters(shell);
 
-    // HYDRATION: Restore draft selection if navigating backward
+    // HYDRATION: Restore the canonical draft selection when navigating back.
+    // Normalized class selections store `id`/`name`; older step-local payloads
+    // used `classId`/`className`. Accept both so the selection remains locked
+    // until the player deliberately chooses another class.
     const draftClass = shell?.progressionSession?.draftSelections?.class;
     if (draftClass) {
-      const classId = draftClass.classId;
+      const classId = draftClass.classId || draftClass.id || draftClass.sourceId || draftClass.name;
       if (classId) {
         this._committedClassId = classId;
-        this._committedClassName = draftClass.className || draftClass.name;
+        this._committedClassName = draftClass.className || draftClass.name || classId;
         console.log('[ClassStep] Hydrated draft class selection:', {
           classId,
           className: this._committedClassName,
@@ -520,6 +523,14 @@ export class ClassStep extends ProgressionStepPlugin {
         { id: 'source', label: 'Source' },
         { id: 'alpha', label: 'A–Z' },
       ],
+    };
+  }
+
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
     };
   }
 

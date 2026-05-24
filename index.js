@@ -129,7 +129,7 @@ Hooks.once("init", async () => {
   await preloadHandlebarsTemplates();
 
   // Boot-time diagnostic: verify required Handlebars helpers are registered
-  const requiredHelpers = ["add", "div", "subtract", "multiply", "and", "or", "not", "arrayIncludes", "truncate"];
+  const requiredHelpers = ["add", "div", "subtract", "multiply", "and", "or", "not", "arrayIncludes", "truncate", "range"];
   const missingHelpers = requiredHelpers.filter(h => !Handlebars.helpers[h]);
   if (missingHelpers.length) {
     console.error("SWSE | Missing required Handlebars helpers:", missingHelpers);

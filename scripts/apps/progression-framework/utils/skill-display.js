@@ -44,21 +44,41 @@ const SKILL_ABILITY_FALLBACK = Object.freeze({
   usetheforce: 'cha',
 });
 
+function firstScalar(...values) {
+  for (const value of values) {
+    if (value === null || value === undefined) continue;
+    if (typeof value === 'object') {
+      const nested = firstScalar(
+        value.key, value.slug, value.name, value.label, value.displayName, value.value,
+        value.id, value._id, value.internalId, value.documentId, value.sourceId,
+        value.skill, value.skillKey, value.skillId,
+        value.system?.key, value.system?.name, value.system?.label, value.system?.skill,
+        value.value?.key, value.value?.name, value.value?.label
+      );
+      if (nested) return nested;
+      continue;
+    }
+    const text = String(value).trim();
+    if (text && text !== '[object Object]') return text;
+  }
+  return '';
+}
+
 function rawSkillKey(value) {
   if (value === null || value === undefined) return '';
   const raw = typeof value === 'object'
-    ? value.key || value.slug || value.name || value.label || value.id || value._id || value.internalId || ''
+    ? firstScalar(value.key, value.slug, value.system?.key, value.name, value.label, value.displayName, value.id, value._id, value.internalId, value.skill, value.skillKey, value.skillId)
     : value;
-  return String(raw).toLowerCase().replace(/[^a-z0-9]/g, '');
+  return String(raw || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 export function resolveSkillEntry(value) {
   if (value === null || value === undefined) return null;
 
   if (typeof value === 'object') {
-    const id = value.id || value._id || value.internalId || value.documentId || value.sourceId;
-    const key = value.key || value.slug || value.system?.key;
-    const name = value.name || value.label || value.displayName;
+    const id = firstScalar(value.id, value._id, value.internalId, value.documentId, value.sourceId, value.skillId);
+    const key = firstScalar(value.key, value.slug, value.system?.key, value.skillKey, value.skill);
+    const name = firstScalar(value.name, value.label, value.displayName, value.skill);
     return SkillRegistry?.getById?.(id)
       || SkillRegistry?.byKey?.(rawSkillKey(key))
       || SkillRegistry?.get?.(name)
@@ -103,9 +123,16 @@ export function getSkillLabel(value) {
   const registryMatch = resolveSkillEntry(value);
   if (registryMatch?.name) return String(registryMatch.name).trim();
   if (typeof value === 'object') {
-    return String(value.name || value.label || value.displayName || value.key || value.id || value._id || '').trim();
+    const scalar = firstScalar(
+      value.name, value.label, value.displayName, value.skillName, value.skillLabel,
+      value.key, value.slug, value.system?.name, value.system?.label, value.system?.key,
+      value.value?.name, value.value?.label, value.value?.key,
+      value.id, value._id, value.skill
+    );
+    return scalar && scalar !== '[object Object]' ? scalar : '';
   }
-  return String(value).trim();
+  const text = String(value).trim();
+  return text === '[object Object]' ? '' : text;
 }
 
 export function buildClassSkillKeySet(classSkills = []) {

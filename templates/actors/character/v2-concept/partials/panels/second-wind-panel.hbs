@@ -26,8 +26,8 @@
   </div>
 
   <div class="swse-concept-chip-row">
-    {{#each (range 0 secondWindPanel.max) as |i|}}
-      <span class="swse-concept-chip {{#if (lt i ../secondWindPanel.uses)}}swse-concept-chip--ok{{else}}swse-concept-chip--neutral{{/if}}">SW</span>
+    {{#each secondWindPanel.pips as |pip|}}
+      <span class="swse-concept-chip {{#if pip.active}}swse-concept-chip--ok{{else}}swse-concept-chip--neutral{{/if}}" title="{{pip.label}}">SW</span>
     {{/each}}
   </div>
 

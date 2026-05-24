@@ -141,4 +141,12 @@ export class DroidDegreeStep extends ProgressionStepPlugin {
       shell.render();
     }
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }

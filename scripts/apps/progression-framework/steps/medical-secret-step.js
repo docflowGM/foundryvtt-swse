@@ -332,6 +332,14 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
+  getAutoAdvanceConfig(shell) {
+    return {
+      enabled: true,
+      delayMs: 700,
+      requireNoRemainingPicks: true,
+    };
+  }
+
 }
 
 export default MedicalSecretStep;

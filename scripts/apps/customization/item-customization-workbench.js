@@ -39,6 +39,87 @@ const STRUCTURAL_LABELS = {
 const ACCENT_SWATCHES = ['#a0a0a0', '#d4af37', '#b87333', '#c0c0c0', '#1a1a1a', '#dc143c', '#1e90ff', '#00ff66'];
 const TINT_SWATCHES = ['#1a1a2e','#3a2a4a','#5a3a4a','#7a3a4a','#8a5a3a','#3a5a4a','#3a4a6a','#5a5a6a','#aa8a4a','#2a2a2a','#9a9a9a','#0a0a0a'];
 
+const WORKBENCH_CATEGORY_ALIASES = {
+  weapons: new Set(['blaster', 'weapon', 'weapons', 'rangedweapon', 'meleeweapon', 'ranged_weapon', 'melee_weapon', 'pistol', 'rifle', 'carbine', 'heavyweapon', 'heavy_weapon', 'simpleweapon', 'advancedweapon', 'exoticweapon']),
+  armor: new Set(['armor', 'armour', 'bodysuit', 'shield', 'shields', 'poweredarmor', 'powered_armor']),
+  gear: new Set(['gear', 'equipment', 'equip', 'tool', 'tools', 'kit', 'kits', 'medical', 'medpac', 'computer', 'slicer', 'sensor', 'sensors', 'survival', 'comlink', 'communications', 'comm'])
+};
+
+function normalizeWorkbenchToken(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function compactWorkbenchToken(value) {
+  return normalizeWorkbenchToken(value).replace(/_/g, '');
+}
+
+function getWorkbenchItemId(item) {
+  return item?.id ?? item?._id ?? item?.uuid ?? item?.name ?? null;
+}
+
+function getWorkbenchItemSystem(item) {
+  return item?.system ?? item?._source?.system ?? {};
+}
+
+function itemHasWorkbenchAlias(item, category) {
+  const system = getWorkbenchItemSystem(item);
+  const aliases = WORKBENCH_CATEGORY_ALIASES[category];
+  if (!aliases) return false;
+  const tokens = [
+    item?.type,
+    system?.type,
+    system?.category,
+    system?.itemCategory,
+    system?.equipmentCategory,
+    system?.equipmentType,
+    system?.weaponType,
+    system?.weaponSubtype,
+    system?.armorType,
+    system?.subtype,
+    system?.group,
+    system?.family
+  ];
+  return tokens.some(token => {
+    const normalized = normalizeWorkbenchToken(token);
+    const compact = compactWorkbenchToken(token);
+    if (!normalized && !compact) return false;
+    return aliases.has(normalized) || aliases.has(compact) || normalized.includes(category.slice(0, -1));
+  });
+}
+
+function classifyWorkbenchItem(item) {
+  if (!item) return null;
+  try {
+    if (LightsaberConstructionEngine.isLightsaberItem(item)) return 'lightsaber';
+  } catch (_error) {
+    // Classification diagnostics below will expose the item shape; do not block inventory display.
+  }
+  if (itemHasWorkbenchAlias(item, 'weapons')) return 'weapons';
+  if (itemHasWorkbenchAlias(item, 'armor')) return 'armor';
+  if (itemHasWorkbenchAlias(item, 'gear')) return 'gear';
+  return null;
+}
+
+function getWorkbenchItemDebugShape(item) {
+  const system = getWorkbenchItemSystem(item);
+  return {
+    id: getWorkbenchItemId(item),
+    name: item?.name ?? '(unnamed)',
+    type: item?.type ?? null,
+    systemType: system?.type ?? null,
+    category: system?.category ?? system?.itemCategory ?? system?.equipmentCategory ?? null,
+    equipmentType: system?.equipmentType ?? null,
+    weaponSubtype: system?.weaponSubtype ?? null,
+    armorType: system?.armorType ?? null,
+    subtype: system?.subtype ?? null,
+    equipped: system?.equipped ?? system?.isEquipped ?? item?.flags?.swse?.equipped ?? null
+  };
+}
+
 export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   constructor(actor, { itemId = null, category = null, mode = 'owned', sourceItem = null, applyMode = null, onStage = null } = {}) {
     super({});
@@ -90,8 +171,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   };
 
   static supportsItem(item) {
-    if (!item) return false;
-    return ['blaster', 'weapon', 'armor', 'bodysuit', 'gear', 'equipment', 'lightsaber'].includes(item.type) || LightsaberConstructionEngine.isLightsaberItem(item);
+    return !!classifyWorkbenchItem(item);
   }
 
 
@@ -222,12 +302,48 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
   _getCategoryForItem(item) {
-    if (!item) return null;
-    if (LightsaberConstructionEngine.isLightsaberItem(item)) return 'lightsaber';
-    if (item.type === 'blaster' || item.type === 'weapon') return 'weapons';
-    if (item.type === 'armor' || item.type === 'bodysuit') return 'armor';
-    if (item.type === 'gear' || item.type === 'equipment') return 'gear';
-    return null;
+    return classifyWorkbenchItem(item);
+  }
+
+  _getActorItems() {
+    const collection = this.actor?.items;
+    if (!collection) return [];
+    if (Array.isArray(collection)) return collection.filter(Boolean);
+    if (Array.isArray(collection.contents)) return collection.contents.filter(Boolean);
+    if (typeof collection.values === 'function') return Array.from(collection.values()).filter(Boolean);
+    if (typeof collection.filter === 'function') {
+      try { return collection.filter(() => true).filter(Boolean); }
+      catch (_error) { return []; }
+    }
+    return [];
+  }
+
+  _getActorItemById(itemId) {
+    if (!itemId) return null;
+    const collection = this.actor?.items;
+    if (collection?.get) return collection.get(itemId) ?? null;
+    return this._getActorItems().find(item => getWorkbenchItemId(item) === itemId) ?? null;
+  }
+
+  _logInventoryScan({ items, byCategory, rejected, sourceCategory = null } = {}) {
+    const counts = Object.fromEntries(Object.entries(byCategory || {}).map(([key, value]) => [key, Array.isArray(value) ? value.length : 0]));
+    const summary = {
+      actor: this.actor?.name ?? this.actor?.id ?? '(no actor)',
+      actorId: this.actor?.id ?? null,
+      selectedCategory: this.selectedCategory ?? null,
+      sourceCategory,
+      mode: this.mode,
+      applyMode: this.applyMode,
+      totalActorItems: Array.isArray(items) ? items.length : 0,
+      counts,
+      rejectedCount: Array.isArray(rejected) ? rejected.length : 0,
+      accepted: Object.fromEntries(Object.entries(byCategory || {}).map(([key, value]) => [key, (value || []).map(getWorkbenchItemDebugShape)])),
+      rejected: (rejected || []).slice(0, 40)
+    };
+    console.info('SWSE [WorkbenchInventory] inventory scan', summary);
+    if ((counts.weapons || 0) + (counts.armor || 0) + (counts.gear || 0) + (counts.lightsaber || 0) === 0) {
+      console.warn('SWSE [WorkbenchInventory] no supported workbench items found; inspect rejected item shapes above', summary);
+    }
   }
 
   _getSearchForCategory(category = this.selectedCategory) {
@@ -256,18 +372,40 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
   _getVisibleCategories() {
+    const items = this._getActorItems();
     const byCategory = {
-      weapons: this.actor.items.filter(item => ['blaster', 'weapon'].includes(item.type) && !LightsaberConstructionEngine.isLightsaberItem(item)),
-      armor: this.actor.items.filter(item => ['armor', 'bodysuit'].includes(item.type)),
-      gear: this.actor.items.filter(item => ['gear', 'equipment'].includes(item.type)),
-      lightsaber: LightsaberConstructionEngine.getOwnedLightsabers(this.actor)
+      weapons: [],
+      armor: [],
+      gear: [],
+      lightsaber: []
     };
+    const rejected = [];
 
+    for (const item of items) {
+      const category = this._getCategoryForItem(item);
+      if (category && byCategory[category]) byCategory[category].push(item);
+      else rejected.push({ ...getWorkbenchItemDebugShape(item), reason: 'unsupported_item_category' });
+    }
+
+    try {
+      const ownedSabers = LightsaberConstructionEngine.getOwnedLightsabers(this.actor) || [];
+      for (const saber of ownedSabers) {
+        const saberId = getWorkbenchItemId(saber);
+        if (saberId && !byCategory.lightsaber.some(item => getWorkbenchItemId(item) === saberId)) byCategory.lightsaber.push(saber);
+      }
+    } catch (error) {
+      console.warn('SWSE [WorkbenchInventory] lightsaber inventory scan failed', { actor: this.actor?.name, error });
+    }
+
+    let sourceCategory = null;
     if (this.sourceItem && this._isStoreStageMode()) {
-      const sourceCategory = this._getCategoryForItem(this.sourceItem);
+      sourceCategory = this._getCategoryForItem(this.sourceItem);
       for (const key of Object.keys(byCategory)) byCategory[key] = [];
       if (sourceCategory && byCategory[sourceCategory]) byCategory[sourceCategory] = [this.sourceItem];
+      else rejected.push({ ...getWorkbenchItemDebugShape(this.sourceItem), reason: 'store_stage_source_unsupported' });
     }
+
+    this._logInventoryScan({ items, byCategory, rejected, sourceCategory });
 
     return CATEGORY_ORDER
       .map(entry => ({ ...entry, items: byCategory[entry.key] || [] }))
@@ -292,29 +430,29 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     if (this.selectedCategory === 'lightsaber') {
       const rememberedSaber = this._selectedByCategory.get('lightsaber');
       if (!this._lightsaber.selectedOwnedSaberId && rememberedSaber) this._lightsaber.selectedOwnedSaberId = rememberedSaber;
-      if (this._lightsaber.selectedOwnedSaberId && !currentCategory.items.find(item => item.id === this._lightsaber.selectedOwnedSaberId)) {
+      if (this._lightsaber.selectedOwnedSaberId && !currentCategory.items.find(item => getWorkbenchItemId(item) === this._lightsaber.selectedOwnedSaberId)) {
         this._lightsaber.selectedOwnedSaberId = null;
       }
-      return { categories, item: this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null };
+      return { categories, item: this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null };
     }
 
     const remembered = this._selectedByCategory.get(this.selectedCategory);
     if (!this.selectedItemId && remembered) this.selectedItemId = remembered;
-    if (!this.selectedItemId || !currentCategory.items.find(item => item.id === this.selectedItemId)) {
+    if (!this.selectedItemId || !currentCategory.items.find(item => getWorkbenchItemId(item) === this.selectedItemId)) {
       this.selectedItemId = currentCategory.items[0]?.id ?? null;
     }
     this._rememberSelectedItem(this.selectedCategory, this.selectedItemId);
 
-    const item = currentCategory.items.find(candidate => candidate.id === this.selectedItemId) || currentCategory.items[0] || null;
+    const item = currentCategory.items.find(candidate => getWorkbenchItemId(candidate) === this.selectedItemId) || currentCategory.items[0] || null;
     return { categories, item };
   }
 
   _getCurrentItem() {
     if (this.selectedCategory === 'lightsaber') {
-      return this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null;
+      return this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
     }
     if (this.sourceItem && this.mode === 'store-stage' && this.selectedItemId === this.sourceItem.id) return this.sourceItem;
-    return this.selectedItemId ? this.actor.items.get(this.selectedItemId) : null;
+    return this.selectedItemId ? this._getActorItemById(this.selectedItemId) : null;
   }
 
   _isStoreStageMode() {
@@ -696,7 +834,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     }
 
     return {
-      id: item.id,
+      id: getWorkbenchItemId(item),
       name: item.name,
       category,
       subtitle,
@@ -746,11 +884,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         const candidateDraft = this._getDraft(candidate);
         const templates = this._getCanonicalTemplateKeys(candidate);
         return {
-          id: candidate.id,
+          id: getWorkbenchItemId(candidate),
           name: candidate.name,
           img: candidate.img,
           subtitle: candidate.system?.weaponSubtype || candidate.system?.armorType || candidate.type,
-          active: candidate.id === item.id,
+          active: getWorkbenchItemId(candidate) === getWorkbenchItemId(item),
           modCount: candidateDraft.selectedUpgrades.length,
           templateCount: new Set([...(candidateDraft.selectedTemplates || []), ...templates]).size,
           equipped: !!candidate.system?.equipped
@@ -1015,13 +1153,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
       case 'reset-item': {
         if (this.selectedCategory === 'lightsaber') {
-          const editItem = this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null;
+          const editItem = this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
           this._lightsaber.selectedChassisId = null;
           this._lightsaber.selectedCrystalId = null;
           this._lightsaber.selectedAccessoryIds = [];
           this._lightsaber.selectedBladeColor = DEFAULT_BLADE_COLOR;
           this._lightsaber.selectedCheckMode = 'roll';
-          if (editItem) this._lightsaber.selectedOwnedSaberId = editItem.id;
+          if (editItem) this._lightsaber.selectedOwnedSaberId = getWorkbenchItemId(editItem);
           this._hydrateLightsaberDefaults();
         } else {
           const item = this._getCurrentItem();
@@ -1246,13 +1384,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.onRoot('click', '[data-action="reset-item"]', async (event) => {
       event.preventDefault();
       if (this.selectedCategory === 'lightsaber') {
-        const editItem = this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null;
+        const editItem = this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
         this._lightsaber.selectedChassisId = null;
         this._lightsaber.selectedCrystalId = null;
         this._lightsaber.selectedAccessoryIds = [];
         this._lightsaber.selectedBladeColor = DEFAULT_BLADE_COLOR;
         this._lightsaber.selectedCheckMode = 'roll';
-        if (editItem) this._lightsaber.selectedOwnedSaberId = editItem.id;
+        if (editItem) this._lightsaber.selectedOwnedSaberId = getWorkbenchItemId(editItem);
         this._hydrateLightsaberDefaults();
       } else {
         const item = this._getCurrentItem();
@@ -1287,7 +1425,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
   _hydrateLightsaberDefaults() {
     const ls = this._lightsaber;
-    const editItem = ls.selectedOwnedSaberId ? this.actor.items.get(ls.selectedOwnedSaberId) : null;
+    const editItem = ls.selectedOwnedSaberId ? this._getActorItemById(ls.selectedOwnedSaberId) : null;
     if (editItem && LightsaberConstructionEngine.isLightsaberItem(editItem)) {
       const editState = LightsaberConstructionEngine.getEditState(editItem);
       ls.selectedChassisId ||= editState.chassisId || editItem.system?.chassisId || this._catalogs.chassis[0]?.id || null;
@@ -1370,7 +1508,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
   async _prepareLightsaberContext(visibleCategories) {
     const ownedSabers = LightsaberConstructionEngine.getOwnedLightsabers(this.actor);
-    const editItem = this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null;
+    const editItem = this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
     const chassis = this._findLightsaberCatalogOption('chassis', this._lightsaber.selectedChassisId);
     const crystal = this._findLightsaberCatalogOption('crystals', this._lightsaber.selectedCrystalId);
     const slotState = this._getLightsaberAccessorySlotState();
@@ -1402,11 +1540,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       hasSearch: !!this._getSearchForCategory('lightsaber'),
       hasInventoryResults: ownedSabers.length > 0,
       inventoryItems: ownedSabers.map(item => ({
-        id: item.id,
+        id: getWorkbenchItemId(item),
         name: item.name,
         img: item.img,
         subtitle: item.system?.chassisId || 'lightsaber',
-        active: item.id === editItem?.id,
+        active: getWorkbenchItemId(item) === getWorkbenchItemId(editItem),
         modCount: (item.flags?.swse?.lightsaberConfig?.accessoryIds || []).length,
         templateCount: item.flags?.swse?.lightsaberConfig?.crystalId ? 1 : 0,
         equipped: !!item.system?.equipped
@@ -1494,7 +1632,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     stagedData.system = stagedData.system || {};
     stagedData.system.cost = finalCost;
     const cartEntry = {
-      id: item.id,
+      id: getWorkbenchItemId(item),
       name: stagedData.name,
       img: stagedData.img || item.img,
       cost: finalCost,
@@ -1517,7 +1655,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
   async _applyLightsaber() {
-    const editItem = this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null;
+    const editItem = this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
     const config = this._getLightsaberConfig();
     const slotState = this._getLightsaberAccessorySlotState();
     if (slotState.isOverflowing) {
@@ -1571,7 +1709,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     const canonicalCustomization = this._getDraftCustomizationState(item, draft, preview);
     const itemUpdate = {
-      _id: item.id,
+      _id: getWorkbenchItemId(item),
       'flags.swse.modifiedAt': game.time?.worldTime ?? Date.now(),
       'flags.swse.modifiedBy': this.actor.id,
       'flags.swse.appliedTemplates': draft.selectedTemplates.map((templateKey, index) => ({
@@ -1608,13 +1746,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     const operationKey = this._isStoreStageMode() ? 'stage_workbench' : 'apply_workbench';
     this._pendingApply = true;
-    SafetyEngine.markOperationInFlight(item.id, operationKey);
+    SafetyEngine.markOperationInFlight(getWorkbenchItemId(item), operationKey);
     if (this._isStoreStageMode()) {
       try {
         await this._stageCurrentItemToCart(item, draft, preview, itemUpdate);
       } finally {
         this._pendingApply = false;
-        SafetyEngine.clearOperationInFlight(item.id, operationKey);
+        SafetyEngine.clearOperationInFlight(getWorkbenchItemId(item), operationKey);
       }
       return;
     }
@@ -1630,7 +1768,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         cost: preview.totalCost,
         transactionContext: 'owned-customization',
         audit: {
-          itemId: item.id,
+          itemId: getWorkbenchItemId(item),
           itemName: item.name,
           category: this._getCategoryForItem(item),
           selectedUpgrades: [...(draft.selectedUpgrades || [])],
@@ -1648,14 +1786,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
 
       ui.notifications.info(`${item.name} customization applied.`);
-      this._drafts.set(item.id, this._getInitialDraft(this.actor.items.get(item.id) || item));
+      this._drafts.set(item.id, this._getInitialDraft(this._getActorItemById(getWorkbenchItemId(item)) || item));
       await this._renderPreservingUi();
     } catch (error) {
       console.error('[ItemCustomizationWorkbench] Apply failed', error);
       ui.notifications.error(`Failed to apply customization: ${error.message}`);
     } finally {
       this._pendingApply = false;
-      SafetyEngine.clearOperationInFlight(item.id, operationKey);
+      SafetyEngine.clearOperationInFlight(getWorkbenchItemId(item), operationKey);
     }
   }
 }
