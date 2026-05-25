@@ -21,7 +21,28 @@ import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems, summar
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
-const { FormDataExtended } = foundry.applications;
+
+function collectSheetFormData(form) {
+  if (!form) return { object: {} };
+
+  const FormDataExtended = foundry?.applications?.ux?.FormDataExtended
+    ?? foundry?.applications?.forms?.FormDataExtended
+    ?? foundry?.applications?.FormDataExtended
+    ?? globalThis.FormDataExtended
+    ?? null;
+
+  if (typeof FormDataExtended === 'function') {
+    try {
+      return new FormDataExtended(form);
+    } catch (_err) {
+      // Foundry v13/v14 builds expose this helper in different namespaces and
+      // some test/runtime contexts expose a non-constructable shim. Fall back to
+      // native FormData so item editing never hard-crashes the sheet.
+    }
+  }
+
+  return { object: Object.fromEntries(new FormData(form).entries()) };
+}
 
 export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   /** @inheritDoc */
@@ -231,7 +252,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
           itemId: this.item?.id,
           itemType: this.item?.type
         });
-        const fd = new FormDataExtended(innerForm);
+        const fd = collectSheetFormData(innerForm);
         await SWSEItemSheet.#onSubmitForm.call(this, event, innerForm, fd);
       });
     }

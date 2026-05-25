@@ -2038,7 +2038,7 @@
     "captain": {
       "name": "The Captain",
       "title": "Scourge of the Spacelanes",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/tideborn.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/captain.png",
       "dialogues": {
         "privateer_raider": {
           "greeting": "<Observation> Raider template active. Your focus is strike-and-vanish operations against merchant and military targets.",

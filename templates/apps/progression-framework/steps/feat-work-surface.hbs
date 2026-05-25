@@ -22,6 +22,59 @@
   </div>
   {{/if}}
 
+
+  {{#if isMulticlassStartingFeatSlot}}
+  <section class="feat-group feat-group--flat-list multiclass-starting-feats">
+    <div class="group-header group-header--static">
+      <div class="header-content">
+        <i class="fa-solid fa-list-check group-icon"></i>
+        <h3 class="group-title">Legal Starting Feats</h3>
+        <span class="feat-count-badge">{{flatFeatList.length}}</span>
+      </div>
+    </div>
+
+    <div class="feat-list category-list feat-list--flat">
+      {{#each flatFeatList as |feat|}}
+      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}}"
+           style="--feat-tree-indent: {{feat.treeIndent}};"
+           data-feat-id="{{feat.id}}"
+           data-item-id="{{feat.id}}"
+           data-action="focus-item">
+        {{#if feat.iconPath}}
+        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
+          <img class="feat-item__icon-image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
+          <div class="feat-item__icon-scan"></div>
+        </div>
+        {{/if}}
+        <div class="feat-item-content">
+          <span class="feat-name">{{feat.name}}</span>
+          {{#if feat.subcategory}}<span class="feat-subcategory-pill">{{feat.subcategory}}</span>{{/if}}
+          {{#if feat.prerequisiteLine}}
+            <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
+              <i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}
+            </span>
+          {{/if}}
+        </div>
+        <div class="feat-item-meta">
+          {{#if feat.isSuggested}}
+          <span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Suggested</span>
+          {{/if}}
+          <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+
+    {{#unless flatFeatList.length}}
+    <div class="empty-message">
+      <i class="fa-solid fa-hexagon-exclamation"></i>
+      <p class="empty-title">No Legal Starting Feats</p>
+      <p class="empty-description">No feat from this class's starting-feat pool currently meets your prerequisites.</p>
+    </div>
+    {{/unless}}
+  </section>
+  {{else}}
+
   {{!-- Type & Tag Filter Bar --}}
   <div class="feat-filter-bar">
     <button class="feat-filter-btn feat-show-all-toggle{{#if showAll}} is-open{{/if}}"
@@ -249,5 +302,7 @@
     </div>
   </section>
   {{/unless}}
+
+  {{/if}}
 
 </div>

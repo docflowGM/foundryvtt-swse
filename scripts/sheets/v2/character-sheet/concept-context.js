@@ -260,15 +260,18 @@ function buildActionGroups(combatActions) {
     subgroups: asArray(group?.subgroups).map((subgroup) => ({
       label: subgroup?.label || 'Actions',
       count: Number(subgroup?.count) || 0,
-      items: asArray(subgroup?.items).slice(0, 5).map((item) => ({
-        key: item?.key,
+      items: asArray(subgroup?.items).map((item) => ({
+        key: item?.key || item?.id || '',
         name: item?.name || 'Unnamed Action',
-        sourceName: item?.sourceName || '',
-        executable: !!item?.executable,
+        sourceName: item?.sourceName || item?.source || '',
+        actionType: item?.actionType || item?.type || '',
+        cost: item?.cost ?? '',
+        executable: item?.executable !== false,
         useLabel: item?.useLabel || 'Use',
-        description: normalizeText(item?.description),
+        description: normalizeText(item?.description || item?.notes),
         itemId: item?.itemId || '',
-        resources: asArray(item?.resources)
+        resources: asArray(item?.resources),
+        relatedSkills: asArray(item?.relatedSkills)
       }))
     }))
   }));
@@ -281,6 +284,7 @@ function buildAbilityTab(abilities) {
       label: ability.label,
       base: Number(ability.base) || 0,
       racial: Number(ability.racial) || 0,
+      enhancement: Number(ability.enhancement ?? ability.misc) || 0,
       temp: Number(ability.temp) || 0,
       total: Number(ability.total) || 0,
       mod: Number(ability.mod) || 0,

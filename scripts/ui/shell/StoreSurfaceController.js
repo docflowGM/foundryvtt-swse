@@ -33,6 +33,7 @@ export class StoreSurfaceController {
 
   /** Wire all store surface events. Called after each render. */
   attach(root) {
+    this._actor = this._host?.actor ?? this._actor;
     this._abort?.abort();
     this._abort = new AbortController();
     const { signal } = this._abort;
@@ -276,7 +277,7 @@ export class StoreSurfaceController {
       const target = ev.target instanceof Element ? ev.target : null;
       if (!target) return;
 
-      const homeTarget = target.closest(homeSelector);
+      const homeTarget = target.closest(homeSelector) || target.closest('[data-action="tablet-home"]');
       if (homeTarget) {
         ev.preventDefault();
         ev.stopImmediatePropagation?.();
@@ -329,6 +330,7 @@ export class StoreSurfaceController {
 
   _enterStore(patch = {}) {
     this._setOptions({
+      enteredStore: true,
       splashComplete: true,
       currentView: 'browse',
       currentCategory: '',
@@ -418,7 +420,16 @@ export class StoreSurfaceController {
 
   _setOptions(patch, rerender = true) {
     this._host._shellSurfaceOptions = { ...this._host._shellSurfaceOptions, ...patch };
-    if (rerender) this._host.render(false);
+    if (rerender) {
+      this._host.render(false);
+      if (patch?.splashComplete || patch?.enteredStore) {
+        queueMicrotask(() => {
+          if (this._host?._shellSurface === 'store' && this._host?._shellSurfaceOptions?.splashComplete) {
+            this._host.render(false);
+          }
+        });
+      }
+    }
   }
 
   _clientFilter(root) {

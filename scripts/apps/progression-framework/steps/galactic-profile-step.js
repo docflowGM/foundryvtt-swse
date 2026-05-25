@@ -113,9 +113,17 @@ function templateArchetypeName(template) {
 function templateDisplayName(template) {
   return template?.name || templateArchetypeName(template);
 }
+function getShellFromContext(context, fallback = null) {
+  if (context?.shell) return context.shell;
+  if (context?._shell) return context._shell;
+  if (context?.progressionSession || context?.actor) return context;
+  return fallback || null;
+}
 function getProfileState(shell) {
-  shell.progressionSession.profileSelection ??= {};
-  return shell.progressionSession.profileSelection;
+  const session = shell?.progressionSession;
+  if (!session) return {};
+  session.profileSelection ??= {};
+  return session.profileSelection;
 }
 function groupTemplates(templates) {
   const map = new Map();
@@ -323,9 +331,18 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
     this._templates = [];
   }
 
+  async _ensureProfileData(contextOrShell = null) {
+    const shell = getShellFromContext(contextOrShell, this._shell);
+    if (shell) this._shell = shell;
+    if (!this._templates.length && this._shell) {
+      this._templates = await loadTemplatesForShell(this._shell);
+    }
+    return this._shell;
+  }
+
   async onStepEnter(shell) {
-    this._shell = shell;
-    this._templates = await loadTemplatesForShell(shell);
+    await this._ensureProfileData(shell);
+    shell.mentor ??= {};
     shell.mentor.askMentorEnabled = true;
 
     const state = getProfileState(shell);
@@ -348,7 +365,8 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   getWarnings() { return []; }
   getRemainingPicks() { return []; }
   validate() { return { isValid: this.getSelection().isComplete, errors: [], warnings: [] }; }
-  renderDetailsPanel(focusedItem) {
+  async renderDetailsPanel(focusedItem, shell = null) {
+    await this._ensureProfileData(shell);
     return { template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/galactic-profile-details.hbs', data: this._detailsData(focusedItem) };
   }
   _detailsData() { return {}; }
@@ -358,8 +376,9 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
 }
 
 export class ProfileClassStep extends GalacticProfileBaseStep {
-  async getStepData() {
-    const state = getProfileState(this._shell);
+  async getStepData(context = null) {
+    const shell = await this._ensureProfileData(context);
+    const state = getProfileState(shell);
     const groups = groupTemplates(this._templates);
     if (!state.classId && groups[0]) state.classId = groups[0].id;
     const selectedGroup = groups.find(g => g.id === state.classId) || groups[0] || null;
@@ -412,8 +431,9 @@ export class ProfileClassStep extends GalacticProfileBaseStep {
 }
 
 export class ProfileArchetypeStep extends GalacticProfileBaseStep {
-  async getStepData() {
-    const state = getProfileState(this._shell);
+  async getStepData(context = null) {
+    const shell = await this._ensureProfileData(context);
+    const state = getProfileState(shell);
     const groups = groupTemplates(this._templates);
     if (!state.classId && groups[0]) state.classId = groups[0].id;
     const selectedGroup = groups.find(g => g.id === state.classId) || groups[0] || null;
@@ -484,18 +504,19 @@ export class ProfileArchetypeStep extends GalacticProfileBaseStep {
 }
 
 export class ProfileReviewStep extends GalacticProfileBaseStep {
-  async getStepData() {
-    const state = getProfileState(this._shell);
+  async getStepData(context = null) {
+    const shell = await this._ensureProfileData(context);
+    const state = getProfileState(shell);
     const template = this._templates.find(t => t.id === state.templateId) || null;
     if (!template) return { template: null, characterName: state.characterName || '' };
 
-    await syncProfileMentor(this._shell, classNameForTemplate(template), 'profile-review');
+    await syncProfileMentor(shell, classNameForTemplate(template), 'profile-review');
     const dialogueData = await loadTemplateDialogues();
-    const preview = await previewTemplateSession(this._shell, template).catch(err => {
+    const preview = await previewTemplateSession(shell, template).catch(err => {
       swseLogger.warn('[GalacticProfile] Review preview session failed', { templateId: template.id, error: err?.message || String(err) });
       return null;
     });
-    const business = await buildRemainingBusiness(this._shell, template);
+    const business = await buildRemainingBusiness(shell, template);
     const confirmation = findTemplateDialogue(dialogueData, template, 'confirmation');
     const review = formatTemplateReview(template, business, confirmation, preview);
     review.characterName = state.characterName || '';

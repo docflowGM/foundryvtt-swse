@@ -1768,7 +1768,7 @@ export const MENTORS = {
     "name": "'The Captain'",
     "title": "Scourge of the Spacelanes",
     "description": "A legendary pirate captain who commands respect and fear across the stars",
-    "portrait": "assets/mentors/tideborn.webp",
+    "portrait": "assets/mentors/captain.png",
     "levelGreetings": {
       "1": "Ahoy there! So you want to sail the stars, raid the shipping lanes, and live free? Welcome aboard, mate! Being a privateer is about freedom, profit, and adventure!",
       "2": "Your first successful raid! The thrill of the hunt, the capture, the treasure! Gets your blood pumping, doesn't it? That's the privateer life!",

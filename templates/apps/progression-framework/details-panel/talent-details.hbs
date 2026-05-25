@@ -4,7 +4,6 @@
     <h2 class="talent-details__name">{{talent.name}}</h2>
     <div class="talent-details__meta">
       <span class="talent-meta-badge tree-badge">{{treeName}}</span>
-      <span class="talent-meta-badge tree-theme-badge"><i class="fa-solid fa-wave-square"></i> {{visualSignal}}</span>
       {{#if isOwned}}
       <span class="talent-meta-badge owned-badge"><i class="fa-solid fa-check"></i> Known</span>
       {{else}}
@@ -21,11 +20,6 @@
       <span class="talent-meta-badge suggested-badge"><i class="fa-solid fa-star"></i> {{recommendationLabel}}</span>
       {{/if}}
     </div>
-  </div>
-
-  <div class="talent-details__section talent-details__section--status talent-details__section--terminal">
-    <h3 class="talent-details__section-title">Signal</h3>
-    <p class="talent-details__description">{{statusText}}</p>
   </div>
 
   <div class="talent-details__section talent-details__section--terminal">

@@ -392,8 +392,11 @@ export class IntroStep extends ProgressionStepPlugin {
     this._statusEl = null;
     this._segmentsContainerEl = null;
 
-    // Shell reference
+    // Shell reference. Keep a last-known reference so stale intro DOM events can
+    // recover gracefully after render churn instead of throwing a false
+    // "No actor available" notification.
     this._shell = null;
+    this._lastShell = null;
 
     // Translation Engine
     this._translationEngine = new SWSETranslationEngine();
@@ -457,6 +460,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Store shell reference
     this._shell = shell;
+    this._lastShell = shell;
 
     // Create new session token to invalidate any stale loops from previous runs
     this._sessionToken = Math.random();
@@ -791,20 +795,23 @@ export class IntroStep extends ProgressionStepPlugin {
       this._transitionInProgress = true;
 
       try {
-        const actor = this._shell?.actor;
-        if (!actor) {
-          ui?.notifications?.error?.('No actor is available for Galactic Profile selection.');
+        const shell = this._shell || this._lastShell || this.descriptor?._shell || null;
+        const actor = shell?.actor;
+        if (!actor || !shell?.progressionSession) {
+          swseLogger.warn('[IntroStep] Ignoring stale Galactic Profile click without an active shell/actor');
           this._transitionInProgress = false;
           return;
         }
 
-        this._shell.progressionSession.profilePickerMode = true;
-        this._shell.progressionSession.profileStepsComplete = false;
-        this._shell.progressionSession.profileSelection ??= {};
-        this._shell.currentStepIndex = 0;
-        this._shell._targetStepId = 'profile-class';
-        await this._shell._initializeSteps?.();
-        await this._shell._persistSessionSnapshot?.('intro-galactic-profile');
+        this._shell = shell;
+        this._lastShell = shell;
+        shell.progressionSession.profilePickerMode = true;
+        shell.progressionSession.profileStepsComplete = false;
+        shell.progressionSession.profileSelection ??= {};
+        shell.currentStepIndex = 0;
+        shell._targetStepId = 'profile-class';
+        await shell._initializeSteps?.();
+        await shell._persistSessionSnapshot?.('intro-galactic-profile');
 
         this._localizedMode = true;
         this._complete = true;
@@ -934,7 +941,7 @@ export class IntroStep extends ProgressionStepPlugin {
         if (!this._complete && !this._isSkipping) {
           this._skipIntro();
           this._applyActorV2StageDOM?.(await this.getStepData?.());
-          await this._shell?.render?.(false);
+          await (this._shell || this._lastShell)?.render?.(false);
         }
         return;
       }

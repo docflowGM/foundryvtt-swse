@@ -118,6 +118,26 @@ function convertBabProgression(progression) {
   return progressionMap[progression] || 0.75; // default to medium
 }
 
+function getClassValue(classItem, propertyName, defaultValue = null) {
+  if (!classItem) return defaultValue;
+
+  const directMappings = {
+    levelProgression: ['levelProgression', 'level_progression'],
+    babProgression: ['babProgression', 'bab_progression', 'bab']
+  };
+
+  for (const key of directMappings[propertyName] ?? [propertyName]) {
+    if (classItem[key] !== undefined) return classItem[key];
+    if (classItem.system?.[key] !== undefined) return classItem.system[key];
+  }
+
+  if (classItem.system) {
+    return getClassProperty(classItem, propertyName, defaultValue);
+  }
+
+  return defaultValue;
+}
+
 export function calculateTotalBAB(actor) {
   const classItems = ActorAbilityBridge.getClasses(actor);
   let totalBAB = 0;
@@ -127,7 +147,7 @@ export function calculateTotalBAB(actor) {
     const className = classItem.name;
 
     // Check if class has level_progression data with BAB
-    const levelProgression = getClassProperty(classItem, 'levelProgression', []);
+    const levelProgression = getClassValue(classItem, 'levelProgression', []);
     if (levelProgression && Array.isArray(levelProgression)) {
       const levelData = levelProgression.find(lp => lp.level === classLevel);
       if (levelData && typeof levelData.bab === 'number') {
@@ -137,8 +157,9 @@ export function calculateTotalBAB(actor) {
     }
 
     // Fallback: Use babProgression if available
-    if (classItem.system.babProgression) {
-      const babMultiplier = convertBabProgression(classItem.system.babProgression);
+    const babProgression = getClassValue(classItem, 'babProgression', null);
+    if (babProgression) {
+      const babMultiplier = convertBabProgression(babProgression);
       totalBAB += Math.floor(classLevel * babMultiplier);
       continue;
     }

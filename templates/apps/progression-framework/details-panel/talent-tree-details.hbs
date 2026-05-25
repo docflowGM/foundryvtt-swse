@@ -3,8 +3,6 @@
     <div class="talent-details__eyebrow">// TREE DOSSIER</div>
     <h2 class="talent-details__name">{{treeName}}</h2>
     <div class="talent-details__meta">
-      <span class="talent-meta-badge tree-badge"><i class="fa-solid fa-fingerprint"></i> {{visualRole}}</span>
-      <span class="talent-meta-badge tree-theme-badge"><i class="fa-solid fa-wave-square"></i> {{visualSignal}}</span>
       <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-nodes"></i> {{nodeCount}} Nodes</span>
       {{#if isSuggested}}
       <span class="talent-meta-badge selected-badge"><i class="fa-solid fa-star"></i> Mentor Fit</span>
@@ -73,10 +71,6 @@
     <div class="talent-tree-dossier-readout talent-tree-dossier-readout--legal">
       <strong>{{#if legalChoiceCount}}{{legalChoiceCount}}{{else}}0{{/if}}</strong>
       <span>Legal Now</span>
-    </div>
-    <div class="talent-tree-dossier-readout talent-tree-dossier-readout--motion">
-      <strong>{{visualMotion}}</strong>
-      <span>Motion Profile</span>
     </div>
   </div>
 

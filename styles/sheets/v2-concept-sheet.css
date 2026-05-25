@@ -7756,3 +7756,91 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
 .swse-concept-btn--help {
   white-space: nowrap;
 }
+
+/* === Character sheet runtime patch: editable attributes, combat action layout, action economy colors === */
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card input,
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card select,
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card textarea,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input {
+  pointer-events: auto !important;
+  user-select: text !important;
+  opacity: 1 !important;
+  color: var(--swse-concept-text, #f2fbff) !important;
+  border-color: rgba(111, 215, 255, 0.28) !important;
+  background: rgba(3, 10, 18, 0.86) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
+  border-color: var(--swse-concept-accent, #00e7ff) !important;
+  box-shadow: 0 0 14px rgba(0, 231, 255, 0.22) !important;
+}
+
+.swse-concept-grid--combat {
+  grid-template-columns: minmax(520px, 1.45fr) minmax(320px, 0.75fr) !important;
+  align-items: start !important;
+}
+
+.swse-concept-combat-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.swse-concept-combat-main .swse-concept-action-groups {
+  max-height: 420px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-concept-action-row--combat {
+  padding: 10px !important;
+  border: 1px solid rgba(111, 215, 255, 0.12) !important;
+  border-left: 3px solid rgba(0, 231, 255, 0.5) !important;
+  border-radius: 12px !important;
+  background: rgba(3, 10, 18, 0.42) !important;
+  cursor: pointer;
+}
+
+.swse-concept-action-row--combat:hover {
+  border-color: rgba(0, 231, 255, 0.42) !important;
+  background: rgba(0, 231, 255, 0.07) !important;
+}
+
+.swse-concept-action-sequence__node--swift {
+  border-color: rgba(120, 255, 176, 0.55) !important;
+  color: #8dffbf !important;
+}
+
+.swse-concept-action-sequence__node--move {
+  border-color: rgba(96, 226, 255, 0.50) !important;
+  color: #7ce8ff !important;
+}
+
+.swse-concept-action-sequence__node--standard {
+  border-color: rgba(255, 210, 94, 0.55) !important;
+  color: #ffd45f !important;
+}
+
+.swse-concept-action-sequence__node--full {
+  border-color: rgba(255, 102, 102, 0.58) !important;
+  color: #ff7777 !important;
+}
+
+.swse-concept-action-sequence__node.swse-action-state-used {
+  background: rgba(130, 18, 24, 0.55) !important;
+  border-color: rgba(255, 86, 86, 0.78) !important;
+  color: #ff8585 !important;
+  text-decoration: line-through;
+  box-shadow: inset 0 0 18px rgba(255, 80, 80, 0.12) !important;
+}
+
+.swse-concept-action-sequence__node.swse-action-state-degraded {
+  background: rgba(166, 100, 12, 0.34) !important;
+  border-color: rgba(255, 190, 86, 0.72) !important;
+  color: #ffd45f !important;
+}
+
+.swse-concept-action-sequence__node.swse-action-state-available {
+  box-shadow: inset 0 0 18px rgba(141, 255, 191, 0.08) !important;
+}

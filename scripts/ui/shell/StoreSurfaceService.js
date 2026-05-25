@@ -268,7 +268,7 @@ export class StoreSurfaceService {
       accountTier: credits >= 5000 ? 'Priority Trade Access' : credits >= 1000 ? 'Verified Customer Account' : 'Public Exchange Access',
       terminalId: actor?.id ? `ACT-${String(actor.id).slice(-6).toUpperCase()}` : 'PUB-0000',
       vendorLink: actor ? 'REN-DARR VERIFIED' : 'PUBLIC CATALOG LINK',
-      splashComplete: Boolean(options.splashComplete)
+      splashComplete: Boolean(options.splashComplete || options.enteredStore || options.currentView)
     };
   }
 
@@ -290,11 +290,13 @@ export class StoreSurfaceService {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'Store unavailable' };
       }
 
+      const splashComplete = Boolean(options.splashComplete || options.enteredStore || options.currentView);
+
       // Sync navigation state from shell options.
       // The splash is a full-catalog entry point; never let stale browse filters
       // from an earlier store session starve hot-item hydration before the user
       // has even entered the store.
-      if (!options.splashComplete) {
+      if (!splashComplete) {
         storeInstance.currentCategory = '';
         storeInstance.currentSubcategory = null;
         storeInstance.currentFamily = null;
@@ -328,7 +330,7 @@ export class StoreSurfaceService {
       const visibleItems = currentCategory
         ? allItems.filter(item => (item.category ?? '').toLowerCase() === currentCategory)
         : allItems;
-      const splashContext = StoreSurfaceService.buildSplashContext(actor, storeContext, options);
+      const splashContext = StoreSurfaceService.buildSplashContext(actor, storeContext, { ...options, splashComplete });
 
       // Phase 2: Include navigation model
       const navigationModel = storeContext.navigationModel ?? buildStoreNavigationModel(
@@ -394,7 +396,7 @@ export class StoreSurfaceService {
         actorCredits: storeContext.credits ?? 0,
         sheetTheme: splashContext.sheetTheme,
         sheetMotionStyle: splashContext.sheetMotionStyle,
-        splashComplete: Boolean(options.splashComplete),
+        splashComplete,
         storeSplash: splashContext,
         storeContext: safeContext
       };

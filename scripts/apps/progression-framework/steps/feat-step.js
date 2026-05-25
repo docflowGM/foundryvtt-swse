@@ -379,6 +379,10 @@ export class FeatStep extends ProgressionStepPlugin {
       ? this._getAllowedMulticlassStartingFeatNames(shell)
       : new Set();
 
+    if (isMulticlassStartingFeatSlot) {
+      this._stripMulticlassStartingFeatPoolFromPending(pendingAbilityData, multiclassStartingFeatNames);
+    }
+
     // Build class grant ledger to identify class-granted feats that are pending.
     // Exception: RAW multiclassing lets the player CHOOSE one starting feat from
     // the new class. Those options must not be treated as already granted.
@@ -477,6 +481,25 @@ export class FeatStep extends ProgressionStepPlugin {
     }
 
     return legal;
+  }
+
+  _stripMulticlassStartingFeatPoolFromPending(pendingAbilityData, multiclassStartingFeatNames = new Set()) {
+    if (!pendingAbilityData || !multiclassStartingFeatNames?.size) return pendingAbilityData;
+
+    const isPoolEntry = (entry) => {
+      const name = getGrantedFeatName(entry);
+      return multiclassStartingFeatNames.has(normalizeManifestName(name));
+    };
+
+    // During a multiclass starting-feat choice, the new class's starting-feat
+    // pool is what the player may choose from; it is not already possessed.
+    // Leaving that pool in pending.grantedFeats/grantedProficiencies lets chain
+    // feats satisfy their own prerequisites, e.g. Armor Proficiency (Medium)
+    // falsely seeing Armor Proficiency (Light) from the same Soldier pool.
+    pendingAbilityData.grantedFeats = (pendingAbilityData.grantedFeats || []).filter(entry => !isPoolEntry(entry));
+    pendingAbilityData.grantedProficiencies = (pendingAbilityData.grantedProficiencies || []).filter(entry => !isPoolEntry(entry));
+    pendingAbilityData.selectedFeats = (pendingAbilityData.selectedFeats || []).filter(entry => !isPoolEntry(entry));
+    return pendingAbilityData;
   }
 
   _dedupeReasonList(values = []) {
@@ -1044,8 +1067,35 @@ export class FeatStep extends ProgressionStepPlugin {
         : 'Complete',
     };
 
+    const isMulticlassStartingFeatSlot = this._isLevelupMulticlassStartingFeatSlot(context?.shell || context);
+    const suggestedIds = new Set();
+    for (const suggestion of this._suggestedFeats || []) {
+      [suggestion?._id, suggestion?.id, suggestion?.name].filter(Boolean).forEach(value => suggestedIds.add(String(value)));
+    }
+    const flatFeatList = this._filterFeatsBySearch(this._legalFeats).map(feat => ({
+      _id: feat._id || feat.id,
+      id: feat.id || feat._id,
+      name: feat.name,
+      category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
+      subcategory: feat.subcategory || '',
+      prerequisiteLine: feat.prerequisiteLine || this._getPrerequisiteLine(feat),
+      isSuggested: [feat._id, feat.id, feat.name].filter(Boolean).some(value => suggestedIds.has(String(value))),
+      isFocused: (feat._id || feat.id) === this._focusedFeatId,
+      isSelected: (feat._id || feat.id) === this._selectedFeatId,
+      isAvailable: feat.isAvailable !== false,
+      isOwned: !!feat.isOwned,
+      isGranted: !!feat.isGranted,
+      unavailabilityReason: feat.unavailabilityReason || null,
+      treeIndent: feat.treeIndent || 0,
+      shortSummary: feat.shortSummary || '',
+      uiBroadTags: feat.uiBroadTags || [],
+      iconPath: feat.iconPath || feat.img || '',
+    }));
+
     return {
       groupedFeats: groupedDisplay,
+      flatFeatList,
+      isMulticlassStartingFeatSlot,
       focusedFeatId: this._focusedFeatId,
       selectedFeatId: this._selectedFeatId,
       searchQuery: this._searchQuery,

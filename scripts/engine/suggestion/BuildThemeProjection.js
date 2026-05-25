@@ -60,7 +60,12 @@ export class BuildThemeProjection {
      * @private
      */
     static _analyzeFeats(state, themes, signals) {
-        for (const featName of state.ownedFeats) {
+        for (const featEntry of state.ownedFeats) {
+            const featName = typeof featEntry === 'string'
+                ? featEntry
+                : String(featEntry?.name ?? featEntry?.displayName ?? featEntry?.id ?? featEntry?.slug ?? '');
+            if (!featName) continue;
+
             // Check direct theme mapping
             const theme = FEAT_THEME_SIGNALS[featName];
             if (theme) {

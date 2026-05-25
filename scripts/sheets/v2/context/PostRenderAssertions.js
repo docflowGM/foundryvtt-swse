@@ -189,6 +189,12 @@ export class PostRenderAssertions {
   static runAll(html, context, visiblePanels = null) {
     console.group('[PostRender] Registry-Driven Panel DOM Assertions');
     try {
+      const shellSurface = context?.shellSurface ?? context?.shell?.surface ?? null;
+      if (shellSurface && shellSurface !== 'sheet') {
+        console.log(`[PostRender] Skipping sheet-panel assertions while shell surface "${shellSurface}" is active.`);
+        return;
+      }
+
       // If no visible panels specified, check all registered panels (legacy behavior)
       const panelsToCheck = visiblePanels ?? Object.keys(PANEL_REGISTRY);
 

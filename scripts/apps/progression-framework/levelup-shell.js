@@ -95,12 +95,17 @@ export class LevelupShell extends ProgressionShell {
 
       // Compute active nodes for level-up mode
       const computer = new ActiveStepComputer();
-      const activeNodeIds = await computer.computeActiveSteps(
+      let activeNodeIds = await computer.computeActiveSteps(
         this.actor,
         'levelup',
         this.progressionSession,
         { subtype }
       );
+
+      // Level-up should open directly on the first actionable advancement step.
+      // Datapad Boot is chargen-only UX even if the shared node registry lists it
+      // for both modes.
+      activeNodeIds = (activeNodeIds || []).filter(nodeId => nodeId !== 'intro');
 
       // Convert active node IDs to StepDescriptors with plugins wired
       let descriptors = mapNodesToDescriptors(activeNodeIds);

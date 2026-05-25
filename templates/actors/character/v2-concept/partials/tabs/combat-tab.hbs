@@ -15,16 +15,17 @@
   </div>
 
   <div class="swse-concept-grid swse-concept-grid--combat">
-    <section class="swse-concept-panel swse-concept-panel--ledger">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">Attack Ledger</h3>
-          <p class="swse-concept-panel__hint">Use current attacks without leaving the dossier shell.</p>
-        </div>
-      </header>
+    <div class="swse-concept-combat-main">
+      <section class="swse-concept-panel swse-concept-panel--ledger">
+        <header class="swse-concept-panel__header">
+          <div>
+            <h3 class="swse-concept-panel__title">Attack Ledger</h3>
+            <p class="swse-concept-panel__hint">Use current attacks without leaving the dossier shell.</p>
+          </div>
+        </header>
 
-      {{#if conceptLayout.combat.hasAnyAttacks}}
-        <div class="swse-concept-ledger">
+        {{#if conceptLayout.combat.hasAnyAttacks}}
+          <div class="swse-concept-ledger">
           {{#if conceptLayout.combat.unarmedAttack}}
             {{#with conceptLayout.combat.unarmedAttack as |attack|}}
               <article class="swse-concept-ledger-row swse-concept-ledger-row--attack swse-concept-ledger-row--unarmed" data-attack-id="{{attack.id}}">
@@ -102,8 +103,11 @@
             <button type="button" class="swse-concept-btn" data-action="sheet-tab" data-sheet-tab="gear" data-tab="gear">Open Gear</button>
           </div>
         </div>
-      {{/if}}
-    </section>
+        {{/if}}
+      </section>
+
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/combat-actions-panel.hbs"}}
+    </div>
 
     <div class="swse-concept-tab-stack">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/hp-condition-panel.hbs"}}
@@ -112,34 +116,8 @@
 
       {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defenses-panel.hbs"}}
 
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/combat-actions-panel.hbs"}}
 
-      <section class="swse-concept-panel swse-concept-panel--action-reference">
-        <header class="swse-concept-panel__header">
-          <div>
-            <h3 class="swse-concept-panel__title">Action Economy</h3>
-            <p class="swse-concept-panel__hint">Condensed action browser grouped by economy bucket.</p>
-          </div>
-        </header>
-
-        <div class="swse-concept-action-sequence" aria-label="Action substitution sequence">
-          <div class="swse-concept-action-sequence__rail">
-            <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--full">Full-Round Action</div>
-            <div class="swse-concept-action-sequence__arrow">↓</div>
-            <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--standard">Standard Action</div>
-            <div class="swse-concept-action-sequence__arrow">↓</div>
-            <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--move">Move Action</div>
-            <div class="swse-concept-action-sequence__arrow">↓</div>
-            <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--swift">Swift Action</div>
-          </div>
-          <p class="swse-concept-action-sequence__note">Each turn normally allows one Standard, one Move, and one Swift action. Higher actions may be exchanged down the chain, while a Full-Round action consumes the round.</p>
-        </div>
-
-        <div class="swse-concept-action-reference-note">
-          <strong>Combat action cards are listed below in the Combat Actions panel.</strong>
-          <span>Use the reference chain here to remember which actions can be traded down during a turn.</span>
-        </div>
-      </section>
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/action-economy-indicator.hbs"}}
 
       <section class="swse-concept-panel">
         <header class="swse-concept-panel__header">

@@ -286,7 +286,21 @@ export class PanelContextBuilder {
       const rulesBonus = (Number(derivedDefense?.stateBonus ?? 0) || 0) + (Number(derivedDefense?.adjustment ?? 0) || 0);
       const sizeModifier = Number(derivedDefense?.sizeModifier ?? 0) || 0;
       const conditionPenalty = Number(derivedDefense?.conditionPenalty ?? this.derived?.damage?.conditionPenalty ?? 0) || 0;
-      const total = Number(defenseViewModel?.total ?? derivedDefense?.total ?? 10) || 10;
+      const computedTotal = 10
+        + levelContribution
+        + armorBonus
+        + abilityMod
+        + classDef
+        + speciesBonus
+        + rulesBonus
+        + sizeModifier
+        + miscMod
+        + conditionPenalty;
+      // The sheet displays the same total as the player-facing formula.  Some
+      // older derived defense payloads miss species/rules penalties even though
+      // the breakdown has them, so do not let a stale cached total contradict
+      // the visible math.
+      const total = Number.isFinite(computedTotal) ? computedTotal : (Number(defenseViewModel?.total ?? derivedDefense?.total ?? 10) || 10);
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
       const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';
       const speciesBonusClass = speciesBonus > 0 ? 'mod--positive' : speciesBonus < 0 ? 'mod--negative' : 'mod--zero';

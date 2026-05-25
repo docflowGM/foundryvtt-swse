@@ -112,6 +112,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._selectedTreeTalents = [];  // Talents in selected tree
     this._graphData = null;          // Dependency graph for selected tree
     this._focusedTalentId = null;    // Focused node in graph
+    this._focusedTalentItem = null;  // Resolved focused talent payload for details rail
     this._selectedTalentId = null;   // Committed talent for this slot
     this._viewMode = 'both';         // 'both', 'list', or 'map'
     this._lastGraphNodeStates = {};  // Async legality cache for the SVG renderer
@@ -586,6 +587,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._stage = 'graph';
     this._viewMode = 'both';
     this._focusedTalentId = null;
+    this._focusedTalentItem = null;
     this._lastGraphNodeStates = {};
 
     this._renderPreservingScroll(shell);
@@ -598,6 +600,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._selectedTreeTalents = [];
     this._graphData = null;
     this._focusedTalentId = null;
+    this._focusedTalentItem = null;
     this._lastGraphNodeStates = {};
     this._centerGraphAfterRender = false;
 
@@ -910,8 +913,8 @@ export class TalentStep extends ProgressionStepPlugin {
     const score = (topTier * 1000) + (topScore * 100) + Math.min(legalChoiceCount, 6) * 8 + investmentBonus;
     const label = this._getRecommendationLabel(topTalent);
     const fallback = [
-      `${legalChoiceCount} legal talent${legalChoiceCount === 1 ? '' : 's'} can be selected from this tree right now.`,
       topTalent?.name ? `${topTalent.name} is the strongest legal pick currently visible in this tree.` : null,
+      `${tree?.name || 'This tree'} has ${legalChoiceCount} legal talent${legalChoiceCount === 1 ? '' : 's'} available for this slot.`,
     ].filter(Boolean);
     const reasons = this._extractSuggestionReasons(topTalent, fallback);
     const treeWithRecommendation = {
@@ -1923,7 +1926,8 @@ export class TalentStep extends ProgressionStepPlugin {
       };
     }
 
-    if (!this._focusedTalentId) {
+    const focusId = this._focusedTalentId || focusedItem?.id || focusedItem?._id || focusedItem?.name || null;
+    if (!focusId && !this._focusedTalentItem) {
       emitTalentStepTrace('DETAILS_EMPTY', {
         reason: 'no-focused-talent-id',
         selectedTreeId: this._selectedTreeId,
@@ -1932,11 +1936,11 @@ export class TalentStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const talent = this._getTalent(this._focusedTalentId);
+    const talent = this._getTalent(focusId) || this._focusedTalentItem || focusedItem;
     if (!talent) {
       emitTalentStepTrace('DETAILS_EMPTY', {
         reason: 'focused-talent-not-found',
-        focusedTalentId: this._focusedTalentId,
+        focusedTalentId: focusId,
         selectedTreeId: this._selectedTreeId,
       });
       console.warn(`[TalentStep] Focused talent not found: ${this._focusedTalentId}`);
@@ -1976,18 +1980,20 @@ export class TalentStep extends ProgressionStepPlugin {
       this._getTalentPrerequisiteText(talent)
     );
     const prerequisitePath = this._buildPrerequisitePathForTalent(talent, this._lastGraphNodeStates);
-    const talentRecommendation = this._talentRecommendationById.get(talentId) || null;
+    const talentRecommendation = this._talentRecommendationById.get(talentId)
+      || this._talentRecommendationById.get(focusId)
+      || this._talentRecommendationById.get(talent?.name)
+      || null;
     const treeRecommendation = this._treeRecommendationById.get(this._selectedTreeId) || this._treeRecommendationById.get(selectedTree?.name) || null;
-    const recommendationText = talentRecommendation?.reason
-      || (treeRecommendation?.reason
-        ? `This tree is suggested because ${treeRecommendation.reason}`
-        : '');
+    const recommendationText = talentRecommendation?.reason || '';
     const statusText = isSelected
       ? 'This talent is selected for the current slot.'
       : meetsPrereqs
         ? 'This talent is available now and can be chosen for the current slot.'
         : 'This talent is locked until its prerequisite path is complete.';
-    const graphNode = talentId ? this._graphData?.nodes?.get?.(talentId) : null;
+    const graphNode = (talentId ? this._graphData?.nodes?.get?.(talentId) : null)
+      || (focusId ? this._graphData?.nodes?.get?.(focusId) : null)
+      || null;
     const downstreamUnlocks = (graphNode?.dependents || [])
       .map(id => this._graphData?.nodes?.get?.(id))
       .filter(Boolean)
@@ -2017,7 +2023,6 @@ export class TalentStep extends ProgressionStepPlugin {
         visualIcon: visual.icon,
         visualRole: visual.role,
         visualMotion: visual.motion,
-        visualSignal: visual.signal,
         visualThemeClass: visual.themeClass,
         isSelected,
         isOwned,
@@ -2058,17 +2063,30 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   async onItemFocused(item, shell = null) {
-    if (this._stage === 'graph') {
-      // item is a string ID from the shell event extraction or graph node id.
-      this._focusedTalentId = this._resolveTalentFocusId(item);
-      const focusedTalent = this._buildFocusedTalentPayload(this._focusedTalentId);
-      shell?.setFocusedItem?.(focusedTalent);
-      emitTalentStepTrace('ITEM_FOCUSED', {
-        stage: this._stage,
-        focusedTalentId: this._focusedTalentId,
-        focusedTalentName: focusedTalent?.name || null,
-      });
+    if (this._stage === 'browser') {
+      const treeId = item?.id || item?._id || item?.treeId || item;
+      if (treeId) this._focusedTreeId = treeId;
+      return;
     }
+
+    // Graph nodes can report a graph node id, a talent id, a name, or a payload.
+    // Resolve all of them into both a stable focus id and a concrete item so the
+    // details rail hydrates from map-node clicks exactly like list clicks.
+    const incomingId = item?.id || item?._id || item?.uuid || item?.name || item;
+    const resolvedId = this._resolveTalentFocusId(incomingId);
+    const focusedTalent = this._getTalent(resolvedId) || this._getTalent(incomingId) || this._buildFocusedTalentPayload(resolvedId);
+
+    this._focusedTalentId = this._getTalentId(focusedTalent) || resolvedId || incomingId || null;
+    this._focusedTalentItem = focusedTalent || null;
+    shell?.setFocusedItem?.(focusedTalent || (this._focusedTalentId ? { id: this._focusedTalentId, _id: this._focusedTalentId } : null));
+
+    emitTalentStepTrace('ITEM_FOCUSED', {
+      stage: this._stage,
+      incomingId,
+      resolvedId,
+      focusedTalentId: this._focusedTalentId,
+      focusedTalentName: focusedTalent?.name || null,
+    });
   }
 
   async onItemCommitted(item, shell) {

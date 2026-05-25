@@ -18,6 +18,7 @@ import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-sel
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
+import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
@@ -766,6 +767,46 @@ export class SWSEV2CharacterSheet extends
         this.render(false);
       }, { signal });
     });
+
+    // Store splash recovery: keep this at the shell-host level as a final
+    // capture-phase escape hatch. The store surface controller also owns these
+    // actions, but if splash initialization races a render or stale AppV2
+    // handlers miss the CTA, the shell must still be able to enter the store or
+    // return home instead of trapping the user on the splash screen.
+    root.addEventListener('click', async (ev) => {
+      if (this._shellSurface !== 'store') return;
+      const target = ev.target instanceof Element ? ev.target : null;
+      if (!target) return;
+
+      const homeTarget = target.closest('[data-action="tablet-home"], [data-shell-action="open-home"], [data-shell-action="return-to-home"]');
+      if (homeTarget) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation?.();
+        await this.setSurface('home');
+        this.render(false);
+        return;
+      }
+
+      const enterTarget = target.closest('[data-action="store-splash-continue"], [data-store-splash-enter]');
+      if (enterTarget) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation?.();
+        this._shellSurfaceOptions = {
+          ...this._shellSurfaceOptions,
+          enteredStore: true,
+          splashComplete: true,
+          currentView: 'browse',
+          currentCategory: '',
+          currentSubcategory: null,
+          currentFamily: null,
+          selectedProductId: null,
+          search: '',
+          availability: 'all',
+          sort: 'default'
+        };
+        this.render(false);
+      }
+    }, { signal, capture: true });
 
     if (this._shellSurface === 'home') {
       this._wireHomeSurfaceEvents(root, signal);
@@ -2581,74 +2622,127 @@ const forcePoints = [];
     };
 
     // Combat Actions Context (for combat tab - actions browser)
-    // Load from data/combat-actions.json and organize by action economy
+    // Primary source: combat-action compendium through CombatActionsMapper.
+    // Fallback: data/combat-actions.json.  The sheet keeps a lookup map so
+    // clicking a card has the same hydrated data that rendered the card.
     let combatActions = { groups: [] };
+    const combatActionLookup = {};
+    const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
+    const economyLabel = (value) => String(value || 'standard')
+      .split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+    const slugAction = (value) => String(value || 'combat-action')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'combat-action';
+    const normalizeActionEconomy = (value) => this._normalizeActionEconomyType(value || 'standard');
+    const registerAction = (grouped, action) => {
+      const key = action.key || action.id || slugAction(action.name);
+      const actionType = normalizeActionEconomy(action.actionType || action.type || action.action?.type || action.costType || 'standard');
+      const row = {
+        key,
+        id: key,
+        name: action.name || action.label || 'Combat Action',
+        sourceName: action.sourceName || action.source || action.system?.source || 'Combat Action',
+        actionType,
+        type: actionType,
+        cost: action.cost ?? action.actionCost ?? action.action?.cost ?? 1,
+        notes: action.notes || action.description || action.system?.notes || action.system?.description || '',
+        description: action.description || action.notes || action.system?.description || action.system?.notes || '',
+        relatedSkills: action.relatedSkills || action.system?.relatedSkills || [],
+        resources: action.resources || [],
+        itemId: action.itemId || '',
+        executable: action.executable !== false,
+        useLabel: action.useLabel || 'Use'
+      };
+      if (!grouped[actionType]) grouped[actionType] = [];
+      grouped[actionType].push(row);
+      combatActionLookup[key] = row;
+    };
+
     try {
-      const response = await fetch('/systems/foundryvtt-swse/data/combat-actions.json');
-      if (response.ok) {
-        const actionsData = await response.json();
+      const grouped = {};
+      let loadedAny = false;
 
-        // Organize by action economy type
-        const grouped = {};
-        const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
+      try {
+        await CombatActionsMapper.init?.();
+        const mappedActions = CombatActionsMapper.getAllCombatActions?.() || [];
+        mappedActions.forEach((action, index) => {
+          registerAction(grouped, {
+            ...action,
+            key: action.key || `combat:${index}`,
+            sourceName: 'Combat Actions Compendium',
+            executable: true,
+            useLabel: action.relatedSkills?.length ? 'Roll / Use' : 'Use'
+          });
+        });
+        loadedAny = mappedActions.length > 0;
+      } catch (mapperErr) {
+        console.warn('[SWSE] CombatActionsMapper unavailable, using JSON fallback:', mapperErr);
+      }
 
-        for (const action of actionsData) {
-          if (!action.action?.type) continue;
-          const economy = action.action.type.toLowerCase().replace(/[\s+]/g, '-');
-          if (!grouped[economy]) {
-            grouped[economy] = [];
-          }
-          grouped[economy].push({
-            id: action.name.toLowerCase().replace(/\s+/g, '-'),
+      if (!loadedAny) {
+        const response = await fetch('/systems/foundryvtt-swse/data/combat-actions.json');
+        if (response.ok) {
+          const actionsData = await response.json();
+          actionsData.forEach((action, index) => registerAction(grouped, {
+            key: `combat:${index}`,
             name: action.name,
-            type: action.action.type,
-            cost: action.action.cost,
+            actionType: action.action?.type,
+            cost: action.action?.cost,
             notes: action.notes,
-            hasRelatedSkills: action.relatedSkills && action.relatedSkills.length > 0
-          });
+            description: action.notes,
+            relatedSkills: action.relatedSkills || [],
+            sourceName: 'Core Combat Action',
+            executable: true,
+            useLabel: action.relatedSkills?.length ? 'Roll / Use' : 'Use'
+          }));
         }
+      }
 
-        // Include actor-ingestible species abilities as action rows.
-        for (const item of this.actor?.items || []) {
-          if (item?.type !== 'combat-action') continue;
-          const isActorAbility = item.flags?.swse?.isSpeciesAbility === true || item.flags?.swse?.isActorAbility === true || item.system?.executionModel === 'actor-special-ability' || item.system?.executionModel === 'species-activated-ability';
-          if (!isActorAbility) continue;
-          const economy = String(item.system?.actionType ?? item.system?.speciesAbility?.actionType ?? 'standard').toLowerCase().replace(/_/g, '-');
-          if (!grouped[economy]) grouped[economy] = [];
-          grouped[economy].push({
-            id: `item:${item.id}:use`,
-            name: item.name,
-            type: economy,
-            cost: 1,
-            notes: item.system?.description ?? item.system?.speciesAbility?.description ?? '',
-            hasRelatedSkills: true,
-            source: item.flags?.swse?.sourceSpecies ?? item.flags?.swse?.sourceName ?? item.system?.specialAbility?.sourceName ?? 'Special Ability'
-          });
-        }
+      // Include actor-owned executable combat-action items, such as species abilities.
+      for (const item of this.actor?.items || []) {
+        if (item?.type !== 'combat-action') continue;
+        const isActorAbility = item.flags?.swse?.isSpeciesAbility === true
+          || item.flags?.swse?.isActorAbility === true
+          || item.system?.executionModel === 'actor-special-ability'
+          || item.system?.executionModel === 'species-activated-ability';
+        if (!isActorAbility) continue;
+        registerAction(grouped, {
+          key: `item:${item.id}:use`,
+          itemId: item.id,
+          name: item.name,
+          actionType: item.system?.actionType ?? item.system?.speciesAbility?.actionType ?? 'standard',
+          cost: 1,
+          notes: item.system?.description ?? item.system?.speciesAbility?.description ?? '',
+          description: item.system?.description ?? item.system?.speciesAbility?.description ?? '',
+          relatedSkills: item.system?.relatedSkills ?? [],
+          sourceName: item.flags?.swse?.sourceSpecies ?? item.flags?.swse?.sourceName ?? item.system?.specialAbility?.sourceName ?? 'Special Ability',
+          executable: true,
+          useLabel: 'Use'
+        });
+      }
 
-        // Build groups in action economy order
-        // Match template structure: groups[].label, groups[].count, groups[].subgroups[].label, groups[].subgroups[].items[]
-        for (const eco of economyOrder) {
-          if (grouped[eco]) {
-            // Template expects: groups > subgroups > items
-            // So wrap actions in a subgroup structure
-            combatActions.groups.push({
-              label: eco.charAt(0).toUpperCase() + eco.slice(1).replace('-', ' '),  // "Standard" from "standard"
-              count: grouped[eco].length,
-              subgroups: [{
-                label: eco.charAt(0).toUpperCase() + eco.slice(1).replace('-', ' '),
-                count: grouped[eco].length,
-                items: grouped[eco]
-              }]
-            });
-          }
-        }
+      for (const eco of economyOrder) {
+        const items = grouped[eco] || [];
+        if (!items.length) continue;
+        items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        combatActions.groups.push({
+          label: economyLabel(eco),
+          count: items.length,
+          subgroups: [{
+            label: economyLabel(eco),
+            count: items.length,
+            items
+          }]
+        });
       }
     } catch (err) {
       console.warn('[SWSE] Failed to load combat actions:', err);
       // Gracefully degrade - will show empty state
     }
-
+    this._combatActionLookup = combatActionLookup;
     /* ============================================================
        MISSING CONTEXT KEYS (REMEDIATION)
     ============================================================ */
@@ -3190,6 +3284,7 @@ const forcePoints = [];
       // PHASE 9: Combat Actions Browser (in-tab)
       // ═════════════════════════════════════════════════════════════════
       combatActions,                // Organized combat actions by economy type
+      combatActionLookup,            // Flat hydrated combat action map for click/roll handlers
       unarmedAttack,                // Always-available SWSE unarmed attack option
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
@@ -4144,9 +4239,10 @@ const forcePoints = [];
 
     const base = Number(row.querySelector('[data-field="base"]')?.value || 0);
     const racial = Number(row.querySelector('[data-field="racial"]')?.value || 0);
+    const enhancement = Number(row.querySelector('[data-field="enhancement"], [data-field="misc"]')?.value || 0);
     const temp = Number(row.querySelector('[data-field="temp"]')?.value || 0);
 
-    const total = base + racial + temp;
+    const total = base + racial + enhancement + temp;
     const mod = Math.floor((total - 10) / 2);
 
     const totalEl = row.querySelector(".math-result");
@@ -4411,14 +4507,13 @@ const forcePoints = [];
     // ═════════════════════════════════════════════════════════════════
 
     // Action click (cards and table rows)
-    html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
+    html.querySelectorAll(".swse-combat-action-card, .action-row, .swse-concept-action-row--combat").forEach(element => {
       element.addEventListener("click", async (event) => {
-        if (event.target.classList.contains("hide-action")) return;
-        const key = event.currentTarget.dataset.actionKey;
+        if (event.target.classList.contains("hide-action") || event.target.closest?.("button, a, input, select, textarea")) return;
+        const key = event.currentTarget.dataset.actionKey || event.currentTarget.dataset.actionId;
         if (!key) return;
 
-        const combatActions = this.actor.getFlag(game.system.id, "combatActions") ?? {};
-        const data = combatActions[key] ?? {};
+        const data = this._resolveSheetCombatActionData(key, event.currentTarget);
 
         await this._runCanonicalCombatAction(key, data, {
           source: "combat-action-card"
@@ -4453,8 +4548,7 @@ const forcePoints = [];
         const actionId = button.dataset.actionId;
         if (!actionId) return;
 
-        const combatActions = this.actor.getFlag(game.system.id, "combatActions") ?? {};
-        const data = combatActions[actionId] ?? {};
+        const data = this._resolveSheetCombatActionData(actionId, button);
 
         await this._runCanonicalCombatAction(actionId, data, {
           source: "combat-action-button"
@@ -5103,6 +5197,86 @@ const forcePoints = [];
       }, { signal });
     });
 
+    const getStatusFeed = () => {
+      const direct = this.actor?.flags?.swse?.character?.statusFeed;
+      return Array.isArray(direct) ? [...direct] : [];
+    };
+    const prependStatusFeed = (entry) => [entry, ...getStatusFeed()].slice(0, 20);
+    const findNearestNumericInput = (button, selector) => {
+      const panel = button.closest?.('.swse-concept-panel') || button.closest?.('.swse-concept-dashboard') || button.parentElement;
+      return panel?.querySelector?.(selector) || null;
+    };
+
+    // Add XP button: increments canonical XP and records the award in the dossier status feed.
+    html.querySelectorAll('[data-action="add-xp-to-actor"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const input = findNearestNumericInput(button, '[data-role="xp-add-amount"]');
+        const amount = Math.max(0, Number(input?.value ?? 0) || 0);
+        if (amount <= 0) {
+          ui?.notifications?.warn?.('Enter an XP amount greater than 0.');
+          return;
+        }
+        const current = Number(this.actor.system?.xp?.total ?? 0) || 0;
+        const next = current + amount;
+        try {
+          await ActorEngine.updateActor(this.actor, {
+            'system.xp.total': next,
+            'flags.swse.character.statusFeed': prependStatusFeed({
+              id: `xp-${Date.now()}`,
+              label: 'XP Awarded',
+              detail: `Added ${amount.toLocaleString()} XP`,
+              value: `${next.toLocaleString()} total XP`,
+              tone: 'ok',
+              timestamp: new Date().toISOString()
+            })
+          }, {
+            source: 'character-sheet-add-xp',
+            meta: { guardKey: 'character-sheet-add-xp' }
+          });
+          if (input) input.value = '';
+          ui?.notifications?.info?.(`Added ${amount.toLocaleString()} XP.`);
+        } catch (err) {
+          ui?.notifications?.error?.(`Failed to add XP: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Add credits button: adjusts the current credit ledger and records it in the status feed.
+    html.querySelectorAll('[data-action="add-credits-to-actor"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const input = findNearestNumericInput(button, '[data-role="credits-add-amount"]');
+        const amount = Number(input?.value ?? 0) || 0;
+        if (amount === 0) {
+          ui?.notifications?.warn?.('Enter a credit adjustment other than 0.');
+          return;
+        }
+        const current = Number(this.actor.system?.credits ?? 0) || 0;
+        const next = Math.max(0, current + amount);
+        try {
+          await ActorEngine.updateActor(this.actor, {
+            'system.credits': next,
+            'flags.swse.character.statusFeed': prependStatusFeed({
+              id: `credits-${Date.now()}`,
+              label: amount > 0 ? 'Credits Added' : 'Credits Spent',
+              detail: `${amount > 0 ? 'Added' : 'Removed'} ${Math.abs(amount).toLocaleString()} credits`,
+              value: `${next.toLocaleString()} current credits`,
+              tone: amount > 0 ? 'accent' : 'warn',
+              timestamp: new Date().toISOString()
+            })
+          }, {
+            source: 'character-sheet-add-credits',
+            meta: { guardKey: 'character-sheet-add-credits' }
+          });
+          if (input) input.value = '';
+          ui?.notifications?.info?.(`${amount > 0 ? 'Added' : 'Removed'} ${Math.abs(amount).toLocaleString()} credits.`);
+        } catch (err) {
+          ui?.notifications?.error?.(`Failed to adjust credits: ${err.message}`);
+        }
+      }, { signal });
+    });
+
     // Gain Force Point button
     html.querySelectorAll('[data-action="gain-force-point"]').forEach(button => {
       button.addEventListener("click", async (event) => {
@@ -5662,6 +5836,27 @@ const forcePoints = [];
     return await rollSkillCheck(this.actor, skillKey, payload);
   }
 
+  _resolveSheetCombatActionData(actionId, element = null) {
+    const key = String(actionId || '');
+    const actorActions = this.actor?.getFlag?.(game.system.id, "combatActions") ?? {};
+    const fromFlag = actorActions[key];
+    const fromSheet = this._combatActionLookup?.[key];
+    const row = element?.closest?.('[data-action-key], .swse-concept-action-row, .combat-action-row');
+    const fromDataset = row ? {
+      key,
+      name: row.querySelector?.('.swse-concept-action-row__copy strong, .action-name')?.textContent?.trim?.() || key,
+      actionType: row.dataset.actionType || element?.dataset?.actionType || 'standard',
+      type: row.dataset.actionType || element?.dataset?.actionType || 'standard',
+      notes: row.querySelector?.('small, .action-notes')?.textContent?.trim?.() || ''
+    } : null;
+
+    return {
+      ...(fromDataset || {}),
+      ...(fromSheet || {}),
+      ...(fromFlag || {})
+    };
+  }
+
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
     const actionType = this._deriveCombatActionEconomyType(actionData);
     const allowed = await this._applyActionEconomy(actionType, {
@@ -5680,7 +5875,8 @@ const forcePoints = [];
 
     try {
       if (typeof CombatEngine?.executeAction === "function") {
-        return await CombatEngine.executeAction(payload);
+        const engineResult = await CombatEngine.executeAction(payload);
+        if (engineResult) return engineResult;
       }
     } catch (err) {
       console.warn("[PHASE E] CombatEngine.executeAction failed, falling back to config dialog once:", err);
@@ -5804,13 +6000,29 @@ const forcePoints = [];
       console.warn("[PHASE F] Action policy check failed, continuing cautiously:", err);
     }
 
-    if (typeof Engine.consumeAction !== "function") {
-      return true;
-    }
+    const costForType = (type) => {
+      const normalized = this._normalizeActionEconomyType(type);
+      if (normalized === 'full-round') return { fullRound: true };
+      if (normalized === 'move') return { move: 1 };
+      if (normalized === 'swift') return { swift: 1 };
+      if (normalized === 'free' || normalized === 'reaction' || normalized === 'passive') return {};
+      return { standard: 1 };
+    };
 
-    const nextState = await Engine.consumeAction(turnState, actionType, metadata);
-    if (nextState === false || nextState?.permitted === false) {
-      return false;
+    let nextState = null;
+    if (typeof Engine.consumeAction === "function") {
+      const result = await Engine.consumeAction(turnState, { actionType, metadata, cost: costForType(actionType) });
+      if (result === false || result?.allowed === false || result?.permitted === false) return false;
+      nextState = result?.turnState ?? result?.updatedTurnState ?? result;
+    } else if (typeof Engine.consume === "function") {
+      const result = Engine.consume(turnState, costForType(actionType));
+      if (result === false || result?.allowed === false || result?.permitted === false) {
+        ui?.notifications?.warn?.('That action is not available this turn.');
+        return false;
+      }
+      nextState = result?.turnState ?? result;
+    } else {
+      return true;
     }
 
     try {
@@ -5821,6 +6033,7 @@ const forcePoints = [];
       } else if (typeof Persistence.updateTurnState === "function") {
         await Persistence.updateTurnState(this.actor, combatId, nextState);
       }
+      this.render(false);
     } catch (err) {
       console.warn("[PHASE F] Failed to persist action economy state:", err);
     }

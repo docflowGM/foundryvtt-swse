@@ -24,7 +24,7 @@
 
               <div class="swse-concept-action-list">
                 {{#each subgroup.items as |item|}}
-                  <article class="swse-concept-action-row swse-concept-action-row--combat">
+                  <article class="swse-concept-action-row swse-concept-action-row--combat" data-action-key="{{item.key}}" data-action-type="{{item.actionType}}">
                     <div class="swse-concept-action-row__copy">
                       <strong>{{item.name}}</strong>
                       <small>
@@ -45,7 +45,7 @@
                         <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{item.itemId}}">Inspect</button>
                       {{/if}}
                       {{#if item.executable}}
-                        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="swse-v2-use-action" data-action-id="{{item.key}}">{{item.useLabel}}</button>
+                        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="swse-v2-use-action" data-action-id="{{item.key}}" data-action-type="{{item.actionType}}">{{item.useLabel}}</button>
                       {{/if}}
                     </div>
                   </article>

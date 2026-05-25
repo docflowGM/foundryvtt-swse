@@ -16,6 +16,7 @@ const SYSTEM_MENTOR_BASE = 'systems/foundryvtt-swse/assets/mentors/';
 const CANONICAL_MENTOR_PORTRAIT_BASENAMES = Object.freeze({
     axiom: 'Axiom.png',
     breach: 'breach.png',
+    captain: 'captain.png',
     darth_malbada: 'darth_malbada.png',
     malbada: 'darth_malbada.png',
     delta: 'delta.png',
@@ -49,6 +50,7 @@ const CANONICAL_MENTOR_PORTRAIT_BASENAMES = Object.freeze({
     seraphim: 'Seraphim.png',
     spark: 'Spark.png',
     theron: 'theron.png',
+    tideborn: 'captain.png',
     tio_the_hutt: 'Tio_the_hutt.png',
     broker: 'Tio_the_hutt.png',
     urza: 'urza.png',

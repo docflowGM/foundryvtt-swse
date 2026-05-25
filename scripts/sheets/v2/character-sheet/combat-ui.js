@@ -91,14 +91,13 @@ export function activateCombatUI(sheet, html, { signal } = {}) {
   });
 
   // Action click (cards and table rows)
-  html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
+  html.querySelectorAll(".swse-combat-action-card, .action-row, .swse-concept-action-row--combat").forEach(element => {
     element.addEventListener("click", async (event) => {
-      if (event.target.classList.contains("hide-action")) return;
-      const key = event.currentTarget.dataset.actionKey;
+      if (event.target.classList.contains("hide-action") || event.target.closest?.("button, a, input, select, textarea")) return;
+      const key = event.currentTarget.dataset.actionKey || event.currentTarget.dataset.actionId;
       if (!key) return;
 
-      const combatActions = sheet.actor.getFlag(game.system.id, "combatActions") ?? {};
-      const data = combatActions[key] ?? {};
+      const data = sheet._resolveSheetCombatActionData?.(key, event.currentTarget) ?? {};
 
       await sheet._runCanonicalCombatAction(key, data, {
         source: "combat-action-card"
@@ -133,8 +132,7 @@ export function activateCombatUI(sheet, html, { signal } = {}) {
       const actionId = button.dataset.actionId;
       if (!actionId) return;
 
-      const combatActions = sheet.actor.getFlag(game.system.id, "combatActions") ?? {};
-      const data = combatActions[actionId] ?? {};
+      const data = sheet._resolveSheetCombatActionData?.(actionId, button) ?? {};
 
       await sheet._runCanonicalCombatAction(actionId, data, {
         source: "combat-action-button"
