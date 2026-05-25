@@ -9,7 +9,7 @@
     "voiceStyle": "Warm, playful, indulgent. Sounds like she’s flirting even when she’s robbing you.",
     "values": "Freedom, cleverness, adaptability, social dominance",
     "tooltip": "Sela reflects your character through charm, deception, and social mastery",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/sela.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Sela.png",
     "dialogues": {
       "classPaths": {
         "charlatan": {

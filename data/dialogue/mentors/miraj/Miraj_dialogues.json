@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, measured, reflective. Speaks in metaphors about the Force and paths.",
     "values": "Awareness, restraint, spiritual alignment, growth through discipline",
     "tooltip": "Miraj reflects your character through a philosophical and Force-aware lens",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.png",
     "dialogues": {
       "classPaths": {
         "jedi": {

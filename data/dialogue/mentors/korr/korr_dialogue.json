@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, authoritative, sober. Speaks with the weight of consequence.",
     "values": "Duty, responsibility, loyalty, disciplined judgment",
     "tooltip": "Admiral Korr reflects your character through command, responsibility, and strategic foresight",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/korr.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Korr.png",
     "dialogues": {
       "classPaths": {
         "officer": {

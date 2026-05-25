@@ -8,7 +8,7 @@
   "voiceStyle": "Casual, mocking, New-Yorker edge. Sounds like she's joking until it's too late.",
   "values": "Survival, efficiency, independence, credibility",
   "tooltip": "Delta reflects your character through lethal subtlety and street-hardened instinct",
-  "avatar": "systems/foundryvtt-swse/assets/mentors/delta.webp",
+  "avatar": "systems/foundryvtt-swse/assets/mentors/delta.png",
 
   "dialogues": {
     "classPaths": {

@@ -9,7 +9,7 @@
     "voiceStyle": "Dry, calm, pragmatic. Uses understatement and dark humor.",
     "values": "Life, responsibility, restraint, preparedness",
     "tooltip": "Kyber reflects your character through a medic’s pragmatic compassion",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/kyber.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Kyber.png",
     "dialogues": {
       "classPaths": {
         "medic": {

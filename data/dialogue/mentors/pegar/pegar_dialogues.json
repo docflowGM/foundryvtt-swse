@@ -9,7 +9,7 @@
     "voiceStyle": "Casual, reflective, faintly amused. Speaks as someone who has seen everything—sometimes twice.",
     "values": "Survival, experience, adaptability, legacy",
     "tooltip": "Pegar reflects your character through the lens of endless survival and arena mastery",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.png",
     "dialogues": {
       "classPaths": {
         "gladiator": {

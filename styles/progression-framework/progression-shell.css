@@ -2053,8 +2053,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 .progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue {

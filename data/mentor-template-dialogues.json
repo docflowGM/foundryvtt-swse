@@ -3,7 +3,7 @@
     "miraj": {
       "name": "Miraj",
       "title": "Jedi Master",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.png",
       "dialogues": {
         "jedi_guardian": {
           "greeting": "Guardian, a martial adept of the Force. You walk the path of decisive action, standing as a shield for those who cannot defend themselves.",
@@ -38,7 +38,7 @@
     "lead": {
       "name": "Lead",
       "title": "Argent Squad Commander",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/lead.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/lead.png",
       "dialogues": {
         "sniper": {
           "greeting": "Sniper. You shape the battlefield from distance, where one well-placed shot can decide the fight.",
@@ -97,7 +97,7 @@
     "breach": {
       "name": "Breach",
       "title": "Mandalorian Mercenary",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/breach.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/breach.png",
       "dialogues": {
         "rifleman": {
           "greeting": "Rifleman. You control the battlefield from range. Precision and timing define you.",
@@ -375,7 +375,7 @@
     "j0n1": {
       "name": "J0-N1",
       "title": "Protocol Droid & Personal Butler",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/j0n1.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/j0n1.png",
       "dialogues": {
         "noble_diplomat": {
           "greeting": "<Inquiry> You have selected Diplomat. Influence and negotiation are your primary skills.",
@@ -410,7 +410,7 @@
     "dezmin": {
       "name": "Dezmin",
       "title": "Grandmaster of the Imperial Knights",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.png",
       "dialogues": {
         "imperialnight_guardian": {
           "greeting": "Guardian of the Empire. You defend order with discipline and resolve, standing as a shield against chaos.",
@@ -585,7 +585,7 @@
     "kyber": {
       "name": "Kyber",
       "title": "Pacifist Combat Medic",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/kyber.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Kyber.png",
       "dialogues": {
         "medic_healer": {
           "greeting": "Healer. Your focus is preserving life when others falter.",
@@ -616,7 +616,7 @@
     "mayu": {
       "name": "Mayu",
       "title": "Ace Pilot & Rogue Smuggler",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.png",
       "dialogues": {
         "pilot_rogue": {
           "greeting": "Rogue Pilot. You fly by instinct and skill, bending the rules to your advantage.",
@@ -647,7 +647,7 @@
     "malbada": {
       "name": "Darth Malbada",
       "title": "Sith Lord",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/malbada.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/darth_malbada.png",
       "dialogues": {
         "sith_warrior": {
           "greeting": "Warrior of the dark side. You channel your anger into combat, making every strike a demonstration of power.",
@@ -822,7 +822,7 @@
     "miedo": {
       "name": "Darth Miedo",
       "title": "Dark Lord of the Sith",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.png",
       "dialogues": {
         "sith_lord_warrior": {
           "greeting": "You grow strong through combat and conquest. Strength and dominance define your path.",
@@ -997,7 +997,7 @@
     "pegar": {
       "name": "Pegar",
       "title": "The Immortal Champion",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.png",
       "dialogues": {
         "gladiator_warrior": {
           "greeting": "Warrior of the arena. You test strength, endurance, and skill under fire, becoming stronger with every challenge.",
@@ -1028,7 +1028,7 @@
     "seraphim": {
       "name": "Seraphim",
       "title": "Self-Aware AI",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/seraphim.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Seraphim.png",
       "dialogues": {
         "droid_independent": {
           "greeting": "<Statement: Autonomous unit detected.> You display initiative and independence uncommon in your model.",
@@ -1059,7 +1059,7 @@
     "skindar": {
       "name": "Marl Skindar",
       "title": "Republic Intelligence Operative",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/skindar.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Marl_Skindar.png",
       "dialogues": {
         "agent_spy": {
           "greeting": "Spy. You operate in shadows, gathering intelligence unseen.",
@@ -1234,7 +1234,7 @@
     "delta_assassin": {
       "name": "Delta",
       "title": "Argent Squad Sniper",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/delta.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/delta.png",
       "dialogues": {
         "assassin_sniper": {
           "greeting": "Sniper. One shot, one target, one ghost in the darkness.",
@@ -1265,7 +1265,7 @@
     "kex_varon": {
       "name": "Kex Varon",
       "title": "Legendary Bounty Hunter",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/kex.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Kex.png",
       "dialogues": {
         "hunter_tracker": {
           "greeting": "Tracker. Every fugitive leaves a trail, and you will follow it to the ends of the galaxy.",
@@ -1440,7 +1440,7 @@
     "sela": {
       "name": "Silvertongue Sela",
       "title": "Con Artist Extraordinaire",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/sela.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Sela.png",
       "dialogues": {
         "charlatan_talker": {
           "greeting": "Talker. Your words are sharper than any blade and can open doors closed to others.",
@@ -1471,7 +1471,7 @@
     "tio": {
       "name": "Tío the Hutt",
       "title": "Underworld Kingpin",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/broker.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Tio_the_hutt.png",
       "dialogues": {
         "crime_lord_enforcer": {
           "greeting": "Enforcer. You make sure debts are paid and reputation is respected.",
@@ -1502,7 +1502,7 @@
     "axiom": {
       "name": "General Axiom",
       "title": "Ruthless Droid Lieutenant",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/axiom.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Axiom.png",
       "dialogues": {
         "commander_tactical": {
           "greeting": "<Declaration: Tactical protocols active.> You coordinate units with precision, controlling the battlefield.",
@@ -1677,7 +1677,7 @@
     "krag": {
       "name": "Krag the Immovable",
       "title": "Chief Enforcer of Tío the Hutt",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/krag.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/krag.png",
       "dialogues": {
         "enforcer_breaker": {
           "greeting": "Breaker. Your strength sets the standard. You enforce will through presence and action.",
@@ -1852,7 +1852,7 @@
     "venn": {
       "name": "Seeker Vera",
       "title": "Wandering Force Mystic",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/vera.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/vera.png",
       "dialogues": {
         "adept_mystic": {
           "greeting": "Mystic. You pursue hidden truths in the Force, beyond rigid dogma.",
@@ -1883,7 +1883,7 @@
     "anchorite": {
       "name": "Riquis",
       "title": "Wandering Force Shaman",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/riquis.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/riquis.png",
       "dialogues": {
         "disciple_seer": {
           "greeting": "Seer. You perceive the unseen currents of the Force, glimpsing truths hidden to most.",
@@ -1914,7 +1914,7 @@
     "rajma": {
       "name": "Rajma",
       "title": "Fastest Draw in the Outer Rim",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.png",
       "dialogues": {
         "gunslinger_quickdraw": {
           "greeting": "Quickdraw. Speed defines you; every motion is measured and instantaneous.",
@@ -1945,7 +1945,7 @@
     "jack": {
       "name": "Lucky Jack",
       "title": "Master of Making It Up",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/jack.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Jack.png",
       "dialogues": {
         "improviser_creative": {
           "greeting": "Creative improviser. You see solutions where others see chaos.",
@@ -1976,7 +1976,7 @@
     "infiltrator": {
       "name": "Delta",
       "title": "Argent Squad Infiltration Expert",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/delta.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/delta.png",
       "dialogues": {
         "infiltrator_ghost": {
           "greeting": "<Inquiry> Ghost Infiltrator detected. Your specialty is moving unseen and striking where the enemy is weakest.",
@@ -2007,7 +2007,7 @@
     "zhen": {
       "name": "Master Zhen",
       "title": "The Empty Hand",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.png",
       "dialogues": {
         "master_peaceful": {
           "greeting": "<Observation> Peaceful martial path selected. Discipline without aggression is your instrument.",
@@ -2069,7 +2069,7 @@
     "kharjo": {
       "name": "Blade Master Kharjo",
       "title": "The Undefeated",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/kael.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/kharjo.png",
       "dialogues": {
         "duelist_classical": {
           "greeting": "<Observation> Classical Duelist detected. Your path honors tradition, discipline, and the precision of blade-to-blade combat.",
@@ -2244,7 +2244,7 @@
     "rax": {
       "name": "Chief Engineer Rax",
       "title": "Master of Siege and Defense",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/rax.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Rax.png",
       "dialogues": {
         "engineer_architect": {
           "greeting": "<Observation> Architect Engineer active. You shape defenses, designing battlegrounds that favor your side before combat begins.",
@@ -2275,7 +2275,7 @@
     "korr": {
       "name": "Admiral Korr",
       "title": "Fleet Commander",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/korr.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Korr.png",
       "dialogues": {
         "officer_commander": {
           "greeting": "<Observation> Commander template recognized. You direct troops and coordinate operations at the tactical level.",
@@ -2450,7 +2450,7 @@
     "rogue": {
       "name": "Rogue",
       "title": "The Untouchable",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/rogue.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Rogue.png",
       "dialogues": {
         "outlaw_fugitive": {
           "greeting": "A fugitive living outside the law. The wanted posters, the bounties, the constant running—that's the outlaw's price for freedom.",
@@ -2481,7 +2481,7 @@
     "spark": {
       "name": "Spark",
       "title": "Master of Controlled Chaos",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/spark.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/Spark.png",
       "dialogues": {
         "saboteur_precise": {
           "greeting": "A precise saboteur. One perfectly placed explosive, perfect timing, perfect devastation. That's elegant work.",
@@ -2512,7 +2512,7 @@
     "urza": {
       "name": "Shaper Urza",
       "title": "Master of Living Technology",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/vel.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/urza.png",
       "dialogues": {
         "shaper_creator": {
           "greeting": "A shaper creating living tools. You understand that biology is the ultimate technology—it grows, adapts, evolves.",
@@ -2543,7 +2543,7 @@
     "theron": {
       "name": "Shield Captain Theron",
       "title": "The Unbreakable Wall",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/theron.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/theron.png",
       "dialogues": {
         "vanguard_protector": {
           "greeting": "A protector standing at the front. Your shield will save lives. Never forget that every enemy you block is a life you preserve.",

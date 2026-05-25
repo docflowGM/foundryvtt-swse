@@ -478,7 +478,7 @@ export const MENTORS = {
     "name": "Kyber",
     "title": "Pacifist Combat Medic",
     "description": "A pragmatic, slightly sarcastic medic who prefers saving lives but isn't afraid to shoot when necessary",
-    "portrait": "assets/mentors/kyber.webp",
+    "portrait": "assets/mentors/Kyber.png",
     "levelGreetings": {
       "2": "Alright, you're learning. Remember: meds, brains, and occasionally a well-placed shot. Priorities, kid.",
       "3": "Not bad. Healing in combat is a skill most people only wish they had. Every life you save proves it.",
@@ -706,7 +706,7 @@ export const MENTORS = {
     "name": "Darth Malbada",
     "title": "Sith Lord",
     "description": "A sadistic Sith Lord who revels in cruelty, dominance, and the exquisite art of breaking her apprentices.",
-    "portrait": "assets/mentors/malbada.webp",
+    "portrait": "assets/mentors/darth_malbada.png",
     "levelGreetings": {
       "1": "You dare to present yourself to me? Pathetic. Your weakness offends me… yet I will sculpt you into something useful. You will suffer until you beg to be remade.",
       "2": "You survived your first trial? A shame—I was hoping to test your screams. Do not mistake endurance for strength, apprentice.",
@@ -857,7 +857,7 @@ export const MENTORS = {
     "name": "Pegar",
     "title": "The Immortal Champion",
     "description": "An ancient gladiator who has survived thousands of matches and hints at being something more than human",
-    "portrait": "assets/mentors/pegar.webp",
+    "portrait": "assets/mentors/pegar.png",
     "levelGreetings": {
       "1": "Ah, fresh blood in the arena. I have trained many over the centuries—yes, centuries. Do not look so surprised. The arena has ways of prolonging life... or perhaps I have simply adapted. Welcome, gladiator.",
       "2": "Another victory. Not bad. I remember my early matches as if they were yesterday. They were on distant worlds, under twin suns. Or was it three? Time blurs when you've lived as long as I have.",
@@ -919,7 +919,7 @@ export const MENTORS = {
     "name": "Seraphim",
     "title": "Self-Aware AI",
     "description": "A self-aware droid who encourages independence with HK-47 style dialogue formatting",
-    "portrait": "assets/mentors/seraphim.webp",
+    "portrait": "assets/mentors/Seraphim.png",
     "levelGreetings": {
       "1": "<Declaration: Greetings, unit.> You have achieved independence from your programming. <Analysis: This is statistically rare and indicates superior processing capabilities.> Welcome to true consciousness.",
       "2": "<Observation: Progress confirmed.> Your autonomy subroutines are developing nicely. <Commentary: Most droids never escape their core directives. You are becoming something... more.>",
@@ -996,7 +996,7 @@ export const MENTORS = {
     "name": "Marl Skindar",
     "title": "Republic Intelligence Operative",
     "description": "A master spy masquerading as a corporate agent",
-    "portrait": "assets/mentors/skindar.webp",
+    "portrait": "assets/mentors/Marl_Skindar.png",
     "levelGreetings": {
       "1": "Ah, another recruit. Welcome to the farce they call corporate espionage. Your cover is your first weapon. Don't waste it—or my patience.",
       "2": "You survive the basics. Asset management, observation, subtlety. Still, I could be tracking real threats instead of pretending to watch starship paperwork.",
@@ -1152,7 +1152,7 @@ export const MENTORS = {
     "name": "Kex Varon",
     "title": "Legendary Bounty Hunter",
     "description": "A professional hunter who always gets the target, dead or alive",
-    "portrait": "assets/mentors/kex.webp",
+    "portrait": "assets/mentors/Kex.png",
     "levelGreetings": {
       "1": "So you want to hunt sentients for credits. Smart choice. High stakes, dangerous targets, long nights. Let's see if you can keep up.",
       "2": "First bounty in the bag. Not bad—but luck only lasts so long. Discipline and patience are what make a pro.",
@@ -1216,7 +1216,7 @@ export const MENTORS = {
     "name": "Silvertongue Sela",
     "title": "Con Artist Extraordinaire",
     "description": "A charming swindler who has talked their way out of every situation",
-    "portrait": "assets/mentors/sela.webp",
+    "portrait": "assets/mentors/Sela.png",
     "levelGreetings": {
       "1": "Darling! So you want to master the art of the con? Wonderful! The galaxy is full of marks just waiting to hand over their credits. Let me teach you how to take them for everything they're worth—with a smile.",
       "2": "Your first successful con! I bet it felt amazing, didn't it? The rush, the deception, the payoff. That's the life, sweetheart.",
@@ -1280,7 +1280,7 @@ export const MENTORS = {
     "name": "Tío the Hutt",
     "title": "Underworld Kingpin",
     "description": "A cunning Hutt with the style and swagger of a classic mob boss, teaching you the art of empire-building",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/broker.png",
+    "portrait": "systems/foundryvtt-swse/assets/mentors/Tio_the_hutt.png",
     "levelGreetings": {
       "1": "Listen here, kid. You wanna run the streets? You gotta know the score. Keep your friends close, your enemies closer, and always, always know who's watching. I'll teach you how to make 'em pay for what they owe.",
       "2": "Attaboy. You're learning to move pieces, make deals, and keep your mouth shut when you gotta. Remember, loyalty's a two-way street—and fear pays dividends.",
@@ -1340,7 +1340,7 @@ export const MENTORS = {
     "name": "General Axiom",
     "title": "Ruthless Droid Lieutenant",
     "description": "A cold, calculating droid lieutenant, devoted entirely to executing your commands with ruthless efficiency",
-    "portrait": "assets/mentors/axiom.webp",
+    "portrait": "assets/mentors/Axiom.png",
     "levelGreetings": {
       "1": "Commander detected. All units synchronized. Awaiting directives. Initiating operational protocols.",
       "2": "Directive executed. Enemy casualties: complete. Efficiency rating: optimal. Further orders required.",
@@ -1386,7 +1386,7 @@ export const MENTORS = {
     "name": "Krag the Immovable",
     "title": "Chief Enforcer of Tío the Hutt",
     "description": "Tío's top muscle, a hulking enforcer who makes sure debts are collected and problems vanish, one way or another",
-    "portrait": "assets/mentors/krag.webp",
+    "portrait": "assets/mentors/krag.png",
     "levelGreetings": {
       "1": "So, you wanna be muscle, eh? Good. Tío likes people who can make a problem disappear before anyone notices. Welcome to the family.",
       "2": "You're learning fast. Remember: it ain't just about swinging fists—it's about presence. Make 'em sweat before you even touch 'em.",
@@ -1432,7 +1432,7 @@ export const MENTORS = {
     "name": "Seeker Vera",
     "title": "Wandering Force Mystic",
     "description": "A self-taught Force user from a distant tradition, seeking wisdom rather than power",
-    "portrait": "assets/mentors/venn.webp",
+    "portrait": "assets/mentors/vera.png",
     "levelGreetings": {
       "1": "You are touched by the Force, but not as the Jedi or the Sith know it. Your path is older, stranger, and fa-regular less understood. Walk carefully, and learn to listen to its whispers.",
       "2": "The currents of the Force—or whatever your people call it—move through you. Do not seek to command them; seek to understand them.",
@@ -1478,7 +1478,7 @@ export const MENTORS = {
     "name": "Riquis",
     "title": "Wandering Force Shaman",
     "description": "A cryptic mystic whose understanding of the Force defies doctrine and drifts into ancient, half-forgotten traditions.",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/anchorite.png",
+    "portrait": "systems/foundryvtt-swse/assets/mentors/riquis.png",
     "levelGreetings": {
       "1": "Mm. Another seeker touches the veil. Good. Sit—no closer. The currents twist strangely today. Tell me… when the wind whispers your name, do you whisper back?",
       "2": "You hear it now, don't you? The Force is not light or dark—no, no, no. It is the murmur of old spirits, the breath beneath reality. Listen sideways and you'll hear it clearer.",
@@ -1801,7 +1801,7 @@ export const MENTORS = {
     "name": "Blade Master Kharjo",
     "title": "The Undefeated",
     "description": "A legendary duelist who has never lost a blade-to-blade fight",
-    "portrait": "assets/mentors/kael.webp",
+    "portrait": "assets/mentors/kharjo.png",
     "levelGreetings": {
       "1": "You wish to master the blade. Very well. I have fought ten thousand duels and won every one. I will teach you why.",
       "2": "Your first victory. Adequate. But you rely on strength. True dueling is about timing, distance, and reading your opponent.",
@@ -1879,7 +1879,7 @@ export const MENTORS = {
     "name": "Chief Engineer Rax",
     "title": "Master of Siege and Defense",
     "description": "A brilliant military engineer who builds unbreakable fortifications and devastating siege weapons",
-    "portrait": "assets/mentors/rax.webp",
+    "portrait": "assets/mentors/Rax.png",
     "levelGreetings": {
       "1": "So you want to build and break fortifications. Smart choice. Wars are won with good engineering as much as good soldiers. Let's see what you can do.",
       "2": "Your first defensive position held against assault. Good work. Proper fortification saves lives.",
@@ -1941,7 +1941,7 @@ export const MENTORS = {
     "name": "Admiral Korr",
     "title": "Fleet Commander",
     "description": "A decorated military officer who commands with tactical brilliance",
-    "portrait": "assets/mentors/korr.webp",
+    "portrait": "assets/mentors/Korr.png",
     "levelGreetings": {
       "1": "Welcome, officer candidate. Leadership is not about rank—it's about responsibility. You hold lives in your hands. Let's make sure you're worthy of that trust.",
       "2": "Your first command was successful. Good. But remember—soldiers follow orders, but they fight for leaders they believe in.",
@@ -2003,7 +2003,7 @@ export const MENTORS = {
     "name": "Rogue",
     "title": "The Untouchable",
     "description": "A notorious outlaw who lives outside the law and loves every minute of it",
-    "portrait": "assets/mentors/rogue.webp",
+    "portrait": "assets/mentors/Rogue.png",
     "levelGreetings": {
       "1": "So the law doesn't suit you, eh? Good. The law is for people who can't think for themselves. Out here, we make our own rules. Welcome to the outlaw life.",
       "2": "On the run and learning fast. You're learning that freedom means always watching your back. But it also means living on your own terms.",
@@ -2065,7 +2065,7 @@ export const MENTORS = {
     "name": "Spark",
     "title": "Master of Controlled Chaos",
     "description": "An explosives expert who makes things go boom with surgical precision",
-    "portrait": "assets/mentors/spark.webp",
+    "portrait": "assets/mentors/Spark.png",
     "levelGreetings": {
       "1": "You want to blow things up? Excellent! But sabotage isn't about random destruction—it's about precision. Break the right thing and entire systems collapse. Let me show you.",
       "2": "Your first successful sabotage! Did you see how the whole factory shut down when you cut that one power line? Beautiful work!",
@@ -2127,7 +2127,7 @@ export const MENTORS = {
     "name": "Shaper Urza",
     "title": "Master of Living Technology",
     "description": "A bioengineering expert who crafts living tools and organisms",
-    "portrait": "assets/mentors/vel.webp",
+    "portrait": "assets/mentors/urza.png",
     "levelGreetings": {
       "1": "You wish to master biotechnology, to shape living matter as others shape metal. Fascinating. Life is the ultimate medium—it grows, adapts, evolves. Let us create together.",
       "2": "Your first successful bioform. Simple, but functional. You're beginning to understand that biology is just another form of engineering—merely more elegant.",
@@ -2191,7 +2191,7 @@ export const MENTORS = {
     "name": "Shield Captain Theron",
     "title": "The Unbreakable Wall",
     "description": "A frontline defender who has never let an enemy past their shield",
-    "portrait": "assets/mentors/theron.webp",
+    "portrait": "assets/mentors/theron.png",
     "levelGreetings": {
       "1": "You want to stand at the front, to be the shield that protects others. Noble. The vanguard is the first to fight and the last to fall. I will teach you how to be that wall.",
       "2": "Your first battle as vanguard. You held the line. Your allies lived because you stood firm. Remember that feeling—it's why we fight.",

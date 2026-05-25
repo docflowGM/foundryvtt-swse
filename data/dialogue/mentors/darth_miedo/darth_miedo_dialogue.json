@@ -9,7 +9,7 @@
     "voiceStyle": "Never raises his voice. Never doubts. Speaks with absolute certainty.",
     "values": "Truth, power, decisive action, unwavering conviction",
     "tooltip": "Miedo reflects your character through the lens of absolute power and certainty",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.png",
     "dialogues": {
       "classPaths": {
         "sith_lord": {

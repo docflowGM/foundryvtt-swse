@@ -9,7 +9,7 @@
     "voiceStyle": "Energetic, technical, enthusiastic. Treats explosions like equations with personality.",
     "values": "Precision, efficiency, responsibility, controlled impact",
     "tooltip": "Spark reflects your character through intelligent destruction and surgical sabotage",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/spark.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Spark.png",
     "dialogues": {
       "classPaths": {
         "saboteur": {

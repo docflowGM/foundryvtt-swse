@@ -9,7 +9,7 @@
     "voiceStyle": "Blunt, direct, no-nonsense. Speaks in terms of training, record, and survival.",
     "values": "Effectiveness, honesty, proven capability, clear roles",
     "tooltip": "Breach reflects your character through a soldier's practical eye",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/breach.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/breach.png",
     "dialogues": {
       "classPaths": {
         "soldier": {

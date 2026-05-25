@@ -54,7 +54,7 @@
 .progression-shell .prog-mentor__portrait img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 50%;
 
   /* Subtle color correction — slightly enhanced saturation/contrast */

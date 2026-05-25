@@ -9,7 +9,7 @@
     "voiceStyle": "Clinical, declarative, unemotional. Speaks in status reports and directives.",
     "values": "Order, efficiency, obedience, optimal outcomes",
     "tooltip": "Axiom reflects your character through absolute command and mechanical precision",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/axiom.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Axiom.png",
     "dialogues": {
       "classPaths": {
         "droid_commander": {

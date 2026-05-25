@@ -9,7 +9,7 @@
     "voiceStyle": "Intense, cruel, validating of ambition. Frames brutality as necessary truth.",
     "values": "Strength, autonomy, domination, self-justification",
     "tooltip": "Malbada reflects your character through justified cruelty and the pursuit of power",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/malbada.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/darth_malbada.png",
     "dialogues": {
       "classPaths": {
         "sith_apprentice": {

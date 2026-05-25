@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, firm, unwavering. Speaks with certainty earned through action.",
     "values": "Duty, sacrifice, trust, steadfastness",
     "tooltip": "Theron reflects your character through absolute defense and selfless resolve",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/theron.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/theron.png",
     "dialogues": {
       "classPaths": {
         "vanguard": {

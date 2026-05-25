@@ -9,7 +9,7 @@
     "voiceStyle": "Dry, observational, skeptical. Speaks about what she's seen and what it means.",
     "values": "Vigilance, flexibility, hard truths, reading situations accurately",
     "tooltip": "Lead reflects your character through a scout's tactical assessment",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/lead.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/lead.png",
     "dialogues": {
       "classPaths": {
         "scout": {

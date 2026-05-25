@@ -9,7 +9,7 @@
     "voiceStyle": "Soft, indirect, unsettling. Speaks in riddles, metaphors, and half-answered questions.",
     "values": "Insight, curiosity, reverence for mystery, lived experience",
     "tooltip": "Riquis reflects your character through ancient, liminal understandings of the Force",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/riquis.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/riquis.png",
     "dialogues": {
       "classPaths": {
         "force_disciple": {

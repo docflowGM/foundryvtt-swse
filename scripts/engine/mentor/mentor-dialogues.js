@@ -11,6 +11,65 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 
 export { MENTORS };
 
+const SYSTEM_MENTOR_BASE = 'systems/foundryvtt-swse/assets/mentors/';
+
+const CANONICAL_MENTOR_PORTRAIT_BASENAMES = Object.freeze({
+    axiom: 'Axiom.png',
+    breach: 'breach.png',
+    darth_malbada: 'darth_malbada.png',
+    malbada: 'darth_malbada.png',
+    delta: 'delta.png',
+    dezmin: 'dezmin.png',
+    j0n1: 'j0n1.png',
+    j0_n1: 'j0n1.png',
+    jack: 'Jack.png',
+    kex: 'Kex.png',
+    kex_varon: 'Kex.png',
+    kharjo: 'kharjo.png',
+    kael: 'kharjo.png',
+    korr: 'Korr.png',
+    krag: 'krag.png',
+    kyber: 'Kyber.png',
+    lead: 'lead.png',
+    marl_skindar: 'Marl_Skindar.png',
+    skindar: 'Marl_Skindar.png',
+    mayu: 'mayu.png',
+    miedo: 'miedo.png',
+    miraj: 'miraj.png',
+    ol_salty: 'salty.png',
+    salty: 'salty.png',
+    pegar: 'pegar.png',
+    rajma: 'rajma.png',
+    rax: 'Rax.png',
+    rendarr: 'Rendarr.png',
+    riquis: 'riquis.png',
+    anchorite: 'riquis.png',
+    rogue: 'Rogue.png',
+    sela: 'Sela.png',
+    seraphim: 'Seraphim.png',
+    spark: 'Spark.png',
+    theron: 'theron.png',
+    tio_the_hutt: 'Tio_the_hutt.png',
+    broker: 'Tio_the_hutt.png',
+    urza: 'urza.png',
+    vel: 'urza.png',
+    vera: 'vera.png',
+    venn: 'vera.png',
+    zhen: 'zhen.png'
+});
+
+function _canonicalMentorPortraitPath(resolved) {
+    const match = String(resolved || '').match(/assets\/mentors\/([^/?#]+)(?:[?#].*)?$/i);
+    if (!match) return resolved;
+
+    const base = match[1].replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    const canonicalBase = CANONICAL_MENTOR_PORTRAIT_BASENAMES[base];
+    if (!canonicalBase) return resolved;
+
+    return `${SYSTEM_MENTOR_BASE}${canonicalBase}`;
+}
+
+
 function _normalizeMentorLookup(value) {
     return String(value || '')
         .trim()
@@ -58,7 +117,8 @@ export function resolveMentorPortraitPath(portraitPath) {
         'systems/foundryvtt-swse/assets/mentors/'
     );
 
-    // Webp mentor portraits are deprecated. Prefer the same asset basename as PNG.
+    // Webp mentor portraits are deprecated. Prefer the canonical transparent PNG asset.
+    resolved = _canonicalMentorPortraitPath(resolved);
     if (/assets\/mentors\//i.test(resolved) && resolved.toLowerCase().endsWith('.webp')) {
         resolved = `${resolved.slice(0, -5)}.png`;
     }
