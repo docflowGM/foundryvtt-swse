@@ -1,0 +1,38 @@
+<div class="prog-galactic-profile prog-galactic-profile--archetype">
+  <header class="prog-profile-header">
+    <div>
+      <div class="eyebrow">Galactic Profile</div>
+      <h2>Archetype</h2>
+      <p>Choose the specific profile package. Hover a holo to reveal its description, quote, and attributes.</p>
+    </div>
+    <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
+  </header>
+
+  <section class="prog-profile-class-strip prog-profile-class-strip--compact" aria-label="Profile classes">
+    {{#each classes}}
+      <button type="button" class="prog-profile-class-card {{#if selected}}is-selected{{else}}is-dimmed{{/if}}" data-profile-class-id="{{id}}">
+        <span class="holo-img holo-img--class"><img src="{{image}}" alt="{{name}}" /></span>
+        <span class="class-copy"><strong>{{name}}</strong><em>{{count}} profiles</em></span>
+      </button>
+    {{/each}}
+  </section>
+
+  <section class="prog-profile-archetype-grid" aria-label="Archetypes">
+    {{#each archetypes}}
+      <button type="button" class="prog-profile-archetype-card {{#if selected}}is-selected{{/if}}" data-profile-template-id="{{id}}">
+        <span class="holo-img holo-img--archetype"><img src="{{image}}" alt="{{name}}" /></span>
+        <span class="archetype-name">{{name}}</span>
+        <span class="archetype-overlay">
+          <strong>{{archetype}}</strong>
+          <em>{{quote}}</em>
+          <span class="archetype-description">{{description}}</span>
+          <span class="profile-abilities">
+            {{#each abilities}}
+              <span class="profile-ability"><b>{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
+            {{/each}}
+          </span>
+        </span>
+      </button>
+    {{/each}}
+  </section>
+</div>

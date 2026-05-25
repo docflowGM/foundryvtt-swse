@@ -296,11 +296,16 @@ export function normalizeFeats(raw) {
   try {
     return raw.map(feat => {
       if (typeof feat === 'string') {
-        return { id: feat, source: 'general' };
+        return { id: feat, name: feat, source: 'general' };
       }
       if (typeof feat === 'object' && feat.id) {
         return {
           id: feat.id,
+          name: feat.displayName || feat.name || feat.label || feat.id,
+          pack: feat.pack || null,
+          type: feat.type || 'feat',
+          count: feat.count,
+          system: feat.system || {},
           source: feat.source || feat.slotType || 'general',
         };
       }
@@ -327,12 +332,16 @@ export function normalizeTalents(raw) {
   try {
     return raw.map(talent => {
       if (typeof talent === 'string') {
-        return { id: talent, treeId: null, source: 'general' };
+        return { id: talent, name: talent, treeId: null, source: 'general' };
       }
       if (typeof talent === 'object' && talent.id) {
         return {
           id: talent.id,
+          name: talent.displayName || talent.name || talent.label || talent.id,
+          pack: talent.pack || null,
+          type: talent.type || 'talent',
           treeId: talent.treeId || talent.tree || null,
+          system: talent.system || {},
           source: talent.source || talent.slotType || 'general',
         };
       }

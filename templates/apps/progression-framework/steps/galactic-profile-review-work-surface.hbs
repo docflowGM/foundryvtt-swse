@@ -1,0 +1,34 @@
+<div class="prog-galactic-profile prog-galactic-profile--review">
+  <header class="prog-profile-header">
+    <div>
+      <div class="eyebrow">Galactic Profile</div>
+      <h2>Profile Review</h2>
+      <p>Confirm the profile package. The normal progression engine will keep only unresolved choices live.</p>
+    </div>
+    <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
+  </header>
+
+  {{#if template}}
+    <section class="prog-profile-review-card">
+      <div class="holo-img holo-img--review"><img src="{{template.image}}" alt="{{template.name}}" /></div>
+      <div class="review-copy">
+        <div class="eyebrow">{{template.className}} / {{template.species}}</div>
+        <h3>{{template.name}}</h3>
+        <p>{{template.description}}</p>
+        <blockquote>{{template.quote}}</blockquote>
+        <div class="profile-abilities profile-abilities--review">
+          {{#each template.abilities}}
+            <span class="profile-ability"><b>{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
+          {{/each}}
+        </div>
+        <div class="profile-review-lists">
+          <div><strong>Trained Skills</strong><span>{{#each template.skills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+          <div><strong>Feats</strong><span>{{#each template.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+          <div><strong>Talents</strong><span>{{#each template.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+        </div>
+      </div>
+    </section>
+  {{else}}
+    <section class="prog-profile-callout"><i class="fas fa-triangle-exclamation"></i><div><strong>No archetype selected.</strong><span>Go back and choose a profile.</span></div></section>
+  {{/if}}
+</div>

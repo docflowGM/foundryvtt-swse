@@ -8127,8 +8127,16 @@
     "bonusFeats": [
       {
         "id": "bonus-force-training",
-        "name": "Unknown Trait",
-        "description": ""
+        "name": "Force Training",
+        "grantedFeat": "Force Training",
+        "condition": "A Miraluka who has Use the Force as a Trained Skill gains Force Training as a bonus Feat.",
+        "requirements": [
+          {
+            "type": "skillTrained",
+            "skill": "useTheForce"
+          }
+        ],
+        "description": "A Miraluka who has Use the Force as a Trained Skill gains Force Training as a bonus Feat."
       }
     ],
     "equipmentGrants": [],

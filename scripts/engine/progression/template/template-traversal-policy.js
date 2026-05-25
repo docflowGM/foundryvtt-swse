@@ -40,7 +40,7 @@ export class TemplateTraversalPolicy {
       };
     }
 
-    const isLocked = session.lockedNodes?.has(nodeId) || false;
+    const isLocked = this._isNodeLocked(session, nodeId);
 
     if (isLocked) {
       return {
@@ -92,9 +92,16 @@ export class TemplateTraversalPolicy {
       return activeNodeIds;
     }
 
-    // Skip locked nodes during traversal
+    // Skip locked nodes during traversal. Template/archetype sessions also
+    // suppress the normal L1 survey because the selected profile is the survey
+    // answer; only unresolved choice debt should remain visible.
     const filtered = activeNodeIds.filter((nodeId) => {
-      const isLocked = session.lockedNodes?.has(nodeId) || false;
+      if (nodeId === 'l1-survey') {
+        swseLogger.debug('[TemplateTraversalPolicy] Skipping L1 survey for template session', { nodeId });
+        return false;
+      }
+
+      const isLocked = this._isNodeLocked(session, nodeId);
       if (isLocked) {
         swseLogger.debug('[TemplateTraversalPolicy] Skipping locked node', { nodeId });
         return false;
@@ -109,6 +116,21 @@ export class TemplateTraversalPolicy {
     });
 
     return filtered;
+  }
+
+  static _isNodeLocked(session, nodeId) {
+    if (!session?.lockedNodes) return false;
+    if (session.lockedNodes.has(nodeId)) return true;
+
+    // Backward compatibility for older template sessions that locked synthetic
+    // domain keys instead of real progression node ids.
+    if ((nodeId === 'general-feat' || nodeId === 'class-feat') && session.lockedNodes.has('feats')) {
+      return !session.templateReconciliation?.requiresGeneralFeatReplacement;
+    }
+    if ((nodeId === 'general-talent' || nodeId === 'class-talent') && session.lockedNodes.has('talents')) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -129,7 +151,7 @@ export class TemplateTraversalPolicy {
       };
     }
 
-    const wasLocked = session.lockedNodes?.has(nodeId) || false;
+    const wasLocked = this._isNodeLocked(session, nodeId);
 
     if (!wasLocked) {
       return {
@@ -165,7 +187,7 @@ These choices will be marked for review.`,
       return;
     }
 
-    const wasLocked = session.lockedNodes?.has(nodeId) || false;
+    const wasLocked = this._isNodeLocked(session, nodeId);
     if (!wasLocked) {
       return;
     }
@@ -221,7 +243,7 @@ These choices will be marked for review.`,
 
     if (direction === 'back') {
       // Check if we're at a locked node
-      const isLocked = session.lockedNodes?.has(currentNodeId) || false;
+      const isLocked = this._isNodeLocked(session, currentNodeId);
 
       if (isLocked) {
         return {
@@ -268,7 +290,7 @@ These choices will be marked for review.`,
       return hints;
     }
 
-    const isLocked = session.lockedNodes?.has(nodeId) || false;
+    const isLocked = this._isNodeLocked(session, nodeId);
     const isAutoResolved = session.autoResolvedNodes?.has(nodeId) || false;
     const isDirty = session.dirtyNodes?.has(nodeId) || false;
 
@@ -304,7 +326,7 @@ These choices will be marked for review.`,
     }
 
     // Locked nodes cannot be skipped
-    const isLocked = session.lockedNodes?.has(nodeId) || false;
+    const isLocked = this._isNodeLocked(session, nodeId);
     if (isLocked) {
       return false;
     }
@@ -338,7 +360,7 @@ These choices will be marked for review.`,
       if (!nodeId) continue;
 
       // If the node is not locked and the selection is null/unresolved, it's required
-      const isLocked = session.lockedNodes?.has(nodeId) || false;
+      const isLocked = this._isNodeLocked(session, nodeId);
       const isDirty = session.dirtyNodes?.has(nodeId) || false;
 
       if (!isLocked && (value === null || isDirty)) {

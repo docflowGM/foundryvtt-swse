@@ -781,8 +781,8 @@ export class IntroStep extends ProgressionStepPlugin {
       }
     });
 
-    // Galactic Profile: optional packaged-profile path from the final splash screen.
-    // This is session-only. It does not mutate the actor until summary/finalization.
+    // Galactic Profile: injects the profile picker into the normal progression shell.
+    // No modal is launched; the player stays inside work/detail/summary/mentor rails.
     $surface.on('click', '[data-role="intro-galactic-profile"]', async (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -798,35 +798,27 @@ export class IntroStep extends ProgressionStepPlugin {
           return;
         }
 
-        const subtype = this._shell?.progressionSession?.subtype || (actor.type === 'droid' ? 'droid' : 'actor');
-        const templateSession = await TemplateInitializer.initializeForChargen(actor, { subtype });
-
-        if (!templateSession) {
-          this._transitionInProgress = false;
-          return;
-        }
-
-        this._shell.progressionSession = templateSession;
-        this._shell._registerPersistenceHook?.();
+        this._shell.progressionSession.profilePickerMode = true;
+        this._shell.progressionSession.profileStepsComplete = false;
+        this._shell.progressionSession.profileSelection ??= {};
         this._shell.currentStepIndex = 0;
-        this._shell._targetStepId = null;
+        this._shell._targetStepId = 'profile-class';
         await this._shell._initializeSteps?.();
-        this._shell._syncLegacyCommittedSelectionsFromSession?.();
-        await this._shell._persistSessionSnapshot?.('intro');
+        await this._shell._persistSessionSnapshot?.('intro-galactic-profile');
 
         this._localizedMode = true;
         this._complete = true;
         this._introRunning = false;
         this._state = INTRO_STATE.TRANSITIONING;
         this._continueClicked = true;
-        ui?.notifications?.info?.('Galactic profile loaded. Continuing registration.');
+        ui?.notifications?.info?.('Galactic Profile channel opened. Continue registration in the shell.');
         await this._transitionToNextStep();
       } catch (error) {
-        swseLogger.error('[IntroStep] Failed to load Galactic Profile from splash', {
+        swseLogger.error('[IntroStep] Failed to open Galactic Profile steps from splash', {
           error: error?.message || String(error),
           stack: error?.stack,
         });
-        ui?.notifications?.error?.('Could not load Galactic Profile. You can still begin registration normally.');
+        ui?.notifications?.error?.('Could not open Galactic Profile. You can still begin registration normally.');
         this._transitionInProgress = false;
         this._continueClicked = false;
       }

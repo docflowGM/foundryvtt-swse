@@ -21,7 +21,6 @@ import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
-import { TemplateInitializer } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-initializer.js';
 import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
 
 // Phase 2: Legacy imports kept for backward compat during transition
@@ -38,6 +37,7 @@ import { LanguageStep } from './steps/language-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { SummaryStep } from './steps/summary-step.js';
+import { ProfileClassStep, ProfileArchetypeStep, ProfileReviewStep } from './steps/galactic-profile-step.js';
 
 export class ChargenShell extends ProgressionShell {
   /**
@@ -109,19 +109,8 @@ export class ChargenShell extends ProgressionShell {
       return null;
     }
 
-    // PHASE 5 STEP 5: Template Selection
-    // Show template selection dialog and, if chosen, seed the session with template data.
-    const templateSession = await TemplateInitializer.initializeForChargen(actor, options);
-    if (templateSession === false) {
-      // User cancelled chargen entirely
-      return null;
-    }
-    // Note: templateSession may be null if user chose freeform; that's OK.
-    // ProgressionShell handles both template-seeded and empty sessions.
-    if (templateSession) {
-      // Pass template session to shell
-      options.initialSession = templateSession;
-    }
+    // Galactic Profile is now launched from the intro splash as normal shell steps.
+    // Do not block chargen startup with the legacy template-selection modal.
 
     // CRITICAL: Use .call(this, ...) to ensure ProgressionShell.open() creates a
     // ChargenShell instance (not a ProgressionShell). This ensures _getCanonicalDescriptors()
@@ -170,7 +159,11 @@ export class ChargenShell extends ProgressionShell {
       }
 
       // Convert active node IDs to StepDescriptors with plugins wired
-      const descriptors = mapNodesToDescriptors(activeNodeIds);
+      let descriptors = mapNodesToDescriptors(activeNodeIds);
+
+      if (this.progressionSession?.profilePickerMode === true && !this.progressionSession?.profileStepsComplete) {
+        descriptors = this._injectGalacticProfileDescriptors(descriptors);
+      }
 
       if (descriptors.length === 0) {
         console.warn('[ChargenShell] No active steps computed for chargen');
@@ -190,6 +183,24 @@ export class ChargenShell extends ProgressionShell {
       // Fallback to legacy behavior on error, using subtype from session
       return this._getLegacyCanonicalDescriptors(this.progressionSession.subtype);
     }
+  }
+
+
+  _injectGalacticProfileDescriptors(descriptors) {
+    const profileDescriptors = [
+      createStepDescriptor({ stepId: 'profile-class', label: 'Profile Class', icon: 'fa-id-card', type: StepType.IDENTITY, pluginClass: ProfileClassStep }),
+      createStepDescriptor({ stepId: 'profile-archetype', label: 'Archetype', icon: 'fa-user-astronaut', type: StepType.SELECTION, pluginClass: ProfileArchetypeStep }),
+      createStepDescriptor({ stepId: 'profile-review', label: 'Profile Review', icon: 'fa-clipboard-check', type: StepType.CONFIRM, pluginClass: ProfileReviewStep }),
+    ];
+
+    const filtered = (descriptors || []).filter(d => !['species', 'attribute', 'class', 'l1-survey', 'background', 'general-feat', 'class-feat', 'general-talent', 'class-talent'].includes(d.stepId));
+    const introIndex = filtered.findIndex(d => d.stepId === 'intro');
+    if (introIndex < 0) return [...profileDescriptors, ...filtered];
+    return [
+      ...filtered.slice(0, introIndex + 1),
+      ...profileDescriptors,
+      ...filtered.slice(introIndex + 1),
+    ];
   }
 
   /**

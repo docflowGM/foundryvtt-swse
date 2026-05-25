@@ -1,0 +1,17 @@
+<div class="prog-profile-detail-panel">
+  {{#if image}}<div class="holo-img holo-img--detail"><img src="{{image}}" alt="{{title}}" /></div>{{/if}}
+  <div class="eyebrow">Galactic Profile / {{mode}}</div>
+  <h3>{{title}}</h3>
+  {{#if description}}<p>{{description}}</p>{{/if}}
+  {{#if quote}}<blockquote>{{quote}}</blockquote>{{/if}}
+  {{#if abilities}}
+    <div class="profile-abilities profile-abilities--detail">
+      {{#each abilities}}
+        <span class="profile-ability"><b>{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
+      {{/each}}
+    </div>
+  {{/if}}
+  {{#if tags}}
+    <div class="profile-detail-tags">{{#each tags}}<span>{{this}}</span>{{/each}}</div>
+  {{/if}}
+</div>

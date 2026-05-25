@@ -715,6 +715,7 @@ export class SpeciesGrantLedgerBuilder {
         for (const entry of (supplementaryTraits.bonusFeats || [])) {
           const target = entry.grantedFeat || entry.name;
           if (!target || typeof target !== 'string') continue;
+          if (/^unknown trait$/i.test(target.trim())) continue;
           ledger.traits.push({
             id: entry.id || `bonus-feat-${String(target).toLowerCase().replace(/\s+/g, '-')}`,
             name: target,
