@@ -284,7 +284,9 @@ export class SelectedRailContext {
           ability: key,
           abilityClass: `swse-ability-label swse-ability-label--${key}`,
           value: attrs[key].score,
-          modifier: attrs[key].modifier,
+          modifier: Number(attrs[key].modifier || 0),
+          modifierDisplay: `${Number(attrs[key].modifier || 0) >= 0 ? '+' : ''}${Number(attrs[key].modifier || 0)}`,
+          hasModifier: true,
           isCurrentFocus: currentStepId === 'attribute',
         });
       }

@@ -384,7 +384,7 @@ export class MentorAdvisoryCoordinator {
 
       // Build confidence label for display (1-5 stars or percentage)
       const confidencePercent = Math.round(confidence * 100);
-      const confidenceLabel = `${confidencePercent}% confidence`;
+      const confidenceLabel = 'Recommended';
 
       // Build advisory object
       const advisory = {

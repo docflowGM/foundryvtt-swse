@@ -51,7 +51,7 @@ export class BackgroundChoiceDialog extends SWSEApplicationV2 {
     cancelLabel = 'Cancel'
   } = {}) {
     super({});
-    this.title = title;
+    this.dialogTitle = title;
     this.backgroundName = backgroundName;
     this.prompt = prompt;
     this.choices = Array.isArray(choices) ? choices : [];
@@ -82,7 +82,7 @@ export class BackgroundChoiceDialog extends SWSEApplicationV2 {
 
     return {
       ...context,
-      title: this.title,
+      title: this.dialogTitle,
       backgroundName: this.backgroundName,
       prompt: this.prompt,
       requiredCount: this.requiredCount,

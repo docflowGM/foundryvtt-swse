@@ -804,7 +804,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       lookupId: canonicalId,
       stateId: canonicalId,
       isSuggested,
-      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };

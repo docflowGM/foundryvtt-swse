@@ -174,6 +174,19 @@ export class ProgressionSurfaceAdapter {
         return;
       }
 
+      // The intro splash owns non-shell controls such as click-to-skip, replay,
+      // Galactic Profile, and droid mode buttons. Inline surfaces do not run the
+      // normal ApplicationV2 listener pass, so bind the step listeners once per
+      // rendered work-surface before the animation starts.
+      if (descriptor.stepId === 'intro' && workSurfaceEl && workSurfaceEl.dataset.introListenersBound !== 'true') {
+        workSurfaceEl.dataset.introListenersBound = 'true';
+        try {
+          plugin.activateListeners?.(workSurfaceEl);
+        } catch (listenerErr) {
+          SWSELogger.warn('[ProgressionSurfaceAdapter] Intro listener binding failed', listenerErr);
+        }
+      }
+
       await plugin.afterRender?.(this._app, workSurfaceEl).catch(async err => {
         SWSELogger.error('[ProgressionSurfaceAdapter] plugin.afterRender failed:', err);
         if (descriptor.stepId === 'intro') {
@@ -294,6 +307,17 @@ export class ProgressionSurfaceAdapter {
     if (!this._app) return;
 
     try {
+      const descriptor = this._app.steps?.[this._app.currentStepIndex] ?? null;
+      const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
+
+      // Intro owns its own chrome controls. If the sheet-level delegated listener
+      // catches one before the step's local listener does, give the intro plugin
+      // first refusal so Skip/Enter/Galactic Profile do not become generic Next.
+      if (descriptor?.stepId === 'intro' && typeof plugin?.handleAction === 'function') {
+        const handled = await plugin.handleAction(action, event, target, this._app);
+        if (handled === true) return;
+      }
+
       switch (action) {
         case 'continue':
         case 'next-step':
@@ -351,11 +375,22 @@ export class ProgressionSurfaceAdapter {
           break;
         default:
           // Try delegating to active step plugin first
-          const descriptor = this._app.steps?.[this._app.currentStepIndex] ?? null;
-          const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
-
           if (typeof plugin?.handleAction === 'function') {
-            await plugin.handleAction(action, event, target, this._app);
+            const handled = await plugin.handleAction(action, event, target, this._app);
+            if (handled === true) {
+              this._app.mentorChoiceReactions?.reactToInteraction?.({
+                stepId: descriptor?.stepId,
+                actionName: action,
+                plugin,
+                event,
+                target,
+              });
+              if (this._app._shouldScheduleAutoAdvanceForAction?.(action)) {
+                await this._app._maybeScheduleAutoAdvance?.({ source: `inline-plugin-action:${action}`, event });
+              } else if (/remove|untrain|reset|back|clear|toggle|focus|filter|search|sort|exit/i.test(String(action || ''))) {
+                this._app._cancelAutoAdvance?.(`inline-plugin-action:${action}`);
+              }
+            }
             break;
           }
 
@@ -611,10 +646,10 @@ export class ProgressionSurfaceAdapter {
       this._app = app;
       this._ready = true;
 
-      // Inline launches from the Home/character shell should land on the first
-      // actionable progression step, not on a nested boot-splash. The intro
-      // remains available to standalone/direct launches by omitting skipIntro.
-      if (options?.skipIntro === true && this._getCurrentStepId() === 'intro') {
+      // Inline chargen launches should show the diegetic splash.  The intro is
+      // only skipped when a caller explicitly requests it for non-chargen
+      // maintenance/level-up flows.
+      if (mode !== 'chargen' && options?.skipIntro === true && this._getCurrentStepId() === 'intro') {
         await this.advancePastIntro('inline-launch-skip-intro');
       }
 

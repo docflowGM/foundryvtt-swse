@@ -396,7 +396,7 @@ export class ProgressionStepPlugin {
       confidenceMap.set(s.id || s, {
         confidence,
         confidencePercent,
-        confidenceLabel: `${confidencePercent}% match`,
+        confidenceLabel: 'Recommended',
         confidenceLevel: this._getConfidenceLevel(confidence) // 'high', 'medium', 'low'
       });
     });

@@ -224,44 +224,48 @@ try {
     // Wire skill checkboxes
     const skillCheckboxes = shell.element.querySelectorAll('.skills-step-skill-checkbox');
     skillCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
+      checkbox.addEventListener('change', async (e) => {
         e.preventDefault();
         const skillKey = checkbox.dataset.skill;
         const checked = checkbox.checked;
 
         this._toggleSkill(skillKey, checked);
+        await this._refreshSkillSuggestions(shell);
         shell.render();
       }, { signal });
     });
 
     const trainButtons = shell.element.querySelectorAll('.skills-step-train-btn');
     trainButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
         const skillKey = btn.dataset.skill;
         this._trainSkill(skillKey);
+        await this._refreshSkillSuggestions(shell);
         shell.render();
       }, { signal });
     });
 
     const untrainButtons = shell.element.querySelectorAll('.skills-step-untrain-btn');
     untrainButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
         const skillKey = btn.dataset.skill;
         this._untrainSkill(skillKey);
+        await this._refreshSkillSuggestions(shell);
         shell.render();
       }, { signal });
     });
 
     const resetBtn = shell.element.querySelector('.skills-step-reset-btn');
     if (resetBtn) {
-      resetBtn.addEventListener('click', (e) => {
+      resetBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
         this._resetAllSkills();
+        await this._refreshSkillSuggestions(shell);
         shell.render();
       }, { signal });
     }
@@ -514,7 +518,7 @@ try {
    * @param {Object} shell - The progression shell context
    * @returns {boolean} - True if action was handled
    */
-  handleAction(action, event, target, shell) {
+  async handleAction(action, event, target, shell) {
     if (!action || !action.startsWith('skill-')) {
       return false;
     }
@@ -528,6 +532,7 @@ try {
       case 'skill-train': {
         if (skillKey) {
           this._trainSkill(skillKey);
+          await this._refreshSkillSuggestions(shell);
           shell?.requestRender?.({ preserveScroll: true, reason: 'skill-train' }) ?? shell?.render?.();
         }
         return true;
@@ -536,6 +541,7 @@ try {
       case 'skill-untrain': {
         if (skillKey) {
           this._untrainSkill(skillKey);
+          await this._refreshSkillSuggestions(shell);
           shell?.requestRender?.({ preserveScroll: true, reason: 'skill-untrain' }) ?? shell?.render?.();
         }
         return true;
@@ -543,6 +549,7 @@ try {
 
       case 'skill-reset': {
         this._resetAllSkills();
+        await this._refreshSkillSuggestions(shell);
         shell?.requestRender?.({ preserveScroll: true, reason: 'skill-reset' }) ?? shell?.render?.();
         return true;
       }
@@ -577,9 +584,10 @@ try {
 
 
 renderDetailsPanel(focusedItem) {
-  const skill = this._resolveFocusedSkill(focusedItem);
-  if (!skill) return this.renderDetailsPanelEmptyState();
+  const resolvedSkill = this._resolveFocusedSkill(focusedItem);
+  if (!resolvedSkill) return this.renderDetailsPanelEmptyState();
 
+  const skill = this._normalizeSkillRecord(resolvedSkill) || resolvedSkill;
   const skillKey = this._coerceSkillIdentity(skill.key || skill.id || skill._id || skill.name || skill.label);
   const skillUses = this._getExtraSkillUses(skillKey);
   const normalized = normalizeDetailPanelData(skill, 'skill', { otherUses: skillUses });
@@ -645,6 +653,7 @@ renderDetailsPanel(focusedItem) {
         await this._commitNormalized(shell, 'skills', trainedList);
         const focused = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey || skill.name === skillKey);
         if (focused) shell.focusedItem = focused;
+        await this._refreshSkillSuggestions(shell);
         shell.render();
       });
       return;
@@ -672,10 +681,17 @@ renderDetailsPanel(focusedItem) {
 
       // Get suggestions from SuggestionService
       // NOTE: Domain is 'skills_l1' per canonical domain registry (not 'skills')
+      const selectedSkills = this._getCurrentSelectedSkillsForSuggestions();
+      const pendingData = {
+        ...SuggestionContextBuilder.buildPendingData(actor, characterData),
+        selectedSkills,
+        slotContext: { slotKind: 'skill', slotType: 'heroic', classId: null }
+      };
+
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'skills_l1',
         available: (this._availableSkills || this._allSkills).filter(skill => !this._isSkillAlreadySelected(skill)),
-        pendingData: { ...SuggestionContextBuilder.buildPendingData(actor, characterData), slotContext: { slotKind: 'skill', slotType: 'heroic', classId: null } },
+        pendingData,
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
@@ -685,11 +701,29 @@ renderDetailsPanel(focusedItem) {
         .filter(skill => !this._isSkillAlreadySelected(skill));
 
       const remaining = Math.max(0, Number(this._allowedCount || 0) - Number(this._trainedCount || 0));
-      this._suggestedSkills = remaining > 0 ? rankedSuggestions.slice(0, Math.min(3, remaining)) : [];
+      this._suggestedSkills = remaining > 0 ? rankedSuggestions.slice(0, 3) : [];
     } catch (err) {
       swseLogger.warn('[SkillsStep] Suggestion service error:', err);
       this._suggestedSkills = [];
     }
+  }
+
+  async _refreshSkillSuggestions(shell) {
+    await this._getSuggestedSkills(shell?.actor, shell);
+  }
+
+  _getCurrentSelectedSkillsForSuggestions() {
+    return Array.from(this._trainedSkills.entries())
+      .filter(([, state]) => state?.trained === true)
+      .map(([key]) => {
+        const match = this._availableSkills.find(skill => this._skillLookupKey(skill.key || skill.id || skill._id || skill.name) === this._skillLookupKey(key));
+        return {
+          key: match?.key || key,
+          id: match?.id || match?._id || key,
+          name: match?.name || key,
+          trained: true,
+        };
+      });
   }
 
   /**

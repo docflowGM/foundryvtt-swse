@@ -1,79 +1,131 @@
 /**
- * Template Selection Dialog — Phase 5 Step 5
+ * Template Selection Dialog — AppV2 Galactic Profile picker
  *
- * Allows player to choose a character template at the start of chargen.
- * If user selects a template, it seeds the progression session and skips some early steps.
- * If user chooses "Create from Scratch", standard chargen proceeds.
- *
- * Design:
- * - Modal dialog (blocks chargen until choice is made)
- * - Shows templates by class for quick navigation
- * - Displays template name, archetype, description, ability preview
- * - "Create from Scratch" button for freeform chargen
- * - Returns template ID or null if freeform chosen
- *
- * Entry point:
- *   const templateId = await TemplateSelectionDialog.showChoiceDialog(actor);
- *   // If templateId is null, user chose freeform
+ * ApplicationV2-native replacement for the older DialogV2 inheritance path.
+ * The picker owns its own controls and uses the existing template registry.
  */
 
-import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { TemplateRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-registry.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-const { DialogV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const SYSTEM_ROOT = 'systems/foundryvtt-swse';
+const TEMPLATE_ASSET_ROOT = `${SYSTEM_ROOT}/assets/templates`;
+const CLASS_ASSET_ROOT = `${SYSTEM_ROOT}/assets/class`;
 
-export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2) {
+const TEMPLATE_IMAGE_ALIASES = {
+  scoundrel_outlaw: 'scoundrel_outlaw.webp',
+  scout_outlaw: 'scoundrel_outlaw.webp',
+  scout_engineer: 'scout_skirmisher.webp',
+  scout_pistoleer: 'scout_skirmisher.webp',
+  soldier_commando: 'soldier_rifleman.webp',
+  nonheroic_worker: 'Worker.webp',
+  nonheroic_merchant: 'merchant.webp',
+  nonheroic_police: 'Police.webp',
+};
+
+function getAppRoot(app) {
+  if (app?.element instanceof HTMLElement) return app.element;
+  if (app?.element?.[0] instanceof HTMLElement) return app.element[0];
+  return document.getElementById?.(app?.id) || null;
+}
+
+function slugify(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function classImagePath(className) {
+  const safeClass = String(className || '').trim();
+  if (!safeClass) return `${TEMPLATE_ASSET_ROOT}/Jedi.webp`;
+  return `${CLASS_ASSET_ROOT}/${safeClass}.webp`;
+}
+
+function templateImagePath(template) {
+  const className = template?.classId?.name || template?.className || 'Jedi';
+  const templateId = slugify(template?.id);
+  const nameSlug = slugify(template?.name || template?.archetype);
+  const classSlug = slugify(className);
+  const path = String(template?.imagePath || '');
+
+  const originalFile = path.split('/').pop() || '';
+  const originalSlug = originalFile.replace(/\.[^.]+$/, '');
+  const aliasFile = TEMPLATE_IMAGE_ALIASES[templateId]
+    || TEMPLATE_IMAGE_ALIASES[originalSlug]
+    || TEMPLATE_IMAGE_ALIASES[`${classSlug}_${nameSlug}`]
+    || null;
+
+  if (aliasFile) return `${TEMPLATE_ASSET_ROOT}/${aliasFile}`;
+
+  // Prefer the canonical assets/templates location for archetype art.
+  if (classSlug && nameSlug) return `${TEMPLATE_ASSET_ROOT}/${classSlug}_${nameSlug}.webp`;
+  if (path.includes('/assets/templates/')) return path;
+
+  return classImagePath(className);
+}
+
+function prepareTemplateForDisplay(template) {
+  const className = template?.classId?.name || template?.className || 'Other';
+  const prepared = foundry.utils.deepClone?.(template) ?? { ...template };
+  prepared.displayClassName = className;
+  prepared.imagePath = templateImagePath(template);
+  prepared.classImagePath = classImagePath(className);
+  return prepared;
+}
+
+export class TemplateSelectionDialog extends SWSEApplicationV2 {
   static DEFAULT_OPTIONS = {
-    ...DialogV2.DEFAULT_OPTIONS,
+    ...SWSEApplicationV2.DEFAULT_OPTIONS,
+    id: 'swse-template-selection-dialog',
+    classes: [
+      ...(SWSEApplicationV2.DEFAULT_OPTIONS?.classes || []),
+      'swse-template-selection-dialog-app'
+    ],
     window: {
+      title: 'Galactic Profile Selection',
       icon: 'fas fa-scroll',
-      title: 'Character Template Selection',
       resizable: true,
+      draggable: true,
+      frame: true,
     },
     position: {
-      width: 900,
-      height: 700,
+      width: 980,
+      height: 760,
     },
-    template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/template-selection.hbs',
-    buttons: {
-      // Foundry v13 DialogV2 requires at least one button in config
-      // We use custom [data-button] buttons in the template, but need this for validation
-      confirm: {
-        icon: 'fas fa-check',
-        label: 'Confirm Selection',
-        callback: () => {} // Handled by custom _onButtonClick
-      },
-      freeform: {
-        icon: 'fas fa-edit',
-        label: 'Create from Scratch',
-        callback: () => {} // Handled by custom _onButtonClick
-      }
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/template-selection.hbs'
     }
   };
 
-  constructor(options = {}) {
-    // Foundry v13 DialogV2 requires options.buttons before super() is called
-    // Merge with defaults if not provided
-    const finalOptions = {
-      ...options,
-      buttons: options.buttons || TemplateSelectionDialog.DEFAULT_OPTIONS.buttons
-    };
-    super(finalOptions);
+  constructor({ actor = null, subtype = 'actor', templates = [], resolve = null } = {}) {
+    super({});
+    this.actor = actor;
+    this.subtype = subtype || 'actor';
     this.selectedTemplate = null;
-    this.templates = [];
+    this.templates = Array.isArray(templates) ? templates : [];
     this.templatesByClass = {};
+    this.classes = [];
+    this.selectedClass = null;
+    this.nonheroicTemplates = [];
+    this._resolve = typeof resolve === 'function' ? resolve : null;
+    this._settled = false;
   }
 
   /**
-   * Show template selection dialog and return chosen template ID (or null for freeform).
-   * BLOCKING: Does not return until user makes a choice.
-   * SUBTYPE-AWARE: Filters templates based on chargen subtype (actor, droid, nonheroic).
+   * Show template selection dialog and return chosen template ID, null for
+   * freeform, or false for cancel/close.
    *
-   * @param {Actor} actor - The actor being created (for context)
-   * @param {Object} options - Options
-   * @param {string} options.subtype - Chargen subtype for filtering ('actor', 'droid', 'nonheroic', 'beast', 'follower')
-   * @returns {Promise<string|null>} Template ID, or null if user chose freeform
+   * @param {Actor} actor
+   * @param {object} options
+   * @param {string} options.subtype
+   * @returns {Promise<string|null|false>}
    */
   static async showChoiceDialog(actor, options = {}) {
     const { subtype = 'actor' } = options;
@@ -84,36 +136,15 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
       return null;
     }
 
-    // V2 COMPLIANCE: Filter templates based on progression subtype
-    // Droid chargen should not see heroic-only templates, etc.
-    templates = this._filterTemplatesBySubtype(templates, subtype);
+    templates = this._filterTemplatesBySubtype(templates, subtype).map(prepareTemplateForDisplay);
 
     if (templates.length === 0) {
-      swseLogger.warn(
-        '[TemplateSelectionDialog] No templates available for subtype',
-        { subtype }
-      );
+      swseLogger.warn('[TemplateSelectionDialog] No templates available for subtype', { subtype });
       return null;
     }
 
     return new Promise((resolve) => {
-      // Foundry v13's DialogV2 requires explicit buttons config
-      // Build complete config object with all required fields
-      const dialogOptions = {
-        ...this.DEFAULT_OPTIONS,
-        actor: actor,
-        resolve: resolve,
-        // Explicitly ensure buttons are present for Foundry validation
-        buttons: this.DEFAULT_OPTIONS.buttons || {
-          confirm: {
-            icon: 'fas fa-check',
-            label: 'Confirm Selection',
-            callback: () => {}
-          }
-        }
-      };
-
-      const dialog = new this(dialogOptions);
+      const dialog = new this({ actor, subtype, templates, resolve });
       dialog.render(true);
     });
   }
@@ -121,196 +152,203 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
-    // Load templates
-    this.templates = await TemplateRegistry.getAllTemplates();
+    const templates = Array.isArray(this.templates) ? this.templates : [];
+    const heroicTemplates = templates.filter(t => t?.isNonheroic !== true);
+    const nonheroicTemplates = templates.filter(t => t?.isNonheroic === true);
 
-    // Phase 2.6: Separate heroic and nonheroic templates
-    const heroicTemplates = this.templates.filter(t => t.isNonheroic !== true);
-    const nonheroicTemplates = this.templates.filter(t => t.isNonheroic === true);
-
-    // Group heroic templates by class
     this.templatesByClass = {};
     for (const template of heroicTemplates) {
-      const className = template.classId?.name || 'Other';
-      if (!this.templatesByClass[className]) {
-        this.templatesByClass[className] = [];
-      }
+      const className = template?.displayClassName || template?.classId?.name || template?.className || 'Other';
+      if (!this.templatesByClass[className]) this.templatesByClass[className] = [];
       this.templatesByClass[className].push(template);
     }
 
-    // Phase 2.6: Store nonheroic templates separately
+    this.classes = Object.entries(this.templatesByClass).map(([name, entries]) => ({
+      name,
+      count: entries.length,
+      imagePath: classImagePath(name),
+      active: !this.selectedClass || this.selectedClass === name,
+    }));
+
+    if (!this.selectedClass && this.classes.length) {
+      this.selectedClass = this.classes[0].name;
+      this.classes[0].active = true;
+    }
+
     this.nonheroicTemplates = nonheroicTemplates;
 
     swseLogger.log('[TemplateSelectionDialog] Templates prepared', {
       heroicCount: heroicTemplates.length,
       nonheroicCount: nonheroicTemplates.length,
-      totalCount: this.templates.length,
+      totalCount: templates.length,
+      subtype: this.subtype,
     });
 
-    context.templatesByClass = this.templatesByClass;
-    context.selectedTemplate = this.selectedTemplate;
-    context.templates = this.templates;
-
-    swseLogger.debug('[TemplateSelectionDialog] Context prepared', {
-      totalTemplates: this.templates.length,
-      classes: Object.keys(this.templatesByClass),
-    });
-
-    return context;
+    return {
+      ...context,
+      actor: this.actor,
+      subtype: this.subtype,
+      classes: this.classes,
+      templatesByClass: this.templatesByClass,
+      selectedClass: this.selectedClass,
+      visibleTemplates: this.templatesByClass[this.selectedClass] || heroicTemplates,
+      selectedTemplate: this.selectedTemplate,
+      templates,
+      hasTemplates: templates.length > 0,
+    };
   }
 
   _onRender(context, options) {
     super._onRender(context, options);
 
-    // Wire up template selection clicks
-    this.element.querySelectorAll('[data-template-id]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const templateId = btn.dataset.templateId;
-        this._selectTemplate(templateId);
-      });
-    });
-  }
-
-  /**
-   * Handle template selection.
-   * Updates visual state and prepares for confirmation.
-   *
-   * @private
-   */
-  _selectTemplate(templateId) {
-    this.selectedTemplate = templateId;
-    const template = this.templates.find(t => t.id === templateId);
-
-    swseLogger.debug('[TemplateSelectionDialog] Template selected', {
-      templateId,
-      templateName: template?.name,
-    });
-
-    // Update visual state
-    this.element.querySelectorAll('[data-template-id]').forEach(btn => {
-      btn.classList.remove('selected');
-    });
-    const selectedBtn = this.element.querySelector(`[data-template-id="${templateId}"]`);
-    if (selectedBtn) {
-      selectedBtn.classList.add('selected');
-    }
-
-    // Update confirm button state
-    this._updateConfirmButton();
-  }
-
-  /**
-   * Enable/disable the confirm button based on selection.
-   * @private
-   */
-  _updateConfirmButton() {
-    const confirmBtn = this.element.querySelector('[data-button="confirm"]');
-    if (confirmBtn) {
-      confirmBtn.disabled = !this.selectedTemplate;
-    }
-  }
-
-  /**
-   * Activate event listeners for custom buttons (template uses [data-button] not Foundry buttons).
-   * @param {HTMLElement} html - The dialog HTML element
-   */
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // Attach click handlers to template card elements
-    html.querySelectorAll('[data-template-id]').forEach(card => {
-      card.addEventListener('click', (event) => {
-        const templateId = card.dataset.templateId;
-        this._onTemplateSelected(templateId);
-      });
-    });
-
-    // Attach click handlers to action buttons
-    html.querySelectorAll('[data-button]').forEach(button => {
-      button.addEventListener('click', (event) => {
-        this._onButtonClick(event);
-      });
-    });
-  }
-
-  /**
-   * Filter templates by progression subtype.
-   * V2 COMPLIANCE: Ensures droid chargen only sees droid-compatible templates.
-   *
-   * @param {Array} templates - All templates
-   * @param {string} subtype - Chargen subtype ('actor', 'droid', 'nonheroic', 'beast', 'follower')
-   * @returns {Array} Filtered templates
-   * @private
-   */
-  static _filterTemplatesBySubtype(templates, subtype) {
-    if (!templates || !Array.isArray(templates)) {
-      return [];
-    }
-
-    // Nonheroic, beast, and follower subtypes
-    if (subtype === 'nonheroic' || subtype === 'beast' || subtype === 'follower') {
-      // These subtypes should only see nonheroic templates
-      return templates.filter(t => t.isNonheroic === true);
-    }
-
-    // Droid subtype: Show droid-specific templates and class templates (exclude Force classes)
-    if (subtype === 'droid') {
-      return templates.filter(t => {
-        // Exclude nonheroic templates for droid
-        if (t.isNonheroic === true) {
-          return false;
-        }
-        // Exclude Force/Jedi classes for droid
-        const classId = t.classId?.id || t.classId;
-        if (classId && classId.toLowerCase().includes('force')) {
-          return false;
-        }
-        return true;
-      });
-    }
-
-    // Heroic actor subtype: Show heroic templates only
-    if (subtype === 'actor') {
-      return templates.filter(t => t.isNonheroic !== true);
-    }
-
-    // Fallback: no filtering
-    return templates;
-  }
-
-  async _onButtonClick(event) {
-    const button = event.target.closest('[data-button]');
-    if (!button) return;
-
-    const action = button.dataset.button;
-
-    if (action === 'freeform') {
-      // User chose freeform
-      swseLogger.log('[TemplateSelectionDialog] User chose freeform chargen');
-      this.close();
-      this.options.resolve(null);
+    const root = getAppRoot(this);
+    if (!root) {
+      swseLogger.warn('[TemplateSelectionDialog] Unable to bind controls: root element missing');
       return;
     }
 
-    if (action === 'confirm' && this.selectedTemplate) {
-      // User confirmed template choice
+    root.style.zIndex = String(Math.max(Number(root.style.zIndex || 0), 120000));
+
+    root.querySelectorAll('[data-template-class]').forEach(card => {
+      card.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectedClass = card.dataset.templateClass || this.selectedClass;
+        this.selectedTemplate = null;
+        this.render(true);
+      });
+    });
+
+    root.querySelectorAll('[data-template-id]').forEach(card => {
+      card.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._selectTemplate(card.dataset.templateId);
+      });
+    });
+
+    root.querySelectorAll('[data-button]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._onButtonClick(event);
+      });
+    });
+
+    root.querySelectorAll('img[data-fallback-src]').forEach(img => {
+      img.addEventListener('error', () => {
+        const fallback = img.dataset.fallbackSrc;
+        if (fallback && img.src !== fallback) img.src = fallback;
+      }, { once: true });
+    });
+
+    this._updateConfirmButton();
+  }
+
+  _selectTemplate(templateId) {
+    const selected = String(templateId || '');
+    if (!selected) return;
+
+    this.selectedTemplate = selected;
+    const template = this.templates.find(t => String(t?.id) === selected);
+
+    swseLogger.debug('[TemplateSelectionDialog] Template selected', {
+      templateId: selected,
+      templateName: template?.name,
+    });
+
+    const root = getAppRoot(this);
+    if (!root) return;
+
+    root.querySelectorAll('[data-template-id]').forEach(card => card.classList.remove('selected'));
+    const escaped = globalThis.CSS?.escape ? CSS.escape(selected) : selected.replace(/["\\]/g, "\\$&");
+    const selectedCard = root.querySelector(`[data-template-id="${escaped}"]`);
+    selectedCard?.classList?.add?.('selected');
+    this._updateConfirmButton();
+  }
+
+  _updateConfirmButton() {
+    const root = getAppRoot(this);
+    const confirmBtn = root?.querySelector?.('[data-button="confirm"]');
+    if (confirmBtn) confirmBtn.disabled = !this.selectedTemplate;
+  }
+
+  async _onButtonClick(event) {
+    const button = event?.target?.closest?.('[data-button]');
+    if (!button) return;
+
+    const action = String(button.dataset.button || '');
+
+    if (action === 'freeform') {
+      swseLogger.log('[TemplateSelectionDialog] User chose freeform chargen');
+      await this._settle(null);
+      return;
+    }
+
+    if (action === 'confirm') {
+      if (!this.selectedTemplate) return;
       swseLogger.log('[TemplateSelectionDialog] User chose template', {
         templateId: this.selectedTemplate,
       });
-      this.close();
-      this.options.resolve(this.selectedTemplate);
+      await this._settle(this.selectedTemplate);
       return;
     }
 
     if (action === 'cancel') {
-      // User cancelled
       swseLogger.log('[TemplateSelectionDialog] User cancelled');
-      this.close();
-      this.options.resolve(false);
-      return;
+      await this._settle(false);
+    }
+  }
+
+  async _settle(value) {
+    if (this._settled) return;
+    this._settled = true;
+    const resolver = this._resolve;
+    this._resolve = null;
+    try {
+      resolver?.(value);
+    } finally {
+      await this.close({ force: true });
+    }
+  }
+
+  async close(options = {}) {
+    if (!this._settled) {
+      this._settled = true;
+      const resolver = this._resolve;
+      this._resolve = null;
+      resolver?.(false);
+    }
+    return super.close(options);
+  }
+
+  /**
+   * Filter templates by progression subtype.
+   *
+   * @param {Array} templates
+   * @param {string} subtype
+   * @returns {Array}
+   * @private
+   */
+  static _filterTemplatesBySubtype(templates, subtype) {
+    if (!Array.isArray(templates)) return [];
+
+    if (subtype === 'nonheroic' || subtype === 'beast' || subtype === 'follower') {
+      return templates.filter(t => t?.isNonheroic === true);
     }
 
-    await super._onButtonClick(event);
+    if (subtype === 'droid') {
+      return templates.filter(t => {
+        if (t?.isNonheroic === true) return false;
+        const classId = String(t?.classId?.id || t?.classId || '').toLowerCase();
+        return !classId.includes('force') && !classId.includes('jedi') && !classId.includes('sith');
+      });
+    }
+
+    if (subtype === 'actor') {
+      return templates.filter(t => t?.isNonheroic !== true);
+    }
+
+    return templates;
   }
 }

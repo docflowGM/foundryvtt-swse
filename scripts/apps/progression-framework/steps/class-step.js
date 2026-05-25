@@ -649,7 +649,7 @@ export class ClassStep extends ProgressionStepPlugin {
     const isSuggested = suggestedIds.has(classData.id);
     const confidenceData = confidenceMap.get ? confidenceMap.get(classData.id) : confidenceMap[classData.id];
     const recommendedLabel = isSuggested
-      ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended')
+      ? 'Recommended'
       : null;
 
     return {

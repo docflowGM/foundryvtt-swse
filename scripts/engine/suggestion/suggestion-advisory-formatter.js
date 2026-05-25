@@ -121,7 +121,7 @@ export class SuggestionAdvisoryFormatter {
    * @returns {string} Percentage string (e.g., "85%")
    */
   static formatConfidencePercent(confidence) {
-    return `${Math.round((confidence || 0) * 100)}%`;
+    return confidence > 0 ? 'Recommended' : '';
   }
 
   /**

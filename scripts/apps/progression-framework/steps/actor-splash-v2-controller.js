@@ -370,7 +370,7 @@ function buildIdentityState(isComplete, sessionId) {
 
 function formatEta(stageIndex) {
   const remainingStages = Math.max(0, ACTOR_SPLASH_V2_BOOT_SEGMENTS - (stageIndex + 1));
-  const seconds = Math.max(0, remainingStages * 2);
+  const seconds = Math.max(0, Math.ceil((remainingStages / ACTOR_SPLASH_V2_BOOT_SEGMENTS) * 10));
   return `0:${String(seconds).padStart(2, '0')}`;
 }
 
@@ -430,7 +430,7 @@ export function buildActorSplashV2Context(options = {}) {
     capacitorLabel: `${String(Math.max(0, Math.min(100, 10 + safeStageIndex * 12))).padStart(2, '0')}%`,
     chipBanks: buildChipBanks(stage),
 
-    stageIndex: `${String(safeStageIndex + 1).padStart(2, '0')}/${String(ACTOR_SPLASH_V2_BOOT_SEGMENTS).padStart(2, '0')}`,
+    stageIndex: 'VERSA V4.3',
     stageName: stage?.label || 'BOOT',
     stageGlyph: stage?.glyph || '◉',
     progressPercent,

@@ -480,6 +480,10 @@ export class IntroStep extends ProgressionStepPlugin {
     this._sessionToken = null;
 
     // Stop all animations and timers immediately
+    if (this._introKeyHandler) {
+      document.removeEventListener('keydown', this._introKeyHandler, true);
+      this._introKeyHandler = null;
+    }
     this._translationEngine.cancel();
     this._stopClock();
     this._stopSignalAnimation();
@@ -735,9 +739,12 @@ export class IntroStep extends ProgressionStepPlugin {
    * @param {jQuery|HTMLElement} html
    */
   activateListeners(html) {
-    super.activateListeners(html);
+    if (typeof super.activateListeners === 'function') {
+      super.activateListeners(html);
+    }
 
     const $surface = html instanceof $ ? html : $(html);
+    this._bindIntroKeyboardShortcuts();
 
     // Skip animation on click (during boot only)
     $surface.on('click', '.prog-intro-surface', (event) => {
@@ -909,36 +916,66 @@ export class IntroStep extends ProgressionStepPlugin {
     });
 
     // Note: Go Back (data-action="previous-step") and Proceed (data-action="next-step")
-    // are routed through the shell's action system via ApplicationV2, not bound here
+    // are routed through the shell's action system via ApplicationV2. Keyboard
+    // shortcuts are bound once per intro render by _bindIntroKeyboardShortcuts().
+  }
 
-    // Parallax camera drift on mouse movement
-    $surface.on('mousemove', '.prog-intro-surface', (event) => {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+  _bindIntroKeyboardShortcuts() {
+    if (this._introKeyHandler) {
+      document.removeEventListener('keydown', this._introKeyHandler, true);
+    }
 
-      // Calculate mouse position relative to center (-1 to 1)
-      const normalizedX = (event.clientX - rect.left - centerX) / centerX;
-      const normalizedY = (event.clientY - rect.top - centerY) / centerY;
+    this._introKeyHandler = async (event) => {
+      const key = String(event.key || '').toLowerCase();
+      if (![' ', 'spacebar', 'enter', 'r'].includes(key)) return;
 
-      // Apply subtle parallax (max ±8px drift)
-      this._parallaxX = normalizedX * 8;
-      this._parallaxY = normalizedY * 8;
+      const activeSurface = document.querySelector('.prog-intro-surface--actor-v2, .prog-intro-surface--droid-v2, .swse-splash-screen');
+      if (!activeSurface?.isConnected) return;
 
-      // Update transform on surface (subtle, smooth movement)
-      const surface = event.currentTarget;
-      surface.style.transform = `translate(${this._parallaxX}px, ${this._parallaxY}px)`;
-      surface.style.transition = 'transform 0.2s ease-out';
-    });
+      const editable = event.target?.closest?.('input, textarea, select, [contenteditable="true"]');
+      if (editable) return;
 
-    // Reset parallax on mouse leave
-    $surface.on('mouseleave', '.prog-intro-surface', (event) => {
-      this._parallaxX = 0;
-      this._parallaxY = 0;
-      const surface = event.currentTarget;
-      surface.style.transform = 'translate(0, 0)';
-      surface.style.transition = 'transform 0.3s ease-out';
-    });
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (key === ' ' || key === 'spacebar') {
+        if (!this._complete && !this._isSkipping) {
+          this._skipIntro();
+          this._applyActorV2StageDOM?.(await this.getStepData?.());
+          await this._shell?.render?.(false);
+        }
+        return;
+      }
+
+      if (key === 'r') {
+        await this._replayIntroSequence();
+        return;
+      }
+
+      if (key === 'enter' && this._complete && !this._transitionInProgress) {
+        this._transitionInProgress = true;
+        this._continueClicked = true;
+        this._state = INTRO_STATE.TRANSITIONING;
+        await this._transitionToNextStep();
+      }
+    };
+
+    document.addEventListener('keydown', this._introKeyHandler, true);
+  }
+
+  async _replayIntroSequence() {
+    if (this._transitionInProgress) return;
+    this._introRunning = false;
+    this._translationEngine.cancel();
+    this._complete = false;
+    this._isSkipping = false;
+    this._localizedMode = false;
+    this._actorV2StageIndex = 0;
+    this._droidV2StageIndex = 0;
+    this._state = INTRO_STATE.ANIMATING;
+    this._animationSequenceStarted = false;
+    this._sessionToken = Math.random();
+    await this._shell?.render?.(false);
   }
 
   // ---------------------------------------------------------------------------
@@ -1327,35 +1364,185 @@ export class IntroStep extends ProgressionStepPlugin {
     try {
       swseLogger.debug('[IntroStep.runActorV2BootSequence] Starting actor-v2 boot sequence');
 
-      // Stage durations (in ms) for 8 stages
-      const stageDurations = [280, 260, 260, 320, 280, 260, 400, 260];  // 8 stages
+      const totalDuration = 10000;
+      const stageCount = 8;
+      const stageDuration = Math.floor(totalDuration / stageCount);
+      const frameMs = 100;
+      const startedAt = Date.now();
 
-      for (let stageIndex = 0; stageIndex < 8; stageIndex++) {
-        // Exit early if intro was cancelled
+      for (let stageIndex = 0; stageIndex < stageCount; stageIndex += 1) {
         if (!this._introRunning || this._sessionToken !== sessionToken) {
           swseLogger.debug('[IntroStep.runActorV2BootSequence] Sequence cancelled');
           return;
         }
 
-        // Update stage index and render
         this._actorV2StageIndex = stageIndex;
-        await shell.render(false);
+        const stageData = await this.getStepData();
+        this._applyActorV2StageDOM(stageData);
 
-        // Run translation animation at stage 6 (the 'translation' stage)
         if (stageIndex === 6) {
           await this.runSplashTranslation(shell, 'aurebesh');
         }
 
-        // Wait for stage duration
-        const duration = stageDurations[stageIndex] || 260;
-        await delay(duration);
+        const nextData = buildActorSplashV2Context({
+          stageIndex: Math.min(stageCount - 1, stageIndex + 1),
+          currentTime: this._getCurrentTime(),
+          localizedMode: this._localizedMode,
+          sessionId: this._shell?.actor?.id || 'NEW-00000',
+          isComplete: false,
+        });
+        const startPct = Number(stageData?.progressPercent) || 0;
+        const endPct = Number(nextData?.progressPercent) || startPct;
+        const stageStartedAt = Date.now();
+
+        while (Date.now() - stageStartedAt < stageDuration) {
+          if (!this._introRunning || this._sessionToken !== sessionToken) return;
+          const elapsed = Date.now() - stageStartedAt;
+          const stageT = Math.max(0, Math.min(1, elapsed / stageDuration));
+          const pct = Math.round(startPct + ((endPct - startPct) * stageT));
+          const remainingMs = Math.max(0, totalDuration - (Date.now() - startedAt));
+          this._setActorV2ProgressDOM(pct, remainingMs);
+          await delay(frameMs);
+        }
       }
+
+      this._actorV2StageIndex = stageCount - 1;
+      this._applyActorV2StageDOM(await this.getStepData());
+      this._setActorV2ProgressDOM(100, 0);
 
       swseLogger.debug('[IntroStep.runActorV2BootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runActorV2BootSequence] Error:', err);
       await this._failOpenPastIntro(shell, 'actor-v2-boot-error');
     }
+  }
+
+  _applyActorV2StageDOM(data = {}) {
+    const root = this._workSurfaceEl;
+    if (!root?.isConnected) return;
+
+    root.classList.toggle('prog-intro-surface--localized', data.localizedMode === true);
+    root.classList.toggle('prog-intro-surface--foreign', data.localizedMode !== true);
+    root.classList.toggle('is-complete', data.isComplete === true);
+    root.classList.toggle('is-erroring', data.erroring === true);
+    root.classList.toggle('is-succeeding', data.succeeding === true);
+
+    const setText = (selector, value) => {
+      const el = root.querySelector(selector);
+      if (el) el.textContent = value ?? '';
+    };
+    const setHtml = (selector, value) => {
+      const el = root.querySelector(selector);
+      if (el) el.innerHTML = value ?? '';
+    };
+
+    setText('[data-role="stage-index"]', data.stageIndex);
+    setText('[data-role="stage-name"]', data.stageName);
+    setText('[data-role="stage-glyph"]', data.stageGlyph);
+    setText('[data-role="intro-progress-percent"]', `${Math.round(Number(data.progressPercent) || 0)}%`);
+    setText('[data-role="eta-big"]', data.etaLabel);
+    setText('[data-role="current-task"]', data.currentTask);
+    setText('[data-role="task-count"]', data.taskCount);
+    setText('[data-role="core-glyph"]', data.coreGlyph);
+    setText('[data-role="status-label"]', data.statusLabel);
+    setText('[data-role="status-msg"]', data.statusMessage);
+    setHtml('[data-role="status-src"]', data.statusSource);
+    const bootStageTag = root.querySelector('[data-role="boot-stage-tag"]');
+    if (bootStageTag) {
+      const dot = bootStageTag.querySelector('.dot');
+      bootStageTag.textContent = '';
+      if (dot) bootStageTag.appendChild(dot);
+      bootStageTag.append(document.createTextNode(data.bootStageTag || 'BOOT'));
+    }
+    setText('[data-role="prompt-text"]', data.promptText);
+    setText('[data-role="rtt-val"]', data.rttLabel);
+    setText('[data-role="clock"]', this._getCurrentTime());
+
+    const bootDot = root.querySelector('[data-role="boot-stage-tag"] .dot')
+      || root.querySelector('.hud-left [data-role="boot-stage-tag"] .dot');
+    if (bootDot) {
+      bootDot.classList.remove('warn', 'err');
+      if (data.bootStageDotClass) bootDot.classList.add(data.bootStageDotClass);
+    }
+
+    const statusMsg = root.querySelector('[data-role="status-msg"]');
+    if (statusMsg) {
+      statusMsg.className = `msg ${data.statusClass || ''}`.trim();
+    }
+
+    const subFill = root.querySelector('[data-role="sub-fill"]');
+    if (subFill) subFill.style.width = `${Math.max(0, Math.min(100, Number(data.taskProgress) || 0))}%`;
+
+    const capFill = root.querySelector('[data-role="cap-fill"]');
+    if (capFill) capFill.style.width = `${Math.max(0, Math.min(100, Number(data.capacitorPct) || 0))}%`;
+    setText('[data-role="cap-val"]', data.capacitorLabel);
+
+    const pixelTest = root.querySelector('[data-role="intro-pixel-test"]');
+    pixelTest?.classList?.toggle?.('on', data.pixelTestOn === true);
+
+    const glitch = root.querySelector('[data-role="intro-glitch"]');
+    if (glitch) glitch.className = `glitch-overlay ${data.glitchFire ? 'fire' : ''}`.trim();
+    const redWash = root.querySelector('[data-role="intro-red-wash"]');
+    redWash?.classList?.toggle?.('on', data.erroring === true);
+    const greenWash = root.querySelector('[data-role="intro-green-wash"]');
+    greenWash?.classList?.toggle?.('on', data.greenWashOn === true);
+
+    const banner = root.querySelector('[data-role="intro-big-banner"]');
+    if (banner) {
+      banner.textContent = data.bannerText || '';
+      banner.className = `big-banner ${data.bannerClass || ''}`.trim();
+    }
+
+    for (const channel of data.channels || []) {
+      const row = root.querySelector(`.channel[data-ch="${channel.id}"]`);
+      if (!row) continue;
+      row.classList.remove('ok', 'warn', 'err');
+      if (channel.stateClass) row.classList.add(channel.stateClass);
+      const fill = row.querySelector('.fill');
+      if (fill) fill.style.width = `${Math.max(0, Math.min(100, Number(channel.pct) || 0))}%`;
+      const val = row.querySelector('.val');
+      if (val) val.textContent = channel.displayValue;
+    }
+
+    const hotBanks = new Map((data.chipBanks || []).map(bank => [bank.label, bank]));
+    root.querySelectorAll('.die .bank').forEach(bankEl => {
+      const label = bankEl.textContent.trim();
+      const bank = hotBanks.get(label);
+      bankEl.classList.toggle('hot', bank?.hot === true);
+      bankEl.classList.toggle('err', bank?.err === true);
+    });
+
+    this._setActorV2ProgressDOM(Number(data.progressPercent) || 0, null);
+    this._applyActorV2IdentityDOM(data);
+  }
+
+  _setActorV2ProgressDOM(percent, remainingMs = null) {
+    const root = this._workSurfaceEl;
+    if (!root?.isConnected) return;
+
+    const safePercent = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+    const percentEl = root.querySelector('[data-role="intro-progress-percent"]');
+    if (percentEl) percentEl.textContent = `${safePercent}%`;
+
+    if (remainingMs !== null) {
+      const seconds = Math.max(0, Math.ceil(Number(remainingMs) / 1000));
+      const eta = root.querySelector('[data-role="eta-big"]');
+      if (eta) eta.textContent = `0:${String(seconds).padStart(2, '0')}`;
+    }
+
+    const segments = Array.from(root.querySelectorAll('[data-role="seg-bar"] .seg'));
+    const litCount = Math.max(0, Math.min(segments.length, Math.floor((safePercent / 100) * segments.length)));
+    segments.forEach((segment, index) => {
+      segment.classList.toggle('on', index < litCount);
+      segment.classList.toggle('leading', litCount > 0 && index === litCount - 1);
+    });
+  }
+
+  _applyActorV2IdentityDOM(data = {}) {
+    const root = this._workSurfaceEl;
+    if (!root?.isConnected) return;
+    root.querySelector('.identity')?.classList?.toggle?.('on', data.showIdentity === true);
+    root.querySelector('.register')?.classList?.toggle?.('on', data.showRegister === true);
   }
 
   /**
@@ -1411,7 +1598,7 @@ export class IntroStep extends ProgressionStepPlugin {
       this._setTranslationFallbackText(stepData);
       this._localizedMode = true;
       this._setSurfaceLocalizationDOM(true);
-      if (shell?.render) await shell.render(false);
+      this._applyActorV2StageDOM?.(await this.getStepData?.());
 
       swseLogger.debug('[IntroStep.runSplashTranslation] Translation animation complete');
     } catch (err) {
@@ -1421,7 +1608,7 @@ export class IntroStep extends ProgressionStepPlugin {
         this._setTranslationFallbackText(stepData);
         this._localizedMode = true;
         this._setSurfaceLocalizationDOM(true);
-        if (shell?.render) await shell.render(false);
+        this._applyActorV2StageDOM?.(await this.getStepData?.());
       } catch (fallbackErr) {
         swseLogger.error('[IntroStep.runSplashTranslation] Fallback translation failed:', fallbackErr);
       }

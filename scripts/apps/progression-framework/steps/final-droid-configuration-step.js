@@ -160,7 +160,7 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
         return {
           ...s,
           isSuggested,
-          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+          badgeLabel: isSuggested ? 'Recommended' : null,
           confidenceLevel: confidenceData?.confidenceLevel || null,
         };
       });

@@ -1039,7 +1039,8 @@ export class SWSEV2CharacterSheet extends
         const routeId = el.dataset.routeId;
         if (!routeId) return;
         const surfaceOptions = { source: 'home' };
-        if (routeId === 'chargen' || routeId === 'progression') surfaceOptions.skipIntro = true;
+        if (routeId === 'progression') surfaceOptions.skipIntro = true;
+        if (routeId === 'chargen') surfaceOptions.skipIntro = false;
         if (el.dataset.bayMode) surfaceOptions.bayMode = el.dataset.bayMode;
         if (el.dataset.contextMode) surfaceOptions.contextMode = el.dataset.contextMode;
         homeRoot.querySelectorAll('.swse-app-tile--launching').forEach(tile => tile.classList.remove('swse-app-tile--launching'));
@@ -3993,7 +3994,10 @@ const forcePoints = [];
       ev.preventDefault();
       try {
         const surfaceId = button.dataset.action === 'cmd-chargen' ? 'chargen' : 'progression';
-        await this.setSurface(surfaceId, { source: 'sheet', skipIntro: true });
+        await this.setSurface(surfaceId, {
+          source: 'sheet',
+          skipIntro: surfaceId !== 'chargen'
+        });
         this.render(false);
       } catch (err) {
         swseLogger.error('[CharacterSheet] Progression launch failed:', err);

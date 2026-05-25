@@ -371,22 +371,22 @@ export class ForceOptionSuggestionEngine {
 
           if (className === 'Jedi Knight' && ['battle_strike', 'enlighten', 'improved_battle_meditation'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+            reasons.push(`Supports ${className} path`);
           }
 
           if (className === 'Force Adept' && ['move_object', 'force_lightning', 'negate_energy', 'telekinetic_savant'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+            reasons.push(`Supports ${className} path`);
           }
 
           if (className === 'Sith Lord' && ['force_lightning', 'dark_side_mastery', 'force_grip'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+            reasons.push(`Supports ${className} path`);
           }
 
           if (className === 'Jedi Master' && ['enlighten', 'force_sensitivity_focus', 'improved_battle_meditation'].includes(option.id)) {
             tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-            reasons.push(`Supports ${className} path (${Math.round(affinity.confidence * 100)}% confidence)`);
+            reasons.push(`Supports ${className} path`);
           }
         }
 

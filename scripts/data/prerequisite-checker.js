@@ -1634,29 +1634,7 @@ export class PrerequisiteChecker {
             };
         }
 
-        // Weapon Focus/Specialization choice dependencies often use prose like
-        // "Proficient with selected weapon group". Parse that as a real
-        // proficiency check against the current candidate choice instead of a
-        // phantom feat called "Proficient with selected weapon group".
-        if (/^(?:proficient|proficiency)\s+with\s+(?:the\s+)?(?:selected|chosen)\s+weapon(?:\s+group)?$/i.test(part)) {
-            return { type: 'weapon_proficiency' };
-        }
-
-        const weaponProfMatch = part.match(/^(?:proficient|proficiency)\s+with\s+(.+)$/i);
-        if (weaponProfMatch && /weapon|pistol|rifle|lightsaber|melee|simple|advanced|heavy|exotic/i.test(weaponProfMatch[1])) {
-            const weaponGroup = weaponProfMatch[1].trim();
-            return this._isPlaceholderWeaponTarget(weaponGroup)
-                ? { type: 'weapon_proficiency' }
-                : { type: 'weapon_proficiency', weaponGroup };
-        }
-
-        const explicitWeaponProficiencyChoice = part.match(/^weapon\s+proficiency\s*\(([^)]+)\)$/i);
-        if (explicitWeaponProficiencyChoice) {
-            const weaponGroup = explicitWeaponProficiencyChoice[1].trim();
-            return this._isPlaceholderWeaponTarget(weaponGroup)
-                ? { type: 'weapon_proficiency' }
-                : { type: 'weapon_proficiency', weaponGroup };
-        }
+        // Weapon proficiency prose is parsed before registry-backed feat-name lookup above.
 
         if (owningType === 'talent') {
             const canonicalTalentName = resolveCanonicalTalentName(part);

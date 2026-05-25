@@ -923,7 +923,7 @@ export class LanguageStep extends ProgressionStepPlugin {
           categoryLabel: this._categoryLabels[lang.category] || lang.category,
           canSelect: true,
           isSuggested,
-          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+          badgeLabel: isSuggested ? 'Recommended' : null,
           badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
           confidenceLevel: confidenceData?.confidenceLevel || null,
         };

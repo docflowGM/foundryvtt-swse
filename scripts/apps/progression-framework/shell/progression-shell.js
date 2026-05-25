@@ -2521,7 +2521,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     try {
       const selection = plugin.getSelection?.(this) ?? null;
-      if (selection?.isComplete !== true) {
+      // Many legacy-but-valid steps do not expose getSelection(). Treat the
+      // absence of an explicit selection contract as silent and let the
+      // remaining-picks/validation gates below decide readiness.  Only an
+      // explicit isComplete:false blocks auto-advance.
+      if (selection?.isComplete === false) {
         return { ready: false, reason: 'selection-incomplete', selection };
       }
     } catch (err) {
@@ -2554,6 +2558,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'skill-train',
       'select-language',
       'add-language',
+      'add-custom-language',
+      'attribute-lock',
+      'confirm-droid-build',
+      'survey-finish',
       'select-species-variant',
       'confirm-near-human',
     ]);
@@ -2571,20 +2579,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return false;
     }
 
-    const delayMs = Math.max(150, Number(readiness.config?.delayMs ?? 700) || 700);
+    const configuredDelay = Number(readiness.config?.delayMs ?? 0);
+    const delayMs = Number.isFinite(configuredDelay) ? Math.max(0, configuredDelay) : 0;
     const token = ++this._autoAdvanceToken;
     if (this._autoAdvanceTimer) clearTimeout(this._autoAdvanceTimer);
 
-    this._autoAdvanceNotice = {
-      stepId,
-      source,
-      text: readiness.config?.statusText || 'Selection complete — advancing…',
-    };
-
-    swseLogger.debug('[ProgressionShell] Auto-advance scheduled', { stepId, source, delayMs });
-    this.requestRender?.({ preserveScroll: true, reason: `auto-advance-scheduled:${stepId}` });
-
-    this._autoAdvanceTimer = setTimeout(async () => {
+    const advance = async () => {
       this._autoAdvanceTimer = null;
       if (token !== this._autoAdvanceToken) return;
       if (this.steps[this.currentStepIndex]?.stepId !== stepId) return;
@@ -2600,7 +2600,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
       this._autoAdvanceNotice = null;
       swseLogger.debug('[ProgressionShell] Auto-advancing completed step', { stepId, source });
       await this._onNextStep(event, null);
-    }, delayMs);
+    };
+
+    if (delayMs <= 0) {
+      this._autoAdvanceNotice = null;
+      swseLogger.debug('[ProgressionShell] Auto-advancing immediately', { stepId, source });
+      await advance();
+      return true;
+    }
+
+    this._autoAdvanceNotice = {
+      stepId,
+      source,
+      text: readiness.config?.statusText || 'Selection complete — advancing…',
+    };
+
+    swseLogger.debug('[ProgressionShell] Auto-advance scheduled', { stepId, source, delayMs });
+    this.requestRender?.({ preserveScroll: true, reason: `auto-advance-scheduled:${stepId}` });
+
+    this._autoAdvanceTimer = setTimeout(advance, delayMs);
 
     return true;
   }
@@ -3047,8 +3065,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
       await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemCommitted(itemId, this));
       // Rebuild projection after selection committed to update selected rail
       this._rebuildProjection();
-      // Trigger re-render to show updated selected rail without losing the scroll position.
-      await this.requestRender({ preserveScroll: true, reason: 'commit-item' });
       this.mentorChoiceReactions?.reactToInteraction({
         stepId,
         action: 'commit',
@@ -3059,7 +3075,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
         target: row || element,
       });
 
-      await this._maybeScheduleAutoAdvance({ source: 'commit-item', event });
+      // Auto-advance is now intentionally immediate. Check it before repainting
+      // the just-completed step so the UI does not feel like it lagged or ignored
+      // the click. If the step is not ready, fall back to the normal local render.
+      const advanced = await this._maybeScheduleAutoAdvance({ source: 'commit-item', event });
+      if (!advanced) {
+        await this.requestRender({ preserveScroll: true, reason: 'commit-item' });
+      }
     }
   }
 
@@ -3155,6 +3177,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.rollCredits) {
       await plugin.rollCredits(this.actor, this);
+      await this._maybeScheduleAutoAdvance({ source: 'roll-credits', event });
       this.render();
     }
   }
@@ -3164,6 +3187,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.useMaximumCredits) {
       await plugin.useMaximumCredits(this.actor, this);
+      await this._maybeScheduleAutoAdvance({ source: 'use-max-credits', event });
       this.render();
     }
   }
@@ -3174,6 +3198,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.useAverageCredits) {
       await plugin.useAverageCredits(this.actor, this);
+      await this._maybeScheduleAutoAdvance({ source: 'use-average-credits', event });
       this.render();
     }
   }
@@ -3182,6 +3207,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.rollHPGain) {
       await plugin.rollHPGain(this.actor, this);
+      await this._maybeScheduleAutoAdvance({ source: 'roll-hp', event });
       this.render();
     }
   }
@@ -3191,6 +3217,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.useMaximumHPGain) {
       await plugin.useMaximumHPGain(this.actor, this);
+      await this._maybeScheduleAutoAdvance({ source: 'use-max-hp', event });
       this.render();
     }
   }

@@ -231,6 +231,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/chargen-feat-suggestions-dialog.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen-skill-focus.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen-template-selection.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/template-selection.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs',
 
   // ==============================

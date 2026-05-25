@@ -114,7 +114,7 @@ export class LanguageSuggestionEngine {
             species: selectedSpecies?.name,
             background: selectedBackground?.name,
             suggestions: suggestions.map(
-              s => `${s.name} (${Math.round(s.suggestion.confidence * 100)}%)`
+              s => `${s.name} (Recommended)`
             ),
           }
         );

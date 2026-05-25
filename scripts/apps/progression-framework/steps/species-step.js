@@ -1557,7 +1557,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       hasVariants: Array.isArray(species.variants) && species.variants.length > 0,
       languages: species.languages ?? [],
       isSuggested,
-      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };

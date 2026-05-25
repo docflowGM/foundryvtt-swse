@@ -1,282 +1,323 @@
 <div class="template-selection-dialog">
+  <style>
+    .template-selection-dialog {
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 0.85rem;
+      height: 100%;
+      min-height: 0;
+      padding: 1rem;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(0, 221, 255, 0.14), transparent 32%),
+        radial-gradient(circle at 82% 92%, rgba(255, 54, 210, 0.12), transparent 38%),
+        linear-gradient(180deg, rgba(2, 16, 30, 0.98), rgba(1, 6, 14, 0.98));
+      color: var(--color-text-primary, #dffbff);
+      font-family: var(--font-primary, sans-serif);
+      overflow: hidden;
+    }
+
+    .template-selection-dialog .dialog-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(94, 224, 255, 0.25);
+      padding-bottom: 0.75rem;
+    }
+
+    .template-selection-dialog h2 {
+      margin: 0;
+      color: #27f4ff;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 1.25rem;
+      text-shadow: 0 0 12px rgba(39, 244, 255, 0.65);
+    }
+
+    .template-selection-dialog .subtitle {
+      margin: 0.25rem 0 0;
+      color: rgba(223, 251, 255, 0.72);
+      font-size: 0.85rem;
+    }
+
+    .template-selection-dialog .flow-label {
+      color: rgba(255, 75, 210, 0.9);
+      font-size: 0.72rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .template-selection-dialog .class-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.6rem;
+      min-height: 108px;
+    }
+
+    .template-selection-dialog .class-card {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 0.55rem;
+      align-items: center;
+      border: 1px solid rgba(94, 224, 255, 0.25);
+      background: rgba(0, 30, 52, 0.55);
+      color: #dffbff;
+      padding: 0.55rem;
+      cursor: pointer;
+      text-align: left;
+      min-width: 0;
+      box-shadow: inset 0 0 18px rgba(94, 224, 255, 0.05);
+    }
+
+    .template-selection-dialog .class-card:hover,
+    .template-selection-dialog .class-card.is-active {
+      border-color: rgba(39, 244, 255, 0.85);
+      box-shadow: 0 0 18px rgba(39, 244, 255, 0.18), inset 0 0 20px rgba(39, 244, 255, 0.08);
+    }
+
+    .template-selection-dialog .class-card img {
+      width: 52px;
+      height: 72px;
+      object-fit: cover;
+      border: 1px solid rgba(94, 224, 255, 0.3);
+      filter: grayscale(0.35) contrast(1.08) brightness(1.05);
+    }
+
+    .template-selection-dialog .class-name {
+      display: block;
+      color: #27f4ff;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .template-selection-dialog .class-count {
+      display: block;
+      margin-top: 0.25rem;
+      color: rgba(223, 251, 255, 0.62);
+      font-size: 0.75rem;
+    }
+
+    .template-selection-dialog .template-selection-content {
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 0.35rem;
+    }
+
+    .template-selection-dialog .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .template-selection-dialog .template-card {
+      border: 1px solid rgba(94, 224, 255, 0.24);
+      background: rgba(1, 19, 34, 0.88);
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+      min-width: 0;
+    }
+
+    .template-selection-dialog .template-card:hover,
+    .template-selection-dialog .template-card.selected {
+      transform: translateY(-2px);
+      border-color: rgba(39, 244, 255, 0.95);
+      box-shadow: 0 0 22px rgba(39, 244, 255, 0.20), inset 0 0 24px rgba(39, 244, 255, 0.06);
+    }
+
+    .template-selection-dialog .template-card.selected {
+      outline: 2px solid rgba(123, 255, 174, 0.85);
+    }
+
+    .template-selection-dialog .template-card-header,
+    .template-selection-dialog .template-card-body,
+    .template-selection-dialog .template-stats {
+      padding: 0.7rem;
+    }
+
+    .template-selection-dialog .template-name {
+      margin: 0 0 0.25rem;
+      color: #dffbff;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .template-selection-dialog .template-archetype {
+      color: rgba(39, 244, 255, 0.8);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .template-selection-dialog .template-image {
+      width: 100%;
+      height: 155px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(0, 190, 255, 0.14), transparent 56%),
+        linear-gradient(180deg, rgba(2, 18, 32, 0.78), rgba(0, 0, 0, 0.94));
+      border-top: 1px solid rgba(94, 224, 255, 0.20);
+      border-bottom: 1px solid rgba(94, 224, 255, 0.20);
+    }
+
+    .template-selection-dialog .template-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(94, 224, 255, 0.095) 2px 3px);
+      mix-blend-mode: screen;
+      opacity: 0.32;
+    }
+
+    .template-selection-dialog .template-image img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(0.75) sepia(0.08) hue-rotate(165deg) saturate(0.86) brightness(1.08) contrast(1.10);
+      opacity: 0.96;
+    }
+
+    .template-selection-dialog .description {
+      margin: 0 0 0.5rem;
+      color: rgba(223, 251, 255, 0.76);
+      font-size: 0.83rem;
+      line-height: 1.35;
+    }
+
+    .template-selection-dialog .quote {
+      margin: 0;
+      color: rgba(255, 75, 210, 0.74);
+      font-size: 0.78rem;
+      font-style: italic;
+    }
+
+    .template-selection-dialog .template-stats {
+      border-top: 1px solid rgba(94, 224, 255, 0.16);
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .template-selection-dialog .abilities {
+      display: flex;
+      gap: 0.45rem;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .template-selection-dialog .ability {
+      color: #27f4ff;
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+    }
+
+    .template-selection-dialog .dialog-footer {
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(94, 224, 255, 0.25);
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    .template-selection-dialog .freeform-btn,
+    .template-selection-dialog .confirm-btn {
+      padding: 0.7rem 1.1rem;
+      border: 1px solid rgba(94, 224, 255, 0.38);
+      background: rgba(0, 30, 52, 0.65);
+      color: #dffbff;
+      cursor: pointer;
+      font-family: var(--font-primary, sans-serif);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .template-selection-dialog .confirm-btn:not(:disabled) {
+      border-color: rgba(123, 255, 174, 0.82);
+      color: #7bffae;
+    }
+
+    .template-selection-dialog .confirm-btn:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+  </style>
+
   <div class="dialog-header">
-    <h2>Choose Your Character Template</h2>
-    <p class="subtitle">Select a pre-built character archetype or create from scratch.</p>
+    <div>
+      <h2>Galactic Profile</h2>
+      <p class="subtitle">Choose a class channel, then select an archetype profile package.</p>
+    </div>
+    <div class="flow-label">Class → Archetype → Summary</div>
+  </div>
+
+  <div class="class-strip" aria-label="Class channels">
+    {{#each classes}}
+      <button type="button" class="class-card {{#if active}}is-active{{/if}}" data-template-class="{{name}}">
+        <img src="{{imagePath}}" alt="{{name}}" />
+        <span>
+          <span class="class-name">{{name}}</span>
+          <span class="class-count">{{count}} profile{{#unless (eq count 1)}}s{{/unless}}</span>
+        </span>
+      </button>
+    {{/each}}
   </div>
 
   <div class="template-selection-content">
-    {{#each templatesByClass}}
-      <div class="template-class-section">
-        <h3 class="class-name">{{@key}}</h3>
-        <div class="templates-grid">
-          {{#each this}}
-            <div class="template-card" data-template-id="{{this.id}}">
-              <div class="template-card-header">
-                <h4 class="template-name">{{this.name}}</h4>
-                <div class="template-archetype">{{this.archetype}}</div>
-              </div>
+    <div class="templates-grid">
+      {{#each visibleTemplates}}
+        <div class="template-card" data-template-id="{{this.id}}">
+          <div class="template-card-header">
+            <h4 class="template-name">{{this.name}}</h4>
+            <div class="template-archetype">{{this.archetype}}</div>
+          </div>
 
-              <div class="template-image prog-holo-media prog-holo-media--wide">
-                {{#if this.imagePath}}
-                  <img class="prog-holo-media__image" src="{{this.imagePath}}" alt="{{this.name}}" />
-                {{else}}
-                  <div class="no-image">No Image</div>
-                {{/if}}
-              </div>
+          <div class="template-image prog-holo-media prog-holo-media--wide">
+            <img class="prog-holo-media__image" src="{{this.imagePath}}" data-fallback-src="{{this.classImagePath}}" alt="{{this.name}}" />
+          </div>
 
-              <div class="template-card-body">
-                <p class="description">{{this.description}}</p>
-                {{#if this.quote}}
-                  <p class="quote">"{{{this.quote}}}"</p>
-                {{/if}}
-              </div>
+          <div class="template-card-body">
+            <p class="description">{{this.description}}</p>
+            {{#if this.quote}}
+              <p class="quote">“{{{this.quote}}}”</p>
+            {{/if}}
+          </div>
 
-              <div class="template-stats">
-                <div class="abilities">
-                  <span class="ability" title="Strength">STR {{this.abilityScores.str}}</span>
-                  <span class="ability" title="Dexterity">DEX {{this.abilityScores.dex}}</span>
-                  <span class="ability" title="Constitution">CON {{this.abilityScores.con}}</span>
-                </div>
-                <div class="abilities">
-                  <span class="ability" title="Intelligence">INT {{this.abilityScores.int}}</span>
-                  <span class="ability" title="Wisdom">WIS {{this.abilityScores.wis}}</span>
-                  <span class="ability" title="Charisma">CHA {{this.abilityScores.cha}}</span>
-                </div>
-              </div>
+          <div class="template-stats">
+            <div class="abilities">
+              <span class="ability" title="Strength">STR {{this.abilityScores.str}}</span>
+              <span class="ability" title="Dexterity">DEX {{this.abilityScores.dex}}</span>
+              <span class="ability" title="Constitution">CON {{this.abilityScores.con}}</span>
             </div>
-          {{/each}}
+            <div class="abilities">
+              <span class="ability" title="Intelligence">INT {{this.abilityScores.int}}</span>
+              <span class="ability" title="Wisdom">WIS {{this.abilityScores.wis}}</span>
+              <span class="ability" title="Charisma">CHA {{this.abilityScores.cha}}</span>
+            </div>
+          </div>
         </div>
-      </div>
-    {{/each}}
+      {{/each}}
+    </div>
   </div>
 
   <div class="dialog-footer">
     <button type="button" class="freeform-btn" data-button="freeform">
       <i class="fas fa-pencil-alt"></i>
-      Create from Scratch (Freeform Chargen)
+      Freeform Registration
     </button>
     <button type="button" class="confirm-btn" data-button="confirm" disabled>
       <i class="fas fa-check"></i>
-      Confirm Template Selection
+      Confirm Profile
     </button>
   </div>
 </div>
-
-<style>
-  .template-selection-dialog {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 1rem;
-    background: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    font-family: var(--font-primary);
-  }
-
-  .dialog-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .dialog-header h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-  }
-
-  .subtitle {
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: 0.95rem;
-  }
-
-  .template-selection-content {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 0.5rem;
-  }
-
-  .template-class-section {
-    margin-bottom: 2rem;
-  }
-
-  .class-name {
-    margin: 1rem 0 1rem 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-border-primary);
-    font-size: 1.1rem;
-  }
-
-  .templates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-
-  .template-card {
-    border: 1px solid var(--color-border-primary);
-    border-radius: 0.25rem;
-    overflow: hidden;
-    background: var(--color-bg-secondary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .template-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    border-color: var(--color-border-highlight);
-  }
-
-  .template-card.selected {
-    border: 2px solid #00c800;
-    box-shadow: 0 0 10px rgba(0, 200, 0, 0.3);
-  }
-
-  .template-card-header {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--color-border-secondary);
-  }
-
-  .template-name {
-    margin: 0 0 0.25rem 0;
-    font-size: 1rem;
-  }
-
-  .template-archetype {
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-    font-style: italic;
-  }
-
-  .template-image {
-    width: 100%;
-    height: 150px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    isolation: isolate;
-    background:
-      radial-gradient(circle at 50% 42%, rgba(0, 190, 255, 0.14), transparent 56%),
-      linear-gradient(180deg, rgba(2, 18, 32, 0.78), rgba(0, 0, 0, 0.94)),
-      var(--color-bg-tertiary);
-    border-top: 1px solid rgba(94, 224, 255, 0.20);
-    border-bottom: 1px solid rgba(94, 224, 255, 0.20);
-  }
-
-  .template-image::before,
-  .template-image::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .template-image::before {
-    z-index: 2;
-    background:
-      radial-gradient(circle at 50% 35%, rgba(124, 236, 255, 0.18), transparent 44%),
-      linear-gradient(135deg, rgba(0, 178, 255, 0.12), transparent 34%, rgba(0, 178, 255, 0.06));
-    mix-blend-mode: screen;
-    opacity: 0.82;
-  }
-
-  .template-image::after {
-    z-index: 3;
-    background:
-      repeating-linear-gradient(0deg, transparent 0 2px, rgba(94, 224, 255, 0.095) 2px 3px),
-      linear-gradient(180deg, transparent 0%, rgba(94, 224, 255, 0.10) 50%, transparent 100%);
-    mix-blend-mode: screen;
-    opacity: 0.32;
-  }
-
-  .template-image img {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(1) sepia(0.08) hue-rotate(165deg) saturate(0.72) brightness(1.12) contrast(1.10) drop-shadow(0 0 5px rgba(0, 190, 255, 0.24));
-    mix-blend-mode: screen;
-    opacity: 0.94;
-  }
-
-  .no-image {
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
-  }
-
-  .template-card-body {
-    padding: 0.75rem;
-  }
-
-  .description {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.85rem;
-    line-height: 1.4;
-  }
-
-  .quote {
-    margin: 0;
-    font-size: 0.8rem;
-    font-style: italic;
-    color: var(--color-text-secondary);
-  }
-
-  .template-stats {
-    padding: 0.75rem;
-    border-top: 1px solid var(--color-border-secondary);
-    background: var(--color-bg-tertiary);
-  }
-
-  .abilities {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: space-around;
-    margin-bottom: 0.25rem;
-  }
-
-  .ability {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    background: var(--color-bg-secondary);
-    border-radius: 0.125rem;
-  }
-
-  .dialog-footer {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--color-border-primary);
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-  }
-
-  .freeform-btn,
-  .confirm-btn {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid var(--color-border-primary);
-    border-radius: 0.25rem;
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    cursor: pointer;
-    font-family: var(--font-primary);
-    transition: all 0.2s ease;
-  }
-
-  .freeform-btn:hover {
-    background: var(--color-bg-tertiary);
-  }
-
-  .confirm-btn:hover:not(:disabled) {
-    background: #00c800;
-    color: white;
-    border-color: #00a000;
-  }
-
-  .confirm-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-</style>

@@ -126,7 +126,7 @@
 
 .prog-holo .prog-selected-rail__portrait-placeholder {
   font-size: 2rem;
-  color: var(--prog-text-secondary);
+  color: var(--prog-neutral);
 }
 
 .prog-holo .prog-selected-rail__name {
@@ -277,5 +277,5 @@
 }
 
 .prog-holo .prog-selected-rail__compact-modifier.prog-num--zero {
-  color: var(--prog-text-secondary);
+  color: var(--prog-neutral);
 }

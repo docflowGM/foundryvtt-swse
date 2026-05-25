@@ -85,7 +85,7 @@
 
           <div class="pane hero">
             <div class="stage-marquee">
-              <div class="stg-idx" data-role="stage-index">{{stageIndex}}</div>
+              <div class="stg-idx intro-foreign-tech" data-role="device-version" title="Versa V4.3">{{deviceVersionLabel}}</div>
               <div class="stg-name" data-role="stage-name">{{stageName}}</div>
               <div class="stg-glyph" data-role="stage-glyph">{{stageGlyph}}</div>
             </div>
@@ -187,7 +187,7 @@
           <div class="intro-action-row">
             <button class="btn ghost" type="button" data-action="skip-intro">{{skipLabel}}</button>
             {{#if showGalacticProfile}}
-            <button class="btn secondary" type="button" data-role="intro-galactic-profile" title="{{galacticProfileTitle}}" {{#unless isComplete}}disabled{{/unless}}>{{galacticProfileLabel}}</button>
+            <button class="btn secondary" type="button" data-role="intro-galactic-profile" data-action="galactic-profile" title="{{galacticProfileTitle}}">{{galacticProfileLabel}}</button>
             {{/if}}
             <button class="btn primary" type="button" data-action="next-step" {{#unless isComplete}}disabled{{/unless}}>{{continueLabel}}</button>
           </div>

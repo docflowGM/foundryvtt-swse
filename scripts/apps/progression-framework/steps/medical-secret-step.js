@@ -327,7 +327,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       ...secret,
       isSelected: this._committedSecretIds.has(secret.id),
       isSuggested,
-      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };

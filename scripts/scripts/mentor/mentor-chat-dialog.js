@@ -790,7 +790,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     }
 
     prestigeAffinities.slice(0, 3).forEach((aff, idx) => {
-      const confidence = Math.round(aff.confidence * 100);
+      const confidence = aff.confidence > 0 ? 'Recommended' : '';
       planning += `**${aff.className}** (${confidence}% alignment)\n`;
       planning += `This path builds on your current direction. It will deepen what you've started, not redirect it.\n\n`;
     });
