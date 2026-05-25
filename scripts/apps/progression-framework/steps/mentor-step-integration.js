@@ -77,6 +77,9 @@ function getMentorIdFromObject(mentor) {
 export const STEP_TO_CHOICE_TYPE = {
   'species': 'species',
   'class': 'class',
+  'profile-class': 'class',
+  'profile-archetype': 'class',
+  'profile-review': 'summary',
   'attribute': 'ability',
   'ability': 'ability',
   'ability-scores': 'ability',
@@ -368,6 +371,7 @@ function _sourcePriority(source) {
   const priorities = {
     'manual': 100,
     'class-selection': 95,
+    'profile-selection': 94,
     'session': 90,
     'prestige-selection': 88,
     'draftSelections.class': 85,

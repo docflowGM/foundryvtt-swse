@@ -2,31 +2,90 @@
   <header class="prog-profile-header">
     <div>
       <div class="eyebrow">Galactic Profile</div>
-      <h2>Profile Review</h2>
-      <p>Confirm the profile package. The normal progression engine will keep only unresolved choices live.</p>
+      <h2>Profile Manifest</h2>
+      <p>Review what the archetype handled, then jump directly to anything the normal progression rules still need from you.</p>
     </div>
     <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
   </header>
 
+  <nav class="prog-profile-substeps" aria-label="Galactic Profile route">
+    <div class="profile-substep is-done"><b>01</b><span>Class</span><em>{{#if template}}{{template.className}}{{else}}Done{{/if}}</em></div>
+    <div class="profile-substep is-done"><b>02</b><span>Archetype</span><em>{{#if template}}{{template.name}}{{else}}Done{{/if}}</em></div>
+    <div class="profile-substep is-active {{#if route.reviewDone}}is-done{{/if}}"><b>03</b><span>Review</span><em>{{#if template}}{{template.openCount}} Open{{else}}Missing{{/if}}</em></div>
+  </nav>
+
   {{#if template}}
-    <section class="prog-profile-review-card">
-      <div class="holo-img holo-img--review"><img src="{{template.image}}" alt="{{template.name}}" /></div>
-      <div class="review-copy">
-        <div class="eyebrow">{{template.className}} / {{template.species}}</div>
-        <h3>{{template.name}}</h3>
-        <p>{{template.description}}</p>
-        <blockquote>{{template.quote}}</blockquote>
+    <section class="prog-profile-review-layout">
+      <aside class="profile-review-identity">
+        <div class="holo-img holo-img--review"><img src="{{template.image}}" alt="{{template.name}}" /></div>
+        <label class="profile-name-field">
+          <span>Character Name</span>
+          <input type="text" value="{{characterName}}" placeholder="Enter name or resolve on final review" maxlength="64" data-profile-character-name />
+        </label>
+        <div class="profile-id-block">
+          <div><span>Class</span><b>{{template.className}}</b></div>
+          <div><span>Archetype</span><b>{{template.name}}</b></div>
+          <div><span>Species</span><b>{{template.species}}</b></div>
+          <div><span>Background</span><b>{{template.background}}</b></div>
+          <div><span>Credits</span><b>{{template.credits}}</b></div>
+        </div>
+      </aside>
+
+      <section class="profile-review-body">
+        <div class="review-copy">
+          <div class="eyebrow">{{template.className}} / {{template.species}}</div>
+          <h3>{{template.archetype}}</h3>
+          <p>{{template.description}}</p>
+          {{#if template.quote}}<blockquote>“{{template.quote}}”</blockquote>{{/if}}
+        </div>
+
         <div class="profile-abilities profile-abilities--review">
           {{#each template.abilities}}
-            <span class="profile-ability"><b>{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
+            <span class="profile-ability"><b class="swse-ability-label swse-ability-label--{{key}}">{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
           {{/each}}
         </div>
+
+        {{#if template.reconciliationNotes}}
+          <div class="profile-reconciliation-notes">
+            <strong>Rules reconciliation</strong>
+            {{#each template.reconciliationNotes}}<span>{{this}}</span>{{/each}}
+          </div>
+        {{/if}}
+
         <div class="profile-review-lists">
-          <div><strong>Trained Skills</strong><span>{{#each template.skills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
-          <div><strong>Feats</strong><span>{{#each template.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
-          <div><strong>Talents</strong><span>{{#each template.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+          <div class="pkg-card"><strong>Trained Skills <small>{{template.skills.length}}</small></strong><span>{{#each template.skills}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+          <div class="pkg-card"><strong>Feats <small>{{template.feats.length}}</small></strong><span>{{#each template.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+          <div class="pkg-card"><strong>Talents <small>{{template.talents.length}}</small></strong><span>{{#each template.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
+          <div class="pkg-card"><strong>Force Powers <small>{{template.forcePowers.length}}</small></strong><span>{{#if template.forcePowers}}{{#each template.forcePowers}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}Not a Force package{{/if}}</span></div>
+          <div class="pkg-card pkg-card--wide"><strong>Starting Equipment <small>{{template.equipment.length}}</small></strong><span>{{#each template.equipment}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span></div>
         </div>
-      </div>
+      </section>
+
+      <aside class="profile-open-business {{#if template.isClean}}is-clean{{/if}}">
+        <div class="business-head">
+          <span>{{#if template.isClean}}Manifest Clean{{else}}Open Assignments{{/if}}</span>
+          <b>{{template.openCount}}</b>
+        </div>
+
+        <div class="business-list">
+          {{#if template.openBusiness}}
+            {{#each template.openBusiness}}
+              <button type="button" class="business-row {{#if blocking}}is-blocking{{/if}}" data-profile-business-target="{{stepId}}">
+                <i class="fas {{icon}}"></i>
+                <span><strong>{{label}}</strong><em>{{detail}}</em></span>
+                <b>Resolve</b>
+              </button>
+            {{/each}}
+          {{else}}
+            <div class="business-row is-resolved"><i class="fas fa-check"></i><span><strong>No open assignments</strong><em>This profile can move straight into final confirmation.</em></span><b>Clean</b></div>
+          {{/if}}
+        </div>
+
+        {{#if template.mentorLine}}
+          <div class="business-mentor-note"><strong>Mentor channel</strong><span>{{template.mentorLine}}</span></div>
+        {{/if}}
+        <div class="business-mentor-note business-mentor-note--system"><strong>System note</strong><span>Rows above are generated from the reconciled progression session, not from static profile copy. Clicking one applies the profile and opens the matching canonical step.</span></div>
+      </aside>
     </section>
   {{else}}
     <section class="prog-profile-callout"><i class="fas fa-triangle-exclamation"></i><div><strong>No archetype selected.</strong><span>Go back and choose a profile.</span></div></section>

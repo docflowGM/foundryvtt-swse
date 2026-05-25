@@ -10,6 +10,9 @@ import { getStepMentorObject, resolveStepMentorContext, resolveStepMentorGuidanc
 const STEP_CHOICE_TYPE = {
   'species': 'species',
   'class': 'class',
+  'profile-class': 'class',
+  'profile-archetype': 'class',
+  'profile-review': 'summary',
   'attribute': 'ability',
   'ability': 'ability',
   'ability-scores': 'ability',

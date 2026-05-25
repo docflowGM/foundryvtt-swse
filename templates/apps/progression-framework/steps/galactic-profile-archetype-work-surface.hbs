@@ -2,17 +2,24 @@
   <header class="prog-profile-header">
     <div>
       <div class="eyebrow">Galactic Profile</div>
-      <h2>Archetype</h2>
-      <p>Choose the specific profile package. Hover a holo to reveal its description, quote, and attributes.</p>
+      <h2>Archetype Profile</h2>
+      <p>Choose the packaged build. Hover a holo-card to reveal the description, mentor line, and attribute spread.</p>
     </div>
     <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
   </header>
 
+  <nav class="prog-profile-substeps" aria-label="Galactic Profile route">
+    <div class="profile-substep is-done"><b>01</b><span>Class</span><em>{{#if selectedClass}}{{selectedClass.name}}{{else}}Selected{{/if}}</em></div>
+    <div class="profile-substep is-active {{#if route.archetypeDone}}is-done{{/if}}"><b>02</b><span>Archetype</span><em>{{#if route.archetypeDone}}Locked{{else}}Select{{/if}}</em></div>
+    <div class="profile-substep {{#if route.reviewDone}}is-done{{/if}}"><b>03</b><span>Review</span><em>Manifest</em></div>
+  </nav>
+
   <section class="prog-profile-class-strip prog-profile-class-strip--compact" aria-label="Profile classes">
     {{#each classes}}
       <button type="button" class="prog-profile-class-card {{#if selected}}is-selected{{else}}is-dimmed{{/if}}" data-profile-class-id="{{id}}">
+        <span class="profile-card-index">{{index}}</span>
         <span class="holo-img holo-img--class"><img src="{{image}}" alt="{{name}}" /></span>
-        <span class="class-copy"><strong>{{name}}</strong><em>{{count}} profiles</em></span>
+        <span class="class-copy"><strong>{{name}}</strong><em>{{profileCountLabel}}</em></span>
       </button>
     {{/each}}
   </section>
@@ -21,14 +28,21 @@
     {{#each archetypes}}
       <button type="button" class="prog-profile-archetype-card {{#if selected}}is-selected{{/if}}" data-profile-template-id="{{id}}">
         <span class="holo-img holo-img--archetype"><img src="{{image}}" alt="{{name}}" /></span>
-        <span class="archetype-name">{{name}}</span>
-        <span class="archetype-overlay">
+        <span class="archetype-name">
           <strong>{{archetype}}</strong>
-          <em>{{quote}}</em>
+          <em>{{species}}{{#if background}} · {{background}}{{/if}}</em>
+        </span>
+        <span class="archetype-overlay">
+          <span class="archetype-overlay__kicker">{{className}} Profile</span>
+          <strong>{{archetype}}</strong>
+          {{#if quote}}<em>“{{quote}}”</em>{{/if}}
           <span class="archetype-description">{{description}}</span>
+          {{#if roles}}
+            <span class="profile-role-tags">{{#each roles}}<i>{{this}}</i>{{/each}}</span>
+          {{/if}}
           <span class="profile-abilities">
             {{#each abilities}}
-              <span class="profile-ability"><b>{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
+              <span class="profile-ability"><b class="swse-ability-label swse-ability-label--{{key}}">{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
             {{/each}}
           </span>
         </span>

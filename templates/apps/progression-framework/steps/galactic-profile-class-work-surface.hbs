@@ -2,26 +2,46 @@
   <header class="prog-profile-header">
     <div>
       <div class="eyebrow">Galactic Profile</div>
-      <h2>Profile Class</h2>
-      <p>Pick the training channel first. The selected class comes forward; the others recede into the holo-stack.</p>
+      <h2>Training Channel</h2>
+      <p>Pick the class foundation. The chosen channel comes forward; inactive channels dim and recede in the holo-stack.</p>
     </div>
     <div class="prog-profile-flow">CLASS → ARCHETYPE → REVIEW</div>
   </header>
 
-  <section class="prog-profile-class-strip" aria-label="Profile classes">
+  <nav class="prog-profile-substeps" aria-label="Galactic Profile route">
+    <div class="profile-substep is-active {{#if route.classDone}}is-done{{/if}}"><b>01</b><span>Class</span><em>{{#if selectedClass}}{{selectedClass.name}}{{else}}Select{{/if}}</em></div>
+    <div class="profile-substep {{#if route.archetypeDone}}is-done{{/if}}"><b>02</b><span>Archetype</span><em>Next</em></div>
+    <div class="profile-substep {{#if route.reviewDone}}is-done{{/if}}"><b>03</b><span>Review</span><em>Manifest</em></div>
+  </nav>
+
+  <section class="prog-profile-class-grid" aria-label="Profile classes">
     {{#each classes}}
       <button type="button" class="prog-profile-class-card {{#if selected}}is-selected{{else}}is-dimmed{{/if}}" data-profile-class-id="{{id}}">
+        <span class="profile-card-index">{{index}}</span>
         <span class="holo-img holo-img--class"><img src="{{image}}" alt="{{name}}" /></span>
-        <span class="class-copy"><strong>{{name}}</strong><em>{{count}} profiles</em></span>
+        <span class="class-copy">
+          <strong>{{name}}</strong>
+          <em>{{profileCountLabel}}</em>
+        </span>
       </button>
     {{/each}}
   </section>
 
-  <section class="prog-profile-callout">
-    <i class="fas fa-satellite-dish"></i>
-    <div>
-      <strong>Channel locked to shell navigation.</strong>
-      <span>Continue to Archetype to choose the actual profile package.</span>
-    </div>
-  </section>
+  {{#if selectedClass}}
+    <section class="prog-profile-class-brief">
+      <div>
+        <div class="eyebrow">Selected Channel</div>
+        <h3>{{selectedClass.name}}</h3>
+        <p>{{selectedClass.description}}</p>
+      </div>
+      <div class="profile-brief-list">
+        <strong>Available archetypes</strong>
+        <div>
+          {{#each selectedClass.archetypeNames}}
+            <span>{{this}}</span>
+          {{/each}}
+        </div>
+      </div>
+    </section>
+  {{/if}}
 </div>

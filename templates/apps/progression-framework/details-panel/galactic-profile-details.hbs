@@ -3,11 +3,11 @@
   <div class="eyebrow">Galactic Profile / {{mode}}</div>
   <h3>{{title}}</h3>
   {{#if description}}<p>{{description}}</p>{{/if}}
-  {{#if quote}}<blockquote>{{quote}}</blockquote>{{/if}}
+  {{#if quote}}<blockquote>“{{quote}}”</blockquote>{{/if}}
   {{#if abilities}}
     <div class="profile-abilities profile-abilities--detail">
       {{#each abilities}}
-        <span class="profile-ability"><b>{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
+        <span class="profile-ability"><b class="swse-ability-label swse-ability-label--{{key}}">{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
       {{/each}}
     </div>
   {{/if}}
