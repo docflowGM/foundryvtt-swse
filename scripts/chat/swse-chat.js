@@ -2,6 +2,71 @@
 
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSERollEngine } from "/systems/foundryvtt-swse/scripts/engine/rolls/swse-roll-engine.js";
+import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
+
+
+function sanitizeRollContextForChat(context = {}) {
+  const safe = { ...(context ?? {}) };
+  delete safe.sourceElement;
+  delete safe.companionSource;
+  delete safe.sheet;
+  delete safe.application;
+  delete safe.app;
+  delete safe.event;
+  delete safe.domEvent;
+  return safe;
+}
+
+function resolveRollCompanionSource(context = {}) {
+  return context?.companionSource
+    ?? context?.sourceElement
+    ?? context?.event?.currentTarget
+    ?? context?.domEvent?.currentTarget
+    ?? context?.sheet
+    ?? context?.application
+    ?? context?.app
+    ?? null;
+}
+
+function shouldShowRollCompanion(context = {}) {
+  return context?.showRollCompanion !== false
+    && context?.showDatapadRollCompanion !== false
+    && context?.showHolopadRollCompanion !== false;
+}
+
+function showDatapadRollCompanionForChat({ source = null, roll = null, actor = null, message = null, holoData = null, context = {} } = {}) {
+  if (!shouldShowRollCompanion(context)) return;
+  try {
+    showHolopadRollCompanion(source, {
+      ...(holoData ?? {}),
+      roll,
+      actor,
+      total: roll?.total ?? holoData?.total,
+      chatMessageId: message?.id ?? holoData?.chatMessageId ?? null,
+      messageId: message?.id ?? null,
+      context: holoData?.context ?? context
+    }, {
+      actor,
+      sourceElement: context?.sourceElement ?? context?.companionSource ?? null,
+      companionSource: source,
+      sheet: context?.sheet ?? null,
+      application: context?.application ?? context?.app ?? null,
+      kind: holoData?.category ?? context?.type ?? context?.kind,
+      title: holoData?.actionTitle ?? holoData?.title,
+      itemName: context?.itemName ?? context?.weapon?.name ?? context?.item?.name ?? context?.sourceItem?.name,
+      abilityKey: holoData?.abilityKey ?? context?.abilityKey ?? context?.ability,
+      skillKey: context?.skillKey ?? context?.skill,
+      forceDescriptor: holoData?.forceDescriptor ?? context?.forceDescriptor ?? context?.descriptor,
+      railColor: holoData?.railColor ?? holoData?.weaponVisual?.colorHex ?? context?.railColor,
+      weapon: context?.weapon ?? context?.item ?? context?.sourceItem,
+      weaponVisual: holoData?.weaponVisual ?? context?.weaponVisual,
+      dc: context?.dc ?? context?.targetDefense,
+      damageType: holoData?.damageType ?? context?.damageType
+    });
+  } catch (err) {
+    console.warn('SWSE | Roll companion display failed', err);
+  }
+}
 
 function stripHtml(value = '') {
   const text = String(value ?? '');
@@ -193,12 +258,15 @@ export class SWSEChat {
   } = {}) {
     if (!roll) {throw new Error('SWSEChat.postRoll requires a Roll.');}
 
+    const companionSource = resolveRollCompanionSource(context);
+    const renderContext = sanitizeRollContextForChat(context);
+
     // Build structured roll data for holo rendering
     const holoData = SWSERollEngine.buildHoloRollData({
       roll,
       actor,
       flavor,
-      context
+      context: renderContext
     });
 
     // Render holo roll template
@@ -226,7 +294,16 @@ export class SWSEChat {
     if (Array.isArray(whisper)) {messageData.whisper = whisper;}
     if (rollMode) {messageData.rollMode = rollMode;}
 
-    return createChatMessage(messageData);
+    const message = await createChatMessage(messageData);
+    showDatapadRollCompanionForChat({
+      source: companionSource,
+      roll,
+      actor,
+      message,
+      holoData,
+      context
+    });
+    return message;
   }
 
   static async postHTML({

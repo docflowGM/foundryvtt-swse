@@ -119,6 +119,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
       context: {
         type: 'skill',
         label: skillLabel,
+        skillKey,
+        abilityKey,
         trained: isTrained,
         baseBonus: rollResult.baseBonus,
         situationalMods: rollResult.modifierTotal,
