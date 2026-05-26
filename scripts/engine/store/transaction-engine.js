@@ -39,6 +39,7 @@ import { VehicleFactory } from "/systems/foundryvtt-swse/scripts/engine/vehicles
 import { DroidFactory } from "/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js";
 import { PlacementRouter } from "/systems/foundryvtt-swse/scripts/engine/store/placement-router.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 
 export class TransactionEngine {
   static _mutationLocks = new Set();
@@ -52,6 +53,97 @@ export class TransactionEngine {
   static _blockedMutationContexts = new Set([
     'store-customization-stage'
   ]);
+
+  static _allowedCreditAdjustmentContexts = new Set([
+    'store-credit-adjustment',
+    'store-rollback-correction',
+    'store-custom-approval',
+    'store-custom-approval-refund',
+    'gm-credit-adjustment',
+    'gm-credit-refund'
+  ]);
+
+  /**
+   * Read TransactionEngine audit entries from one actor.
+   *
+   * These actor flags are the canonical TransactionEngine ledger for actor-scoped
+   * credit movement. Legacy purchaseHistory can mirror this for old UI, but it
+   * must not be treated as the credit SSOT.
+   */
+  static getActorTransactions(actor, options = {}) {
+    const { includeZeroCost = false, contexts = null } = options;
+    if (!actor) return [];
+
+    let records = {};
+    try {
+      records = actor.getFlag?.('foundryvtt-swse', 'transactions') || actor.flags?.['foundryvtt-swse']?.transactions || {};
+    } catch (_err) {
+      records = actor.flags?.['foundryvtt-swse']?.transactions || {};
+    }
+
+    const contextSet = Array.isArray(contexts) && contexts.length ? new Set(contexts) : null;
+    return Object.values(records || {})
+      .filter(record => record && typeof record === 'object')
+      .filter(record => !contextSet || contextSet.has(record.context))
+      .map(record => this.#normalizeTransactionRecord(actor, record))
+      .filter(record => includeZeroCost || Number(record.amount || 0) !== 0)
+      .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+  }
+
+  /** Read all actor-scoped TransactionEngine audit entries. */
+  static getAllTransactions(options = {}) {
+    const actors = Array.from(game?.actors ?? []);
+    return actors
+      .flatMap(actor => this.getActorTransactions(actor, options))
+      .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+  }
+
+  static #normalizeTransactionRecord(actor, record) {
+    const audit = record.audit || {};
+    const amount = Number.isFinite(Number(record.amount))
+      ? Number(record.amount)
+      : (Number(record.cost) > 0 ? -normalizeCredits(record.cost) : 0);
+    const cost = Number.isFinite(Number(record.cost))
+      ? normalizeCredits(record.cost)
+      : Math.abs(normalizeCredits(amount));
+    const itemNames = Array.isArray(audit.itemNames)
+      ? audit.itemNames.filter(Boolean)
+      : (Array.isArray(audit.items) ? audit.items.map(item => item?.name).filter(Boolean) : []);
+
+    return {
+      id: record.id || record.transactionId || '',
+      transactionId: record.id || record.transactionId || '',
+      context: record.context || 'unknown',
+      timestamp: record.createdAt || record.timestamp || 0,
+      actorId: record.actorId || actor?.id || '',
+      actorName: record.actorName || actor?.name || 'Unknown Actor',
+      userId: record.userId || audit.userId || null,
+      userName: record.userName || audit.userName || game?.users?.get?.(record.userId || audit.userId)?.name || '—',
+      amount,
+      cost,
+      creditsBefore: record.creditsBefore ?? audit.creditsBefore ?? null,
+      creditsAfter: record.creditsAfter ?? audit.creditsAfter ?? null,
+      status: record.status || 'Success',
+      reason: record.reason || audit.reason || record.error || '',
+      source: record.source || audit.source || 'TransactionEngine',
+      type: record.type || this.#deriveTransactionType(record.context, amount),
+      itemNames,
+      itemName: record.itemName || audit.itemName || (itemNames.length ? itemNames.join(', ') : audit.label || 'Credit Transaction'),
+      itemCount: Number(audit.itemCount ?? itemNames.length ?? 0) || 0,
+      audit
+    };
+  }
+
+  static #deriveTransactionType(context = '', amount = 0) {
+    const key = String(context || '').toLowerCase();
+    if (key.includes('refund') || key.includes('grant')) return 'Refund';
+    if (key.includes('rollback') || key.includes('correction') || key.includes('adjustment')) return 'Correction';
+    if (key.includes('sell')) return 'Sell';
+    if (key.includes('custom-approval')) return 'Approval Purchase';
+    if (key.includes('purchase') || Number(amount) < 0) return 'Buy';
+    if (Number(amount) > 0) return 'Credit';
+    return 'Transaction';
+  }
 
   /**
    * Execute one actor-scoped contextual mutation transaction.
@@ -138,6 +230,8 @@ export class TransactionEngine {
         };
       }
 
+      const creditsBefore = LedgerService.getCurrentCredits(freshActor);
+      const creditsAfter = normalizeCredits(creditsBefore - normalizedCost);
       const plans = Array.isArray(mutationPlan) ? mutationPlan : [mutationPlan];
       const creditPlan = normalizedCost > 0 ? LedgerService.buildCreditDelta(freshActor, normalizedCost) : null;
 
@@ -146,10 +240,23 @@ export class TransactionEngine {
           [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
             id: transactionId,
             context: transactionContext,
+            type: transactionContext.includes('approval') ? 'Approval Purchase' : 'Buy',
+            status: 'Success',
             cost: normalizedCost,
+            amount: normalizedCost > 0 ? -normalizedCost : 0,
+            creditsBefore,
+            creditsAfter,
             createdAt: Date.now(),
             actorId: freshActor.id,
-            audit
+            actorName: freshActor.name,
+            userId: game?.user?.id ?? null,
+            userName: game?.user?.name ?? null,
+            source,
+            audit: {
+              ...audit,
+              creditsBefore,
+              creditsAfter
+            }
           }
         }
       };
@@ -207,6 +314,157 @@ export class TransactionEngine {
             success: false,
             transactionId,
             error: `Transaction failed and rollback failed: ${error.message}`
+          };
+        }
+      }
+
+      return { success: false, transactionId, error: error.message };
+    } finally {
+      this._mutationLocks.delete(lockKey);
+    }
+  }
+
+  /**
+   * Execute a GM/store credit adjustment through the TransactionEngine ledger.
+   *
+   * Positive amount grants credits. Negative amount deducts credits. This is the
+   * canonical path for store rollback/correction credit movement so GM tools do
+   * not directly mutate system.credits.
+   */
+  static async executeCreditAdjustment(context = {}, options = {}) {
+    const {
+      actor,
+      amount = 0,
+      reason = '',
+      transactionContext = 'store-credit-adjustment',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeCreditAdjustment'
+    } = options;
+
+    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
+      return { success: false, transactionId, error: `Unsupported credit adjustment context: ${transactionContext}` };
+    }
+
+    if (!actor) return { success: false, transactionId, error: 'No actor provided' };
+
+    const freshActor = game?.actors?.get?.(actor.id) || actor;
+    if (!freshActor) return { success: false, transactionId, error: 'Actor no longer exists' };
+    if (freshActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient permissions for transaction' };
+
+    const normalizedAmount = normalizeCredits(amount);
+    if (!Number.isFinite(normalizedAmount) || normalizedAmount === 0) {
+      return { success: false, transactionId, error: 'Credit adjustment amount must be a non-zero number' };
+    }
+
+    const lockKey = `${freshActor.id}:${transactionContext}:credit-adjustment`;
+    if (this._mutationLocks.has(lockKey)) {
+      return { success: false, transactionId, error: 'Credit adjustment already in progress' };
+    }
+
+    this._mutationLocks.add(lockKey);
+
+    let snapshotId = null;
+    try {
+      const creditsBefore = LedgerService.getCurrentCredits(freshActor);
+      const creditsAfter = normalizeCredits(creditsBefore + normalizedAmount);
+      if (creditsAfter < 0) {
+        return {
+          success: false,
+          transactionId,
+          error: `Insufficient credits for correction (have ${creditsBefore}, adjustment ${normalizedAmount})`
+        };
+      }
+
+      const transactionAudit = {
+        set: {
+          'system.credits': creditsAfter,
+          [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
+            id: transactionId,
+            context: transactionContext,
+            type: this.#deriveTransactionType(transactionContext, normalizedAmount),
+            status: 'Success',
+            cost: Math.abs(normalizedAmount),
+            amount: normalizedAmount,
+            creditsBefore,
+            creditsAfter,
+            createdAt: Date.now(),
+            actorId: freshActor.id,
+            actorName: freshActor.name,
+            userId: game?.user?.id ?? null,
+            userName: game?.user?.name ?? null,
+            reason,
+            source,
+            audit: {
+              ...audit,
+              reason,
+              creditsBefore,
+              creditsAfter
+            }
+          }
+        }
+      };
+
+      try {
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        snapshotId = await SnapshotManager.createSnapshot(
+          freshActor,
+          `${transactionContext} credit adjustment (${normalizedAmount} credits)`
+        );
+      } catch (snapshotError) {
+        swseLogger.warn('TransactionEngine: Credit adjustment snapshot failed; continuing without rollback snapshot', {
+          transactionId,
+          context: transactionContext,
+          error: snapshotError.message
+        });
+      }
+
+      await ActorEngine.applyMutationPlan(freshActor, transactionAudit, {
+        validate,
+        rederive,
+        source: `${source}.${transactionContext}`
+      });
+
+      swseLogger.info('TransactionEngine: Credit adjustment complete', {
+        transactionId,
+        context: transactionContext,
+        actor: freshActor.id,
+        amount: normalizedAmount,
+        creditsBefore,
+        creditsAfter
+      });
+
+      Hooks.callAll?.('swseCreditAdjustmentComplete', {
+        transaction: this.#normalizeTransactionRecord(freshActor, transactionAudit.set[`flags.foundryvtt-swse.transactions.${transactionId}`]),
+        actor: freshActor,
+        success: true
+      });
+
+      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedAmount };
+    } catch (error) {
+      swseLogger.error('TransactionEngine: Credit adjustment failed', {
+        transactionId,
+        context: transactionContext,
+        actor: freshActor?.id,
+        error: error.message
+      });
+
+      if (snapshotId) {
+        try {
+          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId, snapshotId });
+        } catch (rollbackError) {
+          return {
+            success: false,
+            transactionId,
+            error: `Credit adjustment failed and rollback failed: ${error.message}`
           };
         }
       }

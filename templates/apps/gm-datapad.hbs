@@ -812,7 +812,7 @@
             <div>
               <span class="gm-command-eyebrow">TRANSACTIONS</span>
               <h3>Sales History</h3>
-              <p>Audit who bought what, at what price, and whether correction is needed.</p>
+              <p>TransactionEngine ledger view: audit who bought what, credit impact, status, and GM corrections.</p>
             </div>
             <div class="gm-store-toolbar">
               <select class="swse-ui-input" data-store-transaction-filter="actor">
@@ -841,7 +841,8 @@
                     <th>Type</th>
                     <th>Item</th>
                     <th>Qty</th>
-                    <th>Price</th>
+                    <th>Credit Impact</th>
+                    <th>Balance</th>
                     <th>Status</th>
                     <th>Reason</th>
                     <th>Source</th>
@@ -857,11 +858,16 @@
                       <td>{{this.item}}</td>
                       <td>{{this.quantity}}</td>
                       <td class="amount {{#if (gt this.amount 0)}}positive{{else}}negative{{/if}}">{{#if (gt this.amount 0)}}+{{/if}}{{this.amount}} cr</td>
+                      <td class="gm-store-balance-cell">{{this.balanceDisplay}}</td>
                       <td><span class="gm-store-status-chip">{{this.status}}</span></td>
                       <td>{{#if this.reason}}{{this.reason}}{{else}}—{{/if}}</td>
                       <td><span class="source-badge">{{this.source}}</span></td>
                       <td>
-                        <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-index="{{@index}}" title="Credit correction only. Full item rollback will be a later ledger phase.">Adjust Credits</button>
+                        {{#if this.canReverse}}
+                          <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-index="{{@index}}" title="Record a TransactionEngine credit correction. Inventory rollback is handled separately.">Reverse Credit Impact</button>
+                        {{else}}
+                          <span class="gm-store-muted-action">Ledger only</span>
+                        {{/if}}
                       </td>
                     </tr>
                   {{/each}}

@@ -2215,3 +2215,24 @@
     justify-content: flex-start;
   }
 }
+
+.gm-store-balance-cell {
+  white-space: nowrap;
+  font-family: var(--swse-font-mono, monospace);
+  color: color-mix(in srgb, var(--swse-accent-text, #dff8ff) 72%, transparent);
+}
+
+.gm-store-muted-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent);
+  color: color-mix(in srgb, var(--swse-accent-text, #dff8ff) 52%, transparent);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

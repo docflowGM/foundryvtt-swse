@@ -185,6 +185,38 @@ async function handleCreditGrantComplete(payload = {}) {
   });
 }
 
+
+async function handleCreditAdjustmentComplete(payload = {}) {
+  const transaction = payload.transaction || {};
+  if (payload.success === false || transaction.success === false) return;
+
+  const context = String(transaction.context || transaction.metadata?.context || '');
+  if (!context.includes('rollback') && !context.includes('correction') && !context.includes('adjustment')) return;
+
+  const actor = payload.actor || game.actors?.get?.(transaction.actorId) || null;
+  if (!actor) return;
+
+  const amount = asNumber(transaction.amount, 0);
+  if (amount === 0) return;
+
+  const after = actorCredits(actor);
+  const transactionId = transaction.id || transaction.transactionId || `adjustment_${transaction.timestamp || Date.now()}`;
+  const reason = transaction.reason || transaction.audit?.reason || 'GM credit correction';
+
+  await postReceiptOnce('credit-adjustment', transactionId, actor, {
+    sourceType: 'credit-adjustment',
+    vendorLabel: 'GM Store Control',
+    title: amount > 0 ? 'Credit correction received' : 'Credit correction applied',
+    itemSummary: reason,
+    previousBalance: after - amount,
+    newBalance: after,
+    delta: amount,
+    deltaLabel: amount > 0 ? 'credited' : 'deducted',
+    actorName: actor.name,
+    actions: [{ action: 'open-store', label: 'Open Store' }]
+  });
+}
+
 async function handleCustomPurchaseApproved(payload = {}) {
   const approval = payload.approval || {};
   const actor = payload.actor || game.actors?.get?.(approval.ownerActorId) || null;
@@ -239,6 +271,7 @@ export function registerStoreReceiptChatCards() {
   Hooks.on('swseStoreTransactionComplete', payload => { void handleStoreTransactionComplete(payload); });
   Hooks.on('swseCreditTransferComplete', payload => { void handleCreditTransferComplete(payload); });
   Hooks.on('swseCreditGrantComplete', payload => { void handleCreditGrantComplete(payload); });
+  Hooks.on('swseCreditAdjustmentComplete', payload => { void handleCreditAdjustmentComplete(payload); });
   Hooks.on('swseCustomPurchaseApproved', payload => { void handleCustomPurchaseApproved(payload); });
   Hooks.on('swseCustomPurchaseDenied', payload => { void handleCustomPurchaseDenied(payload); });
 

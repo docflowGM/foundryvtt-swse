@@ -28,6 +28,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 export class GMStoreDashboard extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -124,29 +125,20 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
   }
 
   async _loadTransactionHistory() {
-    this.transactions = [];
-
-    // Aggregate purchase history from all actors
-    for (const actor of game.actors) {
-      const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-      for (const purchase of history) {
-        for (const item of purchase.items) {
-          this.transactions.push({
-            timestamp: purchase.timestamp,
-            actor: actor.name,
-            type: 'Buy',
-            item: item.name,
-            amount: -normalizeCredits(item.cost),
-            source: 'Store',
-            actorId: actor.id,
-            purchaseId: purchase.timestamp
-          });
-        }
-      }
-    }
-
-    // Sort newest first
-    this.transactions.sort((a, b) => b.timestamp - a.timestamp);
+    this.transactions = TransactionEngine.getAllTransactions({ includeZeroCost: false })
+      .map((tx) => ({
+        transactionId: tx.transactionId || tx.id,
+        timestamp: tx.timestamp,
+        actor: tx.actorName || 'Unknown Actor',
+        type: tx.type || 'Transaction',
+        item: tx.itemName || 'Credit Transaction',
+        amount: normalizeCredits(tx.amount ?? 0),
+        source: tx.source || tx.context || 'TransactionEngine',
+        actorId: tx.actorId,
+        purchaseId: tx.transactionId || tx.id,
+        context: tx.context
+      }))
+      .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
   }
 
   async _loadPendingSales() {
@@ -335,14 +327,31 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         return;
       }
 
-      // Adjust credits only (reverse the amount)
-      const currentCredits = normalizeCredits(actor.system?.credits ?? 0);
-      const correctedCredits = normalizeCredits(currentCredits - tx.amount);
+      const result = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: normalizeCredits(0 - Number(tx.amount || 0)),
+        reason: 'GM store dashboard credit correction',
+        transactionContext: 'store-rollback-correction',
+        audit: {
+          sourceTransactionId: tx.transactionId || tx.purchaseId,
+          sourceContext: tx.context,
+          sourceItem: tx.item,
+          sourceAmount: tx.amount,
+          source: 'Legacy GM Store Dashboard Rollback'
+        }
+      }, {
+        source: 'GMStoreDashboard._reverseTransaction',
+        validate: true,
+        rederive: true
+      });
 
-      await ActorEngine.updateActor(actor, { 'system.credits': correctedCredits });
+      if (!result.success) {
+        ui.notifications.error(`Failed to adjust credits: ${result.error}`);
+        return;
+      }
 
-      SWSELogger.info(`[GM Store] Credit adjustment: ${tx.actor} - ${tx.item} (${tx.amount} credits)`);
-      ui.notifications.info(`Credit adjusted. ${actor.name} now has ${correctedCredits.toLocaleString()} credits.`);
+      SWSELogger.info(`[GM Store] TransactionEngine credit correction: ${tx.actor} - ${tx.item} (${tx.amount} credits)`);
+      ui.notifications.info(`Credit correction recorded for ${actor.name}.`);
 
       this.render();
     } catch (err) {
@@ -427,9 +436,26 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         return;
       }
 
-      // 2. Deduct credits
-      const newCredits = normalizeCredits(currentCredits - approval.costCredits);
-      await ActorEngine.updateActor(ownerActor, { 'system.credits': newCredits });
+      // 2. Deduct credits through the TransactionEngine SSOT
+      const creditResult = await TransactionEngine.executeCreditAdjustment({
+        actor: ownerActor,
+        amount: -normalizeCredits(approval.costCredits),
+        reason: `GM approved ${approval.type || 'custom'} acquisition`,
+        transactionContext: 'store-custom-approval',
+        audit: {
+          approvalType: approval.type,
+          draftActorId: approval.draftActorId,
+          itemName: approval.draftData?.name ?? 'Custom asset',
+          itemNames: [approval.draftData?.name ?? 'Custom asset'],
+          itemCount: 1,
+          source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval'
+        }
+      }, {
+        source: 'GMStoreDashboard._approvePendingCustom',
+        validate: true,
+        rederive: true
+      });
+      if (!creditResult.success) throw new Error(creditResult.error || 'Credit transaction failed');
 
       // 3. Transfer draft actor to owner
       const draftActor = game.actors.get(approval.draftActorId);
@@ -468,7 +494,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
           cost: approval.costCredits
         }] : [],
         total: approval.costCredits,
-        source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval'
+        transactionId: creditResult?.transactionId ?? null,
+        source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
+        compatibilityMirror: true
       };
       history.push(purchase);
       await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);

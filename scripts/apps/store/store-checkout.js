@@ -26,6 +26,7 @@ import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { consumeInventoryPolicyQuantities, isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 /**
  * Add item to shopping cart
@@ -1050,7 +1051,7 @@ export async function checkout(store, animateNumberCallback) {
         ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
 
         // Log purchase to history
-        await logPurchaseToHistory(actor, store.cart, total);
+        await logPurchaseToHistory(actor, store.cart, total, result.transactionId);
 
         // Consume finite GM inventory quantities only after the transaction succeeds.
         await consumeInventoryPolicyQuantities(store.cart);
@@ -1090,7 +1091,7 @@ export async function checkout(store, animateNumberCallback) {
  * @param {Object} cart - The shopping cart
  * @param {number} total - Total credits spent
  */
-async function logPurchaseToHistory(actor, cart, total) {
+async function logPurchaseToHistory(actor, cart, total, transactionId = null) {
     try {
         // Get existing purchase history
         const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
@@ -1114,7 +1115,10 @@ async function logPurchaseToHistory(actor, cart, total) {
                 cost: v.cost || 0,
                 condition: v.condition || 'new'
             })),
-            total: total
+            total: total,
+            transactionId,
+            compatibilityMirror: true,
+            source: 'TransactionEngine mirror'
         };
 
         // Add to history and save
@@ -1383,18 +1387,37 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
  * @param {number} cost - The cost to deduct
  */
 async function deductDroidCredits(actor, cost) {
-    const currentCredits = LedgerService.getCurrentCredits(actor);
-    const newCredits = Math.max(0, currentCredits - cost);
+    const normalizedCost = normalizeCredits(cost);
+    if (normalizedCost <= 0) return;
 
-    await ActorEngine.updateActor(actor, {
-        'system.credits': newCredits
+    const result = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: -normalizedCost,
+        reason: 'Droid construction finalized',
+        transactionContext: 'store-custom-approval',
+        audit: {
+            approvalType: 'droid',
+            itemName: 'Custom Droid Construction',
+            itemNames: ['Custom Droid Construction'],
+            itemCount: 1,
+            source: 'Store Droid Builder Finalization'
+        }
+    }, {
+        source: 'store-checkout.deductDroidCredits',
+        validate: true,
+        rederive: true
     });
 
-    SWSELogger.log('SWSE Store | Credits deducted for droid:', {
+    if (!result.success) {
+        throw new Error(result.error || 'Droid credit transaction failed');
+    }
+
+    SWSELogger.log('SWSE Store | Droid credits deducted through TransactionEngine:', {
         actor: actor.name,
-        cost: cost,
-        oldCredits: currentCredits,
-        newCredits: newCredits
+        cost: normalizedCost,
+        transactionId: result.transactionId,
+        creditsBefore: result.creditsBefore,
+        creditsAfter: result.creditsAfter
     });
 }
 

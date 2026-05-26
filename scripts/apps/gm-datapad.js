@@ -36,6 +36,7 @@ import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/s
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -430,18 +431,35 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
   /**
-   * Load transaction history from all actors
+   * Load transaction history from the TransactionEngine actor-ledger flags.
+   *
+   * purchaseHistory is a legacy/UI mirror. TransactionEngine is the SSOT for
+   * credit movement, so the GM Store Transactions tab reads that first and only
+   * appends clearly marked legacy rows when an actor has no TransactionEngine
+   * entries yet.
    */
   async _loadStoreTransactionHistory() {
-    this.transactions = [];
+    const txRows = TransactionEngine.getAllTransactions({ includeZeroCost: false })
+      .map((tx) => this._formatTransactionEngineRow(tx));
+
+    const actorsWithEngineRows = new Set(txRows.map(row => row.actorId).filter(Boolean));
+    const legacyRows = [];
 
     for (const actor of game.actors) {
+      if (actorsWithEngineRows.has(actor.id)) continue;
+
       const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       for (const purchase of history) {
-        const items = Array.isArray(purchase.items) ? purchase.items : [];
+        const items = [
+          ...(Array.isArray(purchase.items) ? purchase.items : []),
+          ...(Array.isArray(purchase.droids) ? purchase.droids : []),
+          ...(Array.isArray(purchase.vehicles) ? purchase.vehicles : [])
+        ];
+
         for (const item of items) {
           const amount = normalizeCredits(item.cost ?? item.finalCost ?? item.price ?? 0);
-          this.transactions.push({
+          legacyRows.push({
+            transactionId: purchase.transactionId || `legacy-${actor.id}-${purchase.timestamp}-${legacyRows.length}`,
             timestamp: purchase.timestamp,
             actor: actor.name,
             actorId: actor.id,
@@ -451,16 +469,47 @@ export class GMDatapad extends BaseSWSEAppV2 {
             quantity: normalizeCredits(item.quantity ?? 1),
             price: amount,
             amount: purchase.type === 'Sell' ? amount : -amount,
-            status: purchase.status || 'Success',
-            reason: purchase.reason || purchase.failureReason || '',
-            source: purchase.source || 'Store',
-            purchaseId: purchase.timestamp
+            creditsBefore: null,
+            creditsAfter: null,
+            balanceDisplay: '—',
+            status: purchase.status || 'Legacy',
+            reason: purchase.reason || purchase.failureReason || 'Legacy purchaseHistory mirror; not TransactionEngine SSOT.',
+            source: purchase.source || 'Legacy purchaseHistory',
+            purchaseId: purchase.timestamp,
+            canReverse: false
           });
         }
       }
     }
 
-    this.transactions.sort((a, b) => b.timestamp - a.timestamp);
+    this.transactions = [...txRows, ...legacyRows].sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+  }
+
+  _formatTransactionEngineRow(tx) {
+    const amount = normalizeCredits(tx.amount ?? 0);
+    return {
+      transactionId: tx.transactionId || tx.id,
+      timestamp: tx.timestamp,
+      actor: tx.actorName || 'Unknown Actor',
+      actorId: tx.actorId,
+      player: tx.userName || '—',
+      type: tx.type || 'Transaction',
+      item: tx.itemName || 'Credit Transaction',
+      quantity: tx.itemCount || 1,
+      price: Math.abs(amount),
+      amount,
+      creditsBefore: tx.creditsBefore,
+      creditsAfter: tx.creditsAfter,
+      balanceDisplay: Number.isFinite(Number(tx.creditsBefore)) && Number.isFinite(Number(tx.creditsAfter))
+        ? `${normalizeCredits(tx.creditsBefore)} → ${normalizeCredits(tx.creditsAfter)}`
+        : '—',
+      status: tx.status || 'Success',
+      reason: tx.reason || '',
+      source: tx.source || tx.context || 'TransactionEngine',
+      context: tx.context,
+      purchaseId: tx.transactionId || tx.id,
+      canReverse: amount !== 0 && !String(tx.context || '').includes('rollback-correction')
+    };
   }
 
   /**
@@ -1151,7 +1200,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Reverse a transaction and adjust credits
+   * Reverse a transaction's credit impact through TransactionEngine.
+   *
+   * This is intentionally a credit correction, not a full inventory rollback.
+   * Item restoration/removal requires a separate asset reconciliation phase.
    */
   async _reverseTransaction(index) {
     if (index < 0 || index >= this.transactions.length) {
@@ -1160,20 +1212,58 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     const transaction = this.transactions[index];
-    const actor = game.actors.get(transaction.actorId);
+    if (!transaction?.canReverse) {
+      ui?.notifications?.warn?.('This transaction cannot be reversed from the TransactionEngine ledger.');
+      return;
+    }
 
+    const actor = game.actors.get(transaction.actorId);
     if (!actor) {
       ui?.notifications?.error?.('Actor not found');
       return;
     }
 
-    const currentCredits = Number(actor.system.credits) || 0;
-    const newCredits = currentCredits - transaction.amount;
+    const reversalAmount = normalizeCredits(0 - Number(transaction.amount || 0));
+    if (!Number.isFinite(reversalAmount) || reversalAmount === 0) {
+      ui?.notifications?.warn?.('This transaction has no credit impact to reverse.');
+      return;
+    }
+
+    let reason = 'GM credit correction';
+    try {
+      const prompted = await uiPrompt('Reverse Credit Impact', `Reason for reversing ${transaction.item || 'this transaction'}?`, reason);
+      if (prompted === null || prompted === undefined) return;
+      reason = String(prompted || reason).trim() || reason;
+    } catch (_err) {
+      // uiPrompt is best-effort; continue with the default reason if unavailable.
+    }
 
     try {
-      await ActorEngine.updateActor(actor, { 'system.credits': newCredits });
-      ui?.notifications?.info?.(`Reversed transaction: ${transaction.actor} now has ${newCredits} credits`);
-      this.render(false);
+      const result = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: reversalAmount,
+        reason,
+        transactionContext: 'store-rollback-correction',
+        audit: {
+          sourceTransactionId: transaction.transactionId,
+          sourceContext: transaction.context,
+          sourceItem: transaction.item,
+          sourceAmount: transaction.amount,
+          source: 'GM Store Control Rollback'
+        }
+      }, {
+        source: 'GMDatapad._reverseTransaction',
+        validate: true,
+        rederive: true
+      });
+
+      if (!result.success) {
+        ui?.notifications?.error?.(`Failed to reverse credits: ${result.error}`);
+        return;
+      }
+
+      ui?.notifications?.info?.(`Credit correction recorded for ${transaction.actor}.`);
+      await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error reversing transaction:', err);
       ui?.notifications?.error?.(`Failed to reverse transaction: ${err.message}`);
@@ -1196,16 +1286,37 @@ export class GMDatapad extends BaseSWSEAppV2 {
       return;
     }
 
-    const currentCredits = Number(actor.system.credits) || 0;
-    const cost = droidData.credits?.spent || 0;
-    const newCredits = Math.max(0, currentCredits - cost);
+    const cost = normalizeCredits(droidData.credits?.spent || 0);
 
     const updates = {
-      'system.credits': newCredits,
       'system.droidSystems.stateMode': 'FINALIZED'
     };
 
     try {
+      if (cost > 0) {
+        const creditResult = await TransactionEngine.executeCreditAdjustment({
+          actor,
+          amount: -cost,
+          reason: 'GM approved pending droid build',
+          transactionContext: 'store-custom-approval',
+          audit: {
+            approvalType: 'droid',
+            itemName: actor.name,
+            itemNames: [actor.name],
+            itemCount: 1,
+            source: 'GM Datapad - Pending Droid Approval'
+          }
+        }, {
+          source: 'GMDatapad._approveDroid',
+          validate: true,
+          rederive: true
+        });
+        if (!creditResult.success) {
+          ui?.notifications?.error?.(`Failed to approve droid credits: ${creditResult.error}`);
+          return;
+        }
+      }
+
       await ActorEngine.updateActor(actor, updates);
       const buildHistory = droidData.buildHistory || [];
       buildHistory.push({
@@ -1498,12 +1609,33 @@ export class GMDatapad extends BaseSWSEAppV2 {
       return;
     }
 
-    const currentCredits = normalizeCredits(ownerActor.system?.credits ?? 0);
     const cost = normalizeCredits(approval.costCredits ?? 0);
-    const newCredits = Math.max(0, normalizeCredits(currentCredits - cost));
 
     try {
-      await ActorEngine.updateActor(ownerActor, { 'system.credits': newCredits });
+      const creditResult = cost > 0 ? await TransactionEngine.executeCreditAdjustment({
+        actor: ownerActor,
+        amount: -cost,
+        reason: `GM approved ${approval.type || 'custom'} acquisition`,
+        transactionContext: 'store-custom-approval',
+        audit: {
+          approvalType: approval.type,
+          draftActorId: approval.draftActorId,
+          itemName: approval.draftData?.name ?? 'Custom asset',
+          itemNames: [approval.draftData?.name ?? 'Custom asset'],
+          itemCount: 1,
+          source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+          gmNotes: approval.metadata?.gmNotes ?? ''
+        }
+      }, {
+        source: 'GMDatapad._approvePendingCustom',
+        validate: true,
+        rederive: true
+      }) : { success: true, transactionId: null };
+
+      if (!creditResult.success) {
+        ui?.notifications?.error?.(`Failed to approve: ${creditResult.error}`);
+        return;
+      }
 
       const draftActor = game.actors.get(approval.draftActorId);
       if (draftActor) {
@@ -1527,8 +1659,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
         droids: approval.type === 'droid' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
         vehicles: approval.type === 'vehicle' || approval.type === 'starship' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
         total: cost,
+        transactionId: creditResult?.transactionId ?? null,
         source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
-        gmNotes: approval.metadata?.gmNotes ?? ''
+        gmNotes: approval.metadata?.gmNotes ?? '',
+        compatibilityMirror: true
       };
       history.push(purchase);
       await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
