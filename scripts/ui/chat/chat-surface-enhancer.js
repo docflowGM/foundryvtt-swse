@@ -103,6 +103,49 @@ function upgradeDialogueMessage(message, root) {
   root.dataset.swseDialogueUpgraded = 'true';
   return true;
 }
+function ensureLegacyChrome(surface) {
+  if (!(surface instanceof HTMLElement)) return;
+  if (!surface.querySelector(':scope > .corners')) {
+    surface.insertAdjacentHTML('afterbegin', '<span class="corners" aria-hidden="true"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></span>');
+  }
+  if (!surface.querySelector(':scope > .headtick')) {
+    const corners = surface.querySelector(':scope > .corners');
+    corners?.insertAdjacentHTML?.('afterend', '<span class="headtick" aria-hidden="true"></span>');
+  }
+}
+
+function classifyLegacySurface(surface) {
+  const classes = surface.classList;
+  if (classes.contains('swse-attack-card')) return 'attack';
+  if (classes.contains('swse-damage-card') || classes.contains('damage-log-container')) return 'damage';
+  if (classes.contains('swse-ability-card') || classes.contains('swse-ability-chat-card')) return 'ability';
+  if (classes.contains('swse-species-reroll-card')) return 'species';
+  if (classes.contains('swse-level-up-summary') || classes.contains('swse-progression-session')) return 'summary';
+  if (surface.querySelector?.('.dice-total, .roll-total')) return 'roll';
+  return 'system';
+}
+
+function adaptLegacySurface(surface) {
+  if (!(surface instanceof HTMLElement)) return false;
+  if (surface.dataset?.swseChatCardV2 === 'true') return false;
+  if (surface.matches('.swse-holonet-card, .swse-receipt-card, .swse-narration')) return false;
+  if (surface.dataset.swseChatLegacyV2 === 'true') return true;
+
+  surface.dataset.swseChatLegacyV2 = 'true';
+  surface.dataset.swseChatSurface = surface.dataset.swseChatSurface || 'legacy';
+  surface.dataset.swseLegacyKind = classifyLegacySurface(surface);
+  ensureLegacyChrome(surface);
+  return true;
+}
+
+function applyMessageLayout(root) {
+  if (!(root instanceof HTMLElement)) return;
+  root.classList.add('swse-chat-message');
+  root.dataset.swseThemeSurface = 'chat';
+  const width = root.clientWidth || root.getBoundingClientRect?.().width || 0;
+  if (width && width <= 390) root.classList.add('swse-chat-message--narrow');
+}
+
 
 function bindRollCardToggle(surface) {
   if (!(surface instanceof HTMLElement)) return;
@@ -151,7 +194,7 @@ function bindHolonetKeyboard(surface) {
 
 function hideUnauthorizedReactionStrips(surface) {
   if (!(surface instanceof HTMLElement)) return;
-  const strips = surface.querySelectorAll?.('.swse-chat-reaction-strip[data-swse-reaction-owner]') ?? [];
+  const strips = surface.querySelectorAll?.('.swse-chat-reaction-strip[data-swse-reaction-owner], .reactions-strip[data-swse-reaction-owner]') ?? [];
   for (const strip of strips) {
     const ownerId = strip.dataset.swseReactionOwner || '';
     if (!ownerId || game?.user?.isGM === true || ownerId === game?.user?.id) continue;
@@ -172,11 +215,11 @@ export function enhanceSWSEChatMessage(message, html) {
   const surfaces = findSurfaces(root);
   if (!surfaces.length) return false;
 
-  root.classList.add('swse-chat-message');
-  root.dataset.swseThemeSurface = 'chat';
+  applyMessageLayout(root);
 
   for (const surface of surfaces) {
     surface.dataset.swseThemeSurface = surface.dataset.swseThemeSurface || 'chat';
+    adaptLegacySurface(surface);
 
     if (surface.dataset.swseEnhanced === 'true') continue;
     surface.dataset.swseEnhanced = 'true';

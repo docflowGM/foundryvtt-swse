@@ -292,6 +292,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/chat/dialogue-card.hbs',
   'systems/foundryvtt-swse/templates/chat/holonet-card.hbs',
   'systems/foundryvtt-swse/templates/chat/store-receipt.hbs',
+  'systems/foundryvtt-swse/templates/chat/narration-card.hbs',
 
   // Chargen Partials
   'systems/foundryvtt-swse/templates/partials/chargen/near-human.hbs',

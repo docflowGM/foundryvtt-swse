@@ -18,10 +18,9 @@ export class ActionChatEngine {
     if (!this.settingEnabled()) return;
     if (!actor || !text) return;
 
-    const name = actor?.name ?? "Someone";
-    const content = `<p>[${name}] ${this._escape(text)}!</p>`;
-    await SWSEChat.postHTML({
-      content,
+    const content = `${this._escape(text)}!`;
+    await SWSEChat.postNarration({
+      body: content,
       actor,
       style: CONST.CHAT_MESSAGE_STYLES.EMOTE
     });
@@ -37,7 +36,6 @@ export class ActionChatEngine {
     if (!this.settingEnabled()) return;
     if (!actor || !actionName || typeof total !== "number") return;
 
-    const aName = actor?.name ?? "Someone";
     const targetClause = opts?.targetName ? ` [${this._escape(opts.targetName)}]` : "";
     const totalStr = Math.trunc(total).toString();
 
@@ -46,10 +44,10 @@ export class ActionChatEngine {
     else if (opts?.success === false) tail = " which fails!";
 
     const extra = opts?.extra ? ` ${this._escape(opts.extra)}` : "";
-    const content = `<p>[${aName}] does [${this._escape(actionName)}]${targetClause} and rolls a [${totalStr}]${tail}.${extra}</p>`;
+    const content = `<span>does <b>[${this._escape(actionName)}]</b>${targetClause} and rolls a <b>[${totalStr}]</b>${tail}${extra}</span>`;
 
-    await SWSEChat.postHTML({
-      content,
+    await SWSEChat.postNarration({
+      body: content,
       actor,
       style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });
@@ -63,14 +61,13 @@ export class ActionChatEngine {
     if (!actor || !weaponName) return;
     if (typeof attackTotal !== "number" || typeof damageTotal !== "number") return;
 
-    const aName = actor?.name ?? "Someone";
     const target = opts?.targetName ? ` [${this._escape(opts.targetName)}]` : "";
-    const content = `<p>[${aName}] attacks${target} with [${this._escape(weaponName)}] and rolls [${Math.trunc(
+    const content = `<span>attacks${target} with <b>[${this._escape(weaponName)}]</b> and rolls <b>[${Math.trunc(
       attackTotal
-    )}]! It does [${Math.trunc(damageTotal)}].</p>`;
+    )}]</b>. It does <b>[${Math.trunc(damageTotal)}]</b>.</span>`;
 
-    await SWSEChat.postHTML({
-      content,
+    await SWSEChat.postNarration({
+      body: content,
       actor,
       style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });
@@ -83,12 +80,11 @@ export class ActionChatEngine {
     if (!this.settingEnabled()) return;
     if (!actor || !powerName || typeof total !== "number") return;
 
-    const aName = actor?.name ?? "Someone";
     const extra = opts?.extra ? ` ${this._escape(opts.extra)}` : "";
-    const content = `<p>[${aName}] uses the Force and casts [${this._escape(powerName)}], rolling [${Math.trunc(total)}]!${extra}</p>`;
+    const content = `<span>uses the Force and casts <b>[${this._escape(powerName)}]</b>, rolling <b>[${Math.trunc(total)}]</b>!${extra}</span>`;
 
-    await SWSEChat.postHTML({
-      content,
+    await SWSEChat.postNarration({
+      body: content,
       actor,
       style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });

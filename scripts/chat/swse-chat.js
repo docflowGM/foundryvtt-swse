@@ -292,6 +292,36 @@ export class SWSEChat {
     });
   }
 
+
+  static async postNarration({
+    body = '',
+    actor = null,
+    token = null,
+    speaker = null,
+    whisper = null,
+    blind = false,
+    flags = {},
+    style = CONST.CHAT_MESSAGE_STYLES.OTHER
+  } = {}) {
+    const msgSpeaker = speaker ?? this.speaker({ actor, token });
+    const speakerName = msgSpeaker?.alias || actor?.name || '';
+    const content = await foundry.applications.handlebars.renderTemplate(
+      'systems/foundryvtt-swse/templates/chat/narration-card.hbs',
+      { body, speakerName }
+    );
+
+    return this.postHTML({
+      content,
+      actor,
+      token,
+      speaker: msgSpeaker,
+      style,
+      whisper,
+      blind,
+      flags: { ...flags, swse: { ...(flags?.swse || {}), narrationCard: true } }
+    });
+  }
+
   static buildHolonetCardData(record = {}, options = {}) {
     const metadata = record?.metadata ?? {};
     const priority = normalizePriority(options.priority || metadata.priority || metadata.level || record.priority);

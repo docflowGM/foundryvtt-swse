@@ -26,11 +26,7 @@
   --swse-ability-charisma: var(--swse-ability-charisma-color, #5aa7ff);
 }
 
-.chat-message.swse-chat-message,
-.chat-message:has(.swse-chat-card),
-.chat-message:has(.damage-log-container),
-.chat-message:has(.swse-attack-card),
-.chat-message:has(.swse-damage-card) {
+.chat-message.swse-chat-message {
   background: color-mix(in srgb, var(--swse-chat-bg) 90%, transparent);
   border-color: var(--swse-chat-border);
   color: var(--swse-chat-text);
@@ -149,7 +145,7 @@
 .swse-ability--charisma { color: var(--swse-ability-charisma) !important; }
 
 .chat-message .dc-result.success,
-.chat-message .hit-line:has(.success),
+.chat-message .hit-line .success,
 .chat-message .status-normal {
   color: var(--swse-state-positive);
 }

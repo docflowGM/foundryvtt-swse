@@ -125,7 +125,7 @@
   0% { transform: translateX(0); opacity: 0; }
   8% { opacity: 1; }
   92% { opacity: 1; }
-  100% { transform: translateX(calc(100vw)); opacity: 0; }
+  100% { transform: translateX(calc(100% + 28px)); opacity: 0; }
 }
 
 .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .head {
@@ -1400,3 +1400,195 @@
   .chat-message .swse-receipt-card .rc-delta { padding: 2px 0; text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) { .chat-message .swse-receipt-card .rc-delta .amt { animation: none; } }
+
+
+/* ============================================================
+   Patch E — Legacy migration, narration, narrow sidebar polish
+============================================================ */
+.chat-message.swse-chat-message--narrow .swse-chat-card[data-swse-chat-card-v2="true"] .head,
+#chat-log .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .head,
+.chat-sidebar .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: 4px;
+}
+
+.chat-message.swse-chat-message--narrow .swse-chat-card[data-swse-chat-card-v2="true"] .who,
+#chat-log .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .who,
+.chat-sidebar .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .who {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.chat-message.swse-chat-message--narrow .swse-chat-card[data-swse-chat-card-v2="true"] .total,
+#chat-log .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .total,
+.chat-sidebar .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .total {
+  grid-template-columns: auto auto auto minmax(0, 1fr);
+  column-gap: 9px;
+  padding: 8px 10px 9px;
+}
+
+.chat-message.swse-chat-message--narrow .swse-chat-card[data-swse-chat-card-v2="true"] .total .num,
+#chat-log .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .total .num,
+.chat-sidebar .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] .total .num {
+  font-size: 29px;
+}
+
+.chat-message .swse-narration {
+  position: relative;
+  padding: 5px 14px 5px 18px;
+  color: var(--swse-chat-v2-text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  font-style: italic;
+  text-wrap: pretty;
+}
+
+.chat-message .swse-narration::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--swse-chat-v2-accent) 50%, transparent);
+  opacity: 0.65;
+}
+
+.chat-message .swse-narration b {
+  color: var(--swse-chat-v2-text-secondary);
+  font-weight: 800;
+}
+
+.chat-message .swse-chat-card[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-roll-card[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-attack-card[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-damage-card[data-swse-chat-legacy-v2="true"],
+.chat-message .damage-log-container[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-level-up-summary[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-progression-session[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-species-reroll-card[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-ability-card[data-swse-chat-legacy-v2="true"],
+.chat-message .swse-ability-chat-card[data-swse-chat-legacy-v2="true"] {
+  --rail: var(--swse-chat-v2-accent);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--rail) 28%, var(--swse-chat-v2-border));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--rail) 16%, transparent), inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"][data-swse-legacy-kind="attack"] { --rail: #ff8a4c; }
+.chat-message [data-swse-chat-legacy-v2="true"][data-swse-legacy-kind="damage"] { --rail: var(--swse-chat-v2-danger); }
+.chat-message [data-swse-chat-legacy-v2="true"][data-swse-legacy-kind="ability"] { --rail: var(--swse-ability-int); }
+.chat-message [data-swse-chat-legacy-v2="true"][data-swse-legacy-kind="species"] { --rail: var(--swse-chat-v2-success); }
+.chat-message [data-swse-chat-legacy-v2="true"][data-swse-legacy-kind="summary"] { --rail: var(--swse-chat-v2-warning); }
+
+.chat-message [data-swse-chat-legacy-v2="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--rail), color-mix(in srgb, var(--rail) 35%, transparent));
+  box-shadow: 0 0 12px var(--rail);
+  z-index: 0;
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 2px, color-mix(in srgb, var(--rail) 5%, transparent) 2px 3px);
+  opacity: 0.24;
+  mix-blend-mode: screen;
+  z-index: 0;
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"] > .corners {
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"] > .corners span {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid color-mix(in srgb, var(--rail) 55%, transparent);
+  opacity: .58;
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"] > .corners .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.chat-message [data-swse-chat-legacy-v2="true"] > .corners .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.chat-message [data-swse-chat-legacy-v2="true"] > .corners .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.chat-message [data-swse-chat-legacy-v2="true"] > .corners .br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+.chat-message [data-swse-chat-legacy-v2="true"] > .headtick {
+  position: absolute;
+  inset: 0 8px auto 8px;
+  height: 1px;
+  z-index: 0;
+  opacity: .45;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--rail) 60%, transparent), transparent);
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"] > .headtick::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--rail);
+  box-shadow: 0 0 8px var(--rail);
+  animation: swse-chat-v2-headtick 4.8s linear infinite;
+}
+
+.chat-message [data-swse-chat-legacy-v2="true"] .dice-total,
+.chat-message [data-swse-chat-legacy-v2="true"] .roll-total,
+.chat-message [data-swse-chat-legacy-v2="true"] .damage-total {
+  color: var(--rail);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--rail) 45%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-message .swse-chat-card[data-swse-chat-card-v2="true"],
+  .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] *,
+  .chat-message .swse-holonet-card,
+  .chat-message .swse-holonet-card *,
+  .chat-message .swse-receipt-card,
+  .chat-message .swse-receipt-card *,
+  .chat-message [data-swse-chat-legacy-v2="true"],
+  .chat-message [data-swse-chat-legacy-v2="true"] * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+[data-motion-style="reduced"] .chat-message .swse-chat-card[data-swse-chat-card-v2="true"],
+[data-motion-style="reduced"] .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] *,
+[data-motion-style="reduced"] .chat-message .swse-holonet-card,
+[data-motion-style="reduced"] .chat-message .swse-holonet-card *,
+[data-motion-style="reduced"] .chat-message .swse-receipt-card,
+[data-motion-style="reduced"] .chat-message .swse-receipt-card *,
+[data-motion-style="reduced"] .chat-message [data-swse-chat-legacy-v2="true"],
+[data-motion-style="reduced"] .chat-message [data-swse-chat-legacy-v2="true"] *,
+[data-motion-style="none"] .chat-message .swse-chat-card[data-swse-chat-card-v2="true"],
+[data-motion-style="none"] .chat-message .swse-chat-card[data-swse-chat-card-v2="true"] *,
+[data-motion-style="none"] .chat-message .swse-holonet-card,
+[data-motion-style="none"] .chat-message .swse-holonet-card *,
+[data-motion-style="none"] .chat-message .swse-receipt-card,
+[data-motion-style="none"] .chat-message .swse-receipt-card *,
+[data-motion-style="none"] .chat-message [data-swse-chat-legacy-v2="true"],
+[data-motion-style="none"] .chat-message [data-swse-chat-legacy-v2="true"] * {
+  animation: none !important;
+  transition: none !important;
+}
