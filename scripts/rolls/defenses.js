@@ -71,7 +71,8 @@ export async function rollDefense(actor, defenseType, options = {}) {
       roll: rollResult.roll,
       actor,
       flavor: `<strong>${label} Defense</strong><br/>Modifier: ${rollResult.modifierTotal}
-               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
+               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`,
+      context: { type: 'save', label: `${label} Defense`, defenseName: label, baseBonus: rollResult.modifierTotal }
     });
   }
 

@@ -184,7 +184,8 @@ export async function rollDamage(actor, weapon, options = {}) {
   await SWSEChat.postRoll({
     roll,
     actor,
-    flavor: `${weapon.name} Damage (${formula})`
+    flavor: `${weapon.name} Damage (${formula})`,
+    context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
   });
 
   return roll;
@@ -267,7 +268,8 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   await SWSEChat.postRoll({
     roll: damageRoll,
     actor,
-    flavor: `${weapon.name} Damage`
+    flavor: `${weapon.name} Damage`,
+    context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
   });
 
   // Post supplemental narration (gated by setting)

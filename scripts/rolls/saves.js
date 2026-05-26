@@ -55,7 +55,8 @@ export async function rollSave(actor, type, options = {}) {
       roll: rollResult.roll,
       actor,
       flavor: `<strong>${typeLabel} Save</strong><br/>Modifier: ${rollResult.modifierTotal}
-               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
+               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`,
+      context: { type: 'save', label: `${typeLabel} Save`, defenseName: typeLabel, baseBonus: rollResult.modifierTotal }
     });
   }
 

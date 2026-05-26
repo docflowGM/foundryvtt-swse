@@ -42,6 +42,40 @@ function findSurfaces(root) {
   return [...new Set(surfaces)];
 }
 
+
+function bindRollCardToggle(surface) {
+  if (!(surface instanceof HTMLElement)) return;
+  if (surface.dataset?.swseChatCardV2 !== 'true') return;
+
+  const total = surface.querySelector('.swse-roll-total, .total');
+  if (!(total instanceof HTMLElement)) return;
+  if (total.dataset.swseToggleBound === 'true') return;
+  total.dataset.swseToggleBound = 'true';
+
+  const setExpanded = expanded => {
+    const value = expanded ? 'true' : 'false';
+    surface.dataset.expanded = value;
+    total.setAttribute('aria-expanded', value);
+  };
+
+  if (!surface.dataset.expanded) setExpanded(false);
+  total.setAttribute('role', total.getAttribute('role') || 'button');
+  if (!total.hasAttribute('tabindex') && total.tagName !== 'BUTTON') total.setAttribute('tabindex', '0');
+
+  const toggle = event => {
+    const interactive = event?.target?.closest?.('button, a, input, select, textarea, [data-swse-reaction-key]');
+    if (interactive && interactive !== total) return;
+    event?.preventDefault?.();
+    setExpanded(surface.dataset.expanded !== 'true');
+  };
+
+  total.addEventListener('click', toggle);
+  total.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    toggle(event);
+  });
+}
+
 export function enhanceSWSEChatMessage(message, html) {
   const root = normalizeRoot(html);
   if (!root) return false;
@@ -64,6 +98,7 @@ export function enhanceSWSEChatMessage(message, html) {
     try { AbilityWordHighlighter.enhance(surface); } catch (err) { console.warn('[SWSE Chat] Ability highlighting failed', err); }
     try { SignedNumberHighlighter.enhance(surface); } catch (err) { console.warn('[SWSE Chat] Signed number highlighting failed', err); }
     try { TooltipRegistry.bind(surface); } catch (err) { console.warn('[SWSE Chat] Tooltip binding failed', err); }
+    try { bindRollCardToggle(surface); } catch (err) { console.warn('[SWSE Chat] Roll card toggle binding failed', err); }
   }
 
   return true;

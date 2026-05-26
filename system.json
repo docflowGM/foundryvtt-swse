@@ -123,6 +123,7 @@
     "styles/system/store-splash.css",
     "styles/system/secondary-surfaces.css",
     "styles/system/chat-surfaces.css",
+    "styles/system/chat-card-v2.css",
     "styles/system/scene-controls.css",
     "styles/system/gm-datapad-scene-control.css",
     "styles/apps/custom-roll-dialog.css",
@@ -140,12 +141,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -155,7 +156,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
@@ -644,7 +645,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
       "range": {
         "min": 10,
         "max": 100,
