@@ -237,6 +237,50 @@ export function summarizeStorePolicy(item = {}) {
   };
 }
 
+export async function restoreInventoryPolicyQuantities(items = []) {
+  const counts = new Map();
+
+  const add = (entry) => {
+    const id = entry?.id || entry?.itemId || entry?.policyId;
+    if (!id) return;
+    const quantity = Math.max(1, normalizeCredits(entry?.quantity ?? entry?.count ?? 1));
+    counts.set(id, (counts.get(id) || 0) + quantity);
+  };
+
+  if (Array.isArray(items)) {
+    for (const entry of items) add(entry);
+  } else if (items && typeof items === 'object') {
+    for (const collection of [items.items, items.droids, items.vehicles]) {
+      for (const entry of collection || []) add(entry);
+    }
+  }
+
+  if (counts.size === 0) return { updated: 0 };
+
+  const policies = SettingsHelper.getObject('storeInventoryPolicies', {});
+  let updated = 0;
+
+  for (const [id, count] of counts.entries()) {
+    const policy = asObject(policies[id], {});
+    if (policy.trackQuantity !== true) continue;
+
+    const current = asNumberOrNull(policy.quantity);
+    if (current === null) continue;
+
+    policy.quantity = Math.max(0, current + count);
+    policy.updatedAt = Date.now();
+    policy.updatedBy = game.user?.id || null;
+    policies[id] = policy;
+    updated += 1;
+  }
+
+  if (updated > 0) {
+    await SettingsHelper.set('storeInventoryPolicies', policies);
+  }
+
+  return { updated };
+}
+
 export async function consumeInventoryPolicyQuantities(cart = {}) {
   const counts = new Map();
   const add = (entry) => {

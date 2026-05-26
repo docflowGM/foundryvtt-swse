@@ -812,7 +812,7 @@
             <div>
               <span class="gm-command-eyebrow">TRANSACTIONS</span>
               <h3>Sales History</h3>
-              <p>TransactionEngine ledger view: audit who bought what, credit impact, status, and GM corrections.</p>
+              <p>TransactionEngine ledger view: audit who bought what, credit impact, status, rollback state, and GM corrections.</p>
             </div>
             <div class="gm-store-toolbar">
               <select class="swse-ui-input" data-store-transaction-filter="actor">
@@ -863,10 +863,14 @@
                       <td>{{#if this.reason}}{{this.reason}}{{else}}—{{/if}}</td>
                       <td><span class="source-badge">{{this.source}}</span></td>
                       <td>
-                        {{#if this.canReverse}}
-                          <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-index="{{@index}}" title="Record a TransactionEngine credit correction. Inventory rollback is handled separately.">Reverse Credit Impact</button>
+                        {{#if this.canRollback}}
+                          <button class="action-btn swse-ui-button" data-action="rollback-transaction" data-index="{{@index}}" title="Rollback through TransactionEngine, remove safe owned items, and restore tracked stock.">Rollback</button>
                         {{else}}
-                          <span class="gm-store-muted-action">Ledger only</span>
+                          {{#if this.rolledBackByTransactionId}}
+                            <span class="gm-store-muted-action">Rolled back</span>
+                          {{else}}
+                            <span class="gm-store-muted-action">Ledger only</span>
+                          {{/if}}
                         {{/if}}
                       </td>
                     </tr>

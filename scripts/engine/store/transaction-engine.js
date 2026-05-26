@@ -60,7 +60,8 @@ export class TransactionEngine {
     'store-custom-approval',
     'store-custom-approval-refund',
     'gm-credit-adjustment',
-    'gm-credit-refund'
+    'gm-credit-refund',
+    'store-rollback-reconciliation'
   ]);
 
   /**
@@ -106,9 +107,11 @@ export class TransactionEngine {
     const cost = Number.isFinite(Number(record.cost))
       ? normalizeCredits(record.cost)
       : Math.abs(normalizeCredits(amount));
+    const auditItems = Array.isArray(audit.items) ? audit.items.filter(item => item && typeof item === 'object') : [];
     const itemNames = Array.isArray(audit.itemNames)
       ? audit.itemNames.filter(Boolean)
-      : (Array.isArray(audit.items) ? audit.items.map(item => item?.name).filter(Boolean) : []);
+      : auditItems.map(item => item?.name).filter(Boolean);
+    const rollback = audit.rollback || {};
 
     return {
       id: record.id || record.transactionId || '',
@@ -129,7 +132,11 @@ export class TransactionEngine {
       type: record.type || this.#deriveTransactionType(record.context, amount),
       itemNames,
       itemName: record.itemName || audit.itemName || (itemNames.length ? itemNames.join(', ') : audit.label || 'Credit Transaction'),
-      itemCount: Number(audit.itemCount ?? itemNames.length ?? 0) || 0,
+      itemCount: Number(audit.itemCount ?? auditItems.reduce((sum, item) => sum + (Number(item?.quantity) || 1), 0) ?? itemNames.length ?? 0) || 0,
+      itemIds: auditItems.map(item => item?.id || item?.itemId).filter(Boolean),
+      rollbackOf: record.rollbackOf || audit.rollbackOf || rollback.sourceTransactionId || null,
+      rolledBackByTransactionId: record.rolledBackByTransactionId || audit.rolledBackByTransactionId || null,
+      rollbackReason: record.rollbackReason || audit.rollbackReason || rollback.reason || '',
       audit
     };
   }
@@ -465,6 +472,188 @@ export class TransactionEngine {
             success: false,
             transactionId,
             error: `Credit adjustment failed and rollback failed: ${error.message}`
+          };
+        }
+      }
+
+      return { success: false, transactionId, error: error.message };
+    } finally {
+      this._mutationLocks.delete(lockKey);
+    }
+  }
+
+  /**
+   * Execute a GM rollback/reconciliation through the TransactionEngine.
+   *
+   * This is the canonical rollback path for store credit movement. It can also
+   * reconcile owned embedded Items in the same actor mutation plan, so a GM
+   * rollback does not split credits and item cleanup into unrelated writes.
+   * Quantity policy restoration is world-setting state and should happen after
+   * this method succeeds.
+   */
+  static async executeRollbackCorrection(context = {}, options = {}) {
+    const {
+      actor,
+      amount = 0,
+      reason = '',
+      sourceTransactionId = '',
+      removeOwnedItemIds = [],
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeRollbackCorrection'
+    } = options;
+
+    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!actor) return { success: false, transactionId, error: 'No actor provided' };
+
+    const freshActor = game?.actors?.get?.(actor.id) || actor;
+    if (!freshActor) return { success: false, transactionId, error: 'Actor no longer exists' };
+    if (freshActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient permissions for transaction' };
+
+    const normalizedAmount = normalizeCredits(amount);
+    const itemIds = Array.from(new Set((Array.isArray(removeOwnedItemIds) ? removeOwnedItemIds : [])
+      .map(id => String(id || '').trim())
+      .filter(Boolean)));
+
+    if ((!Number.isFinite(normalizedAmount) || normalizedAmount === 0) && itemIds.length === 0) {
+      return { success: false, transactionId, error: 'Rollback requires a credit adjustment or owned item reconciliation' };
+    }
+
+    const lockKey = `${freshActor.id}:store-rollback-reconciliation`;
+    if (this._mutationLocks.has(lockKey)) {
+      return { success: false, transactionId, error: 'Rollback correction already in progress' };
+    }
+
+    this._mutationLocks.add(lockKey);
+
+    let snapshotId = null;
+    try {
+      const creditsBefore = LedgerService.getCurrentCredits(freshActor);
+      const creditsAfter = normalizeCredits(creditsBefore + normalizedAmount);
+      if (creditsAfter < 0) {
+        return {
+          success: false,
+          transactionId,
+          error: `Insufficient credits for rollback correction (have ${creditsBefore}, adjustment ${normalizedAmount})`
+        };
+      }
+
+      const transactionRecord = {
+        id: transactionId,
+        context: 'store-rollback-reconciliation',
+        type: 'Rollback',
+        status: 'Success',
+        cost: Math.abs(normalizedAmount),
+        amount: normalizedAmount,
+        creditsBefore,
+        creditsAfter,
+        createdAt: Date.now(),
+        actorId: freshActor.id,
+        actorName: freshActor.name,
+        userId: game?.user?.id ?? null,
+        userName: game?.user?.name ?? null,
+        reason,
+        source,
+        rollbackOf: sourceTransactionId || null,
+        audit: {
+          ...audit,
+          reason,
+          creditsBefore,
+          creditsAfter,
+          rollback: {
+            sourceTransactionId: sourceTransactionId || null,
+            removedOwnedItemIds: itemIds,
+            reason
+          }
+        }
+      };
+
+      const set = {
+        'system.credits': creditsAfter,
+        [`flags.foundryvtt-swse.transactions.${transactionId}`]: transactionRecord
+      };
+
+      if (sourceTransactionId) {
+        set[`flags.foundryvtt-swse.transactions.${sourceTransactionId}.status`] = 'Rolled Back';
+        set[`flags.foundryvtt-swse.transactions.${sourceTransactionId}.rolledBackByTransactionId`] = transactionId;
+        set[`flags.foundryvtt-swse.transactions.${sourceTransactionId}.rollbackReason`] = reason;
+        set[`flags.foundryvtt-swse.transactions.${sourceTransactionId}.rolledBackAt`] = Date.now();
+      }
+
+      const mutationPlan = {
+        set,
+        delete: itemIds.length ? { items: itemIds } : {}
+      };
+
+      try {
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        snapshotId = await SnapshotManager.createSnapshot(
+          freshActor,
+          `store rollback reconciliation (${normalizedAmount} credits, ${itemIds.length} item removals)`
+        );
+      } catch (snapshotError) {
+        swseLogger.warn('TransactionEngine: Rollback reconciliation snapshot failed; continuing without rollback snapshot', {
+          transactionId,
+          sourceTransactionId,
+          error: snapshotError.message
+        });
+      }
+
+      await ActorEngine.applyMutationPlan(freshActor, mutationPlan, {
+        validate,
+        rederive,
+        source: `${source}.store-rollback-reconciliation`
+      });
+
+      const normalized = this.#normalizeTransactionRecord(freshActor, transactionRecord);
+      Hooks.callAll?.('swseStoreRollbackCorrectionComplete', {
+        transaction: normalized,
+        actor: freshActor,
+        sourceTransactionId,
+        removedOwnedItemIds: itemIds,
+        success: true
+      });
+
+      swseLogger.info('TransactionEngine: Rollback reconciliation complete', {
+        transactionId,
+        sourceTransactionId,
+        actor: freshActor.id,
+        amount: normalizedAmount,
+        removedOwnedItems: itemIds.length
+      });
+
+      return {
+        success: true,
+        transactionId,
+        error: null,
+        creditsBefore,
+        creditsAfter,
+        amount: normalizedAmount,
+        removedOwnedItemIds: itemIds
+      };
+    } catch (error) {
+      swseLogger.error('TransactionEngine: Rollback reconciliation failed', {
+        transactionId,
+        sourceTransactionId,
+        actor: freshActor?.id,
+        error: error.message
+      });
+
+      if (snapshotId) {
+        try {
+          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          swseLogger.info('TransactionEngine: Rollback reconciliation snapshot restore successful', { transactionId, snapshotId });
+        } catch (rollbackError) {
+          return {
+            success: false,
+            transactionId,
+            error: `Rollback reconciliation failed and snapshot restore failed: ${error.message}`
           };
         }
       }

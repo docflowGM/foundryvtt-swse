@@ -37,6 +37,7 @@ import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvt
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -487,6 +488,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _formatTransactionEngineRow(tx) {
     const amount = normalizeCredits(tx.amount ?? 0);
+    const context = String(tx.context || '');
+    const status = tx.status || 'Success';
+    const isRollback = context.includes('rollback') || context.includes('correction') || tx.rollbackOf;
+    const alreadyRolledBack = status === 'Rolled Back' || !!tx.rolledBackByTransactionId;
+
     return {
       transactionId: tx.transactionId || tx.id,
       timestamp: tx.timestamp,
@@ -503,12 +509,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
       balanceDisplay: Number.isFinite(Number(tx.creditsBefore)) && Number.isFinite(Number(tx.creditsAfter))
         ? `${normalizeCredits(tx.creditsBefore)} → ${normalizeCredits(tx.creditsAfter)}`
         : '—',
-      status: tx.status || 'Success',
-      reason: tx.reason || '',
-      source: tx.source || tx.context || 'TransactionEngine',
-      context: tx.context,
+      status,
+      reason: tx.reason || tx.rollbackReason || '',
+      source: tx.source || context || 'TransactionEngine',
+      context,
+      audit: tx.audit || {},
+      itemIds: tx.itemIds || [],
+      rollbackOf: tx.rollbackOf || null,
+      rolledBackByTransactionId: tx.rolledBackByTransactionId || null,
       purchaseId: tx.transactionId || tx.id,
-      canReverse: amount !== 0 && !String(tx.context || '').includes('rollback-correction')
+      canReverse: amount !== 0 && !isRollback && !alreadyRolledBack,
+      canRollback: amount !== 0 && !isRollback && !alreadyRolledBack
     };
   }
 
@@ -924,11 +935,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     }
 
-    // Transaction reversal buttons
-    for (const btn of pageElement.querySelectorAll('[data-action="reverse-transaction"]')) {
+    // Transaction rollback/correction buttons. Credit movement stays inside
+    // TransactionEngine; item cleanup is reconciled in the same rollback mutation
+    // when a safe owned-item match is available.
+    for (const btn of pageElement.querySelectorAll('[data-action="rollback-transaction"], [data-action="reverse-transaction"]')) {
       btn.addEventListener('click', async (ev) => {
         const index = Number(ev.currentTarget.dataset.index);
-        await this._reverseTransaction(index);
+        await this._rollbackTransaction(index);
       });
     }
 
@@ -1200,20 +1213,123 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Reverse a transaction's credit impact through TransactionEngine.
+   * Build a safe item reconciliation preview for a TransactionEngine rollback.
    *
-   * This is intentionally a credit correction, not a full inventory rollback.
-   * Item restoration/removal requires a separate asset reconciliation phase.
+   * Existing historical records may only know item names. New records include
+   * audit.items with ids/types/costs, but we still fall back to name matching so
+   * the GM can recover from older purchases without losing credit SSOT safety.
    */
-  async _reverseTransaction(index) {
+  _buildTransactionRollbackReconciliation(transaction, actor) {
+    const auditItems = Array.isArray(transaction?.audit?.items)
+      ? transaction.audit.items.filter(item => item && typeof item === 'object')
+      : [];
+
+    const fallbackItems = auditItems.length ? [] : String(transaction?.item || '')
+      .split(',')
+      .map(name => name.trim())
+      .filter(Boolean)
+      .map(name => ({ name, type: 'item', quantity: 1, id: null, fallback: true }));
+
+    const requestedItems = (auditItems.length ? auditItems : fallbackItems)
+      .map(item => ({
+        id: item.id || item.itemId || null,
+        name: item.name || 'Unknown Item',
+        type: item.type || 'item',
+        quantity: Math.max(1, normalizeCredits(item.quantity ?? 1) || 1),
+        cost: normalizeCredits(item.cost ?? 0),
+        condition: item.condition || null,
+        fallback: item.fallback === true
+      }));
+
+    const actorItems = Array.from(actor?.items ?? []);
+    const usedIds = new Set();
+    const removableItemIds = [];
+    const removedItems = [];
+    const unmatchedItems = [];
+    const inventoryPolicyItems = [];
+
+    const matchesSourceId = (ownedItem, requested) => {
+      const wanted = String(requested.id || '').trim();
+      if (!wanted) return false;
+      const sourceId = String(ownedItem?.flags?.core?.sourceId || ownedItem?.flags?.foundryvttSwse?.sourceId || '').trim();
+      const ownId = String(ownedItem?.id || ownedItem?._id || '').trim();
+      return ownId === wanted || sourceId === wanted || sourceId.endsWith(`.${wanted}`);
+    };
+
+    const findOwnedItem = (requested) => {
+      const type = String(requested.type || '').toLowerCase();
+      const canDeleteEmbeddedItem = type === 'item' || type === 'customized-item' || type === 'equipment' || type === 'weapon' || type === 'armor';
+      if (!canDeleteEmbeddedItem) return null;
+
+      let match = actorItems.find(item => !usedIds.has(item.id) && matchesSourceId(item, requested));
+      if (match) return match;
+
+      const wantedName = String(requested.name || '').trim().toLowerCase();
+      if (!wantedName) return null;
+      match = actorItems.find(item => !usedIds.has(item.id) && String(item.name || '').trim().toLowerCase() === wantedName);
+      if (match) return match;
+
+      return null;
+    };
+
+    for (const requested of requestedItems) {
+      if (requested.id) {
+        inventoryPolicyItems.push({
+          id: requested.id,
+          name: requested.name,
+          type: requested.type,
+          quantity: requested.quantity
+        });
+      }
+
+      for (let i = 0; i < requested.quantity; i += 1) {
+        const ownedItem = findOwnedItem(requested);
+        if (!ownedItem) {
+          unmatchedItems.push({
+            ...requested,
+            reason: String(requested.type || '').toLowerCase() === 'droid' || String(requested.type || '').toLowerCase() === 'vehicle'
+              ? 'Actor/asset purchases require manual asset review before deletion.'
+              : 'No matching owned item found on the actor.'
+          });
+          continue;
+        }
+
+        usedIds.add(ownedItem.id);
+        removableItemIds.push(ownedItem.id);
+        removedItems.push({
+          id: ownedItem.id,
+          name: ownedItem.name,
+          type: ownedItem.type,
+          requestedName: requested.name
+        });
+      }
+    }
+
+    return {
+      requestedItems,
+      removableItemIds,
+      removedItems,
+      unmatchedItems,
+      inventoryPolicyItems
+    };
+  }
+
+  /**
+   * Roll back a store transaction through TransactionEngine.
+   *
+   * Credit movement is handled by TransactionEngine as the SSOT. Safe owned item
+   * removal is folded into the same actor mutation plan. Inventory quantity
+   * restoration happens only after the TransactionEngine rollback succeeds.
+   */
+  async _rollbackTransaction(index) {
     if (index < 0 || index >= this.transactions.length) {
       ui?.notifications?.error?.('Invalid transaction index');
       return;
     }
 
     const transaction = this.transactions[index];
-    if (!transaction?.canReverse) {
-      ui?.notifications?.warn?.('This transaction cannot be reversed from the TransactionEngine ledger.');
+    if (!transaction?.canRollback && !transaction?.canReverse) {
+      ui?.notifications?.warn?.('This transaction cannot be rolled back from the TransactionEngine ledger.');
       return;
     }
 
@@ -1224,14 +1340,25 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     const reversalAmount = normalizeCredits(0 - Number(transaction.amount || 0));
-    if (!Number.isFinite(reversalAmount) || reversalAmount === 0) {
-      ui?.notifications?.warn?.('This transaction has no credit impact to reverse.');
+    const reconciliation = this._buildTransactionRollbackReconciliation(transaction, actor);
+
+    if (!Number.isFinite(reversalAmount) || (reversalAmount === 0 && reconciliation.removableItemIds.length === 0)) {
+      ui?.notifications?.warn?.('This transaction has no credit or owned-item impact to roll back.');
       return;
     }
 
-    let reason = 'GM credit correction';
+    const defaultReason = 'GM transaction rollback';
+    const summary = [
+      `Credit adjustment: ${reversalAmount >= 0 ? '+' : ''}${reversalAmount.toLocaleString()} cr`,
+      `Owned items to remove: ${reconciliation.removableItemIds.length}`,
+      reconciliation.unmatchedItems.length ? `Manual review: ${reconciliation.unmatchedItems.length} unmatched asset/item(s)` : null,
+      '',
+      `Reason for rolling back ${transaction.item || 'this transaction'}?`
+    ].filter(line => line !== null).join('\n');
+
+    let reason = defaultReason;
     try {
-      const prompted = await uiPrompt('Reverse Credit Impact', `Reason for reversing ${transaction.item || 'this transaction'}?`, reason);
+      const prompted = await uiPrompt('Rollback Store Transaction', summary, reason);
       if (prompted === null || prompted === undefined) return;
       reason = String(prompted || reason).trim() || reason;
     } catch (_err) {
@@ -1239,35 +1366,52 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     try {
-      const result = await TransactionEngine.executeCreditAdjustment({
+      const result = await TransactionEngine.executeRollbackCorrection({
         actor,
         amount: reversalAmount,
         reason,
-        transactionContext: 'store-rollback-correction',
+        sourceTransactionId: transaction.transactionId,
+        removeOwnedItemIds: reconciliation.removableItemIds,
         audit: {
           sourceTransactionId: transaction.transactionId,
           sourceContext: transaction.context,
           sourceItem: transaction.item,
           sourceAmount: transaction.amount,
-          source: 'GM Store Control Rollback'
+          source: 'GM Store Control Rollback',
+          removedItems: reconciliation.removedItems,
+          unmatchedItems: reconciliation.unmatchedItems,
+          inventoryPolicyItems: reconciliation.inventoryPolicyItems
         }
       }, {
-        source: 'GMDatapad._reverseTransaction',
+        source: 'GMDatapad._rollbackTransaction',
         validate: true,
         rederive: true
       });
 
       if (!result.success) {
-        ui?.notifications?.error?.(`Failed to reverse credits: ${result.error}`);
+        ui?.notifications?.error?.(`Failed to roll back transaction: ${result.error}`);
         return;
       }
 
-      ui?.notifications?.info?.(`Credit correction recorded for ${transaction.actor}.`);
+      const restoreResult = await restoreInventoryPolicyQuantities(reconciliation.inventoryPolicyItems);
+      const messageParts = [
+        `Rollback recorded for ${transaction.actor}.`,
+        reconciliation.removedItems.length ? `${reconciliation.removedItems.length} owned item(s) removed.` : null,
+        restoreResult.updated ? `${restoreResult.updated} stock policy record(s) restored.` : null,
+        reconciliation.unmatchedItems.length ? `${reconciliation.unmatchedItems.length} item/asset(s) need manual review.` : null
+      ].filter(Boolean);
+
+      ui?.notifications?.info?.(messageParts.join(' '));
       await this.render(false);
     } catch (err) {
-      SWSELogger.error('[GMDatapad] Error reversing transaction:', err);
-      ui?.notifications?.error?.(`Failed to reverse transaction: ${err.message}`);
+      SWSELogger.error('[GMDatapad] Error rolling back transaction:', err);
+      ui?.notifications?.error?.(`Failed to roll back transaction: ${err.message}`);
     }
+  }
+
+  /** Backward-compatible alias for older buttons/hot reloads. */
+  async _reverseTransaction(index) {
+    return this._rollbackTransaction(index);
   }
 
   /**
