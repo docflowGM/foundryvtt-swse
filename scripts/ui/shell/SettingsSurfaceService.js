@@ -44,17 +44,39 @@ export class SettingsSurfaceService {
     }));
   }
 
+  static getMotionOptions() {
+    return ThemeResolutionService.getMotionOptions();
+  }
+
   static async buildViewModel(actor, options = {}) {
+    const isGMHost = !!options.gm;
+    const preferActor = options.preferActor ?? !isGMHost;
     const current = ThemeManager.getTheme() || ThemeManager.defaults;
-    const actorTheme = ThemeResolutionService.resolveThemeKey(null, { actor });
-    const actorMotionStyle = ThemeResolutionService.resolveMotionStyle(null, { actor });
+    const actorTheme = ThemeResolutionService.resolveThemeKey(null, { actor, preferActor });
+    const actorMotionStyle = ThemeResolutionService.resolveMotionStyle(null, { actor, preferActor });
+    const warning = 'Warning, changing native language to Aurabesh may result in a more difficult play.';
+
     return {
       id: 'settings',
-      title: 'Holopad Settings',
-      subtitle: 'Device Interface Tuning',
-      warning: 'Warning, changing native language to Aurabesh may result in a more difficult play.',
+      title: isGMHost ? 'GM Holopad Settings' : 'Holopad Settings',
+      subtitle: isGMHost ? 'Command Interface Tuning' : 'Device Interface Tuning',
+      introTitle: isGMHost ? 'COMMAND INTERFACE TUNING' : 'DEVICE INTERFACE TUNING',
+      introSubtitle: isGMHost
+        ? 'The GM console uses the same shared Holopad settings surface as actor datapads.'
+        : 'The holopad reads from one shared configuration surface.',
+      backLabel: isGMHost ? 'GM Home' : 'Character Sheet',
+      backAction: isGMHost ? 'return-to-home' : 'return-to-sheet',
+      isGMHost,
+      warning,
+      aurabeshWarning: warning,
       presets: this.getThemePresets().map(p => ({ ...p, selected: p.id === actorTheme })),
       shellColors: this.getShellColors().map(c => ({ ...c, selected: c.id === current.shellColor })),
+      motionOptions: this.getMotionOptions().map(option => ({
+        id: option.value,
+        label: option.label,
+        description: option.description,
+        selected: option.value === actorMotionStyle
+      })),
       controls: {
         theme: actorTheme,
         motionStyle: actorMotionStyle,

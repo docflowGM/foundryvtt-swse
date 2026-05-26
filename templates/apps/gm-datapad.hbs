@@ -951,6 +951,12 @@
       </div>
     </div>
 
+    {{!-- Settings Page --}}
+    {{else if (eq currentPage "settings")}}
+    <div class="gm-datapad-page gm-datapad-settings swse-shell-surface-host" data-shell-surface="settings">
+      {{> "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs" vm=settingsVm}}
+    </div>
+
     {{!-- Healing Page --}}
     {{else if (eq currentPage "healing")}}
     <div class="gm-datapad-page gm-datapad-healing">

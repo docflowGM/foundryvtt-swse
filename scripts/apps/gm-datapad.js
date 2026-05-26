@@ -24,6 +24,8 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { SettingsSurfaceService } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceService.js";
+import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
@@ -86,6 +88,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // Approvals page state
     this.pendingDroids = [];
+
+    // Shared surface controllers
+    this._settingsSurfaceController = null;
   }
 
   async _prepareContext(options) {
@@ -128,6 +133,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         return this._loadHealingContext();
       case 'workspace':
         return this._loadWorkspaceContext();
+      case 'settings':
+        return this._loadSettingsContext();
       default:
         return {};
     }
@@ -678,6 +685,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
+   * Settings page: shared Holopad Settings surface, hosted in GM context.
+   */
+  async _loadSettingsContext() {
+    return {
+      pageTitle: 'GM Holopad Settings',
+      pageDescription: 'Shared datapad theme, motion, shell color, and language controls',
+      settingsVm: await SettingsSurfaceService.buildViewModel(null, { gm: true, preferActor: false })
+    };
+  }
+
+  /**
    * Get app card definitions for home page
    */
   _getAppCards(counts = {}) {
@@ -687,6 +705,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
       { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
+      { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
       { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' }
     ];
   }
@@ -732,6 +751,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    if (this.currentPage !== 'settings') {
+      this._settingsSurfaceController?.destroy?.();
+    }
+
     // Wire page-specific events based on current page
     if (this.currentPage === 'bulletin') {
       await this._wireBulletinEvents(root);
@@ -743,7 +766,20 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireApprovalsEvents(root);
     } else if (this.currentPage === 'healing') {
       await this._wireHealingEvents(root);
+    } else if (this.currentPage === 'settings') {
+      this._wireSettingsEvents(root);
     }
+  }
+
+  /** Wire shared settings surface events in GM context. */
+  _wireSettingsEvents(root) {
+    this._settingsSurfaceController ??= new SettingsSurfaceController(this, {
+      actor: null,
+      preferActor: false,
+      persistActorTheme: false,
+      logger: SWSELogger
+    });
+    this._settingsSurfaceController.attach(root);
   }
 
   /**

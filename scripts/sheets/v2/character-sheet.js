@@ -27,6 +27,7 @@ import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/govern
 import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
 import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
 import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
+import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
@@ -76,7 +77,6 @@ import {
 import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
-import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
@@ -1140,88 +1140,6 @@ export class SWSEV2CharacterSheet extends
     });
   }
 
-  /** Wire settings surface events (theme/motion/display controls). */
-  _wireSettingsSurfaceEvents(root, signal) {
-    const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
-    if (!settingsRoot) return;
-
-    // Wire theme preset selection
-    settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const themeId = el.dataset.themePreset;
-        if (!themeId) return;
-        try {
-          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
-          await ThemeManager.setTheme({ theme: themeId });
-          // Apply theme to shell immediately
-          const sheetShell = root.querySelector('.swse-sheet-v2-shell');
-          if (sheetShell) {
-            sheetShell.setAttribute('data-theme', themeId);
-          }
-          this.render(false);
-        } catch (err) {
-          swseLogger.error('[SETTINGS] Error setting theme:', err);
-          ui.notifications?.error?.(`Failed to set theme: ${err.message}`);
-        }
-      }, { signal });
-    });
-
-    // Wire shell color selection
-    settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const colorId = el.dataset.shellColor;
-        if (!colorId) return;
-        try {
-          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
-          await ThemeManager.setTheme({ shellColor: colorId });
-          this.render(false);
-        } catch (err) {
-          swseLogger.error('[SETTINGS] Error setting shell color:', err);
-          ui.notifications?.error?.(`Failed to set shell color: ${err.message}`);
-        }
-      }, { signal });
-    });
-
-    // Wire display control sliders
-    settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
-      el.addEventListener('change', async (ev) => {
-        const controlName = el.dataset.themeControl;
-        const value = ev.target.value;
-        if (!controlName) return;
-        try {
-          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
-          const currentTheme = ThemeManager.getTheme();
-          const update = { ...currentTheme, [controlName]: parseFloat(value) };
-          await ThemeManager.setTheme(update);
-          this.render(false);
-        } catch (err) {
-          swseLogger.error('[SETTINGS] Error updating display control:', err);
-        }
-      }, { signal });
-    });
-
-    // Wire theme toggles (breathing, reduced motion)
-    settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const toggleName = el.dataset.themeToggle;
-        if (!toggleName) return;
-        try {
-          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
-          const currentTheme = ThemeManager.getTheme();
-          const newValue = !currentTheme[toggleName];
-          const update = { ...currentTheme, [toggleName]: newValue };
-          await ThemeManager.setTheme(update);
-          this.render(false);
-        } catch (err) {
-          swseLogger.error('[SETTINGS] Error toggling theme setting:', err);
-        }
-      }, { signal });
-    });
-  }
-
   /** Wire actor-wide upgrade surface events (category/item selection + apply/remove). */
   _wireUpgradeSurfaceEvents(root, signal) {
     const upgradeRoot = root.querySelector('[data-shell-region="surface-upgrade"]');
@@ -1320,81 +1238,14 @@ export class SWSEV2CharacterSheet extends
 
   /** Wire settings surface: theme presets, shell color, controls, toggles, language, reset. */
   _wireSettingsSurfaceEvents(root, signal) {
-    const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
-    if (!settingsRoot) return;
-
-    settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const themeKey = ThemeResolutionService.resolveThemeKey(el.dataset.themePreset, { preferActor: false });
-        await ThemeManager.setTheme({ theme: themeKey });
-
-        // Settings surface is inside an actor sheet. Persist the choice on the
-        // actor too; otherwise an existing actor sheetTheme flag can continue
-        // to override the client setting and make the preset button appear to
-        // do nothing after the rerender.
-        if (this.document?.setFlag) {
-          await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
-        }
-
-        const sheetShell = root.querySelector('.sheet-shell, .swse-sheet-v2-shell');
-        if (sheetShell) {
-          ThemeResolutionService.applyToElement(sheetShell, {
-            actor: this.document,
-            themeKey,
-            motionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor: this.document })
-          });
-        }
-
-        settingsRoot.querySelectorAll('[data-theme-preset]').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.themePreset === themeKey);
-        });
-
-        this.render(false);
-      }, { signal });
+    this._settingsSurfaceController ??= new SettingsSurfaceController(this, {
+      actor: this.actor ?? this.document,
+      preferActor: true,
+      persistActorTheme: true,
+      logger: swseLogger
     });
-
-    settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        await ThemeManager.setTheme({ shellColor: el.dataset.shellColor });
-        this.render(false);
-      }, { signal });
-    });
-
-    settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
-      el.addEventListener('input', async (ev) => {
-        const key = el.dataset.themeControl;
-        const value = Number(el.value);
-        await ThemeManager.setTheme({ [key]: value });
-        this.render(false);
-      }, { signal });
-    });
-
-    settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const key = el.dataset.themeToggle;
-        const current = ThemeManager.getTheme() || ThemeManager.defaults;
-        await ThemeManager.setTheme({ [key]: !current[key] });
-        this.render(false);
-      }, { signal });
-    });
-
-    settingsRoot.querySelectorAll('[data-language-setting], [data-language-mode]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const language = el.dataset.languageSetting || el.dataset.languageMode;
-        await ThemeManager.setTheme({ language });
-        this.render(false);
-      }, { signal });
-    });
-
-    settingsRoot.querySelector('[data-action="reset-theme-defaults"]')?.addEventListener('click', async (ev) => {
-      ev.preventDefault();
-      await ThemeManager.setTheme(ThemeManager.defaults);
-      this.render(false);
-    }, { signal });
+    this._settingsSurfaceController.actor = this.actor ?? this.document;
+    this._settingsSurfaceController.attach(root, { signal });
   }
 
   /** Wire mentor surface: key selection, topic selection, path commitment with mentor-memory. */
