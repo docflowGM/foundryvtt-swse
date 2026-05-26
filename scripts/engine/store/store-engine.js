@@ -1,10 +1,12 @@
 /**
  * scripts/engine/store/store-engine.js
  *
- * PHASE 4: Store Engine — Consolidated Single Authority
+ * Store Engine — Store validation and pricing authority
  *
- * This is the SSOT (Single Source of Truth) for all store operations.
- * Replaces the dual-engine pattern (StoreEngine + TransactionEngine) with unified design.
+ * StoreEngine is the public store API for inventory, policy, pricing, and
+ * purchase validation. TransactionEngine is the single source of truth for
+ * credit movement, transaction audit records, and commerce rollback/correction
+ * entries. StoreEngine delegates committing purchases to TransactionEngine.
  *
  * Architecture:
  * ┌─────────────────────────────────────┐
@@ -33,9 +35,9 @@
  * 5. No Concurrent Purchases: Per-actor locking prevents race conditions
  *
  * TransactionEngine (transaction-engine.js):
- *   - Legacy atomic coordinator (kept for reference, not actively used)
- *   - Future: Can be integrated as StoreEngine's internal implementation
- *   - For now: StoreEngine implements atomicity via SnapshotManager
+ *   - Canonical commerce transaction boundary for credits/audit/rollback
+ *   - StoreEngine calls it after policy/pricing validation
+ *   - ActorEngine remains underneath it as the actor mutation executor
  *
  * Public API:
  *   - getInventory(options)       : Load from compendiums + apply pricing

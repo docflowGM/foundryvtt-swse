@@ -54,43 +54,46 @@ export class VehicleFactory {
     const template = buildSpec.template;
     const condition = buildSpec.condition || 'new';
 
-    // Extract template data
-    const templateObj = template.toObject ? template.toObject() : template;
-    const templateSystem = templateObj.system || {};
+    const source = template?.doc || template?.template || template;
+    const templateObj = source?.toObject ? source.toObject(false) : foundry.utils.deepClone(source || {});
+    const templateSystem = templateObj.system || template?.system || {};
 
-    return {
+    // Preserve full stock ship/vehicle fidelity from the compendium/world actor:
+    // embedded weapons, effects, token defaults, flags, and vehicle-specific
+    // system fields. The minimal fallback fields stay only as safe defaults.
+    const vehicleData = {
+      ...templateObj,
       type: 'vehicle',
-      name: `${condition === 'used' ? '(Used) ' : ''}${template.name}`,
-      img: template.img || 'icons/svg/anchor.svg',
+      name: `${condition === 'used' ? '(Used) ' : ''}${templateObj.name || template?.name || 'Unnamed Vehicle'}`,
+      img: templateObj.img || template?.img || 'icons/svg/anchor.svg',
       system: {
-        // Vehicle-specific system fields
+        ...templateSystem,
         category: templateSystem.category || templateSystem.vehicleType || 'starfighter',
         domain: templateSystem.domain || 'starship',
-
-        // Stats from template
         hull: {
-          value: templateSystem.hull?.value || templateSystem.hull?.max || 50,
-          max: templateSystem.hull?.max || 50
+          value: templateSystem.hull?.value ?? templateSystem.hull?.max ?? 50,
+          max: templateSystem.hull?.max ?? templateSystem.hull?.value ?? 50
         },
         shields: {
-          value: templateSystem.shields?.value || templateSystem.shields?.max || 0,
-          max: templateSystem.shields?.max || 0
+          value: templateSystem.shields?.value ?? templateSystem.shields?.max ?? 0,
+          max: templateSystem.shields?.max ?? templateSystem.shields?.value ?? 0
         },
         speed: templateSystem.speed || 12,
-
-        // Derived fields: blank (DerivedCalculator will populate after creation)
-        reflexDefense: 10,
-        fortitudeDefense: 10,
-        baseAttackBonus: 0,
-
-        // Store metadata for reference
+        reflexDefense: templateSystem.reflexDefense ?? 10,
+        fortitudeDefense: templateSystem.fortitudeDefense ?? 10,
+        baseAttackBonus: templateSystem.baseAttackBonus ?? 0,
         buildMetadata: {
+          ...(templateSystem.buildMetadata || {}),
           isNew: condition === 'new',
-          condition: condition,
-          templateId: template.id || template._id
+          condition,
+          templateId: template?.id || template?._id || templateObj._id || templateObj.id
         }
       }
     };
+
+    delete vehicleData._id;
+    delete vehicleData.id;
+    return vehicleData;
   }
 
   /**

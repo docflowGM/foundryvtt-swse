@@ -1132,6 +1132,124 @@ async function logPurchaseToHistory(actor, cart, total, transactionId = null) {
     }
 }
 
+
+function cloneStoreCheckoutData(value) {
+    if (value === undefined || value === null) return value;
+    if (globalThis.foundry?.utils?.deepClone) return globalThis.foundry.utils.deepClone(value);
+    try { return structuredClone(value); } catch (_err) { return JSON.parse(JSON.stringify(value)); }
+}
+
+function stripDocumentIdentity(data = {}) {
+    delete data._id;
+    delete data.id;
+    return data;
+}
+
+function firstObjectCandidate(...candidates) {
+    for (const candidate of candidates) {
+        if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) return candidate;
+    }
+    return null;
+}
+
+function buildDraftActorFlags(existingFlags = {}, extra = {}) {
+    const existingSystemFlags = existingFlags['foundryvtt-swse'] || {};
+    return {
+        ...existingFlags,
+        'foundryvtt-swse': {
+            ...existingSystemFlags,
+            pendingApproval: true,
+            draftOnly: true,
+            ownerPlayerId: game.user?.id ?? null,
+            ...extra
+        }
+    };
+}
+
+function buildDraftDroidActorData(chargenSnapshot, ownerActor, costCredits) {
+    const characterData = chargenSnapshot?.characterData || {};
+    const candidate = firstObjectCandidate(
+        chargenSnapshot?.actorData,
+        chargenSnapshot?.finalActorData,
+        chargenSnapshot?.documentData,
+        chargenSnapshot?.characterData?.actorData,
+        chargenSnapshot?.characterData?.documentData,
+        chargenSnapshot?.result?.actorData
+    );
+
+    const data = stripDocumentIdentity(cloneStoreCheckoutData(candidate || {}));
+    data.name = data.name || characterData.name || 'Custom Droid';
+    data.type = 'droid';
+    data.img = data.img || characterData.img || 'icons/svg/mystery-man.svg';
+    data.ownership = { default: 0 };
+    data.flags = buildDraftActorFlags(data.flags || {}, {
+            approvalType: 'droid',
+            ownerActorId: ownerActor?.id ?? null,
+            ownerActorName: ownerActor?.name ?? null
+        });
+    data.system = {
+        ...(data.system || {}),
+        ...(characterData.system || {})
+    };
+    data.system.droidSystems = {
+        ...(data.system.droidSystems || {}),
+        degree: data.system.droidSystems?.degree ?? characterData.droidDegree ?? characterData.degree ?? 'Unknown',
+        size: data.system.droidSystems?.size ?? characterData.droidSize ?? characterData.size ?? 'medium',
+        stateMode: data.system.droidSystems?.stateMode ?? 'PENDING_APPROVAL',
+        totalCost: normalizeCredits(data.system.droidSystems?.totalCost ?? costCredits),
+        credits: {
+            ...(data.system.droidSystems?.credits || {}),
+            spent: normalizeCredits(data.system.droidSystems?.credits?.spent ?? costCredits)
+        }
+    };
+    data.system.storeAcquisition = {
+        ...(data.system.storeAcquisition || {}),
+        pendingApproval: true,
+        source: 'custom-droid-approval-draft',
+        requestedByActorId: ownerActor?.id ?? null,
+        requestedByActorName: ownerActor?.name ?? null,
+        costCredits: normalizeCredits(costCredits)
+    };
+    return data;
+}
+
+function buildDraftVehicleActorData(modificationData, vehicleTemplate, ownerActor, costCredits) {
+    const source = vehicleTemplate?.doc || vehicleTemplate?.actor || vehicleTemplate;
+    const base = source?.toObject ? source.toObject(false) : cloneStoreCheckoutData(source || {});
+    const data = stripDocumentIdentity(base || {});
+    const requestedName = modificationData?.name || modificationData?.vehicleName || modificationData?.displayName;
+
+    data.name = requestedName || data.name || vehicleTemplate?.name || 'Custom Vehicle';
+    data.type = 'vehicle';
+    data.img = modificationData?.img || data.img || vehicleTemplate?.img || 'icons/svg/mystery-man.svg';
+    data.ownership = { default: 0 };
+    data.flags = buildDraftActorFlags(data.flags || {}, {
+            approvalType: 'vehicle',
+            ownerActorId: ownerActor?.id ?? null,
+            ownerActorName: ownerActor?.name ?? null,
+            baseTemplateId: vehicleTemplate?.id || vehicleTemplate?._id || null,
+            baseTemplateName: vehicleTemplate?.name || data.name || null
+        });
+    data.system = {
+        ...(data.system || {}),
+        ...(modificationData?.system || {})
+    };
+    data.system.storeAcquisition = {
+        ...(data.system.storeAcquisition || {}),
+        pendingApproval: true,
+        source: 'custom-vehicle-approval-draft',
+        requestedByActorId: ownerActor?.id ?? null,
+        requestedByActorName: ownerActor?.name ?? null,
+        costCredits: normalizeCredits(costCredits),
+        baseTemplateName: vehicleTemplate?.name || data.name || null
+    };
+    data.system.modificationData = {
+        ...(data.system.modificationData || {}),
+        ...cloneStoreCheckoutData(modificationData || {})
+    };
+    return data;
+}
+
 /**
  * Submit draft droid for GM approval
  * Creates an unpublished draft actor and adds to pending approvals queue
@@ -1149,26 +1267,18 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
     const normalizedCost = normalizeCredits(costCredits);
 
     try {
-        // 1. Create draft droid actor (not published, not owned by player)
-        const draftDroid = await createActor({
-            name: chargenSnapshot.characterData?.name || 'Custom Droid',
-            type: 'droid',
-            ownership: {
-                default: 0  // Players cannot see
-            }
-        });
+        // 1. Create a hidden draft droid actor with as much generated/final actor fidelity as the
+        // submission snapshot contains. The GM approval step publishes this draft through
+        // TransactionEngine instead of rebuilding a second actor later.
+        const draftDroidData = buildDraftDroidActorData(chargenSnapshot, ownerActor, normalizedCost);
+        const draftDroid = await createActor(draftDroidData);
 
         if (!draftDroid) {
             ui.notifications.error('Failed to create draft droid.');
             return false;
         }
 
-        // 2. Mark as draft (pending approval)
-        await draftDroid.setFlag('foundryvtt-swse', 'pendingApproval', true);
-        await draftDroid.setFlag('foundryvtt-swse', 'draftOnly', true);
-        await draftDroid.setFlag('foundryvtt-swse', 'ownerPlayerId', game.user.id);
-
-        // 3. Build pending purchase record
+        // 2. Build pending purchase record
         const pendingRecord = {
             id: `pending_droid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             type: 'droid',
@@ -1188,12 +1298,12 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
             }
         };
 
-        // 4. Add to pending queue (world flag)
+        // 3. Add to pending queue (world flag)
         const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
         pendingPurchases.push(pendingRecord);
         await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
-        // 5. Notify player
+        // 4. Notify player
         ui.notifications.info(`Droid design submitted for GM approval. Awaiting review...`);
         SWSELogger.log('SWSE Store | Draft droid submitted for approval:', {
             droidName: pendingRecord.draftData.name,
@@ -1227,26 +1337,17 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
     const normalizedCost = normalizeCredits(costCredits);
 
     try {
-        // 1. Create draft vehicle actor (not published, not owned by player)
-        const draftVehicle = await createActor({
-            name: vehicleTemplate.name || 'Custom Vehicle',
-            type: 'vehicle',
-            ownership: {
-                default: 0  // Players cannot see
-            }
-        });
+        // 1. Create a hidden draft vehicle/ship actor from the real template data so
+        // approved purchases keep weapons, systems, token data, and flags intact.
+        const draftVehicleData = buildDraftVehicleActorData(modificationData, vehicleTemplate, ownerActor, normalizedCost);
+        const draftVehicle = await createActor(draftVehicleData);
 
         if (!draftVehicle) {
             ui.notifications.error('Failed to create draft vehicle.');
             return false;
         }
 
-        // 2. Mark as draft (pending approval)
-        await draftVehicle.setFlag('foundryvtt-swse', 'pendingApproval', true);
-        await draftVehicle.setFlag('foundryvtt-swse', 'draftOnly', true);
-        await draftVehicle.setFlag('foundryvtt-swse', 'ownerPlayerId', game.user.id);
-
-        // 3. Build pending purchase record
+        // 2. Build pending purchase record
         const pendingRecord = {
             id: `pending_vehicle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             type: 'vehicle',
@@ -1266,12 +1367,12 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
             }
         };
 
-        // 4. Add to pending queue (world flag)
+        // 3. Add to pending queue (world flag)
         const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
         pendingPurchases.push(pendingRecord);
         await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
-        // 5. Notify player
+        // 4. Notify player
         ui.notifications.info(`Vehicle design submitted for GM approval. Awaiting review...`);
         SWSELogger.log('SWSE Store | Draft vehicle submitted for approval:', {
             vehicleName: pendingRecord.draftData.name,

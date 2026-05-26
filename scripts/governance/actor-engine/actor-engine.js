@@ -3050,9 +3050,13 @@ export const ActorEngine = {
         await this._applyCreateOps(plan.create.actors, tempIdMap, source);
       }
 
-      // Rewrite temporary IDs in add bucket with real IDs
-      if (Object.keys(tempIdMap).length > 0 && plan.add && Object.keys(plan.add).length > 0) {
-        this._rewriteTemporaryIds(plan.add, tempIdMap);
+      // Rewrite temporary IDs in all remaining mutation buckets with real IDs.
+      // CREATE-backed store assets may be linked into system.ownedActors and
+      // system.relationships through SET, not just embedded ADD operations.
+      if (Object.keys(tempIdMap).length > 0) {
+        if (plan.set && Object.keys(plan.set).length > 0) this._rewriteTemporaryIds(plan.set, tempIdMap);
+        if (plan.update && Object.keys(plan.update).length > 0) this._rewriteTemporaryIds(plan.update, tempIdMap);
+        if (plan.add && Object.keys(plan.add).length > 0) this._rewriteTemporaryIds(plan.add, tempIdMap);
       }
 
       // DELETE next (remove stale references)
@@ -3239,29 +3243,49 @@ export const ActorEngine = {
    * After CREATE phase creates actors, map temp IDs to real IDs.
    * @private
    */
-  _rewriteTemporaryIds(addBucket, tempIdMap) {
-    if (!addBucket || typeof addBucket !== 'object') {
+  _rewriteTemporaryIds(targetBucket, tempIdMap) {
+    if (!targetBucket || typeof targetBucket !== 'object') {
       return;
     }
 
-    try {
-      for (const [collection, ids] of Object.entries(addBucket)) {
-        if (!Array.isArray(ids)) {
-          continue;
+    const rewriteValue = (value) => {
+      if (typeof value === 'string') {
+        if (tempIdMap[value]) {
+          const realId = tempIdMap[value];
+          SWSELogger.debug('ActorEngine: Rewrote temp ID', {
+            temporaryId: value,
+            realId
+          });
+          return realId;
         }
 
-        // Rewrite each ID if it's a temporary ID
-        addBucket[collection] = ids.map(id => {
-          if (typeof id === 'string' && tempIdMap[id]) {
-            const realId = tempIdMap[id];
-            SWSELogger.debug('ActorEngine: Rewrote temp ID', {
-              temporaryId: id,
-              realId
-            });
-            return realId;
-          }
-          return id;
-        });
+        // Support UUID-like references staged before CREATE, such as
+        // Actor.temp_vehicle_x. This is needed for store-acquired assets that
+        // are linked into relationship panels in the same atomic mutation.
+        for (const [tempId, realId] of Object.entries(tempIdMap)) {
+          const tempUuid = `Actor.${tempId}`;
+          if (value === tempUuid) return `Actor.${realId}`;
+        }
+        return value;
+      }
+
+      if (Array.isArray(value)) {
+        return value.map(entry => rewriteValue(entry));
+      }
+
+      if (value && typeof value === 'object') {
+        for (const [key, nested] of Object.entries(value)) {
+          value[key] = rewriteValue(nested);
+        }
+        return value;
+      }
+
+      return value;
+    };
+
+    try {
+      for (const [key, value] of Object.entries(targetBucket)) {
+        targetBucket[key] = rewriteValue(value);
       }
     } catch (error) {
       throw new MutationApplicationError(

@@ -596,7 +596,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       if (actor.system.droidSystems.stateMode !== 'PENDING') continue;
 
       const droidData = actor.system.droidSystems;
-      const owner = game.users.get(actor.ownership[Object.keys(actor.ownership)[0]]);
+      const owner = game.users.find(user => user?.character?.id === actor.id || Number(actor.ownership?.[user.id] ?? 0) >= 3);
 
       this.pendingDroids.push({
         actorId: actor.id,
@@ -1912,69 +1912,70 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const approval = approvals[index];
     const ownerActor = game.actors.get(approval.ownerActorId);
+    const draftActor = game.actors.get(approval.draftActorId);
 
     if (!ownerActor) {
       ui?.notifications?.error?.('Owner actor not found');
       return;
     }
 
+    if (!draftActor) {
+      ui?.notifications?.error?.('Draft asset actor not found');
+      return;
+    }
+
     const cost = normalizeCredits(approval.costCredits ?? 0);
+    const assetName = approval.draftData?.name ?? draftActor.name ?? 'Custom asset';
 
     try {
-      const creditResult = cost > 0 ? await TransactionEngine.executeCreditAdjustment({
+      const approvalResult = await TransactionEngine.executeAssetApprovalTransaction({
         actor: ownerActor,
-        amount: -cost,
-        reason: `GM approved ${approval.type || 'custom'} acquisition`,
+        assetActor: draftActor,
+        cost,
+        reason: `GM approved ${approval.type || draftActor.type || 'custom'} acquisition`,
         transactionContext: 'store-custom-approval',
         audit: {
-          approvalType: approval.type,
+          approvalId: approval.id ?? null,
+          approvalType: approval.type ?? draftActor.type,
           draftActorId: approval.draftActorId,
-          itemName: approval.draftData?.name ?? 'Custom asset',
-          itemNames: [approval.draftData?.name ?? 'Custom asset'],
+          itemName: assetName,
+          itemNames: [assetName],
           itemCount: 1,
           source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
-          gmNotes: approval.metadata?.gmNotes ?? ''
+          gmNotes: approval.metadata?.gmNotes ?? '',
+          ownerPlayerId: approval.ownerPlayerId ?? null,
+          edited: !!approval.metadata?.gmNotes
         }
       }, {
         source: 'GMDatapad._approvePendingCustom',
         validate: true,
         rederive: true
-      }) : { success: true, transactionId: null };
+      });
 
-      if (!creditResult.success) {
-        ui?.notifications?.error?.(`Failed to approve: ${creditResult.error}`);
+      if (!approvalResult.success) {
+        ui?.notifications?.error?.(`Failed to approve: ${approvalResult.error}`);
         return;
-      }
-
-      const draftActor = game.actors.get(approval.draftActorId);
-      if (draftActor) {
-        const ownerUser = game.users.find(user => user.character?.id === ownerActor.id);
-        const ownership = { default: 0 };
-        if (ownerUser) ownership[ownerUser.id] = 3;
-        if (game.user?.id) ownership[game.user.id] = 3;
-
-        await ActorEngine.updateActor(draftActor, {
-          ownership,
-          'flags.-=foundryvtt-swse.pendingApproval': null,
-          'flags.-=foundryvtt-swse.draftOnly': null,
-          'flags.-=foundryvtt-swse.ownerPlayerId': null
-        });
       }
 
       const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       const purchase = {
         timestamp: Date.now(),
         items: [],
-        droids: approval.type === 'droid' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
-        vehicles: approval.type === 'vehicle' || approval.type === 'starship' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
+        droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost }] : [],
+        vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost }] : [],
         total: cost,
-        transactionId: creditResult?.transactionId ?? null,
-        source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+        transactionId: approvalResult.transactionId ?? null,
+        source: `GM Datapad - Custom ${draftActor.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
         gmNotes: approval.metadata?.gmNotes ?? '',
         compatibilityMirror: true
       };
       history.push(purchase);
-      await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
+      await ActorEngine.updateActor(ownerActor, {
+        'flags.foundryvtt-swse.purchaseHistory': history
+      }, {
+        source: 'GMDatapad._approvePendingCustom.purchaseHistoryMirror',
+        skipValidation: true
+      });
 
       approvals.splice(index, 1);
       await SettingsHelper.set('pendingCustomPurchases', approvals);
@@ -1983,6 +1984,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         approval,
         actor: ownerActor,
         draftActor,
+        transactionId: approvalResult.transactionId,
         decidedBy: game.user?.name ?? 'GM',
         edited: !!approval.metadata?.gmNotes
       });
@@ -1990,7 +1992,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
-      ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Custom asset'}`);
+      ui?.notifications?.info?.(`Approved: ${assetName}`);
       await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error approving custom purchase:', err);
