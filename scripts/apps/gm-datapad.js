@@ -138,10 +138,26 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await this._loadStorePendingApprovals();
     await this._loadPendingDroids();
 
+    let healingEligible = 0;
+    try {
+      const healingSummary = await GMHealingTrigger.getHealingSummary();
+      healingEligible = healingSummary?.eligible ?? 0;
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load healing summary for home badge counts:', err);
+    }
+
+    const pendingDroids = this.pendingDroids?.length ?? 0;
+    const storeApprovals = this.storeApprovals?.length ?? 0;
+    const pendingSales = this.pendingSales?.length ?? 0;
+
     return {
       bulletin: bulletinCount,
-      approvals: (this.pendingDroids?.length ?? 0) + (this.storeApprovals?.length ?? 0),
-      store: (this.pendingSales?.length ?? 0) + (this.storeApprovals?.length ?? 0),
+      approvals: pendingDroids + storeApprovals,
+      pendingDroids,
+      storeApprovals,
+      pendingSales,
+      store: pendingSales + storeApprovals,
+      healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
   }

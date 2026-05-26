@@ -67,23 +67,102 @@
         </div>
       </div>
 
-      <div class="gm-command-dashboard">
-        <article class="gm-command-status-card">
-          <span class="gm-command-status-label">Pending Approvals</span>
-          <strong>{{homeSummary.approvals}}</strong>
-        </article>
-        <article class="gm-command-status-card">
-          <span class="gm-command-status-label">Store Queue</span>
-          <strong>{{homeSummary.store}}</strong>
-        </article>
-        <article class="gm-command-status-card">
-          <span class="gm-command-status-label">Bulletins</span>
-          <strong>{{homeSummary.bulletin}}</strong>
-        </article>
-        <article class="gm-command-status-card">
-          <span class="gm-command-status-label">Owned Actors</span>
-          <strong>{{homeSummary.workspace}}</strong>
-        </article>
+      <div class="gm-command-dashboard" aria-label="GM command summary">
+        {{#each commandStats}}
+        <button type="button" class="gm-command-status-card {{this.tone}}" data-nav-to="{{this.route}}">
+          <span class="gm-command-status-label">{{this.label}}</span>
+          <strong>{{this.value}}</strong>
+          <span class="gm-command-status-detail">{{this.detail}}</span>
+        </button>
+        {{/each}}
+      </div>
+
+      <div class="gm-command-grid">
+        <section class="gm-command-panel gm-command-panel--intel swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">LIVE OPS</span>
+              <h3>Command Intel</h3>
+            </div>
+            <span class="gm-command-panel-chip {{#if combatStatus.active}}crit{{else}}stable{{/if}}">{{combatStatus.label}}</span>
+          </div>
+
+          <div class="gm-intel-grid">
+            {{#each dashboardPanels}}
+            <button type="button" class="gm-intel-card {{this.tone}}" data-nav-to="{{this.route}}">
+              <span class="gm-intel-icon"><i class="{{this.icon}}"></i></span>
+              <span class="gm-intel-label">{{this.label}}</span>
+              <strong>{{this.value}}</strong>
+              <span class="gm-intel-detail">{{this.detail}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </section>
+
+        <aside class="gm-command-panel gm-command-panel--alerts swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">WATCHLIST</span>
+              <h3>Alerts</h3>
+            </div>
+          </div>
+
+          <div class="gm-alert-stack">
+            {{#if dashboardAlerts.length}}
+              {{#each dashboardAlerts}}
+              <button type="button" class="gm-alert-row {{this.tone}}" data-nav-to="{{this.route}}">
+                <span class="gm-alert-pip"></span>
+                <span><strong>{{this.label}}</strong><em>{{this.detail}}</em></span>
+              </button>
+              {{/each}}
+            {{else}}
+              <p class="gm-empty-intel">No priority alerts. Command board is stable.</p>
+            {{/if}}
+          </div>
+        </aside>
+      </div>
+
+      <div class="gm-command-grid gm-command-grid--lower">
+        <section class="gm-command-panel gm-command-panel--transactions swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">RECENT ACTIVITY</span>
+              <h3>Store Ledger</h3>
+            </div>
+            <button type="button" class="swse-ui-button gm-mini-button" data-nav-to="store">View Store</button>
+          </div>
+
+          {{#if recentTransactions.length}}
+          <div class="gm-transaction-list">
+            {{#each recentTransactions}}
+            <div class="gm-transaction-row">
+              <span class="gm-transaction-main"><strong>{{this.actor}}</strong><em>{{this.item}}</em></span>
+              <span class="gm-transaction-meta">{{this.timeLabel}}</span>
+              <span class="gm-transaction-amount {{this.amountTone}}">{{this.amountLabel}}</span>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+            <p class="gm-empty-intel">No store transactions have been recorded.</p>
+          {{/if}}
+        </section>
+
+        <aside class="gm-command-panel gm-command-panel--quick swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">FAST PATHS</span>
+              <h3>Quick Actions</h3>
+            </div>
+          </div>
+          <div class="gm-quick-action-grid">
+            {{#each quickActions}}
+            <button type="button" class="gm-quick-action {{this.tone}}" data-nav-to="{{this.route}}">
+              <i class="{{this.icon}}"></i>
+              <span>{{this.label}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </aside>
       </div>
 
       <div class="app-cards-grid gm-shell-app-grid">
