@@ -1,25 +1,103 @@
 <div class="gm-datapad-container swse-ui-shell swse-datapad flexcol" data-theme="{{themeKey}}" data-motion-style="{{motionStyle}}" style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
-  {{!-- GM Datapad Shell --}}
-  <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
+  {{!-- GM Datapad Shell — mirrors the actor holopad tablet chrome/navigation while keeping GM page logic intact. --}}
+  <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept swse-sheet-v2-shell--gm-datapad sheet-shell" data-shell-surface="{{currentPage}}" data-theme="{{themeKey}}" data-motion-style="{{motionStyle}}" style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
+    <div class="swse-v2-tablet swse-v2-tablet--concept gm-datapad-tablet">
+      <div class="swse-tablet-rivet swse-tablet-rivet--tl" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--tr" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--bl" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--br" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--ml" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--mr" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--top-a" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--top-b" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--right-a" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--right-b" aria-hidden="true"></div>
+      <div class="swse-tablet-camera" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--a" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--b" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--c" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--d" aria-hidden="true"></div>
+
+      <div class="swse-tablet-top-bezel" data-action="tablet-drag" title="Drag datapad" aria-label="Datapad drag rail">
+        <div class="swse-tablet-drag-handle" data-action="tablet-drag" aria-hidden="true"></div>
+      </div>
+
+      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail" aria-label="GM datapad controls">
+        <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="GM command datapad">GM-CMD-{{currentPage}}</span>
+        <span class="swse-tablet-status-lights" aria-hidden="true"><span></span><span></span><span></span></span>
+        <button type="button" class="swse-tablet-control swse-tablet-control--home" data-nav-to="home" title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
+      </div>
+
+      <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+      <div class="swse-v2-screen swse-v2-screen--concept gm-datapad-screen-shell">
+        <div class="scan-v" aria-hidden="true"></div>
+        <div class="corner tl" aria-hidden="true"></div>
+        <div class="corner tr" aria-hidden="true"></div>
+        <div class="corner bl" aria-hidden="true"></div>
+        <div class="corner br" aria-hidden="true"></div>
+        <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
 
     {{!-- Home Page --}}
     {{#if (eq currentPage "home")}}
-    <div class="gm-datapad-page gm-datapad-home">
-      <div class="page-header">
-        <h2>GM Operations</h2>
-        <p class="page-subtitle">Master control for store, rules, approvals, and party management</p>
+    <div class="gm-datapad-page gm-datapad-home swse-home-surface" data-shell-region="surface-home">
+      <div class="swse-home-hud">
+        <div class="swse-home-hud-left">
+          <span class="swse-home-dot"></span>
+          <span class="swse-home-hud-title">GM COMMAND HOLOPAD</span>
+          <span class="swse-home-tag">OPS</span>
+          <span class="swse-home-tag">SHELL PARITY</span>
+        </div>
+        <div class="swse-home-hud-right">
+          <span>GM ACCESS</span>
+          <span class="swse-home-signal"><span></span><span></span><span></span><span></span></span>
+          <span class="swse-home-battery"><span class="swse-home-cell"><span class="swse-home-fill"></span></span> 78%</span>
+        </div>
       </div>
 
-      <div class="app-cards-grid">
+      <div class="swse-home-page-header gm-home-page-header">
+        <div>
+          <div class="swse-home-page-title">GM Operations</div>
+          <div class="swse-home-page-kicker">COMMAND NODE · SHARED HOLOPAD SHELL</div>
+          <div class="swse-home-page-subtitle">▸ Dashboard, store control, approvals, healing, workspace, and bulletin operations</div>
+        </div>
+        <div class="swse-home-page-greeting">
+          <span class="em">{{user.name}}</span> · game master console<br>
+          <span class="stardate">GM DATAPAD · GLOBAL THEME CONTEXT</span>
+        </div>
+      </div>
+
+      <div class="gm-command-dashboard">
+        <article class="gm-command-status-card">
+          <span class="gm-command-status-label">Pending Approvals</span>
+          <strong>{{homeSummary.approvals}}</strong>
+        </article>
+        <article class="gm-command-status-card">
+          <span class="gm-command-status-label">Store Queue</span>
+          <strong>{{homeSummary.store}}</strong>
+        </article>
+        <article class="gm-command-status-card">
+          <span class="gm-command-status-label">Bulletins</span>
+          <strong>{{homeSummary.bulletin}}</strong>
+        </article>
+        <article class="gm-command-status-card">
+          <span class="gm-command-status-label">Owned Actors</span>
+          <strong>{{homeSummary.workspace}}</strong>
+        </article>
+      </div>
+
+      <div class="app-cards-grid gm-shell-app-grid">
         {{#each apps}}
-        <button class="app-card swse-ui-button" data-app-card="{{this.id}}"
+        <button class="app-card swse-home-tile gm-shell-app-card {{#if this.featured}}featured{{/if}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}"
                 title="{{this.description}}">
-          <div class="app-card-icon">
+          <span class="swse-home-tile-id">{{this.code}}</span>
+          <div class="app-card-icon swse-home-tile-icon">
             <i class="{{this.icon}}"></i>
           </div>
-          <div class="app-card-label">{{this.label}}</div>
+          <div class="app-card-label swse-home-tile-label">{{this.label}}</div>
           <div class="app-card-desc">{{this.description}}</div>
-          {{#if this.badgeCount}}<span class="app-card-badge">{{this.badgeCount}}</span>{{/if}}
+          <div class="swse-home-tile-status"><span class="swse-home-dot {{this.statusTone}}"></span><span>{{this.status}}</span></div>
+          {{#if this.badgeCount}}<span class="app-card-badge swse-home-badge {{this.badgeType}}">{{this.badgeCount}}</span>{{/if}}
         </button>
         {{/each}}
       </div>
@@ -976,5 +1054,19 @@
     </div>
     {{/if}}
 
+        </div>
+      </div>
+
+      <div class="swse-tablet-vent swse-tablet-vent--bottom" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <button type="button" class="swse-tablet-bottom-home" data-nav-to="home" title="Return to GM holopad home" aria-label="Return to GM holopad home">
+        <span class="swse-tablet-bottom-home__glyph" aria-hidden="true">⌂</span>
+        <span class="swse-tablet-bottom-home__label">HOME</span>
+      </button>
+
+      <div class="swse-tablet-bottom-engraving" aria-hidden="true">GM COMMAND HOLOPAD · OPS ACCESS · SHARED SHELL</div>
+    </div>
   </div>
 </div>
