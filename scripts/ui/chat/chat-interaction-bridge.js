@@ -206,6 +206,44 @@ async function handleHolonetCardAction(event, button, message) {
   }
 }
 
+async function handleStoreReceiptAction(event, button, message) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const action = button.dataset.storeAction || '';
+  const actor = actorFromId(button.dataset.actorId || message?.speaker?.actor)
+    || game.user?.character
+    || game.actors?.find?.(a => a?.isOwner && a?.type === 'character')
+    || null;
+
+  if (!actor) {
+    ui?.notifications?.warn?.('Open a character sheet before using this receipt shortcut.');
+    return;
+  }
+
+  try {
+    const { ShellRouter } = await import('/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js');
+    if (action === 'open-store') {
+      await ShellRouter.openSurface(actor, 'store', {
+        source: 'chat-store-receipt',
+        transactionId: button.dataset.storeTransactionId || ''
+      });
+      return;
+    }
+    if (action === 'open-holonet') {
+      await ShellRouter.openSurface(actor, 'messenger', {
+        source: 'chat-store-receipt',
+        transactionId: button.dataset.storeTransactionId || ''
+      });
+      return;
+    }
+    await ShellRouter.openSurface(actor, 'sheet', { source: 'chat-store-receipt' });
+  } catch (err) {
+    console.warn('[SWSE Chat] Failed to process store receipt action:', err);
+    ui?.notifications?.warn?.('Receipt shortcut could not be opened.');
+  }
+}
+
 async function handleSpeciesRerollButton(event, button, message) {
   event.preventDefault();
 
@@ -299,6 +337,7 @@ export class ChatInteractionBridge {
     bind(root, '.swse-apply-damage-btn', 'ApplyDamage', handleApplyDamageButton, message);
     bind(root, '[data-reaction], [data-swse-reaction-key]', 'Reaction', handleReactionButton, message);
     bind(root, '[data-holonet-action="open-thread"]', 'HolonetOpenThread', handleHolonetCardAction, message);
+    bind(root, '[data-store-action]', 'StoreReceiptAction', handleStoreReceiptAction, message);
     bind(root, '.species-reroll-btn', 'SpeciesReroll', handleSpeciesRerollButton, message);
     bind(root, '.swse-skill-reroll-btn', 'SkillReroll', handleSkillRerollButton, message);
     bind(root, '.swse-attack-reroll-btn', 'AttackReroll', handleAttackRerollButton, message);

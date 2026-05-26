@@ -25,6 +25,7 @@ import registerActorSidebarControls from "/systems/foundryvtt-swse/scripts/infra
 import registerCustomRollSidebarControl from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/custom-roll-sidebar-control.js";
 import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 import { registerHolonetChatCards } from "/systems/foundryvtt-swse/scripts/chat/holonet-chat-card.js";
+import { registerStoreReceiptChatCards } from "/systems/foundryvtt-swse/scripts/chat/store-receipt-chat.js";
 
 /**
  * Register all UI-related hooks
@@ -35,6 +36,7 @@ export function registerUIHooks() {
 
     registerChatInteractionBridge();
     registerHolonetChatCards();
+    registerStoreReceiptChatCards();
 
     // Chat message rendering (non-application, safe)
     HooksRegistry.register('renderChatMessageHTML', handleRenderChatMessage, {

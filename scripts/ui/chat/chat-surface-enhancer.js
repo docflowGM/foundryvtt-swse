@@ -17,6 +17,7 @@ export const SWSE_CHAT_SURFACE_SELECTOR = [
   '.swse-chat-card',
   '.swse-dialogue-card',
   '.swse-holonet-card',
+  '.swse-receipt-card',
   '.swse-roll-card',
   '.swse-chat-roll',
   '.swse-holo-roll-card',

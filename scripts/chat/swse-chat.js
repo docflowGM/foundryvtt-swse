@@ -77,6 +77,93 @@ function whisperUsersForRecipients(recipients = []) {
   return [...ids].filter(Boolean);
 }
 
+function normalizeReceiptSourceType(value = '') {
+  const v = String(value || '').toLowerCase();
+  if (['approval', 'approved', 'custom-approval', 'gm-approval'].includes(v)) return 'approval';
+  if (['denial', 'denied', 'custom-denial', 'gm-denial'].includes(v)) return 'denial';
+  if (['credit-transfer', 'transfer', 'sent', 'received'].includes(v)) return 'credit-transfer';
+  if (['credit-grant', 'grant', 'reward', 'payout'].includes(v)) return 'credit-grant';
+  if (['refund', 'resale', 'sell', 'sale'].includes(v)) return 'refund';
+  if (['party-fund', 'party', 'fund'].includes(v)) return 'party-fund';
+  return 'purchase';
+}
+
+function normalizeDeltaDirection(value = '', delta = 0) {
+  const v = String(value || '').toLowerCase();
+  if (['positive', 'gain', 'received', 'credit'].includes(v)) return 'positive';
+  if (['negative', 'spent', 'debit', 'cost'].includes(v)) return 'negative';
+  if (['neutral', 'none', 'zero'].includes(v)) return 'neutral';
+  const n = Number(delta);
+  if (Number.isFinite(n)) {
+    if (n > 0) return 'positive';
+    if (n < 0) return 'negative';
+  }
+  return 'neutral';
+}
+
+function formatCredits(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '0';
+  return Math.trunc(n).toLocaleString();
+}
+
+function formatSignedCredits(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n === 0) return '±0';
+  const sign = n > 0 ? '+' : '−';
+  return `${sign}${Math.abs(Math.trunc(n)).toLocaleString()}`;
+}
+
+function receiptKindLabel(sourceType = '') {
+  switch (normalizeReceiptSourceType(sourceType)) {
+    case 'approval': return 'Approved';
+    case 'denial': return 'Denied';
+    case 'credit-transfer': return 'Transfer';
+    case 'credit-grant': return 'Grant';
+    case 'refund': return 'Refund';
+    case 'party-fund': return 'Party Fund';
+    default: return 'Purchase';
+  }
+}
+
+function receiptMastLabel(sourceType = '') {
+  switch (normalizeReceiptSourceType(sourceType)) {
+    case 'approval': return 'Approved · GM';
+    case 'denial': return 'Denied · GM';
+    case 'credit-transfer': return 'Transfer · Credits';
+    case 'credit-grant': return 'Grant · Credits';
+    case 'refund': return 'Receipt · Refund';
+    case 'party-fund': return 'Party · Fund';
+    default: return 'Receipt · Purchase';
+  }
+}
+
+function receiptIconClass(sourceType = '') {
+  switch (normalizeReceiptSourceType(sourceType)) {
+    case 'approval': return 'fas fa-check-circle';
+    case 'denial': return 'fas fa-ban';
+    case 'credit-transfer': return 'fas fa-right-left';
+    case 'credit-grant': return 'fas fa-circle-plus';
+    case 'refund': return 'fas fa-rotate-left';
+    case 'party-fund': return 'fas fa-coins';
+    default: return 'fas fa-credit-card';
+  }
+}
+
+function actorOwnerUserIds(actor, { includeGM = false } = {}) {
+  const ids = new Set();
+  if (actor?.ownership) {
+    for (const [userId, level] of Object.entries(actor.ownership)) {
+      if (userId !== 'default' && Number(level) >= 3) ids.add(userId);
+    }
+  }
+  game.users?.forEach?.(user => {
+    if (user?.character?.id === actor?.id) ids.add(user.id);
+    if (includeGM && user?.isGM) ids.add(user.id);
+  });
+  return [...ids].filter(Boolean);
+}
+
 /**
  * SWSEChat
  *
@@ -257,6 +344,78 @@ export class SWSEChat {
           holonetCard: true,
           holonetRecordId: data.recordId,
           holonetThreadId: data.threadId
+        }
+      }
+    });
+  }
+
+  static buildStoreReceiptCardData(receipt = {}) {
+    const sourceType = normalizeReceiptSourceType(receipt.sourceType || receipt.type || receipt.kind);
+    const delta = Number(receipt.delta ?? receipt.amount ?? 0) || 0;
+    const direction = normalizeDeltaDirection(receipt.deltaDirection, delta);
+    const previous = Number(receipt.previousBalance ?? receipt.previous ?? 0) || 0;
+    const newBalance = Number(receipt.newBalance ?? receipt.balance ?? receipt.after ?? previous + delta) || 0;
+    const actor = receipt.actor || null;
+    const transactionId = receipt.transactionId || receipt.id || `tx_${Date.now()}`;
+    const items = Array.isArray(receipt.items) ? receipt.items : [];
+
+    return {
+      transactionId,
+      sourceType,
+      deltaDirection: direction,
+      kindLabel: receipt.kindLabel || receiptKindLabel(sourceType),
+      mastLabel: receipt.mastLabel || receiptMastLabel(sourceType),
+      iconClass: receipt.iconClass || receiptIconClass(sourceType),
+      vendorLabel: receipt.vendorLabel || receipt.sourceLabel || 'Galactic Treasury',
+      title: receipt.title || 'Credit transaction',
+      items,
+      itemSummary: receipt.itemSummary || items.map(item => item?.quantity && item.quantity > 1 ? `${item.quantity}× ${item.name}` : item?.name).filter(Boolean).join(' · '),
+      reason: receipt.reason || receipt.note || '',
+      previousLabel: receipt.previousLabel || 'Previous',
+      newLabel: receipt.newLabel || (direction === 'neutral' ? 'Balance' : 'New Balance'),
+      deltaLabel: receipt.deltaLabel || (direction === 'positive' ? 'received' : direction === 'negative' ? 'spent' : 'no change'),
+      previousBalance: previous,
+      newBalance,
+      previousBalanceText: formatCredits(previous),
+      newBalanceText: formatCredits(newBalance),
+      delta,
+      deltaText: formatSignedCredits(delta),
+      actorId: receipt.actorId || actor?.id || '',
+      actorName: receipt.actorName || actor?.name || '',
+      fromName: receipt.fromName || '',
+      toName: receipt.toName || '',
+      decidedBy: receipt.decidedBy || '',
+      timeLabel: receipt.timeLabel || formatTime(receipt.timestamp || null),
+      actions: Array.isArray(receipt.actions) ? receipt.actions : []
+    };
+  }
+
+  static actorOwnerWhisper(actor, options = {}) {
+    return actorOwnerUserIds(actor, options);
+  }
+
+  static async postStoreReceipt({ receipt = null, actor = null, token = null, speaker = null, whisper = null, flags = {} } = {}) {
+    if (!receipt) {throw new Error('SWSEChat.postStoreReceipt requires receipt data.');}
+    const data = this.buildStoreReceiptCardData({ ...receipt, actor: receipt.actor || actor });
+    const content = await foundry.applications.handlebars.renderTemplate(
+      'systems/foundryvtt-swse/templates/chat/store-receipt.hbs',
+      data
+    );
+    const resolvedWhisper = Array.isArray(whisper) ? whisper : actorOwnerUserIds(actor || receipt.actor, { includeGM: false });
+
+    return this.postHTML({
+      content,
+      actor: actor || receipt.actor || null,
+      token,
+      speaker,
+      whisper: resolvedWhisper,
+      flags: {
+        ...flags,
+        swse: {
+          ...(flags?.swse || {}),
+          storeReceipt: true,
+          storeTransactionId: data.transactionId,
+          storeSourceType: data.sourceType
         }
       }
     });
