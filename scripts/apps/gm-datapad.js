@@ -89,6 +89,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // Approvals page state
     this.pendingDroids = [];
+    this.selectedApprovalKey = null;
+    this.approvalEditMode = false;
+    this.approvalDenyMode = false;
 
     // Shared surface controllers
     this._settingsSurfaceController = null;
@@ -885,62 +888,129 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-approvals');
     if (!pageElement) return;
 
-    // DROID APPROVAL EVENTS
-    for (const btn of pageElement.querySelectorAll('.approve-droid-btn')) {
+    const reviewForm = pageElement.querySelector('[data-approval-review-form]');
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', (ev) => ev.preventDefault());
+      this._wireApprovalEditPreview(reviewForm);
+    }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="select-approval"]')) {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (actorId) await this._approveDroid(actorId);
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? null;
+        this.approvalEditMode = false;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('.reject-droid-btn')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-enter-edit"]')) {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (actorId) await this._rejectDroid(actorId);
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalEditMode = true;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('.view-droid-details-btn')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-cancel-edit"]')) {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (actorId) {
-          const actor = game.actors.get(actorId);
-          if (actor) actor.sheet.render(true);
-        }
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalEditMode = false;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    // STORE APPROVAL EVENTS
-    for (const btn of pageElement.querySelectorAll('[data-action="preview-approval"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-deny"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._previewPendingCustom(approvalIndex);
+        ev.preventDefault();
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalDenyMode = true;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('[data-action="edit-approval"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-cancel-deny"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._editPendingCustom(approvalIndex);
+        ev.preventDefault();
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('[data-action="approve-custom"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-approve"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._approvePendingCustom(approvalIndex);
+        ev.preventDefault();
+        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        await this._approveApprovalRequest(key);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('[data-action="deny-custom"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-finalize-edits"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._denyPendingCustom(approvalIndex);
+        ev.preventDefault();
+        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        const form = ev.currentTarget.closest('[data-approval-review-form]');
+        await this._finalizeApprovalWithEdits(key, form);
       });
     }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-confirm-deny"]')) {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        const form = ev.currentTarget.closest('[data-approval-review-form]');
+        const reason = String(new FormData(form).get('denialReason') ?? '').trim();
+        await this._denyApprovalRequest(key, reason);
+      });
+    }
+  }
+
+  /** Render live changed-field rows in the approval decision rail while GM edits inline. */
+  _wireApprovalEditPreview(form) {
+    const fields = Array.from(form.querySelectorAll('[data-approval-edit-field]'));
+    const changeList = form.querySelector('[data-approval-change-list]');
+    if (!fields.length || !changeList) return;
+
+    const escapeHtml = (value) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const renderChanges = () => {
+      const changes = fields
+        .map((field) => {
+          const label = field.dataset.label || field.name;
+          const original = String(field.dataset.original ?? '').trim();
+          const current = String(field.value ?? '').trim();
+          return { label, original, current, changed: original !== current };
+        })
+        .filter((change) => change.changed);
+
+      if (!changes.length) {
+        changeList.innerHTML = '<p class="gm-approval-empty-note" data-approval-change-empty>No edits yet. Change fields in the summary packet to build the adjustment list.</p>';
+        return;
+      }
+
+      changeList.innerHTML = changes.map((change) => `
+        <div class="gm-approval-change-row">
+          <span>${escapeHtml(change.label)}</span>
+          <strong>${escapeHtml(change.original || '—')} → ${escapeHtml(change.current || '—')}</strong>
+        </div>
+      `).join('');
+    };
+
+    for (const field of fields) {
+      field.addEventListener('input', renderChanges);
+      field.addEventListener('change', renderChanges);
+    }
+    renderChanges();
   }
 
   /**
@@ -1032,6 +1102,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
         decidedBy: game.user?.name ?? 'GM'
       });
 
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
       ui?.notifications?.info?.(`Droid "${actor.name}" approved`);
       this.render(false);
     } catch (err) {
@@ -1043,7 +1116,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   /**
    * Reject a pending droid
    */
-  async _rejectDroid(actorId) {
+  async _rejectDroid(actorId, reason = '') {
     const actor = game.actors.get(actorId);
     if (!actor) {
       ui?.notifications?.error?.('Actor not found');
@@ -1066,7 +1139,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       buildHistory.push({
         timestamp: Date.now(),
         action: 'rejected',
-        rejectedAt: new Date().toLocaleString()
+        rejectedAt: new Date().toLocaleString(),
+        reason
       });
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
 
@@ -1074,10 +1148,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
         approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
         actor,
         decision: 'denied',
-        decidedBy: game.user?.name ?? 'GM'
+        decidedBy: game.user?.name ?? 'GM',
+        reason
       });
 
-      ui?.notifications?.info?.(`Droid "${actor.name}" rejected`);
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      ui?.notifications?.info?.(`Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`);
       this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error rejecting droid:', err);
@@ -1085,8 +1163,183 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
+  /** Parse a unified approval request key from the GM approvals queue. */
+  _parseApprovalKey(key) {
+    const [kind, rawId] = String(key || '').split(':');
+    if (kind === 'droid' && rawId) return { kind, actorId: rawId };
+    if (kind === 'custom') return { kind, index: Number(rawId) };
+    return { kind: null, index: -1, actorId: null };
+  }
+
+  _approvalNumberValue(value) {
+    const normalized = String(value ?? '').trim();
+    if (!normalized) return null;
+    const numeric = Number(normalized);
+    return Number.isFinite(numeric) ? numeric : null;
+  }
+
+  _approvalInputValue(name, value) {
+    if (/credits|cost|hp|max|value|rating|damageReduction|total|misc|base/i.test(name)) {
+      const numeric = this._approvalNumberValue(value);
+      return numeric ?? value;
+    }
+    return value;
+  }
+
+  _collectInlineApprovalEdits(formOrData) {
+    const edits = {
+      actorUpdates: {},
+      approvalUpdates: {},
+      metadataUpdates: {},
+      hasChanges: false
+    };
+
+    const fields = formOrData?.querySelectorAll
+      ? Array.from(formOrData.querySelectorAll('[data-approval-edit-field]'))
+      : [];
+
+    const entries = fields.length
+      ? fields
+        .map(field => ({
+          name: field.name,
+          value: field.value,
+          original: field.dataset.original ?? ''
+        }))
+        .filter(entry => String(entry.value ?? '').trim() !== String(entry.original ?? '').trim())
+      : Array.from(formOrData?.entries?.() ?? []).map(([name, value]) => ({ name, value, original: null }));
+
+    for (const entry of entries) {
+      const name = String(entry.name || '').trim();
+      const rawValue = entry.value;
+      if (!name || name === 'denialReason') continue;
+      const value = this._approvalInputValue(name, rawValue);
+      edits.hasChanges = true;
+
+      if (name === 'name') {
+        edits.actorUpdates.name = String(rawValue ?? '').trim() || 'Unnamed Asset';
+        edits.approvalUpdates['draftData.name'] = edits.actorUpdates.name;
+        continue;
+      }
+
+      if (name === 'costCredits') {
+        const cost = this._approvalNumberValue(rawValue) ?? 0;
+        edits.approvalUpdates.costCredits = cost;
+        continue;
+      }
+
+      if (name.startsWith('system.')) {
+        edits.actorUpdates[name] = value;
+        if (name === 'system.shields.rating') edits.actorUpdates['system.shieldRating'] = value;
+        continue;
+      }
+
+      if (name.startsWith('metadata.')) {
+        edits.metadataUpdates[name] = String(rawValue ?? '').trim();
+      }
+    }
+
+    return edits;
+  }
+
+  _setNestedValue(target, path, value) {
+    if (!target || !path) return;
+    if (globalThis.foundry?.utils?.setProperty) {
+      foundry.utils.setProperty(target, path, value);
+      return;
+    }
+    const keys = String(path).split('.').filter(Boolean);
+    const finalKey = keys.pop();
+    let cursor = target;
+    for (const key of keys) {
+      cursor[key] ??= {};
+      cursor = cursor[key];
+    }
+    if (finalKey) cursor[finalKey] = value;
+  }
+
+  async _applyInlineApprovalEdits(key, formData) {
+    const parsed = this._parseApprovalKey(key);
+    const edits = this._collectInlineApprovalEdits(formData);
+    if (!edits.hasChanges) return;
+
+    if (parsed.kind === 'droid') {
+      const actor = game.actors.get(parsed.actorId);
+      if (!actor) throw new Error('Droid actor not found.');
+
+      const actorUpdates = { ...edits.actorUpdates };
+      if (!('system.droidSystems.credits.spent' in actorUpdates) && 'costCredits' in edits.approvalUpdates) {
+        actorUpdates['system.droidSystems.credits.spent'] = edits.approvalUpdates.costCredits;
+        actorUpdates['system.droidSystems.totalCost'] = edits.approvalUpdates.costCredits;
+      }
+      await ActorEngine.updateActor(actor, actorUpdates);
+
+      const gmNotes = edits.metadataUpdates['metadata.gmNotes'];
+      const systemsSummary = edits.metadataUpdates['metadata.systemsSummary'];
+      if (gmNotes || systemsSummary) {
+        await actor.setFlag('foundryvtt-swse', 'gmApprovalNotes', {
+          notes: gmNotes || '',
+          systemsSummary: systemsSummary || '',
+          updatedAt: Date.now(),
+          updatedBy: game.user?.id ?? null
+        });
+      }
+      return;
+    }
+
+    if (parsed.kind === 'custom') {
+      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const approval = approvals[parsed.index];
+      if (!approval) throw new Error('Pending approval not found.');
+
+      for (const [path, value] of Object.entries(edits.approvalUpdates)) {
+        this._setNestedValue(approval, path, value);
+      }
+      for (const [path, value] of Object.entries(edits.metadataUpdates)) {
+        this._setNestedValue(approval, path, value);
+      }
+
+      const draftActor = game.actors.get(approval.draftActorId);
+      const actorUpdates = { ...edits.actorUpdates };
+      if (draftActor?.system?.droidSystems && 'costCredits' in edits.approvalUpdates) {
+        actorUpdates['system.droidSystems.credits.spent'] = edits.approvalUpdates.costCredits;
+        actorUpdates['system.droidSystems.totalCost'] = edits.approvalUpdates.costCredits;
+      }
+      if (draftActor && Object.keys(actorUpdates).length) {
+        await ActorEngine.updateActor(draftActor, actorUpdates);
+      }
+
+      approvals[parsed.index] = approval;
+      await SettingsHelper.set('pendingCustomPurchases', approvals);
+    }
+  }
+
+  async _approveApprovalRequest(key) {
+    const parsed = this._parseApprovalKey(key);
+    if (parsed.kind === 'droid') return this._approveDroid(parsed.actorId);
+    if (parsed.kind === 'custom') return this._approvePendingCustom(parsed.index);
+    ui?.notifications?.error?.('Invalid approval request.');
+  }
+
+  async _finalizeApprovalWithEdits(key, formData) {
+    try {
+      await this._applyInlineApprovalEdits(key, formData);
+      await this._approveApprovalRequest(key);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error finalizing approval edits:', err);
+      ui?.notifications?.error?.(`Failed to finalize approval: ${err.message}`);
+    }
+  }
+
+  async _denyApprovalRequest(key, reason = '') {
+    const parsed = this._parseApprovalKey(key);
+    if (parsed.kind === 'droid') return this._rejectDroid(parsed.actorId, reason);
+    if (parsed.kind === 'custom') return this._denyPendingCustom(parsed.index, reason);
+    ui?.notifications?.error?.('Invalid approval request.');
+  }
+
   /**
-   * Preview a pending custom purchase
+   * Preview a pending custom purchase.
+   * Legacy helper retained for older buttons; the Phase 5 approval UI uses inline summary packets instead.
    */
   async _previewPendingCustom(index) {
     if (index < 0 || index >= this.storeApprovals.length) {
@@ -1095,50 +1348,87 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     const approval = this.storeApprovals[index];
-    const actor = game.actors.get(approval.ownerActorId);
-
-    if (actor) {
-      actor.sheet.render(true);
-    }
+    const actor = game.actors.get(approval.draftActorId) ?? game.actors.get(approval.ownerActorId);
+    if (actor) actor.sheet.render(true);
   }
 
-  /**
-   * Edit a pending custom purchase (placeholder for Phase 3)
-   */
+  /** Legacy edit helper now routes to inline edit mode. */
   async _editPendingCustom(index) {
-    ui?.notifications?.info?.('Edit functionality coming in Phase 3');
+    this.selectedApprovalKey = `custom:${index}`;
+    this.approvalEditMode = true;
+    this.approvalDenyMode = false;
+    await this.render(false);
   }
 
   /**
-   * Approve a pending custom purchase
+   * Approve a pending custom purchase.
    */
   async _approvePendingCustom(index) {
-    if (index < 0 || index >= this.storeApprovals.length) {
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    if (index < 0 || index >= approvals.length) {
       ui?.notifications?.error?.('Invalid approval index');
       return;
     }
 
-    const approval = this.storeApprovals[index];
-    const actor = game.actors.get(approval.ownerActorId);
+    const approval = approvals[index];
+    const ownerActor = game.actors.get(approval.ownerActorId);
 
-    if (!actor) {
-      ui?.notifications?.error?.('Actor not found');
+    if (!ownerActor) {
+      ui?.notifications?.error?.('Owner actor not found');
       return;
     }
 
-    const currentCredits = Number(actor.system.credits) || 0;
-    const cost = approval.costCredits || 0;
-    const newCredits = Math.max(0, currentCredits - cost);
+    const currentCredits = normalizeCredits(ownerActor.system?.credits ?? 0);
+    const cost = normalizeCredits(approval.costCredits ?? 0);
+    const newCredits = Math.max(0, normalizeCredits(currentCredits - cost));
 
     try {
-      await ActorEngine.updateActor(actor, { 'system.credits': newCredits });
+      await ActorEngine.updateActor(ownerActor, { 'system.credits': newCredits });
 
-      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const draftActor = game.actors.get(approval.draftActorId);
+      if (draftActor) {
+        const ownerUser = game.users.find(user => user.character?.id === ownerActor.id);
+        const ownership = { default: 0 };
+        if (ownerUser) ownership[ownerUser.id] = 3;
+        if (game.user?.id) ownership[game.user.id] = 3;
+
+        await ActorEngine.updateActor(draftActor, {
+          ownership,
+          'flags.-=foundryvtt-swse.pendingApproval': null,
+          'flags.-=foundryvtt-swse.draftOnly': null,
+          'flags.-=foundryvtt-swse.ownerPlayerId': null
+        });
+      }
+
+      const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
+      const purchase = {
+        timestamp: Date.now(),
+        items: [],
+        droids: approval.type === 'droid' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
+        vehicles: approval.type === 'vehicle' || approval.type === 'starship' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
+        total: cost,
+        source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+        gmNotes: approval.metadata?.gmNotes ?? ''
+      };
+      history.push(purchase);
+      await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
+
       approvals.splice(index, 1);
       await SettingsHelper.set('pendingCustomPurchases', approvals);
 
-      ui?.notifications?.info?.(`Approved: ${approval.draftData.name}`);
-      this.render(false);
+      Hooks.call('swseCustomPurchaseApproved', {
+        approval,
+        actor: ownerActor,
+        draftActor,
+        decidedBy: game.user?.name ?? 'GM',
+        edited: !!approval.metadata?.gmNotes
+      });
+
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Custom asset'}`);
+      await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error approving custom purchase:', err);
       ui?.notifications?.error?.(`Failed to approve: ${err.message}`);
@@ -1146,22 +1436,37 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Deny a pending custom purchase
+   * Deny a pending custom purchase.
    */
-  async _denyPendingCustom(index) {
-    if (index < 0 || index >= this.storeApprovals.length) {
+  async _denyPendingCustom(index, reason = '') {
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    if (index < 0 || index >= approvals.length) {
       ui?.notifications?.error?.('Invalid approval index');
       return;
     }
 
     try {
-      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
       const denial = approvals[index];
+      const ownerActor = game.actors.get(denial.ownerActorId);
+      const draftActor = game.actors.get(denial.draftActorId);
+
+      if (draftActor) await draftActor.delete();
+
       approvals.splice(index, 1);
       await SettingsHelper.set('pendingCustomPurchases', approvals);
 
-      ui?.notifications?.info?.(`Denied: ${denial.draftData.name}`);
-      this.render(false);
+      Hooks.call('swseCustomPurchaseDenied', {
+        approval: denial,
+        actor: ownerActor,
+        decidedBy: game.user?.name ?? 'GM',
+        reason
+      });
+
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      ui?.notifications?.info?.(`Denied: ${denial.draftData?.name ?? 'Custom asset'}${reason ? ` — ${reason}` : ''}`);
+      await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error denying custom purchase:', err);
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
