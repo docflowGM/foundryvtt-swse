@@ -80,7 +80,7 @@ const FORCE_DESCRIPTOR_LABELS = {
  * @returns {boolean} true if companion was displayed, false if no root found
  */
 export function showHolopadRollCompanion(source, rollResult, options = {}) {
-  const root = _findHolopadRoot(source, options);
+  const root = _findHolopadRoot(source);
   if (!root) return false;
 
   const model = _normalizeRollResult(source, rollResult, options);
@@ -89,109 +89,25 @@ export function showHolopadRollCompanion(source, rollResult, options = {}) {
   return true;
 }
 
-function _findHolopadRoot(source, options = {}) {
-  const explicit = _elementFromSource(options.sourceElement)
-    ?? _elementFromSource(options.companionSource)
-    ?? _elementFromSource(options.event?.currentTarget)
-    ?? _elementFromSource(source);
+function _findHolopadRoot(source) {
+  let el = null;
 
-  const explicitRoot = _rootFromElement(explicit);
-  if (explicitRoot) return explicitRoot;
+  if (source instanceof HTMLElement) {
+    el = source;
+  } else if (source?.element instanceof HTMLElement) {
+    el = source.element;
+  } else if (source?.element?.[0] instanceof HTMLElement) {
+    el = source.element[0];
+  }
 
-  const appRoot = _rootFromApplication(options.sheet)
-    ?? _rootFromApplication(options.application)
-    ?? _rootFromApplication(source)
-    ?? _rootFromApplication(options.actor?.sheet);
-  if (appRoot) return appRoot;
+  if (!el) return null;
 
-  const actorRoot = _rootFromActor(options.actor ?? source?.actor ?? source);
-  if (actorRoot) return actorRoot;
-
-  return _bestVisibleHolopadRoot();
-}
-
-function _elementFromSource(source) {
-  if (!source) return null;
-  if (source instanceof HTMLElement) return source;
-  if (source?.currentTarget instanceof HTMLElement) return source.currentTarget;
-  if (source?.target instanceof HTMLElement) return source.target;
-  if (source?.element instanceof HTMLElement) return source.element;
-  if (source?.element?.[0] instanceof HTMLElement) return source.element[0];
-  if (source?.querySelector instanceof Function) return source;
-  return null;
-}
-
-function _rootFromElement(el) {
-  if (!(el instanceof HTMLElement)) return null;
   for (const sel of HOLOPAD_ROOT_SELECTORS) {
     const match = el.matches?.(sel) ? el : el.closest?.(sel);
-    if (match && _isVisibleElement(match)) return _preferScreenRoot(match);
-  }
-  return null;
-}
-
-function _rootFromApplication(app) {
-  if (!app) return null;
-  return _rootFromElement(_elementFromSource(app));
-}
-
-function _rootFromActor(actor) {
-  const actorId = actor?.id ?? actor?.document?.id ?? null;
-  const apps = [
-    ...Object.values(actor?.apps ?? {}),
-    actor?.sheet,
-    ...Object.values(globalThis.ui?.windows ?? {}).filter(app => app?.actor?.id === actorId || app?.document?.id === actorId)
-  ];
-
-  for (const app of apps) {
-    const root = _rootFromApplication(app);
-    if (root) return root;
-  }
-
-  if (actorId) {
-    const actorMarked = document.querySelector(`[data-actor-id="${CSS.escape(actorId)}"], [data-document-id="${CSS.escape(actorId)}"]`);
-    const markedRoot = _rootFromElement(actorMarked);
-    if (markedRoot) return markedRoot;
+    if (match) return match;
   }
 
   return null;
-}
-
-function _bestVisibleHolopadRoot() {
-  const roots = [];
-  for (const sel of HOLOPAD_ROOT_SELECTORS) {
-    document.querySelectorAll(sel).forEach(root => {
-      const preferred = _preferScreenRoot(root);
-      if (preferred && !roots.includes(preferred) && _isVisibleElement(preferred)) roots.push(preferred);
-    });
-  }
-
-  if (!roots.length) return null;
-  roots.sort((a, b) => _rootScore(b) - _rootScore(a));
-  return roots[0];
-}
-
-function _preferScreenRoot(root) {
-  if (!(root instanceof HTMLElement)) return null;
-  if (root.matches?.('.swse-v2-screen--concept, .swse-ui-shell')) return root;
-  return root.querySelector?.('.swse-v2-screen--concept, .swse-ui-shell') ?? root;
-}
-
-function _isVisibleElement(el) {
-  if (!(el instanceof HTMLElement)) return false;
-  const rect = el.getBoundingClientRect();
-  const style = getComputedStyle(el);
-  return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
-}
-
-function _rootScore(root) {
-  const rect = root.getBoundingClientRect();
-  const z = Number.parseInt(getComputedStyle(root).zIndex, 10);
-  const zScore = Number.isFinite(z) ? z : 0;
-  const area = Math.max(0, rect.width) * Math.max(0, rect.height);
-  const activeBoost = root.contains(document.activeElement) ? 1000000 : 0;
-  const sheetBoost = root.closest('.application, .app, [data-appid]') ? 500000 : 0;
-  return activeBoost + sheetBoost + zScore + area / 1000;
 }
 
 function _normalizeRollResult(source, result, options = {}) {

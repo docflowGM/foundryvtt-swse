@@ -3728,6 +3728,8 @@ const forcePoints = [];
             kind: 'ability',
             title: `${abilityLabels[abilityKey] ?? abilityKey.toUpperCase()} Check`,
             actorName: this.actor?.name,
+            actor: this.actor,
+            abilityKey,
             dc: result.dc ?? null,
           });
         }
@@ -3755,6 +3757,8 @@ const forcePoints = [];
               kind: 'initiative',
               title: mode === 'take10' ? 'Initiative (Take 10)' : 'Initiative',
               actorName: this.actor?.name,
+              actor: this.actor,
+              abilityKey: 'dex',
             });
           }
         }
@@ -3929,6 +3933,9 @@ const forcePoints = [];
               kind: 'skill',
               title: `${skill?.label ?? skillKey} Check`,
               actorName: this.actor?.name,
+              actor: this.actor,
+              skillKey,
+              abilityKey: skill?.ability ?? skill?.abilityKey ?? skill?.attribute,
               dc: skillResult?.dc ?? rollOptions?.dc ?? null,
             });
           }
@@ -3964,6 +3971,8 @@ const forcePoints = [];
             kind: 'attack',
             title: `${weapon.name} — Attack`,
             actorName: this.actor?.name,
+            actor: this.actor,
+            weapon,
             itemName: weapon.name,
           });
         }
@@ -4005,6 +4014,8 @@ const forcePoints = [];
             kind: 'attack',
             title: `${weapon.name} — Attack`,
             actorName: this.actor?.name,
+            actor: this.actor,
+            weapon,
             itemName: weapon.name,
           });
         }
@@ -4046,6 +4057,8 @@ const forcePoints = [];
             kind: 'damage',
             title: `${weapon.name} — Damage`,
             actorName: this.actor?.name,
+            actor: this.actor,
+            weapon,
             itemName: weapon.name,
           });
         }
@@ -4574,6 +4587,8 @@ const forcePoints = [];
             kind: 'attack',
             title: `${weapon.name} — Attack`,
             actorName: this.actor?.name,
+            actor: this.actor,
+            weapon,
             itemName: weapon.name,
           });
         }

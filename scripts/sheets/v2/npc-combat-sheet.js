@@ -228,6 +228,9 @@ export class SWSEV2CombatNpcSheet extends
                 kind: 'skill',
                 title: `${skill?.label ?? skillKey} Check`,
                 actorName: this.actor?.name,
+                actor: this.actor,
+                skillKey,
+                abilityKey: skill?.ability ?? skill?.abilityKey ?? skill?.attribute,
               });
             }
           }
@@ -269,6 +272,8 @@ export class SWSEV2CombatNpcSheet extends
             kind: 'attack',
             title: `${item.name} — Attack`,
             actorName: this.actor?.name,
+            actor: this.actor,
+            weapon: item,
             itemName: item.name,
           });
         }
