@@ -111,6 +111,26 @@
           Multiplier for all weapon ranges. Use 0.5 for shorter ranges (more tactical), 1.5-2.0 for longer ranges (more cinematic).
         </p>
       </div>
+
+      <div class="form-group">
+        <label>Fight Defensively Action Mode</label>
+        <select name="fightDefensivelyActionMode">
+          <option value="default" {{#if (eq fightDefensivelyActionMode "default")}}selected{{/if}}>
+            Default RAW: standard action defensive stance
+          </option>
+          <option value="rai" {{#if (eq fightDefensivelyActionMode "rai")}}selected{{/if}}>
+            RAI: can accompany a normal attack at −5
+          </option>
+          <option value="swift" {{#if (eq fightDefensivelyActionMode "swift")}}selected{{/if}}>
+            House Rule: swift action defensive stance
+          </option>
+        </select>
+        <p class="notes">
+          <strong>Default RAW:</strong> Fight Defensively is a standard action (takes your full action).<br>
+          <strong>RAI:</strong> Can accompany a normal attack at a −5 attack penalty — costs no extra action economy.<br>
+          <strong>Swift:</strong> House Rule — Fight Defensively is a swift action stance, freeing your standard action.
+        </p>
+      </div>
     </div>
     
     <div class="tab" data-group="primary-tabs" data-swse-tab="feats">

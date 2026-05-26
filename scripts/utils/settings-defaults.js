@@ -49,7 +49,15 @@ export const SETTINGS_DEFAULTS = {
     levelUpHpRecoveryMode: 'none',
 
     // Death & Dying
-    deathSystem: 'standard',
+    deathSystem: {
+      system: 'standard',
+      strikesUntilDeath: 3,
+      returnToHP: 0,
+      strikeRemoval: 'never',
+      displayStrikes: false,
+      deathAtNegativeCon: false,
+      massiveDamageThreshold: 0
+    },
     deathSaveDC: 10,
 
     // Combat Rules

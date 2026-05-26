@@ -170,4 +170,28 @@ Hooks.once('ready', () => {
     type: HouserulesConfig,
     restricted: true
   });
+
+  // Expose houserule audit utility to GM browser console:
+  //   game.swse.houserules.audit()
+  game.swse = game.swse || {};
+  game.swse.houserules = game.swse.houserules || {};
+  game.swse.houserules.audit = async () => {
+    const { validateHouleruleManifest, HOULERULE_MANIFEST } = await import(
+      '/systems/foundryvtt-swse/scripts/houserules/houserules-manifest.js'
+    );
+    // Cache presets for preset validation
+    const presetsModule = await import('/systems/foundryvtt-swse/scripts/houserules/houserule-presets.js');
+    globalThis._swseManifestPresetsCache = presetsModule;
+
+    const result = validateHouleruleManifest();
+
+    // Summary table
+    const byStatus = {};
+    for (const entry of HOULERULE_MANIFEST) {
+      byStatus[entry.status] = (byStatus[entry.status] ?? 0) + 1;
+    }
+    console.table(byStatus);
+    console.info(`SWSE | Houlerule audit: ${HOULERULE_MANIFEST.length} manifest entries | ${result.errors.length} errors | ${result.warnings.length} warnings`);
+    return result;
+  };
 });

@@ -161,6 +161,7 @@ export class CombatMenu extends SWSEFormApplicationV2 {
     return {
       deathSystem: safeGet('deathSystem'),
       secondWindImproved: safeGet('secondWindImproved'),
+      fightDefensivelyActionMode: safeGet('fightDefensivelyActionMode'),
       armoredDefenseForAll: safeGet('armoredDefenseForAll'),
       weaponRangeMultiplier: safeGet('weaponRangeMultiplier'),
       diagonalMovement: safeGet('diagonalMovement'),
@@ -212,6 +213,7 @@ export class CombatMenu extends SWSEFormApplicationV2 {
     };
 
     await safeSet('deathSystem', deathSystem);
+    await safeSet('fightDefensivelyActionMode', formData.fightDefensivelyActionMode ?? 'default');
     await safeSet('secondWindImproved', _bool(formData.secondWindImproved));
     await safeSet('armoredDefenseForAll', _bool(formData.armoredDefenseForAll));
     await safeSet('weaponRangeMultiplier', _num(formData.weaponRangeMultiplier));

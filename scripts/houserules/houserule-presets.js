@@ -4,8 +4,12 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 
 /**
  * CENTRAL DEFINITIONS FOR PRESET BUNDLES
- * These define the defaults; the application logic below will enforce safety,
- * deep-merge nested objects, and apply only known houserule keys.
+ *
+ * Each preset must only use top-level registered setting keys.
+ * Nested objects (characterCreation, deathSystem, skillFocusRestriction) are
+ * deep-merged so partial overrides do not destroy unset sub-keys.
+ *
+ * Status tags for reference: wired | partial | unwired | experimental
  */
 
 export const HOUSERULE_PRESETS = {
@@ -136,6 +140,257 @@ export const HOUSERULE_PRESETS = {
       criticalHitVariant: 'maxplus',
       retrainingEnabled: true
     }
+  },
+
+  // ─── TACTICAL VTT ─────────────────────────────────────────────────────────
+  tacticalVTT: {
+    name: 'Tactical VTT',
+    description: 'Assumes tokens on canvas, measured ranges, ammo tracking, and action enforcement. Best for fully automated tabletop play.',
+    settings: {
+      characterCreation: {
+        abilityScoreMethod: '4d6drop',
+        pointBuyPool: 28,
+        allowReroll: true,
+        rerollThreshold: 8,
+        hpGeneration: 'average_minimum',
+        maxHPLevels: 1
+      },
+      deathSystem: {
+        system: 'standard',
+        strikesUntilDeath: 3,
+        returnToHP: 0,
+        strikeRemoval: 'never',
+        displayStrikes: false,
+        deathAtNegativeCon: false,
+        massiveDamageThreshold: 0
+      },
+      secondWindImproved: false,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
+      talentEveryLevel: false,
+      crossClassSkillTraining: false,
+      skillFocusRestriction: { useTheForce: 1, scaling: false },
+      armoredDefenseForAll: false,
+      weaponRangeMultiplier: 1.0,
+      athleticsConsolidation: false,
+      knowledgeSkillMode: 'standard',
+      trackBlasterCharges: true,
+      diagonalMovement: 'alternating',
+      fightDefensivelyActionMode: 'default',
+      flankingEnabled: true,
+      flankingBonus: 'plusTwo',
+      flankingRequiresConsciousness: true,
+      flankingDiagonalCounts: false,
+      forcePointRecovery: 'level',
+      conditionTrackCap: 0,
+      darkSideTemptation: 'strict',
+      darkSidePowerIncreaseScore: true,
+      criticalHitVariant: 'standard',
+      retrainingEnabled: false,
+      enableEnhancedMassiveDamage: false,
+      conditionTrackEnabled: false,
+      statusEffectsEnabled: true,
+      statusEffectDurationTracking: 'rounds'
+    }
+  },
+
+  // ─── THEATER OF THE MIND ──────────────────────────────────────────────────
+  theaterOfTheMind: {
+    name: 'Theater of the Mind',
+    description: 'No token enforcement. Range and movement are adjudicated by GM. Simpler, faster play with fewer automation dependencies.',
+    settings: {
+      characterCreation: {
+        abilityScoreMethod: '4d6drop',
+        pointBuyPool: 28,
+        allowReroll: true,
+        rerollThreshold: 8,
+        hpGeneration: 'average_minimum',
+        maxHPLevels: 1
+      },
+      deathSystem: {
+        system: 'standard',
+        strikesUntilDeath: 3,
+        returnToHP: 0,
+        strikeRemoval: 'never',
+        displayStrikes: false,
+        deathAtNegativeCon: false,
+        massiveDamageThreshold: 0
+      },
+      secondWindImproved: true,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
+      talentEveryLevel: false,
+      crossClassSkillTraining: false,
+      skillFocusRestriction: { useTheForce: 8, scaling: false },
+      armoredDefenseForAll: true,
+      weaponRangeMultiplier: 1.0,
+      athleticsConsolidation: false,
+      knowledgeSkillMode: 'standard',
+      trackBlasterCharges: false,
+      diagonalMovement: 'simplified',
+      fightDefensivelyActionMode: 'rai',
+      flankingEnabled: false,
+      forcePointRecovery: 'session',
+      conditionTrackCap: 3,
+      darkSideTemptation: 'lenient',
+      darkSidePowerIncreaseScore: true,
+      criticalHitVariant: 'standard',
+      retrainingEnabled: true,
+      enableEnhancedMassiveDamage: false
+    }
+  },
+
+  // ─── GRITTY / SIMULATIONIST ───────────────────────────────────────────────
+  gritty: {
+    name: 'Gritty / Simulationist',
+    description: 'Ammo tracked, slower recovery, harsher wounds, more logistics. For campaigns that emphasize danger and resource management.',
+    settings: {
+      characterCreation: {
+        abilityScoreMethod: 'organic',
+        pointBuyPool: 25,
+        allowReroll: false,
+        rerollThreshold: 0,
+        hpGeneration: 'roll',
+        maxHPLevels: 0
+      },
+      deathSystem: {
+        system: 'standard',
+        strikesUntilDeath: 3,
+        returnToHP: 0,
+        strikeRemoval: 'never',
+        displayStrikes: false,
+        deathAtNegativeCon: false,
+        massiveDamageThreshold: 0
+      },
+      secondWindImproved: false,
+      secondWindRecovery: 'extended',
+      secondWindWebEnhancement: false,
+      talentEveryLevel: false,
+      crossClassSkillTraining: false,
+      skillFocusRestriction: { useTheForce: 1, scaling: false },
+      armoredDefenseForAll: false,
+      weaponRangeMultiplier: 1.0,
+      athleticsConsolidation: false,
+      knowledgeSkillMode: 'standard',
+      trackBlasterCharges: true,
+      diagonalMovement: 'alternating',
+      fightDefensivelyActionMode: 'default',
+      flankingEnabled: true,
+      flankingBonus: 'plusTwo',
+      flankingRequiresConsciousness: true,
+      forcePointRecovery: 'level',
+      conditionTrackCap: 0,
+      darkSideTemptation: 'strict',
+      darkSidePowerIncreaseScore: true,
+      criticalHitVariant: 'standard',
+      retrainingEnabled: false,
+      enableEnhancedMassiveDamage: true,
+      persistentDTPenalty: true,
+      persistentDTPenaltyCap: 3,
+      doubleThresholdPenalty: true,
+      eliminateInstantDeath: false
+    }
+  },
+
+  // ─── FORCE-CINEMATIC ──────────────────────────────────────────────────────
+  forceCinematic: {
+    name: 'Force-Cinematic',
+    description: 'Flexible Force suite reselection, Force point recovery each session, narrative dark side mode. For campaigns where the Force is central.',
+    settings: {
+      characterCreation: {
+        abilityScoreMethod: '4d6drop',
+        pointBuyPool: 30,
+        allowReroll: true,
+        rerollThreshold: 8,
+        hpGeneration: 'average_minimum',
+        maxHPLevels: 1
+      },
+      deathSystem: {
+        system: 'threeStrikes',
+        strikesUntilDeath: 3,
+        returnToHP: 1,
+        strikeRemoval: 'long_rest',
+        displayStrikes: true,
+        deathAtNegativeCon: false,
+        massiveDamageThreshold: 0
+      },
+      secondWindImproved: true,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
+      talentEveryLevel: false,
+      crossClassSkillTraining: false,
+      skillFocusRestriction: { useTheForce: 6, scaling: true },
+      armoredDefenseForAll: true,
+      weaponRangeMultiplier: 0.5,
+      athleticsConsolidation: false,
+      knowledgeSkillMode: 'consolidated',
+      trackBlasterCharges: false,
+      diagonalMovement: 'alternating',
+      fightDefensivelyActionMode: 'rai',
+      forcePointRecovery: 'session',
+      conditionTrackCap: 2,
+      darkSideTemptation: 'narrative',
+      darkSidePowerIncreaseScore: false,
+      allowSuiteReselection: true,
+      criticalHitVariant: 'standard',
+      retrainingEnabled: true,
+      enableEnhancedMassiveDamage: false,
+      eliminateInstantDeath: true
+    }
+  },
+
+  // ─── VEHICLE-HEAVY CAMPAIGN ───────────────────────────────────────────────
+  vehicleHeavy: {
+    name: 'Vehicle-Heavy Campaign',
+    description: 'Enables SWES subsystems, directional shields, pilot/engineer/commander roles, and vehicle turn controller. Best for space-focused campaigns.',
+    settings: {
+      characterCreation: {
+        abilityScoreMethod: '4d6drop',
+        pointBuyPool: 28,
+        allowReroll: true,
+        rerollThreshold: 8,
+        hpGeneration: 'average_minimum',
+        maxHPLevels: 1
+      },
+      deathSystem: {
+        system: 'standard',
+        strikesUntilDeath: 3,
+        returnToHP: 0,
+        strikeRemoval: 'never',
+        displayStrikes: false,
+        deathAtNegativeCon: false,
+        massiveDamageThreshold: 0
+      },
+      secondWindImproved: false,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
+      talentEveryLevel: false,
+      crossClassSkillTraining: false,
+      skillFocusRestriction: { useTheForce: 1, scaling: false },
+      armoredDefenseForAll: false,
+      weaponRangeMultiplier: 1.0,
+      athleticsConsolidation: false,
+      knowledgeSkillMode: 'standard',
+      trackBlasterCharges: true,
+      diagonalMovement: 'swse',
+      forcePointRecovery: 'level',
+      conditionTrackCap: 0,
+      darkSideTemptation: 'strict',
+      darkSidePowerIncreaseScore: true,
+      criticalHitVariant: 'standard',
+      retrainingEnabled: false,
+      enableScaleEngine: true,
+      enableSWES: true,
+      enableEnhancedShields: true,
+      enableEnhancedEngineer: true,
+      enableEnhancedPilot: true,
+      enableEnhancedCommander: true,
+      enableVehicleTurnController: true,
+      enableLastGrasp: true,
+      enableEmergencyPatch: true,
+      enableSubsystemRepairCost: true,
+      spaceInitiativeSystem: 'shipBased'
+    }
   }
 };
 
@@ -159,12 +414,13 @@ function deepMerge(target, source) {
 }
 
 /**
- * Only apply values for settings that actually exist in Foundry.
- * Prevents world corruption if presets contain old or unused fields.
+ * Only apply values for settings that are registered in the Foundry settings registry.
+ * Uses the registry (game.settings.settings) so settings with default values that
+ * have never been explicitly saved to world storage are still recognised.
  */
 function isValidSetting(key) {
-  const fullPath = `foundryvtt-swse.${key}`;
-  return game.settings.storage.get('world')?.has(fullPath);
+  const fullKey = `foundryvtt-swse.${key}`;
+  return game.settings.settings?.has(fullKey) ?? false;
 }
 
 /* -------------------------------------------------------------------------- */
