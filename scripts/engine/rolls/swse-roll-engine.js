@@ -1,5 +1,165 @@
 import { buildChatSvgContext, buildChatStateContext } from "/systems/foundryvtt-swse/scripts/chat/chat-svg-assets.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+
+
+function swseChatLabel(value = '') {
+  return String(value ?? '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function swseChatForceDescriptorKey(value = '') {
+  const text = String(value ?? '').toLowerCase();
+  if (text.includes('dark')) return 'dark';
+  if (text.includes('tele') || text === 'tk' || text.includes('move')) return 'tk';
+  if (text.includes('mind') || text.includes('affect')) return 'mind';
+  if (text.includes('form') || text.includes('lightsaber')) return 'form';
+  if (text.includes('light')) return 'light';
+  return text ? text.replace(/[^a-z0-9]+/g, '-') : 'light';
+}
+
+function swseChatForceDescriptorGlyph(key = '') {
+  const map = { dark: '◆', light: '◇', tk: '◆', mind: '◇', form: '◆' };
+  return map[key] ?? '◇';
+}
+
+function swseChatBuildForceDescriptors(context = {}, primaryDescriptor = '') {
+  const raw = [];
+  const add = value => {
+    if (Array.isArray(value)) value.forEach(add);
+    else if (value != null && String(value).trim()) raw.push(String(value).trim());
+  };
+  add(context.descriptor);
+  add(context.forceDescriptor);
+  add(context.powerDescriptor);
+  add(context.descriptors);
+  add(context.forceDescriptors);
+  add(context.powerDescriptors);
+  add(context.tags);
+  if (!raw.length && primaryDescriptor) raw.push(primaryDescriptor);
+
+  const byKey = new Map();
+  for (const value of raw) {
+    const key = swseChatForceDescriptorKey(value);
+    if (!key || byKey.has(key)) continue;
+    const labelMap = { tk: 'Telekinetic', mind: 'Mind-Affecting', dark: 'Dark Side', light: 'Light Side', form: 'Form' };
+    byKey.set(key, { key, label: labelMap[key] ?? swseChatLabel(value), glyph: swseChatForceDescriptorGlyph(key) });
+  }
+  return [...byKey.values()];
+}
+
+function swseChatBuildForceTierGauge(total, context = {}) {
+  const raw = context.dcChart ?? context.dcTiers ?? context.forceTiers ?? context.tiers ?? context.powerDcChart ?? [];
+  if (!Array.isArray(raw) || !raw.length) return [];
+  const numericTotal = Number(total);
+  const rows = raw
+    .map(entry => ({
+      dc: Number(entry?.dc ?? entry?.DC ?? entry?.target ?? entry?.threshold),
+      effect: String(entry?.effect ?? entry?.description ?? entry?.text ?? entry?.label ?? '').trim()
+    }))
+    .filter(entry => Number.isFinite(entry.dc) && entry.effect)
+    .sort((a, b) => a.dc - b.dc)
+    .slice(0, 6);
+  let topIndex = -1;
+  if (Number.isFinite(numericTotal)) {
+    rows.forEach((entry, index) => { if (numericTotal >= entry.dc) topIndex = index; });
+  }
+  return rows.map((entry, index) => ({
+    dc: entry.dc,
+    effect: entry.effect,
+    hit: index <= topIndex,
+    top: index === topIndex
+  }));
+}
+
+function swseChatReactionGlyph(key = '') {
+  const map = {
+    block: '◐',
+    deflect: '↗',
+    counterattack: '↩',
+    forceReflection: '◆',
+    force_reflection: '◆',
+    evasion: '⟿',
+    forcePoint: '✦',
+    force_point: '✦',
+    destinyPoint: '⬢',
+    destiny_point: '⬢'
+  };
+  return map[key] ?? '↩';
+}
+
+function swseChatActorOwnerUserId(actor = null) {
+  if (!actor?.ownership) return '';
+  const activeUsers = globalThis.game?.users?.contents ?? [];
+  const owner = activeUsers.find(user => !user.isGM && user.active && Number(actor.ownership[user.id] ?? 0) >= 3)
+    ?? activeUsers.find(user => !user.isGM && Number(actor.ownership[user.id] ?? 0) >= 3)
+    ?? null;
+  return owner?.id ?? '';
+}
+
+function swseChatBuildReactionContext(actor, context = {}) {
+  const source = context.reactionContext ?? {};
+  const reactionsRaw = source.reactions ?? context.availableReactions ?? context.reactions ?? context.chatReactions ?? [];
+  const reactions = Array.isArray(reactionsRaw) ? reactionsRaw : [];
+  if (!reactions.length) return { reactions: [] };
+
+  const defender = source.defender ?? context.defender ?? context.target ?? null;
+  const attacker = source.attacker ?? context.attacker ?? actor ?? null;
+  const defenderId = source.defenderId ?? defender?.id ?? context.defenderId ?? context.targetId ?? '';
+  const attackerId = source.attackerId ?? attacker?.id ?? context.attackerId ?? actor?.id ?? '';
+  const ownerUserId = source.ownerUserId ?? swseChatActorOwnerUserId(defender) ?? '';
+
+  return {
+    reactions: reactions.map(entry => {
+      const key = String(entry?.key ?? entry?.id ?? entry?.reactionKey ?? '').trim();
+      return {
+        key,
+        label: entry?.label ?? entry?.name ?? swseChatLabel(key || 'Reaction'),
+        glyph: entry?.glyph ?? swseChatReactionGlyph(key),
+        trigger: entry?.trigger ?? context.trigger ?? 'ON_ATTACK_DECLARED',
+        available: entry?.available ?? entry?.allowed ?? entry?.isAvailable ?? true,
+        sublabel: entry?.sublabel ?? entry?.subtitle ?? entry?.short ?? entry?.costLabel ?? '',
+        reason: entry?.reason ?? entry?.description ?? ''
+      };
+    }).filter(entry => entry.key),
+    defenderId,
+    attackerId,
+    ownerUserId,
+    defenderName: source.defenderName ?? defender?.name ?? context.targetName ?? '',
+    timerLabel: source.timerLabel ?? context.reactionTimerLabel ?? '',
+    reason: source.reason ?? context.reactionReason ?? ''
+  };
+}
+
+function swseChatBuildEventContext(context = {}, category = 'roll', reactionContext = null) {
+  const eventId = context.eventId ?? context.attackEventId ?? (reactionContext?.reactions?.length ? `swse-${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` : '');
+  const hasReactionWindow = Boolean(reactionContext?.reactions?.length);
+  return {
+    eventId,
+    messageId: context.messageId ?? '',
+    eventState: context.eventState ?? (hasReactionWindow ? 'pending' : 'standard'),
+    resolutionLabel: context.resolutionLabel ?? (hasReactionWindow ? 'Provisional Result' : category === 'damage' ? 'Damage Resolved' : 'Resolved'),
+    reactionLabel: context.reactionLabel ?? (hasReactionWindow ? 'Reaction Window Open' : ''),
+    showProvisionalBadge: hasReactionWindow || context.showProvisionalBadge === true,
+    showFinalBadge: context.showFinalBadge === true
+  };
+}
+
+function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = false) {
+  if (context.showDamageAction === false) return null;
+  const weaponId = context.weaponId ?? context.itemId ?? weapon?.id ?? '';
+  if (!weaponId || context.disableDamageAction === true) return null;
+  const critMultiplier = Number(context.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2;
+  return {
+    weaponId,
+    isCritical: context.isCritical === true || isCritical === true,
+    critMultiplier,
+    twoHanded: context.twoHanded === true,
+    label: context.damageActionLabel ?? `Roll Damage${(context.isCritical === true || isCritical === true) ? ` ×${critMultiplier}` : ''}`
+  };
+}
 /**
  * SWSERollEngine
  *
@@ -58,6 +218,11 @@ export class SWSERollEngine {
     const abilityBadge = abilityKey ? abilityKey.toUpperCase().slice(0, 3) : '';
     const railColor = weaponVisual?.colorHex || this._resolveContextRailColor(safeContext);
     const railStyle = railColor ? `--rail: ${railColor}; --swse-weapon-visual-color: ${railColor};` : '';
+    const forceDescriptors = category === 'force' ? swseChatBuildForceDescriptors(safeContext, forceDescriptor) : [];
+    const forceTierGauge = category === 'force' ? swseChatBuildForceTierGauge(roll.total, safeContext) : [];
+    const reactionContext = swseChatBuildReactionContext(actor, safeContext);
+    const eventContext = swseChatBuildEventContext(safeContext, category, reactionContext);
+    const damageAction = category === 'attack' ? swseChatBuildDamageAction(safeContext, weapon, isCritical) : null;
 
     return {
       chatSvg: buildChatSvgContext(),
@@ -97,7 +262,13 @@ export class SWSERollEngine {
       damageType,
       hasDamageType: Boolean(damageType),
       isCritical,
-      isFumble
+      isFumble,
+      isForceCard: category === 'force',
+      forceDescriptors,
+      forceTierGauge,
+      reactionContext,
+      eventContext,
+      damageAction
     };
   }
 

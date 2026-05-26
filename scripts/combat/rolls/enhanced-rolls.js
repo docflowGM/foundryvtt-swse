@@ -31,6 +31,7 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 
 /**
@@ -497,11 +498,64 @@ export class SWSERoll {
         </div>
       `;
 
-      const message = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: html,
-        rolls: [roll],
-        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
+      let reactionContext = null;
+      try {
+        const attackMode = String(weapon?.system?.meleeOrRanged ?? weapon?.system?.weaponRangeType ?? '').toLowerCase();
+        const attackType = attackMode.includes('range') || attackMode.includes('ranged') ? 'ranged' : 'melee';
+        const damageTypes = weapon?.system?.damageTypes ?? weapon?.system?.damageType ?? weapon?.system?.damage?.type ?? [];
+        const availableReactions = target
+          ? ReactionEngine.getAvailableReactions(target, {
+              attacker: actor,
+              weapon,
+              attackType,
+              damageTypes: Array.isArray(damageTypes) ? damageTypes : [damageTypes].filter(Boolean),
+              trigger: 'ON_ATTACK_DECLARED'
+            })
+          : [];
+        if (availableReactions.length) {
+          reactionContext = {
+            attacker: actor,
+            attackerId: actor.id,
+            defender: target,
+            defenderId: target.id,
+            defenderName: target.name,
+            timerLabel: '6.0 s',
+            reason: `Incoming ${attackType} attack total ${roll.total}.`,
+            reactions: availableReactions.map(reaction => ({
+              ...reaction,
+              available: true,
+              sublabel: reaction.key === 'block' || reaction.key === 'deflect' ? `DC ${roll.total} · UTF` : ''
+            }))
+          };
+        }
+      } catch (err) {
+        swseLogger.warn('[SWSERoll] Failed to derive attack reaction context', err);
+      }
+
+      const message = await SWSEChat.postRoll({
+        roll,
+        actor,
+        flavor: `${weapon.name} Attack`,
+        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
+        context: {
+          type: 'attack',
+          weaponId: weapon.id,
+          weapon,
+          attackRerollOptions,
+          target,
+          targetName: target?.name ?? '',
+          targetDefense: 'Reflex',
+          dc: targetReflex,
+          passed: isHit,
+          success: isHit,
+          outcomeLabel: concealmentResult.hit === false ? 'Miss · Concealment' : critConfirmed ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
+          isCritical: critConfirmed,
+          critMultiplier,
+          customModifier: modifiers.customModifier,
+          situationalMods: modifiers.situationalBonus,
+          baseBonus: totalBonus,
+          reactionContext
+        }
       });
 
       result.message = message;
@@ -1881,42 +1935,27 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         context
       });
 
-      // Build chat card (abbreviated for space)
-      const darkSideWarning = power.system.discipline === 'dark-side'
-        ? `<div class="dark-side-warning"><i class="fa-solid fa-skull"></i> Dark Side Power</div>`
-        : '';
-
-      const html = `
-        <div class="swse-force-power-card">
-          <div class="power-header">
-            <img src="${power.img}" height="50" />
-            <div class="power-title">
-              <h3>${power.name}</h3>
-              <span class="power-level">Level ${power.system.powerLevel || 1}</span>
-            </div>
-          </div>
-          ${darkSideWarning}
-          ${enhancementEffects.displayHTML}
-          <div class="utf-result">
-            <div class="roll-total">${roll.total}</div>
-            <div class="roll-d20">d20: ${d20}</div>
-            <div class="roll-breakdown">${parts.join(', ')}</div>
-          </div>
-          ${resultTier ? `
-            <div class="power-result success">
-              <h4>DC ${resultTier.dc} Achieved</h4>
-              <p>${resultTier.effect}</p>
-              ${damageResult ? `<div class="damage-total">${damageResult.total} ${damageResult.type}</div>` : ''}
-            </div>
-          ` : ''}
-        </div>
-      `;
-
-      const message = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: html,
-        rolls: [roll],
-        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
+      const message = await SWSEChat.postRoll({
+        roll,
+        actor,
+        flavor: `${power.name} — Use the Force`,
+        flags: { swse: { rollType: 'force', forcePowerId: power.id } },
+        context: {
+          type: 'force',
+          label: power.name,
+          itemId: power.id,
+          itemName: power.name,
+          dc: resultTier?.dc ?? power.system?.dc ?? null,
+          passed: Boolean(resultTier),
+          success: Boolean(resultTier),
+          outcomeLabel: resultTier ? 'Resolved' : 'No Tier Reached',
+          descriptor: power.system?.discipline ?? power.system?.descriptor ?? power.system?.descriptors?.[0] ?? 'light',
+          descriptors: power.system?.descriptors ?? power.system?.tags ?? [power.system?.discipline].filter(Boolean),
+          dcChart,
+          baseBonus: total,
+          forcePower: power,
+          resultTier
+        }
       });
 
       result.message = message;

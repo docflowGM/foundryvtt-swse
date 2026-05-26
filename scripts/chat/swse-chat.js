@@ -48,13 +48,15 @@ export class SWSEChat {
 
     const msgSpeaker = speaker ?? this.speaker({ actor, token });
 
+    const eventId = holoData?.eventContext?.eventId || context?.eventId || context?.attackEventId || flags?.swse?.eventId || null;
+
     const messageData = {
       user: game.user.id,
       speaker: msgSpeaker,
       content,
       flags: {
         ...flags,
-        swse: { ...(flags?.swse || {}), holo: true }
+        swse: { ...(flags?.swse || {}), holo: true, ...(eventId ? { eventId } : {}) }
       },
       blind,
       rolls: [roll.toJSON()]
@@ -93,4 +95,21 @@ export class SWSEChat {
 
     return createChatMessage(messageData);
   }
+
+  static async postCombatBanner({ combat = null, round = null, turnName = '', actor = null, whisper = null } = {}) {
+    const resolvedRound = Number.isFinite(Number(round)) ? Number(round) : Number(combat?.round ?? 0);
+    const resolvedTurnName = turnName || combat?.combatant?.actor?.name || combat?.combatant?.name || actor?.name || 'Unknown Combatant';
+    const content = await foundry.applications.handlebars.renderTemplate(
+      'systems/foundryvtt-swse/templates/chat/combat-banner.hbs',
+      { round: resolvedRound, turnName: resolvedTurnName }
+    );
+
+    return this.postHTML({
+      content,
+      actor,
+      whisper,
+      flags: { swse: { combatBanner: true, round: resolvedRound, turnName: resolvedTurnName } }
+    });
+  }
+
 }

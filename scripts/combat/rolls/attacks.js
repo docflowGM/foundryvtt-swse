@@ -7,6 +7,7 @@ import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, 
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -15,6 +16,56 @@ import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 // - Integrates CT penalties, attack penalties, cover, etc.
 // - Performance optimized, fail-safe, RAW-accurate
 // ============================================
+
+function getTargetActorFromOptions(options = {}) {
+  return options.target ?? game.user?.targets?.first?.()?.actor ?? null;
+}
+
+function getTargetReflex(actor = null) {
+  if (!actor) return null;
+  const value = actor.system?.defenses?.reflex?.total
+    ?? actor.system?.derived?.defenses?.reflex?.total
+    ?? actor.system?.defenses?.reflex?.value
+    ?? null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {
+  if (!attacker || !defender) return null;
+
+  const weaponMode = String(weapon?.system?.meleeOrRanged ?? weapon?.system?.weaponRangeType ?? weapon?.system?.category ?? '').toLowerCase();
+  const attackType = weaponMode.includes('range') || weaponMode.includes('ranged') ? 'ranged' : 'melee';
+  const damageTypes = weapon?.system?.damageTypes
+    ?? weapon?.system?.damageType
+    ?? weapon?.system?.damage?.type
+    ?? [];
+
+  const available = ReactionEngine.getAvailableReactions(defender, {
+    attacker,
+    weapon,
+    attackType,
+    damageTypes: Array.isArray(damageTypes) ? damageTypes : [damageTypes].filter(Boolean),
+    trigger: 'ON_ATTACK_DECLARED'
+  });
+
+  if (!available.length) return null;
+
+  return {
+    attacker,
+    attackerId: attacker.id,
+    defender,
+    defenderId: defender.id,
+    defenderName: defender.name,
+    timerLabel: '6.0 s',
+    reason: `Incoming ${attackType} attack total ${attackTotal}.`,
+    reactions: available.map(reaction => ({
+      ...reaction,
+      available: true,
+      sublabel: reaction.key === 'block' || reaction.key === 'deflect' ? `DC ${attackTotal} · UTF` : ''
+    }))
+  };
+}
 
 /**
  * Compute complete attack bonus from all SWSE factors.
@@ -140,12 +191,34 @@ export async function rollAttack(actor, weapon, options = {}) {
     weaponId: weapon.id
   });
 
+  const target = getTargetActorFromOptions(options);
+  const targetReflex = getTargetReflex(target);
+  const isHit = targetReflex != null ? roll.total >= targetReflex : null;
+  const d20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
+  const isCritical = Number(d20) === 20;
+  const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
+
   await SWSEChat.postRoll({
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
     flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
-    context: { type: 'attack', weaponId: weapon.id, attackRerollOptions }
+    context: {
+      type: 'attack',
+      weaponId: weapon.id,
+      weapon,
+      attackRerollOptions,
+      target,
+      targetName: target?.name ?? '',
+      targetDefense: 'Reflex',
+      dc: targetReflex,
+      passed: isHit,
+      success: isHit,
+      outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
+      isCritical,
+      critMultiplier: weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2,
+      reactionContext
+    }
   });
 
   return roll;
@@ -256,12 +329,34 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   });
 
   // Post attack roll card
+  const target = getTargetActorFromOptions(options);
+  const targetReflex = getTargetReflex(target);
+  const isHit = targetReflex != null ? attackRoll.total >= targetReflex : null;
+  const attackD20 = attackRoll?.dice?.[0]?.results?.[0]?.result ?? null;
+  const isCritical = Number(attackD20) === 20;
+  const reactionContext = buildReactionContextForAttack(actor, target, weapon, attackRoll.total);
+
   await SWSEChat.postRoll({
     roll: attackRoll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
     flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
-    context: { type: 'attack', weaponId: weapon.id, attackRerollOptions }
+    context: {
+      type: 'attack',
+      weaponId: weapon.id,
+      weapon,
+      attackRerollOptions,
+      target,
+      targetName: target?.name ?? '',
+      targetDefense: 'Reflex',
+      dc: targetReflex,
+      passed: isHit,
+      success: isHit,
+      outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
+      isCritical,
+      critMultiplier: weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2,
+      reactionContext
+    }
   });
 
   // Post damage roll card

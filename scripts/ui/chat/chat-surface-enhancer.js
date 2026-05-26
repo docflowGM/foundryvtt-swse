@@ -76,6 +76,17 @@ function bindRollCardToggle(surface) {
   });
 }
 
+function hideUnauthorizedReactionStrips(surface) {
+  if (!(surface instanceof HTMLElement)) return;
+  const strips = surface.querySelectorAll?.('.swse-chat-reaction-strip[data-swse-reaction-owner]') ?? [];
+  for (const strip of strips) {
+    const ownerId = strip.dataset.swseReactionOwner || '';
+    if (!ownerId || game?.user?.isGM === true || ownerId === game?.user?.id) continue;
+    strip.hidden = true;
+    strip.setAttribute('aria-hidden', 'true');
+  }
+}
+
 export function enhanceSWSEChatMessage(message, html) {
   const root = normalizeRoot(html);
   if (!root) return false;
@@ -99,6 +110,7 @@ export function enhanceSWSEChatMessage(message, html) {
     try { SignedNumberHighlighter.enhance(surface); } catch (err) { console.warn('[SWSE Chat] Signed number highlighting failed', err); }
     try { TooltipRegistry.bind(surface); } catch (err) { console.warn('[SWSE Chat] Tooltip binding failed', err); }
     try { bindRollCardToggle(surface); } catch (err) { console.warn('[SWSE Chat] Roll card toggle binding failed', err); }
+    try { hideUnauthorizedReactionStrips(surface); } catch (err) { console.warn('[SWSE Chat] Reaction visibility binding failed', err); }
   }
 
   return true;

@@ -19,6 +19,29 @@ import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/s
 import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual/native-projectile-service.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
+
+let lastCombatBannerKey = '';
+
+async function postCombatBanner(combat) {
+    if (!combat || game.user?.isGM !== true) return;
+    const combatant = combat.combatant;
+    const key = `${combat.id}:${combat.round}:${combat.turn}`;
+    if (key === lastCombatBannerKey) return;
+    lastCombatBannerKey = key;
+
+    try {
+        await SWSEChat.postCombatBanner({
+            combat,
+            round: combat.round,
+            turnName: combatant?.actor?.name ?? combatant?.name ?? 'Unknown Combatant',
+            actor: combatant?.actor ?? null
+        });
+    } catch (err) {
+        SWSELogger.warn('[CombatHooks] Combat banner chat post failed', err);
+    }
+}
 
 /**
  * Register all combat-related hooks
@@ -106,6 +129,7 @@ function handleCombatCreate(combat, options, userId) {
  */
 function handleCombatRound(combat, updateData, updateOptions) {
     SWSELogger.log(`Combat Round ${combat.round}`);
+    void postCombatBanner(combat);
 }
 
 /**
@@ -121,6 +145,7 @@ function handleCombatTurn(combat, updateData, updateOptions) {
     if (combatant?.actor) {
         SWSELogger.log(`Turn: ${combatant.actor.name}`);
     }
+    void postCombatBanner(combat);
 }
 
 /**
