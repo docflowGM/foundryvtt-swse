@@ -200,6 +200,9 @@ export function activateForceUI(sheet, html, { signal } = {}) {
             title: isRecovery ? 'Force Recovered' : 'Force Used',
             itemName: power.name,
             actorName: sheet.actor?.name,
+            actor: sheet.actor,
+            sourceItem: power,
+            forceDescriptor: power.system?.descriptor ?? power.system?.descriptors ?? power.system?.tags,
           });
         }
       } catch (err) {
@@ -343,6 +346,8 @@ export function activateForceUI(sheet, html, { signal } = {}) {
           title: 'Maneuver Used',
           itemName: maneuver.name,
           actorName: sheet.actor?.name,
+          actor: sheet.actor,
+          sourceItem: maneuver,
         });
         sheet.render?.(false);
       } catch (err) {

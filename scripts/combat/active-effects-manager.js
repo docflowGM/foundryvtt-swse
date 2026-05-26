@@ -104,16 +104,19 @@ export class SWSEActiveEffectsManager {
       icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
       updates: {
-        'system.attackPenalty': { mode: 'ADD', value: -5 }
+        'system.attackPenalty': { mode: 'ADD', value: -5 },
+        'system.defenses.reflex.misc.auto.combatAction': { mode: 'ADD', value: 2 }
       },
-      flags: { combatAction: 'fighting-defensively' }
+      flags: { combatAction: 'fighting-defensively', attackPenalty: -5, reflexDodgeBonus: 2 }
     },
     'total-defense': {
       name: 'Total Defense',
       icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
-      updates: {},
-      flags: { combatAction: 'total-defense' }
+      updates: {
+        'system.defenses.reflex.misc.auto.combatAction': { mode: 'ADD', value: 5 }
+      },
+      flags: { combatAction: 'total-defense', reflexDodgeBonus: 5, gmAdjudicatesNoAttacks: true }
     },
     'cover-partial': {
       name: 'Partial Cover',
@@ -216,6 +219,95 @@ export class SWSEActiveEffectsManager {
       await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', toRemove.map(e => e.id));
     }
     await this._removeTokenStatus(actor);
+  }
+
+
+  /* -------------------------------------------------------------------------- */
+  /* COMBAT ACTION EFFECT HANDLING                                              */
+  /* -------------------------------------------------------------------------- */
+
+  static _hasTrainedAcrobatics(actor) {
+    const skill = actor?.system?.skills?.acrobatics;
+    const derived = Array.isArray(actor?.system?.derived?.skills?.list)
+      ? actor.system.derived.skills.list.find(s => s?.key === 'acrobatics')
+      : actor?.system?.derived?.skills?.acrobatics;
+    return skill?.trained === true || derived?.trained === true;
+  }
+
+  static _combatActionDataForActor(actor, key) {
+    const data = foundry.utils.deepClone(this.COMBAT_ACTION_EFFECTS[key] ?? null);
+    if (!data) return null;
+    if (key === 'fighting-defensively') {
+      const bonus = this._hasTrainedAcrobatics(actor) ? 5 : 2;
+      data.updates['system.defenses.reflex.misc.auto.combatAction'].value = bonus;
+      data.flags.reflexDodgeBonus = bonus;
+      data.name = `Fighting Defensively (+${bonus} Ref)`;
+    }
+    if (key === 'total-defense') {
+      const bonus = this._hasTrainedAcrobatics(actor) ? 10 : 5;
+      data.updates['system.defenses.reflex.misc.auto.combatAction'].value = bonus;
+      data.flags.reflexDodgeBonus = bonus;
+      data.name = `Total Defense (+${bonus} Ref)`;
+    }
+    return data;
+  }
+
+  static async removeCombatActionEffects(actor, keys = null) {
+    const wanted = keys ? new Set(Array.isArray(keys) ? keys : [keys]) : null;
+    const toRemove = actor.effects.filter(e => {
+      const key = e.flags?.swse?.combatAction;
+      return key && (!wanted || wanted.has(key));
+    });
+    if (toRemove.length) {
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', toRemove.map(e => e.id));
+    }
+  }
+
+  static async applyCombatActionEffect(actor, key) {
+    if (!actor) return null;
+    const data = this._combatActionDataForActor(actor, key);
+    if (!data) return null;
+    if (key === 'fighting-defensively' || key === 'total-defense') {
+      await this.removeCombatActionEffects(actor, ['fighting-defensively', 'total-defense']);
+    } else {
+      await this.removeCombatActionEffects(actor, key);
+    }
+    const effect = this._buildEffect(actor, {
+      name: data.name,
+      icon: data.icon,
+      updates: data.updates,
+      flags: data.flags,
+      duration: data.duration
+    });
+    await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
+    await this._applyTokenStatus(actor, data.icon);
+    return effect;
+  }
+
+  static async toggleCombatActionEffect(actor, key) {
+    if (!actor) return null;
+    const existing = actor.effects.find(e => e.flags?.swse?.combatAction === key);
+    if (existing) {
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', [existing.id]);
+      return null;
+    }
+    return this.applyCombatActionEffect(actor, key);
+  }
+
+  static async createCustomEffect(actor, data = {}) {
+    if (!actor || !data?.name) return null;
+    const effect = {
+      name: data.name,
+      icon: data.icon ?? 'icons/svg/aura.svg',
+      origin: actor.uuid,
+      duration: data.duration ?? {},
+      disabled: false,
+      changes: data.changes ?? [],
+      updates: data.updates ?? {},
+      flags: { swse: { ...(data.flags ?? {}) } }
+    };
+    await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
+    return effect;
   }
 
   /* -------------------------------------------------------------------------- */

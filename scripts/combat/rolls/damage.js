@@ -235,7 +235,8 @@ export async function rollDamage(actor, weapon, context = {}) {
         await SWSEChat.postRoll({
           roll,
           actor,
-          flavor: `${actor.name} — ${weapon.name} Damage`
+          flavor: `${actor.name} — ${weapon.name} Damage`,
+          context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
         });
       }
       return roll;
@@ -315,7 +316,15 @@ export async function rollDamage(actor, weapon, context = {}) {
   await SWSEChat.postRoll({
     roll,
     actor,
-    flavor
+    flavor,
+    context: {
+      type: 'damage',
+      weaponId: weapon.id,
+      weapon,
+      isCritical: context.isCritical === true,
+      critMultiplier,
+      damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? ''
+    }
   });
 
   return roll;
@@ -376,7 +385,8 @@ export async function rollDamageGeneric(actor, formula = '1d6', label = 'Damage'
   await SWSEChat.postRoll({
     roll,
     actor,
-    flavor: `${label} (${formula})`
+    flavor: `${label} (${formula})`,
+    context: { type: 'damage', label }
   });
 
   return roll;

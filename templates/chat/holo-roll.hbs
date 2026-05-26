@@ -1,90 +1,197 @@
-<div class="swse-chat-card swse-roll-card swse-roll-card--{{category}}" data-swse-chat-surface="roll">
-  {{#if title}}
-  <header class="card-header">
-    <h3>{{title}}</h3>
-    {{#if subtitle}}<div class="card-subtitle">{{subtitle}}</div>{{/if}}
-  </header>
+<div class="swse-chat-card swse-roll-card swse-roll-card--{{category}} {{#if hasWeaponRail}}swse-roll-card--weapon-rail{{/if}} {{#if hasDamageType}}swse-roll-card--has-damage-type{{/if}} {{#if eventContext.showProvisionalBadge}}swse-chat-card-event--pending{{/if}}"
+     data-swse-chat-surface="roll"
+     data-swse-chat-card-v2="true"
+     data-expanded="false"
+     {{#if eventContext.eventId}}data-swse-event-id="{{eventContext.eventId}}"{{/if}}
+     {{#if eventContext.eventState}}data-swse-event-state="{{eventContext.eventState}}"{{/if}}
+     {{#if abilityKey}}data-ability="{{abilityKey}}"{{/if}}
+     {{#if forceDescriptor}}data-descriptor="{{forceDescriptor}}"{{/if}}
+     {{#if railStyle}}style="{{railStyle}}"{{/if}}>
+  <span class="corners" aria-hidden="true">
+    <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+  </span>
+  <span class="headtick" aria-hidden="true"></span>
+
+  {{#if isForceCard}}
+    <svg class="glyph swse-force-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <circle cx="12" cy="12" r="3.2"></circle>
+      <path d="M12 3 V21 M3 12 H21" opacity="0.35"></path>
+    </svg>
+  {{/if}}
+
+  {{#if eventContext.showProvisionalBadge}}
+    <div class="swse-chat-resolution-badge swse-chat-provisional-note">
+      <span class="swse-chat-resolution-label">{{eventContext.resolutionLabel}}</span>
+      {{#if eventContext.reactionLabel}}<span class="swse-chat-resolution-sub">{{eventContext.reactionLabel}}</span>{{/if}}
+    </div>
+  {{/if}}
+
+  <div class="head">
+    <span class="type-chip">
+      {{#if abilityBadge}}
+        <span class="ability-hex">{{abilityBadge}}</span>
+      {{else}}
+        <span class="dot" aria-hidden="true"></span>
+      {{/if}}
+      {{typeChipLabel}}
+    </span>
+    <span class="who">{{actorName}}</span>
+    {{#if timeLabel}}<span class="ts">{{timeLabel}}</span>{{/if}}
+  </div>
+
+  {{#if actionTitle}}
+    <h3 class="action">{{{actionTitle}}}</h3>
+  {{/if}}
+
+  {{#if forceDescriptors.length}}
+    <div class="desc-chip-row">
+      {{#each forceDescriptors}}
+        <span class="desc-chip" data-d="{{key}}">{{glyph}} {{label}}</span>
+      {{/each}}
+    </div>
   {{/if}}
 
   {{#if weaponVisual}}
-  <div class="swse-roll-weapon-visual swse-roll-weapon-visual--{{weaponVisual.kind}}" style="--swse-weapon-visual-color: {{weaponVisual.colorHex}}" data-swse-weapon-visual="{{weaponVisual.kind}}">
-    <span class="swse-roll-weapon-visual__emitter" aria-hidden="true"></span>
-    <span class="swse-roll-weapon-visual__beam" aria-hidden="true"></span>
-    <span class="swse-roll-weapon-visual__label">{{weaponVisual.label}}</span>
-  </div>
+    <div class="swse-roll-weapon-visual {{weaponVisual.kind}}" data-swse-weapon-visual="{{weaponVisual.kind}}">
+      <span class="emitter swse-roll-weapon-visual__emitter" aria-hidden="true"></span>
+      <span class="beam swse-roll-weapon-visual__beam" aria-hidden="true"></span>
+      <span class="lbl swse-roll-weapon-visual__label">{{weaponVisual.label}}</span>
+    </div>
   {{/if}}
 
-  {{#if context}}
-  <div class="card-content">
-    {{#if context.baseBonus}}<div><strong>Base Bonus:</strong> {{numberFormat context.baseBonus decimals=0 sign=true}}</div>{{/if}}
-    {{#if context.situationalMods}}<div><strong>Situational Mods:</strong> {{numberFormat context.situationalMods decimals=0 sign=true}}</div>{{/if}}
-    {{#if context.customModifier}}<div><strong>Custom Modifier:</strong> {{numberFormat context.customModifier decimals=0 sign=true}}</div>{{/if}}
-    {{#if context.featSkillBonus}}<div><strong>Feat Skill Bonuses:</strong> {{numberFormat context.featSkillBonus decimals=0 sign=true}}</div>{{/if}}
-    {{#if context.featSkillBonuses}}
-      <div class="swse-roll-bonus-list">
-        {{#each context.featSkillBonuses}}
-          <div class="swse-roll-bonus"><span>{{sourceName}}</span> <strong>{{numberFormat value decimals=0 sign=true}}</strong></div>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if context.hasDc}}
-      <div class="swse-roll-dc"><strong>DC:</strong> {{context.dc}}</div>
-      <div class="swse-roll-outcome swse-roll-outcome--{{#if context.passed}}success{{else}}failure{{/if}}">
-        <strong>Outcome:</strong> {{context.outcomeLabel}}
-      </div>
-    {{/if}}
-  </div>
-  {{/if}}
+  <div class="body">
+    <button type="button" class="total swse-roll-total" aria-expanded="false">
+      <span class="num">{{total}}</span>
+      <span class="label">{{totalLabel}}</span>
+      {{#if damageType}}<span class="dmg-type">{{damageType}}</span>{{/if}}
+    </button>
 
-  {{#if roll}}
-  <div class="card-content">
-    <div class="dice-roll">
-      <div class="dice-result">
-        {{#if formula}}<div class="dice-formula">{{formula}}</div>{{/if}}
-        <div class="dice-total">{{total}}</div>
-      </div>
+    <div class="breakdown swse-roll-breakdown">
+      {{#if formula}}<div class="formula">{{formula}}</div>{{/if}}
+      {{#if parts}}
+        <div class="parts">
+          {{#each parts}}
+            <span class="part {{#if kind}}part--{{kind}}{{/if}} {{#if isNat20}}part--nat20{{/if}} {{#if isNat1}}part--nat1{{/if}}">
+              {{{label}}}{{#if value}} <b>{{value}}</b>{{/if}}{{#if note}} <span>{{note}}</span>{{/if}}
+            </span>
+          {{/each}}
+        </div>
+      {{/if}}
     </div>
   </div>
+
+  {{#if isCritical}}
+    <div class="crit-banner">★ Natural 20 — Critical Threat</div>
+  {{/if}}
+
+  {{#if forceTierGauge.length}}
+    <div class="tier-gauge" aria-label="Force power DC tier reached">
+      {{#each forceTierGauge}}
+        <div class="seg {{#if hit}}hit{{/if}} {{#if top}}top{{/if}}">
+          <span class="dc">{{dc}}</span>
+          <span class="fx">{{effect}}</span>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if outcome}}
+    <div class="outcome">
+      {{#each outcome.meta}}
+        <span class="meta"><span class="k">{{key}}</span><span class="v">{{value}}</span></span>
+      {{/each}}
+      {{#if outcome.label}}
+        <span class="verdict {{outcome.state}}">{{outcome.label}}</span>
+      {{/if}}
+    </div>
   {{/if}}
 
   {{#if context.rerollOptions}}
-  <div class="card-content swse-skill-reroll-options">
-    <strong>Available rerolls:</strong>
-    {{#each context.rerollOptions}}
-      <button type="button"
-              class="swse-skill-reroll-btn"
-              data-actor-id="{{actorId}}"
-              data-skill-key="{{skillKey}}"
-              data-source-id="{{sourceId}}"
-              data-source-name="{{sourceName}}"
-              data-outcome="{{outcome}}"
-              data-original-total="{{originalTotal}}"
-              data-formula="{{formula}}">
-        <i class="fa-solid fa-dice"></i> {{label}}: Reroll ({{outcomeLabel}})
-      </button>
-    {{/each}}
-  </div>
+    <div class="actions swse-skill-reroll-options">
+      {{#each context.rerollOptions}}
+        <button type="button"
+                class="btn swse-skill-reroll-btn"
+                data-actor-id="{{actorId}}"
+                data-skill-key="{{skillKey}}"
+                data-source-id="{{sourceId}}"
+                data-source-name="{{sourceName}}"
+                data-outcome="{{outcome}}"
+                data-original-total="{{originalTotal}}"
+                data-formula="{{formula}}">
+          <span class="i">⟲</span>{{label}} Reroll
+        </button>
+      {{/each}}
+    </div>
   {{/if}}
 
   {{#if context.attackRerollOptions}}
-  <div class="card-content swse-attack-reroll-options">
-    <strong>Available attack rerolls:</strong>
-    {{#each context.attackRerollOptions}}
+    <div class="actions swse-attack-reroll-options">
+      {{#each context.attackRerollOptions}}
+        <button type="button"
+                class="btn swse-attack-reroll-btn"
+                data-actor-id="{{actorId}}"
+                data-weapon-id="{{weaponId}}"
+                data-source-id="{{sourceId}}"
+                data-source-name="{{sourceName}}"
+                data-cost="{{cost}}"
+                data-outcome="{{outcome}}"
+                data-original-total="{{originalTotal}}"
+                data-formula="{{formula}}"
+                {{#unless canUse}}disabled{{/unless}}>
+          <span class="i">⟲</span>{{label}} Reroll
+        </button>
+        {{#if disabledReason}}<span class="notes swse-roll-hint">{{disabledReason}}</span>{{/if}}
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if damageAction}}
+    <div class="actions swse-damage-actions">
       <button type="button"
-              class="swse-attack-reroll-btn"
-              data-actor-id="{{actorId}}"
-              data-weapon-id="{{weaponId}}"
-              data-source-id="{{sourceId}}"
-              data-source-name="{{sourceName}}"
-              data-cost="{{cost}}"
-              data-outcome="{{outcome}}"
-              data-original-total="{{originalTotal}}"
-              data-formula="{{formula}}"
-              {{#unless canUse}}disabled{{/unless}}>
-        <i class="fa-solid fa-dice"></i> {{label}}: Reroll ({{outcomeLabel}})
+              class="btn swse-roll-damage"
+              data-weapon-id="{{damageAction.weaponId}}"
+              data-is-crit="{{damageAction.isCritical}}"
+              data-crit-mult="{{damageAction.critMultiplier}}"
+              data-two-handed="{{damageAction.twoHanded}}">
+        <span class="i">▸</span>{{damageAction.label}}
       </button>
-      {{#if disabledReason}}<div class="swse-roll-hint">{{disabledReason}}</div>{{/if}}
-    {{/each}}
-  </div>
+    </div>
+  {{/if}}
+
+  {{#if reactionContext.reactions.length}}
+    <div class="reactions-strip swse-chat-reaction-strip"
+         role="group"
+         aria-label="Available reactions"
+         data-swse-reaction-owner="{{reactionContext.ownerUserId}}"
+         data-swse-defender-id="{{reactionContext.defenderId}}"
+         data-swse-attacker-id="{{reactionContext.attackerId}}">
+      <div class="head-line">
+        <span>Reaction Window</span>
+        {{#if reactionContext.defenderName}}<span class="you">— {{reactionContext.defenderName}}</span>{{/if}}
+        {{#if reactionContext.timerLabel}}<span class="timer">{{reactionContext.timerLabel}}</span>{{/if}}
+      </div>
+      <div class="pills">
+        {{#each reactionContext.reactions}}
+          <button type="button"
+                  class="reaction-btn swse-chat-reaction-pill {{#unless available}}swse-chat-reaction-pill--blocked{{/unless}}"
+                  data-key="{{key}}"
+                  data-swse-reaction-key="{{key}}"
+                  data-swse-reaction-owner="{{../reactionContext.ownerUserId}}"
+                  data-swse-defender-id="{{../reactionContext.defenderId}}"
+                  data-swse-attacker-id="{{../reactionContext.attackerId}}"
+                  data-swse-event-id="{{../eventContext.eventId}}"
+                  data-swse-message-id="{{../eventContext.messageId}}"
+                  data-swse-trigger="{{trigger}}"
+                  {{#unless available}}disabled{{/unless}}>
+            <span class="glyph">{{glyph}}</span>{{label}}
+            {{#if sublabel}}<span class="sub">{{sublabel}}</span>{{/if}}
+          </button>
+        {{/each}}
+      </div>
+      {{#if reactionContext.reason}}
+        <span class="reason">{{reactionContext.reason}}</span>
+      {{/if}}
+    </div>
   {{/if}}
 </div>

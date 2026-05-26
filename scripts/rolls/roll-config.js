@@ -9,6 +9,8 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
+import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 
 /* ============================================================================
    ROLL HOOKS SYSTEM
@@ -301,6 +303,303 @@ export const ROLL_MODIFIERS = Object.freeze({
  * @param {boolean} [options.showForcePoint=true] - Show Force Point option
  * @returns {Promise<Object|null>} The selected modifiers or null if cancelled
  */
+function escapeHTML(value = '') {
+  const div = document.createElement('div');
+  div.textContent = String(value ?? '');
+  return div.innerHTML;
+}
+
+function normalizeKey(value = '') {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function actorHasNamedItem(actor, names = []) {
+  const wanted = new Set(names.map(normalizeKey));
+  for (const item of actor?.items ?? []) {
+    if (wanted.has(normalizeKey(item?.name))) return true;
+    const stable = normalizeKey(item?.system?.slug ?? item?.system?.key ?? item?.flags?.swse?.stableKey ?? '');
+    if (stable && wanted.has(stable)) return true;
+  }
+  return false;
+}
+
+function isSkillTrained(actor, skillKey) {
+  const skill = actor?.system?.skills?.[skillKey];
+  const derived = Array.isArray(actor?.system?.derived?.skills?.list)
+    ? actor.system.derived.skills.list.find(s => s?.key === skillKey)
+    : actor?.system?.derived?.skills?.[skillKey];
+  return skill?.trained === true || derived?.trained === true;
+}
+
+function getForcePointState(actor) {
+  const fp = actor?.system?.forcePoints ?? {};
+  const value = Number(fp.value ?? fp.current ?? 0) || 0;
+  const max = Number(fp.max ?? fp.maximum ?? value) || value;
+  return { value, max, has: value > 0 };
+}
+
+function getFightDefensivelyActionMode() {
+  try {
+    return game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') || 'default';
+  } catch (_err) {
+    return 'default';
+  }
+}
+
+function fightDefensivelyModeLabel(mode) {
+  if (mode === 'swift') return 'Swift-action house rule';
+  if (mode === 'rai') return 'RAI: attack-compatible stance';
+  return 'Default RAW: standard-action stance';
+}
+
+function isRangedWeapon(weapon = {}) {
+  const system = weapon?.system ?? weapon ?? {};
+  const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase();
+  if (branch === 'ranged') return true;
+  if (branch === 'melee') return false;
+  const range = String(system.range ?? '').toLowerCase();
+  return range && range !== 'melee';
+}
+
+function isMeleeWeapon(weapon = {}) {
+  return !isRangedWeapon(weapon);
+}
+
+function weaponProperties(weapon = {}) {
+  const props = weapon?.system?.properties;
+  if (Array.isArray(props)) return props.map(p => String(p).toLowerCase());
+  return String(props ?? '').split(',').map(p => p.trim().toLowerCase()).filter(Boolean);
+}
+
+function weaponSupportsAutofire(weapon = {}) {
+  const props = weaponProperties(weapon);
+  return weapon?.system?.autofire === true || props.some(p => p.includes('autofire'));
+}
+
+function selectedTargetRows() {
+  const targets = Array.from(game.user?.targets ?? []);
+  return targets.map(token => ({
+    id: token?.id ?? token?.document?.id ?? '',
+    name: token?.name ?? token?.document?.name ?? token?.actor?.name ?? 'Target',
+    defense: Number(token?.actor?.system?.defenses?.reflex?.total ?? token?.actor?.system?.derived?.defenses?.reflex?.total ?? 10) || 10
+  }));
+}
+
+function combatantRows() {
+  return Array.from(game.combat?.combatants ?? [])
+    .filter(c => c?.actor)
+    .map(c => ({
+      id: c.actor.id,
+      name: c.name ?? c.actor.name,
+      defense: Number(c.actor.system?.defenses?.reflex?.total ?? c.actor.system?.derived?.defenses?.reflex?.total ?? 10) || 10
+    }));
+}
+
+async function buildWeaponRangeProfile(weapon) {
+  try {
+    const fromSystem = weapon?.system?.ranges ? {
+      profileSlug: weapon?.system?.rangeProfile ?? weapon?.system?.weaponCategory ?? '',
+      profileName: weapon?.system?.rangeProfileName ?? 'Custom Range',
+      range: weapon?.system?.range ?? '',
+      ranges: weapon.system.ranges
+    } : null;
+    if (fromSystem?.ranges && Object.keys(fromSystem.ranges).length) return fromSystem;
+    return await WeaponRangeProfileResolver.resolveForWeapon(weapon);
+  } catch (_err) {
+    return null;
+  }
+}
+
+function formatBandChip(label, band) {
+  if (!band) return '';
+  const mod = Number(band.attackMod ?? 0) || 0;
+  return `<span class="swse-roll-config-chip"><b>${escapeHTML(label)}</b> ${escapeHTML(band.min)}-${escapeHTML(band.max)} ${mod ? `(${mod})` : ''}</span>`;
+}
+
+function optionCard(option) {
+  const id = escapeHTML(option.id);
+  const label = escapeHTML(option.label ?? option.id);
+  const summary = escapeHTML(option.summary ?? option.warning ?? '');
+  if (option.control === 'slider') {
+    return `<label class="swse-roll-config-option swse-roll-config-option--slider">
+      <span><b>${label}</b>${summary ? `<small>${summary}</small>` : ''}</span>
+      <input type="number" name="combatOptions.${id}" min="${Number(option.min ?? 0)}" max="${Number(option.max ?? 0)}" step="${Number(option.step ?? 1)}" value="${Number(option.value ?? 0)}" ${option.disabled ? 'disabled' : ''}/>
+    </label>`;
+  }
+  return `<label class="swse-roll-config-option">
+    <input type="checkbox" name="combatOptions.${id}" ${option.checked ? 'checked' : ''} ${option.disabled ? 'disabled' : ''}/>
+    <span><b>${label}</b>${summary ? `<small>${summary}</small>` : ''}</span>
+  </label>`;
+}
+
+async function buildRollConfigModel(options = {}) {
+  const actor = options.actor ?? null;
+  const weapon = options.weapon ?? options.item ?? null;
+  const rollType = options.rollType ?? 'attack';
+  const skillKey = options.skillKey ?? options.skill ?? null;
+  const abilityKey = options.abilityKey ?? options.ability ?? (skillKey ? actor?.system?.skills?.[skillKey]?.ability : null);
+  const fp = getForcePointState(actor);
+  const targetRows = selectedTargetRows();
+  const rangeProfile = weapon ? await buildWeaponRangeProfile(weapon) : null;
+  const ranged = weapon ? isRangedWeapon(weapon) : false;
+  const melee = weapon ? isMeleeWeapon(weapon) : false;
+  const combatOptions = weapon ? CombatOptionResolver.summarizeAttackOptions(actor, weapon, { attackType: ranged ? 'ranged' : 'melee' }) : [];
+
+  return {
+    title: options.title ?? 'Roll Configuration',
+    actor,
+    actorName: actor?.name ?? '',
+    rollType,
+    skillKey,
+    abilityKey,
+    weapon,
+    weaponName: weapon?.name ?? '',
+    ranged,
+    melee,
+    supportsAutofire: weaponSupportsAutofire(weapon),
+    hasBurstFire: actorHasNamedItem(actor, ['Burst Fire']),
+    hasRapidShot: actorHasNamedItem(actor, ['Rapid Shot']),
+    hasPowerAttack: actorHasNamedItem(actor, ['Power Attack']),
+    hasFlurry: actorHasNamedItem(actor, ['Flurry', 'Rapid Strike']),
+    hasDoubleStrike: actorHasNamedItem(actor, ['Double Strike', 'Double Attack']),
+    hasTripleStrike: actorHasNamedItem(actor, ['Triple Strike', 'Triple Attack']),
+    trainedAcrobatics: isSkillTrained(actor, 'acrobatics'),
+    fightDefensivelyMode: getFightDefensivelyActionMode(),
+    fp,
+    targetRows,
+    combatantRows: combatantRows(),
+    rangeProfile,
+    combatOptions
+  };
+}
+
+function buildTargetPanel(model) {
+  const needsTarget = ['attack', 'force', 'force-power', 'save', 'damage'].includes(String(model.rollType));
+  if (!needsTarget) return '';
+  const targetOptions = model.targetRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
+  const combatantOptions = model.combatantRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
+  return `<section class="swse-roll-config-panel">
+    <h4>Target Context</h4>
+    <div class="swse-roll-config-grid swse-roll-config-grid--target">
+      <label>Mode
+        <select name="targetMode">
+          <option value="token" ${model.targetRows.length ? 'selected' : ''}>Selected token</option>
+          <option value="combatant">Pick from combatants</option>
+          <option value="manual" ${model.targetRows.length ? '' : 'selected'}>Manual defense/DC</option>
+          <option value="none">No target · GM adjudication</option>
+        </select>
+      </label>
+      <label>Selected Token
+        <select name="targetTokenId"><option value="">None</option>${targetOptions}</select>
+      </label>
+      <label>Combatant
+        <select name="targetActorId"><option value="">None</option>${combatantOptions}</select>
+      </label>
+      <label>Defense
+        <select name="targetDefenseType">
+          <option value="reflex">Reflex</option>
+          <option value="fortitude">Fortitude</option>
+          <option value="will">Will</option>
+          <option value="dc">Static DC</option>
+        </select>
+      </label>
+      <label>Manual Value
+        <input type="number" name="targetDefenseValue" value="${model.targetRows[0]?.defense ?? ''}" placeholder="e.g. 18" />
+      </label>
+      <label>Range Band
+        <select name="rangeBand">
+          <option value="pointBlank">Point Blank</option>
+          <option value="short">Short</option>
+          <option value="medium">Medium</option>
+          <option value="long">Long</option>
+          <option value="custom">Custom / GM</option>
+        </select>
+      </label>
+    </div>
+    <p class="swse-roll-config-note">Tokens are optional. Manual and GM-adjudication modes support theater-of-the-mind play.</p>
+  </section>`;
+}
+
+function buildWeaponPanel(model) {
+  if (!model.weapon) return '';
+  const rangeChips = model.rangeProfile?.ranges
+    ? [formatBandChip('PB', model.rangeProfile.ranges.pb), formatBandChip('Short', model.rangeProfile.ranges.short), formatBandChip('Medium', model.rangeProfile.ranges.medium), formatBandChip('Long', model.rangeProfile.ranges.long)].filter(Boolean).join('')
+    : '';
+  const optionCards = model.combatOptions.map(optionCard).join('');
+  const rangedPanel = model.ranged ? `<div class="swse-roll-config-subpanel">
+      <h5>Ranged Options</h5>
+      ${rangeChips ? `<div class="swse-roll-config-chips">${rangeChips}</div>` : ''}
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.autofire" ${model.supportsAutofire ? '' : 'disabled'} /> <span><b>Autofire</b><small>${model.supportsAutofire ? 'Weapon supports autofire.' : 'Unavailable for this weapon.'}</small></span></label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.burstFire" ${(model.supportsAutofire && model.hasBurstFire) ? '' : 'disabled'} /> <span><b>Burst Fire</b><small>${model.hasBurstFire ? 'Unlocked by feat.' : 'Requires Burst Fire.'}</small></span></label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.rapidShot" ${model.hasRapidShot ? '' : 'disabled'} /> <span><b>Rapid Shot</b><small>${model.hasRapidShot ? '-2 attack, +1 damage die.' : 'Requires Rapid Shot.'}</small></span></label>
+    </div>` : '';
+  const meleePanel = model.melee ? `<div class="swse-roll-config-subpanel">
+      <h5>Melee Options</h5>
+      <label>Grip
+        <select name="grip">
+          <option value="one-handed">One-handed</option>
+          <option value="two-handed">Two-handed</option>
+          <option value="dual-wield">Dual wielding</option>
+        </select>
+      </label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.powerAttack" ${model.hasPowerAttack ? '' : 'disabled'} /> <span><b>Power Attack</b><small>${model.hasPowerAttack ? 'Trade accuracy for damage.' : 'Requires Power Attack.'}</small></span></label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.flurry" ${model.hasFlurry ? '' : 'disabled'} /> <span><b>Flurry / Rapid Strike</b><small>${model.hasFlurry ? 'Unlocked melee multi-strike option.' : 'Requires unlock.'}</small></span></label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.doubleStrike" ${model.hasDoubleStrike ? '' : 'disabled'} /> <span><b>Double Strike</b><small>${model.hasDoubleStrike ? 'Full-round multiattack.' : 'Unlocks contextually later.'}</small></span></label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.tripleStrike" ${model.hasTripleStrike ? '' : 'disabled'} /> <span><b>Triple Strike</b><small>${model.hasTripleStrike ? 'Full-round multiattack.' : 'Unlocks contextually later.'}</small></span></label>
+    </div>` : '';
+
+  return `<section class="swse-roll-config-panel">
+    <h4>Weapon Profile</h4>
+    <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName)}</b><span>${model.ranged ? 'Ranged' : 'Melee'} · ${escapeHTML(model.weapon?.system?.weaponCategory ?? model.weapon?.system?.rangeProfileName ?? '')}</span></div>
+    ${rangedPanel}${meleePanel}
+    ${optionCards ? `<div class="swse-roll-config-subpanel"><h5>Unlocked Attack Options</h5>${optionCards}</div>` : ''}
+  </section>`;
+}
+
+function buildDefenseActionPanel(model) {
+  if (model.rollType !== 'attack') return '';
+  const fdBonus = model.trainedAcrobatics ? 5 : 2;
+  const tdBonus = model.trainedAcrobatics ? 10 : 5;
+  const mode = model.fightDefensivelyMode || 'default';
+  const fdDisabled = mode === 'default' ? 'disabled' : '';
+  const fdNote = mode === 'default'
+    ? `Use the Fight Defensively combat-action toggle first. If you attack afterward, the active stance applies -5 attack and +${fdBonus} Reflex; the GM adjudicates RAW action timing.`
+    : `Toggle this stance for this attack: -5 attack, +${fdBonus} dodge Reflex until your next turn (${fightDefensivelyModeLabel(mode)}).`;
+  return `<section class="swse-roll-config-panel">
+    <h4>Defensive Stance</h4>
+    <label class="swse-roll-config-option ${fdDisabled ? 'swse-roll-config-option--disabled' : ''}"><input type="checkbox" name="fightingDefensively" ${fdDisabled} /> <span><b>Fight Defensively</b><small>${fdNote}${model.trainedAcrobatics ? ' Acrobatics trained.' : ''}</small></span></label>
+    <label class="swse-roll-config-option swse-roll-config-option--disabled"><input type="checkbox" disabled /> <span><b>Total Defense</b><small>Use the Total Defense combat-action toggle. It overrides Fight Defensively, grants +${tdBonus} dodge Reflex, and does not hard-block rolls; GM adjudicates later attacks.</small></span></label>
+  </section>`;
+}
+
+function buildForcePointPanel(model, showForcePoint) {
+  if (!showForcePoint) return '';
+  const disabled = model.fp.has ? '' : 'disabled';
+  const label = model.rollType === 'force' || model.rollType === 'force-power'
+    ? 'Spend Force Point on this Force power / Use the Force check'
+    : 'Spend Force Point on this roll';
+  return `<section class="swse-roll-config-panel swse-roll-config-panel--resource">
+    <h4>Resources</h4>
+    <label class="swse-roll-config-option"><input type="checkbox" name="useForcePoint" ${disabled} /> <span><b>Force Point</b><small>${escapeHTML(label)} · ${model.fp.value}/${model.fp.max} available.</small></span></label>
+  </section>`;
+}
+
+function readNestedFormEntries(form, prefix) {
+  const out = {};
+  const data = new FormData(form);
+  for (const [key, value] of data.entries()) {
+    if (!key.startsWith(`${prefix}.`)) continue;
+    const id = key.slice(prefix.length + 1);
+    out[id] = value === 'on' ? true : value;
+  }
+  return out;
+}
+
+/**
+ * Show a contextual Roll Configurator V2 before making a roll.
+ * Backward compatible return shape: customModifier, cover, concealment,
+ * situationalBonus, coverBonus, missChance, useForcePoint, twoHanded.
+ */
 export async function showRollModifiersDialog(options = {}) {
   const {
     title = 'Roll Modifiers',
@@ -312,102 +611,29 @@ export async function showRollModifiersDialog(options = {}) {
     showForcePoint = true
   } = options;
 
-  const fp = actor?.system?.forcePoints;
-  const hasFP = fp && fp.value > 0;
-
-  // Build dialog content
-  let content = `
-    <form class="swse-roll-modifiers-dialog">
-  `;
-
-  // Cover options
-  if (showCover && rollType === 'attack') {
-    content += `
-      <div class="form-group">
-        <label>Target Cover</label>
-        <select name="cover">
-          <option value="none">No Cover</option>
-          <option value="partial">Partial Cover (+2 Ref)</option>
-          <option value="cover">Cover (+5 Ref)</option>
-          <option value="improved">Improved Cover (+10 Ref)</option>
-        </select>
+  const model = await buildRollConfigModel({ ...options, title, rollType, actor, weapon });
+  const content = `<form class="swse-roll-config-v2">
+    <header class="swse-roll-config-header">
+      <div><span class="swse-roll-config-kicker">PRE-ROLL CONFIGURATION</span><h3>${escapeHTML(title)}</h3></div>
+      <div class="swse-roll-config-type">${escapeHTML(rollType)}</div>
+    </header>
+    <section class="swse-roll-config-panel swse-roll-config-panel--summary">
+      <h4>Source</h4>
+      <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName || model.skillKey || model.abilityKey || title)}</b><span>${escapeHTML(model.actorName || 'No actor')}</span></div>
+    </section>
+    ${buildTargetPanel(model)}
+    ${buildWeaponPanel(model)}
+    ${buildDefenseActionPanel(model)}
+    ${showCover && rollType === 'attack' ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''}
+    ${buildForcePointPanel(model, showForcePoint)}
+    <section class="swse-roll-config-panel">
+      <h4>Situational</h4>
+      <div class="swse-roll-config-grid">
+        <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
+        <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
       </div>
-    `;
-  }
-
-  // Concealment options
-  if (showConcealment && rollType === 'attack') {
-    content += `
-      <div class="form-group">
-        <label>Target Concealment</label>
-        <select name="concealment">
-          <option value="none">No Concealment</option>
-          <option value="partial">Concealment (20% miss)</option>
-          <option value="total">Total Concealment (50% miss)</option>
-        </select>
-      </div>
-    `;
-  }
-
-  // Check if weapon is melee for two-handed option
-  const isMeleeWeapon = weapon && (
-    (weapon.system?.range || '').toLowerCase() === 'melee' ||
-    (weapon.system?.range || '') === ''
-  );
-
-  // Two-handed option for melee weapons (adds 2x STR to damage)
-  if (rollType === 'attack' && isMeleeWeapon) {
-    content += `
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="twoHanded" />
-          Wielding Two-Handed <span style="color: #888; font-weight: normal;">(2× STR/DEX to damage)</span>
-        </label>
-      </div>
-    `;
-  }
-
-  // Situational modifiers
-  content += `
-    <div class="form-group">
-      <label>Situational Modifiers</label>
-      <div class="checkbox-group">
-        ${rollType === 'attack' ? `
-          <label><input type="checkbox" name="aiming" /> Aiming (+2)</label>
-          <label><input type="checkbox" name="charging" /> Charging (+2)</label>
-          <label><input type="checkbox" name="flanking" /> Flanking (+2)</label>
-          <label><input type="checkbox" name="higherGround" /> Higher Ground (+1)</label>
-          <label><input type="checkbox" name="pointBlank" /> Point Blank (+1)</label>
-          <label><input type="checkbox" name="prone" /> Prone Target</label>
-        ` : ''}
-      </div>
-    </div>
-  `;
-
-  // Custom modifier
-  content += `
-    <div class="form-group">
-      <label>Custom Modifier</label>
-      <div class="custom-modifier">
-        <input type="number" name="customModifier" value="0" />
-        <span>additional bonus/penalty</span>
-      </div>
-    </div>
-  `;
-
-  // Force Point
-  if (showForcePoint && hasFP) {
-    content += `
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="useForcePoint" />
-          Spend Force Point (${fp.value}/${fp.max} remaining)
-        </label>
-      </div>
-    `;
-  }
-
-  content += '</form>';
+    </section>
+  </form>`;
 
   return new Promise(resolve => {
     new SWSEDialogV2({
@@ -419,15 +645,40 @@ export async function showRollModifiersDialog(options = {}) {
           label: 'Roll',
           callback: html => {
             const root = html instanceof HTMLElement ? html : html?.[0];
-      const form = root?.querySelector?.('form');
+            const form = root?.querySelector?.('form');
             const data = new FormDataEntries(form);
-
+            const customModifier = parseInt(data.get('customModifier'), 10) || 0;
+            const cover = data.get('cover') || 'none';
+            const concealment = data.get('concealment') || 'none';
+            const combatOptions = readNestedFormEntries(form, 'combatOptions');
+            const attackOptions = readNestedFormEntries(form, 'attackOptions');
+            const targetMode = data.get('targetMode') || 'none';
+            const defenseValue = Number(data.get('targetDefenseValue'));
+            const targetContext = {
+              mode: targetMode,
+              tokenId: data.get('targetTokenId') || null,
+              actorId: data.get('targetActorId') || null,
+              defenseType: data.get('targetDefenseType') || 'reflex',
+              defenseValue: Number.isFinite(defenseValue) ? defenseValue : null,
+              coverBonus: ROLL_MODIFIERS.cover[cover]?.value || 0,
+              concealment,
+              rangeBand: data.get('rangeBand') || null,
+              label: targetMode === 'manual' ? 'Manual Target' : targetMode === 'none' ? 'GM adjudication' : ''
+            };
             const result = {
-              cover: data.get('cover') || 'none',
-              concealment: data.get('concealment') || 'none',
-              customModifier: parseInt(data.get('customModifier'), 10) || 0,
+              cover,
+              concealment,
+              customModifier,
               useForcePoint: data.get('useForcePoint') === 'on',
-              twoHanded: data.get('twoHanded') === 'on',
+              forcePointMode: data.get('useForcePoint') === 'on' ? (rollType === 'force' || rollType === 'force-power' ? 'force-power' : 'roll') : 'none',
+              twoHanded: data.get('grip') === 'two-handed',
+              grip: data.get('grip') || null,
+              rangeBand: data.get('rangeBand') || null,
+              targetContext,
+              combatOptions,
+              attackOptions,
+              fightingDefensively: data.get('fightingDefensively') === 'on',
+              rollNote: data.get('rollNote') || '',
               situational: {
                 aiming: data.get('aiming') === 'on',
                 charging: data.get('charging') === 'on',
@@ -437,29 +688,18 @@ export async function showRollModifiersDialog(options = {}) {
                 prone: data.get('prone') === 'on'
               }
             };
-
-            // Calculate total situational modifier
             result.situationalBonus = 0;
-            if (result.situational.aiming) {result.situationalBonus += 2;}
-            if (result.situational.charging) {result.situationalBonus += 2;}
-            if (result.situational.flanking) {result.situationalBonus += 2;}
-            if (result.situational.higherGround) {result.situationalBonus += 1;}
-            if (result.situational.pointBlank) {result.situationalBonus += 1;}
-
-            // Cover bonus (for target's defense)
+            if (result.situational.aiming) result.situationalBonus += 2;
+            if (result.situational.charging) result.situationalBonus += 2;
+            if (result.situational.flanking) result.situationalBonus += 2;
+            if (result.situational.higherGround) result.situationalBonus += 1;
+            if (result.situational.pointBlank) result.situationalBonus += 1;
             result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
-
-            // Concealment miss chance
             result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;
-
             resolve(result);
           }
         },
-        cancel: {
-          icon: '<i class="fa-solid fa-times"></i>',
-          label: 'Cancel',
-          callback: () => resolve(null)
-        }
+        cancel: { icon: '<i class="fa-solid fa-times"></i>', label: 'Cancel', callback: () => resolve(null) }
       },
       default: 'roll'
     }).render(true);

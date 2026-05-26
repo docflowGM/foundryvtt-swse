@@ -32,6 +32,7 @@ import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/Help
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
+import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
@@ -81,7 +82,6 @@ import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
-import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
@@ -3721,16 +3721,8 @@ const forcePoints = [];
       if (!abilityKey) return;
 
       try {
-        const result = await SWSERoll.rollAbility(this.actor, abilityKey);
-        if (result?.roll) {
-          const abilityLabels = { str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' };
-          showHolopadRollCompanion(button, result, {
-            kind: 'ability',
-            title: `${abilityLabels[abilityKey] ?? abilityKey.toUpperCase()} Check`,
-            actorName: this.actor?.name,
-            dc: result.dc ?? null,
-          });
-        }
+        const result = await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true });
+
       } catch (err) {
         // console.error("Ability roll failed:", err);
         ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
@@ -3746,18 +3738,12 @@ const forcePoints = [];
       const mode = button.dataset.action === "roll-initiative-take10" ? "take10" : "roll";
 
       try {
-        const result = await this._runCanonicalInitiative(mode);
-        if (result) {
-          // _runCanonicalInitiative may return a Roll or an engine result object
-          const roll = result?.roll ?? (result?.total != null ? result : null);
-          if (roll) {
-            showHolopadRollCompanion(button, result, {
-              kind: 'initiative',
-              title: mode === 'take10' ? 'Initiative (Take 10)' : 'Initiative',
-              actorName: this.actor?.name,
-            });
-          }
-        }
+        await this._runCanonicalInitiative(mode, {
+          sourceElement: button,
+          companionSource: button,
+          sheet: this,
+          showRollCompanion: true
+        });
       } catch (err) {
         // console.error("Initiative roll failed:", err);
         ui?.notifications?.error?.(`Initiative roll failed: ${err.message}`);
@@ -3908,31 +3894,28 @@ const forcePoints = [];
           const skill = this.actor.system.skills?.[skillKey];
           const modResult = await showRollModifiersDialog({
             title: `${skill?.label ?? skillKey} Check`,
-            rollType: 'skill'
+            rollType: 'skill',
+            actor: this.actor,
+            skillKey,
+            abilityKey: skill?.ability ?? skill?.abilityKey ?? skill?.attribute,
+            sourceElement: button,
+            sheet: this
           });
 
           if (modResult === null) return;
 
           rollOptions = {
+            ...modResult,
             customModifier: Number(modResult.customModifier || 0),
-            useForcePoint: modResult.useForcePoint === true
+            useForcePoint: modResult.useForcePoint === true,
+            sourceElement: button,
+            companionSource: button,
+            sheet: this,
+            showRollCompanion: true
           };
         }
 
-        const skillResult = await this._runCanonicalSkillCheck(skillKey, rollOptions);
-        if (skillResult) {
-          const skill = this.actor.system.skills?.[skillKey];
-          // _runCanonicalSkillCheck returns a Roll object directly (from rollSkillCheck)
-          const rollObj = skillResult?.roll ?? skillResult;
-          if (rollObj?.total != null) {
-            showHolopadRollCompanion(button, rollObj, {
-              kind: 'skill',
-              title: `${skill?.label ?? skillKey} Check`,
-              actorName: this.actor?.name,
-              dc: skillResult?.dc ?? rollOptions?.dc ?? null,
-            });
-          }
-        }
+        await this._runCanonicalSkillCheck(skillKey, rollOptions);
       } catch (err) {
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
       }
@@ -3950,23 +3933,31 @@ const forcePoints = [];
           title: `${weapon.name} Attack`,
           rollType: 'attack',
           actor: this.actor,
-          weapon
+          weapon,
+          sourceElement: button,
+          sheet: this
         });
         if (modResult === null) return;
-        const unarmedResult = await this._runCanonicalAttack(weapon, {
+        if (modResult.fightingDefensively) {
+          try {
+            if (game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') === 'swift') {
+              const swiftAllowed = await this._applyActionEconomy('swift', { source: 'fighting-defensively', weaponId: weapon?.id ?? null, weaponName: weapon?.name ?? null });
+              if (!swiftAllowed) return;
+            }
+          } catch (_err) {}
+          await SWSEActiveEffectsManager.applyCombatActionEffect(this.actor, 'fighting-defensively');
+        }
+        await this._runCanonicalAttack(weapon, {
+          ...modResult,
           customModifier: modResult.customModifier || 0,
           cover: modResult.cover || 'none',
           concealment: modResult.concealment || 'none',
-          useForcePoint: modResult.useForcePoint || false
+          useForcePoint: modResult.useForcePoint || false,
+          sourceElement: button,
+          companionSource: button,
+          sheet: this,
+          showRollCompanion: true
         });
-        if (unarmedResult?.roll) {
-          showHolopadRollCompanion(button, unarmedResult, {
-            kind: 'attack',
-            title: `${weapon.name} — Attack`,
-            actorName: this.actor?.name,
-            itemName: weapon.name,
-          });
-        }
       } catch (err) {
         ui?.notifications?.error?.(`Unarmed attack failed: ${err.message}`);
       }
@@ -3989,25 +3980,33 @@ const forcePoints = [];
           title: `${weapon.name} Attack`,
           rollType: 'attack',
           actor: this.actor,
-          weapon
+          weapon,
+          sourceElement: button,
+          sheet: this
         });
 
         if (modResult === null) return; // Cancelled
 
-        const attackResult = await this._runCanonicalAttack(weapon, {
+        if (modResult.fightingDefensively) {
+          try {
+            if (game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') === 'swift') {
+              const swiftAllowed = await this._applyActionEconomy('swift', { source: 'fighting-defensively', weaponId: weapon?.id ?? null, weaponName: weapon?.name ?? null });
+              if (!swiftAllowed) return;
+            }
+          } catch (_err) {}
+          await SWSEActiveEffectsManager.applyCombatActionEffect(this.actor, 'fighting-defensively');
+        }
+        await this._runCanonicalAttack(weapon, {
+          ...modResult,
           customModifier: modResult.customModifier || 0,
           cover: modResult.cover || 'none',
           concealment: modResult.concealment || 'none',
-          useForcePoint: modResult.useForcePoint || false
+          useForcePoint: modResult.useForcePoint || false,
+          sourceElement: button,
+          companionSource: button,
+          sheet: this,
+          showRollCompanion: true
         });
-        if (attackResult?.roll) {
-          showHolopadRollCompanion(button, attackResult, {
-            kind: 'attack',
-            title: `${weapon.name} — Attack`,
-            actorName: this.actor?.name,
-            itemName: weapon.name,
-          });
-        }
       } catch (err) {
         // console.error("Attack roll failed:", err);
         ui?.notifications?.error?.(`Attack roll failed: ${err.message}`);
@@ -4031,24 +4030,22 @@ const forcePoints = [];
           title: `${weapon.name} Damage`,
           rollType: 'damage',
           actor: this.actor,
-          weapon
+          weapon,
+          sourceElement: button,
+          sheet: this
         });
 
         if (modResult === null) return; // Cancelled
 
-        const damageResult = await SWSERoll.rollDamage(this.actor, weapon, {
+        await SWSERoll.rollDamage(this.actor, weapon, {
+          ...modResult,
           customModifier: modResult.customModifier || 0,
-          useForcePoint: modResult.useForcePoint || false
+          useForcePoint: modResult.useForcePoint || false,
+          sourceElement: button,
+          companionSource: button,
+          sheet: this,
+          showRollCompanion: true
         });
-        if (damageResult) {
-          // rollDamage returns a Roll object directly
-          showHolopadRollCompanion(button, damageResult, {
-            kind: 'damage',
-            title: `${weapon.name} — Damage`,
-            actorName: this.actor?.name,
-            itemName: weapon.name,
-          });
-        }
       } catch (err) {
         // console.error("Damage roll failed:", err);
         ui?.notifications?.error?.(`Damage roll failed: ${err.message}`);
@@ -4566,17 +4563,32 @@ const forcePoints = [];
         const weapon = this.actor.items.get(weaponId);
         if (!weapon || weapon.type !== "weapon") return;
 
-        const attackResult = await this._runCanonicalAttack(weapon, {
-          source: "combat-tab"
+        const modResult = await showRollModifiersDialog({
+          title: `${weapon.name} Attack`,
+          rollType: 'attack',
+          actor: this.actor,
+          weapon,
+          sourceElement: button,
+          sheet: this
         });
-        if (attackResult?.roll) {
-          showHolopadRollCompanion(button, attackResult, {
-            kind: 'attack',
-            title: `${weapon.name} — Attack`,
-            actorName: this.actor?.name,
-            itemName: weapon.name,
-          });
+        if (modResult === null) return;
+        if (modResult.fightingDefensively) {
+          try {
+            if (game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') === 'swift') {
+              const swiftAllowed = await this._applyActionEconomy('swift', { source: 'fighting-defensively', weaponId: weapon?.id ?? null, weaponName: weapon?.name ?? null });
+              if (!swiftAllowed) return;
+            }
+          } catch (_err) {}
+          await SWSEActiveEffectsManager.applyCombatActionEffect(this.actor, 'fighting-defensively');
         }
+        await this._runCanonicalAttack(weapon, {
+          ...modResult,
+          source: "combat-tab",
+          sourceElement: button,
+          companionSource: button,
+          sheet: this,
+          showRollCompanion: true
+        });
       }, { signal });
     });
 
@@ -5770,10 +5782,10 @@ const forcePoints = [];
      PHASE C/E/F/H: CANONICAL INVOCATION + ACTION ECONOMY WRAPPERS
   ============================================================ */
 
-  async _runCanonicalInitiative(mode = "roll") {
+  async _runCanonicalInitiative(mode = "roll", options = {}) {
     if (mode === "take10") {
       try {
-        return await CombatExecutor.executeInitiative(this.actor, { mode: "take10" });
+        return await CombatExecutor.executeInitiative(this.actor, { mode: "take10", ...options });
       } catch (err) {
         console.warn("[PHASE C] CombatExecutor.executeInitiative take10 path failed, falling back once:", err);
         if (typeof this.actor.swseTake10Initiative === "function") {
@@ -5783,7 +5795,7 @@ const forcePoints = [];
       }
     }
 
-    return await CombatExecutor.executeInitiative(this.actor, { mode: "roll" });
+    return await CombatExecutor.executeInitiative(this.actor, { mode: "roll", ...options });
   }
 
   async _runCanonicalSkillCheck(skillKey, options = {}) {

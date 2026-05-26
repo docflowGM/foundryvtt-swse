@@ -31,7 +31,69 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
+
+
+function hasFightingDefensivelyEffect(actor) {
+  return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
+}
+
+function getFightingDefensivelyAttackPenalty(actor, options = {}) {
+  const active = options?.fightingDefensively === true || hasFightingDefensivelyEffect(actor);
+  if (!active) return 0;
+  const preparedPenalty = Number(actor?.system?.attackPenalty ?? 0) || 0;
+  return preparedPenalty <= -5 ? 0 : -5;
+}
+
+function normalizeDefenseKey(value = 'reflex') {
+  const key = String(value || 'reflex').toLowerCase();
+  if (key === 'fort' || key === 'fortitude') return 'fortitude';
+  if (key === 'will') return 'will';
+  if (key === 'dc') return 'dc';
+  return 'reflex';
+}
+
+function getDefenseValue(actor, defenseType = 'reflex') {
+  if (!actor) return null;
+  const key = normalizeDefenseKey(defenseType);
+  if (key === 'dc') return null;
+  const value = actor.system?.defenses?.[key]?.total
+    ?? actor.system?.derived?.defenses?.[key]?.total
+    ?? actor.system?.defenses?.[key]?.value
+    ?? null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function resolveTargetContext(options = {}, fallbackTarget = null, coverBonus = 0) {
+  const ctx = options.targetContext ?? null;
+  const mode = String(ctx?.mode || '').toLowerCase();
+  if (mode === 'manual') {
+    const value = Number(ctx?.defenseValue);
+    return {
+      target: null,
+      targetName: ctx?.label || 'Manual Target',
+      defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'),
+      defenseValue: Number.isFinite(value) ? value + Number(coverBonus || 0) : null,
+      mode: 'manual'
+    };
+  }
+  if (mode === 'none') {
+    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none' };
+  }
+  const target = fallbackTarget;
+  const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
+  const base = getDefenseValue(target, defenseType);
+  return {
+    target,
+    targetName: target?.name ?? '',
+    defenseType,
+    defenseValue: base != null ? base + Number(coverBonus || 0) : null,
+    mode: target ? 'token' : 'none'
+  };
+}
+
 
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+
@@ -325,7 +387,7 @@ export class SWSERoll {
 
       // Calculate attack bonus
       const atkBonus = computeAttackBonus(actor, weapon);
-      const totalBonus = atkBonus + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
+      const totalBonus = atkBonus + getFightingDefensivelyAttackPenalty(actor, modifiers) + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
       context.attackBonus = totalBonus;
 
       // Build formula
@@ -353,12 +415,12 @@ export class SWSERoll {
         concealmentResult = await rollConcealmentCheck(missChance, actor);
       }
 
-      // Get target defense for comparison
-      const target = context.target;
+      // Get target defense for comparison. Token targets are preferred, but
+      // manual/GM-adjudication target contexts support theater-of-the-mind play.
       const coverBonus = getCoverBonus(modifiers.cover);
-      const targetReflex = target
-        ? (target.system?.defenses?.reflex?.total || 10) + coverBonus
-        : null;
+      const resolvedTarget = resolveTargetContext({ ...options, targetContext: modifiers.targetContext ?? options.targetContext }, context.target, coverBonus);
+      const target = resolvedTarget.target;
+      const targetReflex = resolvedTarget.defenseValue;
 
       // Determine hit/miss
       const isHit = targetReflex !== null
@@ -497,11 +559,69 @@ export class SWSERoll {
         </div>
       `;
 
-      const message = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: html,
-        rolls: [roll],
-        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
+      let reactionContext = null;
+      try {
+        const attackMode = String(weapon?.system?.meleeOrRanged ?? weapon?.system?.weaponRangeType ?? '').toLowerCase();
+        const attackType = attackMode.includes('range') || attackMode.includes('ranged') ? 'ranged' : 'melee';
+        const damageTypes = weapon?.system?.damageTypes ?? weapon?.system?.damageType ?? weapon?.system?.damage?.type ?? [];
+        const availableReactions = target
+          ? ReactionEngine.getAvailableReactions(target, {
+              attacker: actor,
+              weapon,
+              attackType,
+              damageTypes: Array.isArray(damageTypes) ? damageTypes : [damageTypes].filter(Boolean),
+              trigger: 'ON_ATTACK_DECLARED'
+            })
+          : [];
+        if (availableReactions.length) {
+          reactionContext = {
+            attacker: actor,
+            attackerId: actor.id,
+            defender: target,
+            defenderId: target.id,
+            defenderName: target.name,
+            timerLabel: '6.0 s',
+            reason: `Incoming ${attackType} attack total ${roll.total}.`,
+            reactions: availableReactions.map(reaction => ({
+              ...reaction,
+              available: true,
+              sublabel: reaction.key === 'block' || reaction.key === 'deflect' ? `DC ${roll.total} · UTF` : ''
+            }))
+          };
+        }
+      } catch (err) {
+        swseLogger.warn('[SWSERoll] Failed to derive attack reaction context', err);
+      }
+
+      const message = await SWSEChat.postRoll({
+        roll,
+        actor,
+        flavor: `${weapon.name} Attack`,
+        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
+        context: {
+          type: 'attack',
+          weaponId: weapon.id,
+          weapon,
+          attackRerollOptions,
+          target,
+          targetName: resolvedTarget.targetName ?? target?.name ?? '',
+          targetContext: resolvedTarget,
+          targetDefense: resolvedTarget.defenseType === 'dc' ? 'DC' : resolvedTarget.defenseType === 'fortitude' ? 'Fortitude' : resolvedTarget.defenseType === 'will' ? 'Will' : 'Reflex',
+          dc: targetReflex,
+          passed: isHit,
+          success: isHit,
+          outcomeLabel: concealmentResult.hit === false ? 'Miss · Concealment' : critConfirmed ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
+          isCritical: critConfirmed,
+          critMultiplier,
+          customModifier: modifiers.customModifier,
+          situationalMods: modifiers.situationalBonus,
+          baseBonus: totalBonus,
+          reactionContext,
+          sourceElement: options?.sourceElement ?? null,
+          companionSource: options?.companionSource ?? null,
+          sheet: options?.sheet ?? null,
+          showRollCompanion: options?.showRollCompanion !== false
+        }
       });
 
       result.message = message;
@@ -1881,42 +2001,27 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         context
       });
 
-      // Build chat card (abbreviated for space)
-      const darkSideWarning = power.system.discipline === 'dark-side'
-        ? `<div class="dark-side-warning"><i class="fa-solid fa-skull"></i> Dark Side Power</div>`
-        : '';
-
-      const html = `
-        <div class="swse-force-power-card">
-          <div class="power-header">
-            <img src="${power.img}" height="50" />
-            <div class="power-title">
-              <h3>${power.name}</h3>
-              <span class="power-level">Level ${power.system.powerLevel || 1}</span>
-            </div>
-          </div>
-          ${darkSideWarning}
-          ${enhancementEffects.displayHTML}
-          <div class="utf-result">
-            <div class="roll-total">${roll.total}</div>
-            <div class="roll-d20">d20: ${d20}</div>
-            <div class="roll-breakdown">${parts.join(', ')}</div>
-          </div>
-          ${resultTier ? `
-            <div class="power-result success">
-              <h4>DC ${resultTier.dc} Achieved</h4>
-              <p>${resultTier.effect}</p>
-              ${damageResult ? `<div class="damage-total">${damageResult.total} ${damageResult.type}</div>` : ''}
-            </div>
-          ` : ''}
-        </div>
-      `;
-
-      const message = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: html,
-        rolls: [roll],
-        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
+      const message = await SWSEChat.postRoll({
+        roll,
+        actor,
+        flavor: `${power.name} — Use the Force`,
+        flags: { swse: { rollType: 'force', forcePowerId: power.id } },
+        context: {
+          type: 'force',
+          label: power.name,
+          itemId: power.id,
+          itemName: power.name,
+          dc: resultTier?.dc ?? power.system?.dc ?? null,
+          passed: Boolean(resultTier),
+          success: Boolean(resultTier),
+          outcomeLabel: resultTier ? 'Resolved' : 'No Tier Reached',
+          descriptor: power.system?.discipline ?? power.system?.descriptor ?? power.system?.descriptors?.[0] ?? 'light',
+          descriptors: power.system?.descriptors ?? power.system?.tags ?? [power.system?.discipline].filter(Boolean),
+          dcChart,
+          baseBonus: total,
+          forcePower: power,
+          resultTier
+        }
       });
 
       result.message = message;

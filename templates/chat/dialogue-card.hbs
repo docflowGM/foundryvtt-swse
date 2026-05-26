@@ -1,0 +1,13 @@
+<div class="swse-chat-card swse-roll-card swse-roll-card--dialogue swse-dialogue-card"
+     data-swse-chat-surface="dialogue"
+     data-swse-chat-card-v2="true">
+  <span class="corners" aria-hidden="true">
+    <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+  </span>
+  <div class="head swse-dialogue-head">
+    <span class="type-chip"><span class="dot" aria-hidden="true"></span>{{typeLabel}}</span>
+    <span class="who">{{speakerName}}</span>
+    {{#if timeLabel}}<span class="ts">{{timeLabel}}</span>{{/if}}
+  </div>
+  <div class="dialogue-body">{{{body}}}</div>
+</div>

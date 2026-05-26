@@ -1,0 +1,60 @@
+<div class="swse-receipt-card"
+     data-swse-chat-type="store-receipt"
+     data-swse-chat-surface="store-receipt"
+     data-store-transaction-id="{{transactionId}}"
+     data-store-source-type="{{sourceType}}"
+     data-store-delta-direction="{{deltaDirection}}"
+     data-actor-id="{{actorId}}">
+  <div class="rc-mast">
+    <span class="rc-chip" aria-hidden="true"><i class="{{iconClass}}"></i></span>
+    <span class="rc-vlbl">{{mastLabel}}</span>
+  </div>
+
+  <div class="rc-body">
+    <div class="rc-head">
+      <span class="kind">{{kindLabel}}</span>
+      <span class="sep"></span>
+      <span>{{vendorLabel}}</span>
+      {{#if timeLabel}}<span class="sep"></span><span>{{timeLabel}}</span>{{/if}}
+    </div>
+
+    <div class="rc-title">{{title}}</div>
+
+    {{#if itemSummary}}
+      <div class="rc-items">{{itemSummary}}</div>
+    {{else if reason}}
+      <div class="rc-items">{{reason}}</div>
+    {{/if}}
+
+    <div class="rc-ledger">
+      <div class="rc-cell">
+        <span class="k">{{previousLabel}}</span>
+        <span class="v">{{previousBalanceText}}<span class="cr">cr</span></span>
+      </div>
+      <div class="rc-delta">
+        <span class="arrow">{{deltaLabel}}</span>
+        <span class="amt">{{deltaText}}</span>
+      </div>
+      <div class="rc-cell right new">
+        <span class="k">{{newLabel}}</span>
+        <span class="v">{{newBalanceText}}<span class="cr">cr</span></span>
+      </div>
+    </div>
+
+    <div class="rc-foot">
+      {{#if actorName}}<span class="who">Actor: <b>{{actorName}}</b></span>{{/if}}
+      {{#if fromName}}<span class="who">From: <b>{{fromName}}</b></span>{{/if}}
+      {{#if toName}}<span class="who">To: <b>{{toName}}</b></span>{{/if}}
+      {{#if decidedBy}}<span class="who">Decided by: <b>{{decidedBy}}</b></span>{{/if}}
+      <span class="tx">{{transactionId}}</span>
+    </div>
+
+    {{#if actions.length}}
+      <div class="rc-actions">
+        {{#each actions}}
+          <button type="button" class="rc-btn" data-store-action="{{this.action}}" data-actor-id="{{../actorId}}" data-store-transaction-id="{{../transactionId}}">{{this.label}}</button>
+        {{/each}}
+      </div>
+    {{/if}}
+  </div>
+</div>

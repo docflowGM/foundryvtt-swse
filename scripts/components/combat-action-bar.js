@@ -83,6 +83,35 @@ export class CombatActionBar {
    * ACTION GROUPS: ATTACK / DEFENSE / MOVE
    * ---------------------------------------- */
 
+  static _fightDefensivelyMode() {
+    try {
+      return game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') || 'default';
+    } catch (_err) {
+      return 'default';
+    }
+  }
+
+  static _fightDefensivelyCost() {
+    const mode = this._fightDefensivelyMode();
+    if (mode === 'swift') return 'swift';
+    if (mode === 'rai') return null;
+    return 'standard';
+  }
+
+  static _fightDefensivelyLabel() {
+    const mode = this._fightDefensivelyMode();
+    if (mode === 'swift') return 'Fight Defensively · Swift';
+    if (mode === 'rai') return 'Fight Defensively · Attack Stance';
+    return 'Fight Defensively · Standard';
+  }
+
+  static _canToggleFightDefensively(econ, active) {
+    if (active) return true;
+    const cost = this._fightDefensivelyCost();
+    if (!cost) return true;
+    return !!econ?.[cost];
+  }
+
   static _quickActionsHTML(actor, econ, eff) {
 
     const hasWeapon = actor.items.some(i => i.type === 'weapon');
@@ -109,13 +138,16 @@ export class CombatActionBar {
           <h4>Defense</h4>
 
           <button class="swse-btn ${eff.fightingDefensively ? 'active' : ''}"
-            data-action="fighting-defensively">
-            <i class="fa-solid fa-shield-halved"></i> Fight Defensively
+            data-action="fighting-defensively"
+            title="Toggle Fight Defensively. Total Defense overrides this stance."
+            ${!this._canToggleFightDefensively(econ, eff.fightingDefensively) ? 'disabled' : ''}>
+            <i class="fa-solid fa-shield-halved"></i> ${this._fightDefensivelyLabel()}
           </button>
 
           <button class="swse-btn ${eff.totalDefense ? 'active' : ''}"
             data-action="total-defense"
-            ${!econ.standard ? 'disabled' : ''}>
+            title="Toggle Total Defense. Overrides Fight Defensively. GM adjudicates any later attacks."
+            ${!econ.standard && !eff.totalDefense ? 'disabled' : ''}>
             <i class="fa-solid fa-shield"></i> Total Defense
           </button>
         </div>
@@ -192,7 +224,7 @@ export class CombatActionBar {
     const map = {
       'attack': () => this._doAttack(actor),
       'full-attack': () => this._doFullAttack(actor),
-      'fighting-defensively': () => this._toggleEffect(actor, 'fighting-defensively'),
+      'fighting-defensively': () => this._doFightDefensively(actor),
       'total-defense': () => this._doTotalDefense(actor),
       'move': () => this._doMove(actor),
       'charge': () => this._doCharge(actor),
@@ -238,9 +270,19 @@ export class CombatActionBar {
     await SWSEActiveEffectsManager.toggleCombatActionEffect(actor, effect);
   }
 
+  static async _doFightDefensively(actor) {
+    const wasActive = actor.effects.some(e => e.flags?.swse?.combatAction === 'fighting-defensively');
+    await SWSEActiveEffectsManager.toggleCombatActionEffect(actor, 'fighting-defensively');
+    if (wasActive) return;
+
+    const cost = this._fightDefensivelyCost();
+    if (cost) this._useAction(actor, cost);
+  }
+
   static async _doTotalDefense(actor) {
-    await SWSEActiveEffectsManager.applyCombatActionEffect(actor, 'total-defense');
-    this._useAction(actor, 'standard');
+    const wasActive = actor.effects.some(e => e.flags?.swse?.combatAction === 'total-defense');
+    await SWSEActiveEffectsManager.toggleCombatActionEffect(actor, 'total-defense');
+    if (!wasActive) this._useAction(actor, 'standard');
   }
 
   static async _doMove(actor) {

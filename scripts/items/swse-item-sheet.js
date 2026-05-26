@@ -17,6 +17,7 @@ import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-f
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { normalizeItemSystem, sanitizeItemSheetUpdate } from "/systems/foundryvtt-swse/scripts/items/item-defaults.js";
+import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems, summarizeItem } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -241,6 +242,11 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       meleeOrRangedSelect.addEventListener('change', this.#onMeleeOrRangedChange.bind(this));
     }
 
+    const weaponCategorySelect = root.querySelector('.weapon-category-select');
+    if (weaponCategorySelect && this.item?.type === 'weapon') {
+      weaponCategorySelect.addEventListener('change', this.#onWeaponCategoryChange.bind(this));
+    }
+
     // Intercept native form submission — AppV2 does not set tag:'form' so the
     // browser would navigate away (hard-crashing Foundry) without this guard.
     const innerForm = root.querySelector('form.swse-item-editor-form');
@@ -291,7 +297,35 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (!categorySelect) return;
 
     this._previewWeaponBranch = event.currentTarget.value || null;
-    this.render({ force: true });
+    await this.render({ force: true });
+    window.setTimeout(() => this.#hydrateCurrentWeaponRange({ overwrite: true }), 0);
+  }
+
+  async #onWeaponCategoryChange(event) {
+    event.preventDefault();
+    await this.#hydrateCurrentWeaponRange({ overwrite: true });
+  }
+
+  async #hydrateCurrentWeaponRange({ overwrite = false } = {}) {
+    try {
+      const form = this.element?.querySelector?.('form.swse-item-editor-form');
+      if (!form || this.item?.type !== 'weapon') return false;
+      const branch = form.querySelector('[name="system.meleeOrRanged"]')?.value ?? this.item?.system?.meleeOrRanged;
+      if (String(branch || '').toLowerCase() !== 'ranged') return false;
+      const category = form.querySelector('[name="system.weaponCategory"]')?.value ?? this.item?.system?.weaponCategory;
+      const rangeData = await WeaponRangeProfileResolver.resolveForWeapon({
+        system: {
+          ...(this.item?.system ?? {}),
+          meleeOrRanged: branch,
+          weaponCategory: category
+        }
+      });
+      if (!rangeData) return false;
+      return WeaponRangeProfileResolver.applyToForm(form, rangeData, { overwrite });
+    } catch (err) {
+      SWSELogger.warn('[SWSEItemSheet] Failed to hydrate weapon range profile', err);
+      return false;
+    }
   }
 
   async #onActivateShield(event) {
@@ -553,6 +587,29 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
           .split(',')
           .map((t) => t.trim())
           .filter(Boolean);
+      }
+
+      // If a ranged weapon does not yet have range-band data, hydrate it from the
+      // canonical actor weapon range profiles before sanitizing. Explicit player
+      // overrides submitted in the form are preserved.
+      if ((app.item?.type === 'weapon' || data?.type === 'weapon')
+          && String(data?.system?.meleeOrRanged || app.item?.system?.meleeOrRanged || '').toLowerCase() === 'ranged') {
+        const rangeData = await WeaponRangeProfileResolver.resolveForWeapon({
+          system: {
+            ...(app.item?.system ?? {}),
+            ...(data?.system ?? {})
+          }
+        });
+        if (rangeData) {
+          data.system.rangeProfile = data.system.rangeProfile || rangeData.profileSlug || rangeData.profileId;
+          data.system.rangeProfileName = data.system.rangeProfileName || rangeData.profileName;
+          data.system.range = data.system.range || rangeData.range;
+          data.system.ranges = foundry.utils.mergeObject(
+            foundry.utils.deepClone(rangeData.ranges ?? {}),
+            data.system.ranges ?? {},
+            { inplace: false }
+          );
+        }
       }
 
       // If a shield is toggled off via form edits, ensure derived UI doesn't remain "active".

@@ -74,7 +74,20 @@ export async function rollForcePower(actor, itemId, options = {}) {
     await SWSEChat.postRoll({
       roll: rollResult.roll,
       actor,
-      flavor: flavor
+      flavor: flavor,
+      context: {
+        type: 'force',
+        label: item.name,
+        itemId,
+        itemName: item.name,
+        dc: powerDC,
+        hasDc: true,
+        passed: success,
+        outcomeLabel: success ? 'Resolved' : 'Failed',
+        descriptor: item.system?.descriptor ?? item.system?.descriptors?.[0] ?? item.system?.tags?.[0] ?? 'light',
+        descriptors: item.system?.descriptors ?? item.system?.tags ?? [],
+        dcChart: item.system?.dcChart ?? item.system?.dcchart ?? item.system?.dcTiers ?? item.system?.tiers ?? []
+      }
     });
   }
 

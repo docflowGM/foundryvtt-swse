@@ -1,5 +1,165 @@
 import { buildChatSvgContext, buildChatStateContext } from "/systems/foundryvtt-swse/scripts/chat/chat-svg-assets.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+
+
+function swseChatLabel(value = '') {
+  return String(value ?? '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function swseChatForceDescriptorKey(value = '') {
+  const text = String(value ?? '').toLowerCase();
+  if (text.includes('dark')) return 'dark';
+  if (text.includes('tele') || text === 'tk' || text.includes('move')) return 'tk';
+  if (text.includes('mind') || text.includes('affect')) return 'mind';
+  if (text.includes('form') || text.includes('lightsaber')) return 'form';
+  if (text.includes('light')) return 'light';
+  return text ? text.replace(/[^a-z0-9]+/g, '-') : 'light';
+}
+
+function swseChatForceDescriptorGlyph(key = '') {
+  const map = { dark: '◆', light: '◇', tk: '◆', mind: '◇', form: '◆' };
+  return map[key] ?? '◇';
+}
+
+function swseChatBuildForceDescriptors(context = {}, primaryDescriptor = '') {
+  const raw = [];
+  const add = value => {
+    if (Array.isArray(value)) value.forEach(add);
+    else if (value != null && String(value).trim()) raw.push(String(value).trim());
+  };
+  add(context.descriptor);
+  add(context.forceDescriptor);
+  add(context.powerDescriptor);
+  add(context.descriptors);
+  add(context.forceDescriptors);
+  add(context.powerDescriptors);
+  add(context.tags);
+  if (!raw.length && primaryDescriptor) raw.push(primaryDescriptor);
+
+  const byKey = new Map();
+  for (const value of raw) {
+    const key = swseChatForceDescriptorKey(value);
+    if (!key || byKey.has(key)) continue;
+    const labelMap = { tk: 'Telekinetic', mind: 'Mind-Affecting', dark: 'Dark Side', light: 'Light Side', form: 'Form' };
+    byKey.set(key, { key, label: labelMap[key] ?? swseChatLabel(value), glyph: swseChatForceDescriptorGlyph(key) });
+  }
+  return [...byKey.values()];
+}
+
+function swseChatBuildForceTierGauge(total, context = {}) {
+  const raw = context.dcChart ?? context.dcTiers ?? context.forceTiers ?? context.tiers ?? context.powerDcChart ?? [];
+  if (!Array.isArray(raw) || !raw.length) return [];
+  const numericTotal = Number(total);
+  const rows = raw
+    .map(entry => ({
+      dc: Number(entry?.dc ?? entry?.DC ?? entry?.target ?? entry?.threshold),
+      effect: String(entry?.effect ?? entry?.description ?? entry?.text ?? entry?.label ?? '').trim()
+    }))
+    .filter(entry => Number.isFinite(entry.dc) && entry.effect)
+    .sort((a, b) => a.dc - b.dc)
+    .slice(0, 6);
+  let topIndex = -1;
+  if (Number.isFinite(numericTotal)) {
+    rows.forEach((entry, index) => { if (numericTotal >= entry.dc) topIndex = index; });
+  }
+  return rows.map((entry, index) => ({
+    dc: entry.dc,
+    effect: entry.effect,
+    hit: index <= topIndex,
+    top: index === topIndex
+  }));
+}
+
+function swseChatReactionGlyph(key = '') {
+  const map = {
+    block: '◐',
+    deflect: '↗',
+    counterattack: '↩',
+    forceReflection: '◆',
+    force_reflection: '◆',
+    evasion: '⟿',
+    forcePoint: '✦',
+    force_point: '✦',
+    destinyPoint: '⬢',
+    destiny_point: '⬢'
+  };
+  return map[key] ?? '↩';
+}
+
+function swseChatActorOwnerUserId(actor = null) {
+  if (!actor?.ownership) return '';
+  const activeUsers = globalThis.game?.users?.contents ?? [];
+  const owner = activeUsers.find(user => !user.isGM && user.active && Number(actor.ownership[user.id] ?? 0) >= 3)
+    ?? activeUsers.find(user => !user.isGM && Number(actor.ownership[user.id] ?? 0) >= 3)
+    ?? null;
+  return owner?.id ?? '';
+}
+
+function swseChatBuildReactionContext(actor, context = {}) {
+  const source = context.reactionContext ?? {};
+  const reactionsRaw = source.reactions ?? context.availableReactions ?? context.reactions ?? context.chatReactions ?? [];
+  const reactions = Array.isArray(reactionsRaw) ? reactionsRaw : [];
+  if (!reactions.length) return { reactions: [] };
+
+  const defender = source.defender ?? context.defender ?? context.target ?? null;
+  const attacker = source.attacker ?? context.attacker ?? actor ?? null;
+  const defenderId = source.defenderId ?? defender?.id ?? context.defenderId ?? context.targetId ?? '';
+  const attackerId = source.attackerId ?? attacker?.id ?? context.attackerId ?? actor?.id ?? '';
+  const ownerUserId = source.ownerUserId ?? swseChatActorOwnerUserId(defender) ?? '';
+
+  return {
+    reactions: reactions.map(entry => {
+      const key = String(entry?.key ?? entry?.id ?? entry?.reactionKey ?? '').trim();
+      return {
+        key,
+        label: entry?.label ?? entry?.name ?? swseChatLabel(key || 'Reaction'),
+        glyph: entry?.glyph ?? swseChatReactionGlyph(key),
+        trigger: entry?.trigger ?? context.trigger ?? 'ON_ATTACK_DECLARED',
+        available: entry?.available ?? entry?.allowed ?? entry?.isAvailable ?? true,
+        sublabel: entry?.sublabel ?? entry?.subtitle ?? entry?.short ?? entry?.costLabel ?? '',
+        reason: entry?.reason ?? entry?.description ?? ''
+      };
+    }).filter(entry => entry.key),
+    defenderId,
+    attackerId,
+    ownerUserId,
+    defenderName: source.defenderName ?? defender?.name ?? context.targetName ?? '',
+    timerLabel: source.timerLabel ?? context.reactionTimerLabel ?? '',
+    reason: source.reason ?? context.reactionReason ?? ''
+  };
+}
+
+function swseChatBuildEventContext(context = {}, category = 'roll', reactionContext = null) {
+  const eventId = context.eventId ?? context.attackEventId ?? (reactionContext?.reactions?.length ? `swse-${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` : '');
+  const hasReactionWindow = Boolean(reactionContext?.reactions?.length);
+  return {
+    eventId,
+    messageId: context.messageId ?? '',
+    eventState: context.eventState ?? (hasReactionWindow ? 'pending' : 'standard'),
+    resolutionLabel: context.resolutionLabel ?? (hasReactionWindow ? 'Provisional Result' : category === 'damage' ? 'Damage Resolved' : 'Resolved'),
+    reactionLabel: context.reactionLabel ?? (hasReactionWindow ? 'Reaction Window Open' : ''),
+    showProvisionalBadge: hasReactionWindow || context.showProvisionalBadge === true,
+    showFinalBadge: context.showFinalBadge === true
+  };
+}
+
+function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = false) {
+  if (context.showDamageAction === false) return null;
+  const weaponId = context.weaponId ?? context.itemId ?? weapon?.id ?? '';
+  if (!weaponId || context.disableDamageAction === true) return null;
+  const critMultiplier = Number(context.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2;
+  return {
+    weaponId,
+    isCritical: context.isCritical === true || isCritical === true,
+    critMultiplier,
+    twoHanded: context.twoHanded === true,
+    label: context.damageActionLabel ?? `Roll Damage${(context.isCritical === true || isCritical === true) ? ` ×${critMultiplier}` : ''}`
+  };
+}
 /**
  * SWSERollEngine
  *
@@ -35,21 +195,40 @@ export class SWSERollEngine {
       throw new Error('SWSERollEngine: Roll must be evaluated before rendering');
     }
 
+    const safeContext = context ?? {};
     const breakdown = this._buildBreakdown(roll);
-    const category = this._categorizeResult(roll, context);
-    const actorName = actor?.name ?? 'Unknown';
-    const label = context?.label ?? context?.skillLabel ?? context?.rollLabel ?? '';
-    const title = flavor || (label ? `${actorName} used ${label}` : `${actorName} rolled`);
-    const weapon = this._resolveContextWeapon(actor, context);
+    const category = this._categorizeResult(roll, safeContext);
+    const actorName = actor?.name ?? safeContext?.actorName ?? 'Unknown';
+    const label = this._resolveLabel(safeContext, flavor);
+    const actionTitle = this._stripHtml(flavor || label || `${actorName} rolled`);
+    const weapon = this._resolveContextWeapon(actor, safeContext);
     const weaponVisual = weapon
       ? WeaponVisualProfileResolver.toChatView(WeaponVisualProfileResolver.resolve(weapon, { actor }))
       : null;
+    const d20 = this._getD20Result(roll);
+    const abilityKey = this._resolveAbilityKey(category, safeContext);
+    const forceDescriptor = this._resolveForceDescriptor(category, safeContext);
+    const damageType = this._resolveDamageType(weapon, safeContext, category);
+    const parts = this._buildParts({ roll, context: safeContext, breakdown, d20, category });
+    const outcome = this._buildOutcome({ roll, context: safeContext, category, d20 });
+    const isCritical = d20?.result === 20 && (category === 'attack' || category === 'crit' || safeContext?.isCritical === true);
+    const isFumble = d20?.result === 1;
+    const totalLabel = this._resolveTotalLabel(category, safeContext);
+    const typeChipLabel = this._resolveTypeChipLabel(category, safeContext, label, weapon);
+    const abilityBadge = abilityKey ? abilityKey.toUpperCase().slice(0, 3) : '';
+    const railColor = weaponVisual?.colorHex || this._resolveContextRailColor(safeContext);
+    const railStyle = railColor ? `--rail: ${railColor}; --swse-weapon-visual-color: ${railColor};` : '';
+    const forceDescriptors = category === 'force' ? swseChatBuildForceDescriptors(safeContext, forceDescriptor) : [];
+    const forceTierGauge = category === 'force' ? swseChatBuildForceTierGauge(roll.total, safeContext) : [];
+    const reactionContext = swseChatBuildReactionContext(actor, safeContext);
+    const eventContext = swseChatBuildEventContext(safeContext, category, reactionContext);
+    const damageAction = category === 'attack' ? swseChatBuildDamageAction(safeContext, weapon, isCritical) : null;
 
     return {
       chatSvg: buildChatSvgContext(),
       chatState: buildChatStateContext({
-        state: category === 'crit' ? 'success' : category === 'fail' ? 'failure' : 'default',
-        statusLabel: label || 'Roll Result',
+        state: outcome?.state === 'success' || isCritical ? 'success' : outcome?.state === 'failure' || isFumble ? 'failure' : 'default',
+        statusLabel: label || typeChipLabel || 'Roll Result',
         statusSubLabel: `Total ${roll.total}`,
         showStatusRail: true,
         showHeaderDivider: true,
@@ -61,14 +240,35 @@ export class SWSERollEngine {
       dice: roll.dice,
       breakdown,
       flavor,
-      title,
-      subtitle: context?.trained === true ? 'Trained' : '',
+      title: actionTitle,
+      actionTitle,
+      subtitle: safeContext?.trained === true ? 'Trained' : '',
       category,
       actor,
       actorName,
       timestamp: new Date().toISOString(),
-      context,
-      weaponVisual
+      timeLabel: this._formatTimeLabel(new Date()),
+      context: safeContext,
+      weaponVisual,
+      abilityKey,
+      abilityBadge,
+      forceDescriptor,
+      railStyle,
+      hasWeaponRail: Boolean(railColor),
+      typeChipLabel,
+      totalLabel,
+      parts,
+      outcome,
+      damageType,
+      hasDamageType: Boolean(damageType),
+      isCritical,
+      isFumble,
+      isForceCard: category === 'force',
+      forceDescriptors,
+      forceTierGauge,
+      reactionContext,
+      eventContext,
+      damageAction
     };
   }
 
@@ -94,9 +294,8 @@ export class SWSERollEngine {
   static _buildBreakdown(roll) {
     const breakdown = [];
 
-    for (const term of roll.terms) {
+    for (const term of roll.terms ?? []) {
       if (term.results) {
-        // Dice term
         breakdown.push({
           type: 'dice',
           faces: term.faces,
@@ -106,13 +305,11 @@ export class SWSERollEngine {
           }))
         });
       } else if (term.operator) {
-        // Operator term
         breakdown.push({
           type: 'operator',
           operator: term.operator
         });
       } else if (typeof term.number === 'number') {
-        // Number term
         breakdown.push({
           type: 'modifier',
           value: term.number
@@ -124,27 +321,262 @@ export class SWSERollEngine {
   }
 
   /**
-   * Categorize roll result
+   * Categorize roll result. Category controls the chat shell only; it never
+   * changes roll math.
    * @private
    */
   static _categorizeResult(roll, context = {}) {
-    // Check for explicit context categorization
-    if (context.category) {
-      return context.category;
-    }
+    const explicit = String(context?.category ?? context?.type ?? context?.rollType ?? '').trim().toLowerCase();
+    const map = {
+      skill: 'skill',
+      skills: 'skill',
+      ability: 'ability',
+      attack: 'attack',
+      damage: 'damage',
+      save: 'save',
+      defense: 'save',
+      initiative: 'initiative',
+      force: 'force',
+      'force-power': 'force',
+      forcepower: 'force',
+      power: 'force',
+      utility: 'roll',
+      roll: 'roll',
+      neutral: 'roll',
+      crit: 'attack',
+      fail: 'roll'
+    };
+    if (map[explicit]) return map[explicit];
 
-    // Check for natural 20/1
-    const d20 = roll.dice.find(d => d.faces === 20);
-    if (d20) {
-      const result = d20.results[0];
-      if (result.result === 20) return 'crit';
-      if (result.result === 1) return 'fail';
-    }
+    const label = String(context?.label ?? context?.skillLabel ?? context?.rollLabel ?? '').toLowerCase();
+    if (label.includes('initiative')) return 'initiative';
+    if (label.includes('force')) return 'force';
+    if (label.includes('damage')) return 'damage';
+    if (label.includes('attack')) return 'attack';
+    if (context?.skillKey) return 'skill';
+    if (context?.abilityKey) return 'ability';
 
-    // Default to neutral
-    return 'neutral';
+    return 'roll';
   }
-}
+
+  static _resolveLabel(context = {}, flavor = '') {
+    return context?.label
+      ?? context?.skillLabel
+      ?? context?.rollLabel
+      ?? context?.itemName
+      ?? this._stripHtml(flavor || '');
+  }
+
+  static _stripHtml(value) {
+    return String(value ?? '')
+      .replace(/<br\s*\/?>/gi, ' — ')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  static _formatSigned(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return String(value ?? '');
+    return number >= 0 ? `+${number}` : `${number}`;
+  }
+
+  static _formatTimeLabel(date) {
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  }
+
+  static _getD20Result(roll) {
+    const d20 = roll?.dice?.find?.(d => Number(d.faces) === 20);
+    const result = d20?.results?.find?.(r => r.active !== false) ?? d20?.results?.[0] ?? null;
+    if (!result) return null;
+    return {
+      result: result.result,
+      isNat20: Number(result.result) === 20,
+      isNat1: Number(result.result) === 1
+    };
+  }
+
+  static _resolveAbilityKey(category, context = {}) {
+    const explicit = String(context?.abilityKey ?? context?.ability ?? '').trim().toLowerCase();
+    const normalized = this._normalizeAbilityKey(explicit);
+    if (normalized) return normalized;
+
+    if (category !== 'skill') return '';
+    return this._skillAbilityMap()[String(context?.skillKey ?? '').trim().toLowerCase()] ?? '';
+  }
+
+  static _normalizeAbilityKey(value) {
+    const map = {
+      str: 'str', strength: 'str',
+      dex: 'dex', dexterity: 'dex',
+      con: 'con', constitution: 'con',
+      int: 'int', intelligence: 'int',
+      wis: 'wis', wisdom: 'wis',
+      cha: 'cha', charisma: 'cha'
+    };
+    return map[String(value ?? '').toLowerCase()] ?? '';
+  }
+
+  static _skillAbilityMap() {
+    return {
+      acrobatics: 'dex', climb: 'str', deception: 'cha', endurance: 'con', gatherinformation: 'cha',
+      gather_information: 'cha', initiative: 'dex', jump: 'str', knowledge: 'int', mechanics: 'int',
+      perception: 'wis', persuasion: 'cha', pilot: 'dex', ride: 'dex', stealth: 'dex', survival: 'wis',
+      swim: 'str', treatinjury: 'wis', treat_injury: 'wis', usecomputer: 'int', use_computer: 'int',
+      usetheforce: 'cha', use_the_force: 'cha', utf: 'cha'
+    };
+  }
+
+  static _resolveForceDescriptor(category, context = {}) {
+    if (category !== 'force') return '';
+    const descriptor = String(context?.descriptor ?? context?.forceDescriptor ?? context?.powerDescriptor ?? '').toLowerCase();
+    if (descriptor.includes('dark')) return 'dark';
+    if (descriptor.includes('tele') || descriptor === 'tk') return 'tk';
+    if (descriptor.includes('mind')) return 'mind';
+    if (descriptor.includes('form')) return 'form';
+    if (descriptor.includes('light')) return 'light';
+    return 'light';
+  }
+
+  static _resolveContextRailColor(context = {}) {
+    return context?.railColor
+      ?? context?.colorHex
+      ?? context?.weaponVisual?.colorHex
+      ?? context?.visual?.colorHex
+      ?? '';
+  }
+
+  static _resolveDamageType(weapon, context = {}, category = '') {
+    if (category !== 'damage' && category !== 'attack') return '';
+    const value = context?.damageType
+      ?? context?.damageTypes
+      ?? weapon?.system?.damageType
+      ?? weapon?.system?.damage?.type
+      ?? weapon?.system?.damageTypes
+      ?? '';
+    if (Array.isArray(value)) return value.filter(Boolean).join(' / ');
+    return String(value || '').trim();
+  }
+
+  static _resolveTotalLabel(category, context = {}) {
+    if (context?.totalLabel) return context.totalLabel;
+    if (category === 'attack') return context?.targetDefense ? `vs ${context.targetDefense}` : 'vs Defense';
+    if (category === 'damage') return 'Damage';
+    if (category === 'initiative') return 'Init';
+    if (category === 'force') return 'UTF';
+    if (category === 'save') return context?.defenseName ?? 'Defense';
+    if (category === 'skill') return 'Total';
+    if (category === 'ability') return 'Total';
+    return 'Total';
+  }
+
+  static _resolveTypeChipLabel(category, context = {}, label = '', weapon = null) {
+    if (context?.typeChipLabel) return context.typeChipLabel;
+    if (category === 'skill') return `${label || 'Skill'}${context?.trained ? ' · Trained' : ''}`;
+    if (category === 'ability') return label || 'Ability Check';
+    if (category === 'attack') return weapon?.name ? `${weapon.name} · Attack` : 'Attack';
+    if (category === 'damage') return weapon?.name ? `${weapon.name} · Damage` : 'Damage';
+    if (category === 'initiative') return 'Initiative';
+    if (category === 'force') return 'Force Power · UTF';
+    if (category === 'save') return label || 'Defense / Save';
+    return label || 'Roll';
+  }
+
+  static _buildParts({ roll, context = {}, breakdown = [], d20 = null, category = 'roll' } = {}) {
+    const parts = [];
+    if (d20) {
+      parts.push({
+        kind: 'd20',
+        label: 'd20 →',
+        value: String(d20.result),
+        note: d20.isNat20 ? 'NAT 20' : d20.isNat1 ? 'NAT 1' : '',
+        isNat20: d20.isNat20,
+        isNat1: d20.isNat1
+      });
+    }
+
+    const diceGroups = breakdown.filter(part => part.type === 'dice' && Number(part.faces) !== 20);
+    for (const group of diceGroups) {
+      const active = group.results?.filter?.(r => r.active !== false).map(r => r.result) ?? [];
+      if (!active.length) continue;
+      parts.push({ kind: 'dice', label: `d${group.faces} →`, value: active.join(' · ') });
+    }
+
+    if (Number.isFinite(Number(context?.baseBonus))) {
+      parts.push({ kind: 'bonus', label: category === 'attack' ? 'Attack Bonus' : 'Base', value: this._formatSigned(context.baseBonus) });
+    }
+    if (context?.trained === true && category === 'skill') {
+      parts.push({ kind: 'trained', label: 'Trained', value: '' });
+    }
+    if (Number.isFinite(Number(context?.situationalMods)) && Number(context.situationalMods) !== 0) {
+      parts.push({ kind: 'bonus', label: 'Situational', value: this._formatSigned(context.situationalMods) });
+    }
+    if (Number.isFinite(Number(context?.customModifier)) && Number(context.customModifier) !== 0) {
+      parts.push({ kind: 'bonus', label: 'Modifier', value: this._formatSigned(context.customModifier) });
+    }
+    if (Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
+      parts.push({ kind: 'bonus', label: 'Feat Bonus', value: this._formatSigned(context.featSkillBonus) });
+    }
+    if (Array.isArray(context?.featSkillBonuses)) {
+      for (const bonus of context.featSkillBonuses) {
+        const value = Number(bonus?.value ?? bonus?.bonus ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        parts.push({ kind: 'bonus', label: this._stripHtml(bonus?.sourceName ?? bonus?.name ?? 'Feat'), value: this._formatSigned(value) });
+      }
+    }
+
+    const staticBonus = this._rollStaticBonus(roll, d20);
+    if (!parts.some(part => part.kind === 'bonus') && Number.isFinite(staticBonus) && staticBonus !== 0) {
+      parts.push({ kind: 'bonus', label: category === 'damage' ? 'Bonus' : 'Modifier', value: this._formatSigned(staticBonus) });
+    }
+
+    return parts;
+  }
+
+  static _rollStaticBonus(roll, d20 = null) {
+    const total = Number(roll?.total);
+    if (!Number.isFinite(total)) return 0;
+    if (d20) return total - Number(d20.result || 0);
+
+    let diceTotal = 0;
+    for (const die of roll?.dice ?? []) {
+      for (const result of die.results ?? []) {
+        if (result.active === false) continue;
+        diceTotal += Number(result.result || 0);
+      }
+    }
+    return total - diceTotal;
+  }
+
+  static _buildOutcome({ roll, context = {}, category = 'roll', d20 = null } = {}) {
+    const meta = [];
+    const total = Number(roll?.total);
+    const dcRaw = context?.dc ?? context?.targetDc ?? context?.targetDC ?? context?.defenseDc ?? null;
+    const dc = Number(dcRaw);
+
+    if (Number.isFinite(dc)) {
+      const passed = context?.passed ?? context?.success ?? (Number.isFinite(total) ? total >= dc : null);
+      meta.push({ key: category === 'attack' ? 'Target' : 'DC', value: String(dcRaw) });
+      if (Number.isFinite(total)) meta.push({ key: 'Margin', value: this._formatSigned(total - dc) });
+      return {
+        state: passed ? 'success' : 'failure',
+        label: context?.outcomeLabel ?? (passed ? (category === 'attack' ? 'Hit' : 'Success') : (category === 'attack' ? 'Miss' : 'Failure')),
+        meta
+      };
+    }
+
+    if (d20?.isNat20 && category === 'attack') {
+      return { state: 'crit', label: 'Critical Hit', meta };
+    }
+    if (d20?.isNat1 && (category === 'attack' || category === 'skill' || category === 'ability')) {
+      return { state: 'failure', label: category === 'attack' ? 'Miss' : 'Complication', meta };
+    }
+    if (context?.outcomeLabel) {
+      return { state: context?.success === false ? 'failure' : context?.success === true ? 'success' : 'success', label: context.outcomeLabel, meta };
+    }
+    return null;
+  }
+
 
 /* ============================================================
    PHASE 3: CHAT STATE CONTEXT HELPERS
