@@ -35,6 +35,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { isStoreItemPurchasable, summarizeStorePolicy } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { getRendarrLine } from "/systems/foundryvtt-swse/scripts/apps/store/dialogue/rendarr-dialogue.js";
 import { getRendarrPortraitPath } from "/systems/foundryvtt-swse/scripts/mentor/mentor-portrait-registry.js";
@@ -404,6 +405,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
     return {
       ...view,
       price: view.finalCost,
+      priceLabel: view.priceLabel,
+      canPurchase: view.storePolicy?.canPurchase !== false,
+      blockedReason: view.storePolicy?.blockedReason || '',
+      storePolicy: view.storePolicy,
       category: item.category || item.type || '',
       subcategory: item.subcategory || sys.subcategory || sys.category || '',
       availability: item.system?.availability || 'Standard',
@@ -677,8 +682,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       // Add category for filtering
       view.category = item.category || item.type || '';
-      view.availability = (item.system?.availability || '').toString();
+      view.availability = (item.rarityLabel || item.system?.availability || '').toString();
       view.price = view.finalCost;
+      view.canPurchase = view.storePolicy?.canPurchase !== false;
+      view.blockedReason = view.storePolicy?.blockedReason || '';
 
       // Phase 2: Apply category/subcategory/family filtering
       // Skip items that don't match the active filter
@@ -794,7 +801,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _viewFromItem(item) {
     const sys = safeSystem(item) ?? {};
-    const rarityClass = getRarityClass(sys.availability);
+    const rarityClass = item.rarityClass || getRarityClass(sys.availability);
+    const storePolicy = summarizeStorePolicy(item);
+    const finalCost = item.finalCost ?? getCostValue(item);
+    const displayCost = item.finalCostNew ?? finalCost;
+
     return {
       // Engine normalizes IDs to .id (not ._id); prefer .id if available
       id: item.id ?? item._id,
@@ -804,18 +815,21 @@ export class SWSEStore extends BaseSWSEAppV2 {
       // Display pricing: For template compatibility
       // Scalar items: use finalCost as cost
       // Conditional vehicles: use finalCostNew as cost, finalCostUsed as costUsed
-      cost: item.finalCostNew ?? item.finalCost,
+      cost: displayCost,
       costUsed: item.finalCostUsed ?? undefined,
 
       // Legacy field for some views
-      finalCost: item.finalCost ?? getCostValue(item),
+      finalCost,
+      priceLabel: Number.isFinite(Number(displayCost)) ? Number(displayCost).toLocaleString() : '—',
+      priceOverrideApplied: item.priceOverrideApplied === true,
 
       rarityClass,
-      rarityLabel: getRarityLabel(rarityClass),
+      rarityLabel: item.rarityLabel || getRarityLabel(rarityClass),
       system: sys,
       type: item.type,
       subcategory: item.subcategory || sys.subcategory || sys.category || '',
-      typeLabel: this._getItemTypeLabel(item.type)
+      typeLabel: this._getItemTypeLabel(item.type),
+      storePolicy
     };
   }
 
@@ -945,6 +959,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
     root.querySelectorAll('[data-action="detail-add-to-cart"]').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (!this.selectedProductId) {return;}
+        const item = this.itemsById.get(this.selectedProductId);
+        const policyCheck = isStoreItemPurchasable(item);
+        if (!policyCheck.ok) {
+          ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
+          return;
+        }
         const qty = parseInt(detailQtyInput?.value) || 1;
         for (let i = 0; i < qty; i++) {
           addItemToCart(this, this.selectedProductId, i === 0 ? (line => this._setRendarrLine(line)) : null, { quantity: 1 });
@@ -1012,6 +1032,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
         ev.stopPropagation();
         const id = ev.currentTarget?.dataset?.itemId;
         if (!id) {return;}
+        const item = this.itemsById.get(id);
+        const policyCheck = isStoreItemPurchasable(item);
+        if (!policyCheck.ok) {
+          ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
+          return;
+        }
         addItemToCart(this, id, line => this._setRendarrLine(line));
         await this._persistCart();
         this.render();

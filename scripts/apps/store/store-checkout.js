@@ -25,6 +25,8 @@ import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehi
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { consumeInventoryPolicyQuantities, isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 /**
  * Add item to shopping cart
@@ -71,7 +73,13 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
         return;
     }
 
-    // Engine provides finalCost already calculated
+    const policyCheck = isStoreItemPurchasable(item);
+    if (!policyCheck.ok) {
+        ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
+        return;
+    }
+
+    // Engine provides finalCost already calculated, after GM policy overrides.
     const finalCost = normalizeCredits(options.costOverride ?? item.finalCost);
     const stagedCustomization = options.stagedCustomization || null;
 
@@ -115,7 +123,13 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
         return;
     }
 
-    // Engine provides finalCost
+    const policyCheck = isStoreItemPurchasable(droidTemplate);
+    if (!policyCheck.ok) {
+        ui.notifications.warn(policyCheck.reason || 'This droid cannot be purchased right now.');
+        return;
+    }
+
+    // Engine provides finalCost, after GM policy overrides.
     const finalCost = normalizeCredits(droidTemplate.finalCost);
 
     // Add to cart
@@ -156,7 +170,13 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         return;
     }
 
-    // Engine provides both prices
+    const policyCheck = isStoreItemPurchasable(vehicleTemplate);
+    if (!policyCheck.ok) {
+        ui.notifications.warn(policyCheck.reason || 'This vehicle cannot be purchased right now.');
+        return;
+    }
+
+    // Engine provides both prices, after GM policy overrides.
     const finalCost = condition === 'used'
       ? normalizeCredits(vehicleTemplate.finalCostUsed)
       : normalizeCredits(vehicleTemplate.finalCost);
@@ -220,6 +240,14 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
+            const policyCheck = isStoreItemPurchasable(currentItem);
+            if (!policyCheck.ok) {
+                return {
+                    valid: false,
+                    error: `Item "${item.name}" cannot be purchased: ${policyCheck.reason}`
+                };
+            }
+
             // Check price hasn't changed more than 5%
             const expectedCost = item.stagedCustomization?.finalCost ?? item.cost;
             const priceDiff = item.stagedCustomization ? 0 : Math.abs(currentItem.finalCost - expectedCost);
@@ -249,6 +277,14 @@ async function revalidateCart(store, actor, originalTotal) {
                 return {
                     valid: false,
                     error: `Vehicle "${vehicle.name}" is no longer available in the store.`
+                };
+            }
+
+            const policyCheck = isStoreItemPurchasable(vehicleTemplate);
+            if (!policyCheck.ok) {
+                return {
+                    valid: false,
+                    error: `Vehicle "${vehicle.name}" cannot be purchased: ${policyCheck.reason}`
                 };
             }
 
@@ -361,7 +397,13 @@ export async function buyDroid(store, actorId) {
         return;
     }
 
-    // Engine provides finalCost
+    const policyCheck = isStoreItemPurchasable(droidTemplate);
+    if (!policyCheck.ok) {
+        ui.notifications.warn(policyCheck.reason || 'This droid cannot be purchased right now.');
+        return;
+    }
+
+    // Engine provides finalCost, after GM policy overrides.
     const finalCost = Number(droidTemplate.finalCost) || 0;
 
     // DELEGATED TO ENGINE: Check eligibility
@@ -434,8 +476,9 @@ export async function buyVehicle(store, actorId, condition) {
         return;
     }
 
-    // Try to get from world actors first
-    let vehicleTemplate = game.actors.get(actorId);
+    // Prefer the policy-applied store index entry. Falling back to raw actors is
+    // legacy support only and may not include GM policy overlays.
+    let vehicleTemplate = store.itemsById?.get(actorId) || game.actors.get(actorId);
 
     // If not found in world, search compendiums
     if (!vehicleTemplate) {
@@ -447,6 +490,12 @@ export async function buyVehicle(store, actorId, condition) {
 
     if (!vehicleTemplate) {
         ui.notifications.error('Vehicle not found.');
+        return;
+    }
+
+    const policyCheck = isStoreItemPurchasable(vehicleTemplate);
+    if (!policyCheck.ok) {
+        ui.notifications.warn(policyCheck.reason || 'This vehicle cannot be purchased right now.');
         return;
     }
 
@@ -641,6 +690,35 @@ export function calculateCartTotal(cart) {
     return normalizeCredits(total);
 }
 
+
+function validateCartQuantities(store) {
+  const counts = new Map();
+  const names = new Map();
+  const add = (entry) => {
+    if (!entry?.id) return;
+    counts.set(entry.id, (counts.get(entry.id) || 0) + 1);
+    if (!names.has(entry.id)) names.set(entry.id, entry.name || 'Unknown listing');
+  };
+
+  for (const item of store.cart.items || []) add(item);
+  for (const droid of store.cart.droids || []) add(droid);
+  for (const vehicle of store.cart.vehicles || []) add(vehicle);
+
+  for (const [id, count] of counts.entries()) {
+    const storeItem = store.itemsById?.get(id);
+    const policy = storeItem?.storePolicy;
+    if (!policy?.trackQuantity || !Number.isFinite(policy.quantity)) continue;
+    if (count > policy.quantity) {
+      return {
+        ok: false,
+        error: `${names.get(id)} has only ${policy.quantity} in stock. Remove ${count - policy.quantity} from your cart.`
+      };
+    }
+  }
+
+  return { ok: true, error: null };
+}
+
 /**
  * HARDENING 4: Revalidate cart before checkout
  * Do NOT trust stored cart item costs.
@@ -660,6 +738,12 @@ function revalidateCartItems(store) {
       report.removed.push({ type: 'item', name: cartItem.name });
       store.cart.items.splice(i, 1);
     } else {
+      const policyCheck = isStoreItemPurchasable(storeItem);
+      if (!policyCheck.ok) {
+        report.removed.push({ type: 'item', name: `${cartItem.name} (${policyCheck.reason})` });
+        store.cart.items.splice(i, 1);
+        continue;
+      }
       const recalculated = normalizeCredits(storeItem.finalCost);
       if (recalculated !== cartItem.cost) {
         report.recalculated.push({
@@ -682,6 +766,12 @@ function revalidateCartItems(store) {
       report.removed.push({ type: 'droid', name: cartDroid.name });
       store.cart.droids.splice(i, 1);
     } else {
+      const policyCheck = isStoreItemPurchasable(storeItem);
+      if (!policyCheck.ok) {
+        report.removed.push({ type: 'droid', name: `${cartDroid.name} (${policyCheck.reason})` });
+        store.cart.droids.splice(i, 1);
+        continue;
+      }
       const recalculated = normalizeCredits(storeItem.finalCost);
       if (recalculated !== cartDroid.cost) {
         report.recalculated.push({
@@ -704,6 +794,12 @@ function revalidateCartItems(store) {
       report.removed.push({ type: 'vehicle', name: cartVehicle.name });
       store.cart.vehicles.splice(i, 1);
     } else {
+      const policyCheck = isStoreItemPurchasable(storeItem);
+      if (!policyCheck.ok) {
+        report.removed.push({ type: 'vehicle', name: `${cartVehicle.name} (${policyCheck.reason})` });
+        store.cart.vehicles.splice(i, 1);
+        continue;
+      }
       const isUsed = cartVehicle.condition === 'used';
       const recalculated = normalizeCredits(isUsed ? storeItem.finalCostUsed : storeItem.finalCost);
       if (recalculated !== cartVehicle.cost) {
@@ -882,6 +978,12 @@ export async function checkout(store, animateNumberCallback) {
         ui.notifications.warn(`${revalidationReport.removed.length} item(s) no longer available and were removed.`);
     }
 
+    const quantityValidation = validateCartQuantities(store);
+    if (!quantityValidation.ok) {
+        ui.notifications.warn(quantityValidation.error);
+        return { success: false, error: quantityValidation.error };
+    }
+
     // Calculate total using revalidated costs
     const total = calculateCartTotal(store.cart);
 
@@ -949,7 +1051,10 @@ export async function checkout(store, animateNumberCallback) {
         ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
 
         // Log purchase to history
-        await logPurchaseToHistory(actor, store.cart, total);
+        await logPurchaseToHistory(actor, store.cart, total, result.transactionId);
+
+        // Consume finite GM inventory quantities only after the transaction succeeds.
+        await consumeInventoryPolicyQuantities(store.cart);
 
         // Clear cart only on success
         const purchasedItems = {
@@ -986,7 +1091,7 @@ export async function checkout(store, animateNumberCallback) {
  * @param {Object} cart - The shopping cart
  * @param {number} total - Total credits spent
  */
-async function logPurchaseToHistory(actor, cart, total) {
+async function logPurchaseToHistory(actor, cart, total, transactionId = null) {
     try {
         // Get existing purchase history
         const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
@@ -1010,7 +1115,10 @@ async function logPurchaseToHistory(actor, cart, total) {
                 cost: v.cost || 0,
                 condition: v.condition || 'new'
             })),
-            total: total
+            total: total,
+            transactionId,
+            compatibilityMirror: true,
+            source: 'TransactionEngine mirror'
         };
 
         // Add to history and save
@@ -1279,18 +1387,37 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
  * @param {number} cost - The cost to deduct
  */
 async function deductDroidCredits(actor, cost) {
-    const currentCredits = LedgerService.getCurrentCredits(actor);
-    const newCredits = Math.max(0, currentCredits - cost);
+    const normalizedCost = normalizeCredits(cost);
+    if (normalizedCost <= 0) return;
 
-    await ActorEngine.updateActor(actor, {
-        'system.credits': newCredits
+    const result = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: -normalizedCost,
+        reason: 'Droid construction finalized',
+        transactionContext: 'store-custom-approval',
+        audit: {
+            approvalType: 'droid',
+            itemName: 'Custom Droid Construction',
+            itemNames: ['Custom Droid Construction'],
+            itemCount: 1,
+            source: 'Store Droid Builder Finalization'
+        }
+    }, {
+        source: 'store-checkout.deductDroidCredits',
+        validate: true,
+        rederive: true
     });
 
-    SWSELogger.log('SWSE Store | Credits deducted for droid:', {
+    if (!result.success) {
+        throw new Error(result.error || 'Droid credit transaction failed');
+    }
+
+    SWSELogger.log('SWSE Store | Droid credits deducted through TransactionEngine:', {
         actor: actor.name,
-        cost: cost,
-        oldCredits: currentCredits,
-        newCredits: newCredits
+        cost: normalizedCost,
+        transactionId: result.transactionId,
+        creditsBefore: result.creditsBefore,
+        creditsAfter: result.creditsAfter
     });
 }
 

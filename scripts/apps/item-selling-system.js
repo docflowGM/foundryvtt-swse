@@ -15,18 +15,17 @@
  * 1. Player clicks "Offer to Merchant" on item
  * 2. Confirmation panel shows base price, RAW offer (50% floored)
  * 3. Player confirms intent
- * 4. If auto-accept ON: Resolve immediately
- *    If auto-accept OFF: GM await uiPrompt(Accept/Deny/Override amount)
- * 5. On acceptance: Remove item, add credits, animate gain, show player feedback
+ * 4. If auto-accept ON: Resolve immediately through TransactionEngine
+ *    If auto-accept OFF: Queue Store Control approval for GM review
+ * 5. On acceptance: TransactionEngine removes item, adds credits, audits, and emits receipts
  */
 
 import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
-import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 /**
  * Initiate item selling process
@@ -153,51 +152,66 @@ async function resolveSale(item, actor, basePrice, rawOffer) {
   }
 }
 
+function saleRequestId() {
+  return `sale_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+async function enqueueSaleRequest(item, actor, options = {}) {
+  const request = {
+    id: saleRequestId(),
+    kind: 'sale',
+    type: options.requestType || 'sale',
+    status: 'Pending',
+    actorId: actor.id,
+    actor: actor.name,
+    itemId: item.id,
+    item: item.name,
+    itemType: item.type,
+    quantity: normalizeCredits(item.system?.quantity ?? item.system?.equippedQty ?? 1) || 1,
+    basePrice: options.basePrice ?? null,
+    suggestedPrice: options.suggestedPrice ?? null,
+    requestedPrice: options.requestedPrice ?? options.suggestedPrice ?? null,
+    value: options.requestedPrice ?? options.suggestedPrice ?? null,
+    noBasePrice: options.noBasePrice === true,
+    timestamp: Date.now(),
+    requestedAt: Date.now(),
+    playerId: game.user?.id ?? null,
+    playerName: game.user?.name ?? 'Player',
+    source: 'ItemSellingSystem',
+    itemData: item.toObject?.() || { id: item.id, name: item.name, type: item.type }
+  };
+
+  const pendingSales = SettingsHelper.getArray('pendingSales', []);
+  const duplicate = pendingSales.some(entry => entry?.status === 'Pending' && entry.actorId === actor.id && entry.itemId === item.id);
+  if (duplicate) {
+    ui.notifications.warn(`${item.name} is already awaiting GM sale review.`);
+    return;
+  }
+
+  pendingSales.push(request);
+  await SettingsHelper.set('pendingSales', pendingSales);
+
+  SWSELogger.info('[SWSE Selling] Sale request queued for GM Store Control', {
+    requestId: request.id,
+    actor: actor.id,
+    item: item.name,
+    suggestedPrice: request.suggestedPrice
+  });
+
+  ui.notifications.info(`${item.name} has been sent to the GM Store Control approvals queue.`);
+  Hooks.callAll?.('swseStoreSaleRequested', { request, actor, item });
+}
+
 /**
  * Display GM adjudication prompt
  */
 async function showGmAdjudicationPrompt(item, actor, basePrice, rawOffer) {
-  return new Promise((resolve) => {
-    const dialog = new SWSEDialogV2({
-      title: `[SALE] ${actor.name} offers ${item.name}`,
-      content: `
-        <div style="line-height: 1.6;">
-          <p><strong>${actor.name}</strong> wants to sell</p>
-          <p style="font-size: 1.1rem; font-weight: bold;">${item.name}</p>
-          <p>
-            <strong>Base Price:</strong> ${basePrice.toLocaleString()} cr<br>
-            <strong>Suggested Offer (RAW 50%):</strong> ${rawOffer.toLocaleString()} cr
-          </p>
-          <hr>
-          <p>Override amount (leave blank to use suggested):</p>
-          <input type="number" id="override-amount" placeholder="${rawOffer}" style="width: 100%; padding: 0.5rem;"/>
-        </div>
-      `,
-      buttons: {
-        accept: {
-          label: 'Accept',
-          callback: async () => {
-            const overrideEl = document.querySelector('#override-amount');
-            const override = overrideEl?.value?.trim();
-            const salePrice = override ? normalizeCredits(override) : rawOffer;
-            await acceptSale(item, actor, salePrice, false);
-            resolve();
-          }
-        },
-        deny: {
-          label: 'Deny',
-          callback: async () => {
-            denySale(item, actor);
-            resolve();
-          }
-        }
-      },
-      default: 'accept'
-    }, {
-      width: 500
-    });
-
-    dialog.render(true);
+  await enqueueSaleRequest(item, actor, {
+    basePrice,
+    suggestedPrice: rawOffer,
+    requestedPrice: rawOffer,
+    noBasePrice: false,
+    requestType: 'sale'
   });
 }
 
@@ -206,50 +220,12 @@ async function showGmAdjudicationPrompt(item, actor, basePrice, rawOffer) {
  * Only options: Deny or Set Amount (no suggested price shown)
  */
 async function showGmAdjudicationPromptNoPriceBase(item, actor) {
-  return new Promise((resolve) => {
-    const dialog = new SWSEDialogV2({
-      title: `[SALE] ${actor.name} offers ${item.name}`,
-      content: `
-        <div style="line-height: 1.6;">
-          <p><strong>${actor.name}</strong> wants to sell</p>
-          <p style="font-size: 1.1rem; font-weight: bold;">${item.name}</p>
-          <p style="color: #ff9900; margin: 1rem 0;">
-            <strong>⚠ No base price is defined for this item.</strong>
-          </p>
-          <hr>
-          <p>Set an amount (Rendarr's offer):</p>
-          <input type="number" id="override-amount" min="0" placeholder="0" style="width: 100%; padding: 0.5rem;"/>
-        </div>
-      `,
-      buttons: {
-        accept: {
-          label: 'Set Amount',
-          callback: async () => {
-            const overrideEl = document.querySelector('#override-amount');
-            const override = overrideEl?.value?.trim();
-            if (!override || isNaN(Number(override))) {
-              ui.notifications.warn('Please enter a valid amount.');
-              return;
-            }
-            const salePrice = normalizeCredits(override);
-            await acceptSale(item, actor, salePrice, false);
-            resolve();
-          }
-        },
-        deny: {
-          label: 'Deny',
-          callback: async () => {
-            denySale(item, actor);
-            resolve();
-          }
-        }
-      },
-      default: 'deny'
-    }, {
-      width: 500
-    });
-
-    dialog.render(true);
+  await enqueueSaleRequest(item, actor, {
+    basePrice: null,
+    suggestedPrice: null,
+    requestedPrice: null,
+    noBasePrice: true,
+    requestType: 'sale'
   });
 }
 
@@ -266,46 +242,41 @@ async function showGmAdjudicationPromptNoPriceBase(item, actor) {
 async function acceptSale(item, actor, salePrice, isAutomatic) {
   try {
     const creditsBefore = normalizeCredits(actor.system?.credits ?? 0);
-    const creditsAfter = normalizeCredits(creditsBefore + salePrice);
-
-    // Build atomic mutation plan: delete item and update credits in one operation
-    const deletionPlan = {
-      delete: {
-        Item: [item.id]
+    const result = await TransactionEngine.executeSaleTransaction({
+      actor,
+      itemId: item.id,
+      salePrice,
+      reason: isAutomatic ? 'Automatic store sale accepted' : 'GM approved store sale',
+      transactionContext: isAutomatic ? 'store-sale' : 'store-sale-approval',
+      audit: {
+        itemName: item.name,
+        itemNames: [item.name],
+        itemCount: 1,
+        basePrice: normalizeCredits(item.system?.price ?? 0),
+        approvalMode: isAutomatic ? 'automatic' : 'manual',
+        source: 'ItemSellingSystem.acceptSale'
       }
-    };
-
-    const creditPlan = {
-      set: {
-        'system.credits': creditsAfter
-      }
-    };
-
-    // Merge plans into single atomic operation
-    const mergedPlan = mergeMutationPlans([deletionPlan, creditPlan]);
-
-    // Apply merged plan atomically through ActorEngine
-    await ActorEngine.applyMutationPlan(actor, mergedPlan, {
+    }, {
       validate: true,
       rederive: true,
       source: 'ItemSellingSystem.acceptSale'
     });
 
-    // Log transaction (informational only, doesn't block)
-    logSaleTransaction(actor, item, salePrice, isAutomatic);
+    if (!result.success) {
+      ui.notifications.error(`Sale failed: ${result.error}`);
+      return;
+    }
 
-    // Show feedback and animate (only after mutations confirmed)
+    logSaleTransaction(actor, item, salePrice, isAutomatic, result.transactionId);
+
     const isSeller = game.user?.isGM || game.user?.id === actor.owner;
     if (isSeller) {
       showPlayerSaleAcceptance(item, salePrice);
-      // Animate credit gain (safe: actor document already updated)
-      await animateCreditGain(actor, creditsBefore, creditsAfter);
+      await animateCreditGain(actor, creditsBefore, result.creditsAfter ?? normalizeCredits(creditsBefore + salePrice));
     }
   } catch (err) {
-    // All-or-nothing: if mutation fails, both item and credits unchanged
     SWSELogger.error('Item sale failed:', err);
     ui.notifications.error('Sale failed. See console for details.');
-    // UI is restored; player can try again
   }
 }
 
@@ -376,9 +347,10 @@ async function animateCreditGain(actor, creditsBefore, creditsAfter) {
 /**
  * Log sale to GM console
  */
-function logSaleTransaction(actor, item, salePrice, isAutomatic) {
+function logSaleTransaction(actor, item, salePrice, isAutomatic, transactionId = null) {
   const mode = isAutomatic ? 'AUTOMATIC' : 'MANUAL';
   SWSELogger.info(
-    `[ITEM SOLD] ${actor.name} sold ${item.name} for ${salePrice.toLocaleString()} cr [${mode}]`
+    `[ITEM SOLD] ${actor.name} sold ${item.name} for ${salePrice.toLocaleString()} cr [${mode}]`,
+    { transactionId }
   );
 }

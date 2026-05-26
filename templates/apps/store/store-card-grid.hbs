@@ -152,12 +152,13 @@
               <div class="detail-chip">{{selectedProduct.availability}}</div>
               {{#if selectedProduct.suggestionTierLabel}}<div class="detail-chip highlight">{{selectedProduct.suggestionTierLabel}}</div>{{/if}}
             </div>
-            <div class="store-detail-price"><span class="credits-icon">{{currencySymbol}}</span> {{selectedProduct.price}}</div>
+            <div class="store-detail-price"><span class="credits-icon">{{currencySymbol}}</span> {{selectedProduct.priceLabel}}{{#if selectedProduct.priceOverrideApplied}} <span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
+            {{#unless selectedProduct.canPurchase}}<div class="store-policy-lock store-policy-lock--detail"><i class="fa-solid fa-lock"></i> {{selectedProduct.blockedReason}}</div>{{/unless}}
             <div class="store-detail-qty-row">
               <button type="button" class="detail-qty-minus holo-btn secondary">−</button>
               <input type="number" class="detail-qty-input" value="1" min="1" max="999" />
               <button type="button" class="detail-qty-plus holo-btn secondary">+</button>
-              <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart">Add to Cart</button>
+              <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart" {{#unless selectedProduct.canPurchase}}disabled title="{{selectedProduct.blockedReason}}"{{/unless}}>Add to Cart</button>
               <button type="button" class="detail-customize-btn holo-btn secondary" data-action="detail-customize-item">Customize</button>
               <button type="button" class="detail-save-btn holo-btn secondary" data-action="detail-save-for-later">Save for Later</button>
             </div>
@@ -348,7 +349,7 @@
       <div class="card-grid-container">
         <div class="products-grid" id="products-grid">
           {{#each allItems}}
-            <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}">
+            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
               <div class="card-header">
                 {{#if this.suggestion}}
                   <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
@@ -366,12 +367,13 @@
                   <span class="detail-chip">{{this.category}}</span>
                   <span class="detail-chip">{{this.availability}}</span>
                 </div>
-                <div class="card-price"><span class="credits-icon">{{../currencySymbol}}</span><span class="price-amount">{{this.price}}</span></div>
+                <div class="card-price"><span class="credits-icon">{{../currencySymbol}}</span><span class="price-amount">{{this.priceLabel}}</span>{{#if this.priceOverrideApplied}}<span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
+                {{#unless this.canPurchase}}<div class="store-policy-lock"><i class="fa-solid fa-lock"></i> {{this.blockedReason}}</div>{{/unless}}
               </div>
               <div class="card-footer">
                 <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}">Open Listing</button>
-                <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}">
-                  <i class="fa-solid fa-plus"></i>
+                <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}" {{#unless this.canPurchase}}disabled title="{{this.blockedReason}}"{{/unless}}>
+                  {{#if this.canPurchase}}<i class="fa-solid fa-plus"></i>{{else}}<i class="fa-solid fa-lock"></i>{{/if}}
                 </button>
               </div>
             </div>

@@ -2,16 +2,17 @@
  * GM Datapad (ApplicationV2)
  *
  * Consolidated GM operations hub using the same shell architecture as actor datapads.
- * Single window with internal routing to different pages:
+ * Single window shell host with GM-specific surface services:
  * - Home (app cards)
  * - Bulletin (party/player notices)
  * - House Rules (rule configuration)
  * - Store (governance dashboard)
  * - Approvals (droid/custom approvals)
  * - Healing (party recovery management)
+ * - Settings (shared holopad preferences)
  * - Workspace (GM-owned actors)
  *
- * Architecture: internal page routing, NOT multiple embedded ApplicationV2 windows
+ * Architecture: shell-style surface routing, NOT multiple embedded ApplicationV2 windows
  * Styling: reuses .swse-datapad/.swse-screen patterns
  */
 
@@ -24,6 +25,8 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
+import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
@@ -33,6 +36,8 @@ import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/s
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -72,7 +77,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   constructor(options = {}) {
     super(options);
     this.currentPage = 'home';
-    this.currentTab = 'transactions';
+    this.currentTab = 'options';
     this.currentBulletinSection = 'events';
     this.pageData = {};
     this.NS = 'foundryvtt-swse';
@@ -86,6 +91,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // Approvals page state
     this.pendingDroids = [];
+    this.selectedApprovalKey = null;
+    this.approvalEditMode = false;
+    this.approvalDenyMode = false;
+
+    // Shared surface controllers
+    this._settingsSurfaceController = null;
   }
 
   async _prepareContext(options) {
@@ -102,33 +113,25 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
       apps: this._getAppCards(appCounts),
+      homeSummary: appCounts,
+      user: game.user,
       ...surfaceContext,
       ...pageContext
     });
   }
 
   /**
-   * Load context for the current page
+   * Load the active GM shell surface context.
+   *
+   * Phase 3 moves page view-model ownership out of this ApplicationV2 host and
+   * into dedicated GM surface services. Existing action handlers remain here
+   * for now so the migration stays surgical and low-risk.
    */
   async _loadPageContext(pageId) {
-    switch (pageId) {
-      case 'home':
-        return this._loadHomeContext();
-      case 'bulletin':
-        return this._loadBulletinContext();
-      case 'house-rules':
-        return this._loadHouseRulesContext();
-      case 'store':
-        return this._loadStoreContext();
-      case 'approvals':
-        return this._loadApprovalsContext();
-      case 'healing':
-        return this._loadHealingContext();
-      case 'workspace':
-        return this._loadWorkspaceContext();
-      default:
-        return {};
-    }
+    return GMSurfaceRegistry.buildSurfaceVm({
+      surfaceId: pageId || 'home',
+      host: this
+    });
   }
 
 
@@ -140,10 +143,26 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await this._loadStorePendingApprovals();
     await this._loadPendingDroids();
 
+    let healingEligible = 0;
+    try {
+      const healingSummary = await GMHealingTrigger.getHealingSummary();
+      healingEligible = healingSummary?.eligible ?? 0;
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load healing summary for home badge counts:', err);
+    }
+
+    const pendingDroids = this.pendingDroids?.length ?? 0;
+    const storeApprovals = this.storeApprovals?.length ?? 0;
+    const pendingSales = this.pendingSales?.length ?? 0;
+
     return {
       bulletin: bulletinCount,
-      approvals: (this.pendingDroids?.length ?? 0) + (this.storeApprovals?.length ?? 0),
-      store: (this.pendingSales?.length ?? 0) + (this.storeApprovals?.length ?? 0),
+      approvals: pendingDroids + storeApprovals,
+      pendingDroids,
+      storeApprovals,
+      pendingSales,
+      store: pendingSales + storeApprovals,
+      healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
   }
@@ -238,89 +257,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return records.find((record) => record.id === this.bulletinEditor.recordId) ?? null;
   }
 
-  /**
-   * Home page: app cards
-   */
-  async _loadHomeContext() {
-    const badgeCounts = await this._getHomeBadgeCounts();
-    return {
-      pageTitle: 'GM Operations',
-      pageDescription: 'Master control for store, rules, approvals, and party management',
-      badgeCounts
-    };
-  }
 
-  /**
-   * Bulletin page: party/player notices
-   * Phase 2 will back this with journals/flags
-   */
-  async _loadBulletinContext() {
-    const records = (await HolonetStorage.getAllRecords())
-      .filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN)
-      .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
 
-    const eventRecords = records.filter((record) => record.type === 'event');
-    const messageRecords = records.filter((record) => record.type === 'message');
-    const bulletinPlayers = this._getBulletinPlayers();
-    const selectedPlayerId = this.selectedPlayerStateActorId || bulletinPlayers[0]?.actorId || null;
-    const selectedPlayerState = selectedPlayerId ? await HolonetStateService.getPlayerState(selectedPlayerId) : null;
-    const partyState = await HolonetStateService.getPartyState();
-
-    return {
-      pageTitle: 'Bulletin',
-      pageDescription: 'Broadcasts, direct messages, and current-state control',
-      bulletinSection: this.currentBulletinSection,
-      bulletinNav: [
-        { id: 'events', label: 'Events', count: eventRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
-        { id: 'messages', label: 'Messages', count: messageRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
-        { id: 'players', label: 'Players', count: bulletinPlayers.length },
-        { id: 'party', label: 'Party', count: partyState?.situation || partyState?.objective || partyState?.location ? 1 : 0 }
-      ],
-      audienceOptions: this._getAudienceOptions(),
-      bulletinPlayers,
-      selectedPlayerId,
-      selectedPlayerState,
-      partyState,
-      eventRecords: eventRecords.map((record) => this._buildBulletinRecordView(record)),
-      messageRecords: messageRecords.map((record) => this._buildBulletinRecordView(record)),
-      eventEditorRecord: this._getBulletinEditorRecord(eventRecords, 'events') ? this._buildBulletinRecordView(this._getBulletinEditorRecord(eventRecords, 'events')) : null,
-      messageEditorRecord: this._getBulletinEditorRecord(messageRecords, 'messages') ? this._buildBulletinRecordView(this._getBulletinEditorRecord(messageRecords, 'messages')) : null,
-      syntaxGuide: [
-        '@ mention character, NPC, ship, faction, or location',
-        '# add emphasis or a topic tag',
-        '! mark urgent alerts',
-        '+800cr style credits/rewards',
-        'Examples: @Master Tholos wants @Kael at the #Jedi Temple. !urgent +800cr reward posted.'
-      ]
-    };
-  }
-
-  /**
-   * House Rules page: rule configuration
-   * Migrated from HouseRulesApp - reuses HouseRuleService
-   */
-  async _loadHouseRulesContext() {
-    const rules = {
-      characterCreation: this._getRulesForCategory('characterCreation'),
-      combat: this._getRulesForCategory('combat'),
-      force: this._getRulesForCategory('force'),
-      recovery: this._getRulesForCategory('recovery'),
-      skills: this._getRulesForCategory('skills'),
-      vehicles: this._getRulesForCategory('vehicles')
-    };
-
-    const activeRuleCount = Object.values(rules)
-      .flat()
-      .filter(r => r.enabled)
-      .length;
-
-    return {
-      pageTitle: 'House Rules',
-      pageDescription: 'Game rule modifications',
-      rules,
-      activeRuleCount
-    };
-  }
 
   /**
    * Get all rules for a specific category
@@ -492,90 +430,145 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return 'unknown';
   }
 
-  /**
-   * Store page: governance dashboard
-   * Migrated from GMStoreDashboard
-   */
-  async _loadStoreContext() {
-    await this._loadStoreTransactionHistory();
-    await this._loadStorePendingSales();
-    await this._loadStorePendingApprovals();
-
-    const storeOpen = SettingsHelper.getSafe('storeOpen', true);
-    const buyModifier = SettingsHelper.getSafe('globalBuyModifier', 0);
-    const autoAcceptSelling = SettingsHelper.getSafe('autoAcceptItemSales', false);
-    const autoSalePercent = SettingsHelper.getSafe('automaticSalePercentage', 50);
-    const disallowAutoSellNoPrice = SettingsHelper.getSafe('disallowAutoSellNoPrice', true);
-
-    const visibleRarities = SettingsHelper.getObject('visibleRarities', {
-      common: true,
-      uncommon: true,
-      rare: false,
-      restricted: false,
-      illegal: false
-    });
-
-    const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {
-      weapons: true,
-      armor: true,
-      gear: true,
-      droids: true,
-      vehicles: true
-    });
-
-    const blacklistedItems = SettingsHelper.getArray('blacklistedItems', []);
-
-    return {
-      pageTitle: 'Store',
-      pageDescription: 'Store governance and approvals',
-      transactions: this.transactions,
-      pendingSales: this.pendingSales,
-      pendingApprovals: this.storeApprovals,
-      storeOpen,
-      buyModifier,
-      autoAcceptSelling,
-      autoSalePercent,
-      disallowAutoSellNoPrice,
-      visibleRarities,
-      visibleTypes,
-      blacklistedItems,
-      actors: game.actors.filter(a => a.isOwner).map(a => ({ id: a.id, name: a.name })),
-      currentTab: this.currentTab
-    };
-  }
 
   /**
-   * Load transaction history from all actors
+   * Load transaction history from the TransactionEngine actor-ledger flags.
+   *
+   * purchaseHistory is a legacy/UI mirror. TransactionEngine is the SSOT for
+   * credit movement, so the GM Store Transactions tab reads that first and only
+   * appends clearly marked legacy rows when an actor has no TransactionEngine
+   * entries yet.
    */
   async _loadStoreTransactionHistory() {
-    this.transactions = [];
+    const txRows = TransactionEngine.getAllTransactions({ includeZeroCost: false })
+      .map((tx) => this._formatTransactionEngineRow(tx));
+
+    const actorsWithEngineRows = new Set(txRows.map(row => row.actorId).filter(Boolean));
+    const legacyRows = [];
 
     for (const actor of game.actors) {
+      if (actorsWithEngineRows.has(actor.id)) continue;
+
       const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       for (const purchase of history) {
-        for (const item of purchase.items) {
-          this.transactions.push({
+        const items = [
+          ...(Array.isArray(purchase.items) ? purchase.items : []),
+          ...(Array.isArray(purchase.droids) ? purchase.droids : []),
+          ...(Array.isArray(purchase.vehicles) ? purchase.vehicles : [])
+        ];
+
+        for (const item of items) {
+          const amount = normalizeCredits(item.cost ?? item.finalCost ?? item.price ?? 0);
+          legacyRows.push({
+            transactionId: purchase.transactionId || `legacy-${actor.id}-${purchase.timestamp}-${legacyRows.length}`,
             timestamp: purchase.timestamp,
             actor: actor.name,
-            type: 'Buy',
-            item: item.name,
-            amount: -normalizeCredits(item.cost),
-            source: 'Store',
             actorId: actor.id,
-            purchaseId: purchase.timestamp
+            player: purchase.userName || purchase.playerName || purchase.userId || '—',
+            type: purchase.type || 'Buy',
+            item: item.name || 'Unknown Item',
+            quantity: normalizeCredits(item.quantity ?? 1),
+            price: amount,
+            amount: purchase.type === 'Sell' ? amount : -amount,
+            creditsBefore: null,
+            creditsAfter: null,
+            balanceDisplay: '—',
+            status: purchase.status || 'Legacy',
+            reason: purchase.reason || purchase.failureReason || 'Legacy purchaseHistory mirror; not TransactionEngine SSOT.',
+            source: purchase.source || 'Legacy purchaseHistory',
+            purchaseId: purchase.timestamp,
+            canReverse: false
           });
         }
       }
     }
 
-    this.transactions.sort((a, b) => b.timestamp - a.timestamp);
+    this.transactions = [...txRows, ...legacyRows].sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+  }
+
+  _formatTransactionEngineRow(tx) {
+    const amount = normalizeCredits(tx.amount ?? 0);
+    const context = String(tx.context || '');
+    const status = tx.status || 'Success';
+    const isRollback = context.includes('rollback') || context.includes('correction') || tx.rollbackOf;
+    const alreadyRolledBack = status === 'Rolled Back' || !!tx.rolledBackByTransactionId;
+
+    return {
+      transactionId: tx.transactionId || tx.id,
+      timestamp: tx.timestamp,
+      actor: tx.actorName || 'Unknown Actor',
+      actorId: tx.actorId,
+      player: tx.userName || '—',
+      type: tx.type || 'Transaction',
+      item: tx.itemName || 'Credit Transaction',
+      quantity: tx.itemCount || 1,
+      price: Math.abs(amount),
+      amount,
+      creditsBefore: tx.creditsBefore,
+      creditsAfter: tx.creditsAfter,
+      balanceDisplay: Number.isFinite(Number(tx.creditsBefore)) && Number.isFinite(Number(tx.creditsAfter))
+        ? `${normalizeCredits(tx.creditsBefore)} → ${normalizeCredits(tx.creditsAfter)}`
+        : '—',
+      status,
+      reason: tx.reason || tx.rollbackReason || '',
+      source: tx.source || context || 'TransactionEngine',
+      context,
+      audit: tx.audit || {},
+      itemIds: tx.itemIds || [],
+      rollbackOf: tx.rollbackOf || null,
+      rolledBackByTransactionId: tx.rolledBackByTransactionId || null,
+      purchaseId: tx.transactionId || tx.id,
+      canReverse: amount !== 0 && !isRollback && !alreadyRolledBack,
+      canRollback: amount !== 0 && !isRollback && !alreadyRolledBack
+    };
   }
 
   /**
-   * Load pending sales
+   * Load pending sales/haggles from the Store Control request queue.
    */
   async _loadStorePendingSales() {
-    this.pendingSales = SettingsHelper.getArray('pendingSales', []);
+    const pendingSales = SettingsHelper.getArray('pendingSales', []);
+    this.pendingSales = pendingSales
+      .filter(request => request && request.status !== 'Resolved' && request.status !== 'Denied')
+      .map((request, index) => this._formatPendingSaleRequest(request, index));
+  }
+
+  _formatPendingSaleRequest(request, index = 0) {
+    const actor = game.actors.get(request.actorId);
+    const ownedItem = actor?.items?.get?.(request.itemId);
+    const basePrice = request.basePrice ?? request.itemData?.system?.price ?? null;
+    const suggestedPrice = request.suggestedPrice ?? request.value ?? null;
+    const requestedPrice = request.requestedPrice ?? suggestedPrice;
+    const defaultAmount = normalizeCredits(requestedPrice ?? suggestedPrice ?? 0);
+    const submittedAt = request.requestedAt ?? request.timestamp ?? Date.now();
+
+    return {
+      ...request,
+      index,
+      id: request.id || `legacy-sale-${index}`,
+      actor: actor?.name || request.actor || 'Unknown Actor',
+      actorMissing: !actor,
+      item: ownedItem?.name || request.item || request.itemData?.name || 'Unknown Item',
+      itemMissing: !!actor && !ownedItem,
+      basePrice,
+      suggestedPrice,
+      requestedPrice,
+      defaultAmount,
+      basePriceDisplay: Number.isFinite(Number(basePrice)) ? `${normalizeCredits(basePrice).toLocaleString()} cr` : 'No base price',
+      suggestedPriceDisplay: Number.isFinite(Number(suggestedPrice)) ? `${normalizeCredits(suggestedPrice).toLocaleString()} cr` : 'GM sets offer',
+      requestedPriceDisplay: Number.isFinite(Number(requestedPrice)) ? `${normalizeCredits(requestedPrice).toLocaleString()} cr` : 'GM sets offer',
+      submittedAt,
+      submittedDisplay: new Date(submittedAt).toLocaleString(),
+      canApprove: !!actor && !!ownedItem && defaultAmount > 0,
+      needsAmount: !(defaultAmount > 0),
+      warning: !actor
+        ? 'Actor no longer exists.'
+        : !ownedItem
+          ? 'Item is no longer owned by the actor.'
+          : request.noBasePrice
+            ? 'No base price was defined. GM must set a sale amount.'
+            : ''
+    };
   }
 
   /**
@@ -591,23 +584,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  /**
-   * Approvals page: droid and store approvals
-   * Migrated from GMDroidApprovalDashboard and GMStoreDashboard
-   */
-  async _loadApprovalsContext() {
-    await this._loadPendingDroids();
-    await this._loadStorePendingApprovals();
-
-    return {
-      pageTitle: 'Approvals',
-      pageDescription: 'Pending droid and store approvals',
-      pendingDroids: this.pendingDroids,
-      storeApprovals: this.storeApprovals,
-      hasPendingDroids: this.pendingDroids.length > 0,
-      hasPendingApprovals: this.storeApprovals.length > 0
-    };
-  }
 
   /**
    * Load pending droids from all actors
@@ -641,51 +617,21 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  /**
-   * Healing page: GM natural healing trigger
-   */
-  async _loadHealingContext() {
-    const summary = await GMHealingTrigger.getHealingSummary();
-    return {
-      pageTitle: 'Natural Healing',
-      pageDescription: 'Trigger natural healing recovery for eligible party members',
-      healingSummary: summary,
-      eligible: summary.eligible,
-      ineligible: summary.ineligible,
-      eligibleActors: summary.eligibleActors || [],
-      ineligibleActors: summary.ineligibleActors || []
-    };
-  }
 
-  /**
-   * Workspace page: GM-owned actor access
-   * Future: quick-open sheets, pinned actors, active cast
-   */
-  async _loadWorkspaceContext() {
-    const gmActors = game.actors.filter(a => a.isOwner);
-    return {
-      pageTitle: 'Workspace',
-      pageDescription: 'GM-owned actor access',
-      gmActors: gmActors.map(a => ({
-        id: a.id,
-        name: a.name,
-        type: a.type,
-        img: a.img
-      }))
-    };
-  }
+
 
   /**
    * Get app card definitions for home page
    */
   _getAppCards(counts = {}) {
     return [
-      { id: 'bulletin', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0 },
-      { id: 'house-rules', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0 },
-      { id: 'store', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0 },
-      { id: 'approvals', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0 },
-      { id: 'healing', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0 },
-      { id: 'workspace', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0 }
+      { id: 'bulletin', code: 'COM', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : '', badgeType: 'info', featured: true },
+      { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
+      { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
+      { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
+      { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
+      { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
+      { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' }
     ];
   }
 
@@ -694,6 +640,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
+
+    // Mirror actor holopad home affordances: all shell/home controls route to GM home.
+    root.querySelectorAll('[data-action="tablet-home"], [data-shell-action="open-home"], [data-shell-action="return-to-home"]').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        this._navigateTo('home');
+      });
+    });
 
     // Wire app card clicks
     root.querySelectorAll('[data-app-card]').forEach(btn => {
@@ -722,6 +676,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    if (this.currentPage !== 'settings') {
+      this._settingsSurfaceController?.destroy?.();
+    }
+
     // Wire page-specific events based on current page
     if (this.currentPage === 'bulletin') {
       await this._wireBulletinEvents(root);
@@ -733,7 +691,20 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireApprovalsEvents(root);
     } else if (this.currentPage === 'healing') {
       await this._wireHealingEvents(root);
+    } else if (this.currentPage === 'settings') {
+      this._wireSettingsEvents(root);
     }
+  }
+
+  /** Wire shared settings surface events in GM context. */
+  _wireSettingsEvents(root) {
+    this._settingsSurfaceController ??= new SettingsSurfaceController(this, {
+      actor: null,
+      preferActor: false,
+      persistActorTheme: false,
+      logger: SWSELogger
+    });
+    this._settingsSurfaceController.attach(root);
   }
 
   /**
@@ -908,6 +879,19 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-store');
     if (!pageElement) return;
 
+    this._activateStoreTab(pageElement, this.currentTab || 'options');
+
+    // Store control tab buttons: the GM store lives inside the datapad host, so
+    // we manage this small tab switch locally instead of opening another app.
+    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
+      btn.addEventListener('click', (ev) => {
+        const tabId = ev.currentTarget.dataset.storeTab;
+        if (!tabId) return;
+        this.currentTab = tabId;
+        this._activateStoreTab(pageElement, tabId);
+      });
+    }
+
     // Store availability toggle
     const storeOpenToggle = pageElement.querySelector('[name="storeOpen"]');
     if (storeOpenToggle) {
@@ -917,18 +901,32 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     }
 
-    // Buy price modifier slider
-    const buyModifierSlider = pageElement.querySelector('[name="buyModifier"]');
-    if (buyModifierSlider) {
-      buyModifierSlider.addEventListener('input', async (ev) => {
+    // Pricing controls. storeMarkup/storeDiscount are what the pricing engine reads.
+    // globalBuyModifier is also updated as a compatibility mirror for older store UI code.
+    const storeMarkupSlider = pageElement.querySelector('[name="storeMarkup"]');
+    if (storeMarkupSlider) {
+      storeMarkupSlider.addEventListener('input', async (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
+        const valueLabel = pageElement.querySelector('[data-store-markup-value]');
+        if (valueLabel) valueLabel.textContent = `${value}%`;
+        await HouseRuleService.set('storeMarkup', value);
         await HouseRuleService.set('globalBuyModifier', value);
       });
     }
 
-    // Rarity visibility checkboxes
-    for (const rarity of ['common', 'uncommon', 'rare', 'restricted', 'illegal']) {
-      const checkbox = pageElement.querySelector(`[name="rarity-${rarity}"]`);
+    const storeDiscountSlider = pageElement.querySelector('[name="storeDiscount"]');
+    if (storeDiscountSlider) {
+      storeDiscountSlider.addEventListener('input', async (ev) => {
+        const value = normalizeCredits(ev.currentTarget.value);
+        const valueLabel = pageElement.querySelector('[data-store-discount-value]');
+        if (valueLabel) valueLabel.textContent = `${value}%`;
+        await HouseRuleService.set('storeDiscount', value);
+      });
+    }
+
+    // Normalized availability controls used by the v2 store index.
+    for (const rarity of ['standard', 'licensed', 'rare', 'restricted', 'military', 'illegal', 'common', 'uncommon']) {
+      const checkbox = pageElement.querySelector(`[name="availability-${rarity}"]`);
       if (checkbox) {
         checkbox.addEventListener('change', async (ev) => {
           const visibleRarities = SettingsHelper.getObject('visibleRarities', {});
@@ -963,7 +961,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const autoSaleSlider = pageElement.querySelector('[name="autoSalePercent"]');
     if (autoSaleSlider) {
       autoSaleSlider.addEventListener('input', async (ev) => {
-        await HouseRuleService.set('automaticSalePercentage', Number(ev.currentTarget.value));
+        const value = normalizeCredits(ev.currentTarget.value);
+        const valueLabel = pageElement.querySelector('[data-auto-sale-value]');
+        if (valueLabel) valueLabel.textContent = `${value}%`;
+        await HouseRuleService.set('automaticSalePercentage', value);
       });
     }
 
@@ -975,13 +976,222 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     }
 
-    // Transaction reversal buttons
-    for (const btn of pageElement.querySelectorAll('[data-action="reverse-transaction"]')) {
+    // Transaction rollback/correction buttons. Credit movement stays inside
+    // TransactionEngine; item cleanup is reconciled in the same rollback mutation
+    // when a safe owned-item match is available.
+    for (const btn of pageElement.querySelectorAll('[data-action="rollback-transaction"], [data-action="reverse-transaction"]')) {
       btn.addEventListener('click', async (ev) => {
         const index = Number(ev.currentTarget.dataset.index);
-        await this._reverseTransaction(index);
+        await this._rollbackTransaction(index);
       });
     }
+
+    // Inventory filters are Phase A client-side helpers. The saved policy model is
+    // separate from source item data so the GM can soft-ban/override without
+    // mutating compendium documents.
+    for (const input of pageElement.querySelectorAll('[data-store-inventory-filter]')) {
+      input.addEventListener('input', () => this._filterStoreInventoryRows(pageElement));
+      input.addEventListener('change', () => this._filterStoreInventoryRows(pageElement));
+    }
+
+    for (const input of pageElement.querySelectorAll('[data-store-policy-field]')) {
+      input.addEventListener('change', async (ev) => {
+        await this._updateStoreInventoryPolicy(ev.currentTarget);
+        this._filterStoreInventoryRows(pageElement);
+      });
+    }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="approve-sale-request"], [data-action="counteroffer-sale-request"], [data-action="deny-sale-request"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const action = ev.currentTarget.dataset.action;
+        const requestId = ev.currentTarget.dataset.requestId;
+        const card = ev.currentTarget.closest('[data-sale-request-id]');
+        const amountField = card?.querySelector('[data-sale-custom-amount]');
+        const reasonField = card?.querySelector('[data-sale-reason]');
+        const reason = String(reasonField?.value ?? '').trim();
+        let amount = null;
+
+        if (action === 'approve-sale-request') {
+          const defaultAmount = ev.currentTarget.dataset.defaultAmount;
+          amount = defaultAmount ? normalizeCredits(defaultAmount) : normalizeCredits(amountField?.value ?? 0);
+        } else if (action === 'counteroffer-sale-request') {
+          amount = normalizeCredits(amountField?.value ?? 0);
+          if (!(amount > 0)) {
+            ui?.notifications?.warn?.('Enter a custom sale amount before approving a counteroffer.');
+            return;
+          }
+        }
+
+        await this._resolvePendingSaleRequest(requestId, {
+          decision: action === 'deny-sale-request' ? 'deny' : (action === 'counteroffer-sale-request' ? 'counteroffer' : 'approve'),
+          amount,
+          reason
+        });
+      });
+    }
+  }
+
+  async _resolvePendingSaleRequest(requestId, options = {}) {
+    const { decision = 'approve', amount = null, reason = '' } = options;
+    const pendingSales = SettingsHelper.getArray('pendingSales', []);
+    const index = pendingSales.findIndex(request => String(request?.id || '') === String(requestId || ''));
+
+    if (index < 0) {
+      ui?.notifications?.error?.('Pending sale request not found.');
+      return;
+    }
+
+    const request = pendingSales[index];
+    const actor = game.actors.get(request.actorId);
+
+    if (decision === 'deny') {
+      pendingSales.splice(index, 1);
+      await SettingsHelper.set('pendingSales', pendingSales);
+      Hooks.callAll?.('swseStoreSaleDenied', {
+        request,
+        actor,
+        decidedBy: game.user?.name ?? 'GM',
+        reason
+      });
+      ui?.notifications?.info?.(`Denied sale request: ${request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
+      await this.render(false);
+      return;
+    }
+
+    if (!actor) {
+      ui?.notifications?.error?.('Cannot approve sale: actor no longer exists.');
+      return;
+    }
+
+    const salePrice = normalizeCredits(amount ?? request.requestedPrice ?? request.suggestedPrice ?? request.value ?? 0);
+    if (!(salePrice > 0)) {
+      ui?.notifications?.warn?.('Sale approval requires a credit amount greater than zero.');
+      return;
+    }
+
+    const item = actor.items?.get?.(request.itemId);
+    if (!item) {
+      ui?.notifications?.error?.('Cannot approve sale: item is no longer owned by this actor.');
+      return;
+    }
+
+    const result = await TransactionEngine.executeSaleTransaction({
+      actor,
+      itemId: request.itemId,
+      salePrice,
+      reason: reason || (decision === 'counteroffer' ? 'GM counteroffer approved' : 'GM approved store sale'),
+      transactionContext: decision === 'counteroffer' ? 'store-haggle-sale' : 'store-sale-approval',
+      audit: {
+        requestId: request.id,
+        requestType: request.type || 'sale',
+        itemName: item.name || request.item,
+        itemNames: [item.name || request.item].filter(Boolean),
+        itemCount: 1,
+        basePrice: request.basePrice ?? request.itemData?.system?.price ?? null,
+        suggestedPrice: request.suggestedPrice ?? request.value ?? null,
+        requestedPrice: request.requestedPrice ?? request.value ?? null,
+        approvedPrice: salePrice,
+        approvalMode: decision,
+        approvedBy: game.user?.id ?? null,
+        approvedByName: game.user?.name ?? 'GM',
+        gmReason: reason,
+        source: 'GM Store Control Approvals'
+      }
+    }, {
+      validate: true,
+      rederive: true,
+      source: 'GMDatapad._resolvePendingSaleRequest'
+    });
+
+    if (!result.success) {
+      ui?.notifications?.error?.(`Failed to approve sale: ${result.error}`);
+      return;
+    }
+
+    pendingSales.splice(index, 1);
+    await SettingsHelper.set('pendingSales', pendingSales);
+
+    Hooks.callAll?.('swseStoreSaleApproved', {
+      request,
+      actor,
+      itemData: request.itemData,
+      salePrice,
+      decision,
+      reason,
+      transactionId: result.transactionId,
+      decidedBy: game.user?.name ?? 'GM'
+    });
+
+    ui?.notifications?.info?.(`Approved sale: ${request.item || item.name} for ${salePrice.toLocaleString()} credits.`);
+    await this.render(false);
+  }
+
+  _activateStoreTab(pageElement, tabId) {
+    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
+      const active = btn.dataset.storeTab === tabId;
+      btn.classList.toggle('active', active);
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    }
+
+    for (const panel of pageElement.querySelectorAll('[data-store-tab-panel]')) {
+      const active = panel.dataset.storeTabPanel === tabId;
+      panel.classList.toggle('active', active);
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    }
+  }
+
+  _filterStoreInventoryRows(pageElement) {
+    const query = (pageElement.querySelector('[data-store-inventory-filter="search"]')?.value || '').trim().toLowerCase();
+    const type = pageElement.querySelector('[data-store-inventory-filter="type"]')?.value || '';
+    const availability = pageElement.querySelector('[data-store-inventory-filter="availability"]')?.value || '';
+    const visibility = pageElement.querySelector('[data-store-inventory-filter="visibility"]')?.value || '';
+
+    for (const row of pageElement.querySelectorAll('[data-store-inventory-row]')) {
+      const visibleCheckbox = row.querySelector('[data-store-policy-field="visible"]');
+      const availableCheckbox = row.querySelector('[data-store-policy-field="available"]');
+      const isVisible = visibleCheckbox ? visibleCheckbox.checked : row.dataset.visible === 'true';
+      const isAvailable = availableCheckbox ? availableCheckbox.checked : row.dataset.available === 'true';
+
+      const matchesQuery = !query || (row.dataset.search || '').includes(query);
+      const matchesType = !type || row.dataset.type === type;
+      const matchesAvailability = !availability || row.dataset.availability === availability;
+      const matchesVisibility = !visibility
+        || (visibility === 'visible' && isVisible)
+        || (visibility === 'hidden' && !isVisible)
+        || (visibility === 'available' && isAvailable)
+        || (visibility === 'unavailable' && !isAvailable)
+        || (visibility === 'overridden' && row.querySelector('[data-store-policy-field="overridePrice"]')?.value !== '');
+
+      row.hidden = !(matchesQuery && matchesType && matchesAvailability && matchesVisibility);
+    }
+  }
+
+  async _updateStoreInventoryPolicy(input) {
+    const itemId = input.dataset.itemId;
+    const field = input.dataset.storePolicyField;
+    if (!itemId || !field) return;
+
+    const policies = SettingsHelper.getObject('storeInventoryPolicies', {});
+    const policy = { ...(policies[itemId] || {}) };
+
+    if (['visible', 'available', 'trackQuantity', 'requiresApproval'].includes(field)) {
+      policy[field] = input.checked === true;
+    } else if (field === 'quantity' || field === 'overridePrice') {
+      const raw = String(input.value ?? '').trim();
+      policy[field] = raw === '' ? null : Math.max(0, normalizeCredits(raw));
+    } else if (field === 'notes') {
+      policy[field] = String(input.value ?? '').trim();
+    } else {
+      return;
+    }
+
+    policy.updatedAt = Date.now();
+    policy.updatedBy = game.user?.id || null;
+    policies[itemId] = policy;
+
+    await SettingsHelper.set('storeInventoryPolicies', policies);
   }
 
   /**
@@ -1025,62 +1235,129 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-approvals');
     if (!pageElement) return;
 
-    // DROID APPROVAL EVENTS
-    for (const btn of pageElement.querySelectorAll('.approve-droid-btn')) {
+    const reviewForm = pageElement.querySelector('[data-approval-review-form]');
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', (ev) => ev.preventDefault());
+      this._wireApprovalEditPreview(reviewForm);
+    }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="select-approval"]')) {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (actorId) await this._approveDroid(actorId);
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? null;
+        this.approvalEditMode = false;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('.reject-droid-btn')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-enter-edit"]')) {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (actorId) await this._rejectDroid(actorId);
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalEditMode = true;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('.view-droid-details-btn')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-cancel-edit"]')) {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (actorId) {
-          const actor = game.actors.get(actorId);
-          if (actor) actor.sheet.render(true);
-        }
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalEditMode = false;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    // STORE APPROVAL EVENTS
-    for (const btn of pageElement.querySelectorAll('[data-action="preview-approval"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-deny"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._previewPendingCustom(approvalIndex);
+        ev.preventDefault();
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalDenyMode = true;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('[data-action="edit-approval"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-cancel-deny"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._editPendingCustom(approvalIndex);
+        ev.preventDefault();
+        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        this.approvalDenyMode = false;
+        await this.render(false);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('[data-action="approve-custom"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-approve"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._approvePendingCustom(approvalIndex);
+        ev.preventDefault();
+        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        await this._approveApprovalRequest(key);
       });
     }
 
-    for (const btn of pageElement.querySelectorAll('[data-action="deny-custom"]')) {
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-finalize-edits"]')) {
       btn.addEventListener('click', async (ev) => {
-        const approvalIndex = Number(ev.currentTarget.dataset.index);
-        await this._denyPendingCustom(approvalIndex);
+        ev.preventDefault();
+        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        const form = ev.currentTarget.closest('[data-approval-review-form]');
+        await this._finalizeApprovalWithEdits(key, form);
       });
     }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="approval-confirm-deny"]')) {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
+        const form = ev.currentTarget.closest('[data-approval-review-form]');
+        const reason = String(new FormData(form).get('denialReason') ?? '').trim();
+        await this._denyApprovalRequest(key, reason);
+      });
+    }
+  }
+
+  /** Render live changed-field rows in the approval decision rail while GM edits inline. */
+  _wireApprovalEditPreview(form) {
+    const fields = Array.from(form.querySelectorAll('[data-approval-edit-field]'));
+    const changeList = form.querySelector('[data-approval-change-list]');
+    if (!fields.length || !changeList) return;
+
+    const escapeHtml = (value) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const renderChanges = () => {
+      const changes = fields
+        .map((field) => {
+          const label = field.dataset.label || field.name;
+          const original = String(field.dataset.original ?? '').trim();
+          const current = String(field.value ?? '').trim();
+          return { label, original, current, changed: original !== current };
+        })
+        .filter((change) => change.changed);
+
+      if (!changes.length) {
+        changeList.innerHTML = '<p class="gm-approval-empty-note" data-approval-change-empty>No edits yet. Change fields in the summary packet to build the adjustment list.</p>';
+        return;
+      }
+
+      changeList.innerHTML = changes.map((change) => `
+        <div class="gm-approval-change-row">
+          <span>${escapeHtml(change.label)}</span>
+          <strong>${escapeHtml(change.original || '—')} → ${escapeHtml(change.current || '—')}</strong>
+        </div>
+      `).join('');
+    };
+
+    for (const field of fields) {
+      field.addEventListener('input', renderChanges);
+      field.addEventListener('change', renderChanges);
+    }
+    renderChanges();
   }
 
   /**
@@ -1101,33 +1378,205 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Reverse a transaction and adjust credits
+   * Build a safe item reconciliation preview for a TransactionEngine rollback.
+   *
+   * Existing historical records may only know item names. New records include
+   * audit.items with ids/types/costs, but we still fall back to name matching so
+   * the GM can recover from older purchases without losing credit SSOT safety.
    */
-  async _reverseTransaction(index) {
+  _buildTransactionRollbackReconciliation(transaction, actor) {
+    const auditItems = Array.isArray(transaction?.audit?.items)
+      ? transaction.audit.items.filter(item => item && typeof item === 'object')
+      : [];
+
+    const fallbackItems = auditItems.length ? [] : String(transaction?.item || '')
+      .split(',')
+      .map(name => name.trim())
+      .filter(Boolean)
+      .map(name => ({ name, type: 'item', quantity: 1, id: null, fallback: true }));
+
+    const requestedItems = (auditItems.length ? auditItems : fallbackItems)
+      .map(item => ({
+        id: item.id || item.itemId || null,
+        name: item.name || 'Unknown Item',
+        type: item.type || 'item',
+        quantity: Math.max(1, normalizeCredits(item.quantity ?? 1) || 1),
+        cost: normalizeCredits(item.cost ?? 0),
+        condition: item.condition || null,
+        fallback: item.fallback === true
+      }));
+
+    const actorItems = Array.from(actor?.items ?? []);
+    const usedIds = new Set();
+    const removableItemIds = [];
+    const removedItems = [];
+    const unmatchedItems = [];
+    const inventoryPolicyItems = [];
+
+    const matchesSourceId = (ownedItem, requested) => {
+      const wanted = String(requested.id || '').trim();
+      if (!wanted) return false;
+      const sourceId = String(ownedItem?.flags?.core?.sourceId || ownedItem?.flags?.foundryvttSwse?.sourceId || '').trim();
+      const ownId = String(ownedItem?.id || ownedItem?._id || '').trim();
+      return ownId === wanted || sourceId === wanted || sourceId.endsWith(`.${wanted}`);
+    };
+
+    const findOwnedItem = (requested) => {
+      const type = String(requested.type || '').toLowerCase();
+      const canDeleteEmbeddedItem = type === 'item' || type === 'customized-item' || type === 'equipment' || type === 'weapon' || type === 'armor';
+      if (!canDeleteEmbeddedItem) return null;
+
+      let match = actorItems.find(item => !usedIds.has(item.id) && matchesSourceId(item, requested));
+      if (match) return match;
+
+      const wantedName = String(requested.name || '').trim().toLowerCase();
+      if (!wantedName) return null;
+      match = actorItems.find(item => !usedIds.has(item.id) && String(item.name || '').trim().toLowerCase() === wantedName);
+      if (match) return match;
+
+      return null;
+    };
+
+    for (const requested of requestedItems) {
+      if (requested.id) {
+        inventoryPolicyItems.push({
+          id: requested.id,
+          name: requested.name,
+          type: requested.type,
+          quantity: requested.quantity
+        });
+      }
+
+      for (let i = 0; i < requested.quantity; i += 1) {
+        const ownedItem = findOwnedItem(requested);
+        if (!ownedItem) {
+          unmatchedItems.push({
+            ...requested,
+            reason: String(requested.type || '').toLowerCase() === 'droid' || String(requested.type || '').toLowerCase() === 'vehicle'
+              ? 'Actor/asset purchases require manual asset review before deletion.'
+              : 'No matching owned item found on the actor.'
+          });
+          continue;
+        }
+
+        usedIds.add(ownedItem.id);
+        removableItemIds.push(ownedItem.id);
+        removedItems.push({
+          id: ownedItem.id,
+          name: ownedItem.name,
+          type: ownedItem.type,
+          requestedName: requested.name
+        });
+      }
+    }
+
+    return {
+      requestedItems,
+      removableItemIds,
+      removedItems,
+      unmatchedItems,
+      inventoryPolicyItems
+    };
+  }
+
+  /**
+   * Roll back a store transaction through TransactionEngine.
+   *
+   * Credit movement is handled by TransactionEngine as the SSOT. Safe owned item
+   * removal is folded into the same actor mutation plan. Inventory quantity
+   * restoration happens only after the TransactionEngine rollback succeeds.
+   */
+  async _rollbackTransaction(index) {
     if (index < 0 || index >= this.transactions.length) {
       ui?.notifications?.error?.('Invalid transaction index');
       return;
     }
 
     const transaction = this.transactions[index];
-    const actor = game.actors.get(transaction.actorId);
+    if (!transaction?.canRollback && !transaction?.canReverse) {
+      ui?.notifications?.warn?.('This transaction cannot be rolled back from the TransactionEngine ledger.');
+      return;
+    }
 
+    const actor = game.actors.get(transaction.actorId);
     if (!actor) {
       ui?.notifications?.error?.('Actor not found');
       return;
     }
 
-    const currentCredits = Number(actor.system.credits) || 0;
-    const newCredits = currentCredits - transaction.amount;
+    const reversalAmount = normalizeCredits(0 - Number(transaction.amount || 0));
+    const reconciliation = this._buildTransactionRollbackReconciliation(transaction, actor);
+
+    if (!Number.isFinite(reversalAmount) || (reversalAmount === 0 && reconciliation.removableItemIds.length === 0)) {
+      ui?.notifications?.warn?.('This transaction has no credit or owned-item impact to roll back.');
+      return;
+    }
+
+    const defaultReason = 'GM transaction rollback';
+    const summary = [
+      `Credit adjustment: ${reversalAmount >= 0 ? '+' : ''}${reversalAmount.toLocaleString()} cr`,
+      `Owned items to remove: ${reconciliation.removableItemIds.length}`,
+      reconciliation.unmatchedItems.length ? `Manual review: ${reconciliation.unmatchedItems.length} unmatched asset/item(s)` : null,
+      '',
+      `Reason for rolling back ${transaction.item || 'this transaction'}?`
+    ].filter(line => line !== null).join('\n');
+
+    let reason = defaultReason;
+    try {
+      const prompted = await uiPrompt('Rollback Store Transaction', summary, reason);
+      if (prompted === null || prompted === undefined) return;
+      reason = String(prompted || reason).trim() || reason;
+    } catch (_err) {
+      // uiPrompt is best-effort; continue with the default reason if unavailable.
+    }
 
     try {
-      await ActorEngine.updateActor(actor, { 'system.credits': newCredits });
-      ui?.notifications?.info?.(`Reversed transaction: ${transaction.actor} now has ${newCredits} credits`);
-      this.render(false);
+      const result = await TransactionEngine.executeRollbackCorrection({
+        actor,
+        amount: reversalAmount,
+        reason,
+        sourceTransactionId: transaction.transactionId,
+        removeOwnedItemIds: reconciliation.removableItemIds,
+        audit: {
+          sourceTransactionId: transaction.transactionId,
+          sourceContext: transaction.context,
+          sourceItem: transaction.item,
+          sourceAmount: transaction.amount,
+          source: 'GM Store Control Rollback',
+          removedItems: reconciliation.removedItems,
+          unmatchedItems: reconciliation.unmatchedItems,
+          inventoryPolicyItems: reconciliation.inventoryPolicyItems
+        }
+      }, {
+        source: 'GMDatapad._rollbackTransaction',
+        validate: true,
+        rederive: true
+      });
+
+      if (!result.success) {
+        ui?.notifications?.error?.(`Failed to roll back transaction: ${result.error}`);
+        return;
+      }
+
+      const restoreResult = await restoreInventoryPolicyQuantities(reconciliation.inventoryPolicyItems);
+      const messageParts = [
+        `Rollback recorded for ${transaction.actor}.`,
+        reconciliation.removedItems.length ? `${reconciliation.removedItems.length} owned item(s) removed.` : null,
+        restoreResult.updated ? `${restoreResult.updated} stock policy record(s) restored.` : null,
+        reconciliation.unmatchedItems.length ? `${reconciliation.unmatchedItems.length} item/asset(s) need manual review.` : null
+      ].filter(Boolean);
+
+      ui?.notifications?.info?.(messageParts.join(' '));
+      await this.render(false);
     } catch (err) {
-      SWSELogger.error('[GMDatapad] Error reversing transaction:', err);
-      ui?.notifications?.error?.(`Failed to reverse transaction: ${err.message}`);
+      SWSELogger.error('[GMDatapad] Error rolling back transaction:', err);
+      ui?.notifications?.error?.(`Failed to roll back transaction: ${err.message}`);
     }
+  }
+
+  /** Backward-compatible alias for older buttons/hot reloads. */
+  async _reverseTransaction(index) {
+    return this._rollbackTransaction(index);
   }
 
   /**
@@ -1146,16 +1595,37 @@ export class GMDatapad extends BaseSWSEAppV2 {
       return;
     }
 
-    const currentCredits = Number(actor.system.credits) || 0;
-    const cost = droidData.credits?.spent || 0;
-    const newCredits = Math.max(0, currentCredits - cost);
+    const cost = normalizeCredits(droidData.credits?.spent || 0);
 
     const updates = {
-      'system.credits': newCredits,
       'system.droidSystems.stateMode': 'FINALIZED'
     };
 
     try {
+      if (cost > 0) {
+        const creditResult = await TransactionEngine.executeCreditAdjustment({
+          actor,
+          amount: -cost,
+          reason: 'GM approved pending droid build',
+          transactionContext: 'store-custom-approval',
+          audit: {
+            approvalType: 'droid',
+            itemName: actor.name,
+            itemNames: [actor.name],
+            itemCount: 1,
+            source: 'GM Datapad - Pending Droid Approval'
+          }
+        }, {
+          source: 'GMDatapad._approveDroid',
+          validate: true,
+          rederive: true
+        });
+        if (!creditResult.success) {
+          ui?.notifications?.error?.(`Failed to approve droid credits: ${creditResult.error}`);
+          return;
+        }
+      }
+
       await ActorEngine.updateActor(actor, updates);
       const buildHistory = droidData.buildHistory || [];
       buildHistory.push({
@@ -1172,6 +1642,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
         decidedBy: game.user?.name ?? 'GM'
       });
 
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
       ui?.notifications?.info?.(`Droid "${actor.name}" approved`);
       this.render(false);
     } catch (err) {
@@ -1183,7 +1656,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   /**
    * Reject a pending droid
    */
-  async _rejectDroid(actorId) {
+  async _rejectDroid(actorId, reason = '') {
     const actor = game.actors.get(actorId);
     if (!actor) {
       ui?.notifications?.error?.('Actor not found');
@@ -1206,7 +1679,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       buildHistory.push({
         timestamp: Date.now(),
         action: 'rejected',
-        rejectedAt: new Date().toLocaleString()
+        rejectedAt: new Date().toLocaleString(),
+        reason
       });
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
 
@@ -1214,10 +1688,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
         approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
         actor,
         decision: 'denied',
-        decidedBy: game.user?.name ?? 'GM'
+        decidedBy: game.user?.name ?? 'GM',
+        reason
       });
 
-      ui?.notifications?.info?.(`Droid "${actor.name}" rejected`);
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      ui?.notifications?.info?.(`Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`);
       this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error rejecting droid:', err);
@@ -1225,8 +1703,183 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
+  /** Parse a unified approval request key from the GM approvals queue. */
+  _parseApprovalKey(key) {
+    const [kind, rawId] = String(key || '').split(':');
+    if (kind === 'droid' && rawId) return { kind, actorId: rawId };
+    if (kind === 'custom') return { kind, index: Number(rawId) };
+    return { kind: null, index: -1, actorId: null };
+  }
+
+  _approvalNumberValue(value) {
+    const normalized = String(value ?? '').trim();
+    if (!normalized) return null;
+    const numeric = Number(normalized);
+    return Number.isFinite(numeric) ? numeric : null;
+  }
+
+  _approvalInputValue(name, value) {
+    if (/credits|cost|hp|max|value|rating|damageReduction|total|misc|base/i.test(name)) {
+      const numeric = this._approvalNumberValue(value);
+      return numeric ?? value;
+    }
+    return value;
+  }
+
+  _collectInlineApprovalEdits(formOrData) {
+    const edits = {
+      actorUpdates: {},
+      approvalUpdates: {},
+      metadataUpdates: {},
+      hasChanges: false
+    };
+
+    const fields = formOrData?.querySelectorAll
+      ? Array.from(formOrData.querySelectorAll('[data-approval-edit-field]'))
+      : [];
+
+    const entries = fields.length
+      ? fields
+        .map(field => ({
+          name: field.name,
+          value: field.value,
+          original: field.dataset.original ?? ''
+        }))
+        .filter(entry => String(entry.value ?? '').trim() !== String(entry.original ?? '').trim())
+      : Array.from(formOrData?.entries?.() ?? []).map(([name, value]) => ({ name, value, original: null }));
+
+    for (const entry of entries) {
+      const name = String(entry.name || '').trim();
+      const rawValue = entry.value;
+      if (!name || name === 'denialReason') continue;
+      const value = this._approvalInputValue(name, rawValue);
+      edits.hasChanges = true;
+
+      if (name === 'name') {
+        edits.actorUpdates.name = String(rawValue ?? '').trim() || 'Unnamed Asset';
+        edits.approvalUpdates['draftData.name'] = edits.actorUpdates.name;
+        continue;
+      }
+
+      if (name === 'costCredits') {
+        const cost = this._approvalNumberValue(rawValue) ?? 0;
+        edits.approvalUpdates.costCredits = cost;
+        continue;
+      }
+
+      if (name.startsWith('system.')) {
+        edits.actorUpdates[name] = value;
+        if (name === 'system.shields.rating') edits.actorUpdates['system.shieldRating'] = value;
+        continue;
+      }
+
+      if (name.startsWith('metadata.')) {
+        edits.metadataUpdates[name] = String(rawValue ?? '').trim();
+      }
+    }
+
+    return edits;
+  }
+
+  _setNestedValue(target, path, value) {
+    if (!target || !path) return;
+    if (globalThis.foundry?.utils?.setProperty) {
+      foundry.utils.setProperty(target, path, value);
+      return;
+    }
+    const keys = String(path).split('.').filter(Boolean);
+    const finalKey = keys.pop();
+    let cursor = target;
+    for (const key of keys) {
+      cursor[key] ??= {};
+      cursor = cursor[key];
+    }
+    if (finalKey) cursor[finalKey] = value;
+  }
+
+  async _applyInlineApprovalEdits(key, formData) {
+    const parsed = this._parseApprovalKey(key);
+    const edits = this._collectInlineApprovalEdits(formData);
+    if (!edits.hasChanges) return;
+
+    if (parsed.kind === 'droid') {
+      const actor = game.actors.get(parsed.actorId);
+      if (!actor) throw new Error('Droid actor not found.');
+
+      const actorUpdates = { ...edits.actorUpdates };
+      if (!('system.droidSystems.credits.spent' in actorUpdates) && 'costCredits' in edits.approvalUpdates) {
+        actorUpdates['system.droidSystems.credits.spent'] = edits.approvalUpdates.costCredits;
+        actorUpdates['system.droidSystems.totalCost'] = edits.approvalUpdates.costCredits;
+      }
+      await ActorEngine.updateActor(actor, actorUpdates);
+
+      const gmNotes = edits.metadataUpdates['metadata.gmNotes'];
+      const systemsSummary = edits.metadataUpdates['metadata.systemsSummary'];
+      if (gmNotes || systemsSummary) {
+        await actor.setFlag('foundryvtt-swse', 'gmApprovalNotes', {
+          notes: gmNotes || '',
+          systemsSummary: systemsSummary || '',
+          updatedAt: Date.now(),
+          updatedBy: game.user?.id ?? null
+        });
+      }
+      return;
+    }
+
+    if (parsed.kind === 'custom') {
+      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const approval = approvals[parsed.index];
+      if (!approval) throw new Error('Pending approval not found.');
+
+      for (const [path, value] of Object.entries(edits.approvalUpdates)) {
+        this._setNestedValue(approval, path, value);
+      }
+      for (const [path, value] of Object.entries(edits.metadataUpdates)) {
+        this._setNestedValue(approval, path, value);
+      }
+
+      const draftActor = game.actors.get(approval.draftActorId);
+      const actorUpdates = { ...edits.actorUpdates };
+      if (draftActor?.system?.droidSystems && 'costCredits' in edits.approvalUpdates) {
+        actorUpdates['system.droidSystems.credits.spent'] = edits.approvalUpdates.costCredits;
+        actorUpdates['system.droidSystems.totalCost'] = edits.approvalUpdates.costCredits;
+      }
+      if (draftActor && Object.keys(actorUpdates).length) {
+        await ActorEngine.updateActor(draftActor, actorUpdates);
+      }
+
+      approvals[parsed.index] = approval;
+      await SettingsHelper.set('pendingCustomPurchases', approvals);
+    }
+  }
+
+  async _approveApprovalRequest(key) {
+    const parsed = this._parseApprovalKey(key);
+    if (parsed.kind === 'droid') return this._approveDroid(parsed.actorId);
+    if (parsed.kind === 'custom') return this._approvePendingCustom(parsed.index);
+    ui?.notifications?.error?.('Invalid approval request.');
+  }
+
+  async _finalizeApprovalWithEdits(key, formData) {
+    try {
+      await this._applyInlineApprovalEdits(key, formData);
+      await this._approveApprovalRequest(key);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error finalizing approval edits:', err);
+      ui?.notifications?.error?.(`Failed to finalize approval: ${err.message}`);
+    }
+  }
+
+  async _denyApprovalRequest(key, reason = '') {
+    const parsed = this._parseApprovalKey(key);
+    if (parsed.kind === 'droid') return this._rejectDroid(parsed.actorId, reason);
+    if (parsed.kind === 'custom') return this._denyPendingCustom(parsed.index, reason);
+    ui?.notifications?.error?.('Invalid approval request.');
+  }
+
   /**
-   * Preview a pending custom purchase
+   * Preview a pending custom purchase.
+   * Legacy helper retained for older buttons; the Phase 5 approval UI uses inline summary packets instead.
    */
   async _previewPendingCustom(index) {
     if (index < 0 || index >= this.storeApprovals.length) {
@@ -1235,50 +1888,110 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     const approval = this.storeApprovals[index];
-    const actor = game.actors.get(approval.ownerActorId);
-
-    if (actor) {
-      actor.sheet.render(true);
-    }
+    const actor = game.actors.get(approval.draftActorId) ?? game.actors.get(approval.ownerActorId);
+    if (actor) actor.sheet.render(true);
   }
 
-  /**
-   * Edit a pending custom purchase (placeholder for Phase 3)
-   */
+  /** Legacy edit helper now routes to inline edit mode. */
   async _editPendingCustom(index) {
-    ui?.notifications?.info?.('Edit functionality coming in Phase 3');
+    this.selectedApprovalKey = `custom:${index}`;
+    this.approvalEditMode = true;
+    this.approvalDenyMode = false;
+    await this.render(false);
   }
 
   /**
-   * Approve a pending custom purchase
+   * Approve a pending custom purchase.
    */
   async _approvePendingCustom(index) {
-    if (index < 0 || index >= this.storeApprovals.length) {
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    if (index < 0 || index >= approvals.length) {
       ui?.notifications?.error?.('Invalid approval index');
       return;
     }
 
-    const approval = this.storeApprovals[index];
-    const actor = game.actors.get(approval.ownerActorId);
+    const approval = approvals[index];
+    const ownerActor = game.actors.get(approval.ownerActorId);
 
-    if (!actor) {
-      ui?.notifications?.error?.('Actor not found');
+    if (!ownerActor) {
+      ui?.notifications?.error?.('Owner actor not found');
       return;
     }
 
-    const currentCredits = Number(actor.system.credits) || 0;
-    const cost = approval.costCredits || 0;
-    const newCredits = Math.max(0, currentCredits - cost);
+    const cost = normalizeCredits(approval.costCredits ?? 0);
 
     try {
-      await ActorEngine.updateActor(actor, { 'system.credits': newCredits });
+      const creditResult = cost > 0 ? await TransactionEngine.executeCreditAdjustment({
+        actor: ownerActor,
+        amount: -cost,
+        reason: `GM approved ${approval.type || 'custom'} acquisition`,
+        transactionContext: 'store-custom-approval',
+        audit: {
+          approvalType: approval.type,
+          draftActorId: approval.draftActorId,
+          itemName: approval.draftData?.name ?? 'Custom asset',
+          itemNames: [approval.draftData?.name ?? 'Custom asset'],
+          itemCount: 1,
+          source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+          gmNotes: approval.metadata?.gmNotes ?? ''
+        }
+      }, {
+        source: 'GMDatapad._approvePendingCustom',
+        validate: true,
+        rederive: true
+      }) : { success: true, transactionId: null };
 
-      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      if (!creditResult.success) {
+        ui?.notifications?.error?.(`Failed to approve: ${creditResult.error}`);
+        return;
+      }
+
+      const draftActor = game.actors.get(approval.draftActorId);
+      if (draftActor) {
+        const ownerUser = game.users.find(user => user.character?.id === ownerActor.id);
+        const ownership = { default: 0 };
+        if (ownerUser) ownership[ownerUser.id] = 3;
+        if (game.user?.id) ownership[game.user.id] = 3;
+
+        await ActorEngine.updateActor(draftActor, {
+          ownership,
+          'flags.-=foundryvtt-swse.pendingApproval': null,
+          'flags.-=foundryvtt-swse.draftOnly': null,
+          'flags.-=foundryvtt-swse.ownerPlayerId': null
+        });
+      }
+
+      const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
+      const purchase = {
+        timestamp: Date.now(),
+        items: [],
+        droids: approval.type === 'droid' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
+        vehicles: approval.type === 'vehicle' || approval.type === 'starship' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
+        total: cost,
+        transactionId: creditResult?.transactionId ?? null,
+        source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+        gmNotes: approval.metadata?.gmNotes ?? '',
+        compatibilityMirror: true
+      };
+      history.push(purchase);
+      await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
+
       approvals.splice(index, 1);
       await SettingsHelper.set('pendingCustomPurchases', approvals);
 
-      ui?.notifications?.info?.(`Approved: ${approval.draftData.name}`);
-      this.render(false);
+      Hooks.call('swseCustomPurchaseApproved', {
+        approval,
+        actor: ownerActor,
+        draftActor,
+        decidedBy: game.user?.name ?? 'GM',
+        edited: !!approval.metadata?.gmNotes
+      });
+
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Custom asset'}`);
+      await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error approving custom purchase:', err);
       ui?.notifications?.error?.(`Failed to approve: ${err.message}`);
@@ -1286,22 +1999,37 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Deny a pending custom purchase
+   * Deny a pending custom purchase.
    */
-  async _denyPendingCustom(index) {
-    if (index < 0 || index >= this.storeApprovals.length) {
+  async _denyPendingCustom(index, reason = '') {
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    if (index < 0 || index >= approvals.length) {
       ui?.notifications?.error?.('Invalid approval index');
       return;
     }
 
     try {
-      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
       const denial = approvals[index];
+      const ownerActor = game.actors.get(denial.ownerActorId);
+      const draftActor = game.actors.get(denial.draftActorId);
+
+      if (draftActor) await draftActor.delete();
+
       approvals.splice(index, 1);
       await SettingsHelper.set('pendingCustomPurchases', approvals);
 
-      ui?.notifications?.info?.(`Denied: ${denial.draftData.name}`);
-      this.render(false);
+      Hooks.call('swseCustomPurchaseDenied', {
+        approval: denial,
+        actor: ownerActor,
+        decidedBy: game.user?.name ?? 'GM',
+        reason
+      });
+
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      ui?.notifications?.info?.(`Denied: ${denial.draftData?.name ?? 'Custom asset'}${reason ? ` — ${reason}` : ''}`);
+      await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error denying custom purchase:', err);
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
@@ -1331,11 +2059,21 @@ export class GMDatapad extends BaseSWSEAppV2 {
    * Navigate to a different page within the datapad
    */
   async _navigateTo(pageId) {
-    SWSELogger.log(`[GM Datapad] Navigating to: ${pageId}`);
-    this.currentPage = pageId;
-    if (pageId === 'store') {
-      this.currentTab = 'transactions';
+    const targetPage = GMSurfaceRegistry.hasSurface(pageId) ? pageId : 'home';
+
+    if (targetPage !== pageId) {
+      SWSELogger.warn(`[GM Datapad] Unknown surface "${pageId}"; routing to home.`);
+    } else {
+      SWSELogger.log(`[GM Datapad] Navigating to: ${targetPage}`);
     }
+
+    this.currentPage = targetPage;
+
+    // GM store is an operations surface, not the player-facing store splash flow.
+    if (targetPage === 'store') {
+      this.currentTab = this.currentTab || 'options';
+    }
+
     await this.render(false);
   }
 }

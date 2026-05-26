@@ -1,7 +1,7 @@
 <div class="swse-shell-surface swse-shell-surface--settings" data-shell-region="surface-settings" data-surface-id="{{vm.id}}">
   <div class="swse-shell-surface__header swse-settings-header">
-    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-sheet" type="button">
-      <i class="fas fa-arrow-left"></i><span>Character Sheet</span>
+    <button class="swse-shell-surface__back-btn" data-shell-action="{{vm.backAction}}" type="button">
+      <i class="fas fa-arrow-left"></i><span>{{vm.backLabel}}</span>
     </button>
     <div class="swse-shell-surface__title swse-settings-header__title">⚙ SETTINGS</div>
     <div class="swse-settings-actions">
@@ -12,8 +12,8 @@
 
   <div class="swse-shell-surface__body swse-settings-body">
     <div class="swse-settings-intro">
-      <div class="swse-settings-intro__title">DEVICE INTERFACE TUNING</div>
-      <div class="swse-settings-intro__subtitle">The holopad reads from one shared configuration surface.</div>
+      <div class="swse-settings-intro__title">{{vm.introTitle}}</div>
+      <div class="swse-settings-intro__subtitle">{{vm.introSubtitle}}</div>
     </div>
 
     <div class="swse-settings-grid">
@@ -34,6 +34,17 @@
         <div class="swse-shell-colors">
           {{#each vm.shellColors}}
           <button class="swse-shell-color {{#if this.selected}}active{{/if}}" data-shell-color="{{this.id}}" type="button" title="{{this.label}}" style="--swse-shell-chip-start: {{this.start}}; --swse-shell-chip-mid: {{this.mid}}; --swse-shell-chip-end: {{this.end}}; background: linear-gradient(180deg, {{this.color}}, color-mix(in oklch, {{this.color}} 42%, black)); border-color: {{this.color}};"></button>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="swse-panel">
+        <div class="swse-panel-head">◇ Motion Style</div>
+        <div class="swse-motion-options">
+          {{#each vm.motionOptions}}
+          <button class="swse-motion-option {{#if this.selected}}active{{/if}}" data-motion-style="{{this.id}}" type="button" title="{{this.description}}">
+            <span>{{this.label}}</span>
+          </button>
           {{/each}}
         </div>
       </section>
