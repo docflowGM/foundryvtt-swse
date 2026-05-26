@@ -179,6 +179,16 @@ function wireStoreSettingHooks() {
 }
 
 export async function initializeHolonet() {
+  game.swse ??= {};
+  game.swse.holonet = {
+    engine: HolonetEngine,
+    manager: HolonetManager,
+    preferences: HolonetPreferences,
+    sources: HolonetSourceRegistry,
+    state: HolonetStateService
+  };
+
+  registerHolonetSources();
   await HolonetEngine.initialize();
   await HolonetSourceRegistry.initializeAll();
   wireStoreSettingHooks(); // Wire store mutations before initializing emitters

@@ -71,22 +71,25 @@ export class HolonetThreadService {
         return { ok: false, reason: 'no_message', threadId: resolvedThread.id, messageId: null };
       }
 
-      // 2. Publish message (GM-side, always skipSocket from here since callers are already on GM)
-      const published = await HolonetEngine.publish(message, { skipSocket: true, ...publishOptions });
-      if (!published) {
-        return { ok: false, reason: 'publish_failed', threadId: resolvedThread.id, messageId: message.id };
-      }
+      // 2. Prepare publication without persisting. The record and thread are
+      // saved together below so sender/recipient projections advance as one
+      // Holonet envelope instead of two drifting writes.
+      HolonetEngine.prepareRecordForPublish(message, { skipSocket: true, ...publishOptions });
 
-      // 3. Mark sender read to avoid ghost unread badge
+      // 3. Mark sender read before the envelope is saved to avoid ghost unread badges.
       if (markSenderRead && senderRecipient?.id) {
-        await HolonetEngine.markRead(message.id, senderRecipient.id, { skipSocket: true });
+        message.markRead(senderRecipient.id);
       }
 
-      // 4+5. Attach message to thread and save once
+      // 4+5. Attach message to thread and save the message/thread envelope once.
       resolvedThread.addMessage(message.id);
-      await HolonetStorage.saveThread(resolvedThread);
+      const saved = await HolonetStorage.saveRecordAndThread(message, resolvedThread);
+      if (!saved) {
+        return { ok: false, reason: 'envelope_save_failed', threadId: resolvedThread.id, messageId: message.id };
+      }
+      HolonetEngine.emitPreparedRecordPublished(message);
 
-      // 6. Fire local hooks so UI gets one coherent update
+      // 6. Fire local hooks so UI gets one coherent update.
       Hooks.callAll('swseHolonet:threadUpdated', { threadId: resolvedThread.id, messageId: message.id });
       Hooks.callAll('swseHolonetUpdated', { type: 'thread-updated', threadId: resolvedThread.id });
 

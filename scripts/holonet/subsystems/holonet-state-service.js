@@ -1,3 +1,5 @@
+import { HolonetSocketService } from './holonet-socket-service.js';
+
 /**
  * Holonet State Service
  *
@@ -6,6 +8,12 @@
  */
 
 export class HolonetStateService {
+  static emitStateUpdated(payload = {}) {
+    Hooks.callAll('swseHolonet:stateUpdated', payload);
+    Hooks.callAll('swseHolonetUpdated', { type: 'state-updated', ...payload });
+    HolonetSocketService.emitSync({ type: 'state-updated', ...payload });
+  }
+
   static NS = 'foundryvtt-swse';
   static PLAYER_STATE_KEY = 'holonet_player_state';
   static PARTY_STATE_KEY = 'holonet_party_state';
@@ -38,6 +46,7 @@ export class HolonetStateService {
       updatedBy: game.user?.name ?? 'GM'
     };
     await game.settings.set(this.NS, this.PLAYER_STATE_KEY, all);
+    this.emitStateUpdated({ scope: 'player', actorId, state: all[actorId] });
     return true;
   }
 
@@ -61,6 +70,7 @@ export class HolonetStateService {
       updatedBy: game.user?.name ?? 'GM'
     };
     await game.settings.set(this.NS, this.PARTY_STATE_KEY, partyState);
+    this.emitStateUpdated({ scope: 'party', state: partyState });
     return true;
   }
 }

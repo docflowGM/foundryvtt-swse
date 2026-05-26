@@ -168,11 +168,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   _getAudienceOptions() {
+    // Bulletin is a one-way GM → player information sphere. GM-only and
+    // GM+party conversations belong in Messenger, not Bulletin.
     return [
       { value: AUDIENCE_TYPE.ALL_PLAYERS, label: 'All Players' },
       { value: AUDIENCE_TYPE.PARTY, label: 'Party' },
-      { value: AUDIENCE_TYPE.GM_ONLY, label: 'GM Only' },
-      { value: AUDIENCE_TYPE.GM_AND_PARTY, label: 'GM + Party' },
       { value: AUDIENCE_TYPE.ONE_PLAYER, label: 'One Player' },
       { value: AUDIENCE_TYPE.SELECTED_PLAYERS, label: 'Selected Players' }
     ];
@@ -217,13 +217,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
       case AUDIENCE_TYPE.SELECTED_PLAYERS:
         return HolonetAudience.selectedPlayers(playerIds);
       case AUDIENCE_TYPE.GM_ONLY:
-        return HolonetAudience.gmOnly();
+      case AUDIENCE_TYPE.GM_AND_PARTY:
+        return HolonetAudience.allPlayers();
       case AUDIENCE_TYPE.ALL_PLAYERS:
         return HolonetAudience.allPlayers();
       case AUDIENCE_TYPE.PARTY:
         return new HolonetAudience({ type: AUDIENCE_TYPE.PARTY });
-      case AUDIENCE_TYPE.GM_AND_PARTY:
-        return new HolonetAudience({ type: AUDIENCE_TYPE.GM_AND_PARTY });
       default:
         return HolonetAudience.allPlayers();
     }

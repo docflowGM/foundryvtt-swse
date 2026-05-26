@@ -409,10 +409,14 @@ export class SWSEChat {
     const source = options.source || sourceForRecord(record);
     const attachmentCount = Number(options.attachmentCount ?? record.attachments?.length ?? metadata.attachments?.length ?? metadata.attachmentCount ?? 0) || 0;
 
+    const sourceFamily = String(record.sourceFamily || metadata.sourceFamily || '').toLowerCase();
+    const action = options.action || (threadId ? 'open-thread' : sourceFamily === 'bulletin' ? 'open-bulletin' : 'open-record');
+
     return {
       recordId: options.recordId || record.id || '',
       threadId,
       actorId: options.actorId || actorIdForRecord(record),
+      action,
       priority,
       priorityLabel: options.priorityLabel || labelForPriority(priority),
       source,
@@ -424,7 +428,7 @@ export class SWSEChat {
       preview: truncateText(stripHtml(body), 180),
       attachmentCount,
       unread: options.unread ?? true,
-      actionLabel: options.actionLabel || 'Open<br/>Holochat',
+      actionLabel: options.actionLabel || (action === 'open-thread' ? 'Open<br/>Holochat' : action === 'open-bulletin' ? 'Open<br/>Bulletin' : 'Open<br/>Notice'),
       timeLabel: options.timeLabel || formatTime(record.publishedAt || record.createdAt || null)
     };
   }

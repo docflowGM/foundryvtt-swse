@@ -2,7 +2,7 @@
 
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js';
-import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
+import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, INTENT_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 
 export class GMBulletinSurfaceService {
   static async buildViewModel(host) {
@@ -10,8 +10,8 @@ export class GMBulletinSurfaceService {
       .filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN)
       .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
 
-    const eventRecords = records.filter((record) => record.type === 'event');
-    const messageRecords = records.filter((record) => record.type === 'message');
+    const eventRecords = records.filter((record) => record.intent === INTENT_TYPE.BULLETIN_EVENT || record.metadata?.bulletinKind === 'event');
+    const messageRecords = records.filter((record) => record.intent === INTENT_TYPE.BULLETIN_MESSAGE || record.metadata?.bulletinKind === 'message');
     const bulletinPlayers = host._getBulletinPlayers();
     const selectedPlayerId = host.selectedPlayerStateActorId || bulletinPlayers[0]?.actorId || null;
     const selectedPlayerState = selectedPlayerId ? await HolonetStateService.getPlayerState(selectedPlayerId) : null;
@@ -19,11 +19,11 @@ export class GMBulletinSurfaceService {
 
     return {
       pageTitle: 'Bulletin',
-      pageDescription: 'Broadcasts, direct messages, and current-state control',
+      pageDescription: 'One-way GM-to-player bulletins, notices, and current-state control',
       bulletinSection: host.currentBulletinSection,
       bulletinNav: [
         { id: 'events', label: 'Events', count: eventRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
-        { id: 'messages', label: 'Messages', count: messageRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
+        { id: 'messages', label: 'Notices', count: messageRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
         { id: 'players', label: 'Players', count: bulletinPlayers.length },
         { id: 'party', label: 'Party', count: partyState?.situation || partyState?.objective || partyState?.location ? 1 : 0 }
       ],

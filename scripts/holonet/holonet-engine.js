@@ -9,6 +9,7 @@ import { HolonetNotificationService } from './subsystems/holonet-notification-se
 import { HolonetFeedService } from './subsystems/holonet-feed-service.js';
 import { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 import { DELIVERY_STATE } from './contracts/enums.js';
+import { assertHolonetBoundary } from './contracts/holonet-boundaries.js';
 
 export class HolonetEngine {
   static #initialized = false;
@@ -33,17 +34,32 @@ export class HolonetEngine {
   /** @private — GM-side publish pipeline broken into explicit phases */
   static async _publishAsGm(record) {
     try {
-      this._applyPublishLifecycle(record);
-      this._applyRecipients(record);
-      this._applyProjections(record);
+      this.prepareRecordForPublish(record);
       await this._persistRecord(record);
-      this._notifyLocalRecipient(record);
-      this._emitPublished(record);
+      this.emitPreparedRecordPublished(record);
       return true;
     } catch (err) {
       console.error('[Holonet] Failed to publish record:', err);
       return false;
     }
+  }
+
+  /**
+   * Prepare a record for publication without persisting it.
+   * Thread publishing uses this to commit message + thread in one storage envelope.
+   */
+  static prepareRecordForPublish(record) {
+    assertHolonetBoundary(record);
+    this._applyPublishLifecycle(record);
+    this._applyRecipients(record);
+    this._applyProjections(record);
+    return record;
+  }
+
+  /** Emit local notifications/hooks after a prepared record is persisted. */
+  static emitPreparedRecordPublished(record) {
+    this._notifyLocalRecipient(record);
+    this._emitPublished(record);
   }
 
   /** @private — Mark record published and set timestamps */

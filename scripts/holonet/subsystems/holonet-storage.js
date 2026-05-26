@@ -149,6 +149,55 @@ export class HolonetStorage {
     }
   }
 
+  /**
+   * Persist one message record and its thread as a single Holonet envelope.
+   *
+   * Foundry world settings do not provide true database transactions across
+   * settings keys, so this method performs both writes at the storage boundary
+   * with validation and best-effort rollback to the previous raw settings on
+   * partial failure. Callers should prefer this for threaded messages so sender
+   * and recipient views advance together.
+   */
+  static async saveRecordAndThread(record, thread) {
+    if (!game.user?.isGM) {
+      console.warn('Only GM can save Holonet record/thread envelopes');
+      return false;
+    }
+    if (!record || !thread) return false;
+
+    const previousRecords = await game.settings.get(this.NS, this.FLAG_KEY) ?? [];
+    const previousThreads = await game.settings.get(this.NS, this.THREADS_FLAG_KEY) ?? [];
+    const rawRecords = foundry.utils.deepClone(previousRecords);
+    const rawThreads = foundry.utils.deepClone(previousThreads);
+    const serializedRecord = record.toJSON?.() ?? record;
+    const serializedThread = thread.toJSON?.() ?? thread;
+
+    const recordIndex = rawRecords.findIndex(r => r.id === serializedRecord.id);
+    if (recordIndex >= 0) rawRecords[recordIndex] = serializedRecord;
+    else rawRecords.push(serializedRecord);
+
+    const threadIndex = rawThreads.findIndex(t => t.id === serializedThread.id);
+    if (threadIndex >= 0) rawThreads[threadIndex] = serializedThread;
+    else rawThreads.push(serializedThread);
+
+    try {
+      await game.settings.set(this.NS, this.FLAG_KEY, rawRecords);
+      await game.settings.set(this.NS, this.THREADS_FLAG_KEY, rawThreads);
+      this.invalidateCache();
+      return true;
+    } catch (err) {
+      console.error('Failed to save Holonet record/thread envelope:', err);
+      try {
+        await game.settings.set(this.NS, this.FLAG_KEY, previousRecords);
+        await game.settings.set(this.NS, this.THREADS_FLAG_KEY, previousThreads);
+        this.invalidateCache();
+      } catch (rollbackErr) {
+        console.error('Failed to roll back Holonet record/thread envelope:', rollbackErr);
+      }
+      return false;
+    }
+  }
+
   static async getAllThreads() {
     try {
       const rawThreads = await game.settings.get(this.NS, this.THREADS_FLAG_KEY) ?? [];

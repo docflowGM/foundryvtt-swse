@@ -52,8 +52,11 @@ export class HolonetDeliveryRouter {
   }
 
   static getAllPlayers() {
-    return game.users?.filter(u => !u.isGM && u.active)
-      .map(u => HolonetRecipient.player(u.id, u.character?.id, u.character?.name))
+    // Persistent Holonet delivery must include offline players. Real-time UI
+    // projections can still filter active users, but records themselves should
+    // be addressable to every non-GM user.
+    return game.users?.filter(u => !u.isGM)
+      .map(u => HolonetRecipient.player(u.id, u.character?.id, u.character?.name ?? u.name))
       .filter(r => r.userId) ?? [];
   }
 
@@ -70,7 +73,8 @@ export class HolonetDeliveryRouter {
   }
 
   static getGMRecipients() {
-    return game.users?.filter(u => u.isGM && u.active).map(u => HolonetRecipient.gm(u.id)) ?? [HolonetRecipient.gm()];
+    const gms = game.users?.filter(u => u.isGM).map(u => HolonetRecipient.gm(u.id)) ?? [];
+    return gms.length ? gms : [HolonetRecipient.gm()];
   }
 
   static getCurrentRecipientId() {

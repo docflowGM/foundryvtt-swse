@@ -8,7 +8,7 @@
  */
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
-import { StoreTransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/store-transaction-engine.js';
+import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { HolonetStorage } from './holonet-storage.js';
 import { HolonetThreadService } from './holonet-thread-service.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
@@ -1445,11 +1445,14 @@ export class HolonetMessengerService {
         }
       }
       if (playerAmount > 0) {
-        await StoreTransactionEngine.grantCredits({
-          toActor: targetActor,
+        const credit = await TransactionEngine.executeCreditAdjustment({
+          actor: targetActor,
           amount: playerAmount,
-          metadata: { source: asJobPayout ? 'holonet-job-payout' : 'holonet-gm-grant', threadId: thread.id, requesterId }
-        });
+          reason: asJobPayout ? 'Holonet job payout' : 'Holonet GM credit grant',
+          transactionContext: asJobPayout ? 'holonet-job-payout' : 'holonet-gm-grant',
+          audit: { source: asJobPayout ? 'holonet-job-payout' : 'holonet-gm-grant', threadId: thread.id, requesterId }
+        }, { source: 'HolonetMessengerService.gmTransferCredits', validate: true, rederive: true });
+        if (!credit.success) throw new Error(credit.error || 'Holonet credit grant failed');
       }
       const cutText = fundAmount > 0 ? ` ${formatCredits(fundAmount)} was routed to the Party Fund.` : '';
       await this._publishReceiptMessage(thread, { title: asJobPayout ? 'Job Payout Receipt' : 'GM Credit Receipt', eventType: asJobPayout ? 'job-payout-receipt' : 'gm-credit-receipt', amount: playerAmount, lines: [`To: ${targetActor.name}`, cutText.trim()].filter(Boolean) });
@@ -1528,11 +1531,26 @@ export class HolonetMessengerService {
 
     try {
       if (transfer.kind === 'gmGrant') {
-        await StoreTransactionEngine.grantCredits({ toActor: targetActor, amount: value, metadata: { source: 'holonet-transfer', threadId: thread.id, requesterId } });
+        const grant = await TransactionEngine.executeCreditAdjustment({
+          actor: targetActor,
+          amount: value,
+          reason: 'Holonet GM credit grant',
+          transactionContext: 'holonet-gm-grant',
+          audit: { source: 'holonet-transfer', threadId: thread.id, requesterId, transferId: transfer.id }
+        }, { source: 'HolonetMessengerService.creditTransferGrant', validate: true, rederive: true });
+        if (!grant.success) throw new Error(grant.error || 'Credit grant failed');
       } else {
         const fromActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
         if (!fromActor) throw new Error('Sender actor not found');
-        await StoreTransactionEngine.transferCredits({ fromActor, toActor: targetActor, amount: value, metadata: { source: 'holonet-transfer', threadId: thread.id, requesterId } });
+        const moved = await TransactionEngine.executeCreditTransfer({
+          fromActor,
+          toActor: targetActor,
+          amount: value,
+          reason: 'Holonet credit transfer',
+          transactionContext: 'holonet-credit-transfer',
+          audit: { source: 'holonet-transfer', threadId: thread.id, requesterId, transferId: transfer.id }
+        }, { source: 'HolonetMessengerService.creditTransfer', validate: true, rederive: true });
+        if (!moved.success) throw new Error(moved.error || 'Credit transfer failed');
       }
       transfer.status = 'complete';
       transfer.resolvedAt = nowIso();
@@ -1562,7 +1580,14 @@ export class HolonetMessengerService {
         await this._publishSystemMessage(thread, `${actor.name} attempted to contribute ${formatCredits(value)} to the Party Fund, but has insufficient credits.`, { eventType: 'party-fund-failed' });
         return false;
       }
-      await ActorEngine.updateActor(actor, { 'system.credits': creditsOf(actor) - value });
+      const debit = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: -value,
+        reason: 'Holonet party fund contribution',
+        transactionContext: 'holonet-party-fund-contribution',
+        audit: { source: 'party-fund-contribution', threadId: thread.id, requesterId }
+      }, { source: 'HolonetMessengerService.partyFundContribution', validate: true, rederive: true });
+      if (!debit.success) return false;
     }
     const before = getPartyFundBalance();
     const after = await setPartyFundBalance(before + value);
@@ -1601,7 +1626,14 @@ export class HolonetMessengerService {
       return false;
     }
     await setPartyFundBalance(before - value);
-    await StoreTransactionEngine.grantCredits({ toActor: targetActor, amount: value, metadata: { source: 'party-fund-payout', threadId: thread.id, requesterId } });
+    const payout = await TransactionEngine.executeCreditAdjustment({
+      actor: targetActor,
+      amount: value,
+      reason: 'Holonet party fund payout',
+      transactionContext: 'holonet-party-fund-payout',
+      audit: { source: 'party-fund-payout', threadId: thread.id, requesterId }
+    }, { source: 'HolonetMessengerService.partyFundPayout', validate: true, rederive: true });
+    if (!payout.success) return false;
     await appendPartyFundLedger({ type: 'payout', amount: -value, toActorId: targetActor.id, threadId: thread.id, requesterId });
     await this._publishSystemMessage(thread, `Party Fund paid ${formatCredits(value)} to ${targetActor.name}. New balance: ${formatCredits(before - value)}.`, { eventType: 'party-fund-payout', amount: value, toActorId: targetActor.id });
     return true;

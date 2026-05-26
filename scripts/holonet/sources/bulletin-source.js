@@ -4,9 +4,9 @@
 
 import { SOURCE_FAMILY, INTENT_TYPE } from '../contracts/enums.js';
 import { HolonetEvent } from '../contracts/holonet-event.js';
-import { HolonetMessage } from '../contracts/holonet-message.js';
 import { HolonetSender } from '../contracts/holonet-sender.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
+import { normalizeBulletinRecord } from '../contracts/holonet-boundaries.js';
 
 export class BulletinSource {
   static sourceFamily = SOURCE_FAMILY.BULLETIN;
@@ -19,7 +19,7 @@ export class BulletinSource {
   }
 
   static createBulletinEvent(data) {
-    return new HolonetEvent({
+    return normalizeBulletinRecord(new HolonetEvent({
       id: data.id,
       sourceFamily: this.sourceFamily,
       sourceId: data.eventId ?? data.id,
@@ -33,13 +33,14 @@ export class BulletinSource {
       metadata: {
         category: data.category ?? 'news',
         published: data.published ?? false,
+        bulletinKind: 'event',
         ...data.metadata
       }
-    });
+    }));
   }
 
   static createBulletinMessage(data) {
-    return new HolonetMessage({
+    return normalizeBulletinRecord(new HolonetEvent({
       id: data.id,
       sourceFamily: this.sourceFamily,
       sourceId: data.messageId ?? data.id,
@@ -49,12 +50,15 @@ export class BulletinSource {
       title: data.title ?? 'Message',
       body: data.body ?? '',
       state: data.state,
+      eventType: 'bulletin-message',
+      priority: data.priority ?? 'normal',
       metadata: {
         category: data.category ?? 'message',
         published: data.published ?? false,
+        bulletinKind: 'message',
         ...data.metadata
       }
-    });
+    }));
   }
 
   static async initialize() {

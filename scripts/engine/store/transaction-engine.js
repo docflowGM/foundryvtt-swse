@@ -62,7 +62,13 @@ export class TransactionEngine {
     'store-custom-approval-refund',
     'gm-credit-adjustment',
     'gm-credit-refund',
-    'store-rollback-reconciliation'
+    'store-rollback-reconciliation',
+    'holonet-credit-transfer',
+    'holonet-credit-transfer-refund',
+    'holonet-gm-grant',
+    'holonet-job-payout',
+    'holonet-party-fund-contribution',
+    'holonet-party-fund-payout'
   ]);
 
   static _allowedSaleContexts = new Set([
@@ -546,6 +552,121 @@ export class TransactionEngine {
     } finally {
       this._mutationLocks.delete(lockKey);
     }
+  }
+
+  /**
+   * Transfer credits between two actors through TransactionEngine audit records.
+   * This is the canonical boundary for Holonet player-to-player credit movement:
+   * debit first, credit second, and compensate the debit if the credit leg fails.
+   */
+  static async executeCreditTransfer(context = {}, options = {}) {
+    const {
+      fromActor,
+      toActor,
+      amount = 0,
+      reason = '',
+      transactionContext = 'holonet-credit-transfer',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeCreditTransfer'
+    } = options;
+
+    const value = normalizeCredits(amount);
+    const transferId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!fromActor || !toActor) return { success: false, transactionId: transferId, error: 'Credit transfer requires source and target actors' };
+    if (!Number.isFinite(value) || value <= 0) return { success: false, transactionId: transferId, error: 'Credit transfer amount must be positive' };
+    if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
+      return { success: false, transactionId: transferId, error: `Unsupported credit transfer context: ${transactionContext}` };
+    }
+
+    const debit = await this.executeCreditAdjustment({
+      actor: fromActor,
+      amount: -value,
+      reason: reason || `Transfer credits to ${toActor.name}`,
+      transactionContext,
+      audit: {
+        ...audit,
+        transferId,
+        transferLeg: 'debit',
+        toActorId: toActor.id,
+        toActorName: toActor.name
+      }
+    }, { source: `${source}.debit`, validate, rederive });
+
+    if (!debit.success) return { success: false, transactionId: transferId, debitTransactionId: debit.transactionId, error: debit.error };
+
+    const credit = await this.executeCreditAdjustment({
+      actor: toActor,
+      amount: value,
+      reason: reason || `Received credits from ${fromActor.name}`,
+      transactionContext,
+      audit: {
+        ...audit,
+        transferId,
+        transferLeg: 'credit',
+        fromActorId: fromActor.id,
+        fromActorName: fromActor.name,
+        debitTransactionId: debit.transactionId
+      }
+    }, { source: `${source}.credit`, validate, rederive });
+
+    if (!credit.success) {
+      const refund = await this.executeCreditAdjustment({
+        actor: fromActor,
+        amount: value,
+        reason: `Refund failed transfer to ${toActor.name}`,
+        transactionContext: 'holonet-credit-transfer-refund',
+        audit: {
+          ...audit,
+          transferId,
+          failedCreditTransactionId: credit.transactionId,
+          debitTransactionId: debit.transactionId,
+          toActorId: toActor.id,
+          toActorName: toActor.name
+        }
+      }, { source: `${source}.refundDebit`, validate, rederive });
+      return {
+        success: false,
+        transactionId: transferId,
+        debitTransactionId: debit.transactionId,
+        failedCreditTransactionId: credit.transactionId,
+        refundTransactionId: refund.transactionId,
+        error: credit.error || 'Credit leg failed'
+      };
+    }
+
+    Hooks.callAll?.('swseCreditTransferComplete', {
+      transaction: {
+        id: transferId,
+        transactionId: transferId,
+        fromActorId: fromActor.id,
+        fromActorName: fromActor.name,
+        toActorId: toActor.id,
+        toActorName: toActor.name,
+        amount: value,
+        context: transactionContext,
+        debitTransactionId: debit.transactionId,
+        creditTransactionId: credit.transactionId,
+        audit
+      },
+      fromActor,
+      toActor,
+      success: true
+    });
+
+    return {
+      success: true,
+      transactionId: transferId,
+      debitTransactionId: debit.transactionId,
+      creditTransactionId: credit.transactionId,
+      amount: value,
+      error: null
+    };
   }
 
   /**
