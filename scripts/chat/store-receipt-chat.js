@@ -112,6 +112,58 @@ async function handleStoreTransactionComplete(payload = {}) {
   }
 }
 
+async function handleStoreSaleComplete(payload = {}) {
+  const transaction = payload.transaction || {};
+  if (payload.success === false || transaction.success === false) return;
+
+  const actor = payload.actor || game.actors?.get?.(transaction.actorId) || null;
+  if (!actor) return;
+
+  const amount = asNumber(transaction.amount, asNumber(payload.salePrice, 0));
+  if (amount <= 0) return;
+
+  const after = actorCredits(actor);
+  const transactionId = transaction.id || transaction.transactionId || `sale_${transaction.timestamp || Date.now()}`;
+  const itemName = itemNameFromTransaction(transaction);
+
+  await postReceiptOnce('store-sale', transactionId, actor, {
+    sourceType: 'sale',
+    vendorLabel: 'Store Sale',
+    title: `Sale approved — ${itemName}`,
+    itemSummary: transaction.reason ? `GM note: ${transaction.reason}` : itemName,
+    previousBalance: Math.max(0, after - amount),
+    newBalance: after,
+    delta: amount,
+    deltaLabel: 'received',
+    actorName: actor.name,
+    actions: [{ action: 'open-store', label: 'Open Store' }]
+  });
+}
+
+async function handleStoreSaleDenied(payload = {}) {
+  const request = payload.request || {};
+  const actor = payload.actor || game.actors?.get?.(request.actorId) || null;
+  if (!actor) return;
+
+  const balance = actorCredits(actor);
+  const transactionId = request.id || `sale_denial_${request.timestamp || Date.now()}`;
+  const reason = payload.reason || request.reason || 'No credits changed.';
+
+  await postReceiptOnce('store-sale-denied', transactionId, actor, {
+    sourceType: 'denial',
+    vendorLabel: 'Store Sale',
+    title: `Sale denied — ${request.item || 'Item'}`,
+    itemSummary: reason,
+    previousBalance: balance,
+    newBalance: balance,
+    delta: 0,
+    deltaLabel: 'no change',
+    actorName: actor.name,
+    decidedBy: payload.decidedBy || 'GM',
+    actions: [{ action: 'open-store', label: 'Open Store' }]
+  });
+}
+
 async function handleCreditTransferComplete(payload = {}) {
   const transaction = payload.transaction || {};
   if (payload.success === false || transaction.success === false) return;
@@ -269,6 +321,8 @@ export function registerStoreReceiptChatCards() {
   registered = true;
 
   Hooks.on('swseStoreTransactionComplete', payload => { void handleStoreTransactionComplete(payload); });
+  Hooks.on('swseStoreSaleComplete', payload => { void handleStoreSaleComplete(payload); });
+  Hooks.on('swseStoreSaleDenied', payload => { void handleStoreSaleDenied(payload); });
   Hooks.on('swseCreditTransferComplete', payload => { void handleCreditTransferComplete(payload); });
   Hooks.on('swseCreditGrantComplete', payload => { void handleCreditGrantComplete(payload); });
   Hooks.on('swseCreditAdjustmentComplete', payload => { void handleCreditAdjustmentComplete(payload); });

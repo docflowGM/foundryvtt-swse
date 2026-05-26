@@ -2236,3 +2236,119 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
+.gm-store-sale-request-list {
+  gap: 12px;
+}
+
+.gm-store-sale-request-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gm-store-sale-request-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gm-store-sale-request-main > div {
+  min-width: 0;
+}
+
+.gm-store-sale-request-main strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 15px;
+}
+
+.gm-store-sale-request-main span:not(.gm-command-eyebrow):not(.gm-store-status-chip) {
+  display: block;
+  margin-top: 2px;
+  color: color-mix(in srgb, var(--swse-accent-text, #dff8ff) 68%, transparent);
+  font-size: 12px;
+}
+
+.gm-store-sale-request-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gm-store-sale-request-grid > div {
+  padding: 8px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 12%, transparent);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.gm-store-sale-request-grid span,
+.gm-store-sale-controls span {
+  display: block;
+  margin-bottom: 3px;
+  color: color-mix(in srgb, var(--swse-accent-text, #dff8ff) 62%, transparent);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gm-store-sale-request-grid strong {
+  color: var(--swse-accent-text, #dff8ff);
+  font-size: 13px;
+}
+
+.gm-store-sale-warning {
+  margin: 0;
+}
+
+.gm-store-sale-controls {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.35fr) minmax(180px, 0.65fr);
+  gap: 10px;
+}
+
+.gm-store-sale-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gm-store-sale-controls textarea {
+  min-height: 48px;
+  resize: vertical;
+}
+
+.gm-store-sale-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.gm-store-status-chip.warn {
+  color: #ffd28a;
+  border-color: rgba(255, 210, 138, 0.38);
+  background: rgba(255, 164, 28, 0.12);
+}
+
+.swse-ui-button.danger {
+  color: #ffd6d6;
+  border-color: rgba(255, 90, 90, 0.45);
+  background: rgba(90, 0, 0, 0.22);
+}
+
+.swse-ui-button.danger:hover,
+.swse-ui-button.danger:focus-visible {
+  border-color: rgba(255, 120, 120, 0.75);
+  box-shadow: 0 0 16px rgba(255, 90, 90, 0.18);
+}
+
+@media (max-width: 900px) {
+  .gm-store-sale-request-grid,
+  .gm-store-sale-controls {
+    grid-template-columns: 1fr;
+  }
+}

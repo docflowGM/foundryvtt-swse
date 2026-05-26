@@ -86,10 +86,6 @@
     <div class="dashboard-tab swse-ui-panel" data-swse-tab="pending">
       <h3>PENDING SELL ATTEMPTS</h3>
       <p class="tab-description" title="Sell offers awaiting resolution. Offers appear here if they were not automatically accepted or if the original prompt was dismissed.">Sell offers awaiting resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
-      <p style="color: #ff9900; padding: 1rem; background: rgba(255, 153, 0, 0.1); border-radius: 4px; margin-bottom: 1rem;">
-        <strong>⚠ Not Yet Implemented:</strong> Pending sale resolution is not yet available. This feature is under development.
-      </p>
-
       {{#if (eq pendingSales.length 0)}}
         <p class="empty-state">No pending sales.</p>
       {{else}}
@@ -101,6 +97,7 @@
               <th title="The character offering the item for sale.">Actor</th>
               <th title="The item the player is attempting to sell.">Item</th>
               <th title="The proposed credit value. Items without a base price cannot be automatically valued.">Requested Value</th>
+              <th title="Resolve the pending sale through TransactionEngine.">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -115,6 +112,11 @@
                   {{else}}
                     <span class="no-price">No base price</span>
                   {{/if}}
+                </td>
+                <td>
+                  <button class="action-btn swse-ui-button" data-action="accept-pending" data-index="{{@index}}">Approve</button>
+                  <button class="action-btn swse-ui-button" data-action="set-amount-pending" data-index="{{@index}}">Set Amount</button>
+                  <button class="action-btn swse-ui-button danger" data-action="deny-pending" data-index="{{@index}}">Deny</button>
                 </td>
               </tr>
             {{/each}}

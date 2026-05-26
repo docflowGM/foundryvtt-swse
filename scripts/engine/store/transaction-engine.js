@@ -64,6 +64,12 @@ export class TransactionEngine {
     'store-rollback-reconciliation'
   ]);
 
+  static _allowedSaleContexts = new Set([
+    'store-sale',
+    'store-sale-approval',
+    'store-haggle-sale'
+  ]);
+
   /**
    * Read TransactionEngine audit entries from one actor.
    *
@@ -145,7 +151,7 @@ export class TransactionEngine {
     const key = String(context || '').toLowerCase();
     if (key.includes('refund') || key.includes('grant')) return 'Refund';
     if (key.includes('rollback') || key.includes('correction') || key.includes('adjustment')) return 'Correction';
-    if (key.includes('sell')) return 'Sell';
+    if (key.includes('sell') || key.includes('sale')) return 'Sell';
     if (key.includes('custom-approval')) return 'Approval Purchase';
     if (key.includes('purchase') || Number(amount) < 0) return 'Buy';
     if (Number(amount) > 0) return 'Credit';
@@ -472,6 +478,179 @@ export class TransactionEngine {
             success: false,
             transactionId,
             error: `Credit adjustment failed and rollback failed: ${error.message}`
+          };
+        }
+      }
+
+      return { success: false, transactionId, error: error.message };
+    } finally {
+      this._mutationLocks.delete(lockKey);
+    }
+  }
+
+  /**
+   * Execute a player item sale through the TransactionEngine.
+   *
+   * Store/selling UI calls this as the public commerce boundary. ActorEngine
+   * remains underneath it as the atomic mutation executor, so deleting the sold
+   * owned item and granting credits succeed or fail together.
+   */
+  static async executeSaleTransaction(context = {}, options = {}) {
+    const {
+      actor,
+      itemId,
+      salePrice = 0,
+      reason = '',
+      transactionContext = 'store-sale',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeSaleTransaction'
+    } = options;
+
+    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!this._allowedSaleContexts.has(transactionContext)) {
+      return { success: false, transactionId, error: `Unsupported sale transaction context: ${transactionContext}` };
+    }
+
+    if (!actor) return { success: false, transactionId, error: 'No actor provided' };
+
+    const freshActor = game?.actors?.get?.(actor.id) || actor;
+    if (!freshActor) return { success: false, transactionId, error: 'Actor no longer exists' };
+    if (freshActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient permissions for transaction' };
+
+    const ownedItemId = String(itemId || '').trim();
+    if (!ownedItemId) return { success: false, transactionId, error: 'No owned item id provided' };
+
+    const ownedItem = freshActor.items?.get?.(ownedItemId);
+    if (!ownedItem) return { success: false, transactionId, error: 'Sold item is no longer owned by this actor' };
+
+    const normalizedSalePrice = normalizeCredits(salePrice);
+    if (!Number.isFinite(normalizedSalePrice) || normalizedSalePrice <= 0) {
+      return { success: false, transactionId, error: 'Sale price must be greater than zero credits' };
+    }
+
+    const lockKey = `${freshActor.id}:${transactionContext}:sale:${ownedItemId}`;
+    if (this._mutationLocks.has(lockKey)) {
+      return { success: false, transactionId, error: 'Sale transaction already in progress' };
+    }
+
+    this._mutationLocks.add(lockKey);
+
+    let snapshotId = null;
+    try {
+      const creditsBefore = LedgerService.getCurrentCredits(freshActor);
+      const creditsAfter = normalizeCredits(creditsBefore + normalizedSalePrice);
+      const itemData = ownedItem.toObject?.() || globalThis.foundry?.utils?.deepClone?.(ownedItem) || { id: ownedItem.id, name: ownedItem.name, type: ownedItem.type };
+      const itemName = ownedItem.name || audit.itemName || 'Sold item';
+
+      const saleRecord = {
+        id: transactionId,
+        context: transactionContext,
+        type: 'Sell',
+        status: 'Success',
+        cost: normalizedSalePrice,
+        amount: normalizedSalePrice,
+        creditsBefore,
+        creditsAfter,
+        createdAt: Date.now(),
+        actorId: freshActor.id,
+        actorName: freshActor.name,
+        userId: game?.user?.id ?? null,
+        userName: game?.user?.name ?? null,
+        reason,
+        source,
+        itemName,
+        audit: {
+          ...audit,
+          reason,
+          creditsBefore,
+          creditsAfter,
+          itemName,
+          itemCount: 1,
+          items: [{
+            id: ownedItem.id,
+            itemId: ownedItem.id,
+            name: itemName,
+            type: ownedItem.type,
+            quantity: 1,
+            salePrice: normalizedSalePrice,
+            itemData
+          }]
+        }
+      };
+
+      const mutationPlan = mergeMutationPlans(
+        { delete: { items: [ownedItem.id] } },
+        {
+          set: {
+            'system.credits': creditsAfter,
+            [`flags.foundryvtt-swse.transactions.${transactionId}`]: saleRecord
+          }
+        }
+      );
+
+      try {
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        snapshotId = await SnapshotManager.createSnapshot(
+          freshActor,
+          `${transactionContext} sale (${normalizedSalePrice} credits)`
+        );
+      } catch (snapshotError) {
+        swseLogger.warn('TransactionEngine: Sale snapshot failed; continuing without rollback snapshot', {
+          transactionId,
+          context: transactionContext,
+          error: snapshotError.message
+        });
+      }
+
+      await ActorEngine.applyMutationPlan(freshActor, mutationPlan, {
+        validate,
+        rederive,
+        source: `${source}.${transactionContext}`
+      });
+
+      const normalized = this.#normalizeTransactionRecord(freshActor, saleRecord);
+      Hooks.callAll?.('swseStoreSaleComplete', {
+        transaction: normalized,
+        actor: freshActor,
+        itemData,
+        salePrice: normalizedSalePrice,
+        success: true
+      });
+
+      swseLogger.info('TransactionEngine: Sale transaction complete', {
+        transactionId,
+        context: transactionContext,
+        actor: freshActor.id,
+        item: itemName,
+        salePrice: normalizedSalePrice
+      });
+
+      return { success: true, transactionId, error: null, creditsBefore, creditsAfter, amount: normalizedSalePrice };
+    } catch (error) {
+      swseLogger.error('TransactionEngine: Sale transaction failed', {
+        transactionId,
+        context: transactionContext,
+        actor: freshActor?.id,
+        itemId: ownedItemId,
+        error: error.message
+      });
+
+      if (snapshotId) {
+        try {
+          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          swseLogger.info('TransactionEngine: Sale rollback successful', { transactionId, snapshotId });
+        } catch (rollbackError) {
+          return {
+            success: false,
+            transactionId,
+            error: `Sale failed and rollback failed: ${error.message}`
           };
         }
       }

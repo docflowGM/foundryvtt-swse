@@ -907,12 +907,57 @@
                 </div>
               </header>
               {{#if pendingSales.length}}
-                <div class="gm-store-approval-list">
+                <div class="gm-store-approval-list gm-store-sale-request-list">
                   {{#each pendingSales}}
-                    <div class="gm-store-approval-card">
-                      <strong>{{this.item}}</strong>
-                      <span>{{this.actor}}</span>
-                      <em>{{#if this.value}}{{this.value}} cr{{else}}No base price{{/if}}</em>
+                    <div class="gm-store-approval-card gm-store-sale-request-card" data-sale-request-id="{{this.id}}">
+                      <div class="gm-store-sale-request-main">
+                        <div>
+                          <span class="gm-command-eyebrow">{{this.type}} REQUEST</span>
+                          <strong>{{this.item}}</strong>
+                          <span>{{this.actor}} · {{this.submittedDisplay}}</span>
+                        </div>
+                        <span class="gm-store-status-chip {{#if this.warning}}warn{{/if}}">{{#if this.warning}}Needs Review{{else}}Pending{{/if}}</span>
+                      </div>
+
+                      <div class="gm-store-sale-request-grid">
+                        <div>
+                          <span>Base Price</span>
+                          <strong>{{this.basePriceDisplay}}</strong>
+                        </div>
+                        <div>
+                          <span>Suggested Offer</span>
+                          <strong>{{this.suggestedPriceDisplay}}</strong>
+                        </div>
+                        <div>
+                          <span>Requested / Default</span>
+                          <strong>{{this.requestedPriceDisplay}}</strong>
+                        </div>
+                      </div>
+
+                      {{#if this.warning}}
+                        <p class="gm-store-warning gm-store-sale-warning">{{this.warning}}</p>
+                      {{/if}}
+
+                      <div class="gm-store-sale-controls">
+                        <label>
+                          <span>GM Amount</span>
+                          <input type="number" min="0" step="1" class="swse-ui-input" data-sale-custom-amount value="{{#if this.defaultAmount}}{{this.defaultAmount}}{{/if}}" placeholder="Set offer">
+                        </label>
+                        <label>
+                          <span>GM Note / Denial Reason</span>
+                          <textarea class="swse-ui-input" data-sale-reason rows="2" placeholder="Optional note for approval; denial reason if denied."></textarea>
+                        </label>
+                      </div>
+
+                      <div class="gm-store-sale-actions">
+                        {{#if this.canApprove}}
+                          <button type="button" class="swse-ui-button" data-action="approve-sale-request" data-request-id="{{this.id}}" data-default-amount="{{this.defaultAmount}}">Approve Suggested</button>
+                        {{else}}
+                          <button type="button" class="swse-ui-button" data-action="approve-sale-request" data-request-id="{{this.id}}">Approve Amount</button>
+                        {{/if}}
+                        <button type="button" class="swse-ui-button secondary" data-action="counteroffer-sale-request" data-request-id="{{this.id}}">Approve Custom Amount</button>
+                        <button type="button" class="swse-ui-button danger" data-action="deny-sale-request" data-request-id="{{this.id}}">Deny</button>
+                      </div>
                     </div>
                   {{/each}}
                 </div>

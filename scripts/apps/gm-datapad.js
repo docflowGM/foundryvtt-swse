@@ -524,10 +524,51 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Load pending sales
+   * Load pending sales/haggles from the Store Control request queue.
    */
   async _loadStorePendingSales() {
-    this.pendingSales = SettingsHelper.getArray('pendingSales', []);
+    const pendingSales = SettingsHelper.getArray('pendingSales', []);
+    this.pendingSales = pendingSales
+      .filter(request => request && request.status !== 'Resolved' && request.status !== 'Denied')
+      .map((request, index) => this._formatPendingSaleRequest(request, index));
+  }
+
+  _formatPendingSaleRequest(request, index = 0) {
+    const actor = game.actors.get(request.actorId);
+    const ownedItem = actor?.items?.get?.(request.itemId);
+    const basePrice = request.basePrice ?? request.itemData?.system?.price ?? null;
+    const suggestedPrice = request.suggestedPrice ?? request.value ?? null;
+    const requestedPrice = request.requestedPrice ?? suggestedPrice;
+    const defaultAmount = normalizeCredits(requestedPrice ?? suggestedPrice ?? 0);
+    const submittedAt = request.requestedAt ?? request.timestamp ?? Date.now();
+
+    return {
+      ...request,
+      index,
+      id: request.id || `legacy-sale-${index}`,
+      actor: actor?.name || request.actor || 'Unknown Actor',
+      actorMissing: !actor,
+      item: ownedItem?.name || request.item || request.itemData?.name || 'Unknown Item',
+      itemMissing: !!actor && !ownedItem,
+      basePrice,
+      suggestedPrice,
+      requestedPrice,
+      defaultAmount,
+      basePriceDisplay: Number.isFinite(Number(basePrice)) ? `${normalizeCredits(basePrice).toLocaleString()} cr` : 'No base price',
+      suggestedPriceDisplay: Number.isFinite(Number(suggestedPrice)) ? `${normalizeCredits(suggestedPrice).toLocaleString()} cr` : 'GM sets offer',
+      requestedPriceDisplay: Number.isFinite(Number(requestedPrice)) ? `${normalizeCredits(requestedPrice).toLocaleString()} cr` : 'GM sets offer',
+      submittedAt,
+      submittedDisplay: new Date(submittedAt).toLocaleString(),
+      canApprove: !!actor && !!ownedItem && defaultAmount > 0,
+      needsAmount: !(defaultAmount > 0),
+      warning: !actor
+        ? 'Actor no longer exists.'
+        : !ownedItem
+          ? 'Item is no longer owned by the actor.'
+          : request.noBasePrice
+            ? 'No base price was defined. GM must set a sale amount.'
+            : ''
+    };
   }
 
   /**
@@ -959,6 +1000,130 @@ export class GMDatapad extends BaseSWSEAppV2 {
         this._filterStoreInventoryRows(pageElement);
       });
     }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="approve-sale-request"], [data-action="counteroffer-sale-request"], [data-action="deny-sale-request"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const action = ev.currentTarget.dataset.action;
+        const requestId = ev.currentTarget.dataset.requestId;
+        const card = ev.currentTarget.closest('[data-sale-request-id]');
+        const amountField = card?.querySelector('[data-sale-custom-amount]');
+        const reasonField = card?.querySelector('[data-sale-reason]');
+        const reason = String(reasonField?.value ?? '').trim();
+        let amount = null;
+
+        if (action === 'approve-sale-request') {
+          const defaultAmount = ev.currentTarget.dataset.defaultAmount;
+          amount = defaultAmount ? normalizeCredits(defaultAmount) : normalizeCredits(amountField?.value ?? 0);
+        } else if (action === 'counteroffer-sale-request') {
+          amount = normalizeCredits(amountField?.value ?? 0);
+          if (!(amount > 0)) {
+            ui?.notifications?.warn?.('Enter a custom sale amount before approving a counteroffer.');
+            return;
+          }
+        }
+
+        await this._resolvePendingSaleRequest(requestId, {
+          decision: action === 'deny-sale-request' ? 'deny' : (action === 'counteroffer-sale-request' ? 'counteroffer' : 'approve'),
+          amount,
+          reason
+        });
+      });
+    }
+  }
+
+  async _resolvePendingSaleRequest(requestId, options = {}) {
+    const { decision = 'approve', amount = null, reason = '' } = options;
+    const pendingSales = SettingsHelper.getArray('pendingSales', []);
+    const index = pendingSales.findIndex(request => String(request?.id || '') === String(requestId || ''));
+
+    if (index < 0) {
+      ui?.notifications?.error?.('Pending sale request not found.');
+      return;
+    }
+
+    const request = pendingSales[index];
+    const actor = game.actors.get(request.actorId);
+
+    if (decision === 'deny') {
+      pendingSales.splice(index, 1);
+      await SettingsHelper.set('pendingSales', pendingSales);
+      Hooks.callAll?.('swseStoreSaleDenied', {
+        request,
+        actor,
+        decidedBy: game.user?.name ?? 'GM',
+        reason
+      });
+      ui?.notifications?.info?.(`Denied sale request: ${request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
+      await this.render(false);
+      return;
+    }
+
+    if (!actor) {
+      ui?.notifications?.error?.('Cannot approve sale: actor no longer exists.');
+      return;
+    }
+
+    const salePrice = normalizeCredits(amount ?? request.requestedPrice ?? request.suggestedPrice ?? request.value ?? 0);
+    if (!(salePrice > 0)) {
+      ui?.notifications?.warn?.('Sale approval requires a credit amount greater than zero.');
+      return;
+    }
+
+    const item = actor.items?.get?.(request.itemId);
+    if (!item) {
+      ui?.notifications?.error?.('Cannot approve sale: item is no longer owned by this actor.');
+      return;
+    }
+
+    const result = await TransactionEngine.executeSaleTransaction({
+      actor,
+      itemId: request.itemId,
+      salePrice,
+      reason: reason || (decision === 'counteroffer' ? 'GM counteroffer approved' : 'GM approved store sale'),
+      transactionContext: decision === 'counteroffer' ? 'store-haggle-sale' : 'store-sale-approval',
+      audit: {
+        requestId: request.id,
+        requestType: request.type || 'sale',
+        itemName: item.name || request.item,
+        itemNames: [item.name || request.item].filter(Boolean),
+        itemCount: 1,
+        basePrice: request.basePrice ?? request.itemData?.system?.price ?? null,
+        suggestedPrice: request.suggestedPrice ?? request.value ?? null,
+        requestedPrice: request.requestedPrice ?? request.value ?? null,
+        approvedPrice: salePrice,
+        approvalMode: decision,
+        approvedBy: game.user?.id ?? null,
+        approvedByName: game.user?.name ?? 'GM',
+        gmReason: reason,
+        source: 'GM Store Control Approvals'
+      }
+    }, {
+      validate: true,
+      rederive: true,
+      source: 'GMDatapad._resolvePendingSaleRequest'
+    });
+
+    if (!result.success) {
+      ui?.notifications?.error?.(`Failed to approve sale: ${result.error}`);
+      return;
+    }
+
+    pendingSales.splice(index, 1);
+    await SettingsHelper.set('pendingSales', pendingSales);
+
+    Hooks.callAll?.('swseStoreSaleApproved', {
+      request,
+      actor,
+      itemData: request.itemData,
+      salePrice,
+      decision,
+      reason,
+      transactionId: result.transactionId,
+      decidedBy: game.user?.name ?? 'GM'
+    });
+
+    ui?.notifications?.info?.(`Approved sale: ${request.item || item.name} for ${salePrice.toLocaleString()} credits.`);
+    await this.render(false);
   }
 
   _activateStoreTab(pageElement, tabId) {

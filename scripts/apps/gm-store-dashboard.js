@@ -361,9 +361,72 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
   }
 
   async _resolvePendingSale(index, action, customAmount = null) {
-    // Pending sale resolution is not yet implemented
-    ui.notifications.error('Pending sale resolution is not yet implemented. Please contact the development team.');
-    SWSELogger.warn('[GM Store Dashboard] Attempted to resolve pending sale but feature is not implemented');
+    const pendingSales = SettingsHelper.getArray('pendingSales', []);
+    const request = pendingSales[index];
+    if (!request) {
+      ui.notifications.error('Pending sale request not found.');
+      return;
+    }
+
+    if (action === 'deny') {
+      pendingSales.splice(index, 1);
+      await SettingsHelper.set('pendingSales', pendingSales);
+      const actor = game.actors.get(request.actorId);
+      Hooks.callAll?.('swseStoreSaleDenied', {
+        request,
+        actor,
+        decidedBy: game.user?.name ?? 'GM',
+        reason: 'Denied from legacy GM Store Dashboard'
+      });
+      this.render();
+      return;
+    }
+
+    const actor = game.actors.get(request.actorId);
+    const item = actor?.items?.get?.(request.itemId);
+    if (!actor || !item) {
+      ui.notifications.error('Cannot approve sale: actor or owned item no longer exists.');
+      return;
+    }
+
+    const salePrice = normalizeCredits(customAmount ?? request.requestedPrice ?? request.suggestedPrice ?? request.value ?? 0);
+    if (!(salePrice > 0)) {
+      ui.notifications.warn('Sale approval requires a credit amount greater than zero.');
+      return;
+    }
+
+    const result = await TransactionEngine.executeSaleTransaction({
+      actor,
+      itemId: request.itemId,
+      salePrice,
+      reason: action === 'accept' ? 'GM approved store sale' : 'GM counteroffer approved',
+      transactionContext: action === 'accept' ? 'store-sale-approval' : 'store-haggle-sale',
+      audit: {
+        requestId: request.id,
+        itemName: item.name || request.item,
+        itemNames: [item.name || request.item].filter(Boolean),
+        itemCount: 1,
+        basePrice: request.basePrice ?? request.itemData?.system?.price ?? null,
+        suggestedPrice: request.suggestedPrice ?? request.value ?? null,
+        approvedPrice: salePrice,
+        approvalMode: action,
+        source: 'Legacy GM Store Dashboard'
+      }
+    }, {
+      validate: true,
+      rederive: true,
+      source: 'GMStoreDashboard._resolvePendingSale'
+    });
+
+    if (!result.success) {
+      ui.notifications.error(`Failed to approve sale: ${result.error}`);
+      return;
+    }
+
+    pendingSales.splice(index, 1);
+    await SettingsHelper.set('pendingSales', pendingSales);
+    ui.notifications.info(`Approved sale of ${item.name} for ${salePrice.toLocaleString()} credits.`);
+    this.render();
   }
 
   /**
