@@ -52,6 +52,15 @@ export function ShellHostMixin(BaseClass) {
     /** @type {Set<string>} Thread ids currently being auto-marked read. */
     _holonetReadSyncInFlight = new Set();
 
+    /** @type {number|null} Debounce handle for Holonet-driven shell rerenders. */
+    _holonetRenderDebounce = null;
+
+    /** @type {object|null} Captured Messenger UI state restored after rerender. */
+    _pendingMessengerUiState = null;
+
+    /** @type {boolean} Prevents double-render storms when Messenger action handlers already scheduled a refresh. */
+    _messengerActionRefreshQueued = false;
+
     // ─── Accessors ──────────────────────────────────────────────────────────────
 
     get shellSurface() { return this._shellSurface; }
@@ -226,10 +235,10 @@ export function ShellHostMixin(BaseClass) {
       }
 
       if (this._holonetSyncHookId == null) {
-        this._holonetSyncHookId = Hooks.on('swseHolonetUpdated', () => {
+        this._holonetSyncHookId = Hooks.on('swseHolonetUpdated', (syncData = {}) => {
           if (!this.rendered) return;
           if (this._shellSurface === 'home' || this._shellSurface === 'messenger') {
-            this.render(false);
+            this._scheduleHolonetSurfaceRender(syncData);
           }
         });
       }
@@ -478,6 +487,119 @@ export function ShellHostMixin(BaseClass) {
       });
     }
 
+    _captureMessengerUiState(root = this.element, overrides = {}) {
+      const messengerRoot = root?.querySelector?.('[data-shell-region="surface-messenger"]');
+      if (!messengerRoot) return { ...overrides };
+
+      const active = document.activeElement;
+      const activeState = active && messengerRoot.contains(active) ? {
+        selector: active.name
+          ? `${active.tagName.toLowerCase()}[name="${globalThis.CSS?.escape ? globalThis.CSS.escape(active.name) : active.name}"]`
+          : null,
+        value: active.value ?? null,
+        selectionStart: Number.isInteger(active.selectionStart) ? active.selectionStart : null,
+        selectionEnd: Number.isInteger(active.selectionEnd) ? active.selectionEnd : null
+      } : null;
+
+      const conversation = messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]');
+      const messageScrollTop = conversation?.scrollTop ?? 0;
+      const messageAtBottom = conversation
+        ? (conversation.scrollHeight - conversation.clientHeight - conversation.scrollTop) <= 36
+        : false;
+
+      return {
+        threadId: conversation?.dataset.threadId || this._shellSurfaceOptions?.threadId || null,
+        threadListScrollTop: messengerRoot.querySelector('.hl-tlist-scroll')?.scrollTop ?? 0,
+        messageScrollTop,
+        messageAtBottom,
+        infoScrollTop: messengerRoot.querySelector('.hl-info-panel')?.scrollTop ?? 0,
+        composeScrollTop: messengerRoot.querySelector('.hl-compose-scroll')?.scrollTop ?? 0,
+        activeState,
+        ...overrides
+      };
+    }
+
+    _restoreMessengerUiState(root = this.element) {
+      const state = this._pendingMessengerUiState;
+      if (!state) return;
+      const messengerRoot = root?.querySelector?.('[data-shell-region="surface-messenger"]');
+      if (!messengerRoot) return;
+
+      window.requestAnimationFrame?.(() => {
+        const threadList = messengerRoot.querySelector('.hl-tlist-scroll');
+        if (threadList && Number.isFinite(state.threadListScrollTop)) threadList.scrollTop = state.threadListScrollTop;
+
+        const info = messengerRoot.querySelector('.hl-info-panel');
+        if (info && Number.isFinite(state.infoScrollTop)) info.scrollTop = state.infoScrollTop;
+
+        const compose = messengerRoot.querySelector('.hl-compose-scroll');
+        if (compose && Number.isFinite(state.composeScrollTop)) compose.scrollTop = state.composeScrollTop;
+
+        const conversation = messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]');
+        if (conversation) {
+          if (state.scrollToBottom || state.messageAtBottom) conversation.scrollTop = conversation.scrollHeight;
+          else if (Number.isFinite(state.messageScrollTop)) conversation.scrollTop = state.messageScrollTop;
+        }
+
+        const activeState = state.activeState;
+        if (activeState?.selector && activeState.value != null) {
+          const field = messengerRoot.querySelector(activeState.selector);
+          if (field && !field.disabled) {
+            field.value = activeState.value;
+            field.focus?.({ preventScroll: true });
+            if (Number.isInteger(activeState.selectionStart) && field.setSelectionRange) {
+              field.setSelectionRange(activeState.selectionStart, activeState.selectionEnd ?? activeState.selectionStart);
+            }
+          }
+        }
+        this._pendingMessengerUiState = null;
+      });
+    }
+
+    _scheduleHolonetSurfaceRender(syncData = {}) {
+      if (!this.rendered) return;
+      const isMessenger = this._shellSurface === 'messenger';
+      if (isMessenger && this._messengerActionRefreshQueued) return;
+
+      if (isMessenger) {
+        const currentState = this._captureMessengerUiState(this.element, {
+          scrollToBottom: Boolean(syncData?.messageId && syncData?.threadId && this._shellSurfaceOptions?.threadId === syncData.threadId)
+        });
+        if (syncData?.threadId && !this._shellSurfaceOptions?.threadId && currentState.threadId === syncData.threadId) {
+          this._shellSurfaceOptions = { ...this._shellSurfaceOptions, threadId: syncData.threadId, source: 'messenger' };
+        }
+        this._pendingMessengerUiState = currentState;
+      }
+
+      if (this._holonetRenderDebounce) window.clearTimeout(this._holonetRenderDebounce);
+      this._holonetRenderDebounce = window.setTimeout(() => {
+        this._holonetRenderDebounce = null;
+        if (this.rendered) this.render(false);
+      }, isMessenger ? 90 : 120);
+    }
+
+    async _refreshMessengerSurface(options = {}) {
+      const threadId = options.threadId || this._shellSurfaceOptions?.threadId || null;
+      this._messengerActionRefreshQueued = true;
+      this._pendingMessengerUiState = this._captureMessengerUiState(this.element, {
+        threadId,
+        scrollToBottom: Boolean(options.scrollToBottom)
+      });
+      this._shellSurface = 'messenger';
+      this._shellSurfaceOptions = {
+        ...this._shellSurfaceOptions,
+        source: 'messenger',
+        ...(threadId ? { threadId } : {}),
+        ...(options.compose != null ? { compose: options.compose } : {})
+      };
+      if (this._holonetRenderDebounce) {
+        window.clearTimeout(this._holonetRenderDebounce);
+        this._holonetRenderDebounce = null;
+      }
+      this.render(false);
+      window.setTimeout(() => { this._messengerActionRefreshQueued = false; }, 150);
+    }
+
     async _wireMessengerSurfaceEvents(root) {
       const messengerRoot = root.querySelector('[data-shell-region="surface-messenger"]');
       if (!messengerRoot) return;
@@ -499,7 +621,7 @@ export function ShellHostMixin(BaseClass) {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
           await this.setSurface('messenger', { compose: true, source: 'messenger' });
-          this.render(false);
+          await this._refreshMessengerSurface({ compose: true });
         });
       });
 
@@ -509,9 +631,8 @@ export function ShellHostMixin(BaseClass) {
           ev.stopPropagation();
           const recipientId = el.dataset.recipientId;
           if (!recipientId) return;
-          await HolonetMessengerService.quickStartThread({ actor, recipientId });
-          await this.setSurface('messenger', { source: 'messenger' });
-          this.render(false);
+          const result = await HolonetMessengerService.quickStartThread({ actor, recipientId });
+          await this._refreshMessengerSurface({ threadId: result?.threadId ?? this._shellSurfaceOptions?.threadId ?? null, compose: false, scrollToBottom: true });
         });
       });
 
@@ -521,7 +642,7 @@ export function ShellHostMixin(BaseClass) {
           const threadId = ev.currentTarget.dataset.threadId;
           if (!threadId) return;
           await this.setSurface('messenger', { threadId, source: 'messenger' });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false });
         });
       });
 
@@ -536,9 +657,9 @@ export function ShellHostMixin(BaseClass) {
           if (!body && !imageUrl && !attachments.length) return;
           const threadId = form.dataset.threadId || null;
           const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-          await HolonetMessengerService.sendMessage({ actor, body, imageUrl, threadId, recipientIds, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
+          const result = await HolonetMessengerService.sendMessage({ actor, body, imageUrl, threadId, recipientIds, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
           form.reset();
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId: result?.threadId ?? threadId, compose: false, scrollToBottom: true });
         });
       });
 
@@ -553,10 +674,9 @@ export function ShellHostMixin(BaseClass) {
           const title = String(data.get('title') || '').trim();
           const threadType = String(data.get('threadType') || 'private');
           const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-          await HolonetMessengerService.createThread({ actor, body, title, threadType, recipientIds, imageUrl, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
+          const result = await HolonetMessengerService.createThread({ actor, body, title, threadType, recipientIds, imageUrl, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
           form.reset();
-          await this.setSurface('messenger', { source: 'messenger' });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId: result?.threadId ?? null, compose: false, scrollToBottom: true });
         });
       });
 
@@ -573,10 +693,9 @@ export function ShellHostMixin(BaseClass) {
           const rewardItemUuids = data.getAll('rewardItemUuids').map(String).filter(Boolean);
           const attachments = this._collectHolonetAttachments(form);
           const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-          await HolonetMessengerService.createJobPosting({ actor, title, body, contactRecipientId, recipientIds, rewardCredits, rewardItems, rewardItemUuids, attachments });
+          const result = await HolonetMessengerService.createJobPosting({ actor, title, body, contactRecipientId, recipientIds, rewardCredits, rewardItems, rewardItemUuids, attachments });
           form.reset();
-          await this.setSurface('messenger', { source: 'messenger' });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId: result?.threadId ?? null, compose: false, scrollToBottom: true });
         });
       });
 
@@ -592,7 +711,7 @@ export function ShellHostMixin(BaseClass) {
           const status = el.dataset.status || null;
           if (!threadId || !action) return;
           await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, recordId, amount, status });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer'].includes(action) });
         });
       });
 
@@ -607,7 +726,7 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId || !recipientIds.length) return;
           await HolonetMessengerService.threadAction({ actor, threadId, action, recipientIds });
           form.reset();
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false });
         });
       });
 
@@ -628,7 +747,7 @@ export function ShellHostMixin(BaseClass) {
             await HolonetMessengerService.offerCreditTransfer({ actor, threadId, recipientId, amount });
           }
           form.reset();
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
         });
       });
 
@@ -644,7 +763,7 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId || !Number.isFinite(amount) || amount <= 0) return;
           await HolonetMessengerService.threadAction({ actor, threadId, action, amount, recipientId });
           form.reset();
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
         });
       });
 
@@ -660,7 +779,7 @@ export function ShellHostMixin(BaseClass) {
             status: String(data.get('status') || '').trim(),
             visibility: String(data.get('visibility') || 'party')
           });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null });
         });
       });
 
@@ -675,7 +794,7 @@ export function ShellHostMixin(BaseClass) {
             notes: String(data.get('notes') || '').trim()
           });
           form.reset();
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
         });
       });
 
@@ -691,7 +810,7 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId || !recipientId || !itemUuids.length) return;
           await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, itemUuids });
           form.reset();
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
         });
       });
 
@@ -704,7 +823,7 @@ export function ShellHostMixin(BaseClass) {
           const status = String(data.get('status') || '').trim();
           if (!threadId || !status) return;
           await HolonetMessengerService.threadAction({ actor, threadId, action: 'set-job-status', status });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
         });
       });
 
@@ -718,7 +837,7 @@ export function ShellHostMixin(BaseClass) {
           const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
           if (!threadId || !recipientId) return;
           await HolonetMessengerService.threadAction({ actor, threadId, action: 'award-job-items', recipientId, itemUuids });
-          this.render(false);
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
         });
       });
 
@@ -726,6 +845,7 @@ export function ShellHostMixin(BaseClass) {
         input.addEventListener('change', () => this._syncMessengerThreadTypeCards(messengerRoot));
       });
       this._syncMessengerThreadTypeCards(messengerRoot);
+      this._restoreMessengerUiState(root);
 
       if (unreadThreadId) {
         this._queueMessengerThreadRead(unreadThreadId, HolonetMessengerService);
@@ -747,7 +867,7 @@ export function ShellHostMixin(BaseClass) {
           await HolonetMessengerService.markThreadRead(threadId);
           if (game.user?.isGM && this.rendered && this._shellSurface === 'messenger') {
             const selectedThreadId = this._shellSurfaceOptions?.threadId || threadId;
-            if (selectedThreadId === threadId) this.render(false);
+            if (selectedThreadId === threadId) await this._refreshMessengerSurface({ threadId });
           }
         } catch (err) {
           SWSELogger.warn('[ShellHost] Failed to mark Messenger thread read:', err);

@@ -86,33 +86,30 @@ export class HolonetSocketService {
         break;
       }
       case 'send-message': {
-        const result = await HolonetMessengerService._gmSendMessage(data);
-        this.emitSync({ type: 'message-sent', threadId: result?.threadId ?? null });
+        // Messenger service publishes a single thread-updated sync after its
+        // record/thread envelope commits. Do not emit a second socket event here;
+        // duplicate syncs caused full shell repaint storms on the sending client.
+        await HolonetMessengerService._gmSendMessage(data);
         break;
       }
       case 'create-thread': {
-        const result = await HolonetMessengerService._gmCreateThread(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? null });
+        await HolonetMessengerService._gmCreateThread(data);
         break;
       }
       case 'create-job': {
-        const result = await HolonetMessengerService._gmCreateJobPosting(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? null });
+        await HolonetMessengerService._gmCreateJobPosting(data);
         break;
       }
       case 'offer-credit-transfer': {
-        const result = await HolonetMessengerService._gmOfferCreditTransfer(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? data?.threadId ?? null });
+        await HolonetMessengerService._gmOfferCreditTransfer(data);
         break;
       }
       case 'offer-item-transfer': {
-        const result = await HolonetMessengerService._gmOfferItemTransfer(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? data?.threadId ?? null });
+        await HolonetMessengerService._gmOfferItemTransfer(data);
         break;
       }
       case 'thread-action': {
         await HolonetMessengerService._gmThreadAction(data);
-        this.emitSync({ type: 'thread-updated', threadId: data?.threadId ?? null });
         break;
       }
       case 'mark-thread-read': {

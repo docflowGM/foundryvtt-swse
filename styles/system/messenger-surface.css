@@ -702,3 +702,68 @@
   border-color: rgba(255,220,120,.22);
   background: linear-gradient(135deg, rgba(255,220,120,.08), rgba(0,0,0,.25));
 }
+
+/* Messenger shell stability hardening: the Messenger surface owns its internal
+   scroll containers. The outer shell body must not compete for scroll, or clicks
+   and wheel events can be swallowed by the sheet/surface wrapper. */
+.swse-shell-surface--messenger {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .swse-shell-surface__body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .swse-messenger-body,
+.swse-shell-surface--messenger .hl-ms-root,
+.swse-shell-surface--messenger .hl-tlist,
+.swse-shell-surface--messenger .hl-conv,
+.swse-shell-surface--messenger .hl-compose-shell,
+.swse-shell-surface--messenger .hl-chat-layout,
+.swse-shell-surface--messenger .hl-chat-column,
+.swse-shell-surface--messenger .hl-info-panel {
+  min-height: 0;
+}
+
+.swse-shell-surface--messenger .hl-ms-root {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.swse-shell-surface--messenger .hl-conv {
+  height: 100%;
+}
+
+.swse-shell-surface--messenger .hl-chat-layout {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+}
+
+.swse-shell-surface--messenger .hl-chat-column {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .hl-messages,
+.swse-shell-surface--messenger .hl-tlist-scroll,
+.swse-shell-surface--messenger .hl-compose-scroll,
+.swse-shell-surface--messenger .hl-info-panel {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.swse-shell-surface--messenger button,
+.swse-shell-surface--messenger input,
+.swse-shell-surface--messenger textarea,
+.swse-shell-surface--messenger select,
+.swse-shell-surface--messenger label,
+.swse-shell-surface--messenger [data-holonet-action],
+.swse-shell-surface--messenger [data-holonet-drop-zone] {
+  pointer-events: auto;
+}

@@ -829,10 +829,9 @@ export class HolonetMessengerService {
     };
     if (!game.user?.isGM) {
       HolonetSocketService.emitRequest('send-message', payload);
-      return true;
+      return { pending: true, threadId: payload.threadId ?? null };
     }
-    await this._gmSendMessage(payload);
-    return true;
+    return this._gmSendMessage(payload);
   }
 
   static async createThread({ actor, body = '', title = '', threadType = THREAD_TYPE.PRIVATE, recipientIds = [], imageUrl = '', attachments = [], senderRecipientId = null }) {
@@ -849,10 +848,9 @@ export class HolonetMessengerService {
     };
     if (!game.user?.isGM) {
       HolonetSocketService.emitRequest('create-thread', payload);
-      return true;
+      return { pending: true, threadId: null };
     }
-    await this._gmCreateThread(payload);
-    return true;
+    return this._gmCreateThread(payload);
   }
 
   static _normalizeRecipientIds(ids = []) {
@@ -1725,14 +1723,16 @@ export class HolonetMessengerService {
   static async _gmMarkThreadRead(threadId, recipientId) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
+    const changed = [];
     for (const messageId of thread.messageIds ?? []) {
       const message = await HolonetStorage.getRecord(messageId);
       if (!message) continue;
       if (message.isUnreadBy(recipientId)) {
         message.markRead(recipientId);
-        await HolonetStorage.saveRecord(message);
+        changed.push(message);
       }
     }
+    if (changed.length) await HolonetStorage.saveRecords(changed);
     return true;
   }
 
