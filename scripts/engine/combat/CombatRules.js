@@ -92,7 +92,17 @@ export class CombatRules {
    */
 
   static getDeathSystem() {
-    return HouseRuleService.getString('deathSystem', 'standard');
+    // deathSystem is stored as an Object {system, strikesUntilDeath, ...}.
+    // Migrated from String to Object; fall back to 'standard' for old string values.
+    const val = HouseRuleService.getSafe('deathSystem', { system: 'standard' });
+    if (typeof val === 'string') return val;
+    return val?.system ?? 'standard';
+  }
+
+  static getDeathSystemConfig() {
+    const val = HouseRuleService.getSafe('deathSystem', { system: 'standard' });
+    if (typeof val === 'string') return { system: val, strikesUntilDeath: 3, returnToHP: 0 };
+    return val;
   }
 
   static getDeathSaveDC() {

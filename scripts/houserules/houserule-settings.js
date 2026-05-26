@@ -242,16 +242,19 @@ export function registerHouseruleSettings() {
 
   register('deathSystem', {
     name: 'Death System',
-    hint: 'How death is determined in your campaign.',
+    hint: 'How death is determined in your campaign. Stored as a structured object: { system, strikesUntilDeath, returnToHP, strikeRemoval, displayStrikes, deathAtNegativeCon, massiveDamageThreshold }.',
     scope: 'world',
     config: true,
-    type: String,
-    choices: {
-      standard: 'Standard (-10 HP)',
-      threeStrikes: 'Three Strikes System',
-      negativeCon: 'Negative CON Score'
-    },
-    default: 'standard'
+    type: Object,
+    default: {
+      system: 'standard',
+      strikesUntilDeath: 3,
+      returnToHP: 0,
+      strikeRemoval: 'never',
+      displayStrikes: false,
+      deathAtNegativeCon: false,
+      massiveDamageThreshold: 0
+    }
   });
 
   register('deathSaveDC', {
@@ -1618,4 +1621,6 @@ export function registerHouseruleSettings() {
   });
 
   SWSELogger.info('SWSE | Houserule settings registered successfully.');
+  SWSELogger.debug('SWSE | Known partial settings: revivifyWindow (no enforcement logic), limitMoveObjectDamage (no force-power hook).');
+  SWSELogger.debug('SWSE | Run game.swse.houserules.audit() in the browser console for a full diagnostic.');
 }
