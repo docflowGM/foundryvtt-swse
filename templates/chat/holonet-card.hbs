@@ -1,0 +1,38 @@
+<div class="swse-holonet-card"
+     role="button"
+     tabindex="0"
+     data-swse-chat-surface="holonet"
+     data-swse-chat-card-v2="true"
+     data-priority="{{priority}}"
+     data-source="{{source}}"
+     data-holonet-record-id="{{recordId}}"
+     data-holonet-thread-id="{{threadId}}"
+     data-holonet-action="open-thread"
+     {{#if actorId}}data-actor-id="{{actorId}}"{{/if}}>
+  {{#if unread}}<span class="unread" aria-label="Unread"></span>{{/if}}
+  <div class="mast">
+    <span class="antenna" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M12 4 V12"></path>
+        <path d="M6 8 Q12 14 18 8"></path>
+        <path d="M3 5 Q12 17 21 5" opacity="0.55"></path>
+        <circle cx="12" cy="13.5" r="1.4" fill="currentColor"></circle>
+      </svg>
+    </span>
+    <span class="vlbl">{{mastLabel}}</span>
+  </div>
+  <div class="htbody">
+    <div class="htmeta">
+      <span class="pri">{{priorityLabel}}</span>
+      {{#if channelLabel}}<span class="sep"></span><span>{{channelLabel}}</span>{{/if}}
+      {{#if timeLabel}}<span class="sep"></span><span>{{timeLabel}}</span>{{/if}}
+    </div>
+    <div class="htfrom">{{senderName}}{{#if relayLabel}}<span class="relay">// {{relayLabel}}</span>{{/if}}</div>
+    <div class="htsubject">{{subject}}</div>
+    {{#if preview}}<div class="htprev">{{preview}}{{#if attachmentCount}} <span class="att">📎 <b>{{attachmentCount}}</b></span>{{/if}}</div>{{/if}}
+  </div>
+  <div class="htgo">
+    <span class="arrow">▸</span>
+    <span>{{actionLabel}}</span>
+  </div>
+</div>

@@ -296,6 +296,8 @@ export const SWSE_TEMPLATES = [
   // Chat
   'systems/foundryvtt-swse/templates/chat/progression-session-summary.hbs',
   'systems/foundryvtt-swse/templates/chat/combat-banner.hbs',
+  'systems/foundryvtt-swse/templates/chat/dialogue-card.hbs',
+  'systems/foundryvtt-swse/templates/chat/holonet-card.hbs',
 
   // Chargen Partials
   'systems/foundryvtt-swse/templates/partials/chargen/near-human.hbs',
