@@ -329,6 +329,21 @@ export function registerHouseruleSettings() {
     default: 1.0
   });
 
+
+  register('fightDefensivelyActionMode', {
+    name: 'Fight Defensively Action Mode',
+    hint: 'Controls the action cost for Fight Defensively. Default RAW uses a standard action as its own defensive action. RAI lets it ride alongside a normal attack at -5. Swift makes it a swift-action stance.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      default: 'Default RAW: standard action defensive stance',
+      rai: 'RAI: can accompany a normal attack at -5',
+      swift: 'House Rule: swift action defensive stance'
+    },
+    default: 'default'
+  });
+
   register('armoredDefenseForAll', {
     name: 'Armored Defense for All',
     hint: 'All characters can apply armor bonus to Reflex Defense.',

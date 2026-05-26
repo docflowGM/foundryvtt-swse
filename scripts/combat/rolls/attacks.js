@@ -21,6 +21,17 @@ function getTargetActorFromOptions(options = {}) {
   return options.target ?? game.user?.targets?.first?.()?.actor ?? null;
 }
 
+function hasFightingDefensivelyEffect(actor) {
+  return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
+}
+
+function getFightingDefensivelyAttackPenalty(actor, options = {}) {
+  const active = options?.fightingDefensively === true || hasFightingDefensivelyEffect(actor);
+  if (!active) return 0;
+  const preparedPenalty = Number(actor?.system?.attackPenalty ?? 0) || 0;
+  return preparedPenalty <= -5 ? 0 : -5;
+}
+
 function getTargetReflex(actor = null) {
   if (!actor) return null;
   const value = actor.system?.defenses?.reflex?.total
@@ -29,6 +40,43 @@ function getTargetReflex(actor = null) {
     ?? null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
+}
+
+function normalizeDefenseKey(value = 'reflex') {
+  const key = String(value || 'reflex').toLowerCase();
+  if (key === 'fort' || key === 'fortitude') return 'fortitude';
+  if (key === 'will') return 'will';
+  if (key === 'dc') return 'dc';
+  return 'reflex';
+}
+
+function getTargetDefense(actor = null, defenseType = 'reflex') {
+  if (!actor) return null;
+  const key = normalizeDefenseKey(defenseType);
+  if (key === 'dc') return null;
+  if (key === 'reflex') return getTargetReflex(actor);
+  const value = actor.system?.defenses?.[key]?.total
+    ?? actor.system?.derived?.defenses?.[key]?.total
+    ?? actor.system?.defenses?.[key]?.value
+    ?? null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function resolveTargetContext(options = {}, fallbackTarget = null) {
+  const ctx = options.targetContext ?? null;
+  const mode = String(ctx?.mode || '').toLowerCase();
+  if (mode === 'manual') {
+    const value = Number(ctx?.defenseValue);
+    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + Number(ctx?.coverBonus || 0) : null, mode: 'manual' };
+  }
+  if (mode === 'none') {
+    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none' };
+  }
+  const target = fallbackTarget;
+  const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
+  const base = getTargetDefense(target, defenseType);
+  return { target, targetName: target?.name ?? '', defenseType, defenseValue: base, mode: target ? 'token' : 'none' };
 }
 
 function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {
@@ -181,7 +229,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
 
-  const atkBonus = computeAttackBonus(actor, weapon, null, options);
+  const atkBonus = computeAttackBonus(actor, weapon, null, options) + getFightingDefensivelyAttackPenalty(actor, options) + Number(options.customModifier || 0) + Number(options.situationalBonus || 0);
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
@@ -191,8 +239,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     weaponId: weapon.id
   });
 
-  const target = getTargetActorFromOptions(options);
-  const targetReflex = getTargetReflex(target);
+  const resolvedTarget = resolveTargetContext(options, getTargetActorFromOptions(options));
+  const target = resolvedTarget.target;
+  const targetReflex = resolvedTarget.defenseValue;
   const isHit = targetReflex != null ? roll.total >= targetReflex : null;
   const d20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
   const isCritical = Number(d20) === 20;
@@ -209,15 +258,20 @@ export async function rollAttack(actor, weapon, options = {}) {
       weapon,
       attackRerollOptions,
       target,
-      targetName: target?.name ?? '',
-      targetDefense: 'Reflex',
+      targetName: resolvedTarget.targetName ?? target?.name ?? '',
+      targetContext: resolvedTarget,
+      targetDefense: resolvedTarget.defenseType === 'dc' ? 'DC' : resolvedTarget.defenseType === 'fortitude' ? 'Fortitude' : resolvedTarget.defenseType === 'will' ? 'Will' : 'Reflex',
       dc: targetReflex,
       passed: isHit,
       success: isHit,
       outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
       isCritical,
       critMultiplier: weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2,
-      reactionContext
+      reactionContext,
+      sourceElement: options?.sourceElement ?? null,
+      companionSource: options?.companionSource ?? null,
+      sheet: options?.sheet ?? null,
+      showRollCompanion: options?.showRollCompanion !== false
     }
   });
 
@@ -258,7 +312,7 @@ export async function rollDamage(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Damage (${formula})`,
-    context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
+    context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '', sourceElement: options?.sourceElement ?? null, companionSource: options?.companionSource ?? null, sheet: options?.sheet ?? null, showRollCompanion: options?.showRollCompanion !== false, targetContext: options?.targetContext ?? null }
   });
 
   return roll;

@@ -127,7 +127,13 @@ export async function rollSkill(actor, skillKey, options = {}) {
         customModifier: Number(options?.customModifier || 0),
         featSkillBonus: featSkillBonuses.total,
         featSkillBonuses: featSkillBonuses.bonuses,
-        rerollOptions
+        rerollOptions,
+        dc: options?.dc ?? null,
+        sourceElement: options?.sourceElement ?? null,
+        companionSource: options?.companionSource ?? null,
+        sheet: options?.sheet ?? null,
+        showRollCompanion: options?.showRollCompanion !== false,
+        targetContext: options?.targetContext ?? null
       }
     });
 

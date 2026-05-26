@@ -34,6 +34,67 @@ import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 
+
+function hasFightingDefensivelyEffect(actor) {
+  return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
+}
+
+function getFightingDefensivelyAttackPenalty(actor, options = {}) {
+  const active = options?.fightingDefensively === true || hasFightingDefensivelyEffect(actor);
+  if (!active) return 0;
+  const preparedPenalty = Number(actor?.system?.attackPenalty ?? 0) || 0;
+  return preparedPenalty <= -5 ? 0 : -5;
+}
+
+function normalizeDefenseKey(value = 'reflex') {
+  const key = String(value || 'reflex').toLowerCase();
+  if (key === 'fort' || key === 'fortitude') return 'fortitude';
+  if (key === 'will') return 'will';
+  if (key === 'dc') return 'dc';
+  return 'reflex';
+}
+
+function getDefenseValue(actor, defenseType = 'reflex') {
+  if (!actor) return null;
+  const key = normalizeDefenseKey(defenseType);
+  if (key === 'dc') return null;
+  const value = actor.system?.defenses?.[key]?.total
+    ?? actor.system?.derived?.defenses?.[key]?.total
+    ?? actor.system?.defenses?.[key]?.value
+    ?? null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function resolveTargetContext(options = {}, fallbackTarget = null, coverBonus = 0) {
+  const ctx = options.targetContext ?? null;
+  const mode = String(ctx?.mode || '').toLowerCase();
+  if (mode === 'manual') {
+    const value = Number(ctx?.defenseValue);
+    return {
+      target: null,
+      targetName: ctx?.label || 'Manual Target',
+      defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'),
+      defenseValue: Number.isFinite(value) ? value + Number(coverBonus || 0) : null,
+      mode: 'manual'
+    };
+  }
+  if (mode === 'none') {
+    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none' };
+  }
+  const target = fallbackTarget;
+  const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
+  const base = getDefenseValue(target, defenseType);
+  return {
+    target,
+    targetName: target?.name ?? '',
+    defenseType,
+    defenseValue: base != null ? base + Number(coverBonus || 0) : null,
+    mode: target ? 'token' : 'none'
+  };
+}
+
+
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+
  *
@@ -326,7 +387,7 @@ export class SWSERoll {
 
       // Calculate attack bonus
       const atkBonus = computeAttackBonus(actor, weapon);
-      const totalBonus = atkBonus + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
+      const totalBonus = atkBonus + getFightingDefensivelyAttackPenalty(actor, modifiers) + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
       context.attackBonus = totalBonus;
 
       // Build formula
@@ -354,12 +415,12 @@ export class SWSERoll {
         concealmentResult = await rollConcealmentCheck(missChance, actor);
       }
 
-      // Get target defense for comparison
-      const target = context.target;
+      // Get target defense for comparison. Token targets are preferred, but
+      // manual/GM-adjudication target contexts support theater-of-the-mind play.
       const coverBonus = getCoverBonus(modifiers.cover);
-      const targetReflex = target
-        ? (target.system?.defenses?.reflex?.total || 10) + coverBonus
-        : null;
+      const resolvedTarget = resolveTargetContext({ ...options, targetContext: modifiers.targetContext ?? options.targetContext }, context.target, coverBonus);
+      const target = resolvedTarget.target;
+      const targetReflex = resolvedTarget.defenseValue;
 
       // Determine hit/miss
       const isHit = targetReflex !== null
@@ -543,8 +604,9 @@ export class SWSERoll {
           weapon,
           attackRerollOptions,
           target,
-          targetName: target?.name ?? '',
-          targetDefense: 'Reflex',
+          targetName: resolvedTarget.targetName ?? target?.name ?? '',
+          targetContext: resolvedTarget,
+          targetDefense: resolvedTarget.defenseType === 'dc' ? 'DC' : resolvedTarget.defenseType === 'fortitude' ? 'Fortitude' : resolvedTarget.defenseType === 'will' ? 'Will' : 'Reflex',
           dc: targetReflex,
           passed: isHit,
           success: isHit,
@@ -554,7 +616,11 @@ export class SWSERoll {
           customModifier: modifiers.customModifier,
           situationalMods: modifiers.situationalBonus,
           baseBonus: totalBonus,
-          reactionContext
+          reactionContext,
+          sourceElement: options?.sourceElement ?? null,
+          companionSource: options?.companionSource ?? null,
+          sheet: options?.sheet ?? null,
+          showRollCompanion: options?.showRollCompanion !== false
         }
       });
 

@@ -218,8 +218,16 @@
 
               <div class="form-field">
                 <label>Range</label>
-                <input type="text" name="system.range" value="{{system.range}}" />
+                <input type="text" name="system.range" value="{{system.range}}" placeholder="Auto from range profile or override manually" />
               </div>
+
+              {{#if (eq system.meleeOrRanged "ranged")}}
+              <div class="form-field">
+                <label>Range Profile</label>
+                <input type="text" name="system.rangeProfileName" value="{{system.rangeProfileName}}" placeholder="Auto: Pistols / Rifles / Heavy" readonly />
+                <input type="hidden" name="system.rangeProfile" value="{{system.rangeProfile}}" />
+              </div>
+              {{/if}}
 
               <div class="form-field">
                 <label>Weight (kg)</label>
@@ -233,6 +241,63 @@
             </section>
           </div>
         </div>
+
+        {{#if (eq system.meleeOrRanged "ranged")}}
+        <section class="item-editor__section item-editor__section--range-bands">
+          <h3 class="item-editor__section-title">Range Bands</h3>
+          <p class="item-editor__hint">Auto-hydrates from the weapon range data when Branch/Category changes. You may override any band before saving.</p>
+          <div class="item-editor__grid item-editor__grid--four-col swse-range-band-grid">
+            <div class="form-field">
+              <label>PB Min</label>
+              <input type="number" name="system.ranges.pb.min" value="{{system.ranges.pb.min}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>PB Max</label>
+              <input type="number" name="system.ranges.pb.max" value="{{system.ranges.pb.max}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>PB Mod</label>
+              <input type="number" name="system.ranges.pb.attackMod" value="{{system.ranges.pb.attackMod}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Short Max</label>
+              <input type="number" name="system.ranges.short.max" value="{{system.ranges.short.max}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Short Min</label>
+              <input type="number" name="system.ranges.short.min" value="{{system.ranges.short.min}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Short Mod</label>
+              <input type="number" name="system.ranges.short.attackMod" value="{{system.ranges.short.attackMod}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Med Min</label>
+              <input type="number" name="system.ranges.medium.min" value="{{system.ranges.medium.min}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Med Max</label>
+              <input type="number" name="system.ranges.medium.max" value="{{system.ranges.medium.max}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Med Mod</label>
+              <input type="number" name="system.ranges.medium.attackMod" value="{{system.ranges.medium.attackMod}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Long Min</label>
+              <input type="number" name="system.ranges.long.min" value="{{system.ranges.long.min}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Long Max</label>
+              <input type="number" name="system.ranges.long.max" value="{{system.ranges.long.max}}" data-dtype="Number" />
+            </div>
+            <div class="form-field">
+              <label>Long Mod</label>
+              <input type="number" name="system.ranges.long.attackMod" value="{{system.ranges.long.attackMod}}" data-dtype="Number" />
+            </div>
+          </div>
+        </section>
+        {{/if}}
 
         {{!-- Full-width sections for weapon --}}
 
