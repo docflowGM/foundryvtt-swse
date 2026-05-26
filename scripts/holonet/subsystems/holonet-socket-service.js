@@ -48,13 +48,16 @@ export class HolonetSocketService {
   }
 
   static emitRequest(action, data = {}) {
+    const requestId = String(data?.requestId || foundry.utils.randomID());
     game.socket?.emit?.(SOCKET_NAME, {
       event: HOLONET_EVENT,
       kind: 'request',
       action,
-      data,
-      requesterId: game.user?.id
+      data: { ...data, requestId },
+      requesterId: game.user?.id,
+      requestId
     });
+    return requestId;
   }
 
   static emitSync(data = {}) {
@@ -67,7 +70,7 @@ export class HolonetSocketService {
 
   static async #handleGmRequest(payload) {
     const { action } = payload;
-    const data = { ...(payload.data ?? {}), requesterId: payload.requesterId };
+    const data = { ...(payload.data ?? {}), requesterId: payload.requesterId, requestId: payload.requestId ?? payload.data?.requestId ?? null };
     const { HolonetEngine } = await import('../holonet-engine.js');
     const { HolonetMessengerService } = await import('./holonet-messenger-service.js');
 
@@ -76,13 +79,13 @@ export class HolonetSocketService {
         const record = hydrateHolonetRecord(data?.record);
         if (record) {
           await HolonetEngine.publish(record, { skipSocket: true });
-          this.emitSync({ type: 'record-published', recordId: record.id, recipientIds: record.recipients?.map(r => r.id) ?? [] });
+          this.emitSync({ type: 'record-published', recordId: record.id, recipientIds: record.recipients?.map(r => r.id) ?? [], requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         }
         break;
       }
       case 'mark-read': {
         await HolonetEngine.markRead(data.recordId, data.recipientId, { skipSocket: true });
-        this.emitSync({ type: 'record-read', recordId: data.recordId, recipientId: data.recipientId });
+        this.emitSync({ type: 'record-read', recordId: data.recordId, recipientId: data.recipientId, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         break;
       }
       case 'send-message': {
@@ -114,7 +117,7 @@ export class HolonetSocketService {
       }
       case 'mark-thread-read': {
         await HolonetMessengerService._gmMarkThreadRead(data.threadId, data.recipientId);
-        this.emitSync({ type: 'thread-read', threadId: data.threadId, recipientId: data.recipientId });
+        this.emitSync({ type: 'thread-read', threadId: data.threadId, recipientId: data.recipientId, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         break;
       }
       case 'mark-many-read': {

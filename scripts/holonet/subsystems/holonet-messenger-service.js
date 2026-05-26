@@ -359,6 +359,22 @@ export class HolonetMessengerService {
     return thread;
   }
 
+  static _emitMessengerSync(data = {}) {
+    HolonetSocketService.emitSync({
+      source: SOURCE_FAMILY.MESSENGER,
+      ...data
+    });
+  }
+
+  static _threadSyncPayload(threadId, extra = {}) {
+    return {
+      type: 'thread-updated',
+      threadId,
+      source: SOURCE_FAMILY.MESSENGER,
+      ...extra
+    };
+  }
+
   static _decorateRecipient(recipient, { currentId = currentRecipientId(), reason = null } = {}) {
     const actor = recipient?.actorId ? game.actors?.get(recipient.actorId) : null;
     const user = recipient?.userId ? game.users?.get(recipient.userId) : null;
@@ -760,7 +776,7 @@ export class HolonetMessengerService {
     return this._gmCreateJobPosting(payload);
   }
 
-  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], senderUserId = null, senderRecipientId = null } = {}) {
+  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId, senderRecipientId });
     const requested = this._normalizeRecipientIds(recipientIds)
@@ -808,11 +824,11 @@ export class HolonetMessengerService {
       attachments: normalizeAttachmentList(attachments),
       threadId: thread.id,
       senderUserId,
-      senderRecipientId: contactRecipient?.id ?? senderRecipientId
+      senderRecipientId: contactRecipient?.id ?? senderRecipientId,
+      requestId,
+      requesterId
     });
-    Hooks.callAll('swseHolonetUpdated', { type: 'thread-created', threadId: thread.id });
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: thread.id });
-    return { threadId: thread.id };
+    return { threadId: thread.id, requestId };
   }
 
   static async sendMessage({ actor, body, threadId = null, recipientIds = [], imageUrl = '', attachments = [], senderRecipientId = null }) {
@@ -828,8 +844,8 @@ export class HolonetMessengerService {
       senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
     };
     if (!game.user?.isGM) {
-      HolonetSocketService.emitRequest('send-message', payload);
-      return { pending: true, threadId: payload.threadId ?? null };
+      const requestId = HolonetSocketService.emitRequest('send-message', payload);
+      return { pending: true, requestId, threadId: payload.threadId ?? null };
     }
     return this._gmSendMessage(payload);
   }
@@ -847,8 +863,8 @@ export class HolonetMessengerService {
       senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
     };
     if (!game.user?.isGM) {
-      HolonetSocketService.emitRequest('create-thread', payload);
-      return { pending: true, threadId: null };
+      const requestId = HolonetSocketService.emitRequest('create-thread', payload);
+      return { pending: true, requestId, threadId: null };
     }
     return this._gmCreateThread(payload);
   }
@@ -857,7 +873,7 @@ export class HolonetMessengerService {
     return Array.from(new Set(safeArray(ids).map(String).filter(Boolean)));
   }
 
-  static async _gmCreateThread({ actorId, body = '', title = '', threadType = THREAD_TYPE.PRIVATE, recipientIds = [], imageUrl = '', attachments = [], senderUserId = null, senderRecipientId = null } = {}) {
+  static async _gmCreateThread({ actorId, body = '', title = '', threadType = THREAD_TYPE.PRIVATE, recipientIds = [], imageUrl = '', attachments = [], senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId, senderRecipientId });
     const senderLabel = recipientDisplayName(senderRecipient);
@@ -892,21 +908,29 @@ export class HolonetMessengerService {
       gmObserverIds: this._gmObserverRecipients().map(r => r.id)
     });
 
+    let emittedThreadUpdate = false;
+    let requestSyncEmitted = false;
     for (const invitee of pendingInvites) {
       await this._publishSystemMessage(thread, `${senderLabel} invited ${recipientDisplayName(invitee)} to the holochat.`, { eventType: 'member-invited' });
+      emittedThreadUpdate = true;
     }
 
     if (pendingInvites.length) {
       await this._publishSystemMessage(thread, `${senderLabel} wants to have a holochat.`, { eventType: 'holochat-request' });
+      emittedThreadUpdate = true;
     }
 
     if (body?.trim() || imageUrl?.trim()) {
-      await this._gmSendMessage({ actorId, body, imageUrl, attachments, threadId: thread.id, senderUserId, senderRecipientId });
+      await this._gmSendMessage({ actorId, body, imageUrl, attachments, threadId: thread.id, senderUserId, senderRecipientId, requestId, requesterId });
+      emittedThreadUpdate = true;
+      requestSyncEmitted = Boolean(requestId);
     }
 
-    Hooks.callAll('swseHolonetUpdated', { type: 'thread-created', threadId: thread.id });
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: thread.id });
-    return { threadId: thread.id };
+    if (!emittedThreadUpdate || (requestId && !requestSyncEmitted)) {
+      Hooks.callAll('swseHolonetUpdated', { type: 'thread-created', threadId: thread.id });
+      this._emitMessengerSync(this._threadSyncPayload(thread.id, { requestId, requesterId }));
+    }
+    return { threadId: thread.id, requestId };
   }
 
   static _defaultThreadTitle(recipients = [], threadType = THREAD_TYPE.PRIVATE) {
@@ -916,7 +940,7 @@ export class HolonetMessengerService {
     return labels.length ? labels.join(', ') : 'Private Holochat';
   }
 
-  static async _gmSendMessage({ actorId, body, threadId = null, recipientIds = [], imageUrl = '', attachments = [], senderUserId = null, senderRecipientId = null }) {
+  static async _gmSendMessage({ actorId, body, threadId = null, recipientIds = [], imageUrl = '', attachments = [], senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null }) {
     if (!body?.trim() && !imageUrl?.trim() && !normalizeAttachmentList(attachments).length) return null;
     const actor = actorId ? game.actors?.get(actorId) : null;
     let senderRecipient = this._recipientForActorContext(actor, { senderUserId, senderRecipientId });
@@ -928,7 +952,7 @@ export class HolonetMessengerService {
     if (threadId) thread = await HolonetStorage.getThread(threadId);
     if (!thread) {
       const recipients = this._normalizeRecipientIds(recipientIds).map(id => this._recipientFromStableId(id)).filter(Boolean);
-      const created = await this._gmCreateThread({ actorId, body: '', recipientIds: recipients.map(r => r.id), senderUserId, senderRecipientId });
+      const created = await this._gmCreateThread({ actorId, body: '', recipientIds: recipients.map(r => r.id), senderUserId, senderRecipientId, requestId, requesterId });
       thread = await HolonetStorage.getThread(created.threadId);
     }
     if (!thread) return null;
@@ -979,7 +1003,7 @@ export class HolonetMessengerService {
       console.error('[Holonet] publishMessageToThread failed:', result.reason);
       return null;
     }
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: result.threadId, messageId: result.messageId });
+    this._emitMessengerSync(this._threadSyncPayload(result.threadId, { messageId: result.messageId, requestId, requesterId }));
     return { threadId: result.threadId, messageId: result.messageId };
   }
 
@@ -1004,7 +1028,7 @@ export class HolonetMessengerService {
       { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: message.id, isPinned: false, metadata: { threadId: thread.id } }
     ];
     const result = await HolonetThreadService.publishMessageToThread({ thread, message, senderRecipient: null, publishOptions: { skipSocket: true }, markSenderRead: false });
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: thread.id, messageId: result.messageId });
+    this._emitMessengerSync(this._threadSyncPayload(thread.id, { messageId: result.messageId }));
     return result;
   }
 
@@ -1049,11 +1073,10 @@ export class HolonetMessengerService {
       senderRecipientId: currentRecipientId()
     };
     if (!game.user?.isGM) {
-      HolonetSocketService.emitRequest('offer-item-transfer', payload);
-      return true;
+      const requestId = HolonetSocketService.emitRequest('offer-item-transfer', payload);
+      return { pending: true, requestId, threadId };
     }
-    await this._gmOfferItemTransfer(payload);
-    return true;
+    return this._gmOfferItemTransfer(payload);
   }
 
   static async offerCreditTransfer({ actor, threadId, recipientId, amount }) {
@@ -1066,14 +1089,13 @@ export class HolonetMessengerService {
       senderRecipientId: currentRecipientId()
     };
     if (!game.user?.isGM) {
-      HolonetSocketService.emitRequest('offer-credit-transfer', payload);
-      return true;
+      const requestId = HolonetSocketService.emitRequest('offer-credit-transfer', payload);
+      return { pending: true, requestId, threadId };
     }
-    await this._gmOfferCreditTransfer(payload);
-    return true;
+    return this._gmOfferCreditTransfer(payload);
   }
 
-  static async _gmOfferCreditTransfer({ actorId, threadId, recipientId, amount, requesterId = null, senderRecipientId = null } = {}) {
+  static async _gmOfferCreditTransfer({ actorId, threadId, recipientId, amount, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const value = parsePositiveCredits(amount);
     if (!value) return false;
     const thread = await HolonetStorage.getThread(threadId);
@@ -1140,7 +1162,7 @@ export class HolonetMessengerService {
       { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: message.id, isPinned: false, metadata: { threadId: thread.id } }
     ];
     await HolonetThreadService.publishMessageToThread({ thread, message, senderRecipient: null, publishOptions: { skipSocket: true }, markSenderRead: false });
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: thread.id, messageId: message.id });
+    this._emitMessengerSync(this._threadSyncPayload(thread.id, { messageId: message.id, requestId, requesterId }));
     return { threadId: thread.id, messageId: message.id };
   }
 
@@ -1164,7 +1186,7 @@ export class HolonetMessengerService {
     return normalizeAttachmentList(attachments);
   }
 
-  static async _gmOfferItemTransfer({ actorId, threadId, recipientId, itemUuids = [], requesterId = null, senderRecipientId = null } = {}) {
+  static async _gmOfferItemTransfer({ actorId, threadId, recipientId, itemUuids = [], requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     const attachments = await this._resolveItemSummaries(itemUuids);
@@ -1212,21 +1234,20 @@ export class HolonetMessengerService {
       { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: message.id, isPinned: false, metadata: { threadId: thread.id } }
     ];
     await HolonetThreadService.publishMessageToThread({ thread, message, senderRecipient: null, publishOptions: { skipSocket: true }, markSenderRead: false });
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: thread.id, messageId: message.id });
+    this._emitMessengerSync(this._threadSyncPayload(thread.id, { messageId: message.id, requestId, requesterId }));
     return { threadId: thread.id, messageId: message.id };
   }
 
   static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [] }) {
     const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
-      HolonetSocketService.emitRequest('thread-action', payload);
-      return true;
+      const requestId = HolonetSocketService.emitRequest('thread-action', payload);
+      return { pending: true, requestId, threadId };
     }
-    await this._gmThreadAction(payload);
-    return true;
+    return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], requesterId = null, senderRecipientId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -1236,6 +1257,7 @@ export class HolonetMessengerService {
     const currentId = senderRecipientId || actorRecipient?.id;
     const isGm = Boolean((requesterId && game.users?.get(requesterId)?.isGM) || currentId?.startsWith('gm:')); 
     const canManage = isGm || meta.ownerId === currentId;
+    let needsThreadOnlySync = false;
 
     switch (action) {
       case 'accept-invite': {
@@ -1260,18 +1282,21 @@ export class HolonetMessengerService {
         meta.mutedBy ??= {};
         meta.mutedBy[currentId] = true;
         await HolonetStorage.saveThread(thread);
+        needsThreadOnlySync = true;
         break;
       }
       case 'unmute-thread': {
         meta.mutedBy ??= {};
         delete meta.mutedBy[currentId];
         await HolonetStorage.saveThread(thread);
+        needsThreadOnlySync = true;
         break;
       }
       case 'archive-thread': {
         meta.archivedBy ??= {};
         meta.archivedBy[currentId] = nowIso();
         await HolonetStorage.saveThread(thread);
+        needsThreadOnlySync = true;
         break;
       }
       case 'leave-thread': {
@@ -1368,22 +1393,22 @@ export class HolonetMessengerService {
       case 'accept-item-transfer':
       case 'decline-item-transfer':
       case 'cancel-item-transfer': {
-        await this._gmResolveItemTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId });
+        await this._gmResolveItemTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'offer-item-transfer': {
-        await this._gmOfferItemTransfer({ actorId, threadId, recipientId, itemUuids, requesterId, senderRecipientId });
+        await this._gmOfferItemTransfer({ actorId, threadId, recipientId, itemUuids, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'accept-transfer':
       case 'decline-transfer':
       case 'approve-transfer':
       case 'cancel-transfer': {
-        await this._gmResolveCreditTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId });
+        await this._gmResolveCreditTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'offer-credit-transfer': {
-        await this._gmOfferCreditTransfer({ actorId, threadId, recipientId, amount, requesterId, senderRecipientId });
+        await this._gmOfferCreditTransfer({ actorId, threadId, recipientId, amount, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'contribute-party-fund': {
@@ -1406,8 +1431,10 @@ export class HolonetMessengerService {
       }
     }
 
-    Hooks.callAll('swseHolonetUpdated', { type: 'thread-updated', threadId: thread.id });
-    HolonetSocketService.emitSync({ type: 'thread-updated', threadId: thread.id });
+    if (needsThreadOnlySync) {
+      Hooks.callAll('swseHolonetUpdated', { type: 'thread-updated', threadId: thread.id });
+      this._emitMessengerSync(this._threadSyncPayload(thread.id, { requestId, requesterId }));
+    }
     return true;
   }
 
@@ -1469,7 +1496,7 @@ export class HolonetMessengerService {
     return this._gmOfferCreditTransfer({ actorId, threadId: thread.id, recipientId, amount: value, requesterId, senderRecipientId });
   }
 
-  static async _gmResolveCreditTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null } = {}) {
+  static async _gmResolveCreditTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const transfer = message?.metadata?.creditTransfer;
@@ -1638,7 +1665,7 @@ export class HolonetMessengerService {
   }
 
 
-  static async _gmResolveItemTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null } = {}) {
+  static async _gmResolveItemTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const transfer = message?.metadata?.itemTransfer;

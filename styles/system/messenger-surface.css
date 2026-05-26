@@ -713,7 +713,9 @@
 }
 
 .swse-shell-surface--messenger .swse-shell-surface__body {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(232px, 278px) minmax(0, 1fr);
+  gap: 10px;
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
@@ -766,4 +768,44 @@
 .swse-shell-surface--messenger [data-holonet-action],
 .swse-shell-surface--messenger [data-holonet-drop-zone] {
   pointer-events: auto;
+}
+
+
+/* Messenger stabilization addendum: the body element is also .hl-ms-root, so
+   force the intended two-column grid after generic shell-body repair rules. */
+.swse-shell-surface--messenger .swse-messenger-body.hl-ms-root {
+  display: grid !important;
+  grid-template-columns: minmax(232px, 278px) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.swse-shell-surface--messenger .hl-recipient-row--with-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse-shell-surface--messenger .hl-recipient-choice {
+  display: grid;
+  grid-template-columns: auto 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.swse-shell-surface--messenger .hl-recipient-choice .swse-messenger-recipient-option__type {
+  grid-column: 3;
+}
+
+.swse-shell-surface--messenger .hl-recipient-row--with-action .hl-ghost-btn {
+  align-self: stretch;
+}
+
+@media (max-width: 1040px) {
+  .swse-shell-surface--messenger .swse-messenger-body.hl-ms-root,
+  .swse-shell-surface--messenger .swse-shell-surface__body {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
 }

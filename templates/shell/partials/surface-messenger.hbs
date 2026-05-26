@@ -132,13 +132,15 @@
               <div class="swse-messenger-recipient-picker__title hl-label hl-label--accent">Recipients</div>
               <div class="swse-messenger-recipient-grid hl-recipient-grid">
                 {{#each vm.recipientOptions}}
-                <label class="swse-messenger-recipient-option hl-recipient-row {{#if this.isPersona}}swse-messenger-recipient-option--persona{{/if}}">
-                  <input type="checkbox" name="recipientIds" value="{{this.id}}">
-                  {{#if this.avatar}}<img class="swse-messenger-recipient-option__avatar hl-avatar" src="{{this.avatar}}" alt="">{{else}}<span class="swse-messenger-recipient-option__avatar swse-messenger-recipient-option__avatar--blank hl-avatar hl-avatar--blank">◇</span>{{/if}}
-                  <span class="swse-messenger-recipient-option__label">{{this.label}}</span>
-                  <span class="swse-messenger-recipient-option__type hl-subtle">{{this.typeLabel}}</span>
+                <div class="swse-messenger-recipient-option hl-recipient-row hl-recipient-row--with-action {{#if this.isPersona}}swse-messenger-recipient-option--persona{{/if}}">
+                  <label class="hl-recipient-choice">
+                    <input type="checkbox" name="recipientIds" value="{{this.id}}">
+                    {{#if this.avatar}}<img class="swse-messenger-recipient-option__avatar hl-avatar" src="{{this.avatar}}" alt="">{{else}}<span class="swse-messenger-recipient-option__avatar swse-messenger-recipient-option__avatar--blank hl-avatar hl-avatar--blank">◇</span>{{/if}}
+                    <span class="swse-messenger-recipient-option__label">{{this.label}}</span>
+                    <span class="swse-messenger-recipient-option__type hl-subtle">{{this.typeLabel}}</span>
+                  </label>
                   {{#if this.canQuickStart}}<button class="swse-messenger-mini-btn hl-ghost-btn" data-holonet-action="quick-thread" data-recipient-id="{{this.id}}" type="button">Hail</button>{{/if}}
-                </label>
+                </div>
                 {{/each}}
               </div>
             </div>
