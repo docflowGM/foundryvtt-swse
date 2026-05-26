@@ -2,16 +2,17 @@
  * GM Datapad (ApplicationV2)
  *
  * Consolidated GM operations hub using the same shell architecture as actor datapads.
- * Single window with internal routing to different pages:
+ * Single window shell host with GM-specific surface services:
  * - Home (app cards)
  * - Bulletin (party/player notices)
  * - House Rules (rule configuration)
  * - Store (governance dashboard)
  * - Approvals (droid/custom approvals)
  * - Healing (party recovery management)
+ * - Settings (shared holopad preferences)
  * - Workspace (GM-owned actors)
  *
- * Architecture: internal page routing, NOT multiple embedded ApplicationV2 windows
+ * Architecture: shell-style surface routing, NOT multiple embedded ApplicationV2 windows
  * Styling: reuses .swse-datapad/.swse-screen patterns
  */
 
@@ -24,8 +25,8 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
-import { SettingsSurfaceService } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceService.js";
 import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
+import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
@@ -115,29 +116,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Load context for the current page
+   * Load the active GM shell surface context.
+   *
+   * Phase 3 moves page view-model ownership out of this ApplicationV2 host and
+   * into dedicated GM surface services. Existing action handlers remain here
+   * for now so the migration stays surgical and low-risk.
    */
   async _loadPageContext(pageId) {
-    switch (pageId) {
-      case 'home':
-        return this._loadHomeContext();
-      case 'bulletin':
-        return this._loadBulletinContext();
-      case 'house-rules':
-        return this._loadHouseRulesContext();
-      case 'store':
-        return this._loadStoreContext();
-      case 'approvals':
-        return this._loadApprovalsContext();
-      case 'healing':
-        return this._loadHealingContext();
-      case 'workspace':
-        return this._loadWorkspaceContext();
-      case 'settings':
-        return this._loadSettingsContext();
-      default:
-        return {};
-    }
+    return GMSurfaceRegistry.buildSurfaceVm({
+      surfaceId: pageId || 'home',
+      host: this
+    });
   }
 
 
@@ -247,89 +236,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return records.find((record) => record.id === this.bulletinEditor.recordId) ?? null;
   }
 
-  /**
-   * Home page: app cards
-   */
-  async _loadHomeContext() {
-    const badgeCounts = await this._getHomeBadgeCounts();
-    return {
-      pageTitle: 'GM Operations',
-      pageDescription: 'Master control for store, rules, approvals, and party management',
-      badgeCounts
-    };
-  }
 
-  /**
-   * Bulletin page: party/player notices
-   * Phase 2 will back this with journals/flags
-   */
-  async _loadBulletinContext() {
-    const records = (await HolonetStorage.getAllRecords())
-      .filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN)
-      .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
 
-    const eventRecords = records.filter((record) => record.type === 'event');
-    const messageRecords = records.filter((record) => record.type === 'message');
-    const bulletinPlayers = this._getBulletinPlayers();
-    const selectedPlayerId = this.selectedPlayerStateActorId || bulletinPlayers[0]?.actorId || null;
-    const selectedPlayerState = selectedPlayerId ? await HolonetStateService.getPlayerState(selectedPlayerId) : null;
-    const partyState = await HolonetStateService.getPartyState();
-
-    return {
-      pageTitle: 'Bulletin',
-      pageDescription: 'Broadcasts, direct messages, and current-state control',
-      bulletinSection: this.currentBulletinSection,
-      bulletinNav: [
-        { id: 'events', label: 'Events', count: eventRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
-        { id: 'messages', label: 'Messages', count: messageRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
-        { id: 'players', label: 'Players', count: bulletinPlayers.length },
-        { id: 'party', label: 'Party', count: partyState?.situation || partyState?.objective || partyState?.location ? 1 : 0 }
-      ],
-      audienceOptions: this._getAudienceOptions(),
-      bulletinPlayers,
-      selectedPlayerId,
-      selectedPlayerState,
-      partyState,
-      eventRecords: eventRecords.map((record) => this._buildBulletinRecordView(record)),
-      messageRecords: messageRecords.map((record) => this._buildBulletinRecordView(record)),
-      eventEditorRecord: this._getBulletinEditorRecord(eventRecords, 'events') ? this._buildBulletinRecordView(this._getBulletinEditorRecord(eventRecords, 'events')) : null,
-      messageEditorRecord: this._getBulletinEditorRecord(messageRecords, 'messages') ? this._buildBulletinRecordView(this._getBulletinEditorRecord(messageRecords, 'messages')) : null,
-      syntaxGuide: [
-        '@ mention character, NPC, ship, faction, or location',
-        '# add emphasis or a topic tag',
-        '! mark urgent alerts',
-        '+800cr style credits/rewards',
-        'Examples: @Master Tholos wants @Kael at the #Jedi Temple. !urgent +800cr reward posted.'
-      ]
-    };
-  }
-
-  /**
-   * House Rules page: rule configuration
-   * Migrated from HouseRulesApp - reuses HouseRuleService
-   */
-  async _loadHouseRulesContext() {
-    const rules = {
-      characterCreation: this._getRulesForCategory('characterCreation'),
-      combat: this._getRulesForCategory('combat'),
-      force: this._getRulesForCategory('force'),
-      recovery: this._getRulesForCategory('recovery'),
-      skills: this._getRulesForCategory('skills'),
-      vehicles: this._getRulesForCategory('vehicles')
-    };
-
-    const activeRuleCount = Object.values(rules)
-      .flat()
-      .filter(r => r.enabled)
-      .length;
-
-    return {
-      pageTitle: 'House Rules',
-      pageDescription: 'Game rule modifications',
-      rules,
-      activeRuleCount
-    };
-  }
 
   /**
    * Get all rules for a specific category
@@ -501,57 +409,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return 'unknown';
   }
 
-  /**
-   * Store page: governance dashboard
-   * Migrated from GMStoreDashboard
-   */
-  async _loadStoreContext() {
-    await this._loadStoreTransactionHistory();
-    await this._loadStorePendingSales();
-    await this._loadStorePendingApprovals();
-
-    const storeOpen = SettingsHelper.getSafe('storeOpen', true);
-    const buyModifier = SettingsHelper.getSafe('globalBuyModifier', 0);
-    const autoAcceptSelling = SettingsHelper.getSafe('autoAcceptItemSales', false);
-    const autoSalePercent = SettingsHelper.getSafe('automaticSalePercentage', 50);
-    const disallowAutoSellNoPrice = SettingsHelper.getSafe('disallowAutoSellNoPrice', true);
-
-    const visibleRarities = SettingsHelper.getObject('visibleRarities', {
-      common: true,
-      uncommon: true,
-      rare: false,
-      restricted: false,
-      illegal: false
-    });
-
-    const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {
-      weapons: true,
-      armor: true,
-      gear: true,
-      droids: true,
-      vehicles: true
-    });
-
-    const blacklistedItems = SettingsHelper.getArray('blacklistedItems', []);
-
-    return {
-      pageTitle: 'Store',
-      pageDescription: 'Store governance and approvals',
-      transactions: this.transactions,
-      pendingSales: this.pendingSales,
-      pendingApprovals: this.storeApprovals,
-      storeOpen,
-      buyModifier,
-      autoAcceptSelling,
-      autoSalePercent,
-      disallowAutoSellNoPrice,
-      visibleRarities,
-      visibleTypes,
-      blacklistedItems,
-      actors: game.actors.filter(a => a.isOwner).map(a => ({ id: a.id, name: a.name })),
-      currentTab: this.currentTab
-    };
-  }
 
   /**
    * Load transaction history from all actors
@@ -600,23 +457,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  /**
-   * Approvals page: droid and store approvals
-   * Migrated from GMDroidApprovalDashboard and GMStoreDashboard
-   */
-  async _loadApprovalsContext() {
-    await this._loadPendingDroids();
-    await this._loadStorePendingApprovals();
-
-    return {
-      pageTitle: 'Approvals',
-      pageDescription: 'Pending droid and store approvals',
-      pendingDroids: this.pendingDroids,
-      storeApprovals: this.storeApprovals,
-      hasPendingDroids: this.pendingDroids.length > 0,
-      hasPendingApprovals: this.storeApprovals.length > 0
-    };
-  }
 
   /**
    * Load pending droids from all actors
@@ -650,50 +490,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  /**
-   * Healing page: GM natural healing trigger
-   */
-  async _loadHealingContext() {
-    const summary = await GMHealingTrigger.getHealingSummary();
-    return {
-      pageTitle: 'Natural Healing',
-      pageDescription: 'Trigger natural healing recovery for eligible party members',
-      healingSummary: summary,
-      eligible: summary.eligible,
-      ineligible: summary.ineligible,
-      eligibleActors: summary.eligibleActors || [],
-      ineligibleActors: summary.ineligibleActors || []
-    };
-  }
 
-  /**
-   * Workspace page: GM-owned actor access
-   * Future: quick-open sheets, pinned actors, active cast
-   */
-  async _loadWorkspaceContext() {
-    const gmActors = game.actors.filter(a => a.isOwner);
-    return {
-      pageTitle: 'Workspace',
-      pageDescription: 'GM-owned actor access',
-      gmActors: gmActors.map(a => ({
-        id: a.id,
-        name: a.name,
-        type: a.type,
-        img: a.img
-      }))
-    };
-  }
 
-  /**
-   * Settings page: shared Holopad Settings surface, hosted in GM context.
-   */
-  async _loadSettingsContext() {
-    return {
-      pageTitle: 'GM Holopad Settings',
-      pageDescription: 'Shared datapad theme, motion, shell color, and language controls',
-      settingsVm: await SettingsSurfaceService.buildViewModel(null, { gm: true, preferActor: false })
-    };
-  }
 
   /**
    * Get app card definitions for home page
@@ -1377,11 +1175,21 @@ export class GMDatapad extends BaseSWSEAppV2 {
    * Navigate to a different page within the datapad
    */
   async _navigateTo(pageId) {
-    SWSELogger.log(`[GM Datapad] Navigating to: ${pageId}`);
-    this.currentPage = pageId;
-    if (pageId === 'store') {
+    const targetPage = GMSurfaceRegistry.hasSurface(pageId) ? pageId : 'home';
+
+    if (targetPage !== pageId) {
+      SWSELogger.warn(`[GM Datapad] Unknown surface "${pageId}"; routing to home.`);
+    } else {
+      SWSELogger.log(`[GM Datapad] Navigating to: ${targetPage}`);
+    }
+
+    this.currentPage = targetPage;
+
+    // GM store is an operations surface, not the player-facing store splash flow.
+    if (targetPage === 'store') {
       this.currentTab = 'transactions';
     }
+
     await this.render(false);
   }
 }
