@@ -2,25 +2,10 @@
 
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { StoreEngine } from '/systems/foundryvtt-swse/scripts/engine/store/store-engine.js';
-
-const AVAILABILITY_DEFAULTS = {
-  standard: true,
-  licensed: true,
-  rare: false,
-  restricted: false,
-  military: false,
-  illegal: false,
-  common: true,
-  uncommon: true
-};
-
-const TYPE_DEFAULTS = {
-  weapons: true,
-  armor: true,
-  gear: true,
-  droids: true,
-  vehicles: true
-};
+import {
+  STORE_AVAILABILITY_DEFAULTS,
+  STORE_TYPE_DEFAULTS
+} from '/systems/foundryvtt-swse/scripts/engine/store/policy-service.js';
 
 const TYPE_LABELS = {
   weapon: 'Weapon',
@@ -146,13 +131,13 @@ export class GMStoreControlSurfaceService {
     const disallowAutoSellNoPrice = SettingsHelper.getSafe('disallowAutoSellNoPrice', true);
 
     const visibleRarities = {
-      ...AVAILABILITY_DEFAULTS,
-      ...SettingsHelper.getObject('visibleRarities', AVAILABILITY_DEFAULTS)
+      ...STORE_AVAILABILITY_DEFAULTS,
+      ...SettingsHelper.getObject('visibleRarities', STORE_AVAILABILITY_DEFAULTS)
     };
 
     const visibleTypes = {
-      ...TYPE_DEFAULTS,
-      ...SettingsHelper.getObject('visibleItemTypes', TYPE_DEFAULTS)
+      ...STORE_TYPE_DEFAULTS,
+      ...SettingsHelper.getObject('visibleItemTypes', STORE_TYPE_DEFAULTS)
     };
 
     const blacklistedItems = SettingsHelper.getArray('blacklistedItems', []);

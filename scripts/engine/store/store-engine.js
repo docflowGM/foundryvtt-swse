@@ -51,6 +51,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
+import { applyStorePoliciesToIndex } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
@@ -393,8 +394,9 @@ export class StoreEngine {
    *   - Dynamic pricing per NPC
    */
   static _applyPolicies(index) {
-    // Placeholder for future policy application
-    // Currently: no filtering (all items eligible)
-    logger().debug('StoreEngine: Policies applied (currently: none)', {});
+    applyStorePoliciesToIndex(index, { includeHidden: false });
+    logger().debug('StoreEngine: Policies applied', {
+      policyCounts: index.metadata?.policyCounts || null
+    });
   }
 }
