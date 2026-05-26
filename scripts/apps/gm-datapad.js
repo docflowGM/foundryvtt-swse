@@ -75,7 +75,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   constructor(options = {}) {
     super(options);
     this.currentPage = 'home';
-    this.currentTab = 'transactions';
+    this.currentTab = 'options';
     this.currentBulletinSection = 'events';
     this.pageData = {};
     this.NS = 'foundryvtt-swse';
@@ -438,15 +438,22 @@ export class GMDatapad extends BaseSWSEAppV2 {
     for (const actor of game.actors) {
       const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       for (const purchase of history) {
-        for (const item of purchase.items) {
+        const items = Array.isArray(purchase.items) ? purchase.items : [];
+        for (const item of items) {
+          const amount = normalizeCredits(item.cost ?? item.finalCost ?? item.price ?? 0);
           this.transactions.push({
             timestamp: purchase.timestamp,
             actor: actor.name,
-            type: 'Buy',
-            item: item.name,
-            amount: -normalizeCredits(item.cost),
-            source: 'Store',
             actorId: actor.id,
+            player: purchase.userName || purchase.playerName || purchase.userId || '—',
+            type: purchase.type || 'Buy',
+            item: item.name || 'Unknown Item',
+            quantity: normalizeCredits(item.quantity ?? 1),
+            price: amount,
+            amount: purchase.type === 'Sell' ? amount : -amount,
+            status: purchase.status || 'Success',
+            reason: purchase.reason || purchase.failureReason || '',
+            source: purchase.source || 'Store',
             purchaseId: purchase.timestamp
           });
         }
@@ -771,6 +778,19 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-store');
     if (!pageElement) return;
 
+    this._activateStoreTab(pageElement, this.currentTab || 'options');
+
+    // Store control tab buttons: the GM store lives inside the datapad host, so
+    // we manage this small tab switch locally instead of opening another app.
+    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
+      btn.addEventListener('click', (ev) => {
+        const tabId = ev.currentTarget.dataset.storeTab;
+        if (!tabId) return;
+        this.currentTab = tabId;
+        this._activateStoreTab(pageElement, tabId);
+      });
+    }
+
     // Store availability toggle
     const storeOpenToggle = pageElement.querySelector('[name="storeOpen"]');
     if (storeOpenToggle) {
@@ -780,18 +800,32 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     }
 
-    // Buy price modifier slider
-    const buyModifierSlider = pageElement.querySelector('[name="buyModifier"]');
-    if (buyModifierSlider) {
-      buyModifierSlider.addEventListener('input', async (ev) => {
+    // Pricing controls. storeMarkup/storeDiscount are what the pricing engine reads.
+    // globalBuyModifier is also updated as a compatibility mirror for older store UI code.
+    const storeMarkupSlider = pageElement.querySelector('[name="storeMarkup"]');
+    if (storeMarkupSlider) {
+      storeMarkupSlider.addEventListener('input', async (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
+        const valueLabel = pageElement.querySelector('[data-store-markup-value]');
+        if (valueLabel) valueLabel.textContent = `${value}%`;
+        await HouseRuleService.set('storeMarkup', value);
         await HouseRuleService.set('globalBuyModifier', value);
       });
     }
 
-    // Rarity visibility checkboxes
-    for (const rarity of ['common', 'uncommon', 'rare', 'restricted', 'illegal']) {
-      const checkbox = pageElement.querySelector(`[name="rarity-${rarity}"]`);
+    const storeDiscountSlider = pageElement.querySelector('[name="storeDiscount"]');
+    if (storeDiscountSlider) {
+      storeDiscountSlider.addEventListener('input', async (ev) => {
+        const value = normalizeCredits(ev.currentTarget.value);
+        const valueLabel = pageElement.querySelector('[data-store-discount-value]');
+        if (valueLabel) valueLabel.textContent = `${value}%`;
+        await HouseRuleService.set('storeDiscount', value);
+      });
+    }
+
+    // Normalized availability controls used by the v2 store index.
+    for (const rarity of ['standard', 'licensed', 'rare', 'restricted', 'military', 'illegal', 'common', 'uncommon']) {
+      const checkbox = pageElement.querySelector(`[name="availability-${rarity}"]`);
       if (checkbox) {
         checkbox.addEventListener('change', async (ev) => {
           const visibleRarities = SettingsHelper.getObject('visibleRarities', {});
@@ -826,7 +860,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const autoSaleSlider = pageElement.querySelector('[name="autoSalePercent"]');
     if (autoSaleSlider) {
       autoSaleSlider.addEventListener('input', async (ev) => {
-        await HouseRuleService.set('automaticSalePercentage', Number(ev.currentTarget.value));
+        const value = normalizeCredits(ev.currentTarget.value);
+        const valueLabel = pageElement.querySelector('[data-auto-sale-value]');
+        if (valueLabel) valueLabel.textContent = `${value}%`;
+        await HouseRuleService.set('automaticSalePercentage', value);
       });
     }
 
@@ -845,6 +882,89 @@ export class GMDatapad extends BaseSWSEAppV2 {
         await this._reverseTransaction(index);
       });
     }
+
+    // Inventory filters are Phase A client-side helpers. The saved policy model is
+    // separate from source item data so the GM can soft-ban/override without
+    // mutating compendium documents.
+    for (const input of pageElement.querySelectorAll('[data-store-inventory-filter]')) {
+      input.addEventListener('input', () => this._filterStoreInventoryRows(pageElement));
+      input.addEventListener('change', () => this._filterStoreInventoryRows(pageElement));
+    }
+
+    for (const input of pageElement.querySelectorAll('[data-store-policy-field]')) {
+      input.addEventListener('change', async (ev) => {
+        await this._updateStoreInventoryPolicy(ev.currentTarget);
+        this._filterStoreInventoryRows(pageElement);
+      });
+    }
+  }
+
+  _activateStoreTab(pageElement, tabId) {
+    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
+      const active = btn.dataset.storeTab === tabId;
+      btn.classList.toggle('active', active);
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    }
+
+    for (const panel of pageElement.querySelectorAll('[data-store-tab-panel]')) {
+      const active = panel.dataset.storeTabPanel === tabId;
+      panel.classList.toggle('active', active);
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    }
+  }
+
+  _filterStoreInventoryRows(pageElement) {
+    const query = (pageElement.querySelector('[data-store-inventory-filter="search"]')?.value || '').trim().toLowerCase();
+    const type = pageElement.querySelector('[data-store-inventory-filter="type"]')?.value || '';
+    const availability = pageElement.querySelector('[data-store-inventory-filter="availability"]')?.value || '';
+    const visibility = pageElement.querySelector('[data-store-inventory-filter="visibility"]')?.value || '';
+
+    for (const row of pageElement.querySelectorAll('[data-store-inventory-row]')) {
+      const visibleCheckbox = row.querySelector('[data-store-policy-field="visible"]');
+      const availableCheckbox = row.querySelector('[data-store-policy-field="available"]');
+      const isVisible = visibleCheckbox ? visibleCheckbox.checked : row.dataset.visible === 'true';
+      const isAvailable = availableCheckbox ? availableCheckbox.checked : row.dataset.available === 'true';
+
+      const matchesQuery = !query || (row.dataset.search || '').includes(query);
+      const matchesType = !type || row.dataset.type === type;
+      const matchesAvailability = !availability || row.dataset.availability === availability;
+      const matchesVisibility = !visibility
+        || (visibility === 'visible' && isVisible)
+        || (visibility === 'hidden' && !isVisible)
+        || (visibility === 'available' && isAvailable)
+        || (visibility === 'unavailable' && !isAvailable)
+        || (visibility === 'overridden' && row.querySelector('[data-store-policy-field="overridePrice"]')?.value !== '');
+
+      row.hidden = !(matchesQuery && matchesType && matchesAvailability && matchesVisibility);
+    }
+  }
+
+  async _updateStoreInventoryPolicy(input) {
+    const itemId = input.dataset.itemId;
+    const field = input.dataset.storePolicyField;
+    if (!itemId || !field) return;
+
+    const policies = SettingsHelper.getObject('storeInventoryPolicies', {});
+    const policy = { ...(policies[itemId] || {}) };
+
+    if (['visible', 'available', 'trackQuantity', 'requiresApproval'].includes(field)) {
+      policy[field] = input.checked === true;
+    } else if (field === 'quantity' || field === 'overridePrice') {
+      const raw = String(input.value ?? '').trim();
+      policy[field] = raw === '' ? null : Math.max(0, normalizeCredits(raw));
+    } else if (field === 'notes') {
+      policy[field] = String(input.value ?? '').trim();
+    } else {
+      return;
+    }
+
+    policy.updatedAt = Date.now();
+    policy.updatedBy = game.user?.id || null;
+    policies[itemId] = policy;
+
+    await SettingsHelper.set('storeInventoryPolicies', policies);
   }
 
   /**
@@ -1508,7 +1628,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // GM store is an operations surface, not the player-facing store splash flow.
     if (targetPage === 'store') {
-      this.currentTab = 'transactions';
+      this.currentTab = this.currentTab || 'options';
     }
 
     await this.render(false);

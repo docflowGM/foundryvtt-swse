@@ -30,6 +30,37 @@ export const SETTINGS_DEFAULTS = {
     holonetPartyFundDefaultCutPercent: 0,
     holonetPartyFundLedger: [],
     holonetCustomPersonas: [],
+
+    // Store / Commerce
+    storeOpen: true,
+    globalBuyModifier: 0,
+    storeMarkup: 0,
+    storeDiscount: 0,
+    autoAcceptItemSales: false,
+    automaticSalePercentage: 50,
+    disallowAutoSellNoPrice: true,
+    visibleRarities: {
+        standard: true,
+        licensed: true,
+        rare: false,
+        restricted: false,
+        military: false,
+        illegal: false,
+        common: true,
+        uncommon: true
+    },
+    visibleItemTypes: {
+        weapons: true,
+        armor: true,
+        gear: true,
+        droids: true,
+        vehicles: true
+    },
+    blacklistedItems: [],
+    pendingSales: [],
+    pendingCustomPurchases: [],
+    storeInventoryPolicies: {},
+
     characterCreation: {},
 
     // Backgrounds

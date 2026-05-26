@@ -142,12 +142,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -157,7 +157,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     }
   ],
@@ -646,7 +646,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
       "range": {
         "min": 10,
         "max": 100,
@@ -691,7 +691,10 @@
         "uncommon": true,
         "rare": false,
         "restricted": false,
-        "illegal": false
+        "illegal": false,
+        "standard": true,
+        "licensed": true,
+        "military": false
       }
     },
     "foundryvtt-swse.visibleItemTypes": {
@@ -747,6 +750,40 @@
       "config": false,
       "type": "Boolean",
       "default": false
+    },
+    "foundryvtt-swse.storeMarkup": {
+      "scope": "world",
+      "config": true,
+      "type": "Number",
+      "default": 0,
+      "name": "Store Markup (%)",
+      "hint": "Applies a positive percentage markup to store purchase prices. This is the pricing engine setting used by StoreEngine.",
+      "range": {
+        "min": 0,
+        "max": 200,
+        "step": 5
+      }
+    },
+    "foundryvtt-swse.storeDiscount": {
+      "scope": "world",
+      "config": true,
+      "type": "Number",
+      "default": 0,
+      "name": "Store Discount (%)",
+      "hint": "Applies a percentage discount after markup to store purchase prices.",
+      "range": {
+        "min": 0,
+        "max": 90,
+        "step": 5
+      }
+    },
+    "foundryvtt-swse.storeInventoryPolicies": {
+      "scope": "world",
+      "config": false,
+      "type": "Object",
+      "default": {},
+      "name": "Store Inventory Policies",
+      "hint": "GM per-item store policies such as visibility, availability, quantity, approval requirement, and price override."
     }
   },
   "documents": {
