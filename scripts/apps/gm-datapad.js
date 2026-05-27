@@ -33,14 +33,11 @@ import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/su
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
-import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
+import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
-import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
-import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
-import { GameNotificationService } from "/systems/foundryvtt-swse/scripts/games/game-notification-service.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -156,15 +153,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const pendingDroids = this.pendingDroids?.length ?? 0;
     const storeApprovals = this.storeApprovals?.length ?? 0;
-    const gameApprovals = GameSessionStore.getAllSessions().filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement').length;
     const pendingSales = this.pendingSales?.length ?? 0;
 
     return {
       bulletin: bulletinCount,
-      approvals: pendingDroids + storeApprovals + gameApprovals,
+      approvals: pendingDroids + storeApprovals,
       pendingDroids,
       storeApprovals,
-      gameApprovals,
       pendingSales,
       store: pendingSales + storeApprovals,
       healing: healingEligible,
@@ -234,6 +229,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   _buildBulletinRecordView(record) {
+    const featuredProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED) ?? null;
+    const homeFeedProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.HOME_FEED) ?? null;
+    const notificationProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE) ?? null;
+    const isUrgent = record.metadata?.urgent === true || record.priority === 'critical' || Boolean(notificationProjection);
+    const isPinned = Boolean(featuredProjection?.isPinned || record.metadata?.pinAsLastSession);
+    const homeSlot = record.metadata?.homeSlot || (isPinned ? 'last-session' : 'feed');
+
     return {
       id: record.id,
       intent: record.intent,
@@ -252,7 +254,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
       audiencePlayerIds: record.audience?.playerIds || [],
       senderName: record.sender?.actorName || record.sender?.systemLabel || 'GM Bulletin',
       createdAt: record.createdAt ? new Date(record.createdAt).toLocaleString() : '—',
-      publishedAt: record.publishedAt ? new Date(record.publishedAt).toLocaleString() : null
+      publishedAt: record.publishedAt ? new Date(record.publishedAt).toLocaleString() : null,
+      isUrgent,
+      isPinned,
+      isFeatured: Boolean(featuredProjection),
+      isHomeFeed: Boolean(homeFeedProjection),
+      homeSlot,
+      homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
+      recordTone: isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft'))
     };
   }
 
@@ -770,7 +779,41 @@ export class GMDatapad extends BaseSWSEAppV2 {
       button.addEventListener('click', async (event) => {
         const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
         if (!record) return;
+        this._applyBulletinProjectionOptions(record, {
+          urgent: record.metadata?.urgent === true,
+          pinAsLastSession: record.metadata?.pinAsLastSession === true,
+          homeSlot: record.metadata?.homeSlot || 'feed'
+        });
         await HolonetEngine.publish(record);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-pin-last-session"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
+        if (!record) return;
+        this._applyBulletinProjectionOptions(record, {
+          urgent: record.metadata?.urgent === true,
+          pinAsLastSession: true,
+          homeSlot: 'last-session'
+        });
+        await this._unpinOtherBulletins(record.id);
+        await HolonetStorage.saveRecord(record);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-unpin-last-session"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
+        if (!record) return;
+        this._applyBulletinProjectionOptions(record, {
+          urgent: record.metadata?.urgent === true,
+          pinAsLastSession: false,
+          homeSlot: 'feed'
+        });
+        await HolonetStorage.saveRecord(record);
         await this.render(false);
       });
     });
@@ -843,20 +886,31 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const shouldPublish = formData.get('submitMode') === 'publish';
     const audience = this._normalizeAudienceFromForm(formData);
     let record = recordId ? await HolonetStorage.getRecord(recordId) : null;
+    const category = formData.get('category') || (section === 'events' ? 'news' : 'message');
+    const priority = formData.get('priority') || 'normal';
+    const urgent = formData.get('urgent') === 'on' || priority === 'critical';
+    const pinAsLastSession = formData.get('pinAsLastSession') === 'on';
+    const homeSlot = pinAsLastSession ? 'last-session' : (formData.get('homeSlot') || 'feed');
 
     const baseData = {
       id: recordId || undefined,
       title: formData.get('title') || '',
       body: formData.get('body') || '',
-      category: formData.get('category') || (section === 'events' ? 'news' : 'message'),
-      priority: formData.get('priority') || 'normal',
+      category,
+      priority,
       audience,
       authorName: formData.get('authorName') || game.user?.name || 'GM Bulletin',
       authorActorId: formData.get('authorActorId') || null,
       authorActorName: formData.get('authorActorName') || null,
       state: shouldPublish ? DELIVERY_STATE.PUBLISHED : DELIVERY_STATE.DRAFT,
       metadata: {
-        category: formData.get('category') || (section === 'events' ? 'news' : 'message')
+        category,
+        priority,
+        urgent,
+        pinAsLastSession,
+        homeSlot,
+        bulletinHomeRole: homeSlot,
+        bulletinConsoleVersion: 1
       }
     };
 
@@ -876,14 +930,89 @@ export class GMDatapad extends BaseSWSEAppV2 {
       record.updatedAt = new Date().toISOString();
     }
 
+    this._applyBulletinProjectionOptions(record, { urgent, pinAsLastSession, homeSlot });
+
     if (shouldPublish) {
       await HolonetEngine.publish(record);
     } else {
       await HolonetStorage.saveRecord(record);
     }
 
+    if (pinAsLastSession) {
+      await this._unpinOtherBulletins(record.id);
+    }
+
     this.bulletinEditor = { section, mode: 'create', recordId: null };
     await this.render(false);
+  }
+
+
+  async _unpinOtherBulletins(recordId) {
+    if (!recordId) return;
+    const records = await HolonetStorage.getAllRecords();
+    const changed = [];
+    for (const record of records) {
+      if (record.id === recordId || record.sourceFamily !== SOURCE_FAMILY.BULLETIN) continue;
+      let mutated = false;
+      if (record.metadata?.pinAsLastSession) {
+        record.metadata = { ...(record.metadata ?? {}), pinAsLastSession: false };
+        mutated = true;
+      }
+      for (const projection of record.projections ?? []) {
+        if (projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED && projection.isPinned) {
+          projection.isPinned = false;
+          mutated = true;
+        }
+      }
+      if (mutated) changed.push(record);
+    }
+    if (changed.length) {
+      await HolonetStorage.saveRecords(changed);
+    }
+  }
+
+  _applyBulletinProjectionOptions(record, { urgent = false, pinAsLastSession = false, homeSlot = 'feed' } = {}) {
+    if (!record) return record;
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      urgent: Boolean(urgent),
+      pinAsLastSession: Boolean(pinAsLastSession),
+      homeSlot: pinAsLastSession ? 'last-session' : homeSlot
+    };
+    record.projections = Array.isArray(record.projections) ? record.projections : [];
+
+    const ensureProjection = (surfaceType) => {
+      let projection = record.projections.find((entry) => entry.surfaceType === surfaceType);
+      if (!projection) {
+        projection = { surfaceType, recordId: record.id, isPinned: false, metadata: {} };
+        record.projections.push(projection);
+      }
+      projection.recordId = record.id;
+      projection.metadata = { ...(projection.metadata ?? {}), source: 'gm-bulletin-console' };
+      return projection;
+    };
+
+    ensureProjection(SURFACE_TYPE.HOME_FEED);
+    const featured = ensureProjection(SURFACE_TYPE.BULLETIN_FEATURED);
+    featured.isPinned = Boolean(pinAsLastSession);
+    featured.metadata = {
+      ...(featured.metadata ?? {}),
+      homeSlot: pinAsLastSession ? 'last-session' : homeSlot
+    };
+
+    const hasBubble = record.projections.some((entry) => entry.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE);
+    if (urgent && !hasBubble) {
+      record.projections.push({
+        surfaceType: SURFACE_TYPE.NOTIFICATION_BUBBLE,
+        recordId: record.id,
+        isPinned: false,
+        metadata: { source: 'gm-bulletin-console', urgent: true }
+      });
+    } else if (!urgent && hasBubble) {
+      record.projections = record.projections.filter((entry) => entry.surfaceType !== SURFACE_TYPE.NOTIFICATION_BUBBLE);
+    }
+
+    return record;
   }
 
   /**
@@ -1722,7 +1851,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const [kind, rawId] = String(key || '').split(':');
     if (kind === 'droid' && rawId) return { kind, actorId: rawId };
     if (kind === 'custom') return { kind, index: Number(rawId) };
-    if (kind === 'game' && rawId) return { kind, sessionId: rawId };
     return { kind: null, index: -1, actorId: null };
   }
 
@@ -1779,12 +1907,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       if (name === 'costCredits') {
         const cost = this._approvalNumberValue(rawValue) ?? 0;
         edits.approvalUpdates.costCredits = cost;
-        continue;
-      }
-
-      if (name === 'approvedPayout') {
-        const payout = this._approvalNumberValue(rawValue) ?? 0;
-        edits.approvalUpdates.approvedPayout = payout;
         continue;
       }
 
@@ -1871,27 +1993,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
       approvals[parsed.index] = approval;
       await SettingsHelper.set('pendingCustomPurchases', approvals);
-      return;
     }
-
-    if (parsed.kind === 'game') {
-      const session = GameSessionStore.getSession(parsed.sessionId);
-      if (!session) throw new Error('Pending game settlement not found.');
-      const escrow = foundry.utils?.deepClone?.(session.escrow ?? {}) ?? JSON.parse(JSON.stringify(session.escrow ?? {}));
-      escrow.credits ??= {};
-      if ('approvedPayout' in edits.approvalUpdates) escrow.credits.gmPendingApprovedPayout = normalizeCredits(edits.approvalUpdates.approvedPayout ?? 0);
-      const gmReason = edits.metadataUpdates['metadata.gmSettlementReason'];
-      if (gmReason !== undefined) escrow.credits.gmPendingReason = String(gmReason ?? '').trim();
-      await GameSessionStore.upsertSession({ ...session, escrow });
-    }
-
   }
 
   async _approveApprovalRequest(key) {
     const parsed = this._parseApprovalKey(key);
     if (parsed.kind === 'droid') return this._approveDroid(parsed.actorId);
     if (parsed.kind === 'custom') return this._approvePendingCustom(parsed.index);
-    if (parsed.kind === 'game') return this._approveGameSettlement(parsed.sessionId);
     ui?.notifications?.error?.('Invalid approval request.');
   }
 
@@ -1909,59 +2017,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const parsed = this._parseApprovalKey(key);
     if (parsed.kind === 'droid') return this._rejectDroid(parsed.actorId, reason);
     if (parsed.kind === 'custom') return this._denyPendingCustom(parsed.index, reason);
-    if (parsed.kind === 'game') return this._denyGameSettlement(parsed.sessionId, reason);
     ui?.notifications?.error?.('Invalid approval request.');
-  }
-
-
-  async _approveGameSettlement(sessionId) {
-    try {
-      const session = GameSessionStore.getSession(sessionId);
-      if (!session) throw new Error('Pending game settlement not found.');
-      const credits = session.escrow?.credits ?? {};
-      const policy = credits.policy ?? {};
-      const recommended = normalizeCredits(credits.gmPendingApprovedPayout ?? policy.recommendedPayout ?? credits.payoutApproved ?? 0);
-      const reason = credits.gmPendingReason || credits.settlementMessage || 'GM-approved game payout';
-      const result = await GameCreditEscrowService.approvePendingSettlement(session, {
-        payoutAmount: recommended,
-        decision: 'approved',
-        reason,
-        by: game.user?.id ?? null
-      });
-      if (!result.ok) throw new Error(result.error || 'Game settlement approval failed.');
-      GameNotificationService.emitSessionUpdated(result.session, { action: 'gm-game-settlement-approved' });
-      ui?.notifications?.info?.('Game payout settlement approved.');
-      this.selectedApprovalKey = null;
-      this.approvalEditMode = false;
-      this.approvalDenyMode = false;
-      await this.render(false);
-    } catch (err) {
-      SWSELogger.error('[GMDatapad] Error approving game settlement:', err);
-      ui?.notifications?.error?.(`Failed to approve game settlement: ${err.message}`);
-    }
-  }
-
-  async _denyGameSettlement(sessionId, reason = '') {
-    try {
-      const session = GameSessionStore.getSession(sessionId);
-      if (!session) throw new Error('Pending game settlement not found.');
-      const result = await GameCreditEscrowService.approvePendingSettlement(session, {
-        payoutAmount: 0,
-        decision: 'voided',
-        reason: String(reason || '').trim() || 'GM voided the automated game payout.',
-        by: game.user?.id ?? null
-      });
-      if (!result.ok) throw new Error(result.error || 'Game settlement denial failed.');
-      GameNotificationService.emitSessionUpdated(result.session, { action: 'gm-game-settlement-voided' });
-      ui?.notifications?.info?.('Game payout voided. No credits were awarded.');
-      this.selectedApprovalKey = null;
-      this.approvalEditMode = false;
-      this.approvalDenyMode = false;
-      await this.render(false);
-    } catch (err) {
-      SWSELogger.error('[GMDatapad] Error denying game settlement:', err);
-      ui?.notifications?.error?.(`Failed to deny game settlement: ${err.message}`);
-    }
   }
 
   /**
