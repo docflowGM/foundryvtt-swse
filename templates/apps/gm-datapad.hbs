@@ -2446,8 +2446,10 @@
         </div>
         <div class="gm-approval-count-strip" aria-label="Approval queue counts">
           <span><strong>{{approvalQueueCounts.total}}</strong>Total</span>
+          <span><strong>{{approvalQueueCounts.games}}</strong>Games</span>
           <span><strong>{{approvalQueueCounts.droids}}</strong>Droids</span>
           <span><strong>{{approvalQueueCounts.ships}}</strong>Ships</span>
+          <span><strong>{{approvalQueueCounts.storeItems}}</strong>Store</span>
         </div>
       </div>
 
@@ -2609,8 +2611,8 @@
       {{else}}
       <div class="gm-approval-empty-state swse-ui-panel">
         <i class="fa-solid fa-check-double"></i>
-        <h3>No pending ship or droid approvals</h3>
-        <p>The acquisition queue is clear. New custom droid, ship, or vehicle requests will appear here as summary packets.</p>
+        <h3>No pending approvals</h3>
+        <p>The approval queue is clear. New game settlements, restricted store purchases, custom droids, ships, or vehicles will appear here as summary packets.</p>
       </div>
       {{/if}}
 
@@ -2641,6 +2643,50 @@
     {{else if (eq currentPage "settings")}}
     <div class="gm-datapad-page gm-datapad-settings swse-shell-surface-host" data-shell-surface="settings">
       {{> "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs" vm=settingsVm}}
+
+      <section class="gm-game-policy-panel swse-ui-panel" data-gm-game-policy-panel>
+        <div class="gm-command-panel-header">
+          <div>
+            <span class="gm-command-eyebrow">GAME POLICY</span>
+            <h3>{{gamePolicyVm.title}}</h3>
+            <p>{{gamePolicyVm.description}}</p>
+          </div>
+        </div>
+        <div class="gm-game-policy-grid">
+          {{#each gamePolicyVm.groups}}
+          <article class="gm-command-card gm-game-policy-group" data-game-policy-group="{{this.id}}">
+            <header class="gm-store-card-header">
+              <i class="fa-solid fa-dice-d20"></i>
+              <div>
+                <h4>{{this.label}}</h4>
+                <p>Campaign-facing player/GM coordination gates.</p>
+              </div>
+            </header>
+            <div class="gm-game-policy-fields">
+              {{#each this.fields}}
+              <label class="gm-game-policy-field {{this.type}}">
+                <span>
+                  <strong>{{this.label}}</strong>
+                  <em>{{this.description}}</em>
+                </span>
+                {{#if (eq this.type "checkbox")}}
+                  <input type="checkbox" data-game-policy-field="{{this.key}}" {{#if this.checked}}checked{{/if}}>
+                {{else if (eq this.type "select")}}
+                  <select class="swse-ui-input" data-game-policy-field="{{this.key}}">
+                    {{#each this.choices}}
+                      <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <input type="number" class="swse-ui-input" min="{{this.min}}" max="{{this.max}}" step="{{this.step}}" value="{{this.value}}" data-game-policy-field="{{this.key}}">
+                {{/if}}
+              </label>
+              {{/each}}
+            </div>
+          </article>
+          {{/each}}
+        </div>
+      </section>
     </div>
 
     {{!-- Combat & Recovery Page --}}

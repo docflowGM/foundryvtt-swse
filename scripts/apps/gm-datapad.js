@@ -42,6 +42,7 @@ import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/sys
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
@@ -152,6 +153,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const bulletinRecords = await HolonetStorage.getAllRecords();
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
     const jobCounts = await this._getJobBadgeCounts();
+    const tradeCounts = await this._getTradeBadgeCounts();
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
@@ -168,21 +170,55 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pendingDroids = this.pendingDroids?.length ?? 0;
     const storeApprovals = this.storeApprovals?.length ?? 0;
     const pendingSales = this.pendingSales?.length ?? 0;
+    const gameApprovals = this._getPendingGameSettlementCount();
 
     return {
       bulletin: bulletinCount,
-      approvals: pendingDroids + storeApprovals,
+      approvals: pendingDroids + storeApprovals + gameApprovals,
       pendingDroids,
       storeApprovals,
+      gameApprovals,
       pendingSales,
       store: pendingSales + storeApprovals,
       jobs: jobCounts.actionable,
       jobReview: jobCounts.review,
       jobPayout: jobCounts.payout,
       jobActive: jobCounts.active,
+      trade: tradeCounts.actionable,
+      tradeApprovals: tradeCounts.approvals,
+      tradeFailed: tradeCounts.failed,
+      tradeActive: tradeCounts.active,
       healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
+  }
+
+
+  _getPendingGameSettlementCount() {
+    try {
+      return GameSessionStore.getAllSessions()
+        .filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement')
+        .length;
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load pending game settlement count:', err);
+      return 0;
+    }
+  }
+
+
+  async _getTradeBadgeCounts() {
+    try {
+      const { GMTradeConsoleSurfaceService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMTradeConsoleSurfaceService.js');
+      const tradeConsole = await GMTradeConsoleSurfaceService.buildTradeConsoleVm(this);
+      const stats = tradeConsole?.stats ?? {};
+      const approvals = Number(stats.approvals ?? tradeConsole?.approvalQueue?.length ?? 0) || 0;
+      const failed = Number(stats.failed ?? tradeConsole?.failedQueue?.length ?? 0) || 0;
+      const active = Number(stats.active ?? tradeConsole?.activeQueue?.length ?? 0) || 0;
+      return { approvals, failed, active, actionable: approvals + failed };
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load trade console badge counts:', err);
+      return { approvals: 0, failed: 0, active: 0, actionable: 0 };
+    }
   }
 
   async _getJobBadgeCounts() {
@@ -741,6 +777,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'jobs', code: 'JOB', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, review queue, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
       { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
+      { id: 'trade', code: 'TRD', label: 'Trade Console', icon: 'fa-solid fa-right-left', description: 'Transfers, counter-offers, and failed settlements', badgeCount: counts.trade ?? 0, status: 'Ledger', statusTone: (counts.trade ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
       { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
@@ -820,6 +857,30 @@ export class GMDatapad extends BaseSWSEAppV2 {
       logger: SWSELogger
     });
     this._settingsSurfaceController.attach(root);
+    this._wireGamePolicySettings(root);
+  }
+
+  _wireGamePolicySettings(root) {
+    const fields = root.querySelectorAll('[data-game-policy-field]');
+    fields.forEach((field) => {
+      field.addEventListener('change', async (event) => {
+        const input = event.currentTarget;
+        const key = input.dataset.gamePolicyField;
+        if (!key) return;
+        let value;
+        if (input.type === 'checkbox') value = input.checked === true;
+        else if (input.type === 'number') value = Number(input.value || 0);
+        else value = input.value;
+        try {
+          await game.settings.set(this.NS, key, value);
+          ui?.notifications?.info?.('Game policy updated.');
+          await this.render(false);
+        } catch (err) {
+          SWSELogger.error('[GMDatapad] Failed to update game policy setting:', err);
+          ui?.notifications?.error?.(`Game policy update failed: ${err.message}`);
+        }
+      });
+    });
   }
 
   async _wireJobBoardEvents(root) {
@@ -3049,6 +3110,110 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await this.render(false);
   }
 
+
+  _cloneApprovalPayload(value) {
+    if (value === undefined || value === null) return value;
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+    try { return structuredClone(value); } catch (_err) { return JSON.parse(JSON.stringify(value)); }
+  }
+
+  _stripApprovalDocumentIdentity(data = {}) {
+    const clone = this._cloneApprovalPayload(data) || {};
+    delete clone._id;
+    delete clone.id;
+    return clone;
+  }
+
+  async _buildStoreItemApprovalMutationPlans(approval = {}) {
+    const items = Array.isArray(approval.approvalItems) ? approval.approvalItems : [];
+    const plans = [];
+    const itemData = [];
+
+    for (const item of items) {
+      const type = String(item?.type || '').toLowerCase();
+      const sourceBucket = String(item?.sourceBucket || '').toLowerCase();
+      const data = this._stripApprovalDocumentIdentity(item?.itemData || { name: item?.name || 'Store item', type: item?.type || 'equipment', img: item?.img, system: {} });
+
+      if (type === 'droid' || sourceBucket === 'droids') {
+        const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
+        plans.push(DroidFactory.buildMutationPlan({ droidActor: data, name: item?.name || data.name }));
+        continue;
+      }
+
+      if (type === 'vehicle' || sourceBucket === 'vehicles') {
+        const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
+        plans.push(VehicleFactory.buildMutationPlan({ template: data, condition: item?.condition || 'new' }));
+        continue;
+      }
+
+      itemData.push(data);
+    }
+
+    if (itemData.length) {
+      plans.push({ add: { items: itemData } });
+    }
+
+    return plans;
+  }
+
+  async _approveStoreItemPurchase(index, approval, ownerActor) {
+    const cost = normalizeCredits(approval.costCredits ?? 0);
+    const approvalItems = Array.isArray(approval.approvalItems) ? approval.approvalItems : [];
+    if (!approvalItems.length) {
+      ui?.notifications?.error?.('No store item payload is recorded for this approval.');
+      return false;
+    }
+
+    const purchaseItems = approvalItems.map(item => ({
+      id: item.id || item.policyId || null,
+      policyId: item.policyId || item.id || null,
+      name: item.name || 'Store item',
+      type: item.type || 'item',
+      finalCost: normalizeCredits(item.finalCost ?? item.cost ?? 0),
+      cost: normalizeCredits(item.cost ?? item.finalCost ?? 0),
+      condition: item.condition || null
+    }));
+    const pricedTotal = purchaseItems.reduce((sum, item) => sum + normalizeCredits(item.finalCost ?? item.cost ?? 0), 0);
+    if (purchaseItems.length && pricedTotal !== cost) {
+      const delta = cost - pricedTotal;
+      purchaseItems[0].finalCost = Math.max(0, normalizeCredits(purchaseItems[0].finalCost + delta));
+      purchaseItems[0].cost = purchaseItems[0].finalCost;
+    }
+
+    const result = await StoreEngine.purchase({
+      actor: ownerActor,
+      items: purchaseItems,
+      totalCost: cost,
+      transactionContext: 'store-purchase',
+      itemGrantCallback: async () => this._buildStoreItemApprovalMutationPlans(approval)
+    });
+
+    if (!result.success) {
+      ui?.notifications?.error?.(`Failed to approve store purchase: ${result.error}`);
+      return false;
+    }
+
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    approvals.splice(index, 1);
+    await SettingsHelper.set('pendingCustomPurchases', approvals);
+
+    Hooks.call('swseCustomPurchaseApproved', {
+      approval,
+      actor: ownerActor,
+      draftActor: null,
+      transactionId: result.transactionId,
+      decidedBy: game.user?.name ?? 'GM',
+      edited: !!approval.metadata?.gmNotes
+    });
+
+    this.selectedApprovalKey = null;
+    this.approvalEditMode = false;
+    this.approvalDenyMode = false;
+    ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Store purchase'}`);
+    await this.render(false);
+    return true;
+  }
+
   /**
    * Approve a pending custom purchase.
    */
@@ -3066,6 +3231,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     if (!ownerActor) {
       ui?.notifications?.error?.('Owner actor not found');
       return;
+    }
+
+    if (approval.type === 'store-item' || approval.approvalKind === 'store-policy-item') {
+      return this._approveStoreItemPurchase(index, approval, ownerActor);
     }
 
     if (!draftActor) {

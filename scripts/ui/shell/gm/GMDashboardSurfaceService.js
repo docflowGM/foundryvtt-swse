@@ -4,6 +4,7 @@ import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js';
 import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js';
+import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { SOURCE_FAMILY, DELIVERY_STATE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 
 const RULE_CATEGORIES = ['characterCreation', 'combat', 'force', 'recovery', 'skills', 'vehicles'];
@@ -23,6 +24,11 @@ function formatMaybeDate(value) {
 export class GMDashboardSurfaceService {
   static async buildViewModel(host) {
     const badgeCounts = await host._getHomeBadgeCounts();
+    if (badgeCounts.gameApprovals === undefined) {
+      const gameApprovals = this._getPendingGameSettlementCount();
+      badgeCounts.gameApprovals = gameApprovals;
+      badgeCounts.approvals = (badgeCounts.approvals ?? 0) + gameApprovals;
+    }
     const sceneStatus = this._buildSceneStatus();
     const combatStatus = this._buildCombatStatus();
     const storeStatus = await this._buildStoreStatus(host);
@@ -37,7 +43,7 @@ export class GMDashboardSurfaceService {
         id: 'approvals',
         label: 'Pending Approvals',
         value: badgeCounts.approvals ?? 0,
-        detail: `${storeStatus.pendingApprovals} store · ${badgeCounts.pendingDroids ?? 0} droid`,
+        detail: `${storeStatus.pendingApprovals} store · ${badgeCounts.pendingDroids ?? 0} droid · ${badgeCounts.gameApprovals ?? 0} game`,
         tone: (badgeCounts.approvals ?? 0) > 0 ? 'crit' : 'stable',
         route: 'approvals'
       },
@@ -185,6 +191,17 @@ export class GMDashboardSurfaceService {
     };
   }
 
+
+  static _getPendingGameSettlementCount() {
+    try {
+      return GameSessionStore.getAllSessions()
+        .filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement')
+        .length;
+    } catch (_err) {
+      return 0;
+    }
+  }
+
   static _buildSceneStatus() {
     const scene = game.scenes?.active ?? globalThis.canvas?.scene ?? null;
     const tokenCount = scene?.tokens?.size ?? scene?.tokens?.contents?.length ?? scene?.tokens?.length ?? 0;
@@ -314,8 +331,11 @@ export class GMDashboardSurfaceService {
     if ((badgeCounts.jobPayout ?? 0) > 0) {
       add({ tone: 'warn', source: 'Job Board', label: `${badgeCounts.jobPayout} completed contract${badgeCounts.jobPayout === 1 ? '' : 's'} ready for payout`, detail: 'Distribute credits, party-fund cuts, and rewards.', route: 'jobs', actionLabel: 'Pay Rewards' });
     }
+    if ((badgeCounts.gameApprovals ?? 0) > 0) {
+      add({ tone: 'crit', source: 'Holopad Games', label: `${badgeCounts.gameApprovals} game settlement${badgeCounts.gameApprovals === 1 ? '' : 's'} need approval`, detail: 'Approve, adjust, or deny pending game payout and table-credit cash-out requests.', route: 'approvals', actionLabel: 'Review Games' });
+    }
     if ((badgeCounts.approvals ?? 0) > 0) {
-      add({ tone: 'warn', source: 'Approvals', label: `${badgeCounts.approvals} approval request${badgeCounts.approvals === 1 ? '' : 's'} pending`, detail: `${storeStatus.pendingApprovals} store · ${badgeCounts.pendingDroids ?? 0} droid`, route: 'approvals', actionLabel: 'Review' });
+      add({ tone: 'warn', source: 'Approvals', label: `${badgeCounts.approvals} approval request${badgeCounts.approvals === 1 ? '' : 's'} pending`, detail: `${storeStatus.pendingApprovals} store · ${badgeCounts.pendingDroids ?? 0} droid · ${badgeCounts.gameApprovals ?? 0} game`, route: 'approvals', actionLabel: 'Review' });
     }
     if (combatStatus.active) {
       add({ tone: 'crit', source: 'Combat & Recovery', label: 'Encounter tracker is active', detail: combatStatus.detail, route: 'healing', actionLabel: 'Open Recovery' });

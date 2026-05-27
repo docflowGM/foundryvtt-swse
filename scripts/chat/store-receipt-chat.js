@@ -271,6 +271,7 @@ async function handleCreditAdjustmentComplete(payload = {}) {
 
 async function handleCustomPurchaseApproved(payload = {}) {
   const approval = payload.approval || {};
+  if (approval.type === 'store-item' || approval.approvalKind === 'store-policy-item') return;
   const actor = payload.actor || game.actors?.get?.(approval.ownerActorId) || null;
   if (!actor) return;
   const cost = asNumber(approval.costCredits, asNumber(approval.total, 0));

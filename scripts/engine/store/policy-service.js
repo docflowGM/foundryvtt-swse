@@ -211,16 +211,22 @@ export function applyStorePoliciesToIndex(index, options = {}) {
   return index;
 }
 
-export function isStoreItemPurchasable(item = {}) {
+export function isStoreItemPurchasable(item = {}, options = {}) {
   if (!item) return { ok: false, reason: 'Item not found' };
 
+  const { allowApprovalRequired = false } = options || {};
   const policy = item.storePolicy || buildEffectiveStorePolicy(item);
   if (!policy.visible) return { ok: false, reason: 'This listing is hidden by GM policy.' };
   if (!policy.available) return { ok: false, reason: 'This listing is currently unavailable.' };
   if (policy.outOfStock) return { ok: false, reason: 'This listing is out of stock.' };
-  if (policy.requiresApproval) return { ok: false, reason: 'This listing requires GM approval.' };
+  if (policy.requiresApproval && !allowApprovalRequired) return { ok: false, reason: 'This listing requires GM approval.' };
 
-  return { ok: true, reason: null };
+  return {
+    ok: true,
+    reason: null,
+    requiresApproval: policy.requiresApproval === true,
+    policy
+  };
 }
 
 export function summarizeStorePolicy(item = {}) {

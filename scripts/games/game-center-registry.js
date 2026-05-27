@@ -32,10 +32,10 @@ const DEFAULT_GAMES = [
   {
     id: 'sabacc',
     title: 'Sabacc',
-    subtitle: 'High-stakes shifting cards, hand pot, and sabacc pot.',
-    icon: '23',
+    subtitle: 'Galaxy/Corellian Spike target-zero cards, hand pot, and sabacc pot.',
+    icon: '0',
     status: 'Campaign Table MVP',
-    description: "A custom 76-card Sabacc table with dealer seat, hand pot, sabacc pot, PvP invites, credit buy-ins, betting rounds, shifting, drawing, calling, bomb-outs, pure sabacc, and Idiot's Array detection.",
+    description: "A 62-card Galaxy/Corellian Spike-style Sabacc table with +10 through -10 in three suits, two Sylops, target-zero hand evaluation, market lifecycle, hand pot, Sabacc pot, PvP invites, credit buy-ins, betting rounds, and table-credit cash-out settlement.",
     minPlayers: 2,
     maxPlayers: 6,
     supportsAI: true,
@@ -48,7 +48,7 @@ const DEFAULT_GAMES = [
     supportsAssetWagers: true,
     defaultRulesMode: 'wagered',
     implementationPhase: 'Phase 9',
-    nextMilestone: 'Variable bet sizing, item/asset side pots, dealer variants, and expanded table receipts',
+    nextMilestone: 'Evaluator test expansion, market runtime polish, item/asset side pots, dealer variants, and expanded table receipts',
     tags: ['cards', 'high-stakes', 'dealer']
   },
   {
