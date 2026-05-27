@@ -1,11 +1,12 @@
 /**
  * GamesSurfaceController — DOM controller for the Holopad Games surface.
  *
- * Phase 2 wires Messenger-backed game invitations. Playable game reducers and
- * wager settlement remain later layers.
+ * Phase 3 adds a playable Pazaak MVP under Republic Senate Rules, including a
+ * legal 10-card side-deck builder before the match begins.
  */
 
 import { GameHolonetBridge } from '/systems/foundryvtt-swse/scripts/games/game-holonet-bridge.js';
+import { PazaakEngine } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js';
 
 export class GamesSurfaceController {
   constructor(host, actor) {
@@ -27,7 +28,7 @@ export class GamesSurfaceController {
         ev.preventDefault();
         const selectedGameId = button.dataset.gameId;
         if (!selectedGameId) return;
-        this._setOptions({ selectedGameId });
+        this._setOptions({ selectedGameId, sessionId: null, sideDeckIds: [] });
       }, { signal });
     });
 
@@ -46,7 +47,14 @@ export class GamesSurfaceController {
         ev.preventDefault();
         const sessionId = button.dataset.sessionId;
         if (!sessionId) return;
-        this._setOptions({ sessionId, view: 'session' });
+        this._setOptions({ sessionId, view: 'session', sideDeckIds: [] });
+      }, { signal });
+    });
+
+    surface.querySelectorAll('[data-games-action="close-table"]').forEach(button => {
+      button.addEventListener('click', ev => {
+        ev.preventDefault();
+        this._setOptions({ sessionId: null, view: 'library', sideDeckIds: [] });
       }, { signal });
     });
 
@@ -95,6 +103,73 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
+    surface.querySelectorAll('form[data-games-action="start-solo-pazaak"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const result = await PazaakEngine.createSoloAiSession({
+          actor: this._actor,
+          title: String(data.get('title') || '').trim()
+        });
+        if (result?.pending) {
+          this._noteResult(result);
+          this._host.render(false);
+        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'pazaak', view: 'session', sideDeckIds: [] });
+        else this._noteResult(false);
+      }, { signal });
+    });
+
+    surface.querySelectorAll('form[data-games-action="lock-pazaak-side-deck"]').forEach(form => {
+      const checkboxes = Array.from(form.querySelectorAll('[data-pazaak-side-card]'));
+      const countNode = form.querySelector('[data-pazaak-selected-count]');
+      const submit = form.querySelector('button[type="submit"]');
+      const updateSelection = () => this._syncSideDeckBuilder(checkboxes, countNode, submit);
+      checkboxes.forEach(box => box.addEventListener('change', updateSelection, { signal }));
+      updateSelection();
+
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const cardIds = data.getAll('sideDeckIds').map(String).filter(Boolean);
+        const result = await PazaakEngine.lockSideDeck({
+          sessionId: String(data.get('sessionId') || '').trim(),
+          seatId: String(data.get('seatId') || '').trim(),
+          cardIds,
+          actor: this._actor
+        });
+        if (result?.pending) this._noteResult(result);
+        else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Could not lock Pazaak side deck.');
+        this._setOptions({ sideDeckIds: [] });
+      }, { signal });
+    });
+
+    surface.querySelectorAll('form[data-games-action="pazaak-play-side-card"], form[data-games-action="pazaak-stand"], form[data-games-action="pazaak-end-turn"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const action = String(form.dataset.gamesAction || '').replace(/^pazaak-/, '');
+        const payload = {
+          cardInstanceId: String(data.get('cardInstanceId') || '').trim(),
+          choice: {
+            sign: String(data.get('sign') || '').trim(),
+            value: Number(data.get('value') || 0) || null
+          }
+        };
+        const result = await PazaakEngine.submitAction({
+          sessionId: String(data.get('sessionId') || '').trim(),
+          seatId: String(data.get('seatId') || '').trim(),
+          action,
+          payload
+        });
+        if (result?.pending) this._noteResult(result);
+        else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Pazaak action failed.');
+        this._host.render(false);
+      }, { signal });
+    });
+
     surface.querySelectorAll('[data-shell-action="return-to-home"]').forEach(button => {
       button.addEventListener('click', async ev => {
         ev.preventDefault();
@@ -107,6 +182,21 @@ export class GamesSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
+  }
+
+  _syncSideDeckBuilder(checkboxes, countNode, submit) {
+    const selected = checkboxes.filter(box => box.checked);
+    const selectedIds = selected.map(box => box.value).filter(Boolean);
+    const limit = 10;
+    checkboxes.forEach(box => {
+      box.disabled = !box.checked && selected.length >= limit;
+    });
+    if (countNode) countNode.textContent = String(selected.length);
+    if (submit) submit.disabled = selected.length !== limit;
+    this._host._shellSurfaceOptions = {
+      ...(this._host._shellSurfaceOptions ?? {}),
+      sideDeckIds: selectedIds
+    };
   }
 
   _setOptions(patch = {}) {

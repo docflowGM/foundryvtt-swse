@@ -2,6 +2,7 @@ import { GameCenterRegistry } from '/systems/foundryvtt-swse/scripts/games/game-
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
+import { PazaakViewModel } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-view-model.js';
 
 function formatTimestamp(value) {
   if (!value) return '—';
@@ -29,6 +30,7 @@ function mapSession(session, participantId = null) {
   const rawStatus = String(session.status || 'draft');
   const currentSeat = Array.isArray(session.seats) ? session.seats.find(seat => seat.recipientId === participantId) : null;
   const canOpenThread = Boolean(session.holonetThreadId);
+  const isPlayablePazaak = session.gameId === 'pazaak' && ['active', 'paused', 'complete', 'pending-invite'].includes(rawStatus);
   return {
     id: session.id,
     gameId: session.gameId,
@@ -43,7 +45,7 @@ function mapSession(session, participantId = null) {
     holonetThreadId: session.holonetThreadId || null,
     holonetMessageId: session.holonetMessageId || session.metadata?.inviteMessageId || null,
     canOpenThread,
-    canOpenTable: Boolean(['active', 'paused', 'pending-invite'].includes(rawStatus)),
+    canOpenTable: Boolean(isPlayablePazaak || ['active', 'paused', 'pending-invite'].includes(rawStatus)),
     canRespond: Boolean(rawStatus === 'pending-invite' && currentSeat?.status === 'invited')
   };
 }
@@ -70,6 +72,23 @@ async function buildInviteTargets(actor, settings, selectedGame) {
     }));
 }
 
+function buildActiveTableVm(session, actor, participantId, options = {}) {
+  if (!session) return null;
+  if (session.gameId === 'pazaak') {
+    return {
+      isPazaak: true,
+      gameId: 'pazaak',
+      sessionId: session.id,
+      pazaak: PazaakViewModel.build({
+        session,
+        actor,
+        participantId,
+        selectedDeckIds: Array.isArray(options.sideDeckIds) ? options.sideDeckIds : []
+      })
+    };
+  }
+  return null;
+}
 
 export class GamesSurfaceService {
   static async buildViewModel(actor, options = {}) {
@@ -82,6 +101,7 @@ export class GamesSurfaceService {
     const participantId = HolonetMessengerService.getCurrentParticipantId();
     const inviteTargets = await buildInviteTargets(actor, settings, selectedGame);
     const selectedSession = options.sessionId ? GameSessionStore.getSession(options.sessionId) : null;
+    const activeTable = buildActiveTableVm(selectedSession, actor, participantId, options);
 
     return {
       id: 'games',
@@ -108,7 +128,10 @@ export class GamesSurfaceService {
       inviteTargets,
       hasInviteTargets: inviteTargets.length > 0,
       canSendInvites: Boolean(settings.enabled && settings.useMessengerInvites && selectedGame && inviteTargets.length && (settings.allowPlayerCreatedTables || game.user?.isGM)),
+      canStartSoloAiPazaak: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'pazaak' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
       selectedSession: selectedSession ? mapSession(selectedSession, participantId) : null,
+      activeTable,
+      hasActiveTable: Boolean(activeTable),
       sessionSummary: {
         total: summary.total,
         inviteCount: summary.inviteCount,
@@ -137,8 +160,8 @@ export class GamesSurfaceService {
         }
       ],
       infrastructureNotes: [
-        'Phase 2 routes game requests through Holonet/Messenger as accept/decline system cards.',
-        'Accepted game requests create active session envelopes; playable rules engines arrive in later phases.',
+        'Phase 3 adds playable Pazaak under Republic Senate Rules with a legal 10-card side-deck builder.',
+        'Every Pazaak player is treated as having the full side-card catalog unlocked, but each table still requires exactly 10 selected side-deck cards.',
         'Credits must settle through TransactionEngine; items and assets must never be mutated directly by game code.'
       ]
     };

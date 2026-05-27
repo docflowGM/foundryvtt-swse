@@ -517,3 +517,287 @@
   padding: 8px 10px 10px;
   border-top: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 12%, transparent);
 }
+
+/* Phase 3: Pazaak MVP ---------------------------------------------------- */
+.swse-pazaak-table {
+  display: grid;
+  gap: 14px;
+}
+
+.swse-pazaak-topbar,
+.swse-pazaak-builder-head,
+.swse-pazaak-scoreboard,
+.swse-pazaak-turn-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.swse-pazaak-topbar h3,
+.swse-pazaak-rules-card h4,
+.swse-pazaak-complete h4 {
+  margin: 2px 0 4px;
+}
+
+.swse-pazaak-topbar p,
+.swse-pazaak-rules-card p,
+.swse-pazaak-complete p,
+.swse-pazaak-hand-card p {
+  margin: 0;
+  color: color-mix(in oklab, var(--ink, #dffbff) 72%, transparent);
+}
+
+.swse-pazaak-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.swse-pazaak-topbar__right > span,
+.swse-pazaak-scoreboard span {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 28%, transparent);
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: var(--vapor-cyan, #39f7ff);
+  background: color-mix(in oklab, var(--vapor-cyan, #39f7ff) 8%, transparent);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.swse-pazaak-alert,
+.swse-pazaak-rules-card,
+.swse-pazaak-hand-panel,
+.swse-pazaak-complete,
+.swse-pazaak-history {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 18%, transparent);
+  border-radius: 14px;
+  background: color-mix(in oklab, #06131d 86%, transparent);
+  box-shadow: inset 0 0 20px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 6%, transparent);
+  padding: 12px;
+}
+
+.swse-pazaak-alert {
+  display: grid;
+  gap: 4px;
+}
+
+.swse-pazaak-alert span,
+.swse-pazaak-rules-card small,
+.swse-pazaak-history span {
+  color: color-mix(in oklab, var(--ink, #dffbff) 70%, transparent);
+  font-size: 12px;
+}
+
+.swse-pazaak-setup,
+.swse-pazaak-play {
+  display: grid;
+  gap: 12px;
+}
+
+.swse-pazaak-side-builder {
+  display: grid;
+  gap: 12px;
+}
+
+.swse-pazaak-card-catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+  gap: 10px;
+  max-height: 430px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-pazaak-catalog-card,
+.swse-pazaak-hand-card {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 16%, transparent);
+  border-radius: 14px;
+  background: linear-gradient(135deg, color-mix(in oklab, #071724 90%, transparent), color-mix(in oklab, #102437 75%, transparent));
+  padding: 9px;
+  display: grid;
+  gap: 8px;
+}
+
+.swse-pazaak-catalog-card {
+  cursor: pointer;
+  min-height: 118px;
+}
+
+.swse-pazaak-catalog-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swse-pazaak-catalog-card.is-selected,
+.swse-pazaak-catalog-card:has(input:checked) {
+  border-color: color-mix(in oklab, var(--vapor-cyan, #39f7ff) 62%, transparent);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 18%, transparent);
+}
+
+.swse-pazaak-card-face,
+.swse-pazaak-played-card {
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 18%, transparent);
+  background: rgba(0, 0, 0, .22);
+  min-height: 58px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 6px;
+}
+
+.swse-pazaak-card-face b,
+.swse-pazaak-played-card b {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.swse-pazaak-card-face small,
+.swse-pazaak-played-card small,
+.swse-pazaak-card-desc {
+  font-size: 11px;
+  color: color-mix(in oklab, var(--ink, #dffbff) 66%, transparent);
+}
+
+.swse-pazaak-seat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.swse-pazaak-seat {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 16%, transparent);
+  border-radius: 16px;
+  padding: 12px;
+  background: color-mix(in oklab, #07131e 88%, transparent);
+  display: grid;
+  gap: 12px;
+}
+
+.swse-pazaak-seat.is-current {
+  border-color: color-mix(in oklab, var(--zero, #ffd166) 58%, transparent);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--zero, #ffd166) 14%, transparent);
+}
+
+.swse-pazaak-seat.is-viewer {
+  background: color-mix(in oklab, #092033 88%, transparent);
+}
+
+.swse-pazaak-seat.is-bust {
+  border-color: color-mix(in oklab, var(--negative, #ff5c77) 55%, transparent);
+}
+
+.swse-pazaak-seat header,
+.swse-pazaak-seat footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.swse-pazaak-seat header span,
+.swse-pazaak-seat footer,
+.swse-pazaak-no-cards {
+  color: color-mix(in oklab, var(--ink, #dffbff) 68%, transparent);
+  font-size: 12px;
+}
+
+.swse-pazaak-seat header strong {
+  font-size: 28px;
+  color: var(--vapor-cyan, #39f7ff);
+}
+
+.swse-pazaak-table-cards,
+.swse-pazaak-hand-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  gap: 8px;
+}
+
+.swse-pazaak-played-card {
+  min-height: 68px;
+}
+
+.swse-pazaak-hand-grid {
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  margin-top: 10px;
+}
+
+.swse-pazaak-hand-card form {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.swse-pazaak-hand-card select {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 22%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklab, #03121b 86%, transparent);
+  color: var(--ink, #dffbff);
+  padding: 6px;
+}
+
+.swse-pazaak-turn-actions {
+  justify-content: flex-end;
+}
+
+.swse-pazaak-turn-actions form {
+  margin: 0;
+}
+
+.swse-pazaak-history {
+  display: grid;
+  gap: 8px;
+}
+
+.swse-pazaak-history div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 10%, transparent);
+  padding-top: 8px;
+}
+
+.tone-plus .swse-pazaak-card-face,
+.swse-pazaak-played-card.tone-plus,
+.swse-pazaak-hand-card.tone-plus .swse-pazaak-card-face {
+  color: var(--positive, #8aff9a);
+}
+
+.tone-minus .swse-pazaak-card-face,
+.swse-pazaak-played-card.tone-minus,
+.swse-pazaak-hand-card.tone-minus .swse-pazaak-card-face {
+  color: var(--negative, #ff5c77);
+}
+
+.tone-choice .swse-pazaak-card-face,
+.swse-pazaak-hand-card.tone-choice .swse-pazaak-card-face {
+  color: var(--zero, #ffd166);
+}
+
+.tone-advanced .swse-pazaak-card-face,
+.swse-pazaak-hand-card.tone-advanced .swse-pazaak-card-face {
+  color: var(--vapor-cyan, #39f7ff);
+}
+
+@media (max-width: 880px) {
+  .swse-pazaak-topbar,
+  .swse-pazaak-builder-head,
+  .swse-pazaak-scoreboard,
+  .swse-pazaak-seat header,
+  .swse-pazaak-seat footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .swse-pazaak-topbar__right,
+  .swse-pazaak-turn-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

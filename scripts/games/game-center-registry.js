@@ -12,7 +12,7 @@ const DEFAULT_GAMES = [
     title: 'Pazaak',
     subtitle: 'Republic Senate Rules or credit buy-in matches.',
     icon: '20',
-    status: 'Infrastructure Ready',
+    status: 'Playable MVP',
     description: 'Closest to 20 without going over. Ideal first playable implementation for solo AI and player-vs-player side games.',
     minPlayers: 2,
     maxPlayers: 2,
@@ -25,8 +25,8 @@ const DEFAULT_GAMES = [
     supportsItemWagers: false,
     supportsAssetWagers: false,
     defaultRulesMode: 'republic-senate',
-    implementationPhase: 'Phase 2',
-    nextMilestone: 'Playable Republic Senate Rules match loop',
+    implementationPhase: 'Phase 3',
+    nextMilestone: 'Credit buy-ins and wager settlement',
     tags: ['starter', 'cards', 'turn-based']
   },
   {

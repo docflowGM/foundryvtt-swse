@@ -103,6 +103,21 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmCreateGameInvite(data);
         break;
       }
+      case 'create-solo-pazaak': {
+        const { PazaakEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js');
+        await PazaakEngine.createSoloAiSession(data);
+        break;
+      }
+      case 'lock-pazaak-side-deck': {
+        const { PazaakEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js');
+        await PazaakEngine.lockSideDeck(data);
+        break;
+      }
+      case 'pazaak-action': {
+        const { PazaakEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js');
+        await PazaakEngine.submitAction(data);
+        break;
+      }
       case 'create-job': {
         await HolonetMessengerService._gmCreateJobPosting(data);
         break;
