@@ -4902,3 +4902,44 @@
 .combat-recovery-action-stack .danger {
   border-color: rgba(255, 80, 80, 0.55);
 }
+
+.trade-atomic-event-list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.trade-atomic-event {
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  border-radius: 0.65rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(6, 14, 28, 0.48);
+}
+
+.trade-atomic-event strong {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trade-atomic-event span {
+  display: block;
+  opacity: 0.72;
+  font-size: 0.72rem;
+}
+
+.trade-atomic-event p {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+}
+
+.trade-atomic-event.crit {
+  border-color: rgba(255, 80, 80, 0.52);
+  background: rgba(80, 12, 18, 0.42);
+}
+
+.trade-atomic-event.ok {
+  border-color: rgba(80, 220, 150, 0.38);
+  background: rgba(8, 58, 42, 0.34);
+}

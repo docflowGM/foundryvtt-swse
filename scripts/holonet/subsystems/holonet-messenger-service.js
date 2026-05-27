@@ -164,6 +164,15 @@ async function appendPartyFundLedger(entry = {}) {
   await game.settings.set('foundryvtt-swse', 'holonetPartyFundLedger', ledger.slice(-100));
 }
 
+function getPartyFundLedger() {
+  const ledger = getSwseSetting('holonetPartyFundLedger', []);
+  return Array.isArray(ledger) ? foundry.utils.deepClone(ledger) : [];
+}
+
+async function setPartyFundLedger(ledger = []) {
+  await game.settings.set('foundryvtt-swse', 'holonetPartyFundLedger', Array.isArray(ledger) ? ledger.slice(-100) : []);
+}
+
 function partyFundRecipientVm() {
   return {
     id: PARTY_FUND_RECIPIENT_ID,
@@ -492,6 +501,92 @@ export class HolonetMessengerService {
       SWSELogger.error(`[HolonetTradeLifecycle] ${message}`, context);
     } catch (_loggerErr) {
       try { console.error('[HolonetTradeLifecycle]', message, context); } catch (__err) {}
+    }
+  }
+
+  static _appendTradeAtomicEvent(transfer = {}, event = {}) {
+    if (!transfer || typeof transfer !== 'object') return null;
+    const entry = {
+      id: foundry.utils.randomID(),
+      at: nowIso(),
+      phase: String(event.phase || 'atomic.event'),
+      status: String(event.status || 'info'),
+      message: String(event.message || ''),
+      error: event.error ? String(event.error) : '',
+      rollbackOk: event.rollbackOk ?? null,
+      preflight: event.preflight ?? null,
+      actorIds: safeArray(event.actorIds),
+      snapshotCount: Number(event.snapshotCount || 0) || 0,
+      ...event
+    };
+    transfer.atomicEvents = [...safeArray(transfer.atomicEvents), entry].slice(-75);
+    transfer.lastAtomicEvent = entry;
+    if (event.rollbackOk !== undefined) transfer.rollbackOk = event.rollbackOk;
+    if (event.preflight !== undefined) transfer.preflight = event.preflight;
+    if (event.error) transfer.failureReason = String(event.error);
+    return entry;
+  }
+
+  static _jobRewardLog(level = 'debug', message = '', extra = {}) {
+    const logger = SWSELogger?.[level] ?? SWSELogger?.debug ?? console.debug;
+    try {
+      logger.call(SWSELogger, `[HolonetJobReward] ${message}`, extra);
+    } catch (_err) {
+      try { console.debug('[HolonetJobReward]', message, extra); } catch (__err) {}
+    }
+  }
+
+  static async _executeAtomicJobRewardSettlement({ thread, actors = [], preflight = null, operation = null, failureEventType = 'job-reward-atomic-failed', failurePrefix = 'Job reward settlement failed', context = {} } = {}) {
+    if (typeof operation !== 'function') return { success: false, error: 'No job reward settlement operation was provided.' };
+    const actorList = safeArray(actors).filter(actor => actor?.id);
+    const uniqueActors = Array.from(new Map(actorList.map(actor => [actor.id, actor])).values());
+    const partyFundSnapshot = { balance: getPartyFundBalance(), ledger: getPartyFundLedger() };
+    const snapshots = uniqueActors.map(actor => this._tradeSnapshotRoot(actor));
+    this._jobRewardLog('debug', 'Atomic job reward settlement starting.', {
+      threadId: thread?.id ?? null,
+      actorIds: uniqueActors.map(actor => actor.id),
+      failureEventType,
+      ...context
+    });
+
+    try {
+      const validation = typeof preflight === 'function' ? await preflight() : { ok: true };
+      if (validation?.ok === false) throw new Error(validation?.error || 'Job reward preflight failed.');
+      const result = await operation();
+      if (result === false || result?.success === false) throw new Error(result?.error || 'Job reward operation returned failure.');
+      this._jobRewardLog('info', 'Atomic job reward settlement completed.', { threadId: thread?.id ?? null, result, ...context });
+      return { success: true, result, snapshots: snapshots.length };
+    } catch (err) {
+      let rollbackOk = false;
+      let rollbackError = null;
+      try {
+        await this._restoreTradeSnapshots(snapshots, { source: 'HolonetMessengerService.atomicJobRewardRollback' });
+        await setPartyFundBalance(partyFundSnapshot.balance);
+        await setPartyFundLedger(partyFundSnapshot.ledger);
+        rollbackOk = true;
+      } catch (restoreErr) {
+        rollbackError = restoreErr;
+      }
+      const baseError = err?.message || 'Unknown job reward settlement failure.';
+      const message = rollbackOk
+        ? `${failurePrefix}: ${baseError}. All reward state was restored.`
+        : `${failurePrefix}: ${baseError}. Rollback failed: ${rollbackError?.message || 'unknown rollback failure'}.`;
+      this._jobRewardLog('error', message, {
+        threadId: thread?.id ?? null,
+        rollbackOk,
+        rollbackError: rollbackError?.message ?? null,
+        ...context
+      });
+      if (thread) {
+        await this._publishSystemMessage(thread, message, {
+          eventType: failureEventType,
+          rollbackOk,
+          rollbackError: rollbackError?.message ?? null,
+          originalError: baseError,
+          ...context
+        });
+      }
+      return { success: false, error: message, rollbackOk, rollbackError: rollbackError?.message ?? null };
     }
   }
 
@@ -886,6 +981,9 @@ export class HolonetMessengerService {
     const isSender = transfer.fromRecipientId === participantId || (transfer.fromActorId && actor?.id === transfer.fromActorId);
     const isGm = Boolean(game.user?.isGM);
     const requiredCredits = Number(transfer?.trade?.requestedCredits || 0) || 0;
+    const counterCredits = parsePositiveCredits(transfer?.counterOffer?.credits);
+    const counterItems = safeArray(transfer?.counterOffer?.items);
+    const counterItemOptions = isRecipient ? this._buildInventoryComposerVm(actor).items : [];
     return {
       ...transfer,
       messageId: message.id,
@@ -895,10 +993,22 @@ export class HolonetMessengerService {
       requestedCredits: requiredCredits,
       requestedCreditsLabel: requiredCredits > 0 ? formatCredits(requiredCredits) : '',
       hasTradeTerms: Boolean(requiredCredits > 0 || transfer?.trade?.requestedItemsNote),
+      hasCounterOffer: Boolean(transfer?.counterOffer),
+      counterOffer: transfer?.counterOffer ? {
+        ...transfer.counterOffer,
+        credits: counterCredits,
+        creditsLabel: counterCredits > 0 ? formatCredits(counterCredits) : '',
+        items: counterItems,
+        hasItems: counterItems.length > 0
+      } : null,
+      counterItemOptions,
+      canCounterOffer: status === 'pendingRecipient' && (isRecipient || isGm),
+      canAcceptCounter: status === 'counterOffered' && (isSender || isGm),
+      canDeclineCounter: status === 'counterOffered' && (isSender || isRecipient || isGm),
       canAccept: status === 'pendingRecipient' && (isRecipient || isGm),
       canApprove: status === 'pendingGm' && isGm,
       canDecline: ['pendingRecipient', 'pendingGm'].includes(status) && (isRecipient || isGm),
-      canCancel: ['pendingRecipient', 'pendingGm'].includes(status) && (isSender || isGm),
+      canCancel: ['pendingRecipient', 'pendingGm', 'counterOffered'].includes(status) && (isSender || isGm),
       isResolved: ['complete', 'declined', 'cancelled', 'failed'].includes(status)
     };
   }
@@ -2138,8 +2248,11 @@ export class HolonetMessengerService {
       case 'accept-item-transfer':
       case 'approve-item-transfer':
       case 'decline-item-transfer':
-      case 'cancel-item-transfer': {
-        await this._gmResolveItemTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
+      case 'cancel-item-transfer':
+      case 'offer-item-counter':
+      case 'accept-item-counter':
+      case 'decline-item-counter': {
+        await this._gmResolveItemTransfer({ thread, recordId, action, actorId, counterCredits, counterItemIds, counterMemo, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'accept-asset-transfer':
@@ -2209,6 +2322,78 @@ export class HolonetMessengerService {
     return true;
   }
 
+  static async _gmAtomicJobCreditPayout({ thread, amount, recipientId, targetActor = null, requesterId = null, senderRecipientId = null, partyFundCutPercent = null } = {}) {
+    const value = parsePositiveCredits(amount);
+    if (!value) return false;
+    const requester = requesterId ? game.users?.get(requesterId) : game.user;
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    if (!requesterIsGm) return false;
+
+    if (recipientId === PARTY_FUND_RECIPIENT_ID) {
+      const before = getPartyFundBalance();
+      const atomic = await this._executeAtomicJobRewardSettlement({
+        thread,
+        actors: [],
+        context: { rewardType: 'credits', payoutMode: 'party-fund', amount: value, requesterId },
+        operation: async () => {
+          await setPartyFundBalance(before + value);
+          await appendPartyFundLedger({ type: 'job-payout-to-fund', amount: value, threadId: thread.id, requesterId });
+          return { success: true, before, after: before + value };
+        }
+      });
+      if (!atomic?.success) return false;
+      await this._publishSystemMessage(thread, `Party Fund received ${formatCredits(value)} from Job Board. New balance: ${formatCredits(before + value)}.`, { eventType: 'party-fund-credit', amount: value });
+      return true;
+    }
+
+    if (!targetActor) return false;
+    let playerAmount = value;
+    let fundAmount = 0;
+    let pct = 0;
+    if (isPartyFundEnabled()) {
+      pct = partyFundCutPercent == null ? getPartyFundDefaultCutPercent() : Math.max(0, Math.min(100, Math.floor(Number(partyFundCutPercent) || 0)));
+      fundAmount = Math.floor(value * pct / 100);
+      playerAmount = value - fundAmount;
+    }
+
+    const fundBefore = getPartyFundBalance();
+    const atomic = await this._executeAtomicJobRewardSettlement({
+      thread,
+      actors: [targetActor],
+      context: { rewardType: 'credits', payoutMode: 'actor-with-party-cut', amount: value, playerAmount, fundAmount, targetActorId: targetActor.id, requesterId },
+      operation: async () => {
+        if (fundAmount > 0) {
+          await setPartyFundBalance(fundBefore + fundAmount);
+          await appendPartyFundLedger({ type: 'job-cut', amount: fundAmount, percent: pct, threadId: thread.id, targetActorId: targetActor.id, requesterId });
+        }
+        if (playerAmount > 0) {
+          const credit = await TransactionEngine.executeCreditAdjustment({
+            actor: targetActor,
+            amount: playerAmount,
+            reason: 'Holonet job payout',
+            transactionContext: 'holonet-job-payout',
+            audit: { source: 'holonet-job-payout', threadId: thread.id, requesterId }
+          }, { source: 'HolonetMessengerService.atomicJobCreditPayout', validate: true, rederive: true });
+          if (!credit?.success) throw new Error(credit?.error || 'Holonet job payout failed');
+        }
+        return { success: true, playerAmount, fundAmount };
+      }
+    });
+    if (!atomic?.success) return false;
+
+    const cutText = fundAmount > 0 ? ` ${formatCredits(fundAmount)} was routed to the Party Fund.` : '';
+    await this._publishReceiptMessage(thread, { title: 'Job Payout Receipt', eventType: 'job-payout-receipt', amount: playerAmount, lines: [`To: ${targetActor.name}`, cutText.trim()].filter(Boolean) });
+    await this._publishSystemMessage(thread, `Job Board paid ${formatCredits(playerAmount)} to ${targetActor.name}.${cutText}`, {
+      eventType: 'job-payout',
+      amount: playerAmount,
+      partyFundCut: fundAmount,
+      toActorId: targetActor.id,
+      requesterId,
+      senderRecipientId
+    });
+    return true;
+  }
+
   static async _gmTransferCredits({ actorId, thread, amount, recipientId, requesterId = null, senderRecipientId = null, asJobPayout = false, partyFundCutPercent = null } = {}) {
     const value = parsePositiveCredits(amount);
     if (!value) return false;
@@ -2216,6 +2401,10 @@ export class HolonetMessengerService {
     const targetActor = recipient?.actorId ? game.actors?.get(recipient.actorId) : null;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
     const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+
+    if (asJobPayout && requesterIsGm) {
+      return this._gmAtomicJobCreditPayout({ thread, amount: value, recipientId, targetActor, requesterId, senderRecipientId, partyFundCutPercent });
+    }
 
     if (recipientId === PARTY_FUND_RECIPIENT_ID) {
       if (!requesterIsGm) return this._gmContributeToPartyFund({ actorId, thread, amount: value, requesterId, senderRecipientId });
@@ -2599,7 +2788,7 @@ export class HolonetMessengerService {
     return { threadId: thread.id, messageId: message.id };
   }
 
-  static async _gmResolveItemTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmResolveItemTransfer({ thread, recordId, action, actorId = null, counterCredits = 0, counterItemIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const transfer = message?.metadata?.itemTransfer;
@@ -2624,6 +2813,49 @@ export class HolonetMessengerService {
         currentId
       });
       return false;
+    }
+
+    if (action === 'offer-item-counter') {
+      if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
+      if (transfer.status !== 'pendingRecipient') return false;
+      const sourceActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+      const items = this._buildCounterItemEntries(sourceActor, counterItemIds);
+      const credits = parsePositiveCredits(counterCredits);
+      const memo = String(counterMemo || '').trim();
+      if (!credits && !items.length && !memo) return false;
+      transfer.counterOffer = {
+        credits,
+        items,
+        assets: [],
+        memo,
+        offeredByRecipientId: currentId,
+        offeredByActorId: transfer.toActorId ?? null,
+        offeredAt: nowIso()
+      };
+      transfer.status = 'counterOffered';
+      await HolonetStorage.saveRecord(message);
+      const parts = [];
+      if (credits) parts.push(formatCredits(credits));
+      if (items.length) parts.push(items.map(item => item.name).join(', '));
+      await this._publishSystemMessage(thread, `${transfer.toLabel} counter-offered ${parts.join(' + ') || 'alternate terms'} for ${safeArray(transfer.items).map(item => item.name).join(', ') || 'an item transfer'}.`, { eventType: 'item-counter-offered', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'decline-item-counter') {
+      if (transfer.status !== 'counterOffered') return false;
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId && currentId !== transfer.toRecipientId) return false;
+      transfer.status = 'pendingRecipient';
+      transfer.counterDeclinedAt = nowIso();
+      transfer.counterDeclinedBy = currentId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `Counter offer for ${safeArray(transfer.items).map(item => item.name).join(', ') || 'item transfer'} was declined. Original item offer is still awaiting recipient action.`, { eventType: 'item-counter-declined', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'accept-item-counter') {
+      if (transfer.status !== 'counterOffered') return false;
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId) return false;
+      return this._completeItemCounterOffer({ thread, message, transfer, requesterId, resolvedBy: currentId });
     }
 
     if (action === 'decline-item-transfer') {
@@ -2943,20 +3175,24 @@ export class HolonetMessengerService {
       failureEventType,
       failurePrefix
     });
+    this._appendTradeAtomicEvent(transfer, { phase: 'atomic.requested', status: 'started', message: 'Atomic settlement requested.', threadId: thread?.id ?? null });
 
     if (typeof operation !== 'function') {
       const error = 'No trade settlement operation was provided.';
       this._tradeLifecycleError(error, transfer, new Error(error), { phase: 'atomic.no-operation', threadId: thread?.id ?? null, failureEventType });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.no-operation', status: 'failed', message: error, error, threadId: thread?.id ?? null });
       return { success: false, error };
     }
 
     let validation = { ok: true };
     try {
       this._tradeLifecycleLog('debug', 'Atomic preflight starting.', transfer, { phase: 'atomic.preflight.start', threadId: thread?.id ?? null });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.preflight.start', status: 'started', message: 'Preflight validation started.', threadId: thread?.id ?? null });
       validation = typeof preflight === 'function' ? preflight() : { ok: true };
     } catch (err) {
       validation = { ok: false, error: err?.message || 'Trade preflight threw an exception.' };
       this._tradeLifecycleError('Atomic preflight threw an exception.', transfer, err, { phase: 'atomic.preflight.exception', threadId: thread?.id ?? null });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.preflight.exception', status: 'failed', message: 'Preflight threw an exception.', error: validation.error, threadId: thread?.id ?? null, preflight: true, rollbackOk: true });
     }
 
     if (!validation?.ok) {
@@ -2966,6 +3202,7 @@ export class HolonetMessengerService {
         threadId: thread?.id ?? null,
         error
       });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.preflight.failed', status: 'failed', message: 'Preflight failed before mutation.', error, threadId: thread?.id ?? null, rollbackOk: true, preflight: true });
       if (thread && transfer) {
         await this._publishSystemMessage(thread, `${failurePrefix}: ${error}. No trade state was changed.`, { eventType: failureEventType, transferId: transfer.id, rollbackOk: true, preflight: true });
       }
@@ -2973,6 +3210,7 @@ export class HolonetMessengerService {
     }
 
     this._tradeLifecycleLog('debug', 'Atomic preflight passed.', transfer, { phase: 'atomic.preflight.ok', threadId: thread?.id ?? null });
+    this._appendTradeAtomicEvent(transfer, { phase: 'atomic.preflight.ok', status: 'passed', message: 'Preflight validation passed.', threadId: thread?.id ?? null });
     const actorList = safeArray(actors).filter(actor => actor?.id);
     const uniqueActors = Array.from(new Map(actorList.map(actor => [actor.id, actor])).values());
     this._tradeLifecycleLog('debug', 'Capturing atomic rollback snapshots.', transfer, {
@@ -2988,9 +3226,11 @@ export class HolonetMessengerService {
       threadId: thread?.id ?? null,
       snapshotCount: snapshots.length
     });
+    this._appendTradeAtomicEvent(transfer, { phase: 'atomic.snapshot.complete', status: 'captured', message: 'Rollback snapshots captured.', threadId: thread?.id ?? null, snapshotCount: snapshots.length, actorIds: uniqueActors.map(actor => actor.id) });
 
     try {
       this._tradeLifecycleLog('info', 'Atomic settlement operation starting.', transfer, { phase: 'atomic.operation.start', threadId: thread?.id ?? null });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.operation.start', status: 'started', message: 'Settlement mutation started.', threadId: thread?.id ?? null, snapshotCount: snapshots.length });
       const result = await operation();
       if (result === false || result?.success === false) {
         throw new Error(result?.error || 'Trade settlement operation returned failure.');
@@ -3001,6 +3241,7 @@ export class HolonetMessengerService {
         snapshotCount: snapshots.length,
         resultSummary: result === true ? 'true' : result
       });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.operation.success', status: 'complete', message: 'Settlement mutation completed.', threadId: thread?.id ?? null, snapshotCount: snapshots.length });
       return { success: true, result, snapshots: snapshots.length };
     } catch (err) {
       this._tradeLifecycleError('Atomic settlement operation failed; rollback beginning.', transfer, err, {
@@ -3008,6 +3249,7 @@ export class HolonetMessengerService {
         threadId: thread?.id ?? null,
         snapshotCount: snapshots.length
       });
+      this._appendTradeAtomicEvent(transfer, { phase: 'atomic.operation.failed', status: 'failed', message: 'Settlement mutation failed; rollback required.', error: err?.message || 'Unknown operation failure.', threadId: thread?.id ?? null, snapshotCount: snapshots.length });
 
       let rollbackOk = false;
       let rollbackError = null;
@@ -3017,6 +3259,7 @@ export class HolonetMessengerService {
           threadId: thread?.id ?? null,
           snapshotCount: snapshots.length
         });
+        this._appendTradeAtomicEvent(transfer, { phase: 'atomic.rollback.start', status: 'started', message: 'Rollback started.', threadId: thread?.id ?? null, snapshotCount: snapshots.length });
         await this._restoreTradeSnapshots(snapshots, { source: 'HolonetMessengerService.atomicTradeRollback' });
         rollbackOk = true;
         this._tradeLifecycleLog('warn', 'Atomic rollback completed successfully.', transfer, {
@@ -3024,6 +3267,7 @@ export class HolonetMessengerService {
           threadId: thread?.id ?? null,
           snapshotCount: snapshots.length
         });
+        this._appendTradeAtomicEvent(transfer, { phase: 'atomic.rollback.success', status: 'complete', message: 'Rollback completed successfully.', threadId: thread?.id ?? null, snapshotCount: snapshots.length, rollbackOk: true });
       } catch (restoreErr) {
         rollbackError = restoreErr;
         this._tradeLifecycleError('Atomic rollback failed. Manual GM reconciliation may be required.', transfer, restoreErr, {
@@ -3032,6 +3276,7 @@ export class HolonetMessengerService {
           snapshotCount: snapshots.length,
           originalError: err?.message ?? null
         });
+        this._appendTradeAtomicEvent(transfer, { phase: 'atomic.rollback.failed', status: 'failed', message: 'Rollback failed; manual GM reconciliation required.', error: restoreErr?.message || 'Unknown rollback failure.', threadId: thread?.id ?? null, snapshotCount: snapshots.length, rollbackOk: false });
       }
 
       const baseError = err?.message || 'Unknown trade settlement failure.';
@@ -3390,6 +3635,8 @@ export class HolonetMessengerService {
     }
 
     const credits = parsePositiveCredits(counter.credits);
+    const counterContext = transfer.kind === 'ownedItemTransfer' ? 'holonet-item-counter-offer' : 'holonet-asset-counter-offer';
+    const counterReason = transfer.kind === 'ownedItemTransfer' ? 'Holonet item counter-offer' : 'Holonet asset counter-offer';
     if (credits) {
       this._tradeLifecycleLog('debug', 'Counter credit transfer starting.', transfer, {
         phase: 'counter.credits.start',
@@ -3403,9 +3650,9 @@ export class HolonetMessengerService {
         fromActor: sourceActor,
         toActor: targetActor,
         amount: credits,
-        reason: counter.memo ? `Holonet asset counter-offer: ${counter.memo}` : 'Holonet asset counter-offer',
-        transactionContext: 'holonet-asset-counter-offer',
-        audit: { source: 'holonet-asset-counter-offer', threadId: thread.id, transferId: transfer.id, requesterId }
+        reason: counter.memo ? `${counterReason}: ${counter.memo}` : counterReason,
+        transactionContext: counterContext,
+        audit: { source: counterContext, threadId: thread.id, transferId: transfer.id, requesterId }
       }, { source: 'HolonetMessengerService.assetCounterOfferCredits', validate: true, rederive: true });
       if (!credit?.success) {
         const error = credit?.error || 'Counter credit movement failed.';
@@ -3694,6 +3941,39 @@ export class HolonetMessengerService {
     return ok;
   }
 
+  static async _completeItemCounterOffer({ thread, message, transfer, requesterId = null, resolvedBy = null } = {}) {
+    this._tradeLifecycleLog('info', 'Item counter-offer completion requested.', transfer, {
+      phase: 'resolver.item.counter-complete.start',
+      threadId: thread?.id ?? null,
+      requesterId,
+      resolvedBy
+    });
+    const atomic = await this._executeAtomicTradeSettlement({
+      thread,
+      transfer,
+      actors: this._collectTradeSettlementActors(transfer, { includeCounter: true }),
+      preflight: () => this._preflightTradeSettlement(transfer, { includeCounter: true, suppressRequestedCredits: true }),
+      operation: async () => {
+        const counter = await this._settleCounterOffer({ thread, transfer, requesterId });
+        if (!counter?.success) throw new Error(counter?.error || 'Counter settlement failed.');
+        const ok = await this._executeOwnedItemTransfer({ thread, transfer: { ...transfer, trade: { ...(transfer.trade ?? {}), requestedCredits: 0 } }, requesterId });
+        if (!ok) throw new Error('Original item transfer failed after counter settlement.');
+        return { success: true, counter };
+      },
+      failureEventType: 'item-counter-atomic-failed',
+      failurePrefix: 'Item counter-offer failed'
+    });
+
+    const ok = Boolean(atomic?.success);
+    transfer.status = ok ? 'complete' : 'failed';
+    transfer.resolvedAt = nowIso();
+    transfer.resolvedBy = resolvedBy;
+    transfer.counterSettledAt = ok ? nowIso() : null;
+    if (!ok) transfer.failureReason = atomic?.error || 'Atomic item counter-offer settlement failed.';
+    await HolonetStorage.saveRecord(message);
+    return ok;
+  }
+
   static async _completeAssetCounterOffer({ thread, message, transfer, requesterId = null, resolvedBy = null } = {}) {
     this._tradeLifecycleLog('info', 'Asset counter-offer completion requested.', transfer, {
       phase: 'resolver.asset.counter-complete.start',
@@ -3971,12 +4251,17 @@ export class HolonetMessengerService {
     const recipient = this._recipientFromStableId(recipientId);
     const targetActor = recipient?.actorId ? game.actors?.get(recipient.actorId) : null;
     if (!targetActor) return false;
+    const requestedUuids = safeArray(itemUuids).map(String).filter(Boolean);
     const createdNames = [];
     const createData = [];
-    for (const uuid of safeArray(itemUuids).map(String).filter(Boolean)) {
+    const resolutionErrors = [];
+    for (const uuid of requestedUuids) {
       try {
         const item = await fromUuid(uuid);
-        if (!item) continue;
+        if (!item) {
+          resolutionErrors.push(`Item could not be resolved: ${uuid}`);
+          continue;
+        }
         const data = item.toObject ? item.toObject() : foundry.utils.deepClone(item);
         delete data._id;
         data.flags ??= {};
@@ -3985,11 +4270,32 @@ export class HolonetMessengerService {
         createData.push(data);
         createdNames.push(item.name || 'Item');
       } catch (err) {
+        resolutionErrors.push(`Item grant resolution failed for ${uuid}: ${err?.message || err}`);
         console.warn('[Holonet] Failed resolving item grant', uuid, err);
       }
     }
     if (!createData.length) return false;
-    await ActorEngine.createEmbeddedDocuments(targetActor, 'Item', createData, { source });
+    if (eventType === 'job-item-payout' && resolutionErrors.length) {
+      await this._publishSystemMessage(thread, `Job item payout failed: ${resolutionErrors.join('; ')}`, { eventType: 'job-item-payout-failed', toActorId: targetActor.id, errors: resolutionErrors });
+      return false;
+    }
+
+    const applyGrant = async () => {
+      await ActorEngine.createEmbeddedDocuments(targetActor, 'Item', createData, { source });
+      return { success: true, count: createData.length };
+    };
+    if (eventType === 'job-item-payout') {
+      const atomic = await this._executeAtomicJobRewardSettlement({
+        thread,
+        actors: [targetActor],
+        context: { rewardType: 'items', itemCount: createData.length, targetActorId: targetActor.id, requesterId },
+        operation: applyGrant
+      });
+      if (!atomic?.success) return false;
+    } else {
+      await applyGrant();
+    }
+
     await this._publishReceiptMessage(thread, {
       title: 'Item Delivery Receipt',
       eventType,

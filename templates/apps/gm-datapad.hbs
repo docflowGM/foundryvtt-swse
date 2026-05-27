@@ -597,6 +597,17 @@
             {{/if}}
             <div class="trade-dossier-row"><span>Rollback</span><strong>{{tradeConsole.selectedEntry.diagnostic.rollbackLabel}}</strong></div>
             <div class="trade-dossier-row"><span>Preflight</span><strong>{{tradeConsole.selectedEntry.diagnostic.preflightLabel}}</strong></div>
+            {{#if tradeConsole.selectedEntry.hasAtomicEvents}}
+            <div class="trade-atomic-event-list">
+              {{#each tradeConsole.selectedEntry.atomicEvents}}
+              <div class="trade-atomic-event {{this.tone}}">
+                <strong>{{this.phase}}</strong>
+                <span>{{this.timeLabel}}</span>
+                <p>{{this.message}}{{#if this.error}} — {{this.error}}{{/if}}</p>
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
           </div>
 
           <div class="trade-detail-block trade-actions-block">

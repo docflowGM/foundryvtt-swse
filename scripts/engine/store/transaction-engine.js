@@ -68,6 +68,7 @@ export class TransactionEngine {
     'holonet-credit-request',
     'holonet-item-trade',
     'holonet-asset-trade',
+    'holonet-item-counter-offer',
     'holonet-asset-counter-offer',
     'holonet-gm-grant',
     'holonet-job-payout',
