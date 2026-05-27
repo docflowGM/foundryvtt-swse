@@ -148,11 +148,14 @@ export function validateSideDeck(cardIds = []) {
 }
 
 export function buildDefaultPazaakSideDeckIds(profile = 'balanced') {
-  if (profile === 'aggressive') {
+  if (['aggressive', 'reckless', 'showboat', 'desperate'].includes(profile)) {
     return normalizeSideDeckIds(['plus-6', 'plus-5', 'plus-4', 'plus-3', 'plus-minus-6', 'plus-minus-5', 'plus-minus-4', 'double', 'tiebreaker', 'minus-6']);
   }
-  if (profile === 'cautious') {
+  if (['cautious', 'grinder', 'methodical'].includes(profile)) {
     return normalizeSideDeckIds(['minus-6', 'minus-5', 'minus-4', 'minus-3', 'plus-minus-6', 'plus-minus-5', 'plus-minus-4', 'plus-minus-1-2', 'flip-2-4', 'tiebreaker']);
+  }
+  if (['opportunist', 'deceptive', 'forceTouched'].includes(profile)) {
+    return normalizeSideDeckIds(['plus-2', 'plus-3', 'plus-4', 'minus-2', 'minus-3', 'minus-4', 'plus-minus-2', 'plus-minus-4', 'plus-minus-1-2', 'tiebreaker']);
   }
   return normalizeSideDeckIds(['plus-3', 'plus-4', 'plus-5', 'minus-3', 'minus-4', 'minus-5', 'plus-minus-3', 'plus-minus-4', 'plus-minus-5', 'tiebreaker']);
 }

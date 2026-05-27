@@ -801,3 +801,8 @@
     flex-wrap: wrap;
   }
 }
+
+.swse-pazaak-seat header small.swse-pazaak-table-fact {
+  color: var(--ink-faint, #7fb8c4);
+  font-style: italic;
+}
