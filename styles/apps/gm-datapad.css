@@ -4866,3 +4866,39 @@
   font-size: 0.68rem;
   font-weight: 700;
 }
+
+/* Phase F: Combat & Recovery workflow polish */
+.combat-recovery-target-bar .wide {
+  min-width: 180px;
+}
+
+.combat-recovery-active-statuses.critical strong {
+  border-color: rgba(255, 80, 80, 0.55);
+  color: #ffd1d1;
+}
+
+.combat-recovery-active-statuses.warning strong {
+  border-color: rgba(255, 204, 90, 0.55);
+  color: #ffe3a3;
+}
+
+.combat-recovery-log-list li strong {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.combat-recovery-log-list li span {
+  display: block;
+  opacity: 0.82;
+  line-height: 1.35;
+}
+
+.combat-recovery-actor-controls label input[name="actorOngoingLabel"],
+.combat-recovery-target-bar input[name="combatRecoveryOngoingLabel"] {
+  min-width: 150px;
+}
+
+.combat-recovery-button-row .danger,
+.combat-recovery-action-stack .danger {
+  border-color: rgba(255, 80, 80, 0.55);
+}

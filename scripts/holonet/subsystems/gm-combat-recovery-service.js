@@ -16,9 +16,37 @@ import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsy
 import { SecondWindEngine } from '/systems/foundryvtt-swse/scripts/engine/combat/SecondWindEngine.js';
 import { HealingRules } from '/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js';
 import { StatusEffectsMechanics } from '/systems/foundryvtt-swse/scripts/houserules/houserule-status-effects.js';
+import { PoisonEngine } from '/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js';
+import { PoisonRegistry } from '/systems/foundryvtt-swse/scripts/engine/poison/poison-registry.js';
 
 const MANAGED_ACTOR_TYPES = new Set(['character', 'npc', 'droid', 'vehicle', 'beast']);
 const SYSTEM_ID = 'foundryvtt-swse';
+const RECOVERY_LOG_SETTING = 'gmCombatRecoveryLog';
+const RECOVERY_LOG_LIMIT = 60;
+
+const TREAT_INJURY_WORKFLOWS = [
+  { id: 'first-aid', label: 'First Aid', dc: 15, amount: 5, description: 'Field treatment. Applies organic HP recovery on success.' },
+  { id: 'surgery', label: 'Surgery', dc: 20, amount: 10, description: 'Removes persistent condition metadata and improves recovery on success.' },
+  { id: 'critical-care', label: 'Critical Care / Stabilize', dc: 15, amount: 1, description: 'Stabilizes a downed organic actor and restores minimal HP on success.' },
+  { id: 'long-term-care', label: 'Long-Term Care', dc: 15, amount: 0, description: 'Marks long-term care as applied; rest math remains rule-owned.' },
+  { id: 'revivify', label: 'Revivify', dc: 25, amount: 1, description: 'GM-adjudicated emergency revival check.' }
+];
+
+const REPAIR_WORKFLOWS = [
+  { id: 'field-repair', label: 'Field Repair', dc: 20, amount: 5, description: 'Repairs droid/vehicle HP on success.' },
+  { id: 'restore-operation', label: 'Restore Operation', dc: 20, amount: 1, description: 'Restores a disabled droid/vehicle to at least minimal operation.' },
+  { id: 'full-service', label: 'Full Service', dc: 25, amount: 10, description: 'Repairs HP and resets condition track on success.' }
+];
+
+const ONGOING_EFFECT_PRESETS = [
+  { id: 'bleeding', label: 'Bleeding', icon: 'icons/svg/blood.svg', tone: 'critical' },
+  { id: 'burning', label: 'Burning', icon: 'icons/svg/fire.svg', tone: 'critical' },
+  { id: 'disease', label: 'Disease', icon: 'icons/svg/biohazard.svg', tone: 'warning' },
+  { id: 'radiation', label: 'Radiation', icon: 'icons/svg/radiation.svg', tone: 'warning' },
+  { id: 'suffocating', label: 'Suffocating', icon: 'icons/svg/air.svg', tone: 'critical' },
+  { id: 'environmental-hazard', label: 'Environmental Hazard', icon: 'icons/svg/hazard.svg', tone: 'warning' },
+  { id: 'custom', label: 'Custom Ongoing Effect', icon: 'icons/svg/aura.svg', tone: 'info' }
+];
 
 function safeNumber(value, fallback = 0) {
   const n = Number(value);
@@ -37,6 +65,8 @@ export class GMCombatRecoveryService {
     const metrics = this.buildMetrics(cards);
     const rules = this.buildRuleSummary();
     const statusEffects = this.buildStatusEffectOptions();
+    const poisonOptions = this.buildPoisonOptions();
+    const recoveryLog = this.getRecoveryLog();
 
     return {
       pageTitle: 'Combat & Recovery',
@@ -54,6 +84,12 @@ export class GMCombatRecoveryService {
         defaultTargetMode: 'party',
         statusEffects,
         statusEffectsEnabled: statusEffects.length > 0,
+        poisonOptions,
+        poisonEnabled: poisonOptions.length > 0,
+        treatInjuryWorkflows: TREAT_INJURY_WORKFLOWS,
+        repairWorkflows: REPAIR_WORKFLOWS,
+        ongoingEffectPresets: ONGOING_EFFECT_PRESETS,
+        recoveryLog,
         needsAttention: cards.filter((card) => card.needsAttention),
         hasActiveCombat: Boolean(game.combat?.started || game.combat?.active),
         activeCombatLabel: game.combat?.started || game.combat?.active
@@ -242,9 +278,15 @@ export class GMCombatRecoveryService {
       isVehicle,
       activeEffects,
       activeEffectCount: activeEffects.length,
+      activePoisons: this.getActorPoisons(actor),
+      activePoisonCount: this.getActorPoisons(actor).length,
+      activeOngoingEffects: this.getActorOngoingEffects(actor),
+      activeOngoingEffectCount: this.getActorOngoingEffects(actor).length,
+      activeEncounterEffectCount: this.getActorOngoingEffects(actor).filter((effect) => effect.durationScope === 'encounter').length,
+      stabilized: actor.flags?.[SYSTEM_ID]?.combatRecovery?.stabilized === true || actor.flags?.swse?.combatRecovery?.stabilized === true,
       activeStatusEffects,
       activeStatusEffectCount: activeStatusEffects.length,
-      needsAttention: wounded || downed || ctImpaired || conditionPersistent || swSpent,
+      needsAttention: wounded || downed || ctImpaired || conditionPersistent || swSpent || this.getActorPoisons(actor).length > 0 || this.getActorOngoingEffects(actor).length > 0,
       statusChips: this.buildStatusChips({ inCombat, wounded, downed, ctImpaired, conditionPersistent, swSpent, restEligible, repairEligible, isDroid, isVehicle }),
       restNote: this.getRestNote(actor),
       actionTone: downed ? 'critical' : (ctImpaired || wounded || swSpent ? 'warning' : 'stable')
@@ -300,6 +342,56 @@ export class GMCombatRecoveryService {
           name: definition?.name || effect.name || effect.label || String(effectId),
           description: definition?.description || '',
           disabled: effect.disabled === true
+        };
+      })
+      .filter(Boolean);
+  }
+
+  static buildPoisonOptions() {
+    try {
+      return PoisonRegistry.all()
+        .map((poison) => ({
+          id: poison.key,
+          name: poison.name || poison.key,
+          description: poison.description || '',
+          dc: poison.treatment?.dc ?? '',
+          delivery: Array.isArray(poison.delivery) ? poison.delivery.join(', ') : '',
+          label: `${poison.name || poison.key}${poison.treatment?.dc ? ` (DC ${poison.treatment.dc})` : ''}`
+        }))
+        .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    } catch (err) {
+      SWSELogger.warn('[GMCombatRecoveryService] Could not build poison options:', err);
+      return [];
+    }
+  }
+
+  static getActorPoisons(actor) {
+    const poisons = actor?.flags?.swse?.activePoisons || actor?.system?.activePoisons || [];
+    return Array.isArray(poisons) ? poisons.map((poison) => ({
+      id: poison.id || poison.instanceId || poison.poisonKey || poison.key,
+      poisonKey: poison.poisonKey || poison.key,
+      name: poison.poisonName || PoisonRegistry.get(poison.poisonKey || poison.key)?.name || poison.poisonKey || poison.key || 'Poison',
+      dc: poison.treatmentDc || poison.treatmentDC || PoisonRegistry.get(poison.poisonKey || poison.key)?.treatment?.dc || '',
+      trigger: poison.trigger || poison.recurrence?.type || '',
+      sourceName: poison.sourceName || poison.sourceActorName || ''
+    })).filter((poison) => poison.id || poison.poisonKey || poison.name) : [];
+  }
+
+  static getActorOngoingEffects(actor) {
+    return Array.from(actor?.effects ?? [])
+      .map((effect) => {
+        const meta = effect?.getFlag?.(SYSTEM_ID, 'combatRecoveryEffect')
+          ?? effect?.flags?.[SYSTEM_ID]?.combatRecoveryEffect
+          ?? effect?.flags?.swse?.combatRecoveryEffect;
+        if (!meta || meta.category !== 'ongoing') return null;
+        return {
+          documentId: effect.id,
+          effectType: meta.effectType || 'custom',
+          name: effect.name || meta.label || 'Ongoing Effect',
+          label: meta.label || effect.name || 'Ongoing Effect',
+          durationScope: meta.durationScope || 'manual',
+          memo: meta.memo || '',
+          tone: meta.tone || 'warning'
         };
       })
       .filter(Boolean);
@@ -450,6 +542,9 @@ export class GMCombatRecoveryService {
       conditionImpaired: cards.filter((card) => card.ctImpaired).length,
       persistentCondition: cards.filter((card) => card.conditionPersistent).length,
       secondWindSpent: cards.filter((card) => card.secondWindSpent).length,
+      activePoisons: cards.reduce((sum, card) => sum + safeNumber(card.activePoisonCount, 0), 0),
+      ongoingEffects: cards.reduce((sum, card) => sum + safeNumber(card.activeOngoingEffectCount, 0), 0),
+      encounterEffects: cards.reduce((sum, card) => sum + safeNumber(card.activeEncounterEffectCount, 0), 0),
       restEligible: cards.filter((card) => card.restEligible).length,
       droids: cards.filter((card) => card.isDroid).length,
       vehicles: cards.filter((card) => card.isVehicle).length,
@@ -521,36 +616,87 @@ export class GMCombatRecoveryService {
       return { success: false, error: 'No actors matched the selected combat recovery target.' };
     }
 
+    let result;
     switch (action) {
       case 'natural-healing':
-        return this.triggerNaturalHealing({ actors: target.actors, target });
+        result = await this.triggerNaturalHealing({ actors: target.actors, target });
+        break;
       case 'heal-target':
-        return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'heal' });
+        result = await this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'heal' });
+        break;
       case 'repair-target':
-        return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'repair' });
+        result = await this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'repair' });
+        break;
       case 'damage-target':
-        return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'damage' });
+        result = await this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'damage' });
+        break;
       case 'apply-status-effect':
-        return this.applyStatusEffectToActors({ actors: target.actors, target, effectId: options.effectId });
+        result = await this.applyStatusEffectToActors({ actors: target.actors, target, effectId: options.effectId });
+        break;
       case 'remove-status-effect':
-        return this.removeStatusEffectFromActors({ actors: target.actors, target, effectId: options.effectId });
+        result = await this.removeStatusEffectFromActors({ actors: target.actors, target, effectId: options.effectId });
+        break;
       case 'clear-status-effects':
-        return this.clearStatusEffectsFromActors({ actors: target.actors, target });
+        result = await this.clearStatusEffectsFromActors({ actors: target.actors, target });
+        break;
+      case 'treat-injury':
+        result = await this.performTreatInjury({ actors: target.actors, target, ...options });
+        break;
+      case 'repair-skill':
+        result = await this.performRepairSkill({ actors: target.actors, target, ...options });
+        break;
+      case 'stabilize':
+        result = await this.stabilizeActors({ actors: target.actors, target });
+        break;
+      case 'revive':
+        result = await this.reviveActors({ actors: target.actors, target, amount: options.amount });
+        break;
+      case 'apply-poison':
+        result = await this.applyPoisonToActors({ actors: target.actors, target, poisonKey: options.poisonKey });
+        break;
+      case 'treat-poison':
+        result = await this.treatPoisonOnActors({ actors: target.actors, target, poisonKey: options.poisonKey, rollTotal: options.rollTotal });
+        break;
+      case 'apply-ongoing-effect':
+        result = await this.applyOngoingEffectToActors({ actors: target.actors, target, ...options });
+        break;
+      case 'clear-encounter-effects':
+        result = await this.clearEncounterEffectsFromActors({ actors: target.actors, target });
+        break;
       case 'short-rest':
-        return this.performRest({ restType: 'short-rest', isFullRest: false, duration: 60, actors: target.actors, target, ...options });
+        result = await this.performRest({ restType: 'short-rest', isFullRest: false, duration: 60, actors: target.actors, target, ...options });
+        break;
       case 'extended-rest':
-        return this.performRest({ restType: 'extended-rest', isFullRest: true, duration: 480, actors: target.actors, target, ...options });
-      case 'encounter-reset':
-        return this.resetSecondWindForActors({ triggerEvent: 'encounter', actors: target.actors, restTriggered: false, target });
+        result = await this.performRest({ restType: 'extended-rest', isFullRest: true, duration: 480, actors: target.actors, target, ...options });
+        break;
+      case 'encounter-reset': {
+        const secondWind = await this.resetSecondWindForActors({ triggerEvent: 'encounter', actors: target.actors, restTriggered: false, target });
+        const encounterEffects = await this.clearEncounterEffectsFromActors({ actors: target.actors, target });
+        result = {
+          success: true,
+          action: 'encounter-reset',
+          target,
+          secondWind,
+          encounterEffects,
+          message: `Encounter reset for ${target.label}: ${secondWind.updated ?? 0} second wind reset, ${encounterEffects.removedCount ?? 0} encounter effect${encounterEffects.removedCount === 1 ? '' : 's'} cleared.`
+        };
+        break;
+      }
       case 'reset-condition':
-        return this.resetConditionForActors({ actors: target.actors, target });
+        result = await this.resetConditionForActors({ actors: target.actors, target });
+        break;
       case 'reset-second-wind':
-        return this.resetSecondWindForActors({ triggerEvent: 'gm-override', actors: target.actors, restTriggered: false, ignoreTiming: true, target });
+        result = await this.resetSecondWindForActors({ triggerEvent: 'gm-override', actors: target.actors, restTriggered: false, ignoreTiming: true, target });
+        break;
       case 'full-organic-recovery':
-        return this.fullOrganicRecovery({ actors: target.actors, target });
+        result = await this.fullOrganicRecovery({ actors: target.actors, target });
+        break;
       default:
-        return { success: false, error: `Unknown combat recovery group action: ${action}` };
+        result = { success: false, error: `Unknown combat recovery group action: ${action}` };
     }
+
+    await this.recordRecoveryLog({ result, action, target });
+    return result;
   }
 
   static async triggerNaturalHealing({ actors = this.getPartyActors(), target = null } = {}) {
@@ -572,6 +718,7 @@ export class GMCombatRecoveryService {
   }
 
   static async applyHitPointDeltaToActors({ actors = [], target = null, amount = 0, mode = 'heal' } = {}) {
+    const { amount = 0, effectId = '', poisonKey = '', rollTotal = null, dc = null, workflow = '', ongoingEffectType = 'custom', ongoingEffectLabel = '', ongoingEffectMemo = '', ongoingDurationScope = 'encounter' } = options;
     const value = Math.max(0, safeNumber(amount, 0));
     if (value <= 0) return { success: false, error: 'Enter a positive HP amount for the target action.' };
 
@@ -778,6 +925,312 @@ export class GMCombatRecoveryService {
       .filter(Boolean);
   }
 
+  static resolveWorkflow(workflows, workflowId, fallbackId) {
+    return workflows.find((workflow) => workflow.id === workflowId) || workflows.find((workflow) => workflow.id === fallbackId) || workflows[0];
+  }
+
+  static checkSkillResult({ rollTotal = null, dc = null, defaultDc = 15 } = {}) {
+    const targetDc = Math.max(0, safeNumber(dc, defaultDc));
+    const total = rollTotal === '' || rollTotal == null ? null : safeNumber(rollTotal, null);
+    return {
+      dc: targetDc,
+      rollTotal: total,
+      success: total == null ? true : total >= targetDc,
+      adjudicated: total == null
+    };
+  }
+
+  static async performTreatInjury({ actors = [], target = null, workflow = 'first-aid', rollTotal = null, dc = null, amount = null } = {}) {
+    const choice = this.resolveWorkflow(TREAT_INJURY_WORKFLOWS, workflow, 'first-aid');
+    const check = this.checkSkillResult({ rollTotal, dc, defaultDc: choice.dc });
+    const healAmount = Math.max(0, safeNumber(amount, choice.amount));
+    const affected = [];
+    const skipped = [];
+
+    for (const actor of actors) {
+      if (!actor) continue;
+      if (this.isDroid(actor) || this.isVehicle(actor)) {
+        skipped.push({ id: actor.id, name: actor.name, reason: 'treat_injury_not_for_droids_or_vehicles' });
+        continue;
+      }
+      if (!check.success) {
+        skipped.push({ id: actor.id, name: actor.name, reason: `check_failed_dc_${check.dc}` });
+        continue;
+      }
+      try {
+        const beforeHp = safeNumber(actor.system?.hp?.value, 0);
+        if (choice.id === 'long-term-care') {
+          await ActorEngine.updateActor(actor, {
+            [`flags.${SYSTEM_ID}.combatRecovery.longTermCare`]: { appliedAt: Date.now(), by: game.user?.id ?? null }
+          }, { source: 'gm-combat-recovery-long-term-care' });
+          affected.push({ id: actor.id, name: actor.name, workflow: choice.id, hp: 0 });
+          continue;
+        }
+        if (choice.id === 'critical-care') {
+          await ActorEngine.updateActor(actor, {
+            [`flags.${SYSTEM_ID}.combatRecovery.stabilized`]: true,
+            [`flags.${SYSTEM_ID}.combatRecovery.stabilizedAt`]: Date.now()
+          }, { source: 'gm-combat-recovery-critical-care' });
+        }
+        if (choice.id === 'surgery') {
+          await ActorEngine.updateActor(actor, {
+            'system.conditionTrack.persistent': false,
+            [`flags.${SYSTEM_ID}.combatRecovery.lastSurgeryAt`]: Date.now()
+          }, { source: 'gm-combat-recovery-surgery', skipValidation: true });
+        }
+        if (healAmount > 0) await ActorEngine.applyHealing(actor, healAmount, `gm-combat-recovery-treat-injury-${choice.id}`);
+        const afterHp = safeNumber(actor.system?.hp?.value, beforeHp);
+        affected.push({ id: actor.id, name: actor.name, workflow: choice.id, hp: Math.max(0, afterHp - beforeHp) });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'treat_injury_failed' });
+      }
+    }
+
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return {
+      success: true,
+      action: 'treat-injury',
+      target,
+      workflow: choice,
+      check,
+      affected,
+      skipped,
+      message: `${choice.label}${targetLabel}: ${affected.length} affected, ${skipped.length} skipped${check.adjudicated ? ' (GM adjudicated)' : ` (roll ${check.rollTotal} vs DC ${check.dc})`}.`
+    };
+  }
+
+  static async performRepairSkill({ actors = [], target = null, workflow = 'field-repair', rollTotal = null, dc = null, amount = null } = {}) {
+    const choice = this.resolveWorkflow(REPAIR_WORKFLOWS, workflow, 'field-repair');
+    const check = this.checkSkillResult({ rollTotal, dc, defaultDc: choice.dc });
+    const repairAmount = Math.max(0, safeNumber(amount, choice.amount));
+    const affected = [];
+    const skipped = [];
+
+    for (const actor of actors) {
+      if (!actor) continue;
+      if (!this.isDroid(actor) && !this.isVehicle(actor)) {
+        skipped.push({ id: actor.id, name: actor.name, reason: 'repair_skill_only_for_droids_or_vehicles' });
+        continue;
+      }
+      if (!check.success) {
+        skipped.push({ id: actor.id, name: actor.name, reason: `check_failed_dc_${check.dc}` });
+        continue;
+      }
+      try {
+        const beforeHp = safeNumber(actor.system?.hp?.value, 0);
+        if (repairAmount > 0) await ActorEngine.applyHealing(actor, repairAmount, `gm-combat-recovery-repair-skill-${choice.id}`);
+        if (choice.id === 'full-service') await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-full-service');
+        if (choice.id === 'restore-operation') {
+          await ActorEngine.updateActor(actor, {
+            [`flags.${SYSTEM_ID}.combatRecovery.restoredOperationAt`]: Date.now()
+          }, { source: 'gm-combat-recovery-restore-operation' });
+        }
+        const afterHp = safeNumber(actor.system?.hp?.value, beforeHp);
+        affected.push({ id: actor.id, name: actor.name, workflow: choice.id, hp: Math.max(0, afterHp - beforeHp) });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'repair_skill_failed' });
+      }
+    }
+
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return {
+      success: true,
+      action: 'repair-skill',
+      target,
+      workflow: choice,
+      check,
+      affected,
+      skipped,
+      message: `${choice.label}${targetLabel}: ${affected.length} repaired, ${skipped.length} skipped${check.adjudicated ? ' (GM adjudicated)' : ` (roll ${check.rollTotal} vs DC ${check.dc})`}.`
+    };
+  }
+
+  static async stabilizeActors({ actors = [], target = null } = {}) {
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      if (this.isDroid(actor) || this.isVehicle(actor)) {
+        skipped.push({ id: actor.id, name: actor.name, reason: 'use_restore_operation_for_droids_or_vehicles' });
+        continue;
+      }
+      try {
+        await ActorEngine.updateActor(actor, {
+          [`flags.${SYSTEM_ID}.combatRecovery.stabilized`]: true,
+          [`flags.${SYSTEM_ID}.combatRecovery.stabilizedAt`]: Date.now(),
+          [`flags.${SYSTEM_ID}.combatRecovery.stabilizedBy`]: game.user?.id ?? null
+        }, { source: 'gm-combat-recovery-stabilize', skipValidation: true });
+        affected.push({ id: actor.id, name: actor.name });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'stabilize_failed' });
+      }
+    }
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return { success: true, action: 'stabilize', target, affected, skipped, message: `Stabilize${targetLabel}: ${affected.length} marked stable, ${skipped.length} skipped.` };
+  }
+
+  static async reviveActors({ actors = [], target = null, amount = 1 } = {}) {
+    const value = Math.max(1, safeNumber(amount, 1));
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      try {
+        if (this.isDroid(actor) || this.isVehicle(actor)) {
+          const result = await ActorEngine.applyHealing(actor, value, 'gm-combat-recovery-revive-repair');
+          affected.push({ id: actor.id, name: actor.name, hp: result.applied ?? value, mode: 'repair' });
+        } else {
+          const result = await ActorEngine.applyHealing(actor, value, 'gm-combat-recovery-revive');
+          await ActorEngine.updateActor(actor, {
+            [`flags.${SYSTEM_ID}.combatRecovery.stabilized`]: false,
+            [`flags.${SYSTEM_ID}.combatRecovery.revivedAt`]: Date.now()
+          }, { source: 'gm-combat-recovery-revive-flag', skipValidation: true });
+          affected.push({ id: actor.id, name: actor.name, hp: result.applied ?? value, mode: 'healing' });
+        }
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'revive_failed' });
+      }
+    }
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return { success: true, action: 'revive', target, affected, skipped, message: `Revive/restore${targetLabel}: ${affected.length} restored, ${skipped.length} skipped.` };
+  }
+
+  static async applyPoisonToActors({ actors = [], target = null, poisonKey = '' } = {}) {
+    const poison = PoisonRegistry.get(poisonKey);
+    if (!poison) return { success: false, error: 'Choose a valid poison/disease/toxin entry.' };
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      try {
+        const result = await PoisonEngine.applyPoison({ targetActor: actor, poisonDefinition: poison, immediate: true, exposed: true });
+        if (result?.success || result?.instance) affected.push({ id: actor.id, name: actor.name, poisonKey: poison.key });
+        else skipped.push({ id: actor.id, name: actor.name, reason: result?.reason || 'poison_blocked_or_failed' });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'poison_apply_failed' });
+      }
+    }
+    const targetLabel = target?.label ? ` to ${target.label}` : '';
+    return { success: true, action: 'apply-poison', target, poison, affected, skipped, message: `Applied ${poison.name}${targetLabel}: ${affected.length} affected, ${skipped.length} skipped.` };
+  }
+
+  static async treatPoisonOnActors({ actors = [], target = null, poisonKey = '', rollTotal = null } = {}) {
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      const poisons = this.getActorPoisons(actor);
+      const wanted = poisonKey ? poisons.filter((poison) => String(poison.poisonKey) === String(poisonKey)) : poisons;
+      if (!wanted.length) {
+        skipped.push({ id: actor.id, name: actor.name, reason: 'no_matching_active_poison' });
+        continue;
+      }
+      try {
+        let treatedCount = 0;
+        for (const poison of wanted) {
+          const result = await PoisonEngine.treatPoison(actor, { poisonInstanceId: poison.id, poisonKey: poison.poisonKey, rollTotal });
+          if (result?.success) treatedCount += result.treated?.length ?? 1;
+        }
+        if (treatedCount > 0) affected.push({ id: actor.id, name: actor.name, treated: treatedCount });
+        else skipped.push({ id: actor.id, name: actor.name, reason: 'treatment_failed' });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'treat_poison_failed' });
+      }
+    }
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return { success: true, action: 'treat-poison', target, affected, skipped, message: `Poison treatment${targetLabel}: ${affected.length} actor${affected.length === 1 ? '' : 's'} treated, ${skipped.length} skipped.` };
+  }
+
+  static async applyOngoingEffectToActors({ actors = [], target = null, ongoingEffectType = 'custom', ongoingEffectLabel = '', ongoingEffectMemo = '', ongoingDurationScope = 'encounter' } = {}) {
+    const preset = ONGOING_EFFECT_PRESETS.find((entry) => entry.id === ongoingEffectType) || ONGOING_EFFECT_PRESETS.find((entry) => entry.id === 'custom');
+    const label = String(ongoingEffectLabel || preset.label || 'Ongoing Effect').trim();
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      try {
+        const effectData = {
+          name: label,
+          label,
+          icon: preset.icon || 'icons/svg/aura.svg',
+          disabled: false,
+          flags: {
+            [SYSTEM_ID]: {
+              combatRecoveryEffect: {
+                category: 'ongoing',
+                effectType: preset.id,
+                label,
+                memo: String(ongoingEffectMemo || '').trim(),
+                durationScope: ongoingDurationScope || 'manual',
+                tone: preset.tone || 'warning',
+                appliedAt: Date.now(),
+                appliedBy: game.user?.id ?? null
+              },
+              temporary: ongoingDurationScope !== 'manual',
+              effectState: {
+                family: 'ongoing',
+                effectType: preset.id,
+                sourceType: 'gmCombatRecovery',
+                sourceName: label,
+                summary: label,
+                details: ongoingEffectMemo ? [ongoingEffectMemo] : [],
+                tags: ['ongoing', preset.id, ongoingDurationScope || 'manual'],
+                removable: true,
+                removableBy: 'gm-or-owner'
+              }
+            },
+            swse: {
+              combatRecoveryEffect: {
+                category: 'ongoing',
+                effectType: preset.id,
+                label,
+                durationScope: ongoingDurationScope || 'manual'
+              },
+              temporary: ongoingDurationScope !== 'manual'
+            }
+          }
+        };
+        await ActorEngine.createActiveEffects(actor, [effectData], { source: 'gm-combat-recovery-ongoing-effect' });
+        affected.push({ id: actor.id, name: actor.name, effect: label });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'ongoing_effect_failed' });
+      }
+    }
+    const targetLabel = target?.label ? ` to ${target.label}` : '';
+    return { success: true, action: 'apply-ongoing-effect', target, affected, skipped, message: `Applied ${label}${targetLabel}: ${affected.length} affected, ${skipped.length} skipped.` };
+  }
+
+  static async clearEncounterEffectsFromActors({ actors = [], target = null } = {}) {
+    const affected = [];
+    const skipped = [];
+    let removedCount = 0;
+    for (const actor of actors) {
+      if (!actor) continue;
+      const ids = Array.from(actor.effects ?? [])
+        .filter((effect) => {
+          const meta = effect?.getFlag?.(SYSTEM_ID, 'combatRecoveryEffect')
+            ?? effect?.flags?.[SYSTEM_ID]?.combatRecoveryEffect
+            ?? effect?.flags?.swse?.combatRecoveryEffect;
+          return meta?.category === 'ongoing' && meta?.durationScope === 'encounter';
+        })
+        .map((effect) => effect.id)
+        .filter(Boolean);
+      if (!ids.length) {
+        skipped.push({ id: actor.id, name: actor.name, reason: 'no_encounter_effects' });
+        continue;
+      }
+      try {
+        await ActorEngine.deleteActiveEffects(actor, ids, { source: 'gm-combat-recovery-clear-encounter-effects' });
+        removedCount += ids.length;
+        affected.push({ id: actor.id, name: actor.name, removed: ids.length });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'clear_encounter_failed' });
+      }
+    }
+    const targetLabel = target?.label ? ` from ${target.label}` : '';
+    return { success: true, action: 'clear-encounter-effects', target, affected, skipped, removedCount, message: `Cleared ${removedCount} encounter effect${removedCount === 1 ? '' : 's'}${targetLabel}: ${affected.length} actor${affected.length === 1 ? '' : 's'} affected, ${skipped.length} skipped.` };
+  }
+
   static async fullOrganicRecovery({ actors = this.getPartyActors(), target = null } = {}) {
     const recovered = [];
     const skipped = [];
@@ -819,6 +1272,50 @@ export class GMCombatRecoveryService {
     };
   }
 
+  static getRecoveryLog() {
+    try {
+      const log = game.settings.get(SYSTEM_ID, RECOVERY_LOG_SETTING);
+      return Array.isArray(log) ? log : [];
+    } catch (_err) {
+      return [];
+    }
+  }
+
+  static async recordRecoveryLog({ result = {}, action = '', target = null, actor = null } = {}) {
+    if (!result || result.success === false) return result;
+    try {
+      const current = this.getRecoveryLog();
+      const affectedCount = Array.isArray(result.affected) ? result.affected.length
+        : Array.isArray(result.healed) ? result.healed.length
+          : Array.isArray(result.recovered) ? result.recovered.length
+            : safeNumber(result.updated, 0);
+      const skippedCount = Array.isArray(result.skipped) ? result.skipped.length : safeNumber(result.skipped, 0);
+      const entry = {
+        id: foundry.utils.randomID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        timestamp: Date.now(),
+        userId: game.user?.id ?? null,
+        userName: game.user?.name ?? 'GM',
+        action: result.action || action || 'combat-recovery',
+        actorName: actor?.name ?? null,
+        targetLabel: target?.label || result.target?.label || actor?.name || 'target',
+        message: result.message || `${result.action || action} complete`,
+        affectedCount,
+        skippedCount,
+        success: result.success !== false
+      };
+      const next = [entry, ...current].slice(0, RECOVERY_LOG_LIMIT);
+      await game.settings.set(SYSTEM_ID, RECOVERY_LOG_SETTING, next);
+    } catch (err) {
+      SWSELogger.warn('[GMCombatRecoveryService] Could not record recovery log entry:', err);
+    }
+    return result;
+  }
+
+  static async recordAndReturnActorAction(result, action, actor) {
+    await this.recordRecoveryLog({ result, action, actor, target: { label: actor?.name ?? 'actor' } });
+    return result;
+  }
+
   static getRestSkipReason(actor) {
     if (this.isDroid(actor)) return 'droid_no_rest_recovery';
     if (this.isVehicle(actor)) return 'vehicle_no_rest_recovery';
@@ -827,11 +1324,12 @@ export class GMCombatRecoveryService {
     return 'not_eligible';
   }
 
-  static async executeActorAction(actorId, action, { amount = 0 } = {}) {
+  static async executeActorAction(actorId, action, options = {}) {
     if (!game.user?.isGM) return { success: false, error: 'Only GMs can use combat recovery actions.' };
     const actor = game.actors?.get(actorId);
     if (!actor) return { success: false, error: 'Actor not found.' };
 
+    const { amount = 0, effectId = '', poisonKey = '', rollTotal = null, dc = null, workflow = '', ongoingEffectType = 'custom', ongoingEffectLabel = '', ongoingEffectMemo = '', ongoingDurationScope = 'encounter' } = options;
     const value = Math.max(0, safeNumber(amount, 0));
 
     try {
@@ -841,14 +1339,14 @@ export class GMCombatRecoveryService {
             return { success: false, error: `${actor.name} cannot receive organic healing. Use Repair instead.` };
           }
           const result = await ActorEngine.applyHealing(actor, value, 'gm-combat-recovery-heal');
-          return { success: true, message: `${actor.name} healed ${result.applied ?? value} HP.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name, hp: result.applied ?? value }], message: `${actor.name} healed ${result.applied ?? value} HP.` }, action, actor);
         }
         case 'repair': {
           if (!this.isDroid(actor) && !this.isVehicle(actor)) {
             return { success: false, error: `${actor.name} is not a droid or vehicle. Use Heal instead.` };
           }
           const result = await ActorEngine.applyHealing(actor, value, 'gm-combat-recovery-repair');
-          return { success: true, message: `${actor.name} repaired ${result.applied ?? value} HP.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name, hp: result.applied ?? value }], message: `${actor.name} repaired ${result.applied ?? value} HP.` }, action, actor);
         }
         case 'damage': {
           const result = await ActorEngine.applyDamage(actor, {
@@ -856,23 +1354,23 @@ export class GMCombatRecoveryService {
             type: 'gm-override',
             source: 'gm-combat-recovery-damage'
           });
-          return { success: true, message: `${actor.name} took ${result.applied ?? value} HP damage.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name, hp: result.applied ?? value }], message: `${actor.name} took ${result.applied ?? value} HP damage.` }, action, actor);
         }
         case 'improve-condition': {
           await ActorEngine.applyConditionShift(actor, -1, 'gm-combat-recovery');
-          return { success: true, message: `${actor.name} condition improved.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name }], message: `${actor.name} condition improved.` }, action, actor);
         }
         case 'worsen-condition': {
           await ActorEngine.applyConditionShift(actor, 1, 'gm-combat-recovery');
-          return { success: true, message: `${actor.name} condition worsened.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name }], message: `${actor.name} condition worsened.` }, action, actor);
         }
         case 'reset-condition': {
           await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-reset-condition');
-          return { success: true, message: `${actor.name} condition track reset.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name }], message: `${actor.name} condition track reset.` }, action, actor);
         }
         case 'reset-second-wind': {
           await ActorEngine.resetSecondWind(actor);
-          return { success: true, message: `${actor.name} second wind reset.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name }], message: `${actor.name} second wind reset.` }, action, actor);
         }
         case 'repair-full': {
           if (!this.isDroid(actor) && !this.isVehicle(actor)) {
@@ -883,14 +1381,30 @@ export class GMCombatRecoveryService {
           const amountToRepair = Math.max(0, hpMax - hpValue);
           if (amountToRepair > 0) await ActorEngine.applyHealing(actor, amountToRepair, 'gm-combat-recovery-repair-full');
           await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-repair-full');
-          return { success: true, message: `${actor.name} repaired to full operational status.` };
+          return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name }], message: `${actor.name} repaired to full operational status.` }, action, actor);
         }
         case 'apply-status-effect':
-          return this.applyStatusEffectToActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId: options.effectId });
+          return this.recordAndReturnActorAction(await this.applyStatusEffectToActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId }), action, actor);
         case 'remove-status-effect':
-          return this.removeStatusEffectFromActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId: options.effectId });
+          return this.recordAndReturnActorAction(await this.removeStatusEffectFromActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId }), action, actor);
         case 'clear-status-effects':
-          return this.clearStatusEffectsFromActors({ actors: [actor], target: { label: actor.name, actors: [actor] } });
+          return this.recordAndReturnActorAction(await this.clearStatusEffectsFromActors({ actors: [actor], target: { label: actor.name, actors: [actor] } }), action, actor);
+        case 'treat-injury':
+          return this.executeGroupAction('treat-injury', { targetMode: 'selected', actorIds: [actor.id], amount: value, rollTotal, dc, workflow });
+        case 'repair-skill':
+          return this.executeGroupAction('repair-skill', { targetMode: 'selected', actorIds: [actor.id], amount: value, rollTotal, dc, workflow });
+        case 'stabilize':
+          return this.executeGroupAction('stabilize', { targetMode: 'selected', actorIds: [actor.id] });
+        case 'revive':
+          return this.executeGroupAction('revive', { targetMode: 'selected', actorIds: [actor.id], amount: value || 1 });
+        case 'apply-poison':
+          return this.executeGroupAction('apply-poison', { targetMode: 'selected', actorIds: [actor.id], poisonKey });
+        case 'treat-poison':
+          return this.executeGroupAction('treat-poison', { targetMode: 'selected', actorIds: [actor.id], poisonKey, rollTotal });
+        case 'apply-ongoing-effect':
+          return this.executeGroupAction('apply-ongoing-effect', { targetMode: 'selected', actorIds: [actor.id], ongoingEffectType, ongoingEffectLabel, ongoingEffectMemo, ongoingDurationScope });
+        case 'clear-encounter-effects':
+          return this.executeGroupAction('clear-encounter-effects', { targetMode: 'selected', actorIds: [actor.id] });
         case 'short-rest':
           return this.executeGroupAction('short-rest', { targetMode: 'selected', actorIds: [actor.id] });
         case 'extended-rest':

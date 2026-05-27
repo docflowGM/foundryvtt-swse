@@ -16,7 +16,6 @@ import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-mai
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
-import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
 import { GMDatapad } from "/systems/foundryvtt-swse/scripts/apps/gm-datapad.js";
 
 function onClickChargen(app) {
@@ -90,13 +89,12 @@ function onClickGMDashboard(app) {
     ui?.notifications?.warn?.('Only GMs can access the Store Dashboard.');
     return;
   }
-  SWSELogger.log('[Actor Sidebar] Opening GM Store Dashboard');
+  SWSELogger.log('[Actor Sidebar] Opening GM Datapad Store surface');
   try {
-    const dashboard = new GMStoreDashboard();
-    dashboard.render(true);
+    GMDatapad.open('store');
   } catch (err) {
-    SWSELogger.error('[Actor Sidebar] Error opening GM dashboard:', err);
-    ui?.notifications?.error?.(`Failed to open GM dashboard: ${err.message}`);
+    SWSELogger.error('[Actor Sidebar] Error opening GM Store surface:', err);
+    ui?.notifications?.error?.(`Failed to open GM Store surface: ${err.message}`);
   }
 }
 

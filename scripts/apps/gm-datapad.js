@@ -111,6 +111,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._settingsSurfaceController = null;
   }
 
+  static open(pageId = 'home') {
+    if (!game.user?.isGM) {
+      ui?.notifications?.warn?.('Only GMs can access the GM Datapad.');
+      return null;
+    }
+    const app = new GMDatapad();
+    app.currentPage = pageId || 'home';
+    app.render(true);
+    return app;
+  }
+
   async _prepareContext(options) {
     // GM-only access
     if (!game.user?.isGM) {
@@ -2522,6 +2533,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         ev.preventDefault();
         const action = ev.currentTarget.dataset.combatRecoveryAction || 'natural-healing';
         const targetOptions = this._getCombatRecoveryTargetOptions(pageElement);
+        const confirmed = await this._confirmCombatRecoveryAction(action, targetOptions, pageElement);
+        if (!confirmed) return;
         await this._executeCombatRecoveryGroupAction(action, targetOptions);
       });
     });
@@ -2534,7 +2547,23 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const form = ev.currentTarget.closest('[data-combat-actor-card]');
         const amount = Number(form?.querySelector('[name="recoveryAmount"]')?.value ?? 0) || 0;
         const effectId = form?.querySelector('[name="actorStatusEffect"]')?.value || '';
-        await this._executeCombatRecoveryActorAction(actorId, action, { amount, effectId });
+        const rollTotalRaw = form?.querySelector('[name="actorRecoveryRollTotal"]')?.value ?? '';
+        const dcRaw = form?.querySelector('[name="actorRecoveryDc"]')?.value ?? '';
+        const workflow = form?.querySelector('[name="actorWorkflow"]')?.value || '';
+        const poisonKey = form?.querySelector('[name="actorPoisonKey"]')?.value || '';
+        const ongoingEffectType = form?.querySelector('[name="actorOngoingType"]')?.value || 'custom';
+        const ongoingEffectLabel = form?.querySelector('[name="actorOngoingLabel"]')?.value || '';
+        await this._executeCombatRecoveryActorAction(actorId, action, {
+          amount,
+          effectId,
+          rollTotal: rollTotalRaw === '' ? null : Number(rollTotalRaw),
+          dc: dcRaw === '' ? null : Number(dcRaw),
+          workflow,
+          poisonKey,
+          ongoingEffectType,
+          ongoingEffectLabel,
+          ongoingDurationScope: 'encounter'
+        });
       });
     });
   }
@@ -2546,7 +2575,62 @@ export class GMDatapad extends BaseSWSEAppV2 {
       .filter(Boolean);
     const amount = Number(pageElement?.querySelector('[name="combatRecoveryGroupAmount"]')?.value ?? 0) || 0;
     const effectId = pageElement?.querySelector('[name="combatRecoveryStatusEffect"]')?.value || '';
-    return { targetMode, actorIds, amount, effectId };
+    const rollTotalRaw = pageElement?.querySelector('[name="combatRecoveryRollTotal"]')?.value ?? '';
+    const dcRaw = pageElement?.querySelector('[name="combatRecoveryDc"]')?.value ?? '';
+    const treatWorkflow = pageElement?.querySelector('[name="combatRecoveryTreatWorkflow"]')?.value || '';
+    const repairWorkflow = pageElement?.querySelector('[name="combatRecoveryRepairWorkflow"]')?.value || '';
+    const poisonKey = pageElement?.querySelector('[name="combatRecoveryPoisonKey"]')?.value || '';
+    const ongoingEffectType = pageElement?.querySelector('[name="combatRecoveryOngoingType"]')?.value || 'custom';
+    const ongoingEffectLabel = pageElement?.querySelector('[name="combatRecoveryOngoingLabel"]')?.value || '';
+    const ongoingDurationScope = pageElement?.querySelector('[name="combatRecoveryOngoingDuration"]')?.value || 'encounter';
+    return {
+      targetMode,
+      actorIds,
+      amount,
+      effectId,
+      rollTotal: rollTotalRaw === '' ? null : Number(rollTotalRaw),
+      dc: dcRaw === '' ? null : Number(dcRaw),
+      workflow: targetMode === 'selected' ? (treatWorkflow || repairWorkflow) : (treatWorkflow || repairWorkflow),
+      treatWorkflow,
+      repairWorkflow,
+      poisonKey,
+      ongoingEffectType,
+      ongoingEffectLabel,
+      ongoingDurationScope
+    };
+  }
+
+  async _confirmCombatRecoveryAction(action, options = {}, pageElement = null) {
+    const dangerous = new Set([
+      'damage-target', 'short-rest', 'extended-rest', 'encounter-reset', 'reset-condition',
+      'clear-status-effects', 'reset-second-wind', 'full-organic-recovery', 'apply-poison',
+      'treat-poison', 'apply-ongoing-effect', 'clear-encounter-effects', 'stabilize', 'revive',
+      'treat-injury', 'repair-skill'
+    ]);
+    const selectedCount = Array.from(pageElement?.querySelectorAll('[name="combatRecoveryActorTarget"]:checked') ?? []).length;
+    const targetMode = options.targetMode || 'party';
+    const shouldConfirm = dangerous.has(action) || targetMode !== 'selected' || selectedCount > 1;
+    if (!shouldConfirm) return true;
+
+    const targetText = targetMode === 'selected'
+      ? `${selectedCount || 0} checked actor${selectedCount === 1 ? '' : 's'}`
+      : targetMode.replace(/-/g, ' ');
+    const message = `Apply "${action}" to ${targetText}? Droids and vehicles will still be excluded from organic rest/healing.`;
+
+    try {
+      if (globalThis.Dialog?.confirm) {
+        return await Dialog.confirm({
+          title: 'Confirm GM Combat & Recovery Action',
+          content: `<p>${message}</p>`,
+          yes: () => true,
+          no: () => false,
+          defaultYes: false
+        });
+      }
+    } catch (_err) {
+      // Fall back to browser confirm below.
+    }
+    return globalThis.window?.confirm ? window.confirm(message) : true;
   }
 
   /**
@@ -3215,7 +3299,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
    */
   async _executeCombatRecoveryGroupAction(action, options = {}) {
     try {
-      const result = await GMCombatRecoveryService.executeGroupAction(action, options);
+      const actionOptions = { ...options };
+      if (action === 'treat-injury') actionOptions.workflow = options.treatWorkflow || options.workflow;
+      if (action === 'repair-skill') actionOptions.workflow = options.repairWorkflow || options.workflow;
+      const result = await GMCombatRecoveryService.executeGroupAction(action, actionOptions);
       if (result?.success) {
         ui?.notifications?.info?.(result.message || 'Combat recovery action complete.');
         SWSELogger.info('[GMDatapad] Combat recovery group action complete:', { action, result });

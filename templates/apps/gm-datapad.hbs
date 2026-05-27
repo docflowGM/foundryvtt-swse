@@ -2484,6 +2484,8 @@
         <div class="combat-recovery-metric critical"><span>Down</span><strong>{{combatRecovery.metrics.downed}}</strong></div>
         <div class="combat-recovery-metric warning"><span>CT Impaired</span><strong>{{combatRecovery.metrics.conditionImpaired}}</strong></div>
         <div class="combat-recovery-metric info"><span>SW Spent</span><strong>{{combatRecovery.metrics.secondWindSpent}}</strong></div>
+        <div class="combat-recovery-metric critical"><span>Poisons</span><strong>{{combatRecovery.metrics.activePoisons}}</strong></div>
+        <div class="combat-recovery-metric warning"><span>Ongoing</span><strong>{{combatRecovery.metrics.ongoingEffects}}</strong></div>
         <div class="combat-recovery-metric stable"><span>Rest Eligible</span><strong>{{combatRecovery.metrics.restEligible}}</strong></div>
         <div class="combat-recovery-metric muted"><span>Droids</span><strong>{{combatRecovery.metrics.droids}}</strong></div>
       </div>
@@ -2526,6 +2528,30 @@
               <span>HP Amount</span>
               <input type="number" name="combatRecoveryGroupAmount" min="0" step="1" value="5">
             </label>
+            <label class="combat-recovery-group-amount">
+              <span>Check Total</span>
+              <input type="number" name="combatRecoveryRollTotal" min="0" step="1" placeholder="GM roll">
+            </label>
+            <label class="combat-recovery-group-amount">
+              <span>DC</span>
+              <input type="number" name="combatRecoveryDc" min="0" step="1" placeholder="default">
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Treat Injury</span>
+              <select name="combatRecoveryTreatWorkflow">
+                {{#each combatRecovery.treatInjuryWorkflows}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.label}} DC {{this.dc}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Repair Workflow</span>
+              <select name="combatRecoveryRepairWorkflow">
+                {{#each combatRecovery.repairWorkflows}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.label}} DC {{this.dc}}</option>
+                {{/each}}
+              </select>
+            </label>
             <label class="combat-recovery-status-select">
               <span>Status Effect</span>
               <select name="combatRecoveryStatusEffect" {{#unless combatRecovery.statusEffectsEnabled}}disabled{{/unless}}>
@@ -2536,6 +2562,39 @@
                 {{else}}
                 <option value="">Status effects disabled</option>
                 {{/if}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Poison / Disease</span>
+              <select name="combatRecoveryPoisonKey" {{#unless combatRecovery.poisonEnabled}}disabled{{/unless}}>
+                {{#if combatRecovery.poisonEnabled}}
+                <option value="">Any active poison</option>
+                {{#each combatRecovery.poisonOptions}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.label}}</option>
+                {{/each}}
+                {{else}}
+                <option value="">No poison registry</option>
+                {{/if}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Ongoing Type</span>
+              <select name="combatRecoveryOngoingType">
+                {{#each combatRecovery.ongoingEffectPresets}}
+                <option value="{{this.id}}">{{this.label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label class="combat-recovery-group-amount wide">
+              <span>Ongoing Label</span>
+              <input type="text" name="combatRecoveryOngoingLabel" placeholder="Custom effect label">
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Duration</span>
+              <select name="combatRecoveryOngoingDuration">
+                <option value="encounter">Encounter</option>
+                <option value="rest">Until Rest</option>
+                <option value="manual">Manual</option>
               </select>
             </label>
             <span class="combat-recovery-selected-pill"><strong data-combat-selected-count>0</strong> checked</span>
@@ -2588,10 +2647,36 @@
               </div>
               {{/if}}
 
+              {{#if this.activePoisons.length}}
+              <div class="combat-recovery-active-statuses critical" aria-label="Active poisons">
+                <span>Poison:</span>
+                {{#each this.activePoisons}}
+                <strong title="DC {{this.dc}} {{this.trigger}}">{{this.name}}</strong>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              {{#if this.activeOngoingEffects.length}}
+              <div class="combat-recovery-active-statuses warning" aria-label="Ongoing effects">
+                <span>Ongoing:</span>
+                {{#each this.activeOngoingEffects}}
+                <strong title="{{this.durationScope}} {{this.memo}}">{{this.label}}</strong>
+                {{/each}}
+              </div>
+              {{/if}}
+
               <div class="combat-recovery-actor-controls">
                 <label>
                   <span>Amount</span>
                   <input type="number" name="recoveryAmount" min="0" step="1" value="5">
+                </label>
+                <label>
+                  <span>Check</span>
+                  <input type="number" name="actorRecoveryRollTotal" min="0" step="1" placeholder="roll">
+                </label>
+                <label>
+                  <span>DC</span>
+                  <input type="number" name="actorRecoveryDc" min="0" step="1" placeholder="default">
                 </label>
                 <label class="combat-recovery-status-select">
                   <span>Status Effect</span>
@@ -2605,6 +2690,41 @@
                     {{/if}}
                   </select>
                 </label>
+                <label class="combat-recovery-status-select">
+                  <span>Medical/Repair</span>
+                  <select name="actorWorkflow">
+                    {{#if this.repairEligible}}
+                    {{#each ../combatRecovery.repairWorkflows}}
+                    <option value="{{this.id}}">{{this.label}} DC {{this.dc}}</option>
+                    {{/each}}
+                    {{else}}
+                    {{#each ../combatRecovery.treatInjuryWorkflows}}
+                    <option value="{{this.id}}">{{this.label}} DC {{this.dc}}</option>
+                    {{/each}}
+                    {{/if}}
+                  </select>
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Poison</span>
+                  <select name="actorPoisonKey" {{#unless ../combatRecovery.poisonEnabled}}disabled{{/unless}}>
+                    <option value="">Any active poison</option>
+                    {{#each ../combatRecovery.poisonOptions}}
+                    <option value="{{this.id}}">{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Ongoing</span>
+                  <select name="actorOngoingType">
+                    {{#each ../combatRecovery.ongoingEffectPresets}}
+                    <option value="{{this.id}}">{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Ongoing Label</span>
+                  <input type="text" name="actorOngoingLabel" placeholder="optional label">
+                </label>
                 <div class="combat-recovery-button-row">
                   {{#if this.repairEligible}}
                   <button type="button" class="swse-ui-button" data-combat-actor-action="repair" data-actor-id="{{this.id}}">Repair</button>
@@ -2614,6 +2734,13 @@
                   <button type="button" class="swse-ui-button" data-combat-actor-action="short-rest" data-actor-id="{{this.id}}">Short Rest</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="extended-rest" data-actor-id="{{this.id}}">Extended Rest</button>
                   {{/if}}
+                  {{#if this.repairEligible}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="repair-skill" data-actor-id="{{this.id}}">Repair Check</button>
+                  {{else}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="treat-injury" data-actor-id="{{this.id}}">Treat Injury</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="stabilize" data-actor-id="{{this.id}}">Stabilize</button>
+                  {{/if}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="revive" data-actor-id="{{this.id}}">Revive/Restore</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="damage" data-actor-id="{{this.id}}">Damage</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="improve-condition" data-actor-id="{{this.id}}">CT +</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="worsen-condition" data-actor-id="{{this.id}}">CT -</button>
@@ -2622,6 +2749,10 @@
                   <button type="button" class="swse-ui-button" data-combat-actor-action="apply-status-effect" data-actor-id="{{this.id}}">Apply Status</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="remove-status-effect" data-actor-id="{{this.id}}">Remove Status</button>
                   <button type="button" class="swse-ui-button danger" data-combat-actor-action="clear-status-effects" data-actor-id="{{this.id}}">Clear Status</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="apply-poison" data-actor-id="{{this.id}}">Apply Poison</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="treat-poison" data-actor-id="{{this.id}}">Treat Poison</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="apply-ongoing-effect" data-actor-id="{{this.id}}">Apply Ongoing</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="clear-encounter-effects" data-actor-id="{{this.id}}">Clear Encounter FX</button>
                 </div>
               </div>
             </article>
@@ -2650,6 +2781,14 @@
               <button type="button" class="swse-ui-button" data-combat-recovery-action="heal-target">Heal Target by Amount</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="repair-target">Repair Droid/Vehicle Target</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="damage-target">Damage Target by Amount</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="treat-injury">Treat Injury Workflow</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="repair-skill">Repair Workflow</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="stabilize">Stabilize Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="revive">Revive / Restore Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-poison">Apply Poison/Disease</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="treat-poison">Treat Poison/Disease</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-ongoing-effect">Apply Ongoing Effect</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="clear-encounter-effects">Clear Encounter Effects</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Apply Short Rest</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Apply Extended Rest</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
@@ -2660,6 +2799,22 @@
               <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-second-wind">GM Override: Reset Second Wind</button>
               <button type="button" class="swse-ui-button danger" data-combat-recovery-action="full-organic-recovery">GM Override: Full Organic Recovery</button>
             </div>
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Recovery Log</h3>
+            {{#if combatRecovery.recoveryLog.length}}
+            <ul class="combat-recovery-watch-list combat-recovery-log-list">
+              {{#each combatRecovery.recoveryLog}}
+              <li>
+                <strong>{{this.action}}</strong>
+                <span>{{this.message}}</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p class="empty-text">No GM recovery actions logged yet.</p>
+            {{/if}}
           </section>
 
           <section class="combat-recovery-rail-section">
