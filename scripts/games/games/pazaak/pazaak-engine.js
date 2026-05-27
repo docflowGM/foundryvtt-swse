@@ -1,5 +1,8 @@
 import { GameSessionStore } from '../../game-session-store.js';
 import { GameNotificationService } from '../../game-notification-service.js';
+import { getGameSettingsSnapshot } from '../../game-settings.js';
+import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
+import { GameOpponentProfileService } from '../../game-opponent-profile-service.js';
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import {
   buildDefaultPazaakSideDeckIds,
@@ -20,7 +23,8 @@ import {
   isPazaakTwenty,
   scorePazaakPlayer
 } from './pazaak-rules.js';
-import { PazaakAi } from './pazaak-ai.js';
+import { PazaakAi, buildPazaakAiProfile } from './pazaak-ai.js';
+import { randomPazaakDialogue } from './pazaak-ai-personalities.js';
 
 function clone(value) {
   if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -62,7 +66,8 @@ function playableSeats(seats = []) {
 
 function buildPlayerStateForSeat(seat = {}) {
   const automated = isAutomatedSeat(seat);
-  const sideDeckIds = automated ? buildDefaultPazaakSideDeckIds(seat.aiProfile || 'balanced') : [];
+  const aiProfile = buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium');
+  const sideDeckIds = automated ? buildDefaultPazaakSideDeckIds(aiProfile.personality || aiProfile.difficulty || 'balanced') : [];
   return {
     seatId: seat.seatId,
     sideDeckIds,
@@ -114,7 +119,7 @@ function ensurePazaakState(session = {}) {
     existing.players[seat.seatId] ??= buildPlayerStateForSeat(seat);
     existing.players[seat.seatId].seatId = seat.seatId;
     if (isAutomatedSeat(seat) && !existing.players[seat.seatId].sideDeckLocked) {
-      existing.players[seat.seatId].sideDeckIds = buildDefaultPazaakSideDeckIds(seat.aiProfile || 'balanced');
+      existing.players[seat.seatId].sideDeckIds = buildDefaultPazaakSideDeckIds(buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium').personality || 'balanced');
       existing.players[seat.seatId].sideDeckLocked = true;
     }
   }
@@ -255,6 +260,19 @@ function maybeResolveSet(session, state) {
 
   if (result.winnerSeatId && state.players[result.winnerSeatId]) {
     state.players[result.winnerSeatId].setsWon = Number(state.players[result.winnerSeatId].setsWon || 0) + 1;
+    const winnerSeat = findSeat(session, result.winnerSeatId);
+    if (isAutomatedSeat(winnerSeat)) {
+      const profile = buildPazaakAiProfile(winnerSeat?.aiProfile || winnerSeat?.ai || 'medium');
+      state.players[result.winnerSeatId].lastAction = randomPazaakDialogue(profile.personality, 'winRound', state.players[result.winnerSeatId].lastAction || 'Won the set.');
+    }
+  }
+  for (const player of players) {
+    if (player.seatId === result.winnerSeatId) continue;
+    const loserSeat = findSeat(session, player.seatId);
+    if (isAutomatedSeat(loserSeat)) {
+      const profile = buildPazaakAiProfile(loserSeat?.aiProfile || loserSeat?.ai || 'medium');
+      state.players[player.seatId].lastAction = randomPazaakDialogue(profile.personality, 'loseRound', state.players[player.seatId].lastAction || 'Lost the set.');
+    }
   }
 
   const matchWinner = Object.values(state.players).find(player => Number(player.setsWon || 0) >= PAZAAK_SETS_TO_WIN);
@@ -263,6 +281,11 @@ function maybeResolveSet(session, state) {
     state.statusLabel = 'MATCH COMPLETE';
     state.activeSeatId = null;
     state.winnerSeatId = matchWinner.seatId;
+    const winnerSeat = findSeat(session, matchWinner.seatId);
+    if (isAutomatedSeat(winnerSeat)) {
+      const profile = buildPazaakAiProfile(winnerSeat?.aiProfile || winnerSeat?.ai || 'medium');
+      state.players[matchWinner.seatId].lastAction = randomPazaakDialogue(profile.personality, 'winMatch', state.players[matchWinner.seatId].lastAction || 'Won the match.');
+    }
     state.message = `${seatLabel(session, matchWinner.seatId)} wins the match.`;
     return true;
   }
@@ -301,18 +324,20 @@ function processAutomatedTurns(session, state) {
       advanceTurn(session, state, state.activeSeatId);
       continue;
     }
-    const choice = PazaakAi.chooseTurn(player, seat?.aiProfile || 'normal');
+    const profile = buildPazaakAiProfile(seat?.aiProfile || seat?.ai || 'medium');
+    const choice = PazaakAi.chooseTurn(player, profile, { nextMainCard: Array.isArray(state.mainDeck) ? state.mainDeck[0] : null, state, session });
     if (choice.type === 'play-side-card') {
       const result = applyPazaakSideCard(player, choice.cardInstanceId, choice.choice || {});
       if (result.ok) {
         state.players[player.seatId] = result.player;
-        state.players[player.seatId].lastAction = `Played ${result.playedCard?.label || 'a side card'}.`;
+        const playedType = Number(result.playedCard?.value || 0) < 0 ? 'playsNegativeCard' : (Number(result.playedCard?.value || 0) > 0 ? 'playsPositiveCard' : 'playsCard');
+        state.players[player.seatId].lastAction = randomPazaakDialogue(profile.personality, playedType, `Played ${result.playedCard?.label || 'a side card'}.`);
         continue;
       }
     }
     if (choice.type === 'stand') {
       player.stood = true;
-      player.lastAction = 'Stood.';
+      player.lastAction = choice.forceIntuition?.line || randomPazaakDialogue(profile.personality, 'stand', 'Stood.');
       player.score = scorePazaakPlayer(player);
       advanceTurn(session, state, player.seatId);
       continue;
@@ -320,12 +345,12 @@ function processAutomatedTurns(session, state) {
     player.score = scorePazaakPlayer(player);
     if (player.score > PAZAAK_TARGET) {
       player.bust = true;
-      player.lastAction = 'Busted.';
+      player.lastAction = randomPazaakDialogue(profile.personality, 'busts', 'Busted.');
     } else if (player.score === PAZAAK_TARGET) {
       player.stood = true;
-      player.lastAction = 'Reached 20 and stood.';
+      player.lastAction = randomPazaakDialogue(profile.personality, 'hits20', 'Reached 20 and stood.');
     } else {
-      player.lastAction = 'Ended turn.';
+      player.lastAction = choice.forceIntuition?.line || randomPazaakDialogue(profile.personality, 'drawsCard', 'Ended turn.');
     }
     advanceTurn(session, state, player.seatId);
   }
@@ -356,11 +381,11 @@ export class PazaakEngine {
     }) ?? null;
   }
 
-  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null } = {}) {
+  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0 } = {}) {
     const resolvedActor = actor || (actorId ? game.actors?.get?.(actorId) : null);
     const resolvedSessionId = sessionId || `game_${globalThis.foundry?.utils?.randomID?.(12) || Math.random().toString(36).slice(2, 14)}`;
     if (!game?.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-solo-pazaak', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId });
+      const requestId = HolonetSocketService.emitRequest('create-solo-pazaak', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn });
       return { pending: true, requestId, sessionId: resolvedSessionId };
     }
     actor = resolvedActor;
@@ -368,6 +393,12 @@ export class PazaakEngine {
     const requester = requesterId ? game.users?.get?.(requesterId) : game?.user;
     const userId = requesterId || currentUserId();
     const hostRecipientId = requester?.isGM ? `gm:${userId}` : `player:${userId}`;
+    const settings = getGameSettingsSnapshot();
+    const normalizedBuyIn = Number(creditBuyIn || 0) || 0;
+    const safeRulesMode = rulesMode === 'wagered' && settings.allowWagers && settings.allowCreditWagers && normalizedBuyIn > 0 ? 'wagered' : 'republic-senate';
+    const wagerProfile = safeRulesMode === 'wagered'
+      ? GameCreditEscrowService.buildCreditWagerProfile({ buyIn: Math.min(normalizedBuyIn, Number(settings.maxCreditWager || 0) || normalizedBuyIn), houseStake: Math.min(normalizedBuyIn, Number(settings.maxCreditWager || 0) || normalizedBuyIn) })
+      : { mode: 'none' };
     const hostSeat = {
       seatId: 'seat_host',
       type: requester?.isGM ? 'gm' : 'player',
@@ -378,37 +409,58 @@ export class PazaakEngine {
       avatar: actorImg(actor),
       status: 'host'
     };
+    const requestedFairness = settings.defaultAiFairness || 'fair';
+    const safeFairness = requestedFairness === 'cheating' && (!settings.allowCheatingAi || settings.requireGmApprovalForCheatingAi)
+      ? 'fair'
+      : (requestedFairness === 'houseEdge' && !settings.allowHouseEdgeAi ? 'fair' : requestedFairness);
+    const generatedOpponent = await GameOpponentProfileService.buildPazaakAiOpponentProfile({
+      difficulty: settings.defaultAiDifficulty || 'medium',
+      fairness: safeFairness,
+      personality: settings.defaultAiPersonality || 'random'
+    });
+    const aiProfile = buildPazaakAiProfile(generatedOpponent);
     const aiSeat = {
       seatId: 'seat_ai',
       type: 'ai',
       userId: null,
       actorId: null,
       recipientId: null,
-      displayName: 'Dealer Droid RX-44',
-      avatar: 'icons/commodities/tech/cog-bronze.webp',
+      displayName: aiProfile.name || 'Dealer Droid RX-44',
+      avatar: aiProfile.kind === 'living' ? 'icons/svg/mystery-man.svg' : 'icons/commodities/tech/cog-bronze.webp',
       status: 'accepted',
-      aiProfile: 'normal'
+      profession: aiProfile.profession || '',
+      tableFact: aiProfile.tableFact || '',
+      aiProfile,
+      aiDifficulty: aiProfile.difficulty,
+      aiFairness: aiProfile.fairness,
+      aiPersonality: aiProfile.personality
     };
     const shell = {
       id: resolvedSessionId,
       gameId: 'pazaak',
       title: title || `${actorDisplay(actor)} vs Dealer Droid`,
       status: 'active',
-      authorityMode: 'host',
+      authorityMode: safeRulesMode === 'wagered' ? 'gm' : 'host',
       hostUserId: userId,
       hostActorId: actorId,
       holonetThreadId: null,
       holonetMessageId: null,
       seats: [hostSeat, aiSeat],
-      rulesMode: 'republic-senate',
-      wagerProfile: { mode: 'none' },
+      rulesMode: safeRulesMode,
+      wagerProfile,
       prizeProfile: { enabled: false },
       escrow: {},
-      metadata: { createdBy: hostRecipientId, mode: 'solo-ai' },
+      metadata: { createdBy: hostRecipientId, mode: 'solo-ai', creditWagerRequested: safeRulesMode === 'wagered', aiProfile },
       log: [sessionLogEntry('solo-ai-created', hostRecipientId)]
     };
     shell.gameState = ensurePazaakState(shell);
-    const updated = await GameSessionStore.upsertSession(shell);
+    let updated = null;
+    if (GameCreditEscrowService.isCreditWager(shell)) {
+      const escrowed = await GameCreditEscrowService.prepareEscrow(shell, { by: hostRecipientId });
+      updated = escrowed.session || shell;
+    } else {
+      updated = await GameSessionStore.upsertSession(shell);
+    }
     GameNotificationService.emitSessionUpdated(updated, { pazaakPhase: updated.gameState?.phase, action: 'create-solo-pazaak' });
     return updated;
   }
@@ -427,6 +479,10 @@ export class PazaakEngine {
     if (isAutomatedSeat(seat)) return { ok: false, error: 'Automated seats choose their own side deck.' };
     const validation = validateSideDeck(cardIds);
     if (!validation.valid) return { ok: false, error: validation.errors.join(' ') };
+
+    if (GameCreditEscrowService.isCreditWager(session) && session.escrow?.credits?.status !== 'escrowed') {
+      return { ok: false, error: session.escrow?.credits?.error || 'Credit buy-in escrow must complete before side decks can lock.' };
+    }
 
     const state = ensurePazaakState(session);
     state.players[seat.seatId] ??= buildPlayerStateForSeat(seat);
@@ -471,22 +527,22 @@ export class PazaakEngine {
     } else if (action === 'stand') {
       player.stood = true;
       player.score = scorePazaakPlayer(player);
-      player.lastAction = 'Stood.';
+      player.lastAction = choice.forceIntuition?.line || randomPazaakDialogue(profile.personality, 'stand', 'Stood.');
       advanceTurn(session, state, seat.seatId);
     } else if (action === 'end-turn') {
       player.score = scorePazaakPlayer(player);
       if (player.score > PAZAAK_TARGET) {
         player.bust = true;
-        player.lastAction = 'Busted.';
+        player.lastAction = randomPazaakDialogue(profile.personality, 'busts', 'Busted.');
       } else if (player.score === PAZAAK_TARGET) {
         player.stood = true;
-        player.lastAction = 'Reached 20 and stood.';
+        player.lastAction = randomPazaakDialogue(profile.personality, 'hits20', 'Reached 20 and stood.');
       } else if (hasFilledPazaakTable(player)) {
         player.filledTable = true;
         player.stood = true;
         player.lastAction = 'Filled the table.';
       } else {
-        player.lastAction = 'Ended turn.';
+        player.lastAction = choice.forceIntuition?.line || randomPazaakDialogue(profile.personality, 'drawsCard', 'Ended turn.');
       }
       advanceTurn(session, state, seat.seatId);
     } else {
@@ -495,12 +551,19 @@ export class PazaakEngine {
 
     processAutomatedTurns(session, state);
     const updatedStatus = state.phase === 'complete' ? 'complete' : 'active';
-    const updated = await GameSessionStore.upsertSession({
+    let updated = await GameSessionStore.upsertSession({
       ...session,
       status: updatedStatus,
       gameState: state,
       log: [...(session.log ?? []), sessionLogEntry(`pazaak-${action}`, seat.recipientId || seat.seatId, { seatId: seat.seatId })]
     });
+    if (updatedStatus === 'complete' && GameCreditEscrowService.isCreditWager(updated)) {
+      const settled = await GameCreditEscrowService.settleSession(updated, {
+        winnerSeatId: state.winnerSeatId,
+        reason: `${seatLabel(updated, state.winnerSeatId)} wins ${updated.title || 'Pazaak'}`
+      });
+      updated = settled.session || updated;
+    }
     GameNotificationService.emitSessionUpdated(updated, { pazaakPhase: updated.gameState?.phase, action: `pazaak-${action}` });
     return { ok: true, session: updated };
   }

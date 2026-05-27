@@ -1093,6 +1093,7 @@
         </div>
         <div class="gm-approval-count-strip" aria-label="Approval queue counts">
           <span><strong>{{approvalQueueCounts.total}}</strong>Total</span>
+          <span><strong>{{approvalQueueCounts.games}}</strong>Games</span>
           <span><strong>{{approvalQueueCounts.droids}}</strong>Droids</span>
           <span><strong>{{approvalQueueCounts.ships}}</strong>Ships</span>
         </div>
@@ -1256,8 +1257,8 @@
       {{else}}
       <div class="gm-approval-empty-state swse-ui-panel">
         <i class="fa-solid fa-check-double"></i>
-        <h3>No pending ship or droid approvals</h3>
-        <p>The acquisition queue is clear. New custom droid, ship, or vehicle requests will appear here as summary packets.</p>
+        <h3>No pending approvals</h3>
+        <p>The approval queue is clear. Game payouts, custom droids, ships, and vehicle requests will appear here as summary packets.</p>
       </div>
       {{/if}}
     </div>

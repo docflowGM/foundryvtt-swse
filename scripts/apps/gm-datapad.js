@@ -38,6 +38,9 @@ import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holon
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
+import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
+import { GameNotificationService } from "/systems/foundryvtt-swse/scripts/games/game-notification-service.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -153,13 +156,15 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const pendingDroids = this.pendingDroids?.length ?? 0;
     const storeApprovals = this.storeApprovals?.length ?? 0;
+    const gameApprovals = GameSessionStore.getAllSessions().filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement').length;
     const pendingSales = this.pendingSales?.length ?? 0;
 
     return {
       bulletin: bulletinCount,
-      approvals: pendingDroids + storeApprovals,
+      approvals: pendingDroids + storeApprovals + gameApprovals,
       pendingDroids,
       storeApprovals,
+      gameApprovals,
       pendingSales,
       store: pendingSales + storeApprovals,
       healing: healingEligible,
@@ -1717,6 +1722,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const [kind, rawId] = String(key || '').split(':');
     if (kind === 'droid' && rawId) return { kind, actorId: rawId };
     if (kind === 'custom') return { kind, index: Number(rawId) };
+    if (kind === 'game' && rawId) return { kind, sessionId: rawId };
     return { kind: null, index: -1, actorId: null };
   }
 
@@ -1773,6 +1779,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
       if (name === 'costCredits') {
         const cost = this._approvalNumberValue(rawValue) ?? 0;
         edits.approvalUpdates.costCredits = cost;
+        continue;
+      }
+
+      if (name === 'approvedPayout') {
+        const payout = this._approvalNumberValue(rawValue) ?? 0;
+        edits.approvalUpdates.approvedPayout = payout;
         continue;
       }
 
@@ -1859,13 +1871,27 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
       approvals[parsed.index] = approval;
       await SettingsHelper.set('pendingCustomPurchases', approvals);
+      return;
     }
+
+    if (parsed.kind === 'game') {
+      const session = GameSessionStore.getSession(parsed.sessionId);
+      if (!session) throw new Error('Pending game settlement not found.');
+      const escrow = foundry.utils?.deepClone?.(session.escrow ?? {}) ?? JSON.parse(JSON.stringify(session.escrow ?? {}));
+      escrow.credits ??= {};
+      if ('approvedPayout' in edits.approvalUpdates) escrow.credits.gmPendingApprovedPayout = normalizeCredits(edits.approvalUpdates.approvedPayout ?? 0);
+      const gmReason = edits.metadataUpdates['metadata.gmSettlementReason'];
+      if (gmReason !== undefined) escrow.credits.gmPendingReason = String(gmReason ?? '').trim();
+      await GameSessionStore.upsertSession({ ...session, escrow });
+    }
+
   }
 
   async _approveApprovalRequest(key) {
     const parsed = this._parseApprovalKey(key);
     if (parsed.kind === 'droid') return this._approveDroid(parsed.actorId);
     if (parsed.kind === 'custom') return this._approvePendingCustom(parsed.index);
+    if (parsed.kind === 'game') return this._approveGameSettlement(parsed.sessionId);
     ui?.notifications?.error?.('Invalid approval request.');
   }
 
@@ -1883,7 +1909,59 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const parsed = this._parseApprovalKey(key);
     if (parsed.kind === 'droid') return this._rejectDroid(parsed.actorId, reason);
     if (parsed.kind === 'custom') return this._denyPendingCustom(parsed.index, reason);
+    if (parsed.kind === 'game') return this._denyGameSettlement(parsed.sessionId, reason);
     ui?.notifications?.error?.('Invalid approval request.');
+  }
+
+
+  async _approveGameSettlement(sessionId) {
+    try {
+      const session = GameSessionStore.getSession(sessionId);
+      if (!session) throw new Error('Pending game settlement not found.');
+      const credits = session.escrow?.credits ?? {};
+      const policy = credits.policy ?? {};
+      const recommended = normalizeCredits(credits.gmPendingApprovedPayout ?? policy.recommendedPayout ?? credits.payoutApproved ?? 0);
+      const reason = credits.gmPendingReason || credits.settlementMessage || 'GM-approved game payout';
+      const result = await GameCreditEscrowService.approvePendingSettlement(session, {
+        payoutAmount: recommended,
+        decision: 'approved',
+        reason,
+        by: game.user?.id ?? null
+      });
+      if (!result.ok) throw new Error(result.error || 'Game settlement approval failed.');
+      GameNotificationService.emitSessionUpdated(result.session, { action: 'gm-game-settlement-approved' });
+      ui?.notifications?.info?.('Game payout settlement approved.');
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      await this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error approving game settlement:', err);
+      ui?.notifications?.error?.(`Failed to approve game settlement: ${err.message}`);
+    }
+  }
+
+  async _denyGameSettlement(sessionId, reason = '') {
+    try {
+      const session = GameSessionStore.getSession(sessionId);
+      if (!session) throw new Error('Pending game settlement not found.');
+      const result = await GameCreditEscrowService.approvePendingSettlement(session, {
+        payoutAmount: 0,
+        decision: 'voided',
+        reason: String(reason || '').trim() || 'GM voided the automated game payout.',
+        by: game.user?.id ?? null
+      });
+      if (!result.ok) throw new Error(result.error || 'Game settlement denial failed.');
+      GameNotificationService.emitSessionUpdated(result.session, { action: 'gm-game-settlement-voided' });
+      ui?.notifications?.info?.('Game payout voided. No credits were awarded.');
+      this.selectedApprovalKey = null;
+      this.approvalEditMode = false;
+      this.approvalDenyMode = false;
+      await this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error denying game settlement:', err);
+      ui?.notifications?.error?.(`Failed to deny game settlement: ${err.message}`);
+    }
   }
 
   /**

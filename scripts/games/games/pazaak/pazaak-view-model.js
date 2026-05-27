@@ -8,6 +8,8 @@ import {
   PAZAAK_TARGET
 } from './pazaak-deck.js';
 import { playableSideCardStatus, scorePazaakPlayer } from './pazaak-rules.js';
+import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
+import { PazaakAi, buildPazaakAiProfile } from './pazaak-ai.js';
 
 function cardTone(card = {}) {
   if (card.tone) return card.tone;
@@ -61,6 +63,7 @@ function mapHandCard(card = {}, player = {}, canAct = false) {
 }
 
 function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
+  const aiProfile = buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium');
   const player = state.players?.[seat.seatId] ?? {};
   const score = scorePazaakPlayer(player);
   const isCurrent = state.activeSeatId === seat.seatId;
@@ -71,6 +74,13 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     displayName: seat.displayName || 'Unknown Seat',
     type: seat.type || 'player',
     isAi: seat.type === 'ai' || seat.aiProfile,
+    aiDifficultyLabel: PazaakAi.labelForDifficulty(aiProfile.difficulty),
+    aiFairnessLabel: PazaakAi.labelForFairness(aiProfile.fairness),
+    aiPersonalityLabel: PazaakAi.labelForPersonality(aiProfile.personality),
+    aiPersonalityQuality: PazaakAi.qualityForPersonality(aiProfile.personality),
+    aiForceSensitive: Boolean(aiProfile.forceSensitive),
+    profession: seat.profession || aiProfile.profession || '',
+    tableFact: seat.tableFact || aiProfile.tableFact || '',
     isNpc: seat.type === 'npc',
     isViewer,
     isCurrent,
@@ -130,11 +140,13 @@ export class PazaakViewModel {
       .map(seat => mapSeat(session, state, seat, currentSeatId));
     const viewerSeat = seats.find(seat => seat.isViewer) ?? null;
     const winnerSeat = state.winnerSeatId ? seats.find(seat => seat.seatId === state.winnerSeatId) : null;
+    const wager = GameCreditEscrowService.describe(session);
 
     return {
       id: session.id,
       title: session.title,
-      rulesLabel: 'Republic Senate Rules',
+      rulesLabel: wager.enabled ? 'Wagered Credits' : 'Republic Senate Rules',
+      wager,
       phase: state.phase,
       statusLabel: state.statusLabel || state.phase,
       showSetup: state.phase === 'setup',
