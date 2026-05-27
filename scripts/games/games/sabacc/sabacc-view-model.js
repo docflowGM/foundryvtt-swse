@@ -60,7 +60,9 @@ function seatVm(session, state, seat, viewerSeatId) {
     hasCards: Boolean(handCount),
     handCount,
     lastAction: player.lastAction || 'Waiting.',
-    wins: Number(player.wins || 0)
+    wins: Number(player.wins || 0),
+    tableCredits: Number(player.tableCredits || 0),
+    roundContribution: Number(player.roundContribution || 0)
   };
 }
 
@@ -70,7 +72,7 @@ export class SabaccViewModel {
     const currentSeat = SabaccEngine.findSeatForActor(session, actor, participantId);
     const viewerSeatId = currentSeat?.seatId || null;
     const viewerPlayer = viewerSeatId ? state.players?.[viewerSeatId] : null;
-    const canAct = Boolean(currentSeat && state.phase === 'drawing' && state.activeSeatId === currentSeat.seatId && viewerPlayer && !viewerPlayer.called && !viewerPlayer.folded && !viewerPlayer.bombedOut);
+    const canAct = Boolean(currentSeat && ['betting', 'drawing'].includes(state.phase) && state.activeSeatId === currentSeat.seatId && viewerPlayer && !viewerPlayer.called && !viewerPlayer.folded && !viewerPlayer.bombedOut);
     return {
       id: session.id,
       title: session.title,
@@ -83,10 +85,22 @@ export class SabaccViewModel {
       currentSeatId: viewerSeatId,
       showReady: state.phase === 'ready',
       showDrawing: state.phase === 'drawing',
+      showBetting: state.phase === 'betting',
       showHandComplete: state.phase === 'hand-complete',
       showComplete: state.phase === 'complete',
       canStartHand: Boolean(currentSeat && ['ready', 'hand-complete'].includes(state.phase)),
       canCancel: Boolean(currentSeat && !['complete', 'cancelled'].includes(state.phase)),
+      betting: {
+        currentBet: Number(state.betting?.currentBet || 0),
+        minBet: Number(state.betting?.minBet || state.ante || 1),
+        minRaise: Number(state.betting?.minRaise || state.ante || 1),
+        toCall: viewerSeatId ? Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) : 0,
+        canCheck: Boolean(canAct && state.phase === 'betting' && Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) <= 0),
+        canBet: Boolean(canAct && state.phase === 'betting' && Number(state.betting?.currentBet || 0) <= 0 && Number(viewerPlayer?.tableCredits || 0) >= Number(state.betting?.minBet || state.ante || 1)),
+        canCall: Boolean(canAct && state.phase === 'betting' && Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) > 0 && Number(viewerPlayer?.tableCredits || 0) >= Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0))),
+        canRaise: Boolean(canAct && state.phase === 'betting' && Number(state.betting?.currentBet || 0) > 0 && Number(viewerPlayer?.tableCredits || 0) >= Math.max(0, Number(state.betting?.currentBet || 0) - Number(state.betting?.contributions?.[viewerSeatId] ?? viewerPlayer?.roundContribution ?? 0)) + Number(state.betting?.minRaise || state.ante || 1))
+      },
+      viewerTableCredits: Number(viewerPlayer?.tableCredits || 0),
       handPot: Number(state.handPot || 0),
       sabaccPot: Number(state.sabaccPot || 0),
       ante: Number(state.ante || 0),
@@ -95,14 +109,16 @@ export class SabaccViewModel {
       seats: playableSeats(session).map(seat => seatVm(session, state, seat, viewerSeatId)),
       viewerSeat: {
         canAct,
-        canCall: Boolean(canAct && !evaluateSabaccHand(viewerPlayer?.hand || []).bombedOut && (viewerPlayer?.hand || []).length > 0),
-        canDiscard: Boolean(canAct && (viewerPlayer?.hand || []).length > 1),
+        canBettingAct: Boolean(canAct && state.phase === 'betting'),
+        canCardAct: Boolean(canAct && state.phase === 'drawing'),
+        canCall: Boolean(canAct && state.phase === 'drawing' && !evaluateSabaccHand(viewerPlayer?.hand || []).bombedOut && (viewerPlayer?.hand || []).length > 0),
+        canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 1),
         hand: (viewerPlayer?.hand || []).map(card => ({
           ...cardVm(card, true),
           sessionId: session.id,
           seatId: viewerSeatId,
-          canShift: canAct,
-          canDiscard: Boolean(canAct && (viewerPlayer?.hand || []).length > 1)
+          canShift: Boolean(canAct && state.phase === 'drawing'),
+          canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 1)
         }))
       },
       handHistory: (state.handHistory || []).map(hand => ({ ...hand, timeLabel: formatTime(hand.at) })),

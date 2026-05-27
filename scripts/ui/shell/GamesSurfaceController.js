@@ -133,7 +133,8 @@ export class GamesSurfaceController {
         const result = await SabaccEngine.createSoloAiSession({
           actor: this._actor,
           title: String(data.get('title') || '').trim(),
-          rulesMode: String(data.get('rulesMode') || 'republic-senate').trim()
+          rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
         });
         if (result?.pending) {
           this._noteResult(result);
@@ -224,6 +225,7 @@ export class GamesSurfaceController {
           action,
           payload: {
             cardId: String(data.get('cardId') || '').trim(),
+            amount: Number(data.get('amount') || 0) || 0,
             reason: String(data.get('reason') || '').trim()
           }
         });
