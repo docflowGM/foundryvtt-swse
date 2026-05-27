@@ -476,7 +476,10 @@ function tableLeaderSeatId(session, state) {
 }
 function tableCreditBalances(session, state) {
   const balances = {};
-  for (const seat of playableSeats(session.seats)) balances[seat.seatId] = safeAmount(state.players?.[seat.seatId]?.tableCredits, 0);
+  for (const seat of playableSeats(session.seats)) {
+    if (isAutomatedSeat(seat) || !seat.actorId) continue;
+    balances[seat.seatId] = safeAmount(state.players?.[seat.seatId]?.tableCredits, 0);
+  }
   return balances;
 }
 

@@ -13,6 +13,7 @@ import { buildPazaakMainDeck, PAZAAK_TARGET } from '../games/pazaak/pazaak-deck.
 import { scorePazaakPlayer, hasFilledPazaakTable } from '../games/pazaak/pazaak-rules.js';
 import { buildSabaccDeck, buildSabaccSylopCard, buildSabaccNumberCard, SABACC_SUITS } from '../games/sabacc/sabacc-deck.js';
 import { compareSabaccHands, evaluateSabaccHand } from '../games/sabacc/sabacc-rules.js';
+import { SabaccAi } from '../games/sabacc/sabacc-ai.js';
 import { buildDejarikBoard } from '../games/dejarik/dejarik-board.js';
 import { canAttackPiece, canMovePiece } from '../games/dejarik/dejarik-rules.js';
 import { evaluateHintaroRoll, rollHintaroPlayerDice, HINTARO_SYMBOLS } from '../games/hintaro/hintaro-rules.js';
@@ -38,6 +39,16 @@ function testSabacc() {
     { seatId: 'b', cards: [buildSabaccNumberCard(suit, 3), buildSabaccNumberCard(suit, 2)] }
   ]);
   assert.equal(result.winnerSeatId, 'a', 'Zero Sabacc hand should beat Nulrhek');
+
+  const positiveTie = compareSabaccHands([
+    { seatId: 'positive', cards: [buildSabaccNumberCard(suit, 3), buildSabaccNumberCard(suit, -2)] },
+    { seatId: 'negative', cards: [buildSabaccNumberCard(suit, -3), buildSabaccNumberCard(suit, 2)] }
+  ]);
+  assert.equal(positiveTie.winnerSeatId, 'positive', 'Positive Nulrhek should beat equal-distance negative Nulrhek');
+
+  const aiPlayer = { seatId: 'ai', hand: [buildSabaccNumberCard(suit, 4), buildSabaccNumberCard(suit, -2), buildSabaccNumberCard(suit, 1)], evaluation: null };
+  const aiAction = SabaccAi.chooseAction({ player: aiPlayer, state: { players: { ai: aiPlayer }, discard: [], deck: buildSabaccDeck(), market: [] }, aiProfile: { difficulty: 'grandmaster', fairness: 'fair', personality: 'methodical' } });
+  assert.notEqual(aiAction.type, 'discard-card', 'Sabacc AI should not choose standalone discard in Galaxy/Corellian Spike rules');
 }
 
 function testDejarik() {

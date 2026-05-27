@@ -157,13 +157,13 @@ export class SabaccViewModel {
         canBettingAct: Boolean(canAct && state.phase === 'betting'),
         canCardAct: Boolean(canAct && state.phase === 'drawing'),
         canCall: Boolean(canAct && state.phase === 'drawing' && !evaluateSabaccHand(viewerPlayer?.hand || []).bombedOut && (viewerPlayer?.hand || []).length >= 2),
-        canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 2),
+        canDiscard: false,
         hand: (viewerPlayer?.hand || []).map(card => ({
           ...cardVm(card, true),
           sessionId: session.id,
           seatId: viewerSeatId,
           canShift: Boolean(canAct && state.phase === 'drawing'),
-          canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 2),
+          canDiscard: false,
           market: (Array.isArray(state.market) ? state.market : []).map(marketSlotVm)
         }))
       },

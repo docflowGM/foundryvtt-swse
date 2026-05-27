@@ -718,17 +718,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   }
 
   if (action === 'discard-card') {
-    const cardId = String(payload.cardId || payload.cardInstanceId || '');
-    if (!canDiscardSabaccCard(player)) return { ok: false, error: `You must keep at least ${SABACC_MIN_HAND_SIZE} Sabacc cards in hand.` };
-    const index = player.hand.findIndex(card => card.id === cardId);
-    if (index < 0) return { ok: false, error: 'Card not found in hand.' };
-    const [removed] = player.hand.splice(index, 1);
-    state.discard.push(removed);
-    attachAiDecision(player, payload);
-    player.lastAction = 'Discards a card.';
-    pushEvent(session, state, 'discard-card', seat.seatId, publicCardActionMessage(seat, 'discards'), { tone: 'card', ai: payload.ai || null });
-    completeCardAction(session, state, seat.seatId);
-    return { ok: true };
+    return { ok: false, error: 'Standalone discarding is not legal at this Sabacc table. Trade with the deck or market instead.' };
   }
 
   if (action === 'shift-card') {
@@ -746,8 +736,8 @@ function applyActionToState(session, state, seat, action, payload = {}) {
       shiftedAt: now()
     };
     attachAiDecision(player, payload);
-    player.lastAction = 'Shifts a card.';
-    pushEvent(session, state, 'shift-card', seat.seatId, publicCardActionMessage(seat, 'shifts'), { tone: 'shift', ai: payload.ai || null });
+    player.lastAction = 'Trades a card with the deck.';
+    pushEvent(session, state, 'shift-card', seat.seatId, publicCardActionMessage(seat, 'trades with the deck'), { tone: 'shift', ai: payload.ai || null });
     completeCardAction(session, state, seat.seatId);
     return { ok: true };
   }
@@ -819,6 +809,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
 function tableCreditBalances(session, state) {
   const balances = {};
   for (const seat of playableSeats(session.seats)) {
+    if (isAutomatedSeat(seat) || !seat.actorId) continue;
     balances[seat.seatId] = safeAmount(state.players?.[seat.seatId]?.tableCredits, 0);
   }
   return balances;

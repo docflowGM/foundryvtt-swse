@@ -41,8 +41,9 @@ import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/s
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
-import { GMCombatRecoveryService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
+import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
@@ -111,17 +112,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._settingsSurfaceController = null;
   }
 
-  static open(pageId = 'home') {
-    if (!game.user?.isGM) {
-      ui?.notifications?.warn?.('Only GMs can access the GM Datapad.');
-      return null;
-    }
-    const app = new GMDatapad();
-    app.currentPage = pageId || 'home';
-    app.render(true);
-    return app;
-  }
-
   async _prepareContext(options) {
     // GM-only access
     if (!game.user?.isGM) {
@@ -132,14 +122,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageContext = await this._loadPageContext(this.currentPage);
     const surfaceContext = ThemeResolutionService.buildSurfaceContext({ preferActor: false });
     const appCounts = await this._getHomeBadgeCounts();
-    const apps = this._getAppCards(appCounts);
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
-      apps,
-      appClusters: this._getAppClusters(apps),
-      activeApp: apps.find((app) => app.id === this.currentPage) ?? null,
-      gmShell: this._buildGmShellContext(apps, appCounts),
+      apps: this._getAppCards(appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
@@ -166,18 +152,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const bulletinRecords = await HolonetStorage.getAllRecords();
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
     const jobCounts = await this._getJobBadgeCounts();
-    const tradeCounts = await this._getTradeBadgeCounts();
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
     await this._loadPendingDroids();
 
-    let combatRecoveryAlerts = 0;
+    let healingEligible = 0;
     try {
-      const combatSummary = await GMCombatRecoveryService.buildViewModel();
-      combatRecoveryAlerts = combatSummary?.combatRecovery?.metrics?.actionable ?? combatSummary?.eligible ?? 0;
+      const healingSummary = await GMHealingTrigger.getHealingSummary();
+      healingEligible = healingSummary?.eligible ?? 0;
     } catch (err) {
-      SWSELogger.warn('[GMDatapad] Unable to load combat recovery summary for home badge counts:', err);
+      SWSELogger.warn('[GMDatapad] Unable to load healing summary for home badge counts:', err);
     }
 
     const pendingDroids = this.pendingDroids?.length ?? 0;
@@ -195,11 +180,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       jobReview: jobCounts.review,
       jobPayout: jobCounts.payout,
       jobActive: jobCounts.active,
-      trade: tradeCounts.actionable,
-      tradeApprovals: tradeCounts.approvals,
-      tradeFailed: tradeCounts.failed,
-      tradeActive: tradeCounts.active,
-      healing: combatRecoveryAlerts,
+      healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
   }
@@ -224,31 +205,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     } catch (err) {
       SWSELogger.warn('[GMDatapad] Unable to load job board badge counts:', err);
       return { total: 0, review: 0, payout: 0, active: 0, actionable: 0 };
-    }
-  }
-
-  async _getTradeBadgeCounts() {
-    try {
-      const records = await HolonetStorage.getAllRecords();
-      let approvals = 0;
-      let failed = 0;
-      let active = 0;
-      let counter = 0;
-      for (const record of records) {
-        const transfers = [record?.metadata?.creditTransfer, record?.metadata?.itemTransfer, record?.metadata?.assetTransfer].filter(Boolean);
-        for (const transfer of transfers) {
-          if (transfer?.gmArchived || transfer?.tradeConsoleArchived) continue;
-          const status = String(transfer?.status || 'pendingRecipient');
-          if (status === 'pendingGm' || status === 'counterPendingGm') approvals += 1;
-          if (status === 'failed') failed += 1;
-          if (status === 'pendingRecipient' || status === 'counterOffered') active += 1;
-          if (transfer?.counterOffer) counter += 1;
-        }
-      }
-      return { approvals, failed, active, counter, actionable: approvals + failed };
-    } catch (err) {
-      SWSELogger.warn('[GMDatapad] Unable to load trade console badge counts:', err);
-      return { approvals: 0, failed: 0, active: 0, counter: 0, actionable: 0 };
     }
   }
 
@@ -777,70 +733,19 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
   /**
-   * Get GM Holopad app definitions for the command launcher/dock.
+   * Get app card definitions for home page
    */
   _getAppCards(counts = {}) {
     return [
-      { id: 'bulletin', code: 'COM', cluster: 'communications', clusterLabel: 'Comms', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'One-way broadcasts, HoloNews, player status, and session recaps', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : 'stable', badgeType: 'info', featured: true, dockOrder: 10 },
-      { id: 'jobs', code: 'JOB', cluster: 'operations', clusterLabel: 'Ops', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, objective review, assignments, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 20 },
-      { id: 'trade', code: 'TRD', cluster: 'economy', clusterLabel: 'Economy', label: 'Trade Console', icon: 'fa-solid fa-right-left', description: 'Trade approvals, failed settlements, rollback diagnostics, and audit receipts', badgeCount: counts.trade ?? 0, status: 'Atomic', statusTone: (counts.trade ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 30 },
-      { id: 'store', code: 'STR', cluster: 'economy', clusterLabel: 'Economy', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance, approvals, inventory policy, and commerce receipts', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : 'stable', badgeType: 'warn', featured: true, dockOrder: 40 },
-      { id: 'approvals', code: 'APR', cluster: 'operations', clusterLabel: 'Ops', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending GM approval queue for gated system actions', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 50 },
-      { id: 'workspace', code: 'WRK', cluster: 'operations', clusterLabel: 'Ops', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access, scene context, and party workspace', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: 'info', badgeType: 'info', dockOrder: 60 },
-      { id: 'healing', code: 'CMB', cluster: 'operations', clusterLabel: 'Ops', label: 'Combat & Recovery', icon: 'fa-solid fa-heart-pulse', description: 'Healing, rest, encounter reset, condition cleanup, and droid repair visibility', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: (counts.healing ?? 0) ? 'warn' : 'stable', badgeType: 'info', featured: true, dockOrder: 70 },
-      { id: 'house-rules', code: 'RUL', cluster: 'configuration', clusterLabel: 'Config', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications and campaign rule presets', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: (counts.houseRules ?? 0) ? 'info' : 'stable', badgeType: 'info', dockOrder: 80 },
-      { id: 'settings', code: 'CFG', cluster: 'configuration', clusterLabel: 'Config', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme, interface tuning, and GM shell preferences', badgeCount: 0, status: 'Theme', statusTone: 'info', badgeType: 'info', dockOrder: 90 }
-    ].sort((a, b) => (a.dockOrder ?? 999) - (b.dockOrder ?? 999));
-  }
-
-  _getAppClusters(apps = []) {
-    const clusters = new Map();
-    for (const app of apps) {
-      const id = app.cluster || 'other';
-      if (!clusters.has(id)) {
-        clusters.set(id, {
-          id,
-          label: app.clusterLabel || id,
-          apps: [],
-          badgeCount: 0,
-          criticalCount: 0,
-          warningCount: 0
-        });
-      }
-
-      const cluster = clusters.get(id);
-      cluster.apps.push(app);
-      cluster.badgeCount += Number(app.badgeCount ?? 0) || 0;
-      if (app.statusTone === 'crit') cluster.criticalCount += 1;
-      if (app.statusTone === 'warn') cluster.warningCount += 1;
-    }
-
-    const order = ['communications', 'operations', 'economy', 'configuration', 'other'];
-    return Array.from(clusters.values())
-      .map((cluster) => ({
-        ...cluster,
-        tone: cluster.criticalCount > 0 ? 'crit' : cluster.warningCount > 0 ? 'warn' : cluster.badgeCount > 0 ? 'info' : 'stable',
-        countLabel: `${cluster.apps.length} app${cluster.apps.length === 1 ? '' : 's'}`
-      }))
-      .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-  }
-
-  _buildGmShellContext(apps = [], counts = {}) {
-    const activeApp = apps.find((app) => app.id === this.currentPage) ?? null;
-    const criticalBadges = Number(counts.approvals ?? 0) + Number(counts.jobs ?? 0) + Number(counts.trade ?? 0);
-    const watchBadges = criticalBadges + Number(counts.store ?? 0) + Number(counts.healing ?? 0);
-    const visibleDockApps = apps.filter((app) => app.featured || Number(app.badgeCount ?? 0) > 0);
-
-    return {
-      activeLabel: activeApp?.label ?? 'Home',
-      activeCode: activeApp?.code ?? 'HOM',
-      readinessLabel: criticalBadges > 0 ? 'ACTION REQUIRED' : watchBadges > 0 ? 'WATCH' : 'NOMINAL',
-      readinessTone: criticalBadges > 0 ? 'crit' : watchBadges > 0 ? 'warn' : 'stable',
-      summaryLine: `${Number(counts.bulletin ?? 0)} signals · ${Number(counts.jobs ?? 0)} contract actions · ${Number(counts.trade ?? 0)} trade alerts`,
-      dockApps: visibleDockApps,
-      criticalBadges,
-      watchBadges
-    };
+      { id: 'bulletin', code: 'COM', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : '', badgeType: 'info', featured: true },
+      { id: 'jobs', code: 'JOB', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, review queue, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
+      { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
+      { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
+      { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
+      { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
+      { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
+      { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' }
+    ];
   }
 
   async _onRender(context, options) {
@@ -893,8 +798,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireBulletinEvents(root);
     } else if (this.currentPage === 'jobs') {
       await this._wireJobBoardEvents(root);
-    } else if (this.currentPage === 'trade') {
-      await this._wireTradeConsoleEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
@@ -919,125 +822,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._settingsSurfaceController.attach(root);
   }
 
-  async _wireTradeConsoleEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-trade-console');
-    if (!pageElement) return;
-
-    pageElement.querySelectorAll('[data-trade-select]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.selectedTradeRecordId = event.currentTarget.dataset.tradeSelect || null;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-trade-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const target = event.currentTarget;
-        const threadId = target.dataset.threadId;
-        const recordId = target.dataset.recordId;
-        const action = target.dataset.tradeAction;
-        if (!threadId || !recordId || !action) return;
-        const noteInput = pageElement.querySelector(`[data-trade-note-for="${recordId}"]`);
-        const memo = String(noteInput?.value || '').trim();
-        await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo });
-        this.selectedTradeRecordId = recordId;
-        await this.render(false);
-      });
-    });
-
-    const policyForm = pageElement.querySelector('[data-trade-policy-form]');
-    if (policyForm) {
-      policyForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(policyForm);
-        const boolSettings = [
-          'holonetCreditTransfersEnabled',
-          'holonetRequireCreditTransferApproval',
-          'holonetItemTradesEnabled',
-          'holonetRequireItemTradeApproval',
-          'holonetAssetTradesEnabled',
-          'holonetRequireAssetTradeApproval',
-          'holonetPartyFundEnabled'
-        ];
-        for (const key of boolSettings) {
-          await game.settings.set('foundryvtt-swse', key, data.get(key) === 'on');
-        }
-        const cut = Math.max(0, Math.min(100, Math.floor(Number(data.get('holonetPartyFundDefaultCutPercent') || 0))));
-        await game.settings.set('foundryvtt-swse', 'holonetPartyFundDefaultCutPercent', cut);
-        ui?.notifications?.info?.('Holonet trade policy updated.');
-        await this.render(false);
-      });
-    }
-  }
-
   async _wireJobBoardEvents(root) {
     const pageElement = root.querySelector('.gm-datapad-jobs');
     if (!pageElement) return;
-
-    pageElement.querySelectorAll('form[data-job-create-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const title = String(data.get('title') || '').trim();
-        if (!title) {
-          ui?.notifications?.warn?.('Job title is required.');
-          return;
-        }
-        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-        const objectives = ['primary', 'secondary', 'tertiary'].map((type, index) => ({
-          id: `${type}-${index + 1}`,
-          type,
-          title: String(data.get(`${type}Objective`) || '').trim(),
-          description: String(data.get(`${type}Description`) || '').trim(),
-          required: type === 'primary' || data.get(`${type}Required`) === 'on',
-          rewardCredits: Number(data.get(`${type}Credits`) || 0),
-          rewardXp: Number(data.get(`${type}Xp`) || 0),
-          rewardItems: String(data.get(`${type}Items`) || '').trim()
-        })).filter(objective => objective.title);
-        if (!objectives.some(objective => objective.type === 'primary')) {
-          ui?.notifications?.warn?.('At least one primary objective is required.');
-          return;
-        }
-        const client = {
-          type: String(data.get('clientType') || 'customNpc'),
-          name: String(data.get('clientName') || '').trim(),
-          factionName: String(data.get('clientFaction') || '').trim(),
-          imageUrl: String(data.get('clientImage') || '').trim(),
-          notes: String(data.get('clientNotes') || '').trim(),
-          saveForReuse: data.get('clientSave') === 'on'
-        };
-        const briefing = {
-          body: String(data.get('briefing') || '').trim(),
-          instructions: String(data.get('instructions') || '').trim(),
-          oocNote: String(data.get('oocNote') || '').trim()
-        };
-        const factionConsequences = {
-          successDelta: Number(data.get('factionSuccessDelta') || 0),
-          failureDelta: Number(data.get('factionFailureDelta') || 0),
-          notes: String(data.get('factionNotes') || '').trim()
-        };
-        const result = await HolonetMessengerService.createJobPosting({
-          actor: null,
-          title,
-          body: briefing.body,
-          recipientIds,
-          client,
-          objectives,
-          briefing,
-          factionConsequences,
-          status: String(data.get('status') || 'draft'),
-          rewardCredits: Number(data.get('flatCredits') || 0),
-          rewardItems: String(data.get('flatItems') || '').trim()
-        });
-        if (result?.threadId) {
-          this.selectedJobThreadId = result.threadId;
-          ui?.notifications?.info?.('Job contract created.');
-        }
-        await this.render(false);
-      });
-    });
 
     pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
       button.addEventListener('click', async (event) => {
@@ -1053,14 +840,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const threadId = event.currentTarget.dataset.threadId;
         const status = event.currentTarget.dataset.status;
         if (!threadId || !status) return;
-        const statusNote = String(pageElement.querySelector('[data-job-status-note]')?.value || '').trim();
-        const riskyStatuses = new Set(['draft', 'paid', 'archived', 'failed']);
-        if (riskyStatuses.has(status)) {
-          const label = event.currentTarget.textContent?.trim() || status;
-          const ok = globalThis.confirm?.(`Change this job status to ${label}? This is a GM lifecycle override.`) ?? true;
-          if (!ok) return;
-        }
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status, statusNote });
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });
@@ -1073,31 +853,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const objectiveId = event.currentTarget.dataset.objectiveId;
         const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
         if (!threadId || !objectiveId || !objectiveStatus) return;
-        const objectiveSelectorId = globalThis.CSS?.escape ? CSS.escape(objectiveId) : String(objectiveId).replace(/"/g, '\"');
-        const noteInput = pageElement.querySelector(`[data-job-objective-note-for="${objectiveSelectorId}"]`);
-        const objectiveNote = String(noteInput?.value || '').trim();
-        if (['rejected', 'failed'].includes(objectiveStatus)) {
-          const ok = globalThis.confirm?.(`Mark this objective ${objectiveStatus}? A GM note is recommended.`) ?? true;
-          if (!ok) return;
-        }
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus, objectiveNote });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('form[data-job-distribution-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const threadId = String(data.get('threadId') || '').trim();
-        const amount = Number(data.get('amount') || 0);
-        const payoutMode = String(data.get('payoutMode') || 'single');
-        const recipientId = String(data.get('recipientId') || '').trim();
-        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
-        if (!threadId || !amount) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout-distribution', amount, payoutMode, recipientId, recipientIds, partyFundCutPercent });
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });
@@ -1385,31 +1141,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         await this._deleteBulletinContact(event.currentTarget.dataset.contactId);
-      });
-    });
-
-
-    pageElement.querySelectorAll('[data-action="bulletin-edit-contact"], [data-action="bulletin-clone-contact"]').forEach((button) => {
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        const clone = event.currentTarget.dataset.action === 'bulletin-clone-contact';
-        const form = pageElement.querySelector('[data-bulletin-contact-form]');
-        if (!form) return;
-        const data = event.currentTarget.dataset;
-        const setField = (name, value) => {
-          const field = form.querySelector(`[name="${name}"]`);
-          if (field) field.value = value || '';
-        };
-        setField('id', clone ? '' : data.contactId);
-        setField('name', clone ? `${data.name || data.label || 'Source'} Copy` : data.name);
-        setField('label', clone ? `${data.label || data.name || 'Source'} Copy` : data.label);
-        setField('kind', data.kind);
-        setField('imageUrl', data.imageUrl);
-        setField('dateline', data.dateline);
-        setField('sector', data.sector);
-        setField('defaultCategory', data.defaultCategory);
-        setField('notes', data.notes);
-        form.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
       });
     });
 
@@ -2614,145 +2345,20 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Wire Combat & Recovery page events.
+   * Wire healing page events
    */
   async _wireHealingEvents(root) {
     const pageElement = root.querySelector('.gm-datapad-healing');
     if (!pageElement) return;
 
-    const updateSelectedCount = () => {
-      const count = pageElement.querySelectorAll('[name="combatRecoveryActorTarget"]:checked').length;
-      pageElement.querySelectorAll('[data-combat-selected-count]').forEach((node) => { node.textContent = String(count); });
-    };
-
-    pageElement.querySelectorAll('[name="combatRecoveryActorTarget"]').forEach((checkbox) => {
-      checkbox.addEventListener('change', updateSelectedCount);
-    });
-
-    pageElement.querySelectorAll('[data-combat-target-select]').forEach((button) => {
-      button.addEventListener('click', (ev) => {
+    // Trigger natural healing button
+    const triggerButton = pageElement.querySelector('[data-action="trigger-healing"]');
+    if (triggerButton) {
+      triggerButton.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const mode = ev.currentTarget.dataset.combatTargetSelect;
-        const checkboxes = Array.from(pageElement.querySelectorAll('[name="combatRecoveryActorTarget"]'));
-        for (const checkbox of checkboxes) {
-          if (mode === 'clear') checkbox.checked = false;
-          else if (mode === 'all') checkbox.checked = true;
-          else if (mode === 'party') checkbox.checked = checkbox.dataset.partyActor === 'true';
-          else if (mode === 'attention') checkbox.checked = checkbox.dataset.needsAttention === 'true';
-          else if (mode === 'combat') checkbox.checked = checkbox.dataset.inCombat === 'true';
-        }
-        updateSelectedCount();
+        await this._triggerNaturalHealing();
       });
-    });
-
-    updateSelectedCount();
-
-    pageElement.querySelectorAll('[data-combat-recovery-action], [data-action="trigger-healing"]').forEach((button) => {
-      button.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const action = ev.currentTarget.dataset.combatRecoveryAction || 'natural-healing';
-        const targetOptions = this._getCombatRecoveryTargetOptions(pageElement);
-        const confirmed = await this._confirmCombatRecoveryAction(action, targetOptions, pageElement);
-        if (!confirmed) return;
-        await this._executeCombatRecoveryGroupAction(action, targetOptions);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-combat-actor-action]').forEach((button) => {
-      button.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const action = ev.currentTarget.dataset.combatActorAction;
-        const actorId = ev.currentTarget.dataset.actorId;
-        const form = ev.currentTarget.closest('[data-combat-actor-card]');
-        const amount = Number(form?.querySelector('[name="recoveryAmount"]')?.value ?? 0) || 0;
-        const effectId = form?.querySelector('[name="actorStatusEffect"]')?.value || '';
-        const rollTotalRaw = form?.querySelector('[name="actorRecoveryRollTotal"]')?.value ?? '';
-        const dcRaw = form?.querySelector('[name="actorRecoveryDc"]')?.value ?? '';
-        const workflow = form?.querySelector('[name="actorWorkflow"]')?.value || '';
-        const poisonKey = form?.querySelector('[name="actorPoisonKey"]')?.value || '';
-        const ongoingEffectType = form?.querySelector('[name="actorOngoingType"]')?.value || 'custom';
-        const ongoingEffectLabel = form?.querySelector('[name="actorOngoingLabel"]')?.value || '';
-        const ongoingEffectMemo = form?.querySelector('[name="actorOngoingMemo"]')?.value || '';
-        const ongoingDurationScope = form?.querySelector('[name="actorOngoingDuration"]')?.value || 'encounter';
-        await this._executeCombatRecoveryActorAction(actorId, action, {
-          amount,
-          effectId,
-          rollTotal: rollTotalRaw === '' ? null : Number(rollTotalRaw),
-          dc: dcRaw === '' ? null : Number(dcRaw),
-          workflow,
-          poisonKey,
-          ongoingEffectType,
-          ongoingEffectLabel,
-          ongoingEffectMemo,
-          ongoingDurationScope
-        });
-      });
-    });
-  }
-
-  _getCombatRecoveryTargetOptions(pageElement) {
-    const targetMode = pageElement?.querySelector('[name="combatRecoveryTargetMode"]')?.value || 'party';
-    const actorIds = Array.from(pageElement?.querySelectorAll('[name="combatRecoveryActorTarget"]:checked') ?? [])
-      .map((input) => input.value)
-      .filter(Boolean);
-    const amount = Number(pageElement?.querySelector('[name="combatRecoveryGroupAmount"]')?.value ?? 0) || 0;
-    const effectId = pageElement?.querySelector('[name="combatRecoveryStatusEffect"]')?.value || '';
-    const rollTotalRaw = pageElement?.querySelector('[name="combatRecoveryRollTotal"]')?.value ?? '';
-    const dcRaw = pageElement?.querySelector('[name="combatRecoveryDc"]')?.value ?? '';
-    const treatWorkflow = pageElement?.querySelector('[name="combatRecoveryTreatWorkflow"]')?.value || '';
-    const repairWorkflow = pageElement?.querySelector('[name="combatRecoveryRepairWorkflow"]')?.value || '';
-    const poisonKey = pageElement?.querySelector('[name="combatRecoveryPoisonKey"]')?.value || '';
-    const ongoingEffectType = pageElement?.querySelector('[name="combatRecoveryOngoingType"]')?.value || 'custom';
-    const ongoingEffectLabel = pageElement?.querySelector('[name="combatRecoveryOngoingLabel"]')?.value || '';
-    const ongoingDurationScope = pageElement?.querySelector('[name="combatRecoveryOngoingDuration"]')?.value || 'encounter';
-    return {
-      targetMode,
-      actorIds,
-      amount,
-      effectId,
-      rollTotal: rollTotalRaw === '' ? null : Number(rollTotalRaw),
-      dc: dcRaw === '' ? null : Number(dcRaw),
-      workflow: targetMode === 'selected' ? (treatWorkflow || repairWorkflow) : (treatWorkflow || repairWorkflow),
-      treatWorkflow,
-      repairWorkflow,
-      poisonKey,
-      ongoingEffectType,
-      ongoingEffectLabel,
-      ongoingDurationScope
-    };
-  }
-
-  async _confirmCombatRecoveryAction(action, options = {}, pageElement = null) {
-    const dangerous = new Set([
-      'damage-target', 'short-rest', 'extended-rest', 'encounter-reset', 'reset-condition',
-      'clear-status-effects', 'reset-second-wind', 'full-organic-recovery', 'apply-poison',
-      'treat-poison', 'apply-ongoing-effect', 'clear-encounter-effects', 'stabilize', 'revive',
-      'treat-injury', 'repair-skill'
-    ]);
-    const selectedCount = Array.from(pageElement?.querySelectorAll('[name="combatRecoveryActorTarget"]:checked') ?? []).length;
-    const targetMode = options.targetMode || 'party';
-    const shouldConfirm = dangerous.has(action) || targetMode !== 'selected' || selectedCount > 1;
-    if (!shouldConfirm) return true;
-
-    const targetText = targetMode === 'selected'
-      ? `${selectedCount || 0} checked actor${selectedCount === 1 ? '' : 's'}`
-      : targetMode.replace(/-/g, ' ');
-    const message = `Apply "${action}" to ${targetText}? Droids and vehicles will still be excluded from organic rest/healing.`;
-
-    try {
-      if (globalThis.Dialog?.confirm) {
-        return await Dialog.confirm({
-          title: 'Confirm GM Combat & Recovery Action',
-          content: `<p>${message}</p>`,
-          yes: () => true,
-          no: () => false,
-          defaultYes: false
-        });
-      }
-    } catch (_err) {
-      // Fall back to browser confirm below.
     }
-    return globalThis.window?.confirm ? window.confirm(message) : true;
   }
 
   /**
@@ -2957,26 +2563,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return this._rollbackTransaction(index);
   }
 
-  async _appendApprovalHistory(entry = {}) {
-    if (!game.user?.isGM) return;
-    let history = [];
-    try {
-      history = game.settings.get('foundryvtt-swse', 'gmApprovalHistory') ?? [];
-    } catch (_err) {
-      history = [];
-    }
-    const next = [
-      {
-        id: foundry.utils?.randomID?.() ?? `${Date.now()}`,
-        at: new Date().toISOString(),
-        decidedBy: game.user?.name ?? 'GM',
-        ...entry
-      },
-      ...(Array.isArray(history) ? history : [])
-    ].slice(0, 100);
-    await game.settings.set('foundryvtt-swse', 'gmApprovalHistory', next);
-  }
-
   /**
    * Approve a pending droid
    */
@@ -3043,7 +2629,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
-      await this._appendApprovalHistory({ type: 'droid', decision: 'approved', title: actor.name, actorId: actor.id, cost, reason: '' });
       ui?.notifications?.info?.(`Droid "${actor.name}" approved`);
       this.render(false);
     } catch (err) {
@@ -3094,7 +2679,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
-      await this._appendApprovalHistory({ type: 'droid', decision: 'denied', title: actor.name, actorId: actor.id, cost: 0, reason });
       ui?.notifications?.info?.(`Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`);
       this.render(false);
     } catch (err) {
@@ -3108,7 +2692,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const [kind, rawId] = String(key || '').split(':');
     if (kind === 'droid' && rawId) return { kind, actorId: rawId };
     if (kind === 'custom') return { kind, index: Number(rawId) };
-    return { kind: null, index: -1, actorId: null };
+    if (kind === 'game' && rawId) return { kind, sessionId: rawId };
+    return { kind: null, index: -1, actorId: null, sessionId: null };
   }
 
   _approvalNumberValue(value) {
@@ -3202,6 +2787,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const edits = this._collectInlineApprovalEdits(formData);
     if (!edits.hasChanges) return;
 
+    // Game settlement edits are applied during approval so the GM can use the
+    // same review form for both recommended and custom payout decisions.
+    if (parsed.kind === 'game') return;
+
     if (parsed.kind === 'droid') {
       const actor = game.actors.get(parsed.actorId);
       if (!actor) throw new Error('Droid actor not found.');
@@ -3253,15 +2842,24 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  async _approveApprovalRequest(key) {
+  async _approveApprovalRequest(key, options = {}) {
     const parsed = this._parseApprovalKey(key);
     if (parsed.kind === 'droid') return this._approveDroid(parsed.actorId);
     if (parsed.kind === 'custom') return this._approvePendingCustom(parsed.index);
+    if (parsed.kind === 'game') return this._approveGameSettlement(parsed.sessionId, options);
     ui?.notifications?.error?.('Invalid approval request.');
   }
 
   async _finalizeApprovalWithEdits(key, formData) {
     try {
+      const parsed = this._parseApprovalKey(key);
+      if (parsed.kind === 'game') {
+        const data = formData ? new FormData(formData) : new FormData();
+        const approvedPayout = this._approvalNumberValue(data.get('approvedPayout'));
+        const reason = String(data.get('metadata.gmSettlementReason') ?? '').trim();
+        await this._approveApprovalRequest(key, { payoutAmount: approvedPayout, reason, decision: 'custom' });
+        return;
+      }
       await this._applyInlineApprovalEdits(key, formData);
       await this._approveApprovalRequest(key);
     } catch (err) {
@@ -3274,7 +2872,59 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const parsed = this._parseApprovalKey(key);
     if (parsed.kind === 'droid') return this._rejectDroid(parsed.actorId, reason);
     if (parsed.kind === 'custom') return this._denyPendingCustom(parsed.index, reason);
+    if (parsed.kind === 'game') return this._denyGameSettlement(parsed.sessionId, reason);
     ui?.notifications?.error?.('Invalid approval request.');
+  }
+
+  async _approveGameSettlement(sessionId, { payoutAmount = null, reason = '', decision = 'recommended' } = {}) {
+    const session = GameSessionStore.getSession(sessionId);
+    if (!session) {
+      ui?.notifications?.error?.('Game settlement session not found.');
+      return;
+    }
+    const credits = session.escrow?.credits ?? {};
+    const recommended = credits.payoutMode === 'table-credit-balances'
+      ? Number(credits.payoutRequested ?? Object.values(credits.payoutBalances ?? {}).reduce((sum, value) => sum + (Number(value) || 0), 0))
+      : Number(credits.policy?.recommendedPayout ?? credits.payoutApproved ?? credits.payoutRequested ?? credits.pot ?? 0);
+    const approved = payoutAmount === null || payoutAmount === undefined ? recommended : Number(payoutAmount);
+    const result = await GameCreditEscrowService.approvePendingSettlement(session, {
+      payoutAmount: Number.isFinite(approved) ? Math.max(0, Math.floor(approved)) : 0,
+      decision,
+      reason,
+      by: game.user?.id ?? null
+    });
+    if (!result?.ok) {
+      ui?.notifications?.error?.(result?.error || 'Game settlement approval failed.');
+      return;
+    }
+    this.selectedApprovalKey = null;
+    this.approvalEditMode = false;
+    this.approvalDenyMode = false;
+    ui?.notifications?.info?.('Game settlement approved.');
+    await this.render(false);
+  }
+
+  async _denyGameSettlement(sessionId, reason = '') {
+    const session = GameSessionStore.getSession(sessionId);
+    if (!session) {
+      ui?.notifications?.error?.('Game settlement session not found.');
+      return;
+    }
+    const result = await GameCreditEscrowService.approvePendingSettlement(session, {
+      payoutAmount: 0,
+      decision: 'denied',
+      reason: String(reason || '').trim() || 'GM denied the game payout settlement.',
+      by: game.user?.id ?? null
+    });
+    if (!result?.ok) {
+      ui?.notifications?.error?.(result?.error || 'Game settlement denial failed.');
+      return;
+    }
+    this.selectedApprovalKey = null;
+    this.approvalEditMode = false;
+    this.approvalDenyMode = false;
+    ui?.notifications?.info?.('Game settlement denied.');
+    await this.render(false);
   }
 
   /**
@@ -3392,7 +3042,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
-      await this._appendApprovalHistory({ type: draftActor.type || approval.type || 'custom', decision: 'approved', title: assetName, actorId: ownerActor.id, draftActorId: draftActor.id, cost, reason: approval.metadata?.gmNotes ?? '' });
       ui?.notifications?.info?.(`Approved: ${assetName}`);
       await this.render(false);
     } catch (err) {
@@ -3431,7 +3080,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
-      await this._appendApprovalHistory({ type: denial.type || 'custom', decision: 'denied', title: denial.draftData?.name ?? draftActor?.name ?? 'Custom asset', actorId: ownerActor?.id ?? denial.ownerActorId ?? null, draftActorId: denial.draftActorId ?? null, cost: Number(denial.costCredits || 0) || 0, reason });
       ui?.notifications?.info?.(`Denied: ${denial.draftData?.name ?? 'Custom asset'}${reason ? ` — ${reason}` : ''}`);
       await this.render(false);
     } catch (err) {
@@ -3441,49 +3089,22 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Execute a GM Combat & Recovery group action.
+   * Trigger natural healing for eligible party members
    */
-  async _executeCombatRecoveryGroupAction(action, options = {}) {
-    try {
-      const actionOptions = { ...options };
-      if (action === 'treat-injury') actionOptions.workflow = options.treatWorkflow || options.workflow;
-      if (action === 'repair-skill') actionOptions.workflow = options.repairWorkflow || options.workflow;
-      const result = await GMCombatRecoveryService.executeGroupAction(action, actionOptions);
-      if (result?.success) {
-        ui?.notifications?.info?.(result.message || 'Combat recovery action complete.');
-        SWSELogger.info('[GMDatapad] Combat recovery group action complete:', { action, result });
-        await this.render(false);
-      } else {
-        ui?.notifications?.error?.(result?.error || result?.message || 'Combat recovery action failed.');
-      }
-    } catch (err) {
-      SWSELogger.error('[GMDatapad] Error executing combat recovery group action:', err);
-      ui?.notifications?.error?.(`Error: ${err.message}`);
-    }
-  }
-
-  /**
-   * Execute a per-actor GM Combat & Recovery action.
-   */
-  async _executeCombatRecoveryActorAction(actorId, action, options = {}) {
-    try {
-      const result = await GMCombatRecoveryService.executeActorAction(actorId, action, options);
-      if (result?.success) {
-        ui?.notifications?.info?.(result.message || 'Actor recovery action complete.');
-        SWSELogger.info('[GMDatapad] Combat recovery actor action complete:', { actorId, action, result });
-        await this.render(false);
-      } else {
-        ui?.notifications?.error?.(result?.error || result?.message || 'Actor recovery action failed.');
-      }
-    } catch (err) {
-      SWSELogger.error('[GMDatapad] Error executing combat recovery actor action:', err);
-      ui?.notifications?.error?.(`Error: ${err.message}`);
-    }
-  }
-
-  /** Legacy alias retained for older buttons/templates. */
   async _triggerNaturalHealing() {
-    return this._executeCombatRecoveryGroupAction('natural-healing');
+    try {
+      const result = await GMHealingTrigger.triggerNaturalHealing({ isFullRest: true, skipHolonetNotification: false });
+      if (result.success) {
+        ui?.notifications?.info?.(`Natural healing triggered: ${result.totalHealed} actors healed, ${result.totalSkipped} skipped`);
+        SWSELogger.info('[GMDatapad] Natural healing triggered:', result);
+        await this.render(false);
+      } else {
+        ui?.notifications?.error?.(`Failed to trigger healing: ${result.error}`);
+      }
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error triggering natural healing:', err);
+      ui?.notifications?.error?.(`Error: ${err.message}`);
+    }
   }
 
   /**

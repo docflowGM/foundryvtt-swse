@@ -116,6 +116,120 @@ async function refundDebitEntries(session, entries = [], reason = 'Game escrow r
   return refunds;
 }
 
+function normalizeBalanceMap(balances = {}) {
+  return Object.fromEntries(Object.entries(balances || {})
+    .map(([seatId, amount]) => [seatId, safeAmount(amount)])
+    .filter(([_seatId, amount]) => amount > 0));
+}
+
+function sumBalanceMap(balances = {}) {
+  return Object.values(balances || {}).reduce((sum, amount) => sum + safeAmount(amount), 0);
+}
+
+function allocateApprovedBalances(balances = {}, approvedTotal = 0) {
+  const normalized = normalizeBalanceMap(balances);
+  const requestedTotal = sumBalanceMap(normalized);
+  const approved = Math.min(requestedTotal, safeAmount(approvedTotal));
+  if (requestedTotal <= 0 || approved <= 0) return {};
+  if (approved >= requestedTotal) return normalized;
+
+  const raw = Object.entries(normalized).map(([seatId, amount]) => {
+    const exact = (amount / requestedTotal) * approved;
+    const floor = Math.floor(exact);
+    return { seatId, floor, fraction: exact - floor };
+  });
+  let remainder = approved - raw.reduce((sum, entry) => sum + entry.floor, 0);
+  raw.sort((a, b) => b.fraction - a.fraction);
+  for (const entry of raw) {
+    if (remainder <= 0) break;
+    entry.floor += 1;
+    remainder -= 1;
+  }
+  return Object.fromEntries(raw.filter(entry => entry.floor > 0).map(entry => [entry.seatId, entry.floor]));
+}
+
+async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { payoutAmount = 0, decision = 'custom', reason = '', by = null } = {}) {
+  const requestedBalances = normalizeBalanceMap(escrow.credits?.payoutBalances || {});
+  const requested = sumBalanceMap(requestedBalances);
+  const approvedTotal = Math.min(requested, safeAmount(payoutAmount));
+  const approvedBalances = decision === 'denied' || approvedTotal <= 0 ? {} : allocateApprovedBalances(requestedBalances, approvedTotal);
+  const gmReason = String(reason || '').trim() || `GM ${decision} settlement for ${session.title || 'game'}`;
+  const missingActorSeat = playableSeats(session).find(seat => !isAutomatedSeat(seat) && requestedBalances[seat.seatId] > 0 && !actorForSeat(seat));
+  if (missingActorSeat && approvedTotal > 0) {
+    return { ok: false, error: `${seatLabel(missingActorSeat)} has no actor-backed wallet for payout.`, session };
+  }
+
+  const payouts = [];
+  let status = 'settled';
+  let message = approvedTotal > 0
+    ? `GM approved ${approvedTotal.toLocaleString()} credits across table-credit balances.`
+    : 'GM voided the campaign payout; no credits were awarded.';
+
+  for (const seat of playableSeats(session)) {
+    const actor = actorForSeat(seat);
+    const approvedPayout = safeAmount(approvedBalances[seat.seatId]);
+    if (!actor || approvedPayout <= 0) continue;
+    const requestedPayout = safeAmount(requestedBalances[seat.seatId]);
+    const payout = await TransactionEngine.executeCreditAdjustment({
+      actor,
+      amount: approvedPayout,
+      reason: gmReason,
+      transactionContext: 'game-credit-payout',
+      audit: baseAudit(session, seat, {
+        escrowId: escrow.credits.escrowId,
+        payoutType: 'table-credit-balances',
+        requestedPayout,
+        approvedPayout,
+        economySource: 'gm-approved',
+        economyPolicy: 'gm-approved',
+        policyCode: 'gmSettlementApproved',
+        gmDecision: decision,
+        gmReason
+      })
+    }, { source: 'GameCreditEscrowService.approveTableCreditBalanceSettlement' });
+    payouts.push({ ...payout, actorId: actor.id, actorName: actor.name, seatId: seat.seatId, requestedPayout, approvedPayout });
+    if (!payout.success) {
+      status = 'payout-failed';
+      message = payout.error || 'GM-approved table-credit payout failed.';
+      break;
+    }
+  }
+
+  const updated = await GameSessionStore.upsertSession({
+    ...session,
+    status: session.gameState?.phase === 'complete' ? 'complete' : session.status,
+    escrow: {
+      ...escrow,
+      credits: {
+        ...escrow.credits,
+        status,
+        settledAt: status === 'settled' ? now() : null,
+        gmSettledAt: now(),
+        gmSettledBy: by ?? game.user?.id ?? null,
+        gmDecision: decision,
+        gmReason,
+        payoutMode: 'table-credit-balances',
+        payoutBalances: requestedBalances,
+        approvedBalances,
+        payouts,
+        payoutRequested: requested,
+        payoutApproved: payouts.reduce((sum, payout) => sum + safeAmount(payout.approvedPayout), 0),
+        settlementMessage: message,
+        policy: {
+          ...(escrow.credits.policy || {}),
+          allowed: true,
+          requiresGmApproval: false,
+          approvedPayout: approvedTotal,
+          payoutPolicy: 'gm-approved',
+          gmDecision: decision
+        }
+      }
+    },
+    log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: status === 'settled' ? 'credit-table-balances-gm-settled' : 'credit-table-balances-payout-failed', by: by ?? game.user?.id ?? null, requestedBalances, approvedBalances, approvedPayout: approvedTotal, decision, error: status === 'payout-failed' ? message : null }]
+  });
+  return { ok: status === 'settled', session: updated, payouts, error: status === 'payout-failed' ? message : null };
+}
+
 export class GameCreditEscrowService {
   static buildCreditWagerProfile({ buyIn = 0, houseStake = 0 } = {}) {
     const normalizedBuyIn = safeAmount(buyIn);
@@ -495,6 +609,10 @@ export class GameCreditEscrowService {
     if (!profile.enabled) return { ok: false, error: 'This session does not have a credit wager.', session };
     const escrow = ensureEscrow(session);
     if (escrow.credits.status !== 'pending-gm-settlement') return { ok: false, error: 'This session is not waiting for GM settlement approval.', session };
+
+    if (escrow.credits.payoutMode === 'table-credit-balances') {
+      return approveTableCreditBalanceSettlement(session, escrow, { payoutAmount, decision, reason, by });
+    }
 
     const winnerSeatId = escrow.credits.winnerSeatId;
     const winnerSeat = playableSeats(session).find(seat => seat.seatId === winnerSeatId) ?? null;

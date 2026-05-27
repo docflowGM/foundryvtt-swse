@@ -1,4 +1,4 @@
-import { buildSabaccDeck, SABACC_MAX_HAND_SIZE } from './sabacc-deck.js';
+import { buildSabaccDeck, SABACC_MAX_HAND_SIZE, SABACC_MIN_HAND_SIZE } from './sabacc-deck.js';
 import { evaluateSabaccHand, compareSabaccHands } from './sabacc-rules.js';
 import { buildGameAiProfile, labelForGameAiDifficulty } from '../../ai/game-ai-profile-service.js';
 import { GameMonteCarloService } from '../../ai/game-monte-carlo-service.js';
@@ -131,12 +131,18 @@ function legalSabaccActions(player = {}, state = {}, profile = {}) {
   if (evaluation.canWin) actions.push({ type: 'call-hand' });
   if (hand.length) actions.push(...hand.map(card => ({ type: 'shift-card', cardId: card.id })));
   if (hand.length < SABACC_MAX_HAND_SIZE) actions.push({ type: 'draw-card' });
-  if (hand.length > 1) actions.push(...hand.map(card => ({ type: 'discard-card', cardId: card.id })));
+  if (hand.length < SABACC_MAX_HAND_SIZE && Array.isArray(state.market)) {
+    actions.push(...state.market.filter(slot => slot?.card).map(slot => ({ type: 'buy-market-card', slotId: slot.id })));
+  }
+  if (hand.length && Array.isArray(state.market)) {
+    for (const slot of state.market.filter(entry => entry?.card)) {
+      actions.push(...hand.map(card => ({ type: 'trade-market-card', cardId: card.id, slotId: slot.id })));
+    }
+  }
   actions.push({ type: 'fold' });
 
   if (profile.difficulty === 'easy') {
     return actions.filter(action => {
-      if (action.type === 'discard-card') return Math.random() < 0.45;
       if (action.type === 'shift-card') return Math.random() < 0.75;
       return true;
     });
@@ -152,6 +158,13 @@ function applySimulatedSabaccAction(player = {}, state = {}, action = {}, profil
   if (action.type === 'fold') return { folded: true, hand, evaluation: originalEvaluation, drawPool };
   if (action.type === 'draw-card') {
     hand.push(drawSampleCard(drawPool, profile, hand));
+  } else if (action.type === 'buy-market-card') {
+    const slot = (state.market || []).find(entry => entry.id === action.slotId);
+    if (slot?.card) hand.push(cloneCard(slot.card));
+  } else if (action.type === 'trade-market-card') {
+    const index = hand.findIndex(card => card.id === action.cardId);
+    const slot = (state.market || []).find(entry => entry.id === action.slotId);
+    if (index >= 0 && slot?.card) hand[index] = cloneCard(slot.card);
   } else if (action.type === 'shift-card') {
     const index = hand.findIndex(card => card.id === action.cardId);
     if (index >= 0) {
@@ -159,9 +172,6 @@ function applySimulatedSabaccAction(player = {}, state = {}, action = {}, profil
       const shifted = drawSampleCard(buildSabaccDeck(), profile, replacementBase);
       hand[index] = { ...shifted, id: hand[index].id, shiftedFrom: { catalogId: hand[index].catalogId, label: hand[index].label, value: hand[index].value } };
     }
-  } else if (action.type === 'discard-card') {
-    const index = hand.findIndex(card => card.id === action.cardId);
-    if (index >= 0) hand.splice(index, 1);
   }
 
   return { folded: false, hand, evaluation: evaluateSabaccHand(hand), drawPool };
@@ -261,10 +271,11 @@ function scoreSabaccOutcome({ player = {}, state = {}, action = {}, simulated = 
     if (evaluation.distance > originalEval.distance) score -= 900;
   }
 
-  if (action.type === 'discard-card') {
-    score -= profile.personality === 'grinder' ? 20 : 180;
-    if (evaluation.distance < originalEval.distance) score += 900;
-    if ((simulated.hand || []).length < 2) score -= 1400;
+
+  if (action.type === 'buy-market-card' || action.type === 'trade-market-card') {
+    score += 520;
+    if (evaluation.distance < originalEval.distance) score += 1300;
+    if (evaluation.distance > originalEval.distance) score -= 760;
   }
 
   if (profile.forceSensitive && Math.random() < safeNumber(profile.forceSensitivityChance, 0.05)) score += 180;
@@ -276,8 +287,9 @@ function describeAction(action = {}, player = {}, state = {}, profile = {}, resu
   const confidence = Math.round(clamp(safeNumber(result.confidence, 0), 0, 1) * 100);
   if (action.type === 'call-hand') return `Calls with ${evaluation.label}; ${confidence}% confidence after ${result.samples || 0} sampled outcomes.`;
   if (action.type === 'draw-card') return `Draws because the current hand is ${evaluation.label} and the sampled upside is better than standing.`;
-  if (action.type === 'shift-card') return `Shifts a weak card to chase a stronger Sabacc total.`;
-  if (action.type === 'discard-card') return `Discards to reduce distance from zero.`;
+  if (action.type === 'shift-card') return `Trades a weak card with the deck to chase a stronger Sabacc total.`;
+  if (action.type === 'buy-market-card') return `Buys a face-up market card that improves the sampled hand.`;
+  if (action.type === 'trade-market-card') return `Trades into the face-up market after comparing sampled outcomes.`;
   if (action.type === 'fold') return `Folds because the sampled win rate is too low for the pot pressure.`;
   return `Acts with ${profile.difficultyLabel || profile.difficulty || 'medium'} Sabacc logic.`;
 }
