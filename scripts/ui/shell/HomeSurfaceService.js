@@ -18,8 +18,6 @@ import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/s
 import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
-import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
-import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
 
 function supportedTypesForMentor(actor) {
   return ['character', 'droid', 'npc'].includes(actor?.type);
@@ -91,7 +89,6 @@ function sourceIcon(record) {
   switch (record?.sourceFamily) {
     case SOURCE_FAMILY.MENTOR: return '✶';
     case SOURCE_FAMILY.MESSENGER: return '✉';
-    case SOURCE_FAMILY.GAMES: return '◉';
     case SOURCE_FAMILY.STORE: return '¤';
     case SOURCE_FAMILY.APPROVALS: return '✓';
     case SOURCE_FAMILY.PROGRESSION: return '▲';
@@ -114,14 +111,13 @@ function categoryLabel(record) {
 
 export class HomeSurfaceService {
   static async buildViewModel(actor) {
-    const [progressionSummary, upgradeSummary, holonetSummary, gamesSummary] = await Promise.all([
+    const [progressionSummary, upgradeSummary, holonetSummary] = await Promise.all([
       this._getProgressionSummary(actor),
       this._getUpgradeSummary(actor),
-      this._getHolonetSummary(actor),
-      this._getGamesSummary(actor)
+      this._getHolonetSummary(actor)
     ]);
 
-    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, gamesSummary);
+    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary);
     const actorData = this._buildActorData(actor);
     const lockScreenState = this._buildLockScreenState(actor);
 
@@ -353,47 +349,15 @@ export class HomeSurfaceService {
       icon: sourceIcon(record),
       preview: featured ? HolonetMarkupService.render(body) : HolonetMarkupService.preview(previewText(body, 150)),
       timestamp: formatTimestamp(record.publishedAt || record.createdAt),
+      imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
+      priority: record.priority || record.metadata?.priority || 'normal',
+      isUrgent: record.metadata?.urgent === true || record.priority === 'critical',
       isUnread: recipientId ? Boolean(record.isUnreadBy?.(recipientId)) : false
     };
   }
 
   static _progressionHidden() {
     return { visible: false, enabled: false, routeId: 'progression', badge: null, description: '' };
-  }
-
-
-  static _getGamesSummary(actor) {
-    try {
-      const settings = getGameSettingsSnapshot();
-      const summary = GameSessionStore.summarizeForActor(actor);
-      const badgeCount = Number(summary.inviteCount || 0) + Number(summary.activeCount || 0);
-      return {
-        visible: settings.enabled,
-        enabled: settings.enabled,
-        inviteCount: summary.inviteCount || 0,
-        activeCount: summary.activeCount || 0,
-        pendingApprovalCount: summary.pendingApprovalCount || 0,
-        badge: badgeCount > 0 ? String(badgeCount) : null,
-        status: summary.inviteCount > 0 ? 'INVITES' : summary.activeCount > 0 ? 'ACTIVE' : 'READY',
-        statusTone: summary.inviteCount > 0 || summary.activeCount > 0 ? 'warn' : '',
-        description: settings.allowWagers
-          ? 'Pazaak, Sabacc, Dejarik, and wagered side tables'
-          : 'Pazaak, Sabacc, Dejarik, and Republic Senate Rules'
-      };
-    } catch (err) {
-      SWSELogger.warn('[HomeSurfaceService] Games summary failed:', err);
-      return {
-        visible: false,
-        enabled: false,
-        inviteCount: 0,
-        activeCount: 0,
-        pendingApprovalCount: 0,
-        badge: null,
-        status: 'OFFLINE',
-        statusTone: '',
-        description: 'Games unavailable'
-      };
-    }
   }
 
   static _isChargenIncomplete(actor) {
@@ -407,7 +371,7 @@ export class HomeSurfaceService {
   /**
    * Build app tiles with radial positioning, badge types, and state flags
    */
-  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, gamesSummary = {}) {
+  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary) {
     const assetSummary = this._getOwnedAssetSummary(actor);
     const baseTiles = [
       {
@@ -503,21 +467,6 @@ export class HomeSurfaceService {
         status: assetSummary.droidCount > 1 ? `${assetSummary.droidCount} UNITS` : 'READY',
         statusTone: '',
         description: 'Companion status and upgrades'
-      },
-      {
-        id: 'games',
-        label: 'Games',
-        icon: '◉',
-        routeId: 'games',
-        visible: gamesSummary.visible !== false,
-        enabled: gamesSummary.enabled !== false,
-        badge: gamesSummary.badge ?? null,
-        badgeType: gamesSummary.badge ? 'info' : null,
-        featured: false,
-        locked: gamesSummary.enabled === false,
-        status: gamesSummary.status || 'READY',
-        statusTone: gamesSummary.statusTone || '',
-        description: gamesSummary.description || 'Holopad side games and tables'
       },
       {
         id: 'messages',

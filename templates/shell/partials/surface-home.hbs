@@ -244,9 +244,13 @@
             </div>
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
-              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}}>
+              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}}>
+                {{#if this.imageUrl}}
+                <span class="swse-home-feed-thumb"><img src="{{this.imageUrl}}" alt="{{this.title}}"></span>
+                {{else}}
                 <span class="swse-home-feed-ico {{this.category}}">{{this.icon}}</span>
-                <span><span class="em">{{this.sender}}</span> — {{{this.preview}}}</span>
+                {{/if}}
+                <span><span class="em">{{this.sender}}</span>{{#if this.isUrgent}} <span class="swse-home-feed-alert">ALERT</span>{{/if}} — {{{this.preview}}}</span>
                 <span class="swse-home-feed-time">{{this.timestamp}}</span>
               </button>
               {{else}}
@@ -278,6 +282,9 @@
               <span class="swse-home-side-hint">recap</span>
             </div>
             {{#if vm.lastSession}}
+            {{#if vm.lastSession.imageUrl}}
+            <img class="swse-home-session-image" src="{{vm.lastSession.imageUrl}}" alt="{{vm.lastSession.title}}">
+            {{/if}}
             <div style="font-family: var(--font-mono); font-size: 10px; line-height: 1.55; color: var(--ink-dim);">
               {{{vm.lastSession.preview}}}
             </div>

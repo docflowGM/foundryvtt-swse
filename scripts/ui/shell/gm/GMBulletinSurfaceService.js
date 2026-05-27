@@ -103,11 +103,13 @@ export class GMBulletinSurfaceService {
         priority: previewRecord.priority,
         audience: previewRecord.audienceLabel,
         isUrgent: previewRecord.isUrgent,
+        imageUrl: previewRecord.imageUrl || '',
         renderedPreview: previewRecord.renderedBodyPreview || HolonetMarkupService.preview(previewRecord.body || '', 160)
       } : null,
       lastSession: pinned ? {
         title: pinned.title,
         sender: pinned.senderName,
+        imageUrl: pinned.imageUrl || '',
         renderedPreview: pinned.renderedBody || HolonetMarkupService.render(pinned.body || '')
       } : null,
       state

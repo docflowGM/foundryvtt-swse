@@ -261,6 +261,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       isHomeFeed: Boolean(homeFeedProjection),
       homeSlot,
       homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
+      imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
       recordTone: isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft'))
     };
   }
@@ -826,6 +827,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    this._wireBulletinImagePickers(pageElement);
+    this._wireBulletinLivePreview(pageElement);
+
     const eventsForm = pageElement.querySelector('[data-bulletin-form="events"]');
     if (eventsForm) {
       eventsForm.addEventListener('submit', async (event) => {
@@ -881,6 +885,107 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
+  _wireBulletinImagePickers(pageElement) {
+    pageElement.querySelectorAll('[data-action="bulletin-pick-image"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget.closest('form');
+        const input = form?.querySelector('[data-bulletin-image-input]');
+        if (!input) return;
+        if (!globalThis.FilePicker) {
+          ui?.notifications?.warn?.('Foundry FilePicker is not available in this context. Paste an image path instead.');
+          return;
+        }
+        const picker = new FilePicker({
+          type: 'image',
+          current: input.value || '',
+          callback: (path) => {
+            input.value = path || '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+        picker.render(true);
+      });
+    });
+  }
+
+  _wireBulletinLivePreview(pageElement) {
+    const activeForm = pageElement.querySelector('[data-bulletin-form="events"], [data-bulletin-form="messages"]');
+    const preview = pageElement.querySelector('[data-bulletin-live-preview]');
+    if (!activeForm || !preview) return;
+
+    const update = () => this._refreshBulletinLivePreview(activeForm, preview);
+    activeForm.querySelectorAll('input, textarea, select').forEach((field) => {
+      field.addEventListener('input', update);
+      field.addEventListener('change', update);
+    });
+    update();
+
+    const playerForm = pageElement.querySelector('[data-player-state-form]');
+    const partyForm = pageElement.querySelector('[data-party-state-form]');
+    for (const form of [playerForm, partyForm].filter(Boolean)) {
+      form.querySelectorAll('input, textarea').forEach((field) => {
+        field.addEventListener('input', () => this._refreshBulletinStatePreview(form, preview));
+        field.addEventListener('change', () => this._refreshBulletinStatePreview(form, preview));
+      });
+    }
+  }
+
+  _refreshBulletinLivePreview(form, preview) {
+    const formData = new FormData(form);
+    const setText = (selector, value) => {
+      const node = preview.querySelector(selector);
+      if (node) node.textContent = value || '';
+    };
+    const setHtml = (selector, value) => {
+      const node = preview.querySelector(selector);
+      if (node) node.innerHTML = HolonetMarkupService.preview(value || '', 180);
+    };
+
+    const title = String(formData.get('title') || '').trim() || 'Untitled bulletin';
+    const category = String(formData.get('category') || '').trim() || 'general';
+    const priority = String(formData.get('priority') || 'normal').trim() || 'normal';
+    const authorName = String(formData.get('authorName') || '').trim() || 'GM Bulletin';
+    const imageUrl = String(formData.get('imageUrl') || '').trim();
+    const audience = this._getAudienceLabel(this._normalizeAudienceFromForm(formData));
+    const urgent = formData.get('urgent') === 'on' || priority === 'critical';
+
+    setText('[data-preview-feed-category]', category);
+    setText('[data-preview-feed-priority]', priority);
+    setText('[data-preview-feed-title]', title);
+    setText('[data-preview-feed-sender]', `${authorName} · ${audience}`);
+    setHtml('[data-preview-feed-body]', String(formData.get('body') || '').trim() || 'Bulletin body preview will appear here.');
+
+    const urgentNode = preview.querySelector('[data-preview-feed-urgent]');
+    if (urgentNode) urgentNode.classList.toggle('is-hidden', !urgent);
+
+    const image = preview.querySelector('[data-preview-feed-image]');
+    if (image) {
+      image.classList.toggle('is-hidden', !imageUrl);
+      if (imageUrl) {
+        image.src = imageUrl;
+        image.alt = title;
+      } else {
+        image.removeAttribute('src');
+        image.alt = '';
+      }
+    }
+  }
+
+  _refreshBulletinStatePreview(form, preview) {
+    const formData = new FormData(form);
+    const setText = (selector, fallback) => {
+      const node = preview.querySelector(selector);
+      if (!node) return;
+      const fieldName = selector.includes('location') ? 'location' : selector.includes('objective') ? 'objective' : 'situation';
+      node.textContent = String(formData.get(fieldName) || '').trim() || fallback;
+    };
+    setText('[data-preview-state-location]', 'Current location not set');
+    setText('[data-preview-state-objective]', 'No active objective');
+    setText('[data-preview-state-situation]', 'Awaiting new instructions.');
+  }
+
   async _saveBulletinRecord(formData, section) {
     const recordId = formData.get('recordId') || null;
     const shouldPublish = formData.get('submitMode') === 'publish';
@@ -891,6 +996,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const urgent = formData.get('urgent') === 'on' || priority === 'critical';
     const pinAsLastSession = formData.get('pinAsLastSession') === 'on';
     const homeSlot = pinAsLastSession ? 'last-session' : (formData.get('homeSlot') || 'feed');
+    const imageUrl = String(formData.get('imageUrl') || '').trim();
 
     const baseData = {
       id: recordId || undefined,
@@ -902,6 +1008,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       authorName: formData.get('authorName') || game.user?.name || 'GM Bulletin',
       authorActorId: formData.get('authorActorId') || null,
       authorActorName: formData.get('authorActorName') || null,
+      authorAvatar: imageUrl || null,
       state: shouldPublish ? DELIVERY_STATE.PUBLISHED : DELIVERY_STATE.DRAFT,
       metadata: {
         category,
@@ -909,8 +1016,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
         urgent,
         pinAsLastSession,
         homeSlot,
+        imageUrl,
         bulletinHomeRole: homeSlot,
-        bulletinConsoleVersion: 1
+        bulletinConsoleVersion: 2
       }
     };
 
@@ -930,7 +1038,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       record.updatedAt = new Date().toISOString();
     }
 
-    this._applyBulletinProjectionOptions(record, { urgent, pinAsLastSession, homeSlot });
+    this._applyBulletinProjectionOptions(record, { urgent, pinAsLastSession, homeSlot, imageUrl });
 
     if (shouldPublish) {
       await HolonetEngine.publish(record);
@@ -971,13 +1079,15 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  _applyBulletinProjectionOptions(record, { urgent = false, pinAsLastSession = false, homeSlot = 'feed' } = {}) {
+  _applyBulletinProjectionOptions(record, { urgent = false, pinAsLastSession = false, homeSlot = 'feed', imageUrl = undefined } = {}) {
     if (!record) return record;
     record.metadata = {
       ...(record.metadata ?? {}),
       urgent: Boolean(urgent),
       pinAsLastSession: Boolean(pinAsLastSession),
-      homeSlot: pinAsLastSession ? 'last-session' : homeSlot
+      homeSlot: pinAsLastSession ? 'last-session' : homeSlot,
+      imageUrl: imageUrl === undefined ? (record.metadata?.imageUrl || '') : String(imageUrl || '').trim(),
+      bulletinConsoleVersion: 2
     };
     record.projections = Array.isArray(record.projections) ? record.projections : [];
 
@@ -988,7 +1098,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
         record.projections.push(projection);
       }
       projection.recordId = record.id;
-      projection.metadata = { ...(projection.metadata ?? {}), source: 'gm-bulletin-console' };
+      projection.metadata = {
+        ...(projection.metadata ?? {}),
+        source: 'gm-bulletin-console',
+        imageUrl: record.metadata?.imageUrl || ''
+      };
       return projection;
     };
 
@@ -1006,7 +1120,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         surfaceType: SURFACE_TYPE.NOTIFICATION_BUBBLE,
         recordId: record.id,
         isPinned: false,
-        metadata: { source: 'gm-bulletin-console', urgent: true }
+        metadata: { source: 'gm-bulletin-console', urgent: true, imageUrl: record.metadata?.imageUrl || '' }
       });
     } else if (!urgent && hasBubble) {
       record.projections = record.projections.filter((entry) => entry.surfaceType !== SURFACE_TYPE.NOTIFICATION_BUBBLE);

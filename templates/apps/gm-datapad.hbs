@@ -247,6 +247,13 @@
                 <span>Published By</span>
                 <input type="text" name="authorName" value="{{eventEditorRecord.senderName}}" placeholder="Galactic News Service">
               </label>
+              <label class="bulletin-image-field">
+                <span>Holostill / Feed Image</span>
+                <span class="bulletin-image-row">
+                  <input type="text" name="imageUrl" value="{{eventEditorRecord.imageUrl}}" placeholder="systems/foundryvtt-swse/assets/.../image.webp" data-bulletin-image-input>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-pick-image">Browse</button>
+                </span>
+              </label>
             </div>
 
             <div class="bulletin-form-grid bulletin-form-grid-audience">
@@ -318,6 +325,7 @@
               </div>
               <h4>{{this.title}}</h4>
               <div class="bulletin-record-sender">{{this.senderName}}</div>
+              {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
               <div class="bulletin-record-footer">
                 <span>{{this.createdAt}}</span>
@@ -367,6 +375,13 @@
                   <option value="high" {{#if (eq messageEditorRecord.priority "high")}}selected{{/if}}>High</option>
                   <option value="critical" {{#if (eq messageEditorRecord.priority "critical")}}selected{{/if}}>Critical</option>
                 </select>
+              </label>
+              <label class="bulletin-image-field">
+                <span>Notice Image / Sender Portrait</span>
+                <span class="bulletin-image-row">
+                  <input type="text" name="imageUrl" value="{{messageEditorRecord.imageUrl}}" placeholder="icons/svg/mystery-man.svg" data-bulletin-image-input>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-pick-image">Browse</button>
+                </span>
               </label>
             </div>
 
@@ -439,6 +454,7 @@
               </div>
               <h4>{{this.title}}</h4>
               <div class="bulletin-record-sender">From {{this.senderName}}</div>
+              {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
               <div class="bulletin-record-footer">
                 <span>{{this.createdAt}}</span>
@@ -519,7 +535,7 @@
           {{/if}}
         </section>
 
-        <aside class="bulletin-home-preview swse-ui-panel" aria-label="Player home preview">
+        <aside class="bulletin-home-preview swse-ui-panel" aria-label="Player home preview" data-bulletin-live-preview>
           <div class="bulletin-preview-header">
             <span class="bulletin-preview-kicker">Player Home Preview</span>
             <strong>Datapad Feed Projection</strong>
@@ -527,22 +543,23 @@
 
           <div class="bulletin-preview-card bulletin-preview-card--state">
             <span class="bulletin-preview-label">Current State</span>
-            <strong>{{homePreview.state.location}}</strong>
-            <p>{{homePreview.state.objective}}</p>
-            <div class="bulletin-preview-status">{{homePreview.state.situation}}</div>
+            <strong data-preview-state-location>{{homePreview.state.location}}</strong>
+            <p data-preview-state-objective>{{homePreview.state.objective}}</p>
+            <div class="bulletin-preview-status" data-preview-state-situation>{{homePreview.state.situation}}</div>
           </div>
 
           <div class="bulletin-preview-card bulletin-preview-card--feed">
             <span class="bulletin-preview-label">Comm Feed</span>
             {{#if homePreview.feed}}
             <div class="bulletin-preview-meta">
-              <span>{{homePreview.feed.category}}</span>
-              <span>{{homePreview.feed.priority}}</span>
-              {{#if homePreview.feed.isUrgent}}<span class="urgent">Alert</span>{{/if}}
+              <span data-preview-feed-category>{{homePreview.feed.category}}</span>
+              <span data-preview-feed-priority>{{homePreview.feed.priority}}</span>
+              <span class="urgent {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>Alert</span>
             </div>
-            <strong>{{homePreview.feed.title}}</strong>
-            <em>{{homePreview.feed.sender}} · {{homePreview.feed.audience}}</em>
-            <p class="holonet-rendered-text">{{{homePreview.feed.renderedPreview}}}</p>
+            {{#if homePreview.feed.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.feed.imageUrl}}" alt="{{homePreview.feed.title}}" data-preview-feed-image>{{else}}<img class="bulletin-preview-image is-hidden" alt="" data-preview-feed-image>{{/if}}
+            <strong data-preview-feed-title>{{homePreview.feed.title}}</strong>
+            <em data-preview-feed-sender>{{homePreview.feed.sender}} · {{homePreview.feed.audience}}</em>
+            <p class="holonet-rendered-text" data-preview-feed-body>{{{homePreview.feed.renderedPreview}}}</p>
             {{else}}
             <p class="placeholder">No bulletin selected. Save or publish a bulletin to preview the feed card.</p>
             {{/if}}
@@ -551,6 +568,7 @@
           <div class="bulletin-preview-card bulletin-preview-card--session">
             <span class="bulletin-preview-label">Last Session / Featured</span>
             {{#if homePreview.lastSession}}
+            {{#if homePreview.lastSession.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.lastSession.imageUrl}}" alt="{{homePreview.lastSession.title}}">{{/if}}
             <strong>{{homePreview.lastSession.title}}</strong>
             <em>{{homePreview.lastSession.sender}}</em>
             <p class="holonet-rendered-text">{{{homePreview.lastSession.renderedPreview}}}</p>

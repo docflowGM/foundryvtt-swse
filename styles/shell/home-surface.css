@@ -1214,3 +1214,49 @@
     align-self: auto;
   }
 }
+
+/* Bulletin media projected onto the player home feed. */
+.swse-home-feed-row.is-urgent {
+  color: var(--ink);
+  text-shadow: 0 0 8px color-mix(in oklab, var(--zero) 20%, transparent);
+}
+
+.swse-home-feed-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 35%, transparent);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--vapor-cyan) 16%, transparent);
+}
+
+.swse-home-feed-thumb img,
+.swse-home-session-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.swse-home-feed-alert {
+  display: inline-flex;
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--zero) 45%, transparent);
+  color: var(--zero);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.swse-home-session-image {
+  height: 86px;
+  margin: 0 0 8px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 24%, transparent);
+  background: color-mix(in oklab, var(--vapor-cyan) 8%, transparent);
+}
+
+.swse-home-feed-row.has-image {
+  grid-template-columns: 24px 1fr auto;
+}
