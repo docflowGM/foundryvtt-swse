@@ -26,6 +26,7 @@ import { HealingSource } from '../sources/healing-source.js';
 import { ShipSource } from '../sources/ship-source.js';
 import { DroidSource } from '../sources/droid-source.js';
 import { FollowerSource } from '../sources/follower-source.js';
+import { HolonewsAutoPublisher } from '../subsystems/holonews-auto-publisher.js';
 
 export function registerHolonetSettings() {
   game.settings.register('foundryvtt-swse', 'holonet_records', {
@@ -159,6 +160,15 @@ export function registerHolonetSettings() {
     default: []
   });
 
+
+  game.settings.register('foundryvtt-swse', 'holonewsAutoPublisherPolicy', {
+    name: 'HoloNews Auto Publisher Policy (internal)',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: HolonewsAutoPublisher.defaultPolicy()
+  });
+
   HolonetPreferences.registerSettings();
   console.log('[Holonet] Settings registered');
 }
@@ -245,5 +255,6 @@ export async function initializeHolonet() {
   await DroidEmitter.initialize();
   await FollowerEmitter.initialize();
   await StoreStateEmitter.initialize();
+  HolonewsAutoPublisher.initialize();
   console.log('[Holonet] Initialization complete (emitters active)');
 }

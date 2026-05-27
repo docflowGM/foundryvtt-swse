@@ -5,6 +5,7 @@ import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/su
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, INTENT_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonewsGenerator } from '/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js';
+import { HolonewsAutoPublisher } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js';
 
 export class GMBulletinSurfaceService {
   static async buildViewModel(host) {
@@ -64,6 +65,7 @@ export class GMBulletinSurfaceService {
       holonewsViews,
       messageViews
     });
+    const holonewsAutomationPolicy = await HolonewsAutoPublisher.getPolicy();
 
     return {
       pageTitle: 'Bulletin',
@@ -94,6 +96,7 @@ export class GMBulletinSurfaceService {
       holonewsArchiveTotalCount: holonewsViews.length,
       holonewsArchiveFilteredCount: filteredHolonewsViews.length,
       holonewsArchiveStats: this._buildHolonewsArchiveStats(holonewsViews),
+      holonewsAutomation: this._buildHolonewsAutomationView(holonewsAutomationPolicy),
       holonewsArchiveFilters,
       holonewsArchiveStateOptions: this._getHolonewsStateOptions(),
       holonewsArchiveTypeOptions: this._getHolonewsTypeOptions(),
@@ -176,6 +179,36 @@ export class GMBulletinSurfaceService {
       { label: 'Ambient', value: records.filter((record) => record.isAmbientHolonews).length, tone: 'ambient' },
       { label: 'Breaking', value: records.filter((record) => record.isBreakingNews).length, tone: 'breaking' }
     ];
+  }
+
+  static _buildHolonewsAutomationView(policy = {}) {
+    const enabled = policy.enabled === true;
+    const nextDue = policy.nextDueAt || null;
+    const lastPublished = policy.lastPublishedAt || null;
+    const lastCheck = policy.lastCheckAt || null;
+    const history = Array.isArray(policy.history) ? [...policy.history].reverse().slice(0, 5) : [];
+
+    return {
+      enabled,
+      statusLabel: enabled ? 'Enabled' : 'Manual Only',
+      statusTone: enabled ? 'enabled' : 'disabled',
+      cadenceMinutes: Number(policy.cadenceMinutes || 240),
+      maxPerRun: Number(policy.maxPerRun || 1),
+      hideUsedSeeds: policy.hideUsedSeeds !== false,
+      allowRepeatsWhenExhausted: policy.allowRepeatsWhenExhausted === true,
+      query: policy.query || '',
+      category: policy.category || '',
+      sector: policy.sector || '',
+      priority: policy.priority || '',
+      sourceName: policy.sourceName || 'Galaxy News Net',
+      lastCheckAt: lastCheck || 'Never',
+      lastPublishedAt: lastPublished || 'Never',
+      nextDueAt: nextDue || 'Not scheduled',
+      totalPublished: Number(policy.totalPublished || 0),
+      history,
+      historyCount: history.length,
+      isPrimaryGm: HolonewsAutoPublisher.isPrimaryActiveGm()
+    };
   }
 
   static _getHolonewsStateOptions() {

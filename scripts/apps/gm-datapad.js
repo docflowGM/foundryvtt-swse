@@ -32,6 +32,7 @@ import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsyst
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonewsGenerator } from "/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js";
+import { HolonewsAutoPublisher } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js";
 import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
@@ -264,7 +265,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       newsDeck: record.metadata?.newsDeck || '',
       holonewsSeedId: record.metadata?.holonewsSeedId || '',
       isAmbientHolonews: record.metadata?.ambientHolonews === true,
-      holonewsTypeLabel: record.metadata?.ambientHolonews === true ? 'Ambient Wire' : 'GM Authored',
+      isAutomatedHolonews: record.metadata?.automatedHolonews === true,
+      holonewsTypeLabel: record.metadata?.automatedHolonews === true ? 'Auto Wire' : (record.metadata?.ambientHolonews === true ? 'Ambient Wire' : 'GM Authored'),
       archivedAt: record.archivedAt ? new Date(record.archivedAt).toLocaleString() : null,
       priority: record.priority || record.metadata?.priority || 'normal',
       audienceLabel: this._getAudienceLabel(record.audience),
@@ -913,7 +915,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
         this.holonewsSeedOffset = 0;
         this.holonewsHideUsedSeeds = true;
         this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
-    this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
         await this.render(false);
       });
     });
@@ -955,6 +956,29 @@ export class GMDatapad extends BaseSWSEAppV2 {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         await this._createHolonewsFromSeed(event.currentTarget.dataset.seedId, { publish: true });
+      });
+    });
+
+    const holonewsAutomationForm = pageElement.querySelector('[data-holonews-automation-form]');
+    if (holonewsAutomationForm) {
+      holonewsAutomationForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveHolonewsAutomationPolicy(new FormData(holonewsAutomationForm));
+      });
+    }
+
+    pageElement.querySelectorAll('[data-action="holonews-auto-publish-now"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const count = Number(event.currentTarget.dataset.count || 1);
+        await this._publishHolonewsAmbientNow(count);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-auto-reset-schedule"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._resetHolonewsAutomationSchedule();
       });
     });
 
@@ -1309,7 +1333,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     metadata.breakingNews = false;
     metadata.pinAsLastSession = false;
     metadata.homeSlot = 'feed';
-    metadata.bulletinConsoleVersion = 4;
+    metadata.automatedHolonews = false;
+    metadata.holonewsAutoPublishReason = undefined;
+    metadata.holonewsAutoPublishedAt = undefined;
+    metadata.bulletinConsoleVersion = 5;
 
     const record = BulletinSource.createBulletinEvent({
       title: `Copy of ${source.title || 'HoloNews Story'}`,
@@ -1403,6 +1430,55 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.currentBulletinSection = 'holonews';
     this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
     ui?.notifications?.info?.('Archived HoloNews story restored as a draft.');
+    await this.render(false);
+  }
+
+  async _saveHolonewsAutomationPolicy(formData) {
+    if (!game.user?.isGM) return;
+    const patch = {
+      enabled: formData.get('enabled') === 'on',
+      cadenceMinutes: Number(formData.get('cadenceMinutes') || 240),
+      maxPerRun: Number(formData.get('maxPerRun') || 1),
+      hideUsedSeeds: formData.get('hideUsedSeeds') === 'on',
+      allowRepeatsWhenExhausted: formData.get('allowRepeatsWhenExhausted') === 'on',
+      query: String(formData.get('query') || '').trim(),
+      category: String(formData.get('category') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      priority: String(formData.get('priority') || '').trim(),
+      sourceName: String(formData.get('sourceName') || 'Galaxy News Net').trim() || 'Galaxy News Net'
+    };
+
+    const resetSchedule = formData.get('resetSchedule') === 'on';
+    const policy = await HolonewsAutoPublisher.savePolicy(patch, { resetSchedule });
+    ui?.notifications?.info?.(policy.enabled
+      ? `Ambient HoloNews automation saved. Next publish: ${policy.nextDueAt || 'not scheduled'}.`
+      : 'Ambient HoloNews automation saved in manual-only mode.');
+    await this.render(false);
+  }
+
+  async _publishHolonewsAmbientNow(count = 1) {
+    if (!game.user?.isGM) return;
+    const result = await HolonewsAutoPublisher.publishNow({ count });
+    if (result?.published) {
+      ui?.notifications?.info?.(`Published ${result.published} ambient HoloNews ${result.published === 1 ? 'story' : 'stories'}.`);
+    } else if (result?.reason === 'no-eligible-seeds') {
+      ui?.notifications?.warn?.('No eligible ambient HoloNews stories match the automation policy.');
+    } else if (result?.reason === 'not-primary-gm') {
+      ui?.notifications?.warn?.('Only the primary active GM client can publish automated ambient HoloNews.');
+    } else if (result?.failed) {
+      ui?.notifications?.error?.(`Ambient HoloNews publish failed: ${result.error || 'unknown error'}`);
+    } else {
+      ui?.notifications?.warn?.('No ambient HoloNews stories were published.');
+    }
+    await this.render(false);
+  }
+
+  async _resetHolonewsAutomationSchedule() {
+    if (!game.user?.isGM) return;
+    const policy = await HolonewsAutoPublisher.savePolicy({}, { resetSchedule: true });
+    ui?.notifications?.info?.(policy.enabled
+      ? `Ambient HoloNews schedule reset. Next publish: ${policy.nextDueAt || 'not scheduled'}.`
+      : 'Ambient HoloNews schedule cleared because automation is manual-only.');
     await this.render(false);
   }
 

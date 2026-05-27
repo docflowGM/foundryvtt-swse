@@ -456,6 +456,116 @@
             </div>
           </form>
 
+          <section class="holonews-automation-panel">
+            <div class="holonews-wire-header">
+              <div>
+                <h4>Ambient Auto Publisher</h4>
+                <p>Opt-in scheduler for ordinary atomized HoloNews filler. It never creates Breaking News; red alerts remain GM-authored only.</p>
+              </div>
+              <div class="holonews-automation-status {{holonewsAutomation.statusTone}}">
+                <strong>{{holonewsAutomation.statusLabel}}</strong>
+                <span>{{#if holonewsAutomation.isPrimaryGm}}Primary GM client{{else}}Standby GM client{{/if}}</span>
+              </div>
+            </div>
+
+            <div class="holonews-automation-metrics">
+              <div><strong>{{holonewsAutomation.nextDueAt}}</strong><span>Next publish</span></div>
+              <div><strong>{{holonewsAutomation.lastPublishedAt}}</strong><span>Last published</span></div>
+              <div><strong>{{holonewsAutomation.lastCheckAt}}</strong><span>Last check</span></div>
+              <div><strong>{{holonewsAutomation.totalPublished}}</strong><span>Total auto stories</span></div>
+            </div>
+
+            <form class="holonews-automation-form" data-holonews-automation-form>
+              <div class="holonews-automation-toggles">
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="enabled" {{#if holonewsAutomation.enabled}}checked{{/if}}>
+                  <span>Enable scheduled ambient HoloNews</span>
+                </label>
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="hideUsedSeeds" {{#if holonewsAutomation.hideUsedSeeds}}checked{{/if}}>
+                  <span>Avoid already-used atomized stories</span>
+                </label>
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="allowRepeatsWhenExhausted" {{#if holonewsAutomation.allowRepeatsWhenExhausted}}checked{{/if}}>
+                  <span>Allow repeats only if filtered pool is exhausted</span>
+                </label>
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="resetSchedule">
+                  <span>Reset schedule when saving</span>
+                </label>
+              </div>
+
+              <div class="holonews-automation-grid">
+                <label>
+                  <span>Cadence Minutes</span>
+                  <input type="number" name="cadenceMinutes" min="15" max="10080" step="15" value="{{holonewsAutomation.cadenceMinutes}}">
+                </label>
+                <label>
+                  <span>Max Per Run</span>
+                  <input type="number" name="maxPerRun" min="1" max="5" step="1" value="{{holonewsAutomation.maxPerRun}}">
+                </label>
+                <label>
+                  <span>Source Override</span>
+                  <input type="text" name="sourceName" value="{{holonewsAutomation.sourceName}}" placeholder="Galaxy News Net">
+                </label>
+                <label>
+                  <span>Keyword Filter</span>
+                  <input type="search" name="query" value="{{holonewsAutomation.query}}" placeholder="optional: port, clinic, weather...">
+                </label>
+                <label>
+                  <span>Topic Filter</span>
+                  <select name="category">
+                    <option value="" {{#unless holonewsAutomation.category}}selected{{/unless}}>Any topic</option>
+                    {{#each holonewsCategories}}
+                    <option value="{{this.value}}" {{#if (eq ../holonewsAutomation.category this.value)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Sector Filter</span>
+                  <select name="sector">
+                    <option value="" {{#unless holonewsAutomation.sector}}selected{{/unless}}>Any sector</option>
+                    {{#each holonewsSectors}}
+                    <option value="{{this.value}}" {{#if (eq ../holonewsAutomation.sector this.value)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Priority Filter</span>
+                  <select name="priority">
+                    <option value="" {{#unless holonewsAutomation.priority}}selected{{/unless}}>Any priority</option>
+                    {{#each holonewsPriorities}}
+                    <option value="{{this.value}}" {{#if (eq ../holonewsAutomation.priority this.value)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+              </div>
+
+              <div class="holonews-automation-actions">
+                <button type="submit" class="swse-ui-button bulletin-primary-action">Save Automation Policy</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-auto-publish-now" data-count="1">Publish One Now</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-auto-publish-now" data-count="{{holonewsAutomation.maxPerRun}}">Publish Batch Now</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-auto-reset-schedule">Reset Schedule</button>
+              </div>
+            </form>
+
+            {{#if holonewsAutomation.historyCount}}
+            <details class="holonews-automation-history">
+              <summary>Recent automation history</summary>
+              <div class="holonews-automation-history-list">
+                {{#each holonewsAutomation.history}}
+                <div class="holonews-automation-history-row">
+                  <span>{{this.at}}</span>
+                  <span>{{this.reason}}</span>
+                  <strong>{{this.published}} published</strong>
+                  {{#if this.note}}<em>{{this.note}}</em>{{/if}}
+                </div>
+                {{/each}}
+              </div>
+            </details>
+            {{/if}}
+          </section>
+
           <section class="holonews-wire-panel">
             <div class="holonews-wire-header">
               <div>
