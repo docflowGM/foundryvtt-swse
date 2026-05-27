@@ -41,6 +41,7 @@ import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/s
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
+import { GMCombatRecoveryService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 
@@ -160,12 +161,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await this._loadStorePendingApprovals();
     await this._loadPendingDroids();
 
-    let healingEligible = 0;
+    let combatRecoveryAlerts = 0;
     try {
-      const healingSummary = await GMHealingTrigger.getHealingSummary();
-      healingEligible = healingSummary?.eligible ?? 0;
+      const combatSummary = await GMCombatRecoveryService.buildViewModel();
+      combatRecoveryAlerts = combatSummary?.combatRecovery?.metrics?.actionable ?? combatSummary?.eligible ?? 0;
     } catch (err) {
-      SWSELogger.warn('[GMDatapad] Unable to load healing summary for home badge counts:', err);
+      SWSELogger.warn('[GMDatapad] Unable to load combat recovery summary for home badge counts:', err);
     }
 
     const pendingDroids = this.pendingDroids?.length ?? 0;
@@ -187,7 +188,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       tradeApprovals: tradeCounts.approvals,
       tradeFailed: tradeCounts.failed,
       tradeActive: tradeCounts.active,
-      healing: healingEligible,
+      healing: combatRecoveryAlerts,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
   }
@@ -775,7 +776,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'store', code: 'STR', cluster: 'economy', clusterLabel: 'Economy', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance, approvals, inventory policy, and commerce receipts', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : 'stable', badgeType: 'warn', featured: true, dockOrder: 40 },
       { id: 'approvals', code: 'APR', cluster: 'operations', clusterLabel: 'Ops', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending GM approval queue for gated system actions', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 50 },
       { id: 'workspace', code: 'WRK', cluster: 'operations', clusterLabel: 'Ops', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access, scene context, and party workspace', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: 'info', badgeType: 'info', dockOrder: 60 },
-      { id: 'healing', code: 'MED', cluster: 'operations', clusterLabel: 'Ops', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management and natural healing checks', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: (counts.healing ?? 0) ? 'warn' : 'stable', badgeType: 'info', dockOrder: 70 },
+      { id: 'healing', code: 'CMB', cluster: 'operations', clusterLabel: 'Ops', label: 'Combat & Recovery', icon: 'fa-solid fa-heart-pulse', description: 'Healing, rest, encounter reset, condition cleanup, and droid repair visibility', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: (counts.healing ?? 0) ? 'warn' : 'stable', badgeType: 'info', featured: true, dockOrder: 70 },
       { id: 'house-rules', code: 'RUL', cluster: 'configuration', clusterLabel: 'Config', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications and campaign rule presets', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: (counts.houseRules ?? 0) ? 'info' : 'stable', badgeType: 'info', dockOrder: 80 },
       { id: 'settings', code: 'CFG', cluster: 'configuration', clusterLabel: 'Config', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme, interface tuning, and GM shell preferences', badgeCount: 0, status: 'Theme', statusTone: 'info', badgeType: 'info', dockOrder: 90 }
     ].sort((a, b) => (a.dockOrder ?? 999) - (b.dockOrder ?? 999));
@@ -2483,20 +2484,30 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Wire healing page events
+   * Wire Combat & Recovery page events.
    */
   async _wireHealingEvents(root) {
     const pageElement = root.querySelector('.gm-datapad-healing');
     if (!pageElement) return;
 
-    // Trigger natural healing button
-    const triggerButton = pageElement.querySelector('[data-action="trigger-healing"]');
-    if (triggerButton) {
-      triggerButton.addEventListener('click', async (ev) => {
+    pageElement.querySelectorAll('[data-combat-recovery-action], [data-action="trigger-healing"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        await this._triggerNaturalHealing();
+        const action = ev.currentTarget.dataset.combatRecoveryAction || 'natural-healing';
+        await this._executeCombatRecoveryGroupAction(action);
       });
-    }
+    });
+
+    pageElement.querySelectorAll('[data-combat-actor-action]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const action = ev.currentTarget.dataset.combatActorAction;
+        const actorId = ev.currentTarget.dataset.actorId;
+        const form = ev.currentTarget.closest('[data-combat-actor-card]');
+        const amount = Number(form?.querySelector('[name="recoveryAmount"]')?.value ?? 0) || 0;
+        await this._executeCombatRecoveryActorAction(actorId, action, { amount });
+      });
+    });
   }
 
   /**
@@ -3161,22 +3172,46 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Trigger natural healing for eligible party members
+   * Execute a GM Combat & Recovery group action.
    */
-  async _triggerNaturalHealing() {
+  async _executeCombatRecoveryGroupAction(action) {
     try {
-      const result = await GMHealingTrigger.triggerNaturalHealing({ isFullRest: true, skipHolonetNotification: false });
-      if (result.success) {
-        ui?.notifications?.info?.(`Natural healing triggered: ${result.totalHealed} actors healed, ${result.totalSkipped} skipped`);
-        SWSELogger.info('[GMDatapad] Natural healing triggered:', result);
+      const result = await GMCombatRecoveryService.executeGroupAction(action);
+      if (result?.success) {
+        ui?.notifications?.info?.(result.message || 'Combat recovery action complete.');
+        SWSELogger.info('[GMDatapad] Combat recovery group action complete:', { action, result });
         await this.render(false);
       } else {
-        ui?.notifications?.error?.(`Failed to trigger healing: ${result.error}`);
+        ui?.notifications?.error?.(result?.error || result?.message || 'Combat recovery action failed.');
       }
     } catch (err) {
-      SWSELogger.error('[GMDatapad] Error triggering natural healing:', err);
+      SWSELogger.error('[GMDatapad] Error executing combat recovery group action:', err);
       ui?.notifications?.error?.(`Error: ${err.message}`);
     }
+  }
+
+  /**
+   * Execute a per-actor GM Combat & Recovery action.
+   */
+  async _executeCombatRecoveryActorAction(actorId, action, options = {}) {
+    try {
+      const result = await GMCombatRecoveryService.executeActorAction(actorId, action, options);
+      if (result?.success) {
+        ui?.notifications?.info?.(result.message || 'Actor recovery action complete.');
+        SWSELogger.info('[GMDatapad] Combat recovery actor action complete:', { actorId, action, result });
+        await this.render(false);
+      } else {
+        ui?.notifications?.error?.(result?.error || result?.message || 'Actor recovery action failed.');
+      }
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error executing combat recovery actor action:', err);
+      ui?.notifications?.error?.(`Error: ${err.message}`);
+    }
+  }
+
+  /** Legacy alias retained for older buttons/templates. */
+  async _triggerNaturalHealing() {
+    return this._executeCombatRecoveryGroupAction('natural-healing');
   }
 
   /**

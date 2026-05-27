@@ -81,12 +81,12 @@
       <div class="swse-home-page-header gm-home-page-header">
         <div>
           <div class="swse-home-page-title">GM Operations</div>
-          <div class="swse-home-page-kicker">COMMAND NODE · SHARED HOLOPAD SHELL</div>
+          <div class="swse-home-page-kicker">COMMAND NODE - SHARED HOLOPAD SHELL</div>
           <div class="swse-home-page-subtitle">▸ Dashboard, store control, approvals, healing, workspace, and bulletin operations</div>
         </div>
         <div class="swse-home-page-greeting">
-          <span class="em">{{user.name}}</span> · game master console<br>
-          <span class="stardate">GM DATAPAD · GLOBAL THEME CONTEXT</span>
+          <span class="em">{{user.name}}</span> - game master console<br>
+          <span class="stardate">GM DATAPAD - GLOBAL THEME CONTEXT</span>
         </div>
       </div>
 
@@ -237,7 +237,7 @@
     {{else if (eq currentPage "jobs")}}
     <div class="gm-datapad-page gm-datapad-jobs">
       <div class="page-header job-board-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <div>
           <h2>GM Job Board</h2>
           <p>Contract command board for posted work, objective review, and reward payout.</p>
@@ -285,12 +285,12 @@
                     {{#if this.needsAttention}}<span class="job-board-chip attention">Needs GM</span>{{/if}}
                   </div>
                   <div class="job-card-title">{{this.title}}</div>
-                  <div class="job-card-client">{{this.clientLabel}}{{#if this.factionName}} · {{this.factionName}}{{/if}}</div>
+                  <div class="job-card-client">{{this.clientLabel}}{{#if this.factionName}} - {{this.factionName}}{{/if}}</div>
                   <div class="job-card-progress">
                     <span>{{this.requiredProgressLabel}}</span>
                     <span>{{this.optionalProgressLabel}}</span>
                   </div>
-                  <div class="job-card-reward">{{this.rewards.approvedCreditsLabel}} · {{this.rewards.approvedXpLabel}}</div>
+                  <div class="job-card-reward">{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</div>
                   <div class="job-card-footer">
                     <span>{{this.participantCount}} participant(s)</span>
                     <span>{{this.messageCount}} thread events</span>
@@ -319,7 +319,7 @@
             {{#if jobBoard.selectedJob.clientImage}}<img src="{{jobBoard.selectedJob.clientImage}}" alt="{{jobBoard.selectedJob.clientLabel}}">{{/if}}
             <div>
               <strong>{{jobBoard.selectedJob.clientLabel}}</strong>
-              <span>{{jobBoard.selectedJob.clientTypeLabel}}{{#if jobBoard.selectedJob.factionName}} · {{jobBoard.selectedJob.factionName}}{{/if}}</span>
+              <span>{{jobBoard.selectedJob.clientTypeLabel}}{{#if jobBoard.selectedJob.factionName}} - {{jobBoard.selectedJob.factionName}}{{/if}}</span>
               {{#if jobBoard.selectedJob.hasFactionConsequences}}<em>Faction consequence metadata present</em>{{/if}}
             </div>
           </div>
@@ -468,7 +468,7 @@
           <article class="job-queue-card">
             <span class="job-board-chip payout">Ready</span>
             <strong>{{this.title}}</strong>
-            <p>{{this.rewards.approvedCreditsLabel}} · {{this.rewards.approvedXpLabel}}</p>
+            <p>{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</p>
             <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}">Distribute Rewards</button>
           </article>
           {{else}}
@@ -488,7 +488,7 @@
     {{else if (eq currentPage "trade")}}
     <div class="gm-datapad-page gm-datapad-trade-console">
       <div class="page-header trade-console-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <div>
           <h2>GM Trade Console</h2>
           <p>Approval queue, failed settlement diagnostics, and Messenger trade audit receipts.</p>
@@ -680,7 +680,7 @@
     {{else if (eq currentPage "bulletin")}}
     <div class="gm-datapad-page gm-datapad-bulletin">
       <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <h2>{{pageTitle}}</h2>
         <p class="page-subtitle">{{pageDescription}}</p>
       </div>
@@ -745,7 +745,7 @@
                 <select name="contactId" data-bulletin-contact-select>
                   <option value="" {{#unless eventEditorRecord.contactId}}selected{{/unless}}>Manual source</option>
                   {{#each bulletinContacts}}
-                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../eventEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} · {{this.kindLabel}}</option>
+                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../eventEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
                   {{/each}}
                 </select>
               </label>
@@ -873,7 +873,7 @@
                 <select name="contactId" data-bulletin-contact-select>
                   <option value="" {{#unless holonewsEditorRecord.contactId}}selected{{/unless}}>Manual source</option>
                   {{#each bulletinContacts}}
-                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../holonewsEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} · {{this.kindLabel}}</option>
+                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../holonewsEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
                   {{/each}}
                 </select>
               </label>
@@ -1311,7 +1311,7 @@
                 {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
-              <div class="bulletin-record-sender">{{this.newsSource}}{{#if this.dateline}} · {{this.dateline}}{{/if}}{{#if this.sector}} · {{this.sector}}{{/if}}</div>
+              <div class="bulletin-record-sender">{{this.newsSource}}{{#if this.dateline}} - {{this.dateline}}{{/if}}{{#if this.sector}} - {{this.sector}}{{/if}}</div>
               {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
               <div class="holonews-record-details">
@@ -1370,7 +1370,7 @@
                 <select name="contactId" data-bulletin-contact-select>
                   <option value="" {{#unless messageEditorRecord.contactId}}selected{{/unless}}>Manual sender</option>
                   {{#each bulletinContacts}}
-                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../messageEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} · {{this.kindLabel}}</option>
+                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../messageEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
                   {{/each}}
                 </select>
               </label>
@@ -1573,7 +1573,7 @@
             </div>
             {{#if homePreview.feed.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.feed.imageUrl}}" alt="{{homePreview.feed.title}}" data-preview-feed-image>{{else}}<img class="bulletin-preview-image is-hidden" alt="" data-preview-feed-image>{{/if}}
             <strong data-preview-feed-title>{{homePreview.feed.title}}</strong>
-            <em data-preview-feed-sender>{{homePreview.feed.sender}} · {{homePreview.feed.audience}}</em>
+            <em data-preview-feed-sender>{{homePreview.feed.sender}} - {{homePreview.feed.audience}}</em>
             <span class="bulletin-preview-audience {{#if homePreview.feed.audienceMatchesSelectedPlayer}}matches{{else}}blocked{{/if}}">{{#if homePreview.feed.audienceMatchesSelectedPlayer}}Visible to selected player{{else}}Not targeted to selected player{{/if}}</span>
             <p class="holonet-rendered-text" data-preview-feed-body>{{{homePreview.feed.renderedPreview}}}</p>
             {{else}}
@@ -1588,7 +1588,7 @@
               {{#each homePreview.feedItems}}
               <div class="bulletin-preview-feed-row {{#if this.isBreakingNews}}breaking{{else if this.isUrgent}}urgent{{/if}} {{#if this.isRead}}is-read{{else}}is-unread{{/if}}">
                 <strong>{{this.title}}</strong>
-                <span>{{this.sender}} · {{this.category}} · {{#if this.isRead}}read{{else}}unread{{/if}}</span>
+                <span>{{this.sender}} - {{this.category}} - {{#if this.isRead}}read{{else}}unread{{/if}}</span>
               </div>
               {{/each}}
             </div>
@@ -1636,8 +1636,8 @@
             <div class="bulletin-contact-list">
               {{#each bulletinContacts}}
               <div class="bulletin-contact-row">
-                <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} · {{this.defaultCategory}}</em></span>
-                <small>{{this.imageLabel}} · used {{this.useCount}}</small>
+                <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} - {{this.defaultCategory}}</em></span>
+                <small>{{this.imageLabel}} - used {{this.useCount}}</small>
                 {{#unless this.system}}<button type="button" class="swse-ui-button" data-action="bulletin-delete-contact" data-contact-id="{{this.id}}">Delete</button>{{/unless}}
               </div>
               {{/each}}
@@ -1652,7 +1652,7 @@
     {{else if (eq currentPage "house-rules")}}
     <div class="gm-datapad-page gm-datapad-house-rules swse-house-rules-datapad">
       <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <h2>{{pageTitle}}</h2>
         <p class="page-subtitle">{{pageDescription}}</p>
       </div>
@@ -1864,7 +1864,7 @@
     {{else if (eq currentPage "store")}}
     <div class="gm-datapad-page gm-datapad-store gm-store-control-console swse-store-ui swse-ui-shell swse-store-shell flexcol">
       <div class="page-header gm-app-header gm-store-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <div class="gm-app-header-copy">
           <span class="gm-command-eyebrow">COMMERCE COMMAND</span>
           <h2>{{pageTitle}}</h2>
@@ -2106,7 +2106,7 @@
                         <div>
                           <span class="gm-command-eyebrow">{{this.type}} REQUEST</span>
                           <strong>{{this.item}}</strong>
-                          <span>{{this.actor}} · {{this.submittedDisplay}}</span>
+                          <span>{{this.actor}} - {{this.submittedDisplay}}</span>
                         </div>
                         <span class="gm-store-status-chip {{#if this.warning}}warn{{/if}}">{{#if this.warning}}Needs Review{{else}}Pending{{/if}}</span>
                       </div>
@@ -2171,7 +2171,7 @@
                   {{#each pendingApprovals}}
                     <div class="gm-store-approval-card">
                       <strong>{{this.draftData.name}}</strong>
-                      <span>{{this.ownerActorName}} · {{capitalize this.type}}</span>
+                      <span>{{this.ownerActorName}} - {{capitalize this.type}}</span>
                       <em>{{this.costCredits}} cr</em>
                     </div>
                   {{/each}}
@@ -2279,7 +2279,7 @@
     {{else if (eq currentPage "approvals")}}
     <div class="gm-datapad-page gm-datapad-approvals flexcol">
       <div class="page-header gm-app-header gm-approval-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <div class="gm-app-header-copy">
           <span class="gm-command-eyebrow">COMMAND QUEUE</span>
           <h2>{{pageTitle}}</h2>
@@ -2323,7 +2323,7 @@
               <div>
                 <span class="gm-command-eyebrow">{{selectedApproval.typeLabel}}</span>
                 <h3>{{selectedApproval.title}}</h3>
-                <p>{{selectedApproval.ownerLabel}} · {{selectedApproval.costLabel}} · submitted {{selectedApproval.submittedLabel}}</p>
+                <p>{{selectedApproval.ownerLabel}} - {{selectedApproval.costLabel}} - submitted {{selectedApproval.submittedLabel}}</p>
               </div>
               <span class="gm-approval-mode-chip {{#if approvalEditMode}}edit{{else}}review{{/if}}">
                 {{#if approvalEditMode}}Inline Edit Mode{{else}}Read-Only Review{{/if}}
@@ -2462,63 +2462,148 @@
       {{> "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs" vm=settingsVm}}
     </div>
 
-    {{!-- Healing Page --}}
+    {{!-- Combat & Recovery Page --}}
     {{else if (eq currentPage "healing")}}
-    <div class="gm-datapad-page gm-datapad-healing">
-      <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
-        <h2>{{pageTitle}}</h2>
-        <p class="page-subtitle">{{pageDescription}}</p>
+    <div class="gm-datapad-page gm-datapad-healing gm-combat-recovery">
+      <div class="page-header combat-recovery-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+        <div>
+          <h2>{{pageTitle}}</h2>
+          <p class="page-subtitle">{{pageDescription}}</p>
+        </div>
+        <div class="combat-recovery-status {{#if combatRecovery.hasActiveCombat}}active{{else}}idle{{/if}}">
+          <span class="status-label">Encounter</span>
+          <strong>{{combatRecovery.activeCombatLabel}}</strong>
+        </div>
       </div>
 
-      <div class="healing-content">
-        <div class="healing-summary swse-ui-panel">
-          <h3>Party Recovery Status</h3>
-          <div class="healing-stats">
-            <div class="stat-box">
-              <span class="stat-label">Eligible for Healing</span>
-              <span class="stat-value eligible">{{eligible}}</span>
+      <div class="combat-recovery-metrics" aria-label="Combat and recovery status">
+        <div class="combat-recovery-metric"><span>Roster</span><strong>{{combatRecovery.metrics.total}}</strong></div>
+        <div class="combat-recovery-metric"><span>Combatants</span><strong>{{combatRecovery.metrics.activeCombatants}}</strong></div>
+        <div class="combat-recovery-metric warning"><span>Wounded</span><strong>{{combatRecovery.metrics.wounded}}</strong></div>
+        <div class="combat-recovery-metric critical"><span>Down</span><strong>{{combatRecovery.metrics.downed}}</strong></div>
+        <div class="combat-recovery-metric warning"><span>CT Impaired</span><strong>{{combatRecovery.metrics.conditionImpaired}}</strong></div>
+        <div class="combat-recovery-metric info"><span>SW Spent</span><strong>{{combatRecovery.metrics.secondWindSpent}}</strong></div>
+        <div class="combat-recovery-metric stable"><span>Rest Eligible</span><strong>{{combatRecovery.metrics.restEligible}}</strong></div>
+        <div class="combat-recovery-metric muted"><span>Droids</span><strong>{{combatRecovery.metrics.droids}}</strong></div>
+      </div>
+
+      <div class="combat-recovery-shell">
+        <section class="combat-recovery-board swse-ui-panel">
+          <div class="combat-recovery-section-header">
+            <div>
+              <h3>Recovery Roster</h3>
+              <p>Organic actors can rest. Droids and vehicles are shown for repair visibility only.</p>
             </div>
-            <div class="stat-box">
-              <span class="stat-label">Ineligible / Vehicles / Droids</span>
-              <span class="stat-value ineligible">{{ineligible}}</span>
+            <div class="combat-recovery-tools">
+              <button type="button" class="swse-ui-button swse-ui-button-primary" data-combat-recovery-action="natural-healing">
+                <i class="fa-solid fa-heart-pulse"></i> Natural Healing
+              </button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Short Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Extended Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
             </div>
           </div>
 
-          <div class="healing-action">
-            <button class="swse-ui-button swse-ui-button-primary" data-action="trigger-healing">
-              <i class="fa-solid fa-heart-pulse"></i> Trigger Natural Healing
-            </button>
-            <p class="action-hint">Triggers recovery for all eligible party members. Fires restCompleted hook for Holonet notifications.</p>
+          <div class="combat-recovery-card-grid">
+            {{#each combatRecovery.actors}}
+            <article class="combat-recovery-card {{this.actionTone}} {{this.kind}}" data-combat-actor-card data-actor-id="{{this.id}}">
+              <header class="combat-recovery-card-header">
+                <img class="combat-recovery-portrait" src="{{this.img}}" alt="{{this.name}}">
+                <div class="combat-recovery-card-title">
+                  <h4>{{this.name}}</h4>
+                  <span>{{this.typeLabel}} - {{this.ownerLabel}}</span>
+                </div>
+                {{#if this.inCombat}}<span class="combat-recovery-chip info">Combat</span>{{/if}}
+              </header>
+
+              <div class="combat-recovery-bars">
+                <div class="combat-recovery-bar-row">
+                  <span>HP</span>
+                  <strong>{{this.hpLabel}}</strong>
+                </div>
+                <div class="combat-recovery-hpbar" aria-label="Hit points">
+                  <span style="width: {{this.hpPercent}}%"></span>
+                </div>
+                <div class="combat-recovery-stat-row">
+                  <span>Condition</span><strong class="{{this.conditionTone}}">{{this.conditionLabel}}</strong>
+                  <span>Second Wind</span><strong>{{this.secondWindLabel}}</strong>
+                </div>
+              </div>
+
+              <div class="combat-recovery-chip-row">
+                {{#each this.statusChips}}
+                <span class="combat-recovery-chip {{this.tone}}">{{this.label}}</span>
+                {{/each}}
+              </div>
+
+              <p class="combat-recovery-note">{{this.restNote}}</p>
+
+              <div class="combat-recovery-actor-controls">
+                <label>
+                  <span>Amount</span>
+                  <input type="number" name="recoveryAmount" min="0" step="1" value="5">
+                </label>
+                <div class="combat-recovery-button-row">
+                  {{#if this.repairEligible}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="repair" data-actor-id="{{this.id}}">Repair</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="repair-full" data-actor-id="{{this.id}}">Repair Full</button>
+                  {{else}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="heal" data-actor-id="{{this.id}}">Heal</button>
+                  {{/if}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="damage" data-actor-id="{{this.id}}">Damage</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="improve-condition" data-actor-id="{{this.id}}">CT +</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="worsen-condition" data-actor-id="{{this.id}}">CT -</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="reset-condition" data-actor-id="{{this.id}}">Reset CT</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="reset-second-wind" data-actor-id="{{this.id}}">Reset SW</button>
+                </div>
+              </div>
+            </article>
+            {{/each}}
           </div>
-        </div>
+        </section>
 
-        {{#if eligibleActors.length}}
-        <div class="healing-eligible swse-ui-panel">
-          <h3>Eligible Actors</h3>
-          <ul class="actor-list">
-            {{#each eligibleActors}}
-            <li class="actor-item">
-              <span class="actor-name">{{this.name}}</span>
-            </li>
-            {{/each}}
-          </ul>
-        </div>
-        {{/if}}
+        <aside class="combat-recovery-rail swse-ui-panel">
+          <section class="combat-recovery-rail-section">
+            <h3>Rule Preview</h3>
+            <ul class="combat-recovery-rule-list">
+              <li><strong>Recovery:</strong> {{combatRecovery.rules.recoveryLabel}}</li>
+              <li><strong>HP Type:</strong> {{combatRecovery.rules.recoveryHpType}}</li>
+              <li><strong>Rest Timing:</strong> {{combatRecovery.rules.recoveryRestLabel}}</li>
+              <li><strong>Vitality:</strong> {{#if combatRecovery.rules.vitalityEnabled}}Enabled{{else}}Disabled{{/if}}</li>
+              <li><strong>Second Wind:</strong> {{combatRecovery.rules.secondWindLabel}}</li>
+            </ul>
+            <p class="combat-recovery-boundary"><i class="fa-solid fa-triangle-exclamation"></i> {{combatRecovery.rules.droidRestBoundary}}</p>
+          </section>
 
-        {{#if ineligibleActors.length}}
-        <div class="healing-ineligible swse-ui-panel">
-          <h3>Ineligible Actors</h3>
-          <ul class="actor-list">
-            {{#each ineligibleActors}}
-            <li class="actor-item">
-              <span class="actor-name">{{this.name}}</span>
-            </li>
-            {{/each}}
-          </ul>
-          <p class="hint-text">These actors are not eligible: not a character type, is a droid, is a vehicle, or is dead (HP ≤ 0).</p>
-        </div>
-        {{/if}}
+          <section class="combat-recovery-rail-section">
+            <h3>Group Actions</h3>
+            <div class="combat-recovery-action-stack">
+              <button type="button" class="swse-ui-button swse-ui-button-primary" data-combat-recovery-action="natural-healing">Trigger Natural Healing</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Apply Short Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Apply Extended Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-second-wind">GM Override: Reset Second Wind</button>
+              <button type="button" class="swse-ui-button danger" data-combat-recovery-action="full-organic-recovery">GM Override: Full Organic Recovery</button>
+            </div>
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Needs Attention</h3>
+            {{#if combatRecovery.needsAttention.length}}
+            <ul class="combat-recovery-watch-list">
+              {{#each combatRecovery.needsAttention}}
+              <li>
+                <strong>{{this.name}}</strong>
+                <span>{{this.hpLabel}} HP - CT {{this.conditionLabel}} - SW {{this.secondWindLabel}}</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p class="empty-text">No wounded, impaired, or spent actors detected.</p>
+            {{/if}}
+          </section>
+        </aside>
       </div>
     </div>
 
@@ -2526,7 +2611,7 @@
     {{else if (eq currentPage "workspace")}}
     <div class="gm-datapad-page gm-datapad-workspace">
       <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <h2>{{pageTitle}}</h2>
         <p class="page-subtitle">{{pageDescription}}</p>
       </div>
@@ -2558,7 +2643,7 @@
     {{else}}
     <div class="gm-datapad-page gm-datapad-error">
       <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
         <h2>Unknown Page</h2>
       </div>
       <p class="error-message">Page "{{currentPage}}" not found</p>
@@ -2577,7 +2662,7 @@
         <span class="swse-tablet-bottom-home__label">HOME</span>
       </button>
 
-      <div class="swse-tablet-bottom-engraving" aria-hidden="true">GM COMMAND HOLOPAD · OPS ACCESS · SHARED SHELL</div>
+      <div class="swse-tablet-bottom-engraving" aria-hidden="true">GM COMMAND HOLOPAD - OPS ACCESS - SHARED SHELL</div>
     </div>
   </div>
 </div>

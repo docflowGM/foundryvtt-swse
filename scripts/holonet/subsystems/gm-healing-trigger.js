@@ -25,7 +25,7 @@ export class GMHealingTrigger {
       return { success: false, error: 'Only GMs can trigger natural healing' };
     }
 
-    const { isFullRest = true, skipHolonetNotification = false } = options;
+    const { isFullRest = true, skipHolonetNotification = false, skipMechanicalRecoveryHook = true } = options;
 
     const healed = [];
     const skipped = [];
@@ -61,7 +61,13 @@ export class GMHealingTrigger {
         isFullRest,
         duration: isFullRest ? 480 : 60,
         triggeredByGM: true,
-        triggerTime: Date.now()
+        triggerTime: Date.now(),
+        // GMHealingTrigger already applied recovery actor-by-actor. Keep the
+        // restCompleted hook available for Holonet emitters without letting
+        // RecoveryMechanics apply a second mechanical rest pass.
+        skipMechanicalRecovery: skipMechanicalRecoveryHook,
+        healed,
+        skipped
       });
     }
 
