@@ -718,7 +718,6 @@ export class GMCombatRecoveryService {
   }
 
   static async applyHitPointDeltaToActors({ actors = [], target = null, amount = 0, mode = 'heal' } = {}) {
-    const { amount = 0, effectId = '', poisonKey = '', rollTotal = null, dc = null, workflow = '', ongoingEffectType = 'custom', ongoingEffectLabel = '', ongoingEffectMemo = '', ongoingDurationScope = 'encounter' } = options;
     const value = Math.max(0, safeNumber(amount, 0));
     if (value <= 0) return { success: false, error: 'Enter a positive HP amount for the target action.' };
 
