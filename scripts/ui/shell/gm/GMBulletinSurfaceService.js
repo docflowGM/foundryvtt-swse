@@ -71,7 +71,7 @@ export class GMBulletinSurfaceService {
       bulletinSection: host.currentBulletinSection,
       bulletinNav: [
         { id: 'events', label: 'Events', count: eventViews.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length, hint: 'Campaign broadcasts' },
-        { id: 'holonews', label: 'HoloNews', count: holonewsViews.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length, hint: `${HolonewsGenerator.count()} ambient wire stories` },
+        { id: 'holonews', label: 'HoloNews', count: holonewsViews.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length, hint: `${HolonewsGenerator.count()} generated wire variants` },
         { id: 'messages', label: 'Notices', count: messageRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length, hint: 'Targeted one-way pings' },
         { id: 'players', label: 'Players', count: bulletinPlayers.length, hint: 'Personal home status' },
         { id: 'party', label: 'Party', count: partyState?.situation || partyState?.objective || partyState?.location ? 1 : 0, hint: 'Shared home status' }
@@ -88,6 +88,7 @@ export class GMBulletinSurfaceService {
       holonewsAllRecords: holonewsViews,
       holonewsSeeds,
       holonewsSeedCount: HolonewsGenerator.count(),
+      holonewsAtomStats: HolonewsGenerator.atomStats(),
       holonewsWireFilteredCount: HolonewsGenerator.count(holonewsWireFilters),
       holonewsUsedSeedCount: usedHolonewsSeedIds.length,
       holonewsArchiveTotalCount: holonewsViews.length,

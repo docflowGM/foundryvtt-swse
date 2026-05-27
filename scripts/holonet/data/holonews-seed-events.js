@@ -1,208 +1,176 @@
 /**
- * Ambient HoloNews seed library.
+ * Atomized ambient HoloNews wire generator.
  *
- * This library intentionally generates low-stakes, ordinary galactic news.
- * The point is background texture: port advisories, market blurbs, weather,
- * civic notices, maintenance schedules, entertainment updates, and travel
- * paperwork. The player characters should still feel exceptional when the GM
- * writes a custom HoloNews story about what they did.
+ * The GM-facing HoloNews desk needs ordinary, low-stakes background texture:
+ * travel advisories, civic notices, shipping delays, sports blurbs, weather,
+ * market movement, droid service waits, utility work, and other mundane stories.
+ *
+ * This file intentionally does not hand-author a fixed list of dramatic stories.
+ * Instead it builds stable wire copy from atom pools:
+ * - 300 planet/location atoms
+ * - 300 system/region atoms
+ * - 300 source atoms
+ * - 300 story lead atoms
+ * - 300 story detail atoms
  *
  * Ambient entries never mark themselves as breaking news. Breaking News is a
  * GM-authored override handled by the Bulletin console metadata.
  */
 
-const SOURCES = [
-  'Galaxy News Net',
-  'Sector Civic Wire',
-  'Port Authority Desk',
-  'Mid Rim Trade Review',
-  'Outer Rim Local',
-  'Core Worlds Public Channel',
-  'HoloSports Desk',
-  'Commerce Guild Bulletin',
-  'Transit Advisory Service',
-  'Agricultural Exchange Wire',
-  'WeatherNet Relay',
-  'Municipal Affairs Feed',
-  'Shipping Lane Digest',
-  'CultureNet Evening Edition',
-  'Droid Service Journal',
-  'Bureau of Standards Notice',
-  'Freighter Traffic Report',
-  'Regional Markets Minute',
-  'Public Works Bulletin',
-  'University Research Wire'
+export const HOLONEWS_ATOM_POOL_SIZE = 300;
+export const HOLONEWS_SYNTHETIC_STORY_COUNT = 9000;
+
+const SECTORS = [
+  'Core Worlds',
+  'Colonies',
+  'Inner Rim',
+  'Expansion Region',
+  'Mid Rim',
+  'Outer Rim',
+  'Hutt Space',
+  'Corporate Sector',
+  'Wild Space',
+  'Tingel Arm',
+  'Hydian Fringe',
+  'Perlemian Corridor'
 ];
 
-const DATELINES = [
-  { name: 'Coruscant', sector: 'Core Worlds' },
-  { name: 'Corellia', sector: 'Core Worlds' },
-  { name: 'Duro', sector: 'Core Worlds' },
-  { name: 'Chandrila', sector: 'Core Worlds' },
-  { name: 'Kuat', sector: 'Core Worlds' },
-  { name: 'Brentaal', sector: 'Inner Rim' },
-  { name: 'Alderaan', sector: 'Core Worlds' },
-  { name: 'Fondor', sector: 'Colonies' },
-  { name: 'Bestine', sector: 'Inner Rim' },
-  { name: 'Rodia', sector: 'Mid Rim' },
-  { name: 'Ryloth', sector: 'Outer Rim' },
-  { name: 'Taris', sector: 'Outer Rim' },
-  { name: 'Onderon', sector: 'Inner Rim' },
-  { name: 'Dantooine', sector: 'Outer Rim' },
-  { name: 'Tatooine', sector: 'Outer Rim' },
-  { name: 'Mon Cala', sector: 'Outer Rim' },
-  { name: 'Ord Mantell', sector: 'Mid Rim' },
-  { name: 'Bespin', sector: 'Outer Rim' },
-  { name: 'Nal Hutta', sector: 'Hutt Space' },
-  { name: 'Nar Shaddaa', sector: 'Hutt Space' },
-  { name: 'Bothawui', sector: 'Mid Rim' },
-  { name: 'Sullust', sector: 'Outer Rim' },
-  { name: 'Ithor', sector: 'Mid Rim' },
-  { name: 'Manaan', sector: 'Mid Rim' },
-  { name: 'Eriadu', sector: 'Outer Rim' }
+const PRIORITY_ORDER = ['low', 'normal', 'high', 'critical'];
+
+const TOPIC_DEFINITIONS = [
+  { category: 'traffic', priority: 'normal', noun: 'docking schedules', verb: 'revises', subject: 'port authority' },
+  { category: 'weather', priority: 'low', noun: 'visibility advisory', verb: 'extends', subject: 'weather office' },
+  { category: 'commerce', priority: 'normal', noun: 'commodity index', verb: 'posts', subject: 'market desk' },
+  { category: 'civic', priority: 'low', noun: 'permit hours', verb: 'updates', subject: 'civic council' },
+  { category: 'transit', priority: 'normal', noun: 'shuttle routing', verb: 'adjusts', subject: 'transit office' },
+  { category: 'labor', priority: 'normal', noun: 'dock shift schedule', verb: 'approves', subject: 'loading guild' },
+  { category: 'utility', priority: 'low', noun: 'relay calibration', verb: 'schedules', subject: 'utility office' },
+  { category: 'entertainment', priority: 'low', noun: 'local holovid listing', verb: 'announces', subject: 'culture desk' },
+  { category: 'sports', priority: 'low', noun: 'junior league fixture', verb: 'reschedules', subject: 'sports committee' },
+  { category: 'education', priority: 'low', noun: 'technical seminar', verb: 'opens', subject: 'college registrar' },
+  { category: 'medical', priority: 'normal', noun: 'clinic donation hours', verb: 'expands', subject: 'clinic network' },
+  { category: 'legal', priority: 'low', noun: 'small freight rule', verb: 'clarifies', subject: 'magistrate' },
+  { category: 'agriculture', priority: 'normal', noun: 'crop yield estimate', verb: 'reports', subject: 'agricultural office' },
+  { category: 'shipping', priority: 'normal', noun: 'container backlog', verb: 'logs', subject: 'shipping lane desk' },
+  { category: 'public-safety', priority: 'low', noun: 'registration reminder', verb: 'issues', subject: 'safety office' },
+  { category: 'culture', priority: 'low', noun: 'museum exhibit', verb: 'extends', subject: 'museum board' },
+  { category: 'droids', priority: 'normal', noun: 'motivator repair queue', verb: 'reports', subject: 'droid service center' },
+  { category: 'municipal', priority: 'low', noun: 'records office queue', verb: 'revises', subject: 'public records office' },
+  { category: 'tourism', priority: 'low', noun: 'walking route campaign', verb: 'promotes', subject: 'tourism board' },
+  { category: 'standards', priority: 'low', noun: 'cargo label examples', verb: 'updates', subject: 'standards bureau' },
+  { category: 'food', priority: 'low', noun: 'street vendor permit window', verb: 'reopens', subject: 'food licensing desk' },
+  { category: 'maintenance', priority: 'normal', noun: 'landing-light inspection', verb: 'continues', subject: 'maintenance office' },
+  { category: 'communications', priority: 'normal', noun: 'relay packet timing', verb: 'normalizes', subject: 'comm relay bureau' },
+  { category: 'banking', priority: 'low', noun: 'branch service hours', verb: 'standardizes', subject: 'credit union desk' },
+  { category: 'real-estate', priority: 'low', noun: 'warehouse lease notice', verb: 'publishes', subject: 'property registrar' }
 ];
 
-const STORIES = [
-  {
-    category: 'traffic',
-    priority: 'normal',
-    headline: ({ place }) => `${place} Port Authority Revises Docking Window Schedule`,
-    deck: ({ place }) => `Port officials on ${place} announced minor schedule revisions for commercial docking windows after routine berth inspections ran long.`,
-    body: ({ place }) => `Port officials on ${place} announced minor schedule revisions for commercial docking windows after routine berth inspections ran long. Passenger liners and licensed freighters may see brief queue adjustments, but authorities say standard cargo handling will continue throughout the cycle. Travelers are advised to confirm bay assignments before arrival.`
-  },
-  {
-    category: 'weather',
-    priority: 'low',
-    headline: ({ place }) => `Weather Office Issues Routine Visibility Advisory Near ${place}`,
-    deck: ({ place }) => `The local weather office reports haze, wind shear, or sensor interference near several approach lanes around ${place}.`,
-    body: ({ place }) => `The local weather office reports haze, wind shear, or sensor interference near several approach lanes around ${place}. Flight controllers say the advisory is precautionary and mostly affects small craft using older navigation packages. Commercial pilots are being asked to follow updated beacon guidance.`
-  },
-  {
-    category: 'commerce',
-    priority: 'normal',
-    headline: ({ place }) => `${place} Market Index Closes Slightly Higher On Foodstuffs`,
-    deck: ({ place }) => `Local commodity monitors say foodstuff futures on ${place} moved slightly higher after warehouse clerks reported stronger than expected demand.`,
-    body: ({ place }) => `Local commodity monitors say foodstuff futures on ${place} moved slightly higher after warehouse clerks reported stronger than expected demand. Analysts described the movement as modest and seasonal, with little effect expected beyond wholesalers, ship victualers, and small provisioning firms.`
-  },
-  {
-    category: 'civic',
-    priority: 'low',
-    headline: ({ place }) => `Civic Council On ${place} Extends Permit Filing Hours`,
-    deck: ({ place }) => `The civic council on ${place} extended permit filing hours for traders, contractors, and neighborhood associations.`,
-    body: ({ place }) => `The civic council on ${place} extended permit filing hours for traders, contractors, and neighborhood associations. Officials say the change is intended to reduce wait times at public terminals following a routine software update. Residents may still use standard appointment queues.`
-  },
-  {
-    category: 'transit',
-    priority: 'normal',
-    headline: ({ place }) => `Transit Authority Adds Extra Shuttle Stops Around ${place}`,
-    deck: ({ place }) => `Regional transit coordinators added several temporary shuttle stops around ${place} during peak commuter hours.`,
-    body: ({ place }) => `Regional transit coordinators added several temporary shuttle stops around ${place} during peak commuter hours. The added service is expected to remain in place through the end of the local work cycle while maintenance crews adjust routing signals near the main terminal.`
-  },
-  {
-    category: 'labor',
-    priority: 'normal',
-    headline: ({ place }) => `${place} Loading Crews Approve Revised Break Schedule`,
-    deck: ({ place }) => `Dockside loading crews on ${place} approved a revised break schedule after talks with warehouse supervisors.`,
-    body: ({ place }) => `Dockside loading crews on ${place} approved a revised break schedule after talks with warehouse supervisors. Cargo guild representatives called the agreement practical and said most freight operators should see no change in posted delivery estimates.`
-  },
-  {
-    category: 'utility',
-    priority: 'low',
-    headline: ({ place }) => `Power Grid Office Schedules Overnight Calibration On ${place}`,
-    deck: ({ place }) => `Utility officials on ${place} scheduled an overnight calibration for several district power relays.`,
-    body: ({ place }) => `Utility officials on ${place} scheduled an overnight calibration for several district power relays. The office says residential lights may flicker in a few blocks, but no broad outage is expected. Medical centers and traffic beacons have been placed on reserve supply as a routine precaution.`
-  },
-  {
-    category: 'entertainment',
-    priority: 'low',
-    headline: ({ place }) => `${place} Holovid Awards Announces Local Nominees`,
-    deck: ({ place }) => `The ${place} holovid awards committee released this cycle's local nominees for documentary, drama, and short-form comedy.`,
-    body: ({ place }) => `The ${place} holovid awards committee released this cycle's local nominees for documentary, drama, and short-form comedy. Entertainment analysts expect a quiet awards season, though several small studios are reportedly pleased with the added subscription traffic.`
-  },
-  {
-    category: 'sports',
-    priority: 'low',
-    headline: ({ place }) => `${place} Junior Swoop League Announces Rescheduled Match`,
-    deck: ({ place }) => `The junior swoop league on ${place} rescheduled a regional match after track crews requested extra surface checks.`,
-    body: ({ place }) => `The junior swoop league on ${place} rescheduled a regional match after track crews requested extra surface checks. League officials said tickets remain valid and promised a revised concession voucher for spectators affected by the change.`
-  },
-  {
-    category: 'education',
-    priority: 'low',
-    headline: ({ place }) => `${place} Technical College Opens Droid Maintenance Seminar`,
-    deck: ({ place }) => `A technical college on ${place} opened registration for a short seminar on common droid maintenance errors.`,
-    body: ({ place }) => `A technical college on ${place} opened registration for a short seminar on common droid maintenance errors. Instructors say the course is intended for household owners, small garages, and cargo supervisors who want to reduce preventable service calls.`
-  },
-  {
-    category: 'medical',
-    priority: 'normal',
-    headline: ({ place }) => `Clinic Network On ${place} Requests More Routine Bacta Donations`,
-    deck: ({ place }) => `The clinic network on ${place} asked residents to schedule routine bacta and plasma donations where local law allows.`,
-    body: ({ place }) => `The clinic network on ${place} asked residents to schedule routine bacta and plasma donations where local law allows. Medical administrators emphasized that the request is seasonal and not connected to an emergency. Donor centers will extend hours for the next two local evenings.`
-  },
-  {
-    category: 'legal',
-    priority: 'low',
-    headline: ({ place }) => `${place} Magistrate Clarifies Small Freight Tariff Rule`,
-    deck: ({ place }) => `A magistrate on ${place} issued a clarification on small freight tariff classifications for local haulers.`,
-    body: ({ place }) => `A magistrate on ${place} issued a clarification on small freight tariff classifications for local haulers. The ruling affects forms, labels, and terminal fees, but officials say it should not change most cargo prices for ordinary passengers or independent crews.`
-  },
-  {
-    category: 'agriculture',
-    priority: 'normal',
-    headline: ({ place }) => `${place} Agricultural Office Reports Average Grain Yield`,
-    deck: ({ place }) => `Agricultural monitors near ${place} reported average grain yields after a stable growing cycle.`,
-    body: ({ place }) => `Agricultural monitors near ${place} reported average grain yields after a stable growing cycle. Export brokers described the result as reassuring but not remarkable. Local diners may see small menu changes as farms clear storage space for the next planting rotation.`
-  },
-  {
-    category: 'shipping',
-    priority: 'normal',
-    headline: ({ place }) => `Shipping Lane Desk Posts Minor Container Backlog Near ${place}`,
-    deck: ({ place }) => `The shipping lane desk near ${place} posted a minor container backlog after customs scanners received a firmware update.`,
-    body: ({ place }) => `The shipping lane desk near ${place} posted a minor container backlog after customs scanners received a firmware update. Officials estimate the delay in hours rather than days. Freight houses are asking captains to keep manifests current and avoid duplicate filings.`
-  },
-  {
-    category: 'public-safety',
-    priority: 'low',
-    headline: ({ place }) => `${place} Safety Office Reminds Citizens To Tag Pet Droids`,
-    deck: ({ place }) => `The public safety office on ${place} reminded citizens to update registration tags on pet and companion droids.`,
-    body: ({ place }) => `The public safety office on ${place} reminded citizens to update registration tags on pet and companion droids. Officials say most missing-unit reports involve outdated contact codes rather than theft or malfunction. Registration kiosks will waive late fees for one local week.`
-  },
-  {
-    category: 'culture',
-    priority: 'low',
-    headline: ({ place }) => `${place} Museum Extends Textile Exhibit By Popular Demand`,
-    deck: ({ place }) => `A museum on ${place} extended a textile and trade-route exhibit after strong school attendance.`,
-    body: ({ place }) => `A museum on ${place} extended a textile and trade-route exhibit after strong school attendance. Curators said the added dates will include guided tours, student workshops, and a small display of restored shipping labels from several regional archives.`
-  },
-  {
-    category: 'droids',
-    priority: 'normal',
-    headline: ({ place }) => `Droid Service Centers On ${place} Report Long Waits For Motivator Repairs`,
-    deck: ({ place }) => `Droid service centers on ${place} reported longer wait times for common motivator repairs.`,
-    body: ({ place }) => `Droid service centers on ${place} reported longer wait times for common motivator repairs. Shop owners blame a shipment of mislabeled parts and say basic cleaning, memory checks, and restraining bolt replacement appointments remain available.`
-  },
-  {
-    category: 'municipal',
-    priority: 'low',
-    headline: ({ place }) => `${place} Announces New Queue Numbers For Public Records Office`,
-    deck: ({ place }) => `The public records office on ${place} announced a new queue-number system for licenses, liens, and registry extracts.`,
-    body: ({ place }) => `The public records office on ${place} announced a new queue-number system for licenses, liens, and registry extracts. Officials say the change should reduce duplicate appointments and help visitors estimate how long routine paperwork will take.`
-  },
-  {
-    category: 'tourism',
-    priority: 'low',
-    headline: ({ place }) => `${place} Tourism Board Promotes Off-Season Walking Routes`,
-    deck: ({ place }) => `The tourism board on ${place} promoted several off-season walking routes, small markets, and family restaurants.`,
-    body: ({ place }) => `The tourism board on ${place} promoted several off-season walking routes, small markets, and family restaurants. Travel clerks say the campaign is aimed at budget visitors and crews with one or two idle days between cargo assignments.`
-  },
-  {
-    category: 'standards',
-    priority: 'low',
-    headline: ({ place }) => `Standards Bureau On ${place} Updates Cargo Label Examples`,
-    deck: ({ place }) => `The standards bureau on ${place} updated sample cargo labels for foodstuffs, textiles, and low-risk machine parts.`,
-    body: ({ place }) => `The standards bureau on ${place} updated sample cargo labels for foodstuffs, textiles, and low-risk machine parts. The bureau says the update is instructional and does not create new penalties. Printable templates are available at licensed terminal kiosks.`
-  }
+const PLANET_PREFIXES = [
+  'Arel', 'Besh', 'Canto', 'Daro', 'Eshka', 'Fenn', 'Garel', 'Harlo', 'Iona', 'Jorra',
+  'Keth', 'Lorra', 'Mavi', 'Neral', 'Orra', 'Prenn', 'Quell', 'Ravo', 'Sela', 'Toma',
+  'Ubrik', 'Vanto', 'Wess', 'Xand', 'Yora', 'Zenn', 'Arda', 'Bora', 'Cresh', 'Dova'
+];
+
+const PLANET_SUFFIXES = [
+  'Minor', 'Prime', 'Station', 'Reach', 'Junction', 'Haven', 'Crossing', 'Depot', 'Landing', 'Market'
+];
+
+const PLANET_TERRAINS = [
+  'temperate agri-world', 'dry trade moon', 'orbital depot', 'mining settlement', 'rainy port world',
+  'cold refueling station', 'university enclave', 'warehouse moon', 'coastal city-world', 'desert township',
+  'forest colony', 'industrial satellite', 'canyon world', 'harbor moon', 'frontier service hub'
+];
+
+const SYSTEM_PREFIXES = [
+  'Aurek', 'Besh', 'Cresh', 'Dorn', 'Esk', 'Forn', 'Grek', 'Herf', 'Isk', 'Jenth',
+  'Krill', 'Leth', 'Mern', 'Nesh', 'Osk', 'Peth', 'Qek', 'Resh', 'Senth', 'Trill',
+  'Usk', 'Vev', 'Wesk', 'Xesh', 'Yirt', 'Zerek', 'Arkan', 'Bril', 'Cyrn', 'Drell'
+];
+
+const SYSTEM_SUFFIXES = [
+  'Run', 'Circuit', 'Loop', 'Approach', 'Spur', 'Passage', 'Corridor', 'Reach', 'Locality', 'Shelf'
+];
+
+const SYSTEM_AUTHORITIES = [
+  'regional traffic office', 'port coordination bureau', 'sector civil desk', 'shipping advisory board',
+  'transit safety authority', 'municipal liaison channel', 'freight routing committee', 'standards review office',
+  'commerce liaison desk', 'public works bureau'
+];
+
+const SOURCE_PREFIXES = [
+  'Galaxy', 'Sector', 'Port', 'Trade', 'Transit', 'Market', 'Civic', 'Culture', 'Weather', 'Utility',
+  'Freight', 'Municipal', 'Droid', 'Medical', 'Sports', 'Education', 'Standards', 'Agricultural',
+  'Commuter', 'Regional', 'Local', 'Hyperlane', 'Dockside', 'Administrative', 'Public'
+];
+
+const SOURCE_SUFFIXES = [
+  'News Net', 'Civic Wire', 'Authority Desk', 'Review', 'Local', 'Public Channel', 'Desk', 'Bulletin',
+  'Advisory Service', 'Exchange Wire', 'Relay', 'Affairs Feed', 'Lane Digest', 'Evening Edition',
+  'Service Journal', 'Notice', 'Traffic Report', 'Markets Minute', 'Works Bulletin', 'Observer',
+  'Morning Dispatch', 'Registry Feed', 'Signal', 'Ledger', 'Roundup'
+];
+
+const LEAD_PATTERNS = [
+  ({ topic, place, system }) => `${titleCase(topic.subject)} ${titleCase(topic.verb)} ${titleCase(topic.noun)} On ${place}`,
+  ({ topic, place, system }) => `${place} ${titleCase(topic.noun)} Receives Routine Update`,
+  ({ topic, place, system }) => `${titleCase(topic.subject)} Posts Minor ${titleCase(topic.noun)} Notice Near ${system.name}`,
+  ({ topic, place, system }) => `${place} Officials Confirm Ordinary ${titleCase(topic.noun)} Change`,
+  ({ topic, place, system }) => `${titleCase(topic.noun)} Adjusted Along ${system.name}`,
+  ({ topic, place, system }) => `${titleCase(topic.subject)} Says ${place} Change Remains Routine`,
+  ({ topic, place, system }) => `${place} Residents Advised To Check ${titleCase(topic.noun)}`,
+  ({ topic, place, system }) => `${system.name} Offices Publish ${titleCase(topic.noun)} Reminder`,
+  ({ topic, place, system }) => `${place} Service Counters Update ${titleCase(topic.noun)}`,
+  ({ topic, place, system }) => `Minor ${titleCase(topic.noun)} Change Reported Near ${place}`,
+  ({ topic, place, system }) => `${titleCase(topic.subject)} Opens Public Comment On ${titleCase(topic.noun)}`,
+  ({ topic, place, system }) => `${place} Clerks Note Small Adjustment To ${titleCase(topic.noun)}`
+];
+
+const DECK_PATTERNS = [
+  ({ topic, place, system }) => `Local officials say the change is routine and should only affect a small number of residents, licensed operators, or visiting crews around ${place}.`,
+  ({ topic, place, system }) => `The update covers ordinary service planning near ${place} and along the ${system.name}, with no emergency declaration attached.`,
+  ({ topic, place, system }) => `Administrators described the notice as procedural, saying most travelers and merchants will notice little beyond revised terminal prompts.`,
+  ({ topic, place, system }) => `The advisory was posted after clerks completed a standard review of ${topic.noun} data for the current local cycle.`,
+  ({ topic, place, system }) => `Officials say the matter is expected to remain narrow, boring, and largely confined to normal public-service channels.`,
+  ({ topic, place, system }) => `Residents were encouraged to check appointment kiosks, public boards, or licensed comm terminals before making routine plans.`
+];
+
+const DETAIL_OPENERS = [
+  'Officials emphasized that the update is not connected to any known emergency.',
+  'Clerks said the revision should reduce duplicate filings and shorten routine queues.',
+  'A spokesperson said most affected citizens will only see updated signage or terminal prompts.',
+  'The office asked travelers to keep documents current and avoid submitting duplicate forms.',
+  'Several small businesses welcomed the notice, though most said they expect no major change.',
+  'Administrators called the matter seasonal and described the timing as unremarkable.',
+  'A short maintenance window may affect older public terminals, but backups are already scheduled.',
+  'The advisory is expected to expire automatically unless renewed by ordinary committee vote.',
+  'Local service droids have been updated with the revised notice for visitor assistance.',
+  'Public counters will remain open during normal hours unless otherwise posted.'
+];
+
+const DETAIL_MIDDLES = [
+  'Freight captains were reminded to keep manifest numbers visible during routine inspections.',
+  'Passenger traffic is expected to remain within ordinary projections for the rest of the cycle.',
+  'Residents with existing appointments do not need to refile unless contacted by a clerk.',
+  'The change follows a minor data audit requested by the local administrative office.',
+  'No broad price change is expected, according to market observers familiar with the filing.',
+  'Small vendors may see a one-cycle delay while terminal codes refresh.',
+  'The public records kiosk will carry translated notices in the most common local languages.',
+  'Routine enforcement officers were told to issue warnings before citations during the transition.',
+  'The local chamber described the notice as dull but useful for planning.',
+  'A follow-up memo is expected after the next scheduled committee session.'
+];
+
+const DETAIL_CLOSERS = [
+  'Further updates will be posted through standard public channels.',
+  'Visitors are advised to confirm details before making special trips.',
+  'Officials say the next review is already on the ordinary calendar.',
+  'The change is expected to pass quietly unless local demand shifts.',
+  'Residents can request printed copies at participating service counters.',
+  'Licensed operators should watch for routine comm updates over the next cycle.',
+  'The office says old forms will be accepted through the grace period.',
+  'No additional action is required for most households or visiting crews.',
+  'A brief summary is available at authorized terminal kiosks.',
+  'Public comments may be submitted through the usual civic queue.'
 ];
 
 function titleCase(value) {
@@ -211,37 +179,176 @@ function titleCase(value) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function buildSeed(index) {
-  const dateline = DATELINES[index % DATELINES.length];
-  const story = STORIES[Math.floor(index / DATELINES.length) % STORIES.length];
-  const source = SOURCES[(index + Math.floor(index / DATELINES.length)) % SOURCES.length];
-  const place = dateline.name;
-  const sequence = index + 1;
-  const topic = story.category;
+function slugify(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
+function padAtom(index) {
+  return String(index + 1).padStart(3, '0');
+}
+
+function buildPlanetAtom(index) {
+  const prefix = PLANET_PREFIXES[index % PLANET_PREFIXES.length];
+  const suffix = PLANET_SUFFIXES[Math.floor(index / PLANET_PREFIXES.length) % PLANET_SUFFIXES.length];
+  const sector = SECTORS[index % SECTORS.length];
+  const terrain = PLANET_TERRAINS[(index * 7) % PLANET_TERRAINS.length];
+  const name = `${prefix} ${suffix}`;
   return {
-    id: `holonews-${String(sequence).padStart(3, '0')}`,
-    source,
-    dateline: place,
-    sector: dateline.sector,
-    category: topic,
-    priority: story.priority,
-    tone: 'ambient',
-    era: 'any',
-    headline: story.headline({ place, sector: dateline.sector, source }),
-    deck: story.deck({ place, sector: dateline.sector, source }),
-    body: story.body({ place, sector: dateline.sector, source }),
-    tags: ['holonews', 'ambient', topic, dateline.sector.toLowerCase().replace(/\s+/g, '-')],
-    breakingNews: false,
-    ambient: true
+    id: `planet-${padAtom(index)}`,
+    name,
+    sector,
+    terrain,
+    tags: ['location', slugify(name), slugify(sector), slugify(terrain)]
   };
 }
 
-export const HOLONEWS_SEED_EVENTS = Array.from({ length: 500 }, (_, index) => buildSeed(index));
+function buildSystemAtom(index) {
+  const prefix = SYSTEM_PREFIXES[index % SYSTEM_PREFIXES.length];
+  const suffix = SYSTEM_SUFFIXES[Math.floor(index / SYSTEM_PREFIXES.length) % SYSTEM_SUFFIXES.length];
+  const sector = SECTORS[(index * 5 + 2) % SECTORS.length];
+  const authority = SYSTEM_AUTHORITIES[(index * 11) % SYSTEM_AUTHORITIES.length];
+  const name = `${prefix} ${suffix}`;
+  return {
+    id: `system-${padAtom(index)}`,
+    name,
+    sector,
+    authority,
+    tags: ['system', slugify(name), slugify(sector), slugify(authority)]
+  };
+}
+
+function buildSourceAtom(index) {
+  const prefix = SOURCE_PREFIXES[index % SOURCE_PREFIXES.length];
+  const suffix = SOURCE_SUFFIXES[Math.floor(index / SOURCE_PREFIXES.length) % SOURCE_SUFFIXES.length];
+  const name = `${prefix} ${suffix}`;
+  return {
+    id: `source-${padAtom(index)}`,
+    name,
+    tags: ['source', slugify(name)]
+  };
+}
+
+function buildStoryLeadAtom(index) {
+  const topic = TOPIC_DEFINITIONS[index % TOPIC_DEFINITIONS.length];
+  const headlinePattern = LEAD_PATTERNS[Math.floor(index / TOPIC_DEFINITIONS.length) % LEAD_PATTERNS.length];
+  const deckPattern = DECK_PATTERNS[(index * 7) % DECK_PATTERNS.length];
+  return {
+    id: `lead-${padAtom(index)}`,
+    category: topic.category,
+    priority: topic.priority,
+    topic,
+    headlinePattern,
+    deckPattern,
+    tags: ['lead', topic.category, topic.priority]
+  };
+}
+
+function buildStoryDetailAtom(index) {
+  return {
+    id: `detail-${padAtom(index)}`,
+    opener: DETAIL_OPENERS[index % DETAIL_OPENERS.length],
+    middle: DETAIL_MIDDLES[Math.floor(index / DETAIL_OPENERS.length) % DETAIL_MIDDLES.length],
+    closer: DETAIL_CLOSERS[(index * 13) % DETAIL_CLOSERS.length],
+    tags: ['detail']
+  };
+}
+
+export const HOLONEWS_PLANET_ATOMS = Array.from({ length: HOLONEWS_ATOM_POOL_SIZE }, (_, index) => buildPlanetAtom(index));
+export const HOLONEWS_SYSTEM_ATOMS = Array.from({ length: HOLONEWS_ATOM_POOL_SIZE }, (_, index) => buildSystemAtom(index));
+export const HOLONEWS_SOURCE_ATOMS = Array.from({ length: HOLONEWS_ATOM_POOL_SIZE }, (_, index) => buildSourceAtom(index));
+export const HOLONEWS_STORY_LEAD_ATOMS = Array.from({ length: HOLONEWS_ATOM_POOL_SIZE }, (_, index) => buildStoryLeadAtom(index));
+export const HOLONEWS_STORY_DETAIL_ATOMS = Array.from({ length: HOLONEWS_ATOM_POOL_SIZE }, (_, index) => buildStoryDetailAtom(index));
+
+function pickAtom(pool, index, multiplier, offset = 0) {
+  return pool[((index * multiplier) + offset) % pool.length];
+}
+
+function buildSeed(index) {
+  const sequence = index + 1;
+  const planet = pickAtom(HOLONEWS_PLANET_ATOMS, index, 37, 3);
+  const system = pickAtom(HOLONEWS_SYSTEM_ATOMS, index, 53, 11);
+  const source = pickAtom(HOLONEWS_SOURCE_ATOMS, index, 71, 5);
+  const lead = pickAtom(HOLONEWS_STORY_LEAD_ATOMS, index, 97, 17);
+  const detail = pickAtom(HOLONEWS_STORY_DETAIL_ATOMS, index, 113, 23);
+  const place = planet.name;
+  const topic = lead.topic;
+  const sector = planet.sector || system.sector;
+  const context = { topic, place, sector, system, planet, source };
+  const headline = lead.headlinePattern(context);
+  const deck = lead.deckPattern(context);
+  const body = `${deck} ${detail.opener} ${detail.middle} ${detail.closer}`;
+  const category = lead.category;
+
+  return {
+    id: `holonews-atom-${String(sequence).padStart(5, '0')}`,
+    source: source.name,
+    dateline: place,
+    sector,
+    system: system.name,
+    category,
+    priority: lead.priority,
+    tone: 'ambient',
+    era: 'any',
+    headline,
+    deck,
+    body,
+    tags: [
+      'holonews',
+      'ambient',
+      'atomized',
+      category,
+      slugify(sector),
+      slugify(system.name),
+      ...planet.tags,
+      ...system.tags,
+      ...source.tags,
+      ...lead.tags,
+      ...detail.tags
+    ],
+    breakingNews: false,
+    ambient: true,
+    atomized: true,
+    atoms: {
+      planet: planet.id,
+      system: system.id,
+      source: source.id,
+      lead: lead.id,
+      detail: detail.id
+    }
+  };
+}
+
+export const HOLONEWS_SEED_EVENTS = Array.from({ length: HOLONEWS_SYNTHETIC_STORY_COUNT }, (_, index) => buildSeed(index));
 
 export class HolonewsGenerator {
   static all() {
     return HOLONEWS_SEED_EVENTS;
+  }
+
+  static atomCounts() {
+    return {
+      planets: HOLONEWS_PLANET_ATOMS.length,
+      systems: HOLONEWS_SYSTEM_ATOMS.length,
+      sources: HOLONEWS_SOURCE_ATOMS.length,
+      storyLeads: HOLONEWS_STORY_LEAD_ATOMS.length,
+      storyDetails: HOLONEWS_STORY_DETAIL_ATOMS.length,
+      variants: HOLONEWS_SEED_EVENTS.length
+    };
+  }
+
+  static atomStats() {
+    const counts = this.atomCounts();
+    return [
+      { label: 'Planet atoms', value: counts.planets },
+      { label: 'System atoms', value: counts.systems },
+      { label: 'Source atoms', value: counts.sources },
+      { label: 'Story lead atoms', value: counts.storyLeads },
+      { label: 'Story detail atoms', value: counts.storyDetails },
+      { label: 'Generated variants', value: counts.variants }
+    ];
   }
 
   static count(filters = {}) {
@@ -280,7 +387,7 @@ export class HolonewsGenerator {
 
   static priorities() {
     return [...new Set(HOLONEWS_SEED_EVENTS.map((entry) => entry.priority))]
-      .sort((a, b) => ['low', 'normal', 'high', 'critical'].indexOf(a) - ['low', 'normal', 'high', 'critical'].indexOf(b))
+      .sort((a, b) => PRIORITY_ORDER.indexOf(a) - PRIORITY_ORDER.indexOf(b))
       .map((priority) => ({ value: priority, label: titleCase(priority) }));
   }
 
@@ -298,12 +405,14 @@ export class HolonewsGenerator {
           entry.source,
           entry.dateline,
           entry.sector,
+          entry.system,
           entry.category,
           entry.priority,
           entry.headline,
           entry.deck,
           entry.body,
-          ...(entry.tags ?? [])
+          ...(entry.tags ?? []),
+          ...Object.values(entry.atoms ?? {})
         ].join(' ').toLowerCase();
         if (!haystack.includes(query)) return false;
       }
@@ -324,11 +433,14 @@ export class HolonewsGenerator {
       metadata: {
         holonews: true,
         ambientHolonews: seed.ambient === true,
+        atomizedHolonews: seed.atomized === true,
         breakingNews,
         holonewsSeedId: seed.id,
+        holonewsAtoms: seed.atoms ?? {},
         newsSource: overrides.authorName ?? seed.source,
         dateline: overrides.dateline ?? seed.dateline,
         sector: overrides.sector ?? seed.sector,
+        system: overrides.system ?? seed.system,
         newsTone: seed.tone,
         newsEra: seed.era,
         newsCategory: seed.category,

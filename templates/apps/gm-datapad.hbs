@@ -460,18 +460,23 @@
             <div class="holonews-wire-header">
               <div>
                 <h4>Ambient Wire</h4>
-                <p>Search the 500 deliberately boring background stories. These are for filler news, not galaxy-shaking events.</p>
+                <p>Search the atomized, deliberately boring background wire. It combines planet, system, source, lead, and detail atoms into ordinary filler news, not galaxy-shaking events.</p>
               </div>
               <div class="holonews-wire-stats">
                 <span><strong>{{holonewsWireFilteredCount}}</strong> matching</span>
                 <span><strong>{{holonewsUsedSeedCount}}</strong> already used</span>
+              </div>
+              <div class="holonews-atom-stats" aria-label="HoloNews atom pool summary">
+                {{#each holonewsAtomStats}}
+                <span><strong>{{this.value}}</strong> {{this.label}}</span>
+                {{/each}}
               </div>
             </div>
 
             <form class="holonews-wire-filters" data-holonews-wire-filter-form>
               <label class="holonews-wire-search">
                 <span>Search Wire</span>
-                <input type="search" name="query" value="{{holonewsWireFilters.query}}" placeholder="port, weather, Tatooine, agriculture...">
+                <input type="search" name="query" value="{{holonewsWireFilters.query}}" placeholder="port, weather, planet atom, system, agriculture...">
               </label>
               <label>
                 <span>Topic</span>

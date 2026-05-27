@@ -3032,3 +3032,30 @@
     grid-column: span 1;
   }
 }
+
+.holonews-atom-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  max-width: 520px;
+}
+
+.holonews-atom-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid oklch(var(--swse-accent) / 0.12);
+  background: oklch(var(--swse-panel) / 0.42);
+  color: oklch(var(--swse-accent-text) / 0.58);
+  font-size: 0.62rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.holonews-atom-stats strong {
+  color: oklch(var(--swse-accent-text) / 0.86);
+}
