@@ -70,6 +70,7 @@ export class GMHealingTrigger {
         // restCompleted hook available for Holonet emitters without letting
         // RecoveryMechanics apply a second mechanical rest pass.
         skipMechanicalRecovery: skipMechanicalRecoveryHook,
+        actorIds: targetActors.map(actor => actor?.id).filter(Boolean),
         healed,
         skipped
       });

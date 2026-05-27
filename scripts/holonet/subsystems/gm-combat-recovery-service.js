@@ -15,6 +15,7 @@ import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-e
 import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js';
 import { SecondWindEngine } from '/systems/foundryvtt-swse/scripts/engine/combat/SecondWindEngine.js';
 import { HealingRules } from '/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js';
+import { StatusEffectsMechanics } from '/systems/foundryvtt-swse/scripts/houserules/houserule-status-effects.js';
 
 const MANAGED_ACTOR_TYPES = new Set(['character', 'npc', 'droid', 'vehicle', 'beast']);
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -35,10 +36,11 @@ export class GMCombatRecoveryService {
     const cards = actors.map((actor) => this.buildActorCard(actor));
     const metrics = this.buildMetrics(cards);
     const rules = this.buildRuleSummary();
+    const statusEffects = this.buildStatusEffectOptions();
 
     return {
       pageTitle: 'Combat & Recovery',
-      pageDescription: 'GM command console for healing, rest, encounter reset, condition cleanup, and repair visibility.',
+      pageDescription: 'GM command console for healing, rest, encounter reset, condition cleanup, status effects, and repair visibility.',
       combatRecovery: {
         metrics,
         rules,
@@ -50,6 +52,8 @@ export class GMCombatRecoveryService {
         partyActors: cards.filter((card) => card.partyActor),
         selectedTargetModes: this.buildTargetModes(cards),
         defaultTargetMode: 'party',
+        statusEffects,
+        statusEffectsEnabled: statusEffects.length > 0,
         needsAttention: cards.filter((card) => card.needsAttention),
         hasActiveCombat: Boolean(game.combat?.started || game.combat?.active),
         activeCombatLabel: game.combat?.started || game.combat?.active
@@ -197,6 +201,7 @@ export class GMCombatRecoveryService {
     const kind = isDroid ? 'droid' : (isVehicle ? 'vehicle' : 'organic');
     const ownerNames = this.getOwnerNames(actor);
     const partyActor = this.isPartyActor(actor);
+    const activeStatusEffects = this.getActorStatusEffects(actor);
     const activeEffects = Array.from(actor.effects ?? []).map((effect) => ({
       id: effect.id,
       name: effect.name ?? effect.label ?? 'Effect',
@@ -237,6 +242,8 @@ export class GMCombatRecoveryService {
       isVehicle,
       activeEffects,
       activeEffectCount: activeEffects.length,
+      activeStatusEffects,
+      activeStatusEffectCount: activeStatusEffects.length,
       needsAttention: wounded || downed || ctImpaired || conditionPersistent || swSpent,
       statusChips: this.buildStatusChips({ inCombat, wounded, downed, ctImpaired, conditionPersistent, swSpent, restEligible, repairEligible, isDroid, isVehicle }),
       restNote: this.getRestNote(actor),
@@ -258,6 +265,180 @@ export class GMCombatRecoveryService {
     if (flags.repairEligible) chips.push({ label: 'Repair Only', tone: 'info' });
     if (!chips.length) chips.push({ label: 'Nominal', tone: 'stable' });
     return chips;
+  }
+
+  static buildStatusEffectOptions() {
+    try {
+      return StatusEffectsMechanics.getAvailableEffects()
+        .map((effect) => ({
+          id: effect.id,
+          name: effect.name || effect.id,
+          description: effect.description || '',
+          label: effect.description ? `${effect.name || effect.id} - ${effect.description}` : (effect.name || effect.id)
+        }))
+        .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    } catch (err) {
+      SWSELogger.warn('[GMCombatRecoveryService] Could not build status effect options:', err);
+      return [];
+    }
+  }
+
+  static getActorStatusEffects(actor) {
+    const available = new Map(this.buildStatusEffectOptions().map((effect) => [String(effect.id), effect]));
+    return Array.from(actor?.effects ?? [])
+      .map((effect) => {
+        const effectId = effect?.getFlag?.(SYSTEM_ID, 'statusEffect')
+          ?? effect?.flags?.[SYSTEM_ID]?.statusEffect
+          ?? effect?.flags?.swse?.statusEffect
+          ?? (Array.isArray(effect?.statuses) ? effect.statuses.find((status) => available.has(String(status))) : null);
+        if (!effectId) return null;
+        const definition = available.get(String(effectId));
+        return {
+          id: String(effectId),
+          effectId: String(effectId),
+          documentId: effect.id,
+          name: definition?.name || effect.name || effect.label || String(effectId),
+          description: definition?.description || '',
+          disabled: effect.disabled === true
+        };
+      })
+      .filter(Boolean);
+  }
+
+  static findStatusEffect(effectId) {
+    if (!effectId) return null;
+    return this.buildStatusEffectOptions().find((effect) => String(effect.id) === String(effectId)) ?? null;
+  }
+
+  static async applyStatusEffectToActors({ actors = [], target = null, effectId = '' } = {}) {
+    const effect = this.findStatusEffect(effectId);
+    if (!effect) return { success: false, error: 'Choose a valid status effect to apply.' };
+
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      try {
+        if (StatusEffectsMechanics.hasEffect(actor, effect.id)) {
+          skipped.push({ id: actor.id, name: actor.name, reason: 'already_active' });
+          continue;
+        }
+        const applied = await StatusEffectsMechanics.applyEffect(actor, effect.id);
+        if (applied) affected.push({ id: actor.id, name: actor.name, effectId: effect.id });
+        else skipped.push({ id: actor.id, name: actor.name, reason: 'apply_failed' });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'apply_failed' });
+      }
+    }
+
+    Hooks.callAll('swseGmCombatRecoveryCompleted', {
+      action: 'apply-status-effect',
+      target,
+      effectId: effect.id,
+      affected,
+      skipped
+    });
+
+    const targetLabel = target?.label ? ` to ${target.label}` : '';
+    return {
+      success: true,
+      action: 'apply-status-effect',
+      target,
+      effect,
+      affected,
+      skipped,
+      message: `Applied ${effect.name}${targetLabel}: ${affected.length} affected, ${skipped.length} skipped.`
+    };
+  }
+
+  static async removeStatusEffectFromActors({ actors = [], target = null, effectId = '' } = {}) {
+    const effect = this.findStatusEffect(effectId);
+    if (!effect) return { success: false, error: 'Choose a valid status effect to remove.' };
+
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      try {
+        if (!StatusEffectsMechanics.hasEffect(actor, effect.id)) {
+          skipped.push({ id: actor.id, name: actor.name, reason: 'not_active' });
+          continue;
+        }
+        const removed = await StatusEffectsMechanics.removeEffect(actor, effect.id);
+        if (removed) affected.push({ id: actor.id, name: actor.name, effectId: effect.id });
+        else skipped.push({ id: actor.id, name: actor.name, reason: 'remove_failed' });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'remove_failed' });
+      }
+    }
+
+    Hooks.callAll('swseGmCombatRecoveryCompleted', {
+      action: 'remove-status-effect',
+      target,
+      effectId: effect.id,
+      affected,
+      skipped
+    });
+
+    const targetLabel = target?.label ? ` from ${target.label}` : '';
+    return {
+      success: true,
+      action: 'remove-status-effect',
+      target,
+      effect,
+      affected,
+      skipped,
+      message: `Removed ${effect.name}${targetLabel}: ${affected.length} affected, ${skipped.length} skipped.`
+    };
+  }
+
+  static async clearStatusEffectsFromActors({ actors = [], target = null } = {}) {
+    const available = new Set(this.buildStatusEffectOptions().map((effect) => String(effect.id)));
+    if (!available.size) return { success: false, error: 'Status effects are disabled or no status effect list is available.' };
+
+    const affected = [];
+    const skipped = [];
+    for (const actor of actors) {
+      if (!actor) continue;
+      const ids = Array.from(actor.effects ?? [])
+        .filter((effect) => {
+          const effectId = effect?.getFlag?.(SYSTEM_ID, 'statusEffect')
+            ?? effect?.flags?.[SYSTEM_ID]?.statusEffect
+            ?? effect?.flags?.swse?.statusEffect
+            ?? (Array.isArray(effect?.statuses) ? effect.statuses.find((status) => available.has(String(status))) : null);
+          return effectId && available.has(String(effectId));
+        })
+        .map((effect) => effect.id)
+        .filter(Boolean);
+      if (!ids.length) {
+        skipped.push({ id: actor.id, name: actor.name, reason: 'no_status_effects' });
+        continue;
+      }
+      try {
+        await ActorEngine.deleteActiveEffects(actor, ids, { source: 'gm-combat-recovery-clear-status-effects' });
+        affected.push({ id: actor.id, name: actor.name, removed: ids.length });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || 'clear_failed' });
+      }
+    }
+
+    Hooks.callAll('swseGmCombatRecoveryCompleted', {
+      action: 'clear-status-effects',
+      target,
+      affected,
+      skipped
+    });
+
+    const targetLabel = target?.label ? ` from ${target.label}` : '';
+    const removedCount = affected.reduce((sum, row) => sum + safeNumber(row.removed, 0), 0);
+    return {
+      success: true,
+      action: 'clear-status-effects',
+      target,
+      affected,
+      skipped,
+      message: `Cleared ${removedCount} status effect${removedCount === 1 ? '' : 's'}${targetLabel}: ${affected.length} actor${affected.length === 1 ? '' : 's'} affected, ${skipped.length} skipped.`
+    };
   }
 
   static buildMetrics(cards) {
@@ -349,6 +530,12 @@ export class GMCombatRecoveryService {
         return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'repair' });
       case 'damage-target':
         return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'damage' });
+      case 'apply-status-effect':
+        return this.applyStatusEffectToActors({ actors: target.actors, target, effectId: options.effectId });
+      case 'remove-status-effect':
+        return this.removeStatusEffectFromActors({ actors: target.actors, target, effectId: options.effectId });
+      case 'clear-status-effects':
+        return this.clearStatusEffectsFromActors({ actors: target.actors, target });
       case 'short-rest':
         return this.performRest({ restType: 'short-rest', isFullRest: false, duration: 60, actors: target.actors, target, ...options });
       case 'extended-rest':
@@ -492,6 +679,7 @@ export class GMCombatRecoveryService {
       triggeredByGM: true,
       triggerTime: Date.now(),
       skipMechanicalRecovery: true,
+      actorIds: actors.map(actor => actor?.id).filter(Boolean),
       healed,
       skipped,
       secondWind
@@ -697,6 +885,12 @@ export class GMCombatRecoveryService {
           await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-repair-full');
           return { success: true, message: `${actor.name} repaired to full operational status.` };
         }
+        case 'apply-status-effect':
+          return this.applyStatusEffectToActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId: options.effectId });
+        case 'remove-status-effect':
+          return this.removeStatusEffectFromActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId: options.effectId });
+        case 'clear-status-effects':
+          return this.clearStatusEffectsFromActors({ actors: [actor], target: { label: actor.name, actors: [actor] } });
         case 'short-rest':
           return this.executeGroupAction('short-rest', { targetMode: 'selected', actorIds: [actor.id] });
         case 'extended-rest':

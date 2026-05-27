@@ -2533,7 +2533,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const actorId = ev.currentTarget.dataset.actorId;
         const form = ev.currentTarget.closest('[data-combat-actor-card]');
         const amount = Number(form?.querySelector('[name="recoveryAmount"]')?.value ?? 0) || 0;
-        await this._executeCombatRecoveryActorAction(actorId, action, { amount });
+        const effectId = form?.querySelector('[name="actorStatusEffect"]')?.value || '';
+        await this._executeCombatRecoveryActorAction(actorId, action, { amount, effectId });
       });
     });
   }
@@ -2544,7 +2545,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       .map((input) => input.value)
       .filter(Boolean);
     const amount = Number(pageElement?.querySelector('[name="combatRecoveryGroupAmount"]')?.value ?? 0) || 0;
-    return { targetMode, actorIds, amount };
+    const effectId = pageElement?.querySelector('[name="combatRecoveryStatusEffect"]')?.value || '';
+    return { targetMode, actorIds, amount, effectId };
   }
 
   /**

@@ -2526,6 +2526,18 @@
               <span>HP Amount</span>
               <input type="number" name="combatRecoveryGroupAmount" min="0" step="1" value="5">
             </label>
+            <label class="combat-recovery-status-select">
+              <span>Status Effect</span>
+              <select name="combatRecoveryStatusEffect" {{#unless combatRecovery.statusEffectsEnabled}}disabled{{/unless}}>
+                {{#if combatRecovery.statusEffectsEnabled}}
+                {{#each combatRecovery.statusEffects}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                {{/each}}
+                {{else}}
+                <option value="">Status effects disabled</option>
+                {{/if}}
+              </select>
+            </label>
             <span class="combat-recovery-selected-pill"><strong data-combat-selected-count>0</strong> checked</span>
           </div>
 
@@ -2567,10 +2579,31 @@
 
               <p class="combat-recovery-note">{{this.restNote}}</p>
 
+              {{#if this.activeStatusEffects.length}}
+              <div class="combat-recovery-active-statuses" aria-label="Active status effects">
+                <span>Status:</span>
+                {{#each this.activeStatusEffects}}
+                <strong title="{{this.description}}">{{this.name}}</strong>
+                {{/each}}
+              </div>
+              {{/if}}
+
               <div class="combat-recovery-actor-controls">
                 <label>
                   <span>Amount</span>
                   <input type="number" name="recoveryAmount" min="0" step="1" value="5">
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Status Effect</span>
+                  <select name="actorStatusEffect" {{#unless ../combatRecovery.statusEffectsEnabled}}disabled{{/unless}}>
+                    {{#if ../combatRecovery.statusEffectsEnabled}}
+                    {{#each ../combatRecovery.statusEffects}}
+                    <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                    {{/each}}
+                    {{else}}
+                    <option value="">Status effects disabled</option>
+                    {{/if}}
+                  </select>
                 </label>
                 <div class="combat-recovery-button-row">
                   {{#if this.repairEligible}}
@@ -2586,6 +2619,9 @@
                   <button type="button" class="swse-ui-button" data-combat-actor-action="worsen-condition" data-actor-id="{{this.id}}">CT -</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="reset-condition" data-actor-id="{{this.id}}">Reset CT</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="reset-second-wind" data-actor-id="{{this.id}}">Reset SW</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="apply-status-effect" data-actor-id="{{this.id}}">Apply Status</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="remove-status-effect" data-actor-id="{{this.id}}">Remove Status</button>
+                  <button type="button" class="swse-ui-button danger" data-combat-actor-action="clear-status-effects" data-actor-id="{{this.id}}">Clear Status</button>
                 </div>
               </div>
             </article>
@@ -2618,6 +2654,9 @@
               <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Apply Extended Rest</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-condition">Reset Target Condition Track</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-status-effect">Apply Target Status Effect</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="remove-status-effect">Remove Target Status Effect</button>
+              <button type="button" class="swse-ui-button danger" data-combat-recovery-action="clear-status-effects">Clear Target Status Effects</button>
               <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-second-wind">GM Override: Reset Second Wind</button>
               <button type="button" class="swse-ui-button danger" data-combat-recovery-action="full-organic-recovery">GM Override: Full Organic Recovery</button>
             </div>
