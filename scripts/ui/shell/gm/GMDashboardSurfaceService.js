@@ -58,6 +58,14 @@ export class GMDashboardSurfaceService {
         route: 'bulletin'
       },
       {
+        id: 'jobs',
+        label: 'Contract Queue',
+        value: badgeCounts.jobs ?? 0,
+        detail: `${badgeCounts.jobReview ?? 0} review · ${badgeCounts.jobPayout ?? 0} payout`,
+        tone: (badgeCounts.jobs ?? 0) > 0 ? 'crit' : 'stable',
+        route: 'jobs'
+      },
+      {
         id: 'workspace',
         label: 'Owned Actors',
         value: badgeCounts.workspace ?? 0,
@@ -150,6 +158,7 @@ export class GMDashboardSurfaceService {
       }),
       quickActions: [
         { route: 'bulletin', label: 'Broadcast Bulletin', icon: 'fa-solid fa-tower-broadcast', tone: 'info' },
+        { route: 'jobs', label: 'Open Job Board', icon: 'fa-solid fa-clipboard-list', tone: (badgeCounts.jobs ?? 0) > 0 ? 'crit' : 'stable' },
         { route: 'store', label: 'Open Store Control', icon: 'fa-solid fa-store', tone: 'stable' },
         { route: 'approvals', label: 'Review Approvals', icon: 'fa-solid fa-clipboard-check', tone: (badgeCounts.approvals ?? 0) > 0 ? 'crit' : 'stable' },
         { route: 'healing', label: 'Run Recovery', icon: 'fa-solid fa-heart-pulse', tone: healingStatus.eligible > 0 ? 'warn' : 'stable' },
@@ -268,6 +277,10 @@ export class GMDashboardSurfaceService {
 
     if ((badgeCounts.approvals ?? 0) > 0) {
       alerts.push({ tone: 'crit', label: 'Approvals waiting', detail: `${badgeCounts.approvals} approval${badgeCounts.approvals === 1 ? '' : 's'} require GM review.`, route: 'approvals' });
+    }
+
+    if ((badgeCounts.jobs ?? 0) > 0) {
+      alerts.push({ tone: 'crit', label: 'Job board action', detail: `${badgeCounts.jobReview ?? 0} objective review · ${badgeCounts.jobPayout ?? 0} payout queue.`, route: 'jobs' });
     }
 
     if (!storeStatus.open) {

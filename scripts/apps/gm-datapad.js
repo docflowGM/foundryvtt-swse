@@ -29,6 +29,7 @@ import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/s
 import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
+import { HolonetMessengerService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js";
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonewsGenerator } from "/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js";
@@ -83,6 +84,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.currentPage = 'home';
     this.currentTab = 'options';
     this.currentBulletinSection = 'events';
+    this.selectedJobThreadId = null;
     this.pageData = {};
     this.NS = 'foundryvtt-swse';
     this.bulletinEditor = { section: 'events', mode: 'create', recordId: null };
@@ -147,6 +149,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   async _getHomeBadgeCounts() {
     const bulletinRecords = await HolonetStorage.getAllRecords();
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
+    const jobCounts = await this._getJobBadgeCounts();
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
@@ -171,9 +174,36 @@ export class GMDatapad extends BaseSWSEAppV2 {
       storeApprovals,
       pendingSales,
       store: pendingSales + storeApprovals,
+      jobs: jobCounts.actionable,
+      jobReview: jobCounts.review,
+      jobPayout: jobCounts.payout,
+      jobActive: jobCounts.active,
       healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
+  }
+
+  async _getJobBadgeCounts() {
+    try {
+      const threads = await HolonetStorage.getAllThreads();
+      const jobs = threads.filter((thread) => thread?.metadata?.threadType === 'job');
+      let review = 0;
+      let payout = 0;
+      let active = 0;
+      for (const thread of jobs) {
+        const job = thread.metadata?.job ?? {};
+        const status = String(job.status || 'posted');
+        if (status === 'complete') payout += 1;
+        if (['accepted', 'inProgress', 'review'].includes(status)) active += 1;
+        const objectives = Array.isArray(job.objectives) ? job.objectives : [];
+        review += objectives.filter((objective) => ['claimed', 'submitted', 'pendingReview'].includes(String(objective?.status || ''))).length;
+        if (status === 'review') review += 1;
+      }
+      return { total: jobs.length, review, payout, active, actionable: review + payout };
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load job board badge counts:', err);
+      return { total: 0, review: 0, payout: 0, active: 0, actionable: 0 };
+    }
   }
 
   _getAudienceOptions() {
@@ -706,6 +736,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   _getAppCards(counts = {}) {
     return [
       { id: 'bulletin', code: 'COM', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : '', badgeType: 'info', featured: true },
+      { id: 'jobs', code: 'JOB', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, review queue, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
       { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
       { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
@@ -763,6 +794,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     // Wire page-specific events based on current page
     if (this.currentPage === 'bulletin') {
       await this._wireBulletinEvents(root);
+    } else if (this.currentPage === 'jobs') {
+      await this._wireJobBoardEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
@@ -785,6 +818,73 @@ export class GMDatapad extends BaseSWSEAppV2 {
       logger: SWSELogger
     });
     this._settingsSurfaceController.attach(root);
+  }
+
+  async _wireJobBoardEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-jobs');
+    if (!pageElement) return;
+
+    pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedJobThreadId = event.currentTarget.dataset.jobSelect || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-job-status-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        const status = event.currentTarget.dataset.status;
+        if (!threadId || !status) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-job-objective-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        const objectiveId = event.currentTarget.dataset.objectiveId;
+        const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
+        if (!threadId || !objectiveId || !objectiveStatus) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-payout-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const amount = Number(data.get('amount') || 0);
+        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
+        if (!threadId || !recipientId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout', recipientId, amount, partyFundCutPercent });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-award-items-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
+        if (!threadId || !recipientId || !itemUuids.length) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, itemUuids });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
   }
 
   /**

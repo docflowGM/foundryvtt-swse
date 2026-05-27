@@ -3490,3 +3490,317 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* GM Job Board command surface */
+.gm-datapad-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.job-board-header {
+  align-items: center;
+  gap: 1rem;
+}
+
+.job-board-header-actions,
+.job-board-metrics,
+.job-card-topline,
+.job-card-progress,
+.job-card-footer,
+.job-objective-head,
+.job-objective-rewards,
+.job-objective-actions,
+.job-detail-actions,
+.job-reward-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.job-board-metrics {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  border-radius: 14px;
+  background: rgba(2, 8, 23, 0.55);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.job-board-metrics span {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.62);
+}
+
+.job-board-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 1rem;
+  align-items: start;
+}
+
+.job-board-command,
+.job-board-rail,
+.job-queue-panel,
+.job-board-empty-state {
+  padding: 1rem;
+}
+
+.job-board-section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+}
+
+.job-board-section-header.compact {
+  margin-bottom: 0.65rem;
+}
+
+.job-board-section-header h3,
+.job-board-column h4,
+.job-detail-block h4 {
+  margin: 0;
+}
+
+.job-board-section-header p,
+.job-board-column p,
+.job-board-help,
+.job-card-client,
+.job-card-footer,
+.job-detail-client span,
+.job-participant-row em,
+.job-timeline-row span {
+  color: rgba(203, 213, 225, 0.72);
+  font-size: 0.82rem;
+}
+
+.job-board-columns {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(180px, 1fr));
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.job-board-column {
+  min-width: 180px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.46);
+  padding: 0.6rem;
+}
+
+.job-board-column header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.job-board-column header > span {
+  display: grid;
+  place-items: center;
+  min-width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+}
+
+.job-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.job-board-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(2, 8, 23, 0.66);
+  color: inherit;
+  padding: 0.72rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.job-board-card:hover,
+.job-board-card.attention {
+  border-color: rgba(251, 191, 36, 0.55);
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.12);
+}
+
+.job-board-card.danger {
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.job-board-card.success {
+  border-color: rgba(52, 211, 153, 0.38);
+}
+
+.job-card-title {
+  font-weight: 700;
+  color: rgba(248, 250, 252, 0.96);
+}
+
+.job-card-reward {
+  color: rgba(125, 211, 252, 0.9);
+  font-size: 0.84rem;
+}
+
+.job-column-empty,
+.job-board-empty-state {
+  color: rgba(203, 213, 225, 0.68);
+  border: 1px dashed rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem;
+}
+
+.job-board-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.68);
+  color: rgba(226, 232, 240, 0.88);
+  padding: 0.22rem 0.52rem;
+  font-size: 0.72rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.job-board-chip.attention,
+.job-board-chip.review,
+.job-board-chip.payout {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.12);
+  color: rgb(253, 230, 138);
+}
+
+.job-board-chip.active,
+.job-board-chip.claimed,
+.job-board-chip.open {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(14, 165, 233, 0.12);
+  color: rgb(186, 230, 253);
+}
+
+.job-board-chip.success,
+.job-board-chip.approved,
+.job-board-chip.paid {
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(16, 185, 129, 0.13);
+  color: rgb(187, 247, 208);
+}
+
+.job-board-chip.danger,
+.job-board-chip.failed,
+.job-board-chip.rejected {
+  border-color: rgba(248, 113, 113, 0.42);
+  background: rgba(239, 68, 68, 0.13);
+  color: rgb(254, 202, 202);
+}
+
+.job-board-chip.primary,
+.job-board-chip.required {
+  border-color: rgba(129, 140, 248, 0.42);
+  background: rgba(99, 102, 241, 0.14);
+}
+
+.job-detail-client,
+.job-participant-row,
+.job-timeline-row {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.job-detail-client img,
+.job-participant-row img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.job-detail-client em {
+  display: block;
+  margin-top: 0.2rem;
+  color: rgb(253, 230, 138);
+  font-size: 0.78rem;
+}
+
+.job-detail-actions {
+  margin: 0.85rem 0;
+}
+
+.job-detail-block {
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  padding-top: 0.85rem;
+  margin-top: 0.85rem;
+}
+
+.job-objective-list,
+.job-participant-list,
+.job-timeline,
+.job-queue-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.job-objective-card,
+.job-queue-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(2, 8, 23, 0.55);
+  padding: 0.75rem;
+}
+
+.job-objective-card.review,
+.job-queue-card {
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.job-objective-card p,
+.job-queue-card p {
+  margin: 0.35rem 0;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.job-payout-form {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.job-payout-form label {
+  display: grid;
+  gap: 0.25rem;
+  color: rgba(203, 213, 225, 0.82);
+}
+
+.job-payout-form input,
+.job-payout-form select {
+  width: 100%;
+}
+
+.job-queue-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .job-board-shell,
+  .job-queue-grid {
+    grid-template-columns: 1fr;
+  }
+}

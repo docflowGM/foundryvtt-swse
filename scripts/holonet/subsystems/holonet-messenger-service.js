@@ -28,8 +28,7 @@ const THREAD_TYPE = Object.freeze({
   PARTY: 'party',
   SIDE: 'side',
   NPC: 'npc',
-  JOB: 'job',
-  GAME: 'game'
+  JOB: 'job'
 });
 
 
@@ -219,6 +218,44 @@ function userAvatar(user) {
 
 function safeArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+
+function normalizeJobObjectiveEntries(job = {}) {
+  const entries = safeArray(job.objectives).map((objective, index) => ({
+    ...objective,
+    id: String(objective?.id || objective?.objectiveId || `objective-${index + 1}`),
+    type: String(objective?.type || objective?.tier || (index === 0 ? 'primary' : 'secondary')),
+    status: String(objective?.status || 'open')
+  }));
+  if (entries.length) return entries;
+  return [{
+    id: 'legacy-primary',
+    type: 'primary',
+    title: job.title || 'Complete the posted job',
+    required: true,
+    rewardCredits: parsePositiveCredits(job.rewardCredits),
+    rewardItems: String(job.rewardItems || '').trim(),
+    status: ['complete', 'paid'].includes(String(job.status || 'posted')) ? 'approved' : 'open',
+    statusHistory: []
+  }];
+}
+
+function jobObjectiveLabel(objective = {}) {
+  return String(objective.title || objective.objective || objective.name || objective.id || 'Objective');
+}
+
+function jobObjectiveStatusLabel(status = 'open') {
+  const map = {
+    open: 'Open',
+    claimed: 'Claimed Complete',
+    submitted: 'Submitted',
+    pendingReview: 'Pending Review',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    failed: 'Failed'
+  };
+  return map[status] || String(status || 'Open');
 }
 
 function uniqueRecipients(recipients = []) {
@@ -1214,120 +1251,6 @@ export class HolonetMessengerService {
     return this._gmSendMessage(payload);
   }
 
-
-  static async createGameInvite({ actor, gameId, recipientId, rulesMode = 'republic-senate', title = '', memo = '', creditBuyIn = 0, senderRecipientId = null } = {}) {
-    const payload = {
-      actorId: actor?.id ?? null,
-      gameId: String(gameId || '').trim(),
-      recipientId: String(recipientId || '').trim(),
-      rulesMode: String(rulesMode || 'republic-senate').trim() || 'republic-senate',
-      title: String(title || '').trim(),
-      memo: String(memo || '').trim(),
-      creditBuyIn: parsePositiveCredits(creditBuyIn),
-      senderUserId: game.user?.id ?? null,
-      senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
-    };
-    if (!game.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-game-invite', payload);
-      return { pending: true, requestId, threadId: null };
-    }
-    return this._gmCreateGameInvite(payload);
-  }
-
-  static async _gmCreateGameInvite({ actorId, gameId, recipientId, rulesMode = 'republic-senate', title = '', memo = '', creditBuyIn = 0, senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
-    const cleanGameId = String(gameId || '').trim().toLowerCase();
-    const invitee = this._recipientFromStableId(recipientId);
-    if (!cleanGameId || !invitee) return false;
-
-    const { GameCenterRegistry } = await import('/systems/foundryvtt-swse/scripts/games/game-center-registry.js');
-    const { GameSessionStore } = await import('/systems/foundryvtt-swse/scripts/games/game-session-store.js');
-    const { getGameSettingsSnapshot } = await import('/systems/foundryvtt-swse/scripts/games/game-settings.js');
-    const { GameCreditEscrowService } = await import('/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js');
-    const gameDef = GameCenterRegistry.get(cleanGameId);
-    if (!gameDef) return false;
-
-    const actor = actorId ? game.actors?.get(actorId) : null;
-    const senderRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? senderUserId ?? game.user?.id, senderRecipientId });
-    if (!senderRecipient || senderRecipient.id === invitee.id) return false;
-    const senderLabel = recipientDisplayName(senderRecipient);
-    const inviteeLabel = recipientDisplayName(invitee);
-    const settings = getGameSettingsSnapshot();
-    const requestedBuyIn = parsePositiveCredits(creditBuyIn);
-    const canCreditWager = settings.allowWagers && settings.allowCreditWagers && gameDef.supportsCreditWagers && requestedBuyIn > 0;
-    const safeRulesMode = rulesMode === 'wagered' && canCreditWager ? 'wagered' : 'republic-senate';
-    const cappedBuyIn = safeRulesMode === 'wagered' ? Math.min(requestedBuyIn, Number(settings.maxCreditWager || 0) || requestedBuyIn) : 0;
-    const wagerProfile = safeRulesMode === 'wagered'
-      ? GameCreditEscrowService.buildCreditWagerProfile({ buyIn: cappedBuyIn })
-      : { mode: 'none' };
-    const sessionId = `game_${foundry.utils.randomID(12)}`;
-    const tableTitle = String(title || '').trim() || `${gameDef.title || cleanGameId}: ${senderLabel} vs ${inviteeLabel}`;
-    const hostSeat = {
-      seatId: 'seat_host',
-      type: senderRecipient.id?.startsWith('gm:') ? 'gm' : 'player',
-      userId: senderRecipient.userId ?? senderUserId ?? requesterId ?? null,
-      actorId: actor?.id ?? senderRecipient.actorId ?? null,
-      recipientId: senderRecipient.id,
-      displayName: actor?.name ?? senderLabel,
-      avatar: actor?.img ?? recipientAvatar(senderRecipient),
-      status: 'host'
-    };
-    const guestSeat = {
-      seatId: 'seat_guest',
-      type: invitee.id?.startsWith('persona:') ? 'npc' : (invitee.id?.startsWith('gm:') ? 'gm' : 'player'),
-      userId: invitee.userId ?? null,
-      actorId: invitee.actorId ?? null,
-      recipientId: invitee.id,
-      displayName: inviteeLabel,
-      avatar: recipientAvatar(invitee),
-      status: 'invited'
-    };
-    let session = await GameSessionStore.upsertSession({
-      id: sessionId,
-      gameId: cleanGameId,
-      title: tableTitle,
-      status: 'pending-invite',
-      authorityMode: safeRulesMode === 'wagered' ? 'gm' : 'host',
-      hostUserId: senderRecipient.userId ?? senderUserId ?? requesterId ?? game.user?.id ?? null,
-      hostActorId: actor?.id ?? senderRecipient.actorId ?? null,
-      holonetThreadId: null,
-      holonetMessageId: null,
-      seats: [hostSeat, guestSeat],
-      rulesMode: safeRulesMode,
-      wagerProfile,
-      prizeProfile: { enabled: false },
-      escrow: {},
-      metadata: { createdBy: senderRecipient.id, mode: 'invite', memo: String(memo || '').trim(), creditBuyIn: cappedBuyIn },
-      log: [{ id: foundry.utils.randomID(), at: Date.now(), type: 'game-invite-created', by: senderRecipient.id, data: { recipientId: invitee.id, gameId: cleanGameId } }]
-    });
-
-    const created = await this._gmCreateThread({
-      actorId,
-      body: '',
-      title: tableTitle,
-      threadType: THREAD_TYPE.GAME,
-      recipientIds: [invitee.id],
-      senderUserId: senderUserId ?? requesterId ?? game.user?.id ?? null,
-      senderRecipientId: senderRecipient.id,
-      requestId,
-      requesterId
-    });
-    const thread = await HolonetStorage.getThread(created.threadId);
-    if (!thread) return { sessionId: session.id, requestId };
-    const gameInvite = { sessionId: session.id, gameId: cleanGameId, title: tableTitle, rulesMode: safeRulesMode, creditBuyIn: cappedBuyIn, fromRecipientId: senderRecipient.id, toRecipientId: invitee.id, status: 'pending' };
-    const body = `${senderLabel} invited ${inviteeLabel} to ${gameDef.title || cleanGameId}${safeRulesMode === 'wagered' ? ` for a ${formatCredits(cappedBuyIn)} buy-in` : ''}.${memo ? ` ${memo}` : ''}`;
-    const published = await this._publishSystemMessage(thread, body, { eventType: 'game-invite', gameInvite });
-    const messageId = published?.messageId ?? null;
-    session = await GameSessionStore.upsertSession({
-      ...session,
-      holonetThreadId: thread.id,
-      holonetMessageId: messageId,
-      metadata: { ...(session.metadata || {}), inviteMessageId: messageId, gameInvite }
-    });
-    Hooks.callAll('swseGamesUpdated', { type: 'game-invite-created', sessionId: session.id, gameId: cleanGameId });
-    this._emitMessengerSync(this._threadSyncPayload(thread.id, { messageId, requestId, requesterId }));
-    return { threadId: thread.id, messageId, sessionId: session.id, requestId };
-  }
-
   static async createThread({ actor, body = '', title = '', threadType = THREAD_TYPE.PRIVATE, recipientIds = [], imageUrl = '', attachments = [], senderRecipientId = null }) {
     const payload = {
       actorId: actor?.id ?? null,
@@ -1371,7 +1294,7 @@ export class HolonetMessengerService {
       title = title || 'Party Channel';
     }
 
-    if (requested.some(r => r.id?.startsWith('persona:')) && finalType !== THREAD_TYPE.JOB && finalType !== THREAD_TYPE.GAME) finalType = THREAD_TYPE.NPC;
+    if (requested.some(r => r.id?.startsWith('persona:')) && finalType !== THREAD_TYPE.JOB) finalType = THREAD_TYPE.NPC;
 
     const thread = await HolonetThreadService.createThread(title || this._defaultThreadTitle(requested, finalType), participants, {
       sourceFamily: SOURCE_FAMILY.MESSENGER,
@@ -1537,9 +1460,12 @@ export class HolonetMessengerService {
       posted: 'Posted',
       accepted: 'Accepted',
       inProgress: 'In Progress',
-      complete: 'Complete',
+      review: 'Review',
+      complete: 'Ready to Pay',
       paid: 'Paid',
-      archived: 'Archived'
+      archived: 'Archived',
+      draft: 'Draft',
+      failed: 'Failed'
     };
     return map[status] || String(status || 'Posted');
   }
@@ -2021,8 +1947,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -2030,7 +1956,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -2043,63 +1969,6 @@ export class HolonetMessengerService {
     let needsThreadOnlySync = false;
 
     switch (action) {
-      case 'accept-game-invite': {
-        const { GameSessionStore } = await import('/systems/foundryvtt-swse/scripts/games/game-session-store.js');
-        const { GameCreditEscrowService } = await import('/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js');
-        const record = recordId ? await HolonetStorage.getRecord(recordId) : null;
-        const gameInvite = record?.metadata?.gameInvite || meta.gameInvite || null;
-        const sessionId = gameInvite?.sessionId || meta.gameSessionId || null;
-        const session = sessionId ? GameSessionStore.getSession(sessionId) : null;
-        if (!session) return false;
-        const seat = safeArray(session.seats).find(s => s.recipientId === currentId);
-        if (!seat || seat.status !== 'invited') return false;
-        thread.participants = uniqueRecipients([...(thread.participants ?? []), actorRecipient].filter(Boolean));
-        meta.pendingInvites = safeArray(meta.pendingInvites).filter(r => r.id !== currentId);
-        let updated = await GameSessionStore.upsertSession({
-          ...session,
-          status: 'active',
-          seats: safeArray(session.seats).map(s => s.recipientId === currentId ? { ...s, status: 'accepted' } : s),
-          log: [...safeArray(session.log), { id: foundry.utils.randomID(), at: Date.now(), type: 'game-invite-accepted', by: currentId, data: { threadId: thread.id } }]
-        });
-        if (GameCreditEscrowService.isCreditWager(updated)) {
-          const escrowed = await GameCreditEscrowService.prepareEscrow(updated, { by: currentId });
-          updated = escrowed.session || updated;
-        }
-        await HolonetStorage.saveThread(thread);
-        if (record?.metadata?.gameInvite) {
-          record.metadata.gameInvite = { ...record.metadata.gameInvite, status: 'accepted', acceptedBy: currentId, acceptedAt: nowIso() };
-          await HolonetStorage.saveRecord(record);
-        }
-        await this._publishSystemMessage(thread, `${recipientDisplayName(actorRecipient)} accepted the game invite.`, { eventType: 'game-invite-accepted', gameSessionId: updated.id });
-        Hooks.callAll('swseGamesUpdated', { type: 'game-invite-accepted', sessionId: updated.id, gameId: updated.gameId });
-        break;
-      }
-      case 'decline-game-invite': {
-        const { GameSessionStore } = await import('/systems/foundryvtt-swse/scripts/games/game-session-store.js');
-        const record = recordId ? await HolonetStorage.getRecord(recordId) : null;
-        const gameInvite = record?.metadata?.gameInvite || meta.gameInvite || null;
-        const sessionId = gameInvite?.sessionId || meta.gameSessionId || null;
-        const session = sessionId ? GameSessionStore.getSession(sessionId) : null;
-        if (!session) return false;
-        const seat = safeArray(session.seats).find(s => s.recipientId === currentId);
-        if (!seat || seat.status !== 'invited') return false;
-        meta.pendingInvites = safeArray(meta.pendingInvites).filter(r => r.id !== currentId);
-        meta.declinedBy = Array.from(new Set([...safeArray(meta.declinedBy), currentId]));
-        const updated = await GameSessionStore.upsertSession({
-          ...session,
-          status: 'cancelled',
-          seats: safeArray(session.seats).map(s => s.recipientId === currentId ? { ...s, status: 'declined' } : s),
-          log: [...safeArray(session.log), { id: foundry.utils.randomID(), at: Date.now(), type: 'game-invite-declined', by: currentId, data: { threadId: thread.id } }]
-        });
-        await HolonetStorage.saveThread(thread);
-        if (record?.metadata?.gameInvite) {
-          record.metadata.gameInvite = { ...record.metadata.gameInvite, status: 'declined', declinedBy: currentId, declinedAt: nowIso() };
-          await HolonetStorage.saveRecord(record);
-        }
-        await this._publishSystemMessage(thread, `${recipientDisplayName(actorRecipient)} declined the game invite.`, { eventType: 'game-invite-declined', gameSessionId: updated.id });
-        Hooks.callAll('swseGamesUpdated', { type: 'game-invite-declined', sessionId: updated.id, gameId: updated.gameId });
-        break;
-      }
       case 'accept-invite': {
         const invite = safeArray(meta.pendingInvites).find(r => r.id === currentId);
         if (!invite) return false;
@@ -2217,11 +2086,40 @@ export class HolonetMessengerService {
         if (!isGm) return false;
         meta.job ??= {};
         const nextStatus = String(status || '').trim();
-        if (!['posted', 'accepted', 'inProgress', 'complete', 'paid', 'archived'].includes(nextStatus)) return false;
+        if (!['draft', 'posted', 'accepted', 'inProgress', 'review', 'complete', 'paid', 'archived', 'failed'].includes(nextStatus)) return false;
         meta.job.status = nextStatus;
         meta.job.statusHistory = [...safeArray(meta.job.statusHistory), { status: nextStatus, at: nowIso(), by: requesterId || game.user?.id || null }];
         await HolonetStorage.saveThread(thread);
         await this._publishSystemMessage(thread, `Job status changed to ${this._jobStatusLabel(nextStatus)}.`, { eventType: 'job-status-changed', status: nextStatus });
+        break;
+      }
+      case 'set-job-objective-status': {
+        if (!isGm) return false;
+        meta.job ??= {};
+        const allowedObjectiveStatuses = ['open', 'claimed', 'submitted', 'pendingReview', 'approved', 'rejected', 'failed'];
+        const nextObjectiveStatus = String(objectiveStatus || '').trim();
+        if (!objectiveId || !allowedObjectiveStatuses.includes(nextObjectiveStatus)) return false;
+        const objectives = normalizeJobObjectiveEntries(meta.job);
+        const objective = objectives.find(entry => entry.id === String(objectiveId));
+        if (!objective) return false;
+        objective.status = nextObjectiveStatus;
+        objective.statusHistory = [
+          ...safeArray(objective.statusHistory),
+          { status: nextObjectiveStatus, at: nowIso(), by: requesterId || game.user?.id || null, note: String(objectiveNote || '').trim() }
+        ];
+        meta.job.objectives = objectives;
+        meta.job.statusHistory = [
+          ...safeArray(meta.job.statusHistory),
+          { status: `objective:${nextObjectiveStatus}`, objectiveId: objective.id, at: nowIso(), by: requesterId || game.user?.id || null }
+        ];
+        if (nextObjectiveStatus === 'approved' && String(meta.job.status || '') === 'review') {
+          const required = objectives.filter(entry => entry.required === true || String(entry.type || '').toLowerCase() === 'primary');
+          const allRequiredApproved = required.length > 0 && required.every(entry => String(entry.status || '') === 'approved');
+          const stillNeedsReview = objectives.some(entry => ['claimed', 'submitted', 'pendingReview'].includes(String(entry.status || '')));
+          if (allRequiredApproved && !stillNeedsReview) meta.job.status = 'complete';
+        }
+        await HolonetStorage.saveThread(thread);
+        await this._publishSystemMessage(thread, `Job objective ${jobObjectiveStatusLabel(nextObjectiveStatus)}: ${jobObjectiveLabel(objective)}.`, { eventType: 'job-objective-status-changed', objectiveId: objective.id, status: nextObjectiveStatus });
         break;
       }
       case 'award-job-items': {
