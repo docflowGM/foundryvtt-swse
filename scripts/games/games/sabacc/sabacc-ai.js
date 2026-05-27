@@ -1,4 +1,4 @@
-import { buildSabaccDeck, SABACC_TARGET } from './sabacc-deck.js';
+import { buildSabaccDeck, SABACC_MAX_HAND_SIZE } from './sabacc-deck.js';
 import { evaluateSabaccHand, compareSabaccHands } from './sabacc-rules.js';
 import { buildGameAiProfile, labelForGameAiDifficulty } from '../../ai/game-ai-profile-service.js';
 import { GameMonteCarloService } from '../../ai/game-monte-carlo-service.js';
@@ -96,10 +96,8 @@ function fairDrawPool(state = {}, player = {}, profile = {}) {
 function scoreCardForTarget(card = {}, baseHand = []) {
   const next = [...cloneHand(baseHand), cloneCard(card)];
   const evaluation = evaluateSabaccHand(next);
-  if (evaluation.handType === 'idiots-array') return 100000;
-  if (evaluation.specialWinner) return 90000 + (evaluation.total > 0 ? 1200 : 0);
-  if (evaluation.bombedOut) return -50000 - Math.abs(evaluation.total || 0) * 80;
-  return (evaluation.absoluteValue * 550) - (evaluation.distance * 900) + (evaluation.total > 0 ? 150 : 0);
+  if (evaluation.specialWinner) return 90000 + safeNumber(evaluation.rank, 0) * 0.01;
+  return safeNumber(evaluation.rank, 0) - safeNumber(evaluation.distance, 0) * 1400 + (evaluation.total > 0 ? 120 : 0);
 }
 
 function drawSampleCard(pool = [], profile = {}, baseHand = []) {
@@ -130,10 +128,10 @@ function legalSabaccActions(player = {}, state = {}, profile = {}) {
   const evaluation = currentEvaluation(player);
   const actions = [];
 
-  if (!evaluation.bombedOut) actions.push({ type: 'call-hand' });
+  if (evaluation.canWin) actions.push({ type: 'call-hand' });
   if (hand.length) actions.push(...hand.map(card => ({ type: 'shift-card', cardId: card.id })));
+  if (hand.length < SABACC_MAX_HAND_SIZE) actions.push({ type: 'draw-card' });
   if (hand.length > 1) actions.push(...hand.map(card => ({ type: 'discard-card', cardId: card.id })));
-  actions.push({ type: 'draw-card' });
   actions.push({ type: 'fold' });
 
   if (profile.difficulty === 'easy') {
@@ -180,7 +178,7 @@ function estimateCallWinRate({ hand = [], state = {}, player = {}, profile = {},
   const opponents = activeOpponents(state, player.seatId);
   if (!opponents.length) return 1;
   const ownEvaluation = evaluateSabaccHand(hand);
-  if (ownEvaluation.bombedOut) return 0;
+  if (!ownEvaluation.canWin) return 0;
   const iterations = Math.max(1, Math.floor(samples));
   let wins = 0;
   let ties = 0;
@@ -205,11 +203,8 @@ function estimateCallWinRate({ hand = [], state = {}, player = {}, profile = {},
 }
 
 function handQualityScore(evaluation = {}) {
-  if (evaluation.handType === 'idiots-array') return 150000;
-  if (evaluation.handType === 'pure-sabacc-positive') return 132000;
-  if (evaluation.handType === 'pure-sabacc-negative') return 126000;
-  if (evaluation.bombedOut) return -38000 - Math.abs(evaluation.total || 0) * 160;
-  return (safeNumber(evaluation.absoluteValue, 0) * 640) - (safeNumber(evaluation.distance, 0) * 1050) + (evaluation.total > 0 ? 220 : 0);
+  if (evaluation.specialWinner) return 125000 + safeNumber(evaluation.rank, 0) * 0.01;
+  return safeNumber(evaluation.rank, 0) - safeNumber(evaluation.distance, 0) * 1600 + (evaluation.total > 0 ? 220 : 0);
 }
 
 function pressureSamplesFor(profile = {}) {
@@ -238,7 +233,7 @@ function scoreSabaccOutcome({ player = {}, state = {}, action = {}, simulated = 
   const houseEdge = profile.houseEdge ? 300 : 0;
 
   if (simulated.folded) {
-    if (originalEval.bombedOut) return 7600 + potPressure;
+    if (!originalEval.canWin) return 7600 + potPressure;
     const currentWinRate = estimateCallWinRate({ hand: player.hand || [], state, player, profile, samples: pressureSamplesFor(profile) });
     if (currentWinRate < 0.18) return 1200 + potPressure - handQualityScore(originalEval) * 0.04;
     if (currentWinRate < 0.32 && pot > 200) return 450 + potPressure * 0.35;
@@ -251,14 +246,13 @@ function scoreSabaccOutcome({ player = {}, state = {}, action = {}, simulated = 
     const callThreshold = 0.56 - callBias - (pot > 300 ? 0.04 : 0);
     score += (winRate - callThreshold) * 15500 + potPressure;
     if (evaluation.specialWinner) score += 40000;
-    if (!evaluation.specialWinner && evaluation.absoluteValue < 18) score -= 2800 + potPressure;
+    if (!evaluation.specialWinner && evaluation.distance > 3) score -= 2800 + potPressure;
   }
 
   if (action.type === 'draw-card') {
     score += riskMod * 1800;
-    if (originalEval.absoluteValue >= 21) score -= 2600 - riskMod * 1400;
-    if (originalEval.absoluteValue <= 14) score += 900;
-    if (evaluation.bombedOut) score -= 18000;
+    if (originalEval.distance <= 1) score -= 2600 - riskMod * 1400;
+    if (originalEval.distance >= 6) score += 900;
   }
 
   if (action.type === 'shift-card') {
@@ -283,7 +277,7 @@ function describeAction(action = {}, player = {}, state = {}, profile = {}, resu
   if (action.type === 'call-hand') return `Calls with ${evaluation.label}; ${confidence}% confidence after ${result.samples || 0} sampled outcomes.`;
   if (action.type === 'draw-card') return `Draws because the current hand is ${evaluation.label} and the sampled upside is better than standing.`;
   if (action.type === 'shift-card') return `Shifts a weak card to chase a stronger Sabacc total.`;
-  if (action.type === 'discard-card') return `Discards to reduce distance from ${SABACC_TARGET}.`;
+  if (action.type === 'discard-card') return `Discards to reduce distance from zero.`;
   if (action.type === 'fold') return `Folds because the sampled win rate is too low for the pot pressure.`;
   return `Acts with ${profile.difficultyLabel || profile.difficulty || 'medium'} Sabacc logic.`;
 }
@@ -322,14 +316,14 @@ export class SabaccAi {
       simulationsPerAction: profile.monteCarloSamples,
       timeBudgetMs: profile.monteCarloTimeBudgetMs,
       explorationRate,
-      fallbackAction: { type: evaluation.bombedOut ? 'fold' : 'call-hand' },
+      fallbackAction: { type: 'call-hand' },
       simulateAction: action => {
         const simulated = applySimulatedSabaccAction(player, state, action, profile);
         return scoreSabaccOutcome({ player, state, action, simulated, profile });
       }
     });
 
-    const action = result.action || { type: evaluation.bombedOut ? 'fold' : 'call-hand' };
+    const action = result.action || { type: 'call-hand' };
     return {
       ...action,
       ai: {

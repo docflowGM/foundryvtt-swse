@@ -18,8 +18,12 @@ function cardVm(card = {}, reveal = true) {
     shortLabel: card.shortLabel || String(card.value ?? '?'),
     valueLabel: Number(card.value || 0) > 0 ? `+${card.value}` : String(card.value || 0),
     suitLabel: card.suitLabel || 'Special',
-    isSpecial: card.type === 'special'
-  } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', isSpecial: false };
+    image: card.image || '',
+    hasImage: Boolean(card.image),
+    isSpecial: card.type === 'special' || card.type === 'sylop',
+    isSylop: card.type === 'sylop',
+    sign: card.sign || (Number(card.value || 0) > 0 ? 'positive' : (Number(card.value || 0) < 0 ? 'negative' : 'neutral'))
+  } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', image: '', hasImage: false, isSpecial: false, isSylop: false, sign: 'hidden' };
 }
 
 function titleCase(value = '') {
@@ -80,7 +84,7 @@ export class SabaccViewModel {
       statusLabel: state.statusLabel || state.phase,
       message: state.message || '',
       round: Number(state.round || 0),
-      target: state.target || 23,
+      target: state.target ?? 0,
       activeSeatLabel: state.activeSeatId ? (playableSeats(session).find(seat => seat.seatId === state.activeSeatId)?.displayName || 'Unknown Seat') : '',
       currentSeatId: viewerSeatId,
       showReady: state.phase === 'ready',
@@ -90,6 +94,7 @@ export class SabaccViewModel {
       showComplete: state.phase === 'complete',
       canStartHand: Boolean(currentSeat && ['ready', 'hand-complete'].includes(state.phase)),
       canCancel: Boolean(currentSeat && !['complete', 'cancelled'].includes(state.phase)),
+      canCashOut: Boolean(currentSeat && ['ready', 'hand-complete'].includes(state.phase)),
       betting: {
         currentBet: Number(state.betting?.currentBet || 0),
         minBet: Number(state.betting?.minBet || state.ante || 1),
@@ -112,13 +117,13 @@ export class SabaccViewModel {
         canBettingAct: Boolean(canAct && state.phase === 'betting'),
         canCardAct: Boolean(canAct && state.phase === 'drawing'),
         canCall: Boolean(canAct && state.phase === 'drawing' && !evaluateSabaccHand(viewerPlayer?.hand || []).bombedOut && (viewerPlayer?.hand || []).length > 0),
-        canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 1),
+        canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 2),
         hand: (viewerPlayer?.hand || []).map(card => ({
           ...cardVm(card, true),
           sessionId: session.id,
           seatId: viewerSeatId,
           canShift: Boolean(canAct && state.phase === 'drawing'),
-          canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 1)
+          canDiscard: Boolean(canAct && state.phase === 'drawing' && (viewerPlayer?.hand || []).length > 2)
         }))
       },
       handHistory: (state.handHistory || []).map(hand => ({ ...hand, timeLabel: formatTime(hand.at) })),

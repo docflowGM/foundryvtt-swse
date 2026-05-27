@@ -2,27 +2,20 @@
  * Sabacc deck utilities.
  *
  * Custom state only. This intentionally does not use Foundry Cards.
+ * The default table now uses a Galaxy/Corellian Spike-style deck:
+ * +10 through -10 in three suits, plus two Sylops.
  */
 
-export const SABACC_TARGET = 23;
+export const SABACC_TARGET = 0;
 export const SABACC_STARTING_HAND_SIZE = 2;
+export const SABACC_MAX_HAND_SIZE = 5;
+export const SABACC_MIN_HAND_SIZE = 2;
+export const SABACC_CARD_ASSET_ROOT = '/systems/foundryvtt-swse/assets/cards/sabacc';
 
 export const SABACC_SUITS = Object.freeze([
-  { id: 'sabers', label: 'Sabers', short: 'S' },
-  { id: 'staves', label: 'Staves', short: 'T' },
-  { id: 'flasks', label: 'Flasks', short: 'F' },
-  { id: 'coins', label: 'Coins', short: 'C' }
-]);
-
-export const SABACC_SPECIAL_CARDS = Object.freeze([
-  { id: 'idiot', label: 'The Idiot', short: '0', value: 0, type: 'special', copies: 2, description: 'The zero card used in an Idiot\'s Array.' },
-  { id: 'queen_air_darkness', label: 'Queen of Air and Darkness', short: '-2', value: -2, type: 'special', copies: 2 },
-  { id: 'endurance', label: 'Endurance', short: '-8', value: -8, type: 'special', copies: 2 },
-  { id: 'balance', label: 'Balance', short: '-11', value: -11, type: 'special', copies: 2 },
-  { id: 'demise', label: 'Demise', short: '-13', value: -13, type: 'special', copies: 2 },
-  { id: 'moderation', label: 'Moderation', short: '-14', value: -14, type: 'special', copies: 2 },
-  { id: 'evil_one', label: 'The Evil One', short: '-15', value: -15, type: 'special', copies: 2 },
-  { id: 'star', label: 'The Star', short: '-17', value: -17, type: 'special', copies: 2 }
+  { id: 'circles', label: 'Circles', short: 'C', assetCode: 'cir' },
+  { id: 'triangles', label: 'Triangles', short: 'T', assetCode: 'tri' },
+  { id: 'squares', label: 'Squares', short: 'Q', assetCode: 'sqr' }
 ]);
 
 function randomId(prefix = 'sab') {
@@ -34,45 +27,66 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value ?? null));
 }
 
+function padValue(value) {
+  return String(Math.abs(Number(value || 0))).padStart(2, '0');
+}
+
+export function sabaccCardImagePath({ suit = null, value = 0, type = 'number' } = {}) {
+  if (type === 'sylop' || Number(value || 0) === 0) return `${SABACC_CARD_ASSET_ROOT}/sabacc_sylop_thumb.png`;
+  const suitDef = SABACC_SUITS.find(entry => entry.id === suit || entry.assetCode === suit) || SABACC_SUITS[0];
+  const sign = Number(value || 0) < 0 ? 'neg' : 'pos';
+  return `${SABACC_CARD_ASSET_ROOT}/sabacc_${sign}_${suitDef.assetCode}_${padValue(value)}_thumb.png`;
+}
+
 export function buildSabaccNumberCard(suit, value) {
+  const numeric = Number(value || 0);
+  const signLabel = numeric > 0 ? `+${numeric}` : String(numeric);
   return {
     id: randomId('sab_card'),
-    catalogId: `${suit.id}_${value}`,
+    catalogId: `${suit.id}_${numeric > 0 ? 'p' : 'm'}${Math.abs(numeric)}`,
     type: 'number',
     suit: suit.id,
     suitLabel: suit.label,
     suitShort: suit.short,
-    rank: value,
-    value,
-    label: `${value} of ${suit.label}`,
-    shortLabel: `${value}${suit.short}`
+    rank: Math.abs(numeric),
+    value: numeric,
+    absValue: Math.abs(numeric),
+    sign: numeric > 0 ? 'positive' : 'negative',
+    label: `${signLabel} of ${suit.label}`,
+    shortLabel: `${signLabel}${suit.short}`,
+    image: sabaccCardImagePath({ suit: suit.id, value: numeric, type: 'number' })
   };
 }
 
-export function buildSabaccSpecialCard(special) {
+export function buildSabaccSylopCard(index = 0) {
   return {
     id: randomId('sab_card'),
-    catalogId: special.id,
-    type: 'special',
+    catalogId: `sylop_${index + 1}`,
+    type: 'sylop',
     suit: null,
-    suitLabel: 'Special',
-    suitShort: '★',
-    rank: special.id,
-    value: special.value,
-    label: special.label,
-    shortLabel: special.short,
-    description: special.description || ''
+    suitLabel: 'Sylop',
+    suitShort: '0',
+    rank: 0,
+    value: 0,
+    absValue: 0,
+    sign: 'neutral',
+    label: 'Sylop',
+    shortLabel: 'Sylop',
+    image: sabaccCardImagePath({ type: 'sylop', value: 0 }),
+    description: 'A zero-value Sabacc card. In non-special ties, a Sylop can act as a trump card.'
   };
 }
 
 export function buildSabaccDeck() {
   const cards = [];
   for (const suit of SABACC_SUITS) {
-    for (let value = 1; value <= 15; value += 1) cards.push(buildSabaccNumberCard(suit, value));
+    for (let value = 1; value <= 10; value += 1) {
+      cards.push(buildSabaccNumberCard(suit, value));
+      cards.push(buildSabaccNumberCard(suit, -value));
+    }
   }
-  for (const special of SABACC_SPECIAL_CARDS) {
-    for (let i = 0; i < Number(special.copies || 2); i += 1) cards.push(buildSabaccSpecialCard(special));
-  }
+  cards.push(buildSabaccSylopCard(0));
+  cards.push(buildSabaccSylopCard(1));
   return shuffleSabaccDeck(cards);
 }
 

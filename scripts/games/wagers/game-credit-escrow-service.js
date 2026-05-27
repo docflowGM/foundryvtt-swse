@@ -384,6 +384,112 @@ export class GameCreditEscrowService {
   }
 
 
+  static async settleTableCreditBalances(session = {}, { balances = {}, reason = '' } = {}) {
+    const profile = getCreditProfile(session);
+    if (!profile.enabled) return { ok: true, skipped: true, session };
+    const escrow = ensureEscrow(session);
+    if (escrow.credits.status === 'settled') return { ok: true, skipped: true, session };
+    if (escrow.credits.status !== 'escrowed') return { ok: false, error: 'Credit escrow is not ready to settle.', session };
+
+    const normalizedBalances = Object.fromEntries(Object.entries(balances || {})
+      .map(([seatId, amount]) => [seatId, safeAmount(amount)])
+      .filter(([_seatId, amount]) => amount > 0));
+    const payoutSeats = playableSeats(session).filter(seat => normalizedBalances[seat.seatId] > 0 && actorForSeat(seat));
+    const policies = [];
+    let requiresGmSettlement = false;
+    let blocked = false;
+
+    for (const seat of payoutSeats) {
+      const requestedPayout = safeAmount(normalizedBalances[seat.seatId]);
+      const policy = GameEconomyPolicyService.evaluateCreditSettlement(session, { winnerSeatId: seat.seatId, requestedPayout });
+      policies.push({ seatId: seat.seatId, requestedPayout, policy });
+      if (policy.requiresGmApproval) requiresGmSettlement = true;
+      if (!policy.allowed && safeAmount(policy.approvedPayout) <= 0 && !policy.requiresGmApproval) blocked = true;
+    }
+
+    if (requiresGmSettlement || blocked) {
+      const message = requiresGmSettlement
+        ? 'Exact table-credit cashout requires GM settlement approval.'
+        : 'Exact table-credit cashout was blocked by GM economy policy.';
+      const status = requiresGmSettlement ? 'pending-gm-settlement' : 'settlement-blocked';
+      const updated = await GameSessionStore.upsertSession({
+        ...session,
+        status: requiresGmSettlement ? 'pending-gm-settlement' : session.status,
+        escrow: {
+          ...escrow,
+          credits: {
+            ...escrow.credits,
+            status,
+            payoutMode: 'table-credit-balances',
+            payoutBalances: normalizedBalances,
+            payoutPolicies: policies,
+            pendingSettlementAt: requiresGmSettlement ? now() : escrow.credits.pendingSettlementAt ?? null,
+            settlementMessage: message
+          }
+        },
+        log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: `credit-${status}`, by: game.user?.id ?? null, payoutBalances: normalizedBalances }]
+      });
+      return { ok: false, session: updated, error: message, policies };
+    }
+
+    const payouts = [];
+    let status = 'settled';
+    let message = reason || 'Table credits cashed out.';
+
+    for (const seat of payoutSeats) {
+      const actor = actorForSeat(seat);
+      const requestedPayout = safeAmount(normalizedBalances[seat.seatId]);
+      const policyRecord = policies.find(entry => entry.seatId === seat.seatId);
+      const approvedPayout = safeAmount(policyRecord?.policy?.approvedPayout ?? requestedPayout);
+      if (!actor || approvedPayout <= 0) continue;
+      const payout = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: approvedPayout,
+        reason: reason || `${session.title || 'Game'} table-credit cashout`,
+        transactionContext: policyRecord?.policy?.payoutPolicy === 'refund-buy-in-only' ? 'game-credit-refund' : 'game-credit-payout',
+        audit: baseAudit(session, seat, {
+          escrowId: escrow.credits.escrowId,
+          payoutType: 'table-credit-balances',
+          winnerSeatId: seat.seatId,
+          requestedPayout,
+          approvedPayout,
+          economySource: policyRecord?.policy?.source,
+          economyPolicy: policyRecord?.policy?.payoutPolicy,
+          policyCode: policyRecord?.policy?.code
+        })
+      }, { source: 'GameCreditEscrowService.settleTableCreditBalances' });
+      payouts.push({ ...payout, actorId: actor.id, actorName: actor.name, seatId: seat.seatId, requestedPayout, approvedPayout });
+      if (!payout.success) {
+        status = 'payout-failed';
+        message = payout.error || 'One or more table-credit cashout payouts failed.';
+        break;
+      }
+    }
+
+    const updated = await GameSessionStore.upsertSession({
+      ...session,
+      status: status === 'settled' && session.gameState?.phase === 'complete' ? 'complete' : session.status,
+      escrow: {
+        ...escrow,
+        credits: {
+          ...escrow.credits,
+          status,
+          settledAt: status === 'settled' ? now() : null,
+          payoutMode: 'table-credit-balances',
+          payoutBalances: normalizedBalances,
+          payouts,
+          payoutPolicies: policies,
+          payoutRequested: Object.values(normalizedBalances).reduce((sum, amount) => sum + safeAmount(amount), 0),
+          payoutApproved: payouts.reduce((sum, payout) => sum + safeAmount(payout.approvedPayout), 0),
+          settlementMessage: message
+        }
+      },
+      log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: status === 'settled' ? 'credit-table-balances-settled' : 'credit-table-balances-payout-failed', by: game.user?.id ?? null, payoutBalances: normalizedBalances, error: status === 'payout-failed' ? message : null }]
+    });
+    return { ok: status === 'settled', session: updated, payouts, policies, error: status === 'payout-failed' ? message : null };
+  }
+
+
   static async approvePendingSettlement(session = {}, { payoutAmount = 0, decision = 'custom', reason = '', by = null } = {}) {
     const profile = getCreditProfile(session);
     if (!profile.enabled) return { ok: false, error: 'This session does not have a credit wager.', session };

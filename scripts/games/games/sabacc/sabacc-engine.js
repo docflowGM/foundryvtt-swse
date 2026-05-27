@@ -4,7 +4,7 @@ import { getGameSettingsSnapshot } from '../../game-settings.js';
 import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
 import { GameOpponentProfileService } from '../../game-opponent-profile-service.js';
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
-import { buildSabaccDeck, drawSabaccCard, drawSabaccCards, shuffleSabaccDeck, SABACC_STARTING_HAND_SIZE, SABACC_TARGET } from './sabacc-deck.js';
+import { buildSabaccDeck, drawSabaccCard, drawSabaccCards, shuffleSabaccDeck, SABACC_MAX_HAND_SIZE, SABACC_MIN_HAND_SIZE, SABACC_STARTING_HAND_SIZE, SABACC_TARGET } from './sabacc-deck.js';
 import { compareSabaccHands, evaluateSabaccHand } from './sabacc-rules.js';
 import { SabaccAi, buildSabaccAiProfile } from './sabacc-ai.js';
 
@@ -51,7 +51,8 @@ function drawSabaccCardForState(state) {
   if (!drawn.card) throw new Error('Sabacc deck could not provide a card.');
   return drawn.card;
 }
-function canDiscardSabaccCard(player = {}) { return ensureCardArray(player.hand).length > 1; }
+function canDiscardSabaccCard(player = {}) { return ensureCardArray(player.hand).length > SABACC_MIN_HAND_SIZE; }
+function canDrawSabaccCard(player = {}) { return ensureCardArray(player.hand).length < SABACC_MAX_HAND_SIZE; }
 
 function sessionLogEntry(type, by, data = {}) {
   return { id: randomId('log'), at: now(), type, by: by ?? null, data };
@@ -337,23 +338,70 @@ function resolveHand(session, state) {
     .map(seatId => ({ seatId, cards: state.players[seatId]?.hand || [], evaluation: state.players[seatId]?.evaluation }))
     .filter(entry => !state.players[entry.seatId]?.folded);
   const result = compareSabaccHands(entries);
-  state.phase = result.specialWinner ? 'complete' : 'hand-complete';
-  state.statusLabel = result.specialWinner ? 'GAME COMPLETE' : 'HAND COMPLETE';
+  state.phase = 'hand-complete';
+  state.statusLabel = 'HAND COMPLETE';
   state.activeSeatId = null;
   state.winnerSeatId = result.winnerSeatId;
-  const potWon = result.winnerSeatId ? safeAmount(state.handPot, 0) + (result.specialWinner ? safeAmount(state.sabaccPot, 0) : 0) : 0;
+
+  const handPot = safeAmount(state.handPot, 0);
+  const sabaccPot = safeAmount(state.sabaccPot, 0);
+  let potWon = 0;
+  let sabaccPotWon = 0;
+  let splitSeatIds = [];
+
   if (result.winnerSeatId && state.players[result.winnerSeatId]) {
+    potWon = handPot;
+    if (result.claimsSabaccPot) sabaccPotWon = sabaccPot;
+    awardTableCredits(state, result.winnerSeatId, potWon + sabaccPotWon);
     state.players[result.winnerSeatId].wins = safeAmount(state.players[result.winnerSeatId].wins, 0) + 1;
-    awardTableCredits(state, result.winnerSeatId, potWon);
-    state.players[result.winnerSeatId].lastAction = result.specialWinner ? `Claims the hand pot and Sabacc pot with ${result.reason}.` : `Claims the hand pot with ${result.reason}.`;
+    state.players[result.winnerSeatId].lastAction = result.claimsSabaccPot
+      ? `Claims the hand pot and Sabacc pot with ${result.reason}.`
+      : `Claims the hand pot with ${result.reason}.`;
+    state.handPot = 0;
+    if (result.claimsSabaccPot) state.sabaccPot = 0;
+  } else if (result.tied && Array.isArray(result.tiedSeatIds) && result.tiedSeatIds.length) {
+    splitSeatIds = result.tiedSeatIds;
+    const splitHand = Math.floor(handPot / splitSeatIds.length);
+    const handRemainder = handPot - (splitHand * splitSeatIds.length);
+    const splitSabacc = result.claimsSabaccPot ? Math.floor(sabaccPot / splitSeatIds.length) : 0;
+    const sabaccRemainder = result.claimsSabaccPot ? sabaccPot - (splitSabacc * splitSeatIds.length) : sabaccPot;
+    for (const seatId of splitSeatIds) {
+      awardTableCredits(state, seatId, splitHand + splitSabacc);
+      if (state.players[seatId]) state.players[seatId].lastAction = `Splits the pot with ${result.reason}.`;
+    }
+    potWon = splitHand * splitSeatIds.length;
+    sabaccPotWon = splitSabacc * splitSeatIds.length;
+    state.handPot = handRemainder;
+    state.sabaccPot = sabaccRemainder;
   }
-  state.handHistory.unshift({ id: randomId('sab_hand'), round: state.round, winnerSeatId: result.winnerSeatId, winnerLabel: result.winnerSeatId ? seatLabel(session, result.winnerSeatId) : null, reason: result.reason, specialWinner: result.specialWinner, handPot: safeAmount(state.handPot, 0), sabaccPot: safeAmount(state.sabaccPot, 0), potWon, at: now() });
+
+  state.handHistory.unshift({
+    id: randomId('sab_hand'),
+    round: state.round,
+    winnerSeatId: result.winnerSeatId,
+    winnerLabel: result.winnerSeatId ? seatLabel(session, result.winnerSeatId) : null,
+    tiedSeatIds: splitSeatIds,
+    reason: result.reason,
+    specialWinner: result.specialWinner,
+    claimsSabaccPot: result.claimsSabaccPot,
+    handPot,
+    sabaccPot,
+    potWon,
+    sabaccPotWon,
+    at: now()
+  });
   state.handHistory = state.handHistory.slice(0, 12);
-  state.message = result.winnerSeatId ? `${seatLabel(session, result.winnerSeatId)} wins the hand with ${result.reason}.` : `${result.reason || 'No one wins the hand.'} The hand pot carries forward.`;
-  if (result.specialWinner && result.winnerSeatId) state.message = `${seatLabel(session, result.winnerSeatId)} wins the game with ${result.reason} and takes both pots.`;
-  pushEvent(session, state, result.specialWinner ? 'special-win' : 'hand-won', result.winnerSeatId, state.message, { tone: result.specialWinner ? 'success' : 'neutral', potWon });
-  if (result.winnerSeatId) state.handPot = 0;
-  if (result.specialWinner && result.winnerSeatId) state.sabaccPot = 0;
+
+  if (result.winnerSeatId) {
+    state.message = result.claimsSabaccPot
+      ? `${seatLabel(session, result.winnerSeatId)} wins the hand and Sabacc pot with ${result.reason}.`
+      : `${seatLabel(session, result.winnerSeatId)} wins the hand with ${result.reason}.`;
+  } else if (splitSeatIds.length) {
+    state.message = `${result.reason}. The hand pot${result.claimsSabaccPot ? ' and Sabacc pot' : ''} split between tied players.`;
+  } else {
+    state.message = `${result.reason || 'No one wins the hand.'} The hand pot carries forward.`;
+  }
+  pushEvent(session, state, result.claimsSabaccPot ? 'sabacc-pot-won' : (splitSeatIds.length ? 'hand-tied' : 'hand-won'), result.winnerSeatId, state.message, { tone: result.winnerSeatId || splitSeatIds.length ? 'success' : 'neutral', potWon, sabaccPotWon, splitSeatIds });
   return state;
 }
 
@@ -380,8 +428,8 @@ function chooseAiBettingAction(session, state, seat) {
   const toCall = Math.max(0, currentBet - paid);
   const minRaise = safeAmount(state.betting?.minRaise, safeAmount(state.ante, 5));
   const tableCredits = safeAmount(player?.tableCredits, 0);
-  const strong = evaluation.specialWinner || evaluation.rank >= 1800 || Math.abs(evaluation.total || 0) >= 20;
-  const weak = evaluation.bombedOut || Math.abs(evaluation.total || 0) < 12;
+  const strong = evaluation.specialWinner || Number(evaluation.distance || 99) <= 1 || Number(evaluation.rank || 0) >= 700000000;
+  const weak = !evaluation.canWin || Number(evaluation.distance || 99) >= 7;
   const reckless = ['reckless', 'aggressive', 'showboat', 'desperate'].includes(profile.personality);
   if (currentBet <= 0) {
     if ((strong || reckless) && tableCredits >= minRaise) return { type: 'bet', amount: minRaise, ai: { action: 'bet', reason: 'Opens the betting round from a playable hand.', samples: 0 } };
@@ -501,6 +549,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   player.hand = ensureCardArray(player.hand);
 
   if (action === 'draw-card') {
+    if (!canDrawSabaccCard(player)) return { ok: false, error: `A Sabacc hand cannot hold more than ${SABACC_MAX_HAND_SIZE} cards.` };
     const card = drawSabaccCardForState(state);
     player.hand.push(card);
     attachAiDecision(player, payload);
@@ -513,7 +562,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
 
   if (action === 'discard-card') {
     const cardId = String(payload.cardId || payload.cardInstanceId || '');
-    if (!canDiscardSabaccCard(player)) return { ok: false, error: 'You must keep at least one Sabacc card in hand.' };
+    if (!canDiscardSabaccCard(player)) return { ok: false, error: `You must keep at least ${SABACC_MIN_HAND_SIZE} Sabacc cards in hand.` };
     const index = player.hand.findIndex(card => card.id === cardId);
     if (index < 0) return { ok: false, error: 'Card not found in hand.' };
     const [removed] = player.hand.splice(index, 1);
@@ -550,8 +599,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
 
   if (action === 'call-hand') {
     updateEvaluations(state);
-    if (!player.hand.length) return { ok: false, error: 'You need at least one card to call a Sabacc hand.' };
-    if (player.bombedOut) return { ok: false, error: 'A bombed-out Sabacc hand cannot call.' };
+    if (player.hand.length < SABACC_MIN_HAND_SIZE) return { ok: false, error: `You need at least ${SABACC_MIN_HAND_SIZE} cards to call a Sabacc hand.` };
     player.called = true;
     attachAiDecision(player, payload);
     player.lastAction = 'Calls the hand.';
@@ -571,6 +619,14 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   }
 
   return { ok: false, error: 'Unknown Sabacc action.' };
+}
+
+function tableCreditBalances(session, state) {
+  const balances = {};
+  for (const seat of playableSeats(session.seats)) {
+    balances[seat.seatId] = safeAmount(state.players?.[seat.seatId]?.tableCredits, 0);
+  }
+  return balances;
 }
 
 function buildWagerProfileForSabacc(rulesMode, creditBuyIn) {
@@ -662,6 +718,21 @@ export class SabaccEngine {
       GameNotificationService.emitSessionUpdated(updated, { sabaccPhase: updated.gameState?.phase, action: 'sabacc-cancel-session' });
       return { ok: true, session: updated };
     }
+    if (normalized === 'cash-out') {
+      if (['betting', 'drawing', 'dealing'].includes(state.phase)) return { ok: false, error: 'Finish the current Sabacc hand before cashing out.' };
+      state.phase = 'complete';
+      state.statusLabel = 'COMPLETE';
+      state.activeSeatId = null;
+      state.message = 'Sabacc table closed. Table credits are being cashed out.';
+      pushEvent(session, state, 'cash-out', null, state.message, { tone: 'credits' });
+      let updated = await persist(session, state, 'complete', sessionLogEntry('sabacc-cash-out', requesterId || currentUserId(), { balances: tableCreditBalances(session, state) }));
+      if (GameCreditEscrowService.isCreditWager(updated)) {
+        const settled = await GameCreditEscrowService.settleTableCreditBalances(updated, { balances: tableCreditBalances(updated, state), reason: `${updated.title || 'Sabacc'} table-credit cashout` });
+        updated = settled.session || updated;
+      }
+      GameNotificationService.emitSessionUpdated(updated, { sabaccPhase: updated.gameState?.phase, action: 'sabacc-cash-out' });
+      return { ok: true, session: updated };
+    }
     if (normalized === 'next-hand') {
       if (!['ready', 'hand-complete'].includes(state.phase)) return { ok: false, error: 'A Sabacc hand is already in progress.' };
       beginHand(session, state);
@@ -677,13 +748,6 @@ export class SabaccEngine {
     await processAi(session, state);
     const status = state.phase === 'complete' ? 'complete' : 'active';
     let updated = await persist(session, state, status, sessionLogEntry(`sabacc-${normalized}`, seat.recipientId || seat.seatId, { seatId: seat.seatId }));
-    if (state.phase === 'complete' && GameCreditEscrowService.isCreditWager(updated)) {
-      const settled = await GameCreditEscrowService.settleSession(updated, {
-        winnerSeatId: state.winnerSeatId,
-        reason: `${seatLabel(updated, state.winnerSeatId)} wins ${updated.title || 'Sabacc'}`
-      });
-      updated = settled.session || updated;
-    }
     GameNotificationService.emitSessionUpdated(updated, { sabaccPhase: updated.gameState?.phase, action: `sabacc-${normalized}` });
     return { ok: true, session: updated };
   }

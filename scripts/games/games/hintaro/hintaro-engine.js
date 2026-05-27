@@ -245,6 +245,7 @@ function applyBettingAction(session, state, seat, action, payload = {}) {
   if (action === 'raise') {
     const raiseBy = amount || state.betting.minRaise;
     if (currentBet <= 0) return { ok: false, error: 'Open with a bet first.' };
+    if (raiseBy < state.betting.minRaise) return { ok: false, error: `Minimum raise is ${state.betting.minRaise}.` };
     const moved = moveCreditsToPot(session, state, seat.seatId, toCall + raiseBy);
     if (!moved.ok) return moved;
     state.betting.currentBet = currentBet + raiseBy;
@@ -397,6 +398,11 @@ function buildWagerProfileForHintaro(rulesMode, creditBuyIn) {
 function tableLeaderSeatId(session, state) {
   return getOrder(session).slice().sort((a, b) => safeAmount(state.players?.[b]?.tableCredits, 0) - safeAmount(state.players?.[a]?.tableCredits, 0))[0] || null;
 }
+function tableCreditBalances(session, state) {
+  const balances = {};
+  for (const seat of playableSeats(session.seats)) balances[seat.seatId] = safeAmount(state.players?.[seat.seatId]?.tableCredits, 0);
+  return balances;
+}
 
 export class HintaroEngine {
   static getState(session = {}) { return ensureState(session); }
@@ -475,7 +481,7 @@ export class HintaroEngine {
       state.message = state.winnerSeatIds.length ? `${seatLabel(session, state.winnerSeatIds[0])} leaves the Hintaro table ahead.` : 'Hintaro table closed.';
       let updated = await persist(session, state, 'complete', sessionLogEntry('hintaro-cash-out', requesterId || currentUserId(), { winnerSeatId: state.winnerSeatIds[0] || null }));
       if (GameCreditEscrowService.isCreditWager(updated)) {
-        const settled = await GameCreditEscrowService.settleSession(updated, { winnerSeatId: state.winnerSeatIds[0] || null, reason: state.message });
+        const settled = await GameCreditEscrowService.settleTableCreditBalances(updated, { balances: tableCreditBalances(updated, state), reason: `${updated.title || 'Hintaro'} table-credit cashout` });
         updated = settled.session || updated;
       }
       GameNotificationService.emitSessionUpdated(updated, { hintaroPhase: updated.gameState?.phase, action: 'hintaro-cash-out' });
