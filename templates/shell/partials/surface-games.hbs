@@ -1,9 +1,9 @@
 {{!--
   surface-games.hbs — Holopad Games surface.
 
-  Phase 3 adds playable Pazaak under Republic Senate Rules and a legal
-  all-unlocked side-deck builder: exactly 10 selected side cards, 4 randomly
-  drawn into the match hand.
+  Phase 4 adds playable Pazaak credit buy-ins on top of the legal
+  all-unlocked side-deck builder. Credit escrow/payout/refund goes through
+  TransactionEngine, not direct actor mutation.
 --}}
 
 <div class="swse-shell-surface swse-shell-surface--games swse-games-surface"
@@ -75,7 +75,7 @@
             <div>
               <span class="swse-games-kicker">PAZAAK TABLE</span>
               <h3>{{vm.activeTable.pazaak.title}}</h3>
-              <p>{{vm.activeTable.pazaak.rulesLabel}} · target {{vm.activeTable.pazaak.target}} · first to {{vm.activeTable.pazaak.setsToWin}} sets</p>
+              <p>{{vm.activeTable.pazaak.rulesLabel}} · target {{vm.activeTable.pazaak.target}} · first to {{vm.activeTable.pazaak.setsToWin}} sets{{#if vm.activeTable.pazaak.wager.enabled}} · pot {{vm.activeTable.pazaak.wager.pot}} credits{{/if}}</p>
             </div>
             <div class="swse-pazaak-topbar__right">
               <span>{{vm.activeTable.pazaak.statusLabel}}</span>
@@ -87,6 +87,8 @@
             <b>{{vm.activeTable.pazaak.message}}</b>
             {{#if vm.activeTable.pazaak.showPlaying}}<span>Active turn: {{vm.activeTable.pazaak.activeSeatLabel}}</span>{{/if}}
             {{#if vm.activeTable.pazaak.showComplete}}<span>Winner: {{vm.activeTable.pazaak.winnerLabel}}</span>{{/if}}
+            {{#if vm.activeTable.pazaak.wager.enabled}}<span>Wager: {{vm.activeTable.pazaak.wager.status}} · {{vm.activeTable.pazaak.wager.buyIn}} credit buy-in</span>{{/if}}
+            {{#if vm.activeTable.pazaak.wager.settlementMessage}}<span>Economy policy: {{vm.activeTable.pazaak.wager.settlementMessage}}</span>{{/if}}
           </div>
 
           {{#if vm.activeTable.pazaak.showSetup}}
@@ -149,6 +151,11 @@
                   <div>
                     <b>{{this.displayName}}</b>
                     <span>{{this.statusLabel}} · sets {{this.setsWon}}</span>
+                    {{#if this.isAi}}
+                    <small>AI: {{this.aiDifficultyLabel}} · {{this.aiFairnessLabel}} · {{this.aiPersonalityLabel}}{{#if this.aiForceSensitive}} · Force-sensitive{{/if}}</small>
+                    {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
+                    {{#if this.tableFact}}<small class="swse-pazaak-table-fact">{{this.tableFact}}</small>{{/if}}
+                    {{/if}}
                   </div>
                   <strong>{{this.scoreLabel}}</strong>
                 </header>
@@ -242,7 +249,14 @@
           <section class="swse-pazaak-complete">
             <span class="swse-games-kicker">MATCH COMPLETE</span>
             <h4>{{vm.activeTable.pazaak.winnerLabel}} wins the Pazaak match.</h4>
+            {{#if vm.activeTable.pazaak.wager.enabled}}
+            <p>Credit payout/refund status: {{vm.activeTable.pazaak.wager.status}}. TransactionEngine ledger records remain the source of truth.</p>
+            {{#if vm.activeTable.pazaak.wager.settlementMessage}}<p>{{vm.activeTable.pazaak.wager.settlementMessage}}</p>{{/if}}
+            {{#if vm.activeTable.pazaak.wager.requiresGmSettlement}}<p><b>GM settlement required:</b> this payout exceeded automated AI/house policy gates and is waiting for a GM-adjusted payout phase.</p>{{/if}}
+            {{#if vm.activeTable.pazaak.wager.payoutApproved}}<p>Approved payout: {{vm.activeTable.pazaak.wager.payoutApproved}} credits{{#if vm.activeTable.pazaak.wager.payoutRequested}} / requested {{vm.activeTable.pazaak.wager.payoutRequested}} credits{{/if}}.</p>{{/if}}
+            {{else}}
             <p>Republic Senate Rules were active, so no credits, items, or assets were transferred.</p>
+            {{/if}}
           </section>
           {{/if}}
 
@@ -294,12 +308,19 @@
           <div>
             <span class="swse-games-kicker">INSTANT TABLE</span>
             <strong>Start Pazaak vs AI</strong>
-            <small>Republic Senate Rules. No betting. Side-deck setup happens before the first draw.</small>
+            <small>{{#if vm.showCreditWagerControls}}Credit buy-in.{{else}}Republic Senate Rules. No betting.{{/if}} Side-deck setup happens before the first draw.</small>
           </div>
+          <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
           <label>
             <span>Table Name</span>
             <input type="text" name="title" maxlength="80" placeholder="Optional custom table name">
           </label>
+          {{#if vm.showCreditWagerControls}}
+          <label>
+            <span>Credit Buy-In</span>
+            <input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}">
+          </label>
+          {{/if}}
           <button type="submit" class="swse-games-primary">Start Pazaak Table</button>
         </form>
         {{/if}}
@@ -329,6 +350,12 @@
             <span>Message</span>
             <input type="text" name="memo" maxlength="140" placeholder="Optional table note">
           </label>
+          {{#if vm.showCreditWagerControls}}
+          <label>
+            <span>Credit Buy-In</span>
+            <input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}">
+          </label>
+          {{/if}}
           <button type="submit" class="swse-games-primary">Send Game Request</button>
         </form>
         {{else}}
@@ -367,7 +394,7 @@
         <article class="swse-games-session {{#if this.canRespond}}is-actionable{{/if}}">
           <button type="button" class="swse-games-session__main" data-games-action="open-session" data-session-id="{{this.id}}">
             <b>{{this.title}}</b>
-            <span>{{this.status}} · {{this.rulesMode}}</span>
+            <span>{{this.status}} · {{this.rulesMode}}{{#if this.wager.enabled}} · pot {{this.wager.pot}} cr{{/if}}</span>
             <small>{{this.seatCount}} seats · {{this.updatedAt}}</small>
           </button>
           <div class="swse-games-session__actions">

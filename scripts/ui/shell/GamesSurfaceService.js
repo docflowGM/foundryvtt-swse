@@ -3,6 +3,7 @@ import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-se
 import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
 import { PazaakViewModel } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-view-model.js';
+import { GameCreditEscrowService } from '/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js';
 
 function formatTimestamp(value) {
   if (!value) return '—';
@@ -30,7 +31,7 @@ function mapSession(session, participantId = null) {
   const rawStatus = String(session.status || 'draft');
   const currentSeat = Array.isArray(session.seats) ? session.seats.find(seat => seat.recipientId === participantId) : null;
   const canOpenThread = Boolean(session.holonetThreadId);
-  const isPlayablePazaak = session.gameId === 'pazaak' && ['active', 'paused', 'complete', 'pending-invite'].includes(rawStatus);
+  const isPlayablePazaak = session.gameId === 'pazaak' && ['active', 'paused', 'complete', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus);
   return {
     id: session.id,
     gameId: session.gameId,
@@ -41,11 +42,12 @@ function mapSession(session, participantId = null) {
     seatCount: Array.isArray(session.seats) ? session.seats.length : 0,
     updatedAt: formatTimestamp(session.updatedAt),
     wagerMode: session.wagerProfile?.mode || 'none',
+    wager: GameCreditEscrowService.describe(session),
     currentSeatStatus: currentSeat?.status || '',
     holonetThreadId: session.holonetThreadId || null,
     holonetMessageId: session.holonetMessageId || session.metadata?.inviteMessageId || null,
     canOpenThread,
-    canOpenTable: Boolean(isPlayablePazaak || ['active', 'paused', 'pending-invite'].includes(rawStatus)),
+    canOpenTable: Boolean(isPlayablePazaak || ['active', 'paused', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus)),
     canRespond: Boolean(rawStatus === 'pending-invite' && currentSeat?.status === 'invited')
   };
 }
@@ -97,7 +99,9 @@ export class GamesSurfaceService {
     const summary = GameSessionStore.summarizeForActor(actor);
     const selectedGameId = options.selectedGameId || options.gameId || games[0]?.id || null;
     const selectedGame = GameCenterRegistry.get(selectedGameId) || games[0] || null;
-    const selectedRulesMode = options.rulesMode || settings.defaultRulesMode || selectedGame?.defaultRulesMode || 'republic-senate';
+    let selectedRulesMode = options.rulesMode || settings.defaultRulesMode || selectedGame?.defaultRulesMode || 'republic-senate';
+    if (selectedRulesMode === 'wagered' && !(settings.allowWagers && settings.allowCreditWagers && selectedGame?.supportsCreditWagers)) selectedRulesMode = 'republic-senate';
+    const selectedCreditBuyIn = Math.max(0, Math.min(Number(options.creditBuyIn || 50) || 50, Number(settings.maxCreditWager || 0) || 0));
     const participantId = HolonetMessengerService.getCurrentParticipantId();
     const inviteTargets = await buildInviteTargets(actor, settings, selectedGame);
     const selectedSession = options.sessionId ? GameSessionStore.getSession(options.sessionId) : null;
@@ -142,6 +146,9 @@ export class GamesSurfaceService {
       hasSessions: summary.sessions.length > 0,
       canCreateTables: settings.enabled && (settings.allowPlayerCreatedTables || game.user?.isGM),
       canUseWagers: settings.enabled && settings.allowWagers,
+      canUseCreditWagers: settings.enabled && settings.allowWagers && settings.allowCreditWagers && Boolean(selectedGame?.supportsCreditWagers),
+      showCreditWagerControls: Boolean(settings.enabled && settings.allowWagers && settings.allowCreditWagers && selectedGame?.supportsCreditWagers && selectedRulesMode === 'wagered'),
+      selectedCreditBuyIn,
       maxCreditWager: settings.maxCreditWager,
       modeCards: [
         {
@@ -154,15 +161,16 @@ export class GamesSurfaceService {
         {
           id: 'wagered',
           title: 'Wagered Table',
-          description: 'Credits will route through TransactionEngine; item and asset wagers will route through ActorEngine and asset ownership services in later phases.',
-          enabled: settings.enabled && settings.allowWagers,
+          description: 'Credit buy-ins escrow and pay out through TransactionEngine. Item and asset wagers come in later phases.',
+          enabled: settings.enabled && settings.allowWagers && settings.allowCreditWagers && Boolean(selectedGame?.supportsCreditWagers),
           selected: selectedRulesMode === 'wagered'
         }
       ],
       infrastructureNotes: [
-        'Phase 3 adds playable Pazaak under Republic Senate Rules with a legal 10-card side-deck builder.',
-        'Every Pazaak player is treated as having the full side-card catalog unlocked, but each table still requires exactly 10 selected side-deck cards.',
-        'Credits must settle through TransactionEngine; items and assets must never be mutated directly by game code.'
+        'Phase 4.5 adds GM-configurable economy policy gates for AI/house payouts before TransactionEngine settlement.',
+        'Player-vs-player credit games remain closed-loop: payouts come from the escrowed player pool.',
+        'Republic Senate Rules still skip all economy movement and are the safest default downtime mode.',
+        'Items and assets are still intentionally out of scope for this phase; future phases must route them through ActorEngine and asset ownership services.'
       ]
     };
   }

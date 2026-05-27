@@ -27,8 +27,14 @@ function normalizeSeat(seat = {}) {
     actorId: seat.actorId ? String(seat.actorId) : null,
     recipientId: seat.recipientId ? String(seat.recipientId) : null,
     displayName: String(seat.displayName || 'Unknown Seat'),
+    avatar: seat.avatar ? String(seat.avatar) : null,
+    profession: seat.profession ? String(seat.profession) : null,
+    tableFact: seat.tableFact ? String(seat.tableFact) : null,
     status: String(seat.status || 'invited'),
-    aiProfile: seat.aiProfile ? String(seat.aiProfile) : null
+    aiProfile: seat.aiProfile && typeof seat.aiProfile === 'object' ? clone(seat.aiProfile) : (seat.aiProfile ? String(seat.aiProfile) : null),
+    aiDifficulty: seat.aiDifficulty ? String(seat.aiDifficulty) : null,
+    aiFairness: seat.aiFairness ? String(seat.aiFairness) : null,
+    aiPersonality: seat.aiPersonality ? String(seat.aiPersonality) : null
   };
 }
 
@@ -158,7 +164,7 @@ export class GameSessionStore {
     const sessions = this.listForActor(actor);
     const pendingInvites = sessions.filter(session => session.status === 'inviting' || session.status === 'pending-invite');
     const activeSessions = sessions.filter(session => session.status === 'active' || session.status === 'paused');
-    const pendingApproval = sessions.filter(session => session.status === 'pending-approval' || session.status === 'pending-escrow');
+    const pendingApproval = sessions.filter(session => session.status === 'pending-approval' || session.status === 'pending-escrow' || session.status === 'pending-gm-settlement');
 
     return {
       total: sessions.length,
