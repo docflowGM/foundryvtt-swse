@@ -13,6 +13,7 @@ import { BulletinSource } from '../sources/bulletin-source.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
 import { DELIVERY_STATE, SOURCE_FAMILY, SURFACE_TYPE } from '../contracts/enums.js';
 import { HolonewsGenerator } from '../data/holonews-seed-events.js';
+import { HolonewsAtomPolicy } from './holonews-atom-policy.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'holonewsAutoPublisherPolicy';
@@ -188,7 +189,7 @@ export class HolonewsAutoPublisher {
   static async publishAmbientBatch({ policy, reason = 'scheduled', force = false } = {}) {
     policy = this.normalizePolicy(policy);
     const usedSeedIds = await this.getUsedSeedIds();
-    const seedPool = this.selectSeedPool(policy, usedSeedIds);
+    const seedPool = await this.selectSeedPool(policy, usedSeedIds);
     const count = force ? policy.maxPerRun : policy.maxPerRun;
     const seeds = seedPool.slice(0, count);
 
@@ -243,8 +244,11 @@ export class HolonewsAutoPublisher {
       .map((record) => record.metadata?.holonewsSeedId));
   }
 
-  static selectSeedPool(policy, usedSeedIds = []) {
+  static async selectSeedPool(policy, usedSeedIds = []) {
+    const atomPolicy = await HolonewsAtomPolicy.getPolicy();
+    const atomFilters = HolonewsAtomPolicy.toGeneratorFilters(atomPolicy);
     const filters = {
+      ...atomFilters,
       query: policy.query,
       category: policy.category,
       sector: policy.sector,

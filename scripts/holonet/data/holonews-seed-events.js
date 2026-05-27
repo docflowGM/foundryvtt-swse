@@ -394,28 +394,39 @@ export class HolonewsGenerator {
   static #filter(filters = {}) {
     const query = String(filters.query || filters.q || '').trim().toLowerCase();
     const excludeIds = new Set(Array.isArray(filters.excludeIds) ? filters.excludeIds.filter(Boolean) : []);
+    const excludeCategories = new Set(Array.isArray(filters.excludeCategories) ? filters.excludeCategories.filter(Boolean) : []);
+    const excludeSectors = new Set(Array.isArray(filters.excludeSectors) ? filters.excludeSectors.filter(Boolean) : []);
+    const excludePriorities = new Set(Array.isArray(filters.excludePriorities) ? filters.excludePriorities.filter(Boolean) : []);
+    const excludeAtomIds = new Set(Array.isArray(filters.excludeAtomIds) ? filters.excludeAtomIds.filter(Boolean) : []);
+    const excludeKeywords = (Array.isArray(filters.excludeKeywords) ? filters.excludeKeywords : [])
+      .map((keyword) => String(keyword || '').trim().toLowerCase())
+      .filter(Boolean);
+
     return HOLONEWS_SEED_EVENTS.filter((entry) => {
       if (excludeIds.has(entry.id)) return false;
+      if (excludeCategories.has(entry.category)) return false;
+      if (excludeSectors.has(entry.sector)) return false;
+      if (excludePriorities.has(entry.priority)) return false;
+      if ([entry.id, ...Object.values(entry.atoms ?? {})].some((id) => excludeAtomIds.has(id))) return false;
       if (filters.category && entry.category !== filters.category) return false;
       if (filters.priority && entry.priority !== filters.priority) return false;
       if (filters.sector && entry.sector !== filters.sector) return false;
-      if (query) {
-        const haystack = [
-          entry.id,
-          entry.source,
-          entry.dateline,
-          entry.sector,
-          entry.system,
-          entry.category,
-          entry.priority,
-          entry.headline,
-          entry.deck,
-          entry.body,
-          ...(entry.tags ?? []),
-          ...Object.values(entry.atoms ?? {})
-        ].join(' ').toLowerCase();
-        if (!haystack.includes(query)) return false;
-      }
+      const haystack = [
+        entry.id,
+        entry.source,
+        entry.dateline,
+        entry.sector,
+        entry.system,
+        entry.category,
+        entry.priority,
+        entry.headline,
+        entry.deck,
+        entry.body,
+        ...(entry.tags ?? []),
+        ...Object.values(entry.atoms ?? {})
+      ].join(' ').toLowerCase();
+      if (excludeKeywords.length && excludeKeywords.some((keyword) => haystack.includes(keyword))) return false;
+      if (query && !haystack.includes(query)) return false;
       return true;
     });
   }

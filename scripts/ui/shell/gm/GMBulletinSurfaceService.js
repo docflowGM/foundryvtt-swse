@@ -6,6 +6,8 @@ import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, INTENT_TYPE } from '/syst
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonewsGenerator } from '/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js';
 import { HolonewsAutoPublisher } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js';
+import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js';
+import { HolonewsAtomPolicy } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-atom-policy.js';
 
 export class GMBulletinSurfaceService {
   static async buildViewModel(host) {
@@ -19,6 +21,12 @@ export class GMBulletinSurfaceService {
     const selectedPlayerId = host.selectedPlayerStateActorId || bulletinPlayers[0]?.actorId || null;
     const selectedPlayerState = selectedPlayerId ? await HolonetStateService.getPlayerState(selectedPlayerId) : null;
     const partyState = await HolonetStateService.getPartyState();
+    const selectedPreviewUserId = host.selectedBulletinPreviewUserId || bulletinPlayers[0]?.userId || null;
+    const selectedPreviewPlayer = bulletinPlayers.find((player) => player.userId === selectedPreviewUserId) || bulletinPlayers[0] || null;
+    const selectedPreviewState = selectedPreviewPlayer?.actorId ? await HolonetStateService.getPlayerState(selectedPreviewPlayer.actorId) : selectedPlayerState;
+    const bulletinContacts = (await BulletinContactRegistry.getAll()).map((contact) => BulletinContactRegistry.toView(contact));
+    const holonewsAtomPolicy = await HolonewsAtomPolicy.getPolicy();
+    const atomFilters = HolonewsAtomPolicy.toGeneratorFilters(holonewsAtomPolicy);
 
     const allEventViews = eventRecords.map((record) => host._buildBulletinRecordView(record));
     const eventViews = allEventViews.filter((record) => !record.isHolonews);
@@ -35,6 +43,7 @@ export class GMBulletinSurfaceService {
     const filteredHolonewsViews = this._filterHolonewsRecords(holonewsViews, holonewsArchiveFilters);
     const usedHolonewsSeedIds = [...new Set(holonewsViews.map((record) => record.holonewsSeedId).filter(Boolean))];
     const holonewsWireFilters = {
+      ...atomFilters,
       query: String(host.holonewsWireFilters?.query || '').trim(),
       category: host.holonewsWireFilters?.category || '',
       sector: host.holonewsWireFilters?.sector || '',
@@ -83,7 +92,12 @@ export class GMBulletinSurfaceService {
       audienceTypes: AUDIENCE_TYPE,
       bulletinPlayers,
       selectedPlayerId,
+      selectedPreviewUserId,
+      selectedPreviewPlayer,
       selectedPlayerState,
+      bulletinContacts,
+      holonewsAtomPolicy,
+      holonewsAtomPolicySummary: HolonewsAtomPolicy.summary(holonewsAtomPolicy),
       partyState,
       eventRecords: eventViews,
       holonewsRecords: filteredHolonewsViews,
@@ -110,11 +124,12 @@ export class GMBulletinSurfaceService {
       holonewsCategories: HolonewsGenerator.categories(),
       holonewsSectors: HolonewsGenerator.sectors(),
       holonewsPriorities: HolonewsGenerator.priorities(),
+      holonewsAtomControlPreviewCount: HolonewsGenerator.count(atomFilters),
       messageRecords: messageViews,
       eventEditorRecord,
       holonewsEditorRecord,
       messageEditorRecord,
-      homePreview: this._buildHomePreview({ previewRecord, eventViews, holonewsViews, messageViews, selectedPlayerState, partyState }),
+      homePreview: this._buildHomePreview({ previewRecord, eventViews, holonewsViews, messageViews, selectedPlayerState: selectedPreviewState, partyState, selectedPreviewPlayer }),
       syntaxGuide: [
         '@ mention character, NPC, ship, faction, or location',
         '# add emphasis or a topic tag',
@@ -240,8 +255,24 @@ export class GMBulletinSurfaceService {
       ?? null;
   }
 
-  static _buildHomePreview({ previewRecord, eventViews, holonewsViews, messageViews, selectedPlayerState, partyState }) {
-    const pinned = [...holonewsViews, ...eventViews, ...messageViews].find((record) => record.isPinned && record.state !== DELIVERY_STATE.ARCHIVED) ?? previewRecord;
+  static _buildHomePreview({ previewRecord, eventViews, holonewsViews, messageViews, selectedPlayerState, partyState, selectedPreviewPlayer = null }) {
+    const combined = [...holonewsViews, ...eventViews, ...messageViews];
+    const pinned = combined.find((record) => record.isPinned && record.state !== DELIVERY_STATE.ARCHIVED) ?? previewRecord;
+    const recipientId = selectedPreviewPlayer?.userId ? `player:${selectedPreviewPlayer.userId}` : null;
+    const playerFeed = combined
+      .filter((record) => record.state === DELIVERY_STATE.PUBLISHED)
+      .filter((record) => this._recordTargetsPreviewPlayer(record, selectedPreviewPlayer))
+      .slice(0, 5)
+      .map((record) => ({
+        id: record.id,
+        title: record.title,
+        sender: record.senderName,
+        category: record.category,
+        isUrgent: record.isUrgent,
+        isBreakingNews: record.isBreakingNews,
+        isRead: recipientId ? record.readRecipientIds?.includes(recipientId) : false,
+        imageUrl: record.imageUrl || ''
+      }));
     const state = {
       location: selectedPlayerState?.location || partyState?.location || 'Current location not set',
       objective: selectedPlayerState?.objective || partyState?.objective || 'No active objective',
@@ -249,12 +280,17 @@ export class GMBulletinSurfaceService {
     };
 
     return {
+      selectedPlayerLabel: selectedPreviewPlayer?.actorName || selectedPreviewPlayer?.userName || 'All Players',
+      selectedRecipientId: recipientId,
+      unreadCount: playerFeed.filter((entry) => !entry.isRead).length,
+      feedItems: playerFeed,
       feed: previewRecord ? {
         title: previewRecord.title,
         sender: previewRecord.senderName,
         category: previewRecord.category,
         priority: previewRecord.priority,
         audience: previewRecord.audienceLabel,
+        audienceMatchesSelectedPlayer: this._recordTargetsPreviewPlayer(previewRecord, selectedPreviewPlayer),
         isUrgent: previewRecord.isUrgent,
         isBreakingNews: previewRecord.isBreakingNews,
         imageUrl: previewRecord.imageUrl || '',
@@ -268,5 +304,16 @@ export class GMBulletinSurfaceService {
       } : null,
       state
     };
+  }
+
+  static _recordTargetsPreviewPlayer(record, selectedPreviewPlayer = null) {
+    if (!record || !selectedPreviewPlayer?.userId) return true;
+    const audienceType = record.audienceType || record.audience?.type || AUDIENCE_TYPE.ALL_PLAYERS;
+    const playerIds = record.audiencePlayerIds || record.audience?.playerIds || [];
+    if (audienceType === AUDIENCE_TYPE.ALL_PLAYERS || audienceType === AUDIENCE_TYPE.PARTY) return true;
+    if (audienceType === AUDIENCE_TYPE.ONE_PLAYER || audienceType === AUDIENCE_TYPE.SELECTED_PLAYERS) {
+      return playerIds.includes(selectedPreviewPlayer.userId);
+    }
+    return false;
   }
 }

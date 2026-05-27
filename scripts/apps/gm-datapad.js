@@ -33,6 +33,8 @@ import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/su
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonewsGenerator } from "/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js";
 import { HolonewsAutoPublisher } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js";
+import { BulletinContactRegistry } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js";
+import { HolonewsAtomPolicy } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-atom-policy.js";
 import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
@@ -85,6 +87,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.NS = 'foundryvtt-swse';
     this.bulletinEditor = { section: 'events', mode: 'create', recordId: null };
     this.selectedPlayerStateActorId = null;
+    this.selectedBulletinPreviewUserId = null;
     this.holonewsSeedOffset = 0;
     this.holonewsHideUsedSeeds = true;
     this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
@@ -243,6 +246,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const isUrgent = isBreakingNews || record.metadata?.urgent === true || record.priority === 'critical' || Boolean(notificationProjection);
     const isPinned = Boolean(featuredProjection?.isPinned || record.metadata?.pinAsLastSession);
     const homeSlot = record.metadata?.homeSlot || (isPinned ? 'last-session' : 'feed');
+    const deliverySummary = this._buildBulletinDeliverySummary(record);
 
     return {
       id: record.id,
@@ -281,8 +285,40 @@ export class GMDatapad extends BaseSWSEAppV2 {
       isHomeFeed: Boolean(homeFeedProjection),
       homeSlot,
       homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
+      contactId: record.metadata?.contactId || '',
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
+      deliverySummary,
+      recipientCount: deliverySummary.recipientCount,
+      readCount: deliverySummary.readCount,
+      unreadCount: deliverySummary.unreadCount,
+      readRecipientIds: deliverySummary.readRecipientIds,
+      unreadRecipientIds: deliverySummary.unreadRecipientIds,
+      readStateLabel: `${deliverySummary.readCount}/${deliverySummary.recipientCount} read`,
       recordTone: isBreakingNews ? 'breaking' : (isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft')))
+    };
+  }
+
+  _buildBulletinDeliverySummary(record) {
+    const recipients = Array.isArray(record?.recipients) ? record.recipients : [];
+    const deliveryStates = record?.deliveryStates instanceof Map
+      ? record.deliveryStates
+      : new Map(Object.entries(record?.deliveryStates ?? {}));
+    const readRecipientIds = [];
+    const unreadRecipientIds = [];
+    for (const recipient of recipients) {
+      const recipientId = recipient?.id;
+      if (!recipientId) continue;
+      const state = deliveryStates.get(recipientId) ?? {};
+      if (state.readAt) readRecipientIds.push(recipientId);
+      else unreadRecipientIds.push(recipientId);
+    }
+    return {
+      recipientCount: recipients.length,
+      deliveredCount: recipients.filter((recipient) => deliveryStates.has(recipient?.id)).length,
+      readCount: readRecipientIds.length,
+      unreadCount: unreadRecipientIds.length,
+      readRecipientIds,
+      unreadRecipientIds
     };
   }
 
@@ -982,7 +1018,48 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    pageElement.querySelectorAll('[data-select-bulletin-preview-user]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedBulletinPreviewUserId = event.currentTarget.dataset.selectBulletinPreviewUser || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-save-contact"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget.closest('form') || pageElement.querySelector('[data-bulletin-contact-form]');
+        if (!form) return;
+        await this._saveBulletinContact(new FormData(form));
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-delete-contact"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._deleteBulletinContact(event.currentTarget.dataset.contactId);
+      });
+    });
+
+    const atomPolicyForm = pageElement.querySelector('[data-holonews-atom-policy-form]');
+    if (atomPolicyForm) {
+      atomPolicyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveHolonewsAtomPolicy(new FormData(atomPolicyForm));
+      });
+    }
+
+    pageElement.querySelectorAll('[data-action="holonews-reset-atom-policy"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._resetHolonewsAtomPolicy();
+      });
+    });
+
+    this._wireBulletinContactSelectors(pageElement);
     this._wireBulletinImagePickers(pageElement);
+    this._wireBulletinMediaDrops(pageElement);
     this._wireBulletinLivePreview(pageElement);
 
     const eventsForm = pageElement.querySelector('[data-bulletin-form="events"]');
@@ -1073,6 +1150,63 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
   }
 
+  _wireBulletinContactSelectors(pageElement) {
+    pageElement.querySelectorAll('[data-bulletin-contact-select]').forEach((select) => {
+      select.addEventListener('change', () => {
+        const option = select.selectedOptions?.[0];
+        const form = select.closest('form');
+        if (!form || !option || !option.value) return;
+        const assignments = {
+          authorName: option.dataset.label || option.dataset.name || '',
+          imageUrl: option.dataset.imageUrl || '',
+          dateline: option.dataset.dateline || '',
+          sector: option.dataset.sector || '',
+          newsCategory: option.dataset.defaultCategory || '',
+          category: option.dataset.defaultCategory || ''
+        };
+        for (const [name, value] of Object.entries(assignments)) {
+          if (!value) continue;
+          const field = form.querySelector(`[name="${name}"]`);
+          if (field) {
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      });
+    });
+  }
+
+  _wireBulletinMediaDrops(pageElement) {
+    pageElement.querySelectorAll('[data-bulletin-image-dropzone]').forEach((dropzone) => {
+      const input = dropzone.querySelector('[data-bulletin-image-input]') || dropzone.closest('form')?.querySelector('[data-bulletin-image-input]');
+      if (!input) return;
+      const setPath = (path) => {
+        input.value = path || '';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropzone.classList.add('is-drag-over');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-drag-over'));
+      dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('is-drag-over');
+        const text = event.dataTransfer?.getData('text/plain') || event.dataTransfer?.getData('text/uri-list') || '';
+        const file = event.dataTransfer?.files?.[0];
+        if (text) setPath(text.trim());
+        else if (file?.path) setPath(file.path);
+        else if (file?.name) ui?.notifications?.warn?.('Drop a Foundry asset path or use Browse; browser file drops do not expose a world-safe path.');
+      });
+      dropzone.addEventListener('paste', (event) => {
+        const text = event.clipboardData?.getData('text/plain') || '';
+        if (text) setPath(text.trim());
+      });
+    });
+  }
+
   _wireBulletinLivePreview(pageElement) {
     const activeForm = pageElement.querySelector('[data-bulletin-form="events"], [data-bulletin-form="holonews"], [data-bulletin-form="messages"]');
     const preview = pageElement.querySelector('[data-bulletin-live-preview]');
@@ -1154,6 +1288,62 @@ export class GMDatapad extends BaseSWSEAppV2 {
     setText('[data-preview-state-situation]', 'Awaiting new instructions.');
   }
 
+  async _saveBulletinContact(formData) {
+    if (!game.user?.isGM) return;
+    const name = String(formData.get('name') || '').trim();
+    if (!name) {
+      ui?.notifications?.warn?.('Contact/source name is required.');
+      return;
+    }
+    await BulletinContactRegistry.saveContact({
+      id: String(formData.get('id') || '').trim() || undefined,
+      kind: String(formData.get('kind') || 'source').trim(),
+      name,
+      label: String(formData.get('label') || name).trim(),
+      imageUrl: String(formData.get('imageUrl') || '').trim(),
+      dateline: String(formData.get('dateline') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      defaultCategory: String(formData.get('defaultCategory') || 'general').trim(),
+      notes: String(formData.get('notes') || '').trim()
+    });
+    ui?.notifications?.info?.('Bulletin source/contact saved.');
+    await this.render(false);
+  }
+
+  async _deleteBulletinContact(contactId) {
+    if (!game.user?.isGM || !contactId) return;
+    const ok = await BulletinContactRegistry.deleteContact(contactId);
+    if (!ok) ui?.notifications?.warn?.('That contact could not be deleted. Built-in contacts are protected.');
+    else ui?.notifications?.info?.('Bulletin source/contact deleted.');
+    await this.render(false);
+  }
+
+  async _saveHolonewsAtomPolicy(formData) {
+    if (!game.user?.isGM) return;
+    const splitLines = (value) => String(value || '')
+      .split(/[\n,]+/)
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+    await HolonewsAtomPolicy.savePolicy({
+      disabledCategories: formData.getAll('disabledCategories').filter(Boolean),
+      disabledSectors: formData.getAll('disabledSectors').filter(Boolean),
+      disabledPriorities: formData.getAll('disabledPriorities').filter(Boolean),
+      blockedAtomIds: splitLines(formData.get('blockedAtomIds')),
+      blockedKeywords: splitLines(formData.get('blockedKeywords'))
+    });
+    this.holonewsSeedOffset = 0;
+    ui?.notifications?.info?.('HoloNews atom controls saved.');
+    await this.render(false);
+  }
+
+  async _resetHolonewsAtomPolicy() {
+    if (!game.user?.isGM) return;
+    await HolonewsAtomPolicy.resetPolicy();
+    this.holonewsSeedOffset = 0;
+    ui?.notifications?.info?.('HoloNews atom controls reset.');
+    await this.render(false);
+  }
+
   async _saveBulletinRecord(formData, section) {
     const recordId = formData.get('recordId') || null;
     const shouldPublish = formData.get('submitMode') === 'publish';
@@ -1167,6 +1357,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pinAsLastSession = formData.get('pinAsLastSession') === 'on';
     const homeSlot = pinAsLastSession ? 'last-session' : (formData.get('homeSlot') || 'feed');
     const imageUrl = String(formData.get('imageUrl') || '').trim();
+    const contactId = String(formData.get('contactId') || '').trim();
 
     const baseData = {
       id: recordId || undefined,
@@ -1187,6 +1378,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         pinAsLastSession,
         homeSlot,
         imageUrl,
+        contactId,
         bulletinHomeRole: homeSlot,
         bulletinConsoleVersion: isHolonews ? 3 : 2,
         holonews: isHolonews,
@@ -1225,6 +1417,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     if (pinAsLastSession) {
       await this._unpinOtherBulletins(record.id);
+    }
+
+    if (contactId) {
+      await BulletinContactRegistry.markUsed(contactId);
     }
 
     this.bulletinEditor = { section, mode: 'create', recordId: null };
