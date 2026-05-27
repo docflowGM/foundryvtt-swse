@@ -63,6 +63,11 @@
         vm=shellSurfaceVm}}
   {{/if}}
 
+  {{#if (eq shellSurface "games")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-games.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
   {{#if (eq shellSurface "workbench")}}
     {{> "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs"
         vm=shellSurfaceVm}}

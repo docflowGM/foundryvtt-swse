@@ -192,11 +192,22 @@
         <p class="page-subtitle">{{pageDescription}}</p>
       </div>
 
+      <div class="bulletin-console-metrics" aria-label="Bulletin console status">
+        <span><strong>{{bulletinStats.live}}</strong> Live</span>
+        <span><strong>{{bulletinStats.drafts}}</strong> Drafts</span>
+        <span><strong>{{bulletinStats.urgent}}</strong> Alerts</span>
+        <span><strong>{{bulletinStats.pinned}}</strong> Last Session</span>
+        <span><strong>{{bulletinStats.archived}}</strong> Archived</span>
+      </div>
+
       <div class="bulletin-shell">
         <aside class="bulletin-nav-grid">
           {{#each bulletinNav}}
           <button class="bulletin-nav-card {{#if (eq ../bulletinSection this.id)}}is-active{{/if}}" data-bulletin-section="{{this.id}}">
-            <span class="bulletin-nav-label">{{this.label}}</span>
+            <span class="bulletin-nav-copy">
+              <span class="bulletin-nav-label">{{this.label}}</span>
+              <span class="bulletin-nav-hint">{{this.hint}}</span>
+            </span>
             {{#if this.count}}<span class="bulletin-nav-count">{{this.count}}</span>{{/if}}
           </button>
           {{/each}}
@@ -236,6 +247,13 @@
                 <span>Published By</span>
                 <input type="text" name="authorName" value="{{eventEditorRecord.senderName}}" placeholder="Galactic News Service">
               </label>
+              <label class="bulletin-image-field">
+                <span>Holostill / Feed Image</span>
+                <span class="bulletin-image-row">
+                  <input type="text" name="imageUrl" value="{{eventEditorRecord.imageUrl}}" placeholder="systems/foundryvtt-swse/assets/.../image.webp" data-bulletin-image-input>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-pick-image">Browse</button>
+                </span>
+              </label>
             </div>
 
             <div class="bulletin-form-grid bulletin-form-grid-audience">
@@ -260,6 +278,24 @@
               </div>
             </div>
 
+            <div class="bulletin-console-controls">
+              <label class="bulletin-toggle-chip">
+                <input type="checkbox" name="urgent" {{#if eventEditorRecord.isUrgent}}checked{{/if}}>
+                <span>Urgent home alert</span>
+              </label>
+              <label class="bulletin-toggle-chip">
+                <input type="checkbox" name="pinAsLastSession" {{#if eventEditorRecord.isPinned}}checked{{/if}}>
+                <span>Pin as Last Session</span>
+              </label>
+              <label class="bulletin-slot-select">
+                <span>Home Placement</span>
+                <select name="homeSlot">
+                  <option value="feed" {{#if (or (not eventEditorRecord.homeSlot) (eq eventEditorRecord.homeSlot "feed"))}}selected{{/if}}>Comm Feed</option>
+                  <option value="last-session" {{#if (eq eventEditorRecord.homeSlot "last-session")}}selected{{/if}}>Last Session</option>
+                </select>
+              </label>
+            </div>
+
             <label class="bulletin-body-field">
               <span>Body</span>
               <textarea name="body" rows="6" placeholder="Imperial patrols spotted near @Wayfarer. Avoid the #south docking ring until the patrol window closes." data-holonet-editor="bulletin-event">{{eventEditorRecord.body}}</textarea>
@@ -277,21 +313,26 @@
 
           <div class="bulletin-record-grid">
             {{#each eventRecords}}
-            <article class="bulletin-record-card {{this.state}}">
+            <article class="bulletin-record-card {{this.state}} {{this.recordTone}}">
               <div class="bulletin-record-meta">
                 <span class="bulletin-chip state">{{this.stateLabel}}</span>
                 <span class="bulletin-chip category">{{this.category}}</span>
                 <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+                <span class="bulletin-chip home-slot">{{this.homeSlotLabel}}</span>
+                {{#if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
+                {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
               <div class="bulletin-record-sender">{{this.senderName}}</div>
+              {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
               <div class="bulletin-record-footer">
                 <span>{{this.createdAt}}</span>
                 <div class="bulletin-record-actions">
                   <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="events" data-record-id="{{this.id}}">Edit</button>
                   {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
                   {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
                   <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
                 </div>
@@ -326,6 +367,22 @@
                 <span>Sender Label</span>
                 <input type="text" name="authorName" value="{{messageEditorRecord.senderName}}" placeholder="Rendarr / Master Tholos / GM">
               </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="low" {{#if (eq messageEditorRecord.priority "low")}}selected{{/if}}>Low</option>
+                  <option value="normal" {{#if (or (not messageEditorRecord.priority) (eq messageEditorRecord.priority "normal"))}}selected{{/if}}>Normal</option>
+                  <option value="high" {{#if (eq messageEditorRecord.priority "high")}}selected{{/if}}>High</option>
+                  <option value="critical" {{#if (eq messageEditorRecord.priority "critical")}}selected{{/if}}>Critical</option>
+                </select>
+              </label>
+              <label class="bulletin-image-field">
+                <span>Notice Image / Sender Portrait</span>
+                <span class="bulletin-image-row">
+                  <input type="text" name="imageUrl" value="{{messageEditorRecord.imageUrl}}" placeholder="icons/svg/mystery-man.svg" data-bulletin-image-input>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-pick-image">Browse</button>
+                </span>
+              </label>
             </div>
 
             <div class="bulletin-form-grid bulletin-form-grid-audience">
@@ -350,6 +407,24 @@
               </div>
             </div>
 
+            <div class="bulletin-console-controls">
+              <label class="bulletin-toggle-chip">
+                <input type="checkbox" name="urgent" {{#if messageEditorRecord.isUrgent}}checked{{/if}}>
+                <span>Urgent home alert</span>
+              </label>
+              <label class="bulletin-toggle-chip">
+                <input type="checkbox" name="pinAsLastSession" {{#if messageEditorRecord.isPinned}}checked{{/if}}>
+                <span>Pin as Last Session</span>
+              </label>
+              <label class="bulletin-slot-select">
+                <span>Home Placement</span>
+                <select name="homeSlot">
+                  <option value="feed" {{#if (or (not messageEditorRecord.homeSlot) (eq messageEditorRecord.homeSlot "feed"))}}selected{{/if}}>Comm Feed</option>
+                  <option value="last-session" {{#if (eq messageEditorRecord.homeSlot "last-session")}}selected{{/if}}>Last Session</option>
+                </select>
+              </label>
+            </div>
+
             <label class="bulletin-body-field">
               <span>Body</span>
               <textarea name="body" rows="6" placeholder="@Kael Vorren, your stipend has arrived. Report to @Rendarr for the next #shipment." data-holonet-editor="bulletin-notice">{{messageEditorRecord.body}}</textarea>
@@ -367,20 +442,26 @@
 
           <div class="bulletin-record-grid">
             {{#each messageRecords}}
-            <article class="bulletin-record-card message {{this.state}}">
+            <article class="bulletin-record-card message {{this.state}} {{this.recordTone}}">
               <div class="bulletin-record-meta">
                 <span class="bulletin-chip state">{{this.stateLabel}}</span>
                 <span class="bulletin-chip category">{{this.category}}</span>
+                <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+                <span class="bulletin-chip home-slot">{{this.homeSlotLabel}}</span>
+                {{#if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
+                {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
               <div class="bulletin-record-sender">From {{this.senderName}}</div>
+              {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
               <div class="bulletin-record-footer">
                 <span>{{this.createdAt}}</span>
                 <div class="bulletin-record-actions">
                   <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="messages" data-record-id="{{this.id}}">Edit</button>
                   {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
                   {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
                   <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
                 </div>
@@ -453,6 +534,49 @@
           </form>
           {{/if}}
         </section>
+
+        <aside class="bulletin-home-preview swse-ui-panel" aria-label="Player home preview" data-bulletin-live-preview>
+          <div class="bulletin-preview-header">
+            <span class="bulletin-preview-kicker">Player Home Preview</span>
+            <strong>Datapad Feed Projection</strong>
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--state">
+            <span class="bulletin-preview-label">Current State</span>
+            <strong data-preview-state-location>{{homePreview.state.location}}</strong>
+            <p data-preview-state-objective>{{homePreview.state.objective}}</p>
+            <div class="bulletin-preview-status" data-preview-state-situation>{{homePreview.state.situation}}</div>
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--feed">
+            <span class="bulletin-preview-label">Comm Feed</span>
+            {{#if homePreview.feed}}
+            <div class="bulletin-preview-meta">
+              <span data-preview-feed-category>{{homePreview.feed.category}}</span>
+              <span data-preview-feed-priority>{{homePreview.feed.priority}}</span>
+              <span class="urgent {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>Alert</span>
+            </div>
+            {{#if homePreview.feed.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.feed.imageUrl}}" alt="{{homePreview.feed.title}}" data-preview-feed-image>{{else}}<img class="bulletin-preview-image is-hidden" alt="" data-preview-feed-image>{{/if}}
+            <strong data-preview-feed-title>{{homePreview.feed.title}}</strong>
+            <em data-preview-feed-sender>{{homePreview.feed.sender}} · {{homePreview.feed.audience}}</em>
+            <p class="holonet-rendered-text" data-preview-feed-body>{{{homePreview.feed.renderedPreview}}}</p>
+            {{else}}
+            <p class="placeholder">No bulletin selected. Save or publish a bulletin to preview the feed card.</p>
+            {{/if}}
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--session">
+            <span class="bulletin-preview-label">Last Session / Featured</span>
+            {{#if homePreview.lastSession}}
+            {{#if homePreview.lastSession.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.lastSession.imageUrl}}" alt="{{homePreview.lastSession.title}}">{{/if}}
+            <strong>{{homePreview.lastSession.title}}</strong>
+            <em>{{homePreview.lastSession.sender}}</em>
+            <p class="holonet-rendered-text">{{{homePreview.lastSession.renderedPreview}}}</p>
+            {{else}}
+            <p class="placeholder">Pin a bulletin as Last Session to control the player home recap card.</p>
+            {{/if}}
+          </div>
+        </aside>
       </div>
     </div>
 
@@ -1078,6 +1202,8 @@
             </div>
           {{/if}}
         </section>
+
+
       </div>
     </div>
 

@@ -859,7 +859,7 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId || !action) return;
           const result = await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, recordId, amount, status });
           this._noteMessengerPendingResult(result);
-          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer', 'accept-asset-transfer', 'decline-asset-transfer', 'cancel-asset-transfer', 'approve-asset-transfer'].includes(action) });
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer', 'accept-asset-transfer', 'decline-asset-transfer', 'cancel-asset-transfer', 'approve-asset-transfer', 'offer-asset-counter', 'accept-asset-counter', 'approve-asset-counter', 'decline-asset-counter'].includes(action) });
         });
       });
 
@@ -961,6 +961,26 @@ export function ShellHostMixin(BaseClass) {
           const action = ev.submitter?.name === 'itemTransferMode' && ev.submitter?.value ? ev.submitter.value : 'offer-item-transfer';
           if (!threadId || !recipientId || !itemUuids.length) return;
           const result = await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, itemUuids });
+          this._noteMessengerPendingResult(result);
+          form.reset();
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
+        });
+      });
+
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="asset-counter-offer"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const recordId = form.dataset.recordId;
+          const counterCredits = Number(data.get('counterCredits') || 0) || 0;
+          const counterItemIds = data.getAll('counterItemIds').map(String).filter(Boolean);
+          const counterAssetIds = data.getAll('counterAssetIds').map(String).filter(Boolean);
+          const counterMemo = String(data.get('counterMemo') || '').trim();
+          if (!threadId || !recordId || (!counterCredits && !counterItemIds.length && !counterAssetIds.length && !counterMemo)) return;
+          const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'offer-asset-counter', recordId, counterCredits, counterItemIds, counterAssetIds, counterMemo });
           this._noteMessengerPendingResult(result);
           form.reset();
           await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });

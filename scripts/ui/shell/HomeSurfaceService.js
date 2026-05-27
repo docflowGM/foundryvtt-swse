@@ -349,6 +349,9 @@ export class HomeSurfaceService {
       icon: sourceIcon(record),
       preview: featured ? HolonetMarkupService.render(body) : HolonetMarkupService.preview(previewText(body, 150)),
       timestamp: formatTimestamp(record.publishedAt || record.createdAt),
+      imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
+      priority: record.priority || record.metadata?.priority || 'normal',
+      isUrgent: record.metadata?.urgent === true || record.priority === 'critical',
       isUnread: recipientId ? Boolean(record.isUnreadBy?.(recipientId)) : false
     };
   }

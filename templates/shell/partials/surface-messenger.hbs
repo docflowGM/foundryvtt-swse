@@ -325,6 +325,7 @@
                     {{#if this.itemTransfer.trade.requestedItemsNote}}<div class="hl-credit-line">Requested trade: {{this.itemTransfer.trade.requestedItemsNote}}</div>{{/if}}
                     {{#if this.itemTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.itemTransfer.memo}}</div>{{/if}}
                     <div class="hl-credit-status">{{this.itemTransfer.statusLabel}}</div>
+                    {{#if this.itemTransfer.failureReason}}<div class="hl-credit-memo">Failure: {{this.itemTransfer.failureReason}}</div>{{/if}}
                     <div class="hl-credit-actions">
                       {{#if this.itemTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
                       {{#if this.itemTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Items</button>{{/if}}
@@ -346,9 +347,35 @@
                     </div>
                     {{#if this.assetTransfer.requestedCreditsLabel}}<div class="hl-credit-line">Requested payment: <strong>{{this.assetTransfer.requestedCreditsLabel}}</strong></div>{{/if}}
                     {{#if this.assetTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.assetTransfer.memo}}</div>{{/if}}
+                    {{#if this.assetTransfer.hasCounterOffer}}
+                    <div class="hl-counter-offer">
+                      <b>Counter Offer</b>
+                      {{#if this.assetTransfer.counterOffer.creditsLabel}}<div class="hl-credit-line">Credits: <strong>{{this.assetTransfer.counterOffer.creditsLabel}}</strong></div>{{/if}}
+                      {{#if this.assetTransfer.counterOffer.hasItems}}
+                      <div class="hl-credit-line">Items: {{#each this.assetTransfer.counterOffer.items}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+                      {{/if}}
+                      {{#if this.assetTransfer.counterOffer.hasAssets}}
+                      <div class="hl-credit-line">Assets: {{#each this.assetTransfer.counterOffer.assets}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+                      {{/if}}
+                      {{#if this.assetTransfer.counterOffer.memo}}<div class="hl-credit-memo">Terms: {{this.assetTransfer.counterOffer.memo}}</div>{{/if}}
+                    </div>
+                    {{/if}}
+                    {{#if this.assetTransfer.canCounterOffer}}
+                    <form class="hl-counter-form" data-holonet-action="asset-counter-offer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">
+                      <label>Counter credits <input type="number" name="counterCredits" min="0" step="1" placeholder="0"></label>
+                      <label>Counter items <select name="counterItemIds" multiple>{{#each this.assetTransfer.counterItemOptions}}<option value="{{this.id}}">{{this.name}} x{{this.quantity}}</option>{{/each}}</select></label>
+                      <label>Counter assets <select name="counterAssetIds" multiple>{{#each this.assetTransfer.counterAssetOptions}}<option value="{{this.id}}">{{this.name}} — {{this.typeLabel}}</option>{{/each}}</select></label>
+                      <label>Counter terms <textarea name="counterMemo" rows="2" placeholder="Optional terms or notes"></textarea></label>
+                      <button class="hl-btn-accent" type="submit">Send Counter Offer</button>
+                    </form>
+                    {{/if}}
                     <div class="hl-credit-status">{{this.assetTransfer.statusLabel}}</div>
+                    {{#if this.assetTransfer.failureReason}}<div class="hl-credit-memo">Failure: {{this.assetTransfer.failureReason}}</div>{{/if}}
                     <div class="hl-credit-actions">
                       {{#if this.assetTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
+                      {{#if this.assetTransfer.canAcceptCounter}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Counter</button>{{/if}}
+                      {{#if this.assetTransfer.canApproveCounter}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve Counter</button>{{/if}}
+                      {{#if this.assetTransfer.canDeclineCounter}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline Counter</button>{{/if}}
                       {{#if this.assetTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Asset</button>{{/if}}
                       {{#if this.assetTransfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
                       {{#if this.assetTransfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}

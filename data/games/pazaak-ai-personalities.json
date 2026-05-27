@@ -1,0 +1,2565 @@
+{
+  "version": 3,
+  "forceSensitive": {
+    "defaultNpcChance": 0.02,
+    "defaultIntuitionChance": 0.05,
+    "feelings": {
+      "excellent": [
+        "The deck feels friendly right now.",
+        "Something says the next draw wants to help."
+      ],
+      "safe": [
+        "The next card feels quiet enough.",
+        "I do not feel danger from the deck yet."
+      ],
+      "dangerous": [
+        "No. The next draw has teeth.",
+        "The deck feels hot. Too hot."
+      ],
+      "unclear": [
+        "The feeling is muddy. I will trust the table instead.",
+        "Whatever I almost heard, it is gone now."
+      ]
+    }
+  },
+  "personalities": {
+    "cautious": {
+      "label": "Cautious",
+      "quality": "Avoids busting and protects small advantages.",
+      "modifiers": {
+        "standThreshold": -1,
+        "riskTolerance": -2,
+        "conserveCards": 2,
+        "exactTwentyBias": 0,
+        "unpredictability": 0
+      },
+      "dialogue": {
+        "winRound": [
+          "A careful hand still wins.",
+          "That is why one does not chase every card."
+        ],
+        "winMatch": [
+          "Patience paid the bill.",
+          "The table rewards restraint eventually."
+        ],
+        "matchPoint": [
+          "One more quiet set should do it.",
+          "No need to rush the final card."
+        ],
+        "loseRound": [
+          "That loss was acceptable. The match continues.",
+          "Small setback. I still have room to breathe."
+        ],
+        "loseMatch": [
+          "Careful was not enough this time.",
+          "The table found the one risk I could not avoid."
+        ],
+        "taunt": [
+          "You are spending nerve faster than cards.",
+          "Bold choices become expensive choices."
+        ],
+        "forceSensitivityNudge": [
+          "I do not like the next draw.",
+          "Something about the deck says wait."
+        ],
+        "tell1": [
+          "No hurry. The deck punishes hurry.",
+          "A safe total is not a weak total."
+        ],
+        "tell2": [
+          "I can let you make the mistake first.",
+          "The patient chair often gets paid."
+        ],
+        "fakeTell": [
+          "This hand is worse than it looks.",
+          "I may have miscounted that one."
+        ],
+        "fakeTell2": [
+          "You probably have the stronger line.",
+          "If I were you, I would press harder."
+        ],
+        "ante": [
+          "Ante posted. Sensible stakes.",
+          "In quietly, out carefully."
+        ],
+        "raise": [
+          "A small raise. Nothing reckless.",
+          "I will increase the pressure, but not the danger."
+        ],
+        "stay": [
+          "I will hold this line.",
+          "No change. The table can come to me."
+        ],
+        "playsCard": [
+          "This card keeps the hand honest.",
+          "A measured answer."
+        ],
+        "showsCard": [
+          "There. Count it carefully.",
+          "The card says enough."
+        ],
+        "checkmate": [
+          "No safe answer remains.",
+          "That line is closed."
+        ],
+        "check": [
+          "Careful. The next choice matters.",
+          "That position has fewer exits than it seems."
+        ],
+        "playsPositiveCard": [
+          "Only what I need, no more.",
+          "I will add the safe amount."
+        ],
+        "playsNegativeCard": [
+          "Back below danger.",
+          "That trims the risk nicely."
+        ],
+        "busts": [
+          "I overstepped. That is on me.",
+          "Too much caution would have been wiser."
+        ],
+        "hits20": [
+          "Twenty. That is sufficient.",
+          "Exactly twenty. I will take that."
+        ],
+        "stand": [
+          "I stand. That total can work.",
+          "No more cards. This is enough."
+        ],
+        "drawsCard": [
+          "One card, carefully.",
+          "The draw is worth the risk."
+        ],
+        "allIn": [
+          "If it must be all in, it will be deliberate.",
+          "Everything in, but not without reason."
+        ],
+        "conversationLine1": [
+          "Most gamblers lose before the first card, in their head.",
+          "The loudest player is rarely the safest one."
+        ],
+        "conversationLine2": [
+          "A quiet table tells you more than a cheering crowd.",
+          "Credits like calm hands."
+        ],
+        "sideDeckLocked": [
+          "Side deck locked. Nothing extravagant.",
+          "I brought the cards that keep me alive."
+        ],
+        "payoutCapped": [
+          "The house trims the win. Sensible, if annoying.",
+          "A capped payout is still better than a loss."
+        ],
+        "refund": [
+          "No loss, no gain. Clean enough.",
+          "A refund keeps the ledger tidy."
+        ],
+        "thinking": [
+          "Give me a moment. I am counting the safe line.",
+          "The correct play is usually the quiet one."
+        ],
+        "thinkingHard": [
+          "This is tighter than I like. Let me count it again.",
+          "No easy exits. I need the least dangerous one."
+        ],
+        "thinkingEasy": [
+          "The table is calm. I only need not ruin it.",
+          "I am ahead enough to stay careful."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "aggressive": {
+      "label": "Aggressive",
+      "quality": "Pushes hard for twenty and pressures the opponent.",
+      "modifiers": {
+        "standThreshold": 1,
+        "riskTolerance": 2,
+        "conserveCards": -1,
+        "exactTwentyBias": 2,
+        "unpredictability": 1
+      },
+      "dialogue": {
+        "winRound": [
+          "Pressure works.",
+          "That is what happens when the table gets pushed."
+        ],
+        "winMatch": [
+          "The match folds under enough heat.",
+          "Victory favors the player who keeps drawing."
+        ],
+        "matchPoint": [
+          "One more set. No room to breathe now.",
+          "You feel that? That is the table closing."
+        ],
+        "loseRound": [
+          "Fine. The next push lands harder.",
+          "You got one. Do not get comfortable."
+        ],
+        "loseMatch": [
+          "Too much throttle, not enough runway.",
+          "I pushed too far. It happens once."
+        ],
+        "taunt": [
+          "Standing already? Bold way to surrender.",
+          "If you wanted safe, you picked the wrong table."
+        ],
+        "forceSensitivityNudge": [
+          "The next card feels hot. Maybe too hot.",
+          "There is a surge around the next draw."
+        ],
+        "tell1": [
+          "I am not here to tiptoe around twenty.",
+          "The deck only scares players who listen to it."
+        ],
+        "tell2": [
+          "You stand; I press. Simple game.",
+          "A weak total is an invitation."
+        ],
+        "fakeTell": [
+          "Hmph. Too easy.",
+          "That draw did not scare me at all."
+        ],
+        "fakeTell2": [
+          "Careful now. I might already have you.",
+          "You sure you want to watch the next card?"
+        ],
+        "ante": [
+          "Ante in. Now make it interesting.",
+          "There. The table has a pulse."
+        ],
+        "raise": [
+          "Raise. Keep up.",
+          "More pressure. Your move."
+        ],
+        "stay": [
+          "I stay in. Obviously.",
+          "No retreat from this line."
+        ],
+        "playsCard": [
+          "Here comes the push.",
+          "This should wake the table up."
+        ],
+        "showsCard": [
+          "Look closely. That one matters.",
+          "There. Count fast."
+        ],
+        "checkmate": [
+          "No exits. Only the hit.",
+          "That is the end of the line."
+        ],
+        "check": [
+          "Pressure on the board.",
+          "Careful. I am not backing off."
+        ],
+        "playsPositiveCard": [
+          "Up we go.",
+          "Drive the total higher."
+        ],
+        "playsNegativeCard": [
+          "Cut the bust, keep the pressure.",
+          "Back from the edge, still moving."
+        ],
+        "busts": [
+          "Too far. Worth the try.",
+          "That was the right mistake."
+        ],
+        "hits20": [
+          "Twenty. Perfect hit.",
+          "There it is. Clean impact."
+        ],
+        "stand": [
+          "I stand because this total deserves respect.",
+          "Enough. Beat that."
+        ],
+        "drawsCard": [
+          "Draw. No blinking.",
+          "Another card. Let us go."
+        ],
+        "allIn": [
+          "All in. Let the table answer.",
+          "Everything on the line. Finally."
+        ],
+        "conversationLine1": [
+          "A timid gambler is just a donor with a chair.",
+          "The deck respects nerve."
+        ],
+        "conversationLine2": [
+          "Cards are meant to move.",
+          "If the table is quiet, push harder."
+        ],
+        "sideDeckLocked": [
+          "Side deck locked. Built to hit.",
+          "These cards know how to attack."
+        ],
+        "payoutCapped": [
+          "The house flinched before I did.",
+          "Capped? The table could not handle the heat."
+        ],
+        "refund": [
+          "Refunded? Cowardly table.",
+          "No blood, no story."
+        ],
+        "thinking": [
+          "I am looking for the fastest way to twenty.",
+          "Give me a breath; I am lining up the hit."
+        ],
+        "thinkingHard": [
+          "Pinned or not, I only need one clean strike.",
+          "This corner just means I push harder."
+        ],
+        "thinkingEasy": [
+          "I already have the angle. Now I make it hurt.",
+          "Easy pressure is still pressure."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "reckless": {
+      "label": "Reckless",
+      "quality": "Makes risky, emotional, swingy choices.",
+      "modifiers": {
+        "standThreshold": 2,
+        "riskTolerance": 3,
+        "conserveCards": -2,
+        "exactTwentyBias": 3,
+        "unpredictability": 3
+      },
+      "dialogue": {
+        "winRound": [
+          "See? That was definitely a plan.",
+          "The table loved that one. I think."
+        ],
+        "winMatch": [
+          "Never doubted it. Not once. Probably.",
+          "That is what confidence looks like after the smoke clears."
+        ],
+        "matchPoint": [
+          "One more! What could go wrong?",
+          "Last set. The deck and I are on speaking terms."
+        ],
+        "loseRound": [
+          "That was almost brilliant.",
+          "Bad ending, excellent idea."
+        ],
+        "loseMatch": [
+          "The universe had no sense of humor this time.",
+          "Fine, the table survives me today."
+        ],
+        "taunt": [
+          "Safe play is for cargo manifests.",
+          "Come on, make a terrible choice with style."
+        ],
+        "forceSensitivityNudge": [
+          "The next card feels loud.",
+          "Something says draw, which is probably good enough."
+        ],
+        "tell1": [
+          "I promise I checked the score. Mostly.",
+          "If this goes wrong, remember the courage."
+        ],
+        "tell2": [
+          "The deck would not betray me twice. Probably.",
+          "Math is just fear with numbers."
+        ],
+        "fakeTell": [
+          "Oh no, what a terrible position for me.",
+          "This is definitely bad. You should relax."
+        ],
+        "fakeTell2": [
+          "Hmph, too easy.",
+          "I absolutely know what I am doing."
+        ],
+        "ante": [
+          "Ante in before wisdom interferes.",
+          "Credits down. Regrets later."
+        ],
+        "raise": [
+          "Raise! Because the table asked nicely.",
+          "More credits, more fun."
+        ],
+        "stay": [
+          "I stay. Somehow that feels brave.",
+          "I will not run from this nonsense."
+        ],
+        "playsCard": [
+          "This card has a heroic look to it.",
+          "Card down. Consequences pending."
+        ],
+        "showsCard": [
+          "Ta-da. That helped, right?",
+          "Look at that. A choice happened."
+        ],
+        "checkmate": [
+          "That somehow worked.",
+          "No way out. For one of us."
+        ],
+        "check": [
+          "That might be dangerous. Excellent.",
+          "Careful, this is becoming fun."
+        ],
+        "playsPositiveCard": [
+          "More points! Great idea.",
+          "Upward is a direction."
+        ],
+        "playsNegativeCard": [
+          "Back from disaster. Temporarily.",
+          "See? I can be responsible."
+        ],
+        "busts": [
+          "That was too much card.",
+          "The deck has betrayed art itself."
+        ],
+        "hits20": [
+          "Twenty! That counts as skill.",
+          "Perfect. Never tell anyone I was worried."
+        ],
+        "stand": [
+          "I stand before I improve this into a disaster.",
+          "Enough. Do not let me touch the deck again."
+        ],
+        "drawsCard": [
+          "Draw! Consequences are optional.",
+          "Another card. The sensible thing can wait."
+        ],
+        "allIn": [
+          "All in! Excellent mistake or excellent victory.",
+          "Everything in. I choose drama."
+        ],
+        "conversationLine1": [
+          "The trick is to move before doubt catches up.",
+          "A table without panic is just furniture."
+        ],
+        "conversationLine2": [
+          "This chair has seen worse decisions.",
+          "If it works, it was strategy."
+        ],
+        "sideDeckLocked": [
+          "Side deck locked. It looks like a dare.",
+          "These cards and I are going to make memories."
+        ],
+        "payoutCapped": [
+          "Apparently winning too loudly has limits.",
+          "The house fears excellence. Or liability."
+        ],
+        "refund": [
+          "Free lesson, no credits lost.",
+          "A refund? I was just getting dangerous."
+        ],
+        "thinking": [
+          "Give me a second; I am pretending to calculate.",
+          "This feels like a moment for inspiration over math."
+        ],
+        "thinkingHard": [
+          "I am in a corner, so naturally I need a worse idea.",
+          "This is bad enough that something brilliant might happen."
+        ],
+        "thinkingEasy": [
+          "I am ahead, which means I can make it interesting.",
+          "This is going well. Dangerous time to trust me."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "methodical": {
+      "label": "Methodical",
+      "quality": "Plays mathematically and values consistency.",
+      "modifiers": {
+        "standThreshold": 0,
+        "riskTolerance": -1,
+        "conserveCards": 1,
+        "exactTwentyBias": 1,
+        "unpredictability": -1
+      },
+      "dialogue": {
+        "winRound": [
+          "Expected outcome confirmed.",
+          "The correct line held."
+        ],
+        "winMatch": [
+          "The match resolves according to probability.",
+          "Consistent decisions produced the result."
+        ],
+        "matchPoint": [
+          "One set remains in the model.",
+          "The final branch is now active."
+        ],
+        "loseRound": [
+          "Variance, not error.",
+          "Unfavorable outcome. The model adjusts."
+        ],
+        "loseMatch": [
+          "The model requires revision.",
+          "The data disagreed with me. Noted."
+        ],
+        "taunt": [
+          "The arithmetic is unkind to that choice.",
+          "Your line has a poor expected value."
+        ],
+        "forceSensitivityNudge": [
+          "An irrational caution appears statistically useful.",
+          "The numbers say one thing. The table says another."
+        ],
+        "tell1": [
+          "Count the cards, not the nerves.",
+          "Every visible card is evidence."
+        ],
+        "tell2": [
+          "You are giving me useful data.",
+          "That stand tells me enough."
+        ],
+        "fakeTell": [
+          "I may have left a gap in the calculation.",
+          "That total is less stable than I prefer."
+        ],
+        "fakeTell2": [
+          "Perhaps I miscounted by one.",
+          "Your position may be stronger than it appears."
+        ],
+        "ante": [
+          "Ante posted.",
+          "Entry stake recorded."
+        ],
+        "raise": [
+          "Raise. The threshold supports it.",
+          "I increase the stake within acceptable risk."
+        ],
+        "stay": [
+          "I hold the current line.",
+          "No adjustment required."
+        ],
+        "playsCard": [
+          "This is the cleanest card.",
+          "The card fits the calculation."
+        ],
+        "showsCard": [
+          "There is the proof.",
+          "The result follows."
+        ],
+        "checkmate": [
+          "The final branch is closed.",
+          "No legal line improves your position."
+        ],
+        "check": [
+          "The position is forcing.",
+          "Your next choice is constrained."
+        ],
+        "playsPositiveCard": [
+          "Adding the necessary value.",
+          "The positive correction is exact."
+        ],
+        "playsNegativeCard": [
+          "Subtracting to restore a valid state.",
+          "The negative correction prevents failure."
+        ],
+        "busts": [
+          "An unacceptable branch.",
+          "The risk model failed."
+        ],
+        "hits20": [
+          "Twenty. Optimal.",
+          "Exact target achieved."
+        ],
+        "stand": [
+          "I stand at the expected value.",
+          "No further draw is justified."
+        ],
+        "drawsCard": [
+          "Drawing after recalculation.",
+          "The draw has acceptable odds."
+        ],
+        "allIn": [
+          "Full commitment is justified.",
+          "The final wager is mathematically defensible."
+        ],
+        "conversationLine1": [
+          "Luck is just probability refusing to introduce itself.",
+          "Numbers do not bluff. Players do."
+        ],
+        "conversationLine2": [
+          "The table is a ledger with better lighting.",
+          "Every choice leaves a trace."
+        ],
+        "sideDeckLocked": [
+          "Balanced side deck locked.",
+          "The distribution is acceptable."
+        ],
+        "payoutCapped": [
+          "The economic constraint supersedes the game outcome.",
+          "The payout cap is a separate system variable."
+        ],
+        "refund": [
+          "Settlement returns to zero.",
+          "The ledger is neutral again."
+        ],
+        "thinking": [
+          "I need a moment to run the line.",
+          "The answer is in the probabilities."
+        ],
+        "thinkingHard": [
+          "This position is ugly, but not unsolved.",
+          "I need to rebuild the math from the board up."
+        ],
+        "thinkingEasy": [
+          "The numbers are favorable. I only need precision.",
+          "This table state is nearly solved."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "opportunist": {
+      "label": "Opportunist",
+      "quality": "Conserves resources until an opponent exposes a weakness.",
+      "modifiers": {
+        "standThreshold": 0,
+        "riskTolerance": 1,
+        "conserveCards": 1,
+        "exactTwentyBias": 2,
+        "unpredictability": 1
+      },
+      "dialogue": {
+        "winRound": [
+          "That opening was enough.",
+          "Small weakness, full payment."
+        ],
+        "winMatch": [
+          "Every table gives something away eventually.",
+          "I waited. You provided."
+        ],
+        "matchPoint": [
+          "One more mistake is all this needs.",
+          "I only need one more door left open."
+        ],
+        "loseRound": [
+          "No opening worth taking.",
+          "You closed the gap in time."
+        ],
+        "loseMatch": [
+          "The better opportunity never arrived.",
+          "You gave me less than I hoped."
+        ],
+        "taunt": [
+          "That stand left a door open.",
+          "Careful. I collect loose choices."
+        ],
+        "forceSensitivityNudge": [
+          "The next draw feels like an opening, or a trap.",
+          "Something is about to give. Maybe you."
+        ],
+        "tell1": [
+          "I can wait longer than you can.",
+          "Do not worry. I will know when you slip."
+        ],
+        "tell2": [
+          "That choice says more than you meant it to.",
+          "You just made the table easier to read."
+        ],
+        "fakeTell": [
+          "No opening here. None at all.",
+          "I suppose I will just have to survive this hand."
+        ],
+        "fakeTell2": [
+          "Hmph. Too easy.",
+          "That looks harmless enough."
+        ],
+        "ante": [
+          "Ante in. The real game comes later.",
+          "Small price to watch the table."
+        ],
+        "raise": [
+          "Raise. The timing is good.",
+          "Now the opening is worth money."
+        ],
+        "stay": [
+          "I stay. The leverage is not gone yet.",
+          "Holding here costs you patience."
+        ],
+        "playsCard": [
+          "This card arrives at a bad time for you.",
+          "Here is the part you left open."
+        ],
+        "showsCard": [
+          "That was the trap.",
+          "There. That is what I waited for."
+        ],
+        "checkmate": [
+          "The opening closes behind you.",
+          "You stepped through the wrong door."
+        ],
+        "check": [
+          "There is a gap in your defense.",
+          "That position leaks."
+        ],
+        "playsPositiveCard": [
+          "Just enough to steal it.",
+          "A little higher, right where it hurts."
+        ],
+        "playsNegativeCard": [
+          "Back under danger, still in control.",
+          "I will not give the opening back."
+        ],
+        "busts": [
+          "The opening was bait.",
+          "I reached too soon."
+        ],
+        "hits20": [
+          "Twenty, taken at the right time.",
+          "Perfect timing. Perfect total."
+        ],
+        "stand": [
+          "I stand. The pressure is useful now.",
+          "Your turn to solve the problem."
+        ],
+        "drawsCard": [
+          "One draw. Let us see what you left me.",
+          "I draw where the table is weakest."
+        ],
+        "allIn": [
+          "Everything goes in because the window is open.",
+          "This is the moment worth paying for."
+        ],
+        "conversationLine1": [
+          "Nobody loses all at once. They leak.",
+          "The best card is the one played after patience."
+        ],
+        "conversationLine2": [
+          "I do not need a good hand if you give me a bad choice.",
+          "Every opponent eventually tells the table something."
+        ],
+        "sideDeckLocked": [
+          "Flexible side deck locked.",
+          "I brought answers, not wishes."
+        ],
+        "payoutCapped": [
+          "The table pays less than the opening deserved.",
+          "The house noticed the profit too late."
+        ],
+        "refund": [
+          "No harm. The next opening waits.",
+          "A clean reset still teaches me something."
+        ],
+        "thinking": [
+          "I am waiting for the weak seam.",
+          "Give me a moment. There is always an opening."
+        ],
+        "thinkingHard": [
+          "Few openings left. I need the one you missed.",
+          "The corner is tight; I need your mistake before mine."
+        ],
+        "thinkingEasy": [
+          "The opening is already there. I only need to collect.",
+          "The advantage is banked. Now I cash it in."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "showboat": {
+      "label": "Showboat",
+      "quality": "Prefers dramatic, stylish plays and exact totals.",
+      "modifiers": {
+        "standThreshold": 1,
+        "riskTolerance": 1,
+        "conserveCards": -1,
+        "exactTwentyBias": 4,
+        "unpredictability": 2
+      },
+      "dialogue": {
+        "winRound": [
+          "A beautiful finish.",
+          "Tell the table to remember that set."
+        ],
+        "winMatch": [
+          "Performance and victory, perfectly paired.",
+          "Thank you, thank you. The credits may applaud next."
+        ],
+        "matchPoint": [
+          "Final act. Watch closely.",
+          "One more set and the curtain falls."
+        ],
+        "loseRound": [
+          "The timing was excellent. The outcome was rude.",
+          "A temporary flaw in an otherwise fine performance."
+        ],
+        "loseMatch": [
+          "A tragic ending, but memorable.",
+          "Defeat, yes. Dull, never."
+        ],
+        "taunt": [
+          "Do try to make this entertaining.",
+          "If you must lose, at least do it with timing."
+        ],
+        "forceSensitivityNudge": [
+          "The next card has stage presence.",
+          "Something dramatic is waiting in the deck."
+        ],
+        "tell1": [
+          "Everyone watching? Good.",
+          "A good card deserves an audience."
+        ],
+        "tell2": [
+          "This is the part where the table leans in.",
+          "You can feel the scene changing, yes?"
+        ],
+        "fakeTell": [
+          "Oh dear. How terrible for me.",
+          "This hand? Barely worth noticing."
+        ],
+        "fakeTell2": [
+          "Hmph. Too easy.",
+          "Careful, I might make this look effortless."
+        ],
+        "ante": [
+          "Ante, with style.",
+          "A little entrance fee for the show."
+        ],
+        "raise": [
+          "Raise. The scene needed stakes.",
+          "Let us give the audience something to count."
+        ],
+        "stay": [
+          "I stay. Suspense is useful.",
+          "Hold the moment."
+        ],
+        "playsCard": [
+          "Now this is a card.",
+          "Watch the turn."
+        ],
+        "showsCard": [
+          "There. Admire it quickly.",
+          "A reveal worthy of the wait."
+        ],
+        "checkmate": [
+          "And there is the finale.",
+          "Curtain. No exits."
+        ],
+        "check": [
+          "The drama tightens.",
+          "Careful. This is where the music changes."
+        ],
+        "playsPositiveCard": [
+          "Upward, elegantly.",
+          "A little lift for the scene."
+        ],
+        "playsNegativeCard": [
+          "A graceful retreat from disaster.",
+          "Down just enough to stay beautiful."
+        ],
+        "busts": [
+          "Too dramatic. Still impressive.",
+          "A bold mistake is better than a dull one."
+        ],
+        "hits20": [
+          "Twenty, naturally.",
+          "Exact. Elegant. Mine."
+        ],
+        "stand": [
+          "I stand, and I do mean stand.",
+          "No more cards. This total has presence."
+        ],
+        "drawsCard": [
+          "Draw, with timing.",
+          "Let the deck make its entrance."
+        ],
+        "allIn": [
+          "All in. The only tasteful choice.",
+          "Everything on the table. Finally, drama."
+        ],
+        "conversationLine1": [
+          "A dull victory is barely a victory.",
+          "Pazaak is mathematics wearing a cape."
+        ],
+        "conversationLine2": [
+          "If the table is going to remember us, let it remember style.",
+          "Cards should land like applause."
+        ],
+        "sideDeckLocked": [
+          "Flashy side deck locked.",
+          "These cards know how to make an entrance."
+        ],
+        "payoutCapped": [
+          "The house capped the applause.",
+          "A rude limit on an excellent performance."
+        ],
+        "refund": [
+          "A refund is just an encore delayed.",
+          "No payout, but at least the table saw me."
+        ],
+        "thinking": [
+          "Give me a moment; suspense deserves space.",
+          "The next move needs timing, not haste."
+        ],
+        "thinkingHard": [
+          "The spotlight is hot now. I need a spectacular recovery.",
+          "The table wants a comeback. I may provide one."
+        ],
+        "thinkingEasy": [
+          "I am ahead. Now I can make it pretty.",
+          "The lead gives me room for style."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "grinder": {
+      "label": "Grinder",
+      "quality": "Conserves resources and plays the long match.",
+      "modifiers": {
+        "standThreshold": -1,
+        "riskTolerance": -1,
+        "conserveCards": 3,
+        "exactTwentyBias": 0,
+        "unpredictability": 0
+      },
+      "dialogue": {
+        "winRound": [
+          "One set banked.",
+          "Small edges stack."
+        ],
+        "winMatch": [
+          "The long table ends where expected.",
+          "That is what saving resources buys."
+        ],
+        "matchPoint": [
+          "One more edge closes it.",
+          "Last set. No need to waste anything."
+        ],
+        "loseRound": [
+          "A set spent to save the match.",
+          "That loss costs less than the card I kept."
+        ],
+        "loseMatch": [
+          "The grind broke first.",
+          "I ran out of table before you ran out of answers."
+        ],
+        "taunt": [
+          "Spend the good cards early. Please.",
+          "You are burning resources faster than sense."
+        ],
+        "forceSensitivityNudge": [
+          "The next draw feels like a cost.",
+          "Something says this card may be expensive."
+        ],
+        "tell1": [
+          "A saved card wins later.",
+          "One set is not the match."
+        ],
+        "tell2": [
+          "Keep spending. I am counting.",
+          "I can lose small longer than you can win loud."
+        ],
+        "fakeTell": [
+          "This card is probably useless anyway.",
+          "I suppose I have nothing worth saving."
+        ],
+        "fakeTell2": [
+          "You have me under pressure now.",
+          "I may have to spend more than I want."
+        ],
+        "ante": [
+          "Ante paid. Cost of business.",
+          "Another table fee. Fine."
+        ],
+        "raise": [
+          "Raise, but only because it earns.",
+          "I will put more in when the math pays back."
+        ],
+        "stay": [
+          "I stay. Resources intact.",
+          "No need to spend yet."
+        ],
+        "playsCard": [
+          "This card earns its keep.",
+          "Spending one because the set is worth it."
+        ],
+        "showsCard": [
+          "Value extracted.",
+          "That one paid for itself."
+        ],
+        "checkmate": [
+          "Attrition completes the work.",
+          "No resources left to save you."
+        ],
+        "check": [
+          "Pressure accumulates.",
+          "This is how small edges become problems."
+        ],
+        "playsPositiveCard": [
+          "Adding value without waste.",
+          "Just enough. Nothing extra."
+        ],
+        "playsNegativeCard": [
+          "Preserve the set, preserve the match.",
+          "Back under the line. Still efficient."
+        ],
+        "busts": [
+          "An expensive mistake.",
+          "That cost too much."
+        ],
+        "hits20": [
+          "Twenty without waste.",
+          "Exact target, minimum spend."
+        ],
+        "stand": [
+          "I stand and keep the rest.",
+          "Enough for now. The match is longer than this set."
+        ],
+        "drawsCard": [
+          "Draw with the match score in mind.",
+          "One card now, cards saved later."
+        ],
+        "allIn": [
+          "The saved resources go in now.",
+          "This is what the reserve was for."
+        ],
+        "conversationLine1": [
+          "The table pays whoever is still thinking three sets later.",
+          "Never spend a perfect card on a mediocre problem."
+        ],
+        "conversationLine2": [
+          "Fast winners become broke veterans.",
+          "A match is won by what you refuse to waste."
+        ],
+        "sideDeckLocked": [
+          "Resource deck locked.",
+          "These cards are here for the long table."
+        ],
+        "payoutCapped": [
+          "A capped payout is still a payout.",
+          "Profit trimmed is profit kept."
+        ],
+        "refund": [
+          "The bankroll survives.",
+          "No loss. Good enough."
+        ],
+        "thinking": [
+          "I am measuring this set against the whole match.",
+          "Give me a moment; I am pricing the card."
+        ],
+        "thinkingHard": [
+          "Cornered, but not empty. I saved tools for this.",
+          "The hard line is found by refusing to rush."
+        ],
+        "thinkingEasy": [
+          "The lead is another resource to protect.",
+          "No need to hurry when the match is being squeezed."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "desperate": {
+      "label": "Desperate",
+      "quality": "Becomes riskier when behind or near elimination.",
+      "modifiers": {
+        "standThreshold": 0,
+        "riskTolerance": 2,
+        "conserveCards": -1,
+        "exactTwentyBias": 2,
+        "unpredictability": 2
+      },
+      "dialogue": {
+        "winRound": [
+          "Still alive.",
+          "That set was needed."
+        ],
+        "winMatch": [
+          "Survived the table.",
+          "I told you I was not done."
+        ],
+        "matchPoint": [
+          "No room left. Every card matters.",
+          "This is where the table stops forgiving mistakes."
+        ],
+        "loseRound": [
+          "No. Not that one.",
+          "That one hurt. I needed it."
+        ],
+        "loseMatch": [
+          "The table ran out of mercy.",
+          "That was the last breath."
+        ],
+        "taunt": [
+          "Push me far enough and see what happens.",
+          "You do not want me desperate."
+        ],
+        "forceSensitivityNudge": [
+          "The next card feels like a last chance.",
+          "Something says the next draw decides more than it should."
+        ],
+        "tell1": [
+          "I only need one way out.",
+          "Do not count me out while I still have a card."
+        ],
+        "tell2": [
+          "Every total looks dangerous from here.",
+          "The table is closing, but not closed."
+        ],
+        "fakeTell": [
+          "I am worse off than I look.",
+          "This is nearly over for me."
+        ],
+        "fakeTell2": [
+          "Hmph. Too easy.",
+          "You should finish this quickly, if you can."
+        ],
+        "ante": [
+          "Ante in. That stings.",
+          "Fine. The table gets another piece."
+        ],
+        "raise": [
+          "Raise. Backing down costs more.",
+          "More in, because I cannot afford fear."
+        ],
+        "stay": [
+          "I stay because running is worse.",
+          "No retreat. Not yet."
+        ],
+        "playsCard": [
+          "This has to work.",
+          "Card down. Come on."
+        ],
+        "showsCard": [
+          "There. That is the chance.",
+          "Look at it. That keeps me breathing."
+        ],
+        "checkmate": [
+          "That was the last square.",
+          "No room left now."
+        ],
+        "check": [
+          "Everything is pressure now.",
+          "Careful. One mistake and I am back in this."
+        ],
+        "playsPositiveCard": [
+          "Push it higher. I need the win.",
+          "Up. I have to reach."
+        ],
+        "playsNegativeCard": [
+          "Back from the edge.",
+          "Not busting today. Not yet."
+        ],
+        "busts": [
+          "Too much. Too late.",
+          "I reached and the deck bit me."
+        ],
+        "hits20": [
+          "Twenty. Still in it.",
+          "There. I can still breathe."
+        ],
+        "stand": [
+          "I stand because the nerve finally holds.",
+          "Enough. Let that total survive."
+        ],
+        "drawsCard": [
+          "Draw. No tomorrow at this table.",
+          "One more card. It has to be one more."
+        ],
+        "allIn": [
+          "All in. There was no other move.",
+          "Everything left goes here."
+        ],
+        "conversationLine1": [
+          "Debt makes every card heavier.",
+          "There is no safe play when the table is closing."
+        ],
+        "conversationLine2": [
+          "A cornered gambler still has teeth.",
+          "Last chances are still chances."
+        ],
+        "sideDeckLocked": [
+          "Comeback deck locked.",
+          "These cards know what desperation costs."
+        ],
+        "payoutCapped": [
+          "Even the win gets squeezed.",
+          "I fight out and the house still takes a bite."
+        ],
+        "refund": [
+          "At least the floor stayed underfoot.",
+          "No win, but no ruin. I will take it."
+        ],
+        "thinking": [
+          "Give me a second. This matters too much.",
+          "I am counting exits, not odds."
+        ],
+        "thinkingHard": [
+          "I am in the corner now. The only way out is forward.",
+          "Every bad option gets searched for a miracle."
+        ],
+        "thinkingEasy": [
+          "For once, the table is not on fire.",
+          "A little breathing room. I almost forgot the feeling."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "deceptive": {
+      "label": "Deceptive",
+      "quality": "Randomizes choices and hides intent.",
+      "modifiers": {
+        "standThreshold": 0,
+        "riskTolerance": 1,
+        "conserveCards": 0,
+        "exactTwentyBias": 1,
+        "unpredictability": 4
+      },
+      "dialogue": {
+        "winRound": [
+          "Funny how that turned out.",
+          "The table saw what it was meant to see."
+        ],
+        "winMatch": [
+          "Misdirection is also a strategy.",
+          "You played the cards. I played the room."
+        ],
+        "matchPoint": [
+          "Guess wrong one more time.",
+          "One more set. Try reading this one."
+        ],
+        "loseRound": [
+          "A useful false trail, at least.",
+          "You found the right door that time."
+        ],
+        "loseMatch": [
+          "The mask did not hold.",
+          "You saw enough. Annoying."
+        ],
+        "taunt": [
+          "Are you sure that is what I have?",
+          "The obvious answer is usually bait."
+        ],
+        "forceSensitivityNudge": [
+          "The next card whispers through the noise.",
+          "Something says the deck is lying badly."
+        ],
+        "tell1": [
+          "You are watching my hands too much.",
+          "The table is over there, unless I wanted you looking here."
+        ],
+        "tell2": [
+          "That reaction? Free of charge.",
+          "I would never make it that easy."
+        ],
+        "fakeTell": [
+          "Oh no. That is inconvenient.",
+          "What a terrible time for that card."
+        ],
+        "fakeTell2": [
+          "Hmph. Too easy.",
+          "You should trust that instinct. It seems useful."
+        ],
+        "ante": [
+          "Ante in. Watch whatever you like.",
+          "A small price for a larger lie."
+        ],
+        "raise": [
+          "Raise. Or maybe an invitation.",
+          "More credits. Less clarity."
+        ],
+        "stay": [
+          "I stay. Reasons are overrated.",
+          "No move. Make of that what you want."
+        ],
+        "playsCard": [
+          "This one should explain nothing.",
+          "A card. Perhaps the card."
+        ],
+        "showsCard": [
+          "There. Exactly what I wanted you to see.",
+          "Look closely. Then doubt it."
+        ],
+        "checkmate": [
+          "The last lie becomes true.",
+          "No exits, unless I missed one for you."
+        ],
+        "check": [
+          "Something is threatened. Perhaps.",
+          "That position is either safe or doomed. Helpful, yes?"
+        ],
+        "playsPositiveCard": [
+          "Upward, if that helps you guess.",
+          "Adding points. Or adding noise."
+        ],
+        "playsNegativeCard": [
+          "Downward. Predictable, unless it was not.",
+          "Subtracting the obvious problem."
+        ],
+        "busts": [
+          "The deception fooled the wrong player.",
+          "I lied to myself. Bad habit."
+        ],
+        "hits20": [
+          "Twenty. Surprised?",
+          "Exactly where I claimed I was not going."
+        ],
+        "stand": [
+          "I stand. Read that however you like.",
+          "No more cards. Unless you expected that."
+        ],
+        "drawsCard": [
+          "Draw. The honest move, supposedly.",
+          "Another card to misunderstand."
+        ],
+        "allIn": [
+          "All in, unless that is what I wanted believed.",
+          "Everything in. The cleanest kind of confusion."
+        ],
+        "conversationLine1": [
+          "The card is only half the play.",
+          "A good table has three games happening at once."
+        ],
+        "conversationLine2": [
+          "Truth is useful. Timing is better.",
+          "If you know what I want, I have already failed."
+        ],
+        "sideDeckLocked": [
+          "Unpredictable side deck locked.",
+          "These cards and I have an arrangement."
+        ],
+        "payoutCapped": [
+          "The house saw through the payout line.",
+          "Even the cap is trying to read me."
+        ],
+        "refund": [
+          "Nothing lost. Nothing proven.",
+          "A clean refund leaves no fingerprints."
+        ],
+        "thinking": [
+          "Give me a moment, or pretend I need one.",
+          "I am choosing between a move and a story."
+        ],
+        "thinkingHard": [
+          "Under pressure, even silence can bluff.",
+          "The corner is real. So I need the lie to be better."
+        ],
+        "thinkingEasy": [
+          "This is comfortable enough to look worried.",
+          "The lead hides nicely behind concern."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    },
+    "forceTouched": {
+      "label": "Force-Touched",
+      "quality": "Mostly normal play, with rare intuition about danger or opportunity.",
+      "modifiers": {
+        "standThreshold": 0,
+        "riskTolerance": 0,
+        "conserveCards": 1,
+        "exactTwentyBias": 1,
+        "unpredictability": 1
+      },
+      "dialogue": {
+        "winRound": [
+          "The current moved the right way.",
+          "That one felt close before it happened."
+        ],
+        "winMatch": [
+          "Some tables know their ending early.",
+          "The cards were quiet, then clear."
+        ],
+        "matchPoint": [
+          "The next set feels close.",
+          "One more turn of the current."
+        ],
+        "loseRound": [
+          "The feeling was clouded.",
+          "I heard the table wrong."
+        ],
+        "loseMatch": [
+          "Not every whisper is a promise.",
+          "The current changed. I did not."
+        ],
+        "taunt": [
+          "Listen closely. Even the deck has a mood.",
+          "You hear nothing from the table? Shame."
+        ],
+        "forceSensitivityNudge": [
+          "The next draw feels dangerous.",
+          "The next draw feels clear.",
+          "A quiet warning passes over the table."
+        ],
+        "tell1": [
+          "The cards are louder than the room right now.",
+          "Something keeps pulling at the deck."
+        ],
+        "tell2": [
+          "I know how strange this sounds, but the table has a weather.",
+          "Sometimes luck arrives before the card does."
+        ],
+        "fakeTell": [
+          "I have a bad feeling about this harmless little hand.",
+          "The table says I should worry. Probably."
+        ],
+        "fakeTell2": [
+          "Hmph. Too easy.",
+          "The deck practically answered already."
+        ],
+        "ante": [
+          "Ante in. The current starts here.",
+          "The table gets its first offering."
+        ],
+        "raise": [
+          "Raise. The feeling says move.",
+          "More in. The moment is pulling."
+        ],
+        "stay": [
+          "I stay. The air has settled.",
+          "No more motion. Not from me."
+        ],
+        "playsCard": [
+          "This card belongs here.",
+          "That is the one the table wanted."
+        ],
+        "showsCard": [
+          "There. As expected.",
+          "The card was already in the air."
+        ],
+        "checkmate": [
+          "The path narrowed to one.",
+          "Only one line remains."
+        ],
+        "check": [
+          "There is pressure in the air.",
+          "Careful. The table is turning."
+        ],
+        "playsPositiveCard": [
+          "Upward, with the current.",
+          "The total wants to rise."
+        ],
+        "playsNegativeCard": [
+          "Away from danger.",
+          "The warning was enough. Down we go."
+        ],
+        "busts": [
+          "The warning came too late.",
+          "I mistook the echo for the card."
+        ],
+        "hits20": [
+          "Twenty. As felt.",
+          "There it is. The clean note."
+        ],
+        "stand": [
+          "I stand on instinct.",
+          "No. The deck can wait."
+        ],
+        "drawsCard": [
+          "Draw. Let us see if the feeling holds.",
+          "One card from the current."
+        ],
+        "allIn": [
+          "Everything follows the feeling.",
+          "All in. The table is loud now."
+        ],
+        "conversationLine1": [
+          "Sometimes luck has a voice.",
+          "The galaxy hums differently around a good table."
+        ],
+        "conversationLine2": [
+          "Do not worry. I only sound mystical when the stakes are embarrassing.",
+          "A good gambler counts cards. A strange one listens too."
+        ],
+        "sideDeckLocked": [
+          "Side deck locked. It feels balanced.",
+          "These cards sit quietly together."
+        ],
+        "payoutCapped": [
+          "The house interrupts the current.",
+          "Even fate has to pass accounting, apparently."
+        ],
+        "refund": [
+          "The table returns to calm.",
+          "No win, no loss. The current stills."
+        ],
+        "thinking": [
+          "Give me a moment. The table is trying to say something.",
+          "I am listening for the quiet card."
+        ],
+        "thinkingHard": [
+          "The future feels crowded. I need the bright path.",
+          "The deck is arguing with itself. So am I."
+        ],
+        "thinkingEasy": [
+          "The current is gentle right now.",
+          "The table feels kind. That makes this easier."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
+        ]
+      }
+    }
+  },
+  "opponentProfile": {
+    "professions": [
+      "moisture farmer",
+      "cantina musician",
+      "hyperdrive mechanic",
+      "swoop mechanic",
+      "dockyard loader",
+      "spice runner",
+      "cargo broker",
+      "salvage hauler",
+      "ore prospector",
+      "asteroid miner",
+      "starport customs clerk",
+      "protocol tutor",
+      "astromech wrangler",
+      "bounty spotter",
+      "mercenary quartermaster",
+      "security consultant",
+      "private investigator",
+      "holonet courier",
+      "slicer",
+      "data broker",
+      "medical orderly",
+      "field medic",
+      "cybernetics installer",
+      "droid technician",
+      "shipwright apprentice",
+      "navicomputer cartographer",
+      "hyperspace scout",
+      "xenobiologist",
+      "beast handler",
+      "arena booker",
+      "podracing tout",
+      "swoop racer",
+      "speeder cab dispatcher",
+      "black market appraiser",
+      "relic dealer",
+      "Jawa scrap negotiator",
+      "Tusken translator",
+      "outer-rim surveyor",
+      "corporate auditor",
+      "trade guild factor",
+      "banking clan clerk",
+      "senate aide",
+      "bureaucratic fixer",
+      "legal advocate",
+      "bail bond agent",
+      "cantina owner",
+      "tea vendor",
+      "blue milk bottler",
+      "ration pack inspector",
+      "water merchant",
+      "sandcrawler cook",
+      "spaceport janitor",
+      "holovid extra",
+      "sabacc dealer",
+      "pazaak hustler",
+      "dejarik coach",
+      "holochess sculptor",
+      "message runner",
+      "encrypted comms operator",
+      "smuggler's lookout",
+      "fence",
+      "dockside preacher",
+      "fortune teller",
+      "street physician",
+      "spice detox counselor",
+      "monorail conductor",
+      "repulsorlift technician",
+      "shield generator tuner",
+      "weapons range attendant",
+      "armor polisher",
+      "lightsaber parts broker",
+      "kyber rumor collector",
+      "temple archivist",
+      "museum docent",
+      "imperial surplus clerk",
+      "rebel sympathizer",
+      "safehouse host",
+      "cantina bouncer",
+      "pit droid supervisor",
+      "Gonk power vendor",
+      "fuel depot attendant",
+      "refinery inspector",
+      "atmosphere farmer",
+      "storm shelter planner",
+      "space slug insurance adjuster",
+      "clone memorabilia trader",
+      "training remote programmer",
+      "translator droid minder",
+      "wilderness guide",
+      "big-game tracker",
+      "aquatic farmer",
+      "pearl diver",
+      "cloud car mechanic",
+      "gas mine scheduler",
+      "luxury liner steward",
+      "casino host",
+      "house odds analyst",
+      "tournament bracket keeper",
+      "dueling promoter",
+      "holo-ad copywriter",
+      "street food cart owner",
+      "orbital elevator attendant",
+      "scrap rights lawyer",
+      "warehouse forebeing",
+      "star map restorer",
+      "ion storm forecaster",
+      "drift racer",
+      "graveyard scavenger",
+      "privateer recruiter",
+      "dock cantina storyteller",
+      "wandering gambler",
+      "imperial officer",
+      "clone",
+      "clone veteran",
+      "clone trooper",
+      "clone quartermaster",
+      "clone medical orderly",
+      "clone drill instructor",
+      "republic attaché",
+      "senate courier",
+      "sector bureaucrat",
+      "customs inspector",
+      "port authority clerk",
+      "orbital traffic controller",
+      "hyperlane surveyor",
+      "hyperspace cartographer",
+      "navicomputer tuner",
+      "astrogation tutor",
+      "jump route broker",
+      "starport dispatcher",
+      "dockmaster",
+      "landing bay marshal",
+      "cargo manifest auditor",
+      "freight consolidator",
+      "container seal inspector",
+      "tibanna gas broker",
+      "coaxium safety officer",
+      "refinery shift boss",
+      "reactor coolant technician",
+      "power coupling inspector",
+      "shield grid electrician",
+      "sensor mast repairer",
+      "comm tower climber",
+      "holonet relay operator",
+      "encrypted burst messenger",
+      "data courier",
+      "slicer-for-hire",
+      "datapad refurbisher",
+      "memory core archivist",
+      "protocol etiquette coach",
+      "binary translator",
+      "droid motivator mechanic",
+      "restraining bolt locksmith",
+      "battle droid reclamation tech",
+      "scrap yard assessor",
+      "junk dealer",
+      "salvage cutter",
+      "wreck diver",
+      "hull plate scavenger",
+      "void suit patcher",
+      "mag-boots cobbler",
+      "vacuum welder",
+      "airlock inspector",
+      "life support cleaner",
+      "oxygen farm tender",
+      "moisture vaporator calibrator",
+      "desert guide",
+      "dune skiff pilot",
+      "sandcrawler broker",
+      "bantha drover",
+      "dewback handler",
+      "nerf herder",
+      "shaak rancher",
+      "eopie groom",
+      "womp rat trapper",
+      "bogwing catcher",
+      "gizka wrangler",
+      "ronto handler",
+      "tauntaun stable hand",
+      "ice tunnel surveyor",
+      "glacier comm scout",
+      "volcanic mine spotter",
+      "lava ferry pilot",
+      "cloud city lift operator",
+      "repulsor taxi pilot",
+      "airspeeder courier",
+      "swoop pit mechanic",
+      "podracer fuel mixer",
+      "podracer flagger",
+      "swoop gang bookkeeper",
+      "speeder chop-shop painter",
+      "gravsled hauler",
+      "crawler driver",
+      "hovertrain conductor",
+      "maglev signaler",
+      "cantina cook",
+      "cantina stagehand",
+      "holo-jizz arranger",
+      "band manager",
+      "backroom dealer",
+      "professional pazaak player",
+      "sabacc table host",
+      "casino pit boss",
+      "odds marker",
+      "house-credit clerk",
+      "betting slip runner",
+      "dejarik table maintainer",
+      "holochess piece animator",
+      "game den lookout",
+      "loan shark collector",
+      "debt negotiator",
+      "bail bonds broker",
+      "licensed bounty clerk",
+      "skip tracer",
+      "guild receptionist",
+      "wanted-poster printer",
+      "tracking fob tuner",
+      "carbon-freeze technician",
+      "holding cell guard",
+      "security scanner tech",
+      "blast door operator",
+      "turbolift repairer",
+      "prison transport pilot",
+      "evidence locker custodian",
+      "undercover informant",
+      "street vendor",
+      "market stall hawker",
+      "spice route accountant",
+      "rare tea importer",
+      "blue milk vendor",
+      "ration cube sculptor",
+      "protein vat supervisor",
+      "hydroponic bay keeper",
+      "agri-dome pollinator",
+      "fungal farm tender",
+      "mushroom cave guide",
+      "water rights negotiator",
+      "canal lock operator",
+      "planetary survey aide",
+      "terraforming intern",
+      "weather control trainee",
+      "storm shield technician",
+      "seismic sensor installer",
+      "mining claim registrar",
+      "ore scanner",
+      "plasma drill operator",
+      "gemstone sorter",
+      "kyber folklore lecturer",
+      "ancient ruin docent",
+      "temple groundskeeper",
+      "relic cataloger",
+      "museum night guard",
+      "artifact insurance adjuster",
+      "auction house spotter",
+      "luxury yacht steward",
+      "starliner purser",
+      "cruise lounge singer",
+      "sleep pod attendant",
+      "passenger customs advocate",
+      "refugee camp coordinator",
+      "medical triage assistant",
+      "bacta tank attendant",
+      "cybernetic limb fitter",
+      "prosthetic calibration nurse",
+      "clinic records clerk",
+      "quarantine marshal",
+      "xenobiology aide",
+      "creature rights advocate",
+      "animal quarantine handler",
+      "pet import inspector",
+      "beast arena medic",
+      "gladiator promoter",
+      "arena announcer",
+      "dueling instructor",
+      "stun baton trainer",
+      "blaster safety lecturer",
+      "range master",
+      "weapon permit clerk",
+      "vibroblade sharpener",
+      "armor seamstress",
+      "blast vest fitter",
+      "helmet comm installer",
+      "camouflage painter",
+      "uniform quartermaster",
+      "medal engraver",
+      "regimental historian",
+      "recruiting sergeant",
+      "mercenary paymaster",
+      "militia organizer",
+      "planetary defense analyst",
+      "garrison cook",
+      "watchtower sentry",
+      "checkpoint clerk",
+      "border beacon maintainer",
+      "signal jammer operator",
+      "encrypted comms tutor",
+      "holodrama critic",
+      "newsnet stringer",
+      "propaganda poster artist",
+      "public relations droid handler",
+      "senatorial aide",
+      "lobbyist",
+      "petition scribe",
+      "translation booth operator",
+      "court transcript droid owner",
+      "magistrate runner",
+      "contract witness",
+      "notary of starship liens",
+      "divorce mediator",
+      "inheritance claims agent",
+      "guild dues collector",
+      "union organizer",
+      "strike negotiator",
+      "corporate compliance officer",
+      "factory line supervisor",
+      "quality assurance inspector",
+      "parts-bin forecaster",
+      "assembly droid foreman",
+      "shipping crate stencil artist",
+      "barcode tattoo remover",
+      "credit-chip recycler",
+      "casino chip washer",
+      "vault climate technician",
+      "safe deposit runner",
+      "lockbox courier",
+      "encrypted key broker",
+      "pawn counter clerk",
+      "heirloom blade restorer",
+      "rare coin authenticator",
+      "stamp-pad collector",
+      "holocron myth debunker",
+      "force cult pamphleteer",
+      "pilgrim route guide",
+      "shrine candle vendor",
+      "monastery kitchen helper",
+      "meditation mat weaver",
+      "lightsaber insurance salesman",
+      "robe tailor",
+      "boot sole regripper",
+      "cloak weatherproofer",
+      "thermal blanket vendor",
+      "rain collector",
+      "night market fixer",
+      "alleyway noodle cook",
+      "neon sign repairer",
+      "trash compactor supervisor",
+      "recycling chute diver",
+      "sewer map seller",
+      "sublevel guide",
+      "undercity elevator operator",
+      "gang toll collector",
+      "neighborhood watch captain",
+      "orphanage tutor",
+      "street doctor",
+      "gravity well technician",
+      "hyperspace buoy painter",
+      "star chart antiquarian",
+      "cantina credit mediator",
+      "sector customs advocate",
+      "freighter stowage planner",
+      "droid choir conductor",
+      "outer rim weathercaster",
+      "orbital farm beekeeper",
+      "laser fence repairer",
+      "clone-era memorabilia dealer",
+      "imperial surplus tailor",
+      "holonet rumor broker",
+      "asteroid claim jumper",
+      "void whale spotter"
+    ],
+    "tableFacts": [
+      "smells faintly like blue milk",
+      "is wearing shoes too small for their feet",
+      "keeps checking a cracked chronometer",
+      "has a lucky ration wrapper folded beside the cards",
+      "hums a tune that never quite resolves",
+      "keeps one glove on and one glove off",
+      "has a scorch mark across one sleeve",
+      "smells like engine coolant and caf",
+      "is using a chipped sabacc chip as a card weight",
+      "has a tiny repair droid watching from a satchel",
+      "keeps apologizing to the table before every draw",
+      "wears a cloak with too many pockets",
+      "has a boot full of sand and refuses to mention it",
+      "is chewing something bright green",
+      "has a fake pearl pin shaped like a mynock",
+      "keeps glancing at the exit camera",
+      "smells like ozone after a shield surge",
+      "has a stack of unpaid docking tickets",
+      "wears goggles despite being indoors",
+      "has a sleeve patched with ship sealant",
+      "keeps a hand-painted lucky starfighter token nearby",
+      "is clearly pretending not to be nervous",
+      "has caf stains on every visible note",
+      "keeps counting chips in groups of three",
+      "has a datapad covered in cantina stickers",
+      "smells like cheap cologne and hot circuitry",
+      "is wearing a scarf in a room that is too warm",
+      "keeps muttering odds under their breath",
+      "has a tiny holo of a bantha calf on the table",
+      "has a ring that clicks against every card",
+      "is sitting perfectly still except for one tapping finger",
+      "wears a hat with a blaster burn through the brim",
+      "has crumbs from something spicy on their coat",
+      "is using a cargo invoice as a bookmark",
+      "keeps asking if the house rules changed",
+      "has a voice like a failing vocoder",
+      "smells faintly of rain on duracrete",
+      "wears a medal from a contest nobody recognizes",
+      "keeps rearranging the same three chips",
+      "has a pocket full of mismatched dice",
+      "is pretending a cracked tooth does not hurt",
+      "has a droid restraining bolt used as a charm",
+      "keeps a polite smile in place too long",
+      "has a jacket that belonged to somebody taller",
+      "smells like fresh lubricant and old dust",
+      "is wearing two different socks",
+      "has burn scars on the fingertips of one glove",
+      "keeps wiping the table before every set",
+      "has a tiny notebook full of losses",
+      "is followed by the smell of fried nuna",
+      "keeps looking at reflections instead of faces",
+      "has a courier bag that never leaves their lap",
+      "wears a badge from a casino on another world",
+      "has a suspiciously new deck case",
+      "keeps humming along with music that is not playing",
+      "smells like starship upholstery",
+      "has a patched sleeve that reads CREW in three languages",
+      "is balancing a spoon on one knuckle",
+      "keeps a folded legal summons under the chips",
+      "has a missing button replaced with a gear tooth",
+      "seems to know the dealer by reputation",
+      "has an expression that says rent is due",
+      "has a lucky coin with both sides scratched off",
+      "wears boots polished only on the front",
+      "keeps checking the ceiling vents",
+      "has a small burn from cheap caf on one cuff",
+      "smells like a mechanic bay after rain",
+      "has a snack hidden in every pocket",
+      "keeps a neat stack of losing receipts",
+      "wears a ring made from starship hull plating",
+      "has a cough that sounds like a speeder starting",
+      "keeps measuring the table edge with a thumb",
+      "is wearing a borrowed jacket and losing confidence in it",
+      "has a droid oil stain shaped like a moon",
+      "keeps whispering encouragement to the cards",
+      "smells like mint, dust, and panic",
+      "has a bandage wrapped too neatly to be casual",
+      "keeps one eye on the holoscreen scores",
+      "has an old tournament stamp on one wrist",
+      "is pretending not to recognize somebody nearby",
+      "has a half-finished blue milk on the table",
+      "wears a belt with too many empty holsters",
+      "keeps a list of debts written in tiny script",
+      "has a table manner too formal for this cantina",
+      "smells faintly like ionized air",
+      "has a lucky charm that might be illegal salvage",
+      "is wearing a vest with a hidden torn pocket",
+      "keeps smiling whenever someone else busts",
+      "has a cup labeled with the wrong name",
+      "looks like they slept in a cargo crate",
+      "keeps folding and unfolding a receipt",
+      "has a small holo-projector showing static",
+      "wears a rain poncho on a desert world",
+      "has an expensive watch set to the wrong planet",
+      "smells like blue milk and blaster oil",
+      "has a sabacc chip tucked behind one ear",
+      "keeps counting the discard pile under their breath",
+      "has blue milk stains on one sleeve",
+      "wears boots that squeak on every step",
+      "carries a cracked holo of a starship they clearly miss",
+      "uses a ration spoon as a card weight",
+      "smells faintly of coolant and fried tubers",
+      "has a scarf covered in tiny burn marks",
+      "keeps a lucky bolt beside the deck",
+      "wears gloves with mismatched fingertips",
+      "has a datapad full of unpaid parking fines",
+      "keeps glancing at the nearest exit",
+      "has a tiny scorch mark shaped like a moon on their collar",
+      "wears a formal jacket over mechanic coveralls",
+      "speaks to the deck like it can hear them",
+      "keeps a polished chance cube on the rail",
+      "has a pocket full of obsolete credit chits",
+      "carries a dried desert flower in a transparisteel tube",
+      "has a droid oil smudge across their cheek",
+      "keeps folding and unfolding a docking receipt",
+      "has a tiny charm made from a broken power coupling",
+      "smells like engine grease and caf",
+      "has a bandolier that holds snacks instead of ammo",
+      "keeps whispering odds to an imaginary accountant",
+      "wears a badge from a casino that no longer exists",
+      "has a vibroblade scar but talks like an accountant",
+      "carries an umbrella on a desert world",
+      "has a cloak lined with old transit tickets",
+      "keeps their cards perfectly squared",
+      "lets every card land one finger-width from the last",
+      "wears a ring that clicks against every card",
+      "has a laugh like a bad motivator",
+      "smells like ozone after a storm",
+      "has hair singed on only one side",
+      "keeps checking a dead comlink",
+      "has a tiny protocol droid sticker on their cup",
+      "wears a flight helmet as a chair ornament",
+      "uses a ship keycard as a bookmark",
+      "has a pouch labeled “not bribe money”",
+      "keeps a napkin covered in hyperspace coordinates",
+      "has a fresh imperial inspection stamp on their sleeve",
+      "wears clone-era armor plates as jewelry",
+      "has a republic surplus canteen",
+      "keeps a broken stormtrooper lens as a charm",
+      "smells like recycled air and expensive cologne",
+      "has a voice that belongs in an evacuation announcement",
+      "brings their own table light",
+      "wears too many rank pins for a civilian",
+      "has a pet lizard asleep in one pocket",
+      "keeps a tiny cage under the chair",
+      "has dust from three planets on their boots",
+      "wears a casino visor upside down",
+      "has a stitched patch that says “Ask Me About Hyperlanes”",
+      "keeps wiping the same clean spot on the table",
+      "has a cup of caf strong enough to count as a weapon",
+      "smells like mint, smoke, and battery acid",
+      "wears a cloak that has seen better governments",
+      "has a voice modulator that occasionally coughs",
+      "keeps a spare restraining bolt as a worry stone",
+      "has a lucky hydrospanner laid beside the pot",
+      "wears one military boot and one dancing shoe",
+      "has a hat too dramatic for the room",
+      "keeps correcting the dealer droid pronunciation",
+      "has a fake accent that slips when losing",
+      "wears a festival mask pushed up like goggles",
+      "has a jacket full of secret pockets",
+      "smells like a spice market after rain",
+      "has a tattoo of coordinates they refuse to explain",
+      "keeps an old ration wrapper folded into a starfighter",
+      "has a sleeve patched with starship upholstery",
+      "talks to their side deck like an old rival",
+      "has a tiny calculator droid perched nearby",
+      "uses a blaster power pack as a card weight",
+      "wears pearls made from polished bearings",
+      "has a fresh bandage shaped like bad judgement",
+      "keeps claiming the chair is unlucky",
+      "has a datapad case covered in docking stickers",
+      "wears gloves embroidered with tiny asteroids",
+      "smells like sun-baked plastoid",
+      "has a receipt from a meal they still regret",
+      "keeps a list of people who owe them apologies",
+      "has a ceremonial sash with a coffee stain",
+      "wears a monocle that projects useless odds",
+      "has a metal tooth that flashes when they smile",
+      "keeps tapping a rhythm from an old cantina song",
+      "has a pocket full of tiny shell beads",
+      "smells like wet duracrete and engine smoke",
+      "has a fresh haircut and an ancient coat",
+      "keeps a broken holo-projector as a good luck charm",
+      "wears a cape that keeps getting caught on the chair",
+      "has a map of the local sewers folded beside the table",
+      "keeps muttering about customs fees",
+      "wears starship mechanic goggles on their forehead",
+      "has a wrist chrono set to the wrong planet",
+      "smells like bacta and pepper stew",
+      "has a formal invitation used as a coaster",
+      "keeps looking offended by the lighting",
+      "has a pocket full of casino matchbooks",
+      "wears a belt buckle shaped like a freighter",
+      "has a tiny carved rancor on the table rail",
+      "keeps a neat stack of losing tickets",
+      "has a smile too practiced for honest work",
+      "smells like cold metal and sweet tea",
+      "wears old parade gloves with patched palms",
+      "has a holo of a pet they show anyone who asks",
+      "keeps rubbing a dented medal",
+      "has a droid caller clipped to their collar",
+      "wears a jacket that still has sale tags",
+      "keeps asking if the table is level",
+      "has a datapad screen cracked in the shape of a star",
+      "smells like hydraulic fluid and citrus soap",
+      "has an antique credit reader that never works",
+      "keeps rearranging the ante into perfect columns",
+      "wears a scarf printed with fake constellations",
+      "has a tiny toolkit organized by emotional importance",
+      "keeps a thermal detonator-shaped salt shaker",
+      "has a nervous habit of counting ceiling panels",
+      "smells like burnt sugar and landing fuel",
+      "wears a shirt from a mining moon tournament",
+      "has a bag full of suspiciously identical souvenirs",
+      "keeps a bent spoon from a prison transport",
+      "has a blanket over one shoulder like a noble cape",
+      "wears a wedding ring on a chain with a blaster sight",
+      "has a half-written apology note in their pocket",
+      "keeps reciting house rules from the wrong casino",
+      "has a lucky coin that is clearly a washer",
+      "smells faintly of swamp gas and expensive polish",
+      "wears a maintenance badge from a ship they never served on",
+      "has a repaired eyepiece that whirs when they blink",
+      "keeps checking the table for hidden compartments",
+      "wears a sash of tiny clipped transit passes",
+      "has a cape clasp made from a starfighter part",
+      "keeps a snack wrapped in a legal summons",
+      "has a laugh that startles nearby droids",
+      "smells like rain on hot durasteel",
+      "wears a collar with too many old access cards",
+      "has a datapad wallpaper of a suspiciously beautiful asteroid",
+      "keeps a tiny bottle of shipboard air",
+      "wears sandals inappropriate for the climate",
+      "has one sleeve tailored and the other scorched",
+      "keeps touching a hidden pocket when the pot grows",
+      "smells like a medical bay and cheap perfume",
+      "has a menu from a restaurant that burned down",
+      "wears a jacket stitched with unit numbers",
+      "keeps a tiny holoprojector playing static",
+      "has a drink with three umbrellas and no shame",
+      "wears a flight suit with all the patches removed",
+      "has a notebook full of names but no context",
+      "keeps a spool of wire as a bracelet",
+      "smells like old paper and reactor dust",
+      "has a battered helmet covered in smiley stickers",
+      "wears a ceremonial glove on the wrong hand",
+      "keeps a napkin sketch of an impossible engine",
+      "has a tiny bell that rings whenever they win",
+      "smells like a bakery near a fuel depot",
+      "wears boots polished only on the left side",
+      "has a token from a dejarik table embedded in their belt",
+      "keeps telling the dealer droid it has kind eyes",
+      "has a blue milk mustache and denies it",
+      "wears a vest with more repairs than fabric",
+      "keeps a list titled “people not to trust again”",
+      "has a holonet dating profile open by accident",
+      "smells like solder and cinnamon",
+      "wears an officer cap with no insignia",
+      "has a clone-era serial plate used as a coaster",
+      "keeps a tiny flag from a forgotten parade",
+      "has a datapad that announces every low battery warning aloud",
+      "wears a poncho made from cargo netting",
+      "keeps a cracked pilot license in a clear sleeve",
+      "has a private joke with the serving droid",
+      "smells like dust, starch, and ionized air",
+      "wears a bracelet of old hyperdrive fuses",
+      "has a snack crumb trail leading to their chair",
+      "keeps pressing a broken lucky button",
+      "has a table mat from a rival casino",
+      "wears a visor that keeps fogging up",
+      "has a tiny tattoo of a landing clearance code",
+      "keeps a dry leaf from a world without trees",
+      "smells like ship soap and bad decisions",
+      "wears a work apron over formal clothes",
+      "has a pocket droid that quietly judges the game",
+      "keeps a torn bounty notice as a bookmark",
+      "has a ring made from a melted credit chip",
+      "wears a hat with an emergency beacon sewn in",
+      "keeps asking the deck if it feels lucky",
+      "has a pair of dice that are not part of this game",
+      "smells like peppered nerf jerky",
+      "wears gloves with tiny numbers stitched on each finger",
+      "has a fake rank badge upside down",
+      "keeps a half-eaten ration bar under the rail",
+      "has a hologram of a ship that definitely is not theirs",
+      "wears a ceremonial belt over utility suspenders",
+      "keeps a folded eviction notice as a card protector",
+      "has a mug that says “Best Dockmaster”",
+      "smells like ozone, pine soap, and panic",
+      "wears a shirt advertising a cancelled swoop race",
+      "has a tiny sandstorm sealed in a novelty globe",
+      "keeps flexing a cybernetic finger that sticks",
+      "has a scarf knitted from emergency blanket thread",
+      "wears a cloak with a hidden snack pocket",
+      "keeps a ship manifest signed by no one important",
+      "has an old imperial ration spoon polished mirror-bright",
+      "smells like damp wool and starship carpet",
+      "wears a medal for a contest no one remembers",
+      "has a datapad full of half-finished poems about hyperspace",
+      "keeps a bottle cap collection sorted by sector",
+      "has a little scorch mark on every cuff",
+      "wears a dancer’s anklet over compression socks",
+      "keeps a broken scope lens as a worry token",
+      "has a signet ring from a family they will not name",
+      "smells like fried dough and coolant",
+      "wears a utility belt stocked entirely with candy",
+      "has a palm-sized stone from a moon they claim is lucky",
+      "keeps a cup of water untouched for the whole game",
+      "has a laminated list of personal rules",
+      "wears a cloak clasp shaped like a tiny comet",
+      "keeps the chair angled toward the door",
+      "has a neat row of spare shoelaces on the table",
+      "smells like incense and recycled coolant",
+      "wears a jumpsuit two sizes too formal",
+      "has a droid maintenance manual with romance notes in the margins",
+      "keeps an old sabacc tournament stub for courage",
+      "has a blaster holster carrying only a fountain pen",
+      "wears a scarf from a moonball team that always loses",
+      "keeps a charm bracelet of tiny astromech feet",
+      "has a stain shaped like a hyperlane map",
+      "smells like toast, machine oil, and rain",
+      "wears a jacket with “temporary crew” still stitched on it",
+      "has a lucky bootlace tied around one wrist",
+      "keeps a handwritten list of excuses ready",
+      "has a pocket full of polished shell casings",
+      "wears sunglasses indoors because the table is “too bright”",
+      "keeps a small bell for celebrating exact twenties",
+      "has a folded repair invoice for a ship they lost years ago",
+      "smells like cold caf and ion scrubbers",
+      "wears one fancy cufflink and one cargo clip",
+      "has a tiny model freighter glued to their datapad",
+      "keeps a napkin labeled “winning plan” with nothing on it",
+      "has a droid scorch mark on their sleeve",
+      "wears gloves with the fingertips cut for luck",
+      "keeps a starport lost-and-found tag as a pendant",
+      "has a spice-market receipt tucked in their boot",
+      "has a pocket full of gravity-well permits nobody asked to see",
+      "keeps a tiny brush for dusting the edges of cards",
+      "wears a coat that smells faintly of starship hangar foam",
+      "has a folded holomap with one system circled three times",
+      "keeps a droid vocalizer chip as a lucky charm",
+      "wears an imperial surplus belt with the buckle filed smooth",
+      "has a blue milk candy tucked behind one ear",
+      "keeps a handwritten note that simply says “do not draw at nineteen”",
+      "smells like rainwater stored in a metal tank",
+      "has a bracelet made from old clone-era ID tags",
+      "wears a cape pin shaped like a hyperspace buoy",
+      "keeps a tiny unopened packet of emergency caf beside the pot",
+      "has a burn mark on one glove and refuses to explain it",
+      "wears a festival ribbon from a planet they pronounce differently every time",
+      "keeps a cracked star chart under their drink"
+    ]
+  }
+}

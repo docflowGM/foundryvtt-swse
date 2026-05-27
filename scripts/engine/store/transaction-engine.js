@@ -68,6 +68,7 @@ export class TransactionEngine {
     'holonet-credit-request',
     'holonet-item-trade',
     'holonet-asset-trade',
+    'holonet-asset-counter-offer',
     'holonet-gm-grant',
     'holonet-job-payout',
     'holonet-party-fund-contribution',
@@ -580,13 +581,40 @@ export class TransactionEngine {
 
     const value = normalizeCredits(amount);
     const transferId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+    const logContext = {
+      transferId,
+      transactionContext,
+      source,
+      fromActorId: fromActor?.id ?? null,
+      fromActorName: fromActor?.name ?? null,
+      toActorId: toActor?.id ?? null,
+      toActorName: toActor?.name ?? null,
+      amount: value,
+      auditSource: audit?.source ?? null,
+      holonetThreadId: audit?.threadId ?? null,
+      holonetTransferId: audit?.transferId ?? null,
+      validate,
+      rederive
+    };
+    swseLogger.debug('[TransactionEngine.creditTransfer] requested', logContext);
 
-    if (!fromActor || !toActor) return { success: false, transactionId: transferId, error: 'Credit transfer requires source and target actors' };
-    if (!Number.isFinite(value) || value <= 0) return { success: false, transactionId: transferId, error: 'Credit transfer amount must be positive' };
+    if (!fromActor || !toActor) {
+      const error = 'Credit transfer requires source and target actors';
+      swseLogger.error('[TransactionEngine.creditTransfer] rejected: missing actor', { ...logContext, error });
+      return { success: false, transactionId: transferId, error };
+    }
+    if (!Number.isFinite(value) || value <= 0) {
+      const error = 'Credit transfer amount must be positive';
+      swseLogger.error('[TransactionEngine.creditTransfer] rejected: invalid amount', { ...logContext, error });
+      return { success: false, transactionId: transferId, error };
+    }
     if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
-      return { success: false, transactionId: transferId, error: `Unsupported credit transfer context: ${transactionContext}` };
+      const error = `Unsupported credit transfer context: ${transactionContext}`;
+      swseLogger.error('[TransactionEngine.creditTransfer] rejected: unsupported context', { ...logContext, error });
+      return { success: false, transactionId: transferId, error };
     }
 
+    swseLogger.debug('[TransactionEngine.creditTransfer] debit leg starting', logContext);
     const debit = await this.executeCreditAdjustment({
       actor: fromActor,
       amount: -value,
@@ -601,8 +629,13 @@ export class TransactionEngine {
       }
     }, { source: `${source}.debit`, validate, rederive });
 
-    if (!debit.success) return { success: false, transactionId: transferId, debitTransactionId: debit.transactionId, error: debit.error };
+    if (!debit.success) {
+      swseLogger.error('[TransactionEngine.creditTransfer] debit leg failed', { ...logContext, debitTransactionId: debit.transactionId, error: debit.error });
+      return { success: false, transactionId: transferId, debitTransactionId: debit.transactionId, error: debit.error };
+    }
+    swseLogger.debug('[TransactionEngine.creditTransfer] debit leg complete', { ...logContext, debitTransactionId: debit.transactionId });
 
+    swseLogger.debug('[TransactionEngine.creditTransfer] credit leg starting', { ...logContext, debitTransactionId: debit.transactionId });
     const credit = await this.executeCreditAdjustment({
       actor: toActor,
       amount: value,
@@ -619,6 +652,12 @@ export class TransactionEngine {
     }, { source: `${source}.credit`, validate, rederive });
 
     if (!credit.success) {
+      swseLogger.error('[TransactionEngine.creditTransfer] credit leg failed; refunding debit', {
+        ...logContext,
+        debitTransactionId: debit.transactionId,
+        failedCreditTransactionId: credit.transactionId,
+        error: credit.error
+      });
       const refund = await this.executeCreditAdjustment({
         actor: fromActor,
         amount: value,
@@ -633,6 +672,22 @@ export class TransactionEngine {
           toActorName: toActor.name
         }
       }, { source: `${source}.refundDebit`, validate, rederive });
+      if (!refund.success) {
+        swseLogger.error('[TransactionEngine.creditTransfer] debit refund failed after credit leg failure', {
+          ...logContext,
+          debitTransactionId: debit.transactionId,
+          failedCreditTransactionId: credit.transactionId,
+          refundTransactionId: refund.transactionId,
+          error: refund.error
+        });
+      } else {
+        swseLogger.warn('[TransactionEngine.creditTransfer] debit refunded after credit leg failure', {
+          ...logContext,
+          debitTransactionId: debit.transactionId,
+          failedCreditTransactionId: credit.transactionId,
+          refundTransactionId: refund.transactionId
+        });
+      }
       return {
         success: false,
         transactionId: transferId,
@@ -642,6 +697,7 @@ export class TransactionEngine {
         error: credit.error || 'Credit leg failed'
       };
     }
+    swseLogger.debug('[TransactionEngine.creditTransfer] credit leg complete', { ...logContext, debitTransactionId: debit.transactionId, creditTransactionId: credit.transactionId });
 
     Hooks.callAll?.('swseCreditTransferComplete', {
       transaction: {
@@ -662,6 +718,11 @@ export class TransactionEngine {
       success: true
     });
 
+    swseLogger.info('[TransactionEngine.creditTransfer] complete', {
+      ...logContext,
+      debitTransactionId: debit.transactionId,
+      creditTransactionId: credit.transactionId
+    });
     return {
       success: true,
       transactionId: transferId,

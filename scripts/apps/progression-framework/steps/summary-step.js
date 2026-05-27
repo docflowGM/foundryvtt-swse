@@ -1766,29 +1766,22 @@ export class SummaryStep extends ProgressionStepPlugin {
 
   async _generateRandomName(actor) {
     try {
-      const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
-      const CharacterGenerator = module?.CharacterGenerator || module?.default;
-      const names = CharacterGenerator?.RANDOM_NAMES || [];
-      if (names.length > 0) return names[Math.floor(Math.random() * names.length)];
+      const { getRandomName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
+      if (typeof getRandomName === 'function') return await getRandomName(actor);
     } catch (err) {
-      swseLogger.warn('[SummaryStep] Failed to load legacy random names; using local fallback:', err);
+      swseLogger.warn('[SummaryStep] Failed to load shared random name generator:', err);
     }
-    const fallback = ['Tessa', 'Kai Vorn', 'Lira Voss', 'Jax Rendar', 'Mira Sol', 'Dain Korr', 'Vexa Tal'];
-    return fallback[Math.floor(Math.random() * fallback.length)];
+    return 'Unnamed Spacer';
   }
 
   async _generateRandomDroidName(actor) {
     try {
-      const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
-      const CharacterGenerator = module?.CharacterGenerator || module?.default;
-      const names = CharacterGenerator?.RANDOM_DROID_NAMES || [];
-      if (names.length > 0) return names[Math.floor(Math.random() * names.length)];
+      const { getRandomDroidName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
+      if (typeof getRandomDroidName === 'function') return await getRandomDroidName(actor);
     } catch (err) {
-      swseLogger.warn('[SummaryStep] Failed to load legacy droid names; using local fallback:', err);
+      swseLogger.warn('[SummaryStep] Failed to load shared random droid-name generator:', err);
     }
-    const prefix = ['R', 'T', 'K', 'J0', 'D', 'C'];
-    const suffix = Math.floor(10 + Math.random() * 90);
-    return `${prefix[Math.floor(Math.random() * prefix.length)]}-${suffix}`;
+    return 'RX-44';
   }
 
   async _stageStartingCreditsForStore(actor, shell = null) {

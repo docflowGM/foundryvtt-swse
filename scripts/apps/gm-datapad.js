@@ -33,7 +33,7 @@ import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/su
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
-import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
+import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
@@ -229,6 +229,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   _buildBulletinRecordView(record) {
+    const featuredProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED) ?? null;
+    const homeFeedProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.HOME_FEED) ?? null;
+    const notificationProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE) ?? null;
+    const isUrgent = record.metadata?.urgent === true || record.priority === 'critical' || Boolean(notificationProjection);
+    const isPinned = Boolean(featuredProjection?.isPinned || record.metadata?.pinAsLastSession);
+    const homeSlot = record.metadata?.homeSlot || (isPinned ? 'last-session' : 'feed');
+
     return {
       id: record.id,
       intent: record.intent,
@@ -247,7 +254,15 @@ export class GMDatapad extends BaseSWSEAppV2 {
       audiencePlayerIds: record.audience?.playerIds || [],
       senderName: record.sender?.actorName || record.sender?.systemLabel || 'GM Bulletin',
       createdAt: record.createdAt ? new Date(record.createdAt).toLocaleString() : '—',
-      publishedAt: record.publishedAt ? new Date(record.publishedAt).toLocaleString() : null
+      publishedAt: record.publishedAt ? new Date(record.publishedAt).toLocaleString() : null,
+      isUrgent,
+      isPinned,
+      isFeatured: Boolean(featuredProjection),
+      isHomeFeed: Boolean(homeFeedProjection),
+      homeSlot,
+      homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
+      imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
+      recordTone: isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft'))
     };
   }
 
@@ -765,7 +780,41 @@ export class GMDatapad extends BaseSWSEAppV2 {
       button.addEventListener('click', async (event) => {
         const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
         if (!record) return;
+        this._applyBulletinProjectionOptions(record, {
+          urgent: record.metadata?.urgent === true,
+          pinAsLastSession: record.metadata?.pinAsLastSession === true,
+          homeSlot: record.metadata?.homeSlot || 'feed'
+        });
         await HolonetEngine.publish(record);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-pin-last-session"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
+        if (!record) return;
+        this._applyBulletinProjectionOptions(record, {
+          urgent: record.metadata?.urgent === true,
+          pinAsLastSession: true,
+          homeSlot: 'last-session'
+        });
+        await this._unpinOtherBulletins(record.id);
+        await HolonetStorage.saveRecord(record);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-unpin-last-session"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
+        if (!record) return;
+        this._applyBulletinProjectionOptions(record, {
+          urgent: record.metadata?.urgent === true,
+          pinAsLastSession: false,
+          homeSlot: 'feed'
+        });
+        await HolonetStorage.saveRecord(record);
         await this.render(false);
       });
     });
@@ -777,6 +826,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
         if (hidden) hidden.value = event.currentTarget.dataset.submitMode;
       });
     });
+
+    this._wireBulletinImagePickers(pageElement);
+    this._wireBulletinLivePreview(pageElement);
 
     const eventsForm = pageElement.querySelector('[data-bulletin-form="events"]');
     if (eventsForm) {
@@ -833,25 +885,140 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
+  _wireBulletinImagePickers(pageElement) {
+    pageElement.querySelectorAll('[data-action="bulletin-pick-image"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget.closest('form');
+        const input = form?.querySelector('[data-bulletin-image-input]');
+        if (!input) return;
+        if (!globalThis.FilePicker) {
+          ui?.notifications?.warn?.('Foundry FilePicker is not available in this context. Paste an image path instead.');
+          return;
+        }
+        const picker = new FilePicker({
+          type: 'image',
+          current: input.value || '',
+          callback: (path) => {
+            input.value = path || '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+        picker.render(true);
+      });
+    });
+  }
+
+  _wireBulletinLivePreview(pageElement) {
+    const activeForm = pageElement.querySelector('[data-bulletin-form="events"], [data-bulletin-form="messages"]');
+    const preview = pageElement.querySelector('[data-bulletin-live-preview]');
+    if (!activeForm || !preview) return;
+
+    const update = () => this._refreshBulletinLivePreview(activeForm, preview);
+    activeForm.querySelectorAll('input, textarea, select').forEach((field) => {
+      field.addEventListener('input', update);
+      field.addEventListener('change', update);
+    });
+    update();
+
+    const playerForm = pageElement.querySelector('[data-player-state-form]');
+    const partyForm = pageElement.querySelector('[data-party-state-form]');
+    for (const form of [playerForm, partyForm].filter(Boolean)) {
+      form.querySelectorAll('input, textarea').forEach((field) => {
+        field.addEventListener('input', () => this._refreshBulletinStatePreview(form, preview));
+        field.addEventListener('change', () => this._refreshBulletinStatePreview(form, preview));
+      });
+    }
+  }
+
+  _refreshBulletinLivePreview(form, preview) {
+    const formData = new FormData(form);
+    const setText = (selector, value) => {
+      const node = preview.querySelector(selector);
+      if (node) node.textContent = value || '';
+    };
+    const setHtml = (selector, value) => {
+      const node = preview.querySelector(selector);
+      if (node) node.innerHTML = HolonetMarkupService.preview(value || '', 180);
+    };
+
+    const title = String(formData.get('title') || '').trim() || 'Untitled bulletin';
+    const category = String(formData.get('category') || '').trim() || 'general';
+    const priority = String(formData.get('priority') || 'normal').trim() || 'normal';
+    const authorName = String(formData.get('authorName') || '').trim() || 'GM Bulletin';
+    const imageUrl = String(formData.get('imageUrl') || '').trim();
+    const audience = this._getAudienceLabel(this._normalizeAudienceFromForm(formData));
+    const urgent = formData.get('urgent') === 'on' || priority === 'critical';
+
+    setText('[data-preview-feed-category]', category);
+    setText('[data-preview-feed-priority]', priority);
+    setText('[data-preview-feed-title]', title);
+    setText('[data-preview-feed-sender]', `${authorName} · ${audience}`);
+    setHtml('[data-preview-feed-body]', String(formData.get('body') || '').trim() || 'Bulletin body preview will appear here.');
+
+    const urgentNode = preview.querySelector('[data-preview-feed-urgent]');
+    if (urgentNode) urgentNode.classList.toggle('is-hidden', !urgent);
+
+    const image = preview.querySelector('[data-preview-feed-image]');
+    if (image) {
+      image.classList.toggle('is-hidden', !imageUrl);
+      if (imageUrl) {
+        image.src = imageUrl;
+        image.alt = title;
+      } else {
+        image.removeAttribute('src');
+        image.alt = '';
+      }
+    }
+  }
+
+  _refreshBulletinStatePreview(form, preview) {
+    const formData = new FormData(form);
+    const setText = (selector, fallback) => {
+      const node = preview.querySelector(selector);
+      if (!node) return;
+      const fieldName = selector.includes('location') ? 'location' : selector.includes('objective') ? 'objective' : 'situation';
+      node.textContent = String(formData.get(fieldName) || '').trim() || fallback;
+    };
+    setText('[data-preview-state-location]', 'Current location not set');
+    setText('[data-preview-state-objective]', 'No active objective');
+    setText('[data-preview-state-situation]', 'Awaiting new instructions.');
+  }
+
   async _saveBulletinRecord(formData, section) {
     const recordId = formData.get('recordId') || null;
     const shouldPublish = formData.get('submitMode') === 'publish';
     const audience = this._normalizeAudienceFromForm(formData);
     let record = recordId ? await HolonetStorage.getRecord(recordId) : null;
+    const category = formData.get('category') || (section === 'events' ? 'news' : 'message');
+    const priority = formData.get('priority') || 'normal';
+    const urgent = formData.get('urgent') === 'on' || priority === 'critical';
+    const pinAsLastSession = formData.get('pinAsLastSession') === 'on';
+    const homeSlot = pinAsLastSession ? 'last-session' : (formData.get('homeSlot') || 'feed');
+    const imageUrl = String(formData.get('imageUrl') || '').trim();
 
     const baseData = {
       id: recordId || undefined,
       title: formData.get('title') || '',
       body: formData.get('body') || '',
-      category: formData.get('category') || (section === 'events' ? 'news' : 'message'),
-      priority: formData.get('priority') || 'normal',
+      category,
+      priority,
       audience,
       authorName: formData.get('authorName') || game.user?.name || 'GM Bulletin',
       authorActorId: formData.get('authorActorId') || null,
       authorActorName: formData.get('authorActorName') || null,
+      authorAvatar: imageUrl || null,
       state: shouldPublish ? DELIVERY_STATE.PUBLISHED : DELIVERY_STATE.DRAFT,
       metadata: {
-        category: formData.get('category') || (section === 'events' ? 'news' : 'message')
+        category,
+        priority,
+        urgent,
+        pinAsLastSession,
+        homeSlot,
+        imageUrl,
+        bulletinHomeRole: homeSlot,
+        bulletinConsoleVersion: 2
       }
     };
 
@@ -871,14 +1038,95 @@ export class GMDatapad extends BaseSWSEAppV2 {
       record.updatedAt = new Date().toISOString();
     }
 
+    this._applyBulletinProjectionOptions(record, { urgent, pinAsLastSession, homeSlot, imageUrl });
+
     if (shouldPublish) {
       await HolonetEngine.publish(record);
     } else {
       await HolonetStorage.saveRecord(record);
     }
 
+    if (pinAsLastSession) {
+      await this._unpinOtherBulletins(record.id);
+    }
+
     this.bulletinEditor = { section, mode: 'create', recordId: null };
     await this.render(false);
+  }
+
+
+  async _unpinOtherBulletins(recordId) {
+    if (!recordId) return;
+    const records = await HolonetStorage.getAllRecords();
+    const changed = [];
+    for (const record of records) {
+      if (record.id === recordId || record.sourceFamily !== SOURCE_FAMILY.BULLETIN) continue;
+      let mutated = false;
+      if (record.metadata?.pinAsLastSession) {
+        record.metadata = { ...(record.metadata ?? {}), pinAsLastSession: false };
+        mutated = true;
+      }
+      for (const projection of record.projections ?? []) {
+        if (projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED && projection.isPinned) {
+          projection.isPinned = false;
+          mutated = true;
+        }
+      }
+      if (mutated) changed.push(record);
+    }
+    if (changed.length) {
+      await HolonetStorage.saveRecords(changed);
+    }
+  }
+
+  _applyBulletinProjectionOptions(record, { urgent = false, pinAsLastSession = false, homeSlot = 'feed', imageUrl = undefined } = {}) {
+    if (!record) return record;
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      urgent: Boolean(urgent),
+      pinAsLastSession: Boolean(pinAsLastSession),
+      homeSlot: pinAsLastSession ? 'last-session' : homeSlot,
+      imageUrl: imageUrl === undefined ? (record.metadata?.imageUrl || '') : String(imageUrl || '').trim(),
+      bulletinConsoleVersion: 2
+    };
+    record.projections = Array.isArray(record.projections) ? record.projections : [];
+
+    const ensureProjection = (surfaceType) => {
+      let projection = record.projections.find((entry) => entry.surfaceType === surfaceType);
+      if (!projection) {
+        projection = { surfaceType, recordId: record.id, isPinned: false, metadata: {} };
+        record.projections.push(projection);
+      }
+      projection.recordId = record.id;
+      projection.metadata = {
+        ...(projection.metadata ?? {}),
+        source: 'gm-bulletin-console',
+        imageUrl: record.metadata?.imageUrl || ''
+      };
+      return projection;
+    };
+
+    ensureProjection(SURFACE_TYPE.HOME_FEED);
+    const featured = ensureProjection(SURFACE_TYPE.BULLETIN_FEATURED);
+    featured.isPinned = Boolean(pinAsLastSession);
+    featured.metadata = {
+      ...(featured.metadata ?? {}),
+      homeSlot: pinAsLastSession ? 'last-session' : homeSlot
+    };
+
+    const hasBubble = record.projections.some((entry) => entry.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE);
+    if (urgent && !hasBubble) {
+      record.projections.push({
+        surfaceType: SURFACE_TYPE.NOTIFICATION_BUBBLE,
+        recordId: record.id,
+        isPinned: false,
+        metadata: { source: 'gm-bulletin-console', urgent: true, imageUrl: record.metadata?.imageUrl || '' }
+      });
+    } else if (!urgent && hasBubble) {
+      record.projections = record.projections.filter((entry) => entry.surfaceType !== SURFACE_TYPE.NOTIFICATION_BUBBLE);
+    }
+
+    return record;
   }
 
   /**

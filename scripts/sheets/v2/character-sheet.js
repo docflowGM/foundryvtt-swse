@@ -28,6 +28,7 @@ import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/s
 import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
 import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
 import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
+import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
@@ -834,6 +835,12 @@ export class SWSEV2CharacterSheet extends
     }
     if (this._shellSurface === 'customization') {
       this._wireCustomizationSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'games') {
+      this._gamesSurfaceController ??= new GamesSurfaceController(this, this.actor);
+      this._gamesSurfaceController.attach(root);
+    } else {
+      this._gamesSurfaceController?.destroy?.();
     }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);

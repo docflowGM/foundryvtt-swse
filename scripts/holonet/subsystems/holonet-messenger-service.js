@@ -8,6 +8,7 @@
  */
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { StoreAcquisitionService } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js';
 import { HolonetStorage } from './holonet-storage.js';
@@ -393,6 +394,8 @@ function transferStatusLabel(status = '') {
     : status === 'cancelled' ? 'Cancelled'
     : status === 'failed' ? 'Failed'
     : status === 'pendingGm' ? 'Awaiting GM Approval'
+    : status === 'counterOffered' ? 'Counter Offer Pending'
+    : status === 'counterPendingGm' ? 'Counter Awaiting GM Approval'
     : 'Awaiting Recipient';
 }
 
@@ -406,6 +409,54 @@ function parsePositiveCredits(amount) {
 }
 
 export class HolonetMessengerService {
+  static _tradeLogContext(transfer = {}, extra = {}) {
+    const counter = transfer?.counterOffer ?? null;
+    return {
+      transferId: transfer?.id ?? null,
+      kind: transfer?.kind ?? null,
+      status: transfer?.status ?? null,
+      fromActorId: transfer?.fromActorId ?? null,
+      fromLabel: transfer?.fromLabel ?? null,
+      toActorId: transfer?.toActorId ?? null,
+      toLabel: transfer?.toLabel ?? null,
+      itemCount: safeArray(transfer?.items).length,
+      assetCount: safeArray(transfer?.assets).length,
+      requestedCredits: parsePositiveCredits(transfer?.trade?.requestedCredits),
+      hasCounterOffer: Boolean(counter),
+      counterCredits: parsePositiveCredits(counter?.credits),
+      counterItemCount: safeArray(counter?.items).length,
+      counterAssetCount: safeArray(counter?.assets).length,
+      threadId: extra?.threadId ?? null,
+      requesterId: extra?.requesterId ?? null,
+      action: extra?.action ?? null,
+      phase: extra?.phase ?? null,
+      ...extra
+    };
+  }
+
+  static _tradeLifecycleLog(level = 'debug', message = '', transfer = {}, extra = {}) {
+    const context = this._tradeLogContext(transfer, extra);
+    const logger = SWSELogger?.[level] ?? SWSELogger?.debug ?? console.debug;
+    try {
+      logger.call(SWSELogger, `[HolonetTradeLifecycle] ${message}`, context);
+    } catch (_err) {
+      try { console.debug('[HolonetTradeLifecycle]', message, context); } catch (__err) {}
+    }
+  }
+
+  static _tradeLifecycleError(message = '', transfer = {}, err = null, extra = {}) {
+    const context = this._tradeLogContext(transfer, {
+      ...extra,
+      error: err?.message ?? String(err ?? ''),
+      stack: err?.stack ?? null
+    });
+    try {
+      SWSELogger.error(`[HolonetTradeLifecycle] ${message}`, context);
+    } catch (_loggerErr) {
+      try { console.error('[HolonetTradeLifecycle]', message, context); } catch (__err) {}
+    }
+  }
+
   static THREAD_TYPE = THREAD_TYPE;
 
   static getCurrentParticipantId() {
@@ -820,6 +871,22 @@ export class HolonetMessengerService {
     const isSender = transfer.fromRecipientId === participantId || (transfer.fromActorId && actor?.id === transfer.fromActorId);
     const isGm = Boolean(game.user?.isGM);
     const requiredCredits = Number(transfer?.trade?.requestedCredits || 0) || 0;
+    const counterCredits = parsePositiveCredits(transfer?.counterOffer?.credits);
+    const counterItems = safeArray(transfer?.counterOffer?.items);
+    const counterAssets = safeArray(transfer?.counterOffer?.assets);
+    const counterItemOptions = isRecipient ? this._buildInventoryComposerVm(actor).items : [];
+    const counterAssetOptions = isRecipient
+      ? ownedActorLinks(actor).map(link => {
+          const asset = assetActorByLink(link);
+          return asset ? {
+            id: asset.id,
+            uuid: asset.uuid || `Actor.${asset.id}`,
+            name: asset.name || 'Owned Asset',
+            typeLabel: actorAssetCategory(asset),
+            img: asset.img || 'icons/svg/mystery-man.svg'
+          } : null;
+        }).filter(Boolean)
+      : [];
     return {
       ...transfer,
       messageId: message.id,
@@ -827,10 +894,26 @@ export class HolonetMessengerService {
       statusLabel: transferStatusLabel(status),
       requestedCredits: requiredCredits,
       requestedCreditsLabel: requiredCredits > 0 ? formatCredits(requiredCredits) : '',
+      hasCounterOffer: Boolean(transfer?.counterOffer),
+      counterOffer: transfer?.counterOffer ? {
+        ...transfer.counterOffer,
+        credits: counterCredits,
+        creditsLabel: counterCredits > 0 ? formatCredits(counterCredits) : '',
+        items: counterItems,
+        hasItems: counterItems.length > 0,
+        assets: counterAssets,
+        hasAssets: counterAssets.length > 0
+      } : null,
+      counterItemOptions,
+      counterAssetOptions,
+      canCounterOffer: status === 'pendingRecipient' && (isRecipient || isGm),
+      canAcceptCounter: status === 'counterOffered' && (isSender || isGm),
+      canApproveCounter: status === 'counterPendingGm' && isGm,
+      canDeclineCounter: status === 'counterOffered' && (isSender || isRecipient || isGm),
       canAccept: status === 'pendingRecipient' && (isRecipient || isGm),
       canApprove: status === 'pendingGm' && isGm,
       canDecline: ['pendingRecipient', 'pendingGm'].includes(status) && (isRecipient || isGm),
-      canCancel: ['pendingRecipient', 'pendingGm'].includes(status) && (isSender || isGm),
+      canCancel: ['pendingRecipient', 'pendingGm', 'counterOffered', 'counterPendingGm'].includes(status) && (isSender || isGm),
       isResolved: ['complete', 'declined', 'cancelled', 'failed'].includes(status)
     };
   }
@@ -1823,8 +1906,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [] }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -1832,7 +1915,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -1985,8 +2068,12 @@ export class HolonetMessengerService {
       case 'accept-asset-transfer':
       case 'approve-asset-transfer':
       case 'decline-asset-transfer':
-      case 'cancel-asset-transfer': {
-        await this._gmResolveAssetTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
+      case 'cancel-asset-transfer':
+      case 'offer-asset-counter':
+      case 'accept-asset-counter':
+      case 'approve-asset-counter':
+      case 'decline-asset-counter': {
+        await this._gmResolveAssetTransfer({ thread, recordId, action, actorId, counterCredits, counterItemIds, counterAssetIds, counterMemo, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'offer-item-transfer': {
@@ -2364,7 +2451,24 @@ export class HolonetMessengerService {
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
     const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
     const currentId = senderRecipientId || currentRecipientId();
-    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
+    this._tradeLifecycleLog('debug', 'GM/item transfer resolver action received.', transfer, {
+      phase: 'resolver.item.action',
+      threadId: thread?.id ?? null,
+      action,
+      requesterId,
+      senderRecipientId,
+      currentId,
+      requesterIsGm
+    });
+    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) {
+      this._tradeLifecycleLog('warn', 'Item transfer resolver rejected action because transfer is already terminal.', transfer, {
+        phase: 'resolver.item.terminal-reject',
+        threadId: thread?.id ?? null,
+        action,
+        currentId
+      });
+      return false;
+    }
 
     if (action === 'decline-item-transfer') {
       if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
@@ -2398,42 +2502,837 @@ export class HolonetMessengerService {
     }
 
     if (action !== 'accept-item-transfer') return false;
-    if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
+    if (!requesterIsGm && currentId !== transfer.toRecipientId) {
+      this._tradeLifecycleLog('warn', 'Item transfer accept rejected by permission check.', transfer, {
+        phase: 'resolver.item.accept.permission-reject',
+        threadId: thread?.id ?? null,
+        action,
+        currentId,
+        expectedRecipientId: transfer.toRecipientId,
+        requesterIsGm
+      });
+      return false;
+    }
+    this._tradeLifecycleLog('info', 'Item transfer accept requested; settlement path beginning.', transfer, {
+      phase: 'resolver.item.accept.start',
+      threadId: thread?.id ?? null,
+      currentId,
+      requesterId
+    });
     let ok = false;
     if (transfer.kind === 'ownedItemTransfer') {
-      ok = await this._executeOwnedItemTransfer({ thread, transfer, requesterId });
+      const atomic = await this._executeAtomicTradeSettlement({
+        thread,
+        transfer,
+        actors: this._collectTradeSettlementActors(transfer),
+        preflight: () => this._preflightTradeSettlement(transfer),
+        operation: () => this._executeOwnedItemTransfer({ thread, transfer, requesterId }),
+        failureEventType: 'item-trade-atomic-failed',
+        failurePrefix: 'Item trade failed'
+      });
+      ok = Boolean(atomic?.success && atomic.result !== false);
+      if (!ok) transfer.failureReason = atomic?.error || 'Atomic item trade settlement failed.';
     } else {
       ok = await this._gmGrantItems({ thread, recipientId: transfer.toRecipientId, itemUuids: transfer.itemUuids, requesterId, eventType: 'item-transfer-complete', source: 'holonet-item-transfer' });
     }
     transfer.status = ok ? 'complete' : 'failed';
     transfer.resolvedAt = nowIso();
     transfer.resolvedBy = currentId;
+    this._tradeLifecycleLog(ok ? 'info' : 'warn', ok ? 'Item transfer resolved complete.' : 'Item transfer resolved failed.', transfer, {
+      phase: ok ? 'resolver.item.accept.complete' : 'resolver.item.accept.failed',
+      threadId: thread?.id ?? null,
+      currentId,
+      failureReason: transfer.failureReason ?? null
+    });
     await HolonetStorage.saveRecord(message);
     return ok;
   }
 
 
+  static _tradeSnapshotRoot(actor) {
+    const data = actor?.toObject ? actor.toObject(false) : {};
+    return {
+      actorId: actor?.id ?? null,
+      actorName: actor?.name ?? data?.name ?? 'Unknown Actor',
+      data: {
+        name: data?.name ?? actor?.name ?? 'Unknown Actor',
+        img: data?.img ?? actor?.img ?? null,
+        system: foundry.utils.deepClone(data?.system ?? actor?.system ?? {}),
+        flags: foundry.utils.deepClone(data?.flags ?? actor?.flags ?? {}),
+        ownership: foundry.utils.deepClone(data?.ownership ?? actor?.ownership ?? {}),
+        prototypeToken: foundry.utils.deepClone(data?.prototypeToken ?? actor?.prototypeToken ?? {}),
+        items: foundry.utils.deepClone(data?.items ?? actor?.items?.map?.(item => item.toObject ? item.toObject() : item) ?? []),
+        effects: foundry.utils.deepClone(data?.effects ?? actor?.effects?.map?.(effect => effect.toObject ? effect.toObject() : effect) ?? [])
+      }
+    };
+  }
+
+  static _collectTradeSettlementActors(transfer = {}, { includeCounter = true } = {}) {
+    const actors = new Map();
+    const addActor = actor => {
+      if (actor?.id) actors.set(actor.id, actor);
+    };
+    addActor(transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null);
+    addActor(transfer.toActorId ? game.actors?.get(transfer.toActorId) : null);
+    for (const entry of safeArray(transfer.assets)) {
+      addActor(game.actors?.get(String(entry?.id || entry?.uuid || '').replace(/^Actor\./, '')));
+    }
+    if (includeCounter) {
+      for (const entry of safeArray(transfer?.counterOffer?.assets)) {
+        addActor(game.actors?.get(String(entry?.id || entry?.uuid || '').replace(/^Actor\./, '')));
+      }
+    }
+    return Array.from(actors.values());
+  }
+
+  static async _restoreTradeSnapshot(snapshot, { source = 'HolonetMessengerService.atomicTradeRollback' } = {}) {
+    const actor = snapshot?.actorId ? game.actors?.get(snapshot.actorId) : null;
+    if (!actor) throw new Error(`Rollback actor ${snapshot?.actorName || snapshot?.actorId || 'unknown'} could not be resolved.`);
+    const data = snapshot.data ?? {};
+    this._tradeLifecycleLog('debug', 'Restoring actor snapshot for atomic rollback.', {}, {
+      phase: 'rollback.actor.start',
+      source,
+      actorId: actor.id,
+      actorName: actor.name,
+      restoreItemCount: safeArray(data.items).length,
+      restoreEffectCount: safeArray(data.effects).length
+    });
+
+    await ActorEngine.updateActor(actor, {
+      name: data.name,
+      img: data.img,
+      system: foundry.utils.deepClone(data.system ?? {}),
+      flags: foundry.utils.deepClone(data.flags ?? {}),
+      ownership: foundry.utils.deepClone(data.ownership ?? {}),
+      prototypeToken: foundry.utils.deepClone(data.prototypeToken ?? {})
+    }, { source, skipValidation: true, rederive: true, suppressAppRefresh: true });
+
+    const currentItemIds = actor.items?.map?.(item => item.id) ?? [];
+    if (currentItemIds.length) {
+      this._tradeLifecycleLog('debug', 'Rollback deleting current actor items before restore.', {}, {
+        phase: 'rollback.actor.items.delete-current',
+        source,
+        actorId: actor.id,
+        count: currentItemIds.length
+      });
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', currentItemIds, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+    const itemsToRestore = safeArray(data.items).map(item => foundry.utils.deepClone(item));
+    if (itemsToRestore.length) {
+      this._tradeLifecycleLog('debug', 'Rollback recreating actor items from snapshot.', {}, {
+        phase: 'rollback.actor.items.restore',
+        source,
+        actorId: actor.id,
+        count: itemsToRestore.length
+      });
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToRestore, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+
+    const currentEffectIds = actor.effects?.map?.(effect => effect.id) ?? [];
+    if (currentEffectIds.length) {
+      this._tradeLifecycleLog('debug', 'Rollback deleting current active effects before restore.', {}, {
+        phase: 'rollback.actor.effects.delete-current',
+        source,
+        actorId: actor.id,
+        count: currentEffectIds.length
+      });
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', currentEffectIds, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+    const effectsToRestore = safeArray(data.effects).map(effect => foundry.utils.deepClone(effect));
+    if (effectsToRestore.length) {
+      this._tradeLifecycleLog('debug', 'Rollback recreating active effects from snapshot.', {}, {
+        phase: 'rollback.actor.effects.restore',
+        source,
+        actorId: actor.id,
+        count: effectsToRestore.length
+      });
+      await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToRestore, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+    await ActorEngine.recalcAll?.(actor);
+    this._tradeLifecycleLog('debug', 'Actor snapshot restore complete.', {}, {
+      phase: 'rollback.actor.complete',
+      source,
+      actorId: actor.id,
+      actorName: actor.name
+    });
+    return true;
+  }
+
+  static async _restoreTradeSnapshots(snapshots = [], options = {}) {
+    const ordered = safeArray(snapshots).slice().reverse();
+    this._tradeLifecycleLog('warn', 'Restoring atomic trade snapshots in reverse order.', {}, {
+      phase: 'rollback.snapshots.start',
+      count: ordered.length,
+      actorIds: ordered.map(snapshot => snapshot.actorId),
+      actorNames: ordered.map(snapshot => snapshot.actorName)
+    });
+    for (const snapshot of ordered) {
+      await this._restoreTradeSnapshot(snapshot, options);
+    }
+    this._tradeLifecycleLog('warn', 'All atomic trade snapshots restored.', {}, {
+      phase: 'rollback.snapshots.complete',
+      count: ordered.length
+    });
+    return true;
+  }
+
+  static _preflightTradeSettlement(transfer = {}, { includeCounter = false, suppressRequestedCredits = false } = {}) {
+    this._tradeLifecycleLog('debug', 'Trade settlement preflight evaluating transfer.', transfer, {
+      phase: 'preflight.evaluate',
+      includeCounter,
+      suppressRequestedCredits
+    });
+
+    const fail = error => {
+      this._tradeLifecycleLog('warn', 'Trade settlement preflight failed.', transfer, {
+        phase: 'preflight.failed',
+        includeCounter,
+        suppressRequestedCredits,
+        error
+      });
+      return { ok: false, error };
+    };
+
+    if (transfer.kind === 'ownedAssetTransfer') {
+      const assetValidation = this._validateOwnedAssetTransfer(transfer);
+      if (!assetValidation.ok) return fail(assetValidation.error);
+    } else if (transfer.kind === 'ownedItemTransfer') {
+      const itemValidation = this._validateOwnedItemTransfer(transfer);
+      if (!itemValidation.ok) return fail(itemValidation.error);
+    }
+
+    if (!suppressRequestedCredits) {
+      const requestedCredits = parsePositiveCredits(transfer?.trade?.requestedCredits);
+      if (requestedCredits) {
+        const payer = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+        const payee = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+        if (!payer || !payee) return fail('Trade credit actors could not be resolved.');
+        if (creditsOf(payer) < requestedCredits) return fail(`${payer.name} does not have ${formatCredits(requestedCredits)} available for this trade.`);
+        this._tradeLifecycleLog('debug', 'Requested credit preflight passed.', transfer, {
+          phase: 'preflight.requested-credits.ok',
+          payerActorId: payer.id,
+          payeeActorId: payee.id,
+          amount: requestedCredits,
+          payerBalance: creditsOf(payer)
+        });
+      }
+    }
+
+    if (includeCounter && transfer?.counterOffer) {
+      const counterCredits = parsePositiveCredits(transfer.counterOffer.credits);
+      if (counterCredits) {
+        const payer = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+        const payee = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+        if (!payer || !payee) return fail('Counter-offer credit actors could not be resolved.');
+        if (creditsOf(payer) < counterCredits) return fail(`${payer.name} does not have ${formatCredits(counterCredits)} available for this counter-offer.`);
+        this._tradeLifecycleLog('debug', 'Counter credit preflight passed.', transfer, {
+          phase: 'preflight.counter-credits.ok',
+          payerActorId: payer.id,
+          payeeActorId: payee.id,
+          amount: counterCredits,
+          payerBalance: creditsOf(payer)
+        });
+      }
+
+      if (safeArray(transfer.counterOffer.items).length) {
+        const counterItemTransfer = {
+          id: `${transfer.id}-counter-preflight`,
+          kind: 'ownedItemTransfer',
+          fromActorId: transfer.toActorId,
+          fromLabel: transfer.toLabel,
+          toActorId: transfer.fromActorId,
+          toLabel: transfer.fromLabel,
+          items: transfer.counterOffer.items
+        };
+        const itemValidation = this._validateOwnedItemTransfer(counterItemTransfer);
+        if (!itemValidation.ok) return fail(itemValidation.error);
+        this._tradeLifecycleLog('debug', 'Counter item preflight passed.', transfer, {
+          phase: 'preflight.counter-items.ok',
+          count: safeArray(transfer.counterOffer.items).length
+        });
+      }
+
+      if (safeArray(transfer.counterOffer.assets).length) {
+        const counterAssetTransfer = {
+          id: `${transfer.id}-counter-assets-preflight`,
+          kind: 'ownedAssetTransfer',
+          fromActorId: transfer.toActorId,
+          fromLabel: transfer.toLabel,
+          toActorId: transfer.fromActorId,
+          toLabel: transfer.fromLabel,
+          assets: transfer.counterOffer.assets
+        };
+        const assetValidation = this._validateOwnedAssetTransfer(counterAssetTransfer);
+        if (!assetValidation.ok) return fail(assetValidation.error);
+        this._tradeLifecycleLog('debug', 'Counter asset preflight passed.', transfer, {
+          phase: 'preflight.counter-assets.ok',
+          count: safeArray(transfer.counterOffer.assets).length
+        });
+      }
+    }
+
+    this._tradeLifecycleLog('debug', 'Trade settlement preflight passed.', transfer, {
+      phase: 'preflight.ok',
+      includeCounter,
+      suppressRequestedCredits
+    });
+    return { ok: true };
+  }
+
+  static async _executeAtomicTradeSettlement({ thread, transfer, actors = [], preflight = null, operation = null, failureEventType = 'trade-atomic-failed', failurePrefix = 'Trade settlement failed' } = {}) {
+    this._tradeLifecycleLog('debug', 'Atomic settlement requested.', transfer, {
+      phase: 'atomic.requested',
+      threadId: thread?.id ?? null,
+      actorInputCount: safeArray(actors).length,
+      failureEventType,
+      failurePrefix
+    });
+
+    if (typeof operation !== 'function') {
+      const error = 'No trade settlement operation was provided.';
+      this._tradeLifecycleError(error, transfer, new Error(error), { phase: 'atomic.no-operation', threadId: thread?.id ?? null, failureEventType });
+      return { success: false, error };
+    }
+
+    let validation = { ok: true };
+    try {
+      this._tradeLifecycleLog('debug', 'Atomic preflight starting.', transfer, { phase: 'atomic.preflight.start', threadId: thread?.id ?? null });
+      validation = typeof preflight === 'function' ? preflight() : { ok: true };
+    } catch (err) {
+      validation = { ok: false, error: err?.message || 'Trade preflight threw an exception.' };
+      this._tradeLifecycleError('Atomic preflight threw an exception.', transfer, err, { phase: 'atomic.preflight.exception', threadId: thread?.id ?? null });
+    }
+
+    if (!validation?.ok) {
+      const error = validation?.error || 'Trade preflight failed.';
+      this._tradeLifecycleLog('warn', 'Atomic preflight failed. No mutation will be attempted.', transfer, {
+        phase: 'atomic.preflight.failed',
+        threadId: thread?.id ?? null,
+        error
+      });
+      if (thread && transfer) {
+        await this._publishSystemMessage(thread, `${failurePrefix}: ${error}. No trade state was changed.`, { eventType: failureEventType, transferId: transfer.id, rollbackOk: true, preflight: true });
+      }
+      return { success: false, error, rollbackOk: true, preflight: true };
+    }
+
+    this._tradeLifecycleLog('debug', 'Atomic preflight passed.', transfer, { phase: 'atomic.preflight.ok', threadId: thread?.id ?? null });
+    const actorList = safeArray(actors).filter(actor => actor?.id);
+    const uniqueActors = Array.from(new Map(actorList.map(actor => [actor.id, actor])).values());
+    this._tradeLifecycleLog('debug', 'Capturing atomic rollback snapshots.', transfer, {
+      phase: 'atomic.snapshot.start',
+      threadId: thread?.id ?? null,
+      actorCount: uniqueActors.length,
+      actorIds: uniqueActors.map(actor => actor.id),
+      actorNames: uniqueActors.map(actor => actor.name)
+    });
+    const snapshots = uniqueActors.map(actor => this._tradeSnapshotRoot(actor));
+    this._tradeLifecycleLog('debug', 'Atomic rollback snapshots captured.', transfer, {
+      phase: 'atomic.snapshot.complete',
+      threadId: thread?.id ?? null,
+      snapshotCount: snapshots.length
+    });
+
+    try {
+      this._tradeLifecycleLog('info', 'Atomic settlement operation starting.', transfer, { phase: 'atomic.operation.start', threadId: thread?.id ?? null });
+      const result = await operation();
+      if (result === false || result?.success === false) {
+        throw new Error(result?.error || 'Trade settlement operation returned failure.');
+      }
+      this._tradeLifecycleLog('info', 'Atomic settlement operation completed successfully.', transfer, {
+        phase: 'atomic.operation.success',
+        threadId: thread?.id ?? null,
+        snapshotCount: snapshots.length,
+        resultSummary: result === true ? 'true' : result
+      });
+      return { success: true, result, snapshots: snapshots.length };
+    } catch (err) {
+      this._tradeLifecycleError('Atomic settlement operation failed; rollback beginning.', transfer, err, {
+        phase: 'atomic.operation.failed',
+        threadId: thread?.id ?? null,
+        snapshotCount: snapshots.length
+      });
+
+      let rollbackOk = false;
+      let rollbackError = null;
+      try {
+        this._tradeLifecycleLog('warn', 'Atomic rollback starting.', transfer, {
+          phase: 'atomic.rollback.start',
+          threadId: thread?.id ?? null,
+          snapshotCount: snapshots.length
+        });
+        await this._restoreTradeSnapshots(snapshots, { source: 'HolonetMessengerService.atomicTradeRollback' });
+        rollbackOk = true;
+        this._tradeLifecycleLog('warn', 'Atomic rollback completed successfully.', transfer, {
+          phase: 'atomic.rollback.success',
+          threadId: thread?.id ?? null,
+          snapshotCount: snapshots.length
+        });
+      } catch (restoreErr) {
+        rollbackError = restoreErr;
+        this._tradeLifecycleError('Atomic rollback failed. Manual GM reconciliation may be required.', transfer, restoreErr, {
+          phase: 'atomic.rollback.failed',
+          threadId: thread?.id ?? null,
+          snapshotCount: snapshots.length,
+          originalError: err?.message ?? null
+        });
+      }
+
+      const baseError = err?.message || 'Unknown trade settlement failure.';
+      const message = rollbackOk
+        ? `${failurePrefix}: ${baseError}. All trade state was restored.`
+        : `${failurePrefix}: ${baseError}. Rollback failed: ${rollbackError?.message || 'unknown rollback failure'}.`;
+      if (thread && transfer) {
+        try {
+          await this._publishSystemMessage(thread, message, { eventType: failureEventType, transferId: transfer.id, rollbackOk, rollbackError: rollbackError?.message ?? null, originalError: baseError });
+        } catch (publishErr) {
+          this._tradeLifecycleError('Failed to publish atomic failure system message.', transfer, publishErr, {
+            phase: 'atomic.failure-message.failed',
+            threadId: thread?.id ?? null,
+            originalError: baseError,
+            rollbackOk
+          });
+        }
+      }
+      return { success: false, error: message, rollbackOk, rollbackError: rollbackError?.message ?? null };
+    }
+  }
+
   static _validateOwnedItemTransfer(transfer = {}) {
+    this._tradeLifecycleLog('debug', 'Validating owned item transfer.', transfer, { phase: 'validate.items.start' });
     const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
     const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
-    if (!sourceActor || !targetActor) return { ok: false, error: 'Item transfer actors could not be resolved.' };
+    if (!sourceActor || !targetActor) {
+      const error = 'Item transfer actors could not be resolved.';
+      this._tradeLifecycleLog('warn', 'Owned item transfer validation failed.', transfer, { phase: 'validate.items.failed', error });
+      return { ok: false, error };
+    }
     for (const entry of safeArray(transfer.items)) {
       const sourceItem = sourceActor.items?.get?.(entry.itemId) ?? sourceActor.items?.find?.(item => item.id === entry.itemId || item._id === entry.itemId);
-      if (!sourceItem) return { ok: false, error: `${entry.name || 'Item'} is no longer on ${sourceActor.name}.` };
+      if (!sourceItem) {
+        const error = `${entry.name || 'Item'} is no longer on ${sourceActor.name}.`;
+        this._tradeLifecycleLog('warn', 'Owned item transfer validation failed: missing item.', transfer, {
+          phase: 'validate.items.missing-item',
+          error,
+          sourceActorId: sourceActor.id,
+          itemId: entry.itemId,
+          itemName: entry.name ?? null
+        });
+        return { ok: false, error };
+      }
       const sourceQty = getItemQuantity(sourceItem);
       const requestedQty = Math.max(1, normalizeQuantity(entry.quantity, 1));
-      if (sourceQty < requestedQty) return { ok: false, error: `${sourceActor.name} no longer has enough ${sourceItem.name}.` };
+      if (sourceQty < requestedQty) {
+        const error = `${sourceActor.name} no longer has enough ${sourceItem.name}.`;
+        this._tradeLifecycleLog('warn', 'Owned item transfer validation failed: insufficient quantity.', transfer, {
+          phase: 'validate.items.insufficient-quantity',
+          error,
+          sourceActorId: sourceActor.id,
+          itemId: sourceItem.id,
+          itemName: sourceItem.name,
+          sourceQty,
+          requestedQty
+        });
+        return { ok: false, error };
+      }
     }
+    this._tradeLifecycleLog('debug', 'Owned item transfer validation passed.', transfer, {
+      phase: 'validate.items.ok',
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      count: safeArray(transfer.items).length
+    });
     return { ok: true, sourceActor, targetActor };
+  }
+
+  static _buildCounterItemEntries(actor, itemIds = []) {
+    if (!actor) return [];
+    const ids = new Set(safeArray(itemIds).map(id => String(id || '').trim()).filter(Boolean));
+    if (!ids.size) return [];
+    return (actor.items?.contents ?? [])
+      .filter(item => ids.has(item.id) || ids.has(item.uuid))
+      .map(item => ({
+        itemId: item.id,
+        uuid: item.uuid,
+        name: item.name || 'Item',
+        type: item.type || 'item',
+        img: item.img || 'icons/svg/item-bag.svg',
+        quantity: 1
+      }));
+  }
+
+  static _buildCounterAssetEntries(actor, assetIds = []) {
+    if (!actor) return [];
+    const ids = new Set(safeArray(assetIds).map(id => String(id || '').replace(/^Actor\./, '').trim()).filter(Boolean));
+    if (!ids.size) return [];
+    return ownedActorLinks(actor)
+      .map(link => assetActorByLink(link))
+      .filter(Boolean)
+      .filter(asset => ids.has(asset.id) || ids.has(String(asset.uuid || '').replace(/^Actor\./, '')))
+      .map(asset => ({
+        id: asset.id,
+        uuid: asset.uuid || `Actor.${asset.id}`,
+        name: asset.name || 'Owned Asset',
+        type: asset.type || 'actor',
+        typeLabel: actorAssetCategory(asset),
+        img: asset.img || 'icons/svg/mystery-man.svg',
+        summary: [asset.type, asset.system?.vehicleType, asset.system?.droidDegree].filter(Boolean).join(' · ')
+      }));
+  }
+
+  static _validateOwnedAssetTransfer(transfer = {}) {
+    this._tradeLifecycleLog('debug', 'Validating owned asset transfer.', transfer, { phase: 'validate.assets.start' });
+    const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+    const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+    if (!sourceActor || !targetActor) {
+      const error = 'Asset transfer actors could not be resolved.';
+      this._tradeLifecycleLog('warn', 'Owned asset transfer validation failed.', transfer, { phase: 'validate.assets.failed', error });
+      return { ok: false, error };
+    }
+    const assets = safeArray(transfer.assets)
+      .map(entry => game.actors?.get(String(entry?.id || entry?.uuid || '').replace(/^Actor\./, '')))
+      .filter(Boolean);
+    if (!assets.length) {
+      const error = 'No valid ship/droid asset was selected.';
+      this._tradeLifecycleLog('warn', 'Owned asset transfer validation failed: no valid assets.', transfer, { phase: 'validate.assets.none', error });
+      return { ok: false, error };
+    }
+    const ownedIds = new Set(ownedActorLinks(sourceActor).map(link => String(link.id || '').replace(/^Actor\./, '')));
+    const missing = assets.find(asset => !ownedIds.has(asset.id));
+    if (missing) {
+      const error = `${missing.name} is no longer linked to ${sourceActor.name}.`;
+      this._tradeLifecycleLog('warn', 'Owned asset transfer validation failed: missing owner link.', transfer, {
+        phase: 'validate.assets.missing-owner-link',
+        error,
+        sourceActorId: sourceActor.id,
+        assetId: missing.id,
+        assetName: missing.name,
+        ownedIds: Array.from(ownedIds)
+      });
+      return { ok: false, error };
+    }
+    this._tradeLifecycleLog('debug', 'Owned asset transfer validation passed.', transfer, {
+      phase: 'validate.assets.ok',
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      assetIds: assets.map(asset => asset.id),
+      assetNames: assets.map(asset => asset.name)
+    });
+    return { ok: true, sourceActor, targetActor, assets };
+  }
+
+  static async _moveOwnedAssets({ thread, transfer, assets, sourceActor, targetActor, transactionId = null, requesterId = null, source = 'holonet-asset-transfer' } = {}) {
+    const ids = safeArray(assets).map(asset => asset.id).filter(Boolean);
+    this._tradeLifecycleLog('debug', 'Owned asset movement requested.', transfer, {
+      phase: 'assets.move.requested',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor?.id ?? null,
+      targetActorId: targetActor?.id ?? null,
+      assetIds: ids,
+      transactionId,
+      source
+    });
+    if (!ids.length || !sourceActor || !targetActor) {
+      this._tradeLifecycleLog('warn', 'Owned asset movement skipped because movement inputs were incomplete.', transfer, {
+        phase: 'assets.move.invalid-input',
+        threadId: thread?.id ?? null,
+        sourceActorId: sourceActor?.id ?? null,
+        targetActorId: targetActor?.id ?? null,
+        assetIds: ids,
+        source
+      });
+      return false;
+    }
+
+    this._tradeLifecycleLog('debug', 'Unlinking assets from source actor.', transfer, {
+      phase: 'assets.move.unlink-source.start',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      assetIds: ids,
+      source
+    });
+    await ActorEngine.applyMutationPlan(sourceActor, { set: removeAssetLinks(sourceActor, ids) }, { source: 'HolonetMessengerService.assetTransfer.unlinkSource', validate: true, rederive: true });
+    this._tradeLifecycleLog('debug', 'Assets unlinked from source actor.', transfer, {
+      phase: 'assets.move.unlink-source.complete',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      assetIds: ids,
+      source
+    });
+
+    const linkPlan = StoreAcquisitionService.buildOwnerLinkPlan(targetActor, assets, {
+      ownerActor: targetActor,
+      source,
+      transactionId: transactionId ?? transfer?.id,
+      transactionContext: 'holonet-asset-trade',
+      audit: { transferId: transfer?.id ?? null, threadId: thread?.id ?? null, requesterId }
+    });
+    if (linkPlan) {
+      this._tradeLifecycleLog('debug', 'Linking assets to target actor.', transfer, {
+        phase: 'assets.move.link-target.start',
+        threadId: thread?.id ?? null,
+        targetActorId: targetActor.id,
+        assetIds: ids,
+        source
+      });
+      await ActorEngine.applyMutationPlan(targetActor, linkPlan, { source: 'HolonetMessengerService.assetTransfer.linkTarget', validate: true, rederive: true });
+      this._tradeLifecycleLog('debug', 'Assets linked to target actor.', transfer, {
+        phase: 'assets.move.link-target.complete',
+        threadId: thread?.id ?? null,
+        targetActorId: targetActor.id,
+        assetIds: ids,
+        source
+      });
+    }
+
+    const ownership = StoreAcquisitionService.buildActorOwnership(targetActor, { includeCurrentGM: true });
+    for (const asset of assets) {
+      this._tradeLifecycleLog('debug', 'Updating moved asset ownership metadata.', transfer, {
+        phase: 'assets.move.asset-document-update.start',
+        threadId: thread?.id ?? null,
+        assetId: asset.id,
+        assetName: asset.name,
+        sourceActorId: sourceActor.id,
+        targetActorId: targetActor.id,
+        source
+      });
+      await asset.update({
+        ownership,
+        'system.ownedByActorId': targetActor.id,
+        'system.ownedByActorName': targetActor.name,
+        [`flags.foundryvtt-swse.holonetAssetTransfer`]: {
+          source,
+          threadId: thread?.id ?? null,
+          transferId: transfer?.id ?? null,
+          fromActorId: sourceActor.id,
+          toActorId: targetActor.id,
+          transferredAt: nowIso(),
+          requesterId
+        }
+      });
+      this._tradeLifecycleLog('debug', 'Moved asset ownership metadata updated.', transfer, {
+        phase: 'assets.move.asset-document-update.complete',
+        threadId: thread?.id ?? null,
+        assetId: asset.id,
+        assetName: asset.name,
+        source
+      });
+    }
+    this._tradeLifecycleLog('info', 'Owned asset movement completed.', transfer, {
+      phase: 'assets.move.complete',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      assetIds: ids,
+      source
+    });
+    return true;
+  }
+
+  static async _executeCounterAssets({ thread, transfer, requesterId = null } = {}) {
+    const entries = safeArray(transfer?.counterOffer?.assets);
+    this._tradeLifecycleLog('debug', 'Counter asset settlement requested.', transfer, {
+      phase: 'counter.assets.requested',
+      threadId: thread?.id ?? null,
+      requesterId,
+      count: entries.length,
+      assetNames: entries.map(entry => entry?.name).filter(Boolean)
+    });
+    if (!entries.length) return { success: true, count: 0, names: [] };
+    const counterTransfer = {
+      id: `${transfer.id}-counter-assets`,
+      kind: 'ownedAssetTransfer',
+      fromActorId: transfer.toActorId,
+      fromLabel: transfer.toLabel,
+      toActorId: transfer.fromActorId,
+      toLabel: transfer.fromLabel,
+      assets: entries
+    };
+    const validation = this._validateOwnedAssetTransfer(counterTransfer);
+    if (!validation.ok) {
+      this._tradeLifecycleLog('warn', 'Counter asset validation failed.', transfer, {
+        phase: 'counter.assets.validation-failed',
+        threadId: thread?.id ?? null,
+        error: validation.error
+      });
+      return { success: false, error: validation.error };
+    }
+    const ok = await this._moveOwnedAssets({ thread, transfer: counterTransfer, assets: validation.assets, sourceActor: validation.sourceActor, targetActor: validation.targetActor, requesterId, source: 'holonet-asset-counter-offer' });
+    if (!ok) {
+      const error = 'Counter asset transfer failed.';
+      this._tradeLifecycleLog('warn', error, transfer, { phase: 'counter.assets.failed', threadId: thread?.id ?? null });
+      return { success: false, error };
+    }
+    this._tradeLifecycleLog('info', 'Counter asset settlement completed.', transfer, {
+      phase: 'counter.assets.complete',
+      threadId: thread?.id ?? null,
+      count: validation.assets.length,
+      assetIds: validation.assets.map(asset => asset.id),
+      assetNames: validation.assets.map(asset => asset.name)
+    });
+    return { success: true, count: validation.assets.length, names: validation.assets.map(asset => asset.name) };
+  }
+
+  static async _executeCounterItems({ thread, transfer, requesterId = null } = {}) {
+    const entries = safeArray(transfer?.counterOffer?.items);
+    this._tradeLifecycleLog('debug', 'Counter item settlement requested.', transfer, {
+      phase: 'counter.items.requested',
+      threadId: thread?.id ?? null,
+      requesterId,
+      count: entries.length,
+      itemNames: entries.map(entry => entry?.name).filter(Boolean)
+    });
+    if (!entries.length) return { success: true, count: 0 };
+    const counterTransfer = {
+      id: `${transfer.id}-counter`,
+      kind: 'ownedItemTransfer',
+      fromActorId: transfer.toActorId,
+      fromLabel: transfer.toLabel,
+      toActorId: transfer.fromActorId,
+      toLabel: transfer.fromLabel,
+      items: entries
+    };
+    const validation = this._validateOwnedItemTransfer(counterTransfer);
+    if (!validation.ok) {
+      this._tradeLifecycleLog('warn', 'Counter item validation failed.', transfer, {
+        phase: 'counter.items.validation-failed',
+        threadId: thread?.id ?? null,
+        error: validation.error
+      });
+      return { success: false, error: validation.error };
+    }
+    const ok = await this._executeOwnedItemTransfer({ thread, transfer: counterTransfer, requesterId });
+    if (!ok) {
+      const error = 'Counter item transfer failed.';
+      this._tradeLifecycleLog('warn', error, transfer, { phase: 'counter.items.failed', threadId: thread?.id ?? null });
+      return { success: false, error };
+    }
+    this._tradeLifecycleLog('info', 'Counter item settlement completed.', transfer, {
+      phase: 'counter.items.complete',
+      threadId: thread?.id ?? null,
+      count: entries.length,
+      itemNames: entries.map(entry => entry?.name).filter(Boolean)
+    });
+    return { success: true, count: entries.length };
+  }
+
+  static async _settleCounterOffer({ thread, transfer, requesterId = null } = {}) {
+    const counter = transfer?.counterOffer ?? null;
+    this._tradeLifecycleLog('debug', 'Counter-offer settlement requested.', transfer, {
+      phase: 'counter.settle.requested',
+      threadId: thread?.id ?? null,
+      requesterId,
+      hasCounterOffer: Boolean(counter)
+    });
+    if (!counter) return { success: true };
+    const sourceActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+    const targetActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+    if (!sourceActor || !targetActor) {
+      const error = 'Counter-offer actors could not be resolved.';
+      this._tradeLifecycleLog('warn', error, transfer, { phase: 'counter.settle.actors-missing', threadId: thread?.id ?? null });
+      return { success: false, error };
+    }
+
+    const credits = parsePositiveCredits(counter.credits);
+    if (credits) {
+      this._tradeLifecycleLog('debug', 'Counter credit transfer starting.', transfer, {
+        phase: 'counter.credits.start',
+        threadId: thread?.id ?? null,
+        fromActorId: sourceActor.id,
+        toActorId: targetActor.id,
+        amount: credits,
+        requesterId
+      });
+      const credit = await TransactionEngine.executeCreditTransfer({
+        fromActor: sourceActor,
+        toActor: targetActor,
+        amount: credits,
+        reason: counter.memo ? `Holonet asset counter-offer: ${counter.memo}` : 'Holonet asset counter-offer',
+        transactionContext: 'holonet-asset-counter-offer',
+        audit: { source: 'holonet-asset-counter-offer', threadId: thread.id, transferId: transfer.id, requesterId }
+      }, { source: 'HolonetMessengerService.assetCounterOfferCredits', validate: true, rederive: true });
+      if (!credit?.success) {
+        const error = credit?.error || 'Counter credit movement failed.';
+        this._tradeLifecycleLog('warn', 'Counter credit transfer failed.', transfer, {
+          phase: 'counter.credits.failed',
+          threadId: thread?.id ?? null,
+          amount: credits,
+          error
+        });
+        return { success: false, error };
+      }
+      this._tradeLifecycleLog('info', 'Counter credit transfer completed.', transfer, {
+        phase: 'counter.credits.complete',
+        threadId: thread?.id ?? null,
+        fromActorId: sourceActor.id,
+        toActorId: targetActor.id,
+        amount: credits,
+        transactionId: credit.transferId ?? credit.transactionId ?? null
+      });
+    }
+
+    const item = await this._executeCounterItems({ thread, transfer, requesterId });
+    if (!item?.success) {
+      this._tradeLifecycleLog('warn', 'Counter item settlement returned failure.', transfer, {
+        phase: 'counter.settle.items-failed',
+        threadId: thread?.id ?? null,
+        error: item?.error ?? null
+      });
+      return item;
+    }
+    const asset = await this._executeCounterAssets({ thread, transfer, requesterId });
+    if (!asset?.success) {
+      this._tradeLifecycleLog('warn', 'Counter asset settlement returned failure.', transfer, {
+        phase: 'counter.settle.assets-failed',
+        threadId: thread?.id ?? null,
+        error: asset?.error ?? null
+      });
+      return asset;
+    }
+    this._tradeLifecycleLog('info', 'Counter-offer settlement completed.', transfer, {
+      phase: 'counter.settle.complete',
+      threadId: thread?.id ?? null,
+      credits,
+      itemCount: item.count || 0,
+      assetCount: asset.count || 0,
+      assetNames: asset.names || []
+    });
+    return { success: true, credits, itemCount: item.count || 0, assetCount: asset.count || 0, assetNames: asset.names || [] };
   }
 
   static async _settleTradeCredits({ thread, transfer, requesterId = null, source = 'HolonetMessengerService.tradeCredits' } = {}) {
     const requestedCredits = parsePositiveCredits(transfer?.trade?.requestedCredits);
+    this._tradeLifecycleLog('debug', 'Requested trade credit settlement evaluated.', transfer, {
+      phase: 'credits.requested.evaluate',
+      threadId: thread?.id ?? null,
+      requesterId,
+      amount: requestedCredits,
+      source
+    });
     if (!requestedCredits) return { success: true, amount: 0 };
     const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
     const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
-    if (!sourceActor || !targetActor) return { success: false, error: 'Trade credit actors could not be resolved.' };
-    return TransactionEngine.executeCreditTransfer({
+    if (!sourceActor || !targetActor) {
+      const error = 'Trade credit actors could not be resolved.';
+      this._tradeLifecycleLog('warn', error, transfer, {
+        phase: 'credits.requested.actors-missing',
+        threadId: thread?.id ?? null,
+        sourceActorId: sourceActor?.id ?? null,
+        targetActorId: targetActor?.id ?? null,
+        source
+      });
+      return { success: false, error };
+    }
+    this._tradeLifecycleLog('debug', 'Requested trade credit transfer starting.', transfer, {
+      phase: 'credits.requested.start',
+      threadId: thread?.id ?? null,
+      fromActorId: targetActor.id,
+      toActorId: sourceActor.id,
+      amount: requestedCredits,
+      source,
+      transactionContext: transfer.kind === 'ownedAssetTransfer' ? 'holonet-asset-trade' : 'holonet-item-trade'
+    });
+    const result = await TransactionEngine.executeCreditTransfer({
       fromActor: targetActor,
       toActor: sourceActor,
       amount: requestedCredits,
@@ -2441,9 +3340,29 @@ export class HolonetMessengerService {
       transactionContext: transfer.kind === 'ownedAssetTransfer' ? 'holonet-asset-trade' : 'holonet-item-trade',
       audit: { source: 'holonet-trade', threadId: thread.id, transferId: transfer.id, requesterId }
     }, { source, validate: true, rederive: true });
+    if (!result?.success) {
+      this._tradeLifecycleLog('warn', 'Requested trade credit transfer failed.', transfer, {
+        phase: 'credits.requested.failed',
+        threadId: thread?.id ?? null,
+        amount: requestedCredits,
+        error: result?.error ?? 'unknown credit transfer failure',
+        source
+      });
+      return result;
+    }
+    this._tradeLifecycleLog('info', 'Requested trade credit transfer completed.', transfer, {
+      phase: 'credits.requested.complete',
+      threadId: thread?.id ?? null,
+      fromActorId: targetActor.id,
+      toActorId: sourceActor.id,
+      amount: requestedCredits,
+      source,
+      transactionId: result.transferId ?? result.transactionId ?? null
+    });
+    return result;
   }
 
-  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const transfer = message?.metadata?.assetTransfer;
@@ -2451,7 +3370,100 @@ export class HolonetMessengerService {
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
     const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
     const currentId = senderRecipientId || currentRecipientId();
-    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
+    this._tradeLifecycleLog('debug', 'GM/asset transfer resolver action received.', transfer, {
+      phase: 'resolver.asset.action',
+      threadId: thread?.id ?? null,
+      action,
+      requesterId,
+      senderRecipientId,
+      currentId,
+      requesterIsGm,
+      counterItemIds: safeArray(counterItemIds),
+      counterAssetIds: safeArray(counterAssetIds),
+      counterCredits: parsePositiveCredits(counterCredits)
+    });
+    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) {
+      this._tradeLifecycleLog('warn', 'Asset transfer resolver rejected action because transfer is already terminal.', transfer, {
+        phase: 'resolver.asset.terminal-reject',
+        threadId: thread?.id ?? null,
+        action,
+        currentId
+      });
+      return false;
+    }
+
+    if (action === 'offer-asset-counter') {
+      if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
+      if (transfer.status !== 'pendingRecipient') return false;
+      const sourceActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+      const items = this._buildCounterItemEntries(sourceActor, counterItemIds);
+      const assets = this._buildCounterAssetEntries(sourceActor, counterAssetIds);
+      const credits = parsePositiveCredits(counterCredits);
+      const memo = String(counterMemo || '').trim();
+      if (!credits && !items.length && !assets.length && !memo) return false;
+      transfer.counterOffer = {
+        credits,
+        items,
+        assets,
+        memo,
+        offeredByRecipientId: currentId,
+        offeredByActorId: transfer.toActorId ?? null,
+        offeredAt: nowIso()
+      };
+      this._tradeLifecycleLog('info', 'Asset counter-offer created.', transfer, {
+        phase: 'resolver.asset.counter.created',
+        threadId: thread?.id ?? null,
+        currentId,
+        credits,
+        itemCount: items.length,
+        assetCount: assets.length,
+        memoPresent: Boolean(memo)
+      });
+      transfer.status = 'counterOffered';
+      await HolonetStorage.saveRecord(message);
+      const parts = [];
+      if (credits) parts.push(formatCredits(credits));
+      if (items.length) parts.push(items.map(item => item.name).join(', '));
+      if (assets.length) parts.push(assets.map(asset => asset.name).join(', '));
+      await this._publishSystemMessage(thread, `${transfer.toLabel} counter-offered ${parts.join(' + ') || 'alternate terms'} for ${safeArray(transfer.assets).map(asset => asset.name).join(', ') || 'an asset'}.`, { eventType: 'asset-counter-offered', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'decline-asset-counter') {
+      if (transfer.status !== 'counterOffered') return false;
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId && currentId !== transfer.toRecipientId) return false;
+      transfer.status = 'pendingRecipient';
+      transfer.counterDeclinedAt = nowIso();
+      transfer.counterDeclinedBy = currentId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `Counter offer for ${safeArray(transfer.assets).map(asset => asset.name).join(', ') || 'asset transfer'} was declined. Original asset offer is still awaiting recipient action.`, { eventType: 'asset-counter-declined', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'accept-asset-counter') {
+      if (transfer.status !== 'counterOffered') return false;
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId) return false;
+      const hasCounterAssets = safeArray(transfer?.counterOffer?.assets).length > 0;
+      if (hasCounterAssets && assetTradeApprovalRequired() && !requesterIsGm) {
+        transfer.status = 'counterPendingGm';
+        transfer.counterAcceptedAt = nowIso();
+        transfer.counterAcceptedBy = currentId;
+        await HolonetStorage.saveRecord(message);
+        await this._publishSystemMessage(thread, `Counter offer accepted by ${transfer.fromLabel}; awaiting GM approval for reciprocal asset movement.`, { eventType: 'asset-counter-awaiting-gm', transferId: transfer.id });
+        return true;
+      }
+      const ok = await this._completeAssetCounterOffer({ thread, message, transfer, requesterId, resolvedBy: currentId });
+      return ok;
+    }
+
+    if (action === 'approve-asset-counter') {
+      if (!requesterIsGm) return false;
+      if (transfer.status !== 'counterPendingGm') return false;
+      transfer.counterApprovedAt = nowIso();
+      transfer.counterApprovedBy = requesterId || game.user?.id || null;
+      const ok = await this._completeAssetCounterOffer({ thread, message, transfer, requesterId, resolvedBy: currentId });
+      return ok;
+    }
 
     if (action === 'decline-asset-transfer') {
       if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
@@ -2485,58 +3497,154 @@ export class HolonetMessengerService {
     }
 
     if (action !== 'accept-asset-transfer') return false;
-    if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
-    const ok = await this._executeAssetTransfer({ thread, transfer, requesterId });
+    if (!requesterIsGm && currentId !== transfer.toRecipientId) {
+      this._tradeLifecycleLog('warn', 'Asset transfer accept rejected by permission check.', transfer, {
+        phase: 'resolver.asset.accept.permission-reject',
+        threadId: thread?.id ?? null,
+        action,
+        currentId,
+        expectedRecipientId: transfer.toRecipientId,
+        requesterIsGm
+      });
+      return false;
+    }
+    this._tradeLifecycleLog('info', 'Asset transfer accept requested; settlement path beginning.', transfer, {
+      phase: 'resolver.asset.accept.start',
+      threadId: thread?.id ?? null,
+      currentId,
+      requesterId
+    });
+    const atomic = await this._executeAtomicTradeSettlement({
+      thread,
+      transfer,
+      actors: this._collectTradeSettlementActors(transfer),
+      preflight: () => this._preflightTradeSettlement(transfer),
+      operation: () => this._executeAssetTransfer({ thread, transfer, requesterId }),
+      failureEventType: 'asset-trade-atomic-failed',
+      failurePrefix: 'Asset trade failed'
+    });
+    const ok = Boolean(atomic?.success && atomic.result !== false);
     transfer.status = ok ? 'complete' : 'failed';
     transfer.resolvedAt = nowIso();
     transfer.resolvedBy = currentId;
+    if (!ok) transfer.failureReason = atomic?.error || 'Atomic asset trade settlement failed.';
+    this._tradeLifecycleLog(ok ? 'info' : 'warn', ok ? 'Asset transfer resolved complete.' : 'Asset transfer resolved failed.', transfer, {
+      phase: ok ? 'resolver.asset.accept.complete' : 'resolver.asset.accept.failed',
+      threadId: thread?.id ?? null,
+      currentId,
+      failureReason: transfer.failureReason ?? null
+    });
+    await HolonetStorage.saveRecord(message);
+    return ok;
+  }
+
+  static async _completeAssetCounterOffer({ thread, message, transfer, requesterId = null, resolvedBy = null } = {}) {
+    this._tradeLifecycleLog('info', 'Asset counter-offer completion requested.', transfer, {
+      phase: 'resolver.asset.counter-complete.start',
+      threadId: thread?.id ?? null,
+      requesterId,
+      resolvedBy
+    });
+    const atomic = await this._executeAtomicTradeSettlement({
+      thread,
+      transfer,
+      actors: this._collectTradeSettlementActors(transfer, { includeCounter: true }),
+      preflight: () => this._preflightTradeSettlement(transfer, { includeCounter: true, suppressRequestedCredits: true }),
+      operation: async () => {
+        this._tradeLifecycleLog('debug', 'Atomic asset counter operation settling counter package.', transfer, {
+          phase: 'resolver.asset.counter-complete.counter-settle.start',
+          threadId: thread?.id ?? null
+        });
+        const counter = await this._settleCounterOffer({ thread, transfer, requesterId });
+        if (!counter?.success) throw new Error(counter?.error || 'Counter settlement failed.');
+        this._tradeLifecycleLog('debug', 'Atomic asset counter operation moving original asset without requested credits.', transfer, {
+          phase: 'resolver.asset.counter-complete.original-asset.start',
+          threadId: thread?.id ?? null,
+          counter
+        });
+        const ok = await this._executeAssetTransfer({ thread, transfer: { ...transfer, trade: { ...(transfer.trade ?? {}), requestedCredits: 0 } }, requesterId });
+        if (!ok) throw new Error('Original asset transfer failed after counter settlement.');
+        return { success: true, counter };
+      },
+      failureEventType: 'asset-counter-atomic-failed',
+      failurePrefix: 'Asset counter-offer failed'
+    });
+
+    const ok = Boolean(atomic?.success);
+    transfer.status = ok ? 'complete' : 'failed';
+    transfer.resolvedAt = nowIso();
+    transfer.resolvedBy = resolvedBy;
+    transfer.counterSettledAt = ok ? nowIso() : null;
+    if (!ok) transfer.failureReason = atomic?.error || 'Atomic asset counter-offer settlement failed.';
+    this._tradeLifecycleLog(ok ? 'info' : 'warn', ok ? 'Asset counter-offer resolved complete.' : 'Asset counter-offer resolved failed.', transfer, {
+      phase: ok ? 'resolver.asset.counter-complete.complete' : 'resolver.asset.counter-complete.failed',
+      threadId: thread?.id ?? null,
+      requesterId,
+      resolvedBy,
+      failureReason: transfer.failureReason ?? null,
+      rollbackOk: atomic?.rollbackOk ?? null
+    });
     await HolonetStorage.saveRecord(message);
     return ok;
   }
 
   static async _executeAssetTransfer({ thread, transfer, requesterId = null } = {}) {
-    const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
-    const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
-    if (!sourceActor || !targetActor) return false;
-    const assets = safeArray(transfer.assets).map(entry => game.actors?.get(String(entry.id || entry.uuid || '').replace(/^Actor\./, ''))).filter(Boolean);
-    if (!assets.length) return false;
-    const ownedIds = new Set(ownedActorLinks(sourceActor).map(link => String(link.id || '').replace(/^Actor\./, '')));
-    const missing = assets.find(asset => !ownedIds.has(asset.id));
-    if (missing) throw new Error(`${missing.name} is no longer linked to ${sourceActor.name}.`);
+    this._tradeLifecycleLog('info', 'Asset transfer execution starting.', transfer, {
+      phase: 'asset.execute.start',
+      threadId: thread?.id ?? null,
+      requesterId
+    });
+    const validation = this._validateOwnedAssetTransfer(transfer);
+    if (!validation.ok) {
+      this._tradeLifecycleLog('warn', 'Asset transfer execution validation failed.', transfer, {
+        phase: 'asset.execute.validation-failed',
+        threadId: thread?.id ?? null,
+        error: validation.error
+      });
+      await this._publishSystemMessage(thread, `Asset transfer failed: ${validation.error}`, { eventType: 'asset-transfer-failed', transferId: transfer.id });
+      return false;
+    }
+    const { sourceActor, targetActor, assets } = validation;
 
     const credit = await this._settleTradeCredits({ thread, transfer, requesterId, source: 'HolonetMessengerService.assetTradeCredits' });
     if (!credit?.success) {
+      this._tradeLifecycleLog('warn', 'Asset transfer payment failed before asset movement.', transfer, {
+        phase: 'asset.execute.payment-failed',
+        threadId: thread?.id ?? null,
+        error: credit?.error || 'Credit movement failed.'
+      });
       await this._publishSystemMessage(thread, `Asset transfer payment failed: ${credit?.error || 'Credit movement failed.'}`, { eventType: 'asset-transfer-payment-failed', transferId: transfer.id });
       return false;
     }
 
     const ids = assets.map(asset => asset.id);
-    await ActorEngine.applyMutationPlan(sourceActor, { set: removeAssetLinks(sourceActor, ids) }, { source: 'HolonetMessengerService.assetTransfer.unlinkSource', validate: true, rederive: true });
-    const linkPlan = StoreAcquisitionService.buildOwnerLinkPlan(targetActor, assets, {
-      ownerActor: targetActor,
-      source: 'holonet-asset-transfer',
-      transactionId: credit.transferId ?? credit.transactionId ?? transfer.id,
-      transactionContext: 'holonet-asset-trade',
-      audit: { transferId: transfer.id, threadId: thread.id, requesterId }
+    this._tradeLifecycleLog('debug', 'Asset transfer moving owned assets.', transfer, {
+      phase: 'asset.execute.move-assets.start',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      assetIds: ids,
+      creditAmount: credit.amount ?? 0
     });
-    if (linkPlan) await ActorEngine.applyMutationPlan(targetActor, linkPlan, { source: 'HolonetMessengerService.assetTransfer.linkTarget', validate: true, rederive: true });
-
-    const ownership = StoreAcquisitionService.buildActorOwnership(targetActor, { includeCurrentGM: true });
-    for (const asset of assets) {
-      await asset.update({
-        ownership,
-        'system.ownedByActorId': targetActor.id,
-        'system.ownedByActorName': targetActor.name,
-        [`flags.foundryvtt-swse.holonetAssetTransfer`]: {
-          source: 'holonet-asset-transfer',
-          threadId: thread.id,
-          transferId: transfer.id,
-          fromActorId: sourceActor.id,
-          toActorId: targetActor.id,
-          transferredAt: nowIso(),
-          requesterId
-        }
+    const moved = await this._moveOwnedAssets({
+      thread,
+      transfer,
+      assets,
+      sourceActor,
+      targetActor,
+      transactionId: credit.transferId ?? credit.transactionId ?? transfer.id,
+      requesterId,
+      source: 'holonet-asset-transfer'
+    });
+    if (!moved) {
+      this._tradeLifecycleLog('warn', 'Asset transfer movement returned failure.', transfer, {
+        phase: 'asset.execute.move-assets.failed',
+        threadId: thread?.id ?? null,
+        sourceActorId: sourceActor.id,
+        targetActorId: targetActor.id,
+        assetIds: ids
       });
+      return false;
     }
 
     const names = assets.map(asset => asset.name).join(', ');
@@ -2546,12 +3654,31 @@ export class HolonetMessengerService {
       lines: [`From: ${sourceActor.name}`, `To: ${targetActor.name}`, `Assets: ${names}`, credit.amount ? `Credits: ${formatCredits(credit.amount)}` : null].filter(Boolean)
     });
     await this._publishSystemMessage(thread, `${targetActor.name} received ${names} from ${sourceActor.name}.`, { eventType: 'asset-transfer-complete', toActorId: targetActor.id, assetIds: ids });
+    this._tradeLifecycleLog('info', 'Asset transfer execution completed.', transfer, {
+      phase: 'asset.execute.complete',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      assetIds: ids,
+      assetNames: assets.map(asset => asset.name),
+      creditAmount: credit.amount ?? 0
+    });
     return true;
   }
 
   static async _executeOwnedItemTransfer({ thread, transfer, requesterId = null } = {}) {
+    this._tradeLifecycleLog('info', 'Owned item transfer execution starting.', transfer, {
+      phase: 'item.execute.start',
+      threadId: thread?.id ?? null,
+      requesterId
+    });
     const validation = this._validateOwnedItemTransfer(transfer);
     if (!validation.ok) {
+      this._tradeLifecycleLog('warn', 'Owned item transfer execution validation failed.', transfer, {
+        phase: 'item.execute.validation-failed',
+        threadId: thread?.id ?? null,
+        error: validation.error
+      });
       await this._publishSystemMessage(thread, `Item transfer failed: ${validation.error}`, { eventType: 'item-transfer-failed', transferId: transfer.id });
       return false;
     }
@@ -2559,6 +3686,11 @@ export class HolonetMessengerService {
 
     const credit = await this._settleTradeCredits({ thread, transfer, requesterId, source: 'HolonetMessengerService.itemTradeCredits' });
     if (!credit?.success) {
+      this._tradeLifecycleLog('warn', 'Owned item transfer payment failed before item movement.', transfer, {
+        phase: 'item.execute.payment-failed',
+        threadId: thread?.id ?? null,
+        error: credit?.error || 'Credit movement failed.'
+      });
       await this._publishSystemMessage(thread, `Item trade payment failed: ${credit?.error || 'Credit movement failed.'}`, { eventType: 'item-transfer-payment-failed', transferId: transfer.id });
       return false;
     }
@@ -2587,22 +3719,77 @@ export class HolonetMessengerService {
         updates.push({ _id: sourceItem.id, [itemQuantityUpdatePath(sourceItem)]: sourceQty - requestedQty });
       }
     }
-    if (!createData.length) return false;
+    if (!createData.length) {
+      this._tradeLifecycleLog('warn', 'Owned item transfer had no item create payloads.', transfer, {
+        phase: 'item.execute.no-create-data',
+        threadId: thread?.id ?? null
+      });
+      return false;
+    }
+
+    this._tradeLifecycleLog('debug', 'Owned item movement plan built.', transfer, {
+      phase: 'item.execute.plan-built',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      createCount: createData.length,
+      updateCount: updates.length,
+      deleteCount: deletes.length,
+      itemNames: names
+    });
 
     try {
-      if (updates.length) await ActorEngine.updateEmbeddedDocuments(sourceActor, 'Item', updates, { source: 'HolonetMessengerService.itemTransfer.decrement' });
-      if (deletes.length) await ActorEngine.deleteEmbeddedDocuments(sourceActor, 'Item', deletes, { source: 'HolonetMessengerService.itemTransfer.remove' });
+      if (updates.length) {
+        this._tradeLifecycleLog('debug', 'Decrementing source item quantities.', transfer, { phase: 'item.execute.decrement.start', threadId: thread?.id ?? null, count: updates.length });
+        await ActorEngine.updateEmbeddedDocuments(sourceActor, 'Item', updates, { source: 'HolonetMessengerService.itemTransfer.decrement' });
+        this._tradeLifecycleLog('debug', 'Source item quantities decremented.', transfer, { phase: 'item.execute.decrement.complete', threadId: thread?.id ?? null, count: updates.length });
+      }
+      if (deletes.length) {
+        this._tradeLifecycleLog('debug', 'Deleting fully transferred source items.', transfer, { phase: 'item.execute.delete.start', threadId: thread?.id ?? null, count: deletes.length, itemIds: deletes });
+        await ActorEngine.deleteEmbeddedDocuments(sourceActor, 'Item', deletes, { source: 'HolonetMessengerService.itemTransfer.remove' });
+        this._tradeLifecycleLog('debug', 'Fully transferred source items deleted.', transfer, { phase: 'item.execute.delete.complete', threadId: thread?.id ?? null, count: deletes.length, itemIds: deletes });
+      }
+      this._tradeLifecycleLog('debug', 'Creating transferred items on target actor.', transfer, { phase: 'item.execute.create.start', threadId: thread?.id ?? null, count: createData.length, targetActorId: targetActor.id });
       await ActorEngine.createEmbeddedDocuments(targetActor, 'Item', createData, { source: 'HolonetMessengerService.itemTransfer.create' });
+      this._tradeLifecycleLog('debug', 'Transferred items created on target actor.', transfer, { phase: 'item.execute.create.complete', threadId: thread?.id ?? null, count: createData.length, targetActorId: targetActor.id });
     } catch (err) {
+      this._tradeLifecycleError('Owned item movement failed after payment stage.', transfer, err, {
+        phase: 'item.execute.movement-exception',
+        threadId: thread?.id ?? null,
+        creditAmount: credit?.amount ?? 0,
+        sourceActorId: sourceActor.id,
+        targetActorId: targetActor.id
+      });
       if (credit?.amount) {
-        await TransactionEngine.executeCreditTransfer({
-          fromActor: sourceActor,
-          toActor: targetActor,
-          amount: credit.amount,
-          reason: 'Holonet item trade compensation after item movement failure',
-          transactionContext: 'holonet-item-trade',
-          audit: { source: 'holonet-item-trade-compensation', threadId: thread.id, transferId: transfer.id, requesterId, originalTransferId: credit.transferId ?? null }
-        }, { source: 'HolonetMessengerService.itemTradeCompensation', validate: true, rederive: true });
+        try {
+          this._tradeLifecycleLog('warn', 'Attempting immediate credit compensation after item movement failure.', transfer, {
+            phase: 'item.execute.compensation.start',
+            threadId: thread?.id ?? null,
+            amount: credit.amount,
+            fromActorId: sourceActor.id,
+            toActorId: targetActor.id
+          });
+          await TransactionEngine.executeCreditTransfer({
+            fromActor: sourceActor,
+            toActor: targetActor,
+            amount: credit.amount,
+            reason: 'Holonet item trade compensation after item movement failure',
+            transactionContext: 'holonet-item-trade',
+            audit: { source: 'holonet-item-trade-compensation', threadId: thread.id, transferId: transfer.id, requesterId, originalTransferId: credit.transferId ?? null }
+          }, { source: 'HolonetMessengerService.itemTradeCompensation', validate: true, rederive: true });
+          this._tradeLifecycleLog('warn', 'Immediate credit compensation completed; atomic rollback will still restore captured state.', transfer, {
+            phase: 'item.execute.compensation.complete',
+            threadId: thread?.id ?? null,
+            amount: credit.amount
+          });
+        } catch (compensationErr) {
+          this._tradeLifecycleError('Immediate credit compensation failed; atomic rollback will attempt full restore.', transfer, compensationErr, {
+            phase: 'item.execute.compensation.failed',
+            threadId: thread?.id ?? null,
+            amount: credit.amount,
+            originalError: err?.message ?? null
+          });
+        }
       }
       throw err;
     }
@@ -2613,6 +3800,14 @@ export class HolonetMessengerService {
       lines: [`From: ${sourceActor.name}`, `To: ${targetActor.name}`, `Items: ${names.join(', ')}`, credit.amount ? `Credits: ${formatCredits(credit.amount)}` : null].filter(Boolean)
     });
     await this._publishSystemMessage(thread, `${targetActor.name} received ${names.join(', ')} from ${sourceActor.name}.`, { eventType: 'item-transfer-complete', toActorId: targetActor.id, itemNames: names });
+    this._tradeLifecycleLog('info', 'Owned item transfer execution completed.', transfer, {
+      phase: 'item.execute.complete',
+      threadId: thread?.id ?? null,
+      sourceActorId: sourceActor.id,
+      targetActorId: targetActor.id,
+      itemNames: names,
+      creditAmount: credit.amount ?? 0
+    });
     return true;
   }
 

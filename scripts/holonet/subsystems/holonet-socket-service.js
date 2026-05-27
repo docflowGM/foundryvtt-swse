@@ -99,6 +99,45 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmCreateThread(data);
         break;
       }
+      case 'create-game-invite': {
+        await HolonetMessengerService._gmCreateGameInvite(data);
+        break;
+      }
+      case 'create-solo-pazaak': {
+        const { PazaakEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js');
+        await PazaakEngine.createSoloAiSession(data);
+        break;
+      }
+      case 'lock-pazaak-side-deck': {
+        const { PazaakEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js');
+        await PazaakEngine.lockSideDeck(data);
+        break;
+      }
+      case 'pazaak-action': {
+        const { PazaakEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js');
+        await PazaakEngine.submitAction(data);
+        break;
+      }
+      case 'create-solo-sabacc': {
+        const { SabaccEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/sabacc/sabacc-engine.js');
+        await SabaccEngine.createSoloAiSession(data);
+        break;
+      }
+      case 'sabacc-action': {
+        const { SabaccEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/sabacc/sabacc-engine.js');
+        await SabaccEngine.submitAction(data);
+        break;
+      }
+      case 'create-solo-dejarik': {
+        const { DejarikEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/dejarik/dejarik-engine.js');
+        await DejarikEngine.createSoloAiSession(data);
+        break;
+      }
+      case 'dejarik-action': {
+        const { DejarikEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/dejarik/dejarik-engine.js');
+        await DejarikEngine.submitAction(data);
+        break;
+      }
       case 'create-job': {
         await HolonetMessengerService._gmCreateJobPosting(data);
         break;
