@@ -2128,6 +2128,13 @@ export class HolonetMessengerService {
         await this._gmGrantItems({ thread, recipientId, itemUuids: uuids, requesterId, eventType: 'job-item-payout', source: 'holonet-job-item-payout' });
         break;
       }
+      case 'gm-fail-trade':
+      case 'gm-reopen-trade':
+      case 'gm-archive-trade':
+      case 'gm-unarchive-trade': {
+        await this._gmOverrideTradeConsoleState({ thread, recordId, action, memo, requesterId, senderRecipientId, requestId });
+        break;
+      }
       case 'accept-item-transfer':
       case 'approve-item-transfer':
       case 'decline-item-transfer':
@@ -2258,6 +2265,85 @@ export class HolonetMessengerService {
 
     // Non-GM direct transfer requests should be offers, not immediate mutations.
     return this._gmOfferCreditTransfer({ actorId, threadId: thread.id, recipientId, amount: value, requesterId, senderRecipientId });
+  }
+
+  static _getTradeTransferFromMessage(message = {}) {
+    const meta = message?.metadata ?? {};
+    if (meta.creditTransfer) return { type: 'credit', key: 'creditTransfer', transfer: meta.creditTransfer };
+    if (meta.itemTransfer) return { type: 'item', key: 'itemTransfer', transfer: meta.itemTransfer };
+    if (meta.assetTransfer) return { type: 'asset', key: 'assetTransfer', transfer: meta.assetTransfer };
+    return null;
+  }
+
+  static async _gmOverrideTradeConsoleState({ thread, recordId, action, memo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+    if (!recordId || !game.user?.isGM && !(requesterId && game.users?.get(requesterId)?.isGM) && !senderRecipientId?.startsWith('gm:')) return false;
+    const message = await HolonetStorage.getRecord(recordId);
+    const trade = this._getTradeTransferFromMessage(message);
+    if (!message || !trade?.transfer) return false;
+    const { type, transfer } = trade;
+    const currentStatus = String(transfer.status || 'pendingRecipient');
+    const note = String(memo || '').trim();
+    const now = nowIso();
+    const userId = requesterId || game.user?.id || null;
+
+    this._tradeLifecycleLog('warn', 'GM trade console override requested.', transfer, {
+      phase: 'gm-console.override.requested',
+      threadId: thread?.id ?? null,
+      action,
+      currentStatus,
+      notePresent: Boolean(note),
+      requestId
+    });
+
+    if (action === 'gm-archive-trade') {
+      transfer.gmArchived = true;
+      transfer.tradeConsoleArchived = true;
+      transfer.tradeConsoleArchivedAt = now;
+      transfer.tradeConsoleArchivedBy = userId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `GM archived ${type} trade diagnostic ${transfer.id || recordId} from the Trade Console.`, { eventType: 'trade-console-archived', transferId: transfer.id, recordId });
+      return true;
+    }
+
+    if (action === 'gm-unarchive-trade') {
+      transfer.gmArchived = false;
+      transfer.tradeConsoleArchived = false;
+      transfer.tradeConsoleRestoredAt = now;
+      transfer.tradeConsoleRestoredBy = userId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `GM restored ${type} trade diagnostic ${transfer.id || recordId} to the Trade Console.`, { eventType: 'trade-console-unarchived', transferId: transfer.id, recordId });
+      return true;
+    }
+
+    if (action === 'gm-fail-trade') {
+      if (['complete', 'cancelled', 'declined'].includes(currentStatus)) return false;
+      transfer.status = 'failed';
+      transfer.failureReason = note || 'Marked failed by GM from the Trade Console.';
+      transfer.resolvedAt = now;
+      transfer.resolvedBy = senderRecipientId || currentRecipientId();
+      transfer.tradeConsoleOverride = { action, at: now, by: userId, previousStatus: currentStatus, note: transfer.failureReason };
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `GM marked ${type} trade ${transfer.id || recordId} failed: ${transfer.failureReason}`, { eventType: 'trade-console-force-failed', transferId: transfer.id, recordId, previousStatus: currentStatus });
+      return true;
+    }
+
+    if (action === 'gm-reopen-trade') {
+      if (currentStatus !== 'failed') return false;
+      const nextStatus = transfer.approvalRequired ? 'pendingGm' : 'pendingRecipient';
+      transfer.status = nextStatus;
+      transfer.reopenedAt = now;
+      transfer.reopenedBy = userId;
+      transfer.previousFailureReason = transfer.failureReason ?? null;
+      transfer.failureReason = null;
+      transfer.resolvedAt = null;
+      transfer.resolvedBy = null;
+      transfer.tradeConsoleOverride = { action, at: now, by: userId, previousStatus: currentStatus, nextStatus, note };
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `GM reopened ${type} trade ${transfer.id || recordId} as ${transferStatusLabel(nextStatus)}${note ? `: ${note}` : ''}.`, { eventType: 'trade-console-reopened', transferId: transfer.id, recordId, previousStatus: currentStatus, nextStatus });
+      return true;
+    }
+
+    return false;
   }
 
   static async _gmResolveCreditTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {

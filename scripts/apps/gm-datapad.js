@@ -120,10 +120,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageContext = await this._loadPageContext(this.currentPage);
     const surfaceContext = ThemeResolutionService.buildSurfaceContext({ preferActor: false });
     const appCounts = await this._getHomeBadgeCounts();
+    const apps = this._getAppCards(appCounts);
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
-      apps: this._getAppCards(appCounts),
+      apps,
+      appClusters: this._getAppClusters(apps),
+      activeApp: apps.find((app) => app.id === this.currentPage) ?? null,
+      gmShell: this._buildGmShellContext(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
@@ -150,6 +154,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const bulletinRecords = await HolonetStorage.getAllRecords();
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
     const jobCounts = await this._getJobBadgeCounts();
+    const tradeCounts = await this._getTradeBadgeCounts();
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
@@ -178,6 +183,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
       jobReview: jobCounts.review,
       jobPayout: jobCounts.payout,
       jobActive: jobCounts.active,
+      trade: tradeCounts.actionable,
+      tradeApprovals: tradeCounts.approvals,
+      tradeFailed: tradeCounts.failed,
+      tradeActive: tradeCounts.active,
       healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
@@ -203,6 +212,31 @@ export class GMDatapad extends BaseSWSEAppV2 {
     } catch (err) {
       SWSELogger.warn('[GMDatapad] Unable to load job board badge counts:', err);
       return { total: 0, review: 0, payout: 0, active: 0, actionable: 0 };
+    }
+  }
+
+  async _getTradeBadgeCounts() {
+    try {
+      const records = await HolonetStorage.getAllRecords();
+      let approvals = 0;
+      let failed = 0;
+      let active = 0;
+      let counter = 0;
+      for (const record of records) {
+        const transfers = [record?.metadata?.creditTransfer, record?.metadata?.itemTransfer, record?.metadata?.assetTransfer].filter(Boolean);
+        for (const transfer of transfers) {
+          if (transfer?.gmArchived || transfer?.tradeConsoleArchived) continue;
+          const status = String(transfer?.status || 'pendingRecipient');
+          if (status === 'pendingGm' || status === 'counterPendingGm') approvals += 1;
+          if (status === 'failed') failed += 1;
+          if (status === 'pendingRecipient' || status === 'counterOffered') active += 1;
+          if (transfer?.counterOffer) counter += 1;
+        }
+      }
+      return { approvals, failed, active, counter, actionable: approvals + failed };
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load trade console badge counts:', err);
+      return { approvals: 0, failed: 0, active: 0, counter: 0, actionable: 0 };
     }
   }
 
@@ -731,19 +765,70 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
   /**
-   * Get app card definitions for home page
+   * Get GM Holopad app definitions for the command launcher/dock.
    */
   _getAppCards(counts = {}) {
     return [
-      { id: 'bulletin', code: 'COM', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : '', badgeType: 'info', featured: true },
-      { id: 'jobs', code: 'JOB', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, review queue, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
-      { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
-      { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
-      { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
-      { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
-      { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
-      { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' }
-    ];
+      { id: 'bulletin', code: 'COM', cluster: 'communications', clusterLabel: 'Comms', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'One-way broadcasts, HoloNews, player status, and session recaps', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : 'stable', badgeType: 'info', featured: true, dockOrder: 10 },
+      { id: 'jobs', code: 'JOB', cluster: 'operations', clusterLabel: 'Ops', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, objective review, assignments, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 20 },
+      { id: 'trade', code: 'TRD', cluster: 'economy', clusterLabel: 'Economy', label: 'Trade Console', icon: 'fa-solid fa-right-left', description: 'Trade approvals, failed settlements, rollback diagnostics, and audit receipts', badgeCount: counts.trade ?? 0, status: 'Atomic', statusTone: (counts.trade ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 30 },
+      { id: 'store', code: 'STR', cluster: 'economy', clusterLabel: 'Economy', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance, approvals, inventory policy, and commerce receipts', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : 'stable', badgeType: 'warn', featured: true, dockOrder: 40 },
+      { id: 'approvals', code: 'APR', cluster: 'operations', clusterLabel: 'Ops', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending GM approval queue for gated system actions', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : 'stable', badgeType: 'crit', featured: true, dockOrder: 50 },
+      { id: 'workspace', code: 'WRK', cluster: 'operations', clusterLabel: 'Ops', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access, scene context, and party workspace', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: 'info', badgeType: 'info', dockOrder: 60 },
+      { id: 'healing', code: 'MED', cluster: 'operations', clusterLabel: 'Ops', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management and natural healing checks', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: (counts.healing ?? 0) ? 'warn' : 'stable', badgeType: 'info', dockOrder: 70 },
+      { id: 'house-rules', code: 'RUL', cluster: 'configuration', clusterLabel: 'Config', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications and campaign rule presets', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: (counts.houseRules ?? 0) ? 'info' : 'stable', badgeType: 'info', dockOrder: 80 },
+      { id: 'settings', code: 'CFG', cluster: 'configuration', clusterLabel: 'Config', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme, interface tuning, and GM shell preferences', badgeCount: 0, status: 'Theme', statusTone: 'info', badgeType: 'info', dockOrder: 90 }
+    ].sort((a, b) => (a.dockOrder ?? 999) - (b.dockOrder ?? 999));
+  }
+
+  _getAppClusters(apps = []) {
+    const clusters = new Map();
+    for (const app of apps) {
+      const id = app.cluster || 'other';
+      if (!clusters.has(id)) {
+        clusters.set(id, {
+          id,
+          label: app.clusterLabel || id,
+          apps: [],
+          badgeCount: 0,
+          criticalCount: 0,
+          warningCount: 0
+        });
+      }
+
+      const cluster = clusters.get(id);
+      cluster.apps.push(app);
+      cluster.badgeCount += Number(app.badgeCount ?? 0) || 0;
+      if (app.statusTone === 'crit') cluster.criticalCount += 1;
+      if (app.statusTone === 'warn') cluster.warningCount += 1;
+    }
+
+    const order = ['communications', 'operations', 'economy', 'configuration', 'other'];
+    return Array.from(clusters.values())
+      .map((cluster) => ({
+        ...cluster,
+        tone: cluster.criticalCount > 0 ? 'crit' : cluster.warningCount > 0 ? 'warn' : cluster.badgeCount > 0 ? 'info' : 'stable',
+        countLabel: `${cluster.apps.length} app${cluster.apps.length === 1 ? '' : 's'}`
+      }))
+      .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  }
+
+  _buildGmShellContext(apps = [], counts = {}) {
+    const activeApp = apps.find((app) => app.id === this.currentPage) ?? null;
+    const criticalBadges = Number(counts.approvals ?? 0) + Number(counts.jobs ?? 0) + Number(counts.trade ?? 0);
+    const watchBadges = criticalBadges + Number(counts.store ?? 0) + Number(counts.healing ?? 0);
+    const visibleDockApps = apps.filter((app) => app.featured || Number(app.badgeCount ?? 0) > 0);
+
+    return {
+      activeLabel: activeApp?.label ?? 'Home',
+      activeCode: activeApp?.code ?? 'HOM',
+      readinessLabel: criticalBadges > 0 ? 'ACTION REQUIRED' : watchBadges > 0 ? 'WATCH' : 'NOMINAL',
+      readinessTone: criticalBadges > 0 ? 'crit' : watchBadges > 0 ? 'warn' : 'stable',
+      summaryLine: `${Number(counts.bulletin ?? 0)} signals · ${Number(counts.jobs ?? 0)} contract actions · ${Number(counts.trade ?? 0)} trade alerts`,
+      dockApps: visibleDockApps,
+      criticalBadges,
+      watchBadges
+    };
   }
 
   async _onRender(context, options) {
@@ -796,6 +881,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireBulletinEvents(root);
     } else if (this.currentPage === 'jobs') {
       await this._wireJobBoardEvents(root);
+    } else if (this.currentPage === 'trade') {
+      await this._wireTradeConsoleEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
@@ -818,6 +905,59 @@ export class GMDatapad extends BaseSWSEAppV2 {
       logger: SWSELogger
     });
     this._settingsSurfaceController.attach(root);
+  }
+
+  async _wireTradeConsoleEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-trade-console');
+    if (!pageElement) return;
+
+    pageElement.querySelectorAll('[data-trade-select]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedTradeRecordId = event.currentTarget.dataset.tradeSelect || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-trade-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const target = event.currentTarget;
+        const threadId = target.dataset.threadId;
+        const recordId = target.dataset.recordId;
+        const action = target.dataset.tradeAction;
+        if (!threadId || !recordId || !action) return;
+        const noteInput = pageElement.querySelector(`[data-trade-note-for="${recordId}"]`);
+        const memo = String(noteInput?.value || '').trim();
+        await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo });
+        this.selectedTradeRecordId = recordId;
+        await this.render(false);
+      });
+    });
+
+    const policyForm = pageElement.querySelector('[data-trade-policy-form]');
+    if (policyForm) {
+      policyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(policyForm);
+        const boolSettings = [
+          'holonetCreditTransfersEnabled',
+          'holonetRequireCreditTransferApproval',
+          'holonetItemTradesEnabled',
+          'holonetRequireItemTradeApproval',
+          'holonetAssetTradesEnabled',
+          'holonetRequireAssetTradeApproval',
+          'holonetPartyFundEnabled'
+        ];
+        for (const key of boolSettings) {
+          await game.settings.set('foundryvtt-swse', key, data.get(key) === 'on');
+        }
+        const cut = Math.max(0, Math.min(100, Math.floor(Number(data.get('holonetPartyFundDefaultCutPercent') || 0))));
+        await game.settings.set('foundryvtt-swse', 'holonetPartyFundDefaultCutPercent', cut);
+        ui?.notifications?.info?.('Holonet trade policy updated.');
+        await this.render(false);
+      });
+    }
   }
 
   async _wireJobBoardEvents(root) {

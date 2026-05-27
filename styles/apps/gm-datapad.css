@@ -3804,3 +3804,636 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* GM Trade Console ------------------------------------------------------- */
+.gm-datapad-trade-console {
+  gap: 14px;
+}
+
+.trade-console-header,
+.trade-console-header-actions,
+.trade-section-header,
+.trade-card-topline,
+.trade-console-metrics,
+.trade-dossier-row,
+.trade-action-grid,
+.trade-term-grid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trade-console-header {
+  justify-content: space-between;
+}
+
+.trade-console-header-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.trade-console-metrics {
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid rgba(114, 234, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(4, 15, 30, 0.72);
+}
+
+.trade-console-metrics span,
+.trade-chip {
+  border: 1px solid rgba(114, 234, 255, 0.24);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: rgba(4, 18, 33, 0.72);
+  color: var(--swse-theme-text, #d7f7ff);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.trade-chip.warn,
+.trade-chip.crit,
+.trade-card.crit .trade-chip,
+.trade-diagnostic-block.crit {
+  border-color: rgba(255, 92, 92, 0.55);
+  color: #ffd6d6;
+  background: rgba(80, 12, 18, 0.62);
+}
+
+.trade-chip.info,
+.trade-card.info .trade-chip {
+  border-color: rgba(141, 128, 255, 0.48);
+  color: #dfdcff;
+  background: rgba(36, 31, 91, 0.45);
+}
+
+.trade-chip.ok,
+.trade-card.ok .trade-chip,
+.trade-diagnostic-block.ok {
+  border-color: rgba(72, 235, 165, 0.45);
+  color: #c8ffeb;
+  background: rgba(8, 61, 43, 0.45);
+}
+
+.trade-chip.muted,
+.trade-card.muted .trade-chip {
+  border-color: rgba(180, 190, 200, 0.24);
+  color: rgba(220, 235, 240, 0.76);
+  background: rgba(22, 28, 36, 0.5);
+}
+
+.trade-console-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.trade-section-header {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.trade-section-header.compact {
+  align-items: flex-start;
+}
+
+.trade-section-header h3,
+.trade-queue-column h4 {
+  margin: 0;
+}
+
+.trade-console-help,
+.trade-queue-column p,
+.trade-card em,
+.trade-dossier-row span,
+.trade-audit-row span,
+.trade-timeline-row span {
+  color: rgba(214, 240, 246, 0.72);
+  font-size: 0.78rem;
+}
+
+.trade-queue-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.trade-queue-column {
+  min-height: 220px;
+  border: 1px solid rgba(114, 234, 255, 0.16);
+  border-radius: 14px;
+  padding: 10px;
+  background: rgba(3, 12, 24, 0.55);
+}
+
+.trade-queue-column header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.trade-queue-column header > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(114, 234, 255, 0.12);
+  color: var(--swse-theme-accent, #72eaff);
+  font-weight: 700;
+}
+
+.trade-card-stack,
+.trade-timeline,
+.trade-audit-list {
+  display: grid;
+  gap: 8px;
+}
+
+.trade-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(114, 234, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(8, 22, 38, 0.82);
+  color: inherit;
+  cursor: pointer;
+}
+
+.trade-card:hover {
+  border-color: var(--swse-theme-accent, #72eaff);
+  box-shadow: 0 0 16px rgba(114, 234, 255, 0.18);
+}
+
+.trade-card strong,
+.trade-card span,
+.trade-card em {
+  display: block;
+  margin-top: 4px;
+}
+
+.trade-card-failure {
+  color: #ffd6d6;
+}
+
+.trade-card-counter {
+  color: #dfdcff;
+}
+
+.trade-console-rail,
+.trade-console-board,
+.trade-policy-panel,
+.trade-audit-panel {
+  min-width: 0;
+}
+
+.trade-dossier-summary,
+.trade-detail-block {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.trade-detail-block {
+  border-top: 1px solid rgba(114, 234, 255, 0.12);
+  padding-top: 10px;
+}
+
+.trade-detail-block h4 {
+  margin: 0;
+  color: var(--swse-theme-accent, #72eaff);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trade-dossier-row {
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.trade-term-grid {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.trade-term-grid span {
+  flex: 1 1 45%;
+  min-width: 160px;
+  border: 1px solid rgba(114, 234, 255, 0.14);
+  border-radius: 10px;
+  padding: 8px;
+  background: rgba(4, 16, 28, 0.58);
+}
+
+.trade-failure-text {
+  border-left: 3px solid rgba(255, 92, 92, 0.85);
+  padding: 8px 10px;
+  background: rgba(80, 12, 18, 0.35);
+  color: #ffe2e2;
+}
+
+.trade-actions-block textarea {
+  min-height: 58px;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid rgba(114, 234, 255, 0.24);
+  background: rgba(2, 11, 22, 0.76);
+  color: inherit;
+  padding: 8px;
+}
+
+.trade-action-grid {
+  flex-wrap: wrap;
+}
+
+.trade-action.crit {
+  border-color: rgba(255, 92, 92, 0.55);
+}
+
+.trade-action.warn {
+  border-color: rgba(255, 192, 76, 0.5);
+}
+
+.trade-console-lower-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.8fr) minmax(0, 1.2fr);
+  gap: 14px;
+}
+
+.trade-policy-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.trade-policy-form label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+}
+
+.trade-policy-form label:has(input[type="number"]) {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.trade-policy-form button {
+  grid-column: 1 / -1;
+}
+
+.trade-audit-row,
+.trade-timeline-row {
+  border: 1px solid rgba(114, 234, 255, 0.14);
+  border-radius: 10px;
+  padding: 8px;
+  background: rgba(4, 16, 28, 0.54);
+}
+
+.trade-audit-row p,
+.trade-timeline-row p {
+  margin: 4px 0 0;
+  color: rgba(230, 245, 248, 0.86);
+}
+
+.trade-empty,
+.trade-empty-state {
+  border: 1px dashed rgba(114, 234, 255, 0.22);
+  border-radius: 12px;
+  padding: 12px;
+  color: rgba(214, 240, 246, 0.72);
+  background: rgba(4, 16, 28, 0.35);
+}
+
+@media (max-width: 1100px) {
+  .trade-console-shell,
+  .trade-console-lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-queue-grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .trade-queue-grid,
+  .trade-policy-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phase D: GM Holopad command shell, persistent dock, and app clusters */
+.gm-holopad-command-dock {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 0.7fr) minmax(0, 2fr);
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 24%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--swse-accent, #70e2ff) 7%, transparent), rgba(0, 0, 0, 0.24)),
+    rgba(3, 12, 22, 0.58);
+  box-shadow: inset 0 0 22px rgba(0,0,0,0.36), 0 0 18px color-mix(in srgb, var(--swse-accent, #70e2ff) 8%, transparent);
+}
+
+.gm-holopad-dock-home,
+.gm-holopad-dock-app {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 24%, transparent);
+  border-radius: 12px;
+  color: var(--swse-accent-text, #dff8ff);
+  background: rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease, background 140ms ease;
+}
+
+.gm-holopad-dock-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 11px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gm-holopad-dock-home:hover,
+.gm-holopad-dock-app:hover,
+.gm-command-cluster-app:hover {
+  border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 60%, transparent);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+  transform: translateY(-1px);
+}
+
+.gm-holopad-dock-status {
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 20%, transparent);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.gm-holopad-dock-status strong,
+.gm-holopad-dock-status em {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gm-holopad-dock-status strong {
+  margin-top: 2px;
+  color: var(--swse-accent-text, #dff8ff);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gm-holopad-dock-status em {
+  font-style: normal;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--swse-accent, #70e2ff) 72%, transparent);
+}
+
+.gm-holopad-dock-status.crit,
+.gm-command-map-status.crit,
+.gm-command-cluster.crit,
+.gm-holopad-dock-app.crit {
+  border-color: color-mix(in srgb, #ff6b6b 52%, transparent);
+  background: linear-gradient(145deg, rgba(90, 16, 24, 0.48), rgba(5, 15, 28, 0.72));
+}
+
+.gm-holopad-dock-status.warn,
+.gm-command-map-status.warn,
+.gm-command-cluster.warn,
+.gm-holopad-dock-app.warn {
+  border-color: color-mix(in srgb, #ffc857 52%, transparent);
+  background: linear-gradient(145deg, rgba(88, 56, 12, 0.42), rgba(5, 15, 28, 0.72));
+}
+
+.gm-holopad-dock-app.info,
+.gm-command-cluster.info {
+  border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 34%, transparent);
+}
+
+.gm-holopad-dock-apps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 0;
+}
+
+.gm-holopad-dock-app {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 5px;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 10px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gm-holopad-dock-app.is-active {
+  border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 72%, transparent);
+  color: var(--swse-accent, #70e2ff);
+  box-shadow: inset 0 0 15px color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent);
+}
+
+.gm-holopad-dock-app b {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.82);
+  color: var(--swse-accent-text, #dff8ff);
+  font-size: 9px;
+}
+
+.gm-holopad-command-map {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.72fr) minmax(0, 2fr);
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 14% 10%, color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent), transparent 36%),
+    rgba(3, 12, 22, 0.54);
+}
+
+.gm-command-map-status {
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 24%, transparent);
+  border-radius: 15px;
+  background: rgba(0,0,0,0.22);
+}
+
+.gm-command-map-status strong,
+.gm-command-map-status em {
+  display: block;
+}
+
+.gm-command-map-status strong {
+  margin-top: 5px;
+  font-size: 19px;
+  color: var(--swse-accent, #70e2ff);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gm-command-map-status em {
+  margin-top: 6px;
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--swse-accent-text, #dff8ff) 64%, transparent);
+}
+
+.gm-command-cluster-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.gm-command-cluster {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.gm-command-cluster header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.gm-command-cluster header span,
+.gm-command-cluster header b {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gm-command-cluster header span {
+  color: var(--swse-accent, #70e2ff);
+}
+
+.gm-command-cluster header b {
+  color: color-mix(in srgb, var(--swse-accent-text, #dff8ff) 64%, transparent);
+}
+
+.gm-command-cluster-apps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.gm-command-cluster-app {
+  appearance: none;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.20);
+  color: var(--swse-accent-text, #dff8ff);
+  cursor: pointer;
+  text-align: left;
+}
+
+.gm-command-cluster-app i {
+  color: var(--swse-accent, #70e2ff);
+}
+
+.gm-command-cluster-app span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gm-command-cluster-app b {
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0 6px;
+  background: color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, rgba(0,0,0,0.72));
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent);
+  font-size: 10px;
+}
+
+@media (max-width: 1100px) {
+  .gm-holopad-command-dock,
+  .gm-holopad-command-map {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-holopad-dock-apps {
+    justify-content: flex-start;
+  }
+
+  .gm-command-cluster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .gm-command-cluster-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-holopad-dock-app {
+    min-width: 72px;
+  }
+}
+
+.gm-command-cluster-app.crit {
+  border-color: color-mix(in srgb, #ff6b6b 44%, transparent);
+  background: rgba(90, 16, 24, 0.28);
+}
+
+.gm-command-cluster-app.warn {
+  border-color: color-mix(in srgb, #ffc857 44%, transparent);
+  background: rgba(88, 56, 12, 0.24);
+}

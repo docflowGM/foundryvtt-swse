@@ -66,6 +66,14 @@ export class GMDashboardSurfaceService {
         route: 'jobs'
       },
       {
+        id: 'trade',
+        label: 'Trade Watch',
+        value: badgeCounts.trade ?? 0,
+        detail: `${badgeCounts.tradeApprovals ?? 0} approval · ${badgeCounts.tradeFailed ?? 0} failed`,
+        tone: (badgeCounts.tradeFailed ?? 0) > 0 ? 'crit' : (badgeCounts.tradeApprovals ?? 0) > 0 ? 'warn' : 'stable',
+        route: 'trade'
+      },
+      {
         id: 'workspace',
         label: 'Owned Actors',
         value: badgeCounts.workspace ?? 0,
@@ -159,6 +167,7 @@ export class GMDashboardSurfaceService {
       quickActions: [
         { route: 'bulletin', label: 'Broadcast Bulletin', icon: 'fa-solid fa-tower-broadcast', tone: 'info' },
         { route: 'jobs', label: 'Open Job Board', icon: 'fa-solid fa-clipboard-list', tone: (badgeCounts.jobs ?? 0) > 0 ? 'crit' : 'stable' },
+        { route: 'trade', label: 'Open Trade Console', icon: 'fa-solid fa-right-left', tone: (badgeCounts.trade ?? 0) > 0 ? 'crit' : 'stable' },
         { route: 'store', label: 'Open Store Control', icon: 'fa-solid fa-store', tone: 'stable' },
         { route: 'approvals', label: 'Review Approvals', icon: 'fa-solid fa-clipboard-check', tone: (badgeCounts.approvals ?? 0) > 0 ? 'crit' : 'stable' },
         { route: 'healing', label: 'Run Recovery', icon: 'fa-solid fa-heart-pulse', tone: healingStatus.eligible > 0 ? 'warn' : 'stable' },
@@ -281,6 +290,10 @@ export class GMDashboardSurfaceService {
 
     if ((badgeCounts.jobs ?? 0) > 0) {
       alerts.push({ tone: 'crit', label: 'Job board action', detail: `${badgeCounts.jobReview ?? 0} objective review · ${badgeCounts.jobPayout ?? 0} payout queue.`, route: 'jobs' });
+    }
+
+    if ((badgeCounts.trade ?? 0) > 0) {
+      alerts.push({ tone: (badgeCounts.tradeFailed ?? 0) > 0 ? 'crit' : 'warn', label: 'Trade console action', detail: `${badgeCounts.tradeApprovals ?? 0} approval · ${badgeCounts.tradeFailed ?? 0} failed settlement.`, route: 'trade' });
     }
 
     if (!storeStatus.open) {
