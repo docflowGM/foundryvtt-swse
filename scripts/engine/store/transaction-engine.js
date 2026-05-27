@@ -40,6 +40,7 @@ import { DroidFactory } from "/systems/foundryvtt-swse/scripts/engine/droids/dro
 import { PlacementRouter } from "/systems/foundryvtt-swse/scripts/engine/store/placement-router.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 export class TransactionEngine {
   static _mutationLocks = new Set();
@@ -61,7 +62,16 @@ export class TransactionEngine {
     'store-custom-approval-refund',
     'gm-credit-adjustment',
     'gm-credit-refund',
-    'store-rollback-reconciliation'
+    'store-rollback-reconciliation',
+    'holonet-credit-transfer',
+    'holonet-credit-transfer-refund',
+    'holonet-credit-request',
+    'holonet-item-trade',
+    'holonet-asset-trade',
+    'holonet-gm-grant',
+    'holonet-job-payout',
+    'holonet-party-fund-contribution',
+    'holonet-party-fund-payout'
   ]);
 
   static _allowedSaleContexts = new Set([
@@ -245,7 +255,16 @@ export class TransactionEngine {
 
       const creditsBefore = LedgerService.getCurrentCredits(freshActor);
       const creditsAfter = normalizeCredits(creditsBefore - normalizedCost);
-      const plans = Array.isArray(mutationPlan) ? mutationPlan : [mutationPlan];
+      const rawPlans = Array.isArray(mutationPlan) ? mutationPlan : [mutationPlan];
+      const preparedAcquisition = this.#prepareStoreAcquisitionPlans({
+        actor: freshActor,
+        plans: rawPlans,
+        transactionId,
+        transactionContext,
+        audit,
+        source
+      });
+      const plans = preparedAcquisition.plans;
       const creditPlan = normalizedCost > 0 ? LedgerService.buildCreditDelta(freshActor, normalizedCost) : null;
 
       const transactionAudit = {
@@ -268,7 +287,8 @@ export class TransactionEngine {
             audit: {
               ...audit,
               creditsBefore,
-              creditsAfter
+              creditsAfter,
+              acquiredActors: preparedAcquisition.acquiredActors
             }
           }
         }
@@ -303,7 +323,14 @@ export class TransactionEngine {
         cost: normalizedCost
       });
 
-      return { success: true, transactionId, error: null };
+      return {
+        success: true,
+        transactionId,
+        error: null,
+        creditsBefore,
+        creditsAfter,
+        acquiredActors: preparedAcquisition.acquiredActors
+      };
     } catch (error) {
       swseLogger.error('TransactionEngine: Mutation transaction failed', {
         transactionId,
@@ -315,7 +342,7 @@ export class TransactionEngine {
       if (snapshotId) {
         try {
           const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
           swseLogger.info('TransactionEngine: Rollback successful', { transactionId, snapshotId });
         } catch (rollbackError) {
           swseLogger.error('TransactionEngine: Rollback failed', {
@@ -335,6 +362,48 @@ export class TransactionEngine {
     } finally {
       this._mutationLocks.delete(lockKey);
     }
+  }
+
+  static #prepareStoreAcquisitionPlans({ actor, plans = [], transactionId, transactionContext, audit = {}, source = '' } = {}) {
+    const normalizedContext = String(transactionContext || '').toLowerCase();
+    const isStoreAcquisition = normalizedContext === 'store-purchase'
+      || normalizedContext === 'store-customization-checkout'
+      || normalizedContext === 'store-custom-approval';
+
+    if (!isStoreAcquisition || !actor || !Array.isArray(plans) || plans.length === 0) {
+      return { plans, acquiredActors: [] };
+    }
+
+    const prepared = StoreAcquisitionService.prepareCreateActorPlans(plans, {
+      ownerActor: actor,
+      ownerUserId: audit.ownerPlayerId || audit.ownerUserId || audit.userId || null,
+      transactionId,
+      transactionContext,
+      audit,
+      source
+    });
+
+    const linkPlan = StoreAcquisitionService.buildOwnerLinkPlan(actor, prepared.createdSpecs, {
+      ownerActor: actor,
+      ownerUserId: audit.ownerPlayerId || audit.ownerUserId || audit.userId || null,
+      transactionId,
+      transactionContext,
+      audit,
+      source
+    });
+
+    const preparedPlans = linkPlan ? [...prepared.plans, linkPlan] : prepared.plans;
+    return {
+      plans: preparedPlans,
+      acquiredActors: StoreAcquisitionService.summarizeAssetSpecs(prepared.createdSpecs, {
+        ownerActor: actor,
+        ownerUserId: audit.ownerPlayerId || audit.ownerUserId || audit.userId || null,
+        transactionId,
+        transactionContext,
+        audit,
+        source
+      })
+    };
   }
 
   /**
@@ -471,13 +540,349 @@ export class TransactionEngine {
       if (snapshotId) {
         try {
           const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
           swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId, snapshotId });
         } catch (rollbackError) {
           return {
             success: false,
             transactionId,
             error: `Credit adjustment failed and rollback failed: ${error.message}`
+          };
+        }
+      }
+
+      return { success: false, transactionId, error: error.message };
+    } finally {
+      this._mutationLocks.delete(lockKey);
+    }
+  }
+
+  /**
+   * Transfer credits between two actors through TransactionEngine audit records.
+   * This is the canonical boundary for Holonet player-to-player credit movement:
+   * debit first, credit second, and compensate the debit if the credit leg fails.
+   */
+  static async executeCreditTransfer(context = {}, options = {}) {
+    const {
+      fromActor,
+      toActor,
+      amount = 0,
+      reason = '',
+      transactionContext = 'holonet-credit-transfer',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeCreditTransfer'
+    } = options;
+
+    const value = normalizeCredits(amount);
+    const transferId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!fromActor || !toActor) return { success: false, transactionId: transferId, error: 'Credit transfer requires source and target actors' };
+    if (!Number.isFinite(value) || value <= 0) return { success: false, transactionId: transferId, error: 'Credit transfer amount must be positive' };
+    if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
+      return { success: false, transactionId: transferId, error: `Unsupported credit transfer context: ${transactionContext}` };
+    }
+
+    const debit = await this.executeCreditAdjustment({
+      actor: fromActor,
+      amount: -value,
+      reason: reason || `Transfer credits to ${toActor.name}`,
+      transactionContext,
+      audit: {
+        ...audit,
+        transferId,
+        transferLeg: 'debit',
+        toActorId: toActor.id,
+        toActorName: toActor.name
+      }
+    }, { source: `${source}.debit`, validate, rederive });
+
+    if (!debit.success) return { success: false, transactionId: transferId, debitTransactionId: debit.transactionId, error: debit.error };
+
+    const credit = await this.executeCreditAdjustment({
+      actor: toActor,
+      amount: value,
+      reason: reason || `Received credits from ${fromActor.name}`,
+      transactionContext,
+      audit: {
+        ...audit,
+        transferId,
+        transferLeg: 'credit',
+        fromActorId: fromActor.id,
+        fromActorName: fromActor.name,
+        debitTransactionId: debit.transactionId
+      }
+    }, { source: `${source}.credit`, validate, rederive });
+
+    if (!credit.success) {
+      const refund = await this.executeCreditAdjustment({
+        actor: fromActor,
+        amount: value,
+        reason: `Refund failed transfer to ${toActor.name}`,
+        transactionContext: 'holonet-credit-transfer-refund',
+        audit: {
+          ...audit,
+          transferId,
+          failedCreditTransactionId: credit.transactionId,
+          debitTransactionId: debit.transactionId,
+          toActorId: toActor.id,
+          toActorName: toActor.name
+        }
+      }, { source: `${source}.refundDebit`, validate, rederive });
+      return {
+        success: false,
+        transactionId: transferId,
+        debitTransactionId: debit.transactionId,
+        failedCreditTransactionId: credit.transactionId,
+        refundTransactionId: refund.transactionId,
+        error: credit.error || 'Credit leg failed'
+      };
+    }
+
+    Hooks.callAll?.('swseCreditTransferComplete', {
+      transaction: {
+        id: transferId,
+        transactionId: transferId,
+        fromActorId: fromActor.id,
+        fromActorName: fromActor.name,
+        toActorId: toActor.id,
+        toActorName: toActor.name,
+        amount: value,
+        context: transactionContext,
+        debitTransactionId: debit.transactionId,
+        creditTransactionId: credit.transactionId,
+        audit
+      },
+      fromActor,
+      toActor,
+      success: true
+    });
+
+    return {
+      success: true,
+      transactionId: transferId,
+      debitTransactionId: debit.transactionId,
+      creditTransactionId: credit.transactionId,
+      amount: value,
+      error: null
+    };
+  }
+
+  /**
+   * Approve an existing draft droid/vehicle actor as a store acquisition.
+   *
+   * This is the canonical path for GM-approved custom droids/ships/vehicles:
+   * the credit deduction, owner actor linkage, TransactionEngine audit, and
+   * draft actor ownership transfer are coordinated from one commerce boundary.
+   */
+  static async executeAssetApprovalTransaction(context = {}, options = {}) {
+    const {
+      actor,
+      assetActor,
+      cost = 0,
+      reason = '',
+      transactionContext = 'store-custom-approval',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeAssetApprovalTransaction'
+    } = options;
+
+    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!this._allowedCreditAdjustmentContexts.has(transactionContext)) {
+      return { success: false, transactionId, error: `Unsupported asset approval context: ${transactionContext}` };
+    }
+
+    if (!actor) return { success: false, transactionId, error: 'No owner actor provided' };
+    if (!assetActor) return { success: false, transactionId, error: 'No asset actor provided' };
+
+    const ownerActor = game?.actors?.get?.(actor.id) || actor;
+    const freshAsset = game?.actors?.get?.(assetActor.id) || assetActor;
+    if (!ownerActor) return { success: false, transactionId, error: 'Owner actor no longer exists' };
+    if (!freshAsset) return { success: false, transactionId, error: 'Asset actor no longer exists' };
+    if (ownerActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient permissions for owner actor transaction' };
+    if (!StoreAcquisitionService.isAssetActorType(freshAsset.type)) {
+      return { success: false, transactionId, error: 'Approved asset must be a droid or vehicle actor' };
+    }
+
+    const normalizedCost = normalizeCredits(cost);
+    if (!Number.isFinite(normalizedCost) || normalizedCost < 0) {
+      return { success: false, transactionId, error: 'Invalid approval cost' };
+    }
+
+    const lockKey = `${ownerActor.id}:${freshAsset.id}:${transactionContext}:asset-approval`;
+    if (this._mutationLocks.has(lockKey)) {
+      return { success: false, transactionId, error: 'Asset approval transaction already in progress' };
+    }
+
+    this._mutationLocks.add(lockKey);
+
+    let ownerSnapshot = null;
+    let assetSnapshot = null;
+    try {
+      const funds = LedgerService.validateFunds(ownerActor, normalizedCost);
+      if (!funds.ok) {
+        return {
+          success: false,
+          transactionId,
+          error: `Insufficient credits (have ${funds.current}, need ${funds.required})`
+        };
+      }
+
+      const creditsBefore = LedgerService.getCurrentCredits(ownerActor);
+      const creditsAfter = normalizeCredits(creditsBefore - normalizedCost);
+      const assetSpec = {
+        type: freshAsset.type,
+        temporaryId: freshAsset.id,
+        data: freshAsset.toObject?.(false) || foundry.utils.deepClone(freshAsset)
+      };
+
+      const linkPlan = StoreAcquisitionService.buildOwnerLinkPlan(ownerActor, [assetSpec], {
+        ownerActor,
+        ownerUserId: audit.ownerPlayerId || audit.ownerUserId || null,
+        transactionId,
+        transactionContext,
+        audit,
+        source
+      }) || {};
+
+      const transactionRecord = {
+        id: transactionId,
+        context: transactionContext,
+        type: 'Approval Purchase',
+        status: 'Success',
+        cost: normalizedCost,
+        amount: normalizedCost > 0 ? -normalizedCost : 0,
+        creditsBefore,
+        creditsAfter,
+        createdAt: Date.now(),
+        actorId: ownerActor.id,
+        actorName: ownerActor.name,
+        userId: game?.user?.id ?? null,
+        userName: game?.user?.name ?? null,
+        reason,
+        source,
+        itemName: freshAsset.name,
+        audit: {
+          ...audit,
+          reason,
+          creditsBefore,
+          creditsAfter,
+          acquiredActors: StoreAcquisitionService.summarizeAssetSpecs([assetSpec], {
+            ownerActor,
+            ownerUserId: audit.ownerPlayerId || audit.ownerUserId || null,
+            transactionId,
+            transactionContext,
+            audit,
+            source
+          }),
+          items: [{
+            id: freshAsset.id,
+            itemId: freshAsset.id,
+            name: freshAsset.name,
+            type: freshAsset.type,
+            quantity: 1,
+            cost: normalizedCost,
+            actorUuid: freshAsset.uuid
+          }]
+        }
+      };
+
+      const ownerMutationPlan = mergeMutationPlans(
+        {
+          set: {
+            'system.credits': creditsAfter,
+            [`flags.foundryvtt-swse.transactions.${transactionId}`]: transactionRecord
+          }
+        },
+        linkPlan
+      );
+
+      const assetUpdate = StoreAcquisitionService.buildExistingAssetUpdate(freshAsset, {
+        ownerActor,
+        ownerUserId: audit.ownerPlayerId || audit.ownerUserId || null,
+        transactionId,
+        transactionContext,
+        audit,
+        source
+      });
+
+      try {
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        ownerSnapshot = await SnapshotManager.createSnapshot(ownerActor, `${transactionContext} owner before asset approval`);
+        assetSnapshot = await SnapshotManager.createSnapshot(freshAsset, `${transactionContext} asset before approval`);
+      } catch (snapshotError) {
+        swseLogger.warn('TransactionEngine: Asset approval snapshot failed; continuing without rollback snapshot', {
+          transactionId,
+          error: snapshotError.message
+        });
+      }
+
+      await ActorEngine.updateActor(freshAsset, assetUpdate, {
+        source: `${source}.${transactionContext}.asset`,
+        skipValidation: false
+      });
+
+      await ActorEngine.applyMutationPlan(ownerActor, ownerMutationPlan, {
+        validate,
+        rederive,
+        source: `${source}.${transactionContext}.owner`
+      });
+
+      const normalized = this.#normalizeTransactionRecord(ownerActor, transactionRecord);
+      Hooks.callAll?.('swseStoreAssetAcquired', {
+        transaction: normalized,
+        actor: ownerActor,
+        assetActor: freshAsset,
+        cost: normalizedCost,
+        success: true
+      });
+
+      swseLogger.info('TransactionEngine: Asset approval transaction complete', {
+        transactionId,
+        context: transactionContext,
+        ownerActor: ownerActor.id,
+        assetActor: freshAsset.id,
+        cost: normalizedCost
+      });
+
+      return {
+        success: true,
+        transactionId,
+        error: null,
+        creditsBefore,
+        creditsAfter,
+        amount: normalizedCost > 0 ? -normalizedCost : 0,
+        assetActorId: freshAsset.id
+      };
+    } catch (error) {
+      swseLogger.error('TransactionEngine: Asset approval transaction failed', {
+        transactionId,
+        context: transactionContext,
+        actor: ownerActor?.id,
+        assetActor: freshAsset?.id,
+        error: error.message
+      });
+
+      if (ownerSnapshot || assetSnapshot) {
+        try {
+          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+          if (assetSnapshot) await SnapshotManager.restoreSnapshot(freshAsset, assetSnapshot.timestamp);
+          if (ownerSnapshot) await SnapshotManager.restoreSnapshot(ownerActor, ownerSnapshot.timestamp);
+          swseLogger.info('TransactionEngine: Asset approval rollback successful', { transactionId });
+        } catch (rollbackError) {
+          return {
+            success: false,
+            transactionId,
+            error: `Asset approval failed and rollback failed: ${error.message}`
           };
         }
       }
@@ -644,7 +1049,7 @@ export class TransactionEngine {
       if (snapshotId) {
         try {
           const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
           swseLogger.info('TransactionEngine: Sale rollback successful', { transactionId, snapshotId });
         } catch (rollbackError) {
           return {
@@ -826,7 +1231,7 @@ export class TransactionEngine {
       if (snapshotId) {
         try {
           const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId?.timestamp ?? snapshotId);
           swseLogger.info('TransactionEngine: Rollback reconciliation snapshot restore successful', { transactionId, snapshotId });
         } catch (rollbackError) {
           return {
@@ -900,7 +1305,7 @@ export class TransactionEngine {
       // PHASE 2: COMPILE FACTORY PLANS
       // ============================================================
 
-      const factoryPlans = [];
+      let factoryPlans = [];
 
       for (const item of cartItems) {
         if (!item || !item.type) {
@@ -919,9 +1324,20 @@ export class TransactionEngine {
         }
       }
 
+      const preparedLegacyAcquisition = StoreAcquisitionService.prepareCreateActorPlans(factoryPlans, {
+        ownerActor: purchaser,
+        ownerUserId: game?.user?.id || null,
+        transactionId,
+        transactionContext: 'store-purchase',
+        audit: {},
+        source: 'TransactionEngine.execute'
+      });
+      factoryPlans = preparedLegacyAcquisition.plans;
+
       swseLogger.debug('TransactionEngine: Factory plans compiled', {
         transactionId,
-        planCount: factoryPlans.length
+        planCount: factoryPlans.length,
+        acquiredActorCount: preparedLegacyAcquisition.createdSpecs?.length || 0
       });
 
       // ============================================================
@@ -971,7 +1387,9 @@ export class TransactionEngine {
             const placementPlan = PlacementRouter.route({
               purchaser,
               createdTempId: createdSpec.temporaryId,
-              assetType: assetType
+              assetType: assetType,
+              createdSpec,
+              transactionId
             });
 
             swseLogger.debug('TransactionEngine: Placement plan compiled', {

@@ -168,11 +168,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   _getAudienceOptions() {
+    // Bulletin is a one-way GM → player information sphere. GM-only and
+    // GM+party conversations belong in Messenger, not Bulletin.
     return [
       { value: AUDIENCE_TYPE.ALL_PLAYERS, label: 'All Players' },
       { value: AUDIENCE_TYPE.PARTY, label: 'Party' },
-      { value: AUDIENCE_TYPE.GM_ONLY, label: 'GM Only' },
-      { value: AUDIENCE_TYPE.GM_AND_PARTY, label: 'GM + Party' },
       { value: AUDIENCE_TYPE.ONE_PLAYER, label: 'One Player' },
       { value: AUDIENCE_TYPE.SELECTED_PLAYERS, label: 'Selected Players' }
     ];
@@ -217,13 +217,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
       case AUDIENCE_TYPE.SELECTED_PLAYERS:
         return HolonetAudience.selectedPlayers(playerIds);
       case AUDIENCE_TYPE.GM_ONLY:
-        return HolonetAudience.gmOnly();
+      case AUDIENCE_TYPE.GM_AND_PARTY:
+        return HolonetAudience.allPlayers();
       case AUDIENCE_TYPE.ALL_PLAYERS:
         return HolonetAudience.allPlayers();
       case AUDIENCE_TYPE.PARTY:
         return new HolonetAudience({ type: AUDIENCE_TYPE.PARTY });
-      case AUDIENCE_TYPE.GM_AND_PARTY:
-        return new HolonetAudience({ type: AUDIENCE_TYPE.GM_AND_PARTY });
       default:
         return HolonetAudience.allPlayers();
     }
@@ -285,6 +284,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
       allowPlayersNonheroic: 'Allow Non-Heroic Players',
       maxStartingCredits: 'Maximum Starting Credits',
       holonetRequireCreditTransferApproval: 'GM Approves Holonet Credit Transfers',
+      holonetCreditTransfersEnabled: 'Allow Holonet Credit Transfers',
+      holonetItemTradesEnabled: 'Allow Holonet Item Trades',
+      holonetRequireItemTradeApproval: 'GM Approves Holonet Item Trades',
+      holonetAssetTradesEnabled: 'Allow Ship/Droid Trades',
+      holonetRequireAssetTradeApproval: 'GM Approves Ship/Droid Trades',
       holonetPartyFundEnabled: 'Enable Holonet Party Fund',
       holonetPartyFundDefaultCutPercent: 'Party Fund Job Cut Percent',
       enableBackgrounds: 'Enable Backgrounds',
@@ -382,6 +386,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
       allowPlayersNonheroic: 'Players can use the NPC generator',
       maxStartingCredits: 'Receive maximum starting credits',
       holonetRequireCreditTransferApproval: 'Require GM approval before accepted player-to-player Holonet credit transfers complete',
+      holonetCreditTransfersEnabled: 'Show Messenger send/request credit controls to players',
+      holonetItemTradesEnabled: 'Show Messenger item trade controls to players',
+      holonetRequireItemTradeApproval: 'Require GM approval before player item trades can be accepted',
+      holonetAssetTradesEnabled: 'Show ship/droid trade entry points to players',
+      holonetRequireAssetTradeApproval: 'Require GM approval for ship/droid asset trades; defaults on',
       holonetPartyFundEnabled: 'Enable a GM-managed party fund account in Holonet',
       holonetPartyFundDefaultCutPercent: 'Default percent of job payouts routed to the Party Fund',
       enableBackgrounds: 'Allow selecting backgrounds during creation',
@@ -596,7 +605,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       if (actor.system.droidSystems.stateMode !== 'PENDING') continue;
 
       const droidData = actor.system.droidSystems;
-      const owner = game.users.get(actor.ownership[Object.keys(actor.ownership)[0]]);
+      const owner = game.users.find(user => user?.character?.id === actor.id || Number(actor.ownership?.[user.id] ?? 0) >= 3);
 
       this.pendingDroids.push({
         actorId: actor.id,
@@ -1912,69 +1921,70 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const approval = approvals[index];
     const ownerActor = game.actors.get(approval.ownerActorId);
+    const draftActor = game.actors.get(approval.draftActorId);
 
     if (!ownerActor) {
       ui?.notifications?.error?.('Owner actor not found');
       return;
     }
 
+    if (!draftActor) {
+      ui?.notifications?.error?.('Draft asset actor not found');
+      return;
+    }
+
     const cost = normalizeCredits(approval.costCredits ?? 0);
+    const assetName = approval.draftData?.name ?? draftActor.name ?? 'Custom asset';
 
     try {
-      const creditResult = cost > 0 ? await TransactionEngine.executeCreditAdjustment({
+      const approvalResult = await TransactionEngine.executeAssetApprovalTransaction({
         actor: ownerActor,
-        amount: -cost,
-        reason: `GM approved ${approval.type || 'custom'} acquisition`,
+        assetActor: draftActor,
+        cost,
+        reason: `GM approved ${approval.type || draftActor.type || 'custom'} acquisition`,
         transactionContext: 'store-custom-approval',
         audit: {
-          approvalType: approval.type,
+          approvalId: approval.id ?? null,
+          approvalType: approval.type ?? draftActor.type,
           draftActorId: approval.draftActorId,
-          itemName: approval.draftData?.name ?? 'Custom asset',
-          itemNames: [approval.draftData?.name ?? 'Custom asset'],
+          itemName: assetName,
+          itemNames: [assetName],
           itemCount: 1,
           source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
-          gmNotes: approval.metadata?.gmNotes ?? ''
+          gmNotes: approval.metadata?.gmNotes ?? '',
+          ownerPlayerId: approval.ownerPlayerId ?? null,
+          edited: !!approval.metadata?.gmNotes
         }
       }, {
         source: 'GMDatapad._approvePendingCustom',
         validate: true,
         rederive: true
-      }) : { success: true, transactionId: null };
+      });
 
-      if (!creditResult.success) {
-        ui?.notifications?.error?.(`Failed to approve: ${creditResult.error}`);
+      if (!approvalResult.success) {
+        ui?.notifications?.error?.(`Failed to approve: ${approvalResult.error}`);
         return;
-      }
-
-      const draftActor = game.actors.get(approval.draftActorId);
-      if (draftActor) {
-        const ownerUser = game.users.find(user => user.character?.id === ownerActor.id);
-        const ownership = { default: 0 };
-        if (ownerUser) ownership[ownerUser.id] = 3;
-        if (game.user?.id) ownership[game.user.id] = 3;
-
-        await ActorEngine.updateActor(draftActor, {
-          ownership,
-          'flags.-=foundryvtt-swse.pendingApproval': null,
-          'flags.-=foundryvtt-swse.draftOnly': null,
-          'flags.-=foundryvtt-swse.ownerPlayerId': null
-        });
       }
 
       const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       const purchase = {
         timestamp: Date.now(),
         items: [],
-        droids: approval.type === 'droid' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
-        vehicles: approval.type === 'vehicle' || approval.type === 'starship' ? [{ id: approval.draftActorId, name: approval.draftData?.name, cost }] : [],
+        droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost }] : [],
+        vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost }] : [],
         total: cost,
-        transactionId: creditResult?.transactionId ?? null,
-        source: `GM Datapad - Custom ${approval.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+        transactionId: approvalResult.transactionId ?? null,
+        source: `GM Datapad - Custom ${draftActor.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
         gmNotes: approval.metadata?.gmNotes ?? '',
         compatibilityMirror: true
       };
       history.push(purchase);
-      await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
+      await ActorEngine.updateActor(ownerActor, {
+        'flags.foundryvtt-swse.purchaseHistory': history
+      }, {
+        source: 'GMDatapad._approvePendingCustom.purchaseHistoryMirror',
+        skipValidation: true
+      });
 
       approvals.splice(index, 1);
       await SettingsHelper.set('pendingCustomPurchases', approvals);
@@ -1983,6 +1993,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         approval,
         actor: ownerActor,
         draftActor,
+        transactionId: approvalResult.transactionId,
         decidedBy: game.user?.name ?? 'GM',
         edited: !!approval.metadata?.gmNotes
       });
@@ -1990,7 +2001,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
-      ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Custom asset'}`);
+      ui?.notifications?.info?.(`Approved: ${assetName}`);
       await this.render(false);
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error approving custom purchase:', err);
@@ -2084,7 +2095,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 const HOUSE_RULES_CATEGORIES = {
   characterCreation: [
     'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
-    'maxStartingCredits', 'holonetRequireCreditTransferApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
+    'maxStartingCredits', 'holonetCreditTransfersEnabled', 'holonetRequireCreditTransferApproval', 'holonetItemTradesEnabled', 'holonetRequireItemTradeApproval', 'holonetAssetTradesEnabled', 'holonetRequireAssetTradeApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
     'droidPointBuyPool', 'livingPointBuyPool', 'droidConstructionCredits', 'allowDroidDestiny'
   ],
   combat: [

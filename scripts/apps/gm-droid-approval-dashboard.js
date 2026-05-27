@@ -9,6 +9,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
@@ -48,7 +50,7 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
       if (actor.system.droidSystems.stateMode !== 'PENDING') continue;
 
       const droidData = actor.system.droidSystems;
-      const owner = game.users.get(actor.ownership[Object.keys(actor.ownership)[0]]);
+      const owner = game.users.find(user => user?.character?.id === actor.id || Number(actor.ownership?.[user.id] ?? 0) >= 3);
 
       pendingDroids.push({
         actorId: actor.id,
@@ -132,28 +134,46 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
       return;
     }
 
-    // Deduct credits
-    const currentCredits = Number(actor.system.credits) || 0;
-    const cost = droidData.credits?.spent || 0;
-    const newCredits = Math.max(0, currentCredits - cost);
-
-    // Finalize droid
-    const updates = {
-      'system.credits': newCredits,
-      'system.droidSystems.stateMode': 'FINALIZED'
-    };
+    const cost = normalizeCredits(droidData.credits?.spent || 0);
 
     try {
-      await ActorEngine.updateActor(actor, updates);
+      let transactionId = null;
+      if (cost > 0) {
+        const creditResult = await TransactionEngine.executeCreditAdjustment({
+          actor,
+          amount: -cost,
+          reason: 'GM approved pending droid build',
+          transactionContext: 'store-custom-approval',
+          audit: {
+            approvalType: 'droid',
+            itemName: actor.name,
+            itemNames: [actor.name],
+            itemCount: 1,
+            source: 'GM Droid Approval Dashboard - Pending Droid Approval'
+          }
+        }, {
+          source: 'GMDroidApprovalDashboard._approveDroid',
+          validate: true,
+          rederive: true
+        });
 
-      // Add history entry
+        if (!creditResult.success) {
+          ui.notifications.error(`Failed to approve droid credits: ${creditResult.error}`);
+          return;
+        }
+        transactionId = creditResult.transactionId;
+      }
+
       const buildHistory = droidData.buildHistory || [];
       buildHistory.push({
         timestamp: new Date().toISOString(),
         action: 'approved_by_gm',
-        detail: `GM approved droid. Cost: ${cost} credits deducted.`
+        detail: `GM approved droid. Cost: ${cost} credits deducted.`,
+        transactionId
       });
+
       await ActorEngine.updateActor(actor, {
+        'system.droidSystems.stateMode': 'FINALIZED',
         'system.droidSystems.buildHistory': buildHistory
       });
 

@@ -28,6 +28,7 @@ import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
+import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 
 UIManager.init();
 
@@ -152,6 +153,7 @@ Hooks.once("ready", async () => {
   // -------
   MutationInterceptor.initialize();
   PoisonEngine.initializeHooks();
+  await initializeHolonet();
 
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);

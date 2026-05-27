@@ -702,3 +702,305 @@
   border-color: rgba(255,220,120,.22);
   background: linear-gradient(135deg, rgba(255,220,120,.08), rgba(0,0,0,.25));
 }
+
+/* Messenger shell stability hardening: the Messenger surface owns its internal
+   scroll containers. The outer shell body must not compete for scroll, or clicks
+   and wheel events can be swallowed by the sheet/surface wrapper. */
+.swse-shell-surface--messenger {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .swse-shell-surface__body {
+  display: grid;
+  grid-template-columns: minmax(232px, 278px) minmax(0, 1fr);
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .swse-messenger-body,
+.swse-shell-surface--messenger .hl-ms-root,
+.swse-shell-surface--messenger .hl-tlist,
+.swse-shell-surface--messenger .hl-conv,
+.swse-shell-surface--messenger .hl-compose-shell,
+.swse-shell-surface--messenger .hl-chat-layout,
+.swse-shell-surface--messenger .hl-chat-column,
+.swse-shell-surface--messenger .hl-info-panel {
+  min-height: 0;
+}
+
+.swse-shell-surface--messenger .hl-ms-root {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.swse-shell-surface--messenger .hl-conv {
+  height: 100%;
+}
+
+.swse-shell-surface--messenger .hl-chat-layout {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+}
+
+.swse-shell-surface--messenger .hl-chat-column {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .hl-messages,
+.swse-shell-surface--messenger .hl-tlist-scroll,
+.swse-shell-surface--messenger .hl-compose-scroll,
+.swse-shell-surface--messenger .hl-info-panel {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.swse-shell-surface--messenger button,
+.swse-shell-surface--messenger input,
+.swse-shell-surface--messenger textarea,
+.swse-shell-surface--messenger select,
+.swse-shell-surface--messenger label,
+.swse-shell-surface--messenger [data-holonet-action],
+.swse-shell-surface--messenger [data-holonet-drop-zone] {
+  pointer-events: auto;
+}
+
+
+/* Messenger stabilization addendum: the body element is also .hl-ms-root, so
+   force the intended two-column grid after generic shell-body repair rules. */
+.swse-shell-surface--messenger .swse-messenger-body.hl-ms-root {
+  display: grid !important;
+  grid-template-columns: minmax(232px, 278px) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.swse-shell-surface--messenger .hl-recipient-row--with-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse-shell-surface--messenger .hl-recipient-choice {
+  display: grid;
+  grid-template-columns: auto 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.swse-shell-surface--messenger .hl-recipient-choice .swse-messenger-recipient-option__type {
+  grid-column: 3;
+}
+
+.swse-shell-surface--messenger .hl-recipient-row--with-action .hl-ghost-btn {
+  align-self: stretch;
+}
+
+@media (max-width: 1040px) {
+  .swse-shell-surface--messenger .swse-messenger-body.hl-ms-root,
+  .swse-shell-surface--messenger .swse-shell-surface__body {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+}
+
+/* Messenger composition tools: Coruscant Credit Union + cargo transfer modal */
+.hl-composer-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.45rem 0;
+}
+
+.hl-tool-btn {
+  border: 1px solid rgba(117, 213, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(10, 28, 45, 0.72);
+  color: rgba(220, 246, 255, 0.92);
+  padding: 0.38rem 0.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.hl-tool-btn:hover {
+  border-color: rgba(117, 213, 255, 0.75);
+  box-shadow: 0 0 12px rgba(62, 190, 255, 0.24);
+}
+
+.hl-tool-btn--pending {
+  opacity: 0.55;
+  cursor: help;
+}
+
+.hl-credit-card--bank {
+  border-color: rgba(69, 233, 182, 0.45);
+}
+
+.hl-credit-memo,
+.ht-credit-quickline {
+  color: rgba(215, 245, 255, 0.88);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.ht-credit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.ht-credit-actions button {
+  border: 1px solid rgba(117, 213, 255, 0.38);
+  border-radius: 0.5rem;
+  background: rgba(8, 24, 38, 0.78);
+  color: rgba(224, 248, 255, 0.95);
+  padding: 0.28rem 0.5rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.hl-composition-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.hl-composition-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 8, 16, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.hl-composition-panel {
+  position: relative;
+  z-index: 1;
+  width: min(820px, 96%);
+  max-height: min(760px, 92%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(117, 213, 255, 0.38);
+  box-shadow: 0 0 36px rgba(26, 168, 255, 0.18), inset 0 0 30px rgba(19, 88, 134, 0.15);
+}
+
+.hl-composition-head,
+.hl-composition-actions,
+.hl-bank-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.hl-composition-head {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(117, 213, 255, 0.18);
+}
+
+.hl-composition-head h3 {
+  margin: 0.15rem 0 0;
+  color: rgba(231, 251, 255, 0.98);
+}
+
+.hl-composition-form {
+  overflow: auto;
+  padding: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.hl-bank-banner {
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(69, 233, 182, 0.34);
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, rgba(9, 42, 42, 0.7), rgba(8, 20, 36, 0.78));
+  color: rgba(221, 255, 246, 0.95);
+}
+
+.hl-split-options {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(117, 213, 255, 0.18);
+  border-radius: 0.75rem;
+  background: rgba(5, 18, 30, 0.5);
+}
+
+.hl-item-composer-list {
+  display: grid;
+  gap: 0.75rem;
+  max-height: 320px;
+  overflow: auto;
+  padding-right: 0.3rem;
+}
+
+.hl-item-category {
+  border: 1px solid rgba(117, 213, 255, 0.15);
+  border-radius: 0.85rem;
+  padding: 0.65rem;
+  background: rgba(7, 22, 36, 0.56);
+}
+
+.hl-item-category h4 {
+  margin: 0 0 0.55rem;
+  color: rgba(128, 222, 255, 0.92);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.hl-item-row {
+  display: grid;
+  grid-template-columns: auto 32px 1fr minmax(90px, 140px);
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.45rem;
+  border-radius: 0.65rem;
+}
+
+.hl-item-row:hover {
+  background: rgba(117, 213, 255, 0.08);
+}
+
+.hl-item-row img {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 0.45rem;
+}
+
+.hl-item-row small {
+  display: block;
+  color: rgba(185, 221, 236, 0.78);
+}
+
+.hl-trade-terms {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(251, 200, 92, 0.22);
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, rgba(61, 42, 8, 0.32), rgba(8, 20, 36, 0.62));
+}
+
+.hl-asset-transfer-card {
+  border-color: rgba(251, 200, 92, 0.36);
+  background: linear-gradient(135deg, rgba(41, 31, 8, 0.72), rgba(8, 20, 36, 0.84));
+}
+
+.hl-asset-transfer-card .hl-credit-title {
+  color: rgba(255, 226, 142, 0.96);
+}

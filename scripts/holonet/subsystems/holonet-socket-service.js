@@ -48,13 +48,16 @@ export class HolonetSocketService {
   }
 
   static emitRequest(action, data = {}) {
+    const requestId = String(data?.requestId || foundry.utils.randomID());
     game.socket?.emit?.(SOCKET_NAME, {
       event: HOLONET_EVENT,
       kind: 'request',
       action,
-      data,
-      requesterId: game.user?.id
+      data: { ...data, requestId },
+      requesterId: game.user?.id,
+      requestId
     });
+    return requestId;
   }
 
   static emitSync(data = {}) {
@@ -67,7 +70,7 @@ export class HolonetSocketService {
 
   static async #handleGmRequest(payload) {
     const { action } = payload;
-    const data = { ...(payload.data ?? {}), requesterId: payload.requesterId };
+    const data = { ...(payload.data ?? {}), requesterId: payload.requesterId, requestId: payload.requestId ?? payload.data?.requestId ?? null };
     const { HolonetEngine } = await import('../holonet-engine.js');
     const { HolonetMessengerService } = await import('./holonet-messenger-service.js');
 
@@ -76,48 +79,53 @@ export class HolonetSocketService {
         const record = hydrateHolonetRecord(data?.record);
         if (record) {
           await HolonetEngine.publish(record, { skipSocket: true });
-          this.emitSync({ type: 'record-published', recordId: record.id, recipientIds: record.recipients?.map(r => r.id) ?? [] });
+          this.emitSync({ type: 'record-published', recordId: record.id, recipientIds: record.recipients?.map(r => r.id) ?? [], requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         }
         break;
       }
       case 'mark-read': {
         await HolonetEngine.markRead(data.recordId, data.recipientId, { skipSocket: true });
-        this.emitSync({ type: 'record-read', recordId: data.recordId, recipientId: data.recipientId });
+        this.emitSync({ type: 'record-read', recordId: data.recordId, recipientId: data.recipientId, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         break;
       }
       case 'send-message': {
-        const result = await HolonetMessengerService._gmSendMessage(data);
-        this.emitSync({ type: 'message-sent', threadId: result?.threadId ?? null });
+        // Messenger service publishes a single thread-updated sync after its
+        // record/thread envelope commits. Do not emit a second socket event here;
+        // duplicate syncs caused full shell repaint storms on the sending client.
+        await HolonetMessengerService._gmSendMessage(data);
         break;
       }
       case 'create-thread': {
-        const result = await HolonetMessengerService._gmCreateThread(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? null });
+        await HolonetMessengerService._gmCreateThread(data);
         break;
       }
       case 'create-job': {
-        const result = await HolonetMessengerService._gmCreateJobPosting(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? null });
+        await HolonetMessengerService._gmCreateJobPosting(data);
         break;
       }
       case 'offer-credit-transfer': {
-        const result = await HolonetMessengerService._gmOfferCreditTransfer(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? data?.threadId ?? null });
+        await HolonetMessengerService._gmOfferCreditTransfer(data);
+        break;
+      }
+      case 'compose-credit-operation': {
+        await HolonetMessengerService._gmComposeCreditOperation(data);
         break;
       }
       case 'offer-item-transfer': {
-        const result = await HolonetMessengerService._gmOfferItemTransfer(data);
-        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? data?.threadId ?? null });
+        await HolonetMessengerService._gmOfferItemTransfer(data);
+        break;
+      }
+      case 'offer-asset-transfer': {
+        await HolonetMessengerService._gmOfferAssetTransfer(data);
         break;
       }
       case 'thread-action': {
         await HolonetMessengerService._gmThreadAction(data);
-        this.emitSync({ type: 'thread-updated', threadId: data?.threadId ?? null });
         break;
       }
       case 'mark-thread-read': {
         await HolonetMessengerService._gmMarkThreadRead(data.threadId, data.recipientId);
-        this.emitSync({ type: 'thread-read', threadId: data.threadId, recipientId: data.recipientId });
+        this.emitSync({ type: 'thread-read', threadId: data.threadId, recipientId: data.recipientId, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         break;
       }
       case 'mark-many-read': {

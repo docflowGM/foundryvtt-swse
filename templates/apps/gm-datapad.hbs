@@ -305,8 +305,8 @@
           {{else if (eq bulletinSection "messages")}}
           <div class="bulletin-panel-header">
             <div>
-              <h3>Manage Messages</h3>
-              <p>Author direct communications, mentor pings, and sender-based Holonet notices.</p>
+              <h3>Manage Notices</h3>
+              <p>Author one-way GM-to-player notices. Use Messenger for conversations and replies.</p>
             </div>
           </div>
 
@@ -316,7 +316,7 @@
             <div class="bulletin-form-grid">
               <label>
                 <span>Subject</span>
-                <input type="text" name="title" value="{{messageEditorRecord.title}}" placeholder="@Master Tholos requests your presence">
+                <input type="text" name="title" value="{{messageEditorRecord.title}}" placeholder="@Master Tholos has posted new instructions">
               </label>
               <label>
                 <span>Category</span>
@@ -352,7 +352,7 @@
 
             <label class="bulletin-body-field">
               <span>Body</span>
-              <textarea name="body" rows="6" placeholder="@Kael Vorren, your stipend has arrived. Report to @Rendarr for the next #shipment." data-holonet-editor="bulletin-message">{{messageEditorRecord.body}}</textarea>
+              <textarea name="body" rows="6" placeholder="@Kael Vorren, your stipend has arrived. Report to @Rendarr for the next #shipment." data-holonet-editor="bulletin-notice">{{messageEditorRecord.body}}</textarea>
             </label>
 
             <div class="bulletin-syntax-guide">
@@ -361,7 +361,7 @@
 
             <div class="bulletin-form-actions">
               <button type="submit" class="swse-ui-button" data-submit-mode="draft">Save Draft</button>
-              <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish Message</button>
+              <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish Notice</button>
             </div>
           </form>
 
@@ -387,7 +387,7 @@
               </div>
             </article>
             {{else}}
-            <p class="placeholder">No bulletin messages yet.</p>
+            <p class="placeholder">No bulletin notices yet.</p>
             {{/each}}
           </div>
 

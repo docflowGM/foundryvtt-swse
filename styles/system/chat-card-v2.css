@@ -1819,3 +1819,34 @@
   border-color: color-mix(in srgb, var(--swse-success, #00ff88) 45%, transparent);
   background: color-mix(in srgb, var(--swse-success, #00ff88) 12%, transparent);
 }
+
+/* Holonet quick transaction actions */
+.swse-holonet-card .ht-credit-quickline {
+  margin-top: 6px;
+  color: var(--swse-text-primary, #dff7ff);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.swse-holonet-card .ht-credit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.swse-holonet-card .ht-credit-actions button {
+  border: 1px solid color-mix(in oklch, var(--signal, oklch(0.78 0.20 220)) 58%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--rail, oklch(0.78 0.20 220)) 16%, black 84%);
+  color: var(--swse-text-primary, #e8f8ff);
+  padding: 4px 8px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.swse-holonet-card .ht-credit-actions button:hover {
+  box-shadow: 0 0 12px color-mix(in oklch, var(--signal, oklch(0.78 0.20 220)) 35%, transparent);
+}

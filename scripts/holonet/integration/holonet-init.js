@@ -79,6 +79,51 @@ export function registerHolonetSettings() {
     default: false
   });
 
+  game.settings.register('foundryvtt-swse', 'holonetCreditTransfersEnabled', {
+    name: 'Holonet: Allow Player Credit Transfers',
+    hint: 'When disabled, players do not see Messenger send/request credit controls. GM tools can still use direct awards where separately available.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetItemTradesEnabled', {
+    name: 'Holonet: Allow Player Item Trades',
+    hint: 'When disabled, players do not see Messenger item trade controls.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetRequireItemTradeApproval', {
+    name: 'Holonet: GM Approves Item Trades',
+    hint: 'When enabled, player item transfers must be approved by the GM before the recipient can accept them.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetAssetTradesEnabled', {
+    name: 'Holonet: Allow Ship/Droid Asset Trades',
+    hint: 'Controls whether ship and droid asset trade entry points are visible. Asset trades use a separate approved lifecycle.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetRequireAssetTradeApproval', {
+    name: 'Holonet: GM Approves Ship/Droid Trades',
+    hint: 'Ship and droid asset trades default to GM approval because they are owned actor sheets.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register('foundryvtt-swse', 'holonetPartyFundEnabled', {
     name: 'Holonet: Enable Party Fund',
     hint: 'Adds a GM-managed party fund account that players can contribute to, and GMs can charge or pay from.',
@@ -179,6 +224,16 @@ function wireStoreSettingHooks() {
 }
 
 export async function initializeHolonet() {
+  game.swse ??= {};
+  game.swse.holonet = {
+    engine: HolonetEngine,
+    manager: HolonetManager,
+    preferences: HolonetPreferences,
+    sources: HolonetSourceRegistry,
+    state: HolonetStateService
+  };
+
+  registerHolonetSources();
   await HolonetEngine.initialize();
   await HolonetSourceRegistry.initializeAll();
   wireStoreSettingHooks(); // Wire store mutations before initializing emitters

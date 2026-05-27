@@ -51,27 +51,32 @@ export class DroidFactory {
    */
   static _buildDroidActorData(buildSpec) {
     const actor = buildSpec.droidActor;
-    const actorObj = actor.toObject ? actor.toObject() : actor;
-    const actorSystem = actorObj.system || {};
+    const source = actor?.doc || actor?.actor || actor;
+    const actorObj = source?.toObject ? source.toObject(false) : foundry.utils.deepClone(source || {});
+    const actorSystem = actorObj.system || actor?.system || {};
 
-    return {
+    // Preserve full stock droid fidelity from the compendium/world actor: items,
+    // effects, prototype token, flags, and all system fields. Earlier store paths
+    // rebuilt only a tiny system shell from the normalized listing, which made a
+    // purchased stock droid open as a low-fidelity actor.
+    const droidData = {
+      ...actorObj,
       type: 'droid',
-      name: buildSpec.name || actorObj.name || 'Unnamed Droid',
-      img: actorObj.img || 'icons/svg/amulet.svg',
+      name: buildSpec.name || actorObj.name || actor?.name || 'Unnamed Droid',
+      img: actorObj.img || actor?.img || 'icons/svg/amulet.svg',
       system: {
-        // Copy essential droid fields
         ...actorSystem,
-
-        // Ensure required fields exist
         level: actorSystem.level || 1,
-        credits: 0, // Droids start with 0 credits
-
-        // Derived fields: blank (DerivedCalculator will populate)
-        reflexDefense: 10,
-        fortitudeDefense: 10,
-        baseAttackBonus: 0
+        credits: 0,
+        reflexDefense: actorSystem.reflexDefense ?? 10,
+        fortitudeDefense: actorSystem.fortitudeDefense ?? 10,
+        baseAttackBonus: actorSystem.baseAttackBonus ?? 0
       }
     };
+
+    delete droidData._id;
+    delete droidData.id;
+    return droidData;
   }
 
   /**

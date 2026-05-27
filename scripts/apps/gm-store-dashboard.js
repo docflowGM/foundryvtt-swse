@@ -464,27 +464,34 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
   }
 
   /**
-   * Approve a pending custom droid/vehicle purchase
-   * Deducts credits, transfers actor ownership, removes draft flags
+   * Approve a pending custom droid/vehicle purchase.
+   * TransactionEngine owns the credit movement and owner-asset linkage.
    */
   async _approvePendingCustom(index) {
     const approval = this.pendingApprovals[index];
     if (!approval) return;
 
     const ownerActor = game.actors.get(approval.ownerActorId);
+    const draftActor = game.actors.get(approval.draftActorId);
     if (!ownerActor) {
       ui.notifications.error('Owner actor not found.');
       return;
     }
+    if (!draftActor) {
+      ui.notifications.error('Draft asset actor not found.');
+      return;
+    }
 
-    // Confirm approval
+    const assetName = approval.draftData?.name || draftActor.name || 'Custom asset';
+    const normalizedCost = normalizeCredits(approval.costCredits ?? 0);
+
     const confirmed = await SWSEDialogV2.confirm({
       title: 'Approve Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
       content: `
-        <p><strong>${approval.draftData.name}</strong></p>
+        <p><strong>${assetName}</strong></p>
         <p>For: ${ownerActor.name}</p>
-        <p>Cost: <strong>${approval.costCredits.toLocaleString()} credits</strong></p>
-        <p>Approve this purchase?</p>
+        <p>Cost: <strong>${normalizedCost.toLocaleString()} credits</strong></p>
+        <p>Approve this purchase and assign the asset to the buyer?</p>
       `,
       defaultYes: false
     });
@@ -492,96 +499,76 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     if (!confirmed) return;
 
     try {
-      // 1. Validate credits
-      const currentCredits = normalizeCredits(ownerActor.system?.credits ?? 0);
-      if (currentCredits < approval.costCredits) {
-        ui.notifications.warn(`Insufficient credits. ${ownerActor.name} has ${currentCredits.toLocaleString()} but needs ${approval.costCredits.toLocaleString()}.`);
-        return;
-      }
-
-      // 2. Deduct credits through the TransactionEngine SSOT
-      const creditResult = await TransactionEngine.executeCreditAdjustment({
+      const approvalResult = await TransactionEngine.executeAssetApprovalTransaction({
         actor: ownerActor,
-        amount: -normalizeCredits(approval.costCredits),
-        reason: `GM approved ${approval.type || 'custom'} acquisition`,
+        assetActor: draftActor,
+        cost: normalizedCost,
+        reason: `GM approved ${approval.type || draftActor.type || 'custom'} acquisition`,
         transactionContext: 'store-custom-approval',
         audit: {
-          approvalType: approval.type,
+          approvalId: approval.id ?? null,
+          approvalType: approval.type ?? draftActor.type,
           draftActorId: approval.draftActorId,
-          itemName: approval.draftData?.name ?? 'Custom asset',
-          itemNames: [approval.draftData?.name ?? 'Custom asset'],
+          itemName: assetName,
+          itemNames: [assetName],
           itemCount: 1,
-          source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval'
+          source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
+          gmNotes: approval.metadata?.gmNotes ?? '',
+          ownerPlayerId: approval.ownerPlayerId ?? null
         }
       }, {
         source: 'GMStoreDashboard._approvePendingCustom',
         validate: true,
         rederive: true
       });
-      if (!creditResult.success) throw new Error(creditResult.error || 'Credit transaction failed');
 
-      // 3. Transfer draft actor to owner
-      const draftActor = game.actors.get(approval.draftActorId);
-      if (draftActor) {
-        // Set ownership to the player who owns the character
-        const ownerUser = game.users.find(u => u.character?.id === ownerActor.id);
-        const ownership = { default: 0 };
-        if (ownerUser) {
-          ownership[ownerUser.id] = 3;  // Owner level
-        }
-        // Also grant GM ownership
-        ownership[game.user.id] = 3;
+      if (!approvalResult.success) throw new Error(approvalResult.error || 'Asset approval transaction failed');
 
-        // Batch all mutations into single atomic update (ATOMICITY FIX)
-        await ActorEngine.updateActor(draftActor, {
-          'ownership': ownership,
-          'flags.-=foundryvtt-swse.pendingApproval': null,
-          'flags.-=foundryvtt-swse.draftOnly': null,
-          'flags.-=foundryvtt-swse.ownerPlayerId': null
-        });
-      }
-
-      // 4. Log transaction
       const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       const purchase = {
         timestamp: Date.now(),
         items: [],
-        droids: approval.type === 'droid' ? [{
-          id: approval.draftActorId,
-          name: approval.draftData.name,
-          cost: approval.costCredits
+        droids: draftActor.type === 'droid' ? [{
+          id: draftActor.id,
+          name: assetName,
+          cost: normalizedCost
         }] : [],
-        vehicles: approval.type === 'vehicle' ? [{
-          id: approval.draftActorId,
-          name: approval.draftData.name,
-          cost: approval.costCredits
+        vehicles: draftActor.type === 'vehicle' ? [{
+          id: draftActor.id,
+          name: assetName,
+          cost: normalizedCost
         }] : [],
-        total: approval.costCredits,
-        transactionId: creditResult?.transactionId ?? null,
-        source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
+        total: normalizedCost,
+        transactionId: approvalResult.transactionId ?? null,
+        source: 'Store - Custom ' + (draftActor.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
         compatibilityMirror: true
       };
       history.push(purchase);
-      await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
+      await ActorEngine.updateActor(ownerActor, {
+        'flags.foundryvtt-swse.purchaseHistory': history
+      }, {
+        source: 'GMStoreDashboard._approvePendingCustom.purchaseHistoryMirror',
+        skipValidation: true
+      });
 
-      // 5. Remove from pending queue
       const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
       pendingPurchases.splice(index, 1);
       await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
-      // 6. Emit Holonet approval hook
       Hooks.call('swseCustomPurchaseApproved', {
         approval,
         actor: ownerActor,
+        draftActor,
+        transactionId: approvalResult.transactionId,
         decidedBy: game.user?.name ?? 'GM'
       });
 
-      ui.notifications.info(`Approved: ${approval.draftData.name} for ${ownerActor.name}`);
-      SWSELogger.log('SWSE Store | Custom purchase approved:', approval);
+      ui.notifications.info(`Approved: ${assetName} for ${ownerActor.name}`);
+      SWSELogger.log('SWSE Store | Custom purchase approved:', { approval, transactionId: approvalResult.transactionId });
       this.render();
     } catch (err) {
       SWSELogger.error('Failed to approve custom purchase:', err);
-      ui.notifications.error('Approval failed. See console for details.');
+      ui.notifications.error(`Approval failed: ${err.message}`);
     }
   }
 

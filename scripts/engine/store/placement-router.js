@@ -1,33 +1,27 @@
 /**
  * PlacementRouter — Pure Placement Logic
  *
- * PHASE 6: Deterministic asset placement routing
- *
- * Responsibilities:
- * - Route created assets based on purchaser type
- * - Return MutationPlan fragments (ADD bucket)
- * - Never mutate
- * - Never assign ownership
- * - Never inspect credits or cart
- *
- * Routing rules:
- * - Character/Droid/NPC → possessions (embedded reference)
- * - Vehicle → hangar (embedded collection)
- * - (Phase 6+): Faction → faction inventory
+ * Legacy helper for TransactionEngine.execute(). Modern checkout paths use
+ * TransactionEngine.executeMutationTransaction(), which prepares store asset
+ * linkage directly. This router remains for callers that still compile CREATE
+ * specs through the legacy cart-item API.
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 export class PlacementRouter {
   /**
-   * Route created asset to placement location
+   * Route created asset to the purchaser's owned actor links.
    * @param {Object} context
-   * @param {Actor} context.purchaser - Actor making purchase
+   * @param {Object} context.purchaser - Actor making purchase
    * @param {string} context.createdTempId - Temporary ID of created actor
    * @param {string} context.assetType - Asset type (vehicle, droid, item)
-   * @returns {Object} MutationPlan fragment with ADD bucket
+   * @param {Object} context.createdSpec - CREATE actor spec, when available
+   * @param {string} context.transactionId - Transaction id for link metadata
+   * @returns {Object} MutationPlan fragment with SET bucket
    */
-  static route({ purchaser, createdTempId, assetType }) {
+  static route({ purchaser, createdTempId, assetType, createdSpec = null, transactionId = null } = {}) {
     if (!purchaser) {
       throw new Error('PlacementRouter: purchaser required');
     }
@@ -43,48 +37,22 @@ export class PlacementRouter {
       tempId: createdTempId
     });
 
-    // Route based on purchaser type
-    if (purchaser.type === 'vehicle') {
-      return this._routeToHangar(purchaser, createdTempId, assetType);
-    }
-
-    // Default: route to possessions (character, droid, NPC)
-    return this._routeToPossessions(purchaser, createdTempId, assetType);
-  }
-
-  /**
-   * Route asset to possessions (embedded in purchaser)
-   * @private
-   */
-  static _routeToPossessions(purchaser, tempId, assetType) {
-    swseLogger.debug('PlacementRouter: Route to possessions', {
-      purchaser: purchaser.id,
-      assetType,
-      tempId
-    });
-
-    return {
-      add: {
-        possessions: [tempId]
+    const spec = createdSpec || {
+      type: assetType,
+      temporaryId: createdTempId,
+      data: {
+        type: assetType,
+        name: 'Store Asset',
+        img: 'icons/svg/mystery-man.svg'
       }
     };
-  }
 
-  /**
-   * Route asset to hangar (vehicle purchasing vehicle)
-   * @private
-   */
-  static _routeToHangar(purchaser, tempId, assetType) {
-    swseLogger.debug('PlacementRouter: Route to hangar', {
-      purchaser: purchaser.id,
-      assetType,
-      tempId
-    });
-
-    return {
-      add: {
-        hangar: [tempId]
-      }
-    };
+    return StoreAcquisitionService.buildOwnerLinkPlan(purchaser, [spec], {
+      ownerActor: purchaser,
+      transactionId,
+      transactionContext: 'store-purchase',
+      audit: {},
+      source: 'PlacementRouter.route'
+    }) || { set: {} };
   }
 }

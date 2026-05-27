@@ -9,6 +9,7 @@ import { SOURCE_FAMILY, INTENT_TYPE } from '../contracts/enums.js';
 import { HolonetMessage } from '../contracts/holonet-message.js';
 import { HolonetSender } from '../contracts/holonet-sender.js';
 import { HolonetThread } from '../contracts/holonet-thread.js';
+import { normalizeMessengerRecord } from '../contracts/holonet-boundaries.js';
 
 export class MessengerSource {
   static sourceFamily = SOURCE_FAMILY.MESSENGER;
@@ -17,6 +18,7 @@ export class MessengerSource {
    * Create a messenger message
    */
   static createMessage(data) {
+    const metadata = data.metadata ?? {};
     const message = new HolonetMessage({
       sourceFamily: this.sourceFamily,
       sourceId: data.messageId,
@@ -27,12 +29,13 @@ export class MessengerSource {
       body: data.body ?? '',
       threadId: data.threadId,
       parentRecordId: data.parentRecordId,
-      mentions: data.mentions ?? [],
-      tags: data.tags ?? [],
-      metadata: data.metadata ?? {}
+      mentions: data.mentions ?? metadata.mentions ?? [],
+      tags: data.tags ?? metadata.tags ?? [],
+      attachments: data.attachments ?? metadata.attachments ?? [],
+      metadata
     });
 
-    return message;
+    return normalizeMessengerRecord(message);
   }
 
   /**

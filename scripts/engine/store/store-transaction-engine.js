@@ -24,6 +24,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class StoreTransactionEngine {
@@ -95,25 +96,57 @@ export class StoreTransactionEngine {
       // PHASE 2: COORDINATED MUTATIONS (EACH GOVERNED BY SENTINEL)
       // ============================================================
 
-      // Step 1: Deduct buyer credits
-      await ActorEngine.updateActor(buyer, {
-        'system.credits': buyerCredits - price
+      // Step 1: Deduct buyer credits through TransactionEngine, the commerce credit SSOT.
+      const buyerDebit = await TransactionEngine.executeCreditAdjustment({
+        actor: buyer,
+        amount: -price,
+        reason: `Purchase ${item.name} from ${seller.name}`,
+        transactionContext: 'store-credit-adjustment',
+        audit: {
+          ...metadata,
+          source: 'StoreTransactionEngine.purchaseItem.buyerDebit',
+          itemId,
+          itemName: item.name,
+          sellerId: seller.id,
+          sellerName: seller.name
+        }
+      }, {
+        source: 'StoreTransactionEngine.purchaseItem.buyerDebit',
+        validate: true,
+        rederive: true
       });
+      if (!buyerDebit.success) throw new Error(buyerDebit.error || 'Buyer debit failed');
 
       swseLogger.log('[StoreTransactionEngine] Step 1 complete: buyer debited', {
         buyer: buyer.name,
-        newBalance: buyerCredits - price
+        transactionId: buyerDebit.transactionId
       });
 
-      // Step 2: Add seller credits
-      const sellerCredits = Number(seller.system.credits ?? 0);
-      await ActorEngine.updateActor(seller, {
-        'system.credits': sellerCredits + price
+      // Step 2: Add seller credits through TransactionEngine.
+      const sellerCredit = await TransactionEngine.executeCreditAdjustment({
+        actor: seller,
+        amount: price,
+        reason: `Sold ${item.name} to ${buyer.name}`,
+        transactionContext: 'store-credit-adjustment',
+        audit: {
+          ...metadata,
+          source: 'StoreTransactionEngine.purchaseItem.sellerCredit',
+          itemId,
+          itemName: item.name,
+          buyerId: buyer.id,
+          buyerName: buyer.name,
+          buyerTransactionId: buyerDebit.transactionId
+        }
+      }, {
+        source: 'StoreTransactionEngine.purchaseItem.sellerCredit',
+        validate: true,
+        rederive: true
       });
+      if (!sellerCredit.success) throw new Error(sellerCredit.error || 'Seller credit failed');
 
       swseLogger.log('[StoreTransactionEngine] Step 2 complete: seller credited', {
         seller: seller.name,
-        newBalance: sellerCredits + price
+        transactionId: sellerCredit.transactionId
       });
 
       // Step 3: Delete item from seller
@@ -148,6 +181,8 @@ export class StoreTransactionEngine {
         itemName: item.name,
         price,
         timestamp: Date.now(),
+        buyerTransactionId: buyerDebit?.transactionId ?? null,
+        sellerTransactionId: sellerCredit?.transactionId ?? null,
         metadata
       };
 
@@ -260,32 +295,24 @@ export class StoreTransactionEngine {
     });
 
     try {
-      // ============================================================
-      // PHASE 2: COORDINATED MUTATIONS
-      // ============================================================
-
-      // Step 1: Delete item
-      await ActorEngine.deleteEmbeddedDocuments(seller, 'Item', [itemId]);
-
-      swseLogger.log('[StoreTransactionEngine] Step 1 complete: item deleted', {
+      const saleResult = await TransactionEngine.executeSaleTransaction({
+        actor: seller,
         itemId,
-        itemName: item.name
+        salePrice: price,
+        reason: metadata?.reason || 'Store item sale',
+        transactionContext: 'store-sale',
+        audit: {
+          ...metadata,
+          source: 'StoreTransactionEngine.sellItem',
+          itemName: item.name
+        }
+      }, {
+        source: 'StoreTransactionEngine.sellItem',
+        validate: true,
+        rederive: true
       });
 
-      // Step 2: Add credits
-      const sellerCredits = Number(seller.system.credits ?? 0);
-      await ActorEngine.updateActor(seller, {
-        'system.credits': sellerCredits + price
-      });
-
-      swseLogger.log('[StoreTransactionEngine] Step 2 complete: credits added', {
-        seller: seller.name,
-        newBalance: sellerCredits + price
-      });
-
-      // ============================================================
-      // SUCCESS
-      // ============================================================
+      if (!saleResult.success) throw new Error(saleResult.error || 'Sale transaction failed');
 
       const result = {
         success: true,
@@ -294,6 +321,7 @@ export class StoreTransactionEngine {
         itemId,
         itemName: item.name,
         price,
+        transactionId: saleResult.transactionId,
         timestamp: Date.now(),
         metadata
       };
@@ -452,13 +480,47 @@ export class StoreTransactionEngine {
     if (!Number.isFinite(value) || value <= 0) throw new Error('transferCredits: amount must be a positive number');
 
     const fromCredits = Number(fromActor.system?.credits ?? 0) || 0;
-    const toCredits = Number(toActor.system?.credits ?? 0) || 0;
     if (fromCredits < value) throw new Error(`transferCredits: ${fromActor.name} has insufficient credits (${fromCredits} < ${value})`);
 
-    const snapshot = this._createSnapshot(fromActor, toActor);
+    let debitResult = null;
     try {
-      await ActorEngine.updateActor(fromActor, { 'system.credits': fromCredits - value });
-      await ActorEngine.updateActor(toActor, { 'system.credits': toCredits + value });
+      debitResult = await TransactionEngine.executeCreditAdjustment({
+        actor: fromActor,
+        amount: -value,
+        reason: `Transfer credits to ${toActor.name}`,
+        transactionContext: 'store-credit-adjustment',
+        audit: {
+          ...metadata,
+          source: 'StoreTransactionEngine.transferCredits.debit',
+          toActorId: toActor.id,
+          toActorName: toActor.name
+        }
+      }, {
+        source: 'StoreTransactionEngine.transferCredits.debit',
+        validate: true,
+        rederive: true
+      });
+      if (!debitResult.success) throw new Error(debitResult.error || 'Debit failed');
+
+      const creditResult = await TransactionEngine.executeCreditAdjustment({
+        actor: toActor,
+        amount: value,
+        reason: `Received credits from ${fromActor.name}`,
+        transactionContext: 'store-credit-adjustment',
+        audit: {
+          ...metadata,
+          source: 'StoreTransactionEngine.transferCredits.credit',
+          fromActorId: fromActor.id,
+          fromActorName: fromActor.name,
+          debitTransactionId: debitResult.transactionId
+        }
+      }, {
+        source: 'StoreTransactionEngine.transferCredits.credit',
+        validate: true,
+        rederive: true
+      });
+      if (!creditResult.success) throw new Error(creditResult.error || 'Credit failed');
+
       const result = {
         success: true,
         fromId: fromActor.id,
@@ -467,22 +529,32 @@ export class StoreTransactionEngine {
         toName: toActor.name,
         amount: value,
         timestamp: Date.now(),
+        debitTransactionId: debitResult.transactionId,
+        creditTransactionId: creditResult.transactionId,
         metadata
       };
       swseLogger.log('[StoreTransactionEngine] transferCredits completed successfully', result);
       Hooks.callAll('swseCreditTransferComplete', { transaction: result, fromActor, toActor, success: true });
       return result;
     } catch (err) {
-      swseLogger.error('[StoreTransactionEngine] transferCredits failed, attempting rollback', {
+      swseLogger.error('[StoreTransactionEngine] transferCredits failed', {
         error: err.message,
         from: fromActor.name,
         to: toActor.name,
         amount: value
       });
-      try {
-        await this._rollback(snapshot);
-      } catch (rollbackErr) {
-        throw new Error(`transferCredits failed: ${err.message} | Rollback error: ${rollbackErr.message}`);
+      if (debitResult?.success) {
+        await TransactionEngine.executeCreditAdjustment({
+          actor: fromActor,
+          amount: value,
+          reason: `Refund failed transfer to ${toActor.name}`,
+          transactionContext: 'store-rollback-reconciliation',
+          audit: {
+            ...metadata,
+            source: 'StoreTransactionEngine.transferCredits.refundDebit',
+            failedTransferDebitId: debitResult.transactionId
+          }
+        }, { source: 'StoreTransactionEngine.transferCredits.refundDebit', validate: true, rederive: true });
       }
       throw err;
     }
@@ -500,32 +572,41 @@ export class StoreTransactionEngine {
     const value = Math.floor(Number(amount));
     if (!Number.isFinite(value) || value <= 0) throw new Error('grantCredits: amount must be a positive number');
 
-    const current = Number(toActor.system?.credits ?? 0) || 0;
-    const snapshot = this._createSnapshot(toActor);
     try {
-      await ActorEngine.updateActor(toActor, { 'system.credits': current + value });
+      const creditResult = await TransactionEngine.executeCreditAdjustment({
+        actor: toActor,
+        amount: value,
+        reason: metadata?.reason || 'Grant credits',
+        transactionContext: 'store-credit-adjustment',
+        audit: {
+          ...metadata,
+          source: 'StoreTransactionEngine.grantCredits'
+        }
+      }, {
+        source: 'StoreTransactionEngine.grantCredits',
+        validate: true,
+        rederive: true
+      });
+      if (!creditResult.success) throw new Error(creditResult.error || 'Credit grant failed');
+
       const result = {
         success: true,
         toId: toActor.id,
         toName: toActor.name,
         amount: value,
         timestamp: Date.now(),
+        transactionId: creditResult.transactionId,
         metadata
       };
       swseLogger.log('[StoreTransactionEngine] grantCredits completed successfully', result);
       Hooks.callAll('swseCreditGrantComplete', { transaction: result, toActor, success: true });
       return result;
     } catch (err) {
-      swseLogger.error('[StoreTransactionEngine] grantCredits failed, attempting rollback', {
+      swseLogger.error('[StoreTransactionEngine] grantCredits failed', {
         error: err.message,
         to: toActor.name,
         amount: value
       });
-      try {
-        await this._rollback(snapshot);
-      } catch (rollbackErr) {
-        throw new Error(`grantCredits failed: ${err.message} | Rollback error: ${rollbackErr.message}`);
-      }
       throw err;
     }
   }
