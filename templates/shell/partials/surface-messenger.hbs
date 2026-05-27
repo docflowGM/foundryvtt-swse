@@ -325,6 +325,7 @@
                     {{#if this.itemTransfer.trade.requestedItemsNote}}<div class="hl-credit-line">Requested trade: {{this.itemTransfer.trade.requestedItemsNote}}</div>{{/if}}
                     {{#if this.itemTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.itemTransfer.memo}}</div>{{/if}}
                     <div class="hl-credit-status">{{this.itemTransfer.statusLabel}}</div>
+                    {{#if this.itemTransfer.failureReason}}<div class="hl-credit-memo">Failure: {{this.itemTransfer.failureReason}}</div>{{/if}}
                     <div class="hl-credit-actions">
                       {{#if this.itemTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
                       {{#if this.itemTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Items</button>{{/if}}
@@ -369,6 +370,7 @@
                     </form>
                     {{/if}}
                     <div class="hl-credit-status">{{this.assetTransfer.statusLabel}}</div>
+                    {{#if this.assetTransfer.failureReason}}<div class="hl-credit-memo">Failure: {{this.assetTransfer.failureReason}}</div>{{/if}}
                     <div class="hl-credit-actions">
                       {{#if this.assetTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
                       {{#if this.assetTransfer.canAcceptCounter}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Counter</button>{{/if}}

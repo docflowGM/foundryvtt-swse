@@ -2439,7 +2439,17 @@ export class HolonetMessengerService {
     if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
     let ok = false;
     if (transfer.kind === 'ownedItemTransfer') {
-      ok = await this._executeOwnedItemTransfer({ thread, transfer, requesterId });
+      const atomic = await this._executeAtomicTradeSettlement({
+        thread,
+        transfer,
+        actors: this._collectTradeSettlementActors(transfer),
+        preflight: () => this._preflightTradeSettlement(transfer),
+        operation: () => this._executeOwnedItemTransfer({ thread, transfer, requesterId }),
+        failureEventType: 'item-trade-atomic-failed',
+        failurePrefix: 'Item trade failed'
+      });
+      ok = Boolean(atomic?.success && atomic.result !== false);
+      if (!ok) transfer.failureReason = atomic?.error || 'Atomic item trade settlement failed.';
     } else {
       ok = await this._gmGrantItems({ thread, recipientId: transfer.toRecipientId, itemUuids: transfer.itemUuids, requesterId, eventType: 'item-transfer-complete', source: 'holonet-item-transfer' });
     }
@@ -2450,6 +2460,187 @@ export class HolonetMessengerService {
     return ok;
   }
 
+
+  static _tradeSnapshotRoot(actor) {
+    const data = actor?.toObject ? actor.toObject(false) : {};
+    return {
+      actorId: actor?.id ?? null,
+      actorName: actor?.name ?? data?.name ?? 'Unknown Actor',
+      data: {
+        name: data?.name ?? actor?.name ?? 'Unknown Actor',
+        img: data?.img ?? actor?.img ?? null,
+        system: foundry.utils.deepClone(data?.system ?? actor?.system ?? {}),
+        flags: foundry.utils.deepClone(data?.flags ?? actor?.flags ?? {}),
+        ownership: foundry.utils.deepClone(data?.ownership ?? actor?.ownership ?? {}),
+        prototypeToken: foundry.utils.deepClone(data?.prototypeToken ?? actor?.prototypeToken ?? {}),
+        items: foundry.utils.deepClone(data?.items ?? actor?.items?.map?.(item => item.toObject ? item.toObject() : item) ?? []),
+        effects: foundry.utils.deepClone(data?.effects ?? actor?.effects?.map?.(effect => effect.toObject ? effect.toObject() : effect) ?? [])
+      }
+    };
+  }
+
+  static _collectTradeSettlementActors(transfer = {}, { includeCounter = true } = {}) {
+    const actors = new Map();
+    const addActor = actor => {
+      if (actor?.id) actors.set(actor.id, actor);
+    };
+    addActor(transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null);
+    addActor(transfer.toActorId ? game.actors?.get(transfer.toActorId) : null);
+    for (const entry of safeArray(transfer.assets)) {
+      addActor(game.actors?.get(String(entry?.id || entry?.uuid || '').replace(/^Actor\./, '')));
+    }
+    if (includeCounter) {
+      for (const entry of safeArray(transfer?.counterOffer?.assets)) {
+        addActor(game.actors?.get(String(entry?.id || entry?.uuid || '').replace(/^Actor\./, '')));
+      }
+    }
+    return Array.from(actors.values());
+  }
+
+  static async _restoreTradeSnapshot(snapshot, { source = 'HolonetMessengerService.atomicTradeRollback' } = {}) {
+    const actor = snapshot?.actorId ? game.actors?.get(snapshot.actorId) : null;
+    if (!actor) throw new Error(`Rollback actor ${snapshot?.actorName || snapshot?.actorId || 'unknown'} could not be resolved.`);
+    const data = snapshot.data ?? {};
+    await ActorEngine.updateActor(actor, {
+      name: data.name,
+      img: data.img,
+      system: foundry.utils.deepClone(data.system ?? {}),
+      flags: foundry.utils.deepClone(data.flags ?? {}),
+      ownership: foundry.utils.deepClone(data.ownership ?? {}),
+      prototypeToken: foundry.utils.deepClone(data.prototypeToken ?? {})
+    }, { source, skipValidation: true, rederive: true, suppressAppRefresh: true });
+
+    const currentItemIds = actor.items?.map?.(item => item.id) ?? [];
+    if (currentItemIds.length) {
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', currentItemIds, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+    const itemsToRestore = safeArray(data.items).map(item => foundry.utils.deepClone(item));
+    if (itemsToRestore.length) {
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToRestore, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+
+    const currentEffectIds = actor.effects?.map?.(effect => effect.id) ?? [];
+    if (currentEffectIds.length) {
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', currentEffectIds, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+    const effectsToRestore = safeArray(data.effects).map(effect => foundry.utils.deepClone(effect));
+    if (effectsToRestore.length) {
+      await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToRestore, { source, skipValidation: true, rederive: false, suppressAppRefresh: true });
+    }
+    await ActorEngine.recalcAll?.(actor);
+    return true;
+  }
+
+  static async _restoreTradeSnapshots(snapshots = [], options = {}) {
+    const ordered = safeArray(snapshots).slice().reverse();
+    for (const snapshot of ordered) {
+      await this._restoreTradeSnapshot(snapshot, options);
+    }
+    return true;
+  }
+
+  static _preflightTradeSettlement(transfer = {}, { includeCounter = false, suppressRequestedCredits = false } = {}) {
+    if (transfer.kind === 'ownedAssetTransfer') {
+      const assetValidation = this._validateOwnedAssetTransfer(transfer);
+      if (!assetValidation.ok) return { ok: false, error: assetValidation.error };
+    } else if (transfer.kind === 'ownedItemTransfer') {
+      const itemValidation = this._validateOwnedItemTransfer(transfer);
+      if (!itemValidation.ok) return { ok: false, error: itemValidation.error };
+    }
+
+    if (!suppressRequestedCredits) {
+      const requestedCredits = parsePositiveCredits(transfer?.trade?.requestedCredits);
+      if (requestedCredits) {
+        const payer = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+        const payee = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+        if (!payer || !payee) return { ok: false, error: 'Trade credit actors could not be resolved.' };
+        if (creditsOf(payer) < requestedCredits) return { ok: false, error: `${payer.name} does not have ${formatCredits(requestedCredits)} available for this trade.` };
+      }
+    }
+
+    if (includeCounter && transfer?.counterOffer) {
+      const counterCredits = parsePositiveCredits(transfer.counterOffer.credits);
+      if (counterCredits) {
+        const payer = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+        const payee = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+        if (!payer || !payee) return { ok: false, error: 'Counter-offer credit actors could not be resolved.' };
+        if (creditsOf(payer) < counterCredits) return { ok: false, error: `${payer.name} does not have ${formatCredits(counterCredits)} available for this counter-offer.` };
+      }
+
+      if (safeArray(transfer.counterOffer.items).length) {
+        const counterItemTransfer = {
+          id: `${transfer.id}-counter-preflight`,
+          kind: 'ownedItemTransfer',
+          fromActorId: transfer.toActorId,
+          fromLabel: transfer.toLabel,
+          toActorId: transfer.fromActorId,
+          toLabel: transfer.fromLabel,
+          items: transfer.counterOffer.items
+        };
+        const itemValidation = this._validateOwnedItemTransfer(counterItemTransfer);
+        if (!itemValidation.ok) return { ok: false, error: itemValidation.error };
+      }
+
+      if (safeArray(transfer.counterOffer.assets).length) {
+        const counterAssetTransfer = {
+          id: `${transfer.id}-counter-assets-preflight`,
+          kind: 'ownedAssetTransfer',
+          fromActorId: transfer.toActorId,
+          fromLabel: transfer.toLabel,
+          toActorId: transfer.fromActorId,
+          toLabel: transfer.fromLabel,
+          assets: transfer.counterOffer.assets
+        };
+        const assetValidation = this._validateOwnedAssetTransfer(counterAssetTransfer);
+        if (!assetValidation.ok) return { ok: false, error: assetValidation.error };
+      }
+    }
+
+    return { ok: true };
+  }
+
+  static async _executeAtomicTradeSettlement({ thread, transfer, actors = [], preflight = null, operation = null, failureEventType = 'trade-atomic-failed', failurePrefix = 'Trade settlement failed' } = {}) {
+    if (typeof operation !== 'function') return { success: false, error: 'No trade settlement operation was provided.' };
+
+    const validation = typeof preflight === 'function' ? preflight() : { ok: true };
+    if (!validation?.ok) {
+      const error = validation?.error || 'Trade preflight failed.';
+      if (thread && transfer) {
+        await this._publishSystemMessage(thread, `${failurePrefix}: ${error}. No trade state was changed.`, { eventType: failureEventType, transferId: transfer.id, rollbackOk: true, preflight: true });
+      }
+      return { success: false, error, rollbackOk: true, preflight: true };
+    }
+
+    const actorList = safeArray(actors).filter(actor => actor?.id);
+    const uniqueActors = Array.from(new Map(actorList.map(actor => [actor.id, actor])).values());
+    const snapshots = uniqueActors.map(actor => this._tradeSnapshotRoot(actor));
+
+    try {
+      const result = await operation();
+      if (result === false || result?.success === false) {
+        throw new Error(result?.error || 'Trade settlement operation returned failure.');
+      }
+      return { success: true, result, snapshots: snapshots.length };
+    } catch (err) {
+      let rollbackOk = false;
+      let rollbackError = null;
+      try {
+        await this._restoreTradeSnapshots(snapshots, { source: 'HolonetMessengerService.atomicTradeRollback' });
+        rollbackOk = true;
+      } catch (restoreErr) {
+        rollbackError = restoreErr;
+      }
+
+      const baseError = err?.message || 'Unknown trade settlement failure.';
+      const message = rollbackOk
+        ? `${failurePrefix}: ${baseError}. All trade state was restored.`
+        : `${failurePrefix}: ${baseError}. Rollback failed: ${rollbackError?.message || 'unknown rollback failure'}.`;
+      if (thread && transfer) {
+        await this._publishSystemMessage(thread, message, { eventType: failureEventType, transferId: transfer.id, rollbackOk, rollbackError: rollbackError?.message ?? null });
+      }
+      return { success: false, error: message, rollbackOk, rollbackError: rollbackError?.message ?? null };
+    }
+  }
 
   static _validateOwnedItemTransfer(transfer = {}) {
     const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
@@ -2733,38 +2924,47 @@ export class HolonetMessengerService {
 
     if (action !== 'accept-asset-transfer') return false;
     if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
-    const ok = await this._executeAssetTransfer({ thread, transfer, requesterId });
+    const atomic = await this._executeAtomicTradeSettlement({
+      thread,
+      transfer,
+      actors: this._collectTradeSettlementActors(transfer),
+      preflight: () => this._preflightTradeSettlement(transfer),
+      operation: () => this._executeAssetTransfer({ thread, transfer, requesterId }),
+      failureEventType: 'asset-trade-atomic-failed',
+      failurePrefix: 'Asset trade failed'
+    });
+    const ok = Boolean(atomic?.success && atomic.result !== false);
     transfer.status = ok ? 'complete' : 'failed';
     transfer.resolvedAt = nowIso();
     transfer.resolvedBy = currentId;
+    if (!ok) transfer.failureReason = atomic?.error || 'Atomic asset trade settlement failed.';
     await HolonetStorage.saveRecord(message);
     return ok;
   }
 
   static async _completeAssetCounterOffer({ thread, message, transfer, requesterId = null, resolvedBy = null } = {}) {
-    const originalValidation = this._validateOwnedAssetTransfer(transfer);
-    if (!originalValidation.ok) {
-      await this._publishSystemMessage(thread, `Asset counter-offer failed: ${originalValidation.error}`, { eventType: 'asset-counter-failed', transferId: transfer.id });
-      transfer.status = 'failed';
-      transfer.resolvedAt = nowIso();
-      transfer.resolvedBy = resolvedBy;
-      await HolonetStorage.saveRecord(message);
-      return false;
-    }
-    const counter = await this._settleCounterOffer({ thread, transfer, requesterId });
-    if (!counter?.success) {
-      await this._publishSystemMessage(thread, `Asset counter-offer failed: ${counter?.error || 'Counter settlement failed.'}`, { eventType: 'asset-counter-failed', transferId: transfer.id });
-      transfer.status = 'failed';
-      transfer.resolvedAt = nowIso();
-      transfer.resolvedBy = resolvedBy;
-      await HolonetStorage.saveRecord(message);
-      return false;
-    }
-    const ok = await this._executeAssetTransfer({ thread, transfer: { ...transfer, trade: { ...(transfer.trade ?? {}), requestedCredits: 0 } }, requesterId });
+    const atomic = await this._executeAtomicTradeSettlement({
+      thread,
+      transfer,
+      actors: this._collectTradeSettlementActors(transfer, { includeCounter: true }),
+      preflight: () => this._preflightTradeSettlement(transfer, { includeCounter: true, suppressRequestedCredits: true }),
+      operation: async () => {
+        const counter = await this._settleCounterOffer({ thread, transfer, requesterId });
+        if (!counter?.success) throw new Error(counter?.error || 'Counter settlement failed.');
+        const ok = await this._executeAssetTransfer({ thread, transfer: { ...transfer, trade: { ...(transfer.trade ?? {}), requestedCredits: 0 } }, requesterId });
+        if (!ok) throw new Error('Original asset transfer failed after counter settlement.');
+        return { success: true, counter };
+      },
+      failureEventType: 'asset-counter-atomic-failed',
+      failurePrefix: 'Asset counter-offer failed'
+    });
+
+    const ok = Boolean(atomic?.success);
     transfer.status = ok ? 'complete' : 'failed';
     transfer.resolvedAt = nowIso();
     transfer.resolvedBy = resolvedBy;
     transfer.counterSettledAt = ok ? nowIso() : null;
+    if (!ok) transfer.failureReason = atomic?.error || 'Atomic asset counter-offer settlement failed.';
     await HolonetStorage.saveRecord(message);
     return ok;
   }
