@@ -34,8 +34,8 @@ const DEFAULT_GAMES = [
     title: 'Sabacc',
     subtitle: 'High-stakes shifting cards, hand pot, and sabacc pot.',
     icon: '23',
-    status: 'Playable Rules MVP',
-    description: 'A custom 76-card Sabacc rules MVP with dealer seat, hand pot, sabacc pot, shifting, drawing, calling, bomb-outs, pure sabacc, and Idiot's Array detection.',
+    status: 'Campaign Table MVP',
+    description: "A custom 76-card Sabacc table with dealer seat, hand pot, sabacc pot, PvP invites, credit buy-ins, betting rounds, shifting, drawing, calling, bomb-outs, pure sabacc, and Idiot's Array detection.",
     minPlayers: 2,
     maxPlayers: 6,
     supportsAI: true,
@@ -47,8 +47,8 @@ const DEFAULT_GAMES = [
     supportsItemWagers: true,
     supportsAssetWagers: true,
     defaultRulesMode: 'wagered',
-    implementationPhase: 'Phase 7',
-    nextMilestone: 'Credit ante escrow, betting raises, item side pots, and dealer/cheating hooks',
+    implementationPhase: 'Phase 9',
+    nextMilestone: 'Variable bet sizing, item/asset side pots, dealer variants, and expanded table receipts',
     tags: ['cards', 'high-stakes', 'dealer']
   },
   {

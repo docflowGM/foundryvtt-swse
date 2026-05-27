@@ -351,7 +351,8 @@ export class HomeSurfaceService {
       timestamp: formatTimestamp(record.publishedAt || record.createdAt),
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
       priority: record.priority || record.metadata?.priority || 'normal',
-      isUrgent: record.metadata?.urgent === true || record.priority === 'critical',
+      isBreakingNews: record.metadata?.breakingNews === true,
+      isUrgent: record.metadata?.breakingNews === true || record.metadata?.urgent === true || record.priority === 'critical',
       isUnread: recipientId ? Boolean(record.isUnreadBy?.(recipientId)) : false
     };
   }

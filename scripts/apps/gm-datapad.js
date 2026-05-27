@@ -29,8 +29,13 @@ import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/s
 import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
+import { HolonetMessengerService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js";
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
+import { HolonewsGenerator } from "/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js";
+import { HolonewsAutoPublisher } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js";
+import { BulletinContactRegistry } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js";
+import { HolonewsAtomPolicy } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-atom-policy.js";
 import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
@@ -79,10 +84,16 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.currentPage = 'home';
     this.currentTab = 'options';
     this.currentBulletinSection = 'events';
+    this.selectedJobThreadId = null;
     this.pageData = {};
     this.NS = 'foundryvtt-swse';
     this.bulletinEditor = { section: 'events', mode: 'create', recordId: null };
     this.selectedPlayerStateActorId = null;
+    this.selectedBulletinPreviewUserId = null;
+    this.holonewsSeedOffset = 0;
+    this.holonewsHideUsedSeeds = true;
+    this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
+    this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
 
     // Store page state
     this.transactions = [];
@@ -138,6 +149,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   async _getHomeBadgeCounts() {
     const bulletinRecords = await HolonetStorage.getAllRecords();
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
+    const jobCounts = await this._getJobBadgeCounts();
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
@@ -162,9 +174,36 @@ export class GMDatapad extends BaseSWSEAppV2 {
       storeApprovals,
       pendingSales,
       store: pendingSales + storeApprovals,
+      jobs: jobCounts.actionable,
+      jobReview: jobCounts.review,
+      jobPayout: jobCounts.payout,
+      jobActive: jobCounts.active,
       healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
+  }
+
+  async _getJobBadgeCounts() {
+    try {
+      const threads = await HolonetStorage.getAllThreads();
+      const jobs = threads.filter((thread) => thread?.metadata?.threadType === 'job');
+      let review = 0;
+      let payout = 0;
+      let active = 0;
+      for (const thread of jobs) {
+        const job = thread.metadata?.job ?? {};
+        const status = String(job.status || 'posted');
+        if (status === 'complete') payout += 1;
+        if (['accepted', 'inProgress', 'review'].includes(status)) active += 1;
+        const objectives = Array.isArray(job.objectives) ? job.objectives : [];
+        review += objectives.filter((objective) => ['claimed', 'submitted', 'pendingReview'].includes(String(objective?.status || ''))).length;
+        if (status === 'review') review += 1;
+      }
+      return { total: jobs.length, review, payout, active, actionable: review + payout };
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load job board badge counts:', err);
+      return { total: 0, review: 0, payout: 0, active: 0, actionable: 0 };
+    }
   }
 
   _getAudienceOptions() {
@@ -232,9 +271,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const featuredProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED) ?? null;
     const homeFeedProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.HOME_FEED) ?? null;
     const notificationProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE) ?? null;
-    const isUrgent = record.metadata?.urgent === true || record.priority === 'critical' || Boolean(notificationProjection);
+    const isHolonews = record.metadata?.holonews === true || record.metadata?.category === 'holonews';
+    const isBreakingNews = record.metadata?.breakingNews === true;
+    const isUrgent = isBreakingNews || record.metadata?.urgent === true || record.priority === 'critical' || Boolean(notificationProjection);
     const isPinned = Boolean(featuredProjection?.isPinned || record.metadata?.pinAsLastSession);
     const homeSlot = record.metadata?.homeSlot || (isPinned ? 'last-session' : 'feed');
+    const deliverySummary = this._buildBulletinDeliverySummary(record);
 
     return {
       id: record.id,
@@ -248,6 +290,18 @@ export class GMDatapad extends BaseSWSEAppV2 {
       stateLabel: (record.state || 'draft').toUpperCase(),
       sourceFamily: record.sourceFamily,
       category: record.metadata?.category || 'general',
+      isHolonews,
+      isBreakingNews,
+      newsSource: record.metadata?.newsSource || record.sender?.systemLabel || record.sender?.actorName || '',
+      dateline: record.metadata?.dateline || '',
+      sector: record.metadata?.sector || '',
+      newsCategory: record.metadata?.newsCategory || '',
+      newsDeck: record.metadata?.newsDeck || '',
+      holonewsSeedId: record.metadata?.holonewsSeedId || '',
+      isAmbientHolonews: record.metadata?.ambientHolonews === true,
+      isAutomatedHolonews: record.metadata?.automatedHolonews === true,
+      holonewsTypeLabel: record.metadata?.automatedHolonews === true ? 'Auto Wire' : (record.metadata?.ambientHolonews === true ? 'Ambient Wire' : 'GM Authored'),
+      archivedAt: record.archivedAt ? new Date(record.archivedAt).toLocaleString() : null,
       priority: record.priority || record.metadata?.priority || 'normal',
       audienceLabel: this._getAudienceLabel(record.audience),
       audienceType: record.audience?.type || AUDIENCE_TYPE.ALL_PLAYERS,
@@ -261,8 +315,40 @@ export class GMDatapad extends BaseSWSEAppV2 {
       isHomeFeed: Boolean(homeFeedProjection),
       homeSlot,
       homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
+      contactId: record.metadata?.contactId || '',
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
-      recordTone: isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft'))
+      deliverySummary,
+      recipientCount: deliverySummary.recipientCount,
+      readCount: deliverySummary.readCount,
+      unreadCount: deliverySummary.unreadCount,
+      readRecipientIds: deliverySummary.readRecipientIds,
+      unreadRecipientIds: deliverySummary.unreadRecipientIds,
+      readStateLabel: `${deliverySummary.readCount}/${deliverySummary.recipientCount} read`,
+      recordTone: isBreakingNews ? 'breaking' : (isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft')))
+    };
+  }
+
+  _buildBulletinDeliverySummary(record) {
+    const recipients = Array.isArray(record?.recipients) ? record.recipients : [];
+    const deliveryStates = record?.deliveryStates instanceof Map
+      ? record.deliveryStates
+      : new Map(Object.entries(record?.deliveryStates ?? {}));
+    const readRecipientIds = [];
+    const unreadRecipientIds = [];
+    for (const recipient of recipients) {
+      const recipientId = recipient?.id;
+      if (!recipientId) continue;
+      const state = deliveryStates.get(recipientId) ?? {};
+      if (state.readAt) readRecipientIds.push(recipientId);
+      else unreadRecipientIds.push(recipientId);
+    }
+    return {
+      recipientCount: recipients.length,
+      deliveredCount: recipients.filter((recipient) => deliveryStates.has(recipient?.id)).length,
+      readCount: readRecipientIds.length,
+      unreadCount: unreadRecipientIds.length,
+      readRecipientIds,
+      unreadRecipientIds
     };
   }
 
@@ -650,6 +736,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   _getAppCards(counts = {}) {
     return [
       { id: 'bulletin', code: 'COM', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0, status: 'Broadcast', statusTone: (counts.bulletin ?? 0) ? 'warn' : '', badgeType: 'info', featured: true },
+      { id: 'jobs', code: 'JOB', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, review queue, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
       { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
       { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
@@ -707,6 +794,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     // Wire page-specific events based on current page
     if (this.currentPage === 'bulletin') {
       await this._wireBulletinEvents(root);
+    } else if (this.currentPage === 'jobs') {
+      await this._wireJobBoardEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
@@ -729,6 +818,73 @@ export class GMDatapad extends BaseSWSEAppV2 {
       logger: SWSELogger
     });
     this._settingsSurfaceController.attach(root);
+  }
+
+  async _wireJobBoardEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-jobs');
+    if (!pageElement) return;
+
+    pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedJobThreadId = event.currentTarget.dataset.jobSelect || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-job-status-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        const status = event.currentTarget.dataset.status;
+        if (!threadId || !status) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-job-objective-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        const objectiveId = event.currentTarget.dataset.objectiveId;
+        const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
+        if (!threadId || !objectiveId || !objectiveStatus) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-payout-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const amount = Number(data.get('amount') || 0);
+        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
+        if (!threadId || !recipientId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout', recipientId, amount, partyFundCutPercent });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-award-items-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
+        if (!threadId || !recipientId || !itemUuids.length) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, itemUuids });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
   }
 
   /**
@@ -781,7 +937,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
         if (!record) return;
         this._applyBulletinProjectionOptions(record, {
-          urgent: record.metadata?.urgent === true,
+          urgent: record.metadata?.urgent === true || record.metadata?.breakingNews === true,
+          breakingNews: record.metadata?.breakingNews === true,
           pinAsLastSession: record.metadata?.pinAsLastSession === true,
           homeSlot: record.metadata?.homeSlot || 'feed'
         });
@@ -795,7 +952,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
         if (!record) return;
         this._applyBulletinProjectionOptions(record, {
-          urgent: record.metadata?.urgent === true,
+          urgent: record.metadata?.urgent === true || record.metadata?.breakingNews === true,
+          breakingNews: record.metadata?.breakingNews === true,
           pinAsLastSession: true,
           homeSlot: 'last-session'
         });
@@ -810,7 +968,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
         if (!record) return;
         this._applyBulletinProjectionOptions(record, {
-          urgent: record.metadata?.urgent === true,
+          urgent: record.metadata?.urgent === true || record.metadata?.breakingNews === true,
+          breakingNews: record.metadata?.breakingNews === true,
           pinAsLastSession: false,
           homeSlot: 'feed'
         });
@@ -827,7 +986,180 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    const holonewsWireFilterForm = pageElement.querySelector('[data-holonews-wire-filter-form]');
+    if (holonewsWireFilterForm) {
+      holonewsWireFilterForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        this._applyHolonewsWireFilters(new FormData(holonewsWireFilterForm));
+        await this.render(false);
+      });
+      holonewsWireFilterForm.querySelectorAll('select, input[type="checkbox"]').forEach((field) => {
+        field.addEventListener('change', async () => {
+          this._applyHolonewsWireFilters(new FormData(holonewsWireFilterForm));
+          await this.render(false);
+        });
+      });
+    }
+
+    const holonewsArchiveFilterForm = pageElement.querySelector('[data-holonews-archive-filter-form]');
+    if (holonewsArchiveFilterForm) {
+      holonewsArchiveFilterForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        this._applyHolonewsArchiveFilters(new FormData(holonewsArchiveFilterForm));
+        await this.render(false);
+      });
+      holonewsArchiveFilterForm.querySelectorAll('select').forEach((field) => {
+        field.addEventListener('change', async () => {
+          this._applyHolonewsArchiveFilters(new FormData(holonewsArchiveFilterForm));
+          await this.render(false);
+        });
+      });
+    }
+
+    pageElement.querySelectorAll('[data-action="holonews-reset-archive-filters"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-duplicate-draft"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._duplicateHolonewsRecord(event.currentTarget.dataset.recordId);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-toggle-breaking"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._setHolonewsBreaking(event.currentTarget.dataset.recordId, event.currentTarget.dataset.enabled === 'true');
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-restore-draft"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._restoreHolonewsAsDraft(event.currentTarget.dataset.recordId);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-reset-wire-filters"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.holonewsSeedOffset = 0;
+        this.holonewsHideUsedSeeds = true;
+        this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-wire-next"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.holonewsSeedOffset = (Number(this.holonewsSeedOffset) || 0) + 12;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-wire-prev"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.holonewsSeedOffset = Math.max(0, (Number(this.holonewsSeedOffset) || 0) - 12);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-shuffle-wire"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const filteredCount = Number(button.dataset.filteredCount || 0);
+        const ceiling = filteredCount > 0 ? filteredCount : HolonewsGenerator.count(this.holonewsWireFilters);
+        this.holonewsSeedOffset = ceiling > 12 ? Math.floor(Math.random() * Math.max(1, ceiling - 12)) : 0;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-use-draft"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._createHolonewsFromSeed(event.currentTarget.dataset.seedId, { publish: false });
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-publish-ambient"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._createHolonewsFromSeed(event.currentTarget.dataset.seedId, { publish: true });
+      });
+    });
+
+    const holonewsAutomationForm = pageElement.querySelector('[data-holonews-automation-form]');
+    if (holonewsAutomationForm) {
+      holonewsAutomationForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveHolonewsAutomationPolicy(new FormData(holonewsAutomationForm));
+      });
+    }
+
+    pageElement.querySelectorAll('[data-action="holonews-auto-publish-now"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const count = Number(event.currentTarget.dataset.count || 1);
+        await this._publishHolonewsAmbientNow(count);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-auto-reset-schedule"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._resetHolonewsAutomationSchedule();
+      });
+    });
+
+    pageElement.querySelectorAll('[data-select-bulletin-preview-user]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedBulletinPreviewUserId = event.currentTarget.dataset.selectBulletinPreviewUser || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-save-contact"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget.closest('form') || pageElement.querySelector('[data-bulletin-contact-form]');
+        if (!form) return;
+        await this._saveBulletinContact(new FormData(form));
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-delete-contact"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._deleteBulletinContact(event.currentTarget.dataset.contactId);
+      });
+    });
+
+    const atomPolicyForm = pageElement.querySelector('[data-holonews-atom-policy-form]');
+    if (atomPolicyForm) {
+      atomPolicyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveHolonewsAtomPolicy(new FormData(atomPolicyForm));
+      });
+    }
+
+    pageElement.querySelectorAll('[data-action="holonews-reset-atom-policy"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._resetHolonewsAtomPolicy();
+      });
+    });
+
+    this._wireBulletinContactSelectors(pageElement);
     this._wireBulletinImagePickers(pageElement);
+    this._wireBulletinMediaDrops(pageElement);
     this._wireBulletinLivePreview(pageElement);
 
     const eventsForm = pageElement.querySelector('[data-bulletin-form="events"]');
@@ -835,6 +1167,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
       eventsForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         await this._saveBulletinRecord(new FormData(eventsForm), 'events');
+      });
+    }
+
+    const holonewsForm = pageElement.querySelector('[data-bulletin-form="holonews"]');
+    if (holonewsForm) {
+      holonewsForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveBulletinRecord(new FormData(holonewsForm), 'holonews');
       });
     }
 
@@ -910,8 +1250,65 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
   }
 
+  _wireBulletinContactSelectors(pageElement) {
+    pageElement.querySelectorAll('[data-bulletin-contact-select]').forEach((select) => {
+      select.addEventListener('change', () => {
+        const option = select.selectedOptions?.[0];
+        const form = select.closest('form');
+        if (!form || !option || !option.value) return;
+        const assignments = {
+          authorName: option.dataset.label || option.dataset.name || '',
+          imageUrl: option.dataset.imageUrl || '',
+          dateline: option.dataset.dateline || '',
+          sector: option.dataset.sector || '',
+          newsCategory: option.dataset.defaultCategory || '',
+          category: option.dataset.defaultCategory || ''
+        };
+        for (const [name, value] of Object.entries(assignments)) {
+          if (!value) continue;
+          const field = form.querySelector(`[name="${name}"]`);
+          if (field) {
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      });
+    });
+  }
+
+  _wireBulletinMediaDrops(pageElement) {
+    pageElement.querySelectorAll('[data-bulletin-image-dropzone]').forEach((dropzone) => {
+      const input = dropzone.querySelector('[data-bulletin-image-input]') || dropzone.closest('form')?.querySelector('[data-bulletin-image-input]');
+      if (!input) return;
+      const setPath = (path) => {
+        input.value = path || '';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropzone.classList.add('is-drag-over');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-drag-over'));
+      dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('is-drag-over');
+        const text = event.dataTransfer?.getData('text/plain') || event.dataTransfer?.getData('text/uri-list') || '';
+        const file = event.dataTransfer?.files?.[0];
+        if (text) setPath(text.trim());
+        else if (file?.path) setPath(file.path);
+        else if (file?.name) ui?.notifications?.warn?.('Drop a Foundry asset path or use Browse; browser file drops do not expose a world-safe path.');
+      });
+      dropzone.addEventListener('paste', (event) => {
+        const text = event.clipboardData?.getData('text/plain') || '';
+        if (text) setPath(text.trim());
+      });
+    });
+  }
+
   _wireBulletinLivePreview(pageElement) {
-    const activeForm = pageElement.querySelector('[data-bulletin-form="events"], [data-bulletin-form="messages"]');
+    const activeForm = pageElement.querySelector('[data-bulletin-form="events"], [data-bulletin-form="holonews"], [data-bulletin-form="messages"]');
     const preview = pageElement.querySelector('[data-bulletin-live-preview]');
     if (!activeForm || !preview) return;
 
@@ -949,16 +1346,21 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const authorName = String(formData.get('authorName') || '').trim() || 'GM Bulletin';
     const imageUrl = String(formData.get('imageUrl') || '').trim();
     const audience = this._getAudienceLabel(this._normalizeAudienceFromForm(formData));
-    const urgent = formData.get('urgent') === 'on' || priority === 'critical';
+    const breakingNews = formData.get('breakingNews') === 'on';
+    const urgent = breakingNews || formData.get('urgent') === 'on' || priority === 'critical';
 
     setText('[data-preview-feed-category]', category);
-    setText('[data-preview-feed-priority]', priority);
+    setText('[data-preview-feed-priority]', breakingNews ? 'BREAKING' : priority);
     setText('[data-preview-feed-title]', title);
     setText('[data-preview-feed-sender]', `${authorName} · ${audience}`);
     setHtml('[data-preview-feed-body]', String(formData.get('body') || '').trim() || 'Bulletin body preview will appear here.');
 
     const urgentNode = preview.querySelector('[data-preview-feed-urgent]');
-    if (urgentNode) urgentNode.classList.toggle('is-hidden', !urgent);
+    if (urgentNode) {
+      urgentNode.textContent = breakingNews ? 'BREAKING NEWS' : 'Alert';
+      urgentNode.classList.toggle('is-hidden', !urgent);
+      urgentNode.classList.toggle('breaking', breakingNews);
+    }
 
     const image = preview.querySelector('[data-preview-feed-image]');
     if (image) {
@@ -986,17 +1388,76 @@ export class GMDatapad extends BaseSWSEAppV2 {
     setText('[data-preview-state-situation]', 'Awaiting new instructions.');
   }
 
+  async _saveBulletinContact(formData) {
+    if (!game.user?.isGM) return;
+    const name = String(formData.get('name') || '').trim();
+    if (!name) {
+      ui?.notifications?.warn?.('Contact/source name is required.');
+      return;
+    }
+    await BulletinContactRegistry.saveContact({
+      id: String(formData.get('id') || '').trim() || undefined,
+      kind: String(formData.get('kind') || 'source').trim(),
+      name,
+      label: String(formData.get('label') || name).trim(),
+      imageUrl: String(formData.get('imageUrl') || '').trim(),
+      dateline: String(formData.get('dateline') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      defaultCategory: String(formData.get('defaultCategory') || 'general').trim(),
+      notes: String(formData.get('notes') || '').trim()
+    });
+    ui?.notifications?.info?.('Bulletin source/contact saved.');
+    await this.render(false);
+  }
+
+  async _deleteBulletinContact(contactId) {
+    if (!game.user?.isGM || !contactId) return;
+    const ok = await BulletinContactRegistry.deleteContact(contactId);
+    if (!ok) ui?.notifications?.warn?.('That contact could not be deleted. Built-in contacts are protected.');
+    else ui?.notifications?.info?.('Bulletin source/contact deleted.');
+    await this.render(false);
+  }
+
+  async _saveHolonewsAtomPolicy(formData) {
+    if (!game.user?.isGM) return;
+    const splitLines = (value) => String(value || '')
+      .split(/[\n,]+/)
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+    await HolonewsAtomPolicy.savePolicy({
+      disabledCategories: formData.getAll('disabledCategories').filter(Boolean),
+      disabledSectors: formData.getAll('disabledSectors').filter(Boolean),
+      disabledPriorities: formData.getAll('disabledPriorities').filter(Boolean),
+      blockedAtomIds: splitLines(formData.get('blockedAtomIds')),
+      blockedKeywords: splitLines(formData.get('blockedKeywords'))
+    });
+    this.holonewsSeedOffset = 0;
+    ui?.notifications?.info?.('HoloNews atom controls saved.');
+    await this.render(false);
+  }
+
+  async _resetHolonewsAtomPolicy() {
+    if (!game.user?.isGM) return;
+    await HolonewsAtomPolicy.resetPolicy();
+    this.holonewsSeedOffset = 0;
+    ui?.notifications?.info?.('HoloNews atom controls reset.');
+    await this.render(false);
+  }
+
   async _saveBulletinRecord(formData, section) {
     const recordId = formData.get('recordId') || null;
     const shouldPublish = formData.get('submitMode') === 'publish';
     const audience = this._normalizeAudienceFromForm(formData);
     let record = recordId ? await HolonetStorage.getRecord(recordId) : null;
-    const category = formData.get('category') || (section === 'events' ? 'news' : 'message');
-    const priority = formData.get('priority') || 'normal';
-    const urgent = formData.get('urgent') === 'on' || priority === 'critical';
+    const isHolonews = section === 'holonews';
+    const category = isHolonews ? 'holonews' : (formData.get('category') || (section === 'events' ? 'news' : 'message'));
+    const breakingNews = isHolonews && formData.get('breakingNews') === 'on';
+    const priority = breakingNews ? 'critical' : (formData.get('priority') || 'normal');
+    const urgent = breakingNews || formData.get('urgent') === 'on' || priority === 'critical';
     const pinAsLastSession = formData.get('pinAsLastSession') === 'on';
     const homeSlot = pinAsLastSession ? 'last-session' : (formData.get('homeSlot') || 'feed');
     const imageUrl = String(formData.get('imageUrl') || '').trim();
+    const contactId = String(formData.get('contactId') || '').trim();
 
     const baseData = {
       id: recordId || undefined,
@@ -1017,28 +1478,36 @@ export class GMDatapad extends BaseSWSEAppV2 {
         pinAsLastSession,
         homeSlot,
         imageUrl,
+        contactId,
         bulletinHomeRole: homeSlot,
-        bulletinConsoleVersion: 2
+        bulletinConsoleVersion: isHolonews ? 3 : 2,
+        holonews: isHolonews,
+        breakingNews,
+        newsSource: isHolonews ? (formData.get('authorName') || 'Galaxy News Net') : undefined,
+        dateline: isHolonews ? (formData.get('dateline') || '') : undefined,
+        sector: isHolonews ? (formData.get('sector') || '') : undefined,
+        newsCategory: isHolonews ? (formData.get('newsCategory') || 'general') : undefined,
+        newsDeck: isHolonews ? (formData.get('deck') || '') : undefined
       }
     };
 
     if (!record) {
-      record = section === 'events'
-        ? BulletinSource.createBulletinEvent(baseData)
-        : BulletinSource.createBulletinMessage(baseData);
+      record = section === 'messages'
+        ? BulletinSource.createBulletinMessage(baseData)
+        : BulletinSource.createBulletinEvent(baseData);
     } else {
       record.title = baseData.title;
       record.body = baseData.body;
       record.audience = baseData.audience;
       record.priority = baseData.priority;
       record.metadata = { ...record.metadata, ...baseData.metadata };
-      record.sender = section === 'events'
-        ? BulletinSource.createBulletinEvent(baseData).sender
-        : BulletinSource.createBulletinMessage(baseData).sender;
+      record.sender = section === 'messages'
+        ? BulletinSource.createBulletinMessage(baseData).sender
+        : BulletinSource.createBulletinEvent(baseData).sender;
       record.updatedAt = new Date().toISOString();
     }
 
-    this._applyBulletinProjectionOptions(record, { urgent, pinAsLastSession, homeSlot, imageUrl });
+    this._applyBulletinProjectionOptions(record, { urgent, pinAsLastSession, homeSlot, imageUrl, breakingNews });
 
     if (shouldPublish) {
       await HolonetEngine.publish(record);
@@ -1050,10 +1519,264 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._unpinOtherBulletins(record.id);
     }
 
+    if (contactId) {
+      await BulletinContactRegistry.markUsed(contactId);
+    }
+
     this.bulletinEditor = { section, mode: 'create', recordId: null };
     await this.render(false);
   }
 
+
+  _applyHolonewsWireFilters(formData) {
+    this.holonewsSeedOffset = 0;
+    this.holonewsHideUsedSeeds = formData.get('hideUsedSeeds') === 'on';
+    this.holonewsWireFilters = {
+      query: String(formData.get('query') || '').trim(),
+      category: String(formData.get('category') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      priority: String(formData.get('priority') || '').trim()
+    };
+  }
+
+  _applyHolonewsArchiveFilters(formData) {
+    this.holonewsArchiveFilters = {
+      query: String(formData.get('query') || '').trim(),
+      state: String(formData.get('state') || '').trim(),
+      type: String(formData.get('type') || '').trim(),
+      priority: String(formData.get('priority') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      category: String(formData.get('category') || '').trim()
+    };
+  }
+
+  async _createHolonewsFromSeed(seedId, { publish = false } = {}) {
+    const seed = HolonewsGenerator.getById(seedId);
+    if (!seed) {
+      ui?.notifications?.warn?.('HoloNews seed story was not found.');
+      return;
+    }
+
+    const existingRecords = await HolonetStorage.getAllRecords();
+    const alreadyUsed = existingRecords.some((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.metadata?.holonewsSeedId === seedId);
+    if (alreadyUsed) {
+      ui?.notifications?.warn?.('This ambient HoloNews wire story has already been used. Creating another copy anyway.');
+    }
+
+    const data = HolonewsGenerator.toBulletinData(seed, { breakingNews: false });
+    const audience = HolonetAudience.allPlayers();
+    const record = BulletinSource.createBulletinEvent({
+      title: data.title,
+      body: data.body,
+      category: 'holonews',
+      priority: data.priority || 'normal',
+      audience,
+      authorName: data.authorName || seed.source || 'Galaxy News Net',
+      state: publish ? DELIVERY_STATE.PUBLISHED : DELIVERY_STATE.DRAFT,
+      metadata: {
+        ...data.metadata,
+        category: 'holonews',
+        priority: data.priority || 'normal',
+        urgent: false,
+        pinAsLastSession: false,
+        homeSlot: 'feed',
+        imageUrl: '',
+        bulletinHomeRole: 'feed',
+        bulletinConsoleVersion: 3
+      }
+    });
+
+    this._applyBulletinProjectionOptions(record, {
+      urgent: false,
+      breakingNews: false,
+      pinAsLastSession: false,
+      homeSlot: 'feed',
+      imageUrl: ''
+    });
+
+    if (publish) {
+      await HolonetEngine.publish(record);
+      ui?.notifications?.info?.('Ambient HoloNews story published.');
+      this.bulletinEditor = { section: 'holonews', mode: 'create', recordId: null };
+    } else {
+      await HolonetStorage.saveRecord(record);
+      this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
+      ui?.notifications?.info?.('Ambient HoloNews story loaded as a draft.');
+    }
+
+    this.currentBulletinSection = 'holonews';
+    await this.render(false);
+  }
+
+
+  async _duplicateHolonewsRecord(recordId) {
+    const source = await HolonetStorage.getRecord(recordId);
+    if (!source) {
+      ui?.notifications?.warn?.('HoloNews record was not found.');
+      return;
+    }
+    if (!(source.metadata?.holonews === true || source.metadata?.category === 'holonews')) {
+      ui?.notifications?.warn?.('Only HoloNews records can be duplicated from the HoloNews Desk.');
+      return;
+    }
+
+    const metadata = foundry.utils?.deepClone?.(source.metadata)
+      ?? foundry.utils?.duplicate?.(source.metadata)
+      ?? { ...(source.metadata ?? {}) };
+    metadata.duplicatedFromRecordId = source.id;
+    metadata.duplicatedAt = new Date().toISOString();
+    metadata.urgent = false;
+    metadata.breakingNews = false;
+    metadata.pinAsLastSession = false;
+    metadata.homeSlot = 'feed';
+    metadata.automatedHolonews = false;
+    metadata.holonewsAutoPublishReason = undefined;
+    metadata.holonewsAutoPublishedAt = undefined;
+    metadata.bulletinConsoleVersion = 5;
+
+    const record = BulletinSource.createBulletinEvent({
+      title: `Copy of ${source.title || 'HoloNews Story'}`,
+      body: source.body || '',
+      category: 'holonews',
+      priority: source.metadata?.previousPriority || (source.priority === 'critical' ? 'normal' : (source.priority || 'normal')),
+      audience: source.audience || HolonetAudience.allPlayers(),
+      authorName: source.metadata?.newsSource || source.sender?.systemLabel || source.sender?.actorName || 'Galaxy News Net',
+      authorAvatar: source.metadata?.imageUrl || source.sender?.avatar || null,
+      state: DELIVERY_STATE.DRAFT,
+      metadata
+    });
+
+    this._applyBulletinProjectionOptions(record, {
+      urgent: false,
+      breakingNews: false,
+      pinAsLastSession: false,
+      homeSlot: 'feed',
+      imageUrl: metadata.imageUrl || ''
+    });
+    await HolonetStorage.saveRecord(record);
+    this.currentBulletinSection = 'holonews';
+    this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
+    ui?.notifications?.info?.('HoloNews story duplicated as a draft.');
+    await this.render(false);
+  }
+
+  async _setHolonewsBreaking(recordId, enabled) {
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record) {
+      ui?.notifications?.warn?.('HoloNews record was not found.');
+      return;
+    }
+    if (!(record.metadata?.holonews === true || record.metadata?.category === 'holonews')) {
+      ui?.notifications?.warn?.('Only HoloNews records can be marked as Breaking News.');
+      return;
+    }
+
+    const metadata = { ...(record.metadata ?? {}) };
+    if (enabled) {
+      metadata.previousPriority = record.priority === 'critical' ? (metadata.previousPriority || 'normal') : (record.priority || metadata.priority || 'normal');
+      record.priority = 'critical';
+      metadata.priority = 'critical';
+      metadata.urgent = true;
+      metadata.breakingNews = true;
+    } else {
+      const restoredPriority = metadata.previousPriority || 'normal';
+      record.priority = restoredPriority;
+      metadata.priority = restoredPriority;
+      metadata.urgent = false;
+      metadata.breakingNews = false;
+      delete metadata.previousPriority;
+    }
+    metadata.bulletinConsoleVersion = 4;
+    record.metadata = metadata;
+    record.updatedAt = new Date().toISOString();
+
+    this._applyBulletinProjectionOptions(record, {
+      urgent: enabled,
+      breakingNews: enabled,
+      pinAsLastSession: record.metadata?.pinAsLastSession === true,
+      homeSlot: record.metadata?.homeSlot || 'feed',
+      imageUrl: record.metadata?.imageUrl || ''
+    });
+
+    await HolonetStorage.saveRecord(record);
+    ui?.notifications?.info?.(enabled ? 'HoloNews story marked Breaking News.' : 'Breaking News alert removed.');
+    await this.render(false);
+  }
+
+  async _restoreHolonewsAsDraft(recordId) {
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record) {
+      ui?.notifications?.warn?.('HoloNews record was not found.');
+      return;
+    }
+    if (!(record.metadata?.holonews === true || record.metadata?.category === 'holonews')) {
+      ui?.notifications?.warn?.('Only HoloNews records can be restored from the HoloNews Desk.');
+      return;
+    }
+
+    record.state = DELIVERY_STATE.DRAFT;
+    record.archivedAt = null;
+    record.updatedAt = new Date().toISOString();
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      restoredFromArchiveAt: new Date().toISOString(),
+      bulletinConsoleVersion: 4
+    };
+    await HolonetStorage.saveRecord(record);
+    this.currentBulletinSection = 'holonews';
+    this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
+    ui?.notifications?.info?.('Archived HoloNews story restored as a draft.');
+    await this.render(false);
+  }
+
+  async _saveHolonewsAutomationPolicy(formData) {
+    if (!game.user?.isGM) return;
+    const patch = {
+      enabled: formData.get('enabled') === 'on',
+      cadenceMinutes: Number(formData.get('cadenceMinutes') || 240),
+      maxPerRun: Number(formData.get('maxPerRun') || 1),
+      hideUsedSeeds: formData.get('hideUsedSeeds') === 'on',
+      allowRepeatsWhenExhausted: formData.get('allowRepeatsWhenExhausted') === 'on',
+      query: String(formData.get('query') || '').trim(),
+      category: String(formData.get('category') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      priority: String(formData.get('priority') || '').trim(),
+      sourceName: String(formData.get('sourceName') || 'Galaxy News Net').trim() || 'Galaxy News Net'
+    };
+
+    const resetSchedule = formData.get('resetSchedule') === 'on';
+    const policy = await HolonewsAutoPublisher.savePolicy(patch, { resetSchedule });
+    ui?.notifications?.info?.(policy.enabled
+      ? `Ambient HoloNews automation saved. Next publish: ${policy.nextDueAt || 'not scheduled'}.`
+      : 'Ambient HoloNews automation saved in manual-only mode.');
+    await this.render(false);
+  }
+
+  async _publishHolonewsAmbientNow(count = 1) {
+    if (!game.user?.isGM) return;
+    const result = await HolonewsAutoPublisher.publishNow({ count });
+    if (result?.published) {
+      ui?.notifications?.info?.(`Published ${result.published} ambient HoloNews ${result.published === 1 ? 'story' : 'stories'}.`);
+    } else if (result?.reason === 'no-eligible-seeds') {
+      ui?.notifications?.warn?.('No eligible ambient HoloNews stories match the automation policy.');
+    } else if (result?.reason === 'not-primary-gm') {
+      ui?.notifications?.warn?.('Only the primary active GM client can publish automated ambient HoloNews.');
+    } else if (result?.failed) {
+      ui?.notifications?.error?.(`Ambient HoloNews publish failed: ${result.error || 'unknown error'}`);
+    } else {
+      ui?.notifications?.warn?.('No ambient HoloNews stories were published.');
+    }
+    await this.render(false);
+  }
+
+  async _resetHolonewsAutomationSchedule() {
+    if (!game.user?.isGM) return;
+    const policy = await HolonewsAutoPublisher.savePolicy({}, { resetSchedule: true });
+    ui?.notifications?.info?.(policy.enabled
+      ? `Ambient HoloNews schedule reset. Next publish: ${policy.nextDueAt || 'not scheduled'}.`
+      : 'Ambient HoloNews schedule cleared because automation is manual-only.');
+    await this.render(false);
+  }
 
   async _unpinOtherBulletins(recordId) {
     if (!recordId) return;
@@ -1079,15 +1802,16 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  _applyBulletinProjectionOptions(record, { urgent = false, pinAsLastSession = false, homeSlot = 'feed', imageUrl = undefined } = {}) {
+  _applyBulletinProjectionOptions(record, { urgent = false, pinAsLastSession = false, homeSlot = 'feed', imageUrl = undefined, breakingNews = false } = {}) {
     if (!record) return record;
     record.metadata = {
       ...(record.metadata ?? {}),
-      urgent: Boolean(urgent),
+      urgent: Boolean(urgent || breakingNews),
+      breakingNews: Boolean(breakingNews),
       pinAsLastSession: Boolean(pinAsLastSession),
       homeSlot: pinAsLastSession ? 'last-session' : homeSlot,
       imageUrl: imageUrl === undefined ? (record.metadata?.imageUrl || '') : String(imageUrl || '').trim(),
-      bulletinConsoleVersion: 2
+      bulletinConsoleVersion: Math.max(Number(record.metadata?.bulletinConsoleVersion || 0), 4)
     };
     record.projections = Array.isArray(record.projections) ? record.projections : [];
 
@@ -1101,7 +1825,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       projection.metadata = {
         ...(projection.metadata ?? {}),
         source: 'gm-bulletin-console',
-        imageUrl: record.metadata?.imageUrl || ''
+        imageUrl: record.metadata?.imageUrl || '',
+        breakingNews: Boolean(breakingNews || record.metadata?.breakingNews)
       };
       return projection;
     };
@@ -1115,12 +1840,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
     };
 
     const hasBubble = record.projections.some((entry) => entry.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE);
-    if (urgent && !hasBubble) {
+    if ((urgent || breakingNews) && !hasBubble) {
       record.projections.push({
         surfaceType: SURFACE_TYPE.NOTIFICATION_BUBBLE,
         recordId: record.id,
         isPinned: false,
-        metadata: { source: 'gm-bulletin-console', urgent: true, imageUrl: record.metadata?.imageUrl || '' }
+        metadata: { source: 'gm-bulletin-console', urgent: true, breakingNews: Boolean(breakingNews), imageUrl: record.metadata?.imageUrl || '' }
       });
     } else if (!urgent && hasBubble) {
       record.projections = record.projections.filter((entry) => entry.surfaceType !== SURFACE_TYPE.NOTIFICATION_BUBBLE);

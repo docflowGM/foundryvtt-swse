@@ -14,6 +14,8 @@ import { getPazaakSideCardCatalog } from './games/pazaak/pazaak-deck.js';
 import { loadPazaakAiPersonalityData } from './games/pazaak/pazaak-ai-personalities.js';
 import { GameOpponentProfileService } from './game-opponent-profile-service.js';
 import { GameCreditEscrowService } from './wagers/game-credit-escrow-service.js';
+import { buildGameAiProfile, GAME_AI_DIFFICULTIES, GAME_AI_FAIRNESS } from './ai/game-ai-profile-service.js';
+import { GameMonteCarloService } from './ai/game-monte-carlo-service.js';
 
 export async function initializeGames() {
   GameCenterRegistry.initialize();
@@ -29,6 +31,12 @@ export async function initializeGames() {
       credits: GameCreditEscrowService
     },
     opponents: GameOpponentProfileService,
+    ai: {
+      buildProfile: buildGameAiProfile,
+      difficulties: GAME_AI_DIFFICULTIES,
+      fairness: GAME_AI_FAIRNESS,
+      monteCarlo: GameMonteCarloService
+    },
     pazaak: {
       engine: PazaakEngine,
       getSideCardCatalog: getPazaakSideCardCatalog

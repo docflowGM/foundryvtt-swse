@@ -5,7 +5,8 @@ import { GameOpponentProfileService } from '../../game-opponent-profile-service.
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import { buildDejarikBoard, defaultStartingSpaces } from './dejarik-board.js';
 import { defaultDejarikTeam, getDejarikPiece } from './dejarik-pieces.js';
-import { alivePieces, canAttackPiece, canMovePiece, winnerSeatId } from './dejarik-rules.js';
+import { canAttackPiece, canMovePiece, winnerSeatId } from './dejarik-rules.js';
+import { DejarikAi } from './dejarik-ai.js';
 
 function clone(value) { if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value); return JSON.parse(JSON.stringify(value ?? null)); }
 function randomId(prefix = 'dej') { return `${prefix}_${globalThis.foundry?.utils?.randomID?.(8) || Math.random().toString(36).slice(2, 10)}`; }
@@ -77,27 +78,6 @@ function endTurn(session, state, fromSeatId) {
   return state;
 }
 
-function chooseAiAction(session, state, seat) {
-  const own = alivePieces(state).filter(piece => piece.ownerSeatId === seat.seatId);
-  const enemies = alivePieces(state).filter(piece => piece.ownerSeatId !== seat.seatId);
-  for (const piece of own) {
-    const target = enemies.find(enemy => canAttackPiece(piece, enemy).ok);
-    if (target) return { type: 'attack', pieceId: piece.id, targetPieceId: target.id };
-  }
-  const piece = own[0];
-  const target = enemies[0];
-  if (!piece || !target) return { type: 'end-turn' };
-  const options = state.board.map(space => space.id).filter(id => canMovePiece(state, piece, id).ok);
-  let best = options[0] || piece.spaceId;
-  let bestDistance = Infinity;
-  for (const option of options) {
-    const trial = { ...piece, spaceId: option };
-    const distance = canAttackPiece(trial, target).ok ? 0 : Math.abs((target.spaceId || '').localeCompare(option));
-    if (distance < bestDistance) { best = option; bestDistance = distance; }
-  }
-  return best && best !== piece.spaceId ? { type: 'move', pieceId: piece.id, toSpaceId: best } : { type: 'end-turn' };
-}
-
 function applyAction(session, state, seat, action, payload = {}) {
   if (state.phase !== 'playing') return { ok: false, error: 'This Dejarik match is not in play.' };
   if (state.activeSeatId !== seat.seatId) return { ok: false, error: 'It is not this seat\'s Dejarik turn.' };
@@ -138,7 +118,8 @@ async function processAi(session, state) {
     guard += 1;
     const seat = findSeat(session, state.activeSeatId);
     if (!isAutomatedSeat(seat)) break;
-    const choice = chooseAiAction(session, state, seat);
+    const choice = DejarikAi.chooseAction({ session, state, seat, aiProfile: seat.aiProfile || seat.aiDifficulty || 'medium' });
+    if (choice?.gmControlled) break;
     applyAction(session, state, seat, choice.type, choice);
   }
   return { session, state };

@@ -29,11 +29,19 @@ export function hasFilledPazaakTable(player = {}) {
 
 export function playableSideCardStatus(player = {}, sideCard = {}, choice = {}) {
   if (!sideCard?.instanceId) return { playable: false, reason: 'Missing side card.' };
-  if (player.stood || player.bust) return { playable: false, reason: 'You have already stood or busted.' };
+  const tableCards = Array.isArray(player.tableCards) ? player.tableCards : [];
+  if (player.stood || player.bust || player.filledTable) return { playable: false, reason: 'You have already stood, filled the table, or busted.' };
+  if (tableCards.length >= PAZAAK_TABLE_LIMIT) return { playable: false, reason: 'Your Pazaak table is already full.' };
   if (player.sideCardPlayedThisTurn) return { playable: false, reason: 'Only one side card can be played each turn.' };
-  if (sideCard.type === 'double' && !(player.tableCards ?? []).length) return { playable: false, reason: 'Double requires a card in play.' };
+  if (sideCard.type === 'tiebreaker' && player.tiebreakerUsed) return { playable: false, reason: 'Only one tiebreaker can be used in a set.' };
+  if (sideCard.type === 'double' && !tableCards.length) return { playable: false, reason: 'Double requires a card in play.' };
   if ((sideCard.type === 'plusMinus' || sideCard.type === 'tiebreaker') && !['plus', 'minus'].includes(choice.sign)) {
     return { playable: false, reason: 'Choose + or - before playing this card.' };
+  }
+  if (sideCard.type === 'flip') {
+    const values = new Set((Array.isArray(sideCard.values) ? sideCard.values : []).map(value => Math.abs(Number(value) || 0)));
+    const hasTarget = tableCards.some(card => Number(card.value || 0) > 0 && values.has(Math.abs(Number(card.value || 0))));
+    if (!hasTarget) return { playable: false, reason: 'Flip requires a matching positive table card.' };
   }
   if (sideCard.type === 'plusMinusRange') {
     const value = Number(choice.value || 0);

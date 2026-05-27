@@ -12,14 +12,15 @@ function safeString(value) {
 }
 
 export class GameHolonetBridge {
-  static async createInvite({ actor, gameId, recipientId, rulesMode = 'republic-senate', title = '', memo = '' } = {}) {
+  static async createInvite({ actor, gameId, recipientId, rulesMode = 'republic-senate', title = '', memo = '', creditBuyIn = 0 } = {}) {
     return HolonetMessengerService.createGameInvite({
       actor,
       gameId: safeString(gameId),
       recipientId: safeString(recipientId),
       rulesMode: safeString(rulesMode) || 'republic-senate',
       title: safeString(title),
-      memo: safeString(memo)
+      memo: safeString(memo),
+      creditBuyIn: Number(creditBuyIn || 0) || 0
     });
   }
 

@@ -183,6 +183,257 @@
     </div>
 
 
+    {{!-- Job Board Page --}}
+    {{else if (eq currentPage "jobs")}}
+    <div class="gm-datapad-page gm-datapad-jobs">
+      <div class="page-header job-board-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <div>
+          <h2>GM Job Board</h2>
+          <p>Contract command board for posted work, objective review, and reward payout.</p>
+        </div>
+        <div class="job-board-header-actions">
+          <span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>
+          <span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>
+        </div>
+      </div>
+
+      <div class="job-board-metrics" aria-label="Job board status">
+        <span><strong>{{jobBoard.stats.total}}</strong> Total</span>
+        <span><strong>{{jobBoard.stats.open}}</strong> Open</span>
+        <span><strong>{{jobBoard.stats.active}}</strong> Active</span>
+        <span><strong>{{jobBoard.stats.review}}</strong> Review</span>
+        <span><strong>{{jobBoard.stats.payout}}</strong> Ready to Pay</span>
+        <span><strong>{{jobBoard.stats.archived}}</strong> Archived</span>
+      </div>
+
+      {{#if jobBoard.hasJobs}}
+      <div class="job-board-shell">
+        <section class="job-board-command swse-ui-panel">
+          <div class="job-board-section-header">
+            <div>
+              <span class="gm-command-eyebrow">CONTRACT BOARD</span>
+              <h3>Mission Pipeline</h3>
+            </div>
+            <span class="job-board-help">Players see feed updates; GM manages lifecycle here.</span>
+          </div>
+          <div class="job-board-columns">
+            {{#each jobBoard.columns}}
+            <section class="job-board-column" data-job-column="{{this.id}}">
+              <header>
+                <div>
+                  <h4>{{this.label}}</h4>
+                  <p>{{this.hint}}</p>
+                </div>
+                <span>{{this.count}}</span>
+              </header>
+              <div class="job-card-stack">
+                {{#each this.jobs}}
+                <button type="button" class="job-board-card {{this.statusTone}}" data-job-select="{{this.threadId}}">
+                  <div class="job-card-topline">
+                    <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
+                    {{#if this.needsAttention}}<span class="job-board-chip attention">Needs GM</span>{{/if}}
+                  </div>
+                  <div class="job-card-title">{{this.title}}</div>
+                  <div class="job-card-client">{{this.clientLabel}}{{#if this.factionName}} · {{this.factionName}}{{/if}}</div>
+                  <div class="job-card-progress">
+                    <span>{{this.requiredProgressLabel}}</span>
+                    <span>{{this.optionalProgressLabel}}</span>
+                  </div>
+                  <div class="job-card-reward">{{this.rewards.approvedCreditsLabel}} · {{this.rewards.approvedXpLabel}}</div>
+                  <div class="job-card-footer">
+                    <span>{{this.participantCount}} participant(s)</span>
+                    <span>{{this.messageCount}} thread events</span>
+                  </div>
+                </button>
+                {{else}}
+                <div class="job-column-empty">No jobs here.</div>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+          </div>
+        </section>
+
+        <aside class="job-board-rail swse-ui-panel">
+          {{#if jobBoard.selectedJob}}
+          <div class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">DOSSIER</span>
+              <h3>{{jobBoard.selectedJob.title}}</h3>
+            </div>
+            <span class="job-board-chip {{jobBoard.selectedJob.statusTone}}">{{jobBoard.selectedJob.statusLabel}}</span>
+          </div>
+
+          <div class="job-detail-client">
+            {{#if jobBoard.selectedJob.clientImage}}<img src="{{jobBoard.selectedJob.clientImage}}" alt="{{jobBoard.selectedJob.clientLabel}}">{{/if}}
+            <div>
+              <strong>{{jobBoard.selectedJob.clientLabel}}</strong>
+              <span>{{jobBoard.selectedJob.clientTypeLabel}}{{#if jobBoard.selectedJob.factionName}} · {{jobBoard.selectedJob.factionName}}{{/if}}</span>
+              {{#if jobBoard.selectedJob.hasFactionConsequences}}<em>Faction consequence metadata present</em>{{/if}}
+            </div>
+          </div>
+
+          <div class="job-detail-actions">
+            {{#each jobBoard.statusActions}}
+            <button type="button" class="swse-ui-button" data-job-status-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-status="{{this.value}}">{{this.label}}</button>
+            {{/each}}
+          </div>
+
+          <div class="job-detail-block">
+            <h4>Objectives</h4>
+            <div class="job-objective-list">
+              {{#each jobBoard.selectedJob.objectives}}
+              <article class="job-objective-card {{this.statusTone}}">
+                <div class="job-objective-head">
+                  <span class="job-board-chip {{this.type}}">{{this.typeLabel}}</span>
+                  <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
+                  <span class="job-board-chip required">{{this.requiredLabel}}</span>
+                </div>
+                <strong>{{this.title}}</strong>
+                {{#if this.description}}<p>{{this.description}}</p>{{/if}}
+                <div class="job-objective-rewards">
+                  {{#if this.rewardCreditsLabel}}<span>{{this.rewardCreditsLabel}}</span>{{/if}}
+                  {{#if this.rewardXpLabel}}<span>{{this.rewardXpLabel}}</span>{{/if}}
+                  {{#if this.rewardItems}}<span>{{this.rewardItems}}</span>{{/if}}
+                </div>
+                <div class="job-objective-actions">
+                  <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
+                  <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
+                  <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="failed">Fail</button>
+                  <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="open">Reopen</button>
+                </div>
+              </article>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="job-detail-block">
+            <h4>Participants</h4>
+            <div class="job-participant-list">
+              {{#each jobBoard.selectedJob.participants}}
+              <div class="job-participant-row">
+                {{#if this.avatar}}<img src="{{this.avatar}}" alt="{{this.label}}">{{/if}}
+                <span>{{this.label}}</span>
+                <em>{{this.typeLabel}}</em>
+              </div>
+              {{else}}
+              <p class="placeholder">No non-GM participants are attached to this job yet.</p>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="job-detail-block job-payout-panel">
+            <h4>Reward Distribution</h4>
+            <div class="job-reward-summary">
+              <span>Credits: <strong>{{jobBoard.selectedJob.rewards.approvedCreditsLabel}}</strong></span>
+              <span>XP: <strong>{{jobBoard.selectedJob.rewards.approvedXpLabel}}</strong></span>
+              <span>Items: <strong>{{jobBoard.selectedJob.rewards.itemSummary}}</strong></span>
+            </div>
+            <form class="job-payout-form" data-job-payout-form>
+              <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
+              <label>Credit recipient
+                <select name="recipientId">
+                  {{#each jobBoard.selectedJob.payoutTargets}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>Amount
+                <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.totalCredits}}">
+              </label>
+              <label>Party fund cut %
+                <input type="number" name="partyFundCutPercent" min="0" max="100" step="1" value="0">
+              </label>
+              <button type="submit" class="swse-ui-button bulletin-primary-action">Pay Credits</button>
+            </form>
+            {{#if jobBoard.selectedJob.hasAttachedItemRewards}}
+            <form class="job-payout-form" data-job-award-items-form>
+              <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
+              {{#each jobBoard.selectedJob.rewardItemUuids}}<input type="hidden" name="itemUuids" value="{{this}}">{{/each}}
+              <label>Item recipient
+                <select name="recipientId">
+                  {{#each jobBoard.selectedJob.payoutTargets}}
+                    {{#if this.actorId}}<option value="{{this.id}}">{{this.label}}</option>{{/if}}
+                  {{/each}}
+                </select>
+              </label>
+              <button type="submit" class="swse-ui-button">Award Attached Items</button>
+            </form>
+            {{/if}}
+          </div>
+
+          <div class="job-detail-block">
+            <h4>Timeline</h4>
+            <div class="job-timeline">
+              {{#each jobBoard.selectedJob.timeline}}
+              <div class="job-timeline-row">
+                <strong>{{this.label}}</strong>
+                <span>{{this.atLabel}}</span>
+              </div>
+              {{else}}
+              <p class="placeholder">No job timeline yet.</p>
+              {{/each}}
+            </div>
+          </div>
+          {{else}}
+          <p class="placeholder">Select a job to inspect its dossier.</p>
+          {{/if}}
+        </aside>
+      </div>
+
+      <div class="job-queue-grid">
+        <section class="swse-ui-panel job-queue-panel">
+          <div class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">REVIEW QUEUE</span>
+              <h3>Objective Claims</h3>
+            </div>
+            <span class="job-board-chip attention">{{jobBoard.reviewItems.length}}</span>
+          </div>
+          {{#each jobBoard.reviewItems}}
+          <article class="job-queue-card">
+            <span class="job-board-chip review">{{this.statusLabel}}</span>
+            <strong>{{this.jobTitle}}</strong>
+            <p>{{this.typeLabel}}: {{this.title}}</p>
+            <div class="job-objective-actions">
+              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{this.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
+              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{this.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
+            </div>
+          </article>
+          {{else}}
+          <p class="placeholder">No objective claims need review.</p>
+          {{/each}}
+        </section>
+
+        <section class="swse-ui-panel job-queue-panel">
+          <div class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">PAYOUT QUEUE</span>
+              <h3>Completed Contracts</h3>
+            </div>
+            <span class="job-board-chip payout">{{jobBoard.payoutItems.length}}</span>
+          </div>
+          {{#each jobBoard.payoutItems}}
+          <article class="job-queue-card">
+            <span class="job-board-chip payout">Ready</span>
+            <strong>{{this.title}}</strong>
+            <p>{{this.rewards.approvedCreditsLabel}} · {{this.rewards.approvedXpLabel}}</p>
+            <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}">Distribute Rewards</button>
+          </article>
+          {{else}}
+          <p class="placeholder">No completed contracts are waiting on payout.</p>
+          {{/each}}
+        </section>
+      </div>
+      {{else}}
+      <div class="swse-ui-panel job-board-empty-state">
+        <h3>No jobs posted yet</h3>
+        <p>Job threads created through Messenger will appear here as contract cards with lifecycle, review, and payout controls.</p>
+      </div>
+      {{/if}}
+    </div>
+
     {{!-- Bulletin Page --}}
     {{else if (eq currentPage "bulletin")}}
     <div class="gm-datapad-page gm-datapad-bulletin">
@@ -247,7 +498,16 @@
                 <span>Published By</span>
                 <input type="text" name="authorName" value="{{eventEditorRecord.senderName}}" placeholder="Galactic News Service">
               </label>
-              <label class="bulletin-image-field">
+              <label>
+                <span>Saved Source</span>
+                <select name="contactId" data-bulletin-contact-select>
+                  <option value="" {{#unless eventEditorRecord.contactId}}selected{{/unless}}>Manual source</option>
+                  {{#each bulletinContacts}}
+                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../eventEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} · {{this.kindLabel}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label class="bulletin-image-field" data-bulletin-image-dropzone>
                 <span>Holostill / Feed Image</span>
                 <span class="bulletin-image-row">
                   <input type="text" name="imageUrl" value="{{eventEditorRecord.imageUrl}}" placeholder="systems/foundryvtt-swse/assets/.../image.webp" data-bulletin-image-input>
@@ -319,8 +579,9 @@
                 <span class="bulletin-chip category">{{this.category}}</span>
                 <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+                <span class="bulletin-chip read-state">{{this.readStateLabel}}</span>
                 <span class="bulletin-chip home-slot">{{this.homeSlotLabel}}</span>
-                {{#if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
+                {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{else if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
                 {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
@@ -340,6 +601,501 @@
             </article>
             {{else}}
             <p class="placeholder">No bulletin events yet.</p>
+            {{/each}}
+          </div>
+
+          {{else if (eq bulletinSection "holonews")}}
+          <div class="bulletin-panel-header holonews-panel-header">
+            <div>
+              <h3>HoloNews Desk</h3>
+              <p>Publish ordinary galactic background noise, or author a red Breaking News alert when the party truly changes the public story.</p>
+            </div>
+            <div class="holonews-wire-count"><strong>{{holonewsSeedCount}}</strong><span>ambient wire stories</span></div>
+          </div>
+
+          <form class="bulletin-composer holonews-composer" data-bulletin-form="holonews">
+            <input type="hidden" name="recordId" value="{{holonewsEditorRecord.id}}">
+            <input type="hidden" name="submitMode" value="draft">
+            <input type="hidden" name="category" value="holonews">
+            <div class="bulletin-form-grid">
+              <label>
+                <span>HoloNews Headline</span>
+                <input type="text" name="title" value="{{holonewsEditorRecord.title}}" placeholder="Local Port Authority Updates Docking Procedures">
+              </label>
+              <label>
+                <span>News Source</span>
+                <input type="text" name="authorName" value="{{holonewsEditorRecord.newsSource}}" placeholder="Galaxy News Net">
+              </label>
+              <label>
+                <span>Saved Source</span>
+                <select name="contactId" data-bulletin-contact-select>
+                  <option value="" {{#unless holonewsEditorRecord.contactId}}selected{{/unless}}>Manual source</option>
+                  {{#each bulletinContacts}}
+                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../holonewsEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} · {{this.kindLabel}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Dateline</span>
+                <input type="text" name="dateline" value="{{holonewsEditorRecord.dateline}}" placeholder="Coruscant">
+              </label>
+              <label>
+                <span>Sector / Region</span>
+                <input type="text" name="sector" value="{{holonewsEditorRecord.sector}}" placeholder="Core Worlds">
+              </label>
+              <label>
+                <span>News Topic</span>
+                <select name="newsCategory">
+                  <option value="general" {{#if (or (not holonewsEditorRecord.newsCategory) (eq holonewsEditorRecord.newsCategory "general"))}}selected{{/if}}>General</option>
+                  {{#each holonewsCategories}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsEditorRecord.newsCategory this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="low" {{#if (eq holonewsEditorRecord.priority "low")}}selected{{/if}}>Low</option>
+                  <option value="normal" {{#if (or (not holonewsEditorRecord.priority) (eq holonewsEditorRecord.priority "normal"))}}selected{{/if}}>Normal</option>
+                  <option value="high" {{#if (eq holonewsEditorRecord.priority "high")}}selected{{/if}}>High</option>
+                  <option value="critical" {{#if (eq holonewsEditorRecord.priority "critical")}}selected{{/if}}>Critical</option>
+                </select>
+              </label>
+              <label class="bulletin-image-field" data-bulletin-image-dropzone>
+                <span>News Holostill / Feed Image</span>
+                <span class="bulletin-image-row">
+                  <input type="text" name="imageUrl" value="{{holonewsEditorRecord.imageUrl}}" placeholder="systems/foundryvtt-swse/assets/.../news.webp" data-bulletin-image-input>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-pick-image">Browse</button>
+                </span>
+              </label>
+            </div>
+
+            <div class="bulletin-form-grid bulletin-form-grid-audience">
+              <label>
+                <span>Audience</span>
+                <select name="audienceType">
+                  {{#each audienceOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsEditorRecord.audienceType this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="bulletin-recipient-picker">
+                <span>Recipients</span>
+                <div class="bulletin-recipient-list">
+                  {{#each bulletinPlayers}}
+                  <label class="bulletin-recipient-chip">
+                    <input type="checkbox" name="playerIds" value="{{this.userId}}" {{#if (contains ../holonewsEditorRecord.audiencePlayerIds this.userId)}}checked{{/if}}>
+                    <span>{{this.actorName}}</span>
+                  </label>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+
+            <div class="bulletin-console-controls holonews-console-controls">
+              <label class="bulletin-toggle-chip holonews-breaking-toggle">
+                <input type="checkbox" name="breakingNews" {{#if holonewsEditorRecord.isBreakingNews}}checked{{/if}}>
+                <span>Breaking News red alert</span>
+              </label>
+              <label class="bulletin-toggle-chip">
+                <input type="checkbox" name="pinAsLastSession" {{#if holonewsEditorRecord.isPinned}}checked{{/if}}>
+                <span>Pin as Last Session</span>
+              </label>
+              <label class="bulletin-slot-select">
+                <span>Home Placement</span>
+                <select name="homeSlot">
+                  <option value="feed" {{#if (or (not holonewsEditorRecord.homeSlot) (eq holonewsEditorRecord.homeSlot "feed"))}}selected{{/if}}>Comm Feed</option>
+                  <option value="last-session" {{#if (eq holonewsEditorRecord.homeSlot "last-session")}}selected{{/if}}>Last Session</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="bulletin-body-field">
+              <span>News Deck / One-line Summary</span>
+              <input type="text" name="deck" value="{{holonewsEditorRecord.newsDeck}}" placeholder="A short summary shown to the GM while writing.">
+            </label>
+
+            <label class="bulletin-body-field">
+              <span>Story Body</span>
+              <textarea name="body" rows="6" placeholder="Galaxy News Net reports that local port officials have revised docking procedures after routine inspections." data-holonet-editor="holonews-event">{{holonewsEditorRecord.body}}</textarea>
+            </label>
+
+            <div class="bulletin-form-actions">
+              <button type="submit" class="swse-ui-button" data-submit-mode="draft">Save HoloNews Draft</button>
+              <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish HoloNews</button>
+            </div>
+          </form>
+
+          <section class="holonews-automation-panel">
+            <div class="holonews-wire-header">
+              <div>
+                <h4>Ambient Auto Publisher</h4>
+                <p>Opt-in scheduler for ordinary atomized HoloNews filler. It never creates Breaking News; red alerts remain GM-authored only.</p>
+              </div>
+              <div class="holonews-automation-status {{holonewsAutomation.statusTone}}">
+                <strong>{{holonewsAutomation.statusLabel}}</strong>
+                <span>{{#if holonewsAutomation.isPrimaryGm}}Primary GM client{{else}}Standby GM client{{/if}}</span>
+              </div>
+            </div>
+
+            <div class="holonews-automation-metrics">
+              <div><strong>{{holonewsAutomation.nextDueAt}}</strong><span>Next publish</span></div>
+              <div><strong>{{holonewsAutomation.lastPublishedAt}}</strong><span>Last published</span></div>
+              <div><strong>{{holonewsAutomation.lastCheckAt}}</strong><span>Last check</span></div>
+              <div><strong>{{holonewsAutomation.totalPublished}}</strong><span>Total auto stories</span></div>
+            </div>
+
+            <form class="holonews-automation-form" data-holonews-automation-form>
+              <div class="holonews-automation-toggles">
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="enabled" {{#if holonewsAutomation.enabled}}checked{{/if}}>
+                  <span>Enable scheduled ambient HoloNews</span>
+                </label>
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="hideUsedSeeds" {{#if holonewsAutomation.hideUsedSeeds}}checked{{/if}}>
+                  <span>Avoid already-used atomized stories</span>
+                </label>
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="allowRepeatsWhenExhausted" {{#if holonewsAutomation.allowRepeatsWhenExhausted}}checked{{/if}}>
+                  <span>Allow repeats only if filtered pool is exhausted</span>
+                </label>
+                <label class="bulletin-toggle-chip">
+                  <input type="checkbox" name="resetSchedule">
+                  <span>Reset schedule when saving</span>
+                </label>
+              </div>
+
+              <div class="holonews-automation-grid">
+                <label>
+                  <span>Cadence Minutes</span>
+                  <input type="number" name="cadenceMinutes" min="15" max="10080" step="15" value="{{holonewsAutomation.cadenceMinutes}}">
+                </label>
+                <label>
+                  <span>Max Per Run</span>
+                  <input type="number" name="maxPerRun" min="1" max="5" step="1" value="{{holonewsAutomation.maxPerRun}}">
+                </label>
+                <label>
+                  <span>Source Override</span>
+                  <input type="text" name="sourceName" value="{{holonewsAutomation.sourceName}}" placeholder="Galaxy News Net">
+                </label>
+                <label>
+                  <span>Keyword Filter</span>
+                  <input type="search" name="query" value="{{holonewsAutomation.query}}" placeholder="optional: port, clinic, weather...">
+                </label>
+                <label>
+                  <span>Topic Filter</span>
+                  <select name="category">
+                    <option value="" {{#unless holonewsAutomation.category}}selected{{/unless}}>Any topic</option>
+                    {{#each holonewsCategories}}
+                    <option value="{{this.value}}" {{#if (eq ../holonewsAutomation.category this.value)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Sector Filter</span>
+                  <select name="sector">
+                    <option value="" {{#unless holonewsAutomation.sector}}selected{{/unless}}>Any sector</option>
+                    {{#each holonewsSectors}}
+                    <option value="{{this.value}}" {{#if (eq ../holonewsAutomation.sector this.value)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Priority Filter</span>
+                  <select name="priority">
+                    <option value="" {{#unless holonewsAutomation.priority}}selected{{/unless}}>Any priority</option>
+                    {{#each holonewsPriorities}}
+                    <option value="{{this.value}}" {{#if (eq ../holonewsAutomation.priority this.value)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+              </div>
+
+              <div class="holonews-automation-actions">
+                <button type="submit" class="swse-ui-button bulletin-primary-action">Save Automation Policy</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-auto-publish-now" data-count="1">Publish One Now</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-auto-publish-now" data-count="{{holonewsAutomation.maxPerRun}}">Publish Batch Now</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-auto-reset-schedule">Reset Schedule</button>
+              </div>
+            </form>
+
+            {{#if holonewsAutomation.historyCount}}
+            <details class="holonews-automation-history">
+              <summary>Recent automation history</summary>
+              <div class="holonews-automation-history-list">
+                {{#each holonewsAutomation.history}}
+                <div class="holonews-automation-history-row">
+                  <span>{{this.at}}</span>
+                  <span>{{this.reason}}</span>
+                  <strong>{{this.published}} published</strong>
+                  {{#if this.note}}<em>{{this.note}}</em>{{/if}}
+                </div>
+                {{/each}}
+              </div>
+            </details>
+            {{/if}}
+          </section>
+
+          <section class="holonews-wire-panel">
+            <div class="holonews-wire-header">
+              <div>
+                <h4>Ambient Wire</h4>
+                <p>Search the atomized, deliberately boring background wire. It combines planet, system, source, lead, and detail atoms into ordinary filler news, not galaxy-shaking events.</p>
+              </div>
+              <div class="holonews-wire-stats">
+                <span><strong>{{holonewsWireFilteredCount}}</strong> matching</span>
+                <span><strong>{{holonewsUsedSeedCount}}</strong> already used</span>
+              </div>
+              <div class="holonews-atom-stats" aria-label="HoloNews atom pool summary">
+                {{#each holonewsAtomStats}}
+                <span><strong>{{this.value}}</strong> {{this.label}}</span>
+                {{/each}}
+              </div>
+            </div>
+
+            <form class="holonews-atom-policy" data-holonews-atom-policy-form>
+              <div class="holonews-atom-policy-header">
+                <div>
+                  <h5>Atom Controls</h5>
+                  <p>Suppress topics, sectors, priorities, atom IDs, or keywords from the ambient generator without deleting the 300-atom pools.</p>
+                </div>
+                <div class="holonews-wire-stats">
+                  <span><strong>{{holonewsAtomControlPreviewCount}}</strong> eligible after policy</span>
+                  <span><strong>{{holonewsAtomPolicySummary.blockedAtomCount}}</strong> blocked atoms</span>
+                  <span><strong>{{holonewsAtomPolicySummary.blockedKeywordCount}}</strong> blocked keywords</span>
+                </div>
+              </div>
+              <details class="holonews-atom-policy-details">
+                <summary>Open atom suppression controls</summary>
+                <div class="holonews-atom-policy-grid">
+                  <fieldset>
+                    <legend>Disabled Topics</legend>
+                    {{#each holonewsCategories}}
+                    <label class="bulletin-toggle-chip"><input type="checkbox" name="disabledCategories" value="{{this.value}}" {{#if (contains ../holonewsAtomPolicy.disabledCategories this.value)}}checked{{/if}}><span>{{this.label}}</span></label>
+                    {{/each}}
+                  </fieldset>
+                  <fieldset>
+                    <legend>Disabled Sectors</legend>
+                    {{#each holonewsSectors}}
+                    <label class="bulletin-toggle-chip"><input type="checkbox" name="disabledSectors" value="{{this.value}}" {{#if (contains ../holonewsAtomPolicy.disabledSectors this.value)}}checked{{/if}}><span>{{this.label}}</span></label>
+                    {{/each}}
+                  </fieldset>
+                  <fieldset>
+                    <legend>Disabled Priorities</legend>
+                    {{#each holonewsPriorities}}
+                    <label class="bulletin-toggle-chip"><input type="checkbox" name="disabledPriorities" value="{{this.value}}" {{#if (contains ../holonewsAtomPolicy.disabledPriorities this.value)}}checked{{/if}}><span>{{this.label}}</span></label>
+                    {{/each}}
+                  </fieldset>
+                  <label>
+                    <span>Blocked Atom IDs</span>
+                    <textarea name="blockedAtomIds" rows="4" placeholder="planet-001, source-014, detail-200">{{holonewsAtomPolicy.blockedAtomIds}}</textarea>
+                  </label>
+                  <label>
+                    <span>Blocked Keywords</span>
+                    <textarea name="blockedKeywords" rows="4" placeholder="Cardia, Empire, rebellion">{{holonewsAtomPolicy.blockedKeywords}}</textarea>
+                  </label>
+                </div>
+                <div class="holonews-wire-filter-actions">
+                  <button type="submit" class="swse-ui-button bulletin-primary-action">Save Atom Controls</button>
+                  <button type="button" class="swse-ui-button" data-action="holonews-reset-atom-policy">Reset Atom Controls</button>
+                </div>
+              </details>
+            </form>
+
+            <form class="holonews-wire-filters" data-holonews-wire-filter-form>
+              <label class="holonews-wire-search">
+                <span>Search Wire</span>
+                <input type="search" name="query" value="{{holonewsWireFilters.query}}" placeholder="port, weather, planet atom, system, agriculture...">
+              </label>
+              <label>
+                <span>Topic</span>
+                <select name="category">
+                  <option value="" {{#unless holonewsWireFilters.category}}selected{{/unless}}>All topics</option>
+                  {{#each holonewsCategories}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsWireFilters.category this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Sector</span>
+                <select name="sector">
+                  <option value="" {{#unless holonewsWireFilters.sector}}selected{{/unless}}>All sectors</option>
+                  {{#each holonewsSectors}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsWireFilters.sector this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="" {{#unless holonewsWireFilters.priority}}selected{{/unless}}>Any priority</option>
+                  {{#each holonewsPriorities}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsWireFilters.priority this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label class="bulletin-toggle-chip holonews-hide-used">
+                <input type="checkbox" name="hideUsedSeeds" {{#if holonewsHideUsedSeeds}}checked{{/if}}>
+                <span>Hide used wire stories</span>
+              </label>
+              <div class="holonews-wire-filter-actions">
+                <button type="submit" class="swse-ui-button">Apply Filters</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-reset-wire-filters">Reset</button>
+              </div>
+            </form>
+
+            <div class="holonews-wire-pager">
+              <button type="button" class="swse-ui-button" data-action="holonews-wire-prev">Previous 12</button>
+              <button type="button" class="swse-ui-button" data-action="holonews-shuffle-wire" data-filtered-count="{{holonewsWireFilteredCount}}">Random Page</button>
+              <button type="button" class="swse-ui-button" data-action="holonews-wire-next">Next 12</button>
+            </div>
+
+            <div class="holonews-seed-grid">
+              {{#each holonewsSeeds}}
+              <article class="holonews-seed-card {{#if this.alreadyUsed}}already-used{{/if}}">
+                <div class="holonews-seed-meta">
+                  <span>{{this.source}}</span>
+                  <span>{{this.dateline}}</span>
+                  <span>{{this.sector}}</span>
+                  <span>{{this.category}}</span>
+                  <span>{{this.priority}}</span>
+                  {{#if this.alreadyUsed}}<span class="used">USED</span>{{/if}}
+                </div>
+                <h5>{{this.headline}}</h5>
+                <p>{{this.deck}}</p>
+                <details class="holonews-seed-details">
+                  <summary>Read wire copy</summary>
+                  <div class="holonews-seed-body">{{{this.bodyPreview}}}</div>
+                </details>
+                <div class="holonews-seed-actions">
+                  <button type="button" class="swse-ui-button" data-action="holonews-use-draft" data-seed-id="{{this.id}}">Use as Draft</button>
+                  <button type="button" class="swse-ui-button" data-action="holonews-publish-ambient" data-seed-id="{{this.id}}">Publish Ambient</button>
+                </div>
+              </article>
+              {{else}}
+              <p class="placeholder">No ambient wire stories match those filters.</p>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="holonews-archive-panel">
+            <div class="holonews-wire-header">
+              <div>
+                <h4>HoloNews Archive</h4>
+                <p>Review authored, ambient, breaking, draft, live, and archived stories without mixing them into the ambient seed pool.</p>
+              </div>
+              <div class="holonews-wire-stats">
+                <span><strong>{{holonewsArchiveFilteredCount}}</strong> shown</span>
+                <span><strong>{{holonewsArchiveTotalCount}}</strong> total</span>
+              </div>
+            </div>
+
+            <div class="holonews-archive-stats">
+              {{#each holonewsArchiveStats}}
+              <div class="holonews-archive-stat {{this.tone}}">
+                <strong>{{this.value}}</strong>
+                <span>{{this.label}}</span>
+              </div>
+              {{/each}}
+            </div>
+
+            <form class="holonews-archive-filters" data-holonews-archive-filter-form>
+              <label class="holonews-archive-search">
+                <span>Search Archive</span>
+                <input type="search" name="query" value="{{holonewsArchiveFilters.query}}" placeholder="headline, source, sector, seed id...">
+              </label>
+              <label>
+                <span>State</span>
+                <select name="state">
+                  {{#each holonewsArchiveStateOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.state this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Type</span>
+                <select name="type">
+                  {{#each holonewsArchiveTypeOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.type this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="" {{#unless holonewsArchiveFilters.priority}}selected{{/unless}}>Any priority</option>
+                  {{#each holonewsPriorities}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.priority this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Sector</span>
+                <select name="sector">
+                  <option value="" {{#unless holonewsArchiveFilters.sector}}selected{{/unless}}>All sectors</option>
+                  {{#each holonewsSectors}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.sector this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Topic</span>
+                <select name="category">
+                  <option value="" {{#unless holonewsArchiveFilters.category}}selected{{/unless}}>All topics</option>
+                  {{#each holonewsCategories}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.category this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="holonews-wire-filter-actions holonews-archive-filter-actions">
+                <button type="submit" class="swse-ui-button">Apply Archive Filters</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-reset-archive-filters">Reset</button>
+              </div>
+            </form>
+          </section>
+
+          <div class="bulletin-record-grid holonews-record-grid">
+            {{#each holonewsRecords}}
+            <article class="bulletin-record-card holonews {{this.state}} {{this.recordTone}}">
+              <div class="bulletin-record-meta">
+                <span class="bulletin-chip state">{{this.stateLabel}}</span>
+                <span class="bulletin-chip category">HoloNews</span>
+                <span class="bulletin-chip type">{{this.holonewsTypeLabel}}</span>
+                {{#if this.newsCategory}}<span class="bulletin-chip category">{{this.newsCategory}}</span>{{/if}}
+                <span class="bulletin-chip priority">{{this.priority}}</span>
+                <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+                <span class="bulletin-chip read-state">{{this.readStateLabel}}</span>
+                {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{/if}}
+                {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
+              </div>
+              <h4>{{this.title}}</h4>
+              <div class="bulletin-record-sender">{{this.newsSource}}{{#if this.dateline}} · {{this.dateline}}{{/if}}{{#if this.sector}} · {{this.sector}}{{/if}}</div>
+              {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
+              <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
+              <div class="holonews-record-details">
+                {{#if this.holonewsSeedId}}<span>Seed: {{this.holonewsSeedId}}</span>{{/if}}
+                {{#if this.publishedAt}}<span>Published: {{this.publishedAt}}</span>{{/if}}
+                {{#if this.archivedAt}}<span>Archived: {{this.archivedAt}}</span>{{/if}}
+              </div>
+              <div class="bulletin-record-footer">
+                <span>{{this.createdAt}}</span>
+                <div class="bulletin-record-actions">
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="holonews" data-record-id="{{this.id}}">Edit</button>
+                  <button type="button" class="swse-ui-button" data-action="holonews-duplicate-draft" data-record-id="{{this.id}}">Duplicate Draft</button>
+                  {{#if this.isBreakingNews}}
+                    <button type="button" class="swse-ui-button" data-action="holonews-toggle-breaking" data-enabled="false" data-record-id="{{this.id}}">Remove Breaking</button>
+                  {{else}}
+                    <button type="button" class="swse-ui-button" data-action="holonews-toggle-breaking" data-enabled="true" data-record-id="{{this.id}}">Make Breaking</button>
+                  {{/if}}
+                  {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
+                  {{#if (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="holonews-restore-draft" data-record-id="{{this.id}}">Restore Draft</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/if}}
+                  <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
+                </div>
+              </div>
+            </article>
+            {{else}}
+            <p class="placeholder">No HoloNews entries match those archive filters.</p>
             {{/each}}
           </div>
 
@@ -368,6 +1124,15 @@
                 <input type="text" name="authorName" value="{{messageEditorRecord.senderName}}" placeholder="Rendarr / Master Tholos / GM">
               </label>
               <label>
+                <span>Saved Source</span>
+                <select name="contactId" data-bulletin-contact-select>
+                  <option value="" {{#unless messageEditorRecord.contactId}}selected{{/unless}}>Manual sender</option>
+                  {{#each bulletinContacts}}
+                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../messageEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} · {{this.kindLabel}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
                 <span>Priority</span>
                 <select name="priority">
                   <option value="low" {{#if (eq messageEditorRecord.priority "low")}}selected{{/if}}>Low</option>
@@ -376,7 +1141,7 @@
                   <option value="critical" {{#if (eq messageEditorRecord.priority "critical")}}selected{{/if}}>Critical</option>
                 </select>
               </label>
-              <label class="bulletin-image-field">
+              <label class="bulletin-image-field" data-bulletin-image-dropzone>
                 <span>Notice Image / Sender Portrait</span>
                 <span class="bulletin-image-row">
                   <input type="text" name="imageUrl" value="{{messageEditorRecord.imageUrl}}" placeholder="icons/svg/mystery-man.svg" data-bulletin-image-input>
@@ -448,8 +1213,9 @@
                 <span class="bulletin-chip category">{{this.category}}</span>
                 <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+                <span class="bulletin-chip read-state">{{this.readStateLabel}}</span>
                 <span class="bulletin-chip home-slot">{{this.homeSlotLabel}}</span>
-                {{#if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
+                {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{else if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
                 {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
@@ -538,7 +1304,14 @@
         <aside class="bulletin-home-preview swse-ui-panel" aria-label="Player home preview" data-bulletin-live-preview>
           <div class="bulletin-preview-header">
             <span class="bulletin-preview-kicker">Player Home Preview</span>
-            <strong>Datapad Feed Projection</strong>
+            <strong>{{homePreview.selectedPlayerLabel}}</strong>
+            <small>{{homePreview.unreadCount}} unread in preview feed</small>
+          </div>
+
+          <div class="bulletin-preview-player-picker">
+            {{#each bulletinPlayers}}
+            <button type="button" class="bulletin-preview-player-chip {{#if (eq ../selectedPreviewUserId this.userId)}}is-active{{/if}}" data-select-bulletin-preview-user="{{this.userId}}">{{this.actorName}}</button>
+            {{/each}}
           </div>
 
           <div class="bulletin-preview-card bulletin-preview-card--state">
@@ -554,14 +1327,31 @@
             <div class="bulletin-preview-meta">
               <span data-preview-feed-category>{{homePreview.feed.category}}</span>
               <span data-preview-feed-priority>{{homePreview.feed.priority}}</span>
-              <span class="urgent {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>Alert</span>
+              <span class="urgent {{#if homePreview.feed.isBreakingNews}}breaking{{/if}} {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>{{#if homePreview.feed.isBreakingNews}}BREAKING NEWS{{else}}Alert{{/if}}</span>
             </div>
             {{#if homePreview.feed.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.feed.imageUrl}}" alt="{{homePreview.feed.title}}" data-preview-feed-image>{{else}}<img class="bulletin-preview-image is-hidden" alt="" data-preview-feed-image>{{/if}}
             <strong data-preview-feed-title>{{homePreview.feed.title}}</strong>
             <em data-preview-feed-sender>{{homePreview.feed.sender}} · {{homePreview.feed.audience}}</em>
+            <span class="bulletin-preview-audience {{#if homePreview.feed.audienceMatchesSelectedPlayer}}matches{{else}}blocked{{/if}}">{{#if homePreview.feed.audienceMatchesSelectedPlayer}}Visible to selected player{{else}}Not targeted to selected player{{/if}}</span>
             <p class="holonet-rendered-text" data-preview-feed-body>{{{homePreview.feed.renderedPreview}}}</p>
             {{else}}
             <p class="placeholder">No bulletin selected. Save or publish a bulletin to preview the feed card.</p>
+            {{/if}}
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--feed-list">
+            <span class="bulletin-preview-label">Selected Player Feed</span>
+            {{#if homePreview.feedItems}}
+            <div class="bulletin-preview-feed-list">
+              {{#each homePreview.feedItems}}
+              <div class="bulletin-preview-feed-row {{#if this.isBreakingNews}}breaking{{else if this.isUrgent}}urgent{{/if}} {{#if this.isRead}}is-read{{else}}is-unread{{/if}}">
+                <strong>{{this.title}}</strong>
+                <span>{{this.sender}} · {{this.category}} · {{#if this.isRead}}read{{else}}unread{{/if}}</span>
+              </div>
+              {{/each}}
+            </div>
+            {{else}}
+            <p class="placeholder">No published Bulletin/HoloNews records currently target this player.</p>
             {{/if}}
           </div>
 
@@ -576,6 +1366,42 @@
             <p class="placeholder">Pin a bulletin as Last Session to control the player home recap card.</p>
             {{/if}}
           </div>
+
+          <div class="bulletin-preview-card bulletin-contact-registry-card">
+            <span class="bulletin-preview-label">Source / Contact Registry</span>
+            <form class="bulletin-contact-form" data-bulletin-contact-form>
+              <input type="hidden" name="id" value="">
+              <label><span>Name</span><input type="text" name="name" placeholder="Galaxy News Net / Black Sun Desk"></label>
+              <label><span>Display Label</span><input type="text" name="label" placeholder="Shown on feed cards"></label>
+              <label><span>Kind</span>
+                <select name="kind">
+                  <option value="news">News</option>
+                  <option value="source">Source</option>
+                  <option value="faction">Faction</option>
+                  <option value="npc">NPC</option>
+                  <option value="mentor">Mentor</option>
+                  <option value="vendor">Vendor</option>
+                  <option value="system">System</option>
+                </select>
+              </label>
+              <label data-bulletin-image-dropzone><span>Image / Sigil</span><input type="text" name="imageUrl" data-bulletin-image-input placeholder="icons/svg/mystery-man.svg"></label>
+              <label><span>Dateline</span><input type="text" name="dateline" placeholder="Coruscant"></label>
+              <label><span>Sector</span><input type="text" name="sector" placeholder="Core Worlds"></label>
+              <label><span>Default Category</span><input type="text" name="defaultCategory" placeholder="general"></label>
+              <label><span>Notes</span><textarea name="notes" rows="2" placeholder="GM-only source note"></textarea></label>
+              <button type="button" class="swse-ui-button bulletin-primary-action" data-action="bulletin-save-contact">Save Source</button>
+            </form>
+            <div class="bulletin-contact-list">
+              {{#each bulletinContacts}}
+              <div class="bulletin-contact-row">
+                <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} · {{this.defaultCategory}}</em></span>
+                <small>{{this.imageLabel}} · used {{this.useCount}}</small>
+                {{#unless this.system}}<button type="button" class="swse-ui-button" data-action="bulletin-delete-contact" data-contact-id="{{this.id}}">Delete</button>{{/unless}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+
         </aside>
       </div>
     </div>

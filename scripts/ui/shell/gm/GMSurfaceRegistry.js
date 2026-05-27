@@ -12,6 +12,7 @@ import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 const SURFACE_IMPORTS = {
   home: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMDashboardSurfaceService.js'),
   bulletin: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMBulletinSurfaceService.js'),
+  jobs: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMJobBoardSurfaceService.js'),
   'house-rules': () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMHouseRulesSurfaceService.js'),
   store: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMStoreControlSurfaceService.js'),
   approvals: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalsSurfaceService.js'),
@@ -23,6 +24,7 @@ const SURFACE_IMPORTS = {
 const SERVICE_EXPORTS = {
   home: 'GMDashboardSurfaceService',
   bulletin: 'GMBulletinSurfaceService',
+  jobs: 'GMJobBoardSurfaceService',
   'house-rules': 'GMHouseRulesSurfaceService',
   store: 'GMStoreControlSurfaceService',
   approvals: 'GMApprovalsSurfaceService',

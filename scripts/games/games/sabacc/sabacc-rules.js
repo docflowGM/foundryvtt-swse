@@ -79,12 +79,39 @@ export function compareSabaccHands(entries = []) {
       if (b.evaluation.absoluteValue !== a.evaluation.absoluteValue) return b.evaluation.absoluteValue - a.evaluation.absoluteValue;
       return Number(b.evaluation.total || 0) - Number(a.evaluation.total || 0);
     });
-  const winner = evaluated.find(entry => !entry.evaluation.bombedOut) || null;
+  const contenders = evaluated.filter(entry => !entry.evaluation.bombedOut);
+  const winner = contenders[0] || null;
+  if (!winner) {
+    return {
+      winnerSeatId: null,
+      winner: null,
+      evaluated,
+      tied: false,
+      specialWinner: false,
+      reason: 'Every player bombed out.'
+    };
+  }
+  const tied = contenders.slice(1).some(entry =>
+    entry.evaluation.rank === winner.evaluation.rank
+    && entry.evaluation.absoluteValue === winner.evaluation.absoluteValue
+    && Number(entry.evaluation.total || 0) === Number(winner.evaluation.total || 0)
+  );
+  if (tied) {
+    return {
+      winnerSeatId: null,
+      winner: null,
+      evaluated,
+      tied: true,
+      specialWinner: false,
+      reason: `Tied at ${winner.evaluation.label}`
+    };
+  }
   return {
-    winnerSeatId: winner?.seatId || null,
+    winnerSeatId: winner.seatId || null,
     winner,
     evaluated,
-    specialWinner: Boolean(winner?.evaluation?.specialWinner),
-    reason: winner ? winner.evaluation.label : 'Every player bombed out.'
+    tied: false,
+    specialWinner: Boolean(winner.evaluation?.specialWinner),
+    reason: winner.evaluation.label
   };
 }

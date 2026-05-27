@@ -244,13 +244,13 @@
             </div>
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
-              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}}>
+              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}}>
                 {{#if this.imageUrl}}
                 <span class="swse-home-feed-thumb"><img src="{{this.imageUrl}}" alt="{{this.title}}"></span>
                 {{else}}
                 <span class="swse-home-feed-ico {{this.category}}">{{this.icon}}</span>
                 {{/if}}
-                <span><span class="em">{{this.sender}}</span>{{#if this.isUrgent}} <span class="swse-home-feed-alert">ALERT</span>{{/if}} — {{{this.preview}}}</span>
+                <span><span class="em">{{this.sender}}</span>{{#if this.isBreakingNews}} <span class="swse-home-feed-alert swse-home-feed-alert--breaking">BREAKING NEWS</span>{{else if this.isUrgent}} <span class="swse-home-feed-alert">ALERT</span>{{/if}} — {{{this.preview}}}</span>
                 <span class="swse-home-feed-time">{{this.timestamp}}</span>
               </button>
               {{else}}
