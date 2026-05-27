@@ -555,64 +555,218 @@ export function _getAvailableTalentTrees() {
   return Array.from(talentTreesSet).sort();
 }
 
-const FALLBACK_RANDOM_NAMES = [
-  'Rax Venn Daal', 'Lyra Korr Sol', 'Jarek Solan Marr', 'Nyssa Val Marr', 'Torvan Kree Ossik',
-  'Kaela Vire Noor', 'Dax Pell Korr', 'Mira Sol Daal', 'Voren Kess Marr', 'Elra Venn Ash'
-];
+const RANDOM_NAME_DATA_PATH = '/systems/foundryvtt-swse/data/chargen/random-names.json';
+const DEFAULT_DROID_DESIGNATION_RULES = Object.freeze({
+  segmentLength: { min: 1, max: 3 },
+  pattern: 'LNL',
+  separator: '-',
+  totalLength: { min: 4, max: 6 },
+  letters: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+  digits: '0123456789'
+});
 
-const FALLBACK_RANDOM_DROID_NAMES = [
-  'RX-44', 'P3-L9', 'R8-K5', 'C7-M4', 'D7-P3', 'K2-R6', 'M5-T8', 'BX-9R', 'T4-M9', 'HK-5Q'
-];
+let _randomNameDataPromise = null;
+let _randomNameDataCache = null;
 
-let _randomNameSourceCache = null;
+function _asCleanStringArray(values) {
+  return Array.isArray(values)
+    ? values.map(value => String(value ?? '').trim()).filter(Boolean)
+    : [];
+}
 
-function _pickRandomNameValue(values, fallback) {
-  const list = Array.isArray(values) ? values.filter(value => String(value ?? '').trim()) : [];
-  if (!list.length) return fallback;
+function _randomIntInclusive(min, max) {
+  const low = Math.ceil(Number(min));
+  const high = Math.floor(Number(max));
+  if (!Number.isFinite(low) || !Number.isFinite(high) || high < low) return low || 0;
+  return low + Math.floor(Math.random() * (high - low + 1));
+}
+
+function _pickRandom(values) {
+  const list = _asCleanStringArray(values);
+  if (!list.length) return '';
   return list[Math.floor(Math.random() * list.length)];
 }
 
-async function _loadRandomNameSource() {
-  if (_randomNameSourceCache) return _randomNameSourceCache;
-  try {
-    const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
-    const CharacterGenerator = module?.default;
-    _randomNameSourceCache = {
-      living: Array.isArray(CharacterGenerator?.RANDOM_NAMES)
-        ? CharacterGenerator.RANDOM_NAMES.slice()
-        : FALLBACK_RANDOM_NAMES.slice(),
-      droid: Array.isArray(CharacterGenerator?.RANDOM_DROID_NAMES)
-        ? CharacterGenerator.RANDOM_DROID_NAMES.slice()
-        : FALLBACK_RANDOM_DROID_NAMES.slice()
-    };
-  } catch (err) {
-    SWSELogger.warn('[CHARGEN] Random name source unavailable; using fallback names.', err);
-    _randomNameSourceCache = {
-      living: FALLBACK_RANDOM_NAMES.slice(),
-      droid: FALLBACK_RANDOM_DROID_NAMES.slice()
-    };
+function _pickWeightedSource(weightedSources, fallback = 'surnames') {
+  const entries = Array.isArray(weightedSources)
+    ? weightedSources
+      .map(entry => ({
+        source: String(entry?.source ?? '').trim(),
+        weight: Math.max(0, Number(entry?.weight ?? 0) || 0)
+      }))
+      .filter(entry => entry.source && entry.weight > 0)
+    : [];
+  if (!entries.length) return fallback;
+  const total = entries.reduce((sum, entry) => sum + entry.weight, 0);
+  let roll = Math.random() * total;
+  for (const entry of entries) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.source;
   }
-  return _randomNameSourceCache;
+  return entries[entries.length - 1]?.source || fallback;
+}
+
+function _normalizeRandomNameData(raw) {
+  const living = raw?.living ?? {};
+  const droids = raw?.droids ?? {};
+  const designation = droids?.designation ?? {};
+
+  const firstNames = _asCleanStringArray(living.firstNames);
+  const surnames = _asCleanStringArray(living.surnames);
+  if (!firstNames.length) {
+    throw new Error('random-names.json is missing living.firstNames entries.');
+  }
+
+  const minNames = Math.max(1, Number(living.nameCount?.min ?? 1) || 1);
+  const maxNames = Math.max(minNames, Number(living.nameCount?.max ?? 4) || 4);
+
+  return {
+    version: Number(raw?.version ?? 1) || 1,
+    living: {
+      firstNames,
+      surnames,
+      nameCount: {
+        min: Math.min(4, minNames),
+        max: Math.min(4, maxNames)
+      },
+      additionalNameSources: Array.isArray(living.additionalNameSources)
+        ? living.additionalNameSources
+        : [{ source: 'surnames', weight: 3 }, { source: 'firstNames', weight: 1 }]
+    },
+    droids: {
+      designation: {
+        segmentLength: {
+          min: Math.max(1, Number(designation.segmentLength?.min ?? DEFAULT_DROID_DESIGNATION_RULES.segmentLength.min) || 1),
+          max: Math.min(3, Math.max(1, Number(designation.segmentLength?.max ?? DEFAULT_DROID_DESIGNATION_RULES.segmentLength.max) || 3))
+        },
+        pattern: String(designation.pattern || DEFAULT_DROID_DESIGNATION_RULES.pattern).toUpperCase(),
+        separator: String(designation.separator || DEFAULT_DROID_DESIGNATION_RULES.separator),
+        totalLength: {
+          min: Math.min(6, Math.max(2, Number(designation.totalLength?.min ?? DEFAULT_DROID_DESIGNATION_RULES.totalLength.min) || 4)),
+          max: Math.min(6, Math.max(
+            Math.min(6, Math.max(2, Number(designation.totalLength?.min ?? DEFAULT_DROID_DESIGNATION_RULES.totalLength.min) || 4)),
+            Number(designation.totalLength?.max ?? DEFAULT_DROID_DESIGNATION_RULES.totalLength.max) || 6
+          ))
+        },
+        letters: String(designation.letters || DEFAULT_DROID_DESIGNATION_RULES.letters).toUpperCase(),
+        digits: String(designation.digits || DEFAULT_DROID_DESIGNATION_RULES.digits)
+      }
+    }
+  };
+}
+
+async function _loadRandomNameData() {
+  if (_randomNameDataCache) return _randomNameDataCache;
+  if (_randomNameDataPromise) return _randomNameDataPromise;
+
+  _randomNameDataPromise = (async () => {
+    try {
+      const response = await fetch(RANDOM_NAME_DATA_PATH, { cache: 'no-cache' });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} while loading ${RANDOM_NAME_DATA_PATH}`);
+      }
+      const raw = await response.json();
+      _randomNameDataCache = _normalizeRandomNameData(raw);
+      return _randomNameDataCache;
+    } catch (err) {
+      SWSELogger.error('[CHARGEN] Failed to load random name data JSON.', err);
+      throw err;
+    } finally {
+      _randomNameDataPromise = null;
+    }
+  })();
+
+  return _randomNameDataPromise;
+}
+
+function _buildLivingName(data) {
+  const living = data?.living ?? {};
+  const firstNames = _asCleanStringArray(living.firstNames);
+  const surnames = _asCleanStringArray(living.surnames);
+  if (!firstNames.length) return '';
+
+  const min = Math.max(1, Number(living.nameCount?.min ?? 1) || 1);
+  const max = Math.max(min, Number(living.nameCount?.max ?? 4) || 4);
+  const count = _randomIntInclusive(min, max);
+  const parts = [_pickRandom(firstNames)];
+
+  for (let i = 1; i < count; i += 1) {
+    const source = _pickWeightedSource(living.additionalNameSources, 'surnames');
+    const pool = source === 'firstNames' ? firstNames : surnames;
+    const value = _pickRandom(pool.length ? pool : firstNames);
+    if (value) parts.push(value);
+  }
+
+  return parts.filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+}
+
+function _generateDroidSegment(rules) {
+  const segmentLength = rules?.segmentLength ?? DEFAULT_DROID_DESIGNATION_RULES.segmentLength;
+  const length = _randomIntInclusive(segmentLength.min, segmentLength.max);
+  const pattern = String(rules?.pattern || DEFAULT_DROID_DESIGNATION_RULES.pattern).toUpperCase();
+  const letters = String(rules?.letters || DEFAULT_DROID_DESIGNATION_RULES.letters).toUpperCase();
+  const digits = String(rules?.digits || DEFAULT_DROID_DESIGNATION_RULES.digits);
+  let output = '';
+
+  for (let index = 0; index < length; index += 1) {
+    const token = pattern[index % pattern.length] || 'L';
+    output += token === 'N'
+      ? digits[Math.floor(Math.random() * digits.length)]
+      : letters[Math.floor(Math.random() * letters.length)];
+  }
+
+  return output;
+}
+
+function _buildDroidDesignation(data) {
+  const rules = data?.droids?.designation ?? DEFAULT_DROID_DESIGNATION_RULES;
+  const separator = String(rules.separator || DEFAULT_DROID_DESIGNATION_RULES.separator);
+  const totalLength = rules.totalLength ?? DEFAULT_DROID_DESIGNATION_RULES.totalLength;
+  const minTotal = Math.max(2, Number(totalLength.min ?? 4) || 4);
+  const maxTotal = Math.min(6, Math.max(minTotal, Number(totalLength.max ?? 6) || 6));
+
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const left = _generateDroidSegment(rules);
+    const right = _generateDroidSegment(rules);
+    const total = left.length + right.length;
+    if (total >= minTotal && total <= maxTotal) {
+      return `${left}${separator}${right}`;
+    }
+  }
+
+  // Fallback to the common four-part Star Wars-style designation shape.
+  return `${_generateDroidSegment({ ...rules, segmentLength: { min: 2, max: 2 } })}${separator}${_generateDroidSegment({ ...rules, segmentLength: { min: 2, max: 2 } })}`;
 }
 
 /**
  * Shared living-being random name generator used by chargen/progression and game opponents.
- * Reuses the existing CharacterGenerator static name list without duplicating name data here.
+ * Names are generated from data/chargen/random-names.json, not embedded JavaScript arrays.
  *
  * @returns {Promise<string>} Random living-being name.
  */
 export async function getRandomName() {
-  const source = await _loadRandomNameSource();
-  return _pickRandomNameValue(source.living, 'Wandering Gambler');
+  try {
+    const data = await _loadRandomNameData();
+    return _buildLivingName(data) || 'Unnamed Spacer';
+  } catch (err) {
+    globalThis.ui?.notifications?.warn?.('Random name data could not be loaded. Using a placeholder name.');
+    return 'Unnamed Spacer';
+  }
 }
 
 /**
- * Shared droid random name generator used by chargen/progression and game opponents.
- * Reuses the existing CharacterGenerator static droid-name list without duplicating name data here.
+ * Shared droid designation generator used by chargen/progression and game opponents.
+ * Droid names are generated from data/chargen/random-names.json designation rules.
  *
  * @returns {Promise<string>} Random droid designation.
  */
 export async function getRandomDroidName() {
-  const source = await _loadRandomNameSource();
-  return _pickRandomNameValue(source.droid, 'RX-44');
+  try {
+    const data = await _loadRandomNameData();
+    return _buildDroidDesignation(data) || 'RX-44';
+  } catch (err) {
+    SWSELogger.warn('[CHARGEN] Using emergency droid designation generator after random name JSON failure.', err);
+    return _buildDroidDesignation({ droids: { designation: DEFAULT_DROID_DESIGNATION_RULES } });
+  }
 }
+

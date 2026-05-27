@@ -2,7 +2,7 @@
  * NameStep plugin
  *
  * Handles character name and starting level selection.
- * Reuses existing random name generation logic from old chargen.
+ * Reuses the shared data-driven random name generator from chargen-shared.js.
  *
  * Data:
  * - characterName: string
@@ -171,7 +171,7 @@ export class NameStep extends ProgressionStepPlugin {
 
   async _generateRandomName(actor) {
     try {
-      // Import and use existing random name generator from old chargen
+      // Import and use shared data-driven random name generator
       const { getRandomName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
       if (typeof getRandomName === 'function') {
         return await getRandomName(actor);
@@ -184,7 +184,7 @@ export class NameStep extends ProgressionStepPlugin {
 
   async _generateRandomDroidName(actor) {
     try {
-      // Import and use existing droid name generator from old chargen
+      // Import and use shared data-driven droid designation generator
       const { getRandomDroidName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
       if (typeof getRandomDroidName === 'function') {
         return await getRandomDroidName(actor);
