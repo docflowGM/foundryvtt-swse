@@ -426,6 +426,25 @@ export class SWSEChat {
       primaryLabel: transfer.kind === 'creditRequest' ? 'Pay' : 'Deposit',
       declineAction: transfer.kind === 'creditRequest' ? 'decline-credit-request' : 'decline-transfer'
     } : null;
+    const itemTransfer = metadata.itemTransfer || null;
+    const assetTransfer = metadata.assetTransfer || null;
+    const materialTransfer = itemTransfer || assetTransfer;
+    const materialMemo = String(materialTransfer?.memo || '').replace(/\s+/g, ' ').trim();
+    const materialMemoPreview = materialMemo ? (materialMemo.length > 15 ? `${materialMemo.slice(0, 15)}…` : materialMemo) : '';
+    const materialAction = materialTransfer ? {
+      isAsset: Boolean(assetTransfer),
+      recordId: options.recordId || record.id || '',
+      threadId,
+      actorLabel: materialTransfer.fromLabel || senderName,
+      verb: assetTransfer ? 'offers asset' : 'offers items',
+      itemLabel: assetTransfer
+        ? (assetTransfer.assets || []).map(a => a.name).filter(Boolean).join(', ')
+        : (itemTransfer.items || itemTransfer.attachments || []).map(i => `${i.name || 'Item'}${i.quantity ? ` x${i.quantity}` : ''}`).filter(Boolean).join(', '),
+      memoPreview: materialMemoPreview,
+      primaryAction: assetTransfer ? 'accept-asset-transfer' : 'accept-item-transfer',
+      primaryLabel: assetTransfer ? 'Accept Asset' : 'Accept Items',
+      declineAction: assetTransfer ? 'decline-asset-transfer' : 'decline-item-transfer'
+    } : null;
 
     return {
       recordId: options.recordId || record.id || '',
@@ -445,6 +464,7 @@ export class SWSEChat {
       unread: options.unread ?? true,
       actionLabel: options.actionLabel || (action === 'open-thread' ? 'Open<br/>Holochat' : action === 'open-bulletin' ? 'Open<br/>Bulletin' : 'Open<br/>Notice'),
       creditAction,
+      materialAction,
       timeLabel: options.timeLabel || formatTime(record.publishedAt || record.createdAt || null)
     };
   }

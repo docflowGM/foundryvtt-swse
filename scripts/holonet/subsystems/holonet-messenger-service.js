@@ -9,6 +9,7 @@
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
+import { StoreAcquisitionService } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js';
 import { HolonetStorage } from './holonet-storage.js';
 import { HolonetThreadService } from './holonet-thread-service.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
@@ -320,6 +321,54 @@ function itemCategory(item) {
   if (String(sys.modificationType ?? sys.slot ?? '').trim()) return 'Modifications';
   if (['modification', 'upgrade'].includes(type)) return 'Modifications';
   return 'Gear';
+}
+
+
+function actorAssetCategory(actor) {
+  const type = String(actor?.type || '').toLowerCase();
+  const systemType = String(actor?.system?.vehicleType ?? actor?.system?.shipType ?? actor?.system?.type ?? '').toLowerCase();
+  if (type === 'droid' || systemType.includes('droid')) return 'Droids';
+  if (type === 'starship' || systemType.includes('starship') || systemType.includes('ship')) return 'Starships';
+  if (type === 'vehicle' || systemType.includes('vehicle')) return 'Vehicles';
+  return 'Assets';
+}
+
+function assetActorByLink(link = {}) {
+  const id = String(link.id || '').trim();
+  const uuid = String(link.uuid || '').trim();
+  return (id ? game.actors?.get?.(id) : null)
+    ?? (uuid.startsWith('Actor.') ? game.actors?.get?.(uuid.slice('Actor.'.length)) : null)
+    ?? null;
+}
+
+function ownedActorLinks(actor) {
+  const owned = Array.isArray(actor?.system?.ownedActors) ? actor.system.ownedActors : [];
+  const relationships = Array.isArray(actor?.system?.relationships) ? actor.system.relationships : [];
+  const byId = new Map();
+  for (const link of owned) {
+    const id = String(link?.id || link?.uuid || '').replace(/^Actor\./, '');
+    if (!id) continue;
+    byId.set(id, { ...link, id, uuid: link.uuid || `Actor.${id}` });
+  }
+  for (const rel of relationships) {
+    const id = String(rel?.id || rel?.uuid || '').replace(/^Actor\./, '');
+    if (!id || byId.has(id)) continue;
+    const type = String(rel?.type || '').toLowerCase();
+    if (!type.includes('asset') && !['droid', 'vehicle', 'starship'].includes(type)) continue;
+    byId.set(id, { ...rel, id, uuid: rel.uuid || `Actor.${id}` });
+  }
+  return Array.from(byId.values());
+}
+
+function removeAssetLinks(actor, assetIds = []) {
+  const ids = new Set(safeArray(assetIds).map(id => String(id || '').replace(/^Actor\./, '')).filter(Boolean));
+  if (!actor || !ids.size) return {};
+  const owned = Array.isArray(actor.system?.ownedActors) ? foundry.utils.deepClone(actor.system.ownedActors) : [];
+  const relationships = Array.isArray(actor.system?.relationships) ? foundry.utils.deepClone(actor.system.relationships) : [];
+  return {
+    'system.ownedActors': owned.filter(link => !ids.has(String(link?.id || link?.uuid || '').replace(/^Actor\./, ''))),
+    'system.relationships': relationships.filter(link => !ids.has(String(link?.id || link?.uuid || '').replace(/^Actor\./, '')))
+  };
 }
 
 function compactMemo(value = '', length = 15) {
@@ -659,6 +708,7 @@ export class HolonetMessengerService {
     const job = message.metadata?.jobCard ?? null;
     const receipt = message.metadata?.receipt ?? null;
     const itemTransfer = message.metadata?.itemTransfer ?? null;
+    const assetTransfer = message.metadata?.assetTransfer ?? null;
     const attachments = normalizeAttachmentList(message.metadata?.attachments ?? []);
     return {
       id: message.id,
@@ -682,6 +732,8 @@ export class HolonetMessengerService {
       transfer: transfer ? this._creditTransferVm(message, transfer, actor, participantId) : null,
       hasItemTransfer: Boolean(itemTransfer),
       itemTransfer: itemTransfer ? this._itemTransferVm(message, itemTransfer, actor, participantId) : null,
+      hasAssetTransfer: Boolean(assetTransfer),
+      assetTransfer: assetTransfer ? this._assetTransferVm(message, assetTransfer, actor, participantId) : null,
       hasReceipt: Boolean(receipt),
       receipt,
       hasJobCard: Boolean(job),
@@ -744,12 +796,37 @@ export class HolonetMessengerService {
     const isRecipient = transfer.toRecipientId === participantId || (transfer.toActorId && actor?.id === transfer.toActorId);
     const isSender = transfer.fromRecipientId === participantId || (transfer.fromActorId && actor?.id === transfer.fromActorId);
     const isGm = Boolean(game.user?.isGM);
+    const requiredCredits = Number(transfer?.trade?.requestedCredits || 0) || 0;
     return {
       ...transfer,
       messageId: message.id,
       status,
       statusLabel: transferStatusLabel(status),
       itemCount: safeArray(transfer.items).reduce((sum, item) => sum + (Number(item?.quantity) || 1), 0) || safeArray(transfer.attachments).length,
+      requestedCredits: requiredCredits,
+      requestedCreditsLabel: requiredCredits > 0 ? formatCredits(requiredCredits) : '',
+      hasTradeTerms: Boolean(requiredCredits > 0 || transfer?.trade?.requestedItemsNote),
+      canAccept: status === 'pendingRecipient' && (isRecipient || isGm),
+      canApprove: status === 'pendingGm' && isGm,
+      canDecline: ['pendingRecipient', 'pendingGm'].includes(status) && (isRecipient || isGm),
+      canCancel: ['pendingRecipient', 'pendingGm'].includes(status) && (isSender || isGm),
+      isResolved: ['complete', 'declined', 'cancelled', 'failed'].includes(status)
+    };
+  }
+
+  static _assetTransferVm(message, transfer, actor, participantId) {
+    const status = transfer.status || 'pendingGm';
+    const isRecipient = transfer.toRecipientId === participantId || (transfer.toActorId && actor?.id === transfer.toActorId);
+    const isSender = transfer.fromRecipientId === participantId || (transfer.fromActorId && actor?.id === transfer.fromActorId);
+    const isGm = Boolean(game.user?.isGM);
+    const requiredCredits = Number(transfer?.trade?.requestedCredits || 0) || 0;
+    return {
+      ...transfer,
+      messageId: message.id,
+      status,
+      statusLabel: transferStatusLabel(status),
+      requestedCredits: requiredCredits,
+      requestedCreditsLabel: requiredCredits > 0 ? formatCredits(requiredCredits) : '',
       canAccept: status === 'pendingRecipient' && (isRecipient || isGm),
       canApprove: status === 'pendingGm' && isGm,
       canDecline: ['pendingRecipient', 'pendingGm'].includes(status) && (isRecipient || isGm),
@@ -824,6 +901,33 @@ export class HolonetMessengerService {
     return { items: rows, categories };
   }
 
+  static _buildAssetComposerVm(actor) {
+    const rows = ownedActorLinks(actor)
+      .map(link => {
+        const asset = assetActorByLink(link);
+        if (!asset) return null;
+        const category = actorAssetCategory(asset);
+        return {
+          id: asset.id,
+          uuid: asset.uuid || `Actor.${asset.id}`,
+          name: asset.name || link.name || 'Owned Asset',
+          type: asset.type || link.type || 'actor',
+          typeLabel: category,
+          category,
+          img: asset.img || link.img || 'icons/svg/mystery-man.svg',
+          hp: asset.system?.attributes?.hp?.value ?? asset.system?.hp?.value ?? asset.system?.hp ?? null,
+          ref: asset.system?.defenses?.reflex?.value ?? asset.system?.defenses?.reflex ?? null,
+          fort: asset.system?.defenses?.fortitude?.value ?? asset.system?.defenses?.fortitude ?? null,
+          will: asset.system?.defenses?.will?.value ?? asset.system?.defenses?.will ?? null,
+          summary: [asset.type, asset.system?.vehicleType, asset.system?.droidDegree].filter(Boolean).join(' · ')
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+    const categories = Array.from(new Set(rows.map(row => row.category))).map(name => ({ name, assets: rows.filter(row => row.category === name) }));
+    return { assets: rows, categories };
+  }
+
   static _buildCompositionVm(actor, selectedThread, participantId, options = {}) {
     const type = String(options.compositionType || options.composer || '').trim();
     if (!type || !selectedThread) return null;
@@ -842,6 +946,7 @@ export class HolonetMessengerService {
       targets,
       hasMultipleTargets: targets.length > 1,
       inventory: type === 'items' ? this._buildInventoryComposerVm(actor) : null,
+      assets: type === 'assets' ? this._buildAssetComposerVm(actor) : null,
       policy: {
         creditsEnabled: creditTransfersEnabled(),
         itemTradesEnabled: itemTradesEnabled(),
@@ -1241,7 +1346,7 @@ export class HolonetMessengerService {
     return map[status] || String(status || 'Posted');
   }
 
-  static async offerItemTransfer({ actor, threadId, recipientId, itemUuids = [], items = [], recipientIds = [], distributionMode = 'single', memo = '' }) {
+  static async offerItemTransfer({ actor, threadId, recipientId, itemUuids = [], items = [], recipientIds = [], distributionMode = 'single', memo = '', tradeIntent = 'gift', requestedCredits = 0, requestedItemsNote = '' }) {
     const payload = {
       actorId: actor?.id ?? null,
       threadId,
@@ -1251,6 +1356,9 @@ export class HolonetMessengerService {
       items: safeArray(items),
       distributionMode,
       memo: String(memo || '').trim(),
+      tradeIntent: String(tradeIntent || 'gift').trim(),
+      requestedCredits: Number(requestedCredits || 0) || 0,
+      requestedItemsNote: String(requestedItemsNote || '').trim(),
       requesterId: game.user?.id ?? null,
       senderRecipientId: currentRecipientId()
     };
@@ -1259,6 +1367,25 @@ export class HolonetMessengerService {
       return { pending: true, requestId, threadId };
     }
     return this._gmOfferItemTransfer(payload);
+  }
+
+  static async offerAssetTransfer({ actor, threadId, recipientId, recipientIds = [], assetIds = [], memo = '', requestedCredits = 0 }) {
+    const payload = {
+      actorId: actor?.id ?? null,
+      threadId,
+      recipientId,
+      recipientIds: safeArray(recipientIds).map(String).filter(Boolean),
+      assetIds: safeArray(assetIds).map(String).filter(Boolean),
+      memo: String(memo || '').trim(),
+      requestedCredits: Number(requestedCredits || 0) || 0,
+      requesterId: game.user?.id ?? null,
+      senderRecipientId: currentRecipientId()
+    };
+    if (!game.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('offer-asset-transfer', payload);
+      return { pending: true, requestId, threadId };
+    }
+    return this._gmOfferAssetTransfer(payload);
   }
 
   static async offerCreditTransfer({ actor, threadId, recipientId, amount, memo = '' }) {
@@ -1587,7 +1714,7 @@ export class HolonetMessengerService {
     return distributions;
   }
 
-  static async _gmOfferItemTransfer({ actorId, threadId, recipientId, recipientIds = [], itemUuids = [], items = [], distributionMode = 'single', memo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmOfferItemTransfer({ actorId, threadId, recipientId, recipientIds = [], itemUuids = [], items = [], distributionMode = 'single', memo = '', tradeIntent = 'gift', requestedCredits = 0, requestedItemsNote = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!itemTradesEnabled()) return false;
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
@@ -1655,7 +1782,12 @@ export class HolonetMessengerService {
         toLabel: targetActor.name,
         toRecipientId: dist.recipient.id,
         createdAt: nowIso(),
-        createdByUserId: requesterId ?? game.user?.id ?? null
+        createdByUserId: requesterId ?? game.user?.id ?? null,
+        trade: {
+          intent: String(tradeIntent || 'gift').trim() || 'gift',
+          requestedCredits: parsePositiveCredits(requestedCredits),
+          requestedItemsNote: String(requestedItemsNote || '').trim()
+        }
       };
       results.push(await this._publishItemTransferOffer({ thread, transfer, attachments, requestId, requesterId }));
     }
@@ -1691,8 +1823,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '' }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [] }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -1700,7 +1832,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -1850,8 +1982,19 @@ export class HolonetMessengerService {
         await this._gmResolveItemTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
         break;
       }
+      case 'accept-asset-transfer':
+      case 'approve-asset-transfer':
+      case 'decline-asset-transfer':
+      case 'cancel-asset-transfer': {
+        await this._gmResolveAssetTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
+        break;
+      }
       case 'offer-item-transfer': {
-        await this._gmOfferItemTransfer({ actorId, threadId, recipientId, recipientIds, itemUuids, items, distributionMode, memo, requesterId, senderRecipientId, requestId });
+        await this._gmOfferItemTransfer({ actorId, threadId, recipientId, recipientIds, itemUuids, items, distributionMode, memo, tradeIntent, requestedCredits, requestedItemsNote, requesterId, senderRecipientId, requestId });
+        break;
+      }
+      case 'offer-asset-transfer': {
+        await this._gmOfferAssetTransfer({ actorId, threadId, recipientId, recipientIds, assetIds, memo, requestedCredits, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'pay-credit-request':
@@ -2129,6 +2272,90 @@ export class HolonetMessengerService {
   }
 
 
+
+  static async _gmOfferAssetTransfer({ actorId, threadId, recipientId, recipientIds = [], assetIds = [], memo = '', requestedCredits = 0, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+    if (!assetTradesEnabled()) return false;
+    const thread = await HolonetStorage.getThread(threadId);
+    if (!thread) return false;
+    const actor = actorId ? game.actors?.get(actorId) : null;
+    const senderRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
+    const requester = requesterId ? game.users?.get(requesterId) : game.user;
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipient?.id?.startsWith('gm:'));
+    if (!requesterIsGm && !hasRecipient(thread.participants, senderRecipient?.id)) return false;
+
+    const ids = safeArray(assetIds).map(id => String(id || '').replace(/^Actor\./, '')).filter(Boolean);
+    if (!ids.length) return false;
+    const recipientIdList = safeArray(recipientIds).length ? safeArray(recipientIds) : [recipientId];
+    const recipients = this._normalizeRecipientIds(recipientIdList)
+      .map(id => this._recipientFromStableId(id))
+      .filter(Boolean)
+      .filter(r => r.actorId && hasRecipient(thread.participants, r.id));
+    if (recipients.length !== 1) throw new Error('Choose exactly one recipient for ship/droid asset transfers.');
+    const target = recipients[0];
+    const targetActor = game.actors?.get(target.actorId);
+    if (!actor || !targetActor) return false;
+
+    const ownedIds = new Set(ownedActorLinks(actor).map(link => String(link.id || '').replace(/^Actor\./, '')));
+    const assets = ids.map(id => game.actors?.get(id)).filter(Boolean).filter(asset => ownedIds.has(asset.id));
+    if (!assets.length) throw new Error('Selected ship/droid asset is not owned by the sending actor.');
+
+    const transfer = {
+      id: foundry.utils.randomID(),
+      kind: 'ownedAssetTransfer',
+      status: assetTradeApprovalRequired() && !requesterIsGm ? 'pendingGm' : 'pendingRecipient',
+      approvalRequired: assetTradeApprovalRequired() && !requesterIsGm,
+      assets: assets.map(asset => ({
+        id: asset.id,
+        uuid: asset.uuid || `Actor.${asset.id}`,
+        name: asset.name || 'Owned Asset',
+        type: asset.type || 'actor',
+        typeLabel: actorAssetCategory(asset),
+        img: asset.img || 'icons/svg/mystery-man.svg',
+        summary: [asset.type, asset.system?.vehicleType, asset.system?.droidDegree].filter(Boolean).join(' · ')
+      })),
+      memo: String(memo || '').trim(),
+      fromActorId: actor.id,
+      fromLabel: actor.name,
+      fromRecipientId: senderRecipient?.id ?? null,
+      toActorId: targetActor.id,
+      toLabel: targetActor.name,
+      toRecipientId: target.id,
+      trade: {
+        intent: 'assetTrade',
+        requestedCredits: parsePositiveCredits(requestedCredits)
+      },
+      createdAt: nowIso(),
+      createdByUserId: requesterId ?? game.user?.id ?? null
+    };
+    return this._publishAssetTransferOffer({ thread, transfer, requestId, requesterId });
+  }
+
+  static async _publishAssetTransferOffer({ thread, transfer, requestId = null, requesterId = null } = {}) {
+    const names = safeArray(transfer.assets).map(asset => asset.name).join(', ') || 'asset';
+    const price = Number(transfer.trade?.requestedCredits || 0) > 0 ? ` for ${formatCredits(transfer.trade.requestedCredits)}` : '';
+    const message = MessengerSource.createMessage({
+      sender: HolonetSender.system('Holonet Asset Registry'),
+      audience: HolonetAudience.threadParticipants(this._messageRecipientsForThread(thread).map(r => r.id)),
+      body: `${transfer.fromLabel} offers ${names} to ${transfer.toLabel}${price}${transfer.memo ? ` — ${transfer.memo}` : ''}.`,
+      threadId: thread.id,
+      metadata: {
+        categoryId: HolonetPreferences.CATEGORIES.MESSAGES,
+        systemEvent: true,
+        eventType: 'asset-transfer-offered',
+        assetTransfer: transfer
+      }
+    });
+    message.intent = INTENT_TYPE.SYSTEM_NEW_MESSAGE;
+    message.recipients = this._messageRecipientsForThread(thread);
+    message.projections = [
+      { surfaceType: SURFACE_TYPE.MESSENGER_THREAD, recordId: message.id, isPinned: false, metadata: { threadId: thread.id } },
+      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: message.id, isPinned: false, metadata: { threadId: thread.id } }
+    ];
+    await HolonetThreadService.publishMessageToThread({ thread, message, senderRecipient: null, publishOptions: { skipSocket: true }, markSenderRead: false });
+    this._emitMessengerSync(this._threadSyncPayload(thread.id, { messageId: message.id, requestId, requesterId }));
+    return { threadId: thread.id, messageId: message.id };
+  }
+
   static async _gmResolveItemTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
@@ -2185,10 +2412,157 @@ export class HolonetMessengerService {
     return ok;
   }
 
-  static async _executeOwnedItemTransfer({ thread, transfer, requesterId = null } = {}) {
+
+  static _validateOwnedItemTransfer(transfer = {}) {
+    const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+    const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+    if (!sourceActor || !targetActor) return { ok: false, error: 'Item transfer actors could not be resolved.' };
+    for (const entry of safeArray(transfer.items)) {
+      const sourceItem = sourceActor.items?.get?.(entry.itemId) ?? sourceActor.items?.find?.(item => item.id === entry.itemId || item._id === entry.itemId);
+      if (!sourceItem) return { ok: false, error: `${entry.name || 'Item'} is no longer on ${sourceActor.name}.` };
+      const sourceQty = getItemQuantity(sourceItem);
+      const requestedQty = Math.max(1, normalizeQuantity(entry.quantity, 1));
+      if (sourceQty < requestedQty) return { ok: false, error: `${sourceActor.name} no longer has enough ${sourceItem.name}.` };
+    }
+    return { ok: true, sourceActor, targetActor };
+  }
+
+  static async _settleTradeCredits({ thread, transfer, requesterId = null, source = 'HolonetMessengerService.tradeCredits' } = {}) {
+    const requestedCredits = parsePositiveCredits(transfer?.trade?.requestedCredits);
+    if (!requestedCredits) return { success: true, amount: 0 };
+    const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+    const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+    if (!sourceActor || !targetActor) return { success: false, error: 'Trade credit actors could not be resolved.' };
+    return TransactionEngine.executeCreditTransfer({
+      fromActor: targetActor,
+      toActor: sourceActor,
+      amount: requestedCredits,
+      reason: transfer.memo ? `Holonet trade: ${transfer.memo}` : 'Holonet trade',
+      transactionContext: transfer.kind === 'ownedAssetTransfer' ? 'holonet-asset-trade' : 'holonet-item-trade',
+      audit: { source: 'holonet-trade', threadId: thread.id, transferId: transfer.id, requesterId }
+    }, { source, validate: true, rederive: true });
+  }
+
+  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+    if (!recordId) return false;
+    const message = await HolonetStorage.getRecord(recordId);
+    const transfer = message?.metadata?.assetTransfer;
+    if (!message || !transfer) return false;
+    const requester = requesterId ? game.users?.get(requesterId) : game.user;
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const currentId = senderRecipientId || currentRecipientId();
+    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
+
+    if (action === 'decline-asset-transfer') {
+      if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
+      transfer.status = 'declined';
+      transfer.resolvedAt = nowIso();
+      transfer.resolvedBy = currentId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `${transfer.toLabel} declined an asset transfer from ${transfer.fromLabel}.`, { eventType: 'asset-transfer-declined', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'cancel-asset-transfer') {
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId) return false;
+      transfer.status = 'cancelled';
+      transfer.resolvedAt = nowIso();
+      transfer.resolvedBy = currentId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `${transfer.fromLabel} cancelled an asset transfer.`, { eventType: 'asset-transfer-cancelled', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'approve-asset-transfer') {
+      if (!requesterIsGm) return false;
+      if (transfer.status !== 'pendingGm') return false;
+      transfer.status = 'pendingRecipient';
+      transfer.approvedAt = nowIso();
+      transfer.approvedBy = requesterId || game.user?.id || null;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `GM approved an asset transfer from ${transfer.fromLabel} to ${transfer.toLabel}.`, { eventType: 'asset-transfer-approved', transferId: transfer.id });
+      return true;
+    }
+
+    if (action !== 'accept-asset-transfer') return false;
+    if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
+    const ok = await this._executeAssetTransfer({ thread, transfer, requesterId });
+    transfer.status = ok ? 'complete' : 'failed';
+    transfer.resolvedAt = nowIso();
+    transfer.resolvedBy = currentId;
+    await HolonetStorage.saveRecord(message);
+    return ok;
+  }
+
+  static async _executeAssetTransfer({ thread, transfer, requesterId = null } = {}) {
     const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
     const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
     if (!sourceActor || !targetActor) return false;
+    const assets = safeArray(transfer.assets).map(entry => game.actors?.get(String(entry.id || entry.uuid || '').replace(/^Actor\./, ''))).filter(Boolean);
+    if (!assets.length) return false;
+    const ownedIds = new Set(ownedActorLinks(sourceActor).map(link => String(link.id || '').replace(/^Actor\./, '')));
+    const missing = assets.find(asset => !ownedIds.has(asset.id));
+    if (missing) throw new Error(`${missing.name} is no longer linked to ${sourceActor.name}.`);
+
+    const credit = await this._settleTradeCredits({ thread, transfer, requesterId, source: 'HolonetMessengerService.assetTradeCredits' });
+    if (!credit?.success) {
+      await this._publishSystemMessage(thread, `Asset transfer payment failed: ${credit?.error || 'Credit movement failed.'}`, { eventType: 'asset-transfer-payment-failed', transferId: transfer.id });
+      return false;
+    }
+
+    const ids = assets.map(asset => asset.id);
+    await ActorEngine.applyMutationPlan(sourceActor, { set: removeAssetLinks(sourceActor, ids) }, { source: 'HolonetMessengerService.assetTransfer.unlinkSource', validate: true, rederive: true });
+    const linkPlan = StoreAcquisitionService.buildOwnerLinkPlan(targetActor, assets, {
+      ownerActor: targetActor,
+      source: 'holonet-asset-transfer',
+      transactionId: credit.transferId ?? credit.transactionId ?? transfer.id,
+      transactionContext: 'holonet-asset-trade',
+      audit: { transferId: transfer.id, threadId: thread.id, requesterId }
+    });
+    if (linkPlan) await ActorEngine.applyMutationPlan(targetActor, linkPlan, { source: 'HolonetMessengerService.assetTransfer.linkTarget', validate: true, rederive: true });
+
+    const ownership = StoreAcquisitionService.buildActorOwnership(targetActor, { includeCurrentGM: true });
+    for (const asset of assets) {
+      await asset.update({
+        ownership,
+        'system.ownedByActorId': targetActor.id,
+        'system.ownedByActorName': targetActor.name,
+        [`flags.foundryvtt-swse.holonetAssetTransfer`]: {
+          source: 'holonet-asset-transfer',
+          threadId: thread.id,
+          transferId: transfer.id,
+          fromActorId: sourceActor.id,
+          toActorId: targetActor.id,
+          transferredAt: nowIso(),
+          requesterId
+        }
+      });
+    }
+
+    const names = assets.map(asset => asset.name).join(', ');
+    await this._publishReceiptMessage(thread, {
+      title: 'Asset Transfer Receipt',
+      eventType: 'asset-transfer-complete',
+      lines: [`From: ${sourceActor.name}`, `To: ${targetActor.name}`, `Assets: ${names}`, credit.amount ? `Credits: ${formatCredits(credit.amount)}` : null].filter(Boolean)
+    });
+    await this._publishSystemMessage(thread, `${targetActor.name} received ${names} from ${sourceActor.name}.`, { eventType: 'asset-transfer-complete', toActorId: targetActor.id, assetIds: ids });
+    return true;
+  }
+
+  static async _executeOwnedItemTransfer({ thread, transfer, requesterId = null } = {}) {
+    const validation = this._validateOwnedItemTransfer(transfer);
+    if (!validation.ok) {
+      await this._publishSystemMessage(thread, `Item transfer failed: ${validation.error}`, { eventType: 'item-transfer-failed', transferId: transfer.id });
+      return false;
+    }
+    const { sourceActor, targetActor } = validation;
+
+    const credit = await this._settleTradeCredits({ thread, transfer, requesterId, source: 'HolonetMessengerService.itemTradeCredits' });
+    if (!credit?.success) {
+      await this._publishSystemMessage(thread, `Item trade payment failed: ${credit?.error || 'Credit movement failed.'}`, { eventType: 'item-transfer-payment-failed', transferId: transfer.id });
+      return false;
+    }
+
     const createData = [];
     const updates = [];
     const deletes = [];
@@ -2214,18 +2588,33 @@ export class HolonetMessengerService {
       }
     }
     if (!createData.length) return false;
-    if (updates.length) await ActorEngine.updateEmbeddedDocuments(sourceActor, 'Item', updates, { source: 'HolonetMessengerService.itemTransfer.decrement' });
-    if (deletes.length) await ActorEngine.deleteEmbeddedDocuments(sourceActor, 'Item', deletes, { source: 'HolonetMessengerService.itemTransfer.remove' });
-    await ActorEngine.createEmbeddedDocuments(targetActor, 'Item', createData, { source: 'HolonetMessengerService.itemTransfer.create' });
+
+    try {
+      if (updates.length) await ActorEngine.updateEmbeddedDocuments(sourceActor, 'Item', updates, { source: 'HolonetMessengerService.itemTransfer.decrement' });
+      if (deletes.length) await ActorEngine.deleteEmbeddedDocuments(sourceActor, 'Item', deletes, { source: 'HolonetMessengerService.itemTransfer.remove' });
+      await ActorEngine.createEmbeddedDocuments(targetActor, 'Item', createData, { source: 'HolonetMessengerService.itemTransfer.create' });
+    } catch (err) {
+      if (credit?.amount) {
+        await TransactionEngine.executeCreditTransfer({
+          fromActor: sourceActor,
+          toActor: targetActor,
+          amount: credit.amount,
+          reason: 'Holonet item trade compensation after item movement failure',
+          transactionContext: 'holonet-item-trade',
+          audit: { source: 'holonet-item-trade-compensation', threadId: thread.id, transferId: transfer.id, requesterId, originalTransferId: credit.transferId ?? null }
+        }, { source: 'HolonetMessengerService.itemTradeCompensation', validate: true, rederive: true });
+      }
+      throw err;
+    }
+
     await this._publishReceiptMessage(thread, {
-      title: 'Item Transfer Receipt',
+      title: transfer?.trade?.requestedCredits ? 'Item Trade Receipt' : 'Item Transfer Receipt',
       eventType: 'item-transfer-complete',
-      lines: [`From: ${sourceActor.name}`, `To: ${targetActor.name}`, `Items: ${names.join(', ')}`]
+      lines: [`From: ${sourceActor.name}`, `To: ${targetActor.name}`, `Items: ${names.join(', ')}`, credit.amount ? `Credits: ${formatCredits(credit.amount)}` : null].filter(Boolean)
     });
     await this._publishSystemMessage(thread, `${targetActor.name} received ${names.join(', ')} from ${sourceActor.name}.`, { eventType: 'item-transfer-complete', toActorId: targetActor.id, itemNames: names });
     return true;
   }
-
 
   static async _gmGrantItems({ thread, recipientId, itemUuids = [], requesterId = null, eventType = 'item-grant', source = 'holonet-item-grant' } = {}) {
     const recipient = this._recipientFromStableId(recipientId);

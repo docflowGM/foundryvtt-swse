@@ -220,7 +220,7 @@ async function handleHolonetMessageAction(event, button, message) {
   event.stopPropagation();
 
   const action = button.dataset.holonetAction || '';
-  if (!['accept-transfer', 'decline-transfer', 'pay-credit-request', 'decline-credit-request'].includes(action)) return;
+  if (!['accept-transfer', 'decline-transfer', 'pay-credit-request', 'decline-credit-request', 'accept-item-transfer', 'decline-item-transfer', 'accept-asset-transfer', 'decline-asset-transfer'].includes(action)) return;
   const threadId = button.dataset.holonetThreadId || '';
   const recordId = button.dataset.holonetRecordId || '';
   const actor = actorFromId(button.dataset.actorId || message?.speaker?.actor)
@@ -372,7 +372,7 @@ export class ChatInteractionBridge {
     bind(root, '.swse-apply-damage-btn', 'ApplyDamage', handleApplyDamageButton, message);
     bind(root, '[data-reaction], [data-swse-reaction-key]', 'Reaction', handleReactionButton, message);
     bind(root, '[data-holonet-action="open-thread"], [data-holonet-action="open-bulletin"], [data-holonet-action="open-record"]', 'HolonetOpenCard', handleHolonetCardAction, message);
-    bind(root, '[data-holonet-action="accept-transfer"], [data-holonet-action="decline-transfer"], [data-holonet-action="pay-credit-request"], [data-holonet-action="decline-credit-request"]', 'HolonetMessageAction', handleHolonetMessageAction, message);
+    bind(root, '[data-holonet-action="accept-transfer"], [data-holonet-action="decline-transfer"], [data-holonet-action="pay-credit-request"], [data-holonet-action="decline-credit-request"], [data-holonet-action="accept-item-transfer"], [data-holonet-action="decline-item-transfer"], [data-holonet-action="accept-asset-transfer"], [data-holonet-action="decline-asset-transfer"]', 'HolonetMessageAction', handleHolonetMessageAction, message);
     bind(root, '[data-store-action]', 'StoreReceiptAction', handleStoreReceiptAction, message);
     bind(root, '.species-reroll-btn', 'SpeciesReroll', handleSpeciesRerollButton, message);
     bind(root, '.swse-skill-reroll-btn', 'SkillReroll', handleSkillRerollButton, message);

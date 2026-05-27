@@ -321,6 +321,8 @@
                         {{/each}}
                       {{/if}}
                     </div>
+                    {{#if this.itemTransfer.requestedCreditsLabel}}<div class="hl-credit-line">Requested payment: <strong>{{this.itemTransfer.requestedCreditsLabel}}</strong></div>{{/if}}
+                    {{#if this.itemTransfer.trade.requestedItemsNote}}<div class="hl-credit-line">Requested trade: {{this.itemTransfer.trade.requestedItemsNote}}</div>{{/if}}
                     {{#if this.itemTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.itemTransfer.memo}}</div>{{/if}}
                     <div class="hl-credit-status">{{this.itemTransfer.statusLabel}}</div>
                     <div class="hl-credit-actions">
@@ -328,6 +330,28 @@
                       {{#if this.itemTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Items</button>{{/if}}
                       {{#if this.itemTransfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
                       {{#if this.itemTransfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{else}}
+                {{#if this.hasAssetTransfer}}
+                <article class="swse-msg-system hl-item-card-wrap">
+                  <div class="hl-attach-card hl-item-transfer-card hl-asset-transfer-card">
+                    <div class="hl-credit-title">Ship / Droid Asset Transfer</div>
+                    <div class="hl-credit-line"><strong>{{this.assetTransfer.fromLabel}}</strong> → <strong>{{this.assetTransfer.toLabel}}</strong></div>
+                    <div class="hl-attachments">
+                      {{#each this.assetTransfer.assets}}
+                      <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.typeLabel}}</small></div>
+                      {{/each}}
+                    </div>
+                    {{#if this.assetTransfer.requestedCreditsLabel}}<div class="hl-credit-line">Requested payment: <strong>{{this.assetTransfer.requestedCreditsLabel}}</strong></div>{{/if}}
+                    {{#if this.assetTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.assetTransfer.memo}}</div>{{/if}}
+                    <div class="hl-credit-status">{{this.assetTransfer.statusLabel}}</div>
+                    <div class="hl-credit-actions">
+                      {{#if this.assetTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
+                      {{#if this.assetTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Asset</button>{{/if}}
+                      {{#if this.assetTransfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
+                      {{#if this.assetTransfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
                     </div>
                   </div>
                 </article>
@@ -404,7 +428,7 @@
               <button class="hl-tool-btn" data-holonet-action="open-item-composer" data-thread-id="{{vm.selectedThread.id}}" type="button">Send Items</button>
               {{/if}}
               {{#if vm.transferPolicy.assetTradesEnabled}}
-              <button class="hl-tool-btn hl-tool-btn--pending" type="button" title="Ships and droids use the approved asset-transfer lifecycle coming next.">Trade Ship/Droid</button>
+              <button class="hl-tool-btn" data-holonet-action="open-asset-composer" data-thread-id="{{vm.selectedThread.id}}" type="button">Trade Ship/Droid</button>
               {{/if}}
             </div>
             <div class="hl-composer-input-row">
@@ -549,7 +573,6 @@
       {{else}}
       <div class="swse-messenger-empty hl-empty">Select a thread or start a new transmission.</div>
       {{/if}}
-      {{/if}}
     </section>
   </div>
   {{#if vm.composition}}
@@ -613,6 +636,12 @@
           {{/each}}
         </div>
         <label class="hl-field"><span>Memo</span><input type="text" name="memo" maxlength="120" placeholder="Optional trade memo"></label>
+        <div class="hl-trade-terms">
+          <label><input type="radio" name="tradeIntent" value="gift" checked> Send / gift these items</label>
+          <label><input type="radio" name="tradeIntent" value="trade"> Request trade terms</label>
+          <label class="hl-field"><span>Requested Credits</span><input type="number" name="requestedCredits" min="0" step="1" placeholder="0"></label>
+          <label class="hl-field"><span>Requested Items / Notes</span><input type="text" name="requestedItemsNote" maxlength="160" placeholder="Optional: ask for an item, service, or mixed trade"></label>
+        </div>
         <div class="hl-recipient-picker">
           <div class="hl-label">Recipient(s)</div>
           <div class="hl-recipient-grid">
@@ -629,6 +658,41 @@
         {{/if}}
         <div class="hl-composition-actions">
           <button class="swse-btn swse-btn--primary hl-btn-accent" type="submit">Continue / Send Offer</button>
+          <button class="swse-btn hl-icon-btn" data-holonet-action="close-composer" type="button">Cancel</button>
+        </div>
+      </form>
+      {{/if}}
+
+      {{#if (eq vm.composition.type "assets")}}
+      <form class="hl-composition-form" data-holonet-action="submit-asset-composer" data-thread-id="{{vm.composition.threadId}}">
+        <div class="hl-help">Ship and droid trades move owned actor sheets. They default to GM approval unless the GM disables that requirement.</div>
+        <label class="hl-field"><span>Filter</span><input type="search" data-holonet-asset-filter placeholder="Search ships, droids, vehicles..."></label>
+        <div class="hl-item-composer-list">
+          {{#each vm.composition.assets.categories}}
+          <section class="hl-item-category" data-asset-category="{{this.name}}">
+            <h4>{{this.name}}</h4>
+            {{#each this.assets}}
+            <label class="hl-item-row" data-asset-name="{{this.name}} {{this.typeLabel}}">
+              <input type="checkbox" name="assetIds" value="{{this.id}}">
+              {{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span class="hl-avatar hl-avatar--blank">▣</span>{{/if}}
+              <span><b>{{this.name}}</b><small>{{this.typeLabel}}{{#if this.summary}} · {{this.summary}}{{/if}}</small></span>
+            </label>
+            {{/each}}
+          </section>
+          {{/each}}
+        </div>
+        <label class="hl-field"><span>Requested Credits</span><input type="number" name="requestedCredits" min="0" step="1" placeholder="0"></label>
+        <label class="hl-field"><span>Memo</span><input type="text" name="memo" maxlength="120" placeholder="Optional asset transfer memo"></label>
+        <div class="hl-recipient-picker">
+          <div class="hl-label">Recipient</div>
+          <div class="hl-recipient-grid">
+            {{#each vm.composition.targets}}
+            <label class="hl-recipient-row"><input type="radio" name="recipientId" value="{{this.id}}"><span>{{this.label}}</span><small>{{this.typeLabel}}</small></label>
+            {{/each}}
+          </div>
+        </div>
+        <div class="hl-composition-actions">
+          <button class="swse-btn swse-btn--primary hl-btn-accent" type="submit">Send Asset Offer</button>
           <button class="swse-btn hl-icon-btn" data-holonet-action="close-composer" type="button">Cancel</button>
         </div>
       </form>

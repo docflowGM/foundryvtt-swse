@@ -690,6 +690,17 @@ export function ShellHostMixin(BaseClass) {
         });
       });
 
+      messengerRoot.querySelectorAll('[data-holonet-action="open-asset-composer"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const threadId = el.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+          if (!threadId) return;
+          await this.setSurface('messenger', { threadId, compose: false, compositionType: 'assets', source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false, compositionType: 'assets' });
+        });
+      });
+
       messengerRoot.querySelectorAll('[data-holonet-action="close-composer"]').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
@@ -705,6 +716,16 @@ export function ShellHostMixin(BaseClass) {
           const query = String(input.value || '').trim().toLowerCase();
           messengerRoot.querySelectorAll('.hl-item-row[data-item-name]').forEach(row => {
             const haystack = String(row.dataset.itemName || '').toLowerCase();
+            row.hidden = Boolean(query && !haystack.includes(query));
+          });
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-asset-filter]').forEach(input => {
+        input.addEventListener('input', () => {
+          const query = String(input.value || '').trim().toLowerCase();
+          messengerRoot.querySelectorAll('.hl-item-row[data-asset-name]').forEach(row => {
+            const haystack = String(row.dataset.assetName || '').toLowerCase();
             row.hidden = Boolean(query && !haystack.includes(query));
           });
         });
@@ -740,8 +761,29 @@ export function ShellHostMixin(BaseClass) {
           const items = itemIds.map(itemId => ({ itemId, quantity: Number(data.get(`quantity.${itemId}`) || 1) || 1 }));
           const distributionMode = String(data.get('distributionMode') || 'single');
           const memo = String(data.get('memo') || '').trim();
+          const tradeIntent = String(data.get('tradeIntent') || 'gift');
+          const requestedCredits = Number(data.get('requestedCredits') || 0) || 0;
+          const requestedItemsNote = String(data.get('requestedItemsNote') || '').trim();
           if (!threadId || !recipientIds.length || !items.length) return;
-          const result = await HolonetMessengerService.offerItemTransfer({ actor, threadId, recipientIds, items, distributionMode, memo });
+          const result = await HolonetMessengerService.offerItemTransfer({ actor, threadId, recipientIds, items, distributionMode, memo, tradeIntent, requestedCredits, requestedItemsNote });
+          this._noteMessengerPendingResult(result);
+          await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="submit-asset-composer"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+          const recipientId = String(data.get('recipientId') || '').trim();
+          const assetIds = data.getAll('assetIds').map(String).filter(Boolean);
+          const requestedCredits = Number(data.get('requestedCredits') || 0) || 0;
+          const memo = String(data.get('memo') || '').trim();
+          if (!threadId || !recipientId || !assetIds.length) return;
+          const result = await HolonetMessengerService.offerAssetTransfer({ actor, threadId, recipientId, assetIds, requestedCredits, memo });
           this._noteMessengerPendingResult(result);
           await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
           await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
@@ -817,7 +859,7 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId || !action) return;
           const result = await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, recordId, amount, status });
           this._noteMessengerPendingResult(result);
-          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer'].includes(action) });
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer', 'accept-asset-transfer', 'decline-asset-transfer', 'cancel-asset-transfer', 'approve-asset-transfer'].includes(action) });
         });
       });
 

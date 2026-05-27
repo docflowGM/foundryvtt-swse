@@ -37,7 +37,16 @@
       <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">See Message</button>
     </div>
     {{else}}
+    {{#if materialAction}}
+    <div class="ht-credit-quickline"><strong>{{materialAction.actorLabel}}</strong> {{materialAction.verb}} <strong>{{materialAction.itemLabel}}</strong>{{#if materialAction.memoPreview}} · “{{materialAction.memoPreview}}”{{/if}}</div>
+    <div class="ht-credit-actions">
+      <button type="button" data-holonet-action="{{materialAction.primaryAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{materialAction.primaryLabel}}</button>
+      <button type="button" data-holonet-action="{{materialAction.declineAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">Decline</button>
+      <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">See Message</button>
+    </div>
+    {{else}}
     {{#if preview}}<div class="htprev">{{preview}}{{#if attachmentCount}} <span class="att">📎 <b>{{attachmentCount}}</b></span>{{/if}}</div>{{/if}}
+    {{/if}}
     {{/if}}
   </div>
   <div class="htgo">

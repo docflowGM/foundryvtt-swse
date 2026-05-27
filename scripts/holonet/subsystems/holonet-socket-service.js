@@ -115,6 +115,10 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmOfferItemTransfer(data);
         break;
       }
+      case 'offer-asset-transfer': {
+        await HolonetMessengerService._gmOfferAssetTransfer(data);
+        break;
+      }
       case 'thread-action': {
         await HolonetMessengerService._gmThreadAction(data);
         break;
