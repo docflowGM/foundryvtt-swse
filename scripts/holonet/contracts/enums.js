@@ -82,7 +82,17 @@ export const INTENT_TYPE = {
   FOLLOWER_LEVELED: 'follower.leveled',
   FOLLOWER_KILLED: 'follower.killed',
   FOLLOWER_HEALED: 'follower.healed',
-  FOLLOWER_WOUNDS_TREATED: 'follower.wounds_treated'
+  FOLLOWER_WOUNDS_TREATED: 'follower.wounds_treated',
+
+  // Holopad Games notifications
+  GAME_INVITE_RECEIVED: 'game.invite_received',
+  GAME_INVITE_ACCEPTED: 'game.invite_accepted',
+  GAME_INVITE_DECLINED: 'game.invite_declined',
+  GAME_TURN_READY: 'game.turn_ready',
+  GAME_WAGER_ESCROWED: 'game.wager_escrowed',
+  GAME_WAGER_SETTLED: 'game.wager_settled',
+  GAME_COMPLETED: 'game.completed',
+  GAME_PRIZE_AWARDED: 'game.prize_awarded'
 };
 
 export const DELIVERY_STATE = {
@@ -130,7 +140,8 @@ export const SURFACE_TYPE = {
   GM_DATAPAD_BULLETIN: 'gm_datapad_bulletin',
   GM_DATAPAD_APPROVALS: 'gm_datapad_approvals',
   STORE_NOTICE: 'store_notice',
-  MENTOR_NOTICE: 'mentor_notice'
+  MENTOR_NOTICE: 'mentor_notice',
+  GAMES_NOTICE: 'games_notice'
 };
 
 export const SOURCE_FAMILY = {
@@ -145,7 +156,8 @@ export const SOURCE_FAMILY = {
   SHIP: 'ship',
   HEALING: 'healing',
   DROID: 'droid',
-  FOLLOWER: 'follower'
+  FOLLOWER: 'follower',
+  GAMES: 'games'
 };
 
 export const AUDIENCE_TYPE = {

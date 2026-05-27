@@ -1,0 +1,188 @@
+{{!--
+  surface-games.hbs — Holopad Games infrastructure surface.
+
+  Phase 1 only: registry/status/settings/session summaries. Playable table
+  renderers, Messenger invitations, and wager settlement are later layers.
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--games swse-games-surface"
+     data-shell-region="surface-games"
+     data-surface-id="{{vm.id}}">
+
+  <header class="swse-games-hud">
+    <div class="swse-games-hud__left">
+      <span class="swse-games-led {{#if vm.settings.enabled}}is-online{{else}}is-offline{{/if}}"></span>
+      <span>GAME CENTER</span>
+      <span class="swse-games-hud__muted">{{#if vm.settings.enabled}}ONLINE{{else}}DISABLED BY GM{{/if}}</span>
+    </div>
+    <div class="swse-games-hud__right">
+      <span>{{vm.sessionSummary.inviteCount}} INVITES</span>
+      <span>{{vm.sessionSummary.activeCount}} ACTIVE</span>
+      <button type="button" class="swse-games-ghost" data-shell-action="return-to-home">Home</button>
+    </div>
+  </header>
+
+  <section class="swse-games-hero">
+    <div>
+      <div class="swse-games-kicker">HOLOPAD SIDE TABLES</div>
+      <h2>{{vm.title}}</h2>
+      <p>{{vm.subtitle}}</p>
+    </div>
+    <div class="swse-games-actor-chip">
+      <img src="{{vm.actorImg}}" alt="{{vm.actorName}}">
+      <div>
+        <b>{{vm.actorName}}</b>
+        <span>Table access node</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="swse-games-layout">
+    <section class="swse-games-panel swse-games-panel--library">
+      <div class="swse-games-panel__head">
+        <div>
+          <span class="swse-games-kicker">INSTALLED GAMES</span>
+          <h3>Game Library</h3>
+        </div>
+        <span class="swse-games-count">{{vm.games.length}}</span>
+      </div>
+
+      <div class="swse-games-library">
+        {{#each vm.games}}
+        <button type="button"
+                class="swse-games-card {{#if this.selected}}is-selected{{/if}} {{#if this.disabled}}is-disabled{{/if}}"
+                data-games-action="select-game"
+                data-game-id="{{this.id}}"
+                {{#if this.disabled}}disabled{{/if}}>
+          <span class="swse-games-card__icon">{{this.icon}}</span>
+          <span class="swse-games-card__body">
+            <span class="swse-games-card__title">{{this.title}}</span>
+            <span class="swse-games-card__sub">{{this.subtitle}}</span>
+            <span class="swse-games-card__meta">{{this.playerRange}} players · {{this.implementationPhase}}</span>
+          </span>
+          <span class="swse-games-card__status">{{this.status}}</span>
+        </button>
+        {{/each}}
+      </div>
+    </section>
+
+    <section class="swse-games-panel swse-games-panel--detail">
+      {{#if vm.selectedGame}}
+      <div class="swse-games-detail-head">
+        <div class="swse-games-big-icon">{{vm.selectedGame.icon}}</div>
+        <div>
+          <span class="swse-games-kicker">SELECTED TABLE</span>
+          <h3>{{vm.selectedGame.title}}</h3>
+          <p>{{vm.selectedGame.description}}</p>
+        </div>
+      </div>
+
+      <div class="swse-games-chip-row">
+        {{#each vm.selectedGame.capabilityChips}}
+        <span class="swse-games-chip {{#if this.enabled}}is-enabled{{else}}is-disabled{{/if}}">{{this.label}}</span>
+        {{/each}}
+      </div>
+
+      <div class="swse-games-mode-grid">
+        {{#each vm.modeCards}}
+        <button type="button"
+                class="swse-games-mode {{#if this.selected}}is-selected{{/if}} {{#unless this.enabled}}is-disabled{{/unless}}"
+                data-games-action="select-rules-mode"
+                data-rules-mode="{{this.id}}"
+                {{#unless this.enabled}}disabled{{/unless}}>
+          <b>{{this.title}}</b>
+          <span>{{this.description}}</span>
+        </button>
+        {{/each}}
+      </div>
+
+      {{#if vm.canSendInvites}}
+      <form class="swse-games-invite-form" data-games-action="create-game-invite">
+        <input type="hidden" name="gameId" value="{{vm.selectedGame.id}}">
+        <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+        <div>
+          <span class="swse-games-kicker">HOLOCRON REQUEST</span>
+          <strong>Send Game Invite</strong>
+          <small>Creates a Messenger thread with an accept/decline game card.</small>
+        </div>
+        <label>
+          <span>Opponent</span>
+          <select name="recipientId" required>
+            {{#each vm.inviteTargets}}
+            <option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <label>
+          <span>Table Name</span>
+          <input type="text" name="title" maxlength="80" placeholder="Optional custom table name">
+        </label>
+        <label>
+          <span>Message</span>
+          <input type="text" name="memo" maxlength="140" placeholder="Optional table note">
+        </label>
+        <button type="submit" class="swse-games-primary">Send Game Request</button>
+      </form>
+      {{else}}
+      <div class="swse-games-next-box">
+        <div>
+          <span class="swse-games-kicker">NEXT MILESTONE</span>
+          <strong>{{vm.selectedGame.nextMilestone}}</strong>
+          <small>{{#if vm.settings.useMessengerInvites}}No eligible invite targets are available for this table.{{else}}Messenger invites are disabled by GM settings.{{/if}}</small>
+        </div>
+        <button type="button" class="swse-games-primary" disabled>Create Table Soon</button>
+      </div>
+      {{/if}}
+      {{else}}
+      <div class="swse-games-empty">No games are registered.</div>
+      {{/if}}
+    </section>
+
+    <aside class="swse-games-panel swse-games-panel--sessions">
+      <div class="swse-games-panel__head">
+        <div>
+          <span class="swse-games-kicker">SESSION UPLINK</span>
+          <h3>Tables & Invites</h3>
+        </div>
+      </div>
+
+      <div class="swse-games-summary-grid">
+        <div><b>{{vm.sessionSummary.inviteCount}}</b><span>Invites</span></div>
+        <div><b>{{vm.sessionSummary.activeCount}}</b><span>Active</span></div>
+        <div><b>{{vm.sessionSummary.pendingApprovalCount}}</b><span>GM Gate</span></div>
+      </div>
+
+      {{#if vm.hasSessions}}
+      <div class="swse-games-session-list">
+        {{#each vm.sessions}}
+        <article class="swse-games-session {{#if this.canRespond}}is-actionable{{/if}}">
+          <button type="button" class="swse-games-session__main" data-games-action="open-session" data-session-id="{{this.id}}">
+            <b>{{this.title}}</b>
+            <span>{{this.status}} · {{this.rulesMode}}</span>
+            <small>{{this.seatCount}} seats · {{this.updatedAt}}</small>
+          </button>
+          <div class="swse-games-session__actions">
+            {{#if this.canOpenThread}}<button type="button" class="swse-games-ghost" data-games-action="open-thread" data-thread-id="{{this.holonetThreadId}}">Messenger</button>{{/if}}
+            {{#if this.canRespond}}
+              <button type="button" class="swse-games-primary" data-games-action="accept-invite" data-thread-id="{{this.holonetThreadId}}" data-record-id="{{this.holonetMessageId}}">Accept</button>
+              <button type="button" class="swse-games-ghost" data-games-action="decline-invite" data-thread-id="{{this.holonetThreadId}}" data-record-id="{{this.holonetMessageId}}">Decline</button>
+            {{/if}}
+          </div>
+        </article>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="swse-games-empty">
+        <b>No active tables.</b>
+        <span>Messenger game requests and accepted table envelopes will populate here.</span>
+      </div>
+      {{/if}}
+
+      <div class="swse-games-note-stack">
+        {{#each vm.infrastructureNotes}}
+        <p>{{this}}</p>
+        {{/each}}
+      </div>
+    </aside>
+  </main>
+</div>

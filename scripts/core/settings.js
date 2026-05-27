@@ -8,6 +8,7 @@ import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/them
 import { registerHolonetSettings } from "/systems/foundryvtt-swse/scripts/holonet/integration/holonet-init.js";
 import { registerHouseruleSettings } from "/systems/foundryvtt-swse/scripts/houserules/houserule-settings.js";
 import { registerHouseRuleSettings } from "/systems/foundryvtt-swse/scripts/settings/house-rules.js";
+import { registerGameSettings } from "/systems/foundryvtt-swse/scripts/games/game-settings.js";
 
 /**
  * System settings for SWSE
@@ -603,6 +604,9 @@ game.settings.register('foundryvtt-swse', 'themePromptShown', {
 
   // Register class-tree / follower / dark side prestige houlerule settings
   registerHouseRuleSettings();
+
+  // Register Holopad Games settings
+  registerGameSettings();
 
   // Register Holonet settings (bulletin system)
   registerHolonetSettings();

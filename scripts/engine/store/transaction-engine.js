@@ -71,7 +71,12 @@ export class TransactionEngine {
     'holonet-gm-grant',
     'holonet-job-payout',
     'holonet-party-fund-contribution',
-    'holonet-party-fund-payout'
+    'holonet-party-fund-payout',
+    'game-credit-escrow',
+    'game-credit-payout',
+    'game-credit-refund',
+    'game-credit-house-cut',
+    'game-credit-bonus-prize'
   ]);
 
   static _allowedSaleContexts = new Set([

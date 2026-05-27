@@ -29,6 +29,7 @@ import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } fr
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
+import { initializeGames } from "./scripts/games/game-init.js";
 
 UIManager.init();
 
@@ -154,6 +155,7 @@ Hooks.once("ready", async () => {
   MutationInterceptor.initialize();
   PoisonEngine.initializeHooks();
   await initializeHolonet();
+  await initializeGames();
 
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);

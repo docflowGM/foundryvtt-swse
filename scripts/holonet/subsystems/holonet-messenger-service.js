@@ -21,13 +21,18 @@ import { PERSONA_TYPE, RECIPIENT_TYPE, SOURCE_FAMILY, SURFACE_TYPE, INTENT_TYPE,
 import { HolonetSocketService } from './holonet-socket-service.js';
 import { HolonetPreferences } from '../holonet-preferences.js';
 import { HolonetNoticeCenterService } from './holonet-notice-center-service.js';
+import { GameCenterRegistry } from '/systems/foundryvtt-swse/scripts/games/game-center-registry.js';
+import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
+import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
+import { GameNotificationService } from '/systems/foundryvtt-swse/scripts/games/game-notification-service.js';
 
 const THREAD_TYPE = Object.freeze({
   PRIVATE: 'private',
   PARTY: 'party',
   SIDE: 'side',
   NPC: 'npc',
-  JOB: 'job'
+  JOB: 'job',
+  GAME: 'game'
 });
 
 
@@ -387,6 +392,17 @@ function splitAmount(total, count, mode = 'split-total') {
   return Array.from({ length: recipients }, () => base + (remainder-- > 0 ? 1 : 0));
 }
 
+
+function gameInviteStatusLabel(status = '') {
+  return status === 'accepted' ? 'Accepted'
+    : status === 'declined' ? 'Declined'
+    : status === 'cancelled' ? 'Cancelled'
+    : status === 'active' ? 'Active'
+    : status === 'ready' ? 'Ready'
+    : status === 'pending-approval' ? 'Awaiting GM Approval'
+    : 'Awaiting Response';
+}
+
 function transferStatusLabel(status = '') {
   return status === 'complete' ? 'Complete'
     : status === 'declined' ? 'Declined'
@@ -486,7 +502,7 @@ export class HolonetMessengerService {
   static _messageRecipientsForThread(thread) {
     const meta = getThreadMeta(thread);
     const gmObservers = safeArray(meta.gmObserverIds).map(id => this._recipientFromStableId(id)).filter(Boolean);
-    return uniqueRecipients([...(thread.participants ?? []), ...gmObservers]);
+    return uniqueRecipients([...(thread.participants ?? []), ...safeArray(meta.pendingInvites), ...gmObservers]);
   }
 
   static _ensureGmObservers(thread) {
@@ -662,6 +678,7 @@ export class HolonetMessengerService {
         isSide: meta.threadType === THREAD_TYPE.SIDE,
         isNpcThread: meta.threadType === THREAD_TYPE.NPC,
         isJob: meta.threadType === THREAD_TYPE.JOB,
+        isGame: meta.threadType === THREAD_TYPE.GAME,
         isPrivate: meta.threadType === THREAD_TYPE.PRIVATE || meta.threadType === THREAD_TYPE.NPC,
         threadType: meta.threadType,
         ownerId: meta.ownerId,
@@ -684,6 +701,7 @@ export class HolonetMessengerService {
     if (thread.title && !['Conversation', 'Messenger'].includes(thread.title)) return thread.title;
     if (meta.threadType === THREAD_TYPE.PARTY) return 'Party Channel';
     if (meta.threadType === THREAD_TYPE.JOB) return thread.title || 'Job Board Posting';
+    if (meta.threadType === THREAD_TYPE.GAME) return thread.title || 'Game Request';
     const others = safeArray(thread.participants).filter(p => p.id !== participantId && !p.id?.startsWith('gm:'));
     if (!others.length) return thread.title || 'Holochat';
     return participantLabelList(others, participantId).join(', ');
@@ -709,6 +727,7 @@ export class HolonetMessengerService {
     const receipt = message.metadata?.receipt ?? null;
     const itemTransfer = message.metadata?.itemTransfer ?? null;
     const assetTransfer = message.metadata?.assetTransfer ?? null;
+    const gameInvite = message.metadata?.gameInvite ?? null;
     const attachments = normalizeAttachmentList(message.metadata?.attachments ?? []);
     return {
       id: message.id,
@@ -734,10 +753,37 @@ export class HolonetMessengerService {
       itemTransfer: itemTransfer ? this._itemTransferVm(message, itemTransfer, actor, participantId) : null,
       hasAssetTransfer: Boolean(assetTransfer),
       assetTransfer: assetTransfer ? this._assetTransferVm(message, assetTransfer, actor, participantId) : null,
+      hasGameInvite: Boolean(gameInvite),
+      gameInvite: gameInvite ? this._gameInviteVm(message, gameInvite, actor, participantId) : null,
       hasReceipt: Boolean(receipt),
       receipt,
       hasJobCard: Boolean(job),
       job
+    };
+  }
+
+
+  static _gameInviteVm(message, invite, actor, participantId) {
+    const status = String(invite.status || 'pending');
+    const recipientIds = safeArray(invite.recipientIds).map(String);
+    const isGm = Boolean(game.user?.isGM);
+    const isRecipient = recipientIds.includes(participantId) || (invite.recipientActorIds ?? []).includes(actor?.id);
+    const isHost = invite.hostRecipientId === participantId || (invite.hostActorId && actor?.id === invite.hostActorId);
+    const isParticipant = isHost || isRecipient || isGm;
+    const isPending = status === 'pending';
+    return {
+      ...invite,
+      messageId: message.id,
+      recordId: message.id,
+      status,
+      statusLabel: gameInviteStatusLabel(status),
+      gameTitle: invite.gameTitle || invite.gameId || 'Holopad Game',
+      rulesModeLabel: String(invite.rulesMode || 'republic-senate').replace(/[-_]+/g, ' ').toUpperCase(),
+      wagerSummary: invite.wagerSummary || 'No betting',
+      canAccept: Boolean(isPending && (isRecipient || isGm)),
+      canDecline: Boolean(isPending && (isRecipient || isGm)),
+      canOpen: Boolean(isParticipant && invite.sessionId && ['accepted', 'active', 'ready', 'pending', 'pending-approval', 'pending-escrow'].includes(status)),
+      isResolved: ['accepted', 'declined', 'cancelled', 'expired'].includes(status)
     };
   }
 
@@ -1149,6 +1195,159 @@ export class HolonetMessengerService {
     return this._gmCreateThread(payload);
   }
 
+
+  static async createGameInvite({ actor, gameId = '', recipientId = '', recipientIds = [], rulesMode = 'republic-senate', title = '', memo = '', senderRecipientId = null } = {}) {
+    const targets = this._normalizeRecipientIds([recipientId, ...safeArray(recipientIds)]);
+    const payload = {
+      actorId: actor?.id ?? null,
+      gameId: String(gameId || '').trim(),
+      recipientIds: targets,
+      rulesMode: String(rulesMode || 'republic-senate').trim() || 'republic-senate',
+      title: String(title || '').trim(),
+      memo: String(memo || '').trim(),
+      senderUserId: game.user?.id ?? null,
+      senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
+    };
+    if (!payload.gameId || !payload.recipientIds.length) return false;
+    if (!game.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('create-game-invite', payload);
+      return { pending: true, requestId, threadId: null, sessionId: null };
+    }
+    return this._gmCreateGameInvite(payload);
+  }
+
+  static async _gmCreateGameInvite({ actorId, gameId = '', recipientIds = [], rulesMode = 'republic-senate', title = '', memo = '', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
+    const settings = getGameSettingsSnapshot();
+    if (!settings.enabled || !settings.useMessengerInvites) return false;
+
+    const requester = requesterId ? game.users?.get(requesterId) : (senderUserId ? game.users?.get(senderUserId) : game.user);
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    if (!requesterIsGm && !settings.allowPlayerCreatedTables) return false;
+
+    const gameDef = GameCenterRegistry.get(gameId);
+    if (!gameDef) return false;
+
+    const actor = actorId ? game.actors?.get(actorId) : null;
+    const senderRecipient = this._recipientForActorContext(actor, { senderUserId: senderUserId || requesterId || game.user?.id, senderRecipientId });
+    if (!senderRecipient?.id) return false;
+    const senderLabel = recipientDisplayName(senderRecipient);
+
+    const requested = this._normalizeRecipientIds(recipientIds)
+      .map(id => this._recipientFromStableId(id))
+      .filter(Boolean)
+      .filter(r => r.id !== senderRecipient.id);
+    if (!requested.length) return false;
+
+    const hasPlayerTarget = requested.some(r => r.id?.startsWith('player:'));
+    const hasNpcTarget = requested.some(r => r.id?.startsWith('persona:'));
+    if (!requesterIsGm && hasPlayerTarget && !settings.allowPvP) return false;
+    if (!requesterIsGm && hasNpcTarget && !settings.allowNPCs) return false;
+
+    const safeRulesMode = rulesMode === 'wagered' && settings.allowWagers ? 'wagered' : 'republic-senate';
+    const wagerSummary = safeRulesMode === 'wagered'
+      ? 'Wagered table requested; escrow and settlement are pending later Games phases.'
+      : 'Republic Senate Rules — no betting.';
+    const sessionId = `game_${foundry.utils.randomID(12)}`;
+    const sessionTitle = title || `${gameDef.title} Challenge`;
+    const inviteId = foundry.utils.randomID(10);
+    const createdAt = nowIso();
+
+    const hostSeat = {
+      seatId: 'seat_host',
+      type: senderRecipient.id?.startsWith('gm:') ? 'gm' : 'player',
+      userId: senderRecipient.userId ?? senderUserId ?? requesterId ?? game.user?.id ?? null,
+      actorId: senderRecipient.actorId ?? actor?.id ?? null,
+      recipientId: senderRecipient.id,
+      displayName: senderLabel,
+      status: 'host'
+    };
+    const invitedSeats = requested.map((recipient, index) => ({
+      seatId: `seat_${index + 2}`,
+      type: recipient.id?.startsWith('persona:') ? 'npc' : (recipient.id?.startsWith('gm:') ? 'gm' : 'player'),
+      userId: recipient.userId ?? null,
+      actorId: recipient.actorId ?? null,
+      recipientId: recipient.id,
+      displayName: recipientDisplayName(recipient),
+      status: 'invited'
+    }));
+
+    const thread = await HolonetThreadService.createThread(sessionTitle, [senderRecipient], {
+      sourceFamily: SOURCE_FAMILY.GAMES,
+      threadType: THREAD_TYPE.GAME,
+      ownerId: senderRecipient.id,
+      ownerLabel: senderLabel,
+      pendingInvites: requested,
+      declinedBy: [],
+      mutedBy: {},
+      archivedBy: {},
+      createdByUserId: senderUserId || requesterId || game.user?.id || null,
+      gmObserverIds: this._gmObserverRecipients().map(r => r.id),
+      gameInvitation: {
+        inviteId,
+        sessionId,
+        gameId: gameDef.id,
+        gameTitle: gameDef.title,
+        status: 'pending',
+        rulesMode: safeRulesMode
+      }
+    });
+
+    const invite = {
+      id: inviteId,
+      sessionId,
+      gameId: gameDef.id,
+      gameTitle: gameDef.title,
+      title: sessionTitle,
+      status: 'pending',
+      rulesMode: safeRulesMode,
+      wagerSummary,
+      hostActorId: hostSeat.actorId,
+      hostRecipientId: senderRecipient.id,
+      hostLabel: senderLabel,
+      recipientIds: requested.map(r => r.id),
+      recipientActorIds: requested.map(r => r.actorId).filter(Boolean),
+      recipientLabels: requested.map(recipientDisplayName),
+      memo,
+      createdAt
+    };
+
+    const body = `${senderLabel} sent a ${gameDef.title} request to ${requested.map(recipientDisplayName).join(', ')}.`;
+    const published = await this._publishSystemMessage(thread, body, {
+      eventType: 'game-invite',
+      sourceFamily: SOURCE_FAMILY.GAMES,
+      gameInvite: invite
+    });
+
+    const session = await GameSessionStore.upsertSession({
+      id: sessionId,
+      gameId: gameDef.id,
+      title: sessionTitle,
+      status: 'pending-invite',
+      authorityMode: safeRulesMode === 'wagered' || settings.requireGmApprovalForWagers ? 'gm' : 'host',
+      hostUserId: (senderUserId || requesterId || game.user?.id || null),
+      hostActorId: hostSeat.actorId,
+      holonetThreadId: thread.id,
+      holonetMessageId: published?.messageId ?? null,
+      seats: [hostSeat, ...invitedSeats],
+      rulesMode: safeRulesMode,
+      wagerProfile: safeRulesMode === 'wagered' ? { mode: 'pending', summary: wagerSummary } : { mode: 'none' },
+      prizeProfile: { enabled: false },
+      escrow: {},
+      gameState: {},
+      metadata: {
+        inviteId,
+        inviteMessageId: published?.messageId ?? null,
+        createdByRecipientId: senderRecipient.id,
+        createdByUserId: senderUserId || requesterId || game.user?.id || null
+      },
+      log: [{ id: foundry.utils.randomID(), at: Date.now(), type: 'invite-created', by: senderRecipient.id }]
+    });
+
+    GameNotificationService.emitInviteUpdated(session, { status: 'pending', threadId: thread.id, messageId: published?.messageId ?? null });
+    this._emitMessengerSync({ type: 'game-invite-created', source: SOURCE_FAMILY.GAMES, threadId: thread.id, sessionId, messageId: published?.messageId ?? null, requestId, requesterId });
+    return { threadId: thread.id, messageId: published?.messageId ?? null, sessionId, requestId };
+  }
+
   static _normalizeRecipientIds(ids = []) {
     return Array.from(new Set(safeArray(ids).map(String).filter(Boolean)));
   }
@@ -1173,7 +1372,7 @@ export class HolonetMessengerService {
       title = title || 'Party Channel';
     }
 
-    if (requested.some(r => r.id?.startsWith('persona:')) && finalType !== THREAD_TYPE.JOB) finalType = THREAD_TYPE.NPC;
+    if (requested.some(r => r.id?.startsWith('persona:')) && ![THREAD_TYPE.JOB, THREAD_TYPE.GAME].includes(finalType)) finalType = THREAD_TYPE.NPC;
 
     const thread = await HolonetThreadService.createThread(title || this._defaultThreadTitle(requested, finalType), participants, {
       sourceFamily: SOURCE_FAMILY.MESSENGER,
@@ -1216,6 +1415,7 @@ export class HolonetMessengerService {
   static _defaultThreadTitle(recipients = [], threadType = THREAD_TYPE.PRIVATE) {
     if (threadType === THREAD_TYPE.PARTY) return 'Party Channel';
     if (threadType === THREAD_TYPE.SIDE) return 'Side Thread';
+    if (threadType === THREAD_TYPE.GAME) return 'Game Request';
     const labels = recipients.map(recipientDisplayName).filter(Boolean);
     return labels.length ? labels.join(', ') : 'Private Holochat';
   }
@@ -1832,6 +2032,123 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
+
+  static async _findGameInviteMessage(thread, recordId = null) {
+    if (recordId) {
+      const record = await HolonetStorage.getRecord(recordId);
+      if (record?.metadata?.gameInvite) return record;
+    }
+    const ids = safeArray(thread?.messageIds).slice().reverse();
+    for (const id of ids) {
+      const record = await HolonetStorage.getRecord(id);
+      if (record?.metadata?.gameInvite) return record;
+    }
+    return null;
+  }
+
+  static async _gmResolveGameInvite({ thread, recordId = null, action = '', actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+    if (!thread) return false;
+    const meta = getThreadMeta(thread);
+    const actor = actorId ? game.actors?.get(actorId) : null;
+    const actorRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
+    const currentId = senderRecipientId || actorRecipient?.id;
+    const isGm = Boolean((requesterId && game.users?.get(requesterId)?.isGM) || currentId?.startsWith('gm:'));
+    const message = await this._findGameInviteMessage(thread, recordId);
+    const invite = message?.metadata?.gameInvite ?? null;
+    if (!message || !invite?.sessionId) return false;
+
+    const pending = safeArray(meta.pendingInvites);
+    const directInvite = pending.find(r => r.id === currentId) ?? null;
+    const targetInvite = directInvite || (isGm ? pending[0] ?? null : null);
+    const session = GameSessionStore.getSession(invite.sessionId);
+    if (!session) return false;
+
+    if (action === 'accept-game-invite') {
+      if (!targetInvite) return false;
+      thread.participants = uniqueRecipients([...(thread.participants ?? []), targetInvite]);
+      meta.pendingInvites = pending.filter(r => r.id !== targetInvite.id);
+      meta.gameInvitation ??= {};
+      meta.gameInvitation.status = meta.pendingInvites.length ? 'pending' : 'accepted';
+      meta.gameInvitation.acceptedAt = nowIso();
+      meta.gameInvitation.acceptedBy = targetInvite.id;
+
+      invite.status = meta.gameInvitation.status;
+      invite.acceptedAt = meta.gameInvitation.acceptedAt;
+      invite.acceptedBy = targetInvite.id;
+      invite.acceptedByLabel = recipientDisplayName(targetInvite);
+      message.metadata.gameInvite = invite;
+
+      const seats = safeArray(session.seats).map(seat => seat.recipientId === targetInvite.id
+        ? { ...seat, status: 'accepted', actorId: seat.actorId ?? targetInvite.actorId ?? null, userId: seat.userId ?? targetInvite.userId ?? null }
+        : seat);
+      const updated = await GameSessionStore.upsertSession({
+        ...session,
+        status: meta.pendingInvites.length ? 'pending-invite' : 'active',
+        seats,
+        holonetThreadId: thread.id,
+        holonetMessageId: message.id,
+        metadata: {
+          ...(session.metadata ?? {}),
+          inviteStatus: meta.gameInvitation.status,
+          acceptedAt: meta.gameInvitation.acceptedAt,
+          acceptedBy: targetInvite.id
+        },
+        log: [...safeArray(session.log), { id: foundry.utils.randomID(), at: Date.now(), type: 'invite-accepted', by: targetInvite.id }]
+      });
+
+      await HolonetStorage.saveRecord(message);
+      await HolonetStorage.saveThread(thread);
+      await this._publishSystemMessage(thread, `${recipientDisplayName(targetInvite)} accepted the ${invite.gameTitle || 'game'} request.`, { eventType: 'game-invite-accepted', sourceFamily: SOURCE_FAMILY.GAMES, gameSessionId: invite.sessionId, gameInviteStatus: 'accepted' });
+      GameNotificationService.emitInviteUpdated(updated, { status: 'accepted', threadId: thread.id, messageId: message.id });
+      this._emitMessengerSync({ type: 'game-invite-accepted', source: SOURCE_FAMILY.GAMES, threadId: thread.id, sessionId: invite.sessionId, messageId: message.id, requestId, requesterId });
+      return true;
+    }
+
+    if (action === 'decline-game-invite' || action === 'cancel-game-invite') {
+      const target = targetInvite || (currentId === invite.hostRecipientId ? this._recipientFromStableId(currentId) : null);
+      if (!target && !isGm) return false;
+      const targetId = target?.id ?? currentId;
+      meta.pendingInvites = pending.filter(r => r.id !== targetId);
+      meta.declinedBy = Array.from(new Set([...safeArray(meta.declinedBy), targetId].filter(Boolean)));
+      meta.gameInvitation ??= {};
+      meta.gameInvitation.status = action === 'cancel-game-invite' ? 'cancelled' : 'declined';
+      meta.gameInvitation.declinedAt = nowIso();
+      meta.gameInvitation.declinedBy = targetId;
+
+      invite.status = meta.gameInvitation.status;
+      invite.declinedAt = meta.gameInvitation.declinedAt;
+      invite.declinedBy = targetId;
+      invite.declinedByLabel = target ? recipientDisplayName(target) : 'Gamemaster';
+      message.metadata.gameInvite = invite;
+
+      const seats = safeArray(session.seats).map(seat => seat.recipientId === targetId ? { ...seat, status: invite.status } : seat);
+      const updated = await GameSessionStore.upsertSession({
+        ...session,
+        status: 'cancelled',
+        seats,
+        holonetThreadId: thread.id,
+        holonetMessageId: message.id,
+        metadata: {
+          ...(session.metadata ?? {}),
+          inviteStatus: invite.status,
+          declinedAt: invite.declinedAt,
+          declinedBy: targetId
+        },
+        log: [...safeArray(session.log), { id: foundry.utils.randomID(), at: Date.now(), type: invite.status === 'cancelled' ? 'invite-cancelled' : 'invite-declined', by: targetId }]
+      });
+
+      await HolonetStorage.saveRecord(message);
+      await HolonetStorage.saveThread(thread);
+      const verb = invite.status === 'cancelled' ? 'cancelled' : 'declined';
+      await this._publishSystemMessage(thread, `${invite.declinedByLabel || 'Recipient'} ${verb} the ${invite.gameTitle || 'game'} request.`, { eventType: `game-invite-${verb}`, sourceFamily: SOURCE_FAMILY.GAMES, gameSessionId: invite.sessionId, gameInviteStatus: invite.status });
+      GameNotificationService.emitInviteUpdated(updated, { status: invite.status, threadId: thread.id, messageId: message.id });
+      this._emitMessengerSync({ type: `game-invite-${verb}`, source: SOURCE_FAMILY.GAMES, threadId: thread.id, sessionId: invite.sessionId, messageId: message.id, requestId, requesterId });
+      return true;
+    }
+
+    return false;
+  }
+
   static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
@@ -1845,6 +2162,12 @@ export class HolonetMessengerService {
     let needsThreadOnlySync = false;
 
     switch (action) {
+      case 'accept-game-invite':
+      case 'decline-game-invite':
+      case 'cancel-game-invite': {
+        await this._gmResolveGameInvite({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
+        break;
+      }
       case 'accept-invite': {
         const invite = safeArray(meta.pendingInvites).find(r => r.id === currentId);
         if (!invite) return false;

@@ -331,6 +331,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-games.hbs',
   // ==============================
   // Referenced V2 partials loaded deterministically (render stability)
   // ==============================

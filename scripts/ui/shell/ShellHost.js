@@ -64,6 +64,9 @@ export function ShellHostMixin(BaseClass) {
     /** @type {Set<string>} Player-originated Messenger socket requests waiting for GM commit sync. */
     _messengerPendingRequestIds = new Set();
 
+    /** @type {object|null} Lazily-created Games surface controller. */
+    _gamesSurfaceController = null;
+
     // ─── Accessors ──────────────────────────────────────────────────────────────
 
     get shellSurface() { return this._shellSurface; }
@@ -240,7 +243,7 @@ export function ShellHostMixin(BaseClass) {
       if (this._holonetSyncHookId == null) {
         this._holonetSyncHookId = Hooks.on('swseHolonetUpdated', (syncData = {}) => {
           if (!this.rendered) return;
-          if (this._shellSurface === 'home' || this._shellSurface === 'messenger') {
+          if (this._shellSurface === 'home' || this._shellSurface === 'messenger' || this._shellSurface === 'games') {
             this._scheduleHolonetSurfaceRender(syncData);
           }
         });
@@ -315,6 +318,14 @@ export function ShellHostMixin(BaseClass) {
         void this._wireMessengerSurfaceEvents(root).catch(err => {
           SWSELogger.error('[ShellHost] Messenger surface event wiring failed:', err);
         });
+      }
+
+      if (this._shellSurface === 'games') {
+        void this._wireGamesSurfaceEvents(root).catch(err => {
+          SWSELogger.error('[ShellHost] Games surface event wiring failed:', err);
+        });
+      } else {
+        this._gamesSurfaceController?.destroy?.();
       }
 
       if (this._shellDrawer?.drawerId === 'holonet-notifications') {
@@ -701,6 +712,17 @@ export function ShellHostMixin(BaseClass) {
         });
       });
 
+      messengerRoot.querySelectorAll('[data-holonet-action="open-game-session"][data-session-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const sessionId = el.dataset.sessionId;
+          if (!sessionId) return;
+          await this.setSurface('games', { sessionId, view: 'session', source: 'messenger' });
+          this.render(false);
+        });
+      });
+
       messengerRoot.querySelectorAll('[data-holonet-action="close-composer"]').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
@@ -859,7 +881,7 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId || !action) return;
           const result = await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, recordId, amount, status });
           this._noteMessengerPendingResult(result);
-          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer', 'accept-asset-transfer', 'decline-asset-transfer', 'cancel-asset-transfer', 'approve-asset-transfer'].includes(action) });
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: ['accept-transfer', 'decline-transfer', 'approve-transfer', 'cancel-transfer', 'accept-item-transfer', 'decline-item-transfer', 'cancel-item-transfer', 'accept-asset-transfer', 'decline-asset-transfer', 'cancel-asset-transfer', 'approve-asset-transfer', 'accept-game-invite', 'decline-game-invite', 'cancel-game-invite'].includes(action) });
         });
       });
 
@@ -1005,6 +1027,16 @@ export function ShellHostMixin(BaseClass) {
       if (unreadThreadId) {
         this._queueMessengerThreadRead(unreadThreadId, HolonetMessengerService);
       }
+    }
+
+
+    async _wireGamesSurfaceEvents(root) {
+      const gamesRoot = root.querySelector('[data-shell-region="surface-games"]');
+      if (!gamesRoot) return;
+      const { GamesSurfaceController } = await import('/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js');
+      const actor = this.actor || this.document;
+      this._gamesSurfaceController ??= new GamesSurfaceController(this, actor);
+      this._gamesSurfaceController.attach(root);
     }
 
     _syncMessengerThreadTypeCards(messengerRoot) {

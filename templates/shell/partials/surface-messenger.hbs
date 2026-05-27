@@ -231,14 +231,17 @@
             {{#if vm.selectedThread.isParty}}<span class="hl-chip party">Party</span>{{/if}}
             {{#if vm.selectedThread.isSide}}<span class="hl-chip">Side</span>{{/if}}
             {{#if vm.selectedThread.isJob}}<span class="hl-chip job">Job</span>{{/if}}
+            {{#if vm.selectedThread.isGame}}<span class="hl-chip game">Game</span>{{/if}}
             {{#if vm.selectedThread.isPrivate}}<span class="hl-chip private">Private</span>{{/if}}
             <span class="hl-chip gm-vis">GM Visible</span>
           </div>
         </div>
         <div class="swse-messenger-thread-actions hl-thread-actions">
           {{#if vm.selectedThread.isPendingInvite}}
+          {{#unless vm.selectedThread.isGame}}
           <button class="swse-btn swse-btn--primary hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-invite" data-thread-id="{{vm.selectedThread.id}}" type="button">Accept</button>
           <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-invite" data-thread-id="{{vm.selectedThread.id}}" type="button">Decline</button>
+          {{/unless}}
           {{/if}}
           {{#if vm.selectedThread.canEnter}}
           <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="enter-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Enter Chat</button>
@@ -255,8 +258,8 @@
         <div class="swse-messenger-chat-column hl-chat-column">
           {{#if vm.selectedThread.isPendingInvite}}
           <div class="swse-messenger-invite-card hl-invite">
-            <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{vm.selectedThread.ownerLabel}}</strong> wants to have a holochat.</div>
-            <span>You can accept, decline, ignore, archive, or leave later.</span>
+            <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{vm.selectedThread.ownerLabel}}</strong> {{#if vm.selectedThread.isGame}}sent a game request.{{else}}wants to have a holochat.{{/if}}</div>
+            <span>{{#if vm.selectedThread.isGame}}Accept or decline the table request below.{{else}}You can accept, decline, ignore, archive, or leave later.{{/if}}</span>
           </div>
           {{/if}}
 
@@ -356,6 +359,27 @@
                   </div>
                 </article>
                 {{else}}
+                {{#if this.hasGameInvite}}
+                <article class="swse-msg-system hl-game-card-wrap">
+                  <div class="hl-game-card">
+                    <div class="hl-game-card__scan"></div>
+                    <div class="hl-credit-title">Holopad Game Request</div>
+                    <div class="hl-game-card__title">{{this.gameInvite.gameTitle}}</div>
+                    <div class="hl-credit-line"><strong>{{this.gameInvite.hostLabel}}</strong> challenged {{#each this.gameInvite.recipientLabels}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+                    <div class="hl-game-card__meta">
+                      <span>{{this.gameInvite.rulesModeLabel}}</span>
+                      <span>{{this.gameInvite.wagerSummary}}</span>
+                      <span>{{this.gameInvite.statusLabel}}</span>
+                    </div>
+                    {{#if this.gameInvite.memo}}<div class="hl-credit-memo">Memo: {{this.gameInvite.memo}}</div>{{/if}}
+                    <div class="hl-credit-actions">
+                      {{#if this.gameInvite.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Game</button>{{/if}}
+                      {{#if this.gameInvite.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
+                      {{#if this.gameInvite.canOpen}}<button class="hl-icon-btn" data-holonet-action="open-game-session" data-session-id="{{this.gameInvite.sessionId}}" type="button">Open Table</button>{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{else}}
                 {{#if this.hasReceipt}}
                 <article class="swse-msg-system hl-receipt-card-wrap">
                   <div class="hl-receipt-card">
@@ -391,6 +415,8 @@
                     </div>
                   </div>
                 </article>
+                {{/if}}
+                {{/if}}
                 {{/if}}
                 {{/if}}
                 {{/if}}
@@ -572,6 +598,7 @@
       </div>
       {{else}}
       <div class="swse-messenger-empty hl-empty">Select a thread or start a new transmission.</div>
+      {{/if}}
       {{/if}}
     </section>
   </div>

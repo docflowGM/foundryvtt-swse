@@ -99,6 +99,10 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmCreateThread(data);
         break;
       }
+      case 'create-game-invite': {
+        await HolonetMessengerService._gmCreateGameInvite(data);
+        break;
+      }
       case 'create-job': {
         await HolonetMessengerService._gmCreateJobPosting(data);
         break;
