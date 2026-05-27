@@ -555,6 +555,27 @@
   white-space: nowrap;
 }
 
+.swse-pazaak-topbar__right form {
+  margin: 0;
+}
+
+.swse-games-ghost--danger {
+  border-color: color-mix(in oklab, var(--negative, #ff5c77) 45%, transparent);
+  color: var(--negative, #ff5c77);
+}
+
+.swse-pazaak-log div.tone-danger {
+  border-color: color-mix(in oklab, var(--negative, #ff5c77) 18%, transparent);
+}
+
+.swse-pazaak-log div.tone-success {
+  border-color: color-mix(in oklab, var(--positive, #8aff9a) 18%, transparent);
+}
+
+.swse-pazaak-log div.tone-force {
+  border-color: color-mix(in oklab, var(--vapor-pink, #ff4fd8) 22%, transparent);
+}
+
 .swse-pazaak-topbar__right > span,
 .swse-pazaak-scoreboard span {
   border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 28%, transparent);
@@ -805,4 +826,62 @@
 .swse-pazaak-seat header small.swse-pazaak-table-fact {
   color: var(--ink-faint, #7fb8c4);
   font-style: italic;
+}
+
+.swse-pazaak-thinking-banner {
+  border: 1px solid color-mix(in oklab, var(--zero, #ffd166) 34%, transparent);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--zero, #ffd166) 10%, #06131d 90%);
+  box-shadow: inset 0 0 18px color-mix(in oklab, var(--zero, #ffd166) 10%, transparent);
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.swse-pazaak-thinking-banner b {
+  color: var(--zero, #ffd166);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.swse-pazaak-thinking-banner span,
+.swse-pazaak-thinking-line {
+  color: color-mix(in oklab, var(--ink, #dffbff) 74%, transparent);
+  font-size: 12px;
+}
+
+.swse-pazaak-thinking-banner.thinking-hard,
+.swse-pazaak-seat.is-thinking.thinking-hard {
+  border-color: color-mix(in oklab, var(--negative, #ff5c77) 42%, transparent);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--negative, #ff5c77) 13%, transparent);
+}
+
+.swse-pazaak-thinking-banner.thinking-easy,
+.swse-pazaak-seat.is-thinking.thinking-easy {
+  border-color: color-mix(in oklab, var(--positive, #8aff9a) 40%, transparent);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--positive, #8aff9a) 12%, transparent);
+}
+
+.swse-pazaak-seat.is-thinking {
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-pazaak-seat.is-thinking::after {
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--vapor-cyan, #39f7ff) 16%, transparent), transparent);
+  content: '';
+  height: 100%;
+  left: -70%;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  transform: skewX(-18deg);
+  width: 45%;
+  animation: swse-pazaak-thinking-sweep 1.8s ease-in-out infinite;
+}
+
+@keyframes swse-pazaak-thinking-sweep {
+  0% { left: -70%; opacity: 0; }
+  20% { opacity: .7; }
+  100% { left: 130%; opacity: 0; }
 }

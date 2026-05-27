@@ -79,6 +79,21 @@
             </div>
             <div class="swse-pazaak-topbar__right">
               <span>{{vm.activeTable.pazaak.statusLabel}}</span>
+              {{#if vm.activeTable.pazaak.canForfeit}}
+              <form data-games-action="pazaak-forfeit">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Forfeit</button>
+              </form>
+              {{/if}}
+              {{#if vm.activeTable.pazaak.canCancel}}
+              <form data-games-action="pazaak-cancel-session">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+                <input type="hidden" name="reason" value="Pazaak table cancelled from Holopad Games.">
+                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
+              </form>
+              {{/if}}
               <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Table</button>
             </div>
           </div>
@@ -144,9 +159,16 @@
               <span>Table limit {{vm.activeTable.pazaak.tableLimit}}</span>
             </div>
 
+            {{#if vm.activeTable.pazaak.hasAiThinking}}
+            <div class="swse-pazaak-thinking-banner thinking-{{vm.activeTable.pazaak.aiThinking.intensity}}">
+              <b>{{vm.activeTable.pazaak.aiThinking.seatLabel}} is {{vm.activeTable.pazaak.aiThinking.intensityLabel}}</b>
+              <span>{{vm.activeTable.pazaak.aiThinking.message}}{{#if vm.activeTable.pazaak.aiThinking.delayLabel}} · {{vm.activeTable.pazaak.aiThinking.delayLabel}}{{/if}}</span>
+            </div>
+            {{/if}}
+
             <div class="swse-pazaak-seat-grid">
               {{#each vm.activeTable.pazaak.seats}}
-              <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bust}}is-bust{{/if}}">
+              <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bust}}is-bust{{/if}} {{#if this.isThinking}}is-thinking thinking-{{this.thinkingIntensity}}{{/if}}">
                 <header>
                   <div>
                     <b>{{this.displayName}}</b>
@@ -155,6 +177,7 @@
                     <small>AI: {{this.aiDifficultyLabel}} · {{this.aiFairnessLabel}} · {{this.aiPersonalityLabel}}{{#if this.aiForceSensitive}} · Force-sensitive{{/if}}</small>
                     {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
                     {{#if this.tableFact}}<small class="swse-pazaak-table-fact">{{this.tableFact}}</small>{{/if}}
+                    {{#if this.isThinking}}<small class="swse-pazaak-thinking-line">{{this.thinkingMessage}}{{#if this.thinkingDelayLabel}} · {{this.thinkingDelayLabel}}{{/if}}</small>{{/if}}
                     {{/if}}
                   </div>
                   <strong>{{this.scoreLabel}}</strong>
@@ -267,6 +290,18 @@
             <div>
               <b>Set {{this.setNumber}}</b>
               <span>{{#if this.winnerLabel}}{{this.winnerLabel}} won{{else}}Tie{{/if}} · {{this.reason}}</span>
+            </div>
+            {{/each}}
+          </section>
+          {{/if}}
+
+          {{#if vm.activeTable.pazaak.hasEventLog}}
+          <section class="swse-pazaak-history swse-pazaak-log">
+            <span class="swse-games-kicker">TABLE LOG</span>
+            {{#each vm.activeTable.pazaak.eventLog}}
+            <div class="tone-{{this.tone}}">
+              <b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b>
+              <span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span>
             </div>
             {{/each}}
           </section>

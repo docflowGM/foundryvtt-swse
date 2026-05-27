@@ -93,7 +93,8 @@ export class GamesSurfaceController {
           recipientId: String(data.get('recipientId') || '').trim(),
           rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
           title: String(data.get('title') || '').trim(),
-          memo: String(data.get('memo') || '').trim()
+          memo: String(data.get('memo') || '').trim(),
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
         });
         this._noteResult(result);
         if (result?.threadId) {
@@ -110,7 +111,9 @@ export class GamesSurfaceController {
         const data = new FormData(form);
         const result = await PazaakEngine.createSoloAiSession({
           actor: this._actor,
-          title: String(data.get('title') || '').trim()
+          title: String(data.get('title') || '').trim(),
+          rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
         });
         if (result?.pending) {
           this._noteResult(result);
@@ -145,7 +148,7 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
-    surface.querySelectorAll('form[data-games-action="pazaak-play-side-card"], form[data-games-action="pazaak-stand"], form[data-games-action="pazaak-end-turn"]').forEach(form => {
+    surface.querySelectorAll('form[data-games-action="pazaak-play-side-card"], form[data-games-action="pazaak-stand"], form[data-games-action="pazaak-end-turn"], form[data-games-action="pazaak-forfeit"], form[data-games-action="pazaak-cancel-session"]').forEach(form => {
       form.addEventListener('submit', async ev => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -153,6 +156,7 @@ export class GamesSurfaceController {
         const action = String(form.dataset.gamesAction || '').replace(/^pazaak-/, '');
         const payload = {
           cardInstanceId: String(data.get('cardInstanceId') || '').trim(),
+          reason: String(data.get('reason') || '').trim(),
           choice: {
             sign: String(data.get('sign') || '').trim(),
             value: Number(data.get('value') || 0) || null

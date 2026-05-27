@@ -10,19 +10,19 @@ import {
 
 export const PAZAAK_AI_DIFFICULTIES = Object.freeze({
   easy: {
-    id: 'easy', label: 'Easy', standAt: 16, pushAt: 14, bustFixOnlyAt: 21, mistakeRate: 0.28, conserveCards: 0.1
+    id: 'easy', label: 'Easy', standAt: 16, pushAt: 14, bustFixOnlyAt: 21, mistakeRate: 0.28, conserveCards: 0.1, thinkingDelayMs: 5000
   },
   medium: {
-    id: 'medium', label: 'Medium', standAt: 18, pushAt: 16, bustFixOnlyAt: 21, mistakeRate: 0.12, conserveCards: 0.35
+    id: 'medium', label: 'Medium', standAt: 18, pushAt: 16, bustFixOnlyAt: 21, mistakeRate: 0.12, conserveCards: 0.35, thinkingDelayMs: 4000
   },
   hard: {
-    id: 'hard', label: 'Hard', standAt: 19, pushAt: 17, bustFixOnlyAt: 21, mistakeRate: 0.05, conserveCards: 0.55
+    id: 'hard', label: 'Hard', standAt: 19, pushAt: 17, bustFixOnlyAt: 21, mistakeRate: 0.05, conserveCards: 0.55, thinkingDelayMs: 3000
   },
   pro: {
-    id: 'pro', label: 'Pro', standAt: 19, pushAt: 18, bustFixOnlyAt: 21, mistakeRate: 0.015, conserveCards: 0.75
+    id: 'pro', label: 'Pro', standAt: 19, pushAt: 18, bustFixOnlyAt: 21, mistakeRate: 0.015, conserveCards: 0.75, thinkingDelayMs: 2000
   },
   grandmaster: {
-    id: 'grandmaster', label: 'Grandmaster', standAt: 20, pushAt: 18, bustFixOnlyAt: 21, mistakeRate: 0, conserveCards: 0.9
+    id: 'grandmaster', label: 'Grandmaster', standAt: 20, pushAt: 18, bustFixOnlyAt: 21, mistakeRate: 0, conserveCards: 0.9, thinkingDelayMs: 1000
   }
 });
 
@@ -173,6 +173,12 @@ export class PazaakAi {
 
   static labelForFairness(value) {
     return PAZAAK_AI_FAIRNESS[normalizeFairness(value)].label;
+  }
+
+  static thinkingDelayMs(value) {
+    const profile = buildPazaakAiProfile(value);
+    const difficulty = PAZAAK_AI_DIFFICULTIES[normalizeDifficulty(profile.difficulty)] || PAZAAK_AI_DIFFICULTIES.medium;
+    return Number(difficulty.thinkingDelayMs || 4000) || 4000;
   }
 
   static labelForPersonality(value) {

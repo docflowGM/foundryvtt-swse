@@ -62,11 +62,17 @@ function mapHandCard(card = {}, player = {}, canAct = false) {
   };
 }
 
+function formatDelay(ms) {
+  const seconds = Math.max(0, Math.round((Number(ms || 0) || 0) / 1000));
+  return seconds ? `${seconds}s` : '';
+}
+
 function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
   const aiProfile = buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium');
   const player = state.players?.[seat.seatId] ?? {};
   const score = scorePazaakPlayer(player);
   const isCurrent = state.activeSeatId === seat.seatId;
+  const isThinking = Boolean(state.aiThinking?.active && state.aiThinking?.seatId === seat.seatId);
   const isViewer = currentSeatId === seat.seatId;
   const hand = Array.isArray(player.hand) ? player.hand : [];
   return {
@@ -94,6 +100,10 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     filledTable: Boolean(player.filledTable),
     tiebreakerUsed: Boolean(player.tiebreakerUsed),
     lastAction: player.lastAction || '',
+    isThinking,
+    thinkingMessage: isThinking ? (state.aiThinking?.message || player.lastAction || '') : '',
+    thinkingIntensity: isThinking ? (state.aiThinking?.intensity || 'normal') : '',
+    thinkingDelayLabel: isThinking ? formatDelay(state.aiThinking?.delayMs) : '',
     tableCards: (Array.isArray(player.tableCards) ? player.tableCards : []).map(mapTableCard),
     hasTableCards: (player.tableCards ?? []).length > 0,
     hand: isViewer ? hand.map(card => ({ ...mapHandCard(card, player, isCurrent), sessionId: session.id, seatId: seat.seatId })) : [],
@@ -102,7 +112,7 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     canAct: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
     canStand: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
     canEndTurn: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
-    statusLabel: player.bust ? 'BUST' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT'))
+    statusLabel: isThinking ? 'THINKING' : (player.bust ? 'BUST' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT')))
   };
 }
 
@@ -111,6 +121,24 @@ function currentSeatCanLock(session, state, currentSeat) {
   if (currentSeat.type === 'ai' || currentSeat.type === 'npc' || currentSeat.aiProfile) return false;
   const player = state.players?.[currentSeat.seatId];
   return state.phase === 'setup' && !player?.sideDeckLocked;
+}
+
+
+function mapEventLogEntry(entry = {}) {
+  return {
+    id: entry.id,
+    type: entry.type || 'event',
+    seatLabel: entry.seatLabel || '',
+    message: entry.message || '',
+    tone: entry.tone || '',
+    timeLabel: entry.at ? new Date(entry.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+  };
+}
+
+function canCancelSession(session = {}, currentSeat = null) {
+  if (!session || ['complete', 'cancelled', 'refunded'].includes(String(session.status || ''))) return false;
+  if (game?.user?.isGM) return true;
+  return Boolean(currentSeat && session.hostUserId && currentSeat.userId === session.hostUserId);
 }
 
 export class PazaakViewModel {
@@ -141,6 +169,12 @@ export class PazaakViewModel {
     const viewerSeat = seats.find(seat => seat.isViewer) ?? null;
     const winnerSeat = state.winnerSeatId ? seats.find(seat => seat.seatId === state.winnerSeatId) : null;
     const wager = GameCreditEscrowService.describe(session);
+    const eventLog = (Array.isArray(state.eventLog) ? state.eventLog : []).filter(entry => !entry.gmOnly || game?.user?.isGM).slice(-12).reverse().map(mapEventLogEntry);
+    const aiThinking = state.aiThinking?.active ? {
+      ...state.aiThinking,
+      delayLabel: formatDelay(state.aiThinking.delayMs),
+      intensityLabel: state.aiThinking.intensity === 'hard' ? 'thinking hard' : (state.aiThinking.intensity === 'easy' ? 'thinking easy' : 'thinking')
+    } : null;
 
     return {
       id: session.id,
@@ -153,6 +187,12 @@ export class PazaakViewModel {
       showPlaying: state.phase === 'playing',
       showComplete: state.phase === 'complete',
       message: state.message || '',
+      aiThinking,
+      hasAiThinking: Boolean(aiThinking),
+      canCancel: canCancelSession(session, currentSeat),
+      canForfeit: Boolean(currentSeatId && ['setup', 'playing'].includes(state.phase) && !['complete', 'cancelled', 'refunded'].includes(String(session.status || ''))),
+      eventLog,
+      hasEventLog: eventLog.length > 0,
       target: PAZAAK_TARGET,
       setsToWin: PAZAAK_SETS_TO_WIN,
       sideDeckSize: PAZAAK_SIDE_DECK_SIZE,

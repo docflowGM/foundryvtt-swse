@@ -126,6 +126,18 @@
         ],
         "refund": [
           "No loss, no gain. A tidy ruling."
+        ],
+        "thinking": [
+          "Studies the table like a fragile hyperdrive seal.",
+          "Lets the silence stretch before choosing a safe line."
+        ],
+        "thinkingHard": [
+          "The margins are too thin; every card gets counted twice.",
+          "A cornered pause settles over the table while the safest escape is measured."
+        ],
+        "thinkingEasy": [
+          "The lead is comfortable enough to breathe before acting.",
+          "A small nod says the table is still under control."
         ]
       }
     },
@@ -232,6 +244,18 @@
         ],
         "refund": [
           "Refunded? Cowardly table."
+        ],
+        "thinking": [
+          "Looks for the fastest route to twenty.",
+          "The next move is weighed like a thrown vibroblade."
+        ],
+        "thinkingHard": [
+          "Pinned behind the count, the pressure turns sharp.",
+          "The table has teeth now, and the next play has to bite back."
+        ],
+        "thinkingEasy": [
+          "The advantage is obvious; now it just needs force.",
+          "A quick grin says the table is already leaning the right way."
         ]
       }
     },
@@ -337,6 +361,18 @@
         ],
         "refund": [
           "Free lesson, no credits lost."
+        ],
+        "thinking": [
+          "Taps the table twice and seems ready to dare the deck.",
+          "The pause feels less like math and more like a countdown."
+        ],
+        "thinkingHard": [
+          "Backed into a corner, the next idea looks dangerous enough to work.",
+          "The table has gone bad, which apparently makes it more interesting."
+        ],
+        "thinkingEasy": [
+          "The lead makes the next risk look even more tempting.",
+          "A loose laugh slips out before the next impulse wins."
         ]
       }
     },
@@ -441,6 +477,18 @@
         ],
         "refund": [
           "Settlement returns to zero."
+        ],
+        "thinking": [
+          "Runs the visible totals with machine-like patience.",
+          "Every revealed card becomes another quiet calculation."
+        ],
+        "thinkingHard": [
+          "The position is ugly, but not unsolved.",
+          "A hard silence falls while the probabilities are rebuilt from scratch."
+        ],
+        "thinkingEasy": [
+          "The numbers are favorable and the next line is clean.",
+          "The table state is already close to solved."
         ]
       }
     },
@@ -475,7 +523,7 @@
           "That stand left a door open."
         ],
         "forceSensitivityNudge": [
-          "The next draw feels like an opening\u2014or a trap."
+          "The next draw feels like an opening—or a trap."
         ],
         "tell1": [
           "Looks bored until the opponent stands."
@@ -545,6 +593,18 @@
         ],
         "refund": [
           "No harm. The next opening waits."
+        ],
+        "thinking": [
+          "Waits for the weak seam in the set.",
+          "The pause feels like a trap being placed gently on the table."
+        ],
+        "thinkingHard": [
+          "With few openings left, every weakness gets hunted.",
+          "The corner is tight, so the next mistake must belong to someone else."
+        ],
+        "thinkingEasy": [
+          "The opening is already there; now comes the collection.",
+          "The advantage is banked, and the next move only needs to cash it in."
         ]
       }
     },
@@ -649,6 +709,18 @@
         ],
         "refund": [
           "A refund is just an encore delayed."
+        ],
+        "thinking": [
+          "Lets the suspense do half the work.",
+          "The move is delayed just long enough to be noticed."
+        ],
+        "thinkingHard": [
+          "The spotlight gets hotter when the table turns hostile.",
+          "A dramatic recovery is considered with entirely too much confidence."
+        ],
+        "thinkingEasy": [
+          "The lead is comfortable, so the performance can begin.",
+          "A flourish arrives before the card does."
         ]
       }
     },
@@ -753,6 +825,18 @@
         ],
         "refund": [
           "The bankroll survives."
+        ],
+        "thinking": [
+          "Measures the set against the whole match.",
+          "The pause is patient, like a long hyperspace route."
+        ],
+        "thinkingHard": [
+          "Even cornered, the match is not over until the last resource is spent.",
+          "The hard line is found by refusing to rush."
+        ],
+        "thinkingEasy": [
+          "The lead is another resource to conserve.",
+          "No need to hurry when the match is already being squeezed."
         ]
       }
     },
@@ -857,6 +941,18 @@
         ],
         "refund": [
           "At least the floor stayed underfoot."
+        ],
+        "thinking": [
+          "Checks the score, then checks it again.",
+          "The next move carries more weight than it should."
+        ],
+        "thinkingHard": [
+          "The corner is real now, and the only way out is forward.",
+          "Every bad option gets searched for a miracle."
+        ],
+        "thinkingEasy": [
+          "For once, the table is not on fire.",
+          "The lead brings a shaky breath and a faster decision."
         ]
       }
     },
@@ -961,6 +1057,18 @@
         ],
         "refund": [
           "Nothing lost. Nothing proven."
+        ],
+        "thinking": [
+          "The pause is probably real. Probably.",
+          "A readable hesitation appears exactly where one would expect it."
+        ],
+        "thinkingHard": [
+          "Under pressure, even the silence feels like a bluff.",
+          "The cornered look may be honest, which makes it dangerous."
+        ],
+        "thinkingEasy": [
+          "The advantage is hidden behind a very convincing concern.",
+          "A relaxed pause invites the wrong conclusion."
         ]
       }
     },
@@ -1066,6 +1174,18 @@
         ],
         "refund": [
           "The table returns to calm."
+        ],
+        "thinking": [
+          "Listens to something just beyond the table noise.",
+          "The decision waits for a feeling to become a direction."
+        ],
+        "thinkingHard": [
+          "The future feels crowded, and only one path stays bright.",
+          "A hard silence gathers as if the deck itself is arguing."
+        ],
+        "thinkingEasy": [
+          "The current of the table feels gentle for a moment.",
+          "A calm instinct seems to arrive before the calculation."
         ]
       }
     }
