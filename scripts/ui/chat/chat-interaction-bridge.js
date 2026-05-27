@@ -215,6 +215,32 @@ async function handleHolonetCardAction(event, button, message) {
   }
 }
 
+async function handleHolonetMessageAction(event, button, message) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const action = button.dataset.holonetAction || '';
+  if (!['accept-transfer', 'decline-transfer', 'pay-credit-request', 'decline-credit-request'].includes(action)) return;
+  const threadId = button.dataset.holonetThreadId || '';
+  const recordId = button.dataset.holonetRecordId || '';
+  const actor = actorFromId(button.dataset.actorId || message?.speaker?.actor)
+    || game.user?.character
+    || game.actors?.find?.(a => a?.isOwner && a?.type === 'character')
+    || null;
+  if (!actor || !threadId || !recordId) {
+    ui?.notifications?.warn?.('Holonet transaction context could not be resolved.');
+    return;
+  }
+  try {
+    const { HolonetMessengerService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js');
+    await HolonetMessengerService.threadAction({ actor, threadId, action, recordId });
+  } catch (err) {
+    console.warn('[SWSE Chat] Holonet transaction action failed:', err);
+    ui?.notifications?.warn?.('Holonet transaction action failed.');
+  }
+}
+
+
 async function handleStoreReceiptAction(event, button, message) {
   event.preventDefault();
   event.stopPropagation();
@@ -346,6 +372,7 @@ export class ChatInteractionBridge {
     bind(root, '.swse-apply-damage-btn', 'ApplyDamage', handleApplyDamageButton, message);
     bind(root, '[data-reaction], [data-swse-reaction-key]', 'Reaction', handleReactionButton, message);
     bind(root, '[data-holonet-action="open-thread"], [data-holonet-action="open-bulletin"], [data-holonet-action="open-record"]', 'HolonetOpenCard', handleHolonetCardAction, message);
+    bind(root, '[data-holonet-action="accept-transfer"], [data-holonet-action="decline-transfer"], [data-holonet-action="pay-credit-request"], [data-holonet-action="decline-credit-request"]', 'HolonetMessageAction', handleHolonetMessageAction, message);
     bind(root, '[data-store-action]', 'StoreReceiptAction', handleStoreReceiptAction, message);
     bind(root, '.species-reroll-btn', 'SpeciesReroll', handleSpeciesRerollButton, message);
     bind(root, '.swse-skill-reroll-btn', 'SkillReroll', handleSkillRerollButton, message);

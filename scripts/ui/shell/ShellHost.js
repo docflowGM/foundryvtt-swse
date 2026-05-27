@@ -609,7 +609,9 @@ export function ShellHostMixin(BaseClass) {
         ...this._shellSurfaceOptions,
         source: 'messenger',
         ...(threadId ? { threadId } : {}),
-        ...(options.compose != null ? { compose: options.compose } : {})
+        ...(options.compose != null ? { compose: options.compose } : {}),
+        ...(options.compositionType ? { compositionType: options.compositionType } : {}),
+        ...(options.compositionMode ? { compositionMode: options.compositionMode } : {})
       };
       if (this._holonetRenderDebounce) {
         window.clearTimeout(this._holonetRenderDebounce);
@@ -663,6 +665,86 @@ export function ShellHostMixin(BaseClass) {
           if (!threadId) return;
           await this.setSurface('messenger', { threadId, source: 'messenger' });
           await this._refreshMessengerSurface({ threadId, compose: false });
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-action="open-credit-composer"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const threadId = el.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+          if (!threadId) return;
+          await this.setSurface('messenger', { threadId, compose: false, compositionType: 'credits', compositionMode: el.dataset.compositionMode || 'send', source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false, compositionType: 'credits', compositionMode: el.dataset.compositionMode || 'send' });
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-action="open-item-composer"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const threadId = el.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+          if (!threadId) return;
+          await this.setSurface('messenger', { threadId, compose: false, compositionType: 'items', source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false, compositionType: 'items' });
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-action="close-composer"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const threadId = this._shellSurfaceOptions?.threadId || messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]')?.dataset?.threadId || null;
+          await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false });
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-item-filter]').forEach(input => {
+        input.addEventListener('input', () => {
+          const query = String(input.value || '').trim().toLowerCase();
+          messengerRoot.querySelectorAll('.hl-item-row[data-item-name]').forEach(row => {
+            const haystack = String(row.dataset.itemName || '').toLowerCase();
+            row.hidden = Boolean(query && !haystack.includes(query));
+          });
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="submit-credit-composer"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+          const mode = form.dataset.compositionMode || 'send';
+          const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+          const amount = Number(data.get('amount') || 0);
+          const splitMode = String(data.get('splitMode') || 'split-total');
+          const memo = String(data.get('memo') || '').trim();
+          if (!threadId || !recipientIds.length || !Number.isFinite(amount) || amount <= 0) return;
+          const result = await HolonetMessengerService.composeCreditOperation({ actor, threadId, mode, recipientIds, amount, splitMode: mode === 'request' && splitMode === 'send-each' ? 'request-each' : splitMode, memo });
+          this._noteMessengerPendingResult(result);
+          await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="submit-item-composer"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+          const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+          const itemIds = data.getAll('itemIds').map(String).filter(Boolean);
+          const items = itemIds.map(itemId => ({ itemId, quantity: Number(data.get(`quantity.${itemId}`) || 1) || 1 }));
+          const distributionMode = String(data.get('distributionMode') || 'single');
+          const memo = String(data.get('memo') || '').trim();
+          if (!threadId || !recipientIds.length || !items.length) return;
+          const result = await HolonetMessengerService.offerItemTransfer({ actor, threadId, recipientIds, items, distributionMode, memo });
+          this._noteMessengerPendingResult(result);
+          await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
         });
       });
 

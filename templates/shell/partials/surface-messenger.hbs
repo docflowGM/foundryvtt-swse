@@ -276,18 +276,32 @@
               {{#each vm.messages}}
                 {{#if this.hasCreditTransfer}}
                 <article class="swse-msg-system hl-credit-card-wrap">
-                  <div class="hl-credit-card">
+                  <div class="hl-credit-card hl-credit-card--bank">
                     <div class="hl-credit-card-shimmer"></div>
-                    <div class="hl-credit-title">Credit Transfer</div>
+                    <div class="hl-credit-title">Coruscant Credit Union</div>
+                    {{#if this.transfer.isRequest}}
+                    <div class="hl-credit-line"><strong>{{this.transfer.requesterLabel}}</strong> requests credits</div>
+                    <div class="hl-credit-amount">{{this.transfer.amountLabel}}</div>
+                    {{#if this.transfer.memo}}<div class="hl-credit-memo">Memo: {{this.transfer.memo}}</div>{{/if}}
+                    {{#if this.transfer.ownShareLabel}}<div class="hl-credit-line">Your share: <strong>{{this.transfer.ownShareLabel}}</strong></div>{{/if}}
+                    <div class="hl-credit-status">{{this.transfer.statusLabel}} · Paid {{this.transfer.paidLabel}} · Remaining {{this.transfer.remainingLabel}}</div>
+                    <div class="hl-credit-actions">
+                      {{#if this.transfer.canPay}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="pay-credit-request" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Pay</button>{{/if}}
+                      {{#if this.transfer.canDeclineRequest}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-credit-request" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
+                      {{#if this.transfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-credit-request" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
+                    </div>
+                    {{else}}
                     <div class="hl-credit-line"><strong>{{this.transfer.fromLabel}}</strong> → <strong>{{this.transfer.toLabel}}</strong></div>
                     <div class="hl-credit-amount">{{this.transfer.amountLabel}}</div>
+                    {{#if this.transfer.memo}}<div class="hl-credit-memo">Memo: {{this.transfer.memo}}</div>{{/if}}
                     <div class="hl-credit-status">{{this.transfer.statusLabel}}</div>
                     <div class="hl-credit-actions">
-                      {{#if this.transfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept</button>{{/if}}
+                      {{#if this.transfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Deposit</button>{{/if}}
                       {{#if this.transfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
                       {{#if this.transfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
                       {{#if this.transfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
                     </div>
+                    {{/if}}
                   </div>
                 </article>
                 {{else}}
@@ -297,12 +311,20 @@
                     <div class="hl-credit-title">Item Transfer</div>
                     <div class="hl-credit-line"><strong>{{this.itemTransfer.fromLabel}}</strong> → <strong>{{this.itemTransfer.toLabel}}</strong></div>
                     <div class="hl-attachments">
-                      {{#each this.itemTransfer.attachments}}
-                      <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}}</small></div>
-                      {{/each}}
+                      {{#if this.itemTransfer.items.length}}
+                        {{#each this.itemTransfer.items}}
+                        <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}} · x{{this.quantity}}</small></div>
+                        {{/each}}
+                      {{else}}
+                        {{#each this.itemTransfer.attachments}}
+                        <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}}</small></div>
+                        {{/each}}
+                      {{/if}}
                     </div>
+                    {{#if this.itemTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.itemTransfer.memo}}</div>{{/if}}
                     <div class="hl-credit-status">{{this.itemTransfer.statusLabel}}</div>
                     <div class="hl-credit-actions">
+                      {{#if this.itemTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
                       {{#if this.itemTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Items</button>{{/if}}
                       {{#if this.itemTransfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
                       {{#if this.itemTransfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
@@ -372,6 +394,18 @@
             </label>
             <div class="hl-drop-zone hl-drop-zone--compact" data-holonet-drop-zone data-holonet-drop-input="attachmentUuids">
               <b>Drop Item to Attach</b><span>Compendium items become Holonet cards.</span>
+            </div>
+            <div class="hl-composer-tools">
+              {{#if vm.transferPolicy.creditsEnabled}}
+              <button class="hl-tool-btn" data-holonet-action="open-credit-composer" data-composition-mode="send" data-thread-id="{{vm.selectedThread.id}}" type="button">Send Credits</button>
+              <button class="hl-tool-btn" data-holonet-action="open-credit-composer" data-composition-mode="request" data-thread-id="{{vm.selectedThread.id}}" type="button">Request Credits</button>
+              {{/if}}
+              {{#if vm.transferPolicy.itemTradesEnabled}}
+              <button class="hl-tool-btn" data-holonet-action="open-item-composer" data-thread-id="{{vm.selectedThread.id}}" type="button">Send Items</button>
+              {{/if}}
+              {{#if vm.transferPolicy.assetTradesEnabled}}
+              <button class="hl-tool-btn hl-tool-btn--pending" type="button" title="Ships and droids use the approved asset-transfer lifecycle coming next.">Trade Ship/Droid</button>
+              {{/if}}
             </div>
             <div class="hl-composer-input-row">
               <textarea class="hl-composer-ta" name="body" rows="3" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
@@ -456,6 +490,7 @@
           </form>
           {{/if}}
 
+          {{#if vm.transferPolicy.creditsEnabled}}
           {{#if vm.selectedThread.transferTargets.length}}
           <form class="swse-messenger-detail-card hl-info-section" data-holonet-action="transfer-credits" data-thread-id="{{vm.selectedThread.id}}">
             <div class="swse-messenger-detail-card__title hl-info-label">Credits</div>
@@ -473,7 +508,9 @@
             {{#if vm.selectedThread.canUseJobPayout}}<button class="swse-btn hl-icon-btn" name="transferMode" value="job-payout" type="submit">Pay Job Reward</button>{{/if}}
           </form>
           {{/if}}
+          {{/if}}
 
+          {{#if vm.transferPolicy.itemTradesEnabled}}
           {{#if vm.isGm}}
           {{#if vm.selectedThread.transferTargets.length}}
           <form class="swse-messenger-detail-card hl-info-section hl-item-transfer-form" data-holonet-action="item-transfer" data-thread-id="{{vm.selectedThread.id}}">
@@ -486,6 +523,7 @@
             </div>
             <button class="swse-btn hl-icon-btn" name="itemTransferMode" value="offer-item-transfer" type="submit">Offer Item</button>
           </form>
+          {{/if}}
           {{/if}}
           {{/if}}
 
@@ -514,4 +552,89 @@
       {{/if}}
     </section>
   </div>
+  {{#if vm.composition}}
+  <div class="hl-composition-modal" data-holonet-composition-modal>
+    <div class="hl-composition-backdrop" data-holonet-action="close-composer"></div>
+    <section class="hl-composition-panel swse-panel">
+      <header class="hl-composition-head">
+        <div>
+          <div class="hl-label hl-label--accent">{{vm.composition.title}}</div>
+          <h3>{{vm.composition.actorName}}</h3>
+        </div>
+        <button class="hl-icon-btn" data-holonet-action="close-composer" type="button">Close</button>
+      </header>
+
+      {{#if (eq vm.composition.type "credits")}}
+      <form class="hl-composition-form" data-holonet-action="submit-credit-composer" data-thread-id="{{vm.composition.threadId}}" data-composition-mode="{{vm.composition.mode}}">
+        <div class="hl-bank-banner">
+          <strong>Coruscant Credit Union</strong>
+          <span>Available: {{vm.composition.actorCredits}} cr</span>
+        </div>
+        <label class="hl-field"><span>Amount</span><input type="number" name="amount" min="1" step="1" required></label>
+        <label class="hl-field"><span>Memo</span><input type="text" name="memo" maxlength="120" placeholder="Optional memo line"></label>
+        <div class="hl-recipient-picker">
+          <div class="hl-label">Recipients</div>
+          <div class="hl-recipient-grid">
+            {{#each vm.composition.targets}}
+            <label class="hl-recipient-row"><input type="checkbox" name="recipientIds" value="{{this.id}}"><span>{{this.label}}</span><small>{{this.typeLabel}}</small></label>
+            {{/each}}
+          </div>
+        </div>
+        {{#if vm.composition.hasMultipleTargets}}
+        <div class="hl-split-options">
+          <label><input type="radio" name="splitMode" value="split-total" checked> Split total amount between recipients</label>
+          <label><input type="radio" name="splitMode" value="send-each"> {{#if (eq vm.composition.mode "request")}}Request this amount from each recipient{{else}}Send this amount to each recipient{{/if}}</label>
+        </div>
+        {{/if}}
+        <div class="hl-composition-actions">
+          <button class="swse-btn swse-btn--primary hl-btn-accent" type="submit">{{#if (eq vm.composition.mode "request")}}Send Request{{else}}Send Credits{{/if}}</button>
+          <button class="swse-btn hl-icon-btn" data-holonet-action="close-composer" type="button">Cancel</button>
+        </div>
+      </form>
+      {{/if}}
+
+      {{#if (eq vm.composition.type "items")}}
+      <form class="hl-composition-form" data-holonet-action="submit-item-composer" data-thread-id="{{vm.composition.threadId}}">
+        <div class="hl-help">Step 1: choose inventory. Step 2: choose recipient(s). Single-quantity items require one explicit recipient unless quantity can be split.</div>
+        <label class="hl-field"><span>Filter</span><input type="search" data-holonet-item-filter placeholder="Search inventory..."></label>
+        <div class="hl-item-composer-list">
+          {{#each vm.composition.inventory.categories}}
+          <section class="hl-item-category" data-item-category="{{this.name}}">
+            <h4>{{this.name}}</h4>
+            {{#each this.items}}
+            <label class="hl-item-row" data-item-name="{{this.name}} {{this.typeLabel}}">
+              <input type="checkbox" name="itemIds" value="{{this.id}}">
+              {{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span class="hl-avatar hl-avatar--blank">▣</span>{{/if}}
+              <span><b>{{this.name}}</b><small>{{this.typeLabel}} · Qty {{this.quantity}}{{#if this.value}} · {{this.value}} cr{{/if}}</small></span>
+              <input type="range" name="quantity.{{this.id}}" min="1" max="{{this.quantity}}" value="1">
+            </label>
+            {{/each}}
+          </section>
+          {{/each}}
+        </div>
+        <label class="hl-field"><span>Memo</span><input type="text" name="memo" maxlength="120" placeholder="Optional trade memo"></label>
+        <div class="hl-recipient-picker">
+          <div class="hl-label">Recipient(s)</div>
+          <div class="hl-recipient-grid">
+            {{#each vm.composition.targets}}
+            <label class="hl-recipient-row"><input type="checkbox" name="recipientIds" value="{{this.id}}"><span>{{this.label}}</span><small>{{this.typeLabel}}</small></label>
+            {{/each}}
+          </div>
+        </div>
+        {{#if vm.composition.hasMultipleTargets}}
+        <div class="hl-split-options">
+          <label><input type="radio" name="distributionMode" value="single" checked> Send selected items to one chosen recipient</label>
+          <label><input type="radio" name="distributionMode" value="split"> Split quantities across selected recipients</label>
+        </div>
+        {{/if}}
+        <div class="hl-composition-actions">
+          <button class="swse-btn swse-btn--primary hl-btn-accent" type="submit">Continue / Send Offer</button>
+          <button class="swse-btn hl-icon-btn" data-holonet-action="close-composer" type="button">Cancel</button>
+        </div>
+      </form>
+      {{/if}}
+    </section>
+  </div>
+  {{/if}}
+
 </div>

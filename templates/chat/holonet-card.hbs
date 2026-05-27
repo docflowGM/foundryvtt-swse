@@ -29,7 +29,16 @@
     </div>
     <div class="htfrom">{{senderName}}{{#if relayLabel}}<span class="relay">// {{relayLabel}}</span>{{/if}}</div>
     <div class="htsubject">{{subject}}</div>
+    {{#if creditAction}}
+    <div class="ht-credit-quickline"><strong>{{creditAction.actorLabel}}</strong> {{creditAction.verb}} <strong>{{creditAction.amountLabel}}</strong>{{#if creditAction.memoPreview}} · “{{creditAction.memoPreview}}”{{/if}}</div>
+    <div class="ht-credit-actions">
+      <button type="button" data-holonet-action="{{creditAction.primaryAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{creditAction.primaryLabel}}</button>
+      <button type="button" data-holonet-action="{{creditAction.declineAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">Decline</button>
+      <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">See Message</button>
+    </div>
+    {{else}}
     {{#if preview}}<div class="htprev">{{preview}}{{#if attachmentCount}} <span class="att">📎 <b>{{attachmentCount}}</b></span>{{/if}}</div>{{/if}}
+    {{/if}}
   </div>
   <div class="htgo">
     <span class="arrow">▸</span>

@@ -107,6 +107,10 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmOfferCreditTransfer(data);
         break;
       }
+      case 'compose-credit-operation': {
+        await HolonetMessengerService._gmComposeCreditOperation(data);
+        break;
+      }
       case 'offer-item-transfer': {
         await HolonetMessengerService._gmOfferItemTransfer(data);
         break;

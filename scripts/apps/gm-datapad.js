@@ -284,6 +284,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
       allowPlayersNonheroic: 'Allow Non-Heroic Players',
       maxStartingCredits: 'Maximum Starting Credits',
       holonetRequireCreditTransferApproval: 'GM Approves Holonet Credit Transfers',
+      holonetCreditTransfersEnabled: 'Allow Holonet Credit Transfers',
+      holonetItemTradesEnabled: 'Allow Holonet Item Trades',
+      holonetRequireItemTradeApproval: 'GM Approves Holonet Item Trades',
+      holonetAssetTradesEnabled: 'Allow Ship/Droid Trades',
+      holonetRequireAssetTradeApproval: 'GM Approves Ship/Droid Trades',
       holonetPartyFundEnabled: 'Enable Holonet Party Fund',
       holonetPartyFundDefaultCutPercent: 'Party Fund Job Cut Percent',
       enableBackgrounds: 'Enable Backgrounds',
@@ -381,6 +386,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
       allowPlayersNonheroic: 'Players can use the NPC generator',
       maxStartingCredits: 'Receive maximum starting credits',
       holonetRequireCreditTransferApproval: 'Require GM approval before accepted player-to-player Holonet credit transfers complete',
+      holonetCreditTransfersEnabled: 'Show Messenger send/request credit controls to players',
+      holonetItemTradesEnabled: 'Show Messenger item trade controls to players',
+      holonetRequireItemTradeApproval: 'Require GM approval before player item trades can be accepted',
+      holonetAssetTradesEnabled: 'Show ship/droid trade entry points to players',
+      holonetRequireAssetTradeApproval: 'Require GM approval for ship/droid asset trades; defaults on',
       holonetPartyFundEnabled: 'Enable a GM-managed party fund account in Holonet',
       holonetPartyFundDefaultCutPercent: 'Default percent of job payouts routed to the Party Fund',
       enableBackgrounds: 'Allow selecting backgrounds during creation',
@@ -2085,7 +2095,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 const HOUSE_RULES_CATEGORIES = {
   characterCreation: [
     'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
-    'maxStartingCredits', 'holonetRequireCreditTransferApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
+    'maxStartingCredits', 'holonetCreditTransfersEnabled', 'holonetRequireCreditTransferApproval', 'holonetItemTradesEnabled', 'holonetRequireItemTradeApproval', 'holonetAssetTradesEnabled', 'holonetRequireAssetTradeApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
     'droidPointBuyPool', 'livingPointBuyPool', 'droidConstructionCredits', 'allowDroidDestiny'
   ],
   combat: [
