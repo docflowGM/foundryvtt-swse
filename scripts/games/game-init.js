@@ -10,6 +10,7 @@ import { GameNotificationService } from './game-notification-service.js';
 import { PazaakEngine } from './games/pazaak/pazaak-engine.js';
 import { SabaccEngine } from './games/sabacc/sabacc-engine.js';
 import { DejarikEngine } from './games/dejarik/dejarik-engine.js';
+import { HintaroEngine } from './games/hintaro/hintaro-engine.js';
 import { getPazaakSideCardCatalog } from './games/pazaak/pazaak-deck.js';
 import { loadPazaakAiPersonalityData } from './games/pazaak/pazaak-ai-personalities.js';
 import { GameOpponentProfileService } from './game-opponent-profile-service.js';
@@ -46,6 +47,9 @@ export async function initializeGames() {
     },
     dejarik: {
       engine: DejarikEngine
+    },
+    hintaro: {
+      engine: HintaroEngine
     },
     get settings() { return getGameSettingsSnapshot(); }
   };

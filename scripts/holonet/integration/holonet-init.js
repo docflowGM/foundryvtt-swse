@@ -187,6 +187,23 @@ export function registerHolonetSettings() {
     default: HolonewsAtomPolicy.defaultPolicy()
   });
 
+  game.settings.register('foundryvtt-swse', 'gmCombatRecoveryLog', {
+    name: 'GM Combat & Recovery Log (internal)',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+
+  game.settings.register('foundryvtt-swse', 'gmApprovalHistory', {
+    name: 'GM Approval History (internal)',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
   HolonetPreferences.registerSettings();
   console.log('[Holonet] Settings registered');
 }

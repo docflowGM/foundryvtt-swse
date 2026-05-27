@@ -71,8 +71,8 @@ function threatProfile(state = {}, seatId = null) {
 
   for (const piece of own) {
     for (const enemy of enemies) {
-      if (canAttackPiece(piece, enemy).ok) pressure += attackScore(piece, enemy);
-      if (canAttackPiece(enemy, piece).ok) {
+      if (canAttackPiece(piece, enemy, state).ok) pressure += attackScore(piece, enemy);
+      if (canAttackPiece(enemy, piece, state).ok) {
         const incoming = attackScore(enemy, piece);
         exposure += incoming;
         if (Number(enemy.atk || 0) >= effectiveHp(piece)) lethalThreats += 1;
@@ -134,7 +134,7 @@ function legalActions(session = {}, state = {}, seatId = null) {
 
   for (const piece of own) {
     for (const target of enemies) {
-      if (canAttackPiece(piece, target).ok) actions.push(buildAttackAction(piece, target));
+      if (canAttackPiece(piece, target, state).ok) actions.push(buildAttackAction(piece, target));
     }
   }
 
@@ -162,8 +162,8 @@ function actionStaticScore(state = {}, seatId = null, action = {}) {
     const before = nearestEnemyDistance(state, piece, enemies);
     const trial = { ...piece, spaceId: action.toSpaceId };
     const after = nearestEnemyDistance(state, trial, enemies);
-    const canAttackAfter = enemies.some(enemy => canAttackPiece(trial, enemy).ok);
-    const exposedAfter = enemies.some(enemy => canAttackPiece(enemy, trial).ok);
+    const canAttackAfter = enemies.some(enemy => canAttackPiece(trial, enemy, state).ok);
+    const exposedAfter = enemies.some(enemy => canAttackPiece(enemy, trial, state).ok);
     const wounded = effectiveHp(piece) <= Math.max(2, Number(piece.maxHp || 0) / 3);
     return 600 + ((before - after) * 80) + (canAttackAfter ? 260 : 0) - (exposedAfter && wounded ? 420 : (exposedAfter ? 120 : 0)) + (reachableMoveCount(state, trial) * 8);
   }
@@ -180,7 +180,7 @@ function applyActionForSearch(session = {}, state = {}, seatId = null, action = 
 
   if (action.type === 'attack' && piece) {
     const defender = next.pieces?.[String(action.targetPieceId || '')];
-    if (defender && canAttackPiece(piece, defender).ok) {
+    if (defender && canAttackPiece(piece, defender, next).ok) {
       defender.hp = Math.max(0, Number(defender.hp || 0) - Number(piece.atk || 0));
       defender.defeated = defender.hp <= 0;
       piece.activated = true;

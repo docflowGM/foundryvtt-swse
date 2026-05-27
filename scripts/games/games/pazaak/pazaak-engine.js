@@ -108,6 +108,7 @@ function buildSetupState(session = {}) {
     players,
     setHistory: [],
     eventLog: [],
+    debug: { rngLabel: randomId('pazaak_rng'), lastDeckState: null },
     winnerSeatId: null,
     message: 'Build and lock a 10-card side deck before the match begins.'
   };
@@ -119,6 +120,7 @@ function ensurePazaakState(session = {}) {
   existing.players ??= {};
   existing.setHistory = Array.isArray(existing.setHistory) ? existing.setHistory : [];
   existing.eventLog = Array.isArray(existing.eventLog) ? existing.eventLog : [];
+  existing.debug = existing.debug && typeof existing.debug === 'object' ? existing.debug : { rngLabel: randomId('pazaak_rng'), lastDeckState: null };
   for (const seat of seats) {
     existing.players[seat.seatId] ??= buildPlayerStateForSeat(seat);
     existing.players[seat.seatId].seatId = seat.seatId;
@@ -221,13 +223,16 @@ function startNextSet(session, state, firstSeatId = null) {
   state.setNumber = Number(state.setNumber || 0) + 1;
   state.mainDeck = buildPazaakMainDeck();
   state.discard = [];
+  state.debug = state.debug && typeof state.debug === 'object' ? state.debug : { rngLabel: randomId('pazaak_rng') };
+  state.debug.lastDeckState = { setNumber: state.setNumber, mainDeckCount: state.mainDeck.length, discardCount: 0, at: now() };
   resetPlayersForSet(session, state);
   const order = getPlayerOrder(session);
   const chosenFirst = firstSeatId && order.includes(firstSeatId) ? firstSeatId : (state.firstSeatId && order.includes(state.firstSeatId) ? state.firstSeatId : order[0]);
   state.firstSeatId = chosenFirst;
   state.activeSeatId = chosenFirst;
   state.message = `Set ${state.setNumber}: ${seatLabel(session, chosenFirst)} draws first.`;
-  pushPazaakEvent(session, state, 'set-started', chosenFirst, state.message, { setNumber: state.setNumber, tone: 'setup' });
+  pushPazaakEvent(session, state, 'set-started', chosenFirst, state.message, { setNumber: state.setNumber, tone: 'setup', rngLabel: state.debug?.rngLabel, mainDeckCount: state.mainDeck.length, gmOnly: true });
+  pushPazaakEvent(session, state, 'set-public-started', chosenFirst, state.message, { setNumber: state.setNumber, tone: 'setup' });
   beginTurn(session, state, chosenFirst);
   const firstPlayer = state.players?.[chosenFirst];
   if (state.phase === 'playing' && firstPlayer && (firstPlayer.stood || firstPlayer.filledTable || firstPlayer.bust)) advanceTurn(session, state, chosenFirst);
@@ -460,7 +465,7 @@ async function processAutomatedTurns(session, state) {
     const thinkingSession = await persistPazaakSession(workingSession, state, 'active', sessionLogEntry('pazaak-ai-thinking', seat.recipientId || seat.seatId, { seatId: seat.seatId, intensity: thinking.intensity, delayMs: thinking.delayMs }));
     workingSession = thinkingSession || workingSession;
     GameNotificationService.emitSessionUpdated(workingSession, { pazaakPhase: state.phase, action: 'pazaak-ai-thinking' });
-    await sleep(thinking.delayMs);
+    await sleep(Math.max(0, Math.min(Number(thinking.delayMs || 0), 5000))); // hard cap prevents runaway theatrical waits
     clearAiThinkingState(state);
     const choice = PazaakAi.chooseTurn(player, profile, { nextMainCard: Array.isArray(state.mainDeck) ? state.mainDeck[0] : null, state, session: workingSession });
     applyAutomatedTurnChoice(workingSession, state, seat, player, profile, choice);

@@ -7,7 +7,6 @@
 
 import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 import { GMDatapad } from "/systems/foundryvtt-swse/scripts/apps/gm-datapad.js";
-import { GMDroidApprovalDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-droid-approval-dashboard.js";
 import { toggleActionPalette, ensureActionPaletteApp } from "/systems/foundryvtt-swse/scripts/ui/action-palette/init.js";
 
 let gmDatapadApp = null;
@@ -43,7 +42,7 @@ function openDroidApprovals() {
   }
 
   try {
-    GMDroidApprovalDashboard.open();
+    GMDatapad.open('approvals');
   } catch (error) {
     console.error('[SWSE Scene Controls] Failed to open droid approvals', error);
     ui?.notifications?.error?.(`Failed to open droid approvals: ${error.message}`);

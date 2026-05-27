@@ -78,6 +78,13 @@ export const SecondWindEngine = {
             continue;
           }
 
+          const restTriggered = triggerEvent === 'short-rest' || triggerEvent === 'extended-rest';
+          const restExcluded = restTriggered && (actor.type === 'droid' || actor.system?.isDroid === true || actor.type === 'vehicle' || actor.system?.isVehicle === true);
+          if (restExcluded) {
+            skipped++;
+            continue;
+          }
+
           await ActorEngine.resetSecondWind(actor);
           updated++;
         } catch (err) {

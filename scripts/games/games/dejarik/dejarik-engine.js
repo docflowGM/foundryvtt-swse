@@ -5,7 +5,7 @@ import { GameOpponentProfileService } from '../../game-opponent-profile-service.
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import { buildDejarikBoard, defaultStartingSpaces } from './dejarik-board.js';
 import { defaultDejarikTeam, getDejarikPiece } from './dejarik-pieces.js';
-import { canAttackPiece, canMovePiece, winnerSeatId } from './dejarik-rules.js';
+import { canAttackPiece, canMovePiece, legalAttackTargets, legalMoveSpaceIds, winnerSeatId } from './dejarik-rules.js';
 import { DejarikAi } from './dejarik-ai.js';
 
 function clone(value) { if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value); return JSON.parse(JSON.stringify(value ?? null)); }
@@ -24,7 +24,7 @@ function sessionLogEntry(type, by, data = {}) { return { id: randomId('log'), at
 
 function buildPiece(pieceId, ownerSeatId, spaceId) {
   const def = getDejarikPiece(pieceId);
-  return { id: randomId('piece'), creatureId: def.id, label: def.label, ownerSeatId, spaceId, previousSpaceId: null, atk: def.atk, hp: def.hp, maxHp: def.hp, rng: def.rng, mov: def.mov, ability: def.ability, defeated: false, activated: false };
+  return { id: randomId('piece'), creatureId: def.id, label: def.label, ownerSeatId, spaceId, previousSpaceId: null, atk: def.atk, hp: def.hp, maxHp: def.hp, rng: def.rng, mov: def.mov, ability: def.ability, abilityLabel: def.abilityLabel, abilityDescription: def.abilityDescription, image: def.image, defeated: false, activated: false };
 }
 
 function buildState(session = {}) {
@@ -38,13 +38,20 @@ function buildState(session = {}) {
       pieces[piece.id] = piece;
     });
   });
-  return { engine: 'dejarik', version: 1, phase: 'playing', statusLabel: 'PLAYING', board: buildDejarikBoard(), activeSeatId: seats[0]?.seatId || null, initiativeSeatId: seats[0]?.seatId || null, pieces, eventLog: [], winnerSeatId: null, message: `${seatLabel(session, seats[0]?.seatId)} has initiative.` };
+  return { engine: 'dejarik', version: 2, actionModel: 'single-action', phase: 'playing', statusLabel: 'PLAYING', board: buildDejarikBoard(), activeSeatId: seats[0]?.seatId || null, initiativeSeatId: seats[0]?.seatId || null, pieces, eventLog: [], winnerSeatId: null, message: `${seatLabel(session, seats[0]?.seatId)} has initiative.` };
+}
+
+function resetMatchState(session = {}) {
+  const fresh = buildState(session);
+  fresh.eventLog.unshift({ id: randomId('dej_evt'), at: now(), type: 'rematch', seatId: null, seatLabel: null, message: 'The Dejarik holotable resets for a rematch.', tone: 'setup' });
+  return fresh;
 }
 
 function ensureState(session = {}) {
   const state = session.gameState?.engine === 'dejarik' ? clone(session.gameState) : buildState(session);
   state.board = Array.isArray(state.board) && state.board.length ? state.board : buildDejarikBoard();
   state.pieces ??= {};
+  state.actionModel ||= 'single-action';
   state.eventLog = Array.isArray(state.eventLog) ? state.eventLog : [];
   return state;
 }
@@ -90,18 +97,24 @@ function applyAction(session, state, seat, action, payload = {}) {
     piece.previousSpaceId = piece.spaceId;
     piece.spaceId = String(payload.toSpaceId);
     piece.activated = true;
-    pushEvent(session, state, 'move', seat.seatId, `${piece.label} moves to ${piece.spaceId}.`, { tone: 'move' });
+    const attacksFromNewSpace = legalAttackTargets(state, piece).length;
+    const movesFromNewSpace = legalMoveSpaceIds(state, piece).length;
+    pushEvent(session, state, 'move', seat.seatId, `${piece.label} moves from ${piece.previousSpaceId} to ${piece.spaceId}. ${attacksFromNewSpace} target${attacksFromNewSpace === 1 ? '' : 's'} threatened.`, { tone: 'move', pieceId: piece.id, fromSpaceId: piece.previousSpaceId, toSpaceId: piece.spaceId, attacksFromNewSpace, movesFromNewSpace });
     endTurn(session, state, seat.seatId);
     return { ok: true };
   }
   if (action === 'attack') {
     const defender = state.pieces?.[String(payload.targetPieceId || '')];
-    const check = canAttackPiece(piece, defender);
+    const check = canAttackPiece(piece, defender, state);
     if (!check.ok) return check;
-    defender.hp = Math.max(0, Number(defender.hp || 0) - Number(piece.atk || 0));
+    const beforeHp = Number(defender.hp || 0);
+    const damage = Number(piece.atk || 0);
+    defender.hp = Math.max(0, beforeHp - damage);
     if (defender.hp <= 0) defender.defeated = true;
     piece.activated = true;
-    pushEvent(session, state, 'attack', seat.seatId, `${piece.label} hits ${defender.label} for ${piece.atk}.`, { tone: defender.defeated ? 'danger' : 'attack' });
+    const rangeText = Number(check.distance || 0) > 1 ? ` at range ${check.distance}` : '';
+    const outcomeText = defender.defeated ? ` ${defender.label} is defeated.` : ` ${defender.label} has ${defender.hp}/${defender.maxHp} HP left.`;
+    pushEvent(session, state, 'attack', seat.seatId, `${piece.label} hits ${defender.label}${rangeText} for ${damage}.${outcomeText}`, { tone: defender.defeated ? 'danger' : 'attack', attackerId: piece.id, defenderId: defender.id, beforeHp, afterHp: defender.hp, damage, defeated: defender.defeated, distance: check.distance });
     endTurn(session, state, seat.seatId);
     return { ok: true };
   }
@@ -173,6 +186,14 @@ export class DejarikEngine {
       state.phase = 'cancelled'; state.statusLabel = 'CANCELLED'; state.activeSeatId = null; state.message = payload.reason || 'The Dejarik table was cancelled.'; pushEvent(session, state, 'session-cancelled', null, state.message, { tone: 'danger' });
       const updated = await persist(session, state, 'cancelled', sessionLogEntry('dejarik-cancelled', requesterId || currentUserId(), { reason: state.message }));
       GameNotificationService.emitSessionUpdated(updated, { dejarikPhase: updated.gameState?.phase, action: 'dejarik-cancel-session' });
+      return { ok: true, session: updated };
+    }
+    if (normalized === 'rematch') {
+      if (!['complete', 'cancelled'].includes(state.phase)) return { ok: false, error: 'Finish the current Dejarik match before starting a rematch.' };
+      const rematchState = resetMatchState(session);
+      await processAi(session, rematchState);
+      const updated = await persist(session, rematchState, 'active', sessionLogEntry('dejarik-rematch', requesterId || currentUserId()));
+      GameNotificationService.emitSessionUpdated(updated, { dejarikPhase: updated.gameState?.phase, action: 'dejarik-rematch' });
       return { ok: true, session: updated };
     }
     const seat = findSeat(session, seatId);

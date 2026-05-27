@@ -105,6 +105,7 @@ export class GMBulletinSurfaceService {
       holonewsSeeds,
       holonewsSeedCount: HolonewsGenerator.count(),
       holonewsAtomStats: HolonewsGenerator.atomStats(),
+      holonewsAtomSamples: HolonewsGenerator.atomSamples(8),
       holonewsWireFilteredCount: HolonewsGenerator.count(holonewsWireFilters),
       holonewsUsedSeedCount: usedHolonewsSeedIds.length,
       holonewsArchiveTotalCount: holonewsViews.length,

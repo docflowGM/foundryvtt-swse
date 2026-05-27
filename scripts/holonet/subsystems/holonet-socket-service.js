@@ -138,6 +138,16 @@ export class HolonetSocketService {
         await DejarikEngine.submitAction(data);
         break;
       }
+      case 'create-solo-hintaro': {
+        const { HintaroEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/hintaro/hintaro-engine.js');
+        await HintaroEngine.createSoloAiSession(data);
+        break;
+      }
+      case 'hintaro-action': {
+        const { HintaroEngine } = await import('/systems/foundryvtt-swse/scripts/games/games/hintaro/hintaro-engine.js');
+        await HintaroEngine.submitAction(data);
+        break;
+      }
       case 'create-job': {
         await HolonetMessengerService._gmCreateJobPosting(data);
         break;

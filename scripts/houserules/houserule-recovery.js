@@ -60,6 +60,22 @@ export class RecoveryMechanics {
   }
 
   /**
+   * Check whether an actor may receive organic rest recovery.
+   * Droids and vehicles are explicitly excluded from resting.
+   *
+   * @param {Actor} actor
+   * @returns {boolean}
+   */
+  static isRestRecoveryEligible(actor) {
+    if (!actor || actor.isToken) return false;
+    const isDroid = actor.type === 'droid' || actor.system?.isDroid === true;
+    const isVehicle = actor.type === 'vehicle' || actor.type === 'starship' || actor.system?.isVehicle === true || actor.system?.isStarship === true;
+    if (isDroid || isVehicle) return false;
+    if (!['character', 'npc', 'beast'].includes(actor.type)) return false;
+    return Number(actor.system?.hp?.value ?? 0) > 0;
+  }
+
+  /**
    * Perform recovery on an actor
    * @param {Actor} actor - Character to recover
    * @returns {Promise<Object>} - Recovery result
@@ -71,6 +87,10 @@ export class RecoveryMechanics {
 
     if (!actor || actor.isToken) {
       return { success: false, message: 'Invalid actor' };
+    }
+
+    if (!this.isRestRecoveryEligible(actor)) {
+      return { success: false, message: 'Actor is not eligible for organic rest recovery' };
     }
 
     const hpRecovery = this.calculateRecoveryHP(actor);
@@ -118,6 +138,11 @@ export class RecoveryMechanics {
    * @private
    */
   static async onRestCompleted(data) {
+    if (data?.skipMechanicalRecovery === true) {
+      SWSELogger.debug('[RECOVERY] Mechanical rest recovery skipped because GM recovery already applied changes.');
+      return;
+    }
+
     if (!HealingRules.recoveryEnabled()) {return;}
 
     const requiresFullRest = HealingRules.recoveryRequiresFullRest();
@@ -128,8 +153,10 @@ export class RecoveryMechanics {
     const timing = HealingRules.getRecoveryTiming();
     if (timing === 'afterRest' || timing === 'both') {
       // Recover all actors
+      const scopedActorIds = Array.isArray(data?.actorIds) ? new Set(data.actorIds) : null;
       for (const actor of game.actors) {
-        if (actor.type === 'character') {
+        if (scopedActorIds && !scopedActorIds.has(actor.id)) continue;
+        if (this.isRestRecoveryEligible(actor)) {
           await this.performRecovery(actor);
         }
       }
@@ -145,7 +172,7 @@ export class RecoveryMechanics {
       // Reset Second Wind uses for all combatants
       const swReset = await SecondWindEngine.resetAllSecondWind(restType);
 
-      swseLogger.log(`[RECOVERY] Second Wind reset during rest`, {
+      SWSELogger.log(`[RECOVERY] Second Wind reset during rest`, {
         restType,
         updated: swReset.updated,
         skipped: swReset.skipped
@@ -160,7 +187,7 @@ export class RecoveryMechanics {
       });
 
     } catch (err) {
-      swseLogger.error(`[RECOVERY] Failed to reset Second Wind during rest`, { error: err });
+      SWSELogger.error(`[RECOVERY] Failed to reset Second Wind during rest`, { error: err });
     }
   }
 }

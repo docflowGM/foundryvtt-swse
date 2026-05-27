@@ -958,3 +958,691 @@
   max-width: 34rem;
   padding-left: 0.45rem;
 }
+
+/* Hintaro chance-cube table */
+.swse-hintaro-table .swse-pazaak-alert span {
+  white-space: nowrap;
+}
+
+.swse-hintaro-die-rail {
+  display: grid;
+  grid-template-columns: minmax(86px, 120px) 1fr;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid rgba(120, 220, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(4, 18, 34, 0.54);
+}
+
+.swse-hintaro-special-die,
+.swse-hintaro-cube {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  min-height: 54px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.12), 0 0 14px rgba(100, 220, 255, 0.16);
+  color: #f5fbff;
+  text-align: center;
+}
+
+.swse-hintaro-special-die b,
+.swse-hintaro-cube b {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.swse-hintaro-special-die small,
+.swse-hintaro-cube small {
+  margin-top: 4px;
+  font-size: 0.65rem;
+  opacity: 0.82;
+  text-transform: uppercase;
+}
+
+.swse-hintaro-special-die.tone-hin,
+.swse-hintaro-special-die.tone-tukar,
+.swse-hintaro-cube.tone-tukar {
+  background: linear-gradient(135deg, rgba(0, 88, 180, 0.84), rgba(15, 210, 255, 0.36));
+  border-color: rgba(90, 220, 255, 0.54);
+}
+
+.swse-hintaro-special-die.tone-taro,
+.swse-hintaro-special-die.tone-kulro,
+.swse-hintaro-cube.tone-kulro {
+  background: linear-gradient(135deg, rgba(150, 20, 20, 0.86), rgba(255, 85, 75, 0.34));
+  border-color: rgba(255, 130, 115, 0.52);
+}
+
+.swse-hintaro-special-die.tone-mixed {
+  background: linear-gradient(135deg, rgba(0, 88, 180, 0.78), rgba(150, 20, 20, 0.76));
+  border-color: rgba(245, 220, 120, 0.58);
+}
+
+.swse-hintaro-special-die.tone-neutral {
+  background: linear-gradient(135deg, rgba(130, 104, 24, 0.70), rgba(220, 190, 75, 0.26));
+  border-color: rgba(245, 220, 120, 0.42);
+}
+
+.swse-hintaro-cubes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.swse-hintaro-reroll-card {
+  margin: 0;
+}
+
+.swse-hintaro-reroll-card .swse-hintaro-cube {
+  cursor: pointer;
+}
+
+.swse-hintaro-reroll-card .swse-hintaro-cube:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.12);
+}
+
+/* P0 Games hardening: Sabacc card art and restored Dejarik radial board UI */
+.swse-sabacc-card-face {
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-sabacc-card-face img {
+  border-radius: 0.45rem;
+  display: block;
+  height: auto;
+  max-height: 9rem;
+  max-width: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.swse-pazaak-played-card.swse-sabacc-card-face img {
+  max-height: 7.25rem;
+}
+
+.swse-sabacc-card-face img + b,
+.swse-sabacc-card-face img + b + small {
+  background: rgba(0, 0, 0, 0.54);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.25rem;
+}
+
+.swse-dejarik-playmat {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.38fr) minmax(19rem, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  margin-top: 0.9rem;
+}
+
+.swse-dejarik-selection-panel {
+  border: 1px solid rgba(120, 220, 255, 0.22);
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, rgba(7, 20, 34, 0.84), rgba(4, 10, 20, 0.94));
+  box-shadow: inset 0 0 24px rgba(57, 247, 255, 0.06);
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.swse-dejarik-selection-panel b,
+.swse-dejarik-selection-panel small {
+  display: block;
+}
+
+.swse-dejarik-selection-panel small {
+  color: rgba(205, 244, 255, 0.72);
+  line-height: 1.35;
+}
+
+.swse-dejarik-board-stage {
+  --dejarik-board-art: url('/systems/foundryvtt-swse/assets/games/dejarik/dejarik-board.png');
+  aspect-ratio: 1 / 1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(57, 247, 255, 0.1), transparent 52%),
+    var(--dejarik-board-art) center / contain no-repeat;
+  border: 1px solid rgba(120, 220, 255, 0.28);
+  border-radius: 999px;
+  box-shadow: 0 0 28px rgba(57, 247, 255, 0.12), inset 0 0 32px rgba(0, 0, 0, 0.4);
+  margin: 0 auto;
+  max-width: min(34rem, 100%);
+  min-height: 20rem;
+  position: relative;
+}
+
+.swse-dejarik-board-stage::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 247, 255, 0.08);
+  pointer-events: none;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space {
+  appearance: none;
+  position: absolute;
+  left: var(--dej-x);
+  top: var(--dej-y);
+  transform: translate(-50%, -50%);
+  width: clamp(3.2rem, 13%, 4.9rem);
+  min-height: clamp(3.2rem, 13%, 4.9rem);
+  border: 1px solid rgba(120, 220, 255, 0.2);
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 35%, rgba(7, 20, 34, 0.74), rgba(5, 11, 22, 0.88));
+  color: inherit;
+  cursor: default;
+  display: grid;
+  gap: 0.06rem;
+  justify-items: center;
+  align-items: center;
+  padding: 0.2rem;
+  text-align: center;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease, background 120ms ease;
+  z-index: 2;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.has-piece {
+  border-color: rgba(255, 209, 102, 0.45);
+  background: radial-gradient(circle at 50% 35%, rgba(255, 209, 102, 0.1), rgba(5, 11, 22, 0.9));
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.can-select-piece {
+  cursor: pointer;
+  border-color: rgba(57, 247, 255, 0.58);
+  box-shadow: 0 0 14px rgba(57, 247, 255, 0.18);
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-selected-piece {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: rgba(255, 209, 102, 0.95);
+  box-shadow: 0 0 22px rgba(255, 209, 102, 0.34), inset 0 0 18px rgba(255, 209, 102, 0.1);
+  z-index: 5;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-move {
+  cursor: pointer;
+  border-color: rgba(57, 247, 255, 0.95);
+  background: radial-gradient(circle at 50% 35%, rgba(57, 247, 255, 0.2), rgba(5, 11, 22, 0.78));
+  box-shadow: 0 0 22px rgba(57, 247, 255, 0.32), inset 0 0 18px rgba(57, 247, 255, 0.12);
+  z-index: 4;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-attack {
+  cursor: pointer;
+  border-color: rgba(255, 79, 100, 0.98);
+  background: radial-gradient(circle at 50% 35%, rgba(255, 79, 100, 0.26), rgba(35, 6, 12, 0.9));
+  box-shadow: 0 0 24px rgba(255, 79, 100, 0.4), inset 0 0 18px rgba(255, 79, 100, 0.18);
+  z-index: 6;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-move::after,
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-attack::after {
+  border-radius: 999px;
+  bottom: -0.55rem;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  padding: 0.1rem 0.28rem;
+  position: absolute;
+  text-transform: uppercase;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-move::after {
+  background: rgba(57, 247, 255, 0.2);
+  content: 'Move';
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-attack::after {
+  background: rgba(255, 79, 100, 0.22);
+  content: 'Attack';
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space small {
+  font-size: 0.48rem;
+  line-height: 1;
+  opacity: 0.54;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space b {
+  font-size: 0.55rem;
+  line-height: 1.05;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space span:not(.swse-dejarik-token) {
+  font-size: 0.48rem;
+  line-height: 1;
+  opacity: 0.78;
+}
+
+.swse-dejarik-token {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  display: inline-grid;
+  font-size: 0.72rem;
+  font-weight: 800;
+  height: 1.45rem;
+  place-items: center;
+  width: 1.45rem;
+}
+
+.swse-dejarik-token.is-friendly {
+  color: var(--vapor-cyan, #39f7ff);
+  box-shadow: 0 0 10px rgba(57, 247, 255, 0.18);
+}
+
+.swse-dejarik-token.is-enemy {
+  color: var(--neg, #ff4f64);
+  box-shadow: 0 0 10px rgba(255, 79, 100, 0.18);
+}
+
+.swse-dejarik-piece-card [data-dejarik-select-piece].is-selected {
+  border-color: rgba(255, 209, 102, 0.9);
+  color: var(--zero, #ffd166);
+  box-shadow: 0 0 18px rgba(255, 209, 102, 0.24);
+}
+
+.swse-dejarik-hp {
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(120, 220, 255, 0.18);
+  display: block;
+  height: 0.45rem;
+  margin-top: 0.35rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.swse-dejarik-hp i {
+  background: linear-gradient(90deg, rgba(255, 79, 100, 0.8), rgba(255, 209, 102, 0.85), rgba(77, 255, 136, 0.85));
+  display: block;
+  height: 100%;
+}
+
+@media (max-width: 980px) {
+  .swse-dejarik-playmat {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-dejarik-board-stage {
+    max-width: min(30rem, 100%);
+  }
+}
+
+/* Phase P1 Games polish: templated Pazaak cards, market betting controls, dice grouping, and creature visuals */
+.swse-pazaak-template-card {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+.swse-pazaak-template-card img {
+  border-radius: 10px;
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0.72;
+  position: absolute;
+  width: 100%;
+  z-index: -2;
+}
+
+.swse-pazaak-template-card__wash {
+  background: rgba(255, 209, 102, 0.2);
+  inset: 0;
+  mix-blend-mode: color;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.swse-pazaak-template-card.tone-plus .swse-pazaak-template-card__wash {
+  background: rgba(65, 255, 126, 0.34);
+}
+
+.swse-pazaak-template-card.tone-minus .swse-pazaak-template-card__wash {
+  background: rgba(255, 74, 104, 0.36);
+}
+
+.swse-pazaak-template-card.tone-choice .swse-pazaak-template-card__wash,
+.swse-pazaak-template-card.tone-neutral .swse-pazaak-template-card__wash,
+.swse-pazaak-template-card.tone-main .swse-pazaak-template-card__wash {
+  background: rgba(255, 209, 102, 0.28);
+}
+
+.swse-pazaak-template-card b,
+.swse-pazaak-template-card small {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0.35rem;
+  padding: 0.1rem 0.3rem;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+}
+
+.swse-pazaak-choice-button {
+  min-width: 4.4rem;
+}
+
+.swse-games-inline-amount {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.swse-games-inline-amount input[type="number"] {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(120, 220, 255, 0.24);
+  border-radius: 0.5rem;
+  color: inherit;
+  max-width: 5.5rem;
+  padding: 0.35rem 0.45rem;
+}
+
+.swse-sabacc-market-row,
+.swse-sabacc-card-market-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.swse-sabacc-market-row {
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  margin-top: 0.75rem;
+}
+
+.swse-sabacc-market-card {
+  border: 1px solid rgba(120, 220, 255, 0.18);
+  border-radius: 0.9rem;
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.55rem;
+}
+
+.swse-sabacc-card-market-actions form {
+  margin: 0;
+}
+
+.swse-hintaro-die small {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.swse-hintaro-die i {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  display: inline-grid;
+  font-style: normal;
+  height: 1.1rem;
+  place-items: center;
+  width: 1.1rem;
+}
+
+.swse-dejarik-token img {
+  border-radius: 999px;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.swse-dejarik-piece-card__img {
+  border: 1px solid rgba(120, 220, 255, 0.22);
+  border-radius: 999px;
+  display: block;
+  height: 3.4rem;
+  margin: 0 auto 0.35rem;
+  object-fit: cover;
+  width: 3.4rem;
+}
+
+.swse-sabacc-table .swse-pazaak-seat.is-revealed {
+  animation: swse-sabacc-reveal 420ms ease-out;
+  border-color: rgba(255, 216, 122, 0.44);
+  box-shadow: 0 0 18px rgba(255, 216, 122, 0.16);
+}
+
+.swse-sabacc-reveal,
+.swse-sabacc-ai-read {
+  color: rgba(255, 235, 180, 0.86);
+  display: block;
+}
+
+.swse-sabacc-gm-audit {
+  border-color: rgba(255, 98, 98, 0.32);
+}
+
+.swse-dejarik-selection-stats {
+  border: 1px solid rgba(120, 220, 255, 0.16);
+  border-radius: 0.65rem;
+  color: rgba(220, 245, 255, 0.86);
+  font-size: 0.78rem;
+  margin-top: 0.45rem;
+  padding: 0.45rem 0.55rem;
+}
+
+.swse-hintaro-rank-list {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.35rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.swse-hintaro-rank-list li span {
+  color: rgba(220, 245, 255, 0.72);
+}
+
+@keyframes swse-sabacc-reveal {
+  from { opacity: 0.62; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Phase P3 Games polish: lightweight motion, table chatter, hierarchy help, and holo effects. */
+.swse-games-chatter,
+.swse-games-help-panel,
+.swse-games-recap-strip {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 22%, transparent);
+  background: oklch(0 0 0 / 0.24);
+  box-shadow: inset 0 0 18px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 5%, transparent);
+  margin: 0.65rem 0;
+  padding: 0.65rem;
+}
+
+.swse-games-chatter p,
+.swse-games-help-panel p {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0.35rem 0 0;
+}
+
+.swse-games-chatter p b,
+.swse-games-help-panel p b {
+  color: var(--vapor-cyan, #39f7ff);
+  text-transform: uppercase;
+}
+
+.swse-games-chatter p span,
+.swse-games-help-panel p span,
+.swse-pazaak-preview {
+  color: color-mix(in oklab, var(--ink, #dffbff) 78%, transparent);
+}
+
+.swse-pazaak-preview {
+  border-left: 2px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 52%, transparent);
+  font-size: 0.78rem;
+  padding-left: 0.45rem;
+}
+
+.swse-games-recap-strip {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.swse-games-recap-strip span {
+  border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 12%, transparent);
+  padding-bottom: 0.25rem;
+}
+
+.swse-pazaak-played-card,
+.swse-pazaak-hand-card .swse-pazaak-card-face {
+  animation: swse-card-arrive 260ms ease-out;
+}
+
+.swse-pazaak-hand-card:hover .swse-pazaak-card-face,
+.swse-sabacc-market-card:hover .swse-sabacc-card-face {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 20%, transparent);
+}
+
+.swse-card-animate-in {
+  animation: swse-card-arrive 320ms ease-out;
+}
+
+.swse-sabacc-pot-strip {
+  align-items: center;
+  display: inline-flex !important;
+  gap: 0.45rem;
+}
+
+.swse-sabacc-pot-strip i {
+  border: 1px solid color-mix(in oklab, var(--vapor-gold, #ffd166) 45%, transparent);
+  border-radius: 999px;
+  color: var(--vapor-gold, #ffd166);
+  font-style: normal;
+  padding: 0.25rem 0.55rem;
+  text-shadow: 0 0 8px color-mix(in oklab, var(--vapor-gold, #ffd166) 30%, transparent);
+}
+
+.swse-sabacc-hierarchy-help summary {
+  color: var(--vapor-gold, #ffd166);
+  cursor: pointer;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sabacc-hierarchy-help > div {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  margin-top: 0.65rem;
+}
+
+.swse-sabacc-market-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-sabacc-market-card::after {
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--vapor-gold, #ffd166) 12%, transparent), transparent);
+  content: '';
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+.swse-sabacc-market-card:hover::after {
+  animation: swse-market-scan 900ms ease-out;
+}
+
+.swse-dejarik-ai-profile-strip {
+  border-color: color-mix(in oklab, var(--vapor-purple, #8a5cff) 30%, transparent);
+}
+
+.swse-dejarik-token {
+  overflow: visible;
+  position: relative;
+}
+
+.swse-dejarik-token::after {
+  border-radius: inherit;
+  content: '';
+  inset: -0.25rem;
+  opacity: 0.55;
+  pointer-events: none;
+  position: absolute;
+}
+
+.swse-dejarik-token.is-ready::after {
+  box-shadow: 0 0 16px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 36%, transparent);
+}
+
+.swse-dejarik-token.is-wounded {
+  animation: swse-holo-flicker 1.25s steps(3, end) infinite;
+}
+
+.swse-dejarik-token.is-wounded::after {
+  box-shadow: 0 0 20px color-mix(in oklab, var(--neg, #ff4f64) 42%, transparent);
+}
+
+.swse-dejarik-token.is-defeated {
+  filter: grayscale(1);
+  opacity: 0.38;
+}
+
+.swse-dejarik-board-stage .swse-dejarik-space.is-legal-attack .swse-dejarik-token {
+  animation: swse-target-pulse 820ms ease-in-out infinite;
+}
+
+.swse-hintaro-dealer-callout {
+  border-color: color-mix(in oklab, var(--vapor-gold, #ffd166) 28%, transparent);
+}
+
+.swse-hintaro-special-die,
+.swse-hintaro-cube {
+  position: relative;
+}
+
+.swse-hintaro-special-die::before,
+.swse-hintaro-cube::before {
+  background: linear-gradient(135deg, transparent 35%, oklch(1 0 0 / 0.16), transparent 65%);
+  content: '';
+  inset: 0;
+  opacity: 0.5;
+  pointer-events: none;
+  position: absolute;
+}
+
+.swse-hintaro-seat.is-current .swse-hintaro-cube,
+.swse-hintaro-reroll-card .swse-hintaro-cube:hover {
+  animation: swse-dice-tumble 640ms ease-out;
+}
+
+@keyframes swse-card-arrive {
+  from { opacity: 0; transform: translateY(8px) rotateX(8deg) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) rotateX(0) scale(1); }
+}
+
+@keyframes swse-market-scan {
+  0% { opacity: 0; transform: translateX(-100%); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+@keyframes swse-holo-flicker {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  35% { opacity: 0.72; transform: translateY(-1px); }
+  60% { opacity: 0.9; transform: translateY(1px); }
+}
+
+@keyframes swse-target-pulse {
+  0%, 100% { box-shadow: 0 0 16px color-mix(in oklab, var(--neg, #ff4f64) 34%, transparent); }
+  50% { box-shadow: 0 0 30px color-mix(in oklab, var(--neg, #ff4f64) 72%, transparent); }
+}
+
+@keyframes swse-dice-tumble {
+  0% { transform: rotate(-4deg) scale(0.96); }
+  45% { transform: rotate(5deg) scale(1.04); }
+  100% { transform: rotate(0) scale(1); }
+}

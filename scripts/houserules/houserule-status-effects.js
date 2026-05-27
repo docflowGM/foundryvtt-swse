@@ -11,6 +11,25 @@ import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/com
 
 const NS = 'foundryvtt-swse';
 
+const STATUS_EFFECT_ICONS = {
+  fatigued: 'icons/svg/downgrade.svg',
+  exhausted: 'icons/svg/skull.svg',
+  dazed: 'icons/svg/daze.svg',
+  stunned: 'icons/svg/stoned.svg',
+  prone: 'icons/svg/falling.svg',
+  immobilized: 'icons/svg/net.svg',
+  helpless: 'icons/svg/unconscious.svg',
+  blinded: 'icons/svg/blind.svg',
+  deafened: 'icons/svg/deaf.svg',
+  marked: 'icons/svg/target.svg'
+};
+
+function statusEffectSeverity(effectId) {
+  if (['helpless', 'stunned', 'exhausted'].includes(effectId)) return 'danger';
+  if (['dazed', 'blinded', 'immobilized', 'fatigued'].includes(effectId)) return 'warning';
+  return 'info';
+}
+
 // Define available status effects
 const STATUS_EFFECTS_LIBRARY = {
   combatConditions: [
@@ -139,21 +158,44 @@ export class StatusEffectsMechanics {
     }
 
     try {
+      if (this.hasEffect(actor, effect.id)) { return true; }
+
       const activeEffect = {
+        name: effect.name,
         label: effect.name,
-        id: effect.id,
+        icon: STATUS_EFFECT_ICONS[effect.id] || 'icons/svg/aura.svg',
         type: 'condition',
         statuses: [effect.id],
+        disabled: false,
         flags: {
           [NS]: {
             statusEffect: effect.id,
-            appliedAt: Date.now()
+            temporary: true,
+            appliedAt: Date.now(),
+            effectState: {
+              family: 'status',
+              effectType: 'statusEffect',
+              severity: statusEffectSeverity(effect.id),
+              sourceType: 'gmStatusEffect',
+              sourceName: effect.name,
+              summary: effect.description || `Status effect: ${effect.name}`,
+              details: effect.description ? [effect.description] : [],
+              icon: STATUS_EFFECT_ICONS[effect.id] || 'icons/svg/aura.svg',
+              tags: ['status', 'condition', effect.id],
+              removable: true,
+              removableBy: 'gm-or-owner'
+            }
+          },
+          swse: {
+            statusEffect: effect.id,
+            temporary: true,
+            severity: statusEffectSeverity(effect.id)
           }
         }
       };
 
-      // PHASE 7: Create through ActorEngine
-      await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [activeEffect]);
+      // PHASE 7+: Create through ActorEngine ActiveEffect wrapper.
+      await ActorEngine.createActiveEffects(actor, [activeEffect], { source: 'StatusEffectsMechanics.applyEffect' });
       return true;
     } catch (err) {
       SWSELogger.error(`Failed to apply effect ${effectId}`, err);
@@ -172,14 +214,15 @@ export class StatusEffectsMechanics {
 
     try {
       const effects = actor.effects.filter(e =>
-        e.getFlag(NS, 'statusEffect') === effectId
+        e.getFlag?.(NS, 'statusEffect') === effectId
+        || e.flags?.[NS]?.statusEffect === effectId
+        || e.flags?.swse?.statusEffect === effectId
+        || (Array.isArray(e.statuses) && e.statuses.includes(effectId))
       );
 
       if (effects.length > 0) {
-        // PHASE 7: Delete through ActorEngine
-        await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect',
-          effects.map(e => e.id)
-        );
+        // PHASE 7+: Delete through ActorEngine ActiveEffect wrapper.
+        await ActorEngine.deleteActiveEffects(actor, effects.map(e => e.id), { source: 'StatusEffectsMechanics.removeEffect' });
         return true;
       }
       return false;
@@ -199,7 +242,10 @@ export class StatusEffectsMechanics {
     if (!actor) {return false;}
 
     return actor.effects.some(e =>
-      e.getFlag(NS, 'statusEffect') === effectId
+      e.getFlag?.(NS, 'statusEffect') === effectId
+      || e.flags?.[NS]?.statusEffect === effectId
+      || e.flags?.swse?.statusEffect === effectId
+      || (Array.isArray(e.statuses) && e.statuses.includes(effectId))
     );
   }
 
@@ -263,8 +309,20 @@ export class StatusEffectsMechanics {
     const autoRemove = ConditionTrackRules.autoRemoveOnRestEnabled();
     if (!autoRemove) {return;}
 
-    // Remove temporary effects on rest
+    // Remove temporary effects on rest for organic actors only.
+    // Droids/vehicles cannot benefit from resting; use repair/reboot workflows instead.
+    const scopedActorIds = Array.isArray(data?.actorIds) ? new Set(data.actorIds.filter(Boolean)) : null;
     for (const actor of game.actors) {
+      if (scopedActorIds && !scopedActorIds.has(actor.id)) continue;
+      const isDroidOrVehicle = actor?.type === 'droid'
+        || actor?.type === 'vehicle'
+        || actor?.type === 'starship'
+        || actor?.system?.isDroid === true
+        || actor?.system?.isVehicle === true
+        || actor?.system?.isStarship === true
+        || String(actor?.system?.details?.species ?? '').toLowerCase() === 'droid';
+      if (isDroidOrVehicle) continue;
+
       const tempEffects = actor.effects.filter(e =>
         e.getFlag(NS, 'temporary') === true
       );

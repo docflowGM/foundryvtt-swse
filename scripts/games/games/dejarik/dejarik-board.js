@@ -57,6 +57,28 @@ export function boardDistance(fromId, toId) {
   return Infinity;
 }
 
+
+export function shortestPath(fromId, toId, blocked = new Set()) {
+  if (fromId === toId) return [fromId];
+  const visited = new Set([fromId]);
+  let frontier = [{ id: fromId, path: [fromId] }];
+  while (frontier.length) {
+    const next = [];
+    for (const node of frontier) {
+      for (const adjacent of adjacentSpaces(node.id)) {
+        if (visited.has(adjacent)) continue;
+        const path = [...node.path, adjacent];
+        if (adjacent === toId) return path;
+        if (blocked.has(adjacent)) continue;
+        visited.add(adjacent);
+        next.push({ id: adjacent, path });
+      }
+    }
+    frontier = next;
+  }
+  return [];
+}
+
 export function reachableSpaces(fromId, movement, occupied = new Set()) {
   const max = Math.max(0, Number(movement || 0) || 0);
   const visited = new Set([fromId]);

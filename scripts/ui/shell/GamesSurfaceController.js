@@ -9,6 +9,7 @@ import { GameHolonetBridge } from '/systems/foundryvtt-swse/scripts/games/game-h
 import { PazaakEngine } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js';
 import { SabaccEngine } from '/systems/foundryvtt-swse/scripts/games/games/sabacc/sabacc-engine.js';
 import { DejarikEngine } from '/systems/foundryvtt-swse/scripts/games/games/dejarik/dejarik-engine.js';
+import { HintaroEngine } from '/systems/foundryvtt-swse/scripts/games/games/hintaro/hintaro-engine.js';
 
 export class GamesSurfaceController {
   constructor(host, actor) {
@@ -161,6 +162,25 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
+    surface.querySelectorAll('form[data-games-action="start-solo-hintaro"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const result = await HintaroEngine.createSoloAiSession({
+          actor: this._actor,
+          title: String(data.get('title') || '').trim(),
+          rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
+        });
+        if (result?.pending) {
+          this._noteResult(result);
+          this._host.render(false);
+        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'hintaro', view: 'session' });
+        else this._noteResult(false);
+      }, { signal });
+    });
+
     surface.querySelectorAll('form[data-games-action="lock-pazaak-side-deck"]').forEach(form => {
       const checkboxes = Array.from(form.querySelectorAll('[data-pazaak-side-card]'));
       const countNode = form.querySelector('[data-pazaak-selected-count]');
@@ -192,12 +212,14 @@ export class GamesSurfaceController {
         ev.stopPropagation();
         const data = new FormData(form);
         const action = String(form.dataset.gamesAction || '').replace(/^pazaak-/, '');
+        const submitter = ev.submitter || null;
+        const choiceValue = Number(submitter?.dataset?.pazaakChoiceValue || data.get('value') || 0) || null;
         const payload = {
           cardInstanceId: String(data.get('cardInstanceId') || '').trim(),
           reason: String(data.get('reason') || '').trim(),
           choice: {
             sign: String(data.get('sign') || '').trim(),
-            value: Number(data.get('value') || 0) || null
+            value: choiceValue
           }
         };
         const result = await PazaakEngine.submitAction({
@@ -208,6 +230,7 @@ export class GamesSurfaceController {
         });
         if (result?.pending) this._noteResult(result);
         else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Pazaak action failed.');
+        else this._emitGameCue('pazaak', action, { sessionId: String(data.get('sessionId') || '').trim() });
         this._host.render(false);
       }, { signal });
     });
@@ -225,12 +248,14 @@ export class GamesSurfaceController {
           action,
           payload: {
             cardId: String(data.get('cardId') || '').trim(),
+            slotId: String(data.get('slotId') || '').trim(),
             amount: Number(data.get('amount') || 0) || 0,
             reason: String(data.get('reason') || '').trim()
           }
         });
         if (result?.pending) this._noteResult(result);
         else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Sabacc action failed.');
+        else this._emitGameCue('sabacc', action, { sessionId: String(data.get('sessionId') || '').trim() });
         this._host.render(false);
       }, { signal });
     });
@@ -241,7 +266,7 @@ export class GamesSurfaceController {
         ev.stopPropagation();
         const data = new FormData(form);
         const action = String(form.dataset.gamesAction || '').replace(/^dejarik-/, '');
-        const result = await DejarikEngine.submitAction({
+        await this._submitDejarikAction({
           sessionId: String(data.get('sessionId') || '').trim(),
           seatId: String(data.get('seatId') || '').trim(),
           action,
@@ -252,11 +277,33 @@ export class GamesSurfaceController {
             reason: String(data.get('reason') || '').trim()
           }
         });
+      }, { signal });
+    });
+
+    surface.querySelectorAll('form[data-games-action^="hintaro-"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const action = String(form.dataset.gamesAction || '').replace(/^hintaro-/, '');
+        const result = await HintaroEngine.submitAction({
+          sessionId: String(data.get('sessionId') || '').trim(),
+          seatId: String(data.get('seatId') || '').trim(),
+          action,
+          payload: {
+            dieIndex: Number(data.get('dieIndex') || 0) || 0,
+            amount: Number(data.get('amount') || 0) || 0,
+            reason: String(data.get('reason') || '').trim()
+          }
+        });
         if (result?.pending) this._noteResult(result);
-        else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Dejarik action failed.');
+        else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Hintaro action failed.');
+        else this._emitGameCue('hintaro', action, { sessionId: String(data.get('sessionId') || '').trim() });
         this._host.render(false);
       }, { signal });
     });
+
+    this._attachDejarikBoard(surface, signal);
 
     surface.querySelectorAll('[data-shell-action="return-to-home"]').forEach(button => {
       button.addEventListener('click', async ev => {
@@ -270,6 +317,142 @@ export class GamesSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
+  }
+
+  _attachDejarikBoard(surface, signal) {
+    const board = surface.querySelector('[data-dejarik-board]');
+    if (!board) return;
+
+    const sessionId = String(board.dataset.sessionId || '').trim();
+    const seatId = String(board.dataset.seatId || '').trim();
+    const selectionLabel = surface.querySelector('[data-dejarik-selection-label]');
+    const selectionHelp = surface.querySelector('[data-dejarik-selection-help]');
+    const selectionStats = surface.querySelector('[data-dejarik-selection-stats]');
+    const spaces = Array.from(board.querySelectorAll('[data-dejarik-space]'));
+    const selectorButtons = Array.from(surface.querySelectorAll('[data-dejarik-select-piece]'));
+
+    const resetHighlights = () => {
+      board.dataset.selectedPieceId = '';
+      spaces.forEach(space => {
+        space.classList.remove('is-selected-piece', 'is-legal-move', 'is-legal-attack');
+        delete space.dataset.dejarikBoardAction;
+        delete space.dataset.actionPieceId;
+        delete space.dataset.actionTargetPieceId;
+      });
+      selectorButtons.forEach(button => button.classList.remove('is-selected'));
+    };
+
+    const selectPiece = button => {
+      if (!button) return;
+      const pieceId = String(button.dataset.pieceId || '').trim();
+      const pieceLabel = String(button.dataset.pieceLabel || 'Selected piece').trim();
+      const pieceDetail = String(button.dataset.pieceDetail || '').trim();
+      const pieceSummary = String(button.dataset.pieceSummary || '').trim();
+      const pieceAbility = String(button.dataset.pieceAbility || '').trim();
+      if (!pieceId) return;
+      resetHighlights();
+      board.dataset.selectedPieceId = pieceId;
+      button.classList.add('is-selected');
+
+      const pieceSpace = spaces.find(space => String(space.dataset.pieceId || '') === pieceId);
+      pieceSpace?.classList.add('is-selected-piece');
+
+      const moveSpaces = String(button.dataset.moveSpaces || '').split(/\s+/).map(value => value.trim()).filter(Boolean);
+      const attackTargets = String(button.dataset.attackTargets || '').split(/\s+/).map(value => value.trim()).filter(Boolean);
+      const attackMap = new Map();
+      attackTargets.forEach(token => {
+        const [spaceId, targetPieceId] = token.split(':');
+        if (spaceId && targetPieceId) attackMap.set(spaceId, targetPieceId);
+      });
+
+      moveSpaces.forEach(spaceId => {
+        const space = spaces.find(candidate => candidate.dataset.spaceId === spaceId);
+        if (!space || space.dataset.pieceId) return;
+        space.classList.add('is-legal-move');
+        space.dataset.dejarikBoardAction = 'move';
+        space.dataset.actionPieceId = pieceId;
+      });
+
+      attackMap.forEach((targetPieceId, spaceId) => {
+        const space = spaces.find(candidate => candidate.dataset.spaceId === spaceId);
+        if (!space) return;
+        space.classList.add('is-legal-attack');
+        space.dataset.dejarikBoardAction = 'attack';
+        space.dataset.actionPieceId = pieceId;
+        space.dataset.actionTargetPieceId = targetPieceId;
+      });
+
+      if (selectionLabel) selectionLabel.textContent = pieceLabel;
+      if (selectionHelp) selectionHelp.textContent = 'Blue spaces move this piece. Red enemy spaces attack immediately.';
+      if (selectionStats) selectionStats.textContent = [pieceDetail, pieceSummary, pieceAbility].filter(Boolean).join(' • ');
+    };
+
+    selectorButtons.forEach(button => {
+      button.addEventListener('click', ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        selectPiece(button);
+      }, { signal });
+    });
+
+    spaces.forEach(space => {
+      space.addEventListener('click', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const boardAction = String(space.dataset.dejarikBoardAction || '').trim();
+        if (boardAction === 'move') {
+          await this._submitDejarikAction({
+            sessionId,
+            seatId,
+            action: 'move',
+            payload: {
+              pieceId: String(space.dataset.actionPieceId || '').trim(),
+              toSpaceId: String(space.dataset.spaceId || '').trim()
+            }
+          });
+          return;
+        }
+        if (boardAction === 'attack') {
+          await this._submitDejarikAction({
+            sessionId,
+            seatId,
+            action: 'attack',
+            payload: {
+              pieceId: String(space.dataset.actionPieceId || '').trim(),
+              targetPieceId: String(space.dataset.actionTargetPieceId || '').trim()
+            }
+          });
+          return;
+        }
+
+        if (space.dataset.pieceCanSelect === 'true') {
+          const pieceId = String(space.dataset.pieceId || '').trim();
+          const button = selectorButtons.find(candidate => candidate.dataset.pieceId === pieceId);
+          selectPiece(button);
+        }
+      }, { signal });
+    });
+  }
+
+  async _submitDejarikAction({ sessionId, seatId, action, payload = {} } = {}) {
+    const result = await DejarikEngine.submitAction({ sessionId, seatId, action, payload });
+    if (result?.pending) this._noteResult(result);
+    else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Dejarik action failed.');
+    else this._emitGameCue('dejarik', action, { sessionId });
+    this._host.render(false);
+    return result;
+  }
+
+
+
+  _emitGameCue(gameId, cue, detail = {}) {
+    try {
+      window.dispatchEvent(new CustomEvent('swse:game-cue', {
+        detail: { gameId, cue, ...detail }
+      }));
+    } catch (_err) {
+      // Presentation cue hooks are best-effort and must never block gameplay.
+    }
   }
 
   _syncSideDeckBuilder(checkboxes, countNode, submit) {

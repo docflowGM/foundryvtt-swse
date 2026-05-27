@@ -968,6 +968,25 @@ export function ShellHostMixin(BaseClass) {
       });
 
 
+      messengerRoot.querySelectorAll('form[data-holonet-action="item-counter-offer"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const recordId = form.dataset.recordId;
+          const counterCredits = Number(data.get('counterCredits') || 0) || 0;
+          const counterItemIds = data.getAll('counterItemIds').map(String).filter(Boolean);
+          const counterMemo = String(data.get('counterMemo') || '').trim();
+          if (!threadId || !recordId || (!counterCredits && !counterItemIds.length && !counterMemo)) return;
+          const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'offer-item-counter', recordId, counterCredits, counterItemIds, counterMemo });
+          this._noteMessengerPendingResult(result);
+          form.reset();
+          await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
+        });
+      });
+
+
       messengerRoot.querySelectorAll('form[data-holonet-action="asset-counter-offer"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();

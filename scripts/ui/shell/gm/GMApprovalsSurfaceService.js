@@ -220,22 +220,43 @@ function buildGenericActorCategories({ actor, approval, sourceType }) {
 
 function buildGameSettlementRequest(session) {
   const credits = session?.escrow?.credits ?? {};
-  const policy = credits.policy ?? {};
-  const requested = numberOrNull(credits.payoutRequested ?? credits.pot) ?? 0;
-  const recommended = numberOrNull(policy.recommendedPayout ?? credits.payoutApproved) ?? 0;
+  const isTableBalanceSettlement = credits.payoutMode === 'table-credit-balances' && credits.payoutBalances && typeof credits.payoutBalances === 'object';
+  const payoutBalances = isTableBalanceSettlement ? credits.payoutBalances : {};
+  const payoutPolicies = asArray(credits.payoutPolicies);
+  const policy = credits.policy ?? payoutPolicies[0]?.policy ?? {};
+  const requested = numberOrNull(credits.payoutRequested)
+    ?? (isTableBalanceSettlement ? Object.values(payoutBalances).reduce((sum, value) => sum + (numberOrNull(value) ?? 0), 0) : (numberOrNull(credits.pot) ?? 0));
+  const recommended = numberOrNull(policy.recommendedPayout ?? credits.payoutApproved)
+    ?? (isTableBalanceSettlement
+      ? payoutPolicies.reduce((sum, entry) => sum + (numberOrNull(entry?.policy?.approvedPayout ?? entry?.requestedPayout) ?? 0), 0)
+      : requested);
   const winnerSeat = asArray(session?.seats).find((seat) => seat?.seatId === credits.winnerSeatId) ?? null;
   const winnerActor = winnerSeat?.actorId ? game.actors.get(winnerSeat.actorId) : null;
+  const recipientRows = isTableBalanceSettlement
+    ? Object.entries(payoutBalances)
+      .filter(([_seatId, amount]) => (numberOrNull(amount) ?? 0) > 0)
+      .map(([seatId, amount]) => {
+        const seat = asArray(session?.seats).find((entry) => entry?.seatId === seatId) ?? null;
+        const actor = seat?.actorId ? game.actors.get(seat.actorId) : null;
+        return { seatId, seat, actor, amount: numberOrNull(amount) ?? 0 };
+      })
+    : [];
   const submitted = credits.pendingSettlementAt ? new Date(credits.pendingSettlementAt).toLocaleString() : EMPTY;
+  const settlementLabel = isTableBalanceSettlement ? 'Table-Credit Cash-Out' : 'Winner Payout';
+  const recipientSummary = isTableBalanceSettlement
+    ? (recipientRows.length ? recipientRows.map((row) => `${row.seat?.displayName ?? row.seatId}: ${displayCredits(row.amount)}`).join('; ') : 'No positive table-credit balances')
+    : (winnerSeat?.displayName ?? 'Unknown');
   const categories = [
     {
       id: 'game-result',
       label: 'Game Result',
       icon: 'fa-solid fa-dice',
       rows: [
-        makeReadonlyRow('Game', session?.title ?? 'Pazaak Table'),
-        makeReadonlyRow('Mode', session?.rulesMode === 'wagered' ? 'Wagered Credits' : 'Republic Senate Rules'),
-        makeReadonlyRow('Winner', winnerSeat?.displayName ?? 'Unknown'),
-        makeReadonlyRow('Winner Actor', winnerActor?.name ?? 'No actor-backed wallet'),
+        makeReadonlyRow('Game', session?.title ?? 'Game Table'),
+        makeReadonlyRow('Mode', session?.rulesMode === 'wagered' ? 'Wagered Credits' : 'Practice / Non-wagered'),
+        makeReadonlyRow('Settlement Type', settlementLabel),
+        makeReadonlyRow(isTableBalanceSettlement ? 'Recipients' : 'Winner', recipientSummary, { wide: isTableBalanceSettlement }),
+        ...(isTableBalanceSettlement ? [] : [makeReadonlyRow('Winner Actor', winnerActor?.name ?? 'No actor-backed wallet')]),
         makeReadonlyRow('Requested Payout', displayCredits(requested)),
         makeReadonlyRow('Policy', policy.message ?? credits.settlementMessage ?? 'GM settlement required', { wide: true })
       ]
@@ -245,7 +266,7 @@ function buildGameSettlementRequest(session) {
       label: 'GM Settlement',
       icon: 'fa-solid fa-scale-balanced',
       rows: [
-        makeEditableRow('Approved Payout', recommended, 'approvedPayout', 'number', { suffix: 'cr' }),
+        makeEditableRow(isTableBalanceSettlement ? 'Approved Total' : 'Approved Payout', recommended, 'approvedPayout', 'number', { suffix: 'cr' }),
         makeTextAreaRow('GM Reason', credits.settlementMessage ?? '', 'metadata.gmSettlementReason', { wide: true, placeholder: 'Explain the approved, capped, voided, or adjusted campaign payout.' })
       ]
     }
@@ -258,22 +279,28 @@ function buildGameSettlementRequest(session) {
     }))
   }));
 
+  const missingActorWarnings = isTableBalanceSettlement
+    ? recipientRows
+      .filter((row) => !row.actor && !['ai', 'npc'].includes(String(row.seat?.type || '').toLowerCase()) && !row.seat?.aiProfile)
+      .map((row) => `${row.seat?.displayName ?? row.seatId} does not have an actor-backed wallet.`)
+    : (winnerActor ? [] : ['Winner does not have an actor-backed wallet. Approval cannot pay credits until fixed.']);
+
   return {
     key: `game:${session.id}`,
     sourceType: 'game-settlement',
     sessionId: session.id,
     type: 'game-settlement',
-    typeLabel: 'Game Payout Review',
+    typeLabel: isTableBalanceSettlement ? 'Game Cash-Out Review' : 'Game Payout Review',
     title: session?.title ?? 'Pending Game Settlement',
-    subtitle: `${winnerSeat?.displayName ?? 'Unknown winner'} · requested ${displayCredits(requested)}`,
-    ownerLabel: winnerSeat?.displayName ?? 'Unknown',
+    subtitle: `${isTableBalanceSettlement ? 'Table balances' : (winnerSeat?.displayName ?? 'Unknown winner')} · requested ${displayCredits(requested)}`,
+    ownerLabel: isTableBalanceSettlement ? 'Multiple recipients' : (winnerSeat?.displayName ?? 'Unknown'),
     costLabel: displayCredits(requested),
     submittedLabel: submitted,
     icon: 'fa-solid fa-dice-d20',
     tone: 'game',
     categories,
     warnings: [
-      ...(winnerActor ? [] : ['Winner does not have an actor-backed wallet. Approval cannot pay credits until fixed.']),
+      ...missingActorWarnings,
       ...(requested <= 0 ? ['No requested payout is recorded.'] : []),
       ...(policy?.caps?.effectiveCap ? [`Automated cap was ${displayCredits(policy.caps.effectiveCap)}.`] : [])
     ]

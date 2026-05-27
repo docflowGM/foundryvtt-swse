@@ -26,7 +26,9 @@ const TRANSFER_TYPES = Object.freeze({
     icon: 'fa-solid fa-box-open',
     approveAction: 'approve-item-transfer',
     acceptAction: 'accept-item-transfer',
+    acceptCounterAction: 'accept-item-counter',
     declineAction: 'decline-item-transfer',
+    declineCounterAction: 'decline-item-counter',
     cancelAction: 'cancel-item-transfer'
   },
   asset: {
@@ -244,6 +246,8 @@ export class GMTradeConsoleSurfaceService {
       memo: compactText(transfer.memo, ''),
       failureReason: compactText(transfer.failureReason, ''),
       diagnostic,
+      atomicEvents: diagnostic.atomicEvents,
+      hasAtomicEvents: diagnostic.atomicEvents.length > 0,
       createdAt,
       createdAtLabel: formatDate(createdAt),
       resolvedAt,
@@ -293,18 +297,31 @@ export class GMTradeConsoleSurfaceService {
 
   static _buildDiagnostic(record, transfer = {}) {
     const failure = compactText(transfer.failureReason, '');
-    const rollbackEvents = safeArray(record?.metadata?.atomicEvents).filter(Boolean);
+    const atomicEvents = [...safeArray(transfer.atomicEvents), ...safeArray(record?.metadata?.atomicEvents)]
+      .filter(Boolean)
+      .slice(-20)
+      .reverse()
+      .map(event => ({
+        id: event.id || `${event.phase || 'atomic'}-${event.at || ''}`,
+        phase: event.phase || 'atomic.event',
+        status: event.status || 'info',
+        message: compactText(event.message, event.phase || 'Atomic event'),
+        error: compactText(event.error, ''),
+        timeLabel: formatDate(event.at),
+        tone: event.status === 'failed' ? 'crit' : event.status === 'complete' || event.status === 'passed' || event.rollbackOk === true ? 'ok' : event.status === 'started' ? 'info' : 'stable'
+      }));
     const rollbackOk = transfer.rollbackOk ?? record?.metadata?.rollbackOk ?? null;
-    const preflight = record?.metadata?.preflight ?? null;
+    const preflight = transfer.preflight ?? record?.metadata?.preflight ?? null;
     return {
-      hasFailure: Boolean(failure || rollbackEvents.length || rollbackOk === false),
+      hasFailure: Boolean(failure || atomicEvents.length || rollbackOk === false),
       failureReason: failure,
       rollbackOk,
       rollbackLabel: rollbackOk === true ? 'Rollback confirmed' : rollbackOk === false ? 'Rollback failed / manual reconciliation needed' : 'No rollback flag',
       rollbackTone: rollbackOk === false ? 'crit' : rollbackOk === true ? 'ok' : 'muted',
       preflightLabel: preflight === true ? 'Preflight failure; no mutation attempted' : 'Settlement path reached or not logged',
       recordEventType: record?.metadata?.eventType ?? '',
-      atomicEventCount: rollbackEvents.length
+      atomicEventCount: atomicEvents.length,
+      atomicEvents
     };
   }
 
@@ -313,10 +330,10 @@ export class GMTradeConsoleSurfaceService {
     if (status === 'pendingGm') {
       actions.push({ id: 'approve', label: 'Approve', action: config.approveAction, tone: 'primary' });
       actions.push({ id: 'decline', label: 'Decline', action: config.declineAction, tone: 'warn' });
-    } else if (status === 'counterPendingGm' && type === 'asset') {
+    } else if (status === 'counterPendingGm' && config.approveCounterAction) {
       actions.push({ id: 'approve-counter', label: 'Approve Counter', action: config.approveCounterAction, tone: 'primary' });
       actions.push({ id: 'decline-counter', label: 'Decline Counter', action: config.declineCounterAction, tone: 'warn' });
-    } else if (status === 'counterOffered' && type === 'asset') {
+    } else if (status === 'counterOffered' && config.acceptCounterAction) {
       actions.push({ id: 'accept-counter', label: 'Accept Counter', action: config.acceptCounterAction, tone: 'primary' });
       actions.push({ id: 'decline-counter', label: 'Decline Counter', action: config.declineCounterAction, tone: 'warn' });
     } else if (status === 'pendingRecipient') {
