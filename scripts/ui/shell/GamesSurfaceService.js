@@ -5,6 +5,7 @@ import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holone
 import { PazaakViewModel } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-view-model.js';
 import { SabaccViewModel } from '/systems/foundryvtt-swse/scripts/games/games/sabacc/sabacc-view-model.js';
 import { DejarikViewModel } from '/systems/foundryvtt-swse/scripts/games/games/dejarik/dejarik-view-model.js';
+import { HintaroViewModel } from '/systems/foundryvtt-swse/scripts/games/games/hintaro/hintaro-view-model.js';
 import { GameCreditEscrowService } from '/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js';
 
 function formatTimestamp(value) {
@@ -33,7 +34,7 @@ function mapSession(session, participantId = null) {
   const rawStatus = String(session.status || 'draft');
   const currentSeat = Array.isArray(session.seats) ? session.seats.find(seat => seat.recipientId === participantId) : null;
   const canOpenThread = Boolean(session.holonetThreadId);
-  const playableGames = new Set(['pazaak', 'sabacc', 'dejarik']);
+  const playableGames = new Set(['pazaak', 'sabacc', 'dejarik', 'hintaro']);
   const isPlayableGame = playableGames.has(session.gameId) && ['active', 'paused', 'complete', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus);
   return {
     id: session.id,
@@ -108,6 +109,14 @@ function buildActiveTableVm(session, actor, participantId, options = {}) {
       dejarik: DejarikViewModel.build({ session, actor, participantId })
     };
   }
+  if (session.gameId === 'hintaro') {
+    return {
+      isHintaro: true,
+      gameId: 'hintaro',
+      sessionId: session.id,
+      hintaro: HintaroViewModel.build({ session, actor, participantId })
+    };
+  }
   return null;
 }
 
@@ -154,6 +163,7 @@ export class GamesSurfaceService {
       canStartSoloAiPazaak: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'pazaak' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
       canStartSoloAiSabacc: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'sabacc' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
       canStartSoloAiDejarik: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'dejarik' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
+      canStartSoloAiHintaro: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'hintaro' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
       selectedSession: selectedSession ? mapSession(selectedSession, participantId) : null,
       activeTable,
       hasActiveTable: Boolean(activeTable),
@@ -191,7 +201,7 @@ export class GamesSurfaceService {
         'Phase 4.5 adds GM-configurable economy policy gates for AI/house payouts before TransactionEngine settlement.',
         'Player-vs-player credit games remain closed-loop: payouts come from the escrowed player pool.',
         'Republic Senate Rules still skip all economy movement and are the safest default downtime mode.',
-        'Sabacc now has a custom 76-card deck/rules MVP and Dejarik now has a radial board/rules foundation inside Holopad Games.',
+        'Sabacc now has a custom 76-card deck/rules MVP, Dejarik has a radial board, and Hintaro adds a lightweight chance-cube gambling table inside Holopad Games.',
         'Items and assets are still intentionally out of scope for this phase; future phases must route them through ActorEngine and asset ownership services.'
       ]
     };

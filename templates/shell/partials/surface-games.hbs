@@ -435,109 +435,35 @@
         {{#if vm.activeTable.isDejarik}}
         <div class="swse-pazaak-table swse-dejarik-table" data-dejarik-session-id="{{vm.activeTable.sessionId}}">
           <div class="swse-pazaak-topbar">
-            <div>
-              <span class="swse-games-kicker">DEJARIK BOARD</span>
-              <h3>{{vm.activeTable.dejarik.title}}</h3>
-              <p>Click one of your holomonsters to reveal movement spaces. Enemy pieces in range glow red.</p>
-            </div>
-            <div class="swse-pazaak-topbar__right">
-              <span>{{vm.activeTable.dejarik.statusLabel}}</span>
-              {{#if vm.activeTable.dejarik.canCancel}}
-              <form data-games-action="dejarik-cancel-session">
-                <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
-                <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
-                <input type="hidden" name="reason" value="Dejarik board cancelled from Holopad Games.">
-                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
-              </form>
-              {{/if}}
-              <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Board</button>
-            </div>
+            <div><span class="swse-games-kicker">DEJARIK BOARD</span><h3>{{vm.activeTable.dejarik.title}}</h3><p>Holochess creature activations · move orthogonally along orbit or ray · attack within range.</p></div>
+            <div class="swse-pazaak-topbar__right"><span>{{vm.activeTable.dejarik.statusLabel}}</span>{{#if vm.activeTable.dejarik.canCancel}}<form data-games-action="dejarik-cancel-session"><input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}"><input type="hidden" name="reason" value="Dejarik board cancelled from Holopad Games."><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button></form>{{/if}}<button type="button" class="swse-games-ghost" data-games-action="close-table">Close Board</button></div>
           </div>
+          <div class="swse-pazaak-alert"><b>{{vm.activeTable.dejarik.message}}</b>{{#if vm.activeTable.dejarik.showPlaying}}<span>Active turn: {{vm.activeTable.dejarik.activeSeatLabel}}</span>{{/if}}{{#if vm.activeTable.dejarik.showComplete}}<span>Winner: {{vm.activeTable.dejarik.winnerLabel}}</span>{{/if}}</div>
 
-          <div class="swse-pazaak-alert swse-dejarik-alert">
-            <b>{{vm.activeTable.dejarik.message}}</b>
-            {{#if vm.activeTable.dejarik.showPlaying}}<span>Active turn: {{vm.activeTable.dejarik.activeSeatLabel}}</span>{{/if}}
-            {{#if vm.activeTable.dejarik.showComplete}}<span>Winner: {{vm.activeTable.dejarik.winnerLabel}}</span>{{/if}}
-          </div>
-
-          <section class="swse-dejarik-playmat">
-            <div class="swse-dejarik-selection-panel">
-              <span class="swse-games-kicker">TACTICAL OVERLAY</span>
-              <b data-dejarik-selection-label>{{#if vm.activeTable.dejarik.canAct}}Select one of your pieces{{else}}Awaiting activation{{/if}}</b>
-              <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Blue spaces are legal moves. Red spaces are enemy pieces you can attack.{{else}}Only the active player can move or attack.{{/if}}</small>
-              {{#if vm.activeTable.dejarik.canAct}}
-              <form data-games-action="dejarik-end-turn">
-                <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
-                <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
-                <button type="submit" class="swse-games-ghost">End Turn</button>
-              </form>
+          <section class="swse-dejarik-board-grid">
+            {{#each vm.activeTable.dejarik.boardSpaces}}
+            <div class="swse-dejarik-space ring-{{this.ring}} ray-{{this.ray}}">
+              <small>{{this.id}}</small>
+              {{#if this.piece}}
+              <b>{{this.piece.label}}</b>
+              <span>{{this.piece.hpLabel}} · {{this.piece.ownerLabel}}</span>
               {{/if}}
             </div>
-
-            <div class="swse-dejarik-board-stage"
-                 data-dejarik-board
-                 data-session-id="{{vm.activeTable.dejarik.id}}"
-                 data-seat-id="{{vm.activeTable.dejarik.currentSeatId}}"
-                 aria-label="Dejarik radial board">
-              {{#each vm.activeTable.dejarik.boardSpaces}}
-              <button type="button"
-                      class="swse-dejarik-space ring-{{this.ring}} ray-{{this.ray}} {{#if this.hasPiece}}has-piece{{/if}} {{#if this.hasViewerPiece}}has-viewer-piece{{/if}} {{#if this.hasEnemyPiece}}has-enemy-piece{{/if}} {{#if this.canSelectPiece}}can-select-piece{{/if}}"
-                      style="{{this.style}}"
-                      data-dejarik-space
-                      data-space-id="{{this.id}}"
-                      {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}"{{/if}}
-                      {{#if this.canSelectPiece}}data-piece-can-select="true"{{/if}}
-                      title="{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}">
-                <small>{{this.id}}</small>
-                {{#if this.piece}}
-                <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}}" aria-hidden="true">{{this.piece.shortLabel}}</span>
-                <b>{{this.piece.label}}</b>
-                <span>{{this.piece.hpLabel}} · {{this.piece.ownerLabel}}</span>
-                {{/if}}
-              </button>
-              {{/each}}
-            </div>
+            {{/each}}
           </section>
 
           {{#if vm.activeTable.dejarik.canAct}}
           <section class="swse-pazaak-hand-panel swse-dejarik-actions">
-            <div class="swse-pazaak-builder-head">
-              <div><span class="swse-games-kicker">YOUR ACTIVATION</span><strong>Select a holomonster or use the fallback action controls.</strong></div>
-            </div>
+            <div class="swse-pazaak-builder-head"><div><span class="swse-games-kicker">YOUR ACTIVATION</span><strong>Choose a holomonster to move or attack.</strong></div></div>
             <div class="swse-pazaak-hand-grid">
               {{#each vm.activeTable.dejarik.viewerPieces}}
-              <article class="swse-pazaak-hand-card swse-dejarik-piece-card">
-                <div class="swse-pazaak-card-face">
-                  <b>{{this.label}}</b>
-                  <small>ATK {{this.atk}} · HP {{this.hpLabel}} · RNG {{this.rng}} · MOV {{this.mov}}</small>
-                  <span class="swse-dejarik-hp"><i style="width: {{this.hpPct}}%"></i></span>
-                </div>
-                <button type="button"
-                        class="swse-games-primary"
-                        data-dejarik-select-piece
-                        data-piece-id="{{this.id}}"
-                        data-piece-label="{{this.label}}"
-                        data-move-spaces="{{this.moveSpacesAttr}}"
-                        data-attack-targets="{{this.attackTargetsAttr}}">
-                  Highlight Moves
-                </button>
+              <article class="swse-pazaak-hand-card">
+                <div class="swse-pazaak-card-face"><b>{{this.label}}</b><small>ATK {{this.atk}} · HP {{this.hpLabel}} · RNG {{this.rng}} · MOV {{this.mov}}</small></div>
                 {{#if this.hasTargets}}
-                <form data-games-action="dejarik-attack">
-                  <input type="hidden" name="sessionId" value="{{this.sessionId}}">
-                  <input type="hidden" name="seatId" value="{{this.seatId}}">
-                  <input type="hidden" name="pieceId" value="{{this.id}}">
-                  <select name="targetPieceId">{{#each this.targetOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
-                  <button type="submit" class="swse-games-primary">Attack</button>
-                </form>
+                <form data-games-action="dejarik-attack"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="pieceId" value="{{this.id}}"><select name="targetPieceId">{{#each this.targetOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select><button type="submit" class="swse-games-primary">Attack</button></form>
                 {{/if}}
                 {{#if this.hasMoveOptions}}
-                <form data-games-action="dejarik-move">
-                  <input type="hidden" name="sessionId" value="{{this.sessionId}}">
-                  <input type="hidden" name="seatId" value="{{this.seatId}}">
-                  <input type="hidden" name="pieceId" value="{{this.id}}">
-                  <select name="toSpaceId">{{#each this.moveOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
-                  <button type="submit" class="swse-games-ghost">Move</button>
-                </form>
+                <form data-games-action="dejarik-move"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="pieceId" value="{{this.id}}"><select name="toSpaceId">{{#each this.moveOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select><button type="submit" class="swse-games-ghost">Move</button></form>
                 {{/if}}
               </article>
               {{/each}}
@@ -545,6 +471,94 @@
           </section>
           {{/if}}
           {{#if vm.activeTable.dejarik.hasEventLog}}<section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">BOARD LOG</span>{{#each vm.activeTable.dejarik.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>{{/if}}
+        </div>
+        {{/if}}
+
+        {{#if vm.activeTable.isHintaro}}
+        <div class="swse-pazaak-table swse-hintaro-table" data-hintaro-session-id="{{vm.activeTable.sessionId}}">
+          <div class="swse-pazaak-topbar">
+            <div>
+              <span class="swse-games-kicker">HINTARO TABLE</span>
+              <h3>{{vm.activeTable.hintaro.title}}</h3>
+              <p>Ante {{vm.activeTable.hintaro.ante}} · hintaron {{vm.activeTable.hintaro.hintaronLabel}} · round {{vm.activeTable.hintaro.round}}</p>
+            </div>
+            <div class="swse-pazaak-topbar__right">
+              <span>{{vm.activeTable.hintaro.statusLabel}}</span>
+              {{#if vm.activeTable.hintaro.canStartRound}}
+              <form data-games-action="hintaro-next-round"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Next Round</button></form>
+              {{/if}}
+              {{#if vm.activeTable.hintaro.canCashOut}}
+              <form data-games-action="hintaro-cash-out"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost">Cash Out</button></form>
+              {{/if}}
+              {{#if vm.activeTable.hintaro.canCancel}}
+              <form data-games-action="hintaro-cancel-session"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="reason" value="Hintaro table cancelled from Holopad Games."><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button></form>
+              {{/if}}
+              <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Table</button>
+            </div>
+          </div>
+
+          <div class="swse-pazaak-alert">
+            <b>{{vm.activeTable.hintaro.message}}</b>
+            {{#if vm.activeTable.hintaro.showBetting}}<span>Betting: {{vm.activeTable.hintaro.activeSeatLabel}} acts · live bet {{vm.activeTable.hintaro.betting.currentBet}}</span>{{/if}}
+            {{#if vm.activeTable.hintaro.showReroll}}<span>Reroll choice: {{vm.activeTable.hintaro.activeSeatLabel}}</span>{{/if}}
+            <span>Pot: {{vm.activeTable.hintaro.pot}} · carryover {{vm.activeTable.hintaro.carriedPot}}</span>
+            <span>Hintaro die: {{vm.activeTable.hintaro.hintaroDie.label}}</span>
+          </div>
+
+          <section class="swse-hintaro-die-rail">
+            <div class="swse-hintaro-special-die tone-{{vm.activeTable.hintaro.hintaroDie.tone}}"><b>{{vm.activeTable.hintaro.hintaroDie.shortLabel}}</b><small>{{vm.activeTable.hintaro.hintaroDie.label}}</small></div>
+            <div><span class="swse-games-kicker">RANKS</span><p>Tukar to Kulro &gt; Quad Kulro &gt; Tukar Tukar &gt; Kulro Kulro. Hin cancels Tukar; Taro cancels Kulro.</p></div>
+          </section>
+
+          <section class="swse-pazaak-play swse-hintaro-play">
+            <div class="swse-pazaak-seat-grid">
+              {{#each vm.activeTable.hintaro.seats}}
+              <article class="swse-pazaak-seat swse-hintaro-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.dropped}}is-bust{{/if}}">
+                <header><div><b>{{this.displayName}}</b><span>{{this.statusLabel}} · wins {{this.wins}} · table credits {{this.tableCredits}}</span>{{#if this.isAi}}<small>AI chance-cube opponent</small>{{/if}}</div><strong>{{this.rankLabel}}</strong></header>
+                <div class="swse-hintaro-cubes">
+                  {{#if this.hasSymbols}}
+                    {{#each this.symbols}}
+                    <span class="swse-hintaro-cube tone-{{this.tone}}"><b>{{this.shortLabel}}</b><small>{{this.colorLabel}}</small></span>
+                    {{/each}}
+                  {{else}}
+                    <span class="swse-pazaak-no-cards">No cubes rolled.</span>
+                  {{/if}}
+                </div>
+                <footer><span>{{this.lastAction}}</span><span>{{this.modifiedLabel}}</span></footer>
+              </article>
+              {{/each}}
+            </div>
+
+            {{#if vm.activeTable.hintaro.viewerSeat.canBettingAct}}
+            <section class="swse-pazaak-hand-panel swse-hintaro-actions">
+              <div class="swse-pazaak-builder-head"><div><span class="swse-games-kicker">YOUR BET</span><strong>Table credits {{vm.activeTable.hintaro.viewerTableCredits}} · to call {{vm.activeTable.hintaro.betting.toCall}}</strong></div>
+                <div class="swse-pazaak-turn-actions">
+                  <form data-games-action="hintaro-check"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.hintaro.betting.canCheck}}disabled{{/unless}}>Check</button></form>
+                  <form data-games-action="hintaro-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="amount" value="{{vm.activeTable.hintaro.betting.minBet}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.hintaro.betting.canBet}}disabled{{/unless}}>Bet {{vm.activeTable.hintaro.betting.minBet}}</button></form>
+                  <form data-games-action="hintaro-call-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.hintaro.betting.canCall}}disabled{{/unless}}>Call {{vm.activeTable.hintaro.betting.toCall}}</button></form>
+                  <form data-games-action="hintaro-raise"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="amount" value="{{vm.activeTable.hintaro.betting.minRaise}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.hintaro.betting.canRaise}}disabled{{/unless}}>Raise {{vm.activeTable.hintaro.betting.minRaise}}</button></form>
+                  <form data-games-action="hintaro-drop"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Drop</button></form>
+                </div>
+              </div>
+            </section>
+            {{/if}}
+
+            {{#if vm.activeTable.hintaro.viewerSeat.canRerollAct}}
+            <section class="swse-pazaak-hand-panel swse-hintaro-actions">
+              <div class="swse-pazaak-builder-head"><div><span class="swse-games-kicker">YOUR REROLL</span><strong>Reroll one cube or keep your result.</strong></div>
+                <form data-games-action="hintaro-keep-roll"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Keep Roll</button></form>
+              </div>
+              <div class="swse-pazaak-hand-grid">
+                {{#each vm.activeTable.hintaro.viewerSeat.symbols}}
+                <form class="swse-hintaro-reroll-card" data-games-action="hintaro-reroll-die"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="dieIndex" value="{{this.index}}"><button type="submit" class="swse-hintaro-cube tone-{{this.tone}}"><b>{{this.shortLabel}}</b><small>Reroll {{this.displayIndex}}</small></button></form>
+                {{/each}}
+              </div>
+            </section>
+            {{/if}}
+          </section>
+
+          {{#if vm.activeTable.hintaro.hasRoundHistory}}<section class="swse-pazaak-history"><span class="swse-games-kicker">ROUND HISTORY</span>{{#each vm.activeTable.hintaro.roundHistory}}<div><b>Round {{this.round}}</b><span>{{this.winnerLabel}} · {{this.rankLabel}} · {{this.timeLabel}}</span></div>{{/each}}</section>{{/if}}
+          {{#if vm.activeTable.hintaro.hasEventLog}}<section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">TABLE LOG</span>{{#each vm.activeTable.hintaro.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>{{/if}}
         </div>
         {{/if}}
       {{else}}
@@ -616,6 +630,18 @@
           <div><span class="swse-games-kicker">INSTANT BOARD</span><strong>Start Dejarik vs AI</strong><small>Holochess MVP with four creatures per side, movement, range, attacks, HP, and defeat.</small></div>
           <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
           <button type="submit" class="swse-games-primary">Start Dejarik Board</button>
+        </form>
+        {{/if}}
+
+        {{#if vm.canStartSoloAiHintaro}}
+        <form class="swse-games-invite-form swse-pazaak-solo-form" data-games-action="start-solo-hintaro">
+          <div><span class="swse-games-kicker">INSTANT TABLE</span><strong>Start Hintaro vs AI</strong><small>Chance-cube gambling with antes, betting, rerolls, the hintaro die, split pots, and carried pots.</small></div>
+          <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+          <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+          {{#if vm.showCreditWagerControls}}
+          <label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>
+          {{/if}}
+          <button type="submit" class="swse-games-primary">Start Hintaro Table</button>
         </form>
         {{/if}}
 

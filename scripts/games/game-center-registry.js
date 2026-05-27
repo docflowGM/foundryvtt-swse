@@ -52,6 +52,28 @@ const DEFAULT_GAMES = [
     tags: ['cards', 'high-stakes', 'dealer']
   },
   {
+    id: 'hintaro',
+    title: 'Hintaro',
+    subtitle: 'Chance-cube gambling with Tukar, Kulro, and the hintaro die.',
+    icon: '◇',
+    status: 'Playable MVP',
+    description: 'A fast chance-cube table with ante, betting, optional rerolls, the hintaro cancellation die, ranked rolls, split pots, and carryover pots.',
+    minPlayers: 2,
+    maxPlayers: 6,
+    supportsAI: true,
+    supportsNPCs: true,
+    supportsPvP: true,
+    supportsSpectators: true,
+    supportsWagers: true,
+    supportsCreditWagers: true,
+    supportsItemWagers: false,
+    supportsAssetWagers: false,
+    defaultRulesMode: 'republic-senate',
+    implementationPhase: 'Phase 12',
+    nextMilestone: 'PvP table invite materialization, custom hintaro dice art, and casino/non-organized variants',
+    tags: ['dice', 'gambling', 'fast']
+  },
+  {
     id: 'dejarik',
     title: 'Dejarik',
     subtitle: 'Holochess creature board battles.',
