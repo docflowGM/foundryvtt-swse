@@ -3,6 +3,8 @@ import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-se
 import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
 import { PazaakViewModel } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-view-model.js';
+import { SabaccViewModel } from '/systems/foundryvtt-swse/scripts/games/games/sabacc/sabacc-view-model.js';
+import { DejarikViewModel } from '/systems/foundryvtt-swse/scripts/games/games/dejarik/dejarik-view-model.js';
 import { GameCreditEscrowService } from '/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js';
 
 function formatTimestamp(value) {
@@ -31,7 +33,8 @@ function mapSession(session, participantId = null) {
   const rawStatus = String(session.status || 'draft');
   const currentSeat = Array.isArray(session.seats) ? session.seats.find(seat => seat.recipientId === participantId) : null;
   const canOpenThread = Boolean(session.holonetThreadId);
-  const isPlayablePazaak = session.gameId === 'pazaak' && ['active', 'paused', 'complete', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus);
+  const playableGames = new Set(['pazaak', 'sabacc', 'dejarik']);
+  const isPlayableGame = playableGames.has(session.gameId) && ['active', 'paused', 'complete', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus);
   return {
     id: session.id,
     gameId: session.gameId,
@@ -47,7 +50,7 @@ function mapSession(session, participantId = null) {
     holonetThreadId: session.holonetThreadId || null,
     holonetMessageId: session.holonetMessageId || session.metadata?.inviteMessageId || null,
     canOpenThread,
-    canOpenTable: Boolean(isPlayablePazaak || ['active', 'paused', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus)),
+    canOpenTable: Boolean(isPlayableGame || ['active', 'paused', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus)),
     canRespond: Boolean(rawStatus === 'pending-invite' && currentSeat?.status === 'invited')
   };
 }
@@ -87,6 +90,22 @@ function buildActiveTableVm(session, actor, participantId, options = {}) {
         participantId,
         selectedDeckIds: Array.isArray(options.sideDeckIds) ? options.sideDeckIds : []
       })
+    };
+  }
+  if (session.gameId === 'sabacc') {
+    return {
+      isSabacc: true,
+      gameId: 'sabacc',
+      sessionId: session.id,
+      sabacc: SabaccViewModel.build({ session, actor, participantId })
+    };
+  }
+  if (session.gameId === 'dejarik') {
+    return {
+      isDejarik: true,
+      gameId: 'dejarik',
+      sessionId: session.id,
+      dejarik: DejarikViewModel.build({ session, actor, participantId })
     };
   }
   return null;
@@ -133,6 +152,8 @@ export class GamesSurfaceService {
       hasInviteTargets: inviteTargets.length > 0,
       canSendInvites: Boolean(settings.enabled && settings.useMessengerInvites && selectedGame && inviteTargets.length && (settings.allowPlayerCreatedTables || game.user?.isGM)),
       canStartSoloAiPazaak: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'pazaak' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
+      canStartSoloAiSabacc: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'sabacc' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
+      canStartSoloAiDejarik: Boolean(settings.enabled && settings.allowAI && selectedGame?.id === 'dejarik' && (settings.allowPlayerCreatedTables || game.user?.isGM)),
       selectedSession: selectedSession ? mapSession(selectedSession, participantId) : null,
       activeTable,
       hasActiveTable: Boolean(activeTable),
@@ -170,6 +191,7 @@ export class GamesSurfaceService {
         'Phase 4.5 adds GM-configurable economy policy gates for AI/house payouts before TransactionEngine settlement.',
         'Player-vs-player credit games remain closed-loop: payouts come from the escrowed player pool.',
         'Republic Senate Rules still skip all economy movement and are the safest default downtime mode.',
+        'Sabacc now has a custom 76-card deck/rules MVP and Dejarik now has a radial board/rules foundation inside Holopad Games.',
         'Items and assets are still intentionally out of scope for this phase; future phases must route them through ActorEngine and asset ownership services.'
       ]
     };

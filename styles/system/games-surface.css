@@ -885,3 +885,66 @@
   20% { opacity: .7; }
   100% { left: 130%; opacity: 0; }
 }
+
+/* Phase 7: Sabacc and Dejarik MVP surfaces */
+.swse-sabacc-table .swse-pazaak-played-card.tone-special,
+.swse-sabacc-table .tone-special {
+  border-style: dashed;
+  box-shadow: 0 0 14px rgba(255, 218, 120, 0.18);
+}
+
+.swse-sabacc-actions .swse-pazaak-hand-card form,
+.swse-dejarik-actions .swse-pazaak-hand-card form {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 0.45rem;
+}
+
+.swse-sabacc-actions select,
+.swse-dejarik-actions select {
+  min-width: 0;
+  flex: 1;
+}
+
+.swse-dejarik-board-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.swse-dejarik-space {
+  min-height: 5.25rem;
+  border: 1px solid rgba(120, 220, 255, 0.22);
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, rgba(7, 20, 34, 0.82), rgba(5, 11, 22, 0.9));
+  padding: 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  justify-content: space-between;
+}
+
+.swse-dejarik-space small {
+  opacity: 0.68;
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.swse-dejarik-space b {
+  font-size: 0.76rem;
+  line-height: 1.15;
+}
+
+.swse-dejarik-space span {
+  font-size: 0.68rem;
+  opacity: 0.82;
+}
+
+@media (max-width: 980px) {
+  .swse-dejarik-board-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

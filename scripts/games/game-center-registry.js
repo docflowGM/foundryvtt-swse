@@ -25,8 +25,8 @@ const DEFAULT_GAMES = [
     supportsItemWagers: false,
     supportsAssetWagers: false,
     defaultRulesMode: 'republic-senate',
-    implementationPhase: 'Phase 3',
-    nextMilestone: 'Credit buy-ins and wager settlement',
+    implementationPhase: 'Phase 4',
+    nextMilestone: 'Item/asset wager escrow and Sabacc table pots',
     tags: ['starter', 'cards', 'turn-based']
   },
   {
@@ -34,8 +34,8 @@ const DEFAULT_GAMES = [
     title: 'Sabacc',
     subtitle: 'High-stakes shifting cards, hand pot, and sabacc pot.',
     icon: '23',
-    status: 'Planned',
-    description: 'A table game for credit pots, item side pots, dealer droids, cheating hooks, and GM-approved high-value wagers.',
+    status: 'Playable Rules MVP',
+    description: 'A custom 76-card Sabacc rules MVP with dealer seat, hand pot, sabacc pot, shifting, drawing, calling, bomb-outs, pure sabacc, and Idiot's Array detection.',
     minPlayers: 2,
     maxPlayers: 6,
     supportsAI: true,
@@ -47,8 +47,8 @@ const DEFAULT_GAMES = [
     supportsItemWagers: true,
     supportsAssetWagers: true,
     defaultRulesMode: 'wagered',
-    implementationPhase: 'Phase 5',
-    nextMilestone: '2-card Sabacc MVP with credit pots',
+    implementationPhase: 'Phase 7',
+    nextMilestone: 'Credit ante escrow, betting raises, item side pots, and dealer/cheating hooks',
     tags: ['cards', 'high-stakes', 'dealer']
   },
   {
@@ -56,8 +56,8 @@ const DEFAULT_GAMES = [
     title: 'Dejarik',
     subtitle: 'Holochess creature board battles.',
     icon: '◇',
-    status: 'Planned',
-    description: 'A visual tactical board game rendered inside the holopad with HTML/SVG board state, not Foundry scenes or Cards.',
+    status: 'Rules Foundation',
+    description: 'A Dejarik rules foundation with radial board spaces, four holomonsters per side, movement, range, attacks, HP, and defeat state rendered inside the holopad.',
     minPlayers: 2,
     maxPlayers: 2,
     supportsAI: true,
@@ -69,8 +69,8 @@ const DEFAULT_GAMES = [
     supportsItemWagers: false,
     supportsAssetWagers: false,
     defaultRulesMode: 'republic-senate',
-    implementationPhase: 'Phase 6',
-    nextMilestone: 'Board renderer and creature activation loop',
+    implementationPhase: 'Phase 7',
+    nextMilestone: 'Visual board polish, creature selection, special abilities, and smarter tactical AI',
     tags: ['board', 'tactical', 'visual']
   }
 ];

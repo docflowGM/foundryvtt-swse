@@ -7,6 +7,8 @@
 
 import { GameHolonetBridge } from '/systems/foundryvtt-swse/scripts/games/game-holonet-bridge.js';
 import { PazaakEngine } from '/systems/foundryvtt-swse/scripts/games/games/pazaak/pazaak-engine.js';
+import { SabaccEngine } from '/systems/foundryvtt-swse/scripts/games/games/sabacc/sabacc-engine.js';
+import { DejarikEngine } from '/systems/foundryvtt-swse/scripts/games/games/dejarik/dejarik-engine.js';
 
 export class GamesSurfaceController {
   constructor(host, actor) {
@@ -123,6 +125,41 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
+    surface.querySelectorAll('form[data-games-action="start-solo-sabacc"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const result = await SabaccEngine.createSoloAiSession({
+          actor: this._actor,
+          title: String(data.get('title') || '').trim(),
+          rulesMode: String(data.get('rulesMode') || 'republic-senate').trim()
+        });
+        if (result?.pending) {
+          this._noteResult(result);
+          this._host.render(false);
+        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'sabacc', view: 'session' });
+        else this._noteResult(false);
+      }, { signal });
+    });
+
+    surface.querySelectorAll('form[data-games-action="start-solo-dejarik"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const result = await DejarikEngine.createSoloAiSession({
+          actor: this._actor,
+          title: String(data.get('title') || '').trim()
+        });
+        if (result?.pending) {
+          this._noteResult(result);
+          this._host.render(false);
+        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'dejarik', view: 'session' });
+        else this._noteResult(false);
+      }, { signal });
+    });
+
     surface.querySelectorAll('form[data-games-action="lock-pazaak-side-deck"]').forEach(form => {
       const checkboxes = Array.from(form.querySelectorAll('[data-pazaak-side-card]'));
       const countNode = form.querySelector('[data-pazaak-selected-count]');
@@ -170,6 +207,51 @@ export class GamesSurfaceController {
         });
         if (result?.pending) this._noteResult(result);
         else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Pazaak action failed.');
+        this._host.render(false);
+      }, { signal });
+    });
+
+
+    surface.querySelectorAll('form[data-games-action^="sabacc-"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const action = String(form.dataset.gamesAction || '').replace(/^sabacc-/, '');
+        const result = await SabaccEngine.submitAction({
+          sessionId: String(data.get('sessionId') || '').trim(),
+          seatId: String(data.get('seatId') || '').trim(),
+          action,
+          payload: {
+            cardId: String(data.get('cardId') || '').trim(),
+            reason: String(data.get('reason') || '').trim()
+          }
+        });
+        if (result?.pending) this._noteResult(result);
+        else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Sabacc action failed.');
+        this._host.render(false);
+      }, { signal });
+    });
+
+    surface.querySelectorAll('form[data-games-action^="dejarik-"]').forEach(form => {
+      form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const action = String(form.dataset.gamesAction || '').replace(/^dejarik-/, '');
+        const result = await DejarikEngine.submitAction({
+          sessionId: String(data.get('sessionId') || '').trim(),
+          seatId: String(data.get('seatId') || '').trim(),
+          action,
+          payload: {
+            pieceId: String(data.get('pieceId') || '').trim(),
+            targetPieceId: String(data.get('targetPieceId') || '').trim(),
+            toSpaceId: String(data.get('toSpaceId') || '').trim(),
+            reason: String(data.get('reason') || '').trim()
+          }
+        });
+        if (result?.pending) this._noteResult(result);
+        else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Dejarik action failed.');
         this._host.render(false);
       }, { signal });
     });

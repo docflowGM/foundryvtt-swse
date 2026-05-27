@@ -308,6 +308,150 @@
           {{/if}}
         </div>
         {{/if}}
+
+        {{#if vm.activeTable.isSabacc}}
+        <div class="swse-pazaak-table swse-sabacc-table" data-sabacc-session-id="{{vm.activeTable.sessionId}}">
+          <div class="swse-pazaak-topbar">
+            <div>
+              <span class="swse-games-kicker">SABACC TABLE</span>
+              <h3>{{vm.activeTable.sabacc.title}}</h3>
+              <p>Target {{vm.activeTable.sabacc.target}} · ante {{vm.activeTable.sabacc.ante}} · Sabacc ante {{vm.activeTable.sabacc.sabaccAnte}}</p>
+            </div>
+            <div class="swse-pazaak-topbar__right">
+              <span>{{vm.activeTable.sabacc.statusLabel}}</span>
+              {{#if vm.activeTable.sabacc.canStartHand}}
+              <form data-games-action="sabacc-next-hand">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}">
+                <button type="submit" class="swse-games-primary">Next Hand</button>
+              </form>
+              {{/if}}
+              {{#if vm.activeTable.sabacc.canCancel}}
+              <form data-games-action="sabacc-cancel-session">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}">
+                <input type="hidden" name="reason" value="Sabacc table cancelled from Holopad Games.">
+                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
+              </form>
+              {{/if}}
+              <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Table</button>
+            </div>
+          </div>
+
+          <div class="swse-pazaak-alert">
+            <b>{{vm.activeTable.sabacc.message}}</b>
+            {{#if vm.activeTable.sabacc.showDrawing}}<span>Active turn: {{vm.activeTable.sabacc.activeSeatLabel}}</span>{{/if}}
+            {{#if vm.activeTable.sabacc.showComplete}}<span>Winner: {{vm.activeTable.sabacc.winnerLabel}}</span>{{/if}}
+            <span>Hand pot: {{vm.activeTable.sabacc.handPot}} · Sabacc pot: {{vm.activeTable.sabacc.sabaccPot}}</span>
+          </div>
+
+          <section class="swse-pazaak-play">
+            <div class="swse-pazaak-seat-grid">
+              {{#each vm.activeTable.sabacc.seats}}
+              <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bombedOut}}is-bust{{/if}}">
+                <header>
+                  <div>
+                    <b>{{this.displayName}}</b>
+                    <span>{{this.statusLabel}} · hands won {{this.wins}}</span>
+                    {{#if this.isAi}}
+                    <small>AI: {{this.aiDifficultyLabel}}</small>
+                    {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
+                    {{#if this.tableFact}}<small class="swse-pazaak-table-fact">{{this.tableFact}}</small>{{/if}}
+                    {{/if}}
+                  </div>
+                  <strong>{{this.totalLabel}}</strong>
+                </header>
+                <div class="swse-pazaak-table-cards swse-sabacc-hand-cards">
+                  {{#if this.hasCards}}
+                    {{#each this.cards}}
+                    <span class="swse-pazaak-played-card {{#if this.isSpecial}}tone-special{{/if}}">
+                      <b>{{this.shortLabel}}</b>
+                      <small>{{this.label}}</small>
+                    </span>
+                    {{/each}}
+                  {{else}}
+                    <span class="swse-pazaak-no-cards">No cards yet.</span>
+                  {{/if}}
+                </div>
+                <footer><span>{{this.lastAction}}</span><span>{{this.handCount}} cards</span></footer>
+              </article>
+              {{/each}}
+            </div>
+
+            {{#if vm.activeTable.sabacc.viewerSeat.canAct}}
+            <section class="swse-pazaak-hand-panel swse-sabacc-actions">
+              <div class="swse-pazaak-builder-head">
+                <div><span class="swse-games-kicker">YOUR SABACC TURN</span><strong>Draw, shift, discard, call, or fold.</strong></div>
+                <div class="swse-pazaak-turn-actions">
+                  <form data-games-action="sabacc-draw-card"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Draw</button></form>
+                  <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost">Call</button></form>
+                  <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
+                </div>
+              </div>
+              <div class="swse-pazaak-hand-grid">
+                {{#each vm.activeTable.sabacc.viewerSeat.hand}}
+                <article class="swse-pazaak-hand-card">
+                  <div class="swse-pazaak-card-face"><b>{{this.shortLabel}}</b><small>{{this.label}}</small></div>
+                  <p>{{this.valueLabel}} · {{this.suitLabel}}</p>
+                  <form data-games-action="sabacc-shift-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-primary">Shift</button></form>
+                  <form data-games-action="sabacc-discard-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-ghost">Discard</button></form>
+                </article>
+                {{/each}}
+              </div>
+            </section>
+            {{/if}}
+          </section>
+
+          {{#if vm.activeTable.sabacc.hasHandHistory}}
+          <section class="swse-pazaak-history"><span class="swse-games-kicker">HAND HISTORY</span>{{#each vm.activeTable.sabacc.handHistory}}<div><b>Hand {{this.round}}</b><span>{{#if this.winnerLabel}}{{this.winnerLabel}} won{{else}}No winner{{/if}} · {{this.reason}}</span></div>{{/each}}</section>
+          {{/if}}
+          {{#if vm.activeTable.sabacc.hasEventLog}}
+          <section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">TABLE LOG</span>{{#each vm.activeTable.sabacc.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>
+          {{/if}}
+        </div>
+        {{/if}}
+
+        {{#if vm.activeTable.isDejarik}}
+        <div class="swse-pazaak-table swse-dejarik-table" data-dejarik-session-id="{{vm.activeTable.sessionId}}">
+          <div class="swse-pazaak-topbar">
+            <div><span class="swse-games-kicker">DEJARIK BOARD</span><h3>{{vm.activeTable.dejarik.title}}</h3><p>Holochess creature activations · move orthogonally along orbit or ray · attack within range.</p></div>
+            <div class="swse-pazaak-topbar__right"><span>{{vm.activeTable.dejarik.statusLabel}}</span>{{#if vm.activeTable.dejarik.canCancel}}<form data-games-action="dejarik-cancel-session"><input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}"><input type="hidden" name="reason" value="Dejarik board cancelled from Holopad Games."><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button></form>{{/if}}<button type="button" class="swse-games-ghost" data-games-action="close-table">Close Board</button></div>
+          </div>
+          <div class="swse-pazaak-alert"><b>{{vm.activeTable.dejarik.message}}</b>{{#if vm.activeTable.dejarik.showPlaying}}<span>Active turn: {{vm.activeTable.dejarik.activeSeatLabel}}</span>{{/if}}{{#if vm.activeTable.dejarik.showComplete}}<span>Winner: {{vm.activeTable.dejarik.winnerLabel}}</span>{{/if}}</div>
+
+          <section class="swse-dejarik-board-grid">
+            {{#each vm.activeTable.dejarik.boardSpaces}}
+            <div class="swse-dejarik-space ring-{{this.ring}} ray-{{this.ray}}">
+              <small>{{this.id}}</small>
+              {{#if this.piece}}
+              <b>{{this.piece.label}}</b>
+              <span>{{this.piece.hpLabel}} · {{this.piece.ownerLabel}}</span>
+              {{/if}}
+            </div>
+            {{/each}}
+          </section>
+
+          {{#if vm.activeTable.dejarik.canAct}}
+          <section class="swse-pazaak-hand-panel swse-dejarik-actions">
+            <div class="swse-pazaak-builder-head"><div><span class="swse-games-kicker">YOUR ACTIVATION</span><strong>Choose a holomonster to move or attack.</strong></div></div>
+            <div class="swse-pazaak-hand-grid">
+              {{#each vm.activeTable.dejarik.viewerPieces}}
+              <article class="swse-pazaak-hand-card">
+                <div class="swse-pazaak-card-face"><b>{{this.label}}</b><small>ATK {{this.atk}} · HP {{this.hpLabel}} · RNG {{this.rng}} · MOV {{this.mov}}</small></div>
+                {{#if this.hasTargets}}
+                <form data-games-action="dejarik-attack"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="pieceId" value="{{this.id}}"><select name="targetPieceId">{{#each this.targetOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select><button type="submit" class="swse-games-primary">Attack</button></form>
+                {{/if}}
+                {{#if this.hasMoveOptions}}
+                <form data-games-action="dejarik-move"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="pieceId" value="{{this.id}}"><select name="toSpaceId">{{#each this.moveOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select><button type="submit" class="swse-games-ghost">Move</button></form>
+                {{/if}}
+              </article>
+              {{/each}}
+            </div>
+          </section>
+          {{/if}}
+          {{#if vm.activeTable.dejarik.hasEventLog}}<section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">BOARD LOG</span>{{#each vm.activeTable.dejarik.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>{{/if}}
+        </div>
+        {{/if}}
       {{else}}
         {{#if vm.selectedGame}}
         <div class="swse-games-detail-head">
@@ -357,6 +501,23 @@
           </label>
           {{/if}}
           <button type="submit" class="swse-games-primary">Start Pazaak Table</button>
+        </form>
+        {{/if}}
+
+        {{#if vm.canStartSoloAiSabacc}}
+        <form class="swse-games-invite-form swse-pazaak-solo-form" data-games-action="start-solo-sabacc">
+          <div><span class="swse-games-kicker">INSTANT TABLE</span><strong>Start Sabacc vs AI</strong><small>Two-card Sabacc MVP with hand pot, Sabacc pot, draw, shift, discard, call, and special-hand detection.</small></div>
+          <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+          <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+          <button type="submit" class="swse-games-primary">Start Sabacc Table</button>
+        </form>
+        {{/if}}
+
+        {{#if vm.canStartSoloAiDejarik}}
+        <form class="swse-games-invite-form swse-pazaak-solo-form" data-games-action="start-solo-dejarik">
+          <div><span class="swse-games-kicker">INSTANT BOARD</span><strong>Start Dejarik vs AI</strong><small>Holochess MVP with four creatures per side, movement, range, attacks, HP, and defeat.</small></div>
+          <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
+          <button type="submit" class="swse-games-primary">Start Dejarik Board</button>
         </form>
         {{/if}}
 
