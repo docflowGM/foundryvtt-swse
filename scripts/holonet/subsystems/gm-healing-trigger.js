@@ -12,10 +12,11 @@ import { HealingEmitter } from '../emitters/healing-emitter.js';
 
 export class GMHealingTrigger {
   /**
-   * Trigger natural healing for all eligible actors.
+   * Trigger natural healing for all eligible actors, or a supplied target actor list.
    * Only GMs can call this.
    *
    * @param {Object} options
+   * @param {Actor[]} [options.actors] Optional actor list to heal instead of the entire world roster
    * @param {boolean} [options.isFullRest=true] Whether to trigger full rest
    * @param {boolean} [options.skipHolonetNotification=false] Skip Holonet healing notifications
    * @returns {Promise<{success: boolean, healed: Array, skipped: Array, error?: string}>}
@@ -26,12 +27,15 @@ export class GMHealingTrigger {
     }
 
     const { isFullRest = true, skipHolonetNotification = false, skipMechanicalRecoveryHook = true } = options;
+    const targetActors = Array.isArray(options.actors) ? options.actors.filter(Boolean) : Array.from(game.actors || []);
 
     const healed = [];
     const skipped = [];
 
-    // Iterate through all actors
-    for (const actor of game.actors || []) {
+    // Iterate through target actors. The default remains all world actors for
+    // legacy callers, but GM Combat & Recovery can now pass a single actor,
+    // checked actors, active combatants, or the whole party.
+    for (const actor of targetActors) {
       if (!this.isEligibleForHealing(actor)) {
         skipped.push({ id: actor.id, name: actor.name, reason: 'not_eligible' });
         continue;

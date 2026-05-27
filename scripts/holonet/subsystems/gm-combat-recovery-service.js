@@ -47,6 +47,9 @@ export class GMCombatRecoveryService {
         droidActors: cards.filter((card) => card.kind === 'droid'),
         vehicleActors: cards.filter((card) => card.kind === 'vehicle'),
         activeCombatants: cards.filter((card) => card.inCombat),
+        partyActors: cards.filter((card) => card.partyActor),
+        selectedTargetModes: this.buildTargetModes(cards),
+        defaultTargetMode: 'party',
         needsAttention: cards.filter((card) => card.needsAttention),
         hasActiveCombat: Boolean(game.combat?.started || game.combat?.active),
         activeCombatLabel: game.combat?.started || game.combat?.active
@@ -81,6 +84,91 @@ export class GMCombatRecoveryService {
     });
   }
 
+  static buildTargetModes(cards) {
+    return [
+      {
+        id: 'party',
+        label: 'Whole Party',
+        description: 'Player-owned party actors. Droids/vehicles remain excluded from rest benefits.',
+        count: cards.filter((card) => card.partyActor).length
+      },
+      {
+        id: 'selected',
+        label: 'Checked Actors',
+        description: 'Only actors checked in the roster cards.',
+        count: 0
+      },
+      {
+        id: 'active-combat',
+        label: 'Active Combatants',
+        description: 'Actors currently present in the active combat tracker.',
+        count: cards.filter((card) => card.inCombat).length
+      },
+      {
+        id: 'all-managed',
+        label: 'All Managed Roster',
+        description: 'Every visible managed actor in this recovery console.',
+        count: cards.length
+      }
+    ];
+  }
+
+  static getPartyActors() {
+    return this.getManagedActors().filter((actor) => this.isPartyActor(actor));
+  }
+
+  static isPartyActor(actor) {
+    if (!actor) return false;
+    if (actor.hasPlayerOwner === true) return true;
+    if (this.getOwnerNames(actor).length > 0) return true;
+    // Character actors without a current owner are still treated as party candidates
+    // so a GM can recover newly-created or unassigned PCs from the party target.
+    return actor.type === 'character';
+  }
+
+  static resolveTargetActors({ targetMode = 'party', actorIds = [] } = {}) {
+    const ids = Array.isArray(actorIds) ? actorIds.filter(Boolean).map(String) : [];
+    const selectedActors = ids.map((id) => game.actors?.get(id)).filter(Boolean);
+    let actors;
+    let label;
+
+    switch (targetMode) {
+      case 'selected':
+        actors = selectedActors;
+        label = selectedActors.length === 1 ? selectedActors[0].name : `${selectedActors.length} checked actors`;
+        break;
+      case 'active-combat':
+        actors = this.getActiveCombatActors();
+        label = 'active combatants';
+        break;
+      case 'all-managed':
+        actors = this.getManagedActors();
+        label = 'all managed roster actors';
+        break;
+      case 'party':
+      default:
+        actors = this.getPartyActors();
+        label = 'whole party';
+        break;
+    }
+
+    const unique = [];
+    const seen = new Set();
+    for (const actor of actors ?? []) {
+      if (!actor?.id || seen.has(actor.id)) continue;
+      seen.add(actor.id);
+      unique.push(actor);
+    }
+
+    return {
+      targetMode,
+      actorIds: unique.map((actor) => actor.id),
+      actors: unique,
+      label,
+      count: unique.length
+    };
+  }
+
   static getTypeRank(actor) {
     if (this.isDroid(actor)) return 2;
     if (this.isVehicle(actor)) return 3;
@@ -108,6 +196,7 @@ export class GMCombatRecoveryService {
     const repairEligible = isDroid || isVehicle;
     const kind = isDroid ? 'droid' : (isVehicle ? 'vehicle' : 'organic');
     const ownerNames = this.getOwnerNames(actor);
+    const partyActor = this.isPartyActor(actor);
     const activeEffects = Array.from(actor.effects ?? []).map((effect) => ({
       id: effect.id,
       name: effect.name ?? effect.label ?? 'Effect',
@@ -124,6 +213,7 @@ export class GMCombatRecoveryService {
       kind,
       kindLabel: isDroid ? 'Droid' : (isVehicle ? 'Vehicle / Ship' : 'Organic'),
       ownerLabel: ownerNames.length ? ownerNames.join(', ') : 'GM / unassigned',
+      partyActor,
       hpValue,
       hpMax,
       hpTemp,
@@ -245,41 +335,113 @@ export class GMCombatRecoveryService {
   static async executeGroupAction(action, options = {}) {
     if (!game.user?.isGM) return { success: false, error: 'Only GMs can use combat recovery actions.' };
 
+    const target = this.resolveTargetActors(options);
+    if (!target.actors.length) {
+      return { success: false, error: 'No actors matched the selected combat recovery target.' };
+    }
+
     switch (action) {
       case 'natural-healing':
-        return this.triggerNaturalHealing();
+        return this.triggerNaturalHealing({ actors: target.actors, target });
+      case 'heal-target':
+        return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'heal' });
+      case 'repair-target':
+        return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'repair' });
+      case 'damage-target':
+        return this.applyHitPointDeltaToActors({ actors: target.actors, target, amount: options.amount, mode: 'damage' });
       case 'short-rest':
-        return this.performRest({ restType: 'short-rest', isFullRest: false, duration: 60, ...options });
+        return this.performRest({ restType: 'short-rest', isFullRest: false, duration: 60, actors: target.actors, target, ...options });
       case 'extended-rest':
-        return this.performRest({ restType: 'extended-rest', isFullRest: true, duration: 480, ...options });
+        return this.performRest({ restType: 'extended-rest', isFullRest: true, duration: 480, actors: target.actors, target, ...options });
       case 'encounter-reset':
-        return this.resetSecondWindForActors({ triggerEvent: 'encounter', actors: this.getActiveCombatActors(), restTriggered: false });
+        return this.resetSecondWindForActors({ triggerEvent: 'encounter', actors: target.actors, restTriggered: false, target });
+      case 'reset-condition':
+        return this.resetConditionForActors({ actors: target.actors, target });
       case 'reset-second-wind':
-        return this.resetSecondWindForActors({ triggerEvent: 'gm-override', actors: this.getManagedActors(), restTriggered: false, ignoreTiming: true });
+        return this.resetSecondWindForActors({ triggerEvent: 'gm-override', actors: target.actors, restTriggered: false, ignoreTiming: true, target });
       case 'full-organic-recovery':
-        return this.fullOrganicRecovery();
+        return this.fullOrganicRecovery({ actors: target.actors, target });
       default:
         return { success: false, error: `Unknown combat recovery group action: ${action}` };
     }
   }
 
-  static async triggerNaturalHealing() {
+  static async triggerNaturalHealing({ actors = this.getPartyActors(), target = null } = {}) {
     const result = await GMHealingTrigger.triggerNaturalHealing({
+      actors,
       isFullRest: true,
       skipHolonetNotification: false,
       skipMechanicalRecoveryHook: true
     });
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
     return {
       success: result.success !== false,
       action: 'natural-healing',
+      target,
       healed: result.healed ?? [],
       skipped: result.skipped ?? [],
-      message: result.error || `Natural healing complete: ${result.totalHealed ?? 0} healed, ${result.totalSkipped ?? 0} skipped.`
+      message: result.error || `Natural healing${targetLabel} complete: ${result.totalHealed ?? 0} healed, ${result.totalSkipped ?? 0} skipped.`
     };
   }
 
-  static async performRest({ restType, isFullRest, duration }) {
-    const actors = this.getManagedActors();
+  static async applyHitPointDeltaToActors({ actors = [], target = null, amount = 0, mode = 'heal' } = {}) {
+    const value = Math.max(0, safeNumber(amount, 0));
+    if (value <= 0) return { success: false, error: 'Enter a positive HP amount for the target action.' };
+
+    const affected = [];
+    const skipped = [];
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+
+    for (const actor of actors) {
+      if (!actor) continue;
+      try {
+        if (mode === 'heal') {
+          if (this.isDroid(actor) || this.isVehicle(actor)) {
+            skipped.push({ id: actor.id, name: actor.name, reason: 'repair_required' });
+            continue;
+          }
+          const result = await ActorEngine.applyHealing(actor, value, 'gm-combat-recovery-target-heal');
+          affected.push({ id: actor.id, name: actor.name, hp: result.applied ?? value });
+        } else if (mode === 'repair') {
+          if (!this.isDroid(actor) && !this.isVehicle(actor)) {
+            skipped.push({ id: actor.id, name: actor.name, reason: 'organic_healing_required' });
+            continue;
+          }
+          const result = await ActorEngine.applyHealing(actor, value, 'gm-combat-recovery-target-repair');
+          affected.push({ id: actor.id, name: actor.name, hp: result.applied ?? value });
+        } else if (mode === 'damage') {
+          const result = await ActorEngine.applyDamage(actor, {
+            amount: value,
+            type: 'gm-override',
+            source: 'gm-combat-recovery-target-damage'
+          });
+          affected.push({ id: actor.id, name: actor.name, hp: result.applied ?? value });
+        }
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err.message || `${mode}_failed` });
+      }
+    }
+
+    Hooks.callAll('swseGmCombatRecoveryCompleted', {
+      action: `${mode}-target`,
+      target,
+      amount: value,
+      affected,
+      skipped
+    });
+
+    const verb = mode === 'repair' ? 'Repair' : (mode === 'damage' ? 'Damage' : 'Heal');
+    return {
+      success: true,
+      action: `${mode}-target`,
+      target,
+      affected,
+      skipped,
+      message: `${verb} target${targetLabel}: ${affected.length} affected, ${skipped.length} skipped.`
+    };
+  }
+
+  static async performRest({ restType, isFullRest, duration, actors = this.getPartyActors(), target = null }) {
     const healed = [];
     const skipped = [];
     const canApplyHpRecovery = HealingRules.recoveryEnabled() && (isFullRest || !HealingRules.recoveryRequiresFullRest());
@@ -319,7 +481,8 @@ export class GMCombatRecoveryService {
     const secondWind = await this.resetSecondWindForActors({
       triggerEvent: restType,
       actors,
-      restTriggered: true
+      restTriggered: true,
+      target
     });
 
     Hooks.callAll('restCompleted', {
@@ -338,24 +501,59 @@ export class GMCombatRecoveryService {
       action: restType,
       isFullRest,
       duration,
+      target,
       healed,
       skipped,
       secondWind
     });
 
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
     return {
       success: true,
       action: restType,
+      target,
       healed,
       skipped,
       secondWind,
-      message: `${isFullRest ? 'Extended' : 'Short'} rest resolved: ${healed.length} recovered, ${secondWind.updated ?? 0} second wind reset, ${skipped.length} skipped.`
+      message: `${isFullRest ? 'Extended' : 'Short'} rest${targetLabel} resolved: ${healed.length} recovered, ${secondWind.updated ?? 0} second wind reset, ${skipped.length} skipped.`
     };
   }
 
-  static async resetSecondWindForActors({ triggerEvent, actors, restTriggered = false, ignoreTiming = false }) {
+  static async resetConditionForActors({ actors = [], target = null } = {}) {
+    let updated = 0;
+    let skipped = 0;
+    const details = [];
+
+    for (const actor of actors) {
+      if (!actor) {
+        skipped += 1;
+        continue;
+      }
+      try {
+        await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-target-reset-condition');
+        updated += 1;
+        details.push({ id: actor.id, name: actor.name, reset: true });
+      } catch (err) {
+        skipped += 1;
+        details.push({ id: actor.id, name: actor.name, reason: err.message || 'reset_condition_failed' });
+      }
+    }
+
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return {
+      success: true,
+      action: 'reset-condition',
+      target,
+      updated,
+      skipped,
+      details,
+      message: `Condition reset${targetLabel}: ${updated} updated, ${skipped} skipped.`
+    };
+  }
+
+  static async resetSecondWindForActors({ triggerEvent, actors, restTriggered = false, ignoreTiming = false, target = null }) {
     if (!ignoreTiming && !SecondWindEngine.shouldResetSecondWind(triggerEvent)) {
-      return { updated: 0, skipped: actors.length, reason: `Second Wind does not reset on ${triggerEvent}.` };
+      return { success: true, updated: 0, skipped: actors.length, reason: `Second Wind does not reset on ${triggerEvent}.`, message: `Second Wind does not reset on ${triggerEvent}.` };
     }
 
     let updated = 0;
@@ -382,7 +580,8 @@ export class GMCombatRecoveryService {
       }
     }
 
-    return { updated, skipped, details };
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    return { success: true, updated, skipped, details, target, message: `Second Wind reset${targetLabel}: ${updated} updated, ${skipped} skipped.` };
   }
 
   static getActiveCombatActors() {
@@ -391,8 +590,7 @@ export class GMCombatRecoveryService {
       .filter(Boolean);
   }
 
-  static async fullOrganicRecovery() {
-    const actors = this.getManagedActors();
+  static async fullOrganicRecovery({ actors = this.getPartyActors(), target = null } = {}) {
     const recovered = [];
     const skipped = [];
 
@@ -417,16 +615,19 @@ export class GMCombatRecoveryService {
 
     Hooks.callAll('swseGmCombatRecoveryCompleted', {
       action: 'full-organic-recovery',
+      target,
       recovered,
       skipped
     });
 
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
     return {
       success: true,
       action: 'full-organic-recovery',
+      target,
       healed: recovered,
       skipped,
-      message: `GM full organic recovery complete: ${recovered.length} recovered, ${skipped.length} skipped.`
+      message: `GM full organic recovery${targetLabel} complete: ${recovered.length} recovered, ${skipped.length} skipped.`
     };
   }
 
@@ -496,6 +697,14 @@ export class GMCombatRecoveryService {
           await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-repair-full');
           return { success: true, message: `${actor.name} repaired to full operational status.` };
         }
+        case 'short-rest':
+          return this.executeGroupAction('short-rest', { targetMode: 'selected', actorIds: [actor.id] });
+        case 'extended-rest':
+          return this.executeGroupAction('extended-rest', { targetMode: 'selected', actorIds: [actor.id] });
+        case 'encounter-reset':
+          return this.executeGroupAction('encounter-reset', { targetMode: 'selected', actorIds: [actor.id] });
+        case 'full-organic-recovery':
+          return this.executeGroupAction('full-organic-recovery', { targetMode: 'selected', actorIds: [actor.id] });
         default:
           return { success: false, error: `Unknown actor action: ${action}` };
       }

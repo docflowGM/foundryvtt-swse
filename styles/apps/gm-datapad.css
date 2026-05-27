@@ -4737,3 +4737,93 @@
     position: static;
   }
 }
+
+/* GM Combat & Recovery targeting controls */
+.combat-recovery-target-bar {
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) minmax(180px, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.58);
+  padding: 0.7rem;
+  margin-bottom: 0.85rem;
+}
+
+.combat-recovery-target-bar label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.combat-recovery-target-bar label span,
+.combat-recovery-target-bar p,
+.combat-recovery-target-note {
+  font-size: 0.72rem;
+  opacity: 0.78;
+}
+
+.combat-recovery-target-bar p {
+  margin: 0;
+}
+
+.combat-recovery-target-bar select {
+  min-height: 32px;
+}
+
+.combat-recovery-target-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.combat-recovery-selected-pill {
+  grid-column: 1 / -1;
+  justify-self: end;
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  background: rgba(2, 6, 23, 0.55);
+}
+
+.combat-recovery-select {
+  display: grid;
+  gap: 0.12rem;
+  justify-items: center;
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+.combat-recovery-select input {
+  margin: 0;
+}
+
+@media (max-width: 980px) {
+  .combat-recovery-target-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .combat-recovery-target-buttons,
+  .combat-recovery-selected-pill {
+    justify-self: stretch;
+    justify-content: flex-start;
+  }
+}
+
+.combat-recovery-group-amount {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  opacity: 0.9;
+}
+
+.combat-recovery-group-amount input {
+  width: 76px;
+  text-align: right;
+}

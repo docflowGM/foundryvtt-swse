@@ -2490,11 +2490,39 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-healing');
     if (!pageElement) return;
 
+    const updateSelectedCount = () => {
+      const count = pageElement.querySelectorAll('[name="combatRecoveryActorTarget"]:checked').length;
+      pageElement.querySelectorAll('[data-combat-selected-count]').forEach((node) => { node.textContent = String(count); });
+    };
+
+    pageElement.querySelectorAll('[name="combatRecoveryActorTarget"]').forEach((checkbox) => {
+      checkbox.addEventListener('change', updateSelectedCount);
+    });
+
+    pageElement.querySelectorAll('[data-combat-target-select]').forEach((button) => {
+      button.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const mode = ev.currentTarget.dataset.combatTargetSelect;
+        const checkboxes = Array.from(pageElement.querySelectorAll('[name="combatRecoveryActorTarget"]'));
+        for (const checkbox of checkboxes) {
+          if (mode === 'clear') checkbox.checked = false;
+          else if (mode === 'all') checkbox.checked = true;
+          else if (mode === 'party') checkbox.checked = checkbox.dataset.partyActor === 'true';
+          else if (mode === 'attention') checkbox.checked = checkbox.dataset.needsAttention === 'true';
+          else if (mode === 'combat') checkbox.checked = checkbox.dataset.inCombat === 'true';
+        }
+        updateSelectedCount();
+      });
+    });
+
+    updateSelectedCount();
+
     pageElement.querySelectorAll('[data-combat-recovery-action], [data-action="trigger-healing"]').forEach((button) => {
       button.addEventListener('click', async (ev) => {
         ev.preventDefault();
         const action = ev.currentTarget.dataset.combatRecoveryAction || 'natural-healing';
-        await this._executeCombatRecoveryGroupAction(action);
+        const targetOptions = this._getCombatRecoveryTargetOptions(pageElement);
+        await this._executeCombatRecoveryGroupAction(action, targetOptions);
       });
     });
 
@@ -2508,6 +2536,15 @@ export class GMDatapad extends BaseSWSEAppV2 {
         await this._executeCombatRecoveryActorAction(actorId, action, { amount });
       });
     });
+  }
+
+  _getCombatRecoveryTargetOptions(pageElement) {
+    const targetMode = pageElement?.querySelector('[name="combatRecoveryTargetMode"]')?.value || 'party';
+    const actorIds = Array.from(pageElement?.querySelectorAll('[name="combatRecoveryActorTarget"]:checked') ?? [])
+      .map((input) => input.value)
+      .filter(Boolean);
+    const amount = Number(pageElement?.querySelector('[name="combatRecoveryGroupAmount"]')?.value ?? 0) || 0;
+    return { targetMode, actorIds, amount };
   }
 
   /**
@@ -3174,9 +3211,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
   /**
    * Execute a GM Combat & Recovery group action.
    */
-  async _executeCombatRecoveryGroupAction(action) {
+  async _executeCombatRecoveryGroupAction(action, options = {}) {
     try {
-      const result = await GMCombatRecoveryService.executeGroupAction(action);
+      const result = await GMCombatRecoveryService.executeGroupAction(action, options);
       if (result?.success) {
         ui?.notifications?.info?.(result.message || 'Combat recovery action complete.');
         SWSELogger.info('[GMDatapad] Combat recovery group action complete:', { action, result });
