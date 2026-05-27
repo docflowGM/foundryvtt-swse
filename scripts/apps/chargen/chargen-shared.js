@@ -554,3 +554,65 @@ export function _getAvailableTalentTrees() {
   // Convert Set to Array and return sorted
   return Array.from(talentTreesSet).sort();
 }
+
+const FALLBACK_RANDOM_NAMES = [
+  'Rax Venn Daal', 'Lyra Korr Sol', 'Jarek Solan Marr', 'Nyssa Val Marr', 'Torvan Kree Ossik',
+  'Kaela Vire Noor', 'Dax Pell Korr', 'Mira Sol Daal', 'Voren Kess Marr', 'Elra Venn Ash'
+];
+
+const FALLBACK_RANDOM_DROID_NAMES = [
+  'RX-44', 'P3-L9', 'R8-K5', 'C7-M4', 'D7-P3', 'K2-R6', 'M5-T8', 'BX-9R', 'T4-M9', 'HK-5Q'
+];
+
+let _randomNameSourceCache = null;
+
+function _pickRandomNameValue(values, fallback) {
+  const list = Array.isArray(values) ? values.filter(value => String(value ?? '').trim()) : [];
+  if (!list.length) return fallback;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+async function _loadRandomNameSource() {
+  if (_randomNameSourceCache) return _randomNameSourceCache;
+  try {
+    const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+    const CharacterGenerator = module?.default;
+    _randomNameSourceCache = {
+      living: Array.isArray(CharacterGenerator?.RANDOM_NAMES)
+        ? CharacterGenerator.RANDOM_NAMES.slice()
+        : FALLBACK_RANDOM_NAMES.slice(),
+      droid: Array.isArray(CharacterGenerator?.RANDOM_DROID_NAMES)
+        ? CharacterGenerator.RANDOM_DROID_NAMES.slice()
+        : FALLBACK_RANDOM_DROID_NAMES.slice()
+    };
+  } catch (err) {
+    SWSELogger.warn('[CHARGEN] Random name source unavailable; using fallback names.', err);
+    _randomNameSourceCache = {
+      living: FALLBACK_RANDOM_NAMES.slice(),
+      droid: FALLBACK_RANDOM_DROID_NAMES.slice()
+    };
+  }
+  return _randomNameSourceCache;
+}
+
+/**
+ * Shared living-being random name generator used by chargen/progression and game opponents.
+ * Reuses the existing CharacterGenerator static name list without duplicating name data here.
+ *
+ * @returns {Promise<string>} Random living-being name.
+ */
+export async function getRandomName() {
+  const source = await _loadRandomNameSource();
+  return _pickRandomNameValue(source.living, 'Wandering Gambler');
+}
+
+/**
+ * Shared droid random name generator used by chargen/progression and game opponents.
+ * Reuses the existing CharacterGenerator static droid-name list without duplicating name data here.
+ *
+ * @returns {Promise<string>} Random droid designation.
+ */
+export async function getRandomDroidName() {
+  const source = await _loadRandomNameSource();
+  return _pickRandomNameValue(source.droid, 'RX-44');
+}

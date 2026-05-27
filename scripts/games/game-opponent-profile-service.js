@@ -8,43 +8,19 @@ import {
 } from './games/pazaak/pazaak-ai-personalities.js';
 import { getGameSettingsSnapshot } from './game-settings.js';
 
-const FALLBACK_LIVING_NAMES = [
-  'Rax Venn Daal', 'Lyra Korr Sol', 'Jarek Solan Marr', 'Nyssa Val Marr', 'Torvan Kree Ossik',
-  'Kaela Vire Noor', 'Dax Pell Korr', 'Mira Sol Daal', 'Voren Kess Marr', 'Elra Venn Ash'
-];
-
-const FALLBACK_DROID_NAMES = [
-  'RX-44', 'P3-L9', 'R8-K5', 'C7-M4', 'D7-P3', 'K2-R6', 'M5-T8', 'BX-9R', 'T4-M9', 'HK-5Q'
-];
-
-let chargenNameCache = null;
-
-function randomItem(items = [], fallback = '') {
-  const list = Array.isArray(items) ? items.filter(item => item != null && String(item).trim()) : [];
-  if (!list.length) return fallback;
-  return list[Math.floor(Math.random() * list.length)];
-}
-
-async function loadChargenNames() {
-  if (chargenNameCache) return chargenNameCache;
-  try {
-    const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
-    const CharacterGenerator = module?.default;
-    chargenNameCache = {
-      living: Array.isArray(CharacterGenerator?.RANDOM_NAMES) ? CharacterGenerator.RANDOM_NAMES.slice() : FALLBACK_LIVING_NAMES.slice(),
-      droid: Array.isArray(CharacterGenerator?.RANDOM_DROID_NAMES) ? CharacterGenerator.RANDOM_DROID_NAMES.slice() : FALLBACK_DROID_NAMES.slice()
-    };
-  } catch (_err) {
-    chargenNameCache = { living: FALLBACK_LIVING_NAMES.slice(), droid: FALLBACK_DROID_NAMES.slice() };
-  }
-  return chargenNameCache;
-}
-
 export class GameOpponentProfileService {
   static async randomName(kind = 'living') {
-    const names = await loadChargenNames();
-    const list = kind === 'droid' ? names.droid : names.living;
-    return randomItem(list, kind === 'droid' ? 'RX-44' : 'Wandering Gambler');
+    try {
+      const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
+      const picker = kind === 'droid' ? module?.getRandomDroidName : module?.getRandomName;
+      if (typeof picker === 'function') {
+        const name = await picker();
+        if (String(name ?? '').trim()) return name;
+      }
+    } catch (_err) {
+      // Fall through to safe generic labels below.
+    }
+    return kind === 'droid' ? 'RX-44' : 'Wandering Gambler';
   }
 
   static rollForceSensitive(settings = getGameSettingsSnapshot()) {
