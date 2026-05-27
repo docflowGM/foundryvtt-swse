@@ -1,4 +1,4 @@
-import { boardDistance, reachableSpaces } from './dejarik-board.js';
+import { boardDistance, parseSpaceId, reachableSpaces, shortestPath, spaceId } from './dejarik-board.js';
 
 export function alivePieces(state = {}) {
   return Object.values(state.pieces || {}).filter(piece => piece && !piece.defeated && Number(piece.hp || 0) > 0);
@@ -24,7 +24,7 @@ export function legalMoveSpaceIds(state = {}, piece = {}) {
 
 export function legalAttackTargets(state = {}, attacker = {}) {
   if (!attacker || attacker.defeated) return [];
-  return alivePieces(state).filter(defender => canAttackPiece(attacker, defender).ok);
+  return alivePieces(state).filter(defender => canAttackPiece(attacker, defender, state).ok);
 }
 
 export function canMovePiece(state = {}, piece = {}, toSpaceId = '') {
@@ -39,7 +39,41 @@ export function canMovePiece(state = {}, piece = {}, toSpaceId = '') {
   return { ok: true };
 }
 
-export function canAttackPiece(attacker = {}, defender = {}) {
+export function attackPathSpaces(state = {}, attacker = {}, defender = {}) {
+  if (!attacker?.spaceId || !defender?.spaceId) return [];
+  const from = parseSpaceId(attacker.spaceId);
+  const to = parseSpaceId(defender.spaceId);
+  if (!from || !to) return [];
+  const path = [];
+  if (from.ray === to.ray) {
+    const step = from.ring < to.ring ? 1 : -1;
+    for (let ring = from.ring + step; ring !== to.ring; ring += step) path.push(spaceId(ring, from.ray));
+    return path;
+  }
+  if (from.ring === to.ring) {
+    const clockwise = (to.ray - from.ray + 8) % 8;
+    const counter = (from.ray - to.ray + 8) % 8;
+    const step = clockwise <= counter ? 1 : -1;
+    let ray = from.ray;
+    for (let i = 1; i < Math.min(clockwise, counter); i += 1) {
+      ray = (ray + step + 8) % 8;
+      path.push(spaceId(from.ring, ray));
+    }
+    return path;
+  }
+  return shortestPath(attacker.spaceId, defender.spaceId).slice(1, -1);
+}
+
+export function hasAttackLineOfSight(state = {}, attacker = {}, defender = {}) {
+  if (!state?.board) return { ok: true, blockedBy: null, path: [] };
+  const path = attackPathSpaces(state, attacker, defender);
+  const occupied = occupiedSpaces(state, attacker.id);
+  occupied.delete(defender.spaceId);
+  const blockedBy = path.find(spaceId => occupied.has(spaceId)) || null;
+  return { ok: !blockedBy, blockedBy, path };
+}
+
+export function canAttackPiece(attacker = {}, defender = {}, state = null) {
   if (!attacker || !defender) return { ok: false, error: 'Missing attacker or defender.' };
   if (!attacker.spaceId || !defender.spaceId) return { ok: false, error: 'Missing attacker or defender space.' };
   if (attacker.defeated || defender.defeated) return { ok: false, error: 'Defeated pieces cannot attack or be attacked.' };
@@ -49,6 +83,11 @@ export function canAttackPiece(attacker = {}, defender = {}) {
   const distance = boardDistance(attacker.spaceId, defender.spaceId);
   if (!Number.isFinite(distance)) return { ok: false, error: 'Target is not reachable on this board.' };
   if (distance > Number(attacker.rng || 1)) return { ok: false, error: 'Target is out of range.' };
+  if (state) {
+    const line = hasAttackLineOfSight(state, attacker, defender);
+    if (!line.ok) return { ok: false, error: 'Line of sight is blocked.', blockedBy: line.blockedBy, distance, path: line.path };
+    return { ok: true, distance, path: line.path };
+  }
   return { ok: true, distance };
 }
 

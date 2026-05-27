@@ -11,6 +11,9 @@ import { playableSideCardStatus, scorePazaakPlayer } from './pazaak-rules.js';
 import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
 import { PazaakAi, buildPazaakAiProfile } from './pazaak-ai.js';
 
+const PAZAAK_CARD_FRONT_IMAGE = '/systems/foundryvtt-swse/assets/cards/pazaak/custom.png';
+const PAZAAK_CARD_BACK_IMAGE = '/systems/foundryvtt-swse/assets/cards/pazaak/back.png';
+
 function cardTone(card = {}) {
   if (card.tone) return card.tone;
   if (Number(card.value || 0) > 0) return 'plus';
@@ -23,17 +26,30 @@ function scoreLabel(value) {
   return number > 0 ? `+${number}` : String(number);
 }
 
+function cardVisual(card = {}, label = '') {
+  const tone = cardTone(card);
+  return {
+    image: PAZAAK_CARD_FRONT_IMAGE,
+    backImage: PAZAAK_CARD_BACK_IMAGE,
+    hasTemplateImage: true,
+    visualLabel: label || card.shortLabel || card.label || scoreLabel(card.value),
+    visualTone: tone === 'main' ? 'neutral' : tone
+  };
+}
+
 function mapTableCard(card = {}) {
   const value = Number(card.value || 0);
+  const label = card.label || card.shortLabel || scoreLabel(value);
   return {
     id: card.instanceId || card.catalogId || card.id,
-    label: card.label || card.shortLabel || scoreLabel(value),
+    label,
     value,
     valueLabel: scoreLabel(value),
     source: card.source || 'main',
     tone: cardTone(card),
     isSide: card.source === 'side',
-    isMain: card.source === 'main'
+    isMain: card.source === 'main',
+    ...cardVisual(card, label)
   };
 }
 
@@ -50,14 +66,17 @@ function choiceForms(card = {}) {
 function mapHandCard(card = {}, player = {}, canAct = false) {
   const status = playableSideCardStatus(player, card, card.requiresChoice ? { sign: 'plus', value: 1 } : {});
   const forms = choiceForms(card);
+  const label = card.shortLabel || card.label || card.id;
   return {
     ...card,
     id: card.instanceId,
     catalogId: card.catalogId || card.id,
     label: card.label || card.shortLabel || card.id,
+    visualLabel: label,
     tone: cardTone(card),
     canPlay: Boolean(canAct && (forms.requiresChoice || status.playable)),
     disabledReason: status.reason,
+    ...cardVisual(card, label),
     ...forms
   };
 }
@@ -155,7 +174,8 @@ export class PazaakViewModel {
       ...card,
       selected: effectiveSelected.has(card.id),
       locked: Boolean(currentPlayer?.sideDeckLocked),
-      toneClass: `tone-${card.tone || 'neutral'}`
+      toneClass: `tone-${card.tone || 'neutral'}`,
+      ...cardVisual(card, card.shortLabel || card.label)
     }));
     const selectedCount = effectiveSelected.size;
     const canLockDeck = currentSeatCanLock(session, state, currentSeat);
@@ -201,6 +221,7 @@ export class PazaakViewModel {
       setNumber: Number(state.setNumber || 0),
       activeSeatId: state.activeSeatId || null,
       activeSeatLabel: state.activeSeatId ? (seats.find(seat => seat.seatId === state.activeSeatId)?.displayName || 'Unknown') : '—',
+      debug: game?.user?.isGM ? (state.debug || null) : null,
       currentSeatId,
       hasCurrentSeat: Boolean(currentSeatId),
       viewerSeat,

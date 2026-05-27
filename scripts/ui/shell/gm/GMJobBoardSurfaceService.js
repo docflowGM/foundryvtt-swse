@@ -5,6 +5,19 @@ import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsyst
 const THREAD_TYPE_JOB = 'job';
 const PARTY_FUND_RECIPIENT_ID = 'party-fund';
 
+function getSwseSetting(key, fallback = null) {
+  try {
+    return game.settings?.get?.('foundryvtt-swse', key) ?? fallback;
+  } catch (_err) {
+    return fallback;
+  }
+}
+
+function isPartyFundEnabled() {
+  return Boolean(getSwseSetting('holonetPartyFundEnabled', false));
+}
+
+
 const JOB_STATUS_LABELS = Object.freeze({
   draft: 'Draft',
   posted: 'Open',
@@ -193,8 +206,42 @@ function nonGmParticipants(thread) {
 function payoutTargets(thread) {
   const participants = nonGmParticipants(thread).filter(row => row.actorId);
   const rows = participants.map(row => ({ id: row.id, label: row.label, actorId: row.actorId }));
-  rows.push({ id: PARTY_FUND_RECIPIENT_ID, label: 'Party Fund', actorId: null });
+  if (isPartyFundEnabled()) rows.push({ id: PARTY_FUND_RECIPIENT_ID, label: 'Party Fund', actorId: null, partyFund: true });
   return rows;
+}
+
+function jobCreationRecipients() {
+  const users = Array.from(game.users?.contents ?? game.users ?? []);
+  return users
+    .filter(user => !user?.isGM && user?.character)
+    .map(user => ({
+      id: `player:${user.id}`,
+      label: user.character?.name || user.name || 'Player',
+      actorId: user.character?.id ?? null,
+      userName: user.name || 'Player'
+    }));
+}
+
+function clientTypeOptions() {
+  return [
+    { value: 'mentor', label: 'Mentor' },
+    { value: 'faction', label: 'Faction' },
+    { value: 'npc', label: 'NPC / Actor' },
+    { value: 'customNpc', label: 'Custom NPC' }
+  ];
+}
+
+function payoutModeOptions() {
+  const modes = [
+    { value: 'single', label: 'Pay a single player' },
+    { value: 'eachFull', label: 'Pay every selected player full amount' },
+    { value: 'splitEvenly', label: 'Split evenly among selected players' }
+  ];
+  if (isPartyFundEnabled()) {
+    modes.unshift({ value: 'partyFund', label: 'Pay all to Party Fund' });
+    modes.push({ value: 'splitWithPartyCut', label: 'Split evenly after Party Fund cut' });
+  }
+  return modes;
 }
 
 function rewardSummary(job, objectives) {
@@ -290,6 +337,13 @@ export class GMJobBoardSurfaceService {
           payout: payoutItems.length,
           archived: jobs.filter(job => ['paid', 'archived', 'failed'].includes(job.status)).length
         },
+        creation: {
+          recipients: jobCreationRecipients(),
+          clientTypes: clientTypeOptions(),
+          hasRecipients: jobCreationRecipients().length > 0
+        },
+        payoutModes: payoutModeOptions(),
+        partyFundEnabled: isPartyFundEnabled(),
         hasJobs: jobs.length > 0,
         hasReview: reviewItems.length > 0,
         hasPayout: payoutItems.length > 0
@@ -337,6 +391,7 @@ export class GMJobBoardSurfaceService {
       participantCount: participants.length,
       participants,
       payoutTargets: payoutTargets(thread),
+      actorPayoutTargets: payoutTargets(thread).filter(row => row.actorId),
       rewards,
       rewardItemUuids: itemUuids,
       hasAttachedItemRewards: itemUuids.length > 0,

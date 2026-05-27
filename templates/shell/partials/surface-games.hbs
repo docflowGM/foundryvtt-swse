@@ -133,8 +133,10 @@
                 {{#each vm.activeTable.pazaak.catalog}}
                 <label class="swse-pazaak-catalog-card {{this.toneClass}} {{#if this.selected}}is-selected{{/if}}">
                   <input type="checkbox" name="sideDeckIds" value="{{this.id}}" data-pazaak-side-card {{#if this.selected}}checked{{/if}}>
-                  <span class="swse-pazaak-card-face">
-                    <b>{{this.shortLabel}}</b>
+                  <span class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
+                    {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
+                    <span class="swse-pazaak-template-card__wash"></span>
+                    <b>{{this.visualLabel}}</b>
                     <small>{{this.label}}</small>
                   </span>
                   <span class="swse-pazaak-card-desc">{{this.description}}</span>
@@ -186,8 +188,10 @@
                 <div class="swse-pazaak-table-cards">
                   {{#if this.hasTableCards}}
                     {{#each this.tableCards}}
-                    <span class="swse-pazaak-played-card tone-{{this.tone}}">
-                      <b>{{this.label}}</b>
+                    <span class="swse-pazaak-played-card swse-pazaak-template-card tone-{{this.visualTone}}">
+                      {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
+                      <span class="swse-pazaak-template-card__wash"></span>
+                      <b>{{this.visualLabel}}</b>
                       <small>{{this.valueLabel}}</small>
                     </span>
                     {{/each}}
@@ -228,8 +232,10 @@
               <div class="swse-pazaak-hand-grid">
                 {{#each vm.activeTable.pazaak.viewerSeat.hand}}
                 <article class="swse-pazaak-hand-card tone-{{this.tone}}">
-                  <div class="swse-pazaak-card-face">
-                    <b>{{this.shortLabel}}</b>
+                  <div class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
+                    {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
+                    <span class="swse-pazaak-template-card__wash"></span>
+                    <b>{{this.visualLabel}}</b>
                     <small>{{this.label}}</small>
                   </div>
                   <p>{{this.description}}</p>
@@ -238,22 +244,18 @@
                     <input type="hidden" name="seatId" value="{{this.seatId}}">
                     <input type="hidden" name="cardInstanceId" value="{{this.id}}">
                     {{#if this.signOnly}}
-                    <select name="sign">
-                      <option value="plus">+</option>
-                      <option value="minus">-</option>
-                    </select>
+                    <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>Play +</button>
+                    <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>Play −</button>
+                    {{else}}
+                      {{#if this.signAndValue}}
+                      <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>+1</button>
+                      <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="2" {{#unless this.canPlay}}disabled{{/unless}}>+2</button>
+                      <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>−1</button>
+                      <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="2" {{#unless this.canPlay}}disabled{{/unless}}>−2</button>
+                      {{else}}
+                      <button type="submit" class="swse-games-primary" {{#unless this.canPlay}}disabled{{/unless}}>Play</button>
+                      {{/if}}
                     {{/if}}
-                    {{#if this.signAndValue}}
-                    <select name="sign">
-                      <option value="plus">+</option>
-                      <option value="minus">-</option>
-                    </select>
-                    <select name="value">
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                    </select>
-                    {{/if}}
-                    <button type="submit" class="swse-games-primary" {{#unless this.canPlay}}disabled{{/unless}}>Play</button>
                   </form>
                 </article>
                 {{/each}}
@@ -348,15 +350,17 @@
           <div class="swse-pazaak-alert">
             <b>{{vm.activeTable.sabacc.message}}</b>
             {{#if vm.activeTable.sabacc.showBetting}}<span>Betting: {{vm.activeTable.sabacc.activeSeatLabel}} acts · live bet {{vm.activeTable.sabacc.betting.currentBet}}</span>{{/if}}
-            {{#if vm.activeTable.sabacc.showDrawing}}<span>Active turn: {{vm.activeTable.sabacc.activeSeatLabel}}</span>{{/if}}
+            {{#if vm.activeTable.sabacc.showDrawing}}<span>Card round {{vm.activeTable.sabacc.cardRound}} · active turn: {{vm.activeTable.sabacc.activeSeatLabel}}</span>{{/if}}
+            {{#if vm.activeTable.sabacc.shiftRollLabel}}<span>Shift dice: {{vm.activeTable.sabacc.shiftRollLabel}}{{#if vm.activeTable.sabacc.shiftMatched}} · forced shift triggered{{/if}}</span>{{/if}}
             {{#if vm.activeTable.sabacc.showComplete}}<span>Winner: {{vm.activeTable.sabacc.winnerLabel}}</span>{{/if}}
             <span>Hand pot: {{vm.activeTable.sabacc.handPot}} · Sabacc pot: {{vm.activeTable.sabacc.sabaccPot}}</span>
+            {{#if vm.activeTable.sabacc.hasShowdown}}<span>Showdown: {{#if vm.activeTable.sabacc.showdown.winnerLabel}}{{vm.activeTable.sabacc.showdown.winnerLabel}}{{else}}{{vm.activeTable.sabacc.showdown.tiedLabels}}{{/if}} · {{vm.activeTable.sabacc.showdown.reason}}</span>{{/if}}
           </div>
 
           <section class="swse-pazaak-play">
             <div class="swse-pazaak-seat-grid">
               {{#each vm.activeTable.sabacc.seats}}
-              <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bombedOut}}is-bust{{/if}}">
+              <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bombedOut}}is-bust{{/if}} {{#if this.isShowdownReveal}}is-revealed{{/if}}">
                 <header>
                   <div>
                     <b>{{this.displayName}}</b>
@@ -364,6 +368,7 @@
                     {{#if this.isAi}}
                     <small>AI: {{this.aiProfileLabel}}</small>
                     {{#if this.aiLastDecision}}<small class="swse-sabacc-ai-read">{{this.aiLastDecision}}</small>{{/if}}
+                    {{#if this.revealLabel}}<small class="swse-sabacc-reveal">{{this.revealLabel}}</small>{{/if}}
                     {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
                     {{#if this.tableFact}}<small class="swse-pazaak-table-fact">{{this.tableFact}}</small>{{/if}}
                     {{/if}}
@@ -398,9 +403,9 @@
                 </div>
                 <div class="swse-pazaak-turn-actions">
                   <form data-games-action="sabacc-check"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.betting.canCheck}}disabled{{/unless}}>Check</button></form>
-                  <form data-games-action="sabacc-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><input type="hidden" name="amount" value="{{vm.activeTable.sabacc.betting.minBet}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.sabacc.betting.canBet}}disabled{{/unless}}>Bet {{vm.activeTable.sabacc.betting.minBet}}</button></form>
+                  <form data-games-action="sabacc-bet" class="swse-games-inline-amount"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><input type="number" name="amount" min="{{vm.activeTable.sabacc.betting.minBet}}" max="{{vm.activeTable.sabacc.betting.maxBet}}" step="1" value="{{vm.activeTable.sabacc.betting.suggestedBet}}" {{#unless vm.activeTable.sabacc.betting.canBet}}disabled{{/unless}}><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.sabacc.betting.canBet}}disabled{{/unless}}>Bet</button></form>
                   <form data-games-action="sabacc-call-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.sabacc.betting.canCall}}disabled{{/unless}}>Call {{vm.activeTable.sabacc.betting.toCall}}</button></form>
-                  <form data-games-action="sabacc-raise"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><input type="hidden" name="amount" value="{{vm.activeTable.sabacc.betting.minRaise}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.betting.canRaise}}disabled{{/unless}}>Raise {{vm.activeTable.sabacc.betting.minRaise}}</button></form>
+                  <form data-games-action="sabacc-raise" class="swse-games-inline-amount"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><input type="number" name="amount" min="{{vm.activeTable.sabacc.betting.minRaise}}" max="{{vm.activeTable.sabacc.betting.maxBet}}" step="1" value="{{vm.activeTable.sabacc.betting.suggestedRaise}}" {{#unless vm.activeTable.sabacc.betting.canRaise}}disabled{{/unless}}><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.betting.canRaise}}disabled{{/unless}}>Raise</button></form>
                   <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
                 </div>
               </div>
@@ -417,6 +422,20 @@
                   <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
                 </div>
               </div>
+              {{#if vm.activeTable.sabacc.hasMarket}}
+              <div class="swse-sabacc-market-row">
+                {{#each vm.activeTable.sabacc.market}}
+                <article class="swse-sabacc-market-card">
+                  <span class="swse-games-kicker">{{this.label}} · {{this.cost}} cr</span>
+                  <div class="swse-pazaak-card-face swse-sabacc-card-face sign-{{this.card.sign}}">
+                    {{#if this.card.hasImage}}<img src="{{this.card.image}}" alt="{{this.card.label}}">{{/if}}
+                    <b>{{this.card.shortLabel}}</b><small>{{this.card.label}}</small>
+                  </div>
+                  <form data-games-action="sabacc-buy-market-card"><input type="hidden" name="sessionId" value="{{../vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{../vm.activeTable.sabacc.currentSeatId}}"><input type="hidden" name="slotId" value="{{this.id}}"><button type="submit" class="swse-games-primary">Buy</button></form>
+                </article>
+                {{/each}}
+              </div>
+              {{/if}}
               <div class="swse-pazaak-hand-grid">
                 {{#each vm.activeTable.sabacc.viewerSeat.hand}}
                 <article class="swse-pazaak-hand-card">
@@ -425,6 +444,13 @@
                     <b>{{this.shortLabel}}</b><small>{{this.label}}</small>
                   </div>
                   <p>{{this.valueLabel}} · {{this.suitLabel}}</p>
+                  {{#if ../vm.activeTable.sabacc.hasMarket}}
+                  <div class="swse-sabacc-card-market-actions">
+                    {{#each this.market}}
+                    <form data-games-action="sabacc-trade-market-card"><input type="hidden" name="sessionId" value="{{../sessionId}}"><input type="hidden" name="seatId" value="{{../seatId}}"><input type="hidden" name="cardId" value="{{../id}}"><input type="hidden" name="slotId" value="{{this.id}}"><button type="submit" class="swse-games-ghost">Trade {{this.label}} ({{this.cost}})</button></form>
+                    {{/each}}
+                  </div>
+                  {{/if}}
                   <form data-games-action="sabacc-shift-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-primary" {{#unless this.canShift}}disabled{{/unless}}>Shift</button></form>
                   <form data-games-action="sabacc-discard-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-ghost" {{#unless this.canDiscard}}disabled{{/unless}}>Discard</button></form>
                 </article>
@@ -436,6 +462,9 @@
 
           {{#if vm.activeTable.sabacc.hasHandHistory}}
           <section class="swse-pazaak-history"><span class="swse-games-kicker">HAND HISTORY</span>{{#each vm.activeTable.sabacc.handHistory}}<div><b>Hand {{this.round}}</b><span>{{#if this.winnerLabel}}{{this.winnerLabel}} won{{else}}No winner{{/if}} · {{this.reason}}</span></div>{{/each}}</section>
+          {{/if}}
+          {{#if vm.activeTable.sabacc.hasGmAudit}}
+          <section class="swse-pazaak-history swse-pazaak-log swse-sabacc-gm-audit"><span class="swse-games-kicker">GM AI AUDIT</span>{{#each vm.activeTable.sabacc.gmAudit}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>
           {{/if}}
           {{#if vm.activeTable.sabacc.hasEventLog}}
           <section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">TABLE LOG</span>{{#each vm.activeTable.sabacc.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>
@@ -453,6 +482,13 @@
             </div>
             <div class="swse-pazaak-topbar__right">
               <span>{{vm.activeTable.dejarik.statusLabel}}</span>
+              {{#if vm.activeTable.dejarik.canRematch}}
+              <form data-games-action="dejarik-rematch">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+                <button type="submit" class="swse-games-primary">Rematch</button>
+              </form>
+              {{/if}}
               {{#if vm.activeTable.dejarik.canCancel}}
               <form data-games-action="dejarik-cancel-session">
                 <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
@@ -475,7 +511,8 @@
             <div class="swse-dejarik-selection-panel">
               <span class="swse-games-kicker">TACTICAL OVERLAY</span>
               <b data-dejarik-selection-label>{{#if vm.activeTable.dejarik.canAct}}Select one of your pieces{{else}}Awaiting activation{{/if}}</b>
-              <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Blue spaces are legal moves. Red spaces are enemy pieces you can attack.{{else}}Only the active player can move or attack.{{/if}}</small>
+              <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Blue spaces are legal moves. Red spaces are enemy pieces you can attack. Action model: {{vm.activeTable.dejarik.actionModelLabel}}.{{else}}Only the active player can move or attack.{{/if}}</small>
+              <div class="swse-dejarik-selection-stats" data-dejarik-selection-stats>Choose a holomonster to see HP, attack, range, movement, and ability notes.</div>
               {{#if vm.activeTable.dejarik.canAct}}
               <form data-games-action="dejarik-end-turn">
                 <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
@@ -501,7 +538,7 @@
                       title="{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}">
                 <small>{{this.id}}</small>
                 {{#if this.piece}}
-                <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}}" aria-hidden="true">{{this.piece.shortLabel}}</span>
+                <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}}" aria-hidden="true">{{#if this.piece.hasImage}}<img src="{{this.piece.image}}" alt="{{this.piece.label}}">{{else}}{{this.piece.shortLabel}}{{/if}}</span>
                 <b>{{this.piece.label}}</b>
                 <span>{{this.piece.hpLabel}} · {{this.piece.ownerLabel}}</span>
                 {{/if}}
@@ -519,8 +556,10 @@
               {{#each vm.activeTable.dejarik.viewerPieces}}
               <article class="swse-pazaak-hand-card swse-dejarik-piece-card">
                 <div class="swse-pazaak-card-face">
+                  {{#if this.hasImage}}<img class="swse-dejarik-piece-card__img" src="{{this.image}}" alt="{{this.label}}">{{/if}}
                   <b>{{this.label}}</b>
                   <small>ATK {{this.atk}} · HP {{this.hpLabel}} · RNG {{this.rng}} · MOV {{this.mov}}</small>
+                  <small>{{this.abilityLabel}}{{#if this.abilityDescription}} · {{this.abilityDescription}}{{/if}}</small>
                   <span class="swse-dejarik-hp"><i style="width: {{this.hpPct}}%"></i></span>
                 </div>
                 <button type="button"
@@ -528,6 +567,9 @@
                         data-dejarik-select-piece
                         data-piece-id="{{this.id}}"
                         data-piece-label="{{this.label}}"
+                        data-piece-detail="{{this.detailLine}}"
+                        data-piece-summary="{{this.tacticalSummary}}"
+                        data-piece-ability="{{this.abilityLabel}}: {{this.abilityDescription}}"
                         data-move-spaces="{{this.moveSpacesAttr}}"
                         data-attack-targets="{{this.attackTargetsAttr}}">
                   Highlight Moves
@@ -564,7 +606,7 @@
             <div>
               <span class="swse-games-kicker">HINTARO TABLE</span>
               <h3>{{vm.activeTable.hintaro.title}}</h3>
-              <p>Ante {{vm.activeTable.hintaro.ante}} · hintaron {{vm.activeTable.hintaro.hintaronLabel}} · round {{vm.activeTable.hintaro.round}}</p>
+              <p>Ante {{vm.activeTable.hintaro.ante}} · hintaron {{vm.activeTable.hintaro.hintaronLabel}} · {{vm.activeTable.hintaro.hintaronModeLabel}} · round {{vm.activeTable.hintaro.round}}</p>
             </div>
             <div class="swse-pazaak-topbar__right">
               <span>{{vm.activeTable.hintaro.statusLabel}}</span>
@@ -591,18 +633,18 @@
 
           <section class="swse-hintaro-die-rail">
             <div class="swse-hintaro-special-die tone-{{vm.activeTable.hintaro.hintaroDie.tone}}"><b>{{vm.activeTable.hintaro.hintaroDie.shortLabel}}</b><small>{{vm.activeTable.hintaro.hintaroDie.label}}</small></div>
-            <div><span class="swse-games-kicker">RANKS</span><p>Tukar to Kulro &gt; Quad Kulro &gt; Tukar Tukar &gt; Kulro Kulro. Hin cancels Tukar; Taro cancels Kulro.</p></div>
+            <div><span class="swse-games-kicker">RANKS</span><p>Hin cancels Tukar; Taro cancels Kulro.</p><ol class="swse-hintaro-rank-list">{{#each vm.activeTable.hintaro.rankOrder}}<li><b>{{this.label}}</b> <span>{{this.description}}</span></li>{{/each}}</ol></div>
           </section>
 
           <section class="swse-pazaak-play swse-hintaro-play">
             <div class="swse-pazaak-seat-grid">
               {{#each vm.activeTable.hintaro.seats}}
               <article class="swse-pazaak-seat swse-hintaro-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.dropped}}is-bust{{/if}}">
-                <header><div><b>{{this.displayName}}</b><span>{{this.statusLabel}} · wins {{this.wins}} · table credits {{this.tableCredits}}</span>{{#if this.isAi}}<small>AI chance-cube opponent</small>{{/if}}</div><strong>{{this.rankLabel}}</strong></header>
+                <header><div><b>{{this.displayName}}</b><span>{{this.statusLabel}} · wins {{this.wins}} · table credits {{this.tableCredits}}</span>{{#if this.isAi}}<small>AI: {{this.aiProfileLabel}}</small>{{/if}}</div><strong>{{this.rankLabel}}</strong></header>
                 <div class="swse-hintaro-cubes">
                   {{#if this.hasSymbols}}
-                    {{#each this.symbols}}
-                    <span class="swse-hintaro-cube tone-{{this.tone}}"><b>{{this.shortLabel}}</b><small>{{this.colorLabel}}</small></span>
+                    {{#each this.dice}}
+                    <span class="swse-hintaro-cube swse-hintaro-die tone-{{this.tone}}"><b>Die {{this.displayIndex}}</b><small>{{#each this.symbols}}<i class="tone-{{this.tone}}">{{this.shortLabel}}</i>{{/each}}</small></span>
                     {{/each}}
                   {{else}}
                     <span class="swse-pazaak-no-cards">No cubes rolled.</span>
@@ -633,8 +675,8 @@
                 <form data-games-action="hintaro-keep-roll"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Keep Roll</button></form>
               </div>
               <div class="swse-pazaak-hand-grid">
-                {{#each vm.activeTable.hintaro.viewerSeat.symbols}}
-                <form class="swse-hintaro-reroll-card" data-games-action="hintaro-reroll-die"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="dieIndex" value="{{this.index}}"><button type="submit" class="swse-hintaro-cube tone-{{this.tone}}"><b>{{this.shortLabel}}</b><small>Reroll {{this.displayIndex}}</small></button></form>
+                {{#each vm.activeTable.hintaro.viewerSeat.dice}}
+                <form class="swse-hintaro-reroll-card" data-games-action="hintaro-reroll-die"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="dieIndex" value="{{this.index}}"><button type="submit" class="swse-hintaro-cube swse-hintaro-die tone-{{this.tone}}"><b>Die {{this.displayIndex}}</b><small>Reroll this cube</small></button></form>
                 {{/each}}
               </div>
             </section>

@@ -252,6 +252,7 @@
                 {{/if}}
                 <span><span class="em">{{this.sender}}</span>{{#if this.isBreakingNews}} <span class="swse-home-feed-alert swse-home-feed-alert--breaking">BREAKING NEWS</span>{{else if this.isUrgent}} <span class="swse-home-feed-alert">ALERT</span>{{/if}} — {{{this.preview}}}</span>
                 <span class="swse-home-feed-time">{{this.timestamp}}</span>
+                {{#if this.isUnread}}<span class="swse-home-feed-ack">ACK</span>{{/if}}
               </button>
               {{else}}
               <p class="swse-home-feed-empty">No Holonet traffic yet.</p>

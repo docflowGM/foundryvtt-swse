@@ -99,7 +99,7 @@ export class GMDashboardSurfaceService {
         value: combatStatus.label,
         detail: combatStatus.detail,
         tone: combatStatus.active ? 'crit' : 'stable',
-        route: 'workspace',
+        route: 'healing',
         icon: 'fa-solid fa-crosshairs'
       },
       {
@@ -156,6 +156,15 @@ export class GMDashboardSurfaceService {
       activeRuleCount,
       recentTransactions,
       dashboardAlerts: this._buildDashboardAlerts({
+        badgeCounts,
+        sceneStatus,
+        combatStatus,
+        storeStatus,
+        partyStatus,
+        healingStatus,
+        bulletinStatus
+      }),
+      commandInbox: this._buildCommandInbox({
         badgeCounts,
         sceneStatus,
         combatStatus,
@@ -281,6 +290,49 @@ export class GMDashboardSurfaceService {
     }));
   }
 
+  static _buildCommandInbox({ badgeCounts, sceneStatus, combatStatus, storeStatus, partyStatus, healingStatus, bulletinStatus }) {
+    const items = [];
+    const add = (item) => items.push({
+      id: item.id ?? `inbox-${items.length + 1}`,
+      tone: item.tone ?? 'info',
+      source: item.source ?? 'GM',
+      label: item.label ?? 'Action item',
+      detail: item.detail ?? '',
+      route: item.route ?? 'home',
+      actionLabel: item.actionLabel ?? 'Open'
+    });
+
+    if ((badgeCounts.tradeFailed ?? 0) > 0) {
+      add({ tone: 'crit', source: 'Trade Console', label: `${badgeCounts.tradeFailed} failed trade settlement${badgeCounts.tradeFailed === 1 ? '' : 's'}`, detail: 'Review atomic diagnostics and rollback state.', route: 'trade', actionLabel: 'Review Trades' });
+    }
+    if ((badgeCounts.tradeApprovals ?? 0) > 0) {
+      add({ tone: 'warn', source: 'Trade Console', label: `${badgeCounts.tradeApprovals} trade approval${badgeCounts.tradeApprovals === 1 ? '' : 's'} pending`, detail: 'Approve, decline, or investigate pending Holonet trades.', route: 'trade', actionLabel: 'Open Queue' });
+    }
+    if ((badgeCounts.jobReview ?? 0) > 0) {
+      add({ tone: 'crit', source: 'Job Board', label: `${badgeCounts.jobReview} objective claim${badgeCounts.jobReview === 1 ? '' : 's'} need review`, detail: 'Approve, reject, fail, or reopen submitted objectives.', route: 'jobs', actionLabel: 'Review Jobs' });
+    }
+    if ((badgeCounts.jobPayout ?? 0) > 0) {
+      add({ tone: 'warn', source: 'Job Board', label: `${badgeCounts.jobPayout} completed contract${badgeCounts.jobPayout === 1 ? '' : 's'} ready for payout`, detail: 'Distribute credits, party-fund cuts, and rewards.', route: 'jobs', actionLabel: 'Pay Rewards' });
+    }
+    if ((badgeCounts.approvals ?? 0) > 0) {
+      add({ tone: 'warn', source: 'Approvals', label: `${badgeCounts.approvals} approval request${badgeCounts.approvals === 1 ? '' : 's'} pending`, detail: `${storeStatus.pendingApprovals} store · ${badgeCounts.pendingDroids ?? 0} droid`, route: 'approvals', actionLabel: 'Review' });
+    }
+    if (combatStatus.active) {
+      add({ tone: 'crit', source: 'Combat & Recovery', label: 'Encounter tracker is active', detail: combatStatus.detail, route: 'healing', actionLabel: 'Open Recovery' });
+    }
+    if (healingStatus.warningCount > 0) {
+      add({ tone: 'warn', source: 'Combat & Recovery', label: `${healingStatus.warningCount} recovery warning${healingStatus.warningCount === 1 ? '' : 's'}`, detail: `${healingStatus.eligible} eligible · ${healingStatus.ineligible} ineligible`, route: 'healing', actionLabel: 'Review Roster' });
+    }
+    if ((bulletinStatus.drafts ?? 0) > 0) {
+      add({ tone: 'info', source: 'Bulletin', label: `${bulletinStatus.drafts} bulletin draft${bulletinStatus.drafts === 1 ? '' : 's'}`, detail: 'Draft broadcasts can be published or archived.', route: 'bulletin', actionLabel: 'Open Bulletin' });
+    }
+    if (!sceneStatus.active) {
+      add({ tone: 'offline', source: 'Workspace', label: 'No active scene', detail: 'Scene context is unavailable for tactical commands.', route: 'workspace', actionLabel: 'Open Workspace' });
+    }
+
+    return items.slice(0, 12);
+  }
+
   static _buildDashboardAlerts({ badgeCounts, sceneStatus, combatStatus, storeStatus, partyStatus, healingStatus, bulletinStatus }) {
     const alerts = [];
 
@@ -301,7 +353,7 @@ export class GMDashboardSurfaceService {
     }
 
     if (combatStatus.active) {
-      alerts.push({ tone: 'crit', label: 'Combat active', detail: combatStatus.detail, route: 'workspace' });
+      alerts.push({ tone: 'crit', label: 'Combat active', detail: combatStatus.detail, route: 'healing' });
     }
 
     if (!partyStatus.hasState) {

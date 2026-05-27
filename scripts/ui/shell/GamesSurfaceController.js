@@ -212,12 +212,14 @@ export class GamesSurfaceController {
         ev.stopPropagation();
         const data = new FormData(form);
         const action = String(form.dataset.gamesAction || '').replace(/^pazaak-/, '');
+        const submitter = ev.submitter || null;
+        const choiceValue = Number(submitter?.dataset?.pazaakChoiceValue || data.get('value') || 0) || null;
         const payload = {
           cardInstanceId: String(data.get('cardInstanceId') || '').trim(),
           reason: String(data.get('reason') || '').trim(),
           choice: {
             sign: String(data.get('sign') || '').trim(),
-            value: Number(data.get('value') || 0) || null
+            value: choiceValue
           }
         };
         const result = await PazaakEngine.submitAction({
@@ -245,6 +247,7 @@ export class GamesSurfaceController {
           action,
           payload: {
             cardId: String(data.get('cardId') || '').trim(),
+            slotId: String(data.get('slotId') || '').trim(),
             amount: Number(data.get('amount') || 0) || 0,
             reason: String(data.get('reason') || '').trim()
           }
@@ -321,6 +324,7 @@ export class GamesSurfaceController {
     const seatId = String(board.dataset.seatId || '').trim();
     const selectionLabel = surface.querySelector('[data-dejarik-selection-label]');
     const selectionHelp = surface.querySelector('[data-dejarik-selection-help]');
+    const selectionStats = surface.querySelector('[data-dejarik-selection-stats]');
     const spaces = Array.from(board.querySelectorAll('[data-dejarik-space]'));
     const selectorButtons = Array.from(surface.querySelectorAll('[data-dejarik-select-piece]'));
 
@@ -339,6 +343,9 @@ export class GamesSurfaceController {
       if (!button) return;
       const pieceId = String(button.dataset.pieceId || '').trim();
       const pieceLabel = String(button.dataset.pieceLabel || 'Selected piece').trim();
+      const pieceDetail = String(button.dataset.pieceDetail || '').trim();
+      const pieceSummary = String(button.dataset.pieceSummary || '').trim();
+      const pieceAbility = String(button.dataset.pieceAbility || '').trim();
       if (!pieceId) return;
       resetHighlights();
       board.dataset.selectedPieceId = pieceId;
@@ -374,6 +381,7 @@ export class GamesSurfaceController {
 
       if (selectionLabel) selectionLabel.textContent = pieceLabel;
       if (selectionHelp) selectionHelp.textContent = 'Blue spaces move this piece. Red enemy spaces attack immediately.';
+      if (selectionStats) selectionStats.textContent = [pieceDetail, pieceSummary, pieceAbility].filter(Boolean).join(' • ');
     };
 
     selectorButtons.forEach(button => {

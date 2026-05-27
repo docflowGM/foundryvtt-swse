@@ -38,6 +38,10 @@ function pieceVm(piece = {}, session, state, viewerSeatId) {
   return {
     ...piece,
     shortLabel: pieceInitials(piece.label),
+    image: piece.image || '',
+    hasImage: Boolean(piece.image),
+    abilityLabel: piece.abilityLabel || piece.ability || 'Tactic',
+    abilityDescription: piece.abilityDescription || '',
     ownerLabel: seatName(session, piece.ownerSeatId),
     hpLabel: `${piece.hp}/${piece.maxHp}`,
     hpPct: Math.max(0, Math.min(100, Math.round((Number(piece.hp || 0) / Math.max(1, Number(piece.maxHp || 1))) * 100))),
@@ -48,6 +52,8 @@ function pieceVm(piece = {}, session, state, viewerSeatId) {
     defeated: Boolean(piece.defeated),
     canSelect: isViewerPiece && state.activeSeatId === viewerSeatId && !piece.defeated,
     targetOptions: attackTargets,
+    detailLine: `HP ${piece.hp}/${piece.maxHp} · ATK ${piece.atk} · RNG ${piece.rng} · MOV ${piece.mov}`,
+    tacticalSummary: `${moveOptions.length} legal move${moveOptions.length === 1 ? '' : 's'} · ${attackTargets.length} attack target${attackTargets.length === 1 ? '' : 's'}`,
     attackTargetsAttr: attackTargets.map(target => `${target.spaceId}:${target.id}`).join(' '),
     attackSpacesAttr: attackTargets.map(target => target.spaceId).join(' '),
     hasTargets: attackTargets.length > 0,
@@ -69,12 +75,15 @@ export class DejarikViewModel {
       phase: state.phase,
       statusLabel: state.statusLabel || state.phase,
       message: state.message || '',
+      actionModel: state.actionModel || 'single-action',
+      actionModelLabel: state.actionModel === 'move-then-attack' ? 'Move + Attack' : 'Single Action',
       currentSeatId: viewerSeatId,
       activeSeatLabel: state.activeSeatId ? seatName(session, state.activeSeatId) : '',
       winnerLabel: state.winnerSeatId ? seatName(session, state.winnerSeatId) : '',
       canCancel: Boolean(currentSeat && !['complete', 'cancelled'].includes(state.phase)),
       showPlaying: state.phase === 'playing',
       showComplete: state.phase === 'complete',
+      canRematch: Boolean(currentSeat && state.phase === 'complete'),
       seats: playableSeats(session).map(seat => {
         const isAi = seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile;
         const aiProfile = buildDejarikAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium');

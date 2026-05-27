@@ -976,6 +976,69 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-jobs');
     if (!pageElement) return;
 
+    pageElement.querySelectorAll('form[data-job-create-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const title = String(data.get('title') || '').trim();
+        if (!title) {
+          ui?.notifications?.warn?.('Job title is required.');
+          return;
+        }
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const objectives = ['primary', 'secondary', 'tertiary'].map((type, index) => ({
+          id: `${type}-${index + 1}`,
+          type,
+          title: String(data.get(`${type}Objective`) || '').trim(),
+          description: String(data.get(`${type}Description`) || '').trim(),
+          required: type === 'primary' || data.get(`${type}Required`) === 'on',
+          rewardCredits: Number(data.get(`${type}Credits`) || 0),
+          rewardXp: Number(data.get(`${type}Xp`) || 0),
+          rewardItems: String(data.get(`${type}Items`) || '').trim()
+        })).filter(objective => objective.title);
+        if (!objectives.some(objective => objective.type === 'primary')) {
+          ui?.notifications?.warn?.('At least one primary objective is required.');
+          return;
+        }
+        const client = {
+          type: String(data.get('clientType') || 'customNpc'),
+          name: String(data.get('clientName') || '').trim(),
+          factionName: String(data.get('clientFaction') || '').trim(),
+          imageUrl: String(data.get('clientImage') || '').trim(),
+          notes: String(data.get('clientNotes') || '').trim(),
+          saveForReuse: data.get('clientSave') === 'on'
+        };
+        const briefing = {
+          body: String(data.get('briefing') || '').trim(),
+          instructions: String(data.get('instructions') || '').trim(),
+          oocNote: String(data.get('oocNote') || '').trim()
+        };
+        const factionConsequences = {
+          successDelta: Number(data.get('factionSuccessDelta') || 0),
+          failureDelta: Number(data.get('factionFailureDelta') || 0),
+          notes: String(data.get('factionNotes') || '').trim()
+        };
+        const result = await HolonetMessengerService.createJobPosting({
+          actor: null,
+          title,
+          body: briefing.body,
+          recipientIds,
+          client,
+          objectives,
+          briefing,
+          factionConsequences,
+          status: String(data.get('status') || 'draft'),
+          rewardCredits: Number(data.get('flatCredits') || 0),
+          rewardItems: String(data.get('flatItems') || '').trim()
+        });
+        if (result?.threadId) {
+          this.selectedJobThreadId = result.threadId;
+          ui?.notifications?.info?.('Job contract created.');
+        }
+        await this.render(false);
+      });
+    });
+
     pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
@@ -1004,6 +1067,23 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
         if (!threadId || !objectiveId || !objectiveStatus) return;
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-distribution-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const amount = Number(data.get('amount') || 0);
+        const payoutMode = String(data.get('payoutMode') || 'single');
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
+        if (!threadId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout-distribution', amount, payoutMode, recipientId, recipientIds, partyFundCutPercent });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });

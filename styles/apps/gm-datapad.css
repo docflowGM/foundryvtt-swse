@@ -4943,3 +4943,136 @@
   border-color: rgba(80, 220, 150, 0.38);
   background: rgba(8, 58, 42, 0.34);
 }
+
+/* GM Holopad P2: command inbox + job contract wizard */
+.gm-command-inbox {
+  margin: 0 0 14px;
+}
+
+.gm-command-inbox-list {
+  display: grid;
+  gap: 8px;
+}
+
+.gm-command-inbox-row {
+  display: grid;
+  grid-template-columns: minmax(92px, 0.8fr) 2fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  border: 1px solid rgba(91, 213, 255, 0.22);
+  border-radius: 10px;
+  padding: 9px 11px;
+  background: rgba(3, 13, 26, 0.72);
+  color: var(--swse-text-primary, #e6f7ff);
+  text-align: left;
+}
+
+.gm-command-inbox-row.crit { border-color: rgba(255, 72, 72, 0.55); box-shadow: inset 3px 0 0 rgba(255, 72, 72, 0.75); }
+.gm-command-inbox-row.warn { border-color: rgba(255, 191, 72, 0.5); box-shadow: inset 3px 0 0 rgba(255, 191, 72, 0.7); }
+.gm-command-inbox-row.info { border-color: rgba(91, 213, 255, 0.45); }
+.gm-command-inbox-row.offline { opacity: 0.78; }
+
+.gm-command-inbox-source,
+.gm-command-inbox-action {
+  font: 700 10px/1 var(--swse-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--swse-accent-cyan, #5bd5ff);
+}
+
+.gm-command-inbox-main {
+  display: grid;
+  gap: 3px;
+}
+
+.gm-command-inbox-main em {
+  color: var(--swse-text-muted, #98a8b8);
+  font-style: normal;
+  font-size: 11px;
+}
+
+.job-contract-wizard {
+  margin: 0 0 14px;
+}
+
+.job-contract-form {
+  display: grid;
+  gap: 10px;
+}
+
+.job-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.job-contract-grid fieldset {
+  border: 1px solid rgba(91, 213, 255, 0.22);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(3, 13, 26, 0.58);
+}
+
+.job-contract-grid legend {
+  padding: 0 6px;
+  color: var(--swse-accent-cyan, #5bd5ff);
+  font: 700 10px/1 var(--swse-font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.job-contract-grid label,
+.job-payout-form label {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 7px;
+  color: var(--swse-text-muted, #98a8b8);
+  font-size: 11px;
+}
+
+.job-contract-grid input,
+.job-contract-grid select,
+.job-contract-grid textarea,
+.job-payout-form input,
+.job-payout-form select {
+  width: 100%;
+  border: 1px solid rgba(91, 213, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--swse-text-primary, #e6f7ff);
+  padding: 6px 8px;
+}
+
+.job-reward-row {
+  display: grid;
+  grid-template-columns: 0.6fr 0.6fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.job-inline-check {
+  display: flex !important;
+  grid-template-columns: none !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px !important;
+}
+
+.job-inline-check input[type="checkbox"] {
+  width: auto;
+}
+
+.job-recipient-picker {
+  display: grid;
+  gap: 5px;
+  padding: 7px;
+  border: 1px solid rgba(91, 213, 255, 0.16);
+  border-radius: 9px;
+  margin-bottom: 8px;
+}
+
+.job-distribution-form {
+  border-color: rgba(91, 213, 255, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(91, 213, 255, 0.08);
+}

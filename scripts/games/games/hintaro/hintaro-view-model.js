@@ -1,3 +1,4 @@
+import { buildGameAiProfile, labelForGameAiDifficulty } from '../../ai/game-ai-profile-service.js';
 import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
 import { evaluateHintaroRoll } from './hintaro-rules.js';
 
@@ -16,6 +17,16 @@ function symbolVm(symbol, index, sessionId = '', seatId = '') {
     shortLabel: isTukar ? 'T' : 'K',
     tone: isTukar ? 'tukar' : 'kulro',
     colorLabel: isTukar ? 'Blue' : 'Red',
+    sessionId,
+    seatId
+  };
+}
+function dieVm(symbols = [], dieIndex = 0, sessionId = '', seatId = '') {
+  return {
+    index: dieIndex,
+    displayIndex: dieIndex + 1,
+    symbols: safeArray(symbols).map((symbol, index) => symbolVm(symbol, index, sessionId, seatId)),
+    tone: safeArray(symbols).filter(symbol => symbol === 'tukar').length >= safeArray(symbols).filter(symbol => symbol === 'kulro').length ? 'tukar' : 'kulro',
     sessionId,
     seatId
   };
@@ -58,6 +69,7 @@ export class HintaroViewModel {
     const seatVms = seats.map(seat => {
       const player = state.players?.[seat.seatId] || {};
       const evaluation = player.evaluation || evaluateHintaroRoll(player.symbols || [], state.hintaroDie);
+      const aiProfile = isAutomatedSeat(seat) ? buildGameAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium', { personality: 'methodical' }) : null;
       const isViewer = seat.seatId === viewerSeat?.seatId;
       const showSymbols = true;
       return {
@@ -67,6 +79,7 @@ export class HintaroViewModel {
         profession: seat.profession || '',
         tableFact: seat.tableFact || '',
         isAi: isAutomatedSeat(seat),
+        aiProfileLabel: aiProfile ? `${labelForGameAiDifficulty(aiProfile.difficulty)} · ${aiProfile.personality} · ${aiProfile.fairness}` : '',
         isViewer,
         isCurrent: state.activeSeatId === seat.seatId,
         isHintaron: state.hintaronSeatId === seat.seatId,
@@ -76,6 +89,7 @@ export class HintaroViewModel {
         wins: safeAmount(player.wins),
         lastAction: player.lastAction || 'Waiting.',
         symbols: showSymbols ? safeArray(player.symbols).map((symbol, index) => symbolVm(symbol, index, session.id, seat.seatId)) : [],
+        dice: showSymbols ? (safeArray(player.dice).length ? safeArray(player.dice) : [safeArray(player.symbols).slice(0, 2), safeArray(player.symbols).slice(2, 4)]).map((die, index) => dieVm(die, index, session.id, seat.seatId)) : [],
         hasSymbols: safeArray(player.symbols).length > 0,
         rankLabel: evaluation.rankLabel || 'No Rank',
         modifiedLabel: `${evaluation.modified?.tukar ?? 0} Tukar / ${evaluation.modified?.kulro ?? 0} Kulro`,
@@ -96,6 +110,14 @@ export class HintaroViewModel {
       carriedPot: safeAmount(state.carriedPot),
       message: state.message || 'Hintaro table ready.',
       hintaronLabel: labelForSeat(session, state.hintaronSeatId),
+      hintaronMode: state.hintaronMode || 'rotating',
+      hintaronModeLabel: (state.hintaronMode || 'rotating') === 'casino' ? 'Casino fixed hintaron' : 'Casual rotating hintaron',
+      rankOrder: [
+        { label: 'Tukar to Kulro', description: 'Two Tukar and two Kulro after cancellations.' },
+        { label: 'Quad Kulro', description: 'Four Kulro after cancellations.' },
+        { label: 'Tukar Tukar', description: 'At least one Tukar pair.' },
+        { label: 'Kulro Kulro', description: 'At least one Kulro pair.' }
+      ],
       activeSeatLabel: labelForSeat(session, state.activeSeatId),
       currentSeatId,
       canCancel: ['ready', 'betting', 'reroll', 'round-complete'].includes(phase),
@@ -112,6 +134,7 @@ export class HintaroViewModel {
         canBettingAct: canAct && phase === 'betting',
         canRerollAct: canAct && phase === 'reroll',
         symbols: safeArray(viewerPlayer.symbols).map((symbol, index) => symbolVm(symbol, index, session.id, currentSeatId)),
+        dice: (safeArray(viewerPlayer.dice).length ? safeArray(viewerPlayer.dice) : [safeArray(viewerPlayer.symbols).slice(0, 2), safeArray(viewerPlayer.symbols).slice(2, 4)]).map((die, index) => dieVm(die, index, session.id, currentSeatId)),
         hasSymbols: safeArray(viewerPlayer.symbols).length > 0
       },
       seats: seatVms,

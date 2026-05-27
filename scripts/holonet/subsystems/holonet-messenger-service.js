@@ -1269,7 +1269,7 @@ export class HolonetMessengerService {
     });
   }
 
-  static async createJobPosting({ actor, title = '', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [] }) {
+  static async createJobPosting({ actor, title = '', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], client = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted' }) {
     if (!game.user?.isGM) return false;
     const payload = {
       actorId: actor?.id ?? null,
@@ -1281,20 +1281,29 @@ export class HolonetMessengerService {
       rewardItems: String(rewardItems || '').trim(),
       rewardItemUuids: safeArray(rewardItemUuids).map(String).filter(Boolean),
       attachments: normalizeAttachmentList(attachments),
+      client,
+      objectives,
+      briefing,
+      factionConsequences,
+      status,
       senderUserId: game.user?.id ?? null,
       senderRecipientId: currentRecipientId()
     };
     return this._gmCreateJobPosting(payload);
   }
 
-  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
+  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], client = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId, senderRecipientId });
-    const requested = this._normalizeRecipientIds(recipientIds)
+    const rawRecipientIds = this._normalizeRecipientIds(recipientIds);
+    const requested = rawRecipientIds
       .map(id => this._recipientFromStableId(id))
       .filter(Boolean);
-    const participants = uniqueRecipients([senderRecipient, ...requested]);
     const contactRecipient = contactRecipientId ? this._recipientFromStableId(contactRecipientId) : null;
+    const initialStatus = ['draft', 'posted'].includes(String(status || 'posted')) ? String(status || 'posted') : 'posted';
+    const participants = uniqueRecipients(initialStatus === 'draft' ? [senderRecipient] : [senderRecipient, ...requested]);
+    const normalizedObjectives = this._normalizeJobContractObjectives(objectives, { title, rewardCredits, rewardItems });
+    const normalizedClient = this._normalizeJobClient(client, contactRecipient);
     const thread = await HolonetThreadService.createThread(title || 'Job Board Posting', participants, {
       sourceFamily: SOURCE_FAMILY.MESSENGER,
       threadType: THREAD_TYPE.JOB,
@@ -1309,12 +1318,17 @@ export class HolonetMessengerService {
       job: {
         title: title || 'Job Board Posting',
         contactRecipientId: contactRecipient?.id ?? null,
-        contactLabel: contactRecipient ? recipientDisplayName(contactRecipient) : 'Job Board',
+        contactLabel: normalizedClient?.name || (contactRecipient ? recipientDisplayName(contactRecipient) : 'Job Board'),
+        client: normalizedClient,
+        briefing: briefing && typeof briefing === 'object' ? { ...briefing } : { body: String(body || '').trim() },
+        objectives: normalizedObjectives,
+        factionConsequences: factionConsequences && typeof factionConsequences === 'object' ? { ...factionConsequences } : null,
+        intendedRecipientIds: rawRecipientIds,
         rewardCredits: parsePositiveCredits(rewardCredits),
         rewardItems: String(rewardItems || '').trim(),
         rewardItemUuids: safeArray(rewardItemUuids).map(String).filter(Boolean),
-        status: 'posted',
-        statusHistory: [{ status: 'posted', at: nowIso(), by: senderUserId || game.user?.id || null }]
+        status: initialStatus,
+        statusHistory: [{ status: initialStatus, at: nowIso(), by: senderUserId || game.user?.id || null }]
       }
     });
 
@@ -1327,19 +1341,83 @@ export class HolonetMessengerService {
       rewardLines.length ? rewardLines.join(' // ') : ''
     ].filter(Boolean).join('\n\n');
 
-    await this._publishSystemMessage(thread, `Job posted: ${title || 'New Holonet Job'}.`, { eventType: 'job-posted' });
-    await this._gmSendMessage({
-      actorId: contactRecipient?.actorId ?? actorId,
-      body: jobBody,
-      imageUrl: '',
-      attachments: normalizeAttachmentList(attachments),
-      threadId: thread.id,
-      senderUserId,
-      senderRecipientId: contactRecipient?.id ?? senderRecipientId,
-      requestId,
-      requesterId
-    });
+    await this._publishSystemMessage(thread, `${initialStatus === 'draft' ? 'Job draft created' : 'Job posted'}: ${title || 'New Holonet Job'}.`, { eventType: initialStatus === 'draft' ? 'job-draft-created' : 'job-posted' });
+    if (initialStatus !== 'draft') {
+      await this._gmSendMessage({
+        actorId: contactRecipient?.actorId ?? actorId,
+        body: jobBody,
+        imageUrl: '',
+        attachments: normalizeAttachmentList(attachments),
+        threadId: thread.id,
+        senderUserId,
+        senderRecipientId: contactRecipient?.id ?? senderRecipientId,
+        requestId,
+        requesterId
+      });
+    }
     return { threadId: thread.id, requestId };
+  }
+
+
+  static _normalizeJobClient(client = null, contactRecipient = null) {
+    if (!client || typeof client !== 'object') {
+      return contactRecipient ? {
+        type: 'npc',
+        name: recipientDisplayName(contactRecipient),
+        actorId: contactRecipient.actorId ?? null,
+        imageUrl: contactRecipient.metadata?.avatar ?? null
+      } : null;
+    }
+    const type = String(client.type || 'customNpc').trim() || 'customNpc';
+    const name = String(client.name || client.label || '').trim() || (contactRecipient ? recipientDisplayName(contactRecipient) : 'Job Board Client');
+    return {
+      type,
+      name,
+      factionName: String(client.factionName || '').trim(),
+      actorId: String(client.actorId || '').trim() || contactRecipient?.actorId || null,
+      imageUrl: String(client.imageUrl || client.avatar || '').trim(),
+      saveForReuse: Boolean(client.saveForReuse),
+      notes: String(client.notes || '').trim()
+    };
+  }
+
+  static _normalizeJobContractObjectives(objectives = [], fallback = {}) {
+    const entries = safeArray(objectives)
+      .map((objective, index) => {
+        const title = String(objective?.title || objective?.objective || objective?.name || '').trim();
+        if (!title) return null;
+        const type = String(objective?.type || objective?.tier || (index === 0 ? 'primary' : 'secondary')).trim() || 'objective';
+        const lower = type.toLowerCase();
+        return {
+          id: String(objective?.id || `objective-${index + 1}`),
+          type,
+          title,
+          description: String(objective?.description || objective?.memo || '').trim(),
+          memo: String(objective?.memo || '').trim(),
+          required: lower === 'primary' ? true : Boolean(objective?.required),
+          rewardCredits: parsePositiveCredits(objective?.rewardCredits ?? objective?.credits ?? 0),
+          rewardXp: Math.max(0, Math.floor(Number(objective?.rewardXp ?? objective?.xp ?? 0) || 0)),
+          rewardItems: String(objective?.rewardItems || objective?.items || '').trim(),
+          status: String(objective?.status || 'open'),
+          statusHistory: []
+        };
+      })
+      .filter(Boolean);
+
+    if (entries.length) return entries;
+    return [{
+      id: 'objective-1',
+      type: 'primary',
+      title: String(fallback.title || 'Complete the posted job'),
+      description: String(fallback.body || '').trim(),
+      memo: '',
+      required: true,
+      rewardCredits: parsePositiveCredits(fallback.rewardCredits),
+      rewardXp: 0,
+      rewardItems: String(fallback.rewardItems || '').trim(),
+      status: 'open',
+      statusHistory: []
+    }];
   }
 
   static async sendMessage({ actor, body, threadId = null, recipientIds = [], imageUrl = '', attachments = [], senderRecipientId = null }) {
@@ -2057,8 +2135,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -2066,7 +2144,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -2197,10 +2275,32 @@ export class HolonetMessengerService {
         meta.job ??= {};
         const nextStatus = String(status || '').trim();
         if (!['draft', 'posted', 'accepted', 'inProgress', 'review', 'complete', 'paid', 'archived', 'failed'].includes(nextStatus)) return false;
+        const previousStatus = String(meta.job.status || 'posted');
         meta.job.status = nextStatus;
         meta.job.statusHistory = [...safeArray(meta.job.statusHistory), { status: nextStatus, at: nowIso(), by: requesterId || game.user?.id || null }];
+        if (nextStatus === 'posted' && previousStatus === 'draft') {
+          const additions = safeArray(meta.job.intendedRecipientIds)
+            .map(id => this._recipientFromStableId(id))
+            .filter(Boolean)
+            .filter(r => !hasRecipient(thread.participants, r.id));
+          if (additions.length) thread.participants = uniqueRecipients([...(thread.participants ?? []), ...additions]);
+        }
         await HolonetStorage.saveThread(thread);
         await this._publishSystemMessage(thread, `Job status changed to ${this._jobStatusLabel(nextStatus)}.`, { eventType: 'job-status-changed', status: nextStatus });
+        if (nextStatus === 'posted' && previousStatus === 'draft') {
+          const brief = meta.job?.briefing?.body || meta.job?.title || 'A new job has been posted to the Holonet board.';
+          await this._gmSendMessage({
+            actorId: meta.job?.client?.actorId ?? actorId,
+            body: brief,
+            imageUrl: meta.job?.client?.imageUrl || '',
+            attachments: [],
+            threadId: thread.id,
+            senderUserId: requesterId || game.user?.id || null,
+            senderRecipientId: meta.job?.contactRecipientId || senderRecipientId,
+            requestId,
+            requesterId
+          });
+        }
         break;
       }
       case 'set-job-objective-status': {
@@ -2230,6 +2330,11 @@ export class HolonetMessengerService {
         }
         await HolonetStorage.saveThread(thread);
         await this._publishSystemMessage(thread, `Job objective ${jobObjectiveStatusLabel(nextObjectiveStatus)}: ${jobObjectiveLabel(objective)}.`, { eventType: 'job-objective-status-changed', objectiveId: objective.id, status: nextObjectiveStatus });
+        break;
+      }
+      case 'job-payout-distribution': {
+        if (!isGm) return false;
+        await this._gmDistributeJobCredits({ thread, amount, payoutMode, recipientId, recipientIds, partyFundCutPercent, requesterId, senderRecipientId });
         break;
       }
       case 'award-job-items': {
@@ -2388,6 +2493,95 @@ export class HolonetMessengerService {
       amount: playerAmount,
       partyFundCut: fundAmount,
       toActorId: targetActor.id,
+      requesterId,
+      senderRecipientId
+    });
+    return true;
+  }
+
+
+  static async _gmDistributeJobCredits({ thread, amount = 0, payoutMode = 'single', recipientId = '', recipientIds = [], partyFundCutPercent = 0, requesterId = null, senderRecipientId = null } = {}) {
+    const value = parsePositiveCredits(amount);
+    if (!value) return false;
+    const mode = String(payoutMode || 'single');
+    const requester = requesterId ? game.users?.get(requesterId) : game.user;
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    if (!requesterIsGm) return false;
+
+    const actorTargets = safeArray(thread?.participants)
+      .filter(recipient => !String(recipient?.id || '').startsWith('gm:'))
+      .filter(recipient => recipient?.actorId)
+      .filter(recipient => !safeArray(recipientIds).length || safeArray(recipientIds).includes(recipient.id))
+      .map(recipient => ({ recipient, actor: game.actors?.get(recipient.actorId) }))
+      .filter(row => row.actor);
+
+    if (mode === 'partyFund') {
+      return this._gmAtomicJobCreditPayout({ thread, amount: value, recipientId: PARTY_FUND_RECIPIENT_ID, requesterId, senderRecipientId, partyFundCutPercent: 0 });
+    }
+
+    if (mode === 'single') {
+      return this._gmTransferCredits({ thread, amount: value, recipientId, requesterId, senderRecipientId, asJobPayout: true, partyFundCutPercent });
+    }
+
+    if (!actorTargets.length) return false;
+    const fundBefore = getPartyFundBalance();
+    let fundAmount = 0;
+    let perActorAmount = value;
+    if (mode === 'splitEvenly') {
+      perActorAmount = Math.floor(value / actorTargets.length);
+    } else if (mode === 'splitWithPartyCut') {
+      const pct = isPartyFundEnabled() ? Math.max(0, Math.min(100, Math.floor(Number(partyFundCutPercent) || 0))) : 0;
+      fundAmount = Math.floor(value * pct / 100);
+      perActorAmount = Math.floor((value - fundAmount) / actorTargets.length);
+    } else if (mode === 'eachFull') {
+      perActorAmount = value;
+    } else {
+      return false;
+    }
+
+    if (perActorAmount <= 0 && fundAmount <= 0) return false;
+    const actors = actorTargets.map(row => row.actor);
+    const atomic = await this._executeAtomicJobRewardSettlement({
+      thread,
+      actors,
+      context: { rewardType: 'credits', payoutMode: mode, amount: value, perActorAmount, fundAmount, recipientCount: actors.length, requesterId },
+      operation: async () => {
+        if (fundAmount > 0) {
+          await setPartyFundBalance(fundBefore + fundAmount);
+          await appendPartyFundLedger({ type: 'job-cut', amount: fundAmount, percent: Math.max(0, Math.min(100, Math.floor(Number(partyFundCutPercent) || 0))), threadId: thread.id, requesterId, payoutMode: mode });
+        }
+        if (perActorAmount > 0) {
+          for (const actor of actors) {
+            const credit = await TransactionEngine.executeCreditAdjustment({
+              actor,
+              amount: perActorAmount,
+              reason: 'Holonet job payout',
+              transactionContext: 'holonet-job-payout',
+              audit: { source: 'holonet-job-payout', threadId: thread.id, requesterId, payoutMode: mode }
+            }, { source: 'HolonetMessengerService.distributeJobCredits', validate: true, rederive: true });
+            if (!credit?.success) throw new Error(credit?.error || `Holonet job payout failed for ${actor.name}`);
+          }
+        }
+        return { success: true, actors: actors.length, perActorAmount, fundAmount };
+      }
+    });
+    if (!atomic?.success) return false;
+
+    const targetNames = actors.map(actor => actor.name).join(', ');
+    const fundText = fundAmount > 0 ? ` ${formatCredits(fundAmount)} was routed to the Party Fund.` : '';
+    await this._publishReceiptMessage(thread, {
+      title: 'Job Payout Receipt',
+      eventType: 'job-payout-receipt',
+      amount: perActorAmount,
+      lines: [`Mode: ${mode}`, `Recipients: ${targetNames}`, perActorAmount > 0 ? `Each: ${formatCredits(perActorAmount)}` : '', fundText.trim()].filter(Boolean)
+    });
+    await this._publishSystemMessage(thread, `Job Board distributed ${formatCredits(value)} using ${mode}.${perActorAmount > 0 ? ` ${actors.length} recipient(s) received ${formatCredits(perActorAmount)} each.` : ''}${fundText}`, {
+      eventType: 'job-payout-distribution',
+      amount: value,
+      payoutMode: mode,
+      perActorAmount,
+      partyFundCut: fundAmount,
+      recipientActorIds: actors.map(actor => actor.id),
       requesterId,
       senderRecipientId
     });
