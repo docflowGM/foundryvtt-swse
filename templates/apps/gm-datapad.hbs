@@ -511,6 +511,35 @@
               {{/if}}
               <button type="submit" class="swse-ui-button bulletin-primary-action">Distribute Credits</button>
             </form>
+            {{#if jobBoard.selectedJob.rewards.approvedXp}}
+            <form class="job-payout-form job-xp-form" data-job-xp-form>
+              <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
+              <label>XP mode
+                <select name="payoutMode">
+                  {{#each jobBoard.xpPayoutModes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+                </select>
+              </label>
+              <label>Single-player recipient
+                <select name="recipientId">
+                  {{#each jobBoard.selectedJob.actorPayoutTargets}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="job-recipient-picker">
+                <span>Selected recipients for split/full XP</span>
+                {{#each jobBoard.selectedJob.actorPayoutTargets}}
+                <label class="job-inline-check"><input type="checkbox" name="recipientIds" value="{{this.id}}" checked> {{this.label}}</label>
+                {{else}}
+                <p class="placeholder">No actor participants are attached to this job yet.</p>
+                {{/each}}
+              </div>
+              <label>XP Amount
+                <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.approvedXp}}">
+              </label>
+              <button type="submit" class="swse-ui-button bulletin-primary-action">Award XP</button>
+            </form>
+            {{/if}}
             <form class="job-payout-form" data-job-payout-form>
               <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
               <label>Legacy direct credit recipient
@@ -534,13 +563,26 @@
             <form class="job-payout-form" data-job-award-items-form>
               <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
               {{#each jobBoard.selectedJob.rewardItemUuids}}<input type="hidden" name="itemUuids" value="{{this}}">{{/each}}
-              <label>Item recipient
+              <label>Item distribution
+                <select name="distributionMode">
+                  {{#each jobBoard.itemDistributionModes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+                </select>
+              </label>
+              <label>Single item recipient
                 <select name="recipientId">
                   {{#each jobBoard.selectedJob.payoutTargets}}
                     {{#if this.actorId}}<option value="{{this.id}}">{{this.label}}</option>{{/if}}
                   {{/each}}
                 </select>
               </label>
+              <div class="job-recipient-picker">
+                <span>Selected recipients for copied/unique item distribution</span>
+                {{#each jobBoard.selectedJob.actorPayoutTargets}}
+                <label class="job-inline-check"><input type="checkbox" name="recipientIds" value="{{this.id}}" checked> {{this.label}}</label>
+                {{else}}
+                <p class="placeholder">No actor participants are attached to this job yet.</p>
+                {{/each}}
+              </div>
               <button type="submit" class="swse-ui-button">Award Attached Items</button>
             </form>
             {{/if}}
@@ -890,7 +932,7 @@
                 <select name="contactId" data-bulletin-contact-select>
                   <option value="" {{#unless eventEditorRecord.contactId}}selected{{/unless}}>Manual source</option>
                   {{#each bulletinContacts}}
-                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../eventEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
+                  <option value="{{this.id}}" {{#if (eq ../eventEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
                   {{/each}}
                 </select>
               </label>
@@ -1018,7 +1060,7 @@
                 <select name="contactId" data-bulletin-contact-select>
                   <option value="" {{#unless holonewsEditorRecord.contactId}}selected{{/unless}}>Manual source</option>
                   {{#each bulletinContacts}}
-                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../holonewsEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
+                  <option value="{{this.id}}" {{#if (eq ../holonewsEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
                   {{/each}}
                 </select>
               </label>
@@ -1525,7 +1567,7 @@
                 <select name="contactId" data-bulletin-contact-select>
                   <option value="" {{#unless messageEditorRecord.contactId}}selected{{/unless}}>Manual sender</option>
                   {{#each bulletinContacts}}
-                  <option value="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" {{#if (eq ../messageEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
+                  <option value="{{this.id}}" {{#if (eq ../messageEditorRecord.contactId this.id)}}selected{{/if}}>{{this.label}} - {{this.kindLabel}}</option>
                   {{/each}}
                 </select>
               </label>
@@ -1743,7 +1785,15 @@
               {{#each homePreview.feedItems}}
               <div class="bulletin-preview-feed-row {{#if this.isBreakingNews}}breaking{{else if this.isUrgent}}urgent{{/if}} {{#if this.isRead}}is-read{{else}}is-unread{{/if}}">
                 <strong>{{this.title}}</strong>
-                <span>{{this.sender}} - {{this.category}} - {{#if this.isRead}}read{{else}}unread{{/if}}</span>
+                <span>{{this.sender}} - {{this.category}} - {{#if this.isAcknowledged}}acknowledged{{else if this.isDismissed}}dismissed{{else if this.isRead}}read{{else}}unread{{/if}}</span>
+                {{#if this.recipientId}}
+                <div class="bulletin-preview-feed-actions">
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="read" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Read</button>
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="acknowledge" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Acknowledge</button>
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="dismiss" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Dismiss</button>
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="unread" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Unread</button>
+                </div>
+                {{/if}}
               </div>
               {{/each}}
             </div>
@@ -1794,8 +1844,8 @@
                 <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} - {{this.defaultCategory}}</em></span>
                 <small>{{this.imageLabel}} - used {{this.useCount}} - last {{this.lastUsedLabel}}</small>
                 <div class="bulletin-contact-actions">
-                  <button type="button" class="swse-ui-button" data-action="bulletin-edit-contact" data-contact-id="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-kind="{{this.kind}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" data-notes="{{this.notes}}">Edit</button>
-                  <button type="button" class="swse-ui-button" data-action="bulletin-clone-contact" data-contact-id="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-kind="{{this.kind}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" data-notes="{{this.notes}}">Clone</button>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit-contact" data-contact-id="{{this.id}}">Edit</button>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-clone-contact" data-contact-id="{{this.id}}">Clone</button>
                   {{#unless this.system}}<button type="button" class="swse-ui-button" data-action="bulletin-delete-contact" data-contact-id="{{this.id}}">Delete</button>{{/unless}}
                 </div>
               </div>
@@ -3085,26 +3135,53 @@
       </div>
 
       <div class="workspace-content">
-        {{#if gmActors.length}}
-        <div class="actors-grid">
-          {{#each gmActors}}
-          <div class="actor-card swse-ui-panel">
-            <div class="actor-img">
-              <img src="{{this.img}}" alt="{{this.name}}">
-            </div>
-            <div class="actor-info">
-              <h4>{{this.name}}</h4>
-              <p class="actor-type">{{this.type}}</p>
-              <button class="swse-ui-button" data-open-actor="{{this.id}}">
-                Open Sheet
-              </button>
-            </div>
+        <section class="swse-ui-panel workspace-command-strip">
+          <div>
+            <span class="gm-command-eyebrow">ROSTER CONTEXT</span>
+            <strong>{{sceneName}}</strong>
+            <em>{{combatLabel}}</em>
           </div>
-          {{/each}}
-        </div>
-        {{else}}
-        <p class="placeholder">No GM-owned actors</p>
-        {{/if}}
+          <div class="workspace-quick-actions">
+            {{#each quickActions}}
+            <button type="button" class="swse-ui-button" data-nav-to="{{this.route}}"><i class="{{this.icon}}"></i> {{this.label}}</button>
+            {{/each}}
+          </div>
+        </section>
+
+        {{#each rosterSections}}
+        <section class="swse-ui-panel workspace-roster-section" data-workspace-roster="{{this.id}}">
+          <header class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">{{this.label}}</span>
+              <p>{{this.hint}}</p>
+            </div>
+            <span class="job-board-chip">{{this.count}}</span>
+          </header>
+          {{#if this.actors.length}}
+          <div class="actors-grid">
+            {{#each this.actors}}
+            <div class="actor-card swse-ui-panel">
+              <div class="actor-img">
+                <img src="{{this.img}}" alt="{{this.name}}">
+              </div>
+              <div class="actor-info">
+                <h4>{{this.name}}</h4>
+                <p class="actor-type">{{this.type}} · {{this.ownerLabel}}</p>
+                <p class="actor-type">{{this.hpLabel}} · {{this.conditionLabel}}</p>
+                <div class="workspace-actor-actions">
+                  <button class="swse-ui-button" data-open-actor="{{this.id}}">Open Sheet</button>
+                  <button class="swse-ui-button" data-nav-to="healing">Recovery</button>
+                  <button class="swse-ui-button" data-nav-to="bulletin">Message</button>
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <p class="placeholder">{{this.empty}}</p>
+          {{/if}}
+        </section>
+        {{/each}}
       </div>
     </div>
 

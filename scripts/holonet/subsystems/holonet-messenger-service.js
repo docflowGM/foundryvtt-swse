@@ -22,6 +22,7 @@ import { PERSONA_TYPE, RECIPIENT_TYPE, SOURCE_FAMILY, SURFACE_TYPE, INTENT_TYPE,
 import { HolonetSocketService } from './holonet-socket-service.js';
 import { HolonetPreferences } from '../holonet-preferences.js';
 import { HolonetNoticeCenterService } from './holonet-notice-center-service.js';
+import { applyXP } from '/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js';
 
 const THREAD_TYPE = Object.freeze({
   PRIVATE: 'private',
@@ -2339,10 +2340,15 @@ export class HolonetMessengerService {
         await this._gmDistributeJobCredits({ thread, amount, payoutMode, recipientId, recipientIds, partyFundCutPercent, requesterId, senderRecipientId });
         break;
       }
+      case 'job-xp-payout': {
+        if (!isGm) return false;
+        await this._gmDistributeJobXp({ thread, amount, payoutMode, recipientId, recipientIds, requesterId, senderRecipientId });
+        break;
+      }
       case 'award-job-items': {
         if (!isGm) return false;
         const uuids = safeArray(itemUuids).length ? safeArray(itemUuids) : safeArray(meta.job?.rewardItemUuids);
-        await this._gmGrantItems({ thread, recipientId, itemUuids: uuids, requesterId, eventType: 'job-item-payout', source: 'holonet-job-item-payout' });
+        await this._gmAwardJobItems({ thread, recipientId, recipientIds, itemUuids: uuids, distributionMode, requesterId, senderRecipientId });
         break;
       }
       case 'gm-fail-trade':
@@ -2584,6 +2590,176 @@ export class HolonetMessengerService {
       perActorAmount,
       partyFundCut: fundAmount,
       recipientActorIds: actors.map(actor => actor.id),
+      requesterId,
+      senderRecipientId
+    });
+    return true;
+  }
+
+  static _resolveJobActorTargets(thread, recipientIds = []) {
+    const allowedIds = safeArray(recipientIds).map(String).filter(Boolean);
+    const restrict = allowedIds.length > 0;
+    const rows = safeArray(thread?.participants)
+      .filter(recipient => !String(recipient?.id || '').startsWith('gm:'))
+      .filter(recipient => recipient?.actorId)
+      .filter(recipient => !restrict || allowedIds.includes(recipient.id))
+      .map(recipient => ({ recipient, actor: game.actors?.get(recipient.actorId) }))
+      .filter(row => row.actor);
+    return Array.from(new Map(rows.map(row => [row.actor.id, row])).values());
+  }
+
+  static async _gmDistributeJobXp({ thread, amount = 0, payoutMode = 'single', recipientId = '', recipientIds = [], requesterId = null, senderRecipientId = null } = {}) {
+    const value = Math.max(0, Math.floor(Number(amount) || 0));
+    if (!value) return false;
+    const requester = requesterId ? game.users?.get(requesterId) : game.user;
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    if (!requesterIsGm) return false;
+
+    const mode = String(payoutMode || 'single');
+    let targetRows = [];
+    let perActorAmount = value;
+    if (mode === 'single') {
+      const recipient = this._recipientFromStableId(recipientId);
+      const actor = recipient?.actorId ? game.actors?.get(recipient.actorId) : null;
+      if (!actor) return false;
+      targetRows = [{ recipient, actor }];
+    } else {
+      targetRows = this._resolveJobActorTargets(thread, recipientIds);
+      if (!targetRows.length) return false;
+      if (mode === 'splitEvenly') perActorAmount = Math.floor(value / targetRows.length);
+      else if (mode === 'eachFull') perActorAmount = value;
+      else return false;
+    }
+    if (perActorAmount <= 0) return false;
+
+    const actors = targetRows.map(row => row.actor);
+    const atomic = await this._executeAtomicJobRewardSettlement({
+      thread,
+      actors,
+      context: { rewardType: 'xp', payoutMode: mode, amount: value, perActorAmount, recipientCount: actors.length, requesterId },
+      operation: async () => {
+        for (const actor of actors) {
+          const result = await applyXP(actor, perActorAmount);
+          if (!result) throw new Error(`XP payout failed for ${actor.name}`);
+        }
+        return { success: true, actors: actors.length, perActorAmount };
+      }
+    });
+    if (!atomic?.success) return false;
+
+    const targetNames = actors.map(actor => actor.name).join(', ');
+    await this._publishReceiptMessage(thread, {
+      title: 'Job XP Receipt',
+      eventType: 'job-xp-receipt',
+      amount: perActorAmount,
+      lines: [`Mode: ${mode}`, `Recipients: ${targetNames}`, `Each: ${perActorAmount.toLocaleString()} XP`]
+    });
+    await this._publishSystemMessage(thread, `Job Board awarded ${perActorAmount.toLocaleString()} XP to ${actors.length} recipient(s).`, {
+      eventType: 'job-xp-payout',
+      amount: value,
+      payoutMode: mode,
+      perActorAmount,
+      recipientActorIds: actors.map(actor => actor.id),
+      requesterId,
+      senderRecipientId
+    });
+    return true;
+  }
+
+  static async _resolveJobItemGrantDocuments({ thread, itemUuids = [], requesterId = null, source = 'holonet-job-item-payout' } = {}) {
+    const createData = [];
+    const createdNames = [];
+    const errors = [];
+    for (const uuid of safeArray(itemUuids).map(String).filter(Boolean)) {
+      try {
+        const item = await fromUuid(uuid);
+        if (!item) {
+          errors.push(`Item could not be resolved: ${uuid}`);
+          continue;
+        }
+        const data = item.toObject ? item.toObject() : foundry.utils.deepClone(item);
+        delete data._id;
+        data.flags ??= {};
+        data.flags.swse ??= {};
+        data.flags.swse.holonetGrant = { source, threadId: thread?.id ?? null, uuid, grantedAt: nowIso(), requesterId };
+        createData.push(data);
+        createdNames.push(item.name || data.name || 'Item');
+      } catch (err) {
+        errors.push(`Item grant resolution failed for ${uuid}: ${err?.message || err}`);
+        console.warn('[Holonet] Failed resolving item grant', uuid, err);
+      }
+    }
+    return { createData, createdNames, errors };
+  }
+
+  static async _gmAwardJobItems({ thread, recipientId, recipientIds = [], itemUuids = [], distributionMode = 'single-copy', requesterId = null, senderRecipientId = null } = {}) {
+    const requestedUuids = safeArray(itemUuids).map(String).filter(Boolean);
+    if (!requestedUuids.length) return false;
+    const mode = String(distributionMode || 'single-copy');
+    const resolved = await this._resolveJobItemGrantDocuments({ thread, itemUuids: requestedUuids, requesterId, source: 'holonet-job-item-payout' });
+    if (!resolved.createData.length || resolved.errors.length) {
+      await this._publishSystemMessage(thread, `Job item payout failed: ${resolved.errors.join('; ') || 'No item rewards could be resolved.'}`, { eventType: 'job-item-payout-failed', errors: resolved.errors });
+      return false;
+    }
+
+    let targetRows = [];
+    let plans = [];
+    if (mode === 'single-copy') {
+      const recipient = this._recipientFromStableId(recipientId);
+      const actor = recipient?.actorId ? game.actors?.get(recipient.actorId) : null;
+      if (!actor) return false;
+      targetRows = [{ recipient, actor }];
+      plans = [{ actor, items: resolved.createData.map(item => foundry.utils.deepClone(item)), names: resolved.createdNames.slice() }];
+    } else {
+      targetRows = this._resolveJobActorTargets(thread, recipientIds);
+      if (!targetRows.length) return false;
+      if (mode === 'all-selected') {
+        plans = targetRows.map(({ actor }) => ({
+          actor,
+          items: resolved.createData.map(item => foundry.utils.deepClone(item)),
+          names: resolved.createdNames.slice()
+        }));
+      } else if (mode === 'round-robin-unique') {
+        if (resolved.createData.length < targetRows.length) {
+          await this._publishSystemMessage(thread, `Job item payout failed: ${resolved.createData.length} unique item(s) cannot cover ${targetRows.length} recipient(s).`, { eventType: 'job-item-payout-failed', itemCount: resolved.createData.length, recipientCount: targetRows.length });
+          return false;
+        }
+        plans = targetRows.map(({ actor }, index) => ({
+          actor,
+          items: [foundry.utils.deepClone(resolved.createData[index])],
+          names: [resolved.createdNames[index]]
+        }));
+      } else {
+        return false;
+      }
+    }
+
+    const actors = plans.map(plan => plan.actor);
+    const atomic = await this._executeAtomicJobRewardSettlement({
+      thread,
+      actors,
+      context: { rewardType: 'items', distributionMode: mode, itemCount: resolved.createData.length, recipientCount: actors.length, requesterId },
+      operation: async () => {
+        for (const plan of plans) {
+          if (!plan.items.length) continue;
+          await ActorEngine.createEmbeddedDocuments(plan.actor, 'Item', plan.items, { source: 'holonet-job-item-payout' });
+        }
+        return { success: true, actors: actors.length, items: plans.reduce((sum, plan) => sum + plan.items.length, 0) };
+      }
+    });
+    if (!atomic?.success) return false;
+
+    const summaryLines = plans.map(plan => `${plan.actor.name}: ${plan.names.join(', ')}`);
+    await this._publishReceiptMessage(thread, {
+      title: 'Job Item Delivery Receipt',
+      eventType: 'job-item-payout',
+      lines: [`Mode: ${mode}`, ...summaryLines]
+    });
+    await this._publishSystemMessage(thread, `Job Board delivered item rewards to ${actors.length} recipient(s).`, {
+      eventType: 'job-item-payout',
+      distributionMode: mode,
+      recipientActorIds: actors.map(actor => actor.id),
+      itemNames: resolved.createdNames,
       requesterId,
       senderRecipientId
     });

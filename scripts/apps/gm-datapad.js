@@ -361,6 +361,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       unreadCount: deliverySummary.unreadCount,
       readRecipientIds: deliverySummary.readRecipientIds,
       unreadRecipientIds: deliverySummary.unreadRecipientIds,
+      acknowledgedRecipientIds: deliverySummary.acknowledgedRecipientIds,
+      dismissedRecipientIds: deliverySummary.dismissedRecipientIds,
       readStateLabel: `${deliverySummary.readCount}/${deliverySummary.recipientCount} read`,
       recordTone: isBreakingNews ? 'breaking' : (isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft')))
     };
@@ -373,6 +375,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       : new Map(Object.entries(record?.deliveryStates ?? {}));
     const readRecipientIds = [];
     const unreadRecipientIds = [];
+    const acknowledgements = record?.metadata?.acknowledgements && typeof record.metadata.acknowledgements === 'object' ? record.metadata.acknowledgements : {};
+    const dismissals = record?.metadata?.dismissals && typeof record.metadata.dismissals === 'object' ? record.metadata.dismissals : {};
     for (const recipient of recipients) {
       const recipientId = recipient?.id;
       if (!recipientId) continue;
@@ -386,7 +390,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       readCount: readRecipientIds.length,
       unreadCount: unreadRecipientIds.length,
       readRecipientIds,
-      unreadRecipientIds
+      unreadRecipientIds,
+      acknowledgedRecipientIds: Object.keys(acknowledgements),
+      dismissedRecipientIds: Object.keys(dismissals)
     };
   }
 
@@ -835,6 +841,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireBulletinEvents(root);
     } else if (this.currentPage === 'jobs') {
       await this._wireJobBoardEvents(root);
+    } else if (this.currentPage === 'trade') {
+      await this._wireTradeConsoleEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
@@ -879,6 +887,35 @@ export class GMDatapad extends BaseSWSEAppV2 {
           SWSELogger.error('[GMDatapad] Failed to update game policy setting:', err);
           ui?.notifications?.error?.(`Game policy update failed: ${err.message}`);
         }
+      });
+    });
+  }
+
+  async _wireTradeConsoleEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-trade-console');
+    if (!pageElement) return;
+
+    pageElement.querySelectorAll('[data-trade-select]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedTradeRecordId = event.currentTarget.dataset.tradeSelect || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-trade-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const current = event.currentTarget;
+        const action = current.dataset.tradeAction;
+        const threadId = current.dataset.threadId;
+        const recordId = current.dataset.recordId;
+        if (!action || !threadId || !recordId) return;
+        const memo = pageElement.querySelector(`[data-trade-note-for="${recordId}"]`)?.value ?? '';
+        const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo });
+        if (!ok) ui?.notifications?.warn?.('Trade action did not complete. Check the console details for diagnostics.');
+        this.selectedTradeRecordId = recordId;
+        await this.render(false);
       });
     });
   }
@@ -986,6 +1023,22 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    pageElement.querySelectorAll('form[data-job-xp-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const payoutMode = String(data.get('payoutMode') || 'single').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const amount = Number(data.get('amount') || 0);
+        if (!threadId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-xp-payout', payoutMode, recipientId, recipientIds, amount });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
     pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
@@ -1040,9 +1093,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const data = new FormData(form);
         const threadId = String(data.get('threadId') || '').trim();
         const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const distributionMode = String(data.get('distributionMode') || 'single-copy').trim();
         const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
-        if (!threadId || !recipientId || !itemUuids.length) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, itemUuids });
+        if (!threadId || !itemUuids.length) return;
+        if (distributionMode === 'single-copy' && !recipientId) return;
+        if (distributionMode !== 'single-copy' && !recipientIds.length) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, recipientIds, distributionMode, itemUuids });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });
@@ -1288,12 +1345,37 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    pageElement.querySelectorAll('[data-bulletin-preview-delivery-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const action = event.currentTarget.dataset.bulletinPreviewDeliveryAction;
+        const recordId = event.currentTarget.dataset.recordId;
+        const recipientId = event.currentTarget.dataset.recipientId;
+        await this._setBulletinPreviewDeliveryState(recordId, recipientId, action);
+      });
+    });
+
     pageElement.querySelectorAll('[data-action="bulletin-save-contact"]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         const form = event.currentTarget.closest('form') || pageElement.querySelector('[data-bulletin-contact-form]');
         if (!form) return;
         await this._saveBulletinContact(new FormData(form));
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-edit-contact"], [data-action="bulletin-clone-contact"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const action = event.currentTarget.dataset.action;
+        const contact = await BulletinContactRegistry.getById(event.currentTarget.dataset.contactId);
+        if (!contact) {
+          ui?.notifications?.warn?.('That bulletin contact could not be found.');
+          return;
+        }
+        const form = pageElement.querySelector('[data-bulletin-contact-form]');
+        if (!form) return;
+        this._populateBulletinContactForm(form, contact, { clone: action === 'bulletin-clone-contact' });
       });
     });
 
@@ -1414,17 +1496,18 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _wireBulletinContactSelectors(pageElement) {
     pageElement.querySelectorAll('[data-bulletin-contact-select]').forEach((select) => {
-      select.addEventListener('change', () => {
-        const option = select.selectedOptions?.[0];
+      select.addEventListener('change', async () => {
         const form = select.closest('form');
-        if (!form || !option || !option.value) return;
+        if (!form || !select.value) return;
+        const contact = await BulletinContactRegistry.getById(select.value);
+        if (!contact) return;
         const assignments = {
-          authorName: option.dataset.label || option.dataset.name || '',
-          imageUrl: option.dataset.imageUrl || '',
-          dateline: option.dataset.dateline || '',
-          sector: option.dataset.sector || '',
-          newsCategory: option.dataset.defaultCategory || '',
-          category: option.dataset.defaultCategory || ''
+          authorName: contact.label || contact.name || '',
+          imageUrl: contact.imageUrl || '',
+          dateline: contact.dateline || '',
+          sector: contact.sector || '',
+          newsCategory: contact.defaultCategory || '',
+          category: contact.defaultCategory || ''
         };
         for (const [name, value] of Object.entries(assignments)) {
           if (!value) continue;
@@ -1437,6 +1520,28 @@ export class GMDatapad extends BaseSWSEAppV2 {
         }
       });
     });
+  }
+
+  _populateBulletinContactForm(form, contact = {}, { clone = false } = {}) {
+    const assignments = {
+      id: clone ? '' : contact.id,
+      name: clone ? `${contact.name || contact.label || 'Contact'} Copy` : contact.name,
+      label: clone ? `${contact.label || contact.name || 'Contact'} Copy` : contact.label,
+      kind: contact.kind || 'source',
+      imageUrl: contact.imageUrl || '',
+      dateline: contact.dateline || '',
+      sector: contact.sector || '',
+      defaultCategory: contact.defaultCategory || 'general',
+      notes: contact.notes || ''
+    };
+    for (const [name, value] of Object.entries(assignments)) {
+      const field = form.querySelector(`[name="${name}"]`);
+      if (!field) continue;
+      field.value = value ?? '';
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    form.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
   }
 
   _wireBulletinMediaDrops(pageElement) {
@@ -1548,6 +1653,39 @@ export class GMDatapad extends BaseSWSEAppV2 {
     setText('[data-preview-state-location]', 'Current location not set');
     setText('[data-preview-state-objective]', 'No active objective');
     setText('[data-preview-state-situation]', 'Awaiting new instructions.');
+  }
+
+  async _setBulletinPreviewDeliveryState(recordId, recipientId, action) {
+    if (!game.user?.isGM || !recordId || !recipientId) return;
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record) return;
+    const now = new Date().toISOString();
+    record.metadata ??= {};
+    record.metadata.acknowledgements ??= {};
+    record.metadata.dismissals ??= {};
+    switch (action) {
+      case 'read':
+        record.markRead(recipientId, now);
+        break;
+      case 'unread':
+        record.markUnread(recipientId);
+        delete record.metadata.acknowledgements[recipientId];
+        delete record.metadata.dismissals[recipientId];
+        break;
+      case 'acknowledge':
+        record.markRead(recipientId, now);
+        record.metadata.acknowledgements[recipientId] = { at: now, by: game.user?.id ?? null };
+        break;
+      case 'dismiss':
+        record.markRead(recipientId, now);
+        record.metadata.dismissals[recipientId] = { at: now, by: game.user?.id ?? null };
+        break;
+      default:
+        return;
+    }
+    record.updatedAt = now;
+    await HolonetStorage.saveRecord(record);
+    await this.render(false);
   }
 
   async _saveBulletinContact(formData) {
