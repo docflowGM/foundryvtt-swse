@@ -231,17 +231,14 @@
             {{#if vm.selectedThread.isParty}}<span class="hl-chip party">Party</span>{{/if}}
             {{#if vm.selectedThread.isSide}}<span class="hl-chip">Side</span>{{/if}}
             {{#if vm.selectedThread.isJob}}<span class="hl-chip job">Job</span>{{/if}}
-            {{#if vm.selectedThread.isGame}}<span class="hl-chip game">Game</span>{{/if}}
             {{#if vm.selectedThread.isPrivate}}<span class="hl-chip private">Private</span>{{/if}}
             <span class="hl-chip gm-vis">GM Visible</span>
           </div>
         </div>
         <div class="swse-messenger-thread-actions hl-thread-actions">
           {{#if vm.selectedThread.isPendingInvite}}
-          {{#unless vm.selectedThread.isGame}}
           <button class="swse-btn swse-btn--primary hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-invite" data-thread-id="{{vm.selectedThread.id}}" type="button">Accept</button>
           <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-invite" data-thread-id="{{vm.selectedThread.id}}" type="button">Decline</button>
-          {{/unless}}
           {{/if}}
           {{#if vm.selectedThread.canEnter}}
           <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="enter-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Enter Chat</button>
@@ -258,8 +255,8 @@
         <div class="swse-messenger-chat-column hl-chat-column">
           {{#if vm.selectedThread.isPendingInvite}}
           <div class="swse-messenger-invite-card hl-invite">
-            <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{vm.selectedThread.ownerLabel}}</strong> {{#if vm.selectedThread.isGame}}sent a game request.{{else}}wants to have a holochat.{{/if}}</div>
-            <span>{{#if vm.selectedThread.isGame}}Accept or decline the table request below.{{else}}You can accept, decline, ignore, archive, or leave later.{{/if}}</span>
+            <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{vm.selectedThread.ownerLabel}}</strong> wants to have a holochat.</div>
+            <span>You can accept, decline, ignore, archive, or leave later.</span>
           </div>
           {{/if}}
 
@@ -349,33 +346,37 @@
                     </div>
                     {{#if this.assetTransfer.requestedCreditsLabel}}<div class="hl-credit-line">Requested payment: <strong>{{this.assetTransfer.requestedCreditsLabel}}</strong></div>{{/if}}
                     {{#if this.assetTransfer.memo}}<div class="hl-credit-memo">Memo: {{this.assetTransfer.memo}}</div>{{/if}}
+                    {{#if this.assetTransfer.hasCounterOffer}}
+                    <div class="hl-counter-offer">
+                      <b>Counter Offer</b>
+                      {{#if this.assetTransfer.counterOffer.creditsLabel}}<div class="hl-credit-line">Credits: <strong>{{this.assetTransfer.counterOffer.creditsLabel}}</strong></div>{{/if}}
+                      {{#if this.assetTransfer.counterOffer.hasItems}}
+                      <div class="hl-credit-line">Items: {{#each this.assetTransfer.counterOffer.items}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+                      {{/if}}
+                      {{#if this.assetTransfer.counterOffer.hasAssets}}
+                      <div class="hl-credit-line">Assets: {{#each this.assetTransfer.counterOffer.assets}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+                      {{/if}}
+                      {{#if this.assetTransfer.counterOffer.memo}}<div class="hl-credit-memo">Terms: {{this.assetTransfer.counterOffer.memo}}</div>{{/if}}
+                    </div>
+                    {{/if}}
+                    {{#if this.assetTransfer.canCounterOffer}}
+                    <form class="hl-counter-form" data-holonet-action="asset-counter-offer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">
+                      <label>Counter credits <input type="number" name="counterCredits" min="0" step="1" placeholder="0"></label>
+                      <label>Counter items <select name="counterItemIds" multiple>{{#each this.assetTransfer.counterItemOptions}}<option value="{{this.id}}">{{this.name}} x{{this.quantity}}</option>{{/each}}</select></label>
+                      <label>Counter assets <select name="counterAssetIds" multiple>{{#each this.assetTransfer.counterAssetOptions}}<option value="{{this.id}}">{{this.name}} — {{this.typeLabel}}</option>{{/each}}</select></label>
+                      <label>Counter terms <textarea name="counterMemo" rows="2" placeholder="Optional terms or notes"></textarea></label>
+                      <button class="hl-btn-accent" type="submit">Send Counter Offer</button>
+                    </form>
+                    {{/if}}
                     <div class="hl-credit-status">{{this.assetTransfer.statusLabel}}</div>
                     <div class="hl-credit-actions">
                       {{#if this.assetTransfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
+                      {{#if this.assetTransfer.canAcceptCounter}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Counter</button>{{/if}}
+                      {{#if this.assetTransfer.canApproveCounter}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve Counter</button>{{/if}}
+                      {{#if this.assetTransfer.canDeclineCounter}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-asset-counter" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline Counter</button>{{/if}}
                       {{#if this.assetTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Asset</button>{{/if}}
                       {{#if this.assetTransfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
                       {{#if this.assetTransfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-asset-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
-                    </div>
-                  </div>
-                </article>
-                {{else}}
-                {{#if this.hasGameInvite}}
-                <article class="swse-msg-system hl-game-card-wrap">
-                  <div class="hl-game-card">
-                    <div class="hl-game-card__scan"></div>
-                    <div class="hl-credit-title">Holopad Game Request</div>
-                    <div class="hl-game-card__title">{{this.gameInvite.gameTitle}}</div>
-                    <div class="hl-credit-line"><strong>{{this.gameInvite.hostLabel}}</strong> challenged {{#each this.gameInvite.recipientLabels}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</div>
-                    <div class="hl-game-card__meta">
-                      <span>{{this.gameInvite.rulesModeLabel}}</span>
-                      <span>{{this.gameInvite.wagerSummary}}</span>
-                      <span>{{this.gameInvite.statusLabel}}</span>
-                    </div>
-                    {{#if this.gameInvite.memo}}<div class="hl-credit-memo">Memo: {{this.gameInvite.memo}}</div>{{/if}}
-                    <div class="hl-credit-actions">
-                      {{#if this.gameInvite.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Game</button>{{/if}}
-                      {{#if this.gameInvite.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
-                      {{#if this.gameInvite.canOpen}}<button class="hl-icon-btn" data-holonet-action="open-game-session" data-session-id="{{this.gameInvite.sessionId}}" type="button">Open Table</button>{{/if}}
                     </div>
                   </div>
                 </article>
@@ -415,8 +416,6 @@
                     </div>
                   </div>
                 </article>
-                {{/if}}
-                {{/if}}
                 {{/if}}
                 {{/if}}
                 {{/if}}
@@ -598,7 +597,6 @@
       </div>
       {{else}}
       <div class="swse-messenger-empty hl-empty">Select a thread or start a new transmission.</div>
-      {{/if}}
       {{/if}}
     </section>
   </div>

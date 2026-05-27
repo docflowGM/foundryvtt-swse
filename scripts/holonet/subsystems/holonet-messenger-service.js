@@ -21,18 +21,13 @@ import { PERSONA_TYPE, RECIPIENT_TYPE, SOURCE_FAMILY, SURFACE_TYPE, INTENT_TYPE,
 import { HolonetSocketService } from './holonet-socket-service.js';
 import { HolonetPreferences } from '../holonet-preferences.js';
 import { HolonetNoticeCenterService } from './holonet-notice-center-service.js';
-import { GameCenterRegistry } from '/systems/foundryvtt-swse/scripts/games/game-center-registry.js';
-import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
-import { getGameSettingsSnapshot } from '/systems/foundryvtt-swse/scripts/games/game-settings.js';
-import { GameNotificationService } from '/systems/foundryvtt-swse/scripts/games/game-notification-service.js';
 
 const THREAD_TYPE = Object.freeze({
   PRIVATE: 'private',
   PARTY: 'party',
   SIDE: 'side',
   NPC: 'npc',
-  JOB: 'job',
-  GAME: 'game'
+  JOB: 'job'
 });
 
 
@@ -392,23 +387,14 @@ function splitAmount(total, count, mode = 'split-total') {
   return Array.from({ length: recipients }, () => base + (remainder-- > 0 ? 1 : 0));
 }
 
-
-function gameInviteStatusLabel(status = '') {
-  return status === 'accepted' ? 'Accepted'
-    : status === 'declined' ? 'Declined'
-    : status === 'cancelled' ? 'Cancelled'
-    : status === 'active' ? 'Active'
-    : status === 'ready' ? 'Ready'
-    : status === 'pending-approval' ? 'Awaiting GM Approval'
-    : 'Awaiting Response';
-}
-
 function transferStatusLabel(status = '') {
   return status === 'complete' ? 'Complete'
     : status === 'declined' ? 'Declined'
     : status === 'cancelled' ? 'Cancelled'
     : status === 'failed' ? 'Failed'
     : status === 'pendingGm' ? 'Awaiting GM Approval'
+    : status === 'counterOffered' ? 'Counter Offer Pending'
+    : status === 'counterPendingGm' ? 'Counter Awaiting GM Approval'
     : 'Awaiting Recipient';
 }
 
@@ -502,7 +488,7 @@ export class HolonetMessengerService {
   static _messageRecipientsForThread(thread) {
     const meta = getThreadMeta(thread);
     const gmObservers = safeArray(meta.gmObserverIds).map(id => this._recipientFromStableId(id)).filter(Boolean);
-    return uniqueRecipients([...(thread.participants ?? []), ...safeArray(meta.pendingInvites), ...gmObservers]);
+    return uniqueRecipients([...(thread.participants ?? []), ...gmObservers]);
   }
 
   static _ensureGmObservers(thread) {
@@ -678,7 +664,6 @@ export class HolonetMessengerService {
         isSide: meta.threadType === THREAD_TYPE.SIDE,
         isNpcThread: meta.threadType === THREAD_TYPE.NPC,
         isJob: meta.threadType === THREAD_TYPE.JOB,
-        isGame: meta.threadType === THREAD_TYPE.GAME,
         isPrivate: meta.threadType === THREAD_TYPE.PRIVATE || meta.threadType === THREAD_TYPE.NPC,
         threadType: meta.threadType,
         ownerId: meta.ownerId,
@@ -701,7 +686,6 @@ export class HolonetMessengerService {
     if (thread.title && !['Conversation', 'Messenger'].includes(thread.title)) return thread.title;
     if (meta.threadType === THREAD_TYPE.PARTY) return 'Party Channel';
     if (meta.threadType === THREAD_TYPE.JOB) return thread.title || 'Job Board Posting';
-    if (meta.threadType === THREAD_TYPE.GAME) return thread.title || 'Game Request';
     const others = safeArray(thread.participants).filter(p => p.id !== participantId && !p.id?.startsWith('gm:'));
     if (!others.length) return thread.title || 'Holochat';
     return participantLabelList(others, participantId).join(', ');
@@ -727,7 +711,6 @@ export class HolonetMessengerService {
     const receipt = message.metadata?.receipt ?? null;
     const itemTransfer = message.metadata?.itemTransfer ?? null;
     const assetTransfer = message.metadata?.assetTransfer ?? null;
-    const gameInvite = message.metadata?.gameInvite ?? null;
     const attachments = normalizeAttachmentList(message.metadata?.attachments ?? []);
     return {
       id: message.id,
@@ -753,37 +736,10 @@ export class HolonetMessengerService {
       itemTransfer: itemTransfer ? this._itemTransferVm(message, itemTransfer, actor, participantId) : null,
       hasAssetTransfer: Boolean(assetTransfer),
       assetTransfer: assetTransfer ? this._assetTransferVm(message, assetTransfer, actor, participantId) : null,
-      hasGameInvite: Boolean(gameInvite),
-      gameInvite: gameInvite ? this._gameInviteVm(message, gameInvite, actor, participantId) : null,
       hasReceipt: Boolean(receipt),
       receipt,
       hasJobCard: Boolean(job),
       job
-    };
-  }
-
-
-  static _gameInviteVm(message, invite, actor, participantId) {
-    const status = String(invite.status || 'pending');
-    const recipientIds = safeArray(invite.recipientIds).map(String);
-    const isGm = Boolean(game.user?.isGM);
-    const isRecipient = recipientIds.includes(participantId) || (invite.recipientActorIds ?? []).includes(actor?.id);
-    const isHost = invite.hostRecipientId === participantId || (invite.hostActorId && actor?.id === invite.hostActorId);
-    const isParticipant = isHost || isRecipient || isGm;
-    const isPending = status === 'pending';
-    return {
-      ...invite,
-      messageId: message.id,
-      recordId: message.id,
-      status,
-      statusLabel: gameInviteStatusLabel(status),
-      gameTitle: invite.gameTitle || invite.gameId || 'Holopad Game',
-      rulesModeLabel: String(invite.rulesMode || 'republic-senate').replace(/[-_]+/g, ' ').toUpperCase(),
-      wagerSummary: invite.wagerSummary || 'No betting',
-      canAccept: Boolean(isPending && (isRecipient || isGm)),
-      canDecline: Boolean(isPending && (isRecipient || isGm)),
-      canOpen: Boolean(isParticipant && invite.sessionId && ['accepted', 'active', 'ready', 'pending', 'pending-approval', 'pending-escrow'].includes(status)),
-      isResolved: ['accepted', 'declined', 'cancelled', 'expired'].includes(status)
     };
   }
 
@@ -866,6 +822,22 @@ export class HolonetMessengerService {
     const isSender = transfer.fromRecipientId === participantId || (transfer.fromActorId && actor?.id === transfer.fromActorId);
     const isGm = Boolean(game.user?.isGM);
     const requiredCredits = Number(transfer?.trade?.requestedCredits || 0) || 0;
+    const counterCredits = parsePositiveCredits(transfer?.counterOffer?.credits);
+    const counterItems = safeArray(transfer?.counterOffer?.items);
+    const counterAssets = safeArray(transfer?.counterOffer?.assets);
+    const counterItemOptions = isRecipient ? this._buildInventoryComposerVm(actor).items : [];
+    const counterAssetOptions = isRecipient
+      ? ownedActorLinks(actor).map(link => {
+          const asset = assetActorByLink(link);
+          return asset ? {
+            id: asset.id,
+            uuid: asset.uuid || `Actor.${asset.id}`,
+            name: asset.name || 'Owned Asset',
+            typeLabel: actorAssetCategory(asset),
+            img: asset.img || 'icons/svg/mystery-man.svg'
+          } : null;
+        }).filter(Boolean)
+      : [];
     return {
       ...transfer,
       messageId: message.id,
@@ -873,10 +845,26 @@ export class HolonetMessengerService {
       statusLabel: transferStatusLabel(status),
       requestedCredits: requiredCredits,
       requestedCreditsLabel: requiredCredits > 0 ? formatCredits(requiredCredits) : '',
+      hasCounterOffer: Boolean(transfer?.counterOffer),
+      counterOffer: transfer?.counterOffer ? {
+        ...transfer.counterOffer,
+        credits: counterCredits,
+        creditsLabel: counterCredits > 0 ? formatCredits(counterCredits) : '',
+        items: counterItems,
+        hasItems: counterItems.length > 0,
+        assets: counterAssets,
+        hasAssets: counterAssets.length > 0
+      } : null,
+      counterItemOptions,
+      counterAssetOptions,
+      canCounterOffer: status === 'pendingRecipient' && (isRecipient || isGm),
+      canAcceptCounter: status === 'counterOffered' && (isSender || isGm),
+      canApproveCounter: status === 'counterPendingGm' && isGm,
+      canDeclineCounter: status === 'counterOffered' && (isSender || isRecipient || isGm),
       canAccept: status === 'pendingRecipient' && (isRecipient || isGm),
       canApprove: status === 'pendingGm' && isGm,
       canDecline: ['pendingRecipient', 'pendingGm'].includes(status) && (isRecipient || isGm),
-      canCancel: ['pendingRecipient', 'pendingGm'].includes(status) && (isSender || isGm),
+      canCancel: ['pendingRecipient', 'pendingGm', 'counterOffered', 'counterPendingGm'].includes(status) && (isSender || isGm),
       isResolved: ['complete', 'declined', 'cancelled', 'failed'].includes(status)
     };
   }
@@ -1195,159 +1183,6 @@ export class HolonetMessengerService {
     return this._gmCreateThread(payload);
   }
 
-
-  static async createGameInvite({ actor, gameId = '', recipientId = '', recipientIds = [], rulesMode = 'republic-senate', title = '', memo = '', senderRecipientId = null } = {}) {
-    const targets = this._normalizeRecipientIds([recipientId, ...safeArray(recipientIds)]);
-    const payload = {
-      actorId: actor?.id ?? null,
-      gameId: String(gameId || '').trim(),
-      recipientIds: targets,
-      rulesMode: String(rulesMode || 'republic-senate').trim() || 'republic-senate',
-      title: String(title || '').trim(),
-      memo: String(memo || '').trim(),
-      senderUserId: game.user?.id ?? null,
-      senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
-    };
-    if (!payload.gameId || !payload.recipientIds.length) return false;
-    if (!game.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-game-invite', payload);
-      return { pending: true, requestId, threadId: null, sessionId: null };
-    }
-    return this._gmCreateGameInvite(payload);
-  }
-
-  static async _gmCreateGameInvite({ actorId, gameId = '', recipientIds = [], rulesMode = 'republic-senate', title = '', memo = '', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
-    const settings = getGameSettingsSnapshot();
-    if (!settings.enabled || !settings.useMessengerInvites) return false;
-
-    const requester = requesterId ? game.users?.get(requesterId) : (senderUserId ? game.users?.get(senderUserId) : game.user);
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
-    if (!requesterIsGm && !settings.allowPlayerCreatedTables) return false;
-
-    const gameDef = GameCenterRegistry.get(gameId);
-    if (!gameDef) return false;
-
-    const actor = actorId ? game.actors?.get(actorId) : null;
-    const senderRecipient = this._recipientForActorContext(actor, { senderUserId: senderUserId || requesterId || game.user?.id, senderRecipientId });
-    if (!senderRecipient?.id) return false;
-    const senderLabel = recipientDisplayName(senderRecipient);
-
-    const requested = this._normalizeRecipientIds(recipientIds)
-      .map(id => this._recipientFromStableId(id))
-      .filter(Boolean)
-      .filter(r => r.id !== senderRecipient.id);
-    if (!requested.length) return false;
-
-    const hasPlayerTarget = requested.some(r => r.id?.startsWith('player:'));
-    const hasNpcTarget = requested.some(r => r.id?.startsWith('persona:'));
-    if (!requesterIsGm && hasPlayerTarget && !settings.allowPvP) return false;
-    if (!requesterIsGm && hasNpcTarget && !settings.allowNPCs) return false;
-
-    const safeRulesMode = rulesMode === 'wagered' && settings.allowWagers ? 'wagered' : 'republic-senate';
-    const wagerSummary = safeRulesMode === 'wagered'
-      ? 'Wagered table requested; escrow and settlement are pending later Games phases.'
-      : 'Republic Senate Rules — no betting.';
-    const sessionId = `game_${foundry.utils.randomID(12)}`;
-    const sessionTitle = title || `${gameDef.title} Challenge`;
-    const inviteId = foundry.utils.randomID(10);
-    const createdAt = nowIso();
-
-    const hostSeat = {
-      seatId: 'seat_host',
-      type: senderRecipient.id?.startsWith('gm:') ? 'gm' : 'player',
-      userId: senderRecipient.userId ?? senderUserId ?? requesterId ?? game.user?.id ?? null,
-      actorId: senderRecipient.actorId ?? actor?.id ?? null,
-      recipientId: senderRecipient.id,
-      displayName: senderLabel,
-      status: 'host'
-    };
-    const invitedSeats = requested.map((recipient, index) => ({
-      seatId: `seat_${index + 2}`,
-      type: recipient.id?.startsWith('persona:') ? 'npc' : (recipient.id?.startsWith('gm:') ? 'gm' : 'player'),
-      userId: recipient.userId ?? null,
-      actorId: recipient.actorId ?? null,
-      recipientId: recipient.id,
-      displayName: recipientDisplayName(recipient),
-      status: 'invited'
-    }));
-
-    const thread = await HolonetThreadService.createThread(sessionTitle, [senderRecipient], {
-      sourceFamily: SOURCE_FAMILY.GAMES,
-      threadType: THREAD_TYPE.GAME,
-      ownerId: senderRecipient.id,
-      ownerLabel: senderLabel,
-      pendingInvites: requested,
-      declinedBy: [],
-      mutedBy: {},
-      archivedBy: {},
-      createdByUserId: senderUserId || requesterId || game.user?.id || null,
-      gmObserverIds: this._gmObserverRecipients().map(r => r.id),
-      gameInvitation: {
-        inviteId,
-        sessionId,
-        gameId: gameDef.id,
-        gameTitle: gameDef.title,
-        status: 'pending',
-        rulesMode: safeRulesMode
-      }
-    });
-
-    const invite = {
-      id: inviteId,
-      sessionId,
-      gameId: gameDef.id,
-      gameTitle: gameDef.title,
-      title: sessionTitle,
-      status: 'pending',
-      rulesMode: safeRulesMode,
-      wagerSummary,
-      hostActorId: hostSeat.actorId,
-      hostRecipientId: senderRecipient.id,
-      hostLabel: senderLabel,
-      recipientIds: requested.map(r => r.id),
-      recipientActorIds: requested.map(r => r.actorId).filter(Boolean),
-      recipientLabels: requested.map(recipientDisplayName),
-      memo,
-      createdAt
-    };
-
-    const body = `${senderLabel} sent a ${gameDef.title} request to ${requested.map(recipientDisplayName).join(', ')}.`;
-    const published = await this._publishSystemMessage(thread, body, {
-      eventType: 'game-invite',
-      sourceFamily: SOURCE_FAMILY.GAMES,
-      gameInvite: invite
-    });
-
-    const session = await GameSessionStore.upsertSession({
-      id: sessionId,
-      gameId: gameDef.id,
-      title: sessionTitle,
-      status: 'pending-invite',
-      authorityMode: safeRulesMode === 'wagered' || settings.requireGmApprovalForWagers ? 'gm' : 'host',
-      hostUserId: (senderUserId || requesterId || game.user?.id || null),
-      hostActorId: hostSeat.actorId,
-      holonetThreadId: thread.id,
-      holonetMessageId: published?.messageId ?? null,
-      seats: [hostSeat, ...invitedSeats],
-      rulesMode: safeRulesMode,
-      wagerProfile: safeRulesMode === 'wagered' ? { mode: 'pending', summary: wagerSummary } : { mode: 'none' },
-      prizeProfile: { enabled: false },
-      escrow: {},
-      gameState: {},
-      metadata: {
-        inviteId,
-        inviteMessageId: published?.messageId ?? null,
-        createdByRecipientId: senderRecipient.id,
-        createdByUserId: senderUserId || requesterId || game.user?.id || null
-      },
-      log: [{ id: foundry.utils.randomID(), at: Date.now(), type: 'invite-created', by: senderRecipient.id }]
-    });
-
-    GameNotificationService.emitInviteUpdated(session, { status: 'pending', threadId: thread.id, messageId: published?.messageId ?? null });
-    this._emitMessengerSync({ type: 'game-invite-created', source: SOURCE_FAMILY.GAMES, threadId: thread.id, sessionId, messageId: published?.messageId ?? null, requestId, requesterId });
-    return { threadId: thread.id, messageId: published?.messageId ?? null, sessionId, requestId };
-  }
-
   static _normalizeRecipientIds(ids = []) {
     return Array.from(new Set(safeArray(ids).map(String).filter(Boolean)));
   }
@@ -1372,7 +1207,7 @@ export class HolonetMessengerService {
       title = title || 'Party Channel';
     }
 
-    if (requested.some(r => r.id?.startsWith('persona:')) && ![THREAD_TYPE.JOB, THREAD_TYPE.GAME].includes(finalType)) finalType = THREAD_TYPE.NPC;
+    if (requested.some(r => r.id?.startsWith('persona:')) && finalType !== THREAD_TYPE.JOB) finalType = THREAD_TYPE.NPC;
 
     const thread = await HolonetThreadService.createThread(title || this._defaultThreadTitle(requested, finalType), participants, {
       sourceFamily: SOURCE_FAMILY.MESSENGER,
@@ -1415,7 +1250,6 @@ export class HolonetMessengerService {
   static _defaultThreadTitle(recipients = [], threadType = THREAD_TYPE.PRIVATE) {
     if (threadType === THREAD_TYPE.PARTY) return 'Party Channel';
     if (threadType === THREAD_TYPE.SIDE) return 'Side Thread';
-    if (threadType === THREAD_TYPE.GAME) return 'Game Request';
     const labels = recipients.map(recipientDisplayName).filter(Boolean);
     return labels.length ? labels.join(', ') : 'Private Holochat';
   }
@@ -2023,8 +1857,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [] }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -2032,124 +1866,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-
-  static async _findGameInviteMessage(thread, recordId = null) {
-    if (recordId) {
-      const record = await HolonetStorage.getRecord(recordId);
-      if (record?.metadata?.gameInvite) return record;
-    }
-    const ids = safeArray(thread?.messageIds).slice().reverse();
-    for (const id of ids) {
-      const record = await HolonetStorage.getRecord(id);
-      if (record?.metadata?.gameInvite) return record;
-    }
-    return null;
-  }
-
-  static async _gmResolveGameInvite({ thread, recordId = null, action = '', actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
-    if (!thread) return false;
-    const meta = getThreadMeta(thread);
-    const actor = actorId ? game.actors?.get(actorId) : null;
-    const actorRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
-    const currentId = senderRecipientId || actorRecipient?.id;
-    const isGm = Boolean((requesterId && game.users?.get(requesterId)?.isGM) || currentId?.startsWith('gm:'));
-    const message = await this._findGameInviteMessage(thread, recordId);
-    const invite = message?.metadata?.gameInvite ?? null;
-    if (!message || !invite?.sessionId) return false;
-
-    const pending = safeArray(meta.pendingInvites);
-    const directInvite = pending.find(r => r.id === currentId) ?? null;
-    const targetInvite = directInvite || (isGm ? pending[0] ?? null : null);
-    const session = GameSessionStore.getSession(invite.sessionId);
-    if (!session) return false;
-
-    if (action === 'accept-game-invite') {
-      if (!targetInvite) return false;
-      thread.participants = uniqueRecipients([...(thread.participants ?? []), targetInvite]);
-      meta.pendingInvites = pending.filter(r => r.id !== targetInvite.id);
-      meta.gameInvitation ??= {};
-      meta.gameInvitation.status = meta.pendingInvites.length ? 'pending' : 'accepted';
-      meta.gameInvitation.acceptedAt = nowIso();
-      meta.gameInvitation.acceptedBy = targetInvite.id;
-
-      invite.status = meta.gameInvitation.status;
-      invite.acceptedAt = meta.gameInvitation.acceptedAt;
-      invite.acceptedBy = targetInvite.id;
-      invite.acceptedByLabel = recipientDisplayName(targetInvite);
-      message.metadata.gameInvite = invite;
-
-      const seats = safeArray(session.seats).map(seat => seat.recipientId === targetInvite.id
-        ? { ...seat, status: 'accepted', actorId: seat.actorId ?? targetInvite.actorId ?? null, userId: seat.userId ?? targetInvite.userId ?? null }
-        : seat);
-      const updated = await GameSessionStore.upsertSession({
-        ...session,
-        status: meta.pendingInvites.length ? 'pending-invite' : 'active',
-        seats,
-        holonetThreadId: thread.id,
-        holonetMessageId: message.id,
-        metadata: {
-          ...(session.metadata ?? {}),
-          inviteStatus: meta.gameInvitation.status,
-          acceptedAt: meta.gameInvitation.acceptedAt,
-          acceptedBy: targetInvite.id
-        },
-        log: [...safeArray(session.log), { id: foundry.utils.randomID(), at: Date.now(), type: 'invite-accepted', by: targetInvite.id }]
-      });
-
-      await HolonetStorage.saveRecord(message);
-      await HolonetStorage.saveThread(thread);
-      await this._publishSystemMessage(thread, `${recipientDisplayName(targetInvite)} accepted the ${invite.gameTitle || 'game'} request.`, { eventType: 'game-invite-accepted', sourceFamily: SOURCE_FAMILY.GAMES, gameSessionId: invite.sessionId, gameInviteStatus: 'accepted' });
-      GameNotificationService.emitInviteUpdated(updated, { status: 'accepted', threadId: thread.id, messageId: message.id });
-      this._emitMessengerSync({ type: 'game-invite-accepted', source: SOURCE_FAMILY.GAMES, threadId: thread.id, sessionId: invite.sessionId, messageId: message.id, requestId, requesterId });
-      return true;
-    }
-
-    if (action === 'decline-game-invite' || action === 'cancel-game-invite') {
-      const target = targetInvite || (currentId === invite.hostRecipientId ? this._recipientFromStableId(currentId) : null);
-      if (!target && !isGm) return false;
-      const targetId = target?.id ?? currentId;
-      meta.pendingInvites = pending.filter(r => r.id !== targetId);
-      meta.declinedBy = Array.from(new Set([...safeArray(meta.declinedBy), targetId].filter(Boolean)));
-      meta.gameInvitation ??= {};
-      meta.gameInvitation.status = action === 'cancel-game-invite' ? 'cancelled' : 'declined';
-      meta.gameInvitation.declinedAt = nowIso();
-      meta.gameInvitation.declinedBy = targetId;
-
-      invite.status = meta.gameInvitation.status;
-      invite.declinedAt = meta.gameInvitation.declinedAt;
-      invite.declinedBy = targetId;
-      invite.declinedByLabel = target ? recipientDisplayName(target) : 'Gamemaster';
-      message.metadata.gameInvite = invite;
-
-      const seats = safeArray(session.seats).map(seat => seat.recipientId === targetId ? { ...seat, status: invite.status } : seat);
-      const updated = await GameSessionStore.upsertSession({
-        ...session,
-        status: 'cancelled',
-        seats,
-        holonetThreadId: thread.id,
-        holonetMessageId: message.id,
-        metadata: {
-          ...(session.metadata ?? {}),
-          inviteStatus: invite.status,
-          declinedAt: invite.declinedAt,
-          declinedBy: targetId
-        },
-        log: [...safeArray(session.log), { id: foundry.utils.randomID(), at: Date.now(), type: invite.status === 'cancelled' ? 'invite-cancelled' : 'invite-declined', by: targetId }]
-      });
-
-      await HolonetStorage.saveRecord(message);
-      await HolonetStorage.saveThread(thread);
-      const verb = invite.status === 'cancelled' ? 'cancelled' : 'declined';
-      await this._publishSystemMessage(thread, `${invite.declinedByLabel || 'Recipient'} ${verb} the ${invite.gameTitle || 'game'} request.`, { eventType: `game-invite-${verb}`, sourceFamily: SOURCE_FAMILY.GAMES, gameSessionId: invite.sessionId, gameInviteStatus: invite.status });
-      GameNotificationService.emitInviteUpdated(updated, { status: invite.status, threadId: thread.id, messageId: message.id });
-      this._emitMessengerSync({ type: `game-invite-${verb}`, source: SOURCE_FAMILY.GAMES, threadId: thread.id, sessionId: invite.sessionId, messageId: message.id, requestId, requesterId });
-      return true;
-    }
-
-    return false;
-  }
-
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -2162,12 +1879,6 @@ export class HolonetMessengerService {
     let needsThreadOnlySync = false;
 
     switch (action) {
-      case 'accept-game-invite':
-      case 'decline-game-invite':
-      case 'cancel-game-invite': {
-        await this._gmResolveGameInvite({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
-        break;
-      }
       case 'accept-invite': {
         const invite = safeArray(meta.pendingInvites).find(r => r.id === currentId);
         if (!invite) return false;
@@ -2308,8 +2019,12 @@ export class HolonetMessengerService {
       case 'accept-asset-transfer':
       case 'approve-asset-transfer':
       case 'decline-asset-transfer':
-      case 'cancel-asset-transfer': {
-        await this._gmResolveAssetTransfer({ thread, recordId, action, actorId, requesterId, senderRecipientId, requestId });
+      case 'cancel-asset-transfer':
+      case 'offer-asset-counter':
+      case 'accept-asset-counter':
+      case 'approve-asset-counter':
+      case 'decline-asset-counter': {
+        await this._gmResolveAssetTransfer({ thread, recordId, action, actorId, counterCredits, counterItemIds, counterAssetIds, counterMemo, requesterId, senderRecipientId, requestId });
         break;
       }
       case 'offer-item-transfer': {
@@ -2750,6 +2465,151 @@ export class HolonetMessengerService {
     return { ok: true, sourceActor, targetActor };
   }
 
+  static _buildCounterItemEntries(actor, itemIds = []) {
+    if (!actor) return [];
+    const ids = new Set(safeArray(itemIds).map(id => String(id || '').trim()).filter(Boolean));
+    if (!ids.size) return [];
+    return (actor.items?.contents ?? [])
+      .filter(item => ids.has(item.id) || ids.has(item.uuid))
+      .map(item => ({
+        itemId: item.id,
+        uuid: item.uuid,
+        name: item.name || 'Item',
+        type: item.type || 'item',
+        img: item.img || 'icons/svg/item-bag.svg',
+        quantity: 1
+      }));
+  }
+
+  static _buildCounterAssetEntries(actor, assetIds = []) {
+    if (!actor) return [];
+    const ids = new Set(safeArray(assetIds).map(id => String(id || '').replace(/^Actor\./, '').trim()).filter(Boolean));
+    if (!ids.size) return [];
+    return ownedActorLinks(actor)
+      .map(link => assetActorByLink(link))
+      .filter(Boolean)
+      .filter(asset => ids.has(asset.id) || ids.has(String(asset.uuid || '').replace(/^Actor\./, '')))
+      .map(asset => ({
+        id: asset.id,
+        uuid: asset.uuid || `Actor.${asset.id}`,
+        name: asset.name || 'Owned Asset',
+        type: asset.type || 'actor',
+        typeLabel: actorAssetCategory(asset),
+        img: asset.img || 'icons/svg/mystery-man.svg',
+        summary: [asset.type, asset.system?.vehicleType, asset.system?.droidDegree].filter(Boolean).join(' · ')
+      }));
+  }
+
+  static _validateOwnedAssetTransfer(transfer = {}) {
+    const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+    const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+    if (!sourceActor || !targetActor) return { ok: false, error: 'Asset transfer actors could not be resolved.' };
+    const assets = safeArray(transfer.assets)
+      .map(entry => game.actors?.get(String(entry?.id || entry?.uuid || '').replace(/^Actor\./, '')))
+      .filter(Boolean);
+    if (!assets.length) return { ok: false, error: 'No valid ship/droid asset was selected.' };
+    const ownedIds = new Set(ownedActorLinks(sourceActor).map(link => String(link.id || '').replace(/^Actor\./, '')));
+    const missing = assets.find(asset => !ownedIds.has(asset.id));
+    if (missing) return { ok: false, error: `${missing.name} is no longer linked to ${sourceActor.name}.` };
+    return { ok: true, sourceActor, targetActor, assets };
+  }
+
+  static async _moveOwnedAssets({ thread, transfer, assets, sourceActor, targetActor, transactionId = null, requesterId = null, source = 'holonet-asset-transfer' } = {}) {
+    const ids = safeArray(assets).map(asset => asset.id).filter(Boolean);
+    if (!ids.length || !sourceActor || !targetActor) return false;
+    await ActorEngine.applyMutationPlan(sourceActor, { set: removeAssetLinks(sourceActor, ids) }, { source: 'HolonetMessengerService.assetTransfer.unlinkSource', validate: true, rederive: true });
+    const linkPlan = StoreAcquisitionService.buildOwnerLinkPlan(targetActor, assets, {
+      ownerActor: targetActor,
+      source,
+      transactionId: transactionId ?? transfer?.id,
+      transactionContext: 'holonet-asset-trade',
+      audit: { transferId: transfer?.id ?? null, threadId: thread?.id ?? null, requesterId }
+    });
+    if (linkPlan) await ActorEngine.applyMutationPlan(targetActor, linkPlan, { source: 'HolonetMessengerService.assetTransfer.linkTarget', validate: true, rederive: true });
+
+    const ownership = StoreAcquisitionService.buildActorOwnership(targetActor, { includeCurrentGM: true });
+    for (const asset of assets) {
+      await asset.update({
+        ownership,
+        'system.ownedByActorId': targetActor.id,
+        'system.ownedByActorName': targetActor.name,
+        [`flags.foundryvtt-swse.holonetAssetTransfer`]: {
+          source,
+          threadId: thread?.id ?? null,
+          transferId: transfer?.id ?? null,
+          fromActorId: sourceActor.id,
+          toActorId: targetActor.id,
+          transferredAt: nowIso(),
+          requesterId
+        }
+      });
+    }
+    return true;
+  }
+
+  static async _executeCounterAssets({ thread, transfer, requesterId = null } = {}) {
+    const entries = safeArray(transfer?.counterOffer?.assets);
+    if (!entries.length) return { success: true, count: 0, names: [] };
+    const counterTransfer = {
+      id: `${transfer.id}-counter-assets`,
+      kind: 'ownedAssetTransfer',
+      fromActorId: transfer.toActorId,
+      fromLabel: transfer.toLabel,
+      toActorId: transfer.fromActorId,
+      toLabel: transfer.fromLabel,
+      assets: entries
+    };
+    const validation = this._validateOwnedAssetTransfer(counterTransfer);
+    if (!validation.ok) return { success: false, error: validation.error };
+    const ok = await this._moveOwnedAssets({ thread, transfer: counterTransfer, assets: validation.assets, sourceActor: validation.sourceActor, targetActor: validation.targetActor, requesterId, source: 'holonet-asset-counter-offer' });
+    return ok ? { success: true, count: validation.assets.length, names: validation.assets.map(asset => asset.name) } : { success: false, error: 'Counter asset transfer failed.' };
+  }
+
+  static async _executeCounterItems({ thread, transfer, requesterId = null } = {}) {
+    const entries = safeArray(transfer?.counterOffer?.items);
+    if (!entries.length) return { success: true, count: 0 };
+    const counterTransfer = {
+      id: `${transfer.id}-counter`,
+      kind: 'ownedItemTransfer',
+      fromActorId: transfer.toActorId,
+      fromLabel: transfer.toLabel,
+      toActorId: transfer.fromActorId,
+      toLabel: transfer.fromLabel,
+      items: entries
+    };
+    const validation = this._validateOwnedItemTransfer(counterTransfer);
+    if (!validation.ok) return { success: false, error: validation.error };
+    const ok = await this._executeOwnedItemTransfer({ thread, transfer: counterTransfer, requesterId });
+    return ok ? { success: true, count: entries.length } : { success: false, error: 'Counter item transfer failed.' };
+  }
+
+  static async _settleCounterOffer({ thread, transfer, requesterId = null } = {}) {
+    const counter = transfer?.counterOffer ?? null;
+    if (!counter) return { success: true };
+    const sourceActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+    const targetActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
+    if (!sourceActor || !targetActor) return { success: false, error: 'Counter-offer actors could not be resolved.' };
+
+    const credits = parsePositiveCredits(counter.credits);
+    if (credits) {
+      const credit = await TransactionEngine.executeCreditTransfer({
+        fromActor: sourceActor,
+        toActor: targetActor,
+        amount: credits,
+        reason: counter.memo ? `Holonet asset counter-offer: ${counter.memo}` : 'Holonet asset counter-offer',
+        transactionContext: 'holonet-asset-counter-offer',
+        audit: { source: 'holonet-asset-counter-offer', threadId: thread.id, transferId: transfer.id, requesterId }
+      }, { source: 'HolonetMessengerService.assetCounterOfferCredits', validate: true, rederive: true });
+      if (!credit?.success) return { success: false, error: credit?.error || 'Counter credit movement failed.' };
+    }
+
+    const item = await this._executeCounterItems({ thread, transfer, requesterId });
+    if (!item?.success) return item;
+    const asset = await this._executeCounterAssets({ thread, transfer, requesterId });
+    if (!asset?.success) return asset;
+    return { success: true, credits, itemCount: item.count || 0, assetCount: asset.count || 0, assetNames: asset.names || [] };
+  }
+
   static async _settleTradeCredits({ thread, transfer, requesterId = null, source = 'HolonetMessengerService.tradeCredits' } = {}) {
     const requestedCredits = parsePositiveCredits(transfer?.trade?.requestedCredits);
     if (!requestedCredits) return { success: true, amount: 0 };
@@ -2766,7 +2626,7 @@ export class HolonetMessengerService {
     }, { source, validate: true, rederive: true });
   }
 
-  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const transfer = message?.metadata?.assetTransfer;
@@ -2775,6 +2635,70 @@ export class HolonetMessengerService {
     const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
     const currentId = senderRecipientId || currentRecipientId();
     if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
+
+    if (action === 'offer-asset-counter') {
+      if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
+      if (transfer.status !== 'pendingRecipient') return false;
+      const sourceActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
+      const items = this._buildCounterItemEntries(sourceActor, counterItemIds);
+      const assets = this._buildCounterAssetEntries(sourceActor, counterAssetIds);
+      const credits = parsePositiveCredits(counterCredits);
+      const memo = String(counterMemo || '').trim();
+      if (!credits && !items.length && !assets.length && !memo) return false;
+      transfer.counterOffer = {
+        credits,
+        items,
+        assets,
+        memo,
+        offeredByRecipientId: currentId,
+        offeredByActorId: transfer.toActorId ?? null,
+        offeredAt: nowIso()
+      };
+      transfer.status = 'counterOffered';
+      await HolonetStorage.saveRecord(message);
+      const parts = [];
+      if (credits) parts.push(formatCredits(credits));
+      if (items.length) parts.push(items.map(item => item.name).join(', '));
+      if (assets.length) parts.push(assets.map(asset => asset.name).join(', '));
+      await this._publishSystemMessage(thread, `${transfer.toLabel} counter-offered ${parts.join(' + ') || 'alternate terms'} for ${safeArray(transfer.assets).map(asset => asset.name).join(', ') || 'an asset'}.`, { eventType: 'asset-counter-offered', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'decline-asset-counter') {
+      if (transfer.status !== 'counterOffered') return false;
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId && currentId !== transfer.toRecipientId) return false;
+      transfer.status = 'pendingRecipient';
+      transfer.counterDeclinedAt = nowIso();
+      transfer.counterDeclinedBy = currentId;
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `Counter offer for ${safeArray(transfer.assets).map(asset => asset.name).join(', ') || 'asset transfer'} was declined. Original asset offer is still awaiting recipient action.`, { eventType: 'asset-counter-declined', transferId: transfer.id });
+      return true;
+    }
+
+    if (action === 'accept-asset-counter') {
+      if (transfer.status !== 'counterOffered') return false;
+      if (!requesterIsGm && currentId !== transfer.fromRecipientId) return false;
+      const hasCounterAssets = safeArray(transfer?.counterOffer?.assets).length > 0;
+      if (hasCounterAssets && assetTradeApprovalRequired() && !requesterIsGm) {
+        transfer.status = 'counterPendingGm';
+        transfer.counterAcceptedAt = nowIso();
+        transfer.counterAcceptedBy = currentId;
+        await HolonetStorage.saveRecord(message);
+        await this._publishSystemMessage(thread, `Counter offer accepted by ${transfer.fromLabel}; awaiting GM approval for reciprocal asset movement.`, { eventType: 'asset-counter-awaiting-gm', transferId: transfer.id });
+        return true;
+      }
+      const ok = await this._completeAssetCounterOffer({ thread, message, transfer, requesterId, resolvedBy: currentId });
+      return ok;
+    }
+
+    if (action === 'approve-asset-counter') {
+      if (!requesterIsGm) return false;
+      if (transfer.status !== 'counterPendingGm') return false;
+      transfer.counterApprovedAt = nowIso();
+      transfer.counterApprovedBy = requesterId || game.user?.id || null;
+      const ok = await this._completeAssetCounterOffer({ thread, message, transfer, requesterId, resolvedBy: currentId });
+      return ok;
+    }
 
     if (action === 'decline-asset-transfer') {
       if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
@@ -2817,15 +2741,41 @@ export class HolonetMessengerService {
     return ok;
   }
 
+  static async _completeAssetCounterOffer({ thread, message, transfer, requesterId = null, resolvedBy = null } = {}) {
+    const originalValidation = this._validateOwnedAssetTransfer(transfer);
+    if (!originalValidation.ok) {
+      await this._publishSystemMessage(thread, `Asset counter-offer failed: ${originalValidation.error}`, { eventType: 'asset-counter-failed', transferId: transfer.id });
+      transfer.status = 'failed';
+      transfer.resolvedAt = nowIso();
+      transfer.resolvedBy = resolvedBy;
+      await HolonetStorage.saveRecord(message);
+      return false;
+    }
+    const counter = await this._settleCounterOffer({ thread, transfer, requesterId });
+    if (!counter?.success) {
+      await this._publishSystemMessage(thread, `Asset counter-offer failed: ${counter?.error || 'Counter settlement failed.'}`, { eventType: 'asset-counter-failed', transferId: transfer.id });
+      transfer.status = 'failed';
+      transfer.resolvedAt = nowIso();
+      transfer.resolvedBy = resolvedBy;
+      await HolonetStorage.saveRecord(message);
+      return false;
+    }
+    const ok = await this._executeAssetTransfer({ thread, transfer: { ...transfer, trade: { ...(transfer.trade ?? {}), requestedCredits: 0 } }, requesterId });
+    transfer.status = ok ? 'complete' : 'failed';
+    transfer.resolvedAt = nowIso();
+    transfer.resolvedBy = resolvedBy;
+    transfer.counterSettledAt = ok ? nowIso() : null;
+    await HolonetStorage.saveRecord(message);
+    return ok;
+  }
+
   static async _executeAssetTransfer({ thread, transfer, requesterId = null } = {}) {
-    const sourceActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
-    const targetActor = transfer.toActorId ? game.actors?.get(transfer.toActorId) : null;
-    if (!sourceActor || !targetActor) return false;
-    const assets = safeArray(transfer.assets).map(entry => game.actors?.get(String(entry.id || entry.uuid || '').replace(/^Actor\./, ''))).filter(Boolean);
-    if (!assets.length) return false;
-    const ownedIds = new Set(ownedActorLinks(sourceActor).map(link => String(link.id || '').replace(/^Actor\./, '')));
-    const missing = assets.find(asset => !ownedIds.has(asset.id));
-    if (missing) throw new Error(`${missing.name} is no longer linked to ${sourceActor.name}.`);
+    const validation = this._validateOwnedAssetTransfer(transfer);
+    if (!validation.ok) {
+      await this._publishSystemMessage(thread, `Asset transfer failed: ${validation.error}`, { eventType: 'asset-transfer-failed', transferId: transfer.id });
+      return false;
+    }
+    const { sourceActor, targetActor, assets } = validation;
 
     const credit = await this._settleTradeCredits({ thread, transfer, requesterId, source: 'HolonetMessengerService.assetTradeCredits' });
     if (!credit?.success) {
