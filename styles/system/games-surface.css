@@ -948,3 +948,13 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+.swse-sabacc-ai-read {
+  border-left: 2px solid rgba(57, 247, 255, 0.35);
+  color: rgba(205, 244, 255, 0.82);
+  display: block;
+  line-height: 1.25;
+  margin-top: 0.25rem;
+  max-width: 34rem;
+  padding-left: 0.45rem;
+}

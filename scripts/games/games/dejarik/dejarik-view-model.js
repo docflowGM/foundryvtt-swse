@@ -1,5 +1,6 @@
 import { DejarikEngine } from './dejarik-engine.js';
 import { canAttackPiece, canMovePiece } from './dejarik-rules.js';
+import { DejarikAi, buildDejarikAiProfile } from './dejarik-ai.js';
 
 function formatTime(value) { try { return value ? new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''; } catch (_err) { return ''; } }
 function playableSeats(session = {}) { return (Array.isArray(session.seats) ? session.seats : []).filter(seat => !seat.spectator && !['declined', 'cancelled'].includes(seat.status)); }
@@ -42,7 +43,11 @@ export class DejarikViewModel {
       canCancel: Boolean(currentSeat && !['complete', 'cancelled'].includes(state.phase)),
       showPlaying: state.phase === 'playing',
       showComplete: state.phase === 'complete',
-      seats: playableSeats(session).map(seat => ({ seatId: seat.seatId, displayName: seat.displayName, isViewer: seat.seatId === viewerSeatId, isCurrent: seat.seatId === state.activeSeatId, isAi: seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile, profession: seat.profession || '', tableFact: seat.tableFact || '' })),
+      seats: playableSeats(session).map(seat => {
+        const isAi = seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile;
+        const aiProfile = buildDejarikAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium');
+        return { seatId: seat.seatId, displayName: seat.displayName, isViewer: seat.seatId === viewerSeatId, isCurrent: seat.seatId === state.activeSeatId, isAi, aiDifficultyLabel: isAi ? DejarikAi.labelForDifficulty(aiProfile.difficulty) : '', profession: seat.profession || '', tableFact: seat.tableFact || '' };
+      }),
       pieces,
       viewerPieces: pieces.filter(piece => piece.isViewerPiece && !piece.defeated),
       canAct: Boolean(viewerSeatId && state.phase === 'playing' && state.activeSeatId === viewerSeatId),

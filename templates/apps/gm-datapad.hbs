@@ -320,7 +320,7 @@
                 <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
                 <span class="bulletin-chip home-slot">{{this.homeSlotLabel}}</span>
-                {{#if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
+                {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{else if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
                 {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
@@ -340,6 +340,238 @@
             </article>
             {{else}}
             <p class="placeholder">No bulletin events yet.</p>
+            {{/each}}
+          </div>
+
+          {{else if (eq bulletinSection "holonews")}}
+          <div class="bulletin-panel-header holonews-panel-header">
+            <div>
+              <h3>HoloNews Desk</h3>
+              <p>Publish ordinary galactic background noise, or author a red Breaking News alert when the party truly changes the public story.</p>
+            </div>
+            <div class="holonews-wire-count"><strong>{{holonewsSeedCount}}</strong><span>ambient wire stories</span></div>
+          </div>
+
+          <form class="bulletin-composer holonews-composer" data-bulletin-form="holonews">
+            <input type="hidden" name="recordId" value="{{holonewsEditorRecord.id}}">
+            <input type="hidden" name="submitMode" value="draft">
+            <input type="hidden" name="category" value="holonews">
+            <div class="bulletin-form-grid">
+              <label>
+                <span>HoloNews Headline</span>
+                <input type="text" name="title" value="{{holonewsEditorRecord.title}}" placeholder="Local Port Authority Updates Docking Procedures">
+              </label>
+              <label>
+                <span>News Source</span>
+                <input type="text" name="authorName" value="{{holonewsEditorRecord.newsSource}}" placeholder="Galaxy News Net">
+              </label>
+              <label>
+                <span>Dateline</span>
+                <input type="text" name="dateline" value="{{holonewsEditorRecord.dateline}}" placeholder="Coruscant">
+              </label>
+              <label>
+                <span>Sector / Region</span>
+                <input type="text" name="sector" value="{{holonewsEditorRecord.sector}}" placeholder="Core Worlds">
+              </label>
+              <label>
+                <span>News Topic</span>
+                <select name="newsCategory">
+                  <option value="general" {{#if (or (not holonewsEditorRecord.newsCategory) (eq holonewsEditorRecord.newsCategory "general"))}}selected{{/if}}>General</option>
+                  {{#each holonewsCategories}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsEditorRecord.newsCategory this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="low" {{#if (eq holonewsEditorRecord.priority "low")}}selected{{/if}}>Low</option>
+                  <option value="normal" {{#if (or (not holonewsEditorRecord.priority) (eq holonewsEditorRecord.priority "normal"))}}selected{{/if}}>Normal</option>
+                  <option value="high" {{#if (eq holonewsEditorRecord.priority "high")}}selected{{/if}}>High</option>
+                  <option value="critical" {{#if (eq holonewsEditorRecord.priority "critical")}}selected{{/if}}>Critical</option>
+                </select>
+              </label>
+              <label class="bulletin-image-field">
+                <span>News Holostill / Feed Image</span>
+                <span class="bulletin-image-row">
+                  <input type="text" name="imageUrl" value="{{holonewsEditorRecord.imageUrl}}" placeholder="systems/foundryvtt-swse/assets/.../news.webp" data-bulletin-image-input>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-pick-image">Browse</button>
+                </span>
+              </label>
+            </div>
+
+            <div class="bulletin-form-grid bulletin-form-grid-audience">
+              <label>
+                <span>Audience</span>
+                <select name="audienceType">
+                  {{#each audienceOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsEditorRecord.audienceType this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="bulletin-recipient-picker">
+                <span>Recipients</span>
+                <div class="bulletin-recipient-list">
+                  {{#each bulletinPlayers}}
+                  <label class="bulletin-recipient-chip">
+                    <input type="checkbox" name="playerIds" value="{{this.userId}}" {{#if (contains ../holonewsEditorRecord.audiencePlayerIds this.userId)}}checked{{/if}}>
+                    <span>{{this.actorName}}</span>
+                  </label>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+
+            <div class="bulletin-console-controls holonews-console-controls">
+              <label class="bulletin-toggle-chip holonews-breaking-toggle">
+                <input type="checkbox" name="breakingNews" {{#if holonewsEditorRecord.isBreakingNews}}checked{{/if}}>
+                <span>Breaking News red alert</span>
+              </label>
+              <label class="bulletin-toggle-chip">
+                <input type="checkbox" name="pinAsLastSession" {{#if holonewsEditorRecord.isPinned}}checked{{/if}}>
+                <span>Pin as Last Session</span>
+              </label>
+              <label class="bulletin-slot-select">
+                <span>Home Placement</span>
+                <select name="homeSlot">
+                  <option value="feed" {{#if (or (not holonewsEditorRecord.homeSlot) (eq holonewsEditorRecord.homeSlot "feed"))}}selected{{/if}}>Comm Feed</option>
+                  <option value="last-session" {{#if (eq holonewsEditorRecord.homeSlot "last-session")}}selected{{/if}}>Last Session</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="bulletin-body-field">
+              <span>News Deck / One-line Summary</span>
+              <input type="text" name="deck" value="{{holonewsEditorRecord.newsDeck}}" placeholder="A short summary shown to the GM while writing.">
+            </label>
+
+            <label class="bulletin-body-field">
+              <span>Story Body</span>
+              <textarea name="body" rows="6" placeholder="Galaxy News Net reports that local port officials have revised docking procedures after routine inspections." data-holonet-editor="holonews-event">{{holonewsEditorRecord.body}}</textarea>
+            </label>
+
+            <div class="bulletin-form-actions">
+              <button type="submit" class="swse-ui-button" data-submit-mode="draft">Save HoloNews Draft</button>
+              <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish HoloNews</button>
+            </div>
+          </form>
+
+          <section class="holonews-wire-panel">
+            <div class="holonews-wire-header">
+              <div>
+                <h4>Ambient Wire</h4>
+                <p>Search the 500 deliberately boring background stories. These are for filler news, not galaxy-shaking events.</p>
+              </div>
+              <div class="holonews-wire-stats">
+                <span><strong>{{holonewsWireFilteredCount}}</strong> matching</span>
+                <span><strong>{{holonewsUsedSeedCount}}</strong> already used</span>
+              </div>
+            </div>
+
+            <form class="holonews-wire-filters" data-holonews-wire-filter-form>
+              <label class="holonews-wire-search">
+                <span>Search Wire</span>
+                <input type="search" name="query" value="{{holonewsWireFilters.query}}" placeholder="port, weather, Tatooine, agriculture...">
+              </label>
+              <label>
+                <span>Topic</span>
+                <select name="category">
+                  <option value="" {{#unless holonewsWireFilters.category}}selected{{/unless}}>All topics</option>
+                  {{#each holonewsCategories}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsWireFilters.category this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Sector</span>
+                <select name="sector">
+                  <option value="" {{#unless holonewsWireFilters.sector}}selected{{/unless}}>All sectors</option>
+                  {{#each holonewsSectors}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsWireFilters.sector this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="" {{#unless holonewsWireFilters.priority}}selected{{/unless}}>Any priority</option>
+                  {{#each holonewsPriorities}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsWireFilters.priority this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label class="bulletin-toggle-chip holonews-hide-used">
+                <input type="checkbox" name="hideUsedSeeds" {{#if holonewsHideUsedSeeds}}checked{{/if}}>
+                <span>Hide used wire stories</span>
+              </label>
+              <div class="holonews-wire-filter-actions">
+                <button type="submit" class="swse-ui-button">Apply Filters</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-reset-wire-filters">Reset</button>
+              </div>
+            </form>
+
+            <div class="holonews-wire-pager">
+              <button type="button" class="swse-ui-button" data-action="holonews-wire-prev">Previous 12</button>
+              <button type="button" class="swse-ui-button" data-action="holonews-shuffle-wire" data-filtered-count="{{holonewsWireFilteredCount}}">Random Page</button>
+              <button type="button" class="swse-ui-button" data-action="holonews-wire-next">Next 12</button>
+            </div>
+
+            <div class="holonews-seed-grid">
+              {{#each holonewsSeeds}}
+              <article class="holonews-seed-card {{#if this.alreadyUsed}}already-used{{/if}}">
+                <div class="holonews-seed-meta">
+                  <span>{{this.source}}</span>
+                  <span>{{this.dateline}}</span>
+                  <span>{{this.sector}}</span>
+                  <span>{{this.category}}</span>
+                  <span>{{this.priority}}</span>
+                  {{#if this.alreadyUsed}}<span class="used">USED</span>{{/if}}
+                </div>
+                <h5>{{this.headline}}</h5>
+                <p>{{this.deck}}</p>
+                <details class="holonews-seed-details">
+                  <summary>Read wire copy</summary>
+                  <div class="holonews-seed-body">{{{this.bodyPreview}}}</div>
+                </details>
+                <div class="holonews-seed-actions">
+                  <button type="button" class="swse-ui-button" data-action="holonews-use-draft" data-seed-id="{{this.id}}">Use as Draft</button>
+                  <button type="button" class="swse-ui-button" data-action="holonews-publish-ambient" data-seed-id="{{this.id}}">Publish Ambient</button>
+                </div>
+              </article>
+              {{else}}
+              <p class="placeholder">No ambient wire stories match those filters.</p>
+              {{/each}}
+            </div>
+          </section>
+
+          <div class="bulletin-record-grid">
+            {{#each holonewsRecords}}
+            <article class="bulletin-record-card holonews {{this.state}} {{this.recordTone}}">
+              <div class="bulletin-record-meta">
+                <span class="bulletin-chip state">{{this.stateLabel}}</span>
+                <span class="bulletin-chip category">HoloNews</span>
+                <span class="bulletin-chip priority">{{this.priority}}</span>
+                <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+                {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{/if}}
+                {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
+              </div>
+              <h4>{{this.title}}</h4>
+              <div class="bulletin-record-sender">{{this.newsSource}}{{#if this.dateline}} · {{this.dateline}}{{/if}}{{#if this.sector}} · {{this.sector}}{{/if}}</div>
+              {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
+              <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
+              <div class="bulletin-record-footer">
+                <span>{{this.createdAt}}</span>
+                <div class="bulletin-record-actions">
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="holonews" data-record-id="{{this.id}}">Edit</button>
+                  {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
+                  {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
+                  <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
+                </div>
+              </div>
+            </article>
+            {{else}}
+            <p class="placeholder">No HoloNews entries have been published or drafted yet.</p>
             {{/each}}
           </div>
 
@@ -449,7 +681,7 @@
                 <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
                 <span class="bulletin-chip home-slot">{{this.homeSlotLabel}}</span>
-                {{#if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
+                {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{else if this.isUrgent}}<span class="bulletin-chip urgent">ALERT</span>{{/if}}
                 {{#if this.isPinned}}<span class="bulletin-chip pinned">PINNED</span>{{/if}}
               </div>
               <h4>{{this.title}}</h4>
@@ -554,7 +786,7 @@
             <div class="bulletin-preview-meta">
               <span data-preview-feed-category>{{homePreview.feed.category}}</span>
               <span data-preview-feed-priority>{{homePreview.feed.priority}}</span>
-              <span class="urgent {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>Alert</span>
+              <span class="urgent {{#if homePreview.feed.isBreakingNews}}breaking{{/if}} {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>{{#if homePreview.feed.isBreakingNews}}BREAKING NEWS{{else}}Alert{{/if}}</span>
             </div>
             {{#if homePreview.feed.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.feed.imageUrl}}" alt="{{homePreview.feed.title}}" data-preview-feed-image>{{else}}<img class="bulletin-preview-image is-hidden" alt="" data-preview-feed-image>{{/if}}
             <strong data-preview-feed-title>{{homePreview.feed.title}}</strong>

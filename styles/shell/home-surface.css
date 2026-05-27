@@ -1260,3 +1260,19 @@
 .swse-home-feed-row.has-image {
   grid-template-columns: 24px 1fr auto;
 }
+
+/* HoloNews breaking alert projection */
+.swse-home-feed-row.is-breaking-news {
+  border-color: oklch(0.62 0.24 28 / 0.62);
+  background:
+    linear-gradient(90deg, oklch(0.2 0.08 28 / 0.62), oklch(var(--swse-screen) / 0.42)),
+    repeating-linear-gradient(90deg, oklch(0.62 0.24 28 / 0.08) 0 8px, transparent 8px 16px);
+  box-shadow: 0 0 18px oklch(0.62 0.24 28 / 0.24);
+}
+
+.swse-home-feed-alert--breaking {
+  border-color: oklch(0.72 0.25 28 / 0.55);
+  background: oklch(0.62 0.24 28 / 0.24);
+  color: oklch(0.98 0.12 38);
+  font-weight: 900;
+}

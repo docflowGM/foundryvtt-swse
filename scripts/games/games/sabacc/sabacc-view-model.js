@@ -22,13 +22,25 @@ function cardVm(card = {}, reveal = true) {
   } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', isSpecial: false };
 }
 
+function titleCase(value = '') {
+  const text = String(value || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
+}
+
 function seatVm(session, state, seat, viewerSeatId) {
   const player = state.players?.[seat.seatId] || {};
   const isViewer = seat.seatId === viewerSeatId;
   const isAi = seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile;
   const aiProfile = buildSabaccAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium');
-  const reveal = isViewer || state.phase === 'hand-complete' || state.phase === 'complete' || isAi;
+  const reveal = isViewer || state.phase === 'hand-complete' || state.phase === 'complete';
   const evaluation = player.evaluation || evaluateSabaccHand(player.hand || []);
+  const handCount = (player.hand || []).length;
+  const hiddenTotalLabel = evaluation.bombedOut ? 'Bombed Out' : `${handCount} hidden card${handCount === 1 ? '' : 's'}`;
+  const aiProfileLabel = isAi ? `${SabaccAi.labelForDifficulty(aiProfile.difficulty)} · ${titleCase(aiProfile.fairness)} · ${titleCase(aiProfile.personality)}` : '';
+  const aiDecision = player.lastAiDecision || null;
+  const aiLastDecision = isAi && aiDecision
+    ? (reveal && aiDecision.reason ? aiDecision.reason : `${SabaccAi.labelForDifficulty(aiProfile.difficulty)} model sampled ${Number(aiDecision.samples || 0)} outcomes.`)
+    : '';
   return {
     seatId: seat.seatId,
     displayName: seat.displayName || 'Seat',
@@ -36,15 +48,17 @@ function seatVm(session, state, seat, viewerSeatId) {
     isCurrent: state.activeSeatId === seat.seatId,
     isAi,
     aiDifficultyLabel: isAi ? SabaccAi.labelForDifficulty(aiProfile.difficulty) : '',
+    aiProfileLabel,
+    aiLastDecision,
     profession: seat.profession || '',
     tableFact: seat.tableFact || '',
     statusLabel: player.folded ? 'Folded' : (player.called ? 'Called' : (player.bombedOut ? 'Bombed Out' : 'In Hand')),
-    totalLabel: evaluation.label,
+    totalLabel: reveal ? evaluation.label : hiddenTotalLabel,
     bombedOut: Boolean(evaluation.bombedOut),
-    specialWinner: Boolean(evaluation.specialWinner),
+    specialWinner: reveal && Boolean(evaluation.specialWinner),
     cards: (player.hand || []).map(card => cardVm(card, reveal)),
-    hasCards: Boolean((player.hand || []).length),
-    handCount: (player.hand || []).length,
+    hasCards: Boolean(handCount),
+    handCount,
     lastAction: player.lastAction || 'Waiting.',
     wins: Number(player.wins || 0)
   };

@@ -42,7 +42,8 @@ function buildPlayerState(seat = {}) {
     contribution: 0,
     wins: 0,
     lastAction: isAutomatedSeat(seat) ? 'Dealer droid waits for the shift.' : 'Waiting at the Sabacc table.',
-    evaluation: null
+    evaluation: null,
+    lastAiDecision: null
   };
 }
 
@@ -92,6 +93,14 @@ function pushEvent(session, state, type, seatId, message, data = {}) {
   state.eventLog = state.eventLog.slice(0, 30);
 }
 
+function publicCardActionMessage(seat = {}, verb = 'acts') {
+  return `${seat.displayName || 'Seat'} ${verb} a card.`;
+}
+
+function attachAiDecision(player = {}, payload = {}) {
+  if (payload?.ai) player.lastAiDecision = payload.ai;
+}
+
 function updateEvaluations(state) {
   for (const player of Object.values(state.players ?? {})) {
     player.evaluation = evaluateSabaccHand(player.hand || []);
@@ -138,6 +147,7 @@ function beginHand(session, state) {
     player.bombedOut = false;
     player.contribution = Number(player.contribution || 0) + Number(state.ante || 0) + Number(state.sabaccAnte || 0);
     player.lastAction = `Anted ${Number(state.ante || 0)} to the hand pot and ${Number(state.sabaccAnte || 0)} to the Sabacc pot.`;
+    player.lastAiDecision = null;
     state.handPot += Number(state.ante || 0);
     state.sabaccPot += Number(state.sabaccAnte || 0);
     state.players[seat.seatId] = player;
@@ -195,6 +205,7 @@ async function processAi(session, state) {
     if (!isAutomatedSeat(seat)) break;
     const player = state.players[seat.seatId];
     const choice = SabaccAi.chooseAction({ player, state, aiProfile: seat.aiProfile || seat.aiDifficulty || 'medium' });
+    if (choice?.gmControlled) break;
     applyActionToState(session, state, seat, choice.type, choice);
   }
   return { session, state };
@@ -214,8 +225,9 @@ function applyActionToState(session, state, seat, action, payload = {}) {
     const drawn = drawSabaccCard(state.deck);
     state.deck = drawn.deck;
     player.hand.push(drawn.card);
-    player.lastAction = `Draws ${drawn.card.label}.`;
-    pushEvent(session, state, 'draw-card', seat.seatId, player.lastAction, { tone: 'draw' });
+    attachAiDecision(player, payload);
+    player.lastAction = 'Draws a card.';
+    pushEvent(session, state, 'draw-card', seat.seatId, publicCardActionMessage(seat, 'draws'), { tone: 'draw', ai: payload.ai || null });
     updateEvaluations(state);
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
@@ -227,8 +239,9 @@ function applyActionToState(session, state, seat, action, payload = {}) {
     if (index < 0) return { ok: false, error: 'Card not found in hand.' };
     const [removed] = player.hand.splice(index, 1);
     state.discard.push(removed);
-    player.lastAction = `Discards ${removed.label}.`;
-    pushEvent(session, state, 'discard-card', seat.seatId, player.lastAction, { tone: 'card' });
+    attachAiDecision(player, payload);
+    player.lastAction = 'Discards a card.';
+    pushEvent(session, state, 'discard-card', seat.seatId, publicCardActionMessage(seat, 'discards'), { tone: 'card', ai: payload.ai || null });
     updateEvaluations(state);
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
@@ -240,8 +253,9 @@ function applyActionToState(session, state, seat, action, payload = {}) {
     if (index < 0) return { ok: false, error: 'Card not found in hand.' };
     const old = player.hand[index];
     player.hand[index] = shiftSabaccCard(old);
-    player.lastAction = `Shifts ${old.label} into ${player.hand[index].label}.`;
-    pushEvent(session, state, 'shift-card', seat.seatId, player.lastAction, { tone: 'shift' });
+    attachAiDecision(player, payload);
+    player.lastAction = 'Shifts a card.';
+    pushEvent(session, state, 'shift-card', seat.seatId, publicCardActionMessage(seat, 'shifts'), { tone: 'shift', ai: payload.ai || null });
     updateEvaluations(state);
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
@@ -249,8 +263,9 @@ function applyActionToState(session, state, seat, action, payload = {}) {
 
   if (action === 'call-hand') {
     player.called = true;
+    attachAiDecision(player, payload);
     player.lastAction = 'Calls the hand.';
-    pushEvent(session, state, 'call-hand', seat.seatId, `${seat.displayName} calls the hand.`, { tone: 'stand' });
+    pushEvent(session, state, 'call-hand', seat.seatId, `${seat.displayName} calls the hand.`, { tone: 'stand', ai: payload.ai || null });
     updateEvaluations(state);
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
@@ -258,8 +273,9 @@ function applyActionToState(session, state, seat, action, payload = {}) {
 
   if (action === 'fold') {
     player.folded = true;
+    attachAiDecision(player, payload);
     player.lastAction = 'Folds out of the hand.';
-    pushEvent(session, state, 'fold', seat.seatId, `${seat.displayName} folds.`, { tone: 'danger' });
+    pushEvent(session, state, 'fold', seat.seatId, `${seat.displayName} folds.`, { tone: 'danger', ai: payload.ai || null });
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
   }

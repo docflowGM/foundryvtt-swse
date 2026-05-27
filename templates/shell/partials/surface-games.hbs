@@ -354,7 +354,8 @@
                     <b>{{this.displayName}}</b>
                     <span>{{this.statusLabel}} · hands won {{this.wins}}</span>
                     {{#if this.isAi}}
-                    <small>AI: {{this.aiDifficultyLabel}}</small>
+                    <small>AI: {{this.aiProfileLabel}}</small>
+                    {{#if this.aiLastDecision}}<small class="swse-sabacc-ai-read">{{this.aiLastDecision}}</small>{{/if}}
                     {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
                     {{#if this.tableFact}}<small class="swse-pazaak-table-fact">{{this.tableFact}}</small>{{/if}}
                     {{/if}}
