@@ -185,7 +185,7 @@ export function getPazaakPersonalityModifier(id, key, fallback = 0) {
 export function randomPazaakDialogue(personalityId, eventKey, fallback = '') {
   const personality = resolvePazaakAiPersonality(personalityId);
   const lines = personality.dialogue?.[eventKey];
-  return randomItem(lines, fallback || 'The opponent watches the table.');
+  return randomItem(lines, fallback || 'I am watching the table.');
 }
 
 export function randomPazaakProfession() {

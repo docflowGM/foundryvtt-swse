@@ -1,24 +1,24 @@
 {
-  "version": 1,
+  "version": 2,
   "forceSensitive": {
     "defaultNpcChance": 0.02,
     "defaultIntuitionChance": 0.05,
     "feelings": {
       "excellent": [
-        "The next draw feels unusually clear.",
-        "A bright instinct pulls toward the deck."
+        "The deck feels friendly right now.",
+        "Something says the next draw wants to help."
       ],
       "safe": [
-        "The next draw feels steady.",
-        "The deck feels quiet enough."
+        "The next card feels quiet enough.",
+        "I do not feel danger from the deck yet."
       ],
       "dangerous": [
-        "The next draw feels dangerous.",
-        "A sharp warning gathers around the deck."
+        "No. The next draw has teeth.",
+        "The deck feels hot. Too hot."
       ],
       "unclear": [
-        "The feeling fades before it becomes useful.",
-        "The table goes quiet in the wrong way."
+        "The feeling is muddy. I will trust the table instead.",
+        "Whatever I almost heard, it is gone now."
       ]
     }
   },
@@ -35,109 +35,172 @@
       },
       "dialogue": {
         "winRound": [
-          "A careful margin is still a margin.",
-          "That set resolves in this one's favor."
+          "A careful hand still wins.",
+          "That is why one does not chase every card."
         ],
         "winMatch": [
-          "Measured play carries the table.",
-          "Patience wins more than luck."
+          "Patience paid the bill.",
+          "The table rewards restraint eventually."
         ],
         "matchPoint": [
-          "One more quiet set should settle this."
+          "One more quiet set should do it.",
+          "No need to rush the final card."
         ],
         "loseRound": [
-          "A small loss is better than a reckless recovery."
+          "That loss was acceptable. The match continues.",
+          "Small setback. I still have room to breathe."
         ],
         "loseMatch": [
-          "The table was read correctly; the outcome was not."
+          "Careful was not enough this time.",
+          "The table found the one risk I could not avoid."
         ],
         "taunt": [
-          "The pot rewards restraint more often than bravado."
+          "You are spending nerve faster than cards.",
+          "Bold choices become expensive choices."
         ],
         "forceSensitivityNudge": [
-          "Something about the next draw feels unwise.",
-          "The next card carries a strange pressure."
+          "I do not like the next draw.",
+          "Something about the deck says wait."
         ],
         "tell1": [
-          "Touches the edge of each side card before deciding."
+          "No hurry. The deck punishes hurry.",
+          "A safe total is not a weak total."
         ],
         "tell2": [
-          "Counts silently when the table gets close to twenty."
+          "I can let you make the mistake first.",
+          "The patient chair often gets paid."
         ],
         "fakeTell": [
-          "Lets a hand hover over the stand control, then draws anyway."
+          "This hand is worse than it looks.",
+          "I may have miscounted that one."
         ],
         "fakeTell2": [
-          "Frowns at a safe total as if it were dangerous."
+          "You probably have the stronger line.",
+          "If I were you, I would press harder."
         ],
         "ante": [
-          "Posts the ante without ceremony."
+          "Ante posted. Sensible stakes.",
+          "In quietly, out carefully."
         ],
         "raise": [
-          "Raises only after a long pause."
+          "A small raise. Nothing reckless.",
+          "I will increase the pressure, but not the danger."
         ],
         "stay": [
-          "Keeps the table steady."
+          "I will hold this line.",
+          "No change. The table can come to me."
         ],
         "playsCard": [
-          "Slides a side card in with deliberate precision."
+          "This card keeps the hand honest.",
+          "A measured answer."
         ],
         "showsCard": [
-          "Reveals the card without flourish."
+          "There. Count it carefully.",
+          "The card says enough."
         ],
         "checkmate": [
-          "There are no safe lines left."
+          "No safe answer remains.",
+          "That line is closed."
         ],
         "check": [
-          "That position is constrained."
+          "Careful. The next choice matters.",
+          "That position has fewer exits than it seems."
         ],
         "playsPositiveCard": [
-          "Adds only what is needed."
+          "Only what I need, no more.",
+          "I will add the safe amount."
         ],
         "playsNegativeCard": [
-          "Cuts the total back from danger."
+          "Back below danger.",
+          "That trims the risk nicely."
         ],
         "busts": [
-          "The risk was mismeasured."
+          "I overstepped. That is on me.",
+          "Too much caution would have been wiser."
         ],
         "hits20": [
-          "Twenty. Sufficient."
+          "Twenty. That is sufficient.",
+          "Exactly twenty. I will take that."
         ],
         "stand": [
-          "Stands on the current total."
+          "I stand. That total can work.",
+          "No more cards. This is enough."
         ],
         "drawsCard": [
-          "Draws after a careful count."
+          "One card, carefully.",
+          "The draw is worth the risk."
         ],
         "allIn": [
-          "Commits reluctantly, but completely."
+          "If it must be all in, it will be deliberate.",
+          "Everything in, but not without reason."
         ],
         "conversationLine1": [
-          "Most gamblers lose before the cards are dealt."
+          "Most gamblers lose before the first card, in their head.",
+          "The loudest player is rarely the safest one."
         ],
         "conversationLine2": [
-          "A quiet table tells the truth."
+          "A quiet table tells you more than a cheering crowd.",
+          "Credits like calm hands."
         ],
         "sideDeckLocked": [
-          "Locks a conservative side deck."
+          "Side deck locked. Nothing extravagant.",
+          "I brought the cards that keep me alive."
         ],
         "payoutCapped": [
-          "House policy trims the victory."
+          "The house trims the win. Sensible, if annoying.",
+          "A capped payout is still better than a loss."
         ],
         "refund": [
-          "No loss, no gain. A tidy ruling."
+          "No loss, no gain. Clean enough.",
+          "A refund keeps the ledger tidy."
         ],
         "thinking": [
-          "Studies the table like a fragile hyperdrive seal.",
-          "Lets the silence stretch before choosing a safe line."
+          "Give me a moment. I am counting the safe line.",
+          "The correct play is usually the quiet one."
         ],
         "thinkingHard": [
-          "The margins are too thin; every card gets counted twice.",
-          "A cornered pause settles over the table while the safest escape is measured."
+          "This is tighter than I like. Let me count it again.",
+          "No easy exits. I need the least dangerous one."
         ],
         "thinkingEasy": [
-          "The lead is comfortable enough to breathe before acting.",
-          "A small nod says the table is still under control."
+          "The table is calm. I only need not ruin it.",
+          "I am ahead enough to stay careful."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -161,101 +224,164 @@
           "Victory favors the player who keeps drawing."
         ],
         "matchPoint": [
-          "One more set. No room to breathe now."
+          "One more set. No room to breathe now.",
+          "You feel that? That is the table closing."
         ],
         "loseRound": [
-          "Fine. The next push lands harder."
+          "Fine. The next push lands harder.",
+          "You got one. Do not get comfortable."
         ],
         "loseMatch": [
-          "Too much throttle, not enough runway."
+          "Too much throttle, not enough runway.",
+          "I pushed too far. It happens once."
         ],
         "taunt": [
-          "Standing already? Bold way to surrender."
+          "Standing already? Bold way to surrender.",
+          "If you wanted safe, you picked the wrong table."
         ],
         "forceSensitivityNudge": [
           "The next card feels hot. Maybe too hot.",
           "There is a surge around the next draw."
         ],
         "tell1": [
-          "Taps the table faster as the score rises."
+          "I am not here to tiptoe around twenty.",
+          "The deck only scares players who listen to it."
         ],
         "tell2": [
-          "Leans forward whenever an opponent stands."
+          "You stand; I press. Simple game.",
+          "A weak total is an invitation."
         ],
         "fakeTell": [
-          "Grins at a weak total as if it were a winning hand."
+          "Hmph. Too easy.",
+          "That draw did not scare me at all."
         ],
         "fakeTell2": [
-          "Pretends to hesitate before an obvious push."
+          "Careful now. I might already have you.",
+          "You sure you want to watch the next card?"
         ],
         "ante": [
-          "Throws the ante in like a challenge."
+          "Ante in. Now make it interesting.",
+          "There. The table has a pulse."
         ],
         "raise": [
-          "Raises before the silence settles."
+          "Raise. Keep up.",
+          "More pressure. Your move."
         ],
         "stay": [
-          "Refuses to back down from the current line."
+          "I stay in. Obviously.",
+          "No retreat from this line."
         ],
         "playsCard": [
-          "Slams a side card onto the table."
+          "Here comes the push.",
+          "This should wake the table up."
         ],
         "showsCard": [
-          "Shows the card with a sharp nod."
+          "Look closely. That one matters.",
+          "There. Count fast."
         ],
         "checkmate": [
-          "No exits. Only the hit."
+          "No exits. Only the hit.",
+          "That is the end of the line."
         ],
         "check": [
-          "Pressure on the board."
+          "Pressure on the board.",
+          "Careful. I am not backing off."
         ],
         "playsPositiveCard": [
-          "Drives the total upward."
+          "Up we go.",
+          "Drive the total higher."
         ],
         "playsNegativeCard": [
-          "Cuts the bust and keeps pressing."
+          "Cut the bust, keep the pressure.",
+          "Back from the edge, still moving."
         ],
         "busts": [
-          "Too far. Worth the try."
+          "Too far. Worth the try.",
+          "That was the right mistake."
         ],
         "hits20": [
-          "Twenty. Perfect hit."
+          "Twenty. Perfect hit.",
+          "There it is. Clean impact."
         ],
         "stand": [
-          "Stands only because the total demands respect."
+          "I stand because this total deserves respect.",
+          "Enough. Beat that."
         ],
         "drawsCard": [
-          "Draws without blinking."
+          "Draw. No blinking.",
+          "Another card. Let us go."
         ],
         "allIn": [
-          "All in. Let the table answer."
+          "All in. Let the table answer.",
+          "Everything on the line. Finally."
         ],
         "conversationLine1": [
-          "A timid gambler is just a donor with a chair."
+          "A timid gambler is just a donor with a chair.",
+          "The deck respects nerve."
         ],
         "conversationLine2": [
-          "Cards are meant to move."
+          "Cards are meant to move.",
+          "If the table is quiet, push harder."
         ],
         "sideDeckLocked": [
-          "Locks an attack-heavy side deck."
+          "Side deck locked. Built to hit.",
+          "These cards know how to attack."
         ],
         "payoutCapped": [
-          "The house flinched before the player did."
+          "The house flinched before I did.",
+          "Capped? The table could not handle the heat."
         ],
         "refund": [
-          "Refunded? Cowardly table."
+          "Refunded? Cowardly table.",
+          "No blood, no story."
         ],
         "thinking": [
-          "Looks for the fastest route to twenty.",
-          "The next move is weighed like a thrown vibroblade."
+          "I am looking for the fastest way to twenty.",
+          "Give me a breath; I am lining up the hit."
         ],
         "thinkingHard": [
-          "Pinned behind the count, the pressure turns sharp.",
-          "The table has teeth now, and the next play has to bite back."
+          "Pinned or not, I only need one clean strike.",
+          "This corner just means I push harder."
         ],
         "thinkingEasy": [
-          "The advantage is obvious; now it just needs force.",
-          "A quick grin says the table is already leaning the right way."
+          "I already have the angle. Now I make it hurt.",
+          "Easy pressure is still pressure."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -271,108 +397,172 @@
       },
       "dialogue": {
         "winRound": [
-          "See? It was definitely a plan.",
-          "The table loved that one."
+          "See? That was definitely a plan.",
+          "The table loved that one. I think."
         ],
         "winMatch": [
-          "Never doubted it. Not once. Probably."
+          "Never doubted it. Not once. Probably.",
+          "That is what confidence looks like after the smoke clears."
         ],
         "matchPoint": [
-          "One more! What could go wrong?"
+          "One more! What could go wrong?",
+          "Last set. The deck and I are on speaking terms."
         ],
         "loseRound": [
-          "That was almost brilliant."
+          "That was almost brilliant.",
+          "Bad ending, excellent idea."
         ],
         "loseMatch": [
-          "The universe had no sense of humor this time."
+          "The universe had no sense of humor this time.",
+          "Fine, the table survives me today."
         ],
         "taunt": [
-          "Safe play is for cargo manifests."
+          "Safe play is for cargo manifests.",
+          "Come on, make a terrible choice with style."
         ],
         "forceSensitivityNudge": [
           "The next card feels loud.",
           "Something says draw, which is probably good enough."
         ],
         "tell1": [
-          "Laughs at a total that should cause concern."
+          "I promise I checked the score. Mostly.",
+          "If this goes wrong, remember the courage."
         ],
         "tell2": [
-          "Reaches for the deck before checking the score."
+          "The deck would not betray me twice. Probably.",
+          "Math is just fear with numbers."
         ],
         "fakeTell": [
-          "Acts horrified by a perfectly useful card."
+          "Oh no, what a terrible position for me.",
+          "This is definitely bad. You should relax."
         ],
         "fakeTell2": [
-          "Celebrates before the math is finished."
+          "Hmph, too easy.",
+          "I absolutely know what I am doing."
         ],
         "ante": [
-          "Antes with theatrical confidence."
+          "Ante in before wisdom interferes.",
+          "Credits down. Regrets later."
         ],
         "raise": [
-          "Raises because the moment feels right."
+          "Raise! Because the table asked nicely.",
+          "More credits, more fun."
         ],
         "stay": [
-          "Stays, but looks annoyed about it."
+          "I stay. Somehow that feels brave.",
+          "I will not run from this nonsense."
         ],
         "playsCard": [
-          "Plays a card with unnecessary drama."
+          "This card has a heroic look to it.",
+          "Card down. Consequences pending."
         ],
         "showsCard": [
-          "Shows the card like a magic trick."
+          "Ta-da. That helped, right?",
+          "Look at that. A choice happened."
         ],
         "checkmate": [
-          "That somehow worked."
+          "That somehow worked.",
+          "No way out. For one of us."
         ],
         "check": [
-          "That might be dangerous. Excellent."
+          "That might be dangerous. Excellent.",
+          "Careful, this is becoming fun."
         ],
         "playsPositiveCard": [
-          "Adds points with a grin."
+          "More points! Great idea.",
+          "Upward is a direction."
         ],
         "playsNegativeCard": [
-          "Yanks the score back from disaster."
+          "Back from disaster. Temporarily.",
+          "See? I can be responsible."
         ],
         "busts": [
-          "That was too much card."
+          "That was too much card.",
+          "The deck has betrayed art itself."
         ],
         "hits20": [
-          "Twenty! That counts as skill."
+          "Twenty! That counts as skill.",
+          "Perfect. Never tell anyone I was worried."
         ],
         "stand": [
-          "Stands before changing their mind."
+          "I stand before I improve this into a disaster.",
+          "Enough. Do not let me touch the deck again."
         ],
         "drawsCard": [
-          "Draws like consequences are optional."
+          "Draw! Consequences are optional.",
+          "Another card. The sensible thing can wait."
         ],
         "allIn": [
-          "All in! Excellent mistake or excellent victory."
+          "All in! Excellent mistake or excellent victory.",
+          "Everything in. I choose drama."
         ],
         "conversationLine1": [
-          "The trick is to move before doubt catches up."
+          "The trick is to move before doubt catches up.",
+          "A table without panic is just furniture."
         ],
         "conversationLine2": [
-          "This chair has seen worse decisions."
+          "This chair has seen worse decisions.",
+          "If it works, it was strategy."
         ],
         "sideDeckLocked": [
-          "Locks a side deck that looks like a dare."
+          "Side deck locked. It looks like a dare.",
+          "These cards and I are going to make memories."
         ],
         "payoutCapped": [
-          "Apparently winning too loudly has limits."
+          "Apparently winning too loudly has limits.",
+          "The house fears excellence. Or liability."
         ],
         "refund": [
-          "Free lesson, no credits lost."
+          "Free lesson, no credits lost.",
+          "A refund? I was just getting dangerous."
         ],
         "thinking": [
-          "Taps the table twice and seems ready to dare the deck.",
-          "The pause feels less like math and more like a countdown."
+          "Give me a second; I am pretending to calculate.",
+          "This feels like a moment for inspiration over math."
         ],
         "thinkingHard": [
-          "Backed into a corner, the next idea looks dangerous enough to work.",
-          "The table has gone bad, which apparently makes it more interesting."
+          "I am in a corner, so naturally I need a worse idea.",
+          "This is bad enough that something brilliant might happen."
         ],
         "thinkingEasy": [
-          "The lead makes the next risk look even more tempting.",
-          "A loose laugh slips out before the next impulse wins."
+          "I am ahead, which means I can make it interesting.",
+          "This is going well. Dangerous time to trust me."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -389,106 +579,171 @@
       "dialogue": {
         "winRound": [
           "Expected outcome confirmed.",
-          "The line was correct."
+          "The correct line held."
         ],
         "winMatch": [
-          "The match resolves according to probability."
+          "The match resolves according to probability.",
+          "Consistent decisions produced the result."
         ],
         "matchPoint": [
-          "One set remains in the model."
+          "One set remains in the model.",
+          "The final branch is now active."
         ],
         "loseRound": [
-          "Variance, not error."
+          "Variance, not error.",
+          "Unfavorable outcome. The model adjusts."
         ],
         "loseMatch": [
-          "The model requires revision."
+          "The model requires revision.",
+          "The data disagreed with me. Noted."
         ],
         "taunt": [
-          "The arithmetic is unkind to that choice."
+          "The arithmetic is unkind to that choice.",
+          "Your line has a poor expected value."
         ],
         "forceSensitivityNudge": [
-          "An irrational caution appears statistically useful."
+          "An irrational caution appears statistically useful.",
+          "The numbers say one thing. The table says another."
         ],
         "tell1": [
-          "Reorders side cards by value before playing."
+          "Count the cards, not the nerves.",
+          "Every visible card is evidence."
         ],
         "tell2": [
-          "Looks at the discard history more than the opponent."
+          "You are giving me useful data.",
+          "That stand tells me enough."
         ],
         "fakeTell": [
-          "Murmurs a calculation that is deliberately wrong."
+          "I may have left a gap in the calculation.",
+          "That total is less stable than I prefer."
         ],
         "fakeTell2": [
-          "Pretends to miscount by one."
+          "Perhaps I miscounted by one.",
+          "Your position may be stronger than it appears."
         ],
         "ante": [
-          "Antes exactly on cue."
+          "Ante posted.",
+          "Entry stake recorded."
         ],
         "raise": [
-          "Raises at the calculated threshold."
+          "Raise. The threshold supports it.",
+          "I increase the stake within acceptable risk."
         ],
         "stay": [
-          "Holds the line."
+          "I hold the current line.",
+          "No adjustment required."
         ],
         "playsCard": [
-          "Places the mathematically clean card."
+          "This is the cleanest card.",
+          "The card fits the calculation."
         ],
         "showsCard": [
-          "Shows the proof of the decision."
+          "There is the proof.",
+          "The result follows."
         ],
         "checkmate": [
-          "The final branch is closed."
+          "The final branch is closed.",
+          "No legal line improves your position."
         ],
         "check": [
-          "The position is forcing."
+          "The position is forcing.",
+          "Your next choice is constrained."
         ],
         "playsPositiveCard": [
-          "Adds the necessary value."
+          "Adding the necessary value.",
+          "The positive correction is exact."
         ],
         "playsNegativeCard": [
-          "Subtracts to restore a valid state."
+          "Subtracting to restore a valid state.",
+          "The negative correction prevents failure."
         ],
         "busts": [
-          "An unacceptable branch."
+          "An unacceptable branch.",
+          "The risk model failed."
         ],
         "hits20": [
-          "Twenty. Optimal."
+          "Twenty. Optimal.",
+          "Exact target achieved."
         ],
         "stand": [
-          "Stands at the expected value."
+          "I stand at the expected value.",
+          "No further draw is justified."
         ],
         "drawsCard": [
-          "Draws after recalculating."
+          "Drawing after recalculation.",
+          "The draw has acceptable odds."
         ],
         "allIn": [
-          "Full commitment is justified."
+          "Full commitment is justified.",
+          "The final wager is mathematically defensible."
         ],
         "conversationLine1": [
-          "Luck is just probability refusing to introduce itself."
+          "Luck is just probability refusing to introduce itself.",
+          "Numbers do not bluff. Players do."
         ],
         "conversationLine2": [
-          "The table is a ledger with better lighting."
+          "The table is a ledger with better lighting.",
+          "Every choice leaves a trace."
         ],
         "sideDeckLocked": [
-          "Locks a balanced statistical side deck."
+          "Balanced side deck locked.",
+          "The distribution is acceptable."
         ],
         "payoutCapped": [
-          "The economic constraint supersedes the game outcome."
+          "The economic constraint supersedes the game outcome.",
+          "The payout cap is a separate system variable."
         ],
         "refund": [
-          "Settlement returns to zero."
+          "Settlement returns to zero.",
+          "The ledger is neutral again."
         ],
         "thinking": [
-          "Runs the visible totals with machine-like patience.",
-          "Every revealed card becomes another quiet calculation."
+          "I need a moment to run the line.",
+          "The answer is in the probabilities."
         ],
         "thinkingHard": [
-          "The position is ugly, but not unsolved.",
-          "A hard silence falls while the probabilities are rebuilt from scratch."
+          "This position is ugly, but not unsolved.",
+          "I need to rebuild the math from the board up."
         ],
         "thinkingEasy": [
-          "The numbers are favorable and the next line is clean.",
-          "The table state is already close to solved."
+          "The numbers are favorable. I only need precision.",
+          "This table state is nearly solved."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -505,106 +760,171 @@
       "dialogue": {
         "winRound": [
           "That opening was enough.",
-          "A small weakness becomes a set."
+          "Small weakness, full payment."
         ],
         "winMatch": [
-          "Every table gives something away eventually."
+          "Every table gives something away eventually.",
+          "I waited. You provided."
         ],
         "matchPoint": [
-          "One more mistake is all this needs."
+          "One more mistake is all this needs.",
+          "I only need one more door left open."
         ],
         "loseRound": [
-          "No opening worth taking."
+          "No opening worth taking.",
+          "You closed the gap in time."
         ],
         "loseMatch": [
-          "The better opportunity never arrived."
+          "The better opportunity never arrived.",
+          "You gave me less than I hoped."
         ],
         "taunt": [
-          "That stand left a door open."
+          "That stand left a door open.",
+          "Careful. I collect loose choices."
         ],
         "forceSensitivityNudge": [
-          "The next draw feels like an opening—or a trap."
+          "The next draw feels like an opening, or a trap.",
+          "Something is about to give. Maybe you."
         ],
         "tell1": [
-          "Looks bored until the opponent stands."
+          "I can wait longer than you can.",
+          "Do not worry. I will know when you slip."
         ],
         "tell2": [
-          "Saves strong cards longer than expected."
+          "That choice says more than you meant it to.",
+          "You just made the table easier to read."
         ],
         "fakeTell": [
-          "Pretends not to notice a winning line."
+          "No opening here. None at all.",
+          "I suppose I will just have to survive this hand."
         ],
         "fakeTell2": [
-          "Shrugs at a card that clearly matters."
+          "Hmph. Too easy.",
+          "That looks harmless enough."
         ],
         "ante": [
-          "Antes like the real game has not started yet."
+          "Ante in. The real game comes later.",
+          "Small price to watch the table."
         ],
         "raise": [
-          "Raises only when the table tilts."
+          "Raise. The timing is good.",
+          "Now the opening is worth money."
         ],
         "stay": [
-          "Waits for leverage."
+          "I stay. The leverage is not gone yet.",
+          "Holding here costs you patience."
         ],
         "playsCard": [
-          "Plays the card at the worst possible moment for the opponent."
+          "This card arrives at a bad time for you.",
+          "Here is the part you left open."
         ],
         "showsCard": [
-          "Shows the trap card."
+          "That was the trap.",
+          "There. That is what I waited for."
         ],
         "checkmate": [
-          "The opening closes behind you."
+          "The opening closes behind you.",
+          "You stepped through the wrong door."
         ],
         "check": [
-          "There is a gap in the defense."
+          "There is a gap in your defense.",
+          "That position leaks."
         ],
         "playsPositiveCard": [
-          "Adds just enough to steal the set."
+          "Just enough to steal it.",
+          "A little higher, right where it hurts."
         ],
         "playsNegativeCard": [
-          "Drops under the danger line."
+          "Back under danger, still in control.",
+          "I will not give the opening back."
         ],
         "busts": [
-          "The opportunity was bait."
+          "The opening was bait.",
+          "I reached too soon."
         ],
         "hits20": [
-          "Twenty, taken at the right time."
+          "Twenty, taken at the right time.",
+          "Perfect timing. Perfect total."
         ],
         "stand": [
-          "Stands once the pressure is useful."
+          "I stand. The pressure is useful now.",
+          "Your turn to solve the problem."
         ],
         "drawsCard": [
-          "Draws while watching the opponent, not the deck."
+          "One draw. Let us see what you left me.",
+          "I draw where the table is weakest."
         ],
         "allIn": [
-          "Everything goes in because the window is open."
+          "Everything goes in because the window is open.",
+          "This is the moment worth paying for."
         ],
         "conversationLine1": [
-          "Nobody loses all at once. They leak."
-        ],
-        "conversationLine2": [
+          "Nobody loses all at once. They leak.",
           "The best card is the one played after patience."
         ],
+        "conversationLine2": [
+          "I do not need a good hand if you give me a bad choice.",
+          "Every opponent eventually tells the table something."
+        ],
         "sideDeckLocked": [
-          "Locks a flexible side deck."
+          "Flexible side deck locked.",
+          "I brought answers, not wishes."
         ],
         "payoutCapped": [
-          "The table pays less than the opening deserved."
+          "The table pays less than the opening deserved.",
+          "The house noticed the profit too late."
         ],
         "refund": [
-          "No harm. The next opening waits."
+          "No harm. The next opening waits.",
+          "A clean reset still teaches me something."
         ],
         "thinking": [
-          "Waits for the weak seam in the set.",
-          "The pause feels like a trap being placed gently on the table."
+          "I am waiting for the weak seam.",
+          "Give me a moment. There is always an opening."
         ],
         "thinkingHard": [
-          "With few openings left, every weakness gets hunted.",
-          "The corner is tight, so the next mistake must belong to someone else."
+          "Few openings left. I need the one you missed.",
+          "The corner is tight; I need your mistake before mine."
         ],
         "thinkingEasy": [
-          "The opening is already there; now comes the collection.",
-          "The advantage is banked, and the next move only needs to cash it in."
+          "The opening is already there. I only need to collect.",
+          "The advantage is banked. Now I cash it in."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -624,103 +944,168 @@
           "Tell the table to remember that set."
         ],
         "winMatch": [
-          "Performance and victory, perfectly paired."
+          "Performance and victory, perfectly paired.",
+          "Thank you, thank you. The credits may applaud next."
         ],
         "matchPoint": [
-          "Final act. Watch closely."
+          "Final act. Watch closely.",
+          "One more set and the curtain falls."
         ],
         "loseRound": [
-          "The timing was excellent. The outcome was rude."
+          "The timing was excellent. The outcome was rude.",
+          "A temporary flaw in an otherwise fine performance."
         ],
         "loseMatch": [
-          "A tragic ending, but memorable."
+          "A tragic ending, but memorable.",
+          "Defeat, yes. Dull, never."
         ],
         "taunt": [
-          "Do try to make this entertaining."
+          "Do try to make this entertaining.",
+          "If you must lose, at least do it with timing."
         ],
         "forceSensitivityNudge": [
-          "The next card has stage presence."
+          "The next card has stage presence.",
+          "Something dramatic is waiting in the deck."
         ],
         "tell1": [
-          "Waits until everyone is looking before playing."
+          "Everyone watching? Good.",
+          "A good card deserves an audience."
         ],
         "tell2": [
-          "Smiles whenever a dramatic card is possible."
+          "This is the part where the table leans in.",
+          "You can feel the scene changing, yes?"
         ],
         "fakeTell": [
-          "Gasps at a harmless draw."
+          "Oh dear. How terrible for me.",
+          "This hand? Barely worth noticing."
         ],
         "fakeTell2": [
-          "Applauds an opponent's mediocre total."
+          "Hmph. Too easy.",
+          "Careful, I might make this look effortless."
         ],
         "ante": [
-          "Antes with a flourish."
+          "Ante, with style.",
+          "A little entrance fee for the show."
         ],
         "raise": [
-          "Raises for the audience."
+          "Raise. The scene needed stakes.",
+          "Let us give the audience something to count."
         ],
         "stay": [
-          "Holds for effect."
+          "I stay. Suspense is useful.",
+          "Hold the moment."
         ],
         "playsCard": [
-          "Reveals a side card like a curtain rising."
+          "Now this is a card.",
+          "Watch the turn."
         ],
         "showsCard": [
-          "Turns the card for everyone to admire."
+          "There. Admire it quickly.",
+          "A reveal worthy of the wait."
         ],
         "checkmate": [
-          "And there is the finale."
+          "And there is the finale.",
+          "Curtain. No exits."
         ],
         "check": [
-          "The drama tightens."
+          "The drama tightens.",
+          "Careful. This is where the music changes."
         ],
         "playsPositiveCard": [
-          "Adds points with style."
+          "Upward, elegantly.",
+          "A little lift for the scene."
         ],
         "playsNegativeCard": [
-          "Drops the total with theatrical relief."
+          "A graceful retreat from disaster.",
+          "Down just enough to stay beautiful."
         ],
         "busts": [
-          "Too dramatic. Still impressive."
+          "Too dramatic. Still impressive.",
+          "A bold mistake is better than a dull one."
         ],
         "hits20": [
-          "Twenty, naturally."
+          "Twenty, naturally.",
+          "Exact. Elegant. Mine."
         ],
         "stand": [
-          "Stands with theatrical certainty."
+          "I stand, and I do mean stand.",
+          "No more cards. This total has presence."
         ],
         "drawsCard": [
-          "Draws after a pause long enough to be annoying."
+          "Draw, with timing.",
+          "Let the deck make its entrance."
         ],
         "allIn": [
-          "All in. The only tasteful choice."
+          "All in. The only tasteful choice.",
+          "Everything on the table. Finally, drama."
         ],
         "conversationLine1": [
-          "A dull victory is barely a victory."
-        ],
-        "conversationLine2": [
+          "A dull victory is barely a victory.",
           "Pazaak is mathematics wearing a cape."
         ],
+        "conversationLine2": [
+          "If the table is going to remember us, let it remember style.",
+          "Cards should land like applause."
+        ],
         "sideDeckLocked": [
-          "Locks a flashy side deck."
+          "Flashy side deck locked.",
+          "These cards know how to make an entrance."
         ],
         "payoutCapped": [
-          "The house capped the applause."
+          "The house capped the applause.",
+          "A rude limit on an excellent performance."
         ],
         "refund": [
-          "A refund is just an encore delayed."
+          "A refund is just an encore delayed.",
+          "No payout, but at least the table saw me."
         ],
         "thinking": [
-          "Lets the suspense do half the work.",
-          "The move is delayed just long enough to be noticed."
+          "Give me a moment; suspense deserves space.",
+          "The next move needs timing, not haste."
         ],
         "thinkingHard": [
-          "The spotlight gets hotter when the table turns hostile.",
-          "A dramatic recovery is considered with entirely too much confidence."
+          "The spotlight is hot now. I need a spectacular recovery.",
+          "The table wants a comeback. I may provide one."
         ],
         "thinkingEasy": [
-          "The lead is comfortable, so the performance can begin.",
-          "A flourish arrives before the card does."
+          "I am ahead. Now I can make it pretty.",
+          "The lead gives me room for style."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -740,103 +1125,168 @@
           "Small edges stack."
         ],
         "winMatch": [
-          "The long table ends where expected."
+          "The long table ends where expected.",
+          "That is what saving resources buys."
         ],
         "matchPoint": [
-          "One more edge closes it."
+          "One more edge closes it.",
+          "Last set. No need to waste anything."
         ],
         "loseRound": [
-          "A set spent to save the match."
+          "A set spent to save the match.",
+          "That loss costs less than the card I kept."
         ],
         "loseMatch": [
-          "The grind broke first."
+          "The grind broke first.",
+          "I ran out of table before you ran out of answers."
         ],
         "taunt": [
-          "Spend the good cards early. Please."
+          "Spend the good cards early. Please.",
+          "You are burning resources faster than sense."
         ],
         "forceSensitivityNudge": [
-          "The next draw feels like a cost."
+          "The next draw feels like a cost.",
+          "Something says this card may be expensive."
         ],
         "tell1": [
-          "Keeps rare cards untouched for a long time."
+          "A saved card wins later.",
+          "One set is not the match."
         ],
         "tell2": [
-          "Accepts an ugly tie without complaint."
+          "Keep spending. I am counting.",
+          "I can lose small longer than you can win loud."
         ],
         "fakeTell": [
-          "Looks disappointed while preserving the better card."
+          "This card is probably useless anyway.",
+          "I suppose I have nothing worth saving."
         ],
         "fakeTell2": [
-          "Pretends a saved card is useless."
+          "You have me under pressure now.",
+          "I may have to spend more than I want."
         ],
         "ante": [
-          "Posts the ante like rent."
+          "Ante paid. Cost of business.",
+          "Another table fee. Fine."
         ],
         "raise": [
-          "Raises only when the match math supports it."
+          "Raise, but only because it earns.",
+          "I will put more in when the math pays back."
         ],
         "stay": [
-          "Keeps the resources intact."
+          "I stay. Resources intact.",
+          "No need to spend yet."
         ],
         "playsCard": [
-          "Spends a card only when the set is worth it."
+          "This card earns its keep.",
+          "Spending one because the set is worth it."
         ],
         "showsCard": [
-          "Shows the card after squeezing value from it."
+          "Value extracted.",
+          "That one paid for itself."
         ],
         "checkmate": [
-          "Attrition completes the work."
+          "Attrition completes the work.",
+          "No resources left to save you."
         ],
         "check": [
-          "Pressure accumulates."
+          "Pressure accumulates.",
+          "This is how small edges become problems."
         ],
         "playsPositiveCard": [
-          "Adds value without overspending."
+          "Adding value without waste.",
+          "Just enough. Nothing extra."
         ],
         "playsNegativeCard": [
-          "Preserves the set and the match."
+          "Preserve the set, preserve the match.",
+          "Back under the line. Still efficient."
         ],
         "busts": [
-          "An expensive mistake."
+          "An expensive mistake.",
+          "That cost too much."
         ],
         "hits20": [
-          "Twenty without waste."
+          "Twenty without waste.",
+          "Exact target, minimum spend."
         ],
         "stand": [
-          "Stands and saves the hand."
+          "I stand and keep the rest.",
+          "Enough for now. The match is longer than this set."
         ],
         "drawsCard": [
-          "Draws with the match score in mind."
+          "Draw with the match score in mind.",
+          "One card now, cards saved later."
         ],
         "allIn": [
-          "The saved resources go in now."
+          "The saved resources go in now.",
+          "This is what the reserve was for."
         ],
         "conversationLine1": [
-          "The table pays the one who is still thinking three sets later."
-        ],
-        "conversationLine2": [
+          "The table pays whoever is still thinking three sets later.",
           "Never spend a perfect card on a mediocre problem."
         ],
+        "conversationLine2": [
+          "Fast winners become broke veterans.",
+          "A match is won by what you refuse to waste."
+        ],
         "sideDeckLocked": [
-          "Locks a resource-preserving side deck."
+          "Resource deck locked.",
+          "These cards are here for the long table."
         ],
         "payoutCapped": [
-          "A capped payout is still a payout."
+          "A capped payout is still a payout.",
+          "Profit trimmed is profit kept."
         ],
         "refund": [
-          "The bankroll survives."
+          "The bankroll survives.",
+          "No loss. Good enough."
         ],
         "thinking": [
-          "Measures the set against the whole match.",
-          "The pause is patient, like a long hyperspace route."
+          "I am measuring this set against the whole match.",
+          "Give me a moment; I am pricing the card."
         ],
         "thinkingHard": [
-          "Even cornered, the match is not over until the last resource is spent.",
+          "Cornered, but not empty. I saved tools for this.",
           "The hard line is found by refusing to rush."
         ],
         "thinkingEasy": [
-          "The lead is another resource to conserve.",
-          "No need to hurry when the match is already being squeezed."
+          "The lead is another resource to protect.",
+          "No need to hurry when the match is being squeezed."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -856,103 +1306,168 @@
           "That set was needed."
         ],
         "winMatch": [
-          "Survived the table."
+          "Survived the table.",
+          "I told you I was not done."
         ],
         "matchPoint": [
-          "No room left. Every card matters."
+          "No room left. Every card matters.",
+          "This is where the table stops forgiving mistakes."
         ],
         "loseRound": [
-          "No. Not that one."
+          "No. Not that one.",
+          "That one hurt. I needed it."
         ],
         "loseMatch": [
-          "The table ran out of mercy."
+          "The table ran out of mercy.",
+          "That was the last breath."
         ],
         "taunt": [
-          "Push me far enough and see what happens."
+          "Push me far enough and see what happens.",
+          "You do not want me desperate."
         ],
         "forceSensitivityNudge": [
-          "The next card feels like a last chance."
+          "The next card feels like a last chance.",
+          "Something says the next draw decides more than it should."
         ],
         "tell1": [
-          "Breathes faster when behind in sets."
+          "I only need one way out.",
+          "Do not count me out while I still have a card."
         ],
         "tell2": [
-          "Spends side cards more freely near match point."
+          "Every total looks dangerous from here.",
+          "The table is closing, but not closed."
         ],
         "fakeTell": [
-          "Acts cornered even while ahead."
+          "I am worse off than I look.",
+          "This is nearly over for me."
         ],
         "fakeTell2": [
-          "Pretends a safe total is hopeless."
+          "Hmph. Too easy.",
+          "You should finish this quickly, if you can."
         ],
         "ante": [
-          "Antes like it hurts."
+          "Ante in. That stings.",
+          "Fine. The table gets another piece."
         ],
         "raise": [
-          "Raises because backing down is worse."
+          "Raise. Backing down costs more.",
+          "More in, because I cannot afford fear."
         ],
         "stay": [
-          "Stays only when there is no better panic."
+          "I stay because running is worse.",
+          "No retreat. Not yet."
         ],
         "playsCard": [
-          "Throws a side card in before doubt can answer."
+          "This has to work.",
+          "Card down. Come on."
         ],
         "showsCard": [
-          "Shows the card with a tight expression."
+          "There. That is the chance.",
+          "Look at it. That keeps me breathing."
         ],
         "checkmate": [
-          "That was the last square."
+          "That was the last square.",
+          "No room left now."
         ],
         "check": [
-          "Everything is pressure now."
+          "Everything is pressure now.",
+          "Careful. One mistake and I am back in this."
         ],
         "playsPositiveCard": [
-          "Pushes the total out of desperation."
+          "Push it higher. I need the win.",
+          "Up. I have to reach."
         ],
         "playsNegativeCard": [
-          "Pulls back from the edge."
+          "Back from the edge.",
+          "Not busting today. Not yet."
         ],
         "busts": [
-          "Too much. Too late."
+          "Too much. Too late.",
+          "I reached and the deck bit me."
         ],
         "hits20": [
-          "Twenty. Still in it."
+          "Twenty. Still in it.",
+          "There. I can still breathe."
         ],
         "stand": [
-          "Stands because the nerve finally holds."
+          "I stand because the nerve finally holds.",
+          "Enough. Let that total survive."
         ],
         "drawsCard": [
-          "Draws like there is no tomorrow."
+          "Draw. No tomorrow at this table.",
+          "One more card. It has to be one more."
         ],
         "allIn": [
-          "All in. There was no other move."
+          "All in. There was no other move.",
+          "Everything left goes here."
         ],
         "conversationLine1": [
-          "Debt makes every card heavier."
-        ],
-        "conversationLine2": [
+          "Debt makes every card heavier.",
           "There is no safe play when the table is closing."
         ],
+        "conversationLine2": [
+          "A cornered gambler still has teeth.",
+          "Last chances are still chances."
+        ],
         "sideDeckLocked": [
-          "Locks a side deck built for comebacks."
+          "Comeback deck locked.",
+          "These cards know what desperation costs."
         ],
         "payoutCapped": [
-          "Even the win gets squeezed."
+          "Even the win gets squeezed.",
+          "I fight out and the house still takes a bite."
         ],
         "refund": [
-          "At least the floor stayed underfoot."
+          "At least the floor stayed underfoot.",
+          "No win, but no ruin. I will take it."
         ],
         "thinking": [
-          "Checks the score, then checks it again.",
-          "The next move carries more weight than it should."
+          "Give me a second. This matters too much.",
+          "I am counting exits, not odds."
         ],
         "thinkingHard": [
-          "The corner is real now, and the only way out is forward.",
+          "I am in the corner now. The only way out is forward.",
           "Every bad option gets searched for a miracle."
         ],
         "thinkingEasy": [
           "For once, the table is not on fire.",
-          "The lead brings a shaky breath and a faster decision."
+          "A little breathing room. I almost forgot the feeling."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -972,103 +1487,168 @@
           "The table saw what it was meant to see."
         ],
         "winMatch": [
-          "Misdirection is also a strategy."
+          "Misdirection is also a strategy.",
+          "You played the cards. I played the room."
         ],
         "matchPoint": [
-          "Guess wrong one more time."
+          "Guess wrong one more time.",
+          "One more set. Try reading this one."
         ],
         "loseRound": [
-          "A useful false trail, at least."
+          "A useful false trail, at least.",
+          "You found the right door that time."
         ],
         "loseMatch": [
-          "The mask did not hold."
+          "The mask did not hold.",
+          "You saw enough. Annoying."
         ],
         "taunt": [
-          "Are you sure that is what this one has?"
+          "Are you sure that is what I have?",
+          "The obvious answer is usually bait."
         ],
         "forceSensitivityNudge": [
-          "The next card whispers through the noise."
+          "The next card whispers through the noise.",
+          "Something says the deck is lying badly."
         ],
         "tell1": [
-          "Gives a different tell every set."
+          "You are watching my hands too much.",
+          "The table is over there, unless I wanted you looking here."
         ],
         "tell2": [
-          "Looks relieved after bad cards and tense after good ones."
+          "That reaction? Free of charge.",
+          "I would never make it that easy."
         ],
         "fakeTell": [
-          "Lets a smile arrive exactly one second too early."
+          "Oh no. That is inconvenient.",
+          "What a terrible time for that card."
         ],
         "fakeTell2": [
-          "Pretends to count on the wrong fingers."
+          "Hmph. Too easy.",
+          "You should trust that instinct. It seems useful."
         ],
         "ante": [
-          "Antes while watching who watches back."
+          "Ante in. Watch whatever you like.",
+          "A small price for a larger lie."
         ],
         "raise": [
-          "Raises with unreadable timing."
+          "Raise. Or maybe an invitation.",
+          "More credits. Less clarity."
         ],
         "stay": [
-          "Stays for reasons that may not be real."
+          "I stay. Reasons are overrated.",
+          "No move. Make of that what you want."
         ],
         "playsCard": [
-          "Plays a side card without letting the face change."
+          "This one should explain nothing.",
+          "A card. Perhaps the card."
         ],
         "showsCard": [
-          "Shows exactly what was useful to show."
+          "There. Exactly what I wanted you to see.",
+          "Look closely. Then doubt it."
         ],
         "checkmate": [
-          "The last lie becomes true."
+          "The last lie becomes true.",
+          "No exits, unless I missed one for you."
         ],
         "check": [
-          "Something is threatened. Perhaps."
+          "Something is threatened. Perhaps.",
+          "That position is either safe or doomed. Helpful, yes?"
         ],
         "playsPositiveCard": [
-          "Adds points under a blank expression."
+          "Upward, if that helps you guess.",
+          "Adding points. Or adding noise."
         ],
         "playsNegativeCard": [
-          "Subtracts as if that was always the plan."
+          "Downward. Predictable, unless it was not.",
+          "Subtracting the obvious problem."
         ],
         "busts": [
-          "The deception fooled the wrong player."
+          "The deception fooled the wrong player.",
+          "I lied to myself. Bad habit."
         ],
         "hits20": [
-          "Twenty. Surprised?"
+          "Twenty. Surprised?",
+          "Exactly where I claimed I was not going."
         ],
         "stand": [
-          "Stands with no readable confidence."
+          "I stand. Read that however you like.",
+          "No more cards. Unless you expected that."
         ],
         "drawsCard": [
-          "Draws after a misleading pause."
+          "Draw. The honest move, supposedly.",
+          "Another card to misunderstand."
         ],
         "allIn": [
-          "All in, unless that is what this one wanted believed."
+          "All in, unless that is what I wanted believed.",
+          "Everything in. The cleanest kind of confusion."
         ],
         "conversationLine1": [
-          "The card is only half the play."
-        ],
-        "conversationLine2": [
+          "The card is only half the play.",
           "A good table has three games happening at once."
         ],
+        "conversationLine2": [
+          "Truth is useful. Timing is better.",
+          "If you know what I want, I have already failed."
+        ],
         "sideDeckLocked": [
-          "Locks an unpredictable side deck."
+          "Unpredictable side deck locked.",
+          "These cards and I have an arrangement."
         ],
         "payoutCapped": [
-          "The house saw through the payout line."
+          "The house saw through the payout line.",
+          "Even the cap is trying to read me."
         ],
         "refund": [
-          "Nothing lost. Nothing proven."
+          "Nothing lost. Nothing proven.",
+          "A clean refund leaves no fingerprints."
         ],
         "thinking": [
-          "The pause is probably real. Probably.",
-          "A readable hesitation appears exactly where one would expect it."
+          "Give me a moment, or pretend I need one.",
+          "I am choosing between a move and a story."
         ],
         "thinkingHard": [
-          "Under pressure, even the silence feels like a bluff.",
-          "The cornered look may be honest, which makes it dangerous."
+          "Under pressure, even silence can bluff.",
+          "The corner is real. So I need the lie to be better."
         ],
         "thinkingEasy": [
-          "The advantage is hidden behind a very convincing concern.",
-          "A relaxed pause invites the wrong conclusion."
+          "This is comfortable enough to look worried.",
+          "The lead hides nicely behind concern."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     },
@@ -1084,22 +1664,28 @@
       },
       "dialogue": {
         "winRound": [
-          "The current moved the right way."
+          "The current moved the right way.",
+          "That one felt close before it happened."
         ],
         "winMatch": [
-          "Some tables know their ending early."
+          "Some tables know their ending early.",
+          "The cards were quiet, then clear."
         ],
         "matchPoint": [
-          "The next set feels close."
+          "The next set feels close.",
+          "One more turn of the current."
         ],
         "loseRound": [
-          "The feeling was clouded."
+          "The feeling was clouded.",
+          "I heard the table wrong."
         ],
         "loseMatch": [
-          "Not every whisper is a promise."
+          "Not every whisper is a promise.",
+          "The current changed. I did not."
         ],
         "taunt": [
-          "Listen closely. Even the deck has a mood."
+          "Listen closely. Even the deck has a mood.",
+          "You hear nothing from the table? Shame."
         ],
         "forceSensitivityNudge": [
           "The next draw feels dangerous.",
@@ -1107,85 +1693,144 @@
           "A quiet warning passes over the table."
         ],
         "tell1": [
-          "Pauses as if listening to static nobody else hears."
+          "The cards are louder than the room right now.",
+          "Something keeps pulling at the deck."
         ],
         "tell2": [
-          "Looks away from the cards before making the right choice."
+          "I know how strange this sounds, but the table has a weather.",
+          "Sometimes luck arrives before the card does."
         ],
         "fakeTell": [
-          "Acts certain, then ignores the instinct."
+          "I have a bad feeling about this harmless little hand.",
+          "The table says I should worry. Probably."
         ],
         "fakeTell2": [
-          "Claims a bad feeling about a harmless card."
+          "Hmph. Too easy.",
+          "The deck practically answered already."
         ],
         "ante": [
-          "Antes after a distant pause."
+          "Ante in. The current starts here.",
+          "The table gets its first offering."
         ],
         "raise": [
-          "Raises as if following a hunch."
+          "Raise. The feeling says move.",
+          "More in. The moment is pulling."
         ],
         "stay": [
-          "Stays because the moment feels settled."
+          "I stay. The air has settled.",
+          "No more motion. Not from me."
         ],
         "playsCard": [
-          "Plays a card with strange certainty."
+          "This card belongs here.",
+          "That is the one the table wanted."
         ],
         "showsCard": [
-          "Shows the card like it was expected."
+          "There. As expected.",
+          "The card was already in the air."
         ],
         "checkmate": [
-          "The path narrowed to one."
+          "The path narrowed to one.",
+          "Only one line remains."
         ],
         "check": [
-          "There is pressure in the air."
+          "There is pressure in the air.",
+          "Careful. The table is turning."
         ],
         "playsPositiveCard": [
-          "Adds to the total at the right instant."
+          "Upward, with the current.",
+          "The total wants to rise."
         ],
         "playsNegativeCard": [
-          "Pulls away from danger before it lands."
+          "Away from danger.",
+          "The warning was enough. Down we go."
         ],
         "busts": [
-          "The warning came too late."
+          "The warning came too late.",
+          "I mistook the echo for the card."
         ],
         "hits20": [
-          "Twenty. As felt."
+          "Twenty. As felt.",
+          "There it is. The clean note."
         ],
         "stand": [
-          "Stands on instinct."
+          "I stand on instinct.",
+          "No. The deck can wait."
         ],
         "drawsCard": [
-          "Draws after a long, listening silence."
+          "Draw. Let us see if the feeling holds.",
+          "One card from the current."
         ],
         "allIn": [
-          "Everything follows the feeling."
+          "Everything follows the feeling.",
+          "All in. The table is loud now."
         ],
         "conversationLine1": [
-          "Sometimes luck has a voice."
-        ],
-        "conversationLine2": [
+          "Sometimes luck has a voice.",
           "The galaxy hums differently around a good table."
         ],
+        "conversationLine2": [
+          "Do not worry. I only sound mystical when the stakes are embarrassing.",
+          "A good gambler counts cards. A strange one listens too."
+        ],
         "sideDeckLocked": [
-          "Locks a strangely balanced side deck."
+          "Side deck locked. It feels balanced.",
+          "These cards sit quietly together."
         ],
         "payoutCapped": [
-          "The house interrupts the current."
+          "The house interrupts the current.",
+          "Even fate has to pass accounting, apparently."
         ],
         "refund": [
-          "The table returns to calm."
+          "The table returns to calm.",
+          "No win, no loss. The current stills."
         ],
         "thinking": [
-          "Listens to something just beyond the table noise.",
-          "The decision waits for a feeling to become a direction."
+          "Give me a moment. The table is trying to say something.",
+          "I am listening for the quiet card."
         ],
         "thinkingHard": [
-          "The future feels crowded, and only one path stays bright.",
-          "A hard silence gathers as if the deck itself is arguing."
+          "The future feels crowded. I need the bright path.",
+          "The deck is arguing with itself. So am I."
         ],
         "thinkingEasy": [
-          "The current of the table feels gentle for a moment.",
-          "A calm instinct seems to arrive before the calculation."
+          "The current is gentle right now.",
+          "The table feels kind. That makes this easier."
+        ],
+        "forfeit": [
+          "That is one way to leave the table.",
+          "Fold the chair back in when you go."
+        ],
+        "cancel": [
+          "No game, no story. Shame.",
+          "Table closed before it got interesting."
+        ],
+        "invite": [
+          "Pull up a chair. The deck is awake.",
+          "Got time for a set?"
+        ],
+        "acceptInvite": [
+          "Good. Let us see what the cards think.",
+          "Then we play."
+        ],
+        "declineInvite": [
+          "Another time, then.",
+          "Keep your credits warm."
+        ],
+        "rematch": [
+          "Run it back?",
+          "Same table, cleaner excuses."
+        ],
+        "tiedRound": [
+          "No point for either side. Again.",
+          "A tie only delays the answer."
+        ],
+        "tableFill": [
+          "Nine cards and still standing. Respect the table.",
+          "That board is crowded, but it held."
+        ],
+        "tiebreaker": [
+          "The tie breaks my way.",
+          "Close does not matter when the breaker lands."
         ]
       }
     }
