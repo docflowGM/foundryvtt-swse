@@ -87,6 +87,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.holonewsSeedOffset = 0;
     this.holonewsHideUsedSeeds = true;
     this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
+    this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
 
     // Store page state
     this.transactions = [];
@@ -263,6 +264,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       newsDeck: record.metadata?.newsDeck || '',
       holonewsSeedId: record.metadata?.holonewsSeedId || '',
       isAmbientHolonews: record.metadata?.ambientHolonews === true,
+      holonewsTypeLabel: record.metadata?.ambientHolonews === true ? 'Ambient Wire' : 'GM Authored',
+      archivedAt: record.archivedAt ? new Date(record.archivedAt).toLocaleString() : null,
       priority: record.priority || record.metadata?.priority || 'normal',
       audienceLabel: this._getAudienceLabel(record.audience),
       audienceType: record.audience?.type || AUDIENCE_TYPE.ALL_PLAYERS,
@@ -860,12 +863,57 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     }
 
+    const holonewsArchiveFilterForm = pageElement.querySelector('[data-holonews-archive-filter-form]');
+    if (holonewsArchiveFilterForm) {
+      holonewsArchiveFilterForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        this._applyHolonewsArchiveFilters(new FormData(holonewsArchiveFilterForm));
+        await this.render(false);
+      });
+      holonewsArchiveFilterForm.querySelectorAll('select').forEach((field) => {
+        field.addEventListener('change', async () => {
+          this._applyHolonewsArchiveFilters(new FormData(holonewsArchiveFilterForm));
+          await this.render(false);
+        });
+      });
+    }
+
+    pageElement.querySelectorAll('[data-action="holonews-reset-archive-filters"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-duplicate-draft"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._duplicateHolonewsRecord(event.currentTarget.dataset.recordId);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-toggle-breaking"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._setHolonewsBreaking(event.currentTarget.dataset.recordId, event.currentTarget.dataset.enabled === 'true');
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="holonews-restore-draft"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this._restoreHolonewsAsDraft(event.currentTarget.dataset.recordId);
+      });
+    });
+
     pageElement.querySelectorAll('[data-action="holonews-reset-wire-filters"]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.holonewsSeedOffset = 0;
         this.holonewsHideUsedSeeds = true;
         this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
+    this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
         await this.render(false);
       });
     });
@@ -1171,6 +1219,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
     };
   }
 
+  _applyHolonewsArchiveFilters(formData) {
+    this.holonewsArchiveFilters = {
+      query: String(formData.get('query') || '').trim(),
+      state: String(formData.get('state') || '').trim(),
+      type: String(formData.get('type') || '').trim(),
+      priority: String(formData.get('priority') || '').trim(),
+      sector: String(formData.get('sector') || '').trim(),
+      category: String(formData.get('category') || '').trim()
+    };
+  }
+
   async _createHolonewsFromSeed(seedId, { publish = false } = {}) {
     const seed = HolonewsGenerator.getById(seedId);
     if (!seed) {
@@ -1230,6 +1289,123 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
 
+  async _duplicateHolonewsRecord(recordId) {
+    const source = await HolonetStorage.getRecord(recordId);
+    if (!source) {
+      ui?.notifications?.warn?.('HoloNews record was not found.');
+      return;
+    }
+    if (!(source.metadata?.holonews === true || source.metadata?.category === 'holonews')) {
+      ui?.notifications?.warn?.('Only HoloNews records can be duplicated from the HoloNews Desk.');
+      return;
+    }
+
+    const metadata = foundry.utils?.deepClone?.(source.metadata)
+      ?? foundry.utils?.duplicate?.(source.metadata)
+      ?? { ...(source.metadata ?? {}) };
+    metadata.duplicatedFromRecordId = source.id;
+    metadata.duplicatedAt = new Date().toISOString();
+    metadata.urgent = false;
+    metadata.breakingNews = false;
+    metadata.pinAsLastSession = false;
+    metadata.homeSlot = 'feed';
+    metadata.bulletinConsoleVersion = 4;
+
+    const record = BulletinSource.createBulletinEvent({
+      title: `Copy of ${source.title || 'HoloNews Story'}`,
+      body: source.body || '',
+      category: 'holonews',
+      priority: source.metadata?.previousPriority || (source.priority === 'critical' ? 'normal' : (source.priority || 'normal')),
+      audience: source.audience || HolonetAudience.allPlayers(),
+      authorName: source.metadata?.newsSource || source.sender?.systemLabel || source.sender?.actorName || 'Galaxy News Net',
+      authorAvatar: source.metadata?.imageUrl || source.sender?.avatar || null,
+      state: DELIVERY_STATE.DRAFT,
+      metadata
+    });
+
+    this._applyBulletinProjectionOptions(record, {
+      urgent: false,
+      breakingNews: false,
+      pinAsLastSession: false,
+      homeSlot: 'feed',
+      imageUrl: metadata.imageUrl || ''
+    });
+    await HolonetStorage.saveRecord(record);
+    this.currentBulletinSection = 'holonews';
+    this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
+    ui?.notifications?.info?.('HoloNews story duplicated as a draft.');
+    await this.render(false);
+  }
+
+  async _setHolonewsBreaking(recordId, enabled) {
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record) {
+      ui?.notifications?.warn?.('HoloNews record was not found.');
+      return;
+    }
+    if (!(record.metadata?.holonews === true || record.metadata?.category === 'holonews')) {
+      ui?.notifications?.warn?.('Only HoloNews records can be marked as Breaking News.');
+      return;
+    }
+
+    const metadata = { ...(record.metadata ?? {}) };
+    if (enabled) {
+      metadata.previousPriority = record.priority === 'critical' ? (metadata.previousPriority || 'normal') : (record.priority || metadata.priority || 'normal');
+      record.priority = 'critical';
+      metadata.priority = 'critical';
+      metadata.urgent = true;
+      metadata.breakingNews = true;
+    } else {
+      const restoredPriority = metadata.previousPriority || 'normal';
+      record.priority = restoredPriority;
+      metadata.priority = restoredPriority;
+      metadata.urgent = false;
+      metadata.breakingNews = false;
+      delete metadata.previousPriority;
+    }
+    metadata.bulletinConsoleVersion = 4;
+    record.metadata = metadata;
+    record.updatedAt = new Date().toISOString();
+
+    this._applyBulletinProjectionOptions(record, {
+      urgent: enabled,
+      breakingNews: enabled,
+      pinAsLastSession: record.metadata?.pinAsLastSession === true,
+      homeSlot: record.metadata?.homeSlot || 'feed',
+      imageUrl: record.metadata?.imageUrl || ''
+    });
+
+    await HolonetStorage.saveRecord(record);
+    ui?.notifications?.info?.(enabled ? 'HoloNews story marked Breaking News.' : 'Breaking News alert removed.');
+    await this.render(false);
+  }
+
+  async _restoreHolonewsAsDraft(recordId) {
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record) {
+      ui?.notifications?.warn?.('HoloNews record was not found.');
+      return;
+    }
+    if (!(record.metadata?.holonews === true || record.metadata?.category === 'holonews')) {
+      ui?.notifications?.warn?.('Only HoloNews records can be restored from the HoloNews Desk.');
+      return;
+    }
+
+    record.state = DELIVERY_STATE.DRAFT;
+    record.archivedAt = null;
+    record.updatedAt = new Date().toISOString();
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      restoredFromArchiveAt: new Date().toISOString(),
+      bulletinConsoleVersion: 4
+    };
+    await HolonetStorage.saveRecord(record);
+    this.currentBulletinSection = 'holonews';
+    this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
+    ui?.notifications?.info?.('Archived HoloNews story restored as a draft.');
+    await this.render(false);
+  }
+
   async _unpinOtherBulletins(recordId) {
     if (!recordId) return;
     const records = await HolonetStorage.getAllRecords();
@@ -1263,7 +1439,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       pinAsLastSession: Boolean(pinAsLastSession),
       homeSlot: pinAsLastSession ? 'last-session' : homeSlot,
       imageUrl: imageUrl === undefined ? (record.metadata?.imageUrl || '') : String(imageUrl || '').trim(),
-      bulletinConsoleVersion: 2
+      bulletinConsoleVersion: Math.max(Number(record.metadata?.bulletinConsoleVersion || 0), 4)
     };
     record.projections = Array.isArray(record.projections) ? record.projections : [];
 

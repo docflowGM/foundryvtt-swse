@@ -385,7 +385,7 @@
                 <div><span class="swse-games-kicker">YOUR SABACC TURN</span><strong>Draw, shift, discard, call, or fold.</strong></div>
                 <div class="swse-pazaak-turn-actions">
                   <form data-games-action="sabacc-draw-card"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Draw</button></form>
-                  <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost">Call</button></form>
+                  <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canCall}}disabled{{/unless}}>Call</button></form>
                   <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
                 </div>
               </div>
@@ -394,8 +394,8 @@
                 <article class="swse-pazaak-hand-card">
                   <div class="swse-pazaak-card-face"><b>{{this.shortLabel}}</b><small>{{this.label}}</small></div>
                   <p>{{this.valueLabel}} · {{this.suitLabel}}</p>
-                  <form data-games-action="sabacc-shift-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-primary">Shift</button></form>
-                  <form data-games-action="sabacc-discard-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-ghost">Discard</button></form>
+                  <form data-games-action="sabacc-shift-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-primary" {{#unless this.canShift}}disabled{{/unless}}>Shift</button></form>
+                  <form data-games-action="sabacc-discard-card"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="cardId" value="{{this.id}}"><button type="submit" class="swse-games-ghost" {{#unless this.canDiscard}}disabled{{/unless}}>Discard</button></form>
                 </article>
                 {{/each}}
               </div>

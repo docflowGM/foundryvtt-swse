@@ -3,7 +3,7 @@ import { GameNotificationService } from '../../game-notification-service.js';
 import { getGameSettingsSnapshot } from '../../game-settings.js';
 import { GameOpponentProfileService } from '../../game-opponent-profile-service.js';
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
-import { buildSabaccDeck, drawSabaccCard, drawSabaccCards, shiftSabaccCard, SABACC_STARTING_HAND_SIZE, SABACC_TARGET } from './sabacc-deck.js';
+import { buildSabaccDeck, drawSabaccCard, drawSabaccCards, shuffleSabaccDeck, SABACC_STARTING_HAND_SIZE, SABACC_TARGET } from './sabacc-deck.js';
 import { compareSabaccHands, evaluateSabaccHand } from './sabacc-rules.js';
 import { SabaccAi, buildSabaccAiProfile } from './sabacc-ai.js';
 
@@ -27,6 +27,30 @@ function seatLabel(session, seatId) { return playableSeats(session.seats).find(s
 function getOrder(session = {}) { return playableSeats(session.seats).map(seat => seat.seatId).filter(Boolean); }
 function findSeat(session, seatId) { return playableSeats(session.seats).find(seat => seat.seatId === seatId) ?? null; }
 function otherPlayableSeat(session, seatId) { return playableSeats(session.seats).find(seat => seat.seatId !== seatId) ?? null; }
+function ensureCardArray(cards) { return Array.isArray(cards) ? cards.filter(Boolean) : []; }
+function activeSabaccSeatIds(session, state) {
+  return getOrder(session).filter(seatId => {
+    const player = state.players?.[seatId];
+    return player && !player.folded && !player.bombedOut;
+  });
+}
+function canResolveSabaccHand(session, state) {
+  return activeSabaccSeatIds(session, state).length <= 1 || allCalledOrOut(session, state);
+}
+function drawSabaccCardForState(state) {
+  state.deck = ensureCardArray(state.deck);
+  state.discard = ensureCardArray(state.discard);
+  if (!state.deck.length && state.discard.length) {
+    state.deck = shuffleSabaccDeck(state.discard);
+    state.discard = [];
+  }
+  if (!state.deck.length) state.deck = buildSabaccDeck();
+  const drawn = drawSabaccCard(state.deck);
+  state.deck = ensureCardArray(drawn.deck);
+  if (!drawn.card) throw new Error('Sabacc deck could not provide a card.');
+  return drawn.card;
+}
+function canDiscardSabaccCard(player = {}) { return ensureCardArray(player.hand).length > 1; }
 
 function sessionLogEntry(type, by, data = {}) {
   return { id: randomId('log'), at: now(), type, by: by ?? null, data };
@@ -103,6 +127,7 @@ function attachAiDecision(player = {}, payload = {}) {
 
 function updateEvaluations(state) {
   for (const player of Object.values(state.players ?? {})) {
+    player.hand = ensureCardArray(player.hand);
     player.evaluation = evaluateSabaccHand(player.hand || []);
     player.bombedOut = Boolean(player.evaluation.bombedOut);
   }
@@ -168,24 +193,24 @@ function resolveHand(session, state) {
   state.statusLabel = result.specialWinner ? 'GAME COMPLETE' : 'HAND COMPLETE';
   state.activeSeatId = null;
   state.winnerSeatId = result.winnerSeatId;
-  const potWon = Number(state.handPot || 0) + (result.specialWinner ? Number(state.sabaccPot || 0) : 0);
+  const potWon = result.winnerSeatId ? Number(state.handPot || 0) + (result.specialWinner ? Number(state.sabaccPot || 0) : 0) : 0;
   if (result.winnerSeatId && state.players[result.winnerSeatId]) {
     state.players[result.winnerSeatId].wins = Number(state.players[result.winnerSeatId].wins || 0) + 1;
     state.players[result.winnerSeatId].lastAction = result.specialWinner ? `Claims the hand pot and Sabacc pot with ${result.reason}.` : `Claims the hand pot with ${result.reason}.`;
   }
   state.handHistory.unshift({ id: randomId('sab_hand'), round: state.round, winnerSeatId: result.winnerSeatId, winnerLabel: result.winnerSeatId ? seatLabel(session, result.winnerSeatId) : null, reason: result.reason, specialWinner: result.specialWinner, handPot: Number(state.handPot || 0), sabaccPot: Number(state.sabaccPot || 0), potWon, at: now() });
   state.handHistory = state.handHistory.slice(0, 12);
-  state.message = result.winnerSeatId ? `${seatLabel(session, result.winnerSeatId)} wins the hand with ${result.reason}.` : 'No one wins the hand.';
+  state.message = result.winnerSeatId ? `${seatLabel(session, result.winnerSeatId)} wins the hand with ${result.reason}.` : `${result.reason || 'No one wins the hand.'} The hand pot carries forward.`;
   if (result.specialWinner && result.winnerSeatId) state.message = `${seatLabel(session, result.winnerSeatId)} wins the game with ${result.reason} and takes both pots.`;
   pushEvent(session, state, result.specialWinner ? 'special-win' : 'hand-won', result.winnerSeatId, state.message, { tone: result.specialWinner ? 'success' : 'neutral', potWon });
-  state.handPot = 0;
-  if (result.specialWinner) state.sabaccPot = 0;
+  if (result.winnerSeatId) state.handPot = 0;
+  if (result.specialWinner && result.winnerSeatId) state.sabaccPot = 0;
   return state;
 }
 
 function advanceTurn(session, state, fromSeatId) {
   updateEvaluations(state);
-  if (allCalledOrOut(session, state)) return resolveHand(session, state);
+  if (canResolveSabaccHand(session, state)) return resolveHand(session, state);
   const next = nextSeatId(session, state, fromSeatId);
   if (!next) return resolveHand(session, state);
   state.activeSeatId = next;
@@ -215,16 +240,18 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   const player = state.players?.[seat.seatId];
   if (!player) return { ok: false, error: 'Sabacc player missing.' };
   if (action === 'start-hand') {
+    if (!['ready', 'hand-complete'].includes(state.phase)) return { ok: false, error: 'A Sabacc hand is already in progress.' };
     beginHand(session, state);
     return { ok: true };
   }
   if (state.phase !== 'drawing') return { ok: false, error: 'This Sabacc hand is not accepting actions.' };
   if (state.activeSeatId !== seat.seatId) return { ok: false, error: 'It is not this seat\'s Sabacc turn.' };
+  if (player.called || player.folded || player.bombedOut) return { ok: false, error: 'This Sabacc seat has already finished the hand.' };
+  player.hand = ensureCardArray(player.hand);
 
   if (action === 'draw-card') {
-    const drawn = drawSabaccCard(state.deck);
-    state.deck = drawn.deck;
-    player.hand.push(drawn.card);
+    const card = drawSabaccCardForState(state);
+    player.hand.push(card);
     attachAiDecision(player, payload);
     player.lastAction = 'Draws a card.';
     pushEvent(session, state, 'draw-card', seat.seatId, publicCardActionMessage(seat, 'draws'), { tone: 'draw', ai: payload.ai || null });
@@ -235,6 +262,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
 
   if (action === 'discard-card') {
     const cardId = String(payload.cardId || payload.cardInstanceId || '');
+    if (!canDiscardSabaccCard(player)) return { ok: false, error: 'You must keep at least one Sabacc card in hand.' };
     const index = player.hand.findIndex(card => card.id === cardId);
     if (index < 0) return { ok: false, error: 'Card not found in hand.' };
     const [removed] = player.hand.splice(index, 1);
@@ -252,7 +280,15 @@ function applyActionToState(session, state, seat, action, payload = {}) {
     const index = player.hand.findIndex(card => card.id === cardId);
     if (index < 0) return { ok: false, error: 'Card not found in hand.' };
     const old = player.hand[index];
-    player.hand[index] = shiftSabaccCard(old);
+    state.discard = ensureCardArray(state.discard);
+    state.discard.push(old);
+    const replacement = drawSabaccCardForState(state);
+    player.hand[index] = {
+      ...replacement,
+      id: old.id,
+      shiftedFrom: { catalogId: old.catalogId, label: old.label, value: old.value },
+      shiftedAt: now()
+    };
     attachAiDecision(player, payload);
     player.lastAction = 'Shifts a card.';
     pushEvent(session, state, 'shift-card', seat.seatId, publicCardActionMessage(seat, 'shifts'), { tone: 'shift', ai: payload.ai || null });
@@ -262,6 +298,9 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   }
 
   if (action === 'call-hand') {
+    updateEvaluations(state);
+    if (!player.hand.length) return { ok: false, error: 'You need at least one card to call a Sabacc hand.' };
+    if (player.bombedOut) return { ok: false, error: 'A bombed-out Sabacc hand cannot call.' };
     player.called = true;
     attachAiDecision(player, payload);
     player.lastAction = 'Calls the hand.';
@@ -342,6 +381,7 @@ export class SabaccEngine {
       return { ok: true, session: updated };
     }
     if (normalized === 'next-hand') {
+      if (!['ready', 'hand-complete'].includes(state.phase)) return { ok: false, error: 'A Sabacc hand is already in progress.' };
       beginHand(session, state);
       await processAi(session, state);
       const updated = await persist(session, state, 'active', sessionLogEntry('sabacc-next-hand', requesterId || currentUserId()));

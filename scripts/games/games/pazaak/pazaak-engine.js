@@ -9,6 +9,7 @@ import {
   buildOpeningHand,
   buildPazaakMainDeck,
   drawMainCard,
+  shuffleCards,
   PAZAAK_HAND_SIZE,
   PAZAAK_SETS_TO_WIN,
   PAZAAK_SIDE_DECK_SIZE,
@@ -142,8 +143,26 @@ function findSeat(session, seatId) {
 }
 
 function updateScores(state) {
-  for (const player of Object.values(state.players ?? {})) player.score = scorePazaakPlayer(player);
+  for (const player of Object.values(state.players ?? {})) {
+    player.hand = Array.isArray(player.hand) ? player.hand.filter(Boolean) : [];
+    player.tableCards = Array.isArray(player.tableCards) ? player.tableCards.filter(Boolean) : [];
+    player.score = scorePazaakPlayer(player);
+  }
   return state;
+}
+
+function drawPazaakMainCardForState(state) {
+  state.mainDeck = Array.isArray(state.mainDeck) ? state.mainDeck.filter(Boolean) : [];
+  state.discard = Array.isArray(state.discard) ? state.discard.filter(Boolean) : [];
+  if (!state.mainDeck.length && state.discard.length) {
+    state.mainDeck = shuffleCards(state.discard);
+    state.discard = [];
+  }
+  if (!state.mainDeck.length) state.mainDeck = buildPazaakMainDeck();
+  const drawn = drawMainCard(state.mainDeck);
+  state.mainDeck = Array.isArray(drawn.mainDeck) ? drawn.mainDeck.filter(Boolean) : [];
+  if (!drawn.card) throw new Error('Pazaak main deck could not provide a card.');
+  return drawn.card;
 }
 
 function resetPlayersForSet(session, state) {
@@ -164,15 +183,22 @@ function resetPlayersForSet(session, state) {
 function beginTurn(session, state, seatId) {
   const player = state.players?.[seatId];
   if (!player || player.stood || player.bust) return state;
-  const drawn = drawMainCard(state.mainDeck);
-  state.mainDeck = drawn.mainDeck;
-  state.discard = Array.isArray(state.discard) ? state.discard : [];
-  player.tableCards = Array.isArray(player.tableCards) ? player.tableCards : [];
-  player.tableCards.push(drawn.card);
+  state.discard = Array.isArray(state.discard) ? state.discard.filter(Boolean) : [];
+  player.tableCards = Array.isArray(player.tableCards) ? player.tableCards.filter(Boolean) : [];
+  if (player.tableCards.length >= PAZAAK_TABLE_LIMIT) {
+    player.filledTable = true;
+    player.stood = true;
+    player.lastAction = 'Filled the table without busting.';
+    pushPazaakEvent(session, state, 'filled-table', seatId, player.lastAction, { tone: 'success' });
+    maybeResolveSet(session, state);
+    return state;
+  }
+  const card = drawPazaakMainCardForState(state);
+  player.tableCards.push(card);
   player.sideCardPlayedThisTurn = false;
   player.score = scorePazaakPlayer(player);
-  player.lastAction = aiDialogueFor(session, seatId, 'drawsCard', `Drew ${drawn.card?.label || drawn.card?.value || 'a card'}.`);
-  pushPazaakEvent(session, state, 'draw-main-card', seatId, player.lastAction, { cardLabel: drawn.card?.label || String(drawn.card?.value || ''), tone: 'draw' });
+  player.lastAction = aiDialogueFor(session, seatId, 'drawsCard', `Drew ${card?.label || card?.value || 'a card'}.`);
+  pushPazaakEvent(session, state, 'draw-main-card', seatId, player.lastAction, { cardLabel: card?.label || String(card?.value || ''), tone: 'draw' });
   if (isPazaakTwenty(player)) {
     player.stood = true;
     player.lastAction = aiDialogueFor(session, seatId, 'hits20', 'Reached 20 and stood automatically.');
@@ -738,7 +764,7 @@ export class PazaakEngine {
     if (player.stood || player.bust || player.filledTable) return { ok: false, error: 'This seat has already finished the set.' };
 
     if (normalizedAction === 'play-side-card') {
-      const result = applyPazaakSideCard(player, String(payload.cardInstanceId || ''), payload.choice || {});
+      const result = applyPazaakSideCard(player, String(payload.cardInstanceId || payload.cardId || ''), payload.choice || {});
       if (!result.ok) return { ok: false, error: result.error };
       state.players[seat.seatId] = result.player;
       const eventType = sideCardDialogueType(result.playedCard);
@@ -758,10 +784,16 @@ export class PazaakEngine {
       if (state.players[seat.seatId].stood || state.players[seat.seatId].filledTable || state.players[seat.seatId].bust) advanceTurn(session, state, seat.seatId);
       else maybeResolveSet(session, state);
     } else if (normalizedAction === 'stand') {
-      player.stood = true;
-      player.score = scorePazaakPlayer(player);
-      player.lastAction = aiDialogueFor(session, seat.seatId, 'stand', 'Stood.');
-      pushPazaakEvent(session, state, 'stand', seat.seatId, player.lastAction, { tone: 'stand' });
+      const status = markEndOfTurnFlags(player);
+      if (status === 'bust') {
+        player.lastAction = aiDialogueFor(session, seat.seatId, 'busts', 'Busted.');
+        pushPazaakEvent(session, state, 'bust', seat.seatId, player.lastAction, { tone: 'danger' });
+      } else {
+        player.stood = true;
+        player.score = scorePazaakPlayer(player);
+        player.lastAction = aiDialogueFor(session, seat.seatId, 'stand', 'Stood.');
+        pushPazaakEvent(session, state, 'stand', seat.seatId, player.lastAction, { tone: 'stand' });
+      }
       advanceTurn(session, state, seat.seatId);
     } else if (normalizedAction === 'end-turn') {
       const status = markEndOfTurnFlags(player);

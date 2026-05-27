@@ -95,7 +95,15 @@ export class SabaccViewModel {
       seats: playableSeats(session).map(seat => seatVm(session, state, seat, viewerSeatId)),
       viewerSeat: {
         canAct,
-        hand: (viewerPlayer?.hand || []).map(card => ({ ...cardVm(card, true), sessionId: session.id, seatId: viewerSeatId }))
+        canCall: Boolean(canAct && !evaluateSabaccHand(viewerPlayer?.hand || []).bombedOut && (viewerPlayer?.hand || []).length > 0),
+        canDiscard: Boolean(canAct && (viewerPlayer?.hand || []).length > 1),
+        hand: (viewerPlayer?.hand || []).map(card => ({
+          ...cardVm(card, true),
+          sessionId: session.id,
+          seatId: viewerSeatId,
+          canShift: canAct,
+          canDiscard: Boolean(canAct && (viewerPlayer?.hand || []).length > 1)
+        }))
       },
       handHistory: (state.handHistory || []).map(hand => ({ ...hand, timeLabel: formatTime(hand.at) })),
       hasHandHistory: Boolean((state.handHistory || []).length),

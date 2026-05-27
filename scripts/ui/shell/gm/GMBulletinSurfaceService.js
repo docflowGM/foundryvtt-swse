@@ -23,6 +23,15 @@ export class GMBulletinSurfaceService {
     const eventViews = allEventViews.filter((record) => !record.isHolonews);
     const holonewsViews = allEventViews.filter((record) => record.isHolonews);
     const messageViews = messageRecords.map((record) => host._buildBulletinRecordView(record));
+    const holonewsArchiveFilters = {
+      query: String(host.holonewsArchiveFilters?.query || '').trim(),
+      state: host.holonewsArchiveFilters?.state || '',
+      type: host.holonewsArchiveFilters?.type || '',
+      priority: host.holonewsArchiveFilters?.priority || '',
+      sector: host.holonewsArchiveFilters?.sector || '',
+      category: host.holonewsArchiveFilters?.category || ''
+    };
+    const filteredHolonewsViews = this._filterHolonewsRecords(holonewsViews, holonewsArchiveFilters);
     const usedHolonewsSeedIds = [...new Set(holonewsViews.map((record) => record.holonewsSeedId).filter(Boolean))];
     const holonewsWireFilters = {
       query: String(host.holonewsWireFilters?.query || '').trim(),
@@ -75,11 +84,18 @@ export class GMBulletinSurfaceService {
       selectedPlayerState,
       partyState,
       eventRecords: eventViews,
-      holonewsRecords: holonewsViews,
+      holonewsRecords: filteredHolonewsViews,
+      holonewsAllRecords: holonewsViews,
       holonewsSeeds,
       holonewsSeedCount: HolonewsGenerator.count(),
       holonewsWireFilteredCount: HolonewsGenerator.count(holonewsWireFilters),
       holonewsUsedSeedCount: usedHolonewsSeedIds.length,
+      holonewsArchiveTotalCount: holonewsViews.length,
+      holonewsArchiveFilteredCount: filteredHolonewsViews.length,
+      holonewsArchiveStats: this._buildHolonewsArchiveStats(holonewsViews),
+      holonewsArchiveFilters,
+      holonewsArchiveStateOptions: this._getHolonewsStateOptions(),
+      holonewsArchiveTypeOptions: this._getHolonewsTypeOptions(),
       holonewsHideUsedSeeds: Boolean(host.holonewsHideUsedSeeds),
       holonewsWireFilters: {
         query: holonewsWireFilters.query,
@@ -115,6 +131,68 @@ export class GMBulletinSurfaceService {
       pinned: active.filter((record) => record.isPinned).length,
       archived: records.filter((record) => record.state === DELIVERY_STATE.ARCHIVED).length
     };
+  }
+
+  static _filterHolonewsRecords(records, filters = {}) {
+    const query = String(filters.query || '').trim().toLowerCase();
+    const state = String(filters.state || '').trim();
+    const type = String(filters.type || '').trim();
+    const priority = String(filters.priority || '').trim();
+    const sector = String(filters.sector || '').trim();
+    const category = String(filters.category || '').trim();
+
+    return records.filter((record) => {
+      if (state && record.state !== state) return false;
+      if (priority && record.priority !== priority) return false;
+      if (sector && record.sector !== sector) return false;
+      if (category && record.newsCategory !== category) return false;
+      if (type === 'breaking' && !record.isBreakingNews) return false;
+      if (type === 'ambient' && !record.isAmbientHolonews) return false;
+      if (type === 'gm-authored' && record.isAmbientHolonews) return false;
+      if (query) {
+        const haystack = [
+          record.title,
+          record.body,
+          record.newsSource,
+          record.dateline,
+          record.sector,
+          record.newsCategory,
+          record.newsDeck,
+          record.holonewsSeedId
+        ].filter(Boolean).join(' ').toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    });
+  }
+
+  static _buildHolonewsArchiveStats(records) {
+    return [
+      { label: 'All Stories', value: records.length, tone: 'neutral' },
+      { label: 'Live', value: records.filter((record) => record.state === DELIVERY_STATE.PUBLISHED).length, tone: 'live' },
+      { label: 'Drafts', value: records.filter((record) => record.state === DELIVERY_STATE.DRAFT).length, tone: 'draft' },
+      { label: 'Archived', value: records.filter((record) => record.state === DELIVERY_STATE.ARCHIVED).length, tone: 'archived' },
+      { label: 'Ambient', value: records.filter((record) => record.isAmbientHolonews).length, tone: 'ambient' },
+      { label: 'Breaking', value: records.filter((record) => record.isBreakingNews).length, tone: 'breaking' }
+    ];
+  }
+
+  static _getHolonewsStateOptions() {
+    return [
+      { value: '', label: 'Any state' },
+      { value: DELIVERY_STATE.PUBLISHED, label: 'Published' },
+      { value: DELIVERY_STATE.DRAFT, label: 'Draft' },
+      { value: DELIVERY_STATE.ARCHIVED, label: 'Archived' }
+    ];
+  }
+
+  static _getHolonewsTypeOptions() {
+    return [
+      { value: '', label: 'Any type' },
+      { value: 'ambient', label: 'Ambient wire' },
+      { value: 'gm-authored', label: 'GM-authored' },
+      { value: 'breaking', label: 'Breaking News' }
+    ];
   }
 
   static _selectPreviewRecord({ section, eventEditorRecord, holonewsEditorRecord, messageEditorRecord, eventViews, holonewsViews, messageViews }) {

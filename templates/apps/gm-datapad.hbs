@@ -544,12 +544,90 @@
             </div>
           </section>
 
-          <div class="bulletin-record-grid">
+          <section class="holonews-archive-panel">
+            <div class="holonews-wire-header">
+              <div>
+                <h4>HoloNews Archive</h4>
+                <p>Review authored, ambient, breaking, draft, live, and archived stories without mixing them into the ambient seed pool.</p>
+              </div>
+              <div class="holonews-wire-stats">
+                <span><strong>{{holonewsArchiveFilteredCount}}</strong> shown</span>
+                <span><strong>{{holonewsArchiveTotalCount}}</strong> total</span>
+              </div>
+            </div>
+
+            <div class="holonews-archive-stats">
+              {{#each holonewsArchiveStats}}
+              <div class="holonews-archive-stat {{this.tone}}">
+                <strong>{{this.value}}</strong>
+                <span>{{this.label}}</span>
+              </div>
+              {{/each}}
+            </div>
+
+            <form class="holonews-archive-filters" data-holonews-archive-filter-form>
+              <label class="holonews-archive-search">
+                <span>Search Archive</span>
+                <input type="search" name="query" value="{{holonewsArchiveFilters.query}}" placeholder="headline, source, sector, seed id...">
+              </label>
+              <label>
+                <span>State</span>
+                <select name="state">
+                  {{#each holonewsArchiveStateOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.state this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Type</span>
+                <select name="type">
+                  {{#each holonewsArchiveTypeOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.type this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="" {{#unless holonewsArchiveFilters.priority}}selected{{/unless}}>Any priority</option>
+                  {{#each holonewsPriorities}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.priority this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Sector</span>
+                <select name="sector">
+                  <option value="" {{#unless holonewsArchiveFilters.sector}}selected{{/unless}}>All sectors</option>
+                  {{#each holonewsSectors}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.sector this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>
+                <span>Topic</span>
+                <select name="category">
+                  <option value="" {{#unless holonewsArchiveFilters.category}}selected{{/unless}}>All topics</option>
+                  {{#each holonewsCategories}}
+                  <option value="{{this.value}}" {{#if (eq ../holonewsArchiveFilters.category this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="holonews-wire-filter-actions holonews-archive-filter-actions">
+                <button type="submit" class="swse-ui-button">Apply Archive Filters</button>
+                <button type="button" class="swse-ui-button" data-action="holonews-reset-archive-filters">Reset</button>
+              </div>
+            </form>
+          </section>
+
+          <div class="bulletin-record-grid holonews-record-grid">
             {{#each holonewsRecords}}
             <article class="bulletin-record-card holonews {{this.state}} {{this.recordTone}}">
               <div class="bulletin-record-meta">
                 <span class="bulletin-chip state">{{this.stateLabel}}</span>
                 <span class="bulletin-chip category">HoloNews</span>
+                <span class="bulletin-chip type">{{this.holonewsTypeLabel}}</span>
+                {{#if this.newsCategory}}<span class="bulletin-chip category">{{this.newsCategory}}</span>{{/if}}
                 <span class="bulletin-chip priority">{{this.priority}}</span>
                 <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
                 {{#if this.isBreakingNews}}<span class="bulletin-chip breaking">BREAKING</span>{{/if}}
@@ -559,19 +637,30 @@
               <div class="bulletin-record-sender">{{this.newsSource}}{{#if this.dateline}} · {{this.dateline}}{{/if}}{{#if this.sector}} · {{this.sector}}{{/if}}</div>
               {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
+              <div class="holonews-record-details">
+                {{#if this.holonewsSeedId}}<span>Seed: {{this.holonewsSeedId}}</span>{{/if}}
+                {{#if this.publishedAt}}<span>Published: {{this.publishedAt}}</span>{{/if}}
+                {{#if this.archivedAt}}<span>Archived: {{this.archivedAt}}</span>{{/if}}
+              </div>
               <div class="bulletin-record-footer">
                 <span>{{this.createdAt}}</span>
                 <div class="bulletin-record-actions">
                   <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="holonews" data-record-id="{{this.id}}">Edit</button>
+                  <button type="button" class="swse-ui-button" data-action="holonews-duplicate-draft" data-record-id="{{this.id}}">Duplicate Draft</button>
+                  {{#if this.isBreakingNews}}
+                    <button type="button" class="swse-ui-button" data-action="holonews-toggle-breaking" data-enabled="false" data-record-id="{{this.id}}">Remove Breaking</button>
+                  {{else}}
+                    <button type="button" class="swse-ui-button" data-action="holonews-toggle-breaking" data-enabled="true" data-record-id="{{this.id}}">Make Breaking</button>
+                  {{/if}}
                   {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
                   {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
-                  {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
+                  {{#if (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="holonews-restore-draft" data-record-id="{{this.id}}">Restore Draft</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/if}}
                   <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
                 </div>
               </div>
             </article>
             {{else}}
-            <p class="placeholder">No HoloNews entries have been published or drafted yet.</p>
+            <p class="placeholder">No HoloNews entries match those archive filters.</p>
             {{/each}}
           </div>
 
