@@ -36,6 +36,18 @@ function hintaroDieVm(face = null) {
   const symbols = safeArray(face.symbols).map(symbol => symbol === 'hin' ? 'Hin' : 'Taro');
   return { label: face.label || symbols.join('/') || 'Blank', shortLabel: symbols.length ? symbols.map(s => s[0]).join('/') : '—', symbols, tone: symbols.includes('Hin') && symbols.includes('Taro') ? 'mixed' : (symbols.includes('Hin') ? 'hin' : (symbols.includes('Taro') ? 'taro' : 'neutral')) };
 }
+
+function dealerCalloutForPhase(state = {}, session = {}) {
+  const phase = String(state.phase || 'ready');
+  const hintaron = labelForSeat(session, state.hintaronSeatId);
+  if (phase === 'ready') return `${hintaron} gathers the chance cubes.`;
+  if (phase === 'betting') return `${hintaron} calls wagers around the table.`;
+  if (phase === 'reroll') return `${hintaron} offers one cube reroll to each player.`;
+  if (phase === 'round-complete') return 'The hintaro die settles the round.';
+  if (phase === 'complete') return 'The table is closed and winnings are counted.';
+  return 'The table waits for the next call.';
+}
+
 function buildBettingVm(state, viewerSeatId) {
   const betting = state.betting || {};
   const currentBet = safeAmount(betting.currentBet);
@@ -112,6 +124,8 @@ export class HintaroViewModel {
       hintaronLabel: labelForSeat(session, state.hintaronSeatId),
       hintaronMode: state.hintaronMode || 'rotating',
       hintaronModeLabel: (state.hintaronMode || 'rotating') === 'casino' ? 'Casino fixed hintaron' : 'Casual rotating hintaron',
+      dealerCallout: dealerCalloutForPhase(state, session),
+      soundCue: phase === 'reroll' ? 'hintaro-reroll' : (phase === 'round-complete' ? 'hintaro-settle' : 'hintaro-table'),
       rankOrder: [
         { label: 'Tukar to Kulro', description: 'Two Tukar and two Kulro after cancellations.' },
         { label: 'Quad Kulro', description: 'Four Kulro after cancellations.' },

@@ -1,5 +1,5 @@
 import { SabaccEngine } from './sabacc-engine.js';
-import { evaluateSabaccHand } from './sabacc-rules.js';
+import { SABACC_HAND_HIERARCHY_HELP, evaluateSabaccHand } from './sabacc-rules.js';
 import { SabaccAi, buildSabaccAiProfile } from './sabacc-ai.js';
 
 function formatTime(value) {
@@ -22,7 +22,8 @@ function cardVm(card = {}, reveal = true) {
     hasImage: Boolean(card.image),
     isSpecial: card.type === 'special' || card.type === 'sylop',
     isSylop: card.type === 'sylop',
-    sign: card.sign || (Number(card.value || 0) > 0 ? 'positive' : (Number(card.value || 0) < 0 ? 'negative' : 'neutral'))
+    sign: card.sign || (Number(card.value || 0) > 0 ? 'positive' : (Number(card.value || 0) < 0 ? 'negative' : 'neutral')),
+    revealCue: reveal ? 'card-face' : 'card-back'
   } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', image: '', hasImage: false, isSpecial: false, isSylop: false, sign: 'hidden' };
 }
 
@@ -117,6 +118,8 @@ export class SabaccViewModel {
       shiftMatched: Boolean(state.shiftRoll?.matched),
       showdown,
       hasShowdown: Boolean(showdown),
+      handHierarchyHelp: SABACC_HAND_HIERARCHY_HELP,
+      hasHandHierarchyHelp: SABACC_HAND_HIERARCHY_HELP.length > 0,
       gmAudit,
       hasGmAudit: gmAudit.length > 0,
       activeSeatLabel: state.activeSeatId ? (playableSeats(session).find(seat => seat.seatId === state.activeSeatId)?.displayName || 'Unknown Seat') : '',

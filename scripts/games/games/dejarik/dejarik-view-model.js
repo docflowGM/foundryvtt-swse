@@ -50,6 +50,8 @@ function pieceVm(piece = {}, session, state, viewerSeatId) {
     sessionId: session.id,
     seatId: viewerSeatId,
     defeated: Boolean(piece.defeated),
+    wounded: !piece.defeated && Number(piece.hp || 0) <= Math.ceil(Number(piece.maxHp || 1) / 2),
+    tokenStateClass: piece.defeated ? 'is-defeated' : (Number(piece.hp || 0) <= Math.ceil(Number(piece.maxHp || 1) / 2) ? 'is-wounded' : 'is-ready'),
     canSelect: isViewerPiece && state.activeSeatId === viewerSeatId && !piece.defeated,
     targetOptions: attackTargets,
     detailLine: `HP ${piece.hp}/${piece.maxHp} · ATK ${piece.atk} · RNG ${piece.rng} · MOV ${piece.mov}`,
@@ -87,9 +89,11 @@ export class DejarikViewModel {
       seats: playableSeats(session).map(seat => {
         const isAi = seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile;
         const aiProfile = buildDejarikAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium');
-        return { seatId: seat.seatId, displayName: seat.displayName, isViewer: seat.seatId === viewerSeatId, isCurrent: seat.seatId === state.activeSeatId, isAi, aiDifficultyLabel: isAi ? DejarikAi.labelForDifficulty(aiProfile.difficulty) : '', profession: seat.profession || '', tableFact: seat.tableFact || '' };
+        return { seatId: seat.seatId, displayName: seat.displayName, isViewer: seat.seatId === viewerSeatId, isCurrent: seat.seatId === state.activeSeatId, isAi, aiDifficultyLabel: isAi ? DejarikAi.labelForDifficulty(aiProfile.difficulty) : '', aiProfileLabel: isAi ? `${DejarikAi.labelForDifficulty(aiProfile.difficulty)} · ${aiProfile.fairness || 'fair'} · ${aiProfile.personality || 'methodical'}` : '', profession: seat.profession || '', tableFact: seat.tableFact || '' };
       }),
       pieces,
+      aiProfiles: playableSeats(session).filter(seat => seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile).map(seat => { const profile = buildDejarikAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium'); return { label: seat.displayName || 'AI Opponent', profileLabel: `${DejarikAi.labelForDifficulty(profile.difficulty)} · ${profile.fairness || 'fair'} · ${profile.personality || 'methodical'}`, profession: seat.profession || '', tableFact: seat.tableFact || '' }; }),
+      hasAiProfiles: playableSeats(session).some(seat => seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile),
       viewerPieces: pieces.filter(piece => piece.isViewerPiece && !piece.defeated),
       canAct: Boolean(viewerSeatId && state.phase === 'playing' && state.activeSeatId === viewerSeatId),
       boardSpaces: (state.board || []).map(space => {

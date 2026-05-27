@@ -168,6 +168,15 @@
             </div>
             {{/if}}
 
+            {{#if vm.activeTable.pazaak.hasTableChatter}}
+            <aside class="swse-games-chatter swse-pazaak-chatter" aria-label="Pazaak table chatter">
+              <span class="swse-games-kicker">TABLE CHATTER</span>
+              {{#each vm.activeTable.pazaak.tableChatter}}
+              <p class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b> <span>{{this.message}}</span></p>
+              {{/each}}
+            </aside>
+            {{/if}}
+
             <div class="swse-pazaak-seat-grid">
               {{#each vm.activeTable.pazaak.seats}}
               <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bust}}is-bust{{/if}} {{#if this.isThinking}}is-thinking thinking-{{this.thinkingIntensity}}{{/if}}">
@@ -239,6 +248,7 @@
                     <small>{{this.label}}</small>
                   </div>
                   <p>{{this.description}}</p>
+                  {{#if this.previewLabel}}<p class="swse-pazaak-preview">{{this.previewLabel}}</p>{{/if}}
                   <form data-games-action="pazaak-play-side-card">
                     <input type="hidden" name="sessionId" value="{{this.sessionId}}">
                     <input type="hidden" name="seatId" value="{{this.seatId}}">
@@ -281,6 +291,13 @@
             {{#if vm.activeTable.pazaak.wager.payoutApproved}}<p>Approved payout: {{vm.activeTable.pazaak.wager.payoutApproved}} credits{{#if vm.activeTable.pazaak.wager.payoutRequested}} / requested {{vm.activeTable.pazaak.wager.payoutRequested}} credits{{/if}}.</p>{{/if}}
             {{else}}
             <p>Republic Senate Rules were active, so no credits, items, or assets were transferred.</p>
+            {{/if}}
+            {{#if vm.activeTable.pazaak.hasMatchRecap}}
+            <div class="swse-games-recap-strip">
+              {{#each vm.activeTable.pazaak.matchRecap}}
+              <span><b>Set {{this.setNumber}}</b> {{this.outcomeLabel}}</span>
+              {{/each}}
+            </div>
             {{/if}}
           </section>
           {{/if}}
@@ -353,9 +370,20 @@
             {{#if vm.activeTable.sabacc.showDrawing}}<span>Card round {{vm.activeTable.sabacc.cardRound}} · active turn: {{vm.activeTable.sabacc.activeSeatLabel}}</span>{{/if}}
             {{#if vm.activeTable.sabacc.shiftRollLabel}}<span>Shift dice: {{vm.activeTable.sabacc.shiftRollLabel}}{{#if vm.activeTable.sabacc.shiftMatched}} · forced shift triggered{{/if}}</span>{{/if}}
             {{#if vm.activeTable.sabacc.showComplete}}<span>Winner: {{vm.activeTable.sabacc.winnerLabel}}</span>{{/if}}
-            <span>Hand pot: {{vm.activeTable.sabacc.handPot}} · Sabacc pot: {{vm.activeTable.sabacc.sabaccPot}}</span>
+            <span class="swse-sabacc-pot-strip"><i>Hand pot {{vm.activeTable.sabacc.handPot}}</i><i>Sabacc pot {{vm.activeTable.sabacc.sabaccPot}}</i></span>
             {{#if vm.activeTable.sabacc.hasShowdown}}<span>Showdown: {{#if vm.activeTable.sabacc.showdown.winnerLabel}}{{vm.activeTable.sabacc.showdown.winnerLabel}}{{else}}{{vm.activeTable.sabacc.showdown.tiedLabels}}{{/if}} · {{vm.activeTable.sabacc.showdown.reason}}</span>{{/if}}
           </div>
+
+          {{#if vm.activeTable.sabacc.hasHandHierarchyHelp}}
+          <details class="swse-games-help-panel swse-sabacc-hierarchy-help">
+            <summary>Sabacc Hand Hierarchy</summary>
+            <div>
+              {{#each vm.activeTable.sabacc.handHierarchyHelp}}
+              <p><b>{{this.label}}</b><span>{{this.description}}</span></p>
+              {{/each}}
+            </div>
+          </details>
+          {{/if}}
 
           <section class="swse-pazaak-play">
             <div class="swse-pazaak-seat-grid">
@@ -378,7 +406,7 @@
                 <div class="swse-pazaak-table-cards swse-sabacc-hand-cards">
                   {{#if this.hasCards}}
                     {{#each this.cards}}
-                    <span class="swse-pazaak-played-card swse-sabacc-card-face sign-{{this.sign}} {{#if this.isSpecial}}tone-special{{/if}}">
+                    <span class="swse-pazaak-played-card swse-sabacc-card-face swse-card-animate-in sign-{{this.sign}} {{#if this.isSpecial}}tone-special{{/if}}">
                       {{#if this.hasImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
                       <b>{{this.shortLabel}}</b>
                       <small>{{this.label}}</small>
@@ -427,7 +455,7 @@
                 {{#each vm.activeTable.sabacc.market}}
                 <article class="swse-sabacc-market-card">
                   <span class="swse-games-kicker">{{this.label}} · {{this.cost}} cr</span>
-                  <div class="swse-pazaak-card-face swse-sabacc-card-face sign-{{this.card.sign}}">
+                  <div class="swse-pazaak-card-face swse-sabacc-card-face swse-card-animate-in sign-{{this.card.sign}}">
                     {{#if this.card.hasImage}}<img src="{{this.card.image}}" alt="{{this.card.label}}">{{/if}}
                     <b>{{this.card.shortLabel}}</b><small>{{this.card.label}}</small>
                   </div>
@@ -439,7 +467,7 @@
               <div class="swse-pazaak-hand-grid">
                 {{#each vm.activeTable.sabacc.viewerSeat.hand}}
                 <article class="swse-pazaak-hand-card">
-                  <div class="swse-pazaak-card-face swse-sabacc-card-face sign-{{this.sign}}">
+                  <div class="swse-pazaak-card-face swse-sabacc-card-face swse-card-animate-in sign-{{this.sign}}">
                     {{#if this.hasImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
                     <b>{{this.shortLabel}}</b><small>{{this.label}}</small>
                   </div>
@@ -507,6 +535,15 @@
             {{#if vm.activeTable.dejarik.showComplete}}<span>Winner: {{vm.activeTable.dejarik.winnerLabel}}</span>{{/if}}
           </div>
 
+          {{#if vm.activeTable.dejarik.hasAiProfiles}}
+          <section class="swse-games-chatter swse-dejarik-ai-profile-strip">
+            <span class="swse-games-kicker">OPPONENT READOUT</span>
+            {{#each vm.activeTable.dejarik.aiProfiles}}
+            <p><b>{{this.label}}</b> <span>{{this.profileLabel}}{{#if this.profession}} · {{this.profession}}{{/if}}{{#if this.tableFact}} · {{this.tableFact}}{{/if}}</span></p>
+            {{/each}}
+          </section>
+          {{/if}}
+
           <section class="swse-dejarik-playmat">
             <div class="swse-dejarik-selection-panel">
               <span class="swse-games-kicker">TACTICAL OVERLAY</span>
@@ -538,7 +575,7 @@
                       title="{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}">
                 <small>{{this.id}}</small>
                 {{#if this.piece}}
-                <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}}" aria-hidden="true">{{#if this.piece.hasImage}}<img src="{{this.piece.image}}" alt="{{this.piece.label}}">{{else}}{{this.piece.shortLabel}}{{/if}}</span>
+                <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}} {{this.piece.tokenStateClass}}" aria-hidden="true">{{#if this.piece.hasImage}}<img src="{{this.piece.image}}" alt="{{this.piece.label}}">{{else}}{{this.piece.shortLabel}}{{/if}}</span>
                 <b>{{this.piece.label}}</b>
                 <span>{{this.piece.hpLabel}} · {{this.piece.ownerLabel}}</span>
                 {{/if}}
@@ -630,6 +667,11 @@
             <span>Pot: {{vm.activeTable.hintaro.pot}} · carryover {{vm.activeTable.hintaro.carriedPot}}</span>
             <span>Hintaro die: {{vm.activeTable.hintaro.hintaroDie.label}}</span>
           </div>
+
+          <aside class="swse-games-chatter swse-hintaro-dealer-callout" data-game-sound-cue="{{vm.activeTable.hintaro.soundCue}}">
+            <span class="swse-games-kicker">HINTARON CALLOUT</span>
+            <p><b>{{vm.activeTable.hintaro.hintaronLabel}}</b> <span>{{vm.activeTable.hintaro.dealerCallout}}</span></p>
+          </aside>
 
           <section class="swse-hintaro-die-rail">
             <div class="swse-hintaro-special-die tone-{{vm.activeTable.hintaro.hintaroDie.tone}}"><b>{{vm.activeTable.hintaro.hintaroDie.shortLabel}}</b><small>{{vm.activeTable.hintaro.hintaroDie.label}}</small></div>

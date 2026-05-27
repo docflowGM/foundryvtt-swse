@@ -63,6 +63,20 @@ function choiceForms(card = {}) {
   return { requiresChoice: false, signOnly: false, signAndValue: false };
 }
 
+
+function previewForSideCard(card = {}, player = {}) {
+  const current = scorePazaakPlayer(player);
+  const type = String(card.type || '');
+  const baseValue = Number(card.value || 0) || 0;
+  if (type === 'plus') return `Preview: ${scoreLabel(current)} → ${scoreLabel(current + Math.abs(baseValue))}`;
+  if (type === 'minus') return `Preview: ${scoreLabel(current)} → ${scoreLabel(current - Math.abs(baseValue))}`;
+  if (type === 'plusMinus' || type === 'tiebreaker') return `Choose +${Math.abs(baseValue || 1)} or −${Math.abs(baseValue || 1)} before play.`;
+  if (type === 'plusMinusRange') return 'Choose +1, +2, −1, or −2 before play.';
+  if (type === 'flip') return 'Flips a matching positive table card into a negative value.';
+  if (type === 'double') return 'Doubles one matching table card value if legal.';
+  return card.description || 'Side-card effect preview unavailable.';
+}
+
 function mapHandCard(card = {}, player = {}, canAct = false) {
   const status = playableSideCardStatus(player, card, card.requiresChoice ? { sign: 'plus', value: 1 } : {});
   const forms = choiceForms(card);
@@ -76,6 +90,7 @@ function mapHandCard(card = {}, player = {}, canAct = false) {
     tone: cardTone(card),
     canPlay: Boolean(canAct && (forms.requiresChoice || status.playable)),
     disabledReason: status.reason,
+    previewLabel: previewForSideCard(card, player),
     ...cardVisual(card, label),
     ...forms
   };
@@ -190,6 +205,7 @@ export class PazaakViewModel {
     const winnerSeat = state.winnerSeatId ? seats.find(seat => seat.seatId === state.winnerSeatId) : null;
     const wager = GameCreditEscrowService.describe(session);
     const eventLog = (Array.isArray(state.eventLog) ? state.eventLog : []).filter(entry => !entry.gmOnly || game?.user?.isGM).slice(-12).reverse().map(mapEventLogEntry);
+    const tableChatter = eventLog.filter(entry => ['force', 'success', 'danger'].includes(entry.tone) || /AI|stood|bust|20|played|draw/i.test(entry.message)).slice(0, 3);
     const aiThinking = state.aiThinking?.active ? {
       ...state.aiThinking,
       delayLabel: formatDelay(state.aiThinking.delayMs),
@@ -212,6 +228,8 @@ export class PazaakViewModel {
       canCancel: canCancelSession(session, currentSeat),
       canForfeit: Boolean(currentSeatId && ['setup', 'playing'].includes(state.phase) && !['complete', 'cancelled', 'refunded'].includes(String(session.status || ''))),
       eventLog,
+      tableChatter,
+      hasTableChatter: tableChatter.length > 0,
       hasEventLog: eventLog.length > 0,
       target: PAZAAK_TARGET,
       setsToWin: PAZAAK_SETS_TO_WIN,
@@ -234,6 +252,8 @@ export class PazaakViewModel {
       waitingSeats,
       hasWaitingSeats: waitingSeats.length > 0,
       setHistory: (state.setHistory || []).slice(-5).reverse(),
+      matchRecap: (state.setHistory || []).slice(-5).reverse().map(entry => ({ ...entry, outcomeLabel: entry.winnerLabel ? `${entry.winnerLabel} claimed the set` : 'Set tied and carried no point' })),
+      hasMatchRecap: (state.setHistory || []).length > 0,
       hasSetHistory: (state.setHistory || []).length > 0,
       winnerSeat,
       winnerLabel: winnerSeat?.displayName || null

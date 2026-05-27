@@ -230,6 +230,7 @@ export class GamesSurfaceController {
         });
         if (result?.pending) this._noteResult(result);
         else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Pazaak action failed.');
+        else this._emitGameCue('pazaak', action, { sessionId: String(data.get('sessionId') || '').trim() });
         this._host.render(false);
       }, { signal });
     });
@@ -254,6 +255,7 @@ export class GamesSurfaceController {
         });
         if (result?.pending) this._noteResult(result);
         else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Sabacc action failed.');
+        else this._emitGameCue('sabacc', action, { sessionId: String(data.get('sessionId') || '').trim() });
         this._host.render(false);
       }, { signal });
     });
@@ -296,6 +298,7 @@ export class GamesSurfaceController {
         });
         if (result?.pending) this._noteResult(result);
         else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Hintaro action failed.');
+        else this._emitGameCue('hintaro', action, { sessionId: String(data.get('sessionId') || '').trim() });
         this._host.render(false);
       }, { signal });
     });
@@ -435,10 +438,22 @@ export class GamesSurfaceController {
     const result = await DejarikEngine.submitAction({ sessionId, seatId, action, payload });
     if (result?.pending) this._noteResult(result);
     else if (!result?.ok) ui.notifications?.warn?.(result?.error || 'Dejarik action failed.');
+    else this._emitGameCue('dejarik', action, { sessionId });
     this._host.render(false);
     return result;
   }
 
+
+
+  _emitGameCue(gameId, cue, detail = {}) {
+    try {
+      window.dispatchEvent(new CustomEvent('swse:game-cue', {
+        detail: { gameId, cue, ...detail }
+      }));
+    } catch (_err) {
+      // Presentation cue hooks are best-effort and must never block gameplay.
+    }
+  }
 
   _syncSideDeckBuilder(checkboxes, countNode, submit) {
     const selected = checkboxes.filter(box => box.checked);

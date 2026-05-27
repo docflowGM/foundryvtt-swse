@@ -1,5 +1,20 @@
 import { SABACC_MAX_HAND_SIZE, SABACC_MIN_HAND_SIZE, SABACC_TARGET } from './sabacc-deck.js';
 
+
+
+export const SABACC_HAND_HIERARCHY_HELP = [
+  { label: 'Pure Sabacc', description: 'Two lone Sylops with no other cards.' },
+  { label: 'Rhylet', description: 'Three of a kind and two of a kind equalling zero.' },
+  { label: 'Fleet', description: 'A Sylop plus any four of a kind equalling zero.' },
+  { label: 'Banthas Wild', description: 'Three same-sign cards plus one or two mixed cards equalling zero.' },
+  { label: 'Gee Whiz!', description: '+1/+2/+3/+4/-10 or -1/-2/-3/-4/+10.' },
+  { label: 'Squadron', description: 'Four of a kind equalling zero.' },
+  { label: 'Straight Khyron', description: 'A four-card straight that totals zero; suited beats mixed at equal count.' },
+  { label: 'Rule of Two', description: 'Two positive/negative pairs, with optional fifth mixed card or Sylop.' },
+  { label: 'Yee-Haa', description: 'A Sylop plus a matching positive/negative pair.' },
+  { label: 'Regular Sabacc / Nulrhek', description: 'Zero wins over non-zero; otherwise closest to zero wins, with positive beating equal negative.' }
+];
+
 function safeCards(cards = []) {
   return Array.isArray(cards) ? cards.filter(Boolean) : [];
 }
