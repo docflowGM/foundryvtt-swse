@@ -415,6 +415,10 @@
             </div>
           </div>
 
+          <label class="job-status-note">
+            <span>Lifecycle GM Note</span>
+            <textarea rows="2" data-job-status-note placeholder="Optional reason for status override / lifecycle change"></textarea>
+          </label>
           <div class="job-detail-actions">
             {{#each jobBoard.statusActions}}
             <button type="button" class="swse-ui-button" data-job-status-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-status="{{this.value}}">{{this.label}}</button>
@@ -438,6 +442,7 @@
                   {{#if this.rewardXpLabel}}<span>{{this.rewardXpLabel}}</span>{{/if}}
                   {{#if this.rewardItems}}<span>{{this.rewardItems}}</span>{{/if}}
                 </div>
+                <label class="job-objective-note"><span>GM Review Note</span><textarea rows="2" data-job-objective-note-for="{{this.id}}" placeholder="Optional approval/rejection/failure note"></textarea></label>
                 <div class="job-objective-actions">
                   <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
                   <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
@@ -574,6 +579,7 @@
             <span class="job-board-chip review">{{this.statusLabel}}</span>
             <strong>{{this.jobTitle}}</strong>
             <p>{{this.typeLabel}}: {{this.title}}</p>
+            <label class="job-objective-note compact"><span>GM Review Note</span><textarea rows="2" data-job-objective-note-for="{{this.id}}" placeholder="Optional note"></textarea></label>
             <div class="job-objective-actions">
               <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{this.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
               <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{this.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
@@ -1232,6 +1238,16 @@
                 <span><strong>{{this.value}}</strong> {{this.label}}</span>
                 {{/each}}
               </div>
+              <details class="holonews-atom-browser">
+                <summary>Browse sample atoms</summary>
+                <div class="holonews-atom-sample-grid">
+                  {{#each holonewsAtomSamples.planets}}<span title="{{this.summary}}">{{this.label}}</span>{{/each}}
+                  {{#each holonewsAtomSamples.systems}}<span title="{{this.summary}}">{{this.label}}</span>{{/each}}
+                  {{#each holonewsAtomSamples.sources}}<span title="{{this.summary}}">{{this.label}}</span>{{/each}}
+                  {{#each holonewsAtomSamples.storyLeads}}<span title="{{this.summary}}">{{this.label}}</span>{{/each}}
+                  {{#each holonewsAtomSamples.storyDetails}}<span title="{{this.summary}}">{{this.label}}</span>{{/each}}
+                </div>
+              </details>
             </div>
 
             <form class="holonews-atom-policy" data-holonews-atom-policy-form>
@@ -1776,8 +1792,12 @@
               {{#each bulletinContacts}}
               <div class="bulletin-contact-row">
                 <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} - {{this.defaultCategory}}</em></span>
-                <small>{{this.imageLabel}} - used {{this.useCount}}</small>
-                {{#unless this.system}}<button type="button" class="swse-ui-button" data-action="bulletin-delete-contact" data-contact-id="{{this.id}}">Delete</button>{{/unless}}
+                <small>{{this.imageLabel}} - used {{this.useCount}} - last {{this.lastUsedLabel}}</small>
+                <div class="bulletin-contact-actions">
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit-contact" data-contact-id="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-kind="{{this.kind}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" data-notes="{{this.notes}}">Edit</button>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-clone-contact" data-contact-id="{{this.id}}" data-name="{{this.name}}" data-label="{{this.label}}" data-kind="{{this.kind}}" data-image-url="{{this.imageUrl}}" data-dateline="{{this.dateline}}" data-sector="{{this.sector}}" data-default-category="{{this.defaultCategory}}" data-notes="{{this.notes}}">Clone</button>
+                  {{#unless this.system}}<button type="button" class="swse-ui-button" data-action="bulletin-delete-contact" data-contact-id="{{this.id}}">Delete</button>{{/unless}}
+                </div>
               </div>
               {{/each}}
             </div>
@@ -2593,6 +2613,28 @@
         <p>The acquisition queue is clear. New custom droid, ship, or vehicle requests will appear here as summary packets.</p>
       </div>
       {{/if}}
+
+      <section class="gm-approval-history-panel swse-ui-panel">
+        <div class="gm-approval-queue-header">
+          <div>
+            <span class="gm-command-eyebrow">HISTORY</span>
+            <h3>Recent Approval Decisions</h3>
+          </div>
+        </div>
+        {{#if hasApprovalHistory}}
+        <div class="gm-approval-history-list">
+          {{#each approvalHistory}}
+          <div class="gm-approval-history-row {{this.decision}}">
+            <strong>{{this.decisionLabel}} · {{this.title}}</strong>
+            <span>{{this.type}} · {{this.costLabel}} · {{this.atLabel}}</span>
+            {{#if this.reason}}<em>{{this.reason}}</em>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="gm-approval-empty-note">No approval decisions have been logged yet.</p>
+        {{/if}}
+      </section>
     </div>
 
     {{!-- Settings Page --}}
@@ -2864,6 +2906,18 @@
                   <span>Ongoing Label</span>
                   <input type="text" name="actorOngoingLabel" placeholder="optional label">
                 </label>
+                <label>
+                  <span>Ongoing Memo</span>
+                  <input type="text" name="actorOngoingMemo" placeholder="optional GM memo">
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Duration</span>
+                  <select name="actorOngoingDuration">
+                    <option value="encounter">Encounter</option>
+                    <option value="rest">Until Rest</option>
+                    <option value="manual">Manual</option>
+                  </select>
+                </label>
                 <div class="combat-recovery-button-row">
                   {{#if this.repairEligible}}
                   <button type="button" class="swse-ui-button" data-combat-actor-action="repair" data-actor-id="{{this.id}}">Repair</button>
@@ -2881,8 +2935,8 @@
                   {{/if}}
                   <button type="button" class="swse-ui-button" data-combat-actor-action="revive" data-actor-id="{{this.id}}">Revive/Restore</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="damage" data-actor-id="{{this.id}}">Damage</button>
-                  <button type="button" class="swse-ui-button" data-combat-actor-action="improve-condition" data-actor-id="{{this.id}}">CT +</button>
-                  <button type="button" class="swse-ui-button" data-combat-actor-action="worsen-condition" data-actor-id="{{this.id}}">CT -</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="improve-condition" data-actor-id="{{this.id}}">Improve CT</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="worsen-condition" data-actor-id="{{this.id}}">Worsen CT</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="reset-condition" data-actor-id="{{this.id}}">Reset CT</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="reset-second-wind" data-actor-id="{{this.id}}">Reset SW</button>
                   <button type="button" class="swse-ui-button" data-combat-actor-action="apply-status-effect" data-actor-id="{{this.id}}">Apply Status</button>

@@ -351,6 +351,24 @@ export class HolonewsGenerator {
     ];
   }
 
+
+  static atomSamples(limit = 8) {
+    const size = Math.max(1, Math.min(25, Number(limit) || 8));
+    const previewAtom = (atom, type) => ({
+      id: atom.id,
+      type,
+      label: atom.name || atom.label || atom.headline || atom.id,
+      summary: atom.terrain || atom.region || atom.byline || atom.template || atom.sentence || atom.detail || atom.id
+    });
+    return {
+      planets: HOLONEWS_PLANET_ATOMS.slice(0, size).map(atom => previewAtom(atom, 'planet')),
+      systems: HOLONEWS_SYSTEM_ATOMS.slice(0, size).map(atom => previewAtom(atom, 'system')),
+      sources: HOLONEWS_SOURCE_ATOMS.slice(0, size).map(atom => previewAtom(atom, 'source')),
+      storyLeads: HOLONEWS_STORY_LEAD_ATOMS.slice(0, size).map(atom => previewAtom(atom, 'lead')),
+      storyDetails: HOLONEWS_STORY_DETAIL_ATOMS.slice(0, size).map(atom => previewAtom(atom, 'detail'))
+    };
+  }
+
   static count(filters = {}) {
     return this.#filter(filters).length;
   }

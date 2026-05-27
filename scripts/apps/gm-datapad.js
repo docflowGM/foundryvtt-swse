@@ -1053,7 +1053,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const threadId = event.currentTarget.dataset.threadId;
         const status = event.currentTarget.dataset.status;
         if (!threadId || !status) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status });
+        const statusNote = String(pageElement.querySelector('[data-job-status-note]')?.value || '').trim();
+        const riskyStatuses = new Set(['draft', 'paid', 'archived', 'failed']);
+        if (riskyStatuses.has(status)) {
+          const label = event.currentTarget.textContent?.trim() || status;
+          const ok = globalThis.confirm?.(`Change this job status to ${label}? This is a GM lifecycle override.`) ?? true;
+          if (!ok) return;
+        }
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status, statusNote });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });
@@ -1066,7 +1073,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const objectiveId = event.currentTarget.dataset.objectiveId;
         const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
         if (!threadId || !objectiveId || !objectiveStatus) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
+        const objectiveSelectorId = globalThis.CSS?.escape ? CSS.escape(objectiveId) : String(objectiveId).replace(/"/g, '\"');
+        const noteInput = pageElement.querySelector(`[data-job-objective-note-for="${objectiveSelectorId}"]`);
+        const objectiveNote = String(noteInput?.value || '').trim();
+        if (['rejected', 'failed'].includes(objectiveStatus)) {
+          const ok = globalThis.confirm?.(`Mark this objective ${objectiveStatus}? A GM note is recommended.`) ?? true;
+          if (!ok) return;
+        }
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus, objectiveNote });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });
@@ -1371,6 +1385,31 @@ export class GMDatapad extends BaseSWSEAppV2 {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         await this._deleteBulletinContact(event.currentTarget.dataset.contactId);
+      });
+    });
+
+
+    pageElement.querySelectorAll('[data-action="bulletin-edit-contact"], [data-action="bulletin-clone-contact"]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const clone = event.currentTarget.dataset.action === 'bulletin-clone-contact';
+        const form = pageElement.querySelector('[data-bulletin-contact-form]');
+        if (!form) return;
+        const data = event.currentTarget.dataset;
+        const setField = (name, value) => {
+          const field = form.querySelector(`[name="${name}"]`);
+          if (field) field.value = value || '';
+        };
+        setField('id', clone ? '' : data.contactId);
+        setField('name', clone ? `${data.name || data.label || 'Source'} Copy` : data.name);
+        setField('label', clone ? `${data.label || data.name || 'Source'} Copy` : data.label);
+        setField('kind', data.kind);
+        setField('imageUrl', data.imageUrl);
+        setField('dateline', data.dateline);
+        setField('sector', data.sector);
+        setField('defaultCategory', data.defaultCategory);
+        setField('notes', data.notes);
+        form.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
       });
     });
 
@@ -2633,6 +2672,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const poisonKey = form?.querySelector('[name="actorPoisonKey"]')?.value || '';
         const ongoingEffectType = form?.querySelector('[name="actorOngoingType"]')?.value || 'custom';
         const ongoingEffectLabel = form?.querySelector('[name="actorOngoingLabel"]')?.value || '';
+        const ongoingEffectMemo = form?.querySelector('[name="actorOngoingMemo"]')?.value || '';
+        const ongoingDurationScope = form?.querySelector('[name="actorOngoingDuration"]')?.value || 'encounter';
         await this._executeCombatRecoveryActorAction(actorId, action, {
           amount,
           effectId,
@@ -2642,7 +2683,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
           poisonKey,
           ongoingEffectType,
           ongoingEffectLabel,
-          ongoingDurationScope: 'encounter'
+          ongoingEffectMemo,
+          ongoingDurationScope
         });
       });
     });
@@ -2915,6 +2957,26 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return this._rollbackTransaction(index);
   }
 
+  async _appendApprovalHistory(entry = {}) {
+    if (!game.user?.isGM) return;
+    let history = [];
+    try {
+      history = game.settings.get('foundryvtt-swse', 'gmApprovalHistory') ?? [];
+    } catch (_err) {
+      history = [];
+    }
+    const next = [
+      {
+        id: foundry.utils?.randomID?.() ?? `${Date.now()}`,
+        at: new Date().toISOString(),
+        decidedBy: game.user?.name ?? 'GM',
+        ...entry
+      },
+      ...(Array.isArray(history) ? history : [])
+    ].slice(0, 100);
+    await game.settings.set('foundryvtt-swse', 'gmApprovalHistory', next);
+  }
+
   /**
    * Approve a pending droid
    */
@@ -2981,6 +3043,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
+      await this._appendApprovalHistory({ type: 'droid', decision: 'approved', title: actor.name, actorId: actor.id, cost, reason: '' });
       ui?.notifications?.info?.(`Droid "${actor.name}" approved`);
       this.render(false);
     } catch (err) {
@@ -3031,6 +3094,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
+      await this._appendApprovalHistory({ type: 'droid', decision: 'denied', title: actor.name, actorId: actor.id, cost: 0, reason });
       ui?.notifications?.info?.(`Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`);
       this.render(false);
     } catch (err) {
@@ -3328,6 +3392,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
+      await this._appendApprovalHistory({ type: draftActor.type || approval.type || 'custom', decision: 'approved', title: assetName, actorId: ownerActor.id, draftActorId: draftActor.id, cost, reason: approval.metadata?.gmNotes ?? '' });
       ui?.notifications?.info?.(`Approved: ${assetName}`);
       await this.render(false);
     } catch (err) {
@@ -3366,6 +3431,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       this.selectedApprovalKey = null;
       this.approvalEditMode = false;
       this.approvalDenyMode = false;
+      await this._appendApprovalHistory({ type: denial.type || 'custom', decision: 'denied', title: denial.draftData?.name ?? draftActor?.name ?? 'Custom asset', actorId: ownerActor?.id ?? denial.ownerActorId ?? null, draftActorId: denial.draftActorId ?? null, cost: Number(denial.costCredits || 0) || 0, reason });
       ui?.notifications?.info?.(`Denied: ${denial.draftData?.name ?? 'Custom asset'}${reason ? ` — ${reason}` : ''}`);
       await this.render(false);
     } catch (err) {

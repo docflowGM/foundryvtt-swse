@@ -195,6 +195,15 @@ export function registerHolonetSettings() {
     default: []
   });
 
+
+  game.settings.register('foundryvtt-swse', 'gmApprovalHistory', {
+    name: 'GM Approval History (internal)',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
   HolonetPreferences.registerSettings();
   console.log('[Holonet] Settings registered');
 }

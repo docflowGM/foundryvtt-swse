@@ -2135,8 +2135,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, statusNote: String(statusNote || '').trim(), objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -2144,7 +2144,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -2277,7 +2277,8 @@ export class HolonetMessengerService {
         if (!['draft', 'posted', 'accepted', 'inProgress', 'review', 'complete', 'paid', 'archived', 'failed'].includes(nextStatus)) return false;
         const previousStatus = String(meta.job.status || 'posted');
         meta.job.status = nextStatus;
-        meta.job.statusHistory = [...safeArray(meta.job.statusHistory), { status: nextStatus, at: nowIso(), by: requesterId || game.user?.id || null }];
+        const cleanStatusNote = String(statusNote || '').trim();
+        meta.job.statusHistory = [...safeArray(meta.job.statusHistory), { status: nextStatus, at: nowIso(), by: requesterId || game.user?.id || null, note: cleanStatusNote }];
         if (nextStatus === 'posted' && previousStatus === 'draft') {
           const additions = safeArray(meta.job.intendedRecipientIds)
             .map(id => this._recipientFromStableId(id))
@@ -2286,7 +2287,7 @@ export class HolonetMessengerService {
           if (additions.length) thread.participants = uniqueRecipients([...(thread.participants ?? []), ...additions]);
         }
         await HolonetStorage.saveThread(thread);
-        await this._publishSystemMessage(thread, `Job status changed to ${this._jobStatusLabel(nextStatus)}.`, { eventType: 'job-status-changed', status: nextStatus });
+        await this._publishSystemMessage(thread, `Job status changed to ${this._jobStatusLabel(nextStatus)}.${cleanStatusNote ? ` GM note: ${cleanStatusNote}` : ''}`, { eventType: 'job-status-changed', status: nextStatus, note: cleanStatusNote });
         if (nextStatus === 'posted' && previousStatus === 'draft') {
           const brief = meta.job?.briefing?.body || meta.job?.title || 'A new job has been posted to the Holonet board.';
           await this._gmSendMessage({
@@ -2320,7 +2321,7 @@ export class HolonetMessengerService {
         meta.job.objectives = objectives;
         meta.job.statusHistory = [
           ...safeArray(meta.job.statusHistory),
-          { status: `objective:${nextObjectiveStatus}`, objectiveId: objective.id, at: nowIso(), by: requesterId || game.user?.id || null }
+          { status: `objective:${nextObjectiveStatus}`, objectiveId: objective.id, at: nowIso(), by: requesterId || game.user?.id || null, note: String(objectiveNote || '').trim() }
         ];
         if (nextObjectiveStatus === 'approved' && String(meta.job.status || '') === 'review') {
           const required = objectives.filter(entry => entry.required === true || String(entry.type || '').toLowerCase() === 'primary');
@@ -2329,7 +2330,8 @@ export class HolonetMessengerService {
           if (allRequiredApproved && !stillNeedsReview) meta.job.status = 'complete';
         }
         await HolonetStorage.saveThread(thread);
-        await this._publishSystemMessage(thread, `Job objective ${jobObjectiveStatusLabel(nextObjectiveStatus)}: ${jobObjectiveLabel(objective)}.`, { eventType: 'job-objective-status-changed', objectiveId: objective.id, status: nextObjectiveStatus });
+        const cleanObjectiveNote = String(objectiveNote || '').trim();
+        await this._publishSystemMessage(thread, `Job objective ${jobObjectiveStatusLabel(nextObjectiveStatus)}: ${jobObjectiveLabel(objective)}.${cleanObjectiveNote ? ` GM note: ${cleanObjectiveNote}` : ''}`, { eventType: 'job-objective-status-changed', objectiveId: objective.id, status: nextObjectiveStatus, note: cleanObjectiveNote });
         break;
       }
       case 'job-payout-distribution': {

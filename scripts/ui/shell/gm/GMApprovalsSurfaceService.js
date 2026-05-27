@@ -1,7 +1,5 @@
 /** GM approvals surface view-model. */
 
-import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
-
 const EMPTY = '—';
 
 function numberOrNull(value) {
@@ -217,69 +215,6 @@ function buildGenericActorCategories({ actor, approval, sourceType }) {
   }));
 }
 
-
-function buildGameSettlementRequest(session) {
-  const credits = session?.escrow?.credits ?? {};
-  const policy = credits.policy ?? {};
-  const requested = numberOrNull(credits.payoutRequested ?? credits.pot) ?? 0;
-  const recommended = numberOrNull(policy.recommendedPayout ?? credits.payoutApproved) ?? 0;
-  const winnerSeat = asArray(session?.seats).find((seat) => seat?.seatId === credits.winnerSeatId) ?? null;
-  const winnerActor = winnerSeat?.actorId ? game.actors.get(winnerSeat.actorId) : null;
-  const submitted = credits.pendingSettlementAt ? new Date(credits.pendingSettlementAt).toLocaleString() : EMPTY;
-  const categories = [
-    {
-      id: 'game-result',
-      label: 'Game Result',
-      icon: 'fa-solid fa-dice',
-      rows: [
-        makeReadonlyRow('Game', session?.title ?? 'Pazaak Table'),
-        makeReadonlyRow('Mode', session?.rulesMode === 'wagered' ? 'Wagered Credits' : 'Republic Senate Rules'),
-        makeReadonlyRow('Winner', winnerSeat?.displayName ?? 'Unknown'),
-        makeReadonlyRow('Winner Actor', winnerActor?.name ?? 'No actor-backed wallet'),
-        makeReadonlyRow('Requested Payout', displayCredits(requested)),
-        makeReadonlyRow('Policy', policy.message ?? credits.settlementMessage ?? 'GM settlement required', { wide: true })
-      ]
-    },
-    {
-      id: 'settlement',
-      label: 'GM Settlement',
-      icon: 'fa-solid fa-scale-balanced',
-      rows: [
-        makeEditableRow('Approved Payout', recommended, 'approvedPayout', 'number', { suffix: 'cr' }),
-        makeTextAreaRow('GM Reason', credits.settlementMessage ?? '', 'metadata.gmSettlementReason', { wide: true, placeholder: 'Explain the approved, capped, voided, or adjusted campaign payout.' })
-      ]
-    }
-  ].map((category) => ({
-    ...category,
-    rows: category.rows.map((row) => ({
-      ...row,
-      fieldId: row.inputName ? `game-settlement-${category.id}-${row.inputName}`.replace(/[^a-zA-Z0-9_-]/g, '-') : null,
-      originalValue: row.value ?? row.displayValue ?? ''
-    }))
-  }));
-
-  return {
-    key: `game:${session.id}`,
-    sourceType: 'game-settlement',
-    sessionId: session.id,
-    type: 'game-settlement',
-    typeLabel: 'Game Payout Review',
-    title: session?.title ?? 'Pending Game Settlement',
-    subtitle: `${winnerSeat?.displayName ?? 'Unknown winner'} · requested ${displayCredits(requested)}`,
-    ownerLabel: winnerSeat?.displayName ?? 'Unknown',
-    costLabel: displayCredits(requested),
-    submittedLabel: submitted,
-    icon: 'fa-solid fa-dice-d20',
-    tone: 'game',
-    categories,
-    warnings: [
-      ...(winnerActor ? [] : ['Winner does not have an actor-backed wallet. Approval cannot pay credits until fixed.']),
-      ...(requested <= 0 ? ['No requested payout is recorded.'] : []),
-      ...(policy?.caps?.effectiveCap ? [`Automated cap was ${displayCredits(policy.caps.effectiveCap)}.`] : [])
-    ]
-  };
-}
-
 function buildDroidActorRequest(pendingDroid) {
   const actor = game.actors.get(pendingDroid.actorId);
   const droidSystems = actor?.system?.droidSystems ?? {};
@@ -358,10 +293,7 @@ export class GMApprovalsSurfaceService {
 
     const droidRequests = host.pendingDroids.map((pending) => buildDroidActorRequest(pending));
     const storeRequests = host.storeApprovals.map((approval, index) => buildStoreApprovalRequest(approval, index));
-    const gameRequests = GameSessionStore.getAllSessions()
-      .filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement')
-      .map((session) => buildGameSettlementRequest(session));
-    const approvalRequests = [...gameRequests, ...droidRequests, ...storeRequests];
+    const approvalRequests = [...droidRequests, ...storeRequests];
 
     if (!approvalRequests.some((request) => request.key === host.selectedApprovalKey)) {
       host.selectedApprovalKey = approvalRequests[0]?.key ?? null;
@@ -371,10 +303,23 @@ export class GMApprovalsSurfaceService {
 
     const selectedApproval = approvalRequests.find((request) => request.key === host.selectedApprovalKey) ?? approvalRequests[0] ?? null;
     const hasRequests = approvalRequests.length > 0;
+    let approvalHistory = [];
+    try {
+      approvalHistory = game.settings.get('foundryvtt-swse', 'gmApprovalHistory') ?? [];
+    } catch (_err) {
+      approvalHistory = [];
+    }
+    const approvalHistoryViews = asArray(approvalHistory).slice(0, 12).map((entry) => ({
+      ...entry,
+      atLabel: entry.at ? new Date(entry.at).toLocaleString() : EMPTY,
+      decisionLabel: String(entry.decision || '').replace(/\w/g, (letter) => letter.toUpperCase()),
+      costLabel: displayCredits(entry.cost ?? 0),
+      title: entry.title || 'Approval request'
+    }));
 
     return {
       pageTitle: 'Approvals',
-      pageDescription: 'Review game payout settlements, ship and droid acquisition packets, approve unchanged, approve with inline edits, or deny with a player-facing reason.',
+      pageDescription: 'Review ship and droid acquisition packets, approve unchanged, approve with inline edits, or deny with a player-facing reason.',
       pendingDroids: host.pendingDroids,
       storeApprovals: host.storeApprovals,
       hasPendingDroids: host.pendingDroids.length > 0,
@@ -386,10 +331,11 @@ export class GMApprovalsSurfaceService {
       approvalDenyMode: !!host.approvalDenyMode,
       approvalQueueCounts: {
         total: approvalRequests.length,
-        games: approvalRequests.filter((request) => request.type === 'game-settlement').length,
         droids: approvalRequests.filter((request) => request.type === 'droid').length,
         ships: approvalRequests.filter((request) => request.type === 'starship' || request.type === 'vehicle').length
-      }
+      },
+      approvalHistory: approvalHistoryViews,
+      hasApprovalHistory: approvalHistoryViews.length > 0
     };
   }
 }
