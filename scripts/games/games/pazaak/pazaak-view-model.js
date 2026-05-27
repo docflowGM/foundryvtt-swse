@@ -11,8 +11,8 @@ import { playableSideCardStatus, scorePazaakPlayer } from './pazaak-rules.js';
 import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
 import { PazaakAi, buildPazaakAiProfile } from './pazaak-ai.js';
 
-const PAZAAK_CARD_FRONT_IMAGE = '/systems/foundryvtt-swse/assets/cards/pazaak/custom.png';
-const PAZAAK_CARD_BACK_IMAGE = '/systems/foundryvtt-swse/assets/cards/pazaak/back.png';
+const PAZAAK_CARD_FRONT_IMAGE = '/systems/foundryvtt-swse/assets/cards/pazaak/card-front-template.png';
+const PAZAAK_CARD_BACK_IMAGE = '/systems/foundryvtt-swse/assets/cards/pazaak/card-back-template.png';
 
 function cardTone(card = {}) {
   if (card.tone) return card.tone;

@@ -25,7 +25,7 @@ import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehi
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
-import { consumeInventoryPolicyQuantities, isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+import { isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 /**
@@ -1053,8 +1053,6 @@ export async function checkout(store, animateNumberCallback) {
         // Log purchase to history
         await logPurchaseToHistory(actor, store.cart, total, result.transactionId);
 
-        // Consume finite GM inventory quantities only after the transaction succeeds.
-        await consumeInventoryPolicyQuantities(store.cart);
 
         // Clear cart only on success
         const purchasedItems = {

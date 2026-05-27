@@ -826,6 +826,105 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageElement = root.querySelector('.gm-datapad-jobs');
     if (!pageElement) return;
 
+    pageElement.querySelectorAll('form[data-job-create-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const text = (key) => String(data.get(key) || '').trim();
+        const number = (key) => Math.max(0, Math.floor(Number(data.get(key) || 0) || 0));
+        const itemNotes = (...keys) => keys.map(key => text(key)).filter(Boolean).join(' | ');
+        const title = text('title') || 'Job Board Posting';
+        const objectives = [
+          {
+            id: 'primary',
+            type: 'primary',
+            title: text('primaryObjective'),
+            description: text('primaryDescription'),
+            required: true,
+            rewardCredits: number('primaryCredits'),
+            rewardXp: number('primaryXp'),
+            rewardItems: text('primaryItems')
+          },
+          {
+            id: 'secondary',
+            type: 'secondary',
+            title: text('secondaryObjective'),
+            description: text('secondaryDescription'),
+            required: data.get('secondaryRequired') === 'on',
+            rewardCredits: number('secondaryCredits'),
+            rewardXp: number('secondaryXp'),
+            rewardItems: text('secondaryItems')
+          },
+          {
+            id: 'tertiary',
+            type: 'tertiary',
+            title: text('tertiaryObjective'),
+            description: text('tertiaryDescription'),
+            required: false,
+            rewardCredits: number('tertiaryCredits'),
+            rewardXp: number('tertiaryXp'),
+            rewardItems: text('tertiaryItems')
+          }
+        ].filter(objective => objective.title);
+
+        const rewardCredits = number('flatCredits') + objectives.reduce((sum, objective) => sum + Number(objective.rewardCredits || 0), 0);
+        const rewardItems = itemNotes('flatItems', 'primaryItems', 'secondaryItems', 'tertiaryItems');
+        const result = await HolonetMessengerService.createJobPosting({
+          actor: null,
+          title,
+          body: text('briefing') || title,
+          recipientIds: data.getAll('recipientIds').map(String).filter(Boolean),
+          rewardCredits,
+          rewardItems,
+          client: {
+            type: text('clientType'),
+            name: text('clientName'),
+            factionName: text('clientFaction'),
+            imageUrl: text('clientImage'),
+            saveForReuse: data.get('clientSave') === 'on'
+          },
+          objectives,
+          briefing: {
+            body: text('briefing'),
+            instructions: text('instructions'),
+            oocNote: text('oocNote')
+          },
+          factionConsequences: {
+            factionName: text('clientFaction'),
+            successDelta: Number(data.get('factionSuccessDelta') || 0) || 0,
+            failureDelta: Number(data.get('factionFailureDelta') || 0) || 0,
+            notes: text('factionNotes')
+          },
+          status: text('status') || 'posted'
+        });
+
+        if (!result) {
+          ui.notifications?.error?.('Job contract creation failed.');
+          return;
+        }
+        this.selectedJobThreadId = result.threadId || this.selectedJobThreadId;
+        ui.notifications?.info?.(`Job contract ${text('status') === 'draft' ? 'drafted' : 'posted'}.`);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-distribution-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const payoutMode = String(data.get('payoutMode') || 'single').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const amount = Number(data.get('amount') || 0);
+        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
+        if (!threadId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout-distribution', payoutMode, recipientId, recipientIds, amount, partyFundCutPercent });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
     pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();

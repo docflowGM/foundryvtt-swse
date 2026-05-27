@@ -53,7 +53,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
-import { applyStorePoliciesToIndex } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+import { applyStorePoliciesToIndex, consumeInventoryPolicyQuantities, restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
@@ -302,6 +302,7 @@ export class StoreEngine {
     }
 
     freezePricing();
+    let inventoryConsumed = null;
     try {
       const freshActor = game.actors.get(actor.id);
       if (!freshActor) return { success: false, error: 'Actor no longer exists.', transactionId: null };
@@ -341,6 +342,15 @@ export class StoreEngine {
       const hasCustomizedStoreItem = items.some(item => !!item.stagedCustomization || item.type === 'customized-item');
       const resolvedContext = transactionContext || (hasCustomizedStoreItem ? 'store-customization-checkout' : 'store-purchase');
 
+      inventoryConsumed = await consumeInventoryPolicyQuantities(items);
+      if (!inventoryConsumed?.ok) {
+        return {
+          success: false,
+          error: inventoryConsumed?.error || 'Store stock could not be reserved.',
+          transactionId: null
+        };
+      }
+
       const result = await TransactionEngine.executeMutationTransaction({
         actor: freshActor,
         mutationPlan: grantPlans,
@@ -368,6 +378,9 @@ export class StoreEngine {
       });
 
       if (!result.success) {
+        if (inventoryConsumed?.consumed?.length) {
+          await restoreInventoryPolicyQuantities(inventoryConsumed.consumed);
+        }
         logger().error('StoreEngine.purchase: TransactionEngine rejected purchase', {
           actor: actor.id,
           error: result.error,
@@ -384,8 +397,34 @@ export class StoreEngine {
         context: resolvedContext
       });
 
-      return result;
+      Hooks.callAll?.('swseStoreTransactionComplete', {
+        transaction: {
+          id: result.transactionId,
+          transactionId: result.transactionId,
+          buyerId: freshActor.id,
+          buyerName: freshActor.name,
+          itemName: items.map(item => item.name).filter(Boolean).join(', ') || 'Store items',
+          itemCount: items.length,
+          price: totalCost,
+          total: totalCost,
+          timestamp: Date.now(),
+          context: resolvedContext,
+          success: true
+        },
+        buyer: freshActor,
+        seller: null,
+        success: true
+      });
+
+      return { ...result, stock: inventoryConsumed };
     } catch (err) {
+      if (inventoryConsumed?.consumed?.length) {
+        try {
+          await restoreInventoryPolicyQuantities(inventoryConsumed.consumed);
+        } catch (restoreError) {
+          logger().error('StoreEngine.purchase: Stock rollback failed', { error: restoreError.message });
+        }
+      }
       logger().error('StoreEngine.purchase: Transaction failed', {
         actor: actor.id,
         error: err.message,

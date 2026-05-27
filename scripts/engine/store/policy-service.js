@@ -284,37 +284,56 @@ export async function restoreInventoryPolicyQuantities(items = []) {
 export async function consumeInventoryPolicyQuantities(cart = {}) {
   const counts = new Map();
   const add = (entry) => {
-    const id = entry?.id;
+    const id = entry?.id || entry?.itemId || entry?._id || entry?.policyId;
     if (!id) return;
-    counts.set(id, (counts.get(id) || 0) + 1);
+    const quantity = Math.max(1, normalizeCredits(entry?.quantity ?? entry?.count ?? 1));
+    counts.set(id, (counts.get(id) || 0) + quantity);
   };
 
-  for (const item of cart.items || []) add(item);
-  for (const droid of cart.droids || []) add(droid);
-  for (const vehicle of cart.vehicles || []) add(vehicle);
+  if (Array.isArray(cart)) {
+    for (const entry of cart) add(entry);
+  } else {
+    for (const item of cart.items || []) add(item);
+    for (const droid of cart.droids || []) add(droid);
+    for (const vehicle of cart.vehicles || []) add(vehicle);
+  }
 
-  if (counts.size === 0) return { updated: 0 };
+  if (counts.size === 0) return { ok: true, updated: 0, consumed: [] };
 
   const policies = SettingsHelper.getObject('storeInventoryPolicies', {});
-  let updated = 0;
+  const consumed = [];
 
+  // Validate the full stock plan before mutating settings. This keeps checkout
+  // fail-closed: if any finite-stock item cannot be decremented, nothing is
+  // consumed and the actor transaction is never attempted.
   for (const [id, count] of counts.entries()) {
     const policy = asObject(policies[id], {});
     if (policy.trackQuantity !== true) continue;
 
     const current = asNumberOrNull(policy.quantity);
     if (current === null) continue;
+    if (current < count) {
+      return {
+        ok: false,
+        updated: 0,
+        consumed: [],
+        error: `Insufficient stock for ${id} (have ${current}, need ${count}).`
+      };
+    }
 
-    policy.quantity = Math.max(0, current - count);
+    consumed.push({ id, quantity: count, before: current, after: current - count });
+  }
+
+  if (!consumed.length) return { ok: true, updated: 0, consumed: [] };
+
+  for (const entry of consumed) {
+    const policy = asObject(policies[entry.id], {});
+    policy.quantity = entry.after;
     policy.updatedAt = Date.now();
     policy.updatedBy = game.user?.id || null;
-    policies[id] = policy;
-    updated += 1;
+    policies[entry.id] = policy;
   }
 
-  if (updated > 0) {
-    await SettingsHelper.set('storeInventoryPolicies', policies);
-  }
-
-  return { updated };
+  await SettingsHelper.set('storeInventoryPolicies', policies);
+  return { ok: true, updated: consumed.length, consumed };
 }
