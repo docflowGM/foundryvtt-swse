@@ -335,6 +335,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-lane.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies-faction-card.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-base-card.hbs',
   // ==============================
   // Referenced V2 partials loaded deterministically (render stability)

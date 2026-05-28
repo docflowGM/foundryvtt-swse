@@ -262,6 +262,53 @@ function mapRelationshipRecord(entry = {}, fallbackKind = 'record') {
 }
 
 
+function parseInteger(value, fallback = 0) {
+  const number = Number.parseInt(String(value ?? '').trim(), 10);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function mapFactionRecord(entry = {}) {
+  const id = entry.id || entry.factionId || randomId('faction');
+  const score = parseInteger(entry.score ?? entry.factionScore ?? entry.reputation ?? entry.standingScore, 0);
+  const planet = entry.planet || entry.world || entry.locationPlanet || '';
+  const system = entry.system || entry.starSystem || entry.locationSystem || '';
+  const metaParts = [];
+  if (planet) metaParts.push(`Planet: ${planet}`);
+  if (system) metaParts.push(`System: ${system}`);
+  if (entry.scale) metaParts.push(`Scale: ${entry.scale}`);
+  return {
+    id,
+    name: entry.name || entry.label || entry.title || 'Unnamed Faction',
+    type: entry.type || entry.kind || entry.category || entry.factionType || '',
+    planet,
+    system,
+    scale: entry.scale || entry.factionScale || entry.scope || '',
+    leader: entry.leader || entry.factionLeader || entry.commander || '',
+    benefits: entry.benefits || entry.factionBenefits || entry.perks || entry.description || entry.notes || '',
+    score,
+    scoreLabel: score > 0 ? `+${score}` : String(score),
+    scoreClass: score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral',
+    status: score > 0 ? 'FAVORABLE' : score < 0 ? 'HOSTILE' : 'NEUTRAL',
+    meta: metaParts.join(' · ')
+  };
+}
+
+function normalizeFactionForStorage(data = {}) {
+  return {
+    id: data.id || randomId('faction'),
+    name: cleanString(data.name) || 'Unnamed Faction',
+    type: cleanString(data.type),
+    planet: cleanString(data.planet),
+    system: cleanString(data.system),
+    scale: cleanString(data.scale),
+    leader: cleanString(data.leader),
+    benefits: cleanString(data.benefits),
+    score: parseInteger(data.score, 0),
+    updatedAt: Date.now()
+  };
+}
+
+
 function normalizeBaseAccommodations(entry = {}) {
   const source = entry.accommodations || entry.facilities || entry.features || {};
   const out = {};
@@ -539,12 +586,14 @@ export class AlliesSurfaceService {
   }
 
   static async _buildFactions(actor) {
-    const records = [
+    const flagFactions = asArray(actor?.getFlag?.(SYSTEM_ID, 'factions'));
+    const legacyFactions = [
       ...asArray(actor?.system?.factions),
       ...asArray(actor?.system?.affiliations),
       ...asArray(actor?.flags?.swse?.factions),
-      ...asArray(actor?.getFlag?.(SYSTEM_ID, 'factions'))
-    ].map(entry => mapRelationshipRecord(entry, 'faction'));
+      ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'faction')
+    ];
+    const records = uniqueEntries([...flagFactions, ...legacyFactions]).map(entry => mapFactionRecord(entry));
     return { records, hasAny: records.length > 0 };
   }
 
@@ -577,6 +626,43 @@ export class AlliesSurfaceService {
       ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'organization')
     ].map(entry => mapRelationshipRecord(entry, 'organization'));
     return { records, hasAny: records.length > 0 };
+  }
+
+  static async addFaction(ownerActor) {
+    if (!ownerActor) return false;
+    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(normalizeFactionForStorage);
+    const next = normalizeFactionForStorage({
+      id: randomId('faction'),
+      name: `New Faction ${factions.length + 1}`,
+      type: '',
+      planet: '',
+      system: '',
+      scale: '',
+      leader: '',
+      benefits: '',
+      score: 0
+    });
+    await ownerActor.setFlag(SYSTEM_ID, 'factions', [...factions, next]);
+    return true;
+  }
+
+  static async saveFaction(ownerActor, factionId, data = {}) {
+    if (!ownerActor || !factionId) return false;
+    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(normalizeFactionForStorage);
+    const normalized = normalizeFactionForStorage({ ...data, id: factionId });
+    const index = factions.findIndex(faction => faction.id === factionId);
+    const nextFactions = index >= 0
+      ? factions.map(faction => faction.id === factionId ? { ...faction, ...normalized } : faction)
+      : [...factions, normalized];
+    await ownerActor.setFlag(SYSTEM_ID, 'factions', nextFactions);
+    return true;
+  }
+
+  static async removeFaction(ownerActor, factionId) {
+    if (!ownerActor || !factionId) return false;
+    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(normalizeFactionForStorage);
+    await ownerActor.setFlag(SYSTEM_ID, 'factions', factions.filter(faction => faction.id !== factionId));
+    return true;
   }
 
   static async addBase(ownerActor) {

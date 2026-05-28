@@ -83,6 +83,12 @@ export class AlliesSurfaceController {
           return this._rehireAlly(target.dataset.actorId);
         case 'open-garage':
           return this._openGarage(target.dataset.actorId);
+        case 'add-faction':
+          return this._addFaction();
+        case 'save-faction':
+          return this._saveFaction(target);
+        case 'remove-faction':
+          return this._removeFaction(target.dataset.factionId);
         case 'add-base':
           return this._addBase();
         case 'save-base':
@@ -196,6 +202,51 @@ export class AlliesSurfaceController {
       targetActorId: actorId || null
     });
     this._host.render(false);
+  }
+
+  async _addFaction() {
+    const ok = await AlliesSurfaceService.addFaction(this._actor);
+    if (ok) ui?.notifications?.info?.('Faction record created. Fill in the text fields and save when ready.');
+    this._host.render(false);
+  }
+
+  async _saveFaction(target) {
+    const factionId = target.dataset.factionId;
+    const form = target.closest('form');
+    if (!form || !factionId) return this._notify('Faction form could not be found.');
+    const data = this._collectFactionForm(form);
+    const ok = await AlliesSurfaceService.saveFaction(this._actor, factionId, data);
+    if (ok) ui?.notifications?.info?.('Faction record saved.');
+    this._host.render(false);
+  }
+
+  async _removeFaction(factionId) {
+    if (!factionId) return this._notify('Faction record could not be found.');
+    const shouldRemove = await Dialog.confirm({
+      title: 'Remove Faction Record?',
+      content: '<p>This removes the faction record from this actor. It does not change jobs, credits, reputation history, or world faction data.</p>',
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldRemove) return;
+    const ok = await AlliesSurfaceService.removeFaction(this._actor, factionId);
+    if (ok) ui?.notifications?.info?.('Faction record removed.');
+    this._host.render(false);
+  }
+
+  _collectFactionForm(form) {
+    const formData = new FormData(form);
+    return {
+      name: String(formData.get('name') ?? '').trim(),
+      type: String(formData.get('type') ?? '').trim(),
+      planet: String(formData.get('planet') ?? '').trim(),
+      system: String(formData.get('system') ?? '').trim(),
+      scale: String(formData.get('scale') ?? '').trim(),
+      leader: String(formData.get('leader') ?? '').trim(),
+      benefits: String(formData.get('benefits') ?? '').trim(),
+      score: Number.parseInt(String(formData.get('score') ?? '0'), 10) || 0
+    };
   }
 
   async _addBase() {

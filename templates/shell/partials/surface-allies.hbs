@@ -76,22 +76,28 @@
     {{/if}}
 
     {{#if (eq vm.activeTab "factions")}}
-    <section class="swse-allies-directory">
+    <section class="swse-allies-directory swse-allies-factions">
       <div class="swse-allies-section-head">
         <div>
           <span class="swse-allies-kicker">TAB 2</span>
           <h3>Factions</h3>
-          <p>Faction affiliations, reputations, rank, obligations, and standing.</p>
+          <p>Faction relationships earned through jobs, missions, obligations, favors, and consequences. Scores can be positive or negative and benefits are assessed by the GM.</p>
+        </div>
+        <div class="swse-allies-section-actions">
+          <button type="button" class="swse-allies-history-toggle" data-allies-action="add-faction">Add Faction</button>
         </div>
       </div>
+      <div class="swse-allies-base-note">
+        Faction score is intentionally lightweight: record an integer score, then let the GM decide what benefits, access, hostility, or consequences that standing creates.
+      </div>
       {{#if vm.factions.hasAny}}
-      <div class="swse-allies-record-grid">
+      <div class="swse-allies-faction-list">
         {{#each vm.factions.records}}
-        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs" record=this}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-faction-card.hbs" faction=this}}
         {{/each}}
       </div>
       {{else}}
-      <div class="swse-allies-empty">No faction records have been attached to this profile yet.</div>
+      <div class="swse-allies-empty">No faction records have been attached to this profile yet. Use Add Faction to create a reputation record.</div>
       {{/if}}
     </section>
     {{/if}}
