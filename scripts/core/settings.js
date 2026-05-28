@@ -9,6 +9,7 @@ import { registerHolonetSettings } from "/systems/foundryvtt-swse/scripts/holone
 import { registerHouseruleSettings } from "/systems/foundryvtt-swse/scripts/houserules/houserule-settings.js";
 import { registerHouseRuleSettings } from "/systems/foundryvtt-swse/scripts/settings/house-rules.js";
 import { registerGameSettings } from "/systems/foundryvtt-swse/scripts/games/game-settings.js";
+import { registerFactionRegistrySettings } from "/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js";
 
 /**
  * System settings for SWSE
@@ -436,6 +437,9 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
   } catch (err) {
     console.warn('[SWSE] Failed to register GM Store Dashboard menu:', err);
   }
+
+  // Campaign faction/organization registry used by the GM Workspace and future Allies app.
+  registerFactionRegistrySettings();
 
   // Register MetaTuning settings for suggestion engine
   registerMetaTuningSettings();
