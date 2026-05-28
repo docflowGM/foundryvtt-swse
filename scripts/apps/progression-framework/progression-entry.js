@@ -34,6 +34,16 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * @returns {boolean} - True if actor is incomplete and needs chargen
  * @private
  */
+
+function _isOwnerSyncedMinion(actor) {
+  return actor?.system?.isMinion === true
+    || actor?.system?.progression?.isMinion === true
+    || actor?.flags?.swse?.minion?.isMinion === true
+    || actor?.getFlag?.('foundryvtt-swse', 'isMinion') === true
+    || actor?.system?.npcProfile?.kind === 'minion'
+    || actor?.system?.npcProfile?.kind === 'privateer';
+}
+
 function _isChargenIncomplete(actor) {
   if (!actor) {
     return false;
@@ -57,9 +67,12 @@ function _isChargenIncomplete(actor) {
     return true;
   }
 
-  // No class item yet — chargen was not completed
+  // No class item yet usually means chargen was not completed. Owner-synced
+  // minions are dependent nonheroic NPCs and must not be routed into manual
+  // level-up just because their class bookkeeping is implicit/locked.
   const hasClass = ActorAbilityBridge.getClasses(actor).length > 0;
   if (!hasClass) {
+    if (_isOwnerSyncedMinion(actor)) return false;
     return true;
   }
 
@@ -149,6 +162,12 @@ export async function launchProgression(actor, options = {}) {
 
   // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
   const isChargenIncomplete = _isChargenIncomplete(actor);
+
+  if (!isChargenIncomplete && _isOwnerSyncedMinion(actor)) {
+    ui?.notifications?.info?.('Minions do not level up manually. They automatically sync as nonheroic NPCs at owner heroic level - 2.');
+    SWSELogger.log('[Progression Entry] Blocked manual minion level-up; minions are owner-synced.');
+    return;
+  }
 
   SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
   SWSELogger.debug('[PROGRESSION] ROUTING DECISION');
@@ -270,6 +289,20 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     ui?.notifications?.error?.('Followers can only be created for character actors.');
     SWSELogger.error('[Follower Progression] Non-character owner');
     return;
+  }
+
+  if (options.existingFollowerId) {
+    try {
+      const { FollowerCreator } = await import('/systems/foundryvtt-swse/scripts/apps/follower-creator.js');
+      await FollowerCreator.updateFollowersForLevelUp(ownerActor);
+      ui?.notifications?.info?.('Follower recalculated from the owner's current heroic level.');
+      SWSELogger.log('[Follower Progression] Existing follower level-up handled as automatic recalculation.');
+      return game.actors?.get(options.existingFollowerId) || null;
+    } catch (err) {
+      SWSELogger.error('[Follower Progression] Automatic follower recalculation failed:', err);
+      ui?.notifications?.error?.(`Follower recalculation failed: ${err.message}`);
+      return null;
+    }
   }
 
   try {

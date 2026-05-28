@@ -313,7 +313,7 @@ export class MinionCreator {
         },
         [SYSTEM_ID]: {
           isMinion: true,
-          npcLevelUp: { mode: 'progression', track: 'nonheroic' }
+          npcLevelUp: { mode: 'owner-sync', track: 'nonheroic', manualLevelUp: false }
         }
       }
     };
@@ -464,7 +464,10 @@ export class MinionCreator {
         'system.npcProfile.minion.nonheroicLevel': level,
         'system.npcProfile.minion.levelOffset': Number(slot.minionLevelOffset ?? (getFollowerTalentConfig(slot.talentName) || {}).minionLevelOffset ?? -2) || -2,
         'flags.swse.minion.isMinion': true,
-        [`flags.${SYSTEM_ID}.isMinion`]: true
+        [`flags.${SYSTEM_ID}.isMinion`]: true,
+        [`flags.${SYSTEM_ID}.npcLevelUp.mode`]: 'owner-sync',
+        [`flags.${SYSTEM_ID}.npcLevelUp.track`]: 'nonheroic',
+        [`flags.${SYSTEM_ID}.npcLevelUp.manualLevelUp`]: false
       }, { source: 'MinionCreator.updateMinionsForOwnerLevel', isRecomputeHPCall: true });
     }
   }

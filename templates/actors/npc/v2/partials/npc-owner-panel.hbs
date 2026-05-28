@@ -89,11 +89,11 @@
 
     {{#if followerSummary.canAdvance}}
       <div class="swse-npc-callout swse-npc-callout--follower-advance">
-        <strong>Eligible to Level Up:</strong>
+        <strong>Ready to Recalculate:</strong>
         {{#if followerSummary.advanceReason}}
           {{followerSummary.advanceReason}}
         {{else}}
-          This follower is eligible for advancement because its owner has advanced.
+          This follower can be recalculated because its owner has advanced.
         {{/if}}
       </div>
 
@@ -103,7 +103,7 @@
             type="button"
             class="swse-npc-action-button"
             data-action="open-follower-advancement">
-            Open Follower Advancement
+            Recalculate Follower
           </button>
         </div>
       {{/if}}

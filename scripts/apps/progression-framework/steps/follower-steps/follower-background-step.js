@@ -21,7 +21,7 @@ export class FollowerBackgroundStep extends FollowerStepBase {
   async onStepEnter(shell) {
     try {
       // Check house rule setting for follower backgrounds
-      const enableFollowerBackgrounds = HouseRuleService.isEnabled('enableFollowerBackgrounds');
+      const enableFollowerBackgrounds = HouseRuleService.getBoolean('enableFollowerBackgrounds', true);
       this._isEnabled = enableFollowerBackgrounds;
 
       swseLogger.log('[FollowerBackgroundStep] Entered, enabled:', this._isEnabled);

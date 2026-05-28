@@ -1,33 +1,34 @@
 /**
  * Nonheroic Session Seeding Helper
  *
- * Uses existing nonheroic rule sources (class-item isNonheroic flag, beast metadata)
- * to seed nonheroic session state.
- *
- * Phase 2: Wraps existing helpers to avoid duplication.
- * Phase 2 Expansion: Includes Beast as a nonheroic profile/variant.
- * Does not invent nonheroic or beast rules; consumes them from authoritative sources.
+ * Nonheroic can be explicit (a Nonheroic class item already exists) or implicit
+ * during chargen/minion creation. Minions share nonheroic chargen but are owner-
+ * synced after creation instead of getting manual level-up branches.
  */
 
 import { swseLogger } from '../../../utils/logger.js';
 
-/**
- * Nonheroic profile/variant enum
- */
 export const NonheroicProfile = Object.freeze({
-  STANDARD: 'standard',  // Normal nonheroic NPC
-  BEAST: 'beast',        // Beast-type nonheroic (from flags.swse.beastData)
+  STANDARD: 'standard',
+  BEAST: 'beast',
+  MINION: 'minion',
 });
 
-/**
- * Seed nonheroic session state from actor and class-item authorities.
- * Also detects Beast profile if present.
- *
- * @param {ProgressionSession} session
- * @param {Actor} actor
- * @param {string} mode - 'chargen' | 'levelup'
- * @returns {Promise<void>}
- */
+function isMinionActor(actor) {
+  return actor?.system?.isMinion === true
+    || actor?.system?.progression?.isMinion === true
+    || actor?.flags?.swse?.minion?.isMinion === true
+    || actor?.getFlag?.('foundryvtt-swse', 'isMinion') === true
+    || actor?.system?.npcProfile?.kind === 'minion'
+    || actor?.system?.npcProfile?.kind === 'privateer';
+}
+
+function hasNonheroicSubtype(actor) {
+  return actor?.system?.swse?.progressionSubtype === 'nonheroic'
+    || actor?.system?.progressionSubtype === 'nonheroic'
+    || actor?.flags?.swse?.progressionSubtype === 'nonheroic';
+}
+
 export async function seedNonheroicSession(session, actor, mode) {
   if (!actor) {
     swseLogger.debug('[NonheroicSessionSeeder] No actor context');
@@ -35,45 +36,55 @@ export async function seedNonheroicSession(session, actor, mode) {
   }
 
   try {
-    // Phase 2: Detect nonheroic class items from actor
-    // Use class-item isNonheroic flag as authority
-    const nonheroicClasses = actor.items
-      ?.filter(item => item.type === 'class' && item.system?.isNonheroic === true)
-      ?.map(item => ({
+    const itemArray = Array.from(actor.items || []);
+    const nonheroicClasses = itemArray
+      .filter(item => item.type === 'class' && item.system?.isNonheroic === true)
+      .map(item => ({
         id: item.id,
         name: item.name,
-        level: actor.system?.classes?.[item.id]?.level || 1,
+        level: actor.system?.classes?.[item.id]?.level || actor.system?.level || 1,
         isNonheroic: true,
-      })) || [];
+      }));
 
-    // Phase 2 Expansion: Detect Beast profile
-    // Canonical marker: flags.swse.beastData exists
     const hasBeastMetadata = !!actor.flags?.swse?.beastData;
-    const beastProfile = hasBeastMetadata ? NonheroicProfile.BEAST : NonheroicProfile.STANDARD;
+    const isMinion = isMinionActor(actor) || session?.dependencyContext?.dependentKind === 'minion';
+    const implicitNonheroic = nonheroicClasses.length === 0
+      && actor.type === 'npc'
+      && (mode === 'chargen' || isMinion || hasNonheroicSubtype(actor));
 
-    swseLogger.debug('[NonheroicSessionSeeder] Found nonheroic classes and profile', {
-      classCount: nonheroicClasses.length,
-      classes: nonheroicClasses.map(c => c.name),
-      profile: beastProfile,
-      hasBeastData: hasBeastMetadata,
-    });
+    if (implicitNonheroic) {
+      nonheroicClasses.push({
+        id: 'nonheroic-implicit',
+        name: 'Nonheroic',
+        level: Math.max(1, Number(actor.system?.level || 1)),
+        isNonheroic: true,
+        implicit: true,
+      });
+    }
 
-    // Phase 2: Store nonheroic class info in session metadata
-    // Phase 2 Expansion: Include beast profile
-    // (Can be used for projected state, summary, and mutation contribution)
+    const profile = isMinion
+      ? NonheroicProfile.MINION
+      : hasBeastMetadata
+        ? NonheroicProfile.BEAST
+        : NonheroicProfile.STANDARD;
+
     session.nonheroicContext = {
       nonheroicClasses,
       hasNonheroic: nonheroicClasses.length > 0,
-      totalNonheroicLevel: nonheroicClasses.reduce((sum, c) => sum + c.level, 0),
-      profile: beastProfile,
-      isBeast: beastProfile === NonheroicProfile.BEAST,
+      totalNonheroicLevel: nonheroicClasses.reduce((sum, c) => sum + Number(c.level || 0), 0),
+      profile,
+      isBeast: profile === NonheroicProfile.BEAST,
+      isMinion: profile === NonheroicProfile.MINION,
+      isImplicit: implicitNonheroic,
       beastData: actor.flags?.swse?.beastData || null,
+      manualLevelUpAllowed: profile !== NonheroicProfile.MINION,
     };
 
     swseLogger.debug('[NonheroicSessionSeeder] Nonheroic session state seeded', {
       hasNonheroic: session.nonheroicContext.hasNonheroic,
       totalNonheroicLevel: session.nonheroicContext.totalNonheroicLevel,
       profile: session.nonheroicContext.profile,
+      implicitNonheroic,
     });
   } catch (err) {
     swseLogger.error('[NonheroicSessionSeeder] Error seeding nonheroic session:', err);

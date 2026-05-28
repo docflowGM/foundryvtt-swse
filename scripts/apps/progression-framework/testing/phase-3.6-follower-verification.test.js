@@ -44,23 +44,21 @@ describe('Phase 3.6 - Follower Integration Verification', function() {
   });
 
   // ============================================================================
-  // CLAIM 1: FollowerShell provides the correct 7-step flow
+  // CLAIM 1: FollowerShell provides the correct compact 5-step flow
   // ============================================================================
 
-  describe('CLAIM 1: FollowerShell provides 7-step flow', function() {
-    it('FollowerShell._getCanonicalDescriptors returns exactly 7 steps', function() {
+  describe('CLAIM 1: FollowerShell provides compact 5-step flow', function() {
+    it('FollowerShell._getCanonicalDescriptors returns exactly 5 steps', function() {
       const shell = new FollowerShell(null, 'follower', { owner: testOwner });
       const steps = shell._getCanonicalDescriptors();
 
       expect(steps).to.be.an('array');
-      expect(steps).to.have.lengthOf(7);
+      expect(steps).to.have.lengthOf(5);
       expect(steps.map(s => s.stepId)).to.deep.equal([
+        'follower-origin',
         'follower-species',
         'follower-template',
-        'follower-background',
-        'follower-skills',
-        'follower-feats',
-        'follower-languages',
+        'follower-details',
         'follower-confirm'
       ]);
     });
@@ -114,8 +112,7 @@ describe('Phase 3.6 - Follower Integration Verification', function() {
       const candidateIds = [
         'follower-species',
         'follower-template',
-        'follower-skills',
-        'follower-feats'
+        'follower-details'
       ];
 
       // Test with Aggressive template selected
@@ -125,7 +122,7 @@ describe('Phase 3.6 - Follower Integration Verification', function() {
       };
 
       const filteredAgg = adapter.contributeActiveSteps(candidateIds, sessionAggressive, testOwner);
-      expect(filteredAgg).to.not.include('follower-skills');
+      expect(filteredAgg).to.include('follower-details');
 
       // Test with Utility template selected (skills should NOT be suppressed)
       const sessionUtility = {
@@ -134,7 +131,7 @@ describe('Phase 3.6 - Follower Integration Verification', function() {
       };
 
       const filteredUtility = adapter.contributeActiveSteps(candidateIds, sessionUtility, testOwner);
-      expect(filteredUtility).to.include('follower-skills');
+      expect(filteredUtility).to.include('follower-details');
     });
   });
 

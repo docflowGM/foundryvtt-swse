@@ -65,6 +65,10 @@ export const SETTINGS_DEFAULTS = {
 
     // Backgrounds
     enableBackgrounds: true,
+    enableFollowerBackgrounds: true,
+    allowHumanFollowerNormalBonus: false,
+    allowDroidFollowers: true,
+    allowDroidFollowerSizeChoice: false,
     backgroundSelectionCount: 1,
     backgroundSkillGrantMode: 'raw_choice',
 
