@@ -47,6 +47,11 @@ import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-se
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 
+const GM_TABLET_BASE_WIDTH = 1440;
+const GM_TABLET_BASE_HEIGHT = 900;
+const GM_TABLET_MIN_WIDTH = Math.round(GM_TABLET_BASE_WIDTH * 0.55);
+const GM_TABLET_MIN_HEIGHT = Math.round(GM_TABLET_BASE_HEIGHT * 0.55);
+
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'gm-datapad',
@@ -55,7 +60,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       title: 'GM Datapad',
       width: 1200,
       height: 800,
-      resizable: true
+      frame: false,
+      resizable: false,
+      draggable: false
     },
     classes: ['swse', 'gm-datapad', 'swse-datapad-container'],
     tabs: [
@@ -111,6 +118,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // Shared surface controllers
     this._settingsSurfaceController = null;
+
+    // Frameless shared holopad shell window state.
+    this._gmTabletExpanded = false;
+    this._gmTabletPreExpandRect = null;
   }
 
   async _prepareContext(options) {
@@ -123,15 +134,58 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageContext = await this._loadPageContext(this.currentPage);
     const surfaceContext = ThemeResolutionService.buildSurfaceContext({ preferActor: false });
     const appCounts = await this._getHomeBadgeCounts();
+    const apps = this._getAppCards(appCounts);
+    const gmShell = this._buildGmShellContext(apps, appCounts);
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
-      apps: this._getAppCards(appCounts),
+      shellSurface: this._getGmShellSurfaceId(this.currentPage),
+      shellIsSheet: false,
+      shellSurfaceVm: pageContext,
+      apps,
+      gmShell,
+      appClusters: this._buildAppClusters(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
       ...pageContext
     });
+  }
+
+  _getGmShellSurfaceId(pageId) {
+    const id = String(pageId || 'home');
+    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace']);
+    return `gm-${known.has(id) ? id : 'error'}`;
+  }
+
+  _buildGmShellContext(apps = [], counts = {}) {
+    const active = apps.find((app) => app.id === this.currentPage)
+      ?? apps.find((app) => app.id === 'home')
+      ?? { id: 'home', code: 'OPS', label: 'GM Operations', statusTone: '', badgeCount: 0 };
+    const urgent = Number(counts.approvals ?? 0) + Number(counts.tradeFailed ?? 0) + Number(counts.jobs ?? 0);
+    const readinessTone = urgent > 0 ? 'crit' : (Number(counts.store ?? 0) + Number(counts.bulletin ?? 0) > 0 ? 'warn' : 'stable');
+    const readinessLabel = urgent > 0 ? 'Action Required' : readinessTone === 'warn' ? 'Monitoring' : 'Ready';
+    return {
+      activeId: active.id,
+      activeCode: active.code || 'OPS',
+      activeLabel: active.label || 'GM Operations',
+      readinessTone,
+      readinessLabel,
+      summaryLine: `${Number(counts.approvals ?? 0)} approvals · ${Number(counts.trade ?? 0)} trade · ${Number(counts.jobs ?? 0)} jobs`,
+      serialLabel: `GM-CMD-${String(this.currentPage || 'home').toUpperCase()}`,
+      dockApps: apps.filter((app) => app.id !== 'home')
+    };
+  }
+
+  _buildAppClusters(apps = [], counts = {}) {
+    const byId = new Map(apps.map((app) => [app.id, app]));
+    const pick = (ids) => ids.map((id) => byId.get(id)).filter(Boolean);
+    return [
+      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace']) },
+      { label: 'Economy', tone: (counts.store || counts.approvals) ? 'warn' : 'stable', countLabel: `${Number(counts.store ?? 0) + Number(counts.approvals ?? 0)} queued`, apps: pick(['store', 'approvals']) },
+      { label: 'Holonet', tone: counts.bulletin ? 'info' : 'stable', countLabel: `${Number(counts.bulletin ?? 0)} signals`, apps: pick(['bulletin']) },
+      { label: 'Configuration', tone: 'stable', countLabel: 'ready', apps: pick(['house-rules', 'settings']) }
+    ];
   }
 
   /**
@@ -774,6 +828,134 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
 
+  _wireSharedHolopadFrameEvents(root) {
+    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this.close();
+    });
+
+    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this._toggleSharedHolopadExpand();
+    });
+
+    this._wireSharedHolopadDrag(root);
+    this._wireSharedHolopadResize(root);
+  }
+
+  _toggleSharedHolopadExpand() {
+    if (this._gmTabletExpanded) {
+      const saved = this._gmTabletPreExpandRect;
+      if (saved) this.setPosition(saved);
+      this._gmTabletPreExpandRect = null;
+      this._gmTabletExpanded = false;
+      return;
+    }
+
+    this._gmTabletPreExpandRect = {
+      left: Number(this.position?.left) || 0,
+      top: Number(this.position?.top) || 0,
+      width: Number(this.position?.width) || GM_TABLET_BASE_WIDTH,
+      height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT
+    };
+
+    const inset = 24;
+    const width = Math.min(GM_TABLET_BASE_WIDTH, Math.max(GM_TABLET_MIN_WIDTH, window.innerWidth - inset));
+    const height = Math.min(GM_TABLET_BASE_HEIGHT, Math.max(GM_TABLET_MIN_HEIGHT, window.innerHeight - inset));
+    this.setPosition({
+      width,
+      height,
+      left: Math.max(0, Math.round((window.innerWidth - width) / 2)),
+      top: Math.max(0, Math.round((window.innerHeight - height) / 2))
+    });
+    this._gmTabletExpanded = true;
+  }
+
+  _wireSharedHolopadDrag(root) {
+    const handles = root.querySelectorAll('[data-action="tablet-drag"]');
+    handles.forEach((handle) => {
+      handle.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0 || ev.target?.closest?.('button, input, select, textarea, a, [contenteditable="true"]')) return;
+        ev.preventDefault();
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const startLeft = Number(this.position?.left) || root.getBoundingClientRect().left || 0;
+        const startTop = Number(this.position?.top) || root.getBoundingClientRect().top || 0;
+        const onMove = (moveEv) => {
+          moveEv.preventDefault();
+          this.setPosition({
+            left: startLeft + (moveEv.clientX - startX),
+            top: startTop + (moveEv.clientY - startY)
+          });
+        };
+        const onEnd = () => {
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onEnd);
+          window.removeEventListener('pointercancel', onEnd);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onEnd, { once: true });
+        window.addEventListener('pointercancel', onEnd, { once: true });
+      });
+    });
+  }
+
+  _wireSharedHolopadResize(root) {
+    const handles = root.querySelectorAll('[data-action="tablet-resize"]');
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+    handles.forEach((handle) => {
+      handle.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        const dir = String(handle.dataset.resizeDir || 'se').toLowerCase();
+        const resizeWest = dir.includes('w');
+        const resizeEast = dir.includes('e') || (!resizeWest && !dir.includes('n') && !dir.includes('s'));
+        const resizeNorth = dir.includes('n');
+        const resizeSouth = dir.includes('s') || (!resizeNorth && !dir.includes('e') && !dir.includes('w'));
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const rect = root.getBoundingClientRect();
+        const startWidth = Number(this.position?.width) || rect.width || GM_TABLET_BASE_WIDTH;
+        const startHeight = Number(this.position?.height) || rect.height || GM_TABLET_BASE_HEIGHT;
+        const startLeft = Number(this.position?.left) || rect.left || 0;
+        const startTop = Number(this.position?.top) || rect.top || 0;
+        const startRight = startLeft + startWidth;
+        const startBottom = startTop + startHeight;
+
+        const onMove = (moveEv) => {
+          moveEv.preventDefault();
+          const dx = moveEv.clientX - startX;
+          const dy = moveEv.clientY - startY;
+          let left = startLeft;
+          let top = startTop;
+          let width = startWidth;
+          let height = startHeight;
+          if (resizeEast) width = clamp(startWidth + dx, GM_TABLET_MIN_WIDTH, Math.max(GM_TABLET_MIN_WIDTH, window.innerWidth - startLeft - 8));
+          if (resizeSouth) height = clamp(startHeight + dy, GM_TABLET_MIN_HEIGHT, Math.max(GM_TABLET_MIN_HEIGHT, window.innerHeight - startTop - 8));
+          if (resizeWest) {
+            left = clamp(startLeft + dx, 8, startRight - GM_TABLET_MIN_WIDTH);
+            width = clamp(startRight - left, GM_TABLET_MIN_WIDTH, startRight - 8);
+          }
+          if (resizeNorth) {
+            top = clamp(startTop + dy, 8, startBottom - GM_TABLET_MIN_HEIGHT);
+            height = clamp(startBottom - top, GM_TABLET_MIN_HEIGHT, startBottom - 8);
+          }
+          this._gmTabletExpanded = false;
+          this.setPosition({ left, top, width, height });
+        };
+        const onEnd = () => {
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onEnd);
+          window.removeEventListener('pointercancel', onEnd);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onEnd, { once: true });
+        window.addEventListener('pointercancel', onEnd, { once: true });
+      });
+    });
+  }
+
   /**
    * Get app card definitions for home page
    */
@@ -796,6 +978,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
+
+    this._wireSharedHolopadFrameEvents(root);
 
     // Mirror actor holopad home affordances: all shell/home controls route to GM home.
     root.querySelectorAll('[data-action="tablet-home"], [data-shell-action="open-home"], [data-shell-action="return-to-home"]').forEach(btn => {

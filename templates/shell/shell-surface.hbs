@@ -78,19 +78,66 @@
         vm=shellSurfaceVm}}
   {{/if}}
 
+
+  {{#if (eq shellSurface "gm-home")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-jobs")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-trade")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-bulletin")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-house-rules")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/house-rules.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-store")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-approvals")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-settings")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-healing")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-workspace")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/workspace.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-error")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs"}}
+  {{/if}}
+
   {{!-- ═══════════════════════════════════════════════════════════════
     PERSISTENT HOME NAV
     Floating home button visible on all non-home surfaces.
     Lets the user jump to the Home launcher from any route.
   ═══════════════════════════════════════════════════════════════════ --}}
-  {{#unless (eq shellSurface "home")}}
+  {{#if (eq shellSurface "home")}}
+  {{else if (eq shellSurface "gm-home")}}
+  {{else}}
   <button class="swse-shell-home-nav"
           data-shell-action="open-home"
           type="button"
           title="Holopad Home">
     ⌂
   </button>
-  {{/unless}}
+  {{/if}}
 
   {{!-- ═══════════════════════════════════════════════════════════════
     DRAWER LAYER

@@ -1,0 +1,28 @@
+{{!-- Shared holopad/tablet frame closing. Pair with holopad-frame.hbs. --}}
+      </div>
+
+      <div class="swse-tablet-vent swse-tablet-vent--bottom" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <button type="button" class="swse-tablet-bottom-home" data-action="{{#if bottomHomeAction}}{{bottomHomeAction}}{{else}}tablet-home{{/if}}"{{#if bottomHomeNavTo}} data-nav-to="{{bottomHomeNavTo}}"{{/if}} title="{{#if bottomHomeTitle}}{{bottomHomeTitle}}{{else}}Return to holopad home{{/if}}" aria-label="{{#if bottomHomeLabel}}{{bottomHomeLabel}}{{else}}Return to holopad home{{/if}}">
+        <span class="swse-tablet-bottom-home__glyph" aria-hidden="true">⌂</span>
+        <span class="swse-tablet-bottom-home__label">HOME</span>
+      </button>
+
+      <div class="swse-tablet-bottom-engraving" aria-hidden="true">{{#if bottomEngraving}}{{bottomEngraving}}{{else}}CEC ID 31 · CLASS A · NO HOT OPEN{{/if}}</div>
+
+      {{#if showResize}}
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--n" data-action="tablet-resize" data-resize-dir="n" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--s" data-action="tablet-resize" data-resize-dir="s" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--e" data-action="tablet-resize" data-resize-dir="e" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--w" data-action="tablet-resize" data-resize-dir="w" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--ne" data-action="tablet-resize" data-resize-dir="ne" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--nw" data-action="tablet-resize" data-resize-dir="nw" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--se" data-action="tablet-resize" data-resize-dir="se" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--sw" data-action="tablet-resize" data-resize-dir="sw" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-grip" data-action="tablet-resize" data-resize-dir="se" title="Resize datapad" aria-label="Resize datapad"></div>
+      {{/if}}
+    </div>
+  </div>
+</div>

@@ -315,6 +315,7 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/shell/shell-surface.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs',

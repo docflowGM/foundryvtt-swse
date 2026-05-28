@@ -1,83 +1,34 @@
-<div class="gm-datapad-container swse-ui-shell swse-datapad flexcol" data-theme="{{themeKey}}" data-motion-style="{{motionStyle}}" style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
-  {{!-- GM Datapad Shell — mirrors the actor holopad tablet chrome/navigation while keeping GM page logic intact. --}}
-  <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept swse-sheet-v2-shell--gm-datapad sheet-shell" data-shell-surface="{{currentPage}}" data-theme="{{themeKey}}" data-motion-style="{{motionStyle}}" style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
-    <div class="swse-v2-tablet swse-v2-tablet--concept gm-datapad-tablet">
-      <div class="swse-tablet-rivet swse-tablet-rivet--tl" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--tr" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--bl" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--br" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--ml" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--mr" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--top-a" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--top-b" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--right-a" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--right-b" aria-hidden="true"></div>
-      <div class="swse-tablet-camera" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--a" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--b" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--c" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--d" aria-hidden="true"></div>
-
-      <div class="swse-tablet-top-bezel" data-action="tablet-drag" title="Drag datapad" aria-label="Datapad drag rail">
-        <div class="swse-tablet-drag-handle" data-action="tablet-drag" aria-hidden="true"></div>
-      </div>
-
-      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail" aria-label="GM datapad controls">
-        <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="GM command datapad">GM-CMD-{{currentPage}}</span>
-        <span class="swse-tablet-status-lights" aria-hidden="true"><span></span><span></span><span></span></span>
-        <button type="button" class="swse-tablet-control swse-tablet-control--home" data-nav-to="home" title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
-      </div>
-
-      <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-
-      <div class="swse-v2-screen swse-v2-screen--concept gm-datapad-screen-shell">
-        <div class="scan-v" aria-hidden="true"></div>
-        <div class="corner tl" aria-hidden="true"></div>
-        <div class="corner tr" aria-hidden="true"></div>
-        <div class="corner bl" aria-hidden="true"></div>
-        <div class="corner br" aria-hidden="true"></div>
-        <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
-
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
+  frameOuterClass="gm-datapad-container swse-ui-shell swse-datapad flexcol"
+  frameDataApp="gm-datapad"
+  frameStyleInline=themeStyleInline
+  frameStyleInlineExtra=motionStyleInline
+  shellSurface=shellSurface
+  shellTheme=themeKey
+  shellMotionStyle=motionStyle
+  shellStyleInline=themeStyleInline
+  shellStyleInlineExtra=motionStyleInline
+  shellExtraClass="swse-sheet-v2-shell--gm-datapad"
+  tabletExtraClass="gm-datapad-tablet"
+  screenExtraClass="gm-datapad-screen-shell"
+  serialLabel=gmShell.serialLabel
+  serialAria="GM command datapad"
+  controlsLabel="GM datapad controls"
+  topHomeAction="tablet-home"
+  topHomeNavTo="home"
+  dragTitle="Drag GM datapad"
+  dragLabel="GM datapad drag rail"
+  showResize=true
+}}
+  <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs"}}
-
-    {{!-- GM Datapad surface host. Top-level surfaces live in registered full-path partials. --}}
-    {{#if (eq currentPage "home")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs"}}
-    {{else if (eq currentPage "jobs")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs.hbs"}}
-    {{else if (eq currentPage "trade")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade.hbs"}}
-    {{else if (eq currentPage "bulletin")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin.hbs"}}
-    {{else if (eq currentPage "house-rules")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/house-rules.hbs"}}
-    {{else if (eq currentPage "store")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store.hbs"}}
-    {{else if (eq currentPage "approvals")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals.hbs"}}
-    {{else if (eq currentPage "settings")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs"}}
-    {{else if (eq currentPage "healing")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing.hbs"}}
-    {{else if (eq currentPage "workspace")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/workspace.hbs"}}
-    {{else}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs"}}
-    {{/if}}
-
-        </div>
-      </div>
-
-      <div class="swse-tablet-vent swse-tablet-vent--bottom" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-      </div>
-
-      <button type="button" class="swse-tablet-bottom-home" data-nav-to="home" title="Return to GM holopad home" aria-label="Return to GM holopad home">
-        <span class="swse-tablet-bottom-home__glyph" aria-hidden="true">⌂</span>
-        <span class="swse-tablet-bottom-home__label">HOME</span>
-      </button>
-
-      <div class="swse-tablet-bottom-engraving" aria-hidden="true">GM COMMAND HOLOPAD - OPS ACCESS - SHARED SHELL</div>
-    </div>
+    {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
   </div>
-</div>
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs"
+  bottomHomeAction="tablet-home"
+  bottomHomeNavTo="home"
+  bottomHomeTitle="Return to GM holopad home"
+  bottomHomeLabel="Return to GM holopad home"
+  bottomEngraving="GM COMMAND HOLOPAD - OPS ACCESS - SHARED SHELL"
+  showResize=true
+}}
