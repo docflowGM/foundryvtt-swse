@@ -428,6 +428,11 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
         // Owner/entitlement linkage
         ownerActorId,
         slotId: session.dependencyContext.slotId,
+        slotTalentName: session.dependencyContext.slotTalentName,
+        slotTalentItemId: session.dependencyContext.slotTalentItemId,
+        grantingTalentName: session.dependencyContext.slotTalentName,
+        grantingTalentItemId: session.dependencyContext.slotTalentItemId,
+        existingFollowerId: session.dependencyContext.existingFollowerId || null,
 
         // Follower identity (persistent)
         speciesName: derivationContext.speciesName,

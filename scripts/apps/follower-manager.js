@@ -40,6 +40,22 @@ export class FollowerManager {
             featName: 'Toughness',
             description: 'Each of your Followers gains the Toughness feat.'
         },
+        'Coordinated Tactics': {
+            prerequisite: 'Commanding Officer',
+            benefit: 'coordinated-attack-feat',
+            featName: 'Coordinated Attack',
+            description: 'Each of your followers gains the Coordinated Attack feat when eligible.'
+        },
+        'Fire at Will': {
+            prerequisite: 'Commanding Officer',
+            benefit: 'fire-at-will',
+            description: 'As a Full-Round Action, you and one follower can each make a ranged attack at -5.'
+        },
+        'Squad Actions': {
+            prerequisite: 'Commanding Officer',
+            benefit: 'squad-actions',
+            description: 'Enables the Soldier squad action cards for eligible ranged followers.'
+        },
         'Punishing Protection': {
             prerequisite: 'Inspire Loyalty',
             benefit: 'punishing-protection',
@@ -141,6 +157,7 @@ export class FollowerManager {
         switch (enhancement.benefit) {
             case 'point-blank-shot':
             case 'toughness-feat':
+            case 'coordinated-attack-feat':
                 await this.addFeatToAllFollowers(followers, enhancement.featName, talent, owner, options);
                 if (!options.silent && followers.length > 0) {
                     ui.notifications.info(`All followers gained ${enhancement.featName}!`);
@@ -154,6 +171,8 @@ export class FollowerManager {
             case 'reconnaissance-actions':
             case 'protector-actions':
             case 'punishing-protection':
+            case 'fire-at-will':
+            case 'squad-actions':
             case 'bodyguard-redirect':
             case 'bodyguard-defense':
             case 'bodyguard-counterattack':
@@ -273,6 +292,7 @@ export class FollowerManager {
         switch (enhancement.benefit) {
             case 'point-blank-shot':
             case 'toughness-feat':
+            case 'coordinated-attack-feat':
                 await this.removeFeatFromAllFollowers(followers, enhancement.featName, talent, owner);
                 break;
 
@@ -286,6 +306,8 @@ export class FollowerManager {
             case 'reconnaissance-actions':
             case 'protector-actions':
             case 'punishing-protection':
+            case 'fire-at-will':
+            case 'squad-actions':
             case 'bodyguard-redirect':
             case 'bodyguard-defense':
             case 'bodyguard-counterattack':

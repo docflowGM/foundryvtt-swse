@@ -16,6 +16,13 @@ export const FOLLOWER_TALENT_CONFIG = {
     additionalSkills: ["Perception"],
     armorProficiencyChoice: true,
     description: "This talent grants you a follower with an Armor Proficiency feat of your choice and trained in Perception."
+  },
+  "Commanding Officer": {
+    templateChoices: ["aggressive", "defensive", "utility"],
+    maxCount: 3,
+    additionalFeats: ["Weapon Proficiency (Rifles)"],
+    armorProficiencyChoice: true,
+    description: "This talent grants you a follower with Weapon Proficiency (Rifles) and one Armor Proficiency feat of your choice."
   }
 };
 

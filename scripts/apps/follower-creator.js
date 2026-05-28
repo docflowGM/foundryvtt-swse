@@ -16,11 +16,12 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
+import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
 
 export class FollowerCreator {
 
@@ -487,15 +488,30 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      * @returns {boolean} True if feat was added successfully
      */
-    static async _addFeatByName(follower, featName) {
+    static async _addFeatByName(follower, featName, grantMetadata = null) {
         try {
-            const featDoc = await FeatRegistry.getDocumentByName?.(featName);
+            if (!follower || !featName) return false;
+            const normalizedName = String(featName).trim();
+            const hasFeat = Array.from(follower.items || []).some(item => item.type === 'feat' && item.name === normalizedName);
+            if (hasFeat) return false;
+
+            const featDoc = await FeatRegistry.getDocumentByName?.(normalizedName);
             if (featDoc) {
                 const featData = featDoc.toObject();
+                if (grantMetadata) {
+                    featData.flags = {
+                        ...(featData.flags || {}),
+                        swse: {
+                            ...(featData.flags?.swse || {}),
+                            grantedByTalent: grantMetadata,
+                            followerMaterializedGrant: true
+                        }
+                    };
+                }
                 await ActorEngine.createEmbeddedDocuments(follower, 'Item', [featData]);
                 return true;
             }
-            swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);
+            swseLogger.warn(`FollowerCreator: Feat not found: ${normalizedName}`);
             return false;
         } catch (e) {
             swseLogger.warn(`FollowerCreator: Error adding feat "${featName}":`, e);
@@ -551,19 +567,123 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static async _applyTalentBonuses(follower, grantingTalent) {
-        const talentName = grantingTalent.name;
+        const talentName = typeof grantingTalent === 'string' ? grantingTalent : grantingTalent?.name;
+        const cfg = getFollowerTalentConfig(talentName);
+        if (!cfg) return;
 
-        // Handle Reconnaissance Team Leader
-        if (talentName === 'Reconnaissance Team Leader') {
-            await this._addFeatByName(follower, 'Skill Training (Perception)');
-            await this._addFeatByName(follower, 'Skill Training (Stealth)');
+        const grantMetadata = {
+            source: 'follower-granting-talent',
+            talentName,
+            talentItemId: typeof grantingTalent === 'object' ? grantingTalent?.id ?? null : null,
+            grantedAt: Date.now()
+        };
+
+        for (const featName of cfg.additionalFeats || []) {
+            await this._addFeatByName(follower, featName, grantMetadata);
         }
 
-        // Handle Inspire Loyalty
-        if (talentName === 'Inspire Loyalty') {
-            await this._trainSkill(follower, 'Perception');
-            // Armor proficiency will be chosen in dialog
+        for (const skillName of cfg.additionalSkills || []) {
+            await this._trainSkill(follower, skillName);
         }
+    }
+
+    static _choiceArray(value) {
+        if (Array.isArray(value)) return value.filter(Boolean).map(v => String(v).trim()).filter(Boolean);
+        if (value === null || value === undefined || value === '') return [];
+        return [String(value).trim()].filter(Boolean);
+    }
+
+    static _uniqueList(values) {
+        return Array.from(new Set((values || []).filter(Boolean).map(v => String(v).trim()).filter(Boolean)));
+    }
+
+    static _getGrantingTalentNameFromMutation(followerMutation = {}) {
+        return followerMutation.grantingTalentName
+            || followerMutation.slotTalentName
+            || followerMutation.persistentChoices?.grantingTalentName
+            || null;
+    }
+
+    static _getGrantingTalentItemIdFromMutation(followerMutation = {}) {
+        return followerMutation.grantingTalentItemId
+            || followerMutation.slotTalentItemId
+            || followerMutation.persistentChoices?.grantingTalentItemId
+            || null;
+    }
+
+    static async _applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices = {}, followerMutation = {}) {
+        if (!follower || !templateType) return { feats: [], trainedSkills: [], languages: [] };
+
+        const templates = await this.getFollowerTemplates();
+        const template = templates[templateType] || {};
+        const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
+        const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
+        const grantingTalentConfig = getFollowerTalentConfig(grantingTalentName);
+        const grantMetadata = grantingTalentName ? {
+            source: 'follower-granting-talent',
+            ownerId: owner?.id ?? null,
+            ownerName: owner?.name ?? null,
+            talentName: grantingTalentName,
+            talentItemId: grantingTalentItemId,
+            grantedAt: Date.now()
+        } : null;
+
+        const featChoices = this._choiceArray(persistentChoices.featChoices)
+            .concat(this._choiceArray(persistentChoices.featChoice))
+            .concat(this._choiceArray(persistentChoices.armorProficiencyChoice))
+            .concat(this._choiceArray(persistentChoices.armorFeatChoice))
+            .concat(this._choiceArray(persistentChoices.armorChoice));
+
+        const featsToApply = this._uniqueList([
+            'Weapon Proficiency (Simple Weapons)',
+            ...(template.feats || []),
+            ...featChoices,
+            ...(grantingTalentConfig?.additionalFeats || [])
+        ]);
+
+        const appliedFeats = [];
+        for (const featName of featsToApply) {
+            const added = await this._addFeatByName(follower, featName, grantMetadata);
+            if (added || Array.from(follower.items || []).some(item => item.type === 'feat' && item.name === featName)) {
+                appliedFeats.push(featName);
+            }
+        }
+
+        const skillChoices = this._choiceArray(persistentChoices.skillChoices)
+            .concat(this._choiceArray(persistentChoices.skillChoice));
+        const skillsToTrain = this._uniqueList([
+            ...(template.trainedSkills || []),
+            ...skillChoices,
+            ...(grantingTalentConfig?.additionalSkills || [])
+        ]);
+
+        const trainedSkills = [];
+        for (const skillRef of skillsToTrain) {
+            const trained = await this._trainSkill(follower, skillRef);
+            if (trained) {
+                trainedSkills.push(await resolveSkillName(skillRef) || skillRef);
+            }
+        }
+
+        const languageChoices = this._uniqueList(persistentChoices.languageChoices || []);
+        if (languageChoices.length) {
+            const existingLanguages = Array.isArray(follower.system?.languages) ? follower.system.languages : [];
+            await ActorEngine.updateActor(follower, {
+                'system.languages': this._uniqueList([...existingLanguages, ...languageChoices])
+            }, { source: 'FollowerCreator.materializeFollowerLanguages' });
+        }
+
+        await ActorEngine.updateActor(follower, {
+            'system.progression.feats': appliedFeats,
+            'system.progression.trainedSkills': trainedSkills,
+            'system.progression.languages': languageChoices,
+            'system.progression.grantingTalentName': grantingTalentName,
+            'system.npcProfile.owner.talent': grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : follower.system?.npcProfile?.owner?.talent ?? null,
+            'flags.swse.follower.grantingTalent': grantingTalentName,
+            'flags.swse.follower.grantingTalentItemId': grantingTalentItemId
+        }, { source: 'FollowerCreator.materializeFollowerProgression' });
+
+        return { feats: appliedFeats, trainedSkills, languages: languageChoices };
     }
 
     /**
@@ -625,8 +745,31 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Array<Actor>} Array of follower actors
      */
     static getFollowers(actor) {
-        const followerData = actor.getFlag('foundryvtt-swse', 'followers') || [];
-        return followerData.map(f => game.actors.get(f.id)).filter(f => f);
+        if (!actor) return [];
+        const ids = new Set();
+
+        for (const entry of actor.getFlag('foundryvtt-swse', 'followers') || []) {
+            if (entry?.id) ids.add(entry.id);
+        }
+        for (const slot of actor.getFlag('foundryvtt-swse', 'followerSlots') || []) {
+            if (slot?.createdActorId) ids.add(slot.createdActorId);
+        }
+        for (const entry of actor.system?.ownedActors || []) {
+            if (entry?.id) ids.add(entry.id);
+        }
+
+        if (game?.actors) {
+            for (const candidate of game.actors) {
+                const ownerId = candidate?.flags?.swse?.follower?.ownerId || candidate?.system?.npcProfile?.owner?.actorId;
+                const isFollower = candidate?.system?.isFollower === true
+                    || candidate?.system?.progression?.isFollower === true
+                    || candidate?.flags?.swse?.follower?.isFollower === true
+                    || candidate?.getFlag?.('foundryvtt-swse', 'isFollower') === true;
+                if (ownerId === actor.id && isFollower) ids.add(candidate.id);
+            }
+        }
+
+        return Array.from(ids).map(id => game.actors.get(id)).filter(Boolean);
     }
 
     /**
@@ -670,6 +813,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 followerState,
                 targetHeroicLevel
             } = followerMutation;
+            const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
+            const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
 
             // Create actor from derived state
             const actorData = {
@@ -692,7 +837,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         kind: 'follower',
                         owner: {
                             actorId: owner.id,
-                            talent: null
+                            talent: grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : null
                         },
                         template: templateType
                     }
@@ -702,6 +847,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         follower: {
                             ownerId: owner.id,
                             templateType: templateType,
+                            grantingTalent: grantingTalentName,
+                            grantingTalentItemId,
                             isFollower: true
                         }
                     },
@@ -734,11 +881,16 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             }
 
+            // Materialize template/granting-talent feats, trained skills, and languages.
+            await this._applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices, followerMutation);
+
             // Apply defenses from derived state
             if (followerState.defenses) {
                 const defenseUpdates = {};
+                const defenseKeyMap = { fort: 'fortitude', fortitude: 'fortitude', ref: 'reflex', reflex: 'reflex', will: 'will' };
                 for (const [defType, defData] of Object.entries(followerState.defenses)) {
-                    defenseUpdates[`system.defenses.${defType}.total`] = defData.total;
+                    const defenseKey = defenseKeyMap[defType] || defType;
+                    defenseUpdates[`system.defenses.${defenseKey}.total`] = defData.total;
                 }
                 await ActorEngine.updateActor(follower, defenseUpdates, { source: 'FollowerCreator.createFromMutation.defenses' });
             }
@@ -811,6 +963,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 source: 'FollowerCreator.updateFromMutation.progression',
                 isRecomputeHPCall: true
             });
+
+            const owner = game.actors.get(followerMutation.ownerActorId || follower.flags?.swse?.follower?.ownerId);
+            await this._applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices, followerMutation);
 
             swseLogger.log('[FollowerCreator] Follower updated from mutation:', {
                 followerId: follower.id,

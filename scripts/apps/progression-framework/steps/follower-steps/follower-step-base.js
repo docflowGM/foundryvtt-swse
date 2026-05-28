@@ -124,9 +124,9 @@ export class FollowerStepBase extends ProgressionStepPlugin {
       return [];
     }
 
-    // Follower feats come from template definition
-    // Phase 3 planned: Define follower-specific feat allowances in template
-    return template.legalFeats || [];
+    // Follower feats come from template definition.
+    // Fixed template feats are granted automatically; featChoices are the legal optional picks.
+    return template.legalFeats || template.featChoices || [];
   }
 
   /**
@@ -149,23 +149,32 @@ export class FollowerStepBase extends ProgressionStepPlugin {
         return ['Endurance'];
 
       case 'utility':
-        // One choice except Use the Force
-        // Phase 3: Full skill list minus Use the Force
+        // One SWSE skill choice except Use the Force.
         return [
           'Acrobatics',
-          'Athletics',
+          'Climb',
           'Deception',
           'Endurance',
-          'Insight',
-          'Intimidate',
-          'Investigation',
-          'Medicine',
+          'Gather Information',
+          'Initiative',
+          'Jump',
+          'Knowledge (Bureaucracy)',
+          'Knowledge (Galactic Lore)',
+          'Knowledge (Life Sciences)',
+          'Knowledge (Physical Sciences)',
+          'Knowledge (Social Sciences)',
+          'Knowledge (Tactics)',
+          'Knowledge (Technology)',
+          'Mechanics',
           'Perception',
           'Persuasion',
-          'Piloting',
+          'Pilot',
+          'Ride',
           'Stealth',
           'Survival',
-          // NOT 'Use the Force'
+          'Swim',
+          'Treat Injury',
+          'Use Computer'
         ];
 
       default:
