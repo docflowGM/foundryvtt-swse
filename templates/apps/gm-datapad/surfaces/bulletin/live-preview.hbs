@@ -1,0 +1,115 @@
+{{!-- GM Bulletin player-home preview and contact registry rail. --}}
+        <aside class="bulletin-home-preview swse-ui-panel" aria-label="Player home preview" data-bulletin-live-preview>
+          <div class="bulletin-preview-header">
+            <span class="bulletin-preview-kicker">Player Home Preview</span>
+            <strong>{{homePreview.selectedPlayerLabel}}</strong>
+            <small>{{homePreview.unreadCount}} unread in preview feed</small>
+          </div>
+
+          <div class="bulletin-preview-player-picker">
+            {{#each bulletinPlayers}}
+            <button type="button" class="bulletin-preview-player-chip {{#if (eq ../selectedPreviewUserId this.userId)}}is-active{{/if}}" data-select-bulletin-preview-user="{{this.userId}}">{{this.actorName}}</button>
+            {{/each}}
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--state">
+            <span class="bulletin-preview-label">Current State</span>
+            <strong data-preview-state-location>{{homePreview.state.location}}</strong>
+            <p data-preview-state-objective>{{homePreview.state.objective}}</p>
+            <div class="bulletin-preview-status" data-preview-state-situation>{{homePreview.state.situation}}</div>
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--feed">
+            <span class="bulletin-preview-label">Comm Feed</span>
+            {{#if homePreview.feed}}
+            <div class="bulletin-preview-meta">
+              <span data-preview-feed-category>{{homePreview.feed.category}}</span>
+              <span data-preview-feed-priority>{{homePreview.feed.priority}}</span>
+              <span class="urgent {{#if homePreview.feed.isBreakingNews}}breaking{{/if}} {{#unless homePreview.feed.isUrgent}}is-hidden{{/unless}}" data-preview-feed-urgent>{{#if homePreview.feed.isBreakingNews}}BREAKING NEWS{{else}}Alert{{/if}}</span>
+            </div>
+            {{#if homePreview.feed.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.feed.imageUrl}}" alt="{{homePreview.feed.title}}" data-preview-feed-image>{{else}}<img class="bulletin-preview-image is-hidden" alt="" data-preview-feed-image>{{/if}}
+            <strong data-preview-feed-title>{{homePreview.feed.title}}</strong>
+            <em data-preview-feed-sender>{{homePreview.feed.sender}} - {{homePreview.feed.audience}}</em>
+            <span class="bulletin-preview-audience {{#if homePreview.feed.audienceMatchesSelectedPlayer}}matches{{else}}blocked{{/if}}">{{#if homePreview.feed.audienceMatchesSelectedPlayer}}Visible to selected player{{else}}Not targeted to selected player{{/if}}</span>
+            <p class="holonet-rendered-text" data-preview-feed-body>{{{homePreview.feed.renderedPreview}}}</p>
+            {{else}}
+            <p class="placeholder">No bulletin selected. Save or publish a bulletin to preview the feed card.</p>
+            {{/if}}
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--feed-list">
+            <span class="bulletin-preview-label">Selected Player Feed</span>
+            {{#if homePreview.feedItems}}
+            <div class="bulletin-preview-feed-list">
+              {{#each homePreview.feedItems}}
+              <div class="bulletin-preview-feed-row {{#if this.isBreakingNews}}breaking{{else if this.isUrgent}}urgent{{/if}} {{#if this.isRead}}is-read{{else}}is-unread{{/if}}">
+                <strong>{{this.title}}</strong>
+                <span>{{this.sender}} - {{this.category}} - {{#if this.isAcknowledged}}acknowledged{{else if this.isDismissed}}dismissed{{else if this.isRead}}read{{else}}unread{{/if}}</span>
+                {{#if this.recipientId}}
+                <div class="bulletin-preview-feed-actions">
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="read" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Read</button>
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="acknowledge" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Acknowledge</button>
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="dismiss" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Dismiss</button>
+                  <button type="button" class="swse-ui-button" data-bulletin-preview-delivery-action="unread" data-record-id="{{this.id}}" data-recipient-id="{{this.recipientId}}">Unread</button>
+                </div>
+                {{/if}}
+              </div>
+              {{/each}}
+            </div>
+            {{else}}
+            <p class="placeholder">No published Bulletin/HoloNews records currently target this player.</p>
+            {{/if}}
+          </div>
+
+          <div class="bulletin-preview-card bulletin-preview-card--session">
+            <span class="bulletin-preview-label">Last Session / Featured</span>
+            {{#if homePreview.lastSession}}
+            {{#if homePreview.lastSession.imageUrl}}<img class="bulletin-preview-image" src="{{homePreview.lastSession.imageUrl}}" alt="{{homePreview.lastSession.title}}">{{/if}}
+            <strong>{{homePreview.lastSession.title}}</strong>
+            <em>{{homePreview.lastSession.sender}}</em>
+            <p class="holonet-rendered-text">{{{homePreview.lastSession.renderedPreview}}}</p>
+            {{else}}
+            <p class="placeholder">Pin a bulletin as Last Session to control the player home recap card.</p>
+            {{/if}}
+          </div>
+
+          <div class="bulletin-preview-card bulletin-contact-registry-card">
+            <span class="bulletin-preview-label">Source / Contact Registry</span>
+            <form class="bulletin-contact-form" data-bulletin-contact-form>
+              <input type="hidden" name="id" value="">
+              <label><span>Name</span><input type="text" name="name" placeholder="Galaxy News Net / Black Sun Desk"></label>
+              <label><span>Display Label</span><input type="text" name="label" placeholder="Shown on feed cards"></label>
+              <label><span>Kind</span>
+                <select name="kind">
+                  <option value="news">News</option>
+                  <option value="source">Source</option>
+                  <option value="faction">Faction</option>
+                  <option value="npc">NPC</option>
+                  <option value="mentor">Mentor</option>
+                  <option value="vendor">Vendor</option>
+                  <option value="system">System</option>
+                </select>
+              </label>
+              <label data-bulletin-image-dropzone><span>Image / Sigil</span><input type="text" name="imageUrl" data-bulletin-image-input placeholder="icons/svg/mystery-man.svg"></label>
+              <label><span>Dateline</span><input type="text" name="dateline" placeholder="Coruscant"></label>
+              <label><span>Sector</span><input type="text" name="sector" placeholder="Core Worlds"></label>
+              <label><span>Default Category</span><input type="text" name="defaultCategory" placeholder="general"></label>
+              <label><span>Notes</span><textarea name="notes" rows="2" placeholder="GM-only source note"></textarea></label>
+              <button type="button" class="swse-ui-button bulletin-primary-action" data-action="bulletin-save-contact">Save Source</button>
+            </form>
+            <div class="bulletin-contact-list">
+              {{#each bulletinContacts}}
+              <div class="bulletin-contact-row">
+                <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} - {{this.defaultCategory}}</em></span>
+                <small>{{this.imageLabel}} - used {{this.useCount}} - last {{this.lastUsedLabel}}</small>
+                <div class="bulletin-contact-actions">
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit-contact" data-contact-id="{{this.id}}">Edit</button>
+                  <button type="button" class="swse-ui-button" data-action="bulletin-clone-contact" data-contact-id="{{this.id}}">Clone</button>
+                  {{#unless this.system}}<button type="button" class="swse-ui-button" data-action="bulletin-delete-contact" data-contact-id="{{this.id}}">Delete</button>{{/unless}}
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+
+        </aside>

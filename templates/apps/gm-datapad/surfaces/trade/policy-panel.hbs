@@ -1,0 +1,22 @@
+{{!-- GM Trade policy panel. --}}
+        <section class="swse-ui-panel trade-policy-panel">
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">POLICY</span>
+              <h3>Messenger Trade Rules</h3>
+            </div>
+          </div>
+          <form data-trade-policy-form class="trade-policy-form">
+            <label><input type="checkbox" name="holonetCreditTransfersEnabled" {{#if tradeConsole.policy.creditTransfersEnabled}}checked{{/if}}> Allow credit transfers</label>
+            <label><input type="checkbox" name="holonetRequireCreditTransferApproval" {{#if tradeConsole.policy.requireCreditApproval}}checked{{/if}}> GM approval for credit transfers</label>
+            <label><input type="checkbox" name="holonetItemTradesEnabled" {{#if tradeConsole.policy.itemTradesEnabled}}checked{{/if}}> Allow item trades</label>
+            <label><input type="checkbox" name="holonetRequireItemTradeApproval" {{#if tradeConsole.policy.requireItemApproval}}checked{{/if}}> GM approval for item trades</label>
+            <label><input type="checkbox" name="holonetAssetTradesEnabled" {{#if tradeConsole.policy.assetTradesEnabled}}checked{{/if}}> Allow ship/droid trades</label>
+            <label><input type="checkbox" name="holonetRequireAssetTradeApproval" {{#if tradeConsole.policy.requireAssetApproval}}checked{{/if}}> GM approval for ship/droid trades</label>
+            <label><input type="checkbox" name="holonetPartyFundEnabled" {{#if tradeConsole.policy.partyFundEnabled}}checked{{/if}}> Enable party fund</label>
+            <label>Default party fund job cut %
+              <input type="number" min="0" max="100" step="1" name="holonetPartyFundDefaultCutPercent" value="{{tradeConsole.policy.partyFundCutPercent}}">
+            </label>
+            <button type="submit" class="swse-ui-button bulletin-primary-action">Save Trade Policy</button>
+          </form>
+        </section>

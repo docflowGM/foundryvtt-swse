@@ -57,12 +57,12 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
 
   // Base abilities: all 10, then apply template choice
   const abilities = {
-    str: { base: 10, mod: -5 },
-    dex: { base: 10, mod: -5 },
-    con: { base: 10, mod: -5 },
-    int: { base: 10, mod: -5 },
-    wis: { base: 10, mod: -5 },
-    cha: { base: 10, mod: -5 }
+    str: { base: 10, mod: 0 },
+    dex: { base: 10, mod: 0 },
+    con: { base: 10, mod: 0 },
+    int: { base: 10, mod: 0 },
+    wis: { base: 10, mod: 0 },
+    cha: { base: 10, mod: 0 }
   };
 
   // Apply template ability bonus to chosen ability
@@ -73,9 +73,7 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
 
   // Recalculate all ability mods
   for (const key in abilities) {
-    if (abilities[key].base !== 10) {
-      abilities[key].mod = Math.floor((abilities[key].base - 10) / 2);
-    }
+    abilities[key].mod = Math.floor((Number(abilities[key].base || 10) - 10) / 2);
   }
 
   // Derive defenses using FOLLOWER FORMULA: 10 + ability mod + owner heroic level
@@ -189,11 +187,29 @@ export async function getFollowerDerivationContext(session, ownerActor, existing
   const existenceState = computeFollowerExistenceState(existingFollower, ownerHeroicLevel);
 
   const templates = await FollowerCreator.getFollowerTemplates();
-  const templateType = session.dependencyContext.templateType;
-  const template = templates[templateType];
+  const draft = session.draftSelections || {};
+  const existingChoices = existingFollower?.system?.progression?.followerChoices || {};
+  const contextChoices = session.dependencyContext.persistentChoices || {};
+  const persistentChoices = {
+    ...contextChoices,
+    ...existingChoices,
+    ...(draft.abilityChoice !== undefined ? { abilityChoice: draft.abilityChoice } : {}),
+    ...(draft.skillChoices !== undefined ? { skillChoices: draft.skillChoices } : {}),
+    ...(draft.followerSkills !== undefined ? { skillChoices: draft.followerSkills } : {}),
+    ...(draft.featChoices !== undefined ? { featChoices: draft.featChoices } : {}),
+    ...(draft.followerFeats !== undefined ? { featChoices: draft.followerFeats } : {}),
+    ...(draft.languageChoices !== undefined ? { languageChoices: draft.languageChoices } : {}),
+    ...(draft.followerLanguages !== undefined ? { languageChoices: draft.followerLanguages } : {}),
+    ...(draft.backgroundChoice !== undefined ? { backgroundChoice: draft.backgroundChoice } : {}),
+    ...(draft.followerBackground !== undefined ? { backgroundChoice: draft.followerBackground } : {})
+  };
 
-  // Get persistent choices from existing follower or session
-  const persistentChoices = existingFollower?.system?.progression?.followerChoices || session.dependencyContext.persistentChoices || {};
+  const templateType = draft.templateType || existingFollower?.system?.progression?.followerTemplate || session.dependencyContext.templateType || persistentChoices.templateType;
+  const template = templates[templateType];
+  const speciesName = draft.speciesName || existingFollower?.system?.race || session.dependencyContext.speciesName || persistentChoices.speciesName;
+
+  persistentChoices.speciesName = speciesName;
+  persistentChoices.templateType = templateType;
 
   return {
     ownerActor,
@@ -203,7 +219,7 @@ export async function getFollowerDerivationContext(session, ownerActor, existing
     templateType,
     existenceState,
     persistentChoices,
-    speciesName: existingFollower?.system?.race || session.dependencyContext.speciesName
+    speciesName
   };
 }
 

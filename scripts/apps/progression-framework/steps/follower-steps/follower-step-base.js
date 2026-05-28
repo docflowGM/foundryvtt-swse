@@ -42,13 +42,15 @@ export class FollowerStepBase extends ProgressionStepPlugin {
     const persistentChoices = session?.dependencyContext?.persistentChoices || {};
 
     // Build current choices from session draft state
+    const draft = session?.draftSelections || {};
     return {
-      speciesName: persistentChoices.speciesName || session?.draftSelections?.speciesName || null,
-      templateType: persistentChoices.templateType || session?.draftSelections?.templateType || null,
-      skillChoices: session?.draftSelections?.followerSkills || [],
-      featChoices: session?.draftSelections?.followerFeats || [],
-      languageChoices: session?.draftSelections?.followerLanguages || [],
-      backgroundChoice: session?.draftSelections?.followerBackground || null,
+      speciesName: draft.speciesName ?? persistentChoices.speciesName ?? null,
+      templateType: draft.templateType ?? persistentChoices.templateType ?? null,
+      skillChoices: draft.skillChoices ?? draft.followerSkills ?? persistentChoices.skillChoices ?? [],
+      featChoices: draft.featChoices ?? draft.followerFeats ?? persistentChoices.featChoices ?? [],
+      languageChoices: draft.languageChoices ?? draft.followerLanguages ?? persistentChoices.languageChoices ?? [],
+      backgroundChoice: draft.backgroundChoice ?? draft.followerBackground ?? persistentChoices.backgroundChoice ?? null,
+      abilityChoice: draft.abilityChoice ?? persistentChoices.abilityChoice ?? null,
     };
   }
 

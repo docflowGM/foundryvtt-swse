@@ -1,0 +1,25 @@
+{{!-- GM Bulletin party-state-panel. --}}
+
+          <div class="bulletin-panel-header">
+            <div>
+              <h3>Manage Party</h3>
+              <p>Set party-wide opening state for the player Home experience.</p>
+            </div>
+          </div>
+          <form class="bulletin-state-editor" data-party-state-form>
+            <label>
+              <span>Party Location</span>
+              <input type="text" name="location" value="{{partyState.location}}" placeholder="Docking Ring Aurek">
+            </label>
+            <label>
+              <span>Party Objective</span>
+              <input type="text" name="objective" value="{{partyState.objective}}" placeholder="Secure the spice shipment and avoid Imperial customs">
+            </label>
+            <label>
+              <span>Party Situation</span>
+              <textarea name="situation" rows="6" placeholder="The party is starting aboard the freighter with Imperial patrols nearby." data-holonet-editor="party-state">{{partyState.situation}}</textarea>
+            </label>
+            <div class="bulletin-form-actions">
+              <button type="submit" class="swse-ui-button bulletin-primary-action">Save Party State</button>
+            </div>
+          </form>

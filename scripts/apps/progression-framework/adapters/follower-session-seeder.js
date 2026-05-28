@@ -47,9 +47,9 @@ export async function seedFollowerSession(session, ownerActor, slotId = null, ex
       if (existingFollowerId) {
         targetSlot = slots.find(s => s.createdActorId === existingFollowerId);
       }
-      // Otherwise use first available unfilled or the specified one
+      // Otherwise use first available unfilled slot for new follower creation.
       if (!targetSlot) {
-        targetSlot = slots[0];
+        targetSlot = slots.find(s => !s.createdActorId) || slots[0];
       }
     }
 
@@ -88,7 +88,9 @@ export async function seedFollowerSession(session, ownerActor, slotId = null, ex
       slotTalentName: targetSlot.talentName,
       slotTalentItemId: targetSlot.talentItemId,
       templateChoices: targetSlot.templateChoices || [],
-      templateType: null, // To be determined during character creation
+      templateType: existingFollower?.system?.progression?.followerTemplate || existingFollower?.flags?.swse?.follower?.templateType || null,
+      speciesName: existingFollower?.system?.race || null,
+      persistentChoices: existingFollower?.system?.progression?.followerChoices || {},
       existingFollowerId: existingFollower?.id || null,
       isNewFollower: advancementPlan.isNewFollower,
       currentFollowerLevel,

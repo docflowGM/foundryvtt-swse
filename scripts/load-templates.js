@@ -99,7 +99,30 @@ const GM_DATAPAD_PARTIAL_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/workspace.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs'
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs',
+  // GM Datapad Phase 2 surface subpartials.
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/events-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/holonews-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/messages-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/player-state-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/party-state-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/live-preview.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/options-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/transactions-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/approvals-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/inventory-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/review-payout-queues.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/empty-state.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/trade-board.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/economy-repair.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/policy-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/audit-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/queue.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/history.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/party-board.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/selected-actor-rail.hbs'
 ];
 
 /**
@@ -404,6 +427,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/sheets/partials/sheet-header.hbs',
   'systems/foundryvtt-swse/templates/sheets/partials/sheet-tabs.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
 

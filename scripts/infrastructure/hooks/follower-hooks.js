@@ -93,6 +93,65 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
   );
 }
 
+/**
+ * Reconcile follower entitlement slots from currently owned follower-granting talents.
+ * This repairs actors that received talents while follower hooks were not registered,
+ * and keeps future sheet launches from depending on a missed createItem side effect.
+ *
+ * @param {Actor} actor
+ * @returns {Promise<Array>} The reconciled slot array
+ */
+export async function reconcileFollowerSlotsForActor(actor) {
+  if (!actor || actor.type !== 'character') return [];
+
+  const talents = Array.from(actor.items || []).filter(item => item.type === 'talent' && FOLLOWER_TALENT_CONFIG[item.name]);
+  const slots = _getSlots(actor).map(slot => ({ ...slot }));
+  let changed = false;
+
+  for (const talent of talents) {
+    const cfg = FOLLOWER_TALENT_CONFIG[talent.name];
+    const max = Number(cfg?.maxCount ?? 0);
+    const existingForItem = slots.filter(slot => slot.talentItemId === talent.id);
+    const existingForTalent = slots.filter(slot => slot.talentName === talent.name);
+
+    if (existingForItem.length === 0 && (max <= 0 || existingForTalent.length < max)) {
+      slots.push(_buildSlot(talent, cfg));
+      changed = true;
+      continue;
+    }
+
+    for (const slot of existingForItem) {
+      if (!Array.isArray(slot.templateChoices)) {
+        slot.templateChoices = cfg?.templateChoices ?? [];
+        changed = true;
+      }
+      if (!slot.talentName) {
+        slot.talentName = talent.name;
+        changed = true;
+      }
+    }
+  }
+
+  const validTalentItemIds = new Set(talents.map(t => t.id));
+  const filtered = slots.filter(slot => {
+    if (slot.createdActorId) return true;
+    if (!slot.talentItemId) return true;
+    return validTalentItemIds.has(slot.talentItemId);
+  });
+
+  if (filtered.length !== slots.length) changed = true;
+
+  if (changed) {
+    await _setSlots(actor, filtered);
+    swseLogger?.debug?.('[FollowerHooks] Reconciled follower slots', {
+      actor: actor.name,
+      slotCount: filtered.length
+    });
+  }
+
+  return filtered;
+}
+
 export function initializeFollowerHooks() {
 
   Hooks.on('createItem', async (item, options, userId) => {

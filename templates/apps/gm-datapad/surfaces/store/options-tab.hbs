@@ -1,0 +1,112 @@
+{{!-- GM Store options tab. --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab-panel="options" {{#unless (eq currentTab 'options')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">STORE OPTIONS</span>
+              <h3>Market Policy</h3>
+              <p>Set the current shop posture, price environment, availability gates, and sale rules.</p>
+            </div>
+          </div>
+
+          <div class="gm-store-options-grid">
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-power-off"></i>
+                <div>
+                  <h4>Store Status</h4>
+                  <p>Controls whether players can buy from the store.</p>
+                </div>
+              </header>
+              <label class="gm-store-toggle-row">
+                <input type="checkbox" name="storeOpen" {{#if storeOpen}}checked{{/if}}>
+                <span>Store Open</span>
+              </label>
+              {{#unless storeOpen}}
+                <p class="gm-store-warning">Purchases are closed. GM controls remain available.</p>
+              {{/unless}}
+            </article>
+
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-tags"></i>
+                <div>
+                  <h4>Pricing</h4>
+                  <p>Markup and discount feed the v2 pricing engine.</p>
+                </div>
+              </header>
+              <label class="gm-store-slider-row">
+                <span>Markup</span>
+                <input type="range" name="storeMarkup" min="0" max="200" step="5" value="{{storeMarkup}}">
+                <strong data-store-markup-value>{{storeMarkup}}%</strong>
+              </label>
+              <label class="gm-store-slider-row">
+                <span>Discount</span>
+                <input type="range" name="storeDiscount" min="0" max="90" step="5" value="{{storeDiscount}}">
+                <strong data-store-discount-value>{{storeDiscount}}%</strong>
+              </label>
+              <p class="gm-store-note">Legacy buy modifier is mirrored from markup for older store surfaces.</p>
+            </article>
+
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-key"></i>
+                <div>
+                  <h4>Availability Gates</h4>
+                  <p>Global visibility by normalized store availability.</p>
+                </div>
+              </header>
+              <div class="gm-store-check-grid">
+                <label><input type="checkbox" name="availability-standard" {{#if visibleRarities.standard}}checked{{/if}}> Standard</label>
+                <label><input type="checkbox" name="availability-licensed" {{#if visibleRarities.licensed}}checked{{/if}}> Licensed</label>
+                <label><input type="checkbox" name="availability-rare" {{#if visibleRarities.rare}}checked{{/if}}> Rare</label>
+                <label><input type="checkbox" name="availability-restricted" {{#if visibleRarities.restricted}}checked{{/if}}> Restricted</label>
+                <label><input type="checkbox" name="availability-military" {{#if visibleRarities.military}}checked{{/if}}> Military</label>
+                <label><input type="checkbox" name="availability-illegal" {{#if visibleRarities.illegal}}checked{{/if}}> Illegal</label>
+              </div>
+            </article>
+
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <div>
+                  <h4>Category Access</h4>
+                  <p>Show or hide major inventory departments globally.</p>
+                </div>
+              </header>
+              <div class="gm-store-check-grid">
+                <label><input type="checkbox" name="type-weapons" {{#if visibleTypes.weapons}}checked{{/if}}> Weapons</label>
+                <label><input type="checkbox" name="type-armor" {{#if visibleTypes.armor}}checked{{/if}}> Armor</label>
+                <label><input type="checkbox" name="type-gear" {{#if visibleTypes.gear}}checked{{/if}}> Gear</label>
+                <label><input type="checkbox" name="type-droids" {{#if visibleTypes.droids}}checked{{/if}}> Droids</label>
+                <label><input type="checkbox" name="type-vehicles" {{#if visibleTypes.vehicles}}checked{{/if}}> Vehicles</label>
+              </div>
+            </article>
+
+            <article class="gm-command-card gm-store-option-card gm-store-option-card--wide">
+              <header>
+                <i class="fa-solid fa-hand-holding-credit-card"></i>
+                <div>
+                  <h4>Selling Rules</h4>
+                  <p>Controls player sale requests and automatic resale valuation.</p>
+                </div>
+              </header>
+              <div class="gm-store-selling-grid">
+                <label class="gm-store-toggle-row">
+                  <input type="checkbox" name="autoAcceptSelling" {{#if autoAcceptSelling}}checked{{/if}}>
+                  <span>Automatically accept item sales</span>
+                </label>
+                <label class="gm-store-slider-row {{#unless autoAcceptSelling}}disabled{{/unless}}">
+                  <span>Automatic Sale Value</span>
+                  <input type="range" name="autoSalePercent" min="10" max="100" step="5" value="{{autoSalePercent}}" {{#unless autoAcceptSelling}}disabled{{/unless}}>
+                  <strong data-auto-sale-value>{{autoSalePercent}}%</strong>
+                </label>
+                <label class="gm-store-toggle-row">
+                  <input type="checkbox" name="disallowAutoSellNoPrice" {{#if disallowAutoSellNoPrice}}checked{{/if}}>
+                  <span>Disallow auto-selling items with no base price</span>
+                </label>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {{!-- TAB 2: TRANSACTIONS LEDGER --}}

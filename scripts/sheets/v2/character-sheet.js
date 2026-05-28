@@ -2726,14 +2726,17 @@ const forcePoints = [];
 
     // Follower Context (from flags and system)
     const followerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
+    const linkedFollowers = actor.getFlag('foundryvtt-swse', 'followers') || [];
     const ownedActorMap = {};
-    for (const entry of actor.system.ownedActors || []) {
+    for (const entry of [...(actor.system.ownedActors || []), ...linkedFollowers]) {
+      if (!entry?.id) continue;
+      const liveActor = game.actors?.get?.(entry.id);
       ownedActorMap[entry.id] = {
         id: entry.id,
-        name: entry.name,
-        type: entry.type,
-        img: entry.img,
-        system: entry
+        name: liveActor?.name || entry.name,
+        type: liveActor?.type || entry.type,
+        img: liveActor?.img || entry.img,
+        system: liveActor?.system || entry.system || entry
       };
     }
 

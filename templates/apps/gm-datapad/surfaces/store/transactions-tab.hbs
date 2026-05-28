@@ -1,0 +1,78 @@
+{{!-- GM Store transactions tab. --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab-panel="transactions" {{#unless (eq currentTab 'transactions')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">TRANSACTIONS</span>
+              <h3>Sales History</h3>
+              <p>TransactionEngine ledger view: audit who bought what, credit impact, status, rollback state, and GM corrections.</p>
+            </div>
+            <div class="gm-store-toolbar">
+              <select class="swse-ui-input" data-store-transaction-filter="actor">
+                <option value="">All actors</option>
+                {{#each actors}}
+                  <option value="{{this.id}}">{{this.name}}</option>
+                {{/each}}
+              </select>
+              <select class="swse-ui-input" data-store-transaction-filter="status">
+                <option value="">All statuses</option>
+                <option value="Success">Success</option>
+                <option value="Failed">Failed</option>
+                <option value="Rolled Back">Rolled Back</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+          </div>
+
+          {{#if transactions.length}}
+            <div class="gm-store-table-wrap">
+              <table class="gm-store-table transactions-table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Actor</th>
+                    <th>Type</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Credit Impact</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                    <th>Source</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each transactions}}
+                    <tr data-index="{{@index}}" data-actor-id="{{this.actorId}}" data-status="{{this.status}}">
+                      <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
+                      <td>{{this.actor}}</td>
+                      <td><span class="type-badge {{lowercase this.type}}">{{this.type}}</span></td>
+                      <td>{{this.item}}</td>
+                      <td>{{this.quantity}}</td>
+                      <td class="amount {{#if (gt this.amount 0)}}positive{{else}}negative{{/if}}">{{#if (gt this.amount 0)}}+{{/if}}{{this.amount}} cr</td>
+                      <td class="gm-store-balance-cell">{{this.balanceDisplay}}</td>
+                      <td><span class="gm-store-status-chip">{{this.status}}</span></td>
+                      <td>{{#if this.reason}}{{this.reason}}{{else}}—{{/if}}</td>
+                      <td><span class="source-badge">{{this.source}}</span></td>
+                      <td>
+                        {{#if this.canRollback}}
+                          <button class="action-btn swse-ui-button" data-action="rollback-transaction" data-index="{{@index}}" title="Rollback through TransactionEngine, remove safe owned items, and restore tracked stock.">Rollback</button>
+                        {{else}}
+                          {{#if this.rolledBackByTransactionId}}
+                            <span class="gm-store-muted-action">Rolled back</span>
+                          {{else}}
+                            <span class="gm-store-muted-action">Ledger only</span>
+                          {{/if}}
+                        {{/if}}
+                      </td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          {{else}}
+            <p class="empty-state">No store transactions have been recorded.</p>
+          {{/if}}
+        </section>
+
+        {{!-- TAB 3: COMMERCE APPROVALS --}}

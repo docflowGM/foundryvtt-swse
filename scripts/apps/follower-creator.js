@@ -582,15 +582,24 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static async _linkFollowerToOwner(owner, follower, grantingTalent) {
-        // Add follower to owner's flags
+        // Add/update follower link on the owner's canonical follower flag.
         const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
-        currentFollowers.push({
+        const followerLink = {
             id: follower.id,
             name: follower.name,
-            talent: grantingTalent?.name || null
-        });
+            type: follower.type,
+            img: follower.img,
+            talent: grantingTalent?.name || follower.system?.npcProfile?.owner?.talent || null,
+            templateType: follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType || null
+        };
+        const nextFollowers = currentFollowers.filter(entry => entry.id !== follower.id);
+        nextFollowers.push(followerLink);
+        await owner.setFlag('foundryvtt-swse', 'followers', nextFollowers);
 
-        await owner.setFlag('foundryvtt-swse', 'followers', currentFollowers);
+        // Keep the general ownedActors display list in sync for sheet relationship panels.
+        const ownedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors.filter(entry => entry.id !== follower.id) : [];
+        ownedActors.push(followerLink);
+        await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, { source: 'FollowerCreator.linkFollowerToOwner.ownedActors' });
 
         // Set ownership permissions to match owner
         const ownerUser = game.users.find(u => u.character?.id === owner.id);
@@ -662,9 +671,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 system: {
                     level: targetHeroicLevel,
                     race: speciesName,
+                    isFollower: true,
+                    attributes: followerState.abilities,
                     abilities: followerState.abilities,
                     hp: followerState.hp,
-                    baseAttackBonus: followerState.bab,
+                    baseAttackBonus: followerState.baseAttackBonus ?? followerState.bab,
                     progression: {
                         followerChoices: persistentChoices,
                         followerTemplate: templateType,
@@ -688,6 +699,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         }
                     },
                     'foundryvtt-swse': {
+                        isFollower: true,
                         npcLevelUp: {
                             mode: 'statblock'
                         }
@@ -767,9 +779,15 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 'system.attributes': followerState.abilities,
                 'system.hp.max': followerState.hp?.max,
                 'system.hp.value': followerState.hp?.value,
-                'system.baseAttackBonus': followerState.bab,
+                'system.isFollower': true,
+                'system.baseAttackBonus': followerState.baseAttackBonus ?? followerState.bab,
                 'system.progression.followerChoices': persistentChoices,
-                'system.progression.followerTemplate': templateType
+                'system.progression.followerTemplate': templateType,
+                'system.progression.isFollower': true,
+                'flags.swse.follower.ownerId': follower.flags?.swse?.follower?.ownerId || followerMutation.ownerActorId,
+                'flags.swse.follower.templateType': templateType,
+                'flags.swse.follower.isFollower': true,
+                'flags.foundryvtt-swse.isFollower': true
             };
             // Remove undefined hp fields to avoid writing null into schema
             if (updateData['system.hp.max'] === undefined) delete updateData['system.hp.max'];
@@ -806,38 +824,35 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @param {Actor} owner - The owner actor
      */
     static async updateFollowersForLevelUp(owner) {
+        const { deriveFollowerStateForApply } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-deriver.js');
         const followers = this.getFollowers(owner);
-        const ownerLevel = owner.system.level || 1;
+        const ownerLevel = getHeroicLevel(owner) || 1;
 
         for (const follower of followers) {
-            if (!follower.system.isFollower) {continue;}
+            const isFollower = follower.system?.isFollower === true
+                || follower.system?.progression?.isFollower === true
+                || follower.flags?.swse?.follower?.isFollower === true
+                || follower.getFlag?.('foundryvtt-swse', 'isFollower') === true;
+            if (!isFollower) continue;
 
-            // Get follower's template for BAB progression
-            const templateType = follower.flags?.swse?.follower?.templateType;
-            const templates = await this.getFollowerTemplates();
-            const template = templates[templateType];
+            const templateType = follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType;
+            const speciesName = follower.system?.race || follower.system?.species?.name || follower.name;
+            const persistentChoices = follower.system?.progression?.followerChoices || {};
 
-            if (!template) {
-                swseLogger.warn(`FollowerCreator: Unknown template "${templateType}" for follower ${follower.name}`);
-                continue;
+            try {
+                const followerState = await deriveFollowerStateForApply(ownerLevel, speciesName, templateType, persistentChoices);
+                await this.updateFollowerFromMutation(follower, {
+                    ownerActorId: owner.id,
+                    speciesName,
+                    templateType,
+                    persistentChoices,
+                    followerState,
+                    targetHeroicLevel: ownerLevel
+                });
+                swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to owner heroic level ${ownerLevel}`);
+            } catch (err) {
+                swseLogger.warn(`FollowerCreator: Could not update follower "${follower.name}" for level-up:`, err);
             }
-
-            // Update follower stats based on owner's new level
-            const newBAB = template.babProgression[Math.min(ownerLevel - 1, 19)] || 0;
-            const newHP = 10 + ownerLevel;
-
-            // Recalculate defenses
-            const abilities = follower.system.attributes;
-            const getMod = (ability) => Math.floor(((abilities[ability]?.base || 10) - 10) / 2);
-
-            await ActorEngine.updateActor(follower, {
-                'system.level': ownerLevel,
-                'system.baseAttackBonus': newBAB,
-                'system.hp.max': newHP,
-                'system.hp.value': Math.min(follower.system.hp.value, newHP)
-            }, { isRecomputeHPCall: true });
-
-            swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to level ${ownerLevel}`);
         }
     }
 }

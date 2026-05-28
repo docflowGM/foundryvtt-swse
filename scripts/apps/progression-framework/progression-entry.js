@@ -278,13 +278,20 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
       './adapters/follower-session-seeder.js'
     );
 
-    // Check for available slots
+    const allSlots = ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
     const availableSlots = getAvailableFollowerSlots(ownerActor);
-    if (!availableSlots || availableSlots.length === 0) {
+    const existingSlot = options.existingFollowerId
+      ? allSlots.find(slot => slot.createdActorId === options.existingFollowerId)
+      : null;
+    const targetSlot = options.slotId
+      ? allSlots.find(slot => slot.id === options.slotId)
+      : existingSlot || availableSlots[0];
+
+    if (!targetSlot || (!options.existingFollowerId && targetSlot.createdActorId)) {
       ui?.notifications?.warn?.(
         `${ownerActor.name} has no available follower slots. Gain a follower-granting talent first.`
       );
-      SWSELogger.warn('[Follower Progression] No available slots for owner');
+      SWSELogger.warn('[Follower Progression] No available slot for owner');
       return;
     }
 
@@ -316,7 +323,7 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     // Set up dependency context for follower progression
     const dependencyContext = {
       ownerActorId: ownerActor.id,
-      slotId: options.slotId || availableSlots[0].id,
+      slotId: targetSlot.id,
       existingFollowerId: options.existingFollowerId || null
     };
 
