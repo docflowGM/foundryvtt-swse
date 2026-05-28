@@ -7,7 +7,9 @@
       </div>
       <div class="swse-allies-faction-score {{faction.scoreClass}}">
         <span>Score</span>
-        <input type="number" name="score" step="1" value="{{faction.score}}" inputmode="numeric">
+        <output>{{faction.scoreLabel}}</output>
+        <input type="number" name="score" step="1" value="{{faction.score}}" inputmode="numeric" aria-label="Faction score">
+        <small>{{faction.status}}</small>
       </div>
       <div class="swse-allies-faction-actions">
         <button type="button" data-allies-action="save-faction" data-faction-id="{{faction.id}}">Save</button>

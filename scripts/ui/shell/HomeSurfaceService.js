@@ -466,8 +466,8 @@ export class HomeSurfaceService {
         description: 'Ship systems and status'
       },
       {
-        id: 'companion',
-        label: 'Droid\nCompanion',
+        id: 'garage',
+        label: 'Garage',
         icon: '⬡',
         routeId: 'customization',
         bayMode: 'garage',
@@ -480,7 +480,7 @@ export class HomeSurfaceService {
         locked: false,
         status: assetSummary.droidCount > 1 ? `${assetSummary.droidCount} UNITS` : 'READY',
         statusTone: '',
-        description: 'Companion status and upgrades'
+        description: 'Droid systems and maintenance'
       },
       {
         id: 'allies',

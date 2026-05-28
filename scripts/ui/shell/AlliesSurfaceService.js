@@ -30,6 +30,10 @@ const BASE_ACCOMMODATIONS = [
   ['lifeSupport', 'Life Support']
 ];
 
+const ORGANIZATION_SCALE_MIN = 1;
+const ORGANIZATION_SCALE_MAX = 20;
+const ORGANIZATION_GM_FIELDS = new Set(['scale', 'score', 'benefits', 'bases', 'statistics']);
+
 function asArray(value) {
   if (Array.isArray(value)) return value;
   if (!value) return [];
@@ -267,6 +271,25 @@ function parseInteger(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function clampInteger(value, min, max, fallback = min) {
+  const number = parseInteger(value, fallback);
+  return Math.min(max, Math.max(min, number));
+}
+
+function scoreClass(score) {
+  return score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral';
+}
+
+function scoreStatus(score) {
+  return score > 0 ? 'FAVORABLE' : score < 0 ? 'HOSTILE' : 'NEUTRAL';
+}
+
+function scoreLabel(score) {
+  if (score > 0) return `+${score}`;
+  if (score === 0) return '+0';
+  return String(score);
+}
+
 function mapFactionRecord(entry = {}) {
   const id = entry.id || entry.factionId || randomId('faction');
   const score = parseInteger(entry.score ?? entry.factionScore ?? entry.reputation ?? entry.standingScore, 0);
@@ -286,9 +309,9 @@ function mapFactionRecord(entry = {}) {
     leader: entry.leader || entry.factionLeader || entry.commander || '',
     benefits: entry.benefits || entry.factionBenefits || entry.perks || entry.description || entry.notes || '',
     score,
-    scoreLabel: score > 0 ? `+${score}` : String(score),
-    scoreClass: score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral',
-    status: score > 0 ? 'FAVORABLE' : score < 0 ? 'HOSTILE' : 'NEUTRAL',
+    scoreLabel: scoreLabel(score),
+    scoreClass: scoreClass(score),
+    status: scoreStatus(score),
     meta: metaParts.join(' · ')
   };
 }
@@ -306,6 +329,81 @@ function normalizeFactionForStorage(data = {}) {
     score: parseInteger(data.score, 0),
     updatedAt: Date.now()
   };
+}
+
+function factionOptionsForOrganizations(factions = []) {
+  return [{ id: '', name: 'None / Unspecified' }, ...factions.map(faction => ({
+    id: faction.id,
+    name: faction.name || 'Unnamed Faction'
+  }))];
+}
+
+function mapOrganizationRecord(entry = {}, context = {}) {
+  const id = entry.id || entry.organizationId || randomId('organization');
+  const score = parseInteger(entry.score ?? entry.organizationScore ?? entry.standingScore, 0);
+  const scale = clampInteger(entry.scale ?? entry.organizationScale, ORGANIZATION_SCALE_MIN, ORGANIZATION_SCALE_MAX, 1);
+  const alignedWithFactionId = cleanString(entry.alignedWithFactionId ?? entry.alignedWith ?? entry.alignmentWith);
+  const alignedAgainstFactionId = cleanString(entry.alignedAgainstFactionId ?? entry.alignedAgainst ?? entry.opposedTo);
+  const factionOptions = factionOptionsForOrganizations(context.factions || []).map(option => ({
+    ...option,
+    selectedWith: option.id === alignedWithFactionId,
+    selectedAgainst: option.id === alignedAgainstFactionId
+  }));
+
+  return {
+    id,
+    name: entry.name || entry.label || entry.title || 'Unnamed Organization',
+    type: entry.type || entry.kind || entry.category || entry.organizationType || '',
+    planet: entry.planet || entry.world || entry.locationPlanet || '',
+    system: entry.system || entry.starSystem || entry.locationSystem || '',
+    leader: entry.leader || entry.organizationLeader || entry.commander || '',
+    alignedWithFactionId,
+    alignedAgainstFactionId,
+    alignmentNotes: entry.alignmentNotes || entry.alignment || entry.notesAlignment || '',
+    factionOptions,
+    scale,
+    scaleLabel: `${scale}/20`,
+    benefits: entry.benefits || entry.organizationBenefits || entry.privileges || entry.perks || '',
+    bases: entry.bases || entry.organizationBases || entry.holdings || '',
+    statistics: entry.statistics || entry.stats || entry.organizationStats || '',
+    notes: entry.notes || entry.description || entry.summary || '',
+    score,
+    scoreLabel: scoreLabel(score),
+    scoreClass: scoreClass(score),
+    status: scoreStatus(score),
+    canEditConcept: true,
+    canEditGoverned: context.canEditGoverned === true,
+    governedLocked: context.canEditGoverned !== true,
+    naturalLeaderRequired: context.hasNaturalLeader !== true
+  };
+}
+
+function normalizeOrganizationForStorage(data = {}, existing = {}, options = {}) {
+  const isGM = options.isGM === true;
+  const normalized = {
+    id: data.id || existing.id || randomId('organization'),
+    name: cleanString(data.name ?? existing.name) || 'Unnamed Organization',
+    type: cleanString(data.type ?? existing.type),
+    planet: cleanString(data.planet ?? existing.planet),
+    system: cleanString(data.system ?? existing.system),
+    leader: cleanString(data.leader ?? existing.leader),
+    alignedWithFactionId: cleanString(data.alignedWithFactionId ?? existing.alignedWithFactionId),
+    alignedAgainstFactionId: cleanString(data.alignedAgainstFactionId ?? existing.alignedAgainstFactionId),
+    alignmentNotes: cleanString(data.alignmentNotes ?? existing.alignmentNotes),
+    notes: cleanString(data.notes ?? existing.notes),
+    updatedAt: Date.now()
+  };
+
+  for (const field of ORGANIZATION_GM_FIELDS) {
+    const value = isGM ? data[field] : existing[field];
+    if (field === 'scale') normalized.scale = clampInteger(value, ORGANIZATION_SCALE_MIN, ORGANIZATION_SCALE_MAX, 1);
+    else if (field === 'score') normalized.score = parseInteger(value, 0);
+    else normalized[field] = cleanString(value);
+  }
+
+  if (!('scale' in normalized)) normalized.scale = clampInteger(existing.scale, ORGANIZATION_SCALE_MIN, ORGANIZATION_SCALE_MAX, 1);
+  if (!('score' in normalized)) normalized.score = parseInteger(existing.score, 0);
+  return normalized;
 }
 
 
@@ -367,6 +465,15 @@ function mapHistoryRecord(entry = {}) {
     dismissedAtLabel: entry.dismissedAt ? new Date(entry.dismissedAt).toLocaleString() : '',
     canRehire: Boolean(actor)
   };
+}
+
+function hasActorFeat(actor, featName) {
+  const target = normalizeText(featName);
+  return Array.from(actor?.items || []).some(item => item?.type === 'feat' && normalizeText(item.name) === target);
+}
+
+function hasNaturalLeader(actor) {
+  return hasActorFeat(actor, 'Natural Leader');
 }
 
 function isNonheroicActor(actor) {
@@ -431,7 +538,7 @@ export class AlliesSurfaceService {
       { id: 'companions', label: 'Companions', count: counts.companions, visible: companions.hasAny },
       { id: 'factions', label: 'Factions', count: counts.factions, visible: true },
       { id: 'bases', label: 'Bases', count: counts.bases, visible: true },
-      { id: 'organizations', label: 'Organizations', count: counts.organizations, visible: true }
+      { id: 'organizations', label: 'Organizations', count: counts.organizations, visible: organizations.unlocked === true }
     ];
     const visibleTabs = tabDefinitions.filter(tab => tab.visible !== false);
     const activeTab = visibleTabs.some(tab => tab.id === requestedTab) ? requestedTab : (visibleTabs[0]?.id || 'factions');
@@ -618,14 +725,35 @@ export class AlliesSurfaceService {
   }
 
   static async _buildOrganizations(actor) {
-    const records = [
+    const isGM = game.user?.isGM === true;
+    const naturalLeader = hasNaturalLeader(actor);
+    const factions = await this._buildFactions(actor);
+    const rawRecords = uniqueEntries([
+      ...asArray(actor?.getFlag?.(SYSTEM_ID, 'organizations')),
       ...asArray(actor?.system?.organizations),
       ...asArray(actor?.system?.orgs),
       ...asArray(actor?.flags?.swse?.organizations),
-      ...asArray(actor?.getFlag?.(SYSTEM_ID, 'organizations')),
       ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'organization')
-    ].map(entry => mapRelationshipRecord(entry, 'organization'));
-    return { records, hasAny: records.length > 0 };
+    ]);
+    const context = {
+      canEditGoverned: isGM,
+      hasNaturalLeader: naturalLeader,
+      factions: factions.records
+    };
+    const records = rawRecords.map(entry => mapOrganizationRecord(entry, context));
+    const unlocked = naturalLeader || records.length > 0 || isGM;
+    return {
+      records,
+      hasAny: records.length > 0,
+      unlocked,
+      canCreate: naturalLeader || isGM,
+      canEditGoverned: isGM,
+      hasNaturalLeader: naturalLeader,
+      lockMessage: naturalLeader
+        ? ''
+        : 'Organizations unlock for player-created groups when this actor has the Natural Leader feat.',
+      gmControlMessage: 'Organizations are player-visible but GM-governed. Scale, score, benefits, bases, and statistics are controlled by the GM.'
+    };
   }
 
   static async addFaction(ownerActor) {
@@ -696,6 +824,64 @@ export class AlliesSurfaceService {
     if (!ownerActor || !baseId) return false;
     const bases = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'bases')).map(normalizeBaseForStorage);
     await ownerActor.setFlag(SYSTEM_ID, 'bases', bases.filter(base => base.id !== baseId));
+    return true;
+  }
+
+  static async addOrganization(ownerActor) {
+    if (!ownerActor) return false;
+    if (!game.user?.isGM && !hasNaturalLeader(ownerActor)) {
+      ui?.notifications?.warn?.('Organizations unlock when this actor has the Natural Leader feat.');
+      return false;
+    }
+    const organizations = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'organizations'))
+      .map(entry => normalizeOrganizationForStorage(entry, entry, { isGM: true }));
+    const next = normalizeOrganizationForStorage({
+      id: randomId('organization'),
+      name: `New Organization ${organizations.length + 1}`,
+      type: '',
+      planet: '',
+      system: '',
+      leader: '',
+      alignedWithFactionId: '',
+      alignedAgainstFactionId: '',
+      alignmentNotes: '',
+      notes: '',
+      scale: 1,
+      score: 0,
+      benefits: '',
+      bases: '',
+      statistics: ''
+    }, {}, { isGM: true });
+    await ownerActor.setFlag(SYSTEM_ID, 'organizations', [...organizations, next]);
+    return true;
+  }
+
+  static async saveOrganization(ownerActor, organizationId, data = {}) {
+    if (!ownerActor || !organizationId) return false;
+    if (!game.user?.isGM && !hasNaturalLeader(ownerActor)) {
+      ui?.notifications?.warn?.('Only Natural Leader characters can edit their organization concept.');
+      return false;
+    }
+    const organizations = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'organizations'))
+      .map(entry => normalizeOrganizationForStorage(entry, entry, { isGM: true }));
+    const existing = organizations.find(org => org.id === organizationId) || {};
+    const normalized = normalizeOrganizationForStorage({ ...data, id: organizationId }, existing, { isGM: game.user?.isGM === true });
+    const nextOrganizations = organizations.some(org => org.id === organizationId)
+      ? organizations.map(org => org.id === organizationId ? { ...org, ...normalized } : org)
+      : [...organizations, normalized];
+    await ownerActor.setFlag(SYSTEM_ID, 'organizations', nextOrganizations);
+    return true;
+  }
+
+  static async removeOrganization(ownerActor, organizationId) {
+    if (!ownerActor || !organizationId) return false;
+    if (!game.user?.isGM) {
+      ui?.notifications?.warn?.('Only the GM can remove organization records.');
+      return false;
+    }
+    const organizations = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'organizations'))
+      .map(entry => normalizeOrganizationForStorage(entry, entry, { isGM: true }));
+    await ownerActor.setFlag(SYSTEM_ID, 'organizations', organizations.filter(org => org.id !== organizationId));
     return true;
   }
 

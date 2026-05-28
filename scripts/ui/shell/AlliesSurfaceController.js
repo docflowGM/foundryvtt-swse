@@ -95,6 +95,12 @@ export class AlliesSurfaceController {
           return this._saveBase(target);
         case 'remove-base':
           return this._removeBase(target.dataset.baseId);
+        case 'add-organization':
+          return this._addOrganization();
+        case 'save-organization':
+          return this._saveOrganization(target);
+        case 'remove-organization':
+          return this._removeOrganization(target.dataset.organizationId);
         default:
           SWSELogger.warn(`[AlliesSurfaceController] Unknown action: ${action}`);
       }
@@ -291,6 +297,57 @@ export class AlliesSurfaceController {
       }
     }
     return data;
+  }
+
+  async _addOrganization() {
+    const ok = await AlliesSurfaceService.addOrganization(this._actor);
+    if (ok) ui?.notifications?.info?.('Organization record created. Players can describe it; the GM governs scale, score, benefits, bases, and statistics.');
+    this._host.render(false);
+  }
+
+  async _saveOrganization(target) {
+    const organizationId = target.dataset.organizationId;
+    const form = target.closest('form');
+    if (!form || !organizationId) return this._notify('Organization form could not be found.');
+    const data = this._collectOrganizationForm(form);
+    const ok = await AlliesSurfaceService.saveOrganization(this._actor, organizationId, data);
+    if (ok) ui?.notifications?.info?.('Organization record saved.');
+    this._host.render(false);
+  }
+
+  async _removeOrganization(organizationId) {
+    if (!organizationId) return this._notify('Organization record could not be found.');
+    const shouldRemove = await Dialog.confirm({
+      title: 'Remove Organization Record?',
+      content: '<p>This removes the organization record from this actor. Only the GM can remove organization records.</p>',
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldRemove) return;
+    const ok = await AlliesSurfaceService.removeOrganization(this._actor, organizationId);
+    if (ok) ui?.notifications?.info?.('Organization record removed.');
+    this._host.render(false);
+  }
+
+  _collectOrganizationForm(form) {
+    const formData = new FormData(form);
+    return {
+      name: String(formData.get('name') ?? '').trim(),
+      type: String(formData.get('type') ?? '').trim(),
+      planet: String(formData.get('planet') ?? '').trim(),
+      system: String(formData.get('system') ?? '').trim(),
+      leader: String(formData.get('leader') ?? '').trim(),
+      alignedWithFactionId: String(formData.get('alignedWithFactionId') ?? '').trim(),
+      alignedAgainstFactionId: String(formData.get('alignedAgainstFactionId') ?? '').trim(),
+      alignmentNotes: String(formData.get('alignmentNotes') ?? '').trim(),
+      notes: String(formData.get('notes') ?? '').trim(),
+      scale: Number.parseInt(String(formData.get('scale') ?? '1'), 10) || 1,
+      score: Number.parseInt(String(formData.get('score') ?? '0'), 10) || 0,
+      benefits: String(formData.get('benefits') ?? '').trim(),
+      bases: String(formData.get('bases') ?? '').trim(),
+      statistics: String(formData.get('statistics') ?? '').trim()
+    };
   }
 
   _notify(message) {

@@ -130,22 +130,31 @@
     {{/if}}
 
     {{#if (eq vm.activeTab "organizations")}}
-    <section class="swse-allies-directory">
+    <section class="swse-allies-directory swse-allies-organizations">
       <div class="swse-allies-section-head">
         <div>
           <span class="swse-allies-kicker">TAB 4</span>
           <h3>Organizations</h3>
-          <p>Guilds, crews, cells, companies, syndicates, temples, agencies, and other structured groups.</p>
+          <p>Natural Leader organizations are faction-like assets founded by this character. Players can describe the concept; the GM governs statistics, scale, score, bases, benefits, and privileges.</p>
+        </div>
+        <div class="swse-allies-section-actions">
+          {{#if vm.organizations.canCreate}}
+          <button type="button" class="swse-allies-history-toggle" data-allies-action="add-organization">Add Organization</button>
+          {{/if}}
         </div>
       </div>
+      <div class="swse-allies-base-note">
+        {{vm.organizations.gmControlMessage}}
+        {{#unless vm.organizations.hasNaturalLeader}}<br>{{vm.organizations.lockMessage}}{{/unless}}
+      </div>
       {{#if vm.organizations.hasAny}}
-      <div class="swse-allies-record-grid">
+      <div class="swse-allies-organization-list">
         {{#each vm.organizations.records}}
-        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs" record=this}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-organization-card.hbs" organization=this}}
         {{/each}}
       </div>
       {{else}}
-      <div class="swse-allies-empty">No organization records have been attached to this profile yet.</div>
+      <div class="swse-allies-empty">No organization has been recorded yet. Natural Leader characters can create the concept; the GM remains in control of scale, score, benefits, bases, and statistics.</div>
       {{/if}}
     </section>
     {{/if}}
