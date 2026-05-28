@@ -610,6 +610,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             }, { source: 'FollowerCreator.linkFollowerToOwner' });
         }
+
+        try {
+            const { FollowerManager } = await import("/systems/foundryvtt-swse/scripts/apps/follower-manager.js");
+            await FollowerManager.applyExistingEnhancementsToFollower(owner, follower, { silent: true });
+        } catch (err) {
+            swseLogger.warn('[FollowerCreator] Could not apply owner follower enhancements:', err);
+        }
     }
 
     /**

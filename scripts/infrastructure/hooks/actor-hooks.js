@@ -16,7 +16,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { initializeStarshipManeuverHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-maneuver-hooks.js";
 import { initializeForcePowerHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-power-hooks.js";
-import { initializeFollowerHooks, reconcileFollowerSlotsForActor } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-hooks.js";
+import { initializeFollowerHooks, reconcileFollowerSlotsForActor, reconcileFollowerEnhancementsForActor } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-hooks.js";
 import { StarshipDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-domain-lifecycle.js";
 import { ForceDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-domain-lifecycle.js";
 import { registerTelekineticProdigyHook } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/telekinetic-prodigy-hook.js";
@@ -144,6 +144,9 @@ export function registerActorHooks() {
             if (actor?.type !== 'character') continue;
             reconcileFollowerSlotsForActor(actor).catch((err) => {
                 SWSELogger.warn(`[Followers] Slot reconciliation failed for ${actor?.name}:`, err);
+            });
+            reconcileFollowerEnhancementsForActor(actor).catch((err) => {
+                SWSELogger.warn(`[Followers] Enhancement reconciliation failed for ${actor?.name}:`, err);
             });
         }
     });

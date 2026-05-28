@@ -1,5 +1,6 @@
 import { FOLLOWER_TALENT_CONFIG } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FollowerManager } from "/systems/foundryvtt-swse/scripts/apps/follower-manager.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 /**
@@ -101,6 +102,11 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
  * @param {Actor} actor
  * @returns {Promise<Array>} The reconciled slot array
  */
+export async function reconcileFollowerEnhancementsForActor(actor) {
+  if (!actor || actor.type !== 'character') return;
+  await FollowerManager.reconcileEnhancementsForOwner(actor);
+}
+
 export async function reconcileFollowerSlotsForActor(actor) {
   if (!actor || actor.type !== 'character') return [];
 
@@ -161,6 +167,10 @@ export function initializeFollowerHooks() {
     const actor = item.actor;
     if (!actor || actor.type !== 'character') return;
 
+    if (FollowerManager.isEnhancementTalent(item.name)) {
+      await FollowerManager.applyEnhancement(actor, item);
+    }
+
     const cfg = FOLLOWER_TALENT_CONFIG[item.name];
     if (!cfg) return;
 
@@ -186,6 +196,10 @@ export function initializeFollowerHooks() {
 
     const actor = item.actor;
     if (!actor || actor.type !== 'character') return;
+
+    if (FollowerManager.isEnhancementTalent(item.name)) {
+      await FollowerManager.removeEnhancement(actor, item);
+    }
 
     const cfg = FOLLOWER_TALENT_CONFIG[item.name];
     if (!cfg) return;
