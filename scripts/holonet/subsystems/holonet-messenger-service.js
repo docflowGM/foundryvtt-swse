@@ -2453,6 +2453,7 @@ export class HolonetMessengerService {
     const factionName = String(consequences?.factionName || job.client?.factionName || '').trim();
     const delta = normalizedStatus === 'complete' ? Number(consequences?.successDelta || 0) || 0 : Number(consequences?.failureDelta || 0) || 0;
     if (!factionName || !delta) return [];
+    const existingFaction = FactionRegistryService.findFaction(factionName);
     job.factionConsequences ??= consequences && typeof consequences === 'object' ? { ...consequences } : {};
     job.factionConsequences.applied ??= {};
     if (job.factionConsequences.applied[normalizedStatus]) return [];
@@ -2460,13 +2461,33 @@ export class HolonetMessengerService {
     if (!results.length) return [];
     job.factionConsequences.applied[normalizedStatus] = nowIso();
     await HolonetStorage.saveThread(thread);
+    const factionIds = Array.from(new Set(results.map(result => result.factionId).filter(Boolean)));
+    const actorIds = Array.from(new Set(results.map(result => result.actorId).filter(Boolean)));
+    const autoCreated = !existingFaction && factionIds.length > 0;
     const summary = results.map(result => `${result.actorName}: ${result.before >= 0 ? '+' : ''}${result.before} → ${result.after >= 0 ? '+' : ''}${result.after}`).join('; ');
-    await this._publishSystemMessage(thread, `Faction relationship updated for ${factionName}: ${summary}.`, {
-      eventType: 'job-faction-score-changed',
+    if (autoCreated) ui.notifications?.warn?.(`Job faction "${factionName}" was not in the GM registry; it was created automatically.`);
+    const syncPayload = {
+      type: 'faction-score-changed',
+      source: 'job-board',
+      threadId: thread.id,
       factionName,
+      factionIds,
+      actorIds,
       status: normalizedStatus,
       delta,
-      affectedActorIds: results.map(result => result.actorId),
+      requesterId,
+      autoCreated
+    };
+    Hooks.callAll('swseHolonetUpdated', syncPayload);
+    HolonetSocketService.emitSync(syncPayload);
+    await this._publishSystemMessage(thread, `${autoCreated ? 'Created GM registry faction and updated' : 'Faction relationship updated for'} ${factionName}: ${summary}.`, {
+      eventType: 'job-faction-score-changed',
+      factionName,
+      factionIds,
+      status: normalizedStatus,
+      delta,
+      affectedActorIds: actorIds,
+      autoCreated,
       requesterId
     });
     return results;

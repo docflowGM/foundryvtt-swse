@@ -84,7 +84,7 @@
           <p>Faction relationships earned through jobs, missions, obligations, favors, and consequences. Scores can be positive or negative and benefits are assessed by the GM.</p>
         </div>
         <div class="swse-allies-section-actions">
-          <button type="button" class="swse-allies-history-toggle" data-allies-action="add-faction">Add Faction</button>
+          <button type="button" class="swse-allies-history-toggle" data-allies-action="add-faction">{{vm.factions.addLabel}}</button>
         </div>
       </div>
       <div class="swse-allies-base-note">
@@ -97,7 +97,7 @@
         {{/each}}
       </div>
       {{else}}
-      <div class="swse-allies-empty">No faction records have been attached to this profile yet. Use Add Faction to create a reputation record.</div>
+      <div class="swse-allies-empty">No faction records have been attached to this profile yet. Players can suggest a relationship; GMs can attach campaign-authoritative faction records.</div>
       {{/if}}
     </section>
     {{/if}}

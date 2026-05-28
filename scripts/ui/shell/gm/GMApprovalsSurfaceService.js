@@ -1,6 +1,7 @@
 /** GM approvals surface view-model. */
 
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 
 const EMPTY = '—';
 
@@ -217,6 +218,61 @@ function buildGenericActorCategories({ actor, approval, sourceType }) {
   }));
 }
 
+
+
+function buildFactionSuggestionRequest(row) {
+  const record = row.record ?? {};
+  const categories = [
+    {
+      id: 'faction-request',
+      label: 'Faction Suggestion',
+      icon: 'fa-solid fa-people-arrows',
+      rows: [
+        makeEditableRow('Faction Name', record.name ?? record.factionName ?? 'Suggested Faction', 'name'),
+        makeEditableRow('Type', record.type ?? 'Faction', 'type'),
+        makeEditableRow('Planet', record.planet ?? '', 'planet'),
+        makeEditableRow('System', record.system ?? '', 'system'),
+        makeEditableRow('Relationship', record.relationshipType ?? 'known', 'relationshipType'),
+        makeTextAreaRow('Player Notes', record.notes ?? '', 'notes', { wide: true })
+      ]
+    },
+    {
+      id: 'gm-governance',
+      label: 'GM Governance',
+      icon: 'fa-solid fa-scale-balanced',
+      rows: [
+        makeEditableRow('Starting Score', record.score ?? 0, 'score', 'number'),
+        makeTextAreaRow('Benefits', record.benefits ?? '', 'benefits', { wide: true, placeholder: 'GM-assessed benefits or consequences.' }),
+        makeTextAreaRow('GM Notes', record.gmNotes ?? '', 'gmNotes', { wide: true, placeholder: 'Private governance notes.' })
+      ]
+    }
+  ].map((category) => ({
+    ...category,
+    rows: category.rows.map((field) => ({
+      ...field,
+      fieldId: field.inputName ? `faction-suggestion-${category.id}-${field.inputName}`.replace(/[^a-zA-Z0-9_-]/g, '-') : null,
+      originalValue: field.value ?? field.displayValue ?? ''
+    }))
+  }));
+
+  return {
+    key: `faction:${row.actorId}:${record.id}`,
+    sourceType: 'faction-suggestion',
+    actorId: row.actorId,
+    factionRecordId: record.id,
+    type: 'faction-suggestion',
+    typeLabel: 'Faction Suggestion Review',
+    title: record.name ?? record.factionName ?? 'Suggested Faction',
+    subtitle: `${row.actorName} · ${record.type ?? 'Faction'} · pending approval`,
+    ownerLabel: row.actorName,
+    costLabel: 'Faction Standing',
+    submittedLabel: record.updatedAt ? new Date(record.updatedAt).toLocaleString() : (record.createdAt ? new Date(record.createdAt).toLocaleString() : EMPTY),
+    icon: 'fa-solid fa-people-arrows',
+    tone: 'faction',
+    categories,
+    warnings: []
+  };
+}
 
 function buildGameSettlementRequest(session) {
   const credits = session?.escrow?.credits ?? {};
@@ -462,7 +518,8 @@ export class GMApprovalsSurfaceService {
     const gameRequests = GameSessionStore.getAllSessions()
       .filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement')
       .map((session) => buildGameSettlementRequest(session));
-    const approvalRequests = [...gameRequests, ...droidRequests, ...storeRequests];
+    const factionRequests = FactionRegistryService.getPendingSuggestions().map((row) => buildFactionSuggestionRequest(row));
+    const approvalRequests = [...gameRequests, ...droidRequests, ...storeRequests, ...factionRequests];
 
     if (!approvalRequests.some((request) => request.key === host.selectedApprovalKey)) {
       host.selectedApprovalKey = approvalRequests[0]?.key ?? null;
@@ -490,7 +547,8 @@ export class GMApprovalsSurfaceService {
         games: approvalRequests.filter((request) => request.type === 'game-settlement').length,
         droids: approvalRequests.filter((request) => request.type === 'droid').length,
         ships: approvalRequests.filter((request) => request.type === 'starship' || request.type === 'vehicle').length,
-        storeItems: approvalRequests.filter((request) => request.type === 'store-item').length
+        storeItems: approvalRequests.filter((request) => request.type === 'store-item').length,
+        factions: approvalRequests.filter((request) => request.type === 'faction-suggestion').length
       }
     };
   }

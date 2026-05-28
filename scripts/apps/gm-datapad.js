@@ -149,7 +149,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _getGmShellSurfaceId(pageId) {
     const id = String(pageId || 'home');
-    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace']);
+    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace', 'factions']);
     return `gm-${known.has(id) ? id : 'error'}`;
   }
 
@@ -176,7 +176,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const byId = new Map(apps.map((app) => [app.id, app]));
     const pick = (ids) => ids.map((id) => byId.get(id)).filter(Boolean);
     return [
-      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace']) },
+      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace', 'factions']) },
       { label: 'Economy', tone: (counts.store || counts.approvals) ? 'warn' : 'stable', countLabel: `${Number(counts.store ?? 0) + Number(counts.approvals ?? 0)} queued`, apps: pick(['store', 'approvals']) },
       { label: 'Holonet', tone: counts.bulletin ? 'info' : 'stable', countLabel: `${Number(counts.bulletin ?? 0)} signals`, apps: pick(['bulletin']) },
       { label: 'Configuration', tone: 'stable', countLabel: 'ready', apps: pick(['house-rules', 'settings']) }
@@ -238,7 +238,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       tradeFailed: tradeCounts.failed,
       tradeActive: tradeCounts.active,
       healing: healingEligible,
-      workspace: game.actors.filter((actor) => actor.isOwner).length
+      workspace: game.actors.filter((actor) => actor.isOwner).length,
+      factions: globalThis.SWSEFactionRegistryService?.summarizeForWorkspace?.().count ?? 0
     };
   }
 
@@ -783,7 +784,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
       { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
-      { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' }
+      { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' },
+      { id: 'factions', code: 'FAC', label: 'Factions', icon: 'fa-solid fa-people-arrows', description: 'Faction registry and party standings', badgeCount: counts.factions ?? 0, status: 'Ledger', statusTone: (counts.factions ?? 0) ? 'info' : '', badgeType: 'info', featured: true }
     ];
   }
 

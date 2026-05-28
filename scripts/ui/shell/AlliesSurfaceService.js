@@ -10,6 +10,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'bases', 'organizations']);
@@ -290,44 +291,112 @@ function scoreLabel(score) {
   return String(score);
 }
 
-function mapFactionRecord(entry = {}) {
-  const id = entry.id || entry.factionId || randomId('faction');
-  const score = parseInteger(entry.score ?? entry.factionScore ?? entry.reputation ?? entry.standingScore, 0);
-  const planet = entry.planet || entry.world || entry.locationPlanet || '';
-  const system = entry.system || entry.starSystem || entry.locationSystem || '';
-  const metaParts = [];
-  if (planet) metaParts.push(`Planet: ${planet}`);
-  if (system) metaParts.push(`System: ${system}`);
-  if (entry.scale) metaParts.push(`Scale: ${entry.scale}`);
+function splitPlanetSystem(value = '') {
+  const raw = cleanString(value);
+  if (!raw) return { planet: '', system: '' };
+  const [planet, system] = raw.split('/').map(part => cleanString(part));
+  return { planet: planet || raw, system: system || '' };
+}
+
+function factionStatusLabel(status, score) {
+  const normalized = cleanString(status).toLowerCase();
+  if (['suggested', 'pending', 'pending_approval'].includes(normalized)) return 'PENDING GM APPROVAL';
+  if (normalized === 'rejected') return 'REJECTED';
+  return scoreStatus(score);
+}
+
+function mapFactionHistory(entry = {}) {
+  const delta = parseInteger(entry.delta, 0);
+  const before = entry.before === undefined ? null : parseInteger(entry.before, 0);
+  const after = entry.after === undefined ? null : parseInteger(entry.after, 0);
+  const reason = cleanString(entry.reason || entry.note || entry.type || entry.source || 'Faction update');
+  const atLabel = entry.at ? new Date(entry.at).toLocaleString() : '';
   return {
-    id,
-    name: entry.name || entry.label || entry.title || 'Unnamed Faction',
-    type: entry.type || entry.kind || entry.category || entry.factionType || '',
-    planet,
-    system,
-    scale: entry.scale || entry.factionScale || entry.scope || '',
-    leader: entry.leader || entry.factionLeader || entry.commander || '',
-    benefits: entry.benefits || entry.factionBenefits || entry.perks || entry.description || entry.notes || '',
-    score,
-    scoreLabel: scoreLabel(score),
-    scoreClass: scoreClass(score),
-    status: scoreStatus(score),
-    meta: metaParts.join(' · ')
+    id: entry.id || randomId('history'),
+    at: entry.at || '',
+    atLabel,
+    reason,
+    source: cleanString(entry.source || ''),
+    delta,
+    deltaLabel: delta ? scoreLabel(delta) : '',
+    beforeLabel: before === null ? '' : scoreLabel(before),
+    afterLabel: after === null ? '' : scoreLabel(after),
+    hasDelta: delta !== 0
   };
 }
 
-function normalizeFactionForStorage(data = {}) {
+function mapFactionRecord(entry = {}, context = {}) {
+  const registry = context.registry ?? null;
+  const id = entry.id || entry.relationshipId || entry.factionId || randomId('faction');
+  const factionId = entry.factionId || registry?.id || id;
+  const score = parseInteger(entry.score ?? entry.factionScore ?? entry.reputation ?? entry.standingScore ?? registry?.score, 0);
+  const location = splitPlanetSystem(entry.planetSystem || registry?.planetSystem || '');
+  const planet = entry.planet || entry.world || entry.locationPlanet || location.planet || '';
+  const system = entry.system || entry.starSystem || entry.locationSystem || location.system || '';
+  const scale = entry.scale || entry.factionScale || entry.scope || registry?.scale || '';
+  const statusValue = cleanString(entry.status || 'active');
+  const metaParts = [];
+  if (planet) metaParts.push(`Planet: ${planet}`);
+  if (system) metaParts.push(`System: ${system}`);
+  if (scale) metaParts.push(`Scale: ${scale}`);
+  const history = [
+    ...asArray(entry.history),
+    ...asArray(entry.scoreHistory)
+  ].map(mapFactionHistory).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 8);
+  const isGM = context.isGM === true;
+  const pending = ['suggested', 'pending', 'pending_approval'].includes(statusValue.toLowerCase());
   return {
-    id: data.id || randomId('faction'),
-    name: cleanString(data.name) || 'Unnamed Faction',
-    type: cleanString(data.type),
-    planet: cleanString(data.planet),
-    system: cleanString(data.system),
-    scale: cleanString(data.scale),
-    leader: cleanString(data.leader),
-    benefits: cleanString(data.benefits),
-    score: parseInteger(data.score, 0),
-    updatedAt: Date.now()
+    id,
+    factionId,
+    name: entry.factionName || entry.name || entry.label || entry.title || registry?.name || 'Unnamed Faction',
+    type: entry.type || entry.kind || entry.category || entry.factionType || registry?.type || '',
+    planet,
+    system,
+    planetSystem: entry.planetSystem || registry?.planetSystem || '',
+    scale,
+    leader: entry.leader || entry.factionLeader || entry.commander || registry?.leader || '',
+    relationshipType: entry.relationshipType || entry.relationship || 'known',
+    benefits: entry.benefits || entry.factionBenefits || entry.perks || registry?.benefits || '',
+    notes: entry.notes || entry.description || entry.summary || '',
+    gmNotes: entry.gmNotes || registry?.gmNotes || '',
+    source: entry.source || registry?.source || 'gm',
+    approvalStatus: statusValue,
+    isPending: pending,
+    isRejected: statusValue.toLowerCase() === 'rejected',
+    canEditScore: isGM,
+    canEditGoverned: isGM,
+    canSave: isGM || pending || statusValue.toLowerCase() === 'rejected',
+    score,
+    scoreLabel: scoreLabel(score),
+    scoreClass: scoreClass(score),
+    status: factionStatusLabel(statusValue, score),
+    meta: metaParts.join(' · '),
+    history,
+    hasHistory: history.length > 0
+  };
+}
+
+function normalizeFactionForStorage(data = {}, existing = {}) {
+  return {
+    id: data.id || existing.id || randomId('faction'),
+    factionId: cleanString(data.factionId ?? existing.factionId),
+    name: cleanString(data.name ?? data.factionName ?? existing.name) || 'Unnamed Faction',
+    type: cleanString(data.type ?? existing.type),
+    planet: cleanString(data.planet ?? existing.planet),
+    system: cleanString(data.system ?? existing.system),
+    scale: cleanString(data.scale ?? existing.scale),
+    leader: cleanString(data.leader ?? existing.leader),
+    relationshipType: cleanString(data.relationshipType ?? existing.relationshipType) || 'known',
+    benefits: cleanString(data.benefits ?? existing.benefits),
+    notes: cleanString(data.notes ?? existing.notes),
+    gmNotes: cleanString(data.gmNotes ?? existing.gmNotes),
+    source: cleanString(data.source ?? existing.source) || 'player-suggested',
+    status: cleanString(data.status ?? existing.status) || 'pending_approval',
+    score: parseInteger(data.score ?? existing.score, 0),
+    createdAt: existing.createdAt || data.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    history: asArray(data.history ?? existing.history).slice(-75),
+    scoreHistory: asArray(data.scoreHistory ?? existing.scoreHistory).slice(-75)
   };
 }
 
@@ -693,15 +762,40 @@ export class AlliesSurfaceService {
   }
 
   static async _buildFactions(actor) {
+    const isGM = game.user?.isGM === true;
+    const registry = FactionRegistryService.getRegistry();
+    const registryById = new Map(registry.map(record => [record.id, record]));
+    const registryByName = new Map(registry.map(record => [normalizeText(record.name), record]));
     const flagFactions = asArray(actor?.getFlag?.(SYSTEM_ID, 'factions'));
+    const actorRelationships = FactionRegistryService.getActorRelationships(actor);
     const legacyFactions = [
       ...asArray(actor?.system?.factions),
       ...asArray(actor?.system?.affiliations),
       ...asArray(actor?.flags?.swse?.factions),
       ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'faction')
     ];
-    const records = uniqueEntries([...flagFactions, ...legacyFactions]).map(entry => mapFactionRecord(entry));
-    return { records, hasAny: records.length > 0 };
+    const merged = new Map();
+    const pushRecord = (entry = {}) => {
+      const registryRecord = registryById.get(entry.factionId || entry.id) || registryByName.get(normalizeText(entry.factionName || entry.name || '')) || null;
+      const key = registryRecord?.id || entry.factionId || normalizeText(entry.factionName || entry.name || entry.id || randomId('faction'));
+      const existing = merged.get(key) || {};
+      merged.set(key, { ...existing, ...registryRecord, ...entry, factionId: entry.factionId || registryRecord?.id || existing.factionId });
+    };
+
+    for (const entry of legacyFactions) pushRecord(entry);
+    for (const entry of flagFactions) pushRecord(entry);
+    for (const entry of actorRelationships) pushRecord({ ...entry, id: entry.id, factionId: entry.factionId, factionName: entry.factionName });
+
+    const records = Array.from(merged.values())
+      .map(entry => mapFactionRecord(entry, { isGM, registry: registryById.get(entry.factionId) || registryByName.get(normalizeText(entry.factionName || entry.name || '')) || null }))
+      .sort((a, b) => Number(b.isPending) - Number(a.isPending) || a.name.localeCompare(b.name));
+    return {
+      records,
+      hasAny: records.length > 0,
+      canSuggest: !isGM,
+      canManageDirectly: isGM,
+      addLabel: isGM ? 'Add Faction Relationship' : 'Suggest Faction'
+    };
   }
 
   static async _buildBases(actor) {
@@ -758,39 +852,113 @@ export class AlliesSurfaceService {
 
   static async addFaction(ownerActor) {
     if (!ownerActor) return false;
-    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(normalizeFactionForStorage);
-    const next = normalizeFactionForStorage({
-      id: randomId('faction'),
-      name: `New Faction ${factions.length + 1}`,
-      type: '',
-      planet: '',
-      system: '',
-      scale: '',
-      leader: '',
-      benefits: '',
-      score: 0
+    if (game.user?.isGM) {
+      const faction = await FactionRegistryService.upsertFaction({
+        name: `New Faction ${FactionRegistryService.getRegistry().length + 1}`,
+        source: 'gm',
+        status: 'active'
+      });
+      await FactionRegistryService.addActorRelationship({ actor: ownerActor, faction, relationshipType: 'known', score: 0, source: 'gm', status: 'active' });
+      return true;
+    }
+    const record = await FactionRegistryService.suggestFaction(ownerActor, {
+      name: `Suggested Faction ${asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).length + 1}`,
+      status: 'suggested'
     });
-    await ownerActor.setFlag(SYSTEM_ID, 'factions', [...factions, next]);
-    return true;
+    return Boolean(record);
   }
 
   static async saveFaction(ownerActor, factionId, data = {}) {
     if (!ownerActor || !factionId) return false;
-    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(normalizeFactionForStorage);
-    const normalized = normalizeFactionForStorage({ ...data, id: factionId });
-    const index = factions.findIndex(faction => faction.id === factionId);
-    const nextFactions = index >= 0
-      ? factions.map(faction => faction.id === factionId ? { ...faction, ...normalized } : faction)
+    if (game.user?.isGM) {
+      const faction = await FactionRegistryService.upsertFaction({
+        id: data.factionId || factionId,
+        name: data.name,
+        type: data.type,
+        planet: data.planet,
+        system: data.system,
+        scale: data.scale,
+        leader: data.leader,
+        benefits: data.benefits,
+        notes: data.notes,
+        gmNotes: data.gmNotes,
+        source: data.source || 'gm',
+        status: 'active'
+      });
+      const existing = FactionRegistryService.getActorRelationships(ownerActor).find(entry => entry.id === factionId || entry.factionId === factionId || entry.factionId === faction.id);
+      if (existing) {
+        await FactionRegistryService.updateActorRelationship(ownerActor, existing.id, {
+          factionId: faction.id,
+          factionName: faction.name,
+          relationshipType: data.relationshipType || existing.relationshipType || 'known',
+          score: data.score,
+          benefits: data.benefits,
+          notes: data.notes,
+          gmNotes: data.gmNotes,
+          source: data.source || existing.source || 'gm',
+          status: 'active'
+        });
+      } else {
+        await FactionRegistryService.addActorRelationship({
+          actor: ownerActor,
+          faction,
+          relationshipType: data.relationshipType || 'known',
+          score: data.score,
+          benefits: data.benefits,
+          notes: data.notes,
+          gmNotes: data.gmNotes,
+          source: data.source || 'gm',
+          status: 'active'
+        });
+      }
+      return true;
+    }
+
+    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(entry => normalizeFactionForStorage(entry, entry));
+    const existing = factions.find(faction => faction.id === factionId || faction.factionId === factionId) || {};
+    const normalized = normalizeFactionForStorage({
+      ...data,
+      id: existing.id || factionId,
+      factionId: existing.factionId || data.factionId || '',
+      score: existing.score || 0,
+      benefits: existing.benefits || '',
+      gmNotes: existing.gmNotes || '',
+      source: 'player-suggested',
+      status: existing.status === 'rejected' ? 'suggested' : 'pending_approval'
+    }, existing);
+    const nextFactions = factions.some(faction => faction.id === normalized.id)
+      ? factions.map(faction => faction.id === normalized.id ? { ...faction, ...normalized } : faction)
       : [...factions, normalized];
     await ownerActor.setFlag(SYSTEM_ID, 'factions', nextFactions);
+    Hooks.callAll('swseActorFactionRelationshipsUpdated', { actor: ownerActor, relationships: FactionRegistryService.getActorRelationships(ownerActor), suggestion: normalized });
     return true;
   }
 
   static async removeFaction(ownerActor, factionId) {
     if (!ownerActor || !factionId) return false;
-    const factions = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(normalizeFactionForStorage);
-    await ownerActor.setFlag(SYSTEM_ID, 'factions', factions.filter(faction => faction.id !== factionId));
+    const legacy = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'factions')).map(entry => normalizeFactionForStorage(entry, entry));
+    const relationships = FactionRegistryService.getActorRelationships(ownerActor);
+    const relationship = relationships.find(entry => entry.id === factionId || entry.factionId === factionId);
+    if (relationship && !game.user?.isGM) {
+      ui?.notifications?.warn?.('GM-managed faction relationships cannot be removed by players. Ask the GM to archive or change it.');
+      return false;
+    }
+    if (relationship) await FactionRegistryService.removeActorRelationship(ownerActor, relationship.id);
+    await ownerActor.setFlag(SYSTEM_ID, 'factions', legacy.filter(faction => faction.id !== factionId && faction.factionId !== factionId));
     return true;
+  }
+
+  static async applyFactionDelta(ownerActor, factionName, delta, reason = '', options = {}) {
+    return FactionRegistryService.applyScoreDelta({
+      actor: ownerActor,
+      factionName,
+      delta,
+      reason,
+      source: options.source || 'gm',
+      jobId: options.jobId || '',
+      relationshipType: options.relationshipType || 'known',
+      metadata: options.metadata || {}
+    });
   }
 
   static async addBase(ownerActor) {
@@ -870,6 +1038,76 @@ export class AlliesSurfaceService {
       ? organizations.map(org => org.id === organizationId ? { ...org, ...normalized } : org)
       : [...organizations, normalized];
     await ownerActor.setFlag(SYSTEM_ID, 'organizations', nextOrganizations);
+
+    const orgScoreDelta = parseInteger(normalized.score, 0) - parseInteger(existing.score, 0);
+
+    if (normalized.alignedWithFactionId) {
+      try {
+        const faction = FactionRegistryService.findFaction(normalized.alignedWithFactionId);
+        if (faction) {
+          const currentRelationship = FactionRegistryService.getActorRelationships(ownerActor)
+            .find(entry => entry.factionId === faction.id);
+          await FactionRegistryService.addActorRelationship({
+            actor: ownerActor,
+            faction,
+            relationshipType: 'founder',
+            score: currentRelationship?.score ?? 0,
+            benefits: faction.benefits,
+            notes: `Founder/leader organization mirror: ${normalized.name}`,
+            source: 'organization',
+            status: 'active'
+          });
+          if (game.user?.isGM && orgScoreDelta) {
+            await FactionRegistryService.applyScoreDelta({
+              actor: ownerActor,
+              factionId: faction.id,
+              factionName: faction.name,
+              delta: orgScoreDelta,
+              source: 'organization',
+              reason: `Organization score changed for ${normalized.name}`,
+              relationshipType: 'founder',
+              metadata: { organizationId, organizationName: normalized.name }
+            });
+          }
+        }
+      } catch (err) {
+        SWSELogger.warn('[AlliesSurfaceService] Organization-to-faction mirror failed:', err);
+      }
+    }
+
+    if (normalized.alignedAgainstFactionId) {
+      try {
+        const faction = FactionRegistryService.findFaction(normalized.alignedAgainstFactionId);
+        if (faction) {
+          const currentRelationship = FactionRegistryService.getActorRelationships(ownerActor)
+            .find(entry => entry.factionId === faction.id);
+          await FactionRegistryService.addActorRelationship({
+            actor: ownerActor,
+            faction,
+            relationshipType: 'enemy',
+            score: currentRelationship?.score ?? 0,
+            notes: `Opposed organization mirror: ${normalized.name}`,
+            source: 'organization',
+            status: 'active'
+          });
+          if (game.user?.isGM && orgScoreDelta) {
+            await FactionRegistryService.applyScoreDelta({
+              actor: ownerActor,
+              factionId: faction.id,
+              factionName: faction.name,
+              delta: -Math.abs(orgScoreDelta),
+              source: 'organization',
+              reason: `Organization opposition changed for ${normalized.name}`,
+              relationshipType: 'enemy',
+              metadata: { organizationId, organizationName: normalized.name }
+            });
+          }
+        }
+      } catch (err) {
+        SWSELogger.warn('[AlliesSurfaceService] Organization opposition mirror failed:', err);
+      }
+    }
+
     return true;
   }
 

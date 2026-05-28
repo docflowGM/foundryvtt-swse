@@ -19,6 +19,7 @@ const SURFACE_IMPORTS = {
   approvals: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalsSurfaceService.js'),
   healing: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMHealingSurfaceService.js'),
   workspace: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMWorkspaceSurfaceService.js'),
+  factions: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js'),
   settings: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSettingsSurfaceService.js')
 };
 
@@ -32,6 +33,7 @@ const SERVICE_EXPORTS = {
   approvals: 'GMApprovalsSurfaceService',
   healing: 'GMHealingSurfaceService',
   workspace: 'GMWorkspaceSurfaceService',
+  factions: 'GMFactionRelationshipSurfaceService',
   settings: 'GMSettingsSurfaceService'
 };
 
