@@ -83,6 +83,12 @@ export class AlliesSurfaceController {
           return this._rehireAlly(target.dataset.actorId);
         case 'open-garage':
           return this._openGarage(target.dataset.actorId);
+        case 'add-base':
+          return this._addBase();
+        case 'save-base':
+          return this._saveBase(target);
+        case 'remove-base':
+          return this._removeBase(target.dataset.baseId);
         default:
           SWSELogger.warn(`[AlliesSurfaceController] Unknown action: ${action}`);
       }
@@ -190,6 +196,50 @@ export class AlliesSurfaceController {
       targetActorId: actorId || null
     });
     this._host.render(false);
+  }
+
+  async _addBase() {
+    const ok = await AlliesSurfaceService.addBase(this._actor);
+    if (ok) ui?.notifications?.info?.('Base record created. Fill in the text fields and save when ready.');
+    this._host.render(false);
+  }
+
+  async _saveBase(target) {
+    const baseId = target.dataset.baseId;
+    const form = target.closest('form');
+    if (!form || !baseId) return this._notify('Base form could not be found.');
+    const data = this._collectBaseForm(form);
+    const ok = await AlliesSurfaceService.saveBase(this._actor, baseId, data);
+    if (ok) ui?.notifications?.info?.('Base record saved.');
+    this._host.render(false);
+  }
+
+  async _removeBase(baseId) {
+    if (!baseId) return this._notify('Base record could not be found.');
+    const shouldRemove = await Dialog.confirm({
+      title: 'Remove Base Record?',
+      content: '<p>This removes the text record from this actor. It does not delete scenes, actors, items, ships, or vehicles.</p>',
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldRemove) return;
+    const ok = await AlliesSurfaceService.removeBase(this._actor, baseId);
+    if (ok) ui?.notifications?.info?.('Base record removed.');
+    this._host.render(false);
+  }
+
+  _collectBaseForm(form) {
+    const formData = new FormData(form);
+    const data = { accommodations: {} };
+    for (const [key, value] of formData.entries()) {
+      if (String(key).startsWith('accommodations.')) {
+        data.accommodations[String(key).slice('accommodations.'.length)] = String(value ?? '').trim();
+      } else {
+        data[key] = String(value ?? '').trim();
+      }
+    }
+    return data;
   }
 
   _notify(message) {

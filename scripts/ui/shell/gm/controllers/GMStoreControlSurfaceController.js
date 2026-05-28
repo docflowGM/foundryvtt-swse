@@ -1,9 +1,9 @@
 /**
  * GMStoreControlSurfaceController
  *
- * Owns DOM wiring for the GM Store Control surface. Store purchase/sale,
- * rollback, and inventory policy mutations stay on the GM Datapad host and
- * canonical store services.
+ * Owns GM Store Control surface wiring plus page-local tab/filter and
+ * inventory-policy editing behavior. Purchase/sale settlement and rollback still
+ * stay on the GM Datapad host and canonical store services.
  */
 
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
@@ -23,7 +23,7 @@ export class GMStoreControlSurfaceController {
     const pageElement = root.querySelector('.gm-datapad-store');
     if (!pageElement) return;
 
-    this.host._activateStoreTab(pageElement, this.host.currentTab || 'options');
+    this._activateStoreTab(pageElement, this.host.currentTab || 'options');
     this._wireTabs(pageElement, signal);
     this._wireStoreOptions(pageElement, signal);
     this._wireRollbackControls(pageElement, signal);
@@ -42,7 +42,7 @@ export class GMStoreControlSurfaceController {
         const tabId = ev.currentTarget.dataset.storeTab;
         if (!tabId) return;
         this.host.currentTab = tabId;
-        this.host._activateStoreTab(pageElement, tabId);
+        this._activateStoreTab(pageElement, tabId);
       }, { signal });
     }
   }
@@ -134,17 +134,87 @@ export class GMStoreControlSurfaceController {
 
   _wireInventoryPolicyControls(pageElement, signal) {
     for (const input of pageElement.querySelectorAll('[data-store-inventory-filter]')) {
-      input.addEventListener('input', () => this.host._filterStoreInventoryRows(pageElement), { signal });
-      input.addEventListener('change', () => this.host._filterStoreInventoryRows(pageElement), { signal });
+      input.addEventListener('input', () => this._filterStoreInventoryRows(pageElement), { signal });
+      input.addEventListener('change', () => this._filterStoreInventoryRows(pageElement), { signal });
     }
 
     for (const input of pageElement.querySelectorAll('[data-store-policy-field]')) {
       input.addEventListener('change', async (ev) => {
-        await this.host._updateStoreInventoryPolicy(ev.currentTarget);
-        this.host._filterStoreInventoryRows(pageElement);
+        await this._updateStoreInventoryPolicy(ev.currentTarget);
+        this._filterStoreInventoryRows(pageElement);
       }, { signal });
     }
   }
+
+
+  _activateStoreTab(pageElement, tabId) {
+    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
+      const active = btn.dataset.storeTab === tabId;
+      btn.classList.toggle('active', active);
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    }
+
+    for (const panel of pageElement.querySelectorAll('[data-store-tab-panel]')) {
+      const active = panel.dataset.storeTabPanel === tabId;
+      panel.classList.toggle('active', active);
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    }
+  }
+
+  _filterStoreInventoryRows(pageElement) {
+    const query = (pageElement.querySelector('[data-store-inventory-filter="search"]')?.value || '').trim().toLowerCase();
+    const type = pageElement.querySelector('[data-store-inventory-filter="type"]')?.value || '';
+    const availability = pageElement.querySelector('[data-store-inventory-filter="availability"]')?.value || '';
+    const visibility = pageElement.querySelector('[data-store-inventory-filter="visibility"]')?.value || '';
+
+    for (const row of pageElement.querySelectorAll('[data-store-inventory-row]')) {
+      const visibleCheckbox = row.querySelector('[data-store-policy-field="visible"]');
+      const availableCheckbox = row.querySelector('[data-store-policy-field="available"]');
+      const isVisible = visibleCheckbox ? visibleCheckbox.checked : row.dataset.visible === 'true';
+      const isAvailable = availableCheckbox ? availableCheckbox.checked : row.dataset.available === 'true';
+
+      const matchesQuery = !query || (row.dataset.search || '').includes(query);
+      const matchesType = !type || row.dataset.type === type;
+      const matchesAvailability = !availability || row.dataset.availability === availability;
+      const matchesVisibility = !visibility
+        || (visibility === 'visible' && isVisible)
+        || (visibility === 'hidden' && !isVisible)
+        || (visibility === 'available' && isAvailable)
+        || (visibility === 'unavailable' && !isAvailable)
+        || (visibility === 'overridden' && row.querySelector('[data-store-policy-field="overridePrice"]')?.value !== '');
+
+      row.hidden = !(matchesQuery && matchesType && matchesAvailability && matchesVisibility);
+    }
+  }
+
+  async _updateStoreInventoryPolicy(input) {
+    const itemId = input.dataset.itemId;
+    const field = input.dataset.storePolicyField;
+    if (!itemId || !field) return;
+
+    const policies = SettingsHelper.getObject('storeInventoryPolicies', {});
+    const policy = { ...(policies[itemId] || {}) };
+
+    if (['visible', 'available', 'trackQuantity', 'requiresApproval'].includes(field)) {
+      policy[field] = input.checked === true;
+    } else if (field === 'quantity' || field === 'overridePrice') {
+      const raw = String(input.value ?? '').trim();
+      policy[field] = raw === '' ? null : Math.max(0, normalizeCredits(raw));
+    } else if (field === 'notes') {
+      policy[field] = String(input.value ?? '').trim();
+    } else {
+      return;
+    }
+
+    policy.updatedAt = Date.now();
+    policy.updatedBy = game.user?.id || null;
+    policies[itemId] = policy;
+
+    await SettingsHelper.set('storeInventoryPolicies', policies);
+  }
+
 
   _wirePendingSaleControls(pageElement, signal) {
     const selector = '[data-action="approve-sale-request"], [data-action="counteroffer-sale-request"], [data-action="deny-sale-request"]';

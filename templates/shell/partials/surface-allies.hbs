@@ -97,22 +97,28 @@
     {{/if}}
 
     {{#if (eq vm.activeTab "bases")}}
-    <section class="swse-allies-directory">
+    <section class="swse-allies-directory swse-allies-bases">
       <div class="swse-allies-section-head">
         <div>
           <span class="swse-allies-kicker">TAB 3</span>
           <h3>Bases</h3>
-          <p>Safehouses, headquarters, outposts, apartments, businesses, and other non-ship holdings. Ships and vehicles stay in Shipyard.</p>
+          <p>Rules-light records for safehouses, headquarters, outposts, apartments, businesses, and other non-ship holdings. Ships and vehicles stay in Shipyard.</p>
+        </div>
+        <div class="swse-allies-section-actions">
+          <button type="button" class="swse-allies-history-toggle" data-allies-action="add-base">Add Base</button>
         </div>
       </div>
+      <div class="swse-allies-base-note">
+        These are freeform player/GM text boxes. They intentionally do not enforce costs, room rules, or construction mechanics.
+      </div>
       {{#if vm.bases.hasAny}}
-      <div class="swse-allies-record-grid">
+      <div class="swse-allies-base-list">
         {{#each vm.bases.records}}
-        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs" record=this}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-base-card.hbs" base=this}}
         {{/each}}
       </div>
       {{else}}
-      <div class="swse-allies-empty">No bases or non-ship holdings have been recorded for this profile yet.</div>
+      <div class="swse-allies-empty">No bases or non-ship holdings have been recorded for this profile yet. Use Add Base to create a text record.</div>
       {{/if}}
     </section>
     {{/if}}

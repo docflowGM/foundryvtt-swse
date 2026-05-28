@@ -14,6 +14,21 @@ import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'bases', 'organizations']);
 const COMPANION_KINDS = new Set(['follower', 'minion', 'privateer', 'beast', 'assigned-nonheroic']);
+const BASE_ACCOMMODATIONS = [
+  ['airlock', 'Airlock'],
+  ['barracks', 'Barracks / Capacity'],
+  ['commandCenter', 'Command Center'],
+  ['defenses', 'Defenses'],
+  ['hangar', 'Hangar'],
+  ['laboratory', 'Laboratory'],
+  ['medicalBay', 'Medical Bay'],
+  ['offices', 'Offices'],
+  ['reactor', 'Reactor / Energy Station'],
+  ['securityStation', 'Security Station'],
+  ['sensors', 'Sensors'],
+  ['garage', 'Garage'],
+  ['lifeSupport', 'Life Support']
+];
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -34,6 +49,16 @@ function titleCase(value) {
     .replace(/[-_]+/g, ' ')
     .replace(/\b\w/g, char => char.toUpperCase())
     .trim();
+}
+
+
+function randomId(prefix = 'allies') {
+  const id = foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
+  return `${prefix}-${String(id).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24)}`;
+}
+
+function cleanString(value) {
+  return String(value ?? '').trim();
 }
 
 function actorPortrait(actor) {
@@ -233,6 +258,49 @@ function mapRelationshipRecord(entry = {}, fallbackKind = 'record') {
     status: entry.status || entry.rank || entry.standing || 'Recorded',
     description: entry.description || entry.notes || entry.summary || '',
     meta: entry.location || entry.world || entry.scope || entry.role || ''
+  };
+}
+
+
+function normalizeBaseAccommodations(entry = {}) {
+  const source = entry.accommodations || entry.facilities || entry.features || {};
+  const out = {};
+  for (const [key] of BASE_ACCOMMODATIONS) {
+    out[key] = cleanString(source[key] ?? entry[key]);
+  }
+  return out;
+}
+
+function mapBaseRecord(entry = {}) {
+  const id = entry.id || entry.baseId || randomId('base');
+  const accommodations = normalizeBaseAccommodations(entry);
+  return {
+    id,
+    name: entry.name || entry.label || entry.title || 'Unnamed Base',
+    type: entry.type || entry.kind || entry.category || '',
+    location: entry.location || entry.world || entry.planet || entry.address || '',
+    notes: entry.notes || entry.description || entry.summary || '',
+    status: entry.status || 'Recorded',
+    accommodations,
+    accommodationFields: BASE_ACCOMMODATIONS.map(([key, label]) => ({
+      key,
+      label,
+      value: accommodations[key] || ''
+    }))
+  };
+}
+
+function normalizeBaseForStorage(data = {}) {
+  const accommodations = normalizeBaseAccommodations(data);
+  return {
+    id: data.id || randomId('base'),
+    name: cleanString(data.name) || 'Unnamed Base',
+    type: cleanString(data.type),
+    location: cleanString(data.location),
+    notes: cleanString(data.notes),
+    status: cleanString(data.status) || 'Recorded',
+    accommodations,
+    updatedAt: Date.now()
   };
 }
 
@@ -481,18 +549,23 @@ export class AlliesSurfaceService {
   }
 
   static async _buildBases(actor) {
-    const raw = [
+    const flagBases = asArray(actor?.getFlag?.(SYSTEM_ID, 'bases'));
+    const legacyBases = [
       ...asArray(actor?.system?.bases),
       ...asArray(actor?.system?.assets?.bases),
       ...asArray(actor?.flags?.swse?.bases),
-      ...asArray(actor?.getFlag?.(SYSTEM_ID, 'bases')),
       ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'base')
     ];
 
-    const records = raw
+    const merged = uniqueEntries([...flagBases, ...legacyBases])
       .filter(entry => !['ship', 'vehicle', 'starship'].includes(relationshipKind(entry)))
-      .map(entry => mapRelationshipRecord(entry, 'base'));
-    return { records, hasAny: records.length > 0 };
+      .map(entry => mapBaseRecord(entry));
+
+    return {
+      records: merged,
+      hasAny: merged.length > 0,
+      accommodationLabels: BASE_ACCOMMODATIONS.map(([key, label]) => ({ key, label }))
+    };
   }
 
   static async _buildOrganizations(actor) {
@@ -504,6 +577,40 @@ export class AlliesSurfaceService {
       ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'organization')
     ].map(entry => mapRelationshipRecord(entry, 'organization'));
     return { records, hasAny: records.length > 0 };
+  }
+
+  static async addBase(ownerActor) {
+    if (!ownerActor) return false;
+    const bases = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'bases')).map(normalizeBaseForStorage);
+    const next = normalizeBaseForStorage({
+      id: randomId('base'),
+      name: `New Base ${bases.length + 1}`,
+      type: '',
+      location: '',
+      notes: '',
+      accommodations: {}
+    });
+    await ownerActor.setFlag(SYSTEM_ID, 'bases', [...bases, next]);
+    return true;
+  }
+
+  static async saveBase(ownerActor, baseId, data = {}) {
+    if (!ownerActor || !baseId) return false;
+    const bases = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'bases')).map(normalizeBaseForStorage);
+    const normalized = normalizeBaseForStorage({ ...data, id: baseId });
+    const index = bases.findIndex(base => base.id === baseId);
+    const nextBases = index >= 0
+      ? bases.map(base => base.id === baseId ? { ...base, ...normalized } : base)
+      : [...bases, normalized];
+    await ownerActor.setFlag(SYSTEM_ID, 'bases', nextBases);
+    return true;
+  }
+
+  static async removeBase(ownerActor, baseId) {
+    if (!ownerActor || !baseId) return false;
+    const bases = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'bases')).map(normalizeBaseForStorage);
+    await ownerActor.setFlag(SYSTEM_ID, 'bases', bases.filter(base => base.id !== baseId));
+    return true;
   }
 
   static async dismissCompanion(ownerActor, actorId) {

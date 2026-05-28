@@ -372,3 +372,143 @@
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* Allies // Bases tab text-record scaffolding */
+.swse-allies-base-note {
+  margin: -4px 0 14px;
+  padding: 10px 14px;
+  border: 1px dashed color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 14px;
+  background: rgba(0, 223, 255, 0.045);
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 68%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-base-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.swse-allies-base-card {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  background: linear-gradient(180deg, rgba(7, 22, 40, 0.84), rgba(3, 10, 22, 0.92));
+  box-shadow: 0 0 24px rgba(0, 223, 255, 0.07), inset 0 0 18px rgba(0, 223, 255, 0.035);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.swse-allies-base-form {
+  display: grid;
+  gap: 14px;
+}
+
+.swse-allies-base-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 18%, transparent);
+}
+
+.swse-allies-base-card-head > div:first-child {
+  flex: 1;
+  min-width: 220px;
+}
+
+.swse-allies-base-card input,
+.swse-allies-base-card textarea {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 26%, transparent);
+  border-radius: 12px;
+  background: rgba(2, 10, 22, 0.82);
+  color: var(--swse-text, #d7f8ff);
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.swse-allies-base-card input:focus,
+.swse-allies-base-card textarea:focus {
+  outline: none;
+  border-color: var(--vapor-cyan, #00dfff);
+  box-shadow: 0 0 14px rgba(0, 223, 255, 0.14);
+}
+
+.swse-allies-base-card-head input {
+  margin-top: 5px;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-allies-base-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.swse-allies-base-actions button,
+.swse-allies-section-actions > button[data-allies-action="add-base"] {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 223, 255, 0.08);
+  color: var(--swse-text, #d7f8ff);
+  padding: 7px 11px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-base-actions button:hover,
+.swse-allies-section-actions > button[data-allies-action="add-base"]:hover {
+  background: rgba(0, 223, 255, 0.18);
+  border-color: var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-base-actions button.is-danger {
+  border-color: color-mix(in oklab, #ff5c7a 45%, transparent);
+  background: rgba(255, 92, 122, 0.08);
+}
+
+.swse-allies-base-actions button.is-danger:hover {
+  border-color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.18);
+}
+
+.swse-allies-base-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.swse-allies-base-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.swse-allies-base-grid label span {
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 62%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+}
+
+.swse-allies-base-wide {
+  grid-column: 1 / -1;
+}
+
+.swse-allies-base-accommodations {
+  display: grid;
+  gap: 10px;
+}
+
+.swse-allies-base-subhead p {
+  margin: 3px 0 0;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 64%, transparent);
+}

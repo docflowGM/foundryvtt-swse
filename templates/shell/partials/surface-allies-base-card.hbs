@@ -1,0 +1,44 @@
+<article class="swse-allies-base-card" data-base-id="{{base.id}}">
+  <form class="swse-allies-base-form" data-base-id="{{base.id}}">
+    <header class="swse-allies-base-card-head">
+      <div>
+        <span class="swse-allies-kicker">BASE RECORD</span>
+        <input type="text" name="name" value="{{base.name}}" placeholder="Base name">
+      </div>
+      <div class="swse-allies-base-actions">
+        <button type="button" data-allies-action="save-base" data-base-id="{{base.id}}">Save</button>
+        <button type="button" class="is-danger" data-allies-action="remove-base" data-base-id="{{base.id}}">Remove</button>
+      </div>
+    </header>
+
+    <div class="swse-allies-base-grid">
+      <label>
+        <span>Location</span>
+        <input type="text" name="location" value="{{base.location}}" placeholder="Planet, city, sector, coordinates, etc.">
+      </label>
+      <label>
+        <span>Base Type</span>
+        <input type="text" name="type" value="{{base.type}}" placeholder="Safehouse, headquarters, outpost, apartment, business...">
+      </label>
+      <label class="swse-allies-base-wide">
+        <span>General Notes</span>
+        <textarea name="notes" rows="3" placeholder="Freeform notes for players and GMs.">{{base.notes}}</textarea>
+      </label>
+    </div>
+
+    <section class="swse-allies-base-accommodations">
+      <div class="swse-allies-base-subhead">
+        <span class="swse-allies-kicker">ACCOMMODATIONS / FACILITIES</span>
+        <p>Rules-light text fields only. Record whatever the player and GM agree exists here.</p>
+      </div>
+      <div class="swse-allies-base-grid">
+        {{#each base.accommodationFields}}
+        <label>
+          <span>{{this.label}}</span>
+          <textarea name="accommodations.{{this.key}}" rows="2" placeholder="Describe this feature, capacity, quality, or leave blank.">{{this.value}}</textarea>
+        </label>
+        {{/each}}
+      </div>
+    </section>
+  </form>
+</article>
