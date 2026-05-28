@@ -1,0 +1,141 @@
+{{!--
+  surface-allies.hbs — Holopad Allies app.
+  Companions, Factions, Bases, and Organizations live here. Ships/vehicles are
+  deliberately excluded from Bases and remain in Shipyard. Droid companions are
+  visible here, while physical droid work routes to Garage.
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--allies swse-allies-surface"
+     data-shell-region="surface-allies"
+     data-surface-id="{{vm.id}}">
+
+  <header class="swse-allies-header">
+    <div class="swse-allies-identity">
+      <span class="swse-allies-led"></span>
+      <div>
+        <span class="swse-allies-kicker">ALLIES DATABASE</span>
+        <h2>{{vm.title}}</h2>
+        <p>{{vm.subtitle}}</p>
+      </div>
+    </div>
+    <div class="swse-allies-actor">
+      <img src="{{vm.actorImg}}" alt="{{vm.actorName}}">
+      <div>
+        <span>ACTIVE PROFILE</span>
+        <strong>{{vm.actorName}}</strong>
+      </div>
+    </div>
+  </header>
+
+  <nav class="swse-allies-tabs" aria-label="Allies sections">
+    {{#each vm.tabs}}
+    <button type="button"
+            class="swse-allies-tab {{#if this.active}}is-active{{/if}}"
+            data-allies-action="select-tab"
+            data-tab-id="{{this.id}}">
+      <span>{{this.label}}</span>
+      <b>{{this.count}}</b>
+    </button>
+    {{/each}}
+  </nav>
+
+  <main class="swse-allies-body">
+    {{#if (eq vm.activeTab "companions")}}
+    {{#if vm.companions.hasAny}}
+    <section class="swse-allies-companions">
+      <div class="swse-allies-section-head">
+        <div>
+          <span class="swse-allies-kicker">TAB 1</span>
+          <h3>Companions</h3>
+          <p>Followers, minions, and beasts controlled by this character. Droid companions are managed here, while physical droid work routes to Garage.</p>
+        </div>
+        <div class="swse-allies-section-actions">
+          <div class="swse-allies-stat-pill"><b>{{vm.companions.totalCount}}</b><span>Active/Open</span></div>
+          {{#if vm.companions.historyCount}}
+          <button type="button" class="swse-allies-history-toggle {{#if vm.showHistory}}is-active{{/if}}" data-allies-action="toggle-history">
+            {{#if vm.showHistory}}Hide Previously Hired{{else}}Show Previously Hired{{/if}}
+          </button>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="swse-allies-drop-zone">
+        GM shortcut: drag a nonheroic NPC actor here to assign it to this character's Allies.
+      </div>
+
+      <div class="swse-allies-lanes">
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-lane.hbs"
+            lane=vm.companions.followers laneId="followers" emptyText="No followers or pending follower slots."}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-lane.hbs"
+            lane=vm.companions.minions laneId="minions" emptyText="No minions or privateers linked yet."}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-lane.hbs"
+            lane=vm.companions.beasts laneId="beasts" emptyText="No beasts linked yet."}}
+      </div>
+    </section>
+    {{/if}}
+    {{/if}}
+
+    {{#if (eq vm.activeTab "factions")}}
+    <section class="swse-allies-directory">
+      <div class="swse-allies-section-head">
+        <div>
+          <span class="swse-allies-kicker">TAB 2</span>
+          <h3>Factions</h3>
+          <p>Faction affiliations, reputations, rank, obligations, and standing.</p>
+        </div>
+      </div>
+      {{#if vm.factions.hasAny}}
+      <div class="swse-allies-record-grid">
+        {{#each vm.factions.records}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs" record=this}}
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="swse-allies-empty">No faction records have been attached to this profile yet.</div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if (eq vm.activeTab "bases")}}
+    <section class="swse-allies-directory">
+      <div class="swse-allies-section-head">
+        <div>
+          <span class="swse-allies-kicker">TAB 3</span>
+          <h3>Bases</h3>
+          <p>Safehouses, headquarters, outposts, apartments, businesses, and other non-ship holdings. Ships and vehicles stay in Shipyard.</p>
+        </div>
+      </div>
+      {{#if vm.bases.hasAny}}
+      <div class="swse-allies-record-grid">
+        {{#each vm.bases.records}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs" record=this}}
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="swse-allies-empty">No bases or non-ship holdings have been recorded for this profile yet.</div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if (eq vm.activeTab "organizations")}}
+    <section class="swse-allies-directory">
+      <div class="swse-allies-section-head">
+        <div>
+          <span class="swse-allies-kicker">TAB 4</span>
+          <h3>Organizations</h3>
+          <p>Guilds, crews, cells, companies, syndicates, temples, agencies, and other structured groups.</p>
+        </div>
+      </div>
+      {{#if vm.organizations.hasAny}}
+      <div class="swse-allies-record-grid">
+        {{#each vm.organizations.records}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs" record=this}}
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="swse-allies-empty">No organization records have been attached to this profile yet.</div>
+      {{/if}}
+    </section>
+    {{/if}}
+  </main>
+</div>

@@ -44,6 +44,8 @@ export class ShellSurfaceRegistry {
         return this._buildMessengerSurfaceVm(actor, surfaceOptions);
       case 'games':
         return this._buildGamesSurfaceVm(actor, surfaceOptions);
+      case 'allies':
+        return this._buildAlliesSurfaceVm(actor, surfaceOptions);
       case 'store':
         return this._buildStoreSurfaceVm(actor, surfaceOptions);
       case 'workbench':
@@ -172,6 +174,18 @@ export class ShellSurfaceRegistry {
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Games surface VM failed:', err);
       return { id: 'games', title: 'Holopad Games', error: err.message };
+    }
+  }
+
+  static async _buildAlliesSurfaceVm(actor, options) {
+    try {
+      const { AlliesSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceService.js'
+      );
+      return await AlliesSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Allies surface VM failed:', err);
+      return { id: 'allies', title: 'Allies', error: err.message };
     }
   }
 

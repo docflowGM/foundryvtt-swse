@@ -815,7 +815,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             }
         }
 
-        return Array.from(ids).map(id => game.actors.get(id)).filter(Boolean);
+        return Array.from(ids)
+            .map(id => game.actors.get(id))
+            .filter(Boolean)
+            .filter(follower => follower.getFlag?.('foundryvtt-swse', 'dismissedAlly') !== true && follower.flags?.swse?.follower?.active !== false);
     }
 
     /**
@@ -1065,33 +1068,39 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * Called from level-up hooks to sync follower stats
      * @param {Actor} owner - The owner actor
      */
-    static async updateFollowersForLevelUp(owner) {
+    static async updateFollowerForOwnerLevel(owner, follower) {
+        if (!owner || !follower) return false;
+        if (follower.getFlag?.('foundryvtt-swse', 'dismissedAlly') === true || follower.flags?.swse?.follower?.active === false) return false;
+
         const { deriveFollowerStateForApply } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-deriver.js');
-        const followers = this.getFollowers(owner);
         const ownerLevel = getHeroicLevel(owner) || 1;
+        const isFollower = follower.system?.isFollower === true
+            || follower.system?.progression?.isFollower === true
+            || follower.flags?.swse?.follower?.isFollower === true
+            || follower.getFlag?.('foundryvtt-swse', 'isFollower') === true;
+        if (!isFollower) return false;
 
+        const templateType = follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType;
+        const speciesName = follower.system?.race || follower.system?.species?.name || follower.name;
+        const persistentChoices = follower.system?.progression?.followerChoices || {};
+        const followerState = await deriveFollowerStateForApply(ownerLevel, speciesName, templateType, persistentChoices);
+        await this.updateFollowerFromMutation(follower, {
+            ownerActorId: owner.id,
+            speciesName,
+            templateType,
+            persistentChoices,
+            followerState,
+            targetHeroicLevel: ownerLevel
+        });
+        swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to owner heroic level ${ownerLevel}`);
+        return true;
+    }
+
+    static async updateFollowersForLevelUp(owner) {
+        const followers = this.getFollowers(owner);
         for (const follower of followers) {
-            const isFollower = follower.system?.isFollower === true
-                || follower.system?.progression?.isFollower === true
-                || follower.flags?.swse?.follower?.isFollower === true
-                || follower.getFlag?.('foundryvtt-swse', 'isFollower') === true;
-            if (!isFollower) continue;
-
-            const templateType = follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType;
-            const speciesName = follower.system?.race || follower.system?.species?.name || follower.name;
-            const persistentChoices = follower.system?.progression?.followerChoices || {};
-
             try {
-                const followerState = await deriveFollowerStateForApply(ownerLevel, speciesName, templateType, persistentChoices);
-                await this.updateFollowerFromMutation(follower, {
-                    ownerActorId: owner.id,
-                    speciesName,
-                    templateType,
-                    persistentChoices,
-                    followerState,
-                    targetHeroicLevel: ownerLevel
-                });
-                swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to owner heroic level ${ownerLevel}`);
+                await this.updateFollowerForOwnerLevel(owner, follower);
             } catch (err) {
                 swseLogger.warn(`FollowerCreator: Could not update follower "${follower.name}" for level-up:`, err);
             }

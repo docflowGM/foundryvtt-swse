@@ -30,6 +30,7 @@ import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shel
 import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
 import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
+import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
@@ -841,6 +842,12 @@ export class SWSEV2CharacterSheet extends
       this._gamesSurfaceController.attach(root);
     } else {
       this._gamesSurfaceController?.destroy?.();
+    }
+    if (this._shellSurface === 'allies') {
+      this._alliesSurfaceController ??= new AlliesSurfaceController(this, this.actor);
+      this._alliesSurfaceController.attach(root);
+    } else {
+      this._alliesSurfaceController?.destroy?.();
     }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);
@@ -1925,6 +1932,8 @@ export class SWSEV2CharacterSheet extends
         .then(({ CustomizationSurfaceAdapter }) => CustomizationSurfaceAdapter.destroy(this.actor.id))
         .catch(() => {});
     }
+
+    this._alliesSurfaceController?.destroy?.();
 
     return super._onClose(options);
   }

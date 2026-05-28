@@ -162,6 +162,7 @@ export class MinionCreator {
     return Array.from(ids)
       .map(id => game.actors.get(id))
       .filter(Boolean)
+      .filter(actor => actor.getFlag?.(SYSTEM_ID, 'dismissedAlly') !== true && actor.flags?.swse?.minion?.active !== false)
       .filter(actor => !kindFilter || (actor.system?.npcProfile?.kind || actor.flags?.swse?.minion?.kind) === kindFilter);
   }
 
@@ -423,52 +424,59 @@ export class MinionCreator {
     }
   }
 
+  static async updateMinionForOwnerLevel(ownerActor, minion) {
+    if (!ownerActor || !minion) return false;
+    if (minion.getFlag?.(SYSTEM_ID, 'dismissedAlly') === true || minion.flags?.swse?.minion?.active === false) return false;
+    const slot = (ownerActor.getFlag(SYSTEM_ID, 'followerSlots') || [])
+      .find(s => s.createdActorId === minion.id);
+    if (!slot) return false;
+    const level = _computeMinionLevel(ownerActor, slot);
+    const conMod = Math.floor((((minion?.system?.attributes?.con?.base ?? minion?.system?.abilities?.con?.base ?? 10) || 10) - 10) / 2);
+    const hpMax = _nonheroicHp(level, conMod);
+    const existingNonheroicClass = Array.from(minion.items || []).find(item =>
+      item.type === 'class' && (item.system?.isNonheroic === true || item.name === 'Nonheroic')
+    );
+    if (existingNonheroicClass) {
+      await ActorEngine.updateEmbeddedDocuments(minion, 'Item', [{
+        _id: existingNonheroicClass.id,
+        'system.level': level,
+        'system.classId': 'nonheroic',
+        'system.isNonheroic': true
+      }], { source: 'MinionCreator.updateMinionForOwnerLevel.classItem' });
+    } else {
+      await ActorEngine.createEmbeddedDocuments(minion, 'Item', [_nonheroicClassItem(level)], {
+        source: 'MinionCreator.updateMinionForOwnerLevel.createClassItem'
+      });
+    }
+
+    await ActorEngine.updateActor(minion, {
+      'system.level': level,
+      'system.hp.max': hpMax,
+      'system.hp.value': Math.min(Number(minion.system?.hp?.value) || hpMax, hpMax),
+      'system.baseAttackBonus': _nonheroicBab(level),
+      'system.bab': _nonheroicBab(level),
+      'system.class': `Nonheroic ${level}`,
+      'system.className': `Nonheroic ${level}`,
+      'system.progression.classLevels': _nonheroicClassLevels(level),
+      'system.progression.minionKind': _minionKindFromSlot(slot),
+      'system.progression.levelFormula': 'owner-heroic-level-minus-2',
+      'system.progression.isMinion': true,
+      'system.isMinion': true,
+      'system.npcProfile.minion.nonheroicLevel': level,
+      'system.npcProfile.minion.levelOffset': Number(slot.minionLevelOffset ?? (getFollowerTalentConfig(slot.talentName) || {}).minionLevelOffset ?? -2) || -2,
+      'flags.swse.minion.isMinion': true,
+      [`flags.${SYSTEM_ID}.isMinion`]: true,
+      [`flags.${SYSTEM_ID}.npcLevelUp.mode`]: 'owner-sync',
+      [`flags.${SYSTEM_ID}.npcLevelUp.track`]: 'nonheroic',
+      [`flags.${SYSTEM_ID}.npcLevelUp.manualLevelUp`]: false
+    }, { source: 'MinionCreator.updateMinionForOwnerLevel', isRecomputeHPCall: true });
+    return true;
+  }
+
   static async updateMinionsForOwnerLevel(ownerActor) {
     const minions = this.getMinions(ownerActor);
     for (const minion of minions) {
-      const slot = (ownerActor.getFlag(SYSTEM_ID, 'followerSlots') || [])
-        .find(s => s.createdActorId === minion.id);
-      if (!slot) continue;
-      const level = _computeMinionLevel(ownerActor, slot);
-      const conMod = Math.floor((((minion?.system?.attributes?.con?.base ?? minion?.system?.abilities?.con?.base ?? 10) || 10) - 10) / 2);
-      const hpMax = _nonheroicHp(level, conMod);
-      const existingNonheroicClass = Array.from(minion.items || []).find(item =>
-        item.type === 'class' && (item.system?.isNonheroic === true || item.name === 'Nonheroic')
-      );
-      if (existingNonheroicClass) {
-        await ActorEngine.updateEmbeddedDocuments(minion, 'Item', [{
-          _id: existingNonheroicClass.id,
-          'system.level': level,
-          'system.classId': 'nonheroic',
-          'system.isNonheroic': true
-        }], { source: 'MinionCreator.updateMinionsForOwnerLevel.classItem' });
-      } else {
-        await ActorEngine.createEmbeddedDocuments(minion, 'Item', [_nonheroicClassItem(level)], {
-          source: 'MinionCreator.updateMinionsForOwnerLevel.createClassItem'
-        });
-      }
-
-      await ActorEngine.updateActor(minion, {
-        'system.level': level,
-        'system.hp.max': hpMax,
-        'system.hp.value': Math.min(Number(minion.system?.hp?.value) || hpMax, hpMax),
-        'system.baseAttackBonus': _nonheroicBab(level),
-        'system.bab': _nonheroicBab(level),
-        'system.class': `Nonheroic ${level}`,
-        'system.className': `Nonheroic ${level}`,
-        'system.progression.classLevels': _nonheroicClassLevels(level),
-        'system.progression.minionKind': _minionKindFromSlot(slot),
-        'system.progression.levelFormula': 'owner-heroic-level-minus-2',
-        'system.progression.isMinion': true,
-        'system.isMinion': true,
-        'system.npcProfile.minion.nonheroicLevel': level,
-        'system.npcProfile.minion.levelOffset': Number(slot.minionLevelOffset ?? (getFollowerTalentConfig(slot.talentName) || {}).minionLevelOffset ?? -2) || -2,
-        'flags.swse.minion.isMinion': true,
-        [`flags.${SYSTEM_ID}.isMinion`]: true,
-        [`flags.${SYSTEM_ID}.npcLevelUp.mode`]: 'owner-sync',
-        [`flags.${SYSTEM_ID}.npcLevelUp.track`]: 'nonheroic',
-        [`flags.${SYSTEM_ID}.npcLevelUp.manualLevelUp`]: false
-      }, { source: 'MinionCreator.updateMinionsForOwnerLevel', isRecomputeHPCall: true });
+      await this.updateMinionForOwnerLevel(ownerActor, minion);
     }
   }
 }
