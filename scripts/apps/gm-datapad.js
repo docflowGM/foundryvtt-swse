@@ -25,8 +25,8 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
-import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
 import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
+import { GMSurfaceControllerRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/controllers/GMSurfaceControllerRegistry.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetMessengerService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js";
@@ -116,8 +116,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.approvalEditMode = false;
     this.approvalDenyMode = false;
 
-    // Shared surface controllers
-    this._settingsSurfaceController = null;
+    // Surface controllers are routed through GMSurfaceControllerRegistry.
 
     // Frameless shared holopad shell window state.
     this._gmTabletExpanded = false;
@@ -1005,22 +1004,15 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
-    // Wire workspace actor clicks
-    root.querySelectorAll('[data-open-actor]').forEach(btn => {
-      btn.addEventListener('click', (ev) => {
-        const actorId = ev.currentTarget.dataset.openActor;
-        const actor = game.actors.get(actorId);
-        if (actor) {
-          actor.sheet.render(true);
-        }
-      });
+    // Let extracted surface controllers own page-local DOM wiring when available.
+    const handledBySurfaceController = await GMSurfaceControllerRegistry.bind({
+      surfaceId: this.currentPage,
+      host: this,
+      root
     });
+    if (handledBySurfaceController) return;
 
-    if (this.currentPage !== 'settings') {
-      this._settingsSurfaceController?.destroy?.();
-    }
-
-    // Wire page-specific events based on current page
+    // Legacy page-specific wiring stays here until each surface receives a controller.
     if (this.currentPage === 'bulletin') {
       await this._wireBulletinEvents(root);
     } else if (this.currentPage === 'jobs') {
@@ -1029,50 +1021,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireTradeConsoleEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
-    } else if (this.currentPage === 'house-rules') {
-      await this._wireHouseRulesEvents(root);
     } else if (this.currentPage === 'approvals') {
       await this._wireApprovalsEvents(root);
     } else if (this.currentPage === 'healing') {
       await this._wireHealingEvents(root);
-    } else if (this.currentPage === 'settings') {
-      this._wireSettingsEvents(root);
     }
-  }
-
-  /** Wire shared settings surface events in GM context. */
-  _wireSettingsEvents(root) {
-    this._settingsSurfaceController ??= new SettingsSurfaceController(this, {
-      actor: null,
-      preferActor: false,
-      persistActorTheme: false,
-      logger: SWSELogger
-    });
-    this._settingsSurfaceController.attach(root);
-    this._wireGamePolicySettings(root);
-  }
-
-  _wireGamePolicySettings(root) {
-    const fields = root.querySelectorAll('[data-game-policy-field]');
-    fields.forEach((field) => {
-      field.addEventListener('change', async (event) => {
-        const input = event.currentTarget;
-        const key = input.dataset.gamePolicyField;
-        if (!key) return;
-        let value;
-        if (input.type === 'checkbox') value = input.checked === true;
-        else if (input.type === 'number') value = Number(input.value || 0);
-        else value = input.value;
-        try {
-          await game.settings.set(this.NS, key, value);
-          ui?.notifications?.info?.('Game policy updated.');
-          await this.render(false);
-        } catch (err) {
-          SWSELogger.error('[GMDatapad] Failed to update game policy setting:', err);
-          ui?.notifications?.error?.(`Game policy update failed: ${err.message}`);
-        }
-      });
-    });
   }
 
   async _wireTradeConsoleEvents(root) {
@@ -2800,40 +2753,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     policies[itemId] = policy;
 
     await SettingsHelper.set('storeInventoryPolicies', policies);
-  }
-
-  /**
-   * Wire house rules page events
-   */
-  async _wireHouseRulesEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-house-rules');
-    if (!pageElement) return;
-
-    // Wire checkbox toggles for all rules
-    pageElement.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', async (event) => {
-        const key = event.target.dataset.ruleKey;
-        const checked = event.target.checked;
-
-        try {
-          await HouseRuleService.set(key, checked);
-          SWSELogger.info(`[GMDatapad House Rules] Updated ${key} = ${checked}`);
-        } catch (err) {
-          SWSELogger.error(`[GMDatapad House Rules] Failed to update ${key}:`, err);
-          event.target.checked = !checked;
-        }
-      });
-    });
-
-    // Animate category hover
-    pageElement.querySelectorAll('.rule-category').forEach(category => {
-      category.addEventListener('mouseenter', (event) => {
-        event.currentTarget.classList.add('hovered');
-      });
-      category.addEventListener('mouseleave', (event) => {
-        event.currentTarget.classList.remove('hovered');
-      });
-    });
   }
 
   /**
