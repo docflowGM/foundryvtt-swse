@@ -7,6 +7,7 @@
  */
 
 import { GMApprovalsSurfaceController } from './GMApprovalsSurfaceController.js';
+import { GMBulletinSurfaceController } from './GMBulletinSurfaceController.js';
 import { GMHealingSurfaceController } from './GMHealingSurfaceController.js';
 import { GMJobBoardSurfaceController } from './GMJobBoardSurfaceController.js';
 import { GMStoreControlSurfaceController } from './GMStoreControlSurfaceController.js';
@@ -17,6 +18,7 @@ import { GMWorkspaceSurfaceController } from './GMWorkspaceSurfaceController.js'
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
+  bulletin: GMBulletinSurfaceController,
   healing: GMHealingSurfaceController,
   jobs: GMJobBoardSurfaceController,
   'house-rules': GMHouseRulesSurfaceController,
