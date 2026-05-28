@@ -1,4 +1,8 @@
-{{!--
-  GM Datapad error surface partial scaffold.
-  Phase 0 registers this path only; gm-datapad.hbs remains the active host until Phase 1 moves markup.
---}}
+{{!-- GM Datapad error surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    <div class="gm-datapad-page gm-datapad-error">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+        <h2>Unknown Page</h2>
+      </div>
+      <p class="error-message">Page "{{currentPage}}" not found</p>
+    </div>

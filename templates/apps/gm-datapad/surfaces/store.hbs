@@ -1,4 +1,415 @@
-{{!--
-  GM Datapad store surface partial scaffold.
-  Phase 0 registers this path only; gm-datapad.hbs remains the active host until Phase 1 moves markup.
---}}
+{{!-- GM Datapad store surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    <div class="gm-datapad-page gm-datapad-store gm-store-control-console swse-store-ui swse-ui-shell swse-store-shell flexcol">
+      <div class="page-header gm-app-header gm-store-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+        <div class="gm-app-header-copy">
+          <span class="gm-command-eyebrow">COMMERCE COMMAND</span>
+          <h2>{{pageTitle}}</h2>
+          <p class="page-subtitle">{{pageDescription}}</p>
+        </div>
+        <div class="gm-store-status-strip" aria-label="Store command status">
+          <span class="{{#if storeOpen}}online{{else}}offline{{/if}}"><strong>{{#if storeOpen}}OPEN{{else}}CLOSED{{/if}}</strong>Store</span>
+          <span><strong>{{transactions.length}}</strong>Transactions</span>
+          <span><strong>{{storeApprovalCounts.total}}</strong>Approvals</span>
+          <span><strong>{{inventoryStats.total}}</strong>Inventory</span>
+        </div>
+      </div>
+
+      <nav class="gm-store-tabs swse-ui-tabs swse-ui-frame" aria-label="Store control tabs">
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab="options" aria-selected="{{#if (eq currentTab 'options')}}true{{else}}false{{/if}}">Store Options</button>
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab="transactions" aria-selected="{{#if (eq currentTab 'transactions')}}true{{else}}false{{/if}}">Transactions</button>
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab="approvals" aria-selected="{{#if (eq currentTab 'approvals')}}true{{else}}false{{/if}}">Approvals</button>
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab="inventory" aria-selected="{{#if (eq currentTab 'inventory')}}true{{else}}false{{/if}}">Inventory</button>
+      </nav>
+
+      <div class="gm-store-tab-content swse-ui-panel">
+
+        {{!-- TAB 1: STORE OPTIONS --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab-panel="options" {{#unless (eq currentTab 'options')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">STORE OPTIONS</span>
+              <h3>Market Policy</h3>
+              <p>Set the current shop posture, price environment, availability gates, and sale rules.</p>
+            </div>
+          </div>
+
+          <div class="gm-store-options-grid">
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-power-off"></i>
+                <div>
+                  <h4>Store Status</h4>
+                  <p>Controls whether players can buy from the store.</p>
+                </div>
+              </header>
+              <label class="gm-store-toggle-row">
+                <input type="checkbox" name="storeOpen" {{#if storeOpen}}checked{{/if}}>
+                <span>Store Open</span>
+              </label>
+              {{#unless storeOpen}}
+                <p class="gm-store-warning">Purchases are closed. GM controls remain available.</p>
+              {{/unless}}
+            </article>
+
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-tags"></i>
+                <div>
+                  <h4>Pricing</h4>
+                  <p>Markup and discount feed the v2 pricing engine.</p>
+                </div>
+              </header>
+              <label class="gm-store-slider-row">
+                <span>Markup</span>
+                <input type="range" name="storeMarkup" min="0" max="200" step="5" value="{{storeMarkup}}">
+                <strong data-store-markup-value>{{storeMarkup}}%</strong>
+              </label>
+              <label class="gm-store-slider-row">
+                <span>Discount</span>
+                <input type="range" name="storeDiscount" min="0" max="90" step="5" value="{{storeDiscount}}">
+                <strong data-store-discount-value>{{storeDiscount}}%</strong>
+              </label>
+              <p class="gm-store-note">Legacy buy modifier is mirrored from markup for older store surfaces.</p>
+            </article>
+
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-key"></i>
+                <div>
+                  <h4>Availability Gates</h4>
+                  <p>Global visibility by normalized store availability.</p>
+                </div>
+              </header>
+              <div class="gm-store-check-grid">
+                <label><input type="checkbox" name="availability-standard" {{#if visibleRarities.standard}}checked{{/if}}> Standard</label>
+                <label><input type="checkbox" name="availability-licensed" {{#if visibleRarities.licensed}}checked{{/if}}> Licensed</label>
+                <label><input type="checkbox" name="availability-rare" {{#if visibleRarities.rare}}checked{{/if}}> Rare</label>
+                <label><input type="checkbox" name="availability-restricted" {{#if visibleRarities.restricted}}checked{{/if}}> Restricted</label>
+                <label><input type="checkbox" name="availability-military" {{#if visibleRarities.military}}checked{{/if}}> Military</label>
+                <label><input type="checkbox" name="availability-illegal" {{#if visibleRarities.illegal}}checked{{/if}}> Illegal</label>
+              </div>
+            </article>
+
+            <article class="gm-command-card gm-store-option-card">
+              <header>
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <div>
+                  <h4>Category Access</h4>
+                  <p>Show or hide major inventory departments globally.</p>
+                </div>
+              </header>
+              <div class="gm-store-check-grid">
+                <label><input type="checkbox" name="type-weapons" {{#if visibleTypes.weapons}}checked{{/if}}> Weapons</label>
+                <label><input type="checkbox" name="type-armor" {{#if visibleTypes.armor}}checked{{/if}}> Armor</label>
+                <label><input type="checkbox" name="type-gear" {{#if visibleTypes.gear}}checked{{/if}}> Gear</label>
+                <label><input type="checkbox" name="type-droids" {{#if visibleTypes.droids}}checked{{/if}}> Droids</label>
+                <label><input type="checkbox" name="type-vehicles" {{#if visibleTypes.vehicles}}checked{{/if}}> Vehicles</label>
+              </div>
+            </article>
+
+            <article class="gm-command-card gm-store-option-card gm-store-option-card--wide">
+              <header>
+                <i class="fa-solid fa-hand-holding-credit-card"></i>
+                <div>
+                  <h4>Selling Rules</h4>
+                  <p>Controls player sale requests and automatic resale valuation.</p>
+                </div>
+              </header>
+              <div class="gm-store-selling-grid">
+                <label class="gm-store-toggle-row">
+                  <input type="checkbox" name="autoAcceptSelling" {{#if autoAcceptSelling}}checked{{/if}}>
+                  <span>Automatically accept item sales</span>
+                </label>
+                <label class="gm-store-slider-row {{#unless autoAcceptSelling}}disabled{{/unless}}">
+                  <span>Automatic Sale Value</span>
+                  <input type="range" name="autoSalePercent" min="10" max="100" step="5" value="{{autoSalePercent}}" {{#unless autoAcceptSelling}}disabled{{/unless}}>
+                  <strong data-auto-sale-value>{{autoSalePercent}}%</strong>
+                </label>
+                <label class="gm-store-toggle-row">
+                  <input type="checkbox" name="disallowAutoSellNoPrice" {{#if disallowAutoSellNoPrice}}checked{{/if}}>
+                  <span>Disallow auto-selling items with no base price</span>
+                </label>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {{!-- TAB 2: TRANSACTIONS LEDGER --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab-panel="transactions" {{#unless (eq currentTab 'transactions')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">TRANSACTIONS</span>
+              <h3>Sales History</h3>
+              <p>TransactionEngine ledger view: audit who bought what, credit impact, status, rollback state, and GM corrections.</p>
+            </div>
+            <div class="gm-store-toolbar">
+              <select class="swse-ui-input" data-store-transaction-filter="actor">
+                <option value="">All actors</option>
+                {{#each actors}}
+                  <option value="{{this.id}}">{{this.name}}</option>
+                {{/each}}
+              </select>
+              <select class="swse-ui-input" data-store-transaction-filter="status">
+                <option value="">All statuses</option>
+                <option value="Success">Success</option>
+                <option value="Failed">Failed</option>
+                <option value="Rolled Back">Rolled Back</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+          </div>
+
+          {{#if transactions.length}}
+            <div class="gm-store-table-wrap">
+              <table class="gm-store-table transactions-table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Actor</th>
+                    <th>Type</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Credit Impact</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                    <th>Source</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each transactions}}
+                    <tr data-index="{{@index}}" data-actor-id="{{this.actorId}}" data-status="{{this.status}}">
+                      <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
+                      <td>{{this.actor}}</td>
+                      <td><span class="type-badge {{lowercase this.type}}">{{this.type}}</span></td>
+                      <td>{{this.item}}</td>
+                      <td>{{this.quantity}}</td>
+                      <td class="amount {{#if (gt this.amount 0)}}positive{{else}}negative{{/if}}">{{#if (gt this.amount 0)}}+{{/if}}{{this.amount}} cr</td>
+                      <td class="gm-store-balance-cell">{{this.balanceDisplay}}</td>
+                      <td><span class="gm-store-status-chip">{{this.status}}</span></td>
+                      <td>{{#if this.reason}}{{this.reason}}{{else}}—{{/if}}</td>
+                      <td><span class="source-badge">{{this.source}}</span></td>
+                      <td>
+                        {{#if this.canRollback}}
+                          <button class="action-btn swse-ui-button" data-action="rollback-transaction" data-index="{{@index}}" title="Rollback through TransactionEngine, remove safe owned items, and restore tracked stock.">Rollback</button>
+                        {{else}}
+                          {{#if this.rolledBackByTransactionId}}
+                            <span class="gm-store-muted-action">Rolled back</span>
+                          {{else}}
+                            <span class="gm-store-muted-action">Ledger only</span>
+                          {{/if}}
+                        {{/if}}
+                      </td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          {{else}}
+            <p class="empty-state">No store transactions have been recorded.</p>
+          {{/if}}
+        </section>
+
+        {{!-- TAB 3: COMMERCE APPROVALS --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab-panel="approvals" {{#unless (eq currentTab 'approvals')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">APPROVALS</span>
+              <h3>Commerce Requests</h3>
+              <p>Sale, haggle, restricted purchase, and custom acquisition requests that touch the store economy.</p>
+            </div>
+            <div class="gm-store-status-strip gm-store-status-strip--compact">
+              <span><strong>{{storeApprovalCounts.pendingSales}}</strong>Sales</span>
+              <span><strong>{{storeApprovalCounts.customPurchases}}</strong>Custom Assets</span>
+            </div>
+          </div>
+
+          <div class="gm-store-approval-grid">
+            <article class="gm-command-card">
+              <header class="gm-store-card-header">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <div>
+                  <h4>Pending Sales / Haggles</h4>
+                  <p>Player sell and negotiation requests belong here.</p>
+                </div>
+              </header>
+              {{#if pendingSales.length}}
+                <div class="gm-store-approval-list gm-store-sale-request-list">
+                  {{#each pendingSales}}
+                    <div class="gm-store-approval-card gm-store-sale-request-card" data-sale-request-id="{{this.id}}">
+                      <div class="gm-store-sale-request-main">
+                        <div>
+                          <span class="gm-command-eyebrow">{{this.type}} REQUEST</span>
+                          <strong>{{this.item}}</strong>
+                          <span>{{this.actor}} - {{this.submittedDisplay}}</span>
+                        </div>
+                        <span class="gm-store-status-chip {{#if this.warning}}warn{{/if}}">{{#if this.warning}}Needs Review{{else}}Pending{{/if}}</span>
+                      </div>
+
+                      <div class="gm-store-sale-request-grid">
+                        <div>
+                          <span>Base Price</span>
+                          <strong>{{this.basePriceDisplay}}</strong>
+                        </div>
+                        <div>
+                          <span>Suggested Offer</span>
+                          <strong>{{this.suggestedPriceDisplay}}</strong>
+                        </div>
+                        <div>
+                          <span>Requested / Default</span>
+                          <strong>{{this.requestedPriceDisplay}}</strong>
+                        </div>
+                      </div>
+
+                      {{#if this.warning}}
+                        <p class="gm-store-warning gm-store-sale-warning">{{this.warning}}</p>
+                      {{/if}}
+
+                      <div class="gm-store-sale-controls">
+                        <label>
+                          <span>GM Amount</span>
+                          <input type="number" min="0" step="1" class="swse-ui-input" data-sale-custom-amount value="{{#if this.defaultAmount}}{{this.defaultAmount}}{{/if}}" placeholder="Set offer">
+                        </label>
+                        <label>
+                          <span>GM Note / Denial Reason</span>
+                          <textarea class="swse-ui-input" data-sale-reason rows="2" placeholder="Optional note for approval; denial reason if denied."></textarea>
+                        </label>
+                      </div>
+
+                      <div class="gm-store-sale-actions">
+                        {{#if this.canApprove}}
+                          <button type="button" class="swse-ui-button" data-action="approve-sale-request" data-request-id="{{this.id}}" data-default-amount="{{this.defaultAmount}}">Approve Suggested</button>
+                        {{else}}
+                          <button type="button" class="swse-ui-button" data-action="approve-sale-request" data-request-id="{{this.id}}">Approve Amount</button>
+                        {{/if}}
+                        <button type="button" class="swse-ui-button secondary" data-action="counteroffer-sale-request" data-request-id="{{this.id}}">Approve Custom Amount</button>
+                        <button type="button" class="swse-ui-button danger" data-action="deny-sale-request" data-request-id="{{this.id}}">Deny</button>
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+              {{else}}
+                <p class="gm-store-empty-note">No sale or haggle requests are currently queued.</p>
+              {{/if}}
+            </article>
+
+            <article class="gm-command-card">
+              <header class="gm-store-card-header">
+                <i class="fa-solid fa-robot"></i>
+                <div>
+                  <h4>Custom Droid / Ship Requests</h4>
+                  <p>Full review is handled by the GM Approvals app.</p>
+                </div>
+              </header>
+              {{#if pendingApprovals.length}}
+                <div class="gm-store-approval-list">
+                  {{#each pendingApprovals}}
+                    <div class="gm-store-approval-card">
+                      <strong>{{this.draftData.name}}</strong>
+                      <span>{{this.ownerActorName}} - {{capitalize this.type}}</span>
+                      <em>{{this.costCredits}} cr</em>
+                    </div>
+                  {{/each}}
+                </div>
+                <button type="button" class="swse-ui-button" data-nav-to="approvals">Open Full Approval Review</button>
+              {{else}}
+                <p class="gm-store-empty-note">No custom droid or vehicle purchases are queued.</p>
+              {{/if}}
+            </article>
+          </div>
+        </section>
+
+        {{!-- TAB 4: INVENTORY --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab-panel="inventory" {{#unless (eq currentTab 'inventory')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">INVENTORY</span>
+              <h3>Store Inventory Policy</h3>
+              <p>Soft-ban, show, hide, quantity-limit, require approval, or override player-facing price per item.</p>
+            </div>
+            <div class="gm-store-status-strip gm-store-status-strip--compact">
+              <span><strong>{{inventoryStats.visible}}</strong>Visible</span>
+              <span><strong>{{inventoryStats.available}}</strong>Available</span>
+              <span><strong>{{inventoryStats.requiresApproval}}</strong>Approval</span>
+              <span><strong>{{inventoryStats.overrides}}</strong>Price Overrides</span>
+            </div>
+          </div>
+
+          {{#if inventoryLoadError}}
+            <p class="gm-store-warning">Inventory index could not be loaded: {{inventoryLoadError}}</p>
+          {{else}}
+            <div class="gm-store-toolbar gm-store-inventory-toolbar">
+              <input type="search" class="swse-ui-input" data-store-inventory-filter="search" placeholder="Search inventory...">
+              <select class="swse-ui-input" data-store-inventory-filter="type">
+                <option value="">All types</option>
+                {{#each typeFilters}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                {{/each}}
+              </select>
+              <select class="swse-ui-input" data-store-inventory-filter="availability">
+                <option value="">All availability</option>
+                {{#each availabilityFilters}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                {{/each}}
+              </select>
+              <select class="swse-ui-input" data-store-inventory-filter="visibility">
+                <option value="">All policies</option>
+                <option value="visible">Visible</option>
+                <option value="hidden">Hidden</option>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+                <option value="overridden">Price override</option>
+              </select>
+            </div>
+
+            <div class="gm-store-table-wrap gm-store-inventory-table-wrap">
+              <table class="gm-store-table gm-store-inventory-table">
+                <thead>
+                  <tr>
+                    <th>Show</th>
+                    <th>Buy</th>
+                    <th>Qty</th>
+                    <th>Approval</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Availability</th>
+                    <th>Base Cost</th>
+                    <th>Final Cost</th>
+                    <th>GM Price Override</th>
+                    <th>Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each inventoryRows}}
+                    <tr data-store-inventory-row data-item-id="{{this.id}}" data-search="{{this.searchText}}" data-type="{{this.type}}" data-availability="{{this.availabilityKey}}" data-visible="{{this.visible}}" data-available="{{this.available}}">
+                      <td><input type="checkbox" data-store-policy-field="visible" data-item-id="{{this.id}}" {{#if this.visible}}checked{{/if}} title="Show this item to players."></td>
+                      <td><input type="checkbox" data-store-policy-field="available" data-item-id="{{this.id}}" {{#if this.available}}checked{{/if}} title="Allow this item to be bought."></td>
+                      <td class="gm-store-quantity-cell">
+                        <label><input type="checkbox" data-store-policy-field="trackQuantity" data-item-id="{{this.id}}" {{#if this.trackQuantity}}checked{{/if}} title="Track finite stock."> Track</label>
+                        <input type="number" min="0" step="1" data-store-policy-field="quantity" data-item-id="{{this.id}}" value="{{this.quantity}}" placeholder="∞" title="Finite quantity available. Empty means unlimited.">
+                      </td>
+                      <td><input type="checkbox" data-store-policy-field="requiresApproval" data-item-id="{{this.id}}" {{#if this.requiresApproval}}checked{{/if}} title="Require GM approval before purchase."></td>
+                      <td><strong>{{this.name}}</strong></td>
+                      <td>{{this.typeLabel}}</td>
+                      <td>{{this.category}} / {{this.subcategory}}</td>
+                      <td><span class="gm-store-status-chip">{{this.availabilityLabel}}</span></td>
+                      <td>{{this.baseCostDisplay}}</td>
+                      <td>{{this.finalCostDisplay}}</td>
+                      <td><input type="number" min="0" step="1" class="gm-store-price-override" data-store-policy-field="overridePrice" data-item-id="{{this.id}}" value="{{this.overridePriceDisplay}}" placeholder="Default" title="Arbitrary GM sale price override. Saved now; player-store enforcement comes in the policy enforcement phase."></td>
+                      <td>{{this.source}}</td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          {{/if}}
+        </section>
+
+
+      </div>
+    </div>
+
+    {{!-- Approvals Page --}}

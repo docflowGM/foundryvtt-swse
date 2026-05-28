@@ -1,4 +1,237 @@
-{{!--
-  GM Datapad trade surface partial scaffold.
-  Phase 0 registers this path only; gm-datapad.hbs remains the active host until Phase 1 moves markup.
---}}
+{{!-- GM Datapad trade surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    <div class="gm-datapad-page gm-datapad-trade-console">
+      <div class="page-header trade-console-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+        <div>
+          <h2>GM Trade Console</h2>
+          <p>Approval queue, failed settlement diagnostics, and Messenger trade audit receipts.</p>
+        </div>
+        <div class="trade-console-header-actions">
+          <span class="trade-chip warn">{{tradeConsole.stats.approvals}} Approvals</span>
+          <span class="trade-chip crit">{{tradeConsole.stats.failed}} Failed</span>
+        </div>
+      </div>
+
+      <div class="trade-console-metrics" aria-label="Trade console status">
+        <span><strong>{{tradeConsole.stats.visible}}</strong> Visible</span>
+        <span><strong>{{tradeConsole.stats.approvals}}</strong> Approval</span>
+        <span><strong>{{tradeConsole.stats.active}}</strong> Active</span>
+        <span><strong>{{tradeConsole.stats.counter}}</strong> Counter</span>
+        <span><strong>{{tradeConsole.stats.failed}}</strong> Failed</span>
+        <span><strong>{{tradeConsole.stats.archived}}</strong> Archived</span>
+      </div>
+
+      <div class="trade-console-shell">
+        <section class="trade-console-board swse-ui-panel">
+          <div class="trade-section-header">
+            <div>
+              <span class="gm-command-eyebrow">TRADE WATCH</span>
+              <h3>Messenger Transfer Queues</h3>
+            </div>
+            <span class="trade-console-help">All settlements still route through Messenger, TransactionEngine, and ActorEngine.</span>
+          </div>
+
+          {{#if tradeConsole.hasTrades}}
+          <div class="trade-queue-grid">
+            {{#each tradeConsole.queues}}
+            <section class="trade-queue-column {{this.tone}}">
+              <header>
+                <div>
+                  <h4>{{this.label}}</h4>
+                  <p>{{this.hint}}</p>
+                </div>
+                <span>{{this.entries.length}}</span>
+              </header>
+              <div class="trade-card-stack">
+                {{#each this.entries}}
+                <button type="button" class="trade-card {{this.statusTone}}" data-trade-select="{{this.recordId}}">
+                  <div class="trade-card-topline">
+                    <span class="trade-chip {{this.statusTone}}"><i class="{{this.icon}}"></i> {{this.typeLabel}}</span>
+                    <span class="trade-chip {{this.statusTone}}">{{this.statusLabel}}</span>
+                  </div>
+                  <strong>{{this.title}}</strong>
+                  <span>{{this.fromLabel}} → {{this.toLabel}}</span>
+                  <em>{{this.threadTitle}}</em>
+                  {{#if this.hasCounterOffer}}<span class="trade-card-counter">Counter: {{this.counterSummary}}</span>{{/if}}
+                  {{#if this.failureReason}}<span class="trade-card-failure">{{this.failureReason}}</span>{{/if}}
+                </button>
+                {{else}}
+                <div class="trade-empty">No entries in this queue.</div>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="trade-empty-state">
+            <h3>No Messenger trades recorded yet</h3>
+            <p>Credit transfers, item trades, asset trades, counter-offers, and atomic failures will appear here once players use Messenger trading.</p>
+          </div>
+          {{/if}}
+        </section>
+
+        <aside class="trade-console-rail swse-ui-panel">
+          {{#if tradeConsole.selectedEntry}}
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">TRADE DOSSIER</span>
+              <h3>{{tradeConsole.selectedEntry.title}}</h3>
+            </div>
+            <span class="trade-chip {{tradeConsole.selectedEntry.statusTone}}">{{tradeConsole.selectedEntry.statusLabel}}</span>
+          </div>
+
+          <div class="trade-dossier-summary">
+            <div class="trade-dossier-row"><span>Type</span><strong>{{tradeConsole.selectedEntry.typeLabel}}</strong></div>
+            <div class="trade-dossier-row"><span>Thread</span><strong>{{tradeConsole.selectedEntry.threadTitle}}</strong></div>
+            <div class="trade-dossier-row"><span>From</span><strong>{{tradeConsole.selectedEntry.fromLabel}}</strong></div>
+            <div class="trade-dossier-row"><span>To</span><strong>{{tradeConsole.selectedEntry.toLabel}}</strong></div>
+            <div class="trade-dossier-row"><span>Created</span><strong>{{tradeConsole.selectedEntry.createdAtLabel}}</strong></div>
+            <div class="trade-dossier-row"><span>Resolved</span><strong>{{tradeConsole.selectedEntry.resolvedAtLabel}}</strong></div>
+          </div>
+
+          <div class="trade-detail-block">
+            <h4>Terms</h4>
+            <p>{{tradeConsole.selectedEntry.messagePreview}}</p>
+            <div class="trade-term-grid">
+              <span>Credits: <strong>{{tradeConsole.selectedEntry.amountLabel}}</strong></span>
+              <span>Requested credits: <strong>{{tradeConsole.selectedEntry.requestedCreditsLabel}}</strong></span>
+              <span>Items: <strong>{{tradeConsole.selectedEntry.itemSummary}}</strong></span>
+              <span>Assets: <strong>{{tradeConsole.selectedEntry.assetSummary}}</strong></span>
+              <span>Counter: <strong>{{tradeConsole.selectedEntry.counterSummary}}</strong></span>
+            </div>
+          </div>
+
+          <div class="trade-detail-block trade-diagnostic-block {{tradeConsole.selectedEntry.diagnostic.rollbackTone}}">
+            <h4>Atomicity Diagnostics</h4>
+            {{#if tradeConsole.selectedEntry.failureReason}}
+            <p class="trade-failure-text">{{tradeConsole.selectedEntry.failureReason}}</p>
+            {{else}}
+            <p>No failure reason recorded for this trade.</p>
+            {{/if}}
+            <div class="trade-dossier-row"><span>Rollback</span><strong>{{tradeConsole.selectedEntry.diagnostic.rollbackLabel}}</strong></div>
+            <div class="trade-dossier-row"><span>Preflight</span><strong>{{tradeConsole.selectedEntry.diagnostic.preflightLabel}}</strong></div>
+            {{#if tradeConsole.selectedEntry.hasAtomicEvents}}
+            <div class="trade-atomic-event-list">
+              {{#each tradeConsole.selectedEntry.atomicEvents}}
+              <div class="trade-atomic-event {{this.tone}}">
+                <strong>{{this.phase}}</strong>
+                <span>{{this.timeLabel}}</span>
+                <p>{{this.message}}{{#if this.error}} — {{this.error}}{{/if}}</p>
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+
+          <div class="trade-detail-block trade-actions-block">
+            <h4>GM Actions</h4>
+            <textarea data-trade-note-for="{{tradeConsole.selectedEntry.recordId}}" placeholder="Optional GM override note / failure reason"></textarea>
+            <div class="trade-action-grid">
+              {{#each tradeConsole.selectedEntry.actionModel}}
+              <button type="button" class="swse-ui-button trade-action {{this.tone}}" data-trade-action="{{this.action}}" data-thread-id="{{../tradeConsole.selectedEntry.threadId}}" data-record-id="{{../tradeConsole.selectedEntry.recordId}}">{{this.label}}</button>
+              {{else}}
+              <p class="placeholder">No direct actions are available for this trade state.</p>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="trade-detail-block">
+            <h4>Timeline</h4>
+            <div class="trade-timeline">
+              {{#each tradeConsole.selectedTimeline}}
+              <div class="trade-timeline-row {{this.tone}}">
+                <strong>{{this.label}}</strong>
+                <span>{{this.timeLabel}}</span>
+                <p>{{this.detail}}</p>
+              </div>
+              {{else}}
+              <p class="placeholder">No transfer timeline entries were found.</p>
+              {{/each}}
+            </div>
+          </div>
+          {{else}}
+          <p class="placeholder">Select a trade to inspect its atomic settlement state.</p>
+          {{/if}}
+        </aside>
+      </div>
+
+      <div class="trade-console-lower-grid">
+        <section class="swse-ui-panel trade-repair-panel">
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">REPAIR COCKPIT</span>
+              <h3>Economy Reconciliation</h3>
+            </div>
+            <span class="trade-chip {{#if tradeConsole.economyRepair.stats.failed}}crit{{else}}stable{{/if}}">{{tradeConsole.economyRepair.stats.total}} Open</span>
+          </div>
+          <p class="trade-console-help">Review failed game payouts, blocked settlements, failed trades, and recent rollback/correction records without creating a second ledger.</p>
+          <textarea data-economy-repair-note placeholder="Optional GM reconciliation note"></textarea>
+          <div class="trade-repair-ticket-list">
+            {{#each tradeConsole.economyRepair.tickets}}
+            <article class="trade-audit-row {{this.tone}}">
+              <strong>{{this.title}}</strong>
+              <span>{{this.statusLabel}} · {{this.sourceLabel}}</span>
+              <p>{{this.detail}}</p>
+              <div class="trade-dossier-row"><span>Expected</span><strong>{{this.expectedLabel}}</strong></div>
+              <div class="trade-dossier-row"><span>Current</span><strong>{{this.currentLabel}}</strong></div>
+              <div class="trade-action-grid compact">
+                {{#if this.selectRecordId}}<button type="button" class="swse-ui-button" data-economy-action="select-trade" data-economy-kind="trade" data-select-record-id="{{this.selectRecordId}}">Inspect</button>{{/if}}
+                {{#if this.canMarkReconciled}}
+                  {{#if (eq this.kind "game")}}<button type="button" class="swse-ui-button stable" data-economy-action="game-mark-reconciled" data-economy-kind="game" data-session-id="{{this.sessionId}}">Mark Reconciled</button>{{/if}}
+                  {{#if (eq this.kind "trade")}}<button type="button" class="swse-ui-button stable" data-economy-action="gm-mark-trade-reconciled" data-economy-kind="trade" data-thread-id="{{this.threadId}}" data-record-id="{{this.recordId}}">Mark Reconciled</button>{{/if}}
+                {{/if}}
+                {{#if this.canReopenSettlement}}<button type="button" class="swse-ui-button warn" data-economy-action="game-reopen-settlement" data-economy-kind="game" data-session-id="{{this.sessionId}}">Reopen Approval</button>{{/if}}
+                {{#if this.canRefund}}<button type="button" class="swse-ui-button crit" data-economy-action="game-refund-escrow" data-economy-kind="game" data-session-id="{{this.sessionId}}">Refund Escrow</button>{{/if}}
+              </div>
+            </article>
+            {{else}}
+            <p class="placeholder">No open economy repair tickets. Failed trades, blocked game settlements, payout failures, and recent rollback corrections will appear here.</p>
+            {{/each}}
+          </div>
+        </section>
+
+        <section class="swse-ui-panel trade-policy-panel">
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">POLICY</span>
+              <h3>Messenger Trade Rules</h3>
+            </div>
+          </div>
+          <form data-trade-policy-form class="trade-policy-form">
+            <label><input type="checkbox" name="holonetCreditTransfersEnabled" {{#if tradeConsole.policy.creditTransfersEnabled}}checked{{/if}}> Allow credit transfers</label>
+            <label><input type="checkbox" name="holonetRequireCreditTransferApproval" {{#if tradeConsole.policy.requireCreditApproval}}checked{{/if}}> GM approval for credit transfers</label>
+            <label><input type="checkbox" name="holonetItemTradesEnabled" {{#if tradeConsole.policy.itemTradesEnabled}}checked{{/if}}> Allow item trades</label>
+            <label><input type="checkbox" name="holonetRequireItemTradeApproval" {{#if tradeConsole.policy.requireItemApproval}}checked{{/if}}> GM approval for item trades</label>
+            <label><input type="checkbox" name="holonetAssetTradesEnabled" {{#if tradeConsole.policy.assetTradesEnabled}}checked{{/if}}> Allow ship/droid trades</label>
+            <label><input type="checkbox" name="holonetRequireAssetTradeApproval" {{#if tradeConsole.policy.requireAssetApproval}}checked{{/if}}> GM approval for ship/droid trades</label>
+            <label><input type="checkbox" name="holonetPartyFundEnabled" {{#if tradeConsole.policy.partyFundEnabled}}checked{{/if}}> Enable party fund</label>
+            <label>Default party fund job cut %
+              <input type="number" min="0" max="100" step="1" name="holonetPartyFundDefaultCutPercent" value="{{tradeConsole.policy.partyFundCutPercent}}">
+            </label>
+            <button type="submit" class="swse-ui-button bulletin-primary-action">Save Trade Policy</button>
+          </form>
+        </section>
+
+        <section class="swse-ui-panel trade-audit-panel">
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">AUDIT</span>
+              <h3>Recent Trade Receipts</h3>
+            </div>
+          </div>
+          <div class="trade-audit-list">
+            {{#each tradeConsole.auditEvents}}
+            <div class="trade-audit-row {{this.tone}}">
+              <strong>{{this.label}}</strong>
+              <span>{{this.timeLabel}}</span>
+              <p>{{this.detail}}</p>
+            </div>
+            {{else}}
+            <p class="placeholder">No trade audit events found.</p>
+            {{/each}}
+          </div>
+        </section>
+      </div>
+    </div>
+
+    {{!-- Bulletin Page --}}

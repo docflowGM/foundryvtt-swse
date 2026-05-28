@@ -87,7 +87,7 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
 ];
 
 const GM_DATAPAD_PARTIAL_TEMPLATES = [
-  // GM Datapad partial scaffold. Full-path registration only; gm-datapad.hbs remains the active host until Phase 1.
+  // GM Datapad partials. Full-path registration only; gm-datapad.hbs dispatches top-level surfaces through these paths.
   'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs.hbs',

@@ -1,4 +1,23 @@
-{{!--
-  GM Datapad dock partial scaffold.
-  Phase 0 registers this path only; gm-datapad.hbs remains the active host until Phase 1 moves markup.
---}}
+{{!-- GM Datapad command dock. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    {{#unless (eq currentPage "home")}}
+    <nav class="gm-holopad-command-dock" aria-label="GM Holopad app dock">
+      <button type="button" class="gm-holopad-dock-home" data-nav-to="home">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </button>
+      <div class="gm-holopad-dock-status {{gmShell.readinessTone}}">
+        <span class="gm-command-eyebrow">{{gmShell.activeCode}}</span>
+        <strong>{{gmShell.activeLabel}}</strong>
+        <em>{{gmShell.readinessLabel}}</em>
+      </div>
+      <div class="gm-holopad-dock-apps">
+        {{#each gmShell.dockApps}}
+        <button type="button" class="gm-holopad-dock-app {{this.statusTone}} {{#if (eq ../currentPage this.id)}}is-active{{/if}}" data-nav-to="{{this.id}}" title="{{this.description}}">
+          <i class="{{this.icon}}"></i>
+          <span>{{this.code}}</span>
+          {{#if this.badgeCount}}<b>{{this.badgeCount}}</b>{{/if}}
+        </button>
+        {{/each}}
+      </div>
+    </nav>
+    {{/unless}}
