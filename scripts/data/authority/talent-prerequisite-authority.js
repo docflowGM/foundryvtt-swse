@@ -1835,8 +1835,8 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "attract_minion": {
     "name": "Attract Minion",
     "prerequisite": "",
-    "benefit": "You attract a loyal Minion. The Minion is a Nonheroic character with a Class Level equal to three-quarters of your Character Level, rounded down.",
-    "description": "You attract a loyal Minion. The Minion is a Nonheroic character with a Class Level equal to three-quarters of your Character Level, rounded down.\n\nYou may select this Talent multiple times; each time you select this Talent, you gain another Minion. Normally, you can have only one Minion with you at a time. Any other Minions you have are assumed to be looking after your various interests. If you lose a Minion, you can send for another Minion if you have one (although normal Travel Time still applies).\n\nEach Minion that accompanies you on an adventure is entitled to an equal share of the total Experience Points earned for that adventure. For example, a Minion that accompanies a party of five heroes on an adventure receives one-sixth of the XP that the group earns."
+    "benefit": "You attract a loyal Minion. The Minion is a Nonheroic character with a Class Level equal to your heroic level - 2 (minimum 1).",
+    "description": "You attract a loyal Minion. The Minion is a Nonheroic character with a Class Level equal to your heroic level - 2 (minimum 1).\n\nYou may select this Talent multiple times; each time you select this Talent, you gain another Minion. Normally, you can have only one Minion with you at a time. Any other Minions you have are assumed to be looking after your various interests. If you lose a Minion, you can send for another Minion if you have one (although normal Travel Time still applies).\n\nEach Minion that accompanies you on an adventure is entitled to an equal share of the total Experience Points earned for that adventure. For example, a Minion that accompanies a party of five heroes on an adventure receives one-sixth of the XP that the group earns."
   },
   "impel_ally_i": {
     "name": "Impel Ally I",
@@ -3377,8 +3377,8 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "attract_privateer": {
     "name": "Attract Privateer",
     "prerequisite": "",
-    "benefit": "You attract a loyal Privateer Lieutenant. The Lieutenant is a Nonheroic character who has a Class Level equal to three-quarters of your Character Level, rounded down.",
-    "description": "You attract a loyal Privateer Lieutenant. The Lieutenant is a Nonheroic character who has a Class Level equal to three-quarters of your Character Level, rounded down.\n\nYou can select this Talent multiple times. Each time you do so, you gain another Privateer. Each Privateer who accompanies you on an adventure is entitled to an equal share of the total Experience Points earned for the adventure. For example, a Privateer who accompanies a party of five heroes on an adventure receives one-sixth of the XP that the group earns."
+    "benefit": "You attract a loyal Privateer Lieutenant. The Lieutenant is a Nonheroic character with a Class Level equal to your heroic level - 2 (minimum 1).",
+    "description": "You attract a loyal Privateer Lieutenant. The Lieutenant is a Nonheroic character with a Class Level equal to your heroic level - 2 (minimum 1).\n\nYou can select this Talent multiple times. Each time you do so, you gain another Privateer. Each Privateer who accompanies you on an adventure is entitled to an equal share of the total Experience Points earned for the adventure. For example, a Privateer who accompanies a party of five heroes on an adventure receives one-sixth of the XP that the group earns."
   },
   "blaster_and_blade_i": {
     "name": "Blaster and Blade I",

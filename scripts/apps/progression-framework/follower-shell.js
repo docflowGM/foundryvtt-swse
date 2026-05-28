@@ -348,7 +348,11 @@ export class FollowerShell extends ProgressionShell {
         if (result.success) {
           swseLogger.log('[FollowerShell] Follower created/updated successfully:', result);
           ui?.notifications?.info?.('Follower creation complete!');
-          this.close();
+          if (this._embeddedInHolopad && this._inlineSurfaceAdapter) {
+            await this._inlineSurfaceAdapter.completeAndReturnToSheet?.();
+          } else {
+            this.close();
+          }
           return;
         } else {
           swseLogger.error('[FollowerShell] Follower creation failed:', result.error);

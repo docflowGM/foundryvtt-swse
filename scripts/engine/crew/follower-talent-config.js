@@ -29,8 +29,8 @@ export const FOLLOWER_TALENT_CONFIG = {
     maxCount: 0,
     repeatable: true,
     dependentKind: "minion",
-    minionLevelRatio: 0.75,
-    minionLevelLabel: "three-quarters of owner heroic level",
+    minionLevelOffset: -2,
+    minionLevelLabel: "owner heroic level - 2 (minimum 1)",
     description: "This talent grants one attracted nonheroic minion. It may be taken multiple times."
   },
   "Attract Privateer": {
@@ -38,8 +38,8 @@ export const FOLLOWER_TALENT_CONFIG = {
     maxCount: 0,
     repeatable: true,
     dependentKind: "privateer",
-    minionLevelRatio: 0.75,
-    minionLevelLabel: "three-quarters of owner heroic level",
+    minionLevelOffset: -2,
+    minionLevelLabel: "owner heroic level - 2 (minimum 1)",
     description: "This talent grants one attracted privateer-style nonheroic minion. It may be taken multiple times."
   },
   "Attract Superior Minion": {
@@ -47,9 +47,9 @@ export const FOLLOWER_TALENT_CONFIG = {
     maxCount: 0,
     repeatable: true,
     dependentKind: "minion",
-    minionLevelRatio: 1,
-    minionLevelLabel: "owner heroic level",
-    description: "This talent grants one superior attracted nonheroic minion at owner heroic level. It may be taken multiple times."
+    minionLevelOffset: -2,
+    minionLevelLabel: "owner heroic level - 2 (minimum 1)",
+    description: "This talent grants one superior attracted nonheroic minion. It may be taken multiple times."
   }
 };
 

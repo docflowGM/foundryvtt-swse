@@ -1299,6 +1299,12 @@ export class SWSEV2CharacterSheet extends
     });
   }
 
+  _getInlineProgressionAdapterMode() {
+    if (this._shellSurface === 'chargen') return 'chargen';
+    if (this._shellSurfaceOptions?.progressionMode === 'follower' || this._shellSurfaceOptions?.mode === 'follower') return 'follower';
+    return 'levelup';
+  }
+
   /**
    * Wire delegated events for progression/chargen inline surface.
    * Forwards data-action clicks to ProgressionSurfaceAdapter.handleAction().
@@ -1327,7 +1333,7 @@ export class SWSEV2CharacterSheet extends
         const { ProgressionSurfaceAdapter } = await import(
           '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
         );
-        const key = `${this.actor.id}-${this._shellSurface === 'chargen' ? 'chargen' : 'levelup'}`;
+        const key = `${this.actor.id}-${this._getInlineProgressionAdapterMode()}`;
         const adapter = ProgressionSurfaceAdapter._registry.get(key);
         if (adapter) {
           await adapter.handleAction(action, ev, btn);
@@ -1343,7 +1349,7 @@ export class SWSEV2CharacterSheet extends
       const { ProgressionSurfaceAdapter } = await import(
         '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
       );
-      const key = `${this.actor.id}-${this._shellSurface === 'chargen' ? 'chargen' : 'levelup'}`;
+      const key = `${this.actor.id}-${this._getInlineProgressionAdapterMode()}`;
       const adapter = ProgressionSurfaceAdapter._registry.get(key);
       await adapter?.afterInlineRender?.(surfaceRoot);
     } catch (err) {

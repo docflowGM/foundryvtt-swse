@@ -43,7 +43,7 @@ function _buildSlot(talentItem, cfg) {
     talentItemId: talentItem.id,
     templateChoices: cfg?.templateChoices ?? [],
     dependentKind: cfg?.dependentKind ?? 'follower',
-    minionLevelRatio: cfg?.minionLevelRatio ?? null,
+    minionLevelOffset: cfg?.minionLevelOffset ?? null,
     minionLevelLabel: cfg?.minionLevelLabel ?? null,
     createdActorId: null,
     createdAt: Date.now()
@@ -150,8 +150,12 @@ export async function reconcileFollowerSlotsForActor(actor) {
         slot.dependentKind = cfg?.dependentKind ?? 'follower';
         changed = true;
       }
-      if (slot.minionLevelRatio === undefined && cfg?.minionLevelRatio !== undefined) {
-        slot.minionLevelRatio = cfg.minionLevelRatio;
+      if (slot.minionLevelOffset === undefined && cfg?.minionLevelOffset !== undefined) {
+        slot.minionLevelOffset = cfg.minionLevelOffset;
+        changed = true;
+      }
+      if (slot.minionLevelRatio !== undefined) {
+        delete slot.minionLevelRatio;
         changed = true;
       }
       if (!slot.minionLevelLabel && cfg?.minionLevelLabel) {

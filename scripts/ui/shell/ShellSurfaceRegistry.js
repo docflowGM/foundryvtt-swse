@@ -261,7 +261,10 @@ export class ShellSurfaceRegistry {
       const { ProgressionSurfaceAdapter } = await import(
         '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
       );
-      const adapter = await ProgressionSurfaceAdapter.getOrCreate(shellHost, actor, 'levelup', options);
+      const mode = options?.progressionMode === 'follower' || options?.mode === 'follower'
+        ? 'follower'
+        : 'levelup';
+      const adapter = await ProgressionSurfaceAdapter.getOrCreate(shellHost, actor, mode, options);
       return adapter.buildViewModel();
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Progression surface VM failed:', err);

@@ -511,12 +511,30 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
       'class-talent',
       'talent-tree-browser',
       'talent-graph',
-      'force-power',           // Phase 2.5: Suppress force powers for nonheroic
+      'force-power',           // Legacy aliases
       'force-secret',
       'force-technique',
+      'force-powers',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets',
+      'starship-maneuvers',
     ];
 
-    const filteredSteps = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+    let filteredSteps = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+
+    // Nonheroic chargen uses a dedicated constrained starting-feats step instead
+    // of the heroic/general feat pipeline. Keep level-up on normal entitlement
+    // nodes so future nonheroic level-up work can opt into regular feat slots.
+    if (session?.mode === 'chargen') {
+      filteredSteps = filteredSteps.filter(stepId => stepId !== 'general-feat' && stepId !== 'class-feat');
+      if (!filteredSteps.includes('nonheroic-starting-feats')) {
+        const languagesIndex = filteredSteps.indexOf('languages');
+        const insertAt = languagesIndex >= 0 ? languagesIndex : filteredSteps.length;
+        filteredSteps.splice(insertAt, 0, 'nonheroic-starting-feats');
+      }
+    }
+
     return filteredSteps;
   }
 
@@ -558,7 +576,12 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
     restrictions.forbiddenSteps.push(
       'force-power',
       'force-secret',
-      'force-technique'
+      'force-technique',
+      'force-powers',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets',
+      'starship-maneuvers'
     );
 
     // Add metadata for UI/logging

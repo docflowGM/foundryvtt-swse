@@ -551,6 +551,31 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     isFinal: false,
   },
 
+  'nonheroic-starting-feats': {
+    nodeId: 'nonheroic-starting-feats',
+    label: 'Starting Feats',
+    icon: 'fa-star',
+    category: 'canonical',
+    modes: ['chargen'],
+    subtypes: ['nonheroic'],
+
+    // Nonheroic chargen receives exactly three constrained starting feats.
+    // This replaces the generic heroic/class feat nodes for the nonheroic subtype.
+    activationPolicy: ActivationPolicy.CANONICAL,
+    dependsOn: ['class', 'attribute', 'skills'],
+    invalidates: ['languages', 'summary', 'levelup-review'],
+    invalidationBehavior: {
+      languages: InvalidationBehavior.DIRTY,
+      summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
+    },
+
+    selectionKey: 'feats',
+    optional: false,
+    isSkippable: false,
+    isFinal: false,
+  },
+
   languages: {
     nodeId: 'languages',
     label: 'Languages',

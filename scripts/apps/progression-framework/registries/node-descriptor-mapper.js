@@ -23,6 +23,7 @@ import { AttributeStep } from '../steps/attribute-step.js';
 import { BackgroundStep } from '../steps/background-step.js';
 import { SkillsStep } from '../steps/skills-step.js';
 import { GeneralFeatStep, ClassFeatStep } from '../steps/feat-step.js';
+import { NonheroicStartingFeatsStep } from '../steps/nonheroic-starting-feats-step.js';
 import { GeneralTalentStep, ClassTalentStep } from '../steps/talent-step.js';
 import { LanguageStep } from '../steps/language-step.js';
 import { SummaryStep } from '../steps/summary-step.js';
@@ -51,6 +52,7 @@ const NODE_PLUGIN_MAP = Object.freeze({
   skills: SkillsStep,
   'general-feat': GeneralFeatStep,
   'class-feat': ClassFeatStep,
+  'nonheroic-starting-feats': NonheroicStartingFeatsStep,
   'general-talent': GeneralTalentStep,
   'class-talent': ClassTalentStep,
   languages: LanguageStep,

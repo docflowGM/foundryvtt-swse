@@ -1,0 +1,89 @@
+{{!-- Nonheroic Starting Feats Work Surface --}}
+<div class="feat-work-surface nonheroic-starting-feats prog-quickref-stage">
+  <div class="prog-micro-progress prog-micro-progress--feats">
+    {{#if availableSlots}}
+      <div class="prog-progress-status prog-progress-status--incomplete">
+        <i class="fas fa-circle-notch"></i>
+        <span class="prog-progress-label">Nonheroic starting feats</span>
+        <span class="prog-progress-remaining">Choose {{availableSlots}} more of {{totalSlots}}</span>
+      </div>
+    {{else}}
+      <div class="prog-progress-status prog-progress-status--complete">
+        <i class="fas fa-check-circle"></i>
+        <span class="prog-progress-label">Nonheroic starting feats</span>
+        <span class="prog-badge prog-badge--complete">Complete</span>
+      </div>
+    {{/if}}
+  </div>
+
+  <div class="feat-filter-bar">
+    <label class="feat-search-field">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input class="feat-search-input" type="search" value="{{searchQuery}}" placeholder="Search nonheroic-legal feats..." autocomplete="off">
+    </label>
+  </div>
+
+  {{#if selectedFeats.length}}
+  <section class="feat-group granted-feats-group">
+    <div class="group-header group-header--static">
+      <div class="header-content">
+        <i class="fa-solid fa-check-circle group-icon"></i>
+        <h3 class="group-title">Selected Feats</h3>
+        <span class="feat-count-badge">{{selectedFeats.length}}/{{totalSlots}}</span>
+      </div>
+    </div>
+    <div class="feat-list granted-list">
+      {{#each selectedFeats}}
+      <div class="feat-item granted-feat selected" data-feat-id="{{this.id}}" data-item-id="{{this.id}}" data-action="focus-item">
+        <div class="feat-item-content">
+          <span class="feat-name">{{this.name}}</span>
+        </div>
+        <div class="feat-item-meta">
+          <button type="button" class="feat-remove-btn" data-action="remove-feat" data-feat-id="{{this.id}}" title="Remove {{this.name}}">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <section class="feat-group category-group">
+    <div class="group-header group-header--static">
+      <div class="header-content">
+        <i class="fa-solid fa-star group-icon"></i>
+        <h3 class="group-title">Legal Nonheroic Feats</h3>
+        <span class="feat-count-badge">{{allFeats.length}}</span>
+      </div>
+    </div>
+
+    <div class="feat-list category-list feat-list--flat">
+      {{#each allFeats}}
+      <div class="feat-item category-feat {{#if this.isSelected}}selected{{/if}}"
+           data-feat-id="{{this.id}}"
+           data-item-id="{{this.id}}"
+           data-action="focus-item">
+        <div class="feat-item-content">
+          <span class="feat-name">{{this.name}}</span>
+          {{#if this.isRepeatable}}<span class="feat-subcategory-pill">Repeatable</span>{{/if}}
+          {{#if this.description}}<span class="feat-prereq-line">{{this.description}}</span>{{/if}}
+        </div>
+        <div class="feat-item-meta">
+          <span class="feat-state-indicator">
+            {{#if this.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-regular fa-circle"></i>{{/if}}
+          </span>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+
+    {{#unless allFeats.length}}
+    <div class="empty-message">
+      <i class="fa-solid fa-hexagon-exclamation"></i>
+      <p class="empty-title">No Legal Nonheroic Feats</p>
+      <p class="empty-description">No allowed nonheroic feat currently meets prerequisites.</p>
+    </div>
+    {{/unless}}
+  </section>
+</div>

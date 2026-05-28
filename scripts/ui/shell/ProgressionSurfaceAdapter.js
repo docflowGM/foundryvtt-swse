@@ -23,7 +23,7 @@ export class ProgressionSurfaceAdapter {
   /** @type {object} ProgressionShell or ChargenShell instance (never rendered as window) */
   _app = null;
 
-  /** @type {string} 'chargen' | 'levelup' */
+  /** @type {string} 'chargen' | 'levelup' | 'follower' */
   mode = null;
 
   /** @type {object} The character sheet that hosts this surface */
@@ -47,7 +47,7 @@ export class ProgressionSurfaceAdapter {
    *
    * @param {object} shellHost - The character sheet instance
    * @param {Actor} actor
-   * @param {string} mode - 'chargen' | 'levelup'
+   * @param {string} mode - 'chargen' | 'levelup' | 'follower'
    * @param {object} [options]
    * @returns {Promise<ProgressionSurfaceAdapter>}
    */
@@ -88,7 +88,11 @@ export class ProgressionSurfaceAdapter {
    */
   async buildViewModel() {
     const id = this.mode === 'chargen' ? 'chargen' : 'progression';
-    const title = this.mode === 'chargen' ? 'Character Creation' : 'Level Up';
+    const title = this.mode === 'chargen'
+      ? 'Character Creation'
+      : this.mode === 'follower'
+        ? 'Follower Creation'
+        : 'Level Up';
 
     if (!this._app || !this._ready) {
       return { id, title, isLoading: true };
@@ -508,9 +512,18 @@ export class ProgressionSurfaceAdapter {
       const { LevelupShell } = await import(
         '/systems/foundryvtt-swse/scripts/apps/progression-framework/levelup-shell.js'
       );
+      const { FollowerShell } = await import(
+        '/systems/foundryvtt-swse/scripts/apps/progression-framework/follower-shell.js'
+      );
 
-      const ShellClass = mode === 'chargen' ? ChargenShell : LevelupShell;
-      const app = new ShellClass(actor, mode, options);
+      const ShellClass = mode === 'chargen'
+        ? ChargenShell
+        : mode === 'follower'
+          ? FollowerShell
+          : LevelupShell;
+      const app = mode === 'follower'
+        ? new ShellClass(null, 'follower', { ...options, owner: actor })
+        : new ShellClass(actor, mode, options);
 
       // Let ProgressionShell know it is being hosted inline. On successful
       // confirmation it should return the holopad to the actual character sheet,

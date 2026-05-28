@@ -300,27 +300,6 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
       `[Follower Progression] Found ${availableSlots.length} available follower slots`
     );
 
-    // Notify shell host that progression is active for follower creation
-    const ownerShell = ShellRouter.getShell(ownerActor.id);
-    if (ownerShell) {
-      ownerShell.setSurface('progression', { source: 'follower-progression' })
-        .then(() => ownerShell.render(false))
-        .catch(() => {});
-    }
-
-    // Minimize owner sheet
-    if (ownerActor.sheet?.rendered) {
-      try {
-        const pos = computeCenteredPosition(900, 950);
-        ownerActor.sheet.setPosition(pos);
-        SWSELogger.log('[Follower Progression] Owner sheet centered before minimize');
-      } catch (posErr) {
-        SWSELogger.warn('[Follower Progression] Could not center owner sheet:', posErr);
-      }
-      ownerActor.sheet.minimize().catch(() => {});
-      SWSELogger.log('[Follower Progression] Owner sheet minimized');
-    }
-
     // Set up dependency context for follower progression
     const dependencyContext = {
       ownerActorId: ownerActor.id,
@@ -330,16 +309,48 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
 
     SWSELogger.log('[Follower Progression] Dependency context prepared', dependencyContext);
 
-    // Open FollowerShell for follower creation
-    // FollowerShell extends ProgressionShell and handles the 7-step follower creation flow
+    // Preferred v2 route: host the follower's current progression steps inside
+    // the owner's holopad shell. Followers are dependent participants, so the
+    // owner sheet remains the shell host while FollowerShell runs inline.
+    const ownerShell = ShellRouter.getShell(ownerActor.id);
+    if (ownerShell) {
+      SWSELogger.log('[Follower Progression] Shell host found — routing follower flow inline');
+      await ownerShell.setSurface('progression', {
+        ...options,
+        source: 'follower-progression',
+        progressionMode: 'follower',
+        mode: 'follower',
+        dependencyContext,
+        ownerActorId: ownerActor.id
+      });
+      await ownerShell.render(false);
+      return ownerShell;
+    }
+
+    // Legacy fallback only when no holopad shell host is available, such as a GM
+    // launching from a sidebar context. Do not minimize when the holopad route is
+    // available because the progression is already inside the same shell.
+    if (ownerActor.sheet?.rendered) {
+      try {
+        const pos = computeCenteredPosition(900, 950);
+        ownerActor.sheet.setPosition(pos);
+        SWSELogger.log('[Follower Progression] Owner sheet centered before standalone fallback');
+      } catch (posErr) {
+        SWSELogger.warn('[Follower Progression] Could not center owner sheet:', posErr);
+      }
+      ownerActor.sheet.minimize().catch(() => {});
+      SWSELogger.log('[Follower Progression] Owner sheet minimized for standalone fallback');
+    }
+
+    // Open FollowerShell for follower creation only as a standalone fallback.
     const { FollowerShell } = await import('./follower-shell.js');
     const result = await FollowerShell.open(
-      null, // follower actor is null (will be created/advanced)
-      'follower', // mode: 'follower'
+      null,
+      'follower',
       {
         ...options,
-        dependencyContext, // Pass dependency context to shell
-        owner: ownerActor // Pass owner reference for convenience
+        dependencyContext,
+        owner: ownerActor
       }
     );
 
