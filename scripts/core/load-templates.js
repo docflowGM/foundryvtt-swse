@@ -328,6 +328,47 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
+
+  // ==============================
+  // GM Datapad shared-shell surfaces
+  // ==============================
+  'systems/foundryvtt-swse/templates/apps/gm-datapad.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/review-payout-queues.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/empty-state.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/trade-board.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/economy-repair.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/policy-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/audit-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/events-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/holonews-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/messages-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/player-state-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/party-state-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/live-preview.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/house-rules.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/options-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/transactions-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/approvals-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/inventory-tab.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/queue.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/history.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/party-board.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/selected-actor-rail.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/workspace.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/factions.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs',
+
   // ==============================
   // Referenced V2 partials loaded deterministically (render stability)
   // ==============================

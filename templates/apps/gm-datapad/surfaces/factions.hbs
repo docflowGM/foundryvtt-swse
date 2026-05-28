@@ -1,0 +1,165 @@
+{{!-- GM Datapad faction relationship manager surface. --}}
+<div class="gm-datapad-page gm-datapad-factions flexcol">
+  <div class="page-header gm-app-header gm-faction-header">
+    <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+    <div class="gm-app-header-copy">
+      <span class="gm-command-eyebrow">RELATIONSHIP LEDGER</span>
+      <h2>{{pageTitle}}</h2>
+      <p class="page-subtitle">{{pageDescription}}</p>
+    </div>
+    <div class="gm-approval-count-strip" aria-label="Faction counts">
+      <span><strong>{{factionManager.counts.registry}}</strong>Registry</span>
+      <span><strong>{{factionManager.counts.relationships}}</strong>Relationships</span>
+      <span><strong>{{factionManager.counts.suggestions}}</strong>Suggestions</span>
+      <span><strong>{{factionManager.counts.actorsWithRelationships}}</strong>Actors</span>
+    </div>
+  </div>
+
+  <div class="gm-faction-grid">
+    <section class="swse-ui-panel gm-faction-create-panel">
+      <div class="job-board-section-header compact">
+        <div>
+          <span class="gm-command-eyebrow">GM ADD</span>
+          <h3>Add Faction Relationship</h3>
+        </div>
+      </div>
+      <form class="gm-faction-create-form" data-gm-faction-create-form>
+        <div class="gm-faction-form-grid">
+          <label>Name<input type="text" name="name" placeholder="Republic / Black Sun / CorSec" required></label>
+          <label>Type<input type="text" name="type" placeholder="Government, syndicate, local gang..."></label>
+          <label>Planet<input type="text" name="planet" placeholder="Optional"></label>
+          <label>System<input type="text" name="system" placeholder="Optional"></label>
+          <label>Scale<input type="number" name="scale" min="1" max="20" step="1" value="1"></label>
+          <label>Starting Score<input type="number" name="score" step="1" value="0"></label>
+          <label>Leader<input type="text" name="leader" placeholder="Leader or public face"></label>
+          <label>Attach to Actor
+            <select name="actorId">
+              <option value="">Registry only</option>
+              {{#each factionManager.actors}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Relationship
+            <select name="relationshipType">
+              {{#each factionManager.relationshipTypes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+            </select>
+          </label>
+          <label class="is-wide">Benefits<textarea name="benefits" rows="2" placeholder="GM-governed benefits, access, or consequences"></textarea></label>
+          <label class="is-wide">Public Notes<textarea name="notes" rows="2" placeholder="Player-visible notes"></textarea></label>
+          <label class="is-wide">GM Notes<textarea name="gmNotes" rows="2" placeholder="Private GM notes"></textarea></label>
+        </div>
+        <button type="submit" class="swse-ui-button bulletin-primary-action">Save Faction</button>
+      </form>
+    </section>
+
+    <section class="swse-ui-panel gm-faction-registry-panel">
+      <div class="job-board-section-header compact">
+        <div>
+          <span class="gm-command-eyebrow">CAMPAIGN REGISTRY</span>
+          <h3>Known Factions</h3>
+        </div>
+      </div>
+      <div class="gm-faction-registry-list">
+        {{#each factionManager.registry}}
+        <article class="gm-faction-registry-card">
+          <div>
+            <strong>{{this.name}}</strong>
+            <span>{{this.type}} · Scale {{this.scale}} · <b class="{{this.scoreClass}}">{{this.scoreLabel}}</b></span>
+            {{#if this.planetSystem}}<small>{{this.planetSystem}}</small>{{/if}}
+          </div>
+          <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-registry" data-faction-id="{{this.id}}">Delete</button>
+        </article>
+        {{else}}
+        <p class="placeholder">No GM registry factions yet.</p>
+        {{/each}}
+      </div>
+    </section>
+  </div>
+
+  {{#if factionManager.hasSuggestions}}
+  <section class="swse-ui-panel gm-faction-suggestions-panel">
+    <div class="job-board-section-header compact">
+      <div>
+        <span class="gm-command-eyebrow">PLAYER REQUESTS</span>
+        <h3>Faction Suggestions</h3>
+      </div>
+    </div>
+    <div class="gm-faction-suggestion-list">
+      {{#each factionManager.suggestions}}
+      <article class="gm-faction-suggestion-card" data-faction-suggestion-card>
+        <div>
+          <strong>{{this.name}}</strong>
+          <span>{{this.actorName}} · {{this.type}} · {{this.relationshipType}}</span>
+          {{#if this.notes}}<p>{{this.notes}}</p>{{/if}}
+        </div>
+        <label>Reject reason<input type="text" name="rejectReason" placeholder="Optional player-facing reason"></label>
+        <div class="gm-faction-row-actions">
+          <button type="button" class="swse-ui-button approve" data-gm-faction-action="approve-suggestion" data-actor-id="{{this.actorId}}" data-faction-id="{{this.id}}">Approve</button>
+          <button type="button" class="swse-ui-button deny" data-gm-faction-action="reject-suggestion" data-actor-id="{{this.actorId}}" data-faction-id="{{this.id}}">Reject</button>
+        </div>
+      </article>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <section class="swse-ui-panel gm-faction-relationships-panel">
+    <div class="job-board-section-header compact">
+      <div>
+        <span class="gm-command-eyebrow">PARTY-WIDE LEDGER</span>
+        <h3>Actor Faction Relationships</h3>
+      </div>
+    </div>
+    {{#if factionManager.hasRelationships}}
+    <div class="gm-faction-relationship-list">
+      {{#each factionManager.relationships}}
+      <article class="gm-faction-relationship-card">
+        <form data-gm-faction-relationship-form>
+          <input type="hidden" name="actorId" value="{{this.actorId}}">
+          <input type="hidden" name="relationshipId" value="{{this.id}}">
+          <input type="hidden" name="factionId" value="{{this.factionId}}">
+          <header>
+            <img src="{{this.actorImg}}" alt="{{this.actorName}}">
+            <div>
+              <span class="gm-command-eyebrow">{{this.actorName}}</span>
+              <input type="text" name="factionName" value="{{this.factionName}}">
+            </div>
+            <div class="gm-faction-score {{this.scoreClass}}">
+              <span>Score</span>
+              <input type="number" name="score" step="1" value="{{this.score}}">
+            </div>
+            <button type="submit" class="swse-ui-button approve">Save</button>
+            <button type="button" class="swse-ui-button danger" data-gm-faction-action="remove-relationship" data-actor-id="{{this.actorId}}" data-relationship-id="{{this.id}}">Remove</button>
+          </header>
+          <div class="gm-faction-form-grid compact">
+            <label>Type<input type="text" name="type" value="{{this.type}}"></label>
+            <label>Planet<input type="text" name="planet" value="{{this.planet}}"></label>
+            <label>System<input type="text" name="system" value="{{this.system}}"></label>
+            <label>Scale<input type="number" name="scale" min="1" max="20" step="1" value="{{this.scale}}"></label>
+            <label>Leader<input type="text" name="leader" value="{{this.leader}}"></label>
+            <label>Relationship
+              <select name="relationshipType">
+                {{#each ../factionManager.relationshipTypes}}<option value="{{this.value}}" {{#if (eq this.value ../relationshipType)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+              </select>
+            </label>
+            <label class="is-wide">Benefits<textarea name="benefits" rows="2">{{this.benefits}}</textarea></label>
+            <label class="is-wide">Player Notes<textarea name="notes" rows="2">{{this.notes}}</textarea></label>
+            <label class="is-wide">GM Notes<textarea name="gmNotes" rows="2">{{this.gmNotes}}</textarea></label>
+          </div>
+        </form>
+        <form class="gm-faction-adjust-form" data-gm-faction-adjust-form>
+          <input type="hidden" name="actorId" value="{{this.actorId}}">
+          <input type="hidden" name="factionId" value="{{this.factionId}}">
+          <input type="hidden" name="factionName" value="{{this.factionName}}">
+          <input type="hidden" name="relationshipType" value="{{this.relationshipType}}">
+          <label>Delta<input type="number" name="delta" step="1" placeholder="+/-"></label>
+          <label>Reason<input type="text" name="reason" placeholder="Mission, favor, betrayal, obligation..."></label>
+          <button type="submit" class="swse-ui-button">Apply Delta</button>
+        </form>
+      </article>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="placeholder">No actor faction relationships have been attached yet.</p>
+    {{/if}}
+  </section>
+</div>

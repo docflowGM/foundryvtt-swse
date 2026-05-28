@@ -10,6 +10,7 @@ export class AlliesSurfaceController {
     this._host = host;
     this._actor = actor;
     this._abort = null;
+    this._hookListeners = [];
   }
 
   attach(root) {
@@ -19,6 +20,7 @@ export class AlliesSurfaceController {
     const { signal } = this._abort;
     const surface = root.querySelector('[data-shell-region="surface-allies"]');
     if (!surface) return;
+    this._wireFactionRefreshHooks();
 
     surface.addEventListener('click', async (ev) => {
       const target = ev.target instanceof Element ? ev.target.closest('[data-allies-action]') : null;
@@ -50,6 +52,36 @@ export class AlliesSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
+    for (const [hook, fn] of this._hookListeners) Hooks.off(hook, fn);
+    this._hookListeners = [];
+  }
+
+
+  _wireFactionRefreshHooks() {
+    for (const [hook, fn] of this._hookListeners) Hooks.off(hook, fn);
+    this._hookListeners = [];
+    const refresh = () => this._host?.render?.(false);
+    const actorRefresh = (payload = {}) => {
+      if (!payload?.actor || payload.actor.id === this._actor?.id) refresh();
+    };
+    const scoreRefresh = (payload = {}) => {
+      if (!payload?.actorId || payload.actorId === this._actor?.id) refresh();
+    };
+    const holonetRefresh = (payload = {}) => {
+      if (payload?.type !== 'faction-score-changed') return;
+      const actorIds = Array.isArray(payload.actorIds) ? payload.actorIds : [];
+      if (!actorIds.length || actorIds.includes(this._actor?.id)) refresh();
+    };
+    for (const [hook, fn] of [
+      ['swseFactionRegistryUpdated', refresh],
+      ['swseActorFactionRelationshipsUpdated', actorRefresh],
+      ['swseFactionScoreChanged', scoreRefresh],
+      ['swse:factionScoreChanged', scoreRefresh],
+      ['swseHolonetUpdated', holonetRefresh]
+    ]) {
+      Hooks.on(hook, fn);
+      this._hookListeners.push([hook, fn]);
+    }
   }
 
   async _handleAction(target) {
@@ -244,13 +276,18 @@ export class AlliesSurfaceController {
   _collectFactionForm(form) {
     const formData = new FormData(form);
     return {
+      factionId: String(formData.get('factionId') ?? '').trim(),
       name: String(formData.get('name') ?? '').trim(),
       type: String(formData.get('type') ?? '').trim(),
       planet: String(formData.get('planet') ?? '').trim(),
       system: String(formData.get('system') ?? '').trim(),
       scale: String(formData.get('scale') ?? '').trim(),
       leader: String(formData.get('leader') ?? '').trim(),
+      relationshipType: String(formData.get('relationshipType') ?? 'known').trim(),
       benefits: String(formData.get('benefits') ?? '').trim(),
+      notes: String(formData.get('notes') ?? '').trim(),
+      gmNotes: String(formData.get('gmNotes') ?? '').trim(),
+      source: String(formData.get('source') ?? '').trim(),
       score: Number.parseInt(String(formData.get('score') ?? '0'), 10) || 0
     };
   }

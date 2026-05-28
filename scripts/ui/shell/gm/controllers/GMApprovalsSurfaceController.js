@@ -1,3 +1,5 @@
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+
 /**
  * GMApprovalsSurfaceController
  *
@@ -77,7 +79,7 @@ export class GMApprovalsSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         const key = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
-        await this.host._approveApprovalRequest(key);
+        await this._approveRequest(key, event.currentTarget.closest('[data-approval-review-form]'));
       }, { signal });
     });
 
@@ -86,7 +88,7 @@ export class GMApprovalsSurfaceController {
         event.preventDefault();
         const key = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
         const form = event.currentTarget.closest('[data-approval-review-form]');
-        await this.host._finalizeApprovalWithEdits(key, form);
+        await this._finalizeApproval(key, form);
       }, { signal });
     });
 
@@ -96,7 +98,7 @@ export class GMApprovalsSurfaceController {
         const key = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
         const form = event.currentTarget.closest('[data-approval-review-form]');
         const reason = String(new FormData(form).get('denialReason') ?? '').trim();
-        await this.host._denyApprovalRequest(key, reason);
+        await this._denyRequest(key, reason);
       }, { signal });
     });
   }
@@ -104,6 +106,63 @@ export class GMApprovalsSurfaceController {
   destroy() {
     this._abort?.abort?.();
     this._abort = null;
+  }
+
+
+  _parseFactionKey(key = '') {
+    const [type, actorId, factionRecordId] = String(key || '').split(':');
+    if (type !== 'faction' || !actorId || !factionRecordId) return null;
+    return { actorId, factionRecordId };
+  }
+
+  _collectFactionApprovalData(form) {
+    const data = new FormData(form);
+    return {
+      name: String(data.get('name') ?? '').trim(),
+      type: String(data.get('type') ?? '').trim(),
+      planet: String(data.get('planet') ?? '').trim(),
+      system: String(data.get('system') ?? '').trim(),
+      relationshipType: String(data.get('relationshipType') ?? 'known').trim(),
+      notes: String(data.get('notes') ?? '').trim(),
+      score: Number(data.get('score') || 0) || 0,
+      benefits: String(data.get('benefits') ?? '').trim(),
+      gmNotes: String(data.get('gmNotes') ?? '').trim()
+    };
+  }
+
+  async _approveRequest(key, form = null) {
+    const parsed = this._parseFactionKey(key);
+    if (!parsed) return this.host._approveApprovalRequest(key);
+    await FactionRegistryService.approveSuggestedFaction({
+      ...parsed,
+      data: form ? this._collectFactionApprovalData(form) : {}
+    });
+    ui.notifications?.info?.('Faction suggestion approved.');
+    this.host.selectedApprovalKey = null;
+    await this.host.render(false);
+  }
+
+  async _finalizeApproval(key, form = null) {
+    const parsed = this._parseFactionKey(key);
+    if (!parsed) return this.host._finalizeApprovalWithEdits(key, form);
+    await FactionRegistryService.approveSuggestedFaction({
+      ...parsed,
+      data: form ? this._collectFactionApprovalData(form) : {}
+    });
+    ui.notifications?.info?.('Faction suggestion approved with GM edits.');
+    this.host.selectedApprovalKey = null;
+    this.host.approvalEditMode = false;
+    await this.host.render(false);
+  }
+
+  async _denyRequest(key, reason = '') {
+    const parsed = this._parseFactionKey(key);
+    if (!parsed) return this.host._denyApprovalRequest(key, reason);
+    await FactionRegistryService.rejectSuggestedFaction({ ...parsed, reason });
+    ui.notifications?.info?.('Faction suggestion rejected.');
+    this.host.selectedApprovalKey = null;
+    this.host.approvalDenyMode = false;
+    await this.host.render(false);
   }
 
   /** Render live changed-field rows in the approval decision rail while GM edits inline. */

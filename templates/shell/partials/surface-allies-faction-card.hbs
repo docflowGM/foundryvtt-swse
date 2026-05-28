@@ -1,18 +1,24 @@
-<article class="swse-allies-faction-card" data-faction-id="{{faction.id}}">
+<article class="swse-allies-faction-card {{#if faction.isPending}}is-pending{{/if}} {{#if faction.isRejected}}is-rejected{{/if}}" data-faction-id="{{faction.id}}">
   <form class="swse-allies-faction-form" data-faction-id="{{faction.id}}">
+    <input type="hidden" name="factionId" value="{{faction.factionId}}">
     <header class="swse-allies-faction-card-head">
       <div>
         <span class="swse-allies-kicker">FACTION RECORD</span>
         <input type="text" name="name" value="{{faction.name}}" placeholder="Faction name">
+        {{#if faction.meta}}<small>{{faction.meta}}</small>{{/if}}
       </div>
       <div class="swse-allies-faction-score {{faction.scoreClass}}">
         <span>Score</span>
         <output>{{faction.scoreLabel}}</output>
+        {{#if faction.canEditScore}}
         <input type="number" name="score" step="1" value="{{faction.score}}" inputmode="numeric" aria-label="Faction score">
+        {{else}}
+        <input type="hidden" name="score" value="{{faction.score}}">
+        {{/if}}
         <small>{{faction.status}}</small>
       </div>
       <div class="swse-allies-faction-actions">
-        <button type="button" data-allies-action="save-faction" data-faction-id="{{faction.id}}">Save</button>
+        {{#if faction.canSave}}<button type="button" data-allies-action="save-faction" data-faction-id="{{faction.id}}">{{#if faction.isPending}}Submit{{else}}Save{{/if}}</button>{{/if}}
         <button type="button" class="is-danger" data-allies-action="remove-faction" data-faction-id="{{faction.id}}">Remove</button>
       </div>
     </header>
@@ -21,6 +27,19 @@
       <label>
         <span>Faction Type</span>
         <input type="text" name="type" value="{{faction.type}}" placeholder="Crime syndicate, law enforcement, government...">
+      </label>
+      <label>
+        <span>Relationship</span>
+        <select name="relationshipType">
+          <option value="known" {{#if (eq faction.relationshipType "known")}}selected{{/if}}>Known</option>
+          <option value="member" {{#if (eq faction.relationshipType "member")}}selected{{/if}}>Member</option>
+          <option value="enemy" {{#if (eq faction.relationshipType "enemy")}}selected{{/if}}>Enemy / Rival</option>
+          <option value="patron" {{#if (eq faction.relationshipType "patron")}}selected{{/if}}>Patron / Client</option>
+          <option value="founder" {{#if (eq faction.relationshipType "founder")}}selected{{/if}}>Founder / Leader</option>
+          <option value="ally" {{#if (eq faction.relationshipType "ally")}}selected{{/if}}>Ally</option>
+          <option value="neutral" {{#if (eq faction.relationshipType "neutral")}}selected{{/if}}>Neutral</option>
+          <option value="other" {{#if (eq faction.relationshipType "other")}}selected{{/if}}>Other</option>
+        </select>
       </label>
       <label>
         <span>Faction Scale</span>
@@ -40,8 +59,37 @@
       </label>
       <label class="swse-allies-faction-wide">
         <span>Faction Benefits</span>
+        {{#if faction.canEditGoverned}}
         <textarea name="benefits" rows="3" placeholder="GM-assessed benefits derived from the faction score.">{{faction.benefits}}</textarea>
+        {{else}}
+        <textarea name="benefits" rows="3" readonly placeholder="GM-assessed benefits derived from the faction score.">{{faction.benefits}}</textarea>
+        {{/if}}
       </label>
+      <label class="swse-allies-faction-wide">
+        <span>Player Notes / Suggestion Notes</span>
+        <textarea name="notes" rows="3" placeholder="What does this relationship mean to your character?">{{faction.notes}}</textarea>
+      </label>
+      {{#if faction.canEditGoverned}}
+      <label class="swse-allies-faction-wide">
+        <span>GM Notes</span>
+        <textarea name="gmNotes" rows="3" placeholder="Private or governance notes for this relationship.">{{faction.gmNotes}}</textarea>
+      </label>
+      {{/if}}
     </div>
+
+    {{#if faction.hasHistory}}
+    <details class="swse-allies-faction-history">
+      <summary>Score History</summary>
+      <div class="swse-allies-faction-history-list">
+        {{#each faction.history}}
+        <div class="swse-allies-faction-history-row">
+          <span>{{this.atLabel}}</span>
+          <strong>{{#if this.hasDelta}}{{this.deltaLabel}}: {{this.beforeLabel}} → {{this.afterLabel}}{{else}}{{this.reason}}{{/if}}</strong>
+          {{#if this.hasDelta}}<em>{{this.reason}}</em>{{/if}}
+        </div>
+        {{/each}}
+      </div>
+    </details>
+    {{/if}}
   </form>
 </article>
