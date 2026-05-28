@@ -2353,6 +2353,7 @@ export class HolonetMessengerService {
       }
       case 'gm-fail-trade':
       case 'gm-reopen-trade':
+      case 'gm-mark-trade-reconciled':
       case 'gm-archive-trade':
       case 'gm-unarchive-trade': {
         await this._gmOverrideTradeConsoleState({ thread, recordId, action, memo, requesterId, senderRecipientId, requestId });
@@ -2901,6 +2902,20 @@ export class HolonetMessengerService {
       transfer.tradeConsoleOverride = { action, at: now, by: userId, previousStatus: currentStatus, nextStatus, note };
       await HolonetStorage.saveRecord(message);
       await this._publishSystemMessage(thread, `GM reopened ${type} trade ${transfer.id || recordId} as ${transferStatusLabel(nextStatus)}${note ? `: ${note}` : ''}.`, { eventType: 'trade-console-reopened', transferId: transfer.id, recordId, previousStatus: currentStatus, nextStatus });
+      return true;
+    }
+
+    if (action === 'gm-mark-trade-reconciled') {
+      if (currentStatus !== 'failed') return false;
+      transfer.tradeConsoleReconciled = true;
+      transfer.manualReconciliationStatus = 'reconciled';
+      transfer.manualReconciledAt = now;
+      transfer.manualReconciledBy = userId;
+      transfer.manualReconciliationNote = note;
+      transfer.rollbackOk = transfer.rollbackOk ?? true;
+      transfer.tradeConsoleOverride = { action, at: now, by: userId, previousStatus: currentStatus, note };
+      await HolonetStorage.saveRecord(message);
+      await this._publishSystemMessage(thread, `GM marked ${type} trade ${transfer.id || recordId} manually reconciled${note ? `: ${note}` : ''}.`, { eventType: 'trade-console-reconciled', transferId: transfer.id, recordId, previousStatus: currentStatus, note });
       return true;
     }
 

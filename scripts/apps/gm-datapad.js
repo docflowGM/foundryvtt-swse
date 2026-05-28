@@ -918,6 +918,148 @@ export class GMDatapad extends BaseSWSEAppV2 {
         await this.render(false);
       });
     });
+
+    pageElement.querySelectorAll('[data-economy-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const current = event.currentTarget;
+        const action = current.dataset.economyAction;
+        const kind = current.dataset.economyKind || '';
+        const note = pageElement.querySelector('[data-economy-repair-note]')?.value ?? '';
+        await this._handleEconomyRepairAction({
+          action,
+          kind,
+          sessionId: current.dataset.sessionId || '',
+          threadId: current.dataset.threadId || '',
+          recordId: current.dataset.recordId || '',
+          selectRecordId: current.dataset.selectRecordId || '',
+          note
+        });
+      });
+    });
+
+    const tradePolicyForm = pageElement.querySelector('form[data-trade-policy-form]');
+    if (tradePolicyForm) {
+      tradePolicyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(tradePolicyForm);
+        const boolKeys = [
+          'holonetCreditTransfersEnabled',
+          'holonetRequireCreditTransferApproval',
+          'holonetItemTradesEnabled',
+          'holonetRequireItemTradeApproval',
+          'holonetAssetTradesEnabled',
+          'holonetRequireAssetTradeApproval',
+          'holonetPartyFundEnabled'
+        ];
+        const numericKeys = ['holonetPartyFundDefaultCutPercent'];
+        try {
+          for (const key of boolKeys) await game.settings.set(this.NS, key, data.get(key) === 'on');
+          for (const key of numericKeys) await game.settings.set(this.NS, key, Math.max(0, Math.min(100, Math.floor(Number(data.get(key) || 0) || 0))));
+          ui?.notifications?.info?.('Trade policy updated.');
+          await this.render(false);
+        } catch (err) {
+          SWSELogger.error('[GMDatapad] Failed to save trade policy:', err);
+          ui?.notifications?.error?.(`Trade policy update failed: ${err.message}`);
+        }
+      });
+    }
+  }
+
+  async _handleEconomyRepairAction({ action = '', kind = '', sessionId = '', threadId = '', recordId = '', selectRecordId = '', note = '' } = {}) {
+    if (!action) return false;
+    if (action === 'select-trade') {
+      this.selectedTradeRecordId = selectRecordId || recordId || null;
+      await this.render(false);
+      return true;
+    }
+    if (kind === 'trade' && threadId && recordId) {
+      const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo: note });
+      if (!ok) ui?.notifications?.warn?.('Trade reconciliation action did not complete.');
+      this.selectedTradeRecordId = recordId;
+      await this.render(false);
+      return ok;
+    }
+    if (kind === 'game' && sessionId) {
+      const session = GameSessionStore.getSession(sessionId);
+      if (!session) {
+        ui?.notifications?.error?.('Game session not found.');
+        return false;
+      }
+      const cleanNote = String(note || '').trim();
+      if (action === 'game-mark-reconciled') {
+        await GameSessionStore.updateSession(sessionId, current => ({
+          metadata: {
+            ...(current.metadata || {}),
+            gmReconciliation: {
+              status: 'reconciled',
+              at: Date.now(),
+              by: game.user?.id ?? null,
+              note: cleanNote || 'GM marked game settlement reconciled.'
+            }
+          },
+          escrow: {
+            ...(current.escrow || {}),
+            credits: {
+              ...(current.escrow?.credits || {}),
+              manualReconciliationStatus: 'reconciled',
+              manualReconciledAt: Date.now(),
+              manualReconciledBy: game.user?.id ?? null,
+              manualReconciliationNote: cleanNote
+            }
+          },
+          log: [
+            ...((current.log || [])),
+            { id: foundry.utils?.randomID?.() || `log_${Date.now()}`, at: Date.now(), type: 'gm-game-settlement-reconciled', by: game.user?.id ?? null, note: cleanNote }
+          ]
+        }));
+        ui?.notifications?.info?.('Game settlement marked reconciled.');
+        await this.render(false);
+        return true;
+      }
+      if (action === 'game-reopen-settlement') {
+        await GameSessionStore.updateSession(sessionId, current => ({
+          status: 'pending-gm-settlement',
+          metadata: {
+            ...(current.metadata || {}),
+            gmReconciliation: {
+              status: 'reopened',
+              at: Date.now(),
+              by: game.user?.id ?? null,
+              note: cleanNote || 'GM reopened settlement for approval.'
+            }
+          },
+          escrow: {
+            ...(current.escrow || {}),
+            credits: {
+              ...(current.escrow?.credits || {}),
+              status: 'pending-gm-settlement',
+              pendingSettlementAt: Date.now(),
+              manualReconciliationStatus: 'reopened',
+              settlementMessage: cleanNote || 'Settlement reopened by GM for approval.'
+            }
+          },
+          log: [
+            ...((current.log || [])),
+            { id: foundry.utils?.randomID?.() || `log_${Date.now()}`, at: Date.now(), type: 'gm-game-settlement-reopened', by: game.user?.id ?? null, note: cleanNote }
+          ]
+        }));
+        ui?.notifications?.info?.('Game settlement reopened in the approval queue.');
+        await this.render(false);
+        return true;
+      }
+      if (action === 'game-refund-escrow') {
+        const result = await GameCreditEscrowService.refundSession(session, cleanNote || 'GM refunded game escrow from reconciliation cockpit.');
+        if (!result?.ok) {
+          ui?.notifications?.error?.(`Game escrow refund failed: ${result?.error || 'Unknown error'}`);
+          return false;
+        }
+        ui?.notifications?.info?.('Game escrow refunded through TransactionEngine.');
+        await this.render(false);
+        return true;
+      }
+    }
+    return false;
   }
 
   async _wireJobBoardEvents(root) {
