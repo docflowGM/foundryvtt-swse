@@ -9,6 +9,7 @@
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { normalizeCredits } from '/systems/foundryvtt-swse/scripts/utils/credit-normalization.js';
+import { GMStoreOperationsService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMStoreOperationsService.js';
 
 export class GMStoreControlSurfaceController {
   constructor(host) {
@@ -127,7 +128,10 @@ export class GMStoreControlSurfaceController {
     for (const btn of pageElement.querySelectorAll('[data-action="rollback-transaction"], [data-action="reverse-transaction"]')) {
       btn.addEventListener('click', async (ev) => {
         const index = Number(ev.currentTarget.dataset.index);
-        await this.host._rollbackTransaction(index);
+        await GMStoreOperationsService.rollbackTransaction(index, {
+          transactions: this.host.transactions,
+          render: () => this.host.render(false)
+        });
       }, { signal });
     }
   }
@@ -239,10 +243,12 @@ export class GMStoreControlSurfaceController {
           }
         }
 
-        await this.host._resolvePendingSaleRequest(requestId, {
+        await GMStoreOperationsService.resolvePendingSaleRequest(requestId, {
           decision: action === 'deny-sale-request' ? 'deny' : (action === 'counteroffer-sale-request' ? 'counteroffer' : 'approve'),
           amount,
           reason
+        }, {
+          render: () => this.host.render(false)
         });
       }, { signal });
     }
