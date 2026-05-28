@@ -9,6 +9,8 @@
 
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { DELIVERY_STATE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
+import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
+import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 
 const TRANSFER_TYPES = Object.freeze({
   credit: {
@@ -69,6 +71,32 @@ function formatCredits(amount) {
   return `${value.toLocaleString()} cr`;
 }
 
+function actorCredits(actor) {
+  const value = Number(actor?.system?.credits ?? 0);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function gameEscrowStatusLabel(status = '') {
+  switch (String(status || '')) {
+    case 'pending-gm-settlement': return 'Awaiting GM settlement';
+    case 'payout-failed': return 'Payout failed';
+    case 'settlement-blocked': return 'Settlement blocked';
+    case 'escrowed': return 'Escrowed';
+    case 'refunded': return 'Refunded';
+    case 'settled': return 'Settled';
+    default: return status ? String(status) : 'Unknown';
+  }
+}
+
+function gameRepairTone(status = '') {
+  switch (String(status || '')) {
+    case 'payout-failed': return 'crit';
+    case 'settlement-blocked': return 'warn';
+    case 'pending-gm-settlement': return 'warn';
+    default: return 'stable';
+  }
+}
+
 function safeArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -115,6 +143,10 @@ function getThreadTitle(thread) {
   return thread?.title || thread?.name || thread?.metadata?.title || 'Holonet Thread';
 }
 
+function seatLabelFromSessionSeat(seat = {}) {
+  return seat.displayName || seat.actorId || seat.seatId || 'Unknown Seat';
+}
+
 function eventTypeLabel(eventType = '') {
   if (!eventType) return 'Trade event';
   return String(eventType)
@@ -141,7 +173,7 @@ export class GMTradeConsoleSurfaceService {
     const entries = this._buildTransferEntries(records, threadMap)
       .sort((a, b) => (b.sortTime ?? 0) - (a.sortTime ?? 0));
 
-    const visibleEntries = entries.filter(entry => !entry.gmArchived);
+    const visibleEntries = entries.filter(entry => !entry.gmArchived && !entry.tradeConsoleReconciled);
     const selectedId = host?.selectedTradeRecordId && entries.some(entry => entry.recordId === host.selectedTradeRecordId)
       ? host.selectedTradeRecordId
       : (visibleEntries[0]?.recordId ?? entries[0]?.recordId ?? null);
@@ -152,6 +184,7 @@ export class GMTradeConsoleSurfaceService {
     const activeQueue = visibleEntries.filter(entry => ACTIVE_STATUSES.has(entry.status));
     const recentCompleted = visibleEntries.filter(entry => TERMINAL_STATUSES.has(entry.status) && entry.status !== 'failed').slice(0, 10);
     const auditEvents = this._buildAuditEvents(records, entries).slice(0, 30);
+    const economyRepair = this._buildEconomyRepairVm({ records, entries });
 
     return {
       stats: this._buildStats(entries),
@@ -163,6 +196,7 @@ export class GMTradeConsoleSurfaceService {
       activeQueue,
       recentCompleted,
       auditEvents,
+      economyRepair,
       policy: this._buildPolicyVm(),
       queues: [
         { id: 'approvals', label: 'Approvals', hint: 'Transfers waiting for GM approval.', entries: approvalQueue, tone: approvalQueue.length ? 'warn' : 'stable' },
@@ -229,6 +263,7 @@ export class GMTradeConsoleSurfaceService {
       isTerminal: TERMINAL_STATUSES.has(status),
       approvalRequired: Boolean(transfer.approvalRequired),
       gmArchived: Boolean(transfer.gmArchived || transfer.tradeConsoleArchived),
+      tradeConsoleReconciled: Boolean(transfer.tradeConsoleReconciled || transfer.manualReconciliationStatus === 'reconciled'),
       amount,
       amountLabel: amount ? formatCredits(amount) : 'No credits',
       requestedCredits,
@@ -347,6 +382,7 @@ export class GMTradeConsoleSurfaceService {
     }
     if (status === 'failed') {
       actions.push({ id: 'reopen', label: 'Reopen Pending', action: 'gm-reopen-trade', tone: 'warn' });
+      actions.push({ id: 'mark-reconciled', label: 'Mark Reconciled', action: 'gm-mark-trade-reconciled', tone: 'stable' });
     }
     if (transfer?.gmArchived || transfer?.tradeConsoleArchived) {
       actions.push({ id: 'unarchive', label: 'Show in Console', action: 'gm-unarchive-trade', tone: 'stable' });
@@ -414,6 +450,126 @@ export class GMTradeConsoleSurfaceService {
       visible: entries.length - archived,
       actionable: approvals + failed
     };
+  }
+
+
+
+  static _buildEconomyRepairVm({ records = [], entries = [] } = {}) {
+    const tradeTickets = entries
+      .filter(entry => entry.status === 'failed' && !entry.gmArchived && !entry.tradeConsoleReconciled)
+      .map(entry => ({
+        id: `trade:${entry.recordId}`,
+        kind: 'trade',
+        tone: 'crit',
+        title: entry.title,
+        statusLabel: 'Failed trade settlement',
+        sourceLabel: entry.threadTitle,
+        expectedLabel: entry.amount ? `Expected movement: ${entry.amountLabel}` : 'Expected movement recorded in trade terms.',
+        currentLabel: entry.diagnostic?.rollbackLabel || 'Review atomic diagnostics.',
+        detail: entry.failureReason || 'Trade failed or was manually marked failed. Verify credits/items/assets before closing.',
+        actionLabel: 'Inspect Trade',
+        selectRecordId: entry.recordId,
+        threadId: entry.threadId,
+        recordId: entry.recordId,
+        canMarkReconciled: true
+      }));
+
+    const sessions = GameSessionStore.getAllSessions();
+    const gameTickets = sessions
+      .filter(session => {
+        const credits = session?.escrow?.credits ?? {};
+        const status = String(credits.status || '');
+        if (!['pending-gm-settlement', 'payout-failed', 'settlement-blocked'].includes(status)) return false;
+        return session?.metadata?.gmReconciliation?.status !== 'reconciled'
+          && credits.manualReconciliationStatus !== 'reconciled';
+      })
+      .map(session => this._buildGameRepairTicket(session));
+
+    const ledgerTickets = this._buildLedgerReviewTickets();
+    const tickets = [...gameTickets, ...tradeTickets, ...ledgerTickets]
+      .sort((a, b) => (b.sortTime ?? 0) - (a.sortTime ?? 0));
+    const failed = tickets.filter(ticket => ticket.tone === 'crit').length;
+    const blocked = tickets.filter(ticket => ticket.tone === 'warn').length;
+    const informational = tickets.filter(ticket => ticket.tone === 'stable' || ticket.tone === 'info').length;
+    return {
+      hasTickets: tickets.length > 0,
+      tickets,
+      stats: {
+        total: tickets.length,
+        failed,
+        blocked,
+        informational
+      }
+    };
+  }
+
+  static _buildGameRepairTicket(session = {}) {
+    const credits = session?.escrow?.credits ?? {};
+    const status = String(credits.status || '');
+    const payoutBalances = credits.payoutBalances || credits.approvedBalances || {};
+    const payoutRows = Object.entries(payoutBalances)
+      .map(([seatId, amount]) => {
+        const seat = safeArray(session.seats).find(row => row?.seatId === seatId) || {};
+        const actor = seat.actorId ? game.actors?.get?.(seat.actorId) : null;
+        return {
+          seatId,
+          seatLabel: seatLabelFromSessionSeat(seat),
+          actorName: actor?.name || seat.displayName || seatId,
+          amount: Number(amount || 0) || 0,
+          currentCredits: actor ? actorCredits(actor) : null,
+          actorMissing: Boolean(seat.actorId && !actor)
+        };
+      })
+      .filter(row => row.amount > 0);
+    const requested = Number(credits.payoutRequested ?? Object.values(payoutBalances).reduce((sum, amount) => sum + (Number(amount) || 0), 0)) || 0;
+    const approved = Number(credits.payoutApproved ?? Object.values(credits.approvedBalances || {}).reduce((sum, amount) => sum + (Number(amount) || 0), 0)) || 0;
+    const currentLabel = payoutRows.length
+      ? payoutRows.map(row => `${row.actorName}: ${formatCredits(row.currentCredits ?? 0)}${row.actorMissing ? ' (actor missing)' : ''}`).join(' | ')
+      : 'No actor-backed payout rows recorded.';
+    const expectedLabel = status === 'pending-gm-settlement'
+      ? `Requested payout: ${formatCredits(requested)}`
+      : `Requested: ${formatCredits(requested)} · Approved/paid: ${formatCredits(approved)}`;
+    const canRefund = ['escrowed', 'payout-failed'].includes(status);
+    return {
+      id: `game:${session.id}`,
+      kind: 'game',
+      tone: gameRepairTone(status),
+      title: session.title || 'Holopad Game',
+      statusLabel: gameEscrowStatusLabel(status),
+      sourceLabel: session.gameId || 'Holopad Games',
+      expectedLabel,
+      currentLabel,
+      detail: credits.settlementMessage || credits.refundReason || 'Game economy settlement needs GM review.',
+      sortTime: Number(session.updatedAt || session.createdAt || 0) || 0,
+      sessionId: session.id,
+      canReopenSettlement: status === 'payout-failed' || status === 'settlement-blocked',
+      canRefund,
+      canMarkReconciled: status === 'payout-failed' || status === 'settlement-blocked'
+    };
+  }
+
+  static _buildLedgerReviewTickets() {
+    const rows = TransactionEngine.getAllTransactions({ includeZeroCost: false });
+    return rows
+      .filter(tx => {
+        const context = String(tx.context || '').toLowerCase();
+        if (!context.includes('rollback') && !context.includes('correction')) return false;
+        if (tx.audit?.manualReconciliationHidden === true) return false;
+        return String(tx.audit?.sourceTransactionId || tx.rollbackOf || '').trim();
+      })
+      .slice(0, 5)
+      .map(tx => ({
+        id: `ledger:${tx.transactionId}`,
+        kind: 'ledger',
+        tone: 'stable',
+        title: tx.itemName || tx.type || 'Ledger correction',
+        statusLabel: 'Recent rollback/correction',
+        sourceLabel: tx.source || tx.context || 'TransactionEngine',
+        expectedLabel: `Adjustment: ${formatCredits(tx.amount)}`,
+        currentLabel: `${tx.actorName}: ${formatCredits(actorCredits(game.actors?.get?.(tx.actorId)))}`,
+        detail: tx.reason || 'Recent correction is listed here for GM review continuity.',
+        sortTime: Number(tx.timestamp || 0) || 0
+      }));
   }
 
   static _buildPolicyVm() {

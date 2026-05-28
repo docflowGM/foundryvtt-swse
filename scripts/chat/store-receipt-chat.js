@@ -238,39 +238,113 @@ async function handleCreditGrantComplete(payload = {}) {
 }
 
 
+function receiptProjectionForCreditContext(context = '', amount = 0, transaction = {}) {
+  const key = String(context || '').toLowerCase();
+  const audit = transaction.audit || transaction.metadata || {};
+  if (key === 'game-credit-escrow') {
+    return {
+      kind: 'game-credit-escrow',
+      sourceType: 'purchase',
+      vendorLabel: 'Holopad Games',
+      title: amount < 0 ? 'Game buy-in escrowed' : 'Game escrow adjusted',
+      deltaLabel: amount < 0 ? 'escrowed' : 'credited',
+      action: { action: 'open-games', label: 'Open Games' },
+      itemSummary: audit.sessionTitle || audit.gameId || 'Game wager escrow'
+    };
+  }
+  if (key === 'game-credit-payout') {
+    return {
+      kind: 'game-credit-payout',
+      sourceType: 'credit-grant',
+      vendorLabel: 'Holopad Games',
+      title: 'Game payout received',
+      deltaLabel: 'received',
+      action: { action: 'open-games', label: 'Open Games' },
+      itemSummary: audit.sessionTitle || audit.gameId || 'Game payout'
+    };
+  }
+  if (key === 'game-credit-refund') {
+    return {
+      kind: 'game-credit-refund',
+      sourceType: amount >= 0 ? 'refund' : 'credit-adjustment',
+      vendorLabel: 'Holopad Games',
+      title: amount >= 0 ? 'Game credits refunded' : 'Game payout rollback applied',
+      deltaLabel: amount >= 0 ? 'refunded' : 'deducted',
+      action: { action: 'open-games', label: 'Open Games' },
+      itemSummary: audit.refundReason || audit.rollbackReason || audit.sessionTitle || 'Game credit refund'
+    };
+  }
+  if (key === 'holonet-job-payout') {
+    return {
+      kind: 'job-credit-payout',
+      sourceType: 'credit-grant',
+      vendorLabel: 'Job Board',
+      title: 'Job reward received',
+      deltaLabel: 'received',
+      action: { action: 'open-holonet', label: 'Open Holonet' },
+      itemSummary: audit.reason || audit.threadId || 'Job Board payout'
+    };
+  }
+  if (key === 'holonet-gm-grant' || key === 'holonet-party-fund-payout') {
+    return {
+      kind: 'gm-credit-grant',
+      sourceType: key === 'holonet-party-fund-payout' ? 'party-fund' : 'credit-grant',
+      vendorLabel: key === 'holonet-party-fund-payout' ? 'Party Fund' : 'GM Ledger',
+      title: key === 'holonet-party-fund-payout' ? 'Party fund payout received' : 'GM credit grant received',
+      deltaLabel: 'received',
+      action: { action: 'open-holonet', label: 'Open Holonet' },
+      itemSummary: audit.reason || audit.threadId || 'GM credit grant'
+    };
+  }
+  if (key.includes('rollback') || key.includes('correction') || key.includes('adjustment')) {
+    return {
+      kind: 'credit-adjustment',
+      sourceType: 'credit-adjustment',
+      vendorLabel: 'GM Store Control',
+      title: amount > 0 ? 'Credit correction received' : 'Credit correction applied',
+      deltaLabel: amount > 0 ? 'credited' : 'deducted',
+      action: { action: 'open-store', label: 'Open Store' },
+      itemSummary: transaction.reason || transaction.audit?.reason || 'GM credit correction'
+    };
+  }
+  return null;
+}
+
 async function handleCreditAdjustmentComplete(payload = {}) {
   const transaction = payload.transaction || {};
   if (payload.success === false || transaction.success === false) return;
 
   const context = String(transaction.context || transaction.metadata?.context || '');
-  if (!context.includes('rollback') && !context.includes('correction') && !context.includes('adjustment')) return;
-
   const actor = payload.actor || game.actors?.get?.(transaction.actorId) || null;
   if (!actor) return;
 
   const amount = asNumber(transaction.amount, 0);
   if (amount === 0) return;
 
-  const after = actorCredits(actor);
-  const transactionId = transaction.id || transaction.transactionId || `adjustment_${transaction.timestamp || Date.now()}`;
-  const reason = transaction.reason || transaction.audit?.reason || 'GM credit correction';
+  const projection = receiptProjectionForCreditContext(context, amount, transaction);
+  if (!projection) return;
 
-  await postReceiptOnce('credit-adjustment', transactionId, actor, {
-    sourceType: 'credit-adjustment',
-    vendorLabel: 'GM Store Control',
-    title: amount > 0 ? 'Credit correction received' : 'Credit correction applied',
-    itemSummary: reason,
+  const after = actorCredits(actor);
+  const transactionId = transaction.id || transaction.transactionId || `${projection.kind}_${transaction.timestamp || Date.now()}`;
+  const reason = transaction.reason || transaction.audit?.reason || projection.itemSummary;
+
+  await postReceiptOnce(projection.kind, transactionId, actor, {
+    sourceType: projection.sourceType,
+    vendorLabel: projection.vendorLabel,
+    title: projection.title,
+    itemSummary: reason || projection.itemSummary,
     previousBalance: after - amount,
     newBalance: after,
     delta: amount,
-    deltaLabel: amount > 0 ? 'credited' : 'deducted',
+    deltaLabel: projection.deltaLabel,
     actorName: actor.name,
-    actions: [{ action: 'open-store', label: 'Open Store' }]
+    actions: [projection.action]
   });
 }
 
 async function handleCustomPurchaseApproved(payload = {}) {
   const approval = payload.approval || {};
+  if (approval.type === 'store-item' || approval.approvalKind === 'store-policy-item') return;
   const actor = payload.actor || game.actors?.get?.(approval.ownerActorId) || null;
   if (!actor) return;
   const cost = asNumber(approval.costCredits, asNumber(approval.total, 0));

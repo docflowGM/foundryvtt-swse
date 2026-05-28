@@ -16,7 +16,7 @@ import { compareSabaccHands, evaluateSabaccHand } from '../games/sabacc/sabacc-r
 import { SabaccAi } from '../games/sabacc/sabacc-ai.js';
 import { buildDejarikBoard } from '../games/dejarik/dejarik-board.js';
 import { canAttackPiece, canMovePiece } from '../games/dejarik/dejarik-rules.js';
-import { evaluateHintaroRoll, rollHintaroPlayerDice, HINTARO_SYMBOLS } from '../games/hintaro/hintaro-rules.js';
+import { evaluateHintaroRoll, rollHintaroRegularDice, HINTARO_SYMBOLS } from '../games/hintaro/hintaro-rules.js';
 
 function testPazaak() {
   const deck = buildPazaakMainDeck();
@@ -64,9 +64,8 @@ function testDejarik() {
 }
 
 function testHintaro() {
-  const rolled = rollHintaroPlayerDice();
-  assert.equal(rolled.dice.length, 2, 'Hintaro player should roll two regular cubes');
-  assert.equal(rolled.symbols.length, 4, 'Two Hintaro cubes should expose four visible symbols');
+  const rolled = rollHintaroRegularDice(4);
+  assert.equal(rolled.length, 4, 'Hintaro player should roll four visible symbols across two regular cubes');
   const tukarToKulro = evaluateHintaroRoll([HINTARO_SYMBOLS.TUKAR, HINTARO_SYMBOLS.TUKAR, HINTARO_SYMBOLS.KULRO, HINTARO_SYMBOLS.KULRO], null);
   assert.equal(tukarToKulro.rankLabel, 'Tukar to Kulro', 'Two Tukar/two Kulro should be top ranked');
 }

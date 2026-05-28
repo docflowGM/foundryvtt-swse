@@ -1,0 +1,386 @@
+{{!-- GM Datapad healing surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    <div class="gm-datapad-page gm-datapad-healing gm-combat-recovery">
+      <div class="page-header combat-recovery-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+        <div>
+          <h2>{{pageTitle}}</h2>
+          <p class="page-subtitle">{{pageDescription}}</p>
+        </div>
+        <div class="combat-recovery-status {{#if combatRecovery.hasActiveCombat}}active{{else}}idle{{/if}}">
+          <span class="status-label">Encounter</span>
+          <strong>{{combatRecovery.activeCombatLabel}}</strong>
+        </div>
+      </div>
+
+      <div class="combat-recovery-metrics" aria-label="Combat and recovery status">
+        <div class="combat-recovery-metric"><span>Roster</span><strong>{{combatRecovery.metrics.total}}</strong></div>
+        <div class="combat-recovery-metric"><span>Combatants</span><strong>{{combatRecovery.metrics.activeCombatants}}</strong></div>
+        <div class="combat-recovery-metric warning"><span>Wounded</span><strong>{{combatRecovery.metrics.wounded}}</strong></div>
+        <div class="combat-recovery-metric critical"><span>Down</span><strong>{{combatRecovery.metrics.downed}}</strong></div>
+        <div class="combat-recovery-metric warning"><span>CT Impaired</span><strong>{{combatRecovery.metrics.conditionImpaired}}</strong></div>
+        <div class="combat-recovery-metric info"><span>SW Spent</span><strong>{{combatRecovery.metrics.secondWindSpent}}</strong></div>
+        <div class="combat-recovery-metric critical"><span>Poisons</span><strong>{{combatRecovery.metrics.activePoisons}}</strong></div>
+        <div class="combat-recovery-metric warning"><span>Ongoing</span><strong>{{combatRecovery.metrics.ongoingEffects}}</strong></div>
+        <div class="combat-recovery-metric stable"><span>Rest Eligible</span><strong>{{combatRecovery.metrics.restEligible}}</strong></div>
+        <div class="combat-recovery-metric muted"><span>Droids</span><strong>{{combatRecovery.metrics.droids}}</strong></div>
+      </div>
+
+      <div class="combat-recovery-shell">
+        <section class="combat-recovery-board swse-ui-panel">
+          <div class="combat-recovery-section-header">
+            <div>
+              <h3>Recovery Roster</h3>
+              <p>Organic actors can rest. Droids and vehicles are shown for repair visibility only.</p>
+            </div>
+            <div class="combat-recovery-tools">
+              <button type="button" class="swse-ui-button swse-ui-button-primary" data-combat-recovery-action="natural-healing">
+                <i class="fa-solid fa-heart-pulse"></i> Natural Healing
+              </button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Short Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Extended Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
+            </div>
+          </div>
+
+          <div class="combat-recovery-target-bar">
+            <label>
+              <span>Action Target</span>
+              <select name="combatRecoveryTargetMode">
+                {{#each combatRecovery.selectedTargetModes}}
+                <option value="{{this.id}}" {{#if (eq this.id ../combatRecovery.defaultTargetMode)}}selected{{/if}}>{{this.label}} ({{this.count}})</option>
+                {{/each}}
+              </select>
+            </label>
+            <p>Group buttons act on this target. Rest never benefits droids or vehicles.</p>
+            <div class="combat-recovery-target-buttons">
+              <button type="button" class="swse-ui-button" data-combat-target-select="party">Check Party</button>
+              <button type="button" class="swse-ui-button" data-combat-target-select="attention">Check Needs Attention</button>
+              <button type="button" class="swse-ui-button" data-combat-target-select="combat">Check Combatants</button>
+              <button type="button" class="swse-ui-button" data-combat-target-select="all">Check All</button>
+              <button type="button" class="swse-ui-button" data-combat-target-select="clear">Clear</button>
+            </div>
+            <label class="combat-recovery-group-amount">
+              <span>HP Amount</span>
+              <input type="number" name="combatRecoveryGroupAmount" min="0" step="1" value="5">
+            </label>
+            <label class="combat-recovery-group-amount">
+              <span>Check Total</span>
+              <input type="number" name="combatRecoveryRollTotal" min="0" step="1" placeholder="GM roll">
+            </label>
+            <label class="combat-recovery-group-amount">
+              <span>DC</span>
+              <input type="number" name="combatRecoveryDc" min="0" step="1" placeholder="default">
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Treat Injury</span>
+              <select name="combatRecoveryTreatWorkflow">
+                {{#each combatRecovery.treatInjuryWorkflows}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.label}} DC {{this.dc}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Repair Workflow</span>
+              <select name="combatRecoveryRepairWorkflow">
+                {{#each combatRecovery.repairWorkflows}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.label}} DC {{this.dc}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Status Effect</span>
+              <select name="combatRecoveryStatusEffect" {{#unless combatRecovery.statusEffectsEnabled}}disabled{{/unless}}>
+                {{#if combatRecovery.statusEffectsEnabled}}
+                {{#each combatRecovery.statusEffects}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                {{/each}}
+                {{else}}
+                <option value="">Status effects disabled</option>
+                {{/if}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Poison / Disease</span>
+              <select name="combatRecoveryPoisonKey" {{#unless combatRecovery.poisonEnabled}}disabled{{/unless}}>
+                {{#if combatRecovery.poisonEnabled}}
+                <option value="">Any active poison</option>
+                {{#each combatRecovery.poisonOptions}}
+                <option value="{{this.id}}" title="{{this.description}}">{{this.label}}</option>
+                {{/each}}
+                {{else}}
+                <option value="">No poison registry</option>
+                {{/if}}
+              </select>
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Ongoing Type</span>
+              <select name="combatRecoveryOngoingType">
+                {{#each combatRecovery.ongoingEffectPresets}}
+                <option value="{{this.id}}">{{this.label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label class="combat-recovery-group-amount wide">
+              <span>Ongoing Label</span>
+              <input type="text" name="combatRecoveryOngoingLabel" placeholder="Custom effect label">
+            </label>
+            <label class="combat-recovery-status-select">
+              <span>Duration</span>
+              <select name="combatRecoveryOngoingDuration">
+                <option value="encounter">Encounter</option>
+                <option value="rest">Until Rest</option>
+                <option value="manual">Manual</option>
+              </select>
+            </label>
+            <span class="combat-recovery-selected-pill"><strong data-combat-selected-count>0</strong> checked</span>
+          </div>
+
+          <div class="combat-recovery-card-grid">
+            {{#each combatRecovery.actors}}
+            <article class="combat-recovery-card {{this.actionTone}} {{this.kind}}" data-combat-actor-card data-actor-id="{{this.id}}">
+              <header class="combat-recovery-card-header">
+                <label class="combat-recovery-select" title="Include this actor when Action Target is Checked Actors">
+                  <input type="checkbox" name="combatRecoveryActorTarget" value="{{this.id}}" data-party-actor="{{#if this.partyActor}}true{{else}}false{{/if}}" data-needs-attention="{{#if this.needsAttention}}true{{else}}false{{/if}}" data-in-combat="{{#if this.inCombat}}true{{else}}false{{/if}}">
+                  <span>Select</span>
+                </label>
+                <img class="combat-recovery-portrait" src="{{this.img}}" alt="{{this.name}}">
+                <div class="combat-recovery-card-title">
+                  <h4>{{this.name}}</h4>
+                  <span>{{this.typeLabel}} - {{this.ownerLabel}}</span>
+                </div>
+                {{#if this.inCombat}}<span class="combat-recovery-chip info">Combat</span>{{/if}}
+              </header>
+
+              <div class="combat-recovery-bars">
+                <div class="combat-recovery-bar-row">
+                  <span>HP</span>
+                  <strong>{{this.hpLabel}}</strong>
+                </div>
+                <div class="combat-recovery-hpbar" aria-label="Hit points">
+                  <span style="width: {{this.hpPercent}}%"></span>
+                </div>
+                <div class="combat-recovery-stat-row">
+                  <span>Condition</span><strong class="{{this.conditionTone}}">{{this.conditionLabel}}</strong>
+                  <span>Second Wind</span><strong>{{this.secondWindLabel}}</strong>
+                </div>
+              </div>
+
+              <div class="combat-recovery-chip-row">
+                {{#each this.statusChips}}
+                <span class="combat-recovery-chip {{this.tone}}">{{this.label}}</span>
+                {{/each}}
+              </div>
+
+              <p class="combat-recovery-note">{{this.restNote}}</p>
+
+              {{#if this.activeStatusEffects.length}}
+              <div class="combat-recovery-active-statuses" aria-label="Active status effects">
+                <span>Status:</span>
+                {{#each this.activeStatusEffects}}
+                <strong title="{{this.description}}">{{this.name}}</strong>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              {{#if this.activePoisons.length}}
+              <div class="combat-recovery-active-statuses critical" aria-label="Active poisons">
+                <span>Poison:</span>
+                {{#each this.activePoisons}}
+                <strong title="DC {{this.dc}} {{this.trigger}}">{{this.name}}</strong>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              {{#if this.activeOngoingEffects.length}}
+              <div class="combat-recovery-active-statuses warning" aria-label="Ongoing effects">
+                <span>Ongoing:</span>
+                {{#each this.activeOngoingEffects}}
+                <strong title="{{this.durationScope}} {{this.memo}}">{{this.label}}</strong>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              <div class="combat-recovery-actor-controls">
+                <label>
+                  <span>Amount</span>
+                  <input type="number" name="recoveryAmount" min="0" step="1" value="5">
+                </label>
+                <label>
+                  <span>Check</span>
+                  <input type="number" name="actorRecoveryRollTotal" min="0" step="1" placeholder="roll">
+                </label>
+                <label>
+                  <span>DC</span>
+                  <input type="number" name="actorRecoveryDc" min="0" step="1" placeholder="default">
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Status Effect</span>
+                  <select name="actorStatusEffect" {{#unless ../combatRecovery.statusEffectsEnabled}}disabled{{/unless}}>
+                    {{#if ../combatRecovery.statusEffectsEnabled}}
+                    {{#each ../combatRecovery.statusEffects}}
+                    <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                    {{/each}}
+                    {{else}}
+                    <option value="">Status effects disabled</option>
+                    {{/if}}
+                  </select>
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Medical/Repair</span>
+                  <select name="actorWorkflow">
+                    {{#if this.repairEligible}}
+                    {{#each ../combatRecovery.repairWorkflows}}
+                    <option value="{{this.id}}">{{this.label}} DC {{this.dc}}</option>
+                    {{/each}}
+                    {{else}}
+                    {{#each ../combatRecovery.treatInjuryWorkflows}}
+                    <option value="{{this.id}}">{{this.label}} DC {{this.dc}}</option>
+                    {{/each}}
+                    {{/if}}
+                  </select>
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Poison</span>
+                  <select name="actorPoisonKey" {{#unless ../combatRecovery.poisonEnabled}}disabled{{/unless}}>
+                    <option value="">Any active poison</option>
+                    {{#each ../combatRecovery.poisonOptions}}
+                    <option value="{{this.id}}">{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Ongoing</span>
+                  <select name="actorOngoingType">
+                    {{#each ../combatRecovery.ongoingEffectPresets}}
+                    <option value="{{this.id}}">{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Ongoing Label</span>
+                  <input type="text" name="actorOngoingLabel" placeholder="optional label">
+                </label>
+                <label>
+                  <span>Ongoing Memo</span>
+                  <input type="text" name="actorOngoingMemo" placeholder="optional GM memo">
+                </label>
+                <label class="combat-recovery-status-select">
+                  <span>Duration</span>
+                  <select name="actorOngoingDuration">
+                    <option value="encounter">Encounter</option>
+                    <option value="rest">Until Rest</option>
+                    <option value="manual">Manual</option>
+                  </select>
+                </label>
+                <div class="combat-recovery-button-row">
+                  {{#if this.repairEligible}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="repair" data-actor-id="{{this.id}}">Repair</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="repair-full" data-actor-id="{{this.id}}">Repair Full</button>
+                  {{else}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="heal" data-actor-id="{{this.id}}">Heal</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="short-rest" data-actor-id="{{this.id}}">Short Rest</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="extended-rest" data-actor-id="{{this.id}}">Extended Rest</button>
+                  {{/if}}
+                  {{#if this.repairEligible}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="repair-skill" data-actor-id="{{this.id}}">Repair Check</button>
+                  {{else}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="treat-injury" data-actor-id="{{this.id}}">Treat Injury</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="stabilize" data-actor-id="{{this.id}}">Stabilize</button>
+                  {{/if}}
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="revive" data-actor-id="{{this.id}}">Revive/Restore</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="damage" data-actor-id="{{this.id}}">Damage</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="improve-condition" data-actor-id="{{this.id}}">Improve CT</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="worsen-condition" data-actor-id="{{this.id}}">Worsen CT</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="reset-condition" data-actor-id="{{this.id}}">Reset CT</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="reset-second-wind" data-actor-id="{{this.id}}">Reset SW</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="apply-status-effect" data-actor-id="{{this.id}}">Apply Status</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="remove-status-effect" data-actor-id="{{this.id}}">Remove Status</button>
+                  <button type="button" class="swse-ui-button danger" data-combat-actor-action="clear-status-effects" data-actor-id="{{this.id}}">Clear Status</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="apply-poison" data-actor-id="{{this.id}}">Apply Poison</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="treat-poison" data-actor-id="{{this.id}}">Treat Poison</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="apply-ongoing-effect" data-actor-id="{{this.id}}">Apply Ongoing</button>
+                  <button type="button" class="swse-ui-button" data-combat-actor-action="clear-encounter-effects" data-actor-id="{{this.id}}">Clear Encounter FX</button>
+                </div>
+              </div>
+            </article>
+            {{/each}}
+          </div>
+        </section>
+
+        <aside class="combat-recovery-rail swse-ui-panel">
+          <section class="combat-recovery-rail-section">
+            <h3>Rule Preview</h3>
+            <ul class="combat-recovery-rule-list">
+              <li><strong>Recovery:</strong> {{combatRecovery.rules.recoveryLabel}}</li>
+              <li><strong>HP Type:</strong> {{combatRecovery.rules.recoveryHpType}}</li>
+              <li><strong>Rest Timing:</strong> {{combatRecovery.rules.recoveryRestLabel}}</li>
+              <li><strong>Vitality:</strong> {{#if combatRecovery.rules.vitalityEnabled}}Enabled{{else}}Disabled{{/if}}</li>
+              <li><strong>Second Wind:</strong> {{combatRecovery.rules.secondWindLabel}}</li>
+            </ul>
+            <p class="combat-recovery-boundary"><i class="fa-solid fa-triangle-exclamation"></i> {{combatRecovery.rules.droidRestBoundary}}</p>
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Group Actions</h3>
+            <p class="combat-recovery-target-note">Choose Whole Party, Checked Actors, Active Combatants, or the full managed roster before pressing a group action.</p>
+            <div class="combat-recovery-action-stack">
+              <button type="button" class="swse-ui-button swse-ui-button-primary" data-combat-recovery-action="natural-healing">Trigger Natural Healing</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="heal-target">Heal Target by Amount</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="repair-target">Repair Droid/Vehicle Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="damage-target">Damage Target by Amount</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="treat-injury">Treat Injury Workflow</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="repair-skill">Repair Workflow</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="stabilize">Stabilize Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="revive">Revive / Restore Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-poison">Apply Poison/Disease</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="treat-poison">Treat Poison/Disease</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-ongoing-effect">Apply Ongoing Effect</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="clear-encounter-effects">Clear Encounter Effects</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Apply Short Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Apply Extended Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-condition">Reset Target Condition Track</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-status-effect">Apply Target Status Effect</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="remove-status-effect">Remove Target Status Effect</button>
+              <button type="button" class="swse-ui-button danger" data-combat-recovery-action="clear-status-effects">Clear Target Status Effects</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-second-wind">GM Override: Reset Second Wind</button>
+              <button type="button" class="swse-ui-button danger" data-combat-recovery-action="full-organic-recovery">GM Override: Full Organic Recovery</button>
+            </div>
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Recovery Log</h3>
+            {{#if combatRecovery.recoveryLog.length}}
+            <ul class="combat-recovery-watch-list combat-recovery-log-list">
+              {{#each combatRecovery.recoveryLog}}
+              <li>
+                <strong>{{this.action}}</strong>
+                <span>{{this.message}}</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p class="empty-text">No GM recovery actions logged yet.</p>
+            {{/if}}
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Needs Attention</h3>
+            {{#if combatRecovery.needsAttention.length}}
+            <ul class="combat-recovery-watch-list">
+              {{#each combatRecovery.needsAttention}}
+              <li>
+                <strong>{{this.name}}</strong>
+                <span>{{this.hpLabel}} HP - CT {{this.conditionLabel}} - SW {{this.secondWindLabel}}</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p class="empty-text">No wounded, impaired, or spent actors detected.</p>
+            {{/if}}
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    {{!-- Workspace Page --}}

@@ -42,6 +42,7 @@ import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/sys
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
@@ -152,6 +153,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const bulletinRecords = await HolonetStorage.getAllRecords();
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
     const jobCounts = await this._getJobBadgeCounts();
+    const tradeCounts = await this._getTradeBadgeCounts();
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
@@ -168,21 +170,55 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pendingDroids = this.pendingDroids?.length ?? 0;
     const storeApprovals = this.storeApprovals?.length ?? 0;
     const pendingSales = this.pendingSales?.length ?? 0;
+    const gameApprovals = this._getPendingGameSettlementCount();
 
     return {
       bulletin: bulletinCount,
-      approvals: pendingDroids + storeApprovals,
+      approvals: pendingDroids + storeApprovals + gameApprovals,
       pendingDroids,
       storeApprovals,
+      gameApprovals,
       pendingSales,
       store: pendingSales + storeApprovals,
       jobs: jobCounts.actionable,
       jobReview: jobCounts.review,
       jobPayout: jobCounts.payout,
       jobActive: jobCounts.active,
+      trade: tradeCounts.actionable,
+      tradeApprovals: tradeCounts.approvals,
+      tradeFailed: tradeCounts.failed,
+      tradeActive: tradeCounts.active,
       healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length
     };
+  }
+
+
+  _getPendingGameSettlementCount() {
+    try {
+      return GameSessionStore.getAllSessions()
+        .filter((session) => session?.escrow?.credits?.status === 'pending-gm-settlement')
+        .length;
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load pending game settlement count:', err);
+      return 0;
+    }
+  }
+
+
+  async _getTradeBadgeCounts() {
+    try {
+      const { GMTradeConsoleSurfaceService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMTradeConsoleSurfaceService.js');
+      const tradeConsole = await GMTradeConsoleSurfaceService.buildTradeConsoleVm(this);
+      const stats = tradeConsole?.stats ?? {};
+      const approvals = Number(stats.approvals ?? tradeConsole?.approvalQueue?.length ?? 0) || 0;
+      const failed = Number(stats.failed ?? tradeConsole?.failedQueue?.length ?? 0) || 0;
+      const active = Number(stats.active ?? tradeConsole?.activeQueue?.length ?? 0) || 0;
+      return { approvals, failed, active, actionable: approvals + failed };
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load trade console badge counts:', err);
+      return { approvals: 0, failed: 0, active: 0, actionable: 0 };
+    }
   }
 
   async _getJobBadgeCounts() {
@@ -325,6 +361,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       unreadCount: deliverySummary.unreadCount,
       readRecipientIds: deliverySummary.readRecipientIds,
       unreadRecipientIds: deliverySummary.unreadRecipientIds,
+      acknowledgedRecipientIds: deliverySummary.acknowledgedRecipientIds,
+      dismissedRecipientIds: deliverySummary.dismissedRecipientIds,
       readStateLabel: `${deliverySummary.readCount}/${deliverySummary.recipientCount} read`,
       recordTone: isBreakingNews ? 'breaking' : (isUrgent ? 'urgent' : (isPinned ? 'pinned' : (record.state || 'draft')))
     };
@@ -337,6 +375,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       : new Map(Object.entries(record?.deliveryStates ?? {}));
     const readRecipientIds = [];
     const unreadRecipientIds = [];
+    const acknowledgements = record?.metadata?.acknowledgements && typeof record.metadata.acknowledgements === 'object' ? record.metadata.acknowledgements : {};
+    const dismissals = record?.metadata?.dismissals && typeof record.metadata.dismissals === 'object' ? record.metadata.dismissals : {};
     for (const recipient of recipients) {
       const recipientId = recipient?.id;
       if (!recipientId) continue;
@@ -350,7 +390,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       readCount: readRecipientIds.length,
       unreadCount: unreadRecipientIds.length,
       readRecipientIds,
-      unreadRecipientIds
+      unreadRecipientIds,
+      acknowledgedRecipientIds: Object.keys(acknowledgements),
+      dismissedRecipientIds: Object.keys(dismissals)
     };
   }
 
@@ -741,6 +783,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'jobs', code: 'JOB', label: 'Job Board', icon: 'fa-solid fa-clipboard-list', description: 'Contracts, review queue, and payouts', badgeCount: counts.jobs ?? 0, status: 'Contracts', statusTone: (counts.jobs ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'house-rules', code: 'RUL', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0, status: 'Ruleset', statusTone: '', badgeType: 'info' },
       { id: 'store', code: 'STR', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0, status: 'Control', statusTone: (counts.store ?? 0) ? 'warn' : '', badgeType: 'warn', featured: true },
+      { id: 'trade', code: 'TRD', label: 'Trade Console', icon: 'fa-solid fa-right-left', description: 'Transfers, counter-offers, and failed settlements', badgeCount: counts.trade ?? 0, status: 'Ledger', statusTone: (counts.trade ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'approvals', code: 'APR', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0, status: 'Review', statusTone: (counts.approvals ?? 0) ? 'crit' : '', badgeType: 'crit', featured: true },
       { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
       { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
@@ -798,6 +841,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireBulletinEvents(root);
     } else if (this.currentPage === 'jobs') {
       await this._wireJobBoardEvents(root);
+    } else if (this.currentPage === 'trade') {
+      await this._wireTradeConsoleEvents(root);
     } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
@@ -820,11 +865,321 @@ export class GMDatapad extends BaseSWSEAppV2 {
       logger: SWSELogger
     });
     this._settingsSurfaceController.attach(root);
+    this._wireGamePolicySettings(root);
+  }
+
+  _wireGamePolicySettings(root) {
+    const fields = root.querySelectorAll('[data-game-policy-field]');
+    fields.forEach((field) => {
+      field.addEventListener('change', async (event) => {
+        const input = event.currentTarget;
+        const key = input.dataset.gamePolicyField;
+        if (!key) return;
+        let value;
+        if (input.type === 'checkbox') value = input.checked === true;
+        else if (input.type === 'number') value = Number(input.value || 0);
+        else value = input.value;
+        try {
+          await game.settings.set(this.NS, key, value);
+          ui?.notifications?.info?.('Game policy updated.');
+          await this.render(false);
+        } catch (err) {
+          SWSELogger.error('[GMDatapad] Failed to update game policy setting:', err);
+          ui?.notifications?.error?.(`Game policy update failed: ${err.message}`);
+        }
+      });
+    });
+  }
+
+  async _wireTradeConsoleEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-trade-console');
+    if (!pageElement) return;
+
+    pageElement.querySelectorAll('[data-trade-select]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.selectedTradeRecordId = event.currentTarget.dataset.tradeSelect || null;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-trade-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const current = event.currentTarget;
+        const action = current.dataset.tradeAction;
+        const threadId = current.dataset.threadId;
+        const recordId = current.dataset.recordId;
+        if (!action || !threadId || !recordId) return;
+        const memo = pageElement.querySelector(`[data-trade-note-for="${recordId}"]`)?.value ?? '';
+        const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo });
+        if (!ok) ui?.notifications?.warn?.('Trade action did not complete. Check the console details for diagnostics.');
+        this.selectedTradeRecordId = recordId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-economy-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const current = event.currentTarget;
+        const action = current.dataset.economyAction;
+        const kind = current.dataset.economyKind || '';
+        const note = pageElement.querySelector('[data-economy-repair-note]')?.value ?? '';
+        await this._handleEconomyRepairAction({
+          action,
+          kind,
+          sessionId: current.dataset.sessionId || '',
+          threadId: current.dataset.threadId || '',
+          recordId: current.dataset.recordId || '',
+          selectRecordId: current.dataset.selectRecordId || '',
+          note
+        });
+      });
+    });
+
+    const tradePolicyForm = pageElement.querySelector('form[data-trade-policy-form]');
+    if (tradePolicyForm) {
+      tradePolicyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(tradePolicyForm);
+        const boolKeys = [
+          'holonetCreditTransfersEnabled',
+          'holonetRequireCreditTransferApproval',
+          'holonetItemTradesEnabled',
+          'holonetRequireItemTradeApproval',
+          'holonetAssetTradesEnabled',
+          'holonetRequireAssetTradeApproval',
+          'holonetPartyFundEnabled'
+        ];
+        const numericKeys = ['holonetPartyFundDefaultCutPercent'];
+        try {
+          for (const key of boolKeys) await game.settings.set(this.NS, key, data.get(key) === 'on');
+          for (const key of numericKeys) await game.settings.set(this.NS, key, Math.max(0, Math.min(100, Math.floor(Number(data.get(key) || 0) || 0))));
+          ui?.notifications?.info?.('Trade policy updated.');
+          await this.render(false);
+        } catch (err) {
+          SWSELogger.error('[GMDatapad] Failed to save trade policy:', err);
+          ui?.notifications?.error?.(`Trade policy update failed: ${err.message}`);
+        }
+      });
+    }
+  }
+
+  async _handleEconomyRepairAction({ action = '', kind = '', sessionId = '', threadId = '', recordId = '', selectRecordId = '', note = '' } = {}) {
+    if (!action) return false;
+    if (action === 'select-trade') {
+      this.selectedTradeRecordId = selectRecordId || recordId || null;
+      await this.render(false);
+      return true;
+    }
+    if (kind === 'trade' && threadId && recordId) {
+      const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo: note });
+      if (!ok) ui?.notifications?.warn?.('Trade reconciliation action did not complete.');
+      this.selectedTradeRecordId = recordId;
+      await this.render(false);
+      return ok;
+    }
+    if (kind === 'game' && sessionId) {
+      const session = GameSessionStore.getSession(sessionId);
+      if (!session) {
+        ui?.notifications?.error?.('Game session not found.');
+        return false;
+      }
+      const cleanNote = String(note || '').trim();
+      if (action === 'game-mark-reconciled') {
+        await GameSessionStore.updateSession(sessionId, current => ({
+          metadata: {
+            ...(current.metadata || {}),
+            gmReconciliation: {
+              status: 'reconciled',
+              at: Date.now(),
+              by: game.user?.id ?? null,
+              note: cleanNote || 'GM marked game settlement reconciled.'
+            }
+          },
+          escrow: {
+            ...(current.escrow || {}),
+            credits: {
+              ...(current.escrow?.credits || {}),
+              manualReconciliationStatus: 'reconciled',
+              manualReconciledAt: Date.now(),
+              manualReconciledBy: game.user?.id ?? null,
+              manualReconciliationNote: cleanNote
+            }
+          },
+          log: [
+            ...((current.log || [])),
+            { id: foundry.utils?.randomID?.() || `log_${Date.now()}`, at: Date.now(), type: 'gm-game-settlement-reconciled', by: game.user?.id ?? null, note: cleanNote }
+          ]
+        }));
+        ui?.notifications?.info?.('Game settlement marked reconciled.');
+        await this.render(false);
+        return true;
+      }
+      if (action === 'game-reopen-settlement') {
+        await GameSessionStore.updateSession(sessionId, current => ({
+          status: 'pending-gm-settlement',
+          metadata: {
+            ...(current.metadata || {}),
+            gmReconciliation: {
+              status: 'reopened',
+              at: Date.now(),
+              by: game.user?.id ?? null,
+              note: cleanNote || 'GM reopened settlement for approval.'
+            }
+          },
+          escrow: {
+            ...(current.escrow || {}),
+            credits: {
+              ...(current.escrow?.credits || {}),
+              status: 'pending-gm-settlement',
+              pendingSettlementAt: Date.now(),
+              manualReconciliationStatus: 'reopened',
+              settlementMessage: cleanNote || 'Settlement reopened by GM for approval.'
+            }
+          },
+          log: [
+            ...((current.log || [])),
+            { id: foundry.utils?.randomID?.() || `log_${Date.now()}`, at: Date.now(), type: 'gm-game-settlement-reopened', by: game.user?.id ?? null, note: cleanNote }
+          ]
+        }));
+        ui?.notifications?.info?.('Game settlement reopened in the approval queue.');
+        await this.render(false);
+        return true;
+      }
+      if (action === 'game-refund-escrow') {
+        const result = await GameCreditEscrowService.refundSession(session, cleanNote || 'GM refunded game escrow from reconciliation cockpit.');
+        if (!result?.ok) {
+          ui?.notifications?.error?.(`Game escrow refund failed: ${result?.error || 'Unknown error'}`);
+          return false;
+        }
+        ui?.notifications?.info?.('Game escrow refunded through TransactionEngine.');
+        await this.render(false);
+        return true;
+      }
+    }
+    return false;
   }
 
   async _wireJobBoardEvents(root) {
     const pageElement = root.querySelector('.gm-datapad-jobs');
     if (!pageElement) return;
+
+    pageElement.querySelectorAll('form[data-job-create-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const text = (key) => String(data.get(key) || '').trim();
+        const number = (key) => Math.max(0, Math.floor(Number(data.get(key) || 0) || 0));
+        const itemNotes = (...keys) => keys.map(key => text(key)).filter(Boolean).join(' | ');
+        const title = text('title') || 'Job Board Posting';
+        const objectives = [
+          {
+            id: 'primary',
+            type: 'primary',
+            title: text('primaryObjective'),
+            description: text('primaryDescription'),
+            required: true,
+            rewardCredits: number('primaryCredits'),
+            rewardXp: number('primaryXp'),
+            rewardItems: text('primaryItems')
+          },
+          {
+            id: 'secondary',
+            type: 'secondary',
+            title: text('secondaryObjective'),
+            description: text('secondaryDescription'),
+            required: data.get('secondaryRequired') === 'on',
+            rewardCredits: number('secondaryCredits'),
+            rewardXp: number('secondaryXp'),
+            rewardItems: text('secondaryItems')
+          },
+          {
+            id: 'tertiary',
+            type: 'tertiary',
+            title: text('tertiaryObjective'),
+            description: text('tertiaryDescription'),
+            required: false,
+            rewardCredits: number('tertiaryCredits'),
+            rewardXp: number('tertiaryXp'),
+            rewardItems: text('tertiaryItems')
+          }
+        ].filter(objective => objective.title);
+
+        const rewardCredits = number('flatCredits') + objectives.reduce((sum, objective) => sum + Number(objective.rewardCredits || 0), 0);
+        const rewardItems = itemNotes('flatItems', 'primaryItems', 'secondaryItems', 'tertiaryItems');
+        const result = await HolonetMessengerService.createJobPosting({
+          actor: null,
+          title,
+          body: text('briefing') || title,
+          recipientIds: data.getAll('recipientIds').map(String).filter(Boolean),
+          rewardCredits,
+          rewardItems,
+          client: {
+            type: text('clientType'),
+            name: text('clientName'),
+            factionName: text('clientFaction'),
+            imageUrl: text('clientImage'),
+            saveForReuse: data.get('clientSave') === 'on'
+          },
+          objectives,
+          briefing: {
+            body: text('briefing'),
+            instructions: text('instructions'),
+            oocNote: text('oocNote')
+          },
+          factionConsequences: {
+            factionName: text('clientFaction'),
+            successDelta: Number(data.get('factionSuccessDelta') || 0) || 0,
+            failureDelta: Number(data.get('factionFailureDelta') || 0) || 0,
+            notes: text('factionNotes')
+          },
+          status: text('status') || 'posted'
+        });
+
+        if (!result) {
+          ui.notifications?.error?.('Job contract creation failed.');
+          return;
+        }
+        this.selectedJobThreadId = result.threadId || this.selectedJobThreadId;
+        ui.notifications?.info?.(`Job contract ${text('status') === 'draft' ? 'drafted' : 'posted'}.`);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-distribution-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const payoutMode = String(data.get('payoutMode') || 'single').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const amount = Number(data.get('amount') || 0);
+        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
+        if (!threadId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout-distribution', payoutMode, recipientId, recipientIds, amount, partyFundCutPercent });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('form[data-job-xp-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const payoutMode = String(data.get('payoutMode') || 'single').trim();
+        const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const amount = Number(data.get('amount') || 0);
+        if (!threadId || !amount) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-xp-payout', payoutMode, recipientId, recipientIds, amount });
+        this.selectedJobThreadId = threadId;
+        await this.render(false);
+      });
+    });
 
     pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
       button.addEventListener('click', async (event) => {
@@ -880,9 +1235,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const data = new FormData(form);
         const threadId = String(data.get('threadId') || '').trim();
         const recipientId = String(data.get('recipientId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const distributionMode = String(data.get('distributionMode') || 'single-copy').trim();
         const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
-        if (!threadId || !recipientId || !itemUuids.length) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, itemUuids });
+        if (!threadId || !itemUuids.length) return;
+        if (distributionMode === 'single-copy' && !recipientId) return;
+        if (distributionMode !== 'single-copy' && !recipientIds.length) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, recipientIds, distributionMode, itemUuids });
         this.selectedJobThreadId = threadId;
         await this.render(false);
       });
@@ -1128,12 +1487,37 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    pageElement.querySelectorAll('[data-bulletin-preview-delivery-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const action = event.currentTarget.dataset.bulletinPreviewDeliveryAction;
+        const recordId = event.currentTarget.dataset.recordId;
+        const recipientId = event.currentTarget.dataset.recipientId;
+        await this._setBulletinPreviewDeliveryState(recordId, recipientId, action);
+      });
+    });
+
     pageElement.querySelectorAll('[data-action="bulletin-save-contact"]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         const form = event.currentTarget.closest('form') || pageElement.querySelector('[data-bulletin-contact-form]');
         if (!form) return;
         await this._saveBulletinContact(new FormData(form));
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-edit-contact"], [data-action="bulletin-clone-contact"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const action = event.currentTarget.dataset.action;
+        const contact = await BulletinContactRegistry.getById(event.currentTarget.dataset.contactId);
+        if (!contact) {
+          ui?.notifications?.warn?.('That bulletin contact could not be found.');
+          return;
+        }
+        const form = pageElement.querySelector('[data-bulletin-contact-form]');
+        if (!form) return;
+        this._populateBulletinContactForm(form, contact, { clone: action === 'bulletin-clone-contact' });
       });
     });
 
@@ -1254,17 +1638,18 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _wireBulletinContactSelectors(pageElement) {
     pageElement.querySelectorAll('[data-bulletin-contact-select]').forEach((select) => {
-      select.addEventListener('change', () => {
-        const option = select.selectedOptions?.[0];
+      select.addEventListener('change', async () => {
         const form = select.closest('form');
-        if (!form || !option || !option.value) return;
+        if (!form || !select.value) return;
+        const contact = await BulletinContactRegistry.getById(select.value);
+        if (!contact) return;
         const assignments = {
-          authorName: option.dataset.label || option.dataset.name || '',
-          imageUrl: option.dataset.imageUrl || '',
-          dateline: option.dataset.dateline || '',
-          sector: option.dataset.sector || '',
-          newsCategory: option.dataset.defaultCategory || '',
-          category: option.dataset.defaultCategory || ''
+          authorName: contact.label || contact.name || '',
+          imageUrl: contact.imageUrl || '',
+          dateline: contact.dateline || '',
+          sector: contact.sector || '',
+          newsCategory: contact.defaultCategory || '',
+          category: contact.defaultCategory || ''
         };
         for (const [name, value] of Object.entries(assignments)) {
           if (!value) continue;
@@ -1277,6 +1662,28 @@ export class GMDatapad extends BaseSWSEAppV2 {
         }
       });
     });
+  }
+
+  _populateBulletinContactForm(form, contact = {}, { clone = false } = {}) {
+    const assignments = {
+      id: clone ? '' : contact.id,
+      name: clone ? `${contact.name || contact.label || 'Contact'} Copy` : contact.name,
+      label: clone ? `${contact.label || contact.name || 'Contact'} Copy` : contact.label,
+      kind: contact.kind || 'source',
+      imageUrl: contact.imageUrl || '',
+      dateline: contact.dateline || '',
+      sector: contact.sector || '',
+      defaultCategory: contact.defaultCategory || 'general',
+      notes: contact.notes || ''
+    };
+    for (const [name, value] of Object.entries(assignments)) {
+      const field = form.querySelector(`[name="${name}"]`);
+      if (!field) continue;
+      field.value = value ?? '';
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    form.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
   }
 
   _wireBulletinMediaDrops(pageElement) {
@@ -1388,6 +1795,39 @@ export class GMDatapad extends BaseSWSEAppV2 {
     setText('[data-preview-state-location]', 'Current location not set');
     setText('[data-preview-state-objective]', 'No active objective');
     setText('[data-preview-state-situation]', 'Awaiting new instructions.');
+  }
+
+  async _setBulletinPreviewDeliveryState(recordId, recipientId, action) {
+    if (!game.user?.isGM || !recordId || !recipientId) return;
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record) return;
+    const now = new Date().toISOString();
+    record.metadata ??= {};
+    record.metadata.acknowledgements ??= {};
+    record.metadata.dismissals ??= {};
+    switch (action) {
+      case 'read':
+        record.markRead(recipientId, now);
+        break;
+      case 'unread':
+        record.markUnread(recipientId);
+        delete record.metadata.acknowledgements[recipientId];
+        delete record.metadata.dismissals[recipientId];
+        break;
+      case 'acknowledge':
+        record.markRead(recipientId, now);
+        record.metadata.acknowledgements[recipientId] = { at: now, by: game.user?.id ?? null };
+        break;
+      case 'dismiss':
+        record.markRead(recipientId, now);
+        record.metadata.dismissals[recipientId] = { at: now, by: game.user?.id ?? null };
+        break;
+      default:
+        return;
+    }
+    record.updatedAt = now;
+    await HolonetStorage.saveRecord(record);
+    await this.render(false);
   }
 
   async _saveBulletinContact(formData) {
@@ -2950,6 +3390,110 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await this.render(false);
   }
 
+
+  _cloneApprovalPayload(value) {
+    if (value === undefined || value === null) return value;
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+    try { return structuredClone(value); } catch (_err) { return JSON.parse(JSON.stringify(value)); }
+  }
+
+  _stripApprovalDocumentIdentity(data = {}) {
+    const clone = this._cloneApprovalPayload(data) || {};
+    delete clone._id;
+    delete clone.id;
+    return clone;
+  }
+
+  async _buildStoreItemApprovalMutationPlans(approval = {}) {
+    const items = Array.isArray(approval.approvalItems) ? approval.approvalItems : [];
+    const plans = [];
+    const itemData = [];
+
+    for (const item of items) {
+      const type = String(item?.type || '').toLowerCase();
+      const sourceBucket = String(item?.sourceBucket || '').toLowerCase();
+      const data = this._stripApprovalDocumentIdentity(item?.itemData || { name: item?.name || 'Store item', type: item?.type || 'equipment', img: item?.img, system: {} });
+
+      if (type === 'droid' || sourceBucket === 'droids') {
+        const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
+        plans.push(DroidFactory.buildMutationPlan({ droidActor: data, name: item?.name || data.name }));
+        continue;
+      }
+
+      if (type === 'vehicle' || sourceBucket === 'vehicles') {
+        const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
+        plans.push(VehicleFactory.buildMutationPlan({ template: data, condition: item?.condition || 'new' }));
+        continue;
+      }
+
+      itemData.push(data);
+    }
+
+    if (itemData.length) {
+      plans.push({ add: { items: itemData } });
+    }
+
+    return plans;
+  }
+
+  async _approveStoreItemPurchase(index, approval, ownerActor) {
+    const cost = normalizeCredits(approval.costCredits ?? 0);
+    const approvalItems = Array.isArray(approval.approvalItems) ? approval.approvalItems : [];
+    if (!approvalItems.length) {
+      ui?.notifications?.error?.('No store item payload is recorded for this approval.');
+      return false;
+    }
+
+    const purchaseItems = approvalItems.map(item => ({
+      id: item.id || item.policyId || null,
+      policyId: item.policyId || item.id || null,
+      name: item.name || 'Store item',
+      type: item.type || 'item',
+      finalCost: normalizeCredits(item.finalCost ?? item.cost ?? 0),
+      cost: normalizeCredits(item.cost ?? item.finalCost ?? 0),
+      condition: item.condition || null
+    }));
+    const pricedTotal = purchaseItems.reduce((sum, item) => sum + normalizeCredits(item.finalCost ?? item.cost ?? 0), 0);
+    if (purchaseItems.length && pricedTotal !== cost) {
+      const delta = cost - pricedTotal;
+      purchaseItems[0].finalCost = Math.max(0, normalizeCredits(purchaseItems[0].finalCost + delta));
+      purchaseItems[0].cost = purchaseItems[0].finalCost;
+    }
+
+    const result = await StoreEngine.purchase({
+      actor: ownerActor,
+      items: purchaseItems,
+      totalCost: cost,
+      transactionContext: 'store-purchase',
+      itemGrantCallback: async () => this._buildStoreItemApprovalMutationPlans(approval)
+    });
+
+    if (!result.success) {
+      ui?.notifications?.error?.(`Failed to approve store purchase: ${result.error}`);
+      return false;
+    }
+
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    approvals.splice(index, 1);
+    await SettingsHelper.set('pendingCustomPurchases', approvals);
+
+    Hooks.call('swseCustomPurchaseApproved', {
+      approval,
+      actor: ownerActor,
+      draftActor: null,
+      transactionId: result.transactionId,
+      decidedBy: game.user?.name ?? 'GM',
+      edited: !!approval.metadata?.gmNotes
+    });
+
+    this.selectedApprovalKey = null;
+    this.approvalEditMode = false;
+    this.approvalDenyMode = false;
+    ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Store purchase'}`);
+    await this.render(false);
+    return true;
+  }
+
   /**
    * Approve a pending custom purchase.
    */
@@ -2967,6 +3511,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     if (!ownerActor) {
       ui?.notifications?.error?.('Owner actor not found');
       return;
+    }
+
+    if (approval.type === 'store-item' || approval.approvalKind === 'store-policy-item') {
+      return this._approveStoreItemPurchase(index, approval, ownerActor);
     }
 
     if (!draftActor) {

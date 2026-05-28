@@ -148,6 +148,36 @@ function allocateApprovedBalances(balances = {}, approvedTotal = 0) {
   return Object.fromEntries(raw.filter(entry => entry.floor > 0).map(entry => [entry.seatId, entry.floor]));
 }
 
+async function rollbackAppliedCreditPayouts(session = {}, payouts = [], reason = 'Rollback failed game payout', source = 'GameCreditEscrowService.rollbackAppliedCreditPayouts') {
+  const rollbacks = [];
+  for (const payout of [...(Array.isArray(payouts) ? payouts : [])].reverse()) {
+    if (!payout?.success || !payout.actorId) continue;
+    const amount = safeAmount(payout.approvedPayout ?? payout.amount);
+    if (amount <= 0) continue;
+    const actor = game.actors?.get?.(payout.actorId);
+    if (!actor) {
+      rollbacks.push({ success: false, actorId: payout.actorId, seatId: payout.seatId, amount: -amount, error: 'Actor missing during game payout rollback.' });
+      continue;
+    }
+    const rollback = await TransactionEngine.executeCreditAdjustment({
+      actor,
+      amount: -amount,
+      reason,
+      transactionContext: 'game-credit-refund',
+      audit: {
+        ...baseAudit(session, { seatId: payout.seatId, displayName: payout.seatLabel || payout.actorName }, {
+          rollbackOfTransactionId: payout.transactionId,
+          rollbackReason: reason,
+          originalPayoutAmount: amount,
+          payoutType: payout.payoutType || 'table-credit-balances'
+        })
+      }
+    }, { source });
+    rollbacks.push({ ...rollback, actorId: actor.id, actorName: actor.name, seatId: payout.seatId, amount: -amount });
+  }
+  return rollbacks;
+}
+
 async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { payoutAmount = 0, decision = 'custom', reason = '', by = null } = {}) {
   const requestedBalances = normalizeBalanceMap(escrow.credits?.payoutBalances || {});
   const requested = sumBalanceMap(requestedBalances);
@@ -160,6 +190,7 @@ async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { 
   }
 
   const payouts = [];
+  let payoutRollbacks = [];
   let status = 'settled';
   let message = approvedTotal > 0
     ? `GM approved ${approvedTotal.toLocaleString()} credits across table-credit balances.`
@@ -189,6 +220,7 @@ async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { 
     }, { source: 'GameCreditEscrowService.approveTableCreditBalanceSettlement' });
     payouts.push({ ...payout, actorId: actor.id, actorName: actor.name, seatId: seat.seatId, requestedPayout, approvedPayout });
     if (!payout.success) {
+      payoutRollbacks = await rollbackAppliedCreditPayouts(session, payouts, `Rollback failed GM-approved settlement for ${session.title || 'game'}`, 'GameCreditEscrowService.approveTableCreditBalanceSettlement.rollback');
       status = 'payout-failed';
       message = payout.error || 'GM-approved table-credit payout failed.';
       break;
@@ -212,8 +244,9 @@ async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { 
         payoutBalances: requestedBalances,
         approvedBalances,
         payouts,
+        payoutRollbacks,
         payoutRequested: requested,
-        payoutApproved: payouts.reduce((sum, payout) => sum + safeAmount(payout.approvedPayout), 0),
+        payoutApproved: status === 'settled' ? payouts.reduce((sum, payout) => sum + safeAmount(payout.approvedPayout), 0) : 0,
         settlementMessage: message,
         policy: {
           ...(escrow.credits.policy || {}),
@@ -547,6 +580,7 @@ export class GameCreditEscrowService {
     }
 
     const payouts = [];
+    let payoutRollbacks = [];
     let status = 'settled';
     let message = reason || 'Table credits cashed out.';
 
@@ -574,6 +608,7 @@ export class GameCreditEscrowService {
       }, { source: 'GameCreditEscrowService.settleTableCreditBalances' });
       payouts.push({ ...payout, actorId: actor.id, actorName: actor.name, seatId: seat.seatId, requestedPayout, approvedPayout });
       if (!payout.success) {
+        payoutRollbacks = await rollbackAppliedCreditPayouts(session, payouts, `Rollback failed table-credit cashout for ${session.title || 'game'}`, 'GameCreditEscrowService.settleTableCreditBalances.rollback');
         status = 'payout-failed';
         message = payout.error || 'One or more table-credit cashout payouts failed.';
         break;
@@ -592,9 +627,10 @@ export class GameCreditEscrowService {
           payoutMode: 'table-credit-balances',
           payoutBalances: normalizedBalances,
           payouts,
+          payoutRollbacks,
           payoutPolicies: policies,
           payoutRequested: Object.values(normalizedBalances).reduce((sum, amount) => sum + safeAmount(amount), 0),
-          payoutApproved: payouts.reduce((sum, payout) => sum + safeAmount(payout.approvedPayout), 0),
+          payoutApproved: status === 'settled' ? payouts.reduce((sum, payout) => sum + safeAmount(payout.approvedPayout), 0) : 0,
           settlementMessage: message
         }
       },

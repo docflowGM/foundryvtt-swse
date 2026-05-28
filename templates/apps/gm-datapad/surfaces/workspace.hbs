@@ -1,0 +1,58 @@
+{{!-- GM Datapad workspace surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    <div class="gm-datapad-page gm-datapad-workspace">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="workspace-content">
+        <section class="swse-ui-panel workspace-command-strip">
+          <div>
+            <span class="gm-command-eyebrow">ROSTER CONTEXT</span>
+            <strong>{{sceneName}}</strong>
+            <em>{{combatLabel}}</em>
+          </div>
+          <div class="workspace-quick-actions">
+            {{#each quickActions}}
+            <button type="button" class="swse-ui-button" data-nav-to="{{this.route}}"><i class="{{this.icon}}"></i> {{this.label}}</button>
+            {{/each}}
+          </div>
+        </section>
+
+        {{#each rosterSections}}
+        <section class="swse-ui-panel workspace-roster-section" data-workspace-roster="{{this.id}}">
+          <header class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">{{this.label}}</span>
+              <p>{{this.hint}}</p>
+            </div>
+            <span class="job-board-chip">{{this.count}}</span>
+          </header>
+          {{#if this.actors.length}}
+          <div class="actors-grid">
+            {{#each this.actors}}
+            <div class="actor-card swse-ui-panel">
+              <div class="actor-img">
+                <img src="{{this.img}}" alt="{{this.name}}">
+              </div>
+              <div class="actor-info">
+                <h4>{{this.name}}</h4>
+                <p class="actor-type">{{this.type}} · {{this.ownerLabel}}</p>
+                <p class="actor-type">{{this.hpLabel}} · {{this.conditionLabel}}</p>
+                <div class="workspace-actor-actions">
+                  <button class="swse-ui-button" data-open-actor="{{this.id}}">Open Sheet</button>
+                  <button class="swse-ui-button" data-nav-to="healing">Recovery</button>
+                  <button class="swse-ui-button" data-nav-to="bulletin">Message</button>
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <p class="placeholder">{{this.empty}}</p>
+          {{/if}}
+        </section>
+        {{/each}}
+      </div>
+    </div>

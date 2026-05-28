@@ -244,6 +244,22 @@ function payoutModeOptions() {
   return modes;
 }
 
+function xpPayoutModeOptions() {
+  return [
+    { value: 'single', label: 'Award one selected actor' },
+    { value: 'eachFull', label: 'Award every selected actor full XP' },
+    { value: 'splitEvenly', label: 'Split XP evenly among selected actors' }
+  ];
+}
+
+function itemDistributionModeOptions() {
+  return [
+    { value: 'single-copy', label: 'Grant all attached items to one actor' },
+    { value: 'all-selected', label: 'Grant a copy of all attached items to each selected actor' },
+    { value: 'round-robin-unique', label: 'Assign one unique attached item per selected actor' }
+  ];
+}
+
 function rewardSummary(job, objectives) {
   const baseCredits = Math.max(0, Math.floor(asNumber(job?.rewardCredits ?? 0)));
   const approvedObjectives = objectives.filter(objective => objective.isApproved);
@@ -343,6 +359,8 @@ export class GMJobBoardSurfaceService {
           hasRecipients: jobCreationRecipients().length > 0
         },
         payoutModes: payoutModeOptions(),
+        xpPayoutModes: xpPayoutModeOptions(),
+        itemDistributionModes: itemDistributionModeOptions(),
         partyFundEnabled: isPartyFundEnabled(),
         hasJobs: jobs.length > 0,
         hasReview: reviewItems.length > 0,

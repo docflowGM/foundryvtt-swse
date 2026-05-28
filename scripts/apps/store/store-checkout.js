@@ -25,7 +25,7 @@ import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehi
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
-import { consumeInventoryPolicyQuantities, isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+import { isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 /**
@@ -73,7 +73,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
         return;
     }
 
-    const policyCheck = isStoreItemPurchasable(item);
+    const policyCheck = isStoreItemPurchasable(item, { allowApprovalRequired: true });
     if (!policyCheck.ok) {
         ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
         return;
@@ -90,10 +90,11 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
         img: options.imgOverride || item.img,
         cost: finalCost,
         item: item,
-        stagedCustomization
+        stagedCustomization,
+        requiresApproval: policyCheck.requiresApproval === true
     });
 
-    ui.notifications.info(`${item.name} added to cart.`);
+    ui.notifications.info(`${item.name} added to cart${policyCheck.requiresApproval ? ' (GM approval required)' : ''}.`);
 
     // Update Rendarr's dialogue
     const dialogue = getRandomDialogue('purchase');
@@ -123,7 +124,7 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
         return;
     }
 
-    const policyCheck = isStoreItemPurchasable(droidTemplate);
+    const policyCheck = isStoreItemPurchasable(droidTemplate, { allowApprovalRequired: true });
     if (!policyCheck.ok) {
         ui.notifications.warn(policyCheck.reason || 'This droid cannot be purchased right now.');
         return;
@@ -137,10 +138,11 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
         id: actorId,
         name: droidTemplate.name,
         cost: finalCost,
-        actor: droidTemplate
+        actor: droidTemplate,
+        requiresApproval: policyCheck.requiresApproval === true
     });
 
-    ui.notifications.info(`${droidTemplate.name} added to cart.`);
+    ui.notifications.info(`${droidTemplate.name} added to cart${policyCheck.requiresApproval ? ' (GM approval required)' : ''}.`);
 
     // Update Rendarr's dialogue
     const dialogue = getRandomDialogue('purchase');
@@ -170,7 +172,7 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         return;
     }
 
-    const policyCheck = isStoreItemPurchasable(vehicleTemplate);
+    const policyCheck = isStoreItemPurchasable(vehicleTemplate, { allowApprovalRequired: true });
     if (!policyCheck.ok) {
         ui.notifications.warn(policyCheck.reason || 'This vehicle cannot be purchased right now.');
         return;
@@ -186,10 +188,11 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         name: vehicleTemplate.name,
         cost: finalCost,
         condition: condition,
-        template: vehicleTemplate
+        template: vehicleTemplate,
+        requiresApproval: policyCheck.requiresApproval === true
     });
 
-    ui.notifications.info(`${condition === 'used' ? 'Used' : 'New'} ${vehicleTemplate.name} added to cart.`);
+    ui.notifications.info(`${condition === 'used' ? 'Used' : 'New'} ${vehicleTemplate.name} added to cart${policyCheck.requiresApproval ? ' (GM approval required)' : ''}.`);
 
     const dialogue = getRandomDialogue('purchase');
     if (updateDialogueCallback) {
@@ -240,7 +243,7 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
-            const policyCheck = isStoreItemPurchasable(currentItem);
+            const policyCheck = isStoreItemPurchasable(currentItem, { allowApprovalRequired: true });
             if (!policyCheck.ok) {
                 return {
                     valid: false,
@@ -280,7 +283,7 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
-            const policyCheck = isStoreItemPurchasable(vehicleTemplate);
+            const policyCheck = isStoreItemPurchasable(vehicleTemplate, { allowApprovalRequired: true });
             if (!policyCheck.ok) {
                 return {
                     valid: false,
@@ -738,7 +741,7 @@ function revalidateCartItems(store) {
       report.removed.push({ type: 'item', name: cartItem.name });
       store.cart.items.splice(i, 1);
     } else {
-      const policyCheck = isStoreItemPurchasable(storeItem);
+      const policyCheck = isStoreItemPurchasable(storeItem, { allowApprovalRequired: true });
       if (!policyCheck.ok) {
         report.removed.push({ type: 'item', name: `${cartItem.name} (${policyCheck.reason})` });
         store.cart.items.splice(i, 1);
@@ -766,7 +769,7 @@ function revalidateCartItems(store) {
       report.removed.push({ type: 'droid', name: cartDroid.name });
       store.cart.droids.splice(i, 1);
     } else {
-      const policyCheck = isStoreItemPurchasable(storeItem);
+      const policyCheck = isStoreItemPurchasable(storeItem, { allowApprovalRequired: true });
       if (!policyCheck.ok) {
         report.removed.push({ type: 'droid', name: `${cartDroid.name} (${policyCheck.reason})` });
         store.cart.droids.splice(i, 1);
@@ -794,7 +797,7 @@ function revalidateCartItems(store) {
       report.removed.push({ type: 'vehicle', name: cartVehicle.name });
       store.cart.vehicles.splice(i, 1);
     } else {
-      const policyCheck = isStoreItemPurchasable(storeItem);
+      const policyCheck = isStoreItemPurchasable(storeItem, { allowApprovalRequired: true });
       if (!policyCheck.ok) {
         report.removed.push({ type: 'vehicle', name: `${cartVehicle.name} (${policyCheck.reason})` });
         store.cart.vehicles.splice(i, 1);
@@ -962,6 +965,101 @@ function flattenCartForPurchase(cart) {
     return flattened;
 }
 
+
+function hasStoreApprovalRequirement(entry = {}) {
+    return entry?.requiresApproval === true
+        || entry?.storePolicy?.requiresApproval === true
+        || entry?.item?.storePolicy?.requiresApproval === true
+        || entry?.actor?.storePolicy?.requiresApproval === true
+        || entry?.template?.storePolicy?.requiresApproval === true;
+}
+
+function serializeApprovalSourceData(source = {}) {
+    const data = source?.toObject ? source.toObject(false) : cloneStoreCheckoutData(source || {});
+    return stripDocumentIdentity(data || {});
+}
+
+function serializeStoreApprovalEntry(entry = {}, bucket = 'item') {
+    const source = entry.stagedCustomization?.itemData || entry.item || entry.actor || entry.template || {};
+    const itemData = serializeApprovalSourceData(source);
+    const type = bucket === 'droids' ? 'droid' : bucket === 'vehicles' ? 'vehicle' : (itemData.type || entry.item?.type || 'equipment');
+    const name = entry.name || itemData.name || 'Store item';
+    const cost = normalizeCredits(entry.cost ?? entry.finalCost ?? itemData.finalCost ?? itemData.system?.cost ?? 0);
+    return {
+        id: entry.id || source?.id || source?._id || itemData._id || null,
+        policyId: entry.id || source?.id || source?._id || null,
+        name,
+        type,
+        sourceBucket: bucket,
+        cost,
+        finalCost: cost,
+        condition: entry.condition || null,
+        img: entry.img || itemData.img || source?.img || '',
+        itemData,
+        stagedCustomization: entry.stagedCustomization ? cloneStoreCheckoutData(entry.stagedCustomization) : null
+    };
+}
+
+function collectStoreApprovalEntries(cart = {}) {
+    const entries = [];
+    const collect = (bucketName, bucket = []) => {
+        for (let index = 0; index < bucket.length; index += 1) {
+            const entry = bucket[index];
+            if (!hasStoreApprovalRequirement(entry)) continue;
+            entries.push({ bucketName, index, approvalItem: serializeStoreApprovalEntry(entry, bucketName) });
+        }
+    };
+    collect('items', cart.items || []);
+    collect('droids', cart.droids || []);
+    collect('vehicles', cart.vehicles || []);
+    return entries;
+}
+
+function removeApprovedRequestEntriesFromCart(cart = {}, entries = []) {
+    const byBucket = new Map();
+    for (const entry of entries) {
+        if (!byBucket.has(entry.bucketName)) byBucket.set(entry.bucketName, []);
+        byBucket.get(entry.bucketName).push(entry.index);
+    }
+    for (const [bucketName, indexes] of byBucket.entries()) {
+        const bucket = cart[bucketName] || [];
+        indexes.sort((a, b) => b - a).forEach(index => bucket.splice(index, 1));
+    }
+}
+
+async function submitStoreItemApprovalRequest(actor, approvalItems = []) {
+    if (!actor || !approvalItems.length) {
+        return { success: false, error: 'No approval items were supplied.' };
+    }
+
+    const costCredits = approvalItems.reduce((sum, item) => sum + normalizeCredits(item.finalCost ?? item.cost ?? 0), 0);
+    const label = approvalItems.length === 1 ? approvalItems[0].name : `${approvalItems.length} store items`;
+    const pendingRecord = {
+        id: `pending_store_item_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+        type: 'store-item',
+        approvalKind: 'store-policy-item',
+        approvalItems,
+        ownerPlayerId: game.user?.id ?? null,
+        ownerActorId: actor.id,
+        ownerActorName: actor.name,
+        costCredits,
+        requestedAt: Date.now(),
+        draftData: {
+            name: label,
+            type: 'store-item',
+            cost: costCredits,
+            details: approvalItems.map(item => `${item.name} — ${normalizeCredits(item.finalCost ?? item.cost ?? 0).toLocaleString()} cr`).join('\n'),
+            description: `GM approval requested for ${label}`
+        }
+    };
+
+    const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
+    pendingPurchases.push(pendingRecord);
+    await SettingsHelper.set('pendingCustomPurchases', pendingPurchases);
+    Hooks.callAll?.('swseStoreApprovalRequested', { approval: pendingRecord, actor });
+    return { success: true, approval: pendingRecord };
+}
+
 /**
  * Checkout and purchase all items in cart
  * @param {Object} store - Store instance
@@ -984,12 +1082,27 @@ export async function checkout(store, animateNumberCallback) {
         return { success: false, error: quantityValidation.error };
     }
 
-    // Calculate total using revalidated costs
+    const approvalEntries = collectStoreApprovalEntries(store.cart);
+    if (approvalEntries.length > 0) {
+        const approvalItems = approvalEntries.map(entry => entry.approvalItem);
+        const approvalResult = await submitStoreItemApprovalRequest(actor, approvalItems);
+        if (!approvalResult.success) {
+            ui.notifications.error(approvalResult.error || 'GM approval request failed.');
+            return { success: false, error: approvalResult.error || 'GM approval request failed.' };
+        }
+        removeApprovedRequestEntriesFromCart(store.cart, approvalEntries);
+        await store._persistCart?.();
+        ui.notifications.info(`GM approval requested for ${approvalItems.length} store item${approvalItems.length === 1 ? '' : 's'}.`);
+    }
+
+    // Calculate total using revalidated costs after approval-gated items have been queued.
     const total = calculateCartTotal(store.cart);
 
     if (total === 0) {
-        ui.notifications.warn('Your cart is empty.');
-        return { success: false, error: 'Cart is empty.' };
+        clearCart(store.cart);
+        store.cartTotal = 0;
+        await store._persistCart?.();
+        return { success: true, pendingApproval: approvalEntries.length > 0, total: 0 };
     }
 
     // Check eligibility
@@ -1053,8 +1166,6 @@ export async function checkout(store, animateNumberCallback) {
         // Log purchase to history
         await logPurchaseToHistory(actor, store.cart, total, result.transactionId);
 
-        // Consume finite GM inventory quantities only after the transaction succeeds.
-        await consumeInventoryPolicyQuantities(store.cart);
 
         // Clear cart only on success
         const purchasedItems = {

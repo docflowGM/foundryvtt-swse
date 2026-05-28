@@ -1,0 +1,195 @@
+{{!-- GM Datapad home surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
+    <div class="gm-datapad-page gm-datapad-home swse-home-surface" data-shell-region="surface-home">
+      <div class="swse-home-hud">
+        <div class="swse-home-hud-left">
+          <span class="swse-home-dot"></span>
+          <span class="swse-home-hud-title">GM COMMAND HOLOPAD</span>
+          <span class="swse-home-tag">OPS</span>
+          <span class="swse-home-tag">SHELL PARITY</span>
+        </div>
+        <div class="swse-home-hud-right">
+          <span>GM ACCESS</span>
+          <span class="swse-home-signal"><span></span><span></span><span></span><span></span></span>
+          <span class="swse-home-battery"><span class="swse-home-cell"><span class="swse-home-fill"></span></span> 78%</span>
+        </div>
+      </div>
+
+      <div class="swse-home-page-header gm-home-page-header">
+        <div>
+          <div class="swse-home-page-title">GM Operations</div>
+          <div class="swse-home-page-kicker">COMMAND NODE - SHARED HOLOPAD SHELL</div>
+          <div class="swse-home-page-subtitle">▸ Dashboard, store control, approvals, healing, workspace, and bulletin operations</div>
+        </div>
+        <div class="swse-home-page-greeting">
+          <span class="em">{{user.name}}</span> - game master console<br>
+          <span class="stardate">GM DATAPAD - GLOBAL THEME CONTEXT</span>
+        </div>
+      </div>
+
+      <section class="gm-holopad-command-map swse-ui-panel" aria-label="GM Holopad command map">
+        <div class="gm-command-map-status {{gmShell.readinessTone}}">
+          <span class="gm-command-eyebrow">COMMAND READINESS</span>
+          <strong>{{gmShell.readinessLabel}}</strong>
+          <em>{{gmShell.summaryLine}}</em>
+        </div>
+        <div class="gm-command-cluster-grid">
+          {{#each appClusters}}
+          <article class="gm-command-cluster {{this.tone}}">
+            <header>
+              <span>{{this.label}}</span>
+              <b>{{this.countLabel}}</b>
+            </header>
+            <div class="gm-command-cluster-apps">
+              {{#each this.apps}}
+              <button type="button" class="gm-command-cluster-app {{this.statusTone}}" data-nav-to="{{this.id}}" title="{{this.description}}">
+                <i class="{{this.icon}}"></i>
+                <span>{{this.label}}</span>
+                {{#if this.badgeCount}}<b>{{this.badgeCount}}</b>{{/if}}
+              </button>
+              {{/each}}
+            </div>
+          </article>
+          {{/each}}
+        </div>
+      </section>
+
+      <div class="gm-command-dashboard" aria-label="GM command summary">
+        {{#each commandStats}}
+        <button type="button" class="gm-command-status-card {{this.tone}}" data-nav-to="{{this.route}}">
+          <span class="gm-command-status-label">{{this.label}}</span>
+          <strong>{{this.value}}</strong>
+          <span class="gm-command-status-detail">{{this.detail}}</span>
+        </button>
+        {{/each}}
+      </div>
+
+      <section class="gm-command-inbox swse-ui-panel" aria-label="GM command inbox">
+        <div class="gm-command-panel-header">
+          <div>
+            <span class="gm-command-eyebrow">COMMAND INBOX</span>
+            <h3>Action Center</h3>
+          </div>
+          <span class="gm-command-panel-chip {{gmShell.readinessTone}}">{{gmShell.readinessLabel}}</span>
+        </div>
+        <div class="gm-command-inbox-list">
+          {{#if commandInbox.length}}
+            {{#each commandInbox}}
+            <button type="button" class="gm-command-inbox-row {{this.tone}}" data-nav-to="{{this.route}}">
+              <span class="gm-command-inbox-source">{{this.source}}</span>
+              <span class="gm-command-inbox-main"><strong>{{this.label}}</strong><em>{{this.detail}}</em></span>
+              <span class="gm-command-inbox-action">{{this.actionLabel}}</span>
+            </button>
+            {{/each}}
+          {{else}}
+            <p class="gm-empty-intel">No cross-app action items. Command inbox is clear.</p>
+          {{/if}}
+        </div>
+      </section>
+
+      <div class="gm-command-grid">
+        <section class="gm-command-panel gm-command-panel--intel swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">LIVE OPS</span>
+              <h3>Command Intel</h3>
+            </div>
+            <span class="gm-command-panel-chip {{#if combatStatus.active}}crit{{else}}stable{{/if}}">{{combatStatus.label}}</span>
+          </div>
+
+          <div class="gm-intel-grid">
+            {{#each dashboardPanels}}
+            <button type="button" class="gm-intel-card {{this.tone}}" data-nav-to="{{this.route}}">
+              <span class="gm-intel-icon"><i class="{{this.icon}}"></i></span>
+              <span class="gm-intel-label">{{this.label}}</span>
+              <strong>{{this.value}}</strong>
+              <span class="gm-intel-detail">{{this.detail}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </section>
+
+        <aside class="gm-command-panel gm-command-panel--alerts swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">WATCHLIST</span>
+              <h3>Alerts</h3>
+            </div>
+          </div>
+
+          <div class="gm-alert-stack">
+            {{#if dashboardAlerts.length}}
+              {{#each dashboardAlerts}}
+              <button type="button" class="gm-alert-row {{this.tone}}" data-nav-to="{{this.route}}">
+                <span class="gm-alert-pip"></span>
+                <span><strong>{{this.label}}</strong><em>{{this.detail}}</em></span>
+              </button>
+              {{/each}}
+            {{else}}
+              <p class="gm-empty-intel">No priority alerts. Command board is stable.</p>
+            {{/if}}
+          </div>
+        </aside>
+      </div>
+
+      <div class="gm-command-grid gm-command-grid--lower">
+        <section class="gm-command-panel gm-command-panel--transactions swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">RECENT ACTIVITY</span>
+              <h3>Store Ledger</h3>
+            </div>
+            <button type="button" class="swse-ui-button gm-mini-button" data-nav-to="store">View Store</button>
+          </div>
+
+          {{#if recentTransactions.length}}
+          <div class="gm-transaction-list">
+            {{#each recentTransactions}}
+            <div class="gm-transaction-row">
+              <span class="gm-transaction-main"><strong>{{this.actor}}</strong><em>{{this.item}}</em></span>
+              <span class="gm-transaction-meta">{{this.timeLabel}}</span>
+              <span class="gm-transaction-amount {{this.amountTone}}">{{this.amountLabel}}</span>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+            <p class="gm-empty-intel">No store transactions have been recorded.</p>
+          {{/if}}
+        </section>
+
+        <aside class="gm-command-panel gm-command-panel--quick swse-ui-panel">
+          <div class="gm-command-panel-header">
+            <div>
+              <span class="gm-command-eyebrow">FAST PATHS</span>
+              <h3>Quick Actions</h3>
+            </div>
+          </div>
+          <div class="gm-quick-action-grid">
+            {{#each quickActions}}
+            <button type="button" class="gm-quick-action {{this.tone}}" data-nav-to="{{this.route}}">
+              <i class="{{this.icon}}"></i>
+              <span>{{this.label}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </aside>
+      </div>
+
+      <div class="app-cards-grid gm-shell-app-grid">
+        {{#each apps}}
+        <button class="app-card swse-home-tile gm-shell-app-card {{#if this.featured}}featured{{/if}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}"
+                title="{{this.description}}">
+          <span class="swse-home-tile-id">{{this.code}}</span>
+          <div class="app-card-icon swse-home-tile-icon">
+            <i class="{{this.icon}}"></i>
+          </div>
+          <div class="app-card-label swse-home-tile-label">{{this.label}}</div>
+          <div class="app-card-desc">{{this.description}}</div>
+          <div class="swse-home-tile-status"><span class="swse-home-dot {{this.statusTone}}"></span><span>{{this.status}}</span></div>
+          {{#if this.badgeCount}}<span class="app-card-badge swse-home-badge {{this.badgeType}}">{{this.badgeCount}}</span>{{/if}}
+        </button>
+        {{/each}}
+      </div>
+    </div>
+
+
+    {{!-- Job Board Page --}}

@@ -343,7 +343,81 @@ function buildDroidActorRequest(pendingDroid) {
   };
 }
 
+
+function buildStoreItemApprovalRequest(approval, index) {
+  const ownerActor = game.actors.get(approval.ownerActorId) ?? null;
+  const submitted = approval.requestedAt ? new Date(approval.requestedAt).toLocaleString() : approval.timeSubmitted ?? EMPTY;
+  const items = asArray(approval.approvalItems);
+  const cost = numberOrNull(approval.costCredits) ?? items.reduce((sum, item) => sum + (numberOrNull(item?.finalCost ?? item?.cost) ?? 0), 0);
+  const currentCredits = numberOrNull(ownerActor?.system?.credits) ?? 0;
+  const itemSummary = items.length
+    ? items.map((item) => `${item.name ?? 'Store item'} (${displayCredits(item.finalCost ?? item.cost ?? 0)})`).join('\n')
+    : (approval.draftData?.details ?? 'No item detail recorded.');
+  const categories = [
+    {
+      id: 'request',
+      label: 'Store Request',
+      icon: 'fa-solid fa-store',
+      rows: [
+        makeReadonlyRow('Requested For', ownerActor?.name ?? approval.ownerActorName ?? 'Unknown'),
+        makeReadonlyRow('Items', itemSummary, { wide: true }),
+        makeReadonlyRow('Submitted', submitted),
+        makeReadonlyRow('Policy', 'GM approval required before purchase')
+      ]
+    },
+    {
+      id: 'cost',
+      label: 'Cost & Ledger',
+      icon: 'fa-solid fa-coins',
+      rows: [
+        makeReadonlyRow('Current Credits', displayCredits(currentCredits)),
+        makeEditableRow('Approved Cost', cost, 'costCredits', 'number', { suffix: 'cr' }),
+        makeReadonlyRow('Credits After', displayCredits(Math.max(0, currentCredits - cost)))
+      ]
+    },
+    {
+      id: 'notes',
+      label: 'GM Notes',
+      icon: 'fa-solid fa-clipboard-list',
+      rows: [
+        makeTextAreaRow('Approval Notes', approval?.metadata?.gmNotes ?? '', 'metadata.gmNotes', { wide: true, placeholder: 'Reason, restrictions, altered price, or sourcing note.' })
+      ]
+    }
+  ].map((category) => ({
+    ...category,
+    rows: category.rows.map((row) => ({
+      ...row,
+      fieldId: row.inputName ? `store-item-${category.id}-${row.inputName}`.replace(/[^a-zA-Z0-9_-]/g, '-') : null,
+      originalValue: row.value ?? row.displayValue ?? ''
+    }))
+  }));
+
+  return {
+    key: `custom:${index}`,
+    sourceType: 'store-item-approval',
+    actorId: ownerActor?.id ?? null,
+    requestIndex: index,
+    type: 'store-item',
+    typeLabel: 'Store Purchase Review',
+    title: approval.draftData?.name ?? (items.length === 1 ? items[0].name : `${items.length} store items`),
+    subtitle: `${ownerActor?.name ?? approval.ownerActorName ?? 'Unknown'} · ${displayCredits(cost)}`,
+    ownerLabel: ownerActor?.name ?? approval.ownerActorName ?? 'Unknown',
+    costLabel: displayCredits(cost),
+    submittedLabel: submitted,
+    icon: 'fa-solid fa-cart-shopping',
+    tone: 'store',
+    categories,
+    warnings: [
+      ...(ownerActor ? [] : ['Owner actor could not be found. Approval cannot deduct credits until fixed.']),
+      ...(ownerActor && currentCredits < cost ? [`${ownerActor.name} has ${displayCredits(currentCredits)} but this request costs ${displayCredits(cost)}.`] : []),
+      ...(items.length ? [] : ['No approval item payload is recorded.'])
+    ]
+  };
+}
+
 function buildStoreApprovalRequest(approval, index) {
+  if (approval?.type === 'store-item' || approval?.approvalKind === 'store-policy-item') return buildStoreItemApprovalRequest(approval, index);
+
   const draftActor = game.actors.get(approval.draftActorId) ?? null;
   const ownerActor = game.actors.get(approval.ownerActorId) ?? null;
   const type = approval.type === 'vehicle' ? 'starship' : (approval.type || draftActor?.type || 'custom');
@@ -415,7 +489,8 @@ export class GMApprovalsSurfaceService {
         total: approvalRequests.length,
         games: approvalRequests.filter((request) => request.type === 'game-settlement').length,
         droids: approvalRequests.filter((request) => request.type === 'droid').length,
-        ships: approvalRequests.filter((request) => request.type === 'starship' || request.type === 'vehicle').length
+        ships: approvalRequests.filter((request) => request.type === 'starship' || request.type === 'vehicle').length,
+        storeItems: approvalRequests.filter((request) => request.type === 'store-item').length
       }
     };
   }

@@ -272,6 +272,9 @@ export class GMBulletinSurfaceService {
         isUrgent: record.isUrgent,
         isBreakingNews: record.isBreakingNews,
         isRead: recipientId ? record.readRecipientIds?.includes(recipientId) : false,
+        isAcknowledged: recipientId ? record.acknowledgedRecipientIds?.includes(recipientId) : false,
+        isDismissed: recipientId ? record.dismissedRecipientIds?.includes(recipientId) : false,
+        recipientId,
         imageUrl: record.imageUrl || ''
       }));
     const state = {
