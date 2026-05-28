@@ -1,25 +1,22 @@
 /**
  * FollowerShell — Follower Creation Flow
  *
- * Extends ProgressionShell to provide the follower-specific 7-step creation flow.
+ * Extends ProgressionShell to provide the follower-specific compact creation flow.
  * Followers are DEPENDENT participants: derived from owner state, template-driven, nonheroic.
  *
  * Canonical Follower Sequence (LOCKED):
- *   1. Species (selection from follower-compatible species)
- *   2. Class (Template Type: Aggressive, Defensive, Utility — PERSISTENT)
- *   3. Background (optional, house-rule toggleable)
- *   4. Skills (constrained to template allowances only)
- *   5. Feat Selection (constrained to legal follower feats only, no normal feat browser)
- *   6. Languages (native language + languages shared with owner)
- *   7. Confirmation (show true follower derivation at owner heroic level, not normal progression)
+ *   1. Follower Type: Droid or Living Being
+ *   2. Species / Chassis: living species or droid size/mobility/systems/+2 ability
+ *   3. Template: Aggressive, Defensive, or Utility; organic template ability choice
+ *   4. Details: Human bonus, background, constrained skills, languages
+ *   5. Summary: starting credits and final confirmation
  *
  * Key Constraints:
- * - No heroic class selection (followers have template, not class)
- * - No freeform ability distribution (followers derive from species + template)
- * - Skills limited to template allowances (Aggressive/Defensive: Endurance; Utility: one choice except Use Force)
- * - Feats limited to legal follower feats (Weapon Prof. Simple, template-specific bonuses only)
- * - Languages: native + owner-shared only
- * - Confirmation shows final derived stats, not incremental gains
+ * - No heroic or nonheroic class selection
+ * - No normal feat/talent/class pipeline
+ * - Skills limited to template allowances
+ * - Languages: species + Basic + one owner-known language + INT bonus picks
+ * - Future follower level-up is an automatic recalculation, not a choice flow
  */
 
 import { ProgressionShell } from './shell/progression-shell.js';
@@ -28,12 +25,10 @@ import { ProgressionSession } from './shell/progression-session.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 // Follower-specific step imports
+import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
 import { FollowerTemplateStep } from './steps/follower-steps/follower-template-step.js';
-import { FollowerBackgroundStep } from './steps/follower-steps/follower-background-step.js';
-import { FollowerSkillsStep } from './steps/follower-steps/follower-skills-step.js';
-import { FollowerFeatStep } from './steps/follower-steps/follower-feat-step.js';
-import { FollowerLanguageStep } from './steps/follower-steps/follower-language-step.js';
+import { FollowerDetailsStep } from './steps/follower-steps/follower-details-step.js';
 import { FollowerConfirmStep } from './steps/follower-steps/follower-confirm-step.js';
 
 export class FollowerShell extends ProgressionShell {
@@ -51,16 +46,25 @@ export class FollowerShell extends ProgressionShell {
 
   /**
    * Get canonical descriptor list for follower progression.
-   * Returns the 7-step follower creation flow.
+   * Returns the 5-step follower creation flow.
    *
    * @returns {StepDescriptor[]} Array of 7 follower step descriptors
    */
   _getCanonicalDescriptors() {
     return [
       createStepDescriptor({
+        stepId: 'follower-origin',
+        stepName: 'Follower Type',
+        stepDescription: 'Choose droid or living being',
+        category: StepCategory.CHARGEN,
+        type: StepType.SELECTION,
+        pluginClass: FollowerOriginStep,
+      }),
+
+      createStepDescriptor({
         stepId: 'follower-species',
-        stepName: 'Species',
-        stepDescription: 'Select follower species',
+        stepName: 'Species / Chassis',
+        stepDescription: 'Choose living species or configure droid chassis',
         category: StepCategory.CHARGEN,
         type: StepType.SELECTION,
         pluginClass: FollowerSpeciesStep,
@@ -68,52 +72,25 @@ export class FollowerShell extends ProgressionShell {
 
       createStepDescriptor({
         stepId: 'follower-template',
-        stepName: 'Template Type',
-        stepDescription: 'Choose follower template (Aggressive, Defensive, or Utility)',
+        stepName: 'Template',
+        stepDescription: 'Choose follower template and organic ability bonus',
         category: StepCategory.CHARGEN,
         type: StepType.SELECTION,
         pluginClass: FollowerTemplateStep,
       }),
 
       createStepDescriptor({
-        stepId: 'follower-background',
-        stepName: 'Background',
-        stepDescription: 'Select background (optional)',
+        stepId: 'follower-details',
+        stepName: 'Details',
+        stepDescription: 'Choose background, template skills, Human bonus, and languages',
         category: StepCategory.CHARGEN,
         type: StepType.SELECTION,
-        pluginClass: FollowerBackgroundStep,
-      }),
-
-      createStepDescriptor({
-        stepId: 'follower-skills',
-        stepName: 'Skills',
-        stepDescription: 'Choose trained skills (template-constrained)',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
-        pluginClass: FollowerSkillsStep,
-      }),
-
-      createStepDescriptor({
-        stepId: 'follower-feats',
-        stepName: 'Feats',
-        stepDescription: 'Select follower feats (constrained to legal feats only)',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
-        pluginClass: FollowerFeatStep,
-      }),
-
-      createStepDescriptor({
-        stepId: 'follower-languages',
-        stepName: 'Languages',
-        stepDescription: 'Choose languages (native + owner-shared)',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
-        pluginClass: FollowerLanguageStep,
+        pluginClass: FollowerDetailsStep,
       }),
 
       createStepDescriptor({
         stepId: 'follower-confirm',
-        stepName: 'Confirmation',
+        stepName: 'Summary',
         stepDescription: 'Review and confirm follower creation',
         category: StepCategory.CHARGEN,
         type: StepType.CONFIRMATION,
@@ -348,7 +325,11 @@ export class FollowerShell extends ProgressionShell {
         if (result.success) {
           swseLogger.log('[FollowerShell] Follower created/updated successfully:', result);
           ui?.notifications?.info?.('Follower creation complete!');
-          this.close();
+          if (this._embeddedInHolopad && this._inlineSurfaceAdapter) {
+            await this._inlineSurfaceAdapter.completeAndReturnToSheet?.();
+          } else {
+            this.close();
+          }
           return;
         } else {
           swseLogger.error('[FollowerShell] Follower creation failed:', result.error);

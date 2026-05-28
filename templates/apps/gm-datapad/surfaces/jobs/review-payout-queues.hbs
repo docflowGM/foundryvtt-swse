@@ -1,0 +1,46 @@
+{{!-- GM Jobs objective review and payout queues. --}}
+      <div class="job-queue-grid">
+        <section class="swse-ui-panel job-queue-panel">
+          <div class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">REVIEW QUEUE</span>
+              <h3>Objective Claims</h3>
+            </div>
+            <span class="job-board-chip attention">{{jobBoard.reviewItems.length}}</span>
+          </div>
+          {{#each jobBoard.reviewItems}}
+          <article class="job-queue-card">
+            <span class="job-board-chip review">{{this.statusLabel}}</span>
+            <strong>{{this.jobTitle}}</strong>
+            <p>{{this.typeLabel}}: {{this.title}}</p>
+            <label class="job-objective-note compact"><span>GM Review Note</span><textarea rows="2" data-job-objective-note-for="{{this.id}}" placeholder="Optional note"></textarea></label>
+            <div class="job-objective-actions">
+              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{this.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
+              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{this.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
+            </div>
+          </article>
+          {{else}}
+          <p class="placeholder">No objective claims need review.</p>
+          {{/each}}
+        </section>
+
+        <section class="swse-ui-panel job-queue-panel">
+          <div class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">PAYOUT QUEUE</span>
+              <h3>Completed Contracts</h3>
+            </div>
+            <span class="job-board-chip payout">{{jobBoard.payoutItems.length}}</span>
+          </div>
+          {{#each jobBoard.payoutItems}}
+          <article class="job-queue-card">
+            <span class="job-board-chip payout">Ready</span>
+            <strong>{{this.title}}</strong>
+            <p>{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</p>
+            <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}">Distribute Rewards</button>
+          </article>
+          {{else}}
+          <p class="placeholder">No completed contracts are waiting on payout.</p>
+          {{/each}}
+        </section>
+      </div>

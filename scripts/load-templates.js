@@ -86,22 +86,6 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs'
 ];
 
-const GM_DATAPAD_PARTIAL_TEMPLATES = [
-  // GM Datapad partials. Full-path registration only; gm-datapad.hbs dispatches top-level surfaces through these paths.
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/house-rules.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/workspace.hbs',
-  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs'
-];
-
 /**
  * All templates used by the system.
  * These paths MUST match exactly how they are referenced in {{> }} calls.
@@ -256,9 +240,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/chargen-template-selection.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs',
 
-  // GM Datapad partial scaffolds (Phase 0; not active render hosts yet)
-  ...GM_DATAPAD_PARTIAL_TEMPLATES,
-
   // ==============================
   // Progression Framework (New Shell System)
   // ==============================
@@ -351,6 +332,12 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-games.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies-lane.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies-record.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies-faction-card.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies-base-card.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-allies-organization-card.hbs',
   // ==============================
   // Referenced V2 partials loaded deterministically (render stability)
   // ==============================

@@ -16,11 +16,12 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
+import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
 
 export class FollowerCreator {
 
@@ -246,18 +247,25 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             cha: { base: 10 }
         };
 
-        // Apply template ability bonus
-        if (followerData.abilityChoice && template.abilityBonus) {
-            abilities[followerData.abilityChoice].base += template.abilityBonus;
+        // Apply follower template ability bonus. Current follower chargen lets
+        // organic followers choose between the two legal template abilities.
+        const templateAbilityOptions = { aggressive: ['str', 'con'], defensive: ['dex', 'wis'], utility: ['int', 'cha'] };
+        const allowedTemplateAbilities = templateAbilityOptions[followerData.templateType] || [];
+        const abilityKey = allowedTemplateAbilities.includes(followerData.abilityChoice)
+            ? followerData.abilityChoice
+            : allowedTemplateAbilities[0];
+        if (abilityKey && template.abilityBonus && abilities[abilityKey]) {
+            abilities[abilityKey].base += template.abilityBonus;
         }
 
         // Calculate defenses (10 + ability mod + owner heroic level) - FOLLOWER SPECIFIC
         const defenses = await this._calculateFollowerDefenses(abilities, ownerHeroicLevel, template);
 
-        // Calculate HP (10 + owner heroic level) - FOLLOWER SPECIFIC
+        // Calculate HP (10 + owner heroic level + CON modifier) - FOLLOWER SPECIFIC
+        const conMod = Math.floor((Number(abilities.con?.base || 10) - 10) / 2);
         const hp = {
-            max: 10 + ownerHeroicLevel,
-            value: 10 + ownerHeroicLevel
+            max: Math.max(1, 10 + ownerHeroicLevel + conMod),
+            value: Math.max(1, 10 + ownerHeroicLevel + conMod)
         };
 
         // Get BAB from template - FOLLOWER SPECIFIC
@@ -487,15 +495,30 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      * @returns {boolean} True if feat was added successfully
      */
-    static async _addFeatByName(follower, featName) {
+    static async _addFeatByName(follower, featName, grantMetadata = null) {
         try {
-            const featDoc = await FeatRegistry.getDocumentByName?.(featName);
+            if (!follower || !featName) return false;
+            const normalizedName = String(featName).trim();
+            const hasFeat = Array.from(follower.items || []).some(item => item.type === 'feat' && item.name === normalizedName);
+            if (hasFeat) return false;
+
+            const featDoc = await FeatRegistry.getDocumentByName?.(normalizedName);
             if (featDoc) {
                 const featData = featDoc.toObject();
+                if (grantMetadata) {
+                    featData.flags = {
+                        ...(featData.flags || {}),
+                        swse: {
+                            ...(featData.flags?.swse || {}),
+                            grantedByTalent: grantMetadata,
+                            followerMaterializedGrant: true
+                        }
+                    };
+                }
                 await ActorEngine.createEmbeddedDocuments(follower, 'Item', [featData]);
                 return true;
             }
-            swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);
+            swseLogger.warn(`FollowerCreator: Feat not found: ${normalizedName}`);
             return false;
         } catch (e) {
             swseLogger.warn(`FollowerCreator: Error adding feat "${featName}":`, e);
@@ -551,19 +574,158 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static async _applyTalentBonuses(follower, grantingTalent) {
-        const talentName = grantingTalent.name;
+        const talentName = typeof grantingTalent === 'string' ? grantingTalent : grantingTalent?.name;
+        const cfg = getFollowerTalentConfig(talentName);
+        if (!cfg) return;
 
-        // Handle Reconnaissance Team Leader
-        if (talentName === 'Reconnaissance Team Leader') {
-            await this._addFeatByName(follower, 'Skill Training (Perception)');
-            await this._addFeatByName(follower, 'Skill Training (Stealth)');
+        const grantMetadata = {
+            source: 'follower-granting-talent',
+            talentName,
+            talentItemId: typeof grantingTalent === 'object' ? grantingTalent?.id ?? null : null,
+            grantedAt: Date.now()
+        };
+
+        for (const featName of cfg.additionalFeats || []) {
+            await this._addFeatByName(follower, featName, grantMetadata);
         }
 
-        // Handle Inspire Loyalty
-        if (talentName === 'Inspire Loyalty') {
-            await this._trainSkill(follower, 'Perception');
-            // Armor proficiency will be chosen in dialog
+        for (const skillName of cfg.additionalSkills || []) {
+            await this._trainSkill(follower, skillName);
         }
+    }
+
+    static _choiceArray(value) {
+        if (Array.isArray(value)) return value.filter(Boolean).map(v => String(v).trim()).filter(Boolean);
+        if (value === null || value === undefined || value === '') return [];
+        return [String(value).trim()].filter(Boolean);
+    }
+
+    static _uniqueList(values) {
+        return Array.from(new Set((values || []).filter(Boolean).map(v => String(v).trim()).filter(Boolean)));
+    }
+
+    static _getGrantingTalentNameFromMutation(followerMutation = {}) {
+        return followerMutation.grantingTalentName
+            || followerMutation.slotTalentName
+            || followerMutation.persistentChoices?.grantingTalentName
+            || null;
+    }
+
+    static _getGrantingTalentItemIdFromMutation(followerMutation = {}) {
+        return followerMutation.grantingTalentItemId
+            || followerMutation.slotTalentItemId
+            || followerMutation.persistentChoices?.grantingTalentItemId
+            || null;
+    }
+
+    static async _applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices = {}, followerMutation = {}) {
+        if (!follower || !templateType) return { feats: [], trainedSkills: [], languages: [] };
+
+        const templates = await this.getFollowerTemplates();
+        const template = templates[templateType] || {};
+        const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
+        const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
+        const grantingTalentConfig = getFollowerTalentConfig(grantingTalentName);
+        const grantMetadata = grantingTalentName ? {
+            source: 'follower-granting-talent',
+            ownerId: owner?.id ?? null,
+            ownerName: owner?.name ?? null,
+            talentName: grantingTalentName,
+            talentItemId: grantingTalentItemId,
+            grantedAt: Date.now()
+        } : null;
+
+        const humanBonus = persistentChoices.humanTemplateBonus || null;
+        const humanBonusFeat = humanBonus?.bonusType === 'feat' ? humanBonus.value : null;
+        const humanBonusSkill = humanBonus?.bonusType === 'skill' ? humanBonus.value : null;
+
+        const featChoices = this._choiceArray(persistentChoices.featChoices)
+            .concat(this._choiceArray(persistentChoices.featChoice))
+            .concat(this._choiceArray(persistentChoices.armorProficiencyChoice))
+            .concat(this._choiceArray(persistentChoices.armorFeatChoice))
+            .concat(this._choiceArray(persistentChoices.armorChoice))
+            .concat(this._choiceArray(humanBonusFeat));
+
+        const featsToApply = this._uniqueList([
+            'Weapon Proficiency (Simple Weapons)',
+            ...(template.feats || []),
+            ...featChoices,
+            ...(grantingTalentConfig?.additionalFeats || [])
+        ]);
+
+        const appliedFeats = [];
+        for (const featName of featsToApply) {
+            const added = await this._addFeatByName(follower, featName, grantMetadata);
+            if (added || Array.from(follower.items || []).some(item => item.type === 'feat' && item.name === featName)) {
+                appliedFeats.push(featName);
+            }
+        }
+
+        const skillChoices = this._choiceArray(persistentChoices.skillChoices)
+            .concat(this._choiceArray(persistentChoices.skillChoice))
+            .concat(this._choiceArray(humanBonusSkill));
+        const skillsToTrain = this._uniqueList([
+            ...(template.trainedSkills || []),
+            ...skillChoices,
+            ...(grantingTalentConfig?.additionalSkills || [])
+        ]);
+
+        const trainedSkills = [];
+        for (const skillRef of skillsToTrain) {
+            const trained = await this._trainSkill(follower, skillRef);
+            if (trained) {
+                trainedSkills.push(await resolveSkillName(skillRef) || skillRef);
+            }
+        }
+
+        const languageChoices = this._uniqueList(persistentChoices.languageChoices || []);
+        if (languageChoices.length) {
+            const existingLanguages = Array.isArray(follower.system?.languages) ? follower.system.languages : [];
+            await ActorEngine.updateActor(follower, {
+                'system.languages': this._uniqueList([...existingLanguages, ...languageChoices])
+            }, { source: 'FollowerCreator.materializeFollowerLanguages' });
+        }
+
+        const materialUpdates = {
+            'system.progression.feats': appliedFeats,
+            'system.progression.trainedSkills': trainedSkills,
+            'system.progression.languages': languageChoices,
+            'system.progression.grantingTalentName': grantingTalentName,
+            'system.progression.humanTemplateBonus': humanBonus,
+            'system.progression.droidConfig': persistentChoices.droidConfig || null,
+            'system.npcProfile.owner.talent': grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : follower.system?.npcProfile?.owner?.talent ?? null,
+            'flags.swse.follower.grantingTalent': grantingTalentName,
+            'flags.swse.follower.grantingTalentItemId': grantingTalentItemId
+        };
+
+        if (persistentChoices.droidConfig?.isDroid) {
+            const droidConfig = persistentChoices.droidConfig;
+            materialUpdates['system.isDroid'] = true;
+            materialUpdates['system.noConstitution'] = true;
+            materialUpdates['system.droidSize'] = droidConfig.size || 'medium';
+            materialUpdates['system.size'] = droidConfig.size || 'medium';
+            materialUpdates['system.speed'] = droidConfig.speed || 6;
+            materialUpdates['system.movement.walk'] = droidConfig.speed || 6;
+            materialUpdates['system.droidSystems'] = {
+                baseSystems: droidConfig.baseSystems || [],
+                optionalSystems: droidConfig.optionalSystems || [],
+                allowedOptionalCategories: droidConfig.allowedOptionalCategories || []
+            };
+            materialUpdates['system.droidCredits'] = {
+                budget: Number(persistentChoices.startingCredits || 0),
+                spent: Number(droidConfig.spentCredits || 0),
+                lost: Number(droidConfig.lostCredits || 0),
+                unspentCreditsLost: true
+            };
+            materialUpdates['system.credits'] = 0;
+            materialUpdates['flags.foundryvtt-swse.isDroid'] = true;
+        } else if (persistentChoices.startingCredits !== undefined && persistentChoices.startingCredits !== null) {
+            materialUpdates['system.credits'] = Number(persistentChoices.startingCredits || 0);
+        }
+
+        await ActorEngine.updateActor(follower, materialUpdates, { source: 'FollowerCreator.materializeFollowerProgression' });
+
+        return { feats: appliedFeats, trainedSkills, languages: languageChoices };
     }
 
     /**
@@ -582,15 +744,24 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static async _linkFollowerToOwner(owner, follower, grantingTalent) {
-        // Add follower to owner's flags
+        // Add/update follower link on the owner's canonical follower flag.
         const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
-        currentFollowers.push({
+        const followerLink = {
             id: follower.id,
             name: follower.name,
-            talent: grantingTalent?.name || null
-        });
+            type: follower.type,
+            img: follower.img,
+            talent: grantingTalent?.name || follower.system?.npcProfile?.owner?.talent || null,
+            templateType: follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType || null
+        };
+        const nextFollowers = currentFollowers.filter(entry => entry.id !== follower.id);
+        nextFollowers.push(followerLink);
+        await owner.setFlag('foundryvtt-swse', 'followers', nextFollowers);
 
-        await owner.setFlag('foundryvtt-swse', 'followers', currentFollowers);
+        // Keep the general ownedActors display list in sync for sheet relationship panels.
+        const ownedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors.filter(entry => entry.id !== follower.id) : [];
+        ownedActors.push(followerLink);
+        await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, { source: 'FollowerCreator.linkFollowerToOwner.ownedActors' });
 
         // Set ownership permissions to match owner
         const ownerUser = game.users.find(u => u.character?.id === owner.id);
@@ -601,6 +772,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             }, { source: 'FollowerCreator.linkFollowerToOwner' });
         }
+
+        try {
+            const { FollowerManager } = await import("/systems/foundryvtt-swse/scripts/apps/follower-manager.js");
+            await FollowerManager.applyExistingEnhancementsToFollower(owner, follower, { silent: true });
+        } catch (err) {
+            swseLogger.warn('[FollowerCreator] Could not apply owner follower enhancements:', err);
+        }
     }
 
     /**
@@ -609,8 +787,38 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Array<Actor>} Array of follower actors
      */
     static getFollowers(actor) {
-        const followerData = actor.getFlag('foundryvtt-swse', 'followers') || [];
-        return followerData.map(f => game.actors.get(f.id)).filter(f => f);
+        if (!actor) return [];
+        const ids = new Set();
+
+        for (const entry of actor.getFlag('foundryvtt-swse', 'followers') || []) {
+            if (entry?.id) ids.add(entry.id);
+        }
+        for (const slot of actor.getFlag('foundryvtt-swse', 'followerSlots') || []) {
+            if (slot?.createdActorId) ids.add(slot.createdActorId);
+        }
+        for (const entry of actor.system?.ownedActors || []) {
+            const kind = entry?.kind || entry?.dependentKind || entry?.npcKind;
+            if (kind && kind !== 'follower') continue;
+            if (entry?.id) ids.add(entry.id);
+        }
+
+        if (game?.actors) {
+            for (const candidate of game.actors) {
+                const kind = candidate?.system?.npcProfile?.kind || candidate?.flags?.swse?.follower?.kind || null;
+                if (kind && kind !== 'follower') continue;
+                const ownerId = candidate?.flags?.swse?.follower?.ownerId || candidate?.system?.npcProfile?.owner?.actorId;
+                const isFollower = candidate?.system?.isFollower === true
+                    || candidate?.system?.progression?.isFollower === true
+                    || candidate?.flags?.swse?.follower?.isFollower === true
+                    || candidate?.getFlag?.('foundryvtt-swse', 'isFollower') === true;
+                if (ownerId === actor.id && isFollower) ids.add(candidate.id);
+            }
+        }
+
+        return Array.from(ids)
+            .map(id => game.actors.get(id))
+            .filter(Boolean)
+            .filter(follower => follower.getFlag?.('foundryvtt-swse', 'dismissedAlly') !== true && follower.flags?.swse?.follower?.active !== false);
     }
 
     /**
@@ -654,17 +862,41 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 followerState,
                 targetHeroicLevel
             } = followerMutation;
+            const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
+            const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
+            const droidConfig = persistentChoices?.droidConfig?.isDroid ? persistentChoices.droidConfig : null;
+            const isDroidFollower = !!droidConfig;
 
             // Create actor from derived state
             const actorData = {
                 name: `${owner.name}'s ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Follower`,
                 type: 'npc',
                 system: {
-                    level: targetHeroicLevel,
+                    level: targetHeroicLevel ?? followerState.level,
                     race: speciesName,
+                    isFollower: true,
+                    isDroid: isDroidFollower,
+                    noConstitution: isDroidFollower,
+                    droidSize: droidConfig?.size || null,
+                    size: droidConfig?.size || undefined,
+                    speed: droidConfig?.speed || undefined,
+                    movement: isDroidFollower ? { walk: droidConfig?.speed || 6 } : undefined,
+                    attributes: followerState.abilities,
                     abilities: followerState.abilities,
                     hp: followerState.hp,
-                    baseAttackBonus: followerState.bab,
+                    credits: isDroidFollower ? 0 : Number(persistentChoices?.startingCredits || 0),
+                    droidSystems: isDroidFollower ? {
+                        baseSystems: droidConfig.baseSystems || [],
+                        optionalSystems: droidConfig.optionalSystems || [],
+                        allowedOptionalCategories: droidConfig.allowedOptionalCategories || []
+                    } : undefined,
+                    droidCredits: isDroidFollower ? {
+                        budget: Number(persistentChoices?.startingCredits || 0),
+                        spent: Number(droidConfig.spentCredits || 0),
+                        lost: Number(droidConfig.lostCredits || 0),
+                        unspentCreditsLost: true
+                    } : undefined,
+                    baseAttackBonus: followerState.baseAttackBonus ?? followerState.bab,
                     progression: {
                         followerChoices: persistentChoices,
                         followerTemplate: templateType,
@@ -674,7 +906,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         kind: 'follower',
                         owner: {
                             actorId: owner.id,
-                            talent: null
+                            talent: grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : null
                         },
                         template: templateType
                     }
@@ -684,10 +916,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         follower: {
                             ownerId: owner.id,
                             templateType: templateType,
+                            grantingTalent: grantingTalentName,
+                            grantingTalentItemId,
                             isFollower: true
                         }
                     },
                     'foundryvtt-swse': {
+                        isFollower: true,
+                        isDroid: isDroidFollower,
                         npcLevelUp: {
                             mode: 'statblock'
                         }
@@ -715,11 +951,16 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             }
 
+            // Materialize template/granting-talent feats, trained skills, and languages.
+            await this._applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices, followerMutation);
+
             // Apply defenses from derived state
             if (followerState.defenses) {
                 const defenseUpdates = {};
+                const defenseKeyMap = { fort: 'fortitude', fortitude: 'fortitude', ref: 'reflex', reflex: 'reflex', will: 'will' };
                 for (const [defType, defData] of Object.entries(followerState.defenses)) {
-                    defenseUpdates[`system.defenses.${defType}.total`] = defData.total;
+                    const defenseKey = defenseKeyMap[defType] || defType;
+                    defenseUpdates[`system.defenses.${defenseKey}.total`] = defData.total;
                 }
                 await ActorEngine.updateActor(follower, defenseUpdates, { source: 'FollowerCreator.createFromMutation.defenses' });
             }
@@ -731,7 +972,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 followerId: follower.id,
                 ownerId: owner.id,
                 templateType: templateType,
-                level: targetHeroicLevel
+                level: targetHeroicLevel ?? followerState.level
             });
 
             return follower;
@@ -767,18 +1008,37 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 'system.attributes': followerState.abilities,
                 'system.hp.max': followerState.hp?.max,
                 'system.hp.value': followerState.hp?.value,
-                'system.baseAttackBonus': followerState.bab,
+                'system.isFollower': true,
+                'system.baseAttackBonus': followerState.baseAttackBonus ?? followerState.bab,
                 'system.progression.followerChoices': persistentChoices,
-                'system.progression.followerTemplate': templateType
+                'system.progression.followerTemplate': templateType,
+                'system.progression.isFollower': true,
+                'flags.swse.follower.ownerId': follower.flags?.swse?.follower?.ownerId || followerMutation.ownerActorId,
+                'flags.swse.follower.templateType': templateType,
+                'flags.swse.follower.isFollower': true,
+                'flags.foundryvtt-swse.isFollower': true
             };
             // Remove undefined hp fields to avoid writing null into schema
             if (updateData['system.hp.max'] === undefined) delete updateData['system.hp.max'];
             if (updateData['system.hp.value'] === undefined) delete updateData['system.hp.value'];
 
+            if (persistentChoices?.droidConfig?.isDroid) {
+                const droidConfig = persistentChoices.droidConfig;
+                updateData['system.isDroid'] = true;
+                updateData['system.noConstitution'] = true;
+                updateData['system.droidSize'] = droidConfig.size || 'medium';
+                updateData['system.size'] = droidConfig.size || 'medium';
+                updateData['system.speed'] = droidConfig.speed || 6;
+                updateData['system.movement.walk'] = droidConfig.speed || 6;
+                updateData['flags.foundryvtt-swse.isDroid'] = true;
+            }
+
             // Apply defense updates
             if (followerState.defenses) {
+                const defenseKeyMap = { fort: 'fortitude', fortitude: 'fortitude', ref: 'reflex', reflex: 'reflex', will: 'will' };
                 for (const [defType, defData] of Object.entries(followerState.defenses)) {
-                    updateData[`system.defenses.${defType}.total`] = defData.total;
+                    const defenseKey = defenseKeyMap[defType] || defType;
+                    updateData[`system.defenses.${defenseKey}.total`] = defData.total;
                 }
             }
 
@@ -787,10 +1047,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 isRecomputeHPCall: true
             });
 
+            const owner = game.actors.get(followerMutation.ownerActorId || follower.flags?.swse?.follower?.ownerId);
+            await this._applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices, followerMutation);
+
             swseLogger.log('[FollowerCreator] Follower updated from mutation:', {
                 followerId: follower.id,
                 templateType: templateType,
-                level: targetHeroicLevel
+                level: targetHeroicLevel ?? followerState.level
             });
 
             return true;
@@ -805,39 +1068,42 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * Called from level-up hooks to sync follower stats
      * @param {Actor} owner - The owner actor
      */
+    static async updateFollowerForOwnerLevel(owner, follower) {
+        if (!owner || !follower) return false;
+        if (follower.getFlag?.('foundryvtt-swse', 'dismissedAlly') === true || follower.flags?.swse?.follower?.active === false) return false;
+
+        const { deriveFollowerStateForApply } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-deriver.js');
+        const ownerLevel = getHeroicLevel(owner) || 1;
+        const isFollower = follower.system?.isFollower === true
+            || follower.system?.progression?.isFollower === true
+            || follower.flags?.swse?.follower?.isFollower === true
+            || follower.getFlag?.('foundryvtt-swse', 'isFollower') === true;
+        if (!isFollower) return false;
+
+        const templateType = follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType;
+        const speciesName = follower.system?.race || follower.system?.species?.name || follower.name;
+        const persistentChoices = follower.system?.progression?.followerChoices || {};
+        const followerState = await deriveFollowerStateForApply(ownerLevel, speciesName, templateType, persistentChoices);
+        await this.updateFollowerFromMutation(follower, {
+            ownerActorId: owner.id,
+            speciesName,
+            templateType,
+            persistentChoices,
+            followerState,
+            targetHeroicLevel: ownerLevel
+        });
+        swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to owner heroic level ${ownerLevel}`);
+        return true;
+    }
+
     static async updateFollowersForLevelUp(owner) {
         const followers = this.getFollowers(owner);
-        const ownerLevel = owner.system.level || 1;
-
         for (const follower of followers) {
-            if (!follower.system.isFollower) {continue;}
-
-            // Get follower's template for BAB progression
-            const templateType = follower.flags?.swse?.follower?.templateType;
-            const templates = await this.getFollowerTemplates();
-            const template = templates[templateType];
-
-            if (!template) {
-                swseLogger.warn(`FollowerCreator: Unknown template "${templateType}" for follower ${follower.name}`);
-                continue;
+            try {
+                await this.updateFollowerForOwnerLevel(owner, follower);
+            } catch (err) {
+                swseLogger.warn(`FollowerCreator: Could not update follower "${follower.name}" for level-up:`, err);
             }
-
-            // Update follower stats based on owner's new level
-            const newBAB = template.babProgression[Math.min(ownerLevel - 1, 19)] || 0;
-            const newHP = 10 + ownerLevel;
-
-            // Recalculate defenses
-            const abilities = follower.system.attributes;
-            const getMod = (ability) => Math.floor(((abilities[ability]?.base || 10) - 10) / 2);
-
-            await ActorEngine.updateActor(follower, {
-                'system.level': ownerLevel,
-                'system.baseAttackBonus': newBAB,
-                'system.hp.max': newHP,
-                'system.hp.value': Math.min(follower.system.hp.value, newHP)
-            }, { isRecomputeHPCall: true });
-
-            swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to level ${ownerLevel}`);
         }
     }
 }

@@ -1,52 +1,89 @@
 /**
  * Follower Deriver
  *
- * RULES CORRECTION (Phase 3 Addendum):
- * Followers are DERIVED ENTITIES, not class-leveled characters.
- *
- * Follower stats at any moment = f(owner.heroicLevel, follower.species, follower.template, persistent.choices, owner.talents)
- *
- * This is NOT incremental level-by-level advancement.
- * This is derived recalculation at target level, with persistent choices preserved.
- *
- * Reuses existing follower template rules and formulas from canonical sources.
- * Does not invent follower progression from memory.
+ * Followers are dependent actors, not class-leveled participants. Creation stores
+ * persistent choices; level-up re-derives from owner heroic level with no player
+ * choices.
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { FollowerCreator } from '../../follower-creator.js';
 
-/**
- * Derive follower statistics at a target level from persistent identity.
- *
- * Given:
- * - owner heroic level
- * - follower species
- * - follower template
- * - persistent template choices
- *
- * Compute follower stats that should exist at that level.
- *
- * This is the core derivation function. Not incremental. Not level-by-level.
- *
- * @param {number} targetHeroicLevel - Owner's heroic level (becomes follower level)
- * @param {string} speciesName - Follower species name
- * @param {string} templateType - 'aggressive', 'defensive', 'utility'
- * @param {Object} persistentChoices - {abilityChoice, skillChoice, featChoice}
- * @returns {Promise<Object>} Derived follower stats object
- */
+const TEMPLATE_ABILITY_OPTIONS = Object.freeze({
+  aggressive: ['str', 'con'],
+  defensive: ['dex', 'wis'],
+  utility: ['int', 'cha']
+});
+
+const DEFENSE_KEY_MAP = Object.freeze({
+  fort: 'fort',
+  fortitude: 'fort',
+  ref: 'ref',
+  reflex: 'ref',
+  will: 'will'
+});
+
+function normalizeDefenseKey(key) {
+  return DEFENSE_KEY_MAP[key] || key;
+}
+
+function abilityMod(score, absent = false) {
+  if (absent) return 0;
+  return Math.floor((Number(score || 10) - 10) / 2);
+}
+
+function recalcAbilityMods(abilities) {
+  for (const [key, data] of Object.entries(abilities)) {
+    data.mod = abilityMod(data.base, data.absent === true || key === 'con' && data.base === 0);
+  }
+  return abilities;
+}
+
+function buildBaseAbilities(templateType, template, persistentChoices = {}) {
+  const isDroid = persistentChoices?.droidConfig?.isDroid === true || String(persistentChoices?.speciesName || '').toLowerCase().includes('droid');
+  const abilities = {
+    str: { base: 10, mod: 0 },
+    dex: { base: 10, mod: 0 },
+    con: { base: isDroid ? 0 : 10, mod: 0, absent: isDroid },
+    int: { base: 10, mod: 0 },
+    wis: { base: 10, mod: 0 },
+    cha: { base: 10, mod: 0 }
+  };
+
+  if (isDroid) {
+    const key = persistentChoices?.droidConfig?.abilityChoice;
+    if (key && key !== 'con' && abilities[key]) abilities[key].base += 2;
+  } else {
+    const options = TEMPLATE_ABILITY_OPTIONS[templateType] || [];
+    const key = options.includes(persistentChoices?.abilityChoice)
+      ? persistentChoices.abilityChoice
+      : options[0];
+    if (key && abilities[key]) abilities[key].base += Number(template?.abilityBonus || 0);
+  }
+
+  const humanBonus = persistentChoices?.humanTemplateBonus;
+  if (!isDroid && humanBonus?.bonusType === 'ability' && abilities[humanBonus.value]) {
+    const templates = persistentChoices.__templates || {};
+    const sourceTemplate = templates[humanBonus.templateType] || {};
+    abilities[humanBonus.value].base += Number(sourceTemplate.abilityBonus || template?.abilityBonus || 2);
+  }
+
+  return recalcAbilityMods(abilities);
+}
+
+function applyDefenseBonus(defenses, bonusSource, sourceLabel = 'template') {
+  for (const [rawKey, rawBonus] of Object.entries(bonusSource || {})) {
+    const key = normalizeDefenseKey(rawKey);
+    if (!defenses[key]) continue;
+    const bonus = Number(rawBonus || 0);
+    defenses[key].bonus = Number(defenses[key].bonus || 0) + bonus;
+    defenses[key].sources = [...(defenses[key].sources || []), { source: sourceLabel, bonus }];
+  }
+}
+
 export async function deriveFollowerStats(targetHeroicLevel, speciesName, templateType, persistentChoices = {}) {
-  const level = Math.max(1, targetHeroicLevel || 1);
-
-  swseLogger.log('[FollowerDeriver] Deriving stats', {
-    level,
-    species: speciesName,
-    template: templateType,
-    choices: persistentChoices
-  });
-
-  // Load template rules from canonical source
+  const level = Math.max(1, Number(targetHeroicLevel || 1));
   const templates = await FollowerCreator.getFollowerTemplates();
   const template = templates[templateType];
 
@@ -55,84 +92,47 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
     throw new Error(`Unknown follower template: ${templateType}`);
   }
 
-  // Base abilities: all 10, then apply template choice
-  const abilities = {
-    str: { base: 10, mod: -5 },
-    dex: { base: 10, mod: -5 },
-    con: { base: 10, mod: -5 },
-    int: { base: 10, mod: -5 },
-    wis: { base: 10, mod: -5 },
-    cha: { base: 10, mod: -5 }
-  };
+  const choices = { ...persistentChoices, speciesName, templateType, __templates: templates };
+  const abilities = buildBaseAbilities(templateType, template, choices);
 
-  // Apply template ability bonus to chosen ability
-  if (persistentChoices.abilityChoice && template.abilityBonus) {
-    abilities[persistentChoices.abilityChoice].base += template.abilityBonus;
-    abilities[persistentChoices.abilityChoice].mod = Math.floor((abilities[persistentChoices.abilityChoice].base - 10) / 2);
-  }
-
-  // Recalculate all ability mods
-  for (const key in abilities) {
-    if (abilities[key].base !== 10) {
-      abilities[key].mod = Math.floor((abilities[key].base - 10) / 2);
-    }
-  }
-
-  // Derive defenses using FOLLOWER FORMULA: 10 + ability mod + owner heroic level
   const defenses = {
-    fort: {
-      base: 10 + Math.max(abilities.str.mod, abilities.con.mod) + level
-    },
-    ref: {
-      base: 10 + abilities.dex.mod + level
-    },
-    will: {
-      base: 10 + abilities.wis.mod + level
-    }
+    fort: { base: 10 + Math.max(abilities.str.mod, abilities.con.mod) + level, bonus: 0 },
+    ref: { base: 10 + abilities.dex.mod + level, bonus: 0 },
+    will: { base: 10 + abilities.wis.mod + level, bonus: 0 }
   };
 
-  // Apply template defense bonuses
-  if (template.defenseBonus) {
-    for (const [defense, bonus] of Object.entries(template.defenseBonus)) {
-      if (defenses[defense]) {
-        defenses[defense].bonus = bonus;
-        defenses[defense].total = defenses[defense].base + bonus;
-      }
+  applyDefenseBonus(defenses, template.defenseBonus, 'template');
+
+  const humanBonus = choices.humanTemplateBonus;
+  if (humanBonus?.bonusType === 'defense') {
+    const sourceTemplate = templates[humanBonus.templateType] || {};
+    const rawDefenseKey = humanBonus.value;
+    const rawBonus = sourceTemplate.defenseBonus?.[rawDefenseKey] ?? sourceTemplate.defenseBonus?.[normalizeDefenseKey(rawDefenseKey)];
+    if (rawBonus !== undefined) {
+      applyDefenseBonus(defenses, { [rawDefenseKey]: rawBonus }, 'human-template-bonus');
     }
   }
 
-  // Set totals if not already set
-  for (const defense in defenses) {
-    if (!defenses[defense].total) {
-      defenses[defense].total = defenses[defense].base;
-    }
+  for (const defense of Object.values(defenses)) {
+    defense.total = defense.base + Number(defense.bonus || 0);
   }
 
-  // HP using FOLLOWER FORMULA: 10 + owner heroic level
-  const hp = {
-    max: 10 + level,
-    value: 10 + level
-  };
-
-  // BAB from template table at the target level
-  // Template.babProgression is [level1, level2, ..., level20]
-  // Index is level-1
+  const conMod = abilities.con?.mod || 0;
+  const hpValue = Math.max(1, 10 + level + conMod);
+  const hp = { max: hpValue, value: hpValue };
   const bab = template.babProgression?.[Math.min(level - 1, 19)] ?? 0;
-
-  // Damage threshold from Fortitude defense + any special bonuses
-  const damageThreshold = defenses.fort.total + (template.damageThresholdBonus || 0);
-
-  // Grapple: STR mod + misc bonuses (not calculated, will be set on actor update)
+  const damageThreshold = defenses.fort.total + Number(template.damageThresholdBonus || 0);
   const grappleBonus = abilities.str.mod;
 
   swseLogger.log('[FollowerDeriver] Derived follower stats', {
     level,
     hp: hp.max,
     bab,
-    abilities: Object.entries(abilities).map(([k, v]) => ({ [k]: v.base })),
-    defenses: Object.entries(defenses).map(([k, v]) => ({ [k]: v.total }))
+    templateType,
+    speciesName
   });
 
+  delete choices.__templates;
   return {
     level,
     abilities,
@@ -144,17 +144,10 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
     template,
     templateType,
     speciesName,
-    persistentChoices
+    persistentChoices: choices
   };
 }
 
-/**
- * Compute follower existence state: is this a new follower or an update?
- *
- * @param {Actor|null} existingFollower - The existing follower actor (null if new)
- * @param {number} ownerHeroicLevel - Owner's current heroic level
- * @returns {Object} State with isNew, currentLevel, targetLevel, needsUpdate
- */
 export function computeFollowerExistenceState(existingFollower, ownerHeroicLevel) {
   const targetLevel = Math.max(1, ownerHeroicLevel || 1);
   const currentLevel = existingFollower?.system?.level || 0;
@@ -171,14 +164,6 @@ export function computeFollowerExistenceState(existingFollower, ownerHeroicLevel
   };
 }
 
-/**
- * Get follower derivation context for projection/finalization
- *
- * @param {ProgressionSession} session - The progression session
- * @param {Actor} ownerActor - The owner actor
- * @param {Actor|null} existingFollower - The existing follower (null if new)
- * @returns {Promise<Object>} Context with derivation info
- */
 export async function getFollowerDerivationContext(session, ownerActor, existingFollower = null) {
   if (!session?.dependencyContext) {
     swseLogger.warn('[FollowerDeriver] No dependency context in session');
@@ -187,13 +172,44 @@ export async function getFollowerDerivationContext(session, ownerActor, existing
 
   const ownerHeroicLevel = getHeroicLevel(ownerActor) || 1;
   const existenceState = computeFollowerExistenceState(existingFollower, ownerHeroicLevel);
-
   const templates = await FollowerCreator.getFollowerTemplates();
-  const templateType = session.dependencyContext.templateType;
+  const draft = session.draftSelections || {};
+  const existingChoices = existingFollower?.system?.progression?.followerChoices || {};
+  const contextChoices = session.dependencyContext.persistentChoices || {};
+
+  const persistentChoices = {
+    ...contextChoices,
+    ...existingChoices,
+    ...(draft.followerKind !== undefined ? { followerKind: draft.followerKind } : {}),
+    ...(draft.speciesName !== undefined ? { speciesName: draft.speciesName } : {}),
+    ...(draft.speciesId !== undefined ? { speciesId: draft.speciesId } : {}),
+    ...(draft.templateType !== undefined ? { templateType: draft.templateType } : {}),
+    ...(draft.abilityChoice !== undefined ? { abilityChoice: draft.abilityChoice } : {}),
+    ...(draft.skillChoices !== undefined ? { skillChoices: draft.skillChoices } : {}),
+    ...(draft.followerSkills !== undefined ? { skillChoices: draft.followerSkills } : {}),
+    ...(draft.featChoices !== undefined ? { featChoices: draft.featChoices } : {}),
+    ...(draft.followerFeats !== undefined ? { featChoices: draft.followerFeats } : {}),
+    ...(draft.languageChoices !== undefined ? { languageChoices: draft.languageChoices } : {}),
+    ...(draft.followerLanguages !== undefined ? { languageChoices: draft.followerLanguages } : {}),
+    ...(draft.backgroundChoice !== undefined ? { backgroundChoice: draft.backgroundChoice } : {}),
+    ...(draft.followerBackground !== undefined ? { backgroundChoice: draft.followerBackground } : {}),
+    ...(draft.humanTemplateBonus !== undefined ? { humanTemplateBonus: draft.humanTemplateBonus } : {}),
+    ...(draft.droidConfig !== undefined ? { droidConfig: draft.droidConfig } : {}),
+    ...(draft.startingCredits !== undefined ? { startingCredits: draft.startingCredits } : {}),
+    ...(draft.startingCreditsMode !== undefined ? { startingCreditsMode: draft.startingCreditsMode } : {}),
+    ...(draft.startingCreditsFormula !== undefined ? { startingCreditsFormula: draft.startingCreditsFormula } : {})
+  };
+
+  const templateType = persistentChoices.templateType
+    || existingFollower?.system?.progression?.followerTemplate
+    || session.dependencyContext.templateType;
+  const speciesName = persistentChoices.speciesName
+    || existingFollower?.system?.race
+    || session.dependencyContext.speciesName;
   const template = templates[templateType];
 
-  // Get persistent choices from existing follower or session
-  const persistentChoices = existingFollower?.system?.progression?.followerChoices || session.dependencyContext.persistentChoices || {};
+  persistentChoices.speciesName = speciesName;
+  persistentChoices.templateType = templateType;
 
   return {
     ownerActor,
@@ -203,27 +219,12 @@ export async function getFollowerDerivationContext(session, ownerActor, existing
     templateType,
     existenceState,
     persistentChoices,
-    speciesName: existingFollower?.system?.race || session.dependencyContext.speciesName
+    speciesName
   };
 }
 
-/**
- * Derive full follower state at target level
- * This is what gets applied (for new) or updated (for existing)
- *
- * @param {number} targetHeroicLevel - Owner's heroic level
- * @param {string} speciesName - Species name
- * @param {string} templateType - Template type
- * @param {Object} persistentChoices - Persistent template choices
- * @returns {Promise<Object>} Complete follower state object for mutation
- */
 export async function deriveFollowerStateForApply(targetHeroicLevel, speciesName, templateType, persistentChoices) {
-  const derivedStats = await deriveFollowerStats(
-    targetHeroicLevel,
-    speciesName,
-    templateType,
-    persistentChoices
-  );
+  const derivedStats = await deriveFollowerStats(targetHeroicLevel, speciesName, templateType, persistentChoices);
 
   return {
     level: derivedStats.level,
@@ -233,9 +234,8 @@ export async function deriveFollowerStateForApply(targetHeroicLevel, speciesName
     baseAttackBonus: derivedStats.bab,
     damageThreshold: derivedStats.damageThreshold,
     race: speciesName,
-    // Store persistent choices for future updates
     progression: {
-      followerChoices: persistentChoices,
+      followerChoices: derivedStats.persistentChoices,
       followerTemplate: templateType,
       isFollower: true
     }

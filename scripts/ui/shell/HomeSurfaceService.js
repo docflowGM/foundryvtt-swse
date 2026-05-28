@@ -111,13 +111,14 @@ function categoryLabel(record) {
 
 export class HomeSurfaceService {
   static async buildViewModel(actor) {
-    const [progressionSummary, upgradeSummary, holonetSummary] = await Promise.all([
+    const [progressionSummary, upgradeSummary, holonetSummary, alliesSummary] = await Promise.all([
       this._getProgressionSummary(actor),
       this._getUpgradeSummary(actor),
-      this._getHolonetSummary(actor)
+      this._getHolonetSummary(actor),
+      this._getAlliesSummary(actor)
     ]);
 
-    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary);
+    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary);
     const actorData = this._buildActorData(actor);
     const lockScreenState = this._buildLockScreenState(actor);
 
@@ -225,6 +226,18 @@ export class HomeSurfaceService {
     } catch (err) {
       SWSELogger.warn('[HomeSurfaceService] Workbench summary failed:', err);
       return { visible: false, enabled: false, badge: null };
+    }
+  }
+
+  static async _getAlliesSummary(actor) {
+    try {
+      const { AlliesSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceService.js'
+      );
+      return await AlliesSurfaceService.buildSummary(actor);
+    } catch (err) {
+      SWSELogger.warn('[HomeSurfaceService] Allies summary failed:', err);
+      return { total: 0, companions: 0, factions: 0, bases: 0, organizations: 0, pending: 0 };
     }
   }
 
@@ -372,7 +385,7 @@ export class HomeSurfaceService {
   /**
    * Build app tiles with radial positioning, badge types, and state flags
    */
-  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary) {
+  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}) {
     const assetSummary = this._getOwnedAssetSummary(actor);
     const baseTiles = [
       {
@@ -453,8 +466,8 @@ export class HomeSurfaceService {
         description: 'Ship systems and status'
       },
       {
-        id: 'companion',
-        label: 'Droid\nCompanion',
+        id: 'garage',
+        label: 'Garage',
         icon: '⬡',
         routeId: 'customization',
         bayMode: 'garage',
@@ -467,7 +480,22 @@ export class HomeSurfaceService {
         locked: false,
         status: assetSummary.droidCount > 1 ? `${assetSummary.droidCount} UNITS` : 'READY',
         statusTone: '',
-        description: 'Companion status and upgrades'
+        description: 'Droid systems and maintenance'
+      },
+      {
+        id: 'allies',
+        label: 'Allies',
+        icon: '✹',
+        routeId: 'allies',
+        visible: true,
+        enabled: true,
+        badge: alliesSummary.pending > 0 ? String(alliesSummary.pending) : (alliesSummary.total > 0 ? String(alliesSummary.total) : null),
+        badgeType: alliesSummary.pending > 0 ? 'crit' : (alliesSummary.total > 0 ? 'info' : null),
+        featured: false,
+        locked: false,
+        status: alliesSummary.pending > 0 ? 'PENDING' : 'READY',
+        statusTone: alliesSummary.pending > 0 ? 'warn' : '',
+        description: 'Followers, minions, factions, bases, and organizations'
       },
       {
         id: 'messages',

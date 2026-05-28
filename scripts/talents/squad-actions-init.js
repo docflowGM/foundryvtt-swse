@@ -6,6 +6,7 @@
 import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FollowerCreator } from "/systems/foundryvtt-swse/scripts/apps/follower-creator.js";
 
 Hooks.once('ready', () => {
   SWSELogger.log('SWSE System | Initializing Squad Actions (Followers)');
@@ -27,6 +28,8 @@ Hooks.once('ready', () => {
       return;
     }
 
+    const followers = FollowerCreator.getFollowers(selectedActor);
+
     const dialog = new SWSEDialogV2({
       title: 'Squad Actions',
       content: `
@@ -36,15 +39,15 @@ Hooks.once('ready', () => {
       buttons: {
         autofire: {
           label: 'Autofire Barrage',
-          callback: async () => SquadActionsMechanics.autofireBarrage(selectedActor)
+          callback: async () => SquadActionsMechanics.autofireBarrage(selectedActor, followers)
         },
         openFire: {
           label: 'Open Fire',
-          callback: async () => SquadActionsMechanics.openFire(selectedActor)
+          callback: async () => SquadActionsMechanics.openFire(selectedActor, followers)
         },
         painted: {
           label: 'Painted Target',
-          callback: async () => SquadActionsMechanics.paintedTarget(selectedActor)
+          callback: async () => SquadActionsMechanics.paintedTarget(selectedActor, followers)
         },
         cancel: { label: 'Cancel' }
       }

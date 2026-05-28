@@ -428,6 +428,11 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
         // Owner/entitlement linkage
         ownerActorId,
         slotId: session.dependencyContext.slotId,
+        slotTalentName: session.dependencyContext.slotTalentName,
+        slotTalentItemId: session.dependencyContext.slotTalentItemId,
+        grantingTalentName: session.dependencyContext.slotTalentName,
+        grantingTalentItemId: session.dependencyContext.slotTalentItemId,
+        existingFollowerId: session.dependencyContext.existingFollowerId || null,
 
         // Follower identity (persistent)
         speciesName: derivationContext.speciesName,
@@ -493,25 +498,44 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async contributeActiveSteps(candidateStepIds, session, actor) {
-    // Phase 2.5: REAL. Suppress talent and force steps for nonheroic participants.
     const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
 
     if (!isNonheroic) {
       return candidateStepIds;
     }
 
-    // Nonheroic cannot have talents or force powers
+    // Nonheroics have no heroic class identity during chargen, so suppress class
+    // business and L1 class survey. Do NOT blanket-suppress Force powers or
+    // starship maneuvers: nonheroic feats such as Force Training or Starship
+    // Tactics can create those entitlements.
     const suppressedStepIds = [
+      'base-class-survey',
+      'class-survey',
+      'l1-class-survey',
+      'l1-survey',
+      'level-one-survey',
       'general-talent',
       'class-talent',
       'talent-tree-browser',
       'talent-graph',
-      'force-power',           // Phase 2.5: Suppress force powers for nonheroic
       'force-secret',
       'force-technique',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets'
     ];
 
-    const filteredSteps = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+    let filteredSteps = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+
+    if (session?.mode === 'chargen') {
+      filteredSteps = filteredSteps.filter(stepId => !['class', 'class-step', 'class-selection', 'base-class', 'general-feat', 'class-feat'].includes(stepId));
+      if (!filteredSteps.includes('nonheroic-starting-feats')) {
+        const languagesIndex = filteredSteps.indexOf('languages');
+        const insertAt = languagesIndex >= 0 ? languagesIndex : filteredSteps.length;
+        filteredSteps.splice(insertAt, 0, 'nonheroic-starting-feats');
+      }
+    }
+
     return filteredSteps;
   }
 
@@ -545,15 +569,18 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
       return restrictions;
     }
 
-    // Nonheroic characters cannot access force powers or related mechanics
+    // Nonheroics can still become Force-sensitive or learn starship maneuvers
+    // through feats, so only forbid heroic/prestige secret-style mechanics here.
     if (!restrictions.forbiddenSteps) {
       restrictions.forbiddenSteps = [];
     }
 
     restrictions.forbiddenSteps.push(
-      'force-power',
       'force-secret',
-      'force-technique'
+      'force-technique',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets'
     );
 
     // Add metadata for UI/logging
@@ -614,7 +641,17 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
       return;
     }
 
-    // Validate that actor has nonheroic class item
+    // During chargen, Nonheroic is implicit and may be materialized at final
+    // application. Existing independent nonheroics should still have a class item
+    // unless they are dependent owner-synced minions.
+    if (session?.mode === 'chargen') return;
+
+    const isMinion = actor?.system?.isMinion === true
+      || actor?.system?.progression?.isMinion === true
+      || actor?.flags?.swse?.minion?.isMinion === true
+      || actor?.getFlag?.('foundryvtt-swse', 'isMinion') === true;
+    if (isMinion) return;
+
     if (!actor?.items?.some(item => item.type === 'class' && item.system?.isNonheroic === true)) {
       throw new Error('[NonheroicAdapter] validateReadiness: Actor missing nonheroic class item');
     }

@@ -23,14 +23,12 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
-import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
-import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
 import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
+import { GMSurfaceControllerRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/controllers/GMSurfaceControllerRegistry.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetMessengerService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js";
-import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonewsGenerator } from "/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js";
 import { HolonewsAutoPublisher } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js";
@@ -39,13 +37,16 @@ import { HolonewsAtomPolicy } from "/systems/foundryvtt-swse/scripts/holonet/sub
 import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, SURFACE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
-import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
-import { restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
+
+const GM_TABLET_BASE_WIDTH = 1440;
+const GM_TABLET_BASE_HEIGHT = 900;
+const GM_TABLET_MIN_WIDTH = Math.round(GM_TABLET_BASE_WIDTH * 0.55);
+const GM_TABLET_MIN_HEIGHT = Math.round(GM_TABLET_BASE_HEIGHT * 0.55);
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -55,7 +56,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       title: 'GM Datapad',
       width: 1200,
       height: 800,
-      resizable: true
+      frame: false,
+      resizable: false,
+      draggable: false
     },
     classes: ['swse', 'gm-datapad', 'swse-datapad-container'],
     tabs: [
@@ -109,8 +112,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.approvalEditMode = false;
     this.approvalDenyMode = false;
 
-    // Shared surface controllers
-    this._settingsSurfaceController = null;
+    // Surface controllers are routed through GMSurfaceControllerRegistry.
+
+    // Frameless shared holopad shell window state.
+    this._gmTabletExpanded = false;
+    this._gmTabletPreExpandRect = null;
   }
 
   async _prepareContext(options) {
@@ -123,15 +129,58 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const pageContext = await this._loadPageContext(this.currentPage);
     const surfaceContext = ThemeResolutionService.buildSurfaceContext({ preferActor: false });
     const appCounts = await this._getHomeBadgeCounts();
+    const apps = this._getAppCards(appCounts);
+    const gmShell = this._buildGmShellContext(apps, appCounts);
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
-      apps: this._getAppCards(appCounts),
+      shellSurface: this._getGmShellSurfaceId(this.currentPage),
+      shellIsSheet: false,
+      shellSurfaceVm: pageContext,
+      apps,
+      gmShell,
+      appClusters: this._buildAppClusters(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
       ...pageContext
     });
+  }
+
+  _getGmShellSurfaceId(pageId) {
+    const id = String(pageId || 'home');
+    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace']);
+    return `gm-${known.has(id) ? id : 'error'}`;
+  }
+
+  _buildGmShellContext(apps = [], counts = {}) {
+    const active = apps.find((app) => app.id === this.currentPage)
+      ?? apps.find((app) => app.id === 'home')
+      ?? { id: 'home', code: 'OPS', label: 'GM Operations', statusTone: '', badgeCount: 0 };
+    const urgent = Number(counts.approvals ?? 0) + Number(counts.tradeFailed ?? 0) + Number(counts.jobs ?? 0);
+    const readinessTone = urgent > 0 ? 'crit' : (Number(counts.store ?? 0) + Number(counts.bulletin ?? 0) > 0 ? 'warn' : 'stable');
+    const readinessLabel = urgent > 0 ? 'Action Required' : readinessTone === 'warn' ? 'Monitoring' : 'Ready';
+    return {
+      activeId: active.id,
+      activeCode: active.code || 'OPS',
+      activeLabel: active.label || 'GM Operations',
+      readinessTone,
+      readinessLabel,
+      summaryLine: `${Number(counts.approvals ?? 0)} approvals · ${Number(counts.trade ?? 0)} trade · ${Number(counts.jobs ?? 0)} jobs`,
+      serialLabel: `GM-CMD-${String(this.currentPage || 'home').toUpperCase()}`,
+      dockApps: apps.filter((app) => app.id !== 'home')
+    };
+  }
+
+  _buildAppClusters(apps = [], counts = {}) {
+    const byId = new Map(apps.map((app) => [app.id, app]));
+    const pick = (ids) => ids.map((id) => byId.get(id)).filter(Boolean);
+    return [
+      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace']) },
+      { label: 'Economy', tone: (counts.store || counts.approvals) ? 'warn' : 'stable', countLabel: `${Number(counts.store ?? 0) + Number(counts.approvals ?? 0)} queued`, apps: pick(['store', 'approvals']) },
+      { label: 'Holonet', tone: counts.bulletin ? 'info' : 'stable', countLabel: `${Number(counts.bulletin ?? 0)} signals`, apps: pick(['bulletin']) },
+      { label: 'Configuration', tone: 'stable', countLabel: 'ready', apps: pick(['house-rules', 'settings']) }
+    ];
   }
 
   /**
@@ -405,187 +454,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
   /**
-   * Get all rules for a specific category
-   */
-  _getRulesForCategory(category) {
-    const categoryRules = HOUSE_RULES_CATEGORIES[category] || [];
-    return categoryRules.map(key => ({
-      key,
-      name: this._getRuleName(key),
-      description: this._getRuleDescription(key),
-      enabled: SettingsHelper.getBoolean(key, false),
-      type: this._getRuleType(key)
-    }));
-  }
-
-  /**
-   * Get display name for a rule
-   */
-  _getRuleName(key) {
-    const names = {
-      abilityScoreMethod: 'Ability Score Method',
-      pointBuyPool: 'Point Buy Pool',
-      allowAbilityReroll: 'Allow Ability Reroll',
-      allowPlayersNonheroic: 'Allow Non-Heroic Players',
-      maxStartingCredits: 'Maximum Starting Credits',
-      holonetRequireCreditTransferApproval: 'GM Approves Holonet Credit Transfers',
-      holonetCreditTransfersEnabled: 'Allow Holonet Credit Transfers',
-      holonetItemTradesEnabled: 'Allow Holonet Item Trades',
-      holonetRequireItemTradeApproval: 'GM Approves Holonet Item Trades',
-      holonetAssetTradesEnabled: 'Allow Ship/Droid Trades',
-      holonetRequireAssetTradeApproval: 'GM Approves Ship/Droid Trades',
-      holonetPartyFundEnabled: 'Enable Holonet Party Fund',
-      holonetPartyFundDefaultCutPercent: 'Party Fund Job Cut Percent',
-      enableBackgrounds: 'Enable Backgrounds',
-      backgroundSelectionCount: 'Background Selection Count',
-      droidPointBuyPool: 'Droid Point Buy Pool',
-      livingPointBuyPool: 'Living Point Buy Pool',
-      droidConstructionCredits: 'Droid Construction Credits',
-      allowDroidDestiny: 'Allow Droids Destiny Points',
-      conditionTrackCap: 'Condition Track Damage Cap',
-      criticalHitVariant: 'Critical Hit Variant',
-      diagonalMovement: 'Diagonal Movement Cost',
-      weaponRangeReduction: 'Weapon Range Reduction',
-      weaponRangeMultiplier: 'Weapon Range Multiplier',
-      armoredDefenseForAll: 'Armored Defense for All',
-      trackBlasterCharges: 'Track Blaster Charges',
-      secondWindImproved: 'Improved Second Wind',
-      secondWindRecovery: 'Second Wind Recovery Timing',
-      secondWindWebEnhancement: 'Web Enhancement: Second Wind',
-      feintSkill: 'Feint Skill',
-      deathSystem: 'Death System',
-      deathSaveDC: 'Death Save DC',
-      forceTrainingAttribute: 'Force Training Ability',
-      blockDeflectTalents: 'Block & Deflect Behavior',
-      blockMechanicalAlternative: 'Block Mechanic Alternative',
-      forceSensitiveJediOnly: 'Force Sensitive Jedi Restriction',
-      darkSideMaxMultiplier: 'Dark Side Max Score Multiplier',
-      darkSidePowerIncreaseScore: 'Auto-Increase Dark Side Score',
-      darkInspirationEnabled: 'Enable Dark Inspiration',
-      forcePointRecovery: 'Force Point Recovery',
-      darkSideTemptation: 'Dark Side Temptation Mode',
-      skillFocusVariant: 'Skill Focus Variant',
-      skillFocusActivationLevel: 'Delayed Skill Focus Activation',
-      talentTreeRestriction: 'Talent Tree Access Rules',
-      talentEveryLevel: 'Talent Every Level',
-      talentEveryLevelExtraL1: 'Extra Talent at Level 1',
-      talentDoubleLevels: 'Talent Double Level Option',
-      crossClassSkillTraining: 'Cross-Class Skill Training',
-      retrainingEnabled: 'Retraining System',
-      skillTrainingEnabled: 'Skill Training Advancement',
-      trainingPointsPerLevel: 'Training Points Per Level',
-      multiclassBonusChoice: 'Multiclass Bonus Selection',
-      abilityIncreaseMethod: 'Ability Increase Method',
-      grappleEnabled: 'Enable Grapple',
-      grappleVariant: 'Grapple Variant',
-      grappleDCBonus: 'Grapple DC Bonus',
-      flankingEnabled: 'Enable Flanking',
-      flankingBonus: 'Flanking Bonus Type',
-      flankingRequiresConsciousness: 'Flanking Requires Consciousness',
-      flankingLargeCreatures: 'Flanking Large Creatures',
-      flankingDiagonalCounts: 'Diagonal Adjacency Counts',
-      recoveryEnabled: 'Enable Recovery & Healing',
-      recoveryHPType: 'Recovery HP Amount',
-      customRecoveryHP: 'Custom Recovery HP',
-      recoveryVitality: 'Recover Vitality Points',
-      conditionTrackEnabled: 'Enable Enhanced Condition Track',
-      conditionTrackVariant: 'Condition Track Variant',
-      conditionTrackAutoApply: 'Auto-Apply Condition Effects',
-      enableEnhancedMassiveDamage: 'Enable Enhanced Massive Damage',
-      persistentDTPenalty: 'Persistent Damage Threshold Penalty',
-      doubleThresholdPenalty: 'Double Threshold Penalty',
-      eliminateInstantDeath: 'Eliminate Instant Death',
-      healingSkillEnabled: 'Enable Healing Skill Integration',
-      firstAidEnabled: 'Allow First Aid',
-      longTermCareEnabled: 'Allow Long-Term Care',
-      performSurgeryEnabled: 'Allow Surgery',
-      revivifyEnabled: 'Allow Revivify',
-      criticalCareEnabled: 'Allow Critical Care',
-      spaceInitiativeSystem: 'Space Combat Initiative',
-      weaponsOperatorsRollInit: 'Weapons Operators Roll Initiative',
-      enableScaleEngine: 'Enable Scale Engine',
-      enableSWES: 'Enable Subsystem Engine',
-      enableEnhancedShields: 'Enable Enhanced Shields',
-      enableEnhancedEngineer: 'Enable Enhanced Engineer',
-      enableEnhancedPilot: 'Enable Enhanced Pilot',
-      enableEnhancedCommander: 'Enable Enhanced Commander',
-      enableVehicleTurnController: 'Enable Vehicle Turn Controller',
-      enableGlancingHit: 'Enable Glancing Hit Rule',
-      enableLastGrasp: 'Enable Last Grasp',
-      enableEmergencyPatch: 'Enable Emergency Patch',
-      enableExperienceSystem: 'Enable Experience System',
-      statusEffectsEnabled: 'Enable Status Effects',
-      bannedSpecies: 'Banned Species/Races'
-    };
-    return names[key] || key;
-  }
-
-  /**
-   * Get description for a rule
-   */
-  _getRuleDescription(key) {
-    const descriptions = {
-      abilityScoreMethod: 'How ability scores are generated for new characters',
-      pointBuyPool: 'Total ability score points available',
-      allowAbilityReroll: 'Allow players to reroll low stat sets',
-      allowPlayersNonheroic: 'Players can use the NPC generator',
-      maxStartingCredits: 'Receive maximum starting credits',
-      holonetRequireCreditTransferApproval: 'Require GM approval before accepted player-to-player Holonet credit transfers complete',
-      holonetCreditTransfersEnabled: 'Show Messenger send/request credit controls to players',
-      holonetItemTradesEnabled: 'Show Messenger item trade controls to players',
-      holonetRequireItemTradeApproval: 'Require GM approval before player item trades can be accepted',
-      holonetAssetTradesEnabled: 'Show ship/droid trade entry points to players',
-      holonetRequireAssetTradeApproval: 'Require GM approval for ship/droid asset trades; defaults on',
-      holonetPartyFundEnabled: 'Enable a GM-managed party fund account in Holonet',
-      holonetPartyFundDefaultCutPercent: 'Default percent of job payouts routed to the Party Fund',
-      enableBackgrounds: 'Allow selecting backgrounds during creation',
-      allowDroidDestiny: 'Droid characters can have Destiny Points',
-      conditionTrackCap: 'Maximum CT steps moved by one hit',
-      criticalHitVariant: 'How critical hits deal damage',
-      diagonalMovement: 'Grid diagonal movement cost',
-      secondWindImproved: 'Second Wind also moves up Condition Track',
-      secondWindRecovery: 'When Second Wind recovers',
-      forceTrainingAttribute: 'Force Training ability (WIS or CHA)',
-      blockDeflectTalents: 'Block and Deflect as separate or combined',
-      blockMechanicalAlternative: 'Non-Jedi melee weapons can block attacks',
-      darkSideMaxMultiplier: 'Maximum Dark Side score multiplier',
-      darkSidePowerIncreaseScore: 'Using Dark Side power increases DSS',
-      darkInspirationEnabled: 'Dark Inspiration system available',
-      forcePointRecovery: 'When Force Points refresh',
-      darkSideTemptation: 'How Dark Side temptation is handled',
-      skillFocusVariant: 'How Skill Focus calculates bonus',
-      talentEveryLevel: 'Gain talent each level (not just odd)',
-      recoveryEnabled: 'Specialized recovery mechanics during rest',
-      recoveryHPType: 'How much HP is recovered per rest',
-      conditionTrackEnabled: 'Advanced condition track mechanics',
-      healingSkillEnabled: 'Treat Injury provides direct HP recovery',
-      flankingEnabled: 'Flanking bonuses/penalties in combat',
-      grappleEnabled: 'Specialized grapple mechanics',
-      spaceInitiativeSystem: 'Per-person or ship-based initiative',
-      statusEffectsEnabled: 'Condition/status effect tracking',
-      enableScaleEngine: 'Character/starship scale conversions'
-    };
-    return descriptions[key] || '';
-  }
-
-  /**
-   * Get the type of rule
-   */
-  _getRuleType(key) {
-    const defaults = SettingsHelper.DEFAULTS;
-    const value = defaults[key];
-
-    if (typeof value === 'boolean') return 'boolean';
-    if (typeof value === 'string') return 'string';
-    if (typeof value === 'number') return 'number';
-    if (Array.isArray(value)) return 'array';
-    if (typeof value === 'object') return 'object';
-
-    return 'unknown';
-  }
-
-
-  /**
    * Load transaction history from the TransactionEngine actor-ledger flags.
    *
    * purchaseHistory is a legacy/UI mirror. TransactionEngine is the SSOT for
@@ -774,6 +642,134 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
 
+  _wireSharedHolopadFrameEvents(root) {
+    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this.close();
+    });
+
+    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this._toggleSharedHolopadExpand();
+    });
+
+    this._wireSharedHolopadDrag(root);
+    this._wireSharedHolopadResize(root);
+  }
+
+  _toggleSharedHolopadExpand() {
+    if (this._gmTabletExpanded) {
+      const saved = this._gmTabletPreExpandRect;
+      if (saved) this.setPosition(saved);
+      this._gmTabletPreExpandRect = null;
+      this._gmTabletExpanded = false;
+      return;
+    }
+
+    this._gmTabletPreExpandRect = {
+      left: Number(this.position?.left) || 0,
+      top: Number(this.position?.top) || 0,
+      width: Number(this.position?.width) || GM_TABLET_BASE_WIDTH,
+      height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT
+    };
+
+    const inset = 24;
+    const width = Math.min(GM_TABLET_BASE_WIDTH, Math.max(GM_TABLET_MIN_WIDTH, window.innerWidth - inset));
+    const height = Math.min(GM_TABLET_BASE_HEIGHT, Math.max(GM_TABLET_MIN_HEIGHT, window.innerHeight - inset));
+    this.setPosition({
+      width,
+      height,
+      left: Math.max(0, Math.round((window.innerWidth - width) / 2)),
+      top: Math.max(0, Math.round((window.innerHeight - height) / 2))
+    });
+    this._gmTabletExpanded = true;
+  }
+
+  _wireSharedHolopadDrag(root) {
+    const handles = root.querySelectorAll('[data-action="tablet-drag"]');
+    handles.forEach((handle) => {
+      handle.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0 || ev.target?.closest?.('button, input, select, textarea, a, [contenteditable="true"]')) return;
+        ev.preventDefault();
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const startLeft = Number(this.position?.left) || root.getBoundingClientRect().left || 0;
+        const startTop = Number(this.position?.top) || root.getBoundingClientRect().top || 0;
+        const onMove = (moveEv) => {
+          moveEv.preventDefault();
+          this.setPosition({
+            left: startLeft + (moveEv.clientX - startX),
+            top: startTop + (moveEv.clientY - startY)
+          });
+        };
+        const onEnd = () => {
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onEnd);
+          window.removeEventListener('pointercancel', onEnd);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onEnd, { once: true });
+        window.addEventListener('pointercancel', onEnd, { once: true });
+      });
+    });
+  }
+
+  _wireSharedHolopadResize(root) {
+    const handles = root.querySelectorAll('[data-action="tablet-resize"]');
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+    handles.forEach((handle) => {
+      handle.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        const dir = String(handle.dataset.resizeDir || 'se').toLowerCase();
+        const resizeWest = dir.includes('w');
+        const resizeEast = dir.includes('e') || (!resizeWest && !dir.includes('n') && !dir.includes('s'));
+        const resizeNorth = dir.includes('n');
+        const resizeSouth = dir.includes('s') || (!resizeNorth && !dir.includes('e') && !dir.includes('w'));
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const rect = root.getBoundingClientRect();
+        const startWidth = Number(this.position?.width) || rect.width || GM_TABLET_BASE_WIDTH;
+        const startHeight = Number(this.position?.height) || rect.height || GM_TABLET_BASE_HEIGHT;
+        const startLeft = Number(this.position?.left) || rect.left || 0;
+        const startTop = Number(this.position?.top) || rect.top || 0;
+        const startRight = startLeft + startWidth;
+        const startBottom = startTop + startHeight;
+
+        const onMove = (moveEv) => {
+          moveEv.preventDefault();
+          const dx = moveEv.clientX - startX;
+          const dy = moveEv.clientY - startY;
+          let left = startLeft;
+          let top = startTop;
+          let width = startWidth;
+          let height = startHeight;
+          if (resizeEast) width = clamp(startWidth + dx, GM_TABLET_MIN_WIDTH, Math.max(GM_TABLET_MIN_WIDTH, window.innerWidth - startLeft - 8));
+          if (resizeSouth) height = clamp(startHeight + dy, GM_TABLET_MIN_HEIGHT, Math.max(GM_TABLET_MIN_HEIGHT, window.innerHeight - startTop - 8));
+          if (resizeWest) {
+            left = clamp(startLeft + dx, 8, startRight - GM_TABLET_MIN_WIDTH);
+            width = clamp(startRight - left, GM_TABLET_MIN_WIDTH, startRight - 8);
+          }
+          if (resizeNorth) {
+            top = clamp(startTop + dy, 8, startBottom - GM_TABLET_MIN_HEIGHT);
+            height = clamp(startBottom - top, GM_TABLET_MIN_HEIGHT, startBottom - 8);
+          }
+          this._gmTabletExpanded = false;
+          this.setPosition({ left, top, width, height });
+        };
+        const onEnd = () => {
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onEnd);
+          window.removeEventListener('pointercancel', onEnd);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onEnd, { once: true });
+        window.addEventListener('pointercancel', onEnd, { once: true });
+      });
+    });
+  }
+
   /**
    * Get app card definitions for home page
    */
@@ -796,6 +792,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
+
+    this._wireSharedHolopadFrameEvents(root);
 
     // Mirror actor holopad home affordances: all shell/home controls route to GM home.
     root.querySelectorAll('[data-action="tablet-home"], [data-shell-action="open-home"], [data-shell-action="return-to-home"]').forEach(btn => {
@@ -821,149 +819,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
-    // Wire workspace actor clicks
-    root.querySelectorAll('[data-open-actor]').forEach(btn => {
-      btn.addEventListener('click', (ev) => {
-        const actorId = ev.currentTarget.dataset.openActor;
-        const actor = game.actors.get(actorId);
-        if (actor) {
-          actor.sheet.render(true);
-        }
-      });
+    // Let extracted surface controllers own page-local DOM wiring when available.
+    const handledBySurfaceController = await GMSurfaceControllerRegistry.bind({
+      surfaceId: this.currentPage,
+      host: this,
+      root
     });
+    if (handledBySurfaceController) return;
 
-    if (this.currentPage !== 'settings') {
-      this._settingsSurfaceController?.destroy?.();
-    }
-
-    // Wire page-specific events based on current page
-    if (this.currentPage === 'bulletin') {
-      await this._wireBulletinEvents(root);
-    } else if (this.currentPage === 'jobs') {
-      await this._wireJobBoardEvents(root);
-    } else if (this.currentPage === 'trade') {
-      await this._wireTradeConsoleEvents(root);
-    } else if (this.currentPage === 'store') {
-      await this._wireStoreEvents(root);
-    } else if (this.currentPage === 'house-rules') {
-      await this._wireHouseRulesEvents(root);
-    } else if (this.currentPage === 'approvals') {
-      await this._wireApprovalsEvents(root);
-    } else if (this.currentPage === 'healing') {
-      await this._wireHealingEvents(root);
-    } else if (this.currentPage === 'settings') {
-      this._wireSettingsEvents(root);
-    }
-  }
-
-  /** Wire shared settings surface events in GM context. */
-  _wireSettingsEvents(root) {
-    this._settingsSurfaceController ??= new SettingsSurfaceController(this, {
-      actor: null,
-      preferActor: false,
-      persistActorTheme: false,
-      logger: SWSELogger
-    });
-    this._settingsSurfaceController.attach(root);
-    this._wireGamePolicySettings(root);
-  }
-
-  _wireGamePolicySettings(root) {
-    const fields = root.querySelectorAll('[data-game-policy-field]');
-    fields.forEach((field) => {
-      field.addEventListener('change', async (event) => {
-        const input = event.currentTarget;
-        const key = input.dataset.gamePolicyField;
-        if (!key) return;
-        let value;
-        if (input.type === 'checkbox') value = input.checked === true;
-        else if (input.type === 'number') value = Number(input.value || 0);
-        else value = input.value;
-        try {
-          await game.settings.set(this.NS, key, value);
-          ui?.notifications?.info?.('Game policy updated.');
-          await this.render(false);
-        } catch (err) {
-          SWSELogger.error('[GMDatapad] Failed to update game policy setting:', err);
-          ui?.notifications?.error?.(`Game policy update failed: ${err.message}`);
-        }
-      });
-    });
-  }
-
-  async _wireTradeConsoleEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-trade-console');
-    if (!pageElement) return;
-
-    pageElement.querySelectorAll('[data-trade-select]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.selectedTradeRecordId = event.currentTarget.dataset.tradeSelect || null;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-trade-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const current = event.currentTarget;
-        const action = current.dataset.tradeAction;
-        const threadId = current.dataset.threadId;
-        const recordId = current.dataset.recordId;
-        if (!action || !threadId || !recordId) return;
-        const memo = pageElement.querySelector(`[data-trade-note-for="${recordId}"]`)?.value ?? '';
-        const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo });
-        if (!ok) ui?.notifications?.warn?.('Trade action did not complete. Check the console details for diagnostics.');
-        this.selectedTradeRecordId = recordId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-economy-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const current = event.currentTarget;
-        const action = current.dataset.economyAction;
-        const kind = current.dataset.economyKind || '';
-        const note = pageElement.querySelector('[data-economy-repair-note]')?.value ?? '';
-        await this._handleEconomyRepairAction({
-          action,
-          kind,
-          sessionId: current.dataset.sessionId || '',
-          threadId: current.dataset.threadId || '',
-          recordId: current.dataset.recordId || '',
-          selectRecordId: current.dataset.selectRecordId || '',
-          note
-        });
-      });
-    });
-
-    const tradePolicyForm = pageElement.querySelector('form[data-trade-policy-form]');
-    if (tradePolicyForm) {
-      tradePolicyForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(tradePolicyForm);
-        const boolKeys = [
-          'holonetCreditTransfersEnabled',
-          'holonetRequireCreditTransferApproval',
-          'holonetItemTradesEnabled',
-          'holonetRequireItemTradeApproval',
-          'holonetAssetTradesEnabled',
-          'holonetRequireAssetTradeApproval',
-          'holonetPartyFundEnabled'
-        ];
-        const numericKeys = ['holonetPartyFundDefaultCutPercent'];
-        try {
-          for (const key of boolKeys) await game.settings.set(this.NS, key, data.get(key) === 'on');
-          for (const key of numericKeys) await game.settings.set(this.NS, key, Math.max(0, Math.min(100, Math.floor(Number(data.get(key) || 0) || 0))));
-          ui?.notifications?.info?.('Trade policy updated.');
-          await this.render(false);
-        } catch (err) {
-          SWSELogger.error('[GMDatapad] Failed to save trade policy:', err);
-          ui?.notifications?.error?.(`Trade policy update failed: ${err.message}`);
-        }
-      });
-    }
   }
 
   async _handleEconomyRepairAction({ action = '', kind = '', sessionId = '', threadId = '', recordId = '', selectRecordId = '', note = '' } = {}) {
@@ -1062,608 +925,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return false;
   }
 
-  async _wireJobBoardEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-jobs');
-    if (!pageElement) return;
-
-    pageElement.querySelectorAll('form[data-job-create-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const text = (key) => String(data.get(key) || '').trim();
-        const number = (key) => Math.max(0, Math.floor(Number(data.get(key) || 0) || 0));
-        const itemNotes = (...keys) => keys.map(key => text(key)).filter(Boolean).join(' | ');
-        const title = text('title') || 'Job Board Posting';
-        const objectives = [
-          {
-            id: 'primary',
-            type: 'primary',
-            title: text('primaryObjective'),
-            description: text('primaryDescription'),
-            required: true,
-            rewardCredits: number('primaryCredits'),
-            rewardXp: number('primaryXp'),
-            rewardItems: text('primaryItems')
-          },
-          {
-            id: 'secondary',
-            type: 'secondary',
-            title: text('secondaryObjective'),
-            description: text('secondaryDescription'),
-            required: data.get('secondaryRequired') === 'on',
-            rewardCredits: number('secondaryCredits'),
-            rewardXp: number('secondaryXp'),
-            rewardItems: text('secondaryItems')
-          },
-          {
-            id: 'tertiary',
-            type: 'tertiary',
-            title: text('tertiaryObjective'),
-            description: text('tertiaryDescription'),
-            required: false,
-            rewardCredits: number('tertiaryCredits'),
-            rewardXp: number('tertiaryXp'),
-            rewardItems: text('tertiaryItems')
-          }
-        ].filter(objective => objective.title);
-
-        const rewardCredits = number('flatCredits') + objectives.reduce((sum, objective) => sum + Number(objective.rewardCredits || 0), 0);
-        const rewardItems = itemNotes('flatItems', 'primaryItems', 'secondaryItems', 'tertiaryItems');
-        const result = await HolonetMessengerService.createJobPosting({
-          actor: null,
-          title,
-          body: text('briefing') || title,
-          recipientIds: data.getAll('recipientIds').map(String).filter(Boolean),
-          rewardCredits,
-          rewardItems,
-          client: {
-            type: text('clientType'),
-            name: text('clientName'),
-            factionName: text('clientFaction'),
-            imageUrl: text('clientImage'),
-            saveForReuse: data.get('clientSave') === 'on'
-          },
-          objectives,
-          briefing: {
-            body: text('briefing'),
-            instructions: text('instructions'),
-            oocNote: text('oocNote')
-          },
-          factionConsequences: {
-            factionName: text('clientFaction'),
-            successDelta: Number(data.get('factionSuccessDelta') || 0) || 0,
-            failureDelta: Number(data.get('factionFailureDelta') || 0) || 0,
-            notes: text('factionNotes')
-          },
-          status: text('status') || 'posted'
-        });
-
-        if (!result) {
-          ui.notifications?.error?.('Job contract creation failed.');
-          return;
-        }
-        this.selectedJobThreadId = result.threadId || this.selectedJobThreadId;
-        ui.notifications?.info?.(`Job contract ${text('status') === 'draft' ? 'drafted' : 'posted'}.`);
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('form[data-job-distribution-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const threadId = String(data.get('threadId') || '').trim();
-        const payoutMode = String(data.get('payoutMode') || 'single').trim();
-        const recipientId = String(data.get('recipientId') || '').trim();
-        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-        const amount = Number(data.get('amount') || 0);
-        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
-        if (!threadId || !amount) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout-distribution', payoutMode, recipientId, recipientIds, amount, partyFundCutPercent });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('form[data-job-xp-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const threadId = String(data.get('threadId') || '').trim();
-        const payoutMode = String(data.get('payoutMode') || 'single').trim();
-        const recipientId = String(data.get('recipientId') || '').trim();
-        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-        const amount = Number(data.get('amount') || 0);
-        if (!threadId || !amount) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-xp-payout', payoutMode, recipientId, recipientIds, amount });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-job-select]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.selectedJobThreadId = event.currentTarget.dataset.jobSelect || null;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-job-status-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const threadId = event.currentTarget.dataset.threadId;
-        const status = event.currentTarget.dataset.status;
-        if (!threadId || !status) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-job-objective-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const threadId = event.currentTarget.dataset.threadId;
-        const objectiveId = event.currentTarget.dataset.objectiveId;
-        const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
-        if (!threadId || !objectiveId || !objectiveStatus) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('form[data-job-payout-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const threadId = String(data.get('threadId') || '').trim();
-        const recipientId = String(data.get('recipientId') || '').trim();
-        const amount = Number(data.get('amount') || 0);
-        const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
-        if (!threadId || !recipientId || !amount) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout', recipientId, amount, partyFundCutPercent });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('form[data-job-award-items-form]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-        const threadId = String(data.get('threadId') || '').trim();
-        const recipientId = String(data.get('recipientId') || '').trim();
-        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-        const distributionMode = String(data.get('distributionMode') || 'single-copy').trim();
-        const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
-        if (!threadId || !itemUuids.length) return;
-        if (distributionMode === 'single-copy' && !recipientId) return;
-        if (distributionMode !== 'single-copy' && !recipientIds.length) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, recipientIds, distributionMode, itemUuids });
-        this.selectedJobThreadId = threadId;
-        await this.render(false);
-      });
-    });
-  }
-
-  /**
-   * Wire bulletin page events
-   */
-  async _wireBulletinEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-bulletin');
-    if (!pageElement) return;
-
-    await HolonetComposerAssist.attach(pageElement);
-
-    pageElement.querySelectorAll('[data-bulletin-section]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        this.currentBulletinSection = event.currentTarget.dataset.bulletinSection;
-        this.bulletinEditor = { section: this.currentBulletinSection, mode: 'create', recordId: null };
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-edit"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        this.bulletinEditor = {
-          section: event.currentTarget.dataset.section,
-          mode: 'edit',
-          recordId: event.currentTarget.dataset.recordId
-        };
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-archive"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        await HolonetEngine.archiveRecord(event.currentTarget.dataset.recordId);
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-delete"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        await HolonetStorage.deleteRecord(event.currentTarget.dataset.recordId);
-        if (this.bulletinEditor?.recordId === event.currentTarget.dataset.recordId) {
-          this.bulletinEditor = { section: this.currentBulletinSection, mode: 'create', recordId: null };
-        }
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-publish"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
-        if (!record) return;
-        this._applyBulletinProjectionOptions(record, {
-          urgent: record.metadata?.urgent === true || record.metadata?.breakingNews === true,
-          breakingNews: record.metadata?.breakingNews === true,
-          pinAsLastSession: record.metadata?.pinAsLastSession === true,
-          homeSlot: record.metadata?.homeSlot || 'feed'
-        });
-        await HolonetEngine.publish(record);
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-pin-last-session"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
-        if (!record) return;
-        this._applyBulletinProjectionOptions(record, {
-          urgent: record.metadata?.urgent === true || record.metadata?.breakingNews === true,
-          breakingNews: record.metadata?.breakingNews === true,
-          pinAsLastSession: true,
-          homeSlot: 'last-session'
-        });
-        await this._unpinOtherBulletins(record.id);
-        await HolonetStorage.saveRecord(record);
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-unpin-last-session"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
-        if (!record) return;
-        this._applyBulletinProjectionOptions(record, {
-          urgent: record.metadata?.urgent === true || record.metadata?.breakingNews === true,
-          breakingNews: record.metadata?.breakingNews === true,
-          pinAsLastSession: false,
-          homeSlot: 'feed'
-        });
-        await HolonetStorage.saveRecord(record);
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-submit-mode]').forEach((button) => {
-      button.addEventListener('click', (event) => {
-        const form = event.currentTarget.closest('form');
-        const hidden = form?.querySelector('[name="submitMode"]');
-        if (hidden) hidden.value = event.currentTarget.dataset.submitMode;
-      });
-    });
-
-    const holonewsWireFilterForm = pageElement.querySelector('[data-holonews-wire-filter-form]');
-    if (holonewsWireFilterForm) {
-      holonewsWireFilterForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        this._applyHolonewsWireFilters(new FormData(holonewsWireFilterForm));
-        await this.render(false);
-      });
-      holonewsWireFilterForm.querySelectorAll('select, input[type="checkbox"]').forEach((field) => {
-        field.addEventListener('change', async () => {
-          this._applyHolonewsWireFilters(new FormData(holonewsWireFilterForm));
-          await this.render(false);
-        });
-      });
-    }
-
-    const holonewsArchiveFilterForm = pageElement.querySelector('[data-holonews-archive-filter-form]');
-    if (holonewsArchiveFilterForm) {
-      holonewsArchiveFilterForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        this._applyHolonewsArchiveFilters(new FormData(holonewsArchiveFilterForm));
-        await this.render(false);
-      });
-      holonewsArchiveFilterForm.querySelectorAll('select').forEach((field) => {
-        field.addEventListener('change', async () => {
-          this._applyHolonewsArchiveFilters(new FormData(holonewsArchiveFilterForm));
-          await this.render(false);
-        });
-      });
-    }
-
-    pageElement.querySelectorAll('[data-action="holonews-reset-archive-filters"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-duplicate-draft"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._duplicateHolonewsRecord(event.currentTarget.dataset.recordId);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-toggle-breaking"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._setHolonewsBreaking(event.currentTarget.dataset.recordId, event.currentTarget.dataset.enabled === 'true');
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-restore-draft"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._restoreHolonewsAsDraft(event.currentTarget.dataset.recordId);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-reset-wire-filters"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.holonewsSeedOffset = 0;
-        this.holonewsHideUsedSeeds = true;
-        this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-wire-next"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.holonewsSeedOffset = (Number(this.holonewsSeedOffset) || 0) + 12;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-wire-prev"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.holonewsSeedOffset = Math.max(0, (Number(this.holonewsSeedOffset) || 0) - 12);
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-shuffle-wire"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const filteredCount = Number(button.dataset.filteredCount || 0);
-        const ceiling = filteredCount > 0 ? filteredCount : HolonewsGenerator.count(this.holonewsWireFilters);
-        this.holonewsSeedOffset = ceiling > 12 ? Math.floor(Math.random() * Math.max(1, ceiling - 12)) : 0;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-use-draft"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._createHolonewsFromSeed(event.currentTarget.dataset.seedId, { publish: false });
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-publish-ambient"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._createHolonewsFromSeed(event.currentTarget.dataset.seedId, { publish: true });
-      });
-    });
-
-    const holonewsAutomationForm = pageElement.querySelector('[data-holonews-automation-form]');
-    if (holonewsAutomationForm) {
-      holonewsAutomationForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await this._saveHolonewsAutomationPolicy(new FormData(holonewsAutomationForm));
-      });
-    }
-
-    pageElement.querySelectorAll('[data-action="holonews-auto-publish-now"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const count = Number(event.currentTarget.dataset.count || 1);
-        await this._publishHolonewsAmbientNow(count);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="holonews-auto-reset-schedule"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._resetHolonewsAutomationSchedule();
-      });
-    });
-
-    pageElement.querySelectorAll('[data-select-bulletin-preview-user]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.selectedBulletinPreviewUserId = event.currentTarget.dataset.selectBulletinPreviewUser || null;
-        await this.render(false);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-bulletin-preview-delivery-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const action = event.currentTarget.dataset.bulletinPreviewDeliveryAction;
-        const recordId = event.currentTarget.dataset.recordId;
-        const recipientId = event.currentTarget.dataset.recipientId;
-        await this._setBulletinPreviewDeliveryState(recordId, recipientId, action);
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-save-contact"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const form = event.currentTarget.closest('form') || pageElement.querySelector('[data-bulletin-contact-form]');
-        if (!form) return;
-        await this._saveBulletinContact(new FormData(form));
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-edit-contact"], [data-action="bulletin-clone-contact"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const action = event.currentTarget.dataset.action;
-        const contact = await BulletinContactRegistry.getById(event.currentTarget.dataset.contactId);
-        if (!contact) {
-          ui?.notifications?.warn?.('That bulletin contact could not be found.');
-          return;
-        }
-        const form = pageElement.querySelector('[data-bulletin-contact-form]');
-        if (!form) return;
-        this._populateBulletinContactForm(form, contact, { clone: action === 'bulletin-clone-contact' });
-      });
-    });
-
-    pageElement.querySelectorAll('[data-action="bulletin-delete-contact"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._deleteBulletinContact(event.currentTarget.dataset.contactId);
-      });
-    });
-
-    const atomPolicyForm = pageElement.querySelector('[data-holonews-atom-policy-form]');
-    if (atomPolicyForm) {
-      atomPolicyForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await this._saveHolonewsAtomPolicy(new FormData(atomPolicyForm));
-      });
-    }
-
-    pageElement.querySelectorAll('[data-action="holonews-reset-atom-policy"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this._resetHolonewsAtomPolicy();
-      });
-    });
-
-    this._wireBulletinContactSelectors(pageElement);
-    this._wireBulletinImagePickers(pageElement);
-    this._wireBulletinMediaDrops(pageElement);
-    this._wireBulletinLivePreview(pageElement);
-
-    const eventsForm = pageElement.querySelector('[data-bulletin-form="events"]');
-    if (eventsForm) {
-      eventsForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await this._saveBulletinRecord(new FormData(eventsForm), 'events');
-      });
-    }
-
-    const holonewsForm = pageElement.querySelector('[data-bulletin-form="holonews"]');
-    if (holonewsForm) {
-      holonewsForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await this._saveBulletinRecord(new FormData(holonewsForm), 'holonews');
-      });
-    }
-
-    const messagesForm = pageElement.querySelector('[data-bulletin-form="messages"]');
-    if (messagesForm) {
-      messagesForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        await this._saveBulletinRecord(new FormData(messagesForm), 'messages');
-      });
-    }
-
-    const playerStateForm = pageElement.querySelector('[data-player-state-form]');
-    if (playerStateForm) {
-      playerStateForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const formData = new FormData(playerStateForm);
-        const actorId = formData.get('actorId');
-        if (!actorId) return;
-        await HolonetStateService.savePlayerState(actorId, {
-          location: formData.get('location'),
-          objective: formData.get('objective'),
-          situation: formData.get('situation')
-        });
-        this.selectedPlayerStateActorId = actorId;
-        await this.render(false);
-      });
-    }
-
-    pageElement.querySelectorAll('[data-select-player-state]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        this.selectedPlayerStateActorId = event.currentTarget.dataset.selectPlayerState;
-        await this.render(false);
-      });
-    });
-
-    const partyStateForm = pageElement.querySelector('[data-party-state-form]');
-    if (partyStateForm) {
-      partyStateForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const formData = new FormData(partyStateForm);
-        await HolonetStateService.savePartyState({
-          location: formData.get('location'),
-          objective: formData.get('objective'),
-          situation: formData.get('situation')
-        });
-        await this.render(false);
-      });
-    }
-  }
-
-  _wireBulletinImagePickers(pageElement) {
-    pageElement.querySelectorAll('[data-action="bulletin-pick-image"]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const form = event.currentTarget.closest('form');
-        const input = form?.querySelector('[data-bulletin-image-input]');
-        if (!input) return;
-        if (!globalThis.FilePicker) {
-          ui?.notifications?.warn?.('Foundry FilePicker is not available in this context. Paste an image path instead.');
-          return;
-        }
-        const picker = new FilePicker({
-          type: 'image',
-          current: input.value || '',
-          callback: (path) => {
-            input.value = path || '';
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        });
-        picker.render(true);
-      });
-    });
-  }
-
-  _wireBulletinContactSelectors(pageElement) {
-    pageElement.querySelectorAll('[data-bulletin-contact-select]').forEach((select) => {
-      select.addEventListener('change', async () => {
-        const form = select.closest('form');
-        if (!form || !select.value) return;
-        const contact = await BulletinContactRegistry.getById(select.value);
-        if (!contact) return;
-        const assignments = {
-          authorName: contact.label || contact.name || '',
-          imageUrl: contact.imageUrl || '',
-          dateline: contact.dateline || '',
-          sector: contact.sector || '',
-          newsCategory: contact.defaultCategory || '',
-          category: contact.defaultCategory || ''
-        };
-        for (const [name, value] of Object.entries(assignments)) {
-          if (!value) continue;
-          const field = form.querySelector(`[name="${name}"]`);
-          if (field) {
-            field.value = value;
-            field.dispatchEvent(new Event('input', { bubbles: true }));
-            field.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }
-      });
-    });
-  }
-
   _populateBulletinContactForm(form, contact = {}, { clone = false } = {}) {
     const assignments = {
       id: clone ? '' : contact.id,
@@ -1684,58 +945,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
       field.dispatchEvent(new Event('change', { bubbles: true }));
     }
     form.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
-  }
-
-  _wireBulletinMediaDrops(pageElement) {
-    pageElement.querySelectorAll('[data-bulletin-image-dropzone]').forEach((dropzone) => {
-      const input = dropzone.querySelector('[data-bulletin-image-input]') || dropzone.closest('form')?.querySelector('[data-bulletin-image-input]');
-      if (!input) return;
-      const setPath = (path) => {
-        input.value = path || '';
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-      };
-      dropzone.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dropzone.classList.add('is-drag-over');
-      });
-      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-drag-over'));
-      dropzone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropzone.classList.remove('is-drag-over');
-        const text = event.dataTransfer?.getData('text/plain') || event.dataTransfer?.getData('text/uri-list') || '';
-        const file = event.dataTransfer?.files?.[0];
-        if (text) setPath(text.trim());
-        else if (file?.path) setPath(file.path);
-        else if (file?.name) ui?.notifications?.warn?.('Drop a Foundry asset path or use Browse; browser file drops do not expose a world-safe path.');
-      });
-      dropzone.addEventListener('paste', (event) => {
-        const text = event.clipboardData?.getData('text/plain') || '';
-        if (text) setPath(text.trim());
-      });
-    });
-  }
-
-  _wireBulletinLivePreview(pageElement) {
-    const activeForm = pageElement.querySelector('[data-bulletin-form="events"], [data-bulletin-form="holonews"], [data-bulletin-form="messages"]');
-    const preview = pageElement.querySelector('[data-bulletin-live-preview]');
-    if (!activeForm || !preview) return;
-
-    const update = () => this._refreshBulletinLivePreview(activeForm, preview);
-    activeForm.querySelectorAll('input, textarea, select').forEach((field) => {
-      field.addEventListener('input', update);
-      field.addEventListener('change', update);
-    });
-    update();
-
-    const playerForm = pageElement.querySelector('[data-player-state-form]');
-    const partyForm = pageElement.querySelector('[data-party-state-form]');
-    for (const form of [playerForm, partyForm].filter(Boolean)) {
-      form.querySelectorAll('input, textarea').forEach((field) => {
-        field.addEventListener('input', () => this._refreshBulletinStatePreview(form, preview));
-        field.addEventListener('change', () => this._refreshBulletinStatePreview(form, preview));
-      });
-    }
   }
 
   _refreshBulletinLivePreview(form, preview) {
@@ -2294,713 +1503,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     return record;
-  }
-
-  /**
-   * Wire store page events
-   */
-  async _wireStoreEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-store');
-    if (!pageElement) return;
-
-    this._activateStoreTab(pageElement, this.currentTab || 'options');
-
-    // Store control tab buttons: the GM store lives inside the datapad host, so
-    // we manage this small tab switch locally instead of opening another app.
-    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
-      btn.addEventListener('click', (ev) => {
-        const tabId = ev.currentTarget.dataset.storeTab;
-        if (!tabId) return;
-        this.currentTab = tabId;
-        this._activateStoreTab(pageElement, tabId);
-      });
-    }
-
-    // Store availability toggle
-    const storeOpenToggle = pageElement.querySelector('[name="storeOpen"]');
-    if (storeOpenToggle) {
-      storeOpenToggle.addEventListener('change', async (ev) => {
-        await HouseRuleService.set('storeOpen', ev.currentTarget.checked);
-        this.render(false);
-      });
-    }
-
-    // Pricing controls. storeMarkup/storeDiscount are what the pricing engine reads.
-    // globalBuyModifier is also updated as a compatibility mirror for older store UI code.
-    const storeMarkupSlider = pageElement.querySelector('[name="storeMarkup"]');
-    if (storeMarkupSlider) {
-      storeMarkupSlider.addEventListener('input', async (ev) => {
-        const value = normalizeCredits(ev.currentTarget.value);
-        const valueLabel = pageElement.querySelector('[data-store-markup-value]');
-        if (valueLabel) valueLabel.textContent = `${value}%`;
-        await HouseRuleService.set('storeMarkup', value);
-        await HouseRuleService.set('globalBuyModifier', value);
-      });
-    }
-
-    const storeDiscountSlider = pageElement.querySelector('[name="storeDiscount"]');
-    if (storeDiscountSlider) {
-      storeDiscountSlider.addEventListener('input', async (ev) => {
-        const value = normalizeCredits(ev.currentTarget.value);
-        const valueLabel = pageElement.querySelector('[data-store-discount-value]');
-        if (valueLabel) valueLabel.textContent = `${value}%`;
-        await HouseRuleService.set('storeDiscount', value);
-      });
-    }
-
-    // Normalized availability controls used by the v2 store index.
-    for (const rarity of ['standard', 'licensed', 'rare', 'restricted', 'military', 'illegal', 'common', 'uncommon']) {
-      const checkbox = pageElement.querySelector(`[name="availability-${rarity}"]`);
-      if (checkbox) {
-        checkbox.addEventListener('change', async (ev) => {
-          const visibleRarities = SettingsHelper.getObject('visibleRarities', {});
-          visibleRarities[rarity] = ev.currentTarget.checked;
-          await SettingsHelper.set('visibleRarities', visibleRarities);
-        });
-      }
-    }
-
-    // Item type visibility checkboxes
-    for (const type of ['weapons', 'armor', 'gear', 'droids', 'vehicles']) {
-      const checkbox = pageElement.querySelector(`[name="type-${type}"]`);
-      if (checkbox) {
-        checkbox.addEventListener('change', async (ev) => {
-          const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {});
-          visibleTypes[type] = ev.currentTarget.checked;
-          await SettingsHelper.set('visibleItemTypes', visibleTypes);
-        });
-      }
-    }
-
-    // Auto-accept selling toggle
-    const autoAcceptToggle = pageElement.querySelector('[name="autoAcceptSelling"]');
-    if (autoAcceptToggle) {
-      autoAcceptToggle.addEventListener('change', async (ev) => {
-        await HouseRuleService.set('autoAcceptItemSales', ev.currentTarget.checked);
-        this.render(false);
-      });
-    }
-
-    // Auto-sale percentage slider
-    const autoSaleSlider = pageElement.querySelector('[name="autoSalePercent"]');
-    if (autoSaleSlider) {
-      autoSaleSlider.addEventListener('input', async (ev) => {
-        const value = normalizeCredits(ev.currentTarget.value);
-        const valueLabel = pageElement.querySelector('[data-auto-sale-value]');
-        if (valueLabel) valueLabel.textContent = `${value}%`;
-        await HouseRuleService.set('automaticSalePercentage', value);
-      });
-    }
-
-    // Disallow auto-sell no-price toggle
-    const disallowToggle = pageElement.querySelector('[name="disallowAutoSellNoPrice"]');
-    if (disallowToggle) {
-      disallowToggle.addEventListener('change', async (ev) => {
-        await HouseRuleService.set('disallowAutoSellNoPrice', ev.currentTarget.checked);
-      });
-    }
-
-    // Transaction rollback/correction buttons. Credit movement stays inside
-    // TransactionEngine; item cleanup is reconciled in the same rollback mutation
-    // when a safe owned-item match is available.
-    for (const btn of pageElement.querySelectorAll('[data-action="rollback-transaction"], [data-action="reverse-transaction"]')) {
-      btn.addEventListener('click', async (ev) => {
-        const index = Number(ev.currentTarget.dataset.index);
-        await this._rollbackTransaction(index);
-      });
-    }
-
-    // Inventory filters are Phase A client-side helpers. The saved policy model is
-    // separate from source item data so the GM can soft-ban/override without
-    // mutating compendium documents.
-    for (const input of pageElement.querySelectorAll('[data-store-inventory-filter]')) {
-      input.addEventListener('input', () => this._filterStoreInventoryRows(pageElement));
-      input.addEventListener('change', () => this._filterStoreInventoryRows(pageElement));
-    }
-
-    for (const input of pageElement.querySelectorAll('[data-store-policy-field]')) {
-      input.addEventListener('change', async (ev) => {
-        await this._updateStoreInventoryPolicy(ev.currentTarget);
-        this._filterStoreInventoryRows(pageElement);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approve-sale-request"], [data-action="counteroffer-sale-request"], [data-action="deny-sale-request"]')) {
-      btn.addEventListener('click', async (ev) => {
-        const action = ev.currentTarget.dataset.action;
-        const requestId = ev.currentTarget.dataset.requestId;
-        const card = ev.currentTarget.closest('[data-sale-request-id]');
-        const amountField = card?.querySelector('[data-sale-custom-amount]');
-        const reasonField = card?.querySelector('[data-sale-reason]');
-        const reason = String(reasonField?.value ?? '').trim();
-        let amount = null;
-
-        if (action === 'approve-sale-request') {
-          const defaultAmount = ev.currentTarget.dataset.defaultAmount;
-          amount = defaultAmount ? normalizeCredits(defaultAmount) : normalizeCredits(amountField?.value ?? 0);
-        } else if (action === 'counteroffer-sale-request') {
-          amount = normalizeCredits(amountField?.value ?? 0);
-          if (!(amount > 0)) {
-            ui?.notifications?.warn?.('Enter a custom sale amount before approving a counteroffer.');
-            return;
-          }
-        }
-
-        await this._resolvePendingSaleRequest(requestId, {
-          decision: action === 'deny-sale-request' ? 'deny' : (action === 'counteroffer-sale-request' ? 'counteroffer' : 'approve'),
-          amount,
-          reason
-        });
-      });
-    }
-  }
-
-  async _resolvePendingSaleRequest(requestId, options = {}) {
-    const { decision = 'approve', amount = null, reason = '' } = options;
-    const pendingSales = SettingsHelper.getArray('pendingSales', []);
-    const index = pendingSales.findIndex(request => String(request?.id || '') === String(requestId || ''));
-
-    if (index < 0) {
-      ui?.notifications?.error?.('Pending sale request not found.');
-      return;
-    }
-
-    const request = pendingSales[index];
-    const actor = game.actors.get(request.actorId);
-
-    if (decision === 'deny') {
-      pendingSales.splice(index, 1);
-      await SettingsHelper.set('pendingSales', pendingSales);
-      Hooks.callAll?.('swseStoreSaleDenied', {
-        request,
-        actor,
-        decidedBy: game.user?.name ?? 'GM',
-        reason
-      });
-      ui?.notifications?.info?.(`Denied sale request: ${request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
-      await this.render(false);
-      return;
-    }
-
-    if (!actor) {
-      ui?.notifications?.error?.('Cannot approve sale: actor no longer exists.');
-      return;
-    }
-
-    const salePrice = normalizeCredits(amount ?? request.requestedPrice ?? request.suggestedPrice ?? request.value ?? 0);
-    if (!(salePrice > 0)) {
-      ui?.notifications?.warn?.('Sale approval requires a credit amount greater than zero.');
-      return;
-    }
-
-    const item = actor.items?.get?.(request.itemId);
-    if (!item) {
-      ui?.notifications?.error?.('Cannot approve sale: item is no longer owned by this actor.');
-      return;
-    }
-
-    const result = await TransactionEngine.executeSaleTransaction({
-      actor,
-      itemId: request.itemId,
-      salePrice,
-      reason: reason || (decision === 'counteroffer' ? 'GM counteroffer approved' : 'GM approved store sale'),
-      transactionContext: decision === 'counteroffer' ? 'store-haggle-sale' : 'store-sale-approval',
-      audit: {
-        requestId: request.id,
-        requestType: request.type || 'sale',
-        itemName: item.name || request.item,
-        itemNames: [item.name || request.item].filter(Boolean),
-        itemCount: 1,
-        basePrice: request.basePrice ?? request.itemData?.system?.price ?? null,
-        suggestedPrice: request.suggestedPrice ?? request.value ?? null,
-        requestedPrice: request.requestedPrice ?? request.value ?? null,
-        approvedPrice: salePrice,
-        approvalMode: decision,
-        approvedBy: game.user?.id ?? null,
-        approvedByName: game.user?.name ?? 'GM',
-        gmReason: reason,
-        source: 'GM Store Control Approvals'
-      }
-    }, {
-      validate: true,
-      rederive: true,
-      source: 'GMDatapad._resolvePendingSaleRequest'
-    });
-
-    if (!result.success) {
-      ui?.notifications?.error?.(`Failed to approve sale: ${result.error}`);
-      return;
-    }
-
-    pendingSales.splice(index, 1);
-    await SettingsHelper.set('pendingSales', pendingSales);
-
-    Hooks.callAll?.('swseStoreSaleApproved', {
-      request,
-      actor,
-      itemData: request.itemData,
-      salePrice,
-      decision,
-      reason,
-      transactionId: result.transactionId,
-      decidedBy: game.user?.name ?? 'GM'
-    });
-
-    ui?.notifications?.info?.(`Approved sale: ${request.item || item.name} for ${salePrice.toLocaleString()} credits.`);
-    await this.render(false);
-  }
-
-  _activateStoreTab(pageElement, tabId) {
-    for (const btn of pageElement.querySelectorAll('[data-store-tab]')) {
-      const active = btn.dataset.storeTab === tabId;
-      btn.classList.toggle('active', active);
-      btn.classList.toggle('is-active', active);
-      btn.setAttribute('aria-selected', active ? 'true' : 'false');
-    }
-
-    for (const panel of pageElement.querySelectorAll('[data-store-tab-panel]')) {
-      const active = panel.dataset.storeTabPanel === tabId;
-      panel.classList.toggle('active', active);
-      panel.classList.toggle('is-active', active);
-      panel.hidden = !active;
-    }
-  }
-
-  _filterStoreInventoryRows(pageElement) {
-    const query = (pageElement.querySelector('[data-store-inventory-filter="search"]')?.value || '').trim().toLowerCase();
-    const type = pageElement.querySelector('[data-store-inventory-filter="type"]')?.value || '';
-    const availability = pageElement.querySelector('[data-store-inventory-filter="availability"]')?.value || '';
-    const visibility = pageElement.querySelector('[data-store-inventory-filter="visibility"]')?.value || '';
-
-    for (const row of pageElement.querySelectorAll('[data-store-inventory-row]')) {
-      const visibleCheckbox = row.querySelector('[data-store-policy-field="visible"]');
-      const availableCheckbox = row.querySelector('[data-store-policy-field="available"]');
-      const isVisible = visibleCheckbox ? visibleCheckbox.checked : row.dataset.visible === 'true';
-      const isAvailable = availableCheckbox ? availableCheckbox.checked : row.dataset.available === 'true';
-
-      const matchesQuery = !query || (row.dataset.search || '').includes(query);
-      const matchesType = !type || row.dataset.type === type;
-      const matchesAvailability = !availability || row.dataset.availability === availability;
-      const matchesVisibility = !visibility
-        || (visibility === 'visible' && isVisible)
-        || (visibility === 'hidden' && !isVisible)
-        || (visibility === 'available' && isAvailable)
-        || (visibility === 'unavailable' && !isAvailable)
-        || (visibility === 'overridden' && row.querySelector('[data-store-policy-field="overridePrice"]')?.value !== '');
-
-      row.hidden = !(matchesQuery && matchesType && matchesAvailability && matchesVisibility);
-    }
-  }
-
-  async _updateStoreInventoryPolicy(input) {
-    const itemId = input.dataset.itemId;
-    const field = input.dataset.storePolicyField;
-    if (!itemId || !field) return;
-
-    const policies = SettingsHelper.getObject('storeInventoryPolicies', {});
-    const policy = { ...(policies[itemId] || {}) };
-
-    if (['visible', 'available', 'trackQuantity', 'requiresApproval'].includes(field)) {
-      policy[field] = input.checked === true;
-    } else if (field === 'quantity' || field === 'overridePrice') {
-      const raw = String(input.value ?? '').trim();
-      policy[field] = raw === '' ? null : Math.max(0, normalizeCredits(raw));
-    } else if (field === 'notes') {
-      policy[field] = String(input.value ?? '').trim();
-    } else {
-      return;
-    }
-
-    policy.updatedAt = Date.now();
-    policy.updatedBy = game.user?.id || null;
-    policies[itemId] = policy;
-
-    await SettingsHelper.set('storeInventoryPolicies', policies);
-  }
-
-  /**
-   * Wire house rules page events
-   */
-  async _wireHouseRulesEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-house-rules');
-    if (!pageElement) return;
-
-    // Wire checkbox toggles for all rules
-    pageElement.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', async (event) => {
-        const key = event.target.dataset.ruleKey;
-        const checked = event.target.checked;
-
-        try {
-          await HouseRuleService.set(key, checked);
-          SWSELogger.info(`[GMDatapad House Rules] Updated ${key} = ${checked}`);
-        } catch (err) {
-          SWSELogger.error(`[GMDatapad House Rules] Failed to update ${key}:`, err);
-          event.target.checked = !checked;
-        }
-      });
-    });
-
-    // Animate category hover
-    pageElement.querySelectorAll('.rule-category').forEach(category => {
-      category.addEventListener('mouseenter', (event) => {
-        event.currentTarget.classList.add('hovered');
-      });
-      category.addEventListener('mouseleave', (event) => {
-        event.currentTarget.classList.remove('hovered');
-      });
-    });
-  }
-
-  /**
-   * Wire approvals page events
-   */
-  async _wireApprovalsEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-approvals');
-    if (!pageElement) return;
-
-    const reviewForm = pageElement.querySelector('[data-approval-review-form]');
-    if (reviewForm) {
-      reviewForm.addEventListener('submit', (ev) => ev.preventDefault());
-      this._wireApprovalEditPreview(reviewForm);
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="select-approval"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? null;
-        this.approvalEditMode = false;
-        this.approvalDenyMode = false;
-        await this.render(false);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-enter-edit"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        this.approvalEditMode = true;
-        this.approvalDenyMode = false;
-        await this.render(false);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-cancel-edit"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        this.approvalEditMode = false;
-        this.approvalDenyMode = false;
-        await this.render(false);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-deny"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        this.approvalDenyMode = true;
-        await this.render(false);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-cancel-deny"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        this.selectedApprovalKey = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        this.approvalDenyMode = false;
-        await this.render(false);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-approve"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        await this._approveApprovalRequest(key);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-finalize-edits"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        const form = ev.currentTarget.closest('[data-approval-review-form]');
-        await this._finalizeApprovalWithEdits(key, form);
-      });
-    }
-
-    for (const btn of pageElement.querySelectorAll('[data-action="approval-confirm-deny"]')) {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const key = ev.currentTarget?.dataset?.approvalKey ?? this.selectedApprovalKey;
-        const form = ev.currentTarget.closest('[data-approval-review-form]');
-        const reason = String(new FormData(form).get('denialReason') ?? '').trim();
-        await this._denyApprovalRequest(key, reason);
-      });
-    }
-  }
-
-  /** Render live changed-field rows in the approval decision rail while GM edits inline. */
-  _wireApprovalEditPreview(form) {
-    const fields = Array.from(form.querySelectorAll('[data-approval-edit-field]'));
-    const changeList = form.querySelector('[data-approval-change-list]');
-    if (!fields.length || !changeList) return;
-
-    const escapeHtml = (value) => String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-    const renderChanges = () => {
-      const changes = fields
-        .map((field) => {
-          const label = field.dataset.label || field.name;
-          const original = String(field.dataset.original ?? '').trim();
-          const current = String(field.value ?? '').trim();
-          return { label, original, current, changed: original !== current };
-        })
-        .filter((change) => change.changed);
-
-      if (!changes.length) {
-        changeList.innerHTML = '<p class="gm-approval-empty-note" data-approval-change-empty>No edits yet. Change fields in the summary packet to build the adjustment list.</p>';
-        return;
-      }
-
-      changeList.innerHTML = changes.map((change) => `
-        <div class="gm-approval-change-row">
-          <span>${escapeHtml(change.label)}</span>
-          <strong>${escapeHtml(change.original || '—')} → ${escapeHtml(change.current || '—')}</strong>
-        </div>
-      `).join('');
-    };
-
-    for (const field of fields) {
-      field.addEventListener('input', renderChanges);
-      field.addEventListener('change', renderChanges);
-    }
-    renderChanges();
-  }
-
-  /**
-   * Wire healing page events
-   */
-  async _wireHealingEvents(root) {
-    const pageElement = root.querySelector('.gm-datapad-healing');
-    if (!pageElement) return;
-
-    // Trigger natural healing button
-    const triggerButton = pageElement.querySelector('[data-action="trigger-healing"]');
-    if (triggerButton) {
-      triggerButton.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        await this._triggerNaturalHealing();
-      });
-    }
-  }
-
-  /**
-   * Build a safe item reconciliation preview for a TransactionEngine rollback.
-   *
-   * Existing historical records may only know item names. New records include
-   * audit.items with ids/types/costs, but we still fall back to name matching so
-   * the GM can recover from older purchases without losing credit SSOT safety.
-   */
-  _buildTransactionRollbackReconciliation(transaction, actor) {
-    const auditItems = Array.isArray(transaction?.audit?.items)
-      ? transaction.audit.items.filter(item => item && typeof item === 'object')
-      : [];
-
-    const fallbackItems = auditItems.length ? [] : String(transaction?.item || '')
-      .split(',')
-      .map(name => name.trim())
-      .filter(Boolean)
-      .map(name => ({ name, type: 'item', quantity: 1, id: null, fallback: true }));
-
-    const requestedItems = (auditItems.length ? auditItems : fallbackItems)
-      .map(item => ({
-        id: item.id || item.itemId || null,
-        name: item.name || 'Unknown Item',
-        type: item.type || 'item',
-        quantity: Math.max(1, normalizeCredits(item.quantity ?? 1) || 1),
-        cost: normalizeCredits(item.cost ?? 0),
-        condition: item.condition || null,
-        fallback: item.fallback === true
-      }));
-
-    const actorItems = Array.from(actor?.items ?? []);
-    const usedIds = new Set();
-    const removableItemIds = [];
-    const removedItems = [];
-    const unmatchedItems = [];
-    const inventoryPolicyItems = [];
-
-    const matchesSourceId = (ownedItem, requested) => {
-      const wanted = String(requested.id || '').trim();
-      if (!wanted) return false;
-      const sourceId = String(ownedItem?.flags?.core?.sourceId || ownedItem?.flags?.foundryvttSwse?.sourceId || '').trim();
-      const ownId = String(ownedItem?.id || ownedItem?._id || '').trim();
-      return ownId === wanted || sourceId === wanted || sourceId.endsWith(`.${wanted}`);
-    };
-
-    const findOwnedItem = (requested) => {
-      const type = String(requested.type || '').toLowerCase();
-      const canDeleteEmbeddedItem = type === 'item' || type === 'customized-item' || type === 'equipment' || type === 'weapon' || type === 'armor';
-      if (!canDeleteEmbeddedItem) return null;
-
-      let match = actorItems.find(item => !usedIds.has(item.id) && matchesSourceId(item, requested));
-      if (match) return match;
-
-      const wantedName = String(requested.name || '').trim().toLowerCase();
-      if (!wantedName) return null;
-      match = actorItems.find(item => !usedIds.has(item.id) && String(item.name || '').trim().toLowerCase() === wantedName);
-      if (match) return match;
-
-      return null;
-    };
-
-    for (const requested of requestedItems) {
-      if (requested.id) {
-        inventoryPolicyItems.push({
-          id: requested.id,
-          name: requested.name,
-          type: requested.type,
-          quantity: requested.quantity
-        });
-      }
-
-      for (let i = 0; i < requested.quantity; i += 1) {
-        const ownedItem = findOwnedItem(requested);
-        if (!ownedItem) {
-          unmatchedItems.push({
-            ...requested,
-            reason: String(requested.type || '').toLowerCase() === 'droid' || String(requested.type || '').toLowerCase() === 'vehicle'
-              ? 'Actor/asset purchases require manual asset review before deletion.'
-              : 'No matching owned item found on the actor.'
-          });
-          continue;
-        }
-
-        usedIds.add(ownedItem.id);
-        removableItemIds.push(ownedItem.id);
-        removedItems.push({
-          id: ownedItem.id,
-          name: ownedItem.name,
-          type: ownedItem.type,
-          requestedName: requested.name
-        });
-      }
-    }
-
-    return {
-      requestedItems,
-      removableItemIds,
-      removedItems,
-      unmatchedItems,
-      inventoryPolicyItems
-    };
-  }
-
-  /**
-   * Roll back a store transaction through TransactionEngine.
-   *
-   * Credit movement is handled by TransactionEngine as the SSOT. Safe owned item
-   * removal is folded into the same actor mutation plan. Inventory quantity
-   * restoration happens only after the TransactionEngine rollback succeeds.
-   */
-  async _rollbackTransaction(index) {
-    if (index < 0 || index >= this.transactions.length) {
-      ui?.notifications?.error?.('Invalid transaction index');
-      return;
-    }
-
-    const transaction = this.transactions[index];
-    if (!transaction?.canRollback && !transaction?.canReverse) {
-      ui?.notifications?.warn?.('This transaction cannot be rolled back from the TransactionEngine ledger.');
-      return;
-    }
-
-    const actor = game.actors.get(transaction.actorId);
-    if (!actor) {
-      ui?.notifications?.error?.('Actor not found');
-      return;
-    }
-
-    const reversalAmount = normalizeCredits(0 - Number(transaction.amount || 0));
-    const reconciliation = this._buildTransactionRollbackReconciliation(transaction, actor);
-
-    if (!Number.isFinite(reversalAmount) || (reversalAmount === 0 && reconciliation.removableItemIds.length === 0)) {
-      ui?.notifications?.warn?.('This transaction has no credit or owned-item impact to roll back.');
-      return;
-    }
-
-    const defaultReason = 'GM transaction rollback';
-    const summary = [
-      `Credit adjustment: ${reversalAmount >= 0 ? '+' : ''}${reversalAmount.toLocaleString()} cr`,
-      `Owned items to remove: ${reconciliation.removableItemIds.length}`,
-      reconciliation.unmatchedItems.length ? `Manual review: ${reconciliation.unmatchedItems.length} unmatched asset/item(s)` : null,
-      '',
-      `Reason for rolling back ${transaction.item || 'this transaction'}?`
-    ].filter(line => line !== null).join('\n');
-
-    let reason = defaultReason;
-    try {
-      const prompted = await uiPrompt('Rollback Store Transaction', summary, reason);
-      if (prompted === null || prompted === undefined) return;
-      reason = String(prompted || reason).trim() || reason;
-    } catch (_err) {
-      // uiPrompt is best-effort; continue with the default reason if unavailable.
-    }
-
-    try {
-      const result = await TransactionEngine.executeRollbackCorrection({
-        actor,
-        amount: reversalAmount,
-        reason,
-        sourceTransactionId: transaction.transactionId,
-        removeOwnedItemIds: reconciliation.removableItemIds,
-        audit: {
-          sourceTransactionId: transaction.transactionId,
-          sourceContext: transaction.context,
-          sourceItem: transaction.item,
-          sourceAmount: transaction.amount,
-          source: 'GM Store Control Rollback',
-          removedItems: reconciliation.removedItems,
-          unmatchedItems: reconciliation.unmatchedItems,
-          inventoryPolicyItems: reconciliation.inventoryPolicyItems
-        }
-      }, {
-        source: 'GMDatapad._rollbackTransaction',
-        validate: true,
-        rederive: true
-      });
-
-      if (!result.success) {
-        ui?.notifications?.error?.(`Failed to roll back transaction: ${result.error}`);
-        return;
-      }
-
-      const restoreResult = await restoreInventoryPolicyQuantities(reconciliation.inventoryPolicyItems);
-      const messageParts = [
-        `Rollback recorded for ${transaction.actor}.`,
-        reconciliation.removedItems.length ? `${reconciliation.removedItems.length} owned item(s) removed.` : null,
-        restoreResult.updated ? `${restoreResult.updated} stock policy record(s) restored.` : null,
-        reconciliation.unmatchedItems.length ? `${reconciliation.unmatchedItems.length} item/asset(s) need manual review.` : null
-      ].filter(Boolean);
-
-      ui?.notifications?.info?.(messageParts.join(' '));
-      await this.render(false);
-    } catch (err) {
-      SWSELogger.error('[GMDatapad] Error rolling back transaction:', err);
-      ui?.notifications?.error?.(`Failed to roll back transaction: ${err.message}`);
-    }
-  }
-
-  /** Backward-compatible alias for older buttons/hot reloads. */
-  async _reverseTransaction(index) {
-    return this._rollbackTransaction(index);
   }
 
   /**
@@ -3637,25 +2139,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Trigger natural healing for eligible party members
-   */
-  async _triggerNaturalHealing() {
-    try {
-      const result = await GMHealingTrigger.triggerNaturalHealing({ isFullRest: true, skipHolonetNotification: false });
-      if (result.success) {
-        ui?.notifications?.info?.(`Natural healing triggered: ${result.totalHealed} actors healed, ${result.totalSkipped} skipped`);
-        SWSELogger.info('[GMDatapad] Natural healing triggered:', result);
-        await this.render(false);
-      } else {
-        ui?.notifications?.error?.(`Failed to trigger healing: ${result.error}`);
-      }
-    } catch (err) {
-      SWSELogger.error('[GMDatapad] Error triggering natural healing:', err);
-      ui?.notifications?.error?.(`Error: ${err.message}`);
-    }
-  }
-
-  /**
    * Navigate to a different page within the datapad
    */
   async _navigateTo(pageId) {
@@ -3677,47 +2160,5 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await this.render(false);
   }
 }
-
-/**
- * House Rules Categories
- */
-const HOUSE_RULES_CATEGORIES = {
-  characterCreation: [
-    'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
-    'maxStartingCredits', 'holonetCreditTransfersEnabled', 'holonetRequireCreditTransferApproval', 'holonetItemTradesEnabled', 'holonetRequireItemTradeApproval', 'holonetAssetTradesEnabled', 'holonetRequireAssetTradeApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
-    'droidPointBuyPool', 'livingPointBuyPool', 'droidConstructionCredits', 'allowDroidDestiny'
-  ],
-  combat: [
-    'conditionTrackCap', 'criticalHitVariant', 'diagonalMovement', 'weaponRangeReduction',
-    'weaponRangeMultiplier', 'armoredDefenseForAll', 'trackBlasterCharges', 'secondWindImproved',
-    'secondWindRecovery', 'secondWindWebEnhancement', 'feintSkill', 'deathSystem', 'deathSaveDC'
-  ],
-  force: [
-    'forceTrainingAttribute', 'blockDeflectTalents', 'blockMechanicalAlternative',
-    'forceSensitiveJediOnly', 'darkSideMaxMultiplier', 'darkSidePowerIncreaseScore',
-    'darkInspirationEnabled', 'forcePointRecovery', 'darkSideTemptation'
-  ],
-  recovery: [
-    'recoveryEnabled', 'recoveryHPType', 'customRecoveryHP', 'recoveryVitality',
-    'conditionTrackEnabled', 'conditionTrackVariant', 'conditionTrackAutoApply',
-    'enableEnhancedMassiveDamage', 'persistentDTPenalty', 'doubleThresholdPenalty',
-    'eliminateInstantDeath', 'healingSkillEnabled', 'firstAidEnabled', 'longTermCareEnabled',
-    'performSurgeryEnabled', 'revivifyEnabled', 'criticalCareEnabled'
-  ],
-  skills: [
-    'skillFocusVariant', 'skillFocusActivationLevel', 'talentTreeRestriction', 'talentEveryLevel',
-    'talentEveryLevelExtraL1', 'talentDoubleLevels', 'crossClassSkillTraining', 'retrainingEnabled',
-    'skillTrainingEnabled', 'trainingPointsPerLevel', 'multiclassBonusChoice', 'abilityIncreaseMethod',
-    'grappleEnabled', 'grappleVariant', 'grappleDCBonus', 'flankingEnabled', 'flankingBonus',
-    'flankingRequiresConsciousness', 'flankingLargeCreatures', 'flankingDiagonalCounts'
-  ],
-  vehicles: [
-    'spaceInitiativeSystem', 'weaponsOperatorsRollInit', 'enableScaleEngine', 'enableSWES',
-    'enableEnhancedShields', 'enableEnhancedEngineer', 'enableEnhancedPilot',
-    'enableEnhancedCommander', 'enableVehicleTurnController', 'enableGlancingHit',
-    'enableLastGrasp', 'enableEmergencyPatch', 'enableExperienceSystem', 'statusEffectsEnabled',
-    'bannedSpecies'
-  ]
-};
 
 export default GMDatapad;

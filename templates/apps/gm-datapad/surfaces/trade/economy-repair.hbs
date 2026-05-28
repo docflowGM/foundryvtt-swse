@@ -1,0 +1,34 @@
+{{!-- GM Trade economy repair cockpit. --}}
+        <section class="swse-ui-panel trade-repair-panel">
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">REPAIR COCKPIT</span>
+              <h3>Economy Reconciliation</h3>
+            </div>
+            <span class="trade-chip {{#if tradeConsole.economyRepair.stats.failed}}crit{{else}}stable{{/if}}">{{tradeConsole.economyRepair.stats.total}} Open</span>
+          </div>
+          <p class="trade-console-help">Review failed game payouts, blocked settlements, failed trades, and recent rollback/correction records without creating a second ledger.</p>
+          <textarea data-economy-repair-note placeholder="Optional GM reconciliation note"></textarea>
+          <div class="trade-repair-ticket-list">
+            {{#each tradeConsole.economyRepair.tickets}}
+            <article class="trade-audit-row {{this.tone}}">
+              <strong>{{this.title}}</strong>
+              <span>{{this.statusLabel}} · {{this.sourceLabel}}</span>
+              <p>{{this.detail}}</p>
+              <div class="trade-dossier-row"><span>Expected</span><strong>{{this.expectedLabel}}</strong></div>
+              <div class="trade-dossier-row"><span>Current</span><strong>{{this.currentLabel}}</strong></div>
+              <div class="trade-action-grid compact">
+                {{#if this.selectRecordId}}<button type="button" class="swse-ui-button" data-economy-action="select-trade" data-economy-kind="trade" data-select-record-id="{{this.selectRecordId}}">Inspect</button>{{/if}}
+                {{#if this.canMarkReconciled}}
+                  {{#if (eq this.kind "game")}}<button type="button" class="swse-ui-button stable" data-economy-action="game-mark-reconciled" data-economy-kind="game" data-session-id="{{this.sessionId}}">Mark Reconciled</button>{{/if}}
+                  {{#if (eq this.kind "trade")}}<button type="button" class="swse-ui-button stable" data-economy-action="gm-mark-trade-reconciled" data-economy-kind="trade" data-thread-id="{{this.threadId}}" data-record-id="{{this.recordId}}">Mark Reconciled</button>{{/if}}
+                {{/if}}
+                {{#if this.canReopenSettlement}}<button type="button" class="swse-ui-button warn" data-economy-action="game-reopen-settlement" data-economy-kind="game" data-session-id="{{this.sessionId}}">Reopen Approval</button>{{/if}}
+                {{#if this.canRefund}}<button type="button" class="swse-ui-button crit" data-economy-action="game-refund-escrow" data-economy-kind="game" data-session-id="{{this.sessionId}}">Refund Escrow</button>{{/if}}
+              </div>
+            </article>
+            {{else}}
+            <p class="placeholder">No open economy repair tickets. Failed trades, blocked game settlements, payout failures, and recent rollback corrections will appear here.</p>
+            {{/each}}
+          </div>
+        </section>

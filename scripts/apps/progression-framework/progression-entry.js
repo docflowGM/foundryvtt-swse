@@ -34,6 +34,16 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * @returns {boolean} - True if actor is incomplete and needs chargen
  * @private
  */
+
+function _isOwnerSyncedMinion(actor) {
+  return actor?.system?.isMinion === true
+    || actor?.system?.progression?.isMinion === true
+    || actor?.flags?.swse?.minion?.isMinion === true
+    || actor?.getFlag?.('foundryvtt-swse', 'isMinion') === true
+    || actor?.system?.npcProfile?.kind === 'minion'
+    || actor?.system?.npcProfile?.kind === 'privateer';
+}
+
 function _isChargenIncomplete(actor) {
   if (!actor) {
     return false;
@@ -57,9 +67,12 @@ function _isChargenIncomplete(actor) {
     return true;
   }
 
-  // No class item yet — chargen was not completed
+  // No class item yet usually means chargen was not completed. Owner-synced
+  // minions are dependent nonheroic NPCs and must not be routed into manual
+  // level-up just because their class bookkeeping is implicit/locked.
   const hasClass = ActorAbilityBridge.getClasses(actor).length > 0;
   if (!hasClass) {
+    if (_isOwnerSyncedMinion(actor)) return false;
     return true;
   }
 
@@ -149,6 +162,12 @@ export async function launchProgression(actor, options = {}) {
 
   // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
   const isChargenIncomplete = _isChargenIncomplete(actor);
+
+  if (!isChargenIncomplete && _isOwnerSyncedMinion(actor)) {
+    ui?.notifications?.info?.('Minions do not level up manually. They automatically sync as nonheroic NPCs at owner heroic level - 2.');
+    SWSELogger.log('[Progression Entry] Blocked manual minion level-up; minions are owner-synced.');
+    return;
+  }
 
   SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
   SWSELogger.debug('[PROGRESSION] ROUTING DECISION');
@@ -272,19 +291,41 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     return;
   }
 
+  if (options.existingFollowerId) {
+    try {
+      const { FollowerCreator } = await import('/systems/foundryvtt-swse/scripts/apps/follower-creator.js');
+      await FollowerCreator.updateFollowersForLevelUp(ownerActor);
+      ui?.notifications?.info?.('Follower recalculated from the owner's current heroic level.');
+      SWSELogger.log('[Follower Progression] Existing follower level-up handled as automatic recalculation.');
+      return game.actors?.get(options.existingFollowerId) || null;
+    } catch (err) {
+      SWSELogger.error('[Follower Progression] Automatic follower recalculation failed:', err);
+      ui?.notifications?.error?.(`Follower recalculation failed: ${err.message}`);
+      return null;
+    }
+  }
+
   try {
     // Import follower helpers
     const { getAvailableFollowerSlots } = await import(
       './adapters/follower-session-seeder.js'
     );
 
-    // Check for available slots
+    const allSlots = (ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [])
+      .filter(slot => !slot.dependentKind || slot.dependentKind === 'follower');
     const availableSlots = getAvailableFollowerSlots(ownerActor);
-    if (!availableSlots || availableSlots.length === 0) {
+    const existingSlot = options.existingFollowerId
+      ? allSlots.find(slot => slot.createdActorId === options.existingFollowerId)
+      : null;
+    const targetSlot = options.slotId
+      ? allSlots.find(slot => slot.id === options.slotId)
+      : existingSlot || availableSlots[0];
+
+    if (!targetSlot || (!options.existingFollowerId && targetSlot.createdActorId)) {
       ui?.notifications?.warn?.(
         `${ownerActor.name} has no available follower slots. Gain a follower-granting talent first.`
       );
-      SWSELogger.warn('[Follower Progression] No available slots for owner');
+      SWSELogger.warn('[Follower Progression] No available slot for owner');
       return;
     }
 
@@ -292,46 +333,57 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
       `[Follower Progression] Found ${availableSlots.length} available follower slots`
     );
 
-    // Notify shell host that progression is active for follower creation
-    const ownerShell = ShellRouter.getShell(ownerActor.id);
-    if (ownerShell) {
-      ownerShell.setSurface('progression', { source: 'follower-progression' })
-        .then(() => ownerShell.render(false))
-        .catch(() => {});
-    }
-
-    // Minimize owner sheet
-    if (ownerActor.sheet?.rendered) {
-      try {
-        const pos = computeCenteredPosition(900, 950);
-        ownerActor.sheet.setPosition(pos);
-        SWSELogger.log('[Follower Progression] Owner sheet centered before minimize');
-      } catch (posErr) {
-        SWSELogger.warn('[Follower Progression] Could not center owner sheet:', posErr);
-      }
-      ownerActor.sheet.minimize().catch(() => {});
-      SWSELogger.log('[Follower Progression] Owner sheet minimized');
-    }
-
     // Set up dependency context for follower progression
     const dependencyContext = {
       ownerActorId: ownerActor.id,
-      slotId: options.slotId || availableSlots[0].id,
+      slotId: targetSlot.id,
       existingFollowerId: options.existingFollowerId || null
     };
 
     SWSELogger.log('[Follower Progression] Dependency context prepared', dependencyContext);
 
-    // Open FollowerShell for follower creation
-    // FollowerShell extends ProgressionShell and handles the 7-step follower creation flow
+    // Preferred v2 route: host the follower's current progression steps inside
+    // the owner's holopad shell. Followers are dependent participants, so the
+    // owner sheet remains the shell host while FollowerShell runs inline.
+    const ownerShell = ShellRouter.getShell(ownerActor.id);
+    if (ownerShell) {
+      SWSELogger.log('[Follower Progression] Shell host found — routing follower flow inline');
+      await ownerShell.setSurface('progression', {
+        ...options,
+        source: 'follower-progression',
+        progressionMode: 'follower',
+        mode: 'follower',
+        dependencyContext,
+        ownerActorId: ownerActor.id
+      });
+      await ownerShell.render(false);
+      return ownerShell;
+    }
+
+    // Legacy fallback only when no holopad shell host is available, such as a GM
+    // launching from a sidebar context. Do not minimize when the holopad route is
+    // available because the progression is already inside the same shell.
+    if (ownerActor.sheet?.rendered) {
+      try {
+        const pos = computeCenteredPosition(900, 950);
+        ownerActor.sheet.setPosition(pos);
+        SWSELogger.log('[Follower Progression] Owner sheet centered before standalone fallback');
+      } catch (posErr) {
+        SWSELogger.warn('[Follower Progression] Could not center owner sheet:', posErr);
+      }
+      ownerActor.sheet.minimize().catch(() => {});
+      SWSELogger.log('[Follower Progression] Owner sheet minimized for standalone fallback');
+    }
+
+    // Open FollowerShell for follower creation only as a standalone fallback.
     const { FollowerShell } = await import('./follower-shell.js');
     const result = await FollowerShell.open(
-      null, // follower actor is null (will be created/advanced)
-      'follower', // mode: 'follower'
+      null,
+      'follower',
       {
         ...options,
-        dependencyContext, // Pass dependency context to shell
-        owner: ownerActor // Pass owner reference for convenience
+        dependencyContext,
+        owner: ownerActor
       }
     );
 
@@ -346,6 +398,20 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     ui?.notifications?.error?.(`Follower progression failed: ${err.message}`);
     ShellRouter.notifySurfaceClosed(ownerActor.id);
   }
+}
+
+/**
+ * Launch minion creation for an owner actor.
+ * Reuses the dependent slot/linkage contract, but creates a minion/privateer NPC
+ * instead of opening the follower progression template flow.
+ *
+ * @param {Actor} ownerActor
+ * @param {Object} options
+ * @returns {Promise<Actor|null>}
+ */
+export async function launchMinionCreation(ownerActor, options = {}) {
+  const { MinionCreator } = await import('/systems/foundryvtt-swse/scripts/apps/minion-creator.js');
+  return MinionCreator.launchMinionCreation(ownerActor, options);
 }
 
 /**

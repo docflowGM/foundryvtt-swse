@@ -20,6 +20,78 @@
           </div>
         </section>
 
+
+
+        <section class="swse-ui-panel workspace-faction-manager" data-workspace-faction-manager>
+          <header class="job-board-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">FACTION / ORGANIZATION MANAGER</span>
+              <p>GM-owned campaign ledger for factions, rivals, patrons, and organizations. The future Allies app can consume this registry.</p>
+            </div>
+            <span class="job-board-chip">{{factionManager.count}}</span>
+          </header>
+
+          <form class="workspace-faction-form" data-faction-create-form>
+            <div class="gm-form-grid two-col">
+              <label>Faction name<input type="text" name="name" placeholder="Coruscant Security Force" required></label>
+              <label>Type<input type="text" name="type" placeholder="Government, syndicate, academy, guild..."></label>
+              <label>Planet/System<input type="text" name="planetSystem" placeholder="Coruscant / Core Worlds"></label>
+              <label>Scale<input type="number" name="scale" min="1" max="20" step="1" value="1"></label>
+              <label>Leader<input type="text" name="leader" placeholder="Known leader or command contact"></label>
+              <label>Starting score<input type="number" name="startingScore" step="1" value="0"></label>
+              <label>Relationship type
+                <select name="relationshipType">
+                  {{#each factionManager.relationshipTypes}}
+                  <option value="{{this.value}}">{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>Attach to actor now
+                <select name="actorId">
+                  <option value="">Registry only</option>
+                  {{#each factionManager.actorOptions}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+            </div>
+            <label>Benefits<textarea name="benefits" rows="2" placeholder="GM-authored benefits, access, discounts, permissions, or complications."></textarea></label>
+            <label>Public notes<textarea name="notes" rows="2" placeholder="Player-visible campaign context."></textarea></label>
+            <label>GM notes<textarea name="gmNotes" rows="2" placeholder="Private GM-only notes for later Allies/faction ledger work."></textarea></label>
+            <div class="workspace-faction-actions">
+              <button type="submit" class="swse-ui-button primary"><i class="fa-solid fa-plus"></i> Add Faction Relationship</button>
+            </div>
+          </form>
+
+          {{#if factionManager.factions.length}}
+          <div class="workspace-faction-grid">
+            {{#each factionManager.factions}}
+            <article class="workspace-faction-card swse-ui-panel" data-faction-id="{{this.id}}">
+              <header>
+                <div>
+                  <h4>{{this.name}}</h4>
+                  <p>{{this.type}}{{#if this.planetSystem}} · {{this.planetSystem}}{{/if}}</p>
+                </div>
+                <span class="job-board-chip">{{this.scoreLabel}}</span>
+              </header>
+              <div class="workspace-faction-meta">
+                <span>{{this.scaleLabel}}</span>
+                {{#if this.leader}}<span>Leader: {{this.leader}}</span>{{/if}}
+                <span>Source: {{this.sourceLabel}}</span>
+              </div>
+              {{#if this.benefits}}<p class="workspace-faction-text"><strong>Benefits:</strong> {{this.benefits}}</p>{{/if}}
+              {{#if this.notes}}<p class="workspace-faction-text">{{this.notes}}</p>{{/if}}
+              <div class="workspace-faction-actions compact">
+                <button type="button" class="swse-ui-button" data-delete-faction="{{this.id}}"><i class="fa-solid fa-trash-can"></i> Remove Registry Entry</button>
+              </div>
+            </article>
+            {{/each}}
+          </div>
+          {{else}}
+          <p class="placeholder">{{factionManager.empty}}</p>
+          {{/if}}
+        </section>
+
         {{#each rosterSections}}
         <section class="swse-ui-panel workspace-roster-section" data-workspace-roster="{{this.id}}">
           <header class="job-board-section-header compact">

@@ -1,58 +1,44 @@
-{{!-- Unified metallic holopad shell frame. Use as a block partial and pass app content through @partial-block. --}}
+{{!--
+  Shared holopad/tablet frame opening.
+  Pair with templates/shell/partials/holopad-frame-close.hbs.
+  Player actor shell and GM Datapad both consume this same physical chrome.
+--}}
+<div class="{{frameOuterClass}}"{{#if frameDataSheetForm}} data-sheet-form="{{frameDataSheetForm}}"{{/if}}{{#if frameDataConceptSource}} data-concept-source="{{frameDataConceptSource}}"{{/if}}{{#if frameDataApp}} data-app="{{frameDataApp}}"{{/if}} data-theme="{{shellTheme}}" data-motion-style="{{shellMotionStyle}}" style="{{{frameStyleInline}}}; {{{frameStyleInlineExtra}}};">
+  <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept sheet-shell swse-sheet-v2-shell--surface-{{shellSurface}} {{shellExtraClass}}" data-shell-surface="{{shellSurface}}" data-theme="{{shellTheme}}" data-motion-style="{{shellMotionStyle}}" style="{{{shellStyleInline}}}; {{{shellStyleInlineExtra}}};">
+    <div class="swse-v2-tablet swse-v2-tablet--concept {{tabletExtraClass}}">
+      <div class="swse-tablet-rivet swse-tablet-rivet--tl" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--tr" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--bl" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--br" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--ml" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--mr" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--top-a" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--top-b" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--right-a" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--right-b" aria-hidden="true"></div>
+      <div class="swse-tablet-camera" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--a" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--b" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--c" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--d" aria-hidden="true"></div>
 
-<form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept" autocomplete="off">
-  <div class="swse-tablet-scale-host">
-    <div class="swse-tablet-scale-stage">
-      <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept sheet-shell" data-theme="{{theme}}" data-motion-style="{{motionStyle}}">
-        <div class="swse-v2-tablet swse-v2-tablet--concept">
-          <div class="swse-tablet-drag-handle" data-action="tablet-drag" title="Drag datapad" aria-label="Drag datapad"></div>
+      <div class="swse-tablet-top-bezel" data-action="tablet-drag" title="{{#if dragTitle}}{{dragTitle}}{{else}}Drag datapad. Double-click to minimize.{{/if}}" data-shell-chrome="top" aria-label="{{#if dragLabel}}{{dragLabel}}{{else}}Datapad drag rail. Double-click to minimize.{{/if}}">
+        <div class="swse-tablet-drag-handle" data-action="tablet-drag" aria-hidden="true"></div>
+      </div>
 
-          <div class="swse-tablet-hardware swse-tablet-hardware--top" aria-label="Tablet window controls">
-            <button type="button" class="swse-tablet-control swse-tablet-control--close" data-action="tablet-close" title="Close" aria-label="Close">×</button>
-            <button type="button" class="swse-tablet-control swse-tablet-control--expand" data-action="tablet-expand" title="Expand" aria-label="Expand">⛶</button>
-          </div>
+      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail" aria-label="{{#if controlsLabel}}{{controlsLabel}}{{else}}Tablet identity and window controls{{/if}}">
+        <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="{{#if serialAria}}{{serialAria}}{{else}}SN 4471-0EA-00827{{/if}}">{{#if serialLabel}}{{serialLabel}}{{else}}SN4471-0EA-00827{{/if}}</span>
+        <span class="swse-tablet-status-lights" aria-hidden="true"><span></span><span></span><span></span></span>
+        <button type="button" class="swse-tablet-control swse-tablet-control--home" data-action="{{#if topHomeAction}}{{topHomeAction}}{{else}}tablet-home{{/if}}"{{#if topHomeNavTo}} data-nav-to="{{topHomeNavTo}}"{{/if}} title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--expand" data-action="{{#if expandAction}}{{expandAction}}{{else}}tablet-expand{{/if}}" title="Expand" aria-label="Expand">⛶</button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--close" data-action="{{#if closeAction}}{{closeAction}}{{else}}tablet-close{{/if}}" title="Close" aria-label="Close">×</button>
+      </div>
 
-          <div class="swse-tablet-bezel-detail swse-tablet-bezel-detail--top-left" aria-hidden="true">
-            <span class="swse-tablet-rivet"></span>
-            <span class="swse-tablet-micro-led"></span>
-            <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="SN 4471-0EA-00827">SN4471-0EA-00827</span>
-          </div>
+      <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
-          <div class="swse-tablet-bezel-detail swse-tablet-bezel-detail--top-right" aria-hidden="true">
-            <span class="swse-tablet-rivet"></span>
-          </div>
-
-          <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true">
-            <span></span><span></span><span></span><span></span>
-          </div>
-
-          <div class="swse-v2-screen swse-v2-screen--concept">
-            <div class="scan-v" aria-hidden="true"></div>
-            <div class="corner tl" aria-hidden="true"></div>
-            <div class="corner tr" aria-hidden="true"></div>
-            <div class="corner bl" aria-hidden="true"></div>
-            <div class="corner br" aria-hidden="true"></div>
-
-            {{#if @partial-block}}
-              {{@partial-block}}
-            {{else}}
-              <div class="swse-concept-main sheet-body sheet-content" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: var(--swse-concept-text-dim, #8fd7ef); font-size: 14px;">
-                <p>No application loaded</p>
-              </div>
-            {{/if}}
-          </div>{{!-- /swse-v2-screen --}}
-
-          {{#if (ne showHome false)}}
-          <button type="button" class="swse-tablet-home-button" data-action="{{homeRoute}}" title="Home" aria-label="Home">
-            <span class="swse-tablet-home-button__glyph"></span>
-          </button>
-          {{/if}}
-
-          <div class="swse-tablet-vent swse-tablet-vent--bottom" aria-hidden="true">
-            <span></span><span></span><span></span><span></span>
-          </div>
-        </div>{{!-- /swse-v2-tablet --}}
-      </div>{{!-- /swse-sheet-v2-shell --}}
-    </div>{{!-- /swse-tablet-scale-stage --}}
-  </div>{{!-- /swse-tablet-scale-host --}}
-</form>
+      <div class="swse-v2-screen swse-v2-screen--concept {{screenExtraClass}}">
+        <div class="scan-v" aria-hidden="true"></div>
+        <div class="corner tl" aria-hidden="true"></div>
+        <div class="corner tr" aria-hidden="true"></div>
+        <div class="corner bl" aria-hidden="true"></div>
+        <div class="corner br" aria-hidden="true"></div>

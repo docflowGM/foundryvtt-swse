@@ -5145,3 +5145,107 @@
   color: rgba(210, 230, 240, 0.78);
   font-size: 0.78rem;
 }
+
+/* ─── WORKSPACE FACTION / ORGANIZATION MANAGER ─── */
+
+.workspace-faction-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+}
+
+.workspace-faction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workspace-faction-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: oklch(var(--swse-accent-text) / 0.72);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.workspace-faction-form input,
+.workspace-faction-form select,
+.workspace-faction-form textarea {
+  width: 100%;
+  min-height: 30px;
+  border: 1px solid oklch(var(--swse-accent) / 0.3);
+  border-radius: 6px;
+  background: oklch(var(--swse-screen) / 0.66);
+  color: var(--swse-accent-text);
+  padding: 6px 8px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.workspace-faction-form textarea {
+  resize: vertical;
+}
+
+.workspace-faction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.workspace-faction-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.workspace-faction-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.workspace-faction-card h4,
+.workspace-faction-card p {
+  margin: 0;
+}
+
+.workspace-faction-card h4 {
+  color: var(--swse-accent-text);
+  font-size: 1rem;
+}
+
+.workspace-faction-card header p,
+.workspace-faction-meta,
+.workspace-faction-text {
+  color: oklch(var(--swse-accent-text) / 0.7);
+  font-size: 0.82rem;
+}
+
+.workspace-faction-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.workspace-faction-meta span {
+  padding: 3px 7px;
+  border: 1px solid oklch(var(--swse-accent) / 0.22);
+  border-radius: 999px;
+  background: oklch(var(--swse-accent) / 0.08);
+}
+
+.workspace-faction-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.workspace-faction-actions.compact .swse-ui-button {
+  padding: 5px 8px;
+  font-size: 0.75rem;
+}

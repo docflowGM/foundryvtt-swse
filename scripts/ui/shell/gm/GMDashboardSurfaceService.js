@@ -6,8 +6,7 @@ import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/su
 import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js';
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { SOURCE_FAMILY, DELIVERY_STATE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
-
-const RULE_CATEGORIES = ['characterCreation', 'combat', 'force', 'recovery', 'skills', 'vehicles'];
+import { GMHouseRulesSurfaceService } from './GMHouseRulesSurfaceService.js';
 
 function safeNumber(value, fallback = 0) {
   const numeric = Number(value);
@@ -290,11 +289,8 @@ export class GMDashboardSurfaceService {
     }
   }
 
-  static _getActiveRuleCount(host) {
-    return RULE_CATEGORIES
-      .flatMap((category) => host._getRulesForCategory(category) ?? [])
-      .filter((rule) => rule.enabled)
-      .length;
+  static _getActiveRuleCount(_host) {
+    return GMHouseRulesSurfaceService.getActiveRuleCount();
   }
 
   static async _getRecentTransactions(host) {

@@ -15,6 +15,33 @@ export function registerHouseRuleSettings() {
         scope: 'world',
         config: true,
         type: Boolean,
+        default: true
+    });
+
+    game.settings.register('foundryvtt-swse', 'allowHumanFollowerNormalBonus', {
+        name: 'Allow Human Followers to Use Normal Human Bonuses',
+        hint: 'If enabled, Human followers may use normal Human bonus feat/skill behavior. If disabled, Human followers use the follower-only cross-template bonus rule.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
+    game.settings.register('foundryvtt-swse', 'allowDroidFollowers', {
+        name: 'Allow Droid Followers',
+        hint: 'If enabled, players may create droid followers from follower-granting talents. Droid followers use the follower droid chassis rules.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register('foundryvtt-swse', 'allowDroidFollowerSizeChoice', {
+        name: 'Allow Small/Large Droid Followers',
+        hint: 'If enabled, droid followers may be Small or Large. If disabled, droid followers are Medium by default.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
         default: false
     });
 

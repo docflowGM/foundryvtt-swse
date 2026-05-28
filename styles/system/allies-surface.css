@@ -1,0 +1,1046 @@
+/* Holopad Allies surface */
+
+.swse-shell-surface--allies {
+  height: 100%;
+  color: var(--swse-text, #d7f8ff);
+}
+
+.swse-allies-surface {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 14px;
+  min-height: 100%;
+  padding: 18px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 10%, color-mix(in oklab, var(--vapor-cyan, #00dfff) 16%, transparent), transparent 38%),
+    radial-gradient(circle at 85% 18%, color-mix(in oklab, var(--vapor-pink, #ff2fd6) 14%, transparent), transparent 34%),
+    linear-gradient(180deg, rgba(5, 18, 34, 0.94), rgba(2, 8, 18, 0.98));
+}
+
+.swse-allies-header,
+.swse-allies-section-head,
+.swse-allies-lane,
+.swse-allies-card,
+.swse-allies-record,
+.swse-allies-empty {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  background: linear-gradient(180deg, rgba(7, 22, 40, 0.84), rgba(3, 10, 22, 0.92));
+  box-shadow: 0 0 24px rgba(0, 223, 255, 0.07), inset 0 0 18px rgba(0, 223, 255, 0.035);
+  border-radius: 16px;
+}
+
+.swse-allies-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+}
+
+.swse-allies-identity,
+.swse-allies-actor,
+.swse-allies-card-main,
+.swse-allies-record-head,
+.swse-allies-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.swse-allies-section-head {
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.swse-allies-led {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--vapor-cyan, #00dfff);
+  box-shadow: 0 0 18px var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-kicker {
+  display: inline-block;
+  color: var(--vapor-cyan, #00dfff);
+  font-size: 0.68rem;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.swse-allies-header h2,
+.swse-allies-section-head h3,
+.swse-allies-lane h4,
+.swse-allies-card h5,
+.swse-allies-record h4 {
+  margin: 0;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-allies-header p,
+.swse-allies-section-head p,
+.swse-allies-card p,
+.swse-allies-record p {
+  margin: 3px 0 0;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 72%, transparent);
+}
+
+.swse-allies-card small,
+.swse-allies-record small,
+.swse-allies-actor span {
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 55%, transparent);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swse-allies-actor img,
+.swse-allies-card-main img {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 35%, transparent);
+}
+
+.swse-allies-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-allies-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 9px 12px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 20%, transparent);
+  background: rgba(3, 12, 24, 0.84);
+  color: var(--swse-text, #d7f8ff);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.swse-allies-tab:hover,
+.swse-allies-tab.is-active {
+  border-color: color-mix(in oklab, var(--vapor-cyan, #00dfff) 68%, transparent);
+  background: linear-gradient(180deg, rgba(0, 223, 255, 0.14), rgba(255, 47, 214, 0.08));
+  box-shadow: 0 0 18px rgba(0, 223, 255, 0.14);
+}
+
+.swse-allies-tab b {
+  min-width: 24px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: #00131d;
+  background: var(--vapor-cyan, #00dfff);
+  text-align: center;
+}
+
+.swse-allies-body {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-allies-body::-webkit-scrollbar { width: 8px; }
+.swse-allies-body::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--vapor-cyan, #00dfff) 40%, transparent);
+  border-radius: 99px;
+}
+
+.swse-allies-lanes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.swse-allies-lane {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 260px;
+  padding: 12px;
+}
+
+.swse-allies-lane > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 18%, transparent);
+}
+
+.swse-allies-lane > header b,
+.swse-allies-stat-pill b {
+  color: var(--vapor-cyan, #00dfff);
+  font-size: 1.1rem;
+}
+
+.swse-allies-stat-pill {
+  min-width: 84px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 22%, transparent);
+  background: rgba(0, 223, 255, 0.06);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.swse-allies-stat-pill span {
+  display: block;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 55%, transparent);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.swse-allies-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.swse-allies-card--pending {
+  border-color: color-mix(in oklab, var(--vapor-pink, #ff2fd6) 35%, transparent);
+}
+
+.swse-allies-card-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--vapor-pink, #ff2fd6);
+  border: 1px dashed color-mix(in oklab, var(--vapor-pink, #ff2fd6) 54%, transparent);
+  font-size: 1.4rem;
+}
+
+.swse-allies-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swse-allies-card-actions button {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 223, 255, 0.08);
+  color: var(--swse-text, #d7f8ff);
+  padding: 6px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-card-actions button:hover {
+  background: rgba(0, 223, 255, 0.18);
+  border-color: var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-card.is-droid {
+  border-color: color-mix(in oklab, var(--zero, #f7d774) 42%, transparent);
+}
+
+.swse-allies-record-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.swse-allies-record {
+  padding: 14px;
+}
+
+.swse-allies-record-head {
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 58%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-record-head b {
+  color: var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-empty {
+  padding: 18px;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 62%, transparent);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.swse-allies-empty--lane {
+  margin-top: auto;
+  padding: 16px;
+  font-size: 0.76rem;
+}
+
+@media (max-width: 980px) {
+  .swse-allies-lanes { grid-template-columns: 1fr; }
+  .swse-allies-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .swse-allies-header { align-items: flex-start; flex-direction: column; }
+}
+
+.swse-allies-section-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.swse-allies-history-toggle {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 223, 255, 0.08);
+  color: var(--swse-text, #d7f8ff);
+  padding: 8px 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-history-toggle.is-active,
+.swse-allies-history-toggle:hover {
+  background: rgba(0, 223, 255, 0.18);
+  border-color: var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-drop-zone {
+  margin: -4px 0 12px;
+  padding: 10px 14px;
+  border: 1px dashed color-mix(in oklab, var(--vapor-cyan, #00dfff) 34%, transparent);
+  border-radius: 14px;
+  background: rgba(0, 223, 255, 0.045);
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 68%, transparent);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-surface.is-drag-over .swse-allies-drop-zone {
+  border-color: var(--vapor-cyan, #00dfff);
+  background: rgba(0, 223, 255, 0.16);
+  box-shadow: 0 0 24px rgba(0, 223, 255, 0.18);
+}
+
+.swse-allies-lane > header small {
+  display: block;
+  margin-top: 2px;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 58%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+}
+
+.swse-allies-card.is-stale {
+  border-color: color-mix(in oklab, var(--zero, #f7d774) 58%, transparent);
+  box-shadow: 0 0 24px rgba(247, 215, 116, 0.12), inset 0 0 18px rgba(247, 215, 116, 0.045);
+}
+
+.swse-allies-card--history {
+  opacity: 0.82;
+  border-style: dashed;
+}
+
+.swse-allies-card-actions button.is-danger {
+  border-color: color-mix(in oklab, #ff5c7a 45%, transparent);
+  background: rgba(255, 92, 122, 0.08);
+}
+
+.swse-allies-card-actions button.is-danger:hover {
+  border-color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.18);
+}
+
+.swse-allies-card-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Allies // Bases tab text-record scaffolding */
+.swse-allies-base-note {
+  margin: -4px 0 14px;
+  padding: 10px 14px;
+  border: 1px dashed color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 14px;
+  background: rgba(0, 223, 255, 0.045);
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 68%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-base-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.swse-allies-base-card {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  background: linear-gradient(180deg, rgba(7, 22, 40, 0.84), rgba(3, 10, 22, 0.92));
+  box-shadow: 0 0 24px rgba(0, 223, 255, 0.07), inset 0 0 18px rgba(0, 223, 255, 0.035);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.swse-allies-base-form {
+  display: grid;
+  gap: 14px;
+}
+
+.swse-allies-base-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 18%, transparent);
+}
+
+.swse-allies-base-card-head > div:first-child {
+  flex: 1;
+  min-width: 220px;
+}
+
+.swse-allies-base-card input,
+.swse-allies-base-card textarea {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 26%, transparent);
+  border-radius: 12px;
+  background: rgba(2, 10, 22, 0.82);
+  color: var(--swse-text, #d7f8ff);
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.swse-allies-base-card input:focus,
+.swse-allies-base-card textarea:focus {
+  outline: none;
+  border-color: var(--vapor-cyan, #00dfff);
+  box-shadow: 0 0 14px rgba(0, 223, 255, 0.14);
+}
+
+.swse-allies-base-card-head input {
+  margin-top: 5px;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-allies-base-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.swse-allies-base-actions button,
+.swse-allies-section-actions > button[data-allies-action="add-base"] {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 223, 255, 0.08);
+  color: var(--swse-text, #d7f8ff);
+  padding: 7px 11px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-base-actions button:hover,
+.swse-allies-section-actions > button[data-allies-action="add-base"]:hover {
+  background: rgba(0, 223, 255, 0.18);
+  border-color: var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-base-actions button.is-danger {
+  border-color: color-mix(in oklab, #ff5c7a 45%, transparent);
+  background: rgba(255, 92, 122, 0.08);
+}
+
+.swse-allies-base-actions button.is-danger:hover {
+  border-color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.18);
+}
+
+.swse-allies-base-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.swse-allies-base-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.swse-allies-base-grid label span {
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 62%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+}
+
+.swse-allies-base-wide {
+  grid-column: 1 / -1;
+}
+
+.swse-allies-base-accommodations {
+  display: grid;
+  gap: 10px;
+}
+
+.swse-allies-base-subhead p {
+  margin: 3px 0 0;
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 64%, transparent);
+}
+
+/* Allies // Factions tab reputation records */
+.swse-allies-faction-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.swse-allies-faction-card {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  background: linear-gradient(180deg, rgba(7, 22, 40, 0.84), rgba(3, 10, 22, 0.92));
+  box-shadow: 0 0 24px rgba(0, 223, 255, 0.07), inset 0 0 18px rgba(0, 223, 255, 0.035);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.swse-allies-faction-form {
+  display: grid;
+  gap: 14px;
+}
+
+.swse-allies-faction-card-head {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(110px, 150px) auto;
+  align-items: start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 18%, transparent);
+}
+
+.swse-allies-faction-card input,
+.swse-allies-faction-card textarea {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 26%, transparent);
+  border-radius: 12px;
+  background: rgba(2, 10, 22, 0.82);
+  color: var(--swse-text, #d7f8ff);
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.swse-allies-faction-card input:focus,
+.swse-allies-faction-card textarea:focus {
+  outline: none;
+  border-color: var(--vapor-cyan, #00dfff);
+  box-shadow: 0 0 14px rgba(0, 223, 255, 0.14);
+}
+
+.swse-allies-faction-card-head input[name="name"] {
+  margin-top: 5px;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-allies-faction-score {
+  display: grid;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  border-radius: 14px;
+  background: rgba(0, 223, 255, 0.045);
+}
+
+.swse-allies-faction-score span {
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 64%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+}
+
+.swse-allies-faction-score input {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.swse-allies-faction-score.is-positive input {
+  color: #7dffad;
+}
+
+.swse-allies-faction-score.is-negative input {
+  color: #ff8ca0;
+}
+
+.swse-allies-faction-score.is-neutral input {
+  color: var(--swse-text, #d7f8ff);
+}
+
+.swse-allies-faction-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.swse-allies-faction-actions button,
+.swse-allies-section-actions > button[data-allies-action="add-faction"] {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 223, 255, 0.08);
+  color: var(--swse-text, #d7f8ff);
+  padding: 7px 11px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-faction-actions button:hover,
+.swse-allies-section-actions > button[data-allies-action="add-faction"]:hover {
+  background: rgba(0, 223, 255, 0.18);
+  border-color: var(--vapor-cyan, #00dfff);
+}
+
+.swse-allies-faction-actions button.is-danger {
+  border-color: color-mix(in oklab, #ff5c7a 45%, transparent);
+  background: rgba(255, 92, 122, 0.08);
+}
+
+.swse-allies-faction-actions button.is-danger:hover {
+  border-color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.18);
+}
+
+.swse-allies-faction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.swse-allies-faction-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.swse-allies-faction-grid label span {
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 62%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+}
+
+.swse-allies-faction-wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .swse-allies-faction-card-head {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-allies-faction-actions {
+    justify-content: flex-start;
+  }
+}
+
+
+.swse-allies-organization-list {
+  display: grid;
+  gap: 14px;
+}
+
+.swse-allies-organization-card {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  background: linear-gradient(180deg, rgba(7, 22, 40, 0.84), rgba(3, 10, 22, 0.92));
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 0 24px rgba(0, 223, 255, 0.07), inset 0 0 18px rgba(0, 223, 255, 0.035);
+}
+
+.swse-allies-organization-card-head {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(110px, 150px) minmax(110px, 150px) auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.swse-allies-organization-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.swse-allies-organization-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.swse-allies-organization-wide {
+  grid-column: 1 / -1;
+}
+
+.swse-allies-organization-card input,
+.swse-allies-organization-card select,
+.swse-allies-organization-card textarea {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 24%, transparent);
+  border-radius: 10px;
+  background: rgba(2, 9, 18, 0.82);
+  color: var(--swse-text, #d7f8ff);
+  padding: 8px 10px;
+}
+
+.swse-allies-organization-card input:disabled,
+.swse-allies-organization-card textarea:disabled {
+  opacity: 0.72;
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.swse-allies-organization-card label span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--vapor-cyan, #00dfff);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-allies-governed-lock,
+.swse-allies-governed-section {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px dashed color-mix(in oklab, var(--zero, #f7d774) 42%, transparent);
+  border-radius: 14px;
+  background: rgba(247, 215, 116, 0.055);
+  color: color-mix(in oklab, var(--swse-text, #d7f8ff) 72%, transparent);
+}
+
+.swse-allies-organization-actions button {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 32%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 223, 255, 0.08);
+  color: var(--swse-text, #d7f8ff);
+  padding: 7px 11px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.swse-allies-organization-actions button.is-danger {
+  border-color: color-mix(in oklab, var(--vapor-pink, #ff2fd6) 42%, transparent);
+  background: rgba(255, 47, 214, 0.08);
+}
+
+@media (max-width: 980px) {
+  .swse-allies-organization-card-head { grid-template-columns: 1fr; }
+  .swse-allies-organization-grid { grid-template-columns: 1fr; }
+}
+
+/* Allies // final Holopad polish pass */
+.swse-shell-surface--allies,
+.swse-allies-surface {
+  --swse-allies-accent: var(--vapor-cyan, var(--swse-accent, #39f7ff));
+  --swse-allies-accent-2: var(--vapor-pink, #ff44c7);
+  --swse-allies-panel: var(--swse-panel-bg, rgba(7, 22, 40, 0.84));
+  --swse-allies-panel-strong: var(--swse-panel-bg-strong, rgba(3, 10, 22, 0.94));
+  --swse-allies-text: var(--swse-text, var(--swse-text-primary, #d7f8ff));
+  --swse-allies-muted: var(--swse-text-muted, rgba(215, 248, 255, 0.62));
+  --swse-allies-positive: var(--swse-positive, #7dffad);
+  --swse-allies-negative: var(--swse-negative, #ff5c7a);
+  --swse-allies-zero: var(--zero, var(--swse-warning, #f7d774));
+}
+
+.swse-allies-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 49%, color-mix(in oklab, var(--swse-allies-accent) 5%, transparent) 50%, transparent 51%),
+    repeating-linear-gradient(0deg, transparent 0 7px, rgba(255, 255, 255, 0.018) 7px 8px);
+  opacity: 0.32;
+  mix-blend-mode: screen;
+}
+
+.swse-allies-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-allies-header,
+.swse-allies-section-head,
+.swse-allies-lane,
+.swse-allies-card,
+.swse-allies-base-card,
+.swse-allies-faction-card,
+.swse-allies-organization-card,
+.swse-allies-empty,
+.swse-allies-base-note,
+.swse-allies-drop-zone {
+  backdrop-filter: blur(6px);
+}
+
+.swse-allies-header {
+  border-top: 1px solid color-mix(in oklab, var(--swse-allies-accent) 62%, transparent);
+}
+
+.swse-allies-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-allies-tab::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--swse-allies-accent) 52%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.swse-allies-tab:hover::after,
+.swse-allies-tab.is-active::after {
+  opacity: 1;
+}
+
+.swse-allies-faction-score output {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border: 1px solid currentColor;
+  border-radius: 12px;
+  background: color-mix(in oklab, currentColor 12%, transparent);
+  font-size: 1.28rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 12px color-mix(in oklab, currentColor 50%, transparent);
+}
+
+.swse-allies-faction-score small {
+  color: color-mix(in oklab, currentColor 74%, var(--swse-allies-muted));
+  font-size: 0.62rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.swse-allies-faction-score.is-positive,
+.swse-allies-faction-score.is-positive input,
+.swse-allies-faction-score.is-positive output {
+  color: var(--swse-allies-positive);
+  border-color: color-mix(in oklab, var(--swse-allies-positive) 48%, transparent);
+}
+
+.swse-allies-faction-score.is-negative,
+.swse-allies-faction-score.is-negative input,
+.swse-allies-faction-score.is-negative output {
+  color: var(--swse-allies-negative);
+  border-color: color-mix(in oklab, var(--swse-allies-negative) 48%, transparent);
+}
+
+.swse-allies-faction-score.is-neutral,
+.swse-allies-faction-score.is-neutral input,
+.swse-allies-faction-score.is-neutral output,
+.swse-allies-faction-score.is-scale,
+.swse-allies-faction-score.is-scale input,
+.swse-allies-faction-score.is-scale output {
+  color: var(--swse-allies-zero);
+  border-color: color-mix(in oklab, var(--swse-allies-zero) 48%, transparent);
+}
+
+.swse-allies-faction-score.is-positive {
+  background: color-mix(in oklab, var(--swse-allies-positive) 8%, transparent);
+  box-shadow: inset 0 0 18px color-mix(in oklab, var(--swse-allies-positive) 5%, transparent);
+}
+
+.swse-allies-faction-score.is-negative {
+  background: color-mix(in oklab, var(--swse-allies-negative) 8%, transparent);
+  box-shadow: inset 0 0 18px color-mix(in oklab, var(--swse-allies-negative) 5%, transparent);
+}
+
+.swse-allies-faction-score.is-neutral,
+.swse-allies-faction-score.is-scale {
+  background: color-mix(in oklab, var(--swse-allies-zero) 8%, transparent);
+  box-shadow: inset 0 0 18px color-mix(in oklab, var(--swse-allies-zero) 5%, transparent);
+}
+
+.swse-allies-faction-score input {
+  min-height: 28px;
+  font-size: 0.88rem;
+  opacity: 0.86;
+}
+
+.swse-allies-faction-score input:focus {
+  opacity: 1;
+}
+
+.swse-allies-faction-card-head,
+.swse-allies-organization-card-head,
+.swse-allies-base-card-head {
+  position: relative;
+}
+
+.swse-allies-faction-card-head::after,
+.swse-allies-organization-card-head::after,
+.swse-allies-base-card-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--swse-allies-accent) 44%, transparent), transparent 72%);
+}
+
+.swse-allies-base-card input,
+.swse-allies-base-card textarea,
+.swse-allies-faction-card input,
+.swse-allies-faction-card textarea,
+.swse-allies-organization-card input,
+.swse-allies-organization-card select,
+.swse-allies-organization-card textarea {
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.swse-allies-base-card input:hover,
+.swse-allies-base-card textarea:hover,
+.swse-allies-faction-card input:hover,
+.swse-allies-faction-card textarea:hover,
+.swse-allies-organization-card input:hover,
+.swse-allies-organization-card select:hover,
+.swse-allies-organization-card textarea:hover {
+  border-color: color-mix(in oklab, var(--swse-allies-accent) 46%, transparent);
+}
+
+.swse-allies-base-card textarea,
+.swse-allies-faction-card textarea,
+.swse-allies-organization-card textarea {
+  min-height: 78px;
+  line-height: 1.35;
+}
+
+.swse-allies-card--active::before,
+.swse-allies-faction-card::before,
+.swse-allies-base-card::before,
+.swse-allies-organization-card::before {
+  content: "";
+  display: block;
+  height: 2px;
+  margin: -14px -14px 12px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, var(--swse-allies-accent), color-mix(in oklab, var(--swse-allies-accent-2) 68%, transparent), transparent);
+  opacity: 0.6;
+}
+
+.swse-allies-card--pending::before {
+  content: "";
+  display: block;
+  height: 2px;
+  margin: -12px -12px 10px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, var(--swse-allies-zero), var(--swse-allies-accent-2), transparent);
+  opacity: 0.75;
+}
+
+.swse-allies-lane--followers { --swse-allies-lane-color: var(--swse-allies-accent); }
+.swse-allies-lane--minions { --swse-allies-lane-color: var(--swse-allies-accent-2); }
+.swse-allies-lane--beasts { --swse-allies-lane-color: var(--swse-allies-zero); }
+
+.swse-allies-lane {
+  border-top-color: color-mix(in oklab, var(--swse-allies-lane-color, var(--swse-allies-accent)) 52%, transparent);
+}
+
+.swse-allies-lane > header b {
+  color: var(--swse-allies-lane-color, var(--swse-allies-accent));
+  text-shadow: 0 0 10px color-mix(in oklab, var(--swse-allies-lane-color, var(--swse-allies-accent)) 44%, transparent);
+}
+
+.swse-allies-section-actions button,
+.swse-allies-card-actions button,
+.swse-allies-base-actions button,
+.swse-allies-faction-actions button,
+.swse-allies-organization-actions button {
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.swse-allies-section-actions button:hover,
+.swse-allies-card-actions button:hover,
+.swse-allies-base-actions button:hover,
+.swse-allies-faction-actions button:hover,
+.swse-allies-organization-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px color-mix(in oklab, var(--swse-allies-accent) 18%, transparent);
+}
+
+.swse-allies-card-actions .is-danger,
+.swse-allies-base-actions .is-danger,
+.swse-allies-faction-actions .is-danger,
+.swse-allies-organization-actions .is-danger {
+  color: #ffdce3;
+}
+
+.swse-allies-empty {
+  min-height: 126px;
+  display: grid;
+  place-items: center;
+  border-style: dashed;
+}
+
+.swse-allies-base-note {
+  line-height: 1.35;
+}
+
+@media (max-width: 720px) {
+  .swse-allies-surface {
+    padding: 12px;
+  }
+
+  .swse-allies-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-allies-section-head {
+    flex-direction: column;
+  }
+
+  .swse-allies-section-actions {
+    justify-content: flex-start;
+  }
+}
+
+.swse-allies-surface { position: relative; }

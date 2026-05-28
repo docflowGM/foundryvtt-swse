@@ -44,6 +44,8 @@ export class ShellSurfaceRegistry {
         return this._buildMessengerSurfaceVm(actor, surfaceOptions);
       case 'games':
         return this._buildGamesSurfaceVm(actor, surfaceOptions);
+      case 'allies':
+        return this._buildAlliesSurfaceVm(actor, surfaceOptions);
       case 'store':
         return this._buildStoreSurfaceVm(actor, surfaceOptions);
       case 'workbench':
@@ -175,6 +177,18 @@ export class ShellSurfaceRegistry {
     }
   }
 
+  static async _buildAlliesSurfaceVm(actor, options) {
+    try {
+      const { AlliesSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceService.js'
+      );
+      return await AlliesSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Allies surface VM failed:', err);
+      return { id: 'allies', title: 'Allies', error: err.message };
+    }
+  }
+
   static async _buildMentorSurfaceVm(actor, options) {
     try {
       const { MentorSurfaceService } = await import(
@@ -261,7 +275,10 @@ export class ShellSurfaceRegistry {
       const { ProgressionSurfaceAdapter } = await import(
         '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
       );
-      const adapter = await ProgressionSurfaceAdapter.getOrCreate(shellHost, actor, 'levelup', options);
+      const mode = options?.progressionMode === 'follower' || options?.mode === 'follower'
+        ? 'follower'
+        : 'levelup';
+      const adapter = await ProgressionSurfaceAdapter.getOrCreate(shellHost, actor, mode, options);
       return adapter.buildViewModel();
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Progression surface VM failed:', err);

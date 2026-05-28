@@ -1223,17 +1223,32 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildRelationshipsPanel() {
-    const relationships = (this.actor.system?.relationships ?? []).map(rel => ({
-      uuid: rel.uuid || '',
-      img: rel.img || '',
-      name: rel.name || '',
-      type: rel.type || '',
-      notes: rel.notes || ''
-    }));
+    const seen = new Set();
+    const toRelationship = (rel = {}) => {
+      const live = rel.id ? game.actors?.get?.(rel.id) : null;
+      const uuid = rel.uuid || live?.uuid || (rel.id ? `Actor.${rel.id}` : '');
+      if (uuid && seen.has(uuid)) return null;
+      if (uuid) seen.add(uuid);
+      const kind = rel.kind || rel.dependentKind || live?.system?.npcProfile?.kind || rel.type || live?.type || '';
+      return {
+        uuid,
+        id: rel.id || live?.id || '',
+        img: live?.img || rel.img || '',
+        name: live?.name || rel.name || '',
+        type: kind || '',
+        notes: rel.notes || rel.talent || live?.system?.npcProfile?.notes || ''
+      };
+    };
 
-    // Calculate available follower slots (depends on game mechanics)
-    // For now, always show the button (can be customized)
-    const hasAvailableFollowerSlots = true;
+    const relationships = [
+      ...(this.actor.system?.relationships ?? []),
+      ...(this.actor.system?.ownedActors ?? []),
+      ...(this.actor.getFlag?.('foundryvtt-swse', 'followers') ?? []),
+      ...(this.actor.getFlag?.('foundryvtt-swse', 'minions') ?? [])
+    ].map(toRelationship).filter(Boolean);
+
+    const dependentSlots = this.actor.getFlag?.('foundryvtt-swse', 'followerSlots') || [];
+    const hasAvailableFollowerSlots = dependentSlots.some(slot => !slot.createdActorId);
 
     const panel = {
       relationships,

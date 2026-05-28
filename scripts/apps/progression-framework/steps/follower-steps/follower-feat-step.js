@@ -14,6 +14,7 @@
 
 import { FollowerStepBase } from './follower-step-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 
 export class FollowerFeatStep extends FollowerStepBase {
   constructor(descriptor) {
@@ -21,6 +22,8 @@ export class FollowerFeatStep extends FollowerStepBase {
     this._templateType = null;
     this._legalFeats = [];
     this._selectedFeats = [];
+    this._grantedFeats = [];
+    this._maxOptionalFeats = null;
   }
 
   async onStepEnter(shell) {
@@ -33,17 +36,34 @@ export class FollowerFeatStep extends FollowerStepBase {
         return;
       }
 
-      // Load legal feats for this template
-      this._legalFeats = await this.getFollowerFeatsForTemplate(this._templateType);
+      const templates = await this.getFollowerTemplates();
+      const template = templates[this._templateType] || {};
+      const slotTalentName = shell?.progressionSession?.dependencyContext?.slotTalentName;
+      const talentConfig = getFollowerTalentConfig(slotTalentName);
 
-      // Always add Weapon Proficiency (Simple Weapons) as a granted feat
-      const baseFeats = ['Weapon Proficiency (Simple Weapons)'];
+      this._grantedFeats = this._uniqueFeats([
+        'Weapon Proficiency (Simple Weapons)',
+        ...(template.feats || []),
+        ...(talentConfig?.additionalFeats || [])
+      ]);
 
-      swseLogger.log('[FollowerFeatStep] Entered, template:', this._templateType, 'legal feats:', this._legalFeats);
+      // Load legal optional feats for this template, then add granting-talent armor picks.
+      const legalFeats = await this.getFollowerFeatsForTemplate(this._templateType);
+      const armorChoices = talentConfig?.armorProficiencyChoice
+        ? ['Armor Proficiency (Light)', 'Armor Proficiency (Medium)', 'Armor Proficiency (Heavy)']
+        : [];
+      this._legalFeats = this._uniqueFeats([...legalFeats, ...armorChoices])
+        .filter(feat => !this._grantedFeats.includes(feat));
+
+      const templateChoiceSlots = Array.isArray(template.featChoices) && template.featChoices.length > 0 ? 1 : 0;
+      const armorChoiceSlots = talentConfig?.armorProficiencyChoice ? 1 : 0;
+      this._maxOptionalFeats = templateChoiceSlots + armorChoiceSlots || null;
+
+      swseLogger.log('[FollowerFeatStep] Entered, template:', this._templateType, 'granted feats:', this._grantedFeats, 'legal feats:', this._legalFeats);
 
       // Restore selection from session if available
       if (choices.featChoices && choices.featChoices.length > 0) {
-        this._selectedFeats = [...choices.featChoices];
+        this._selectedFeats = this._uniqueFeats(choices.featChoices).filter(feat => this._legalFeats.includes(feat));
       }
     } catch (err) {
       swseLogger.error('[FollowerFeatStep] Error entering step:', err);
@@ -71,13 +91,13 @@ export class FollowerFeatStep extends FollowerStepBase {
   }
 
   _renderFeatSelection() {
-    // Always granted: Weapon Proficiency (Simple Weapons)
-    const grantedHtml = `
-      <div class="follower-feat-item granted">
-        <span class="feat-name">Weapon Proficiency (Simple Weapons)</span>
-        <span class="feat-badge">Granted</span>
-      </div>
-    `;
+    const grantedHtml = (this._grantedFeats.length ? this._grantedFeats : ['Weapon Proficiency (Simple Weapons)'])
+      .map(feat => `
+        <div class="follower-feat-item granted">
+          <span class="feat-name">${feat}</span>
+          <span class="feat-badge">Granted</span>
+        </div>
+      `).join('');
 
     // Template-specific feats (optional)
     const optionalHtml = (this._legalFeats || []).map(feat => {
@@ -95,7 +115,7 @@ export class FollowerFeatStep extends FollowerStepBase {
     return `
       <div class="follower-step-content">
         <h3>${titleCase} Follower Feats</h3>
-        <p class="step-help">All followers gain Weapon Proficiency (Simple Weapons). Template-specific feats may be selected below.</p>
+        <p class="step-help">All followers gain their base/template/granting-talent feats automatically. Select only the optional feat choices below.</p>
 
         <h4>Granted Feats</h4>
         <div class="follower-feats-granted">
@@ -120,6 +140,11 @@ export class FollowerFeatStep extends FollowerStepBase {
         const isChecked = checkbox.checked;
 
         if (isChecked) {
+          if (this._maxOptionalFeats && this._selectedFeats.length >= this._maxOptionalFeats && !this._selectedFeats.includes(feat)) {
+            checkbox.checked = false;
+            ui?.notifications?.warn?.(`This follower can select ${this._maxOptionalFeats} optional feat${this._maxOptionalFeats === 1 ? '' : 's'} from this step.`);
+            return;
+          }
           if (!this._selectedFeats.includes(feat)) {
             this._selectedFeats.push(feat);
           }
@@ -130,6 +155,10 @@ export class FollowerFeatStep extends FollowerStepBase {
         swseLogger.log('[FollowerFeatStep] Selected feats:', this._selectedFeats);
       });
     });
+  }
+
+  _uniqueFeats(feats) {
+    return Array.from(new Set((feats || []).filter(Boolean).map(feat => String(feat).trim()).filter(Boolean)));
   }
 
   async onStepCommit(shell) {

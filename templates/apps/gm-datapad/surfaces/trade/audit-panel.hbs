@@ -1,0 +1,20 @@
+{{!-- GM Trade audit panel. --}}
+        <section class="swse-ui-panel trade-audit-panel">
+          <div class="trade-section-header compact">
+            <div>
+              <span class="gm-command-eyebrow">AUDIT</span>
+              <h3>Recent Trade Receipts</h3>
+            </div>
+          </div>
+          <div class="trade-audit-list">
+            {{#each tradeConsole.auditEvents}}
+            <div class="trade-audit-row {{this.tone}}">
+              <strong>{{this.label}}</strong>
+              <span>{{this.timeLabel}}</span>
+              <p>{{this.detail}}</p>
+            </div>
+            {{else}}
+            <p class="placeholder">No trade audit events found.</p>
+            {{/each}}
+          </div>
+        </section>

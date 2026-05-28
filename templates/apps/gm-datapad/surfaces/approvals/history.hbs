@@ -1,0 +1,22 @@
+{{!-- GM Approvals decision history. --}}
+      <section class="gm-approval-history-panel swse-ui-panel">
+        <div class="gm-approval-queue-header">
+          <div>
+            <span class="gm-command-eyebrow">HISTORY</span>
+            <h3>Recent Approval Decisions</h3>
+          </div>
+        </div>
+        {{#if hasApprovalHistory}}
+        <div class="gm-approval-history-list">
+          {{#each approvalHistory}}
+          <div class="gm-approval-history-row {{this.decision}}">
+            <strong>{{this.decisionLabel}} · {{this.title}}</strong>
+            <span>{{this.type}} · {{this.costLabel}} · {{this.atLabel}}</span>
+            {{#if this.reason}}<em>{{this.reason}}</em>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="gm-approval-empty-note">No approval decisions have been logged yet.</p>
+        {{/if}}
+      </section>

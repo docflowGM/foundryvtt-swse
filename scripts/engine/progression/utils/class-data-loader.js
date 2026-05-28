@@ -22,6 +22,54 @@ let classDataCache = null;
 let loadPromise = null;
 let warnedUnavailable = false;
 
+
+function _buildNonheroicClassFallback() {
+  const levelProgression = Array.from({ length: 20 }, (_, index) => {
+    const level = index + 1;
+    const babTable = [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15];
+    return {
+      level,
+      bab: babTable[index] ?? Math.floor(level * 0.75),
+      force_points: 0,
+      features: [],
+      defense_bonus: 0,
+      bonus_talents: 0,
+      bonus_feats: level === 1 || level % 3 === 0 ? 1 : 0
+    };
+  });
+
+  return {
+    id: 'nonheroic',
+    name: 'Nonheroic',
+    isNonheroic: true,
+    hitDie: 4,
+    babProgression: 'slow',
+    trainedSkills: 1,
+    classSkills: [],
+    defenses: { fortitude: 0, reflex: 0, will: 0 },
+    forceSensitive: false,
+    grantsForcePoints: false,
+    forcePointBase: 0,
+    levelProgression,
+    levelProgressionArray: levelProgression,
+    _raw: { level_progression: levelProgression },
+    _canonical: {
+      id: 'nonheroic',
+      name: 'Nonheroic',
+      isNonheroic: true,
+      hitDie: 4,
+      babProgression: 'slow',
+      trainedSkills: 1,
+      classSkills: [],
+      defenses: { fortitude: 0, reflex: 0, will: 0 },
+      forceSensitive: false,
+      grantsForcePoints: false,
+      forcePointBase: 0,
+      levelProgression
+    }
+  };
+}
+
 function _cacheKey(name) {
   return String(name || '').trim().toLowerCase();
 }
@@ -155,7 +203,11 @@ async function _loadFromCompendium() {
       }
     }
 
-    swseLogger.log(`[CLASS-DATA-LOADER] Normalization complete. ${cache.size} lookup keys created for ${entries.length} classes`);
+    const nonheroicFallback = _buildNonheroicClassFallback();
+    _storeClass(cache, nonheroicFallback);
+    cache.set('nonheroic', nonheroicFallback);
+
+    swseLogger.log(`[CLASS-DATA-LOADER] Normalization complete. ${cache.size} lookup keys created for ${entries.length} classes plus Nonheroic fallback`);
 
     if (errors.length > 0) {
       swseLogger.warn(`[CLASS-DATA-LOADER] ${errors.length} class(es) had normalization issues`, errors);
@@ -185,7 +237,8 @@ export async function getClassData(className) {
   const cache = await loadClassData();
   swseLogger.log(`[CLASS-DATA-LOADER] getClassData: Cache loaded with ${cache.size} keys`);
 
-  const classData = cache.get(className) || cache.get(_cacheKey(className));
+  const requestedKey = _cacheKey(className);
+  const classData = cache.get(className) || cache.get(requestedKey) || (requestedKey === 'nonheroic' ? _buildNonheroicClassFallback() : null);
 
   if (!classData) {
     swseLogger.error(`[CLASS-DATA-LOADER] Class not found: "${className}". Available classes:`, Array.from(cache.keys()).filter(k => k && !String(k).includes(' ')).slice(0, 50));

@@ -1,0 +1,74 @@
+{{!-- GM Combat & Recovery selected actor rail. --}}
+        <aside class="combat-recovery-rail swse-ui-panel">
+          <section class="combat-recovery-rail-section">
+            <h3>Rule Preview</h3>
+            <ul class="combat-recovery-rule-list">
+              <li><strong>Recovery:</strong> {{combatRecovery.rules.recoveryLabel}}</li>
+              <li><strong>HP Type:</strong> {{combatRecovery.rules.recoveryHpType}}</li>
+              <li><strong>Rest Timing:</strong> {{combatRecovery.rules.recoveryRestLabel}}</li>
+              <li><strong>Vitality:</strong> {{#if combatRecovery.rules.vitalityEnabled}}Enabled{{else}}Disabled{{/if}}</li>
+              <li><strong>Second Wind:</strong> {{combatRecovery.rules.secondWindLabel}}</li>
+            </ul>
+            <p class="combat-recovery-boundary"><i class="fa-solid fa-triangle-exclamation"></i> {{combatRecovery.rules.droidRestBoundary}}</p>
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Group Actions</h3>
+            <p class="combat-recovery-target-note">Choose Whole Party, Checked Actors, Active Combatants, or the full managed roster before pressing a group action.</p>
+            <div class="combat-recovery-action-stack">
+              <button type="button" class="swse-ui-button swse-ui-button-primary" data-combat-recovery-action="natural-healing">Trigger Natural Healing</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="heal-target">Heal Target by Amount</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="repair-target">Repair Droid/Vehicle Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="damage-target">Damage Target by Amount</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="treat-injury">Treat Injury Workflow</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="repair-skill">Repair Workflow</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="stabilize">Stabilize Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="revive">Revive / Restore Target</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-poison">Apply Poison/Disease</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="treat-poison">Treat Poison/Disease</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-ongoing-effect">Apply Ongoing Effect</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="clear-encounter-effects">Clear Encounter Effects</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Apply Short Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Apply Extended Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-condition">Reset Target Condition Track</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="apply-status-effect">Apply Target Status Effect</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="remove-status-effect">Remove Target Status Effect</button>
+              <button type="button" class="swse-ui-button danger" data-combat-recovery-action="clear-status-effects">Clear Target Status Effects</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="reset-second-wind">GM Override: Reset Second Wind</button>
+              <button type="button" class="swse-ui-button danger" data-combat-recovery-action="full-organic-recovery">GM Override: Full Organic Recovery</button>
+            </div>
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Recovery Log</h3>
+            {{#if combatRecovery.recoveryLog.length}}
+            <ul class="combat-recovery-watch-list combat-recovery-log-list">
+              {{#each combatRecovery.recoveryLog}}
+              <li>
+                <strong>{{this.action}}</strong>
+                <span>{{this.message}}</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p class="empty-text">No GM recovery actions logged yet.</p>
+            {{/if}}
+          </section>
+
+          <section class="combat-recovery-rail-section">
+            <h3>Needs Attention</h3>
+            {{#if combatRecovery.needsAttention.length}}
+            <ul class="combat-recovery-watch-list">
+              {{#each combatRecovery.needsAttention}}
+              <li>
+                <strong>{{this.name}}</strong>
+                <span>{{this.hpLabel}} HP - CT {{this.conditionLabel}} - SW {{this.secondWindLabel}}</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p class="empty-text">No wounded, impaired, or spent actors detected.</p>
+            {{/if}}
+          </section>
+        </aside>

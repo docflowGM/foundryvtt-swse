@@ -1,43 +1,15 @@
-<div class="swse-character-sheet-wrapper swse-character-sheet-wrapper--concept swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept" data-sheet-form="character" data-concept-source="assets/Concept/Character Sheet v2.html">
-  <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept sheet-shell swse-sheet-v2-shell--surface-{{shellSurface}}" data-shell-surface="{{shellSurface}}" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}" style='{{{sheetSurfaceStyleInline}}}'>
-    <div class="swse-v2-tablet swse-v2-tablet--concept">
-      <div class="swse-tablet-rivet swse-tablet-rivet--tl" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--tr" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--bl" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--br" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--ml" aria-hidden="true"></div>
-      <div class="swse-tablet-rivet swse-tablet-rivet--mr" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--top-a" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--top-b" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--right-a" aria-hidden="true"></div>
-      <div class="swse-tablet-phys swse-tablet-phys--right-b" aria-hidden="true"></div>
-      <div class="swse-tablet-camera" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--a" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--b" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--c" aria-hidden="true"></div>
-      <div class="swse-tablet-led swse-tablet-led--d" aria-hidden="true"></div>
-
-      <div class="swse-tablet-top-bezel" data-action="tablet-drag" title="Drag datapad. Double-click to minimize." data-shell-chrome="top" aria-label="Datapad drag rail. Double-click to minimize.">
-        <div class="swse-tablet-drag-handle" data-action="tablet-drag" aria-hidden="true"></div>
-      </div>
-
-      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail" aria-label="Tablet identity and window controls">
-        <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="SN 4471-0EA-00827">SN4471-0EA-00827</span>
-        <span class="swse-tablet-status-lights" aria-hidden="true"><span></span><span></span><span></span></span>
-        <button type="button" class="swse-tablet-control swse-tablet-control--home" data-action="tablet-home" title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
-        <button type="button" class="swse-tablet-control swse-tablet-control--expand" data-action="tablet-expand" title="Expand" aria-label="Expand">⛶</button>
-        <button type="button" class="swse-tablet-control swse-tablet-control--close" data-action="tablet-close" title="Close" aria-label="Close">×</button>
-      </div>
-
-      <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-
-      <div class="swse-v2-screen swse-v2-screen--concept">
-        <div class="scan-v" aria-hidden="true"></div>
-        <div class="corner tl" aria-hidden="true"></div>
-        <div class="corner tr" aria-hidden="true"></div>
-        <div class="corner bl" aria-hidden="true"></div>
-        <div class="corner br" aria-hidden="true"></div>
-
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
+  frameOuterClass="swse-character-sheet-wrapper swse-character-sheet-wrapper--concept swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept"
+  frameDataSheetForm="character"
+  frameDataConceptSource="assets/Concept/Character Sheet v2.html"
+  shellSurface=shellSurface
+  shellTheme=sheetTheme
+  shellMotionStyle=sheetMotionStyle
+  shellStyleInline=sheetSurfaceStyleInline
+  topHomeAction="tablet-home"
+  bottomHomeAction="tablet-home"
+  showResize=true
+}}
         {{#if shellIsSheet}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs"}}
@@ -125,28 +97,10 @@
             {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
           </div>
         {{/if}}
-      </div>
-
-      <div class="swse-tablet-vent swse-tablet-vent--bottom" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-      </div>
-
-      <button type="button" class="swse-tablet-bottom-home" data-action="tablet-home" title="Return to holopad home" aria-label="Return to holopad home">
-        <span class="swse-tablet-bottom-home__glyph" aria-hidden="true">⌂</span>
-        <span class="swse-tablet-bottom-home__label">HOME</span>
-      </button>
-
-      <div class="swse-tablet-bottom-engraving" aria-hidden="true">CEC ID 31 · CLASS A · NO HOT OPEN</div>
-
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--n" data-action="tablet-resize" data-resize-dir="n" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--s" data-action="tablet-resize" data-resize-dir="s" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--e" data-action="tablet-resize" data-resize-dir="e" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--w" data-action="tablet-resize" data-resize-dir="w" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--ne" data-action="tablet-resize" data-resize-dir="ne" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--nw" data-action="tablet-resize" data-resize-dir="nw" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--se" data-action="tablet-resize" data-resize-dir="se" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--sw" data-action="tablet-resize" data-resize-dir="sw" aria-hidden="true"></div>
-      <div class="swse-tablet-resize-grip" data-action="tablet-resize" data-resize-dir="se" title="Resize datapad" aria-label="Resize datapad"></div>
-    </div>
-  </div>
-</div>
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs"
+  bottomHomeAction="tablet-home"
+  bottomHomeTitle="Return to holopad home"
+  bottomHomeLabel="Return to holopad home"
+  bottomEngraving="CEC ID 31 · CLASS A · NO HOT OPEN"
+  showResize=true
+}}

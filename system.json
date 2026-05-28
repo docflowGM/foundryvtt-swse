@@ -56,6 +56,7 @@
     "styles/system/home-surface.css",
     "styles/system/messenger-surface.css",
     "styles/system/games-surface.css",
+    "styles/system/allies-surface.css",
     "styles/system/consistency-lock.css",
     "styles/system/micro-interactions.css",
     "styles/system/final-polish.css",

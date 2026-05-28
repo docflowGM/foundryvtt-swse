@@ -1,0 +1,47 @@
+<article class="swse-allies-faction-card" data-faction-id="{{faction.id}}">
+  <form class="swse-allies-faction-form" data-faction-id="{{faction.id}}">
+    <header class="swse-allies-faction-card-head">
+      <div>
+        <span class="swse-allies-kicker">FACTION RECORD</span>
+        <input type="text" name="name" value="{{faction.name}}" placeholder="Faction name">
+      </div>
+      <div class="swse-allies-faction-score {{faction.scoreClass}}">
+        <span>Score</span>
+        <output>{{faction.scoreLabel}}</output>
+        <input type="number" name="score" step="1" value="{{faction.score}}" inputmode="numeric" aria-label="Faction score">
+        <small>{{faction.status}}</small>
+      </div>
+      <div class="swse-allies-faction-actions">
+        <button type="button" data-allies-action="save-faction" data-faction-id="{{faction.id}}">Save</button>
+        <button type="button" class="is-danger" data-allies-action="remove-faction" data-faction-id="{{faction.id}}">Remove</button>
+      </div>
+    </header>
+
+    <div class="swse-allies-faction-grid">
+      <label>
+        <span>Faction Type</span>
+        <input type="text" name="type" value="{{faction.type}}" placeholder="Crime syndicate, law enforcement, government...">
+      </label>
+      <label>
+        <span>Faction Scale</span>
+        <input type="text" name="scale" value="{{faction.scale}}" placeholder="Local, planetary, sector, galactic...">
+      </label>
+      <label>
+        <span>Planet</span>
+        <input type="text" name="planet" value="{{faction.planet}}" placeholder="Optional">
+      </label>
+      <label>
+        <span>System</span>
+        <input type="text" name="system" value="{{faction.system}}" placeholder="Optional">
+      </label>
+      <label class="swse-allies-faction-wide">
+        <span>Faction Leader</span>
+        <input type="text" name="leader" value="{{faction.leader}}" placeholder="Leader, council, cell handler, boss, or unknown">
+      </label>
+      <label class="swse-allies-faction-wide">
+        <span>Faction Benefits</span>
+        <textarea name="benefits" rows="3" placeholder="GM-assessed benefits derived from the faction score.">{{faction.benefits}}</textarea>
+      </label>
+    </div>
+  </form>
+</article>

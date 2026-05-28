@@ -11,34 +11,64 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/feat-registry.js';
-import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js';
+import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
-// Nonheroic-specific feats that are allowed
-const NONHEROIC_LEGAL_FEATS = [
-  'Alertness',
-  'Armor Proficiency',
-  'Blind-Fight',
-  'Cleave',
-  'Dodge',
-  'Exotic Weapon Proficiency',
-  'Far Shot',
-  'Improved Initiative',
-  'Improved Unarmed Strike',
-  'Martial Arts Training',
-  'Power Attack',
-  'Quick Draw',
-  'Shield Proficiency',
-  'Simple Weapon Proficiency',
-  'Skill Focus',           // Repeatable
-  'Skill Training',        // Repeatable
-  'Toughness',
-  'Weapon Focus',
-  'Weapon Proficiency',
+// Nonheroic-specific feat families that are allowed. Use normalized family
+// matching because the compendium stores many SWSE proficiencies as variants
+// such as "Weapon Proficiency (Simple Weapons)" and "Armor Proficiency (light)".
+const NONHEROIC_LEGAL_FEAT_FAMILIES = [
+  'alertness',
+  'armor proficiency',
+  'blind fight',
+  'cleave',
+  'dodge',
+  'exotic weapon proficiency',
+  'far shot',
+  'improved initiative',
+  'improved unarmed strike',
+  'martial arts i',
+  'martial arts training',
+  'power attack',
+  'quick draw',
+  'shield proficiency',
+  'simple weapon proficiency',
+  'skill focus',
+  'skill training',
+  'toughness',
+  'weapon focus',
+  'weapon proficiency',
 ];
+
+function _featId(feat) {
+  return feat?.id || feat?._id || feat?.uuid || feat?.name || null;
+}
+
+function _normalizeFeatName(name) {
+  return String(name || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function _isNonheroicLegalFeatName(name) {
+  const key = _normalizeFeatName(name);
+  if (!key) return false;
+
+  if (key === 'weapon proficiency simple weapons') return true;
+  if (key === 'simple weapon proficiency') return true;
+  if (key.startsWith('armor proficiency')) return true;
+  if (key.startsWith('weapon proficiency')) return true;
+  if (key === 'martial arts i') return true;
+
+  return NONHEROIC_LEGAL_FEAT_FAMILIES.some(family => key === family);
+}
 
 export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -62,8 +92,10 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
-    // Initialize registry
-    await FeatRegistry.initialize?.();
+    // Initialize progression-facing registry
+    if (!FeatRegistry.isBuilt && typeof FeatRegistry.build === 'function') {
+      await FeatRegistry.build();
+    }
 
     // Load all feats from registry
     this._allFeats = FeatRegistry.list?.() || [];
@@ -130,8 +162,8 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   async getStepData(context) {
     return {
       selectedFeats: this._selectedFeatIds.map(id => {
-        const feat = this._legalFeats.find(f => f._id === id);
-        return feat ? { id: feat._id, name: feat.name } : null;
+        const feat = this._findFeat(id);
+        return feat ? { id: _featId(feat), name: feat.name } : null;
       }).filter(Boolean),
       availableSlots: 3 - this._selectedFeatIds.length,
       totalSlots: 3,
@@ -163,7 +195,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   renderDetailsPanel(focusedItem) {
     if (!focusedItem) return this.renderDetailsPanelEmptyState();
 
-    const feat = this._legalFeats.find(f => f._id === focusedItem.id);
+    const feat = this._findFeat(focusedItem.id);
     if (!feat) return this.renderDetailsPanelEmptyState();
 
     return {
@@ -193,6 +225,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     }
 
     this._focusedFeatId = null;
+    await this._commitSelectedFeats(shell);
     shell.render();
   }
 
@@ -201,6 +234,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     if (index >= 0) {
       this._selectedFeatIds.splice(index, 1);
     }
+    await this._commitSelectedFeats(shell);
     shell.render();
   }
 
@@ -256,9 +290,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
     for (const feat of this._allFeats) {
       // Check if feat is in nonheroic legal list
-      if (!NONHEROIC_LEGAL_FEATS.some(name =>
-        name.toLowerCase() === feat.name.toLowerCase()
-      )) {
+      if (!_isNonheroicLegalFeatName(feat.name)) {
         continue;
       }
 
@@ -276,7 +308,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
       // Skill Focus and Training are repeatable for nonheroic
       const isRepeatable = ['skill focus', 'skill training'].includes(
-        feat.name.toLowerCase()
+        _normalizeFeatName(feat.name)
       );
 
       if (alreadyOwned && !isRepeatable) {
@@ -329,22 +361,46 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
     // Sort: selected first, then alphabetical
     filtered.sort((a, b) => {
-      const aSelected = this._selectedFeatIds.includes(a._id) ? 0 : 1;
-      const bSelected = this._selectedFeatIds.includes(b._id) ? 0 : 1;
+      const aSelected = this._selectedFeatIds.includes(_featId(a)) ? 0 : 1;
+      const bSelected = this._selectedFeatIds.includes(_featId(b)) ? 0 : 1;
       if (aSelected !== bSelected) return aSelected - bSelected;
       return a.name?.localeCompare(b.name) ?? 0;
     });
 
     return filtered.map(feat => ({
-      id: feat._id,
+      id: _featId(feat),
       name: feat.name,
       description: feat.system?.description || feat.system?.rules || '',
-      isSelected: this._selectedFeatIds.includes(feat._id),
+      isSelected: this._selectedFeatIds.includes(_featId(feat)),
       isRepeatable: ['skill focus', 'skill training'].includes(
-        feat.name.toLowerCase()
+        _normalizeFeatName(feat.name)
       ),
     }));
   }
+
+
+  _findFeat(featId) {
+    return this._legalFeats.find(f => _featId(f) === featId)
+      || this._allFeats.find(f => _featId(f) === featId)
+      || null;
+  }
+
+  async _commitSelectedFeats(shell) {
+    const selected = this._selectedFeatIds
+      .map(id => this._findFeat(id))
+      .filter(Boolean)
+      .map(feat => ({
+        id: _featId(feat),
+        _id: feat?._id || feat?.id || null,
+        uuid: feat?.uuid || null,
+        name: feat?.name || _featId(feat),
+        type: 'feat',
+        source: 'nonheroic-starting-feats'
+      }));
+
+    await this._commitNormalized(shell, 'feats', selected);
+  }
+
   getAutoAdvanceConfig(shell) {
     return {
       enabled: true,

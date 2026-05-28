@@ -23,6 +23,7 @@ import { HolonetSocketService } from './holonet-socket-service.js';
 import { HolonetPreferences } from '../holonet-preferences.js';
 import { HolonetNoticeCenterService } from './holonet-notice-center-service.js';
 import { applyXP } from '/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js';
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 
 const THREAD_TYPE = Object.freeze({
   PRIVATE: 'private',
@@ -2289,6 +2290,9 @@ export class HolonetMessengerService {
         }
         await HolonetStorage.saveThread(thread);
         await this._publishSystemMessage(thread, `Job status changed to ${this._jobStatusLabel(nextStatus)}.${cleanStatusNote ? ` GM note: ${cleanStatusNote}` : ''}`, { eventType: 'job-status-changed', status: nextStatus, note: cleanStatusNote });
+        if (['complete', 'failed'].includes(nextStatus)) {
+          await this._applyJobFactionConsequences({ thread, status: nextStatus, requesterId });
+        }
         if (nextStatus === 'posted' && previousStatus === 'draft') {
           const brief = meta.job?.briefing?.body || meta.job?.title || 'A new job has been posted to the Holonet board.';
           await this._gmSendMessage({
@@ -2333,6 +2337,9 @@ export class HolonetMessengerService {
         await HolonetStorage.saveThread(thread);
         const cleanObjectiveNote = String(objectiveNote || '').trim();
         await this._publishSystemMessage(thread, `Job objective ${jobObjectiveStatusLabel(nextObjectiveStatus)}: ${jobObjectiveLabel(objective)}.${cleanObjectiveNote ? ` GM note: ${cleanObjectiveNote}` : ''}`, { eventType: 'job-objective-status-changed', objectiveId: objective.id, status: nextObjectiveStatus, note: cleanObjectiveNote });
+        if (String(meta.job.status || '') === 'complete') {
+          await this._applyJobFactionConsequences({ thread, status: 'complete', requesterId });
+        }
         break;
       }
       case 'job-payout-distribution': {
@@ -2434,6 +2441,35 @@ export class HolonetMessengerService {
       this._emitMessengerSync(this._threadSyncPayload(thread.id, { requestId, requesterId }));
     }
     return true;
+  }
+
+
+  static async _applyJobFactionConsequences({ thread, status = '', requesterId = null } = {}) {
+    const job = thread?.metadata?.job ?? null;
+    if (!job) return [];
+    const normalizedStatus = String(status || job.status || '').trim();
+    if (!['complete', 'failed'].includes(normalizedStatus)) return [];
+    const consequences = job.factionConsequences || job.relationshipConsequences || null;
+    const factionName = String(consequences?.factionName || job.client?.factionName || '').trim();
+    const delta = normalizedStatus === 'complete' ? Number(consequences?.successDelta || 0) || 0 : Number(consequences?.failureDelta || 0) || 0;
+    if (!factionName || !delta) return [];
+    job.factionConsequences ??= consequences && typeof consequences === 'object' ? { ...consequences } : {};
+    job.factionConsequences.applied ??= {};
+    if (job.factionConsequences.applied[normalizedStatus]) return [];
+    const results = await FactionRegistryService.applyJobConsequences({ thread, status: normalizedStatus, requesterId });
+    if (!results.length) return [];
+    job.factionConsequences.applied[normalizedStatus] = nowIso();
+    await HolonetStorage.saveThread(thread);
+    const summary = results.map(result => `${result.actorName}: ${result.before >= 0 ? '+' : ''}${result.before} → ${result.after >= 0 ? '+' : ''}${result.after}`).join('; ');
+    await this._publishSystemMessage(thread, `Faction relationship updated for ${factionName}: ${summary}.`, {
+      eventType: 'job-faction-score-changed',
+      factionName,
+      status: normalizedStatus,
+      delta,
+      affectedActorIds: results.map(result => result.actorId),
+      requesterId
+    });
+    return results;
   }
 
   static async _gmAtomicJobCreditPayout({ thread, amount, recipientId, targetActor = null, requesterId = null, senderRecipientId = null, partyFundCutPercent = null } = {}) {

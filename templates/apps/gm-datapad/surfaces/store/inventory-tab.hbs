@@ -1,0 +1,86 @@
+{{!-- GM Store inventory tab. --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab-panel="inventory" {{#unless (eq currentTab 'inventory')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">INVENTORY</span>
+              <h3>Store Inventory Policy</h3>
+              <p>Soft-ban, show, hide, quantity-limit, require approval, or override player-facing price per item.</p>
+            </div>
+            <div class="gm-store-status-strip gm-store-status-strip--compact">
+              <span><strong>{{inventoryStats.visible}}</strong>Visible</span>
+              <span><strong>{{inventoryStats.available}}</strong>Available</span>
+              <span><strong>{{inventoryStats.requiresApproval}}</strong>Approval</span>
+              <span><strong>{{inventoryStats.overrides}}</strong>Price Overrides</span>
+            </div>
+          </div>
+
+          {{#if inventoryLoadError}}
+            <p class="gm-store-warning">Inventory index could not be loaded: {{inventoryLoadError}}</p>
+          {{else}}
+            <div class="gm-store-toolbar gm-store-inventory-toolbar">
+              <input type="search" class="swse-ui-input" data-store-inventory-filter="search" placeholder="Search inventory...">
+              <select class="swse-ui-input" data-store-inventory-filter="type">
+                <option value="">All types</option>
+                {{#each typeFilters}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                {{/each}}
+              </select>
+              <select class="swse-ui-input" data-store-inventory-filter="availability">
+                <option value="">All availability</option>
+                {{#each availabilityFilters}}
+                  <option value="{{this.id}}">{{this.label}}</option>
+                {{/each}}
+              </select>
+              <select class="swse-ui-input" data-store-inventory-filter="visibility">
+                <option value="">All policies</option>
+                <option value="visible">Visible</option>
+                <option value="hidden">Hidden</option>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+                <option value="overridden">Price override</option>
+              </select>
+            </div>
+
+            <div class="gm-store-table-wrap gm-store-inventory-table-wrap">
+              <table class="gm-store-table gm-store-inventory-table">
+                <thead>
+                  <tr>
+                    <th>Show</th>
+                    <th>Buy</th>
+                    <th>Qty</th>
+                    <th>Approval</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Availability</th>
+                    <th>Base Cost</th>
+                    <th>Final Cost</th>
+                    <th>GM Price Override</th>
+                    <th>Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each inventoryRows}}
+                    <tr data-store-inventory-row data-item-id="{{this.id}}" data-search="{{this.searchText}}" data-type="{{this.type}}" data-availability="{{this.availabilityKey}}" data-visible="{{this.visible}}" data-available="{{this.available}}">
+                      <td><input type="checkbox" data-store-policy-field="visible" data-item-id="{{this.id}}" {{#if this.visible}}checked{{/if}} title="Show this item to players."></td>
+                      <td><input type="checkbox" data-store-policy-field="available" data-item-id="{{this.id}}" {{#if this.available}}checked{{/if}} title="Allow this item to be bought."></td>
+                      <td class="gm-store-quantity-cell">
+                        <label><input type="checkbox" data-store-policy-field="trackQuantity" data-item-id="{{this.id}}" {{#if this.trackQuantity}}checked{{/if}} title="Track finite stock."> Track</label>
+                        <input type="number" min="0" step="1" data-store-policy-field="quantity" data-item-id="{{this.id}}" value="{{this.quantity}}" placeholder="∞" title="Finite quantity available. Empty means unlimited.">
+                      </td>
+                      <td><input type="checkbox" data-store-policy-field="requiresApproval" data-item-id="{{this.id}}" {{#if this.requiresApproval}}checked{{/if}} title="Require GM approval before purchase."></td>
+                      <td><strong>{{this.name}}</strong></td>
+                      <td>{{this.typeLabel}}</td>
+                      <td>{{this.category}} / {{this.subcategory}}</td>
+                      <td><span class="gm-store-status-chip">{{this.availabilityLabel}}</span></td>
+                      <td>{{this.baseCostDisplay}}</td>
+                      <td>{{this.finalCostDisplay}}</td>
+                      <td><input type="number" min="0" step="1" class="gm-store-price-override" data-store-policy-field="overridePrice" data-item-id="{{this.id}}" value="{{this.overridePriceDisplay}}" placeholder="Default" title="Arbitrary GM sale price override. Saved now; player-store enforcement comes in the policy enforcement phase."></td>
+                      <td>{{this.source}}</td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          {{/if}}
+        </section>

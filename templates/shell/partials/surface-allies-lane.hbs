@@ -1,0 +1,94 @@
+{{#if lane.hasAny}}
+<section class="swse-allies-lane swse-allies-lane--{{laneId}}">
+  <header>
+    <div>
+      <span class="swse-allies-kicker">{{lane.title}}</span>
+      <h4>{{lane.title}}</h4>
+      {{#if lane.slotSummary}}<small>{{lane.title}} slots {{lane.slotSummary}}</small>{{/if}}
+    </div>
+    <b>{{lane.count}}</b>
+  </header>
+
+  {{#each lane.pending}}
+  <article class="swse-allies-card swse-allies-card--pending">
+    <div class="swse-allies-card-main">
+      <span class="swse-allies-card-icon">＋</span>
+      <div>
+        <h5>{{this.title}}</h5>
+        <p>{{this.description}}</p>
+        <small>Granted by: {{this.sourceTalent}}</small>
+      </div>
+    </div>
+    <div class="swse-allies-card-actions">
+      {{#if this.canBuildFollower}}
+      <button type="button" data-allies-action="build-follower" data-slot-id="{{this.id}}">Hire Follower</button>
+      {{/if}}
+      {{#if this.canBuildMinion}}
+      <button type="button" data-allies-action="build-minion" data-slot-id="{{this.id}}">Hire {{this.label}}</button>
+      {{/if}}
+      {{#if this.canBuildBeast}}
+      <button type="button" data-allies-action="build-beast" data-slot-id="{{this.id}}">Add Beast</button>
+      {{/if}}
+    </div>
+  </article>
+  {{/each}}
+
+  {{#each lane.active}}
+  <article class="swse-allies-card swse-allies-card--active {{#if this.isDroid}}is-droid{{/if}} {{#if this.isStale}}is-stale{{/if}}">
+    <div class="swse-allies-card-main">
+      <img src="{{this.img}}" alt="{{this.name}}">
+      <div>
+        <h5>{{this.name}}</h5>
+        <p>{{this.typeLabel}}{{#if this.templateLabel}} · {{this.templateLabel}}{{/if}}</p>
+        <small>{{this.levelLabel}}{{#if this.desiredLevelLabel}} · {{this.desiredLevelLabel}}{{/if}} · HP {{this.hpLabel}}</small>
+        <small>Source: {{this.sourceTalent}}</small>
+      </div>
+    </div>
+    <div class="swse-allies-card-actions">
+      {{#if this.canLevelUpFollower}}
+      <button type="button" data-allies-action="level-up-follower" data-actor-id="{{this.id}}">Level Up</button>
+      {{/if}}
+      {{#if this.canSyncMinion}}
+      <button type="button" data-allies-action="sync-minion" data-actor-id="{{this.id}}">Level Up</button>
+      {{/if}}
+      {{#if this.canRequestBeastLevelUp}}
+      <button type="button" data-allies-action="request-beast-level-up" data-actor-id="{{this.id}}">Request Level Up</button>
+      {{/if}}
+      {{#if this.beastLevelRequested}}
+      <button type="button" disabled>GM Review</button>
+      {{/if}}
+      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">Manage</button>
+      {{#if this.canOpenGarage}}
+      <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">Garage</button>
+      {{/if}}
+      {{#if this.canFire}}
+      <button type="button" class="is-danger" data-allies-action="fire-ally" data-actor-id="{{this.id}}">Fire</button>
+      {{/if}}
+    </div>
+  </article>
+  {{/each}}
+
+  {{#if lane.showHistory}}
+  {{#each lane.history}}
+  <article class="swse-allies-card swse-allies-card--history">
+    <div class="swse-allies-card-main">
+      <img src="{{this.img}}" alt="{{this.name}}">
+      <div>
+        <h5>{{this.name}}</h5>
+        <p>{{this.typeLabel}} · Previously Hired</p>
+        <small>{{this.levelLabel}} · HP {{this.hpLabel}}</small>
+        {{#if this.dismissedAtLabel}}<small>Dismissed {{this.dismissedAtLabel}}</small>{{/if}}
+      </div>
+    </div>
+    <div class="swse-allies-card-actions">
+      {{#if this.canRehire}}
+      <button type="button" data-allies-action="rehire-ally" data-actor-id="{{this.id}}">Rehire</button>
+      {{else}}
+      <button type="button" disabled>Actor Missing</button>
+      {{/if}}
+    </div>
+  </article>
+  {{/each}}
+  {{/if}}
+</section>
+{{/if}}

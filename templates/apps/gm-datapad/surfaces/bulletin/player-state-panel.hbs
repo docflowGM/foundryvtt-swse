@@ -1,0 +1,36 @@
+{{!-- GM Bulletin player-state-panel. --}}
+
+          <div class="bulletin-panel-header">
+            <div>
+              <h3>Manage Players</h3>
+              <p>Set current location, objective, and situation for individual player datapads.</p>
+            </div>
+          </div>
+          <div class="bulletin-state-layout">
+            <aside class="bulletin-player-list">
+              {{#each bulletinPlayers}}
+              <button class="bulletin-player-card {{#if (eq ../selectedPlayerId this.actorId)}}is-active{{/if}}" type="button" data-select-player-state="{{this.actorId}}">
+                <strong>{{this.actorName}}</strong>
+                <span>{{this.userName}}</span>
+              </button>
+              {{/each}}
+            </aside>
+            <form class="bulletin-state-editor" data-player-state-form>
+              <input type="hidden" name="actorId" value="{{selectedPlayerId}}">
+              <label>
+                <span>Current Location</span>
+                <input type="text" name="location" value="{{selectedPlayerState.location}}" placeholder="Wayfarer-class freighter">
+              </label>
+              <label>
+                <span>Current Objective</span>
+                <input type="text" name="objective" value="{{selectedPlayerState.objective}}" placeholder="Meet @Rendarr and confirm the shipment route">
+              </label>
+              <label>
+                <span>Current Situation</span>
+                <textarea name="situation" rows="6" placeholder="Currently onboard Wayfarer-class freighter. Last contact: Mid-Rim." data-holonet-editor="player-state">{{selectedPlayerState.situation}}</textarea>
+              </label>
+              <div class="bulletin-form-actions">
+                <button type="submit" class="swse-ui-button bulletin-primary-action">Save Player State</button>
+              </div>
+            </form>
+          </div>

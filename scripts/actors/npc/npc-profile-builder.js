@@ -31,7 +31,7 @@ export class NpcProfileBuilder {
     const npcMode = getNpcMode(actor);
     const npcKind = getNpcKind(actor);
 
-    // Resolve owner data for followers
+    // Resolve owner data for followers/minions
     const ownerData = this._resolveOwnerData(actor);
     const hasOwner = !!ownerData;
 
@@ -41,10 +41,11 @@ export class NpcProfileBuilder {
 
     // Build serializable link card objects for open-related-actor action
     let ownerLink = { actorId: null, name: null, img: null, type: null, kind: null };
-    if (npcKind === 'follower') {
+    if (['follower', 'minion', 'privateer'].includes(npcKind)) {
       const ownerId =
         actor.system?.npcProfile?.owner?.actorId ||
         actor?.flags?.swse?.follower?.ownerId ||
+        actor?.flags?.swse?.minion?.ownerId ||
         null;
 
       if (ownerId) {
@@ -91,17 +92,18 @@ export class NpcProfileBuilder {
     // Resolve follower summary (Phase 3)
     const followerSummary = this._getFollowerSummary(actor);
     const hasFollowerSummary = !!followerSummary;
-    const followerOwnerUnresolved = npcKind === 'follower' && !followerSummary?.isOwnerResolved;
+    const dependentNpcKinds = ['follower', 'minion', 'privateer'];
+    const followerOwnerUnresolved = dependentNpcKinds.includes(npcKind) && !followerSummary?.isOwnerResolved;
 
     // Resolve progression summary
     const progressionSummary = this._getProgressionSummary(actor);
 
     // Determine which panels to show
     const showProgressionPanel = npcMode === 'progression';
-    const showOwnerPanel = npcKind === 'follower' && hasOwner;
+    const showOwnerPanel = dependentNpcKinds.includes(npcKind) && hasOwner;
     const showBeastPanel = npcKind === 'beast';
     const showMountPanel = npcKind === 'mount';
-    const showRelationshipsTab = npcKind === 'follower' || npcKind === 'mount';
+    const showRelationshipsTab = dependentNpcKinds.includes(npcKind) || npcKind === 'mount';
 
     // Generate descriptions
     const profileDescription = this._getProfileDescription(npcKind, npcMode);
@@ -110,7 +112,7 @@ export class NpcProfileBuilder {
     // Phase 3: Follower-specific descriptions
     let followerAuthorityDescription = null;
     let followerScalingDescription = null;
-    if (npcKind === 'follower' && hasFollowerSummary) {
+    if (dependentNpcKinds.includes(npcKind) && hasFollowerSummary) {
       if (npcMode === 'statblock') {
         followerAuthorityDescription =
           'This follower uses published statblock values as the primary authority for abilities.';
@@ -146,6 +148,7 @@ export class NpcProfileBuilder {
       isNonheroicNpc: npcKind === 'nonheroic',
       isBeastNpc: npcKind === 'beast',
       isFollowerNpc: npcKind === 'follower',
+      isMinionNpc: npcKind === 'minion' || npcKind === 'privateer',
       isMountNpc: npcKind === 'mount',
 
       // Attack authority (for combat tab)
@@ -210,26 +213,15 @@ export class NpcProfileBuilder {
    * @private
    */
   static _resolveOwnerData(actor) {
-    if (!actor || actor.system?.npcProfile?.kind !== 'follower') {
-      const ownerId = actor?.flags?.swse?.follower?.ownerId;
-      if (!ownerId) {
-        return null;
-      }
-
-      const owner = game.actors?.get(ownerId);
-      if (!owner) {
-        return null;
-      }
-
-      return {
-        name: owner.name || 'Unknown Owner',
-        talent: actor.flags?.swse?.follower?.grantingTalent || null,
-        template: actor.system?.followerType || null,
-        provenance: 'Legacy follower flag'
-      };
+    const kind = actor?.system?.npcProfile?.kind || actor?.flags?.swse?.minion?.kind || null;
+    if (!actor || !['follower', 'minion', 'privateer'].includes(kind)) {
+      return null;
     }
 
-    const ownerId = actor.system?.npcProfile?.owner?.actorId;
+    const ownerId = actor.system?.npcProfile?.owner?.actorId
+      || actor?.flags?.swse?.follower?.ownerId
+      || actor?.flags?.swse?.minion?.ownerId
+      || null;
     if (!ownerId) {
       return null;
     }
@@ -240,12 +232,13 @@ export class NpcProfileBuilder {
     }
 
     const grantingTalent = actor.system?.npcProfile?.owner?.talent;
+    const legacyTalent = actor.flags?.swse?.follower?.grantingTalent || actor.flags?.swse?.minion?.talentName || null;
 
     return {
       name: owner.name || 'Unknown Owner',
-      talent: grantingTalent?.name || null,
-      template: actor.system?.npcProfile?.template || null,
-      provenance: 'NPC profile contract'
+      talent: grantingTalent?.name || legacyTalent,
+      template: actor.system?.npcProfile?.template || actor.system?.npcProfile?.kind || actor.system?.followerType || null,
+      provenance: actor.system?.npcProfile?.owner?.actorId ? 'NPC profile contract' : 'Legacy dependent flag'
     };
   }
 
@@ -360,7 +353,8 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getFollowerSummary(actor) {
-    if (!actor || actor.system?.npcProfile?.kind !== 'follower') {
+    const npcKind = actor?.system?.npcProfile?.kind || actor?.flags?.swse?.minion?.kind || null;
+    if (!actor || !['follower', 'minion', 'privateer'].includes(npcKind)) {
       return null;
     }
 
@@ -405,7 +399,22 @@ export class NpcProfileBuilder {
       }
     }
 
-    templateName = actor.system?.npcProfile?.template || actor.system?.followerType || null;
+    if (!ownerActorId) {
+      const minionOwnerId = actor?.flags?.swse?.minion?.ownerId;
+      if (minionOwnerId) {
+        ownerActorId = minionOwnerId;
+        const owner = game.actors?.get(minionOwnerId);
+        if (owner) {
+          ownerName = owner.name || 'Unknown Owner';
+          isOwnerResolved = true;
+          ownerHeroicLevel = getHeroicLevel(owner) || null;
+        }
+        grantingTalentName = actor?.flags?.swse?.minion?.talentName || actor.system?.npcProfile?.owner?.talent?.name || null;
+        provenance = 'Minion ownership flag';
+      }
+    }
+
+    templateName = actor.system?.npcProfile?.template || actor.system?.npcProfile?.kind || actor.system?.followerType || null;
     isTemplateResolved = !!templateName;
 
     const npcMode = actor.system?.npcProfile?.mode || 'statblock';
@@ -444,6 +453,8 @@ export class NpcProfileBuilder {
       ownerActorId,
       grantingTalentName,
       templateName,
+      dependentKind: npcKind,
+      dependentKindLabel: npcKind === 'privateer' ? 'Privateer' : npcKind === 'minion' ? 'Minion' : 'Follower',
       provenance,
       scalingMode,
       ownerHeroicLevel,

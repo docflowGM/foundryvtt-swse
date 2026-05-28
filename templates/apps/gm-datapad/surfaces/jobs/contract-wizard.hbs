@@ -1,0 +1,68 @@
+{{!-- GM Jobs contract wizard. --}}
+      <section class="swse-ui-panel job-contract-wizard">
+        <div class="job-board-section-header compact">
+          <div>
+            <span class="gm-command-eyebrow">CONTRACT WIZARD</span>
+            <h3>Create Job Contract</h3>
+          </div>
+          <span class="job-board-help">Client → objectives → briefing → optional faction consequences.</span>
+        </div>
+        <form class="job-contract-form" data-job-create-form>
+          <div class="job-contract-grid">
+            <fieldset>
+              <legend>Step 1 · Client</legend>
+              <label>Client Type
+                <select name="clientType">
+                  {{#each jobBoard.creation.clientTypes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+                </select>
+              </label>
+              <label>Client / Faction / NPC Name<input type="text" name="clientName" placeholder="Galaxy News Net / Black Sun Vigo / Master Tholos"></label>
+              <label>Faction Name<input type="text" name="clientFaction" placeholder="Optional faction relationship anchor"></label>
+              <label>Client Image / Sigil<input type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg"></label>
+              <label class="job-inline-check"><input type="checkbox" name="clientSave"> Save as reusable contact later</label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Step 2 · Objectives</legend>
+              <label>Primary Objective <input type="text" name="primaryObjective" placeholder="Required objective"></label>
+              <textarea name="primaryDescription" rows="2" placeholder="Primary memo / player-facing clarity"></textarea>
+              <div class="job-reward-row"><input type="number" name="primaryCredits" min="0" step="1" placeholder="Credits"><input type="number" name="primaryXp" min="0" step="1" placeholder="XP"><input type="text" name="primaryItems" placeholder="Item rewards"></div>
+              <label>Secondary Objective <input type="text" name="secondaryObjective" placeholder="Optional or required secondary objective"></label>
+              <label class="job-inline-check"><input type="checkbox" name="secondaryRequired"> Required for completion</label>
+              <textarea name="secondaryDescription" rows="2" placeholder="Secondary memo"></textarea>
+              <div class="job-reward-row"><input type="number" name="secondaryCredits" min="0" step="1" placeholder="Credits"><input type="number" name="secondaryXp" min="0" step="1" placeholder="XP"><input type="text" name="secondaryItems" placeholder="Item rewards"></div>
+              <label>Tertiary Objective <input type="text" name="tertiaryObjective" placeholder="Always optional bonus objective"></label>
+              <textarea name="tertiaryDescription" rows="2" placeholder="Tertiary memo"></textarea>
+              <div class="job-reward-row"><input type="number" name="tertiaryCredits" min="0" step="1" placeholder="Credits"><input type="number" name="tertiaryXp" min="0" step="1" placeholder="XP"><input type="text" name="tertiaryItems" placeholder="Item rewards"></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Step 3 · Briefing</legend>
+              <label>Job Title<input type="text" name="title" placeholder="Retrieve artifact from Korriban" required></label>
+              <textarea name="briefing" rows="4" placeholder="What the players are told about this job"></textarea>
+              <textarea name="instructions" rows="2" placeholder="Player instructions / rendezvous / conditions"></textarea>
+              <textarea name="oocNote" rows="2" placeholder="Optional OOC GM note to players"></textarea>
+              <div class="job-reward-row"><input type="number" name="flatCredits" min="0" step="1" placeholder="Flat credits"><input type="text" name="flatItems" placeholder="Flat item reward notes"></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Audience & Faction Notes</legend>
+              <label>Status
+                <select name="status"><option value="draft">Save Draft</option><option value="posted">Post Now</option></select>
+              </label>
+              <div class="job-recipient-picker">
+                <span>Visible to</span>
+                {{#each jobBoard.creation.recipients}}
+                <label class="job-inline-check"><input type="checkbox" name="recipientIds" value="{{this.id}}"> {{this.label}}</label>
+                {{else}}
+                <p class="placeholder">No player characters are linked to users yet. The job can still be saved as a GM draft.</p>
+                {{/each}}
+              </div>
+              <label>Success relationship delta<input type="number" name="factionSuccessDelta" step="1" value="0"></label>
+              <label>Failure relationship delta<input type="number" name="factionFailureDelta" step="1" value="0"></label>
+              <textarea name="factionNotes" rows="2" placeholder="GM-only relationship consequence notes"></textarea>
+            </fieldset>
+          </div>
+          <button type="submit" class="swse-ui-button bulletin-primary-action">Create Contract</button>
+        </form>
+      </section>

@@ -1,0 +1,110 @@
+{{!-- GM Store approvals tab. --}}
+        <section class="gm-store-tab-panel {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab-panel="approvals" {{#unless (eq currentTab 'approvals')}}hidden{{/unless}}>
+          <div class="gm-store-section-heading">
+            <div>
+              <span class="gm-command-eyebrow">APPROVALS</span>
+              <h3>Commerce Requests</h3>
+              <p>Sale, haggle, restricted purchase, and custom acquisition requests that touch the store economy.</p>
+            </div>
+            <div class="gm-store-status-strip gm-store-status-strip--compact">
+              <span><strong>{{storeApprovalCounts.pendingSales}}</strong>Sales</span>
+              <span><strong>{{storeApprovalCounts.customPurchases}}</strong>Custom Assets</span>
+            </div>
+          </div>
+
+          <div class="gm-store-approval-grid">
+            <article class="gm-command-card">
+              <header class="gm-store-card-header">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <div>
+                  <h4>Pending Sales / Haggles</h4>
+                  <p>Player sell and negotiation requests belong here.</p>
+                </div>
+              </header>
+              {{#if pendingSales.length}}
+                <div class="gm-store-approval-list gm-store-sale-request-list">
+                  {{#each pendingSales}}
+                    <div class="gm-store-approval-card gm-store-sale-request-card" data-sale-request-id="{{this.id}}">
+                      <div class="gm-store-sale-request-main">
+                        <div>
+                          <span class="gm-command-eyebrow">{{this.type}} REQUEST</span>
+                          <strong>{{this.item}}</strong>
+                          <span>{{this.actor}} - {{this.submittedDisplay}}</span>
+                        </div>
+                        <span class="gm-store-status-chip {{#if this.warning}}warn{{/if}}">{{#if this.warning}}Needs Review{{else}}Pending{{/if}}</span>
+                      </div>
+
+                      <div class="gm-store-sale-request-grid">
+                        <div>
+                          <span>Base Price</span>
+                          <strong>{{this.basePriceDisplay}}</strong>
+                        </div>
+                        <div>
+                          <span>Suggested Offer</span>
+                          <strong>{{this.suggestedPriceDisplay}}</strong>
+                        </div>
+                        <div>
+                          <span>Requested / Default</span>
+                          <strong>{{this.requestedPriceDisplay}}</strong>
+                        </div>
+                      </div>
+
+                      {{#if this.warning}}
+                        <p class="gm-store-warning gm-store-sale-warning">{{this.warning}}</p>
+                      {{/if}}
+
+                      <div class="gm-store-sale-controls">
+                        <label>
+                          <span>GM Amount</span>
+                          <input type="number" min="0" step="1" class="swse-ui-input" data-sale-custom-amount value="{{#if this.defaultAmount}}{{this.defaultAmount}}{{/if}}" placeholder="Set offer">
+                        </label>
+                        <label>
+                          <span>GM Note / Denial Reason</span>
+                          <textarea class="swse-ui-input" data-sale-reason rows="2" placeholder="Optional note for approval; denial reason if denied."></textarea>
+                        </label>
+                      </div>
+
+                      <div class="gm-store-sale-actions">
+                        {{#if this.canApprove}}
+                          <button type="button" class="swse-ui-button" data-action="approve-sale-request" data-request-id="{{this.id}}" data-default-amount="{{this.defaultAmount}}">Approve Suggested</button>
+                        {{else}}
+                          <button type="button" class="swse-ui-button" data-action="approve-sale-request" data-request-id="{{this.id}}">Approve Amount</button>
+                        {{/if}}
+                        <button type="button" class="swse-ui-button secondary" data-action="counteroffer-sale-request" data-request-id="{{this.id}}">Approve Custom Amount</button>
+                        <button type="button" class="swse-ui-button danger" data-action="deny-sale-request" data-request-id="{{this.id}}">Deny</button>
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+              {{else}}
+                <p class="gm-store-empty-note">No sale or haggle requests are currently queued.</p>
+              {{/if}}
+            </article>
+
+            <article class="gm-command-card">
+              <header class="gm-store-card-header">
+                <i class="fa-solid fa-robot"></i>
+                <div>
+                  <h4>Custom Droid / Ship Requests</h4>
+                  <p>Full review is handled by the GM Approvals app.</p>
+                </div>
+              </header>
+              {{#if pendingApprovals.length}}
+                <div class="gm-store-approval-list">
+                  {{#each pendingApprovals}}
+                    <div class="gm-store-approval-card">
+                      <strong>{{this.draftData.name}}</strong>
+                      <span>{{this.ownerActorName}} - {{capitalize this.type}}</span>
+                      <em>{{this.costCredits}} cr</em>
+                    </div>
+                  {{/each}}
+                </div>
+                <button type="button" class="swse-ui-button" data-nav-to="approvals">Open Full Approval Review</button>
+              {{else}}
+                <p class="gm-store-empty-note">No custom droid or vehicle purchases are queued.</p>
+              {{/if}}
+            </article>
+          </div>
+        </section>
+
+        {{!-- TAB 4: INVENTORY --}}

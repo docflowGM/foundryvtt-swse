@@ -68,6 +68,11 @@
         vm=shellSurfaceVm}}
   {{/if}}
 
+  {{#if (eq shellSurface "allies")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-allies.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
   {{#if (eq shellSurface "workbench")}}
     {{> "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs"
         vm=shellSurfaceVm}}
