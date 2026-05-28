@@ -1,6 +1,7 @@
 import { FOLLOWER_TALENT_CONFIG } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FollowerManager } from "/systems/foundryvtt-swse/scripts/apps/follower-manager.js";
+import { MinionManager } from "/systems/foundryvtt-swse/scripts/apps/minion-manager.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 /**
@@ -41,6 +42,9 @@ function _buildSlot(talentItem, cfg) {
     talentName: talentItem.name,
     talentItemId: talentItem.id,
     templateChoices: cfg?.templateChoices ?? [],
+    dependentKind: cfg?.dependentKind ?? 'follower',
+    minionLevelRatio: cfg?.minionLevelRatio ?? null,
+    minionLevelLabel: cfg?.minionLevelLabel ?? null,
     createdActorId: null,
     createdAt: Date.now()
   };
@@ -70,12 +74,18 @@ async function _removeGrantedItemsFromFollower(ownerActor, followerActorId, tale
     await ActorEngine.deleteEmbeddedDocuments(follower, 'Item', toDelete);
   }
 
-  // PHASE 2: Route through ActorEngine with guard key for owner update
-  // Detach from owner's ownedActors list via ActorEngine (ensures recompute)
+  // PHASE 2: Route through ActorEngine with guard key for owner update.
+  // Detach from every owner-side dependent registry that can point at this actor.
   const owned = (ownerActor.system.ownedActors || []).filter(o => o.id !== followerActorId);
   await ActorEngine.updateActor(ownerActor, { 'system.ownedActors': owned }, {
     meta: { guardKey: 'follower-cleanup' }
   });
+
+  const followers = (ownerActor.getFlag('foundryvtt-swse', 'followers') || []).filter(o => o.id !== followerActorId);
+  await ownerActor.setFlag('foundryvtt-swse', 'followers', followers);
+
+  const minions = (ownerActor.getFlag('foundryvtt-swse', 'minions') || []).filter(o => o.id !== followerActorId);
+  await ownerActor.setFlag('foundryvtt-swse', 'minions', minions);
 }
 
 /**
@@ -105,6 +115,7 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
 export async function reconcileFollowerEnhancementsForActor(actor) {
   if (!actor || actor.type !== 'character') return;
   await FollowerManager.reconcileEnhancementsForOwner(actor);
+  await MinionManager.reconcileTalentsForOwner(actor);
 }
 
 export async function reconcileFollowerSlotsForActor(actor) {
@@ -133,6 +144,18 @@ export async function reconcileFollowerSlotsForActor(actor) {
       }
       if (!slot.talentName) {
         slot.talentName = talent.name;
+        changed = true;
+      }
+      if (!slot.dependentKind) {
+        slot.dependentKind = cfg?.dependentKind ?? 'follower';
+        changed = true;
+      }
+      if (slot.minionLevelRatio === undefined && cfg?.minionLevelRatio !== undefined) {
+        slot.minionLevelRatio = cfg.minionLevelRatio;
+        changed = true;
+      }
+      if (!slot.minionLevelLabel && cfg?.minionLevelLabel) {
+        slot.minionLevelLabel = cfg.minionLevelLabel;
         changed = true;
       }
     }
@@ -170,6 +193,9 @@ export function initializeFollowerHooks() {
     if (FollowerManager.isEnhancementTalent(item.name)) {
       await FollowerManager.applyEnhancement(actor, item);
     }
+    if (MinionManager.isMinionTalent(item.name)) {
+      await MinionManager.applyTalent(actor, item);
+    }
 
     const cfg = FOLLOWER_TALENT_CONFIG[item.name];
     if (!cfg) return;
@@ -199,6 +225,9 @@ export function initializeFollowerHooks() {
 
     if (FollowerManager.isEnhancementTalent(item.name)) {
       await FollowerManager.removeEnhancement(actor, item);
+    }
+    if (MinionManager.isMinionTalent(item.name)) {
+      await MinionManager.removeTalent(actor, item);
     }
 
     const cfg = FOLLOWER_TALENT_CONFIG[item.name];

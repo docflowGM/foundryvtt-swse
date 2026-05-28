@@ -50,20 +50,26 @@ export function getNpcMode(actor) {
  * 3. Conservative default (heroic for unknown)
  *
  * @param {Actor} actor
- * @returns {string} 'heroic' | 'nonheroic' | 'beast' | 'follower' | 'mount'
+ * @returns {string} 'heroic' | 'nonheroic' | 'beast' | 'follower' | 'mount' | 'minion' | 'privateer'
  */
 export function getNpcKind(actor) {
   if (!actor) return 'heroic';
 
   // Canonical npcProfile (priority 1)
   const kind = actor.system?.npcProfile?.kind;
-  if (kind && ['heroic', 'nonheroic', 'beast', 'follower', 'mount'].includes(kind)) {
+  if (kind && ['heroic', 'nonheroic', 'beast', 'follower', 'mount', 'minion', 'privateer'].includes(kind)) {
     return kind;
   }
 
   // Check for explicit follower flag (priority 2)
   if (actor.flags?.swse?.follower?.ownerId || actor.system?.isFollower) {
     return 'follower';
+  }
+
+
+  // Check for explicit minion/privateer flag (priority 2)
+  if (actor.flags?.swse?.minion?.ownerId || actor.system?.isMinion) {
+    return actor.flags?.swse?.minion?.kind || actor.system?.npcProfile?.kind || 'minion';
   }
 
   // Check for beast indicator (priority 2)

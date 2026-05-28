@@ -31,6 +31,7 @@ import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.j
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 import { initializeGames } from "./scripts/games/game-init.js";
 import "./scripts/talents/squad-actions-init.js";
+import "./scripts/talents/minion-actions-init.js";
 
 UIManager.init();
 

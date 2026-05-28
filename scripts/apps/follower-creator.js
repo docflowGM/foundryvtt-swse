@@ -755,11 +755,15 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             if (slot?.createdActorId) ids.add(slot.createdActorId);
         }
         for (const entry of actor.system?.ownedActors || []) {
+            const kind = entry?.kind || entry?.dependentKind || entry?.npcKind;
+            if (kind && kind !== 'follower') continue;
             if (entry?.id) ids.add(entry.id);
         }
 
         if (game?.actors) {
             for (const candidate of game.actors) {
+                const kind = candidate?.system?.npcProfile?.kind || candidate?.flags?.swse?.follower?.kind || null;
+                if (kind && kind !== 'follower') continue;
                 const ownerId = candidate?.flags?.swse?.follower?.ownerId || candidate?.system?.npcProfile?.owner?.actorId;
                 const isFollower = candidate?.system?.isFollower === true
                     || candidate?.system?.progression?.isFollower === true

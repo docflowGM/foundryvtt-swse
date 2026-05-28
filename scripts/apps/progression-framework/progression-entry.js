@@ -278,7 +278,8 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
       './adapters/follower-session-seeder.js'
     );
 
-    const allSlots = ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
+    const allSlots = (ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [])
+      .filter(slot => !slot.dependentKind || slot.dependentKind === 'follower');
     const availableSlots = getAvailableFollowerSlots(ownerActor);
     const existingSlot = options.existingFollowerId
       ? allSlots.find(slot => slot.createdActorId === options.existingFollowerId)
@@ -353,6 +354,20 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     ui?.notifications?.error?.(`Follower progression failed: ${err.message}`);
     ShellRouter.notifySurfaceClosed(ownerActor.id);
   }
+}
+
+/**
+ * Launch minion creation for an owner actor.
+ * Reuses the dependent slot/linkage contract, but creates a minion/privateer NPC
+ * instead of opening the follower progression template flow.
+ *
+ * @param {Actor} ownerActor
+ * @param {Object} options
+ * @returns {Promise<Actor|null>}
+ */
+export async function launchMinionCreation(ownerActor, options = {}) {
+  const { MinionCreator } = await import('/systems/foundryvtt-swse/scripts/apps/minion-creator.js');
+  return MinionCreator.launchMinionCreation(ownerActor, options);
 }
 
 /**

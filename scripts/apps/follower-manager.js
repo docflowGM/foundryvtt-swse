@@ -85,6 +85,26 @@ export class FollowerManager {
             prerequisite: 'Attract Minion',
             benefit: 'shelter',
             description: 'Cover bonus to Reflex Defense increased by +2 when adjacent to minion.'
+        },
+        'Wealth of Allies': {
+            prerequisite: 'Attract Minion',
+            benefit: 'wealth-of-allies',
+            description: 'If a minion is killed, it is replaced by one of the same level after 24 hours.'
+        },
+        'Shared Notoriety': {
+            prerequisite: 'Notorious',
+            benefit: 'shared-notoriety',
+            description: 'Your minions may reroll Persuasion checks made to intimidate.'
+        },
+        'Frighten': {
+            prerequisite: 'Inspire Fear I',
+            benefit: 'frighten',
+            description: 'Once per encounter, force enemies to move 1 square away from one minion.'
+        },
+        'Fear Me': {
+            prerequisite: 'Inspire Fear II',
+            benefit: 'fear-me',
+            description: 'Once per encounter, reduce a minion by 1 condition step and heal them by owner heroic level.'
         }
     };
 
@@ -177,6 +197,10 @@ export class FollowerManager {
             case 'bodyguard-defense':
             case 'bodyguard-counterattack':
             case 'shelter':
+            case 'wealth-of-allies':
+            case 'shared-notoriety':
+            case 'frighten':
+            case 'fear-me':
                 // These are tactical abilities that don't directly mutate follower stats.
                 await this.addTacticalAbility(owner, talent, enhancement, options);
                 break;
@@ -311,7 +335,11 @@ export class FollowerManager {
             case 'bodyguard-redirect':
             case 'bodyguard-defense':
             case 'bodyguard-counterattack':
-            case 'shelter': {
+            case 'shelter':
+            case 'wealth-of-allies':
+            case 'shared-notoriety':
+            case 'frighten':
+            case 'fear-me': {
                 const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
                 const nextAbilities = tacticalAbilities.filter(name => name !== talent.name);
                 await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', nextAbilities);

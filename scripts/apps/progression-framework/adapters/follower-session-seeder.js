@@ -12,6 +12,10 @@ import { swseLogger } from '../../../utils/logger.js';
 import { getHeroicLevel } from '../../../actors/derived/level-split.js';
 import { computeFollowerAdvancementPlan } from './follower-advancer.js';
 
+function _isFollowerSlot(slot) {
+  return !slot?.dependentKind || slot.dependentKind === 'follower';
+}
+
 /**
  * Seed follower dependency context into a progression session
  *
@@ -29,7 +33,7 @@ export async function seedFollowerSession(session, ownerActor, slotId = null, ex
 
   try {
     // Get follower slots from owner flags
-    const slots = ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
+    const slots = (ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || []).filter(_isFollowerSlot);
 
     if (!slots || slots.length === 0) {
       swseLogger.warn('[FollowerSessionSeeder] Owner has no follower slots', {
@@ -125,7 +129,7 @@ export function validateFollowerEntitlement(ownerActor, slotId) {
   if (!ownerActor) return false;
 
   const slots = ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
-  return slots.some(s => s.id === slotId);
+  return slots.some(s => s.id === slotId && _isFollowerSlot(s));
 }
 
 /**
@@ -138,7 +142,7 @@ export function getAvailableFollowerSlots(ownerActor, templateFilter = null) {
   if (!ownerActor) return [];
 
   const slots = ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
-  const available = slots.filter(s => !s.createdActorId); // Unfilled slots
+  const available = slots.filter(s => !s.createdActorId && _isFollowerSlot(s)); // Unfilled follower slots
 
   if (templateFilter) {
     return available.filter(s =>

@@ -3,12 +3,12 @@
     <div class="swse-npc-card__header-main">
       <h3 class="swse-section-title">Follower / Minion Link</h3>
       <p class="swse-npc-card__subhead">
-        Owner, provenance, and follower relationship summary.
+        Owner, provenance, and dependent NPC relationship summary.
       </p>
     </div>
 
     <div class="swse-npc-badges">
-      <span class="swse-npc-badge swse-npc-badge--subtype">Follower</span>
+      <span class="swse-npc-badge swse-npc-badge--subtype">{{#if followerSummary.dependentKindLabel}}{{followerSummary.dependentKindLabel}}{{else}}Follower{{/if}}</span>
       {{#if followerSummary.isOwnerResolved}}
         <span class="swse-npc-badge swse-npc-badge--kind">Owner Linked</span>
       {{/if}}
@@ -25,7 +25,7 @@
       </div>
 
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Template</label>
+        <label class="swse-npc-summary-stat__label">Template / Kind</label>
         <div class="swse-npc-summary-stat__value">
           {{#if followerSummary.templateName}}{{followerSummary.templateName}}{{else}}—{{/if}}
         </div>
@@ -61,7 +61,7 @@
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Follower Level</dt>
+        <dt>Dependent Level</dt>
         <dd>{{#if followerSummary.currentFollowerLevel}}{{followerSummary.currentFollowerLevel}}{{else}}—{{/if}}</dd>
       </div>
     </dl>
@@ -117,7 +117,7 @@
 
     {{#unless followerSummary.ownerName}}
       <p class="swse-npc-empty-state">
-        No owner is currently resolved for this follower.
+        No owner is currently resolved for this dependent NPC.
       </p>
     {{/unless}}
   </div>

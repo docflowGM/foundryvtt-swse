@@ -23,6 +23,33 @@ export const FOLLOWER_TALENT_CONFIG = {
     additionalFeats: ["Weapon Proficiency (Rifles)"],
     armorProficiencyChoice: true,
     description: "This talent grants you a follower with Weapon Proficiency (Rifles) and one Armor Proficiency feat of your choice."
+  },
+  "Attract Minion": {
+    templateChoices: ["minion"],
+    maxCount: 0,
+    repeatable: true,
+    dependentKind: "minion",
+    minionLevelRatio: 0.75,
+    minionLevelLabel: "three-quarters of owner heroic level",
+    description: "This talent grants one attracted nonheroic minion. It may be taken multiple times."
+  },
+  "Attract Privateer": {
+    templateChoices: ["privateer"],
+    maxCount: 0,
+    repeatable: true,
+    dependentKind: "privateer",
+    minionLevelRatio: 0.75,
+    minionLevelLabel: "three-quarters of owner heroic level",
+    description: "This talent grants one attracted privateer-style nonheroic minion. It may be taken multiple times."
+  },
+  "Attract Superior Minion": {
+    templateChoices: ["minion"],
+    maxCount: 0,
+    repeatable: true,
+    dependentKind: "minion",
+    minionLevelRatio: 1,
+    minionLevelLabel: "owner heroic level",
+    description: "This talent grants one superior attracted nonheroic minion at owner heroic level. It may be taken multiple times."
   }
 };
 

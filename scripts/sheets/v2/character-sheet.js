@@ -12,7 +12,7 @@ import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
-import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { launchFollowerProgression, launchMinionCreation } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -2727,8 +2727,9 @@ const forcePoints = [];
     // Follower Context (from flags and system)
     const followerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
     const linkedFollowers = actor.getFlag('foundryvtt-swse', 'followers') || [];
+    const linkedMinions = actor.getFlag('foundryvtt-swse', 'minions') || [];
     const ownedActorMap = {};
-    for (const entry of [...(actor.system.ownedActors || []), ...linkedFollowers]) {
+    for (const entry of [...(actor.system.ownedActors || []), ...linkedFollowers, ...linkedMinions]) {
       if (!entry?.id) continue;
       const liveActor = game.actors?.get?.(entry.id);
       ownedActorMap[entry.id] = {
@@ -2783,7 +2784,9 @@ const forcePoints = [];
     });
 
     // Phase 3.5: Check if owner has available (unfilled) follower slots for UI visibility
-    const hasAvailableFollowerSlots = followerSlots.some(slot => !slot.createdActorId);
+    const hasAvailableFollowerSlots = followerSlots.some(slot => !slot.createdActorId && (!slot.dependentKind || slot.dependentKind === 'follower'));
+    const hasAvailableMinionSlots = followerSlots.some(slot => !slot.createdActorId && ['minion', 'privateer'].includes(slot.dependentKind));
+    const hasAvailableDependentSlots = hasAvailableFollowerSlots || hasAvailableMinionSlots;
 
     // Calculate total talent count for ledger display
     const totalTalentCount = derived.talents?.groups?.reduce((sum, group) => sum + (group.items?.length || 0), 0) || 0;
@@ -3106,7 +3109,9 @@ const forcePoints = [];
       followerSlots,                // Follower slots from actor flags
       followerTalentBadges,         // Aggregated follower talent badges
       enrichedFollowerSlots,        // Follower slots enriched with actor data
-      hasAvailableFollowerSlots,    // Whether any slots are unfilled
+      hasAvailableFollowerSlots,    // Whether any follower slots are unfilled
+      hasAvailableMinionSlots,      // Whether any minion/privateer slots are unfilled
+      hasAvailableDependentSlots,   // Any dependent actor slot
       xpData,                       // XP progress data for display
       headerHpSegments,             // 20-step segmented HP bar
       headerXpSegments,             // 20-step segmented XP bar
@@ -4019,6 +4024,7 @@ const forcePoints = [];
           `,
           buttons: [
             { action: 'follower', label: 'Follower', default: true },
+            { action: 'minion', label: 'Minion / Privateer' },
             { action: 'beast', label: 'Beast' },
             { action: 'mount', label: 'Mount' },
             { action: 'droid', label: 'Droid' },
@@ -4030,6 +4036,10 @@ const forcePoints = [];
         if (choice === 'cancel' || !choice) return;
         if (choice === 'follower') {
           await launchFollowerProgression(this.actor);
+          return;
+        }
+        if (choice === 'minion') {
+          await launchMinionCreation(this.actor);
           return;
         }
 
