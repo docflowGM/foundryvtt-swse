@@ -185,7 +185,8 @@ export class GamesSurfaceController {
       const checkboxes = Array.from(form.querySelectorAll('[data-pazaak-side-card]'));
       const countNode = form.querySelector('[data-pazaak-selected-count]');
       const submit = form.querySelector('button[type="submit"]');
-      const updateSelection = () => this._syncSideDeckBuilder(checkboxes, countNode, submit);
+      const traySlots = Array.from(form.querySelectorAll('[data-pazaak-deck-slot]'));
+      const updateSelection = () => this._syncSideDeckBuilder(checkboxes, countNode, submit, traySlots);
       checkboxes.forEach(box => box.addEventListener('change', updateSelection, { signal }));
       updateSelection();
 
@@ -455,19 +456,46 @@ export class GamesSurfaceController {
     }
   }
 
-  _syncSideDeckBuilder(checkboxes, countNode, submit) {
+  _syncSideDeckBuilder(checkboxes, countNode, submit, traySlots = []) {
     const selected = checkboxes.filter(box => box.checked);
     const selectedIds = selected.map(box => box.value).filter(Boolean);
     const limit = 10;
     checkboxes.forEach(box => {
       box.disabled = !box.checked && selected.length >= limit;
+      box.closest?.('.swse-pazaak-catalog-card')?.classList.toggle('is-selected', box.checked);
     });
     if (countNode) countNode.textContent = String(selected.length);
     if (submit) submit.disabled = selected.length !== limit;
+    this._syncSideDeckTray(selected, traySlots);
     this._host._shellSurfaceOptions = {
       ...(this._host._shellSurfaceOptions ?? {}),
       sideDeckIds: selectedIds
     };
+  }
+
+  _syncSideDeckTray(selected = [], traySlots = []) {
+    traySlots.forEach((slot, index) => {
+      const card = selected[index] || null;
+      const indexLabel = String(index + 1).padStart(2, '0');
+      slot.className = 'swse-pazaak-deck-slot';
+      slot.textContent = '';
+      const idx = document.createElement('span');
+      idx.className = 'swse-pazaak-slot__idx';
+      idx.textContent = indexLabel;
+      slot.appendChild(idx);
+      if (!card) return;
+      const tone = String(card.dataset.cardTone || 'neutral').trim() || 'neutral';
+      slot.classList.add('is-filled', `tone-${tone}`);
+      const face = document.createElement('span');
+      face.className = `swse-pazaak-card-face swse-pazaak-template-card tone-${tone}`;
+      const wash = document.createElement('span');
+      wash.className = 'swse-pazaak-template-card__wash';
+      const value = document.createElement('b');
+      value.textContent = String(card.dataset.cardVisual || card.dataset.cardLabel || card.value || '?');
+      face.appendChild(wash);
+      face.appendChild(value);
+      slot.appendChild(face);
+    });
   }
 
   _setOptions(patch = {}) {

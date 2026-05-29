@@ -53,6 +53,56 @@ function mapTableCard(card = {}) {
   };
 }
 
+function mapTableCardSlots(cards = [], limit = PAZAAK_TABLE_LIMIT) {
+  const mapped = (Array.isArray(cards) ? cards : []).map(mapTableCard);
+  return Array.from({ length: limit }, (_, index) => {
+    const card = mapped[index] ?? null;
+    return {
+      index: index + 1,
+      indexLabel: String(index + 1).padStart(2, '0'),
+      hasCard: Boolean(card),
+      card
+    };
+  });
+}
+
+function setPips(setsWon = 0, setsToWin = PAZAAK_SETS_TO_WIN) {
+  const won = Number(setsWon || 0);
+  return Array.from({ length: setsToWin }, (_, index) => ({
+    index: index + 1,
+    on: index < won
+  }));
+}
+
+function initialForSeat(seat = {}) {
+  return String(seat.displayName || seat.seatId || '?').trim().slice(0, 1).toUpperCase() || '?';
+}
+
+function scoreStateClass(player = {}, score = 0) {
+  if (player.bust) return 'is-bust';
+  if (Number(score || 0) === PAZAAK_TARGET) return 'is-twenty';
+  if (player.stood || player.filledTable) return 'is-stand';
+  return '';
+}
+
+function buildSideDeckSlots(selectedIds = [], catalogById = new Map(), limit = PAZAAK_SIDE_DECK_SIZE) {
+  const ids = Array.from(selectedIds || []).map(String).filter(Boolean);
+  return Array.from({ length: limit }, (_, index) => {
+    const card = catalogById.get(ids[index]) || null;
+    return {
+      index: index + 1,
+      indexLabel: String(index + 1).padStart(2, '0'),
+      hasCard: Boolean(card),
+      card,
+      visualLabel: card?.visualLabel || '',
+      label: card?.label || '',
+      visualTone: card?.visualTone || 'neutral',
+      image: card?.image || PAZAAK_CARD_FRONT_IMAGE,
+      hasTemplateImage: Boolean(card?.hasTemplateImage)
+    };
+  });
+}
+
 function choiceForms(card = {}) {
   if (card.type === 'plusMinus' || card.type === 'tiebreaker') {
     return { requiresChoice: true, signOnly: true, signAndValue: false };
@@ -109,9 +159,15 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
   const isThinking = Boolean(state.aiThinking?.active && state.aiThinking?.seatId === seat.seatId);
   const isViewer = currentSeatId === seat.seatId;
   const hand = Array.isArray(player.hand) ? player.hand : [];
+  const tableCards = (Array.isArray(player.tableCards) ? player.tableCards : []).map(mapTableCard);
+  const displayName = seat.displayName || 'Unknown Seat';
+  const avatar = seat.avatar || '';
   return {
     seatId: seat.seatId,
-    displayName: seat.displayName || 'Unknown Seat',
+    displayName,
+    initial: initialForSeat(seat),
+    avatar,
+    hasAvatar: Boolean(avatar),
     type: seat.type || 'player',
     isAi: seat.type === 'ai' || seat.aiProfile,
     aiDifficultyLabel: PazaakAi.labelForDifficulty(aiProfile.difficulty),
@@ -127,8 +183,11 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     sideDeckLocked: Boolean(player.sideDeckLocked),
     sideDeckCount: Array.isArray(player.sideDeckIds) ? player.sideDeckIds.length : 0,
     score,
+    totalLabel: String(score),
     scoreLabel: scoreLabel(score),
+    scoreStateClass: scoreStateClass(player, score),
     setsWon: Number(player.setsWon || 0),
+    setPips: setPips(player.setsWon, PAZAAK_SETS_TO_WIN),
     stood: Boolean(player.stood),
     bust: Boolean(player.bust),
     filledTable: Boolean(player.filledTable),
@@ -138,10 +197,12 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     thinkingMessage: isThinking ? (state.aiThinking?.message || player.lastAction || '') : '',
     thinkingIntensity: isThinking ? (state.aiThinking?.intensity || 'normal') : '',
     thinkingDelayLabel: isThinking ? formatDelay(state.aiThinking?.delayMs) : '',
-    tableCards: (Array.isArray(player.tableCards) ? player.tableCards : []).map(mapTableCard),
-    hasTableCards: (player.tableCards ?? []).length > 0,
+    tableCards,
+    tableCardSlots: mapTableCardSlots(player.tableCards),
+    hasTableCards: tableCards.length > 0,
     hand: isViewer ? hand.map(card => ({ ...mapHandCard(card, player, isCurrent), sessionId: session.id, seatId: seat.seatId })) : [],
     handCount: hand.length,
+    hasHand: isViewer && hand.length > 0,
     showHand: isViewer,
     canAct: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
     canStand: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
@@ -192,6 +253,8 @@ export class PazaakViewModel {
       toneClass: `tone-${card.tone || 'neutral'}`,
       ...cardVisual(card, card.shortLabel || card.label)
     }));
+    const catalogById = new Map(catalog.map(card => [String(card.id), card]));
+    const deckSlots = buildSideDeckSlots(Array.from(effectiveSelected), catalogById);
     const selectedCount = effectiveSelected.size;
     const canLockDeck = currentSeatCanLock(session, state, currentSeat);
     const waitingSeats = (session.seats || [])
@@ -202,6 +265,9 @@ export class PazaakViewModel {
       .filter(seat => seat.status !== 'declined' && seat.status !== 'cancelled')
       .map(seat => mapSeat(session, state, seat, currentSeatId));
     const viewerSeat = seats.find(seat => seat.isViewer) ?? null;
+    const opponentSeats = seats.filter(seat => !seat.isViewer);
+    const opponentSeat = opponentSeats[0] || seats.find(seat => !seat.isViewer) || seats[0] || null;
+    const boardSeats = [opponentSeat, viewerSeat].filter(Boolean);
     const winnerSeat = state.winnerSeatId ? seats.find(seat => seat.seatId === state.winnerSeatId) : null;
     const wager = GameCreditEscrowService.describe(session);
     const eventLog = (Array.isArray(state.eventLog) ? state.eventLog : []).filter(entry => !entry.gmOnly || game?.user?.isGM).slice(-12).reverse().map(mapEventLogEntry);
@@ -243,8 +309,12 @@ export class PazaakViewModel {
       currentSeatId,
       hasCurrentSeat: Boolean(currentSeatId),
       viewerSeat,
+      opponentSeat,
+      opponentSeats,
+      boardSeats,
       seats,
       catalog,
+      deckSlots,
       selectedCount,
       selectedDeckCsv: Array.from(effectiveSelected).join(','),
       canLockDeck,

@@ -1,257 +1,291 @@
-{{!-- Pazaak active-table partial. Production actions remain data-games-action driven. --}}
-        <div class="swse-pazaak-table" data-pazaak-session-id="{{vm.activeTable.sessionId}}">
-          <div class="swse-pazaak-topbar">
-            <div>
-              <span class="swse-games-kicker">PAZAAK TABLE</span>
-              <h3>{{vm.activeTable.pazaak.title}}</h3>
-              <p>{{vm.activeTable.pazaak.rulesLabel}} · target {{vm.activeTable.pazaak.target}} · first to {{vm.activeTable.pazaak.setsToWin}} sets{{#if vm.activeTable.pazaak.wager.enabled}} · pot {{vm.activeTable.pazaak.wager.pot}} credits{{/if}}</p>
-            </div>
-            <div class="swse-pazaak-topbar__right">
-              <span>{{vm.activeTable.pazaak.statusLabel}}</span>
-              {{#if vm.activeTable.pazaak.canForfeit}}
-              <form data-games-action="pazaak-forfeit">
-                <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
-                <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
-                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Forfeit</button>
-              </form>
-              {{/if}}
-              {{#if vm.activeTable.pazaak.canCancel}}
-              <form data-games-action="pazaak-cancel-session">
-                <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
-                <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
-                <input type="hidden" name="reason" value="Pazaak table cancelled from Holopad Games.">
-                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
-              </form>
-              {{/if}}
-              <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Table</button>
-            </div>
+{{!-- Pazaak active-table partial. Phase 4 reskins the production engine with the concept table layout. --}}
+<div class="swse-pazaak-table" data-pazaak-session-id="{{vm.activeTable.sessionId}}">
+  {{#if vm.activeTable.pazaak.showSetup}}
+  <section class="swse-pazaak-setup swse-pazaak-setup--concept">
+    <aside class="swse-pazaak-setup__side">
+      <div class="swse-pazaak-rules-card swse-pazaak-opponent-card">
+        <span class="swse-games-kicker">SIDE DECK RULES</span>
+        <h4>Build a legal Pazaak side deck</h4>
+        <p>Choose exactly {{vm.activeTable.pazaak.sideDeckSize}} unique side cards. When all human players lock their decks, {{vm.activeTable.pazaak.openingHandSize}} random cards become the usable hand for this match.</p>
+        {{#if vm.activeTable.pazaak.hasWaitingSeats}}
+        <small>Waiting on: {{#each vm.activeTable.pazaak.waitingSeats}}{{this}} {{/each}}</small>
+        {{/if}}
+      </div>
+
+      {{#if vm.activeTable.pazaak.opponentSeat}}
+      <div class="swse-pazaak-opponent-card">
+        <div class="swse-pazaak-avatar swse-pazaak-avatar--large">
+          {{#if vm.activeTable.pazaak.opponentSeat.hasAvatar}}<img src="{{vm.activeTable.pazaak.opponentSeat.avatar}}" alt="{{vm.activeTable.pazaak.opponentSeat.displayName}}">{{else}}<span>{{vm.activeTable.pazaak.opponentSeat.initial}}</span>{{/if}}
+        </div>
+        <b>{{vm.activeTable.pazaak.opponentSeat.displayName}}</b>
+        <span>{{vm.activeTable.pazaak.opponentSeat.statusLabel}} · sets {{vm.activeTable.pazaak.opponentSeat.setsWon}}</span>
+        {{#if vm.activeTable.pazaak.opponentSeat.isAi}}
+        <small>{{vm.activeTable.pazaak.opponentSeat.aiDifficultyLabel}} AI · {{vm.activeTable.pazaak.opponentSeat.aiPersonalityLabel}}</small>
+        {{#if vm.activeTable.pazaak.opponentSeat.profession}}<small>{{vm.activeTable.pazaak.opponentSeat.profession}}</small>{{/if}}
+        {{#if vm.activeTable.pazaak.opponentSeat.tableFact}}<small class="swse-pazaak-table-fact">{{vm.activeTable.pazaak.opponentSeat.tableFact}}</small>{{/if}}
+        {{/if}}
+      </div>
+      {{/if}}
+    </aside>
+
+    {{#if vm.activeTable.pazaak.canLockDeck}}
+    <form class="swse-pazaak-side-builder swse-pazaak-setup__main" data-games-action="lock-pazaak-side-deck">
+      <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+      <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+
+      <div class="swse-pazaak-builder-head swse-pazaak-build-head">
+        <div>
+          <span class="swse-games-kicker">SIDE DECK BUILDER</span>
+          <h3>Build your side deck</h3>
+          <p>Tap cards to fill the tray. The production rule remains unique-card legality; duplicate concept behavior is intentionally not enabled here.</p>
+        </div>
+        <div class="swse-pazaak-build-counter">
+          <b><span data-pazaak-selected-count>{{vm.activeTable.pazaak.selectedCount}}</span><small>/{{vm.activeTable.pazaak.sideDeckSize}}</small></b>
+          <span>cards selected</span>
+        </div>
+      </div>
+
+      <div class="swse-pazaak-card-catalog swse-pazaak-build-catalog">
+        {{#each vm.activeTable.pazaak.catalog}}
+        <label class="swse-pazaak-catalog-card {{this.toneClass}} {{#if this.selected}}is-selected{{/if}}" title="{{this.description}}">
+          <input type="checkbox" name="sideDeckIds" value="{{this.id}}" data-pazaak-side-card data-card-label="{{this.label}}" data-card-visual="{{this.visualLabel}}" data-card-tone="{{this.visualTone}}" {{#if this.selected}}checked{{/if}}>
+          <span class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
+            {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
+            <span class="swse-pazaak-template-card__wash"></span>
+            <b>{{this.visualLabel}}</b>
+            <small>{{this.label}}</small>
+          </span>
+          <span class="swse-pazaak-card-desc">{{this.description}}</span>
+        </label>
+        {{/each}}
+      </div>
+
+      <div class="swse-pazaak-deck-tray-wrap">
+        <div class="swse-pazaak-deck-tray-head">
+          <span class="swse-games-kicker">Your Side Deck — selected cards</span>
+          <span>{{vm.activeTable.pazaak.selectedCount}} / {{vm.activeTable.pazaak.sideDeckSize}}</span>
+        </div>
+        <div class="swse-pazaak-deck-tray" data-pazaak-deck-tray>
+          {{#each vm.activeTable.pazaak.deckSlots}}
+          <span class="swse-pazaak-deck-slot {{#if this.hasCard}}is-filled tone-{{this.visualTone}}{{/if}}" data-pazaak-deck-slot>
+            <span class="swse-pazaak-slot__idx">{{this.indexLabel}}</span>
+            {{#if this.hasCard}}
+            <span class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
+              {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
+              <span class="swse-pazaak-template-card__wash"></span>
+              <b>{{this.visualLabel}}</b>
+            </span>
+            {{/if}}
+          </span>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="swse-pazaak-build-actions">
+        <span>Opponent decks are generated by the existing Pazaak engine. Wagers, if any, remain TransactionEngine-backed.</span>
+        <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.pazaak.lockDeckReady}}disabled{{/unless}}>Lock Deck &amp; Deal</button>
+      </div>
+    </form>
+    {{else}}
+    <section class="swse-pazaak-setup__main">
+      <div class="swse-games-empty">
+        <b>Your side deck is locked or you are spectating this table.</b>
+        <span>The match starts automatically when every human player has locked a legal side deck.</span>
+      </div>
+    </section>
+    {{/if}}
+  </section>
+  {{/if}}
+
+  {{#if vm.activeTable.pazaak.showPlaying}}
+  <section class="swse-pazaak-play swse-pazaak-board-mode">
+    {{#if vm.activeTable.pazaak.hasAiThinking}}
+    <div class="swse-pazaak-thinking-banner thinking-{{vm.activeTable.pazaak.aiThinking.intensity}}">
+      <b>{{vm.activeTable.pazaak.aiThinking.seatLabel}} is {{vm.activeTable.pazaak.aiThinking.intensityLabel}}</b>
+      <span>{{vm.activeTable.pazaak.aiThinking.message}}{{#if vm.activeTable.pazaak.aiThinking.delayLabel}} · {{vm.activeTable.pazaak.aiThinking.delayLabel}}{{/if}}</span>
+    </div>
+    {{/if}}
+
+    <div class="swse-pazaak-board-shell">
+      <aside class="swse-pazaak-rail swse-pazaak-rail--left">
+        {{#if vm.activeTable.pazaak.opponentSeat}}
+        <div class="swse-pazaak-opponent-card">
+          <div class="swse-pazaak-avatar swse-pazaak-avatar--large">
+            {{#if vm.activeTable.pazaak.opponentSeat.hasAvatar}}<img src="{{vm.activeTable.pazaak.opponentSeat.avatar}}" alt="{{vm.activeTable.pazaak.opponentSeat.displayName}}">{{else}}<span>{{vm.activeTable.pazaak.opponentSeat.initial}}</span>{{/if}}
           </div>
-
-          <div class="swse-pazaak-alert">
-            <b>{{vm.activeTable.pazaak.message}}</b>
-            {{#if vm.activeTable.pazaak.showPlaying}}<span>Active turn: {{vm.activeTable.pazaak.activeSeatLabel}}</span>{{/if}}
-            {{#if vm.activeTable.pazaak.showComplete}}<span>Winner: {{vm.activeTable.pazaak.winnerLabel}}</span>{{/if}}
-            {{#if vm.activeTable.pazaak.wager.enabled}}<span>Wager: {{vm.activeTable.pazaak.wager.status}} · {{vm.activeTable.pazaak.wager.buyIn}} credit buy-in</span>{{/if}}
-            {{#if vm.activeTable.pazaak.wager.settlementMessage}}<span>Economy policy: {{vm.activeTable.pazaak.wager.settlementMessage}}</span>{{/if}}
-          </div>
-
-          {{#if vm.activeTable.pazaak.showSetup}}
-          <section class="swse-pazaak-setup">
-            <div class="swse-pazaak-rules-card">
-              <span class="swse-games-kicker">SIDE DECK RULES</span>
-              <h4>Build a legal Pazaak side deck</h4>
-              <p>All side cards are unlocked for this MVP. Before play begins, each human player must lock exactly {{vm.activeTable.pazaak.sideDeckSize}} unique side cards. At match start, {{vm.activeTable.pazaak.openingHandSize}} of those cards are randomly selected as that player's usable hand for the match.</p>
-              {{#if vm.activeTable.pazaak.hasWaitingSeats}}
-              <small>Waiting on: {{#each vm.activeTable.pazaak.waitingSeats}}{{this}} {{/each}}</small>
-              {{/if}}
-            </div>
-
-            {{#if vm.activeTable.pazaak.canLockDeck}}
-            <form class="swse-pazaak-side-builder" data-games-action="lock-pazaak-side-deck">
-              <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
-              <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
-              <div class="swse-pazaak-builder-head">
-                <div>
-                  <span class="swse-games-kicker">ALL CARDS UNLOCKED</span>
-                  <strong><span data-pazaak-selected-count>{{vm.activeTable.pazaak.selectedCount}}</span> / {{vm.activeTable.pazaak.sideDeckSize}} selected</strong>
-                </div>
-                <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.pazaak.lockDeckReady}}disabled{{/unless}}>Lock Side Deck</button>
-              </div>
-
-              <div class="swse-pazaak-card-catalog">
-                {{#each vm.activeTable.pazaak.catalog}}
-                <label class="swse-pazaak-catalog-card {{this.toneClass}} {{#if this.selected}}is-selected{{/if}}">
-                  <input type="checkbox" name="sideDeckIds" value="{{this.id}}" data-pazaak-side-card {{#if this.selected}}checked{{/if}}>
-                  <span class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
-                    {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
-                    <span class="swse-pazaak-template-card__wash"></span>
-                    <b>{{this.visualLabel}}</b>
-                    <small>{{this.label}}</small>
-                  </span>
-                  <span class="swse-pazaak-card-desc">{{this.description}}</span>
-                </label>
-                {{/each}}
-              </div>
-            </form>
-            {{else}}
-            <div class="swse-games-empty">
-              <b>Your side deck is locked or you are spectating this table.</b>
-              <span>The match will start automatically when every human player has locked a legal side deck.</span>
-            </div>
-            {{/if}}
-          </section>
-          {{/if}}
-
-          {{#if vm.activeTable.pazaak.showPlaying}}
-          <section class="swse-pazaak-play">
-            <div class="swse-pazaak-scoreboard">
-              <span>Set {{vm.activeTable.pazaak.setNumber}}</span>
-              <span>Target {{vm.activeTable.pazaak.target}}</span>
-              <span>Table limit {{vm.activeTable.pazaak.tableLimit}}</span>
-            </div>
-
-            {{#if vm.activeTable.pazaak.hasAiThinking}}
-            <div class="swse-pazaak-thinking-banner thinking-{{vm.activeTable.pazaak.aiThinking.intensity}}">
-              <b>{{vm.activeTable.pazaak.aiThinking.seatLabel}} is {{vm.activeTable.pazaak.aiThinking.intensityLabel}}</b>
-              <span>{{vm.activeTable.pazaak.aiThinking.message}}{{#if vm.activeTable.pazaak.aiThinking.delayLabel}} · {{vm.activeTable.pazaak.aiThinking.delayLabel}}{{/if}}</span>
-            </div>
-            {{/if}}
-
-            {{#if vm.activeTable.pazaak.hasTableChatter}}
-            <aside class="swse-games-chatter swse-pazaak-chatter" aria-label="Pazaak table chatter">
-              <span class="swse-games-kicker">TABLE CHATTER</span>
-              {{#each vm.activeTable.pazaak.tableChatter}}
-              <p class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b> <span>{{this.message}}</span></p>
-              {{/each}}
-            </aside>
-            {{/if}}
-
-            <div class="swse-pazaak-seat-grid">
-              {{#each vm.activeTable.pazaak.seats}}
-              <article class="swse-pazaak-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.bust}}is-bust{{/if}} {{#if this.isThinking}}is-thinking thinking-{{this.thinkingIntensity}}{{/if}}">
-                <header>
-                  <div>
-                    <b>{{this.displayName}}</b>
-                    <span>{{this.statusLabel}} · sets {{this.setsWon}}</span>
-                    {{#if this.isAi}}
-                    <small>AI: {{this.aiDifficultyLabel}} · {{this.aiFairnessLabel}} · {{this.aiPersonalityLabel}}{{#if this.aiForceSensitive}} · Force-sensitive{{/if}}</small>
-                    {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
-                    {{#if this.tableFact}}<small class="swse-pazaak-table-fact">{{this.tableFact}}</small>{{/if}}
-                    {{#if this.isThinking}}<small class="swse-pazaak-thinking-line">{{this.thinkingMessage}}{{#if this.thinkingDelayLabel}} · {{this.thinkingDelayLabel}}{{/if}}</small>{{/if}}
-                    {{/if}}
-                  </div>
-                  <strong>{{this.scoreLabel}}</strong>
-                </header>
-
-                <div class="swse-pazaak-table-cards">
-                  {{#if this.hasTableCards}}
-                    {{#each this.tableCards}}
-                    <span class="swse-pazaak-played-card swse-pazaak-template-card tone-{{this.visualTone}}">
-                      {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
-                      <span class="swse-pazaak-template-card__wash"></span>
-                      <b>{{this.visualLabel}}</b>
-                      <small>{{this.valueLabel}}</small>
-                    </span>
-                    {{/each}}
-                  {{else}}
-                    <span class="swse-pazaak-no-cards">No table cards yet.</span>
-                  {{/if}}
-                </div>
-
-                <footer>
-                  <span>{{this.lastAction}}</span>
-                  {{#if this.showHand}}<span>{{this.handCount}} side cards in hand</span>{{else}}<span>{{this.handCount}} hidden side cards</span>{{/if}}
-                </footer>
-              </article>
-              {{/each}}
-            </div>
-
-            {{#if vm.activeTable.pazaak.viewerSeat.canAct}}
-            <section class="swse-pazaak-hand-panel">
-              <div class="swse-pazaak-builder-head">
-                <div>
-                  <span class="swse-games-kicker">YOUR TURN</span>
-                  <strong>Play one side card, stand, or end your turn.</strong>
-                </div>
-                <div class="swse-pazaak-turn-actions">
-                  <form data-games-action="pazaak-stand">
-                    <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
-                    <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
-                    <button type="submit" class="swse-games-primary">Stand</button>
-                  </form>
-                  <form data-games-action="pazaak-end-turn">
-                    <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
-                    <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
-                    <button type="submit" class="swse-games-ghost">End Turn</button>
-                  </form>
-                </div>
-              </div>
-
-              <div class="swse-pazaak-hand-grid">
-                {{#each vm.activeTable.pazaak.viewerSeat.hand}}
-                <article class="swse-pazaak-hand-card tone-{{this.tone}}">
-                  <div class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
-                    {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
-                    <span class="swse-pazaak-template-card__wash"></span>
-                    <b>{{this.visualLabel}}</b>
-                    <small>{{this.label}}</small>
-                  </div>
-                  <p>{{this.description}}</p>
-                  {{#if this.previewLabel}}<p class="swse-pazaak-preview">{{this.previewLabel}}</p>{{/if}}
-                  <form data-games-action="pazaak-play-side-card">
-                    <input type="hidden" name="sessionId" value="{{this.sessionId}}">
-                    <input type="hidden" name="seatId" value="{{this.seatId}}">
-                    <input type="hidden" name="cardInstanceId" value="{{this.id}}">
-                    {{#if this.signOnly}}
-                    <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>Play +</button>
-                    <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>Play −</button>
-                    {{else}}
-                      {{#if this.signAndValue}}
-                      <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>+1</button>
-                      <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="2" {{#unless this.canPlay}}disabled{{/unless}}>+2</button>
-                      <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>−1</button>
-                      <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="2" {{#unless this.canPlay}}disabled{{/unless}}>−2</button>
-                      {{else}}
-                      <button type="submit" class="swse-games-primary" {{#unless this.canPlay}}disabled{{/unless}}>Play</button>
-                      {{/if}}
-                    {{/if}}
-                  </form>
-                </article>
-                {{/each}}
-              </div>
-            </section>
-            {{else}}
-            <div class="swse-games-empty">
-              <b>Waiting for {{vm.activeTable.pazaak.activeSeatLabel}}.</b>
-              <span>Your hand appears here when it is your turn.</span>
-            </div>
-            {{/if}}
-          </section>
-          {{/if}}
-
-          {{#if vm.activeTable.pazaak.showComplete}}
-          <section class="swse-pazaak-complete">
-            <span class="swse-games-kicker">MATCH COMPLETE</span>
-            <h4>{{vm.activeTable.pazaak.winnerLabel}} wins the Pazaak match.</h4>
-            {{#if vm.activeTable.pazaak.wager.enabled}}
-            <p>Credit payout/refund status: {{vm.activeTable.pazaak.wager.status}}. TransactionEngine ledger records remain the source of truth.</p>
-            {{#if vm.activeTable.pazaak.wager.settlementMessage}}<p>{{vm.activeTable.pazaak.wager.settlementMessage}}</p>{{/if}}
-            {{#if vm.activeTable.pazaak.wager.requiresGmSettlement}}<p><b>GM settlement required:</b> this payout exceeded automated AI/house policy gates and is waiting for a GM-adjusted payout phase.</p>{{/if}}
-            {{#if vm.activeTable.pazaak.wager.payoutApproved}}<p>Approved payout: {{vm.activeTable.pazaak.wager.payoutApproved}} credits{{#if vm.activeTable.pazaak.wager.payoutRequested}} / requested {{vm.activeTable.pazaak.wager.payoutRequested}} credits{{/if}}.</p>{{/if}}
-            {{else}}
-            <p>Republic Senate Rules were active, so no credits, items, or assets were transferred.</p>
-            {{/if}}
-            {{#if vm.activeTable.pazaak.hasMatchRecap}}
-            <div class="swse-games-recap-strip">
-              {{#each vm.activeTable.pazaak.matchRecap}}
-              <span><b>Set {{this.setNumber}}</b> {{this.outcomeLabel}}</span>
-              {{/each}}
-            </div>
-            {{/if}}
-          </section>
-          {{/if}}
-
-          {{#if vm.activeTable.pazaak.hasSetHistory}}
-          <section class="swse-pazaak-history">
-            <span class="swse-games-kicker">SET HISTORY</span>
-            {{#each vm.activeTable.pazaak.setHistory}}
-            <div>
-              <b>Set {{this.setNumber}}</b>
-              <span>{{#if this.winnerLabel}}{{this.winnerLabel}} won{{else}}Tie{{/if}} · {{this.reason}}</span>
-            </div>
-            {{/each}}
-          </section>
-          {{/if}}
-
-          {{#if vm.activeTable.pazaak.hasEventLog}}
-          <section class="swse-pazaak-history swse-pazaak-log">
-            <span class="swse-games-kicker">TABLE LOG</span>
-            {{#each vm.activeTable.pazaak.eventLog}}
-            <div class="tone-{{this.tone}}">
-              <b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b>
-              <span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span>
-            </div>
-            {{/each}}
-          </section>
+          <b>{{vm.activeTable.pazaak.opponentSeat.displayName}}</b>
+          <span>{{vm.activeTable.pazaak.opponentSeat.statusLabel}} · {{vm.activeTable.pazaak.opponentSeat.handCount}} hidden side cards</span>
+          {{#if vm.activeTable.pazaak.opponentSeat.isAi}}
+          <small>{{vm.activeTable.pazaak.opponentSeat.aiDifficultyLabel}} AI · {{vm.activeTable.pazaak.opponentSeat.aiFairnessLabel}} · {{vm.activeTable.pazaak.opponentSeat.aiPersonalityLabel}}{{#if vm.activeTable.pazaak.opponentSeat.aiForceSensitive}} · Force-sensitive{{/if}}</small>
+          {{#if vm.activeTable.pazaak.opponentSeat.profession}}<small>{{vm.activeTable.pazaak.opponentSeat.profession}}</small>{{/if}}
+          {{#if vm.activeTable.pazaak.opponentSeat.tableFact}}<small class="swse-pazaak-table-fact">{{vm.activeTable.pazaak.opponentSeat.tableFact}}</small>{{/if}}
           {{/if}}
         </div>
+        {{/if}}
+
+        {{#if vm.activeTable.pazaak.hasTableChatter}}
+        <div class="swse-games-chatter swse-pazaak-chatter" aria-label="Pazaak table chatter">
+          <span class="swse-games-kicker">TABLE CHATTER</span>
+          {{#each vm.activeTable.pazaak.tableChatter}}
+          <p class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b> <span>{{this.message}}</span></p>
+          {{/each}}
+        </div>
+        {{/if}}
+      </aside>
+
+      <div class="swse-pazaak-board">
+        {{#if vm.activeTable.pazaak.opponentSeat}}
+        <article class="swse-pazaak-seat-row swse-pazaak-seat-row--opponent {{#if vm.activeTable.pazaak.opponentSeat.isCurrent}}is-current{{/if}} {{#if vm.activeTable.pazaak.opponentSeat.bust}}is-bust{{/if}} {{vm.activeTable.pazaak.opponentSeat.scoreStateClass}}">
+          <header class="swse-pazaak-seat-head">
+            <div class="swse-pazaak-avatar">
+              {{#if vm.activeTable.pazaak.opponentSeat.hasAvatar}}<img src="{{vm.activeTable.pazaak.opponentSeat.avatar}}" alt="{{vm.activeTable.pazaak.opponentSeat.displayName}}">{{else}}<span>{{vm.activeTable.pazaak.opponentSeat.initial}}</span>{{/if}}
+            </div>
+            <div>
+              <b>{{vm.activeTable.pazaak.opponentSeat.displayName}}</b>
+              <span>{{vm.activeTable.pazaak.opponentSeat.statusLabel}} · opponent</span>
+              <span class="swse-pazaak-set-pips">{{#each vm.activeTable.pazaak.opponentSeat.setPips}}<i class="{{#if this.on}}on{{/if}}"></i>{{/each}}</span>
+            </div>
+            <strong>{{vm.activeTable.pazaak.opponentSeat.totalLabel}}<small>score</small></strong>
+          </header>
+          <div class="swse-pazaak-slot-row">
+            {{#each vm.activeTable.pazaak.opponentSeat.tableCardSlots}}
+            <span class="swse-pazaak-slot {{#if this.hasCard}}is-filled{{/if}}"><span class="swse-pazaak-slot__idx">{{this.indexLabel}}</span>{{#if this.hasCard}}<span class="swse-pazaak-played-card swse-pazaak-template-card tone-{{this.card.visualTone}}">{{#if this.card.hasTemplateImage}}<img src="{{this.card.image}}" alt="{{this.card.label}}">{{/if}}<span class="swse-pazaak-template-card__wash"></span><b>{{this.card.visualLabel}}</b><small>{{this.card.valueLabel}}</small></span>{{/if}}</span>
+            {{/each}}
+          </div>
+        </article>
+        {{/if}}
+
+        <div class="swse-pazaak-midline"><span>Set {{vm.activeTable.pazaak.setNumber}}</span><b>VS</b><span>Target {{vm.activeTable.pazaak.target}}</span></div>
+
+        {{#if vm.activeTable.pazaak.viewerSeat}}
+        <article class="swse-pazaak-seat-row swse-pazaak-seat-row--viewer {{#if vm.activeTable.pazaak.viewerSeat.isCurrent}}is-current{{/if}} {{#if vm.activeTable.pazaak.viewerSeat.bust}}is-bust{{/if}} {{vm.activeTable.pazaak.viewerSeat.scoreStateClass}}">
+          <header class="swse-pazaak-seat-head">
+            <div class="swse-pazaak-avatar">
+              {{#if vm.activeTable.pazaak.viewerSeat.hasAvatar}}<img src="{{vm.activeTable.pazaak.viewerSeat.avatar}}" alt="{{vm.activeTable.pazaak.viewerSeat.displayName}}">{{else}}<span>{{vm.activeTable.pazaak.viewerSeat.initial}}</span>{{/if}}
+            </div>
+            <div>
+              <b>{{vm.activeTable.pazaak.viewerSeat.displayName}}</b>
+              <span>{{vm.activeTable.pazaak.viewerSeat.statusLabel}} · you</span>
+              <span class="swse-pazaak-set-pips">{{#each vm.activeTable.pazaak.viewerSeat.setPips}}<i class="{{#if this.on}}on{{/if}}"></i>{{/each}}</span>
+            </div>
+            <strong>{{vm.activeTable.pazaak.viewerSeat.totalLabel}}<small>score</small></strong>
+          </header>
+          <div class="swse-pazaak-slot-row swse-pazaak-slot-row--viewer">
+            {{#each vm.activeTable.pazaak.viewerSeat.tableCardSlots}}
+            <span class="swse-pazaak-slot {{#if this.hasCard}}is-filled{{/if}}"><span class="swse-pazaak-slot__idx">{{this.indexLabel}}</span>{{#if this.hasCard}}<span class="swse-pazaak-played-card swse-pazaak-template-card tone-{{this.card.visualTone}}">{{#if this.card.hasTemplateImage}}<img src="{{this.card.image}}" alt="{{this.card.label}}">{{/if}}<span class="swse-pazaak-template-card__wash"></span><b>{{this.card.visualLabel}}</b><small>{{this.card.valueLabel}}</small></span>{{/if}}</span>
+            {{/each}}
+          </div>
+        </article>
+        {{/if}}
+      </div>
+
+      <aside class="swse-pazaak-rail swse-pazaak-rail--right">
+        <div class="swse-pazaak-scoreboard swse-pazaak-table-stats">
+          <span>Set {{vm.activeTable.pazaak.setNumber}}</span>
+          <span>Limit {{vm.activeTable.pazaak.tableLimit}}</span>
+          <span>{{vm.activeTable.pazaak.rulesLabel}}</span>
+        </div>
+        {{#if vm.activeTable.pazaak.hasEventLog}}
+        <section class="swse-pazaak-history swse-pazaak-log swse-pazaak-log-rail">
+          <span class="swse-games-kicker">TABLE LOG</span>
+          {{#each vm.activeTable.pazaak.eventLog}}
+          <div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>
+          {{/each}}
+        </section>
+        {{/if}}
+      </aside>
+    </div>
+
+    {{#if vm.activeTable.pazaak.viewerSeat.hasHand}}
+    <section class="swse-pazaak-hand-panel swse-pazaak-hand-dock {{#unless vm.activeTable.pazaak.viewerSeat.canAct}}is-waiting{{/unless}}">
+      <div class="swse-pazaak-builder-head swse-pazaak-hand-head">
+        <div>
+          <span class="swse-games-kicker">YOUR SIDE HAND</span>
+          {{#if vm.activeTable.pazaak.viewerSeat.canAct}}<strong>Play one side card, stand, or end your turn.</strong>{{else}}<strong>Waiting for {{vm.activeTable.pazaak.activeSeatLabel}}.</strong>{{/if}}
+        </div>
+        <div class="swse-pazaak-turn-actions">
+          <form data-games-action="pazaak-stand">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+            <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.pazaak.viewerSeat.canAct}}disabled{{/unless}}>Stand</button>
+          </form>
+          <form data-games-action="pazaak-end-turn">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+            <button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.pazaak.viewerSeat.canAct}}disabled{{/unless}}>End Turn</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="swse-pazaak-hand-grid swse-pazaak-hand-row">
+        {{#each vm.activeTable.pazaak.viewerSeat.hand}}
+        <article class="swse-pazaak-hand-card tone-{{this.tone}} {{#if this.canPlay}}is-playable{{/if}}">
+          <div class="swse-pazaak-card-face swse-pazaak-template-card tone-{{this.visualTone}}">
+            {{#if this.hasTemplateImage}}<img src="{{this.image}}" alt="{{this.label}}">{{/if}}
+            <span class="swse-pazaak-template-card__wash"></span>
+            <b>{{this.visualLabel}}</b>
+            <small>{{this.label}}</small>
+          </div>
+          {{#if this.previewLabel}}<p class="swse-pazaak-preview">{{this.previewLabel}}</p>{{/if}}
+          <form data-games-action="pazaak-play-side-card">
+            <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+            <input type="hidden" name="seatId" value="{{this.seatId}}">
+            <input type="hidden" name="cardInstanceId" value="{{this.id}}">
+            {{#if this.signOnly}}
+            <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>+ Play</button>
+            <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>− Play</button>
+            {{else}}
+              {{#if this.signAndValue}}
+              <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>+1</button>
+              <button type="submit" class="swse-games-primary swse-pazaak-choice-button" name="sign" value="plus" data-pazaak-choice-value="2" {{#unless this.canPlay}}disabled{{/unless}}>+2</button>
+              <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="1" {{#unless this.canPlay}}disabled{{/unless}}>−1</button>
+              <button type="submit" class="swse-games-ghost swse-pazaak-choice-button" name="sign" value="minus" data-pazaak-choice-value="2" {{#unless this.canPlay}}disabled{{/unless}}>−2</button>
+              {{else}}
+              <button type="submit" class="swse-games-primary" {{#unless this.canPlay}}disabled{{/unless}}>Play</button>
+              {{/if}}
+            {{/if}}
+          </form>
+        </article>
+        {{/each}}
+      </div>
+    </section>
+    {{else}}
+    <div class="swse-games-empty">
+      <b>Waiting for {{vm.activeTable.pazaak.activeSeatLabel}}.</b>
+      <span>Your hand appears here once your side deck is locked and the first set begins.</span>
+    </div>
+    {{/if}}
+  </section>
+  {{/if}}
+
+  {{#if vm.activeTable.pazaak.showComplete}}
+  <section class="swse-pazaak-complete">
+    <span class="swse-games-kicker">MATCH COMPLETE</span>
+    <h4>{{vm.activeTable.pazaak.winnerLabel}} wins the Pazaak match.</h4>
+    {{#if vm.activeTable.pazaak.wager.enabled}}
+    <p>Credit payout/refund status: {{vm.activeTable.pazaak.wager.status}}. TransactionEngine ledger records remain the source of truth.</p>
+    {{#if vm.activeTable.pazaak.wager.settlementMessage}}<p>{{vm.activeTable.pazaak.wager.settlementMessage}}</p>{{/if}}
+    {{#if vm.activeTable.pazaak.wager.requiresGmSettlement}}<p><b>GM settlement required:</b> this payout exceeded automated AI/house policy gates and is waiting for a GM-adjusted payout phase.</p>{{/if}}
+    {{#if vm.activeTable.pazaak.wager.payoutApproved}}<p>Approved payout: {{vm.activeTable.pazaak.wager.payoutApproved}} credits{{#if vm.activeTable.pazaak.wager.payoutRequested}} / requested {{vm.activeTable.pazaak.wager.payoutRequested}} credits{{/if}}.</p>{{/if}}
+    {{else}}
+    <p>Republic Senate Rules were active, so no credits, items, or assets were transferred.</p>
+    {{/if}}
+    {{#if vm.activeTable.pazaak.hasMatchRecap}}
+    <div class="swse-games-recap-strip">
+      {{#each vm.activeTable.pazaak.matchRecap}}
+      <span><b>Set {{this.setNumber}}</b> {{this.outcomeLabel}}</span>
+      {{/each}}
+    </div>
+    {{/if}}
+  </section>
+  {{/if}}
+
+  {{#if vm.activeTable.pazaak.hasSetHistory}}
+  <section class="swse-pazaak-history swse-pazaak-set-history">
+    <span class="swse-games-kicker">SET HISTORY</span>
+    {{#each vm.activeTable.pazaak.setHistory}}
+    <div><b>Set {{this.setNumber}}</b><span>{{#if this.winnerLabel}}{{this.winnerLabel}} won{{else}}Tie{{/if}} · {{this.reason}}</span></div>
+    {{/each}}
+  </section>
+  {{/if}}
+</div>
