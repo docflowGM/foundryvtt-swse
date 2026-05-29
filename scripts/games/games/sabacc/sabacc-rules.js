@@ -3,7 +3,8 @@ import { SABACC_MAX_HAND_SIZE, SABACC_MIN_HAND_SIZE, SABACC_TARGET } from './sab
 
 
 export const SABACC_HAND_HIERARCHY_HELP = [
-  { label: 'Pure Sabacc', description: 'Two lone Sylops with no other cards.' },
+  { label: "Idiot's Array", description: 'A Sylop plus a 2 and 3. This named hand outranks Pure Sabacc and may claim the Sabacc pot.' },
+  { label: 'Pure Sabacc', description: 'Two lone Sylops with no other cards; may claim the Sabacc pot.' },
   { label: 'Rhylet', description: 'Three of a kind and two of a kind equalling zero.' },
   { label: 'Fleet', description: 'A Sylop plus any four of a kind equalling zero.' },
   { label: 'Banthas Wild', description: 'Three same-sign cards plus one or two mixed cards equalling zero.' },
@@ -62,6 +63,10 @@ function hasConsecutiveAbsRun(cards = [], length = 4) {
   return unique.length >= length && unique.every((value, index) => index === 0 || value === unique[index - 1] + 1);
 }
 
+function jackpotSabaccPotClaimForSpecial(special = null) {
+  return ['idiots-array', 'pure-sabacc'].includes(String(special?.id || '').trim());
+}
+
 function classifySpecialHand(cards = [], total = 0) {
   const hand = safeCards(cards);
   const nonSylops = nonSylopCards(hand);
@@ -76,6 +81,9 @@ function classifySpecialHand(cards = [], total = 0) {
   const valueSet = nonSylopValues.join(',');
   const make = (id, label, specialRank, extra = []) => ({ id, label, specialRank, vector: [900, specialRank, ...extra, cardCount, suited ? 1 : 0, posTotal, highPos, sylops] });
 
+  const hasTwo = hand.some(card => valueOf(card) === 2);
+  const hasThree = hand.some(card => valueOf(card) === 3);
+  if (sylops >= 1 && hasTwo && hasThree) return make('idiots-array', "Idiot's Array", 1010, [suited ? 1 : 0]);
   if (cardCount === 2 && sylops === 2) return make('pure-sabacc', 'Pure Sabacc', 1000);
   if (total !== 0) return null;
 
@@ -97,10 +105,6 @@ function classifySpecialHand(cards = [], total = 0) {
   if (countPositiveNegativePairs(hand) >= 2 && cardCount >= 4) return make('rule-of-two', 'Rule of Two', 930, [cardCount, suited ? 1 : 0]);
 
   if (sylops >= 1 && countPositiveNegativePairs(hand) >= 1 && cardCount >= 3) return make('yee-haa', 'Yee-Haa', 920, [cardCount, suited ? 1 : 0]);
-
-  if (sylops >= 1 && hand.some(card => valueOf(card) === 2 && card.suit) && hand.some(card => valueOf(card) === 3 && card.suit && card.suit === hand.find(two => valueOf(two) === 2 && two.suit)?.suit)) {
-    return make('idiots-array', "Idiot's Array", 910, [suited ? 1 : 0]);
-  }
 
   return null;
 }
@@ -147,11 +151,18 @@ export function scoreSabaccHand(cards = []) {
 }
 
 export function isSabaccBombOut(_total) {
+  // Corellian Spike — Holopad Wagered Variant intentionally disables classic
+  // bomb-out elimination. The UI can still display legacy labels when a future
+  // classic Sabacc rules mode enables that rule.
   return false;
 }
 
 export function isIdiotsArray(cards = []) {
   return classifySpecialHand(cards, scoreSabaccHand(cards))?.id === 'idiots-array';
+}
+
+export function isSabaccPotJackpotHand(cards = []) {
+  return jackpotSabaccPotClaimForSpecial(classifySpecialHand(cards, scoreSabaccHand(cards)));
 }
 
 export function evaluateSabaccHand(cards = []) {
@@ -173,7 +184,7 @@ export function evaluateSabaccHand(cards = []) {
     bombedOut: false,
     canWin: enoughCards,
     specialWinner: Boolean(special || total === 0),
-    claimsSabaccPot: Boolean(enoughCards && total === 0),
+    claimsSabaccPot: Boolean(enoughCards && jackpotSabaccPotClaimForSpecial(special)),
     handType: special?.id || (total === 0 ? 'sabacc' : 'nulrhek'),
     handRankLabel: label,
     rank,

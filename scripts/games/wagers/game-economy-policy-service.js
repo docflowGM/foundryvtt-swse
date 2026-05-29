@@ -58,6 +58,14 @@ function isClosedPlayerPool(session = {}) {
   return !seats.some(isAutomatedSeat) && safeAmount(session.escrow?.credits?.houseStake ?? session.wagerProfile?.houseStake) <= 0;
 }
 
+function isPlayerInitiatedWager(session = {}) {
+  const createdBy = String(session.metadata?.createdBy || '');
+  if (createdBy.startsWith('player:')) return true;
+  const hostUserId = session.hostUserId || null;
+  const hostSeat = playableSeats(session).find(seat => seat.seatId === 'seat_host' || (hostUserId && seat.userId === hostUserId));
+  return hostSeat?.type === 'player';
+}
+
 function policyMessage(code, fallback) {
   const messages = {
     republicSenate: 'Republic Senate Rules were active, so no economy settlement is needed.',
@@ -90,7 +98,11 @@ export class GameEconomyPolicyService {
     }
     const buyIn = safeAmount(session.wagerProfile?.buyIn ?? session.wagerProfile?.creditBuyIn);
     const max = safeAmount(settings.maxCreditWager);
-    if (!game.user?.isGM && max > 0 && buyIn > max) {
+    const playerInitiated = isPlayerInitiatedWager(session) || !game.user?.isGM;
+    if (playerInitiated && max <= 0) {
+      return { allowed: false, severity: 'blocked', code: 'playerCreditWagersDisabled', message: 'GM settings currently set maximum player credit wagers to 0, so player-created credit wagers are disabled.', caps: { maxCreditWager: 0 } };
+    }
+    if (playerInitiated && max > 0 && buyIn > max) {
       return { allowed: false, severity: 'blocked', code: 'buyInAboveCap', message: `This buy-in exceeds the GM player wager cap of ${max} credits.`, caps: { maxCreditWager: max } };
     }
     return { allowed: true, code: 'escrowAllowed', message: 'Credit escrow is allowed by GM settings.' };

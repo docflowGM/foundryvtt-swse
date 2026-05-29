@@ -1,0 +1,216 @@
+{{!-- Sabacc active-table partial. Production actions remain data-games-action driven. --}}
+<div class="swse-sabacc-casino swse-sabacc-table {{vm.activeTable.sabacc.phaseClass}}" data-sabacc-session-id="{{vm.activeTable.sessionId}}">
+  {{#if vm.activeTable.sabacc.hasShowdown}}
+  <div class="swse-sabacc-banner {{#if vm.activeTable.sabacc.showdown.winnerLabel}}win{{/if}}">
+    {{#if vm.activeTable.sabacc.showdown.winnerLabel}}{{vm.activeTable.sabacc.showdown.winnerLabel}}{{else}}{{vm.activeTable.sabacc.showdown.tiedLabels}}{{/if}}
+    <small>{{vm.activeTable.sabacc.showdown.reason}}{{#if vm.activeTable.sabacc.showdown.timeLabel}} · {{vm.activeTable.sabacc.showdown.timeLabel}}{{/if}}</small>
+  </div>
+  {{/if}}
+
+  <section class="swse-sabacc-felt">
+    <div class="swse-sabacc-table-oval">
+      <div class="swse-sabacc-center">
+        <div class="swse-sabacc-pots">
+          <span><b>Hand Pot</b><strong>{{vm.activeTable.sabacc.handPot}}</strong></span>
+          <span class="sabacc"><b>Sabacc Pot</b><strong>{{vm.activeTable.sabacc.sabaccPot}}</strong></span>
+        </div>
+        <div class="swse-sabacc-deck-row">
+          <i class="swse-sabacc-deck-card"></i>
+          <span>{{vm.activeTable.sabacc.rulesVariantLabel}}</span><small>{{vm.activeTable.sabacc.phasePlan}} · {{vm.activeTable.sabacc.handLimitLabel}}</small>
+          <i class="swse-sabacc-deck-card"></i>
+        </div>
+        <div class="swse-sabacc-shift-row {{#if vm.activeTable.sabacc.shiftMatched}}matched{{/if}}">
+          <span>Shift Dice</span>
+          {{#if vm.activeTable.sabacc.hasShiftDice}}
+            {{#each vm.activeTable.sabacc.shiftDice.dice}}<b>{{this.value}}</b>{{/each}}
+            <small>{{#if vm.activeTable.sabacc.shiftMatched}}Forced shift triggered{{else}}Stable{{/if}}</small>
+          {{else}}
+            <b>?</b><b>?</b><small>Rolls after each betting round</small>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    {{#if vm.activeTable.sabacc.hasTableSeats}}
+      {{#each vm.activeTable.sabacc.tableSeats}}
+      <article class="swse-sabacc-seat {{this.cssClass}}" style="{{this.seatStyle}}">
+        <div class="swse-sabacc-seat-card">
+          <header>
+            {{#if this.hasAvatar}}<img src="{{this.avatar}}" alt="{{this.displayName}}">{{else}}<span class="swse-sabacc-avatar-glyph">{{this.avatarGlyph}}</span>{{/if}}
+            <div>
+              <strong>{{this.displayName}}</strong>
+              <small>{{#if this.isAi}}{{this.aiProfileLabel}}{{else}}Seat {{this.seatNumber}}{{/if}}</small>
+            </div>
+            <div class="swse-sabacc-total {{this.totalClass}}"><span>Total</span>{{this.totalLabel}}</div>
+          </header>
+          <div class="swse-sabacc-seat-cards">
+            {{#if this.hasCards}}
+              {{#each this.cards}}
+              <span class="swse-sabacc-card {{this.cssClass}} swse-card-animate-in">
+                {{#if this.hasImage}}<img src="{{this.image}}" alt="{{this.label}}">{{else}}<b>{{this.shortLabel}}</b>{{/if}}
+                <small>{{this.shortLabel}}</small>
+              </span>
+              {{/each}}
+            {{else}}
+              <span class="swse-sabacc-empty-hand">No cards</span>
+            {{/if}}
+          </div>
+          <footer>
+            <span class="swse-sabacc-seat-status {{this.statusClass}}">{{this.statusLabel}}</span>
+            <span>{{this.tableCredits}} cr</span>
+          </footer>
+          <p>{{this.lastAction}}</p>
+          {{#if this.aiLastDecision}}<p class="swse-sabacc-ai-read">{{this.aiLastDecision}}</p>{{/if}}
+          {{#if this.revealLabel}}<p class="swse-sabacc-reveal">{{this.revealLabel}}</p>{{/if}}
+        </div>
+      </article>
+      {{/each}}
+    {{/if}}
+
+    {{#if vm.activeTable.sabacc.hasMarket}}
+    <aside class="swse-sabacc-market-dock">
+      <span class="swse-games-kicker">Market · House Rule</span><small class="swse-sabacc-market-note">{{vm.activeTable.sabacc.marketRuleLabel}}</small>
+      {{#each vm.activeTable.sabacc.market}}
+      <article>
+        <span class="swse-sabacc-card {{this.card.cssClass}}">
+          {{#if this.card.hasImage}}<img src="{{this.card.image}}" alt="{{this.card.label}}">{{else}}<b>{{this.card.shortLabel}}</b>{{/if}}
+          <small>{{this.card.shortLabel}}</small>
+        </span>
+        <div><b>{{this.label}}</b><small>{{this.cost}} cr</small></div>
+        {{#if ../vm.activeTable.sabacc.viewerSeat.canCardAct}}
+        <form data-games-action="sabacc-buy-market-card">
+          <input type="hidden" name="sessionId" value="{{../vm.activeTable.sabacc.id}}">
+          <input type="hidden" name="seatId" value="{{../vm.activeTable.sabacc.currentSeatId}}">
+          <input type="hidden" name="slotId" value="{{this.id}}">
+          <button type="submit" class="swse-games-ghost">Buy</button>
+        </form>
+        {{/if}}
+      </article>
+      {{/each}}
+    </aside>
+    {{/if}}
+
+    {{#if vm.activeTable.sabacc.message}}
+    <div class="swse-sabacc-table-message">
+      <b>{{vm.activeTable.sabacc.statusLabel}}</b>
+      <span>{{vm.activeTable.sabacc.message}}</span>
+    </div>
+    {{/if}}
+  </section>
+
+  <section class="swse-sabacc-player-dock">
+    <div class="swse-sabacc-private-hand">
+      <span class="swse-games-kicker">Your Hand — Private</span>
+      <div class="swse-sabacc-private-cards">
+        {{#if vm.activeTable.sabacc.hasPrivateHand}}
+          {{#each vm.activeTable.sabacc.viewerSeat.hand}}
+          <article class="swse-sabacc-private-card">
+            <span class="swse-sabacc-card {{this.cssClass}}">
+              {{#if this.hasImage}}<img src="{{this.image}}" alt="{{this.label}}">{{else}}<b>{{this.shortLabel}}</b>{{/if}}
+              <small>{{this.shortLabel}}</small>
+            </span>
+            <div>
+              <b>{{this.label}}</b>
+              <small>{{this.valueLabel}} · {{this.suitLabel}}</small>
+            </div>
+            {{#if ../vm.activeTable.sabacc.viewerSeat.canCardAct}}
+            <div class="swse-sabacc-private-card-actions">
+              <form data-games-action="sabacc-shift-card">
+                <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+                <input type="hidden" name="seatId" value="{{this.seatId}}">
+                <input type="hidden" name="cardId" value="{{this.id}}">
+                <button type="submit" class="swse-games-ghost" {{#unless this.canShift}}disabled{{/unless}}>Trade Deck</button>
+              </form>
+              {{#if ../vm.activeTable.sabacc.hasMarket}}
+                {{#each this.market}}
+                <form data-games-action="sabacc-trade-market-card">
+                  <input type="hidden" name="sessionId" value="{{../sessionId}}">
+                  <input type="hidden" name="seatId" value="{{../seatId}}">
+                  <input type="hidden" name="cardId" value="{{../id}}">
+                  <input type="hidden" name="slotId" value="{{this.id}}">
+                  <button type="submit" class="swse-games-ghost">Trade {{this.label}} ({{this.cost}})</button>
+                </form>
+                {{/each}}
+              {{/if}}
+            </div>
+            {{/if}}
+          </article>
+          {{/each}}
+        {{else}}
+          <span class="swse-sabacc-empty-hand">No private cards yet.</span>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="swse-sabacc-action-box">
+      {{#if vm.activeTable.sabacc.viewerSeat.canBettingAct}}
+      <span class="swse-games-kicker">Your Betting Turn</span>
+      <strong>Table credits {{vm.activeTable.sabacc.viewerSeat.tableCredits}} · to call {{vm.activeTable.sabacc.betting.toCall}}</strong>
+      <div class="swse-sabacc-action-row">
+        <form data-games-action="sabacc-check"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.betting.canCheck}}disabled{{/unless}}>Check</button></form>
+        <form data-games-action="sabacc-bet" class="swse-games-inline-amount"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><input type="number" name="amount" min="{{vm.activeTable.sabacc.betting.minBet}}" max="{{vm.activeTable.sabacc.betting.maxBet}}" step="1" value="{{vm.activeTable.sabacc.betting.suggestedBet}}" {{#unless vm.activeTable.sabacc.betting.canBet}}disabled{{/unless}}><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.sabacc.betting.canBet}}disabled{{/unless}}>Bet</button></form>
+        <form data-games-action="sabacc-call-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.sabacc.betting.canCall}}disabled{{/unless}}>Call {{vm.activeTable.sabacc.betting.toCall}}</button></form>
+        <form data-games-action="sabacc-raise" class="swse-games-inline-amount"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><input type="number" name="amount" min="{{vm.activeTable.sabacc.betting.minRaise}}" max="{{vm.activeTable.sabacc.betting.maxBet}}" step="1" value="{{vm.activeTable.sabacc.betting.suggestedRaise}}" {{#unless vm.activeTable.sabacc.betting.canRaise}}disabled{{/unless}}><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.betting.canRaise}}disabled{{/unless}}>Raise</button></form>
+        <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
+      </div>
+      {{else if vm.activeTable.sabacc.viewerSeat.canCardAct}}
+      <span class="swse-games-kicker">Your Sabacc Turn</span>
+      <strong>{{vm.activeTable.sabacc.viewerSeat.totalLabel}} · {{vm.activeTable.sabacc.viewerSeat.statusLabel}}</strong>
+      <div class="swse-sabacc-action-row">
+        <form data-games-action="sabacc-draw-card"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Draw Card</button></form>
+        <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canStand}}disabled{{/unless}}>Stand / Pass</button></form>
+        <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
+      </div>
+      {{else if vm.activeTable.sabacc.canStartHand}}
+      <span class="swse-games-kicker">Table Ready</span>
+      <strong>{{#if vm.activeTable.sabacc.handLimitReached}}Hand limit reached. Cash out to close the table.{{else}}Start the next hand or cash out.{{/if}}</strong>
+      <div class="swse-sabacc-action-row">
+        <form data-games-action="sabacc-next-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#if vm.activeTable.sabacc.handLimitReached}}disabled{{/if}}>Next Hand</button></form>
+        {{#if vm.activeTable.sabacc.canCashOut}}<form data-games-action="sabacc-cash-out"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost">Cash Out</button></form>{{/if}}
+      </div>
+      {{else}}
+      <span class="swse-games-kicker">Waiting</span>
+      <strong>{{#if vm.activeTable.sabacc.activeSeatLabel}}{{vm.activeTable.sabacc.activeSeatLabel}}{{else}}Table{{/if}} is acting.</strong>
+      <small>{{vm.activeTable.sabacc.statusLabel}}</small>
+      {{/if}}
+    </div>
+
+    <div class="swse-sabacc-myinfo">
+      <div>{{vm.activeTable.sabacc.viewerSeat.tableCredits}}</div>
+      <span>table credits</span>
+      <small>{{vm.activeTable.sabacc.handProgressLabel}} · Total: {{vm.activeTable.sabacc.viewerSeat.totalLabel}}</small>
+    </div>
+  </section>
+
+  <section class="swse-sabacc-lower-panels">
+    {{#if vm.activeTable.sabacc.hasEventLog}}
+    <details class="swse-pazaak-history swse-pazaak-log" open>
+      <summary class="swse-games-kicker">Table Log</summary>
+      {{#each vm.activeTable.sabacc.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}
+    </details>
+    {{/if}}
+
+    {{#if vm.activeTable.sabacc.hasHandHistory}}
+    <details class="swse-pazaak-history">
+      <summary class="swse-games-kicker">Hand History</summary>
+      {{#each vm.activeTable.sabacc.handHistory}}<div><b>Hand {{this.round}}</b><span>{{#if this.winnerLabel}}{{this.winnerLabel}} won{{else}}No winner{{/if}} · {{this.reason}}</span></div>{{/each}}
+    </details>
+    {{/if}}
+
+    {{#if vm.activeTable.sabacc.hasHandHierarchyHelp}}
+    <details class="swse-games-help-panel swse-sabacc-hierarchy-help">
+      <summary>Sabacc Hand Hierarchy</summary>
+      <div>
+        {{#each vm.activeTable.sabacc.handHierarchyHelp}}<p><b>{{this.label}}</b><span>{{this.description}}</span></p>{{/each}}
+      </div>
+    </details>
+    {{/if}}
+
+    {{#if vm.activeTable.sabacc.hasGmAudit}}
+    <details class="swse-pazaak-history swse-pazaak-log swse-sabacc-gm-audit">
+      <summary class="swse-games-kicker">GM AI Audit</summary>
+      {{#each vm.activeTable.sabacc.gmAudit}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}
+    </details>
+    {{/if}}
+  </section>
+</div>
