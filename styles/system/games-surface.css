@@ -1851,3 +1851,120 @@
 @media (max-width: 1180px) {
   .swse-hintaro-rules-panel { position: static; width: auto; margin: 10px 16px; }
 }
+
+
+/* Audit fix: generated Dejarik SVG board geometry and click regions. */
+.swse-dejarik-svg {
+  display: block;
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.swse-dejarik-svg__base {
+  fill: url(#swseDejarikBase);
+  stroke: rgba(120, 220, 255, 0.26);
+  stroke-width: 0.45;
+}
+
+.swse-dejarik-cell {
+  cursor: default;
+  fill: rgba(10, 25, 45, 0.56);
+  pointer-events: auto;
+  stroke: rgba(120, 220, 255, 0.18);
+  stroke-width: 0.32;
+  transition: fill 140ms ease, stroke 140ms ease, filter 140ms ease;
+}
+
+.swse-dejarik-cell.is-even {
+  fill: rgba(57, 247, 255, 0.055);
+}
+
+.swse-dejarik-cell.is-odd {
+  fill: rgba(255, 209, 102, 0.045);
+}
+
+.swse-dejarik-cell.has-piece {
+  stroke: rgba(255, 209, 102, 0.36);
+}
+
+.swse-dejarik-cell.can-select-piece,
+.swse-dejarik-cell.is-selected-piece {
+  cursor: pointer;
+  fill: rgba(57, 247, 255, 0.18);
+  filter: drop-shadow(0 0 4px rgba(57, 247, 255, 0.4));
+  stroke: rgba(57, 247, 255, 0.86);
+}
+
+.swse-dejarik-cell.is-legal-move {
+  cursor: pointer;
+  fill: rgba(57, 247, 255, 0.24);
+  filter: drop-shadow(0 0 5px rgba(57, 247, 255, 0.55));
+  stroke: rgba(57, 247, 255, 0.95);
+}
+
+.swse-dejarik-cell.is-legal-attack {
+  cursor: pointer;
+  fill: rgba(255, 79, 100, 0.28);
+  filter: drop-shadow(0 0 5px rgba(255, 79, 100, 0.58));
+  stroke: rgba(255, 79, 100, 0.98);
+}
+
+.swse-dejarik-svg__ring,
+.swse-dejarik-svg__ray {
+  fill: none;
+  pointer-events: none;
+  stroke: rgba(120, 220, 255, 0.2);
+  stroke-width: 0.28;
+}
+
+.swse-dejarik-svg__hub {
+  fill: url(#swseDejarikHub);
+  pointer-events: none;
+  stroke: rgba(255, 209, 102, 0.28);
+  stroke-width: 0.38;
+}
+
+.swse-dejarik-svg__hub-dot {
+  fill: rgba(255, 209, 102, 0.8);
+  pointer-events: none;
+}
+
+.swse-dejarik-token-layer {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.swse-dejarik-token-anchor {
+  align-items: center;
+  color: rgba(220, 245, 255, 0.9);
+  display: grid;
+  justify-items: center;
+  left: var(--dej-x);
+  min-width: 4.2rem;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  top: var(--dej-y);
+  transform: translate(-50%, -50%);
+}
+
+.swse-dejarik-token-anchor b,
+.swse-dejarik-token-anchor small {
+  background: rgba(0, 0, 0, 0.48);
+  border-radius: 0.35rem;
+  display: block;
+  font-size: 0.52rem;
+  line-height: 1.1;
+  margin-top: 0.1rem;
+  max-width: 5.4rem;
+  overflow: hidden;
+  padding: 0.05rem 0.22rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

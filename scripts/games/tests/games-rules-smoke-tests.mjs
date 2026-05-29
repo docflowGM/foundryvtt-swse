@@ -9,7 +9,7 @@
 
 import assert from 'node:assert/strict';
 
-import { buildPazaakMainDeck, buildOpeningHand, PAZAAK_HAND_SIZE, PAZAAK_TARGET } from '../games/pazaak/pazaak-deck.js';
+import { buildPazaakMainDeck, buildOpeningHand, PAZAAK_HAND_SIZE, PAZAAK_TARGET, validateSideDeck } from '../games/pazaak/pazaak-deck.js';
 import {
   comparePazaakInitiativeDraws,
   comparePazaakSet,
@@ -27,6 +27,9 @@ import { evaluateHintaroRoll, getHintaroCancellationRules, getHintaroLifecycleSt
 function testPazaak() {
   const deck = buildPazaakMainDeck();
   assert.equal(deck.length, 40, 'Pazaak main deck should contain four each of 1-10');
+  const duplicateDeck = validateSideDeck(Array.from({ length: 10 }, () => 'plus-1'));
+  assert.equal(duplicateDeck.valid, false, 'Pazaak side deck should reject duplicate cards');
+  assert.equal(duplicateDeck.errors.some(error => /unique|duplicate/i.test(error)), true, 'Pazaak duplicate side-deck errors should explain duplicate cards');
   const player = { tableCards: [{ value: 10 }, { value: 5 }, { value: 5 }], hand: [] };
   assert.equal(scorePazaakPlayer(player), PAZAAK_TARGET, 'Pazaak score should total table cards');
   assert.equal(hasFilledPazaakTable({ tableCards: Array.from({ length: 9 }, () => ({ value: 1 })) }), true, 'Pazaak filled table should be detected');
@@ -118,6 +121,22 @@ function testDejarik() {
   slamState.pieces = { sav: savrip, push: pushed };
   const slam = resolveDejarikAttack(slamState, savrip, pushed, canAttackPiece(savrip, pushed, slamState), { randomize: false });
   assert.equal(Boolean(slam.pushedTo), true, 'Holopad Skirmish resolver should apply Brutal Slam push through the shared resolver');
+
+  const anchorState = { board: buildDejarikBoard(), pieces: {} };
+  const anchorAttacker = { id: 'anchor-a', ownerSeatId: 'one', spaceId: 'r1_q0', hp: 8, maxHp: 8, atk: 1, rng: 1, mov: 2, ability: 'brutal-slam' };
+  const anchorDefender = { id: 'anchor-d', ownerSeatId: 'two', spaceId: 'r2_q0', hp: 8, maxHp: 8, atk: 1, rng: 1, mov: 1, ability: 'anchor' };
+  anchorState.pieces = { 'anchor-a': anchorAttacker, 'anchor-d': anchorDefender };
+  const anchorSlam = resolveDejarikAttack(anchorState, anchorAttacker, anchorDefender, canAttackPiece(anchorAttacker, anchorDefender, anchorState), { randomize: false });
+  assert.equal(anchorSlam.pushedTo, null, 'Bulbous anchor should block push effects');
+  assert.equal(anchorDefender.spaceId, 'r2_q0', 'Anchor defender should remain in place when push is blocked');
+
+  const sacrificeState = { board: buildDejarikBoard(), pieces: {} };
+  const slug = { id: 'slug', ownerSeatId: 'one', spaceId: 'r1_q0', hp: 4, maxHp: 4, atk: 7, rng: 1, mov: 2, ability: 'sacrifice' };
+  const prey = { id: 'prey', ownerSeatId: 'two', spaceId: 'r2_q0', hp: 8, maxHp: 8, atk: 4, rng: 1, mov: 1 };
+  sacrificeState.pieces = { slug, prey };
+  const sacrifice = resolveDejarikAttack(sacrificeState, slug, prey, canAttackPiece(slug, prey, sacrificeState), { randomize: false });
+  assert.equal(sacrifice.attackerDefeated, true, "K'lor'slug sacrifice should defeat the attacker");
+  assert.equal(prey.defeated, true, "K'lor'slug sacrifice should defeat the adjacent target");
 
   const classicState = { rulesMode: 'classic-holochess', board: buildDejarikBoard(), pieces: {} };
   const molator = { id: 'mol', ownerSeatId: 'one', spaceId: 'r1_q0', hp: 7, maxHp: 7, atk: 5, attack: 8, defense: 2, rng: 1, mov: 1 };

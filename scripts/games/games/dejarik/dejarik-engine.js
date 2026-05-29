@@ -180,6 +180,7 @@ export class DejarikEngine {
     const safeDejarikRulesMode = normalizeDejarikRulesMode(dejarikRulesMode);
     const shell = { id: resolvedSessionId, gameId: 'dejarik', title: title || `${actorDisplay(resolvedActor)} plays Dejarik`, status: 'active', authorityMode: 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: 'republic-senate', wagerProfile: { mode: 'none' }, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', aiProfile: generated, dejarikRulesMode: safeDejarikRulesMode }, log: [sessionLogEntry('solo-ai-dejarik-created', hostRecipientId, { dejarikRulesMode: safeDejarikRulesMode })] };
     shell.gameState = ensureState(shell);
+    await processAi(shell, shell.gameState);
     const updated = await GameSessionStore.upsertSession(shell);
     GameNotificationService.emitSessionUpdated(updated, { dejarikPhase: updated.gameState?.phase, action: 'create-solo-dejarik' });
     return updated;

@@ -134,10 +134,18 @@ export function normalizeSideDeckIds(cardIds = []) {
 }
 
 export function validateSideDeck(cardIds = []) {
+  const submitted = (Array.isArray(cardIds) ? cardIds : [])
+    .map(rawId => String(rawId || '').trim())
+    .filter(Boolean);
+  const validSubmitted = submitted.filter(id => CATALOG_BY_ID.has(id));
+  const uniqueSubmitted = new Set(validSubmitted);
   const normalized = normalizeSideDeckIds(cardIds);
   const required = PAZAAK_SIDE_DECK_SIZE;
   const errors = [];
-  if (normalized.length !== required) errors.push(`Choose exactly ${required} side-deck cards.`);
+  if (validSubmitted.length !== uniqueSubmitted.size) errors.push('Side-deck cards must be unique; duplicate Pazaak cards are not allowed.');
+  if (validSubmitted.length !== submitted.length) errors.push('One or more selected Pazaak side-deck cards are not available in the catalog.');
+  if (submitted.length !== required) errors.push(`Choose exactly ${required} side-deck cards.`);
+  else if (normalized.length !== required && !errors.length) errors.push(`Choose exactly ${required} legal, unique side-deck cards.`);
   return {
     valid: errors.length === 0,
     errors,

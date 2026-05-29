@@ -60,7 +60,7 @@
                 d="{{this.path}}"
                 data-dejarik-space
                 data-space-id="{{this.id}}"
-                {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}"{{/if}}
+                {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}" data-detail-json="{{{this.piece.detailJsonAttr}}}"{{/if}}
                 {{#if this.canSelectPiece}}data-piece-can-select="true"{{/if}}>
             <title>{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}</title>
           </path>

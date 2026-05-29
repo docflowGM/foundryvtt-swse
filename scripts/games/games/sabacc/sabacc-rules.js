@@ -151,6 +151,9 @@ export function scoreSabaccHand(cards = []) {
 }
 
 export function isSabaccBombOut(_total) {
+  // Corellian Spike — Holopad Wagered Variant intentionally disables classic
+  // bomb-out elimination. The UI can still display legacy labels when a future
+  // classic Sabacc rules mode enables that rule.
   return false;
 }
 

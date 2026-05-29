@@ -23,15 +23,70 @@ function detailAttr(value) {
     .replace(/>/g, '&gt;');
 }
 
+const DEJARIK_RAY_COUNT = 8;
+const DEJARIK_RING_BANDS = [
+  { ring: 1, inner: 7.6, outer: 18.4, token: 13 },
+  { ring: 2, inner: 18.4, outer: 31.2, token: 26 },
+  { ring: 3, inner: 31.2, outer: 43.8, token: 38 },
+  { ring: 4, inner: 43.8, outer: 49.0, token: 48 }
+];
+const DEJARIK_HUB_RADIUS = 7.6;
+const DEJARIK_OUTER_RADIUS = DEJARIK_RING_BANDS[DEJARIK_RING_BANDS.length - 1].outer;
+
+function clampRing(value) { return Math.max(1, Math.min(DEJARIK_RING_BANDS.length, Number(value || 1))); }
+function clampRay(value) { return ((Math.floor(Number(value || 0)) % DEJARIK_RAY_COUNT) + DEJARIK_RAY_COUNT) % DEJARIK_RAY_COUNT; }
+function angleForRayBoundary(rayBoundary = 0) { return (-Math.PI / 2) + ((Math.PI * 2) * (rayBoundary / DEJARIK_RAY_COUNT)); }
+function pointAt(radius, angle) { return { x: 50 + (Math.cos(angle) * radius), y: 50 + (Math.sin(angle) * radius) }; }
+function fmt(value) { return Number(value).toFixed(2); }
+
+function boardSpaceGeometry(space = {}) {
+  const ring = clampRing(space.ring);
+  const ray = clampRay(space.ray);
+  const band = DEJARIK_RING_BANDS[ring - 1] || DEJARIK_RING_BANDS[0];
+  const angle = angleForRayBoundary(ray);
+  const tokenPoint = pointAt(band.token, angle);
+  const start = angleForRayBoundary(ray - 0.5);
+  const end = angleForRayBoundary(ray + 0.5);
+  const outerA = pointAt(band.outer, start);
+  const outerB = pointAt(band.outer, end);
+  const innerB = pointAt(band.inner, end);
+  const innerA = pointAt(band.inner, start);
+  const largeArc = 0;
+  const path = [
+    `M ${fmt(innerA.x)} ${fmt(innerA.y)}`,
+    `L ${fmt(outerA.x)} ${fmt(outerA.y)}`,
+    `A ${fmt(band.outer)} ${fmt(band.outer)} 0 ${largeArc} 1 ${fmt(outerB.x)} ${fmt(outerB.y)}`,
+    `L ${fmt(innerB.x)} ${fmt(innerB.y)}`,
+    `A ${fmt(band.inner)} ${fmt(band.inner)} 0 ${largeArc} 0 ${fmt(innerA.x)} ${fmt(innerA.y)}`,
+    'Z'
+  ].join(' ');
+  return {
+    x: Number(tokenPoint.x.toFixed(2)),
+    y: Number(tokenPoint.y.toFixed(2)),
+    style: `--dej-x: ${tokenPoint.x.toFixed(2)}%; --dej-y: ${tokenPoint.y.toFixed(2)}%;`,
+    path,
+    parityClass: (ring + ray) % 2 ? 'is-odd' : 'is-even',
+    ringClass: `ring-${ring}`,
+    rayClass: `ray-${ray}`
+  };
+}
+
 function spaceCoordinates(space = {}) {
-  const ring = Math.max(1, Math.min(4, Number(space.ring || 1)));
-  const ray = Math.max(0, Math.min(7, Number(space.ray || 0)));
-  const radiusByRing = [0, 13, 26, 38, 48];
-  const angle = (-Math.PI / 2) + ((Math.PI * 2) * (ray / 8));
-  const radius = radiusByRing[ring] || 48;
-  const x = 50 + (Math.cos(angle) * radius);
-  const y = 50 + (Math.sin(angle) * radius);
-  return { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)), style: `--dej-x: ${x.toFixed(2)}%; --dej-y: ${y.toFixed(2)}%;` };
+  const geometry = boardSpaceGeometry(space);
+  return { x: geometry.x, y: geometry.y, style: geometry.style };
+}
+
+function boardRingsVm() {
+  return DEJARIK_RING_BANDS.map(band => ({ ring: band.ring, radius: fmt(band.outer) }));
+}
+
+function boardRaysVm() {
+  return Array.from({ length: DEJARIK_RAY_COUNT }, (_value, ray) => {
+    const angle = angleForRayBoundary(ray + 0.5);
+    const inner = pointAt(DEJARIK_HUB_RADIUS, angle);
+    const outer = pointAt(DEJARIK_OUTER_RADIUS, angle);
+    return { ray, x1: fmt(inner.x), y1: fmt(inner.y), x2: fmt(outer.x), y2: fmt(outer.y) };
+  });
 }
 
 function pieceVm(piece = {}, session, state, viewerSeatId) {
@@ -131,12 +186,15 @@ export class DejarikViewModel {
       enemyPieces: pieces.filter(piece => piece.isEnemyPiece),
       hasEnemyPieces: pieces.some(piece => piece.isEnemyPiece),
       canAct: Boolean(viewerSeatId && state.phase === 'playing' && state.activeSeatId === viewerSeatId),
+      boardHubRadius: fmt(DEJARIK_HUB_RADIUS),
+      boardRings: boardRingsVm(),
+      boardRays: boardRaysVm(),
       boardSpaces: (state.board || []).map(space => {
-        const coords = spaceCoordinates(space);
+        const geometry = boardSpaceGeometry(space);
         const piece = pieces.find(entry => entry.spaceId === space.id && !entry.defeated) || null;
         return {
           ...space,
-          ...coords,
+          ...geometry,
           piece,
           hasPiece: Boolean(piece),
           hasViewerPiece: Boolean(piece?.isViewerPiece),

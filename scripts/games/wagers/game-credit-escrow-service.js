@@ -48,6 +48,12 @@ function humanCreditSeats(session = {}) {
   return playableSeats(session).filter(seat => !isAutomatedSeat(seat) && actorForSeat(seat));
 }
 
+function gameTitle(session = {}) {
+  const id = String(session.gameId || '').trim();
+  const labels = { pazaak: 'Pazaak', sabacc: 'Sabacc', hintaro: 'Hintaro', dejarik: 'Dejarik' };
+  return labels[id] || 'Game';
+}
+
 function seatLabel(seat = {}) {
   return seat.displayName || seat.actorId || seat.seatId || 'Unknown Seat';
 }
@@ -412,7 +418,7 @@ export class GameCreditEscrowService {
       const result = await TransactionEngine.executeCreditAdjustment({
         actor,
         amount: -profile.buyIn,
-        reason: `${session.title || 'Pazaak'} buy-in`,
+        reason: `${session.title || gameTitle(session)} buy-in`,
         transactionContext: 'game-credit-escrow',
         audit: baseAudit(session, seat, {
           escrowId,

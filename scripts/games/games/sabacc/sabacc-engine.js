@@ -821,6 +821,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   if (action === 'call-hand' || action === 'stand') {
     updateEvaluations(state);
     if (player.hand.length < SABACC_MIN_HAND_SIZE) return { ok: false, error: `You need at least ${SABACC_MIN_HAND_SIZE} cards to stand in Sabacc.` };
+    player.called = true;
     player.cardActionRound = safeAmount(state.cardRound, 1);
     attachAiDecision(player, payload);
     player.lastAction = 'Passes/stands for this card round.';

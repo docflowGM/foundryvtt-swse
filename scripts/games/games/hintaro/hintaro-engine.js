@@ -173,6 +173,19 @@ function nextSeatIdReverse(session, state, afterSeatId, predicate = null) {
 function firstSeatRightOfHintaron(session, state, predicate = null) {
   return nextSeatIdReverse(session, state, state.hintaronSeatId, predicate) || getOrder(session).find(id => predicate ? predicate(id, state.players?.[id]) : true) || null;
 }
+function orderedSeatIdsLeftOfHintaron(session, state, predicate = null) {
+  const order = getOrder(session);
+  if (!order.length) return [];
+  const start = Math.max(0, order.indexOf(state.hintaronSeatId));
+  const result = [];
+  for (let i = 1; i <= order.length; i += 1) {
+    const seatId = order[(start + i) % order.length];
+    const player = state.players?.[seatId];
+    if (predicate && !predicate(seatId, player)) continue;
+    result.push(seatId);
+  }
+  return result;
+}
 function openRerollPhase(session, state) {
   state.phase = 'reroll';
   state.statusLabel = 'REROLL';
@@ -250,7 +263,8 @@ function beginRound(session, state) {
   state.winnerSeatIds = [];
   state.pot = safeAmount(state.carriedPot, 0);
   state.carriedPot = 0;
-  for (const seatId of getOrder(session)) {
+  const anteOrder = orderedSeatIdsLeftOfHintaron(session, state);
+  for (const seatId of anteOrder) {
     const player = state.players[seatId] ??= buildPlayerState(findSeat(session, seatId));
     const rolled = rollHintaroPlayerDice();
     player.dice = rolled.dice;
@@ -265,6 +279,9 @@ function beginRound(session, state) {
     if (!ante.ok) {
       player.dropped = true;
       player.lastAction = 'Could not cover the ante and dropped.';
+      pushEvent(session, state, 'ante-failed', seatId, `${seatLabel(session, seatId)} cannot cover the ante and drops.`, { tone: 'danger', amount: state.ante });
+    } else {
+      pushEvent(session, state, 'ante', seatId, `${seatLabel(session, seatId)} antes ${state.ante}.`, { tone: 'credits', amount: state.ante });
     }
   }
   pushEvent(session, state, 'round-start', state.hintaronSeatId, `Round ${state.round} begins. ${seatLabel(session, state.hintaronSeatId)} is hintaron (${state.hintaronMode}).`, { tone: 'credits', hintaronMode: state.hintaronMode });
