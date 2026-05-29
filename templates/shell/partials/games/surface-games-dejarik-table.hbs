@@ -1,0 +1,214 @@
+{{!-- Dejarik active-board partial. Phase 7 uses generated SVG sectors so legal moves/attacks highlight real cells instead of a PNG overlay. --}}
+<div class="swse-dejarik-table" data-dejarik-session-id="{{vm.activeTable.sessionId}}">
+  {{#if vm.activeTable.dejarik.showDraft}}
+  <section class="swse-dejarik-draft">
+    <aside class="swse-dejarik-draft__side">
+      <span class="swse-games-kicker">PRE-MATCH DRAFT</span>
+      <h3>Choose 4 holomonsters</h3>
+      <p>Select exactly four creatures for your side of the holotable. The AI will deploy four from the same roster when you launch the board.</p>
+      <div class="swse-dejarik-draft-count {{#if vm.activeTable.dejarik.draft.canDeploy}}is-ready{{/if}}">
+        <strong>{{vm.activeTable.dejarik.draft.selectedCountLabel}}</strong>
+        <span>selected</span>
+      </div>
+      {{#if vm.activeTable.dejarik.draft.hasSelected}}
+      <div class="swse-dejarik-draft-tray">
+        {{#each vm.activeTable.dejarik.draft.selectedMonsterCards}}
+        <span>{{this.shortLabel}}<small>{{this.label}}</small></span>
+        {{/each}}
+      </div>
+      {{else}}
+      <p class="swse-games-muted">No holomonsters selected yet.</p>
+      {{/if}}
+      <form data-games-action="dejarik-clear-draft">
+        <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+        <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+        <button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.dejarik.draft.hasSelected}}disabled{{/unless}}>Clear Draft</button>
+      </form>
+      <form data-games-action="dejarik-deploy-team">
+        <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+        <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+        <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.dejarik.draft.canDeploy}}disabled{{/unless}}>Deploy to Board</button>
+      </form>
+    </aside>
+
+    <div class="swse-dejarik-draft-grid">
+      {{#each vm.activeTable.dejarik.draft.monsterCatalog}}
+      <form class="swse-dejarik-draft-card {{this.cssClass}}" data-games-action="dejarik-select-monster">
+        <input type="hidden" name="sessionId" value="{{../vm.activeTable.dejarik.id}}">
+        <input type="hidden" name="seatId" value="{{../vm.activeTable.dejarik.currentSeatId}}">
+        <input type="hidden" name="monsterId" value="{{this.id}}">
+        <button type="submit" {{#if this.disabled}}disabled{{/if}}>
+          <span class="swse-dejarik-draft-card__glyph">{{this.shortLabel}}</span>
+          <b>{{this.label}}</b>
+          <small>HP {{this.hp}} · ATK {{this.atk}} · MOV {{this.mov}} · RNG {{this.rng}}</small>
+          <em>{{this.abilityLabel}}</em>
+          <span>{{this.abilityDescription}}</span>
+          {{#if this.selected}}<i>Selected</i>{{/if}}
+        </button>
+      </form>
+      {{/each}}
+    </div>
+  </section>
+  {{else}}
+  <section class="swse-dejarik-layout">
+    <aside class="swse-dejarik-rail swse-dejarik-rail--left">
+      <div class="swse-dejarik-panel swse-dejarik-panel--opponent">
+        <span class="swse-games-kicker">OPPONENT READOUT</span>
+        {{#if vm.activeTable.dejarik.hasAiProfiles}}
+          {{#each vm.activeTable.dejarik.aiProfiles}}
+          <article class="swse-dejarik-opponent-card">
+            <div class="swse-dejarik-opponent-card__glyph">✷</div>
+            <div>
+              <b>{{this.label}}</b>
+              <span>{{this.profileLabel}}</span>
+              {{#if this.profession}}<small>{{this.profession}}</small>{{/if}}
+              {{#if this.tableFact}}<small>{{this.tableFact}}</small>{{/if}}
+            </div>
+          </article>
+          {{/each}}
+        {{else}}
+          <p class="swse-games-muted">No AI opponent metadata is attached to this Dejarik board.</p>
+        {{/if}}
+      </div>
+
+      <div class="swse-dejarik-panel swse-dejarik-panel--tactical">
+        <span class="swse-games-kicker">TACTICAL OVERLAY</span>
+        <b data-dejarik-selection-label>{{#if vm.activeTable.dejarik.canAct}}Select one of your pieces{{else}}Awaiting activation{{/if}}</b>
+        <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Cyan sectors are legal moves. Red sectors are attack targets. Action model: {{vm.activeTable.dejarik.actionModelLabel}}.{{else}}Only the active player can move or attack.{{/if}}</small>
+        <div class="swse-dejarik-selection-stats" data-dejarik-selection-stats>Choose a holomonster to see HP, attack, range, movement, and ability notes.</div>
+        {{#if vm.activeTable.dejarik.canAct}}
+        <form data-games-action="dejarik-end-turn">
+          <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+          <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+          <button type="submit" class="swse-games-ghost">End Turn</button>
+        </form>
+        {{/if}}
+      </div>
+    </aside>
+
+    <section class="swse-dejarik-board-shell">
+      <div class="swse-dejarik-board-stage"
+           data-dejarik-board
+           data-session-id="{{vm.activeTable.dejarik.id}}"
+           data-seat-id="{{vm.activeTable.dejarik.currentSeatId}}"
+           aria-label="Dejarik radial board">
+        <svg class="swse-dejarik-svg" viewBox="0 0 100 100" role="img" aria-label="Generated Dejarik radial board">
+          <defs>
+            <radialGradient id="swseDejarikBase" cx="50%" cy="42%" r="65%">
+              <stop offset="0%" stop-color="rgba(57, 247, 255, 0.18)"/>
+              <stop offset="58%" stop-color="rgba(12, 31, 55, 0.96)"/>
+              <stop offset="100%" stop-color="rgba(4, 9, 20, 0.98)"/>
+            </radialGradient>
+            <radialGradient id="swseDejarikHub" cx="50%" cy="42%" r="70%">
+              <stop offset="0%" stop-color="rgba(255, 209, 102, 0.2)"/>
+              <stop offset="100%" stop-color="rgba(8, 20, 35, 0.98)"/>
+            </radialGradient>
+          </defs>
+          <circle class="swse-dejarik-svg__base" cx="50" cy="50" r="48.6"></circle>
+          {{#each vm.activeTable.dejarik.boardSpaces}}
+          <path class="swse-dejarik-cell {{this.parityClass}} {{this.ringClass}} {{this.rayClass}} {{#if this.hasPiece}}has-piece{{/if}} {{#if this.hasViewerPiece}}has-viewer-piece{{/if}} {{#if this.hasEnemyPiece}}has-enemy-piece{{/if}} {{#if this.canSelectPiece}}can-select-piece{{/if}}"
+                d="{{this.path}}"
+                data-dejarik-space
+                data-space-id="{{this.id}}"
+                {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}" data-detail-json="{{{this.piece.detailJsonAttr}}}"{{/if}}
+                {{#if this.canSelectPiece}}data-piece-can-select="true"{{/if}}>
+            <title>{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}</title>
+          </path>
+          {{/each}}
+          {{#each vm.activeTable.dejarik.boardRings}}
+          <circle class="swse-dejarik-svg__ring" cx="50" cy="50" r="{{this.radius}}"></circle>
+          {{/each}}
+          {{#each vm.activeTable.dejarik.boardRays}}
+          <line class="swse-dejarik-svg__ray" x1="{{this.x1}}" y1="{{this.y1}}" x2="{{this.x2}}" y2="{{this.y2}}"></line>
+          {{/each}}
+          <circle class="swse-dejarik-svg__hub" cx="50" cy="50" r="{{vm.activeTable.dejarik.boardHubRadius}}"></circle>
+          <circle class="swse-dejarik-svg__hub-dot" cx="50" cy="50" r="1.35"></circle>
+        </svg>
+
+        <div class="swse-dejarik-token-layer" aria-hidden="true">
+          {{#each vm.activeTable.dejarik.boardSpaces}}
+            {{#if this.piece}}
+            <div class="swse-dejarik-token-anchor {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}} {{this.piece.tokenStateClass}}" style="{{this.style}}" title="{{this.piece.label}} · {{this.piece.hpLabel}}">
+              <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}} {{this.piece.tokenStateClass}}">{{#if this.piece.hasImage}}<img src="{{this.piece.image}}" alt="{{this.piece.label}}">{{else}}{{this.piece.shortLabel}}{{/if}}</span>
+              <b>{{this.piece.label}}</b>
+              <small>{{this.piece.hpLabel}}</small>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+      <div class="swse-dejarik-board-help">
+        <span>{{vm.activeTable.dejarik.message}}</span>
+        {{#if vm.activeTable.dejarik.showPlaying}}<b>Active turn: {{vm.activeTable.dejarik.activeSeatLabel}}</b>{{/if}}
+        {{#if vm.activeTable.dejarik.showComplete}}<b>Winner: {{vm.activeTable.dejarik.winnerLabel}}</b>{{/if}}
+      </div>
+    </section>
+
+    <aside class="swse-dejarik-rail swse-dejarik-rail--right">
+      <div class="swse-dejarik-panel swse-dejarik-panel--roster">
+        <span class="swse-games-kicker">YOUR HOLOMONSTERS</span>
+        {{#if vm.activeTable.dejarik.viewerPieces}}
+          {{#each vm.activeTable.dejarik.viewerPieces}}
+          <article class="swse-dejarik-piece-card">
+            <div class="swse-dejarik-piece-card__top">
+              <span class="swse-dejarik-piece-card__glyph">{{#if this.hasImage}}<img class="swse-dejarik-piece-card__img" src="{{this.image}}" alt="{{this.label}}">{{else}}{{this.shortLabel}}{{/if}}</span>
+              <div>
+                <b>{{this.label}}</b>
+                <small>ATK {{this.atk}} · HP {{this.hpLabel}} · RNG {{this.rng}} · MOV {{this.mov}}</small>
+              </div>
+            </div>
+            <span class="swse-dejarik-hp"><i style="width: {{this.hpPct}}%"></i></span>
+            <small class="swse-dejarik-piece-card__ability">{{this.abilityLabel}}{{#if this.abilityDescription}} · {{this.abilityDescription}}{{/if}}</small>
+            {{#if @root.vm.activeTable.dejarik.canAct}}
+            <button type="button"
+                    class="swse-games-primary"
+                    data-dejarik-select-piece
+                    data-piece-id="{{this.id}}"
+                    data-piece-label="{{this.label}}"
+                    data-piece-detail="{{this.detailLine}}"
+                    data-piece-summary="{{this.tacticalSummary}}"
+                    data-piece-ability="{{this.abilityLabel}}: {{this.abilityDescription}}"
+                    data-move-spaces="{{this.moveSpacesAttr}}"
+                    data-attack-targets="{{this.attackTargetsAttr}}">
+              Highlight Moves
+            </button>
+            {{/if}}
+            {{#if this.hasTargets}}
+            <form data-games-action="dejarik-attack">
+              <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+              <input type="hidden" name="seatId" value="{{this.seatId}}">
+              <input type="hidden" name="pieceId" value="{{this.id}}">
+              <select name="targetPieceId">{{#each this.targetOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
+              <button type="submit" class="swse-games-primary">Attack</button>
+            </form>
+            {{/if}}
+            {{#if this.hasMoveOptions}}
+            <form data-games-action="dejarik-move">
+              <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+              <input type="hidden" name="seatId" value="{{this.seatId}}">
+              <input type="hidden" name="pieceId" value="{{this.id}}">
+              <select name="toSpaceId">{{#each this.moveOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
+              <button type="submit" class="swse-games-ghost">Move</button>
+            </form>
+            {{/if}}
+          </article>
+          {{/each}}
+        {{else}}
+          <p class="swse-games-muted">No living viewer pieces are available.</p>
+        {{/if}}
+      </div>
+
+      {{#if vm.activeTable.dejarik.hasEventLog}}
+      <div class="swse-dejarik-panel swse-dejarik-panel--log">
+        <span class="swse-games-kicker">BOARD LOG</span>
+        <div class="swse-dejarik-log">
+          {{#each vm.activeTable.dejarik.eventLog}}
+          <div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+    </aside>
+  </section>
+  {{/if}}
+</div>

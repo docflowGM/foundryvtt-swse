@@ -1079,7 +1079,7 @@
 
 .swse-dejarik-playmat {
   display: grid;
-  grid-template-columns: minmax(10rem, 0.38fr) minmax(19rem, 1fr);
+  grid-template-columns: minmax(10rem, 0.32fr) minmax(19rem, 1fr) minmax(13rem, 0.42fr);
   gap: 0.9rem;
   align-items: start;
   margin-top: 0.9rem;
@@ -1269,6 +1269,155 @@
   background: linear-gradient(90deg, rgba(255, 79, 100, 0.8), rgba(255, 209, 102, 0.85), rgba(77, 255, 136, 0.85));
   display: block;
   height: 100%;
+}
+
+
+.swse-dejarik-roster-rail {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.swse-dejarik-enemy-panel,
+.swse-dejarik-mini-detail {
+  border: 1px solid rgba(120, 220, 255, 0.2);
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, rgba(7, 20, 34, 0.82), rgba(4, 10, 20, 0.94));
+  box-shadow: inset 0 0 22px rgba(57, 247, 255, 0.055);
+  padding: 0.75rem;
+}
+
+.swse-dejarik-enemy-list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.55rem;
+}
+
+.swse-dejarik-enemy-chip {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.26);
+  border: 1px solid rgba(255, 79, 100, 0.24);
+  border-radius: 0.75rem;
+  color: rgba(230, 246, 255, 0.9);
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: auto 1fr;
+  min-width: 0;
+  padding: 0.45rem;
+  text-align: left;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.swse-dejarik-enemy-chip:hover,
+.swse-dejarik-enemy-chip.is-selected {
+  border-color: rgba(255, 209, 102, 0.84);
+  box-shadow: 0 0 16px rgba(255, 209, 102, 0.16);
+  transform: translateY(-1px);
+}
+
+.swse-dejarik-enemy-chip.is-defeated {
+  opacity: 0.52;
+}
+
+.swse-dejarik-enemy-chip__glyph {
+  align-items: center;
+  border: 1px solid rgba(255, 79, 100, 0.26);
+  border-radius: 999px;
+  color: var(--neg, #ff4f64);
+  display: inline-flex;
+  font-family: var(--font-orbit, sans-serif);
+  font-size: 0.68rem;
+  font-weight: 800;
+  height: 2rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 2rem;
+}
+
+.swse-dejarik-enemy-chip__glyph img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.swse-dejarik-enemy-chip__body {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.swse-dejarik-enemy-chip__body b,
+.swse-dejarik-enemy-chip__body small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-dejarik-enemy-chip__body small,
+.swse-dejarik-empty {
+  color: rgba(205, 244, 255, 0.68);
+  font-size: 0.72rem;
+}
+
+.swse-dejarik-mini-detail {
+  border-color: rgba(255, 209, 102, 0.28);
+}
+
+.swse-dejarik-mini-detail.has-selection {
+  box-shadow: inset 0 0 22px rgba(255, 209, 102, 0.055), 0 0 18px rgba(255, 209, 102, 0.08);
+}
+
+.swse-dejarik-mini-detail strong {
+  color: rgba(255, 235, 180, 0.94);
+  display: block;
+  font-family: var(--font-orbit, sans-serif);
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+}
+
+.swse-dejarik-mini-detail__stats {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.65rem;
+}
+
+.swse-dejarik-mini-detail__stats span {
+  background: rgba(0, 0, 0, 0.26);
+  border: 1px solid rgba(120, 220, 255, 0.14);
+  border-radius: 0.55rem;
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.45rem;
+}
+
+.swse-dejarik-mini-detail__stats b,
+.swse-dejarik-mini-detail__ability b {
+  color: rgba(120, 220, 255, 0.72);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-dejarik-mini-detail__stats i {
+  color: rgba(255, 235, 180, 0.92);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.swse-dejarik-mini-detail__ability {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.65rem;
+}
+
+.swse-dejarik-mini-detail__ability span {
+  color: rgba(230, 246, 255, 0.86);
+  font-size: 0.76rem;
+  line-height: 1.35;
 }
 
 @media (max-width: 980px) {
@@ -1645,4 +1794,257 @@
   0% { transform: rotate(-4deg) scale(0.96); }
   45% { transform: rotate(5deg) scale(1.04); }
   100% { transform: rotate(0) scale(1); }
+}
+
+/* Sabacc Patch 2: variant and house-rule labels */
+.swse-sabacc-market-note {
+  display: block;
+  margin: 2px 0 8px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--swse-color-text-muted, rgba(220, 240, 255, 0.68));
+  text-transform: uppercase;
+}
+
+
+/* Hintaro Patch 4: mode + rules-reference polish */
+.swse-hintaro-mode-chip {
+  margin-top: 8px;
+  border: 1px solid color-mix(in oklab, var(--swse-cyan, #63d8ff) 28%, transparent);
+  background: rgba(0, 0, 0, 0.34);
+  padding: 6px 8px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.swse-hintaro-mode-chip span { display: block; font-weight: 700; color: var(--swse-cyan, #63d8ff); font-size: 10px; }
+.swse-hintaro-mode-chip small { display: block; margin-top: 2px; color: var(--swse-muted, #9bb2c4); font-size: 9px; }
+.swse-hintaro-callout small { display: block; margin-top: 7px; color: var(--swse-muted, #9bb2c4); font-size: 9px; line-height: 1.45; }
+.swse-hintaro-rules-panel {
+  position: absolute;
+  right: 18px;
+  bottom: 104px;
+  width: 280px;
+  z-index: 4;
+  border: 1px solid var(--swse-line-soft, rgba(100, 216, 255, 0.22));
+  background: rgba(0, 0, 0, 0.48);
+  padding: 10px 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+}
+.swse-hintaro-cancel-map { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.swse-hintaro-cancel-map div {
+  border: 1px solid var(--swse-line-soft, rgba(100, 216, 255, 0.18));
+  background: rgba(0, 0, 0, 0.35);
+  padding: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.swse-hintaro-cancel-map b { color: var(--swse-gold, #ffd36c); }
+.swse-hintaro-cancel-map span { display: block; color: var(--swse-muted, #9bb2c4); font-size: 8px; margin: 2px 0; }
+.swse-hintaro-cancel-map strong { color: var(--swse-cyan, #63d8ff); }
+.swse-hintaro-lifecycle { margin: 9px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.swse-hintaro-lifecycle li { font-size: 9px; line-height: 1.35; color: var(--swse-muted, #9bb2c4); }
+.swse-hintaro-lifecycle b { color: var(--swse-cyan, #63d8ff); margin-right: 4px; }
+@media (max-width: 1180px) {
+  .swse-hintaro-rules-panel { position: static; width: auto; margin: 10px 16px; }
+}
+
+
+/* Audit fix: generated Dejarik SVG board geometry and click regions. */
+.swse-dejarik-svg {
+  display: block;
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.swse-dejarik-svg__base {
+  fill: url(#swseDejarikBase);
+  stroke: rgba(120, 220, 255, 0.26);
+  stroke-width: 0.45;
+}
+
+.swse-dejarik-cell {
+  cursor: default;
+  fill: rgba(10, 25, 45, 0.56);
+  pointer-events: auto;
+  stroke: rgba(120, 220, 255, 0.18);
+  stroke-width: 0.32;
+  transition: fill 140ms ease, stroke 140ms ease, filter 140ms ease;
+}
+
+.swse-dejarik-cell.is-even {
+  fill: rgba(57, 247, 255, 0.055);
+}
+
+.swse-dejarik-cell.is-odd {
+  fill: rgba(255, 209, 102, 0.045);
+}
+
+.swse-dejarik-cell.has-piece {
+  stroke: rgba(255, 209, 102, 0.36);
+}
+
+.swse-dejarik-cell.can-select-piece,
+.swse-dejarik-cell.is-selected-piece {
+  cursor: pointer;
+  fill: rgba(57, 247, 255, 0.18);
+  filter: drop-shadow(0 0 4px rgba(57, 247, 255, 0.4));
+  stroke: rgba(57, 247, 255, 0.86);
+}
+
+.swse-dejarik-cell.is-legal-move {
+  cursor: pointer;
+  fill: rgba(57, 247, 255, 0.24);
+  filter: drop-shadow(0 0 5px rgba(57, 247, 255, 0.55));
+  stroke: rgba(57, 247, 255, 0.95);
+}
+
+.swse-dejarik-cell.is-legal-attack {
+  cursor: pointer;
+  fill: rgba(255, 79, 100, 0.28);
+  filter: drop-shadow(0 0 5px rgba(255, 79, 100, 0.58));
+  stroke: rgba(255, 79, 100, 0.98);
+}
+
+.swse-dejarik-svg__ring,
+.swse-dejarik-svg__ray {
+  fill: none;
+  pointer-events: none;
+  stroke: rgba(120, 220, 255, 0.2);
+  stroke-width: 0.28;
+}
+
+.swse-dejarik-svg__hub {
+  fill: url(#swseDejarikHub);
+  pointer-events: none;
+  stroke: rgba(255, 209, 102, 0.28);
+  stroke-width: 0.38;
+}
+
+.swse-dejarik-svg__hub-dot {
+  fill: rgba(255, 209, 102, 0.8);
+  pointer-events: none;
+}
+
+.swse-dejarik-token-layer {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.swse-dejarik-token-anchor {
+  align-items: center;
+  color: rgba(220, 245, 255, 0.9);
+  display: grid;
+  justify-items: center;
+  left: var(--dej-x);
+  min-width: 4.2rem;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  top: var(--dej-y);
+  transform: translate(-50%, -50%);
+}
+
+.swse-dejarik-token-anchor b,
+.swse-dejarik-token-anchor small {
+  background: rgba(0, 0, 0, 0.48);
+  border-radius: 0.35rem;
+  display: block;
+  font-size: 0.52rem;
+  line-height: 1.1;
+  margin-top: 0.1rem;
+  max-width: 5.4rem;
+  overflow: hidden;
+  padding: 0.05rem 0.22rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Decision patch: Dejarik pre-match draft + Sabacc table options */
+.swse-dejarik-draft {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  padding: 16px;
+  min-height: 0;
+}
+.swse-dejarik-draft__side {
+  border: 1px solid var(--swse-games-line, rgba(89, 220, 255, 0.28));
+  background: rgba(0, 0, 0, 0.32);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+.swse-dejarik-draft__side h3 { margin: 0; text-transform: uppercase; letter-spacing: 0.08em; }
+.swse-dejarik-draft__side p { margin: 0; color: var(--swse-games-muted, rgba(210, 235, 255, 0.72)); font-size: 12px; line-height: 1.45; }
+.swse-dejarik-draft-count {
+  border: 1px solid rgba(255, 209, 102, 0.32);
+  background: rgba(255, 209, 102, 0.08);
+  padding: 10px;
+  text-align: center;
+}
+.swse-dejarik-draft-count strong { display: block; font-size: 32px; line-height: 1; color: var(--swse-games-warn, #ffd166); }
+.swse-dejarik-draft-count span { display: block; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.75; }
+.swse-dejarik-draft-count.is-ready { border-color: rgba(67, 255, 154, 0.55); background: rgba(67, 255, 154, 0.1); }
+.swse-dejarik-draft-count.is-ready strong { color: var(--swse-games-positive, #43ff9a); }
+.swse-dejarik-draft-tray { display: grid; gap: 7px; }
+.swse-dejarik-draft-tray span {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(89, 220, 255, 0.18);
+  background: rgba(89, 220, 255, 0.06);
+  padding: 6px 8px;
+  font-weight: 700;
+}
+.swse-dejarik-draft-tray small { font-weight: 400; opacity: 0.75; }
+.swse-dejarik-draft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+.swse-dejarik-draft-card { margin: 0; }
+.swse-dejarik-draft-card button {
+  width: 100%;
+  min-height: 194px;
+  border: 1px solid rgba(89, 220, 255, 0.22);
+  background: linear-gradient(145deg, rgba(0,0,0,0.42), rgba(89,220,255,0.08));
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  padding: 10px;
+  text-align: left;
+}
+.swse-dejarik-draft-card button:hover:not(:disabled) { border-color: rgba(89, 220, 255, 0.7); box-shadow: 0 0 18px rgba(89, 220, 255, 0.16); }
+.swse-dejarik-draft-card.is-selected button { border-color: rgba(255, 95, 212, 0.75); box-shadow: inset 3px 0 0 rgba(255, 95, 212, 0.9), 0 0 18px rgba(255, 95, 212, 0.18); }
+.swse-dejarik-draft-card.is-disabled button { opacity: 0.48; cursor: not-allowed; }
+.swse-dejarik-draft-card__glyph { font-size: 24px; color: var(--swse-games-cyan, #59dcff); }
+.swse-dejarik-draft-card b { text-transform: uppercase; letter-spacing: 0.06em; }
+.swse-dejarik-draft-card small, .swse-dejarik-draft-card span { font-size: 11px; opacity: 0.75; line-height: 1.35; }
+.swse-dejarik-draft-card em { color: var(--swse-games-warn, #ffd166); font-style: normal; font-weight: 700; }
+.swse-dejarik-draft-card i { align-self: flex-start; color: var(--swse-games-positive, #43ff9a); font-style: normal; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+.swse-games-checkline { display: flex !important; align-items: center; gap: 8px; }
+.swse-games-checkline input[type="checkbox"] { width: auto; }
+.swse-sabacc-deck-row small { display: block; grid-column: 1 / -1; opacity: 0.68; font-size: 10px; text-align: center; margin-top: 3px; }
+@media (max-width: 980px) {
+  .swse-dejarik-draft { grid-template-columns: 1fr; }
+  .swse-dejarik-draft__side { order: -1; }
 }

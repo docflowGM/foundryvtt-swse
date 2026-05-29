@@ -48,6 +48,12 @@ function humanCreditSeats(session = {}) {
   return playableSeats(session).filter(seat => !isAutomatedSeat(seat) && actorForSeat(seat));
 }
 
+function gameTitle(session = {}) {
+  const id = String(session.gameId || '').trim();
+  const labels = { pazaak: 'Pazaak', sabacc: 'Sabacc', hintaro: 'Hintaro', dejarik: 'Dejarik' };
+  return labels[id] || 'Game';
+}
+
 function seatLabel(seat = {}) {
   return seat.displayName || seat.actorId || seat.seatId || 'Unknown Seat';
 }
@@ -96,7 +102,19 @@ async function refundDebitEntries(session, entries = [], reason = 'Game escrow r
   for (const entry of entries) {
     const actor = entry.actorId ? game.actors?.get?.(entry.actorId) : null;
     const amount = safeAmount(entry.amount);
-    if (!actor || amount <= 0) continue;
+    if (amount <= 0) continue;
+    if (!actor) {
+      refunds.push({
+        success: false,
+        actorId: entry.actorId ?? null,
+        actorName: entry.actorName ?? null,
+        seatId: entry.seatId,
+        seatLabel: entry.seatLabel,
+        amount,
+        error: `${entry.seatLabel || entry.seatId || 'A seat'} has no actor-backed wallet for refund.`
+      });
+      continue;
+    }
     const refund = await TransactionEngine.executeCreditAdjustment({
       actor,
       amount,
@@ -114,6 +132,17 @@ async function refundDebitEntries(session, entries = [], reason = 'Game escrow r
     refunds.push({ ...refund, actorId: actor.id, actorName: actor.name, seatId: entry.seatId, amount });
   }
   return refunds;
+}
+
+function failedCreditResults(results = []) {
+  return (Array.isArray(results) ? results : []).filter(result => result && result.success !== true);
+}
+
+function summarizeFailures(results = [], fallback = 'One or more credit transactions failed.') {
+  const failures = failedCreditResults(results);
+  if (!failures.length) return '';
+  return failures.map(result => result.error || `${result.actorName || result.seatLabel || result.seatId || 'Unknown seat'} failed`).join(' ')
+    || fallback;
 }
 
 function normalizeBalanceMap(balances = {}) {
@@ -389,7 +418,7 @@ export class GameCreditEscrowService {
       const result = await TransactionEngine.executeCreditAdjustment({
         actor,
         amount: -profile.buyIn,
-        reason: `${session.title || 'Pazaak'} buy-in`,
+        reason: `${session.title || gameTitle(session)} buy-in`,
         transactionContext: 'game-credit-escrow',
         audit: baseAudit(session, seat, {
           escrowId,
@@ -401,6 +430,9 @@ export class GameCreditEscrowService {
       transactions.push({ ...result, actorId: actor?.id ?? null, actorName: actor?.name ?? null, seatId: seat.seatId, amount: -profile.buyIn });
       if (!result.success) {
         const refunds = await refundDebitEntries({ ...session, escrow: { ...escrow, credits: { ...escrow.credits, escrowId } } }, entries, `Refund failed ${session.title || 'game'} escrow`);
+        const refundError = summarizeFailures(refunds, 'Credit escrow failed and one or more rollback refunds failed.');
+        const failedStatus = refundError ? 'refund-failed' : 'failed';
+        const failedMessage = refundError || result.error || 'Credit escrow failed.';
         const failed = await GameSessionStore.upsertSession({
           ...session,
           status: 'pending-escrow',
@@ -409,17 +441,18 @@ export class GameCreditEscrowService {
             credits: {
               ...escrow.credits,
               escrowId,
-              status: 'failed',
-              error: result.error || 'Credit escrow failed.',
+              status: failedStatus,
+              error: failedMessage,
               entries,
               transactions,
               refunds,
-              failedAt: now()
+              failedAt: now(),
+              refundFailedAt: refundError ? now() : null
             }
           },
-          log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: 'credit-escrow-failed', by: options.by ?? game.user?.id ?? null, error: result.error }]
+          log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: refundError ? 'credit-escrow-refund-failed' : 'credit-escrow-failed', by: options.by ?? game.user?.id ?? null, error: failedMessage }]
         });
-        return { ok: false, error: result.error || 'Credit escrow failed.', session: failed };
+        return { ok: false, error: failedMessage, session: failed };
       }
 
       entries.push({
@@ -541,6 +574,27 @@ export class GameCreditEscrowService {
     const normalizedBalances = Object.fromEntries(Object.entries(balances || {})
       .map(([seatId, amount]) => [seatId, safeAmount(amount)])
       .filter(([_seatId, amount]) => amount > 0));
+    const missingActorSeats = playableSeats(session).filter(seat => !isAutomatedSeat(seat) && normalizedBalances[seat.seatId] > 0 && !actorForSeat(seat));
+    if (missingActorSeats.length) {
+      const message = missingActorSeats.map(seat => `${seatLabel(seat)} has no actor-backed wallet for table-credit cashout.`).join(' ');
+      const updated = await GameSessionStore.upsertSession({
+        ...session,
+        escrow: {
+          ...escrow,
+          credits: {
+            ...escrow.credits,
+            status: 'payout-failed',
+            payoutMode: 'table-credit-balances',
+            payoutBalances: normalizedBalances,
+            payoutRequested: sumBalanceMap(normalizedBalances),
+            payoutApproved: 0,
+            settlementMessage: message
+          }
+        },
+        log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: 'credit-table-balances-payout-failed', by: game.user?.id ?? null, payoutBalances: normalizedBalances, error: message }]
+      });
+      return { ok: false, session: updated, error: message };
+    }
     const payoutSeats = playableSeats(session).filter(seat => normalizedBalances[seat.seatId] > 0 && actorForSeat(seat));
     const policies = [];
     let requiresGmSettlement = false;
@@ -727,23 +781,27 @@ export class GameCreditEscrowService {
     if (!profile.enabled) return { ok: true, skipped: true, session };
     const escrow = ensureEscrow(session);
     if (escrow.credits.status === 'refunded') return { ok: true, skipped: true, session };
-    if (!['escrowed', 'payout-failed'].includes(escrow.credits.status)) return { ok: false, error: 'Credit escrow is not refundable in its current state.', session };
+    if (!['escrowed', 'payout-failed', 'refund-failed'].includes(escrow.credits.status)) return { ok: false, error: 'Credit escrow is not refundable in its current state.', session };
     const refunds = await refundDebitEntries(session, escrow.credits.entries || [], reason);
+    const refundError = summarizeFailures(refunds, 'One or more game escrow refunds failed.');
+    const status = refundError ? 'refund-failed' : 'refunded';
     const updated = await GameSessionStore.upsertSession({
       ...session,
-      status: 'refunded',
+      status,
       escrow: {
         ...escrow,
         credits: {
           ...escrow.credits,
-          status: 'refunded',
+          status,
           refunds,
-          refundedAt: now(),
-          refundReason: reason
+          refundedAt: refundError ? null : now(),
+          refundFailedAt: refundError ? now() : escrow.credits.refundFailedAt ?? null,
+          refundReason: reason,
+          refundError: refundError || null
         }
       },
-      log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: 'credit-escrow-refunded', by: game.user?.id ?? null, reason }]
+      log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: refundError ? 'credit-escrow-refund-failed' : 'credit-escrow-refunded', by: game.user?.id ?? null, reason, error: refundError || null }]
     });
-    return { ok: true, session: updated, refunds };
+    return { ok: !refundError, session: updated, refunds, error: refundError || null };
   }
 }

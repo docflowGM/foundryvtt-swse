@@ -135,7 +135,9 @@ export class GamesSurfaceController {
           actor: this._actor,
           title: String(data.get('title') || '').trim(),
           rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
-          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0,
+          handLimit: Number(data.get('handLimit') || 0) || 0,
+          marketEnabled: data.get('marketEnabled') === 'on' || data.get('marketEnabled') === 'true'
         });
         if (result?.pending) {
           this._noteResult(result);
@@ -152,7 +154,8 @@ export class GamesSurfaceController {
         const data = new FormData(form);
         const result = await DejarikEngine.createSoloAiSession({
           actor: this._actor,
-          title: String(data.get('title') || '').trim()
+          title: String(data.get('title') || '').trim(),
+          dejarikRulesMode: String(data.get('dejarikRulesMode') || 'holopad-skirmish').trim()
         });
         if (result?.pending) {
           this._noteResult(result);
@@ -171,7 +174,8 @@ export class GamesSurfaceController {
           actor: this._actor,
           title: String(data.get('title') || '').trim(),
           rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
-          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0,
+          hintaronMode: String(data.get('hintaronMode') || 'rotating').trim()
         });
         if (result?.pending) {
           this._noteResult(result);
@@ -272,6 +276,7 @@ export class GamesSurfaceController {
           action,
           payload: {
             pieceId: String(data.get('pieceId') || '').trim(),
+            monsterId: String(data.get('monsterId') || '').trim(),
             targetPieceId: String(data.get('targetPieceId') || '').trim(),
             toSpaceId: String(data.get('toSpaceId') || '').trim(),
             reason: String(data.get('reason') || '').trim()
@@ -328,8 +333,35 @@ export class GamesSurfaceController {
     const selectionLabel = surface.querySelector('[data-dejarik-selection-label]');
     const selectionHelp = surface.querySelector('[data-dejarik-selection-help]');
     const selectionStats = surface.querySelector('[data-dejarik-selection-stats]');
+    const detailCard = surface.querySelector('[data-dejarik-detail-card]');
+    const detailName = surface.querySelector('[data-dejarik-detail-name]');
+    const detailHp = surface.querySelector('[data-dejarik-detail-hp]');
+    const detailAttack = surface.querySelector('[data-dejarik-detail-attack]');
+    const detailMovement = surface.querySelector('[data-dejarik-detail-movement]');
+    const detailReach = surface.querySelector('[data-dejarik-detail-reach]');
+    const detailAbility = surface.querySelector('[data-dejarik-detail-ability]');
     const spaces = Array.from(board.querySelectorAll('[data-dejarik-space]'));
     const selectorButtons = Array.from(surface.querySelectorAll('[data-dejarik-select-piece]'));
+    const inspectButtons = Array.from(surface.querySelectorAll('[data-dejarik-inspect-piece]'));
+
+    const parseDetail = source => {
+      const raw = String(source?.dataset?.detailJson || '').trim();
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch (_err) { return null; }
+    };
+
+    const updateDetailCard = source => {
+      const detail = parseDetail(source);
+      if (!detail) return;
+      if (detailCard) detailCard.classList.add('has-selection');
+      if (detailName) detailName.textContent = detail.name || source?.dataset?.pieceLabel || 'Selected monster';
+      if (detailHp) detailHp.textContent = detail.hp || '—';
+      if (detailAttack) detailAttack.textContent = detail.attack || '—';
+      if (detailMovement) detailMovement.textContent = detail.movement || '—';
+      if (detailReach) detailReach.textContent = detail.reach || '—';
+      if (detailAbility) detailAbility.textContent = [detail.ability, detail.abilityDescription].filter(Boolean).join(' — ') || '—';
+      inspectButtons.forEach(button => button.classList.toggle('is-selected', String(button.dataset.pieceId || '') === String(source?.dataset?.pieceId || '')));
+    };
 
     const resetHighlights = () => {
       board.dataset.selectedPieceId = '';
@@ -353,6 +385,7 @@ export class GamesSurfaceController {
       resetHighlights();
       board.dataset.selectedPieceId = pieceId;
       button.classList.add('is-selected');
+      updateDetailCard(button);
 
       const pieceSpace = spaces.find(space => String(space.dataset.pieceId || '') === pieceId);
       pieceSpace?.classList.add('is-selected-piece');
@@ -395,6 +428,14 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
+    inspectButtons.forEach(button => {
+      button.addEventListener('click', ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        updateDetailCard(button);
+      }, { signal });
+    });
+
     spaces.forEach(space => {
       space.addEventListener('click', async ev => {
         ev.preventDefault();
@@ -429,7 +470,10 @@ export class GamesSurfaceController {
           const pieceId = String(space.dataset.pieceId || '').trim();
           const button = selectorButtons.find(candidate => candidate.dataset.pieceId === pieceId);
           selectPiece(button);
+          return;
         }
+
+        if (space.dataset.pieceId) updateDetailCard(space);
       }, { signal });
     });
   }

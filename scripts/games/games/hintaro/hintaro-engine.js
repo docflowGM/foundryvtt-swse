@@ -5,7 +5,7 @@ import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service
 import { GameOpponentProfileService } from '../../game-opponent-profile-service.js';
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import { buildGameAiProfile } from '../../ai/game-ai-profile-service.js';
-import { evaluateHintaroRoll, rollHintaroDie, rollHintaroPlayerDice, rollHintaroRegularDieSymbols, compareHintaroEvaluations } from './hintaro-rules.js';
+import { compareHintaroEvaluations, evaluateHintaroRoll, normalizeHintaronMode, rollHintaroDie, rollHintaroPlayerDice, rollHintaroRegularDieSymbols } from './hintaro-rules.js';
 
 function clone(value) {
   if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -55,7 +55,7 @@ function buildState(session = {}) {
     statusLabel: 'READY',
     round: 0,
     hintaronSeatId: seats[0]?.seatId || null,
-    hintaronMode: session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating'),
+    hintaronMode: normalizeHintaronMode(session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating')),
     activeSeatId: null,
     pot: 0,
     carriedPot: 0,
@@ -95,7 +95,7 @@ function ensureTableCredits(session, state) {
 function ensureState(session = {}) {
   const state = session.gameState?.engine === 'hintaro' ? clone(session.gameState) : buildState(session);
   state.players ??= {};
-  state.hintaronMode ||= session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating');
+  state.hintaronMode = normalizeHintaronMode(state.hintaronMode || session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating'));
   state.pendingReceipts = Array.isArray(state.pendingReceipts) ? state.pendingReceipts : [];
   state.roundHistory = Array.isArray(state.roundHistory) ? state.roundHistory : [];
   state.eventLog = Array.isArray(state.eventLog) ? state.eventLog : [];
@@ -158,6 +158,42 @@ function nextSeatId(session, state, afterSeatId, predicate = null) {
 function firstSeatLeftOfHintaron(session, state, predicate = null) {
   return nextSeatId(session, state, state.hintaronSeatId, predicate) || getOrder(session).find(id => predicate ? predicate(id, state.players?.[id]) : true) || null;
 }
+function nextSeatIdReverse(session, state, afterSeatId, predicate = null) {
+  const order = getOrder(session);
+  if (!order.length) return null;
+  const index = Math.max(0, order.indexOf(afterSeatId));
+  for (let i = 1; i <= order.length; i += 1) {
+    const candidate = order[(index - i + order.length) % order.length];
+    const player = state.players?.[candidate];
+    if (!player) continue;
+    if (predicate ? predicate(candidate, player) : !player.dropped) return candidate;
+  }
+  return null;
+}
+function firstSeatRightOfHintaron(session, state, predicate = null) {
+  return nextSeatIdReverse(session, state, state.hintaronSeatId, predicate) || getOrder(session).find(id => predicate ? predicate(id, state.players?.[id]) : true) || null;
+}
+function orderedSeatIdsLeftOfHintaron(session, state, predicate = null) {
+  const order = getOrder(session);
+  if (!order.length) return [];
+  const start = Math.max(0, order.indexOf(state.hintaronSeatId));
+  const result = [];
+  for (let i = 1; i <= order.length; i += 1) {
+    const seatId = order[(start + i) % order.length];
+    const player = state.players?.[seatId];
+    if (predicate && !predicate(seatId, player)) continue;
+    result.push(seatId);
+  }
+  return result;
+}
+function openRerollPhase(session, state) {
+  state.phase = 'reroll';
+  state.statusLabel = 'REROLL';
+  state.betting = null;
+  state.activeSeatId = firstSeatLeftOfHintaron(session, state, (_id, player) => !player.dropped && !player.rerolled && !player.kept);
+  state.message = state.activeSeatId ? `${seatLabel(session, state.activeSeatId)} may reroll one cube or keep.` : 'No rerolls remain.';
+  if (!state.activeSeatId) resolveRound(session, state);
+}
 function moveCreditsToPot(session, state, seatId, amount) {
   const player = state.players?.[seatId];
   const value = safeAmount(amount, 0);
@@ -187,9 +223,9 @@ function openBettingRound(session, state) {
   const minBet = Math.max(1, safeAmount(state.ante, 10));
   state.phase = 'betting';
   state.statusLabel = 'BETTING';
-  state.betting = { currentBet: 0, minBet, minRaise: minBet, actedSeatIds: [], contributions: {}, lastAggressorSeatId: null };
-  state.activeSeatId = firstSeatLeftOfHintaron(session, state, (_id, player) => !player.dropped);
-  state.message = 'Initial cubes are down. Betting starts to the left of the hintaron.';
+  state.betting = { currentBet: 0, minBet, minRaise: minBet, actedSeatIds: [], contributions: {}, lastAggressorSeatId: null, stage: 'open-table', hintaronDecisionOffered: false };
+  state.activeSeatId = firstSeatRightOfHintaron(session, state, (_id, player) => !player.dropped);
+  state.message = 'Initial cubes are down. Wagering begins to the right of the hintaron.';
 }
 function bettingClosed(session, state) {
   const active = activeSeatIds(session, state);
@@ -199,27 +235,36 @@ function bettingClosed(session, state) {
   return active.every(id => acted.has(id) && safeAmount(state.betting?.contributions?.[id], 0) >= currentBet);
 }
 function advanceBetting(session, state, fromSeatId) {
+  const betting = state.betting || {};
   if (bettingClosed(session, state)) {
-    state.phase = 'reroll';
-    state.statusLabel = 'REROLL';
-    state.betting = null;
-    state.activeSeatId = firstSeatLeftOfHintaron(session, state, (_id, player) => !player.dropped && !player.rerolled && !player.kept);
-    state.message = state.activeSeatId ? `${seatLabel(session, state.activeSeatId)} may reroll one cube or keep.` : 'No rerolls remain.';
-    if (!state.activeSeatId) resolveRound(session, state);
+    const hintaronPlayer = state.players?.[state.hintaronSeatId];
+    const active = activeSeatIds(session, state);
+    if (betting.stage === 'open-table' && active.length > 1 && hintaronPlayer && !hintaronPlayer.dropped && !betting.hintaronDecisionOffered) {
+      state.betting.stage = 'hintaron-decision';
+      state.betting.hintaronDecisionOffered = true;
+      state.activeSeatId = state.hintaronSeatId;
+      state.message = `${seatLabel(session, state.hintaronSeatId)} is the hintaron and makes the final meet-or-raise decision.`;
+      return;
+    }
+    openRerollPhase(session, state);
     return;
   }
-  state.activeSeatId = nextSeatId(session, state, fromSeatId, (_id, player) => !player.dropped);
+  const next = betting.stage === 'final-meet'
+    ? nextSeatIdReverse(session, state, fromSeatId, (_id, player) => !player.dropped)
+    : nextSeatId(session, state, fromSeatId, (_id, player) => !player.dropped);
+  state.activeSeatId = next;
 }
 function beginRound(session, state) {
   ensureTableCredits(session, state);
   state.round += 1;
-  state.hintaronMode ||= session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating');
+  state.hintaronMode = normalizeHintaronMode(state.hintaronMode || session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating'));
   state.hintaronSeatId = state.round === 1 ? (state.hintaronSeatId || getOrder(session)[0] || null) : rotateHintaron(session, state);
   state.hintaroDie = null;
   state.winnerSeatIds = [];
   state.pot = safeAmount(state.carriedPot, 0);
   state.carriedPot = 0;
-  for (const seatId of getOrder(session)) {
+  const anteOrder = orderedSeatIdsLeftOfHintaron(session, state);
+  for (const seatId of anteOrder) {
     const player = state.players[seatId] ??= buildPlayerState(findSeat(session, seatId));
     const rolled = rollHintaroPlayerDice();
     player.dice = rolled.dice;
@@ -234,6 +279,9 @@ function beginRound(session, state) {
     if (!ante.ok) {
       player.dropped = true;
       player.lastAction = 'Could not cover the ante and dropped.';
+      pushEvent(session, state, 'ante-failed', seatId, `${seatLabel(session, seatId)} cannot cover the ante and drops.`, { tone: 'danger', amount: state.ante });
+    } else {
+      pushEvent(session, state, 'ante', seatId, `${seatLabel(session, seatId)} antes ${state.ante}.`, { tone: 'credits', amount: state.ante });
     }
   }
   pushEvent(session, state, 'round-start', state.hintaronSeatId, `Round ${state.round} begins. ${seatLabel(session, state.hintaronSeatId)} is hintaron (${state.hintaronMode}).`, { tone: 'credits', hintaronMode: state.hintaronMode });
@@ -249,12 +297,14 @@ function applyBettingAction(session, state, seat, action, payload = {}) {
   const paid = safeAmount(state.betting.contributions?.[seat.seatId], 0);
   const toCall = Math.max(0, currentBet - paid);
   const amount = safeAmount(payload.amount, 0);
+  const isHintaronDecision = state.betting?.stage === 'hintaron-decision' && seat.seatId === state.hintaronSeatId;
   state.betting.actedSeatIds = Array.from(new Set([...(state.betting.actedSeatIds || []), seat.seatId]));
   if (action === 'check') {
     if (toCall > 0) return { ok: false, error: 'There is a live bet to meet.' };
-    player.lastAction = 'Checks.';
-    pushEvent(session, state, 'check', seat.seatId, `${seat.displayName} checks.`, { tone: 'credits' });
-    advanceBetting(session, state, seat.seatId);
+    player.lastAction = isHintaronDecision ? 'Hintaron checks and closes wagering.' : 'Checks.';
+    pushEvent(session, state, 'check', seat.seatId, isHintaronDecision ? `${seat.displayName} checks as hintaron; wagering closes.` : `${seat.displayName} checks.`, { tone: 'credits' });
+    if (isHintaronDecision) openRerollPhase(session, state);
+    else advanceBetting(session, state, seat.seatId);
     return { ok: true };
   }
   if (action === 'bet') {
@@ -266,8 +316,9 @@ function applyBettingAction(session, state, seat, action, payload = {}) {
     state.betting.currentBet = bet;
     state.betting.contributions[seat.seatId] = bet;
     state.betting.lastAggressorSeatId = seat.seatId;
-    player.lastAction = `Bets ${bet} credits.`;
-    pushEvent(session, state, 'bet', seat.seatId, `${seat.displayName} bets ${bet}.`, { tone: 'credits', amount: bet });
+    player.lastAction = isHintaronDecision ? `Hintaron opens for ${bet} credits.` : `Bets ${bet} credits.`;
+    pushEvent(session, state, 'bet', seat.seatId, isHintaronDecision ? `${seat.displayName} opens as hintaron for ${bet}.` : `${seat.displayName} bets ${bet}.`, { tone: 'credits', amount: bet });
+    if (isHintaronDecision) { state.betting.stage = 'final-meet'; state.betting.actedSeatIds = [seat.seatId]; }
     advanceBetting(session, state, seat.seatId);
     return { ok: true };
   }
@@ -276,9 +327,10 @@ function applyBettingAction(session, state, seat, action, payload = {}) {
     const moved = moveCreditsToPot(session, state, seat.seatId, toCall);
     if (!moved.ok) return moved;
     state.betting.contributions[seat.seatId] = paid + toCall;
-    player.lastAction = `Calls ${toCall} credits.`;
-    pushEvent(session, state, 'call-bet', seat.seatId, `${seat.displayName} calls ${toCall}.`, { tone: 'credits', amount: toCall });
-    advanceBetting(session, state, seat.seatId);
+    player.lastAction = isHintaronDecision ? `Hintaron meets ${toCall} credits and closes wagering.` : `Calls ${toCall} credits.`;
+    pushEvent(session, state, 'call-bet', seat.seatId, isHintaronDecision ? `${seat.displayName} meets the wager as hintaron; wagering closes.` : `${seat.displayName} calls ${toCall}.`, { tone: 'credits', amount: toCall });
+    if (isHintaronDecision) openRerollPhase(session, state);
+    else advanceBetting(session, state, seat.seatId);
     return { ok: true };
   }
   if (action === 'raise') {
@@ -291,8 +343,9 @@ function applyBettingAction(session, state, seat, action, payload = {}) {
     state.betting.contributions[seat.seatId] = paid + toCall + raiseBy;
     state.betting.lastAggressorSeatId = seat.seatId;
     state.betting.actedSeatIds = [seat.seatId];
-    player.lastAction = `Raises by ${raiseBy} credits.`;
-    pushEvent(session, state, 'raise', seat.seatId, `${seat.displayName} raises by ${raiseBy}.`, { tone: 'credits', amount: raiseBy });
+    player.lastAction = isHintaronDecision ? `Hintaron raises by ${raiseBy} credits.` : `Raises by ${raiseBy} credits.`;
+    pushEvent(session, state, 'raise', seat.seatId, isHintaronDecision ? `${seat.displayName} raises as hintaron by ${raiseBy}; others must meet or drop.` : `${seat.displayName} raises by ${raiseBy}.`, { tone: 'credits', amount: raiseBy });
+    if (isHintaronDecision) { state.betting.stage = 'final-meet'; state.betting.actedSeatIds = [seat.seatId]; }
     advanceBetting(session, state, seat.seatId);
     return { ok: true };
   }
@@ -497,11 +550,11 @@ export class HintaroEngine {
     }) ?? null;
   }
 
-  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0 } = {}) {
+  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0, hintaronMode = 'rotating' } = {}) {
     const resolvedActor = actor || (actorId ? game.actors?.get?.(actorId) : null);
     const resolvedSessionId = sessionId || `game_${globalThis.foundry?.utils?.randomID?.(12) || Math.random().toString(36).slice(2, 14)}`;
     if (!game?.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-solo-hintaro', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn });
+      const requestId = HolonetSocketService.emitRequest('create-solo-hintaro', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn, hintaronMode: normalizeHintaronMode(hintaronMode) });
       return { pending: true, requestId, sessionId: resolvedSessionId };
     }
     const requester = requesterId ? game.users?.get?.(requesterId) : game?.user;
@@ -509,11 +562,12 @@ export class HintaroEngine {
     const hostRecipientId = requester?.isGM ? `gm:${userId}` : `player:${userId}`;
     const settings = getGameSettingsSnapshot();
     const wager = buildWagerProfileForHintaro(rulesMode, creditBuyIn);
+    const safeHintaronMode = normalizeHintaronMode(hintaronMode);
     const generated = await GameOpponentProfileService.buildPazaakAiOpponentProfile({ difficulty: settings.defaultAiDifficulty || 'medium', fairness: settings.defaultAiFairness || 'fair', personality: settings.defaultAiPersonality || 'random' });
     const aiProfile = aiProfileForSeat({ aiProfile: { ...generated, difficulty: settings.defaultAiDifficulty || 'medium', fairness: settings.defaultAiFairness || 'fair', personality: generated.personality || 'methodical' } });
     const hostSeat = { seatId: 'seat_host', type: requester?.isGM ? 'gm' : 'player', userId, actorId: resolvedActor?.id ?? actorId ?? null, recipientId: hostRecipientId, displayName: actorDisplay(resolvedActor), avatar: actorImg(resolvedActor), status: 'host' };
     const aiSeat = { seatId: 'seat_ai', type: 'ai', userId: null, actorId: null, recipientId: null, displayName: aiProfile.name || 'Hintaro Regular', avatar: 'icons/commodities/currency/coin-engraved-sun-smile-copper.webp', status: 'accepted', profession: aiProfile.profession || '', tableFact: aiProfile.tableFact || '', aiProfile };
-    let shell = { id: resolvedSessionId, gameId: 'hintaro', title: title || `${actorDisplay(resolvedActor)} at the Hintaro Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', hintaroAnte: 10, creditBuyIn: wager.creditBuyIn, hintaronMode: 'rotating', aiProfile }, log: [sessionLogEntry('solo-ai-hintaro-created', hostRecipientId)] };
+    let shell = { id: resolvedSessionId, gameId: 'hintaro', title: title || `${actorDisplay(resolvedActor)} at the Hintaro Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', hintaroAnte: 10, creditBuyIn: wager.creditBuyIn, hintaronMode: safeHintaronMode, rulesVariant: 'proper-symbolic', aiProfile }, log: [sessionLogEntry('solo-ai-hintaro-created', hostRecipientId)] };
     shell.gameState = ensureState(shell);
     if (GameCreditEscrowService.isCreditWager(shell)) {
       const escrowed = await GameCreditEscrowService.prepareEscrow(shell, { by: hostRecipientId });

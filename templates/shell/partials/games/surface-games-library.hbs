@@ -1,0 +1,40 @@
+{{!-- Games library mode: installed games + selected-game configuration + session rail. --}}
+
+<main class="swse-games-concept-layout">
+  <section class="swse-games-lib-col swse-games-lib-col--list">
+    <div class="swse-games-lib-head">
+      <div>
+        <span class="swse-games-kicker">INSTALLED GAMES</span>
+        <h3>Game Library</h3>
+      </div>
+      <span class="swse-games-count">{{vm.games.length}}</span>
+    </div>
+
+    <div class="swse-games-library swse-games-library--concept">
+      {{#each vm.games}}
+      <button type="button"
+              class="swse-games-card swse-games-game-card {{#if this.selected}}is-selected{{/if}} {{#if this.disabled}}is-disabled{{/if}}"
+              data-games-action="select-game"
+              data-game-id="{{this.id}}"
+              {{#if this.disabled}}disabled{{/if}}>
+        <span class="swse-games-card__icon">{{this.displayIcon}}</span>
+        <span class="swse-games-card__body">
+          <span class="swse-games-card__title">{{this.title}}</span>
+          <span class="swse-games-card__sub">{{this.subtitle}}</span>
+          <span class="swse-games-card__meta">
+            <span class="swse-games-pill {{this.statusKind}}">{{this.status}}</span>
+            <span class="swse-games-pill">{{this.playerRange}} players</span>
+            <span class="swse-games-pill">{{this.railHint}}</span>
+          </span>
+        </span>
+      </button>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="swse-games-lib-col swse-games-lib-col--detail">
+    {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-detail.hbs"}}
+  </section>
+
+  {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-rail.hbs"}}
+</main>

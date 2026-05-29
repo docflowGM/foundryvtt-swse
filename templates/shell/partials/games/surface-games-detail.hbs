@@ -1,0 +1,125 @@
+{{!-- Library selected-game detail/config partial. --}}
+{{#if vm.selectedGame}}
+<div class="swse-games-detail swse-games-detail--concept">
+  <div class="swse-games-detail-hero">
+    <div class="swse-games-detail-hero__glyph">{{vm.selectedGame.displayIcon}}</div>
+    <span class="swse-games-kicker">{{vm.selectedGame.implementationPhase}} · {{vm.selectedGame.status}}</span>
+    <h2>{{vm.selectedGame.title}}</h2>
+    <p class="swse-games-detail-sub">{{vm.selectedGame.description}}</p>
+    <p class="swse-games-detail-line">{{vm.selectedGame.tableLine}}</p>
+    <div class="swse-games-detail-tags">
+      {{#each vm.selectedGame.tags}}
+      <span class="swse-games-pill">{{this}}</span>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="swse-games-spec-grid">
+    <div class="swse-games-spec"><div class="k">Players</div><div class="v cyan">{{vm.selectedGame.playerRange}}</div><div class="vs">at the table</div></div>
+    <div class="swse-games-spec"><div class="k">{{vm.selectedGame.targetLabel}}</div><div class="v">{{vm.selectedGame.targetValue}}</div><div class="vs">{{vm.selectedGame.targetHint}}</div></div>
+    <div class="swse-games-spec"><div class="k">Stakes</div><div class="v gold">{{vm.selectedGame.stakesValue}}</div><div class="vs">{{vm.selectedGame.stakesHint}}</div></div>
+    <div class="swse-games-spec"><div class="k">Build</div><div class="v pink">{{vm.selectedGame.phaseShort}}</div><div class="vs">{{vm.selectedGame.status}}</div></div>
+  </div>
+
+  <div class="swse-games-capset">
+    {{#each vm.selectedGame.capabilityChips}}
+    <span class="swse-games-cap {{#if this.enabled}}on{{else}}off{{/if}}">{{#if this.enabled}}◆{{else}}◇{{/if}} {{this.label}}</span>
+    {{/each}}
+  </div>
+
+  {{#if vm.selectedGame.hasQuickRules}}
+  <section class="swse-games-quick-rules">
+    <span class="swse-games-kicker">Table Pattern</span>
+    <div>
+      {{#each vm.selectedGame.quickRules}}
+      <p>{{this}}</p>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <section class="swse-games-config-card">
+    <span class="swse-games-kicker">Start a Table</span>
+    <h4>Configure {{vm.selectedGame.title}} session</h4>
+
+    <div class="swse-games-config-row">
+      <span class="lbl">Rules</span>
+      <div class="swse-games-seg" role="group" aria-label="Game rules mode">
+        {{#each vm.modeCards}}
+        <button type="button"
+                class="{{#if this.selected}}on{{/if}} {{#unless this.enabled}}is-disabled{{/unless}}"
+                data-games-action="select-rules-mode"
+                data-rules-mode="{{this.id}}"
+                {{#unless this.enabled}}disabled{{/unless}}>
+          {{this.shortTitle}}
+        </button>
+        {{/each}}
+      </div>
+    </div>
+
+    {{#if vm.showCreditWagerControls}}
+    <div class="swse-games-config-row">
+      <span class="lbl">Buy-In</span>
+      <div class="swse-games-buyin-chip">{{vm.selectedCreditBuyIn}} cr <small>max {{vm.maxCreditWager}} cr</small></div>
+    </div>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiPazaak}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-pazaak">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiSabacc}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-sabacc">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <label><span>Hand Limit</span><input type="number" name="handLimit" min="0" max="99" step="1" value="0"><small>0 = open-ended casino table</small></label>
+      <label class="swse-games-checkline"><input type="checkbox" name="marketEnabled" checked> <span>Enable Holopad Casino Market house rule</span></label>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiDejarik}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-dejarik">
+      <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
+      <label><span>Rules Style</span><select name="dejarikRulesMode"><option value="holopad-skirmish">Holopad Skirmish — HP, reach, abilities</option><option value="classic-holochess">Classic Holochess — attack vs defense contest</option></select></label>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiHintaro}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-hintaro">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+          <label><span>Hintaron Mode</span><select name="hintaronMode"><option value="rotating">Rotating table hintaron</option><option value="casino">Fixed casino hintaron</option></select></label>
+      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canSendInvites}}
+    <form class="swse-games-invite-form" data-games-action="create-game-invite">
+      <input type="hidden" name="gameId" value="{{vm.selectedGame.id}}">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <div><span class="swse-games-kicker">Holonet Request</span><strong>Send Game Invite</strong><small>Creates a Messenger thread with an accept/decline game card.</small></div>
+      <label><span>Opponent</span><select name="recipientId" required>{{#each vm.inviteTargets}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/each}}</select></label>
+      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+      <label><span>Message</span><input type="text" name="memo" maxlength="140" placeholder="Optional table note"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <button type="submit" class="swse-games-primary">Send Game Request</button>
+    </form>
+    {{else}}
+    <div class="swse-games-next-box swse-games-next-box--concept">
+      <div><span class="swse-games-kicker">Next Milestone</span><strong>{{vm.selectedGame.nextMilestone}}</strong><small>{{#if vm.settings.useMessengerInvites}}No eligible invite targets are available for this table.{{else}}Messenger invites are disabled by GM settings.{{/if}}</small></div>
+    </div>
+    {{/if}}
+  </section>
+</div>
+{{else}}
+<div class="swse-games-empty">No games are registered.</div>
+{{/if}}
