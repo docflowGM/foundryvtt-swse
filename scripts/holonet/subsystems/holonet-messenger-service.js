@@ -28,6 +28,7 @@ import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-se
 import { GameSessionMaterializer } from '/systems/foundryvtt-swse/scripts/games/game-session-materializer.js';
 import { GameNotificationService } from '/systems/foundryvtt-swse/scripts/games/game-notification-service.js';
 import { MessengerNotificationBridge } from './messenger-notification-bridge.js';
+import { MessengerMaintenanceService } from './messenger-maintenance-service.js';
 
 const THREAD_TYPE = Object.freeze({
   PRIVATE: 'private',
@@ -550,6 +551,26 @@ function parsePositiveCredits(amount) {
 }
 
 export class HolonetMessengerService {
+
+  static async auditStorage(options = {}) {
+    return MessengerMaintenanceService.audit(options);
+  }
+
+  static async runMaintenanceDryRun(options = {}) {
+    return MessengerMaintenanceService.runDryRunProfile(options);
+  }
+
+  static async compactStorage(options = {}) {
+    return MessengerMaintenanceService.compact(options);
+  }
+
+  static async pruneMessages(options = {}) {
+    return MessengerMaintenanceService.pruneThreadMessages(options);
+  }
+
+  static async archiveDormantThreads(options = {}) {
+    return MessengerMaintenanceService.archiveDormantThreads(options);
+  }
   static _tradeLogContext(transfer = {}, extra = {}) {
     const counter = transfer?.counterOffer ?? null;
     return {

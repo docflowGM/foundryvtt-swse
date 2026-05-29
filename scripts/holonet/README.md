@@ -248,3 +248,29 @@ if (success) {
 - **HolonetStorage** — `scripts/holonet/subsystems/holonet-storage.js`  
 - **Contracts** — `scripts/holonet/contracts/`  
 - **Integration** — `scripts/holonet/integration/holonet-init.js`  
+
+### Messenger Maintenance Service
+**Opt-in GM diagnostics and cleanup for long-running Messenger campaigns.**
+
+Messenger threads can accumulate a large number of Holonet records over a campaign. The maintenance service keeps the default behavior safe: every destructive operation is GM-only and dry-run by default.
+
+Available helpers:
+- `MessengerMaintenanceService.audit()` — report missing thread/message references, orphaned Messenger records, notification routing issues, muted/archive counts, and oversized threads.
+- `MessengerMaintenanceService.runDryRunProfile()` — run the audit, compact preview, prune preview, and dormant-thread archive preview together.
+- `MessengerMaintenanceService.compact({ dryRun })` — remove missing/duplicate message references from thread metadata.
+- `MessengerMaintenanceService.pruneThreadMessages({ keepPerThread, olderThanDays, dryRun, deleteRecords })` — remove old read non-actionable messages from thread windows; archives records by default instead of deleting them.
+- `MessengerMaintenanceService.archiveDormantThreads({ olderThanDays, dryRun })` — mark old inactive threads archived for their participants.
+
+Facade access:
+```javascript
+await HolonetEngine.auditMessengerStorage();
+await HolonetEngine.runMessengerMaintenanceDryRun({ keepPerThread: 500, olderThanDays: 180 });
+await HolonetMessengerService.auditStorage();
+await HolonetMessengerService.pruneMessages({ keepPerThread: 500, dryRun: true });
+```
+
+Validation:
+```bash
+node tools/check-messenger-holonet-contract.mjs
+node tools/check-messenger-holonet-contract.mjs --strict
+```

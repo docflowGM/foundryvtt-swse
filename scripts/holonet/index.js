@@ -17,6 +17,8 @@ export { HolonetNotificationService } from './subsystems/holonet-notification-se
 export { HolonetFeedService } from './subsystems/holonet-feed-service.js';
 export { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 export { HolonetMessengerService } from './subsystems/holonet-messenger-service.js';
+export { MessengerNotificationBridge } from './subsystems/messenger-notification-bridge.js';
+export { MessengerMaintenanceService } from './subsystems/messenger-maintenance-service.js';
 
 // Contracts & enums
 export * from './contracts/index.js';

@@ -7,6 +7,7 @@ import { HolonetDeliveryRouter } from './subsystems/holonet-delivery-router.js';
 import { HolonetProjectionRouter } from './subsystems/holonet-projection-router.js';
 import { HolonetNotificationService } from './subsystems/holonet-notification-service.js';
 import { MessengerNotificationBridge } from './subsystems/messenger-notification-bridge.js';
+import { MessengerMaintenanceService } from './subsystems/messenger-maintenance-service.js';
 import { HolonetFeedService } from './subsystems/holonet-feed-service.js';
 import { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 import { DELIVERY_STATE } from './contracts/enums.js';
@@ -189,6 +190,15 @@ export class HolonetEngine {
   static get projection() { return HolonetProjectionRouter; }
   static get notifications() { return HolonetNotificationService; }
   static get feed() { return HolonetFeedService; }
+  static get messengerMaintenance() { return MessengerMaintenanceService; }
+
+  static async auditMessengerStorage(options = {}) {
+    return MessengerMaintenanceService.audit(options);
+  }
+
+  static async runMessengerMaintenanceDryRun(options = {}) {
+    return MessengerMaintenanceService.runDryRunProfile(options);
+  }
 
   static async getRecordsForValidation(limit = 10) {
     const records = await HolonetStorage.getAllRecords();
