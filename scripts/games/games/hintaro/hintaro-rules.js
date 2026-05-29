@@ -60,6 +60,14 @@ export function rollHintaroRegularDice(count = 4) {
   return Array.from({ length: Math.max(1, Number(count) || 4) }, () => rollHintaroRegularDie());
 }
 
+export function rollHintaroPlayerDice(count = 4) {
+  return rollHintaroRegularDice(count);
+}
+
+export function rollHintaroRegularDieSymbols() {
+  return rollHintaroRegularDie();
+}
+
 export function rollHintaroDie() {
   const face = HINTARO_FACES[randomIndex(HINTARO_FACES.length)];
   return { ...face, symbols: [...face.symbols] };

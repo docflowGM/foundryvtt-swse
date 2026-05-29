@@ -110,6 +110,49 @@ function buildSystemSummary(droidSystems = {}) {
   return parts.join('\n');
 }
 
+
+
+function resolveDroidOwnerActor(droidActor, pendingDroid = {}) {
+  if (!droidActor) return null;
+  const droidSystems = droidActor.system?.droidSystems ?? {};
+  const system = droidActor.system ?? {};
+  const flags = droidActor.flags ?? {};
+  const swseFlags = flags['foundryvtt-swse'] ?? flags.swse ?? {};
+  const storeFlags = swseFlags.storeAcquisition ?? flags.storeAcquisition ?? {};
+  const pendingFlags = swseFlags.pendingApproval ?? flags.pendingApproval ?? {};
+  const candidates = [
+    pendingDroid.ownerActorId,
+    droidSystems.ownerActorId,
+    droidSystems.requestedByActorId,
+    droidSystems.builtForActorId,
+    droidSystems.createdForActorId,
+    system.ownedByActorId,
+    system.ownerActorId,
+    system.storeAcquisition?.requestedByActorId,
+    system.storeAcquisition?.ownerActorId,
+    storeFlags.ownerActorId,
+    storeFlags.requestedByActorId,
+    pendingFlags.ownerActorId,
+    pendingFlags.requestedByActorId,
+    swseFlags.ownerActorId,
+    swseFlags.requestedByActorId
+  ].filter(Boolean);
+
+  for (const id of candidates) {
+    const owner = game.actors?.get?.(String(id));
+    if (owner && owner.id !== droidActor.id) return owner;
+  }
+
+  const ownerUserId = swseFlags.ownerPlayerId ?? storeFlags.ownerUserId ?? system.storeAcquisition?.ownerUserId ?? null;
+  if (ownerUserId) {
+    const ownerUser = game.users?.get?.(ownerUserId) ?? Array.from(game.users ?? []).find((user) => user?.id === ownerUserId);
+    if (ownerUser?.character && ownerUser.character.id !== droidActor.id) return ownerUser.character;
+  }
+
+  const playerOwner = Array.from(game.users ?? []).find((user) => !user?.isGM && Number(droidActor.ownership?.[user.id] ?? 0) >= 3 && user.character?.id && user.character.id !== droidActor.id);
+  return playerOwner?.character ?? null;
+}
+
 function buildGenericActorCategories({ actor, approval, sourceType }) {
   const system = actor?.system ?? {};
   const draftData = approval?.draftData ?? {};
@@ -366,9 +409,11 @@ function buildGameSettlementRequest(session) {
 function buildDroidActorRequest(pendingDroid) {
   const actor = game.actors.get(pendingDroid.actorId);
   const droidSystems = actor?.system?.droidSystems ?? {};
+  const ownerActor = pendingDroid.ownerActorId ? game.actors.get(pendingDroid.ownerActorId) : resolveDroidOwnerActor(actor, pendingDroid);
   const approval = {
     type: 'droid',
-    ownerActorName: pendingDroid.ownerName,
+    ownerActorId: ownerActor?.id ?? pendingDroid.ownerActorId ?? null,
+    ownerActorName: ownerActor?.name ?? pendingDroid.ownerName,
     requestedAt: droidSystems.buildHistory?.[0]?.timestamp,
     timeSubmitted: pendingDroid.createdAt,
     costCredits: droidSystems.credits?.spent ?? droidSystems.totalCost ?? pendingDroid.cost ?? 0,
@@ -386,7 +431,7 @@ function buildDroidActorRequest(pendingDroid) {
     typeLabel: 'Droid Acquisition Review',
     title: actor?.name ?? pendingDroid.actorName ?? 'Pending Droid',
     subtitle: `${pendingDroid.degree ?? 'Unknown degree'} · ${pendingDroid.size ?? 'Medium'} · ${displayCredits(cost)}`,
-    ownerLabel: pendingDroid.ownerName ?? 'Unknown',
+    ownerLabel: ownerActor?.name ?? pendingDroid.ownerName ?? 'Unknown',
     costLabel: displayCredits(cost),
     submittedLabel: pendingDroid.createdAt ?? EMPTY,
     icon: 'fa-solid fa-robot',
@@ -394,7 +439,8 @@ function buildDroidActorRequest(pendingDroid) {
     categories,
     warnings: [
       ...(actor ? [] : ['Draft droid actor could not be found.']),
-      ...(cost <= 0 ? ['No credit cost recorded for this droid.'] : [])
+      ...(cost <= 0 ? ['No credit cost recorded for this droid.'] : []),
+      ...(ownerActor ? [] : ['Owning character actor could not be resolved. Approval will fail closed until ownership is fixed.'])
     ]
   };
 }

@@ -175,7 +175,8 @@ export class GMJobBoardSurfaceController {
         const threadId = event.currentTarget.dataset.threadId;
         const status = event.currentTarget.dataset.status;
         if (!threadId || !status) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status });
+        const statusNote = this._readStatusNote(pageElement, threadId);
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status, statusNote });
         this.host.selectedJobThreadId = threadId;
         await this.host.render(false);
       }, { signal });
@@ -190,11 +191,28 @@ export class GMJobBoardSurfaceController {
         const objectiveId = event.currentTarget.dataset.objectiveId;
         const objectiveStatus = event.currentTarget.dataset.objectiveStatus;
         if (!threadId || !objectiveId || !objectiveStatus) return;
-        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus });
+        const objectiveNote = this._readObjectiveNote(pageElement, objectiveId, event.currentTarget);
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus, objectiveNote });
         this.host.selectedJobThreadId = threadId;
         await this.host.render(false);
       }, { signal });
     });
+  }
+
+
+  _readStatusNote(pageElement, threadId = '') {
+    const selector = threadId
+      ? `[data-job-status-note][data-thread-id="${CSS.escape(threadId)}"]`
+      : '[data-job-status-note]';
+    const textarea = pageElement.querySelector(selector) ?? pageElement.querySelector('[data-job-status-note]');
+    return String(textarea?.value || '').trim();
+  }
+
+  _readObjectiveNote(pageElement, objectiveId = '', trigger = null) {
+    const local = trigger?.closest?.('.job-objective-card, .job-queue-card')?.querySelector?.(`[data-job-objective-note-for="${CSS.escape(objectiveId)}"]`);
+    if (local) return String(local.value || '').trim();
+    const textarea = pageElement.querySelector(`[data-job-objective-note-for="${CSS.escape(objectiveId)}"]`);
+    return String(textarea?.value || '').trim();
   }
 
   _wirePayoutForms(pageElement, signal) {

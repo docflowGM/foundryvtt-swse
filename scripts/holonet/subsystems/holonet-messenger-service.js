@@ -2451,46 +2451,121 @@ export class HolonetMessengerService {
     if (!['complete', 'failed'].includes(normalizedStatus)) return [];
     const consequences = job.factionConsequences || job.relationshipConsequences || null;
     const factionName = String(consequences?.factionName || job.client?.factionName || '').trim();
-    const delta = normalizedStatus === 'complete' ? Number(consequences?.successDelta || 0) || 0 : Number(consequences?.failureDelta || 0) || 0;
-    if (!factionName || !delta) return [];
-    const existingFaction = FactionRegistryService.findFaction(factionName);
+    if (!factionName) return [];
+
     job.factionConsequences ??= consequences && typeof consequences === 'object' ? { ...consequences } : {};
     job.factionConsequences.applied ??= {};
-    if (job.factionConsequences.applied[normalizedStatus]) return [];
+    job.factionConsequences.reversed ??= {};
+
+    const delta = this._jobFactionDeltaForStatus(job.factionConsequences, normalizedStatus);
+    const currentAppliedStatus = this._currentAppliedJobFactionStatus(job.factionConsequences);
+    if (currentAppliedStatus === normalizedStatus) return [];
+
+    const existingFaction = FactionRegistryService.findFaction(factionName);
+    const correctionResults = currentAppliedStatus
+      ? await this._reverseJobFactionConsequences({ thread, fromStatus: currentAppliedStatus, toStatus: normalizedStatus, requesterId })
+      : [];
+
+    if (!delta) {
+      job.factionConsequences.currentAppliedStatus = '';
+      await HolonetStorage.saveThread(thread);
+      if (correctionResults.length) await this._emitJobFactionSync({ thread, factionName, status: normalizedStatus, delta: 0, results: correctionResults, requesterId, autoCreated: false, correction: true });
+      return correctionResults;
+    }
+
     const results = await FactionRegistryService.applyJobConsequences({ thread, status: normalizedStatus, requesterId });
-    if (!results.length) return [];
-    job.factionConsequences.applied[normalizedStatus] = nowIso();
+    const combinedResults = [...correctionResults, ...results];
+    if (!combinedResults.length) return [];
+    job.factionConsequences.applied[normalizedStatus] = {
+      at: nowIso(),
+      delta,
+      correctionOf: currentAppliedStatus || ''
+    };
+    job.factionConsequences.currentAppliedStatus = normalizedStatus;
     await HolonetStorage.saveThread(thread);
+
+    const autoCreated = !existingFaction && results.some(result => result.factionId);
+    await this._emitJobFactionSync({ thread, factionName, status: normalizedStatus, delta, results: combinedResults, requesterId, autoCreated, correction: correctionResults.length > 0 });
+    const summary = combinedResults.map(result => `${result.actorName}: ${result.before >= 0 ? '+' : ''}${result.before} → ${result.after >= 0 ? '+' : ''}${result.after}`).join('; ');
+    if (autoCreated) ui.notifications?.warn?.(`Job faction "${factionName}" was not in the GM registry; it was created automatically.`);
+    await this._publishSystemMessage(thread, `${autoCreated ? 'Created GM registry faction and updated' : correctionResults.length ? 'Corrected faction relationship and updated' : 'Faction relationship updated for'} ${factionName}: ${summary}.`, {
+      eventType: 'job-faction-score-changed',
+      factionName,
+      factionIds: Array.from(new Set(combinedResults.map(result => result.factionId).filter(Boolean))),
+      status: normalizedStatus,
+      delta,
+      affectedActorIds: Array.from(new Set(combinedResults.map(result => result.actorId).filter(Boolean))),
+      autoCreated,
+      correctedPriorStatus: currentAppliedStatus || '',
+      requesterId
+    });
+    return combinedResults;
+  }
+
+  static _jobFactionDeltaForStatus(consequences = {}, status = '') {
+    const normalizedStatus = String(status || '').trim();
+    if (normalizedStatus === 'complete') return Number(consequences?.successDelta || 0) || 0;
+    if (normalizedStatus === 'failed') return Number(consequences?.failureDelta || 0) || 0;
+    return 0;
+  }
+
+  static _currentAppliedJobFactionStatus(consequences = {}) {
+    const current = String(consequences?.currentAppliedStatus || '').trim();
+    if (['complete', 'failed'].includes(current)) return current;
+    const applied = consequences?.applied || {};
+    const hasComplete = Boolean(applied.complete);
+    const hasFailed = Boolean(applied.failed);
+    if (hasComplete && !hasFailed) return 'complete';
+    if (hasFailed && !hasComplete) return 'failed';
+    return '';
+  }
+
+  static async _reverseJobFactionConsequences({ thread, fromStatus = '', toStatus = '', requesterId = null } = {}) {
+    const job = thread?.metadata?.job ?? null;
+    if (!job) return [];
+    const consequences = job.factionConsequences || job.relationshipConsequences || {};
+    const normalizedFrom = String(fromStatus || '').trim();
+    if (!['complete', 'failed'].includes(normalizedFrom)) return [];
+    const priorDelta = this._jobFactionDeltaForStatus(consequences, normalizedFrom);
+    const factionName = String(consequences?.factionName || job.client?.factionName || '').trim();
+    if (!factionName || !priorDelta) return [];
+    const reason = `Correction: job status changed from ${this._jobStatusLabel(normalizedFrom)} to ${this._jobStatusLabel(toStatus)} for ${job.title || thread?.title || 'Holonet Job'}.`;
+    const results = await FactionRegistryService.applyJobFactionDelta({
+      thread,
+      factionName,
+      delta: -priorDelta,
+      source: 'job',
+      reason,
+      requesterId,
+      status: toStatus,
+      metadata: { correction: true, reversedStatus: normalizedFrom }
+    });
+    if (results.length) {
+      job.factionConsequences.reversed ??= {};
+      job.factionConsequences.reversed[normalizedFrom] = { at: nowIso(), delta: -priorDelta, toStatus };
+    }
+    return results;
+  }
+
+  static async _emitJobFactionSync({ thread, factionName = '', status = '', delta = 0, results = [], requesterId = null, autoCreated = false, correction = false } = {}) {
     const factionIds = Array.from(new Set(results.map(result => result.factionId).filter(Boolean)));
     const actorIds = Array.from(new Set(results.map(result => result.actorId).filter(Boolean)));
-    const autoCreated = !existingFaction && factionIds.length > 0;
-    const summary = results.map(result => `${result.actorName}: ${result.before >= 0 ? '+' : ''}${result.before} → ${result.after >= 0 ? '+' : ''}${result.after}`).join('; ');
-    if (autoCreated) ui.notifications?.warn?.(`Job faction "${factionName}" was not in the GM registry; it was created automatically.`);
     const syncPayload = {
       type: 'faction-score-changed',
       source: 'job-board',
-      threadId: thread.id,
+      threadId: thread?.id,
       factionName,
       factionIds,
       actorIds,
-      status: normalizedStatus,
+      status,
       delta,
       requesterId,
-      autoCreated
+      autoCreated,
+      correction
     };
     Hooks.callAll('swseHolonetUpdated', syncPayload);
     HolonetSocketService.emitSync(syncPayload);
-    await this._publishSystemMessage(thread, `${autoCreated ? 'Created GM registry faction and updated' : 'Faction relationship updated for'} ${factionName}: ${summary}.`, {
-      eventType: 'job-faction-score-changed',
-      factionName,
-      factionIds,
-      status: normalizedStatus,
-      delta,
-      affectedActorIds: actorIds,
-      autoCreated,
-      requesterId
-    });
-    return results;
+    return syncPayload;
   }
 
   static async _gmAtomicJobCreditPayout({ thread, amount, recipientId, targetActor = null, requesterId = null, senderRecipientId = null, partyFundCutPercent = null } = {}) {

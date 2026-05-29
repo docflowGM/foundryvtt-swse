@@ -576,13 +576,13 @@ export class SWSERollEngine {
     }
     return null;
   }
+}
 
 
 /* ============================================================
    PHASE 3: CHAT STATE CONTEXT HELPERS
 ============================================================ */
 
-const __swseSafePayload = swseNormalizeRendererPayload(typeof payload !== "undefined" ? payload : {});
 function swseDeriveChatStateContext(payload = {}) {
   const type = String(payload.type ?? payload.rollType ?? payload.eventType ?? "roll").toLowerCase();
   const tags = Array.isArray(payload.tags) ? payload.tags : [];

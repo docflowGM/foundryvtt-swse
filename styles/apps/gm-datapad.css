@@ -5297,6 +5297,24 @@
   .gm-faction-grid,
   .gm-faction-form-grid,
   .gm-faction-form-grid.compact,
+  .gm-faction-filter-bar,
   .gm-faction-adjust-form,
   .gm-faction-relationship-card header { grid-template-columns: 1fr; }
+  .gm-faction-registry-card-header { align-items: stretch; flex-direction: column; }
 }
+
+.gm-faction-attach-panel { border-color: rgba(125, 220, 255, 0.24); }
+.gm-faction-filter-bar { display: grid; grid-template-columns: minmax(220px, 1.4fr) repeat(3, minmax(150px, 1fr)) auto; gap: 0.65rem; align-items: end; margin-bottom: 0.85rem; padding: 0.75rem; border: 1px solid rgba(125, 220, 255, 0.16); border-radius: 12px; background: rgba(5, 16, 26, 0.38); }
+.gm-faction-filter-bar label,
+.gm-faction-registry-form label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--swse-text-muted, #9fb7c8); }
+.gm-faction-filter-bar input,
+.gm-faction-filter-bar select,
+.gm-faction-registry-form input,
+.gm-faction-registry-form select,
+.gm-faction-registry-form textarea { width: 100%; }
+.gm-faction-checkbox-label { flex-direction: row !important; align-items: center; gap: 0.45rem !important; min-height: 2rem; }
+.gm-faction-checkbox-label input { width: auto; }
+.gm-faction-registry-card { display: block; }
+.gm-faction-registry-form { display: grid; gap: 0.65rem; width: 100%; }
+.gm-faction-registry-card-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.gm-faction-stale-warning { display: inline-flex; width: fit-content; margin-top: 0.2rem; padding: 0.15rem 0.4rem; border: 1px solid rgba(255, 210, 90, 0.42); border-radius: 999px; color: #ffd25a; background: rgba(255, 210, 90, 0.12); text-transform: uppercase; letter-spacing: 0.08em; }

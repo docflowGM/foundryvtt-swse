@@ -295,7 +295,7 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     try {
       const { FollowerCreator } = await import('/systems/foundryvtt-swse/scripts/apps/follower-creator.js');
       await FollowerCreator.updateFollowersForLevelUp(ownerActor);
-      ui?.notifications?.info?.('Follower recalculated from the owner's current heroic level.');
+      ui?.notifications?.info?.(`Follower recalculated from the owner's current heroic level.`);
       SWSELogger.log('[Follower Progression] Existing follower level-up handled as automatic recalculation.');
       return game.actors?.get(options.existingFollowerId) || null;
     } catch (err) {

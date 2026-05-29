@@ -50,12 +50,18 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
       if (actor.system.droidSystems.stateMode !== 'PENDING') continue;
 
       const droidData = actor.system.droidSystems;
-      const owner = game.users.find(user => user?.character?.id === actor.id || Number(actor.ownership?.[user.id] ?? 0) >= 3);
+      const ownerActor = this._resolveDroidOwnerActor(actor);
+      const ownerUser = ownerActor
+        ? Array.from(game.users ?? []).find(user => !user?.isGM && user?.character?.id === ownerActor.id)
+        : Array.from(game.users ?? []).find(user => !user?.isGM && Number(actor.ownership?.[user.id] ?? 0) >= 3);
 
       pendingDroids.push({
         actorId: actor.id,
         actorName: actor.name,
-        ownerName: owner?.name || 'Unknown',
+        ownerActorId: ownerActor?.id ?? null,
+        ownerActorName: ownerActor?.name ?? null,
+        ownerCredits: ownerActor?.system?.credits ?? 0,
+        ownerName: ownerActor?.name || ownerUser?.name || 'Unknown',
         degree: droidData.degree || 'Unknown',
         size: droidData.size || 'Medium',
         locomotion: droidData.locomotion?.name || 'None',
@@ -117,6 +123,48 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
     });
   }
 
+
+  _resolveDroidOwnerActor(actor) {
+    if (!actor) return null;
+    const droidSystems = actor.system?.droidSystems ?? {};
+    const system = actor.system ?? {};
+    const flags = actor.flags ?? {};
+    const swseFlags = flags['foundryvtt-swse'] ?? flags.swse ?? {};
+    const storeFlags = swseFlags.storeAcquisition ?? flags.storeAcquisition ?? {};
+    const pendingFlags = swseFlags.pendingApproval ?? flags.pendingApproval ?? {};
+    const candidates = [
+      droidSystems.ownerActorId,
+      droidSystems.requestedByActorId,
+      droidSystems.builtForActorId,
+      droidSystems.createdForActorId,
+      system.ownedByActorId,
+      system.ownerActorId,
+      system.storeAcquisition?.requestedByActorId,
+      system.storeAcquisition?.ownerActorId,
+      storeFlags.ownerActorId,
+      storeFlags.requestedByActorId,
+      pendingFlags.ownerActorId,
+      pendingFlags.requestedByActorId,
+      swseFlags.ownerActorId,
+      swseFlags.requestedByActorId
+    ].filter(Boolean);
+
+    for (const id of candidates) {
+      const owner = game.actors?.get?.(String(id));
+      if (owner && owner.id !== actor.id) return owner;
+    }
+
+    const ownerUserId = swseFlags.ownerPlayerId ?? storeFlags.ownerUserId ?? system.storeAcquisition?.ownerUserId ?? null;
+    if (ownerUserId) {
+      const ownerUser = game.users?.get?.(ownerUserId) ?? Array.from(game.users ?? []).find((user) => user?.id === ownerUserId);
+      if (ownerUser?.character && ownerUser.character.id !== actor.id) return ownerUser.character;
+    }
+
+    const playerOwner = Array.from(game.users ?? []).find((user) => !user?.isGM && Number(actor.ownership?.[user.id] ?? 0) >= 3 && user.character?.id && user.character.id !== actor.id);
+    return playerOwner?.character ?? null;
+  }
+
+
   /**
    * Approve a pending droid
    * Deduct credits and finalize
@@ -134,21 +182,29 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
       return;
     }
 
-    const cost = normalizeCredits(droidData.credits?.spent || 0);
+    const cost = normalizeCredits(droidData.credits?.spent || droidData.totalCost || 0);
+    const ownerActor = this._resolveDroidOwnerActor(actor);
+    if (!ownerActor) {
+      ui.notifications.error(`Cannot approve ${actor.name}: no owning character actor could be resolved for the credit charge.`);
+      return;
+    }
 
     try {
       let transactionId = null;
       if (cost > 0) {
         const creditResult = await TransactionEngine.executeCreditAdjustment({
-          actor,
+          actor: ownerActor,
           amount: -cost,
-          reason: 'GM approved pending droid build',
+          reason: `GM approved pending droid build: ${actor.name}`,
           transactionContext: 'store-custom-approval',
           audit: {
             approvalType: 'droid',
             itemName: actor.name,
             itemNames: [actor.name],
             itemCount: 1,
+            ownerActorId: ownerActor.id,
+            ownerActorName: ownerActor.name,
+            draftActorId: actor.id,
             source: 'GM Droid Approval Dashboard - Pending Droid Approval'
           }
         }, {
@@ -158,7 +214,7 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
         });
 
         if (!creditResult.success) {
-          ui.notifications.error(`Failed to approve droid credits: ${creditResult.error}`);
+          ui.notifications.error(`Failed to approve droid credits from ${ownerActor.name}: ${creditResult.error}`);
           return;
         }
         transactionId = creditResult.transactionId;
@@ -168,13 +224,17 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
       buildHistory.push({
         timestamp: new Date().toISOString(),
         action: 'approved_by_gm',
-        detail: `GM approved droid. Cost: ${cost} credits deducted.`,
+        detail: `GM approved droid for ${ownerActor.name}. Cost: ${cost} credits deducted.`,
+        ownerActorId: ownerActor.id,
+        ownerActorName: ownerActor.name,
         transactionId
       });
 
       await ActorEngine.updateActor(actor, {
         'system.droidSystems.stateMode': 'FINALIZED',
-        'system.droidSystems.buildHistory': buildHistory
+        'system.droidSystems.buildHistory': buildHistory,
+        'system.ownedByActorId': ownerActor.id,
+        'system.ownedByActorName': ownerActor.name
       });
 
       Hooks.call('swseApprovalResolved', {

@@ -60,7 +60,15 @@ export class AlliesSurfaceController {
   _wireFactionRefreshHooks() {
     for (const [hook, fn] of this._hookListeners) Hooks.off(hook, fn);
     this._hookListeners = [];
-    const refresh = () => this._host?.render?.(false);
+    // Debounced refresh — collapses multiple hook fires in the same tick into one render.
+    let _refreshTimer = null;
+    const refresh = () => {
+      if (_refreshTimer) return;
+      _refreshTimer = setTimeout(() => {
+        _refreshTimer = null;
+        this._host?.render?.(false);
+      }, 0);
+    };
     const actorRefresh = (payload = {}) => {
       if (!payload?.actor || payload.actor.id === this._actor?.id) refresh();
     };
@@ -255,7 +263,6 @@ export class AlliesSurfaceController {
     const data = this._collectFactionForm(form);
     const ok = await AlliesSurfaceService.saveFaction(this._actor, factionId, data);
     if (ok) ui?.notifications?.info?.('Faction record saved.');
-    this._host.render(false);
   }
 
   async _removeFaction(factionId) {
@@ -305,7 +312,6 @@ export class AlliesSurfaceController {
     const data = this._collectBaseForm(form);
     const ok = await AlliesSurfaceService.saveBase(this._actor, baseId, data);
     if (ok) ui?.notifications?.info?.('Base record saved.');
-    this._host.render(false);
   }
 
   async _removeBase(baseId) {
@@ -349,7 +355,6 @@ export class AlliesSurfaceController {
     const data = this._collectOrganizationForm(form);
     const ok = await AlliesSurfaceService.saveOrganization(this._actor, organizationId, data);
     if (ok) ui?.notifications?.info?.('Organization record saved.');
-    this._host.render(false);
   }
 
   async _removeOrganization(organizationId) {

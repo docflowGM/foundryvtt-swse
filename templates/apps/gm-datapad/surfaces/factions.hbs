@@ -51,29 +51,91 @@
       </form>
     </section>
 
-    <section class="swse-ui-panel gm-faction-registry-panel">
+    <section class="swse-ui-panel gm-faction-attach-panel">
       <div class="job-board-section-header compact">
         <div>
-          <span class="gm-command-eyebrow">CAMPAIGN REGISTRY</span>
-          <h3>Known Factions</h3>
+          <span class="gm-command-eyebrow">ATTACH EXISTING</span>
+          <h3>Assign Registry Faction</h3>
         </div>
       </div>
-      <div class="gm-faction-registry-list">
-        {{#each factionManager.registry}}
-        <article class="gm-faction-registry-card">
-          <div>
-            <strong>{{this.name}}</strong>
-            <span>{{this.type}} · Scale {{this.scale}} · <b class="{{this.scoreClass}}">{{this.scoreLabel}}</b></span>
-            {{#if this.planetSystem}}<small>{{this.planetSystem}}</small>{{/if}}
-          </div>
-          <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-registry" data-faction-id="{{this.id}}">Delete</button>
-        </article>
-        {{else}}
-        <p class="placeholder">No GM registry factions yet.</p>
-        {{/each}}
-      </div>
+      <form class="gm-faction-attach-form" data-gm-faction-attach-existing-form>
+        <div class="gm-faction-form-grid compact">
+          <label>Actor
+            <select name="actorId" required>
+              <option value="">Choose actor</option>
+              {{#each factionManager.actors}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Faction
+            <select name="factionId" required>
+              <option value="">Choose faction</option>
+              {{#each factionManager.registry}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Relationship
+            <select name="relationshipType">
+              {{#each factionManager.relationshipTypes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Starting Score<input type="number" name="score" step="1" value="0"></label>
+          <label class="is-wide">Benefits Override<textarea name="benefits" rows="2" placeholder="Optional; blank uses registry benefits"></textarea></label>
+          <label class="is-wide">Public Notes<textarea name="notes" rows="2" placeholder="Player-visible notes for this actor"></textarea></label>
+          <label class="is-wide">GM Notes<textarea name="gmNotes" rows="2" placeholder="Optional; blank uses registry GM notes"></textarea></label>
+        </div>
+        <button type="submit" class="swse-ui-button bulletin-primary-action">Attach Relationship</button>
+      </form>
     </section>
   </div>
+
+  <section class="swse-ui-panel gm-faction-registry-panel">
+    <div class="job-board-section-header compact">
+      <div>
+        <span class="gm-command-eyebrow">CAMPAIGN REGISTRY</span>
+        <h3>Known Factions</h3>
+      </div>
+    </div>
+    <div class="gm-faction-registry-list">
+      {{#each factionManager.registry}}
+      <article class="gm-faction-registry-card" data-search="{{this.searchText}}">
+        <form class="gm-faction-registry-form" data-gm-faction-registry-form>
+          <input type="hidden" name="id" value="{{this.id}}">
+          <div class="gm-faction-registry-card-header">
+            <div>
+              <strong>{{this.name}}</strong>
+              <span>{{this.type}} · Scale {{this.scale}} · <b class="{{this.scoreClass}}">{{this.scoreLabel}}</b></span>
+              {{#if this.planetSystem}}<small>{{this.planetSystem}}</small>{{/if}}
+            </div>
+            <div class="gm-faction-row-actions">
+              <button type="submit" class="swse-ui-button approve">Save Registry</button>
+              <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-registry" data-faction-id="{{this.id}}">Delete</button>
+            </div>
+          </div>
+          <div class="gm-faction-form-grid compact">
+            <label>Name<input type="text" name="name" value="{{this.name}}" required></label>
+            <label>Type<input type="text" name="type" value="{{this.type}}"></label>
+            <label>Planet<input type="text" name="planet" value="{{this.planet}}"></label>
+            <label>System<input type="text" name="system" value="{{this.system}}"></label>
+            <label>Scale<input type="number" name="scale" min="1" max="20" step="1" value="{{this.scale}}"></label>
+            <label>Score<input type="number" name="score" step="1" value="{{this.score}}"></label>
+            <label>Starting Score<input type="number" name="startingScore" step="1" value="{{this.startingScore}}"></label>
+            <label>Leader<input type="text" name="leader" value="{{this.leader}}"></label>
+            <label>Source
+              <select name="source">
+                {{#each ../factionManager.sourceTypes}}<option value="{{this.value}}" {{#if (eq this.value ../source)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+              </select>
+            </label>
+            <label>Status<input type="text" name="status" value="{{this.status}}"></label>
+            <label class="is-wide">Benefits<textarea name="benefits" rows="2">{{this.benefits}}</textarea></label>
+            <label class="is-wide">Public Notes<textarea name="notes" rows="2">{{this.notes}}</textarea></label>
+            <label class="is-wide">GM Notes<textarea name="gmNotes" rows="2">{{this.gmNotes}}</textarea></label>
+          </div>
+        </form>
+      </article>
+      {{else}}
+      <p class="placeholder">No GM registry factions yet.</p>
+      {{/each}}
+    </div>
+  </section>
 
   {{#if factionManager.hasSuggestions}}
   <section class="swse-ui-panel gm-faction-suggestions-panel">
@@ -109,10 +171,35 @@
         <h3>Actor Faction Relationships</h3>
       </div>
     </div>
+    <div class="gm-faction-filter-bar">
+      <label>Search<input type="search" data-gm-faction-search placeholder="Actor, faction, type, notes..."></label>
+      <label>Actor
+        <select data-gm-faction-filter="actorId">
+          <option value="">All Actors</option>
+          {{#each factionManager.actors}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Relationship
+        <select data-gm-faction-filter="relationshipType">
+          <option value="">All Types</option>
+          {{#each factionManager.relationshipTypes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Status
+        <select data-gm-faction-filter="status">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </label>
+      <label class="gm-faction-checkbox-label"><input type="checkbox" data-gm-faction-filter="missingRegistry"> Stale registry only</label>
+    </div>
     {{#if factionManager.hasRelationships}}
     <div class="gm-faction-relationship-list">
       {{#each factionManager.relationships}}
-      <article class="gm-faction-relationship-card">
+      <article class="gm-faction-relationship-card" data-gm-faction-filter-row data-search="{{this.searchText}}" data-actor-id="{{this.actorId}}" data-relationship-type="{{this.relationshipType}}" data-status="{{this.status}}" data-registry-missing="{{this.registryMissing}}">
         <form data-gm-faction-relationship-form>
           <input type="hidden" name="actorId" value="{{this.actorId}}">
           <input type="hidden" name="relationshipId" value="{{this.id}}">
@@ -122,6 +209,7 @@
             <div>
               <span class="gm-command-eyebrow">{{this.actorName}}</span>
               <input type="text" name="factionName" value="{{this.factionName}}">
+              {{#if this.registryMissing}}<small class="gm-faction-stale-warning">{{this.missingRegistryLabel}}</small>{{/if}}
             </div>
             <div class="gm-faction-score {{this.scoreClass}}">
               <span>Score</span>

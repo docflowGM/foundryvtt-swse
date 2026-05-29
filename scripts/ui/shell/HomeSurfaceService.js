@@ -387,6 +387,13 @@ export class HomeSurfaceService {
    */
   static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}) {
     const assetSummary = this._getOwnedAssetSummary(actor);
+    const gamesEnabled = (() => {
+      try {
+        return game.settings?.get?.('foundryvtt-swse', 'gamesEnabled') !== false;
+      } catch {
+        return true;
+      }
+    })();
     const baseTiles = [
       {
         id: 'sheet',
@@ -447,6 +454,21 @@ export class HomeSurfaceService {
         status: 'OPEN',
         statusTone: '',
         description: 'Browse and purchase equipment'
+      },
+      {
+        id: 'games',
+        label: 'Games',
+        icon: '⬟',
+        routeId: 'games',
+        visible: gamesEnabled,
+        enabled: gamesEnabled,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: !gamesEnabled,
+        status: gamesEnabled ? 'READY' : 'DISABLED',
+        statusTone: gamesEnabled ? '' : 'warn',
+        description: 'Pazaak, Sabacc, Dejarik, and Hintaro tables'
       },
       {
         id: 'ship',

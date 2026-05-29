@@ -18,6 +18,8 @@ export class GMFactionRelationshipSurfaceController {
     const pageElement = root.querySelector('.gm-datapad-factions');
     if (!pageElement) return;
 
+    this._wireFilters(pageElement, signal);
+
     pageElement.querySelectorAll('form[data-gm-faction-create-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -55,6 +57,59 @@ export class GMFactionRelationshipSurfaceController {
           }
         }
         ui.notifications?.info?.(`Faction ${faction.name} saved.`);
+        form.reset();
+        await this.host.render(false);
+      }, { signal });
+    });
+
+
+
+    pageElement.querySelectorAll('form[data-gm-faction-registry-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const faction = await FactionRegistryService.upsertFaction({
+          id: text(data, 'id'),
+          name: text(data, 'name'),
+          type: text(data, 'type') || 'Faction',
+          planet: text(data, 'planet'),
+          system: text(data, 'system'),
+          scale: number(data, 'scale') || 1,
+          leader: text(data, 'leader'),
+          score: number(data, 'score'),
+          startingScore: number(data, 'startingScore'),
+          benefits: text(data, 'benefits'),
+          notes: text(data, 'notes'),
+          gmNotes: text(data, 'gmNotes'),
+          source: text(data, 'source') || 'gm',
+          status: text(data, 'status') || 'active',
+          historyNote: 'GM registry edit'
+        });
+        ui.notifications?.info?.(`Registry faction ${faction.name} updated.`);
+        await this.host.render(false);
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('form[data-gm-faction-attach-existing-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const actor = game.actors?.get?.(text(data, 'actorId'));
+        const faction = FactionRegistryService.findFaction(text(data, 'factionId'));
+        if (!actor) return ui.notifications?.warn?.('Choose an actor to attach.');
+        if (!faction) return ui.notifications?.warn?.('Choose an existing registry faction.');
+        await FactionRegistryService.addActorRelationship({
+          actor,
+          faction,
+          relationshipType: text(data, 'relationshipType') || 'known',
+          score: number(data, 'score'),
+          benefits: text(data, 'benefits') || faction.benefits || '',
+          notes: text(data, 'notes'),
+          gmNotes: text(data, 'gmNotes') || faction.gmNotes || '',
+          source: 'gm',
+          status: 'active'
+        });
+        ui.notifications?.info?.(`${faction.name} attached to ${actor.name}.`);
         form.reset();
         await this.host.render(false);
       }, { signal });
@@ -150,6 +205,31 @@ export class GMFactionRelationshipSurfaceController {
         }
       }, { signal });
     });
+  }
+
+
+  _wireFilters(pageElement, signal) {
+    const controls = Array.from(pageElement.querySelectorAll('[data-gm-faction-filter], [data-gm-faction-search]'));
+    if (!controls.length) return;
+    const apply = () => {
+      const query = String(pageElement.querySelector('[data-gm-faction-search]')?.value || '').trim().toLowerCase();
+      const actor = String(pageElement.querySelector('[data-gm-faction-filter="actorId"]')?.value || '').trim();
+      const relationship = String(pageElement.querySelector('[data-gm-faction-filter="relationshipType"]')?.value || '').trim();
+      const status = String(pageElement.querySelector('[data-gm-faction-filter="status"]')?.value || '').trim();
+      const missingOnly = pageElement.querySelector('[data-gm-faction-filter="missingRegistry"]')?.checked === true;
+      pageElement.querySelectorAll('[data-gm-faction-filter-row]').forEach((row) => {
+        const haystack = String(row.dataset.search || '').toLowerCase();
+        const actorMatch = !actor || row.dataset.actorId === actor;
+        const relationshipMatch = !relationship || row.dataset.relationshipType === relationship;
+        const statusMatch = !status || row.dataset.status === status;
+        const missingMatch = !missingOnly || row.dataset.registryMissing === 'true';
+        const queryMatch = !query || haystack.includes(query);
+        row.hidden = !(actorMatch && relationshipMatch && statusMatch && missingMatch && queryMatch);
+      });
+    };
+    controls.forEach((control) => control.addEventListener('input', apply, { signal }));
+    controls.forEach((control) => control.addEventListener('change', apply, { signal }));
+    apply();
   }
 
   destroy() {

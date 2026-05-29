@@ -432,6 +432,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/sheets/partials/sheet-header.hbs',
   'systems/foundryvtt-swse/templates/sheets/partials/sheet-tabs.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
 

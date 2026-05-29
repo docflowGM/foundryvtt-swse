@@ -1,11 +1,12 @@
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { GMApprovalOperationsService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js';
 
 /**
  * GMApprovalsSurfaceController
  *
- * Owns DOM wiring for the GM Approvals surface. Approval decisions remain on
- * the GM Datapad host so the controller extraction does not change behavior or
- * duplicate approval/economy logic.
+ * Owns DOM wiring for the GM Approvals surface. Approval decisions route through
+ * GMApprovalOperationsService so the GM Datapad host remains a shell/router and
+ * existing economy/asset/game engines stay the source of truth.
  */
 
 export class GMApprovalsSurfaceController {
@@ -132,7 +133,7 @@ export class GMApprovalsSurfaceController {
 
   async _approveRequest(key, form = null) {
     const parsed = this._parseFactionKey(key);
-    if (!parsed) return this.host._approveApprovalRequest(key);
+    if (!parsed) return GMApprovalOperationsService.approveRequest(this.host, key);
     await FactionRegistryService.approveSuggestedFaction({
       ...parsed,
       data: form ? this._collectFactionApprovalData(form) : {}
@@ -144,7 +145,7 @@ export class GMApprovalsSurfaceController {
 
   async _finalizeApproval(key, form = null) {
     const parsed = this._parseFactionKey(key);
-    if (!parsed) return this.host._finalizeApprovalWithEdits(key, form);
+    if (!parsed) return GMApprovalOperationsService.finalizeWithEdits(this.host, key, form);
     await FactionRegistryService.approveSuggestedFaction({
       ...parsed,
       data: form ? this._collectFactionApprovalData(form) : {}
@@ -157,7 +158,7 @@ export class GMApprovalsSurfaceController {
 
   async _denyRequest(key, reason = '') {
     const parsed = this._parseFactionKey(key);
-    if (!parsed) return this.host._denyApprovalRequest(key, reason);
+    if (!parsed) return GMApprovalOperationsService.denyRequest(this.host, key, reason);
     await FactionRegistryService.rejectSuggestedFaction({ ...parsed, reason });
     ui.notifications?.info?.('Faction suggestion rejected.');
     this.host.selectedApprovalKey = null;

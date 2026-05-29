@@ -5,6 +5,13 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 function asArray(value) { return Array.isArray(value) ? value : []; }
 function scoreClass(score) { return score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral'; }
 function scoreLabel(score) { return score > 0 ? `+${score}` : score === 0 ? '+0' : String(score); }
+function splitPlanetSystem(value = '') {
+  const raw = String(value || '').trim();
+  if (!raw) return { planet: '', system: '' };
+  const [planet, system] = raw.split('/').map(part => String(part || '').trim());
+  return { planet: planet || raw, system: system || '' };
+}
+function searchText(...parts) { return parts.map(part => String(part || '').toLowerCase()).join(' '); }
 function actorOption(actor) {
   return {
     id: actor.id,
@@ -44,12 +51,22 @@ export class GMFactionRelationshipSurfaceService {
       pageTitle: 'Faction Manager',
       pageDescription: 'GM-owned campaign faction registry, party-wide actor relationships, score adjustments, and player suggestions.',
       factionManager: {
-        registry: registrySummary.factions.map((record) => ({
-          ...record,
-          scoreClass: scoreClass(record.score),
-          scoreLabel: scoreLabel(record.score)
+        registry: registrySummary.factions.map((record) => {
+          const location = splitPlanetSystem(record.planetSystem);
+          return {
+            ...record,
+            planet: location.planet,
+            system: location.system,
+            scoreClass: scoreClass(record.score),
+            scoreLabel: scoreLabel(record.score),
+            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel)
+          };
+        }),
+        relationships: activeRelationships.map(row => ({
+          ...row,
+          searchText: searchText(row.actorName, row.factionName, row.type, row.planetSystem, row.relationshipType, row.status, row.sourceLabel),
+          missingRegistryLabel: row.registryMissing ? 'Registry missing / stale link' : ''
         })),
-        relationships: activeRelationships,
         suggestions,
         actors,
         relationshipTypes: FactionRegistryService.getRelationshipTypeOptions(),

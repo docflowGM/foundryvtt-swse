@@ -357,6 +357,22 @@ export class FactionRegistryService {
         : 0;
     if (!delta) return [];
     const reason = cleanText(consequences.notes || `Job ${normalizedStatus}: ${job.title || thread?.title || 'Holonet Job'}`);
+    return this.applyJobFactionDelta({
+      thread,
+      factionName,
+      delta,
+      source: 'job',
+      reason,
+      requesterId,
+      status: normalizedStatus,
+      metadata: { status: normalizedStatus }
+    });
+  }
+
+  static async applyJobFactionDelta({ thread, factionName = '', delta = 0, source = 'job', reason = '', requesterId = null, status = '', metadata = {} } = {}) {
+    const factionLabel = cleanText(factionName);
+    const value = normalizeScore(delta);
+    if (!thread || !factionLabel || !value) return [];
     const actorRows = safeArray(thread.participants)
       .filter(recipient => !String(recipient?.id || '').startsWith('gm:'))
       .filter(recipient => recipient?.actorId)
@@ -367,13 +383,13 @@ export class FactionRegistryService {
     for (const actor of uniqueActors) {
       const result = await this.applyScoreDelta({
         actor,
-        factionName,
-        delta,
-        source: 'job',
+        factionName: factionLabel,
+        delta: value,
+        source,
         jobId: thread.id,
         reason,
         relationshipType: 'known',
-        metadata: { threadId: thread.id, requesterId, status: normalizedStatus }
+        metadata: { threadId: thread.id, requesterId, status, ...metadata }
       });
       if (result) results.push(result);
     }
