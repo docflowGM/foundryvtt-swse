@@ -1,91 +1,174 @@
 {{!-- Hintaro active-table partial. Production actions remain data-games-action driven. --}}
-        <div class="swse-pazaak-table swse-hintaro-table" data-hintaro-session-id="{{vm.activeTable.sessionId}}">
-          <div class="swse-pazaak-topbar">
-            <div>
-              <span class="swse-games-kicker">HINTARO TABLE</span>
-              <h3>{{vm.activeTable.hintaro.title}}</h3>
-              <p>Ante {{vm.activeTable.hintaro.ante}} · hintaron {{vm.activeTable.hintaro.hintaronLabel}} · {{vm.activeTable.hintaro.hintaronModeLabel}} · round {{vm.activeTable.hintaro.round}}</p>
-            </div>
-            <div class="swse-pazaak-topbar__right">
-              <span>{{vm.activeTable.hintaro.statusLabel}}</span>
-              {{#if vm.activeTable.hintaro.canStartRound}}
-              <form data-games-action="hintaro-next-round"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Next Round</button></form>
-              {{/if}}
-              {{#if vm.activeTable.hintaro.canCashOut}}
-              <form data-games-action="hintaro-cash-out"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost">Cash Out</button></form>
-              {{/if}}
-              {{#if vm.activeTable.hintaro.canCancel}}
-              <form data-games-action="hintaro-cancel-session"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="reason" value="Hintaro table cancelled from Holopad Games."><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button></form>
-              {{/if}}
-              <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Table</button>
-            </div>
-          </div>
+<div class="swse-hintaro-pit swse-hintaro-table {{vm.activeTable.hintaro.phaseClass}}" data-hintaro-session-id="{{vm.activeTable.sessionId}}">
+  {{#if vm.activeTable.hintaro.hasShowdown}}
+  <div class="swse-hintaro-banner {{#if vm.activeTable.hintaro.showdown.winnerLabel}}win{{/if}}">
+    {{vm.activeTable.hintaro.showdown.winnerLabel}}
+    <small>{{vm.activeTable.hintaro.showdown.rankLabel}} · {{vm.activeTable.hintaro.showdown.potLabel}}{{#if vm.activeTable.hintaro.showdown.timeLabel}} · {{vm.activeTable.hintaro.showdown.timeLabel}}{{/if}}</small>
+  </div>
+  {{/if}}
 
-          <div class="swse-pazaak-alert">
-            <b>{{vm.activeTable.hintaro.message}}</b>
-            {{#if vm.activeTable.hintaro.showBetting}}<span>Betting: {{vm.activeTable.hintaro.activeSeatLabel}} acts · live bet {{vm.activeTable.hintaro.betting.currentBet}}</span>{{/if}}
-            {{#if vm.activeTable.hintaro.showReroll}}<span>Reroll choice: {{vm.activeTable.hintaro.activeSeatLabel}}</span>{{/if}}
-            <span>Pot: {{vm.activeTable.hintaro.pot}} · carryover {{vm.activeTable.hintaro.carriedPot}}</span>
-            <span>Hintaro die: {{vm.activeTable.hintaro.hintaroDie.label}}</span>
-          </div>
-
-          <aside class="swse-games-chatter swse-hintaro-dealer-callout" data-game-sound-cue="{{vm.activeTable.hintaro.soundCue}}">
-            <span class="swse-games-kicker">HINTARON CALLOUT</span>
-            <p><b>{{vm.activeTable.hintaro.hintaronLabel}}</b> <span>{{vm.activeTable.hintaro.dealerCallout}}</span></p>
-          </aside>
-
-          <section class="swse-hintaro-die-rail">
-            <div class="swse-hintaro-special-die tone-{{vm.activeTable.hintaro.hintaroDie.tone}}"><b>{{vm.activeTable.hintaro.hintaroDie.shortLabel}}</b><small>{{vm.activeTable.hintaro.hintaroDie.label}}</small></div>
-            <div><span class="swse-games-kicker">RANKS</span><p>Hin cancels Tukar; Taro cancels Kulro.</p><ol class="swse-hintaro-rank-list">{{#each vm.activeTable.hintaro.rankOrder}}<li><b>{{this.label}}</b> <span>{{this.description}}</span></li>{{/each}}</ol></div>
-          </section>
-
-          <section class="swse-pazaak-play swse-hintaro-play">
-            <div class="swse-pazaak-seat-grid">
-              {{#each vm.activeTable.hintaro.seats}}
-              <article class="swse-pazaak-seat swse-hintaro-seat {{#if this.isCurrent}}is-current{{/if}} {{#if this.isViewer}}is-viewer{{/if}} {{#if this.dropped}}is-bust{{/if}}">
-                <header><div><b>{{this.displayName}}</b><span>{{this.statusLabel}} · wins {{this.wins}} · table credits {{this.tableCredits}}</span>{{#if this.isAi}}<small>AI: {{this.aiProfileLabel}}</small>{{/if}}</div><strong>{{this.rankLabel}}</strong></header>
-                <div class="swse-hintaro-cubes">
-                  {{#if this.hasSymbols}}
-                    {{#each this.dice}}
-                    <span class="swse-hintaro-cube swse-hintaro-die tone-{{this.tone}}"><b>Die {{this.displayIndex}}</b><small>{{#each this.symbols}}<i class="tone-{{this.tone}}">{{this.shortLabel}}</i>{{/each}}</small></span>
-                    {{/each}}
-                  {{else}}
-                    <span class="swse-pazaak-no-cards">No cubes rolled.</span>
-                  {{/if}}
-                </div>
-                <footer><span>{{this.lastAction}}</span><span>{{this.modifiedLabel}}</span></footer>
-              </article>
-              {{/each}}
-            </div>
-
-            {{#if vm.activeTable.hintaro.viewerSeat.canBettingAct}}
-            <section class="swse-pazaak-hand-panel swse-hintaro-actions">
-              <div class="swse-pazaak-builder-head"><div><span class="swse-games-kicker">YOUR BET</span><strong>Table credits {{vm.activeTable.hintaro.viewerTableCredits}} · to call {{vm.activeTable.hintaro.betting.toCall}}</strong></div>
-                <div class="swse-pazaak-turn-actions">
-                  <form data-games-action="hintaro-check"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.hintaro.betting.canCheck}}disabled{{/unless}}>Check</button></form>
-                  <form data-games-action="hintaro-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="amount" value="{{vm.activeTable.hintaro.betting.minBet}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.hintaro.betting.canBet}}disabled{{/unless}}>Bet {{vm.activeTable.hintaro.betting.minBet}}</button></form>
-                  <form data-games-action="hintaro-call-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.hintaro.betting.canCall}}disabled{{/unless}}>Call {{vm.activeTable.hintaro.betting.toCall}}</button></form>
-                  <form data-games-action="hintaro-raise"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="amount" value="{{vm.activeTable.hintaro.betting.minRaise}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.hintaro.betting.canRaise}}disabled{{/unless}}>Raise {{vm.activeTable.hintaro.betting.minRaise}}</button></form>
-                  <form data-games-action="hintaro-drop"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Drop</button></form>
-                </div>
-              </div>
-            </section>
-            {{/if}}
-
-            {{#if vm.activeTable.hintaro.viewerSeat.canRerollAct}}
-            <section class="swse-pazaak-hand-panel swse-hintaro-actions">
-              <div class="swse-pazaak-builder-head"><div><span class="swse-games-kicker">YOUR REROLL</span><strong>Reroll one cube or keep your result.</strong></div>
-                <form data-games-action="hintaro-keep-roll"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Keep Roll</button></form>
-              </div>
-              <div class="swse-pazaak-hand-grid">
-                {{#each vm.activeTable.hintaro.viewerSeat.dice}}
-                <form class="swse-hintaro-reroll-card" data-games-action="hintaro-reroll-die"><input type="hidden" name="sessionId" value="{{this.sessionId}}"><input type="hidden" name="seatId" value="{{this.seatId}}"><input type="hidden" name="dieIndex" value="{{this.index}}"><button type="submit" class="swse-hintaro-cube swse-hintaro-die tone-{{this.tone}}"><b>Die {{this.displayIndex}}</b><small>Reroll this cube</small></button></form>
-                {{/each}}
-              </div>
-            </section>
-            {{/if}}
-          </section>
-
-          {{#if vm.activeTable.hintaro.hasRoundHistory}}<section class="swse-pazaak-history"><span class="swse-games-kicker">ROUND HISTORY</span>{{#each vm.activeTable.hintaro.roundHistory}}<div><b>Round {{this.round}}</b><span>{{this.winnerLabel}} · {{this.rankLabel}} · {{this.timeLabel}}</span></div>{{/each}}</section>{{/if}}
-          {{#if vm.activeTable.hintaro.hasEventLog}}<section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">TABLE LOG</span>{{#each vm.activeTable.hintaro.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>{{/if}}
+  <section class="swse-hintaro-felt" data-game-sound-cue="{{vm.activeTable.hintaro.soundCue}}">
+    <div class="swse-hintaro-table-oval">
+      <div class="swse-hintaro-center">
+        <div class="swse-hintaro-pots">
+          <span><b>Pot</b><strong>{{vm.activeTable.hintaro.pot}}</strong></span>
+          <span class="carry"><b>Carry</b><strong>{{vm.activeTable.hintaro.carriedPot}}</strong></span>
         </div>
+
+        <div class="swse-hintaro-special-die tone-{{vm.activeTable.hintaro.hintaroDie.tone}}">
+          <b>{{vm.activeTable.hintaro.hintaroDie.glyph}}</b>
+          <small>{{vm.activeTable.hintaro.hintaroDie.label}}</small>
+        </div>
+
+        <div class="swse-hintaro-die-rule">
+          <span>Hintaro Die</span>
+          <small>{{vm.activeTable.hintaro.hintaroDie.cancelsLabel}}</small>
+        </div>
+      </div>
+    </div>
+
+    {{#if vm.activeTable.hintaro.hasTableSeats}}
+      {{#each vm.activeTable.hintaro.tableSeats}}
+      <article class="swse-hintaro-seat {{this.cssClass}}" style="{{this.seatStyle}}">
+        <div class="swse-hintaro-seat-card">
+          <header>
+            {{#if this.hasAvatar}}<img src="{{this.avatar}}" alt="{{this.displayName}}">{{else}}<span class="swse-hintaro-avatar-glyph">{{this.avatarGlyph}}</span>{{/if}}
+            <div>
+              <strong>{{this.displayName}}</strong>
+              <small>{{#if this.isAi}}{{this.aiProfileLabel}}{{else}}Seat {{this.seatNumber}}{{/if}}</small>
+            </div>
+            <div class="swse-hintaro-rank {{this.totalClass}}"><span>Rank</span>{{this.rankLabel}}</div>
+          </header>
+
+          <div class="swse-hintaro-seat-dice">
+            {{#if this.hasSymbols}}
+              {{#each this.dice}}
+              <span class="swse-hintaro-cube {{this.cssClass}}">
+                <b>Die {{this.displayIndex}}</b>
+                <small>{{#each this.symbols}}<i class="{{this.cssClass}}">{{this.glyph}}</i>{{/each}}</small>
+              </span>
+              {{/each}}
+            {{else}}
+              <span class="swse-hintaro-empty">No cubes rolled.</span>
+            {{/if}}
+          </div>
+
+          <footer>
+            <span class="swse-hintaro-seat-status {{this.statusClass}}">{{this.statusLabel}}</span>
+            <span>{{this.tableCredits}} cr</span>
+          </footer>
+          <p>{{this.lastAction}}</p>
+          <p>{{this.modifiedLabel}} · {{this.cancelledLabel}}</p>
+        </div>
+      </article>
+      {{/each}}
+    {{/if}}
+
+    <aside class="swse-hintaro-ranks-panel">
+      <span class="swse-games-kicker">Ranks</span>
+      <div class="swse-hintaro-rank-list">
+        {{#each vm.activeTable.hintaro.rankOrder}}
+        <div class="r {{#if this.active}}active{{/if}}"><b>{{this.label}}</b><span>{{this.description}}</span></div>
+        {{/each}}
+      </div>
+    </aside>
+
+    <aside class="swse-hintaro-callout">
+      <span class="swse-games-kicker">Hintaron Callout</span>
+      <b>{{vm.activeTable.hintaro.hintaronLabel}}</b>
+      <span>{{vm.activeTable.hintaro.dealerCallout}}</span>
+    </aside>
+
+    {{#if vm.activeTable.hintaro.message}}
+    <div class="swse-hintaro-table-message">
+      <b>{{vm.activeTable.hintaro.statusLabel}}</b>
+      <span>{{vm.activeTable.hintaro.message}}</span>
+    </div>
+    {{/if}}
+  </section>
+
+  <section class="swse-hintaro-player-dock">
+    <div class="swse-hintaro-private-hand">
+      <span class="swse-games-kicker">Your Cubes</span>
+      <div class="swse-hintaro-private-dice">
+        {{#if vm.activeTable.hintaro.viewerSeat.hasSymbols}}
+          {{#each vm.activeTable.hintaro.viewerSeat.dice}}
+          <article class="swse-hintaro-private-cube {{this.cssClass}}">
+            <span class="swse-hintaro-cube {{this.cssClass}}">
+              <b>Die {{this.displayIndex}}</b>
+              <small>{{#each this.symbols}}<i class="{{this.cssClass}}">{{this.glyph}}</i>{{/each}}</small>
+            </span>
+            <div>
+              <b>{{#if this.cancelled}}Cancelled{{else}}Live{{/if}}</b>
+              <small>{{#each this.symbols}}{{this.label}} {{/each}}</small>
+            </div>
+            {{#if ../vm.activeTable.hintaro.viewerSeat.canRerollAct}}
+            <form data-games-action="hintaro-reroll-die">
+              <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+              <input type="hidden" name="seatId" value="{{this.seatId}}">
+              <input type="hidden" name="dieIndex" value="{{this.index}}">
+              <button type="submit" class="swse-games-ghost">Reroll</button>
+            </form>
+            {{/if}}
+          </article>
+          {{/each}}
+        {{else}}
+          <span class="swse-hintaro-empty">No private cubes yet.</span>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="swse-hintaro-action-box">
+      {{#if vm.activeTable.hintaro.viewerSeat.canBettingAct}}
+      <span class="swse-games-kicker">Your Betting Turn</span>
+      <strong>Table credits {{vm.activeTable.hintaro.viewerTableCredits}} · to call {{vm.activeTable.hintaro.betting.toCall}}</strong>
+      <div class="swse-hintaro-action-row">
+        <form data-games-action="hintaro-check"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.hintaro.betting.canCheck}}disabled{{/unless}}>Check</button></form>
+        <form data-games-action="hintaro-bet" class="swse-games-inline-amount"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="number" name="amount" min="{{vm.activeTable.hintaro.betting.minBet}}" max="{{vm.activeTable.hintaro.betting.maxBet}}" step="1" value="{{vm.activeTable.hintaro.betting.suggestedBet}}" {{#unless vm.activeTable.hintaro.betting.canBet}}disabled{{/unless}}><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.hintaro.betting.canBet}}disabled{{/unless}}>Bet</button></form>
+        <form data-games-action="hintaro-call-bet"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#unless vm.activeTable.hintaro.betting.canCall}}disabled{{/unless}}>Call {{vm.activeTable.hintaro.betting.toCall}}</button></form>
+        <form data-games-action="hintaro-raise" class="swse-games-inline-amount"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="number" name="amount" min="{{vm.activeTable.hintaro.betting.minRaise}}" max="{{vm.activeTable.hintaro.betting.maxBet}}" step="1" value="{{vm.activeTable.hintaro.betting.suggestedRaise}}" {{#unless vm.activeTable.hintaro.betting.canRaise}}disabled{{/unless}}><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.hintaro.betting.canRaise}}disabled{{/unless}}>Raise</button></form>
+        <form data-games-action="hintaro-drop"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Drop</button></form>
+      </div>
+      {{else if vm.activeTable.hintaro.viewerSeat.canRerollAct}}
+      <span class="swse-games-kicker">Your Reroll</span>
+      <strong>{{vm.activeTable.hintaro.viewerSeat.rankLabel}} · {{vm.activeTable.hintaro.viewerSeat.modifiedLabel}}</strong>
+      <div class="swse-hintaro-action-row">
+        <form data-games-action="hintaro-keep-roll"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Keep Roll</button></form>
+      </div>
+      {{else if vm.activeTable.hintaro.canStartRound}}
+      <span class="swse-games-kicker">Pit Ready</span>
+      <strong>Start the next round or cash out.</strong>
+      <div class="swse-hintaro-action-row">
+        <form data-games-action="hintaro-next-round"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Next Round</button></form>
+        {{#if vm.activeTable.hintaro.canCashOut}}<form data-games-action="hintaro-cash-out"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost">Cash Out</button></form>{{/if}}
+      </div>
+      {{else}}
+      <span class="swse-games-kicker">Waiting</span>
+      <strong>{{#if vm.activeTable.hintaro.activeSeatLabel}}{{vm.activeTable.hintaro.activeSeatLabel}}{{else}}Pit{{/if}} is acting.</strong>
+      <small>{{vm.activeTable.hintaro.statusLabel}}</small>
+      {{/if}}
+    </div>
+
+    <div class="swse-hintaro-myinfo">
+      <div>{{vm.activeTable.hintaro.viewerTableCredits}}</div>
+      <span>table credits</span>
+      <small>{{vm.activeTable.hintaro.viewerSeat.rankLabel}}</small>
+    </div>
+  </section>
+
+  <section class="swse-hintaro-lower-panels">
+    {{#if vm.activeTable.hintaro.hasEventLog}}
+    <details class="swse-pazaak-history swse-pazaak-log" open>
+      <summary class="swse-games-kicker">Table Log</summary>
+      {{#each vm.activeTable.hintaro.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}
+    </details>
+    {{/if}}
+
+    {{#if vm.activeTable.hintaro.hasRoundHistory}}
+    <details class="swse-pazaak-history">
+      <summary class="swse-games-kicker">Round History</summary>
+      {{#each vm.activeTable.hintaro.roundHistory}}<div><b>Round {{this.round}}</b><span>{{this.winnerLabel}} · {{this.rankLabel}} · {{this.timeLabel}}</span></div>{{/each}}
+    </details>
+    {{/if}}
+  </section>
+</div>

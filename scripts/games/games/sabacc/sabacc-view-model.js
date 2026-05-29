@@ -11,8 +11,62 @@ function playableSeats(session = {}) {
   return (Array.isArray(session.seats) ? session.seats : []).filter(seat => !seat.spectator && !['declined', 'cancelled'].includes(seat.status));
 }
 
+const SABACC_SEAT_POSITIONS = Object.freeze({
+  1: [{ l: 50, t: 23 }],
+  2: [{ l: 28, t: 25 }, { l: 72, t: 25 }],
+  3: [{ l: 18, t: 33 }, { l: 50, t: 21 }, { l: 82, t: 33 }],
+  4: [{ l: 15, t: 45 }, { l: 34, t: 24 }, { l: 66, t: 24 }, { l: 85, t: 45 }],
+  5: [{ l: 13, t: 50 }, { l: 28, t: 25 }, { l: 50, t: 20 }, { l: 72, t: 25 }, { l: 87, t: 50 }],
+  6: [{ l: 13, t: 53 }, { l: 24, t: 28 }, { l: 43, t: 20 }, { l: 57, t: 20 }, { l: 76, t: 28 }, { l: 87, t: 53 }]
+});
+
+function seatStyle(index, total) {
+  const positions = SABACC_SEAT_POSITIONS[Math.max(1, Math.min(6, Number(total) || 1))] || SABACC_SEAT_POSITIONS[3];
+  const pos = positions[index] || positions[positions.length - 1] || { l: 50, t: 28 };
+  return `left:${pos.l}%;top:${pos.t}%;`;
+}
+
+function avatarGlyph(name = '') {
+  const letters = String(name || 'S')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part.charAt(0).toUpperCase())
+    .join('');
+  return letters || 'S';
+}
+
+function seatStatusClass(player = {}, evaluation = {}, { isCurrent = false, isViewer = false, reveal = false } = {}) {
+  const cls = [];
+  if (isCurrent) cls.push('is-current');
+  if (isViewer) cls.push('is-viewer');
+  if (player.folded) cls.push('folded');
+  if (player.called) cls.push('called');
+  if (player.bombedOut || evaluation.bombedOut) cls.push('bombed');
+  if (reveal && evaluation.specialWinner) cls.push('special');
+  return cls.join(' ');
+}
+
 function cardVm(card = {}, reveal = true) {
-  return reveal ? {
+  if (!reveal) {
+    return {
+      id: card.id,
+      label: 'Hidden Card',
+      shortLabel: '??',
+      valueLabel: 'Hidden',
+      suitLabel: 'Hidden',
+      image: '',
+      hasImage: false,
+      isSpecial: false,
+      isSylop: false,
+      sign: 'hidden',
+      cssClass: 'sign-hidden is-hidden',
+      revealCue: 'card-back'
+    };
+  }
+  const sign = card.sign || (Number(card.value || 0) > 0 ? 'positive' : (Number(card.value || 0) < 0 ? 'negative' : 'neutral'));
+  const isSpecial = card.type === 'special' || card.type === 'sylop';
+  return {
     id: card.id,
     label: card.label || 'Card',
     shortLabel: card.shortLabel || String(card.value ?? '?'),
@@ -20,11 +74,12 @@ function cardVm(card = {}, reveal = true) {
     suitLabel: card.suitLabel || 'Special',
     image: card.image || '',
     hasImage: Boolean(card.image),
-    isSpecial: card.type === 'special' || card.type === 'sylop',
+    isSpecial,
     isSylop: card.type === 'sylop',
-    sign: card.sign || (Number(card.value || 0) > 0 ? 'positive' : (Number(card.value || 0) < 0 ? 'negative' : 'neutral')),
-    revealCue: reveal ? 'card-face' : 'card-back'
-  } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', image: '', hasImage: false, isSpecial: false, isSylop: false, sign: 'hidden' };
+    sign,
+    cssClass: `sign-${sign}${isSpecial ? ' tone-special' : ''}${card.type === 'sylop' ? ' sylop' : ''}`,
+    revealCue: 'card-face'
+  };
 }
 
 function marketSlotVm(slot = {}) {
@@ -59,22 +114,31 @@ function seatVm(session, state, seat, viewerSeatId) {
   const aiLastDecision = isAi && aiDecision
     ? (reveal && aiDecision.reason ? aiDecision.reason : `${SabaccAi.labelForDifficulty(aiProfile.difficulty)} model sampled ${Number(aiDecision.samples || 0)} outcomes.`)
     : '';
+  const isCurrent = state.activeSeatId === seat.seatId;
+  const statusLabel = player.folded ? 'Folded' : (player.called ? 'Stood' : (player.bombedOut ? 'Bombed Out' : 'In Hand'));
+  const cards = (player.hand || []).map(card => cardVm(card, reveal));
   return {
     seatId: seat.seatId,
     displayName: seat.displayName || 'Seat',
     isViewer,
-    isCurrent: state.activeSeatId === seat.seatId,
+    isCurrent,
     isAi,
     aiDifficultyLabel: isAi ? SabaccAi.labelForDifficulty(aiProfile.difficulty) : '',
     aiProfileLabel,
     aiLastDecision,
     profession: seat.profession || '',
     tableFact: seat.tableFact || '',
-    statusLabel: player.folded ? 'Folded' : (player.called ? 'Called' : (player.bombedOut ? 'Bombed Out' : 'In Hand')),
+    avatar: seat.avatar || '',
+    hasAvatar: Boolean(seat.avatar),
+    avatarGlyph: avatarGlyph(seat.displayName || 'Seat'),
+    statusLabel,
+    statusClass: player.folded ? 'fold' : (player.called ? 'called' : (player.bombedOut ? 'bomb' : 'in')),
+    cssClass: seatStatusClass(player, evaluation, { isCurrent, isViewer, reveal }),
     totalLabel: reveal ? evaluation.label : hiddenTotalLabel,
+    totalClass: evaluation.bombedOut ? 'bomb' : (reveal && evaluation.specialWinner ? 'special' : (evaluation.pureSabacc ? 'sabacc' : '')),
     bombedOut: Boolean(evaluation.bombedOut),
     specialWinner: reveal && Boolean(evaluation.specialWinner),
-    cards: (player.hand || []).map(card => cardVm(card, reveal)),
+    cards,
     hasCards: Boolean(handCount),
     handCount,
     isShowdownReveal,
@@ -101,6 +165,20 @@ export class SabaccViewModel {
       timeLabel: formatTime(state.showdown.at),
       winnerLabel: state.showdown.winnerSeatId ? (playableSeats(session).find(seat => seat.seatId === state.showdown.winnerSeatId)?.displayName || 'Unknown Seat') : '',
       tiedLabels: (state.showdown.tiedSeatIds || []).map(id => playableSeats(session).find(seat => seat.seatId === id)?.displayName || id).join(', ')
+    } : null;
+    const seatList = playableSeats(session);
+    const seatVms = seatList.map(seat => seatVm(session, state, seat, viewerSeatId));
+    const viewerSeatSummary = seatVms.find(seat => seat.isViewer) || null;
+    const tableSeatSource = viewerSeatSummary ? seatVms.filter(seat => !seat.isViewer) : seatVms;
+    const tableSeats = tableSeatSource.map((seat, index) => ({
+      ...seat,
+      seatStyle: seatStyle(index, tableSeatSource.length),
+      seatNumber: index + 1
+    }));
+    const shiftDice = state.shiftRoll ? {
+      ...state.shiftRoll,
+      dice: [state.shiftRoll.first, state.shiftRoll.second].filter(value => value !== undefined && value !== null).map(value => ({ value })),
+      tone: state.shiftRoll.matched ? 'danger' : 'safe'
     } : null;
     return {
       id: session.id,
@@ -151,13 +229,25 @@ export class SabaccViewModel {
       ante: Number(state.ante || 0),
       sabaccAnte: Number(state.sabaccAnte || 0),
       winnerLabel: state.winnerSeatId ? (playableSeats(session).find(seat => seat.seatId === state.winnerSeatId)?.displayName || 'Unknown Seat') : '',
-      seats: playableSeats(session).map(seat => seatVm(session, state, seat, viewerSeatId)),
+      seats: seatVms,
+      tableSeats,
+      hasTableSeats: tableSeats.length > 0,
+      viewerSeatSummary,
+      hasViewerSeatSummary: Boolean(viewerSeatSummary),
+      shiftDice,
+      hasShiftDice: Boolean(shiftDice),
+      phaseClass: `phase-${String(state.phase || 'ready').replace(/[^a-z0-9-]/gi, '-').toLowerCase()}`,
       viewerSeat: {
         canAct,
         canBettingAct: Boolean(canAct && state.phase === 'betting'),
         canCardAct: Boolean(canAct && state.phase === 'drawing'),
         canCall: Boolean(canAct && state.phase === 'drawing' && !evaluateSabaccHand(viewerPlayer?.hand || []).bombedOut && (viewerPlayer?.hand || []).length >= 2),
         canDiscard: false,
+        summary: viewerSeatSummary,
+        hasSummary: Boolean(viewerSeatSummary),
+        totalLabel: viewerSeatSummary?.totalLabel || '—',
+        statusLabel: viewerSeatSummary?.statusLabel || 'Observer',
+        tableCredits: Number(viewerPlayer?.tableCredits || 0),
         hand: (viewerPlayer?.hand || []).map(card => ({
           ...cardVm(card, true),
           sessionId: session.id,
@@ -167,6 +257,7 @@ export class SabaccViewModel {
           market: (Array.isArray(state.market) ? state.market : []).map(marketSlotVm)
         }))
       },
+      hasPrivateHand: Boolean((viewerPlayer?.hand || []).length),
       handHistory: (state.handHistory || []).map(hand => ({ ...hand, timeLabel: formatTime(hand.at) })),
       hasHandHistory: Boolean((state.handHistory || []).length),
       eventLog: publicEvents.map(event => ({ ...event, timeLabel: formatTime(event.at) })),
