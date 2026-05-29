@@ -9,8 +9,14 @@
 
 import assert from 'node:assert/strict';
 
-import { buildPazaakMainDeck, PAZAAK_TARGET } from '../games/pazaak/pazaak-deck.js';
-import { scorePazaakPlayer, hasFilledPazaakTable } from '../games/pazaak/pazaak-rules.js';
+import { buildPazaakMainDeck, buildOpeningHand, PAZAAK_HAND_SIZE, PAZAAK_TARGET } from '../games/pazaak/pazaak-deck.js';
+import {
+  comparePazaakInitiativeDraws,
+  comparePazaakSet,
+  scorePazaakPlayer,
+  hasFilledPazaakTable,
+  resetPazaakPlayerForSet
+} from '../games/pazaak/pazaak-rules.js';
 import { buildSabaccDeck, buildSabaccSylopCard, buildSabaccNumberCard, SABACC_SUITS } from '../games/sabacc/sabacc-deck.js';
 import { compareSabaccHands, evaluateSabaccHand } from '../games/sabacc/sabacc-rules.js';
 import { SabaccAi } from '../games/sabacc/sabacc-ai.js';
@@ -24,6 +30,24 @@ function testPazaak() {
   const player = { tableCards: [{ value: 10 }, { value: 5 }, { value: 5 }], hand: [] };
   assert.equal(scorePazaakPlayer(player), PAZAAK_TARGET, 'Pazaak score should total table cards');
   assert.equal(hasFilledPazaakTable({ tableCards: Array.from({ length: 9 }, () => ({ value: 1 })) }), true, 'Pazaak filled table should be detected');
+
+  const matchHand = buildOpeningHand(['plus-1', 'plus-2', 'plus-3', 'plus-4', 'minus-1', 'minus-2', 'minus-3', 'minus-4', 'plus-minus-1', 'tiebreaker']);
+  assert.equal(matchHand.length, PAZAAK_HAND_SIZE, 'Pazaak should draw exactly four side cards into the match hand');
+  const reset = resetPazaakPlayerForSet({ seatId: 'a', hand: matchHand, tableCards: [{ value: 9 }], tiebreakerUsed: true, tiebreakerPlayedAt: 12, sideCardPlayedThisTurn: true });
+  assert.deepEqual(reset.hand.map(card => card.instanceId), matchHand.map(card => card.instanceId), 'Pazaak set reset should preserve the four-card match hand');
+  assert.equal(reset.tableCards.length, 0, 'Pazaak set reset should clear table cards');
+  assert.equal(reset.tiebreakerUsed, false, 'Pazaak set reset should clear per-set tiebreaker flag');
+
+  const initiative = comparePazaakInitiativeDraws([{ seatId: 'low', value: 4 }, { seatId: 'high', value: 9 }]);
+  assert.equal(initiative.winnerSeatId, 'high', 'Pazaak opening high-card draw should choose the highest main-card value');
+  const tiedInitiative = comparePazaakInitiativeDraws([{ seatId: 'a', value: 7 }, { seatId: 'b', value: 7 }]);
+  assert.equal(tiedInitiative.tied, true, 'Pazaak opening high-card draw should report tied high cards');
+
+  const tiedSet = comparePazaakSet([
+    { seatId: 'first', tableCards: [{ value: 20 }], tiebreakerUsed: true, tiebreakerPlayedAt: 1 },
+    { seatId: 'last', tableCards: [{ value: 20 }], tiebreakerUsed: true, tiebreakerPlayedAt: 2 }
+  ]);
+  assert.equal(tiedSet.winnerSeatId, 'last', 'Pazaak tied score should be won by the last tiebreaker card');
 }
 
 function testSabacc() {

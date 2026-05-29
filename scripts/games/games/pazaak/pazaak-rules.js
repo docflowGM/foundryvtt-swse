@@ -27,6 +27,44 @@ export function hasFilledPazaakTable(player = {}) {
   return cards.length >= PAZAAK_TABLE_LIMIT && scorePazaakPlayer(player) <= PAZAAK_TARGET;
 }
 
+/**
+ * Reset per-set Pazaak state while preserving the four-card match hand.
+ * The side hand is dealt once at match start and must last the whole match.
+ */
+export function resetPazaakPlayerForSet(player = {}) {
+  const next = clone(player) || {};
+  next.hand = Array.isArray(next.hand) ? next.hand.filter(Boolean) : [];
+  next.tableCards = [];
+  next.stood = false;
+  next.bust = false;
+  next.filledTable = false;
+  next.score = 0;
+  next.sideCardPlayedThisTurn = false;
+  next.tiebreakerUsed = false;
+  next.tiebreakerPlayedAt = null;
+  return next;
+}
+
+export function comparePazaakInitiativeDraws(draws = []) {
+  const normalized = (Array.isArray(draws) ? draws : [])
+    .map(draw => ({
+      seatId: draw?.seatId || null,
+      value: Number(draw?.value ?? draw?.card?.value ?? 0) || 0,
+      label: draw?.label || draw?.card?.label || String(draw?.value ?? draw?.card?.value ?? '')
+    }))
+    .filter(draw => draw.seatId && draw.value > 0);
+  if (!normalized.length) return { winnerSeatId: null, tied: true, highValue: 0, tiedSeatIds: [], draws: normalized };
+  const highValue = Math.max(...normalized.map(draw => draw.value));
+  const tiedSeatIds = normalized.filter(draw => draw.value === highValue).map(draw => draw.seatId);
+  return {
+    winnerSeatId: tiedSeatIds.length === 1 ? tiedSeatIds[0] : null,
+    tied: tiedSeatIds.length !== 1,
+    highValue,
+    tiedSeatIds,
+    draws: normalized
+  };
+}
+
 export function playableSideCardStatus(player = {}, sideCard = {}, choice = {}) {
   if (!sideCard?.instanceId) return { playable: false, reason: 'Missing side card.' };
   const tableCards = Array.isArray(player.tableCards) ? player.tableCards : [];

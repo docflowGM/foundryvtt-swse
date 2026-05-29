@@ -19,9 +19,11 @@ import {
 } from './pazaak-deck.js';
 import {
   applyPazaakSideCard,
+  comparePazaakInitiativeDraws,
   comparePazaakSet,
   hasFilledPazaakTable,
   isPazaakTwenty,
+  resetPazaakPlayerForSet,
   scorePazaakPlayer
 } from './pazaak-rules.js';
 import { PazaakAi, buildPazaakAiProfile } from './pazaak-ai.js';
@@ -186,17 +188,9 @@ function resetPlayersForSet(session, state) {
       player.hand = buildOpeningHand(player.sideDeckIds);
       player.matchHandDealt = true;
       player.lastAction = `Drew ${PAZAAK_HAND_SIZE} random side-deck cards for the match.`;
-    } else {
-      player.lastAction = `${player.hand.length} match side-deck card${player.hand.length === 1 ? '' : 's'} remain.`;
     }
-    player.tableCards = [];
-    player.stood = false;
-    player.bust = false;
-    player.filledTable = false;
-    player.score = 0;
-    player.sideCardPlayedThisTurn = false;
-    player.tiebreakerUsed = false;
-    player.tiebreakerPlayedAt = null;
+    state.players[seat.seatId] = resetPazaakPlayerForSet(player);
+    state.players[seat.seatId].lastAction = `${state.players[seat.seatId].hand.length} match side-deck card${state.players[seat.seatId].hand.length === 1 ? '' : 's'} remain.`;
   }
 }
 
@@ -220,9 +214,9 @@ function determineOpeningFirstSeat(session, state) {
       deck = Array.isArray(drawn.mainDeck) ? drawn.mainDeck : [];
       return { seatId, value: Number(drawn.card?.value || 0), label: drawn.card?.label || String(drawn.card?.value || '') };
     });
-    drawHistory.push({ attempt, draws });
-    const high = Math.max(...draws.map(entry => entry.value));
-    contenders = draws.filter(entry => entry.value === high).map(entry => entry.seatId);
+    const result = comparePazaakInitiativeDraws(draws);
+    drawHistory.push({ attempt, draws: result.draws, highValue: result.highValue, tiedSeatIds: result.tiedSeatIds });
+    contenders = result.winnerSeatId ? [result.winnerSeatId] : (result.tiedSeatIds.length ? result.tiedSeatIds : contenders);
   }
 
   const firstSeatId = contenders[0] || order[0];
@@ -232,6 +226,20 @@ function determineOpeningFirstSeat(session, state) {
   const summary = drawHistory[0]?.draws?.map(entry => `${seatLabel(session, entry.seatId)} ${entry.label}`).join(' · ') || 'Opening high-card draw completed.';
   pushPazaakEvent(session, state, 'opening-high-card', firstSeatId, `${seatLabel(session, firstSeatId)} wins the opening high-card draw. ${summary}`, { tone: 'setup', drawHistory });
   return firstSeatId;
+}
+
+function dealOpeningMainCardsForSet(session, state) {
+  for (const seatId of getPlayerOrder(session)) {
+    const player = state.players?.[seatId];
+    if (!player) continue;
+    const card = drawPazaakMainCardForState(state);
+    player.tableCards = Array.isArray(player.tableCards) ? player.tableCards.filter(Boolean) : [];
+    player.tableCards.push(card);
+    player.score = scorePazaakPlayer(player);
+    player.lastAction = `Opening draw: ${card?.label || card?.value || 'card'}.`;
+    pushPazaakEvent(session, state, 'opening-main-card', seatId, `${seatLabel(session, seatId)} draws an opening ${card?.label || card?.value || 'card'}.`, { cardLabel: card?.label || String(card?.value || ''), tone: 'draw' });
+  }
+  updateScores(state);
 }
 
 function beginTurn(session, state, seatId) {
@@ -284,7 +292,8 @@ function startNextSet(session, state, firstSeatId = null) {
     : (firstSeatId && order.includes(firstSeatId) ? firstSeatId : (state.firstSeatId && order.includes(state.firstSeatId) ? state.firstSeatId : order[0]));
   state.firstSeatId = chosenFirst;
   state.activeSeatId = chosenFirst;
-  state.message = `Set ${state.setNumber}: ${seatLabel(session, chosenFirst)} draws first.`;
+  dealOpeningMainCardsForSet(session, state);
+  state.message = `Set ${state.setNumber}: ${seatLabel(session, chosenFirst)} acts first after opening cards are dealt.`;
   pushPazaakEvent(session, state, 'set-started', chosenFirst, state.message, { setNumber: state.setNumber, tone: 'setup', rngLabel: state.debug?.rngLabel, mainDeckCount: state.mainDeck.length, gmOnly: true });
   pushPazaakEvent(session, state, 'set-public-started', chosenFirst, state.message, { setNumber: state.setNumber, tone: 'setup' });
   beginTurn(session, state, chosenFirst);
