@@ -8,7 +8,8 @@
         <span class="swse-games-table-row__glyph">{{this.gameIcon}}</span>
         <button type="button" class="swse-games-table-row__body" data-games-action="open-session" data-session-id="{{this.id}}">
           <span class="name">{{this.title}}</span>
-          <span class="meta">{{this.gameTitle}} · {{this.rulesMode}}{{#if this.wager.enabled}} · pot {{this.wager.pot}} cr{{/if}}</span>
+          <span class="meta">{{this.summaryLine}} · {{this.rulesMode}} · {{this.wagerLabel}}</span>
+          <span class="hint">{{this.tableTheme}}</span>
         </button>
         <button type="button" class="swse-games-table-row__cta" data-games-action="open-session" data-session-id="{{this.id}}">Resume</button>
       </article>
@@ -26,7 +27,8 @@
         <span class="swse-games-table-row__glyph">{{this.gameIcon}}</span>
         <button type="button" class="swse-games-table-row__body" data-games-action="open-session" data-session-id="{{this.id}}">
           <span class="name">{{this.title}}</span>
-          <span class="meta">{{this.gameTitle}} · {{this.rulesMode}}{{#if this.wager.enabled}} · {{this.wager.pot}} cr pot{{/if}}</span>
+          <span class="meta">{{this.summaryLine}} · {{this.rulesMode}} · {{this.wagerLabel}}</span>
+          <span class="hint">{{this.tableTheme}}</span>
         </button>
         <div class="swse-games-table-row__actions">
           {{#if this.canRespond}}
@@ -48,8 +50,8 @@
       {{#each vm.recentSessions}}
       <button type="button" class="swse-games-feed-row" data-games-action="open-session" data-session-id="{{this.id}}">
         <span class="ico {{this.statusTone}}">{{this.resultGlyph}}</span>
-        <span><span class="em">{{this.gameTitle}}</span> — {{this.status}}</span>
-        <span class="time">{{this.updatedAt}}</span>
+        <span><span class="em">{{this.gameTitle}}</span> - {{this.status}} <small>{{this.wagerLabel}}</small></span>
+        <span class="time">{{this.updatedAtShort}}</span>
       </button>
       {{/each}}
     {{else}}

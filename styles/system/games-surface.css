@@ -4576,3 +4576,76 @@
     max-width: min(34rem, 100%);
   }
 }
+
+/* Phase 8: game presentation metadata polish */
+.swse-games-detail-line {
+  color: var(--vapor-cyan, #39f7ff);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  margin: 8px 0 0;
+  max-width: 88%;
+  text-transform: uppercase;
+}
+
+.swse-games-quick-rules {
+  background: color-mix(in oklab, var(--vapor-purple, #8a5cff) 9%, transparent);
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 18%, transparent);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 150px 1fr;
+  padding: 12px 14px;
+}
+
+.swse-games-quick-rules p {
+  color: var(--ink-dim, #b9d9df);
+  font-family: var(--font-mono, monospace);
+  font-size: 9.5px;
+  line-height: 1.45;
+  margin: 0 0 5px;
+}
+
+.swse-games-quick-rules p:last-child { margin-bottom: 0; }
+
+.swse-games-table-row__body .hint {
+  color: var(--vapor-cyan, #39f7ff);
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.swse-games-feed-row small {
+  color: var(--ink-faint, #7fb8c4);
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.swse-games-tm-bar__line {
+  color: var(--ink-faint, #7fb8c4);
+  font-family: var(--font-mono, monospace);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.swse-games-theme-pazaak .swse-games-table-glyph,
+.swse-games-theme-pazaak .swse-games-tm-bar__line { color: var(--vapor-cyan, #39f7ff); }
+.swse-games-theme-sabacc .swse-games-table-glyph,
+.swse-games-theme-sabacc .swse-games-tm-bar__line { color: var(--gold, #ffd166); }
+.swse-games-theme-hintaro .swse-games-table-glyph,
+.swse-games-theme-hintaro .swse-games-tm-bar__line { color: var(--vapor-pink, #ff4fd8); }
+.swse-games-theme-dejarik .swse-games-table-glyph,
+.swse-games-theme-dejarik .swse-games-tm-bar__line { color: var(--vapor-cyan, #39f7ff); }
+
+@media (max-width: 960px) {
+  .swse-games-quick-rules { grid-template-columns: 1fr; }
+  .swse-games-detail-line { max-width: 100%; }
+}

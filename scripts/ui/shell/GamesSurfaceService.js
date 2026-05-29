@@ -14,6 +14,16 @@ function formatTimestamp(value) {
   catch (_err) { return String(value); }
 }
 
+function formatShortTimestamp(value) {
+  if (!value) return '—';
+  try {
+    const date = new Date(value);
+    return `${date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} ${date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`;
+  } catch (_err) {
+    return String(value);
+  }
+}
+
 function actorName(actor) {
   return actor?.name || 'Unknown Actor';
 }
@@ -34,7 +44,13 @@ function readActorCredits(actor) {
   return 0;
 }
 
+function presentationOf(game = {}) {
+  return game?.presentation && typeof game.presentation === 'object' ? game.presentation : {};
+}
+
 function statusKind(game) {
+  const presentation = presentationOf(game);
+  if (presentation.statusKind) return presentation.statusKind;
   const status = String(game?.status || '').toLowerCase();
   if (/playable|campaign|mvp|live/.test(status)) return 'live';
   if (/foundation|rules|found/.test(status)) return 'found';
@@ -47,29 +63,46 @@ function phaseShort(game) {
 }
 
 function displayIcon(game) {
+  const presentation = presentationOf(game);
+  if (presentation.displayIcon) return presentation.displayIcon;
   if (game?.id === 'hintaro') return '◈';
   if (game?.id === 'dejarik') return '✷';
   return String(game?.icon || '◇');
 }
 
-function gamePresentation(game, settings = null) {
+function defaultPresentationForGame(game = {}) {
   const id = String(game?.id || '');
+  if (id === 'pazaak') return { targetLabel: 'Target', targetValue: '20', targetHint: 'closest, no bust', tableNoun: 'Table', tableTheme: 'high table', railHint: 'target 20' };
+  if (id === 'sabacc') return { targetLabel: 'Target', targetValue: '0', targetHint: 'closest to zero', tableNoun: 'Den', tableTheme: 'casino table', railHint: 'target zero' };
+  if (id === 'hintaro') return { targetLabel: 'Mode', targetValue: 'Dice', targetHint: 'chance-cube pit', tableNoun: 'Pit', tableTheme: 'chance-cube pit', railHint: 'chance cubes' };
+  if (id === 'dejarik') return { targetLabel: 'Mode', targetValue: 'Board', targetHint: 'holochess tactics', tableNoun: 'Board', tableTheme: 'radial holochess', railHint: 'radial board' };
+  return { targetLabel: 'Mode', targetValue: 'Table', targetHint: 'house ruleset', tableNoun: 'Table', tableTheme: 'side table', railHint: 'side table' };
+}
+
+function gamePresentation(game, settings = null) {
+  const presentation = presentationOf(game);
+  const defaults = defaultPresentationForGame(game);
   const creditEnabled = Boolean(game?.supportsCreditWagers && (!settings || (settings.allowWagers && settings.allowCreditWagers)));
-  const base = {
+  const quickRules = Array.isArray(presentation.quickRules) ? presentation.quickRules.filter(Boolean) : [];
+  return {
     displayIcon: displayIcon(game),
     statusKind: statusKind(game),
     phaseShort: phaseShort(game),
-    targetLabel: 'Mode',
-    targetValue: 'Table',
-    targetHint: 'house ruleset',
+    targetLabel: presentation.targetLabel || defaults.targetLabel,
+    targetValue: presentation.targetValue || defaults.targetValue,
+    targetHint: presentation.targetHint || defaults.targetHint,
     stakesValue: creditEnabled ? 'Credits' : '—',
-    stakesHint: creditEnabled ? 'escrowed buy-in' : 'no credit movement'
+    stakesHint: creditEnabled ? 'escrowed buy-in' : 'no credit movement',
+    tableNoun: presentation.tableNoun || defaults.tableNoun,
+    tableTheme: presentation.tableTheme || defaults.tableTheme,
+    actionLabel: presentation.actionLabel || `Start ${game?.title || 'Game'}`,
+    startNote: presentation.startNote || game?.nextMilestone || '',
+    tableLine: presentation.tableLine || game?.subtitle || defaults.targetHint,
+    railHint: presentation.railHint || defaults.railHint,
+    quickRules,
+    hasQuickRules: quickRules.length > 0,
+    themeClass: `swse-games-theme-${String(game?.id || 'game').replace(/[^a-z0-9-]/gi, '').toLowerCase()}`
   };
-  if (id === 'pazaak') return { ...base, targetLabel: 'Target', targetValue: '20', targetHint: 'closest, no bust' };
-  if (id === 'sabacc') return { ...base, targetLabel: 'Target', targetValue: '0', targetHint: 'closest to zero' };
-  if (id === 'hintaro') return { ...base, targetLabel: 'Mode', targetValue: 'Dice', targetHint: 'chance-cube pit' };
-  if (id === 'dejarik') return { ...base, targetLabel: 'Mode', targetValue: 'Board', targetHint: 'holochess tactics' };
-  return base;
 }
 
 function mapGameForLibrary(game, selectedGame, settings) {
@@ -115,7 +148,9 @@ function buildTableFrameMeta(session, gameVm = {}, gameDef = {}) {
     gameId,
     gameIcon: displayIcon(gameDef),
     gameTitle: gameDef?.title || gameVm?.title || gameId || 'Game',
-    gameClass: `swse-games-table-frame--${gameId || 'unknown'}`,
+    tableTheme: gamePresentation(gameDef).tableTheme,
+    tableLine: gamePresentation(gameDef).tableLine,
+    gameClass: `swse-games-table-frame--${gameId || 'unknown'} ${gamePresentation(gameDef).themeClass}`,
     title: gameVm?.title || gameDef?.title || session?.title || 'Game Table',
     statusLabel: gameVm?.statusLabel || String(session?.status || 'active').replace(/[-_]+/g, ' ').toUpperCase(),
     statusTone: toneForPhase(gameVm?.phase || session?.status),
@@ -212,6 +247,8 @@ function mapSession(session, participantId = null) {
   const playableGames = new Set(['pazaak', 'sabacc', 'dejarik', 'hintaro']);
   const isPlayableGame = playableGames.has(session.gameId) && ['active', 'paused', 'complete', 'pending-invite', 'pending-gm-settlement'].includes(rawStatus);
   const gameDef = GameCenterRegistry.get(session.gameId) || { id: session.gameId, title: session.gameId || 'Game', icon: '◇' };
+  const presentation = gamePresentation(gameDef);
+  const wager = GameCreditEscrowService.describe(session);
   const isInvite = rawStatus === 'pending-invite';
   const isComplete = rawStatus === 'complete';
   const isActive = ['active', 'paused', 'pending-gm-settlement'].includes(rawStatus);
@@ -219,8 +256,11 @@ function mapSession(session, participantId = null) {
     id: session.id,
     gameId: session.gameId,
     gameTitle: gameDef.title || session.gameId || 'Game',
-    gameIcon: displayIcon(gameDef),
+    gameIcon: presentation.displayIcon,
     title: session.title,
+    tableTheme: presentation.tableTheme,
+    tableLine: presentation.tableLine,
+    railHint: presentation.railHint,
     rawStatus,
     status: rawStatus.replace(/[-_]+/g, ' ').toUpperCase(),
     statusTone: isComplete ? 'pos' : isInvite ? 'warn' : isActive ? 'cyan' : 'muted',
@@ -228,8 +268,11 @@ function mapSession(session, participantId = null) {
     rulesMode: String(session.rulesMode || 'republic-senate').replace(/[-_]+/g, ' ').toUpperCase(),
     seatCount: Array.isArray(session.seats) ? session.seats.length : 0,
     updatedAt: formatTimestamp(session.updatedAt),
+    updatedAtShort: formatShortTimestamp(session.updatedAt),
     wagerMode: session.wagerProfile?.mode || 'none',
-    wager: GameCreditEscrowService.describe(session),
+    wager,
+    wagerLabel: wager.enabled ? `pot ${amountLabel(wager.pot)} cr` : 'no wager',
+    summaryLine: `${gameDef.title || session.gameId || 'Game'} · ${presentation.railHint || presentation.targetHint || 'side table'}`,
     currentSeatStatus: currentSeat?.status || '',
     holonetThreadId: session.holonetThreadId || null,
     holonetMessageId: session.holonetMessageId || session.metadata?.inviteMessageId || null,
@@ -402,11 +445,11 @@ export class GamesSurfaceService {
         }
       ],
       infrastructureNotes: [
-        'Phase 4.5 adds GM-configurable economy policy gates for AI/house payouts before TransactionEngine settlement.',
-        'Player-vs-player credit games remain closed-loop: payouts come from the escrowed player pool.',
-        'Republic Senate Rules still skip all economy movement and are the safest default downtime mode.',
-        'Sabacc now has a custom 76-card deck/rules MVP, Dejarik has a radial board, and Hintaro adds a lightweight chance-cube gambling table inside Holopad Games.',
-        'Items and assets are still intentionally out of scope for this phase; future phases must route them through ActorEngine and asset ownership services.'
+        'Game metadata comes from GameCenterRegistry; per-game engines remain the source of truth for rules and table state.',
+        'Credit buy-ins and payouts remain routed through GameCreditEscrowService and TransactionEngine.',
+        'Republic Senate Rules skip all economy movement and remain the safest default downtime mode.',
+        'The active table frame now uses shared presentation metadata while game bodies stay engine-specific.',
+        'Item and asset wagers must continue to route through ActorEngine and asset ownership services before becoming player-facing.'
       ]
     };
   }

@@ -27,7 +27,21 @@ const DEFAULT_GAMES = [
     defaultRulesMode: 'republic-senate',
     implementationPhase: 'Phase 4',
     nextMilestone: 'Item/asset wager escrow and Sabacc table pots',
-    tags: ['starter', 'cards', 'turn-based']
+    tags: ['starter', 'cards', 'turn-based'],
+    presentation: {
+      displayIcon: '20',
+      statusKind: 'live',
+      targetLabel: 'Target',
+      targetValue: '20',
+      targetHint: 'closest, no bust',
+      tableNoun: 'Table',
+      tableTheme: 'high table',
+      actionLabel: 'Sit at Pazaak Table',
+      startNote: 'Build a 10-card side deck, draw a 4-card hand, and play to the configured set target.',
+      tableLine: 'Side deck tactics, main-deck pressure, first to the set target.',
+      railHint: 'target 20',
+      quickRules: ['Draw one main card on your turn.', 'Play at most one side card per turn.', 'Closest to 20 without busting wins the set.']
+    }
   },
   {
     id: 'sabacc',
@@ -49,7 +63,21 @@ const DEFAULT_GAMES = [
     defaultRulesMode: 'wagered',
     implementationPhase: 'Phase 9',
     nextMilestone: 'Evaluator test expansion, market runtime polish, item/asset side pots, dealer variants, and expanded table receipts',
-    tags: ['cards', 'high-stakes', 'dealer']
+    tags: ['cards', 'high-stakes', 'dealer'],
+    presentation: {
+      displayIcon: '0',
+      statusKind: 'live',
+      targetLabel: 'Target',
+      targetValue: '0',
+      targetHint: 'closest to zero',
+      tableNoun: 'Den',
+      tableTheme: 'casino table',
+      actionLabel: 'Sit at Sabacc Table',
+      startNote: 'Enter with table credits, play betting and draw rounds, then cash out through settlement.',
+      tableLine: 'Hand pot, Sabacc pot, market cards, and shift pressure.',
+      railHint: 'target zero',
+      quickRules: ['Ante into the hand pot.', 'Bet, call, raise, or fold during table rounds.', 'Closest to zero wins; pure Sabacc can claim the Sabacc pot.']
+    }
   },
   {
     id: 'hintaro',
@@ -71,7 +99,21 @@ const DEFAULT_GAMES = [
     defaultRulesMode: 'republic-senate',
     implementationPhase: 'Phase 12',
     nextMilestone: 'PvP table invite materialization, custom hintaro dice art, and casino/non-organized variants',
-    tags: ['dice', 'gambling', 'fast']
+    tags: ['dice', 'gambling', 'fast'],
+    presentation: {
+      displayIcon: '◈',
+      statusKind: 'live',
+      targetLabel: 'Mode',
+      targetValue: 'Dice',
+      targetHint: 'chance-cube pit',
+      tableNoun: 'Pit',
+      tableTheme: 'chance-cube pit',
+      actionLabel: 'Enter Hintaro Pit',
+      startNote: 'Ante, call wagers, choose rerolls, and let the Hintaro die decide which symbols survive.',
+      tableLine: 'Tukar, Kulro, hintaron pressure, and carryover pots.',
+      railHint: 'chance cubes',
+      quickRules: ['Ante into the pit.', 'Bet or drop before the reroll window.', 'Final live symbols determine the rank and pot outcome.']
+    }
   },
   {
     id: 'dejarik',
@@ -93,7 +135,21 @@ const DEFAULT_GAMES = [
     defaultRulesMode: 'republic-senate',
     implementationPhase: 'Phase 7',
     nextMilestone: 'Visual board polish, creature selection, special abilities, and smarter tactical AI',
-    tags: ['board', 'tactical', 'visual']
+    tags: ['board', 'tactical', 'visual'],
+    presentation: {
+      displayIcon: '✷',
+      statusKind: 'found',
+      targetLabel: 'Mode',
+      targetValue: 'Board',
+      targetHint: 'holochess tactics',
+      tableNoun: 'Board',
+      tableTheme: 'radial holochess',
+      actionLabel: 'Start Dejarik Board',
+      startNote: 'Move holomonsters across generated SVG cells, attack legal targets, and clear the enemy side.',
+      tableLine: 'Generated SVG board, real cell highlights, creature HP, and tactical turns.',
+      railHint: 'radial board',
+      quickRules: ['Select one of your active holomonsters.', 'Move to highlighted cells or attack red target cells.', 'Last side with living creatures wins.']
+    }
   }
 ];
 
@@ -121,7 +177,28 @@ function normalizeGameDefinition(definition = {}) {
     defaultRulesMode: definition.defaultRulesMode || 'republic-senate',
     implementationPhase: definition.implementationPhase || 'Future Phase',
     nextMilestone: definition.nextMilestone || '',
-    tags: Array.isArray(definition.tags) ? definition.tags.map(tag => String(tag)) : []
+    tags: Array.isArray(definition.tags) ? definition.tags.map(tag => String(tag)) : [],
+    presentation: normalizePresentation(definition.presentation)
+  };
+}
+
+function normalizePresentation(presentation = {}) {
+  const quickRules = Array.isArray(presentation.quickRules)
+    ? presentation.quickRules.map(rule => String(rule || '').trim()).filter(Boolean)
+    : [];
+  return {
+    displayIcon: presentation.displayIcon ? String(presentation.displayIcon) : '',
+    statusKind: presentation.statusKind ? String(presentation.statusKind) : '',
+    targetLabel: presentation.targetLabel ? String(presentation.targetLabel) : '',
+    targetValue: presentation.targetValue ? String(presentation.targetValue) : '',
+    targetHint: presentation.targetHint ? String(presentation.targetHint) : '',
+    tableNoun: presentation.tableNoun ? String(presentation.tableNoun) : '',
+    tableTheme: presentation.tableTheme ? String(presentation.tableTheme) : '',
+    actionLabel: presentation.actionLabel ? String(presentation.actionLabel) : '',
+    startNote: presentation.startNote ? String(presentation.startNote) : '',
+    tableLine: presentation.tableLine ? String(presentation.tableLine) : '',
+    railHint: presentation.railHint ? String(presentation.railHint) : '',
+    quickRules
   };
 }
 

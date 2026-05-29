@@ -6,6 +6,7 @@
     <span class="swse-games-kicker">{{vm.selectedGame.implementationPhase}} · {{vm.selectedGame.status}}</span>
     <h2>{{vm.selectedGame.title}}</h2>
     <p class="swse-games-detail-sub">{{vm.selectedGame.description}}</p>
+    <p class="swse-games-detail-line">{{vm.selectedGame.tableLine}}</p>
     <div class="swse-games-detail-tags">
       {{#each vm.selectedGame.tags}}
       <span class="swse-games-pill">{{this}}</span>
@@ -25,6 +26,17 @@
     <span class="swse-games-cap {{#if this.enabled}}on{{else}}off{{/if}}">{{#if this.enabled}}◆{{else}}◇{{/if}} {{this.label}}</span>
     {{/each}}
   </div>
+
+  {{#if vm.selectedGame.hasQuickRules}}
+  <section class="swse-games-quick-rules">
+    <span class="swse-games-kicker">Table Pattern</span>
+    <div>
+      {{#each vm.selectedGame.quickRules}}
+      <p>{{this}}</p>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
 
   <section class="swse-games-config-card">
     <span class="swse-games-kicker">Start a Table</span>
@@ -57,7 +69,7 @@
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
       <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
       {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
-      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">Sit at Pazaak Table</button><span class="swse-games-start-note">Side-deck setup happens before the first draw. Wagers, when enabled, stay escrowed by the production game economy services.</span></div>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
 
@@ -66,14 +78,14 @@
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
       <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
       {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
-      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">Sit at Sabacc Table</button><span class="swse-games-start-note">Hand pot and Sabacc pot remain managed by the existing Sabacc engine.</span></div>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
 
     {{#if vm.canStartSoloAiDejarik}}
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-dejarik">
       <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
-      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">Start Dejarik Board</button><span class="swse-games-start-note">The current production board opens directly; creature draft remains a later table-mode polish pass.</span></div>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
 
@@ -82,7 +94,7 @@
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
       <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
       {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
-      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">Enter Hintaro Pit</button><span class="swse-games-start-note">Antes, betting, rerolls, and carryover pots remain owned by the Hintaro engine.</span></div>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
 
