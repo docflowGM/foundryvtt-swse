@@ -152,7 +152,8 @@ export class GamesSurfaceController {
         const data = new FormData(form);
         const result = await DejarikEngine.createSoloAiSession({
           actor: this._actor,
-          title: String(data.get('title') || '').trim()
+          title: String(data.get('title') || '').trim(),
+          dejarikRulesMode: String(data.get('dejarikRulesMode') || 'holopad-skirmish').trim()
         });
         if (result?.pending) {
           this._noteResult(result);

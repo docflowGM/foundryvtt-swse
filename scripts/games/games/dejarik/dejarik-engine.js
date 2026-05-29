@@ -5,8 +5,7 @@ import { GameOpponentProfileService } from '../../game-opponent-profile-service.
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import { buildDejarikBoard, defaultStartingSpaces } from './dejarik-board.js';
 import { defaultDejarikTeam, getDejarikPiece } from './dejarik-pieces.js';
-import { adjacentSpaces, boardDistance, parseSpaceId } from './dejarik-board.js';
-import { canAttackPiece, canMovePiece, legalAttackTargets, legalMoveSpaceIds, occupiedSpaces, winnerSeatId } from './dejarik-rules.js';
+import { canAttackPiece, canMovePiece, dejarikRulesModeLabel, legalAttackTargets, legalMoveSpaceIds, normalizeDejarikRulesMode, resolveDejarikAttack, winnerSeatId } from './dejarik-rules.js';
 import { DejarikAi } from './dejarik-ai.js';
 
 function clone(value) { if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value); return JSON.parse(JSON.stringify(value ?? null)); }
@@ -22,6 +21,7 @@ function seatLabel(session, seatId) { return playableSeats(session.seats).find(s
 function getOrder(session = {}) { return playableSeats(session.seats).map(seat => seat.seatId).filter(Boolean); }
 function findSeat(session, seatId) { return playableSeats(session.seats).find(seat => seat.seatId === seatId) ?? null; }
 function sessionLogEntry(type, by, data = {}) { return { id: randomId('log'), at: now(), type, by: by ?? null, data }; }
+function requestedDejarikRulesMode(session = {}) { return normalizeDejarikRulesMode(session.metadata?.dejarikRulesMode || session.dejarikRulesMode || session.rulesMode); }
 
 function buildPiece(pieceId, ownerSeatId, spaceId) {
   const def = getDejarikPiece(pieceId);
@@ -39,7 +39,8 @@ function buildState(session = {}) {
       pieces[piece.id] = piece;
     });
   });
-  return { engine: 'dejarik', version: 2, actionModel: 'single-action', phase: 'playing', statusLabel: 'PLAYING', board: buildDejarikBoard(), activeSeatId: seats[0]?.seatId || null, initiativeSeatId: seats[0]?.seatId || null, pieces, eventLog: [], winnerSeatId: null, message: `${seatLabel(session, seats[0]?.seatId)} has initiative.` };
+  const rulesMode = requestedDejarikRulesMode(session);
+  return { engine: 'dejarik', version: 3, rulesMode, rulesModeLabel: dejarikRulesModeLabel(rulesMode), actionModel: rulesMode === 'classic-holochess' ? 'classic-two-action-foundation' : 'single-action', phase: 'playing', statusLabel: 'PLAYING', board: buildDejarikBoard(), activeSeatId: seats[0]?.seatId || null, initiativeSeatId: seats[0]?.seatId || null, pieces, eventLog: [], winnerSeatId: null, message: `${seatLabel(session, seats[0]?.seatId)} has initiative.` };
 }
 
 function resetMatchState(session = {}) {
@@ -52,7 +53,9 @@ function ensureState(session = {}) {
   const state = session.gameState?.engine === 'dejarik' ? clone(session.gameState) : buildState(session);
   state.board = Array.isArray(state.board) && state.board.length ? state.board : buildDejarikBoard();
   state.pieces ??= {};
-  state.actionModel ||= 'single-action';
+  state.rulesMode = normalizeDejarikRulesMode(state.rulesMode || session.metadata?.dejarikRulesMode || session.dejarikRulesMode || session.rulesMode);
+  state.rulesModeLabel = dejarikRulesModeLabel(state.rulesMode);
+  state.actionModel ||= state.rulesMode === 'classic-holochess' ? 'classic-two-action-foundation' : 'single-action';
   state.eventLog = Array.isArray(state.eventLog) ? state.eventLog : [];
   return state;
 }
@@ -63,56 +66,6 @@ function pushEvent(session, state, type, seatId, message, data = {}) {
   state.eventLog = state.eventLog.slice(0, 30);
 }
 
-
-function adjustedDejarikDamage(attacker = {}, defender = {}, distance = 1) {
-  let damage = Math.max(1, Number(attacker.atk || 1));
-  if (attacker.ability === 'maul' && Number(defender.hp || 0) < Number(defender.maxHp || 0)) damage += 1;
-  if (attacker.ability === 'rend' && Number(defender.hp || 0) < Number(defender.maxHp || 0)) damage += 1;
-  if (attacker.ability === 'snap' && Number(distance || 0) > 1) damage += 1;
-  if (defender.ability === 'guard' && attacker.ability !== 'spit') damage = Math.max(1, damage - 1);
-  return damage;
-}
-
-function preferredPushSpace(state = {}, attacker = {}, defender = {}) {
-  if (!attacker?.spaceId || !defender?.spaceId || defender.ability === 'anchor') return null;
-  const occupied = occupiedSpaces(state, defender.id);
-  const currentDistance = boardDistance(attacker.spaceId, defender.spaceId);
-  return adjacentSpaces(defender.spaceId)
-    .filter(id => !occupied.has(id))
-    .filter(id => (state.board || []).some(space => space.id === id))
-    .map(id => ({ id, distance: boardDistance(attacker.spaceId, id) }))
-    .filter(entry => Number.isFinite(entry.distance) && entry.distance > currentDistance)
-    .sort((a, b) => b.distance - a.distance)[0]?.id || null;
-}
-
-function resolveDejarikAttack(state = {}, attacker = {}, defender = {}, check = {}) {
-  const beforeHp = Number(defender.hp || 0);
-  const distance = Number(check.distance || boardDistance(attacker.spaceId, defender.spaceId) || 1);
-  const effects = [];
-
-  if (attacker.ability === 'sacrifice' && distance <= 1) {
-    defender.hp = 0;
-    defender.defeated = true;
-    attacker.hp = 0;
-    attacker.defeated = true;
-    effects.push('sacrifice');
-    return { beforeHp, afterHp: 0, damage: beforeHp, defeated: true, effects, pushedTo: null };
-  }
-
-  const damage = adjustedDejarikDamage(attacker, defender, distance);
-  defender.hp = Math.max(0, beforeHp - damage);
-  if (defender.hp <= 0) defender.defeated = true;
-  let pushedTo = null;
-  if (!defender.defeated && attacker.ability === 'brutal-slam' && distance <= 1) {
-    pushedTo = preferredPushSpace(state, attacker, defender);
-    if (pushedTo) {
-      defender.previousSpaceId = defender.spaceId;
-      defender.spaceId = pushedTo;
-      effects.push('push');
-    }
-  }
-  return { beforeHp, afterHp: defender.hp, damage, defeated: Boolean(defender.defeated), effects, pushedTo };
-}
 
 function nextSeatId(session, state, fromSeatId) {
   const order = getOrder(session);
@@ -162,9 +115,17 @@ function applyAction(session, state, seat, action, payload = {}) {
     const resolved = resolveDejarikAttack(state, piece, defender, check);
     piece.activated = true;
     const rangeText = Number(check.distance || 0) > 1 ? ` at range ${check.distance}` : '';
-    const effectText = resolved.effects.includes('sacrifice') ? ` ${piece.label} sacrifices itself.` : (resolved.pushedTo ? ` ${defender.label} is pushed to ${resolved.pushedTo}.` : '');
-    const outcomeText = defender.defeated ? ` ${defender.label} is defeated.` : ` ${defender.label} has ${defender.hp}/${defender.maxHp} HP left.`;
-    pushEvent(session, state, 'attack', seat.seatId, `${piece.label} hits ${defender.label}${rangeText} for ${resolved.damage}.${effectText}${outcomeText}`, { tone: defender.defeated ? 'danger' : 'attack', attackerId: piece.id, defenderId: defender.id, beforeHp: resolved.beforeHp, afterHp: defender.hp, damage: resolved.damage, defeated: defender.defeated, distance: check.distance, effects: resolved.effects, pushedTo: resolved.pushedTo });
+    if (resolved.mode === 'classic-holochess') {
+      const contest = `attack ${resolved.attackRoll?.total ?? '?'} vs defense ${resolved.defenseRoll?.total ?? '?'} (${resolved.margin >= 0 ? '+' : ''}${resolved.margin})`;
+      const pushedLabel = resolved.pushedPieceId === piece.id ? piece.label : defender.label;
+      const pushText = resolved.pushedTo ? ` ${pushedLabel} is pushed to ${resolved.pushedTo}.` : '';
+      const outcomeText = resolved.attackerDefeated ? ` ${piece.label} is defeated by the counter.` : (defender.defeated ? ` ${defender.label} is defeated.` : pushText || ' No legal push space is available.');
+      pushEvent(session, state, 'attack', `${seat.seatId}`, `${piece.label} contests ${defender.label}${rangeText}: ${contest}.${outcomeText}`, { tone: defender.defeated || resolved.attackerDefeated ? 'danger' : 'attack', attackerId: piece.id, defenderId: defender.id, beforeHp: resolved.beforeHp, afterHp: defender.hp, damage: resolved.damage, defeated: defender.defeated, attackerDefeated: resolved.attackerDefeated, distance: check.distance, effects: resolved.effects, pushedTo: resolved.pushedTo, classic: { attackTotal: resolved.attackRoll?.total, defenseTotal: resolved.defenseRoll?.total, margin: resolved.margin, outcome: resolved.outcome } });
+    } else {
+      const effectText = resolved.effects.includes('sacrifice') ? ` ${piece.label} sacrifices itself.` : (resolved.pushedTo ? ` ${defender.label} is pushed to ${resolved.pushedTo}.` : '');
+      const outcomeText = defender.defeated ? ` ${defender.label} is defeated.` : ` ${defender.label} has ${defender.hp}/${defender.maxHp} HP left.`;
+      pushEvent(session, state, 'attack', seat.seatId, `${piece.label} hits ${defender.label}${rangeText} for ${resolved.damage}.${effectText}${outcomeText}`, { tone: defender.defeated ? 'danger' : 'attack', attackerId: piece.id, defenderId: defender.id, beforeHp: resolved.beforeHp, afterHp: defender.hp, damage: resolved.damage, defeated: defender.defeated, distance: check.distance, effects: resolved.effects, pushedTo: resolved.pushedTo });
+    }
     endTurn(session, state, seat.seatId);
     return { ok: true };
   }
@@ -202,11 +163,11 @@ export class DejarikEngine {
     }) ?? null;
   }
 
-  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null } = {}) {
+  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, dejarikRulesMode = 'holopad-skirmish' } = {}) {
     const resolvedActor = actor || (actorId ? game.actors?.get?.(actorId) : null);
     const resolvedSessionId = sessionId || `game_${globalThis.foundry?.utils?.randomID?.(12) || Math.random().toString(36).slice(2, 14)}`;
     if (!game?.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-solo-dejarik', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId });
+      const requestId = HolonetSocketService.emitRequest('create-solo-dejarik', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, dejarikRulesMode });
       return { pending: true, requestId, sessionId: resolvedSessionId };
     }
     const requester = requesterId ? game.users?.get?.(requesterId) : game?.user;
@@ -216,7 +177,8 @@ export class DejarikEngine {
     const generated = await GameOpponentProfileService.buildPazaakAiOpponentProfile({ difficulty: settings.defaultAiDifficulty || 'medium', fairness: settings.defaultAiFairness || 'fair', personality: settings.defaultAiPersonality || 'random' });
     const hostSeat = { seatId: 'seat_host', type: requester?.isGM ? 'gm' : 'player', userId, actorId: resolvedActor?.id ?? actorId ?? null, recipientId: hostRecipientId, displayName: actorDisplay(resolvedActor), avatar: actorImg(resolvedActor), status: 'host' };
     const aiSeat = { seatId: 'seat_ai', type: 'ai', userId: null, actorId: null, recipientId: null, displayName: generated.name || 'Holochess Droid', avatar: 'icons/commodities/tech/cog-bronze.webp', status: 'accepted', profession: generated.profession || '', tableFact: generated.tableFact || '', aiProfile: generated, aiDifficulty: generated.difficulty, aiFairness: generated.fairness, aiPersonality: generated.personality };
-    const shell = { id: resolvedSessionId, gameId: 'dejarik', title: title || `${actorDisplay(resolvedActor)} plays Dejarik`, status: 'active', authorityMode: 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: 'republic-senate', wagerProfile: { mode: 'none' }, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', aiProfile: generated }, log: [sessionLogEntry('solo-ai-dejarik-created', hostRecipientId)] };
+    const safeDejarikRulesMode = normalizeDejarikRulesMode(dejarikRulesMode);
+    const shell = { id: resolvedSessionId, gameId: 'dejarik', title: title || `${actorDisplay(resolvedActor)} plays Dejarik`, status: 'active', authorityMode: 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: 'republic-senate', wagerProfile: { mode: 'none' }, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', aiProfile: generated, dejarikRulesMode: safeDejarikRulesMode }, log: [sessionLogEntry('solo-ai-dejarik-created', hostRecipientId, { dejarikRulesMode: safeDejarikRulesMode })] };
     shell.gameState = ensureState(shell);
     const updated = await GameSessionStore.upsertSession(shell);
     GameNotificationService.emitSessionUpdated(updated, { dejarikPhase: updated.gameState?.phase, action: 'create-solo-dejarik' });

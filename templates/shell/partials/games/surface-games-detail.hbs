@@ -85,6 +85,7 @@
     {{#if vm.canStartSoloAiDejarik}}
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-dejarik">
       <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
+      <label><span>Rules Style</span><select name="dejarikRulesMode"><option value="holopad-skirmish">Holopad Skirmish — HP, reach, abilities</option><option value="classic-holochess">Classic Holochess — attack vs defense contest</option></select></label>
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}

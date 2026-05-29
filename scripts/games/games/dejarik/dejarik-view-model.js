@@ -1,5 +1,5 @@
 import { DejarikEngine } from './dejarik-engine.js';
-import { legalAttackTargets, legalMoveSpaceIds } from './dejarik-rules.js';
+import { dejarikRulesModeLabel, legalAttackTargets, legalMoveSpaceIds, normalizeDejarikRulesMode } from './dejarik-rules.js';
 import { DejarikAi, buildDejarikAiProfile } from './dejarik-ai.js';
 
 function formatTime(value) { try { return value ? new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''; } catch (_err) { return ''; } }
@@ -108,8 +108,10 @@ export class DejarikViewModel {
       phase: state.phase,
       statusLabel: state.statusLabel || state.phase,
       message: state.message || '',
+      rulesMode: normalizeDejarikRulesMode(state.rulesMode),
+      rulesModeLabel: dejarikRulesModeLabel(state.rulesMode),
       actionModel: state.actionModel || 'single-action',
-      actionModelLabel: state.actionModel === 'move-then-attack' ? 'Move + Attack' : 'Single Action',
+      actionModelLabel: state.actionModel === 'classic-two-action-foundation' ? 'Classic contest foundation' : (state.actionModel === 'move-then-attack' ? 'Move + Attack' : 'Single Action'),
       currentSeatId: viewerSeatId,
       activeSeatLabel: state.activeSeatId ? seatName(session, state.activeSeatId) : '',
       winnerLabel: state.winnerSeatId ? seatName(session, state.winnerSeatId) : '',

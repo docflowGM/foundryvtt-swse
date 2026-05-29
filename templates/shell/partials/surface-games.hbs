@@ -548,7 +548,7 @@
             <div class="swse-dejarik-selection-panel">
               <span class="swse-games-kicker">TACTICAL OVERLAY</span>
               <b data-dejarik-selection-label>{{#if vm.activeTable.dejarik.canAct}}Select one of your pieces{{else}}Awaiting activation{{/if}}</b>
-              <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Blue spaces are legal moves. Red spaces are enemy pieces you can attack. Action model: {{vm.activeTable.dejarik.actionModelLabel}}.{{else}}Only the active player can move or attack.{{/if}}</small>
+              <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Blue spaces are legal moves. Red spaces are enemy pieces you can attack. Rules: {{vm.activeTable.dejarik.rulesModeLabel}} · Action model: {{vm.activeTable.dejarik.actionModelLabel}}.{{else}}Only the active player can move or attack.{{/if}}</small>
               <div class="swse-dejarik-selection-stats" data-dejarik-selection-stats>Choose a holomonster to see HP, attack, range, movement, and ability notes.</div>
               {{#if vm.activeTable.dejarik.canAct}}
               <form data-games-action="dejarik-end-turn">
@@ -836,6 +836,7 @@
         <form class="swse-games-invite-form swse-pazaak-solo-form" data-games-action="start-solo-dejarik">
           <div><span class="swse-games-kicker">INSTANT BOARD</span><strong>Start Dejarik vs AI</strong><small>Holochess MVP with four creatures per side, movement, range, attacks, HP, and defeat.</small></div>
           <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
+          <label><span>Rules Style</span><select name="dejarikRulesMode"><option value="holopad-skirmish">Holopad Skirmish — HP, reach, abilities</option><option value="classic-holochess">Classic Holochess — attack vs defense contest</option></select></label>
           <button type="submit" class="swse-games-primary">Start Dejarik Board</button>
         </form>
         {{/if}}

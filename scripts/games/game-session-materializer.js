@@ -40,6 +40,7 @@ function applyGameSpecificInviteDefaults(session = {}) {
     next.metadata.inviteSetup = 'chance-cube-standard';
   } else if (next.gameId === 'dejarik') {
     next.metadata.actionModel ??= 'single-action';
+    next.metadata.dejarikRulesMode ??= 'holopad-skirmish';
     next.metadata.inviteSetup = 'radial-holotable';
   } else if (next.gameId === 'pazaak') {
     next.metadata.inviteSetup = 'side-deck-lock';

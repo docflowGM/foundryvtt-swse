@@ -21,7 +21,7 @@ import { buildSabaccDeck, buildSabaccSylopCard, buildSabaccNumberCard, SABACC_SU
 import { compareSabaccHands, evaluateSabaccHand, isSabaccPotJackpotHand } from '../games/sabacc/sabacc-rules.js';
 import { SabaccAi } from '../games/sabacc/sabacc-ai.js';
 import { buildDejarikBoard } from '../games/dejarik/dejarik-board.js';
-import { attackRangeForPiece, canAttackPiece, canMovePiece } from '../games/dejarik/dejarik-rules.js';
+import { attackRangeForPiece, canAttackPiece, canMovePiece, normalizeDejarikRulesMode, resolveDejarikAttack } from '../games/dejarik/dejarik-rules.js';
 import { evaluateHintaroRoll, rollHintaroPlayerDice, HINTARO_SYMBOLS } from '../games/hintaro/hintaro-rules.js';
 
 function testPazaak() {
@@ -109,6 +109,24 @@ function testDejarik() {
   const skitter = { id: 'sk', ownerSeatId: 'one', spaceId: 'r1_q1', previousSpaceId: 'r1_q0', hp: 3, maxHp: 3, atk: 1, rng: 3, mov: 3, ability: 'skitter' };
   state.pieces = { sk: skitter };
   assert.equal(canMovePiece(state, skitter, 'r1_q0').ok, true, 'Scrimp skitter should allow immediate retreat');
+
+
+  assert.equal(normalizeDejarikRulesMode('classic-holochess'), 'classic-holochess', 'Dejarik classic mode should normalize to classic-holochess');
+  const slamState = { board: buildDejarikBoard(), pieces: {} };
+  const savrip = { id: 'sav', ownerSeatId: 'one', spaceId: 'r1_q0', hp: 8, maxHp: 8, atk: 4, rng: 1, mov: 2, ability: 'brutal-slam' };
+  const pushed = { id: 'push', ownerSeatId: 'two', spaceId: 'r2_q0', hp: 8, maxHp: 8, atk: 2, rng: 1, mov: 1 };
+  slamState.pieces = { sav: savrip, push: pushed };
+  const slam = resolveDejarikAttack(slamState, savrip, pushed, canAttackPiece(savrip, pushed, slamState), { randomize: false });
+  assert.equal(Boolean(slam.pushedTo), true, 'Holopad Skirmish resolver should apply Brutal Slam push through the shared resolver');
+
+  const classicState = { rulesMode: 'classic-holochess', board: buildDejarikBoard(), pieces: {} };
+  const molator = { id: 'mol', ownerSeatId: 'one', spaceId: 'r1_q0', hp: 7, maxHp: 7, atk: 5, attack: 8, defense: 2, rng: 1, mov: 1 };
+  const target = { id: 'tar', ownerSeatId: 'two', spaceId: 'r2_q0', hp: 6, maxHp: 6, atk: 2, attack: 2, defense: 2, rng: 1, mov: 1 };
+  classicState.pieces = { mol: molator, tar: target };
+  const classic = resolveDejarikAttack(classicState, molator, target, canAttackPiece(molator, target, classicState), { randomize: false });
+  assert.equal(classic.mode, 'classic-holochess', 'Classic Dejarik resolver should use attack/defense contest mode');
+  assert.equal(classic.outcome, 'attack-mortal', 'Classic deterministic 8 attack vs 2 defense should produce a mortal attack');
+  assert.equal(target.defeated, true, 'Classic mortal attack should defeat the defender');
 }
 
 function testHintaro() {

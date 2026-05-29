@@ -1,4 +1,19 @@
-import { boardDistance, parseSpaceId, reachableSpaces, shortestPath, spaceId } from './dejarik-board.js';
+import { adjacentSpaces, boardDistance, parseSpaceId, reachableSpaces, shortestPath, spaceId } from './dejarik-board.js';
+
+export const DEJARIK_RULES_MODES = Object.freeze({
+  SKIRMISH: 'holopad-skirmish',
+  CLASSIC: 'classic-holochess'
+});
+
+export function normalizeDejarikRulesMode(value = '') {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (['classic', 'classic-holochess', 'classic_dejarik', 'classic-dejarik', 'holochess'].includes(normalized)) return DEJARIK_RULES_MODES.CLASSIC;
+  return DEJARIK_RULES_MODES.SKIRMISH;
+}
+
+export function dejarikRulesModeLabel(value = '') {
+  return normalizeDejarikRulesMode(value) === DEJARIK_RULES_MODES.CLASSIC ? 'Classic Holochess' : 'Holopad Skirmish';
+}
 
 export function alivePieces(state = {}) {
   return Object.values(state.pieces || {}).filter(piece => piece && !piece.defeated && Number(piece.hp || 0) > 0);
@@ -95,6 +110,134 @@ export function canAttackPiece(attacker = {}, defender = {}, state = null) {
     return { ok: true, distance, path: line.path };
   }
   return { ok: true, distance };
+}
+
+export function adjustedDejarikSkirmishDamage(attacker = {}, defender = {}, distance = 1) {
+  let damage = Math.max(1, Number(attacker.atk || 1));
+  if (attacker.ability === 'maul' && Number(defender.hp || 0) < Number(defender.maxHp || 0)) damage += 1;
+  if (attacker.ability === 'rend' && Number(defender.hp || 0) < Number(defender.maxHp || 0)) damage += 1;
+  if (attacker.ability === 'snap' && Number(distance || 0) > 1) damage += 1;
+  if (defender.ability === 'guard' && attacker.ability !== 'spit') damage = Math.max(1, damage - 1);
+  return damage;
+}
+
+export function preferredPushSpace(state = {}, attacker = {}, defender = {}) {
+  if (!attacker?.spaceId || !defender?.spaceId || defender.ability === 'anchor') return null;
+  const occupied = occupiedSpaces(state, defender.id);
+  const currentDistance = boardDistance(attacker.spaceId, defender.spaceId);
+  return adjacentSpaces(defender.spaceId)
+    .filter(id => !occupied.has(id))
+    .filter(id => (state.board || []).some(space => space.id === id))
+    .map(id => ({ id, distance: boardDistance(attacker.spaceId, id) }))
+    .filter(entry => Number.isFinite(entry.distance) && entry.distance > currentDistance)
+    .sort((a, b) => b.distance - a.distance)[0]?.id || null;
+}
+
+function rollDejarikDice(count, { randomize = true } = {}) {
+  const dice = Math.max(1, Math.min(12, Number(count || 1)));
+  const rolls = [];
+  for (let i = 0; i < dice; i += 1) rolls.push(randomize ? 1 + Math.floor(Math.random() * 6) : 3.5);
+  return { dice, rolls, total: Math.round(rolls.reduce((sum, value) => sum + value, 0)) };
+}
+
+export function resolveDejarikSkirmishAttack(state = {}, attacker = {}, defender = {}, check = {}) {
+  const beforeHp = Number(defender.hp || 0);
+  const distance = Number(check.distance || boardDistance(attacker.spaceId, defender.spaceId) || 1);
+  const effects = [];
+
+  if (attacker.ability === 'sacrifice' && distance <= 1) {
+    defender.hp = 0;
+    defender.defeated = true;
+    attacker.hp = 0;
+    attacker.defeated = true;
+    effects.push('sacrifice');
+    return { mode: DEJARIK_RULES_MODES.SKIRMISH, beforeHp, afterHp: 0, damage: beforeHp, defeated: true, attackerDefeated: true, effects, pushedTo: null };
+  }
+
+  const damage = adjustedDejarikSkirmishDamage(attacker, defender, distance);
+  defender.hp = Math.max(0, beforeHp - damage);
+  if (defender.hp <= 0) defender.defeated = true;
+  let pushedTo = null;
+  if (!defender.defeated && attacker.ability === 'brutal-slam' && distance <= 1) {
+    pushedTo = preferredPushSpace(state, attacker, defender);
+    if (pushedTo) {
+      defender.previousSpaceId = defender.spaceId;
+      defender.spaceId = pushedTo;
+      effects.push('push');
+    }
+  }
+  return { mode: DEJARIK_RULES_MODES.SKIRMISH, beforeHp, afterHp: defender.hp, damage, defeated: Boolean(defender.defeated), attackerDefeated: Boolean(attacker.defeated), effects, pushedTo };
+}
+
+export function resolveDejarikClassicAttack(state = {}, attacker = {}, defender = {}, check = {}, options = {}) {
+  const distance = Number(check.distance || boardDistance(attacker.spaceId, defender.spaceId) || 1);
+  const beforeHp = Number(defender.hp || 0);
+  const attackRoll = rollDejarikDice(attacker.attack || attacker.classic?.attack || attacker.atk || 1, options);
+  const defenseRoll = rollDejarikDice(defender.defense || defender.classic?.defense || defender.hp || 1, options);
+  const margin = attackRoll.total - defenseRoll.total;
+  const effects = ['classic-contest'];
+  let pushedTo = null;
+  let pushedPieceId = null;
+  let damage = 0;
+  let defeated = false;
+  let attackerDefeated = false;
+  let outcome = 'defender-push';
+
+  if (margin > 7) {
+    defender.hp = 0;
+    defender.defeated = true;
+    defeated = true;
+    damage = beforeHp;
+    outcome = 'attack-mortal';
+    effects.push('attack-mortal');
+  } else if (margin <= -7) {
+    attacker.hp = 0;
+    attacker.defeated = true;
+    attackerDefeated = true;
+    outcome = 'defense-mortal';
+    effects.push('defense-mortal');
+  } else if (margin > 0) {
+    pushedTo = preferredPushSpace(state, attacker, defender);
+    pushedPieceId = defender.id;
+    outcome = 'attacker-push';
+    effects.push('attacker-push');
+    if (pushedTo) {
+      defender.previousSpaceId = defender.spaceId;
+      defender.spaceId = pushedTo;
+    }
+  } else {
+    pushedTo = preferredPushSpace(state, defender, attacker);
+    pushedPieceId = attacker.id;
+    outcome = 'defender-push';
+    effects.push('defender-push');
+    if (pushedTo) {
+      attacker.previousSpaceId = attacker.spaceId;
+      attacker.spaceId = pushedTo;
+    }
+  }
+
+  return {
+    mode: DEJARIK_RULES_MODES.CLASSIC,
+    beforeHp,
+    afterHp: defender.hp,
+    damage,
+    defeated,
+    attackerDefeated,
+    effects,
+    pushedTo,
+    pushedPieceId,
+    distance,
+    outcome,
+    attackRoll,
+    defenseRoll,
+    margin
+  };
+}
+
+export function resolveDejarikAttack(state = {}, attacker = {}, defender = {}, check = {}, options = {}) {
+  const mode = normalizeDejarikRulesMode(state.rulesMode || state.metadata?.dejarikRulesMode);
+  if (mode === DEJARIK_RULES_MODES.CLASSIC) return resolveDejarikClassicAttack(state, attacker, defender, check, options);
+  return resolveDejarikSkirmishAttack(state, attacker, defender, check);
 }
 
 export function winnerSeatId(state = {}) {

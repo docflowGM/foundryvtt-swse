@@ -1,5 +1,5 @@
 import { boardDistance } from './dejarik-board.js';
-import { alivePieces, canAttackPiece, canMovePiece, winnerSeatId } from './dejarik-rules.js';
+import { alivePieces, canAttackPiece, canMovePiece, resolveDejarikAttack, winnerSeatId } from './dejarik-rules.js';
 import { buildGameAiProfile, labelForGameAiDifficulty } from '../../ai/game-ai-profile-service.js';
 
 function clone(value) {
@@ -55,11 +55,27 @@ function nearestEnemyDistance(state = {}, piece = {}, enemies = []) {
   return enemies.reduce((best, enemy) => Math.min(best, boardDistance(piece.spaceId, enemy.spaceId)), Infinity);
 }
 
-function attackScore(attacker = {}, defender = {}) {
-  const damage = Math.min(Number(attacker.atk || 0), effectiveHp(defender));
-  const lethal = damage >= effectiveHp(defender) ? 900 + Math.round(pieceValue(defender) / 3) : 0;
+function simulateAttack(state = {}, attacker = {}, defender = {}) {
+  const next = clone(state);
+  const simAttacker = next.pieces?.[attacker.id] || { ...attacker };
+  const simDefender = next.pieces?.[defender.id] || { ...defender };
+  const check = canAttackPiece(simAttacker, simDefender, next);
+  if (!check.ok) return { ok: false, next, resolved: null, attacker: simAttacker, defender: simDefender };
+  const resolved = resolveDejarikAttack(next, simAttacker, simDefender, check, { randomize: false });
+  return { ok: true, next, resolved, attacker: simAttacker, defender: simDefender };
+}
+
+function attackScore(state = {}, attacker = {}, defender = {}) {
+  const sim = simulateAttack(state, attacker, defender);
+  if (!sim.ok) return -999999;
+  const resolved = sim.resolved || {};
+  const damage = Math.min(Number(resolved.damage || 0), effectiveHp(defender));
+  const lethal = resolved.defeated ? 900 + Math.round(pieceValue(defender) / 3) : 0;
+  const attackerLoss = resolved.attackerDefeated ? 900 + Math.round(pieceValue(attacker) / 3) : 0;
+  const pushPressure = resolved.pushedTo ? 160 : 0;
+  const classicPressure = resolved.mode === 'classic-holochess' ? Math.max(-240, Math.min(360, Number(resolved.margin || 0) * 28)) : 0;
   const woundPressure = Math.max(0, Number(defender.maxHp || 0) - effectiveHp(defender)) * 20;
-  return (damage * 180) + lethal + Math.round(pieceValue(defender) / 12) + woundPressure;
+  return (damage * 180) + lethal + pushPressure + classicPressure + Math.round(pieceValue(defender) / 12) + woundPressure - attackerLoss;
 }
 
 function threatProfile(state = {}, seatId = null) {
@@ -71,11 +87,11 @@ function threatProfile(state = {}, seatId = null) {
 
   for (const piece of own) {
     for (const enemy of enemies) {
-      if (canAttackPiece(piece, enemy, state).ok) pressure += attackScore(piece, enemy);
+      if (canAttackPiece(piece, enemy, state).ok) pressure += attackScore(state, piece, enemy);
       if (canAttackPiece(enemy, piece, state).ok) {
-        const incoming = attackScore(enemy, piece);
+        const incoming = attackScore(state, enemy, piece);
         exposure += incoming;
-        if (Number(enemy.atk || 0) >= effectiveHp(piece)) lethalThreats += 1;
+        if (simulateAttack(state, enemy, piece).resolved?.defeated) lethalThreats += 1;
       }
     }
   }
@@ -153,7 +169,7 @@ function actionStaticScore(state = {}, seatId = null, action = {}) {
     const attacker = state.pieces?.[action.pieceId];
     const defender = state.pieces?.[action.targetPieceId];
     if (!attacker || !defender) return -999999;
-    return 2000 + attackScore(attacker, defender);
+    return 2000 + attackScore(state, attacker, defender);
   }
   if (action.type === 'move') {
     const piece = state.pieces?.[action.pieceId];
@@ -180,9 +196,9 @@ function applyActionForSearch(session = {}, state = {}, seatId = null, action = 
 
   if (action.type === 'attack' && piece) {
     const defender = next.pieces?.[String(action.targetPieceId || '')];
-    if (defender && canAttackPiece(piece, defender, next).ok) {
-      defender.hp = Math.max(0, Number(defender.hp || 0) - Number(piece.atk || 0));
-      defender.defeated = defender.hp <= 0;
+    const check = defender ? canAttackPiece(piece, defender, next) : { ok: false };
+    if (defender && check.ok) {
+      resolveDejarikAttack(next, piece, defender, check, { randomize: false });
       piece.activated = true;
     }
   } else if (action.type === 'move' && piece) {
