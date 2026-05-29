@@ -12,6 +12,7 @@ export const SABACC_HAND_HIERARCHY_HELP = [
   { label: 'Straight Khyron', description: 'A four-card straight that totals zero; suited beats mixed at equal count.' },
   { label: 'Rule of Two', description: 'Two positive/negative pairs, with optional fifth mixed card or Sylop.' },
   { label: 'Yee-Haa', description: 'A Sylop plus a matching positive/negative pair.' },
+  { label: "Idiot's Array", description: 'A Sylop with suited +2 and +3; a named special hand even though it is not zero-valued.' },
   { label: 'Regular Sabacc / Nulrhek', description: 'Zero wins over non-zero; otherwise closest to zero wins, with positive beating equal negative.' }
 ];
 
@@ -77,6 +78,12 @@ function classifySpecialHand(cards = [], total = 0) {
   const make = (id, label, specialRank, extra = []) => ({ id, label, specialRank, vector: [900, specialRank, ...extra, cardCount, suited ? 1 : 0, posTotal, highPos, sylops] });
 
   if (cardCount === 2 && sylops === 2) return make('pure-sabacc', 'Pure Sabacc', 1000);
+
+  const idiotSuit = hand.find(card => valueOf(card) === 2 && card.suit)?.suit || null;
+  if (cardCount === 3 && sylops === 1 && idiotSuit && hand.some(card => valueOf(card) === 3 && card.suit === idiotSuit)) {
+    return make('idiots-array', "Idiot's Array", 910, [1]);
+  }
+
   if (total !== 0) return null;
 
   const exactCountsSorted = Array.from(exactCounts.values()).sort((a, b) => b - a).join(',');
@@ -97,10 +104,6 @@ function classifySpecialHand(cards = [], total = 0) {
   if (countPositiveNegativePairs(hand) >= 2 && cardCount >= 4) return make('rule-of-two', 'Rule of Two', 930, [cardCount, suited ? 1 : 0]);
 
   if (sylops >= 1 && countPositiveNegativePairs(hand) >= 1 && cardCount >= 3) return make('yee-haa', 'Yee-Haa', 920, [cardCount, suited ? 1 : 0]);
-
-  if (sylops >= 1 && hand.some(card => valueOf(card) === 2 && card.suit) && hand.some(card => valueOf(card) === 3 && card.suit && card.suit === hand.find(two => valueOf(two) === 2 && two.suit)?.suit)) {
-    return make('idiots-array', "Idiot's Array", 910, [suited ? 1 : 0]);
-  }
 
   return null;
 }
