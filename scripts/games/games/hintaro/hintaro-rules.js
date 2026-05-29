@@ -60,12 +60,13 @@ export function rollHintaroRegularDice(count = 4) {
   return Array.from({ length: Math.max(1, Number(count) || 4) }, () => rollHintaroRegularDie());
 }
 
-export function rollHintaroPlayerDice(count = 4) {
-  return rollHintaroRegularDice(count);
+export function rollHintaroRegularDieSymbols() {
+  return [rollHintaroRegularDie(), rollHintaroRegularDie()];
 }
 
-export function rollHintaroRegularDieSymbols() {
-  return rollHintaroRegularDie();
+export function rollHintaroPlayerDice() {
+  const dice = [rollHintaroRegularDieSymbols(), rollHintaroRegularDieSymbols()];
+  return { dice, symbols: dice.flat() };
 }
 
 export function rollHintaroDie() {
@@ -81,6 +82,10 @@ export function countHintaroSymbols(symbols = []) {
   }, { tukar: 0, kulro: 0 });
 }
 
+/**
+ * Hintaro cancellation mapping used by the Holopad ruleset:
+ * Hin cancels Tukar; Taro cancels Kulro.
+ */
 export function evaluateHintaroRoll(symbols = [], hintaro = null) {
   const base = countHintaroSymbols(symbols);
   const hin = Math.max(0, Number(hintaro?.hin || 0));

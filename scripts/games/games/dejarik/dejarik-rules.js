@@ -35,7 +35,7 @@ export function canMovePiece(state = {}, piece = {}, toSpaceId = '') {
   if (occupiedSpaces(state, piece.id).has(destination)) return { ok: false, error: 'Destination is occupied.' };
   const reachable = reachableSpaces(piece.spaceId, piece.mov, occupiedSpaces(state, piece.id));
   if (!reachable.includes(destination)) return { ok: false, error: 'Destination is out of movement range.' };
-  if (piece.previousSpaceId && destination === piece.previousSpaceId) return { ok: false, error: 'A piece cannot immediately retreat to the space it just left.' };
+  if (piece.previousSpaceId && destination === piece.previousSpaceId && piece.ability !== 'skitter') return { ok: false, error: 'A piece cannot immediately retreat to the space it just left.' };
   return { ok: true };
 }
 
@@ -73,6 +73,12 @@ export function hasAttackLineOfSight(state = {}, attacker = {}, defender = {}) {
   return { ok: !blockedBy, blockedBy, path };
 }
 
+export function attackRangeForPiece(piece = {}) {
+  const base = Math.max(1, Number(piece.rng || 1));
+  if (['lunge', 'pounce'].includes(piece.ability)) return base + 1;
+  return base;
+}
+
 export function canAttackPiece(attacker = {}, defender = {}, state = null) {
   if (!attacker || !defender) return { ok: false, error: 'Missing attacker or defender.' };
   if (!attacker.spaceId || !defender.spaceId) return { ok: false, error: 'Missing attacker or defender space.' };
@@ -82,7 +88,7 @@ export function canAttackPiece(attacker = {}, defender = {}, state = null) {
   if (attacker.ownerSeatId === defender.ownerSeatId) return { ok: false, error: 'Cannot attack allied pieces.' };
   const distance = boardDistance(attacker.spaceId, defender.spaceId);
   if (!Number.isFinite(distance)) return { ok: false, error: 'Target is not reachable on this board.' };
-  if (distance > Number(attacker.rng || 1)) return { ok: false, error: 'Target is out of range.' };
+  if (distance > attackRangeForPiece(attacker)) return { ok: false, error: 'Target is out of range.' };
   if (state) {
     const line = hasAttackLineOfSight(state, attacker, defender);
     if (!line.ok) return { ok: false, error: 'Line of sight is blocked.', blockedBy: line.blockedBy, distance, path: line.path };

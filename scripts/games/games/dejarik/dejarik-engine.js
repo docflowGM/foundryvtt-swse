@@ -5,7 +5,8 @@ import { GameOpponentProfileService } from '../../game-opponent-profile-service.
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import { buildDejarikBoard, defaultStartingSpaces } from './dejarik-board.js';
 import { defaultDejarikTeam, getDejarikPiece } from './dejarik-pieces.js';
-import { canAttackPiece, canMovePiece, legalAttackTargets, legalMoveSpaceIds, winnerSeatId } from './dejarik-rules.js';
+import { adjacentSpaces, boardDistance, parseSpaceId } from './dejarik-board.js';
+import { canAttackPiece, canMovePiece, legalAttackTargets, legalMoveSpaceIds, occupiedSpaces, winnerSeatId } from './dejarik-rules.js';
 import { DejarikAi } from './dejarik-ai.js';
 
 function clone(value) { if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value); return JSON.parse(JSON.stringify(value ?? null)); }
@@ -24,7 +25,7 @@ function sessionLogEntry(type, by, data = {}) { return { id: randomId('log'), at
 
 function buildPiece(pieceId, ownerSeatId, spaceId) {
   const def = getDejarikPiece(pieceId);
-  return { id: randomId('piece'), creatureId: def.id, label: def.label, ownerSeatId, spaceId, previousSpaceId: null, atk: def.atk, hp: def.hp, maxHp: def.hp, rng: def.rng, mov: def.mov, ability: def.ability, abilityLabel: def.abilityLabel, abilityDescription: def.abilityDescription, image: def.image, defeated: false, activated: false };
+  return { id: randomId('piece'), creatureId: def.id, label: def.label, ownerSeatId, spaceId, previousSpaceId: null, atk: def.atk, hp: def.hp, maxHp: def.hp, rng: def.rng, mov: def.mov, classic: clone(def.classic || {}), attack: Number(def.classic?.attack || def.atk || 0), defense: Number(def.classic?.defense || def.hp || 0), movement: Number(def.classic?.movement || def.mov || 0), ability: def.ability, abilityLabel: def.abilityLabel, abilityDescription: def.abilityDescription, image: def.image, defeated: false, activated: false };
 }
 
 function buildState(session = {}) {
@@ -60,6 +61,57 @@ function pushEvent(session, state, type, seatId, message, data = {}) {
   state.eventLog ??= [];
   state.eventLog.unshift({ id: randomId('dej_evt'), at: now(), type, seatId: seatId || null, seatLabel: seatId ? seatLabel(session, seatId) : null, message: String(message || ''), tone: data.tone || 'neutral', ...data });
   state.eventLog = state.eventLog.slice(0, 30);
+}
+
+
+function adjustedDejarikDamage(attacker = {}, defender = {}, distance = 1) {
+  let damage = Math.max(1, Number(attacker.atk || 1));
+  if (attacker.ability === 'maul' && Number(defender.hp || 0) < Number(defender.maxHp || 0)) damage += 1;
+  if (attacker.ability === 'rend' && Number(defender.hp || 0) < Number(defender.maxHp || 0)) damage += 1;
+  if (attacker.ability === 'snap' && Number(distance || 0) > 1) damage += 1;
+  if (defender.ability === 'guard' && attacker.ability !== 'spit') damage = Math.max(1, damage - 1);
+  return damage;
+}
+
+function preferredPushSpace(state = {}, attacker = {}, defender = {}) {
+  if (!attacker?.spaceId || !defender?.spaceId || defender.ability === 'anchor') return null;
+  const occupied = occupiedSpaces(state, defender.id);
+  const currentDistance = boardDistance(attacker.spaceId, defender.spaceId);
+  return adjacentSpaces(defender.spaceId)
+    .filter(id => !occupied.has(id))
+    .filter(id => (state.board || []).some(space => space.id === id))
+    .map(id => ({ id, distance: boardDistance(attacker.spaceId, id) }))
+    .filter(entry => Number.isFinite(entry.distance) && entry.distance > currentDistance)
+    .sort((a, b) => b.distance - a.distance)[0]?.id || null;
+}
+
+function resolveDejarikAttack(state = {}, attacker = {}, defender = {}, check = {}) {
+  const beforeHp = Number(defender.hp || 0);
+  const distance = Number(check.distance || boardDistance(attacker.spaceId, defender.spaceId) || 1);
+  const effects = [];
+
+  if (attacker.ability === 'sacrifice' && distance <= 1) {
+    defender.hp = 0;
+    defender.defeated = true;
+    attacker.hp = 0;
+    attacker.defeated = true;
+    effects.push('sacrifice');
+    return { beforeHp, afterHp: 0, damage: beforeHp, defeated: true, effects, pushedTo: null };
+  }
+
+  const damage = adjustedDejarikDamage(attacker, defender, distance);
+  defender.hp = Math.max(0, beforeHp - damage);
+  if (defender.hp <= 0) defender.defeated = true;
+  let pushedTo = null;
+  if (!defender.defeated && attacker.ability === 'brutal-slam' && distance <= 1) {
+    pushedTo = preferredPushSpace(state, attacker, defender);
+    if (pushedTo) {
+      defender.previousSpaceId = defender.spaceId;
+      defender.spaceId = pushedTo;
+      effects.push('push');
+    }
+  }
+  return { beforeHp, afterHp: defender.hp, damage, defeated: Boolean(defender.defeated), effects, pushedTo };
 }
 
 function nextSeatId(session, state, fromSeatId) {
@@ -107,14 +159,12 @@ function applyAction(session, state, seat, action, payload = {}) {
     const defender = state.pieces?.[String(payload.targetPieceId || '')];
     const check = canAttackPiece(piece, defender, state);
     if (!check.ok) return check;
-    const beforeHp = Number(defender.hp || 0);
-    const damage = Number(piece.atk || 0);
-    defender.hp = Math.max(0, beforeHp - damage);
-    if (defender.hp <= 0) defender.defeated = true;
+    const resolved = resolveDejarikAttack(state, piece, defender, check);
     piece.activated = true;
     const rangeText = Number(check.distance || 0) > 1 ? ` at range ${check.distance}` : '';
+    const effectText = resolved.effects.includes('sacrifice') ? ` ${piece.label} sacrifices itself.` : (resolved.pushedTo ? ` ${defender.label} is pushed to ${resolved.pushedTo}.` : '');
     const outcomeText = defender.defeated ? ` ${defender.label} is defeated.` : ` ${defender.label} has ${defender.hp}/${defender.maxHp} HP left.`;
-    pushEvent(session, state, 'attack', seat.seatId, `${piece.label} hits ${defender.label}${rangeText} for ${damage}.${outcomeText}`, { tone: defender.defeated ? 'danger' : 'attack', attackerId: piece.id, defenderId: defender.id, beforeHp, afterHp: defender.hp, damage, defeated: defender.defeated, distance: check.distance });
+    pushEvent(session, state, 'attack', seat.seatId, `${piece.label} hits ${defender.label}${rangeText} for ${resolved.damage}.${effectText}${outcomeText}`, { tone: defender.defeated ? 'danger' : 'attack', attackerId: piece.id, defenderId: defender.id, beforeHp: resolved.beforeHp, afterHp: defender.hp, damage: resolved.damage, defeated: defender.defeated, distance: check.distance, effects: resolved.effects, pushedTo: resolved.pushedTo });
     endTurn(session, state, seat.seatId);
     return { ok: true };
   }
