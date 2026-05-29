@@ -172,7 +172,8 @@ export class GamesSurfaceController {
           actor: this._actor,
           title: String(data.get('title') || '').trim(),
           rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
-          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0,
+          hintaronMode: String(data.get('hintaronMode') || 'rotating').trim()
         });
         if (result?.pending) {
           this._noteResult(result);

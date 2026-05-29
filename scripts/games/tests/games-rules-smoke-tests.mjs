@@ -22,7 +22,7 @@ import { compareSabaccHands, evaluateSabaccHand, isSabaccPotJackpotHand } from '
 import { SabaccAi } from '../games/sabacc/sabacc-ai.js';
 import { buildDejarikBoard } from '../games/dejarik/dejarik-board.js';
 import { attackRangeForPiece, canAttackPiece, canMovePiece, normalizeDejarikRulesMode, resolveDejarikAttack } from '../games/dejarik/dejarik-rules.js';
-import { evaluateHintaroRoll, rollHintaroPlayerDice, HINTARO_SYMBOLS } from '../games/hintaro/hintaro-rules.js';
+import { evaluateHintaroRoll, getHintaroCancellationRules, getHintaroLifecycleSteps, normalizeHintaronMode, rollHintaroPlayerDice, HINTARO_SYMBOLS } from '../games/hintaro/hintaro-rules.js';
 
 function testPazaak() {
   const deck = buildPazaakMainDeck();
@@ -139,6 +139,10 @@ function testHintaro() {
   assert.equal(cancelled.modified.tukar, 1, 'Hin should cancel one Tukar');
   assert.equal(cancelled.modified.kulro, 1, 'Taro should cancel one Kulro');
   assert.equal(cancelled.canWin, false, 'A fully broken one-and-one result should not win');
+  assert.equal(normalizeHintaronMode('casino'), 'casino', 'Hintaro should preserve fixed casino hintaron mode');
+  assert.equal(normalizeHintaronMode('bogus'), 'rotating', 'Hintaro should fall back to rotating hintaron mode');
+  assert.equal(getHintaroCancellationRules().length, 2, 'Hintaro should expose the Hin/Taro cancellation map for UI rules panels');
+  assert.equal(getHintaroLifecycleSteps()[3].label, 'Wager', 'Hintaro lifecycle reference should expose wagering as the fourth step');
 }
 
 for (const test of [testPazaak, testSabacc, testDejarik, testHintaro]) test();

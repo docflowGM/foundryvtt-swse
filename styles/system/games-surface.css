@@ -1806,3 +1806,48 @@
   color: var(--swse-color-text-muted, rgba(220, 240, 255, 0.68));
   text-transform: uppercase;
 }
+
+
+/* Hintaro Patch 4: mode + rules-reference polish */
+.swse-hintaro-mode-chip {
+  margin-top: 8px;
+  border: 1px solid color-mix(in oklab, var(--swse-cyan, #63d8ff) 28%, transparent);
+  background: rgba(0, 0, 0, 0.34);
+  padding: 6px 8px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.swse-hintaro-mode-chip span { display: block; font-weight: 700; color: var(--swse-cyan, #63d8ff); font-size: 10px; }
+.swse-hintaro-mode-chip small { display: block; margin-top: 2px; color: var(--swse-muted, #9bb2c4); font-size: 9px; }
+.swse-hintaro-callout small { display: block; margin-top: 7px; color: var(--swse-muted, #9bb2c4); font-size: 9px; line-height: 1.45; }
+.swse-hintaro-rules-panel {
+  position: absolute;
+  right: 18px;
+  bottom: 104px;
+  width: 280px;
+  z-index: 4;
+  border: 1px solid var(--swse-line-soft, rgba(100, 216, 255, 0.22));
+  background: rgba(0, 0, 0, 0.48);
+  padding: 10px 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+}
+.swse-hintaro-cancel-map { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.swse-hintaro-cancel-map div {
+  border: 1px solid var(--swse-line-soft, rgba(100, 216, 255, 0.18));
+  background: rgba(0, 0, 0, 0.35);
+  padding: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.swse-hintaro-cancel-map b { color: var(--swse-gold, #ffd36c); }
+.swse-hintaro-cancel-map span { display: block; color: var(--swse-muted, #9bb2c4); font-size: 8px; margin: 2px 0; }
+.swse-hintaro-cancel-map strong { color: var(--swse-cyan, #63d8ff); }
+.swse-hintaro-lifecycle { margin: 9px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.swse-hintaro-lifecycle li { font-size: 9px; line-height: 1.35; color: var(--swse-muted, #9bb2c4); }
+.swse-hintaro-lifecycle b { color: var(--swse-cyan, #63d8ff); margin-right: 4px; }
+@media (max-width: 1180px) {
+  .swse-hintaro-rules-panel { position: static; width: auto; margin: 10px 16px; }
+}

@@ -846,6 +846,7 @@
           <div><span class="swse-games-kicker">INSTANT TABLE</span><strong>Start Hintaro vs AI</strong><small>Chance-cube gambling with antes, betting, rerolls, the hintaro die, split pots, and carried pots.</small></div>
           <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
           <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+          <label><span>Hintaron Mode</span><select name="hintaronMode"><option value="rotating">Rotating table hintaron</option><option value="casino">Fixed casino hintaron</option></select></label>
           {{#if vm.showCreditWagerControls}}
           <label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>
           {{/if}}

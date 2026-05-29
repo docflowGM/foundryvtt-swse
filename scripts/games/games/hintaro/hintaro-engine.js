@@ -5,7 +5,7 @@ import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service
 import { GameOpponentProfileService } from '../../game-opponent-profile-service.js';
 import { HolonetSocketService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-socket-service.js';
 import { buildGameAiProfile } from '../../ai/game-ai-profile-service.js';
-import { evaluateHintaroRoll, rollHintaroDie, rollHintaroPlayerDice, rollHintaroRegularDieSymbols, compareHintaroEvaluations } from './hintaro-rules.js';
+import { compareHintaroEvaluations, evaluateHintaroRoll, normalizeHintaronMode, rollHintaroDie, rollHintaroPlayerDice, rollHintaroRegularDieSymbols } from './hintaro-rules.js';
 
 function clone(value) {
   if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -55,7 +55,7 @@ function buildState(session = {}) {
     statusLabel: 'READY',
     round: 0,
     hintaronSeatId: seats[0]?.seatId || null,
-    hintaronMode: session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating'),
+    hintaronMode: normalizeHintaronMode(session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating')),
     activeSeatId: null,
     pot: 0,
     carriedPot: 0,
@@ -95,7 +95,7 @@ function ensureTableCredits(session, state) {
 function ensureState(session = {}) {
   const state = session.gameState?.engine === 'hintaro' ? clone(session.gameState) : buildState(session);
   state.players ??= {};
-  state.hintaronMode ||= session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating');
+  state.hintaronMode = normalizeHintaronMode(state.hintaronMode || session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating'));
   state.pendingReceipts = Array.isArray(state.pendingReceipts) ? state.pendingReceipts : [];
   state.roundHistory = Array.isArray(state.roundHistory) ? state.roundHistory : [];
   state.eventLog = Array.isArray(state.eventLog) ? state.eventLog : [];
@@ -244,7 +244,7 @@ function advanceBetting(session, state, fromSeatId) {
 function beginRound(session, state) {
   ensureTableCredits(session, state);
   state.round += 1;
-  state.hintaronMode ||= session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating');
+  state.hintaronMode = normalizeHintaronMode(state.hintaronMode || session.metadata?.hintaronMode || (session.rulesMode === 'casino' ? 'casino' : 'rotating'));
   state.hintaronSeatId = state.round === 1 ? (state.hintaronSeatId || getOrder(session)[0] || null) : rotateHintaron(session, state);
   state.hintaroDie = null;
   state.winnerSeatIds = [];
@@ -533,11 +533,11 @@ export class HintaroEngine {
     }) ?? null;
   }
 
-  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0 } = {}) {
+  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0, hintaronMode = 'rotating' } = {}) {
     const resolvedActor = actor || (actorId ? game.actors?.get?.(actorId) : null);
     const resolvedSessionId = sessionId || `game_${globalThis.foundry?.utils?.randomID?.(12) || Math.random().toString(36).slice(2, 14)}`;
     if (!game?.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-solo-hintaro', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn });
+      const requestId = HolonetSocketService.emitRequest('create-solo-hintaro', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn, hintaronMode: normalizeHintaronMode(hintaronMode) });
       return { pending: true, requestId, sessionId: resolvedSessionId };
     }
     const requester = requesterId ? game.users?.get?.(requesterId) : game?.user;
@@ -545,11 +545,12 @@ export class HintaroEngine {
     const hostRecipientId = requester?.isGM ? `gm:${userId}` : `player:${userId}`;
     const settings = getGameSettingsSnapshot();
     const wager = buildWagerProfileForHintaro(rulesMode, creditBuyIn);
+    const safeHintaronMode = normalizeHintaronMode(hintaronMode);
     const generated = await GameOpponentProfileService.buildPazaakAiOpponentProfile({ difficulty: settings.defaultAiDifficulty || 'medium', fairness: settings.defaultAiFairness || 'fair', personality: settings.defaultAiPersonality || 'random' });
     const aiProfile = aiProfileForSeat({ aiProfile: { ...generated, difficulty: settings.defaultAiDifficulty || 'medium', fairness: settings.defaultAiFairness || 'fair', personality: generated.personality || 'methodical' } });
     const hostSeat = { seatId: 'seat_host', type: requester?.isGM ? 'gm' : 'player', userId, actorId: resolvedActor?.id ?? actorId ?? null, recipientId: hostRecipientId, displayName: actorDisplay(resolvedActor), avatar: actorImg(resolvedActor), status: 'host' };
     const aiSeat = { seatId: 'seat_ai', type: 'ai', userId: null, actorId: null, recipientId: null, displayName: aiProfile.name || 'Hintaro Regular', avatar: 'icons/commodities/currency/coin-engraved-sun-smile-copper.webp', status: 'accepted', profession: aiProfile.profession || '', tableFact: aiProfile.tableFact || '', aiProfile };
-    let shell = { id: resolvedSessionId, gameId: 'hintaro', title: title || `${actorDisplay(resolvedActor)} at the Hintaro Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', hintaroAnte: 10, creditBuyIn: wager.creditBuyIn, hintaronMode: 'rotating', aiProfile }, log: [sessionLogEntry('solo-ai-hintaro-created', hostRecipientId)] };
+    let shell = { id: resolvedSessionId, gameId: 'hintaro', title: title || `${actorDisplay(resolvedActor)} at the Hintaro Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', hintaroAnte: 10, creditBuyIn: wager.creditBuyIn, hintaronMode: safeHintaronMode, rulesVariant: 'proper-symbolic', aiProfile }, log: [sessionLogEntry('solo-ai-hintaro-created', hostRecipientId)] };
     shell.gameState = ensureState(shell);
     if (GameCreditEscrowService.isCreditWager(shell)) {
       const escrowed = await GameCreditEscrowService.prepareEscrow(shell, { by: hostRecipientId });

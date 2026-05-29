@@ -94,6 +94,7 @@
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-hintaro">
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
       <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
+          <label><span>Hintaron Mode</span><select name="hintaronMode"><option value="rotating">Rotating table hintaron</option><option value="casino">Fixed casino hintaron</option></select></label>
       {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>

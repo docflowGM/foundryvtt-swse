@@ -1,6 +1,6 @@
 import { buildGameAiProfile, labelForGameAiDifficulty } from '../../ai/game-ai-profile-service.js';
 import { GameCreditEscrowService } from '../../wagers/game-credit-escrow-service.js';
-import { evaluateHintaroRoll } from './hintaro-rules.js';
+import { evaluateHintaroRoll, getHintaroCancellationRules, getHintaroLifecycleSteps, HINTARO_MODE_LABELS, normalizeHintaronMode } from './hintaro-rules.js';
 
 function safeArray(value) { return Array.isArray(value) ? value : []; }
 function safeAmount(value) { const n = Math.floor(Number(value)); return Number.isFinite(n) && n >= 0 ? n : 0; }
@@ -109,10 +109,12 @@ function hintaroDieVm(face = null) {
 function dealerCalloutForPhase(state = {}, session = {}) {
   const phase = String(state.phase || 'ready');
   const hintaron = labelForSeat(session, state.hintaronSeatId);
-  if (phase === 'ready') return `${hintaron} gathers the chance cubes.`;
-  if (phase === 'betting') return `${hintaron} calls wagers around the table.`;
-  if (phase === 'reroll') return `${hintaron} offers one cube reroll to each player.`;
-  if (phase === 'round-complete') return 'The hintaro die settles the round.';
+  const mode = normalizeHintaronMode(state.hintaronMode);
+  const modeLabel = mode === 'casino' ? 'fixed casino hintaron' : 'rotating table hintaron';
+  if (phase === 'ready') return `${hintaron} gathers the chance cubes as ${modeLabel}.`;
+  if (phase === 'betting') return `${hintaron} calls wagers; betting began to the hintaron's right.`;
+  if (phase === 'reroll') return `${hintaron} offers one cube reroll from the hintaron's left.`;
+  if (phase === 'round-complete') return 'The hintaro die settles the round after Hin/Taro cancellations.';
   if (phase === 'complete') return 'The table is closed and winnings are counted.';
   return 'The table waits for the next call.';
 }
@@ -264,8 +266,12 @@ export class HintaroViewModel {
       carriedPot: safeAmount(state.carriedPot),
       message: state.message || 'Hintaro table ready.',
       hintaronLabel: labelForSeat(session, state.hintaronSeatId),
-      hintaronMode: state.hintaronMode || 'rotating',
-      hintaronModeLabel: (state.hintaronMode || 'rotating') === 'casino' ? 'Casino fixed hintaron' : 'Casual rotating hintaron',
+      hintaronMode: normalizeHintaronMode(state.hintaronMode),
+      hintaronModeLabel: HINTARO_MODE_LABELS[normalizeHintaronMode(state.hintaronMode)] || HINTARO_MODE_LABELS.rotating,
+      rulesVariantLabel: state.rulesVariantLabel || (session.metadata?.rulesVariant === 'standard-cube-simplified' ? 'Simplified Standard-Cube Variant' : 'Proper Symbolic Hintaro'),
+      cancellationRules: getHintaroCancellationRules(),
+      lifecycleSteps: getHintaroLifecycleSteps(),
+      rulesSummary: 'Proper symbolic Hintaro: ante left of hintaron, wager right of hintaron, one reroll left of hintaron, then the hintaro die modifies all rolls.',
       dealerCallout: dealerCalloutForPhase(state, session),
       soundCue: phase === 'reroll' ? 'hintaro-reroll' : (phase === 'round-complete' ? 'hintaro-settle' : 'hintaro-table'),
       rankOrder,

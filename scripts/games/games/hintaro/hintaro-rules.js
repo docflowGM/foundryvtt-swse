@@ -30,6 +30,38 @@ export const HINTARO_RANK_LABELS = Object.freeze({
   [HINTARO_RANKS.TUKAR_TO_KULRO]: 'Tukar to Kulro'
 });
 
+
+export const HINTARO_CANCELLATION_RULES = Object.freeze([
+  { face: 'Hin', faceSymbol: HINTARO_SYMBOLS.HIN, cancels: 'Tukar', cancelsSymbol: HINTARO_SYMBOLS.TUKAR, description: 'Hin cancels one Tukar symbol from each player roll.' },
+  { face: 'Taro', faceSymbol: HINTARO_SYMBOLS.TARO, cancels: 'Kulro', cancelsSymbol: HINTARO_SYMBOLS.KULRO, description: 'Taro cancels one Kulro symbol from each player roll.' }
+]);
+
+export const HINTARO_LIFECYCLE_STEPS = Object.freeze([
+  { step: 1, label: 'Hintaron', description: 'Designate the hintaron/dealer for this round.' },
+  { step: 2, label: 'Ante', description: "Players ante, beginning to the hintaron\'s left." },
+  { step: 3, label: 'Cast Cubes', description: 'Each player rolls two regular Tukar/Kulro chance cubes.' },
+  { step: 4, label: 'Wager', description: "Betting begins to the hintaron\'s right; players meet, raise, or drop." },
+  { step: 5, label: 'Reroll', description: "Players may reroll one regular cube, beginning to the hintaron\'s left." },
+  { step: 6, label: 'Hintaro Die', description: 'The hintaron rolls the special die; Hin/Taro cancellations modify all rolls before ranking.' }
+]);
+
+export const HINTARO_MODE_LABELS = Object.freeze({
+  rotating: 'Rotating table hintaron',
+  casino: 'Fixed casino hintaron'
+});
+
+export function normalizeHintaronMode(mode = 'rotating') {
+  return String(mode || '').trim().toLowerCase() === 'casino' ? 'casino' : 'rotating';
+}
+
+export function getHintaroCancellationRules() {
+  return HINTARO_CANCELLATION_RULES.map(rule => ({ ...rule }));
+}
+
+export function getHintaroLifecycleSteps() {
+  return HINTARO_LIFECYCLE_STEPS.map(step => ({ ...step }));
+}
+
 const REGULAR_FACES = Object.freeze([
   HINTARO_SYMBOLS.TUKAR,
   HINTARO_SYMBOLS.TUKAR,

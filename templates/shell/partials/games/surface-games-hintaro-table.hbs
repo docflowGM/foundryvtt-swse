@@ -24,6 +24,10 @@
           <span>Hintaro Die</span>
           <small>{{vm.activeTable.hintaro.hintaroDie.cancelsLabel}}</small>
         </div>
+        <div class="swse-hintaro-mode-chip">
+          <span>{{vm.activeTable.hintaro.hintaronModeLabel}}</span>
+          <small>{{vm.activeTable.hintaro.rulesVariantLabel}}</small>
+        </div>
       </div>
     </div>
 
@@ -77,6 +81,21 @@
       <span class="swse-games-kicker">Hintaron Callout</span>
       <b>{{vm.activeTable.hintaro.hintaronLabel}}</b>
       <span>{{vm.activeTable.hintaro.dealerCallout}}</span>
+      <small>{{vm.activeTable.hintaro.rulesSummary}}</small>
+    </aside>
+
+    <aside class="swse-hintaro-rules-panel">
+      <span class="swse-games-kicker">Rules Reference</span>
+      <div class="swse-hintaro-cancel-map">
+        {{#each vm.activeTable.hintaro.cancellationRules}}
+        <div><b>{{this.face}}</b><span>cancels</span><strong>{{this.cancels}}</strong></div>
+        {{/each}}
+      </div>
+      <ol class="swse-hintaro-lifecycle">
+        {{#each vm.activeTable.hintaro.lifecycleSteps}}
+        <li><b>{{this.label}}</b><span>{{this.description}}</span></li>
+        {{/each}}
+      </ol>
     </aside>
 
     {{#if vm.activeTable.hintaro.message}}
