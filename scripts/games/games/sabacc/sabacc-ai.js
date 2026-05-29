@@ -128,7 +128,7 @@ function legalSabaccActions(player = {}, state = {}, profile = {}) {
   const evaluation = currentEvaluation(player);
   const actions = [];
 
-  if (evaluation.canWin) actions.push({ type: 'call-hand' });
+  if (evaluation.canWin) actions.push({ type: 'stand' });
   if (hand.length) actions.push(...hand.map(card => ({ type: 'shift-card', cardId: card.id })));
   if (hand.length < SABACC_MAX_HAND_SIZE) actions.push({ type: 'draw-card' });
   if (hand.length < SABACC_MAX_HAND_SIZE && Array.isArray(state.market)) {
@@ -252,7 +252,7 @@ function scoreSabaccOutcome({ player = {}, state = {}, action = {}, simulated = 
 
   let score = handQualityScore(evaluation) + (winRate - 0.5) * 9000 + houseEdge;
 
-  if (action.type === 'call-hand') {
+  if (action.type === 'stand') {
     const callThreshold = 0.56 - callBias - (pot > 300 ? 0.04 : 0);
     score += (winRate - callThreshold) * 15500 + potPressure;
     if (evaluation.specialWinner) score += 40000;
@@ -285,7 +285,7 @@ function scoreSabaccOutcome({ player = {}, state = {}, action = {}, simulated = 
 function describeAction(action = {}, player = {}, state = {}, profile = {}, result = {}) {
   const evaluation = currentEvaluation(player);
   const confidence = Math.round(clamp(safeNumber(result.confidence, 0), 0, 1) * 100);
-  if (action.type === 'call-hand') return `Calls with ${evaluation.label}; ${confidence}% confidence after ${result.samples || 0} sampled outcomes.`;
+  if (action.type === 'stand') return `Stands with ${evaluation.label}; ${confidence}% confidence after ${result.samples || 0} sampled outcomes.`;
   if (action.type === 'draw-card') return `Draws because the current hand is ${evaluation.label} and the sampled upside is better than standing.`;
   if (action.type === 'shift-card') return `Trades a weak card with the deck to chase a stronger Sabacc total.`;
   if (action.type === 'buy-market-card') return `Buys a face-up market card that improves the sampled hand.`;
@@ -301,12 +301,12 @@ export function buildSabaccAiProfile(raw = {}) {
 export class SabaccAi {
   static chooseAction({ player = {}, state = {}, aiProfile = {} } = {}) {
     const profile = buildSabaccAiProfile(aiProfile);
-    if (profile.gmControlled) return { type: 'call-hand', gmControlled: true };
+    if (profile.gmControlled) return { type: 'stand', gmControlled: true };
 
     const evaluation = currentEvaluation(player);
     if (evaluation.specialWinner) {
       return {
-        type: 'call-hand',
+        type: 'stand',
         ai: {
           engine: 'sabacc-monte-carlo',
           immediate: 'special-winning-hand',
@@ -315,7 +315,7 @@ export class SabaccAi {
           personality: profile.personality,
           confidence: 1,
           samples: 0,
-          reason: `Calls immediately with ${evaluation.label}.`
+          reason: `Stands immediately with ${evaluation.label}.`
         }
       };
     }
@@ -328,14 +328,14 @@ export class SabaccAi {
       simulationsPerAction: profile.monteCarloSamples,
       timeBudgetMs: profile.monteCarloTimeBudgetMs,
       explorationRate,
-      fallbackAction: { type: 'call-hand' },
+      fallbackAction: { type: 'stand' },
       simulateAction: action => {
         const simulated = applySimulatedSabaccAction(player, state, action, profile);
         return scoreSabaccOutcome({ player, state, action, simulated, profile });
       }
     });
 
-    const action = result.action || { type: 'call-hand' };
+    const action = result.action || { type: 'stand' };
     return {
       ...action,
       ai: {

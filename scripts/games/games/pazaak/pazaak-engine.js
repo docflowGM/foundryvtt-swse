@@ -81,7 +81,9 @@ function buildPlayerStateForSeat(seat = {}) {
     setsWon: 0,
     score: 0,
     sideCardPlayedThisTurn: false,
+    matchHandDealt: false,
     tiebreakerUsed: false,
+    tiebreakerPlayedAt: null,
     lastAction: automated ? 'AI side deck loaded.' : 'Awaiting side deck.'
   };
 }
@@ -108,6 +110,9 @@ function buildSetupState(session = {}) {
     players,
     setHistory: [],
     eventLog: [],
+    openingDrawHistory: [],
+    openingFirstSeatResolved: false,
+    turnSequence: 0,
     debug: { rngLabel: randomId('pazaak_rng'), lastDeckState: null },
     winnerSeatId: null,
     message: 'Build and lock a 10-card side deck before the match begins.'
@@ -120,10 +125,16 @@ function ensurePazaakState(session = {}) {
   existing.players ??= {};
   existing.setHistory = Array.isArray(existing.setHistory) ? existing.setHistory : [];
   existing.eventLog = Array.isArray(existing.eventLog) ? existing.eventLog : [];
+  existing.openingDrawHistory = Array.isArray(existing.openingDrawHistory) ? existing.openingDrawHistory : [];
+  existing.openingFirstSeatResolved = Boolean(existing.openingFirstSeatResolved);
+  existing.turnSequence = Number(existing.turnSequence || 0) || 0;
   existing.debug = existing.debug && typeof existing.debug === 'object' ? existing.debug : { rngLabel: randomId('pazaak_rng'), lastDeckState: null };
   for (const seat of seats) {
     existing.players[seat.seatId] ??= buildPlayerStateForSeat(seat);
     existing.players[seat.seatId].seatId = seat.seatId;
+    existing.players[seat.seatId].hand = Array.isArray(existing.players[seat.seatId].hand) ? existing.players[seat.seatId].hand.filter(Boolean) : [];
+    existing.players[seat.seatId].tableCards = Array.isArray(existing.players[seat.seatId].tableCards) ? existing.players[seat.seatId].tableCards.filter(Boolean) : [];
+    existing.players[seat.seatId].matchHandDealt = Boolean(existing.players[seat.seatId].matchHandDealt || existing.players[seat.seatId].hand.length);
     if (isAutomatedSeat(seat) && !existing.players[seat.seatId].sideDeckLocked) {
       existing.players[seat.seatId].sideDeckIds = buildDefaultPazaakSideDeckIds(buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium').personality || 'balanced');
       existing.players[seat.seatId].sideDeckLocked = true;
@@ -170,7 +181,14 @@ function drawPazaakMainCardForState(state) {
 function resetPlayersForSet(session, state) {
   for (const seat of playableSeats(session.seats)) {
     const player = state.players[seat.seatId];
-    player.hand = buildOpeningHand(player.sideDeckIds);
+    player.hand = Array.isArray(player.hand) ? player.hand.filter(Boolean) : [];
+    if (!player.matchHandDealt) {
+      player.hand = buildOpeningHand(player.sideDeckIds);
+      player.matchHandDealt = true;
+      player.lastAction = `Drew ${PAZAAK_HAND_SIZE} random side-deck cards for the match.`;
+    } else {
+      player.lastAction = `${player.hand.length} match side-deck card${player.hand.length === 1 ? '' : 's'} remain.`;
+    }
     player.tableCards = [];
     player.stood = false;
     player.bust = false;
@@ -178,8 +196,42 @@ function resetPlayersForSet(session, state) {
     player.score = 0;
     player.sideCardPlayedThisTurn = false;
     player.tiebreakerUsed = false;
-    player.lastAction = `Drew ${PAZAAK_HAND_SIZE} random side-deck cards.`;
+    player.tiebreakerPlayedAt = null;
   }
+}
+
+function nextPazaakSequence(state) {
+  state.turnSequence = Number(state.turnSequence || 0) + 1;
+  return state.turnSequence;
+}
+
+function determineOpeningFirstSeat(session, state) {
+  const order = getPlayerOrder(session);
+  if (!order.length) return null;
+  if (state.openingFirstSeatResolved && state.firstSeatId && order.includes(state.firstSeatId)) return state.firstSeatId;
+
+  let contenders = order.slice();
+  let deck = buildPazaakMainDeck();
+  const drawHistory = [];
+  for (let attempt = 1; attempt <= 12 && contenders.length > 1; attempt += 1) {
+    const draws = contenders.map(seatId => {
+      if (!deck.length) deck = buildPazaakMainDeck();
+      const drawn = drawMainCard(deck);
+      deck = Array.isArray(drawn.mainDeck) ? drawn.mainDeck : [];
+      return { seatId, value: Number(drawn.card?.value || 0), label: drawn.card?.label || String(drawn.card?.value || '') };
+    });
+    drawHistory.push({ attempt, draws });
+    const high = Math.max(...draws.map(entry => entry.value));
+    contenders = draws.filter(entry => entry.value === high).map(entry => entry.seatId);
+  }
+
+  const firstSeatId = contenders[0] || order[0];
+  state.firstSeatId = firstSeatId;
+  state.openingFirstSeatResolved = true;
+  state.openingDrawHistory = drawHistory;
+  const summary = drawHistory[0]?.draws?.map(entry => `${seatLabel(session, entry.seatId)} ${entry.label}`).join(' · ') || 'Opening high-card draw completed.';
+  pushPazaakEvent(session, state, 'opening-high-card', firstSeatId, `${seatLabel(session, firstSeatId)} wins the opening high-card draw. ${summary}`, { tone: 'setup', drawHistory });
+  return firstSeatId;
 }
 
 function beginTurn(session, state, seatId) {
@@ -227,7 +279,9 @@ function startNextSet(session, state, firstSeatId = null) {
   state.debug.lastDeckState = { setNumber: state.setNumber, mainDeckCount: state.mainDeck.length, discardCount: 0, at: now() };
   resetPlayersForSet(session, state);
   const order = getPlayerOrder(session);
-  const chosenFirst = firstSeatId && order.includes(firstSeatId) ? firstSeatId : (state.firstSeatId && order.includes(state.firstSeatId) ? state.firstSeatId : order[0]);
+  const chosenFirst = state.setNumber === 1 && !state.openingFirstSeatResolved
+    ? determineOpeningFirstSeat(session, state)
+    : (firstSeatId && order.includes(firstSeatId) ? firstSeatId : (state.firstSeatId && order.includes(state.firstSeatId) ? state.firstSeatId : order[0]));
   state.firstSeatId = chosenFirst;
   state.activeSeatId = chosenFirst;
   state.message = `Set ${state.setNumber}: ${seatLabel(session, chosenFirst)} draws first.`;
@@ -411,6 +465,7 @@ function applyAutomatedTurnChoice(session, state, seat, player, profile, choice)
     const result = applyPazaakSideCard(player, choice.cardInstanceId, choice.choice || {});
     if (result.ok) {
       state.players[player.seatId] = result.player;
+      if (result.playedCard?.tiebreaker) state.players[player.seatId].tiebreakerPlayedAt = nextPazaakSequence(state);
       const playedType = sideCardDialogueType(result.playedCard);
       state.players[player.seatId].lastAction = randomPazaakDialogue(profile.personality, playedType, `Played ${result.playedCard?.label || 'a side card'}.`);
       pushPazaakEvent(session, state, 'play-side-card', player.seatId, state.players[player.seatId].lastAction, { cardLabel: result.playedCard?.label || 'side card', tone: result.playedCard?.tone || 'card' });
@@ -772,6 +827,7 @@ export class PazaakEngine {
       const result = applyPazaakSideCard(player, String(payload.cardInstanceId || payload.cardId || ''), payload.choice || {});
       if (!result.ok) return { ok: false, error: result.error };
       state.players[seat.seatId] = result.player;
+      if (result.playedCard?.tiebreaker) state.players[seat.seatId].tiebreakerPlayedAt = nextPazaakSequence(state);
       const eventType = sideCardDialogueType(result.playedCard);
       const label = result.playedCard?.label || 'a side card';
       state.players[seat.seatId].lastAction = aiDialogueFor(session, seat.seatId, eventType, `Played ${label}.`);

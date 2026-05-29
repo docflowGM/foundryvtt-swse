@@ -177,5 +177,11 @@ export function comparePazaakSet(players = []) {
   const tied = scored.filter(entry => entry.score === tiedScore).map(entry => entry.player);
   const tiebreakers = tied.filter(player => player.tiebreakerUsed);
   if (tiebreakers.length === 1) return { winnerSeatId: tiebreakers[0].seatId, tied: false, reason: 'Tiebreaker card.' };
+  if (tiebreakers.length > 1) {
+    const ranked = tiebreakers
+      .map(player => ({ player, playedAt: Number(player.tiebreakerPlayedAt || 0) }))
+      .sort((a, b) => b.playedAt - a.playedAt);
+    if (ranked[0].playedAt > ranked[1].playedAt) return { winnerSeatId: ranked[0].player.seatId, tied: false, reason: 'Last tiebreaker card.' };
+  }
   return { winnerSeatId: null, tied: true, reason: 'Set tied.' };
 }

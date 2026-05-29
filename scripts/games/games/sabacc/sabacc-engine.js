@@ -36,7 +36,7 @@ function activeSabaccSeatIds(session, state) {
   });
 }
 function canResolveSabaccHand(session, state) {
-  return activeSabaccSeatIds(session, state).length <= 1 || allCalledOrOut(session, state);
+  return activeSabaccSeatIds(session, state).length <= 1;
 }
 function drawSabaccCardForState(state) {
   state.deck = ensureCardArray(state.deck);
@@ -169,21 +169,42 @@ function refillMarketSlot(state, slotId, replace = true) {
   return taken;
 }
 
-function forceRoundThreeShift(session, state) {
-  state.shiftRoll = rollSabaccShiftDice();
-  if (!state.shiftRoll.matched) {
-    pushEvent(session, state, 'shift-dice-safe', null, `Round 3 shift dice show ${state.shiftRoll.label}; no forced shift.`, { tone: 'neutral' });
-    return;
-  }
-  for (const seatId of activeCardSeatIds(session, state)) {
+function applyCorellianSpikeShift(session, state) {
+  for (const seatId of activeSabaccSeatIds(session, state)) {
     const player = state.players?.[seatId];
-    if (!player?.hand?.length) continue;
-    const discarded = player.hand.shift();
-    state.discard.push(discarded);
-    player.hand.unshift(drawSabaccCardForState(state));
-    player.lastAction = 'Forced shift: discarded one card and drew from the deck.';
+    const hand = ensureCardArray(player?.hand);
+    if (!player || !hand.length) continue;
+    const replacementCount = hand.length;
+    state.discard.push(...hand);
+    const drawn = drawSabaccCards(state.deck, replacementCount);
+    state.deck = ensureCardArray(drawn.deck);
+    player.hand = drawn.cards;
+    player.lastAction = `Spike shift: replaced ${replacementCount} card${replacementCount === 1 ? '' : 's'}.`;
   }
-  pushEvent(session, state, 'forced-shift', null, `Round 3 shift dice match ${state.shiftRoll.label}; each active player shifts one card.`, { tone: 'shift' });
+  updateEvaluations(state);
+}
+
+function rollCorellianSpikeDice(session, state) {
+  state.shiftRoll = rollSabaccShiftDice();
+  if (state.shiftRoll.matched) {
+    applyCorellianSpikeShift(session, state);
+    pushEvent(session, state, 'spike-shift', null, `Spike dice match ${state.shiftRoll.label}; every active hand shifts.`, { tone: 'shift' });
+  } else {
+    pushEvent(session, state, 'shift-dice-safe', null, `Spike dice show ${state.shiftRoll.label}; no shift.`, { tone: 'neutral' });
+  }
+  return state.shiftRoll;
+}
+
+function applySabaccFoldPenalty(session, state, seatId) {
+  const player = state.players?.[seatId];
+  if (!player) return { ok: true, amount: 0 };
+  const moved = moveCreditsToPot(session, state, seatId, 1, 'sabaccPot');
+  if (moved.ok && moved.amount > 0) {
+    pushEvent(session, state, 'fold-penalty', seatId, `${seatLabel(session, seatId)} pays a 1-credit fold penalty to the Sabacc pot.`, { tone: 'credits', amount: moved.amount });
+    return moved;
+  }
+  pushEvent(session, state, 'fold-penalty-waived', seatId, `${seatLabel(session, seatId)} could not cover the 1-credit fold penalty.`, { tone: 'danger' });
+  return { ok: true, amount: 0 };
 }
 
 function startCardRound(session, state, round = 1) {
@@ -195,10 +216,9 @@ function startCardRound(session, state, round = 1) {
     const player = state.players?.[seatId];
     if (player && !player.folded && !player.bombedOut) player.cardActionRound = 0;
   }
-  if (state.cardRound === 3) forceRoundThreeShift(session, state);
   setupMarketForRound(state, state.cardRound);
   state.activeSeatId = firstActionSeatId(session, state);
-  state.message = `${seatLabel(session, state.activeSeatId)} may draw, trade, purchase the market, call, or fold.`;
+  state.message = `${seatLabel(session, state.activeSeatId)} may draw, trade, purchase the market, stand, or fold.`;
   pushEvent(session, state, 'card-round-opened', state.activeSeatId, `Sabacc card round ${state.cardRound} opens.`, { tone: 'card' });
   updateEvaluations(state);
   return state;
@@ -397,7 +417,8 @@ function hasBettingClosed(session, state) {
 
 function closeBettingRound(session, state) {
   state.betting = { ...(state.betting || {}), closedAt: now(), closed: true };
-  pushEvent(session, state, 'betting-closed', state.activeSeatId, 'Betting round closed.', { tone: 'credits' });
+  pushEvent(session, state, 'betting-closed', state.activeSeatId, 'Betting round closed. Spike dice roll now.', { tone: 'credits' });
+  rollCorellianSpikeDice(session, state);
   if (safeAmount(state.cardRound, 1) >= 3) return resolveHand(session, state);
   startCardRound(session, state, safeAmount(state.cardRound, 1) + 1);
   return state;
@@ -564,7 +585,7 @@ function advanceTurn(session, state, fromSeatId) {
   const next = nextSeatId(session, state, fromSeatId);
   if (!next) return resolveHand(session, state);
   state.activeSeatId = next;
-  state.message = `${seatLabel(session, next)} is deciding whether to draw, trade, purchase, call, or fold.`;
+  state.message = `${seatLabel(session, next)} is deciding whether to draw, trade, purchase, stand, or fold.`;
   return state;
 }
 
@@ -682,6 +703,7 @@ function applyBettingActionToState(session, state, seat, action, payload = {}) {
   }
 
   if (action === 'fold') {
+    applySabaccFoldPenalty(session, state, seat.seatId);
     player.folded = true;
     player.lastAction = 'Folds out of the betting round.';
     pushEvent(session, state, 'fold', seat.seatId, `${seat.displayName} folds.`, { tone: 'danger', ai: payload.ai || null });
@@ -780,20 +802,20 @@ function applyActionToState(session, state, seat, action, payload = {}) {
     return { ok: true };
   }
 
-  if (action === 'call-hand') {
+  if (action === 'call-hand' || action === 'stand') {
     updateEvaluations(state);
-    if (player.hand.length < SABACC_MIN_HAND_SIZE) return { ok: false, error: `You need at least ${SABACC_MIN_HAND_SIZE} cards to call a Sabacc hand.` };
-    player.called = true;
+    if (player.hand.length < SABACC_MIN_HAND_SIZE) return { ok: false, error: `You need at least ${SABACC_MIN_HAND_SIZE} cards to stand in Sabacc.` };
     player.cardActionRound = safeAmount(state.cardRound, 1);
     attachAiDecision(player, payload);
-    player.lastAction = 'Calls the hand.';
-    pushEvent(session, state, 'call-hand', seat.seatId, `${seat.displayName} calls the hand.`, { tone: 'stand', ai: payload.ai || null });
+    player.lastAction = 'Stands for this card round.';
+    pushEvent(session, state, 'stand', seat.seatId, `${seat.displayName} stands.`, { tone: 'stand', ai: payload.ai || null });
     updateEvaluations(state);
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
   }
 
   if (action === 'fold') {
+    applySabaccFoldPenalty(session, state, seat.seatId);
     player.folded = true;
     player.cardActionRound = safeAmount(state.cardRound, 1);
     attachAiDecision(player, payload);

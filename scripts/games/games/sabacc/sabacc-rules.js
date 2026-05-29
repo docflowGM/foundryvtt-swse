@@ -3,6 +3,7 @@ import { SABACC_MAX_HAND_SIZE, SABACC_MIN_HAND_SIZE, SABACC_TARGET } from './sab
 
 
 export const SABACC_HAND_HIERARCHY_HELP = [
+  { label: "Idiot's Array", description: 'A Sylop plus a 2 and 3. This named hand outranks Pure Sabacc.' },
   { label: 'Pure Sabacc', description: 'Two lone Sylops with no other cards.' },
   { label: 'Rhylet', description: 'Three of a kind and two of a kind equalling zero.' },
   { label: 'Fleet', description: 'A Sylop plus any four of a kind equalling zero.' },
@@ -12,7 +13,6 @@ export const SABACC_HAND_HIERARCHY_HELP = [
   { label: 'Straight Khyron', description: 'A four-card straight that totals zero; suited beats mixed at equal count.' },
   { label: 'Rule of Two', description: 'Two positive/negative pairs, with optional fifth mixed card or Sylop.' },
   { label: 'Yee-Haa', description: 'A Sylop plus a matching positive/negative pair.' },
-  { label: "Idiot's Array", description: 'A Sylop with suited +2 and +3; a named special hand even though it is not zero-valued.' },
   { label: 'Regular Sabacc / Nulrhek', description: 'Zero wins over non-zero; otherwise closest to zero wins, with positive beating equal negative.' }
 ];
 
@@ -77,13 +77,10 @@ function classifySpecialHand(cards = [], total = 0) {
   const valueSet = nonSylopValues.join(',');
   const make = (id, label, specialRank, extra = []) => ({ id, label, specialRank, vector: [900, specialRank, ...extra, cardCount, suited ? 1 : 0, posTotal, highPos, sylops] });
 
+  const hasTwo = hand.some(card => valueOf(card) === 2);
+  const hasThree = hand.some(card => valueOf(card) === 3);
+  if (sylops >= 1 && hasTwo && hasThree) return make('idiots-array', "Idiot's Array", 1010, [suited ? 1 : 0]);
   if (cardCount === 2 && sylops === 2) return make('pure-sabacc', 'Pure Sabacc', 1000);
-
-  const idiotSuit = hand.find(card => valueOf(card) === 2 && card.suit)?.suit || null;
-  if (cardCount === 3 && sylops === 1 && idiotSuit && hand.some(card => valueOf(card) === 3 && card.suit === idiotSuit)) {
-    return make('idiots-array', "Idiot's Array", 910, [1]);
-  }
-
   if (total !== 0) return null;
 
   const exactCountsSorted = Array.from(exactCounts.values()).sort((a, b) => b - a).join(',');
