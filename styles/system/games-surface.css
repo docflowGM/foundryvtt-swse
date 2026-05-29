@@ -1968,3 +1968,83 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Decision patch: Dejarik pre-match draft + Sabacc table options */
+.swse-dejarik-draft {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  padding: 16px;
+  min-height: 0;
+}
+.swse-dejarik-draft__side {
+  border: 1px solid var(--swse-games-line, rgba(89, 220, 255, 0.28));
+  background: rgba(0, 0, 0, 0.32);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+.swse-dejarik-draft__side h3 { margin: 0; text-transform: uppercase; letter-spacing: 0.08em; }
+.swse-dejarik-draft__side p { margin: 0; color: var(--swse-games-muted, rgba(210, 235, 255, 0.72)); font-size: 12px; line-height: 1.45; }
+.swse-dejarik-draft-count {
+  border: 1px solid rgba(255, 209, 102, 0.32);
+  background: rgba(255, 209, 102, 0.08);
+  padding: 10px;
+  text-align: center;
+}
+.swse-dejarik-draft-count strong { display: block; font-size: 32px; line-height: 1; color: var(--swse-games-warn, #ffd166); }
+.swse-dejarik-draft-count span { display: block; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.75; }
+.swse-dejarik-draft-count.is-ready { border-color: rgba(67, 255, 154, 0.55); background: rgba(67, 255, 154, 0.1); }
+.swse-dejarik-draft-count.is-ready strong { color: var(--swse-games-positive, #43ff9a); }
+.swse-dejarik-draft-tray { display: grid; gap: 7px; }
+.swse-dejarik-draft-tray span {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(89, 220, 255, 0.18);
+  background: rgba(89, 220, 255, 0.06);
+  padding: 6px 8px;
+  font-weight: 700;
+}
+.swse-dejarik-draft-tray small { font-weight: 400; opacity: 0.75; }
+.swse-dejarik-draft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+.swse-dejarik-draft-card { margin: 0; }
+.swse-dejarik-draft-card button {
+  width: 100%;
+  min-height: 194px;
+  border: 1px solid rgba(89, 220, 255, 0.22);
+  background: linear-gradient(145deg, rgba(0,0,0,0.42), rgba(89,220,255,0.08));
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  padding: 10px;
+  text-align: left;
+}
+.swse-dejarik-draft-card button:hover:not(:disabled) { border-color: rgba(89, 220, 255, 0.7); box-shadow: 0 0 18px rgba(89, 220, 255, 0.16); }
+.swse-dejarik-draft-card.is-selected button { border-color: rgba(255, 95, 212, 0.75); box-shadow: inset 3px 0 0 rgba(255, 95, 212, 0.9), 0 0 18px rgba(255, 95, 212, 0.18); }
+.swse-dejarik-draft-card.is-disabled button { opacity: 0.48; cursor: not-allowed; }
+.swse-dejarik-draft-card__glyph { font-size: 24px; color: var(--swse-games-cyan, #59dcff); }
+.swse-dejarik-draft-card b { text-transform: uppercase; letter-spacing: 0.06em; }
+.swse-dejarik-draft-card small, .swse-dejarik-draft-card span { font-size: 11px; opacity: 0.75; line-height: 1.35; }
+.swse-dejarik-draft-card em { color: var(--swse-games-warn, #ffd166); font-style: normal; font-weight: 700; }
+.swse-dejarik-draft-card i { align-self: flex-start; color: var(--swse-games-positive, #43ff9a); font-style: normal; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+.swse-games-checkline { display: flex !important; align-items: center; gap: 8px; }
+.swse-games-checkline input[type="checkbox"] { width: auto; }
+.swse-sabacc-deck-row small { display: block; grid-column: 1 / -1; opacity: 0.68; font-size: 10px; text-align: center; margin-top: 3px; }
+@media (max-width: 980px) {
+  .swse-dejarik-draft { grid-template-columns: 1fr; }
+  .swse-dejarik-draft__side { order: -1; }
+}

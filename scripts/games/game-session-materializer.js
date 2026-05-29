@@ -34,12 +34,14 @@ function applyGameSpecificInviteDefaults(session = {}) {
   if (next.gameId === 'sabacc') {
     next.metadata.sabaccAnte ??= 10;
     next.metadata.sabaccPotAnte ??= 5;
+    next.metadata.sabaccHandLimit ??= 0;
+    next.metadata.sabaccMarketEnabled ??= true;
     next.metadata.inviteSetup = 'galaxy-corellian-spike';
   } else if (next.gameId === 'hintaro') {
     next.metadata.hintaroAnte ??= 10;
     next.metadata.hintaronMode = normalizeHintaronMode(next.metadata.hintaronMode || (next.rulesMode === 'casino' ? 'casino' : 'rotating'));
     next.metadata.rulesVariant ??= 'proper-symbolic';
-    next.metadata.inviteSetup = 'chance-cube-standard';
+    next.metadata.inviteSetup = 'proper-symbolic-hintaro';
   } else if (next.gameId === 'dejarik') {
     next.metadata.actionModel ??= 'single-action';
     next.metadata.dejarikRulesMode ??= 'holopad-skirmish';

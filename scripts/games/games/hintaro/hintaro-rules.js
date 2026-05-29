@@ -1,9 +1,9 @@
 /**
  * Hintaro rules helpers.
  *
- * The published Hintaro ranking uses four visible Tukar/Kulro symbols. For the
- * lightweight Holopad chance-cube variant, each player rolls four red/blue
- * symbol results. The UI can still present these as paired chance cubes.
+ * Proper Symbolic Hintaro uses two Tukar/Kulro regular cubes per player plus
+ * the hintaron's Hin/Taro cancellation die. This implementation intentionally
+ * does not expose the simplified standard chance-cube variant yet.
  */
 
 export const HINTARO_SYMBOLS = Object.freeze({

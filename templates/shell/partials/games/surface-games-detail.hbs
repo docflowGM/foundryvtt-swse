@@ -78,6 +78,8 @@
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
       <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
       {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <label><span>Hand Limit</span><input type="number" name="handLimit" min="0" max="99" step="1" value="0"><small>0 = open-ended casino table</small></label>
+      <label class="swse-games-checkline"><input type="checkbox" name="marketEnabled" checked> <span>Enable Holopad Casino Market house rule</span></label>
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}

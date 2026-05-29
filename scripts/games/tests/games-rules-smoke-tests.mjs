@@ -8,6 +8,7 @@
  */
 
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import { buildPazaakMainDeck, buildOpeningHand, PAZAAK_HAND_SIZE, PAZAAK_TARGET, validateSideDeck } from '../games/pazaak/pazaak-deck.js';
 import {
@@ -164,5 +165,23 @@ function testHintaro() {
   assert.equal(getHintaroLifecycleSteps()[3].label, 'Wager', 'Hintaro lifecycle reference should expose wagering as the fourth step');
 }
 
-for (const test of [testPazaak, testSabacc, testDejarik, testHintaro]) test();
+function testGamesUiDecisionWiring() {
+  const dejarikViewModel = readFileSync('scripts/games/games/dejarik/dejarik-view-model.js', 'utf8');
+  const dejarikTemplate = readFileSync('templates/shell/partials/games/surface-games-dejarik-table.hbs', 'utf8');
+  const sabaccEngine = readFileSync('scripts/games/games/sabacc/sabacc-engine.js', 'utf8');
+  const sabaccTemplate = readFileSync('templates/shell/partials/games/surface-games-sabacc-table.hbs', 'utf8');
+  const hintaroViewModel = readFileSync('scripts/games/games/hintaro/hintaro-view-model.js', 'utf8');
+  assert.match(dejarikViewModel, /showDraft/, 'Dejarik view model should expose a draft/setup phase flag');
+  assert.match(dejarikViewModel, /monsterCatalog/, 'Dejarik view model should expose a monster catalog for draft selection');
+  assert.match(dejarikTemplate, /dejarik-deploy-team/, 'Dejarik template should include a deploy-team action');
+  assert.match(dejarikTemplate, /Choose 4 holomonsters/, 'Dejarik draft UI should instruct the player to choose exactly four monsters');
+  assert.match(sabaccEngine, /handLimit/, 'Sabacc engine should track an optional hand limit');
+  assert.match(sabaccEngine, /marketEnabled/, 'Sabacc engine should track the market house-rule toggle');
+  assert.match(sabaccTemplate, /handLimitLabel/, 'Sabacc table UI should expose open-ended vs hand-limit labels');
+  assert.match(sabaccTemplate, /Market · House Rule/, 'Sabacc market should be visibly labeled as a house rule');
+  assert.match(hintaroViewModel, /Proper Symbolic Hintaro/, 'Hintaro UI should identify the proper symbolic ruleset');
+  assert.doesNotMatch(hintaroViewModel, /Simplified Standard-Cube Variant/, 'Hintaro should not expose simplified chance-cube mode yet');
+}
+
+for (const test of [testPazaak, testSabacc, testDejarik, testHintaro, testGamesUiDecisionWiring]) test();
 console.log('Holopad Games rules smoke tests passed.');

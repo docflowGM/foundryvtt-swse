@@ -29,6 +29,8 @@ function getOrder(session = {}) { return playableSeats(session.seats).map(seat =
 function findSeat(session, seatId) { return playableSeats(session.seats).find(seat => seat.seatId === seatId) ?? null; }
 function ensureCardArray(cards) { return Array.isArray(cards) ? cards.filter(Boolean) : []; }
 function safeAmount(value, fallback = 0) { const n = Math.floor(Number(value)); return Number.isFinite(n) && n >= 0 ? n : fallback; }
+export function normalizeSabaccHandLimit(value = 0) { const n = Math.floor(Number(value)); return Number.isFinite(n) && n > 0 ? Math.min(99, n) : 0; }
+export function normalizeSabaccMarketEnabled(value = true) { if (value === false || value === 'false' || value === '0' || value === 0 || value === 'off') return false; return true; }
 function activeSabaccSeatIds(session, state) {
   return getOrder(session).filter(seatId => {
     const player = state.players?.[seatId];
@@ -89,9 +91,12 @@ function buildState(session = {}) {
     version: 2,
     rulesVariant: session.metadata?.sabaccVariant || 'corellian-spike-holopad-wagered',
     rulesVariantLabel: 'Corellian Spike — Holopad Wagered Variant',
-    marketRuleLabel: 'Holopad Casino Market — house-rule buy/trade option',
+    marketRuleLabel: 'Holopad Casino Market — House Rule',
+    marketEnabled: normalizeSabaccMarketEnabled(session.metadata?.sabaccMarketEnabled ?? true),
+    handLimit: normalizeSabaccHandLimit(session.metadata?.sabaccHandLimit ?? 0),
+    handLimitReached: false,
     jackpotRuleLabel: "Sabacc pot pays only on Idiot's Array or Pure Sabacc.",
-    phasePlan: 'Card action → betting → spike dice, repeated for three rounds.',
+    phasePlan: 'Three action rounds per hand: card action → betting → spike dice.',
     phase: 'ready',
     statusLabel: 'READY',
     target: SABACC_TARGET,
@@ -128,10 +133,13 @@ function ensureState(session = {}) {
   state.betting ??= null;
   state.rulesVariant ||= session.metadata?.sabaccVariant || 'corellian-spike-holopad-wagered';
   state.rulesVariantLabel ||= 'Corellian Spike — Holopad Wagered Variant';
-  state.marketRuleLabel ||= 'Holopad Casino Market — house-rule buy/trade option';
+  state.marketRuleLabel ||= 'Holopad Casino Market — House Rule';
+  state.marketEnabled = normalizeSabaccMarketEnabled(state.marketEnabled ?? session.metadata?.sabaccMarketEnabled ?? true);
+  state.handLimit = normalizeSabaccHandLimit(state.handLimit ?? session.metadata?.sabaccHandLimit ?? 0);
+  state.handLimitReached = Boolean(state.handLimit && safeAmount(state.round, 0) >= state.handLimit && ['hand-complete', 'complete'].includes(state.phase));
   state.jackpotRuleLabel ||= "Sabacc pot pays only on Idiot's Array or Pure Sabacc.";
-  state.phasePlan ||= 'Card action → betting → spike dice, repeated for three rounds.';
-  state.market = Array.isArray(state.market) ? state.market : [];
+  state.phasePlan ||= 'Three action rounds per hand: card action → betting → spike dice.';
+  state.market = state.marketEnabled && Array.isArray(state.market) ? state.market : [];
   state.cardRound = safeAmount(state.cardRound, 0);
   for (const seat of playableSeats(session.seats)) {
     state.players[seat.seatId] ??= buildPlayerState(seat);
@@ -224,11 +232,16 @@ function startCardRound(session, state, round = 1) {
   state.betting = null;
   for (const seatId of getOrder(session)) {
     const player = state.players?.[seatId];
-    if (player && !player.folded && !player.bombedOut) player.cardActionRound = 0;
+    if (player && !player.folded && !player.bombedOut) {
+      player.cardActionRound = 0;
+      player.called = false;
+    }
   }
-  setupMarketForRound(state, state.cardRound);
+  if (state.marketEnabled) setupMarketForRound(state, state.cardRound);
+  else state.market = [];
   state.activeSeatId = firstActionSeatId(session, state);
-  state.message = `${seatLabel(session, state.activeSeatId)} may draw, trade with the deck, use the Holopad market house rule, stand/pass, or fold.`;
+  const marketPhrase = state.marketEnabled ? ', use the Holopad market house rule,' : '';
+  state.message = `${seatLabel(session, state.activeSeatId)} may draw, trade with the deck${marketPhrase} stand/pass, or fold.`;
   pushEvent(session, state, 'card-round-opened', state.activeSeatId, `Sabacc card round ${state.cardRound} opens.`, { tone: 'card' });
   updateEvaluations(state);
   return state;
@@ -466,6 +479,7 @@ function beginHand(session, state) {
   state.shiftRoll = null;
   state.winnerSeatId = null;
   state.showdown = null;
+  state.handLimitReached = false;
   state.handPot = safeAmount(state.handPot, 0);
   state.sabaccPot = safeAmount(state.sabaccPot, 0);
   state.betting = null;
@@ -567,6 +581,11 @@ function resolveHand(session, state) {
     at: now()
   });
   state.handHistory = state.handHistory.slice(0, 12);
+  state.handLimitReached = Boolean(state.handLimit && safeAmount(state.round, 0) >= safeAmount(state.handLimit, 0));
+  if (state.handLimitReached) {
+    state.statusLabel = 'TABLE LIMIT';
+    pushEvent(session, state, 'hand-limit-reached', null, `Sabacc hand limit reached after hand ${state.round}. Cash out to close the table.`, { tone: 'credits', handLimit: state.handLimit });
+  }
 
   queueSabaccReceipt(state, {
     title: 'Sabacc Hand Receipt',
@@ -590,7 +609,8 @@ function resolveHand(session, state) {
   } else {
     state.message = `${result.reason || 'No one wins the hand.'} The hand pot carries forward.`;
   }
-  pushEvent(session, state, result.claimsSabaccPot ? 'sabacc-pot-won' : (splitSeatIds.length ? 'hand-tied' : 'hand-won'), result.winnerSeatId, state.message, { tone: result.winnerSeatId || splitSeatIds.length ? 'success' : 'neutral', potWon, sabaccPotWon, splitSeatIds });
+  if (state.handLimitReached) state.message = `${state.message} Hand limit ${state.handLimit} reached; cash out to settle the table.`;
+  pushEvent(session, state, result.claimsSabaccPot ? 'sabacc-pot-won' : (splitSeatIds.length ? 'hand-tied' : 'hand-won'), result.winnerSeatId, state.message, { tone: result.winnerSeatId || splitSeatIds.length ? 'success' : 'neutral', potWon, sabaccPotWon, splitSeatIds, handLimitReached: state.handLimitReached });
   return state;
 }
 
@@ -601,7 +621,7 @@ function advanceTurn(session, state, fromSeatId) {
   const next = nextSeatId(session, state, fromSeatId);
   if (!next) return resolveHand(session, state);
   state.activeSeatId = next;
-  state.message = `${seatLabel(session, next)} is deciding whether to draw, trade, use the market, stand/pass, or fold.`;
+  state.message = `${seatLabel(session, next)} is deciding whether to draw, trade${state.marketEnabled ? ', use the market' : ''}, stand/pass, or fold.`;
   return state;
 }
 
@@ -735,6 +755,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   if (!player) return { ok: false, error: 'Sabacc player missing.' };
   if (action === 'start-hand') {
     if (!['ready', 'hand-complete'].includes(state.phase)) return { ok: false, error: 'A Sabacc hand is already in progress.' };
+    if (state.handLimitReached || (state.handLimit && safeAmount(state.round, 0) >= safeAmount(state.handLimit, 0))) return { ok: false, error: 'This Sabacc table has reached its hand limit. Cash out to close the table.' };
     beginHand(session, state);
     return { ok: true };
   }
@@ -781,6 +802,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   }
 
   if (action === 'buy-market-card') {
+    if (!state.marketEnabled) return { ok: false, error: 'The Holopad Casino Market house rule is disabled for this table.' };
     if (!canDrawSabaccCard(player)) return { ok: false, error: `A Sabacc hand cannot hold more than ${SABACC_MAX_HAND_SIZE} cards.` };
     const slotId = String(payload.slotId || '').trim();
     const slot = (state.market || []).find(entry => entry.id === slotId);
@@ -798,6 +820,7 @@ function applyActionToState(session, state, seat, action, payload = {}) {
   }
 
   if (action === 'trade-market-card') {
+    if (!state.marketEnabled) return { ok: false, error: 'The Holopad Casino Market house rule is disabled for this table.' };
     const cardId = String(payload.cardId || payload.cardInstanceId || '').trim();
     const slotId = String(payload.slotId || '').trim();
     const index = player.hand.findIndex(card => card.id === cardId);
@@ -882,11 +905,11 @@ export class SabaccEngine {
     }) ?? null;
   }
 
-  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0 } = {}) {
+  static async createSoloAiSession({ actor, actorId = null, title = '', sessionId = null, requesterId = null, rulesMode = 'republic-senate', creditBuyIn = 0, handLimit = 0, marketEnabled = true } = {}) {
     const resolvedActor = actor || (actorId ? game.actors?.get?.(actorId) : null);
     const resolvedSessionId = sessionId || `game_${globalThis.foundry?.utils?.randomID?.(12) || Math.random().toString(36).slice(2, 14)}`;
     if (!game?.user?.isGM) {
-      const requestId = HolonetSocketService.emitRequest('create-solo-sabacc', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn });
+      const requestId = HolonetSocketService.emitRequest('create-solo-sabacc', { actorId: resolvedActor?.id ?? actorId ?? null, title, sessionId: resolvedSessionId, rulesMode, creditBuyIn, handLimit: normalizeSabaccHandLimit(handLimit), marketEnabled: normalizeSabaccMarketEnabled(marketEnabled) });
       return { pending: true, requestId, sessionId: resolvedSessionId };
     }
     const requester = requesterId ? game.users?.get?.(requesterId) : game?.user;
@@ -902,7 +925,7 @@ export class SabaccEngine {
     const aiProfile = buildSabaccAiProfile(generated);
     const hostSeat = { seatId: 'seat_host', type: requester?.isGM ? 'gm' : 'player', userId, actorId: resolvedActor?.id ?? actorId ?? null, recipientId: hostRecipientId, displayName: actorDisplay(resolvedActor), avatar: actorImg(resolvedActor), status: 'host' };
     const aiSeat = { seatId: 'seat_ai', type: 'ai', userId: null, actorId: null, recipientId: null, displayName: aiProfile.name || 'Sabacc Dealer Droid', avatar: 'icons/commodities/tech/cog-bronze.webp', status: 'accepted', profession: aiProfile.profession || '', tableFact: aiProfile.tableFact || '', aiProfile, aiDifficulty: aiProfile.difficulty, aiFairness: aiProfile.fairness, aiPersonality: aiProfile.personality };
-    let shell = { id: resolvedSessionId, gameId: 'sabacc', title: title || `${actorDisplay(resolvedActor)} at the Sabacc Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', sabaccAnte: 10, sabaccPotAnte: 5, creditBuyIn: wager.creditBuyIn, sabaccVariant: 'corellian-spike-holopad-wagered', aiProfile }, log: [sessionLogEntry('solo-ai-sabacc-created', hostRecipientId)] };
+    let shell = { id: resolvedSessionId, gameId: 'sabacc', title: title || `${actorDisplay(resolvedActor)} at the Sabacc Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', sabaccAnte: 10, sabaccPotAnte: 5, creditBuyIn: wager.creditBuyIn, sabaccVariant: 'corellian-spike-holopad-wagered', sabaccHandLimit: normalizeSabaccHandLimit(handLimit), sabaccMarketEnabled: normalizeSabaccMarketEnabled(marketEnabled), aiProfile }, log: [sessionLogEntry('solo-ai-sabacc-created', hostRecipientId)] };
     shell.gameState = ensureState(shell);
     if (GameCreditEscrowService.isCreditWager(shell)) {
       const escrowed = await GameCreditEscrowService.prepareEscrow(shell, { by: hostRecipientId });
@@ -970,6 +993,7 @@ export class SabaccEngine {
     }
     if (normalized === 'next-hand') {
       if (!['ready', 'hand-complete'].includes(state.phase)) return { ok: false, error: 'A Sabacc hand is already in progress.' };
+      if (state.handLimitReached || (state.handLimit && safeAmount(state.round, 0) >= safeAmount(state.handLimit, 0))) return { ok: false, error: 'This Sabacc table has reached its hand limit. Cash out to close the table.' };
       beginHand(session, state);
       await processAi(session, state);
       const receipts = drainSabaccReceipts(state);

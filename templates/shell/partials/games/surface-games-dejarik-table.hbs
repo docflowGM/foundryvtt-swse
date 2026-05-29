@@ -1,5 +1,55 @@
 {{!-- Dejarik active-board partial. Phase 7 uses generated SVG sectors so legal moves/attacks highlight real cells instead of a PNG overlay. --}}
 <div class="swse-dejarik-table" data-dejarik-session-id="{{vm.activeTable.sessionId}}">
+  {{#if vm.activeTable.dejarik.showDraft}}
+  <section class="swse-dejarik-draft">
+    <aside class="swse-dejarik-draft__side">
+      <span class="swse-games-kicker">PRE-MATCH DRAFT</span>
+      <h3>Choose 4 holomonsters</h3>
+      <p>Select exactly four creatures for your side of the holotable. The AI will deploy four from the same roster when you launch the board.</p>
+      <div class="swse-dejarik-draft-count {{#if vm.activeTable.dejarik.draft.canDeploy}}is-ready{{/if}}">
+        <strong>{{vm.activeTable.dejarik.draft.selectedCountLabel}}</strong>
+        <span>selected</span>
+      </div>
+      {{#if vm.activeTable.dejarik.draft.hasSelected}}
+      <div class="swse-dejarik-draft-tray">
+        {{#each vm.activeTable.dejarik.draft.selectedMonsterCards}}
+        <span>{{this.shortLabel}}<small>{{this.label}}</small></span>
+        {{/each}}
+      </div>
+      {{else}}
+      <p class="swse-games-muted">No holomonsters selected yet.</p>
+      {{/if}}
+      <form data-games-action="dejarik-clear-draft">
+        <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+        <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+        <button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.dejarik.draft.hasSelected}}disabled{{/unless}}>Clear Draft</button>
+      </form>
+      <form data-games-action="dejarik-deploy-team">
+        <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+        <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+        <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.dejarik.draft.canDeploy}}disabled{{/unless}}>Deploy to Board</button>
+      </form>
+    </aside>
+
+    <div class="swse-dejarik-draft-grid">
+      {{#each vm.activeTable.dejarik.draft.monsterCatalog}}
+      <form class="swse-dejarik-draft-card {{this.cssClass}}" data-games-action="dejarik-select-monster">
+        <input type="hidden" name="sessionId" value="{{../vm.activeTable.dejarik.id}}">
+        <input type="hidden" name="seatId" value="{{../vm.activeTable.dejarik.currentSeatId}}">
+        <input type="hidden" name="monsterId" value="{{this.id}}">
+        <button type="submit" {{#if this.disabled}}disabled{{/if}}>
+          <span class="swse-dejarik-draft-card__glyph">{{this.shortLabel}}</span>
+          <b>{{this.label}}</b>
+          <small>HP {{this.hp}} · ATK {{this.atk}} · MOV {{this.mov}} · RNG {{this.rng}}</small>
+          <em>{{this.abilityLabel}}</em>
+          <span>{{this.abilityDescription}}</span>
+          {{#if this.selected}}<i>Selected</i>{{/if}}
+        </button>
+      </form>
+      {{/each}}
+    </div>
+  </section>
+  {{else}}
   <section class="swse-dejarik-layout">
     <aside class="swse-dejarik-rail swse-dejarik-rail--left">
       <div class="swse-dejarik-panel swse-dejarik-panel--opponent">
@@ -160,4 +210,5 @@
       {{/if}}
     </aside>
   </section>
+  {{/if}}
 </div>

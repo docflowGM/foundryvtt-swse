@@ -268,7 +268,7 @@ export class HintaroViewModel {
       hintaronLabel: labelForSeat(session, state.hintaronSeatId),
       hintaronMode: normalizeHintaronMode(state.hintaronMode),
       hintaronModeLabel: HINTARO_MODE_LABELS[normalizeHintaronMode(state.hintaronMode)] || HINTARO_MODE_LABELS.rotating,
-      rulesVariantLabel: state.rulesVariantLabel || (session.metadata?.rulesVariant === 'standard-cube-simplified' ? 'Simplified Standard-Cube Variant' : 'Proper Symbolic Hintaro'),
+      rulesVariantLabel: state.rulesVariantLabel || 'Proper Symbolic Hintaro',
       cancellationRules: getHintaroCancellationRules(),
       lifecycleSteps: getHintaroLifecycleSteps(),
       rulesSummary: 'Proper symbolic Hintaro: ante left of hintaron, wager right of hintaron, one reroll left of hintaron, then the hintaro die modifies all rolls.',

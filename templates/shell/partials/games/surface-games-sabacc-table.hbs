@@ -16,7 +16,7 @@
         </div>
         <div class="swse-sabacc-deck-row">
           <i class="swse-sabacc-deck-card"></i>
-          <span>{{vm.activeTable.sabacc.rulesVariantLabel}}</span>
+          <span>{{vm.activeTable.sabacc.rulesVariantLabel}}</span><small>{{vm.activeTable.sabacc.phasePlan}} · {{vm.activeTable.sabacc.handLimitLabel}}</small>
           <i class="swse-sabacc-deck-card"></i>
         </div>
         <div class="swse-sabacc-shift-row {{#if vm.activeTable.sabacc.shiftMatched}}matched{{/if}}">
@@ -163,9 +163,9 @@
       </div>
       {{else if vm.activeTable.sabacc.canStartHand}}
       <span class="swse-games-kicker">Table Ready</span>
-      <strong>Start the next hand or cash out.</strong>
+      <strong>{{#if vm.activeTable.sabacc.handLimitReached}}Hand limit reached. Cash out to close the table.{{else}}Start the next hand or cash out.{{/if}}</strong>
       <div class="swse-sabacc-action-row">
-        <form data-games-action="sabacc-next-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Next Hand</button></form>
+        <form data-games-action="sabacc-next-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary" {{#if vm.activeTable.sabacc.handLimitReached}}disabled{{/if}}>Next Hand</button></form>
         {{#if vm.activeTable.sabacc.canCashOut}}<form data-games-action="sabacc-cash-out"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost">Cash Out</button></form>{{/if}}
       </div>
       {{else}}
@@ -178,7 +178,7 @@
     <div class="swse-sabacc-myinfo">
       <div>{{vm.activeTable.sabacc.viewerSeat.tableCredits}}</div>
       <span>table credits</span>
-      <small>Total: {{vm.activeTable.sabacc.viewerSeat.totalLabel}}</small>
+      <small>{{vm.activeTable.sabacc.handProgressLabel}} · Total: {{vm.activeTable.sabacc.viewerSeat.totalLabel}}</small>
     </div>
   </section>
 

@@ -1,6 +1,7 @@
 import { DejarikEngine } from './dejarik-engine.js';
 import { dejarikRulesModeLabel, legalAttackTargets, legalMoveSpaceIds, normalizeDejarikRulesMode } from './dejarik-rules.js';
 import { DejarikAi, buildDejarikAiProfile } from './dejarik-ai.js';
+import { DEJARIK_PIECES } from './dejarik-pieces.js';
 
 function formatTime(value) { try { return value ? new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''; } catch (_err) { return ''; } }
 function playableSeats(session = {}) { return (Array.isArray(session.seats) ? session.seats : []).filter(seat => !seat.spectator && !['declined', 'cancelled'].includes(seat.status)); }
@@ -151,6 +152,32 @@ function pieceVm(piece = {}, session, state, viewerSeatId) {
   };
 }
 
+
+function monsterCatalogVm(state = {}) {
+  const selected = new Set((state.draft?.selectedMonsterIds || []).map(String));
+  const allowed = new Set((state.draft?.allowedMonsterIds || DEJARIK_PIECES.map(piece => piece.id)).map(String));
+  const full = selected.size >= 4;
+  return DEJARIK_PIECES.filter(piece => allowed.has(piece.id)).map(piece => ({
+    id: piece.id,
+    label: piece.label,
+    name: piece.label,
+    shortLabel: pieceInitials(piece.label),
+    hp: piece.hp,
+    atk: piece.atk,
+    attack: piece.atk,
+    mov: piece.mov,
+    movement: piece.mov,
+    rng: piece.rng,
+    reach: piece.rng,
+    ability: piece.ability,
+    abilityLabel: piece.abilityLabel || piece.ability || 'Tactic',
+    abilityDescription: piece.abilityDescription || '',
+    selected: selected.has(piece.id),
+    disabled: full && !selected.has(piece.id),
+    cssClass: `${selected.has(piece.id) ? 'is-selected' : ''} ${full && !selected.has(piece.id) ? 'is-disabled' : ''}`.trim()
+  }));
+}
+
 export class DejarikViewModel {
   static build({ session, actor, participantId } = {}) {
     const state = DejarikEngine.getState(session);
@@ -171,9 +198,27 @@ export class DejarikViewModel {
       activeSeatLabel: state.activeSeatId ? seatName(session, state.activeSeatId) : '',
       winnerLabel: state.winnerSeatId ? seatName(session, state.winnerSeatId) : '',
       canCancel: Boolean(currentSeat && !['complete', 'cancelled'].includes(state.phase)),
+      showDraft: state.phase === 'draft',
+      showSetup: state.phase === 'draft',
       showPlaying: state.phase === 'playing',
       showComplete: state.phase === 'complete',
       canRematch: Boolean(currentSeat && state.phase === 'complete'),
+      draft: (() => {
+        const catalog = monsterCatalogVm(state);
+        const selectedMonsterIds = (state.draft?.selectedMonsterIds || []).map(String);
+        const selectedMonsterCards = catalog.filter(card => selectedMonsterIds.includes(card.id));
+        const requiredCount = Number(state.draft?.requiredCount || 4);
+        return {
+          requiredCount,
+          selectedMonsterIds,
+          selectedMonsterCards,
+          selectedCount: selectedMonsterIds.length,
+          selectedCountLabel: `${selectedMonsterIds.length}/${requiredCount}`,
+          canDeploy: Boolean(currentSeat && state.phase === 'draft' && selectedMonsterIds.length === requiredCount),
+          monsterCatalog: catalog,
+          hasSelected: selectedMonsterIds.length > 0
+        };
+      })(),
       seats: playableSeats(session).map(seat => {
         const isAi = seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile;
         const aiProfile = buildDejarikAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium');

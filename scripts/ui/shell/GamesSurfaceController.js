@@ -135,7 +135,9 @@ export class GamesSurfaceController {
           actor: this._actor,
           title: String(data.get('title') || '').trim(),
           rulesMode: String(data.get('rulesMode') || 'republic-senate').trim(),
-          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
+          creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0,
+          handLimit: Number(data.get('handLimit') || 0) || 0,
+          marketEnabled: data.get('marketEnabled') === 'on' || data.get('marketEnabled') === 'true'
         });
         if (result?.pending) {
           this._noteResult(result);
@@ -274,6 +276,7 @@ export class GamesSurfaceController {
           action,
           payload: {
             pieceId: String(data.get('pieceId') || '').trim(),
+            monsterId: String(data.get('monsterId') || '').trim(),
             targetPieceId: String(data.get('targetPieceId') || '').trim(),
             toSpaceId: String(data.get('toSpaceId') || '').trim(),
             reason: String(data.get('reason') || '').trim()
