@@ -1,0 +1,136 @@
+{{!-- Dejarik active-board partial. Production actions remain data-games-action driven. --}}
+        <div class="swse-pazaak-table swse-dejarik-table" data-dejarik-session-id="{{vm.activeTable.sessionId}}">
+          <div class="swse-pazaak-topbar">
+            <div>
+              <span class="swse-games-kicker">DEJARIK BOARD</span>
+              <h3>{{vm.activeTable.dejarik.title}}</h3>
+              <p>Click one of your holomonsters to reveal movement spaces. Enemy pieces in range glow red.</p>
+            </div>
+            <div class="swse-pazaak-topbar__right">
+              <span>{{vm.activeTable.dejarik.statusLabel}}</span>
+              {{#if vm.activeTable.dejarik.canRematch}}
+              <form data-games-action="dejarik-rematch">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+                <button type="submit" class="swse-games-primary">Rematch</button>
+              </form>
+              {{/if}}
+              {{#if vm.activeTable.dejarik.canCancel}}
+              <form data-games-action="dejarik-cancel-session">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+                <input type="hidden" name="reason" value="Dejarik board cancelled from Holopad Games.">
+                <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
+              </form>
+              {{/if}}
+              <button type="button" class="swse-games-ghost" data-games-action="close-table">Close Board</button>
+            </div>
+          </div>
+
+          <div class="swse-pazaak-alert swse-dejarik-alert">
+            <b>{{vm.activeTable.dejarik.message}}</b>
+            {{#if vm.activeTable.dejarik.showPlaying}}<span>Active turn: {{vm.activeTable.dejarik.activeSeatLabel}}</span>{{/if}}
+            {{#if vm.activeTable.dejarik.showComplete}}<span>Winner: {{vm.activeTable.dejarik.winnerLabel}}</span>{{/if}}
+          </div>
+
+          {{#if vm.activeTable.dejarik.hasAiProfiles}}
+          <section class="swse-games-chatter swse-dejarik-ai-profile-strip">
+            <span class="swse-games-kicker">OPPONENT READOUT</span>
+            {{#each vm.activeTable.dejarik.aiProfiles}}
+            <p><b>{{this.label}}</b> <span>{{this.profileLabel}}{{#if this.profession}} · {{this.profession}}{{/if}}{{#if this.tableFact}} · {{this.tableFact}}{{/if}}</span></p>
+            {{/each}}
+          </section>
+          {{/if}}
+
+          <section class="swse-dejarik-playmat">
+            <div class="swse-dejarik-selection-panel">
+              <span class="swse-games-kicker">TACTICAL OVERLAY</span>
+              <b data-dejarik-selection-label>{{#if vm.activeTable.dejarik.canAct}}Select one of your pieces{{else}}Awaiting activation{{/if}}</b>
+              <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Blue spaces are legal moves. Red spaces are enemy pieces you can attack. Action model: {{vm.activeTable.dejarik.actionModelLabel}}.{{else}}Only the active player can move or attack.{{/if}}</small>
+              <div class="swse-dejarik-selection-stats" data-dejarik-selection-stats>Choose a holomonster to see HP, attack, range, movement, and ability notes.</div>
+              {{#if vm.activeTable.dejarik.canAct}}
+              <form data-games-action="dejarik-end-turn">
+                <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+                <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+                <button type="submit" class="swse-games-ghost">End Turn</button>
+              </form>
+              {{/if}}
+            </div>
+
+            <div class="swse-dejarik-board-stage"
+                 data-dejarik-board
+                 data-session-id="{{vm.activeTable.dejarik.id}}"
+                 data-seat-id="{{vm.activeTable.dejarik.currentSeatId}}"
+                 aria-label="Dejarik radial board">
+              {{#each vm.activeTable.dejarik.boardSpaces}}
+              <button type="button"
+                      class="swse-dejarik-space ring-{{this.ring}} ray-{{this.ray}} {{#if this.hasPiece}}has-piece{{/if}} {{#if this.hasViewerPiece}}has-viewer-piece{{/if}} {{#if this.hasEnemyPiece}}has-enemy-piece{{/if}} {{#if this.canSelectPiece}}can-select-piece{{/if}}"
+                      style="{{this.style}}"
+                      data-dejarik-space
+                      data-space-id="{{this.id}}"
+                      {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}"{{/if}}
+                      {{#if this.canSelectPiece}}data-piece-can-select="true"{{/if}}
+                      title="{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}">
+                <small>{{this.id}}</small>
+                {{#if this.piece}}
+                <span class="swse-dejarik-token {{#if this.piece.isViewerPiece}}is-friendly{{else}}is-enemy{{/if}} {{this.piece.tokenStateClass}}" aria-hidden="true">{{#if this.piece.hasImage}}<img src="{{this.piece.image}}" alt="{{this.piece.label}}">{{else}}{{this.piece.shortLabel}}{{/if}}</span>
+                <b>{{this.piece.label}}</b>
+                <span>{{this.piece.hpLabel}} · {{this.piece.ownerLabel}}</span>
+                {{/if}}
+              </button>
+              {{/each}}
+            </div>
+          </section>
+
+          {{#if vm.activeTable.dejarik.canAct}}
+          <section class="swse-pazaak-hand-panel swse-dejarik-actions">
+            <div class="swse-pazaak-builder-head">
+              <div><span class="swse-games-kicker">YOUR ACTIVATION</span><strong>Select a holomonster or use the fallback action controls.</strong></div>
+            </div>
+            <div class="swse-pazaak-hand-grid">
+              {{#each vm.activeTable.dejarik.viewerPieces}}
+              <article class="swse-pazaak-hand-card swse-dejarik-piece-card">
+                <div class="swse-pazaak-card-face">
+                  {{#if this.hasImage}}<img class="swse-dejarik-piece-card__img" src="{{this.image}}" alt="{{this.label}}">{{/if}}
+                  <b>{{this.label}}</b>
+                  <small>ATK {{this.atk}} · HP {{this.hpLabel}} · RNG {{this.rng}} · MOV {{this.mov}}</small>
+                  <small>{{this.abilityLabel}}{{#if this.abilityDescription}} · {{this.abilityDescription}}{{/if}}</small>
+                  <span class="swse-dejarik-hp"><i style="width: {{this.hpPct}}%"></i></span>
+                </div>
+                <button type="button"
+                        class="swse-games-primary"
+                        data-dejarik-select-piece
+                        data-piece-id="{{this.id}}"
+                        data-piece-label="{{this.label}}"
+                        data-piece-detail="{{this.detailLine}}"
+                        data-piece-summary="{{this.tacticalSummary}}"
+                        data-piece-ability="{{this.abilityLabel}}: {{this.abilityDescription}}"
+                        data-move-spaces="{{this.moveSpacesAttr}}"
+                        data-attack-targets="{{this.attackTargetsAttr}}">
+                  Highlight Moves
+                </button>
+                {{#if this.hasTargets}}
+                <form data-games-action="dejarik-attack">
+                  <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+                  <input type="hidden" name="seatId" value="{{this.seatId}}">
+                  <input type="hidden" name="pieceId" value="{{this.id}}">
+                  <select name="targetPieceId">{{#each this.targetOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
+                  <button type="submit" class="swse-games-primary">Attack</button>
+                </form>
+                {{/if}}
+                {{#if this.hasMoveOptions}}
+                <form data-games-action="dejarik-move">
+                  <input type="hidden" name="sessionId" value="{{this.sessionId}}">
+                  <input type="hidden" name="seatId" value="{{this.seatId}}">
+                  <input type="hidden" name="pieceId" value="{{this.id}}">
+                  <select name="toSpaceId">{{#each this.moveOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
+                  <button type="submit" class="swse-games-ghost">Move</button>
+                </form>
+                {{/if}}
+              </article>
+              {{/each}}
+            </div>
+          </section>
+          {{/if}}
+          {{#if vm.activeTable.dejarik.hasEventLog}}<section class="swse-pazaak-history swse-pazaak-log"><span class="swse-games-kicker">BOARD LOG</span>{{#each vm.activeTable.dejarik.eventLog}}<div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>{{/each}}</section>{{/if}}
+        </div>

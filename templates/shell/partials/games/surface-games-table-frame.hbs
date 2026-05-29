@@ -1,0 +1,140 @@
+{{!-- Games active-table mode. Phase 3 owns the shared table chrome here so game bodies only render the play surface. --}}
+
+<main class="swse-games-table-frame {{vm.activeTable.tableFrame.gameClass}}" data-games-table-frame data-session-id="{{vm.activeTable.sessionId}}">
+  <section class="swse-games-table-mode swse-games-felt">
+    <header class="swse-games-tm-bar">
+      <div class="swse-games-tm-bar__title">
+        <span class="swse-games-table-glyph" aria-hidden="true">{{vm.activeTable.tableFrame.gameIcon}}</span>
+        <div>
+          <span class="swse-games-kicker">{{vm.activeTable.tableFrame.gameTitle}}</span>
+          <h3>{{vm.activeTable.tableFrame.title}}</h3>
+          <div class="swse-games-tm-bar__rules">{{vm.activeTable.tableFrame.rulesLine}}</div>
+        </div>
+        <span class="swse-games-tm-bar__status tone-{{vm.activeTable.tableFrame.statusTone}}">{{vm.activeTable.tableFrame.statusLabel}}</span>
+      </div>
+
+      <div class="swse-games-tm-bar__right">
+        {{#if vm.activeTable.tableFrame.metrics}}
+        <div class="swse-games-pot-strip" aria-label="Table metrics">
+          {{#each vm.activeTable.tableFrame.metrics}}
+          <span class="swse-games-pot-strip__item tone-{{this.tone}}"><span class="k">{{this.key}}</span><span class="v">{{this.value}}</span></span>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if vm.activeTable.isPazaak}}
+          {{#if vm.activeTable.pazaak.canForfeit}}
+          <form data-games-action="pazaak-forfeit">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+            <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Forfeit</button>
+          </form>
+          {{/if}}
+          {{#if vm.activeTable.pazaak.canCancel}}
+          <form data-games-action="pazaak-cancel-session">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.pazaak.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.pazaak.currentSeatId}}">
+            <input type="hidden" name="reason" value="Pazaak table cancelled from Holopad Games.">
+            <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
+          </form>
+          {{/if}}
+        {{/if}}
+
+        {{#if vm.activeTable.isSabacc}}
+          {{#if vm.activeTable.sabacc.canStartHand}}
+          <form data-games-action="sabacc-next-hand">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}">
+            <button type="submit" class="swse-games-primary">Next Hand</button>
+          </form>
+          {{/if}}
+          {{#if vm.activeTable.sabacc.canCashOut}}
+          <form data-games-action="sabacc-cash-out">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}">
+            <button type="submit" class="swse-games-ghost">Cash Out</button>
+          </form>
+          {{/if}}
+          {{#if vm.activeTable.sabacc.canCancel}}
+          <form data-games-action="sabacc-cancel-session">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}">
+            <input type="hidden" name="reason" value="Sabacc table cancelled from Holopad Games.">
+            <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
+          </form>
+          {{/if}}
+        {{/if}}
+
+        {{#if vm.activeTable.isHintaro}}
+          {{#if vm.activeTable.hintaro.canStartRound}}
+          <form data-games-action="hintaro-next-round"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-primary">Next Round</button></form>
+          {{/if}}
+          {{#if vm.activeTable.hintaro.canCashOut}}
+          <form data-games-action="hintaro-cash-out"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><button type="submit" class="swse-games-ghost">Cash Out</button></form>
+          {{/if}}
+          {{#if vm.activeTable.hintaro.canCancel}}
+          <form data-games-action="hintaro-cancel-session"><input type="hidden" name="sessionId" value="{{vm.activeTable.hintaro.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.hintaro.currentSeatId}}"><input type="hidden" name="reason" value="Hintaro table cancelled from Holopad Games."><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button></form>
+          {{/if}}
+        {{/if}}
+
+        {{#if vm.activeTable.isDejarik}}
+          {{#if vm.activeTable.dejarik.canRematch}}
+          <form data-games-action="dejarik-rematch">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+            <button type="submit" class="swse-games-primary">Rematch</button>
+          </form>
+          {{/if}}
+          {{#if vm.activeTable.dejarik.canCancel}}
+          <form data-games-action="dejarik-cancel-session">
+            <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
+            <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
+            <input type="hidden" name="reason" value="Dejarik board cancelled from Holopad Games.">
+            <button type="submit" class="swse-games-ghost swse-games-ghost--danger">Cancel</button>
+          </form>
+          {{/if}}
+        {{/if}}
+
+        <button type="button" class="swse-games-ghost" data-games-action="close-table">Library</button>
+      </div>
+    </header>
+
+    <div class="swse-games-table-status">
+      <b>{{vm.activeTable.tableFrame.message}}</b>
+      {{#each vm.activeTable.tableFrame.secondaryLines}}
+      <span>{{this}}</span>
+      {{/each}}
+    </div>
+
+    <div class="swse-games-table-body">
+      {{#if vm.activeTable.isPazaak}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-pazaak-table.hbs"}}
+      {{/if}}
+
+      {{#if vm.activeTable.isSabacc}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-sabacc-table.hbs"}}
+      {{/if}}
+
+      {{#if vm.activeTable.isDejarik}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-dejarik-table.hbs"}}
+      {{/if}}
+
+      {{#if vm.activeTable.isHintaro}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-hintaro-table.hbs"}}
+      {{/if}}
+
+      {{#unless vm.activeTable.isPazaak}}
+        {{#unless vm.activeTable.isSabacc}}
+          {{#unless vm.activeTable.isDejarik}}
+            {{#unless vm.activeTable.isHintaro}}
+              <div class="swse-games-empty">
+                <b>Unsupported table payload.</b>
+                <span>Close this table and reopen it from the Games library.</span>
+              </div>
+            {{/unless}}
+          {{/unless}}
+        {{/unless}}
+      {{/unless}}
+    </div>
+  </section>
+</main>
