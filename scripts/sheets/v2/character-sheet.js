@@ -67,7 +67,7 @@ import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellH
 import { ShellSurfaceState } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceState.js";
 import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
 import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js";
-import { mutateShellOnly } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
+import { mutateAndRepaint, mutateShellOnly } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
@@ -537,8 +537,8 @@ export class SWSEV2CharacterSheet extends
     this._shellRouterRegistered = false; // Guard to register only once per session
 
     // ─── Alpha v1: Force Power Execution Disabled ────────────────────────────
-    // Force power execution is deferred to Alpha v1.1. The UI layer prevents clicks.
-    this.forcePowerExecutionEnabled = false;
+    // Force power execution is live. Buttons route through ForceExecutor.
+    this.forcePowerExecutionEnabled = true;
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -2082,7 +2082,8 @@ export class SWSEV2CharacterSheet extends
     derived.actions.groups ??= [];
 
     derived.identity ??= {};
-    derived.identity.halfLevel ??= 0;
+    derived.identity.level ??= Number(system.level ?? system.progression?.level ?? 1) || 1;
+    derived.identity.halfLevel = Math.floor(Math.max(1, Number(derived.identity.level) || 1) / 2);
     // Provide ability array for skills panel selectors (used in skills-panel.hbs line 75)
     derived.identity.abilities ??= ABILITY_KEYS.map(key => ({
       key,
@@ -2426,8 +2427,14 @@ export class SWSEV2CharacterSheet extends
     const attacksBundle = derived?.attacks;
     let attacksList = Array.isArray(attacksBundle?.list) ? attacksBundle.list : [];
     const isEquippedForAttack = (item) => {
-      const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on'].includes(String(value || '').toLowerCase());
-      return truthy(item?.system?.equipped) || truthy(item?.flags?.swse?.autoEquipped);
+      const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(String(value || '').toLowerCase());
+      const system = item?.system ?? {};
+      return truthy(system.equipped)
+        || truthy(system.isEquipped)
+        || truthy(system.active)
+        || truthy(system.equippable?.equipped)
+        || truthy(system.activation?.active)
+        || truthy(item?.flags?.swse?.autoEquipped);
     };
     const expectedItemBackedAttackCount = Array.from(actor?.items ?? []).filter(item =>
       ['weapon', 'lightsaber'].includes(item?.type) && isEquippedForAttack(item)
@@ -2435,15 +2442,17 @@ export class SWSEV2CharacterSheet extends
     const missingAttackBundle = !attacksBundle || !Array.isArray(attacksBundle.list);
     const missingExpectedItemBackedAttacks = expectedItemBackedAttackCount > 0 && attacksList.length === 0;
 
-    // PHASE 8 Check: warn only when the derived attack bundle is actually missing,
-    // or when item-backed attack sources exist but no derived item attacks were emitted.
+    // Derived remains authoritative, but the combat tab must stay usable during
+    // the short prepare/render window before async derived attacks have landed.
+    // Use the legacy builder as a display-only rescue when equipped weapon
+    // sources exist but no item-backed derived attacks were emitted.
     if (missingAttackBundle || missingExpectedItemBackedAttacks) {
-      swseLogger.warn(`[Phase 10] Item-backed attacks missing from derived for ${actor.name}`, {
+      swseLogger.debug(`[Attacks] Derived item-backed attacks missing for ${actor.name}; using display rescue.`, {
         actor: actor.name,
         expectedItemBackedAttackCount,
-        derivedAttacks: attacksBundle,
-        note: 'Unarmed Attack is virtual and built separately; this warning only concerns equipped/auto-equipped weapon attacks.'
+        derivedAttacks: attacksBundle
       });
+      attacksList = this._buildAttacksFallback(actor);
 
       if (CONFIG?.SWSE?.debug?.contractObservability) {
         warnMissingDerivedOutput('Attacks', 'derived.attacks.list', actor.name);
@@ -2508,7 +2517,7 @@ const forcePoints = [];
     const forceSuite = {
       hand: forcePowers.filter(p => !p.system?.discarded).map(toPlain),
       discard: forcePowers.filter(p => p.system?.discarded).map(toPlain),
-      forcePowerExecutionEnabled: false // Alpha v1: force power execution deferred to v1.1
+      forcePowerExecutionEnabled: true
     };
 
     const lightsaberConstructionEligibility = LightsaberConstructionEngine.getEligibility(actor);
@@ -4775,12 +4784,6 @@ const forcePoints = [];
       button.addEventListener("click", async (event) => {
         event.preventDefault();
 
-        // Alpha v1 guard: force power execution deferred to v1.1
-        if (!this.forcePowerExecutionEnabled) {
-          ui?.notifications?.info?.("Force power execution is coming in Alpha v1.1");
-          return;
-        }
-
         const itemId = button.dataset.itemId;
         if (!itemId) return;
 
@@ -4791,8 +4794,16 @@ const forcePoints = [];
         const isRecovery = power.system?.discarded ?? false;
 
         try {
-          const result = await ForceExecutor.activateForce(this.actor, itemId, isRecovery);
-          if (result.success) {
+          const result = await mutateAndRepaint(this, () => (
+            isRecovery
+              ? ForceExecutor.activateForce(this.actor, itemId, true)
+              : ForceExecutor.executeForcePower(this.actor, itemId)
+          ), {
+            reason: isRecovery ? 'force-power-recover' : 'force-power-use',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+          if (result?.success !== false) {
             ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
           }
         } catch (err) {
@@ -5188,7 +5199,7 @@ const forcePoints = [];
         const current = Number(this.actor.system?.xp?.total ?? 0) || 0;
         const next = current + amount;
         try {
-          await ActorEngine.updateActor(this.actor, {
+          await mutateAndRepaint(this, () => ActorEngine.updateActor(this.actor, {
             'system.xp.total': next,
             'flags.swse.character.statusFeed': prependStatusFeed({
               id: `xp-${Date.now()}`,
@@ -5200,7 +5211,12 @@ const forcePoints = [];
             })
           }, {
             source: 'character-sheet-add-xp',
-            meta: { guardKey: 'character-sheet-add-xp' }
+            meta: { guardKey: 'character-sheet-add-xp' },
+            render: false
+          }), {
+            reason: 'character-sheet-add-xp',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
           });
           if (input) input.value = '';
           ui?.notifications?.info?.(`Added ${amount.toLocaleString()} XP.`);
@@ -5536,7 +5552,7 @@ const forcePoints = [];
    * @returns {Array} Array of basic attack objects from equipped weapons
    */
   _buildAttacksFallback(actor) {
-    swseLogger.error(`[Phase 10] LEGACY FALLBACK: Attacks list rebuild used — derived.attacks.list missing!`, {
+    swseLogger.debug(`[Attacks] Display rescue rebuild used because derived.attacks.list is not ready.`, {
       actor: actor.name,
       equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0,
       warning: 'This indicates DerivedCalculator did not properly compute attacks'
@@ -5552,14 +5568,24 @@ const forcePoints = [];
       );
     }
 
-    const equippedWeapons = (actor?.items ?? []).filter(item =>
-      ['weapon', 'lightsaber'].includes(item?.type) && (
-        item.system?.equipped === true
-        || Number(item.system?.equipped) === 1
-        || ['true', '1', 'yes', 'equipped', 'on'].includes(String(item.system?.equipped || '').toLowerCase())
-        || item.flags?.swse?.autoEquipped === true
-      )
-    );
+    const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(String(value || '').toLowerCase());
+    const equippedWeapons = (actor?.items ?? []).filter(item => {
+      const system = item?.system ?? {};
+      return ['weapon', 'lightsaber'].includes(item?.type) && (
+        truthy(system.equipped)
+        || truthy(system.isEquipped)
+        || truthy(system.active)
+        || truthy(system.equippable?.equipped)
+        || truthy(system.activation?.active)
+        || truthy(item?.flags?.swse?.autoEquipped)
+      );
+    });
+
+    const babValue = actor.system?.derived?.bab;
+    const baseAttackBonus = Number(
+      typeof babValue === 'object' ? (babValue.total ?? babValue.value ?? 0) :
+      (babValue ?? actor.system?.baseAttackBonus ?? actor.system?.bab ?? 0)
+    ) || 0;
 
     return equippedWeapons.map(weapon => ({
       id: `attack-${weapon.id}`,
@@ -5568,7 +5594,7 @@ const forcePoints = [];
       weaponName: weapon.name,
       weaponType: weapon.system?.weaponCategory,
       attackBonus: weapon.system?.attackBonus ?? 0,
-      attackTotal: (weapon.system?.attackBonus ?? 0) + (actor.system?.baseAttackBonus ?? 0),
+      attackTotal: (Number(weapon.system?.attackBonus ?? 0) || 0) + baseAttackBonus,
       attackAttribute: weapon.system?.attackAttribute ?? 'str',
       damageFormula: weapon.system?.damage ?? '1d6',
       damageBonus: weapon.system?.damageBonus ?? '',

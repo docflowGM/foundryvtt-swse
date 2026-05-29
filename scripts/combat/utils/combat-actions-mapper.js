@@ -77,7 +77,7 @@ export class CombatActionsMapper {
     try {
       const response = await fetch(`systems/foundryvtt-swse/${path}`);
       if (!response.ok) {
-        SWSELogger.warn(`SWSE | Failed to load JSON fallback from ${path}`);
+        SWSELogger.debug?.(`SWSE | Failed to load JSON fallback from ${path}`);
         return [];
       }
       const data = await response.json();
@@ -110,7 +110,7 @@ export class CombatActionsMapper {
   static async _loadCompendiumItems(packId) {
     const pack = game.packs.get(packId);
     if (!pack) {
-      SWSELogger.warn(`SWSE | Missing compendium: ${packId}`);
+      SWSELogger.debug?.(`SWSE | Missing compendium: ${packId}; using fallback if available`);
       return [];
     }
 

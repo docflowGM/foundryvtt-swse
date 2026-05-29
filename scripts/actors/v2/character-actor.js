@@ -102,9 +102,19 @@ function safeNumber(value, fallback = 0) {
 function isTruthyEquipState(value) {
   if (value === true) return true;
   if (typeof value === 'string') {
-    return ['true', '1', 'yes', 'equipped', 'on'].includes(value.toLowerCase());
+    return ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(value.toLowerCase());
   }
   return Number(value) === 1;
+}
+
+function isItemEquipped(item) {
+  const system = item?.system ?? {};
+  return isTruthyEquipState(system.equipped)
+    || isTruthyEquipState(system.isEquipped)
+    || isTruthyEquipState(system.active)
+    || isTruthyEquipState(system.equippable?.equipped)
+    || isTruthyEquipState(system.activation?.active)
+    || isTruthyEquipState(item?.flags?.swse?.autoEquipped);
 }
 
 /**
@@ -144,7 +154,8 @@ function mirrorIdentity(actor, system) {
   const i = system.derived.identity;
   // PHASE 7: All identity values are inputs, but we mirror them into derived so sheets can remain derived-first.
   // Sheet should NEVER rebuild identity strings — read from this bundle instead.
-  i.level = safeNumber(system.level, 1);
+  i.level = safeNumber(system.level ?? system.progression?.level, 1);
+  i.halfLevel = Math.floor(Math.max(1, i.level) / 2);
 
   // Phase 3B: Prefer canonical system.class.name, fall back to legacy paths
   // system.className and system.class (as string) are deprecated, kept for compatibility only
@@ -343,9 +354,7 @@ function mirrorAttacks(actor, system) {
 
   for (const w of weapons) {
     // PHASE 4: Include equipped weapons OR natural weapons with autoEquipped flag
-    const equipped = isTruthyEquipState(w.system?.equipped);
-    const isAutoEquipped = isTruthyEquipState(w.flags?.swse?.autoEquipped);
-    if (!equipped && !isAutoEquipped) continue;
+    if (!isItemEquipped(w)) continue;
 
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);

@@ -151,8 +151,25 @@ export const ActorEngine = {
 
     queueMicrotask(() => {
       for (const app of apps) {
+        const surfaceId = app?._shellSurface ?? app?.shellSurface ?? app?.currentPage ?? 'sheet';
         try {
-          app?.render?.(false);
+          if (typeof app?.requestSurfaceRender === 'function') {
+            app.requestSurfaceRender({
+              reason: options?.source ?? 'actor-engine-refresh',
+              surfaceId,
+              preserveUi: true
+            });
+            continue;
+          }
+          if (typeof app?.render === 'function') {
+            import('/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js')
+              .then(({ requestShellRender }) => requestShellRender(app, {
+                reason: options?.source ?? 'actor-engine-refresh',
+                surfaceId,
+                preserveUi: true
+              }))
+              .catch(() => app.render(false));
+          }
         } catch (err) {
           SWSELogger.warn(`[RENDER REFRESH] Failed to refresh app for ${actor?.name ?? 'unknown actor'}`, {
             actorId: actor?.id,

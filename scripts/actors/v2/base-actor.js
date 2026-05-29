@@ -137,6 +137,33 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       // Use new pattern: computeModifierBundle() + applyComputedBundle()
       const bundle = ModifierEngine.computeModifierBundle(this, modifierMap, allModifiers);
       ModifierEngine.applyComputedBundle(this, bundle);
+
+      system.derived.meta ??= {};
+      system.derived.meta.lastAsyncRecalcMs = Date.now();
+
+      // Foundry does not await prepareDerivedData(). Without a follow-up render,
+      // the first sheet paint can show stale defenses/skills until any later actor
+      // update happens (for example, awarding XP). Repaint open sheets once after
+      // async derived values land so the UI reflects the authoritative snapshot.
+      const apps = Object.values(this.apps ?? {});
+      if (apps.length) {
+        queueMicrotask(() => {
+          for (const app of apps) {
+            const surfaceId = app?._shellSurface ?? app?.shellSurface ?? 'sheet';
+            try {
+              if (typeof app?.requestSurfaceRender === 'function') {
+                app.requestSurfaceRender({ reason: 'actor-async-derived-recalc', surfaceId, preserveUi: true });
+              } else if (typeof app?.render === 'function') {
+                import('/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js')
+                  .then(({ requestShellRender }) => requestShellRender(app, { reason: 'actor-async-derived-recalc', surfaceId, preserveUi: true }))
+                  .catch(() => app.render(false));
+              }
+            } catch (_err) {
+              // Rendering is best-effort; derived data itself is already applied.
+            }
+          }
+        });
+      }
     } catch (err) {
       // Log but don't throw - derived computation is non-critical
       console.warn(`Failed to compute derived values for ${this.name}:`, err);

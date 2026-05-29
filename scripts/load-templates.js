@@ -45,6 +45,7 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-secrets-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-suite-card.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-techniques-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/hp-condition-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/identity-strip.hbs',

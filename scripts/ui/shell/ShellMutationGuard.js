@@ -38,6 +38,25 @@ function isShellStack(stack = '') {
     || text.includes('scripts/sheets/v2/character-sheet.js');
 }
 
+
+function isActorEngineStack(stack = '') {
+  const text = String(stack);
+  return text.includes('/scripts/governance/actor-engine/')
+    || text.includes('scripts/governance/actor-engine/')
+    || text.includes('/scripts/utils/actor-utils.js')
+    || text.includes('scripts/utils/actor-utils.js');
+}
+
+function isFoundryDocumentRenderStack(stack = '') {
+  const text = String(stack);
+  return text.includes('_onUpdateDescendantDocuments')
+    || text.includes('_dispatchDescendantDocumentEvents')
+    || text.includes('#handleUpdateDocuments')
+    || text.includes('foundry.mjs:36190')
+    || text.includes('foundry.mjs:47047')
+    || text.includes('foundry.mjs:47099');
+}
+
 function shouldWarn() {
   try {
     const worldSetting = game?.settings?.get?.('foundryvtt-swse', 'debugMode');
@@ -209,6 +228,7 @@ export class ShellMutationGuard {
 
     const stack = new Error().stack ?? '';
     if (!isShellStack(stack)) return;
+    if (isActorEngineStack(stack)) return;
 
     const docName = document?.name ?? document?.constructor?.name ?? label;
     emitWarning(
@@ -282,6 +302,7 @@ export class ShellMutationGuard {
     if (args?.[0] !== false) return;
 
     const stack = new Error().stack ?? '';
+    if (isActorEngineStack(stack) || isFoundryDocumentRenderStack(stack)) return;
     emitWarning(
       logger,
       `${label}:render:false:${getStackSignature(stack)}`,

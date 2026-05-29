@@ -48,19 +48,18 @@ export class ForceExecutor {
         throw new Error("Force power is discarded");
       }
 
-      // Update power state
-      const plan = {
-        update: {
-          "items": {
-            [powerId]: {
-              "system.discarded": recover ? false : true,
-              "system.lastUsed": Date.now()
-            }
+      // Update owned force-power state through the embedded-document path.
+      // The older nested actor update shape ({ items: { [id]: ... } }) does
+      // not update owned Items reliably in Foundry v13.
+      await ActorEngine.apply(actor, {
+        updateEmbedded: [{
+          _id: powerId,
+          update: {
+            'system.discarded': recover ? false : true,
+            [recover ? 'system.lastRecovered' : 'system.lastUsed']: Date.now()
           }
-        }
-      };
-
-      await ActorEngine.apply(actor, plan);
+        }]
+      }, { source: recover ? 'force-power-recover' : 'force-power-use', render: false });
 
       // Check for dark side usage (optional mechanic)
       const hasDarkSide = power.system?.darkSideOption || false;
@@ -110,7 +109,23 @@ export class ForceExecutor {
       const power = actor.items.get(powerId);
       if (!power) throw new Error("Force power not found");
 
-      const { baseDC = 10, bonus = 0, useForce = false } = options;
+      const baseDC = Number(
+        options.baseDC ??
+        power.system?.useTheForce ??
+        power.system?.dc ??
+        power.system?.DC ??
+        power.system?.dcChart?.[0]?.dc ??
+        10
+      ) || 10;
+      const bonus = Number.isFinite(Number(options.bonus))
+        ? Number(options.bonus)
+        : Number(
+            actor.system?.derived?.skillsByKey?.useTheForce?.total ??
+            actor.system?.derived?.skills?.useTheForce?.total ??
+            actor.system?.skills?.useTheForce?.total ??
+            0
+          ) || 0;
+      const useForce = options.useForce === true;
 
       // Check if power is already discarded
       if (power.system?.discarded) {
@@ -229,22 +244,15 @@ export class ForceExecutor {
         throw new Error("No force powers to recover");
       }
 
-      // Build mutation plan
-      const updates = {};
-      powersToRecover.forEach(power => {
-        updates[power.id] = {
-          "system.discarded": false,
-          "system.lastRecovered": Date.now()
-        };
-      });
-
-      const plan = {
-        update: {
-          "items": updates
-        }
-      };
-
-      await ActorEngine.apply(actor, plan);
+      await ActorEngine.apply(actor, {
+        updateEmbedded: powersToRecover.map(power => ({
+          _id: power.id,
+          update: {
+            'system.discarded': false,
+            'system.lastRecovered': Date.now()
+          }
+        }))
+      }, { source: 'force-power-recover-all', render: false });
 
       // Remove any active effects from recovered powers
       for (const power of powersToRecover) {

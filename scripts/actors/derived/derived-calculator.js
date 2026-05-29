@@ -278,7 +278,15 @@ export class DerivedCalculator {
       const skillData = CANONICAL_SKILL_DEFS;
 
       const normalizedSkills = normalizeSkillMap(actor.system.skills);
-      const halfLevel = actor.system.halfLevel || 0;
+      const actorLevel = Number(
+        actor.system?.derived?.identity?.level ??
+        actor.system?.progression?.level ??
+        actor.system?.level ??
+        1
+      ) || 1;
+      const halfLevel = Number.isFinite(Number(actor.system?.halfLevel))
+        ? Number(actor.system.halfLevel)
+        : Math.floor(Math.max(1, actorLevel) / 2);
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
 
@@ -333,6 +341,7 @@ export class DerivedCalculator {
             trained: skill.trained || false,
             focused: skill.focused || false,
             miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
+            halfLevel: 0,
             armorPenalty: 0,
             conditionPenalty: 0,
             featBonus: 0,
@@ -469,6 +478,7 @@ export class DerivedCalculator {
           trained: skill.trained || false,
           focused: skill.focused || false,
           miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
+          halfLevel: SkillRules.isHalfLevelSkillBonusEnabled() ? halfLevel : 0,
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
           featBonus: featBonus,

@@ -343,8 +343,28 @@ export class GamesSurfaceController {
     const detailAbility = surface.querySelector('[data-dejarik-detail-ability]');
     const spaces = Array.from(board.querySelectorAll('[data-dejarik-space]'));
     const selectorButtons = Array.from(surface.querySelectorAll('[data-dejarik-select-piece]'));
+    const inspectButtons = Array.from(surface.querySelectorAll('[data-dejarik-inspect-piece]'));
 
-    const resetHighlights = () => {
+    const parseDetail = source => {
+      const raw = String(source?.dataset?.detailJson || '').trim();
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch (_err) { return null; }
+    };
+
+    const updateDetailCard = source => {
+      const detail = parseDetail(source);
+      if (!detail) return;
+      if (detailCard) detailCard.classList.add('has-selection');
+      if (detailName) detailName.textContent = detail.name || source?.dataset?.pieceLabel || 'Selected monster';
+      if (detailHp) detailHp.textContent = detail.hp || '—';
+      if (detailAttack) detailAttack.textContent = detail.attack || '—';
+      if (detailMovement) detailMovement.textContent = detail.movement || '—';
+      if (detailReach) detailReach.textContent = detail.reach || '—';
+      if (detailAbility) detailAbility.textContent = [detail.ability, detail.abilityDescription].filter(Boolean).join(' — ') || '—';
+      inspectButtons.forEach(button => button.classList.toggle('is-selected', String(button.dataset.pieceId || '') === String(source?.dataset?.pieceId || '')));
+    };
+
+    const resetHighlights = ({ clearState = false } = {}) => {
       board.dataset.selectedPieceId = '';
       if (clearState) this._host.patchSurfaceState?.('games', { selectedDejarikPieceId: null }, { render: false });
       spaces.forEach(space => {

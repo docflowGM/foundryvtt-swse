@@ -149,8 +149,17 @@ export class PostRenderAssertions {
     // spam false positives or mask real errors during gear-tab hydration tests.
     const root = html?.querySelector?.(rootSelector);
     if (!root) {
+      const activeTab = html?.querySelector?.('.tab.active[data-tab]');
+      const activeTabId = activeTab?.dataset?.tab ?? null;
       const activeConceptGear = html?.querySelector?.('.tab.active[data-tab="gear"] .swse-concept-dashboard, .tab.active[data-tab="gear"] .swse-concept-panel--ledger');
       if (activeConceptGear && ['inventoryPanel', 'armorSummaryPanel', 'equipmentLedgerPanel'].includes(panelKey)) {
+        return;
+      }
+      // VisibilityManager can report panels that are valid for the sheet at large
+      // even when the currently active tab intentionally does not render them.
+      // Only warn loudly for critical panels; otherwise keep the diagnostic quiet.
+      if (!critical && activeTabId) {
+        console.debug?.(`[PostRender] ${panelKey} root (${rootSelector}) not present on active tab "${activeTabId}"; skipped.`);
         return;
       }
       this._reportViolation(`${panelKey} root (${rootSelector}) not found`, critical);

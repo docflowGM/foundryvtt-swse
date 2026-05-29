@@ -32,7 +32,7 @@ function registerHelperGroup(group, groupName) {
     }
 
     if (Handlebars.helpers[name]) {
-      swseLogger.warn(`SWSE | Helper '${name}' already registered, skipping`);
+      swseLogger.debug?.(`SWSE | Helper '${name}' already registered, skipping`);
       skipped++;
       continue;
     }
