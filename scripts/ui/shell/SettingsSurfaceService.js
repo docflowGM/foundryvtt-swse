@@ -51,7 +51,8 @@ export class SettingsSurfaceService {
   static async buildViewModel(actor, options = {}) {
     const isGMHost = !!options.gm;
     const preferActor = options.preferActor ?? !isGMHost;
-    const current = ThemeManager.getTheme() || ThemeManager.defaults;
+    const pendingControls = options.pendingControls && typeof options.pendingControls === 'object' ? options.pendingControls : {};
+    const current = { ...(ThemeManager.getTheme() || ThemeManager.defaults), ...pendingControls };
     const actorTheme = ThemeResolutionService.resolveThemeKey(null, { actor, preferActor });
     const actorMotionStyle = ThemeResolutionService.resolveMotionStyle(null, { actor, preferActor });
     const warning = 'Warning, changing native language to Aurabesh may result in a more difficult play.';

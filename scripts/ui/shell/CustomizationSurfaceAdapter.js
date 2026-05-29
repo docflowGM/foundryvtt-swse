@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class CustomizationSurfaceAdapter {
   static _registry = new Map();
@@ -97,12 +98,12 @@ export class CustomizationSurfaceAdapter {
     const app = new CustomizationBayApp(this.actor, options);
     const self = this;
     app.render = async function() {
-      await self._shellHost?.render?.(false);
+      await requestShellRender(self._shellHost, { reason: 'customization-surface-refresh', surfaceId: 'customization' });
       return app;
     };
     app.close = async function() {
       await self._shellHost?.setSurface?.('home');
-      await self._shellHost?.render?.(false);
+      await requestShellRender(self._shellHost, { reason: 'customization-surface-refresh', surfaceId: 'customization' });
       return app;
     };
 

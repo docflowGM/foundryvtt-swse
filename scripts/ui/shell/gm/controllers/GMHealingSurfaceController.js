@@ -9,6 +9,7 @@
 import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 function numberOrNull(value) {
   if (value === '' || value === undefined || value === null) return null;
@@ -202,7 +203,7 @@ export class GMHealingSurfaceController {
     }
 
     ui?.notifications?.info?.(result?.message || 'Combat recovery action complete.');
-    await this.host?.render?.(false);
+    await requestShellRender(this.host, { reason: 'gm-healing-refresh', surfaceId: 'healing' });
     return true;
   }
 
@@ -213,7 +214,7 @@ export class GMHealingSurfaceController {
       if (result.success) {
         ui?.notifications?.info?.(`Natural healing triggered: ${result.totalHealed} actors healed, ${result.totalSkipped} skipped`);
         SWSELogger.info('[GMHealingSurfaceController] Natural healing triggered:', result);
-        await this.host?.render?.(false);
+        await requestShellRender(this.host, { reason: 'gm-healing-refresh', surfaceId: 'healing' });
       } else {
         ui?.notifications?.error?.(`Failed to trigger healing: ${result.error}`);
       }

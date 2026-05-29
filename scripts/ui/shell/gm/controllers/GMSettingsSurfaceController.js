@@ -8,6 +8,7 @@
 
 import { SettingsSurfaceController } from '/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { mutateAndRepaint } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 export class GMSettingsSurfaceController {
   constructor(host) {
@@ -26,7 +27,7 @@ export class GMSettingsSurfaceController {
     this._abort = new AbortController();
     const signal = this._abort.signal;
 
-    this._settings.attach(root);
+    this._settings.attach(root, { signal });
     this._wireGamePolicySettings(root, signal);
   }
 
@@ -50,9 +51,11 @@ export class GMSettingsSurfaceController {
         else value = input.value;
 
         try {
-          await game.settings.set(this.host?.NS ?? 'foundryvtt-swse', key, value);
+          await mutateAndRepaint(this.host, () => game.settings.set(this.host?.NS ?? 'foundryvtt-swse', key, value), {
+            reason: 'gm-settings-policy-update',
+            surfaceId: 'settings'
+          });
           ui?.notifications?.info?.('Game policy updated.');
-          await this.host?.render?.(false);
         } catch (err) {
           SWSELogger.error('[GMSettingsSurfaceController] Failed to update game policy setting:', err);
           ui?.notifications?.error?.(`Game policy update failed: ${err.message}`);

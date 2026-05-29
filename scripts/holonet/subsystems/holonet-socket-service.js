@@ -174,7 +174,6 @@ export class HolonetSocketService {
       }
       case 'mark-thread-read': {
         await HolonetMessengerService._gmMarkThreadRead(data.threadId, data.recipientId);
-        this.emitSync({ type: 'thread-read', threadId: data.threadId, recipientId: data.recipientId, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         break;
       }
       case 'mark-many-read': {

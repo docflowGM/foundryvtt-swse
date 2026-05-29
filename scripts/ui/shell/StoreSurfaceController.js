@@ -4,7 +4,7 @@
  * Owns all store-surface interactivity within the datapad shell.
  * - Tab switching, search, filters, sort: scoped to surface root
  * - Cart mutations delegate to real checkout functions + actor-flag persistence
- * - Re-render triggered via host.render(false) after state changes
+ * - Re-render triggered via host.requestSurfaceRender after state changes
  * - AbortController-based cleanup on each re-render
  */
 
@@ -46,7 +46,7 @@ export class StoreSurfaceController {
       el.addEventListener('click', async ev => {
         ev.preventDefault();
         await this._host.setSurface('home');
-        this._host.render(false);
+        await this._requestRender('store-return-home');
       }, { signal });
     });
 
@@ -215,7 +215,7 @@ export class StoreSurfaceController {
           removeFromCartById(store.cart, type, id);
         }
         await store._persistCart();
-        this._host.render(false);
+        await this._requestRender('store-cart-remove');
       }, { signal });
     });
 
@@ -325,7 +325,7 @@ export class StoreSurfaceController {
 
   async _returnHome() {
     await this._host.setSurface?.('home');
-    this._host.render(false);
+    await this._requestRender('store-return-home');
   }
 
   _enterStore(patch = {}) {
@@ -370,7 +370,9 @@ export class StoreSurfaceController {
     card.classList.add('is-hot-deal-focus');
     card.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
     window.setTimeout(() => card.classList.remove('is-hot-deal-focus'), 1800);
-    this._host._shellSurfaceOptions = { ...this._host._shellSurfaceOptions, hotDealFocusId: null };
+    if (typeof this._host?.patchSurfaceOptions === 'function') {
+      this._host.patchSurfaceOptions({ hotDealFocusId: null }, { render: false });
+    }
   }
 
   destroy() {
@@ -406,7 +408,7 @@ export class StoreSurfaceController {
       this._setOptions(rerenderPatch);
       return;
     }
-    this._host.render(false);
+    await this._requestRender('store-cart-add');
   }
 
   _toggleDetail(id) {
@@ -418,17 +420,16 @@ export class StoreSurfaceController {
     });
   }
 
+  _requestRender(reason = 'store-surface-render') {
+    return this._host?.requestSurfaceRender?.({ reason, surfaceId: 'store' }) ?? this._host?.render?.(false);
+  }
+
   _setOptions(patch, rerender = true) {
-    this._host._shellSurfaceOptions = { ...this._host._shellSurfaceOptions, ...patch };
+    if (typeof this._host?.patchSurfaceOptions === 'function') {
+      this._host.patchSurfaceOptions(patch, { render: false });
+    }
     if (rerender) {
-      this._host.render(false);
-      if (patch?.splashComplete || patch?.enteredStore) {
-        queueMicrotask(() => {
-          if (this._host?._shellSurface === 'store' && this._host?._shellSurfaceOptions?.splashComplete) {
-            this._host.render(false);
-          }
-        });
-      }
+      void this._requestRender('store-options-change');
     }
   }
 

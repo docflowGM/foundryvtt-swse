@@ -8,6 +8,7 @@
  */
 
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class GMJobBoardSurfaceController {
   constructor(host) {
@@ -116,7 +117,7 @@ export class GMJobBoardSurfaceController {
         }
         this.host.selectedJobThreadId = result.threadId || this.host.selectedJobThreadId;
         ui.notifications?.info?.(`Job contract ${text('status') === 'draft' ? 'drafted' : 'posted'}.`);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -135,7 +136,7 @@ export class GMJobBoardSurfaceController {
         if (!threadId || !amount) return;
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout-distribution', payoutMode, recipientId, recipientIds, amount, partyFundCutPercent });
         this.host.selectedJobThreadId = threadId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -153,7 +154,7 @@ export class GMJobBoardSurfaceController {
         if (!threadId || !amount) return;
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-xp-payout', payoutMode, recipientId, recipientIds, amount });
         this.host.selectedJobThreadId = threadId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -163,7 +164,7 @@ export class GMJobBoardSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.selectedJobThreadId = event.currentTarget.dataset.jobSelect || null;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -178,7 +179,7 @@ export class GMJobBoardSurfaceController {
         const statusNote = this._readStatusNote(pageElement, threadId);
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status, statusNote });
         this.host.selectedJobThreadId = threadId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -194,7 +195,7 @@ export class GMJobBoardSurfaceController {
         const objectiveNote = this._readObjectiveNote(pageElement, objectiveId, event.currentTarget);
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus, objectiveNote });
         this.host.selectedJobThreadId = threadId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -227,7 +228,7 @@ export class GMJobBoardSurfaceController {
         if (!threadId || !recipientId || !amount) return;
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'job-payout', recipientId, amount, partyFundCutPercent });
         this.host.selectedJobThreadId = threadId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -247,7 +248,7 @@ export class GMJobBoardSurfaceController {
         if (distributionMode !== 'single-copy' && !recipientIds.length) return;
         await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-items', recipientId, recipientIds, distributionMode, itemUuids });
         this.host.selectedJobThreadId = threadId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }

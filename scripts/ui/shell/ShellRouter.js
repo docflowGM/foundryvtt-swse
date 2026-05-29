@@ -14,6 +14,7 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class ShellRouter {
   /** @type {Map<string, object>} actorId → shell host instance */
@@ -59,6 +60,25 @@ export class ShellRouter {
   }
 
   /**
+   * Request a shell repaint through the coordinated render path when available.
+   * This avoids bypassing ShellSurfaceState preservation from router-driven
+   * surface, overlay, and drawer changes.
+   *
+   * @param {object} shell
+   * @param {object} options
+   * @param {string} options.reason
+   * @param {string} [options.surfaceId]
+   * @returns {Promise<object|void>}
+   */
+  static async _requestRender(shell, { reason = 'shell-router-render', surfaceId = shell?.shellSurface } = {}) {
+    if (!shell) return undefined;
+    if (typeof shell.requestSurfaceRender === 'function') {
+      return shell.requestSurfaceRender({ reason, surfaceId });
+    }
+    return requestShellRender(shell, { reason, surfaceId });
+  }
+
+  /**
    * Open a ROUTE surface on the actor's shell host.
    * If no shell is open, opens the actor sheet first (which registers as shell host).
    *
@@ -90,7 +110,7 @@ export class ShellRouter {
     }
 
     await shell.setSurface(surfaceId, options);
-    shell.render(false);
+    await this._requestRender(shell, { reason: 'router-open-surface', surfaceId });
 
     return shell;
   }
@@ -117,7 +137,7 @@ export class ShellRouter {
     if (!shell) return null;
 
     await shell.openOverlay(overlayId, options);
-    shell.render(false);
+    await this._requestRender(shell, { reason: 'router-open-overlay' });
 
     return shell;
   }
@@ -145,7 +165,7 @@ export class ShellRouter {
     if (!shell) return null;
 
     await shell.openDrawer(drawerId, options);
-    shell.render(false);
+    await this._requestRender(shell, { reason: 'router-open-drawer' });
 
     return shell;
   }
@@ -159,7 +179,7 @@ export class ShellRouter {
     const shell = this.getShell(actor.id);
     if (!shell) return;
     await shell.closeOverlay();
-    shell.render(false);
+    await this._requestRender(shell, { reason: 'router-close-overlay' });
   }
 
   /**
@@ -171,7 +191,7 @@ export class ShellRouter {
     const shell = this.getShell(actor.id);
     if (!shell) return;
     await shell.closeDrawer();
-    shell.render(false);
+    await this._requestRender(shell, { reason: 'router-close-drawer' });
   }
 
   /**
@@ -183,7 +203,7 @@ export class ShellRouter {
     const shell = this.getShell(actor.id);
     if (!shell) return;
     await shell.setSurface('sheet');
-    shell.render(false);
+    await this._requestRender(shell, { reason: 'router-return-to-sheet', surfaceId: 'sheet' });
   }
 
   /**
@@ -196,7 +216,7 @@ export class ShellRouter {
     const shell = this.getShell(actorId);
     if (!shell) return;
     if (shell.shellSurface !== 'sheet') {
-      shell.setSurface('sheet').then(() => shell.render(false));
+      shell.setSurface('sheet').then(() => this._requestRender(shell, { reason: 'router-notify-surface-closed', surfaceId: 'sheet' }));
     }
   }
 }

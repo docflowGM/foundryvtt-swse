@@ -6,6 +6,7 @@ import { HolonetStorage } from './subsystems/holonet-storage.js';
 import { HolonetDeliveryRouter } from './subsystems/holonet-delivery-router.js';
 import { HolonetProjectionRouter } from './subsystems/holonet-projection-router.js';
 import { HolonetNotificationService } from './subsystems/holonet-notification-service.js';
+import { MessengerNotificationBridge } from './subsystems/messenger-notification-bridge.js';
 import { HolonetFeedService } from './subsystems/holonet-feed-service.js';
 import { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 import { DELIVERY_STATE } from './contracts/enums.js';
@@ -92,9 +93,14 @@ export class HolonetEngine {
   static _notifyLocalRecipient(record) {
     const currentRecipientId = HolonetDeliveryRouter.getCurrentRecipientId();
     const isLocalRecipient = record.recipients?.some(r => r.id === currentRecipientId);
-    if (isLocalRecipient && record.type === 'notification') {
-      HolonetNotificationService.notify(record);
+    if (!isLocalRecipient) return;
+    if (record.type === 'notification') {
+      void MessengerNotificationBridge.shouldSuppressForRecipient(record, currentRecipientId).then((suppressed) => {
+        if (!suppressed) HolonetNotificationService.notify(record);
+      });
+      return;
     }
+    void MessengerNotificationBridge.notifyLocalMessengerRecord(record, currentRecipientId);
   }
 
   /** @private — Fire local hook so UI can react without waiting for socket sync */

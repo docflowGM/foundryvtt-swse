@@ -17,6 +17,7 @@
 import { ItemCustomizationWorkbench } from '/systems/foundryvtt-swse/scripts/apps/customization/item-customization-workbench.js';
 import { MentorTranslationIntegration } from '/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class WorkbenchSurfaceAdapter {
   /** @type {Map<string, WorkbenchSurfaceAdapter>} Registry per actor id */
@@ -53,7 +54,8 @@ export class WorkbenchSurfaceAdapter {
     }
 
     adapter._shellHost = shellHost;
-    adapter._ensureWorkbench(actor, options);
+    const state = adapter._getSurfaceState(options);
+    adapter._ensureWorkbench(actor, state);
     return adapter;
   }
 
@@ -139,21 +141,13 @@ export class WorkbenchSurfaceAdapter {
    * @param {object} options - Updated surface options from shell host
    */
   updateState(actor, options) {
+    const state = this._getSurfaceState(options);
     if (!this._workbench) {
-      this._ensureWorkbench(actor, options);
+      this._ensureWorkbench(actor, state);
       return;
     }
 
-    // Update selection state without rebuilding the whole workbench
-    if (options.category) {
-      this._workbench.selectedCategory = options.category;
-    }
-    if (options.itemId !== undefined) {
-      this._workbench.selectedItemId = options.itemId;
-    }
-    if (options.search !== undefined) {
-      this._workbench._setSearchForCategory?.(this._workbench.selectedCategory, options.search);
-    }
+    this._applySurfaceStateToWorkbench(state);
   }
 
   /**
@@ -171,6 +165,7 @@ export class WorkbenchSurfaceAdapter {
     try {
       if (typeof this._workbench.handleSurfaceAction === 'function') {
         await this._workbench.handleSurfaceAction(action, target);
+        this._syncStateFromWorkbench({ render: false });
         return;
       }
       SWSELogger.warn(`[WorkbenchSurfaceAdapter] Workbench is missing handleSurfaceAction for ${action}`);
@@ -180,6 +175,61 @@ export class WorkbenchSurfaceAdapter {
   }
 
   // ─── Private ────────────────────────────────────────────────────────────────
+
+  _getSurfaceState(options = {}) {
+    const stored = this._shellHost?.getSurfaceState?.('workbench') ?? {};
+    return { ...stored, ...(options ?? {}) };
+  }
+
+  _applySurfaceStateToWorkbench(options = {}) {
+    const workbench = this._workbench;
+    if (!workbench) return;
+
+    if (options.category !== undefined && options.category !== null) {
+      workbench.selectedCategory = options.category;
+    }
+    if (options.itemId !== undefined) {
+      workbench.selectedItemId = options.itemId || null;
+    }
+
+    const selectedByCategory = options.selectedByCategory;
+    if (selectedByCategory && typeof selectedByCategory === 'object') {
+      workbench._selectedByCategory = new Map(Object.entries(selectedByCategory).filter(([, value]) => value));
+    }
+
+    const searchByCategory = options.searchByCategory;
+    if (searchByCategory && typeof searchByCategory === 'object') {
+      workbench._searchByCategory = new Map(Object.entries(searchByCategory));
+    }
+
+    if (options.search !== undefined) {
+      workbench._setSearchForCategory?.(workbench.selectedCategory, options.search);
+    }
+  }
+
+  _syncStateFromWorkbench({ render = false, reason = 'workbench-state-sync' } = {}) {
+    const workbench = this._workbench;
+    if (!workbench || typeof this._shellHost?.patchSurfaceState !== 'function') return null;
+
+    const searchByCategory = workbench._searchByCategory instanceof Map
+      ? Object.fromEntries(workbench._searchByCategory.entries())
+      : {};
+    const selectedByCategory = workbench._selectedByCategory instanceof Map
+      ? Object.fromEntries(workbench._selectedByCategory.entries())
+      : {};
+
+    return this._shellHost.patchSurfaceState('workbench', {
+      category: workbench.selectedCategory ?? null,
+      itemId: workbench.selectedItemId ?? null,
+      search: workbench.search ?? '',
+      searchByCategory,
+      selectedByCategory
+    }, { render, reason });
+  }
+
+  async _requestShellRender(reason = 'workbench-render') {
+    await (requestShellRender(this._shellHost, { reason, surfaceId: 'workbench' }));
+  }
 
   _ensureWorkbench(actor, options) {
     const category = options.category || 'weapons';
@@ -206,22 +256,22 @@ export class WorkbenchSurfaceAdapter {
       // own ApplicationV2 window while operating inside the holopad.
       const self = this;
       this._workbench._renderPreservingUi = async function() {
-        SWSELogger.debug('[WorkbenchSurfaceAdapter] Intercepted _renderPreservingUi — redirecting to shell');
-        await self._shellHost?.render?.(false);
+        SWSELogger.debug('[WorkbenchSurfaceAdapter] Intercepted _renderPreservingUi — syncing state and redirecting to shell');
+        self._syncStateFromWorkbench({ render: false });
+        await self._requestShellRender('workbench-inline-render');
       };
       this._workbench.close = async function() {
         await self._shellHost?.setSurface?.('sheet');
-        await self._shellHost?.render?.(false);
+        await self._requestShellRender('workbench-close');
         return this;
       };
 
+      this._applySurfaceStateToWorkbench(options);
+      this._syncStateFromWorkbench({ render: false });
       SWSELogger.log(`[WorkbenchSurfaceAdapter] Initialized workbench for actor ${actor.name}`);
     } else {
-      // Update selection without rebuilding
-      if (itemId !== undefined) existing.selectedItemId = itemId;
-      if (category !== existing.selectedCategory) {
-        existing.selectedCategory = category;
-      }
+      this._applySurfaceStateToWorkbench({ category, itemId, mode, ...options });
+      this._syncStateFromWorkbench({ render: false });
     }
   }
 }

@@ -339,11 +339,11 @@ export class ShellSurfaceRegistry {
 
       // Sync resolved state back to the shell host surface options
       if (shellHost) {
-        shellHost._shellSurfaceOptions = {
-          ...shellHost._shellSurfaceOptions,
+        const patch = {
           selectedCategoryId: appData.activeCategoryId,
           selectedItemId: appData.activeItemId
         };
+        if (typeof shellHost.patchSurfaceOptions === 'function') shellHost.patchSurfaceOptions(patch, { render: false });
       }
 
       return {

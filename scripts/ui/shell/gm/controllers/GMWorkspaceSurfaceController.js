@@ -8,6 +8,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class GMWorkspaceSurfaceController {
   constructor(host) {
@@ -88,7 +89,7 @@ export class GMWorkspaceSurfaceController {
         }
         ui?.notifications?.info?.(`Faction relationship prepared: ${faction.name}.`);
         form.reset();
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -101,7 +102,7 @@ export class GMWorkspaceSurfaceController {
         if (!factionId) return;
         const ok = await FactionRegistryService.deleteFaction(factionId);
         if (ok) ui?.notifications?.info?.('Faction removed from the GM registry. Actor relationship flags are not deleted.');
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }

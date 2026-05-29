@@ -13,6 +13,7 @@ import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/su
 import { HolonewsGenerator } from '/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js';
 import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js';
 import { HolonetComposerAssist } from '/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class GMBulletinSurfaceController {
   constructor(host) {
@@ -56,7 +57,7 @@ export class GMBulletinSurfaceController {
         event.preventDefault();
         this.host.currentBulletinSection = event.currentTarget.dataset.bulletinSection;
         this.host.bulletinEditor = { section: this.host.currentBulletinSection, mode: 'create', recordId: null };
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -70,7 +71,7 @@ export class GMBulletinSurfaceController {
           mode: 'edit',
           recordId: event.currentTarget.dataset.recordId
         };
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -78,7 +79,7 @@ export class GMBulletinSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         await HolonetEngine.archiveRecord(event.currentTarget.dataset.recordId);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -89,7 +90,7 @@ export class GMBulletinSurfaceController {
         if (this.host.bulletinEditor?.recordId === event.currentTarget.dataset.recordId) {
           this.host.bulletinEditor = { section: this.host.currentBulletinSection, mode: 'create', recordId: null };
         }
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -105,7 +106,7 @@ export class GMBulletinSurfaceController {
           homeSlot: record.metadata?.homeSlot || 'feed'
         });
         await HolonetEngine.publish(record);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -122,7 +123,7 @@ export class GMBulletinSurfaceController {
         });
         await this.host._unpinOtherBulletins(record.id);
         await HolonetStorage.saveRecord(record);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -138,7 +139,7 @@ export class GMBulletinSurfaceController {
           homeSlot: 'feed'
         });
         await HolonetStorage.saveRecord(record);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -159,12 +160,12 @@ export class GMBulletinSurfaceController {
       wireFilterForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         this.host._applyHolonewsWireFilters(new FormData(wireFilterForm));
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
       wireFilterForm.querySelectorAll('select, input[type="checkbox"]').forEach((field) => {
         field.addEventListener('change', async () => {
           this.host._applyHolonewsWireFilters(new FormData(wireFilterForm));
-          await this.host.render(false);
+          await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
         }, { signal });
       });
     }
@@ -174,12 +175,12 @@ export class GMBulletinSurfaceController {
       archiveFilterForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         this.host._applyHolonewsArchiveFilters(new FormData(archiveFilterForm));
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
       archiveFilterForm.querySelectorAll('select').forEach((field) => {
         field.addEventListener('change', async () => {
           this.host._applyHolonewsArchiveFilters(new FormData(archiveFilterForm));
-          await this.host.render(false);
+          await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
         }, { signal });
       });
     }
@@ -188,7 +189,7 @@ export class GMBulletinSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -198,7 +199,7 @@ export class GMBulletinSurfaceController {
         this.host.holonewsSeedOffset = 0;
         this.host.holonewsHideUsedSeeds = true;
         this.host.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
   }
@@ -229,7 +230,7 @@ export class GMBulletinSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.holonewsSeedOffset = (Number(this.host.holonewsSeedOffset) || 0) + 12;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -237,7 +238,7 @@ export class GMBulletinSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.holonewsSeedOffset = Math.max(0, (Number(this.host.holonewsSeedOffset) || 0) - 12);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -247,7 +248,7 @@ export class GMBulletinSurfaceController {
         const filteredCount = Number(button.dataset.filteredCount || 0);
         const ceiling = filteredCount > 0 ? filteredCount : HolonewsGenerator.count(this.host.holonewsWireFilters);
         this.host.holonewsSeedOffset = ceiling > 12 ? Math.floor(Math.random() * Math.max(1, ceiling - 12)) : 0;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -294,7 +295,7 @@ export class GMBulletinSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.selectedBulletinPreviewUserId = event.currentTarget.dataset.selectBulletinPreviewUser || null;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -475,7 +476,7 @@ export class GMBulletinSurfaceController {
           situation: formData.get('situation')
         });
         this.host.selectedPlayerStateActorId = actorId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     }
 
@@ -483,7 +484,7 @@ export class GMBulletinSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.selectedPlayerStateActorId = event.currentTarget.dataset.selectPlayerState;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -497,7 +498,7 @@ export class GMBulletinSurfaceController {
           objective: formData.get('objective'),
           situation: formData.get('situation')
         });
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     }
   }

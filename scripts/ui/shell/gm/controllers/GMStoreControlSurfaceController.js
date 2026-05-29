@@ -10,6 +10,8 @@ import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { normalizeCredits } from '/systems/foundryvtt-swse/scripts/utils/credit-normalization.js';
 import { GMStoreOperationsService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMStoreOperationsService.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { mutateAndRepaint, mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 export class GMStoreControlSurfaceController {
   constructor(host) {
@@ -43,39 +45,67 @@ export class GMStoreControlSurfaceController {
         const tabId = ev.currentTarget.dataset.storeTab;
         if (!tabId) return;
         this.host.currentTab = tabId;
+        this.host.patchSurfaceState?.('store', { currentTab: tabId }, { render: false });
         this._activateStoreTab(pageElement, tabId);
       }, { signal });
     }
+  }
+
+  async _render(reason = 'gm-store-render') {
+    await (requestShellRender(this.host, { reason, surfaceId: 'store' }));
+  }
+
+  async _mutate(mutation, reason = 'gm-store-mutation') {
+    return mutateShellOnly(this.host, mutation, { reason, surfaceId: 'store' });
+  }
+
+  async _mutateAndRender(mutation, reason = 'gm-store-mutation') {
+    return mutateAndRepaint(this.host, mutation, { reason, surfaceId: 'store' });
   }
 
   _wireStoreOptions(pageElement, signal) {
     const storeOpenToggle = pageElement.querySelector('[name="storeOpen"]');
     if (storeOpenToggle) {
       storeOpenToggle.addEventListener('change', async (ev) => {
-        await HouseRuleService.set('storeOpen', ev.currentTarget.checked);
-        this.host.render(false);
+        await this._mutateAndRender(() => HouseRuleService.set('storeOpen', ev.currentTarget.checked), 'gm-store-open-toggle');
       }, { signal });
     }
 
     const storeMarkupSlider = pageElement.querySelector('[name="storeMarkup"]');
     if (storeMarkupSlider) {
-      storeMarkupSlider.addEventListener('input', async (ev) => {
+      const commitMarkup = async (input) => {
+        const value = normalizeCredits(input.value);
+        await this._mutate(async () => {
+          await HouseRuleService.set('storeMarkup', value);
+          await HouseRuleService.set('globalBuyModifier', value);
+        }, 'gm-store-markup-commit');
+        this.host.patchSurfaceState?.('store', { storeMarkup: value }, { render: false });
+      };
+      storeMarkupSlider.addEventListener('input', (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
         const valueLabel = pageElement.querySelector('[data-store-markup-value]');
         if (valueLabel) valueLabel.textContent = `${value}%`;
-        await HouseRuleService.set('storeMarkup', value);
-        await HouseRuleService.set('globalBuyModifier', value);
+        this.host.patchSurfaceState?.('store', { storeMarkup: value }, { render: false });
       }, { signal });
+      storeMarkupSlider.addEventListener('change', async (ev) => commitMarkup(ev.currentTarget), { signal });
+      storeMarkupSlider.addEventListener('blur', async (ev) => commitMarkup(ev.currentTarget), { signal });
     }
 
     const storeDiscountSlider = pageElement.querySelector('[name="storeDiscount"]');
     if (storeDiscountSlider) {
-      storeDiscountSlider.addEventListener('input', async (ev) => {
+      const commitDiscount = async (input) => {
+        const value = normalizeCredits(input.value);
+        await this._mutate(() => HouseRuleService.set('storeDiscount', value), 'gm-store-discount-commit');
+        this.host.patchSurfaceState?.('store', { storeDiscount: value }, { render: false });
+      };
+      storeDiscountSlider.addEventListener('input', (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
         const valueLabel = pageElement.querySelector('[data-store-discount-value]');
         if (valueLabel) valueLabel.textContent = `${value}%`;
-        await HouseRuleService.set('storeDiscount', value);
+        this.host.patchSurfaceState?.('store', { storeDiscount: value }, { render: false });
       }, { signal });
+      storeDiscountSlider.addEventListener('change', async (ev) => commitDiscount(ev.currentTarget), { signal });
+      storeDiscountSlider.addEventListener('blur', async (ev) => commitDiscount(ev.currentTarget), { signal });
     }
 
     for (const rarity of ['standard', 'licensed', 'rare', 'restricted', 'military', 'illegal', 'common', 'uncommon']) {
@@ -84,7 +114,7 @@ export class GMStoreControlSurfaceController {
       checkbox.addEventListener('change', async (ev) => {
         const visibleRarities = SettingsHelper.getObject('visibleRarities', {});
         visibleRarities[rarity] = ev.currentTarget.checked;
-        await SettingsHelper.set('visibleRarities', visibleRarities);
+        await this._mutate(() => SettingsHelper.set('visibleRarities', visibleRarities), 'gm-store-visible-rarities');
       }, { signal });
     }
 
@@ -94,32 +124,38 @@ export class GMStoreControlSurfaceController {
       checkbox.addEventListener('change', async (ev) => {
         const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {});
         visibleTypes[type] = ev.currentTarget.checked;
-        await SettingsHelper.set('visibleItemTypes', visibleTypes);
+        await this._mutate(() => SettingsHelper.set('visibleItemTypes', visibleTypes), 'gm-store-visible-item-types');
       }, { signal });
     }
 
     const autoAcceptToggle = pageElement.querySelector('[name="autoAcceptSelling"]');
     if (autoAcceptToggle) {
       autoAcceptToggle.addEventListener('change', async (ev) => {
-        await HouseRuleService.set('autoAcceptItemSales', ev.currentTarget.checked);
-        this.host.render(false);
+        await this._mutateAndRender(() => HouseRuleService.set('autoAcceptItemSales', ev.currentTarget.checked), 'gm-store-auto-accept-toggle');
       }, { signal });
     }
 
     const autoSaleSlider = pageElement.querySelector('[name="autoSalePercent"]');
     if (autoSaleSlider) {
-      autoSaleSlider.addEventListener('input', async (ev) => {
+      const commitAutoSale = async (input) => {
+        const value = normalizeCredits(input.value);
+        await this._mutate(() => HouseRuleService.set('automaticSalePercentage', value), 'gm-store-auto-sale-commit');
+        this.host.patchSurfaceState?.('store', { automaticSalePercentage: value }, { render: false });
+      };
+      autoSaleSlider.addEventListener('input', (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
         const valueLabel = pageElement.querySelector('[data-auto-sale-value]');
         if (valueLabel) valueLabel.textContent = `${value}%`;
-        await HouseRuleService.set('automaticSalePercentage', value);
+        this.host.patchSurfaceState?.('store', { automaticSalePercentage: value }, { render: false });
       }, { signal });
+      autoSaleSlider.addEventListener('change', async (ev) => commitAutoSale(ev.currentTarget), { signal });
+      autoSaleSlider.addEventListener('blur', async (ev) => commitAutoSale(ev.currentTarget), { signal });
     }
 
     const disallowToggle = pageElement.querySelector('[name="disallowAutoSellNoPrice"]');
     if (disallowToggle) {
       disallowToggle.addEventListener('change', async (ev) => {
-        await HouseRuleService.set('disallowAutoSellNoPrice', ev.currentTarget.checked);
+        await this._mutateAndRender(() => HouseRuleService.set('disallowAutoSellNoPrice', ev.currentTarget.checked), 'gm-store-disallow-no-price');
       }, { signal });
     }
   }
@@ -130,7 +166,7 @@ export class GMStoreControlSurfaceController {
         const index = Number(ev.currentTarget.dataset.index);
         await GMStoreOperationsService.rollbackTransaction(index, {
           transactions: this.host.transactions,
-          render: () => this.host.render(false)
+          render: () => this._render('gm-store-rollback')
         });
       }, { signal });
     }
@@ -216,7 +252,7 @@ export class GMStoreControlSurfaceController {
     policy.updatedBy = game.user?.id || null;
     policies[itemId] = policy;
 
-    await SettingsHelper.set('storeInventoryPolicies', policies);
+    await this._mutate(() => SettingsHelper.set('storeInventoryPolicies', policies), 'gm-store-inventory-policy');
   }
 
 
@@ -248,7 +284,7 @@ export class GMStoreControlSurfaceController {
           amount,
           reason
         }, {
-          render: () => this.host.render(false)
+          render: () => this._render('gm-store-sale-resolution')
         });
       }, { signal });
     }

@@ -6,6 +6,7 @@ import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
+import { requestShellRender } from "/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js";
 
 /**
  * GMApprovalOperationsService
@@ -76,7 +77,7 @@ export class GMApprovalOperationsService {
     host.selectedApprovalKey = `custom:${index}`;
     host.approvalEditMode = true;
     host.approvalDenyMode = false;
-    await host.render(false);
+    await (requestShellRender(host, { reason: 'gm-approval-operation-refresh' }));
     return true;
   }
 
@@ -674,7 +675,7 @@ export class GMApprovalOperationsService {
     host.selectedApprovalKey = null;
     host.approvalEditMode = false;
     host.approvalDenyMode = false;
-    await host.render(false);
+    await (requestShellRender(host, { reason: 'gm-approval-operation-refresh' }));
   }
 }
 

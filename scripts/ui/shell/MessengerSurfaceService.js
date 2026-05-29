@@ -6,6 +6,7 @@ import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holone
 
 export class MessengerSurfaceService {
   static async buildViewModel(actor, options = {}) {
-    return HolonetMessengerService.buildViewModel(actor, options);
+    const { uiState: _uiState, ...serviceOptions } = options || {};
+    return HolonetMessengerService.buildViewModel(actor, serviceOptions);
   }
 }

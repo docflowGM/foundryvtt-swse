@@ -7,6 +7,7 @@
 
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { mutateAndRepaint } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 export class GMHouseRulesSurfaceController {
   constructor(host) {
@@ -28,7 +29,10 @@ export class GMHouseRulesSurfaceController {
         if (!key) return;
 
         try {
-          await HouseRuleService.set(key, checked);
+          await mutateAndRepaint(this.host, () => HouseRuleService.set(key, checked), {
+            reason: 'gm-house-rule-toggle',
+            surfaceId: 'house-rules'
+          });
           SWSELogger.info(`[GMDatapad House Rules] Updated ${key} = ${checked}`);
         } catch (err) {
           SWSELogger.error(`[GMDatapad House Rules] Failed to update ${key}:`, err);

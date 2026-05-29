@@ -4,6 +4,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { AlliesSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceService.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class AlliesSurfaceController {
   constructor(host, actor) {
@@ -11,6 +12,7 @@ export class AlliesSurfaceController {
     this._actor = actor;
     this._abort = null;
     this._hookListeners = [];
+    this._refreshTimer = null;
   }
 
   attach(root) {
@@ -20,7 +22,16 @@ export class AlliesSurfaceController {
     const { signal } = this._abort;
     const surface = root.querySelector('[data-shell-region="surface-allies"]');
     if (!surface) return;
-    this._wireFactionRefreshHooks();
+    this._wireFactionRefreshHooks(surface);
+    this._restoreDraftForms(surface);
+
+    surface.addEventListener('input', (ev) => {
+      this._captureDraftFromEvent(ev);
+    }, { signal });
+
+    surface.addEventListener('change', (ev) => {
+      this._captureDraftFromEvent(ev);
+    }, { signal });
 
     surface.addEventListener('click', async (ev) => {
       const target = ev.target instanceof Element ? ev.target.closest('[data-allies-action]') : null;
@@ -52,21 +63,28 @@ export class AlliesSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
+    if (this._refreshTimer) {
+      clearTimeout(this._refreshTimer);
+      this._refreshTimer = null;
+    }
     for (const [hook, fn] of this._hookListeners) Hooks.off(hook, fn);
     this._hookListeners = [];
   }
 
 
-  _wireFactionRefreshHooks() {
+  _wireFactionRefreshHooks(surface = null) {
     for (const [hook, fn] of this._hookListeners) Hooks.off(hook, fn);
     this._hookListeners = [];
     // Debounced refresh — collapses multiple hook fires in the same tick into one render.
-    let _refreshTimer = null;
     const refresh = () => {
-      if (_refreshTimer) return;
-      _refreshTimer = setTimeout(() => {
-        _refreshTimer = null;
-        this._host?.render?.(false);
+      if (this._refreshTimer) return;
+      this._refreshTimer = setTimeout(() => {
+        this._refreshTimer = null;
+        if (this._isEditingDraft(surface)) {
+          this._captureAllDraftForms(surface);
+          return;
+        }
+        this._requestRender('allies-hook-refresh');
       }, 0);
     };
     const actorRefresh = (payload = {}) => {
@@ -151,32 +169,28 @@ export class AlliesSurfaceController {
   }
 
   async _selectTab(tabId) {
-    await this._host.setSurface('allies', {
-      ...(this._host._shellSurfaceOptions ?? {}),
-      activeTab: tabId || 'companions'
-    });
-    this._host.render(false);
+    this._patchAlliesState({ activeTab: tabId || 'companions' });
+    this._requestRender('allies-tab-change');
   }
 
   async _toggleHistory() {
-    const current = this._host._shellSurfaceOptions ?? {};
-    await this._host.setSurface('allies', {
-      ...current,
+    const current = this._getAlliesState();
+    this._patchAlliesState({
       showHistory: !(current.showHistory === true || current.showHistory === 'true')
     });
-    this._host.render(false);
+    this._requestRender('allies-history-toggle');
   }
 
   async _buildFollower(slotId) {
     const { launchFollowerProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
     await launchFollowerProgression(this._actor, { slotId, source: 'allies' });
-    this._host.render(false);
+    this._requestRender('allies-build-follower');
   }
 
   async _buildMinion(slotId) {
     const { launchMinionCreation } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
     await launchMinionCreation(this._actor, { slotId, source: 'allies' });
-    this._host.render(false);
+    this._requestRender('allies-build-minion');
   }
 
   _openActor(actorId) {
@@ -197,7 +211,7 @@ export class AlliesSurfaceController {
       await FollowerCreator.updateFollowersForLevelUp(this._actor);
     }
     ui?.notifications?.info?.('Follower recalculated from owner level.');
-    this._host.render(false);
+    this._requestRender('allies-follower-level-up');
   }
 
   async _syncMinions(actorId) {
@@ -209,13 +223,13 @@ export class AlliesSurfaceController {
       await MinionCreator.updateMinionsForOwnerLevel(this._actor);
     }
     ui?.notifications?.info?.('Minion synced to owner heroic level - 2.');
-    this._host.render(false);
+    this._requestRender('allies-minion-sync');
   }
 
   async _requestBeastLevelUp(actorId) {
     const ok = await AlliesSurfaceService.requestBeastLevelUp(this._actor, actorId);
     if (ok) ui?.notifications?.info?.('Beast level-up request sent to the chat for GM approval.');
-    this._host.render(false);
+    this._requestRender('allies-beast-level-request');
   }
 
   async _fireAlly(actorId) {
@@ -231,13 +245,13 @@ export class AlliesSurfaceController {
     if (!shouldFire) return;
     const ok = await AlliesSurfaceService.dismissCompanion(this._actor, actorId);
     if (ok) ui?.notifications?.info?.(`${ally.name} moved to Previously Hired.`);
-    this._host.render(false);
+    this._requestRender('allies-fire-ally');
   }
 
   async _rehireAlly(actorId) {
     const ok = await AlliesSurfaceService.rehireCompanion(this._actor, actorId);
     if (ok) ui?.notifications?.info?.('Ally rehired and restored to the active list.');
-    this._host.render(false);
+    this._requestRender('allies-rehire-ally');
   }
 
   async _openGarage(actorId) {
@@ -247,13 +261,16 @@ export class AlliesSurfaceController {
       contextMode: 'modifyExisting',
       targetActorId: actorId || null
     });
-    this._host.render(false);
+    this._requestRender('allies-open-garage');
   }
 
   async _addFaction() {
     const ok = await AlliesSurfaceService.addFaction(this._actor);
-    if (ok) ui?.notifications?.info?.('Faction record created. Fill in the text fields and save when ready.');
-    this._host.render(false);
+    if (ok) {
+      ui?.notifications?.info?.('Faction record created. Fill in the text fields and save when ready.');
+      this._patchAlliesState({ activeTab: 'factions' });
+    }
+    this._requestRender('allies-add-faction');
   }
 
   async _saveFaction(target) {
@@ -262,7 +279,11 @@ export class AlliesSurfaceController {
     if (!form || !factionId) return this._notify('Faction form could not be found.');
     const data = this._collectFactionForm(form);
     const ok = await AlliesSurfaceService.saveFaction(this._actor, factionId, data);
-    if (ok) ui?.notifications?.info?.('Faction record saved.');
+    if (ok) {
+      ui?.notifications?.info?.('Faction record saved.');
+      this._clearDraftForForm(form);
+      this._requestRender('allies-save-faction');
+    }
   }
 
   async _removeFaction(factionId) {
@@ -277,7 +298,7 @@ export class AlliesSurfaceController {
     if (!shouldRemove) return;
     const ok = await AlliesSurfaceService.removeFaction(this._actor, factionId);
     if (ok) ui?.notifications?.info?.('Faction record removed.');
-    this._host.render(false);
+    this._requestRender('allies-remove-faction');
   }
 
   _collectFactionForm(form) {
@@ -301,8 +322,11 @@ export class AlliesSurfaceController {
 
   async _addBase() {
     const ok = await AlliesSurfaceService.addBase(this._actor);
-    if (ok) ui?.notifications?.info?.('Base record created. Fill in the text fields and save when ready.');
-    this._host.render(false);
+    if (ok) {
+      ui?.notifications?.info?.('Base record created. Fill in the text fields and save when ready.');
+      this._patchAlliesState({ activeTab: 'bases' });
+    }
+    this._requestRender('allies-add-base');
   }
 
   async _saveBase(target) {
@@ -311,7 +335,11 @@ export class AlliesSurfaceController {
     if (!form || !baseId) return this._notify('Base form could not be found.');
     const data = this._collectBaseForm(form);
     const ok = await AlliesSurfaceService.saveBase(this._actor, baseId, data);
-    if (ok) ui?.notifications?.info?.('Base record saved.');
+    if (ok) {
+      ui?.notifications?.info?.('Base record saved.');
+      this._clearDraftForForm(form);
+      this._requestRender('allies-save-base');
+    }
   }
 
   async _removeBase(baseId) {
@@ -326,7 +354,7 @@ export class AlliesSurfaceController {
     if (!shouldRemove) return;
     const ok = await AlliesSurfaceService.removeBase(this._actor, baseId);
     if (ok) ui?.notifications?.info?.('Base record removed.');
-    this._host.render(false);
+    this._requestRender('allies-remove-base');
   }
 
   _collectBaseForm(form) {
@@ -344,8 +372,11 @@ export class AlliesSurfaceController {
 
   async _addOrganization() {
     const ok = await AlliesSurfaceService.addOrganization(this._actor);
-    if (ok) ui?.notifications?.info?.('Organization record created. Players can describe it; the GM governs scale, score, benefits, bases, and statistics.');
-    this._host.render(false);
+    if (ok) {
+      ui?.notifications?.info?.('Organization record created. Players can describe it; the GM governs scale, score, benefits, bases, and statistics.');
+      this._patchAlliesState({ activeTab: 'organizations' });
+    }
+    this._requestRender('allies-add-organization');
   }
 
   async _saveOrganization(target) {
@@ -354,7 +385,11 @@ export class AlliesSurfaceController {
     if (!form || !organizationId) return this._notify('Organization form could not be found.');
     const data = this._collectOrganizationForm(form);
     const ok = await AlliesSurfaceService.saveOrganization(this._actor, organizationId, data);
-    if (ok) ui?.notifications?.info?.('Organization record saved.');
+    if (ok) {
+      ui?.notifications?.info?.('Organization record saved.');
+      this._clearDraftForForm(form);
+      this._requestRender('allies-save-organization');
+    }
   }
 
   async _removeOrganization(organizationId) {
@@ -369,7 +404,7 @@ export class AlliesSurfaceController {
     if (!shouldRemove) return;
     const ok = await AlliesSurfaceService.removeOrganization(this._actor, organizationId);
     if (ok) ui?.notifications?.info?.('Organization record removed.');
-    this._host.render(false);
+    this._requestRender('allies-remove-organization');
   }
 
   _collectOrganizationForm(form) {
@@ -390,6 +425,119 @@ export class AlliesSurfaceController {
       bases: String(formData.get('bases') ?? '').trim(),
       statistics: String(formData.get('statistics') ?? '').trim()
     };
+  }
+
+  _getAlliesState() {
+    return this._host?.getSurfaceState?.('allies') ?? this._host?._shellSurfaceOptions ?? {};
+  }
+
+  _patchAlliesState(patch = {}, options = {}) {
+    if (typeof this._host?.patchSurfaceState === 'function') {
+      return this._host.patchSurfaceState('allies', patch, options);
+    }
+    if (typeof this._host?.patchSurfaceOptions === 'function') {
+      return this._host.patchSurfaceOptions(patch, options);
+    }
+    return patch;
+  }
+
+  _requestRender(reason = 'allies-surface-render') {
+    if (typeof this._host?.requestSurfaceRender === 'function') {
+      return this._host.requestSurfaceRender({ reason, surfaceId: 'allies' });
+    }
+    return requestShellRender(this._host, { reason, surfaceId: 'allies' });
+  }
+
+  _draftForms() {
+    const state = this._getAlliesState();
+    return state.draftForms && typeof state.draftForms === 'object' ? state.draftForms : {};
+  }
+
+  _patchDraftForms(draftForms = {}) {
+    this._patchAlliesState({ draftForms });
+  }
+
+  _captureDraftFromEvent(ev) {
+    const form = ev?.target instanceof Element
+      ? ev.target.closest('.swse-allies-faction-form, .swse-allies-base-form, .swse-allies-organization-form')
+      : null;
+    if (!form) return;
+    this._captureDraftForm(form);
+  }
+
+  _captureAllDraftForms(surface) {
+    if (!surface) return;
+    const next = { ...this._draftForms() };
+    surface.querySelectorAll('.swse-allies-faction-form, .swse-allies-base-form, .swse-allies-organization-form').forEach(form => {
+      const key = this._formDraftKey(form);
+      if (key) next[key] = this._formDataObject(form);
+    });
+    this._patchDraftForms(next);
+  }
+
+  _captureDraftForm(form) {
+    const key = this._formDraftKey(form);
+    if (!key) return;
+    this._patchDraftForms({ ...this._draftForms(), [key]: this._formDataObject(form) });
+  }
+
+  _clearDraftForForm(form) {
+    const key = this._formDraftKey(form);
+    if (!key) return;
+    const next = { ...this._draftForms() };
+    delete next[key];
+    this._patchDraftForms(next);
+  }
+
+  _restoreDraftForms(surface) {
+    if (!surface) return;
+    const drafts = this._draftForms();
+    if (!Object.keys(drafts).length) return;
+    surface.querySelectorAll('.swse-allies-faction-form, .swse-allies-base-form, .swse-allies-organization-form').forEach(form => {
+      const key = this._formDraftKey(form);
+      if (!key || !drafts[key]) return;
+      this._applyFormDataObject(form, drafts[key]);
+    });
+  }
+
+  _formDraftKey(form) {
+    if (!form) return null;
+    if (form.matches?.('.swse-allies-faction-form')) return `faction:${form.dataset.factionId || ''}`;
+    if (form.matches?.('.swse-allies-base-form')) return `base:${form.dataset.baseId || ''}`;
+    if (form.matches?.('.swse-allies-organization-form')) return `organization:${form.dataset.organizationId || ''}`;
+    return null;
+  }
+
+  _formDataObject(form) {
+    const data = {};
+    for (const field of form.querySelectorAll('input[name], select[name], textarea[name]')) {
+      if (field.disabled) continue;
+      const name = field.name;
+      if (!name) continue;
+      if (field.type === 'checkbox') data[name] = field.checked === true;
+      else if (field.type === 'radio') {
+        if (field.checked) data[name] = field.value;
+      } else data[name] = field.value;
+    }
+    return data;
+  }
+
+  _applyFormDataObject(form, values = {}) {
+    if (!values || typeof values !== 'object') return;
+    for (const field of form.querySelectorAll('input[name], select[name], textarea[name]')) {
+      if (field.disabled) continue;
+      const name = field.name;
+      if (!Object.prototype.hasOwnProperty.call(values, name)) continue;
+      if (field.type === 'checkbox') field.checked = values[name] === true || values[name] === 'true';
+      else if (field.type === 'radio') field.checked = String(field.value) === String(values[name]);
+      else field.value = values[name] ?? '';
+    }
+  }
+
+  _isEditingDraft(surface) {
+    const active = document?.activeElement;
+    return !!(surface && active instanceof Element && surface.contains(active)
+      && active.closest?.('.swse-allies-faction-form, .swse-allies-base-form, .swse-allies-organization-form'));
   }
 
   _notify(message) {
@@ -423,7 +571,7 @@ export class AlliesSurfaceController {
 
     const ok = await AlliesSurfaceService.assignDroppedActor(this._actor, actor);
     if (ok) ui?.notifications?.info?.(`${actor.name} assigned to ${this._actor.name}'s Allies.`);
-    this._host.render(false);
+    this._requestRender('allies-drop-assign');
   }
 }
 

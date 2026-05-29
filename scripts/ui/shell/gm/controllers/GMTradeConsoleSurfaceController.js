@@ -8,6 +8,8 @@
 
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { mutateAndRepaint } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 export class GMTradeConsoleSurfaceController {
   constructor(host) {
@@ -26,7 +28,7 @@ export class GMTradeConsoleSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         this.host.selectedTradeRecordId = event.currentTarget.dataset.tradeSelect || null;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -43,7 +45,7 @@ export class GMTradeConsoleSurfaceController {
         const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo });
         if (!ok) ui?.notifications?.warn?.('Trade action did not complete. Check the console details for diagnostics.');
         this.host.selectedTradeRecordId = recordId;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -93,12 +95,13 @@ export class GMTradeConsoleSurfaceController {
       const numericKeys = ['holonetPartyFundDefaultCutPercent'];
 
       try {
-        for (const key of boolKeys) await game.settings.set(this.host.NS, key, data.get(key) === 'on');
-        for (const key of numericKeys) {
-          await game.settings.set(this.host.NS, key, Math.max(0, Math.min(100, Math.floor(Number(data.get(key) || 0) || 0))));
-        }
+        await mutateAndRepaint(this.host, async () => {
+          for (const key of boolKeys) await game.settings.set(this.host.NS, key, data.get(key) === 'on');
+          for (const key of numericKeys) {
+            await game.settings.set(this.host.NS, key, Math.max(0, Math.min(100, Math.floor(Number(data.get(key) || 0) || 0))));
+          }
+        }, { reason: 'gm-trade-policy-update', surfaceId: 'trade' });
         ui?.notifications?.info?.('Trade policy updated.');
-        await this.host.render(false);
       } catch (err) {
         SWSELogger.error('[GMTradeConsoleSurfaceController] Failed to save trade policy:', err);
         ui?.notifications?.error?.(`Trade policy update failed: ${err.message}`);

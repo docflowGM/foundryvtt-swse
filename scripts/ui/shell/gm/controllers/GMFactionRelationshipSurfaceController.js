@@ -1,6 +1,7 @@
 /** GM Faction Relationship Manager controller. */
 
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -58,7 +59,7 @@ export class GMFactionRelationshipSurfaceController {
         }
         ui.notifications?.info?.(`Faction ${faction.name} saved.`);
         form.reset();
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -86,7 +87,7 @@ export class GMFactionRelationshipSurfaceController {
           historyNote: 'GM registry edit'
         });
         ui.notifications?.info?.(`Registry faction ${faction.name} updated.`);
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -111,7 +112,7 @@ export class GMFactionRelationshipSurfaceController {
         });
         ui.notifications?.info?.(`${faction.name} attached to ${actor.name}.`);
         form.reset();
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -138,7 +139,7 @@ export class GMFactionRelationshipSurfaceController {
           status: 'active'
         });
         ui.notifications?.info?.('Faction relationship saved.');
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -162,7 +163,7 @@ export class GMFactionRelationshipSurfaceController {
         });
         ui.notifications?.info?.('Faction score adjusted.');
         form.reset();
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -181,27 +182,27 @@ export class GMFactionRelationshipSurfaceController {
           });
           if (!confirmed) return;
           await FactionRegistryService.deleteFaction(factionId);
-          await this.host.render(false);
+          await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
           return;
         }
         if (action === 'remove-relationship') {
           const actor = game.actors?.get?.(target.dataset.actorId);
           if (!actor) return;
           await FactionRegistryService.removeActorRelationship(actor, target.dataset.relationshipId);
-          await this.host.render(false);
+          await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
           return;
         }
         if (action === 'approve-suggestion') {
           await FactionRegistryService.approveSuggestedFaction({ actorId: target.dataset.actorId, factionRecordId: target.dataset.factionId });
           ui.notifications?.info?.('Faction suggestion approved.');
-          await this.host.render(false);
+          await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
           return;
         }
         if (action === 'reject-suggestion') {
           const reason = target.closest('[data-faction-suggestion-card]')?.querySelector('[name="rejectReason"]')?.value || '';
           await FactionRegistryService.rejectSuggestedFaction({ actorId: target.dataset.actorId, factionRecordId: target.dataset.factionId, reason });
           ui.notifications?.info?.('Faction suggestion rejected.');
-          await this.host.render(false);
+          await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
         }
       }, { signal });
     });

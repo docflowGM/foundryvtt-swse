@@ -8,6 +8,7 @@ import { HolonetStorage } from './holonet-storage.js';
 import { HolonetDeliveryRouter } from './holonet-delivery-router.js';
 import { HolonetMarkupService } from './holonet-markup-service.js';
 import { DELIVERY_STATE, SOURCE_FAMILY } from '../contracts/enums.js';
+import { MessengerNotificationBridge } from './messenger-notification-bridge.js';
 import { HolonetEngine } from '../holonet-engine.js';
 
 function formatTimestamp(value) {
@@ -60,13 +61,16 @@ export class HolonetNoticeCenterService {
     const records = await HolonetStorage.getUnreadRecordsForRecipient(recipientId, {
       deliveryStates: [DELIVERY_STATE.PUBLISHED]
     });
-    return records
+    const visibleRecords = await MessengerNotificationBridge.filterMutedRecords(records, recipientId);
+    return visibleRecords
       .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0) - new Date(a.publishedAt || a.createdAt || 0))
       .slice(0, limit);
   }
 
   static mapNotice(record, recipientId) {
     const body = record?.body || record?.title || '';
+    const threadId = MessengerNotificationBridge.threadIdForRecord(record);
+    const sourceRecordId = MessengerNotificationBridge.sourceRecordIdForNotice(record);
     return {
       id: record.id,
       title: record.title || categoryLabel(record),
@@ -77,16 +81,39 @@ export class HolonetNoticeCenterService {
       previewText: previewText(body, 120),
       previewHtml: HolonetMarkupService.preview(body, 120),
       isUnread: recipientId ? Boolean(record.isUnreadBy?.(recipientId)) : false,
-      sourceFamily: record.sourceFamily || 'system'
+      sourceFamily: record.sourceFamily || 'system',
+      threadId,
+      sourceRecordId,
+      actionSurface: record?.metadata?.actionSurface || (threadId ? 'messenger' : null),
+      actionLabel: record?.metadata?.actionLabel || (threadId ? 'Open Thread' : null)
     };
+  }
+
+
+  static _summarizeUnreadRecords(records = []) {
+    const unread = Array.isArray(records) ? records : [];
+    const summary = {
+      total: unread.length,
+      messages: unread.filter(r => r.type === 'message').length,
+      notifications: unread.filter(r => r.type === 'notification').length,
+      events: unread.filter(r => r.type === 'event').length,
+      requests: unread.filter(r => r.type === 'request').length,
+      transactions: unread.filter(r => String(r.intent).startsWith('system.transaction_')).length,
+      approvals: unread.filter(r => String(r.intent).includes('approval')).length,
+      mentor: unread.filter(r => r.sourceFamily === SOURCE_FAMILY.MENTOR).length,
+      bySourceFamily: unread.reduce((acc, record) => {
+        const key = record.sourceFamily || 'unknown';
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {})
+    };
+    return summary;
   }
 
   static async buildCenterVm({ actor = null, limit = 18, previewLimit = 3 } = {}) {
     const recipientId = this.currentRecipientId();
-    const [unreadRecords, unreadSummary] = await Promise.all([
-      this.getUnreadRecords(recipientId, limit),
-      recipientId ? HolonetEngine.getUnreadCountsForRecipient(recipientId, { bySourceFamily: true }) : Promise.resolve({ total: 0 })
-    ]);
+    const unreadRecords = await this.getUnreadRecords(recipientId, limit);
+    const unreadSummary = this._summarizeUnreadRecords(unreadRecords);
 
     const notices = unreadRecords.map(record => this.mapNotice(record, recipientId));
     const preview = notices.slice(0, previewLimit);

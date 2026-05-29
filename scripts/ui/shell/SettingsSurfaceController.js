@@ -10,6 +10,8 @@
 import { ThemeManager } from '/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -63,7 +65,7 @@ export class SettingsSurfaceController {
         ev.preventDefault();
         if (typeof this.host?.setSurface === 'function') {
           await this.host.setSurface('home');
-          this._render();
+          this._render('settings-return-home');
           return;
         }
         if (typeof this.host?._navigateTo === 'function') {
@@ -84,17 +86,19 @@ export class SettingsSurfaceController {
         if (!themeKey) return;
 
         try {
-          await ThemeManager.setTheme({ theme: themeKey });
-
-          if (this.persistActorTheme && this.actor?.setFlag) {
-            await this.actor.setFlag(NS, 'sheetTheme', themeKey);
-          }
+          await this._mutate(async () => {
+            await ThemeManager.setTheme({ theme: themeKey });
+            if (this.persistActorTheme && this.actor?.setFlag) {
+              await this.actor.setFlag(NS, 'sheetTheme', themeKey);
+            }
+          }, { reason: 'settings-theme-preset' });
 
           this._applyThemeToRenderedShell(root, { themeKey });
+          this._patchSettingsState({ theme: themeKey, pendingControls: {} });
           settingsRoot.querySelectorAll('[data-theme-preset]').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.themePreset === themeKey);
           });
-          this._render();
+          this._render('settings-theme-preset');
         } catch (err) {
           this.logger.error?.('[SettingsSurfaceController] Error setting theme:', err);
           ui.notifications?.error?.(`Failed to set theme: ${err.message}`);
@@ -110,8 +114,12 @@ export class SettingsSurfaceController {
         const shellColor = el.dataset.shellColor;
         if (!shellColor) return;
         try {
-          await ThemeManager.setTheme({ shellColor });
-          this._render();
+          await this._mutate(() => ThemeManager.setTheme({ shellColor }), { reason: 'settings-shell-color' });
+          this._patchSettingsState({ shellColor });
+          settingsRoot.querySelectorAll('[data-shell-color]').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.shellColor === shellColor);
+          });
+          this._render('settings-shell-color');
         } catch (err) {
           this.logger.error?.('[SettingsSurfaceController] Error setting shell color:', err);
           ui.notifications?.error?.(`Failed to set shell color: ${err.message}`);
@@ -127,17 +135,19 @@ export class SettingsSurfaceController {
         const motionStyle = el.dataset.motionStyle;
         if (!motionStyle) return;
         try {
-          await ThemeManager.setTheme({ motionStyle, reducedMotion: motionStyle === 'off' });
-
-          if (this.persistActorTheme && this.actor?.setFlag) {
-            await this.actor.setFlag(NS, 'sheetMotionStyle', motionStyle);
-          }
+          await this._mutate(async () => {
+            await ThemeManager.setTheme({ motionStyle, reducedMotion: motionStyle === 'off' });
+            if (this.persistActorTheme && this.actor?.setFlag) {
+              await this.actor.setFlag(NS, 'sheetMotionStyle', motionStyle);
+            }
+          }, { reason: 'settings-motion-style' });
 
           this._applyThemeToRenderedShell(root, { motionStyle });
+          this._patchSettingsState({ motionStyle, reducedMotion: motionStyle === 'off', pendingControls: {} });
           settingsRoot.querySelectorAll('[data-motion-style]').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.motionStyle === motionStyle);
           });
-          this._render();
+          this._render('settings-motion-style');
         } catch (err) {
           this.logger.error?.('[SettingsSurfaceController] Error setting motion style:', err);
           ui.notifications?.error?.(`Failed to set motion style: ${err.message}`);
@@ -148,14 +158,28 @@ export class SettingsSurfaceController {
 
   _wireDisplayControls(settingsRoot, signal) {
     settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
-      el.addEventListener('input', async ev => {
+      const preview = ev => {
         const key = el.dataset.themeControl;
-        if (!key) return;
+        if (!key) return null;
         const value = Number(ev.currentTarget?.value ?? el.value);
-        if (!Number.isFinite(value)) return;
+        if (!Number.isFinite(value)) return null;
+        this._updateControlLabel(el, value);
+        this._patchPendingControl(key, value);
+        ThemeManager.applyTheme({ [key]: value });
+        return { key, value };
+      };
+
+      el.addEventListener('input', ev => {
+        preview(ev);
+      }, { signal });
+
+      el.addEventListener('change', async ev => {
+        const result = preview(ev);
+        if (!result) return;
         try {
-          await ThemeManager.setTheme({ [key]: value });
-          this._render();
+          await this._mutate(() => ThemeManager.setTheme({ [result.key]: result.value }), { reason: 'settings-display-control-commit' });
+          this._clearPendingControl(result.key);
+          this._render('settings-display-control-commit');
         } catch (err) {
           this.logger.error?.('[SettingsSurfaceController] Error updating display control:', err);
         }
@@ -171,8 +195,11 @@ export class SettingsSurfaceController {
         if (!key) return;
         try {
           const current = ThemeManager.getTheme() || ThemeManager.defaults;
-          await ThemeManager.setTheme({ [key]: !current[key] });
-          this._render();
+          const nextValue = !current[key];
+          await this._mutate(() => ThemeManager.setTheme({ [key]: nextValue }), { reason: 'settings-toggle' });
+          this._patchSettingsState({ [key]: nextValue });
+          el.classList.toggle('on', nextValue);
+          this._render('settings-toggle');
         } catch (err) {
           this.logger.error?.('[SettingsSurfaceController] Error toggling theme setting:', err);
         }
@@ -187,8 +214,13 @@ export class SettingsSurfaceController {
         const language = el.dataset.languageSetting || el.dataset.languageMode;
         if (!language) return;
         try {
-          await ThemeManager.setTheme({ language });
-          this._render();
+          await this._mutate(() => ThemeManager.setTheme({ language }), { reason: 'settings-language' });
+          this._patchSettingsState({ language });
+          settingsRoot.querySelectorAll('[data-language-setting], [data-language-mode]').forEach(btn => {
+            const btnLanguage = btn.dataset.languageSetting || btn.dataset.languageMode;
+            btn.classList.toggle('active', btnLanguage === language);
+          });
+          this._render('settings-language');
         } catch (err) {
           this.logger.error?.('[SettingsSurfaceController] Error setting language:', err);
         }
@@ -200,12 +232,15 @@ export class SettingsSurfaceController {
     settingsRoot.querySelector('[data-action="reset-theme-defaults"]')?.addEventListener('click', async ev => {
       ev.preventDefault();
       try {
-        await ThemeManager.setTheme(ThemeManager.defaults);
-        if (this.persistActorTheme && this.actor?.unsetFlag) {
-          await this.actor.unsetFlag(NS, 'sheetTheme');
-          await this.actor.unsetFlag(NS, 'sheetMotionStyle');
-        }
-        this._render();
+        await this._mutate(async () => {
+          await ThemeManager.setTheme(ThemeManager.defaults);
+          if (this.persistActorTheme && this.actor?.unsetFlag) {
+            await this.actor.unsetFlag(NS, 'sheetTheme');
+            await this.actor.unsetFlag(NS, 'sheetMotionStyle');
+          }
+        }, { reason: 'settings-reset-defaults' });
+        this._patchSettingsState({ ...ThemeManager.defaults, pendingControls: {} });
+        this._render('settings-reset-defaults');
       } catch (err) {
         this.logger.error?.('[SettingsSurfaceController] Error resetting theme defaults:', err);
         ui.notifications?.error?.(`Failed to restore defaults: ${err.message}`);
@@ -225,9 +260,55 @@ export class SettingsSurfaceController {
     }
   }
 
-  _render() {
-    if (typeof this.host?.render === 'function') {
-      this.host.render(false);
+  _updateControlLabel(input, value) {
+    const label = input?.closest?.('.swse-settings-control')?.querySelector?.('label span');
+    if (label) label.textContent = String(value);
+  }
+
+  _settingsState() {
+    return this.host?.getSurfaceState?.('settings') ?? this.host?.shellSurfaceOptions ?? {};
+  }
+
+  _patchPendingControl(key, value) {
+    const current = this._settingsState();
+    this._patchSettingsState({
+      pendingControls: {
+        ...(current.pendingControls && typeof current.pendingControls === 'object' ? current.pendingControls : {}),
+        [key]: value
+      }
+    });
+  }
+
+  _clearPendingControl(key) {
+    const current = this._settingsState();
+    const pending = { ...(current.pendingControls && typeof current.pendingControls === 'object' ? current.pendingControls : {}) };
+    delete pending[key];
+    this._patchSettingsState({ pendingControls: pending });
+  }
+
+  _patchSettingsState(patch = {}, options = {}) {
+    if (typeof this.host?.patchSurfaceState === 'function') {
+      return this.host.patchSurfaceState('settings', patch, options);
     }
+    if (typeof this.host?.patchSurfaceOptions === 'function') {
+      return this.host.patchSurfaceOptions(patch, options);
+    }
+    return patch;
+  }
+
+  _mutate(mutation, { reason = 'settings-mutation' } = {}) {
+    return mutateShellOnly(this.host, mutation, { reason, surfaceId: 'settings' });
+  }
+
+  _render(reason = 'settings-surface-render') {
+    if (typeof this.host?.requestSurfaceRender === 'function') {
+      return this.host.requestSurfaceRender({ reason, surfaceId: 'settings' });
+    }
+    if (typeof this.host?.render === 'function') {
+      return requestShellRender(this.host, { reason, surfaceId: 'settings' });
+    }
+    return undefined;
   }
 }
+
+export default SettingsSurfaceController;

@@ -15,6 +15,7 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 export class ProgressionSurfaceAdapter {
   /** @type {Map<string, ProgressionSurfaceAdapter>} Registry per actor id */
@@ -228,7 +229,7 @@ export class ProgressionSurfaceAdapter {
 
       const event = { preventDefault: () => {}, stopPropagation: () => {} };
       await this._app._onNextStep(event, null);
-      await this._shellHost?.render?.(false);
+      await requestShellRender(this._shellHost, { reason: 'progression-surface-refresh', surfaceId: this.mode === 'chargen' ? 'chargen' : 'progression' });
       return true;
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Failed to advance past intro:', err);
@@ -496,7 +497,7 @@ export class ProgressionSurfaceAdapter {
         this._app.currentStepIndex = index;
         await this._app._activateStep?.(index);
       }
-      await this._shellHost?.render?.(false);
+      await requestShellRender(this._shellHost, { reason: 'progression-surface-refresh', surfaceId: this.mode === 'chargen' ? 'chargen' : 'progression' });
       return true;
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Failed to navigate to requested step:', err);
@@ -593,7 +594,7 @@ export class ProgressionSurfaceAdapter {
           const focusedName = focusedElement?.getAttribute?.('name') || null;
           const focusedAction = focusedElement?.dataset?.action || null;
 
-          await self._shellHost?.render?.(false);
+          await requestShellRender(self._shellHost, { reason: 'progression-surface-refresh', surfaceId: self.mode === 'chargen' ? 'chargen' : 'progression' });
 
           // After a shell-host render, immediately rebind the inline progression DOM.
           // Intro splash stages call shell.render() during the animation; without this

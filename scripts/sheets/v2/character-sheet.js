@@ -31,6 +31,7 @@ import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/s
 import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceController.js";
+import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
@@ -63,6 +64,10 @@ import { handleFormSubmission, isDirectFieldMutationPath } from "/systems/foundr
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Phase 11: Shell system for surface routing (progression, chargen, upgrade)
 import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
+import { ShellSurfaceState } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceState.js";
+import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
+import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js";
+import { mutateShellOnly } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
@@ -522,6 +527,10 @@ export class SWSEV2CharacterSheet extends
     // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
     this._shellSurface = 'home';
     this._shellSurfaceOptions = {};
+    ShellMutationGuard.install(this, { label: 'SWSEV2CharacterSheet', logger: swseLogger });
+    this._shellUiStatePreserver = ShellUiStatePreserver.install(this, { logger: swseLogger });
+    this._shellSurfaceState = new ShellSurfaceState({ home: this._shellSurfaceOptions });
+    this._shellRenderPromise = null;
     this._shellOverlay = null;
     this._shellDrawer = null;
     this._shellModal = null;
@@ -558,6 +567,10 @@ export class SWSEV2CharacterSheet extends
     try {
       // Phase 6: Capture UI state before rerender so it can be restored after
       this.uiStateManager.captureState();
+      this._shellUiStatePreserver?.capture?.(this.element, {
+        surfaceId: this._shellSurface,
+        reason: this.__swseShellRenderReason || 'character-sheet-render'
+      });
 
       // swseLogger.debug(`[SWSEV2CharacterSheet] RENDER START (#${this._renderCount}) position:`, this.position);
       return await super.render(...args);
@@ -578,15 +591,64 @@ export class SWSEV2CharacterSheet extends
 
   /** @returns {string} Active surface ID */
   get shellSurface() { return this._shellSurface; }
+  get shellSurfaceOptions() { return this._shellSurfaceOptions; }
+
+  _ensureShellSurfaceState() {
+    if (!this._shellSurfaceState) {
+      this._shellSurfaceState = new ShellSurfaceState({
+        [this._shellSurface || 'home']: this._shellSurfaceOptions || {}
+      });
+    }
+    return this._shellSurfaceState;
+  }
+
+  getSurfaceState(surfaceId = this._shellSurface) {
+    return this._ensureShellSurfaceState().get(surfaceId);
+  }
+
+  patchSurfaceState(surfaceId = this._shellSurface, patch = {}, { render = false, reason = 'surface-state-patch' } = {}) {
+    const next = this._ensureShellSurfaceState().patch(surfaceId, patch);
+    if (surfaceId === this._shellSurface) {
+      ShellMutationGuard.withSurfaceOptionsMutation(this, () => { this._shellSurfaceOptions = next; });
+    }
+    if (render) void this.requestSurfaceRender({ reason, surfaceId });
+    return next;
+  }
+
+  patchSurfaceOptions(patch = {}, options = {}) {
+    return this.patchSurfaceState(this._shellSurface, patch, options);
+  }
+
+  requestSurfaceRender({ reason = 'surface-render', surfaceId = this._shellSurface, preserveUi = true } = {}) {
+    if (this._shellRenderPromise) {
+      if (preserveUi) this._shellUiStatePreserver?.capture?.(this.element, { surfaceId, reason: `${reason}:coalesced-before-render` });
+      return this._shellRenderPromise;
+    }
+    this._shellRenderPromise = Promise.resolve().then(async () => {
+      swseLogger.debug(`[ShellHost] requestSurfaceRender: ${surfaceId} (${reason})`);
+      if (preserveUi) this._shellUiStatePreserver?.capture?.(this.element, { surfaceId, reason: `${reason}:before-render` });
+      // Do not call render(false) while the sheet render guard is active; that
+      // path queues a follow-up render but returns before the repaint completes.
+      while (this._isRendering) {
+        await new Promise(resolve => window.setTimeout(resolve, 0));
+      }
+      return ShellMutationGuard.withSurfaceRender(this, () => this.render(false), { reason, surfaceId });
+    }).finally(() => {
+      this._shellRenderPromise = null;
+    });
+    return this._shellRenderPromise;
+  }
 
   /**
    * Switch to a route surface (progression | chargen | upgrade | settings | mentor | sheet).
    * Clears any active overlay/drawer.
    */
   async setSurface(surfaceId, options = {}) {
-    swseLogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${surfaceId}`);
-    this._shellSurface = surfaceId;
-    this._shellSurfaceOptions = options;
+    const normalizedSurfaceId = surfaceId === 'upgrade' ? 'workbench' : surfaceId;
+    swseLogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${normalizedSurfaceId}`);
+    this._shellSurface = normalizedSurfaceId;
+    const nextOptions = this._ensureShellSurfaceState().patch(normalizedSurfaceId, options ?? {});
+    ShellMutationGuard.withSurfaceOptionsMutation(this, () => { this._shellSurfaceOptions = nextOptions; });
     this._shellOverlay = null;
     this._shellDrawer = null;
   }
@@ -594,7 +656,7 @@ export class SWSEV2CharacterSheet extends
   /** Return to the primary sheet surface. */
   async returnToSheet() {
     await this.setSurface('sheet');
-    this.render(false);
+    await this.requestSurfaceRender({ reason: 'return-to-sheet', surfaceId: 'sheet' });
   }
 
   /** Open an overlay above the current surface. */
@@ -636,7 +698,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         if (this._shellSurface !== 'home') {
           await this.setSurface('home');
-          this.render(false);
+          await this.requestSurfaceRender({ reason: 'tablet-home', surfaceId: 'home' });
         }
       }, { signal });
     });
@@ -716,7 +778,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.setSurface('home');
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'return-to-home', surfaceId: 'home' });
       }, { signal });
     });
 
@@ -724,7 +786,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.closeOverlay();
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'close-overlay', surfaceId: this._shellSurface });
       }, { signal });
     });
 
@@ -732,7 +794,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.closeDrawer();
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'close-drawer', surfaceId: this._shellSurface });
       }, { signal });
     });
 
@@ -743,14 +805,14 @@ export class SWSEV2CharacterSheet extends
         const onConfirm = this._shellOverlay?.options?.onConfirm;
         if (typeof onConfirm === 'function') await onConfirm().catch(() => {});
         await this.closeOverlay();
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'close-overlay', surfaceId: this._shellSurface });
       }, { signal });
 
       overlayRoot.querySelector('[data-shell-overlay-action="cancel"]')?.addEventListener('click', async () => {
         const onCancel = this._shellOverlay?.options?.onCancel;
         if (typeof onCancel === 'function') await onCancel().catch(() => {});
         await this.closeOverlay();
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'close-overlay', surfaceId: this._shellSurface });
       }, { signal });
     }
 
@@ -758,7 +820,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.setSurface('settings', { source: 'sheet' });
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'open-settings', surfaceId: 'settings' });
       }, { signal });
     });
 
@@ -766,7 +828,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.setSurface('home');
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'return-to-home', surfaceId: 'home' });
       }, { signal });
     });
 
@@ -785,7 +847,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         ev.stopImmediatePropagation?.();
         await this.setSurface('home');
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'return-to-home', surfaceId: 'home' });
         return;
       }
 
@@ -793,8 +855,7 @@ export class SWSEV2CharacterSheet extends
       if (enterTarget) {
         ev.preventDefault();
         ev.stopImmediatePropagation?.();
-        this._shellSurfaceOptions = {
-          ...this._shellSurfaceOptions,
+        this.patchSurfaceOptions({
           enteredStore: true,
           splashComplete: true,
           currentView: 'browse',
@@ -805,8 +866,8 @@ export class SWSEV2CharacterSheet extends
           search: '',
           availability: 'all',
           sort: 'default'
-        };
-        this.render(false);
+        });
+        this.requestSurfaceRender({ reason: 'store-splash-enter' });
       }
     }, { signal, capture: true });
 
@@ -842,6 +903,15 @@ export class SWSEV2CharacterSheet extends
       this._gamesSurfaceController.attach(root);
     } else {
       this._gamesSurfaceController?.destroy?.();
+    }
+    if (this._shellSurface === 'messenger') {
+      this._messengerSurfaceController ??= new MessengerSurfaceController(this, this.actor);
+      this._messengerSurfaceController.setActor?.(this.actor);
+      void this._messengerSurfaceController.attach(root, signal).catch((err) => {
+        swseLogger.warn('[SWSEV2CharacterSheet] Messenger surface wiring failed.', err);
+      });
+    } else {
+      this._messengerSurfaceController?.destroy?.();
     }
     if (this._shellSurface === 'allies') {
       this._alliesSurfaceController ??= new AlliesSurfaceController(this, this.actor);
@@ -1108,7 +1178,7 @@ export class SWSEV2CharacterSheet extends
         // can fall back to a standalone empty ApplicationV2 popup. Routing directly
         // lets ShellSurfaceRegistry/ProgressionSurfaceAdapter build the inline VM.
         await this.setSurface(routeId, surfaceOptions);
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'home-route-launch', surfaceId: this._shellSurface });
       }, { signal });
     });
 
@@ -1138,8 +1208,8 @@ export class SWSEV2CharacterSheet extends
 
         // Update surface options to track current view/category
         const view = action.replace('store-', '');
-        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentView: view };
-        this.render(false);
+        this.patchSurfaceOptions({ currentView: view });
+        this.requestSurfaceRender({ reason: 'store-view-change' });
       }, { signal });
     });
 
@@ -1148,8 +1218,8 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         const category = el.dataset.category || '';
-        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentCategory: category };
-        this.render(false);
+        this.patchSurfaceOptions({ currentCategory: category });
+        this.requestSurfaceRender({ reason: 'store-category-change' });
       }, { signal });
     });
   }
@@ -1165,8 +1235,8 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', () => {
         const newCat = el.dataset.categoryId;
         if (this._shellSurfaceOptions.selectedCategoryId === newCat) return;
-        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, selectedCategoryId: newCat, selectedItemId: null };
-        this.render(false);
+        this.patchSurfaceOptions({ selectedCategoryId: newCat, selectedItemId: null });
+        this.requestSurfaceRender({ reason: 'upgrade-category-change' });
       }, { signal });
     });
 
@@ -1174,8 +1244,8 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', () => {
         const newItem = el.dataset.itemId;
         if (this._shellSurfaceOptions.selectedItemId === newItem) return;
-        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, selectedItemId: newItem };
-        this.render(false);
+        this.patchSurfaceOptions({ selectedItemId: newItem });
+        this.requestSurfaceRender({ reason: 'upgrade-item-change' });
       }, { signal });
     });
 
@@ -1187,7 +1257,7 @@ export class SWSEV2CharacterSheet extends
         try {
           const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
           await CommandBus.execute('APPLY_ITEM_UPGRADE', { actor, itemId: selectedItemId, upgradeId: el.dataset.upgradeId });
-          this.render(false);
+          await this.requestSurfaceRender({ reason: 'upgrade-apply' });
         } catch (err) { ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`); }
       }, { signal });
     });
@@ -1200,7 +1270,7 @@ export class SWSEV2CharacterSheet extends
         try {
           const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
           await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: selectedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
-          this.render(false);
+          await this.requestSurfaceRender({ reason: 'upgrade-remove' });
         } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
       }, { signal });
     });
@@ -1212,7 +1282,7 @@ export class SWSEV2CharacterSheet extends
         const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
         await CommandBus.execute('FINALIZE_ITEM_UPGRADES', { actor, itemId: selectedItemId });
         ui.notifications?.info?.('Upgrades finalized.');
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'upgrade-finalize' });
       } catch (err) { ui.notifications?.error?.(`Failed to finalize: ${err.message}`); }
     }, { signal });
   }
@@ -1232,7 +1302,7 @@ export class SWSEV2CharacterSheet extends
         try {
           const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
           await CommandBus.execute('APPLY_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeId: el.dataset.upgradeId });
-          this.render(false);
+          await this.requestSurfaceRender({ reason: 'upgrade-overlay-apply' });
         } catch (err) { ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`); }
       }, { signal });
     });
@@ -1244,7 +1314,7 @@ export class SWSEV2CharacterSheet extends
         try {
           const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
           await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
-          this.render(false);
+          await this.requestSurfaceRender({ reason: 'upgrade-overlay-remove' });
         } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
       }, { signal });
     });
@@ -1270,19 +1340,18 @@ export class SWSEV2CharacterSheet extends
     mentorRoot.querySelectorAll('[data-mentor-key]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        this._shellSurfaceOptions = { selectedMentorKey: el.dataset.mentorKey };
-        this.render(false);
+        this.patchSurfaceOptions({ selectedMentorKey: el.dataset.mentorKey, topicKey: null });
+        this.requestSurfaceRender({ reason: 'mentor-selection-change' });
       }, { signal });
     });
 
     mentorRoot.querySelectorAll('[data-mentor-topic]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        this._shellSurfaceOptions = {
-          ...this._shellSurfaceOptions,
+        this.patchSurfaceOptions({
           topicKey: el.dataset.mentorTopic
-        };
-        this.render(false);
+        });
+        this.requestSurfaceRender({ reason: 'mentor-topic-change' });
       }, { signal });
     });
 
@@ -1668,13 +1737,14 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'sheet') {
       this.uiStateManager.restoreState();
     }
+    this._shellUiStatePreserver?.restore?.(this.element, { surfaceId: this._shellSurface });
 
     // ── Phase 11: Initialize HOME surface on first render ──
     // If this is the very first render and we're in sheet mode, trigger HOME display
     // CRITICAL: Schedule render for next microtask to avoid re-entrancy during _onRender
     if (isFirstRenderEver && this._shellSurface === 'sheet') {
       await this.setSurface('home');
-      queueMicrotask(() => this.render(false));
+      queueMicrotask(() => { void this.requestSurfaceRender({ reason: 'initial-home-surface', surfaceId: 'home' }); });
       return;
     }
 
@@ -3435,12 +3505,12 @@ const forcePoints = [];
       const themeKey = select.value;
       if (!themeKey) return;
       try {
-        await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
+        await mutateShellOnly(this, () => this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey), { reason: 'sheet-theme-change', surfaceId: this._shellSurface });
         const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
           ThemeResolutionService.applyToElement(sheetShell, { actor: this.document, themeKey });
         }
-        await this.render(false);
+        await this.requestSurfaceRender({ reason: 'sheet-theme-change' });
       } catch (err) {
         swseLogger.error('[THEME] Error setting sheet theme:', err);
         ui.notifications?.error?.(`Failed to set theme: ${err.message}`);
@@ -3455,12 +3525,12 @@ const forcePoints = [];
       const motionStyle = select.value;
       if (!motionStyle) return;
       try {
-        await this.document.setFlag('foundryvtt-swse', 'sheetMotionStyle', motionStyle);
+        await mutateShellOnly(this, () => this.document.setFlag('foundryvtt-swse', 'sheetMotionStyle', motionStyle), { reason: 'sheet-motion-change', surfaceId: this._shellSurface });
         const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
           ThemeResolutionService.applyToElement(sheetShell, { actor: this.document, motionStyle });
         }
-        await this.render(false);
+        await this.requestSurfaceRender({ reason: 'sheet-motion-change' });
       } catch (err) {
         swseLogger.error('[MOTION] Error setting motion style:', err);
         ui.notifications?.error?.(`Failed to set motion style: ${err.message}`);
@@ -3971,7 +4041,7 @@ const forcePoints = [];
           source: 'sheet',
           skipIntro: surfaceId !== 'chargen'
         });
-        this.render(false);
+        await this.requestSurfaceRender({ reason: `${surfaceId}-launch`, surfaceId });
       } catch (err) {
         swseLogger.error('[CharacterSheet] Progression launch failed:', err);
       }
@@ -3984,7 +4054,7 @@ const forcePoints = [];
       ev.preventDefault();
       try {
         await this.setSurface('progression', { source: 'sheet', stepId: 'attribute', currentStep: 'attribute' });
-        this.render(false);
+        await this.requestSurfaceRender({ reason: 'progression-attribute-launch', surfaceId: 'progression' });
       } catch (err) {
         swseLogger.error('[CharacterSheet] roll-attributes failed:', err);
       }
@@ -4018,7 +4088,7 @@ const forcePoints = [];
 
       try {
         await this.setSurface('progression', { source: 'sheet', stepId: targetStep, currentStep: targetStep });
-        this.render(false);
+        await this.requestSurfaceRender({ reason: `${action}-launch`, surfaceId: 'progression' });
       } catch (err) {
         swseLogger.error(`[CharacterSheet] ${action} failed:`, err);
       }
@@ -4376,8 +4446,8 @@ const forcePoints = [];
           await ActionEconomyPersistence.resetTurnState(this.actor, combatId);
           ui?.notifications?.info?.(`${this.actor.name} actions reset for new round`);
 
-          // Trigger a re-render to update the action economy indicator
-          this.render(false);
+          // Trigger a coordinated re-render to update the action economy indicator
+          await this.requestSurfaceRender({ reason: 'action-economy-reset' });
         } catch (err) {
           // console.error('Failed to reset turn state:', err);
           ui?.notifications?.error?.('Failed to reset actions');
@@ -4835,7 +4905,7 @@ const forcePoints = [];
 
         // Explicitly re-render to ensure derived item mirrors are populated for the UI.
         if (doc && this.render) {
-          await this.render(false);
+          await this.requestSurfaceRender({ reason: 'embedded-item-created' });
         }
         ui.notifications.info(`Created new ${doc?.type || itemType}`);
       } catch (err) {
@@ -4865,7 +4935,7 @@ const forcePoints = [];
         const item = itemId ? this.actor.items.get(itemId) : null;
         if (!item) return;
         const changed = await FeatChoiceDialog.promptAndApply(this.actor, item);
-        if (changed) this.render?.(false);
+        if (changed) await this.requestSurfaceRender({ reason: 'feat-choice-resolved' });
       }, { signal });
     });
 
@@ -4906,7 +4976,7 @@ const forcePoints = [];
         created: doc ? { id: doc.id, name: doc.name, type: doc.type } : null
       });
       doc?.sheet?.render?.(true);
-      await this.render?.(false);
+      await this.requestSurfaceRender({ reason: 'embedded-item-created' });
       return doc ?? null;
     } catch (err) {
       addItemEditorTrace('sheet-create-and-open-error', { actor: summarizeActorItems(this.actor), itemType: safeType, error: err });
@@ -4989,7 +5059,7 @@ const forcePoints = [];
         source: `character-sheet-modal-custom-${this._currentItemType}`
       });
       doc?.sheet?.render?.(true);
-      await this.render?.(false);
+      await this.requestSurfaceRender({ reason: 'embedded-item-created' });
     } catch (err) {
       ui?.notifications?.error?.(`Failed to create ${this._currentItemType}: ${err.message}`);
     }
@@ -5931,7 +6001,7 @@ const forcePoints = [];
       } else if (typeof Persistence.updateTurnState === "function") {
         await Persistence.updateTurnState(this.actor, combatId, nextState);
       }
-      this.render(false);
+      await this.requestSurfaceRender({ reason: 'action-economy-persist' });
     } catch (err) {
       console.warn("[PHASE F] Failed to persist action economy state:", err);
     }
@@ -6285,7 +6355,7 @@ const forcePoints = [];
           await ActorEngine.recalcAll(freshActor);
           // swseLogger.debug('[PERSISTENCE] Full actor recalculation completed');
           // Re-render sheet to show updated derived values
-          await this.render(false);
+          await this.requestSurfaceRender({ reason: 'level-change-recalc' });
           // swseLogger.debug('[PERSISTENCE] Sheet re-rendered with updated derived data');
         } catch (recalcErr) {
           // console.error('[PERSISTENCE] Recalculation failed:', recalcErr);

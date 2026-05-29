@@ -24,6 +24,9 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
 import { GMSurfaceControllerRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/controllers/GMSurfaceControllerRegistry.js";
+import { ShellSurfaceState } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceState.js";
+import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
+import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetMessengerService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js";
@@ -97,6 +100,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.holonewsHideUsedSeeds = true;
     this.holonewsWireFilters = { query: '', category: '', sector: '', priority: '' };
     this.holonewsArchiveFilters = { query: '', state: '', type: '', priority: '', sector: '', category: '' };
+    this._shellSurfaceOptions = {};
+    ShellMutationGuard.install(this, { label: 'GMDatapad', logger: SWSELogger });
+    this._shellUiStatePreserver = ShellUiStatePreserver.install(this, { logger: SWSELogger });
+    this._shellSurfaceState = new ShellSurfaceState({ store: { currentTab: this.currentTab } });
+    this._shellRenderPromise = null;
 
     // Store page state
     this.transactions = [];
@@ -114,6 +122,50 @@ export class GMDatapad extends BaseSWSEAppV2 {
     // Frameless shared holopad shell window state.
     this._gmTabletExpanded = false;
     this._gmTabletPreExpandRect = null;
+  }
+
+
+  _ensureShellSurfaceState() {
+    if (!this._shellSurfaceState) {
+      this._shellSurfaceState = new ShellSurfaceState({
+        [this.currentPage || 'home']: { currentTab: this.currentTab }
+      });
+    }
+    return this._shellSurfaceState;
+  }
+
+  getSurfaceState(surfaceId = this.currentPage) {
+    return this._ensureShellSurfaceState().get(surfaceId || 'home');
+  }
+
+  patchSurfaceState(surfaceId = this.currentPage, patch = {}, { render = false, reason = 'gm-surface-state-patch' } = {}) {
+    const target = surfaceId || this.currentPage || 'home';
+    const next = this._ensureShellSurfaceState().patch(target, patch);
+    if (target === 'store' && next.currentTab) this.currentTab = next.currentTab;
+    if (render) void this.requestSurfaceRender({ reason, surfaceId: target });
+    return next;
+  }
+
+  patchSurfaceOptions(patch = {}, options = {}) {
+    return this.patchSurfaceState(this.currentPage, patch, options);
+  }
+
+  requestSurfaceRender({ reason = 'gm-surface-render', surfaceId = this.currentPage, preserveUi = true } = {}) {
+    if (this._shellRenderPromise) {
+      if (preserveUi) this._shellUiStatePreserver?.capture?.(this.element, { surfaceId, reason: `${reason}:coalesced-before-render` });
+      return this._shellRenderPromise;
+    }
+    this._shellRenderPromise = Promise.resolve().then(async () => {
+      SWSELogger.debug(`[GM Datapad] requestSurfaceRender: ${surfaceId} (${reason})`);
+      if (preserveUi) this._shellUiStatePreserver?.capture?.(this.element, { surfaceId, reason: `${reason}:before-render` });
+      while (this._isRendering) {
+        await new Promise(resolve => window.setTimeout(resolve, 0));
+      }
+      return ShellMutationGuard.withSurfaceRender(this, () => this.render(false), { reason, surfaceId });
+    }).finally(() => {
+      this._shellRenderPromise = null;
+    });
+    return this._shellRenderPromise;
   }
 
   async _prepareContext(options) {
@@ -836,6 +888,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+    this._shellUiStatePreserver?.restore?.(this.element, { surfaceId: this.currentPage });
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
@@ -880,14 +933,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
     if (!action) return false;
     if (action === 'select-trade') {
       this.selectedTradeRecordId = selectRecordId || recordId || null;
-      await this.render(false);
+      await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
       return true;
     }
     if (kind === 'trade' && threadId && recordId) {
       const ok = await HolonetMessengerService.threadAction({ actor: null, threadId, recordId, action, memo: note });
       if (!ok) ui?.notifications?.warn?.('Trade reconciliation action did not complete.');
       this.selectedTradeRecordId = recordId;
-      await this.render(false);
+      await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
       return ok;
     }
     if (kind === 'game' && sessionId) {
@@ -924,7 +977,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
           ]
         }));
         ui?.notifications?.info?.('Game settlement marked reconciled.');
-        await this.render(false);
+        await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
         return true;
       }
       if (action === 'game-reopen-settlement') {
@@ -955,7 +1008,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
           ]
         }));
         ui?.notifications?.info?.('Game settlement reopened in the approval queue.');
-        await this.render(false);
+        await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
         return true;
       }
       if (action === 'game-refund-escrow') {
@@ -965,7 +1018,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
           return false;
         }
         ui?.notifications?.info?.('Game escrow refunded through TransactionEngine.');
-        await this.render(false);
+        await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
         return true;
       }
     }
@@ -1083,7 +1136,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
     record.updatedAt = now;
     await HolonetStorage.saveRecord(record);
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _saveBulletinContact(formData) {
@@ -1105,7 +1158,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       notes: String(formData.get('notes') || '').trim()
     });
     ui?.notifications?.info?.('Bulletin source/contact saved.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _deleteBulletinContact(contactId) {
@@ -1113,7 +1166,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const ok = await BulletinContactRegistry.deleteContact(contactId);
     if (!ok) ui?.notifications?.warn?.('That contact could not be deleted. Built-in contacts are protected.');
     else ui?.notifications?.info?.('Bulletin source/contact deleted.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _saveHolonewsAtomPolicy(formData) {
@@ -1131,7 +1184,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
     this.holonewsSeedOffset = 0;
     ui?.notifications?.info?.('HoloNews atom controls saved.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _resetHolonewsAtomPolicy() {
@@ -1139,7 +1192,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     await HolonewsAtomPolicy.resetPolicy();
     this.holonewsSeedOffset = 0;
     ui?.notifications?.info?.('HoloNews atom controls reset.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _saveBulletinRecord(formData, section) {
@@ -1222,7 +1275,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     this.bulletinEditor = { section, mode: 'create', recordId: null };
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
 
@@ -1303,7 +1356,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     this.currentBulletinSection = 'holonews';
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
 
@@ -1355,7 +1408,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.currentBulletinSection = 'holonews';
     this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
     ui?.notifications?.info?.('HoloNews story duplicated as a draft.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _setHolonewsBreaking(recordId, enabled) {
@@ -1398,7 +1451,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     await HolonetStorage.saveRecord(record);
     ui?.notifications?.info?.(enabled ? 'HoloNews story marked Breaking News.' : 'Breaking News alert removed.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _restoreHolonewsAsDraft(recordId) {
@@ -1424,7 +1477,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this.currentBulletinSection = 'holonews';
     this.bulletinEditor = { section: 'holonews', mode: 'edit', recordId: record.id };
     ui?.notifications?.info?.('Archived HoloNews story restored as a draft.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _saveHolonewsAutomationPolicy(formData) {
@@ -1447,7 +1500,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     ui?.notifications?.info?.(policy.enabled
       ? `Ambient HoloNews automation saved. Next publish: ${policy.nextDueAt || 'not scheduled'}.`
       : 'Ambient HoloNews automation saved in manual-only mode.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _publishHolonewsAmbientNow(count = 1) {
@@ -1464,7 +1517,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     } else {
       ui?.notifications?.warn?.('No ambient HoloNews stories were published.');
     }
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _resetHolonewsAutomationSchedule() {
@@ -1473,7 +1526,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     ui?.notifications?.info?.(policy.enabled
       ? `Ambient HoloNews schedule reset. Next publish: ${policy.nextDueAt || 'not scheduled'}.`
       : 'Ambient HoloNews schedule cleared because automation is manual-only.');
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-datapad-refresh', surfaceId: this.currentPage });
   }
 
   async _unpinOtherBulletins(recordId) {
@@ -1573,10 +1626,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // GM store is an operations surface, not the player-facing store splash flow.
     if (targetPage === 'store') {
-      this.currentTab = this.currentTab || 'options';
+      const storeState = this.getSurfaceState('store');
+      this.currentTab = storeState.currentTab || this.currentTab || 'options';
+      this.patchSurfaceState('store', { currentTab: this.currentTab }, { render: false });
     }
 
-    await this.render(false);
+    await this.requestSurfaceRender({ reason: 'gm-navigate', surfaceId: targetPage });
   }
 }
 

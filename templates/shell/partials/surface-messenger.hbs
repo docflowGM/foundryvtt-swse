@@ -50,6 +50,16 @@
         </div>
       </div>
 
+      <form class="hl-thread-filter-form" data-holonet-action="thread-filter">
+        <input type="search" name="threadSearch" value="{{vm.threadSearch}}" placeholder="Search transmissions..." aria-label="Search messenger threads">
+        <label class="hl-thread-filter-toggle">
+          <input type="checkbox" name="includeArchived" value="true" {{#if vm.includeArchived}}checked{{/if}}>
+          <span>Archived</span>
+        </label>
+        <button class="hl-icon-btn" type="submit">Filter</button>
+        {{#if vm.hasThreadSearch}}<button class="hl-ghost-btn" data-holonet-action="clear-thread-filter" type="button">Clear</button>{{/if}}
+      </form>
+
       <div class="swse-messenger-thread-list hl-tlist-scroll">
         {{#if vm.threads.length}}
           <div class="hl-cat">
@@ -247,7 +257,11 @@
           {{#if vm.selectedThread.canLeave}}
           <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="leave-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Leave</button>
           {{/if}}
+          {{#if vm.selectedThread.isArchivedForCurrent}}
+          <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="unarchive-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Unarchive</button>
+          {{else}}
           <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="archive-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Archive</button>
+          {{/if}}
         </div>
       </div>
 
@@ -271,9 +285,16 @@
           </div>
           {{/if}}
 
-          <div class="swse-messenger-conversation hl-messages" data-thread-id="{{vm.selectedThread.id}}">
+          <div class="swse-messenger-conversation hl-messages" data-thread-id="{{vm.selectedThread.id}}" data-message-limit="{{vm.messageLimit}}" data-highlight-record-id="{{vm.highlightRecordId}}">
             {{#if vm.messages.length}}
+              {{#if vm.hasOlderMessages}}
+              <div class="hl-message-window-notice">
+                <button class="hl-ghost-btn" data-holonet-action="load-older-messages" data-thread-id="{{vm.selectedThread.id}}" data-message-limit="{{vm.messageLimit}}" type="button">Load older transmissions</button>
+                <span>{{vm.hiddenOlderCount}} older transmissions hidden to keep repaint fast.</span>
+              </div>
+              {{/if}}
               {{#each vm.messages}}
+              <div class="hl-message-anchor {{#if this.isHighlighted}}hl-message-anchor--highlight{{/if}}" data-holonet-message-id="{{this.id}}" data-holonet-record-id="{{this.id}}" {{#if this.isHighlighted}}data-holonet-highlight="true"{{/if}}>
                 {{#if this.hasCreditTransfer}}
                 <article class="swse-msg-system hl-credit-card-wrap">
                   <div class="hl-credit-card hl-credit-card--bank">
@@ -403,6 +424,25 @@
                   </div>
                 </article>
                 {{else}}
+                {{#if this.hasGameInvite}}
+                <article class="swse-msg-system hl-game-invite-card-wrap">
+                  <div class="hl-attach-card hl-game-invite-card">
+                    <div class="hl-credit-title">Holopad Game Invite</div>
+                    <div class="hl-title">{{this.gameInvite.gameTitle}}</div>
+                    <div class="hl-credit-line">Rules: <strong>{{this.gameInvite.rulesLabel}}</strong></div>
+                    {{#if this.gameInvite.buyInLabel}}<div class="hl-credit-line">Buy-In: <strong>{{this.gameInvite.buyInLabel}}</strong></div>{{/if}}
+                    {{#if this.gameInvite.hostLabel}}<div class="hl-credit-line">Host: {{this.gameInvite.hostLabel}}</div>{{/if}}
+                    {{#if this.gameInvite.invitedLabel}}<div class="hl-credit-line">Invited: {{this.gameInvite.invitedLabel}}</div>{{/if}}
+                    {{#if this.gameInvite.memo}}<div class="hl-credit-memo">Memo: {{this.gameInvite.memo}}</div>{{/if}}
+                    <div class="hl-credit-status">{{this.gameInvite.statusLabel}}</div>
+                    <div class="hl-credit-actions">
+                      {{#if this.gameInvite.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Invite</button>{{/if}}
+                      {{#if this.gameInvite.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
+                      {{#if this.gameInvite.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-game-invite" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{else}}
                 {{#if this.hasReceipt}}
                 <article class="swse-msg-system hl-receipt-card-wrap">
                   <div class="hl-receipt-card">
@@ -443,6 +483,8 @@
                 {{/if}}
                 {{/if}}
                 {{/if}}
+                {{/if}}
+              </div>
               {{/each}}
             {{else}}
               <div class="swse-messenger-empty hl-empty">Thread is empty.</div>
@@ -495,14 +537,44 @@
             <div class="hl-chip job">{{vm.selectedThread.job.statusLabel}}</div>
             {{#if vm.selectedThread.job.rewardCredits}}<div class="hl-credit-line">Credits: {{vm.selectedThread.job.rewardCredits}} cr</div>{{/if}}
             {{#if vm.selectedThread.job.rewardItems}}<div class="hl-credit-line">Items: {{vm.selectedThread.job.rewardItems}}</div>{{/if}}
+            {{#if vm.selectedThread.job.hasObjectives}}
+            <div class="hl-job-objectives">
+              <div class="hl-info-label">Objectives</div>
+              {{#each vm.selectedThread.job.objectives}}
+              <div class="hl-job-objective-card">
+                <div class="hl-credit-line"><strong>{{this.label}}</strong> <span class="hl-chip job">{{this.statusLabel}}</span>{{#if this.isRequired}} <span class="hl-chip warn">Required</span>{{/if}}</div>
+                {{#if this.description}}<div class="hl-credit-memo">{{this.description}}</div>{{/if}}
+                {{#if this.rewardCreditsLabel}}<div class="hl-credit-line">Objective credits: {{this.rewardCreditsLabel}}</div>{{/if}}
+                {{#if ../vm.selectedThread.job.canManage}}
+                <form class="hl-job-objective-form" data-holonet-action="job-objective-status" data-thread-id="{{../vm.selectedThread.id}}">
+                  <input type="hidden" name="objectiveId" value="{{this.id}}">
+                  <select name="objectiveStatus">
+                    <option value="open">Open</option>
+                    <option value="claimed">Claimed</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="pendingReview">Pending Review</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="failed">Failed</option>
+                  </select>
+                  <textarea name="objectiveNote" rows="2" placeholder="Objective note"></textarea>
+                  <button class="hl-icon-btn gm" type="submit">Update Objective</button>
+                </form>
+                {{/if}}
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
             {{#if vm.selectedThread.job.canManage}}
             <form class="hl-job-status-form" data-holonet-action="job-status" data-thread-id="{{vm.selectedThread.id}}">
               <select name="status">
                 <option value="posted">Posted</option>
                 <option value="accepted">Accepted</option>
                 <option value="inProgress">In Progress</option>
+                <option value="review">Review</option>
                 <option value="complete">Complete</option>
                 <option value="paid">Paid</option>
+                <option value="failed">Failed</option>
                 <option value="archived">Archived</option>
               </select>
               <button class="hl-icon-btn gm" type="submit">Set Status</button>

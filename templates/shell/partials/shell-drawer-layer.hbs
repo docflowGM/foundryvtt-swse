@@ -147,7 +147,7 @@
       {{/if}}
       <div class="swse-shell-drawer__holonet-list">
         {{#each vm.notices}}
-        <button class="swse-shell-drawer__holonet-card {{#if this.isUnread}}is-unread{{/if}}" type="button" data-holonet-record-id="{{this.id}}">
+        <button class="swse-shell-drawer__holonet-card {{#if this.isUnread}}is-unread{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.sourceRecordId}}data-holonet-source-record-id="{{this.sourceRecordId}}"{{/if}} {{#if this.actionSurface}}data-holonet-action-surface="{{this.actionSurface}}"{{/if}}>
           <span class="swse-shell-drawer__holonet-icon">{{this.icon}}</span>
           <span class="swse-shell-drawer__holonet-content">
             <span class="swse-shell-drawer__holonet-meta">
@@ -157,6 +157,7 @@
             <strong>{{this.title}}</strong>
             <span class="holonet-rendered-text swse-shell-drawer__holonet-preview">{{{this.previewHtml}}}</span>
             <span class="swse-shell-drawer__holonet-time">{{this.timestamp}}</span>
+            {{#if this.actionLabel}}<span class="swse-shell-drawer__holonet-action">{{this.actionLabel}}</span>{{/if}}
           </span>
         </button>
         {{else}}

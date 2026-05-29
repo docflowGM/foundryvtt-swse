@@ -1,5 +1,6 @@
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { GMApprovalOperationsService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 /**
  * GMApprovalsSurfaceController
@@ -34,7 +35,7 @@ export class GMApprovalsSurfaceController {
         this.host.selectedApprovalKey = event.currentTarget?.dataset?.approvalKey ?? null;
         this.host.approvalEditMode = false;
         this.host.approvalDenyMode = false;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -44,7 +45,7 @@ export class GMApprovalsSurfaceController {
         this.host.selectedApprovalKey = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
         this.host.approvalEditMode = true;
         this.host.approvalDenyMode = false;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -54,7 +55,7 @@ export class GMApprovalsSurfaceController {
         this.host.selectedApprovalKey = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
         this.host.approvalEditMode = false;
         this.host.approvalDenyMode = false;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -63,7 +64,7 @@ export class GMApprovalsSurfaceController {
         event.preventDefault();
         this.host.selectedApprovalKey = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
         this.host.approvalDenyMode = true;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -72,7 +73,7 @@ export class GMApprovalsSurfaceController {
         event.preventDefault();
         this.host.selectedApprovalKey = event.currentTarget?.dataset?.approvalKey ?? this.host.selectedApprovalKey;
         this.host.approvalDenyMode = false;
-        await this.host.render(false);
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
     });
 
@@ -140,7 +141,7 @@ export class GMApprovalsSurfaceController {
     });
     ui.notifications?.info?.('Faction suggestion approved.');
     this.host.selectedApprovalKey = null;
-    await this.host.render(false);
+    await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
   }
 
   async _finalizeApproval(key, form = null) {
@@ -153,7 +154,7 @@ export class GMApprovalsSurfaceController {
     ui.notifications?.info?.('Faction suggestion approved with GM edits.');
     this.host.selectedApprovalKey = null;
     this.host.approvalEditMode = false;
-    await this.host.render(false);
+    await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
   }
 
   async _denyRequest(key, reason = '') {
@@ -163,7 +164,7 @@ export class GMApprovalsSurfaceController {
     ui.notifications?.info?.('Faction suggestion rejected.');
     this.host.selectedApprovalKey = null;
     this.host.approvalDenyMode = false;
-    await this.host.render(false);
+    await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
   }
 
   /** Render live changed-field rows in the approval decision rail while GM edits inline. */

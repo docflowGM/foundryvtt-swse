@@ -1055,3 +1055,33 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* Phase 12: Messenger message windowing and notice-route highlighting. */
+.hl-message-window-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 6px auto 12px;
+  padding: 8px 10px;
+  border: 1px solid oklch(var(--hl-accent-raw) / .22);
+  border-radius: 12px;
+  background: oklch(var(--hl-accent-raw) / .08);
+  color: var(--hl-ink-muted);
+  font: 700 10px/1.2 var(--swse-font-mono, monospace);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.hl-message-anchor {
+  display: contents;
+}
+
+.hl-message-anchor--highlight .hl-msg-bubble,
+.hl-message-anchor--highlight .hl-credit-card,
+.hl-message-anchor--highlight .hl-attach-card,
+.hl-message-anchor--highlight .hl-receipt-card,
+.hl-message-anchor--highlight .hl-sys-msg {
+  outline: 2px solid oklch(var(--hl-accent-raw) / .85);
+  box-shadow: 0 0 22px oklch(var(--hl-accent-raw) / .35);
+}
