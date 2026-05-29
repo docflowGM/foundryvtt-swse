@@ -15,6 +15,14 @@ function pieceInitials(label = '') {
     .join('') || '?';
 }
 
+function detailAttr(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function spaceCoordinates(space = {}) {
   const ring = Math.max(1, Math.min(4, Number(space.ring || 1)));
   const ray = Math.max(0, Math.min(7, Number(space.ray || 0)));
@@ -35,15 +43,33 @@ function pieceVm(piece = {}, session, state, viewerSeatId) {
   }));
   const moveSpaceIds = legalMoveSpaceIds(state, piece);
   const moveOptions = moveSpaceIds.map(id => ({ id, label: id }));
+  const abilityLabel = piece.abilityLabel || piece.ability || 'Tactic';
+  const abilityDescription = piece.abilityDescription || '';
+  const hpLabel = `${piece.hp}/${piece.maxHp}`;
+  const attackLabel = String(piece.atk ?? piece.attack ?? '—');
+  const movementLabel = String(piece.mov ?? piece.movement ?? '—');
+  const reachLabel = String(piece.rng ?? '1');
+  const detailLine = `HP ${hpLabel} · Attack ${attackLabel} · Movement ${movementLabel} · Reach ${reachLabel} · Ability ${abilityLabel}`;
+  const tacticalSummary = `${moveOptions.length} legal move${moveOptions.length === 1 ? '' : 's'} · ${attackTargets.length} attack target${attackTargets.length === 1 ? '' : 's'}`;
+  const miniDetail = {
+    name: piece.label || 'Unknown Holomonster',
+    hp: hpLabel,
+    attack: attackLabel,
+    movement: movementLabel,
+    reach: reachLabel,
+    ability: abilityLabel,
+    abilityDescription
+  };
+  const detailJsonAttr = detailAttr(JSON.stringify(miniDetail));
   return {
     ...piece,
     shortLabel: pieceInitials(piece.label),
     image: piece.image || '',
     hasImage: Boolean(piece.image),
-    abilityLabel: piece.abilityLabel || piece.ability || 'Tactic',
-    abilityDescription: piece.abilityDescription || '',
+    abilityLabel,
+    abilityDescription,
     ownerLabel: seatName(session, piece.ownerSeatId),
-    hpLabel: `${piece.hp}/${piece.maxHp}`,
+    hpLabel,
     hpPct: Math.max(0, Math.min(100, Math.round((Number(piece.hp || 0) / Math.max(1, Number(piece.maxHp || 1))) * 100))),
     isViewerPiece,
     isEnemyPiece: Boolean(viewerSeatId && piece.ownerSeatId !== viewerSeatId),
@@ -54,10 +80,15 @@ function pieceVm(piece = {}, session, state, viewerSeatId) {
     tokenStateClass: piece.defeated ? 'is-defeated' : (Number(piece.hp || 0) <= Math.ceil(Number(piece.maxHp || 1) / 2) ? 'is-wounded' : 'is-ready'),
     canSelect: isViewerPiece && state.activeSeatId === viewerSeatId && !piece.defeated,
     targetOptions: attackTargets,
-    detailLine: `HP ${piece.hp}/${piece.maxHp} · SKIRMISH ATK ${piece.atk} · RNG ${piece.rng} · MOV ${piece.mov} · CLASSIC A/D/M ${piece.attack || piece.classic?.attack || '—'}/${piece.defense || piece.classic?.defense || '—'}/${piece.movement || piece.classic?.movement || '—'}`,
-    tacticalSummary: `${moveOptions.length} legal move${moveOptions.length === 1 ? '' : 's'} · ${attackTargets.length} attack target${attackTargets.length === 1 ? '' : 's'}`,
+    detailLine,
+    tacticalSummary,
     attackTargetsAttr: attackTargets.map(target => `${target.spaceId}:${target.id}`).join(' '),
     attackSpacesAttr: attackTargets.map(target => target.spaceId).join(' '),
+    detailJsonAttr,
+    miniDetail,
+    attackLabel,
+    movementLabel,
+    reachLabel,
     hasTargets: attackTargets.length > 0,
     moveOptions,
     moveSpacesAttr: moveSpaceIds.join(' '),
@@ -95,6 +126,8 @@ export class DejarikViewModel {
       aiProfiles: playableSeats(session).filter(seat => seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile).map(seat => { const profile = buildDejarikAiProfile(seat.aiProfile || seat.aiDifficulty || 'medium'); return { label: seat.displayName || 'AI Opponent', profileLabel: `${DejarikAi.labelForDifficulty(profile.difficulty)} · ${profile.fairness || 'fair'} · ${profile.personality || 'methodical'}`, profession: seat.profession || '', tableFact: seat.tableFact || '' }; }),
       hasAiProfiles: playableSeats(session).some(seat => seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile),
       viewerPieces: pieces.filter(piece => piece.isViewerPiece && !piece.defeated),
+      enemyPieces: pieces.filter(piece => piece.isEnemyPiece),
+      hasEnemyPieces: pieces.some(piece => piece.isEnemyPiece),
       canAct: Boolean(viewerSeatId && state.phase === 'playing' && state.activeSeatId === viewerSeatId),
       boardSpaces: (state.board || []).map(space => {
         const coords = spaceCoordinates(space);

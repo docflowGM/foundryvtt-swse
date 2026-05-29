@@ -443,10 +443,10 @@
             {{#if vm.activeTable.sabacc.viewerSeat.canCardAct}}
             <section class="swse-pazaak-hand-panel swse-sabacc-actions">
               <div class="swse-pazaak-builder-head">
-                <div><span class="swse-games-kicker">YOUR SABACC TURN</span><strong>Draw, trade with the deck/market, stand, or fold.</strong></div>
+                <div><span class="swse-games-kicker">YOUR SABACC TURN</span><strong>Draw, trade with the deck/market, call, or fold.</strong></div>
                 <div class="swse-pazaak-turn-actions">
                   <form data-games-action="sabacc-draw-card"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Draw</button></form>
-                  <form data-games-action="sabacc-stand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canStand}}disabled{{/unless}}>Stand</button></form>
+                  <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canCall}}disabled{{/unless}}>Call</button></form>
                   <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
                 </div>
               </div>
@@ -570,7 +570,7 @@
                       style="{{this.style}}"
                       data-dejarik-space
                       data-space-id="{{this.id}}"
-                      {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}"{{/if}}
+                      {{#if this.piece}}data-piece-id="{{this.piece.id}}" data-piece-label="{{this.piece.label}}" data-detail-json="{{{this.piece.detailJsonAttr}}}"{{/if}}
                       {{#if this.canSelectPiece}}data-piece-can-select="true"{{/if}}
                       title="{{this.id}}{{#if this.piece}} · {{this.piece.label}} · {{this.piece.hpLabel}}{{/if}}">
                 <small>{{this.id}}</small>
@@ -582,6 +582,44 @@
               </button>
               {{/each}}
             </div>
+
+            <aside class="swse-dejarik-roster-rail">
+              <section class="swse-dejarik-enemy-panel">
+                <span class="swse-games-kicker">ENEMY MONSTERS</span>
+                {{#if vm.activeTable.dejarik.hasEnemyPieces}}
+                <div class="swse-dejarik-enemy-list">
+                  {{#each vm.activeTable.dejarik.enemyPieces}}
+                  <button type="button"
+                          class="swse-dejarik-enemy-chip {{#if this.defeated}}is-defeated{{/if}}"
+                          data-dejarik-inspect-piece
+                          data-piece-id="{{this.id}}"
+                          data-piece-label="{{this.label}}"
+                          data-detail-json="{{{this.detailJsonAttr}}}">
+                    <span class="swse-dejarik-enemy-chip__glyph">{{#if this.hasImage}}<img src="{{this.image}}" alt="{{this.label}}">{{else}}{{this.shortLabel}}{{/if}}</span>
+                    <span class="swse-dejarik-enemy-chip__body"><b>{{this.label}}</b><small>{{this.hpLabel}} · ATK {{this.attackLabel}} · MOV {{this.movementLabel}}</small></span>
+                  </button>
+                  {{/each}}
+                </div>
+                {{else}}
+                <p class="swse-dejarik-empty">No enemy holomonsters detected.</p>
+                {{/if}}
+              </section>
+
+              <section class="swse-dejarik-mini-detail" data-dejarik-detail-card>
+                <span class="swse-games-kicker">MONSTER DETAIL</span>
+                <strong data-dejarik-detail-name>Click a monster</strong>
+                <div class="swse-dejarik-mini-detail__stats">
+                  <span><b>HP</b><i data-dejarik-detail-hp>—</i></span>
+                  <span><b>Attack</b><i data-dejarik-detail-attack>—</i></span>
+                  <span><b>Movement Speed</b><i data-dejarik-detail-movement>—</i></span>
+                  <span><b>Reach</b><i data-dejarik-detail-reach>—</i></span>
+                </div>
+                <div class="swse-dejarik-mini-detail__ability">
+                  <b>Ability</b>
+                  <span data-dejarik-detail-ability>Choose any friendly or enemy monster to inspect its tactical profile.</span>
+                </div>
+              </section>
+            </aside>
           </section>
 
           {{#if vm.activeTable.dejarik.canAct}}
@@ -607,6 +645,7 @@
                         data-piece-detail="{{this.detailLine}}"
                         data-piece-summary="{{this.tacticalSummary}}"
                         data-piece-ability="{{this.abilityLabel}}: {{this.abilityDescription}}"
+                        data-detail-json="{{{this.detailJsonAttr}}}"
                         data-move-spaces="{{this.moveSpacesAttr}}"
                         data-attack-targets="{{this.attackTargetsAttr}}">
                   Highlight Moves
