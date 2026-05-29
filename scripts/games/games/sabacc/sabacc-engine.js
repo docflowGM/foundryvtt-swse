@@ -87,6 +87,11 @@ function buildState(session = {}) {
   return {
     engine: 'sabacc',
     version: 2,
+    rulesVariant: session.metadata?.sabaccVariant || 'corellian-spike-holopad-wagered',
+    rulesVariantLabel: 'Corellian Spike — Holopad Wagered Variant',
+    marketRuleLabel: 'Holopad Casino Market — house-rule buy/trade option',
+    jackpotRuleLabel: "Sabacc pot pays only on Idiot's Array or Pure Sabacc.",
+    phasePlan: 'Card action → betting → spike dice, repeated for three rounds.',
     phase: 'ready',
     statusLabel: 'READY',
     target: SABACC_TARGET,
@@ -121,6 +126,11 @@ function ensureState(session = {}) {
   state.eventLog = Array.isArray(state.eventLog) ? state.eventLog : [];
   state.pendingReceipts = Array.isArray(state.pendingReceipts) ? state.pendingReceipts : [];
   state.betting ??= null;
+  state.rulesVariant ||= session.metadata?.sabaccVariant || 'corellian-spike-holopad-wagered';
+  state.rulesVariantLabel ||= 'Corellian Spike — Holopad Wagered Variant';
+  state.marketRuleLabel ||= 'Holopad Casino Market — house-rule buy/trade option';
+  state.jackpotRuleLabel ||= "Sabacc pot pays only on Idiot's Array or Pure Sabacc.";
+  state.phasePlan ||= 'Card action → betting → spike dice, repeated for three rounds.';
   state.market = Array.isArray(state.market) ? state.market : [];
   state.cardRound = safeAmount(state.cardRound, 0);
   for (const seat of playableSeats(session.seats)) {
@@ -218,7 +228,7 @@ function startCardRound(session, state, round = 1) {
   }
   setupMarketForRound(state, state.cardRound);
   state.activeSeatId = firstActionSeatId(session, state);
-  state.message = `${seatLabel(session, state.activeSeatId)} may draw, trade, purchase the market, stand, or fold.`;
+  state.message = `${seatLabel(session, state.activeSeatId)} may draw, trade with the deck, use the Holopad market house rule, stand/pass, or fold.`;
   pushEvent(session, state, 'card-round-opened', state.activeSeatId, `Sabacc card round ${state.cardRound} opens.`, { tone: 'card' });
   updateEvaluations(state);
   return state;
@@ -417,8 +427,14 @@ function hasBettingClosed(session, state) {
 
 function closeBettingRound(session, state) {
   state.betting = { ...(state.betting || {}), closedAt: now(), closed: true };
-  pushEvent(session, state, 'betting-closed', state.activeSeatId, 'Betting round closed. Spike dice roll now.', { tone: 'credits' });
-  rollCorellianSpikeDice(session, state);
+  state.phase = 'spike-dice';
+  state.statusLabel = 'SPIKE DICE';
+  pushEvent(session, state, 'betting-closed', state.activeSeatId, 'Betting round closed. Spike dice phase begins.', { tone: 'credits' });
+  const roll = rollCorellianSpikeDice(session, state);
+  state.lastSpikeDicePhase = { at: now(), cardRound: safeAmount(state.cardRound, 1), roll };
+  state.message = roll?.matched
+    ? `Spike dice ${roll.label}: doubles trigger a table-wide hand shift.`
+    : `Spike dice ${roll?.label || 'rolled'}: stable; play continues.`;
   if (safeAmount(state.cardRound, 1) >= 3) return resolveHand(session, state);
   startCardRound(session, state, safeAmount(state.cardRound, 1) + 1);
   return state;
@@ -585,7 +601,7 @@ function advanceTurn(session, state, fromSeatId) {
   const next = nextSeatId(session, state, fromSeatId);
   if (!next) return resolveHand(session, state);
   state.activeSeatId = next;
-  state.message = `${seatLabel(session, next)} is deciding whether to draw, trade, purchase, stand, or fold.`;
+  state.message = `${seatLabel(session, next)} is deciding whether to draw, trade, use the market, stand/pass, or fold.`;
   return state;
 }
 
@@ -807,8 +823,8 @@ function applyActionToState(session, state, seat, action, payload = {}) {
     if (player.hand.length < SABACC_MIN_HAND_SIZE) return { ok: false, error: `You need at least ${SABACC_MIN_HAND_SIZE} cards to stand in Sabacc.` };
     player.cardActionRound = safeAmount(state.cardRound, 1);
     attachAiDecision(player, payload);
-    player.lastAction = 'Stands for this card round.';
-    pushEvent(session, state, 'stand', seat.seatId, `${seat.displayName} stands.`, { tone: 'stand', ai: payload.ai || null });
+    player.lastAction = 'Passes/stands for this card round.';
+    pushEvent(session, state, 'stand', seat.seatId, `${seat.displayName} passes/stands.`, { tone: 'stand', ai: payload.ai || null });
     updateEvaluations(state);
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
@@ -885,7 +901,7 @@ export class SabaccEngine {
     const aiProfile = buildSabaccAiProfile(generated);
     const hostSeat = { seatId: 'seat_host', type: requester?.isGM ? 'gm' : 'player', userId, actorId: resolvedActor?.id ?? actorId ?? null, recipientId: hostRecipientId, displayName: actorDisplay(resolvedActor), avatar: actorImg(resolvedActor), status: 'host' };
     const aiSeat = { seatId: 'seat_ai', type: 'ai', userId: null, actorId: null, recipientId: null, displayName: aiProfile.name || 'Sabacc Dealer Droid', avatar: 'icons/commodities/tech/cog-bronze.webp', status: 'accepted', profession: aiProfile.profession || '', tableFact: aiProfile.tableFact || '', aiProfile, aiDifficulty: aiProfile.difficulty, aiFairness: aiProfile.fairness, aiPersonality: aiProfile.personality };
-    let shell = { id: resolvedSessionId, gameId: 'sabacc', title: title || `${actorDisplay(resolvedActor)} at the Sabacc Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', sabaccAnte: 10, sabaccPotAnte: 5, creditBuyIn: wager.creditBuyIn, aiProfile }, log: [sessionLogEntry('solo-ai-sabacc-created', hostRecipientId)] };
+    let shell = { id: resolvedSessionId, gameId: 'sabacc', title: title || `${actorDisplay(resolvedActor)} at the Sabacc Table`, status: 'active', authorityMode: wager.rulesMode === 'wagered' ? 'gm' : 'host', hostUserId: userId, hostActorId: resolvedActor?.id ?? actorId ?? null, seats: [hostSeat, aiSeat], rulesMode: wager.rulesMode, wagerProfile: wager.wagerProfile, prizeProfile: { enabled: false }, escrow: {}, metadata: { createdBy: hostRecipientId, mode: 'solo-ai', sabaccAnte: 10, sabaccPotAnte: 5, creditBuyIn: wager.creditBuyIn, sabaccVariant: 'corellian-spike-holopad-wagered', aiProfile }, log: [sessionLogEntry('solo-ai-sabacc-created', hostRecipientId)] };
     shell.gameState = ensureState(shell);
     if (GameCreditEscrowService.isCreditWager(shell)) {
       const escrowed = await GameCreditEscrowService.prepareEscrow(shell, { by: hostRecipientId });

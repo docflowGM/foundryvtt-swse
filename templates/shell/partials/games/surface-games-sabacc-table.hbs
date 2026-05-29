@@ -16,7 +16,7 @@
         </div>
         <div class="swse-sabacc-deck-row">
           <i class="swse-sabacc-deck-card"></i>
-          <span>Corellian Spike</span>
+          <span>{{vm.activeTable.sabacc.rulesVariantLabel}}</span>
           <i class="swse-sabacc-deck-card"></i>
         </div>
         <div class="swse-sabacc-shift-row {{#if vm.activeTable.sabacc.shiftMatched}}matched{{/if}}">
@@ -25,7 +25,7 @@
             {{#each vm.activeTable.sabacc.shiftDice.dice}}<b>{{this.value}}</b>{{/each}}
             <small>{{#if vm.activeTable.sabacc.shiftMatched}}Forced shift triggered{{else}}Stable{{/if}}</small>
           {{else}}
-            <b>?</b><b>?</b><small>Awaiting round 3</small>
+            <b>?</b><b>?</b><small>Rolls after each betting round</small>
           {{/if}}
         </div>
       </div>
@@ -69,7 +69,7 @@
 
     {{#if vm.activeTable.sabacc.hasMarket}}
     <aside class="swse-sabacc-market-dock">
-      <span class="swse-games-kicker">Market</span>
+      <span class="swse-games-kicker">Market · House Rule</span><small class="swse-sabacc-market-note">{{vm.activeTable.sabacc.marketRuleLabel}}</small>
       {{#each vm.activeTable.sabacc.market}}
       <article>
         <span class="swse-sabacc-card {{this.card.cssClass}}">
@@ -158,7 +158,7 @@
       <strong>{{vm.activeTable.sabacc.viewerSeat.totalLabel}} · {{vm.activeTable.sabacc.viewerSeat.statusLabel}}</strong>
       <div class="swse-sabacc-action-row">
         <form data-games-action="sabacc-draw-card"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Draw Card</button></form>
-        <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canCall}}disabled{{/unless}}>Call Hand</button></form>
+        <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canStand}}disabled{{/unless}}>Stand / Pass</button></form>
         <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
       </div>
       {{else if vm.activeTable.sabacc.canStartHand}}

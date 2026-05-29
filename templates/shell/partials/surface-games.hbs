@@ -443,10 +443,10 @@
             {{#if vm.activeTable.sabacc.viewerSeat.canCardAct}}
             <section class="swse-pazaak-hand-panel swse-sabacc-actions">
               <div class="swse-pazaak-builder-head">
-                <div><span class="swse-games-kicker">YOUR SABACC TURN</span><strong>Draw, trade with the deck/market, call, or fold.</strong></div>
+                <div><span class="swse-games-kicker">YOUR SABACC TURN</span><strong>Draw, trade with the deck/market, stand/pass, or fold.</strong></div>
                 <div class="swse-pazaak-turn-actions">
                   <form data-games-action="sabacc-draw-card"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-primary">Draw</button></form>
-                  <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canCall}}disabled{{/unless}}>Call</button></form>
+                  <form data-games-action="sabacc-call-hand"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.sabacc.viewerSeat.canStand}}disabled{{/unless}}>Stand / Pass</button></form>
                   <form data-games-action="sabacc-fold"><input type="hidden" name="sessionId" value="{{vm.activeTable.sabacc.id}}"><input type="hidden" name="seatId" value="{{vm.activeTable.sabacc.currentSeatId}}"><button type="submit" class="swse-games-ghost swse-games-ghost--danger">Fold</button></form>
                 </div>
               </div>

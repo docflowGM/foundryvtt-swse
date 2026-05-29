@@ -18,7 +18,7 @@ import {
   resetPazaakPlayerForSet
 } from '../games/pazaak/pazaak-rules.js';
 import { buildSabaccDeck, buildSabaccSylopCard, buildSabaccNumberCard, SABACC_SUITS } from '../games/sabacc/sabacc-deck.js';
-import { compareSabaccHands, evaluateSabaccHand } from '../games/sabacc/sabacc-rules.js';
+import { compareSabaccHands, evaluateSabaccHand, isSabaccPotJackpotHand } from '../games/sabacc/sabacc-rules.js';
 import { SabaccAi } from '../games/sabacc/sabacc-ai.js';
 import { buildDejarikBoard } from '../games/dejarik/dejarik-board.js';
 import { attackRangeForPiece, canAttackPiece, canMovePiece } from '../games/dejarik/dejarik-rules.js';
@@ -53,11 +53,25 @@ function testPazaak() {
 function testSabacc() {
   const deck = buildSabaccDeck();
   assert.equal(deck.length, 62, 'Galaxy/Corellian Spike Sabacc deck should contain 62 cards');
-  const pure = evaluateSabaccHand([buildSabaccSylopCard(0), buildSabaccSylopCard(1)]);
+  const pureCards = [buildSabaccSylopCard(0), buildSabaccSylopCard(1)];
+  const pure = evaluateSabaccHand(pureCards);
   assert.equal(pure.handType, 'pure-sabacc', 'Two Sylops should evaluate as Pure Sabacc');
+  assert.equal(pure.claimsSabaccPot, true, 'Pure Sabacc should claim the Sabacc pot jackpot');
   const suit = SABACC_SUITS[0];
   const paired = evaluateSabaccHand([buildSabaccNumberCard(suit, 5), buildSabaccNumberCard(suit, -5)]);
   assert.equal(paired.total, 0, 'Paired positive/negative cards should total zero');
+  assert.equal(paired.claimsSabaccPot, false, 'Ordinary zero Sabacc should not claim the Sabacc pot jackpot');
+
+  const idiotsArrayCards = [buildSabaccSylopCard(2), buildSabaccNumberCard(suit, 2), buildSabaccNumberCard(suit, 3)];
+  const idiotsArray = evaluateSabaccHand(idiotsArrayCards);
+  assert.equal(idiotsArray.handType, 'idiots-array', "Sylop + 2 + 3 should evaluate as Idiot's Array");
+  assert.equal(isSabaccPotJackpotHand(idiotsArrayCards), true, "Idiot's Array should claim the Sabacc pot jackpot");
+  const specialRank = compareSabaccHands([
+    { seatId: 'idiot', cards: idiotsArrayCards },
+    { seatId: 'pure', cards: pureCards }
+  ]);
+  assert.equal(specialRank.winnerSeatId, 'idiot', "Idiot's Array should outrank Pure Sabacc");
+
   const result = compareSabaccHands([
     { seatId: 'a', cards: [buildSabaccNumberCard(suit, 1), buildSabaccNumberCard(suit, -1)] },
     { seatId: 'b', cards: [buildSabaccNumberCard(suit, 3), buildSabaccNumberCard(suit, 2)] }

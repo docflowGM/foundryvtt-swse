@@ -3,8 +3,8 @@ import { SABACC_MAX_HAND_SIZE, SABACC_MIN_HAND_SIZE, SABACC_TARGET } from './sab
 
 
 export const SABACC_HAND_HIERARCHY_HELP = [
-  { label: "Idiot's Array", description: 'A Sylop plus a 2 and 3. This named hand outranks Pure Sabacc.' },
-  { label: 'Pure Sabacc', description: 'Two lone Sylops with no other cards.' },
+  { label: "Idiot's Array", description: 'A Sylop plus a 2 and 3. This named hand outranks Pure Sabacc and may claim the Sabacc pot.' },
+  { label: 'Pure Sabacc', description: 'Two lone Sylops with no other cards; may claim the Sabacc pot.' },
   { label: 'Rhylet', description: 'Three of a kind and two of a kind equalling zero.' },
   { label: 'Fleet', description: 'A Sylop plus any four of a kind equalling zero.' },
   { label: 'Banthas Wild', description: 'Three same-sign cards plus one or two mixed cards equalling zero.' },
@@ -61,6 +61,10 @@ function hasConsecutiveAbsRun(cards = [], length = 4) {
     if (run >= length) return true;
   }
   return unique.length >= length && unique.every((value, index) => index === 0 || value === unique[index - 1] + 1);
+}
+
+function jackpotSabaccPotClaimForSpecial(special = null) {
+  return ['idiots-array', 'pure-sabacc'].includes(String(special?.id || '').trim());
 }
 
 function classifySpecialHand(cards = [], total = 0) {
@@ -154,6 +158,10 @@ export function isIdiotsArray(cards = []) {
   return classifySpecialHand(cards, scoreSabaccHand(cards))?.id === 'idiots-array';
 }
 
+export function isSabaccPotJackpotHand(cards = []) {
+  return jackpotSabaccPotClaimForSpecial(classifySpecialHand(cards, scoreSabaccHand(cards)));
+}
+
 export function evaluateSabaccHand(cards = []) {
   const hand = safeCards(cards).slice(0, SABACC_MAX_HAND_SIZE);
   const total = scoreSabaccHand(hand);
@@ -173,7 +181,7 @@ export function evaluateSabaccHand(cards = []) {
     bombedOut: false,
     canWin: enoughCards,
     specialWinner: Boolean(special || total === 0),
-    claimsSabaccPot: Boolean(enoughCards && total === 0),
+    claimsSabaccPot: Boolean(enoughCards && jackpotSabaccPotClaimForSpecial(special)),
     handType: special?.id || (total === 0 ? 'sabacc' : 'nulrhek'),
     handRankLabel: label,
     rank,

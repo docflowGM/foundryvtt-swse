@@ -1795,3 +1795,14 @@
   45% { transform: rotate(5deg) scale(1.04); }
   100% { transform: rotate(0) scale(1); }
 }
+
+/* Sabacc Patch 2: variant and house-rule labels */
+.swse-sabacc-market-note {
+  display: block;
+  margin: 2px 0 8px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--swse-color-text-muted, rgba(220, 240, 255, 0.68));
+  text-transform: uppercase;
+}
