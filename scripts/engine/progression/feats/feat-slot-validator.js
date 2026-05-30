@@ -23,8 +23,9 @@ export class FeatSlotValidator {
    * @param {Object} actor - Actor (for context)
    * @returns {Promise<Object>} {valid: boolean, message: string}
    */
-  static async validateFeatForSlot(feat, slot, actor = null) {
+  static async validateFeatForSlot(feat, slot, actor = null, options = {}) {
     const errors = [];
+    const quiet = options?.quiet === true || options?.suppressWarnings === true;
 
     // Validate slot structure
     if (!slot || typeof slot !== 'object') {
@@ -58,20 +59,26 @@ export class FeatSlotValidator {
       if (lookupKeys.length > 0) {
         const allowed = await ClassFeatRegistry.getClassBonusFeats(lookupKeys);
         if (allowed.length === 0) {
-          SWSELogger.warn(
-            `[FeatSlotValidator] No class bonus feats available for class keys ${lookupKeys.join(', ')}`
-          );
+          if (!quiet) {
+            SWSELogger.warn(
+              `[FeatSlotValidator] No class bonus feats available for class keys ${lookupKeys.join(', ')}`
+            );
+          }
           errors.push('No class bonus feat is available for this class at this level');
         } else if (!allowed.includes(feat._id || feat.id)) {
-          SWSELogger.warn(
-            `[FeatSlotValidator] Feat ${feat._id} not in class bonus list for ${lookupKeys.join(', ')}`
-          );
+          if (!quiet) {
+            SWSELogger.warn(
+              `[FeatSlotValidator] Feat ${feat._id} not in class bonus list for ${lookupKeys.join(', ')}`
+            );
+          }
           errors.push(`Feat not allowed for class bonus slot: must be from class feat list`);
         }
       } else {
-        SWSELogger.warn(
-          '[FeatSlotValidator] Class slot provided but no classId resolved'
-        );
+        if (!quiet) {
+          SWSELogger.warn(
+            '[FeatSlotValidator] Class slot provided but no classId resolved'
+          );
+        }
         errors.push('Class ID not resolved for class bonus validation');
       }
     } else if (slot.slotType === 'heroic') {
@@ -79,14 +86,17 @@ export class FeatSlotValidator {
       // Validation handled by prerequisite checks elsewhere
     }
 
-    SWSELogger.log(
-      `[FeatSlotValidator] Validation for ${feat.name} to ${slot.slotType} slot: ` +
-      `${errors.length === 0 ? 'PASS' : 'FAIL'}`
-    );
+    if (!quiet) {
+      SWSELogger.log(
+        `[FeatSlotValidator] Validation for ${feat.name} to ${slot.slotType} slot: ` +
+        `${errors.length === 0 ? 'PASS' : 'FAIL'}`
+      );
+    }
 
     return {
       valid: errors.length === 0,
-      message: errors.length > 0 ? errors.join('; ') : 'Valid'
+      message: errors.length > 0 ? errors.join('; ') : 'Valid',
+      reason: errors.length > 0 ? errors.join('; ') : 'Valid'
     };
   }
 

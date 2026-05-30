@@ -1,4 +1,11 @@
 /**
+ * @deprecated MARKED FOR DELETION
+ * This file is a stale backup copy and is NOT imported anywhere.
+ * The active implementation is class-step.js in the same directory.
+ * Safe to delete from the repository.
+ */
+
+/**
  * ClassStep plugin
  *
  * Handles class selection for chargen.

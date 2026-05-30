@@ -170,9 +170,11 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       const ownedForceSensitivity = actorHasForceSensitivity();
       const pendingForceSensitivityFeat = FeatGrantEntitlementResolver.getFeatEntries(actor, { shell, includePending: true })
         .some((entry) => normalizeGrantName(entry?.name) === 'force sensitivity');
-      const forceSensitivityApplies = isLevelUpLike
-        ? ((classGrantsForceSensitivity || pendingForceSensitivityFeat) && !ownedForceSensitivity)
-        : (classGrantsForceSensitivity || ownedForceSensitivity || pendingForceSensitivityFeat);
+      // In level-up, Force Sensitivity itself is only access metadata; it must not
+      // reopen the Force Power picker by itself. New Force Power purchases are
+      // driven by explicit force_power_grants or Force Training slot entitlements.
+      const forceSensitivityApplies = !isLevelUpLike
+        && (classGrantsForceSensitivity || ownedForceSensitivity || pendingForceSensitivityFeat);
       if (forceSensitivityApplies) {
         totalEntitlements += 1;
         reasons.push('Force Sensitive grants +1 Force Power training');

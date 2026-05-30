@@ -48,6 +48,16 @@ function emitTalentStepTrace(label, payload = {}) {
 }
 
 
+function normalizeTalentTreeAccessKey(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 function cssEscapeSelector(value) {
   const raw = String(value ?? '');
   if (globalThis.CSS?.escape) return globalThis.CSS.escape(raw);
@@ -642,7 +652,10 @@ export class TalentStep extends ProgressionStepPlugin {
           ...(lookup.treeNames || []),
           ...(classModel.talentTreeIds || []),
           ...(classModel.talentTreeSourceIds || []),
-          ...(classModel.talentTreeNames || [])
+          ...(classModel.talentTreeNames || []),
+          ...(classModel.system?.talentTreeIds || []),
+          ...(classModel.system?.talent_tree_ids || []),
+          ...(classModel.system?.talent_trees || [])
         ].filter(Boolean);
         SWSELogger.debug(`[TalentStep] Resolved class model "${classModel.name}" with ${allowedIds.length} talent tree access keys`);
       }
@@ -672,10 +685,10 @@ export class TalentStep extends ProgressionStepPlugin {
     }
 
     // For heroic slots, use all available trees if no restriction
-    const normalizedAllowed = new Set((allowedIds || []).map(id => String(id).toLowerCase()));
+    const normalizedAllowed = new Set((allowedIds || []).map(normalizeTalentTreeAccessKey).filter(Boolean));
     let available = allTrees.filter(tree => {
       if (!normalizedAllowed.size) return this._slotType === 'heroic';  // heroic: allow all if no restriction
-      const treeIds = [tree.id, tree.sourceId, tree.name].filter(Boolean).map(v => String(v).toLowerCase());
+      const treeIds = [tree.id, tree.sourceId, tree.name, tree.key, tree.displayName].filter(Boolean).map(normalizeTalentTreeAccessKey);
       return treeIds.some(id => normalizedAllowed.has(id));
     });
 

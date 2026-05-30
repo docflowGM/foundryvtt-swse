@@ -23,16 +23,22 @@ function normalizeName(value) {
     .trim();
 }
 
-function getAbilityModifier(actor, abilityKey) {
+function getAbilityModifier(actor, abilityKey, shell = null) {
   const key = String(abilityKey || '').toLowerCase();
   if (!actor || !key) return 0;
   const system = actor.system || {};
-  const draftAttributes = globalThis.game?.__swseActiveProgressionShell?.actor?.id === actor.id
+  const shellDraftAttributes = shell?.progressionSession?.draftSelections?.attributes
+    ?? shell?.draftSelections?.attributes
+    ?? shell?.committedSelections?.get?.('attributes')
+    ?? null;
+  const globalDraftAttributes = globalThis.game?.__swseActiveProgressionShell?.actor?.id === actor.id
     ? globalThis.game.__swseActiveProgressionShell.progressionSession?.draftSelections?.attributes
     : null;
+  const draftAttributes = shellDraftAttributes || globalDraftAttributes;
   const draftValue = draftAttributes?.finalValues?.[key]
-    ?? (Number.isFinite(Number(draftAttributes?.values?.[key])) && Number.isFinite(Number(draftAttributes?.speciesMods?.[key]))
-      ? Number(draftAttributes.values[key]) + Number(draftAttributes.speciesMods[key])
+    ?? draftAttributes?.values?.[key]
+    ?? (Number.isFinite(Number(draftAttributes?.baseValues?.[key])) && Number.isFinite(Number(draftAttributes?.speciesMods?.[key]))
+      ? Number(draftAttributes.baseValues[key]) + Number(draftAttributes.speciesMods[key])
       : null);
   const candidates = [
     draftAttributes?.modifiers?.[key],
@@ -55,19 +61,19 @@ function getRegisteredSetting(moduleId, key, fallback = null) {
   try { return globalThis.game?.settings?.get?.(moduleId, key) ?? fallback; } catch (_err) { return fallback; }
 }
 
-function getForceTrainingAbilityModifier(actor) {
+function getForceTrainingAbilityModifier(actor, shell = null) {
   const configured = getRegisteredSetting(globalThis.game?.system?.id || 'foundryvtt-swse', 'forceTrainingAttribute')
     ?? getRegisteredSetting('foundryvtt-swse', 'forceTrainingAttribute')
     ?? getRegisteredSetting('swse', 'forceTrainingAttribute')
     ?? 'wisdom';
   const key = String(configured || '').toLowerCase();
-  if (key === 'cha' || key === 'charisma') return getAbilityModifier(actor, 'cha');
-  if (key === 'wis' || key === 'wisdom') return getAbilityModifier(actor, 'wis');
+  if (key === 'cha' || key === 'charisma') return getAbilityModifier(actor, 'cha', shell);
+  if (key === 'wis' || key === 'wisdom') return getAbilityModifier(actor, 'wis', shell);
 
   // Existing system behavior often allows WIS/CHA configuration. If no setting
   // is readable in this context, use the better of the two so the entitlement is
   // conservative for either supported table setting and remains minimum 1.
-  return Math.max(getAbilityModifier(actor, 'wis'), getAbilityModifier(actor, 'cha'));
+  return Math.max(getAbilityModifier(actor, 'wis', shell), getAbilityModifier(actor, 'cha', shell));
 }
 
 function makeSourceId(itemOrFeat, index, prefix) {
@@ -135,8 +141,8 @@ function getPendingFeatEntries(shell) {
 }
 
 export class FeatGrantEntitlementResolver {
-  static getAbilityModifier(actor, abilityKey) {
-    return getAbilityModifier(actor, abilityKey);
+  static getAbilityModifier(actor, abilityKey, shell = null) {
+    return getAbilityModifier(actor, abilityKey, shell);
   }
 
   static getIntBonusLanguageCount(actor) {
@@ -147,12 +153,12 @@ export class FeatGrantEntitlementResolver {
     return Math.max(1, 1 + getAbilityModifier(actor, 'int'));
   }
 
-  static getForceTrainingSlotsPerInstance(actor) {
-    return Math.max(1, 1 + getForceTrainingAbilityModifier(actor));
+  static getForceTrainingSlotsPerInstance(actor, shell = null) {
+    return Math.max(1, 1 + getForceTrainingAbilityModifier(actor, shell));
   }
 
-  static getStarshipTacticsSlotsPerInstance(actor) {
-    return Math.max(1, 1 + Math.max(0, getAbilityModifier(actor, 'wis')));
+  static getStarshipTacticsSlotsPerInstance(actor, shell = null) {
+    return Math.max(1, 1 + Math.max(0, getAbilityModifier(actor, 'wis', shell)));
   }
 
   static getOwnedFeatEntries(actor) {
@@ -173,7 +179,7 @@ export class FeatGrantEntitlementResolver {
     return entries;
   }
 
-  static resolveForFeat(actor, featEntry, index = 0) {
+  static resolveForFeat(actor, featEntry, index = 0, options = {}) {
     const name = normalizeName(featEntry?.name);
     const sourceItemId = makeSourceId(featEntry, index, 'feat-grant');
     const sourceName = featEntry?.name || '';
@@ -198,7 +204,7 @@ export class FeatGrantEntitlementResolver {
     }
 
     if (name === 'force training') {
-      const count = this.getForceTrainingSlotsPerInstance(actor);
+      const count = this.getForceTrainingSlotsPerInstance(actor, options.shell || null);
       return [{
         grantType: 'forcePowerSlots',
         registry: 'forcePower',
@@ -216,7 +222,7 @@ export class FeatGrantEntitlementResolver {
     }
 
     if (name === 'starship tactics') {
-      const count = this.getStarshipTacticsSlotsPerInstance(actor);
+      const count = this.getStarshipTacticsSlotsPerInstance(actor, options.shell || null);
       return [{
         grantType: 'starshipManeuverSlots',
         registry: 'starshipManeuver',
@@ -241,7 +247,7 @@ export class FeatGrantEntitlementResolver {
     const entries = this.getFeatEntries(actor, options);
     const entitlements = [];
     entries.forEach((entry, index) => {
-      entitlements.push(...this.resolveForFeat(actor, entry, index));
+      entitlements.push(...this.resolveForFeat(actor, entry, index, options));
     });
 
     // Diagnostic logging for Force-related entitlements

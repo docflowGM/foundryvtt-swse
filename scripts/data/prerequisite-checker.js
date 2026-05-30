@@ -66,6 +66,7 @@ import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
+import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 
 function isForceSensitivityName(value) {
     const key = normalizeLooseLookupKey(value);
@@ -1017,6 +1018,20 @@ export class PrerequisiteChecker {
                 return this._checkSkillRankLegacy(prereq, actor, pending);
             case 'force_sensitive':
                 return this._checkForceSensitiveLegacy(prereq, actor, pending);
+            case 'forcePower':
+            case 'force_power':
+                return this._checkForcePowerCondition(prereq, actor, pending);
+            case 'darkSideScore':
+            case 'dark_side_score':
+                return this._checkDarkSideCondition(prereq, actor, pending);
+            case 'isDroid':
+            case 'is_droid':
+                return this._checkIsDroidCondition(prereq, actor, pending);
+            case 'species_trait':
+                return this._checkSpeciesTraitCondition(prereq, actor, pending);
+            case 'advisory':
+            case 'unknown_advisory':
+                return { met: true, message: '' };
             case 'species':
                 return this._checkSpeciesLegacy(prereq, actor, pending);
             case 'non_droid':
@@ -1616,6 +1631,68 @@ export class PrerequisiteChecker {
             };
         }
 
+        // Legacy feat data often stores a bare skill name (for example "Jump",
+        // "Ride", or "Use Computer") to mean trained in that skill. Treat known
+        // canonical skill names as skill prerequisites instead of literal feat names.
+        const bareSkillKey = resolveCanonicalSkillKey(part);
+        if (bareSkillKey && CANONICAL_SKILL_DEFS[bareSkillKey]) {
+            return { type: 'skill', skillName: part, skillKey: bareSkillKey };
+        }
+
+        // Dark Side Score pattern, e.g. "Dark Side Score 1+".
+        const darkSideMatch = part.match(/^dark\s+side\s+score\s+(\d+)\+?$/i);
+        if (darkSideMatch) {
+            return { type: 'darkSideScore', minimum: parseInt(darkSideMatch[1], 10) };
+        }
+
+        // Droid / cyborg / biological chassis requirements. These should be
+        // semantic actor predicates, not fake feat-name prerequisites.
+        if (/^droid$/i.test(part)) {
+            return { type: 'isDroid' };
+        }
+        if (/^non[-\s]?droid$/i.test(part)) {
+            return { type: 'non_droid' };
+        }
+        if (/^(cyborg hybrid|possess an implant|have an implant|implant)$/i.test(part)) {
+            return { type: 'advisory', label: part, reason: 'implant-or-cyborg-requirement' };
+        }
+
+        // Choice-based feat prerequisites. During list building there may be no
+        // selected weapon yet, so these mean "has any matching choice provider".
+        const weaponFocusChoice = part.match(/^weapon\s+focus\s+(?:with\s+)?(?:selected|chosen)\s+weapon(?:\s+group)?$/i)
+            || part.match(/^weapon\s+focus\s*\((?:selected|chosen|chosen weapon|selected weapon|chosen weapon group|selected weapon group)\)$/i);
+        if (weaponFocusChoice) {
+            return { type: 'weapon_focus' };
+        }
+        const weaponSpecChoice = part.match(/^weapon\s+specialization\s+(?:with\s+)?(?:selected|chosen)\s+weapon(?:\s+group)?$/i)
+            || part.match(/^weapon\s+specialization\s*\((?:selected|chosen|chosen weapon|selected weapon|chosen weapon group|selected weapon group)\)$/i);
+        if (weaponSpecChoice) {
+            return { type: 'weapon_specialization' };
+        }
+
+        // GM/destiny/table-state requirements should not hard-fail automated
+        // chargen. They remain visible as advisory requirements for the GM/player.
+        if (/^(?:gamemaster|game\s*master|gm)'?s?\s+approval$/i.test(part) || /^have\s+a\s+destiny$/i.test(part)) {
+            return { type: 'advisory', label: part, reason: 'table-state-requirement' };
+        }
+
+        // Species trait phrasing, e.g. "Rage Species Trait".
+        const speciesTraitMatch = part.match(/^(.+?)\s+species\s+trait$/i);
+        if (speciesTraitMatch) {
+            return { type: 'species_trait', trait: speciesTraitMatch[1].trim() };
+        }
+
+        // Common droid accessory / locomotion / processor prerequisites are not
+        // represented as feats in actor inventory today. Do not convert them into
+        // false feat requirements; leave them advisory until the droid equipment
+        // pipeline owns them.
+        if (/^(?:basic processor|shield generator \(droid accessory\)|droid with hovering|flying locomotion)$/i.test(part)
+            || /droid with/i.test(part)
+            || /locomotion/i.test(part)
+            || /appendages/i.test(part)) {
+            return { type: 'advisory', label: part, reason: 'droid-equipment-requirement' };
+        }
+
         // Force Sensitive
         if (part.toLowerCase().includes('force sensitive') || part.toLowerCase().includes('force sensitivity')) {
             return { type: 'force_sensitive' };
@@ -1648,12 +1725,13 @@ export class PrerequisiteChecker {
             return { type: 'feat', featName: canonicalFeatName, name: canonicalFeatName };
         }
 
-        // FIX #2: Report unrecognized patterns instead of silently parsing as feat names
-        // This helps DMs catch malformed prerequisite data
+        // Unknown legacy strings should not become hard false feat requirements.
+        // Legacy SWSE data contains many table-state, equipment, force-power, and
+        // species-trait phrases that are not modeled as owned feat items. Treat
+        // them as advisory until a specific semantic parser exists.
         SWSELogger.warn(`[CHARGEN PREREQ] Unrecognized prerequisite pattern: "${part}". ` +
-            `Parsing as feat requirement, but this may indicate a typo or malformed prerequisite.`);
+            `Treating as advisory instead of a hard feat requirement.`);
 
-        // Default: feat name (last resort fallback)
         if (owningType === 'talent') {
             const fallbackTalent = resolveCanonicalTalentName(part);
             if (fallbackTalent && normalizeLooseLookupKey(fallbackTalent) !== normalizeLooseLookupKey(part)) {
@@ -1661,7 +1739,7 @@ export class PrerequisiteChecker {
             }
         }
 
-        return { type: 'feat', featName: canonicalFeatName || part, name: canonicalFeatName || part };
+        return { type: 'unknown_advisory', label: part, reason: 'unparsed-legacy-prerequisite' };
     }
 
     static _checkOrGroupLegacy(prereq, actor, pending) {

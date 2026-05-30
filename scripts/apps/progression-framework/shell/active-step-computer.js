@@ -574,7 +574,20 @@ export class ActiveStepComputer {
         '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
       );
       const entitlements = await resolveForcePowerEntitlements(progressionSession, actor);
-      return entitlements.remaining > 0;
+      if (!(entitlements.remaining > 0)) return false;
+      const isLevelUpLike = progressionSession?.mode === 'levelup';
+      if (!isLevelUpLike) return true;
+
+      // Level-up should not open the Force Power surface solely because the
+      // actor/class has Force access metadata. The entitlement resolver must
+      // identify a concrete current-event source: explicit class force power
+      // grants or pending Force Training slot grants.
+      const manifest = buildLevelUpEntitlementManifest(actor, progressionSession);
+      const classGrantCount = Number(manifest?.choices?.forcePowerChoices || 0) || 0;
+      const hasConcreteReason = (entitlements.reasons || []).some(reason =>
+        /force training|force_power_grants|force power entitlement|class level/i.test(String(reason || ''))
+      );
+      return classGrantCount > 0 || hasConcreteReason;
     } catch (err) {
       swseLogger.warn('[ActiveStepComputer] Error checking force power grants:', err);
       return false;

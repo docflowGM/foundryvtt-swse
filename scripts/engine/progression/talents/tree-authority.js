@@ -8,6 +8,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentTreeRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentTreeRegistry.js";
+import { resolveClassModel, getClassTalentTreeLookupKeys } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 
 /**
  * Get allowed talent trees for a given slot
@@ -24,34 +25,50 @@ export function getAllowedTalentTrees(actor, slot) {
 
   const allowedTrees = [];
 
-  // Rule 1: Class slots restrict to that class's trees ONLY
-  if (slot.slotType === "class" && slot.classId) {
-    const classes = actor.system?.classes || [];
-    const classDoc = classes.find(c => c._id === slot.classId);
+  const normalizeAccessKeys = (classDoc) => {
+    const model = resolveClassModel(classDoc) || classDoc || {};
+    const lookup = getClassTalentTreeLookupKeys(model) || {};
+    return [
+      ...(lookup.treeIds || []),
+      ...(lookup.treeNames || []),
+      ...(model.talentTreeIds || []),
+      ...(model.talentTreeSourceIds || []),
+      ...(model.talentTreeNames || []),
+      ...(model.system?.talent_trees || []),
+      ...(model.system?.talentTrees || []),
+      ...(model.system?.talentTreeIds || []),
+    ].filter(Boolean);
+  };
 
-    if (classDoc?.system?.talent_trees) {
-      SWSELogger.log(
-        `[TreeAuthority] Class slot: Adding ${classDoc.system.talent_trees.length} trees for class ${classDoc.name}`
-      );
-      return classDoc.system.talent_trees;
-    }
+  const ownedClassDocs = [
+    ...(Array.isArray(actor.system?.classes) ? actor.system.classes : []),
+    ...(actor.items?.filter?.(item => item?.type === 'class') || []),
+  ];
+
+  // Rule 1: Class slots restrict to the selected/owning class's access list.
+  // Trees categorize talents; they do not own talents or grant selections by themselves.
+  if (slot.slotType === "class") {
+    const selectedClass = slot.classModel || slot.class || slot.selectedClass || null;
+    const classDoc = selectedClass || ownedClassDocs.find(c =>
+      c?._id === slot.classId || c?.id === slot.classId || c?.system?.id === slot.classId
+    );
+    const keys = normalizeAccessKeys(classDoc);
 
     SWSELogger.log(
-      `[TreeAuthority] Class slot: No trees found for class ${slot.classId}`
+      `[TreeAuthority] Class slot: ${keys.length} tree access keys for ${classDoc?.name || slot.classId || 'selected class'}`
     );
-    return [];
+    return [...new Set(keys)];
   }
 
-  // Rule 2: Heroic slots can access multiple tree categories
+  // Rule 2: Heroic slots can access multiple tree categories derived from classes/domains.
   if (slot.slotType === "heroic") {
-    const classes = actor.system?.classes || [];
-
     // Add all trees from character's classes
-    for (const classDoc of classes) {
-      if (classDoc.system?.talent_trees) {
-        allowedTrees.push(...classDoc.system.talent_trees);
+    for (const classDoc of ownedClassDocs) {
+      const keys = normalizeAccessKeys(classDoc);
+      if (keys.length) {
+        allowedTrees.push(...keys);
         SWSELogger.log(
-          `[TreeAuthority] Heroic slot: Added ${classDoc.system.talent_trees.length} trees from class ${classDoc.name}`
+          `[TreeAuthority] Heroic slot: Added ${keys.length} tree access keys from class ${classDoc.name}`
         );
       }
     }

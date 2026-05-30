@@ -6,17 +6,22 @@
       <p class="prog-class-browse__droid-subtitle">Choose the unit role package before chassis systems are installed.</p>
     </div>
   {{/if}}
+  {{#if showUnavailable}}
+    <div class="prog-class-browse__notice">Unavailable classes are shown as locked. Select a locked card to review why it is unavailable.</div>
+  {{/if}}
   <div class="prog-class-grid" role="listbox" aria-label="Class">
     {{#each classes}}
       <button class="swse-option-card prog-class-card prog-class-card--visual
                      {{#if (eq id ../focusedClassId)}}swse-option-card--focused prog-class-card--focused{{/if}}
                      {{#if (eq id ../committedClassId)}}swse-option-card--selected prog-class-card--selected{{/if}}
+                     {{#if this.isLocked}}prog-class-card--locked swse-option-card--locked{{/if}}
                      {{#if this.isSuggested}}prog-class-card--suggested prog-class-card--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
               data-selected="{{#if (eq id ../committedClassId)}}true{{else}}false{{/if}}"
               data-focused="{{#if (eq id ../focusedClassId)}}true{{else}}false{{/if}}"
               data-recommended="{{#if this.isSuggested}}true{{/if}}"
+              data-locked="{{#if this.isLocked}}true{{else}}false{{/if}}"
               data-confidence-level="{{this.confidenceLevel}}"
               type="button"
               role="option"
@@ -38,7 +43,7 @@
 
         <div class="prog-class-card__chips" aria-hidden="true">
           {{#if this.badgeLabel}}
-            <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
+            <span class="swse-option-card__badge {{#if this.isLocked}}swse-option-card__badge--locked{{else}}swse-option-card__badge--recommended{{/if}}">{{this.badgeLabel}}</span>
           {{/if}}
           {{#if this.mentorName}}
             <span class="swse-option-card__badge"><i class="fas fa-user-circle"></i> {{this.mentorName}}</span>
@@ -47,6 +52,16 @@
             <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
           {{/if}}
         </div>
+
+        {{#if this.isLocked}}
+          <div class="prog-class-card__lock-reasons" aria-label="Unavailable requirements">
+            {{#each this.lockedReasons}}
+              <span class="prog-class-card__lock-reason"><i class="fas fa-lock"></i> {{this}}</span>
+            {{else}}
+              <span class="prog-class-card__lock-reason"><i class="fas fa-lock"></i> Prerequisites not met</span>
+            {{/each}}
+          </div>
+        {{/if}}
       </button>
     {{else}}
       <div class="prog-class-browse__empty">No classes found. Adjust your search or filters.</div>

@@ -1,4 +1,11 @@
 /**
+ * @deprecated MARKED FOR DELETION
+ * This file is an unused patch fragment. Pending entitlement behavior is now
+ * fully owned by feat-step.js and this file is NOT imported anywhere.
+ * Safe to delete from the repository.
+ */
+
+/**
  * PATCH: FeatStep - Pending Entitlements & Immediate Choices Integration
  *
  * This patch adds support for:

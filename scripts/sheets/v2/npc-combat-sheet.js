@@ -5,7 +5,7 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
-import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
@@ -287,7 +287,7 @@ export class SWSEV2CombatNpcSheet extends
       levelUpBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+          await launchProgression(this.actor, { source: "sheet.level-up" });
         }
       }, { signal });
     }

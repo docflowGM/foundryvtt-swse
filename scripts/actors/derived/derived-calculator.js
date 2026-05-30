@@ -31,7 +31,7 @@ import { DerivedOverrideEngine } from "/systems/foundryvtt-swse/scripts/engine/a
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
-import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getEffectiveHalfLevel, getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
@@ -278,15 +278,10 @@ export class DerivedCalculator {
       const skillData = CANONICAL_SKILL_DEFS;
 
       const normalizedSkills = normalizeSkillMap(actor.system.skills);
-      const actorLevel = Number(
-        actor.system?.derived?.identity?.level ??
-        actor.system?.progression?.level ??
-        actor.system?.level ??
-        1
-      ) || 1;
-      const halfLevel = Number.isFinite(Number(actor.system?.halfLevel))
-        ? Number(actor.system.halfLevel)
-        : Math.floor(Math.max(1, actorLevel) / 2);
+      // Half-level is derived from the level-split authority, not a persisted system field.
+      // system.halfLevel can be absent/stale during Foundry prepareData/update cycles,
+      // which caused trained skills to miss the +1 at level 2 and similar level-up flows.
+      const halfLevel = getEffectiveHalfLevel(actor);
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
 
@@ -341,7 +336,6 @@ export class DerivedCalculator {
             trained: skill.trained || false,
             focused: skill.focused || false,
             miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
-            halfLevel: 0,
             armorPenalty: 0,
             conditionPenalty: 0,
             featBonus: 0,
@@ -478,7 +472,6 @@ export class DerivedCalculator {
           trained: skill.trained || false,
           focused: skill.focused || false,
           miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
-          halfLevel: SkillRules.isHalfLevelSkillBonusEnabled() ? halfLevel : 0,
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
           featBonus: featBonus,

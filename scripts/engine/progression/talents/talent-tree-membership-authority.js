@@ -103,6 +103,67 @@ async function loadRegistry() {
 /**
  * FALLBACK 1: Try registry lookup by ID and normalized key
  */
+function normalizeTalentTreeKey(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function getTreeIdentityKeys(tree) {
+  return [...new Set([
+    tree?.id,
+    tree?.sourceId,
+    tree?.key,
+    tree?.name,
+    tree?.displayName,
+    tree?.system?.treeId,
+    tree?.system?.key,
+    tree?.system?.talent_tree,
+  ].map(normalizeTalentTreeKey).filter(Boolean))];
+}
+
+/**
+ * PRIMARY: resolve membership from talent-side tree fields.
+ */
+function tryTalentSideMembership(tree) {
+  const keys = getTreeIdentityKeys(tree);
+  if (!keys.length) return [];
+
+  const resolved = [];
+  const seenIds = new Set();
+
+  for (const key of keys) {
+    const matches = TalentRegistry.getByTree?.(key) || [];
+    for (const talent of matches) {
+      const id = talent?.id || talent?._id || talent?.name;
+      if (!id || seenIds.has(id)) continue;
+      resolved.push(talent);
+      seenIds.add(id);
+    }
+  }
+
+  if (resolved.length > 0) return resolved;
+
+  return TalentRegistry.search?.(talent => {
+    const talentKeys = [
+      talent?.treeId,
+      talent?.treeName,
+      talent?.talentTree,
+      talent?.system?.treeId,
+      talent?.system?.talentTreeId,
+      talent?.system?.talent_tree_id,
+      talent?.system?.talent_tree,
+      talent?.system?.talentTree,
+      talent?.system?.tree,
+    ].map(normalizeTalentTreeKey).filter(Boolean);
+    return talentKeys.some(key => keys.includes(key));
+  }) || [];
+}
+
 function tryRegistryLookup(registry, tree) {
   if (!tree || !registry) return null;
 
@@ -241,6 +302,18 @@ export async function getTalentMembership(tree) {
   const registry = await loadRegistry();
   const methodsTried = [];
 
+  // PRIMARY: talent-side membership. Talents declare which tree they belong to;
+  // tree-side talent lists are fallback hints only.
+  methodsTried.push('talent-side-membership');
+  let resolved = tryTalentSideMembership(tree);
+  if (resolved.length > 0) {
+    SWSELogger.debug(
+      `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
+      `${resolved.length} talents found from talent-side tree fields`
+    );
+    return resolved;
+  }
+
   // FALLBACK 1: Try registry lookup
   const registryEntry = tryRegistryLookup(registry, tree);
   if (registryEntry && Array.isArray(registryEntry.talents)) {
@@ -274,7 +347,7 @@ export async function getTalentMembership(tree) {
 
   // FALLBACK 2: Scan TalentRegistry by category
   methodsTried.push('registry-scan');
-  let resolved = tryRegistryScan(tree);
+  resolved = tryRegistryScan(tree);
   if (resolved.length > 0) {
     SWSELogger.debug(
       `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +

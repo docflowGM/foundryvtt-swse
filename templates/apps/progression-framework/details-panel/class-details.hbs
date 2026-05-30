@@ -79,8 +79,24 @@
   </section>
   {{/if}}
 
+  {{#if isLocked}}
+  <section class="prog-class-details__section prog-class-details__locked">
+    <h4 class="prog-class-details__section-title"><i class="fas fa-lock"></i> Prerequisites Required</h4>
+    {{#if missingPrereqs.length}}
+      <ul class="prog-class-details__list prog-class-details__locked-list">
+        {{#each missingPrereqs}}<li>{{this}}</li>{{/each}}
+      </ul>
+    {{else}}
+      <p class="prog-class-details__description">This class is currently locked by the prerequisite engine.</p>
+    {{/if}}
+  </section>
+  {{/if}}
 
   <div class="prog-class-details__actions">
-    <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> Choose {{class.name}}</button>
+    {{#if isLocked}}
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button" disabled title="{{lockReason}}"><i class="fas fa-lock"></i> Locked</button>
+    {{else}}
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> Choose {{class.name}}</button>
+    {{/if}}
   </div>
 </div>

@@ -53,7 +53,13 @@ export class TalentSlotValidator {
     if (talentTree) {
       // Get allowed trees for this slot type (derived from actor state)
       // Note: This may require access to the full actor, which we need from chargenData
-      const allowedTrees = getAllowedTalentTrees(chargenData?._actor || actor, slot);
+      const authorityActor = chargenData?._actor || chargenData?.actor || null;
+      const authoritySlot = {
+        ...slot,
+        classModel: slot.classModel || chargenData?.classModel || chargenData?.selectedClass || null,
+        selectedClass: slot.selectedClass || chargenData?.selectedClass || null,
+      };
+      const allowedTrees = authorityActor ? getAllowedTalentTrees(authorityActor, authoritySlot) : [];
 
       if (allowedTrees.length > 0 && !allowedTrees.includes(talentTree)) {
         errors.push(

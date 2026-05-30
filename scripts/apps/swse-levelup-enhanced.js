@@ -1,18 +1,13 @@
 /**
- * SWSE Enhanced Level Up System
+ * @deprecated Legacy enhanced level-up export shim.
  *
- * This file serves as a compatibility shim for the refactored level-up system.
- * The actual implementation has been split into focused modules in the levelup/ directory.
+ * The ApplicationV2 level-up stack under `scripts/apps/levelup/` has been
+ * superseded by the unified progression framework. Active sheets and new code
+ * should use `launchProgression()` from:
  *
- * See:
- * - levelup/levelup-main.js - Main application class and orchestration
- * - levelup/levelup-class.js - Class selection and HP calculation
- * - levelup/levelup-skills.js - Skill point allocation
- * - levelup/levelup-feats.js - Feat selection with prerequisites
- * - levelup/levelup-talents.js - Talent selection with tree validation
- * - levelup/levelup-force-powers.js - Force power selection
- * - levelup/levelup-validation.js - Validation logic and requirements checking
- * - levelup/levelup-shared.js - Shared utilities and helpers
+ *   scripts/apps/progression-framework/progression-entry.js
+ *
+ * This export remains only for older macros/modules during migration.
  */
 
 export { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-main.js";

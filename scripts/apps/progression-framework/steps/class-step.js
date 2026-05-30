@@ -30,7 +30,8 @@ export class ClassStep extends ProgressionStepPlugin {
     this._allClasses = [];            // ClassesRegistry entries
     this._filteredClasses = [];       // after search + filter + sort applied
     this._searchQuery = '';
-    this._filters = { type: null, heroicType: null };   // type: 'base' | 'prestige' | null; heroicType: 'heroic' | 'nonheroic' | null
+    this._filters = { type: null, heroicType: null, showUnavailable: false };   // type: 'base' | 'prestige' | null; heroicType: 'heroic' | 'nonheroic' | null
+    this._classEligibility = new Map(); // class id/name -> normalized eligibility report for the current shell context
     this._sortBy = 'source';          // 'source' | 'alpha'
 
     // Event listener cleanup
@@ -143,6 +144,8 @@ export class ClassStep extends ProgressionStepPlugin {
         this._filters.type = null;
       } else if (filterId === 'nonheroic') {
         this._filters.heroicType = value ? 'nonheroic' : null;
+      } else if (filterId === 'show-unavailable') {
+        this._filters.showUnavailable = !!value;
       }
       this._applyFilters(shell);
       shell.render();
@@ -182,6 +185,7 @@ export class ClassStep extends ProgressionStepPlugin {
       suggestedClasses: this._suggestedClasses,
       hasSuggestions,
       isDroidProgression: this._isDroidProgression,
+      showUnavailable: this._filters.showUnavailable === true,
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
         acc[id] = data;
         return acc;
@@ -401,6 +405,19 @@ export class ClassStep extends ProgressionStepPlugin {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
+    const pendingData = shell?.buildIntent?.toCharacterData?.() || {};
+    const eligibility = this._classEligibility.get(entry.id) || this._evaluateClassEligibilityForDisplay(entry, shell, pendingData);
+    if (eligibility?.eligible === false) {
+      swseLogger.warn('[ClassStep] Blocked commit of unavailable class', {
+        className: entry.name,
+        reasons: this._formatEligibilityReasons(eligibility)
+      });
+      this._focusedClassId = id;
+      shell.focusedItem = entry;
+      shell.render();
+      return;
+    }
+
     // Load full class data from ClassesRegistry
     const classData = ClassesRegistry.getById(id);
     if (!classData) {
@@ -515,6 +532,12 @@ export class ClassStep extends ProgressionStepPlugin {
       filters.push({ id: 'nonheroic', label: 'Nonheroic Only', defaultOn: true });
     }
 
+    filters.push({
+      id: 'show-unavailable',
+      label: 'Show Unavailable Classes',
+      defaultOn: this._filters.showUnavailable === true
+    });
+
     return {
       mode: 'rich',
       search: { enabled: true, placeholder: this._isDroidProgression ? 'Search droid classes…' : 'Search classes…' },
@@ -606,7 +629,16 @@ export class ClassStep extends ProgressionStepPlugin {
     }
 
     const pendingData = shell?.buildIntent?.toCharacterData?.() || {};
-    filtered = filtered.filter(c => evaluateClassEligibility({ className: c.name, actor: shell?.actor, pendingData })?.eligible !== false);
+    this._classEligibility = new Map();
+    filtered = filtered.map(c => {
+      const eligibility = this._evaluateClassEligibilityForDisplay(c, shell, pendingData);
+      this._classEligibility.set(c.id, eligibility);
+      this._classEligibility.set(c.name, eligibility);
+      return c;
+    }).filter(c => {
+      const eligibility = this._classEligibility.get(c.id);
+      return this._filters.showUnavailable === true || eligibility?.eligible !== false;
+    });
 
     // Phase 2.5: Heroic/Nonheroic filter
     if (this._filters.heroicType) {
@@ -619,12 +651,15 @@ export class ClassStep extends ProgressionStepPlugin {
     }
 
     // SWSE RAW: Droid class restriction
-    // PC droids are limited to Noble, Scoundrel, Scout, Soldier
-    // Jedi can be allowed via houserule setting
+    // PC droids are limited to Noble, Scoundrel, Scout, Soldier.
+    // In normal browsing these are hidden; with Show Unavailable they remain visible and locked.
     if (this._isDroidProgression) {
-      const allowJedi = ProgressionRules.allowDroidJediClass?.() ?? false;
-      const allowedClasses = getPCDroidAllowedHeroicClasses(allowJedi);
-      filtered = filtered.filter(c => allowedClasses.includes(c.name));
+      filtered = filtered.filter(c => {
+        const eligibility = this._classEligibility.get(c.id) || this._evaluateClassEligibilityForDisplay(c, shell, pendingData);
+        this._classEligibility.set(c.id, eligibility);
+        this._classEligibility.set(c.name, eligibility);
+        return this._filters.showUnavailable === true || eligibility?.eligible !== false;
+      });
     }
 
     // Sort
@@ -648,6 +683,9 @@ export class ClassStep extends ProgressionStepPlugin {
   _formatClassCard(classData, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = suggestedIds.has(classData.id);
     const confidenceData = confidenceMap.get ? confidenceMap.get(classData.id) : confidenceMap[classData.id];
+    const eligibility = this._classEligibility.get(classData.id) || this._classEligibility.get(classData.name) || { eligible: true, reasons: { missing: [] } };
+    const isLocked = eligibility?.eligible === false;
+    const lockedReasons = this._formatEligibilityReasons(eligibility);
     const recommendedLabel = isSuggested
       ? 'Recommended'
       : null;
@@ -663,12 +701,16 @@ export class ClassStep extends ProgressionStepPlugin {
       profileQuote: getClassProfileQuote(classData.name),
       mentorName: getMentorForClass(classData.name)?.name ?? classData.mentorName ?? 'Unknown Mentor',
       img: this._resolveClassImg(classData.name),
-      isSuggested,
-      badgeLabel: recommendedLabel,
+      isSuggested: isSuggested && !isLocked,
+      isLocked,
+      lockedReasons,
+      lockedReasonText: lockedReasons.join('; '),
+      badgeLabel: isLocked ? 'Unavailable' : recommendedLabel,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
         { label: classData.prestigeClass ? 'Prestige' : 'Base' },
-        isSuggested && { label: recommendedLabel, cssClass: 'prog-meta-chip--suggested' },
+        !isLocked && isSuggested && { label: recommendedLabel, cssClass: 'prog-meta-chip--suggested' },
+        isLocked && { label: 'Locked', cssClass: 'prog-meta-chip--locked' },
         classData.source && { label: classData.source },
       ].filter(Boolean),
       stats: [
@@ -677,6 +719,51 @@ export class ClassStep extends ProgressionStepPlugin {
         { label: 'Def Bonus', value: classData.defenseBonus ?? '+0' },
       ],
     };
+  }
+
+
+  _evaluateClassEligibilityForDisplay(classData, shell = null, pendingData = {}) {
+    const baseEligibility = evaluateClassEligibility({
+      className: classData?.name,
+      actor: shell?.actor,
+      pendingData
+    }) || { eligible: true, reasons: { missing: [] } };
+
+    const missing = [...(baseEligibility?.reasons?.missing || [])];
+    let eligible = baseEligibility?.eligible !== false;
+
+    if (this._isDroidProgression) {
+      const allowJedi = ProgressionRules.allowDroidJediClass?.() ?? false;
+      const allowedClasses = getPCDroidAllowedHeroicClasses(allowJedi);
+      if (!allowedClasses.includes(classData?.name)) {
+        eligible = false;
+        missing.push('Droid progression may only select an allowed heroic class.');
+      }
+    }
+
+    return {
+      ...baseEligibility,
+      eligible,
+      reasons: {
+        ...(baseEligibility?.reasons || {}),
+        missing
+      }
+    };
+  }
+
+  _formatEligibilityReasons(eligibility) {
+    const rawReasons = eligibility?.reasons?.missing
+      || eligibility?.eligibilityResult?.missingPrereqs
+      || eligibility?.eligibilityResult?.missing
+      || [];
+    const reasons = Array.isArray(rawReasons) ? rawReasons : [rawReasons];
+    return reasons
+      .map(reason => {
+        if (!reason) return null;
+        if (typeof reason === 'string') return reason;
+        return reason.label || reason.name || reason.message || reason.reason || JSON.stringify(reason);
+      })
+      .filter(Boolean);
   }
 
   /**

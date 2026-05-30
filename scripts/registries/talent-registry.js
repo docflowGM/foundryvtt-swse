@@ -50,6 +50,7 @@ export class TalentRegistry {
     static _byName = new Map();             // lowercase name -> entry
     static _byCategory = new Map();         // category -> entry[]
     static _byTag = new Map();              // tag -> entry[]
+    static _byTree = new Map();             // normalized tree identity -> entry[]
 
     /**
      * Initialize TalentRegistry from compendium
@@ -118,6 +119,16 @@ export class TalentRegistry {
                     this._byCategory.get(entry.category).push(entry);
                 }
 
+                // Index by talent-side tree membership. This is the canonical
+                // direction for talent membership: talents declare their tree;
+                // talent-tree documents/registries are only fallback hints.
+                for (const treeKey of entry.treeKeys || []) {
+                    if (!this._byTree.has(treeKey)) {
+                        this._byTree.set(treeKey, []);
+                    }
+                    this._byTree.get(treeKey).push(entry);
+                }
+
                 // Index by tags
                 for (const tag of entry.tags) {
                     if (!this._byTag.has(tag)) {
@@ -138,13 +149,30 @@ export class TalentRegistry {
      * @param {*} doc - Compendium document
      * @returns {TalentRegistryEntry}
      */
+    static _normalizeTreeKey(value) {
+        return String(value ?? '')
+            .toLowerCase()
+            .trim()
+            .replace(/&/g, ' and ')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
     static _normalizeEntry(doc) {
         const system = doc.system || {};
         const canonicalPrerequisite = getCanonicalPrerequisiteText('talent', doc.name);
         const canonicalDescription = getCanonicalDescriptionText('talent', doc.name);
         const canonicalBenefit = getCanonicalBenefitText('talent', doc.name);
 
-        // Extract and normalize category
+        const treeId = system.treeId || system.talentTreeId || system.talent_tree_id || null;
+        const treeName = system.talent_tree || system.talentTree || system.tree || null;
+        const treeKeys = [...new Set([treeId, treeName]
+            .map(value => this._normalizeTreeKey(value))
+            .filter(Boolean))];
+
+        // Extract and normalize category. Legacy data often stores class name in
+        // system.category, so do not treat category as tree membership.
         let category = system.talentCategory || system.category || null;
         if (category) {
             category = String(category).toLowerCase().trim() || null;
@@ -172,7 +200,10 @@ export class TalentRegistry {
             tags: tags,
             prerequisites: prerequisites,
             description: canonicalDescription || system.description?.value || system.description || canonicalBenefit || '',
-            talentTree: system.talentTree || null,
+            treeId: treeId || null,
+            treeName: treeName || null,
+            treeKeys,
+            talentTree: treeId || treeName || null,
             source: system.source || null,
             pack: doc.pack || 'unknown',
             system
@@ -245,6 +276,21 @@ export class TalentRegistry {
         }
         const normalized = String(tag).toLowerCase().trim();
         return [...(this._byTag.get(normalized) || [])];
+    }
+
+    /**
+     * Get all talents that declare membership in a given talent tree.
+     * This is talent-side membership and should be preferred over tree-side
+     * talent-name lists.
+     * @param {string} treeRef - Tree id, stable key, or display name
+     * @returns {TalentRegistryEntry[]}
+     */
+    static getByTree(treeRef) {
+        const normalized = this._normalizeTreeKey(treeRef);
+        if (!normalized) {
+            return [];
+        }
+        return [...(this._byTree.get(normalized) || [])];
     }
 
     /**

@@ -127,8 +127,22 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   _getActorAbilityBase(shell, key) {
-    const ability = shell?.actor?.system?.abilities?.[key] || shell?.actor?.system?.attributes?.[key] || {};
-    return Number(ability.base ?? ability.value ?? ability.total ?? 10) || 10;
+    const system = shell?.actor?.system || {};
+    const ability = system.attributes?.[key]
+      || system.abilities?.[key]
+      || system.stats?.abilities?.[key]
+      || {};
+    const derived = system.derived?.abilities?.[key] || {};
+    const value = ability.base
+      ?? ability.value
+      ?? ability.total
+      ?? ability.score
+      ?? derived.base
+      ?? derived.value
+      ?? derived.total
+      ?? derived.score
+      ?? 10;
+    return Number(value) || 10;
   }
 
   _normalizeLevelUpIncreases(raw = null, shell = null) {

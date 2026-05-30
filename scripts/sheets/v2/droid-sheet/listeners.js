@@ -19,7 +19,6 @@ import { DroidCustomizationRouter } from "/systems/foundryvtt-swse/scripts/appli
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { StockDroidConversionDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-conversion-dialog.js";
 import { StockDroidComparisonDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-comparison-dialog.js";
-import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
@@ -663,7 +662,7 @@ function wireProgressionButtons(sheet, root, signal) {
   levelUpBtn.addEventListener("click", async (ev) => {
     ev.preventDefault();
     if (sheet.actor) {
-      await SWSELevelUp.openEnhanced(sheet.actor);
+      await launchProgression(sheet.actor, { source: "droid-sheet.level-up" });
     }
   }, { signal });
 }

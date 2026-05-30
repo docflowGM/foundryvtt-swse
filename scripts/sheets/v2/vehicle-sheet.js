@@ -6,7 +6,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
-import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { VehicleDropEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/vehicle-drop-engine.js";
@@ -487,7 +487,7 @@ export class SWSEV2VehicleSheet extends
       levelUpBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
+          await launchProgression(this.actor, { source: "sheet.level-up" });
         }
       }, { signal });
     }

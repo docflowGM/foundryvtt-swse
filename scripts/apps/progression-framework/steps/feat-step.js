@@ -36,6 +36,7 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { attachFeatIconPath, resolveFeatIconPath } from './feat-icon-resolver.js';
 import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
@@ -1362,15 +1363,19 @@ export class FeatStep extends ProgressionStepPlugin {
     const mod = (abilityKey) => this._getPendingAbilityModifier(shell, abilityKey);
 
     if (entitlementType === 'language_pick') return Math.max(1, 1 + mod('int'));
-    if (entitlementType === 'force_power_pick') return Math.max(1, 1 + mod('wis'));
-    if (entitlementType === 'maneuver_pick') return Math.max(1, 1 + mod('wis'));
+    if (entitlementType === 'force_power_pick') {
+      return FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance(shell?.actor || null, shell);
+    }
+    if (entitlementType === 'maneuver_pick') return FeatGrantEntitlementResolver.getStarshipTacticsSlotsPerInstance(shell?.actor || null, shell);
     return 1;
   }
 
   _getPendingAbilityModifier(shell, abilityKey) {
     const pending = shell?.progressionSession?.draftSelections?.attributes;
     const values = pending?.values && typeof pending.values === 'object' ? pending.values : pending || {};
-    const raw = values?.[abilityKey]?.score
+    const raw = pending?.modifiers?.[abilityKey]
+      ?? pending?.finalValues?.[abilityKey]
+      ?? values?.[abilityKey]?.score
       ?? values?.[abilityKey]?.base
       ?? values?.[abilityKey]?.value
       ?? values?.[abilityKey]
