@@ -22,6 +22,7 @@ import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
 import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
+import { NullStepPlugin } from './steps/null-step-plugin.js';
 
 // Phase 2: Legacy imports kept for backward compat during transition
 // These are now resolved via NODE_PLUGIN_MAP in node-descriptor-mapper.js
@@ -290,45 +291,6 @@ export class ChargenShell extends ProgressionShell {
       })
     );
   }
-}
-
-/**
- * Null plugin stub — used for steps whose plugin class is not yet implemented.
- * Returns safe empty values for all methods.
- */
-class NullStepPlugin {
-  constructor(descriptor) {
-    this._descriptor = descriptor;
-  }
-
-  get descriptor() { return this._descriptor; }
-  async onStepEnter() {}
-  async onStepExit() {}
-  async onDataReady() {}
-  async getStepData() { return {}; }
-  getSelection() { return { selected: [], count: 0, isComplete: false }; }
-  async onItemFocused() {}
-  async onItemHovered() {}
-  async onItemCommitted() {}
-  async onItemDeselected() {}
-  validate() { return { isValid: true, errors: [], warnings: [] }; }
-  getBlockingIssues() { return []; }
-  getWarnings() { return []; }
-  getRemainingPicks() { return []; }
-  renderWorkSurface() { return null; }
-  renderDetailsPanel() { return this.renderDetailsPanelEmptyState(); }
-  renderDetailsPanelEmptyState() {
-    return {
-      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
-      data: { message: 'Select an item to see details.', icon: this._descriptor.icon },
-    };
-  }
-  getUtilityBarConfig() { return { mode: 'minimal' }; }
-  getUtilityBarMode() { return 'minimal'; }
-  getFooterConfig() { return null; }
-  getMentorContext() { return ''; }
-  async onAskMentor() {}
-  getMentorMode() { return 'context-only'; }
 }
 
 /**

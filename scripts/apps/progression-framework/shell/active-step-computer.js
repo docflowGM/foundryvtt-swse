@@ -29,7 +29,7 @@ import {
   ActivationPolicy,
   getNodesForModeAndSubtype,
   getDownstreamDependents,
-} from '../registries/progression-node-registry.js';
+} from '../../../engine/progression/registries/progression-node-registry.js';
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { resolveClassModel } from '../../../engine/progression/utils/class-resolution.js';
 import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-registry.js';

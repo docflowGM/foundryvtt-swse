@@ -9,7 +9,7 @@
  */
 
 import { createStepDescriptor, StepCategory, StepType } from '../steps/step-descriptor.js';
-import { PROGRESSION_NODE_REGISTRY } from './progression-node-registry.js';
+import { PROGRESSION_NODE_REGISTRY } from '../../../engine/progression/registries/progression-node-registry.js';
 
 // Import all step plugins (matching chargen-shell imports)
 import { IntroStep } from '../steps/intro-step.js';
@@ -34,12 +34,13 @@ import { ForceTechniqueStep } from '../steps/force-technique-step.js';
 import { MedicalSecretStep } from '../steps/medical-secret-step.js';
 import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
 import { FinalDroidConfigurationStep } from '../steps/final-droid-configuration-step.js';
+import { NullStepPlugin } from '../steps/null-step-plugin.js';
 
 /**
  * Map of nodeId → step plugin class.
  * This is the single source of truth for what plugin handles each node.
  */
-const NODE_PLUGIN_MAP = Object.freeze({
+const NODE_PLUGIN_MAP = {
   intro: IntroStep,
   species: SpeciesStep,
   'droid-builder': DroidBuilderStep,
@@ -64,45 +65,7 @@ const NODE_PLUGIN_MAP = Object.freeze({
   'levelup-review': LevelupReviewStep,
   'final-droid-configuration': FinalDroidConfigurationStep,
   summary: SummaryStep,
-});
-
-/**
- * Null plugin stub for unimplemented steps.
- */
-class NullStepPlugin {
-  constructor(descriptor) {
-    this._descriptor = descriptor;
-  }
-
-  get descriptor() { return this._descriptor; }
-  async onStepEnter() {}
-  async onStepExit() {}
-  async onDataReady() {}
-  async getStepData() { return {}; }
-  getSelection() { return { selected: [], count: 0, isComplete: false }; }
-  async onItemFocused() {}
-  async onItemHovered() {}
-  async onItemCommitted() {}
-  async onItemDeselected() {}
-  validate() { return { isValid: true, errors: [], warnings: [] }; }
-  getBlockingIssues() { return []; }
-  getWarnings() { return []; }
-  getRemainingPicks() { return []; }
-  renderWorkSurface() { return null; }
-  renderDetailsPanel() { return this.renderDetailsPanelEmptyState(); }
-  renderDetailsPanelEmptyState() {
-    return {
-      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
-      data: { message: 'Select an item to see details.', icon: this._descriptor.icon },
-    };
-  }
-  getUtilityBarConfig() { return { mode: 'minimal' }; }
-  getUtilityBarMode() { return 'minimal'; }
-  getFooterConfig() { return null; }
-  getMentorContext() { return ''; }
-  async onAskMentor() {}
-  getMentorMode() { return 'context-only'; }
-}
+};
 
 /**
  * Convert a list of active node IDs into StepDescriptors with plugins wired.

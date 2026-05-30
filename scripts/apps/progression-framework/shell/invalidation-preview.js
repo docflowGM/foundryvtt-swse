@@ -18,7 +18,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
-import { PROGRESSION_NODE_REGISTRY } from '../registries/progression-node-registry.js';
+import { PROGRESSION_NODE_REGISTRY, InvalidationBehavior } from '../../../engine/progression/registries/progression-node-registry.js';
 import { ActiveStepComputer } from './active-step-computer.js';
 
 export class InvalidationPreview {
@@ -156,11 +156,11 @@ export class InvalidationPreview {
     const reasons = [];
 
     // Behavior-specific messages
-    if (behavior === 'PURGE') {
+    if (behavior === InvalidationBehavior.PURGE) {
       reasons.push('Current selection will be removed');
-    } else if (behavior === 'DIRTY') {
+    } else if (behavior === InvalidationBehavior.DIRTY) {
       reasons.push('Step marked for review due to upstream change');
-    } else if (behavior === 'RECOMPUTE') {
+    } else if (behavior === InvalidationBehavior.RECOMPUTE) {
       reasons.push('Available items will be recalculated');
     }
 
@@ -194,7 +194,7 @@ export class InvalidationPreview {
       }
 
       // PURGE behavior: entire selection is removed
-      if (behavior === 'PURGE') {
+      if (behavior === InvalidationBehavior.PURGE) {
         return Array.isArray(currentSelection) ? currentSelection.length : 1;
       }
 

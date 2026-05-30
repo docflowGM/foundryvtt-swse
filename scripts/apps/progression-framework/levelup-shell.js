@@ -22,6 +22,7 @@ import { RolloutSettings } from './rollout/rollout-settings.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { ClassTalentStep } from './steps/talent-step.js';
+import { NullStepPlugin } from './steps/null-step-plugin.js';
 
 export class LevelupShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -154,45 +155,6 @@ export class LevelupShell extends ProgressionShell {
       })
     );
   }
-}
-
-/**
- * Null plugin stub for unimplemented step plugins.
- * Identical to chargen-shell.js NullStepPlugin — Wave 3+ replaces these.
- */
-class NullStepPlugin {
-  constructor(descriptor) {
-    this._descriptor = descriptor;
-  }
-
-  get descriptor() { return this._descriptor; }
-  async onStepEnter() {}
-  async onStepExit() {}
-  async onDataReady() {}
-  async getStepData() { return {}; }
-  getSelection() { return { selected: [], count: 0, isComplete: false }; }
-  async onItemFocused() {}
-  async onItemHovered() {}
-  async onItemCommitted() {}
-  async onItemDeselected() {}
-  validate() { return { isValid: true, errors: [], warnings: [] }; }
-  getBlockingIssues() { return []; }
-  getWarnings() { return []; }
-  getRemainingPicks() { return []; }
-  renderWorkSurface() { return null; }
-  renderDetailsPanel() { return this.renderDetailsPanelEmptyState(); }
-  renderDetailsPanelEmptyState() {
-    return {
-      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
-      data: { message: 'Select an item to see details.', icon: this._descriptor.icon },
-    };
-  }
-  getUtilityBarConfig() { return { mode: 'minimal' }; }
-  getUtilityBarMode() { return 'minimal'; }
-  getFooterConfig() { return null; }
-  getMentorContext() { return ''; }
-  async onAskMentor() {}
-  getMentorMode() { return 'context-only'; }
 }
 
 /**

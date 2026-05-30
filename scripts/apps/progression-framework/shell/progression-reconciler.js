@@ -26,7 +26,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import {
   PROGRESSION_NODE_REGISTRY,
   InvalidationBehavior,
-} from '../registries/progression-node-registry.js';
+} from '../../../engine/progression/registries/progression-node-registry.js';
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 
 export class ProgressionReconciler {

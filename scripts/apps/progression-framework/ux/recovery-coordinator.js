@@ -14,7 +14,7 @@
  * - Avoid trapping users in broken states
  */
 
-import { PROGRESSION_NODE_REGISTRY } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/registries/progression-node-registry.js';
+import { PROGRESSION_NODE_REGISTRY } from '/systems/foundryvtt-swse/scripts/engine/progression/registries/progression-node-registry.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { UserExplainability } from './user-explainability.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';

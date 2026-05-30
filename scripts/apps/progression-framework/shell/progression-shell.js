@@ -50,6 +50,7 @@ import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import { resolveMentorData, resolveMentorPortraitPath, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { getStepMentorObject, resolveStepMentorContext } from '../steps/mentor-step-integration.js';
+import { PROGRESSION_NODE_REGISTRY, InvalidationBehavior } from '../../../engine/progression/registries/progression-node-registry.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -3449,8 +3450,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _trackDownstreamInvalidation(stepId) {
     try {
-      // Import registry (synchronous)
-      const { PROGRESSION_NODE_REGISTRY } = require('../registries/progression-node-registry.js');
 
       // Map step ID to node ID from registry
       const nodeId = Object.keys(PROGRESSION_NODE_REGISTRY).find(
@@ -3473,7 +3472,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
         // Only mark visited steps as stale (unvisited steps stay neutral)
         const isVisited = this.progressionSession.visitedStepIds.includes(descriptor.stepId);
-        if (isVisited && behavior === 'DIRTY') {
+        if (isVisited && behavior === InvalidationBehavior.DIRTY) {
           if (!this.progressionSession.invalidatedStepIds.includes(descriptor.stepId)) {
             this.progressionSession.invalidatedStepIds.push(descriptor.stepId);
             swseLogger.log(`[ProgressionShell] Marked step as stale due to upstream change`, {
@@ -3484,7 +3483,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         }
 
         // If behavior is PURGE, also mark to purge from committedSelections
-        if (behavior === 'PURGE') {
+        if (behavior === InvalidationBehavior.PURGE) {
           this.committedSelections.delete(descriptor.stepId);
           swseLogger.log(`[ProgressionShell] Purged downstream selection due to upstream change`, {
             upstreamStep: stepId,
