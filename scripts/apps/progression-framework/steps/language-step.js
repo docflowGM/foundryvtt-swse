@@ -28,6 +28,7 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { getPendingBackgroundLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { CustomLanguageDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js';
+import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -732,13 +733,13 @@ export class LanguageStep extends ProgressionStepPlugin {
     const entitlements = Array.isArray(shell?.progressionSession?.draftSelections?.pendingEntitlements)
       ? shell.progressionSession.draftSelections.pendingEntitlements
       : [];
-    return entitlements.reduce((total, entry) => {
-      const type = String(entry?.type || entry?.kind || '').toLowerCase();
-      if (type !== 'language_slot' && type !== 'language_training_slot' && type !== 'bonus_language') return total;
-      const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
-      const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
-      return total + Math.max(0, quantity - spent);
-    }, 0);
+    return PendingEntitlementService.countUnspentByType(entitlements, 'language_pick', {
+      exclude: (entry) => {
+        const featName = String(entry?.source?.featName || entry?.sourceName || '').toLowerCase();
+        // Linguist is counted from FeatGrantEntitlementResolver with pending feats.
+        return featName === 'linguist' || featName.includes('linguist');
+      },
+    });
   }
 
   /**

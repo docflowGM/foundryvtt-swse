@@ -36,6 +36,7 @@ import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-
 import { LanguageEngine } from '../../../engine/progression/engine/language-engine.js';
 import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel } from '../../../engine/progression/utils/levelup-event-context.js';
 import { buildLevelUpEntitlementManifest } from '../../../engine/progression/utils/levelup-entitlement-manifest.js';
+import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 
 export class ActiveStepComputer {
   /**
@@ -263,9 +264,7 @@ export class ActiveStepComputer {
   _countPendingSkillTrainingSlots(actor, progressionSession) {
     const draft = progressionSession?.draftSelections || {};
     const entitlements = Array.isArray(draft.pendingEntitlements) ? draft.pendingEntitlements : [];
-    const entitlementSlots = entitlements
-      .filter(entry => String(entry?.type || '') === 'skill_training_slot')
-      .reduce((sum, entry) => sum + Math.max(0, Number(entry?.quantity || 0) - Number(entry?.spent || 0)), 0);
+    const entitlementSlots = PendingEntitlementService.countUnspentByType(entitlements, 'skill_training_slot');
 
     const pendingFeats = Array.isArray(draft.feats) ? draft.feats : [];
     const featSlots = pendingFeats.reduce((sum, feat) => {
@@ -347,13 +346,14 @@ export class ActiveStepComputer {
     const entitlements = Array.isArray(progressionSession?.draftSelections?.pendingEntitlements)
       ? progressionSession.draftSelections.pendingEntitlements
       : [];
-    return entitlements.reduce((total, entry) => {
-      const type = String(entry?.type || entry?.kind || '').toLowerCase();
-      if (type !== 'language_slot' && type !== 'language_training_slot' && type !== 'bonus_language') return total;
-      const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
-      const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
-      return total + Math.max(0, quantity - spent);
-    }, 0);
+    return PendingEntitlementService.countUnspentByType(entitlements, 'language_pick', {
+      exclude: (entry) => {
+        const featName = String(entry?.source?.featName || entry?.sourceName || '').toLowerCase();
+        // Linguist is counted from pending feats/FeatGrantEntitlementResolver so
+        // a generated language_pick record must not double count it here.
+        return featName === 'linguist' || featName.includes('linguist');
+      },
+    });
   }
 
   _countLevelupLanguageSlots(actor, progressionSession) {
@@ -673,6 +673,23 @@ export class ActiveStepComputer {
     }
   }
 
+
+  _buildProgressionAuthorityOptions(actor, progressionSession) {
+    return {
+      actor,
+      includePending: true,
+      progressionSession,
+      shell: {
+        actor,
+        mode: progressionSession?.mode || 'levelup',
+        progressionSession,
+        draftSelections: progressionSession?.draftSelections || {},
+        buildIntent: progressionSession?.buildIntent || null,
+        committedSelections: progressionSession?.committedSelections || null,
+      },
+    };
+  }
+
   /**
    * Check if starship maneuver entitlements exist.
    * PHASE 3: Uses real ManeuverAuthorityEngine validation instead of placeholder.
@@ -714,7 +731,8 @@ export class ActiveStepComputer {
 
       // Check real access validation: Starship Tactics feat + domain unlock
       try {
-        const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(actor);
+        const authorityOptions = this._buildProgressionAuthorityOptions(actor, progressionSession);
+        const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(actor, authorityOptions);
         const hasAccess = accessValidation.valid;
 
         diagnostics.accessValidation = {
@@ -734,7 +752,7 @@ export class ActiveStepComputer {
 
         if (!hasAccess) return false;
 
-        const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(actor, { shell: { progressionSession }, includePending: true });
+        const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(actor, authorityOptions);
         const pendingManeuvers = progressionSession?.draftSelections?.starshipManeuvers || [];
         const pendingCount = Array.isArray(pendingManeuvers)
           ? pendingManeuvers.reduce((sum, entry) => sum + Math.max(1, Number(entry?.count || 1)), 0)

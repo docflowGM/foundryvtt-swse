@@ -34,6 +34,7 @@ export class PendingEntitlementService {
       throw new Error('[PendingEntitlementService] Missing type or source');
     }
 
+    const canonicalType = PendingEntitlementService.normalizeType(type);
     const validTypes = [
       'skill_training_slot',
       'language_pick',
@@ -41,13 +42,13 @@ export class PendingEntitlementService {
       'maneuver_pick',
     ];
 
-    if (!validTypes.includes(type)) {
+    if (!validTypes.includes(canonicalType)) {
       throw new Error(`[PendingEntitlementService] Invalid entitlement type: ${type}`);
     }
 
     return {
       id: `entitlement-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-      type,
+      type: canonicalType,
       source: { ...source },
       quantity: Math.max(1, quantity || 1),
       spent: 0,
@@ -92,6 +93,66 @@ export class PendingEntitlementService {
       validation: options.validation || {},
       createdAt: Date.now(),
     };
+  }
+
+
+  /**
+   * Normalize entitlement aliases used by legacy steps, feat grants, and
+   * new pending-entitlement records into one canonical vocabulary.
+   *
+   * @param {string} type
+   * @returns {string}
+   */
+  static normalizeType(type) {
+    const normalized = String(type || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    const aliases = {
+      skill_training: 'skill_training_slot',
+      bonus_skill_training: 'skill_training_slot',
+      trained_skill_pick: 'skill_training_slot',
+      language_slot: 'language_pick',
+      language_training_slot: 'language_pick',
+      bonus_language: 'language_pick',
+      bonus_language_pick: 'language_pick',
+      force_power_choice: 'force_power_pick',
+      force_power_slot: 'force_power_pick',
+      force_power_slots: 'force_power_pick',
+      starship_maneuver_pick: 'maneuver_pick',
+      starship_maneuver_slot: 'maneuver_pick',
+      starship_maneuver_slots: 'maneuver_pick',
+      maneuver_slot: 'maneuver_pick',
+      maneuver_choice: 'maneuver_pick',
+    };
+    return aliases[normalized] || normalized;
+  }
+
+  /**
+   * Check whether an entitlement matches one or more canonical/alias types.
+   * @param {Object} entitlement
+   * @param {string|Array<string>} types
+   * @returns {boolean}
+   */
+  static isType(entitlement, types) {
+    const actual = PendingEntitlementService.normalizeType(entitlement?.type || entitlement?.kind || entitlement?.grantType);
+    const expected = Array.isArray(types) ? types : [types];
+    return expected.some(type => actual === PendingEntitlementService.normalizeType(type));
+  }
+
+  /**
+   * Sum unspent pending entitlement slots for the requested type(s).
+   *
+   * @param {Array} entitlements
+   * @param {string|Array<string>} types
+   * @param {Object} options
+   * @param {Function} options.exclude - Optional predicate to exclude entries.
+   * @returns {number}
+   */
+  static countUnspentByType(entitlements = [], types, options = {}) {
+    const list = Array.isArray(entitlements) ? entitlements : [];
+    return list.reduce((total, entry) => {
+      if (!PendingEntitlementService.isType(entry, types)) return total;
+      if (typeof options.exclude === 'function' && options.exclude(entry)) return total;
+      return total + PendingEntitlementService.getUnspentCount(entry);
+    }, 0);
   }
 
   /**
@@ -143,7 +204,9 @@ export class PendingEntitlementService {
    */
   static getUnspentCount(entitlement) {
     if (!entitlement) return 0;
-    return Math.max(0, entitlement.quantity - entitlement.spent);
+    const quantity = Math.max(0, Number(entitlement.quantity ?? entitlement.count ?? 1) || 0);
+    const spent = Math.max(0, Number(entitlement.spent ?? entitlement.spentSelections?.length ?? 0) || 0);
+    return Math.max(0, quantity - spent);
   }
 
   /**

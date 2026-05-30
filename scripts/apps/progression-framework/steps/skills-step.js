@@ -26,6 +26,7 @@ import { getPendingBackgroundClassSkills } from '/systems/foundryvtt-swse/script
 import { BackgroundLedgerCompatibility } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-ledger-compatibility.js';
 import { extractDescriptionText, normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ExtraSkillUseRegistry } from '/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js';
+import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -878,13 +879,7 @@ renderDetailsPanel(focusedItem) {
 
   _resolvePendingSkillTrainingSlots(shell, character = null) {
     const pendingEntitlements = shell?.progressionSession?.draftSelections?.pendingEntitlements || [];
-    const entitlementSlots = pendingEntitlements.reduce((total, entry) => {
-      const type = String(entry?.type || entry?.kind || '').toLowerCase();
-      if (type !== 'skill_training_slot' && type !== 'skill_training' && type !== 'bonus_skill_training') return total;
-      const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
-      const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
-      return total + Math.max(0, quantity - spent);
-    }, 0);
+    const entitlementSlots = PendingEntitlementService.countUnspentByType(pendingEntitlements, 'skill_training_slot');
 
     return entitlementSlots + this._getPendingIntModifierDelta(shell, character);
   }

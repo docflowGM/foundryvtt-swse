@@ -21,6 +21,28 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 import { FeatGrantEntitlementResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js";
 
 export class ManeuverAuthorityEngine {
+
+  static _getStarshipManeuverEntitlementCapacity(actor, options = {}) {
+    return FeatGrantEntitlementResolver.totalForGrantType(actor, 'starshipManeuverSlots', options);
+  }
+
+  static _hasPendingStarshipManeuverDomainUnlock(actor, options = {}) {
+    try {
+      const entitlements = FeatGrantEntitlementResolver.resolve(actor, {
+        ...options,
+        includePending: true,
+      });
+      return entitlements.some((entry) =>
+        entry?.grantType === 'starshipManeuverSlots'
+        && entry?.sourceType === 'pendingFeat'
+        && String(entry?.unlockDomain || '').toLowerCase() === 'starship-maneuvers'
+      );
+    } catch (err) {
+      swseLogger.warn('[MANEUVER ACCESS] Pending starship domain unlock check failed', err);
+      return false;
+    }
+  }
+
   /**
    * Calculate maneuver capacity for an actor
    * Capacity = 1 + max(0, WIS modifier)
@@ -39,7 +61,7 @@ export class ManeuverAuthorityEngine {
       // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       // Check for Starship Tactics feat or pending feat entitlement.
       const hasFeat = ActorAbilityBridge.hasFeat(actor, 'Starship Tactics');
-      const entitlementCapacity = FeatGrantEntitlementResolver.totalForGrantType(actor, 'starshipManeuverSlots', options);
+      const entitlementCapacity = this._getStarshipManeuverEntitlementCapacity(actor, options);
 
       if (!hasFeat && entitlementCapacity <= 0) {
         return 0;
@@ -84,7 +106,7 @@ export class ManeuverAuthorityEngine {
       // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       // Check 1: Has Starship Tactics feat or pending feat entitlement.
       const hasFeat = ActorAbilityBridge.hasFeat(actor, 'Starship Tactics');
-      const entitlementCapacity = FeatGrantEntitlementResolver.totalForGrantType(actor, 'starshipManeuverSlots', options);
+      const entitlementCapacity = this._getStarshipManeuverEntitlementCapacity(actor, options);
 
       if (!hasFeat && entitlementCapacity <= 0) {
         return {
@@ -93,9 +115,13 @@ export class ManeuverAuthorityEngine {
         };
       }
 
-      // Check 2: Domain unlocked
+      // Check 2: Domain unlocked. Pending Starship Tactics entitlements unlock
+      // the domain for the current progression event before the feat exists on
+      // the actor, so level-up can show the Maneuvers step immediately.
       const unlockedDomains = actor.system?.progression?.unlockedDomains || [];
-      if (!unlockedDomains.includes('starship-maneuvers')) {
+      const hasDomain = unlockedDomains.includes('starship-maneuvers')
+        || this._hasPendingStarshipManeuverDomainUnlock(actor, options);
+      if (!hasDomain) {
         return {
           valid: false,
           reason: 'Starship maneuvers domain not unlocked'

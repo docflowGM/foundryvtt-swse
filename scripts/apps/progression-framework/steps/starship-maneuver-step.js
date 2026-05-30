@@ -67,7 +67,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     try {
       // PHASE 3: Validate access first (fail-closed if not allowed)
       try {
-        const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(shell.actor);
+        const authorityOptions = this._buildAuthorityOptions(shell);
+        const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(shell.actor, authorityOptions);
         diagnostics.accessValidation = {
           success: accessValidation.valid,
           reason: accessValidation.reason || 'not specified',
@@ -106,7 +107,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       // PHASE 3: Get capacity from authority engine
       let capacity = 0;
       try {
-        capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor, { shell, includePending: true });
+        capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor, this._buildAuthorityOptions(shell));
         diagnostics.capacityResolution = {
           success: capacity > 0,
           capacity,
@@ -206,11 +207,14 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
       // Calculate remaining picks from capacity and shell selections
       try {
-        const pendingManeuvers = shell?.buildIntent?.getSelection?.('starshipManeuvers') || [];
+        const pendingManeuvers = shell?.progressionSession?.draftSelections?.starshipManeuvers
+          || shell?.buildIntent?.getSelection?.('starshipManeuvers')
+          || [];
         const pendingCount = Array.isArray(pendingManeuvers)
           ? pendingManeuvers.reduce((sum, m) => sum + (m.count || 1), 0)
           : 0;
-        const actorCount = shell.actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0;
+        const actorCount = this._getActorManeuverEntries(shell.actor)
+          .reduce((sum, entry) => sum + Math.max(0, Number(entry?.count || 0)), 0);
         const alreadySelected = pendingCount > 0 ? pendingCount : actorCount;
         this._remainingPicks = Math.max(0, capacity - alreadySelected);
         this._baseRemainingPicks = this._remainingPicks;
@@ -593,6 +597,15 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   getMentorMode() { return 'interactive'; }
 
   // Private
+
+  _buildAuthorityOptions(shell) {
+    return {
+      shell,
+      actor: shell?.actor || null,
+      includePending: true,
+      progressionSession: shell?.progressionSession || null,
+    };
+  }
 
   async _computeLegalManeuvers(actor) {
     this._legalManeuvers = [];
