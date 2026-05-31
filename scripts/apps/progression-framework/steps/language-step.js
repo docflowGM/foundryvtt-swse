@@ -733,11 +733,26 @@ export class LanguageStep extends ProgressionStepPlugin {
     const entitlements = Array.isArray(shell?.progressionSession?.draftSelections?.pendingEntitlements)
       ? shell.progressionSession.draftSelections.pendingEntitlements
       : [];
+    const isLevelup = this.isLevelup?.(shell) === true;
     return PendingEntitlementService.countUnspentByType(entitlements, 'language_pick', {
       exclude: (entry) => {
+        const sourceText = JSON.stringify(entry?.source || {}).toLowerCase();
+        const labelText = String(entry?.sourceName || entry?.label || entry?.reason || entry?.id || '').toLowerCase();
+        const combined = `${sourceText} ${labelText}`;
         const featName = String(entry?.source?.featName || entry?.sourceName || '').toLowerCase();
         // Linguist is counted from FeatGrantEntitlementResolver with pending feats.
-        return featName === 'linguist' || featName.includes('linguist');
+        if (featName === 'linguist' || featName.includes('linguist')) return true;
+        if (!isLevelup) return false;
+        if (combined.includes('intelligence') || combined.includes('int increase') || combined.includes('ability increase')) return true;
+        if (combined.includes('chargen') || combined.includes('character creation') || combined.includes('starting') || combined.includes('initial')) return true;
+        if (combined.includes('base language') || combined.includes('species language') || combined.includes('starting language')) return true;
+        const isExplicitIncremental = combined.includes('feat')
+          || combined.includes('talent')
+          || combined.includes('bonus')
+          || combined.includes('levelup')
+          || combined.includes('level up')
+          || combined.includes('language');
+        return !isExplicitIncremental;
       },
     });
   }

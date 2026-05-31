@@ -54,6 +54,20 @@ import { swseLogger } from '../../../utils/logger.js';
  *   }
  */
 
+function isRepeatableTalentProjection(talent = {}) {
+  const system = talent?.system || {};
+  if (talent?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
+  const text = [talent?.name, talent?.description, talent?.benefit, talent?.special, system.description, system.benefit, system.special]
+    .map(value => value == null ? '' : (typeof value === 'object' ? (value.value || value.text || value.raw || value.label || value.name || '') : String(value)))
+    .join(' ')
+    .toLowerCase();
+  return /(?:can|may)\s+(?:select|take|choose)\s+this\s+talent\s+multiple\s+times/.test(text)
+    || /may\s+be\s+taken\s+multiple\s+times/.test(text)
+    || /can\s+be\s+taken\s+multiple\s+times/.test(text)
+    || /may\s+be\s+selected\s+multiple\s+times/.test(text)
+    || /taken\s+multiple\s+times/.test(text);
+}
+
 export class MutationPlan {
   /**
    * Compile a mutation plan from a projection.
@@ -282,7 +296,7 @@ export class MutationPlan {
     if (Array.isArray(projection.abilities.talents)) {
       for (const talent of projection.abilities.talents) {
         const talentName = talent.name || talent.id || talent;
-        if (!currentTalents.includes(talentName)) {
+        if (isRepeatableTalentProjection(talent) || !currentTalents.includes(talentName)) {
           mutations.push({
             action: 'add',
             type: 'talent',

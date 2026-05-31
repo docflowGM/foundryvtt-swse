@@ -14,6 +14,7 @@ import {
 import { resolveClassModel } from './class-resolution.js';
 import { ProgressionRules } from '../ProgressionRules.js';
 import { ProgressionContentAuthority } from '../content/progression-content-authority.js';
+import TalentCadenceEngine from '../talents/talent-cadence-engine.js';
 
 const CHOICE_TYPES = Object.freeze({
   feat_choice: 'classFeatChoices',
@@ -201,6 +202,7 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
   const enteringLevel = Number(context.enteringLevel || 0) || 0;
   const abilityIncreaseCount = enteringLevel > 1 && enteringLevel % 4 === 0 ? 2 : 0;
   const generalFeatCount = enteringLevel > 1 && enteringLevel % 3 === 0 ? 1 : 0;
+  const heroicTalentCount = enteringLevel >= 1 && TalentCadenceEngine.grantsHeroicTalent(enteringLevel) ? 1 : 0;
 
   return {
     kind: 'swse-level-up-entitlement-manifest',
@@ -218,6 +220,11 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
     generalFeat: {
       required: generalFeatCount > 0,
       count: generalFeatCount,
+    },
+    heroicTalent: {
+      required: heroicTalentCount > 0,
+      count: heroicTalentCount,
+      reason: heroicTalentCount > 0 ? `Heroic level ${enteringLevel}` : null,
     },
     abilityIncreases: {
       required: abilityIncreaseCount > 0,

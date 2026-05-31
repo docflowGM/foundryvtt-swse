@@ -264,7 +264,21 @@ export class ActiveStepComputer {
   _countPendingSkillTrainingSlots(actor, progressionSession) {
     const draft = progressionSession?.draftSelections || {};
     const entitlements = Array.isArray(draft.pendingEntitlements) ? draft.pendingEntitlements : [];
-    const entitlementSlots = PendingEntitlementService.countUnspentByType(entitlements, 'skill_training_slot');
+    const entitlementSlots = PendingEntitlementService.countUnspentByType(entitlements, 'skill_training_slot', {
+      exclude: (entry) => {
+        const combined = `${JSON.stringify(entry?.source || {}).toLowerCase()} ${String(entry?.sourceName || entry?.label || entry?.reason || entry?.id || '').toLowerCase()}`;
+        if (combined.includes('intelligence') || combined.includes('int increase') || combined.includes('ability increase')) return true;
+        if (combined.includes('chargen') || combined.includes('character creation') || combined.includes('starting') || combined.includes('initial')) return true;
+        if (combined.includes('class skill') || combined.includes('trained skills + int') || combined.includes('base skill')) return true;
+        const isExplicitIncremental = combined.includes('feat')
+          || combined.includes('talent')
+          || combined.includes('bonus')
+          || combined.includes('levelup')
+          || combined.includes('level up')
+          || combined.includes('skill training');
+        return !isExplicitIncremental;
+      },
+    });
 
     const pendingFeats = Array.isArray(draft.feats) ? draft.feats : [];
     const featSlots = pendingFeats.reduce((sum, feat) => {
@@ -349,9 +363,20 @@ export class ActiveStepComputer {
     return PendingEntitlementService.countUnspentByType(entitlements, 'language_pick', {
       exclude: (entry) => {
         const featName = String(entry?.source?.featName || entry?.sourceName || '').toLowerCase();
+        const combined = `${JSON.stringify(entry?.source || {}).toLowerCase()} ${String(entry?.sourceName || entry?.label || entry?.reason || entry?.id || '').toLowerCase()}`;
         // Linguist is counted from pending feats/FeatGrantEntitlementResolver so
         // a generated language_pick record must not double count it here.
-        return featName === 'linguist' || featName.includes('linguist');
+        if (featName === 'linguist' || featName.includes('linguist')) return true;
+        if (combined.includes('intelligence') || combined.includes('int increase') || combined.includes('ability increase')) return true;
+        if (combined.includes('chargen') || combined.includes('character creation') || combined.includes('starting') || combined.includes('initial')) return true;
+        if (combined.includes('base language') || combined.includes('species language') || combined.includes('starting language')) return true;
+        const isExplicitIncremental = combined.includes('feat')
+          || combined.includes('talent')
+          || combined.includes('bonus')
+          || combined.includes('levelup')
+          || combined.includes('level up')
+          || combined.includes('language');
+        return !isExplicitIncremental;
       },
     });
   }
@@ -545,22 +570,26 @@ export class ActiveStepComputer {
    * @private
    */
   _hasTalentChoices(stepNodeId, actor, progressionSession, mode = 'chargen') {
-    // Level-up has one talent entitlement budget. Keep the class-talent surface
-    // and suppress the duplicate general-talent surface so a single owed talent
-    // cannot be selected twice.
-    if (mode === 'levelup' && stepNodeId === 'general-talent') return false;
-
     const classSelection = progressionSession?.getSelection?.('class') || progressionSession?.draftSelections?.class || null;
     const classModel = resolveClassModel(classSelection);
     if (!classModel) return false;
 
-    const owedTalents = mode === 'levelup'
-      ? Number(buildLevelUpEntitlementManifest(actor, progressionSession)?.choices?.talentChoices || 0)
-      : countClassFeatureChoicesAtLevel(classModel, buildLevelUpEventContext(actor, progressionSession)?.selectedClassNextLevel || 1, 'talent_choice');
+    if (mode === 'levelup') {
+      const manifest = buildLevelUpEntitlementManifest(actor, progressionSession);
+      if (stepNodeId === 'general-talent') {
+        return Number(manifest?.heroicTalent?.count || 0) > 0;
+      }
+      if (stepNodeId === 'class-talent') {
+        return Number(manifest?.choices?.talentChoices || 0) > 0;
+      }
+    }
 
-    // The current progression spine has both general/class talent surfaces; both are
-    // selection UIs for the same class-granted talent budget. Show them only when a
-    // class level actually grants a talent to avoid zero-choice soft-locks.
+    const owedTalents = countClassFeatureChoicesAtLevel(
+      classModel,
+      buildLevelUpEventContext(actor, progressionSession)?.selectedClassNextLevel || 1,
+      'talent_choice'
+    );
+
     return owedTalents > 0;
   }
 

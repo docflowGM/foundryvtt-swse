@@ -197,6 +197,19 @@ try {
       }
     }
 
+    if (this.isLevelup(shell)) {
+      const beforeCount = this._availableSkills.length;
+      this._availableSkills = this._filterAlreadyTrainedSkills(this._availableSkills);
+      const filtered = beforeCount - this._availableSkills.length;
+      if (filtered > 0) {
+        swseLogger.debug('[SkillsStep] Level-up skill pick filtered existing trained skills', {
+          beforeCount,
+          afterCount: this._availableSkills.length,
+          filtered,
+        });
+      }
+    }
+
     await this._loadExtraSkillUses(shell);
 
     const prunedCount = this._pruneInvalidTrainedSkills(shell);
@@ -879,9 +892,32 @@ renderDetailsPanel(focusedItem) {
 
   _resolvePendingSkillTrainingSlots(shell, character = null) {
     const pendingEntitlements = shell?.progressionSession?.draftSelections?.pendingEntitlements || [];
-    const entitlementSlots = PendingEntitlementService.countUnspentByType(pendingEntitlements, 'skill_training_slot');
+    const intDeltaSlots = this._getPendingIntModifierDelta(shell, character);
+    const entitlementSlots = this.isLevelup(shell)
+      ? this._countIncrementalLevelupSkillEntitlements(pendingEntitlements)
+      : PendingEntitlementService.countUnspentByType(pendingEntitlements, 'skill_training_slot');
 
-    return entitlementSlots + this._getPendingIntModifierDelta(shell, character);
+    return entitlementSlots + intDeltaSlots;
+  }
+
+  _countIncrementalLevelupSkillEntitlements(entitlements = []) {
+    return PendingEntitlementService.countUnspentByType(entitlements, 'skill_training_slot', {
+      exclude: (entry) => {
+        const sourceText = JSON.stringify(entry?.source || {}).toLowerCase();
+        const labelText = String(entry?.sourceName || entry?.label || entry?.reason || entry?.id || '').toLowerCase();
+        const combined = `${sourceText} ${labelText}`;
+        if (combined.includes('intelligence') || combined.includes('int increase') || combined.includes('ability increase')) return true;
+        if (combined.includes('chargen') || combined.includes('character creation') || combined.includes('starting') || combined.includes('initial')) return true;
+        if (combined.includes('class skill') || combined.includes('trained skills + int') || combined.includes('base skill')) return true;
+        const isExplicitIncremental = combined.includes('feat')
+          || combined.includes('talent')
+          || combined.includes('bonus')
+          || combined.includes('levelup')
+          || combined.includes('level up')
+          || combined.includes('skill training');
+        return !isExplicitIncremental;
+      },
+    });
   }
 
   _getAbilityScore(character = {}, abilityKey = 'int') {
@@ -938,6 +974,76 @@ renderDetailsPanel(focusedItem) {
     return this._resolvePendingSkillTrainingSlots(shell, character);
   }
 
+  _filterAlreadyTrainedSkills(skills = []) {
+    if (!this._actorTrainedSkillKeys || this._actorTrainedSkillKeys.size === 0) return skills || [];
+    return (skills || []).filter(skill => {
+      const keys = [skill?.key, skill?.id, skill?._id, skill?.name, skill?.label]
+        .map(value => this._skillLookupKey(value))
+        .filter(Boolean);
+      return !keys.some(key => this._actorTrainedSkillKeys.has(key));
+    });
+  }
+
+  _getAllGrantedClassSkillRefs(shell, selectedClassModel = null) {
+    const refs = [];
+    const seenClassKeys = new Set();
+
+    const addClassModel = (candidate) => {
+      if (!candidate) return;
+      const resolved = resolveClassModel(candidate) || candidate;
+      const key = this._classModelKey(resolved || candidate);
+      if (key && seenClassKeys.has(key)) return;
+      if (key) seenClassKeys.add(key);
+      const classSkills = getClassSkills(resolved || candidate) || [];
+      classSkills.forEach(ref => { if (ref) refs.push(ref); });
+    };
+
+    addClassModel(selectedClassModel);
+
+    const rawItems = shell?.actor?.items?.contents || shell?.actor?.items || [];
+    const actorItems = Array.isArray(rawItems) ? rawItems : Array.from(rawItems || []);
+    actorItems
+      .filter(item => item?.type === 'class')
+      .forEach(item => {
+        const candidates = [
+          item.system?.classId,
+          item.system?.sourceId,
+          item.system?.class_name,
+          item.system?.name,
+          item.name,
+          item.id,
+        ].filter(Boolean);
+        const registryClass = candidates.reduce((found, key) => found
+          || ClassesRegistry.getById?.(key)
+          || ClassesRegistry.getByName?.(key)
+          || ClassesRegistry.get?.(key), null);
+        addClassModel(registryClass || item);
+      });
+
+    const systemClasses = shell?.actor?.system?.classes || {};
+    for (const [className, classData] of Object.entries(systemClasses || {})) {
+      const registryClass = ClassesRegistry.getByName?.(className) || ClassesRegistry.get?.(className) || null;
+      addClassModel(registryClass || { name: className, ...classData });
+    }
+
+    const draftClasses = shell?.progressionSession?.draftSelections?.classes || shell?.progressionSession?.draftSelections?.classHistory || [];
+    if (Array.isArray(draftClasses)) draftClasses.forEach(addClassModel);
+
+    return Array.from(new Set(refs.map(ref => String(ref || '').trim()).filter(Boolean)));
+  }
+
+  _classModelKey(classModel) {
+    const value = classModel?.id
+      || classModel?._id
+      || classModel?.classId
+      || classModel?.sourceId
+      || classModel?.system?.classId
+      || classModel?.system?.sourceId
+      || classModel?.name
+      || classModel?.system?.class_name;
+    return value ? String(value).toLowerCase() : null;
+  }
+
   _deriveAvailableSkills(shell) {
     const classSelection =
       shell?.progressionSession?.getSelection?.('class')
@@ -946,7 +1052,7 @@ renderDetailsPanel(focusedItem) {
 
     const classModel = this._resolveSelectedClassData(classSelection);
 
-    const classSkillRefs = classModel ? getClassSkills(classModel) : [];
+    const classSkillRefs = this._getAllGrantedClassSkillRefs(shell, classModel);
     const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
     const backgroundSkillRefs = this._getBackgroundSkillRefs(shell);
     const backgroundSkillMatches = this._matchSkillsFromRefs(backgroundSkillRefs);
@@ -980,13 +1086,13 @@ renderDetailsPanel(focusedItem) {
     const skills = Array.from(allowedSkillMap.values())
       .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
-    if (!classModel || classSkillMatches.length === 0 || skills.length === 0) {
+    if (classSkillRefs.length === 0 || classSkillMatches.length === 0 || skills.length === 0) {
       return {
         mode: 'fallback-full-chart',
-        fallbackReason: !classModel
-          ? 'selected-class-unresolved'
+        fallbackReason: classSkillRefs.length === 0
+          ? 'no-class-background-species-skill-authority'
           : (classSkillMatches.length === 0
-            ? 'selected-class-produced-zero-skill-matches'
+            ? 'class-background-species-authority-produced-zero-skill-matches'
             : 'allowed-skill-set-empty-after-filter'),
         classSkillRefs: classSkillRefs.length,
         classSkillMatches: classSkillMatches.length,
@@ -1000,7 +1106,7 @@ renderDetailsPanel(focusedItem) {
     }
 
     return {
-      mode: speciesSkillMatches.length > 0 ? 'legal-class-background-species' : 'legal-class-background',
+      mode: speciesSkillMatches.length > 0 ? 'legal-all-classes-background-species' : 'legal-all-classes-background',
       fallbackReason: null,
       classSkillRefs: classSkillRefs.length,
       classSkillMatches: classSkillMatches.length,

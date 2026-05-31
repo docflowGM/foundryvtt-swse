@@ -13,14 +13,23 @@
   --icw-negative: var(--neg, oklch(0.70 0.22 25));
 }
 
+/* Standalone window: thread height from window-content down through the full layout chain
+   so that the inner CSS grid gets a definite height and 1fr rows expand correctly. */
 .swse-item-customization-workbench .window-content,
 .swse-item-customization-workbench [data-application-content] {
   padding: 0;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .swse-customization-stage {
-  min-height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   background: radial-gradient(circle at top left, color-mix(in oklch, var(--icw-pink) 30%, transparent), transparent 28%),
               radial-gradient(circle at bottom right, color-mix(in oklch, var(--icw-cyan) 26%, transparent), transparent 32%),
               linear-gradient(180deg, var(--icw-bg) 0%, color-mix(in oklch, var(--icw-bg) 70%, black) 100%);
@@ -30,13 +39,18 @@
 
 .swse-customization-tablet {
   padding: 16px;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .swse-customization-screen {
-  min-height: 100%;
-  display: grid;
-  grid-template-rows: auto auto auto 1fr auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
   padding: 18px;
   border-radius: 16px;
@@ -158,8 +172,12 @@
 .swse-customization-workarea {
   display: grid;
   grid-template-columns: 360px 1fr;
+  grid-template-rows: 1fr;
+  align-items: stretch;
   gap: 14px;
+  flex: 1 1 auto;
   min-height: 0;
+  overflow: hidden;
 }
 
 .panel {
@@ -198,6 +216,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
@@ -205,9 +224,9 @@
 
 .inventory-item {
   display: grid;
-  grid-template-columns: 42px 1fr auto;
-  gap: 10px;
-  padding: 10px;
+  grid-template-columns: 56px 1fr auto;
+  gap: 12px;
+  padding: 12px;
   border: 1px solid oklch(0.85 0.18 200 / 0.18);
   background: oklch(0 0 0 / 0.35);
   color: inherit;
@@ -218,12 +237,18 @@
   border-left: 3px solid var(--icw-pink);
   background: linear-gradient(90deg, oklch(0.72 0.26 350 / 0.14), oklch(0.85 0.18 200 / 0.05));
 }
-.inventory-icon { width: 42px; height: 42px; object-fit: cover; border: 1px solid var(--icw-border); background: oklch(0 0 0 / 0.45); }
-.inventory-name { display:block; font-family: var(--swse-font-orbit, 'Orbitron', sans-serif); font-weight:600; font-size:12px; letter-spacing:0.05em; }
+.inventory-icon { width: 56px; height: 56px; object-fit: cover; border: 1px solid var(--icw-border); background: oklch(0 0 0 / 0.45); }
+.inventory-name { display:block; font-family: var(--swse-font-orbit, 'Orbitron', sans-serif); font-weight:600; font-size:13px; letter-spacing:0.05em; }
 .inventory-subtitle, .inventory-meta { display:block; font-family: var(--swse-font-mono, 'JetBrains Mono', monospace); font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--icw-dim); }
 .inventory-meta { align-self:center; }
 
-.workbench-detail { display:grid; grid-template-rows:auto 1fr; gap:12px; min-height:0; }
+.workbench-inventory,
+.workbench-detail { height: 100%; min-height: 0; overflow: hidden; }
+/* Inventory side: scrolls via .inventory-list (flex: 1 1 auto, overflow-y: auto) */
+.workbench-inventory { overflow-y: auto; }
+/* Detail side: hero is fixed, panels below scroll */
+.workbench-detail { display:grid; grid-template-rows:auto 1fr; gap:12px; }
+.workbench-detail > :last-child { overflow-y: auto; min-height: 0; }
 .hero-grid { display:grid; grid-template-columns: 128px 1fr; gap:14px; }
 .hero-art { display:flex; align-items:center; justify-content:center; min-height: 128px; background: radial-gradient(circle at center, oklch(0.85 0.18 200 / 0.12), transparent 70%), oklch(0 0 0 / 0.45); border:1px solid var(--icw-border); }
 .hero-art img { max-width: 88%; max-height: 88%; object-fit: contain; }
@@ -627,4 +652,125 @@
   .weapon-color-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .blaster-bolt-preview { grid-template-columns: 34px 1fr; }
   .blaster-bolt-preview__label { grid-column: 1 / -1; }
+}
+
+
+/* Inline workbench in Holopad shell: keep inventory and detail panes visible. */
+.swse-customization-stage,
+.swse-customization-tablet,
+.swse-customization-screen,
+.item-customization-workbench {
+  height: 100%;
+  min-height: 0;
+}
+
+.item-customization-workbench,
+.item-customization-workbench__body,
+.item-customization-workbench__layout,
+.workbench-inventory,
+.workbench-detail {
+  min-height: 0;
+}
+
+.item-customization-workbench__body,
+.item-customization-workbench__layout {
+  overflow: hidden;
+}
+
+.workbench-inventory,
+.workbench-detail,
+.workbench-inventory__list,
+.workbench-detail__body {
+  overflow: auto;
+}
+
+/* Workbench shell fit pass: the workbench is already inside the Holopad frame,
+ * so it should consume the visible shell body and pin its credit/action rail to
+ * the bottom of the workbench screen instead of content-sizing near the top.
+ */
+.swse-item-customization-workbench {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .swse-customization-stage {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .swse-customization-tablet {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 14px !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .swse-customization-screen {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .swse-customization-workarea {
+  display: grid !important;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .workbench-inventory,
+.swse-item-customization-workbench .workbench-detail,
+.swse-item-customization-workbench .detail-grid,
+.swse-item-customization-workbench .detail-panel,
+.swse-item-customization-workbench .lightsaber-workspace {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+.swse-item-customization-workbench .workbench-inventory,
+.swse-item-customization-workbench .workbench-detail {
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .inventory-list,
+.swse-item-customization-workbench .card-list,
+.swse-item-customization-workbench .variant-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.swse-item-customization-workbench .swse-customization-footer {
+  align-self: stretch !important;
+  margin-top: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-item-customization-workbench .swse-customization-workarea {
+    grid-template-columns: 1fr !important;
+  }
 }

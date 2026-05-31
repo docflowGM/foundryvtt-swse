@@ -145,13 +145,15 @@ export class ArmorScoringEngine {
         }
       };
 
-      SWSELogger.log(`[ArmorScoringEngine] Scored ${armor.name}`, {
-        axisAScore: axisA.score.toFixed(2),
-        axisBScore: axisB.score.toFixed(2),
-        roleAlignment: roleAlignment.toFixed(2),
-        finalScore: finalScore.toFixed(2),
-        tier
-      });
+      if (!options?.silent && !options?.suppressLogs) {
+        SWSELogger.log(`[ArmorScoringEngine] Scored ${armor.name}`, {
+          axisAScore: axisA.score.toFixed(2),
+          axisBScore: axisB.score.toFixed(2),
+          roleAlignment: roleAlignment.toFixed(2),
+          finalScore: finalScore.toFixed(2),
+          tier
+        });
+      }
 
       return result;
     } catch (err) {

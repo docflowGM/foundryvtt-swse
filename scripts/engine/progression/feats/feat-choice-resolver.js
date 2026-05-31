@@ -668,7 +668,11 @@ export class FeatChoiceResolver {
   static getWeaponFocusEligibleChoices(actor, registry = this._registry || {}, pending = {}) {
     return this.getWeaponProficiencyChoices(actor, registry, pending).map((entry) => ({
       ...entry,
-      prerequisiteSource: 'weapon_proficiency'
+      prerequisiteSource: 'weapon_proficiency',
+      providerLocked: Boolean(entry?.locked),
+      providerSource: entry?.source || null,
+      locked: false,
+      editable: true
     }));
   }
 
@@ -681,13 +685,19 @@ export class FeatChoiceResolver {
     if (existingFocus.length > 0) {
       return existingFocus.map((entry) => ({
         ...entry,
-        prerequisiteSource: 'weapon_focus'
+        prerequisiteSource: 'weapon_focus',
+        providerLocked: Boolean(entry?.locked),
+        providerSource: entry?.source || null,
+        locked: false,
+        editable: true
       }));
     }
     return this.getWeaponFocusEligibleChoices(actor, registry, pending).map((entry) => ({
       ...entry,
       prerequisiteSource: 'weapon_proficiency_fallback',
-      unresolvedPrerequisite: true
+      unresolvedPrerequisite: true,
+      locked: false,
+      editable: true
     }));
   }
 

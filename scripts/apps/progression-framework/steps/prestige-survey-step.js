@@ -516,6 +516,50 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     await this._speakCurrentPhase(shell, true);
   }
 
+  async handleAction(action, event, target, shell) {
+    switch (action) {
+      case 'survey-start':
+        event?.preventDefault?.();
+        await this.startSurvey(shell);
+        return true;
+      case 'survey-choose': {
+        event?.preventDefault?.();
+        const choiceId = target?.dataset?.choiceId || event?.target?.closest?.('[data-choice-id]')?.dataset?.choiceId;
+        if (choiceId) await this.chooseAnswer(shell, choiceId);
+        return true;
+      }
+      case 'survey-continue':
+        event?.preventDefault?.();
+        await this.continueSurvey(shell);
+        return true;
+      case 'survey-finish':
+        event?.preventDefault?.();
+        await this.finishSurvey(shell);
+        return true;
+      case 'survey-change-answer':
+        event?.preventDefault?.();
+        this.state.selectedChoiceId = null;
+        this._commitSurveyState(shell);
+        shell?.requestRender?.({ preserveScroll: true, reason: 'prestige-survey-change-answer' }) ?? shell?.render?.();
+        return true;
+      case 'survey-previous':
+        event?.preventDefault?.();
+        await this.previousQuestion(shell);
+        return true;
+      case 'survey-retake':
+        event?.preventDefault?.();
+        await this.retakeSurvey(shell);
+        return true;
+      case 'survey-back':
+        event?.preventDefault?.();
+        if (typeof shell?._onPreviousStep === 'function') await shell._onPreviousStep();
+        else shell?.render?.();
+        return true;
+      default:
+        return false;
+    }
+  }
+
   async onDataReady(shell) {
     if (!shell.element) return;
     this._renderAbort?.abort();

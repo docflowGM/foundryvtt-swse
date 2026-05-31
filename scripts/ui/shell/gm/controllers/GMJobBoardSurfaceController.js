@@ -31,6 +31,7 @@ export class GMJobBoardSurfaceController {
     this._wireObjectiveButtons(pageElement, signal);
     this._wirePayoutForms(pageElement, signal);
     this._wireItemAwardForms(pageElement, signal);
+    this._wireAssetAwardForms(pageElement, signal);
   }
 
   destroy() {
@@ -252,4 +253,22 @@ export class GMJobBoardSurfaceController {
       }, { signal });
     });
   }
+
+  _wireAssetAwardForms(pageElement, signal) {
+    pageElement.querySelectorAll('form[data-job-award-asset-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || '').trim();
+        const assetActorId = String(data.get('assetActorId') || '').trim();
+        const primaryActorId = String(data.get('primaryActorId') || '').trim();
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        if (!threadId || !assetActorId || !recipientIds.length) return;
+        await HolonetMessengerService.threadAction({ actor: null, threadId, action: 'award-job-asset-access', assetActorId, primaryActorId, recipientIds });
+        this.host.selectedJobThreadId = threadId;
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+      }, { signal });
+    });
+  }
+
 }

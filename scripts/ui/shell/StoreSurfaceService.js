@@ -285,24 +285,64 @@ export class StoreSurfaceService {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'No actor selected' };
       }
 
+      const splashComplete = Boolean(options.splashComplete || options.enteredStore || options.currentView);
+
+      // P0 safety: the splash screen must remain interactive.  The full store
+      // catalog invokes suggestion scoring for every listing, which can be
+      // expensive and chatty enough to make the holopad look frozen before the
+      // player even clicks ENTER.  When the user is still on the splash, build a
+      // lightweight VM from actor/theme data and only use a previously-loaded
+      // store instance if it is already available.
+      if (!splashComplete) {
+        const cached = _instanceCache.get(actor.id);
+        let cachedContext = {};
+        if (cached?._loaded && typeof cached._prepareContext === 'function') {
+          try {
+            cachedContext = await cached._prepareContext({ splashOnly: true });
+          } catch (err) {
+            SWSELogger.warn('[StoreSurfaceService] Cached splash context unavailable:', err);
+          }
+        }
+        const splashContext = StoreSurfaceService.buildSplashContext(actor, cachedContext, { ...options, splashComplete: false });
+        return {
+          id: 'store',
+          title: 'Rendarr\'s Outfitters',
+          actorName: actor.name,
+          actorCredits: Number(actor.system?.credits ?? 0) || 0,
+          sheetTheme: splashContext.sheetTheme,
+          sheetMotionStyle: splashContext.sheetMotionStyle,
+          splashComplete: false,
+          storeSplash: splashContext,
+          storeContext: {
+            allItems: [],
+            totalItems: 0,
+            visibleItemCount: 0,
+            credits: Number(actor.system?.credits ?? 0) || 0,
+            cartCount: 0,
+            cartTotal: 0,
+            cartEntries: [],
+            currentView: 'splash',
+            isBrowseOrDetail: false,
+            categorySummary: [],
+            navigationModel: { topCategories: [] },
+            pageContext: {},
+            purchaseHistoryEntries: [],
+            purchaseHistoryCount: 0,
+            filters: { search: '', availability: 'all', sort: 'default' }
+          }
+        };
+      }
+
       const storeInstance = await StoreSurfaceService.getOrCreateInstance(actor);
       if (!storeInstance) {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'Store unavailable' };
       }
 
-      const splashComplete = Boolean(options.splashComplete || options.enteredStore || options.currentView);
-
       // Sync navigation state from shell options.
       // The splash is a full-catalog entry point; never let stale browse filters
       // from an earlier store session starve hot-item hydration before the user
       // has even entered the store.
-      if (!splashComplete) {
-        storeInstance.currentCategory = '';
-        storeInstance.currentSubcategory = null;
-        storeInstance.currentFamily = null;
-        storeInstance.currentView = 'browse';
-        storeInstance.selectedProductId = null;
-      } else {
+      {
         const previousCategory = storeInstance.currentCategory ?? '';
         if (options.currentCategory !== undefined) storeInstance.currentCategory = options.currentCategory ?? '';
         // Phase 2: Sync subcategory/family state

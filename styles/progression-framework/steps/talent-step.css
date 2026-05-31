@@ -2983,3 +2983,42 @@
 .prog-talent-tree-svg--holomap.is-panning {
   cursor: grabbing;
 }
+
+
+/* Progression talent picker must remain scrollable inside the shell. */
+.progression-shell .talent-work-surface {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell .talent-stage-browser,
+.progression-shell .talent-stage-graph {
+  display: flex;
+  flex-direction: column;
+}
+
+.progression-shell .talent-browser-all-trees,
+.progression-shell .talent-planner-grid,
+.progression-shell .talent-choice-panel,
+.progression-shell .talent-map-panel {
+  min-height: 0;
+}
+
+.progression-shell .talent-browser-all-trees {
+  overflow: auto;
+}
+
+.progression-shell .talent-planner-grid {
+  overflow: hidden;
+}
+
+.progression-shell .talent-choice-panel {
+  overflow: auto;
+  max-height: 100%;
+}
+
+.progression-shell .talent-choice-list {
+  max-height: none;
+  overflow: visible;
+}

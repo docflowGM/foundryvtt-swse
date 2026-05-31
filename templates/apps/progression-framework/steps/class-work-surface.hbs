@@ -15,6 +15,7 @@
                      {{#if (eq id ../focusedClassId)}}swse-option-card--focused prog-class-card--focused{{/if}}
                      {{#if (eq id ../committedClassId)}}swse-option-card--selected prog-class-card--selected{{/if}}
                      {{#if this.isLocked}}prog-class-card--locked swse-option-card--locked{{/if}}
+                     {{#if this.isPrestige}}prog-class-card--prestige{{/if}}
                      {{#if this.isSuggested}}prog-class-card--suggested prog-class-card--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
@@ -35,6 +36,16 @@
           <div class="prog-class-card__scanline"></div>
           <div class="prog-class-card__holo-overlay" aria-hidden="true"></div>
           <div class="prog-class-card__quote" aria-hidden="true">{{this.profileQuote}}</div>
+          {{#if this.isLocked}}
+            <div class="prog-class-card__lock-overlay" aria-hidden="true">
+              <div class="prog-class-card__lock-title"><i class="fas fa-lock"></i> Requirements</div>
+              {{#each this.lockedReasons}}
+                <div class="prog-class-card__lock-line">{{this}}</div>
+              {{else}}
+                <div class="prog-class-card__lock-line">Prerequisites not met</div>
+              {{/each}}
+            </div>
+          {{/if}}
           <div class="prog-class-card__nameplate">
             <span class="prog-class-card__name">{{this.name}}</span>
             <span class="prog-class-card__type">{{this.type}}</span>
@@ -53,15 +64,6 @@
           {{/if}}
         </div>
 
-        {{#if this.isLocked}}
-          <div class="prog-class-card__lock-reasons" aria-label="Unavailable requirements">
-            {{#each this.lockedReasons}}
-              <span class="prog-class-card__lock-reason"><i class="fas fa-lock"></i> {{this}}</span>
-            {{else}}
-              <span class="prog-class-card__lock-reason"><i class="fas fa-lock"></i> Prerequisites not met</span>
-            {{/each}}
-          </div>
-        {{/if}}
       </button>
     {{else}}
       <div class="prog-class-browse__empty">No classes found. Adjust your search or filters.</div>

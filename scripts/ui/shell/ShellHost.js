@@ -536,8 +536,97 @@ export function ShellHostMixin(BaseClass) {
               contextMode: 'modifyExisting'
             });
             await this.requestSurfaceRender({ reason: `${bayMode}-asset-bay-launch`, surfaceId: 'customization' });
+            return;
+          }
+
+          if (action === 'grant-access') {
+            const bayMode = el.dataset.bayMode || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            await this._promptGrantAssetAccess(targetActor, bayMode);
+            return;
           }
         });
+      });
+    }
+
+
+    async _promptGrantAssetAccess(assetActor, bayMode = 'garage') {
+      if (!game.user?.isGM) {
+        ui.notifications?.warn?.('Only a GM can grant droid or ship access.');
+        return false;
+      }
+      const recipients = Array.from(game.users?.contents ?? game.users ?? [])
+        .filter(user => !user?.isGM && user?.character)
+        .map(user => ({ user, actor: user.character }))
+        .filter(row => row.actor?.id);
+      if (!recipients.length) {
+        ui.notifications?.warn?.('No player character actors are available to receive this asset.');
+        return false;
+      }
+
+      const checkboxes = recipients.map(({ actor }) => `
+        <label style="display:block;margin:.25rem 0;">
+          <input type="checkbox" name="recipientActorIds" value="${actor.id}" checked>
+          ${actor.name}
+        </label>`).join('');
+      const primaryOptions = recipients.map(({ actor }) => `<option value="${actor.id}">${actor.name}</option>`).join('');
+      const label = bayMode === 'shipyard' ? 'ship' : 'droid';
+      const content = `
+        <form class="swse-asset-grant-dialog">
+          <p>Grant access to <strong>${assetActor.name}</strong>. One ${label} actor is shared; this does not copy the asset or charge credits.</p>
+          <label>Primary owner / captain
+            <select name="primaryActorId">${primaryOptions}</select>
+          </label>
+          <fieldset style="margin-top:.5rem;">
+            <legend>Access recipients</legend>
+            ${checkboxes}
+          </fieldset>
+        </form>`;
+
+      return new Promise(resolve => {
+        new Dialog({
+          title: `Grant ${assetActor.name}`,
+          content,
+          buttons: {
+            grant: {
+              icon: '<i class="fas fa-gift"></i>',
+              label: 'Grant Access',
+              callback: async (html) => {
+                try {
+                  const form = html?.[0]?.querySelector?.('form') ?? html?.querySelector?.('form');
+                  const data = new FormData(form);
+                  const recipientActorIds = data.getAll('recipientActorIds').map(String).filter(Boolean);
+                  const recipientActors = recipientActorIds.map(id => game.actors?.get?.(id)).filter(Boolean);
+                  const primaryOwnerActor = game.actors?.get?.(String(data.get('primaryActorId') || '')) ?? recipientActors[0] ?? null;
+                  if (!recipientActors.length) {
+                    ui.notifications?.warn?.('Select at least one recipient actor.');
+                    resolve(false);
+                    return;
+                  }
+                  const { AssetGrantService } = await import('/systems/foundryvtt-swse/scripts/engine/assets/AssetGrantService.js');
+                  await AssetGrantService.grantAssetAccess({
+                    assetActor,
+                    recipientActors,
+                    primaryOwnerActor,
+                    shared: recipientActors.length > 1,
+                    grantSource: `${bayMode}-gm-grant`,
+                    requesterId: game.user?.id ?? null,
+                    notes: `Granted from ${bayMode === 'shipyard' ? 'Shipyard' : 'Garage'}.`
+                  });
+                  ui.notifications?.info?.(`${assetActor.name} access granted to ${recipientActors.length} actor(s).`);
+                  await this.requestSurfaceRender({ reason: 'asset-bay-grant-access', surfaceId: 'asset-bay' });
+                  resolve(true);
+                } catch (err) {
+                  SWSELogger.error('[ShellHost] Asset grant failed:', err);
+                  ui.notifications?.error?.(`Asset grant failed: ${err.message}`);
+                  resolve(false);
+                }
+              }
+            },
+            cancel: { label: 'Cancel', callback: () => resolve(false) }
+          },
+          default: 'grant',
+          close: () => resolve(false)
+        }).render(true);
       });
     }
 

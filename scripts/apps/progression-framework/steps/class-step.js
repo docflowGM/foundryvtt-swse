@@ -67,6 +67,18 @@ export class ClassStep extends ProgressionStepPlugin {
     this._isNonheroicProgression = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
 
+    // Level-up is where prestige visibility matters most. Default the class
+    // browser to showing unavailable/locked classes so prestige options can be
+    // inspected even before every prerequisite is met. If the user has already
+    // toggled the utility chip in this shell, respect that explicit state.
+    if (this.isLevelup(shell)) {
+      const utilityState = shell?.utilityBar?._filterState;
+      if (utilityState && !Object.prototype.hasOwnProperty.call(utilityState, 'show-unavailable')) {
+        utilityState['show-unavailable'] = true;
+      }
+      this._filters.showUnavailable = utilityState?.['show-unavailable'] ?? true;
+    }
+
     // Droid mode awareness: Standard model droids have special class rules
     if (this._isDroidProgression) {
       this._isStandardModelDroid = shell?.progressionSession?.droidContext?.creationMode === 'standard-model' ||
@@ -92,6 +104,9 @@ export class ClassStep extends ProgressionStepPlugin {
     if (utilityFilters.base) this._filters.type = 'base';
     if (utilityFilters.prestige) this._filters.type = 'prestige';
     if (utilityFilters.nonheroic) this._filters.heroicType = 'nonheroic';
+    if (Object.prototype.hasOwnProperty.call(utilityFilters, 'show-unavailable')) {
+      this._filters.showUnavailable = !!utilityFilters['show-unavailable'];
+    }
     const utilitySearch = shell?.utilityBar?.getSearchQuery?.();
     if (utilitySearch) this._searchQuery = utilitySearch;
     const utilitySort = shell?.utilityBar?.getSortValue?.();
@@ -132,28 +147,18 @@ export class ClassStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters(shell);
-      shell.render();
+      this._requestStepRender(shell, 'class-search');
     };
     const onFilter = e => {
-      const { filterId, value } = e.detail;
-      if (filterId === 'base' && value) {
-        this._filters.type = 'base';
-      } else if (filterId === 'prestige' && value) {
-        this._filters.type = 'prestige';
-      } else if ((filterId === 'base' || filterId === 'prestige') && !value && this._filters.type === filterId) {
-        this._filters.type = null;
-      } else if (filterId === 'nonheroic') {
-        this._filters.heroicType = value ? 'nonheroic' : null;
-      } else if (filterId === 'show-unavailable') {
-        this._filters.showUnavailable = !!value;
-      }
+      if (e.detail?.handledByStepHook) return;
+      if (!this._applyUtilityChange('filter', e.detail || {}, shell, null)) return;
       this._applyFilters(shell);
-      shell.render();
+      this._requestStepRender(shell, 'class-filter');
     };
     const onSort = e => {
       this._sortBy = e.detail.sortId;
       this._applyFilters(shell);
-      shell.render();
+      this._requestStepRender(shell, 'class-sort');
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -216,10 +221,17 @@ export class ClassStep extends ProgressionStepPlugin {
   renderDetailsPanel(focusedItem) {
     if (!focusedItem) return this.renderDetailsPanelEmptyState();
 
-    const classData = this._allClasses.find(c => c.id === focusedItem.id);
+    const focusKeys = [focusedItem?.id, focusedItem?.classId, focusedItem?.sourceId, focusedItem?.name].filter(Boolean).map(value => String(value).toLowerCase());
+    const classData = this._allClasses.find(c => [c.id, c.classId, c.sourceId, c.name].some(value => value && focusKeys.includes(String(value).toLowerCase())));
     if (!classData) return this.renderDetailsPanelEmptyState();
 
     const normalized = normalizeDetailPanelData(classData, 'class');
+    const eligibility = this._classEligibility.get(classData.id)
+      || this._classEligibility.get(classData.name)
+      || this._evaluateClassEligibilityForDisplay(classData, null, {});
+    const isLocked = eligibility?.eligible === false;
+    const missingPrereqs = this._formatEligibilityReasons(eligibility);
+    const prerequisiteRows = this._formatPrerequisiteRows(eligibility);
     const mentor = resolveMentorData(getMentorForClass(classData.name));
     const levelOne = Array.isArray(classData.levelProgression) ? (classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0]) : null;
     const babValue = levelOne?.bab ?? (classData.babProgression === 'fast' ? 1 : 0);
@@ -243,6 +255,7 @@ export class ClassStep extends ProgressionStepPlugin {
         class: classData,
         img: this._resolveClassImg(classData.name),
         type: classData.prestigeClass ? 'Prestige' : 'Base',
+      isPrestige: classData.prestigeClass === true || classData.baseClass === false || classData.isPrestige === true,
         bab: `+${babValue}`,
         hitDie: `d${classData.hitDie ?? 10}`,
         defenses: { fortitude: defenses.fortitude ?? 0, reflex: defenses.reflex ?? 0, will: defenses.will ?? 0 },
@@ -260,6 +273,11 @@ export class ClassStep extends ProgressionStepPlugin {
         metadataTags: normalized.metadataTags,
         buildMetadata,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
+        isLocked,
+        missingPrereqs,
+        prerequisiteRows,
+        hasPrerequisiteRows: prerequisiteRows.length > 0,
+        lockReason: missingPrereqs.join('; ') || 'Prerequisites not met',
       },
     };
   }
@@ -534,7 +552,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     filters.push({
       id: 'show-unavailable',
-      label: 'Show Unavailable Classes',
+      label: this._filters.type === 'prestige' ? 'Show Locked Prestige' : 'Show Unavailable Classes',
       defaultOn: this._filters.showUnavailable === true
     });
 
@@ -602,6 +620,71 @@ export class ClassStep extends ProgressionStepPlugin {
   }
 
   // ---------------------------------------------------------------------------
+  // Utility Bar Direct Hook
+  // ---------------------------------------------------------------------------
+
+  onUtilityChange({ type, detail, shell, utilityBar } = {}) {
+    if (!this._applyUtilityChange(type, detail || {}, shell, utilityBar)) return false;
+    this._applyFilters(shell);
+    this._requestStepRender(shell, `class-utility-${type || 'filter'}`);
+    return true;
+  }
+
+  _requestStepRender(shell, reason = 'class-step-update') {
+    if (typeof shell?.requestRender === 'function') {
+      shell.requestRender({ preserveScroll: true, reason });
+      return;
+    }
+    shell?.render?.();
+  }
+
+  _applyUtilityChange(type, detail = {}, shell = null, utilityBar = null) {
+    if (type === 'search') {
+      this._searchQuery = String(detail.query || '');
+      return true;
+    }
+
+    if (type === 'sort') {
+      this._sortBy = detail.sortId || 'source';
+      return true;
+    }
+
+    if (type !== 'filter') return false;
+
+    const filterId = String(detail.filterId || '');
+    const value = detail.value;
+
+    if (filterId === 'base' || filterId === 'prestige') {
+      const active = Boolean(value);
+      this._filters.type = active ? filterId : (this._filters.type === filterId ? null : this._filters.type);
+
+      // Base and prestige are mutually exclusive. Keep the utility bar state in
+      // sync so a later render does not reactivate both chips at once.
+      const other = filterId === 'base' ? 'prestige' : 'base';
+      if (active && utilityBar?._filterState) {
+        utilityBar._filterState[other] = false;
+        utilityBar._filterState[filterId] = true;
+      }
+      if (!active && utilityBar?._filterState) {
+        utilityBar._filterState[filterId] = false;
+      }
+      return true;
+    }
+
+    if (filterId === 'nonheroic') {
+      this._filters.heroicType = value ? 'nonheroic' : null;
+      return true;
+    }
+
+    if (filterId === 'show-unavailable') {
+      this._filters.showUnavailable = Boolean(value);
+      return true;
+    }
+
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
   // Private Helpers
   // ---------------------------------------------------------------------------
 
@@ -662,16 +745,23 @@ export class ClassStep extends ProgressionStepPlugin {
       });
     }
 
-    // Sort
+    // Sort. Default layout groups base classes first, then prestige classes,
+    // with the familiar core classes at the top of the base group.
     filtered.sort((a, b) => {
+      const aPrestige = a.prestigeClass === true || a.baseClass === false || a.isPrestige === true;
+      const bPrestige = b.prestigeClass === true || b.baseClass === false || b.isPrestige === true;
+
+      if (this._sortBy !== 'alpha' && aPrestige !== bPrestige) {
+        return aPrestige ? 1 : -1;
+      }
+
       if (this._sortBy === 'alpha') {
         return a.name?.localeCompare(b.name) ?? 0;
       }
 
-      // Default: 'source' — priority classes first, then alpha
-      const sourceOrder = { 'Jedi': 0, 'Sith': 1, 'Soldier': 2, 'Scoundrel': 3 };
-      const aOrder = sourceOrder[a.name] ?? 4;
-      const bOrder = sourceOrder[b.name] ?? 4;
+      const sourceOrder = { 'Jedi': 0, 'Noble': 1, 'Scoundrel': 2, 'Scout': 3, 'Soldier': 4 };
+      const aOrder = sourceOrder[a.name] ?? (aPrestige ? 100 : 10);
+      const bOrder = sourceOrder[b.name] ?? (bPrestige ? 100 : 10);
       if (aOrder !== bOrder) return aOrder - bOrder;
 
       return a.name?.localeCompare(b.name) ?? 0;
@@ -689,22 +779,25 @@ export class ClassStep extends ProgressionStepPlugin {
     const recommendedLabel = isSuggested
       ? 'Recommended'
       : null;
+    const lockedReasonText = lockedReasons.join('; ');
 
     return {
       id: classData.id,
       name: classData.name,
       type: classData.prestigeClass ? 'Prestige' : 'Base',
+      isPrestige: classData.prestigeClass === true || classData.baseClass === false || classData.isPrestige === true,
       bab: `+${(Array.isArray(classData.levelProgression) ? ((classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0])?.bab ?? 0) : 0)}`,
       hitDie: classData.hitDie ?? 'd10',
       defenseBonus: `${classData.defenses?.fortitude ?? 0}/${classData.defenses?.reflex ?? 0}/${classData.defenses?.will ?? 0}`,
       description: getClassProfileDescription(classData.name) || classData.fantasy || classData.description || '',
-      profileQuote: getClassProfileQuote(classData.name),
+      profileQuote: isLocked ? (lockedReasonText || 'Prerequisites not met') : getClassProfileQuote(classData.name),
+      lockOverlayText: lockedReasonText || 'Prerequisites not met',
       mentorName: getMentorForClass(classData.name)?.name ?? classData.mentorName ?? 'Unknown Mentor',
       img: this._resolveClassImg(classData.name),
       isSuggested: isSuggested && !isLocked,
       isLocked,
       lockedReasons,
-      lockedReasonText: lockedReasons.join('; '),
+      lockedReasonText,
       badgeLabel: isLocked ? 'Unavailable' : recommendedLabel,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
@@ -764,6 +857,69 @@ export class ClassStep extends ProgressionStepPlugin {
         return reason.label || reason.name || reason.message || reason.reason || JSON.stringify(reason);
       })
       .filter(Boolean);
+  }
+
+
+  _formatPrerequisiteRows(eligibility) {
+    const rows = [];
+    const add = (label, met) => {
+      if (!label) return;
+      const key = String(label).toLowerCase();
+      if (rows.some(row => String(row.label || '').toLowerCase() === key)) return;
+      rows.push({ label, met: !!met, cssClass: met ? 'is-met' : 'is-missing' });
+    };
+
+    const details = eligibility?.eligibilityResult?.details || {};
+    if (details.level) {
+      add(`Minimum level ${details.level.required} (${details.level.effectiveLevel ?? details.level.actual} counted)`, Number(details.level.effectiveLevel ?? details.level.actual ?? 0) >= Number(details.level.required ?? 0));
+    }
+    if (details.bab) {
+      add(`Base Attack Bonus +${details.bab.required} (you have +${details.bab.actual})`, Number(details.bab.actual ?? 0) >= Number(details.bab.required ?? 0));
+    }
+    if (details.skills) {
+      const missing = Array.isArray(details.skills.missing) ? details.skills.missing : [];
+      if (missing.length) add(`Trained in: ${missing.join(', ')}`, false);
+      else add('Required trained skills met', true);
+    }
+    if (details.feats) {
+      const missing = Array.isArray(details.feats.missing) ? details.feats.missing : [];
+      if (missing.length) add(`Feats: ${missing.join(', ')}`, false);
+      else add('Required feats met', true);
+    }
+    if (details.featsAny) {
+      add('At least one required feat option met', !!details.featsAny.met);
+    }
+    if (details.talents) {
+      add(details.talents.message || 'Required talents met', !!details.talents.met);
+    }
+    if (details.forcePowers) {
+      const missing = Array.isArray(details.forcePowers.missing) ? details.forcePowers.missing : [];
+      if (missing.length) add(`Force Powers: ${missing.join(', ')}`, false);
+      else add('Required Force powers met', true);
+    }
+    if (details.forceTechniques) {
+      add(`${details.forceTechniques.required || 'Required'} Force Technique(s) (you have ${details.forceTechniques.actual ?? 0})`, !!details.forceTechniques.met);
+    }
+    if (details.darkSideScore) {
+      add(`Dark Side Score ${details.darkSideScore.required} (you have ${details.darkSideScore.actual})`, !!details.darkSideScore.met);
+    }
+    if (details.species) {
+      add(`Species requirement${details.species.allowed ? `: ${details.species.allowed.join(' or ')}` : ''}`, !!details.species.met);
+    }
+
+    const coerce = (raw, met) => {
+      const list = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return list.forEach(entry => {
+        if (!entry) return;
+        const label = typeof entry === 'string'
+          ? entry
+          : (entry.label || entry.name || entry.message || entry.reason || JSON.stringify(entry));
+        add(label, met);
+      });
+    };
+    coerce(eligibility?.reasons?.met || eligibility?.eligibilityResult?.metPrereqs || eligibility?.eligibilityResult?.met || [], true);
+    coerce(eligibility?.reasons?.missing || eligibility?.eligibilityResult?.missingPrereqs || eligibility?.eligibilityResult?.missing || [], false);
+    return rows;
   }
 
   /**
@@ -827,12 +983,29 @@ export class ClassStep extends ProgressionStepPlugin {
           if (scoreB !== scoreA) return scoreB - scoreA;
           return String(a?.name || '').localeCompare(String(b?.name || ''));
         });
-      this._suggestedClasses = rankedSuggested.slice(0, mode === 'chargen' ? 3 : 4);
+      this._suggestedClasses = rankedSuggested
+        .map(entry => this._normalizeSuggestedClassReference(entry))
+        .filter(Boolean)
+        .slice(0, mode === 'chargen' ? 3 : 4);
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];
       this._skillDocs = [];
     }
+  }
+
+  _normalizeSuggestedClassReference(entry) {
+    if (!entry) return null;
+    const keys = [entry.id, entry.classId, entry.sourceId, entry.name].filter(Boolean).map(value => String(value).toLowerCase());
+    const classData = this._allClasses.find(cls => [cls.id, cls.classId, cls.sourceId, cls.name].some(value => value && keys.includes(String(value).toLowerCase())));
+    if (!classData) return entry;
+    return {
+      ...entry,
+      id: classData.id,
+      classId: classData.id,
+      sourceId: classData.sourceId || entry.sourceId,
+      name: classData.name,
+    };
   }
 
   /**

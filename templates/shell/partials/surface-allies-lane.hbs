@@ -6,7 +6,18 @@
       <h4>{{lane.title}}</h4>
       {{#if lane.slotSummary}}<small>{{lane.title}} slots {{lane.slotSummary}}</small>{{/if}}
     </div>
-    <b>{{lane.count}}</b>
+    <div class="swse-allies-lane-header-actions">
+      {{#if lane.hasOpenSlots}}
+        {{#if (eq laneId "followers")}}
+        <button type="button" class="swse-allies-create-btn" data-allies-action="build-follower">＋ Add Follower</button>
+        {{else if (eq laneId "minions")}}
+        <button type="button" class="swse-allies-create-btn" data-allies-action="build-minion">＋ Add Minion</button>
+        {{else if (eq laneId "beasts")}}
+        <button type="button" class="swse-allies-create-btn" data-allies-action="build-beast">＋ Add Beast</button>
+        {{/if}}
+      {{/if}}
+      <b>{{lane.count}}</b>
+    </div>
   </header>
 
   {{#each lane.pending}}
@@ -33,6 +44,28 @@
   </article>
   {{/each}}
 
+  {{#if lane.hasOpenCapacity}}
+  <article class="swse-allies-card swse-allies-card--pending">
+    <div class="swse-allies-card-main">
+      <span class="swse-allies-card-icon">＋</span>
+      <div>
+        <h5>Open {{#if (eq laneId "followers")}}Follower{{else if (eq laneId "minions")}}Minion{{else}}Beast{{/if}} Slot</h5>
+        <p>{{lane.openCapacityCount}} open {{#if (eq laneId "followers")}}follower{{else if (eq laneId "minions")}}minion/privateer{{else}}beast{{/if}} slot{{#unless (eq lane.openCapacityCount 1)}}s{{/unless}} can be filled.</p>
+        <small>Use this shortcut to start creation from the Allies app.</small>
+      </div>
+    </div>
+    <div class="swse-allies-card-actions">
+      {{#if (eq laneId "followers")}}
+      <button type="button" data-allies-action="build-follower">Build Follower</button>
+      {{else if (eq laneId "minions")}}
+      <button type="button" data-allies-action="build-minion">Build Minion</button>
+      {{else}}
+      <button type="button" data-allies-action="build-beast">Add Beast</button>
+      {{/if}}
+    </div>
+  </article>
+  {{/if}}
+
   {{#each lane.active}}
   <article class="swse-allies-card swse-allies-card--active {{#if this.isDroid}}is-droid{{/if}} {{#if this.isStale}}is-stale{{/if}}">
     <div class="swse-allies-card-main">
@@ -57,12 +90,7 @@
       {{#if this.beastLevelRequested}}
       <button type="button" disabled>GM Review</button>
       {{/if}}
-      {{#if this.canOpenSheet}}
-      <button type="button" data-allies-action="open-ally-sheet" data-actor-id="{{this.id}}">{{this.sheetLabel}}</button>
-      {{/if}}
-      {{#if this.canManage}}
-      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">{{this.manageLabel}}</button>
-      {{/if}}
+      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">Manage</button>
       {{#if this.canOpenGarage}}
       <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">Garage</button>
       {{/if}}

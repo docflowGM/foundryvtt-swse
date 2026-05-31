@@ -521,6 +521,70 @@
   height: 100% !important;
 }
 
+/* Convert the workbench screen from a grid to a flex column so the workarea
+   can use flex: 1 1 auto instead of 1fr, which requires a definitively-sized
+   grid container that is unreliable across the sheet's CSS layering. */
 .swse.sheet.actor.character.v2 .swse-customization-screen {
-  min-height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-customization-hud,
+.swse.sheet.actor.character.v2 .swse-customization-mentor,
+.swse.sheet.actor.character.v2 .swse-customization-tabs,
+.swse.sheet.actor.character.v2 .swse-customization-footer {
+  flex: 0 0 auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-customization-workarea {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  /* Explicit row sizing so grid items actually fill the workarea height */
+  grid-template-rows: 1fr !important;
+  align-items: stretch !important;
+}
+
+.swse.sheet.actor.character.v2 .workbench-inventory,
+.swse.sheet.actor.character.v2 .workbench-detail {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .detail-grid {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Workbench already has the Holopad frame's hardware Home control. Hide the
+ * extra floating shell-home button so it does not sit in the workbench viewport.
+ */
+.swse-shell-surface-host[data-shell-surface="workbench"] > .swse-shell-home-nav {
+  display: none !important;
+}
+
+/* consistency-lock.css hides .panel globally inside .application.swse — override
+ * that for workbench panels which intentionally use the .panel class for styling. */
+.swse.sheet.actor.character.v2 .swse-item-customization-workbench .panel {
+  display: flex !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"],
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] > .swse-shell-surface--workbench,
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] .swse-shell-surface__body,
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] .swse-item-customization-workbench {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }

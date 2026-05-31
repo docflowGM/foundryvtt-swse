@@ -518,6 +518,508 @@
   border-top: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 12%, transparent);
 }
 
+
+/* Game Center concept library layout --------------------------------------
+   The library template was moved to concept-specific class names, but the
+   original stylesheet only styled the older generic panels. Keep the table
+   surfaces untouched and restore the card/detail/rail layout for library mode.
+   ------------------------------------------------------------------------ */
+.swse-games-surface.is-library-mode {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-library-mode .swse-games-hud {
+  flex: 0 0 auto;
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--vapor-cyan, #39f7ff) 10%, transparent), transparent 42%),
+    color-mix(in oklab, var(--screen, #08131f) 86%, black 14%);
+}
+
+.swse-games-concept-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.78fr) minmax(420px, 1.45fr) minmax(300px, 0.85fr);
+  gap: 14px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.swse-games-lib-col {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-games-lib-col--list,
+.swse-games-lib-col--detail,
+.swse-games-lib-col--rail {
+  overflow: hidden;
+}
+
+.swse-games-lib-head,
+.swse-games-detail-hero,
+.swse-games-config-card,
+.swse-games-rail-card {
+  border: 1px solid var(--games-border);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--vapor-cyan, #39f7ff) 6%, transparent), transparent 58%),
+    color-mix(in oklab, var(--games-panel) 82%, transparent);
+  box-shadow:
+    0 0 22px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 9%, transparent),
+    inset 0 0 24px oklch(0 0 0 / 0.22);
+  backdrop-filter: blur(4px);
+}
+
+.swse-games-lib-head {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+}
+
+.swse-games-lib-head h3,
+.swse-games-detail h2,
+.swse-games-config-card h4 {
+  margin: 2px 0 0;
+  font-family: var(--font-orbit, var(--font-mono, monospace));
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--vapor-cyan, #39f7ff);
+  text-shadow: 0 0 14px var(--games-glow);
+}
+
+.swse-games-library--concept {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-auto-rows: minmax(96px, max-content);
+  gap: 10px;
+  margin-top: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-games-library--concept .swse-games-card {
+  min-height: 96px;
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-color: color-mix(in oklab, var(--vapor-cyan, #39f7ff) 32%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--vapor-cyan, #39f7ff) 9%, transparent), transparent 58%),
+    oklch(0 0 0 / 0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-games-library--concept .swse-games-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 6px, color-mix(in oklab, var(--vapor-cyan, #39f7ff) 4%, transparent) 6px 7px),
+    radial-gradient(circle at 12% 50%, color-mix(in oklab, var(--vapor-pink, #ff4fd8) 16%, transparent), transparent 35%);
+  opacity: 0.42;
+}
+
+.swse-games-library--concept .swse-games-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-games-library--concept .swse-games-card.is-selected {
+  border-color: color-mix(in oklab, var(--vapor-pink, #ff4fd8) 70%, var(--vapor-cyan, #39f7ff) 30%);
+  box-shadow:
+    0 0 22px color-mix(in oklab, var(--vapor-pink, #ff4fd8) 18%, transparent),
+    inset 0 0 22px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 7%, transparent);
+}
+
+.swse-games-library--concept .swse-games-card__icon {
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
+}
+
+.swse-games-library--concept .swse-games-card__title {
+  font-size: 14px;
+  color: var(--ink, #dffbff);
+}
+
+.swse-games-library--concept .swse-games-card__sub {
+  margin-top: 4px;
+  color: var(--ink-dim, #b9d9df);
+}
+
+.swse-games-library--concept .swse-games-card__meta,
+.swse-games-detail-tags,
+.swse-games-capset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swse-games-library--concept .swse-games-card__meta {
+  margin-top: 8px;
+}
+
+.swse-games-pill,
+.swse-games-cap,
+.swse-games-buyin-chip,
+.swse-games-rail-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 28%, transparent);
+  background: color-mix(in oklab, var(--vapor-cyan, #39f7ff) 8%, transparent);
+  color: var(--ink-dim, #b9d9df);
+  padding: 4px 7px;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-games-pill.live,
+.swse-games-cap.on {
+  border-color: color-mix(in oklab, var(--pos, #4dff88) 45%, transparent);
+  color: var(--pos, #4dff88);
+}
+
+.swse-games-pill.found {
+  border-color: color-mix(in oklab, var(--zero, #ffd166) 45%, transparent);
+  color: var(--zero, #ffd166);
+}
+
+.swse-games-pill.planned,
+.swse-games-cap.off {
+  opacity: 0.62;
+}
+
+.swse-games-detail--concept {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-games-detail-hero {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  grid-template-areas:
+    'glyph kicker'
+    'glyph title'
+    'glyph sub'
+    'glyph line'
+    'tags tags';
+  gap: 8px 14px;
+  padding: 16px;
+}
+
+.swse-games-detail-hero__glyph {
+  grid-area: glyph;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklab, var(--vapor-pink, #ff4fd8) 48%, transparent);
+  color: var(--vapor-pink, #ff4fd8);
+  font-size: 32px;
+  box-shadow: inset 0 0 22px color-mix(in oklab, var(--vapor-pink, #ff4fd8) 12%, transparent);
+}
+
+.swse-games-detail-hero .swse-games-kicker { grid-area: kicker; }
+.swse-games-detail-hero h2 { grid-area: title; margin: 0; font-size: 28px; }
+.swse-games-detail-sub { grid-area: sub; }
+.swse-games-detail-line { grid-area: line; }
+.swse-games-detail-tags { grid-area: tags; margin-top: 8px; }
+
+.swse-games-detail-sub,
+.swse-games-detail-line,
+.swse-games-quick-rules p,
+.swse-games-start-note {
+  margin: 0;
+  color: var(--ink-dim, #b9d9df);
+  line-height: 1.45;
+}
+
+.swse-games-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-games-spec {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 22%, transparent);
+  background: oklch(0 0 0 / 0.22);
+  padding: 12px;
+  min-height: 92px;
+}
+
+.swse-games-spec .k,
+.swse-games-spec .vs,
+.swse-games-config-row .lbl {
+  color: var(--ink-faint, #7fb8c4);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.swse-games-spec .v {
+  display: block;
+  margin: 8px 0 4px;
+  color: var(--ink, #dffbff);
+  font-size: 24px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.swse-games-spec .v.cyan { color: var(--vapor-cyan, #39f7ff); }
+.swse-games-spec .v.gold { color: var(--zero, #ffd166); }
+.swse-games-spec .v.pink { color: var(--vapor-pink, #ff4fd8); }
+
+.swse-games-capset {
+  padding: 2px 0;
+}
+
+.swse-games-quick-rules,
+.swse-games-config-card {
+  display: grid;
+  gap: 10px;
+}
+
+.swse-games-quick-rules {
+  border-left: 2px solid color-mix(in oklab, var(--vapor-pink, #ff4fd8) 46%, transparent);
+  background: color-mix(in oklab, var(--vapor-pink, #ff4fd8) 5%, transparent);
+  padding: 10px 12px;
+}
+
+.swse-games-config-card {
+  padding: 14px;
+}
+
+.swse-games-config-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 14%, transparent);
+  padding-top: 10px;
+}
+
+.swse-games-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.swse-games-seg button,
+.swse-games-table-row__cta,
+.swse-games-ghost.mini {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 32%, transparent);
+  background: color-mix(in oklab, var(--vapor-cyan, #39f7ff) 8%, transparent);
+  color: var(--ink, #dffbff);
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.swse-games-seg button.on,
+.swse-games-table-row__cta {
+  border-color: color-mix(in oklab, var(--vapor-cyan, #39f7ff) 64%, transparent);
+  color: var(--vapor-cyan, #39f7ff);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 13%, transparent);
+}
+
+.swse-games-seg button.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.swse-games-start-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swse-games-lib-col--rail {
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-games-rail-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.swse-games-rail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-games-table-row,
+.swse-games-feed-row {
+  display: grid;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 18%, transparent);
+  background: oklch(0 0 0 / 0.24);
+  padding: 9px;
+  color: inherit;
+}
+
+.swse-games-table-row {
+  grid-template-columns: 32px 1fr auto;
+}
+
+.swse-games-table-row.invite {
+  grid-template-columns: 32px 1fr;
+}
+
+.swse-games-table-row__glyph {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklab, var(--vapor-pink, #ff4fd8) 38%, transparent);
+  color: var(--vapor-pink, #ff4fd8);
+}
+
+.swse-games-table-row__body,
+.swse-games-feed-row {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.swse-games-table-row__body span,
+.swse-games-feed-row span {
+  display: block;
+  min-width: 0;
+}
+
+.swse-games-table-row__body .name,
+.swse-games-feed-row .em {
+  color: var(--ink, #dffbff);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.swse-games-table-row__body .meta,
+.swse-games-table-row__body .hint,
+.swse-games-feed-row small,
+.swse-games-feed-row .time {
+  color: var(--ink-faint, #7fb8c4);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.swse-games-table-row__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.swse-games-feed-row {
+  grid-template-columns: 28px 1fr auto;
+}
+
+.swse-games-feed-row .ico {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: var(--vapor-cyan, #39f7ff);
+}
+
+.swse-games-empty--compact {
+  margin-top: 0;
+  padding: 10px;
+}
+
+.swse-games-empty--compact b,
+.swse-games-empty--compact span {
+  display: block;
+}
+
+@media (max-width: 1200px) {
+  .swse-games-concept-layout {
+    grid-template-columns: minmax(240px, 0.9fr) minmax(420px, 1.35fr);
+  }
+
+  .swse-games-lib-col--rail {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+  }
+}
+
+@media (max-width: 860px) {
+  .swse-games-surface.is-library-mode {
+    overflow: auto;
+  }
+
+  .swse-games-concept-layout,
+  .swse-games-lib-col--rail {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .swse-games-library--concept,
+  .swse-games-detail--concept,
+  .swse-games-lib-col--rail {
+    overflow: visible;
+  }
+
+  .swse-games-detail-hero,
+  .swse-games-spec-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-games-detail-hero {
+    grid-template-areas:
+      'glyph'
+      'kicker'
+      'title'
+      'sub'
+      'line'
+      'tags';
+  }
+}
+
 /* Phase 3: Pazaak MVP ---------------------------------------------------- */
 .swse-pazaak-table {
   display: grid;

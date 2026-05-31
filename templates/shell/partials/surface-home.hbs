@@ -245,7 +245,7 @@
             </div>
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
-              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}}>
+              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" {{#if this.recordId}}data-holonet-record-id="{{this.recordId}}"{{/if}} {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.routeId}}data-route-id="{{this.routeId}}"{{/if}} {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}>
                 {{#if this.imageUrl}}
                 <span class="swse-home-feed-thumb"><img src="{{this.imageUrl}}" alt="{{this.title}}"></span>
                 {{else}}

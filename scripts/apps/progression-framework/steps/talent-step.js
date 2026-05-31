@@ -97,6 +97,27 @@ function firstDisplayText(...values) {
   }
   return '';
 }
+
+function isRepeatableTalentEntry(talent = {}) {
+  const system = talent?.system || {};
+  if (talent?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
+  const text = [
+    talent?.name,
+    talent?.description,
+    talent?.benefit,
+    talent?.special,
+    system.description,
+    system.benefit,
+    system.special,
+    system.details,
+    system.summary,
+  ].map(toDisplayText).join(' ').toLowerCase();
+  return /(?:can|may)\s+(?:select|take|choose)\s+this\s+talent\s+multiple\s+times/.test(text)
+    || /may\s+be\s+taken\s+multiple\s+times/.test(text)
+    || /can\s+be\s+taken\s+multiple\s+times/.test(text)
+    || /may\s+be\s+selected\s+multiple\s+times/.test(text)
+    || /taken\s+multiple\s+times/.test(text);
+}
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -621,6 +642,55 @@ export class TalentStep extends ProgressionStepPlugin {
   // Data Retrieval
   // ---------------------------------------------------------------------------
 
+
+  _getClassTalentTreeAccessKeys(classModel) {
+    if (!classModel) return [];
+    const lookup = getClassTalentTreeLookupKeys(classModel) || {};
+    return [
+      ...(lookup.treeIds || []),
+      ...(lookup.treeNames || []),
+      ...(classModel.talentTreeIds || []),
+      ...(classModel.talentTreeSourceIds || []),
+      ...(classModel.talentTreeNames || []),
+      ...(classModel.talentTrees || []),
+      ...(classModel.system?.talentTreeIds || []),
+      ...(classModel.system?.talent_tree_ids || []),
+      ...(classModel.system?.talent_trees || []),
+      ...(classModel.system?.talentTreeNames || []),
+    ].filter(Boolean);
+  }
+
+  _collectActorUnlockedTalentTreeKeys(actor) {
+    const keys = [];
+    const addClass = (candidate) => {
+      const model = resolveClassModel(candidate) || candidate;
+      keys.push(...this._getClassTalentTreeAccessKeys(model));
+    };
+    const rawItems = actor?.items?.contents || actor?.items || [];
+    const items = Array.isArray(rawItems) ? rawItems : Array.from(rawItems || []);
+    items.filter(item => item?.type === 'class').forEach(item => addClass({
+      id: item.system?.classId || item.id,
+      name: item.name || item.system?.class_name,
+      system: item.system || {},
+    }));
+    const systemClasses = actor?.system?.classes || {};
+    for (const [className, classData] of Object.entries(systemClasses || {})) {
+      addClass({ name: className, system: classData || {} });
+    }
+    return keys;
+  }
+
+  _slotKey() {
+    return String(this.descriptor?.stepId || this.descriptor?.id || this._slotType || 'talent-slot');
+  }
+
+  _entryMatchesCurrentSlot(entry) {
+    const key = this._slotKey();
+    const entryKey = entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source;
+    if (entryKey) return String(entryKey) === key;
+    return entry?.slotType === this._slotType;
+  }
+
   /**
    * Get talent trees available in current context
    * HARDENED: Use class-resolution helper to resolve class model first
@@ -644,21 +714,16 @@ export class TalentStep extends ProgressionStepPlugin {
     if (committedClass) {
       classModel = resolveClassModel(committedClass);
       if (classModel) {
-        // Use canonical class model talent tree IDs (primary source)
-        // getClassTalentTreeLookupKeys returns an object { treeIds: [], treeNames: [] }
-        const lookup = getClassTalentTreeLookupKeys(classModel) || {};
-        allowedIds = [
-          ...(lookup.treeIds || []),
-          ...(lookup.treeNames || []),
-          ...(classModel.talentTreeIds || []),
-          ...(classModel.talentTreeSourceIds || []),
-          ...(classModel.talentTreeNames || []),
-          ...(classModel.system?.talentTreeIds || []),
-          ...(classModel.system?.talent_tree_ids || []),
-          ...(classModel.system?.talent_trees || [])
-        ].filter(Boolean);
+        allowedIds = this._getClassTalentTreeAccessKeys(classModel);
         SWSELogger.debug(`[TalentStep] Resolved class model "${classModel.name}" with ${allowedIds.length} talent tree access keys`);
       }
+    }
+
+    if (this._slotType === 'heroic') {
+      allowedIds = Array.from(new Set([
+        ...this._collectActorUnlockedTalentTreeKeys(actor),
+        ...allowedIds,
+      ].map(value => String(value || '').trim()).filter(Boolean)));
     }
 
     // Fallback: Use actor authority only for levelup context when class is unresolved
@@ -820,7 +885,8 @@ export class TalentStep extends ProgressionStepPlugin {
 
     for (const talent of talents || []) {
       const identityKeys = this._getTalentIdentityKeys(talent);
-      if (identityKeys.some(key => otherSelectedKeys.has(key) || ownedTalentKeys.has(key))) continue;
+      const repeatable = isRepeatableTalentEntry(talent);
+      if (!repeatable && identityKeys.some(key => otherSelectedKeys.has(key) || ownedTalentKeys.has(key))) continue;
 
       let prereqDetails = { legal: true };
       try {
@@ -1047,7 +1113,7 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   _getCommittedTalentForSlot(shell) {
-    return this._getCommittedTalentSelections(shell).find(talent => talent?.slotType === this._slotType) || null;
+    return this._getCommittedTalentSelections(shell).find(talent => this._entryMatchesCurrentSlot(talent)) || null;
   }
 
   _normalizeTalentKey(value) {
@@ -1084,6 +1150,7 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   _isTalentAlreadyTakenElsewhere(talent, shell) {
+    if (isRepeatableTalentEntry(talent)) return false;
     const keys = this._getTalentIdentityKeys(talent);
     if (!keys.length) return false;
     const otherSelected = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
@@ -1093,13 +1160,21 @@ export class TalentStep extends ProgressionStepPlugin {
 
   _buildCanonicalTalentSelection(talent) {
     if (!talent) return null;
+    const repeatable = isRepeatableTalentEntry(talent);
     return {
       id: talent.id || talent._id,
       name: talent.name || '',
       type: talent.type || 'talent',
-      system: talent.system || {},
+      description: talent.description || talent.system?.description || '',
+      repeatable,
+      system: {
+        ...(talent.system || {}),
+        ...(repeatable ? { repeatable: true } : {}),
+      },
       img: talent.img || undefined,
       slotType: this._slotType,
+      slotKey: this._slotKey(),
+      stepId: this.descriptor?.stepId || this.descriptor?.id || null,
       source: this._slotType,
       treeId: this._selectedTreeId || talent.talent_tree || talent.system?.talent_tree || null,
     };
@@ -1736,13 +1811,15 @@ export class TalentStep extends ProgressionStepPlugin {
         }
         const identityKeys = this._getTalentIdentityKeys(talent);
         const isSelected = nodeId === this._selectedTalentId;
-        const chosenElsewhere = identityKeys.some(key => otherSelectedKeys.has(key));
-        const isActorOwned = identityKeys.some(key => ownedTalentKeys.has(key));
+        const repeatable = isRepeatableTalentEntry(talent);
+        const chosenElsewhere = !repeatable && identityKeys.some(key => otherSelectedKeys.has(key));
+        const isActorOwned = !repeatable && identityKeys.some(key => ownedTalentKeys.has(key));
         const isOwned = isSelected || chosenElsewhere || isActorOwned;
         nodeStates[nodeId] = {
           legal: prereqDetails.legal !== false && !chosenElsewhere && !isActorOwned,
           owned: isOwned,
           selected: isSelected,
+          repeatable,
           chosenElsewhere,
           actorOwned: isActorOwned,
           suggested: false,
@@ -2125,7 +2202,12 @@ export class TalentStep extends ProgressionStepPlugin {
       });
 
       const currentSelections = this._getCommittedTalentSelections(shell);
-      const slotSelections = currentSelections.filter(entry => entry?.slotType !== this._slotType);
+      const currentSlotKey = this._slotKey();
+      const slotSelections = currentSelections.filter(entry => {
+        const entryKey = entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source;
+        if (entryKey) return String(entryKey) !== currentSlotKey;
+        return entry?.slotType !== this._slotType;
+      });
       const isTogglingOff = this._selectedTalentId === talentId;
 
       if (!isTogglingOff && this._isTalentAlreadyTakenElsewhere(talent, shell)) {
@@ -2145,13 +2227,19 @@ export class TalentStep extends ProgressionStepPlugin {
 
       this._selectedTalentId = nextSelection?.id || null;
 
+      const expectedSlots = new Set([currentSlotKey, ...slotSelections.map(entry => entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source || entry?.slotType).filter(Boolean).map(String)]);
+      const cappedSelections = nextSelections.filter((entry, index, list) => {
+        const entryKey = String(entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source || entry?.slotType || `legacy-${index}`);
+        return list.findIndex(other => String(other?.slotKey || other?.stepId || other?.sourceStep || other?.source || other?.slotType || '') === entryKey) === index;
+      }).slice(0, Math.max(1, expectedSlots.size));
+
       emitTalentStepTrace('ITEM_COMMIT_TALENT_RESULT', {
         selectedTalentId: this._selectedTalentId,
         talentId,
-        totalSelections: nextSelections.length,
+        totalSelections: cappedSelections.length,
       });
 
-      await this._commitNormalized(shell, 'talents', nextSelections);
+      await this._commitNormalized(shell, 'talents', cappedSelections);
 
       if (shell?.committedSelections && this.descriptor?.stepId) {
         shell.committedSelections.set(this.descriptor.stepId, nextSelection);

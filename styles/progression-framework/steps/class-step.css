@@ -202,7 +202,7 @@
   z-index: 1;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   margin: 0;
   display: block;
@@ -593,7 +593,7 @@
 
 .progression-shell .prog-class-card--visual {
   padding: 0;
-  min-height: 280px;
+  min-height: 300px;
   overflow: hidden;
   background: rgba(1, 13, 22, 0.84);
   border-color: rgba(67, 214, 255, 0.24);
@@ -611,7 +611,7 @@
 .progression-shell .prog-class-card__visual-wrap {
   position: relative;
   flex: 1;
-  min-height: 245px;
+  min-height: 260px;
   width: 100%;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
@@ -625,7 +625,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   margin: 0;
   transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
@@ -889,24 +889,100 @@
 }
 
 .progression-shell .prog-class-card__lock-reasons {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px 10px 10px;
-  color: rgba(255, 221, 142, 0.92);
-  font-size: var(--prog-font-size-xs);
-  line-height: 1.25;
-  text-align: left;
+  display: none;
 }
 
-.progression-shell .prog-class-card__lock-reason {
-  display: inline-flex;
-  align-items: flex-start;
+.progression-shell .prog-class-card__lock-overlay {
+  position: absolute;
+  z-index: 7;
+  inset: 12px 12px 56px;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(255, 215, 105, 0.32);
+  border-radius: 10px;
+  background: rgba(11, 12, 10, 0.78);
+  color: rgba(255, 226, 155, 0.96);
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.25;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  overflow: auto;
+}
+
+.progression-shell .prog-class-card--locked:hover .prog-class-card__lock-overlay,
+.progression-shell .prog-class-card--locked:focus-visible .prog-class-card__lock-overlay,
+.progression-shell .prog-class-card--locked.prog-class-card--focused .prog-class-card__lock-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.progression-shell .prog-class-card__lock-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 244, 190, 0.98);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-class-card__lock-line {
+  color: rgba(255, 226, 155, 0.94);
 }
 
 .progression-shell .swse-option-card__badge--locked {
   border-color: rgba(255, 210, 90, 0.38);
   background: rgba(255, 194, 71, 0.12);
   color: rgba(255, 228, 153, 0.96);
+}
+
+/* Class level-up hardening: prestige portraits should show the full concept art,
+   and locked cards should reveal prerequisite reasons through the existing hover
+   overlay instead of generic flavor quotes. */
+.progression-shell .prog-class-card--prestige .prog-class-card__visual-wrap .prog-class-card__image {
+  object-fit: contain;
+  background: radial-gradient(circle at center, rgba(0, 180, 255, 0.12), rgba(0, 8, 16, 0.92));
+}
+
+.progression-shell .prog-class-card--locked .prog-class-card__quote {
+  color: rgba(255, 221, 142, 0.96);
+  text-align: left;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: auto;
+}
+
+
+/* Compact legal-language for class prerequisites in the detail rail. */
+.progression-shell .prog-class-details__prereq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progression-shell .prog-class-details__prereq-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--prog-font-size-sm);
+  line-height: 1.35;
+}
+
+.progression-shell .prog-class-details__prereq-row.is-met {
+  color: rgba(107, 255, 173, 0.95);
+}
+
+.progression-shell .prog-class-details__prereq-row.is-missing {
+  color: rgba(255, 105, 105, 0.95);
+}
+
+.progression-shell .prog-class-card--prestige .prog-class-card__visual-wrap,
+.progression-shell .prog-class-card__visual-wrap {
+  flex: 1 1 auto;
 }

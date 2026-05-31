@@ -2023,6 +2023,25 @@ export class ProgressionFinalizer {
     return out;
   }
 
+  static _isRepeatableTalentEntry(entry = {}, resolvedData = null) {
+    const system = entry?.system || resolvedData?.system || {};
+    if (entry?.repeatable === true || resolvedData?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
+    const text = [
+      entry?.name, entry?.description, entry?.benefit, entry?.special,
+      resolvedData?.name, resolvedData?.description, resolvedData?.benefit, resolvedData?.special,
+      system.description, system.benefit, system.special, system.details, system.summary,
+    ].map(value => {
+      if (value == null) return '';
+      if (typeof value === 'object') return value.value || value.text || value.raw || value.label || value.name || '';
+      return String(value);
+    }).join(' ').toLowerCase();
+    return /(?:can|may)\s+(?:select|take|choose)\s+this\s+talent\s+multiple\s+times/.test(text)
+      || /may\s+be\s+taken\s+multiple\s+times/.test(text)
+      || /can\s+be\s+taken\s+multiple\s+times/.test(text)
+      || /may\s+be\s+selected\s+multiple\s+times/.test(text)
+      || /taken\s+multiple\s+times/.test(text);
+  }
+
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {
     const sessionId = sessionState.sessionId || 'unknown';
     const itemSpecs = [];
@@ -2065,8 +2084,9 @@ export class ProgressionFinalizer {
         for (let idx = 0; idx < count; idx += 1) {
           const sessionMarker = `${sessionId}::${domain.key}::${rawEntry?.id || resolvedName}::${idx}`;
           const dedupeKey = `${domain.type}::${String(resolvedName || '').toLowerCase()}`;
+          const allowDuplicateForEntry = domain.allowDuplicates || (domain.key === 'talents' && this._isRepeatableTalentEntry(rawEntry, resolvedData));
           if (existingBySessionMarker.has(sessionMarker)) continue;
-          if (!domain.allowDuplicates && existingByTypeAndName.has(dedupeKey)) continue;
+          if (!allowDuplicateForEntry && existingByTypeAndName.has(dedupeKey)) continue;
 
           const baseItem = resolvedData || {
             name: resolvedName,
@@ -2114,7 +2134,7 @@ export class ProgressionFinalizer {
 
           itemSpecs.push(baseItem);
           existingBySessionMarker.add(sessionMarker);
-          if (!domain.allowDuplicates) existingByTypeAndName.add(dedupeKey);
+          if (!allowDuplicateForEntry) existingByTypeAndName.add(dedupeKey);
         }
       }
     }

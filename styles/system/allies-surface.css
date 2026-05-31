@@ -186,6 +186,26 @@
   font-size: 1.1rem;
 }
 
+.swse-allies-lane-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.swse-allies-create-btn {
+  padding: 4px 10px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #00dfff) 40%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--vapor-cyan, #00dfff) 10%, transparent);
+  color: var(--vapor-cyan, #00dfff);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.swse-allies-create-btn:hover {
+  background: color-mix(in oklab, var(--vapor-cyan, #00dfff) 20%, transparent);
+}
+
 .swse-allies-stat-pill {
   min-width: 84px;
   padding: 8px 10px;

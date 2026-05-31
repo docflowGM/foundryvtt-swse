@@ -115,6 +115,8 @@ function collectOwnedEntries(ownerActor, mode) {
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
       canModify: Boolean(actor?.id),
+      canGrantAccess: Boolean(actor?.id && game.user?.isGM),
+      grantAccessLabel: mode === 'shipyard' ? 'Give / Share Ship' : 'Give Droid',
       sheetLabel: mode === 'shipyard' ? 'See Ship Sheet' : 'See Droid Sheet',
       modifyLabel: mode === 'shipyard' ? 'Modify in Shipyard' : 'Modify in Garage'
     });
@@ -144,7 +146,11 @@ export class AssetBaySurfaceService {
         : 'Droids purchased, granted, or linked to this actor appear here. Droid PC sheets remain their own character sheet app.',
       assets,
       count: assets.length,
-      hasAssets: assets.length > 0
+      hasAssets: assets.length > 0,
+      isGM: Boolean(game.user?.isGM),
+      grantHelp: isShipyard
+        ? 'GM tools can grant one shared ship to one or more owner actors without copying it.'
+        : 'GM tools can grant a droid to an owner actor without routing through store purchase.'
     };
   }
 }

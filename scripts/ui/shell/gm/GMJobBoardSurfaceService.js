@@ -1,6 +1,7 @@
 /** GM Job Board command surface view-model. */
 
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
+import { AssetGrantService } from '/systems/foundryvtt-swse/scripts/engine/assets/AssetGrantService.js';
 
 const THREAD_TYPE_JOB = 'job';
 const PARTY_FUND_RECIPIENT_ID = 'party-fund';
@@ -252,6 +253,15 @@ function xpPayoutModeOptions() {
   ];
 }
 
+
+function assetRewardCandidates() {
+  try {
+    return AssetGrantService.assetCandidates({ includeUnowned: true });
+  } catch (_err) {
+    return [];
+  }
+}
+
 function itemDistributionModeOptions() {
   return [
     { value: 'single-copy', label: 'Grant all attached items to one actor' },
@@ -335,6 +345,8 @@ export class GMJobBoardSurfaceService {
       .map(objective => ({ ...objective, jobTitle: job.title, threadId: job.threadId, clientLabel: job.clientLabel })));
     const payoutItems = jobs.filter(job => job.status === 'complete');
 
+    const assetCandidates = assetRewardCandidates();
+
     return {
       pageTitle: 'GM Job Board',
       pageDescription: 'Contract command board for posted work, objective review, and reward payout',
@@ -361,6 +373,8 @@ export class GMJobBoardSurfaceService {
         payoutModes: payoutModeOptions(),
         xpPayoutModes: xpPayoutModeOptions(),
         itemDistributionModes: itemDistributionModeOptions(),
+        assetRewardCandidates: assetCandidates,
+        hasAssetRewardCandidates: assetCandidates.length > 0,
         partyFundEnabled: isPartyFundEnabled(),
         hasJobs: jobs.length > 0,
         hasReview: reviewItems.length > 0,
@@ -390,6 +404,8 @@ export class GMJobBoardSurfaceService {
     const reviewCount = objectives.filter(objective => objective.needsReview).length;
     const itemUuids = safeArray(job?.rewardItemUuids).map(String).filter(Boolean);
 
+    const assetCandidates = assetRewardCandidates();
+
     return {
       threadId: thread.id,
       title: job?.title || thread.title || 'Job Board Posting',
@@ -414,6 +430,8 @@ export class GMJobBoardSurfaceService {
       rewardItemUuids: itemUuids,
       hasAttachedItemRewards: itemUuids.length > 0,
       rewardItems: String(job?.rewardItems || '').trim(),
+      assetRewardCandidates: assetCandidates,
+      hasAssetRewardCandidates: assetCandidates.length > 0,
       timeline: buildTimeline(thread, job, recordsById),
       createdAt: thread.createdAt || job?.createdAt || null,
       createdAtLabel: formatMaybeDate(thread.createdAt || job?.createdAt),

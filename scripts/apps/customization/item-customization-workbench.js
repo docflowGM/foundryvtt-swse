@@ -45,6 +45,50 @@ const WORKBENCH_CATEGORY_ALIASES = {
   gear: new Set(['gear', 'equipment', 'equip', 'tool', 'tools', 'kit', 'kits', 'medical', 'medpac', 'computer', 'slicer', 'sensor', 'sensors', 'survival', 'comlink', 'communications', 'comm'])
 };
 
+const WORKBENCH_DIRECT_TYPE_CATEGORY = new Map([
+  ['blaster', 'weapons'],
+  ['weapon', 'weapons'],
+  ['meleeweapon', 'weapons'],
+  ['rangedweapon', 'weapons'],
+  ['armor', 'armor'],
+  ['armour', 'armor'],
+  ['bodysuit', 'armor'],
+  ['equipment', 'gear'],
+  ['gear', 'gear'],
+  ['tool', 'gear'],
+  ['tech', 'gear'],
+  ['consumable', 'gear']
+]);
+
+const WORKBENCH_BLOCKED_ITEM_TYPES = new Set([
+  'ability',
+  'attribute',
+  'background',
+  'class',
+  'class_feature',
+  'classfeature',
+  'combat_action',
+  'combataction',
+  'effect',
+  'extra_skill_use',
+  'extraskilluse',
+  'feat',
+  'force_power',
+  'force_secret',
+  'force_technique',
+  'forcepower',
+  'forcesecret',
+  'forcetechnique',
+  'language',
+  'species',
+  'skill',
+  'talent',
+  'talent_choice',
+  'talent_tree',
+  'talentchoice',
+  'talenttree'
+]);
+
 function normalizeWorkbenchToken(value) {
   return String(value ?? '')
     .trim()
@@ -70,12 +114,11 @@ function itemHasWorkbenchAlias(item, category) {
   const aliases = WORKBENCH_CATEGORY_ALIASES[category];
   if (!aliases) return false;
   const tokens = [
-    item?.type,
-    system?.type,
     system?.category,
     system?.itemCategory,
     system?.equipmentCategory,
     system?.equipmentType,
+    system?.weaponCategory,
     system?.weaponType,
     system?.weaponSubtype,
     system?.armorType,
@@ -87,8 +130,39 @@ function itemHasWorkbenchAlias(item, category) {
     const normalized = normalizeWorkbenchToken(token);
     const compact = compactWorkbenchToken(token);
     if (!normalized && !compact) return false;
-    return aliases.has(normalized) || aliases.has(compact) || normalized.includes(category.slice(0, -1));
+    return aliases.has(normalized) || aliases.has(compact);
   });
+}
+
+function hasInventoryEconomics(item) {
+  const system = getWorkbenchItemSystem(item);
+  const cost = system?.cost ?? system?.costNumeric ?? system?.economics?.cost;
+  const weight = system?.weight ?? system?.economics?.weight;
+  return cost !== undefined || weight !== undefined || !!system?.equippable || !!system?.quantity;
+}
+
+function classifyPhysicalWorkbenchItem(item) {
+  if (!item) return null;
+  const system = getWorkbenchItemSystem(item);
+  const itemType = compactWorkbenchToken(item?.type);
+  const systemType = compactWorkbenchToken(system?.type);
+
+  // Actor feature items often contain words like "weapon" or "armor" in
+  // their category text. They are not physical inventory and must not inflate
+  // the workbench lanes.
+  if (WORKBENCH_BLOCKED_ITEM_TYPES.has(itemType) || WORKBENCH_BLOCKED_ITEM_TYPES.has(systemType)) return null;
+
+  const direct = WORKBENCH_DIRECT_TYPE_CATEGORY.get(itemType);
+  if (direct) return direct;
+
+  // Only use loose system aliases for physical/economic item documents. This
+  // keeps feats such as Weapon Focus or Armor Proficiency out of the armory.
+  if (!hasInventoryEconomics(item)) return null;
+
+  if (itemHasWorkbenchAlias(item, 'weapons')) return 'weapons';
+  if (itemHasWorkbenchAlias(item, 'armor')) return 'armor';
+  if (itemHasWorkbenchAlias(item, 'gear')) return 'gear';
+  return null;
 }
 
 function classifyWorkbenchItem(item) {
@@ -98,10 +172,7 @@ function classifyWorkbenchItem(item) {
   } catch (_error) {
     // Classification diagnostics below will expose the item shape; do not block inventory display.
   }
-  if (itemHasWorkbenchAlias(item, 'weapons')) return 'weapons';
-  if (itemHasWorkbenchAlias(item, 'armor')) return 'armor';
-  if (itemHasWorkbenchAlias(item, 'gear')) return 'gear';
-  return null;
+  return classifyPhysicalWorkbenchItem(item);
 }
 
 function getWorkbenchItemDebugShape(item) {
@@ -204,7 +275,12 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   _getLegacyAppliedUpgradeKeys(item) {
     if (!item) return [];
     if (item.type === 'blaster') return Array.isArray(item.flags?.swse?.blasterUpgrades) ? item.flags.swse.blasterUpgrades : [];
-    if (item.type === 'weapon') return Array.isArray(item.flags?.swse?.meleeUpgrades) ? item.flags.swse.meleeUpgrades : [];
+    if (item.type === 'weapon') {
+      const subtypeKey = this._getItemSubtypeKey(item);
+      const isRangedWeapon = ['blaster', 'pistol', 'rifle', 'carbine', 'heavy', 'grenade'].includes(subtypeKey);
+      if (isRangedWeapon) return Array.isArray(item.flags?.swse?.blasterUpgrades) ? item.flags.swse.blasterUpgrades : [];
+      return Array.isArray(item.flags?.swse?.meleeUpgrades) ? item.flags.swse.meleeUpgrades : [];
+    }
     if (['armor', 'bodysuit'].includes(item.type)) return Array.isArray(item.flags?.swse?.armorUpgrades) ? item.flags.swse.armorUpgrades : [];
     return Array.isArray(item.flags?.swse?.gearMods) ? item.flags.swse.gearMods : [];
   }
@@ -409,7 +485,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     return CATEGORY_ORDER
       .map(entry => ({ ...entry, items: byCategory[entry.key] || [] }))
-      .filter(entry => entry.items.length > 0 || entry.key === 'lightsaber');
+      .filter(entry => entry.items.length > 0);
   }
 
   _ensureSelection() {
@@ -439,7 +515,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const remembered = this._selectedByCategory.get(this.selectedCategory);
     if (!this.selectedItemId && remembered) this.selectedItemId = remembered;
     if (!this.selectedItemId || !currentCategory.items.find(item => getWorkbenchItemId(item) === this.selectedItemId)) {
-      this.selectedItemId = currentCategory.items[0]?.id ?? null;
+      this.selectedItemId = getWorkbenchItemId(currentCategory.items[0]) ?? null;
     }
     this._rememberSelectedItem(this.selectedCategory, this.selectedItemId);
 
@@ -451,7 +527,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     if (this.selectedCategory === 'lightsaber') {
       return this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
     }
-    if (this.sourceItem && this.mode === 'store-stage' && this.selectedItemId === this.sourceItem.id) return this.sourceItem;
+    if (this.sourceItem && this.mode === 'store-stage' && this.selectedItemId === getWorkbenchItemId(this.sourceItem)) return this.sourceItem;
     return this.selectedItemId ? this._getActorItemById(this.selectedItemId) : null;
   }
 
@@ -516,16 +592,20 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
   _getDraft(item) {
     if (!item) return null;
-    if (!this._drafts.has(item.id)) {
-      this._drafts.set(item.id, this._getInitialDraft(item));
+    const draftKey = getWorkbenchItemId(item);
+    if (!draftKey) return null;
+    if (!this._drafts.has(draftKey)) {
+      this._drafts.set(draftKey, this._getInitialDraft(item));
     }
-    return this._drafts.get(item.id);
+    return this._drafts.get(draftKey);
   }
 
   _getUpgradeCatalog(item, draft) {
     if (!item || !draft) return [];
     let source = {};
-    if (item.type === 'blaster') source = BLASTER_UPGRADES;
+    const subtypeKey = this._getItemSubtypeKey(item);
+    const isRangedWeapon = ['blaster', 'pistol', 'rifle', 'carbine', 'heavy', 'grenade'].includes(subtypeKey);
+    if (item.type === 'blaster' || (item.type === 'weapon' && isRangedWeapon)) source = BLASTER_UPGRADES;
     else if (item.type === 'weapon') source = MELEE_UPGRADES;
     else if (['armor', 'bodysuit'].includes(item.type)) source = ARMOR_UPGRADES;
     else source = Object.fromEntries(Object.entries(GEAR_MODS).filter(([, mod]) => mod.compatible.includes(draft.variant || DEFAULT_GEAR_VARIANT)));
@@ -1733,8 +1813,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       itemUpdate['flags.swse.fxType'] = visualProfile.fxType;
       itemUpdate['flags.swse.blasterUpgrades'] = [...draft.selectedUpgrades];
     } else if (item.type === 'weapon') {
-      itemUpdate['flags.swse.meleeUpgrades'] = [...draft.selectedUpgrades];
-      itemUpdate['flags.swse.accentColor'] = draft.accentColor;
+      const subtypeKey = this._getItemSubtypeKey(item);
+      const isRangedWeapon = ['blaster', 'pistol', 'rifle', 'carbine', 'heavy', 'grenade'].includes(subtypeKey);
+      if (isRangedWeapon) {
+        itemUpdate['flags.swse.blasterUpgrades'] = [...draft.selectedUpgrades];
+      } else {
+        itemUpdate['flags.swse.meleeUpgrades'] = [...draft.selectedUpgrades];
+        itemUpdate['flags.swse.accentColor'] = draft.accentColor;
+      }
     } else if (['armor', 'bodysuit'].includes(item.type)) {
       itemUpdate['flags.swse.armorUpgrades'] = [...draft.selectedUpgrades];
       itemUpdate['flags.swse.tintColor'] = draft.tintColor;

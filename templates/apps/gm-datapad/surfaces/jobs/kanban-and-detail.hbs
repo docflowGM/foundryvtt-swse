@@ -236,6 +236,36 @@
               <button type="submit" class="swse-ui-button">Award Attached Items</button>
             </form>
             {{/if}}
+            {{#if jobBoard.selectedJob.hasAssetRewardCandidates}}
+            <form class="job-payout-form" data-job-award-asset-form>
+              <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
+              <label>Shared asset reward
+                <select name="assetActorId">
+                  {{#each jobBoard.selectedJob.assetRewardCandidates}}
+                  <option value="{{this.id}}">{{this.name}} — {{this.typeLabel}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label>Primary owner / captain
+                <select name="primaryActorId">
+                  {{#each jobBoard.selectedJob.actorPayoutTargets}}
+                  <option value="{{this.actorId}}">{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="job-recipient-picker">
+                <span>Grant access to selected job participants. One asset is shared; it is not copied per player.</span>
+                {{#each jobBoard.selectedJob.actorPayoutTargets}}
+                <label class="job-inline-check"><input type="checkbox" name="recipientIds" value="{{this.id}}" checked> {{this.label}}</label>
+                {{else}}
+                <p class="placeholder">No actor participants are attached to this job yet.</p>
+                {{/each}}
+              </div>
+              <button type="submit" class="swse-ui-button">Grant Shared Droid / Ship</button>
+            </form>
+            {{else}}
+            <p class="placeholder">No droid or ship actors are available to grant as a shared job reward.</p>
+            {{/if}}
           </div>
 
           <div class="job-detail-block">

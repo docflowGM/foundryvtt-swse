@@ -22,8 +22,11 @@ function optionLabel(option) {
   return String(option?.label || option?.name || option?.value || option?.id || 'Choice');
 }
 
-function optionSource(option) {
-  return String(option?.locked ? 'Locked' : (option?.source || option?.prerequisiteSource || 'Available'));
+function optionSource(option, { showSource = true } = {}) {
+  if (!showSource) return '';
+  if (option?.locked && !option?.providerLocked) return 'Locked';
+  if (option?.providerLocked) return '';
+  return String(option?.source || option?.prerequisiteSource || 'Available');
 }
 
 class FeatChoiceAppV2 extends SWSEApplicationV2 {
@@ -61,7 +64,8 @@ class FeatChoiceAppV2 extends SWSEApplicationV2 {
     selectedKey = '',
     confirmLabel = 'Save Choice',
     cancelLabel = 'Cancel',
-    fieldName = 'swseFeatChoice'
+    fieldName = 'swseFeatChoice',
+    showSources = true
   } = {}) {
     super({});
     this.dialogTitle = title;
@@ -73,6 +77,7 @@ class FeatChoiceAppV2 extends SWSEApplicationV2 {
     this.confirmLabel = confirmLabel;
     this.cancelLabel = cancelLabel;
     this.fieldName = fieldName;
+    this.showSources = showSources !== false;
     this.result = null;
     this.onDecision = null;
     this._settled = false;
@@ -96,8 +101,9 @@ class FeatChoiceAppV2 extends SWSEApplicationV2 {
       return {
         key,
         label: optionLabel(option),
-        source: optionSource(option),
-        locked: Boolean(option?.locked),
+        source: optionSource(option, { showSource: this.showSources }),
+        locked: Boolean(option?.locked && !option?.providerLocked),
+        showSource: this.showSources && !!optionSource(option, { showSource: this.showSources }),
         checked: this.selectedKey && this.selectedKey === key
       };
     });
@@ -112,7 +118,8 @@ class FeatChoiceAppV2 extends SWSEApplicationV2 {
       cancelLabel: this.cancelLabel,
       fieldName: this.fieldName,
       hasChoices: choices.length > 0,
-      choices
+      choices,
+      showSources: this.showSources
     };
   }
 
@@ -215,15 +222,19 @@ export class FeatChoiceDialog {
       ? 'This feat unlocks progression slots. The dedicated progression step resolves the granted selections later.'
       : '';
 
+    const simpleWeaponGroupChoice = ['weapon_focus', 'greater_weapon_focus', 'weapon_specialization', 'greater_weapon_specialization']
+      .includes(String(meta.choiceKind || '').toLowerCase());
+
     let selected = await FeatChoiceAppV2.prompt({
       title: title || `Choose: ${itemOrFeat?.name || 'Feat Choice'}`,
       heading: `${itemOrFeat?.name || 'Feat'} requires a choice.`,
-      message: 'Pick the option this feat should apply to.',
+      message: simpleWeaponGroupChoice ? 'Pick the weapon group this feat should apply to.' : 'Pick the option this feat should apply to.',
       helper,
       options,
       selectedKey,
       confirmLabel: 'Save Choice',
-      cancelLabel: allowCancel ? 'Cancel' : 'Later'
+      cancelLabel: allowCancel ? 'Cancel' : 'Later',
+      showSources: !simpleWeaponGroupChoice
     });
 
     if (!selected) return null;

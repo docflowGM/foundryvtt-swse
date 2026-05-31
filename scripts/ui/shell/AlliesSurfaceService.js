@@ -143,20 +143,39 @@ function sourceTalentLabel(record = {}) {
   return record.sourceTalent || record.talentName || record.grantingTalent || record.talent || record.source || 'Unknown source';
 }
 
+function slotCreatedActorId(slot = {}) {
+  return cleanString(slot.createdActorId ?? slot.actorId ?? slot.assignedActorId ?? slot.dependentActorId ?? slot.npcActorId);
+}
+
+function slotLiveActor(slot = {}) {
+  const actorId = slotCreatedActorId(slot);
+  return actorId ? game.actors?.get?.(String(actorId).replace(/^Actor\./, '')) ?? null : null;
+}
+
+function isOpenCompanionSlot(slot = {}) {
+  const actorId = slotCreatedActorId(slot);
+  if (!actorId) return true;
+  return !slotLiveActor(slot);
+}
+
 function mapPendingSlot(slot = {}) {
   const kind = slotKind(slot);
   const label = slotLabel(slot);
+  const staleActorId = slotCreatedActorId(slot);
+  const staleAssignment = Boolean(staleActorId && !slotLiveActor(slot));
   return {
     id: slot.id || slot.slotId || `${kind}-${sourceTalentLabel(slot)}`,
     kind,
     label,
-    title: `Open ${label} Slot`,
+    title: staleAssignment ? `Rebuild ${label} Slot` : `Open ${label} Slot`,
     sourceTalent: sourceTalentLabel(slot),
-    description: slot.description || `${sourceTalentLabel(slot)} has granted an unfilled ${label.toLowerCase()} slot.`,
+    description: slot.description || (staleAssignment
+      ? `${sourceTalentLabel(slot)} has a missing linked actor. Rebuild or refill this ${label.toLowerCase()} slot.`
+      : `${sourceTalentLabel(slot)} has granted an unfilled ${label.toLowerCase()} slot.`),
     canBuildFollower: kind === 'follower',
-    canBuildMinion: kind === 'minion' || kind === 'privateer',
+    canBuildMinion: kind === 'minion' || kind === 'privateer' || kind === 'assigned-nonheroic',
     canBuildBeast: kind === 'beast',
-    status: 'OPEN SLOT'
+    status: staleAssignment ? 'ACTOR MISSING' : 'OPEN SLOT'
   };
 }
 
@@ -211,11 +230,7 @@ function mapActorCard(actor, kind = 'follower', owner = null, options = {}) {
     defenseLabel: defenseLabel(actor),
     templateLabel: template ? titleCase(template) : null,
     isDroid,
-    isNpc: actor?.type === 'npc',
-    canOpenSheet: true,
-    canManage: actor?.type === 'npc' || isDroid,
-    manageLabel: actor?.type === 'npc' ? 'Manage NPC' : 'Manage',
-    sheetLabel: actor?.type === 'npc' ? 'See NPC Sheet' : 'See Sheet',
+    canManage: true,
     canOpenGarage: isDroid,
     canLevelUpFollower: kind === 'follower' && canLevelUp,
     canSyncMinion: (kind === 'minion' || kind === 'privateer') && canLevelUp,
@@ -641,7 +656,8 @@ export class AlliesSurfaceService {
       factions: vm.counts.factions,
       bases: vm.counts.bases,
       organizations: vm.counts.organizations,
-      pending: vm.companions.pending.length
+      pending: vm.companions.openSlotCount ?? vm.companions.pending.length,
+      openSlots: vm.companions.openSlotCount ?? vm.companions.pending.length
     };
   }
 
@@ -651,7 +667,7 @@ export class AlliesSurfaceService {
     const FollowerCreator = await loadFollowerCreator();
     const MinionCreator = await loadMinionCreator();
     const followerSlots = asArray(actor.getFlag?.(SYSTEM_ID, 'followerSlots'));
-    const pendingSlots = followerSlots.filter(slot => !slot?.createdActorId).map(mapPendingSlot);
+    const pendingSlots = followerSlots.filter(isOpenCompanionSlot).map(mapPendingSlot);
 
     const followerActors = uniqueActors(FollowerCreator?.getFollowers?.(actor) || []);
     const minionActors = uniqueActors(MinionCreator?.getMinions?.(actor) || []);
@@ -667,14 +683,14 @@ export class AlliesSurfaceService {
 
     const history = asArray(actor.getFlag?.(SYSTEM_ID, 'previouslyHiredAllies')).map(mapHistoryRecord);
     const pendingFollowers = pendingSlots.filter(slot => slot.kind === 'follower');
-    const pendingMinions = pendingSlots.filter(slot => slot.kind === 'minion' || slot.kind === 'privateer');
+    const pendingMinions = pendingSlots.filter(slot => slot.kind === 'minion' || slot.kind === 'privateer' || slot.kind === 'assigned-nonheroic');
     const pendingBeasts = pendingSlots.filter(slot => slot.kind === 'beast');
     const historyFollowers = history.filter(entry => entry.kind === 'follower');
     const historyMinions = history.filter(entry => ['minion', 'privateer', 'assigned-nonheroic'].includes(entry.kind));
     const historyBeasts = history.filter(entry => entry.kind === 'beast');
 
     const followerSlotTotal = Math.max(followers.length + pendingFollowers.length, followerSlots.filter(slot => slotKind(slot) === 'follower').length);
-    const minionSlotTotal = Math.max(minions.length + pendingMinions.length, followerSlots.filter(slot => ['minion', 'privateer'].includes(slotKind(slot))).length);
+    const minionSlotTotal = Math.max(minions.length + pendingMinions.length, followerSlots.filter(slot => ['minion', 'privateer', 'assigned-nonheroic'].includes(slotKind(slot))).length);
     const beastSlotTotal = Math.max(beasts.length + pendingBeasts.length, followerSlots.filter(slot => slotKind(slot) === 'beast').length);
 
     const lanes = {
@@ -683,10 +699,12 @@ export class AlliesSurfaceService {
       beasts: this._lane('Beasts', beasts, pendingBeasts, historyBeasts, beastSlotTotal, options)
     };
 
-    const activeTotal = pendingSlots.length + followers.length + minions.length + beasts.length;
+    const openSlotCount = lanes.followers.openSlotCount + lanes.minions.openSlotCount + lanes.beasts.openSlotCount;
+    const activeTotal = openSlotCount + followers.length + minions.length + beasts.length;
     const historyTotal = history.length;
     return {
       pending: pendingSlots,
+      openSlotCount,
       ...lanes,
       totalCount: activeTotal,
       historyCount: historyTotal,
@@ -698,6 +716,7 @@ export class AlliesSurfaceService {
   static _lane(title, active, pending, history, slotTotal, options) {
     const count = active.length + pending.length;
     const historyCount = history.length;
+    const openCapacityCount = Math.max(0, Number(slotTotal || 0) - active.length - pending.length);
     return {
       title,
       pending,
@@ -709,8 +728,11 @@ export class AlliesSurfaceService {
       historyCount,
       slotTotal,
       slotSummary: slotTotal > 0 ? `${active.length}/${slotTotal}` : null,
-      hasOpenSlots: pending.length > 0,
-      hasAny: count > 0 || (options.showHistory === true && historyCount > 0),
+      hasOpenSlots: pending.length > 0 || openCapacityCount > 0,
+      openCapacityCount,
+      openSlotCount: pending.length + openCapacityCount,
+      hasOpenCapacity: openCapacityCount > 0,
+      hasAny: count > 0 || slotTotal > 0 || (options.showHistory === true && historyCount > 0),
       showHistory: options.showHistory === true
     };
   }
@@ -718,6 +740,7 @@ export class AlliesSurfaceService {
   static _emptyCompanions(options = {}) {
     return {
       pending: [],
+      openSlotCount: 0,
       followers: this._lane('Followers', [], [], [], 0, options),
       minions: this._lane('Minions', [], [], [], 0, options),
       beasts: this._lane('Beasts', [], [], [], 0, options),
@@ -763,6 +786,31 @@ export class AlliesSurfaceService {
       }
     }
     return Array.from(ids).map(id => game.actors.get(id)).filter(Boolean);
+  }
+
+
+  static async reopenCompanionSlot(actor, slotId) {
+    if (!actor || !slotId) return false;
+    const slots = asArray(actor.getFlag?.(SYSTEM_ID, 'followerSlots'));
+    let changed = false;
+    const updated = slots.map(slot => {
+      if (slot?.id !== slotId) return slot;
+      const actorId = slotCreatedActorId(slot);
+      if (!actorId || slotLiveActor(slot)) return slot;
+      changed = true;
+      return {
+        ...slot,
+        createdActorId: null,
+        actorId: null,
+        assignedActorId: null,
+        dependentActorId: null,
+        npcActorId: null,
+        staleActorId: actorId,
+        reopenedAt: Date.now()
+      };
+    });
+    if (changed) await actor.setFlag(SYSTEM_ID, 'followerSlots', updated);
+    return changed;
   }
 
   static async _buildFactions(actor) {

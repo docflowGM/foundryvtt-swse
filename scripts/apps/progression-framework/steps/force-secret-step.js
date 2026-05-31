@@ -220,7 +220,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
         prerequisites: focusedItem.system?.prerequisites || null,
         selectedCount: currentCount,
         canAddMore,
-        buttonLabel: currentCount > 0 ? 'Add Another Secret' : 'Add Secret',
+        buttonLabel: currentCount > 0 ? 'Choose This Secret Again' : 'Choose This Secret',
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,

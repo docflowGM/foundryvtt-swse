@@ -892,12 +892,12 @@ export class PrerequisiteChecker {
             case 'ability':
                 return this._checkAbilityRequirement(prereq, actor, 10, pending);
             case 'bab': {
-                const bab = actor.system?.bab?.total ?? actor.system?.bab ?? 0;
+                const bab = getBaseAttackBonus(actor);
                 const required = prereq.minimum ?? prereq.min ?? 0;
                 const met = bab >= required;
                 return {
                     met,
-                    message: !met ? `Requires BAB +${required} (you have +${bab})` : ''
+                    message: !met ? `Requires BAB +${required} (you have +${bab})` : `BAB +${required} met (you have +${bab})`
                 };
             }
             case 'skill_trained': {
@@ -1157,12 +1157,12 @@ export class PrerequisiteChecker {
     }
 
     static _checkBabCondition(prereq, actor, pending) {
-        const bab = actor.system?.bab?.total ?? actor.system?.bab ?? 0;
+        const bab = getBaseAttackBonus(actor);
         const required = prereq.minimum ?? prereq.min ?? 0;
         const met = bab >= required;
         return {
             met,
-            message: !met ? `Requires BAB +${required} (you have +${bab})` : ''
+            message: !met ? `Requires BAB +${required} (you have +${bab})` : `BAB +${required} met (you have +${bab})`
         };
     }
 
@@ -2206,9 +2206,55 @@ function getTotalLevel(actor) {
 function getBaseAttackBonus(actor) {
     if (!actor) {return 0;}
 
-    // v2 Architecture: Trust system.bab as source of truth
-    // This field is maintained by ActorProgressionUpdater.finalize()
-    return actor.system?.bab ?? 0;
+    const directBab = Number(
+        actor.system?.bab
+        ?? actor.system?.derived?.bab?.total
+        ?? actor.system?.derived?.baseAttackBonus
+        ?? actor.system?.combat?.bab?.total
+        ?? 0
+    );
+
+    // Some migrated/progression actors can have a stale system.bab of 0 while
+    // their embedded class items already describe the real progression. Use the
+    // higher of the explicit statblock value and the class-derived fallback so
+    // prestige prerequisites do not report +0 for multiclass heroic actors.
+    const classBab = calculateBabFromClassItems(actor);
+    return Math.max(Number.isFinite(directBab) ? directBab : 0, classBab);
+}
+
+function calculateBabFromClassItems(actor) {
+    const rawItems = actor?.items?.contents || actor?.items || [];
+    const items = Array.isArray(rawItems) ? rawItems : Array.from(rawItems || []);
+    let total = 0;
+
+    for (const item of items) {
+        if (item?.type !== 'class') {continue;}
+        const system = item.system || {};
+        const level = Number(system.level ?? item.level ?? 1) || 1;
+        const levelProgression = system.levelProgression || system.level_progression || [];
+        if (Array.isArray(levelProgression) && levelProgression.length > 0) {
+            const levelData = levelProgression.find(entry => Number(entry?.level) === level);
+            const bab = Number(levelData?.bab ?? levelData?.baseAttackBonus);
+            if (Number.isFinite(bab)) {
+                total += bab;
+                continue;
+            }
+        }
+
+        const progression = String(system.babProgression || system.bab_progression || '').toLowerCase();
+        if (progression === 'fast' || progression === 'full') {
+            total += level;
+        } else if (progression === 'slow' || progression === 'poor') {
+            total += Math.floor(level * 0.5);
+        } else if (progression === 'medium' || progression === 'average') {
+            total += Math.floor(level * 0.75);
+        } else {
+            const className = String(item.name || system.class_name || system.classId || '').toLowerCase();
+            total += /^(jedi|soldier)$/.test(className) ? level : Math.floor(level * 0.75);
+        }
+    }
+
+    return total;
 }
 
 /**

@@ -22,6 +22,7 @@
       <span>{{vm.title}}</span>
     </div>
     <div class="swse-shell-surface__subtitle">{{vm.subtitle}}</div>
+    {{#if vm.isGM}}<div class="swse-shell-surface__subtitle">GM: {{vm.grantHelp}}</div>{{/if}}
   </div>
 
   <div class="swse-shell-surface__body swse-shell-surface__body--asset-bay">
@@ -60,6 +61,16 @@
                 <i class="fas fa-tools"></i>
                 <span>{{asset.modifyLabel}}</span>
               </button>
+              {{#if asset.canGrantAccess}}
+              <button type="button"
+                      class="swse-asset-bay-action"
+                      data-asset-bay-action="grant-access"
+                      data-actor-id="{{asset.actorId}}"
+                      data-bay-mode="{{../vm.mode}}">
+                <i class="fas fa-gift"></i>
+                <span>{{asset.grantAccessLabel}}</span>
+              </button>
+              {{/if}}
             </div>
           </article>
         {{/each}}

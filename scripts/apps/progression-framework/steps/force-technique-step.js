@@ -206,7 +206,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
         description: focusedItem.description || focusedItem.system?.description || '',
         selectedCount: currentCount,
         canAddMore,
-        buttonLabel: currentCount > 0 ? 'Add Another Technique' : 'Add Technique',
+        buttonLabel: currentCount > 0 ? 'Choose This Technique Again' : 'Choose This Technique',
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,

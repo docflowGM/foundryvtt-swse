@@ -82,23 +82,30 @@ export function calculateTotalBAB(actor) {
   const classItems = ActorAbilityBridge.getClasses(actor);
   let totalBAB = 0;
 
-  for (const classItem of classItems) {
-    const classLevel = classItem.system.level || 1;
-    const className = classItem.name;
+  for (const classItem of classItems || []) {
+    const system = classItem?.system || {};
+    const classLevel = Number(system.level ?? classItem?.level ?? classItem?.system?.levels ?? 1) || 1;
+    const className = classItem?.name || system.class_name || system.classId || 'Unknown Class';
 
-    // Check if class has level_progression data with BAB
-    const levelProgression = getNestedProperty(classItem, 'system.levelProgression', []);
+    // Check if class has level_progression data with BAB. Some class
+    // records are sparse (or pack-index only) and contain holes; use the
+    // highest available row <= classLevel before falling back to progression.
+    const levelProgression = system.levelProgression || system.level_progression || getNestedProperty(classItem, 'system.levelProgression', []);
     if (Array.isArray(levelProgression) && levelProgression.length > 0) {
-      const levelData = levelProgression.find(lp => lp.level === classLevel);
-      if (levelData && typeof levelData.bab === 'number') {
+      const rows = levelProgression
+        .map(lp => ({ level: Number(lp?.level ?? 0), bab: Number(lp?.bab ?? lp?.baseAttackBonus) }))
+        .filter(lp => Number.isFinite(lp.level) && Number.isFinite(lp.bab))
+        .sort((a, b) => a.level - b.level);
+      const levelData = [...rows].reverse().find(lp => lp.level <= classLevel) || rows[0];
+      if (levelData && Number.isFinite(levelData.bab)) {
         totalBAB += levelData.bab;
         continue;
       }
     }
 
     // Fallback: Use babProgression if available
-    if (classItem.system.babProgression) {
-      const babMultiplier = convertBabProgression(classItem.system.babProgression);
+    if (system.babProgression || system.bab_progression) {
+      const babMultiplier = convertBabProgression(system.babProgression || system.bab_progression);
       totalBAB += Math.floor(classLevel * babMultiplier);
       continue;
     }

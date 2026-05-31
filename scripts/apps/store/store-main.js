@@ -621,7 +621,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       // Generate suggestions for each type
       if (armor.length > 0) {
         try {
-          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 999 });
+          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true });
           if (armorSugg.allScored) {
             for (const scored of armorSugg.allScored) {
               const itemId = scored.armorId || scored.itemId;
@@ -637,7 +637,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (weapons.length > 0) {
         try {
-          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 999 });
+          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true });
           if (weaponSugg.allScored) {
             for (const scored of weaponSugg.allScored) {
               const itemId = scored.weaponId || scored.itemId;
@@ -653,7 +653,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (gear.length > 0) {
         try {
-          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 999 });
+          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true });
           if (gearSugg.allScored) {
             for (const scored of gearSugg.allScored) {
               const itemId = scored.equipmentId || scored.itemId;

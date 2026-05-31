@@ -11,6 +11,7 @@ import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { StoreAcquisitionService } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js';
+import { AssetGrantService } from '/systems/foundryvtt-swse/scripts/engine/assets/AssetGrantService.js';
 import { HolonetStorage } from './holonet-storage.js';
 import { HolonetThreadService } from './holonet-thread-service.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
@@ -2539,8 +2540,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '' }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, statusNote: String(statusNote || '').trim(), objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, statusNote: String(statusNote || '').trim(), objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), assetActorId: String(assetActorId || '').trim(), primaryActorId: String(primaryActorId || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -2548,7 +2549,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -2771,6 +2772,11 @@ export class HolonetMessengerService {
         if (!isGm) return false;
         const uuids = safeArray(itemUuids).length ? safeArray(itemUuids) : safeArray(meta.job?.rewardItemUuids);
         await this._gmAwardJobItems({ thread, recipientId, recipientIds, itemUuids: uuids, distributionMode, requesterId, senderRecipientId });
+        break;
+      }
+      case 'award-job-asset-access': {
+        if (!isGm) return false;
+        await this._gmAwardJobAssetAccess({ thread, assetActorId, recipientIds, primaryActorId, requesterId, senderRecipientId });
         break;
       }
       case 'gm-fail-trade':
@@ -3308,6 +3314,74 @@ export class HolonetMessengerService {
       distributionMode: mode,
       recipientActorIds: actors.map(actor => actor.id),
       itemNames: resolved.createdNames,
+      requesterId,
+      senderRecipientId
+    });
+    return true;
+  }
+
+
+  static async _gmAwardJobAssetAccess({ thread, assetActorId = '', recipientIds = [], primaryActorId = '', requesterId = null, senderRecipientId = null } = {}) {
+    const requester = requesterId ? game.users?.get(requesterId) : game.user;
+    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    if (!requesterIsGm) return false;
+
+    const cleanAssetId = String(assetActorId || '').replace(/^Actor\./, '').trim();
+    const assetActor = cleanAssetId ? game.actors?.get?.(cleanAssetId) : null;
+    if (!assetActor || !AssetGrantService.isGrantableAsset(assetActor)) {
+      await this._publishSystemMessage(thread, 'Job asset reward failed: select one droid or ship/vehicle actor to grant.', { eventType: 'job-asset-payout-failed', assetActorId: cleanAssetId });
+      return false;
+    }
+
+    const targetRows = this._resolveJobActorTargets(thread, recipientIds);
+    if (!targetRows.length) {
+      await this._publishSystemMessage(thread, 'Job asset reward failed: no valid actor recipients were selected.', { eventType: 'job-asset-payout-failed', assetActorId: cleanAssetId });
+      return false;
+    }
+
+    const recipients = targetRows.map(row => row.actor);
+    const primaryOwnerActor = recipients.find(actor => actor.id === primaryActorId) ?? recipients[0];
+    const actors = [assetActor, ...recipients];
+
+    const atomic = await this._executeAtomicJobRewardSettlement({
+      thread,
+      actors,
+      context: {
+        rewardType: 'asset-access',
+        assetActorId: assetActor.id,
+        assetName: assetActor.name,
+        recipientActorIds: recipients.map(actor => actor.id),
+        requesterId
+      },
+      operation: async () => AssetGrantService.grantAssetAccess({
+        assetActor,
+        recipientActors: recipients,
+        primaryOwnerActor,
+        shared: recipients.length > 1,
+        grantSource: 'job-board-reward',
+        sourceThreadId: thread?.id ?? null,
+        requesterId,
+        notes: `Granted as a Job Board reward${thread?.title ? ` for ${thread.title}` : ''}.`
+      })
+    });
+    if (!atomic?.success) return false;
+
+    const targetNames = recipients.map(actor => actor.name).join(', ');
+    await this._publishReceiptMessage(thread, {
+      title: 'Job Asset Reward Receipt',
+      eventType: 'job-asset-payout-receipt',
+      lines: [
+        `Asset: ${assetActor.name}`,
+        `Access granted to: ${targetNames}`,
+        `Primary owner: ${primaryOwnerActor?.name || recipients[0]?.name || 'None'}`
+      ]
+    });
+    await this._publishSystemMessage(thread, `Job Board granted shared access to ${assetActor.name} for ${recipients.length} actor(s).`, {
+      eventType: 'job-asset-payout',
+      assetActorId: assetActor.id,
+      assetName: assetActor.name,
+      recipientActorIds: recipients.map(actor => actor.id),
+      primaryOwnerActorId: primaryOwnerActor?.id ?? null,
       requesterId,
       senderRecipientId
     });
@@ -4700,7 +4774,7 @@ export class HolonetMessengerService {
     return result;
   }
 
-  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmResolveAssetTransfer({ thread, recordId, action, actorId = null, counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     if (!recordId) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const transfer = message?.metadata?.assetTransfer;
