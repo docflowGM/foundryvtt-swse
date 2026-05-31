@@ -10,11 +10,14 @@
 import {
   getNpcMode,
   getNpcKind,
+  getNpcProfileState,
   isNpcStatblockMode
 } from './npc-mode-adapter.js';
 
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { NpcProgressionEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js';
+import { NpcLegalReviewEngine } from '/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcLegalReviewEngine.js';
+import { NpcReviewRepairEngine } from '/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js';
 
 export class NpcProfileBuilder {
   /**
@@ -28,6 +31,7 @@ export class NpcProfileBuilder {
       return this._getEmptyContext();
     }
 
+    const npcProfileState = getNpcProfileState(actor);
     const npcMode = getNpcMode(actor);
     const npcKind = getNpcKind(actor);
 
@@ -98,9 +102,64 @@ export class NpcProfileBuilder {
     // Resolve progression summary
     const progressionSummary = this._getProgressionSummary(actor);
 
+    // Phase 3: Play Mode/statblock quick-reference context. This is read-only and
+    // intentionally tolerates noncanonical imported/compendium shapes.
+    const playStatblock = this._getPlayStatblockSummary(actor, npcProfileState);
+
+    // Phase 8: read-only Legal Review context. This identifies Play/Legal issues
+    // without mutating/import-normalizing the actor.
+    let npcLegalReview = null;
+    try {
+      npcLegalReview = NpcLegalReviewEngine.buildReport(actor);
+    } catch (err) {
+      console.error('Error building NPC legal review context:', err);
+      npcLegalReview = {
+        profileLabel: npcProfileState.labels.legalProfile,
+        legalStateLabel: 'Unavailable',
+        summary: { ok: 0, info: 0, warn: 0, error: 1, review: 1, total: 1 },
+        progressionSkeleton: null,
+        groups: [{
+          id: 'error',
+          label: 'Legal Review Error',
+          checks: [{
+            id: 'legal-review-error',
+            label: 'Legal Review',
+            severity: 'error',
+            tone: 'error',
+            status: 'Fix Needed',
+            message: err?.message || 'Unable to build Legal Review context.',
+            detail: null,
+            action: null,
+            canAutoFix: false,
+            requiresGm: false
+          }]
+        }],
+        note: 'Legal Review failed to prepare.'
+      };
+    }
+
+    // Phase 9: safe Review & Repair plan. This is non-mutating context only;
+    // actions are explicitly triggered by GM/user controls.
+    let npcRepairPlan = null;
+    try {
+      npcRepairPlan = NpcReviewRepairEngine.buildPlan(actor);
+    } catch (err) {
+      console.error('Error building NPC repair plan context:', err);
+      npcRepairPlan = {
+        safeFixes: [],
+        proposals: [],
+        progressionSkeleton: null,
+        classItemProposal: null,
+        canProposeClassItems: false,
+        canApplySafeFixes: false,
+        canMarkGmApproved: false,
+        note: 'Review & Repair plan failed to prepare.'
+      };
+    }
+
     // Determine which panels to show
     const showProgressionPanel = npcMode === 'progression';
-    const showOwnerPanel = dependentNpcKinds.includes(npcKind) && hasOwner;
+    const showOwnerPanel = dependentNpcKinds.includes(npcKind) && (hasOwner || hasOwnerLink || hasFollowerSummary);
     const showBeastPanel = npcKind === 'beast';
     const showMountPanel = npcKind === 'mount';
     const showRelationshipsTab = dependentNpcKinds.includes(npcKind) || npcKind === 'mount';
@@ -137,10 +196,29 @@ export class NpcProfileBuilder {
     const npcProgressionAdvisory = progressionSummary?.advisory ?? null;
 
     return {
-      // Mode + subtype (stable, canonical)
+      // Mode + subtype (stable, canonical, non-mutating inference)
       npcKind,
       npcMode,
-      isStatblockMode: npcMode === 'statblock',
+      npcProfileState,
+      npcKindLabel: npcProfileState.labels.kind,
+      npcModeLabel: npcProfileState.labels.mode,
+      npcSourceAuthority: npcProfileState.sourceAuthority,
+      npcSourceAuthorityLabel: npcProfileState.labels.sourceAuthority,
+      npcLegalProfile: npcProfileState.legalProfile,
+      npcLegalProfileLabel: npcProfileState.labels.legalProfile,
+      npcLegalState: npcProfileState.legalState,
+      npcLegalStateLabel: npcProfileState.labels.legalState,
+      npcProfileMissing: npcProfileState.profileMissing,
+      npcImported: npcProfileState.imported,
+      npcHasRawImport: npcProfileState.hasRawImport,
+      npcHasBeastData: npcProfileState.hasBeastData,
+      npcHasClassItems: npcProfileState.hasClassItems,
+      npcClassItemCount: npcProfileState.classItemCount,
+      isPlayMode: npcProfileState.mode === 'play',
+      isOwnerSyncMode: npcProfileState.mode === 'owner-sync',
+      isHybridMode: npcProfileState.mode === 'hybrid',
+      isLegalReviewMode: npcProfileState.mode === 'legal-review',
+      isStatblockMode: npcProfileState.mode === 'play' || npcMode === 'statblock',
       isProgressionMode: npcMode === 'progression',
 
       // Subtype checks
@@ -149,6 +227,8 @@ export class NpcProfileBuilder {
       isBeastNpc: npcKind === 'beast',
       isFollowerNpc: npcKind === 'follower',
       isMinionNpc: npcKind === 'minion' || npcKind === 'privateer',
+      isPrivateerNpc: npcKind === 'privateer',
+      isImportedNpc: npcKind === 'imported' || npcProfileState.imported,
       isMountNpc: npcKind === 'mount',
 
       // Attack authority (for combat tab)
@@ -188,6 +268,15 @@ export class NpcProfileBuilder {
 
       // Progression summary (Phase 5 expanded)
       progressionSummary,
+
+      // Phase 3: Play Mode/statblock quick-reference context
+      playStatblock,
+
+      // Phase 8: read-only Legal Review checklist
+      npcLegalReview,
+
+      // Phase 9: deterministic repair/GM approval plan
+      npcRepairPlan,
 
       // Phase 5: Top-level helpers
       hasMixedProgressionTracks,
@@ -272,7 +361,7 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getBeastSummary(actor) {
-    if (!actor || actor.system?.npcProfile?.kind !== 'beast') {
+    if (!actor || getNpcKind(actor) !== 'beast') {
       return null;
     }
 
@@ -321,7 +410,7 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getMountSummary(actor) {
-    if (!actor || actor.system?.npcProfile?.kind !== 'mount') {
+    if (!actor || getNpcKind(actor) !== 'mount') {
       return null;
     }
 
@@ -353,7 +442,7 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getFollowerSummary(actor) {
-    const npcKind = actor?.system?.npcProfile?.kind || actor?.flags?.swse?.minion?.kind || null;
+    const npcKind = getNpcKind(actor);
     if (!actor || !['follower', 'minion', 'privateer'].includes(npcKind)) {
       return null;
     }
@@ -417,7 +506,8 @@ export class NpcProfileBuilder {
     templateName = actor.system?.npcProfile?.template || actor.system?.npcProfile?.kind || actor.system?.followerType || null;
     isTemplateResolved = !!templateName;
 
-    const npcMode = actor.system?.npcProfile?.mode || 'statblock';
+    const profileState = getNpcProfileState(actor);
+    const npcMode = profileState.mode === 'play' ? 'statblock' : profileState.mode;
     let scalingMode = null;
     if (npcMode === 'progression') {
       scalingMode = 'Progression-scaled';
@@ -467,6 +557,379 @@ export class NpcProfileBuilder {
       ownerLevelDelta,
       canLaunchAdvance
     };
+  }
+
+
+  /**
+   * Build Play Mode/statblock quick-reference context.
+   *
+   * This deliberately reads from imported/compendium/statblock shapes without
+   * writing normalized data back to the actor. Play Mode is table usability, not
+   * legality repair.
+   * @private
+   */
+  static _getPlayStatblockSummary(actor, profileState = null) {
+    if (!actor) {
+      return this._emptyPlayStatblockSummary();
+    }
+
+    const system = actor.system ?? {};
+    const raw = this._getRawImport(actor);
+    const beastData = this._getRawBeastData(actor);
+    const items = Array.from(actor.items ?? []);
+
+    const abilities = this._getAbilityRows(system);
+    const defenses = this._getDefenseRows(system);
+    const hp = this._getHpSummary(system);
+    const skills = this._getSkillRows(system).slice(0, 12);
+    const attacks = this._getAttackRows(actor, items, raw, beastData);
+    const featureGroups = this._getFeatureGroups(items);
+    const forcePowers = featureGroups.forcePowers;
+    const specials = this._getSpecialRows(actor, raw, beastData, featureGroups);
+    const sourceLines = this._getSourceLines(raw, beastData);
+
+    const bab = this._firstDefined(
+      system?.bab?.total,
+      system?.bab?.value,
+      system?.bab,
+      system?.baseAttackBonus,
+      beastData?.baseAttackBonus,
+      raw?.BAB,
+      raw?.BaseAttackBonus,
+      raw?.['Base Attack Bonus']
+    );
+
+    const damageThreshold = this._firstDefined(
+      system?.damageThreshold?.total,
+      system?.damageThreshold?.value,
+      system?.derived?.damageThreshold?.total,
+      system?.derived?.threshold?.total,
+      beastData?.damageThreshold,
+      raw?.Threshold,
+      raw?.['Damage Threshold'],
+      raw?.DT
+    );
+
+    const speed = this._firstDefined(
+      system?.speed?.total,
+      system?.speed?.value,
+      system?.speed,
+      beastData?.speed,
+      raw?.Speed
+    );
+
+    const senses = this._firstDefined(
+      system?.senses,
+      beastData?.senses,
+      raw?.Senses
+    );
+
+    const languages = this._asDisplayList(this._firstDefined(system?.languages, raw?.Languages));
+
+    const statblockWarnings = [];
+    if (profileState?.profileMissing) {
+      statblockWarnings.push('NPC profile metadata is inferred for display; it has not been written to the actor.');
+    }
+    if (profileState?.sourceAuthority === 'statblock') {
+      statblockWarnings.push('Source/statblock values are authoritative in Play Mode; Legal Review can audit them later.');
+    }
+    if (!attacks.length) {
+      statblockWarnings.push('No parsed attacks were found. Check raw source text or item data before combat use.');
+    }
+    if (profileState?.kind === 'beast' && !items.length) {
+      statblockWarnings.push('Beast statblock has no itemized features; raw beast data is shown as the play reference.');
+    }
+
+    return {
+      hasData: true,
+      hp,
+      defenses,
+      abilities,
+      attacks,
+      skills,
+      featureGroups,
+      forcePowers,
+      specials,
+      sourceLines,
+      warnings: statblockWarnings,
+      hasWarnings: statblockWarnings.length > 0,
+      bab: this._formatValue(bab),
+      damageThreshold: this._formatValue(damageThreshold),
+      speed: this._formatValue(speed),
+      senses: this._formatValue(senses),
+      languages,
+      hasLanguages: languages.length > 0,
+      rawAvailable: Boolean(raw),
+      beastDataAvailable: Boolean(beastData)
+    };
+  }
+
+  static _emptyPlayStatblockSummary() {
+    return {
+      hasData: false,
+      hp: { value: '—', max: '—', temp: null, wounds: null },
+      defenses: [],
+      abilities: [],
+      attacks: [],
+      skills: [],
+      featureGroups: { feats: [], talents: [], species: [], forcePowers: [], weapons: [], gear: [], other: [] },
+      forcePowers: [],
+      specials: [],
+      sourceLines: [],
+      warnings: [],
+      hasWarnings: false,
+      bab: '—',
+      damageThreshold: '—',
+      speed: '—',
+      senses: '—',
+      languages: [],
+      hasLanguages: false,
+      rawAvailable: false,
+      beastDataAvailable: false
+    };
+  }
+
+  static _getRawImport(actor) {
+    return actor?.flags?.swse?.import?.raw
+      ?? actor?.flags?.['foundryvtt-swse']?.import?.raw
+      ?? actor?.system?.import?.raw
+      ?? null;
+  }
+
+  static _getRawBeastData(actor) {
+    return actor?.flags?.swse?.beastData
+      ?? actor?.flags?.['foundryvtt-swse']?.beastData
+      ?? actor?.system?.beastData
+      ?? null;
+  }
+
+  static _firstDefined(...values) {
+    for (const value of values) {
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return null;
+  }
+
+  static _formatValue(value) {
+    if (value === null || value === undefined || value === '') return '—';
+    if (Array.isArray(value)) return value.filter(Boolean).join(', ') || '—';
+    if (typeof value === 'object') {
+      return Object.entries(value)
+        .filter(([, v]) => v !== null && v !== undefined && v !== '')
+        .map(([k, v]) => `${this._labelFromKey(k)} ${v}`)
+        .join(', ') || '—';
+    }
+    return String(value);
+  }
+
+  static _labelFromKey(key) {
+    return String(key ?? '')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  static _asDisplayList(value) {
+    if (value === null || value === undefined || value === '') return [];
+    if (Array.isArray(value)) return value.map(v => this._formatValue(v)).filter(v => v && v !== '—');
+    if (typeof value === 'object') {
+      return Object.entries(value)
+        .filter(([, v]) => v !== null && v !== undefined && v !== false && v !== '')
+        .map(([k, v]) => v === true ? this._labelFromKey(k) : `${this._labelFromKey(k)}: ${this._formatValue(v)}`);
+    }
+    return String(value).split(/[,;]\s*/).map(v => v.trim()).filter(Boolean);
+  }
+
+  static _getHpSummary(system) {
+    return {
+      value: this._formatValue(this._firstDefined(system?.hp?.value, system?.health?.value, system?.derived?.hp?.value)),
+      max: this._formatValue(this._firstDefined(system?.hp?.max, system?.health?.max, system?.derived?.hp?.max)),
+      temp: this._firstDefined(system?.hp?.temp, system?.health?.temp),
+      wounds: this._firstDefined(system?.wounds?.value, system?.damage?.wounds)
+    };
+  }
+
+  static _getDefenseRows(system) {
+    const defenses = system?.defenses ?? system?.derived?.defenses ?? {};
+    const rows = [
+      ['reflex', 'Reflex', defenses?.reflex],
+      ['fortitude', 'Fortitude', defenses?.fortitude ?? defenses?.fort],
+      ['will', 'Will', defenses?.will],
+      ['flatFooted', 'Flat-Footed', defenses?.flatFooted ?? defenses?.flatfooted]
+    ];
+    return rows.map(([key, label, data]) => ({
+      key,
+      label,
+      value: this._formatValue(this._firstDefined(data?.total, data?.value, data))
+    })).filter(row => row.value !== '—');
+  }
+
+  static _getAbilityRows(system) {
+    const keys = [
+      ['str', 'STR'], ['dex', 'DEX'], ['con', 'CON'], ['int', 'INT'], ['wis', 'WIS'], ['cha', 'CHA']
+    ];
+    return keys.map(([key, label]) => {
+      const attr = system?.attributes?.[key] ?? system?.abilities?.[key] ?? {};
+      const score = this._firstDefined(attr?.base, attr?.score, attr?.value, attr);
+      const mod = this._firstDefined(attr?.mod, attr?.modifier, attr?.derived?.mod);
+      return {
+        key,
+        label,
+        score: this._formatValue(score),
+        mod: mod === null ? null : this._formatSigned(mod)
+      };
+    }).filter(row => row.score !== '—');
+  }
+
+  static _formatSigned(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return this._formatValue(value);
+    return n >= 0 ? `+${n}` : String(n);
+  }
+
+  static _getSkillRows(system) {
+    const skills = system?.skills ?? {};
+    return Object.entries(skills).map(([key, data]) => {
+      const total = this._firstDefined(data?.total, data?.mod, data?.modifier, data?.value, data?.bonus);
+      const trained = data?.trained === true || data?.isTrained === true;
+      return {
+        key,
+        label: data?.label ?? data?.name ?? this._labelFromKey(key),
+        total: this._formatSigned(total ?? 0),
+        trained
+      };
+    }).filter(row => row.total !== '+0' || row.trained).sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }
+
+  static _getFeatureGroups(items) {
+    const toRow = item => ({
+      id: item.id,
+      name: item.name || 'Unnamed',
+      type: item.type || 'item',
+      img: item.img || null,
+      summary: this._itemSummary(item)
+    });
+
+    return {
+      feats: items.filter(i => i.type === 'feat').map(toRow),
+      talents: items.filter(i => i.type === 'talent').map(toRow),
+      species: items.filter(i => ['species', 'racialAbility', 'species-power'].includes(i.type)).map(toRow),
+      forcePowers: items.filter(i => i.type === 'force-power').map(toRow),
+      weapons: items.filter(i => i.type === 'weapon').map(toRow),
+      gear: items.filter(i => ['equipment', 'armor', 'consumable', 'tool', 'gear'].includes(i.type)).map(toRow),
+      other: items.filter(i => !['feat', 'talent', 'species', 'racialAbility', 'species-power', 'force-power', 'weapon', 'equipment', 'armor', 'consumable', 'tool', 'gear'].includes(i.type)).map(toRow)
+    };
+  }
+
+  static _itemSummary(item) {
+    const system = item?.system ?? {};
+    return this._formatValue(this._firstDefined(
+      system?.description?.value,
+      system?.description,
+      system?.summary,
+      system?.text,
+      system?.effect,
+      system?.damage,
+      system?.damageFormula
+    ));
+  }
+
+  static _getAttackRows(actor, items, raw, beastData) {
+    const rows = [];
+    for (const weapon of items.filter(i => i.type === 'weapon')) {
+      const sys = weapon.system ?? {};
+      rows.push({
+        name: weapon.name || 'Weapon',
+        source: 'Item',
+        mode: this._formatValue(this._firstDefined(sys?.weaponType, sys?.category, sys?.group, sys?.type)),
+        attack: this._formatValue(this._firstDefined(sys?.attackBonus, sys?.attack?.bonus, sys?.bonus, sys?.toHit)),
+        damage: this._formatValue(this._firstDefined(sys?.damage, sys?.damageFormula, sys?.damage?.formula, sys?.damage?.value)),
+        notes: this._formatValue(this._firstDefined(sys?.description?.value, sys?.description, sys?.properties, sys?.special))
+      });
+    }
+
+    const rawAttackKeys = ['Melee Weapons', 'Ranged Weapons', 'Melee', 'Ranged', 'Attacks', 'Attack Options', 'Special Actions'];
+    for (const key of rawAttackKeys) {
+      const value = raw?.[key];
+      for (const line of this._asDisplayList(value)) {
+        rows.push(this._parseAttackLine(line, key));
+      }
+    }
+
+    for (const key of ['melee', 'ranged', 'naturalAttacks', 'attacks']) {
+      for (const line of this._asDisplayList(beastData?.[key])) {
+        rows.push(this._parseAttackLine(line, `Beast ${this._labelFromKey(key)}`));
+      }
+    }
+
+    const seen = new Set();
+    return rows.filter(row => {
+      const sig = `${row.source}|${row.name}|${row.attack}|${row.damage}|${row.notes}`;
+      if (seen.has(sig)) return false;
+      seen.add(sig);
+      return true;
+    }).slice(0, 20);
+  }
+
+  static _parseAttackLine(line, source) {
+    const text = String(line ?? '').trim();
+    const match = text.match(/^(.+?)\s+([+-]\d+)\s*\(([^)]+)\)(.*)$/);
+    if (match) {
+      return {
+        name: match[1].trim(),
+        source,
+        mode: 'Statblock',
+        attack: match[2],
+        damage: match[3].trim(),
+        notes: match[4]?.trim() || text
+      };
+    }
+    return { name: text || source, source, mode: 'Statblock', attack: '—', damage: '—', notes: text };
+  }
+
+  static _getSpecialRows(actor, raw, beastData, featureGroups) {
+    const rows = [];
+    const push = (label, value, source = 'Source') => {
+      for (const entry of this._asDisplayList(value)) {
+        rows.push({ label, value: entry, source });
+      }
+    };
+
+    push('Immune', raw?.Immune ?? raw?.Immunities ?? actor?.system?.immunities, 'Raw');
+    push('Resistances', raw?.Resistances ?? raw?.Resistance ?? actor?.system?.resistances, 'Raw');
+    push('Special Qualities', raw?.['Special Qualities'] ?? raw?.SpecialQualities ?? raw?.SQ, 'Raw');
+    push('Special Actions', raw?.['Special Actions'] ?? raw?.SpecialActions, 'Raw');
+    push('Species Traits', raw?.['Species Traits'] ?? raw?.SpeciesTraits, 'Raw');
+    push('Beast Traits', beastData?.traits ?? beastData?.specialQualities ?? beastData?.speciesTraits, 'Beast');
+    push('Beast Ability Text', beastData?.abilityText, 'Beast');
+    push('Senses', beastData?.senses ?? raw?.Senses, beastData ? 'Beast' : 'Raw');
+
+    for (const item of [...featureGroups.species, ...featureGroups.other]) {
+      const name = String(item.name ?? '').toLowerCase();
+      if (name.includes('immune') || name.includes('resist') || name.includes('trait') || name.includes('special')) {
+        rows.push({ label: item.type, value: item.name, source: 'Item' });
+      }
+    }
+
+    return rows.slice(0, 24);
+  }
+
+  static _getSourceLines(raw, beastData) {
+    const rows = [];
+    const push = (label, value, source = 'Raw') => {
+      for (const entry of this._asDisplayList(value)) {
+        rows.push({ label, value: entry, source });
+      }
+    };
+
+    for (const key of ['Class Levels', 'Nonheroic Level', 'Species', 'Race', 'Challenge Level', 'CL', 'Destiny', 'Force Points', 'Dark Side Score']) {
+      push(this._labelFromKey(key), raw?.[key], 'Raw');
+    }
+    for (const key of ['cl', 'fightingSpace', 'reach', 'grapple', 'carryingCapacity']) {
+      push(this._labelFromKey(key), beastData?.[key], 'Beast');
+    }
+
+    return rows.slice(0, 16);
   }
 
   /**
@@ -532,7 +995,7 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getProfileDescription(npcKind, npcMode) {
-    const modeText = npcMode === 'progression' ? 'progression-based' : 'statblock';
+    const modeText = npcMode === 'progression' ? 'progression-based' : npcMode === 'owner-sync' ? 'owner-synced' : 'play-mode statblock';
 
     switch (npcKind) {
       case 'heroic':
@@ -542,7 +1005,13 @@ export class NpcProfileBuilder {
       case 'beast':
         return `This is a beast or creature operating in ${modeText} mode.`;
       case 'follower':
-        return `This is a follower or minion in ${modeText} mode, bound to an owner.`;
+        return `This is a follower in ${modeText} mode, bound to an owner.`;
+      case 'minion':
+        return `This is a minion in ${modeText} mode, bound to an owner.`;
+      case 'privateer':
+        return `This is a privateer in ${modeText} mode, bound to an owner.`;
+      case 'imported':
+        return `This is an imported ${modeText} NPC. Use Play Mode unless Legal Review promotes it.`;
       case 'mount':
         return `This is a mount or steed in ${modeText} mode, available for riding.`;
       default:
@@ -555,8 +1024,8 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getAuthorityDescription(npcMode, npcKind) {
-    if (npcMode === 'statblock') {
-      return 'This NPC uses published statblock values as the primary authority for abilities and bonuses.';
+    if (npcMode === 'statblock' || npcMode === 'play') {
+      return 'This NPC uses source/statblock values as the primary authority. Missing progression legality does not block table use.';
     }
 
     if (npcMode === 'progression') {
@@ -564,6 +1033,14 @@ export class NpcProfileBuilder {
         return 'This follower uses progression-driven calculations scaled to the owner\'s level.';
       }
       return 'This NPC uses progression-driven calculations for abilities and bonuses.';
+    }
+
+    if (npcMode === 'owner-sync') {
+      return 'This NPC is controlled by an owner-sync relationship. The owner relationship provides context for level/progression decisions.';
+    }
+
+    if (npcMode === 'hybrid') {
+      return 'This NPC uses a hybrid authority model: source values are preserved while selected progression data may be normalized.';
     }
 
     return 'Authority mode unknown.';
@@ -577,12 +1054,34 @@ export class NpcProfileBuilder {
     return {
       npcKind: 'heroic',
       npcMode: 'statblock',
+      npcProfileState: null,
+      npcKindLabel: 'Heroic NPC',
+      npcModeLabel: 'Play Mode',
+      npcSourceAuthority: 'statblock',
+      npcSourceAuthorityLabel: 'Statblock',
+      npcLegalProfile: 'heroic',
+      npcLegalProfileLabel: 'Heroic NPC',
+      npcLegalState: 'unchecked',
+      npcLegalStateLabel: 'Unchecked',
+      npcProfileMissing: true,
+      npcImported: false,
+      npcHasRawImport: false,
+      npcHasBeastData: false,
+      npcHasClassItems: false,
+      npcClassItemCount: 0,
+      isPlayMode: true,
+      isOwnerSyncMode: false,
+      isHybridMode: false,
+      isLegalReviewMode: false,
       isStatblockMode: true,
       isProgressionMode: false,
       isHeroicNpc: true,
       isNonheroicNpc: false,
       isBeastNpc: false,
       isFollowerNpc: false,
+      isMinionNpc: false,
+      isPrivateerNpc: false,
+      isImportedNpc: false,
       isMountNpc: false,
       usesFlatStatblockAttacks: false,
       showProgressionPanel: false,

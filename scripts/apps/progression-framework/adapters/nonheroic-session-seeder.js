@@ -26,7 +26,9 @@ function isMinionActor(actor) {
 function hasNonheroicSubtype(actor) {
   return actor?.system?.swse?.progressionSubtype === 'nonheroic'
     || actor?.system?.progressionSubtype === 'nonheroic'
-    || actor?.flags?.swse?.progressionSubtype === 'nonheroic';
+    || actor?.flags?.swse?.progressionSubtype === 'nonheroic'
+    || actor?.system?.npcProfile?.legalProfile === 'nonheroic'
+    || actor?.system?.npcProfile?.kind === 'nonheroic';
 }
 
 export async function seedNonheroicSession(session, actor, mode) {
@@ -46,11 +48,15 @@ export async function seedNonheroicSession(session, actor, mode) {
         isNonheroic: true,
       }));
 
-    const hasBeastMetadata = !!actor.flags?.swse?.beastData;
+    const hasBeastMetadata = !!actor.flags?.swse?.beastData
+      || actor?.system?.npcProfile?.kind === 'beast'
+      || actor?.system?.npcProfile?.kind === 'mount'
+      || actor?.system?.npcProfile?.legalProfile === 'beast'
+      || actor?.system?.npcProfile?.legalProfile === 'mount';
     const isMinion = isMinionActor(actor) || session?.dependencyContext?.dependentKind === 'minion';
     const implicitNonheroic = nonheroicClasses.length === 0
       && actor.type === 'npc'
-      && (mode === 'chargen' || isMinion || hasNonheroicSubtype(actor));
+      && (mode === 'chargen' || mode === 'levelup' || isMinion || hasBeastMetadata || hasNonheroicSubtype(actor));
 
     if (implicitNonheroic) {
       nonheroicClasses.push({

@@ -38,6 +38,10 @@ export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
     });
   }
 
+  handles(subtype) {
+    return subtype === 'beast' || subtype === 'mount';
+  }
+
   async seedSession(session, actor, mode) {
     // Phase 2.7: Seed Beast session from actor or template
     // Detect Beast profile and set up Beast-specific context

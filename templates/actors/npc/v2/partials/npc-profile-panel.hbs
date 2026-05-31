@@ -5,15 +5,19 @@
     </div>
 
     <div class="swse-npc-badges">
-      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKind}}</span>
-      {{#if isFollowerNpc}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Minion</span>
+      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKindLabel}}</span>
+      <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
+      {{#if npcImported}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Imported</span>
       {{/if}}
       {{#if isBeastNpc}}
         <span class="swse-npc-badge swse-npc-badge--subtype">Creature</span>
       {{/if}}
       {{#if isMountNpc}}
         <span class="swse-npc-badge swse-npc-badge--subtype">Mounted</span>
+      {{/if}}
+      {{#if isOwnerSyncMode}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Owner Sync</span>
       {{/if}}
     </div>
   </header>
@@ -26,23 +30,45 @@
     <dl class="swse-npc-meta-list">
       <div class="swse-npc-meta-list__row">
         <dt>Profile</dt>
-        <dd>{{npcKind}}</dd>
+        <dd>{{npcKindLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Mode</dt>
-        <dd>{{npcMode}}</dd>
+        <dt>Sheet Mode</dt>
+        <dd>{{npcModeLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Attack Authority</dt>
-        <dd>{{#if usesFlatStatblockAttacks}}Flat Statblock{{else}}Derived / Progression{{/if}}</dd>
+        <dt>Source Authority</dt>
+        <dd>{{npcSourceAuthorityLabel}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Legal Profile</dt>
+        <dd>{{npcLegalProfileLabel}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Legal State</dt>
+        <dd>{{npcLegalStateLabel}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Class Items</dt>
+        <dd>{{#if npcHasClassItems}}{{npcClassItemCount}}{{else}}None / statblock source{{/if}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
         <dt>Relationships</dt>
         <dd>{{#if showRelationshipsTab}}Active{{else}}None{{/if}}</dd>
       </div>
+
+      {{#if npcProfileMissing}}
+        <div class="swse-npc-meta-list__row">
+          <dt>Profile Metadata</dt>
+          <dd>Inferred, not written</dd>
+        </div>
+      {{/if}}
 
       {{#if isFollowerNpc}}
         <div class="swse-npc-meta-list__row">

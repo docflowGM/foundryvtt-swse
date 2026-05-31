@@ -31,13 +31,19 @@ export class ProgressionDocumentTargetPolicy {
     'nonheroic': 'npc',         // Nonheroic → NPC sheet
     'beast': 'npc',             // Beast → NPC sheet
     'follower': 'npc',          // Follower → NPC sheet
+    'heroic': 'npc',            // Heroic NPC progression stays on NPC actor document
+    'minion': 'npc',            // Minion/privateer → NPC sheet
+    'privateer': 'npc',         // Privateer minion variant → NPC sheet
+    'mount': 'npc',             // Mount → NPC sheet
+    'companion': 'npc',         // Companion → NPC sheet
+    'imported-statblock': 'npc' // Imported/statblock NPC repair/progression context
   };
 
   /**
    * Resolve the target actor document type for a given progression subtype.
    *
    * @param {string} progressionSubtype - Progression subtype/profile
-   *   ('actor', 'droid', 'nonheroic', 'beast', 'follower')
+   *   ('actor', 'droid', 'nonheroic', 'beast', 'follower', 'heroic', 'minion', 'privateer', 'mount', 'companion', 'imported-statblock')
    * @returns {string} Target actor document type ('character', 'droid', 'npc')
    * @throws {Error} If subtype is unknown or mapping is invalid
    */

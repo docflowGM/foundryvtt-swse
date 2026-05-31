@@ -144,12 +144,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -159,7 +159,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
@@ -380,35 +380,65 @@
       "label": "Vehicles - Starships",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-starships.db"
+      "path": "packs/vehicles-starships.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "vehicles-stations",
       "label": "Vehicles - Stations",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-stations.db"
+      "path": "packs/vehicles-stations.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "vehicles-walkers",
       "label": "Vehicles - Walkers",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-walkers.db"
+      "path": "packs/vehicles-walkers.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "vehicles-speeders",
       "label": "Vehicles - Speeders",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-speeders.db"
+      "path": "packs/vehicles-speeders.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "vehicles",
       "label": "Vehicles (All)",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles.db"
+      "path": "packs/vehicles.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "vehicle-weapons",
@@ -545,17 +575,29 @@
     },
     {
       "name": "heroic",
-      "label": "Heroic Classes",
+      "label": "Heroic NPCs",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/heroic.db"
+      "path": "packs/heroic.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "nonheroic",
-      "label": "Nonheroic Classes",
+      "label": "Nonheroic NPCs",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/nonheroic.db"
+      "path": "packs/nonheroic.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "sample-active-abilities",
@@ -569,14 +611,26 @@
       "label": "NPCs",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/npc.db"
+      "path": "packs/npc.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "droids",
       "label": "Droids",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/droids.db"
+      "path": "packs/droids.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     },
     {
       "name": "beasts",
@@ -648,7 +702,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
       "range": {
         "min": 10,
         "max": 100,

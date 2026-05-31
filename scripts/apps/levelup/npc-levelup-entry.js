@@ -6,7 +6,7 @@ import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/l
 import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
-import { getNpcMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getNpcMode, getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
@@ -42,7 +42,20 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const nonheroicAdvisory = nonheroicNext > 20 && epicOverrideEnabled;
 
     const mode = getNpcMode(actor);
+    const npcProfileState = getNpcProfileState(actor);
     const hasSnapshot = NpcProgressionEngine.hasSnapshot(actor);
+    const isBeast = npcProfileState?.legalProfile === 'beast' || npcProfileState?.kind === 'beast';
+    const isMount = npcProfileState?.legalProfile === 'mount' || npcProfileState?.kind === 'mount';
+    const isOwnerSynced = npcProfileState?.mode === 'owner-sync' || ['minion', 'privateer'].includes(npcProfileState?.kind);
+    const isFollower = npcProfileState?.kind === 'follower' || npcProfileState?.legalProfile === 'follower';
+    const progressionSubtype = isBeast ? 'beast'
+      : isMount ? 'mount'
+        : isFollower ? 'follower'
+          : npcProfileState?.legalProfile === 'nonheroic' || npcProfileState?.kind === 'nonheroic'
+            ? 'nonheroic'
+            : npcProfileState?.legalProfile === 'heroic' || npcProfileState?.kind === 'heroic'
+              ? 'heroic'
+              : 'imported-statblock';
 
     // Phase 5: Progression summary for status block
     const classes = actor.items?.filter(i => i.type === 'class') || [];
@@ -56,6 +69,16 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       heroicLevels: Number(heroicLevels) || 0,
       nonheroicLevels: Number(nonheroicLevels) || 0,
       mode,
+      profile: npcProfileState,
+      kindLabel: npcProfileState?.labels?.kind || 'NPC',
+      sourceAuthorityLabel: npcProfileState?.labels?.sourceAuthority || 'Statblock',
+      legalProfileLabel: npcProfileState?.labels?.legalProfile || 'Standard',
+      progressionSubtype,
+      isBeast,
+      isMount,
+      isFollower,
+      isOwnerSynced,
+      canManualLevel: !isOwnerSynced,
       hasSnapshot,
       isGM: !!game.user?.isGM,
 
@@ -111,8 +134,32 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     });
   }
 
+  _getNpcProgressionSubtype(preferred = null) {
+    const profile = getNpcProfileState(this.actor);
+    if (preferred === 'heroic') return 'heroic';
+    if (preferred === 'nonheroic') {
+      if (profile?.kind === 'beast' || profile?.legalProfile === 'beast') return 'beast';
+      if (profile?.kind === 'mount' || profile?.legalProfile === 'mount') return 'mount';
+      return 'nonheroic';
+    }
+    if (profile?.kind === 'beast' || profile?.legalProfile === 'beast') return 'beast';
+    if (profile?.kind === 'mount' || profile?.legalProfile === 'mount') return 'mount';
+    if (profile?.kind === 'follower' || profile?.legalProfile === 'follower') return 'follower';
+    if (profile?.kind === 'nonheroic' || profile?.legalProfile === 'nonheroic') return 'nonheroic';
+    if (profile?.kind === 'heroic' || profile?.legalProfile === 'heroic') return 'heroic';
+    return 'imported-statblock';
+  }
+
+  _isOwnerSyncedNpc() {
+    const profile = getNpcProfileState(this.actor);
+    return profile?.mode === 'owner-sync' || ['minion', 'privateer'].includes(profile?.kind);
+  }
+
   async _handleHeroic() {
     if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
+    if (this._isOwnerSyncedNpc()) {
+      return ui.notifications.info('Owner-synced minions/privateers do not level manually. Update the owner or sync from Allies instead.');
+    }
 
     const { heroicLevel, nonheroicLevel } = getLevelSplit(this.actor);
     const epicOverrideEnabled = isEpicOverrideEnabled();
@@ -136,8 +183,9 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
 
       this.close();
       await launchProgression(this.actor, {
-        subtype: 'actor',
-        source: 'npc-levelup-entry.heroic'
+        subtype: this._getNpcProgressionSubtype('heroic'),
+        source: 'npc-levelup-entry.heroic',
+        npcProgression: true
       });
     } catch (err) {
       SWSELogger.error('Heroic level-up failed:', err);
@@ -147,6 +195,9 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
 
   async _handleNonheroic() {
     if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
+    if (this._isOwnerSyncedNpc()) {
+      return ui.notifications.info('Owner-synced minions/privateers do not level manually. Update the owner or sync from Allies instead.');
+    }
 
     const { heroicLevel, nonheroicLevel } = getLevelSplit(this.actor);
     const epicOverrideEnabled = isEpicOverrideEnabled();
@@ -170,8 +221,9 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
 
       this.close();
       await launchProgression(this.actor, {
-        subtype: 'nonheroic',
-        source: 'npc-levelup-entry.nonheroic'
+        subtype: this._getNpcProgressionSubtype('nonheroic'),
+        source: 'npc-levelup-entry.nonheroic',
+        npcProgression: true
       });
     } catch (err) {
       SWSELogger.error('Nonheroic level-up failed:', err);

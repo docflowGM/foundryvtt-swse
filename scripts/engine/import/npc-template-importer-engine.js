@@ -8,6 +8,117 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { NPCTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/npc-template-data-loader.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
+
+const NPC_IMPORT_NAMESPACE = 'swse';
+const NPC_LEGACY_IMPORT_NAMESPACE = 'foundryvtt-swse';
+
+function cleanText(value) {
+  if (value === null || value === undefined) return '';
+  return String(value).trim();
+}
+
+function numberOrNull(value) {
+  if (value === null || value === undefined || value === '') return null;
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  const match = String(value).match(/-?\d+/);
+  return match ? Number(match[0]) : null;
+}
+
+function abilityMod(score) {
+  return Math.floor((Number(score || 10) - 10) / 2);
+}
+
+function buildImportProfile(kind, source = {}) {
+  const normalizedKind = ['heroic', 'nonheroic', 'beast', 'mount'].includes(kind) ? kind : 'imported';
+  const legalProfile = normalizedKind === 'beast' || normalizedKind === 'mount'
+    ? 'beast'
+    : normalizedKind === 'heroic' || normalizedKind === 'nonheroic'
+      ? normalizedKind
+      : 'imported-statblock';
+
+  return {
+    kind: normalizedKind,
+    mode: 'play',
+    importMode: 'play',
+    sourceAuthority: 'statblock',
+    legalProfile,
+    legalState: 'playable-unchecked',
+    source: {
+      importer: 'npc-template-importer',
+      sourceType: source.sourceType || 'template',
+      pack: source.pack || null,
+      templateId: source.templateId || null,
+      templateName: source.templateName || null,
+      importedAt: new Date().toISOString()
+    },
+    overrides: {
+      hp: true,
+      defenses: true,
+      bab: true,
+      skills: true,
+      attacks: true
+    },
+    legalReview: {
+      status: 'not-run',
+      summary: 'Imported in Play Mode using statblock authority. Legal Review has not been run.'
+    }
+  };
+}
+
+function buildImportFlags(kind, statblock, source = {}) {
+  const raw = foundry.utils.deepClone(statblock || {});
+  const importData = {
+    imported: true,
+    importDate: new Date().toISOString(),
+    templateType: kind,
+    category: kind,
+    mode: 'play',
+    sourceAuthority: 'statblock',
+    legalProfile: kind === 'beast' || kind === 'mount' ? 'beast' : kind,
+    pack: source.pack || null,
+    templateId: source.templateId || null,
+    templateName: source.templateName || null,
+    raw
+  };
+
+  return {
+    [NPC_IMPORT_NAMESPACE]: {
+      import: importData
+    },
+    [NPC_LEGACY_IMPORT_NAMESPACE]: {
+      imported: true,
+      importDate: importData.importDate,
+      templateType: kind,
+      originalStatblock: raw,
+      import: importData
+    }
+  };
+}
+
+function mergeFlags(existingFlags, kind, statblock, source = {}) {
+  const merged = foundry.utils.deepClone(existingFlags || {});
+  const importFlags = buildImportFlags(kind, statblock, source);
+  return foundry.utils.mergeObject(merged, importFlags, { inplace: false, recursive: true });
+}
+
+function normalizeSize(value) {
+  return cleanText(value) || 'Medium';
+}
+
+function normalizeLanguages(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).map(v => String(v).trim()).filter(Boolean);
+  if (!value) return [];
+  return String(value).split(/[,;]/).map(v => v.trim()).filter(Boolean);
+}
+
+function classLevelLabel(classLevels) {
+  if (!classLevels || typeof classLevels !== 'object') return '';
+  return Object.entries(classLevels)
+    .filter(([, levels]) => levels !== null && levels !== undefined && levels !== '')
+    .map(([name, levels]) => `${name} ${levels}`.trim())
+    .join(' / ');
+}
+
 export class NPCTemplateImporterEngine {
   /**
    * Import a Beast template from the compendium
@@ -41,6 +152,32 @@ export class NPCTemplateImporterEngine {
         }
       }
 
+      newActorData.system = newActorData.system || {};
+      newActorData.system.npcProfile = foundry.utils.mergeObject(
+        buildImportProfile('beast', {
+          sourceType: 'compendium',
+          pack: 'foundryvtt-swse.beasts',
+          templateId: actorId,
+          templateName: newActorData.name
+        }),
+        newActorData.system.npcProfile || {},
+        { inplace: false, recursive: true }
+      );
+      newActorData.system.npcType = newActorData.system.npcType || 'beast';
+      newActorData.system.creatureType = newActorData.system.creatureType || 'beast';
+      newActorData.system.useProgression = false;
+      newActorData.flags = mergeFlags(
+        newActorData.flags,
+        'beast',
+        newActorData.flags?.swse?.beastData || newActorData.flags?.['foundryvtt-swse']?.beastData || newActorData.system?.beastData || {},
+        {
+          sourceType: 'compendium',
+          pack: 'foundryvtt-swse.beasts',
+          templateId: actorId,
+          templateName: newActorData.name
+        }
+      );
+
       // PHASE 2: Include biography in initial actor creation data
       // This avoids post-creation direct mutations
       if (customData && (customData.notes || customData.biography)) {
@@ -52,7 +189,7 @@ export class NPCTemplateImporterEngine {
         }
       }
 
-      // Create the actor in the world (includes biography in initial data)
+      // Create the actor in the world (includes biography/profile data in initial data)
       const actor = await Actor.create(newActorData);
 
       SWSELogger.log(`[NPCTemplateImporterEngine] Beast imported successfully: ${actor.name} (${actor.id})`);
@@ -151,7 +288,21 @@ export class NPCTemplateImporterEngine {
       biography = parts.join('\n\n');
     }
 
-    // Create base actor data
+    const hpValue = this._parseHitPoints(statblock['Hit Points']) || 10;
+    const babValue = numberOrNull(statblock['Base Attack Bonus'] ?? statblock.BAB ?? statblock['Attack Bonus']) ?? 0;
+    const damageThreshold = numberOrNull(statblock['Damage Threshold']);
+    const classLevels = statblock['Class Levels'] || {};
+    const classLabel = classLevelLabel(classLevels) || cleanText(statblock.Class || statblock.className) || (statblock['Nonheroic Level'] ? `Nonheroic ${statblock['Nonheroic Level']}` : '');
+    const species = cleanText(statblock.Species) || 'Unknown';
+    const size = normalizeSize(statblock.Size);
+    const speed = cleanText(statblock.Speed) || '6 Squares';
+    const npcProfile = buildImportProfile(npcType, {
+      sourceType: 'json',
+      templateName: name
+    });
+
+    // Create base actor data. Keep source/statblock values as first-class
+    // Play Mode values and do not require derived/progression legality yet.
     const actorData = {
       type: 'npc',
       name: name,
@@ -161,34 +312,42 @@ export class NPCTemplateImporterEngine {
         img: portrait
       },
       system: {
-        attributes: {
-          hp: {
-            value: this._parseHitPoints(statblock['Hit Points']) || 10,
-            max: this._parseHitPoints(statblock['Hit Points']) || 10,
-            temp: 0,
-            tempmax: 0
-          }
+        hp: {
+          value: hpValue,
+          max: hpValue,
+          temp: 0
         },
-        // Map ability scores
+        attributes: this._mapAttributes(statblock),
         abilities: this._mapAbilities(statblock),
-        // Map defenses
         defenses: this._mapDefenses(statblock),
-        // Mark as imported NPC
-        npcType: npcType,
-        // Store species
-        species: statblock.Species || 'Unknown',
-        // PHASE 2: Include biography in initial creation to avoid post-creation mutation
-        biography: biography || ''
+        npcProfile,
+        npcType,
+        useProgression: false,
+        species,
+        race: species,
+        size,
+        speed,
+        class: classLabel,
+        className: classLabel,
+        level: this._inferLevel(statblock, npcType),
+        bab: babValue,
+        damageThreshold: damageThreshold ?? hpValue,
+        forcePoints: numberOrNull(statblock['Force Points']) ?? 0,
+        destinyPoints: numberOrNull(statblock['Destiny Points']) ?? 0,
+        darkSideScore: numberOrNull(statblock['Dark Side Points']) ?? 0,
+        languages: normalizeLanguages(statblock.Languages),
+        source: {
+          mode: 'play',
+          authority: 'statblock',
+          imported: true
+        },
+        biography: biography || cleanText(statblock.Biography || statblock.Description || '')
       },
       items: [],
-      flags: {
-        'foundryvtt-swse': {
-          imported: true,
-          importDate: new Date().toISOString(),
-          templateType: npcType,
-          originalStatblock: statblock
-        }
-      }
+      flags: mergeFlags({}, npcType, statblock, {
+        sourceType: 'json',
+        templateName: name
+      })
     };
 
     // Create the actor (includes biography in initial data)
@@ -228,11 +387,16 @@ export class NPCTemplateImporterEngine {
 
     const abilities = {};
     for (const [statKey, sysKey] of Object.entries(abilityMap)) {
-      const score = statblock[statKey] || 10;
-      const mod = Math.floor((score - 10) / 2);
+      const score = numberOrNull(statblock[statKey]) ?? 10;
+      const mod = abilityMod(score);
       abilities[sysKey] = {
-        score: score,
-        modifier: mod
+        base: score,
+        score,
+        total: score,
+        mod,
+        modifier: mod,
+        racial: 0,
+        temp: 0
       };
     }
 
@@ -240,23 +404,63 @@ export class NPCTemplateImporterEngine {
   }
 
   /**
+   * Map ability scores to the actor-concept attributes contract.
+   * @private
+   */
+  static _mapAttributes(statblock) {
+    const abilityMap = {
+      Strength: 'str',
+      Dexterity: 'dex',
+      Constitution: 'con',
+      Intelligence: 'int',
+      Wisdom: 'wis',
+      Charisma: 'cha'
+    };
+
+    const attributes = {};
+    for (const [statKey, sysKey] of Object.entries(abilityMap)) {
+      const score = numberOrNull(statblock[statKey]) ?? 10;
+      attributes[sysKey] = {
+        base: score,
+        racial: 0,
+        enhancement: 0,
+        temp: 0
+      };
+    }
+    return attributes;
+  }
+
+  /**
+   * Infer a simple display level from class-level text without creating legal class history.
+   * @private
+   */
+  static _inferLevel(statblock, npcType) {
+    const classLevels = statblock?.['Class Levels'];
+    if (classLevels && typeof classLevels === 'object') {
+      const total = Object.values(classLevels).reduce((sum, value) => sum + (numberOrNull(value) ?? 0), 0);
+      if (total > 0) return total;
+    }
+    const nonheroic = numberOrNull(statblock?.['Nonheroic Level']);
+    if (npcType === 'nonheroic' && nonheroic !== null) return Math.max(1, nonheroic);
+    return 1;
+  }
+
+  /**
    * Map defenses from statblock to actor system
    * @private
    */
   static _mapDefenses(statblock) {
+    const reflex = this._parseDefense(statblock['Reflex Defense']) || 10;
+    const fortitude = this._parseDefense(statblock['Fortitude Defense']) || 10;
+    const will = this._parseDefense(statblock['Will Defense']) || 10;
+    const flatFooted = this._parseDefense(statblock['Flat-Footed Defense']) || reflex;
+
     return {
-      reflex: {
-        value: this._parseDefense(statblock['Reflex Defense']) || 10
-      },
-      fortitude: {
-        value: this._parseDefense(statblock['Fortitude Defense']) || 10
-      },
-      will: {
-        value: this._parseDefense(statblock['Will Defense']) || 10
-      },
-      flatFooted: {
-        value: this._parseDefense(statblock['Flat-Footed Defense']) || 10
-      }
+      reflex: { base: 10, value: reflex, total: reflex, misc: 0 },
+      fort: { base: 10, value: fortitude, total: fortitude, misc: 0 },
+      fortitude: { base: 10, value: fortitude, total: fortitude, misc: 0 },
+      will: { base: 10, value: will, total: will, misc: 0 },
+      flatFooted: { value: flatFooted, total: flatFooted }
     };
   }
 
@@ -299,10 +503,24 @@ export class NPCTemplateImporterEngine {
       }
     }
 
+    // Add Force powers as readable Play Mode reference items if available.
+    if (statblock['Force Powers'] && Array.isArray(statblock['Force Powers'])) {
+      for (const power of statblock['Force Powers']) {
+        items.push(this._createForcePowerItem(power));
+      }
+    }
+
     // Add languages if available
     if (statblock.Languages && Array.isArray(statblock.Languages)) {
       for (const lang of statblock.Languages) {
         items.push(this._createLanguageItem(lang));
+      }
+    }
+
+    // Add gear as source-reference items rather than pretending it is fully legalized equipment.
+    if (statblock.Gear) {
+      for (const gear of this._splitSourceList(statblock.Gear)) {
+        items.push(this._createGearItem(gear));
       }
     }
 
@@ -326,7 +544,7 @@ export class NPCTemplateImporterEngine {
     if (!weaponString) return weapons;
 
     // Parse weapon entries (e.g., "Blaster Pistol +7 (3d6+6)")
-    const weaponEntries = String(weaponString).split(',');
+    const weaponEntries = this._splitSourceList(weaponString);
     for (const entry of weaponEntries) {
       const trimmed = entry.trim();
       if (trimmed) {
@@ -337,7 +555,12 @@ export class NPCTemplateImporterEngine {
           system: {
             weaponType: type,
             description: trimmed,
-            rarity: 'common'
+            rarity: 'common',
+            sourceAuthority: 'statblock',
+            playModeReference: true
+          },
+          flags: {
+            swse: { import: { sourceAuthority: 'statblock', raw: trimmed } }
           }
         });
       }
@@ -357,7 +580,12 @@ export class NPCTemplateImporterEngine {
       img: 'systems/foundryvtt-swse/assets/icons/feat.png',
       system: {
         description: `Imported from NPC template: ${featName}`,
-        rarity: 'common'
+        rarity: 'common',
+        sourceAuthority: 'statblock',
+        playModeReference: true
+      },
+      flags: {
+        swse: { import: { sourceAuthority: 'statblock', raw: featName } }
       }
     };
   }
@@ -373,7 +601,65 @@ export class NPCTemplateImporterEngine {
       img: 'systems/foundryvtt-swse/assets/icons/talent.png',
       system: {
         description: `Imported from NPC template: ${talentName}`,
-        rarity: 'common'
+        rarity: 'common',
+        sourceAuthority: 'statblock',
+        playModeReference: true
+      },
+      flags: {
+        swse: { import: { sourceAuthority: 'statblock', raw: talentName } }
+      }
+    };
+  }
+
+  /**
+   * Split source-list strings while preserving complex entries as best as possible.
+   * @private
+   */
+  static _splitSourceList(value) {
+    if (Array.isArray(value)) return value.filter(Boolean).map(v => String(v).trim()).filter(Boolean);
+    if (!value) return [];
+    return String(value)
+      .split(/,(?![^()]*\))/)
+      .map(part => part.trim())
+      .filter(Boolean);
+  }
+
+  /**
+   * Create a Force power item from imported source data.
+   * @private
+   */
+  static _createForcePowerItem(powerName) {
+    return {
+      name: String(powerName).replace(/^Force Powers\s*:\s*/i, '').trim(),
+      type: 'force-power',
+      img: 'systems/foundryvtt-swse/assets/icons/force-power.png',
+      system: {
+        description: `Imported source power: ${powerName}`,
+        sourceAuthority: 'statblock',
+        playModeReference: true
+      },
+      flags: {
+        swse: { import: { sourceAuthority: 'statblock', raw: powerName } }
+      }
+    };
+  }
+
+  /**
+   * Create a gear reference item from imported source data.
+   * @private
+   */
+  static _createGearItem(gearName) {
+    return {
+      name: String(gearName).trim(),
+      type: 'equipment',
+      img: 'systems/foundryvtt-swse/assets/icons/equipment.png',
+      system: {
+        description: `Imported gear reference: ${gearName}`,
+        sourceAuthority: 'statblock',
+        playModeReference: true
+      },
+      flags: {
+        swse: { import: { sourceAuthority: 'statblock', raw: gearName } }
       }
     };
   }

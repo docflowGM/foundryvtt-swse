@@ -124,9 +124,11 @@ export class AlliesSurfaceController {
           return this._buildMinion(target.dataset.slotId);
         case 'build-beast':
           return this._notify('Beast companion creation is not implemented yet. A GM can drag a beast/nonheroic NPC into Allies as a linked actor.');
-        case 'manage-ally':
+        case 'open-ally-sheet':
         case 'open-actor':
           return this._openActor(target.dataset.actorId);
+        case 'manage-ally':
+          return this._manageAlly(target.dataset.actorId);
         case 'level-up-follower':
         case 'recalculate-follower':
           return this._levelUpFollower(target.dataset.actorId);
@@ -193,12 +195,44 @@ export class AlliesSurfaceController {
     this._requestRender('allies-build-minion');
   }
 
-  _openActor(actorId) {
+  _resolveAllyActor(actorId) {
     const actor = game.actors?.get?.(actorId);
     if (!actor) {
       ui?.notifications?.warn?.('That ally actor could not be found.');
+      return null;
+    }
+    return actor;
+  }
+
+  _openActor(actorId) {
+    const actor = this._resolveAllyActor(actorId);
+    if (!actor) return;
+    actor.sheet?.render?.(true);
+  }
+
+  async _manageAlly(actorId) {
+    const actor = this._resolveAllyActor(actorId);
+    if (!actor) return;
+
+    if (actor.type === 'npc') {
+      try {
+        const mod = await import('/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js');
+        const Entry = mod.SWSENpcLevelUpEntry ?? mod.default;
+        if (Entry) {
+          new Entry(actor, { source: 'allies-manage-ally', ownerActorId: this._actor?.id ?? null }).render(true);
+          return;
+        }
+      } catch (err) {
+        SWSELogger.warn('[AlliesSurfaceController] NPC management entry unavailable; opening sheet instead.', err);
+      }
+      actor.sheet?.render?.(true);
       return;
     }
+
+    if (actor.type === 'droid') {
+      return this._openGarage(actor.id);
+    }
+
     actor.sheet?.render?.(true);
   }
 

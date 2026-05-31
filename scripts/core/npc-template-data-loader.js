@@ -32,7 +32,10 @@ export class NPCTemplateDataLoader {
           portrait: entry.img || 'systems/foundryvtt-swse/assets/token-default.png',
           metadata: {
             type: entry.type || 'npc',
-            source: 'compendium'
+            source: 'compendium',
+            mode: 'play',
+            sourceAuthority: 'statblock',
+            legalProfile: 'beast'
           }
         });
       }
@@ -73,6 +76,9 @@ export class NPCTemplateDataLoader {
         metadata: {
           type: 'npc',
           source: 'json',
+          mode: 'play',
+          sourceAuthority: 'statblock',
+          legalProfile: 'nonheroic',
           classLevels: entry['Class Levels'] || {},
           species: entry.Species || 'Unknown'
         }
@@ -114,6 +120,9 @@ export class NPCTemplateDataLoader {
         metadata: {
           type: 'npc',
           source: 'json',
+          mode: 'play',
+          sourceAuthority: 'statblock',
+          legalProfile: 'heroic',
           classLevels: entry['Class Levels'] || {},
           species: entry.Species || 'Unknown'
         }

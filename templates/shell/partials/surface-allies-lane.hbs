@@ -57,7 +57,12 @@
       {{#if this.beastLevelRequested}}
       <button type="button" disabled>GM Review</button>
       {{/if}}
-      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">Manage</button>
+      {{#if this.canOpenSheet}}
+      <button type="button" data-allies-action="open-ally-sheet" data-actor-id="{{this.id}}">{{this.sheetLabel}}</button>
+      {{/if}}
+      {{#if this.canManage}}
+      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">{{this.manageLabel}}</button>
+      {{/if}}
       {{#if this.canOpenGarage}}
       <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">Garage</button>
       {{/if}}

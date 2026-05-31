@@ -20,6 +20,7 @@ import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/
 import { ProgressionDocumentTargetPolicy } from "./policies/progression-document-target-policy.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
+import { getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -35,16 +36,55 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * @private
  */
 
+function _getNpcProgressionProfile(actor) {
+  if (actor?.type !== 'npc') return null;
+  try {
+    return getNpcProfileState(actor);
+  } catch (err) {
+    SWSELogger.warn('[Progression Entry] Could not infer NPC progression profile:', err);
+    return null;
+  }
+}
+
 function _isOwnerSyncedMinion(actor) {
+  const profile = _getNpcProgressionProfile(actor);
   return actor?.system?.isMinion === true
     || actor?.system?.progression?.isMinion === true
     || actor?.flags?.swse?.minion?.isMinion === true
     || actor?.getFlag?.('foundryvtt-swse', 'isMinion') === true
     || actor?.system?.npcProfile?.kind === 'minion'
-    || actor?.system?.npcProfile?.kind === 'privateer';
+    || actor?.system?.npcProfile?.kind === 'privateer'
+    || profile?.kind === 'minion'
+    || profile?.kind === 'privateer'
+    || profile?.mode === 'owner-sync';
 }
 
-function _isChargenIncomplete(actor) {
+function _resolveNpcProgressionSubtype(actor, options = {}) {
+  if (actor?.type !== 'npc') return null;
+  if (options?.subtype) return options.subtype;
+
+  const profile = _getNpcProgressionProfile(actor);
+  const kind = profile?.kind;
+  const legalProfile = profile?.legalProfile;
+
+  if (kind === 'beast' || legalProfile === 'beast') return 'beast';
+  if (kind === 'mount' || legalProfile === 'mount') return 'mount';
+  if (kind === 'follower' || legalProfile === 'follower') return 'follower';
+  if (kind === 'minion' || kind === 'privateer' || legalProfile === 'minion') return kind === 'privateer' ? 'privateer' : 'minion';
+  if (kind === 'nonheroic' || legalProfile === 'nonheroic') return 'nonheroic';
+  if (kind === 'heroic' || legalProfile === 'heroic') return 'heroic';
+  if (profile?.imported || legalProfile === 'imported-statblock') return 'imported-statblock';
+  return 'nonheroic';
+}
+
+function _isStatblockAuthorityNpc(actor) {
+  const profile = _getNpcProgressionProfile(actor);
+  return actor?.type === 'npc'
+    && profile
+    && (profile.sourceAuthority === 'statblock' || profile.mode === 'play' || profile.imported || profile.hasRawImport || profile.hasBeastData);
+}
+
+function _isChargenIncomplete(actor, options = {}) {
   if (!actor) {
     return false;
   }
@@ -73,6 +113,15 @@ function _isChargenIncomplete(actor) {
   const hasClass = ActorAbilityBridge.getClasses(actor).length > 0;
   if (!hasClass) {
     if (_isOwnerSyncedMinion(actor)) return false;
+
+    // Imported/statblock NPCs are deliberately Play Mode actors. A missing
+    // class item means Legal Review/Repair work is pending; it should not route
+    // them into full chargen unless the caller explicitly asks for chargen.
+    if (actor.type === 'npc' && !options?.forceChargen) {
+      if (_isStatblockAuthorityNpc(actor)) return false;
+      if (options?.subtype && ['nonheroic', 'beast', 'mount', 'heroic', 'imported-statblock'].includes(options.subtype)) return false;
+    }
+
     return true;
   }
 
@@ -161,7 +210,13 @@ export async function launchProgression(actor, options = {}) {
   }
 
   // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
-  const isChargenIncomplete = _isChargenIncomplete(actor);
+  const npcSubtype = _resolveNpcProgressionSubtype(actor, options);
+  if (npcSubtype && !options.subtype) {
+    options = { ...options, subtype: npcSubtype, npcProfileState: _getNpcProgressionProfile(actor) };
+    SWSELogger.debug('[Progression Entry] NPC subtype inferred', { subtype: npcSubtype, npcProfileState: options.npcProfileState });
+  }
+
+  const isChargenIncomplete = _isChargenIncomplete(actor, options);
 
   if (!isChargenIncomplete && _isOwnerSyncedMinion(actor)) {
     ui?.notifications?.info?.('Minions do not level up manually. They automatically sync as nonheroic NPCs at owner heroic level - 2.');

@@ -41,6 +41,10 @@ export class ActorSubtypeAdapter extends ProgressionSubtypeAdapter {
     super('actor', 'Character (Actor)', ParticipantKind.INDEPENDENT);
   }
 
+  handles(subtype) {
+    return subtype === 'actor' || subtype === 'heroic';
+  }
+
   async seedSession(session, actor, mode) {
     // Phase 1: No subtype-specific seeding for generic actors.
     // Actor behavior is already default in spine.
@@ -489,6 +493,10 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
 export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
     super('nonheroic', 'Nonheroic Character', ParticipantKind.INDEPENDENT);
+  }
+
+  handles(subtype) {
+    return subtype === 'nonheroic' || subtype === 'imported-statblock' || subtype === 'standard';
   }
 
   async seedSession(session, actor, mode) {

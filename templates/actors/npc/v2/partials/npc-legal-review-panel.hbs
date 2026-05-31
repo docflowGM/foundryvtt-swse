@@ -1,0 +1,160 @@
+{{!--
+  NPC Legal Review Panel
+  Phase 8 read-only checklist + Phase 9 explicit Review & Repair actions.
+  Opening this panel does not mutate actor data.
+--}}
+<section class="swse-npc-panel swse-npc-legal-review-panel">
+  <header class="swse-npc-panel-header">
+    <div>
+      <h3>Legal Review</h3>
+      <p class="swse-npc-panel-kicker">
+        {{npcLegalReview.profileLabel}} · {{npcLegalReview.modeLabel}} · {{npcLegalReview.sourceAuthorityLabel}}
+      </p>
+    </div>
+    <div class="swse-npc-mode-badges">
+      <span class="swse-npc-mode-badge swse-npc-mode-badge--{{npcLegalReview.legalState}}">
+        {{npcLegalReview.legalStateLabel}}
+      </span>
+      {{#if npcLegalReview.tablePlayable}}
+        <span class="swse-npc-mode-badge swse-npc-mode-badge--playable">Table Playable</span>
+      {{/if}}
+      {{#if npcLegalReview.progressionLegal}}
+        <span class="swse-npc-mode-badge swse-npc-mode-badge--legal">Progression Legal</span>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="swse-npc-legal-summary">
+    <div class="swse-npc-legal-summary-card">
+      <strong>{{npcLegalReview.summary.ok}}</strong>
+      <span>Ready</span>
+    </div>
+    <div class="swse-npc-legal-summary-card swse-npc-legal-summary-card--warn">
+      <strong>{{npcLegalReview.summary.warn}}</strong>
+      <span>Review</span>
+    </div>
+    <div class="swse-npc-legal-summary-card swse-npc-legal-summary-card--error">
+      <strong>{{npcLegalReview.summary.error}}</strong>
+      <span>Fix</span>
+    </div>
+    <div class="swse-npc-legal-summary-card">
+      <strong>{{npcLegalReview.summary.info}}</strong>
+      <span>Notes</span>
+    </div>
+  </div>
+
+  <p class="swse-npc-legal-note">{{npcLegalReview.note}}</p>
+
+  {{#if npcLegalReview.progressionSkeleton.entries.length}}
+    <section class="swse-npc-legal-group swse-npc-skeleton-group">
+      <header class="swse-npc-repair-header">
+        <div>
+          <h4>Progression Skeleton</h4>
+          <p class="swse-npc-legal-detail">
+            {{npcLegalReview.progressionSkeleton.statusLabel}}
+            {{#if npcLegalReview.progressionSkeleton.totalLevels}} · {{npcLegalReview.progressionSkeleton.totalLevels}} total level(s){{/if}}
+            {{#if npcLegalReview.progressionSkeleton.nonheroicFirstValid}} · Nonheroic-first valid{{/if}}
+          </p>
+        </div>
+      </header>
+      <div class="swse-npc-legal-checks">
+        {{#each npcLegalReview.progressionSkeleton.entries as |entry|}}
+          <article class="swse-npc-legal-check swse-npc-legal-check--ok">
+            <header>
+              <strong>{{entry.order}}. {{entry.name}}</strong>
+              <span>{{entry.levels}} level(s)</span>
+            </header>
+            <p>Class ID: {{entry.classId}}</p>
+            {{#if entry.confidence}}<p class="swse-npc-legal-detail">Confidence: {{entry.confidence}}</p>{{/if}}
+          </article>
+        {{/each}}
+      </div>
+      {{#unless npcLegalReview.progressionSkeleton.classItemsCreated}}
+        <p class="swse-npc-legal-action">Next: Review &amp; Repair can propose class item/history creation from this skeleton. Safe normalization will not create those items automatically.</p>
+      {{/unless}}
+    </section>
+  {{/if}}
+
+  <section class="swse-npc-legal-group swse-npc-repair-group">
+    <header class="swse-npc-repair-header">
+      <div>
+        <h4>Review &amp; Repair</h4>
+        <p class="swse-npc-legal-detail">{{npcRepairPlan.note}}</p>
+      </div>
+      <div class="swse-npc-repair-actions">
+        <button type="button" class="swse-button" data-action="npc-repair-safe-normalize" {{#unless npcRepairPlan.canApplySafeFixes}}disabled{{/unless}}>
+          Apply Safe Normalization
+        </button>
+        <button type="button" class="swse-button" data-action="npc-repair-gm-approve" {{#unless npcRepairPlan.canMarkGmApproved}}disabled{{/unless}}>
+          GM Approve Overrides
+        </button>
+      </div>
+    </header>
+
+    <div class="swse-npc-legal-checks">
+      {{#if npcRepairPlan.safeFixes.length}}
+        {{#each npcRepairPlan.safeFixes as |fix|}}
+          <article class="swse-npc-legal-check swse-npc-legal-check--info">
+            <header>
+              <strong>{{fix.label}}</strong>
+              <span>Safe</span>
+            </header>
+            <p>{{fix.detail}}</p>
+          </article>
+        {{/each}}
+      {{else}}
+        <article class="swse-npc-legal-check swse-npc-legal-check--ok">
+          <header>
+            <strong>Safe normalization</strong>
+            <span>Ready</span>
+          </header>
+          <p>No deterministic safe normalization steps are currently needed.</p>
+        </article>
+      {{/if}}
+
+      {{#if npcRepairPlan.proposals.length}}
+        {{#each npcRepairPlan.proposals as |proposal|}}
+          <article class="swse-npc-legal-check swse-npc-legal-check--warn">
+            <header>
+              <strong>{{proposal.label}}</strong>
+              <span>GM Decision</span>
+            </header>
+            <p>{{proposal.detail}}</p>
+            {{#if proposal.count}}<p class="swse-npc-legal-detail">Detected: {{proposal.count}}</p>{{/if}}
+            {{#if proposal.path}}<p class="swse-npc-legal-detail">Path: {{proposal.path}}</p>{{/if}}
+            {{#if proposal.nonheroicFirstValid}}<p class="swse-npc-legal-detail">Nonheroic-first rule validated.</p>{{/if}}
+          </article>
+        {{/each}}
+      {{/if}}
+    </div>
+  </section>
+
+  {{#if npcLegalReview.groups.length}}
+    <div class="swse-npc-legal-groups">
+      {{#each npcLegalReview.groups as |group|}}
+        <section class="swse-npc-legal-group swse-npc-legal-group--{{group.id}}">
+          <h4>{{group.label}}</h4>
+          <div class="swse-npc-legal-checks">
+            {{#each group.checks as |check|}}
+              <article class="swse-npc-legal-check swse-npc-legal-check--{{check.severity}}">
+                <header>
+                  <strong>{{check.label}}</strong>
+                  <span>{{check.status}}</span>
+                </header>
+                <p>{{check.message}}</p>
+                {{#if check.detail}}<p class="swse-npc-legal-detail">{{check.detail}}</p>{{/if}}
+                {{#if check.action}}<p class="swse-npc-legal-action">Next: {{check.action}}</p>{{/if}}
+                <footer>
+                  {{#if check.canAutoFix}}<span>Repair candidate</span>{{/if}}
+                  {{#if check.requiresGm}}<span>GM decision</span>{{/if}}
+                </footer>
+              </article>
+            {{/each}}
+          </div>
+        </section>
+      {{/each}}
+    </div>
+  {{else}}
+    <p class="swse-npc-empty">No Legal Review checks were generated.</p>
+  {{/if}}
+</section>

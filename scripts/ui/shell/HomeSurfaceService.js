@@ -18,6 +18,7 @@ import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/s
 import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
+import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
 
 function supportedTypesForMentor(actor) {
   return ['character', 'droid', 'npc'].includes(actor?.type);
@@ -81,6 +82,46 @@ function actorPortrait(actor) {
 
 function isVehicleActor(actor) {
   return actor?.type === 'vehicle';
+}
+
+function isNpcActor(actor) {
+  return actor?.type === 'npc';
+}
+
+function npcKindLabel(actor) {
+  try {
+    return getNpcProfileState(actor).labels.kind;
+  } catch {
+    return 'NPC';
+  }
+}
+
+function npcModeLabel(actor) {
+  try {
+    return getNpcProfileState(actor).labels.mode;
+  } catch {
+    return 'Play Mode';
+  }
+}
+
+function npcAuthorityLabel(actor) {
+  try {
+    return getNpcProfileState(actor).labels.sourceAuthority;
+  } catch {
+    return 'Statblock';
+  }
+}
+
+function npcRoleLabel(actor) {
+  const system = actor?.system ?? {};
+  return String(
+    system.className
+    ?? system.class
+    ?? system.role
+    ?? system.challengeLevel
+    ?? system.level
+    ?? npcKindLabel(actor)
+  );
 }
 
 function vehicleSystemLabel(actor) {
@@ -199,6 +240,16 @@ export class HomeSurfaceService {
       const supportedTypes = ['character', 'droid', 'npc'];
       if (!supportedTypes.includes(actor.type)) return this._progressionHidden();
 
+      if (actor.type === 'npc') {
+        return {
+          visible: true,
+          enabled: true,
+          routeId: 'progression',
+          badge: null,
+          description: 'NPC progression and level review'
+        };
+      }
+
       const isIncomplete = this._isChargenIncomplete(actor);
       const currentLevel = Math.max(1, Number(getTotalLevel(actor) || actor.system?.level || 1));
       const xpTotal = Number(actor.system?.xp?.total) || 0;
@@ -297,6 +348,10 @@ export class HomeSurfaceService {
       const vehicleShieldMax = asNumber(actor?.system?.shields?.max, asNumber(actor?.system?.shield?.max, 0));
       const vehicleCrew = asNumber(actor?.system?.crew?.current, asNumber(actor?.system?.crew?.value, asNumber(actor?.system?.crew, 0)));
       const vehicleQuickGlance = isVehicleActor(actor);
+      const npcQuickGlance = isNpcActor(actor);
+      const reflex = asNumber(actor?.system?.defenses?.reflex?.total, asNumber(actor?.system?.derived?.defenses?.reflex?.total, 0));
+      const fortitude = asNumber(actor?.system?.defenses?.fort?.total, asNumber(actor?.system?.defenses?.fortitude?.total, asNumber(actor?.system?.derived?.defenses?.fortitude?.total, 0)));
+      const will = asNumber(actor?.system?.defenses?.will?.total, asNumber(actor?.system?.derived?.defenses?.will?.total, 0));
 
       const alerts = {
         total: summary.total ?? 0,
@@ -323,6 +378,27 @@ export class HomeSurfaceService {
           {
             label: 'Crew',
             value: vehicleCrew > 0 ? String(vehicleCrew) : '—',
+            tone: 'neutral'
+          },
+          {
+            label: 'Alerts',
+            value: String(summary.total ?? 0),
+            tone: (summary.total ?? 0) > 0 ? 'alert' : 'neutral'
+          }
+        ] : npcQuickGlance ? [
+          {
+            label: 'HP',
+            value: hpMax > 0 ? `${hpValue}/${hpMax}` : '—',
+            tone: hpValue > 0 ? 'neutral' : 'alert'
+          },
+          {
+            label: 'Ref',
+            value: reflex > 0 ? String(reflex) : '—',
+            tone: 'neutral'
+          },
+          {
+            label: 'Fort/Will',
+            value: `${fortitude > 0 ? fortitude : '—'}/${will > 0 ? will : '—'}`,
             tone: 'neutral'
           },
           {
@@ -615,11 +691,33 @@ export class HomeSurfaceService {
     ]);
   }
 
+  static _buildNpcAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary) {
+    const itemCount = asArray(actor?.items).length;
+    const forcePowerCount = asArray(actor?.items).filter(item => String(item?.type ?? '').toLowerCase() === 'force-power').length;
+    const profileState = getNpcProfileState(actor);
+    const modeBadge = profileState.mode === 'play' ? 'PLAY' : profileState.labels.mode.toUpperCase();
+
+    return this._withTilePositions([
+      { id: 'sheet', label: 'NPC\nSheet', icon: '◇', routeId: 'sheet', visible: true, enabled: true, badge: profileState.labels.kind, badgeType: 'info', featured: true, locked: false, status: 'READY', statusTone: '', description: 'NPC stat record and controls' },
+      { id: 'statblock', label: 'Statblock', icon: '▣', routeId: 'sheet', tab: 'statblock', visible: true, enabled: true, badge: modeBadge, badgeType: 'info', featured: false, locked: false, status: profileState.labels.sourceAuthority.toUpperCase(), statusTone: '', description: `${profileState.labels.mode} quick reference` },
+      { id: 'combat', label: 'Combat', icon: '✦', routeId: 'sheet', tab: 'combat', visible: true, enabled: true, badge: null, badgeType: null, featured: false, locked: false, status: 'ARMED', statusTone: '', description: 'Attacks, actions, and encounter controls' },
+      { id: 'abilities', label: 'Abilities', icon: '◆', routeId: 'sheet', tab: 'abilities', visible: true, enabled: true, badge: null, badgeType: null, featured: false, locked: false, status: 'ONLINE', statusTone: '', description: 'Ability scores and modifiers' },
+      { id: 'skills', label: 'Skills', icon: '◫', routeId: 'sheet', tab: 'stats', visible: true, enabled: true, badge: null, badgeType: null, featured: false, locked: false, status: 'READY', statusTone: '', description: 'Skills, feats, and stat panels' },
+      { id: 'powers', label: 'Powers', icon: '✶', routeId: 'sheet', tab: 'force', visible: forcePowerCount > 0 || actor?.system?.forceSensitive === true, enabled: true, badge: forcePowerCount > 0 ? String(forcePowerCount) : null, badgeType: forcePowerCount > 0 ? 'info' : null, featured: false, locked: false, status: forcePowerCount > 0 ? 'ACTIVE' : 'NONE', statusTone: '', description: 'Force powers and special powers' },
+      { id: 'gear', label: 'Gear', icon: '▤', routeId: 'sheet', tab: 'gear', visible: itemCount > 0, enabled: true, badge: itemCount > 0 ? String(itemCount) : null, badgeType: itemCount > 0 ? 'info' : null, featured: false, locked: false, status: itemCount > 0 ? 'ITEMS' : 'EMPTY', statusTone: '', description: 'Equipment and carried items' },
+      { id: 'progression', label: 'Training', icon: '▲', routeId: progressionSummary.routeId, visible: progressionSummary.visible, enabled: progressionSummary.enabled, badge: progressionSummary.badge, badgeType: progressionSummary.badge ? 'info' : null, featured: false, locked: !progressionSummary.enabled && progressionSummary.visible, status: progressionSummary.badge ? 'REVIEW' : 'READY', statusTone: progressionSummary.badge ? 'warn' : '', description: progressionSummary.description || 'NPC progression entry' },
+      { id: 'legal-review', label: 'Legal\nReview', icon: '✓', routeId: 'sheet', tab: 'legal-review', visible: true, enabled: true, badge: profileState.labels.legalProfile, badgeType: 'info', featured: false, locked: false, status: profileState.labels.legalState.toUpperCase(), statusTone: profileState.legalState === 'playable-unchecked' ? '' : 'warn', description: 'Read-only Play/Legal audit checklist' },
+      { id: 'messages', label: 'Messages', icon: '✉', routeId: 'messenger', visible: true, enabled: true, badge: holonetSummary.badges.messages ? holonetSummary.badges.messages : null, badgeType: holonetSummary.badges.messages ? 'info' : null, featured: false, locked: false, status: 'READY', statusTone: holonetSummary.badges.messages ? 'warn' : '', description: 'Messages and communications' },
+      { id: 'settings', label: 'Settings', icon: '⚙', routeId: 'settings', visible: true, enabled: true, badge: null, badgeType: null, featured: false, locked: false, status: 'READY', statusTone: '', description: 'Datapad settings and preferences' }
+    ]);
+  }
+
   /**
    * Build app tiles with radial positioning, badge types, and state flags
    */
   static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}) {
     if (isVehicleActor(actor)) return this._buildVehicleAppTiles(actor, holonetSummary);
+    if (isNpcActor(actor)) return this._buildNpcAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary);
     const assetSummary = this._getOwnedAssetSummary(actor);
     const gamesEnabled = (() => {
       try {
@@ -917,6 +1015,22 @@ export class HomeSurfaceService {
         xpMax: 0,
         xpPercent: 0
       };
+    }
+
+    if (isNpcActor(actor)) {
+      const profileState = getNpcProfileState(actor);
+      const classDisplay = npcRoleLabel(actor);
+      const species = actor.system?.race || actor.system?.species || profileState.labels.kind;
+      const affiliation = actor.system?.affiliation || actor.system?.faction || actor.system?.organization || profileState.labels.sourceAuthority;
+      const hpCurrent = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, asNumber(actor.system?.health?.value, 0)));
+      const hpMax = asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, asNumber(actor.system?.health?.max, 0)));
+      const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, (hpCurrent / hpMax) * 100)) : 0;
+      const fpCurrent = asNumber(actor.system?.forcePoints?.value, asNumber(actor.system?.resources?.forcePoints?.value, 0));
+      const fpMax = asNumber(actor.system?.forcePoints?.max, asNumber(actor.system?.resources?.forcePoints?.max, 0));
+      const fpPercent = fpMax > 0 ? Math.max(0, Math.min(100, (fpCurrent / fpMax) * 100)) : 0;
+      const dt = asNumber(actor.system?.damageThreshold, asNumber(actor.system?.derived?.damageThreshold, asNumber(actor.system?.dt, 0)));
+      const dtPercent = Math.max(0, Math.min(100, (dt / 100) * 100));
+      return { classDisplay, species, affiliation, hpCurrent, hpMax, hpPercent, fpCurrent, fpMax, fpPercent, dt, dtPercent, xpCurrent: 0, xpMax: 0, xpPercent: 0 };
     }
 
     const classItem = actor.items?.find(item => item.type === 'class');

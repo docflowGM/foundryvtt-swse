@@ -1,9 +1,9 @@
 <section class="swse-npc-card swse-npc-mode-card">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">Rules Mode</h3>
+    <h3 class="swse-section-title">Rules Authority</h3>
     <div class="swse-npc-badges">
-      <span class="swse-npc-badge swse-npc-badge--mode">{{npcMode}}</span>
-      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKind}}</span>
+      <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
+      <span class="swse-npc-badge swse-npc-badge--kind">{{npcSourceAuthorityLabel}}</span>
     </div>
   </header>
 
@@ -13,13 +13,13 @@
     </p>
 
     <div class="swse-npc-mode-grid">
-      <div class="swse-npc-mode-grid__item {{#if isStatblockMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">Statblock Mode</label>
+      <div class="swse-npc-mode-grid__item {{#if isPlayMode}}is-active{{/if}}">
+        <label class="swse-npc-mode-grid__label">Play Mode</label>
         <div class="swse-npc-mode-grid__value">
-          {{#if isStatblockMode}}Active{{else}}Inactive{{/if}}
+          {{#if isPlayMode}}Active{{else}}Inactive{{/if}}
         </div>
         <p class="swse-npc-mode-grid__text">
-          Uses printed/published NPC values as the primary authority.
+          Trust source/statblock values for table use. Missing progression legality does not block play.
         </p>
       </div>
 
@@ -29,7 +29,17 @@
           {{#if isProgressionMode}}Active{{else}}Inactive{{/if}}
         </div>
         <p class="swse-npc-mode-grid__text">
-          Uses level-based progression and recalculated advancement data.
+          Uses level/class/species progression as the main authority for derived values.
+        </p>
+      </div>
+
+      <div class="swse-npc-mode-grid__item {{#if isOwnerSyncMode}}is-active{{/if}}">
+        <label class="swse-npc-mode-grid__label">Owner Sync</label>
+        <div class="swse-npc-mode-grid__value">
+          {{#if isOwnerSyncMode}}Active{{else}}Inactive{{/if}}
+        </div>
+        <p class="swse-npc-mode-grid__text">
+          Follower/minion context is resolved from an owner actor relationship.
         </p>
       </div>
     </div>

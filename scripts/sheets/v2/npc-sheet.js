@@ -3,6 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
@@ -14,18 +15,183 @@ import { launchProgression, launchFollowerProgression } from "/systems/foundryvt
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { buildForceTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { activateForceUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-ui.js";
+import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { NpcReviewRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js";
 
-function markActiveConditionStep(root, actor) {
-  // AppV2: root is HTMLElement, not jQuery
-  if (!(root instanceof HTMLElement)) {return;}
 
-  const current = Number(actor?.system?.derived?.damage?.conditionStep ?? actor?.system?.conditionTrack?.current ?? 0);
-  for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
-    const s = Number(el.dataset?.step);
-    if (Number.isFinite(s) && s === current) {el.classList.add('active');}
-  }
+const NPC_ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+const NPC_ABILITY_LABELS = {
+  str: 'Strength',
+  dex: 'Dexterity',
+  con: 'Constitution',
+  int: 'Intelligence',
+  wis: 'Wisdom',
+  cha: 'Charisma'
+};
+
+function safeNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
 }
 
+function abilityMod(score) {
+  return Math.floor((safeNumber(score, 10) - 10) / 2);
+}
+
+function modClass(mod) {
+  const n = safeNumber(mod, 0);
+  if (n > 0) return 'mod--positive';
+  if (n < 0) return 'mod--negative';
+  return 'mod--zero';
+}
+
+function readNpcAbilitySource(system, key) {
+  const attr = system?.attributes?.[key] ?? {};
+  const legacy = system?.abilities?.[key] ?? {};
+  const base = safeNumber(attr.base ?? attr.value ?? legacy.base ?? legacy.score ?? legacy.value, 10);
+  const racial = safeNumber(attr.racial ?? legacy.racial ?? legacy.species ?? 0, 0);
+  const temp = safeNumber(attr.temp ?? attr.temporary ?? legacy.temp ?? legacy.temporary ?? 0, 0);
+  const total = safeNumber(attr.total ?? legacy.total, base + racial + temp);
+  const mod = safeNumber(attr.mod ?? attr.modifier ?? legacy.mod ?? legacy.modifier, abilityMod(total));
+  return { base, racial, temp, total, mod };
+}
+
+function buildNpcConceptAbilities(actor) {
+  const system = actor?.system ?? {};
+  const isDroidNpc = system.isDroid === true || system.creatureType === 'droid' || system.npcProfile?.kind === 'droid';
+  const keys = isDroidNpc ? NPC_ABILITY_KEYS.filter(key => key !== 'con') : NPC_ABILITY_KEYS;
+  const entries = keys.map((key) => {
+    const source = readNpcAbilitySource(system, key);
+    return {
+      key,
+      label: NPC_ABILITY_LABELS[key] ?? key.toUpperCase(),
+      abbr: key.toUpperCase(),
+      base: source.base,
+      racial: source.racial,
+      temp: source.temp,
+      total: source.total,
+      mod: source.mod,
+      modClass: modClass(source.mod),
+      isPrimary: false,
+      isSecondary: false,
+      isLowest: false
+    };
+  });
+
+  if (entries.length) {
+    const sortedTotals = entries.map(entry => entry.total).sort((a, b) => b - a);
+    const highest = sortedTotals[0];
+    const second = sortedTotals[1] ?? highest;
+    const lowest = sortedTotals[sortedTotals.length - 1];
+    for (const entry of entries) {
+      entry.isPrimary = entry.total === highest;
+      entry.isSecondary = entry.total === second && entry.total !== highest;
+      entry.isLowest = entry.total === lowest;
+    }
+  }
+
+  return {
+    abilities: entries,
+    canEdit: actor?.isOwner === true,
+    hasConstitution: !isDroidNpc
+  };
+}
+
+const NPC_SHEET_WRITABLE_EXACT_PATHS = new Set([
+  'name',
+  'img',
+  'system.class',
+  'system.className',
+  'system.race',
+  'system.size',
+  'system.speed',
+  'system.challengeLevel',
+  'system.level',
+  'system.credits',
+  'system.notes',
+  'system.bio',
+  'system.biography',
+  'system.details.notes',
+  'system.details.tactics'
+]);
+
+const NPC_SHEET_WRITABLE_PATTERNS = [
+  /^system\.attributes\.(str|dex|con|int|wis|cha)\.(base|racial|temp)$/
+];
+
+const NPC_QUIET_FIELD_PATHS = new Set([
+  'name',
+  'img',
+  'system.class',
+  'system.className',
+  'system.race',
+  'system.size',
+  'system.speed',
+  'system.challengeLevel',
+  'system.credits',
+  'system.notes',
+  'system.bio',
+  'system.biography',
+  'system.details.notes',
+  'system.details.tactics'
+]);
+
+const NPC_SHEET_BLOCKED_PREFIXES = [
+  'items.',
+  'effects.',
+  'system.derived.',
+  'system.houseRuleContexts.',
+  'system.actionEconomy.',
+  'system.defenses.',
+  'system.skills.',
+  'system.attacks.',
+  'system.generatedAttacks.',
+  'system.npcProfile.legalReview.',
+  'system.npcProfile.importAudit.',
+  'system.npcProfile.normalization.',
+  'flags.swse.import.raw',
+  'flags.swse.beastData'
+];
+
+const NPC_SHEET_BLOCKED_EXACT_PATHS = new Set([
+  'system.hp.max',
+  'system.health.max',
+  'system.bab',
+  'system.damageThreshold'
+]);
+
+function isNpcSheetWritablePath(path) {
+  if (!path || typeof path !== 'string') return false;
+  if (NPC_SHEET_BLOCKED_EXACT_PATHS.has(path)) return false;
+  if (NPC_SHEET_BLOCKED_PREFIXES.some(prefix => path === prefix || path.startsWith(prefix))) return false;
+  if (NPC_SHEET_WRITABLE_EXACT_PATHS.has(path)) return true;
+  return NPC_SHEET_WRITABLE_PATTERNS.some(pattern => pattern.test(path));
+}
+
+function filterNpcSheetUpdate(formDataObj) {
+  const allowed = {};
+  for (const [path, value] of Object.entries(formDataObj || {})) {
+    if (isNpcSheetWritablePath(path)) allowed[path] = value;
+  }
+  return allowed;
+}
+
+function isQuietNpcSheetPath(path) {
+  if (!path || typeof path !== 'string') return false;
+  if (NPC_QUIET_FIELD_PATHS.has(path)) return true;
+  return path.startsWith('system.notes.')
+    || path.startsWith('system.bio.')
+    || path.startsWith('system.biography.')
+    || path.startsWith('system.details.notes.')
+    || path.startsWith('system.details.tactics.');
+}
+
+function isQuietNpcSheetUpdate(flatUpdateData) {
+  const entries = Object.entries(flatUpdateData || {});
+  return entries.length > 0 && entries.every(([path]) => isQuietNpcSheetPath(path));
+}
 
 /**
  * SWSEV2NpcSheet
@@ -35,7 +201,8 @@ function markActiveConditionStep(root, actor) {
  * - _updateObject routes through ActorEngine
  */
 const { HandlebarsApplicationMixin } = foundry.applications.api;
-export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+export class SWSEV2NpcSheet extends
+  ShellHostMixin(HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static PARTS = {
     ...super.PARTS,
     body: {
@@ -46,9 +213,21 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    classes: ['swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'v2'],
-    width: 820,
-    height: 920
+    classes: ['application', 'swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'swse-sheet-ui', 'v2'],
+    position: {
+      width: 900,
+      height: 950
+    },
+    window: {
+      resizable: true,
+      draggable: true,
+      frame: false
+    },
+    form: {
+      closeOnSubmit: false,
+      submitOnChange: false
+    },
+    tabs: []
   };
 
   /**
@@ -57,6 +236,12 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
    */
   get actor() {
     return this.document;
+  }
+
+  constructor(document, options = {}) {
+    super(document, options);
+    this._shellSurface = 'home';
+    this._shellSurfaceOptions = {};
   }
 
   async _prepareContext(options) {
@@ -77,6 +262,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Collections, and User objects cannot be cloned. Extract only primitives and data.
     const actor = this.document;
     const context = {
+      ...baseContext,
       // Actor header data (serializable primitives only)
       actor: {
         id: actor.id,
@@ -107,7 +293,10 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       feats: [],
       talents: [],
       racialAbilities: [],
-      abilityPanel: {}
+      abilityPanel: {},
+      sheetTheme: ThemeResolutionService.resolveThemeKey(null, { actor }),
+      sheetMotionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor }),
+      sheetSurfaceStyleInline: ''
     };
 
     try {
@@ -120,6 +309,17 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     } catch (err) {
       console.error('Error preparing abilities panel for NPC sheet:', err);
     }
+
+    const npcConceptAbilities = buildNpcConceptAbilities(actor);
+    context.abilitiesPanel = npcConceptAbilities;
+    context.abilities = npcConceptAbilities.abilities;
+    context.conceptLayout = {
+      ...(context.conceptLayout ?? {}),
+      abilities: npcConceptAbilities.abilities,
+      abilitiesTab: {
+        entries: npcConceptAbilities.abilities
+      }
+    };
 
     // NPC Profile Context (Phase 1: Contract Foundation)
     try {
@@ -152,17 +352,23 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
             max: actor.system?.darkSideScore?.max ?? 0
           }
         });
-        context.conceptLayout = { force: forceCtx };
+        context.conceptLayout = {
+          ...(context.conceptLayout ?? {}),
+          force: forceCtx
+        };
       } catch (err) {
         console.error('Error building NPC force suite context:', err);
-        context.conceptLayout = { force: {} };
+        context.conceptLayout = {
+          ...(context.conceptLayout ?? {}),
+          force: {}
+        };
       }
     }
 
     // HP/Vitals Context for header (Phase 2 upgrade)
     try {
-      const hpMax = actor.system?.derived?.health?.max ?? actor.system?.health?.max ?? 0;
-      const hpCurrent = actor.system?.health?.value ?? 0;
+      const hpMax = actor.system?.derived?.hp?.max ?? actor.system?.hp?.max ?? actor.system?.derived?.health?.max ?? actor.system?.health?.max ?? 0;
+      const hpCurrent = actor.system?.hp?.value ?? actor.system?.health?.value ?? 0;
       const hpPercent = hpMax > 0 ? Math.round((hpCurrent / hpMax) * 100) : 0;
       context.hpCurrent = hpCurrent;
       context.hpMax = hpMax;
@@ -240,15 +446,22 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(root, this.document);
 
-    RenderAssertions.assertDOMElements(
-      root,
-      [".sheet-tabs", ".sheet-body"],
-      "SWSEV2NpcSheet"
-    );
+    this._wireNpcShellChromeEvents(root, signal);
+    this._wireNamedFieldPersistence(root, signal);
 
-    // Highlight the current condition step
-    markActiveConditionStep(root, this.actor);
-    applyResourceBarAnimations(this, root);
+    if (this._shellSurface === 'sheet') {
+      RenderAssertions.assertDOMElements(
+        root,
+        [".sheet-tabs", ".sheet-body"],
+        "SWSEV2NpcSheet"
+      );
+    }
+
+    if (this._shellSurface === 'sheet') {
+      // Condition step active state is template/context-owned; avoid render-time DOM mutation.
+      applyResourceBarAnimations(this, root);
+      this._activateNpcTab(root, this._requestedNpcTab());
+    }
 
     // Portrait upload + auto-apply (click via data-edit="img", drag/drop here)
     PortraitUploadController.bind(root, { actor: this.actor, signal });
@@ -256,6 +469,18 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Force Suite UI — only active for force-sensitive NPCs
     if (this.actor.system?.forceSensitive) {
       activateForceUI(this, root, { signal });
+    }
+
+    /* ---------------- TAB HANDLING ---------------- */
+    if (this._shellSurface === 'sheet') {
+      for (const tabBtn of root.querySelectorAll('.sheet-tabs .item')) {
+        tabBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const tabName = ev.currentTarget?.dataset?.tab;
+          if (!tabName) return;
+          this._activateNpcTab(root, tabName);
+        }, { signal });
+      }
     }
 
     // Condition step clicking
@@ -299,6 +524,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Abilities tab handlers (Phase 3)
     this._bindAbilityCardHandlers(root, { signal });
+    this._bindConceptAbilityPanelControls(root, { signal });
 
     // Condition track persistence toggle
     const persistentCheckbox = root.querySelector('.swse-v2-condition-persistent');
@@ -373,12 +599,56 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         ui.notifications?.warn('No owner is linked to this follower.');
         return;
       }
-      const ownerActor = game.actors?.get(ownerActorId);
+      const ownerActor = game.actors?.get(String(ownerActorId).replace(/^Actor\./, ''));
       if (!ownerActor) {
         ui.notifications?.warn('Owner actor could not be found in this world.');
         return;
       }
       await launchFollowerProgression(ownerActor, { existingFollowerId: this.actor.id });
+    }, { signal });
+
+
+
+    // Phase 9: Review & Repair actions. These are explicit user/GM actions;
+    // they do not run when an NPC sheet opens.
+    root.querySelector('[data-action="npc-repair-safe-normalize"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      try {
+        const result = await NpcReviewRepairEngine.applySafeFixes(this.actor);
+        if (result?.applied) {
+          ui.notifications?.info?.(`NPC Review & Repair applied ${result.updateCount} safe normalization update(s).`);
+        } else {
+          ui.notifications?.info?.('No safe NPC normalization updates were needed.');
+        }
+        await this.render(false);
+      } catch (err) {
+        console.error('NPC Review & Repair normalization failed:', err);
+        ui.notifications?.error?.(`NPC Review & Repair failed: ${err.message}`);
+      }
+    }, { signal });
+
+    root.querySelector('[data-action="npc-repair-gm-approve"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      try {
+        const confirm = globalThis.Dialog?.confirm;
+        let approved = true;
+        if (typeof confirm === 'function') {
+          approved = await confirm({
+            title: 'GM Approve NPC Overrides',
+            content: '<p>This marks the NPC as table-approved with overrides. It does not make the NPC progression-legal and does not recalculate HP, defenses, BAB, attacks, feats, or talents.</p>',
+            yes: () => true,
+            no: () => false,
+            defaultYes: false
+          });
+        }
+        if (!approved) return;
+        await NpcReviewRepairEngine.markGmApproved(this.actor);
+        ui.notifications?.info?.('NPC marked GM-approved with overrides.');
+        await this.render(false);
+      } catch (err) {
+        console.error('NPC GM approval failed:', err);
+        ui.notifications?.error?.(`NPC GM approval failed: ${err.message}`);
+      }
     }, { signal });
 
     // Open related actor sheet (linked relationship cards)
@@ -387,7 +657,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       ev.stopPropagation();
       const actorId = ev.currentTarget?.dataset?.actorId;
       if (!actorId) return;
-      const relatedActor = game.actors?.get(actorId);
+      const relatedActor = game.actors?.get(String(actorId).replace(/^Actor\./, ''));
       if (!relatedActor?.sheet) {
         ui.notifications?.warn('Related actor could not be found.');
         return;
@@ -432,6 +702,85 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       this,
       "SWSEV2NpcSheet"
     );
+  }
+
+  _wireNpcShellChromeEvents(root, signal) {
+    if (!(root instanceof HTMLElement)) return;
+
+    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this.close();
+    }, { signal });
+
+    root.querySelectorAll('[data-action="tablet-home"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('home');
+        await this.requestSurfaceRender({ reason: 'npc-tablet-home', surfaceId: 'home' });
+      }, { signal });
+    });
+
+    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      root.classList.toggle('swse-tablet-expanded');
+    }, { signal });
+  }
+
+  _requestedNpcTab() {
+    const requested = this._shellSurfaceOptions?.tab || this.shellSurfaceOptions?.tab;
+    return typeof requested === 'string' && requested.trim() ? requested.trim() : 'overview';
+  }
+
+  _activateNpcTab(root, tabName = 'overview') {
+    if (!(root instanceof HTMLElement)) return;
+    const requested = String(tabName || 'overview');
+    const tabs = [...root.querySelectorAll('.sheet-body .tab')];
+    const hasRequestedTab = tabs.some(tab => tab.dataset?.tab === requested);
+    const target = hasRequestedTab ? requested : 'overview';
+
+    this._shellSurfaceOptions = {
+      ...(this._shellSurfaceOptions ?? {}),
+      tab: target
+    };
+
+    root.querySelectorAll('.sheet-tabs .item').forEach(button => {
+      button.classList.toggle('active', button.dataset?.tab === target);
+    });
+
+    tabs.forEach(tab => {
+      tab.classList.toggle('active', tab.dataset?.tab === target);
+    });
+  }
+
+  _wireNamedFieldPersistence(root, signal) {
+    if (!(root instanceof HTMLElement)) return;
+
+    root.addEventListener('change', async (ev) => {
+      const field = ev.target instanceof HTMLElement
+        ? ev.target.closest('input[name], textarea[name], select[name]')
+        : null;
+      if (!(field instanceof HTMLElement)) return;
+      if (!field.name || field.hasAttribute('data-action') || field.disabled || field.hasAttribute('readonly')) return;
+      if (!isNpcSheetWritablePath(field.name)) return;
+
+      const rawValue = field.matches('input[type="checkbox"]') ? field.checked : field.value;
+      const update = {
+        [field.name]: coerceSingleFieldValue(field.name, rawValue, field)
+      };
+
+      try {
+        const quiet = isQuietNpcSheetPath(field.name);
+        await ActorEngine.updateActor(this.actor, update, {
+          source: quiet ? 'npc-sheet-direct-field-quiet' : 'npc-sheet-direct-field',
+          render: quiet ? false : undefined,
+          suppressAppRefresh: quiet,
+          meta: { guardKey: `npc-field:${field.name}` }
+        });
+      } catch (err) {
+        console.error('NPC field update failed:', err);
+        ui.notifications.error(`Failed to update field: ${err.message}`);
+      }
+    }, { signal });
   }
 
   async _onClose(options) {
@@ -546,6 +895,81 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     }
   }
 
+  /* -------- SHARED CONCEPT ABILITY PANEL CONTROLS (Phase 6) -------- */
+
+  _bindConceptAbilityPanelControls(root, { signal } = {}) {
+    if (!(root instanceof HTMLElement)) return;
+
+    root.addEventListener('click', async (ev) => {
+      const toggle = ev.target?.closest?.('[data-action="toggle-abilities"]');
+      if (toggle) {
+        ev.preventDefault();
+        const panel = toggle.closest('.abilities-panel');
+        if (!panel) return;
+        const isExpanded = panel.classList.toggle('abilities-expanded');
+        for (const row of panel.querySelectorAll('.ability-row')) {
+          const collapsed = row.querySelector('.ability-collapsed');
+          const expanded = row.querySelector('.ability-expanded');
+          if (collapsed instanceof HTMLElement) collapsed.style.display = isExpanded ? 'none' : 'flex';
+          if (expanded instanceof HTMLElement) expanded.style.display = isExpanded ? (expanded.dataset?.expandedDisplay || 'grid') : 'none';
+        }
+        toggle.setAttribute('aria-expanded', String(isExpanded));
+        toggle.textContent = isExpanded ? 'Collapse' : (toggle.dataset?.collapsedLabel || 'Edit Stats');
+        return;
+      }
+
+      const rollButton = ev.target?.closest?.('[data-action="roll-ability"]');
+      if (!rollButton) return;
+      ev.preventDefault();
+      const abilityKey = rollButton.dataset?.ability;
+      if (!abilityKey) return;
+
+      try {
+        await SWSERoll.rollAbility(this.actor, abilityKey, {
+          sourceElement: rollButton,
+          companionSource: rollButton,
+          sheet: this,
+          showRollCompanion: true
+        });
+      } catch (err) {
+        console.error('NPC ability roll failed:', err);
+        ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
+      }
+    }, { signal });
+
+    root.addEventListener('input', (ev) => {
+      const input = ev.target?.closest?.('.ability-expanded input');
+      if (!input) return;
+      const row = input.closest('.ability-row');
+      if (!row) return;
+      this._previewConceptAbilityRow(row);
+    }, { signal });
+  }
+
+  _previewConceptAbilityRow(row) {
+    const read = (field, fallback = 0) => {
+      const input = row.querySelector(`input[data-field="${field}"]`);
+      const value = Number(input?.value);
+      return Number.isFinite(value) ? value : fallback;
+    };
+    const base = read('base', 10);
+    const racial = read('racial', 0);
+    const temp = read('temp', 0);
+    const total = base + racial + temp;
+    const mod = Math.floor((total - 10) / 2);
+    const sign = mod > 0 ? `+${mod}` : String(mod);
+
+    row.querySelectorAll('.math-result, .swse-concept-ability-card__score').forEach((el) => {
+      el.textContent = String(total);
+    });
+    row.querySelectorAll('.math-mod, .swse-concept-ability-card__mod').forEach((el) => {
+      el.textContent = sign;
+      el.classList.toggle('mod--positive', mod > 0);
+      el.classList.toggle('mod--negative', mod < 0);
+      el.classList.toggle('mod--zero', mod === 0);
+    });
+  }
+
   /* -------- ABILITIES TAB HANDLERS (Phase 3) -------- */
 
   _bindAbilityCardHandlers(root, { signal } = {}) {
@@ -574,9 +998,11 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
         try {
           const ability = this.actor.items?.get(abilityId);
-          if (ability && typeof rollAttack === 'function') {
+          if (ability) {
             const { rollAttack } = await import("/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js");
-            await rollAttack(this.actor, ability);
+            if (typeof rollAttack === 'function') {
+              await rollAttack(this.actor, ability);
+            }
           }
         } catch (err) {
           console.error('Error rolling ability:', err);
@@ -612,14 +1038,21 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     const form = event.target;
     const formData = new FormData(form);
     const formDataObj = Object.fromEntries(formData.entries());
-    const expanded = foundry.utils.expandObject(formDataObj);
+    const allowedFlat = filterNpcSheetUpdate(formDataObj);
+    const expanded = foundry.utils.expandObject(allowedFlat);
 
-    if (!expanded) {return;}
+    if (!expanded || Object.keys(allowedFlat).length === 0) {return;}
 
     try {
-      // CRITICAL: Include ALL fields (name, system, etc.) not just system.
-      // Route directly through governance layer to bypass Foundry's actor.update()
-      await ActorEngine.updateActor(this.actor, expanded);
+      // Route safe source-field edits through governance. Derived math,
+      // statblock authority, import raw data, embedded items, and Legal Review
+      // repair data stay with their owning engines/surfaces.
+      const quiet = isQuietNpcSheetUpdate(allowedFlat);
+      await ActorEngine.updateActor(this.actor, expanded, {
+        source: quiet ? 'npc-sheet-form-submit-quiet' : 'npc-sheet-form-submit',
+        render: quiet ? false : undefined,
+        suppressAppRefresh: quiet
+      });
     } catch (err) {
       console.error('Sheet submission failed:', err);
       ui.notifications.error(`Failed to update actor: ${err.message}`);

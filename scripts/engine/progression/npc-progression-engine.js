@@ -58,7 +58,12 @@ export class NpcProgressionEngine {
     const stateUpdates = {
       'system.level': newLevel,
       // Mark NPC as in progression mode (not statblock)
-      'flags.foundryvtt-swse.npcLevelUp.mode': 'progression'
+      'flags.foundryvtt-swse.npcLevelUp.mode': 'progression',
+      'system.npcProfile.kind': 'heroic',
+      'system.npcProfile.mode': 'progression',
+      'system.npcProfile.sourceAuthority': 'progression',
+      'system.npcProfile.legalProfile': 'heroic',
+      'system.npcProfile.legalState': 'unchecked'
     };
 
     if (heroicClass) {
@@ -150,7 +155,12 @@ export class NpcProgressionEngine {
     const stateUpdates = {
       'system.level': newLevel,
       // Mark NPC as in progression mode (not statblock)
-      'flags.foundryvtt-swse.npcLevelUp.mode': 'progression'
+      'flags.foundryvtt-swse.npcLevelUp.mode': 'progression',
+      'system.npcProfile.kind': 'nonheroic',
+      'system.npcProfile.mode': 'progression',
+      'system.npcProfile.sourceAuthority': 'progression',
+      'system.npcProfile.legalProfile': 'nonheroic',
+      'system.npcProfile.legalState': 'unchecked'
     };
 
     if (nonheroicClass) {

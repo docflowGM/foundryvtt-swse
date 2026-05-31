@@ -440,6 +440,8 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-owner-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-profile-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-play-statblock-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-legal-review-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-progression-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-relationships-panel.hbs',

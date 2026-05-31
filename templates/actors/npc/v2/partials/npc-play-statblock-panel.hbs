@@ -1,0 +1,202 @@
+<section class="swse-npc-card swse-npc-play-statblock-card {{#if isStatblockMode}}is-statblock{{/if}}">
+  <header class="swse-npc-card__header">
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Play Mode Statblock</h3>
+      <p class="swse-npc-card__subhead">
+        Table-facing values from actor data, imported source text, and beast data. This does not legalize or rewrite the NPC.
+      </p>
+    </div>
+
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
+      <span class="swse-npc-badge swse-npc-badge--subtype">{{npcSourceAuthorityLabel}}</span>
+      {{#if playStatblock.rawAvailable}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Raw Source</span>
+      {{/if}}
+      {{#if playStatblock.beastDataAvailable}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Beast Data</span>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="swse-npc-card__body swse-npc-statblock-stack">
+    {{#if playStatblock.hasWarnings}}
+      <div class="swse-npc-callout swse-npc-callout--statblock">
+        <strong>Play Mode:</strong>
+        {{#each playStatblock.warnings as |warning|}}
+          <div>{{warning}}</div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    <div class="swse-npc-statblock-grid swse-npc-statblock-grid--core">
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">HP</label>
+        <div class="swse-npc-progress-stat__value">{{playStatblock.hp.value}} / {{playStatblock.hp.max}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">BAB</label>
+        <div class="swse-npc-progress-stat__value">{{playStatblock.bab}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Threshold</label>
+        <div class="swse-npc-progress-stat__value">{{playStatblock.damageThreshold}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Speed</label>
+        <div class="swse-npc-progress-stat__value">{{playStatblock.speed}}</div>
+      </div>
+    </div>
+
+    <div class="swse-npc-statblock-grid swse-npc-statblock-grid--defenses">
+      {{#each playStatblock.defenses as |defense|}}
+        <div class="swse-npc-progress-stat">
+          <label class="swse-npc-progress-stat__label">{{defense.label}}</label>
+          <div class="swse-npc-progress-stat__value">{{defense.value}}</div>
+        </div>
+      {{/each}}
+    </div>
+
+    <section class="swse-npc-statblock-section">
+      <h4>Abilities</h4>
+      {{#if playStatblock.abilities.length}}
+        <div class="swse-npc-chip-row">
+          {{#each playStatblock.abilities as |ability|}}
+            <span class="swse-npc-chip">{{ability.label}} {{ability.score}}{{#if ability.mod}} ({{ability.mod}}){{/if}}</span>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">No ability scores were found.</p>
+      {{/if}}
+    </section>
+
+    <section class="swse-npc-statblock-section">
+      <h4>Attacks</h4>
+      {{#if playStatblock.attacks.length}}
+        <div class="swse-npc-statblock-list swse-npc-statblock-list--attacks">
+          {{#each playStatblock.attacks as |attack|}}
+            <article class="swse-npc-statblock-row">
+              <div class="swse-npc-statblock-row__main">
+                <strong>{{attack.name}}</strong>
+                <span>{{attack.source}}</span>
+              </div>
+              <div class="swse-npc-statblock-row__meta">
+                <span>Attack {{attack.attack}}</span>
+                <span>Damage {{attack.damage}}</span>
+              </div>
+              {{#if attack.notes}}
+                <p>{{attack.notes}}</p>
+              {{/if}}
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">No itemized or raw statblock attacks were found.</p>
+      {{/if}}
+    </section>
+
+    <section class="swse-npc-statblock-section">
+      <h4>Skills</h4>
+      {{#if playStatblock.skills.length}}
+        <div class="swse-npc-chip-row">
+          {{#each playStatblock.skills as |skill|}}
+            <span class="swse-npc-chip">{{skill.label}} {{skill.total}}{{#if skill.trained}} · trained{{/if}}</span>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">No trained or notable skill rows were found.</p>
+      {{/if}}
+    </section>
+
+    <section class="swse-npc-statblock-section">
+      <h4>Special Traits / Immunities / Source Notes</h4>
+      {{#if playStatblock.specials.length}}
+        <div class="swse-npc-statblock-list">
+          {{#each playStatblock.specials as |special|}}
+            <article class="swse-npc-statblock-row">
+              <div class="swse-npc-statblock-row__main">
+                <strong>{{special.label}}</strong>
+                <span>{{special.source}}</span>
+              </div>
+              <p>{{special.value}}</p>
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">No structured special trait or immunity notes were found.</p>
+      {{/if}}
+    </section>
+
+    {{#if playStatblock.forcePowers.length}}
+      <section class="swse-npc-statblock-section">
+        <h4>Force Powers</h4>
+        <div class="swse-npc-chip-row">
+          {{#each playStatblock.forcePowers as |power|}}
+            <span class="swse-npc-chip">{{power.name}}</span>
+          {{/each}}
+        </div>
+      </section>
+    {{/if}}
+
+    <section class="swse-npc-statblock-section">
+      <h4>Feats / Talents</h4>
+      <div class="swse-npc-statblock-grid swse-npc-statblock-grid--features">
+        <div>
+          <h5>Feats</h5>
+          {{#if playStatblock.featureGroups.feats.length}}
+            <div class="swse-npc-chip-row">
+              {{#each playStatblock.featureGroups.feats as |feat|}}
+                <span class="swse-npc-chip">{{feat.name}}</span>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="swse-npc-empty-state">No feat items.</p>
+          {{/if}}
+        </div>
+        <div>
+          <h5>Talents</h5>
+          {{#if playStatblock.featureGroups.talents.length}}
+            <div class="swse-npc-chip-row">
+              {{#each playStatblock.featureGroups.talents as |talent|}}
+                <span class="swse-npc-chip">{{talent.name}}</span>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="swse-npc-empty-state">No talent items.</p>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+
+    {{#if playStatblock.sourceLines.length}}
+      <section class="swse-npc-statblock-section">
+        <h4>Raw Source Context</h4>
+        <div class="swse-npc-statblock-list">
+          {{#each playStatblock.sourceLines as |line|}}
+            <article class="swse-npc-statblock-row">
+              <div class="swse-npc-statblock-row__main">
+                <strong>{{line.label}}</strong>
+                <span>{{line.source}}</span>
+              </div>
+              <p>{{line.value}}</p>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if playStatblock.hasLanguages}}
+      <section class="swse-npc-statblock-section">
+        <h4>Languages</h4>
+        <div class="swse-npc-chip-row">
+          {{#each playStatblock.languages as |language|}}
+            <span class="swse-npc-chip">{{language}}</span>
+          {{/each}}
+        </div>
+      </section>
+    {{/if}}
+  </div>
+</section>

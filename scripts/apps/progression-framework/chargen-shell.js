@@ -23,6 +23,7 @@ import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
 import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
+import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
 
 // Phase 2: Legacy imports kept for backward compat during transition
 // These are now resolved via NODE_PLUGIN_MAP in node-descriptor-mapper.js
@@ -58,6 +59,21 @@ export class ChargenShell extends ProgressionShell {
     // Phase 1: Detect droid subtype based on actor system data
     if (DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {})) {
       return 'droid';
+    }
+
+    if (this.actor.type === 'npc') {
+      try {
+        const profile = getNpcProfileState(this.actor);
+        if (profile.kind === 'beast' || profile.legalProfile === 'beast') return 'beast';
+        if (profile.kind === 'mount' || profile.legalProfile === 'mount') return 'mount';
+        if (profile.kind === 'follower' || profile.legalProfile === 'follower') return 'follower';
+        if (profile.kind === 'minion' || profile.kind === 'privateer' || profile.legalProfile === 'minion') return profile.kind === 'privateer' ? 'privateer' : 'minion';
+        if (profile.kind === 'nonheroic' || profile.legalProfile === 'nonheroic') return 'nonheroic';
+        if (profile.kind === 'heroic' || profile.legalProfile === 'heroic') return 'heroic';
+        if (profile.imported || profile.legalProfile === 'imported-statblock') return 'imported-statblock';
+      } catch (err) {
+        console.warn('[ChargenShell] NPC profile inference failed; falling back to legacy subtype detection.', err);
+      }
     }
 
     // Phase 2.7: Detect Beast profile (takes precedence over nonheroic)

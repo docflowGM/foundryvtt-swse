@@ -23,6 +23,7 @@ import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { ClassTalentStep } from './steps/talent-step.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
+import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
 
 export class LevelupShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -62,6 +63,21 @@ export class LevelupShell extends ProgressionShell {
       return 'droid';
     }
 
+    if (this.actor.type === 'npc') {
+      try {
+        const profile = getNpcProfileState(this.actor);
+        if (profile.kind === 'beast' || profile.legalProfile === 'beast') return 'beast';
+        if (profile.kind === 'mount' || profile.legalProfile === 'mount') return 'mount';
+        if (profile.kind === 'follower' || profile.legalProfile === 'follower') return 'follower';
+        if (profile.kind === 'minion' || profile.kind === 'privateer' || profile.legalProfile === 'minion') return profile.kind === 'privateer' ? 'privateer' : 'minion';
+        if (profile.kind === 'nonheroic' || profile.legalProfile === 'nonheroic') return 'nonheroic';
+        if (profile.kind === 'heroic' || profile.legalProfile === 'heroic') return 'heroic';
+        if (profile.imported || profile.legalProfile === 'imported-statblock') return 'imported-statblock';
+      } catch (err) {
+        console.warn('[LevelupShell] NPC profile inference failed; falling back to legacy subtype detection.', err);
+      }
+    }
+
     // Phase 2.8: Detect Beast profile (highest priority)
     const isBeastProfile = this.actor.flags?.swse?.beastData ||
                           this.progressionSession?.beastContext?.isBeast === true;
@@ -92,7 +108,7 @@ export class LevelupShell extends ProgressionShell {
   async _getCanonicalDescriptors() {
     try {
       // Detect subtype based on actor properties
-      const subtype = this._getProgressionSubtype();
+      const subtype = this.progressionSession?.subtype || this._getProgressionSubtype('levelup', this.options || {});
 
       // Compute active nodes for level-up mode
       const computer = new ActiveStepComputer();

@@ -8,6 +8,7 @@ import { SWSEDroidSheet } from "./scripts/swse-droid.js";
 import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
 import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
+import { SWSEV2NpcSheet } from "./scripts/sheets/v2/npc-sheet.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
@@ -79,6 +80,12 @@ Hooks.once("init", async () => {
   Actors.registerSheet("swse", SWSEV2DroidSheet, {
     types: ["droid"],
     label: "SWSE Droid Sheet v2",
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEV2NpcSheet, {
+    types: ["npc"],
+    label: "SWSE NPC Sheet v2",
     makeDefault: true
   });
 
