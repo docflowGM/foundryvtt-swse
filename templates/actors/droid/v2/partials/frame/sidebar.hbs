@@ -1,0 +1,30 @@
+<section class="swse-concept-panel swse-droid-sidebar-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Unit Snapshot</h3>
+      <p class="swse-concept-panel__hint">Droid-specific command readout.</p>
+    </div>
+  </header>
+  <div class="swse-concept-chip-row">
+    <span class="swse-concept-chip swse-concept-chip--neutral">HP {{quickGlance.hpLabel}}</span>
+    <span class="swse-concept-chip swse-concept-chip--neutral">Speed {{quickGlance.speed}}</span>
+    <span class="swse-concept-chip swse-concept-chip--neutral">Credits {{system.credits}}</span>
+  </div>
+</section>
+
+<section class="swse-concept-panel swse-droid-sidebar-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Droid Systems</h3>
+      <p class="swse-concept-panel__hint">Garage-owned systems remain droid-specific.</p>
+    </div>
+  </header>
+  <div class="swse-concept-list-stack">
+    <article class="swse-concept-simple-row swse-concept-simple-row--compact"><div class="swse-concept-simple-row__copy"><strong>Processor</strong><span>{{#if droid.resolvedSystems.processor.defaultName}}{{droid.resolvedSystems.processor.defaultName}}{{else}}Configured{{/if}}</span></div></article>
+    <article class="swse-concept-simple-row swse-concept-simple-row--compact"><div class="swse-concept-simple-row__copy"><strong>Locomotion</strong><span>{{#if droid.resolvedSystems.locomotion.defaultName}}{{droid.resolvedSystems.locomotion.defaultName}}{{else}}Configured{{/if}}</span></div></article>
+    <article class="swse-concept-simple-row swse-concept-simple-row--compact"><div class="swse-concept-simple-row__copy"><strong>Appendages</strong><span>{{#if droid.resolvedSystems.appendages.defaultName}}{{droid.resolvedSystems.appendages.defaultName}}{{else}}Configured{{/if}}</span></div></article>
+  </div>
+  {{#if droid.garage.canOpenGarage}}
+    <button type="button" class="edit-droid-systems swse-concept-btn swse-concept-btn--primary">Open Droid Systems</button>
+  {{/if}}
+</section>

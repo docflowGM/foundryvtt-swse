@@ -585,3 +585,146 @@
   color: var(--swse-color-warning, var(--color-warm-2, #f0b35f));
   font-size: 0.82rem;
 }
+
+
+/* Phase 3: Shared holopad shell parity cleanup.
+   Droid sheets now live inside the same concept tablet/screen frame as the
+   character sheet; keep the sheet surface bounded inside that screen and let
+   shell surfaces own full-screen routing. */
+.swse-droid-sheet .swse-droid-tablet,
+.swse-droid-sheet .swse-droid-screen {
+  min-height: 0;
+}
+
+.swse-droid-sheet .swse-droid-screen {
+  overflow: hidden;
+}
+
+.swse-droid-sheet .swse-droid-sheet-form {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-droid-sheet .swse-droid-sheet-surface {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.swse-droid-sheet .swse-shell-screen-surface {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-droid-sheet .swse-shell-surface-host {
+  inset: 0;
+}
+
+.swse-droid-sheet .sheet-tabs.swse-sheet-tabs {
+  flex: 0 0 auto;
+}
+
+.swse-droid-sheet .sheet-body.swse-sheet-body {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+/* Phase 4: Droid concept partial parity.
+   Droid sheet content now sits directly in the shared holopad concept screen;
+   the old nested datapad/home/radial mimic has been removed from the live path. */
+.swse-droid-sheet .swse-droid-concept-root {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.swse-droid-sheet .swse-droid-concept-body {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.swse-droid-sheet .swse-droid-concept-main {
+  min-height: 0;
+  overflow: auto;
+}
+
+.swse-droid-sheet .swse-droid-concept-sidebar {
+  min-height: 0;
+  overflow: auto;
+}
+
+.swse-droid-sheet .swse-droid-concept-header .swse-concept-field input,
+.swse-droid-sheet .swse-droid-concept-main input,
+.swse-droid-sheet .swse-droid-concept-main textarea {
+  width: 100%;
+}
+
+.swse-droid-sheet .swse-droid-panel,
+.swse-droid-sheet .swse-droid-sidebar-panel {
+  padding: var(--swse-space-3, 0.75rem);
+}
+
+.swse-droid-sheet .swse-droid-panel .swse-concept-panel__header,
+.swse-droid-sheet .swse-droid-sidebar-panel .swse-concept-panel__header {
+  margin-bottom: var(--swse-space-2, 0.5rem);
+}
+
+.swse-droid-sheet .swse-droid-overview-grid,
+.swse-droid-sheet .swse-droid-two-up,
+.swse-droid-sheet .swse-droid-ability-grid {
+  gap: var(--swse-space-3, 0.75rem);
+}
+
+.swse-droid-sheet .swse-list-row.weapon-entry,
+.swse-droid-sheet .swse-list-row.list-entry,
+.swse-droid-sheet button.swse-list-row {
+  width: 100%;
+  text-align: left;
+}
+
+.swse-droid-sheet .swse-defense-chip {
+  cursor: pointer;
+}
+
+.swse-droid-sheet .swse-droid-default-region.swse-concept-panel {
+  padding: 0;
+}
+
+.swse-droid-sheet .swse-droid-region-wrapper > .swse-concept-panel,
+.swse-droid-sheet .swse-droid-region-wrapper > .swse-panel {
+  min-height: 100%;
+}
+
+.swse-droid-sheet .swse-droid-identity-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--swse-space-2, 0.5rem);
+}
+
+.swse-droid-sheet .swse-droid-summary-readout {
+  border: 1px solid rgba(116, 214, 255, 0.22);
+  border-radius: 0.5rem;
+  padding: var(--swse-space-2, 0.5rem);
+  background: rgba(5, 14, 24, 0.42);
+}
+
+.swse-droid-sheet .swse-droid-summary-readout span {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.swse-droid-sheet .swse-droid-summary-readout strong {
+  display: block;
+  margin-top: 0.2rem;
+}

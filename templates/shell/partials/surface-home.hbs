@@ -182,6 +182,7 @@
                     data-route-id="{{this.routeId}}"
                     {{#if this.bayMode}}data-bay-mode="{{this.bayMode}}"{{/if}}
                     {{#if this.contextMode}}data-context-mode="{{this.contextMode}}"{{/if}}
+                    {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}
                     type="button"
                     {{#unless this.enabled}}disabled{{/unless}}>
               <span class="swse-home-tile-id">{{this.id}}</span>
@@ -300,6 +301,20 @@
       <div class="swse-home-footer">
         <div class="swse-home-footer-left">
           <div class="swse-home-footer-label">Quick Launch</div>
+          {{#if vm.isVehicleHome}}
+          <button class="swse-home-nav-pill" data-route-id="sheet" type="button">
+            <span class="swse-home-key">[1]</span> Vehicle
+          </button>
+          <button class="swse-home-nav-pill" data-route-id="customization" data-bay-mode="shipyard" data-context-mode="modifyExisting" type="button">
+            <span class="swse-home-key">[2]</span> Shipyard
+          </button>
+          <button class="swse-home-nav-pill" data-route-id="sheet" type="button">
+            <span class="swse-home-key">[3]</span> Stations
+          </button>
+          <button class="swse-home-nav-pill" data-route-id="store" type="button">
+            <span class="swse-home-key">[4]</span> Store
+          </button>
+          {{else}}
           <button class="swse-home-nav-pill" data-route-id="sheet" type="button">
             <span class="swse-home-key">[1]</span> Character
           </button>
@@ -312,6 +327,7 @@
           <button class="swse-home-nav-pill" data-route-id="store" type="button">
             <span class="swse-home-key">[4]</span> Store
           </button>
+          {{/if}}
         </div>
         <div class="swse-home-footer-quote">
           <span style="color: var(--vapor-cyan);">▸</span> "Use the datapad well, young one." <span style="color: var(--ink-faint);">— Master Tholos</span>

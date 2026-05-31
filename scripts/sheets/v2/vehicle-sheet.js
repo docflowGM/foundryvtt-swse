@@ -1,6 +1,6 @@
 // scripts/sheets/v2/vehicle-sheet.js
 
-const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
@@ -17,7 +17,6 @@ import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foun
 // PHASE 1: Import prepared context builders instead of direct engine access
 import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
-import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
 import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
 import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
 import { EnhancedEngineer } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-engineer.js";
@@ -25,18 +24,113 @@ import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/st
 import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
 
-function markActiveConditionStep(root, actor) {
-  if (!(root instanceof HTMLElement)) return;
-  const current = Number(actor?.system?.conditionTrack?.current ?? 0);
-  for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
-    const s = Number(el.dataset?.step);
-    if (Number.isFinite(s) && s === current) el.classList.add('active');
+const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
+  'name',
+  'img',
+  'system.category',
+  'system.type',
+  'system.size',
+  'system.challengeLevel',
+  'system.cost',
+  'system.availability',
+  'system.hull.value',
+  'system.hull.max',
+  'system.shields.value',
+  'system.shields.max',
+  'system.shieldRating',
+  'system.damageReduction',
+  'system.reflexDefense',
+  'system.fortitudeDefense',
+  'system.damageThreshold',
+  'system.armorBonus',
+  'system.speed',
+  'system.maxVelocity',
+  'system.maneuver',
+  'system.hyperdrive',
+  'system.crew',
+  'system.crewQuality',
+  'system.passengers',
+  'system.cargo',
+  'system.payload',
+  'system.cover',
+  'system.notes',
+  'system.description',
+  'system.details.notes'
+]);
+
+const VEHICLE_SHEET_WRITABLE_PATTERNS = [
+  /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
+  /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
+];
+
+
+const VEHICLE_QUIET_FIELD_PATHS = new Set([
+  'name',
+  'img',
+  'system.category',
+  'system.type',
+  'system.size',
+  'system.challengeLevel',
+  'system.cost',
+  'system.availability',
+  'system.crew',
+  'system.crewQuality',
+  'system.passengers',
+  'system.cargo',
+  'system.payload',
+  'system.cover',
+  'system.notes',
+  'system.description',
+  'system.details.notes'
+]);
+
+function isQuietVehicleSheetPath(path) {
+  if (!path || typeof path !== 'string') return false;
+  if (VEHICLE_QUIET_FIELD_PATHS.has(path)) return true;
+  return path.startsWith('system.notes.')
+    || path.startsWith('system.description.')
+    || path.startsWith('system.details.notes.');
+}
+
+function isQuietVehicleSheetUpdate(flatUpdateData) {
+  const entries = Object.entries(flatUpdateData || {});
+  return entries.length > 0 && entries.every(([path]) => isQuietVehicleSheetPath(path));
+}
+
+const VEHICLE_SHEET_BLOCKED_PREFIXES = [
+  'items.',
+  'system.derived.',
+  'system.vehiclePanels.',
+  'system.houseRuleContexts.',
+  'system.actionEconomy.',
+  'system.subsystems.',
+  'system.power.',
+  'system.powerRouting.',
+  'system.shieldZones.',
+  'system.turnState.',
+  'system.customization.',
+  'system.shipyard.'
+];
+
+function isVehicleSheetWritablePath(path) {
+  if (!path || typeof path !== 'string') return false;
+  if (VEHICLE_SHEET_BLOCKED_PREFIXES.some(prefix => path.startsWith(prefix))) return false;
+  if (VEHICLE_SHEET_WRITABLE_EXACT_PATHS.has(path)) return true;
+  return VEHICLE_SHEET_WRITABLE_PATTERNS.some(pattern => pattern.test(path));
+}
+
+function filterVehicleSheetUpdate(formDataObj) {
+  const allowed = {};
+  for (const [path, value] of Object.entries(formDataObj || {})) {
+    if (isVehicleSheetWritablePath(path)) allowed[path] = value;
   }
+  return allowed;
 }
 
 export class SWSEV2VehicleSheet extends
-  HandlebarsApplicationMixin(DocumentSheetV2) {
+  ShellHostMixin(HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
 
   static PARTS = {
     ...super.PARTS,
@@ -51,19 +145,18 @@ export class SWSEV2VehicleSheet extends
     width: 820,
     height: 920,
     window: {
-      resizable: true
+      resizable: true,
+      draggable: true,
+      frame: false
     },
     form: {
       closeOnSubmit: false,
       submitOnChange: false
     },
-    tabs: [
-      {
-        navSelector: ".sheet-tabs",
-        contentSelector: ".sheet-content",
-        initial: "overview"
-      }
-    ]
+    // The shared holopad shell owns the window frame. Vehicle tabs are wired
+    // by this sheet so Foundry does not try to bind classic framed tabs inside
+    // the frameless tablet surface.
+    tabs: []
   };
 
   /**
@@ -76,6 +169,10 @@ export class SWSEV2VehicleSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+    // Vehicles are first-class datapad actors: open to Holopad Home first,
+    // then launch Vehicle Sheet / Shipyard / stations inside the shared shell.
+    this._shellSurface = 'home';
+    this._shellSurfaceOptions = {};
   }
 
   async _prepareContext(options) {
@@ -195,7 +292,10 @@ export class SWSEV2VehicleSheet extends
     const starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
 
     const overrides = {
-    actionEconomy,
+      actionEconomy,
+      sheetTheme: actor.getFlag?.("foundryvtt-swse", "sheetTheme") ?? "default",
+      sheetMotionStyle: actor.getFlag?.("foundryvtt-swse", "sheetMotionStyle") ?? "normal",
+      sheetSurfaceStyleInline: "",
       // Core document and system data
       system: actor.system,
       derived: derived,  // Now properly normalized by buildVehicleDerived
@@ -253,18 +353,8 @@ export class SWSEV2VehicleSheet extends
   }
 
   /**
-   * Post-render hook: Attach event listeners, NOT manipulate DOM
-   *
-   * RULES FOR _onRender():
-   * ✓ Traverse DOM with querySelector/querySelectorAll
-   * ✓ Attach event listeners via addEventListener
-   * ✓ Read data attributes and CSS classes
-   * ✗ Do NOT mutate DOM (add/remove/modify elements)
-   * ✗ Do NOT change CSS classes or styles
-   * ✗ Do NOT set textContent or innerHTML
-   *
-   * If you need to change what renders: update actor data in _updateObject(),
-   * which triggers a re-render with new _prepareContext() data.
+   * Post-render hook. Actor/system data must remain context-owned; this method
+   * only wires event listeners and updates transient shell/tab chrome state.
    */
   async _onRender(context, options) {
     // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
@@ -302,7 +392,9 @@ export class SWSEV2VehicleSheet extends
       "SWSEV2VehicleSheet"
     );
 
-    markActiveConditionStep(root, this.actor);
+    this._wireVehicleShellChromeEvents(root, signal);
+
+    this._activateVehicleTab(root, this._requestedVehicleTab());
 
     /* ---------------- TAB HANDLING ---------------- */
 
@@ -313,16 +405,7 @@ export class SWSEV2VehicleSheet extends
             const tabName = ev.currentTarget.dataset.tab;
             if (!tabName) return;
 
-            root.querySelectorAll(".sheet-tabs .item")
-              .forEach(b => b.classList.remove("active"));
-
-            ev.currentTarget.classList.add("active");
-
-            root.querySelectorAll(".tab")
-              .forEach(t => t.classList.remove("active"));
-
-            root.querySelector(`.tab[data-tab="${tabName}"]`)
-              ?.classList.add("active");
+            this._activateVehicleTab(root, tabName);
           } catch (err) {
             console.error("Error handling tab click:", err);
           }
@@ -331,6 +414,8 @@ export class SWSEV2VehicleSheet extends
     } catch (err) {
       console.error("Error binding tab handlers:", err);
     }
+
+    this._wireConceptAbilityPanelControls(root, signal);
 
     /* ---------------- CONDITION STEP HANDLING ---------------- */
 
@@ -614,7 +699,15 @@ export class SWSEV2VehicleSheet extends
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
-        VehicleCustomizationRouter.openVehicleCustomization(this.actor);
+        await this.setSurface('customization', {
+          source: 'vehicle-sheet',
+          bayMode: 'shipyard',
+          contextMode: 'modifyExisting'
+        });
+        await this.requestSurfaceRender({
+          reason: 'vehicle-sheet-shipyard-launch',
+          surfaceId: 'customization'
+        });
       }, { signal });
     }
 
@@ -760,6 +853,135 @@ export class SWSEV2VehicleSheet extends
     }, 800);
   }
 
+
+  _wireConceptAbilityPanelControls(root, signal) {
+    if (!(root instanceof HTMLElement)) return;
+
+    root.addEventListener("click", async (ev) => {
+      const toggle = ev.target?.closest?.('[data-action="toggle-abilities"]');
+      if (toggle) {
+        ev.preventDefault();
+        const panel = toggle.closest(".abilities-panel");
+        if (!panel) return;
+        const isExpanded = panel.classList.toggle("abilities-expanded");
+        for (const row of panel.querySelectorAll(".ability-row")) {
+          const collapsed = row.querySelector(".ability-collapsed");
+          const expanded = row.querySelector(".ability-expanded");
+          if (collapsed instanceof HTMLElement) collapsed.style.display = isExpanded ? "none" : "flex";
+          if (expanded instanceof HTMLElement) expanded.style.display = isExpanded ? (expanded.dataset?.expandedDisplay || "grid") : "none";
+        }
+        toggle.setAttribute("aria-expanded", String(isExpanded));
+        toggle.textContent = isExpanded ? "Collapse" : (toggle.dataset?.collapsedLabel || "Edit Stats");
+        return;
+      }
+
+      const rollButton = ev.target?.closest?.('[data-action="roll-ability"]');
+      if (!rollButton) return;
+      ev.preventDefault();
+      const abilityKey = rollButton.dataset?.ability;
+      if (!abilityKey || abilityKey === 'con') return;
+
+      try {
+        await SWSERoll.rollAbility(this.actor, abilityKey, {
+          sourceElement: rollButton,
+          companionSource: rollButton,
+          sheet: this,
+          showRollCompanion: true
+        });
+      } catch (err) {
+        console.error("Vehicle ability roll failed:", err);
+        ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
+      }
+    }, { signal });
+
+    root.addEventListener("input", (ev) => {
+      const input = ev.target?.closest?.(".ability-expanded input");
+      if (!input) return;
+      const row = input.closest(".ability-row");
+      if (!row) return;
+      this._previewConceptAbilityRow(row);
+    }, { signal });
+  }
+
+  _previewConceptAbilityRow(row) {
+    const read = (field, fallback = 0) => {
+      const input = row.querySelector(`input[data-field="${field}"]`);
+      const value = Number(input?.value);
+      return Number.isFinite(value) ? value : fallback;
+    };
+    const base = read("base", 10);
+    const racial = read("racial", 0);
+    const temp = read("temp", 0);
+    const total = base + racial + temp;
+    const mod = Math.floor((total - 10) / 2);
+    const sign = mod > 0 ? `+${mod}` : String(mod);
+    row.querySelectorAll(".math-result, .swse-concept-ability-card__score").forEach((el) => { el.textContent = String(total); });
+    row.querySelectorAll(".math-mod, .swse-concept-ability-card__mod").forEach((el) => {
+      el.textContent = sign;
+      el.classList.toggle("mod--positive", mod > 0);
+      el.classList.toggle("mod--negative", mod < 0);
+      el.classList.toggle("mod--zero", mod === 0);
+    });
+  }
+
+
+  _requestedVehicleTab() {
+    const requested = this._shellSurfaceOptions?.tab || this.shellSurfaceOptions?.tab;
+    return typeof requested === 'string' && requested.trim() ? requested.trim() : 'overview';
+  }
+
+  _activateVehicleTab(root, tabName = 'overview') {
+    if (!(root instanceof HTMLElement)) return;
+    const requested = String(tabName || 'overview');
+    const hasRequestedTab = [...root.querySelectorAll('.sheet-content .tab')]
+      .some(tab => tab.dataset?.tab === requested);
+    const target = hasRequestedTab ? requested : 'overview';
+
+    root.querySelectorAll('.sheet-tabs .item').forEach(button => {
+      button.classList.toggle('active', button.dataset?.tab === target);
+    });
+
+    root.querySelectorAll('.sheet-content .tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset?.tab === target);
+    });
+  }
+
+
+  /**
+   * Wire vehicle-only tablet chrome events that are not part of the generic
+   * ShellHost route/overlay/drawer contract. Generic shell events stay owned
+   * by ShellHostMixin.
+   *
+   * @private
+   * @param {HTMLElement} root
+   * @param {AbortSignal} signal
+   */
+  _wireVehicleShellChromeEvents(root, signal) {
+    if (!(root instanceof HTMLElement)) return;
+
+    root.querySelectorAll('[data-action="tablet-close"]').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        this.close();
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="tablet-home"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('home');
+        await this.requestSurfaceRender({ reason: 'vehicle-tablet-home', surfaceId: 'home' });
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="tablet-expand"]').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        root.classList.toggle('swse-tablet-expanded');
+      }, { signal });
+    });
+  }
+
   /* ------------------------------------------------------------------------ */
   /* FORM UPDATE ROUTING                                                      */
   /* ------------------------------------------------------------------------ */
@@ -770,13 +992,20 @@ export class SWSEV2VehicleSheet extends
     const form = event.target;
     const formData = new FormData(form);
     const formDataObj = Object.fromEntries(formData.entries());
-    const expanded = foundry.utils.expandObject(formDataObj);
+    const allowedFlat = filterVehicleSheetUpdate(formDataObj);
+    const expanded = foundry.utils.expandObject(allowedFlat);
 
-    if (!expanded) return;
+    if (!expanded || Object.keys(allowedFlat).length === 0) return;
 
     try {
-      // Route directly through governance layer
-      await ActorEngine.updateActor(this.actor, expanded);
+      // Route safe source-field edits through governance. Derived, Shipyard,
+      // subsystem, and embedded-item ownership stays with their canonical engines.
+      const quiet = isQuietVehicleSheetUpdate(allowedFlat);
+      await ActorEngine.updateActor(this.actor, expanded, {
+        source: quiet ? 'vehicle-sheet-form-submit-quiet' : 'vehicle-sheet-form-submit',
+        render: quiet ? false : undefined,
+        suppressAppRefresh: quiet
+      });
     } catch (err) {
       console.error('Sheet submission failed:', err);
       ui.notifications.error(`Failed to update actor: ${err.message}`);

@@ -663,6 +663,16 @@ export const ActorEngine = {
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
       // ========================================
       this._markActorMutationInFlight(actor.id);
+
+      // Quiet sheet edits are intentionally persisted without forcing every open
+      // sheet/shell surface to repaint. Foundry's own render:false option stops
+      // the document update repaint; this transient flag also tells async derived
+      // recalculation hooks not to schedule a follow-up shell render.
+      const shouldSuppressAppRefresh = Boolean(options?.suppressAppRefresh);
+      if (shouldSuppressAppRefresh) {
+        actor._swseSuppressAppRefreshDepth = Number(actor._swseSuppressAppRefreshDepth || 0) + 1;
+      }
+
       try {
         // ========================================
         // PHASE 3: Authorize mutation via context
@@ -740,6 +750,9 @@ export const ActorEngine = {
           }
         }
       } finally {
+        if (shouldSuppressAppRefresh) {
+          actor._swseSuppressAppRefreshDepth = Math.max(0, Number(actor._swseSuppressAppRefreshDepth || 0) - 1);
+        }
         // PHASE 2: Always clear in-flight flag, even on error
         this._clearActorMutationInFlight(actor.id);
       }

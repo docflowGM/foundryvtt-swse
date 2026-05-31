@@ -1,0 +1,75 @@
+{{!--
+  surface-asset-bay.hbs — Owned Droid Garage / Shipyard control point.
+
+  This is an owner dashboard, not a droid/vehicle sheet replacement.
+  Droid actors still use the Droid Sheet as their character sheet app.
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--asset-bay"
+     data-shell-region="surface-asset-bay"
+     data-surface-id="{{vm.id}}"
+     data-bay-mode="{{vm.mode}}">
+  <div class="swse-shell-surface__header">
+    <button class="swse-shell-surface__back-btn"
+            data-shell-action="return-to-home"
+            type="button"
+            title="Return to Home">
+      <i class="fas fa-arrow-left"></i>
+      <span>Home</span>
+    </button>
+    <div class="swse-shell-surface__title">
+      <i class="fas {{#if (eq vm.mode 'shipyard')}}fa-rocket{{else}}fa-robot{{/if}}"></i>
+      <span>{{vm.title}}</span>
+    </div>
+    <div class="swse-shell-surface__subtitle">{{vm.subtitle}}</div>
+  </div>
+
+  <div class="swse-shell-surface__body swse-shell-surface__body--asset-bay">
+    {{#if vm.error}}
+      <div class="swse-shell-surface__error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{vm.error}}</span>
+      </div>
+    {{else if vm.hasAssets}}
+      <div class="swse-asset-bay-grid">
+        {{#each vm.assets as |asset|}}
+          <article class="swse-asset-bay-card" data-asset-id="{{asset.actorId}}" data-asset-type="{{asset.type}}">
+            <div class="swse-asset-bay-card__portrait">
+              <img src="{{asset.img}}" alt="{{asset.name}}" />
+            </div>
+            <div class="swse-asset-bay-card__body">
+              <h3>{{asset.name}}</h3>
+              <div class="swse-asset-bay-card__detail">{{asset.detail}}</div>
+              <div class="swse-asset-bay-card__status">{{asset.status}}</div>
+            </div>
+            <div class="swse-asset-bay-card__actions">
+              <button type="button"
+                      class="swse-asset-bay-action"
+                      data-asset-bay-action="open-sheet"
+                      data-actor-id="{{asset.actorId}}"
+                      {{#unless asset.canOpenSheet}}disabled{{/unless}}>
+                <i class="fas fa-external-link-alt"></i>
+                <span>{{asset.sheetLabel}}</span>
+              </button>
+              <button type="button"
+                      class="swse-asset-bay-action primary"
+                      data-asset-bay-action="modify"
+                      data-actor-id="{{asset.actorId}}"
+                      data-bay-mode="{{../vm.mode}}"
+                      {{#unless asset.canModify}}disabled{{/unless}}>
+                <i class="fas fa-tools"></i>
+                <span>{{asset.modifyLabel}}</span>
+              </button>
+            </div>
+          </article>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="swse-shell-empty-state">
+        <i class="fas {{#if (eq vm.mode 'shipyard')}}fa-rocket{{else}}fa-robot{{/if}}"></i>
+        <h3>{{vm.emptyTitle}}</h3>
+        <p>{{vm.emptyText}}</p>
+      </div>
+    {{/if}}
+  </div>
+</div>

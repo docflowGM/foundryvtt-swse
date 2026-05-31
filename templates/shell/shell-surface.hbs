@@ -83,6 +83,11 @@
         vm=shellSurfaceVm}}
   {{/if}}
 
+  {{#if (eq shellSurface "asset-bay")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-asset-bay.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
 
 
   {{#if (eq shellSurface "gm-home")}}

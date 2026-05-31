@@ -10,6 +10,8 @@ const CHARACTER_V2_CONCEPT_PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/action-economy-indicator.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/abilities-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs",
@@ -22,6 +24,8 @@ const CHARACTER_V2_CONCEPT_PARTIALS = [
 ];
 
 const SHARED_PARTIALS = [
+  "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/abilities-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/action-economy-indicator.hbs",
   // Shared/general partials
   "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"
 ];
@@ -160,6 +164,7 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs",
   "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs",
   "systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-asset-bay.hbs",
 
   // Store and Upgrade Partials
   "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs",

@@ -3,35 +3,53 @@
  *
  * Live-path Droid Sheet listener wiring.
  *
- * Phase 2 transplant from `scripts/sheets/v2/droid-sheet.js#_onRender`.
- * Each helper takes (sheet, root, signal) and is called from the sheet's
- * `_onRender` in the same order it was wired previously, so initialization
- * order and behavior are preserved.
- *
- * The helpers intentionally do not introduce a second action system; they
- * still attach raw DOM listeners exactly as before. This pass is about
- * structural extraction, not behavioral change.
+ * The live Droid sheet now composes explicit frame/tab partials inside the
+ * shared shell. Listener wiring is intentionally limited to controls that are
+ * still present on that live path. Legacy helpers may remain below for dormant
+ * partials, but they are not wired unless their controls return to the live UI.
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createSafeEmbeddedItem } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
-import { DroidCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/droid/droid-customization-router.js";
-import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { StockDroidConversionDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-conversion-dialog.js";
 import { StockDroidComparisonDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-comparison-dialog.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
-import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
-import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 
+const DIRECT_FIELD_ALLOWLIST = new Set([
+  "name",
+  "system.class",
+  "system.level",
+  "system.credits",
+  "system.notes",
+  "system.bio"
+]);
+
+const DIRECT_ABILITY_FIELD_PATTERN = /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/;
+
+function isSafeDroidSheetFieldName(name) {
+  if (!name || typeof name !== "string") return false;
+  if (DIRECT_FIELD_ALLOWLIST.has(name)) return true;
+  if (DIRECT_ABILITY_FIELD_PATTERN.test(name)) return true;
+
+  // Engine-owned / derived / Garage-managed namespaces are intentionally not
+  // writable through generic sheet persistence. Use their owning controls.
+  if (name.startsWith("system.derived.")) return false;
+  if (name.startsWith("system.droidSystems.")) return false;
+  if (name.startsWith("system.defenses.")) return false;
+  if (name.startsWith("system.hp.max")) return false;
+  if (name.startsWith("items.")) return false;
+
+  return false;
+}
+
 /**
- * Wire every droid-sheet listener block. Order matches the original
- * `_onRender` body so visual + behavioral parity is preserved.
+ * Wire live Droid sheet listener blocks for the current frame/tab partials.
+ * Dormant legacy partial helpers are intentionally not called from here.
  *
  * @param {object} sheet - SWSEV2DroidSheet instance
  * @param {HTMLElement} root - Sheet root element
@@ -41,14 +59,11 @@ export function wireDroidSheetListeners(sheet, root, signal) {
   wireTabHandling(sheet, root, signal);
   wireNamedFieldPersistence(sheet, root, signal);
   wireConditionTrackControls(sheet, root, signal);
-  wireInitiativeControls(sheet, root, signal);
   wireProgressionFrameworkButtons(sheet, root, signal);
   wireDroidCustomization(sheet, root, signal);
   wireItemOpenControls(sheet, root, signal);
   wireEquipmentSellAndDelete(sheet, root, signal);
-  wireArmorEquipToggle(sheet, root, signal);
   wireFeatTalentButtons(sheet, root, signal);
-  wireOwnedActorControls(sheet, root, signal);
   wireSkillRolling(sheet, root, signal);
   wireDefenseRolling(sheet, root, signal);
   wireWeaponRolling(sheet, root, signal);
@@ -57,9 +72,9 @@ export function wireDroidSheetListeners(sheet, root, signal) {
   wireActionUse(sheet, root, signal);
   wireDroidSystemsEditor(sheet, root, signal);
   wireConvertStockDroid(sheet, root, signal);
-  wireStockDroidProvenance(sheet, root, signal);
   wireProgressionButtons(sheet, root, signal);
   wireAbilityCardHandlers(sheet, root, signal);
+  wireConceptAbilityPanelControls(sheet, root, signal);
   wireDragAndDrop(sheet, root, signal);
 }
 
@@ -79,6 +94,22 @@ function wireTabHandling(sheet, root, signal) {
 }
 
 
+
+const DROID_QUIET_FIELD_PATHS = new Set([
+  'name',
+  'img',
+  'system.class',
+  'system.credits',
+  'system.notes',
+  'system.bio'
+]);
+
+function isQuietDroidFieldPath(path) {
+  if (!path || typeof path !== 'string') return false;
+  if (DROID_QUIET_FIELD_PATHS.has(path)) return true;
+  return path.startsWith('system.notes.') || path.startsWith('system.bio.');
+}
+
 function wireNamedFieldPersistence(sheet, root, signal) {
   root.addEventListener('change', async (ev) => {
     const field = ev.target instanceof HTMLElement
@@ -86,7 +117,7 @@ function wireNamedFieldPersistence(sheet, root, signal) {
       : null;
     if (!(field instanceof HTMLElement)) return;
     if (!field.name || field.hasAttribute('data-action') || field.disabled || field.hasAttribute('readonly')) return;
-    if (field.name.startsWith('items.')) return;
+    if (!isSafeDroidSheetFieldName(field.name)) return;
 
     const rawValue = field.matches('input[type="checkbox"]') ? field.checked : field.value;
     const update = {
@@ -94,8 +125,11 @@ function wireNamedFieldPersistence(sheet, root, signal) {
     };
 
     try {
+      const quiet = isQuietDroidFieldPath(field.name);
       await ActorEngine.updateActor(sheet.actor, update, {
-        source: 'droid-sheet-direct-field',
+        source: quiet ? 'droid-sheet-direct-field-quiet' : 'droid-sheet-direct-field',
+        render: quiet ? false : undefined,
+        suppressAppRefresh: quiet,
         meta: { guardKey: `droid-field:${field.name}` }
       });
     } catch (err) {
@@ -163,32 +197,65 @@ function wireInitiativeControls(sheet, root, signal) {
 }
 
 function wireProgressionFrameworkButtons(sheet, root, signal) {
-  root.querySelector('[data-action="cmd-chargen"]')?.addEventListener("click", async (ev) => {
-    ev.preventDefault();
-    await launchProgression(sheet.actor);
-  }, { signal });
+  root.querySelectorAll('[data-action="cmd-chargen"], [data-action="cmd-levelup"]').forEach((button) => {
+    button.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const surfaceId = button.dataset.action === "cmd-chargen" ? "chargen" : "progression";
+      if (typeof sheet.setSurface === "function") {
+        await sheet.setSurface(surfaceId, {
+          source: "droid-sheet",
+          skipIntro: surfaceId !== "chargen"
+        });
+        await sheet.requestSurfaceRender?.({ reason: `droid-${surfaceId}-launch`, surfaceId });
+      }
+    }, { signal });
+  });
 
-  root.querySelector('[data-action="cmd-store"]')?.addEventListener("click", async (ev) => {
-    ev.preventDefault();
-    new SWSEStore(sheet.actor).render(true);
-  }, { signal });
+  root.querySelectorAll('[data-action="cmd-store"]').forEach((button) => {
+    button.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      if (typeof sheet.setSurface === "function") {
+        await sheet.setSurface("store", { source: "droid-sheet" });
+        await sheet.requestSurfaceRender?.({ reason: "droid-store-launch", surfaceId: "store" });
+      }
+    }, { signal });
+  });
 
   root.querySelector('[data-action="open-mentor"]')?.addEventListener("click", async (ev) => {
     ev.preventDefault();
-    ui.notifications.info("Mentor interactions coming soon!");
+    if (typeof sheet.setSurface === "function") {
+      await sheet.setSurface("mentor", { source: "droid-sheet" });
+      await sheet.requestSurfaceRender?.({ reason: "droid-mentor-launch", surfaceId: "mentor" });
+    } else {
+      ui.notifications.info("Mentor interactions coming soon!");
+    }
   }, { signal });
+}
+
+function buildDroidCustomizationSurfaceOptions(target = null, source = "droid-sheet") {
+  return {
+    source,
+    bayMode: "garage",
+    mode: "garage",
+    contextMode: "modifyExisting",
+    focusCategory: target?.dataset?.garageRegion ?? target?.dataset?.region ?? null,
+    focusSlot: target?.dataset?.garageSlot ?? target?.dataset?.slotId ?? null,
+    focusMode: target?.dataset?.garageMode ?? null
+  };
+}
+
+async function openDroidCustomizationSurface(sheet, target = null, source = "droid-sheet") {
+  if (!sheet?.actor || typeof sheet.setSurface !== "function") return false;
+  await sheet.setSurface("customization", buildDroidCustomizationSurfaceOptions(target, source));
+  await sheet.requestSurfaceRender?.({ reason: "droid-customization-launch", surfaceId: "customization" });
+  return true;
 }
 
 function wireDroidCustomization(sheet, root, signal) {
   for (const btn of root.querySelectorAll('[data-action="customize-droid"]')) {
     btn.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      if (!sheet.actor) return;
-      DroidCustomizationRouter.openDroidCustomization(sheet.actor, {
-        focusCategory: ev.currentTarget?.dataset?.garageRegion ?? ev.currentTarget?.dataset?.region ?? null,
-        focusSlot: ev.currentTarget?.dataset?.garageSlot ?? ev.currentTarget?.dataset?.slotId ?? null,
-        focusMode: ev.currentTarget?.dataset?.garageMode ?? null
-      });
+      await openDroidCustomizationSurface(sheet, ev.currentTarget, "droid-customize-action");
     }, { signal });
   }
 }
@@ -520,17 +587,12 @@ function wireDroidSystemsEditor(sheet, root, signal) {
   for (const editDroidBtn of editButtons) {
     editDroidBtn.addEventListener('click', async (ev) => {
       ev.preventDefault();
-      const hasConfig = !!sheet.actor?.system?.droidSystems?.degree;
-      const mode = hasConfig ? 'EDIT' : 'NEW';
       try {
-        await DroidBuilderApp.open(sheet.actor, {
-          mode,
-          sourceActor: hasConfig ? sheet.actor : null,
-          requireApproval: HouseRuleService.isEnabled('store.requireGMApproval')
-        });
+        const opened = await openDroidCustomizationSurface(sheet, ev.currentTarget, "droid-systems-editor");
+        if (!opened) ui.notifications.warn('Droid Garage is unavailable for this sheet.');
       } catch (err) {
-        console.error('Failed to open droid builder:', err);
-        ui.notifications.error('Failed to open droid builder.');
+        console.error('Failed to open droid garage surface:', err);
+        ui.notifications.error('Failed to open droid garage surface.');
       }
     }, { signal });
   }
@@ -540,13 +602,8 @@ function wireConvertStockDroid(sheet, root, signal) {
   const convertBtn = root.querySelector(".convert-to-custom-droid");
   if (!convertBtn) return;
 
-  // Only show for stock droid imports (not custom droids)
-  const isStockDroid = !!sheet.actor?.flags?.swse?.stockDroidImport;
-  if (!isStockDroid) {
-    convertBtn.style.display = "none";
-    return;
-  }
-
+  // Visibility is template/context owned. This listener only handles the button
+  // if the stock-droid conversion action is actually rendered.
   convertBtn.addEventListener("click", async (ev) => {
     ev.preventDefault();
     try {
@@ -661,9 +718,12 @@ function wireProgressionButtons(sheet, root, signal) {
   if (!levelUpBtn) return;
   levelUpBtn.addEventListener("click", async (ev) => {
     ev.preventDefault();
-    if (sheet.actor) {
-      await launchProgression(sheet.actor, { source: "droid-sheet.level-up" });
-    }
+    if (!sheet.actor || typeof sheet.setSurface !== "function") return;
+    await sheet.setSurface("progression", {
+      source: "droid-sheet.level-up",
+      skipIntro: true
+    });
+    await sheet.requestSurfaceRender?.({ reason: "droid-level-up-launch", surfaceId: "progression" });
   }, { signal });
 }
 
@@ -715,6 +775,75 @@ function wireAbilityCardHandlers(sheet, root, signal) {
         console.error("Error using ability:", err);
       }
     }, { signal });
+  });
+}
+
+
+function wireConceptAbilityPanelControls(sheet, root, signal) {
+  root.addEventListener("click", async (ev) => {
+    const toggle = ev.target?.closest?.('[data-action="toggle-abilities"]');
+    if (toggle) {
+      ev.preventDefault();
+      const panel = toggle.closest(".abilities-panel");
+      if (!panel) return;
+      const isExpanded = panel.classList.toggle("abilities-expanded");
+      for (const row of panel.querySelectorAll(".ability-row")) {
+        const collapsed = row.querySelector(".ability-collapsed");
+        const expanded = row.querySelector(".ability-expanded");
+        if (collapsed instanceof HTMLElement) collapsed.style.display = isExpanded ? "none" : "flex";
+        if (expanded instanceof HTMLElement) expanded.style.display = isExpanded ? (expanded.dataset?.expandedDisplay || "grid") : "none";
+      }
+      toggle.setAttribute("aria-expanded", String(isExpanded));
+      toggle.textContent = isExpanded ? "Collapse" : (toggle.dataset?.collapsedLabel || "Edit Stats");
+      return;
+    }
+
+    const rollButton = ev.target?.closest?.('[data-action="roll-ability"]');
+    if (!rollButton) return;
+    ev.preventDefault();
+    const abilityKey = rollButton.dataset?.ability;
+    if (!abilityKey) return;
+
+    try {
+      await SWSERoll.rollAbility(sheet.actor, abilityKey, {
+        sourceElement: rollButton,
+        companionSource: rollButton,
+        sheet,
+        showRollCompanion: true
+      });
+    } catch (err) {
+      console.error("Droid ability roll failed:", err);
+      ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
+    }
+  }, { signal });
+
+  root.addEventListener("input", (ev) => {
+    const input = ev.target?.closest?.(".ability-expanded input");
+    if (!input) return;
+    const row = input.closest(".ability-row");
+    if (!row) return;
+    previewConceptAbilityRow(row);
+  }, { signal });
+}
+
+function previewConceptAbilityRow(row) {
+  const read = (field, fallback = 0) => {
+    const input = row.querySelector(`input[data-field="${field}"]`);
+    const value = Number(input?.value);
+    return Number.isFinite(value) ? value : fallback;
+  };
+  const base = read("base", 10);
+  const racial = read("racial", 0);
+  const temp = read("temp", 0);
+  const total = base + racial + temp;
+  const mod = Math.floor((total - 10) / 2);
+  const sign = mod > 0 ? `+${mod}` : String(mod);
+  row.querySelectorAll(".math-result, .swse-concept-ability-card__score").forEach((el) => { el.textContent = String(total); });
+  row.querySelectorAll(".math-mod, .swse-concept-ability-card__mod").forEach((el) => {
+    el.textContent = sign;
+    el.classList.toggle("mod--positive", mod > 0);
+    el.classList.toggle("mod--negative", mod < 0);
+    el.classList.toggle("mod--zero", mod === 0);
   });
 }
 

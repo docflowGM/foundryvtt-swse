@@ -1,0 +1,23 @@
+<div class="swse-content-grid two-up swse-droid-two-up">
+  <section class="swse-concept-panel swse-droid-panel">
+    <header class="swse-concept-panel__header"><h3 class="swse-concept-panel__title">Feats</h3></header>
+    <div class="swse-list">
+      {{#each feats as |feat|}}
+        <article class="swse-list-row list-entry"><span>{{feat.name}}</span></article>
+      {{else}}
+        <div class="swse-empty">No feats yet.</div>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="swse-concept-panel swse-droid-panel">
+    <header class="swse-concept-panel__header"><h3 class="swse-concept-panel__title">Talents</h3></header>
+    <div class="swse-list">
+      {{#each talents as |talent|}}
+        <article class="swse-list-row list-entry"><span>{{talent.name}}</span></article>
+      {{else}}
+        <div class="swse-empty">No talents yet.</div>
+      {{/each}}
+    </div>
+  </section>
+</div>

@@ -1,0 +1,122 @@
+<header class="swse-concept-header swse-droid-concept-header">
+  <div class="swse-concept-portrait-card">
+    <div class="swse-concept-portrait-frame" data-role="actor-portrait-dropzone">
+      <span class="swse-concept-portrait-cert">Verified</span>
+      <img class="swse-concept-portrait"
+           src="{{document.img}}"
+           data-edit="img"
+           data-role="actor-portrait-image"
+           title="Click or drop image to update droid portrait"
+           alt="{{document.name}} portrait" />
+    </div>
+    <div class="swse-concept-portrait-caption">
+      <span>{{#if system.droidType}}{{system.droidType}}{{else}}Droid{{/if}}</span>
+      <span>{{#if droid.degree.category}}{{droid.degree.category}}{{else}}Unit{{/if}}</span>
+    </div>
+  </div>
+
+  <div class="swse-concept-identity-card">
+    <div class="swse-concept-identity-topline">Droid Control Profile</div>
+    <h1 class="swse-concept-name">
+      <input name="name" type="text" value="{{document.name}}" placeholder="Droid Designation" {{#unless editable}}disabled{{/unless}} />
+    </h1>
+
+    <div class="swse-concept-identity-subline">
+      <span>{{#if system.class}}{{system.class}}{{else}}Droid Unit{{/if}}</span>
+      <span class="sep">•</span>
+      <span>{{#if system.droidModel}}{{system.droidModel}}{{else}}Model Unknown{{/if}}</span>
+      <span class="sep">•</span>
+      <span>{{#if system.manufacturer}}{{system.manufacturer}}{{else}}Manufacturer Unknown{{/if}}</span>
+      <span class="sep">•</span>
+      <span>Lvl {{system.level}}</span>
+    </div>
+
+    <div class="swse-concept-badges">
+      <span class="swse-concept-badge swse-concept-badge--accent">{{#if system.class}}{{system.class}}{{else}}Droid{{/if}}</span>
+      <span class="swse-concept-badge">Lvl {{system.level}}</span>
+      <span class="swse-concept-badge">{{#if droid.degree.label}}{{droid.degree.label}}{{else}}Chassis{{/if}}</span>
+      {{#if droid.flags.isStockDroid}}<span class="swse-concept-badge swse-concept-badge--force">Stock Unit</span>{{/if}}
+    </div>
+
+    <div class="swse-concept-identity-grid swse-droid-identity-grid">
+      <label class="swse-concept-field">
+        <span>Class / Model</span>
+        <input name="system.class" type="text" value="{{system.class}}" placeholder="Droid class or model" {{#unless editable}}disabled{{/unless}} />
+      </label>
+      <label class="swse-concept-field">
+        <span>Level</span>
+        <input name="system.level" type="number" value="{{system.level}}" min="1" {{#unless editable}}disabled{{/unless}} />
+      </label>
+      <label class="swse-concept-field">
+        <span>Credits</span>
+        <input name="system.credits" type="number" value="{{system.credits}}" {{#unless editable}}disabled{{/unless}} />
+      </label>
+      <div class="swse-concept-readout">
+        <span>Readiness</span>
+        <strong>{{#if droid.sourceStatus.sourceLabel}}{{droid.sourceStatus.sourceLabel}}{{else}}Operational{{/if}}</strong>
+      </div>
+    </div>
+
+    <div class="swse-concept-operator-line">
+      <span class="swse-concept-operator-line__label">Unit Status</span>
+      <span class="swse-concept-operator-line__value">{{#if droid.garage.lockReason}}{{droid.garage.lockReason}}{{else}}Systems nominal{{/if}}</span>
+      <span class="swse-concept-operator-line__sep">//</span>
+      <span class="swse-concept-operator-line__value">{{#if droid.layoutMode}}{{droid.layoutMode}}{{else}}standard{{/if}}</span>
+    </div>
+
+    <div class="swse-concept-action-row">
+      <button type="button" data-action="cmd-levelup" class="swse-concept-btn swse-concept-btn--primary {{#if xpLevelReady}}ready{{/if}}">Training</button>
+      <button type="button" class="edit-droid-systems swse-concept-btn">Droid Systems</button>
+      <button type="button" data-action="cmd-store" class="swse-concept-btn">Store</button>
+      <button type="button" data-shell-action="return-to-home" class="swse-concept-btn">Home</button>
+    </div>
+  </div>
+
+  <div class="swse-concept-readouts-card swse-droid-readouts-card">
+    <div class="swse-concept-level-block">
+      <div class="swse-concept-level-row">
+        <strong class="swse-concept-level-num">{{system.level}}</strong>
+        <div class="swse-concept-level-stack">
+          <span class="lbl">Droid Track</span>
+          <span class="class">{{#if system.class}}{{system.class}}{{else}}Droid Unit{{/if}}</span>
+          <span class="half">Half Level {{derived.identity.halfLevel}}</span>
+        </div>
+      </div>
+      <div class="swse-concept-xp-bar">
+        <span class="swse-concept-xp-fill" style="width: {{xpData.percentRounded}}%;"></span>
+      </div>
+      <div class="swse-concept-xp-text">
+        <span>{{xpData.total}} XP</span>
+        <span>{{#if xpLevelReady}}Training Ready{{else}}{{xpData.percentRounded}}% to next level{{/if}}</span>
+      </div>
+    </div>
+
+    <div class="swse-concept-stat-stack">
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">HP</span>
+        <strong>{{quickGlance.hpLabel}}</strong>
+      </div>
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Speed</span>
+        <strong>{{quickGlance.speed}}</strong>
+      </div>
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Credits</span>
+        <strong>{{system.credits}}</strong>
+      </div>
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Condition</span>
+        <strong>{{healthPanel.currentConditionPenalty.label}}</strong>
+      </div>
+    </div>
+
+    <div class="swse-concept-defense-strip">
+      {{#each defensePanel.defenses as |def|}}
+        <div class="swse-concept-defense-pill" data-action="roll-defense" data-defense="{{def.key}}">
+          <span>{{def.label}}</span>
+          <strong>{{def.total}}</strong>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</header>

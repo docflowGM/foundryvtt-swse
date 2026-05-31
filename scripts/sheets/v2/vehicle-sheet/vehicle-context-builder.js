@@ -6,6 +6,8 @@
  * Templates receive pre-shaped objects rather than raw actor/system data.
  */
 
+import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
+
 /**
  * Safe numeric coercion.
  *
@@ -26,6 +28,19 @@ function safeNumber(value, fallback = 0) {
  */
 function safeArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+const VEHICLE_ABILITY_KEYS = new Set(['str', 'dex', 'int', 'wis', 'cha']);
+
+function buildVehicleAbilitiesPanel(actor) {
+  const panelBuilder = new PanelContextBuilder(actor, { isEditable: actor?.isOwner === true });
+  const basePanel = panelBuilder.buildAbilitiesPanel();
+  const abilities = safeArray(basePanel?.abilities).filter((ability) => VEHICLE_ABILITY_KEYS.has(ability?.key));
+  return {
+    ...basePanel,
+    abilities,
+    canEdit: actor?.isOwner === true
+  };
 }
 
 /**
@@ -627,12 +642,22 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const powerSummaryPanel = buildVehiclePowerSummaryPanel(actor, powerData);
   const cargoSummaryPanel = buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoState);
   const cargoManifestPanel = buildVehicleCargoManifestPanel(actor);
+  const abilitiesPanel = buildVehicleAbilitiesPanel(actor);
+  const abilities = safeArray(abilitiesPanel?.abilities);
 
   const pilotManeuverPanel = buildPilotManeuverPanel(pilotData);
   const commanderOrderPanel = buildCommanderOrderPanel(commanderData);
   const turnPhasePanel = buildTurnPhasePanel(turnPhaseData);
 
   return {
+    abilitiesPanel,
+    abilities,
+    conceptLayout: {
+      abilities,
+      abilitiesTab: {
+        entries: abilities
+      }
+    },
     vehiclePanels: {
       headerSummaryPanel,
       defensesPanel,

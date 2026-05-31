@@ -1,0 +1,26 @@
+<section class="swse-concept-panel swse-droid-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Inventory &amp; Workbench</h3>
+      <p class="swse-concept-panel__hint">Gear rows keep the existing item controls and sale/delete listeners.</p>
+    </div>
+  </header>
+  <div class="swse-list">
+    {{#each equipment as |item|}}
+      <article class="swse-list-row" data-item-id="{{item.id}}">
+        <span>{{item.name}}</span>
+        <span class="swse-item-type">{{item.type}}</span>
+        <div class="swse-inline-actions">
+          <button type="button" data-action="sell-item" data-item-id="{{item.id}}">Sell</button>
+          <button type="button" data-action="delete-item" data-item-id="{{item.id}}">Delete</button>
+        </div>
+      </article>
+    {{else}}
+      <div class="swse-empty">No inventory items found.</div>
+    {{/each}}
+  </div>
+  <div class="swse-inline-actions">
+    <button type="button" data-action="cmd-store" class="swse-concept-btn">Open Store</button>
+    <button type="button" data-action="cmd-chargen" class="swse-concept-btn">Open Progression</button>
+  </div>
+</section>

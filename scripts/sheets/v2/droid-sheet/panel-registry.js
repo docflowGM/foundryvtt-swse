@@ -3,21 +3,17 @@
  *
  * Minimal panel-registry adapter for the live droid sheet.
  *
- * The live droid sheet renders a single monolithic template
- * (`templates/actors/droid/v2/droid-sheet.hbs`) rather than composing
- * per-panel partials, so a full PanelContextBuilder/PANEL_REGISTRY transplant
- * (as the dormant droid implementation has) would be over-engineering for
- * Phase 2.
+ * The live droid sheet now renders through shared shell/frame partials plus
+ * droid-owned frame/tab partials. This registry remains intentionally light:
+ * it validates the logical context contracts consumed by those partials without
+ * introducing a second rendering registry or a parallel derived-data system.
  *
- * Instead, this file:
- *   1. Declares the logical panel contracts the live droid context is
+ * This file:
+ *   1. Declares the logical panel contracts the live droid partials are
  *      expected to satisfy (required keys per panel).
  *   2. Exposes a `validateLivePanelContracts(context)` helper that flags drift
  *      without throwing — drift is logged via SWSELogger and returned as a
  *      report so callers (and tests) can react.
- *
- * If/when the live droid sheet is broken into per-panel partials, this
- * registry can grow into a full registry comparable to the character sheet's.
  *
  * Phase 3C removed the dormant `scripts/sheets/v2/droid/*` tree — this file
  * is now the only droid panel registry in the repo.
@@ -33,54 +29,47 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * if it exists at the documented path (defined or null/empty value is fine —
  * we are not asserting non-null payloads here).
  *
- * Phase 3A added the optional `partial` field on entries that correspond to
- * a concrete droid-owned partial (`templates/actors/droid/v2/partials/*.hbs`).
- * This is *documentation only* today — the live template still composes
- * partials by explicit `{{> ... }}` includes. No dynamic registry-driven
- * rendering is introduced yet.
+ * The optional `partial` field documents the concrete droid-owned partial that
+ * consumes a contract. Rendering is still explicit Handlebars composition, not
+ * a dynamic registry-driven renderer.
  */
 const DROID_PARTIAL_BASE = "systems/foundryvtt-swse/templates/actors/droid/v2/partials";
+const DROID_FRAME_PARTIAL_BASE = `${DROID_PARTIAL_BASE}/frame`;
+const DROID_TAB_PARTIAL_BASE = `${DROID_PARTIAL_BASE}/tabs`;
 
 export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
   {
     panelName: "header",
-    description: "Header strip (defenses summary, damage threshold, condition track)",
+    description: "Header frame and quick-glance data from canonical panel builders",
     requiredKeys: [
-      "derived.defenses.fort",
-      "derived.defenses.ref",
-      "derived.defenses.will",
-      "derived.damage.threshold"
-    ]
+      "healthPanel.hp",
+      "healthPanel.conditionTrack",
+      "defensePanel.defenses",
+      "quickGlance.hpLabel",
+      "quickGlance.reflex",
+      "quickGlance.fortitude"
+    ],
+    partial: `${DROID_FRAME_PARTIAL_BASE}/header-block.hbs`
   },
   {
-    panelName: "summary",
-    description: "Top-of-sheet summary (initiative, system shape, abilities)",
-    requiredKeys: ["system", "derived"],
-    partial: `${DROID_PARTIAL_BASE}/initiative-panel.hbs`
+    panelName: "overview",
+    description: "Overview tab identity summary, defenses, and Garage/build status",
+    requiredKeys: ["document", "system", "defensePanel.defenses", "droid.garage", "droid.sourceStatus"],
+    partial: `${DROID_TAB_PARTIAL_BASE}/overview-tab.hbs`
   },
   {
-    panelName: "equipment",
-    description: "Equipment ledger entries projected from actor.items",
-    requiredKeys: ["equipment"],
-    arrayKey: "equipment",
-    rowContract: ["id", "name", "type", "img", "system"],
-    partial: `${DROID_PARTIAL_BASE}/equipment-panel.hbs`
+    panelName: "abilities",
+    description: "Ability tab rows projected from canonical ability context",
+    requiredKeys: ["abilities"],
+    arrayKey: "abilities",
+    rowContract: ["key", "label", "base", "total", "mod"],
+    partial: `${DROID_TAB_PARTIAL_BASE}/abilities-tab.hbs`
   },
   {
-    panelName: "armor",
-    description: "Armor ledger entries projected from actor.items",
-    requiredKeys: ["armor"],
-    arrayKey: "armor",
-    rowContract: ["id", "name", "type", "img", "system"],
-    partial: `${DROID_PARTIAL_BASE}/armor-panel.hbs`
-  },
-  {
-    panelName: "weapons",
-    description: "Weapons ledger entries projected from actor.items",
-    requiredKeys: ["weapons"],
-    arrayKey: "weapons",
-    rowContract: ["id", "name", "type", "img", "system"],
-    partial: `${DROID_PARTIAL_BASE}/weapons-panel.hbs`
+    panelName: "gear",
+    description: "Gear tab equipment, armor, and weapon ledgers projected from actor.items",
+    requiredKeys: ["equipment", "armor", "weapons", "combatWeapons.unarmed", "combatWeapons.handheld", "combatWeapons.integrated", "combatWeapons.integratedParts", "combatWeapons.hasAny"],
+    partial: `${DROID_TAB_PARTIAL_BASE}/gear-tab.hbs`
   },
   {
     panelName: "talents",
@@ -104,7 +93,7 @@ export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
     panelName: "ownedActors",
     description: "Serializable map of related/owned actors",
     requiredKeys: ["ownedActorMap"],
-    partial: `${DROID_PARTIAL_BASE}/owned-actors-panel.hbs`
+    partial: `${DROID_FRAME_PARTIAL_BASE}/sidebar.hbs`
   },
   {
     panelName: "xp",
@@ -124,7 +113,7 @@ export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
       "droidPanels.customizations",
       "droidPanels.buildHistory"
     ],
-    partial: `${DROID_PARTIAL_BASE}/droid-systems-panel.hbs`
+    partial: `${DROID_TAB_PARTIAL_BASE}/systems-tab.hbs`
   }
 ]);
 

@@ -48,5 +48,14 @@
       </div>
     {{/if}}
   {{/if}}
+
+  {{#if droid.garage.canConvert}}
+    <div class="swse-droid-garage-cta swse-droid-conversion-cta">
+      <span class="swse-droid-garage-cta-text">Stock import detected. Convert it into a Garage-managed custom build.</span>
+      <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="Convert stock droid to custom Garage build">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Convert Stock Droid
+      </button>
+    </div>
+  {{/if}}
 </div>
 {{/if}}

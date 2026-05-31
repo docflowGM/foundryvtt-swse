@@ -1,0 +1,19 @@
+<section class="swse-concept-panel swse-droid-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Skills</h3>
+      <p class="swse-concept-panel__hint">Uses the canonical derived skill model.</p>
+    </div>
+  </header>
+  <div class="swse-list">
+    {{#each derived.skills as |skill key|}}
+      <button type="button" class="swse-list-row" data-action="roll-skill" data-skill="{{key}}">
+        <span>{{skill.label}}</span>
+        <span class="swse-trained-indicator">{{#if skill.trained}}T{{/if}}</span>
+        <strong>{{skill.total}}</strong>
+      </button>
+    {{else}}
+      <div class="swse-empty">No skills configured yet.</div>
+    {{/each}}
+  </div>
+</section>

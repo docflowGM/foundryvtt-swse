@@ -87,6 +87,11 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs'
 ];
 
+const SHARED_V2_CONCEPT_PANEL_TEMPLATES = [
+  'systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/abilities-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/action-economy-indicator.hbs'
+];
+
 /**
  * All templates used by the system.
  * These paths MUST match exactly how they are referenced in {{> }} calls.
@@ -105,6 +110,11 @@ export const SWSE_TEMPLATES = [
   // Character V2 Concept Sheet
   // ==============================
   ...CHARACTER_V2_CONCEPT_TEMPLATES,
+
+  // ==============================
+  // Shared V2 Concept Panels
+  // ==============================
+  ...SHARED_V2_CONCEPT_PANEL_TEMPLATES,
 
   // ==============================
   // Character v2 Partials
@@ -174,15 +184,16 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Vehicle v2 Partials
   // ==============================
+  // Dormant legacy vehicle panels kept only where no actor v2-concept
+  // equivalent exists. Name-colliding generic panels (hp-condition,
+  // defenses, attacks, actions) are intentionally not preloaded here;
+  // live vehicle sheet usage should route through actor v2-concept partials
+  // or vehicle-specific `vehicle-*` panels instead.
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
 
   // ==============================
   // NPC Partials
@@ -328,6 +339,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-asset-bay.hbs',
 
   // ==============================
   // GM Datapad shared-shell surfaces

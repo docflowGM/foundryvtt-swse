@@ -895,9 +895,6 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'workbench') {
       this._wireWorkbenchSurfaceEvents(root, signal);
     }
-    if (this._shellSurface === 'customization') {
-      this._wireCustomizationSurfaceEvents(root, signal);
-    }
     if (this._shellSurface === 'games') {
       this._gamesSurfaceController ??= new GamesSurfaceController(this, this.actor);
       this._gamesSurfaceController.attach(root);

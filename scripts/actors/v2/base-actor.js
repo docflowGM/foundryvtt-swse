@@ -146,8 +146,9 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       // update happens (for example, awarding XP). Repaint open sheets once after
       // async derived values land so the UI reflects the authoritative snapshot.
       const apps = Object.values(this.apps ?? {});
-      if (apps.length) {
+      if (apps.length && !this._swseSuppressAppRefreshDepth) {
         queueMicrotask(() => {
+          if (this._swseSuppressAppRefreshDepth) return;
           for (const app of apps) {
             const surfaceId = app?._shellSurface ?? app?.shellSurface ?? 'sheet';
             try {

@@ -19,22 +19,42 @@ export class CustomizationSurfaceAdapter {
     this._app = null;
   }
 
+  static key(actorId, mode) {
+    return `${actorId}-${mode}`;
+  }
+
+  static get(actorId, mode = 'garage') {
+    if (!actorId) return null;
+    return this._registry.get(this.key(actorId, mode)) ?? null;
+  }
+
   static getOrCreate(shellHost, actor, options = {}) {
     const mode = options.bayMode || options.mode || (actor?.type === 'vehicle' ? 'shipyard' : 'garage');
-    const key = `${actor.id}-${mode}`;
+    const key = this.key(actor.id, mode);
     let adapter = this._registry.get(key);
     if (!adapter) {
       adapter = new CustomizationSurfaceAdapter(shellHost, actor, options);
       this._registry.set(key, adapter);
     }
     adapter._shellHost = shellHost;
-    adapter.options = { ...adapter.options, ...options, mode };
+    adapter.actor = actor;
+    adapter.options = { ...adapter.options, ...options, mode, bayMode: mode, inlineShell: true };
     return adapter;
   }
 
   static destroy(actorId) {
     for (const [key, adapter] of this._registry) {
       if (key.startsWith(actorId + '-')) {
+        adapter._destroy();
+        this._registry.delete(key);
+      }
+    }
+  }
+
+  static destroyForHost(shellHost) {
+    if (!shellHost) return;
+    for (const [key, adapter] of this._registry) {
+      if (adapter._shellHost === shellHost) {
         adapter._destroy();
         this._registry.delete(key);
       }
@@ -55,6 +75,9 @@ export class CustomizationSurfaceAdapter {
         title: context?.modeLabel || 'Customization Bay',
         actorId: this.actor.id,
         actorName: this.actor.name,
+        ownerActorId: this.options.ownerActorId || '',
+        source: this.options.source || '',
+        returnSurface: this.options.returnSurface || (this.options.source === 'asset-bay' ? 'asset-bay' : 'home'),
         bayMode: context?.mode || this.options.mode || 'garage',
         contextMode: context?.contextMode || this.options.contextMode || 'modifyExisting',
         contentHtml,
@@ -92,7 +115,8 @@ export class CustomizationSurfaceAdapter {
     const options = {
       ...this.options,
       mode: this.options.mode || this.options.bayMode,
-      contextMode: this.options.contextMode
+      contextMode: this.options.contextMode,
+      inlineShell: true
     };
 
     const app = new CustomizationBayApp(this.actor, options);
@@ -102,8 +126,17 @@ export class CustomizationSurfaceAdapter {
       return app;
     };
     app.close = async function() {
-      await self._shellHost?.setSurface?.('home');
-      await requestShellRender(self._shellHost, { reason: 'customization-surface-refresh', surfaceId: 'customization' });
+      if (self.options?.returnSurface === 'asset-bay') {
+        await self._shellHost?.setSurface?.('asset-bay', {
+          source: 'customization',
+          bayMode: self.options.bayMode || self.options.mode,
+          mode: self.options.bayMode || self.options.mode,
+          contextMode: self.options.contextMode || 'modifyExisting'
+        });
+      } else {
+        await self._shellHost?.setSurface?.('home');
+      }
+      await requestShellRender(self._shellHost, { reason: 'customization-surface-close', surfaceId: self._shellHost?.shellSurface || 'home' });
       return app;
     };
 

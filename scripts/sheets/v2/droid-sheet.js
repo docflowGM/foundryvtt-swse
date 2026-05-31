@@ -1,6 +1,6 @@
 // scripts/sheets/v2/droid-sheet.js
 
-const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
@@ -17,18 +17,17 @@ import { diagnoseLivePanelContext } from "/systems/foundryvtt-swse/scripts/sheet
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-
-function markActiveConditionStep(root, actor) {
-  if (!(root instanceof HTMLElement)) return;
-  const current = Number(actor?.system?.derived?.damage?.conditionStep ?? actor?.system?.conditionTrack?.current ?? 0);
-  for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
-    const s = Number(el.dataset?.step);
-    if (Number.isFinite(s) && s === current) el.classList.add('active');
-  }
-}
+import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
+import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
+import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
+import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
+import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceController.js";
+import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js";
 
 export class SWSEV2DroidSheet extends
-  HandlebarsApplicationMixin(DocumentSheetV2) {
+  ShellHostMixin(HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
 
   static PARTS = {
     ...super.PARTS,
@@ -39,16 +38,33 @@ export class SWSEV2DroidSheet extends
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    classes: ["swse", "sheet", "actor", "droid", "swse-sheet", "swse-droid-sheet", "v2"],
-    width: 820,
-    height: 920,
+    classes: [
+      "application",
+      "swse",
+      "sheet",
+      "actor",
+      "droid",
+      "swse-sheet",
+      "swse-sheet-ui",
+      "swse-droid-sheet",
+      "swse-droid-sheet--concept",
+      "v2"
+    ],
+    position: {
+      width: 900,
+      height: 950
+    },
     window: {
-      resizable: true
+      resizable: true,
+      draggable: true,
+      frame: false
     },
     form: {
       closeOnSubmit: false,
       submitOnChange: false
-    }
+    },
+    // The shared holopad/shell owns tab and surface routing.
+    tabs: []
   };
 
   /**
@@ -61,6 +77,12 @@ export class SWSEV2DroidSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+
+    // Match the actor concept V2 contract: the shared holopad home surface is
+    // the first-class view. The sheet itself is just one shell surface.
+    this._shellSurface = 'home';
+    this._shellSurfaceOptions = {};
+    this._ensureShellSurfaceState?.();
 
     // Preserves interactive UI state (active tabs, scroll, focus) across rerenders.
     this.uiStateManager = new UIStateManager(this);
@@ -75,6 +97,28 @@ export class SWSEV2DroidSheet extends
 
   async _onClose(options) {
     this._renderAbort?.abort();
+    this._homeController?.destroy?.();
+    this._storeSurfaceController?.destroy?.();
+    this._settingsSurfaceController?.destroy?.();
+    this._gamesSurfaceController?.destroy?.();
+    this._alliesSurfaceController?.destroy?.();
+    this._messengerSurfaceController?.destroy?.();
+
+    if (this.actor?.id) {
+      import('/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js')
+        .then(({ ShellRouter }) => ShellRouter.unregister(this.actor.id))
+        .catch(() => {});
+      import('/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js')
+        .then(({ ProgressionSurfaceAdapter }) => ProgressionSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
+      import('/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js')
+        .then(({ WorkbenchSurfaceAdapter }) => WorkbenchSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
+      import('/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js')
+        .then(({ CustomizationSurfaceAdapter }) => CustomizationSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
+    }
+
     this.uiStateManager?.clear();
     return super._onClose?.(options);
   }
@@ -158,18 +202,12 @@ export class SWSEV2DroidSheet extends
   }
 
   /**
-   * Post-render hook: Attach event listeners, NOT manipulate DOM
+   * Post-render hook for event wiring and shared-shell chrome behavior.
    *
-   * RULES FOR _onRender():
-   * ✓ Traverse DOM with querySelector/querySelectorAll
-   * ✓ Attach event listeners via addEventListener
-   * ✓ Read data attributes and CSS classes
-   * ✗ Do NOT mutate DOM (add/remove/modify elements)
-   * ✗ Do NOT change CSS classes or styles
-   * ✗ Do NOT set textContent or innerHTML
-   *
-   * If you need to change what renders: update actor data in _updateObject(),
-   * which triggers a re-render with new _prepareContext() data.
+   * Actor/system data must not be corrected by render-time DOM mutation. The
+   * only class/style changes allowed here are transient shell chrome state
+   * changes such as tablet expand/drag/resize controls. Rendered actor content
+   * must still come from _prepareContext().
    */
   async _onRender(context, options) {
     // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
@@ -192,7 +230,10 @@ export class SWSEV2DroidSheet extends
     await super._onRender(context, options);
 
     // Restore tabs/scroll/focus that were captured before super.render().
-    this.uiStateManager?.restoreState();
+    if (this._shellSurface === 'sheet') {
+      this.uiStateManager?.restoreState();
+    }
+    this._shellUiStatePreserver?.restore?.(this.element, { surfaceId: this._shellSurface });
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) {
@@ -204,27 +245,322 @@ export class SWSEV2DroidSheet extends
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    RenderAssertions.assertDOMElements(
-      root,
-      [".sheet-tabs", ".sheet-body"],
-      "SWSEV2DroidSheet"
-    );
+    if (this._shellSurface === 'sheet') {
+      RenderAssertions.assertDOMElements(
+        root,
+        [".sheet-tabs", ".sheet-body"],
+        "SWSEV2DroidSheet"
+      );
 
-    markActiveConditionStep(root, this.actor);
-    applyResourceBarAnimations(this, root);
+      applyResourceBarAnimations(this, root);
+    }
+
+    const sheetThemeContext = ThemeResolutionService.applyToElement(root, { actor: this.actor });
+    const sheetShell = root.querySelector?.('.swse-sheet-v2-shell');
+    if (sheetShell) {
+      ThemeResolutionService.applyToElement(sheetShell, {
+        actor: this.actor,
+        themeKey: sheetThemeContext.themeKey,
+        motionStyle: sheetThemeContext.motionStyle,
+        surfaceStyleInline: sheetThemeContext.surfaceStyleInline,
+        themeStyleInline: sheetThemeContext.themeStyleInline,
+        motionStyleInline: sheetThemeContext.motionStyleInline
+      });
+    }
 
     // Portrait upload + auto-apply (click via data-edit="img", drag/drop here)
     PortraitUploadController.bind(root, { actor: this.actor, signal });
 
+    this._wireDroidShellSurfaceEvents(root, signal);
+
     // Phase 2: All listener wiring lives in scripts/sheets/v2/droid-sheet/listeners.js.
     // wireDroidSheetListeners preserves the original `_onRender` order so init
     // sequencing (tab handling first, drag/drop last) is unchanged.
-    wireDroidSheetListeners(this, root, signal);
+    if (this._shellSurface === 'sheet') {
+      wireDroidSheetListeners(this, root, signal);
+    }
 
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2DroidSheet"
     );
+  }
+
+  /**
+   * Wire Droid-specific shell chrome and inline-surface controllers.
+   *
+   * Generic shell navigation is intentionally owned by ShellHostMixin. Do not
+   * override `_wireShellEvents`; super._onRender() calls the mixin method so
+   * all shared shell behavior (notifications drawer, overlay actions, Holonet
+   * home-card routing, close drawer, return home/sheet) stays in one place.
+   */
+  _wireDroidShellSurfaceEvents(root = null, signal = null) {
+    if (!(root instanceof HTMLElement)) return;
+
+    // Droid-only tablet hardware controls. Shared shell actions are wired by
+    // ShellHostMixin._wireShellEvents() during super._onRender().
+    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this.close();
+    }, { signal });
+
+    root.querySelectorAll('[data-action="tablet-home"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('home');
+        await this.requestSurfaceRender({ reason: 'droid-tablet-home', surfaceId: 'home' });
+      }, { signal });
+    });
+
+    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      root.classList.toggle('swse-tablet-expanded');
+    }, { signal });
+
+    this._wireTabletWindowDrag(root, signal);
+    this._wireTabletWindowResize(root, signal);
+
+    if (this._shellSurface === 'progression' || this._shellSurface === 'chargen') {
+      this._wireProgressionSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'workbench') {
+      this._wireWorkbenchSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'store') {
+      this._storeSurfaceController ??= new StoreSurfaceController(this, this.actor);
+      this._storeSurfaceController.attach(root);
+    } else {
+      this._storeSurfaceController?.destroy?.();
+    }
+    if (this._shellSurface === 'settings') {
+      this._wireSettingsSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'games') {
+      this._gamesSurfaceController ??= new GamesSurfaceController(this, this.actor);
+      this._gamesSurfaceController.attach(root);
+    } else {
+      this._gamesSurfaceController?.destroy?.();
+    }
+    if (this._shellSurface === 'allies') {
+      this._alliesSurfaceController ??= new AlliesSurfaceController(this, this.actor);
+      this._alliesSurfaceController.attach(root);
+    } else {
+      this._alliesSurfaceController?.destroy?.();
+    }
+  }
+
+
+  _wireTabletWindowDrag(root, signal) {
+    const dragHandles = root.querySelectorAll('[data-action="tablet-drag"], [data-shell-chrome="top"]');
+    if (!dragHandles.length) return;
+
+    const isInteractive = (target) => !!target?.closest?.('button, input, select, textarea, a, [contenteditable="true"], [data-route-id], [data-shell-action]');
+
+    dragHandles.forEach((handle) => {
+      handle.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0 || isInteractive(ev.target)) return;
+        ev.preventDefault();
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const rect = root.getBoundingClientRect();
+        const startLeft = Number(this.position?.left ?? rect.left ?? 0);
+        const startTop = Number(this.position?.top ?? rect.top ?? 0);
+
+        const move = (moveEv) => {
+          const left = Math.round(startLeft + (moveEv.clientX - startX));
+          const top = Math.round(startTop + (moveEv.clientY - startY));
+          this.setPosition({ left, top });
+        };
+        const up = () => {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up, { once: true });
+      }, { signal });
+    });
+  }
+
+  _wireTabletWindowResize(root, signal) {
+    const resizeZones = root.querySelectorAll('[data-action="tablet-resize"]');
+    if (!resizeZones.length) return;
+
+    resizeZones.forEach((zone) => {
+      zone.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        const dir = String(zone.dataset.resizeDir || 'se');
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const rect = root.getBoundingClientRect();
+        const startLeft = Number(this.position?.left ?? rect.left ?? 0);
+        const startTop = Number(this.position?.top ?? rect.top ?? 0);
+        const startWidth = Number(this.position?.width ?? rect.width ?? 900);
+        const startHeight = Number(this.position?.height ?? rect.height ?? 950);
+        const minWidth = 720;
+        const minHeight = 760;
+
+        const move = (moveEv) => {
+          const dx = moveEv.clientX - startX;
+          const dy = moveEv.clientY - startY;
+          const next = {};
+          if (dir.includes('e')) next.width = Math.max(minWidth, Math.round(startWidth + dx));
+          if (dir.includes('s')) next.height = Math.max(minHeight, Math.round(startHeight + dy));
+          if (dir.includes('w')) {
+            const width = Math.max(minWidth, Math.round(startWidth - dx));
+            next.width = width;
+            next.left = Math.round(startLeft + (startWidth - width));
+          }
+          if (dir.includes('n')) {
+            const height = Math.max(minHeight, Math.round(startHeight - dy));
+            next.height = height;
+            next.top = Math.round(startTop + (startHeight - height));
+          }
+          this.setPosition(next);
+        };
+        const up = () => {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up, { once: true });
+      }, { signal });
+    });
+  }
+
+  // Home surface routing is inherited from ShellHostMixin. Keeping the generic
+  // implementation here ensures droids receive the same Holonet/home-tile
+  // behavior as character sheets and future shell upgrades automatically.
+
+  _getInlineProgressionAdapterMode() {
+    if (this._shellSurface === 'chargen') return 'chargen';
+    return 'levelup';
+  }
+
+  _wireProgressionSurfaceEvents(root, signal) {
+    const regionAttr = this._shellSurface === 'chargen' ? 'surface-chargen' : 'surface-progression';
+    const surfaceRoot = root.querySelector(`[data-shell-region="${regionAttr}"]`);
+    if (!surfaceRoot) return;
+
+    void this._hydrateInlineProgressionSurface(surfaceRoot);
+
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      if (!action) return;
+      ev.preventDefault();
+
+      try {
+        const { ProgressionSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+        );
+        const key = `${this.actor.id}-${this._getInlineProgressionAdapterMode()}`;
+        const adapter = ProgressionSurfaceAdapter._registry.get(key);
+        await adapter?.handleAction?.(action, ev, btn);
+      } catch (err) {
+        SWSELogger.error(`[SWSEV2DroidSheet] Progression surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+  }
+
+  async _hydrateInlineProgressionSurface(surfaceRoot) {
+    try {
+      const { ProgressionSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+      );
+      const key = `${this.actor.id}-${this._getInlineProgressionAdapterMode()}`;
+      const adapter = ProgressionSurfaceAdapter._registry.get(key);
+      await adapter?.afterInlineRender?.(surfaceRoot);
+    } catch (err) {
+      SWSELogger.error('[SWSEV2DroidSheet] Inline progression hydration failed:', err);
+    }
+  }
+
+  _wireWorkbenchSurfaceEvents(root, signal) {
+    const surfaceRoot = root.querySelector('[data-shell-region="surface-workbench"]');
+    if (!surfaceRoot) return;
+    void this._hydrateInlineWorkbenchSurface(surfaceRoot);
+
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      if (!action || action === 'search-items') return;
+      ev.preventDefault();
+      try {
+        const { WorkbenchSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+        );
+        const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+        await adapter?.handleAction?.(action, btn);
+      } catch (err) {
+        SWSELogger.error(`[SWSEV2DroidSheet] Workbench surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+
+    surfaceRoot.addEventListener('input', async (ev) => {
+      const input = ev.target.closest('[data-action="search-items"]');
+      if (!input) return;
+      try {
+        const { WorkbenchSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+        );
+        const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+        await adapter?.handleAction?.('search-items', input);
+      } catch (err) {
+        SWSELogger.error('[SWSEV2DroidSheet] Workbench search failed:', err);
+      }
+    }, { signal });
+  }
+
+  async _hydrateInlineWorkbenchSurface(surfaceRoot) {
+    try {
+      const { WorkbenchSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+      );
+      const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+      await adapter?.afterInlineRender?.(surfaceRoot);
+    } catch (err) {
+      SWSELogger.error('[SWSEV2DroidSheet] Inline workbench hydration failed:', err);
+    }
+  }
+
+  _wireCustomizationSurfaceEvents(root, signal) {
+    const surfaceRoot = root.querySelector('[data-shell-region="surface-customization"]');
+    if (!surfaceRoot) return;
+
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const target = ev.target.closest('[data-action]');
+      if (!target) return;
+      const action = target.dataset.action;
+      if (!action) return;
+      ev.preventDefault();
+      try {
+        const { CustomizationSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
+        );
+        const mode = this._shellSurfaceOptions?.bayMode
+          || this._shellSurfaceOptions?.mode
+          || (this.actor?.type === 'vehicle' ? 'shipyard' : 'garage');
+        const adapter = CustomizationSurfaceAdapter._registry?.get?.(`${this.actor.id}-${mode}`);
+        await adapter?.handleAction?.(action, target);
+      } catch (err) {
+        SWSELogger.error(`[SWSEV2DroidSheet] Customization surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+  }
+
+  _wireSettingsSurfaceEvents(root, signal) {
+    this._settingsSurfaceController ??= new SettingsSurfaceController(this, {
+      actor: this.actor,
+      preferActor: true,
+      persistActorTheme: true,
+      logger: SWSELogger
+    });
+    this._settingsSurfaceController.actor = this.actor;
+    this._settingsSurfaceController.attach(root, { signal });
   }
 
   /* -------- -------- -------- -------- -------- -------- -------- -------- */

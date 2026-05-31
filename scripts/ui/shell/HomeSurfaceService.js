@@ -79,6 +79,33 @@ function actorPortrait(actor) {
   return actor?.img || actor?.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg';
 }
 
+function isVehicleActor(actor) {
+  return actor?.type === 'vehicle';
+}
+
+function vehicleSystemLabel(actor) {
+  const system = actor?.system ?? {};
+  return String(
+    system.model
+    ?? system.vehicleModel
+    ?? system.frame
+    ?? system.size
+    ?? system.class
+    ?? 'Vehicle'
+  );
+}
+
+function vehicleRoleLabel(actor) {
+  const system = actor?.system ?? {};
+  return String(
+    system.vehicleType
+    ?? system.type
+    ?? system.role
+    ?? system.category
+    ?? 'Starship'
+  );
+}
+
 function previewText(value = '', length = 160) {
   const text = String(value ?? '').replace(/\s+/g, ' ').trim();
   if (text.length <= length) return text;
@@ -160,6 +187,8 @@ export class HomeSurfaceService {
       lockCredits: lockScreenState.credits,
       sheetTheme: ThemeResolutionService.resolveThemeKey(null, { actor }),
       sheetMotionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor }),
+      actorType: actor?.type ?? '',
+      isVehicleHome: isVehicleActor(actor),
       apps
     };
   }
@@ -260,10 +289,14 @@ export class HomeSurfaceService {
       const lastSession = lastSessionRecord ? this._mapFeedRecord(lastSessionRecord, recipientId, { featured: true }) : null;
 
       const currentLevel = Math.max(1, Number(getTotalLevel(actor) || actor?.system?.level || 1));
-      const hpValue = asNumber(actor?.system?.hp?.value, asNumber(actor?.system?.hitPoints?.value, 0));
-      const hpMax = asNumber(actor?.system?.hp?.max, asNumber(actor?.system?.hitPoints?.max, 0));
+      const hpValue = asNumber(actor?.system?.hp?.value, asNumber(actor?.system?.hitPoints?.value, asNumber(actor?.system?.hull?.value, 0)));
+      const hpMax = asNumber(actor?.system?.hp?.max, asNumber(actor?.system?.hitPoints?.max, asNumber(actor?.system?.hull?.max, 0)));
       const fpValue = asNumber(actor?.system?.forcePoints?.value, asNumber(actor?.system?.resources?.forcePoints?.value, 0));
       const credits = asNumber(actor?.system?.credits, 0);
+      const vehicleShieldValue = asNumber(actor?.system?.shields?.value, asNumber(actor?.system?.shield?.value, 0));
+      const vehicleShieldMax = asNumber(actor?.system?.shields?.max, asNumber(actor?.system?.shield?.max, 0));
+      const vehicleCrew = asNumber(actor?.system?.crew?.current, asNumber(actor?.system?.crew?.value, asNumber(actor?.system?.crew, 0)));
+      const vehicleQuickGlance = isVehicleActor(actor);
 
       const alerts = {
         total: summary.total ?? 0,
@@ -276,7 +309,28 @@ export class HomeSurfaceService {
           messages: summary.messages > 0 ? String(summary.messages) : null,
           mentor: summary.mentor > 0 ? String(summary.mentor) : null
         },
-        quickGlance: [
+        quickGlance: vehicleQuickGlance ? [
+          {
+            label: 'Hull',
+            value: hpMax > 0 ? `${hpValue}/${hpMax}` : '—',
+            tone: hpValue > 0 ? 'neutral' : 'alert'
+          },
+          {
+            label: 'Shields',
+            value: vehicleShieldMax > 0 ? `${vehicleShieldValue}/${vehicleShieldMax}` : String(vehicleShieldValue || 0),
+            tone: vehicleShieldValue > 0 ? 'accent' : 'neutral'
+          },
+          {
+            label: 'Crew',
+            value: vehicleCrew > 0 ? String(vehicleCrew) : '—',
+            tone: 'neutral'
+          },
+          {
+            label: 'Alerts',
+            value: String(summary.total ?? 0),
+            tone: (summary.total ?? 0) > 0 ? 'alert' : 'neutral'
+          }
+        ] : [
           {
             label: 'Level',
             value: String(currentLevel),
@@ -382,10 +436,190 @@ export class HomeSurfaceService {
     return false;
   }
 
+  static _withTilePositions(tiles) {
+    const visibleTiles = tiles.filter(tile => tile.visible !== false);
+    const tilePositions = this._buildRadialTilePositions(visibleTiles.length);
+
+    return visibleTiles.map((tile, index) => ({
+      ...tile,
+      positionLeft: tilePositions[index]?.left ?? 50,
+      positionTop: tilePositions[index]?.top ?? 50
+    }));
+  }
+
+  static _buildVehicleAppTiles(actor, holonetSummary) {
+    const hullValue = asNumber(actor?.system?.hull?.value, asNumber(actor?.system?.hp?.value, 0));
+    const hullMax = asNumber(actor?.system?.hull?.max, asNumber(actor?.system?.hp?.max, 0));
+    const shieldValue = asNumber(actor?.system?.shields?.value, asNumber(actor?.system?.shield?.value, 0));
+    const cargoItems = asArray(actor?.items).filter(item => String(item?.type ?? '').toLowerCase() === 'equipment');
+    const crewEntries = asArray(actor?.system?.crew?.members ?? actor?.system?.crewMembers ?? actor?.system?.ownedActors);
+
+    return this._withTilePositions([
+      {
+        id: 'sheet',
+        label: 'Vehicle\nSheet',
+        icon: '◇',
+        routeId: 'sheet',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: true,
+        locked: false,
+        status: 'READY',
+        statusTone: '',
+        description: 'Vehicle command record'
+      },
+      {
+        id: 'shipyard',
+        label: 'Shipyard',
+        icon: '◈',
+        routeId: 'customization',
+        bayMode: 'shipyard',
+        contextMode: 'modifyExisting',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'ONLINE',
+        statusTone: '',
+        description: 'Modify hull, systems, and components'
+      },
+      {
+        id: 'abilities',
+        label: 'Abilities',
+        icon: '◆',
+        routeId: 'sheet',
+        tab: 'abilities',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'ONLINE',
+        statusTone: '',
+        description: 'Open the vehicle ability matrix'
+      },
+      {
+        id: 'weapons',
+        label: 'Weapons',
+        icon: '✦',
+        routeId: 'sheet',
+        tab: 'weapons',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'ARMED',
+        statusTone: '',
+        description: 'Open the vehicle weapons station'
+      },
+      {
+        id: 'crew',
+        label: 'Crew',
+        icon: '✹',
+        routeId: 'sheet',
+        tab: 'crew',
+        visible: true,
+        enabled: true,
+        badge: crewEntries.length > 0 ? String(crewEntries.length) : null,
+        badgeType: crewEntries.length > 0 ? 'info' : null,
+        featured: false,
+        locked: false,
+        status: crewEntries.length > 0 ? `${crewEntries.length} CREW` : 'OPEN',
+        statusTone: '',
+        description: 'Open the crew manifest'
+      },
+      {
+        id: 'systems',
+        label: 'Systems',
+        icon: '⬡',
+        routeId: 'sheet',
+        tab: 'systems',
+        visible: true,
+        enabled: true,
+        badge: shieldValue > 0 ? 'SHD' : null,
+        badgeType: shieldValue > 0 ? 'info' : null,
+        featured: false,
+        locked: false,
+        status: hullMax > 0 && hullValue <= 0 ? 'CRITICAL' : 'READY',
+        statusTone: hullMax > 0 && hullValue <= 0 ? 'warn' : '',
+        description: 'Open shields, power, and subsystems'
+      },
+      {
+        id: 'cargo',
+        label: 'Cargo',
+        icon: '▣',
+        routeId: 'sheet',
+        tab: 'cargo',
+        visible: true,
+        enabled: true,
+        badge: cargoItems.length > 0 ? String(cargoItems.length) : null,
+        badgeType: cargoItems.length > 0 ? 'info' : null,
+        featured: false,
+        locked: false,
+        status: cargoItems.length > 0 ? `${cargoItems.length} ITEMS` : 'EMPTY',
+        statusTone: '',
+        description: 'Open cargo manifest'
+      },
+      {
+        id: 'store',
+        label: 'Store',
+        icon: '¤',
+        routeId: 'store',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'OPEN',
+        statusTone: '',
+        description: 'Browse and purchase vehicle gear'
+      },
+      {
+        id: 'messages',
+        label: 'Messages',
+        icon: '✉',
+        routeId: 'messenger',
+        visible: true,
+        enabled: true,
+        badge: holonetSummary.badges.messages ? holonetSummary.badges.messages : null,
+        badgeType: holonetSummary.badges.messages ? 'info' : null,
+        featured: false,
+        locked: false,
+        status: 'READY',
+        statusTone: holonetSummary.badges.messages ? 'warn' : '',
+        description: 'Messages and communications'
+      },
+      {
+        id: 'settings',
+        label: 'Settings',
+        icon: '⚙',
+        routeId: 'settings',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'READY',
+        statusTone: '',
+        description: 'Datapad settings and preferences'
+      }
+    ]);
+  }
+
   /**
    * Build app tiles with radial positioning, badge types, and state flags
    */
   static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}) {
+    if (isVehicleActor(actor)) return this._buildVehicleAppTiles(actor, holonetSummary);
     const assetSummary = this._getOwnedAssetSummary(actor);
     const gamesEnabled = (() => {
       try {
@@ -472,9 +706,9 @@ export class HomeSurfaceService {
       },
       {
         id: 'ship',
-        label: 'Ship',
+        label: 'Shipyard',
         icon: '◈',
-        routeId: 'customization',
+        routeId: 'asset-bay',
         bayMode: 'shipyard',
         contextMode: 'modifyExisting',
         visible: assetSummary.vehicleCount > 0,
@@ -485,13 +719,13 @@ export class HomeSurfaceService {
         locked: false,
         status: assetSummary.vehicleCount > 1 ? `${assetSummary.vehicleCount} SHIPS` : 'READY',
         statusTone: '',
-        description: 'Ship systems and status'
+        description: 'Owned ship control point'
       },
       {
         id: 'garage',
         label: 'Garage',
         icon: '⬡',
-        routeId: 'customization',
+        routeId: 'asset-bay',
         bayMode: 'garage',
         contextMode: 'modifyExisting',
         visible: assetSummary.droidCount > 0,
@@ -502,7 +736,7 @@ export class HomeSurfaceService {
         locked: false,
         status: assetSummary.droidCount > 1 ? `${assetSummary.droidCount} UNITS` : 'READY',
         statusTone: '',
-        description: 'Droid systems and maintenance'
+        description: 'Owned droid control point'
       },
       {
         id: 'allies',
@@ -566,14 +800,7 @@ export class HomeSurfaceService {
       }
     ];
 
-    const visibleTiles = baseTiles.filter(tile => tile.visible !== false);
-    const tilePositions = this._buildRadialTilePositions(visibleTiles.length);
-
-    return visibleTiles.map((tile, index) => ({
-      ...tile,
-      positionLeft: tilePositions[index]?.left ?? 50,
-      positionTop: tilePositions[index]?.top ?? 50
-    }));
+    return this._withTilePositions(baseTiles);
   }
 
 
@@ -590,7 +817,9 @@ export class HomeSurfaceService {
     const relationships = asArray(system.relationships);
     const items = asArray(actor.items);
 
+    const ownedActorLinks = asArray(system.ownedActors);
     const droidRefs = [
+      ...ownedActorLinks.filter(entry => relationshipMatchesType(entry, ['droid']) || game.actors?.get?.(String(entry?.id ?? entry?.actorId ?? '').replace(/^Actor\./, ''))?.type === 'droid'),
       ...asArray(system.droids),
       ...asArray(system.assets?.droids),
       ...asArray(system.inventory?.droids),
@@ -599,6 +828,7 @@ export class HomeSurfaceService {
     ];
 
     const vehicleRefs = [
+      ...ownedActorLinks.filter(entry => relationshipMatchesType(entry, ['vehicle', 'ship', 'starship']) || game.actors?.get?.(String(entry?.id ?? entry?.actorId ?? '').replace(/^Actor\./, ''))?.type === 'vehicle'),
       ...asArray(system.vehicles),
       ...asArray(system.ships),
       ...asArray(system.assets?.vehicles),
@@ -653,6 +883,36 @@ export class HomeSurfaceService {
         fpPercent: 0,
         dt: 0,
         dtPercent: 0,
+        xpCurrent: 0,
+        xpMax: 0,
+        xpPercent: 0
+      };
+    }
+
+    if (isVehicleActor(actor)) {
+      const classDisplay = vehicleSystemLabel(actor);
+      const species = vehicleRoleLabel(actor);
+      const affiliation = actor.system?.manufacturer || actor.system?.owner || actor.system?.affiliation || 'Independent Vessel';
+      const hpCurrent = asNumber(actor.system?.hull?.value, asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, 0)));
+      const hpMax = asNumber(actor.system?.hull?.max, asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, 0)));
+      const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, (hpCurrent / hpMax) * 100)) : 0;
+      const fpCurrent = asNumber(actor.system?.shields?.value, asNumber(actor.system?.shield?.value, 0));
+      const fpMax = asNumber(actor.system?.shields?.max, asNumber(actor.system?.shield?.max, 0));
+      const fpPercent = fpMax > 0 ? Math.max(0, Math.min(100, (fpCurrent / fpMax) * 100)) : 0;
+      const dt = asNumber(actor.system?.damageThreshold, asNumber(actor.system?.derived?.damageThreshold, asNumber(actor.system?.dt, 0)));
+      const dtPercent = Math.max(0, Math.min(100, (dt / 100) * 100));
+      return {
+        classDisplay,
+        species,
+        affiliation,
+        hpCurrent,
+        hpMax,
+        hpPercent,
+        fpCurrent,
+        fpMax,
+        fpPercent,
+        dt,
+        dtPercent,
         xpCurrent: 0,
         xpMax: 0,
         xpPercent: 0
@@ -740,9 +1000,11 @@ export class HomeSurfaceService {
       };
     }
 
-    const hpValue = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, 0));
-    const hpMax = asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, 42));
-    const fpValue = asNumber(actor.system?.forcePoints?.value, asNumber(actor.system?.resources?.forcePoints?.value, 5));
+    const hpValue = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, asNumber(actor.system?.hull?.value, 0)));
+    const hpMax = asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, asNumber(actor.system?.hull?.max, 42)));
+    const fpValue = isVehicleActor(actor)
+      ? asNumber(actor.system?.shields?.value, asNumber(actor.system?.shield?.value, 0))
+      : asNumber(actor.system?.forcePoints?.value, asNumber(actor.system?.resources?.forcePoints?.value, 5));
     const credits = asNumber(actor.system?.credits, 0);
 
     return {

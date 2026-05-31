@@ -52,6 +52,8 @@ export class ShellSurfaceRegistry {
         return this._buildWorkbenchSurfaceVm(actor, surfaceOptions, shellHost);
       case 'customization':
         return this._buildCustomizationSurfaceVm(actor, surfaceOptions, shellHost);
+      case 'asset-bay':
+        return this._buildAssetBaySurfaceVm(actor, surfaceOptions);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -213,6 +215,19 @@ export class ShellSurfaceRegistry {
     }
   }
 
+
+  static async _buildAssetBaySurfaceVm(actor, options) {
+    try {
+      const { AssetBaySurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/AssetBaySurfaceService.js'
+      );
+      return await AssetBaySurfaceService.buildViewModel(actor, options ?? {});
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Asset bay surface VM failed:', err);
+      return { id: 'asset-bay', title: 'Asset Bay', error: err.message };
+    }
+  }
+
   /**
    * Workbench surface VM — inline via WorkbenchSurfaceAdapter.
    * Creates/reuses an ItemCustomizationWorkbench instance that renders into the holopad surface.
@@ -254,7 +269,8 @@ export class ShellSurfaceRegistry {
       const { CustomizationSurfaceAdapter } = await import(
         '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
       );
-      const adapter = CustomizationSurfaceAdapter.getOrCreate(shellHost, actor, options ?? {});
+      const targetActor = options?.targetActorId ? game.actors?.get?.(String(options.targetActorId)) : actor;
+      const adapter = CustomizationSurfaceAdapter.getOrCreate(shellHost, targetActor || actor, options ?? {});
       return adapter.buildViewModel();
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Customization surface VM failed:', err);

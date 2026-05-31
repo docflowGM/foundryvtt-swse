@@ -1,3 +1,15 @@
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
+  frameOuterClass="swse-vehicle-sheet-wrapper swse-vehicle-sheet-form swse-sheet-ui swse-sheet swse-sheet--concept"
+  frameDataSheetForm="vehicle"
+  shellSurface=shellSurface
+  shellTheme=sheetTheme
+  shellMotionStyle=sheetMotionStyle
+  shellStyleInline=sheetSurfaceStyleInline
+  topHomeAction="tablet-home"
+  bottomHomeAction="tablet-home"
+  showResize=true
+}}
+{{#if shellIsSheet}}
 <form class="sheet-shell swse-sheet-ui swse-ui-shell swse-vehicle-sheet swse-vehicle-shell swse-vehicle-command-deck v2 flexcol" autocomplete="off">
 
   <header class="sheet-header swse-ui-frame swse-vehicle-command-header">
@@ -29,6 +41,7 @@
 
     <nav class="sheet-tabs tabs flexrow swse-ui-tabs swse-vehicle-tabs" data-group="primary">
       <a class="item active" data-tab="overview">Overview</a>
+      <a class="item" data-tab="abilities">Abilities</a>
       <a class="item" data-tab="weapons">Weapons</a>
       <a class="item" data-tab="crew">Crew</a>
       <a class="item" data-tab="systems">Systems</a>
@@ -77,9 +90,13 @@
         </div>
       </section>
 
+      <section class="tab flexcol" data-group="primary" data-tab="abilities">
+        {{> "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/abilities-panel.hbs"}}
+      </section>
+
       <section class="tab flexcol" data-group="primary" data-tab="weapons">
         {{#if actionEconomy}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+          {{> "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/action-economy-indicator.hbs"
               actionState=actionEconomy.state
               actionBreakdown=actionEconomy.breakdown
               swiftMax=actionEconomy.state.swiftMax}}
@@ -217,3 +234,15 @@
   {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
 
 </form>
+{{else}}
+  <div class="swse-shell-screen-surface swse-shell-screen-surface--{{shellSurface}}">
+    {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+  </div>
+{{/if}}
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs"
+  bottomHomeAction="tablet-home"
+  bottomHomeTitle="Return to holopad home"
+  bottomHomeLabel="Return to holopad home"
+  bottomEngraving="CEC ID 31 · VEHICLE · DOCKED"
+  showResize=true
+}}

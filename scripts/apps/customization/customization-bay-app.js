@@ -243,6 +243,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.focusCategory = options.focusCategory ?? options.region ?? null;
     this.focusSlot = options.focusSlot ?? options.slot ?? null;
     this.focusMode = options.focusMode ?? null;
+    this.inlineShell = Boolean(options.inlineShell);
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
@@ -768,7 +769,9 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       ui.notifications.info("Customization applied through the engine.");
       this.selectedAdditions.clear();
       this.selectedRemovals.clear();
-      this.actor?.sheet?.render?.(true);
+      if (!this.inlineShell) {
+        this.actor?.sheet?.render?.(true);
+      }
       await this.render({ force: true });
     } catch (err) {
       SWSELogger.error("Customization Bay apply failed:", err);

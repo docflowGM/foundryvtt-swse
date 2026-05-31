@@ -10,9 +10,8 @@
  * (`templates/actors/droid/v2/droid-sheet.hbs`).
  *
  * Goals:
- *   - Move panel-shaped data construction out of `droid-sheet.js`'s monolithic
- *     `_prepareContext` so the live droid sheet has the same builder seam the
- *     character sheet has.
+ *   - Move panel-shaped data construction out of `droid-sheet.js` so the
+ *     live droid sheet has the same builder seam the character sheet has.
  *   - Preserve EVERY context key the live template + its partials currently
  *     consume. This is a structural transplant, not a refactor of payloads.
  *   - Keep droid-specific divergences intact: no CON gating, no force/UTF
@@ -22,8 +21,8 @@
  *     surfaced explicitly so consumers — and tests — can find it.
  *
  * NOT in this pass:
- *   - Per-panel template registration (the live droid sheet still renders a
- *     single monolithic template).
+ *   - A dynamic registry-driven renderer. The live droid sheet now composes
+ *     explicit frame/tab partials inside the shared shell.
  *   - Per-panel validation enforcement (DroidLivePanelRegistry only flags
  *     drift, it does not throw).
  */
@@ -37,17 +36,33 @@ import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
 function projectItem(item) {
   const projection = {};
   for (const key of ITEM_PROJECTION_KEYS) projection[key] = item?.[key];
+  projection.damage = item?.system?.damage ?? item?.system?.damageFormula ?? "";
+  projection.damageType = item?.system?.damageType ?? item?.system?.damageTypes ?? "";
+  projection.range = item?.system?.range ?? item?.system?.rangeText ?? "";
+  projection.attackBonus = item?.system?.attackBonus ?? item?.system?.attack ?? null;
+  projection.integrated = item?.system?.integrated === true || Boolean(item?.flags?.swse?.integrated);
   return projection;
 }
 
+function asItemArray(items) {
+  if (Array.isArray(items)) return items;
+  if (!items) return [];
+  if (Array.isArray(items.contents)) return items.contents;
+  if (typeof items.values === "function") return Array.from(items.values());
+  if (typeof items[Symbol.iterator] === "function") return Array.from(items);
+  if (typeof items === "object") return Object.values(items);
+  return [];
+}
+
 function projectItems(items) {
-  return Array.isArray(items) ? items.map(projectItem) : [];
+  return asItemArray(items).map(projectItem);
 }
 
 export class DroidSheetContextBuilder {
@@ -76,6 +91,7 @@ export class DroidSheetContextBuilder {
     const biographyPanel = this.buildBiographyPanel();
     const healthPanel = this.panelBuilder.buildHealthPanel();
     const defensePanel = this.panelBuilder.buildDefensePanel();
+    const quickGlance = this.buildQuickGlancePanel(healthPanel, defensePanel);
     const secondWindPanel = this.panelBuilder.buildSecondWindPanel();
     const abilitiesPanel = this.buildAbilitiesPanel();
     const abilities = abilitiesPanel.abilities;
@@ -89,6 +105,7 @@ export class DroidSheetContextBuilder {
     const requiredSystems = this.buildRequiredSystemsDefaults(droidPanels);
     const garage = this.buildGarageContext();
     const flags = this.buildFlagsContext();
+    const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor: this.actor });
 
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
@@ -98,8 +115,15 @@ export class DroidSheetContextBuilder {
       biographyPanel,
       healthPanel,
       defensePanel,
+      quickGlance,
       abilitiesPanel,
       abilities,
+      conceptLayout: {
+        abilities,
+        abilitiesTab: {
+          entries: abilities
+        }
+      },
       xpEnabled: header.xpEnabled,
       xpData: header.xpData,
       xpPercent: header.xpPercent,
@@ -112,16 +136,21 @@ export class DroidSheetContextBuilder {
       destinyPointsValue: header.destinyPointsValue,
       destinyPointsMax: header.destinyPointsMax,
       secondWindPanel,
-      items: projectItems(this.actor?.items),
+      items: projectItems(asItemArray(this.actor?.items)),
       equipment,
       armor,
       weapons,
-      combatWeapons: weapons,
+      combatWeapons: this.buildCombatWeapons(weapons, droidPanels),
       ownedActorMap,
       feats: abilityCards.feats,
       talents: abilityCards.talents,
       racialAbilities: abilityCards.racialAbilities,
       droidPanels,
+      sheetTheme: sheetThemeContext.themeKey,
+      sheetMotionStyle: sheetThemeContext.motionStyle,
+      sheetThemeStyleInline: sheetThemeContext.themeStyleInline,
+      sheetMotionStyleInline: sheetThemeContext.motionStyleInline,
+      sheetSurfaceStyleInline: sheetThemeContext.surfaceStyleInline,
       droid: {
         degree,
         layoutMode: degree.layoutMode,
@@ -192,15 +221,48 @@ export class DroidSheetContextBuilder {
   }
 
   buildEquipmentEntries() {
-    return projectItems((this.actor?.items ?? []).filter((item) => item.type === "equipment"));
+    return projectItems(asItemArray(this.actor?.items).filter((item) => item.type === "equipment"));
   }
 
   buildArmorEntries() {
-    return projectItems((this.actor?.items ?? []).filter((item) => item.type === "armor"));
+    return projectItems(asItemArray(this.actor?.items).filter((item) => item.type === "armor"));
   }
 
   buildWeaponEntries() {
-    return projectItems((this.actor?.items ?? []).filter((item) => item.type === "weapon"));
+    return projectItems(asItemArray(this.actor?.items).filter((item) => item.type === "weapon"));
+  }
+
+  buildCombatWeapons(weapons, droidPanels) {
+    const all = Array.isArray(weapons) ? weapons : [];
+    const integrated = all.filter((weapon) => weapon.integrated === true);
+    const handheld = all.filter((weapon) => weapon.integrated !== true);
+    const integratedParts = Array.isArray(droidPanels?.integratedWeapons?.entries)
+      ? droidPanels.integratedWeapons.entries.filter((part) => !all.some((weapon) => weapon.id === part.id))
+      : [];
+    const unarmed = buildUnarmedAttackContext(this.actor);
+    return {
+      unarmed,
+      handheld,
+      integrated,
+      integratedParts,
+      all: [unarmed, ...handheld, ...integrated, ...integratedParts],
+      hasHandheld: handheld.length > 0,
+      hasIntegrated: integrated.length > 0,
+      hasIntegratedParts: integratedParts.length > 0,
+      hasAny: handheld.length > 0 || integrated.length > 0 || integratedParts.length > 0 || Boolean(unarmed)
+    };
+  }
+
+  buildQuickGlancePanel(healthPanel, defensePanel) {
+    const defenseBySystemKey = new Map((defensePanel?.defenses ?? []).map((defense) => [defense.systemKey, defense]));
+    const speed = this.derived?.speed?.total ?? this.derived?.speed ?? this.system?.speed?.total ?? this.system?.speed?.value ?? 0;
+    return {
+      hpLabel: `${healthPanel?.hp?.value ?? 0}/${healthPanel?.hp?.max ?? 0}`,
+      speed,
+      reflex: defenseBySystemKey.get('reflex')?.total ?? this.derived?.defenses?.reflex?.total ?? 10,
+      fortitude: defenseBySystemKey.get('fortitude')?.total ?? this.derived?.defenses?.fortitude?.total ?? 10,
+      will: defenseBySystemKey.get('will')?.total ?? this.derived?.defenses?.will?.total ?? 10
+    };
   }
 
   buildHeaderViewModel() {
@@ -271,8 +333,8 @@ export class DroidSheetContextBuilder {
    * partials and parity tests can consume a stable contract without forcing
    * character-only fields onto droids.
    *
-   * These payloads are additive — they do not replace any existing keys the
-   * monolithic template already binds.
+   * These payloads are additive — they do not replace existing top-level keys
+   * consumed by the frame/tab partials.
    */
   buildDroidSpecificPanels() {
     return {
@@ -957,7 +1019,7 @@ export class DroidSheetContextBuilder {
   }
 
   _calculateUsedModPoints() {
-    return (this.actor?.items ?? [])
+    return asItemArray(this.actor?.items)
       .filter((item) => item.type === "customization")
       .reduce((sum, item) => sum + Number(item.system?.costPoints ?? 1), 0);
   }

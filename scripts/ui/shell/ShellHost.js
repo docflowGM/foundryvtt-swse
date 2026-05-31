@@ -369,6 +369,14 @@ export function ShellHostMixin(BaseClass) {
         this._wireUpgradeSurfaceEvents(root);
       }
 
+      if (this._shellSurface === 'asset-bay') {
+        this._wireAssetBaySurfaceEvents(root);
+      }
+
+      if (this._shellSurface === 'customization') {
+        this._wireCustomizationSurfaceEvents(root);
+      }
+
       if (this._shellSurface === 'messenger') {
         this._messengerSurfaceController ??= new MessengerSurfaceController(this, this.actor || this.document);
         this._messengerSurfaceController.setActor?.(this.actor || this.document);
@@ -417,6 +425,7 @@ export function ShellHostMixin(BaseClass) {
           const surfaceOptions = { source: 'home' };
           if (el.dataset.bayMode) surfaceOptions.bayMode = el.dataset.bayMode;
           if (el.dataset.contextMode) surfaceOptions.contextMode = el.dataset.contextMode;
+          if (el.dataset.tabTarget) surfaceOptions.tab = el.dataset.tabTarget;
           await this.setSurface(routeId, surfaceOptions);
           await this.requestSurfaceRender({ reason: `${routeId}-home-launch`, surfaceId: routeId });
         });
@@ -447,6 +456,90 @@ export function ShellHostMixin(BaseClass) {
       });
     }
 
+
+
+
+    /**
+     * Wire inline Garage / Shipyard customization actions for whatever actor is
+     * bound to the customization surface. This is intentionally generic shell
+     * behavior so owner dashboards, droid sheets, and vehicle sheets all use the
+     * same inline adapter bridge.
+     */
+    _wireCustomizationSurfaceEvents(root) {
+      const surfaceRoot = root.querySelector('[data-shell-region="surface-customization"]');
+      if (!surfaceRoot) return;
+
+      surfaceRoot.addEventListener('click', async (ev) => {
+        const target = ev.target.closest('[data-action]');
+        if (!target) return;
+        const action = target.dataset.action;
+        if (!action) return;
+        ev.preventDefault();
+
+        try {
+          const { CustomizationSurfaceAdapter } = await import(
+            '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
+          );
+          const mode = surfaceRoot.dataset.bayMode
+            || this._shellSurfaceOptions?.bayMode
+            || this._shellSurfaceOptions?.mode
+            || (this.actor?.type === 'vehicle' ? 'shipyard' : 'garage');
+          const targetActorId = surfaceRoot.dataset.actorId
+            || this._shellSurfaceOptions?.targetActorId
+            || this.actor?.id;
+          const adapter = CustomizationSurfaceAdapter.get(targetActorId, mode);
+          await adapter?.handleAction?.(action, target);
+        } catch (err) {
+          SWSELogger.error(`[ShellHost] Customization surface action failed:`, err);
+        }
+      });
+    }
+
+    /**
+     * Wire Garage / Shipyard owner dashboard actions.
+     * The dashboard controls owned property actors; it does not replace a droid
+     * PC/NPC actor's own Droid Sheet app.
+     */
+    _wireAssetBaySurfaceEvents(root) {
+      const surfaceRoot = root.querySelector('[data-shell-region="surface-asset-bay"]');
+      if (!surfaceRoot) return;
+
+      surfaceRoot.querySelectorAll('[data-asset-bay-action]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          if (el.disabled) return;
+          const action = el.dataset.assetBayAction;
+          const actorId = el.dataset.actorId;
+          if (!action || !actorId) return;
+
+          const targetActor = game.actors?.get?.(String(actorId).replace(/^Actor\./, '')) ?? null;
+          if (!targetActor) {
+            ui.notifications?.warn?.('That owned actor could not be found.');
+            await this.requestSurfaceRender({ reason: 'asset-bay-missing-actor', surfaceId: 'asset-bay' });
+            return;
+          }
+
+          if (action === 'open-sheet') {
+            targetActor.sheet?.render?.(true);
+            return;
+          }
+
+          if (action === 'modify') {
+            const bayMode = el.dataset.bayMode || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            await this.setSurface('customization', {
+              source: 'asset-bay',
+              returnSurface: 'asset-bay',
+              ownerActorId: this.actor?.id ?? this.document?.id ?? '',
+              targetActorId: targetActor.id,
+              bayMode,
+              mode: bayMode,
+              contextMode: 'modifyExisting'
+            });
+            await this.requestSurfaceRender({ reason: `${bayMode}-asset-bay-launch`, surfaceId: 'customization' });
+          }
+        });
+      });
+    }
 
     _holonetMessengerThreadId(record, element = null) {
       const dataset = element?.dataset || {};
@@ -717,6 +810,12 @@ export function ShellHostMixin(BaseClass) {
       const actor = this.actor || this.document;
       if (actor?.id) {
         ShellRouter.unregister(actor.id);
+      }
+      try {
+        const { CustomizationSurfaceAdapter } = await import('/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js');
+        CustomizationSurfaceAdapter.destroyForHost?.(this);
+      } catch (err) {
+        SWSELogger.warn('[ShellHost] Failed to destroy customization adapters for closing host:', err);
       }
       if (this._holonetSyncHookId != null) {
         Hooks.off('swseHolonetUpdated', this._holonetSyncHookId);

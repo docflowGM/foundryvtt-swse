@@ -87,6 +87,11 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs'
 ];
 
+const SHARED_V2_CONCEPT_PANEL_TEMPLATES = [
+  'systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/abilities-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/action-economy-indicator.hbs'
+];
+
 /**
  * All templates used by the system.
  * These paths MUST match exactly how they are referenced in {{> }} calls.
@@ -98,6 +103,19 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/title-strip.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/header-block.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/resource-strip.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/tabs-bar.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/sidebar.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/overview-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/abilities-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/skills-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/combat-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/talents-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/gear-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/systems-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/biography-tab.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
 
@@ -105,6 +123,11 @@ export const SWSE_TEMPLATES = [
   // Character V2 Concept Sheet
   // ==============================
   ...CHARACTER_V2_CONCEPT_TEMPLATES,
+
+  // ==============================
+  // Shared V2 Concept Panels
+  // ==============================
+  ...SHARED_V2_CONCEPT_PANEL_TEMPLATES,
 
   // ==============================
   // Character v2 Partials
@@ -146,10 +169,13 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Droid v2 Partials
   // ==============================
-  // Legacy monolithic panels (used by NPC sheet, kept for backward compatibility)
+  // Live Droid concept partials are declared above beside droid-sheet.hbs.
+  // The remaining droid partials below are either live subsystem panels used by
+  // tabs/systems-tab.hbs or dormant legacy panels kept preloaded so older sheet
+  // paths do not fail while the V2 shell migration is verified.
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs',
-  // Phase 2: New subsystem partials for droid sheet systems tab
+  // Live subsystem partials for droid sheet systems tab
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs',
@@ -163,7 +189,7 @@ export const SWSE_TEMPLATES = [
   // Phase 4: Armor detail and budget analysis partials
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-budget-breakdown-panel.hbs',
-  // Other droid partials
+  // Dormant legacy droid panels kept for compatibility during V2 migration
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/initiative-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/equipment-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/armor-panel.hbs',
@@ -174,15 +200,16 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Vehicle v2 Partials
   // ==============================
+  // Dormant legacy vehicle panels kept only where no actor v2-concept
+  // equivalent exists. Name-colliding generic panels (hp-condition,
+  // defenses, attacks, actions) are intentionally not preloaded here;
+  // live vehicle sheet usage should route through actor v2-concept partials
+  // or vehicle-specific `vehicle-*` panels instead.
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
 
   // ==============================
   // NPC V2 Partials
@@ -444,6 +471,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-asset-bay.hbs',
 
 
 ];
