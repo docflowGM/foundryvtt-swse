@@ -6,7 +6,6 @@
 import { SWSE } from "./scripts/core/config.js";
 import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
-import { SWSEV2NpcSheet } from "./scripts/sheets/v2/npc-sheet.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
@@ -88,9 +87,12 @@ Hooks.once("init", async () => {
     makeDefault: true
   });
 
-  Actors.registerSheet("swse", SWSEV2NpcSheet, {
+  // NPC actors intentionally use the same actor holopad/shell as characters.
+  // NPC-specific differences are layered inside the character sheet context/templates;
+  // the old NPC-only shell is deprecated and no longer registered.
+  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
     types: ["npc"],
-    label: "SWSE NPC Sheet v2",
+    label: "SWSE NPC Actor Sheet v2 (Actor Shell)",
     makeDefault: true
   });
 

@@ -79,9 +79,13 @@
                   {{#each pendingApprovals}}
                     <div class="gm-store-approval-card gm-phase10-asset-card">
                       <span class="gm-command-eyebrow">{{capitalize this.type}}</span>
-                      <strong>{{this.draftData.name}}</strong>
+                      <strong>{{#if this.assetName}}{{this.assetName}}{{else}}{{this.draftData.name}}{{/if}}</strong>
                       <span>{{this.ownerActorName}}</span>
-                      <em>{{this.costCredits}} cr</em>
+                      {{#if this.frameLabel}}<span>Frame: {{this.frameLabel}}</span>{{/if}}
+                      {{#if this.epSummary}}<span>EP: {{this.epSummary}}</span>{{/if}}
+                      {{#if this.reviewWarning}}<span class="gm-store-warning">{{this.reviewWarning}}</span>{{/if}}
+                      <em>{{#if this.costLabel}}{{this.costLabel}}{{else}}{{this.costCredits}} cr{{/if}}</em>
+                      {{#if this.currentCreditsLabel}}<small>Wallet {{this.currentCreditsLabel}} → {{this.afterCreditsLabel}}</small>{{/if}}
                     </div>
                   {{/each}}
                 </div>

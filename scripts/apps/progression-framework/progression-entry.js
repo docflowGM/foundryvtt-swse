@@ -136,7 +136,7 @@ function _createTransientProgressionActor({ actorType = 'character', subtype = n
   }
 
   const resolvedIsDroid = isDroid || subtype === 'droid';
-  const resolvedActorType = resolvedIsDroid ? 'character' : actorType;
+  const resolvedActorType = resolvedIsDroid ? 'droid' : actorType;
   const defaultName = name || (resolvedActorType === 'npc'
     ? 'New NPC'
     : resolvedIsDroid

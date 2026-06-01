@@ -517,6 +517,95 @@ function buildStoreItemApprovalRequest(approval, index) {
   };
 }
 
+
+function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, currentCredits, submitted }) {
+  const build = approval?.modificationData ?? approval?.buildSpec ?? {};
+  const stockShip = build.stockShip ?? approval?.stockShip ?? {};
+  const modifications = asArray(build.modifications ?? approval?.modifications);
+  const frameName = stockShip?.name ?? approval?.vehicleTemplateName ?? approval?.draftData?.baseTemplate ?? 'Unknown frame';
+  const frameCost = numberOrNull(stockShip?.cost) ?? 0;
+  const modCost = modifications.reduce((sum, mod) => sum + (numberOrNull(mod?.finalCost ?? mod?.cost) ?? 0), 0);
+  const epUsed = modifications.reduce((sum, mod) => sum + (numberOrNull(mod?.emplacementPoints ?? mod?.ep) ?? 0), 0);
+  const epAvailable = numberOrNull(stockShip?.unusedEmplacementPoints ?? stockShip?.unusedEP) ?? null;
+  const approvalReason = approval?.metadata?.approvalReason ?? approval?.approvalReason ?? 'GM approval required.';
+  const modSummary = modifications.length
+    ? modifications.map((mod) => {
+      const ep = numberOrNull(mod?.emplacementPoints ?? mod?.ep) ?? 0;
+      const price = numberOrNull(mod?.finalCost ?? mod?.cost) ?? 0;
+      const marker = mod?.nonstandard ? ' · nonstandard ×5' : '';
+      return `${mod?.name ?? mod?.id ?? 'Modification'} — ${ep} EP — ${displayCredits(price)}${marker}`;
+    }).join('\n')
+    : (approval?.draftData?.details ?? 'No modification payload recorded.');
+
+  const categories = [
+    {
+      id: 'shipyard-frame',
+      label: 'Shipyard Build',
+      icon: 'fa-solid fa-rocket',
+      rows: [
+        makeReadonlyRow('Frame', frameName),
+        makeReadonlyRow('Requested For', ownerActor?.name ?? approval?.ownerActorName ?? 'Unknown'),
+        makeReadonlyRow('Draft Actor', actor?.name ?? 'No draft actor linked'),
+        makeReadonlyRow('Submitted', submitted),
+        makeReadonlyRow('Approval Reason', approvalReason, { wide: true })
+      ]
+    },
+    {
+      id: 'shipyard-cost',
+      label: 'Cost & Ledger',
+      icon: 'fa-solid fa-coins',
+      rows: [
+        makeReadonlyRow('Current Credits', displayCredits(currentCredits)),
+        makeEditableRow('Approved Cost', cost, 'costCredits', 'number', { suffix: 'cr' }),
+        makeReadonlyRow('Credits After Approval', displayCredits(currentCredits - cost)),
+        makeReadonlyRow('Frame Cost', displayCredits(frameCost)),
+        makeReadonlyRow('Modification Cost', displayCredits(modCost))
+      ]
+    },
+    {
+      id: 'shipyard-resources',
+      label: 'Emplacement & Systems',
+      icon: 'fa-solid fa-screwdriver-wrench',
+      rows: [
+        makeReadonlyRow('Unused EP Pool', epAvailable === null ? EMPTY : epAvailable),
+        makeReadonlyRow('EP Used', epUsed),
+        makeReadonlyRow('EP Remaining', epAvailable === null ? EMPTY : epAvailable - epUsed),
+        makeReadonlyRow('Installed Modifications', modSummary, { wide: true })
+      ]
+    },
+    {
+      id: 'shipyard-stats',
+      label: 'Frame Stats',
+      icon: 'fa-solid fa-gauge-high',
+      rows: [
+        makeReadonlyRow('Size', stockShip?.size ?? safeGet(actor, 'system.size', EMPTY)),
+        makeReadonlyRow('HP', stockShip?.hitPoints ?? safeGet(actor, 'system.hp.max', EMPTY)),
+        makeReadonlyRow('DR', stockShip?.dr ?? safeGet(actor, 'system.dr', EMPTY)),
+        makeReadonlyRow('Armor', stockShip?.armor ?? safeGet(actor, 'system.armor', EMPTY)),
+        makeReadonlyRow('Crew / Passengers', `${stockShip?.crew ?? safeGet(actor, 'system.crew', EMPTY)} / ${stockShip?.passengers ?? safeGet(actor, 'system.passengers', EMPTY)}`),
+        makeReadonlyRow('Cargo', stockShip?.cargoCapacity ?? safeGet(actor, 'system.cargo', EMPTY))
+      ]
+    },
+    {
+      id: 'shipyard-notes',
+      label: 'GM Notes & Restrictions',
+      icon: 'fa-solid fa-clipboard-list',
+      rows: [
+        makeTextAreaRow('Approval Notes', approval?.metadata?.gmNotes ?? '', 'metadata.gmNotes', { wide: true, placeholder: 'Restrictions, altered price, source, delivery delay, or campaign notes.' })
+      ]
+    }
+  ];
+
+  return categories.map((category) => ({
+    ...category,
+    rows: category.rows.map((row) => ({
+      ...row,
+      fieldId: row.inputName ? `store-shipyard-${category.id}-${row.inputName}`.replace(/[^a-zA-Z0-9_-]/g, '-') : null,
+      originalValue: row.value ?? row.displayValue ?? ''
+    }))
+  }));
+}
+
 function buildStoreApprovalRequest(approval, index) {
   if (approval?.type === 'store-item' || approval?.approvalKind === 'store-policy-item') return buildStoreItemApprovalRequest(approval, index);
 
@@ -528,12 +617,15 @@ function buildStoreApprovalRequest(approval, index) {
   const submitted = approval.requestedAt ? new Date(approval.requestedAt).toLocaleString() : approval.timeSubmitted ?? EMPTY;
   const cost = numberOrNull(approval.costCredits) ?? 0;
   const currentCredits = numberOrNull(ownerActor?.system?.credits) ?? 0;
-  const categories = buildGenericActorCategories({ actor: draftActor, approval: { ...approval, ownerActorName: ownerActor?.name ?? approval.ownerActorName, timeSubmitted: submitted }, sourceType: 'store-custom' });
+  const categories = isShip
+    ? buildShipyardRequestCategories({ actor: draftActor, approval: { ...approval, ownerActorName: ownerActor?.name ?? approval.ownerActorName, timeSubmitted: submitted }, ownerActor, cost, currentCredits, submitted })
+    : buildGenericActorCategories({ actor: draftActor, approval: { ...approval, ownerActorName: ownerActor?.name ?? approval.ownerActorName, timeSubmitted: submitted }, sourceType: 'store-custom' });
   const warnings = [];
 
-  if (!draftActor) warnings.push('No draft actor is linked to this request. Inline edits will update approval metadata only.');
+  if (!draftActor) warnings.push('No draft actor is linked to this request. Approval will fail closed until the draft actor is restored.');
   if (!ownerActor) warnings.push('Owner actor could not be found. Approval cannot deduct credits until fixed.');
   if (ownerActor && currentCredits < cost) warnings.push(`${ownerActor.name} has ${displayCredits(currentCredits)} but this request costs ${displayCredits(cost)}.`);
+  if (isShip && !approval?.modificationData) warnings.push('No Shipyard build payload is recorded; review the draft actor before approving.');
 
   return {
     key: `custom:${index}`,

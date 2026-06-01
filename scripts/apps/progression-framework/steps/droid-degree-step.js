@@ -1,4 +1,13 @@
 /**
+ * DEPRECATED / ORPHANED.
+ *
+ * Droid first-time construction now runs through DroidBuilder/Garage
+ * Construction Mode. Degree, size, chassis, model/profile, systems, and budget
+ * are owned by that builder; this standalone step is intentionally not wired
+ * into the progression spine.
+ */
+
+/**
  * DroidDegreeStep — Droid Identity Selection
  *
  * Lightweight progression step for selecting droid degree (and optionally size).

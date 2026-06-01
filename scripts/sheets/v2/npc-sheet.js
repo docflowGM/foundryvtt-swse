@@ -106,7 +106,7 @@ function readNpcAbilitySource(system, key) {
   return { base, racial, temp, total, mod };
 }
 
-function buildNpcConceptAbilities(actor) {
+export function buildNpcConceptAbilities(actor) {
   const system = actor?.system ?? {};
   const isDroidNpc = system.isDroid === true || system.creatureType === 'droid' || system.npcProfile?.kind === 'droid';
   const keys = isDroidNpc ? NPC_ABILITY_KEYS.filter(key => key !== 'con') : NPC_ABILITY_KEYS;
@@ -144,6 +144,345 @@ function buildNpcConceptAbilities(actor) {
     abilities: entries,
     canEdit: actor?.isOwner === true,
     hasConstitution: !isDroidNpc
+  };
+}
+
+
+function labelFromKey(key) {
+  return String(key ?? '')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function displayValue(value, fallback = '—') {
+  if (value === null || value === undefined || value === '') return fallback;
+  if (Array.isArray(value)) {
+    const joined = value.map(v => displayValue(v, '')).filter(Boolean).join(', ');
+    return joined || fallback;
+  }
+  if (typeof value === 'object') {
+    const joined = Object.entries(value)
+      .filter(([, v]) => v !== null && v !== undefined && v !== '' && v !== false)
+      .map(([k, v]) => v === true ? labelFromKey(k) : `${labelFromKey(k)}: ${displayValue(v, '')}`)
+      .filter(Boolean)
+      .join(', ');
+    return joined || fallback;
+  }
+  return String(value);
+}
+
+function formatSignedNpc(value, fallback = '—') {
+  if (value === null || value === undefined || value === '') return fallback;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return displayValue(value, fallback);
+  return n >= 0 ? `+${n}` : String(n);
+}
+
+function numberToneClass(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 'is-neutral';
+  if (n > 0) return 'is-positive';
+  if (n < 0) return 'is-negative';
+  return 'is-neutral';
+}
+
+function abilityModifierClass(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n === 0) return 'zero';
+  return n > 0 ? 'pos' : 'neg';
+}
+
+function itemTypeLabel(type) {
+  const map = {
+    feat: 'Feat', talent: 'Talent', weapon: 'Weapon', armor: 'Armor', equipment: 'Equipment',
+    consumable: 'Consumable', tool: 'Tool', gear: 'Gear', class: 'Class', species: 'Species',
+    'force-power': 'Force Power', class_feature: 'Class Feature', racialAbility: 'Species Ability'
+  };
+  return map[type] ?? labelFromKey(type || 'Item');
+}
+
+function itemDescription(item) {
+  const sys = item?.system ?? {};
+  return displayValue(
+    sys?.description?.value ?? sys?.description ?? sys?.summary ?? sys?.text ?? sys?.effect ?? sys?.properties,
+    ''
+  );
+}
+
+function itemQuantity(item) {
+  const q = item?.system?.quantity ?? item?.system?.qty ?? null;
+  const n = Number(q);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+function buildNpcConceptItemRow(item, typeOverride = null) {
+  return {
+    id: item?.id ?? null,
+    name: item?.name || 'Unnamed',
+    type: item?.type || typeOverride || 'item',
+    typeLabel: itemTypeLabel(typeOverride || item?.type),
+    img: item?.img || null,
+    quantity: itemQuantity(item),
+    summary: itemDescription(item),
+    canOpen: Boolean(item?.id)
+  };
+}
+
+export function buildNpcConceptSheetContext(actor, context = {}) {
+  const system = actor?.system ?? {};
+  const derived = context?.derived ?? system?.derived ?? {};
+  const play = context?.playStatblock ?? {};
+  const allItems = Array.from(actor?.items ?? []);
+
+  const levelValue = displayValue(
+    system?.attributes?.level ?? system?.level ?? derived?.identity?.level ?? derived?.level,
+    ''
+  );
+  const challenge = displayValue(
+    system?.challengeLevel ?? system?.cl ?? derived?.identity?.challengeLevel ?? derived?.challengeLevel,
+    ''
+  );
+  const species = displayValue(
+    derived?.identity?.species ?? system?.species ?? system?.race ?? system?.details?.species,
+    ''
+  );
+  const classDisplay = displayValue(
+    derived?.identity?.classDisplay ?? system?.className ?? system?.class ?? system?.details?.class,
+    ''
+  );
+
+  const hpCurrent = safeNumber(
+    context?.hpCurrent ?? system?.hp?.value ?? system?.health?.value ?? play?.hp?.value,
+    0
+  );
+  const hpMax = safeNumber(
+    context?.hpMax ?? system?.hp?.max ?? system?.health?.max ?? system?.derived?.hp?.max ?? play?.hp?.max,
+    0
+  );
+  const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, Math.round((hpCurrent / hpMax) * 100))) : 0;
+  const hpToneClass = hpPercent <= 25 ? 'low' : hpPercent <= 60 ? 'mid' : 'healthy';
+
+  const defenseFallback = Object.fromEntries((play?.defenses ?? []).map(row => [String(row.key || row.label || '').toLowerCase(), row.value]));
+  const defenseValues = {
+    ref: displayValue(
+      derived?.defenses?.ref ?? derived?.defenses?.reflex ?? system?.defenses?.ref ?? system?.defenses?.reflex?.total ?? defenseFallback.reflex,
+      '—'
+    ),
+    fort: displayValue(
+      derived?.defenses?.fort ?? derived?.defenses?.fortitude ?? system?.defenses?.fort ?? system?.defenses?.fortitude?.total ?? defenseFallback.fortitude,
+      '—'
+    ),
+    will: displayValue(
+      derived?.defenses?.will ?? system?.defenses?.will?.total ?? system?.defenses?.will ?? defenseFallback.will,
+      '—'
+    ),
+    dt: displayValue(
+      derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold ?? play?.damageThreshold,
+      '—'
+    )
+  };
+
+  const defenseChips = [
+    { key: 'ref', label: 'REF', value: defenseValues.ref },
+    { key: 'fort', label: 'FORT', value: defenseValues.fort },
+    { key: 'will', label: 'WILL', value: defenseValues.will },
+    { key: 'dt', label: 'DT', value: defenseValues.dt }
+  ];
+
+  const abilityRows = Array.isArray(context?.abilitiesPanel?.abilities) && context.abilitiesPanel.abilities.length
+    ? context.abilitiesPanel.abilities.map(entry => ({
+        key: entry.key,
+        abbr: entry.abbr || String(entry.key || '').toUpperCase(),
+        label: entry.label || labelFromKey(entry.key),
+        score: displayValue(entry.total ?? entry.score ?? entry.base, '—'),
+        mod: formatSignedNpc(entry.mod, '—'),
+        modifierClass: abilityModifierClass(entry.mod),
+        isPrimary: entry.isPrimary === true,
+        isLowest: entry.isLowest === true
+      }))
+    : (play?.abilities ?? []).map(entry => ({
+        key: entry.key,
+        abbr: entry.label || String(entry.key || '').toUpperCase(),
+        label: entry.label || labelFromKey(entry.key),
+        score: displayValue(entry.score, '—'),
+        mod: displayValue(entry.mod, '—'),
+        modifierClass: abilityModifierClass(String(entry.mod || '').replace('+', '')),
+        isPrimary: false,
+        isLowest: false
+      }));
+
+  const skillRows = (play?.skills ?? []).map(skill => ({
+    key: skill.key,
+    label: skill.label || labelFromKey(skill.key),
+    total: skill.total ?? '+0',
+    trained: skill.trained === true
+  }));
+
+  const weaponFallbackRows = allItems.filter(item => item.type === 'weapon').map(item => ({
+    id: item.id,
+    name: item.name || 'Weapon',
+    source: 'Item',
+    mode: displayValue(item.system?.weaponType ?? item.system?.category ?? item.system?.group ?? item.system?.type, 'Weapon'),
+    attack: displayValue(item.system?.attackBonus ?? item.system?.attack?.bonus ?? item.system?.bonus ?? item.system?.toHit, '—'),
+    damage: displayValue(item.system?.damage ?? item.system?.damageFormula ?? item.system?.damage?.formula ?? item.system?.damage?.value, '—'),
+    notes: itemDescription(item),
+    canOpen: true
+  }));
+
+  const attackRows = (play?.attacks?.length ? play.attacks : weaponFallbackRows).map(row => ({
+    id: row.id ?? null,
+    name: row.name || 'Attack',
+    source: row.source || 'Statblock',
+    mode: row.mode || '—',
+    attack: row.attack || '—',
+    damage: row.damage || '—',
+    notes: row.notes && row.notes !== '—' ? row.notes : '',
+    canOpen: Boolean(row.id)
+  }));
+
+  const grouped = play?.featureGroups ?? {};
+  const featureFromGroup = (rows = [], typeLabel = 'Feature') => rows.map(row => ({
+    id: row.id ?? null,
+    name: row.name || 'Unnamed',
+    typeLabel,
+    summary: row.summary && row.summary !== '—' ? row.summary : '',
+    canOpen: Boolean(row.id)
+  }));
+  const featRows = grouped.feats?.length
+    ? featureFromGroup(grouped.feats, 'Feat')
+    : allItems.filter(item => item.type === 'feat').map(item => buildNpcConceptItemRow(item, 'feat'));
+  const talentRows = grouped.talents?.length
+    ? featureFromGroup(grouped.talents, 'Talent')
+    : allItems.filter(item => item.type === 'talent').map(item => buildNpcConceptItemRow(item, 'talent'));
+  const specialRows = (play?.specials ?? []).map(special => ({
+    label: special.label || 'Special',
+    value: special.value || '—',
+    source: special.source || 'Source'
+  }));
+
+  const hiddenGearTypes = new Set(['class', 'feat', 'talent', 'species', 'racialAbility', 'species-power', 'force-power', 'class_feature']);
+  const gearRows = allItems
+    .filter(item => !hiddenGearTypes.has(item.type))
+    .map(item => buildNpcConceptItemRow(item));
+  const credits = safeNumber(system?.credits ?? system?.resources?.credits ?? system?.wealth?.credits, 0);
+
+  const forcePowerRows = grouped.forcePowers?.length
+    ? featureFromGroup(grouped.forcePowers, 'Force Power')
+    : allItems.filter(item => item.type === 'force-power').map(item => buildNpcConceptItemRow(item, 'force-power'));
+
+  const legalSummary = context?.npcLegalReview?.summary ?? {};
+  const legalChecks = (context?.npcLegalReview?.groups ?? [])
+    .flatMap(group => (group.checks ?? []).map(check => ({
+      label: check.label || group.label || 'Legal Check',
+      severity: check.severity || check.tone || 'info',
+      status: check.status || '',
+      message: check.message || check.detail || ''
+    })));
+
+  const isDependent = ['follower', 'minion', 'privateer'].includes(context?.npcKind);
+  const isCreature = context?.isBeastNpc === true || context?.isMountNpc === true;
+  const showForceTab = system?.forceSensitive === true || forcePowerRows.length > 0;
+  const showGearTab = gearRows.length > 0 || credits !== 0 || game.user?.isGM === true;
+  const showGmTab = game.user?.isGM === true;
+
+  const conditionCurrent = displayValue(
+    derived?.damage?.conditionStep ?? system?.conditionTrack?.current ?? system?.condition?.step,
+    '—'
+  );
+  const initiative = formatSignedNpc(
+    derived?.initiative?.total ?? system?.initiative?.total ?? system?.skills?.init?.total ?? system?.skills?.initiative?.total,
+    '—'
+  );
+
+  const summaryLine = [];
+  if (levelValue) summaryLine.push(`L${levelValue}`);
+  if (species) summaryLine.push(species);
+  if (classDisplay) summaryLine.push(classDisplay);
+  if (challenge) summaryLine.push(String(challenge).startsWith('CL') ? challenge : `CL ${challenge}`);
+
+  return {
+    kind: context?.npcKind || 'npc',
+    kindLabel: context?.npcKindLabel || 'NPC',
+    modeLabel: context?.npcModeLabel || 'Play Mode',
+    sourceAuthorityLabel: context?.npcSourceAuthorityLabel || 'Statblock',
+    legalStateLabel: context?.npcLegalStateLabel || 'Unchecked',
+    levelLabel: levelValue || '—',
+    speciesLabel: species || '—',
+    classDisplay: classDisplay || '—',
+    challengeLabel: challenge || '—',
+    summaryLine,
+    hpCurrent,
+    hpMax,
+    hpPercent,
+    hpToneClass,
+    conditionCurrent,
+    initiative,
+    defenseChips,
+    babDisplay: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab, '—'),
+    quickStats: [
+      { label: 'HP', value: hpMax > 0 ? `${hpCurrent}/${hpMax}` : displayValue(play?.hp?.value, '—') },
+      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab, '—') },
+      { label: 'Threshold', value: defenseValues.dt },
+      { label: 'Speed', value: play?.speed || displayValue(system?.speed?.total ?? system?.speed, '—') }
+    ],
+    combatStats: [
+      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab, '—') },
+      { label: 'Speed', value: play?.speed || displayValue(system?.speed?.total ?? system?.speed, '—') },
+      { label: 'Senses', value: play?.senses || displayValue(system?.senses, '—') },
+      { label: 'DT', value: defenseValues.dt }
+    ],
+    conditionSteps: [
+      { label: 'Normal', value: '0', active: String(conditionCurrent) === '0' || conditionCurrent === '—' },
+      { label: '-1', value: '-1', active: String(conditionCurrent) === '-1' },
+      { label: '-2', value: '-2', active: String(conditionCurrent) === '-2' },
+      { label: '-5', value: '-5', active: String(conditionCurrent) === '-5' },
+      { label: '-10', value: '-10', active: String(conditionCurrent) === '-10' },
+      { label: 'Helpless', value: 'helpless', active: String(conditionCurrent).toLowerCase() === 'helpless' }
+    ],
+    abilities: abilityRows,
+    hasAbilities: abilityRows.length > 0,
+    skills: skillRows,
+    hasSkills: skillRows.length > 0,
+    trainedSkillCount: skillRows.filter(skill => skill.trained).length,
+    attacks: attackRows,
+    hasAttacks: attackRows.length > 0,
+    feats: featRows,
+    hasFeats: featRows.length > 0,
+    talents: talentRows,
+    hasTalents: talentRows.length > 0,
+    specials: specialRows,
+    hasSpecials: specialRows.length > 0,
+    gear: gearRows,
+    hasGear: gearRows.length > 0,
+    credits,
+    creditsDisplay: `${Math.floor(credits)} cr`,
+    forcePowers: forcePowerRows,
+    hasForcePowers: forcePowerRows.length > 0,
+    showGearTab,
+    showRelationshipsTab: context?.showRelationshipsTab === true,
+    showBeastTab: context?.showBeastPanel === true || context?.showMountPanel === true,
+    beastTabLabel: context?.showMountPanel === true ? 'Mount' : 'Beast',
+    showForceTab,
+    showGmTab,
+    isDependent,
+    isCreature,
+    isMount: context?.showMountPanel === true,
+    legalSummary: {
+      ok: safeNumber(legalSummary.ok, 0),
+      info: safeNumber(legalSummary.info, 0),
+      warn: safeNumber(legalSummary.warn, 0),
+      error: safeNumber(legalSummary.error, 0),
+      review: safeNumber(legalSummary.review, 0),
+      total: safeNumber(legalSummary.total, 0)
+    },
+    legalChecks,
+    hasLegalChecks: legalChecks.length > 0,
+    modeCards: [
+      { label: 'Play Mode', value: context?.isStatblockMode ? 'Active' : 'Inactive', active: context?.isStatblockMode === true },
+      { label: 'Progression', value: context?.isProgressionMode ? 'Active' : 'Inactive', active: context?.isProgressionMode === true },
+      { label: 'Owner Sync', value: context?.isOwnerSyncMode ? 'Active' : 'Inactive', active: context?.isOwnerSyncMode === true }
+    ]
   };
 }
 
@@ -264,7 +603,7 @@ export class SWSEV2NpcSheet extends
     classes: ['application', 'swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'swse-sheet-ui', 'v2'],
     position: {
       width: 900,
-      height: 950
+      height: 760
     },
     window: {
       resizable: true,
@@ -418,6 +757,8 @@ export class SWSEV2NpcSheet extends
       context.hpMax = 0;
       context.hpPercent = 0;
     }
+
+    context.npcConcept = buildNpcConceptSheetContext(actor, context);
 
     // Action Economy Context (for combat tab)
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {

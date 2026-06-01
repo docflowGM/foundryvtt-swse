@@ -109,29 +109,109 @@ export class VehicleModificationManager {
   }
 
   /**
+   * Normalize a modification category to the app/manager key.
+   */
+  static normalizeCategory(category) {
+    const raw = String(category || '').toLowerCase();
+    if (raw.startsWith('movement')) return 'movement';
+    if (raw.startsWith('defense')) return 'defense';
+    if (raw.startsWith('weapon')) return 'weapon';
+    if (raw.startsWith('accessor')) return 'accessory';
+    return raw || 'accessory';
+  }
+
+  /**
+   * Shield systems are mutually exclusive. Data mostly uses shields-* ids,
+   * but regenerating shields are also a shield system and must not bypass the
+   * one-shield contract.
+   */
+  static isShieldModification(modification = {}) {
+    const id = String(modification?.id || '').toLowerCase();
+    const name = String(modification?.name || '').toLowerCase();
+    return id.startsWith('shields-') || id === 'regenerating-shields' || name.includes('shield');
+  }
+
+  /**
+   * Hyperdrive systems are mutually exclusive, except the dedicated backup
+   * hyperdrive, which is not a primary drive replacement.
+   */
+  static isPrimaryHyperdriveModification(modification = {}) {
+    const id = String(modification?.id || '').toLowerCase();
+    return id.startsWith('hyperdrive-');
+  }
+
+
+  /**
+   * Some weapon entries are enhancement multipliers rather than standalone
+   * systems. They require an already-installed base weapon so the extra cost can
+   * be priced from that weapon instead of silently becoming free.
+   */
+  static isMultiplierEnhancement(modification = {}) {
+    return String(modification?.costType || '').toLowerCase() === 'multiplier';
+  }
+
+  static _resolveMultiplierBaseModification(modification = {}, currentModifications = []) {
+    const installed = Array.isArray(currentModifications) ? currentModifications : [];
+    const targetType = String(modification?.weaponType || '').toLowerCase();
+    const modName = String(modification?.name || '').toLowerCase();
+    const candidates = installed.filter((entry) => {
+      const category = String(entry?.category || '').toLowerCase();
+      const weaponType = String(entry?.weaponType || '').toLowerCase();
+      const costType = String(entry?.costType || '').toLowerCase();
+      if (!category.startsWith('weapon')) return false;
+      if (costType === 'multiplier') return false;
+      if (weaponType === 'enhancement') return false;
+      const entryText = `${entry?.id || ''} ${entry?.name || ''}`.toLowerCase();
+      if (targetType && targetType !== 'enhancement') {
+        return weaponType === targetType || entryText.includes(targetType);
+      }
+      if (modName.includes('cannon')) return /cannon|blaster|ion|laser|turbolaser/i.test(entryText);
+      if (modName.includes('fire-linked')) return true;
+      return true;
+    });
+
+    if (!candidates.length) return null;
+    return candidates.reduce((best, entry) => {
+      const bestCost = Number(best?.finalCost ?? best?.cost ?? 0) || 0;
+      const entryCost = Number(entry?.finalCost ?? entry?.cost ?? 0) || 0;
+      return entryCost > bestCost ? entry : best;
+    }, candidates[0]);
+  }
+
+  static _resolveMultiplierBaseCost(modification = {}, currentModifications = []) {
+    const base = this._resolveMultiplierBaseModification(modification, currentModifications);
+    return Number(base?.finalCost ?? base?.cost ?? 0) || 0;
+  }
+
+  /**
    * Calculate the cost of a modification for a specific ship
    * @param {Object} modification - The modification object
    * @param {Object} stockShip - The stock ship object
    * @param {boolean} isNonstandard - Whether this is a nonstandard modification
    * @returns {number} - The calculated cost in credits
    */
-  static calculateModificationCost(modification, stockShip, isNonstandard = false) {
+  static calculateModificationCost(modification, stockShip, isNonstandard = false, currentModifications = []) {
     if (!modification) {return 0;}
     if (!stockShip) {return modification.cost || 0;}
 
-    let baseCost = modification.cost || 0;
+    const costType = String(modification.costType || 'flat').toLowerCase();
+    let baseCost = Number(modification.cost || 0) || 0;
 
     // Handle cost type
-    if (modification.costType === 'base') {
+    if (costType === 'base') {
       // Cost scales with ship size via costModifier
       baseCost *= (stockShip.costModifier || 1);
-    } else if (modification.costType === 'flat') {
-      // Flat cost type uses the cost as-is, no scaling
-      // baseCost already set above
-    } else if (modification.costType === 'multiplier') {
-      // Multiplier type is not currently supported - would require base item cost
-      SWSELogger.warn(`SWSE | Modification "${modification.name}" uses unsupported cost type: multiplier. Treating as flat cost.`);
-      // Fall through to use flat cost
+    } else if (costType === 'flat' || costType === 'modifier') {
+      // Flat/modifier cost types use the cost as-is, no scaling.
+    } else if (costType === 'multiplier') {
+      const multiplier = Number(modification.costMultiplier || 0) || 0;
+      const baseWeaponCost = this._resolveMultiplierBaseCost(modification, currentModifications);
+      if (baseWeaponCost > 0 && multiplier > 1) {
+        // SWSE enhancement multipliers price the additional work over the base weapon.
+        baseCost = Math.max(0, Math.round(baseWeaponCost * (multiplier - 1)));
+      } else {
+        baseCost = 0;
+      }
     } else {
       // Default to flat cost for unknown types
       SWSELogger.warn(`SWSE | Modification "${modification.name}" has unknown cost type: ${modification.costType}. Treating as flat cost.`);
@@ -151,15 +231,10 @@ export class VehicleModificationManager {
    * @param {boolean} isNonstandard - Whether this is a nonstandard modification
    * @returns {number} - The emplacement points required
    */
-  static calculateEmplacementPoints(modification, isNonstandard = false) {
-    let ep = modification.emplacementPoints || 0;
-
-    // Nonstandard modifications require double emplacement points
-    if (isNonstandard) {
-      ep *= 2;
-    }
-
-    return ep;
+  static calculateEmplacementPoints(modification, _isNonstandard = false) {
+    // Store construction uses the real unusedEmplacementPoints pool.
+    // Nonstandard systems are a cost multiplier only; they do not double EP.
+    return modification?.emplacementPoints || 0;
   }
 
   /**
@@ -170,6 +245,16 @@ export class VehicleModificationManager {
    * @returns {Object} - {canInstall: boolean, reason: string}
    */
   static canInstallModification(modification, stockShip, currentModifications = []) {
+    if (!modification) {
+      return { canInstall: false, reason: 'No modification selected' };
+    }
+
+    if (!stockShip) {
+      return { canInstall: false, reason: 'Select a ship frame first' };
+    }
+
+    const installed = Array.isArray(currentModifications) ? currentModifications : [];
+
     // Check size restriction
     if (modification.sizeRestriction) {
       const allowed = this._checkSizeRestriction(stockShip.size, modification.sizeRestriction);
@@ -181,12 +266,9 @@ export class VehicleModificationManager {
       }
     }
 
-    // Check for conflicting modifications
-    // For example, can only have one hyperdrive
-    if (modification.id.startsWith('hyperdrive-')) {
-      const hasHyperdrive = currentModifications.some(mod =>
-        mod.id.startsWith('hyperdrive-')
-      );
+    // Only one primary hyperdrive may be installed.
+    if (this.isPrimaryHyperdriveModification(modification)) {
+      const hasHyperdrive = installed.some(mod => this.isPrimaryHyperdriveModification(mod));
       if (hasHyperdrive) {
         return {
           canInstall: false,
@@ -195,11 +277,9 @@ export class VehicleModificationManager {
       }
     }
 
-    // Check for shield conflicts
-    if (modification.id.startsWith('shields-')) {
-      const hasShields = currentModifications.some(mod =>
-        mod.id.startsWith('shields-')
-      );
+    // Only one shield system may be installed.
+    if (this.isShieldModification(modification)) {
+      const hasShields = installed.some(mod => this.isShieldModification(mod));
       if (hasShields) {
         return {
           canInstall: false,
@@ -208,9 +288,17 @@ export class VehicleModificationManager {
       }
     }
 
-    // Check emplacement points availability
-    const epStats = this.calculateEmplacementPointsTotal(currentModifications, stockShip);
-    const modEP = modification.emplacementPoints || 0;
+    if (this.isMultiplierEnhancement(modification) && !this._resolveMultiplierBaseModification(modification, installed)) {
+      return {
+        canInstall: false,
+        reason: 'Requires an installed base weapon before this enhancement can be priced'
+      };
+    }
+
+    // Check emplacement points availability against unusedEmplacementPoints, not
+    // total/baseline EP already consumed by the stock hull.
+    const epStats = this.calculateEmplacementPointsTotal(installed, stockShip);
+    const modEP = this.calculateEmplacementPoints(modification);
     if (epStats.remaining < modEP) {
       return {
         canInstall: false,
@@ -268,19 +356,21 @@ export class VehicleModificationManager {
    * @returns {Object} - {used, available, total, remaining}
    */
   static calculateEmplacementPointsTotal(modifications, stockShip) {
-    // Calculate EP used by modifications
+    if (!stockShip) {
+      return { used: 0, available: 0, total: 0, remaining: 0, usedByStock: 0, totalAvailable: 0 };
+    }
+
+    // Calculate EP used by modifications. This is the actual player-spendable
+    // pool, not the stock hull's already-allocated baseline EP.
     const usedByModifications = (Array.isArray(modifications) ? modifications : []).reduce((sum, mod) => {
-      return sum + (mod?.emplacementPoints || 0);
+      return sum + this.calculateEmplacementPoints(mod);
     }, 0);
 
-    // Total available EP pool is the sum of baseline and unused
-    const totalAvailable = (stockShip.emplacementPoints || 0) + (stockShip.unusedEmplacementPoints || 0);
-
-    // EP used by stock configuration (already allocated in emplacementPoints)
+    // Total available EP pool is the sum of baseline and unused, but only
+    // unusedEmplacementPoints is available for the builder.
     const usedByStock = stockShip.emplacementPoints || 0;
-
-    // Remaining available for modifications
-    const available = (stockShip.unusedEmplacementPoints || 0);
+    const available = stockShip.unusedEmplacementPoints || 0;
+    const totalAvailable = usedByStock + available;
 
     return {
       used: usedByModifications,
@@ -303,7 +393,8 @@ export class VehicleModificationManager {
     if (!Array.isArray(modifications)) {return stockShip.cost || 0;}
 
     const modCost = modifications.reduce((sum, mod) => {
-      return sum + this.calculateModificationCost(mod, stockShip);
+      if (Number.isFinite(Number(mod?.finalCost))) return sum + Number(mod.finalCost);
+      return sum + this.calculateModificationCost(mod, stockShip, this.isNonstandardModification(mod, stockShip), modifications);
     }, 0);
 
     return (stockShip.cost || 0) + modCost;
@@ -373,21 +464,23 @@ export class VehicleModificationManager {
    * @returns {boolean} - True if nonstandard
    */
   static isNonstandardModification(modification, stockShip) {
-    // Hyperdrives are nonstandard for TIE fighters and similar
-    if (modification.id.startsWith('hyperdrive-') &&
-        stockShip.name.toLowerCase().includes('fighter') &&
-        !stockShip.name.toLowerCase().includes('x-wing')) {
+    if (!modification || !stockShip) return false;
+
+    const shipName = String(stockShip.name || '').toLowerCase();
+
+    // Hyperdrives are nonstandard for TIE-class / small stock fighters in the
+    // store construction lane. The stock data does not include named TIE frames,
+    // so the generic fighter/interceptor hulls use the same warning/cost rule.
+    if (this.isPrimaryHyperdriveModification(modification) &&
+        (shipName.includes('tie') || shipName.includes('light fighter') || shipName.includes('interceptor'))) {
       return true;
     }
 
-    // Shields are nonstandard for TIE fighters
-    if (modification.id.startsWith('shields-') &&
-        stockShip.name.toLowerCase().includes('tie')) {
+    // Shields are nonstandard for TIE-class frames.
+    if (this.isShieldModification(modification) && shipName.includes('tie')) {
       return true;
     }
 
-    // This would need more complex logic based on stock configuration
-    // For now, return false (can be expanded based on requirements)
     return false;
   }
 

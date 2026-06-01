@@ -153,12 +153,15 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
     let prioritized;
 
     if (creationMode === 'standard-model') {
-      // Standard Droid Model path (RAW): Splash → Model Selection → Systems → Class (if eligible) → rest
-      // Note: attribute step is skipped for standard models (they arrive with published ability scores)
-      prioritized = ['intro', 'droid-model', 'droid-builder', 'class'];
+      // Galactic Profile seeds the model data; DroidBuilder/Garage Construction
+      // Mode owns final chassis/systems confirmation. The old standalone
+      // droid-model step is deprecated and intentionally not part of the spine.
+      prioritized = ['intro', 'droid-builder', 'class'];
     } else {
-      // Custom Droid path (RAW): Splash → Degree → Systems → Attributes → rest
-      prioritized = ['intro', 'droid-degree', 'droid-builder', 'attribute'];
+      // DroidBuilder/Garage Construction Mode owns degree, size, chassis, and
+      // systems. The old standalone droid-degree step is deprecated and
+      // intentionally not part of the spine.
+      prioritized = ['intro', 'droid-builder', 'attribute'];
     }
 
     const ordered = [];

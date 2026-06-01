@@ -23,6 +23,17 @@
     </div>
     <div class="swse-shell-surface__subtitle">{{vm.subtitle}}</div>
     {{#if vm.isGM}}<div class="swse-shell-surface__subtitle">GM: {{vm.grantHelp}}</div>{{/if}}
+    {{#if vm.canBuildNew}}
+      <div class="swse-asset-bay-toolbar">
+        <button type="button"
+                class="swse-asset-bay-action swse-asset-bay-action--build primary"
+                data-asset-bay-action="build-new"
+                title="{{vm.buildNewHelp}}">
+          <i class="fas fa-plus"></i>
+          <span>{{vm.buildNewLabel}}</span>
+        </button>
+      </div>
+    {{/if}}
   </div>
 
   <div class="swse-shell-surface__body swse-shell-surface__body--asset-bay">
@@ -40,6 +51,7 @@
             </div>
             <div class="swse-asset-bay-card__body">
               <h3>{{asset.name}}</h3>
+              <div class="swse-asset-bay-card__ownership swse-asset-bay-card__ownership--{{asset.ownershipKind}}">{{asset.ownershipLabel}}</div>
               <div class="swse-asset-bay-card__detail">{{asset.detail}}</div>
               <div class="swse-asset-bay-card__status">{{asset.status}}</div>
             </div>
@@ -80,6 +92,14 @@
         <i class="fas {{#if (eq vm.mode 'shipyard')}}fa-rocket{{else}}fa-robot{{/if}}"></i>
         <h3>{{vm.emptyTitle}}</h3>
         <p>{{vm.emptyText}}</p>
+        {{#if vm.canBuildNew}}
+          <button type="button"
+                  class="swse-asset-bay-action swse-asset-bay-action--build primary"
+                  data-asset-bay-action="build-new">
+            <i class="fas fa-plus"></i>
+            <span>{{vm.buildNewLabel}}</span>
+          </button>
+        {{/if}}
       </div>
     {{/if}}
   </div>

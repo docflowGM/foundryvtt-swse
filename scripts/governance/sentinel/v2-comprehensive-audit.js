@@ -87,7 +87,7 @@ export class V2ComprehensiveAudit {
       // Sheets
       { path: 'scripts/sheets/v2/character-sheet.js', name: 'SWSEV2CharacterSheet', type: 'sheet' },
       // SWSEV2DroidSheet is deprecated/orphaned; droid actors use SWSEV2CharacterSheet.
-      { path: 'scripts/sheets/v2/npc-sheet.js', name: 'SWSEV2NpcSheet', type: 'sheet' },
+      // SWSEV2NpcSheet is deprecated/orphaned; NPC actors use SWSEV2CharacterSheet.
       { path: 'scripts/sheets/v2/vehicle-sheet.js', name: 'SWSEV2VehicleSheet', type: 'sheet' },
 
       // Applications

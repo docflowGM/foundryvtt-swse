@@ -2,9 +2,9 @@
 {{!--
   Droid Systems v2 Panel
 
-  Read-only systems map for the Droid Character Sheet v2.
-  Reuses the existing Garage/DroidBuilder entry point through .edit-droid-systems
-  buttons wired in scripts/sheets/v2/droid-sheet/listeners.js.
+  Read-only / activate-only systems map for the Droid Actor Sheet inside the shared actor shell.
+  Garage owns paid install/remove/sell/modify workflows; this tab only opens items,
+  rolls integrated attacks, and posts Use / Describe operational chat cards.
 
   Data consumed:
     droid.resolvedSystems.* — pure DroidSystemsResolver output
@@ -25,12 +25,17 @@
         </p>
       </div>
       {{#if droid.garage.canOpenGarage}}
-        <button type="button" class="edit-droid-systems swse-droid-garage-button" aria-label="Open Droid Garage">
+        <button type="button" class="edit-droid-systems swse-droid-garage-button" data-action="customize-droid" aria-label="Open Droid Garage">
           <i class="fa-solid fa-screwdriver-wrench"></i>
-          Garage
+          Open Garage
         </button>
       {{/if}}
     </header>
+
+    <div class="swse-droid-readonly-notice">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>This sheet is operational only. Paid installs, removals, sales, and rebuilds are handled in Garage.</span>
+    </div>
 
     {{#if droid.garage.systemsLocked}}
       <div class="swse-droid-inline-lock">
@@ -48,9 +53,10 @@
         <div class="node-body">
           {{#if droid.resolvedSystems.processor.isConfigured}}
             {{#each droid.resolvedSystems.processor.items as |item|}}
-              <div class="system-chip swse-v2-open-item" data-item-id="{{item.id}}">
+              <div class="system-chip swse-v2-open-item" data-action="open-droid-system-item" data-item-id="{{item.id}}">
                 {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
                 <div><strong>{{item.name}}</strong>{{#if item.rating}}<small>Rating {{item.rating}}</small>{{/if}}</div>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button>
               </div>
             {{/each}}
           {{else}}
@@ -64,9 +70,10 @@
         <div class="node-body">
           {{#if droid.resolvedSystems.armor.isConfigured}}
             {{#each droid.resolvedSystems.armor.items as |item|}}
-              <div class="system-chip swse-v2-open-item" data-item-id="{{item.id}}">
+              <div class="system-chip swse-v2-open-item" data-action="open-droid-system-item" data-item-id="{{item.id}}">
                 {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
                 <div><strong>{{item.name}}</strong>{{#if item.bonus}}<small>Defense +{{item.bonus}}</small>{{/if}}</div>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button>
               </div>
             {{/each}}
           {{else}}
@@ -83,7 +90,7 @@
         <div class="node-body">
           {{#if droid.resolvedSystems.appendages.isConfigured}}
             {{#each droid.resolvedSystems.appendages.items as |item|}}
-              <div class="system-chip"><strong>{{item.name}}</strong>{{#if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div>
+              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button></div>
             {{/each}}
           {{else}}
             <div class="system-chip ghost"><strong>{{droid.resolvedSystems.appendages.defaultName}}</strong><small>{{droid.resolvedSystems.appendages.warning}}</small></div>
@@ -105,9 +112,12 @@
                     {{#if weapon.range}} · {{weapon.range}}{{/if}}
                   </small>
                 </div>
-                {{#if weapon.canRoll}}
-                  <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}" aria-label="Roll {{weapon.name}}">Roll</button>
-                {{/if}}
+                <div class="swse-droid-chip-actions">
+                  {{#if weapon.canRoll}}
+                    <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}" aria-label="Roll {{weapon.name}}">Roll</button>
+                  {{/if}}
+                  <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">Use</button>
+                </div>
               </div>
             {{/each}}
           {{else}}
@@ -121,9 +131,10 @@
         <div class="node-body compact-list">
           {{#if droid.resolvedSystems.integratedEquipment.isConfigured}}
             {{#each droid.resolvedSystems.integratedEquipment.items as |item|}}
-              <div class="system-chip swse-v2-open-item" data-item-id="{{item.id}}">
+              <div class="system-chip swse-v2-open-item" data-action="open-droid-system-item" data-item-id="{{item.id}}">
                 {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
                 <div><strong>{{item.name}}</strong>{{#if item.location}}<small>{{item.location}}</small>{{/if}}</div>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button>
               </div>
             {{/each}}
           {{else}}
@@ -137,7 +148,7 @@
         <div class="node-body compact-list">
           {{#if droid.resolvedSystems.sensors.isConfigured}}
             {{#each droid.resolvedSystems.sensors.items as |sensor|}}
-              <div class="system-chip"><strong>{{sensor.name}}</strong>{{#if sensor.range}}<small>{{sensor.range}}</small>{{/if}}</div>
+              <div class="system-chip"><div><strong>{{sensor.name}}</strong>{{#if sensor.range}}<small>{{sensor.range}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{sensor.id}}" data-part-name="{{sensor.name}}">Use</button></div>
             {{/each}}
           {{else}}
             <div class="system-empty">No sensor package recorded</div>
@@ -153,7 +164,7 @@
         <div class="node-body">
           {{#if droid.resolvedSystems.locomotion.isConfigured}}
             {{#each droid.resolvedSystems.locomotion.items as |item|}}
-              <div class="system-chip"><strong>{{item.name}}</strong>{{#if item.speed}}<small>Speed {{item.speed}}</small>{{/if}}</div>
+              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.speed}}<small>Speed {{item.speed}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button></div>
             {{/each}}
           {{else}}
             <div class="system-chip ghost"><strong>{{droid.resolvedSystems.locomotion.defaultName}}</strong><small>{{droid.resolvedSystems.locomotion.warning}}</small></div>
@@ -190,7 +201,7 @@
         {{#if droid.sourceStatus.garageRecommended}}
           <div class="swse-droid-garage-cta">
             <span class="swse-droid-garage-cta-text">Garage can complete or tune this droid frame.</span>
-            <button type="button" class="edit-droid-systems holo-btn small">Open Garage</button>
+            <button type="button" class="edit-droid-systems holo-btn small" data-action="customize-droid">Open Garage</button>
           </div>
         {{/if}}
       </div>
@@ -204,7 +215,10 @@
             <div class="swse-droid-bridge-row">
               <span class="swse-weapon-integrated-badge">Integrated</span>
               <strong>{{weapon.name}}</strong>
-              <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+              <div class="swse-droid-chip-actions">
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">Use</button>
+              </div>
             </div>
           {{/each}}
         {{else}}
@@ -228,8 +242,8 @@
   <div class="section-bar">
     <h3 class="section-header">Droid Systems</h3>
     {{#if editable}}
-      <button type="button" class="edit-droid-systems holo-btn small" aria-label="Edit droid configuration">
-        <i class="fa-solid fa-edit"></i> Edit
+      <button type="button" class="edit-droid-systems holo-btn small" data-action="customize-droid" aria-label="Open Droid Garage">
+        <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
       </button>
     {{/if}}
   </div>
@@ -259,8 +273,8 @@
     <div class="empty-state">
       <p><em>No droid configuration yet.</em></p>
       {{#if editable}}
-        <button type="button" class="edit-droid-systems holo-btn" aria-label="Create droid configuration">
-          <i class="fa-solid fa-robot"></i> Create Configuration
+        <button type="button" class="edit-droid-systems holo-btn" data-action="customize-droid" aria-label="Open Droid Garage">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
         </button>
       {{/if}}
     </div>

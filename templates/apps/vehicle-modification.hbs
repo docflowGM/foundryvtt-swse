@@ -1,171 +1,311 @@
-<div class="swse-sheet vehicle-modification-sheet">
-  <div class="vehicle-mod-container">
+<div class="swse-shipyard-builder" data-context-mode="{{contextMode}}">
+  {{#if loadError}}
+    <section class="shipyard-error">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <strong>Shipyard data failed to load</strong>
+      <p>{{errorMessage}}</p>
+      <button type="button" class="sy-btn sy-btn-secondary" data-action="close-builder">Close</button>
+    </section>
+  {{else}}
 
-    {{!-- Marl Skindar Holographic Narrator --}}
-    <div class="holo-banner marl-narrator-panel">
-      <div class="shopkeeper-portrait">
-        <img src="systems/foundryvtt-swse/assets/mentors/Marl_Skindar.png" alt="Marl Skindar"/>
-      </div>
-      <div class="holo-content">
-        <div class="holo-speaker">
-          <i class="{{getIconClass 'user'}}-secret"></i>
-          <span>MARL SKINDAR - REPUBLIC INTELLIGENCE</span>
-        </div>
-        <div class="holo-message">{{{marlDialogue}}}</div>
-      </div>
-    </div>
-
-    {{#if (eq currentStep 'intro')}}
-    {{!-- Introduction Step --}}
-    <div class="starship-intro">
-      <h2>Starship Acquisition</h2>
-      <p>Ready to begin? Select a stock ship to start your customization.</p>
-      <button type="button" class="start-selection holo-btn">
-        <i class="{{getIconClass 'rocket'}}"></i> Begin Ship Selection
-      </button>
-    </div>
-    {{/if}}
-
-    {{#unless selectedShip}}
-    {{!-- Ship Selection Grid --}}
-    <div class="ship-selection-grid">
-      <h3><i class="{{getIconClass 'rocket'}}"></i> Select Stock Ship</h3>
-      <div class="stock-ships-grid">
-        {{#each stockShips}}
-        <div class="stock-ship-card" data-ship="{{this.name}}">
-          <div class="ship-image">
-            <i class="{{getIconClass 'shuttle'}}"></i>
-          </div>
-          <div class="ship-info">
-            <h4>{{this.name}}</h4>
-            <div class="ship-stats">
-              <span class="stat-item"><i class="{{getIconClass 'rulerCombined'}}-combined"></i> {{this.size}}</span>
-              <span class="stat-item"><i class="{{getIconClass 'plug'}}"></i> {{this.emplacementPoints}} EP</span>
-            </div>
-            <div class="ship-cost">
-              <span class="credits-icon">$</span>
-              <span>{{this.cost}}</span>
-            </div>
-          </div>
-          <button type="button" class="select-ship holo-btn" data-ship="{{this.name}}">
-            <i class="{{getIconClass 'check'}}"></i> Select
-          </button>
-        </div>
-        {{/each}}
+  <header class="sy-header">
+    <div class="sy-header-id">
+      <div class="sy-glyph">✦</div>
+      <div>
+        <div class="sy-title">{{appTitle}}</div>
+        <div class="sy-subtitle">{{subtitle}}</div>
       </div>
     </div>
-    {{/unless}}
 
-    {{#if selectedShip}}
-    {{!-- Modification Interface --}}
-    <div class="modification-interface">
-
-      {{!-- Selected Ship Info --}}
-      <div class="selected-ship-panel">
-        <h3>{{selectedShip.name}}</h3>
-        <div class="ship-stats-grid">
-          <div class="stat-box">
-            <label>Size</label>
-            <span>{{selectedShip.size}}</span>
-          </div>
-          <div class="stat-box">
-            <label>Base Cost</label>
-            <span>${{baseCost}}</span>
-          </div>
-          <div class="stat-box {{#if (gt emplacementPoints.used emplacementPoints.available)}}over-limit{{/if}}">
-            <label>Emplacement Points</label>
-            <span>{{emplacementPoints.used}} / {{emplacementPoints.available}} available ({{emplacementPoints.total}} total)</span>
-          </div>
-          <div class="stat-box">
-            <label>Total Cost</label>
-            <span class="total-cost">${{totalCost}}</span>
-          </div>
-        </div>
+    <div class="sy-config-strip">
+      <div class="sy-config-block">
+        <span>Frame</span>
+        <strong>{{#if hasFrame}}{{frame.name}}{{else}}— None Selected —{{/if}}</strong>
       </div>
-
-      {{!-- Modification Browser --}}
-      <div class="modification-browser">
-        <div class="mod-categories">
-          {{#each categories}}
-          <button type="button" class="category-tab {{#if (eq ../selectedCategory this.id)}}active{{/if}}" data-category="{{this.id}}">
-            <i class="fa-solid {{this.icon}}"></i>
-            <span>{{this.label}}</span>
-          </button>
-          {{/each}}
+      <div class="sy-config-block">
+        <span>Size</span>
+        <strong>{{#if hasFrame}}{{frame.sizeLabel}}{{else}}—{{/if}}</strong>
+      </div>
+      {{#if hasFrame}}
+        <div class="sy-ep-wrap">
+          <div class="sy-ep-bar"><div class="sy-ep-fill {{ep.fillClass}}" style="width: {{ep.fillPct}}"></div></div>
+          <div class="sy-ep-meta">
+            <span>EP {{ep.used}}/{{ep.available}}</span>
+            <span>{{ep.label}}</span>
+          </div>
         </div>
+      {{/if}}
+      <span class="sy-chip {{validity.chipClass}}"><i class="fa-solid {{validity.iconClass}}"></i> {{validity.label}}</span>
+    </div>
 
-        <div class="mod-list-container">
-          <h4>Available Modifications</h4>
-          <div class="available-mods-list">
-            {{#each availableModifications}}
-            <div class="modification-item" data-mod-id="{{this.id}}">
-              <div class="mod-header">
-                <h5>{{this.name}}</h5>
-                <span class="mod-cost">${{this.cost}}</span>
-              </div>
-              <div class="mod-details">
-                <p class="mod-description">{{this.description}}</p>
-                <div class="mod-stats">
-                  <span class="mod-stat"><i class="{{getIconClass 'plug'}}"></i> {{this.emplacementPoints}} EP</span>
-                  <span class="mod-stat"><i class="{{getIconClass 'tag'}}"></i> {{this.availability}}</span>
-                  {{#if this.sizeRestriction}}
-                  <span class="mod-stat"><i class="{{getIconClass 'rulerCombined'}}-combined"></i> {{this.sizeRestriction}}</span>
-                  {{/if}}
-                </div>
-                <div class="mod-effect">
-                  <strong>Effect:</strong> {{this.effect}}
-                </div>
-              </div>
-              <button type="button" class="add-modification holo-btn" data-mod-id="{{this.id}}">
-                <i class="{{getIconClass 'plus'}}"></i> Add
-              </button>
-            </div>
+    <div class="sy-credit-strip">
+      <div><span>{{walletLabel}}</span><strong>{{playerCreditsLabel}}</strong></div>
+      <div><span>{{totalLabel}}</span><strong>{{cost.totalLabel}}</strong></div>
+      <div><span>Remaining</span><strong class="{{cost.remainingClass}}">{{cost.remainingLabel}}</strong></div>
+    </div>
+  </header>
+
+  <div class="sy-workgrid">
+    <aside class="sy-left-rail">
+      <section class="sy-panel">
+        <header><span>Current Build</span><strong>{{modCountLabel}}</strong></header>
+        <div class="sy-installed-list">
+          {{#if hasFrame}}
+            {{#if installedGroups.length}}
+              {{#each installedGroups}}
+                <div class="sy-installed-group-label">{{label}}</div>
+                {{#each systems}}
+                  <article class="sy-installed sy-cat-{{cssCategory}}" data-action="focus-mod" data-mod-id="{{id}}">
+                    <span title="{{name}}">{{name}}</span>
+                    <em>{{epLabel}}</em>
+                    <strong>{{costLabel}}</strong>
+                    <button type="button" class="sy-mini-remove" data-action="remove-mod" data-mod-id="{{id}}" title="Remove {{name}}">
+                      <i class="fa-solid fa-times"></i>
+                    </button>
+                  </article>
+                {{/each}}
+              {{/each}}
             {{else}}
-            <div class="empty-message">
-              <i class="{{getIconClass 'boxOpen'}}"></i>
-              <p>No modifications available in this category.</p>
-            </div>
+              <div class="sy-empty-slot">No modifications installed</div>
+            {{/if}}
+          {{else}}
+            <div class="sy-empty-slot">No frame selected</div>
+          {{/if}}
+        </div>
+      </section>
+
+      {{#if removedGroups.length}}
+        <section class="sy-panel sy-removed-panel">
+          <header><span>Removed for Resale</span><strong>{{cost.resaleCreditLabel}}</strong></header>
+          <div class="sy-installed-list">
+            {{#each removedGroups}}
+              <div class="sy-installed-group-label">{{label}}</div>
+              {{#each systems}}
+                <article class="sy-installed sy-removed sy-cat-{{cssCategory}}" data-action="focus-mod" data-mod-id="{{id}}">
+                  <span title="{{name}}">{{name}}</span>
+                  <em>refund</em>
+                  <strong>{{resaleLabel}}</strong>
+                  <button type="button" class="sy-mini-remove" data-action="install-mod" data-mod-id="{{id}}" title="Restore {{name}}">
+                    <i class="fa-solid fa-rotate-left"></i>
+                  </button>
+                </article>
+              {{/each}}
             {{/each}}
           </div>
-        </div>
+        </section>
+      {{/if}}
 
-        <div class="installed-mods-container">
-          <h4>Installed Modifications</h4>
-          <div class="installed-mods-list">
-            {{#each installedModifications}}
-            <div class="installed-mod-item">
-              <div class="mod-info">
-                <h5>{{this.name}}</h5>
-                <span class="mod-category-badge">{{this.category}}</span>
-              </div>
-              <div class="mod-stats-compact">
-                <span>{{this.emplacementPoints}} EP</span>
-                <span>${{this.cost}}</span>
-              </div>
-              <button type="button" class="remove-modification" data-mod-id="{{this.id}}" title="Remove">
-                <i class="{{getIconClass 'times'}}"></i>
-              </button>
-            </div>
-            {{else}}
-            <div class="empty-message">
-              <p>No modifications installed yet.</p>
-            </div>
+      {{#if hasFrame}}
+        <section class="sy-panel">
+          <header><span>Frame Stats</span></header>
+          <div class="sy-stat-grid">
+            {{#each frame.stats}}
+              <div class="sy-stat-row {{#if wide}}wide{{/if}}"><span>{{label}}</span><strong>{{value}}</strong></div>
             {{/each}}
           </div>
+        </section>
+      {{/if}}
+
+      <section class="sy-panel">
+        <header><span>Build Cost</span><strong>{{cost.totalLabel}}</strong></header>
+        <div class="sy-budget-rows">
+          {{#if isModifyExisting}}
+          <div><span>Vehicle Value</span><strong>{{cost.vehicleValueLabel}}</strong></div>
+          <div><span>Install Cost</span><strong>{{cost.grossCostLabel}}</strong></div>
+          <div><span>Removal Credit</span><strong>{{cost.resaleCreditLabel}}</strong></div>
+          <div><span>Net Refit Cost</span><strong>{{cost.totalLabel}}</strong></div>
+          {{else}}
+          <div><span>Frame Base Cost</span><strong>{{cost.frameLabel}}</strong></div>
+          <div><span>Modifications</span><strong>{{cost.modificationsLabel}}</strong></div>
+          <div><span>Build Total</span><strong>{{cost.totalLabel}}</strong></div>
+          {{/if}}
+          <div><span>{{walletLabel}}</span><strong>{{cost.creditsLabel}}</strong></div>
+          <div><span>Remaining</span><strong class="{{cost.remainingClass}}">{{cost.remainingLabel}}</strong></div>
         </div>
-      </div>
+      </section>
 
-      {{!-- Action Buttons --}}
-      <div class="modification-actions">
-        <button type="button" class="reset-ship holo-btn secondary">
-          <i class="fa-solid fa-rotate-left"></i> Start Over
-        </button>
-        <button type="button" class="finalize-ship holo-btn primary">
-          <i class="{{getIconClass 'success'}}"></i> Finalize Starship
-        </button>
-      </div>
-    </div>
-    {{/if}}
+      <section class="sy-panel">
+        <header><span>Checklist</span></header>
+        <div class="sy-checklist">
+          <div><i class="fa-solid {{checklist.frame.iconClass}}"></i><span>Frame selected</span></div>
+          <div><i class="fa-solid {{checklist.hyperdrive.iconClass}}"></i><span>Hyperdrive (recommended)</span></div>
+          <div><i class="fa-solid {{checklist.shields.iconClass}}"></i><span>Shields (recommended)</span></div>
+          <div><i class="fa-solid {{checklist.weapons.iconClass}}"></i><span>Weapons</span></div>
+          <div><i class="fa-solid {{checklist.budget.iconClass}}"></i><span>Credits sufficient</span></div>
+        </div>
+      </section>
 
+      <section class="sy-panel">
+        <header><span>Warnings</span><strong>{{warningCount}}</strong></header>
+        <div class="sy-warning-list">
+          {{#if warnings.length}}
+            {{#each warnings}}
+              <div class="sy-warning sy-warning-{{tone}}"><i class="fa-solid {{icon}}"></i><span>{{text}}</span></div>
+            {{/each}}
+          {{else}}
+            <p>No active warnings</p>
+          {{/if}}
+        </div>
+      </section>
+    </aside>
+
+    <main class="sy-mid-rail">
+      {{#unless hasFrame}}
+        <section class="sy-frame-phase">
+          <div class="sy-phase-label"><span>1</span>Select a Vessel Frame / Hull</div>
+          <div class="sy-frame-grid">
+            {{#each stockShips}}
+              <article class="sy-frame-card {{typeClass}} {{selectedClass}}" data-action="select-frame" data-frame-name="{{name}}">
+                <div class="sy-frame-size">{{size}}</div>
+                <h3>{{name}}</h3>
+                <div class="sy-frame-stats">
+                  <span>HP <strong>{{hp}}</strong></span>
+                  <span>DR <strong>{{dr}}</strong></span>
+                  <span>Crew <strong>{{crew}}</strong></span>
+                  <span>EP <strong>{{unusedEP}}</strong></span>
+                </div>
+                <footer><span>{{costLabel}}</span><em>{{costModifierLabel}}</em></footer>
+              </article>
+            {{/each}}
+          </div>
+        </section>
+      {{else}}
+        <section class="sy-browser-bar">
+          <input type="search" class="sy-search" data-role="shipyard-search" value="{{query}}" placeholder="Search modifications…">
+          <nav class="sy-tabs">
+            {{#each categories}}
+              <button type="button" class="sy-tab {{activeClass}}" data-action="set-filter" data-filter="{{key}}">{{label}}</button>
+            {{/each}}
+          </nav>
+          <button type="button" class="sy-toggle {{compatOnlyClass}}" data-action="toggle-compatible"><i class="fa-solid fa-check-circle"></i> Compatible Only</button>
+          <button type="button" class="sy-btn sy-btn-secondary sy-small" data-action="reset-filters"><i class="fa-solid fa-rotate-left"></i> Reset Filters</button>
+          {{#unless isModifyExisting}}<button type="button" class="sy-btn sy-btn-secondary sy-small" data-action="change-frame"><i class="fa-solid fa-exchange-alt"></i> Change Frame</button>{{/unless}}
+        </section>
+
+        <section class="sy-system-groups">
+          {{#if systemGroups.length}}
+            {{#each systemGroups}}
+              <section class="sy-system-group sy-cat-{{key}}">
+                <h2><span></span>{{label}}<em>{{count}}</em></h2>
+                <div class="sy-card-grid">
+                  {{#each systems}}
+                    <article class="sy-system-card sy-cat-{{cssCategory}} {{installedClass}} {{focusedClass}} {{cantClass}}" data-action="focus-mod" data-mod-id="{{id}}">
+                      <header>
+                        <strong>{{name}}</strong>
+                        <div class="sy-badges">
+                          {{#if installed}}<span class="sy-badge sy-badge-installed">Installed</span>{{/if}}
+                          {{#if militaryBadge}}<span class="sy-badge sy-badge-military">Military</span>{{/if}}
+                          {{#if restrictedBadge}}<span class="sy-badge sy-badge-restricted">Restricted</span>{{/if}}
+                          {{#if zeroEpBadge}}<span class="sy-badge sy-badge-muted">0 EP</span>{{/if}}
+                          {{#if nonstandardBadge}}<span class="sy-badge sy-badge-restricted">Nonstandard</span>{{/if}}
+                        </div>
+                      </header>
+                      <p>{{description}}</p>
+                      {{#if blockingReason}}<div class="sy-card-note">{{blockingReason}}</div>{{/if}}
+                      <footer><span>{{costLabel}}</span><em>{{epLabel}}</em></footer>
+                    </article>
+                  {{/each}}
+                </div>
+              </section>
+            {{/each}}
+          {{else}}
+            <div class="sy-no-results">No modifications match current filters</div>
+          {{/if}}
+        </section>
+      {{/unless}}
+    </main>
+
+    <aside class="sy-right-rail">
+      {{#if hasFocused}}
+        <section class="sy-detail">
+          <header>
+            <span class="sy-detail-category sy-cat-text-{{focused.cssCategory}}">{{focused.categoryLabel}}</span>
+            <h2>{{focused.name}}</h2>
+            <div class="sy-detail-tags">
+              {{#if focused.installed}}<span class="sy-badge sy-badge-installed">Installed</span>{{/if}}
+              {{#if focused.militaryBadge}}<span class="sy-badge sy-badge-military">Military</span>{{/if}}
+              {{#if focused.restrictedBadge}}<span class="sy-badge sy-badge-restricted">Restricted</span>{{/if}}
+              {{#if focused.nonstandardBadge}}<span class="sy-badge sy-badge-restricted">Nonstandard</span>{{/if}}
+            </div>
+            <em>Availability: {{focused.availabilityLabel}}</em>
+          </header>
+
+          <p class="sy-detail-desc">{{focused.description}}</p>
+
+          <div class="sy-cost-table">
+            <div><span>Base Cost</span><strong>{{focused.baseCostLabel}}</strong></div>
+            {{#if focused.showCostModifier}}
+              <div><span>Size Modifier ({{focused.costModifierLabel}})</span><strong>{{focused.adjustedBaseLabel}}</strong></div>
+            {{/if}}
+            {{#if focused.nonstandard}}
+              <div><span>Nonstandard ×5</span><strong>{{focused.nonstandardCostLabel}}</strong></div>
+            {{/if}}
+            <div class="total"><span>Final Cost</span><strong>{{focused.finalCostLabel}}</strong></div>
+            <div class="{{focused.afterClass}}"><span>Credits After Install</span><strong>{{focused.afterInstallLabel}}</strong></div>
+          </div>
+
+          <div class="sy-ep-detail">
+            <span>Emplacement Points</span>
+            <strong class="{{focused.epBadgeClass}}">{{focused.epLabel}}</strong>
+            <em>{{focused.epRemainingLabel}}</em>
+          </div>
+
+          <section class="sy-detail-section">
+            <h3>Effect</h3>
+            <p>{{focused.effectLabel}}</p>
+          </section>
+
+          {{#if focused.hasSizeRestriction}}
+            <section class="sy-detail-section">
+              <h3>Size Restriction</h3>
+              <p>{{focused.sizeRestrictionLabel}}</p>
+            </section>
+          {{/if}}
+
+          {{#if focused.hasWeaponStats}}
+            <section class="sy-detail-section">
+              <h3>Weapon Stats</h3>
+              <p>Type: {{focused.weaponTypeLabel}}</p>
+              <p>Damage: {{focused.damageLabel}}</p>
+            </section>
+          {{/if}}
+
+          {{#if focused.nonstandard}}
+            <div class="sy-nonstandard"><i class="fa-solid fa-triangle-exclamation"></i><span>Nonstandard modification — costs 5× the base adjusted price</span></div>
+          {{/if}}
+
+          <div class="sy-compat {{focused.compatClass}}"><i class="fa-solid {{focused.compatIcon}}"></i><span>{{focused.compatText}}</span></div>
+
+          {{#if focused.requiresApproval}}
+            <div class="sy-approval"><i class="fa-solid fa-gavel"></i><span>This modification may require GM approval before purchase.</span></div>
+          {{/if}}
+
+          <div class="sy-detail-actions">
+            {{#if focused.showInstall}}
+              <button type="button" class="sy-btn sy-btn-install" data-action="install-mod" data-mod-id="{{focused.id}}" {{focused.installDisabled}}><i class="fa-solid fa-wrench"></i> Install Modification</button>
+            {{/if}}
+            {{#if focused.showRemove}}
+              <button type="button" class="sy-btn sy-btn-remove" data-action="remove-mod" data-mod-id="{{focused.id}}"><i class="fa-solid fa-trash-alt"></i> Remove Modification</button>
+            {{/if}}
+          </div>
+        </section>
+      {{else}}
+        <section class="sy-detail-empty">
+          <i class="fa-solid fa-space-shuttle"></i>
+          <p>Select a frame, then choose a modification to view details and install controls.</p>
+        </section>
+      {{/if}}
+    </aside>
   </div>
+
+  <footer class="sy-footer">
+    <button type="button" class="sy-btn sy-btn-secondary" data-action="close-builder"><i class="fa-solid fa-arrow-left"></i> {{closeLabel}}</button>
+    <div class="sy-footer-status"><span>Build Status</span><strong>{{footerStatus}}</strong></div>
+    {{#if requiresApproval}}
+      <div class="sy-footer-approval"><i class="fa-solid fa-gavel"></i>{{approvalNotice}}</div>
+    {{/if}}
+    <button type="button" class="sy-btn sy-btn-primary" data-action="submit-build" {{submitDisabled}}><i class="fa-solid fa-credit-card"></i> {{submitLabel}}</button>
+  </footer>
+
+  {{/if}}
 </div>

@@ -18,6 +18,7 @@
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getDroidAcquisitionBlockReason } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 
 function emitAbilityTrace(label, payload = {}) {
   // Only emit trace logs when debug mode is enabled
@@ -70,6 +71,16 @@ export class AbilityEngine {
           : null,
         pendingKeys: Object.keys(pending || {}),
       });
+      const droidBlockReason = getDroidAcquisitionBlockReason(actor, candidate, pending);
+      if (droidBlockReason) {
+        return {
+          legal: false,
+          permanentlyBlocked: true,
+          missingPrereqs: [droidBlockReason],
+          blockingReasons: [droidBlockReason],
+        };
+      }
+
       // Detect candidate type (fix operator precedence)
       let type;
       if (typeof candidate === 'string') {

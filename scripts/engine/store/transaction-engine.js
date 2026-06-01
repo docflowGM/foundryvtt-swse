@@ -737,6 +737,236 @@ export class TransactionEngine {
     };
   }
 
+
+  /**
+   * Execute an owned asset customization transaction.
+   *
+   * This is the cross-actor commerce boundary used by Shipyard modify-existing:
+   * - walletActor receives the credit mutation and TransactionEngine audit
+   * - assetActor receives the vehicle mutation and a matching audit shadow
+   * - both actors are snapshotted first and restored if either leg fails
+   *
+   * @param {Object} context
+   * @param {Actor} context.actor - Wallet/owner actor whose credits pay/refund the work
+   * @param {Actor} context.assetActor - Existing droid/vehicle actor being modified
+   * @param {Object|Object[]} context.assetMutationPlan - MutationPlan(s) for the asset actor
+   * @param {number} context.cost - Gross installation cost
+   * @param {number} context.resaleCredit - Gross resale/refund credit from removed systems
+   * @param {string} context.transactionContext - Usually "owned-customization"
+   * @param {Object} context.audit - Additional audit metadata
+   */
+  static async executeAssetCustomizationTransaction(context = {}, options = {}) {
+    const {
+      actor,
+      assetActor,
+      assetMutationPlan = {},
+      cost = 0,
+      resaleCredit = 0,
+      reason = '',
+      transactionContext = 'owned-customization',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeAssetCustomizationTransaction'
+    } = options;
+
+    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (!this._allowedMutationContexts.has(transactionContext)) {
+      return { success: false, transactionId, error: `Unsupported transaction context: ${transactionContext}` };
+    }
+    if (!actor) return { success: false, transactionId, error: 'No wallet actor provided' };
+    if (!assetActor) return { success: false, transactionId, error: 'No asset actor provided' };
+
+    const walletActor = game?.actors?.get?.(actor.id) || actor;
+    const targetAsset = game?.actors?.get?.(assetActor.id) || assetActor;
+    if (!walletActor) return { success: false, transactionId, error: 'Wallet actor no longer exists' };
+    if (!targetAsset) return { success: false, transactionId, error: 'Asset actor no longer exists' };
+    if (walletActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient wallet actor permissions' };
+    if (targetAsset.isOwner === false) return { success: false, transactionId, error: 'Insufficient asset actor permissions' };
+
+    const grossCost = normalizeCredits(cost);
+    const grossResale = normalizeCredits(resaleCredit);
+    if (!Number.isFinite(grossCost) || grossCost < 0) {
+      return { success: false, transactionId, error: 'Invalid customization cost' };
+    }
+    if (!Number.isFinite(grossResale) || grossResale < 0) {
+      return { success: false, transactionId, error: 'Invalid customization resale credit' };
+    }
+
+    const netCost = normalizeCredits(grossCost - grossResale);
+    const creditsBefore = LedgerService.getCurrentCredits(walletActor);
+    const creditsAfter = normalizeCredits(creditsBefore - netCost);
+    if (!Number.isFinite(creditsBefore) || creditsBefore < 0) {
+      return { success: false, transactionId, error: 'Invalid wallet credit state' };
+    }
+    if (creditsAfter < 0) {
+      return {
+        success: false,
+        transactionId,
+        error: `Insufficient credits (have ${creditsBefore}, need ${netCost})`
+      };
+    }
+
+    const lockKey = `${walletActor.id}:${targetAsset.id}:${transactionContext}`;
+    if (this._mutationLocks.has(lockKey)) {
+      return { success: false, transactionId, error: 'Asset customization already in progress' };
+    }
+    this._mutationLocks.add(lockKey);
+
+    let walletSnapshot = null;
+    let assetSnapshot = null;
+    try {
+      try {
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        walletSnapshot = await SnapshotManager.createSnapshot(
+          walletActor,
+          `${transactionContext} wallet transaction (${netCost} net credits)`
+        );
+        if (targetAsset.id !== walletActor.id) {
+          assetSnapshot = await SnapshotManager.createSnapshot(
+            targetAsset,
+            `${transactionContext} asset mutation (${targetAsset.name})`
+          );
+        }
+      } catch (snapshotError) {
+        swseLogger.warn('TransactionEngine: Asset customization snapshot failed; continuing with best-effort rollback', {
+          transactionId,
+          context: transactionContext,
+          error: snapshotError.message
+        });
+      }
+
+      const walletAudit = {
+        id: transactionId,
+        context: transactionContext,
+        type: netCost < 0 ? 'Refund' : netCost > 0 ? 'Buy' : 'Customization',
+        status: 'Success',
+        cost: Math.abs(netCost),
+        amount: netCost > 0 ? -netCost : Math.abs(netCost),
+        creditsBefore,
+        creditsAfter,
+        createdAt: Date.now(),
+        actorId: walletActor.id,
+        actorName: walletActor.name,
+        assetActorId: targetAsset.id,
+        assetActorName: targetAsset.name,
+        userId: game?.user?.id ?? null,
+        userName: game?.user?.name ?? null,
+        reason,
+        source,
+        audit: {
+          ...audit,
+          reason,
+          creditsBefore,
+          creditsAfter,
+          grossCost,
+          resaleCredit: grossResale,
+          netCost,
+          assetActorId: targetAsset.id,
+          assetActorName: targetAsset.name
+        }
+      };
+
+      const walletPlan = {
+        set: {
+          'system.credits': creditsAfter,
+          [`flags.foundryvtt-swse.transactions.${transactionId}`]: walletAudit
+        }
+      };
+
+      const assetPlans = Array.isArray(assetMutationPlan) ? assetMutationPlan : [assetMutationPlan];
+      const assetAuditPlan = {
+        set: {
+          [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
+            ...walletAudit,
+            actorId: targetAsset.id,
+            actorName: targetAsset.name,
+            walletActorId: walletActor.id,
+            walletActorName: walletActor.name,
+            source: `${source}.asset`,
+            audit: {
+              ...walletAudit.audit,
+              walletActorId: walletActor.id,
+              walletActorName: walletActor.name
+            }
+          }
+        }
+      };
+      const mergedAssetPlan = mergeMutationPlans(...assetPlans, assetAuditPlan);
+
+      if (targetAsset.id === walletActor.id) {
+        await ActorEngine.applyMutationPlan(walletActor, mergeMutationPlans(walletPlan, mergedAssetPlan), {
+          validate,
+          rederive,
+          source: `${source}.${transactionContext}`
+        });
+      } else {
+        await ActorEngine.applyMutationPlan(walletActor, walletPlan, {
+          validate,
+          rederive,
+          source: `${source}.${transactionContext}.wallet`
+        });
+        await ActorEngine.applyMutationPlan(targetAsset, mergedAssetPlan, {
+          validate,
+          rederive,
+          source: `${source}.${transactionContext}.asset`
+        });
+      }
+
+      Hooks.callAll?.('swseAssetCustomizationTransactionComplete', {
+        transaction: this.#normalizeTransactionRecord(walletActor, walletAudit),
+        actor: walletActor,
+        assetActor: targetAsset,
+        success: true
+      });
+
+      return {
+        success: true,
+        transactionId,
+        error: null,
+        creditsBefore,
+        creditsAfter,
+        grossCost,
+        resaleCredit: grossResale,
+        netCost
+      };
+    } catch (error) {
+      swseLogger.error('TransactionEngine: Asset customization failed', {
+        transactionId,
+        context: transactionContext,
+        walletActor: walletActor?.id,
+        assetActor: targetAsset?.id,
+        error: error.message
+      });
+
+      try {
+        if (walletSnapshot || assetSnapshot) {
+          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+          if (assetSnapshot && targetAsset.id !== walletActor.id) {
+            await SnapshotManager.restoreSnapshot(targetAsset, assetSnapshot.timestamp ?? assetSnapshot);
+          }
+          if (walletSnapshot) {
+            await SnapshotManager.restoreSnapshot(walletActor, walletSnapshot.timestamp ?? walletSnapshot);
+          }
+        }
+      } catch (rollbackError) {
+        return {
+          success: false,
+          transactionId,
+          error: `Asset customization failed and rollback failed: ${error.message}`
+        };
+      }
+
+      return { success: false, transactionId, error: error.message };
+    } finally {
+      this._mutationLocks.delete(lockKey);
+    }
+  }
+
   /**
    * Approve an existing draft droid/vehicle actor as a store acquisition.
    *

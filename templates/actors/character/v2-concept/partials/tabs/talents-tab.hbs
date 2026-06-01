@@ -8,16 +8,19 @@
       <span>Talents</span>
       <strong>{{conceptLayout.talents.talentCount}}</strong>
     </article>
+    {{#unless isDroidActor}}
     <article class="swse-concept-info-card swse-concept-info-card--stat">
       <span>Species Abilities</span>
       <strong>{{conceptLayout.talents.speciesAbilityCount}}</strong>
     </article>
+    {{/unless}}
     <article class="swse-concept-info-card swse-concept-info-card--stat">
       <span>Total Abilities</span>
       <strong>{{conceptLayout.talents.abilityCount}}</strong>
     </article>
   </div>
 
+  {{#unless isDroidActor}}
   <section class="swse-concept-panel swse-concept-panel--ledger racial-section">
     <header class="swse-concept-panel__header">
       <div>
@@ -50,6 +53,7 @@
       </div>
     {{/if}}
   </section>
+  {{/unless}}
 
   <div class="swse-concept-grid swse-concept-grid--two">
     <section class="swse-concept-panel swse-concept-panel--ledger">

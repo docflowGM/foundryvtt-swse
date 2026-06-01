@@ -38,6 +38,7 @@ import { attachFeatIconPath, resolveFeatIconPath } from './feat-icon-resolver.js
 import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
+import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -409,7 +410,7 @@ export class FeatStep extends ProgressionStepPlugin {
           addFeatOwnershipName(classGrantedFeats, getGrantedFeatName(grant));
         }
 
-        if (ledger?.forceSensitive || merged?.forceSensitive) {
+        if (!isDroidProgressionActor(actor, pendingAbilityData) && (ledger?.forceSensitive || merged?.forceSensitive)) {
           addFeatOwnershipName(classGrantedFeats, 'Force Sensitivity');
           addFeatOwnershipName(classGrantedFeats, 'Force Sensitive');
         }

@@ -1,0 +1,61 @@
+<section class="swse-vehicle-panel swse-vehicle-shipyard-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-panel-kicker">{{panel.frameName}}</span>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div class="swse-vehicle-shipyard-summary">
+      <div>
+        <span>EP Used</span>
+        <strong>{{panel.ep.used}} / {{panel.ep.available}}</strong>
+        <em>{{panel.ep.remaining}} remaining</em>
+      </div>
+      <div>
+        <span>Vehicle Value</span>
+        <strong>{{panel.totalCost}} cr</strong>
+        <em>{{panel.modificationCost}} cr systems</em>
+      </div>
+      <div>
+        <span>Last Refit</span>
+        <strong>{{panel.lastNetCost}} cr</strong>
+        <em>{{panel.lastResaleCredit}} cr resale</em>
+      </div>
+    </div>
+
+    {{#if panel.hasGroups}}
+      <div class="swse-vehicle-shipyard-groups">
+        {{#each panel.groups as |group|}}
+          <section class="swse-vehicle-shipyard-group swse-vehicle-shipyard-group--{{group.key}}">
+            <h4>{{group.label}} <span>{{group.count}}</span></h4>
+            <div class="swse-vehicle-shipyard-mod-list">
+              {{#each group.items as |mod|}}
+                <article class="swse-vehicle-shipyard-mod {{#if mod.nonstandard}}is-nonstandard{{/if}}">
+                  <div>
+                    <strong>{{mod.name}}</strong>
+                    <span>{{mod.availability}}{{#if mod.nonstandard}} · Nonstandard{{/if}}</span>
+                  </div>
+                  <em>{{mod.ep}} EP</em>
+                  <em>{{mod.cost}} cr</em>
+                  {{#if mod.effect}}<p>{{mod.effect}}</p>{{/if}}
+                  {{#if mod.damage}}<p>{{mod.weaponType}} · {{mod.damage}}</p>{{/if}}
+                </article>
+              {{/each}}
+            </div>
+          </section>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="swse-vehicle-panel-empty">{{panel.emptyText}}</p>
+    {{/if}}
+
+    {{#if panel.hasRemoved}}
+      <div class="swse-vehicle-shipyard-removed">
+        <h4>Removed / Resold Systems</h4>
+        {{#each panel.removed as |mod|}}
+          <span>{{mod.name}} · {{mod.cost}} cr base</span>
+        {{/each}}
+      </div>
+    {{/if}}
+  </div>
+</section>

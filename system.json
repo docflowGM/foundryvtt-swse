@@ -132,6 +132,7 @@
     "styles/system/gm-datapad-scene-control.css",
     "styles/apps/custom-roll-dialog.css",
     "styles/apps/customization-bay.css",
+    "styles/apps/vehicle-modification.css",
     "styles/apps/item-customization-workbench.css",
     "styles/apps/gm-datapad.css",
     "styles/layout/sheet-layout.css",

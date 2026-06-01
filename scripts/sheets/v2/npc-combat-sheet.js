@@ -1,3 +1,5 @@
+// DEPRECATED / ORPHANED (Phase 2.5): NPC actors now use SWSEV2CharacterSheet and the shared actor shell.
+// Retained only as historical/reference code until fully removed. Do not register this sheet.
 // scripts/sheets/v2/npc-combat-sheet.js
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;

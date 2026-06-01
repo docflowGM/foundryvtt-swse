@@ -7844,3 +7844,288 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
 .swse-concept-action-sequence__node.swse-action-state-available {
   box-shadow: inset 0 0 18px rgba(141, 255, 191, 0.08) !important;
 }
+
+/* === Droid actor mode: Droid Systems tab inside the shared actor shell === */
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-systems-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
+  gap: 14px;
+  min-height: 0;
+  color: var(--swse-concept-text, #e9fbff);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-frame-panel,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-right-rail .swse-panel,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-system-suite {
+  border: 1px solid rgba(111, 215, 255, 0.18);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(8, 18, 32, 0.86), rgba(3, 9, 18, 0.78));
+  box-shadow: inset 0 0 28px rgba(0, 231, 255, 0.055), 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-frame-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(111, 215, 255, 0.12);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-kicker,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .node-label,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-status-grid span,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .section-header {
+  color: var(--swse-concept-accent, #70e2ff);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-frame-header h2 {
+  margin: 3px 0 4px;
+  color: var(--swse-concept-text, #f2fbff);
+  font-size: 1.35rem;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-frame-header p {
+  margin: 0;
+  color: var(--swse-concept-text-dim, #a7c9d4);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-garage-button,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .edit-droid-systems.holo-btn,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .edit-droid-systems.swse-concept-btn {
+  border: 1px solid rgba(112, 226, 255, 0.42);
+  border-radius: 999px;
+  background: rgba(0, 231, 255, 0.1);
+  color: var(--swse-concept-text, #e9fbff);
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-garage-button:hover,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .edit-droid-systems.holo-btn:hover {
+  background: rgba(0, 231, 255, 0.18);
+  box-shadow: 0 0 18px rgba(0, 231, 255, 0.16);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-silhouette-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(170px, 1fr));
+  grid-auto-rows: minmax(135px, auto);
+  gap: 12px;
+  padding: 16px;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-system-node {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid rgba(111, 215, 255, 0.15);
+  border-radius: 16px;
+  background: rgba(3, 10, 18, 0.6);
+  overflow: hidden;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-system-node header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(111, 215, 255, 0.1);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-system-node.is-default {
+  border-color: rgba(255, 211, 107, 0.28);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-system-node.is-empty {
+  opacity: 0.82;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .node-badge,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-default-badge,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-weapon-integrated-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 0.68rem;
+  color: #ffd76a;
+  border: 1px solid rgba(255, 211, 107, 0.26);
+  background: rgba(255, 211, 107, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .node-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 215, 255, 0.12);
+  background: rgba(0, 231, 255, 0.055);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip strong {
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip small,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-empty,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-handheld-note,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-rail-body {
+  color: var(--swse-concept-text-dim, #a7c9d4);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip.ghost,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-empty {
+  border-style: dashed;
+  background: rgba(255, 211, 107, 0.045);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-right-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-right-rail .swse-panel {
+  padding: 12px;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-diagnostics summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-status-grid > div,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-bridge-row,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-garage-cta,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-all-clear,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-inline-lock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 215, 255, 0.12);
+  background: rgba(3, 10, 18, 0.5);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-validation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-validation-item {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 211, 107, 0.24);
+  color: #ffd76a;
+  background: rgba(255, 211, 107, 0.07);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-validation-error {
+  border-color: rgba(255, 105, 105, 0.34);
+  color: #ff8b8b;
+  background: rgba(255, 105, 105, 0.08);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-validation-info,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-all-clear {
+  border-color: rgba(92, 255, 173, 0.24);
+  color: #8dffbf;
+  background: rgba(92, 255, 173, 0.07);
+}
+
+@media (max-width: 1180px) {
+  .swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-systems-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-silhouette-grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+/* Droid Systems Phase 5: read-only / activate-only operational controls */
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-readonly-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 12px 16px 0;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 211, 107, 0.22);
+  border-radius: 12px;
+  background: rgba(255, 211, 107, 0.075);
+  color: var(--swse-concept-text-dim, #a7c9d4);
+  font-size: 0.82rem;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-readonly-notice i {
+  color: #ffd76a;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-chip-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-operate-button {
+  min-width: auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(112, 226, 255, 0.32);
+  background: rgba(0, 231, 255, 0.08);
+  color: var(--swse-concept-text, #e9fbff);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-operate-button:hover,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .swse-droid-operate-button:focus-visible {
+  background: rgba(0, 231, 255, 0.17);
+  box-shadow: 0 0 14px rgba(0, 231, 255, 0.16);
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip .swse-droid-operate-button {
+  justify-self: end;
+}

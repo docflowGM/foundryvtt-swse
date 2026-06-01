@@ -11,6 +11,7 @@
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { isDroidProgressionActor } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 
 export class ActorProgressionUpdater {
   /**
@@ -70,9 +71,10 @@ export class ActorProgressionUpdater {
         f.toLowerCase().includes('force sensitivity')
       );
 
-      if (isForceSensitive || hasForceTrainingFeat || hasForceStartingFeat) {
+      if (!isDroidProgressionActor(actor) && (isForceSensitive || hasForceTrainingFeat || hasForceStartingFeat)) {
         updates['system.forceSensitive'] = true;
       }
+
 
       // Track progression state in flags (for auditing) — canonical namespace
       updates['flags.foundryvtt-swse.appliedFeats'] = prog.feats || [];

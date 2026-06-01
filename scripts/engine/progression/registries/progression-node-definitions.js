@@ -350,7 +350,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-book-open',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
@@ -397,7 +397,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-star',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 

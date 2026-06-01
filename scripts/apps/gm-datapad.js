@@ -21,6 +21,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { GMSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSurfaceRegistry.js";
 import { GMSurfaceControllerRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/controllers/GMSurfaceControllerRegistry.js";
@@ -688,8 +689,30 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     for (const approval of this.storeApprovals) {
       const ownerActor = game.actors.get(approval.ownerActorId);
-      approval.ownerActorName = ownerActor?.name || 'Unknown Player';
-      approval.timeSubmitted = new Date(approval.requestedAt).toLocaleString();
+      const draftActor = game.actors.get(approval.draftActorId);
+      const build = approval.modificationData ?? approval.buildSpec ?? {};
+      const stockShip = build.stockShip ?? approval.stockShip ?? {};
+      const modifications = Array.isArray(build.modifications) ? build.modifications : [];
+      const cost = normalizeCredits(approval.costCredits ?? 0);
+      const currentCredits = ownerActor ? normalizeCredits(LedgerService.getCurrentCredits(ownerActor)) : 0;
+      const epAvailable = Number(stockShip.unusedEmplacementPoints ?? stockShip.unusedEP ?? 0) || 0;
+      const epUsed = modifications.reduce((sum, mod) => sum + (Number(mod?.emplacementPoints ?? mod?.ep ?? 0) || 0), 0);
+
+      approval.ownerActorName = ownerActor?.name || approval.ownerActorName || 'Unknown Player';
+      approval.assetName = approval.draftData?.name || draftActor?.name || 'Custom asset';
+      approval.timeSubmitted = approval.requestedAt ? new Date(approval.requestedAt).toLocaleString() : (approval.timeSubmitted || '—');
+      approval.costLabel = `${cost.toLocaleString()} cr`;
+      approval.currentCreditsLabel = `${currentCredits.toLocaleString()} cr`;
+      approval.afterCreditsLabel = `${(currentCredits - cost).toLocaleString()} cr`;
+      approval.frameLabel = stockShip.name ?? approval.vehicleTemplateName ?? approval.draftData?.baseTemplate ?? '';
+      approval.epSummary = approval.type === 'vehicle' && epAvailable ? `${epUsed}/${epAvailable} EP` : '';
+      approval.reviewWarning = !ownerActor
+        ? 'Owner missing'
+        : !draftActor && approval.type !== 'store-item'
+          ? 'Draft missing'
+          : ownerActor && currentCredits < cost
+            ? 'Insufficient credits'
+            : '';
     }
   }
 

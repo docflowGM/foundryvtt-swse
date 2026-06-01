@@ -1,33 +1,93 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 /**
- * Vehicle Modification Application
- * Interactive starship builder with Marl Skindar, Republic Spy narrator
+ * Shipyard Builder / Vehicle Modification Application
+ *
+ * Store construction mode for custom starships.  This UI is deliberately thin:
+ * - real frame/modification data comes from VehicleModificationManager
+ * - credits come from LedgerService
+ * - rule gates use VehicleModificationManager.canInstallModification()
+ * - purchase mutates through StoreEngine.purchase() + VehicleFactory.buildMutationPlan()
+ * - approval-gated builds create draft vehicle actors for the GM approval queue
  */
 
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { VehicleModificationManager } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-manager.js";
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
+import { VehicleFactory } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+
+const CATEGORY_META = Object.freeze({
+  movement: { key: 'movement', label: 'Movement & Propulsion', tab: 'Movement', icon: 'fa-rocket' },
+  defense: { key: 'defense', label: 'Defense Systems', tab: 'Defense', icon: 'fa-shield-halved' },
+  weapon: { key: 'weapon', label: 'Weapon Systems', tab: 'Weapons', icon: 'fa-crosshairs' },
+  accessory: { key: 'accessory', label: 'Accessories', tab: 'Accessories', icon: 'fa-screwdriver-wrench' }
+});
+
+const CATEGORY_ORDER = Object.keys(CATEGORY_META);
+
+function normalizeCategory(value) {
+  const raw = String(value || '').toLowerCase();
+  if (raw.startsWith('movement')) return 'movement';
+  if (raw.startsWith('defense')) return 'defense';
+  if (raw.startsWith('weapon')) return 'weapon';
+  if (raw.startsWith('accessor')) return 'accessory';
+  return raw || 'accessory';
+}
+
+function formatCredits(value) {
+  const number = Number(value ?? 0);
+  if (!Number.isFinite(number)) return '0 cr';
+  return `${number.toLocaleString()} cr`;
+}
+
+function formatSignedCredits(value) {
+  const number = Number(value ?? 0);
+  const prefix = number > 0 ? '+' : '';
+  return `${prefix}${number.toLocaleString()} cr`;
+}
+
+function cssSafe(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'misc';
+}
+
+function numberOrZero(value) {
+  const n = Number(value ?? 0);
+  return Number.isFinite(n) ? n : 0;
+}
 
 export class VehicleModificationApp extends SWSEApplication {
-
   constructor(options = {}) {
     super(options);
-    this.actor = options.actor;
+    this.actor = options.actor ?? null; // wallet / owner actor
+    this.targetVehicle = options.targetVehicle ?? options.vehicleActor ?? null;
     this.stockShip = null;
     this.modifications = [];
-    this.currentStep = 'intro';
-    this.selectedCategory = 'movement';
-    this.lastAction = null;
+    this.originalModifications = [];
+    this.removedModifications = [];
+    this.baseVehicleCost = 0;
+    this.focusedModId = null;
+    this.selectedCategory = 'all';
+    this.query = '';
+    this.compatOnly = false;
+    this.contextMode = options.contextMode || 'storeConstruction';
+    this.mode = options.mode || 'shipyard';
+    this.isSubmitting = false;
+    this._restoreSearchFocus = false;
+    this._hydratedExistingVehicle = false;
   }
 
   static DEFAULT_OPTIONS = {
     id: 'swse-vehicle-modification',
-    classes: ['swse', 'swse-vehicle-mod-app'],
+    classes: ['swse', 'swse-vehicle-mod-app', 'swse-shipyard-builder-app'],
     tag: 'div',
     template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs',
-    position: { width: 900, height: 700 },
+    position: { width: 1240, height: 820 },
     window: {
-      title: 'Starship Acquisition & Modification',
+      title: 'Shipyard Builder',
       resizable: true,
       frame: true
     },
@@ -35,769 +95,1019 @@ export class VehicleModificationApp extends SWSEApplication {
   };
 
   async _prepareContext(options) {
-    const context = {};
+    const context = await super._prepareContext(options);
 
-    context.actor = this.actor;
-    context.currentStep = this.currentStep;
-    context.marlDialogue = this.getMarlDialogue();
-
-    // Check if vehicle data loaded successfully
     if (!VehicleModificationManager._initialized) {
-      context.loadError = true;
-      context.errorMessage = 'Failed to load vehicle modification data. Check the browser console for details.';
-      return context;
+      await VehicleModificationManager.init();
     }
 
-    // Stock ships
-    context.stockShips = VehicleModificationManager.getStockShips();
-    context.selectedShip = this.stockShip;
-
-    // Modifications by category
-    context.categories = [
-      { id: 'movement', label: 'Movement', icon: 'fa-rocket' },
-      { id: 'defense', label: 'Defense', icon: 'fa-shield-alt' },
-      { id: 'weapon', label: 'Weapons', icon: 'fa-crosshairs' },
-      { id: 'accessory', label: 'Accessories', icon: 'fa-tools' }
-    ];
-
-    context.selectedCategory = this.selectedCategory;
-
-    if (this.stockShip) {
-      context.availableModifications = VehicleModificationManager
-        .getModificationsByCategory(this.selectedCategory);
-
-      // Filter out already installed modifications using O(n) Set lookup
-      const installedIds = new Set(this.modifications.map(m => m?.id).filter(id => id != null));
-      context.availableModifications = context.availableModifications.filter(mod => !installedIds.has(mod.id));
-
-      context.installedModifications = this.modifications;
-
-      // Calculate stats
-      const epStats = VehicleModificationManager.calculateEmplacementPointsTotal(
-        this.modifications,
-        this.stockShip
-      );
-      // Validate EP calculation
-      if (epStats && isFinite(epStats.remaining)) {
-        context.emplacementPoints = epStats;
-      }
-
-      context.totalCost = VehicleModificationManager.calculateTotalCost(
-        this.modifications,
-        this.stockShip
-      );
-
-      context.baseCost = this.stockShip.cost;
+    if (!VehicleModificationManager._initialized) {
+      return {
+        ...context,
+        actor: this.actor,
+        loadError: true,
+        errorMessage: 'Failed to load vehicle modification data. Check the browser console for details.'
+      };
     }
 
-    return context;
+    this._hydrateExistingVehicleState();
+
+    const credits = this._currentCredits();
+    const epStats = this._epStats();
+    const costSummary = this._costSummary();
+    const frameCost = costSummary.frame;
+    const modificationCost = costSummary.modifications;
+    const buildTotal = costSummary.total;
+    const remainingCredits = credits - costSummary.netCost;
+    const warnings = this._buildWarnings({ remainingCredits, epStats });
+    const requiresApproval = this._requiresApproval(buildTotal);
+    const hasChanges = !this._isModifyExisting() || this._hasExistingBuildChanges();
+    const canSubmit = Boolean(this.stockShip) && remainingCredits >= 0 && epStats.remaining >= 0 && !this.isSubmitting && hasChanges;
+    const focusedMod = this._focusedModification();
+
+    return {
+      ...context,
+      actor: this.actor,
+      loadError: false,
+      contextMode: this.contextMode,
+      isModifyExisting: this._isModifyExisting(),
+      appTitle: this._isModifyExisting() ? 'Shipyard Refit' : 'Shipyard Builder',
+      subtitle: this._isModifyExisting() ? `Modify Existing · ${this.targetVehicle?.name || 'Selected Vehicle'}` : `Store Construction Mode · Marl Skindar's Outfitting Yard`,
+      walletLabel: this._isModifyExisting() ? 'Owner Credits' : 'Player Credits',
+      totalLabel: this._isModifyExisting() ? 'Net Refit Cost' : 'Build Total',
+      closeLabel: this._isModifyExisting() ? 'Back to Shipyard' : 'Back to Store',
+      hasChanges,
+      playerCredits: credits,
+      playerCreditsLabel: formatCredits(credits),
+      stockShips: this._frameRows(),
+      hasFrame: Boolean(this.stockShip),
+      frame: this._frameSummary(),
+      categories: this._categoryTabs(),
+      selectedCategory: this.selectedCategory,
+      query: this.query,
+      compatOnly: this.compatOnly,
+      compatOnlyClass: this.compatOnly ? 'on' : '',
+      systemGroups: this._systemGroups(),
+      installedGroups: this._installedGroups(),
+      removedGroups: this._removedGroups(),
+      installedCount: this.modifications.length,
+      modCountLabel: `${this.modifications.length} mod${this.modifications.length === 1 ? '' : 's'}`,
+      focused: focusedMod,
+      hasFocused: Boolean(focusedMod),
+      ep: {
+        ...epStats,
+        fillPct: `${Math.max(0, Math.min(100, epStats.available > 0 ? (epStats.used / epStats.available) * 100 : 0))}%`,
+        fillClass: epStats.remaining <= 0 && epStats.used > 0 ? 'full' : epStats.used / Math.max(1, epStats.available) > 0.75 ? 'warn' : 'ok',
+        label: `${epStats.remaining} remaining`
+      },
+      cost: {
+        ...costSummary,
+        frame: frameCost,
+        frameLabel: formatCredits(frameCost),
+        modifications: modificationCost,
+        modificationsLabel: formatCredits(modificationCost),
+        total: buildTotal,
+        totalLabel: formatCredits(buildTotal),
+        vehicleValueLabel: formatCredits(costSummary.vehicleValue),
+        grossCostLabel: formatCredits(costSummary.grossCost),
+        resaleCreditLabel: formatCredits(costSummary.resaleCredit),
+        netCostLabel: formatSignedCredits(costSummary.netCost),
+        credits,
+        creditsLabel: formatCredits(credits),
+        remaining: remainingCredits,
+        remainingLabel: formatSignedCredits(remainingCredits),
+        remainingClass: remainingCredits < 0 ? 'neg' : remainingCredits === 0 ? 'neu' : 'pos'
+      },
+      checklist: this._checklist(remainingCredits),
+      warnings,
+      warningCount: warnings.length,
+      validity: this._validity({ remainingCredits, epStats }),
+      requiresApproval,
+      approvalNotice: requiresApproval ? this._approvalReason(buildTotal) : '',
+      canSubmit,
+      submitDisabled: canSubmit ? '' : 'disabled',
+      submitLabel: this._submitLabel(requiresApproval),
+      footerStatus: this._footerStatus({ remainingCredits, epStats, requiresApproval })
+    };
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-
     const root = this.element;
-    if (!(root instanceof HTMLElement)) {return;}
+    if (!(root instanceof HTMLElement)) return;
 
-    // Start selection button
-    const startBtn = root.querySelector('.start-selection');
-    if (startBtn) {
-      startBtn.addEventListener('click', this._onStartSelection.bind(this));
-    }
-
-    // Stock ship selection
-    root.querySelectorAll('.select-ship').forEach(el => {
-      el.addEventListener('click', this._onSelectShip.bind(this));
+    root.querySelectorAll('[data-action]').forEach((element) => {
+      element.addEventListener('click', (event) => this._handleAction(event));
     });
 
-    // Category tabs
-    root.querySelectorAll('.category-tab').forEach(el => {
-      el.addEventListener('click', this._onSelectCategory.bind(this));
-    });
+    const search = root.querySelector('[data-role="shipyard-search"]');
+    if (search) {
+      search.addEventListener('input', (event) => {
+        this.query = event.currentTarget.value || '';
+        this._restoreSearchFocus = true;
+        this.render(false);
+      });
 
-    // Add modification
-    root.querySelectorAll('.add-modification').forEach(el => {
-      el.addEventListener('click', this._onAddModification.bind(this));
-    });
-
-    // Remove modification
-    root.querySelectorAll('.remove-modification').forEach(el => {
-      el.addEventListener('click', this._onRemoveModification.bind(this));
-    });
-
-    // Finalize button
-    const finalizeBtn = root.querySelector('.finalize-ship');
-    if (finalizeBtn) {
-      finalizeBtn.addEventListener('click', this._onFinalizeShip.bind(this));
-    }
-
-    // Reset button
-    const resetBtn = root.querySelector('.reset-ship');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', this._onResetShip.bind(this));
-    }
-
-    // Modification details
-    root.querySelectorAll('.modification-item').forEach(el => {
-      el.addEventListener('click', this._onShowModificationDetails.bind(this));
-    });
-  }
-
-  async _onStartSelection(event) {
-    event.preventDefault();
-    this.currentStep = 'ship-selection';
-    await this.render();
-  }
-
-  /**
-   * Get Marl Skindar's dialogue based on current state.
-   * Fully derived from state; no stored dialogue state.
-   * AppV2 pattern: all context computed in _prepareContext()
-   */
-  getMarlDialogue() {
-    // Special: show removal dialogue once after mod is removed
-    if (this.lastAction === 'removed') {
-      this.lastAction = null; // Clear flag so next render shows normal dialogue
-      return `*Marl watches you remove the modification*
-
-"Second thoughts? That's fine. Better to change your mind now than after you're in a firefight and realize you needed those shields after all."`;
-    }
-
-    // Intro step: initial greeting
-    if (this.currentStep === 'intro') {
-      return this._getIntroDialogue();
-    }
-
-    // Ship selection: no ship chosen yet
-    if (this.currentStep === 'ship-selection' && !this.stockShip) {
-      return this._getShipSelectionDialogue();
-    }
-
-    // Ship chosen: provide commentary on selection
-    if (this.stockShip && this.currentStep === 'modification') {
-      // If no modifications yet, provide ship choice commentary
-      if (this.modifications.length === 0) {
-        return this._getShipChoiceCommentary(this.stockShip.name);
+      if (this._restoreSearchFocus) {
+        queueMicrotask(() => {
+          search.focus();
+          const cursor = String(search.value || '').length;
+          search.setSelectionRange?.(cursor, cursor);
+        });
+        this._restoreSearchFocus = false;
       }
-      // With modifications: comment on last mod
-      return this._getModificationCommentary();
     }
-
-    // Fallback: random filler dialogue
-    return this._getDefaultDialogue();
   }
 
-  _getIntroDialogue() {
-    return `"Marl Skindar, Republic Intelligence. I run vehicle requisitions. Well, that's what the official paperwork says, anyway. Let's just say I have... flexible accounting with certain Republic contacts.
+  async _handleAction(event) {
+    const target = event.currentTarget;
+    const action = target?.dataset?.action;
+    if (!action) return;
+    event.preventDefault();
+    event.stopPropagation();
 
-You want a ship? Fine. Pick one. I'll process the credits through proper channels. Mostly proper. The less you ask, the better."`;
+    switch (action) {
+      case 'select-frame':
+        return this._selectFrame(target.dataset.frameName);
+      case 'change-frame':
+        return this._changeFrame();
+      case 'focus-mod':
+        return this._focusModification(target.dataset.modId);
+      case 'install-mod':
+        return this._installModification(target.dataset.modId);
+      case 'remove-mod':
+        return this._removeModification(target.dataset.modId);
+      case 'set-filter':
+        this.selectedCategory = target.dataset.filter || 'all';
+        return this.render(false);
+      case 'toggle-compatible':
+        this.compatOnly = !this.compatOnly;
+        return this.render(false);
+      case 'reset-filters':
+        this.selectedCategory = 'all';
+        this.query = '';
+        this.compatOnly = false;
+        return this.render(false);
+      case 'submit-build':
+        return this._submitBuild();
+      case 'close-builder':
+        return this.close();
+      default:
+        return undefined;
+    }
   }
 
-  _getShipSelectionDialogue() {
-    return `"Browse the catalog. The prices are... adjusted. Republic overhead, you understand. Some of these credits might find their way back through various contacts. Very proper. Very legal.
 
-Choose wisely. Every transaction gets logged. Eventually."`;
+  _isModifyExisting() {
+    return this.contextMode === 'modifyExisting';
   }
 
-  _getShipChoiceCommentary(shipName) {
-    const commentary = {
-      'Light Fighter': `*Marl actually looks surprised*
+  _clone(value) {
+    return foundry.utils.deepClone(value ?? null);
+  }
 
-"A Light Fighter? You picked... the CHEAPEST option? I... I don't know whether to be impressed or concerned.
+  _modKey(mod = {}) {
+    return String(mod?.id || mod?.name || '').trim();
+  }
 
-On one hand, you're not bleeding the Republic dry. On the other hand, this thing has the structural integrity of a Naboo starfighter—which is to say, NONE. You'll be flying a target with engines.
-
-But at least when you inevitably get vaporized, the Republic will only lose 5,000 credits instead of 500,000. So... thanks for that, I guess? Congratulations on your suicide mission vehicle."`,
-
-      'Interceptor': `*Marl laughs bitterly*
-
-"An Interceptor. Oh, wonderful. You've chosen the 'I have a death wish but I want to look COOL while dying' option.
-
-25,000 credits for a ship so fast you'll black out from the G-forces before you even see what kills you. And it WILL kill you. These things have more dead pilots than successful missions. But sure, live fast, die young, waste Republic credits. That's basically your motto now."`,
-
-      'Superiority Fighter': `*Marl's eye twitches*
-
-"A Superiority Fighter. 50,000 credits. FIFTY. THOUSAND.
-
-Do you have ANY idea how many troops we could equip with that? How many meals we could provide to refugees? But no, YOU need the fancy starfighter because you watched too many holo-vids.
-
-The maintenance alone on this thing will bankrupt a small moon. But I'm sure your ego is worth it. Try not to crash it on day one—actually, you know what? DO crash it. At least then the Republic can write it off as a combat loss instead of 'idiot pilot error.'"`,
-
-      'Bomber': `*Marl pinches the bridge of his nose*
-
-"A Bomber. 75,000 credits for a flying bomb that attracts enemy fire like a Hutt attracts parasites.
-
-You're basically telling everyone in the sector 'PLEASE SHOOT ME, I'M FULL OF EXPLOSIVES.' And they will. Oh, they WILL. Every TIE fighter, turbolaser, and angry pirate will prioritize you, because you're a giant target made of ordnance.
-
-The Republic thanks you for your... sacrifice. Because that's what this is. A sacrifice. Of credits, common sense, and your inevitable life."`,
-
-      'Light Freighter': `*Marl's expression turns knowing*
-
-"Ah, the Light Freighter. 100,000 credits for the galaxy's most popular smuggling vessel. And you want me to believe you're going to use it for 'legitimate cargo hauling'? Sure you are.
-
-Let me guess—you'll add hidden compartments, upgrade the hyperdrive to outrun authorities, and spend more time running from Imperial customs than actually doing honest work. I've seen this story a hundred times.
-
-The Republic is funding your future life of crime. Fantastic. Just... try not to make the rest of us look bad when you inevitably get caught with contraband."`,
-
-      'Shuttle': `*Marl shrugs*
-
-"A Shuttle. Practical. Boring. Safe. You're either the responsible type or you've given up on adventure entirely.
-
-Then again, shuttles are everywhere, which makes them great for blending in. Nobody suspects the shuttle. Unless it's YOUR shuttle, in which case everyone will suspect it. That's just how it works."`,
-
-      'Gunship': `*Marl whistles*
-
-"A Gunship! Now you're speaking my language. This is basically a flying weapons platform that happens to have room for a crew.
-
-Perfect for when you need to make a statement. That statement being 'I have more guns than common sense.' But honestly? Sometimes that's exactly the statement you need."`,
-
-      'Heavy Freighter': `*Marl stares in disbelief*
-
-"A Heavy Freighter. 250,000 credits. Quarter of a MILLION credits for a ship that moves like a drunk bantha and handles like a flying warehouse.
-
-What exactly are you hauling that needs this much space? Stolen AT-ATs? An entire black market? The hopes and dreams of the Republic Treasury? Because that's what you just spent.
-
-This thing is so slow that star systems will AGE before you finish a single cargo run. But sure, enjoy your flying mall. I'm sure it'll be worth every single wasted credit."`,
-
-      'Corvette': `*Marl looks concerned*
-
-"A Corvette. That's... ambitious. And expensive. And requires a crew of fifty. Do you HAVE fifty people? Because I don't, and I'm supposedly a Republic Intelligence officer.
-
-This is a proper warship. Don't take it into a customs inspection. Don't take it NEAR customs. Just... stay away from legitimate authorities entirely."`,
-
-      'Frigate': `*Marl's hologram flickers with rage*
-
-"A FRIGATE?! TWO MILLION CREDITS?!
-
-Are you INSANE?! Do you have ANY concept of money?! That's TWO MILLION Republic credits! We could build FORTY Light Freighters! EIGHTY Fighters! An entire FLEET of useful ships!
-
-But no, you want your own personal warship. With a crew of 200. TWO HUNDRED people who could be doing literally anything else. And the fuel costs? The maintenance? The docking fees?!
-
-You know what? I hope pirates board it. I hope they take it. They'll probably use it more responsibly than you will. This is the worst financial decision I've seen since the Republic Senate approved funding for the Malevolence."`,
-
-      'Cruiser': `*Marl's hologram shorts out briefly from pure shock*
-
-"A... a Cruiser. TEN MILLION CREDITS.
-
-I... I need to sit down. Do you understand what you've done? TEN. MILLION. CREDITS. That's not even REAL money anymore! That's theoretical economics! That's the kind of number that breaks calculators!
-
-Five THOUSAND crew members. The population of a small CITY. All dedicated to your flying monument to fiscal irresponsibility.
-
-You could've funded an entire SECTOR for a year. Built schools. Hospitals. Defensive stations. But no. YOU need a Cruiser. The Republic Finance Committee is going to have me assassinated for approving this. And honestly? I'd deserve it."`,
-
-      'Battlecruiser': `*Marl's hologram actually crashes and reboots*
-
-"Did... did you just try to buy a BATTLECRUISER?! FIFTY MILLION CREDITS?!
-
-FIFTY. MILLION. FIFTY MILLION REPUBLIC CREDITS FOR A SINGLE SHIP.
-
-You know what? No. I'm done. I quit. I'm resigning from Republic Intelligence right now. This is beyond incompetence. This is criminal. This is GALACTIC TREASON.
-
-Twenty THOUSAND crew members! The GDP of entire PLANETS is less than this! You could buy FLEETS! ARMADAS! Small GOVERNMENTS!
-
-The Republic is going to execute me for this. They're going to space me. And I'll ACCEPT it. Because clearly the universe has gone insane and I don't want to live in it anymore. Congratulations. You've broken me. And the economy. Mostly the economy."`
+  _normalizeStoredModification(mod = {}, sourceStatus = 'existing') {
+    const base = mod?.id ? (VehicleModificationManager.getModification(mod.id) || {}) : {};
+    const merged = { ...base, ...this._clone(mod) };
+    const nonstandard = Boolean(merged.nonstandard ?? this._isNonstandard(merged));
+    const finalCost = numberOrZero(merged.finalCost ?? VehicleModificationManager.calculateModificationCost(merged, this.stockShip, nonstandard, this.modifications));
+    return {
+      ...merged,
+      category: normalizeCategory(merged.category),
+      finalCost,
+      nonstandard,
+      sourceStatus
     };
-
-    return commentary[shipName] || `*Marl examines your choice*
-
-"The ${shipName}, huh? Interesting choice. Let's see what we can do with it."`;
   }
 
-  _getModificationCommentary() {
-    const lastMod = this.modifications[this.modifications.length - 1];
-    if (!lastMod) {return this._getDefaultDialogue();}
-
-    // Get category-specific commentary
-    if (lastMod.category === 'Movement') {
-      return this._getMovementCommentary(lastMod);
-    } else if (lastMod.category === 'Defense') {
-      return this._getDefenseCommentary(lastMod);
-    } else if (lastMod.category === 'Weapon') {
-      return this._getWeaponCommentary(lastMod);
-    } else if (lastMod.category === 'Accessory') {
-      return this._getAccessoryCommentary(lastMod);
-    }
-
-    return this._getDefaultDialogue();
+  _synthesizeStockShipFromVehicle(vehicle) {
+    const system = vehicle?.system ?? {};
+    const attrs = system.attributes ?? {};
+    const cost = system.cost;
+    const costValue = typeof cost === 'number'
+      ? cost
+      : typeof cost === 'object'
+        ? numberOrZero(cost.new ?? cost.value)
+        : numberOrZero(String(cost || '').replace(/[^0-9.-]/g, ''));
+    const unused = numberOrZero(system.unusedEmplacementPoints ?? system.remainingCustomizationEmplacementPoints ?? 0);
+    const used = numberOrZero(system.emplacementPoints ?? system.usedCustomizationEmplacementPoints ?? 0);
+    return {
+      name: system.buildMetadata?.frameName || system.shipyard?.frameName || vehicle?.name || 'Existing Vehicle',
+      size: system.size || 'Colossal',
+      strength: numberOrZero(attrs.str?.base ?? system.strength ?? 10),
+      dexterity: numberOrZero(attrs.dex?.base ?? system.dexterity ?? 10),
+      intelligence: numberOrZero(attrs.int?.base ?? system.intelligence ?? 10),
+      speedCharacter: system.speedCharacter || system.speed || '',
+      speedStarship: system.speedStarship || system.speed || '',
+      hitPoints: numberOrZero(system.hull?.max ?? system.hp?.max ?? 1),
+      dr: numberOrZero(system.damageReduction ?? system.dr ?? 0),
+      armor: numberOrZero(system.armor ?? system.armorBonus ?? 0),
+      cost: costValue,
+      costModifier: numberOrZero(system.costModifier ?? system.stockShip?.costModifier ?? 1) || 1,
+      crew: numberOrZero(system.crew ?? 1),
+      passengers: numberOrZero(system.passengers ?? 0),
+      cargoCapacity: system.cargoCapacity || system.cargo || '',
+      consumables: system.consumables || '',
+      emplacementPoints: used,
+      unusedEmplacementPoints: unused
+    };
   }
 
-  /**
-   * Get narration commentary for movement modifications.
-   * Uses explicit metadata (mod.hyperdriveClass) instead of parsing names.
-   */
-  _getMovementCommentary(mod) {
-    if (mod.id.startsWith('hyperdrive-')) {
-      // Use explicit metadata if available; fallback to ID parsing only
-      const hyperClass = mod.hyperdriveClass ?? this._extractHyperdriveClass(mod.id);
+  _hydrateExistingVehicleState() {
+    if (!this._isModifyExisting() || this._hydratedExistingVehicle) return;
+    this._hydratedExistingVehicle = true;
 
-      if (hyperClass <= 1) {
-        return `*Marl's jaw drops*
+    const vehicle = this.targetVehicle;
+    if (!vehicle || vehicle.type !== 'vehicle') return;
 
-"A Class ${hyperClass} hyperdrive?! Do you understand how ABSURDLY expensive these are?! That's military-grade hardware! Black market contraband! The kind of thing that gets you arrested just for OWNING!
+    const system = vehicle.system ?? {};
+    const flagBuild = vehicle.getFlag?.('foundryvtt-swse', 'shipyardBuild') || vehicle.flags?.['foundryvtt-swse']?.shipyardBuild || null;
+    const modData = system.modificationData || system.shipyard || flagBuild || {};
+    const stockShip = modData.stockShip || system.stockShip || flagBuild?.stockShip || this._synthesizeStockShipFromVehicle(vehicle);
+    const frameName = stockShip?.name || system.buildMetadata?.frameName || system.shipyard?.frameName || vehicle.name;
+    this.stockShip = VehicleModificationManager.getStockShip(frameName) || stockShip;
 
-But sure, waste MORE Republic credits on going slightly faster through hyperspace. Because apparently you have money to burn. Literally. That's what hyperdrives do—they burn fuel. Expensive fuel. VERY expensive fuel.
+    const storedMods = Array.isArray(modData.modifications)
+      ? modData.modifications
+      : Array.isArray(modData.installedModifications)
+        ? modData.installedModifications
+        : Array.isArray(flagBuild?.modifications)
+          ? flagBuild.modifications
+          : [];
 
-I hope you're planning to outrun the tax auditors, because they're coming for you."`;
-      } else if (hyperClass >= 6) {
-        return `*Marl smirks cruelly*
-
-"A Class ${hyperClass}? Oh, this is PRECIOUS. You bought a hyperdrive so slow that SUBLIGHT might be faster.
-
-This is the kind of drive they install on prison transports because the inmates would die of old age before escaping. You'll be in hyperspace so long you'll forget what you were traveling for. Your enemies will just... wait for you. They'll have time to get married, have children, retire, and die before you arrive.
-
-But hey, at least it was cheap! Like everything else about your life choices."`;
-      } else {
-        return `*Marl shrugs dismissively*
-
-"Class ${hyperClass}. How... adequate. It'll get you places at a mediocre speed while burning a moderate amount of Republic credits. You're the embodiment of 'good enough,' aren't you?
-
-Not fast enough to be impressive, not slow enough to be memorable. Just... average. Like your piloting skills, probably."`;
-      }
-    }
-
-    if (mod.id.includes('maneuvering-jets')) {
-      return `*Marl grins*
-
-"Maneuvering jets! Planning to dance around TIE fighters, are we? Or just trying to avoid parking tickets? Either way, good thinking. Can't shoot what you can't hit."`;
-    }
-
-    if (mod.id.includes('sublight')) {
-      return `*Marl examines the specs*
-
-"Upgrading the sublight drive. Smart. Hyperdrives get you between systems, but sublight gets you away from customs inspectors. Trust me, that's just as important."`;
-    }
-
-    return `*Marl looks over the modification*
-
-"${mod.name}. Sure, why not? It's your ship... and your credits."`;
+    this.originalModifications = storedMods.map((mod) => this._normalizeStoredModification(mod, 'existing'));
+    this.modifications = this.originalModifications.map((mod) => this._clone(mod));
+    this.removedModifications = [];
+    this.baseVehicleCost = numberOrZero(modData.frameCost ?? modData.costs?.frameCost ?? this.stockShip?.cost ?? system.cost?.new ?? system.cost ?? 0);
   }
 
-  /**
-   * Extract hyperdrive class from modification ID (fallback if metadata missing).
-   * Only used if mod.hyperdriveClass is not explicitly set.
-   * Pattern: "hyperdrive-1", "hyperdrive-1.5", etc.
-   */
-  _extractHyperdriveClass(modId) {
-    const match = modId.match(/hyperdrive-([\d.]+)/);
-    return match ? parseFloat(match[1]) : 2;
+  _originalModIds() {
+    return new Set(this.originalModifications.map((mod) => this._modKey(mod)).filter(Boolean));
   }
 
-  /**
-   * Get narration commentary for defense modifications.
-   * Uses explicit metadata (mod.shieldRating) instead of parsing names.
-   */
-  _getDefenseCommentary(mod) {
-    if (mod.id.startsWith('shields-')) {
-      // Use explicit metadata if available; fallback to ID parsing only
-      const shieldRating = mod.shieldRating ?? this._extractShieldRating(mod.id);
-
-      if (shieldRating >= 100) {
-        return `*Marl throws his hands up*
-
-"SR ${shieldRating}?! CAPITAL SHIP SHIELDING?! What are you protecting yourself from, the ENTIRE IMPERIAL FLEET?!
-
-These shields cost more than some planets' defense budgets! You're installing protection designed for BATTLESHIPS onto your... whatever this is! It's like putting blast doors on a speeder bike!
-
-You know what? At this point I don't even care. Waste the credits. Install shields that could deflect asteroids. When the Republic Treasury comes asking where all the money went, I'll just point at you and your flying fortress of fiscal insanity."`;
-      } else if (shieldRating >= 50) {
-        return `*Marl shakes his head*
-
-"SR ${shieldRating}. Because apparently regular shields weren't expensive enough for you. No, you need PREMIUM shields. Military-grade. The kind that make accountants weep.
-
-Sure, you'll survive hits that would vaporize normal ships. But you'll also be bankrupt from the power costs. These things drain fuel like a Hutt drains buffets. Hope you're ready for that maintenance bill."`;
-      } else {
-        return `*Marl looks unimpressed*
-
-"SR ${shieldRating}. Basic shields. Barely better than flying naked through space. These will stop, what, maybe three hits from a laser cannon before failing?
-
-But I guess it's better than nothing. Marginally. It's like wearing a t-shirt in a blizzard and claiming you're 'protected from the elements.' Technically true, practically useless."`;
-      }
-    }
-
-    if (mod.id.includes('armor')) {
-      return `*Marl taps the specs*
-
-"Extra armor. The 'I don't trust shields' approach to survival. Heavier, slower, but it won't fail when you divert power to engines. Assuming you live long enough to divert power to engines."`;
-    }
-
-    if (mod.id.includes('reinforced-bulkheads')) {
-      return `*Marl chuckles*
-
-"Reinforcing the hull? Planning to take a beating, are you? Or maybe you just fly like my uncle—straight into every obstacle in the sector. Either way, your insurance premiums just went up."`;
-    }
-
-    if (mod.id === 'regenerating-shields') {
-      return `*Marl looks impressed*
-
-"Regenerating shields! Fancy. These are great until someone hits you faster than they can regenerate. Then they're just expensive regular shields. But hey, optimism is important!"`;
-    }
-
-    return `*Marl examines the modification*
-
-"${mod.name}. Thinking about survival. I like it. Most of my clients don't bother with defense. Course, most of them are dead now, so..."`;
+  _addedModifications() {
+    if (!this._isModifyExisting()) return this.modifications;
+    const originalIds = this._originalModIds();
+    return this.modifications.filter((mod) => !originalIds.has(this._modKey(mod)) || mod.sourceStatus === 'added');
   }
 
-  /**
-   * Extract shield rating from modification ID (fallback if metadata missing).
-   * Only used if mod.shieldRating is not explicitly set.
-   * Pattern: "shields-20", "shields-50", "shields-100", etc.
-   */
-  _extractShieldRating(modId) {
-    const match = modId.match(/shields-(\d+)/);
-    return match ? parseInt(match[1], 10) : 0;
+  _grossInstallCost() {
+    if (!this._isModifyExisting()) return numberOrZero(this.stockShip?.cost) + this.modifications.reduce((sum, mod) => sum + numberOrZero(mod.finalCost), 0);
+    return this._addedModifications().reduce((sum, mod) => sum + numberOrZero(mod.finalCost), 0);
   }
 
-  _getWeaponCommentary(mod) {
-    if (mod.weaponType === 'Turbolaser') {
-      return `*Marl's hologram glitches out completely*
-
-"TURBOLASERS?! TURBO—ARE YOU OUT OF YOUR MIND?!
-
-These are weapons of WAR! Capital ship killers! The kind of armament that starts GALACTIC INCIDENTS! You can't just BUY these! Well, apparently you CAN, but you SHOULDN'T!
-
-The second you fire one of these, every government in the sector is going to assume you're starting a rebellion! The Empire will hunt you! The Republic will disavow you! Your insurance premiums will be ASTRONOMICAL!
-
-But sure. Mount turbolasers. Why not? You've already wasted enough credits to buy a fleet. What's a few MORE war crimes to add to the list?"`;
-    }
-
-    if (mod.weaponType === 'Laser' || mod.weaponType === 'Blaster') {
-      return `*Marl nods*
-
-"${mod.name}. Classic choice. Everyone needs guns. Laser cannons for style, blaster cannons for bulk. Either way, you're ready to convince people you mean business."`;
-    }
-
-    if (mod.weaponType === 'Ion') {
-      return `*Marl grins*
-
-"Ion weapons? Someone's thinking tactically. Or you're a bounty hunter. Ion cannons are perfect for when you need the target alive. Or at least when you need their ship intact enough to sell.
-
-The Empire HATES these things, by the way. Which makes them even better."`;
-    }
-
-    if (mod.weaponType === 'Torpedo' || mod.weaponType === 'Missile') {
-      return `*Marl whistles*
-
-"${mod.name}! Now we're talking serious firepower. These are for when laser cannons just aren't dramatic enough. Just remember: missiles are expensive, and you can't reuse them after they explode.
-
-Unlike energy weapons, which explode and then you can use them again. Well, if the ship survives."`;
-    }
-
-    if (mod.id === 'tractor-beam') {
-      return `*Marl smirks*
-
-"A tractor beam? Either you're planning to salvage, pirate, or 'detain' Imperial cargo vessels for 'inspection.' All perfectly legitimate activities, I'm sure.
-
-Just don't use it on anything bigger than you. I've seen that mistake before. The little ship does NOT win that tug-of-war."`;
-    }
-
-    return `*Marl looks at the specs*
-
-"${mod.name}. Because you can never have too many ways to blow things up. That's practically the Republic motto at this point."`;
+  _resaleCredit() {
+    if (!this._isModifyExisting()) return 0;
+    return this.removedModifications.reduce((sum, mod) => sum + LedgerService.calculateResale(numberOrZero(mod.finalCost)), 0);
   }
 
-  _getAccessoryCommentary(mod) {
-    if (mod.id.includes('smuggler')) {
-      return `*Marl leans in conspiratorially*
-
-"Smuggler's compartments. I have ABSOLUTELY no idea what you'd use these for. None whatsoever. Definitely not for contraband, illegal weapons, or avoiding Imperial customs.
-
-*winks*
-
-Make sure you get the good kind. The cheap ones show up on scanners, and then you've just installed a 'please search me' sign on your hull."`;
-    }
-
-    if (mod.id.includes('hidden-cargo')) {
-      return `*Marl grins widely*
-
-"Hidden cargo holds? Oh, this is my FAVORITE modification. Nothing says 'legitimate business' like hiding most of your cargo capacity from sensors.
-
-Just remember the scanner officer's rule of thumb: if the ship's mass doesn't match its cargo manifest, someone's hiding something. So either hide it REALLY well, or be REALLY fast."`;
-    }
-
-    if (mod.id.includes('luxury')) {
-      return `*Marl laughs*
-
-"Luxury upgrades? What are you, some kind of dignitary? Or maybe you're planning to transport VIPs? Either way, you're paying extra to make the flying death trap comfortable.
-
-I respect that. If you're going to die in space, might as well die in style."`;
-    }
-
-    if (mod.id.includes('medical')) {
-      return `*Marl nods approvingly*
-
-"A medical suite. Smart. Very smart. Bacta tanks have saved my life at least three times. Four if you count that incident on Nal Hutta, but I try not to count that one.
-
-Plus, they're great for crew morale. Nothing says 'I care about you' like the ability to put you back together after you get shot."`;
-    }
-
-    if (mod.id.includes('sensor')) {
-      return `*Marl taps his nose*
-
-"Sensor upgrades. The difference between 'detecting the ambush' and 'flying into the ambush' is usually about 10,000 credits worth of sensors.
-
-You just spent those credits. Wisely, I might add. Can't shoot what you can't see, and you can't run from what you don't detect."`;
-    }
-
-    if (mod.id.includes('escape-pod')) {
-      return `*Marl's expression turns serious*
-
-"Escape pods. The modification everyone mocks until they need one. I've used escape pods twice in my career. Both times, I was VERY grateful I had them.
-
-Plus, they're legally required on most civilian vessels. Not that legality has stopped anyone in this galaxy."`;
-    }
-
-    if (mod.id.includes('cloaking')) {
-      return `*Marl's hologram literally sparks with panic*
-
-"A CLOAKING DEVICE?! ARE YOU TRYING TO GET US BOTH EXECUTED?!
-
-These are SUPER illegal! Like, 'death sentence in twelve systems' illegal! The Empire doesn't just arrest people with cloaking devices—they DISAPPEAR them! No trial, no record, just GONE!
-
-And the COST! These things are worth more than some planetary treasuries! You're basically flying around in a war crime wrapped in bankruptcy! Every government in the galaxy will want you dead!
-
-But you don't care, do you? No, you're going to install it anyway, because you've already demonstrated a complete disregard for laws, regulations, and basic survival instincts! Fine! FINE! Just... don't tell anyone where you got it. I value my life, even if you don't value yours—or the Republic's credits!"`;
-    }
-
-    if (mod.id.includes('transponder-disguised')) {
-      return `*Marl grins mischievously*
-
-"Disguised transponder. The 'I'm definitely not the ship you're looking for' modification. Essential for anyone with outstanding warrants, unpaid docking fees, or a tendency to upset Hutts.
-
-Just remember to keep your story straight. Nothing blows your cover faster than forgetting what ship you're supposed to be."`;
-    }
-
-    return `*Marl examines the specs*
-
-"${mod.name}. Practical. I like practical. Flashy weapons are fun, but practical accessories keep you alive."`;
+  _hasExistingBuildChanges() {
+    if (!this._isModifyExisting()) return true;
+    return this._addedModifications().length > 0 || this.removedModifications.length > 0;
   }
 
-  _getDefaultDialogue() {
-    const options = [
-      `*Marl checks his datapad*
+  _costSummary() {
+    const frameCost = this._isModifyExisting() ? this.baseVehicleCost : numberOrZero(this.stockShip?.cost);
+    const modificationCost = this.modifications.reduce((sum, mod) => sum + numberOrZero(mod.finalCost), 0);
+    const fullTotal = this._isModifyExisting() ? frameCost + modificationCost : frameCost + modificationCost;
+    const grossCost = this._isModifyExisting() ? this._grossInstallCost() : fullTotal;
+    const resaleCredit = this._resaleCredit();
+    const netCost = Math.max(0, grossCost - resaleCredit);
+    return {
+      frame: frameCost,
+      modifications: modificationCost,
+      total: this._isModifyExisting() ? netCost : fullTotal,
+      vehicleValue: fullTotal,
+      grossCost,
+      resaleCredit,
+      netCost
+    };
+  }
 
-"Still tinkering? Take your time. It's not like I have other clients or anything. Oh wait, I do. Several. But they're less entertaining than watching you build this ship."`,
-      `*Marl yawns*
+  _submitLabel(requiresApproval) {
+    if (this._isModifyExisting()) {
+      if (requiresApproval) return 'Apply Restricted Refit';
+      return 'Apply Shipyard Refit';
+    }
+    return requiresApproval ? 'Submit for GM Approval' : 'Submit for Purchase';
+  }
 
-"You know, most people just pick a ship and go. But not you. You're CUSTOMIZING. I respect the dedication. Or the paranoia. Probably both."`,
-      `*Marl leans back*
+  _currentCredits() {
+    if (!this.actor) return 0;
+    return numberOrZero(LedgerService.getCurrentCredits(this.actor));
+  }
 
-"Every modification tells a story. Your story seems to be 'I want ALL the things.' Classic first-time ship owner mistake. But hey, it's your credits."`,
-      `*Marl grins*
+  _frameRows() {
+    return VehicleModificationManager.getStockShips().map((ship) => ({
+      ...ship,
+      typeClass: `shipyard-frame--${this._frameType(ship)}`,
+      selectedClass: this.stockShip?.name === ship.name ? 'selected' : '',
+      costLabel: formatCredits(ship.cost),
+      costModifierLabel: `×${numberOrZero(ship.costModifier) || 1} mod`,
+      unusedEP: numberOrZero(ship.unusedEmplacementPoints),
+      hp: numberOrZero(ship.hitPoints),
+      dr: numberOrZero(ship.dr),
+      crew: numberOrZero(ship.crew)
+    }));
+  }
 
-"Fun fact: Did you know that 67% of starship modifications are never actually used? The other 33% are usually used exactly once, catastrophically. Statistics are fun!"`
+  _frameType(ship) {
+    const size = String(ship?.size || '').toLowerCase();
+    const name = String(ship?.name || '').toLowerCase();
+    if (size.includes('frigate') || name.includes('corvette')) return 'frigate';
+    if (name.includes('fighter') || name.includes('interceptor') || name.includes('bomber')) return 'starfighter';
+    if (name.includes('freighter') || name.includes('shuttle') || name.includes('gunship')) return 'transport';
+    return 'colossal';
+  }
+
+  _frameSummary() {
+    const f = this.stockShip;
+    if (!f) return null;
+    return {
+      ...f,
+      costLabel: formatCredits(f.cost),
+      sizeLabel: f.size || '—',
+      speedLabel: `${f.speedCharacter || '—'} / ${f.speedStarship || '—'}`,
+      crewPassLabel: `${numberOrZero(f.crew)} / ${numberOrZero(f.passengers)}`,
+      costModifierLabel: `×${numberOrZero(f.costModifier) || 1}`,
+      stats: [
+        { label: 'STR', value: numberOrZero(f.strength) },
+        { label: 'DEX', value: numberOrZero(f.dexterity) },
+        { label: 'INT', value: numberOrZero(f.intelligence) },
+        { label: 'HP', value: numberOrZero(f.hitPoints) },
+        { label: 'DR', value: numberOrZero(f.dr) },
+        { label: 'Armor', value: `+${numberOrZero(f.armor)}` },
+        { label: 'Speed', value: `${f.speedCharacter || '—'} / ${f.speedStarship || '—'}`, wide: true },
+        { label: 'Crew / Pass', value: `${numberOrZero(f.crew)} / ${numberOrZero(f.passengers)}`, wide: true },
+        { label: 'Cargo', value: f.cargoCapacity || '—', wide: true },
+        { label: 'Cost Modifier', value: `×${numberOrZero(f.costModifier) || 1}`, wide: true }
+      ]
+    };
+  }
+
+  _categoryTabs() {
+    return [
+      { key: 'all', label: 'All', activeClass: this.selectedCategory === 'all' ? 'on' : '' },
+      ...CATEGORY_ORDER.map((key) => ({
+        key,
+        label: CATEGORY_META[key].tab,
+        activeClass: this.selectedCategory === key ? 'on' : ''
+      }))
     ];
-
-    return options[Math.floor(Math.random() * options.length)];
   }
 
-  /**
-   * Select a stock ship.
-   * State change triggers render; dialogue derived from state in getMarlDialogue().
-   */
-  async _onSelectShip(event) {
-    event.preventDefault();
-    const shipName = event.currentTarget.dataset.ship;
-    this.stockShip = VehicleModificationManager.getStockShip(shipName);
+  _systemGroups() {
+    if (!this.stockShip) return [];
+
+    const query = String(this.query || '').trim().toLowerCase();
+    const groups = [];
+
+    for (const key of CATEGORY_ORDER) {
+      if (this.selectedCategory !== 'all' && this.selectedCategory !== key) continue;
+
+      const systems = VehicleModificationManager.getModificationsByCategory(key)
+        .filter((mod) => this._matchesQuery(mod, query))
+        .map((mod) => this._decorateModification(mod))
+        .filter((mod) => !this.compatOnly || mod.compatible || mod.installed);
+
+      if (!systems.length) continue;
+      groups.push({
+        key,
+        label: CATEGORY_META[key].label,
+        count: systems.length,
+        systems
+      });
+    }
+
+    return groups;
+  }
+
+  _matchesQuery(mod, query) {
+    if (!query) return true;
+    const haystack = [mod.name, mod.description, mod.effect, mod.availability, mod.sizeRestriction]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+    return haystack.includes(query);
+  }
+
+  _decorateModification(mod) {
+    const installed = this._isInstalled(mod.id);
+    const installedRecord = this.modifications.find((entry) => entry.id === mod.id);
+    const nonstandard = this._isNonstandard(mod);
+    const cost = installedRecord?.finalCost ?? VehicleModificationManager.calculateModificationCost(mod, this.stockShip, nonstandard, this.modifications);
+    const eligibility = this._installEligibility(mod);
+    const category = normalizeCategory(mod.category);
+    const isFocused = this.focusedModId === mod.id;
+    const isRestricted = this._isApprovalAvailability(mod);
+
+    return {
+      ...mod,
+      category,
+      categoryLabel: CATEGORY_META[category]?.tab ?? category,
+      cssCategory: cssSafe(category),
+      installed,
+      installedClass: installed ? 'installed' : '',
+      focusedClass: isFocused ? 'focused' : '',
+      cantClass: !eligibility.canInstall && !installed ? 'cant' : '',
+      compatible: eligibility.canInstall,
+      blockingReason: eligibility.reason,
+      nonstandard,
+      cost,
+      costLabel: formatCredits(cost),
+      baseCostLabel: formatCredits(mod.cost || 0),
+      ep: numberOrZero(mod.emplacementPoints),
+      epLabel: `${numberOrZero(mod.emplacementPoints)} EP`,
+      availabilityLabel: mod.availability || 'Common',
+      restrictedBadge: isRestricted,
+      militaryBadge: String(mod.availability || '').toLowerCase() === 'military',
+      zeroEpBadge: numberOrZero(mod.emplacementPoints) === 0,
+      nonstandardBadge: nonstandard,
+      actionLabel: installed ? 'Installed' : eligibility.canInstall ? 'Install' : 'Blocked'
+    };
+  }
+
+
+  _removedGroups() {
+    if (!this._isModifyExisting() || !this.removedModifications.length) return [];
+    const byCategory = new Map();
+    for (const mod of this.removedModifications) {
+      const key = normalizeCategory(mod.category);
+      if (!byCategory.has(key)) byCategory.set(key, []);
+      const resale = LedgerService.calculateResale(numberOrZero(mod.finalCost));
+      byCategory.get(key).push({
+        ...this._decorateModification(mod),
+        resaleLabel: formatCredits(resale),
+        costLabel: formatCredits(mod.finalCost)
+      });
+    }
+    return CATEGORY_ORDER
+      .filter((key) => byCategory.has(key))
+      .map((key) => ({ key, label: CATEGORY_META[key]?.label ?? key, systems: byCategory.get(key) }));
+  }
+
+  _installedGroups() {
+    if (!this.stockShip || !this.modifications.length) return [];
+    const byCategory = new Map();
+    for (const mod of this.modifications) {
+      const key = normalizeCategory(mod.category);
+      if (!byCategory.has(key)) byCategory.set(key, []);
+      byCategory.get(key).push(this._decorateModification(mod));
+    }
+    return CATEGORY_ORDER
+      .filter((key) => byCategory.has(key))
+      .map((key) => ({ key, label: CATEGORY_META[key]?.label ?? key, systems: byCategory.get(key) }));
+  }
+
+  _focusedModification() {
+    const base = VehicleModificationManager.getModification(this.focusedModId);
+    if (!base || !this.stockShip) return null;
+
+    const mod = this._decorateModification(base);
+    const adjustedBase = base.costType === 'base'
+      ? numberOrZero(base.cost) * (numberOrZero(this.stockShip.costModifier) || 1)
+      : numberOrZero(base.cost);
+    const costSummary = this._costSummary();
+    const remainingBefore = this._currentCredits() - costSummary.netCost;
+    const installedRecord = this.modifications.find((entry) => entry.id === mod.id);
+    const removalCredit = this._isModifyExisting() && installedRecord?.sourceStatus === 'existing'
+      ? LedgerService.calculateResale(numberOrZero(mod.cost))
+      : numberOrZero(mod.cost);
+    const after = mod.installed
+      ? remainingBefore + removalCredit
+      : remainingBefore - numberOrZero(mod.cost);
+    const epRemaining = this._epStats().remaining;
+    const compatClass = mod.installed ? 'compat-inst' : mod.compatible ? 'compat-can' : 'compat-no';
+    const compatIcon = mod.installed ? 'fa-check-circle' : mod.compatible ? 'fa-circle-plus' : 'fa-ban';
+    const compatText = mod.installed ? 'Installed — can remove below' : mod.compatible ? 'Can install' : mod.blockingReason;
+
+    return {
+      ...mod,
+      adjustedBaseLabel: formatCredits(adjustedBase),
+      finalCostLabel: formatCredits(mod.cost),
+      afterInstallLabel: formatCredits(after),
+      afterClass: after < 0 && !mod.installed ? 'neg' : after === 0 ? 'neu' : 'pos',
+      costModifierLabel: `×${numberOrZero(this.stockShip.costModifier) || 1}`,
+      showCostModifier: base.costType === 'base',
+      nonstandardCostLabel: formatCredits(adjustedBase * 5),
+      epRemainingLabel: `${epRemaining} EP remaining`,
+      epBadgeClass: numberOrZero(mod.emplacementPoints) > epRemaining && !mod.installed ? 'ep-short' : 'ep-ok',
+      effectLabel: base.effect || '—',
+      description: base.description || 'No description available.',
+      availabilityLabel: base.availability || 'Common',
+      sizeRestrictionLabel: base.sizeRestriction || '',
+      hasSizeRestriction: Boolean(base.sizeRestriction),
+      hasWeaponStats: Boolean(base.weaponType || base.damage),
+      weaponTypeLabel: base.weaponType || '—',
+      damageLabel: base.damage || '—',
+      compatClass,
+      compatIcon,
+      compatText,
+      requiresApproval: this._isApprovalAvailability(base),
+      showInstall: !mod.installed,
+      showRemove: mod.installed,
+      installDisabled: mod.compatible ? '' : 'disabled'
+    };
+  }
+
+  _epStats() {
+    if (!this.stockShip) {
+      return { used: 0, available: 0, total: 0, remaining: 0, usedByStock: 0, totalAvailable: 0 };
+    }
+    return VehicleModificationManager.calculateEmplacementPointsTotal(this.modifications, this.stockShip);
+  }
+
+  _buildTotal() {
+    return this._costSummary().total;
+  }
+
+  _installEligibility(mod) {
+    if (!this.stockShip) return { canInstall: false, reason: 'Select a frame first.' };
+    if (this._isInstalled(mod.id)) return { canInstall: false, reason: 'Already installed.' };
+
+    const managerCheck = VehicleModificationManager.canInstallModification(mod, this.stockShip, this.modifications);
+    if (!managerCheck.canInstall) return managerCheck;
+
+    const cost = VehicleModificationManager.calculateModificationCost(mod, this.stockShip, this._isNonstandard(mod), this.modifications);
+    const currentNet = this._costSummary().netCost;
+    const projectedNet = Math.max(0, currentNet + cost);
+    const remaining = this._currentCredits() - projectedNet;
+    if (remaining < 0) {
+      return { canInstall: false, reason: `Need ${formatCredits(Math.abs(remaining))} more credits.` };
+    }
+
+    return { canInstall: true, reason: '' };
+  }
+
+  _isInstalled(modId) {
+    return this.modifications.some((mod) => mod.id === modId);
+  }
+
+  _isNonstandard(mod) {
+    if (!mod || !this.stockShip) return false;
+    return VehicleModificationManager.isNonstandardModification(mod, this.stockShip);
+  }
+
+  _isApprovalAvailability(mod) {
+    const availability = String(mod?.availability || '').toLowerCase();
+    return availability === 'restricted' || availability === 'military' || availability === 'illegal';
+  }
+
+  _approvalRelevantModifications() {
+    return this._isModifyExisting() ? this._addedModifications() : this.modifications;
+  }
+
+  _requiresApproval(totalCost = this._buildTotal()) {
+    if (!this.stockShip) return false;
+    if (this._approvalRelevantModifications().some((mod) => this._isApprovalAvailability(mod))) return true;
+    if (SettingsHelper.getSafe('store.requireGMApproval', false) === true) return true;
+    const threshold = Number(SettingsHelper.getSafe('storeApprovalThreshold', 0)) || 0;
+    return threshold > 0 && totalCost >= threshold;
+  }
+
+  _approvalReason(totalCost = this._buildTotal()) {
+    const restricted = this._approvalRelevantModifications().filter((mod) => this._isApprovalAvailability(mod));
+    if (restricted.length) return `${restricted.length} restricted/military modification${restricted.length === 1 ? '' : 's'} require GM review.`;
+    if (SettingsHelper.getSafe('store.requireGMApproval', false) === true) return 'Store policy currently requires GM approval.';
+    const threshold = Number(SettingsHelper.getSafe('storeApprovalThreshold', 0)) || 0;
+    if (threshold > 0 && totalCost >= threshold) return `Value is at or above the ${formatCredits(threshold)} approval threshold.`;
+    return 'GM approval required.';
+  }
+
+  _checklist(remainingCredits) {
+    const hasHyperdrive = this.modifications.some((mod) => String(mod.id || '').startsWith('hyperdrive-'));
+    const hasShield = this.modifications.some((mod) => VehicleModificationManager.isShieldModification(mod));
+    const hasWeapon = this.modifications.some((mod) => normalizeCategory(mod.category) === 'weapon');
+    const selected = Boolean(this.stockShip);
+    const item = (done, optional = false) => ({
+      done,
+      optional,
+      iconClass: optional && !done ? 'fa-circle ck-opt' : done ? 'fa-check-circle ck-done' : 'fa-circle ck-miss'
+    });
+    return {
+      frame: item(selected),
+      hyperdrive: item(hasHyperdrive, !hasHyperdrive),
+      shields: item(hasShield, !hasShield),
+      weapons: item(hasWeapon, !hasWeapon),
+      budget: item(selected && remainingCredits >= 0, !selected)
+    };
+  }
+
+  _buildWarnings({ remainingCredits, epStats }) {
+    const warnings = [];
+    if (remainingCredits < 0) {
+      warnings.push({ tone: 'neg', icon: 'fa-exclamation-circle', text: `Over budget by ${formatCredits(Math.abs(remainingCredits))}.` });
+    }
+    if (this.stockShip && epStats.remaining < 0) {
+      warnings.push({ tone: 'neg', icon: 'fa-exclamation-circle', text: `EP exceeded: ${epStats.used}/${epStats.available} used.` });
+    }
+    const nonstandard = this.modifications.filter((mod) => mod.nonstandard === true);
+    if (nonstandard.length) {
+      warnings.push({ tone: 'warn', icon: 'fa-triangle-exclamation', text: `${nonstandard.length} nonstandard modification${nonstandard.length === 1 ? '' : 's'} at 5× cost: ${nonstandard.map((mod) => mod.name).join(', ')}.` });
+    }
+    const approval = this._approvalRelevantModifications().filter((mod) => this._isApprovalAvailability(mod));
+    if (approval.length) {
+      const text = this._isModifyExisting()
+        ? `${approval.length} restricted/military modification${approval.length === 1 ? '' : 's'} will be recorded in the transaction audit for GM review.`
+        : `${approval.length} restricted/military modification${approval.length === 1 ? '' : 's'} will be routed to GM approval.`;
+      warnings.push({ tone: 'warn', icon: 'fa-gavel', text });
+    }
+    return warnings;
+  }
+
+  _validity({ remainingCredits, epStats }) {
+    if (!this.stockShip) return { chipClass: 'chip-none', iconClass: 'fa-circle', label: 'Select a Frame' };
+    if (remainingCredits < 0) return { chipClass: 'chip-bad', iconClass: 'fa-times-circle', label: 'Over Budget' };
+    if (epStats.remaining < 0) return { chipClass: 'chip-bad', iconClass: 'fa-times-circle', label: 'Over EP' };
+    return { chipClass: 'chip-valid', iconClass: 'fa-check-circle', label: 'Build Valid' };
+  }
+
+  _footerStatus({ remainingCredits, epStats, requiresApproval }) {
+    if (!this.stockShip) return 'Select a vessel frame to begin';
+    if (remainingCredits < 0) return `Over budget by ${formatCredits(Math.abs(remainingCredits))} — remove modifications`;
+    if (epStats.remaining < 0) return `Over EP by ${Math.abs(epStats.remaining)} — remove modifications`;
+    if (this._isModifyExisting() && !this._hasExistingBuildChanges()) return 'No refit changes staged';
+    const reviewSuffix = requiresApproval ? (this._isModifyExisting() ? ' · restricted mods logged' : ' · GM approval required') : '';
+    return `${this._isModifyExisting() ? 'Refit valid' : 'Build valid'} · ${formatCredits(remainingCredits)} remaining · ${this.modifications.length} mod(s)${reviewSuffix}`;
+  }
+
+  async _selectFrame(frameName) {
+    if (this._isModifyExisting()) {
+      ui.notifications.warn('Existing vehicle refits cannot change the base frame.');
+      return;
+    }
+    const frame = VehicleModificationManager.getStockShip(frameName);
+    if (!frame) {
+      ui.notifications.warn('Ship frame not found.');
+      return;
+    }
+    this.stockShip = frame;
     this.modifications = [];
-    this.currentStep = 'modification';
-    // No need to set this.marlDialogue — getMarlDialogue() derives it from state
+    this.focusedModId = null;
+    this.selectedCategory = 'all';
+    this.query = '';
+    this.compatOnly = false;
     await this.render(true);
   }
 
-  /**
-   * Select a modification category
-   */
-  _onSelectCategory(event) {
-    event.preventDefault();
-    this.selectedCategory = event.currentTarget.dataset.category;
-    this.render(false);
-  }
-
-  /**
-   * Add a modification to the ship
-   */
-  async _onAddModification(event) {
-    event.preventDefault();
-    const modId = event.currentTarget.dataset.modId;
-    const modification = VehicleModificationManager.getModification(modId);
-
-    if (!modification) {return;}
-
-    // Check if can install
-    const check = VehicleModificationManager.canInstallModification(
-      modification,
-      this.stockShip,
-      this.modifications
-    );
-
-    if (!check.canInstall) {
-      ui.notifications.warn(check.reason);
+  async _changeFrame() {
+    if (this._isModifyExisting()) {
+      ui.notifications.warn('Existing vehicle refits cannot change the base frame.');
       return;
     }
-
-    // Check for Vehicle Modification Tokens (if applicable)
-    const tokens = Number(this.actor.system.vehicleModificationTokens ?? 0);
-    if (this.actor.system.vehicleModificationTokens !== undefined && tokens <= 0) {
-      ui.notifications.warn('Insufficient Vehicle Modification Tokens. You need at least 1 token per modification.');
-      return;
+    if (this.stockShip && this.modifications.length) {
+      const confirmed = await SWSEDialogV2.confirm({
+        title: 'Change Frame?',
+        content: '<p>Changing the frame resets all installed modifications for this build.</p>',
+        defaultYes: false
+      });
+      if (!confirmed) return;
     }
-
-    // Add to modifications list
-    this.modifications.push(modification);
-
-    // No need to set this.marlDialogue — getMarlDialogue() derives it from state
-    await this.render(false);
-  }
-
-  /**
-   * Remove a modification.
-   * State change triggers render; dialogue derived from state in getMarlDialogue().
-   */
-  async _onRemoveModification(event) {
-    event.preventDefault();
-    const modId = event.currentTarget.dataset.modId;
-
-    this.modifications = this.modifications.filter(mod => mod.id !== modId);
-    this.lastAction = 'removed'; // Flag to show removal dialogue once
-
-    await this.render(false);
-  }
-
-  /**
-   * Show modification details
-   */
-  _onShowModificationDetails(event) {
-    event.preventDefault();
-    const modId = event.currentTarget.dataset.modId;
-    const modification = VehicleModificationManager.getModification(modId);
-
-    if (!modification) {return;}
-
-    const cost = VehicleModificationManager.calculateModificationCost(
-      modification,
-      this.stockShip
-    );
-
-    const costDisplay = isFinite(cost) ? cost.toLocaleString() : 'Unknown';
-
-    const content = `
-      <div class="modification-details">
-        <h3>${modification.name}</h3>
-        <p><strong>Category:</strong> ${modification.category}</p>
-        <p><strong>Emplacement Points:</strong> ${modification.emplacementPoints}</p>
-        <p><strong>Cost:</strong> ${costDisplay} credits</p>
-        <p><strong>Availability:</strong> ${modification.availability}</p>
-        ${modification.sizeRestriction ? `<p><strong>Size Restriction:</strong> ${modification.sizeRestriction}</p>` : ''}
-        ${modification.damage ? `<p><strong>Damage:</strong> ${modification.damage}</p>` : ''}
-        <p><strong>Effect:</strong> ${modification.effect}</p>
-        <p>${modification.description}</p>
-      </div>
-    `;
-
-    new SWSEDialogV2({
-      title: modification.name,
-      content: content,
-      buttons: {
-        close: {
-          icon: '<i class="fa-solid fa-times"></i>',
-          label: 'Close'
-        }
-      }
-    }).render(true);
-  }
-
-  /**
-   * Finalize the ship and save to actor
-   */
-  async _onFinalizeShip(event) {
-    event.preventDefault();
-
-    if (!this.stockShip) {
-      ui.notifications.warn('Please select a stock ship first!');
-      return;
-    }
-
-    const totalCost = VehicleModificationManager.calculateTotalCost(this.modifications, this.stockShip);
-
-    if (!isFinite(totalCost)) {
-      ui.notifications.error('Invalid cost calculation - check modification data');
-      return;
-    }
-
-    // Check for Vehicle Modification Tokens (if applicable)
-    const tokensNeeded = Math.max(0, this.modifications.length);
-    const tokens = Number(this.actor.system.vehicleModificationTokens ?? 0);
-    if (this.actor.system.vehicleModificationTokens !== undefined && tokens < tokensNeeded) {
-      ui.notifications.warn(
-        `Insufficient Vehicle Modification Tokens. Need ${tokensNeeded}, have ${tokens}.`
-      );
-      return;
-    }
-
-    const confirmed = await SWSEDialogV2.confirm({
-      title: 'Finalize Starship?',
-      content: `
-        <p>Finalize this starship configuration?</p>
-        <p><strong>Ship:</strong> ${this.stockShip.name}</p>
-        <p><strong>Modifications:</strong> ${this.modifications.length}</p>
-        <p><strong>Total Cost:</strong> ${totalCost.toLocaleString()} credits</p>
-        <hr/>
-        <p><em>Marl Skindar:</em> "Well, that's it then. She's all yours. Try not to crash her on the first flight. Or the second. Actually, just... try not to crash at all. Good luck out there!"</p>
-      `
-    });
-
-    if (!confirmed) {return;}
-
-    // Build atomic update: save vehicle config and deduct tokens (if tokens exist)
-    const updateData = {
-      'system.vehicle': {
-        stockShip: this.stockShip,
-        modifications: this.modifications,
-        totalCost: totalCost
-      }
-    };
-
-    // Deduct tokens: one token per modification
-    if (this.actor.system.vehicleModificationTokens !== undefined && tokensNeeded > 0) {
-      updateData['system.vehicleModificationTokens'] = Math.max(0, tokens - tokensNeeded);
-    }
-
-    // Save configuration to actor
-    await globalThis.SWSE.ActorEngine.updateActor(this.actor, updateData);
-
-    ui.notifications.info(`Starship configuration saved to ${this.actor.name}!`);
-    this.close();
-  }
-
-  /**
-   * Reset the ship configuration.
-   * State change triggers render; dialogue derived from state in getMarlDialogue().
-   */
-  async _onResetShip(event) {
-    event.preventDefault();
-
-    const confirmed = await SWSEDialogV2.confirm({
-      title: 'Reset Starship?',
-      content: `<p>Reset your entire starship configuration?</p>
-        <p><em>Marl:</em> "Starting over? That's fine. Most of my best ships came from the fifth or sixth design iteration. Or was it seventh? I've lost count."</p>`
-    });
-
-    if (!confirmed) {return;}
-
     this.stockShip = null;
     this.modifications = [];
-    this.currentStep = 'intro';
-    // No need to set this.marlDialogue — getMarlDialogue() derives it from state
+    this.focusedModId = null;
     await this.render(true);
   }
 
-  /**
-   * Static method to open the app
-   */
-  static async open(actor) {
+  async _focusModification(modId) {
+    this.focusedModId = modId || null;
+    await this.render(false);
+  }
+
+  async _installModification(modId) {
+    const mod = VehicleModificationManager.getModification(modId);
+    if (!mod) {
+      ui.notifications.warn('Modification not found.');
+      return;
+    }
+
+    const removedOriginal = this.removedModifications.find((entry) => entry.id === mod.id);
+    if (removedOriginal) {
+      this.removedModifications = this.removedModifications.filter((entry) => entry.id !== mod.id);
+      this.modifications.push({ ...this._clone(removedOriginal), sourceStatus: 'existing' });
+      this.focusedModId = mod.id;
+      await this.render(false);
+      return;
+    }
+
+    const eligibility = this._installEligibility(mod);
+    if (!eligibility.canInstall) {
+      ui.notifications.warn(eligibility.reason || 'This modification cannot be installed.');
+      this.focusedModId = mod.id;
+      await this.render(false);
+      return;
+    }
+
+    const nonstandard = this._isNonstandard(mod);
+    const finalCost = VehicleModificationManager.calculateModificationCost(mod, this.stockShip, nonstandard, this.modifications);
+    this.modifications.push({
+      ...foundry.utils.deepClone(mod),
+      category: normalizeCategory(mod.category),
+      finalCost,
+      nonstandard,
+      sourceStatus: this._isModifyExisting() ? 'added' : 'newBuild',
+      installedAt: Date.now()
+    });
+    this.focusedModId = mod.id;
+    await this.render(false);
+  }
+
+  async _removeModification(modId) {
+    const removed = this.modifications.find((mod) => mod.id === modId);
+    this.modifications = this.modifications.filter((mod) => mod.id !== modId);
+    if (this._isModifyExisting() && removed) {
+      const wasOriginal = this.originalModifications.some((mod) => mod.id === modId);
+      if (wasOriginal && !this.removedModifications.some((mod) => mod.id === modId)) {
+        this.removedModifications.push({ ...this._clone(removed), sourceStatus: 'removed' });
+      }
+    }
+    if (this.focusedModId === modId) this.focusedModId = modId;
+    await this.render(false);
+  }
+
+  _buildSpec(totalCost = this._buildTotal()) {
+    const costSummary = this._costSummary();
+    return {
+      stockShip: foundry.utils.deepClone(this.stockShip),
+      modifications: foundry.utils.deepClone(this.modifications),
+      removedModifications: foundry.utils.deepClone(this.removedModifications),
+      addedModifications: foundry.utils.deepClone(this._addedModifications()),
+      condition: 'new',
+      totalCost: this._isModifyExisting() ? costSummary.vehicleValue : totalCost,
+      transactionCost: costSummary.netCost,
+      grossCost: costSummary.grossCost,
+      resaleCredit: costSummary.resaleCredit,
+      name: this._isModifyExisting()
+        ? (this.targetVehicle?.name || `${this.stockShip?.name || 'Vehicle'} (Refit)`)
+        : `${this.stockShip?.name || 'Custom Starship'} (Custom)`,
+      ownerActorId: this.actor?.id ?? null,
+      ownerActorName: this.actor?.name ?? null,
+      existingVehicleActorId: this.targetVehicle?.id ?? null,
+      existingVehicleActorName: this.targetVehicle?.name ?? null,
+      contextMode: this.contextMode
+    };
+  }
+
+  _purchaseItem(totalCost) {
+    return {
+      id: `custom-starship-${Date.now()}`,
+      name: `${this.stockShip.name} (Custom)`,
+      type: 'vehicle',
+      finalCost: totalCost,
+      cost: totalCost,
+      condition: 'new',
+      customBuild: true
+    };
+  }
+
+  async _submitExistingModification() {
+    if (!this.targetVehicle || this.targetVehicle.type !== 'vehicle') {
+      ui.notifications.warn('No existing vehicle actor is linked for this refit.');
+      return false;
+    }
+    if (!this._hasExistingBuildChanges()) {
+      ui.notifications.warn('No refit changes are staged.');
+      return false;
+    }
+
+    const costSummary = this._costSummary();
+    const epStats = this._epStats();
+    const remaining = this._currentCredits() - costSummary.netCost;
+    if (remaining < 0) {
+      ui.notifications.warn(`Insufficient credits. Need ${formatCredits(Math.abs(remaining))} more.`);
+      return false;
+    }
+    if (epStats.remaining < 0) {
+      ui.notifications.warn(`Insufficient emplacement points. Remove ${Math.abs(epStats.remaining)} EP worth of modifications.`);
+      return false;
+    }
+
+    const requiresApproval = this._requiresApproval(costSummary.netCost);
+    const title = requiresApproval ? 'Apply Restricted Shipyard Refit?' : 'Apply Shipyard Refit?';
+    const content = `
+      <p><strong>${this.targetVehicle.name}</strong></p>
+      <p>Install cost: ${formatCredits(costSummary.grossCost)} · Removal credit: ${formatCredits(costSummary.resaleCredit)}</p>
+      <p>Net refit cost: <strong>${formatCredits(costSummary.netCost)}</strong></p>
+      <p>${requiresApproval ? `${this._approvalReason(costSummary.netCost)} The refit will be recorded in the Transaction Engine audit.` : 'This will update the vehicle and charge the owner wallet through the Transaction Engine.'}</p>
+    `;
+
+    const confirmed = await SWSEDialogV2.confirm({ title, content, defaultYes: !requiresApproval });
+    if (!confirmed) return false;
+
+    const buildSpec = this._buildSpec(costSummary.netCost);
+    const vehiclePlan = VehicleFactory.buildExistingModificationMutationPlan(this.targetVehicle, buildSpec);
+    const result = await TransactionEngine.executeAssetCustomizationTransaction({
+      actor: this.actor,
+      assetActor: this.targetVehicle,
+      assetMutationPlan: vehiclePlan,
+      cost: costSummary.grossCost,
+      resaleCredit: costSummary.resaleCredit,
+      reason: `Shipyard refit: ${this.targetVehicle.name}`,
+      transactionContext: 'owned-customization',
+      audit: {
+        source: 'Shipyard Builder - Modify Existing',
+        itemName: `${this.targetVehicle.name} refit`,
+        itemNames: [`${this.targetVehicle.name} refit`],
+        itemCount: this._addedModifications().length + this.removedModifications.length,
+        ownerActorId: this.actor?.id ?? null,
+        ownerActorName: this.actor?.name ?? null,
+        vehicleActorId: this.targetVehicle.id,
+        vehicleActorName: this.targetVehicle.name,
+        shipyard: {
+          frameName: this.stockShip?.name ?? null,
+          grossCost: costSummary.grossCost,
+          resaleCredit: costSummary.resaleCredit,
+          netCost: costSummary.netCost,
+          ep: epStats,
+          addedModifications: this._addedModifications().map((mod) => ({ id: mod.id, name: mod.name, cost: mod.finalCost })),
+          removedModifications: this.removedModifications.map((mod) => ({ id: mod.id, name: mod.name, resale: LedgerService.calculateResale(numberOrZero(mod.finalCost)) }))
+        }
+      }
+    }, {
+      source: 'VehicleModificationApp.submitExistingRefit',
+      validate: true,
+      rederive: true
+    });
+
+    if (!result.success) {
+      ui.notifications.error(`Refit failed: ${result.error}`);
+      return false;
+    }
+
+    ui.notifications.info(`${this.targetVehicle.name} refit complete.`);
+    return true;
+  }
+
+  async _submitBuild() {
+    if (this.isSubmitting) return;
+    if (!this.stockShip) {
+      ui.notifications.warn('Select a vessel frame first.');
+      return;
+    }
+
+    if (this._isModifyExisting()) {
+      this.isSubmitting = true;
+      let closedAfterSubmit = false;
+      await this.render(false);
+      try {
+        const submitted = await this._submitExistingModification();
+        if (submitted) {
+          closedAfterSubmit = true;
+          await this.close();
+        }
+      } catch (err) {
+        SWSELogger.error('SWSE Shipyard | Failed to apply shipyard refit:', err);
+        ui.notifications.error('Failed to apply shipyard refit. See console for details.');
+      } finally {
+        this.isSubmitting = false;
+        if (!closedAfterSubmit && this.rendered) await this.render(false);
+      }
+      return;
+    }
+
+    const costSummary = this._costSummary();
+    const totalCost = costSummary.netCost;
+    const epStats = this._epStats();
+    const remaining = this._currentCredits() - totalCost;
+    if (remaining < 0) {
+      ui.notifications.warn(`Insufficient credits. Need ${formatCredits(Math.abs(remaining))} more.`);
+      return;
+    }
+    if (epStats.remaining < 0) {
+      ui.notifications.warn(`Insufficient emplacement points. Remove ${Math.abs(epStats.remaining)} EP worth of modifications.`);
+      return;
+    }
+
+    const requiresApproval = this._requiresApproval(totalCost);
+    const title = requiresApproval ? 'Submit Starship for GM Approval?' : 'Purchase Custom Starship?';
+    const content = `
+      <p><strong>${this.stockShip.name} (Custom)</strong></p>
+      <p>Frame: ${formatCredits(this.stockShip.cost)} · Modifications: ${formatCredits(totalCost - numberOrZero(this.stockShip.cost))}</p>
+      <p>Total: <strong>${formatCredits(totalCost)}</strong></p>
+      <p>${requiresApproval ? this._approvalReason(totalCost) : 'This will deduct credits and create the vehicle actor through the store transaction engine.'}</p>
+    `;
+
+    const confirmed = await SWSEDialogV2.confirm({ title, content, defaultYes: !requiresApproval });
+    if (!confirmed) return;
+
+    this.isSubmitting = true;
+    let closedAfterSubmit = false;
+    await this.render(false);
+
+    try {
+      if (requiresApproval) {
+        const submitted = await this._submitForApproval(totalCost);
+        if (submitted) {
+          closedAfterSubmit = true;
+          await this.close();
+        }
+        return;
+      }
+
+      const item = this._purchaseItem(totalCost);
+      const eligible = StoreEngine.canPurchase({
+        actor: this.actor,
+        items: [item],
+        totalCost
+      });
+
+      if (!eligible.canPurchase) {
+        ui.notifications.warn(eligible.reason || 'Cannot complete purchase.');
+        return;
+      }
+
+      const buildSpec = this._buildSpec(totalCost);
+      const result = await StoreEngine.purchase({
+        actor: this.actor,
+        items: [item],
+        totalCost,
+        transactionContext: 'store-purchase',
+        itemGrantCallback: async () => [VehicleFactory.buildMutationPlan(buildSpec)]
+      });
+
+      if (!result.success) {
+        ui.notifications.error(`Purchase failed: ${result.error}`);
+        return;
+      }
+
+      ui.notifications.info(`${this.stockShip.name} purchased. Check your actors list.`);
+      closedAfterSubmit = true;
+      await this.close();
+    } catch (err) {
+      SWSELogger.error('SWSE Shipyard | Failed to submit custom starship:', err);
+      ui.notifications.error('Failed to submit custom starship. See console for details.');
+    } finally {
+      this.isSubmitting = false;
+      if (!closedAfterSubmit && this.rendered) await this.render(false);
+    }
+  }
+
+  async _submitForApproval(totalCost) {
+    const buildSpec = this._buildSpec(totalCost);
+    const draftData = VehicleFactory.buildVehicleActorData(buildSpec);
+    draftData.ownership = { default: 0 };
+    draftData.flags = {
+      ...(draftData.flags || {}),
+      'foundryvtt-swse': {
+        ...(draftData.flags?.['foundryvtt-swse'] || {}),
+        pendingApproval: true,
+        draftOnly: true,
+        approvalType: 'vehicle',
+        ownerPlayerId: game.user?.id ?? null,
+        ownerActorId: this.actor?.id ?? null,
+        ownerActorName: this.actor?.name ?? null
+      }
+    };
+
+    const draftVehicle = await createActor(draftData);
+    if (!draftVehicle) {
+      ui.notifications.error('Failed to create draft vehicle for approval.');
+      return false;
+    }
+
+    const pendingRecord = {
+      id: `pending_vehicle_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+      type: 'vehicle',
+      draftActorId: draftVehicle.id,
+      modificationData: buildSpec,
+      vehicleTemplateName: this.stockShip.name,
+      ownerPlayerId: game.user?.id ?? null,
+      ownerActorId: this.actor?.id ?? null,
+      ownerActorName: this.actor?.name ?? null,
+      costCredits: totalCost,
+      requestedAt: Date.now(),
+      draftData: {
+        name: draftVehicle.name,
+        type: 'vehicle',
+        baseTemplate: this.stockShip.name,
+        cost: totalCost,
+        details: this.modifications.map((mod) => `${mod.name} — ${formatCredits(mod.finalCost)}`).join('\n'),
+        description: `Custom ${this.stockShip.name} built by ${this.actor?.name || 'Unknown Actor'}`
+      },
+      metadata: {
+        source: 'shipyard-builder',
+        contextMode: this.contextMode,
+        approvalReason: this._approvalReason(totalCost)
+      }
+    };
+
+    const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
+    pendingPurchases.push(pendingRecord);
+    await SettingsHelper.set('pendingCustomPurchases', pendingPurchases);
+    Hooks.callAll?.('swseStoreApprovalRequested', { approval: pendingRecord, actor: this.actor });
+
+    ui.notifications.info('Vehicle design submitted for GM approval. Awaiting review.');
+    return true;
+  }
+
+  static async open(actor, options = {}) {
     if (!VehicleModificationManager._initialized) {
       await VehicleModificationManager.init();
     }
-    return new this({ actor }).render(true);
+    return new this({ actor, mode: 'shipyard', contextMode: 'storeConstruction', ...options }).render(true);
   }
 }

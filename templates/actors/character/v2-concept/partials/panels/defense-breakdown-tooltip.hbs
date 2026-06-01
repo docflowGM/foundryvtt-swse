@@ -27,7 +27,7 @@
   {{/if}}
   {{#if defense.speciesBonus}}
     <div class="swse-concept-defense-breakdown__row">
-      <span>Species</span>
+      <span>{{#if @root.conceptLayout.isDroidActor}}Chassis{{else}}Species{{/if}}</span>
       <strong class="{{defense.speciesBonusClass}}">{{numberFormat defense.speciesBonus decimals=0 sign=true}}</strong>
     </div>
   {{/if}}

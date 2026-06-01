@@ -19,6 +19,7 @@ import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/stor
 import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
+import { VehicleModificationManager } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-manager.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
@@ -610,19 +611,27 @@ export async function createCustomDroid(actor, closeCallback) {
 export async function createCustomStarship(actor, closeCallback) {
     const credits = LedgerService.getCurrentCredits(actor);
 
-    if (credits < 5000) {
-        ui.notifications.warn('You need at least 5,000 credits to build a custom starship.');
+    if (!VehicleModificationManager._initialized) {
+        await VehicleModificationManager.init();
+    }
+
+    const stockShips = VehicleModificationManager.getStockShips();
+    const frameCosts = stockShips.map(ship => normalizeCredits(ship.cost)).filter(cost => cost > 0);
+    const minimumFrameCost = frameCosts.length ? Math.min(...frameCosts) : 30000;
+
+    if (credits < minimumFrameCost) {
+        ui.notifications.warn(`You need at least ${minimumFrameCost.toLocaleString()} credits to build a custom starship.`);
         return;
     }
 
     // Confirm
     const confirmed = await SWSEDialogV2.confirm({
         title: 'Build Custom Starship',
-        content: `<p>Enter the starship modification system with Marl Skindar?</p>
-                 <p>You will select a stock ship and customize it with modifications.</p>
-                 <p><strong>This build will be submitted for GM approval.</strong></p>
-                 <p><strong>Minimum cost:</strong> 5,000 credits (Light Fighter)</p>
-                 <p><em>Warning: Marl will judge your choices harshly.</em></p>`,
+        content: `<p>Enter Marl Skindar's shipyard builder?</p>
+                 <p>Select a stock frame, then customize it with real vehicle modification data.</p>
+                 <p><strong>Budget:</strong> your current wallet (${credits.toLocaleString()} credits), not a fixed chargen pool.</p>
+                 <p><strong>Minimum frame cost:</strong> ${minimumFrameCost.toLocaleString()} credits</p>
+                 <p><em>Restricted, military, and high-value builds may route to GM approval.</em></p>`,
         defaultYes: true
     });
 
@@ -634,8 +643,11 @@ export async function createCustomStarship(actor, closeCallback) {
             closeCallback();
         }
 
-        // Launch vehicle modification app
-        await VehicleModificationApp.open(actor);
+        // Launch store-construction shipyard lane
+        await VehicleModificationApp.open(actor, {
+            mode: 'shipyard',
+            contextMode: 'storeConstruction'
+        });
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to launch starship builder:', err);
         ui.notifications.error('Failed to open starship builder.');

@@ -62,6 +62,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMatchLoosely, normalizeLooseLookupKey, normalizePendingSkillKeys, parseRegistryBackedLegacyPrerequisite, resolveCanonicalFeatName, resolveCanonicalSkillKey, resolveCanonicalTalentName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
@@ -404,7 +405,7 @@ export class PrerequisiteChecker {
         // Phase 3.1: Droids cannot acquire Force Sensitivity feat from any source
         const isDroid = actorIsDroidLike(actor, pending);
         const featName = feat.name || feat.label || '';
-        if (isDroid && featName.toLowerCase() === 'force sensitivity') {
+        if (isDroid && isForceSensitivityName(featName)) {
             return {
                 met: false,
                 missing: ['Droids cannot acquire Force Sensitivity'],
@@ -937,6 +938,9 @@ export class PrerequisiteChecker {
                 };
             }
             case 'force_sensitive': {
+                if (actorIsDroidLike(actor, pending)) {
+                    return { met: false, message: 'Droids cannot acquire or satisfy Force Sensitivity prerequisites' };
+                }
                 const hasFS = actor.items?.some(i => i.type === 'feat' && matchesForceSensitivity(i.name)) ||
                     (pending.selectedFeats || []).some(f => matchesForceSensitivity(typeof f === 'string' ? f : f?.name)) ||
                     (pending.grantedFeats || []).some(f => matchesForceSensitivity(typeof f === 'string' ? f : f?.name)) ||
@@ -1817,6 +1821,9 @@ export class PrerequisiteChecker {
     }
 
     static _checkForceSensitiveLegacy(prereq, actor, pending) {
+        if (actorIsDroidLike(actor, pending)) {
+            return { met: false, message: 'Droids cannot acquire or satisfy Force Sensitivity prerequisites' };
+        }
         const hasForceSensitivityFeat = actor.items?.some(i =>
             i.type === 'feat' && matchesForceSensitivity(i.name)
         );

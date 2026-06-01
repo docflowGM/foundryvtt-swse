@@ -20,7 +20,7 @@
         <div class="swse-concept-panel__header defense-collapsed">
           <div>
             <h3 class="swse-concept-panel__title">{{def.label}}</h3>
-            <p class="swse-concept-panel__hint">10 + heroic level/armor + ability + class + species + misc.</p>
+            <p class="swse-concept-panel__hint">10 + heroic level/armor + ability + class + {{#if @root.conceptLayout.isDroidActor}}chassis{{else}}species{{/if}} + misc.</p>
           </div>
           <div class="swse-concept-ledger-row__actions">
             <span class="swse-concept-chip swse-concept-chip--neutral">{{def.abilityLabel}}</span>
@@ -41,7 +41,7 @@
             <select name="{{def.abilityPath}}" {{#unless def.canEdit}}disabled{{/unless}}>
               <option value="str" {{#if (eq def.abilityKey "str")}}selected{{/if}}>Strength</option>
               <option value="dex" {{#if (eq def.abilityKey "dex")}}selected{{/if}}>Dexterity</option>
-              <option value="con" {{#if (eq def.abilityKey "con")}}selected{{/if}}>Constitution</option>
+              {{#unless @root.conceptLayout.isDroidActor}}<option value="con" {{#if (eq def.abilityKey "con")}}selected{{/if}}>Constitution</option>{{/unless}}
               <option value="int" {{#if (eq def.abilityKey "int")}}selected{{/if}}>Intelligence</option>
               <option value="wis" {{#if (eq def.abilityKey "wis")}}selected{{/if}}>Wisdom</option>
               <option value="cha" {{#if (eq def.abilityKey "cha")}}selected{{/if}}>Charisma</option>
@@ -81,7 +81,7 @@
 
           {{#if def.speciesBonus}}
             <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
-              <span>Species</span>
+              <span>{{#if @root.conceptLayout.isDroidActor}}Chassis{{else}}Species{{/if}}</span>
               <strong class="{{def.speciesBonusClass}}">{{numberFormat def.speciesBonus decimals=0 sign=true}}</strong>
             </div>
           {{/if}}

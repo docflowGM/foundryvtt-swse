@@ -21,6 +21,7 @@ import { getClassAutoGrants } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js';
 import { resolveClassModel } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { isDroidProgressionActor, isForceSensitivityName } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 
 /**
  * Build a provisional grant ledger from class selection.
@@ -125,8 +126,19 @@ export function buildClassGrantLedger(actor, classSelection, pendingState = {}) 
       }
     }
 
+    const isDroid = isDroidProgressionActor(actor, pendingState);
+
     // Add unconditional grants directly
     for (const grantName of unconditionalGrants) {
+      if (isDroid && isForceSensitivityName(grantName)) {
+        ledger.suppressedGrants.push({
+          name: grantName,
+          reason: 'Droids cannot receive the Force Sensitivity class feature.',
+          source: classModel.name || null,
+        });
+        continue;
+      }
+
       // Categorize by type
       if (grantName.toLowerCase().includes('armor proficiency')) {
         ledger.grantedProficiencies.push({
@@ -156,6 +168,15 @@ export function buildClassGrantLedger(actor, classSelection, pendingState = {}) 
 
     // Validate conditional grants before adding
     for (const grantName of conditionalGrants) {
+      if (isDroid && isForceSensitivityName(grantName)) {
+        ledger.suppressedGrants.push({
+          name: grantName,
+          reason: 'Droids cannot receive the Force Sensitivity class feature.',
+          source: classModel.name || null,
+        });
+        continue;
+      }
+
       const featToValidate = { name: grantName, system: {} };
 
       // Build a temporary pending state that includes grants we've added so far

@@ -1452,7 +1452,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
       ...canonical.slice(insertAtNormal),
     ];
 
-    return merged;
+    // Defensive de-dupe: final-droid-configuration can be discovered from both
+    // the node registry and the legacy conditional resolver while old sessions
+    // are migrating. Preserve first-seen order and prevent duplicate surfaces.
+    const seen = new Set();
+    return merged.filter((descriptor) => {
+      const key = descriptor?.stepId || descriptor?.id;
+      if (!key) return true;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
   /**

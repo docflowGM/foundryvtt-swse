@@ -460,7 +460,7 @@ function buildSkillsTab(context, abilities, identity) {
   };
 }
 
-function buildTalentsTab(context) {
+function buildTalentsTab(context, options = {}) {
   const featEntries = asArray(context.featPanel?.entries).map((feat) => ({
     id: feat?.id || '',
     name: feat?.name || 'Unnamed Feat',
@@ -469,7 +469,7 @@ function buildTalentsTab(context) {
     virtual: feat?.virtual === true
   }));
 
-  const speciesAbilityEntries = asArray(context.racialAbilitiesPanel?.entries).map((ability, index) => ({
+  const speciesAbilityEntries = options.isDroidActor ? [] : asArray(context.racialAbilitiesPanel?.entries).map((ability, index) => ({
     id: ability?.id || ability?.uuid || ability?.key || `species-ability-${index}`,
     name: ability?.name || ability?.label || 'Species Ability',
     source: ability?.source || ability?.species || 'Species',
@@ -823,8 +823,12 @@ function buildRelationshipsTab(context) {
 
 export function buildConceptSheetViewModel(context = {}) {
   const actor = context.actor ?? {};
+  const isDroidActor = context.isDroidActor === true || actor?.type === 'droid' || actor?.system?.isDroid === true;
   const flags = actor?.flags?.swse?.character ?? {};
   const identity = context.biographyPanel?.identity ?? {};
+  const droidDegreeLabel = context.droid?.degree?.label || actor?.system?.droidSystems?.degree || actor?.system?.droidDegree || '';
+  const droidChassisLabel = actor?.system?.droidSystems?.chassis?.name || actor?.system?.droidModel || actor?.system?.droidType || identity.species || 'Droid Chassis';
+  const identityKindLabel = isDroidActor ? 'Droid Chassis' : 'Species';
   const defenses = asArray(context.defensePanel?.defenses);
   const abilities = asArray(context.abilities);
   const languages = asArray(context.languagesPanel?.entries);
@@ -886,7 +890,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const forceAccess = hasForceSensitivityAccess(context, identity);
   const abilitiesTab = buildAbilityTab(abilities);
   const skills = buildSkillsTab(context, abilities, identity);
-  const talents = buildTalentsTab(context);
+  const talents = buildTalentsTab(context, { isDroidActor });
   const force = buildForceTab(context);
   const starship = buildStarshipSuiteTab(context);
   const relationships = buildRelationshipsTab(context);
@@ -913,10 +917,11 @@ export function buildConceptSheetViewModel(context = {}) {
   const homeworldText = normalizeText(identity.homeworld);
   const hasKnownHomeworld = !!homeworldText && !['unknown', '—', '-', 'none', 'n/a'].includes(homeworldText.toLowerCase());
   const dossierTags = [
-    { label: context.classDisplay || identity.class || 'Unclassified', tone: 'accent' },
-    { label: identity.species || 'Unknown Species', tone: 'neutral' },
-    { label: identity.background || 'Unrecorded Background', tone: 'accent-soft' },
-    { label: hasKnownHomeworld ? `From ${homeworldText}` : 'From Parts Unknown', tone: 'neutral' },
+    { label: context.classDisplay || identity.class || (isDroidActor ? 'Droid' : 'Unclassified'), tone: 'accent' },
+    { label: isDroidActor ? droidChassisLabel : (identity.species || 'Unknown Species'), tone: 'neutral' },
+    ...(isDroidActor && droidDegreeLabel ? [{ label: droidDegreeLabel, tone: 'accent-soft' }] : []),
+    ...(!isDroidActor ? [{ label: identity.background || 'Unrecorded Background', tone: 'accent-soft' }] : []),
+    { label: hasKnownHomeworld ? `From ${homeworldText}` : (isDroidActor ? 'Manufacturer Unknown' : 'From Parts Unknown'), tone: 'neutral' },
     { label: `Level ${Number(identity.level) || Number(actor?.system?.level) || 1}`, tone: 'ok' }
   ];
 
@@ -924,7 +929,7 @@ export function buildConceptSheetViewModel(context = {}) {
     dossierTags.push({ label: 'Force-Sensitive', tone: 'force' });
   }
 
-  const speciesAbilityCount = asArray(context.racialAbilitiesPanel?.entries).length;
+  const speciesAbilityCount = isDroidActor ? 0 : asArray(context.racialAbilitiesPanel?.entries).length;
   const starshipManeuverCount = starship.starshipSuite?.counts?.total || 0;
   const tabs = [
     { id: 'overview', label: 'Summary', icon: 'fa-solid fa-file-lines', active: true },
@@ -932,6 +937,12 @@ export function buildConceptSheetViewModel(context = {}) {
     { id: 'skills', label: 'Skills', icon: 'fa-solid fa-crosshairs', count: toCountBadge(skillCount) },
     { id: 'combat', label: 'Combat', icon: 'fa-solid fa-burst', count: toCountBadge(attackEntries.length + (unarmedAttackEntry ? 1 : 0) || actionGroups.length) },
     { id: 'talents', label: 'Abilities', icon: 'fa-solid fa-diagram-project', count: toCountBadge(talentEntries.length + featEntries.length + speciesAbilityCount) },
+    ...(isDroidActor ? [{
+      id: 'droid-systems',
+      label: 'Droid Systems',
+      icon: 'fa-solid fa-robot',
+      count: toCountBadge((context.droid?.resolvedSystems?.summary?.weaponizedPartCount || 0) + (context.droid?.resolvedSystems?.summary?.skillModifierCount || 0) || '')
+    }] : []),
     { id: 'gear', label: 'Gear', icon: 'fa-solid fa-toolbox', count: toCountBadge(inventoryEntries.length) },
     { id: 'biography', label: 'Biography', icon: 'fa-solid fa-book-open' }
   ];
@@ -949,8 +960,11 @@ export function buildConceptSheetViewModel(context = {}) {
     identity: {
       name: identity.name || actor?.name || 'Unnamed Operative',
       player: identity.player || 'Unassigned',
-      species: identity.species || 'Unknown Species',
-      classDisplay: context.classDisplay || identity.class || 'Unclassified',
+      species: isDroidActor ? droidChassisLabel : (identity.species || 'Unknown Species'),
+      speciesLabel: identityKindLabel,
+      droidChassis: isDroidActor ? droidChassisLabel : '',
+      droidDegree: isDroidActor ? (droidDegreeLabel || 'Unclassified Droid') : '',
+      classDisplay: context.classDisplay || identity.class || (isDroidActor ? 'Droid' : 'Unclassified'),
       level: Number(identity.level) || Number(actor?.system?.level) || 1,
       size: identity.size || 'Medium',
       homeworld: identity.homeworld || 'Unknown',
@@ -1075,7 +1089,14 @@ export function buildConceptSheetViewModel(context = {}) {
       hasUpgradeableItems: !!context.inventoryPanel?.hasUpgradeableItems
     },
     biography: {
-      profileCards: [
+      profileCards: isDroidActor ? [
+        { label: 'Operator', value: identity.player || 'Unassigned' },
+        { label: 'Droid Chassis', value: droidChassisLabel },
+        { label: 'Droid Degree', value: droidDegreeLabel || 'Unclassified Droid' },
+        { label: 'Manufacturer', value: actor?.system?.manufacturer || identity.homeworld || 'Unknown' },
+        { label: 'Function', value: actor?.system?.droidFunction || identity.profession || '—' },
+        { label: 'Size', value: identity.size || actor?.system?.size || 'Medium' }
+      ] : [
         { label: 'Player', value: identity.player || 'Unassigned' },
         { label: 'Species', value: identity.species || 'Unknown Species' },
         { label: 'Background', value: identity.background || 'Unrecorded' },

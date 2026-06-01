@@ -29,6 +29,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 
 export class GMStoreDashboard extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -70,6 +71,65 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     this.transactions = [];
     this.pendingSales = [];
     this.pendingApprovals = [];
+  }
+
+  _findPendingApprovalIndex(approval = {}, fallbackIndex = -1) {
+    const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
+    const id = String(approval?.id || '').trim();
+    if (id) {
+      const byId = pendingPurchases.findIndex((entry) => String(entry?.id || '').trim() === id);
+      if (byId >= 0) return { index: byId, queue: pendingPurchases };
+    }
+    if (fallbackIndex >= 0 && fallbackIndex < pendingPurchases.length) return { index: fallbackIndex, queue: pendingPurchases };
+    return { index: -1, queue: pendingPurchases };
+  }
+
+  async _removePendingApproval(approval = {}, fallbackIndex = -1) {
+    const { index, queue } = this._findPendingApprovalIndex(approval, fallbackIndex);
+    if (index < 0) return false;
+    queue.splice(index, 1);
+    await HouseRuleService.set('pendingCustomPurchases', queue);
+    return true;
+  }
+
+  _approvalModSummary(approval = {}) {
+    const build = approval.modificationData ?? approval.buildSpec ?? {};
+    const mods = Array.isArray(build.modifications) ? build.modifications : [];
+    return mods.map((mod) => ({
+      id: mod?.id ?? null,
+      name: mod?.name ?? mod?.id ?? 'Modification',
+      category: mod?.category ?? null,
+      ep: normalizeCredits(mod?.emplacementPoints ?? mod?.ep ?? 0),
+      cost: normalizeCredits(mod?.finalCost ?? mod?.cost ?? 0),
+      nonstandard: !!mod?.nonstandard,
+      availability: mod?.availability ?? mod?.avail ?? null
+    }));
+  }
+
+  _buildApprovalAudit(approval = {}, draftActor = null, assetName = 'Custom asset', cost = 0) {
+    const build = approval.modificationData ?? approval.buildSpec ?? {};
+    const stockShip = build.stockShip ?? approval.stockShip ?? null;
+    const modifications = this._approvalModSummary(approval);
+    return {
+      approvalId: approval.id ?? null,
+      approvalType: approval.type ?? draftActor?.type,
+      draftActorId: approval.draftActorId,
+      itemName: assetName,
+      itemNames: [assetName],
+      itemCount: 1,
+      source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
+      gmNotes: approval.metadata?.gmNotes ?? '',
+      ownerPlayerId: approval.ownerPlayerId ?? null,
+      approvalReason: approval.metadata?.approvalReason ?? approval.approvalReason ?? null,
+      shipyard: stockShip ? {
+        frameName: stockShip.name ?? approval.vehicleTemplateName ?? null,
+        frameCost: normalizeCredits(stockShip.cost ?? 0),
+        unusedEmplacementPoints: normalizeCredits(stockShip.unusedEmplacementPoints ?? stockShip.unusedEP ?? 0),
+        modifications,
+        modificationCost: modifications.reduce((sum, mod) => sum + normalizeCredits(mod.cost), 0),
+        totalCost: normalizeCredits(cost)
+      } : null
+    };
   }
 
   async _prepareContext(options) {
@@ -150,11 +210,40 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     // Load pending custom droid/vehicle purchases from world flag
     this.pendingApprovals = SettingsHelper.getArray('pendingCustomPurchases', []);
 
-    // Enrich each approval with actor name
+    // Enrich each approval with review/ledger information so the GM can make a safe decision.
     for (const approval of this.pendingApprovals) {
       const ownerActor = game.actors.get(approval.ownerActorId);
-      approval.ownerActorName = ownerActor?.name || 'Unknown Player';
-      approval.timeSubmitted = new Date(approval.requestedAt).toLocaleString();
+      const draftActor = game.actors.get(approval.draftActorId);
+      const build = approval.modificationData ?? approval.buildSpec ?? {};
+      const stockShip = build.stockShip ?? approval.stockShip ?? {};
+      const modifications = Array.isArray(build.modifications) ? build.modifications : [];
+      const currentCredits = ownerActor ? normalizeCredits(LedgerService.getCurrentCredits(ownerActor)) : 0;
+      const cost = normalizeCredits(approval.costCredits ?? 0);
+      const epAvailable = Number(stockShip.unusedEmplacementPoints ?? stockShip.unusedEP ?? 0) || 0;
+      const epUsed = modifications.reduce((sum, mod) => sum + (Number(mod?.emplacementPoints ?? mod?.ep ?? 0) || 0), 0);
+      approval.ownerActorName = ownerActor?.name || approval.ownerActorName || 'Unknown Player';
+      approval.assetName = approval.draftData?.name || draftActor?.name || 'Custom asset';
+      approval.timeSubmitted = approval.requestedAt ? new Date(approval.requestedAt).toLocaleString() : (approval.timeSubmitted || '—');
+      approval.costLabel = `${cost.toLocaleString()} cr`;
+      approval.currentCreditsLabel = `${currentCredits.toLocaleString()} cr`;
+      approval.afterCreditsLabel = `${(currentCredits - cost).toLocaleString()} cr`;
+      approval.canApprove = Boolean(ownerActor && draftActor && currentCredits >= cost);
+      approval.reviewWarning = !ownerActor
+        ? 'Owner actor missing.'
+        : !draftActor
+          ? 'Draft asset actor missing.'
+          : currentCredits < cost
+            ? `Insufficient credits: ${ownerActor.name} has ${currentCredits.toLocaleString()} cr.`
+            : '';
+      approval.frameLabel = stockShip.name ?? approval.vehicleTemplateName ?? approval.draftData?.baseTemplate ?? '';
+      approval.modificationSummary = modifications.length
+        ? modifications.map((mod) => `${mod?.name ?? mod?.id ?? 'Modification'} (${mod?.emplacementPoints ?? mod?.ep ?? 0} EP, ${normalizeCredits(mod?.finalCost ?? mod?.cost ?? 0).toLocaleString()} cr${mod?.nonstandard ? ', nonstandard ×5' : ''})`).join('
+')
+        : (approval.draftData?.details || 'No modification details recorded.');
+      approval.epSummary = approval.type === 'vehicle' && epAvailable
+        ? `${epUsed}/${epAvailable} EP used`
+        : '';
+      approval.approvalReason = approval.metadata?.approvalReason ?? approval.approvalReason ?? '';
     }
   }
 
@@ -459,7 +548,13 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       SWSELogger.warn('SWSE GM Dashboard | Droid edit mode pending implementation in new progression shell');
       ui.notifications.info('Droid editing is being refactored for the new character progression system. This feature will be available soon.');
     } else if (approval.type === 'vehicle') {
-      ui.notifications.info('Vehicle modification editing not yet implemented.');
+      const draftActor = game.actors.get(approval.draftActorId);
+      if (draftActor) {
+        draftActor.sheet?.render?.(true);
+        ui.notifications.info('Opened the draft vehicle sheet for GM review. Inline Shipyard edit mode is a later pass.');
+      } else {
+        ui.notifications.warn('Draft vehicle actor not found.');
+      }
     }
   }
 
@@ -484,13 +579,20 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
 
     const assetName = approval.draftData?.name || draftActor.name || 'Custom asset';
     const normalizedCost = normalizeCredits(approval.costCredits ?? 0);
+    const currentCredits = normalizeCredits(LedgerService.getCurrentCredits(ownerActor));
+    if (currentCredits < normalizedCost) {
+      ui.notifications.error(`${ownerActor.name} has ${currentCredits.toLocaleString()} credits, but ${assetName} costs ${normalizedCost.toLocaleString()} credits.`);
+      return;
+    }
 
     const confirmed = await SWSEDialogV2.confirm({
       title: 'Approve Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
       content: `
         <p><strong>${assetName}</strong></p>
         <p>For: ${ownerActor.name}</p>
+        <p>Current Credits: <strong>${currentCredits.toLocaleString()} credits</strong></p>
         <p>Cost: <strong>${normalizedCost.toLocaleString()} credits</strong></p>
+        <p>Remaining After Approval: <strong>${(currentCredits - normalizedCost).toLocaleString()} credits</strong></p>
         <p>Approve this purchase and assign the asset to the buyer?</p>
       `,
       defaultYes: false
@@ -505,17 +607,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         cost: normalizedCost,
         reason: `GM approved ${approval.type || draftActor.type || 'custom'} acquisition`,
         transactionContext: 'store-custom-approval',
-        audit: {
-          approvalId: approval.id ?? null,
-          approvalType: approval.type ?? draftActor.type,
-          draftActorId: approval.draftActorId,
-          itemName: assetName,
-          itemNames: [assetName],
-          itemCount: 1,
-          source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
-          gmNotes: approval.metadata?.gmNotes ?? '',
-          ownerPlayerId: approval.ownerPlayerId ?? null
-        }
+        audit: this._buildApprovalAudit(approval, draftActor, assetName, normalizedCost)
       }, {
         source: 'GMStoreDashboard._approvePendingCustom',
         validate: true,
@@ -551,11 +643,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         skipValidation: true
       });
 
-      const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
-      pendingPurchases.splice(index, 1);
-      await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
+      await this._removePendingApproval(approval, index);
 
-      Hooks.call('swseCustomPurchaseApproved', {
+      Hooks.callAll?.('swseCustomPurchaseApproved', {
         approval,
         actor: ownerActor,
         draftActor,
@@ -600,17 +690,16 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         await draftActor.delete();
       }
 
-      // Remove from pending queue
-      const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
-      pendingPurchases.splice(index, 1);
-      await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
+      // Remove from pending queue. Denial never touches the ledger or deducts credits.
+      await this._removePendingApproval(approval, index);
 
       // Emit Holonet denial hook
       if (ownerActor) {
-        Hooks.call('swseCustomPurchaseDenied', {
+        Hooks.callAll?.('swseCustomPurchaseDenied', {
           approval,
           actor: ownerActor,
-          decidedBy: game.user?.name ?? 'GM'
+          decidedBy: game.user?.name ?? 'GM',
+          noCreditsChanged: true
         });
       }
 

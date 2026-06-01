@@ -35,6 +35,7 @@ import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
@@ -46,6 +47,10 @@ import { buildHpViewModel, buildDefensesViewModel, buildHeaderHpSegments } from 
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
+import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/context-builder.js";
+import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
+import { buildNpcConceptAbilities, buildNpcConceptSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc-sheet.js";
+import { applyActorSheetModeClasses, buildActorSheetModeContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/actor-sheet-mode.js";
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
 import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
@@ -114,6 +119,120 @@ function setStoredSheetMode(actor, mode) {
   } catch (_err) {
     // localStorage may be unavailable in some embedded contexts; mode still works for this render.
   }
+}
+
+function getDroidActorSize(actor) {
+  return String(actor?.system?.size ?? actor?.system?.droidSystems?.size ?? actor?.system?.droidSize ?? 'medium').toLowerCase();
+}
+
+async function createDroidSelfDestructTemplate(actor, part) {
+  const token = actor?.getActiveTokens?.()?.[0] ?? actor?.token?.object ?? null;
+  const scene = token?.scene ?? canvas?.scene;
+  if (!scene || !token) return null;
+
+  const radiusSquares = getSelfDestructBurstSquares(getDroidActorSize(actor), {
+    miniaturized: part?.weaponProfile?.miniaturized === true
+  });
+  if (!radiusSquares) return null;
+
+  const distance = canvas?.grid?.distance ?? scene.grid?.distance ?? 1;
+  const radiusDistance = radiusSquares * distance;
+  const x = token.center?.x ?? token.x ?? 0;
+  const y = token.center?.y ?? token.y ?? 0;
+
+  try {
+    const created = await scene.createEmbeddedDocuments('MeasuredTemplate', [{
+      t: 'circle',
+      user: game.user?.id,
+      x,
+      y,
+      direction: 0,
+      distance: radiusDistance,
+      borderColor: game.user?.color ?? '#ff6400',
+      fillColor: game.user?.color ?? '#ff6400',
+      flags: {
+        swse: {
+          droidSelfDestruct: true,
+          actorUuid: actor.uuid,
+          partId: part?.ruleId ?? part?.id
+        }
+      }
+    }]);
+    return created?.[0] ?? null;
+  } catch (err) {
+    swseLogger.warn('[Droid Systems] Failed to create self-destruct template', err);
+    return null;
+  }
+}
+
+function buildDroidPartVirtualWeapon(actor, part) {
+  const profile = part?.weaponProfile ?? {};
+  const damage = profile.damageBySize
+    ? getSelfDestructDamage(getDroidActorSize(actor), { miniaturized: profile.miniaturized === true })
+    : (profile.damage ?? '1d6');
+
+  return {
+    id: `swse-droid-part-${part?.ruleId ?? part?.id ?? 'weapon'}`,
+    name: profile.name ?? part?.name ?? 'Droid Part',
+    type: 'weapon',
+    img: part?.img ?? actor?.img ?? 'icons/svg/aura.svg',
+    flags: {
+      swse: {
+        virtual: true,
+        droidPart: true,
+        droidPartId: part?.ruleId ?? part?.id,
+        selfDestruct: profile.selfDestruct === true
+      }
+    },
+    system: {
+      damage: damage || '1d6',
+      damageType: profile.damageType ?? 'normal',
+      attackAttribute: profile.mode === 'ranged' || profile.mode === 'area' ? 'dex' : 'str',
+      meleeOrRanged: profile.mode === 'ranged' || profile.mode === 'area' ? 'ranged' : 'melee',
+      weaponType: profile.weaponType ?? 'simple',
+      proficiency: profile.weaponType ?? 'simple',
+      range: profile.range ?? '',
+      attackBonus: profile.attackBonus ?? 0,
+      equipped: true,
+      integrated: true,
+      description: part?.description ?? ''
+    }
+  };
+}
+
+function listToHtml(label, values) {
+  return Array.isArray(values) && values.length
+    ? `<h4>${label}</h4><ul>${values.map(value => `<li>${String(value)}</li>`).join('')}</ul>`
+    : '';
+}
+
+async function postDroidPartChat(actor, part, { roll = null, destroyed = false } = {}) {
+  const modifiers = (part.modifiers ?? []).filter(mod => mod.active !== false);
+  const modifierHtml = modifiers.length
+    ? `<ul>${modifiers.map(mod => `<li><strong>${mod.target}</strong>: ${mod.value !== undefined ? `${Number(mod.value) >= 0 ? '+' : ''}${mod.value}` : 'special'} ${mod.type ?? ''}</li>`).join('')}</ul>`
+    : '<p class="muted">No automatic modifier is active for this use.</p>';
+  const weaponHtml = part.weaponProfile
+    ? `<p><strong>Weapon profile:</strong> ${part.weaponProfile.name ?? part.name}${part.weaponProfile.damage ? `, ${part.weaponProfile.damage} damage` : ''}${part.weaponProfile.range ? `, ${part.weaponProfile.range}` : ''}${part.weaponProfile.defense ? `, targets ${part.weaponProfile.defense}` : ''}</p>`
+    : '';
+  const prerequisiteHtml = listToHtml('Prerequisites', [
+    ...(part.prerequisiteIds ?? []),
+    ...((part.prerequisiteAnyIds ?? []).length ? [`Any: ${(part.prerequisiteAnyIds ?? []).join(', ')}`] : [])
+  ]);
+  const featureHtml = listToHtml('Features', part.features);
+  const restrictionHtml = listToHtml('Restrictions', part.restrictions);
+  const content = `
+    <div class="swse-chat-card swse-droid-part-chat">
+      <h3><i class="fa-solid fa-robot"></i> ${actor.name} uses ${part.name}</h3>
+      ${part.description ? `<p>${part.description}</p>` : ''}
+      ${weaponHtml}
+      ${featureHtml}
+      ${restrictionHtml}
+      ${prerequisiteHtml}
+      <h4>Rules / Modifiers</h4>
+      ${modifierHtml}
+      ${destroyed ? '<p class="swse-danger"><strong>Result:</strong> Droid destroyed. This Droid cannot be repaired or salvaged.</p>' : ''}
+    </div>`;
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content, rolls: roll ? [roll] : [] });
 }
 
 
@@ -1776,9 +1895,11 @@ export class SWSEV2CharacterSheet extends
     // This sheet has no Foundry .window-content wrapper, so the root FORM and the
     // tablet shell both need the concept variables emitted inline for exact palette fidelity.
     root.classList.add('swse-character-sheet-form-root', 'swse-sheet--concept', 'swse-sheet-ui');
+    applyActorSheetModeClasses(root, this.document);
     const sheetThemeContext = ThemeResolutionService.applyToElement(root, { actor: this.document });
     const sheetShell = root.querySelector('.sheet-shell');
     if (sheetShell) {
+      applyActorSheetModeClasses(root, this.document);
       ThemeResolutionService.applyToElement(sheetShell, {
         actor: this.document,
         themeKey: sheetThemeContext.themeKey,
@@ -2012,6 +2133,12 @@ export class SWSEV2CharacterSheet extends
   async _prepareContext(options) {
     const actor = this.document;
     const system = actor.system;
+    const actorModeContext = buildActorSheetModeContext({ actor, editable: this.isEditable });
+    const isDroidActor = actorModeContext.isDroidActor;
+    const isNpcActor = actorModeContext.isNpcActor;
+    const isNpcActorDocument = actorModeContext.isNpcActorDocument;
+    const isPromotedHeroicNpcActor = actorModeContext.isPromotedHeroicNpcActor;
+    const useNpcConceptSheet = actorModeContext.useNpcConceptSheet;
 
     // Sanity check: actor must be valid
     RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
@@ -2042,6 +2169,38 @@ export class SWSEV2CharacterSheet extends
     // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
     const derived = foundry.utils.duplicate(actor.system?.derived ?? {});
 
+    if (useNpcConceptSheet) {
+      try {
+        const npcConceptAbilities = buildNpcConceptAbilities(actor);
+        context.abilitiesPanel = npcConceptAbilities;
+        context.abilities = npcConceptAbilities.abilities;
+        context.conceptLayout = {
+          ...(context.conceptLayout ?? {}),
+          abilities: npcConceptAbilities.abilities,
+          abilitiesTab: {
+            entries: npcConceptAbilities.abilities
+          }
+        };
+      } catch (err) {
+        swseLogger.warn('[SWSEV2CharacterSheet] NPC concept ability context failed', {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          error: err?.message
+        });
+      }
+
+      try {
+        const npcProfile = NpcProfileBuilder.buildContext(actor);
+        Object.assign(context, npcProfile);
+      } catch (err) {
+        swseLogger.warn('[SWSEV2CharacterSheet] NPC concept profile context failed', {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          error: err?.message
+        });
+      }
+    }
+
     // Define ability constants used for multiple safeguards
     const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
     const ABILITY_LABELS = {
@@ -2052,6 +2211,7 @@ export class SWSEV2CharacterSheet extends
       wis: 'Wisdom',
       cha: 'Charisma'
     };
+    const sheetAbilityKeys = isDroidActor ? ABILITY_KEYS.filter((key) => key !== 'con') : ABILITY_KEYS;
 
     // Normalize critical derived structures to prevent undefined path errors in templates
     derived.talents ??= {};
@@ -2082,7 +2242,7 @@ export class SWSEV2CharacterSheet extends
     derived.identity.level ??= Number(system.level ?? system.progression?.level ?? 1) || 1;
     derived.identity.halfLevel = Math.floor(Math.max(1, Number(derived.identity.level) || 1) / 2);
     // Provide ability array for skills panel selectors (used in skills-panel.hbs line 75)
-    derived.identity.abilities ??= ABILITY_KEYS.map(key => ({
+    derived.identity.abilities ??= sheetAbilityKeys.map(key => ({
       key,
       label: ABILITY_LABELS[key]
     }));
@@ -2151,7 +2311,7 @@ export class SWSEV2CharacterSheet extends
       return Number.isFinite(n) ? n : fallback;
     };
 
-    const abilities = ABILITY_KEYS.map(key => {
+    const abilities = sheetAbilityKeys.map(key => {
       const ability = abilitiesMap[key] ?? {};
       const legacyAbility = legacyAbilitiesMap[key] ?? {};
       const derivedAbility = derivedAttributesMap[key] ?? {};
@@ -3122,6 +3282,29 @@ const forcePoints = [];
     // Log panel contract version for debugging
     const _sheetContractVersion = 1;
 
+    let droidSheetContext = null;
+    if (isDroidActor) {
+      try {
+        droidSheetContext = new DroidSheetContextBuilder(actor).build();
+      } catch (err) {
+        swseLogger.warn('[SWSEV2CharacterSheet] Failed to build droid systems tab context', {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          error: err?.message
+        });
+        droidSheetContext = {
+          droid: {
+            degree: { label: '', category: '', isConfigured: false },
+            garage: { canOpenGarage: actor?.isOwner === true, systemsLocked: false },
+            resolvedSystems: null,
+            sourceStatus: { sourceLabel: 'Unavailable', validationMessages: [], hasValidationMessages: false }
+          },
+          droidPanels: {},
+          combatWeapons: { hasIntegrated: false, hasHandheld: false, integrated: [], handheld: [] }
+        };
+      }
+    }
+
     const conceptLayout = buildConceptSheetViewModel({
       ...context,
       ...panelContexts,
@@ -3147,8 +3330,43 @@ const forcePoints = [];
       destinyPointsMax,
       classDisplay,
       forceSensitive,
-      actor
+      actor,
+      ...(droidSheetContext ? {
+        droid: droidSheetContext.droid,
+        droidPanels: droidSheetContext.droidPanels,
+        combatWeapons: droidSheetContext.combatWeapons
+      } : {}),
+      isDroidActor,
+      isNpcActor,
+      isNpcActorDocument,
+      isPromotedHeroicNpcActor,
+      useNpcConceptSheet
     });
+
+    if (useNpcConceptSheet) {
+      try {
+        context.npcConcept = buildNpcConceptSheetContext(actor, {
+          ...context,
+          derived,
+          conceptLayout,
+          actionEconomy
+        });
+      } catch (err) {
+        swseLogger.warn('[SWSEV2CharacterSheet] NPC concept sheet context failed', {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          error: err?.message
+        });
+        context.npcConcept = {
+          kind: 'npc',
+          kindLabel: 'NPC',
+          modeLabel: 'Play Mode',
+          summaryLine: [],
+          defenseChips: [],
+          showGmTab: game.user?.isGM === true
+        };
+      }
+    }
 
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
 
@@ -3190,6 +3408,20 @@ const forcePoints = [];
       sheetThemeStyleInline: sheetThemeContext.themeStyleInline,
       sheetMotionStyleInline: sheetThemeContext.motionStyleInline,
       sheetSurfaceStyleInline: sheetThemeContext.surfaceStyleInline,
+      system: foundry.utils.duplicate(system ?? {}),
+      ...actorModeContext,
+      isDroidActor,
+      isNpcActor,
+      isNpcActorDocument,
+      isPromotedHeroicNpcActor,
+      useNpcConceptSheet,
+      actorSheetModeLabel: actorModeContext.actorSheetMode?.label ?? (isDroidActor ? 'Droid Actor' : (isNpcActor ? 'NPC Actor' : 'Character Actor')),
+      ...(droidSheetContext ? {
+        droid: droidSheetContext.droid,
+        droidPanels: droidSheetContext.droidPanels,
+        combatWeapons: droidSheetContext.combatWeapons,
+        droidSystemsReadOnly: true
+      } : {}),
       // ═════════════════════════════════════════════════════════════════
       // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
       // ═════════════════════════════════════════════════════════════════
@@ -3582,6 +3814,83 @@ const forcePoints = [];
       applySheetInteractionMode(html, nextMode);
     }, { signal });
 
+
+    // DELEGATED: Droid Systems tab → Garage/customization surface handoff.
+    // The sheet tab remains read-only/operational; Garage owns paid modifications.
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".edit-droid-systems, [data-action='customize-droid']");
+      if (!button || this.actor?.type !== 'droid') return;
+
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      if (typeof this.setSurface !== 'function') {
+        ui.notifications?.warn?.('Droid Garage is unavailable for this sheet.');
+        return;
+      }
+
+      try {
+        await this.setSurface('customization', {
+          source: 'droid-systems-tab',
+          bayMode: 'garage',
+          mode: 'garage',
+          contextMode: 'modifyExisting',
+          focusCategory: button.dataset.garageRegion ?? button.dataset.region ?? null,
+          focusSlot: button.dataset.garageSlot ?? button.dataset.slotId ?? null,
+          focusMode: button.dataset.garageMode ?? null
+        });
+        await this.requestSurfaceRender?.({ reason: 'droid-systems-open-garage', surfaceId: 'customization' });
+      } catch (err) {
+        swseLogger.error('[Droid Systems] Failed to open Garage from actor sheet', err);
+        ui.notifications?.error?.('Failed to open Droid Garage.');
+      }
+    }, { signal });
+
+    // DELEGATED: Droid Systems tab operational controls.
+    // Read-only/activate-only: item opening, use/describe, and rolls are allowed;
+    // installs, removals, purchases, sales, and build changes remain Garage-owned.
+    html.addEventListener("click", async ev => {
+      if (this.actor?.type !== 'droid') return;
+
+      const useButton = ev.target.closest("[data-action='use-droid-part']");
+      if (useButton) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._useDroidPartFromButton(useButton);
+        return;
+      }
+
+      const rollButton = ev.target.closest("[data-action='roll-weapon'], [data-action='roll-weapon-attack']");
+      if (rollButton) {
+        ev.preventDefault();
+        const itemId = rollButton.dataset.itemId ?? rollButton.dataset.weaponId;
+        const item = itemId ? this.actor?.items?.get?.(itemId) : null;
+        if (!item) {
+          ui.notifications?.warn?.('That integrated weapon could not be found on this droid.');
+          return;
+        }
+        if (typeof item.roll === 'function') {
+          await item.roll();
+        } else {
+          await this._runCanonicalAttack(item, {
+            source: 'droid-systems-tab',
+            sourceElement: rollButton,
+            companionSource: rollButton,
+            sheet: this,
+            showRollCompanion: true
+          });
+        }
+        return;
+      }
+
+      const openChip = ev.target.closest(".swse-v2-open-item, [data-action='open-droid-system-item']");
+      if (openChip) {
+        ev.preventDefault();
+        const itemId = openChip.dataset.itemId;
+        const item = itemId ? this.actor?.items?.get?.(itemId) : null;
+        if (item?.sheet) item.sheet.render(true);
+      }
+    }, { signal });
 
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders

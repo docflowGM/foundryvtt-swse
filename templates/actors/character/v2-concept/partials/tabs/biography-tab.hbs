@@ -3,7 +3,7 @@
     <header class="swse-concept-panel__header">
       <div>
         <h3 class="swse-concept-panel__title">Identity Record</h3>
-        <p class="swse-concept-panel__hint">Reference metadata for the character dossier. Origin, species, and class are progression-owned; personal metadata is editable here.</p>
+        <p class="swse-concept-panel__hint">Reference metadata for the actor dossier. Origin, chassis/species, and class are progression-owned; personal metadata is editable here.</p>
       </div>
     </header>
 
@@ -29,19 +29,19 @@
         <input type="text" name="flags.swse.character.weight" value="{{conceptLayout.identity.weight}}" placeholder="Weight" />
       </article>
       <article class="swse-concept-info-card">
-        <span>Species</span>
-        <strong>{{conceptLayout.identity.species}}</strong>
+        <span>{{conceptLayout.identity.identityLabel}}</span>
+        <strong>{{conceptLayout.identity.identityValue}}</strong>
       </article>
       <article class="swse-concept-info-card">
-        <span>Homeworld</span>
-        <strong>{{conceptLayout.identity.homeworld}}</strong>
+        <span>{{conceptLayout.identity.originLabel}}</span>
+        <strong>{{conceptLayout.identity.originValue}}</strong>
       </article>
       <article class="swse-concept-info-card">
-        <span>Background</span>
+        <span>{{#if conceptLayout.isDroidActor}}Function{{else}}Background{{/if}}</span>
         <strong>{{conceptLayout.identity.background}}</strong>
       </article>
       <article class="swse-concept-info-card">
-        <span>Profession</span>
+        <span>{{#if conceptLayout.isDroidActor}}Chassis{{else}}Profession{{/if}}</span>
         <strong>{{conceptLayout.identity.profession}}</strong>
       </article>
     </div>

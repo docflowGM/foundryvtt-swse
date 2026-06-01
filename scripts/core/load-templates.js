@@ -102,9 +102,9 @@ export const SWSE_TEMPLATES = [
   // V2 Actor Sheets
   // ==============================
   'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
-  // Deprecated/orphaned droid-only sheet shell templates are intentionally
-  // not preloaded. Droid actors now open through SWSEV2CharacterSheet.
-  'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
+  // Deprecated/orphaned droid-only and NPC-only sheet shell templates are
+  // intentionally not preloaded. Droid and NPC actors now open through
+  // SWSEV2CharacterSheet.
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
 
   // ==============================
@@ -457,10 +457,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-faction-card.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-base-card.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-organization-card.hbs',
-  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet.hbs',
-  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet-header.hbs',
-  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet-tabs.hbs',
-  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet-body.hbs',
   'systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel.hbs',
   'systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel.hbs',
   'systems/foundryvtt-swse/templates/v2/npc/panels/health-panel.hbs',

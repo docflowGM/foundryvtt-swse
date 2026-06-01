@@ -612,6 +612,99 @@ function buildTurnPhasePanel(turnPhaseData) {
   };
 }
 
+
+/**
+ * Build shipyard systems panel from Shipyard Builder output.
+ *
+ * @param {Actor} actor
+ * @returns {Object|null}
+ */
+export function buildVehicleShipyardPanel(actor) {
+  const system = actor?.system ?? {};
+  const data = system.shipyard || system.modificationData || actor?.flags?.['foundryvtt-swse']?.shipyardBuild || null;
+  if (!data || typeof data !== 'object') return null;
+
+  const stockShip = data.stockShip || system.stockShip || {};
+  const modifications = safeArray(data.installedModifications || data.modifications);
+  const removed = safeArray(data.removedModifications);
+  const ep = data.emplacementPoints || {
+    used: system.usedCustomizationEmplacementPoints,
+    available: system.unusedEmplacementPoints,
+    remaining: system.remainingCustomizationEmplacementPoints,
+    total: safeNumber(system.emplacementPoints, 0) + safeNumber(system.unusedEmplacementPoints, 0)
+  };
+  const costs = data.costs || data;
+
+  const categoryLabels = {
+    movement: 'Movement',
+    defense: 'Defense',
+    weapon: 'Weapons',
+    accessory: 'Accessories'
+  };
+
+  const groupsMap = new Map();
+  for (const mod of modifications) {
+    const category = String(mod?.category || 'accessory').toLowerCase();
+    const key = category.startsWith('movement') ? 'movement'
+      : category.startsWith('defense') ? 'defense'
+        : category.startsWith('weapon') ? 'weapon'
+          : 'accessory';
+    if (!groupsMap.has(key)) groupsMap.set(key, []);
+    groupsMap.get(key).push({
+      id: mod?.id || mod?.name || '',
+      name: mod?.name || 'Modification',
+      effect: mod?.effect || mod?.description || '',
+      ep: safeNumber(mod?.emplacementPoints ?? mod?.ep, 0),
+      cost: safeNumber(mod?.finalCost ?? mod?.cost, 0),
+      availability: mod?.availability || 'Common',
+      nonstandard: Boolean(mod?.nonstandard),
+      weaponType: mod?.weaponType || null,
+      damage: mod?.damage || null
+    });
+  }
+
+  const groups = Array.from(groupsMap.entries()).map(([key, items]) => ({
+    key,
+    label: categoryLabels[key] || key,
+    items,
+    count: items.length
+  }));
+
+  return {
+    title: 'Shipyard Systems',
+    frameName: data.frameName || stockShip.name || system.buildMetadata?.frameName || actor?.name || 'Vehicle',
+    contextMode: data.contextMode || 'unknown',
+    totalCost: safeNumber(costs.totalCost ?? system.cost?.new ?? system.cost, 0),
+    frameCost: safeNumber(costs.frameCost ?? stockShip.cost, 0),
+    modificationCost: safeNumber(costs.modificationCost, 0),
+    lastGrossCost: safeNumber(costs.lastGrossCost, 0),
+    lastResaleCredit: safeNumber(costs.lastResaleCredit, 0),
+    lastNetCost: safeNumber(costs.lastNetCost, 0),
+    ep: {
+      used: safeNumber(ep.used, 0),
+      available: safeNumber(ep.available, 0),
+      remaining: safeNumber(ep.remaining, 0),
+      total: safeNumber(ep.total, 0),
+      percent: safeNumber(ep.available, 0) > 0 ? Math.round((safeNumber(ep.used, 0) / safeNumber(ep.available, 0)) * 100) : 0
+    },
+    groups,
+    hasGroups: groups.length > 0,
+    removed: removed.map((mod) => ({
+      id: mod?.id || mod?.name || '',
+      name: mod?.name || 'Modification',
+      cost: safeNumber(mod?.finalCost ?? mod?.cost, 0)
+    })),
+    hasRemoved: removed.length > 0,
+    weapons: modifications.filter((mod) => String(mod?.category || '').toLowerCase().startsWith('weapon')).map((mod) => ({
+      name: mod?.name || 'Weapon',
+      type: mod?.weaponType || 'Weapon',
+      damage: mod?.damage || '—'
+    })),
+    hasWeapons: modifications.some((mod) => String(mod?.category || '').toLowerCase().startsWith('weapon')),
+    emptyText: 'No Shipyard Builder systems are recorded on this vehicle yet.'
+  };
+}
+
 /**
  * Main context builder for vehicle sheet.
  *
@@ -642,6 +735,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const powerSummaryPanel = buildVehiclePowerSummaryPanel(actor, powerData);
   const cargoSummaryPanel = buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoState);
   const cargoManifestPanel = buildVehicleCargoManifestPanel(actor);
+  const shipyardPanel = buildVehicleShipyardPanel(actor);
   const abilitiesPanel = buildVehicleAbilitiesPanel(actor);
   const abilities = safeArray(abilitiesPanel?.abilities);
 
@@ -668,6 +762,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
       subsystemDetailPanel,
       shieldManagementPanel,
       powerSummaryPanel,
+      shipyardPanel,
       cargoSummaryPanel,
       cargoManifestPanel,
       pilotManeuverPanel,
@@ -695,7 +790,8 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
       systems: {
         subsystemDetailPanel,
         shieldManagementPanel,
-        powerSummaryPanel
+        powerSummaryPanel,
+        shipyardPanel
       },
       cargo: {
         cargoSummaryPanel,

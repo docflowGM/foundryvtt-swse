@@ -1,16 +1,25 @@
 {{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
-  frameOuterClass="swse-character-sheet-wrapper swse-character-sheet-wrapper--concept swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept"
-  frameDataSheetForm="character"
-  frameDataConceptSource="assets/Concept/Character Sheet v2.html"
+  frameOuterClass=actorSheetFrame.outerClass
+  frameDataSheetForm=actorSheetFrame.dataSheetForm
+  frameDataConceptSource=actorSheetFrame.conceptSource
   shellSurface=shellSurface
   shellTheme=sheetTheme
   shellMotionStyle=sheetMotionStyle
   shellStyleInline=sheetSurfaceStyleInline
+  shellExtraClass=actorSheetFrame.shellExtraClass
+  tabletExtraClass=actorSheetFrame.tabletExtraClass
+  screenExtraClass=actorSheetFrame.screenExtraClass
+  dragTitle=actorSheetFrame.dragTitle
+  dragLabel=actorSheetFrame.dragLabel
   topHomeAction="tablet-home"
   bottomHomeAction="tablet-home"
   showResize=true
 }}
         {{#if shellIsSheet}}
+          {{#if actorSheetMode.useNpcConceptSheet}}
+            {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-concept-content.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+          {{else}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs"}}
@@ -42,6 +51,12 @@
               <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
                 {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs"}}
               </section>
+
+              {{#if isDroidActor}}
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="droid-systems">
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
+              </section>
+              {{/if}}
 
               {{#if forceSensitive}}
               <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
@@ -92,6 +107,7 @@
           </div>
 
           {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+          {{/if}}
         {{else}}
           <div class="swse-shell-screen-surface swse-shell-screen-surface--{{shellSurface}}">
             {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
@@ -101,6 +117,6 @@
   bottomHomeAction="tablet-home"
   bottomHomeTitle="Return to holopad home"
   bottomHomeLabel="Return to holopad home"
-  bottomEngraving="CEC ID 31 · CLASS A · NO HOT OPEN"
+  bottomEngraving=actorSheetFrame.bottomEngraving
   showResize=true
 }}

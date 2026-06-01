@@ -122,6 +122,9 @@
       </section>
 
       <section class="tab flexcol" data-group="primary" data-tab="systems">
+        {{#if vehiclePanels.shipyardPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shipyard-systems-panel.hbs" panel=vehiclePanels.shipyardPanel}}
+        {{/if}}
         {{#if vehiclePanels.subsystemDetailPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs" panel=vehiclePanels.subsystemDetailPanel}}
         {{/if}}

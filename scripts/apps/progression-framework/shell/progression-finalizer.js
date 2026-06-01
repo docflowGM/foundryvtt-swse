@@ -33,6 +33,11 @@ import {
   buildLevelUpFinalizationReceipt,
   validateLevelUpRequiredSelections,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
+import {
+  filterDroidForbiddenItemSpecs,
+  getDroidAcquisitionBlockReason,
+  isDroidProgressionActor,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 
 export class ProgressionFinalizer {
   /**
@@ -257,6 +262,10 @@ export class ProgressionFinalizer {
         if (!item.type) {
           errors.push('Item in mutation plan missing type');
         }
+        const droidBlockReason = getDroidAcquisitionBlockReason(actor, item, { droid: mutationPlan.set?.['system.isDroid'] ? { isDroid: true } : null });
+        if (droidBlockReason) {
+          errors.push(`Droid-forbidden item grant "${item.name || item.id || 'Unknown'}": ${droidBlockReason}`);
+        }
       }
     }
 
@@ -295,6 +304,8 @@ export class ProgressionFinalizer {
     const session = sessionState.progressionSession;
     const selections = session.draftSelections || {};
     const summarySelection = selections.survey || {};
+
+    this._validateDroidForbiddenSelections(sessionState.actor, session, selections);
 
     // PHASE 1: Check droid build from canonical session only
     const droidBuild = selections.droid;
@@ -375,6 +386,36 @@ export class ProgressionFinalizer {
     }
   }
 
+  static _validateDroidForbiddenSelections(actor, session, selections = {}) {
+    if (!isDroidProgressionActor(actor, {
+      subtype: session?.subtype,
+      droidContext: session?.droidContext,
+      droid: selections?.droid,
+    })) {
+      return;
+    }
+
+    const entries = [
+      ...(Array.isArray(selections.feats) ? selections.feats : []),
+      ...(Array.isArray(selections.talents) ? selections.talents : []),
+      ...(Array.isArray(selections.forcePowers) ? selections.forcePowers : []),
+      ...(Array.isArray(selections.forceTechniques) ? selections.forceTechniques : []),
+      ...(Array.isArray(selections.forceSecrets) ? selections.forceSecrets : []),
+    ];
+
+    for (const entry of entries) {
+      const reason = getDroidAcquisitionBlockReason(actor, entry, {
+        subtype: session?.subtype,
+        droidContext: session?.droidContext,
+        droid: selections?.droid,
+      });
+      if (reason) {
+        const name = entry?.name || entry?.label || entry?.id || String(entry || 'Unknown');
+        throw new Error(`Droid progression invalid: "${name}" is not legal for droids. ${reason}`);
+      }
+    }
+  }
+
   /**
    * PHASE 2.X (Document Targeting): Validate actor document type matches progression subtype.
    * Ensures actors are finalized with the correct document/sheet type from the start.
@@ -449,6 +490,11 @@ export class ProgressionFinalizer {
     const pendingBackgroundContext = selections.pendingBackgroundContext || background?.pendingContext || null;
     const languages = selections.languages || [];
     const skills = selections.skills || [];
+    const isDroidProgression = isDroidProgressionActor(actor, {
+      subtype: sessionState.progressionSession?.subtype,
+      droidContext: sessionState.progressionSession?.droidContext,
+      droid: selections.droid,
+    });
 
     const set = {};
     const add = { items: [] };
@@ -466,7 +512,14 @@ export class ProgressionFinalizer {
 
     // PHASE 3: Canonical species materialization
     // Use pending context from Phase 2 to materialize species durably
-    if (sessionState.mode === 'chargen' && pendingSpeciesContext) {
+    if (sessionState.mode === 'chargen' && isDroidProgression) {
+      // Droid Builder/Garage Construction Mode is the species-equivalent identity
+      // authority for droids. Never materialize biological Species data onto a
+      // droid actor, even if stale sessions contain species selections.
+      set['system.species'] = '';
+      set['system.race'] = '';
+      set['flags.swse.progression.speciesSkippedForDroid'] = true;
+    } else if (sessionState.mode === 'chargen' && pendingSpeciesContext) {
       const materialization = await applyCanonicalSpeciesToActor(actor, pendingSpeciesContext);
       if (materialization.success) {
         const mutations = materialization.mutations;
@@ -538,11 +591,16 @@ export class ProgressionFinalizer {
       }
     }
     if (clazz) {
+      const classSystemForActor = this._sanitizeClassSystemForDroid(clazz.system || {}, isDroidProgression);
+      const classSelectionForActor = isDroidProgression && clazz && typeof clazz === 'object'
+        ? { ...clazz, system: classSystemForActor, forceSensitive: false }
+        : clazz;
+
       // Phase 3B: Canonical class storage is system.class (object). During
       // level-up, preserve existing identity fields and update class item/history
       // instead of replacing the actor's primary class field.
       if (sessionState.mode === 'chargen') {
-        set['system.class'] = clazz;
+        set['system.class'] = classSelectionForActor;
       }
 
       if (sessionState.mode === 'levelup') {
@@ -559,19 +617,21 @@ export class ProgressionFinalizer {
         set['system.progression.classLevelHistory'] = this._buildClassLevelHistoryAfterLevelUp(actor, clazz, levelContext);
 
         if (levelContext.existingClassItemId) {
-          update.items.push({
+          const classUpdate = {
             _id: levelContext.existingClassItemId,
             'system.level': levelContext.selectedClassNextLevel,
             'system.classId': clazz.id || clazz.classId || clazz.sourceId || levelContext.selectedClassId,
             'flags.swse.progression.lastLeveledAt': new Date().toISOString(),
             'flags.swse.progression.lastSourceSession': sessionState.sessionId || 'unknown',
-          });
+          };
+          if (isDroidProgression) classUpdate['system.forceSensitive'] = false;
+          update.items.push(classUpdate);
         } else {
           add.items.push({
             name: clazz.name || clazz.label || String(clazz),
             type: 'class',
             system: {
-              ...(clazz.system || {}),
+              ...classSystemForActor,
               level: 1,
               classId: clazz.id || clazz.classId || clazz.sourceId || levelContext.selectedClassId,
             },
@@ -590,7 +650,7 @@ export class ProgressionFinalizer {
         add.items.push({
           name: clazz.name || clazz.label || String(clazz),
           type: 'class',
-          system: clazz.system || {},
+          system: classSystemForActor,
           flags: {
             swse: {
               progression: {
@@ -711,7 +771,10 @@ export class ProgressionFinalizer {
     }
 
     if (sessionState.mode === 'chargen') {
-      const startingHp = Number(summary.startingHp || 0) || this._computeStartingHP(clazz, attrValues, actor, selections.droid).total;
+      const computedStartingHp = this._computeStartingHP(clazz, attrValues, actor, selections.droid).total;
+      const startingHp = isDroidProgression
+        ? computedStartingHp
+        : (Number(summary.startingHp || 0) || computedStartingHp);
       if (Number.isFinite(startingHp) && startingHp > 0) {
         set['system.hp.value'] = startingHp;
         set['system.hp.max'] = startingHp;
@@ -761,7 +824,16 @@ export class ProgressionFinalizer {
     }
 
     if (sessionState.mode === 'levelup') {
-      const hpGain = Number(summary.hpGain || 0) || 0;
+      let hpGain = Number(summary.hpGain || 0) || 0;
+      if (isDroidProgression && hpGain > 0) {
+        // Defense-in-depth: droids never receive Constitution bonus HP. The HP
+        // generator already uses CON 0 for droids; clamp stale/manual summaries
+        // to the selected class hit die maximum so a CON bonus cannot leak in.
+        const hitDieOnlyMax = this._extractClassHitDie(clazz);
+        if (Number.isFinite(hitDieOnlyMax) && hitDieOnlyMax > 0) {
+          hpGain = Math.min(hpGain, hitDieOnlyMax);
+        }
+      }
       const currentHpMax = Number(actor?.system?.hp?.max ?? actor?.system?.derived?.hp?.max ?? 0) || 0;
       const currentHpValue = Number(actor?.system?.hp?.value ?? currentHpMax) || 0;
       if (hpGain > 0) {
@@ -858,7 +930,7 @@ export class ProgressionFinalizer {
       set['system.languageIds'] = Array.from(new Set([...existingLanguageIds, ...languageIds]));
     }
 
-    if (this._hasForceSensitivityGrant(actor, selections)) {
+    if (!isDroidProgression && this._hasForceSensitivityGrant(actor, selections)) {
       const existingDomains = actor?.system?.progression?.unlockedDomains || [];
       const nextDomains = Array.from(new Set([...(Array.isArray(existingDomains) ? existingDomains : []), 'force']));
       set['system.progression.unlockedDomains'] = nextDomains;
@@ -914,10 +986,19 @@ export class ProgressionFinalizer {
     await ProgressionContentAuthority.initialize?.();
 
     const classAutoGrantItems = await this._compileClassAutoGrantItems(actor, selections, sessionState, levelUpManifest);
-    add.items.push(...classAutoGrantItems.items);
+    add.items.push(...filterDroidForbiddenItemSpecs(classAutoGrantItems.items, actor, {
+      subtype: sessionState.progressionSession?.subtype,
+      droidContext: sessionState.progressionSession?.droidContext,
+      droid: selections.droid,
+    }));
     add.items.push(...await this._compileClassStarterEquipmentItems(actor, selections, sessionState));
     if (sessionState.mode === 'levelup') {
-      add.items.push(...await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState));
+      const automaticClassFeatures = await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState);
+      add.items.push(...filterDroidForbiddenItemSpecs(automaticClassFeatures, actor, {
+        subtype: sessionState.progressionSession?.subtype,
+        droidContext: sessionState.progressionSession?.droidContext,
+        droid: selections.droid,
+      }));
     }
     if (classAutoGrantItems.suppressed?.length) {
       set['flags.swse.suppressedClassAutoGrants'] = classAutoGrantItems.suppressed;
@@ -932,7 +1013,11 @@ export class ProgressionFinalizer {
     }
 
     const compiledAbilityItems = await this._compileProgressionAbilityItems(actor, selections, sessionState);
-    add.items.push(...compiledAbilityItems.items);
+    add.items.push(...filterDroidForbiddenItemSpecs(compiledAbilityItems.items, actor, {
+      subtype: sessionState.progressionSession?.subtype,
+      droidContext: sessionState.progressionSession?.droidContext,
+      droid: selections.droid,
+    }));
     if (Array.isArray(compiledAbilityItems.deleteItems) && compiledAbilityItems.deleteItems.length) {
       itemsToDelete.push(...compiledAbilityItems.deleteItems);
     }
@@ -1030,6 +1115,8 @@ export class ProgressionFinalizer {
   }
 
   static _hasForceSensitivityGrant(actor, selections = {}) {
+    if (isDroidProgressionActor(actor, { droid: selections?.droid })) return false;
+
     const featSelections = [
       ...(Array.isArray(selections.feats) ? selections.feats : []),
       ...this._collectSelectionEntries(selections, ['feat']),
@@ -1398,6 +1485,31 @@ export class ProgressionFinalizer {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_|_$/g, '');
+  }
+
+  static _sanitizeClassSystemForDroid(system = {}, isDroidProgression = false) {
+    const clone = foundry.utils.deepClone(system || {});
+    if (isDroidProgression) {
+      clone.forceSensitive = false;
+      clone.force_sensitivity = false;
+      clone.forceSensitiveClassFeature = false;
+    }
+    return clone;
+  }
+
+  static _extractClassHitDie(classSelection = null) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const explicit = classModel?.system?.hitDie ?? classModel?.system?.hit_die ?? classModel?.hitDie ?? classModel?.hit_die ?? null;
+    if (Number.isFinite(Number(explicit))) return Number(explicit);
+    const match = String(explicit || '').match(/d(\d+)/i);
+    if (match) return Number(match[1]);
+    const hitDice = {
+      elite_trooper: 12, independent_droid: 12,
+      assassin: 10, bounty_hunter: 10, droid_commander: 10, gladiator: 10, imperial_knight: 10, jedi: 10, jedi_knight: 10, jedi_master: 10, master_privateer: 10, martial_arts_master: 10, pathfinder: 10, sith_apprentice: 10, sith_lord: 10, soldier: 10, vanguard: 10,
+      ace_pilot: 8, beast_rider: 8, charlatan: 8, corporate_agent: 8, crime_lord: 8, enforcer: 8, force_adept: 8, force_disciple: 8, gunslinger: 8, improviser: 8, infiltrator: 8, medic: 8, melee_duelist: 8, military_engineer: 8, officer: 8, outlaw: 8, saboteur: 8, scout: 8, shaper: 8,
+      noble: 6, scoundrel: 6, slicer: 6,
+    };
+    return hitDice[this._classKey(classModel)] || 6;
   }
 
   static _computeStartingHP(classSelection, attrValues = {}, actor = null, droidBuild = null) {

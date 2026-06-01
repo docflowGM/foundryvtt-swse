@@ -150,12 +150,23 @@
                 <td><span class="timestamp">{{this.timeSubmitted}}</span></td>
                 <td><span class="actor-name">{{this.ownerActorName}}</span></td>
                 <td><span class="type-badge {{this.type}}">{{capitalize this.type}}</span></td>
-                <td><strong>{{this.draftData.name}}</strong></td>
-                <td><span class="credit-amount">{{this.costCredits}}</span></td>
+                <td>
+                  <strong>{{this.assetName}}</strong>
+                  {{#if this.frameLabel}}<div class="approval-detail-line">Frame: {{this.frameLabel}}</div>{{/if}}
+                  {{#if this.epSummary}}<div class="approval-detail-line">{{this.epSummary}}</div>{{/if}}
+                  {{#if this.approvalReason}}<div class="approval-detail-line warn">{{this.approvalReason}}</div>{{/if}}
+                  {{#if this.reviewWarning}}<div class="approval-detail-line danger">{{this.reviewWarning}}</div>{{/if}}
+                  <pre class="approval-mod-summary">{{this.modificationSummary}}</pre>
+                </td>
+                <td>
+                  <span class="credit-amount">{{this.costLabel}}</span>
+                  <div class="approval-detail-line">Wallet: {{this.currentCreditsLabel}}</div>
+                  <div class="approval-detail-line">After: {{this.afterCreditsLabel}}</div>
+                </td>
                 <td class="action-cell">
                   <button class="action-btn icon-btn swse-ui-button" data-action="preview-approval" data-index="{{@index}}" title="View the finalized actor sheet as it will appear if approved. No changes can be made.">👁️</button>
                   <button class="action-btn icon-btn swse-ui-button" data-action="edit-approval" data-index="{{@index}}" title="Edit the draft before approval. Changes apply only if the purchase is approved.">✏️</button>
-                  <button class="action-btn icon-btn approve" data-action="approve-custom" data-index="{{@index}}" title="Approve this purchase. Credits will be deducted and the actor will be granted to the player.">✓</button>
+                  <button class="action-btn icon-btn approve" data-action="approve-custom" data-index="{{@index}}" title="Approve this purchase. Credits will be deducted and the actor will be granted to the player." {{#unless this.canApprove}}disabled{{/unless}}>✓</button>
                   <button class="action-btn icon-btn deny" data-action="deny-custom" data-index="{{@index}}" title="Deny this purchase. No credits or actors will be created.">✕</button>
                 </td>
               </tr>

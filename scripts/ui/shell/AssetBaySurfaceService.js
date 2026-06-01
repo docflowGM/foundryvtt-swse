@@ -81,6 +81,28 @@ function statusLine(entry, actor = null, mode = 'garage') {
   return `${hpText} · ${source}`;
 }
 
+function ownershipKind(entry, actor = null, ownerActor = null) {
+  const directOwnerId = normalizeId(entry?.ownerActorId ?? actor?.system?.ownedByActorId ?? actor?.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerActorId);
+  if (directOwnerId && directOwnerId === ownerActor?.id) return 'owned';
+
+  const ownerUserId = entry?.ownerUserId ?? actor?.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerUserId ?? null;
+  const ownerUser = ownerUserId ? game.users?.get?.(ownerUserId) : null;
+  if (ownerUser?.character?.id === ownerActor?.id) return 'owned';
+
+  if (actor && game.user?.isGM && actor.system?.ownedByActorId && actor.system.ownedByActorId !== ownerActor?.id) return 'gm-linked';
+  if (actor && Number(actor.ownership?.[game.user?.id] ?? 0) >= 3 && !directOwnerId) return 'shared';
+  return actor ? 'linked' : 'unresolved';
+}
+
+function ownershipLabel(kind, mode = 'garage') {
+  if (kind === 'owned') return 'Player-owned';
+  if (kind === 'shared') return mode === 'shipyard' ? 'Shared ship' : 'Shared droid';
+  if (kind === 'gm-linked') return 'GM-linked';
+  if (kind === 'unresolved') return 'Unresolved link';
+  return 'Linked asset';
+}
+
+
 function collectOwnedEntries(ownerActor, mode) {
   const system = ownerActor?.system ?? {};
   const candidates = [
@@ -103,6 +125,7 @@ function collectOwnedEntries(ownerActor, mode) {
     const id = normalizeId(actor?.id ?? entry?.id ?? entry?.actorId ?? entry?.uuid ?? displayName(entry, actor));
     if (!id || seen.has(id)) continue;
     seen.add(id);
+    const ownerKind = ownershipKind(entry, actor, ownerActor);
     assets.push({
       id,
       actorId: actor?.id ?? id,
@@ -112,6 +135,8 @@ function collectOwnedEntries(ownerActor, mode) {
       type: entryType(entry, actor),
       detail: detailLine(entry, actor, mode),
       status: statusLine(entry, actor, mode),
+      ownershipKind: ownerKind,
+      ownershipLabel: ownershipLabel(ownerKind, mode),
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
       canModify: Boolean(actor?.id),
@@ -142,8 +167,11 @@ export class AssetBaySurfaceService {
       actorName: actor?.name ?? '',
       emptyTitle: isShipyard ? 'No owned ships linked' : 'No owned droids linked',
       emptyText: isShipyard
-        ? 'Ships and vehicles purchased, granted, or linked to this actor appear here.'
+        ? 'Ships and vehicles purchased, granted, or linked to this actor appear here. You can also commission a new custom starship from this surface.'
         : 'Droids purchased, granted, or linked to this actor appear here. Droid PC sheets remain their own character sheet app.',
+      canBuildNew: isShipyard,
+      buildNewLabel: 'Build New Ship',
+      buildNewHelp: 'Open Shipyard Builder in store-construction mode for this character wallet.',
       assets,
       count: assets.length,
       hasAssets: assets.length > 0,

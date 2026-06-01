@@ -447,7 +447,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
         resolved: !needsResolution,  // Auto-resolved if not needing manual roll
         gain: hpGain,
         method: hpGeneration,
-        formula: `d${hitDie} ${actor.system.attributes.con?.mod >= 0 ? '+' : ''}${actor.system.attributes.con?.mod || 0}`,
+        formula: `d${hitDie}${(actor?.type === 'droid' || actor?.system?.isDroid === true) ? '' : ` ${(actor.system.attributes.con?.mod || 0) >= 0 ? '+' : ''}${actor.system.attributes.con?.mod || 0}`}`,
         needsResolution,
         hitDie,
       };
@@ -496,9 +496,9 @@ export class ConfirmStep extends ProgressionStepPlugin {
       const newLevel = (actor.system.details?.level || 1) + 1;
       const classData = actor.system.class?.primary;
       const hitDie = this._extractHitDie(classData);
-      const conMod = actor.system.attributes.con?.mod || 0;
+      const conMod = (actor?.type === 'droid' || actor?.system?.isDroid === true) ? 0 : (actor.system.attributes.con?.mod || 0);
 
-      // Maximum: hitDie + CON mod
+      // Maximum: hitDie + CON mod. Droids have no Constitution, so this is hit die only.
       const maxHPGain = Math.max(1, hitDie + conMod);
 
       this._hpGainState.resolved = true;

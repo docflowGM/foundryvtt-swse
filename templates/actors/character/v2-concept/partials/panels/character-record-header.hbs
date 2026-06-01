@@ -1,7 +1,7 @@
 <section class="swse-concept-panel">
   <header class="swse-concept-panel__header">
     <div>
-      <h3 class="swse-concept-panel__title">Character Identity</h3>
+      <h3 class="swse-concept-panel__title">Actor Identity</h3>
       <p class="swse-concept-panel__hint">Editable identity record and canonical biography fields.</p>
     </div>
   </header>
@@ -25,6 +25,7 @@
       {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-class">Select</button>{{/if}}
     </div>
 
+    {{#unless actorSheetMode.hideSpeciesSection}}
     <div class="swse-concept-action-row">
       <label class="swse-concept-field swse-concept-field--action">
         <span>Species</span>
@@ -32,6 +33,16 @@
       </label>
       {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-species">Select</button>{{/if}}
     </div>
+    {{else}}
+    <div class="swse-concept-readout">
+      <span>Droid Chassis</span>
+      <strong>{{conceptLayout.identity.chassisLabel}}</strong>
+    </div>
+    <div class="swse-concept-readout">
+      <span>Droid Degree</span>
+      <strong>{{conceptLayout.identity.degreeLabel}}</strong>
+    </div>
+    {{/unless}}
 
     <label class="swse-concept-field">
       <span>Level</span>
@@ -65,8 +76,8 @@
 
     <div class="swse-concept-action-row">
       <label class="swse-concept-field swse-concept-field--action">
-        <span>Homeworld</span>
-        <input type="text" name="system.planetOfOrigin" value="{{biographyPanel.identity.homeworld}}" placeholder="Homeworld" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+        <span>{{conceptLayout.identity.originLabel}}</span>
+        <input type="text" name="system.planetOfOrigin" value="{{biographyPanel.identity.homeworld}}" placeholder="{{conceptLayout.identity.originLabel}}" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </label>
       {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-homeworld">Select</button>{{/if}}
     </div>

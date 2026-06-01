@@ -904,16 +904,16 @@ export class HomeSurfaceService {
         icon: '◈',
         routeId: 'asset-bay',
         bayMode: 'shipyard',
-        contextMode: 'modifyExisting',
-        visible: assetSummary.vehicleCount > 0,
-        enabled: assetSummary.vehicleCount > 0,
+        contextMode: assetSummary.vehicleCount > 0 ? 'modifyExisting' : 'storeConstruction',
+        visible: true,
+        enabled: true,
         badge: assetSummary.vehicleCount > 1 ? String(assetSummary.vehicleCount) : null,
         badgeType: assetSummary.vehicleCount > 1 ? 'info' : null,
         featured: false,
         locked: false,
-        status: assetSummary.vehicleCount > 1 ? `${assetSummary.vehicleCount} SHIPS` : 'READY',
-        statusTone: '',
-        description: 'Owned ship control point'
+        status: assetSummary.vehicleCount > 1 ? `${assetSummary.vehicleCount} SHIPS` : assetSummary.vehicleCount === 1 ? 'READY' : 'BUILD',
+        statusTone: assetSummary.vehicleCount > 0 ? '' : 'warn',
+        description: assetSummary.vehicleCount > 0 ? 'Owned ship control point' : 'Build or commission a custom starship'
       },
       {
         id: 'garage',

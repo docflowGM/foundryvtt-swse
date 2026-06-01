@@ -12,7 +12,7 @@
     <header class="swse-concept-panel__header">
       <div>
         <h3 class="swse-concept-panel__title">Ability Matrix</h3>
-        <p class="swse-concept-panel__hint">Direct access to the six core abilities with live total preview and roll hooks.</p>
+        <p class="swse-concept-panel__hint">{{#if isDroidActor}}Direct access to the five droid attributes with live total preview and roll hooks.{{else}}Direct access to the six core abilities with live total preview and roll hooks.{{/if}}</p>
       </div>
       <div class="swse-concept-ledger-row__actions">
         {{#if (eq actor.type "character")}}
@@ -52,10 +52,10 @@
             </label>
 
             <label class="swse-concept-ability-field">
-              <span>Species</span>
+              <span>{{#if @root.isDroidActor}}Chassis{{else}}Species{{/if}}</span>
               <input type="number"
                      data-field="racial"
-                     title="Edit the persisted species/racial adjustment."
+                     title="{{#if @root.isDroidActor}}Edit the persisted chassis adjustment.{{else}}Edit the persisted species/racial adjustment.{{/if}}"
                      name="system.attributes.{{ability.key}}.racial"
                      value="{{ability.racial}}">
             </label>

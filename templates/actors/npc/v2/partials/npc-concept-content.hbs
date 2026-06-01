@@ -1,22 +1,4 @@
-{{!--
-  NPC Concept Sheet V2 — conservative/readable NPC dossier.
-  Implements the uploaded concept using the existing NPC sheet host, shell surface,
-  profile builder, legal review, follower, beast, mount, and progression wiring.
---}}
-{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
-  frameOuterClass="swse-npc-sheet-wrapper swse-npc-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept"
-  frameDataSheetForm="npc"
-  shellSurface=shellSurface
-  shellTheme=sheetTheme
-  shellMotionStyle=sheetMotionStyle
-  shellStyleInline=sheetSurfaceStyleInline
-  topHomeAction="tablet-home"
-  bottomHomeAction="tablet-home"
-  tabletExtraClass="swse-npc-tablet"
-  screenExtraClass="swse-npc-screen"
-  showResize=true
-}}
-{{#if shellIsSheet}}
+{{!-- Shared NPC concept sheet content. Host this inside the shared actor shell. --}}
 <div class="swse swse-sheet v2 flexcol swse-sheet-ui swse-ui-shell swse-npc-concept-sheet swse-npc-kind--{{npcConcept.kind}}">
   {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs"}}
 
@@ -399,16 +381,3 @@
     {{/if}}
   </section>
 </div>
-
-  {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
-{{else}}
-  <div class="swse-shell-screen-surface swse-shell-screen-surface--{{shellSurface}}">
-    {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
-  </div>
-{{/if}}
-{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs"
-  bottomHomeAction="tablet-home"
-  bottomHomeTitle="Return to holopad home"
-  bottomHomeLabel="Return to holopad home"
-  bottomEngraving="CEC ID 31 · NPC OPS · SOURCE AUTHORITY"
-}}

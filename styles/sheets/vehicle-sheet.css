@@ -1173,3 +1173,124 @@ button.swse-vehicle-order-card {
   margin-top: 0.75rem;
   padding-top: 0.75rem;
 }
+
+/* Shipyard Builder results panel */
+.swse-vehicle-shipyard-panel .swse-vehicle-panel-kicker {
+  color: var(--swse-text-muted, rgba(216,247,255,.68));
+  font-size: 0.72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.swse-vehicle-shipyard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .5rem;
+  margin-bottom: .75rem;
+}
+
+.swse-vehicle-shipyard-summary > div {
+  border: 1px solid rgba(126,231,255,.18);
+  background: rgba(0,0,0,.24);
+  padding: .55rem .65rem;
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.swse-vehicle-shipyard-summary span,
+.swse-vehicle-shipyard-summary em,
+.swse-vehicle-shipyard-mod span,
+.swse-vehicle-shipyard-mod em {
+  color: var(--swse-text-muted, rgba(216,247,255,.68));
+  font-size: .72rem;
+  font-style: normal;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.swse-vehicle-shipyard-summary strong {
+  color: var(--swse-accent, #7ee7ff);
+  font-size: 1rem;
+}
+
+.swse-vehicle-shipyard-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .75rem;
+}
+
+.swse-vehicle-shipyard-group {
+  border: 1px solid rgba(126,231,255,.16);
+  background: rgba(0,0,0,.18);
+  padding: .6rem;
+}
+
+.swse-vehicle-shipyard-group h4,
+.swse-vehicle-shipyard-removed h4 {
+  color: var(--swse-accent, #7ee7ff);
+  font-size: .78rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin: 0 0 .45rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.swse-vehicle-shipyard-mod-list {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.swse-vehicle-shipyard-mod {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: .45rem;
+  align-items: start;
+  padding: .45rem;
+  border-left: 2px solid rgba(126,231,255,.6);
+  background: rgba(0,0,0,.24);
+}
+
+.swse-vehicle-shipyard-mod strong {
+  display: block;
+  color: var(--swse-text, #d8f7ff);
+  font-size: .82rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.swse-vehicle-shipyard-mod p {
+  grid-column: 1 / -1;
+  margin: .1rem 0 0;
+  color: var(--swse-text-muted, rgba(216,247,255,.72));
+  font-size: .78rem;
+  line-height: 1.35;
+}
+
+.swse-vehicle-shipyard-mod.is-nonstandard {
+  border-left-color: #ffc857;
+}
+
+.swse-vehicle-shipyard-removed {
+  margin-top: .75rem;
+  border: 1px dashed rgba(255,200,87,.35);
+  padding: .55rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem .6rem;
+}
+
+.swse-vehicle-shipyard-removed span {
+  color: #ffc857;
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .swse-vehicle-shipyard-summary {
+    grid-template-columns: 1fr;
+  }
+}

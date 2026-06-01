@@ -1,3 +1,5 @@
+// DEPRECATED / ORPHANED (Phase 2.5): NPC actors now use SWSEV2CharacterSheet and the shared actor shell.
+// Retained only as historical/reference code until fully removed. Do not import/register this sheet.
 /**
  * scripts/sheets/v2/npc/NPCSheet.js
  *
@@ -267,5 +269,5 @@ export class NPCSheet extends HandlebarsApplicationMixin(foundry.applications.sh
   }
 }
 
-// Register NPC sheet
-foundry.documents.collections.Actors.registerSheet('foundryvtt-swse', NPCSheet, { types: ['npc'], makeDefault: false });
+// Deprecated/orphaned: do not self-register. NPC actors now register to SWSEV2CharacterSheet in index.js.
+// foundry.documents.collections.Actors.registerSheet('foundryvtt-swse', NPCSheet, { types: ['npc'], makeDefault: false });

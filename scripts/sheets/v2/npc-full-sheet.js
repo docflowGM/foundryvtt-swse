@@ -1,3 +1,5 @@
+// DEPRECATED / ORPHANED (Phase 2.5): NPC actors now use SWSEV2CharacterSheet and the shared actor shell.
+// Retained only as historical/reference code until fully removed. Do not register this sheet.
 // scripts/sheets/v2/npc-full-sheet.js
 
 import { SWSEV2CharacterSheet } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet.js";

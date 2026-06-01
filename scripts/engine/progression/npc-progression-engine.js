@@ -63,7 +63,9 @@ export class NpcProgressionEngine {
       'system.npcProfile.mode': 'progression',
       'system.npcProfile.sourceAuthority': 'progression',
       'system.npcProfile.legalProfile': 'heroic',
-      'system.npcProfile.legalState': 'unchecked'
+      'system.npcProfile.legalState': 'unchecked',
+      'system.promotedFromNpc': true,
+      'system.actorMode': 'heroic'
     };
 
     if (heroicClass) {
