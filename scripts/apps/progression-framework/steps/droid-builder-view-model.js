@@ -41,6 +41,87 @@ const CATEGORY_DESCRIPTIONS = {
 
 const REQUIRED_GROUPS = new Set(['locomotion', 'processor', 'appendage']);
 
+export const DROID_BUILDER_CONTEXT_PROFILES = Object.freeze({
+  chargenDraft: {
+    id: 'chargenDraft',
+    modeClass: 'chargen-draft',
+    hostKind: 'progression',
+    hudLabel: 'GARAGE CONSTRUCTION MODE',
+    hostLabel: 'Progression Draft',
+    modeLabel: 'Construction Draft',
+    railLabel: 'Current Build',
+    actionRailLabel: 'Action Rail',
+    validationLabel: 'Build Status',
+    subtitle: 'Garage construction mode for first-time droid assembly.',
+    description: 'Used by droid character creation and other first-time droid build flows.',
+  },
+  buildNew: {
+    id: 'buildNew',
+    modeClass: 'build-new',
+    hostKind: 'garage',
+    hudLabel: 'GARAGE BUILD MODE',
+    hostLabel: 'New Droid',
+    modeLabel: 'New Build',
+    railLabel: 'Current Build',
+    actionRailLabel: 'Action Rail',
+    validationLabel: 'Build Status',
+    subtitle: 'Garage construction mode for a new droid chassis.',
+    description: 'Used when the Garage hosts a first-time droid build outside progression.',
+  },
+  modifyExisting: {
+    id: 'modifyExisting',
+    modeClass: 'modify-existing',
+    hostKind: 'garage',
+    hudLabel: 'GARAGE MODIFICATION MODE',
+    hostLabel: 'Existing Droid',
+    modeLabel: 'Modification Draft',
+    railLabel: 'Installed Systems',
+    actionRailLabel: 'Modification Rail',
+    validationLabel: 'Modification Status',
+    subtitle: 'Garage modification mode for an existing owned droid.',
+    description: 'Used by Garage when modifying an already-created droid.',
+  },
+  storeQuote: {
+    id: 'storeQuote',
+    modeClass: 'store-quote',
+    hostKind: 'store',
+    hudLabel: 'GARAGE QUOTE MODE',
+    hostLabel: 'Store Quote',
+    modeLabel: 'Purchase Quote',
+    railLabel: 'Quoted Build',
+    actionRailLabel: 'Quote Rail',
+    validationLabel: 'Quote Status',
+    subtitle: 'Garage construction mode for a store-side droid quote.',
+    description: 'Used by Store-side droid construction before purchase or GM approval.',
+  },
+  followerDraft: {
+    id: 'followerDraft',
+    modeClass: 'follower-draft',
+    hostKind: 'follower',
+    hudLabel: 'GARAGE FOLLOWER MODE',
+    hostLabel: 'Follower Droid',
+    modeLabel: 'Follower Draft',
+    railLabel: 'Follower Build',
+    actionRailLabel: 'Build Rail',
+    validationLabel: 'Follower Build Status',
+    subtitle: 'Garage construction mode for a follower or minion droid chassis.',
+    description: 'Used by follower and minion flows that need the shared droid construction workbench.',
+  },
+  gmDraft: {
+    id: 'gmDraft',
+    modeClass: 'gm-draft',
+    hostKind: 'gm',
+    hudLabel: 'GM GARAGE MODE',
+    hostLabel: 'GM Build',
+    modeLabel: 'GM Draft',
+    railLabel: 'GM Build',
+    actionRailLabel: 'Command Rail',
+    validationLabel: 'Command Status',
+    subtitle: 'Garage construction mode for GM-created droid chassis.',
+    description: 'Used by future GM tools that host the same droid construction workbench.',
+  },
+});
+
 
 function selectedKeyMatches(selectedKey, uid, category, id, subcategory = null) {
   if (!selectedKey) return false;
@@ -54,8 +135,11 @@ export class DroidBuilderViewModelAdapter {
    * Build a Garage-style view model for the current droid builder state.
    */
   static build({ droidState, readiness = null, suggestedIds = new Set(), confidenceMap = new Map(), contextMode = 'chargenDraft', selectedComponentKey = null } = {}) {
+    const normalizedContextMode = this.#normalizeContextMode(contextMode);
+    const contextProfile = this.#contextProfileFor(normalizedContextMode);
+
     if (!droidState) {
-      return this.#emptyViewModel(contextMode);
+      return this.#emptyViewModel(normalizedContextMode);
     }
 
     const degree = this.#normalizeDegree(droidState.droidDegree);
@@ -89,10 +173,12 @@ export class DroidBuilderViewModelAdapter {
     const validation = this.#buildValidation(readiness, budget, requiredChecklist);
 
     return {
-      mode: contextMode,
-      contextMode,
+      mode: normalizedContextMode,
+      modeClass: contextProfile.modeClass,
+      contextMode: normalizedContextMode,
+      contextProfile,
       title: 'Droid Chassis Builder',
-      subtitle: 'Garage construction mode for first-time droid assembly.',
+      subtitle: contextProfile.subtitle,
       chassis: {
         degree,
         degreeLabel: degreePackage?.name || this.#titleCase(degree),
@@ -119,14 +205,19 @@ export class DroidBuilderViewModelAdapter {
       validation,
       warnings: validation.warnings,
       errors: validation.errors,
-      dataShapeVersion: 1,
+      reusableHosts: ['chargenDraft', 'buildNew', 'modifyExisting', 'storeQuote', 'followerDraft', 'gmDraft'],
+      dataShapeVersion: 2,
     };
   }
 
   static #emptyViewModel(contextMode) {
+    const normalizedContextMode = this.#normalizeContextMode(contextMode);
+    const contextProfile = this.#contextProfileFor(normalizedContextMode);
     return {
-      mode: contextMode,
-      contextMode,
+      mode: normalizedContextMode,
+      modeClass: contextProfile.modeClass,
+      contextMode: normalizedContextMode,
+      contextProfile,
       title: 'Droid Chassis Builder',
       subtitle: 'No droid construction state is available yet.',
       chassis: null,
@@ -146,8 +237,36 @@ export class DroidBuilderViewModelAdapter {
       },
       warnings: [],
       errors: ['Droid construction state unavailable.'],
-      dataShapeVersion: 1,
+      reusableHosts: ['chargenDraft', 'buildNew', 'modifyExisting', 'storeQuote', 'followerDraft', 'gmDraft'],
+      dataShapeVersion: 2,
     };
+  }
+
+  static #normalizeContextMode(contextMode) {
+    const normalized = String(contextMode || 'chargenDraft').trim();
+    if (DROID_BUILDER_CONTEXT_PROFILES[normalized]) return normalized;
+    const lower = normalized.toLowerCase();
+    const aliases = {
+      chargen: 'chargenDraft',
+      charactercreation: 'chargenDraft',
+      charactercreationdraft: 'chargenDraft',
+      new: 'buildNew',
+      newbuild: 'buildNew',
+      garage: 'modifyExisting',
+      modify: 'modifyExisting',
+      store: 'storeQuote',
+      quote: 'storeQuote',
+      follower: 'followerDraft',
+      minion: 'followerDraft',
+      gm: 'gmDraft',
+      gmdraft: 'gmDraft',
+    };
+    return aliases[lower] || 'chargenDraft';
+  }
+
+  static #contextProfileFor(contextMode) {
+    return DROID_BUILDER_CONTEXT_PROFILES[this.#normalizeContextMode(contextMode)]
+      || DROID_BUILDER_CONTEXT_PROFILES.chargenDraft;
   }
 
   static #normalizeDegree(degree) {
@@ -273,15 +392,30 @@ export class DroidBuilderViewModelAdapter {
       groupId,
       category: item.category || item.subcategory || this.#actionCategoryForGroup(groupId),
       subcategory,
+      type: CATEGORY_LABELS[groupId] || CATEGORY_LABELS[actionCategory] || this.#titleCase(groupId),
+      description: item.description || '',
+      baseCost: this.#formatCredits(item.baseCost ?? item.cost ?? 0),
+      adjustedCost: Number(item.cost || 0),
       cost: Number(item.cost || 0),
       weight: Number(item.weight || 0),
       speed: item.speed ?? null,
+      sizeMultiplier: item.sizeMultiplier || item.costFactor || 1,
+      budgetImpact: 0,
+      budgetImpactLabel: '0 cr',
       isDefault: !!item.isDefault,
       isGranted: !!item.isGranted,
       isRequired: !!item.isRequired || (groupId === 'processor' && item.id === 'heuristic'),
       isLocked: !!item.isLocked || (groupId === 'processor' && item.id === 'heuristic'),
+      isInstalled: true,
       isSelected: selectedKeyMatches(selectedComponentKey, detailKey, actionCategory, item.id || '', subcategory),
+      isSuggested: false,
+      canInstall: false,
+      canRemove: !(!!item.isLocked || (groupId === 'processor' && item.id === 'heuristic')),
+      disabled: false,
+      disabledReasons: [],
+      compatibility: { isCompatible: true, reasons: [] },
       detailKey,
+      installAction: null,
       removeAction: {
         action: 'remove-system',
         category: this.#actionCategoryForGroup(groupId),
@@ -754,7 +888,9 @@ export class DroidBuilderViewModelAdapter {
       };
     }
 
-    const item = availableSystemsFlat.find(item => item.uid === selectedComponentKey) || null;
+    const installedSystemsFlat = (installedGroups || []).flatMap(group => group.items || []);
+    const installedItem = installedSystemsFlat.find(item => item.detailKey === selectedComponentKey || item.uid === selectedComponentKey) || null;
+    const item = availableSystemsFlat.find(item => item.uid === selectedComponentKey) || installedItem || null;
 
     if (!item) {
       return {

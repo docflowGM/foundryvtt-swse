@@ -2,10 +2,10 @@
 {{!-- Phase 5: right-rail component selection/action flow using builderVm while preserving existing state contracts. --}}
 
 {{#if builderVm.chassis}}
-<div class="prog-droid-builder prog-droid-builder--garage swse-droid-builder-surface swse-ui-shell" data-builder-mode="{{builderVm.contextMode}}">
+<div class="prog-droid-builder prog-droid-builder--garage prog-droid-builder--mode-{{builderVm.modeClass}} swse-droid-builder-surface swse-ui-shell" data-builder-mode="{{builderVm.modeClass}}" data-builder-context="{{builderVm.contextMode}}" data-builder-host="{{builderVm.contextProfile.hostKind}}">
   <div class="prog-droid-builder__hud">
-    <div class="prog-droid-builder__hud-tag"><span class="prog-droid-builder__hud-dot"></span>GARAGE CONSTRUCTION MODE</div>
-    <div class="prog-droid-builder__hud-tag">CHASSIS BUILDER</div>
+    <div class="prog-droid-builder__hud-tag prog-droid-builder__hud-tag--mode"><span class="prog-droid-builder__hud-dot"></span>{{builderVm.contextProfile.hudLabel}}</div>
+    <div class="prog-droid-builder__hud-tag">{{builderVm.contextProfile.hostLabel}}</div>
     <div class="prog-droid-builder__hud-tag prog-droid-builder__hud-tag--serial">{{builderVm.chassis.degreeLabel}} · {{builderVm.chassis.sizeLabel}}</div>
   </div>
 
@@ -56,8 +56,8 @@
     <aside class="prog-droid-builder__left-rail" aria-label="Current droid build">
       <section class="prog-droid-builder__garage-panel prog-droid-builder__garage-summary">
         <div class="prog-droid-builder__garage-head">
-          <h3>Current Build</h3>
-          <span>{{builderVm.mode}}</span>
+          <h3>{{builderVm.contextProfile.railLabel}}</h3>
+          <span>{{builderVm.contextProfile.modeLabel}}</span>
         </div>
         <div class="prog-droid-builder__budget">
           <div class="prog-droid-builder__budget-rows">
@@ -233,7 +233,7 @@
       <section class="prog-droid-builder__garage-panel prog-droid-builder__detail">
         <div class="prog-droid-builder__garage-head">
           <h3>Component Detail</h3>
-          <span>Action Rail</span>
+          <span>{{builderVm.contextProfile.actionRailLabel}}</span>
         </div>
         {{#if builderVm.selectedDetail.isEmpty}}
           <div class="prog-droid-builder__detail-empty">
@@ -268,7 +268,7 @@
           {{else}}
             <div class="prog-droid-builder__garage-panel">
               <div class="prog-droid-builder__garage-head"><h3>Compatibility</h3><span>Ready</span></div>
-              <p class="prog-droid-builder__detail-description">This component is compatible with the current chassis view model.</p>
+              <p class="prog-droid-builder__detail-description">This component is compatible with the current chassis and builder context.</p>
             </div>
           {{/if}}
 
@@ -303,7 +303,7 @@
 
       <section class="prog-droid-builder__garage-panel">
         <div class="prog-droid-builder__garage-head">
-          <h3>Build Status</h3>
+          <h3>{{builderVm.contextProfile.validationLabel}}</h3>
           <span>{{#if buildComplete}}Complete{{else}}Incomplete{{/if}}</span>
         </div>
         {{#if buildComplete}}
@@ -319,6 +319,14 @@
             <p class="prog-droid-builder__detail-description">{{builderVm.validation.summary}}</p>
           {{/if}}
         {{/if}}
+      </section>
+
+      <section class="prog-droid-builder__garage-panel prog-droid-builder__context-note">
+        <div class="prog-droid-builder__garage-head">
+          <h3>Reuse Context</h3>
+          <span>{{builderVm.contextProfile.hostKind}}</span>
+        </div>
+        <p>{{builderVm.contextProfile.description}}</p>
       </section>
     </aside>
   </div>

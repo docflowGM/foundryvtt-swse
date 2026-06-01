@@ -229,14 +229,26 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     return system.weightFormula(costFactor);
   }
 
+  _getDroidBuilderContextMode(shell = null) {
+    const droidContext = shell?.progressionSession?.droidContext || {};
+    return droidContext.contextMode
+      || droidContext.builderMode
+      || this.descriptor?.contextMode
+      || this.descriptor?.builderContextMode
+      || 'chargenDraft';
+  }
+
   /**
    * Provide step data to templates.
    */
   async getStepData(context) {
+    const shell = context?.shell || context?.progressionShell || null;
+    const contextMode = this._getDroidBuilderContextMode(shell);
+
     if (!this._droidState) {
       const builderVm = DroidBuilderViewModelAdapter.build({
         droidState: null,
-        contextMode: 'chargenDraft',
+        contextMode,
       });
       return {
         droidState: null,
@@ -262,7 +274,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       readiness,
       suggestedIds,
       confidenceMap,
-      contextMode: 'chargenDraft',
+      contextMode,
       selectedComponentKey: this._selectedComponentKey,
     });
 
@@ -1089,7 +1101,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const builderVm = DroidBuilderViewModelAdapter.build({
       droidState: this._droidState,
       readiness,
-      contextMode: 'chargenDraft',
+      contextMode,
       selectedComponentKey: this._selectedComponentKey,
     });
 

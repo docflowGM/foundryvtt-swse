@@ -1869,3 +1869,137 @@
 .progression-shell .prog-droid-builder__detail-empty {
   min-height: 140px;
 }
+
+
+/* ============================================
+   PHASE 7 + 8: REUSE READINESS, POLISH, RESPONSIVENESS
+   ============================================ */
+
+.progression-shell .prog-droid-builder--garage {
+  container-type: inline-size;
+}
+
+.progression-shell .prog-droid-builder__hud-tag--mode {
+  border-color: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 26%, transparent);
+  color: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 84%, white 8%);
+  background: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 8%, transparent);
+}
+
+.progression-shell .prog-droid-builder__context-note {
+  color: var(--droid-bay-muted, var(--prog-text-dim));
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.progression-shell .prog-droid-builder__context-note p {
+  margin: 0;
+}
+
+.progression-shell .prog-droid-builder__systems-browser {
+  padding-right: 4px;
+}
+
+.progression-shell .prog-droid-builder__panel {
+  display: none;
+}
+
+.progression-shell .prog-droid-builder__panel--active {
+  display: block;
+}
+
+.progression-shell .prog-droid-builder__component-card-body {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.progression-shell .prog-droid-builder__component-card--disabled:hover {
+  border-color: color-mix(in oklch, var(--droid-bay-negative, #ff6b6b) 30%, transparent);
+  box-shadow: 0 0 10px color-mix(in oklch, var(--droid-bay-negative, #ff6b6b) 10%, transparent);
+}
+
+.progression-shell .prog-droid-builder__detail-description {
+  line-height: 1.45;
+}
+
+.progression-shell .prog-droid-builder__cost-table {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder__right-rail > .prog-droid-builder__garage-panel,
+.progression-shell .prog-droid-builder__left-rail > .prog-droid-builder__garage-panel {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder__left-rail > .prog-droid-builder__scroll,
+.progression-shell .prog-droid-builder__systems-browser {
+  flex: 1 1 auto;
+}
+
+.progression-shell .prog-droid-builder__budget-row strong,
+.progression-shell .prog-droid-builder__cost-row strong {
+  white-space: nowrap;
+}
+
+.progression-shell .prog-droid-builder--mode-store-quote .prog-droid-builder__hud-tag--mode,
+.progression-shell .prog-droid-builder--mode-gm-draft .prog-droid-builder__hud-tag--mode {
+  border-color: color-mix(in oklch, var(--droid-bay-neutral, #ffc857) 32%, transparent);
+  color: var(--droid-bay-neutral, #ffc857);
+  background: color-mix(in oklch, var(--droid-bay-neutral, #ffc857) 8%, transparent);
+}
+
+.progression-shell .prog-droid-builder--mode-modify-existing .prog-droid-builder__hud-tag--mode {
+  border-color: color-mix(in oklch, var(--droid-bay-accent-alt, #ff71d9) 32%, transparent);
+  color: var(--droid-bay-accent-alt, #ff71d9);
+  background: color-mix(in oklch, var(--droid-bay-accent-alt, #ff71d9) 8%, transparent);
+}
+
+@media (min-width: 1181px) {
+  .progression-shell .prog-droid-builder__workbench {
+    grid-template-columns: minmax(220px, 0.78fr) minmax(400px, 1.48fr) minmax(300px, 0.98fr);
+  }
+
+  .progression-shell .prog-droid-builder__right-rail {
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .progression-shell .prog-droid-builder__right-rail > .prog-droid-builder__detail {
+    overflow-y: auto;
+  }
+}
+
+@media (max-height: 780px) {
+  .progression-shell .prog-droid-builder--garage {
+    gap: 8px;
+  }
+
+  .progression-shell .prog-droid-builder__hud,
+  .progression-shell .prog-droid-builder__builder-strip {
+    gap: 6px;
+  }
+
+  .progression-shell .prog-droid-builder__garage-panel,
+  .progression-shell .prog-droid-builder__component-card {
+    padding: 8px;
+  }
+
+  .progression-shell .prog-droid-builder__component-card {
+    min-height: 116px;
+  }
+
+  .progression-shell .prog-droid-builder__detail-empty {
+    min-height: 100px;
+  }
+}
+
+@container (max-width: 980px) {
+  .progression-shell .prog-droid-builder__builder-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .progression-shell .prog-droid-builder__control-group {
+    align-items: stretch;
+  }
+}
