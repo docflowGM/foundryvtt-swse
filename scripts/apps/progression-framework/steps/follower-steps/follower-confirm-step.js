@@ -23,6 +23,7 @@ export class FollowerConfirmStep extends FollowerStepBase {
 
   async onStepEnter(shell) {
     try {
+      this._lastShell = shell || null;
       this._ownerActor = this.getOwnerActor(shell);
       this._followerChoices = this.getFollowerChoices(shell);
 
@@ -51,15 +52,121 @@ export class FollowerConfirmStep extends FollowerStepBase {
     }
   }
 
+  async getStepData(context = {}) {
+    const shell = context?.shell || this._lastShell || null;
+    if (shell) {
+      this._lastShell = shell;
+      this._followerChoices = this.getFollowerChoices(shell);
+    }
+
+    const choices = this._followerChoices || {};
+    const stats = this._derivedStats || null;
+    const templateDisplay = choices.templateType
+      ? choices.templateType.charAt(0).toUpperCase() + choices.templateType.slice(1)
+      : 'Unknown';
+    const droidConfig = choices.droidConfig?.isDroid ? choices.droidConfig : null;
+    const droidBudget = droidConfig ? this._getDroidBudgetSummary(choices, droidConfig) : null;
+
+    const ownerName = this._ownerActor?.name || shell?.ownerActor?.name || shell?.actor?.name || 'Owner';
+    const fallbackFollowerName = this._buildFallbackFollowerName(ownerName, choices.templateType);
+
+    return {
+      mode: 'follower',
+      choices,
+      stats,
+      templateDisplay,
+      followerName: String(choices.followerName || ''),
+      fallbackFollowerName,
+      ownerName,
+      ownerHeroicLevel: this._ownerHeroicLevel || 1,
+      creditModel: this._creditModel || null,
+      droidConfig,
+      droidBudget,
+      abilityRows: this._formatAbilityRows(stats?.abilities || {}),
+      combatStats: this._formatCombatStats(stats, templateDisplay),
+      defenseRows: this._formatDefenseRows(stats?.defenses || {}),
+      selectedOptions: this._formatSelectedOptions(choices),
+      abilityChoiceLabel: choices.abilityChoice ? String(choices.abilityChoice).toUpperCase() : '',
+      droidAbilityChoiceLabel: droidConfig?.abilityChoice ? String(droidConfig.abilityChoice).toUpperCase() : '',
+      creditsResolved: choices.startingCredits !== null && choices.startingCredits !== undefined,
+    };
+  }
+
+  renderWorkSurface(stepData = {}) {
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/follower-summary-work-surface.hbs',
+      data: stepData,
+    };
+  }
+
+  async afterRender(shell, workSurfaceEl) {
+    try {
+      if (!workSurfaceEl) return;
+      this._attachCreditListeners(shell, workSurfaceEl);
+      this._attachNameListeners(shell, workSurfaceEl);
+    } catch (err) {
+      swseLogger.error('[FollowerConfirmStep] Error wiring summary controls:', err);
+    }
+  }
+
   async onRender(shell, html, context) {
+    // Kept for detached legacy rendering only. Inline V2 rendering uses
+    // renderWorkSurface() + afterRender() so the Summary step can share the
+    // normal progression summary visual language.
     try {
       const container = html.querySelector('[data-step-content]');
       if (!container) return;
       container.innerHTML = this._renderConfirmation();
       this._attachCreditListeners(shell, container);
     } catch (err) {
-      swseLogger.error('[FollowerConfirmStep] Error rendering:', err);
+      swseLogger.error('[FollowerConfirmStep] Error rendering legacy summary:', err);
     }
+  }
+
+  _formatAbilityRows(abilities = {}) {
+    const labels = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+    return Object.entries(abilities || {}).map(([key, value]) => ({
+      key,
+      label: labels[key] || String(key).toUpperCase(),
+      score: value?.absent ? '—' : Number(value?.base ?? value?.score ?? 10),
+      modifier: Number(value?.mod || 0),
+      modifierDisplay: value?.absent ? '—' : `${Number(value?.mod || 0) >= 0 ? '+' : ''}${Number(value?.mod || 0)}`,
+      abilityClass: `swse-ability-label swse-ability-label--${key}`,
+      isTemplateChoice: key === this._followerChoices?.abilityChoice || key === this._followerChoices?.droidConfig?.abilityChoice,
+    }));
+  }
+
+  _formatCombatStats(stats, templateDisplay) {
+    if (!stats) return [];
+    return [
+      { label: 'Hit Points', value: stats.hp?.max ?? '—', help: '10 + owner heroic level + CON modifier' },
+      { label: 'Base Attack Bonus', value: stats.bab ?? stats.baseAttackBonus ?? '—', help: `${templateDisplay} progression` },
+      { label: 'Damage Threshold', value: stats.damageThreshold ?? '—', help: 'Fortitude + template bonuses' },
+      { label: 'Grapple', value: `${Number(stats.grappleBonus || 0) >= 0 ? '+' : ''}${Number(stats.grappleBonus || 0)}`, help: 'Strength modifier' },
+    ];
+  }
+
+  _formatDefenseRows(defenses = {}) {
+    return Object.entries(defenses || {}).map(([key, value]) => ({
+      key,
+      label: this._displayDefense(key),
+      total: value?.total ?? value?.base ?? '—',
+      base: value?.base ?? null,
+      bonus: value?.bonus ?? 0,
+    }));
+  }
+
+  _formatSelectedOptions(choices = {}) {
+    const rows = [];
+    if (choices.speciesName) rows.push({ label: 'Species', value: choices.speciesName, icon: 'fa-dna' });
+    if (choices.templateType) rows.push({ label: 'Template', value: choices.templateType.charAt(0).toUpperCase() + choices.templateType.slice(1), icon: 'fa-id-card' });
+    if (choices.abilityChoice) rows.push({ label: 'Template Ability', value: `+2 ${String(choices.abilityChoice).toUpperCase()}`, icon: 'fa-dumbbell' });
+    if (choices.droidConfig?.abilityChoice) rows.push({ label: 'Droid Ability', value: `+2 ${String(choices.droidConfig.abilityChoice).toUpperCase()}`, icon: 'fa-robot' });
+    if (choices.backgroundChoice) rows.push({ label: 'Background', value: choices.backgroundChoice, icon: 'fa-book' });
+    if (Array.isArray(choices.skillChoices) && choices.skillChoices.length) rows.push({ label: 'Trained Skills', value: choices.skillChoices.join(', '), icon: 'fa-book-open' });
+    if (Array.isArray(choices.languageChoices) && choices.languageChoices.length) rows.push({ label: 'Languages', value: choices.languageChoices.join(', '), icon: 'fa-language' });
+    if (Array.isArray(choices.featChoices) && choices.featChoices.length) rows.push({ label: 'Feats', value: choices.featChoices.join(', '), icon: 'fa-star' });
+    return rows;
   }
 
   _renderConfirmation() {
@@ -159,6 +266,30 @@ export class FollowerConfirmStep extends FollowerStepBase {
     `;
   }
 
+  _attachNameListeners(shell, container) {
+    const input = container.querySelector('.follower-summary-name-input');
+    if (!input) return;
+
+    const save = (rerender = false) => {
+      const value = String(input.value || '').trim();
+      this.saveFollowerChoice(shell, 'followerName', value);
+      this._followerChoices = this.getFollowerChoices(shell);
+      if (rerender) {
+        shell?.requestRender?.({ preserveScroll: true, reason: 'follower-name-change' }) ?? shell?.render?.();
+      }
+    };
+
+    input.addEventListener('input', () => save(false));
+    input.addEventListener('change', () => save(true));
+  }
+
+  _buildFallbackFollowerName(ownerName, templateType) {
+    const templateDisplay = templateType
+      ? `${String(templateType).charAt(0).toUpperCase()}${String(templateType).slice(1)}`
+      : 'Linked';
+    return `${ownerName || 'Owner'}'s ${templateDisplay} Follower`;
+  }
+
   _attachCreditListeners(shell, container) {
     container.querySelector('.take-max-credits-btn')?.addEventListener('click', event => {
       event.preventDefault();
@@ -205,6 +336,7 @@ export class FollowerConfirmStep extends FollowerStepBase {
     this.saveFollowerChoice(shell, 'startingCredits', value);
     this.saveFollowerChoice(shell, 'startingCreditsMode', mode);
     this.saveFollowerChoice(shell, 'startingCreditsFormula', this._creditModel?.formula || null);
+    this._followerChoices = this.getFollowerChoices(shell);
   }
 
   async onStepCommit(shell) {
@@ -230,11 +362,14 @@ export class FollowerConfirmStep extends FollowerStepBase {
       this.saveFollowerChoice(shell, 'droidConfig', choices.droidConfig);
     }
 
+    this.saveFollowerChoice(shell, 'followerName', String(choices.followerName || '').trim());
+
     swseLogger.log('[FollowerConfirmStep] Follower creation confirmed', {
       species: choices.speciesName,
       template: choices.templateType,
       ownerLevel: this._ownerHeroicLevel,
-      startingCredits: choices.startingCredits
+      startingCredits: choices.startingCredits,
+      followerName: String(choices.followerName || '').trim() || null
     });
     return true;
   }

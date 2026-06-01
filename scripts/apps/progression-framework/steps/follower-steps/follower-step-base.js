@@ -1,14 +1,13 @@
 /**
- * FollowerStepBase — Base class for follower-specific progression steps.
+ * FollowerStepBase — thin follower-only adapter helpers.
  *
- * Followers are dependent actors. They are configured during follower chargen,
- * then re-derived from owner heroic level thereafter. They do not use heroic or
- * nonheroic choice-based level-up.
+ * Follower creation uses the normal progression shell/step contract. This base is
+ * only for the genuinely follower-specific steps and for mirroring follower-only
+ * choices into the canonical ProgressionSession.
  */
 
 import { ProgressionStepPlugin } from '../step-plugin-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
-import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 
 const TEMPLATE_ABILITY_OPTIONS = Object.freeze({
   aggressive: ['str', 'con'],
@@ -25,24 +24,32 @@ const BASE_LANGUAGE_FALLBACK = [
 
 export class FollowerStepBase extends ProgressionStepPlugin {
   getOwnerActor(shell) {
-    const ownerActorId = shell.progressionSession?.dependencyContext?.ownerActorId;
-    if (!ownerActorId) return null;
-    return game.actors.get(ownerActorId);
+    const ownerActorId = shell?.progressionSession?.dependencyContext?.ownerActorId;
+    return ownerActorId ? game?.actors?.get?.(ownerActorId) || shell?.ownerActor || shell?.actor || null : shell?.ownerActor || shell?.actor || null;
   }
 
   getFollowerChoices(shell) {
-    const session = shell.progressionSession;
+    const session = shell?.progressionSession;
     const persistentChoices = session?.dependencyContext?.persistentChoices || {};
     const draft = session?.draftSelections || {};
+    const species = draft.species || null;
+    const background = draft.background || null;
+    const skills = draft.skills || null;
+    const languages = draft.languages || null;
+
     return {
       followerKind: draft.followerKind ?? persistentChoices.followerKind ?? null,
-      speciesName: draft.speciesName ?? persistentChoices.speciesName ?? null,
-      speciesId: draft.speciesId ?? persistentChoices.speciesId ?? null,
+      followerName: draft.followerName ?? persistentChoices.followerName ?? '',
+      speciesName: draft.speciesName ?? species?.name ?? persistentChoices.speciesName ?? null,
+      speciesId: draft.speciesId ?? species?.id ?? species?.sourceId ?? persistentChoices.speciesId ?? null,
+      speciesSelection: species || persistentChoices.speciesSelection || null,
+      pendingSpeciesContext: draft.pendingSpeciesContext || species?.pendingContext || persistentChoices.pendingSpeciesContext || null,
       templateType: draft.templateType ?? persistentChoices.templateType ?? null,
-      skillChoices: draft.skillChoices ?? draft.followerSkills ?? persistentChoices.skillChoices ?? [],
+      skillChoices: draft.skillChoices ?? draft.followerSkills ?? this._extractSkillChoices(skills) ?? persistentChoices.skillChoices ?? [],
       featChoices: draft.featChoices ?? draft.followerFeats ?? persistentChoices.featChoices ?? [],
-      languageChoices: draft.languageChoices ?? draft.followerLanguages ?? persistentChoices.languageChoices ?? [],
-      backgroundChoice: draft.backgroundChoice ?? draft.followerBackground ?? persistentChoices.backgroundChoice ?? null,
+      languageChoices: draft.languageChoices ?? draft.followerLanguages ?? this._extractLanguageChoices(languages) ?? persistentChoices.languageChoices ?? [],
+      backgroundChoice: draft.backgroundChoice ?? draft.followerBackground ?? this._extractBackgroundChoice(background) ?? persistentChoices.backgroundChoice ?? null,
+      backgroundSelection: background || persistentChoices.backgroundSelection || null,
       abilityChoice: draft.abilityChoice ?? persistentChoices.abilityChoice ?? null,
       humanTemplateBonus: draft.humanTemplateBonus ?? persistentChoices.humanTemplateBonus ?? null,
       droidConfig: draft.droidConfig ?? persistentChoices.droidConfig ?? null,
@@ -52,10 +59,38 @@ export class FollowerStepBase extends ProgressionStepPlugin {
     };
   }
 
+  _extractSkillChoices(skills) {
+    if (!skills) return null;
+    if (Array.isArray(skills)) return skills;
+    if (Array.isArray(skills.trained)) return skills.trained;
+    if (Array.isArray(skills.trainedSkills)) return skills.trainedSkills;
+    if (Array.isArray(skills.skillChoices)) return skills.skillChoices;
+    if (skills.selected && typeof skills.selected === 'object') {
+      return Object.entries(skills.selected).filter(([, value]) => value === true || value?.trained).map(([key]) => key);
+    }
+    return null;
+  }
+
+  _extractLanguageChoices(languages) {
+    if (!languages) return null;
+    if (Array.isArray(languages)) return languages;
+    if (Array.isArray(languages.selected)) return languages.selected;
+    if (Array.isArray(languages.languages)) return languages.languages;
+    if (Array.isArray(languages.known)) return languages.known;
+    return null;
+  }
+
+  _extractBackgroundChoice(background) {
+    if (!background) return null;
+    if (Array.isArray(background.backgroundIds) && background.backgroundIds.length) return background.backgroundIds[0];
+    return background.id || background.backgroundId || background.name || null;
+  }
+
   saveFollowerChoice(shell, choiceType, value) {
-    if (!shell.progressionSession) return;
+    if (!shell?.progressionSession) return;
     shell.progressionSession.draftSelections = shell.progressionSession.draftSelections || {};
     shell.progressionSession.draftSelections[choiceType] = value;
+    shell.progressionSession.lastModifiedAt = Date.now();
     swseLogger.debug('[FollowerStep] Saved choice:', { choiceType, value });
   }
 
@@ -70,12 +105,6 @@ export class FollowerStepBase extends ProgressionStepPlugin {
 
   getDefaultTemplateAbility(templateType) {
     return this.getTemplateAbilityOptions(templateType)[0] || null;
-  }
-
-  getFixedTemplateAbility(templateType) {
-    // Backwards-compatible alias for older callers. New follower chargen lets
-    // organic followers choose between the template's two legal ability bonuses.
-    return this.getDefaultTemplateAbility(templateType);
   }
 
   isHumanSpecies(speciesName) {
@@ -101,28 +130,8 @@ export class FollowerStepBase extends ProgressionStepPlugin {
 
   async getFollowerCompatibleSpecies() {
     const { SpeciesRegistry } = await import('/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js');
-
-    if (!SpeciesRegistry.isInitialized()) {
-      await SpeciesRegistry.initialize();
-    }
-
-    // Droid followers are selected from the dedicated follower-origin card and
-    // configured by the droid chassis step. The living-species browser should not
-    // mix droid chassis records into the organic species list.
-    const allSpecies = SpeciesRegistry.getAll() || [];
-    return allSpecies.filter(species => !this.isDroidSpeciesRecord(species));
-  }
-
-  async getFollowerFeatsForTemplate(templateType) {
-    const templates = await this.getFollowerTemplates();
-    const template = templates[templateType];
-
-    if (!template) {
-      swseLogger.warn('[FollowerStepBase] Unknown template:', templateType);
-      return [];
-    }
-
-    return template.legalFeats || template.featChoices || [];
+    if (!SpeciesRegistry.isInitialized()) await SpeciesRegistry.initialize();
+    return (SpeciesRegistry.getAll() || []).filter(species => !this.isDroidSpeciesRecord(species));
   }
 
   async getFollowerSkillsForTemplate(templateType) {
@@ -152,7 +161,12 @@ export class FollowerStepBase extends ProgressionStepPlugin {
       if (!SpeciesRegistry.isInitialized()) await SpeciesRegistry.initialize();
       const species = SpeciesRegistry.getByName(speciesName);
       const languages = species?.languages || species?.system?.languages || species?.system?.canonicalStats?.languages || [];
-      const normalized = this._uniqueStrings(languages).filter(lang => !this._looksLikeBadLanguage(lang));
+      const raw = this._uniqueStrings(languages);
+      const contaminated = raw.some(lang => this._looksLikeBadLanguage(lang));
+      if (contaminated && speciesName && String(speciesName).toLowerCase() !== 'droid') {
+        return this._uniqueStrings([speciesName, 'Basic']);
+      }
+      const normalized = raw.filter(lang => !this._looksLikeBadLanguage(lang));
       return normalized.length ? normalized : fallback;
     } catch (err) {
       swseLogger.warn('[FollowerStepBase] Could not resolve species languages:', err);
@@ -175,7 +189,8 @@ export class FollowerStepBase extends ProgressionStepPlugin {
 
   getOwnerLanguages(ownerActor) {
     const raw = ownerActor?.system?.languages || [];
-    return this._uniqueStrings(Array.isArray(raw) ? raw : [raw]).filter(Boolean);
+    const values = Array.isArray(raw) ? raw : [raw?.value, raw?.custom, raw].flat();
+    return this._uniqueStrings(values).filter(Boolean);
   }
 
   getFollowerLanguagePickCount(choices = {}) {
@@ -191,12 +206,7 @@ export class FollowerStepBase extends ProgressionStepPlugin {
     const allLanguages = (await this.getAllLanguages()).filter(lang => !forced.includes(lang));
     const pickCount = this.getFollowerLanguagePickCount(choices);
 
-    swseLogger.log('[FollowerStepBase] Resolved follower language rules:', {
-      forced,
-      ownerLanguages,
-      pickCount
-    });
-
+    swseLogger.log('[FollowerStepBase] Resolved follower language rules:', { forced, ownerLanguages, pickCount });
     return { forced, ownerLanguages, allLanguages, pickCount };
   }
 
@@ -217,34 +227,88 @@ export class FollowerStepBase extends ProgressionStepPlugin {
     } else {
       const key = choices?.abilityChoice || this.getDefaultTemplateAbility(choices?.templateType);
       if (key && abilities[key]) abilities[key].base += 2;
+      const speciesMods = this._extractSpeciesAbilityMods(choices);
+      for (const [ability, mod] of Object.entries(speciesMods || {})) {
+        const key = String(ability).toLowerCase().slice(0, 3);
+        if (abilities[key]) abilities[key].base += Number(mod || 0);
+      }
     }
 
     for (const key of Object.keys(abilities)) {
-      if (abilities[key].absent) {
-        abilities[key].mod = 0;
-      } else {
-        abilities[key].mod = Math.floor((Number(abilities[key].base || 10) - 10) / 2);
-      }
+      abilities[key].mod = abilities[key].absent ? 0 : Math.floor((Number(abilities[key].base || 10) - 10) / 2);
     }
     return abilities;
   }
 
+  _extractSpeciesAbilityMods(choices = {}) {
+    const normalize = (raw) => {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+      const out = {};
+      for (const [rawKey, rawValue] of Object.entries(raw)) {
+        const key = String(rawKey || '').toLowerCase().slice(0, 3);
+        if (!['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(key)) continue;
+        const value = Number(rawValue);
+        if (Number.isFinite(value) && value !== 0) out[key] = value;
+      }
+      return out;
+    };
+    const candidates = [
+      choices.speciesAbilityMods,
+      choices.speciesSelection?.abilityScores,
+      choices.speciesSelection?.abilityMods,
+      choices.speciesSelection?.speciesData?.abilityScores,
+      choices.speciesSelection?.speciesData?.abilityMods,
+      choices.speciesSelection?.speciesData?.system?.abilityMods,
+      choices.speciesSelection?.speciesData?.system?.canonicalStats?.abilityMods,
+      choices.pendingSpeciesContext?.abilities,
+      choices.pendingSpeciesContext?.identity?.doc?.abilityScores,
+      choices.pendingSpeciesContext?.identity?.doc?.abilityMods,
+      choices.pendingSpeciesContext?.identity?.doc?.system?.abilityMods,
+      choices.pendingSpeciesContext?.identity?.doc?.system?.canonicalStats?.abilityMods,
+    ];
+    for (const candidate of candidates) {
+      const mods = normalize(candidate);
+      if (Object.keys(mods).length) return mods;
+    }
+    return {};
+  }
+
   async getOwnerStartingCreditModel(ownerActor) {
-    const classItems = Array.from(ownerActor?.items || []).filter(item => item.type === 'class');
     const baseNames = new Set(['jedi', 'noble', 'scoundrel', 'scout', 'soldier']);
-    const baseClass = classItems.find(item => baseNames.has(String(item.name || '').toLowerCase()))
+    const cleanClassName = (value) => String(value || '').trim().replace(/\s+\d+$/, '');
+    const classItems = Array.from(ownerActor?.items || []).filter(item => item.type === 'class');
+    const baseClass = classItems.find(item => baseNames.has(cleanClassName(item.name).toLowerCase()) || baseNames.has(String(item.system?.classId || '').toLowerCase()))
       || classItems.find(item => item.system?.base_class === true || item.system?.baseClass === true)
       || classItems[0]
       || null;
-    const formula = baseClass?.system?.starting_credits || baseClass?.system?.startingCredits || null;
+
+    const registryClass = await this._resolveClassModel(cleanClassName(baseClass?.name) || ownerActor?.system?.class?.name || ownerActor?.system?.class);
+    const formula = baseClass?.system?.starting_credits
+      || baseClass?.system?.startingCredits
+      || registryClass?.startingCredits
+      || registryClass?.system?.starting_credits
+      || registryClass?.system?.startingCredits
+      || null;
     const parsed = this.parseCreditFormula(formula);
     return {
-      className: baseClass?.name || 'Owner class',
+      className: cleanClassName(baseClass?.name) || registryClass?.name || 'Owner class',
       formula: parsed.formula,
       max: parsed.max,
       average: parsed.average,
       raw: formula
     };
+  }
+
+  async _resolveClassModel(name) {
+    if (!name) return null;
+    try {
+      const { ClassesRegistry } = await import('/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js');
+      await ClassesRegistry.initialize?.();
+      return ClassesRegistry.getByName?.(String(name)) || ClassesRegistry.resolveModel?.(name) || null;
+    } catch (err) {
+      swseLogger.warn('[FollowerStepBase] Class registry unavailable for credits fallback:', err);
+      return null;
+    }
   }
 
   parseCreditFormula(raw) {
@@ -266,14 +330,45 @@ export class FollowerStepBase extends ProgressionStepPlugin {
     };
   }
 
+  getStepData() {
+    return { stepId: this.descriptor?.stepId };
+  }
+
+  renderWorkSurface(stepData = {}) {
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/follower-work-surface.hbs',
+      data: { stepId: this.descriptor?.stepId, ...stepData }
+    };
+  }
+
+  async afterRender(shell, workSurfaceEl) {
+    if (typeof this.onRender === 'function') {
+      await this.onRender(shell, workSurfaceEl, {});
+    }
+  }
+
+  getSelection(shell) {
+    const issues = this.getBlockingIssues(shell);
+    return { selected: [], count: 0, isComplete: issues.length === 0 };
+  }
+
+  validate(shell) {
+    const errors = this.getBlockingIssues(shell);
+    return { isValid: errors.length === 0, errors, warnings: [] };
+  }
+
+  getBlockingIssues() {
+    return [];
+  }
+
   _looksLikeBadLanguage(lang) {
     const value = String(lang || '').trim();
-    return !value || /^\d+\s+more/i.test(value) || /\bEdit\b/i.test(value) || /\bMedium\b/i.test(value);
+    return !value || /^\d+\s+more/i.test(value) || /\bEdit\b/i.test(value) || /\bMedium\b/i.test(value) || /\bin:\s*Species/i.test(value);
   }
 
   _uniqueStrings(values = []) {
     return Array.from(new Set((values || [])
-      .flatMap(value => Array.isArray(value) ? value : [value])
+      .flatMap(value => Array.isArray(value) ? value : String(value || '').split(','))
       .filter(value => value !== undefined && value !== null && value !== '')
       .map(value => String(value).trim())
       .filter(Boolean)));

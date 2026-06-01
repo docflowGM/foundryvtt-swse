@@ -1240,3 +1240,43 @@
     transform: none;
   }
 }
+
+/* Follower summary identity naming */
+.prog-summary-surface--follower .follower-summary-name-field {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(127, 230, 255, 0.24);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.prog-summary-surface--follower .follower-summary-name-field > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--prog-cyan, #7fe6ff);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.prog-summary-surface--follower .follower-summary-name-field small {
+  color: var(--prog-yellow, #ffd766);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+
+.prog-summary-surface--follower .follower-summary-name-input {
+  width: 100%;
+  min-height: 34px;
+  padding: 8px 10px;
+  border: 1px solid rgba(127, 230, 255, 0.32);
+  background: rgba(0, 0, 0, 0.34);
+  color: var(--prog-ink, #e8f8ff);
+  font: inherit;
+}
+
+.prog-summary-surface--follower .follower-summary-name-input::placeholder {
+  color: rgba(255, 215, 102, 0.72);
+}

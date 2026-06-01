@@ -7,6 +7,7 @@ import { registerVehiclePreCreateHooks } from "/systems/foundryvtt-swse/scripts/
 import { initSidebarSentinelTrace } from "/systems/foundryvtt-swse/scripts/core/sidebar-sentinel-trace.js";
 import { initSidebarIconComparison } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-comparison.js";
 import { initSidebarIconClassAudit } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-class-audit.js";
+import { initSidebarIconFallback } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-fallback.js";
 
 Hooks.once('init', () => {
   console.log('[SWSE] Init hook fired - starting sidebar diagnostics initialization');
@@ -18,6 +19,8 @@ Hooks.once('init', () => {
     initSidebarIconComparison();
     console.log('[SWSE] Calling initSidebarIconClassAudit...');
     initSidebarIconClassAudit();
+    console.log('[SWSE] Calling initSidebarIconFallback...');
+    initSidebarIconFallback();
     console.log('[SWSE] Sidebar diagnostics initialized successfully');
   } catch (err) {
     console.error('[SWSE] Failed to initialize sidebar diagnostics:', err);

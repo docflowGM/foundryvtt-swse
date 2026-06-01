@@ -403,7 +403,7 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     const ownerShell = ShellRouter.getShell(ownerActor.id);
     if (ownerShell) {
       SWSELogger.log('[Follower Progression] Shell host found — routing follower flow inline');
-      await ownerShell.setSurface('progression', {
+      return await ShellRouter.openSurface(ownerActor, 'progression', {
         ...options,
         source: 'follower-progression',
         progressionMode: 'follower',
@@ -411,8 +411,6 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
         dependencyContext,
         ownerActorId: ownerActor.id
       });
-      await ownerShell.render(false);
-      return ownerShell;
     }
 
     // Legacy fallback only when no holopad shell host is available, such as a GM

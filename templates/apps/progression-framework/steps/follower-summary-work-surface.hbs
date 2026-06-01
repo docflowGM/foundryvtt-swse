@@ -1,0 +1,96 @@
+<div class="prog-summary-surface prog-summary-surface--chargen prog-summary-surface--follower">
+  <div class="prog-panel prog-panel--center prog-panel--summary-preview">
+    <h3 class="prog-panel-title">Follower Preview</h3>
+    <p class="prog-panel-subtitle">Final checkpoint before this linked follower actor is created.</p>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-user-plus"></i> Follower Identity</span></div>
+      <label class="follower-summary-name-field">
+        <span>Follower Name <small>optional</small></span>
+        <input type="text" class="follower-summary-name-input" value="{{followerName}}" placeholder="{{fallbackFollowerName}}" autocomplete="off">
+      </label>
+      <div class="prog-summary-delta-grid">
+        <div class="prog-summary-delta-row"><span>Name if blank</span><strong>{{fallbackFollowerName}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Owner</span><strong>{{ownerName}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Owner Heroic Level</span><strong>{{ownerHeroicLevel}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Species / Chassis</span><strong>{{choices.speciesName}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Template</span><strong>{{templateDisplay}}</strong></div>
+        {{#if choices.abilityChoice}}<div class="prog-summary-delta-row"><span>Template Ability</span><strong>+2 {{abilityChoiceLabel}}</strong></div>{{/if}}
+        {{#if droidConfig}}<div class="prog-summary-delta-row"><span>Droid Chassis</span><strong>{{droidConfig.size}} • Speed {{droidConfig.speed}} • +2 {{droidAbilityChoiceLabel}}</strong></div>{{/if}}
+        {{#if choices.backgroundChoice}}<div class="prog-summary-delta-row"><span>Background</span><strong>{{choices.backgroundChoice}}</strong></div>{{/if}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card prog-finalization-card">
+      <div class="prog-section-header"><span><i class="fas fa-coins"></i> Starting Credits</span></div>
+      <div class="prog-finalization-status {{#if creditsResolved}}is-resolved{{else}}is-required{{/if}}">
+        <span>{{#if creditsResolved}}Resolved{{else}}Required{{/if}}</span>
+        <strong>{{#if creditsResolved}}{{choices.startingCredits}} cr{{else}}Roll or take max credits{{/if}}</strong>
+      </div>
+      <div class="prog-summary-delta-grid">
+        <div class="prog-summary-delta-row"><span>Owner Base Class</span><strong>{{#if creditModel.className}}{{creditModel.className}}{{else}}Unknown{{/if}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Formula</span><strong>{{#if creditModel.formula}}{{creditModel.formula}}{{else}}No formula found{{/if}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Maximum</span><strong>{{#if creditModel.max}}{{creditModel.max}} cr{{else}}0 cr{{/if}}</strong></div>
+      </div>
+      {{#unless creditsResolved}}
+      <div class="prog-finalization-actions">
+        <button type="button" class="prog-finalization-btn prog-finalization-btn--primary take-max-credits-btn"><i class="fas fa-arrow-up-short-wide"></i> Take Max</button>
+        <button type="button" class="prog-finalization-btn roll-credits-btn"><i class="fas fa-dice-d20"></i> Roll Starting Credits</button>
+      </div>
+      {{/unless}}
+      {{#if droidBudget}}
+        <div class="prog-credit-source-list">
+          <div class="prog-credit-source prog-credit-source--neutral"><span>Droid optional systems</span><strong>{{droidBudget.spent}} cr</strong></div>
+        </div>
+      {{/if}}
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-fist-raised"></i> Derived Combat Stats</span></div>
+      <div class="prog-combat-grid">
+        {{#each combatStats}}
+          <div class="prog-combat-stat">
+            <span class="prog-combat-stat__label">{{this.label}}</span>
+            <span class="prog-combat-stat__value">{{this.value}}</span>
+            <small>{{this.help}}</small>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-chart-bar"></i> Attributes</span></div>
+      <div class="prog-attributes-grid prog-attributes-grid--summary">
+        {{#each abilityRows}}
+          <div class="prog-attr-display prog-attr-display--summary {{#if this.isTemplateChoice}}is-highlighted{{/if}}">
+            <span class="prog-attr-name {{this.abilityClass}}" data-ability="{{this.key}}">{{this.label}}</span>
+            <span class="prog-attr-score">{{this.score}}</span>
+            <span class="prog-attr-modifier">{{this.modifierDisplay}}</span>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-shield-alt"></i> Defenses</span></div>
+      <div class="prog-summary-delta-grid">
+        {{#each defenseRows}}
+          <div class="prog-summary-delta-row"><span>{{this.label}}</span><strong>{{this.total}}</strong></div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-list-check"></i> Selected Options</span></div>
+      <div class="prog-items-list">
+        {{#if selectedOptions.length}}
+          {{#each selectedOptions}}
+            <div class="prog-item-entry"><i class="fas {{this.icon}}"></i> <strong>{{this.label}}:</strong> {{this.value}}</div>
+          {{/each}}
+        {{else}}
+          <div class="prog-placeholder">No selectable options recorded.</div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

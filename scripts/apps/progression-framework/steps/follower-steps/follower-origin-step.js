@@ -25,6 +25,7 @@ export class FollowerOriginStep extends FollowerStepBase {
   }
 
   async onRender(shell, html) {
+    if (!html || typeof html.querySelector !== 'function') return;
     const container = html.querySelector('[data-step-content]');
     if (!container) return;
 
@@ -104,6 +105,26 @@ export class FollowerOriginStep extends FollowerStepBase {
     }
     this.saveFollowerChoice(shell, 'followerKind', this._selectedKind);
     return true;
+  }
+
+
+  validate() {
+    const errors = [];
+    if (!this._selectedKind) errors.push('Choose whether the follower is a living being or a droid.');
+    if (this._selectedKind === 'droid' && !this._allowDroids) errors.push('Droid followers are disabled by campaign houserule.');
+    return { isValid: errors.length === 0, errors, warnings: [] };
+  }
+
+  getBlockingIssues() {
+    return this.validate().errors;
+  }
+
+  getSelection() {
+    return {
+      selected: this._selectedKind ? [this._selectedKind] : [],
+      count: this._selectedKind ? 1 : 0,
+      isComplete: this.getBlockingIssues().length === 0,
+    };
   }
 
   getUtilityBarConfig() {

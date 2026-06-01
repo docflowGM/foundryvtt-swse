@@ -198,19 +198,22 @@ export class UnlockContractValidator {
   static _validateSkillTrainingGrant(grant, prefix, errors) {
     const { skills } = grant;
 
-    if (!Array.isArray(skills) || skills.length === 0) {
-      errors.push(
-        `${prefix}.skills must be a non-empty array of skill IDs`
-      );
-      return;
-    }
+    // skills may be omitted or empty for choice-based grants (e.g. Skill Training
+    // feat) where the skill is resolved at runtime from ability.system.selectedChoice.
+    // The handler exits cleanly when skills is empty, so only validate when present.
+    if (skills !== undefined && skills !== null) {
+      if (!Array.isArray(skills)) {
+        errors.push(`${prefix}.skills must be an array of skill IDs`);
+        return;
+      }
 
-    // Validate each skill is a string
-    for (let i = 0; i < skills.length; i++) {
-      if (typeof skills[i] !== 'string' || skills[i].trim() === '') {
-        errors.push(
-          `${prefix}.skills[${i}] must be a non-empty string`
-        );
+      // Validate each skill is a string
+      for (let i = 0; i < skills.length; i++) {
+        if (typeof skills[i] !== 'string' || skills[i].trim() === '') {
+          errors.push(
+            `${prefix}.skills[${i}] must be a non-empty string`
+          );
+        }
       }
     }
 

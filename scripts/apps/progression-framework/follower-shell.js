@@ -1,139 +1,115 @@
 /**
- * FollowerShell — Follower Creation Flow
+ * FollowerShell — follower creation through the normal progression spine.
  *
- * Extends ProgressionShell to provide the follower-specific compact creation flow.
- * Followers are DEPENDENT participants: derived from owner state, template-driven, nonheroic.
- *
- * Canonical Follower Sequence (LOCKED):
- *   1. Follower Type: Droid or Living Being
- *   2. Species / Chassis: living species or droid size/mobility/systems/+2 ability
- *   3. Template: Aggressive, Defensive, or Utility; organic template ability choice
- *   4. Details: Human bonus, background, constrained skills, languages
- *   5. Summary: starting credits and final confirmation
- *
- * Key Constraints:
- * - No heroic or nonheroic class selection
- * - No normal feat/talent/class pipeline
- * - Skills limited to template allowances
- * - Languages: species + Basic + one owner-known language + INT bonus picks
- * - Future follower level-up is an automatic recalculation, not a choice flow
+ * Followers are dependent participants. The flow should not be a second
+ * chargen framework. It reuses mature chargen steps where the rule contract is
+ * identical and inserts only the follower-specific decisions:
+ *   1. Living Being or Droid
+ *   2. Follower Template
  */
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
-import { ProgressionSession } from './shell/progression-session.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-// Follower-specific step imports
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
 import { FollowerTemplateStep } from './steps/follower-steps/follower-template-step.js';
-import { FollowerDetailsStep } from './steps/follower-steps/follower-details-step.js';
+import { FollowerBackgroundStep } from './steps/follower-steps/follower-background-step.js';
+import { FollowerSkillsStep } from './steps/follower-steps/follower-skills-step.js';
+import { FollowerLanguageStep } from './steps/follower-steps/follower-language-step.js';
 import { FollowerConfirmStep } from './steps/follower-steps/follower-confirm-step.js';
 
 export class FollowerShell extends ProgressionShell {
-  /**
-   * Detect progression subtype.
-   * Followers are always 'follower' subtype (DEPENDENT participant, derived, template-driven).
-   *
-   * @param {string} mode - always 'follower' for this shell
-   * @param {Object} options
-   * @returns {string} 'follower'
-   */
   _getProgressionSubtype(mode, options) {
     return 'follower';
   }
 
-  /**
-   * Get canonical descriptor list for follower progression.
-   * Returns the 5-step follower creation flow.
-   *
-   * @returns {StepDescriptor[]} Array of 7 follower step descriptors
-   */
   _getCanonicalDescriptors() {
     return [
       createStepDescriptor({
         stepId: 'follower-origin',
-        stepName: 'Follower Type',
-        stepDescription: 'Choose droid or living being',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
+        label: 'Follower Type',
+        icon: 'fa-user-plus',
+        category: StepCategory.CANONICAL,
+        type: StepType.IDENTITY,
         pluginClass: FollowerOriginStep,
       }),
-
       createStepDescriptor({
-        stepId: 'follower-species',
-        stepName: 'Species / Chassis',
-        stepDescription: 'Choose living species or configure droid chassis',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
+        stepId: 'species',
+        label: 'Species / Chassis',
+        icon: 'fa-dna',
+        category: StepCategory.CANONICAL,
+        type: StepType.IDENTITY,
         pluginClass: FollowerSpeciesStep,
       }),
-
       createStepDescriptor({
         stepId: 'follower-template',
-        stepName: 'Template',
-        stepDescription: 'Choose follower template and organic ability bonus',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
+        label: 'Template',
+        icon: 'fa-id-card',
+        category: StepCategory.CANONICAL,
+        type: StepType.BUILD,
         pluginClass: FollowerTemplateStep,
       }),
-
       createStepDescriptor({
-        stepId: 'follower-details',
-        stepName: 'Details',
-        stepDescription: 'Choose background, template skills, Human bonus, and languages',
-        category: StepCategory.CHARGEN,
-        type: StepType.SELECTION,
-        pluginClass: FollowerDetailsStep,
+        stepId: 'background',
+        label: 'Background',
+        icon: 'fa-book',
+        category: StepCategory.CANONICAL,
+        type: StepType.NARRATIVE,
+        pluginClass: FollowerBackgroundStep,
       }),
-
       createStepDescriptor({
-        stepId: 'follower-confirm',
-        stepName: 'Summary',
-        stepDescription: 'Review and confirm follower creation',
-        category: StepCategory.CHARGEN,
-        type: StepType.CONFIRMATION,
+        stepId: 'skills',
+        label: 'Skills',
+        icon: 'fa-book-open',
+        category: StepCategory.CATEGORY_SPECIFIC,
+        type: StepType.SELECTION,
+        pluginClass: FollowerSkillsStep,
+      }),
+      createStepDescriptor({
+        stepId: 'languages',
+        label: 'Languages',
+        icon: 'fa-language',
+        category: StepCategory.CATEGORY_SPECIFIC,
+        type: StepType.NARRATIVE,
+        pluginClass: FollowerLanguageStep,
+      }),
+      createStepDescriptor({
+        stepId: 'summary',
+        label: 'Summary',
+        icon: 'fa-list-check',
+        category: StepCategory.CONFIRMATION,
+        type: StepType.CONFIRM,
         pluginClass: FollowerConfirmStep,
       }),
     ];
   }
 
-  /**
-   * Override constructor to handle null actor (follower hasn't been created yet).
-   *
-   * @param {Actor|null} actor - Will be null for new followers; set after creation
-   * @param {string} mode - always 'follower'
-   * @param {Object} options - Must include dependencyContext with owner and slot info
-   */
   constructor(actor, mode = 'follower', options = {}) {
-    // For followers, actor is null (not yet created); build title from owner
-    let title = 'Follower Creation';
-    if (options.owner) {
-      title = `${options.owner.name}'s Follower`;
-    }
+    const ownerActor = options.owner || actor || null;
+    const title = ownerActor ? `${ownerActor.name}'s Follower` : 'Follower Creation';
 
-    super(actor, mode, {
+    // The progression shell expects a real actor in several shared render paths.
+    // For dependent follower creation, the owner actor is the render/session host;
+    // the follower actor is created only at finalization.
+    super(ownerActor, mode, {
       ...options,
       title,
     });
 
-    // Mark this as a follower shell for any special handling
     this.isFollowerShell = true;
-    this.ownerActor = options.owner || null;
+    this.ownerActor = ownerActor;
     this.dependencyContext = options.dependencyContext || null;
+
+    if (this.dependencyContext && this.progressionSession) {
+      this.progressionSession.dependencyContext = this.dependencyContext;
+    }
 
     swseLogger.log('[FollowerShell] Created for owner:', this.ownerActor?.name);
   }
 
-  /**
-   * Initialize progression session with follower-specific context.
-   * Override to handle null actor and seed dependency context.
-   *
-   * @private
-   */
   async _initializeSteps() {
-    // Seed the progression session with follower dependency context BEFORE calling parent
     if (this.dependencyContext && this.progressionSession) {
       this.progressionSession.dependencyContext = this.dependencyContext;
       swseLogger.log('[FollowerShell] Seeded session with dependency context:', {
@@ -142,18 +118,9 @@ export class FollowerShell extends ProgressionShell {
       });
     }
 
-    // Call parent to initialize steps, which will now use the follower's 7-step sequence
     await super._initializeSteps();
   }
 
-  /**
-   * Static open method for follower creation.
-   *
-   * @param {Actor|null} actor - Always null for followers
-   * @param {string} mode - Always 'follower'
-   * @param {Object} options - Must include owner and dependencyContext
-   * @returns {Promise<FollowerShell>}
-   */
   static async open(actor = null, mode = 'follower', options = {}) {
     swseLogger.log('[FollowerShell] Opening follower creation shell', {
       owner: options.owner?.name,
@@ -172,10 +139,8 @@ export class FollowerShell extends ProgressionShell {
       return null;
     }
 
-    // Create shell instance with null actor
-    const app = new this(null, mode, options);
+    const app = new this(options.owner, mode, options);
 
-    // Initialize steps (will use follower's 7-step sequence)
     try {
       await app._initializeSteps();
       swseLogger.log('[FollowerShell] Steps initialized, count:', app.steps?.length || 0);
@@ -185,7 +150,6 @@ export class FollowerShell extends ProgressionShell {
       return null;
     }
 
-    // Initialize first step
     try {
       await app._initializeFirstStep();
       swseLogger.log('[FollowerShell] First step initialized');
@@ -194,16 +158,11 @@ export class FollowerShell extends ProgressionShell {
       ui?.notifications?.error?.('Failed to initialize first step. Please try again.');
     }
 
-    // Render and bring to top
     app.render({ force: true });
     await new Promise(resolve => setTimeout(() => {
       try {
-        // Foundry v13+ uses bringToFront() instead of bringToTop()
-        if (typeof app.bringToFront === 'function') {
-          app.bringToFront();
-        } else if (typeof app.bringToTop === 'function') {
-          app.bringToTop();
-        }
+        if (typeof app.bringToFront === 'function') app.bringToFront();
+        else if (typeof app.bringToTop === 'function') app.bringToTop();
         swseLogger.debug('[FollowerShell.open] Shell brought to front after render');
       } catch (err) {
         swseLogger.warn('[FollowerShell.open] Error bringing shell to front:', err.message);
@@ -214,67 +173,137 @@ export class FollowerShell extends ProgressionShell {
     return app;
   }
 
-  /**
-   * Prepare context for template rendering.
-   * Override to handle null actor gracefully.
-   *
-   * @param {Object} options
-   * @returns {Promise<Object>}
-   */
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-
-    // Override title and actor name for null actor case
-    if (!this.actor && this.ownerActor) {
+    if (this.ownerActor) {
       context.title = `${this.ownerActor.name}'s Follower`;
       context.owner = this.ownerActor;
     }
-
     return context;
   }
 
+
+
+
+  _shouldSkipFollowerStep(stepId) {
+    const draft = this.progressionSession?.draftSelections || {};
+    const templateType = String(draft.templateType || '').toLowerCase();
+
+    // Utility followers choose one broad practical skill. Aggressive and
+    // Defensive followers get their template skill package automatically, so
+    // there is no player-facing Skills step to show.
+    if (stepId === 'skills' && templateType !== 'utility') return true;
+
+    return false;
+  }
+
+  _findNextApplicableStep(startIndex) {
+    for (let i = startIndex; i < (this.steps?.length || 0); i += 1) {
+      const stepId = this.steps[i]?.stepId;
+      if (this._shouldSkipFollowerStep(stepId)) continue;
+      return i;
+    }
+    return -1;
+  }
+
+  _findPreviousApplicableStep(startIndex, minIndex = 0) {
+    for (let i = startIndex; i >= minIndex; i -= 1) {
+      const stepId = this.steps[i]?.stepId;
+      if (this._shouldSkipFollowerStep(stepId)) continue;
+      return i;
+    }
+    return -1;
+  }
+
   /**
-   * Override finalization gateway for follower-specific handling.
-   * Instead of calling ProgressionFinalizer, we handle follower creation/update directly.
-   *
-   * @returns {Promise<void>}
-   * @private
+   * Follower creation owns a fixed canonical step list. The normal chargen
+   * ActiveStepComputer does not know about the dependent follower-only graph,
+   * so allowing shared post-commit recomputation collapses the flow to the
+   * current step and exposes the Confirm button too early. Keep the descriptor
+   * spine stable; individual follower steps still validate their own
+   * applicability and can no-op when their prerequisite choice does not apply.
    */
+  async _recomputeActiveStepsIfNeeded() {
+    return;
+  }
+
+  _getFollowerDraftSelections() {
+    return this.progressionSession?.draftSelections || {};
+  }
+
+  _getMissingFollowerRequirements() {
+    const draft = this._getFollowerDraftSelections();
+    const missing = [];
+    const isDroid = draft.followerKind === 'droid' || draft.droidConfig?.isDroid === true || String(draft.speciesName || '').toLowerCase() === 'droid';
+
+    if (!draft.followerKind) missing.push('Choose Living Being or Droid.');
+    if (isDroid) {
+      if (!draft.droidConfig?.abilityChoice) missing.push('Choose the droid chassis ability bonus.');
+    } else if (!draft.speciesName && !draft.species?.name) {
+      missing.push('Choose a follower species.');
+    }
+    if (!draft.templateType) missing.push('Choose a follower template.');
+    if (!isDroid && draft.templateType && !draft.abilityChoice) missing.push('Choose the template ability bonus.');
+
+    return missing;
+  }
+
   async _onFinalizeProgression() {
     if (this.isProcessing) return;
 
     try {
       this.isProcessing = true;
-
       swseLogger.log('[FollowerShell] Follower finalization initiated');
 
-      // Validate current step (usually confirm)
       const currentDescriptor = this.steps[this.currentStepIndex];
-      if (currentDescriptor) {
-        const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
-        if (currentPlugin && typeof currentPlugin.validate === 'function') {
-          const validation = currentPlugin.validate();
-          if (validation && validation.errors && validation.errors.length > 0) {
-            swseLogger.warn('[FollowerShell] Validation failed:', validation.errors);
-            ui.notifications.error(`Cannot finish: ${validation.errors[0]}`);
-            this.isProcessing = false;
-            return;
-          }
-        }
-      }
-
-      // Call parent's commit logic for the current step
-      const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
-      if (currentPlugin && typeof currentPlugin.onStepCommit === 'function') {
-        const committed = await currentPlugin.onStepCommit(this);
-        if (!committed) {
-          swseLogger.warn('[FollowerShell] Current step commit failed');
+      const currentStepId = currentDescriptor?.stepId || null;
+      const isSummaryStep = currentStepId === 'summary' || currentStepId === 'follower-confirm';
+      if (!isSummaryStep) {
+        const missing = this._getMissingFollowerRequirements();
+        const nextIndex = this._findNextApplicableStep?.(this.currentStepIndex + 1);
+        if (nextIndex >= 0) {
+          swseLogger.warn('[FollowerShell] Finalize requested before summary; routing to next follower step instead', {
+            currentStepId,
+            nextStepId: this.steps[nextIndex]?.stepId,
+            missing
+          });
           this.isProcessing = false;
+          await this._activateStep(nextIndex, { source: 'follower-finalize-guard', restoreIndex: this.currentStepIndex });
+          this.render();
+          return;
+        }
+        if (missing.length) {
+          ui?.notifications?.warn?.(missing[0]);
+          swseLogger.warn('[FollowerShell] Blocked early follower finalization', { currentStepId, missing });
           return;
         }
       }
 
-      // Now complete the follower progression
+      const missingRequirements = this._getMissingFollowerRequirements();
+      if (missingRequirements.length) {
+        ui?.notifications?.warn?.(missingRequirements[0]);
+        swseLogger.warn('[FollowerShell] Follower finalization blocked by incomplete choices', { missingRequirements });
+        return;
+      }
+
+      const currentPlugin = currentDescriptor ? this.stepPlugins.get(currentDescriptor.stepId) : null;
+      if (currentPlugin && typeof currentPlugin.validate === 'function') {
+        const validation = currentPlugin.validate(this);
+        if (validation?.errors?.length) {
+          swseLogger.warn('[FollowerShell] Validation failed:', validation.errors);
+          ui.notifications.error(`Cannot finish: ${validation.errors[0]}`);
+          return;
+        }
+      }
+
+      if (currentPlugin && typeof currentPlugin.onStepCommit === 'function') {
+        const committed = await currentPlugin.onStepCommit(this);
+        if (!committed) {
+          swseLogger.warn('[FollowerShell] Current step commit failed');
+          return;
+        }
+      }
+
       await this._onProgressionComplete();
     } catch (error) {
       swseLogger.error('[FollowerShell._onFinalizeProgression] Unexpected error', error);
@@ -284,21 +313,12 @@ export class FollowerShell extends ProgressionShell {
     }
   }
 
-  /**
-   * Handle progression completion for follower creation/advancement.
-   * Creates/updates the follower actor and links to owner.
-   *
-   * @param {Object} options
-   * @returns {Promise<void>}
-   * @private
-   */
   async _onProgressionComplete(options = {}) {
     try {
       swseLogger.log('[FollowerShell] Follower progression complete, finalizing creation/advancement');
 
-      // Compile the mutation plan
       const { ProgressionFinalizer } = await import('./shell/progression-finalizer.js');
-      const mutationPlan = ProgressionFinalizer._compileMutationPlan(
+      const mutationPlan = await ProgressionFinalizer._compileMutationPlan(
         {
           mode: this.mode,
           actor: this.ownerActor,
@@ -309,17 +329,15 @@ export class FollowerShell extends ProgressionShell {
         options
       );
 
-      // Get subtype adapter contribution (includes follower mutation bundle)
-      let finalMutationPlan = mutationPlan;
+      let finalMutationPlan = mutationPlan || {};
       if (this.progressionSession?.subtypeAdapter) {
         finalMutationPlan = await this.progressionSession.subtypeAdapter.contributeMutationPlan(
-          mutationPlan,
+          finalMutationPlan,
           this.progressionSession,
           this.ownerActor
         );
       }
 
-      // Extract and apply the follower mutation
       if (finalMutationPlan.follower) {
         const result = await this._applyFollowerMutation(finalMutationPlan.follower);
         if (result.success) {
@@ -331,35 +349,29 @@ export class FollowerShell extends ProgressionShell {
             this.close();
           }
           return;
-        } else {
-          swseLogger.error('[FollowerShell] Follower creation failed:', result.error);
-          ui?.notifications?.error?.(`Follower creation failed: ${result.error}`);
-          return;
         }
-      } else {
-        swseLogger.error('[FollowerShell] No follower mutation in plan');
-        ui?.notifications?.error?.('Follower creation failed: invalid mutation plan');
+        swseLogger.error('[FollowerShell] Follower creation failed:', result.error);
+        ui?.notifications?.error?.(`Follower creation failed: ${result.error}`);
+        return;
       }
+
+      swseLogger.error('[FollowerShell] No follower mutation in plan', {
+        hasAdapter: !!this.progressionSession?.subtypeAdapter,
+        dependencyContext: this.progressionSession?.dependencyContext,
+        draftKeys: Object.keys(this.progressionSession?.draftSelections || {})
+      });
+      ui?.notifications?.error?.('Follower creation failed: invalid mutation plan');
     } catch (err) {
       swseLogger.error('[FollowerShell] Error completing follower progression:', err);
       ui?.notifications?.error?.(`Follower creation error: ${err.message}`);
     }
   }
 
-  /**
-   * Apply the follower mutation bundle (create or update follower).
-   *
-   * @param {Object} followerMutation - The follower mutation from the plan
-   * @returns {Promise<{success: boolean, result?: Object, error?: string}>}
-   * @private
-   */
   async _applyFollowerMutation(followerMutation) {
     try {
-      const { FollowerCreator } = await import('../../follower-creator.js');
-      const { createFollowerActor, updateFollowerActor } = FollowerCreator;
+      const { FollowerCreator } = await import('../follower-creator.js');
 
       if (followerMutation.operation === 'create') {
-        // Create new follower
         swseLogger.log('[FollowerShell] Creating new follower');
         const followerActor = await FollowerCreator.createFollowerFromMutation(
           this.ownerActor,
@@ -370,14 +382,12 @@ export class FollowerShell extends ProgressionShell {
           return { success: false, error: 'Failed to create follower actor' };
         }
 
-        // Update owner's follower slot with the created actor ID
-        const slotId = followerMutation.slotId;
-        await this._updateFollowerSlot(slotId, followerActor.id);
-
+        await this._updateFollowerSlot(followerMutation.slotId, followerActor.id);
         swseLogger.log('[FollowerShell] Follower created:', followerActor.id);
         return { success: true, result: { followerId: followerActor.id } };
-      } else if (followerMutation.operation === 'update') {
-        // Update existing follower
+      }
+
+      if (followerMutation.operation === 'update') {
         swseLogger.log('[FollowerShell] Updating existing follower');
         const followerId = followerMutation.existingFollowerId;
         const followerActor = game.actors.get(followerId);
@@ -386,30 +396,18 @@ export class FollowerShell extends ProgressionShell {
           return { success: false, error: 'Existing follower actor not found' };
         }
 
-        await FollowerCreator.updateFollowerFromMutation(
-          followerActor,
-          followerMutation
-        );
-
+        await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation);
         swseLogger.log('[FollowerShell] Follower updated:', followerId);
         return { success: true, result: { followerId } };
-      } else {
-        return { success: false, error: `Unknown follower operation: ${followerMutation.operation}` };
       }
+
+      return { success: false, error: `Unknown follower operation: ${followerMutation.operation}` };
     } catch (err) {
       swseLogger.error('[FollowerShell] Error applying follower mutation:', err);
       return { success: false, error: err.message };
     }
   }
 
-  /**
-   * Update the owner's follower slot with the created follower actor ID.
-   *
-   * @param {string} slotId - The slot ID
-   * @param {string} followerActorId - The newly created follower actor ID
-   * @returns {Promise<void>}
-   * @private
-   */
   async _updateFollowerSlot(slotId, followerActorId) {
     try {
       const slots = this.ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
@@ -423,7 +421,6 @@ export class FollowerShell extends ProgressionShell {
       }
     } catch (err) {
       swseLogger.error('[FollowerShell] Error updating follower slot:', err);
-      // Non-fatal — continue even if slot update fails
     }
   }
 }

@@ -4299,13 +4299,18 @@ export const ActorEngine = {
         actor.system.defenses[key] = foundry.utils.deepClone(seed);
         continue;
       }
-      actor.system.defenses[key].classBonus ??= seed.classBonus;
-      if (key === 'reflex') actor.system.defenses[key].armor ??= seed.armor;
-      actor.system.defenses[key].ability ??= seed.ability;
-      actor.system.defenses[key].misc ??= {};
-      actor.system.defenses[key].misc.auto ??= {};
-      actor.system.defenses[key].misc.user ??= {};
-      actor.system.defenses[key].misc.user.extra ??= 0;
+      const defense = actor.system.defenses[key];
+      defense.classBonus ??= Number(defense.class ?? seed.classBonus) || seed.classBonus;
+      if (key === 'reflex') defense.armor ??= seed.armor;
+      if (!defense.ability || typeof defense.ability !== 'string') defense.ability = seed.ability;
+
+      const legacyMisc = (defense.misc !== undefined && (!defense.misc || typeof defense.misc !== 'object' || Array.isArray(defense.misc)))
+        ? (Number(defense.misc) || 0)
+        : null;
+      if (!defense.misc || typeof defense.misc !== 'object' || Array.isArray(defense.misc)) defense.misc = {};
+      if (!defense.misc.auto || typeof defense.misc.auto !== 'object' || Array.isArray(defense.misc.auto)) defense.misc.auto = {};
+      if (!defense.misc.user || typeof defense.misc.user !== 'object' || Array.isArray(defense.misc.user)) defense.misc.user = {};
+      defense.misc.user.extra ??= legacyMisc ?? 0;
     }
   },
 

@@ -618,6 +618,23 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             || null;
     }
 
+    static _resolveFollowerName(owner, templateType, persistentChoices = {}) {
+        const explicitName = String(persistentChoices?.followerName || '').trim();
+        if (explicitName) return explicitName.replace(/\s+/g, ' ');
+
+        const ownerName = String(owner?.name || 'Owner').trim().replace(/\s+/g, ' ') || 'Owner';
+        const templateKey = String(templateType || 'follower').trim().toLowerCase();
+        const templateLabels = {
+            aggressive: 'Aggressive Follower',
+            defensive: 'Defensive Follower',
+            utility: 'Utility Follower'
+        };
+        const fallbackTemplateLabel = templateKey
+            ? `${templateKey.charAt(0).toUpperCase()}${templateKey.slice(1)} Follower`
+            : 'Follower';
+        return `${ownerName}'s ${templateLabels[templateKey] || fallbackTemplateLabel}`;
+    }
+
     static async _applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices = {}, followerMutation = {}) {
         if (!follower || !templateType) return { feats: [], trainedSkills: [], languages: [] };
 
@@ -686,10 +703,17 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             }, { source: 'FollowerCreator.materializeFollowerLanguages' });
         }
 
+        const backgroundChoice = persistentChoices.backgroundSelection?.name
+            || persistentChoices.backgroundSelection?.id
+            || persistentChoices.backgroundChoice
+            || null;
+
         const materialUpdates = {
             'system.progression.feats': appliedFeats,
             'system.progression.trainedSkills': trainedSkills,
             'system.progression.languages': languageChoices,
+            'system.progression.background': backgroundChoice,
+            'system.background': backgroundChoice,
             'system.progression.grantingTalentName': grantingTalentName,
             'system.progression.humanTemplateBonus': humanBonus,
             'system.progression.droidConfig': persistentChoices.droidConfig || null,
@@ -854,6 +878,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Promise<Actor|null>} Created follower actor or null on error
      */
     static async createFollowerFromMutation(owner, followerMutation) {
+        let follower = null;
         try {
             const {
                 speciesName,
@@ -866,10 +891,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
             const droidConfig = persistentChoices?.droidConfig?.isDroid ? persistentChoices.droidConfig : null;
             const isDroidFollower = !!droidConfig;
+            const followerName = this._resolveFollowerName(owner, templateType, persistentChoices);
 
             // Create actor from derived state
             const actorData = {
-                name: `${owner.name}'s ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Follower`,
+                name: followerName,
                 type: 'npc',
                 system: {
                     level: targetHeroicLevel ?? followerState.level,
@@ -878,9 +904,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                     isDroid: isDroidFollower,
                     noConstitution: isDroidFollower,
                     droidSize: droidConfig?.size || null,
-                    size: droidConfig?.size || undefined,
-                    speed: droidConfig?.speed || undefined,
-                    movement: isDroidFollower ? { walk: droidConfig?.speed || 6 } : undefined,
+                    size: droidConfig?.size || followerState.size || undefined,
+                    speed: droidConfig?.speed || followerState.speed || undefined,
+                    movement: isDroidFollower ? { walk: droidConfig?.speed || 6 } : (followerState.movement || undefined),
                     attributes: followerState.abilities,
                     abilities: followerState.abilities,
                     hp: followerState.hp,
@@ -900,6 +926,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                     progression: {
                         followerChoices: persistentChoices,
                         followerTemplate: templateType,
+                        followerName,
                         isFollower: true
                     },
                     npcProfile: {
@@ -908,7 +935,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                             actorId: owner.id,
                             talent: grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : null
                         },
-                        template: templateType
+                        template: templateType,
+                        displayName: followerName
                     }
                 },
                 flags: {
@@ -916,6 +944,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         follower: {
                             ownerId: owner.id,
                             templateType: templateType,
+                            followerName,
                             grantingTalent: grantingTalentName,
                             grantingTalentItemId,
                             isFollower: true
@@ -932,7 +961,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             };
 
             // Create the actor
-            const follower = await createActor(actorData);
+            follower = await createActor(actorData);
             if (!follower) {
                 swseLogger.error('[FollowerCreator] Failed to create follower actor from mutation');
                 return null;
@@ -978,6 +1007,18 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             return follower;
         } catch (err) {
             swseLogger.error('[FollowerCreator] Error creating follower from mutation:', err);
+            if (follower?.id) {
+                const partialFollowerId = follower.id;
+                try {
+                    await follower.delete();
+                    swseLogger.warn('[FollowerCreator] Rolled back partially created follower after failed mutation apply', {
+                        followerId: partialFollowerId,
+                        ownerId: owner?.id ?? null
+                    });
+                } catch (cleanupErr) {
+                    swseLogger.warn('[FollowerCreator] Failed to delete partially created follower after mutation error:', cleanupErr);
+                }
+            }
             return null;
         }
     }
@@ -1013,6 +1054,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 'system.progression.followerChoices': persistentChoices,
                 'system.progression.followerTemplate': templateType,
                 'system.progression.isFollower': true,
+                ...(String(persistentChoices?.followerName || '').trim() ? {
+                    name: String(persistentChoices.followerName).trim(),
+                    'system.progression.followerName': String(persistentChoices.followerName).trim(),
+                    'system.npcProfile.displayName': String(persistentChoices.followerName).trim(),
+                    'flags.swse.follower.followerName': String(persistentChoices.followerName).trim()
+                } : {}),
                 'flags.swse.follower.ownerId': follower.flags?.swse?.follower?.ownerId || followerMutation.ownerActorId,
                 'flags.swse.follower.templateType': templateType,
                 'flags.swse.follower.isFollower': true,
@@ -1031,6 +1078,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 updateData['system.speed'] = droidConfig.speed || 6;
                 updateData['system.movement.walk'] = droidConfig.speed || 6;
                 updateData['flags.foundryvtt-swse.isDroid'] = true;
+            } else {
+                if (followerState.size) updateData['system.size'] = followerState.size;
+                if (followerState.speed) updateData['system.speed'] = followerState.speed;
+                if (followerState.movement) updateData['system.movement'] = followerState.movement;
             }
 
             // Apply defense updates

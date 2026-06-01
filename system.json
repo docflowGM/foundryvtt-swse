@@ -28,6 +28,7 @@
   ],
   "styles": [
     "styles/fonts.css",
+    "styles/core-overrides.css",
     "styles/swse-core.css",
     "styles/swse-holo.css",
     "styles/core/variables.css",

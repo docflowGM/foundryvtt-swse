@@ -1,0 +1,55 @@
+<div class="prog-class-browse prog-quickref-stage follower-template-stage">
+  <div class="prog-class-browse__notice">Choose the follower role package. Hover a card for its skill and ability rules; click to select it.</div>
+  <div class="prog-class-grid follower-template-grid" role="listbox" aria-label="Follower template">
+    {{#each templates}}
+      <button class="swse-option-card prog-class-card prog-class-card--visual follower-template-card
+                     {{#if focused}}swse-option-card--focused prog-class-card--focused{{/if}}
+                     {{#if selected}}swse-option-card--selected prog-class-card--selected{{/if}}"
+              type="button"
+              data-follower-template-card="true"
+              data-template="{{id}}"
+              role="option"
+              aria-label="{{name}} follower template"
+              {{#if selected}}aria-selected="true"{{/if}}>
+        <div class="prog-class-card__visual-wrap prog-holo-media prog-holo-media--wide">
+          {{#if img}}<img class="prog-class-card__image prog-holo-media__image" src="{{img}}" alt="{{name}}">{{/if}}
+          <div class="prog-class-card__scanline"></div>
+          <div class="prog-class-card__holo-overlay" aria-hidden="true"></div>
+          <div class="prog-class-card__quote" aria-hidden="true">{{profileQuote}}</div>
+          <div class="follower-template-card__rules" aria-hidden="true">
+            <div><strong>{{skillText}}</strong></div>
+            <div>{{attributeText}}</div>
+            {{#if defenseText}}<div>{{defenseText}}</div>{{/if}}
+          </div>
+          <div class="prog-class-card__nameplate">
+            <span class="prog-class-card__name">{{name}}</span>
+            <span class="prog-class-card__type">{{type}}</span>
+          </div>
+        </div>
+        <div class="prog-class-card__chips" aria-hidden="true">
+          <span class="swse-option-card__badge">{{skillText}}</span>
+          {{#if selected}}<span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>{{/if}}
+        </div>
+      </button>
+    {{/each}}
+  </div>
+
+  {{#unless isDroid}}
+    {{#each templates}}
+      {{#if selected}}
+        <div class="follower-template-ability-strip">
+          <h4>{{name}} Ability Bonus</h4>
+          <p>Choose where this template's +{{abilityBonus}} applies.</p>
+          <div class="follower-template-ability-options">
+            {{#each abilityOptions}}
+              <label class="template-ability-option">
+                <input type="radio" name="templateAbility" value="{{this}}" {{#if (eq this ../../abilityChoice)}}checked{{/if}}>
+                {{this}}
+              </label>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+    {{/each}}
+  {{/unless}}
+</div>

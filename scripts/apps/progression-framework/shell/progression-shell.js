@@ -1507,6 +1507,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.requestRender({ preserveScroll: true, reason: 'reconcile-conditional-steps' });
   }
 
+
+  /**
+   * Convert an Actor document or actor-like object into a plain context object.
+   * Follower creation is a dependent flow and intentionally starts with no
+   * child actor document, so the shell must be able to render from the owner
+   * actor without touching a null .toObject().
+   *
+   * @param {Actor|object|null} actor
+   * @returns {object|null}
+   * @private
+   */
+  _toPlainActorContext(actor) {
+    if (!actor) return null;
+    if (typeof actor.toObject === 'function') return actor.toObject();
+    try {
+      return foundry.utils.deepClone(actor);
+    } catch (_err) {
+      return actor;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // ApplicationV2 Lifecycle
   // ---------------------------------------------------------------------------
@@ -1530,7 +1551,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Theme/motion for shared datapad presentation.
     // Resolved through the same authority used by v2 sheets and secondary surfaces.
-    Object.assign(context, ThemeResolutionService.buildSurfaceContext({ actor: this.actor }));
+    // Dependent flows such as follower creation do not have a child actor yet;
+    // use the owner actor for presentation/theme while preserving the null
+    // progression actor for step logic.
+    const presentationActor = this.actor || this.ownerActor || null;
+    Object.assign(context, ThemeResolutionService.buildSurfaceContext({ actor: presentationActor }));
 
     // ✓ PHASE 4: Build shell-owned presentation data for HUD/manifest/canvas enrichment
     context.sessionLabel = this._buildSessionLabel();
@@ -1622,10 +1647,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
       done: step.isComplete,
     }));
 
-    // Step data from plugin
-    const stepData = currentPlugin
-      ? await currentPlugin.getStepData(context).catch(() => ({}))
-      : {};
+    // Step data from plugin. Some legacy/follower plugins return a plain
+    // object while mature progression steps return a Promise; normalize both.
+    let stepData = {};
+    if (currentPlugin?.getStepData) {
+      try {
+        stepData = await Promise.resolve(currentPlugin.getStepData(context));
+      } catch (err) {
+        swseLogger.error('ProgressionShell: plugin.getStepData failed', { err, stepId: currentDescriptor?.stepId });
+        stepData = {};
+      }
+    }
 
     // Rule 8.4: Detect invalid step data
     diagnostics.detectInvalidStepData(currentDescriptor?.stepId ?? 'unknown', stepData);
@@ -1858,7 +1890,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       ...context,
       // Shell identity
       mode: this.mode,
-      actor: this.actor.toObject(),
+      actor: this._toPlainActorContext?.(presentationActor) ?? (presentationActor?.toObject?.() ?? presentationActor ?? null),
+      actorDocument: this.actor || null,
+      ownerActor: this.ownerActor || null,
 
       // Step state
       steps: this.steps,
@@ -2013,15 +2047,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (descriptor) {
       const plugin = this.stepPlugins.get(descriptor.stepId);
       if (plugin) {
-        await plugin.onDataReady(this).catch(err =>
-          swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err })
-        );
+        if (typeof plugin.onDataReady === 'function') {
+          try {
+            await Promise.resolve(plugin.onDataReady(this));
+          } catch (err) {
+            swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err });
+          }
+        }
 
-        // Call plugin's afterRender hook with work-surface element
+        // Call plugin's afterRender hook with work-surface element. Mature steps
+        // and follower compatibility steps do not all return Promises, so normalize.
         const workSurfaceEl = html.querySelector('[data-region="work-surface"]');
-        await plugin.afterRender?.(this, workSurfaceEl).catch(err =>
-          swseLogger.error('ProgressionShell: plugin.afterRender failed', { err })
-        );
+        if (typeof plugin.afterRender === 'function') {
+          try {
+            await Promise.resolve(plugin.afterRender(this, workSurfaceEl));
+          } catch (err) {
+            swseLogger.error('ProgressionShell: plugin.afterRender failed', { err });
+          }
+        }
 
         // Wire delegated action handling for step-specific actions
         // This allows plugins to define step-specific actions via handleAction() method

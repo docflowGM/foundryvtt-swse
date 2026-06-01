@@ -1,170 +1,170 @@
 /**
  * FollowerLanguageStep
  *
- * Followers know species languages + Basic, then choose one language known by
- * the controlling owner plus normal positive-INT bonus language picks. Minions
- * and nonheroics use their own normal language handling outside this follower
- * flow.
+ * Uses the mature LanguageStep work surface and detail rail. Follower-specific
+ * logic is limited to computing known languages and the follower bonus pick
+ * count from the follower draft instead of the owner actor.
  */
 
-import { FollowerStepBase } from './follower-step-base.js';
+import { LanguageStep } from '../language-step.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-export class FollowerLanguageStep extends FollowerStepBase {
-  constructor(descriptor) {
-    super(descriptor);
-    this._speciesName = null;
-    this._forcedLanguages = [];
-    this._ownerLanguages = [];
-    this._allLanguages = [];
-    this._selectedLanguages = [];
-    this._pickCount = 1;
-  }
+function uniqueStrings(values = []) {
+  return Array.from(new Set((values || [])
+    .flatMap(value => Array.isArray(value) ? value : [value])
+    .map(value => typeof value === 'string' ? value : (value?.name || value?.label || value?.id || ''))
+    .map(value => String(value || '').trim())
+    .filter(Boolean)));
+}
 
+export class FollowerLanguageStep extends LanguageStep {
   async onStepEnter(shell) {
-    try {
-      const choices = this.getFollowerChoices(shell);
-      const ownerActor = this.getOwnerActor(shell);
-      this._speciesName = choices.speciesName;
+    this._followerChoices = this._getFollowerChoices(shell);
+    this._allLanguages = await this._getAllLanguages();
+    await this._loadSpeciesLanguageRules();
 
-      if (!this._speciesName || !ownerActor) {
-        swseLogger.warn('[FollowerLanguageStep] Missing species or owner');
-        return;
-      }
+    this._knownLanguages = await this._getKnownLanguages(shell?.actor, shell);
+    this._bonusLanguagesAvailable = await this._calculateBonusLanguagesAvailable(shell?.actor, shell);
+    this._restoreFollowerSelectedLanguages(shell);
+    this._suggestedLanguages = [];
+    shell.mentor.askMentorEnabled = false;
 
-      const langData = await this.getFollowerLanguages(ownerActor, this._speciesName, choices);
-      this._forcedLanguages = langData.forced || ['Basic'];
-      this._ownerLanguages = langData.ownerLanguages || [];
-      this._allLanguages = langData.allLanguages || [];
-      this._pickCount = Math.max(0, Number(langData.pickCount || 0));
-
-      const forcedSet = new Set(this._forcedLanguages);
-      const restored = Array.isArray(choices.languageChoices) ? choices.languageChoices : [];
-      this._selectedLanguages = restored.filter(lang => !forcedSet.has(lang));
-      this._selectedLanguages = this._selectedLanguages.filter(lang => this._allLanguages.includes(lang) || this._ownerLanguages.includes(lang));
-      this._selectedLanguages = this._selectedLanguages.slice(0, this._pickCount);
-
-      swseLogger.log('[FollowerLanguageStep] Entered', {
-        forced: this._forcedLanguages,
-        owner: this._ownerLanguages,
-        pickCount: this._pickCount,
-        selected: this._selectedLanguages
-      });
-    } catch (err) {
-      swseLogger.error('[FollowerLanguageStep] Error entering step:', err);
-    }
-  }
-
-  async onRender(shell, html, context) {
-    try {
-      const container = html.querySelector('[data-step-content]');
-      if (!container) return;
-      container.innerHTML = this._renderLanguageSelection();
-      this._attachLanguageListeners(shell, container);
-    } catch (err) {
-      swseLogger.error('[FollowerLanguageStep] Error rendering:', err);
-    }
-  }
-
-  _renderLanguageSelection() {
-    const forcedHtml = this._forcedLanguages.map(lang => `
-      <div class="follower-language-item native">
-        <span class="language-name">${lang}</span>
-        <span class="language-badge">Forced</span>
-      </div>
-    `).join('');
-
-    const selectedCount = this._selectedLanguages.length;
-    const remaining = Math.max(0, this._pickCount - selectedCount);
-    const ownerSelected = this._selectedLanguages.some(lang => this._ownerLanguages.includes(lang));
-
-    const ownerHtml = this._ownerLanguages.map(lang => this._renderLanguageCheckbox(lang, 'owner')).join('');
-    const otherHtml = this._allLanguages
-      .filter(lang => !this._ownerLanguages.includes(lang))
-      .map(lang => this._renderLanguageCheckbox(lang, 'bonus'))
-      .join('');
-
-    return `
-      <div class="follower-step-content">
-        <h3>Follower Languages</h3>
-        <p class="step-help">Followers know their species languages and Basic. They also choose one language known by the controlling owner, plus normal positive-INT bonus language picks.</p>
-
-        <h4>Forced Languages</h4>
-        <div class="follower-languages-native">${forcedHtml}</div>
-
-        <div class="language-pick-summary">
-          <p><strong>Language picks:</strong> ${selectedCount} / ${this._pickCount} selected (${remaining} remaining)</p>
-          ${this._pickCount > 0 && this._ownerLanguages.length > 0 && !ownerSelected ? '<p class="warning">At least one selected language must be known by the owner.</p>' : ''}
-        </div>
-
-        ${this._pickCount > 0 ? `
-          <h4>Owner Known Languages</h4>
-          ${this._ownerLanguages.length ? `<div class="follower-languages-shared">${ownerHtml}</div>` : '<p class="step-help">The owner has no additional language records to choose from.</p>'}
-
-          <h4>Other Bonus Language Options</h4>
-          <div class="follower-languages-shared">${otherHtml}</div>
-        ` : '<p class="step-help">This follower has no bonus language picks.</p>'}
-      </div>
-    `;
-  }
-
-  _renderLanguageCheckbox(lang, source) {
-    const isSelected = this._selectedLanguages.includes(lang);
-    return `
-      <div class="follower-language-item ${isSelected ? 'selected' : ''}" data-language="${lang}">
-        <input type="checkbox" class="language-checkbox" data-language="${lang}" data-source="${source}" ${isSelected ? 'checked' : ''}>
-        <label class="language-label">${lang}</label>
-        ${source === 'owner' ? '<span class="language-badge">Owner</span>' : ''}
-      </div>
-    `;
-  }
-
-  _attachLanguageListeners(shell, container) {
-    container.querySelectorAll('.language-checkbox').forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        const language = checkbox.getAttribute('data-language');
-        const isChecked = checkbox.checked;
-
-        if (isChecked) {
-          if (this._selectedLanguages.length >= this._pickCount) {
-            checkbox.checked = false;
-            ui?.notifications?.warn?.(`You may select only ${this._pickCount} bonus language${this._pickCount === 1 ? '' : 's'}.`);
-            return;
-          }
-          if (!this._selectedLanguages.includes(language)) this._selectedLanguages.push(language);
-        } else {
-          this._selectedLanguages = this._selectedLanguages.filter(lang => lang !== language);
-        }
-
-        this.saveFollowerChoice(shell, 'languageChoices', this._allChosenLanguages());
-        shell.render();
-      });
+    swseLogger.log('[FollowerLanguageStep] Using normal language UI with follower authority', {
+      species: this._followerChoices?.speciesName,
+      known: this._knownLanguages,
+      bonusSlots: this._bonusLanguagesAvailable,
+      selected: this._selectedBonusLanguages,
     });
   }
 
-  async onStepCommit(shell) {
-    if (this._selectedLanguages.length < this._pickCount) {
-      ui?.notifications?.warn?.(`Choose ${this._pickCount} bonus language${this._pickCount === 1 ? '' : 's'} for this follower.`);
-      return false;
-    }
+  _getFollowerChoices(shell) {
+    const draft = shell?.progressionSession?.draftSelections || {};
+    const persistent = shell?.progressionSession?.dependencyContext?.persistentChoices || {};
+    const species = draft.species || persistent.speciesSelection || null;
+    return {
+      speciesName: draft.speciesName || species?.name || persistent.speciesName || null,
+      speciesSelection: species,
+      backgroundSelection: draft.background || persistent.backgroundSelection || null,
+      pendingBackgroundContext: draft.pendingBackgroundContext || draft.background?.pendingContext || persistent.pendingBackgroundContext || null,
+      languageChoices: draft.languageChoices || draft.followerLanguages || persistent.languageChoices || [],
+      templateType: draft.templateType || persistent.templateType || null,
+      abilityChoice: draft.abilityChoice || persistent.abilityChoice || null,
+      droidConfig: draft.droidConfig || persistent.droidConfig || null,
+    };
+  }
 
-    if (this._pickCount > 0 && this._ownerLanguages.length > 0) {
-      const ownerSelected = this._selectedLanguages.some(lang => this._ownerLanguages.includes(lang));
-      if (!ownerSelected) {
-        ui?.notifications?.warn?.('Choose at least one language known by the controlling owner.');
-        return false;
+  async _getKnownLanguages(actor, shell) {
+    const choices = this._getFollowerChoices(shell);
+    const grants = [];
+    const speciesRef = choices.speciesName || choices.speciesSelection?.name || choices.speciesSelection?.id || null;
+
+    let usedSpeciesRule = false;
+    if (speciesRef) {
+      const speciesRule = this._resolveSpeciesLanguageRule(speciesRef);
+      if (speciesRule?.languages?.length) {
+        usedSpeciesRule = true;
+        speciesRule.languages.forEach(entry => {
+          const grant = this._makeLanguageGrant(entry.name, entry.origin || 'species', {
+            mode: entry.mode || 'full',
+            note: this._languageModeHint(entry.mode, entry.note),
+          });
+          if (grant) grants.push(grant);
+        });
       }
     }
 
-    this.saveFollowerChoice(shell, 'languageChoices', this._allChosenLanguages());
-    return true;
+    if (!usedSpeciesRule) {
+      const names = uniqueStrings([
+        choices.speciesSelection?.languages,
+        choices.speciesSelection?.system?.languages,
+        choices.speciesSelection?.canonicalStats?.languages,
+        choices.speciesSelection?.system?.canonicalStats?.languages,
+      ]);
+      names.forEach(lang => {
+        const grant = this._makeLanguageGrant(lang, 'species');
+        if (grant) grants.push(grant);
+      });
+    }
+
+    if (!grants.some(grant => this._languageMatchesName(grant.name, 'Basic'))) {
+      grants.push(this._makeLanguageGrant('Basic', 'default'));
+    }
+
+    const bgLanguages = uniqueStrings([
+      choices.pendingBackgroundContext?.languages,
+      choices.pendingBackgroundContext?.ledger?.languages?.granted,
+      choices.backgroundSelection?.languages,
+      choices.backgroundSelection?.system?.languages,
+    ]);
+    bgLanguages.forEach(lang => {
+      const grant = this._makeLanguageGrant(lang, 'background');
+      if (grant) grants.push(grant);
+    });
+
+    this._knownLanguageGrants = this._dedupeLanguageGrants(grants);
+    return this._knownLanguageGrants.filter(grant => grant.isFull).map(grant => grant.name);
   }
 
-  _allChosenLanguages() {
-    return this._uniqueStrings([...this._forcedLanguages, ...this._selectedLanguages]);
+  async _calculateBonusLanguagesAvailable(actor, shell) {
+    const choices = this._getFollowerChoices(shell);
+    const ability = this._computeFollowerAbilityPreview(choices);
+    const intMod = Math.max(0, Number(ability?.int?.mod || 0));
+    return 1 + intMod;
   }
 
-  getUtilityBarConfig() {
-    return { showSearch: false, showSort: false, showFilter: false };
+  _restoreFollowerSelectedLanguages(shell) {
+    const choices = this._getFollowerChoices(shell);
+    const knownTokens = new Set(this._knownLanguages.map(value => this._normalizeLanguageToken(value)));
+    const saved = uniqueStrings([
+      choices.languageChoices,
+      shell?.progressionSession?.draftSelections?.languages,
+    ]).filter(name => !knownTokens.has(this._normalizeLanguageToken(name)));
+    this._selectedBonusLanguages = saved.slice(0, Math.max(0, Number(this._bonusLanguagesAvailable || saved.length || 0)));
+  }
+
+  async _commitLanguageSelection(shell) {
+    await super._commitLanguageSelection(shell);
+    const allChosen = uniqueStrings([...this._knownLanguages, ...this._selectedBonusLanguages]);
+    if (shell?.progressionSession?.draftSelections) {
+      shell.progressionSession.draftSelections.languageChoices = allChosen;
+      shell.progressionSession.draftSelections.followerLanguages = allChosen;
+    }
+  }
+
+  _computeFollowerAbilityPreview(choices = {}) {
+    const isDroid = choices?.droidConfig?.isDroid === true || String(choices?.speciesName || '').toLowerCase().includes('droid');
+    const abilities = {
+      str: { base: 10, mod: 0 },
+      dex: { base: 10, mod: 0 },
+      con: { base: isDroid ? 0 : 10, mod: 0, absent: isDroid },
+      int: { base: 10, mod: 0 },
+      wis: { base: 10, mod: 0 },
+      cha: { base: 10, mod: 0 },
+    };
+
+    const templateOptions = { aggressive: ['str', 'con'], defensive: ['dex', 'wis'], utility: ['int', 'cha'] };
+    if (isDroid) {
+      const key = choices?.droidConfig?.abilityChoice;
+      if (key && key !== 'con' && abilities[key]) abilities[key].base += 2;
+    } else {
+      const key = templateOptions[choices?.templateType]?.includes(choices?.abilityChoice)
+        ? choices.abilityChoice
+        : templateOptions[choices?.templateType]?.[0];
+      if (key && abilities[key]) abilities[key].base += 2;
+      const mods = choices?.speciesSelection?.abilityScores || choices?.speciesSelection?.abilityMods || choices?.speciesSelection?.system?.abilityMods || {};
+      for (const [rawKey, rawValue] of Object.entries(mods || {})) {
+        const abilityKey = String(rawKey || '').toLowerCase().slice(0, 3);
+        if (abilities[abilityKey]) abilities[abilityKey].base += Number(rawValue || 0);
+      }
+    }
+
+    for (const [key, data] of Object.entries(abilities)) {
+      data.mod = data.absent ? 0 : Math.floor((Number(data.base || 10) - 10) / 2);
+    }
+    return abilities;
+  }
+
+  getMentorContext() {
+    return 'Choose bonus languages using the normal language selector. Species and background languages are already listed as known.';
   }
 }

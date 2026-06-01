@@ -212,8 +212,44 @@ export class SelectedRailContext {
       sections.push(this._buildNonheroicSection(projection, currentStepId));
     }
 
+    if (pathType.includes('follower')) {
+      const followerSection = this._buildFollowerSection(projection, session, currentStepId);
+      if (followerSection) sections.unshift(followerSection);
+    }
+
     // Filter out empty sections and return
     return sections.filter(s => s && s.items && s.items.length > 0);
+  }
+
+
+  static _buildFollowerSection(projection, session, currentStepId) {
+    const draft = session?.draftSelections || {};
+    const items = [];
+    const add = (label, value, stepId = null) => {
+      if (value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0)) return;
+      items.push({
+        label,
+        value: Array.isArray(value) ? value.join(', ') : String(value),
+        isCurrent: stepId ? currentStepId === stepId : false,
+      });
+    };
+
+    add('Kind', draft.followerKind ? String(draft.followerKind).charAt(0).toUpperCase() + String(draft.followerKind).slice(1) : null, 'follower-origin');
+    add('Species', draft.speciesName || draft.species?.name, 'species');
+    add('Template', draft.templateType ? String(draft.templateType).charAt(0).toUpperCase() + String(draft.templateType).slice(1) : null, 'follower-template');
+    add('Template Ability', draft.abilityChoice ? `+2 ${String(draft.abilityChoice).toUpperCase()}` : null, 'follower-template');
+    add('Droid Ability', draft.droidConfig?.abilityChoice ? `+2 ${String(draft.droidConfig.abilityChoice).toUpperCase()}` : null, 'follower-template');
+    add('Background', draft.backgroundChoice || draft.background?.name || draft.background?.id, 'background');
+    add('Skills', draft.skillChoices || draft.followerSkills, 'skills');
+    add('Languages', draft.languageChoices || draft.followerLanguages, 'languages');
+    add('Credits', draft.startingCredits !== undefined && draft.startingCredits !== null ? `${draft.startingCredits} cr` : null, 'summary');
+
+    return items.length ? {
+      id: 'follower-build',
+      label: 'Follower Build',
+      items,
+      isCurrent: ['follower-origin', 'species', 'follower-template', 'background', 'skills', 'languages', 'summary'].includes(currentStepId),
+    } : null;
   }
 
   /**

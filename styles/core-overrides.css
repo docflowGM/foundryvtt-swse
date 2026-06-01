@@ -19,7 +19,10 @@
    The .swse-sidebar-icons-fallback class is applied by JavaScript detection.
    ============================================================================ */
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="chat"] .control-icon::before {
+/* Foundry v13: sidebar tabs are button.ui-control.plain.icon[data-action="tab"][data-tab="…"]
+   Pre-v13 used .item[data-tab="…"] .control-icon — those selectors are dead in v13. */
+
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="chat"]::before {
   background-image: url('../assets/icons/chat.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -27,7 +30,7 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="combat"] .control-icon::before {
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="combat"]::before {
   background-image: url('../assets/icons/combat.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -35,7 +38,7 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="actors"] .control-icon::before {
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="actors"]::before {
   background-image: url('../assets/icons/actors.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -43,7 +46,7 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="items"] .control-icon::before {
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="items"]::before {
   background-image: url('../assets/icons/items.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -51,7 +54,7 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="journal"] .control-icon::before {
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="journal"]::before {
   background-image: url('../assets/icons/journal.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -59,7 +62,7 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="tables"] .control-icon::before {
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="tables"]::before {
   background-image: url('../assets/icons/tables.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -67,7 +70,7 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="playlists"] .control-icon::before {
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="playlists"]::before {
   background-image: url('../assets/icons/playlists.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -75,18 +78,4 @@
   content: '' !important;
 }
 
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="compendium"] .control-icon::before {
-  background-image: url('../assets/icons/compendium.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  content: '' !important;
-}
-
-.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="settings"] .control-icon::before {
-  background-image: url('../assets/icons/settings.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  content: '' !important;
-}
+.swse-sidebar-icons-fallback #sidebar-tabs button[data-action="tab"][data-tab="compendium

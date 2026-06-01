@@ -774,3 +774,305 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Runtime bugfix pass: make inventory cards legible, make the workspace itself
+   scrollable inside the holopad, and add room for the modification detail rail. */
+.swse-customization-workarea {
+  grid-template-columns: minmax(300px, 330px) minmax(0, 1fr);
+}
+
+.workbench-inventory {
+  overflow: hidden;
+}
+
+.inventory-list {
+  min-height: 120px;
+  padding: 2px 4px 10px 0;
+}
+
+.inventory-item {
+  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  min-height: 82px;
+  padding: 12px 14px;
+  overflow: visible;
+}
+
+.inventory-icon {
+  grid-row: 1 / span 2;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.inventory-copy {
+  min-width: 0;
+}
+
+.inventory-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inventory-meta {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start;
+  align-self: start;
+  margin-top: 4px;
+}
+
+.workbench-detail {
+  grid-template-rows: auto auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
+}
+
+.workbench-detail > :last-child {
+  overflow: visible;
+}
+
+.detail-grid {
+  grid-template-columns: minmax(210px, 1fr) minmax(210px, 1fr) minmax(250px, 0.9fr);
+  grid-auto-rows: minmax(160px, auto);
+  align-items: start;
+  padding-bottom: 12px;
+}
+
+.detail-panel {
+  min-height: 0;
+}
+
+.detail-panel > .card-list {
+  max-height: 245px;
+}
+
+.appearance-panel {
+  grid-column: 1 / 3;
+}
+
+.detail-rail {
+  grid-column: 3;
+  grid-row: 1 / span 4;
+  align-self: stretch;
+  min-height: 0;
+  max-height: none;
+  background: linear-gradient(180deg, color-mix(in oklch, var(--icw-cyan), transparent 91%), var(--icw-panel));
+}
+
+.detail-rail-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.rail-section {
+  display: grid;
+  gap: 8px;
+}
+
+.rail-section-title {
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--icw-pink);
+  border-bottom: 1px dashed color-mix(in oklch, var(--icw-pink), transparent 68%);
+  padding-bottom: 5px;
+}
+
+.rail-detail-card {
+  border: 1px solid color-mix(in oklch, var(--icw-cyan), transparent 78%);
+  background: oklch(0 0 0 / 0.30);
+  padding: 9px 10px;
+}
+
+.rail-detail-card.selected {
+  border-left: 3px solid var(--icw-pink);
+  background: linear-gradient(90deg, color-mix(in oklch, var(--icw-pink), transparent 86%), oklch(0 0 0 / 0.28));
+}
+
+.rail-detail-card.installed {
+  border-left: 3px solid var(--icw-positive);
+}
+
+.rail-detail-card.disabled {
+  opacity: 0.58;
+}
+
+.rail-detail-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--swse-font-orbit, 'Orbitron', sans-serif);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--icw-ink);
+  text-transform: uppercase;
+}
+
+.rail-detail-top span:last-child {
+  color: var(--icw-cyan);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+}
+
+.rail-detail-card p,
+.rail-empty {
+  margin: 6px 0 0;
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.rail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.rail-tags span {
+  border: 1px solid currentColor;
+  color: var(--icw-cyan);
+  padding: 1px 5px;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1180px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-rail,
+  .appearance-panel {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* Workbench scroll and inspector refinements */
+.workbench-detail {
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.workbench-detail > .detail-grid,
+.workbench-detail > .lightsaber-workspace {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
+}
+
+.detail-rail {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  min-height: 0;
+}
+
+.detail-rail-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.detail-panel > .card-list {
+  max-height: clamp(190px, 27vh, 300px);
+}
+
+.config-card,
+.variant-row {
+  padding: 8px 9px;
+}
+
+.card-name,
+.variant-name {
+  line-height: 1.2;
+}
+
+.card-desc,
+.variant-desc,
+.card-rules {
+  line-height: 1.35;
+}
+
+.rail-detail-fields {
+  display: grid;
+  gap: 7px;
+  margin: 8px 0 0;
+}
+
+.rail-detail-fields > div {
+  display: grid;
+  gap: 2px;
+}
+
+.rail-detail-fields dt {
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.rail-detail-fields dd {
+  margin: 0;
+  color: var(--icw-ink);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.rail-detail-fields .rail-benefit {
+  color: var(--icw-positive);
+}
+
+.rail-select-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 7px 9px;
+  border: 1px solid color-mix(in oklch, var(--icw-positive), transparent 38%);
+  background: color-mix(in oklch, var(--icw-positive), transparent 88%);
+  color: var(--icw-positive);
+  cursor: pointer;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.rail-select-btn--template {
+  border-color: color-mix(in oklch, #ffb15f, transparent 35%);
+  background: color-mix(in oklch, #ffb15f, transparent 88%);
+  color: #ffb15f;
+}
+
+.rail-detail-card.disabled .rail-benefit,
+.rail-detail-card.disabled .rail-select-btn {
+  color: var(--icw-dim);
+}
+
+@media (min-width: 1181px) {
+  .detail-rail {
+    position: sticky;
+    top: 0;
+  }
+}

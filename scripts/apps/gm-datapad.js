@@ -42,6 +42,7 @@ import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsy
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
+import { computeCenteredPosition, resetApplicationCentering } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 
 const GM_TABLET_BASE_WIDTH = 1440;
 const GM_TABLET_BASE_HEIGHT = 900;
@@ -54,8 +55,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     tag: 'section',
     window: {
       title: 'GM Datapad',
-      width: 1200,
-      height: 800,
+      width: GM_TABLET_BASE_WIDTH,
+      height: GM_TABLET_BASE_HEIGHT,
       frame: false,
       resizable: false,
       draggable: false
@@ -75,6 +76,24 @@ export class GMDatapad extends BaseSWSEAppV2 {
       template: 'systems/foundryvtt-swse/templates/apps/gm-datapad.hbs'
     }
   };
+
+  static open(pageId = 'home', options = {}) {
+    if (!(globalThis.game?.user?.isGM ?? false)) {
+      globalThis.ui?.notifications?.warn?.('Only GMs can access the GM Datapad.');
+      return null;
+    }
+
+    const targetPage = GMSurfaceRegistry.hasSurface(pageId) ? pageId : 'home';
+    const existing = this._activeInstance;
+    const app = existing && !existing.closing ? existing : new this(options);
+    this._activeInstance = app;
+
+    app.currentPage = targetPage;
+    app._shouldCenterOnRender = true;
+    app.render(true);
+    app.bringToFront?.();
+    return app;
+  }
 
   static get defaultOptions() {
     const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
@@ -122,6 +141,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     // Frameless shared holopad shell window state.
     this._gmTabletExpanded = false;
     this._gmTabletPreExpandRect = null;
+    this._shouldCenterOnRender = true;
   }
 
 
@@ -738,6 +758,58 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
 
+  _centerGmDatapadOnFirstRender() {
+    if (!this._shouldCenterOnRender || !this.setPosition) return;
+    this._shouldCenterOnRender = false;
+
+    const pos = this._computeGmDatapadSafePosition({
+      width: Number(this.position?.width) || GM_TABLET_BASE_WIDTH,
+      height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT,
+      expanded: false
+    });
+    this._applyGmDatapadPosition(pos);
+
+    SWSELogger.log('[GM Datapad] Centered on first render', pos);
+  }
+
+  _computeGmDatapadSafePosition({ width = GM_TABLET_BASE_WIDTH, height = GM_TABLET_BASE_HEIGHT, expanded = false } = {}) {
+    const viewportW = Math.max(1, window.innerWidth || GM_TABLET_BASE_WIDTH);
+    const viewportH = Math.max(1, window.innerHeight || GM_TABLET_BASE_HEIGHT);
+
+    // The GM datapad is a frameless canvas app, so leave room for Foundry's
+    // bottom UI/hotbar. This keeps the shared shell bottom rail visible instead
+    // of letting it hide behind the viewport chrome.
+    const topInset = expanded ? 16 : 24;
+    const bottomInset = expanded ? 118 : 132;
+    const maxHeight = Math.max(GM_TABLET_MIN_HEIGHT, viewportH - topInset - bottomInset);
+    const safeHeight = Math.min(Number(height) || GM_TABLET_BASE_HEIGHT, GM_TABLET_BASE_HEIGHT, maxHeight);
+
+    const pos = computeCenteredPosition(Number(width) || GM_TABLET_BASE_WIDTH, safeHeight);
+    pos.height = safeHeight;
+    pos.top = Math.max(topInset, Math.min(pos.top, viewportH - safeHeight - bottomInset));
+
+    // If the viewport is very short, prefer a visible bottom rail over perfect centering.
+    if (pos.top + pos.height > viewportH - bottomInset) {
+      pos.top = Math.max(topInset, viewportH - bottomInset - pos.height);
+    }
+
+    return pos;
+  }
+
+  _applyGmDatapadPosition(pos = {}) {
+    this.setPosition(pos);
+
+    const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+    if (el) {
+      el.style.setProperty('position', 'absolute', 'important');
+      el.style.setProperty('left', `${pos.left}px`, 'important');
+      el.style.setProperty('top', `${pos.top}px`, 'important');
+      el.style.setProperty('width', `${pos.width}px`, 'important');
+      el.style.setProperty('height', `${pos.height}px`, 'important');
+      el.style.setProperty('--swse-tablet-scaled-width', `${pos.width}px`);
+      el.style.setProperty('--swse-tablet-scaled-height', `${pos.height}px`);
+    }
+  }
 
 
   _wireSharedHolopadFrameEvents(root) {
@@ -771,15 +843,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
       height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT
     };
 
-    const inset = 24;
-    const width = Math.min(GM_TABLET_BASE_WIDTH, Math.max(GM_TABLET_MIN_WIDTH, window.innerWidth - inset));
-    const height = Math.min(GM_TABLET_BASE_HEIGHT, Math.max(GM_TABLET_MIN_HEIGHT, window.innerHeight - inset));
-    this.setPosition({
-      width,
-      height,
-      left: Math.max(0, Math.round((window.innerWidth - width) / 2)),
-      top: Math.max(0, Math.round((window.innerHeight - height) / 2))
+    const pos = this._computeGmDatapadSafePosition({
+      width: GM_TABLET_BASE_WIDTH,
+      height: GM_TABLET_BASE_HEIGHT,
+      expanded: true
     });
+    this._applyGmDatapadPosition(pos);
     this._gmTabletExpanded = true;
   }
 
@@ -821,6 +890,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
         ev.preventDefault();
         ev.stopPropagation();
         const dir = String(handle.dataset.resizeDir || 'se').toLowerCase();
+        const shell = root.querySelector?.('.swse-sheet-v2-shell--gm-datapad') || root;
+        handle.setPointerCapture?.(ev.pointerId);
+        shell?.classList?.add?.('is-window-resizing', `is-window-resizing--${dir}`);
         const resizeWest = dir.includes('w');
         const resizeEast = dir.includes('e') || (!resizeWest && !dir.includes('n') && !dir.includes('s'));
         const resizeNorth = dir.includes('n');
@@ -855,8 +927,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
           }
           this._gmTabletExpanded = false;
           this.setPosition({ left, top, width, height });
+          const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+          el?.style?.setProperty?.('--swse-tablet-scaled-width', `${Math.round(width)}px`);
+          el?.style?.setProperty?.('--swse-tablet-scaled-height', `${Math.round(height)}px`);
         };
-        const onEnd = () => {
+        const onEnd = (upEv) => {
+          handle.releasePointerCapture?.(upEv?.pointerId ?? ev.pointerId);
+          shell?.classList?.remove?.('is-window-resizing', `is-window-resizing--${dir}`);
           window.removeEventListener('pointermove', onMove);
           window.removeEventListener('pointerup', onEnd);
           window.removeEventListener('pointercancel', onEnd);
@@ -893,6 +970,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
 
+    this._centerGmDatapadOnFirstRender();
     this._wireSharedHolopadFrameEvents(root);
 
     // Mirror actor holopad home affordances: all shell/home controls route to GM home.
@@ -1609,6 +1687,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
    * Approval decisions are owned by GMApprovalOperationsService.
    * The GM Datapad host intentionally remains the shared-shell route/render owner.
    */
+
+
+  async close(options = {}) {
+    if (this.constructor._activeInstance === this) this.constructor._activeInstance = null;
+    resetApplicationCentering(this);
+    return super.close(options);
+  }
 
   /**
    * Navigate to a different page within the datapad

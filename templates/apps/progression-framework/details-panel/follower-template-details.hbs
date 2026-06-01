@@ -1,0 +1,24 @@
+<div class="prog-details-card follower-template-details">
+  <header class="prog-details-card__header">
+    <div class="prog-details-card__eyebrow">Follower Template</div>
+    <h2>{{template.name}}</h2>
+    <p>{{template.type}}</p>
+  </header>
+  <div class="prog-details-card__body">
+    <p>{{template.description}}</p>
+    <div class="prog-details-card__section">
+      <h3>Skill Package</h3>
+      <p>{{template.skillText}}</p>
+    </div>
+    <div class="prog-details-card__section">
+      <h3>Ability Choice</h3>
+      <p>{{template.attributeText}}</p>
+    </div>
+    {{#if template.defenseText}}
+      <div class="prog-details-card__section">
+        <h3>Defenses</h3>
+        <p>{{template.defenseText}}</p>
+      </div>
+    {{/if}}
+  </div>
+</div>

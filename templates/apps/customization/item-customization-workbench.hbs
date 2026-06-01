@@ -242,11 +242,97 @@
                 </button>
                 {{#each structuralActions.strips}}
                 <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-strip" data-key="{{key}}">
-                  <span class="card-name">{{label}}</span>
+                  <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
+                  {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
                 </button>
                 {{/each}}
               </div>
             </section>
+
+            <aside class="detail-rail panel">
+              <div class="panel-head">
+                <span>Modification Intel</span>
+                <span class="hint">{{detailRail.slotSummary}}</span>
+              </div>
+              <div class="detail-rail-scroll">
+                {{#if detailRail.stagedRows.length}}
+                <section class="rail-section rail-section-staged">
+                  <div class="rail-section-title">Staged Work</div>
+                  {{#each detailRail.stagedRows}}
+                  <article class="rail-detail-card selected">
+                    <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                    <dl class="rail-detail-fields">
+                      <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                      {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                      <div><dt>Slots</dt><dd>{{#if slotCost}}{{slotCost}}{{else}}0{{/if}}</dd></div>
+                      <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
+                    </dl>
+                    {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
+                  </article>
+                  {{/each}}
+                </section>
+                {{/if}}
+
+                <section class="rail-section">
+                  <div class="rail-section-title">Available Modifications</div>
+                  {{#if detailRail.upgradeRows.length}}
+                    {{#each detailRail.upgradeRows}}
+                    <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
+                      <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                      <dl class="rail-detail-fields">
+                        <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                        {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                        <div><dt>Slots</dt><dd>{{slotCost}}</dd></div>
+                        <div><dt>Cost</dt><dd>{{cost}} cr</dd></div>
+                      </dl>
+                      <div class="rail-tags">{{#if installed}}<span>Installed</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
+                      {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" data-key="{{key}}">{{buttonLabel}}</button>{{/if}}
+                    </article>
+                    {{/each}}
+                  {{else}}
+                    <div class="rail-empty">No structured modifications are available for this item.</div>
+                  {{/if}}
+                </section>
+
+                {{#if detailRail.templateRows.length}}
+                <section class="rail-section">
+                  <div class="rail-section-title">Templates</div>
+                  {{#each detailRail.templateRows}}
+                  <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
+                    <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                    <dl class="rail-detail-fields">
+                      <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                      {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                      <div><dt>Slots</dt><dd>0</dd></div>
+                      <div><dt>Cost</dt><dd>{{cost}} cr</dd></div>
+                    </dl>
+                    <div class="rail-tags">{{#if installed}}<span>Applied</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
+                    {{#if selectable}}<button type="button" class="rail-select-btn rail-select-btn--template" data-action="{{action}}" data-key="{{key}}">{{buttonLabel}}</button>{{/if}}
+                  </article>
+                  {{/each}}
+                </section>
+                {{/if}}
+
+                {{#if detailRail.structuralRows.length}}
+                <section class="rail-section">
+                  <div class="rail-section-title">Structural Changes</div>
+                  {{#each detailRail.structuralRows}}
+                  <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
+                    <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                    <dl class="rail-detail-fields">
+                      <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                      {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                      <div><dt>Slots</dt><dd>+1</dd></div>
+                      <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
+                    </dl>
+                    <div class="rail-tags">{{#if installed}}<span>Installed</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
+                    {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
+                  </article>
+                  {{/each}}
+                </section>
+                {{/if}}
+              </div>
+            </aside>
 
             <section class="detail-panel panel appearance-panel">
               <div class="panel-head">

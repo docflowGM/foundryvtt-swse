@@ -5318,3 +5318,262 @@
 .gm-faction-registry-form { display: grid; gap: 0.65rem; width: 100%; }
 .gm-faction-registry-card-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
 .gm-faction-stale-warning { display: inline-flex; width: fit-content; margin-top: 0.2rem; padding: 0.15rem 0.4rem; border: 1px solid rgba(255, 210, 90, 0.42); border-radius: 999px; color: #ffd25a; background: rgba(255, 210, 90, 0.12); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* -------------------------------------------------------------------------
+   GM datapad V13 shell host corrections
+   The GM datapad is a standalone ApplicationV2 shell, not an actor-sheet
+   overlay. Keep the dock fixed and let the surface content scroll.
+   ------------------------------------------------------------------------- */
+.gm-datapad.application,
+.gm-datapad {
+  overflow: visible;
+}
+
+.gm-datapad .window-content,
+.gm-datapad.application .window-content {
+  height: 100%;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-tablet,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen-shell,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen {
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-shell-surface-host {
+  position: relative;
+  inset: auto;
+  z-index: 3;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow: auto;
+  background: transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-shell-surface {
+  min-height: min-content;
+  overflow: visible;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-page {
+  min-height: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-shell-home-nav {
+  position: sticky;
+  bottom: 0.75rem;
+  margin-left: auto;
+  z-index: 30;
+}
+
+/* -------------------------------------------------------------------------
+   GM datapad shared-shell parity pass
+   ------------------------------------------------------------------------- */
+.gm-datapad.application,
+.gm-datapad {
+  z-index: 1500 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.gm-datapad .window-content,
+.gm-datapad.application .window-content {
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.gm-datapad-container,
+.swse-sheet-v2-shell--gm-datapad,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-tablet,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen-shell,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-tablet {
+  padding: 34px 34px 42px !important;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-screen {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 14px !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-command-dock {
+  flex: 0 0 auto !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-shell-surface-host {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  scrollbar-gutter: stable both-edges;
+  padding-bottom: 1.35rem !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-shell-surface,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-page,
+.swse-sheet-v2-shell--gm-datapad [class^="gm-datapad-"][class*="page"],
+.swse-sheet-v2-shell--gm-datapad [class*="gm-datapad-"][class*="surface"] {
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-bottom-home,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-bottom-engraving,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-vent--bottom {
+  z-index: 650 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-bottom-home {
+  bottom: 7px !important;
+}
+
+/* The shell already has a hardware home button. Do not add another floating
+   app-level home button inside GM surfaces. */
+.swse-sheet-v2-shell--gm-datapad .swse-shell-home-nav {
+  display: none !important;
+}
+
+/* Larger resize hit boxes matching the actor holopad behavior. */
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-grip {
+  position: absolute !important;
+  z-index: 700 !important;
+  right: -2px !important;
+  bottom: -2px !important;
+  width: 40px !important;
+  height: 40px !important;
+  cursor: nwse-resize !important;
+  pointer-events: auto !important;
+  border-radius: 0 0 28px 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-grip::before {
+  content: "";
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  width: 15px;
+  height: 15px;
+  border-right: 2px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 72%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 72%, transparent);
+  opacity: 0.88;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone {
+  position: absolute !important;
+  z-index: 690 !important;
+  display: block !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  opacity: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--n {
+  top: -3px !important;
+  left: 18px !important;
+  right: 18px !important;
+  height: 10px !important;
+  cursor: ns-resize !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--s {
+  bottom: -3px !important;
+  left: 18px !important;
+  right: 18px !important;
+  height: 12px !important;
+  cursor: ns-resize !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--e {
+  top: 18px !important;
+  right: -3px !important;
+  bottom: 18px !important;
+  width: 12px !important;
+  cursor: ew-resize !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--w {
+  top: 18px !important;
+  left: -3px !important;
+  bottom: 18px !important;
+  width: 12px !important;
+  cursor: ew-resize !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--ne,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--nw,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--se,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--sw {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--ne { top: -4px !important; right: -4px !important; cursor: nesw-resize !important; }
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--nw { top: -4px !important; left: -4px !important; cursor: nwse-resize !important; }
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--se { right: -4px !important; bottom: -4px !important; cursor: nwse-resize !important; }
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-resize-zone--sw { left: -4px !important; bottom: -4px !important; cursor: nesw-resize !important; }
+
+.swse-sheet-v2-shell--gm-datapad.is-window-resizing,
+.swse-sheet-v2-shell--gm-datapad.is-window-resizing * {
+  user-select: none !important;
+}
+
+/* Home is only the app launcher grid. */
+.gm-datapad-home--launcher-only {
+  min-height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(0.75rem, 2vh, 1.5rem) !important;
+}
+
+.gm-shell-app-grid--home-only {
+  width: min(100%, 1040px) !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(132px, 1fr)) !important;
+  gap: clamp(0.7rem, 1.6vw, 1rem) !important;
+  align-items: stretch !important;
+}
+
+.gm-shell-app-grid--home-only .gm-shell-app-card {
+  min-height: 132px !important;
+}
+
+@media (max-width: 1050px) {
+  .gm-shell-app-grid--home-only {
+    grid-template-columns: repeat(2, minmax(160px, 1fr)) !important;
+    align-content: start !important;
+  }
+
+  .gm-datapad-home--launcher-only {
+    align-items: flex-start !important;
+  }
+}

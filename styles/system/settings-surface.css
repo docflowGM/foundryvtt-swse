@@ -27,7 +27,23 @@
 .swse-language-chip { padding:8px 14px; border:1px solid oklch(var(--swse-accent-l) var(--swse-accent-c) var(--swse-accent-h) / 0.3); background:transparent; color:var(--swse-ink-dim); font-family:var(--swse-font-mono); font-size:10px; letter-spacing:0.18em; text-transform:uppercase; cursor:pointer; }
 .swse-language-chip.active { background:oklch(var(--swse-accent-l) var(--swse-accent-c) var(--swse-accent-h) / 0.14); color:var(--swse-accent); border-color:var(--swse-accent); }
 .swse-language-aurabesh .swse-shell-surface, .swse-language-aurabesh .swse-shell-surface *, .swse-language-aurabesh .swse-shell-sheet-layers, .swse-language-aurabesh .swse-shell-sheet-layers *, .swse-language-aurabesh .swse-sheet-v2-shell, .swse-language-aurabesh .swse-sheet-v2-shell * { font-family: 'Aurabesh', var(--swse-font-body), sans-serif !important; }
-.swse-language-aurabesh input, .swse-language-aurabesh textarea, .swse-language-aurabesh select, .swse-language-aurabesh button { font-family: 'Aurabesh', var(--swse-font-body), sans-serif !important; }
+/* Scope Aurabesh font to SWSE-owned surfaces only — never global buttons/inputs.
+   Applying to bare html.swse-language-aurabesh button would clobber Font Awesome
+   icons on Foundry sidebar/canvas controls. */
+.swse-language-aurabesh .swse-shell-surface :is(input, textarea, select, button),
+.swse-language-aurabesh .swse-shell-sheet-layers :is(input, textarea, select, button),
+.swse-language-aurabesh .swse-sheet-v2-shell :is(input, textarea, select, button) {
+  font-family: 'Aurabesh', var(--swse-font-body), sans-serif !important;
+}
+
+/* Guard: ensure Foundry canvas/sidebar icon buttons can never inherit Aurabesh. */
+.swse-language-aurabesh #controls button.ui-control::before,
+.swse-language-aurabesh #sidebar-tabs button.ui-control::before,
+.swse-language-aurabesh button.ui-control.icon::before,
+.swse-language-aurabesh button.ui-control.plain.icon::before {
+  font-family: var(--font-awesome, "Font Awesome 6 Free") !important;
+  font-weight: 900 !important;
+}
 @media (max-width: 700px) { .swse-settings-grid { grid-template-columns:1fr; } }
 
 /* Phase 2 shared settings surface parity: template-aligned classes used by both actor and GM holopads. */

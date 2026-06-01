@@ -50,3 +50,59 @@ i.swse-scene-control-approval::before,
 #controls .swse-scene-control {
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 70%, transparent));
 }
+
+i.swse-scene-control-datapad::before,
+.swse-scene-control-datapad::before {
+  content: "▣";
+  font-family: "SWSE Space Grotesk", sans-serif;
+  font-size: 1.08em;
+}
+
+i.swse-scene-control-store::before,
+.swse-scene-control-store::before {
+  content: "◆";
+  font-family: "SWSE Space Grotesk", sans-serif;
+  font-size: 1.05em;
+}
+
+.swse-directory-launcher-row,
+.directory-header .swse-directory-launcher-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.swse-directory-launcher {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 38%, rgba(255,255,255,0.14));
+  border-radius: 0.35rem;
+  background: rgba(5, 12, 22, 0.88);
+  color: color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 80%, white);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.swse-directory-launcher:hover,
+.swse-directory-launcher:focus-visible {
+  background: color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 18%, rgba(5, 12, 22, 0.92));
+  border-color: color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 70%, white);
+}
+
+/* Safety guard: GM directory launchers must never attach to the sidebar tab rail. */
+#sidebar-tabs .swse-directory-launcher,
+#sidebar-tabs .swse-directory-launcher-row,
+nav#sidebar-tabs .swse-directory-launcher,
+nav#sidebar-tabs .swse-directory-launcher-row,
+.sidebar-tabs .swse-directory-launcher,
+.sidebar-tabs .swse-directory-launcher-row {
+  display: none !important;
+  pointer-events: none !important;
+}

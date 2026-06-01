@@ -184,8 +184,8 @@ export class AlliesSurfaceController {
   async _buildFollower(slotId) {
     if (slotId) await AlliesSurfaceService.reopenCompanionSlot(this._actor, slotId);
     const { launchFollowerProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
-    await launchFollowerProgression(this._actor, { slotId: slotId || null, source: 'allies' });
-    this._requestRender('allies-build-follower');
+    const launched = await launchFollowerProgression(this._actor, { slotId: slotId || null, source: 'allies' });
+    if (!launched) this._requestRender('allies-build-follower-failed');
   }
 
   async _buildMinion(slotId) {

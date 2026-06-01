@@ -36,6 +36,41 @@ const STRUCTURAL_LABELS = {
   defensive_material: 'Strip Defensive Material',
   joint_protection: 'Strip Joint Protection'
 };
+
+const STRUCTURAL_DETAILS = {
+  size_increase: {
+    effect: '+1 upgrade slot',
+    description: 'Physically expands or reinforces the item, adding one upgrade slot at the cost of increased size, bulk, or profile.'
+  },
+  damage: {
+    effect: '+1 upgrade slot',
+    description: "Removes or weakens the item's damage-bearing assembly to free internal space for other workbench modifications."
+  },
+  range: {
+    effect: '+1 upgrade slot',
+    description: 'Trades range hardware, focusing arrays, or delivery systems for another upgrade slot.'
+  },
+  design: {
+    effect: '+1 upgrade slot',
+    description: "Simplifies the item's specialized design package, making room for customization at the expense of stock refinements."
+  },
+  stun_setting: {
+    effect: '+1 upgrade slot',
+    description: 'Removes the stun-setting assembly and routes that space and power budget into upgrade capacity.'
+  },
+  autofire: {
+    effect: '+1 upgrade slot',
+    description: 'Removes autofire cycling components to reclaim space for another upgrade.'
+  },
+  defensive_material: {
+    effect: '+1 upgrade slot',
+    description: 'Strips protective material or reinforcement from armor to recover upgrade space.'
+  },
+  joint_protection: {
+    effect: '+1 upgrade slot',
+    description: 'Removes joint guards or coverage elements, improving modification capacity while reducing stock protection.'
+  }
+};
 const ACCENT_SWATCHES = ['#a0a0a0', '#d4af37', '#b87333', '#c0c0c0', '#1a1a1a', '#dc143c', '#1e90ff', '#00ff66'];
 const TINT_SWATCHES = ['#1a1a2e','#3a2a4a','#5a3a4a','#7a3a4a','#8a5a3a','#3a5a4a','#3a4a6a','#5a5a6a','#aa8a4a','#2a2a2a','#9a9a9a','#0a0a0a'];
 
@@ -684,6 +719,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return areas.map(key => ({
       key,
       label: STRUCTURAL_LABELS[key] || key,
+      description: STRUCTURAL_DETAILS[key]?.description || 'Trade a stock capability for one additional upgrade slot.',
+      effect: STRUCTURAL_DETAILS[key]?.effect || '+1 upgrade slot',
       selected: draftAreas.has(key),
       installed: current.has(key),
       disabled: current.has(key)
@@ -882,6 +919,93 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     await this._renderMentorTranslation();
   }
 
+  _buildModificationDetailRail({ item, upgrades = [], templates = [], structuralActions = null, preview = null } = {}) {
+    const upgradeRows = upgrades.map(card => ({
+      kind: 'Modification',
+      action: 'toggle-upgrade',
+      key: card.key,
+      selectable: !card.installed && !card.disabled,
+      buttonLabel: card.selected ? 'Remove Modification' : 'Select Modification',
+      name: card.name,
+      description: card.description || 'No description is recorded for this modification yet.',
+      effect: card.effect || '',
+      cost: Number(card.costCredits ?? 0),
+      slotCost: Number(card.slotCost ?? 0),
+      selected: !!card.selected,
+      installed: !!card.installed,
+      disabled: !!card.disabled
+    }));
+
+    const templateRows = templates.map(card => ({
+      kind: 'Template',
+      action: 'toggle-template',
+      key: card.key,
+      selectable: !card.installed && !card.disabled,
+      buttonLabel: card.selected ? 'Remove Template' : 'Select Template',
+      name: card.name,
+      description: card.description || card.rulesText || 'No template notes are recorded for this entry yet.',
+      effect: card.rulesText || card.restriction || '',
+      cost: Number(card.costPreview ?? 0),
+      slotCost: null,
+      selected: !!card.selected,
+      installed: !!card.installed,
+      disabled: !!card.disabled
+    }));
+
+    const structuralRows = [];
+    if (structuralActions?.sizeIncrease) {
+      structuralRows.push({
+        kind: 'Structural',
+        action: 'toggle-size-increase',
+        key: null,
+        selectable: !structuralActions.sizeIncrease.disabled,
+        buttonLabel: structuralActions.sizeIncrease.selected ? 'Remove Structural Change' : 'Select Structural Change',
+        name: structuralActions.sizeIncrease.label,
+        description: structuralActions.sizeIncrease.description || STRUCTURAL_DETAILS.size_increase.description,
+        effect: STRUCTURAL_DETAILS.size_increase.effect,
+        cost: this._costEngine.getSizeIncreaseOperationCost?.(item) ?? 0,
+        slotCost: null,
+        selected: !!structuralActions.sizeIncrease.selected,
+        installed: preview?.slotState?.sizeIncreaseAlreadyApplied ?? false,
+        disabled: !!structuralActions.sizeIncrease.disabled
+      });
+    }
+    for (const strip of structuralActions?.strips || []) {
+      structuralRows.push({
+        kind: 'Structural',
+        action: 'toggle-strip',
+        key: strip.key,
+        selectable: !strip.disabled && !strip.installed,
+        buttonLabel: strip.selected ? 'Remove Structural Change' : 'Select Structural Change',
+        name: strip.label,
+        description: strip.description || STRUCTURAL_DETAILS[strip.key]?.description || 'Trade a stock capability for one additional upgrade slot.',
+        effect: strip.effect || STRUCTURAL_DETAILS[strip.key]?.effect || '+1 upgrade slot',
+        cost: this._costEngine.getStripOperationCost?.(item) ?? 0,
+        slotCost: null,
+        selected: !!strip.selected,
+        installed: !!strip.installed,
+        disabled: !!strip.disabled
+      });
+    }
+
+    const allRows = [...upgradeRows, ...templateRows, ...structuralRows];
+    const stagedRows = allRows.filter(row => row.selected && !row.installed);
+    const installedRows = allRows.filter(row => row.installed);
+
+    return {
+      hasRows: allRows.length > 0,
+      stagedRows,
+      installedRows,
+      upgradeRows,
+      templateRows,
+      structuralRows,
+      slotSummary: preview?.slotState
+        ? `${preview.slotState.usedSlots}/${preview.slotState.totalAvailable} slots used`
+        : '',
+      costSummary: preview ? `${preview.totalCost} cr staged` : ''
+    };
+  }
+
   _getItemSummary(item, draft, preview) {
     const category = this._getCategoryForItem(item);
     const subtitle = item.system?.weaponSubtype || item.system?.armorType || item.system?.subtype || item.type;
@@ -975,6 +1099,22 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         };
       });
 
+    const upgrades = this._getUpgradeCatalog(item, draft);
+    const templates = this._getTemplateCards(item, draft);
+    const structuralActions = {
+      sizeIncrease: {
+        selected: !!draft.structural?.sizeIncreaseApplied,
+        disabled: ['lightsaber', 'droid'].includes(item.type),
+        label: 'Increase Size / Bulk',
+        description: ['armor', 'bodysuit'].includes(item.type)
+          ? 'Increase this armor one weight class heavier for +1 upgrade slot.'
+          : 'Increase the item one size step for +1 upgrade slot.',
+        effect: STRUCTURAL_DETAILS.size_increase.effect
+      },
+      strips: this._getStrippableAreas(item, draft)
+    };
+    const detailRail = this._buildModificationDetailRail({ item, upgrades, templates, structuralActions, preview });
+
     return {
       ...shellContext,
       actor: this.actor,
@@ -986,19 +1126,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       inventoryItems,
       currentItem: this._getItemSummary(item, draft, preview),
       ...(await this._getWorkshopMentorContext(item)),
-      upgrades: this._getUpgradeCatalog(item, draft),
-      templates: this._getTemplateCards(item, draft),
-      structuralActions: {
-        sizeIncrease: {
-          selected: !!draft.structural?.sizeIncreaseApplied,
-          disabled: ['lightsaber', 'droid'].includes(item.type),
-          label: 'Increase Size / Bulk',
-          description: ['armor', 'bodysuit'].includes(item.type)
-            ? 'Increase this armor one weight class heavier for +1 upgrade slot.'
-            : 'Increase the item one size step for +1 upgrade slot.'
-        },
-        strips: this._getStrippableAreas(item, draft)
-      },
+      upgrades,
+      templates,
+      structuralActions,
+      detailRail,
       isStoreStageMode: this._isStoreStageMode(),
       footer: {
         credits: Number(this.actor.system?.credits ?? 0) || 0,

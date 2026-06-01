@@ -106,8 +106,7 @@ function onClickGMDatapad(app) {
   }
   SWSELogger.log('[Actor Sidebar] Opening GM Datapad');
   try {
-    const datapad = new GMDatapad();
-    datapad.render(true);
+    GMDatapad.open('home');
   } catch (err) {
     SWSELogger.error('[Actor Sidebar] Error opening GM Datapad:', err);
     ui?.notifications?.error?.(`Failed to open GM Datapad: ${err.message}`);
@@ -129,7 +128,186 @@ function onClickNPCTemplates(app) {
   }
 }
 
+function getActorDirectoryElement(html) {
+  if (!html) return null;
+  if (html instanceof HTMLElement) return html;
+  if (html[0] instanceof HTMLElement) return html[0];
+  if (html.element instanceof HTMLElement) return html.element;
+  return null;
+}
+
+function isInsideSidebarTabs(element) {
+  return Boolean(element?.closest?.('#sidebar-tabs, nav#sidebar-tabs, .sidebar-tabs'));
+}
+
+function hasDirectoryChrome(element) {
+  if (!(element instanceof HTMLElement)) return false;
+  return Boolean(
+    element.querySelector?.('.directory-header, .directory-list, [data-application-part="directory"]')
+      || element.matches?.('.directory, .actor-directory, .actors-sidebar, [data-document-name="Actor"]')
+      || element.id === 'actors'
+  );
+}
+
+function isActorDirectoryRoot(element) {
+  if (!(element instanceof HTMLElement)) return false;
+  if (isInsideSidebarTabs(element)) return false;
+
+  const documentName = String(element.dataset?.documentName || '').toLowerCase();
+  const tab = String(element.dataset?.tab || element.dataset?.sidebarTab || '').toLowerCase();
+  const id = String(element.id || '').toLowerCase();
+  const classes = element.classList;
+
+  const actorIdentity = id === 'actors'
+    || documentName === 'actor'
+    || tab === 'actors'
+    || classes?.contains?.('actor-directory')
+    || classes?.contains?.('actors-sidebar');
+
+  if (!actorIdentity) return false;
+  return hasDirectoryChrome(element);
+}
+
+function getLiveActorDirectoryRoot(root = null) {
+  const rawCandidates = [
+    root,
+    root?.closest?.('#actors, .actor-directory, .actors-sidebar, [data-document-name="Actor"], [data-sidebar-tab="actors"], [data-tab="actors"]'),
+    root?.querySelector?.('#actors'),
+    root?.querySelector?.('.actor-directory'),
+    root?.querySelector?.('.actors-sidebar'),
+    root?.querySelector?.('[data-document-name="Actor"]'),
+    root?.querySelector?.('[data-sidebar-tab="actors"]'),
+    root?.querySelector?.('[data-tab="actors"]'),
+    document.querySelector('#sidebar #actors'),
+    document.querySelector('#sidebar .actor-directory'),
+    document.querySelector('#sidebar .actors-sidebar'),
+    document.querySelector('#sidebar [data-document-name="Actor"]'),
+    document.querySelector('#sidebar [data-sidebar-tab="actors"]'),
+    document.querySelector('#sidebar .tab[data-tab="actors"]'),
+    document.querySelector('#sidebar section[data-tab="actors"]'),
+    document.querySelector('#actors')
+  ].filter(Boolean);
+
+  const candidates = rawCandidates.filter(isActorDirectoryRoot);
+  return candidates.find((el) => el.offsetParent || el.matches?.('.active, [aria-hidden="false"]')) ?? candidates[0] ?? null;
+}
+
+function cleanupMisplacedDirectoryLaunchers() {
+  for (const launcher of document.querySelectorAll('.swse-directory-launcher, .swse-directory-launcher-row')) {
+    const actorRoot = launcher.closest?.('#actors, .actor-directory, .actors-sidebar, [data-document-name="Actor"], [data-sidebar-tab="actors"], [data-tab="actors"]');
+    if (!isActorDirectoryRoot(actorRoot)) {
+      launcher.remove();
+    }
+  }
+}
+
+function findDirectoryActionBar(root) {
+  const scope = getLiveActorDirectoryRoot(root) ?? root;
+  if (!isActorDirectoryRoot(scope)) return null;
+
+  const existingRow = scope.querySelector?.('.directory-header .swse-directory-launcher-row, header .swse-directory-launcher-row, [data-application-part="header"] .swse-directory-launcher-row');
+  if (existingRow) return existingRow;
+
+  const actionBar = scope.querySelector?.('.directory-header .action-buttons')
+    ?? scope.querySelector?.('.directory-header .header-actions')
+    ?? scope.querySelector?.('.directory-header .actions')
+    ?? scope.querySelector?.('.directory-header .directory-actions')
+    ?? scope.querySelector?.('header .action-buttons')
+    ?? scope.querySelector?.('header .header-actions')
+    ?? scope.querySelector?.('[data-application-part="header"] .action-buttons')
+    ?? scope.querySelector?.('[data-application-part="directory"] .action-buttons');
+
+  if (actionBar) return actionBar;
+
+  const header = scope.querySelector?.('.directory-header')
+    ?? scope.querySelector?.('header')
+    ?? scope.querySelector?.('[data-application-part="header"]');
+  if (!header) return null;
+
+  const row = document.createElement('div');
+  row.className = 'swse-directory-launcher-row';
+  header.append(row);
+  return row;
+}
+
+function makeDirectoryButton({ className, icon, label, action, onClick }) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = `swse-directory-launcher ${className}`;
+  button.dataset.action = action || className;
+  button.dataset.tooltip = label;
+  button.setAttribute('aria-label', label);
+  button.title = label;
+  button.innerHTML = `<i class="${String(icon || 'fas fa-circle').replace(/\bfa-solid\b/g, 'fas')}"></i> <span>${label}</span>`;
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation?.();
+    onClick?.();
+  });
+  return button;
+}
+
+function ensureActorDirectoryLaunchers(app = null, html = null) {
+  cleanupMisplacedDirectoryLaunchers();
+  if (!(game.user?.isGM ?? false)) return false;
+
+  const hookRoot = getActorDirectoryElement(html);
+  const root = getLiveActorDirectoryRoot(hookRoot);
+  if (!isActorDirectoryRoot(root)) return false;
+  if (root.querySelector('.swse-gm-datapad-launcher')) return true;
+
+  const actionBar = findDirectoryActionBar(root);
+  if (!actionBar) return false;
+
+  const gmDatapadButton = makeDirectoryButton({
+    className: 'swse-gm-datapad-launcher',
+    action: 'swse-gm-datapad',
+    icon: 'swse-scene-control swse-scene-control-datapad',
+    label: 'GM Datapad',
+    onClick: () => onClickGMDatapad(app)
+  });
+
+  const gmStoreButton = makeDirectoryButton({
+    className: 'swse-gm-store-dashboard-launcher',
+    action: 'swse-gm-store-dashboard',
+    icon: 'swse-scene-control swse-scene-control-store',
+    label: 'Store Dashboard',
+    onClick: () => onClickGMDashboard(app)
+  });
+
+  actionBar.append(gmDatapadButton, gmStoreButton);
+  SWSELogger.log('[Actor Sidebar] GM Datapad DOM launchers injected');
+  return true;
+}
+
+function scheduleActorDirectoryLauncherInjection(app = null, html = null) {
+  for (const delay of [0, 50, 250, 750]) {
+    globalThis.setTimeout(() => ensureActorDirectoryLaunchers(app, html), delay);
+  }
+}
+
+
+let actorDirectoryLauncherObserverInstalled = false;
+
+function installActorDirectoryLauncherObserver() {
+  if (actorDirectoryLauncherObserverInstalled) return;
+  actorDirectoryLauncherObserverInstalled = true;
+
+  Hooks.once('ready', () => {
+    scheduleActorDirectoryLauncherInjection();
+    const observer = new MutationObserver(() => scheduleActorDirectoryLauncherInjection());
+    observer.observe(document.body, { childList: true, subtree: true });
+    globalThis.SWSE ??= {};
+    globalThis.SWSE.debug ??= {};
+    globalThis.SWSE.debug.injectGMDatapadLaunchers = () => ensureActorDirectoryLaunchers();
+    globalThis.SWSE.debug.openGMDatapad = () => GMDatapad.open('home');
+    globalThis.SWSE.debug.openGMDatapadStore = () => GMDatapad.open('store');
+  });
+}
+
 export function registerActorSidebarControls() {
+  installActorDirectoryLauncherObserver();
   // Sidebar controls appear on ActorDirectory app
   HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
     // Only add to ActorDirectory sidebar
@@ -145,7 +323,7 @@ export function registerActorSidebarControls() {
     // Chargen button (for characters, or GM for new creation)
     controls.unshift({
       action: 'swse-chargen',
-      icon: 'fa-solid fa-dice-d20',
+      icon: 'fas fa-dice-d20',
       label: 'Chargen',
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
       visible: () => {
@@ -159,7 +337,7 @@ export function registerActorSidebarControls() {
     // Store button (for any character, or standalone)
     controls.unshift({
       action: 'swse-store',
-      icon: 'fa-solid fa-store',
+      icon: 'swse-scene-control swse-scene-control-store',
       label: 'Store',
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
       visible: () => {
@@ -174,14 +352,14 @@ export function registerActorSidebarControls() {
     if (game.user?.isGM ?? false) {
       controls.unshift({
         action: 'swse-npc-templates',
-        icon: 'fa-solid fa-dragon',
+        icon: 'fas fa-dragon',
         label: 'Import NPC',
         handler: () => onClickNPCTemplates(app)
       });
 
       controls.unshift({
         action: 'swse-templates',
-        icon: 'fa-solid fa-layer-group',
+        icon: 'fas fa-layer-group',
         label: 'Templates',
         handler: () => onClickTemplates(app)
       });
@@ -189,7 +367,7 @@ export function registerActorSidebarControls() {
       // GM Store Dashboard button (GM only)
       controls.unshift({
         action: 'swse-gm-store-dashboard',
-        icon: 'fa-solid fa-cog',
+        icon: 'fas fa-cog',
         label: 'Store Dashboard',
         handler: () => onClickGMDashboard(app)
       });
@@ -197,14 +375,33 @@ export function registerActorSidebarControls() {
       // GM Datapad button (GM only)
       controls.unshift({
         action: 'swse-gm-datapad',
-        icon: 'fa-solid fa-display',
+        icon: 'fas fa-display',
         label: 'GM Datapad',
         handler: () => onClickGMDatapad(app)
       });
     }
 
-    SWSELogger.log('[Actor Sidebar] Controls registered');
+    SWSELogger.log('[Actor Sidebar] Header controls registered');
   }, { id: 'swse-actor-sidebar' });
+
+  HooksRegistry.register('renderActorDirectory', (app, html) => {
+    scheduleActorDirectoryLauncherInjection(app, html);
+  }, {
+    id: 'swse-actor-directory-gm-launchers',
+    priority: 0,
+    description: 'Inject GM Datapad launchers into the Actor Directory action bar.',
+    category: 'ui'
+  });
+
+
+  HooksRegistry.register('renderSidebar', (app, html) => {
+    scheduleActorDirectoryLauncherInjection(app, html);
+  }, {
+    id: 'swse-sidebar-gm-launchers',
+    priority: 0,
+    description: 'Retry GM Datapad launcher injection when the sidebar renders.',
+    category: 'ui'
+  });
 }
 
 export default registerActorSidebarControls;

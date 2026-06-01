@@ -286,3 +286,58 @@ async function _handleDroidCreation(result) {
     ui?.notifications?.error?.(`Failed to create droid: ${err.message}`);
   }
 }
+/**
+ * GM Datapad sidebar button — injected on ready and on each renderActorDirectory.
+ * Uses multiple selector fallbacks to handle V13's ApplicationV2 DOM structure
+ * where .directory-header may not exist.
+ */
+function _injectGMDatapadButton() {
+  if (!game.user?.isGM) return;
+
+  // Try multiple V13 selectors in priority order
+  const actors = document.querySelector('#actors');
+  if (!actors) return;
+  if (actors.querySelector('.swse-gm-datapad-sidebar-btn')) return; // already injected
+
+  const btn = document.createElement('button');
+  btn.className = 'swse-gm-datapad-sidebar-btn';
+  btn.type = 'button';
+  btn.style.cssText = 'width:100%;margin:4px 0;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;background:rgba(0,180,255,0.08);border:1px solid rgba(0,180,255,0.3);color:inherit;border-radius:4px;font-size:12px;';
+  btn.innerHTML = '<i class="fa-solid fa-tablet-screen-button"></i> GM Datapad';
+  btn.title = 'Open the GM Datapad';
+  btn.addEventListener('click', async () => {
+    try {
+      const { GMDatapad } = await import('/systems/foundryvtt-swse/scripts/apps/gm-datapad.js');
+      const inst = GMDatapad.instance ?? new GMDatapad();
+      await inst.render(true);
+    } catch (err) {
+      SWSELogger.error('[chargen-init] Failed to open GM Datapad:', err);
+      ui?.notifications?.error?.('Failed to open GM Datapad');
+    }
+  });
+
+  // Insert before the directory list, or at the top of the actors panel
+  const insertTarget =
+    actors.querySelector('.directory-footer') ||
+    actors.querySelector('.directory-list') ||
+    actors.querySelector('[data-application-part="directory"]') ||
+    actors.firstElementChild;
+
+  if (insertTarget && insertTarget !== actors.querySelector('.directory-footer')) {
+    actors.insertBefore(btn, insertTarget);
+  } else if (actors.querySelector('.directory-footer')) {
+    actors.querySelector('.directory-footer').prepend(btn);
+  } else {
+    actors.prepend(btn);
+  }
+}
+
+Hooks.once('ready', () => {
+  // Inject on initial load
+  setTimeout(_injectGMDatapadButton, 500);
+});
+
+Hooks.on('renderActorDirectory', () => {
+  // Re-inject after each re-render (debounced)
+  setTimeout(_injectGMDatapadButton, 100);
+});

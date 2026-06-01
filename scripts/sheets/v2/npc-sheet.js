@@ -31,6 +31,54 @@ const NPC_ABILITY_LABELS = {
   cha: 'Charisma'
 };
 
+
+function plainClone(value, fallback = {}) {
+  if (value === null || value === undefined) return fallback;
+  try {
+    if (foundry?.utils?.duplicate) return foundry.utils.duplicate(value);
+  } catch (_err) {}
+  try {
+    return structuredClone(value);
+  } catch (_err) {}
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch (_err) {}
+  return fallback;
+}
+
+function buildSerializableBaseContext(baseContext = {}) {
+  return {
+    cssClass: String(baseContext.cssClass ?? ''),
+    editable: Boolean(baseContext.editable),
+    owner: Boolean(baseContext.owner),
+    limited: Boolean(baseContext.limited),
+    rootId: baseContext.rootId ? String(baseContext.rootId) : undefined,
+    partId: baseContext.partId ? String(baseContext.partId) : undefined
+  };
+}
+
+function buildSerializableActorContext(actor) {
+  return {
+    id: actor.id,
+    name: actor.name,
+    type: actor.type,
+    img: actor.img,
+    _id: actor._id,
+    system: plainClone(actor.system, {})
+  };
+}
+
+function buildSerializableItemContext(item) {
+  return {
+    id: item.id,
+    name: item.name,
+    type: item.type,
+    img: item.img,
+    system: plainClone(item.system, {}),
+    flags: plainClone(item.flags, {})
+  };
+}
+
 function safeNumber(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
@@ -257,55 +305,46 @@ export class SWSEV2NpcSheet extends
     // AppV2 inheritance: Call super to get base context
     const baseContext = await super._prepareContext(options);
 
-    // AppV2 Compatibility: Only pass serializable data
-    // V13 AppV2 calls structuredClone() on render context - Document objects,
-    // Collections, and User objects cannot be cloned. Extract only primitives and data.
+    // AppV2 Compatibility: Only pass serializable data. Do not spread the
+    // ActorSheetV2 base context wholesale: it can contain Document classes,
+    // CONFIG constructors, Window references, or other non-cloneable objects.
+    // Templates only need a small primitive base plus explicit sheet VM data.
     const actor = this.document;
+    const system = plainClone(actor.system, {});
     const context = {
-      ...baseContext,
+      ...buildSerializableBaseContext(baseContext),
       // Actor header data (serializable primitives only)
-      actor: {
-        id: actor.id,
-        name: actor.name,
-        type: actor.type,
-        img: actor.img,
-        _id: actor._id
-      },
-      system: actor.system,
-      derived: actor.system?.derived ?? {},
-      // Items: map to plain objects to avoid Collection serialization issues
-      items: actor.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        type: item.type,
-        img: item.img,
-        system: item.system
-      })),
+      actor: buildSerializableActorContext(actor),
+      system,
+      derived: plainClone(system?.derived ?? actor.system?.derived ?? {}, {}),
+      // Items: map to plain objects to avoid Collection/DataModel serialization issues
+      items: Array.from(actor.items ?? []).map(item => buildSerializableItemContext(item)),
       editable: this.isEditable,
       // User data (serializable primitives only)
       user: {
-        id: game.user.id,
-        name: game.user.name,
-        role: game.user.role
+        id: game.user?.id ?? null,
+        name: game.user?.name ?? '',
+        role: game.user?.role ?? 0,
+        isGM: game.user?.isGM === true
       },
-      config: CONFIG.SWSE,
       // Abilities panel data (Phase 3)
       feats: [],
       talents: [],
       racialAbilities: [],
       abilityPanel: {},
+      talentAbilities: [],
       sheetTheme: ThemeResolutionService.resolveThemeKey(null, { actor }),
       sheetMotionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor }),
       sheetSurfaceStyleInline: ''
     };
 
     try {
-      const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
+      const abilityPanel = plainClone(AbilityEngine.getCardPanelModelForActor(actor), {});
       context.abilityPanel = abilityPanel;
-      context.talentAbilities = abilityPanel.all ?? [];
-      context.feats = abilityPanel.all?.filter(a => a.type === "feat") ?? [];
-      context.talents = abilityPanel.all?.filter(a => a.type === "talent") ?? [];
-      context.racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
+      context.talentAbilities = Array.isArray(abilityPanel.all) ? abilityPanel.all : [];
+      context.feats = context.talentAbilities.filter(a => a.type === "feat");
+      context.talents = context.talentAbilities.filter(a => a.type === "talent");
+      context.racialAbilities = context.talentAbilities.filter(a => a.type === "racialAbility");
     } catch (err) {
       console.error('Error preparing abilities panel for NPC sheet:', err);
     }
@@ -332,8 +371,8 @@ export class SWSEV2NpcSheet extends
     // Force Suite Context — only built for force-sensitive NPCs
     if (actor.system?.forceSensitive) {
       try {
-        const forcePowers = (actor.items ?? []).filter(i => i.type === 'force-power');
-        const derived = actor.system?.derived ?? {};
+        const forcePowers = Array.from(actor.items ?? []).filter(i => i.type === 'force-power').map(item => buildSerializableItemContext(item));
+        const derived = plainClone(actor.system?.derived ?? {}, {});
         const forcePowersPanel = {
           hand: forcePowers.filter(p => !p.system?.discarded),
           discard: forcePowers.filter(p => !!p.system?.discarded),
@@ -341,7 +380,7 @@ export class SWSEV2NpcSheet extends
           techniques: derived.forceTechniques?.list ?? []
         };
         const forceCtx = buildForceTab({
-          actor: { name: actor.name, flags: actor.flags },
+          actor: { name: actor.name, flags: plainClone(actor.flags, {}) },
           forcePowersPanel,
           forcePointsValue: actor.system?.forcePoints?.value ?? 0,
           forcePointsMax: actor.system?.forcePoints?.max ?? 0,

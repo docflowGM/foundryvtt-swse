@@ -28,9 +28,12 @@ import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./
 import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
+import { registerCompendiumDirectoryClickRepair } from "./scripts/core/compendium-directory-click-repair.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 import { initializeGames } from "./scripts/games/game-init.js";
+import { initSidebarIconFallback } from "./scripts/core/sidebar-icon-fallback.js";
+import { initSidebarIconDiagnostics, dumpSidebarIconState, watchSidebarIconMutations, auditSidebarIconCssRules, snapshotPhase } from "./scripts/core/sidebar-icon-diagnostics.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -41,6 +44,7 @@ UIManager.init();
 // ============================================
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
+  // snapshotPhase('init:hook'); // LOGGING DISABLED
   installItemEditorTrace();
   // Register SWSE.debug.defenses(actor) helper for defense breakdown diagnostics
   globalThis.SWSE ??= {};
@@ -133,6 +137,7 @@ Hooks.once("init", async () => {
   initializeSceneControls();
   initializeDiscoverySystem();
   initializeSentinelGovernance();
+  registerCompendiumDirectoryClickRepair();
 
   // -------------------------------
   // Preload Templates
@@ -165,6 +170,15 @@ Hooks.once("ready", async () => {
   PoisonEngine.initializeHooks();
   await initializeHolonet();
   await initializeGames();
+
+  // Wire debug helpers (logging disabled — uncomment below to re-enable diagnostics)
+  initSidebarIconDiagnostics();
+  // snapshotPhase('ready:start (before SWSE theme)');
+  // auditSidebarIconCssRules();
+  // requestAnimationFrame(() => snapshotPhase('ready:rAF'));
+
+  // Restore sidebar tab icon classes for Foundry v13.
+  initSidebarIconFallback();
 
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);

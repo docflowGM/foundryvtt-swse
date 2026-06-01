@@ -1,14 +1,14 @@
 /**
  * FollowerSpeciesStep
  *
- * Step 2 of the compact follower builder. Living beings choose a species here.
- * Droid followers configure chassis size, locomotion, allowed systems, and the
- * single +2 ability in this same step.
+ * Thin adapter over the mature SpeciesStep. Living followers use the exact same
+ * species browser/details rail as normal chargen. Droid followers keep the
+ * follower-only chassis configuration because that rule contract is different.
  */
 
-import { FollowerStepBase } from './follower-step-base.js';
-import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SpeciesStep } from '../species-step.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 const ALLOWED_DROID_ABILITIES = ['str', 'dex', 'int', 'wis', 'cha'];
 const BASE_DROID_SYSTEMS = [
@@ -35,48 +35,124 @@ const OPTIONAL_DROID_SYSTEMS = [
   { id: 'universal-translator', name: 'Universal Translator Unit', category: 'translator', cost: 500 }
 ];
 
-export class FollowerSpeciesStep extends FollowerStepBase {
+export class FollowerSpeciesStep extends SpeciesStep {
   constructor(descriptor) {
     super(descriptor);
-    this._allSpecies = [];
-    this._filteredSpecies = [];
-    this._selectedSpeciesName = null;
     this._isDroidPath = false;
     this._allowSizeChoice = false;
     this._droidConfig = null;
   }
 
   async onStepEnter(shell) {
-    try {
-      const choices = this.getFollowerChoices(shell);
-      this._isDroidPath = choices.followerKind === 'droid' || choices.droidConfig?.isDroid === true;
-      this._allowSizeChoice = HouseRuleService.getBoolean('allowDroidFollowerSizeChoice', false);
+    const choices = this._getFollowerChoices(shell);
+    this._isDroidPath = choices.followerKind === 'droid' || choices.droidConfig?.isDroid === true;
+    this._allowSizeChoice = HouseRuleService.getBoolean('allowDroidFollowerSizeChoice', false);
 
-      if (this._isDroidPath) {
-        this._selectedSpeciesName = 'Droid';
-        this._droidConfig = this._buildDroidConfig(choices.droidConfig || {});
-        this.saveFollowerChoice(shell, 'speciesName', 'Droid');
-        this.saveFollowerChoice(shell, 'droidConfig', this._droidConfig);
-        return;
-      }
+    if (this._isDroidPath) {
+      this._committedSpeciesId = 'droid';
+      this._committedSpeciesName = 'Droid';
+      this._droidConfig = this._buildDroidConfig(choices.droidConfig || {});
+      this._saveFollowerChoice(shell, 'speciesName', 'Droid');
+      this._saveFollowerChoice(shell, 'speciesId', null);
+      this._saveFollowerChoice(shell, 'droidConfig', this._droidConfig);
+      return;
+    }
 
-      this._allSpecies = await this.getFollowerCompatibleSpecies();
-      this._filteredSpecies = [...this._allSpecies];
-      this._selectedSpeciesName = choices.speciesName || null;
-      swseLogger.log('[FollowerSpeciesStep] Living species loaded:', this._allSpecies.length);
-    } catch (err) {
-      swseLogger.error('[FollowerSpeciesStep] Error entering step:', err);
-      ui?.notifications?.error?.('Failed to load follower species/chassis options. Please reload.');
+    await super.onStepEnter(shell);
+    this._allSpecies = (this._allSpecies || []).filter(species => !this._isDroidSpeciesRecord(species));
+    this._applyFilters?.();
+
+    const draft = shell?.progressionSession?.draftSelections || {};
+    const species = draft.species || null;
+    if (species?.id || species?.name) {
+      this._committedSpeciesId = species.id || species.speciesId || species.name;
+      this._committedSpeciesName = species.name || species.speciesName || species.id;
+      this._saveFollowerChoice(shell, 'speciesName', this._committedSpeciesName);
+      this._saveFollowerChoice(shell, 'speciesId', this._committedSpeciesId);
     }
   }
 
-  async onRender(shell, html) {
-    const container = html.querySelector('[data-step-content]');
-    if (!container) return;
+  async getStepData(context) {
+    if (!this._isDroidPath) return super.getStepData(context);
+    return { stepId: this.descriptor?.stepId, droidConfig: this._droidConfig };
+  }
 
-    container.innerHTML = this._isDroidPath ? this._renderDroidConfiguration() : this._renderSpeciesGrid();
-    if (this._isDroidPath) this._attachDroidListeners(shell, container);
-    else this._attachSpeciesListeners(shell, container);
+  renderWorkSurface(stepData) {
+    if (!this._isDroidPath) return super.renderWorkSurface(stepData);
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/follower-work-surface.hbs',
+      data: { stepId: this.descriptor?.stepId, ...stepData }
+    };
+  }
+
+  async afterRender(shell, workSurfaceEl) {
+    if (!this._isDroidPath) return super.afterRender(shell, workSurfaceEl);
+    this._renderDroidStep(shell, workSurfaceEl);
+  }
+
+
+  renderDetailsPanel(focusedItem) {
+    if (!focusedItem) return this.renderDetailsPanelEmptyState?.() || {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
+      data: { message: 'Select a species to see details.' }
+    };
+    return super.renderDetailsPanel(focusedItem);
+  }
+
+  async onItemCommitted(id, shell) {
+    if (this._isDroidPath) return;
+    await super.onItemCommitted(id, shell);
+    const draftSpecies = shell?.progressionSession?.draftSelections?.species || null;
+    if (draftSpecies) {
+      this._saveFollowerChoice(shell, 'speciesName', draftSpecies.name || draftSpecies.speciesName || id);
+      this._saveFollowerChoice(shell, 'speciesId', draftSpecies.id || draftSpecies.speciesId || id);
+      this._saveFollowerChoice(shell, 'speciesSelection', draftSpecies);
+      this._saveFollowerChoice(shell, 'droidConfig', null);
+    }
+  }
+
+  validate() {
+    if (!this._isDroidPath) return super.validate();
+    const ok = !!this._droidConfig?.abilityChoice;
+    return { isValid: ok, errors: ok ? [] : ['Choose the droid follower +2 ability score.'], warnings: [] };
+  }
+
+  getBlockingIssues() {
+    if (!this._isDroidPath) return super.getBlockingIssues();
+    return this._droidConfig?.abilityChoice ? [] : ['Choose the droid follower +2 ability score.'];
+  }
+
+  getSelection() {
+    if (!this._isDroidPath) return super.getSelection();
+    return { selected: this._droidConfig?.abilityChoice ? ['Droid'] : [], count: this._droidConfig?.abilityChoice ? 1 : 0, isComplete: !!this._droidConfig?.abilityChoice };
+  }
+
+  _getFollowerChoices(shell) {
+    const draft = shell?.progressionSession?.draftSelections || {};
+    const persistent = shell?.progressionSession?.dependencyContext?.persistentChoices || {};
+    return {
+      followerKind: draft.followerKind ?? persistent.followerKind ?? null,
+      speciesName: draft.speciesName ?? draft.species?.name ?? persistent.speciesName ?? null,
+      droidConfig: draft.droidConfig ?? persistent.droidConfig ?? null
+    };
+  }
+
+  _saveFollowerChoice(shell, choiceType, value) {
+    if (!shell?.progressionSession) return;
+    shell.progressionSession.draftSelections = shell.progressionSession.draftSelections || {};
+    shell.progressionSession.draftSelections[choiceType] = value;
+    shell.progressionSession.lastModifiedAt = Date.now();
+  }
+
+  _isDroidSpeciesRecord(species) {
+    const name = String(species?.name || '').toLowerCase();
+    const system = species?.system || species || {};
+    return name === 'droid'
+      || name.includes('droid')
+      || system.speciesActsAsDroid === true
+      || system.noConstitution === true
+      || !!system.droidBuilder
+      || (Array.isArray(system.tags) && system.tags.some(tag => String(tag).toLowerCase().includes('droid')));
   }
 
   _buildDroidConfig(existing = {}) {
@@ -101,7 +177,9 @@ export class FollowerSpeciesStep extends FollowerStepBase {
       : system);
   }
 
-  _renderDroidConfiguration() {
+  _renderDroidStep(shell, html) {
+    const container = html?.querySelector?.('[data-step-content]');
+    if (!container) return;
     const abilityHtml = ALLOWED_DROID_ABILITIES.map(key => `
       <label class="follower-droid-option">
         <input type="radio" name="droidAbility" value="${key}" ${this._droidConfig.abilityChoice === key ? 'checked' : ''}>
@@ -134,67 +212,18 @@ export class FollowerSpeciesStep extends FollowerStepBase {
       </label>
     `).join('');
 
-    return `
+    container.innerHTML = `
       <div class="follower-step-content">
         <h3>Droid Follower Chassis</h3>
-        <p class="step-help">Droid followers start with a heuristic processor, two appendages, and a locomotion system. Starting credits are resolved on the summary screen and may be spent only on the allowed systems below; unspent credits are lost.</p>
-
-        <h4>Size</h4>
-        <div class="follower-droid-options">${sizeHtml}</div>
-
-        <h4>Mobility</h4>
-        <div class="follower-droid-options">${locomotionHtml}</div>
-
-        <h4>Ability Bonus</h4>
-        <p class="step-help">Droids have no Constitution score and gain +2 to one of the other five abilities.</p>
-        <div class="follower-droid-options">${abilityHtml}</div>
-
-        <h4>Included Starting Systems</h4>
-        <ul>${this._droidConfig.baseSystems.map(system => `<li>${system.name}</li>`).join('')}</ul>
-
-        <h4>Allowed Droid System Spending</h4>
-        <div class="follower-droid-system-grid">${optionalHtml}</div>
+        <p class="step-help">Droid followers use a follower-only chassis step because they have no Constitution score and buy droid systems from their starting-credit budget.</p>
+        <h4>Size</h4><div class="follower-droid-options">${sizeHtml}</div>
+        <h4>Mobility</h4><div class="follower-droid-options">${locomotionHtml}</div>
+        <h4>Ability Bonus</h4><div class="follower-droid-options">${abilityHtml}</div>
+        <h4>Included Starting Systems</h4><ul>${this._droidConfig.baseSystems.map(system => `<li>${system.name}</li>`).join('')}</ul>
+        <h4>Allowed Droid System Spending</h4><div class="follower-droid-system-grid">${optionalHtml}</div>
       </div>
     `;
-  }
-
-  _renderSpeciesGrid() {
-    const speciesHtml = (this._filteredSpecies || this._allSpecies || []).map(spec => {
-      const isSelected = this._selectedSpeciesName === spec.name;
-      return `
-        <div class="follower-species-card ${isSelected ? 'selected' : ''}" data-species="${spec.name}">
-          <div class="species-card-header"><h4>${spec.name}</h4></div>
-          <div class="species-card-body"><p class="species-description">${spec.description || 'No description'}</p></div>
-          <button type="button" class="select-species-btn" data-species="${spec.name}">
-            ${isSelected ? '✓ Selected' : 'Select'}
-          </button>
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="follower-step-content">
-        <h3>Select Living Follower Species</h3>
-        <p class="step-help">Living followers use normal species languages and traits, then apply follower template rules.</p>
-        <div class="follower-species-grid">${speciesHtml}</div>
-      </div>
-    `;
-  }
-
-  _attachSpeciesListeners(shell, container) {
-    container.querySelectorAll('.select-species-btn').forEach(btn => {
-      btn.addEventListener('click', event => {
-        event.preventDefault();
-        const speciesName = btn.getAttribute('data-species');
-        this._selectedSpeciesName = speciesName;
-        this.saveFollowerChoice(shell, 'speciesName', speciesName);
-        const selected = (this._allSpecies || []).find(spec => spec.name === speciesName);
-        this.saveFollowerChoice(shell, 'speciesId', selected?.id || selected?._id || null);
-        if (!this.isHumanSpecies(speciesName)) this.saveFollowerChoice(shell, 'humanTemplateBonus', null);
-        this.saveFollowerChoice(shell, 'droidConfig', null);
-        shell.render();
-      });
-    });
+    this._attachDroidListeners(shell, container);
   }
 
   _attachDroidListeners(shell, container) {
@@ -232,30 +261,9 @@ export class FollowerSpeciesStep extends FollowerStepBase {
   }
 
   _saveDroidConfig(shell) {
-    this.saveFollowerChoice(shell, 'followerKind', 'droid');
-    this.saveFollowerChoice(shell, 'speciesName', 'Droid');
-    this.saveFollowerChoice(shell, 'droidConfig', this._droidConfig);
-  }
-
-  async onStepCommit(shell) {
-    if (this._isDroidPath) {
-      if (!this._droidConfig?.abilityChoice) {
-        ui?.notifications?.warn?.('Choose the droid follower +2 ability score.');
-        return false;
-      }
-      this._saveDroidConfig(shell);
-      return true;
-    }
-
-    if (!this._selectedSpeciesName) {
-      ui?.notifications?.warn?.('Please select a species for your follower.');
-      return false;
-    }
-    this.saveFollowerChoice(shell, 'speciesName', this._selectedSpeciesName);
-    return true;
-  }
-
-  getUtilityBarConfig() {
-    return { showSearch: true, showSort: true, showFilter: false };
+    this._saveFollowerChoice(shell, 'followerKind', 'droid');
+    this._saveFollowerChoice(shell, 'speciesName', 'Droid');
+    this._saveFollowerChoice(shell, 'speciesId', null);
+    this._saveFollowerChoice(shell, 'droidConfig', this._droidConfig);
   }
 }

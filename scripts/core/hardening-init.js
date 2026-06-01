@@ -83,9 +83,13 @@ function _restoreSidebarDefaults() {
       log.warn(`SWSE | Stripped leaked classes from native sidebar panel #${panel.id}:`, removed);
     }
 
-    // Foundry controls visibility via active state; clear stale inline display
-    // without forcing non-active panels visible.
-    panel.style.removeProperty('display');
+    // Foundry controls visibility via active state. Do not touch the
+    // CompendiumDirectory panel at all: in Foundry v13 it is an ApplicationV2
+    // sidebar app, and boot-time style mutation can desynchronize its native
+    // render/action lifecycle.
+    if (panel.id !== 'compendium') {
+      panel.style.removeProperty('display');
+    }
   });
 }
 

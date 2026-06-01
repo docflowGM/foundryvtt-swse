@@ -1,166 +1,195 @@
 /**
  * FollowerSkillsStep
  *
- * Constrained skill selection for followers based on template.
- *
- * CONSTRAINTS (from user specification):
- * - Aggressive/Defensive: Endurance only (forced, no choice)
- * - Utility: One skill choice, excluding "Use the Force"
- *
- * NO BONUS from Intelligence modifier (followers don't calculate that way).
- * Followers get trained skill choices only as specified by template.
+ * Uses the mature SkillsStep UI/details rail. Follower-specific rule authority is
+ * limited to the available skill set:
+ * - Utility followers choose 1 trained skill from every skill except Use the Force.
+ * - Aggressive/Defensive followers skip this step; Endurance is granted by the
+ *   template and mirrored when the template is selected.
  */
 
-import { FollowerStepBase } from './follower-step-base.js';
+import { SkillsStep } from '../skills-step.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-export class FollowerSkillsStep extends FollowerStepBase {
-  constructor(descriptor) {
-    super(descriptor);
-    this._templateType = null;
-    this._availableSkills = [];
-    this._selectedSkills = [];
-  }
+function skillName(skill) {
+  return String(skill?.name || skill?.label || skill?.displayName || skill?.id || skill?.key || '').trim();
+}
 
+function isUseTheForce(skill) {
+  const normalized = skillName(skill).toLowerCase().replace(/[^a-z0-9]/g, '');
+  return normalized === 'usetheforce';
+}
+
+export class FollowerSkillsStep extends SkillsStep {
   async onStepEnter(shell) {
-    try {
-      const choices = this.getFollowerChoices(shell);
-      this._templateType = choices.templateType;
+    this._followerTemplateType = String(
+      shell?.progressionSession?.draftSelections?.templateType
+      || shell?.progressionSession?.dependencyContext?.persistentChoices?.templateType
+      || ''
+    ).toLowerCase();
 
-      if (!this._templateType) {
-        swseLogger.warn('[FollowerSkillsStep] No template type selected yet');
-        return;
-      }
+    await super.onStepEnter(shell);
 
-      // Get skills allowed for this template
-      this._availableSkills = await this.getFollowerSkillsForTemplate(this._templateType);
-
-      swseLogger.log('[FollowerSkillsStep] Entered, template:', this._templateType, 'available skills:', this._availableSkills);
-
-      // Restore selection from session if available
-      if (choices.skillChoices && choices.skillChoices.length > 0) {
-        this._selectedSkills = [...choices.skillChoices];
-      }
-
-      // For Aggressive/Defensive, auto-select Endurance (no choice)
-      if (this._templateType === 'aggressive' || this._templateType === 'defensive') {
-        this._selectedSkills = ['Endurance'];
-        this.saveFollowerChoice(shell, 'skillChoices', this._selectedSkills);
-      }
-    } catch (err) {
-      swseLogger.error('[FollowerSkillsStep] Error entering step:', err);
-    }
-  }
-
-  async onRender(shell, html, context) {
-    try {
-      const container = html.querySelector('[data-step-content]');
-      if (!container) {
-        swseLogger.warn('[FollowerSkillsStep] No step content container found');
-        return;
-      }
-
-      const contentHtml = this._renderSkillSelection();
-      container.innerHTML = contentHtml;
-
-      // Attach event listeners only for Utility (which has choices)
-      if (this._templateType === 'utility') {
-        this._attachSkillListeners(shell, container);
-      }
-    } catch (err) {
-      swseLogger.error('[FollowerSkillsStep] Error rendering:', err);
-    }
-  }
-
-  _renderSkillSelection() {
-    const titleCase = this._templateType.charAt(0).toUpperCase() + this._templateType.slice(1);
-
-    if (this._templateType === 'aggressive' || this._templateType === 'defensive') {
-      // Forced Endurance only
-      return `
-        <div class="follower-step-content">
-          <h3>${titleCase} Follower Skills</h3>
-          <p class="step-help">${titleCase} followers are trained in Endurance only.</p>
-          <div class="follower-skills-list">
-            <div class="skill-item forced">
-              <span class="skill-name">Endurance</span>
-              <span class="skill-badge">Forced</span>
-            </div>
-          </div>
-        </div>
-      `;
+    if (this._followerTemplateType === 'utility') {
+      this._allowedCount = 1;
+      this._availableSkills = (this._allSkills || [])
+        .filter(skill => !isUseTheForce(skill))
+        .map(skill => ({
+          ...skill,
+          canTrain: true,
+          available: true,
+          alwaysVisible: true,
+          isClassSkill: true,
+          followerTemplateSkill: true,
+        }))
+        .sort((a, b) => skillName(a).localeCompare(skillName(b)));
+      this._skillDerivation = {
+        mode: 'follower-utility-all-skills',
+        fallbackReason: null,
+        classSkillRefs: this._availableSkills.length,
+        classSkillMatches: this._availableSkills.length,
+        backgroundSkillRefs: 0,
+        backgroundSkillMatches: 0,
+        speciesSkillRefs: 0,
+        speciesSkillMatches: 0,
+        trainedSelectionMatches: this._availableSkills.length,
+        skills: this._availableSkills,
+      };
+      this._pruneUnavailableSelections();
+      this._trainedCount = Array.from(this._trainedSkills.values()).filter(s => s.trained).length;
+    } else {
+      this._allowedCount = 0;
+      this._availableSkills = [];
+      this._trainedSkills.clear();
+      this._trainedCount = 0;
+      this._mirrorFollowerSkills(shell, this._followerTemplateType === 'aggressive' || this._followerTemplateType === 'defensive' ? ['Endurance'] : []);
     }
 
-    // Utility: One choice
-    const skillHtml = (this._availableSkills || []).map(skill => {
-      const isSelected = this._selectedSkills.includes(skill);
-      return `
-        <div class="follower-skill-item ${isSelected ? 'selected' : ''}" data-skill="${skill}">
-          <input type="checkbox" class="skill-checkbox" data-skill="${skill}" ${isSelected ? 'checked' : ''}>
-          <label class="skill-label">${skill}</label>
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="follower-step-content">
-        <h3>Utility Follower Skills</h3>
-        <p class="step-help">Utility followers may choose one trained skill (excluding Use the Force).</p>
-        <div class="follower-skills-list">
-          ${skillHtml}
-        </div>
-      </div>
-    `;
-  }
-
-  _attachSkillListeners(shell, container) {
-    const checkboxes = container.querySelectorAll('.skill-checkbox');
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
-        const skill = checkbox.getAttribute('data-skill');
-        const isChecked = checkbox.checked;
-
-        if (isChecked) {
-          // Utility: only one selection allowed
-          this._selectedSkills = [skill];
-        } else {
-          // Uncheck
-          this._selectedSkills = this._selectedSkills.filter(s => s !== skill);
-        }
-
-        // Uncheck all others (single-select for Utility)
-        const otherCheckboxes = container.querySelectorAll('.skill-checkbox');
-        otherCheckboxes.forEach(cb => {
-          if (cb !== checkbox) {
-            cb.checked = false;
-          }
-        });
-
-        swseLogger.log('[FollowerSkillsStep] Selected skills:', this._selectedSkills);
-        shell.render();
-      });
+    swseLogger.log('[FollowerSkillsStep] Using normal skill UI with follower template authority', {
+      templateType: this._followerTemplateType,
+      allowedCount: this._allowedCount,
+      availableSkills: this._availableSkills.length,
+      trainedCount: this._trainedCount,
     });
   }
 
-  async onStepCommit(shell) {
-    // For Aggressive/Defensive, Endurance is forced
-    if (this._templateType === 'aggressive' || this._templateType === 'defensive') {
-      this._selectedSkills = ['Endurance'];
-    }
-
-    // For Utility, one skill is optional (can proceed without selection)
-    // If no selection, that's okay
-
-    this.saveFollowerChoice(shell, 'skillChoices', this._selectedSkills);
-    swseLogger.log('[FollowerSkillsStep] Committed skills:', this._selectedSkills);
-    return true;
+  _resolveAllowedSkillCount(shell, character) {
+    const templateType = String(
+      shell?.progressionSession?.draftSelections?.templateType
+      || shell?.progressionSession?.dependencyContext?.persistentChoices?.templateType
+      || ''
+    ).toLowerCase();
+    return templateType === 'utility' ? 1 : 0;
   }
 
-  getUtilityBarConfig() {
+  _deriveAvailableSkills(shell) {
+    const templateType = String(
+      shell?.progressionSession?.draftSelections?.templateType
+      || shell?.progressionSession?.dependencyContext?.persistentChoices?.templateType
+      || ''
+    ).toLowerCase();
+    if (templateType !== 'utility') {
+      return {
+        mode: 'follower-template-skip',
+        fallbackReason: null,
+        classSkillRefs: 0,
+        classSkillMatches: 0,
+        backgroundSkillRefs: 0,
+        backgroundSkillMatches: 0,
+        speciesSkillRefs: 0,
+        speciesSkillMatches: 0,
+        trainedSelectionMatches: 0,
+        skills: [],
+      };
+    }
+    const skills = (this._allSkills || [])
+      .filter(skill => !isUseTheForce(skill))
+      .map(skill => ({
+        ...skill,
+        canTrain: true,
+        available: true,
+        alwaysVisible: true,
+        isClassSkill: true,
+        followerTemplateSkill: true,
+      }))
+      .sort((a, b) => skillName(a).localeCompare(skillName(b)));
     return {
-      showSearch: false,
-      showSort: false,
-      showFilter: false,
+      mode: 'follower-utility-all-skills',
+      fallbackReason: null,
+      classSkillRefs: skills.length,
+      classSkillMatches: skills.length,
+      backgroundSkillRefs: 0,
+      backgroundSkillMatches: 0,
+      speciesSkillRefs: 0,
+      speciesSkillMatches: 0,
+      trainedSelectionMatches: skills.length,
+      skills,
     };
+  }
+
+  async onStepExit(shell) {
+    if (this._followerTemplateType !== 'utility') {
+      this._mirrorFollowerSkills(shell, this._followerTemplateType === 'aggressive' || this._followerTemplateType === 'defensive' ? ['Endurance'] : []);
+      return;
+    }
+    await super.onStepExit(shell);
+    this._mirrorFollowerSkills(shell);
+  }
+
+  async onItemCommitted(id, shell) {
+    await super.onItemCommitted(id, shell);
+    this._mirrorFollowerSkills(shell);
+  }
+
+  async onItemDeselected(id, shell) {
+    await super.onItemDeselected?.(id, shell);
+    this._mirrorFollowerSkills(shell);
+  }
+
+  _pruneUnavailableSelections() {
+    const allowedIds = new Set((this._availableSkills || []).flatMap(skill => [skill.id, skill.key, skill._id, skill.name, skill.label].filter(Boolean)));
+    for (const key of Array.from(this._trainedSkills.keys())) {
+      if (!allowedIds.has(key)) this._trainedSkills.delete(key);
+    }
+    const trained = Array.from(this._trainedSkills.entries()).filter(([, value]) => value?.trained);
+    if (trained.length > 1) {
+      this._trainedSkills.clear();
+      const [key, value] = trained[0];
+      this._trainedSkills.set(key, value);
+    }
+  }
+
+  _mirrorFollowerSkills(shell, explicit = null) {
+    const byKey = new Map((this._availableSkills || []).flatMap(skill => [
+      [skill.id, skill], [skill.key, skill], [skill._id, skill], [skill.name, skill], [skill.label, skill]
+    ].filter(([key]) => key)));
+    const selected = Array.isArray(explicit)
+      ? explicit
+      : Array.from(this._trainedSkills.entries())
+        .filter(([, value]) => value?.trained)
+        .map(([key]) => skillName(byKey.get(key)) || key)
+        .filter(Boolean);
+    if (shell?.progressionSession?.draftSelections) {
+      shell.progressionSession.draftSelections.skillChoices = selected;
+      shell.progressionSession.draftSelections.followerSkills = selected;
+    }
+  }
+
+  getBlockingIssues() {
+    if (this._followerTemplateType !== 'utility') return [];
+    return super.getBlockingIssues();
+  }
+
+  getSelection() {
+    if (this._followerTemplateType !== 'utility') {
+      const selected = this._followerTemplateType === 'aggressive' || this._followerTemplateType === 'defensive' ? ['Endurance'] : [];
+      return { selected, count: selected.length, isComplete: true };
+    }
+    return super.getSelection();
+  }
+
+  getMentorContext() {
+    if (this._followerTemplateType === 'utility') return 'Utility followers can learn one practical trained skill. Every non-Force skill is available as a class skill.';
+    return 'This template has its follower skill package locked in. Continuing will skip manual skill training.';
   }
 }

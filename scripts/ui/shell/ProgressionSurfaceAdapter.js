@@ -169,9 +169,13 @@ export class ProgressionSurfaceAdapter {
       const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
       if (!descriptor || !plugin) return;
 
-      await plugin.onDataReady?.(this._app).catch(err => {
-        SWSELogger.error('[ProgressionSurfaceAdapter] plugin.onDataReady failed:', err);
-      });
+      if (typeof plugin.onDataReady === 'function') {
+        try {
+          await Promise.resolve(plugin.onDataReady(this._app));
+        } catch (err) {
+          SWSELogger.error('[ProgressionSurfaceAdapter] plugin.onDataReady failed:', err);
+        }
+      }
 
       const workSurfaceEl = surfaceRoot.querySelector('[data-region="work-surface"]');
       if (!workSurfaceEl && descriptor.stepId === 'intro') {
@@ -192,12 +196,16 @@ export class ProgressionSurfaceAdapter {
         }
       }
 
-      await plugin.afterRender?.(this._app, workSurfaceEl).catch(async err => {
-        SWSELogger.error('[ProgressionSurfaceAdapter] plugin.afterRender failed:', err);
-        if (descriptor.stepId === 'intro') {
-          await this.advancePastIntro('intro-after-render-failed');
+      if (typeof plugin.afterRender === 'function') {
+        try {
+          await Promise.resolve(plugin.afterRender(this._app, workSurfaceEl));
+        } catch (err) {
+          SWSELogger.error('[ProgressionSurfaceAdapter] plugin.afterRender failed:', err);
+          if (descriptor.stepId === 'intro') {
+            await this.advancePastIntro('intro-after-render-failed');
+          }
         }
-      });
+      }
 
       if (descriptor.stepId === 'intro') this._scheduleIntroWatchdog(plugin);
     } catch (err) {
@@ -556,6 +564,16 @@ export class ProgressionSurfaceAdapter {
       const self = this;
       app.render = async function(...args) {
         SWSELogger.debug('[ProgressionSurfaceAdapter] Intercepted render() — redirecting to shell');
+
+        const expectedSurface = self.mode === 'chargen' ? 'chargen' : 'progression';
+        if (self._shellHost?.shellSurface && self._shellHost.shellSurface !== expectedSurface) {
+          SWSELogger.debug('[ProgressionSurfaceAdapter] Dropping stale inline render outside active progression surface', {
+            expectedSurface,
+            currentSurface: self._shellHost.shellSurface,
+            mode: self.mode
+          });
+          return app;
+        }
 
         const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
         const captureNow = () => {
