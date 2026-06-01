@@ -1,12 +1,19 @@
 {{!-- GM Bulletin holonews-panel. --}}
 
-          <div class="bulletin-panel-header holonews-panel-header">
+          <div class="bulletin-panel-header holonews-panel-header gm-phase8-bulletin-panel-header">
             <div>
-              <h3>HoloNews Desk</h3>
+              <span class="gm-command-eyebrow">HOLONEWS</span>
+              <h3>Wire Desk</h3>
               <p>Publish ordinary galactic background noise, or author a red Breaking News alert when the party truly changes the public story.</p>
             </div>
             <div class="holonews-wire-count"><strong>{{holonewsSeedCount}}</strong><span>ambient wire stories</span></div>
           </div>
+
+          <details class="bulletin-composer-accordion gm-phase8-bulletin-composer" open>
+            <summary>
+              <span><i class="fa-solid fa-satellite-dish"></i> Add HoloNews Entry</span>
+              <em>Headline, source, dateline, deck, story body</em>
+            </summary>
 
           <form class="bulletin-composer holonews-composer" data-bulletin-form="holonews">
             <input type="hidden" name="recordId" value="{{holonewsEditorRecord.id}}">
@@ -120,6 +127,7 @@
               <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish HoloNews</button>
             </div>
           </form>
+          </details>
 
           <section class="holonews-automation-panel">
             <div class="holonews-wire-header">
@@ -459,7 +467,12 @@
             </form>
           </section>
 
-          <div class="bulletin-record-grid holonews-record-grid">
+          <div class="gm-phase8-record-feed-header">
+            <span class="gm-command-eyebrow">HOLONEWS ARCHIVE</span>
+            <strong>{{holonewsArchiveFilteredCount}}/{{holonewsArchiveTotalCount}}</strong>
+          </div>
+
+          <div class="bulletin-record-grid holonews-record-grid gm-phase8-record-feed">
             {{#each holonewsRecords}}
             <article class="bulletin-record-card holonews {{this.state}} {{this.recordTone}}">
               <div class="bulletin-record-meta">

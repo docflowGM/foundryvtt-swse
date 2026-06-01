@@ -1,33 +1,54 @@
-{{!-- GM Datapad jobs surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-jobs">
-      <div class="page-header job-board-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <div>
-          <h2>GM Job Board</h2>
-          <p>Contract command board for posted work, objective review, and reward payout.</p>
-        </div>
-        <div class="job-board-header-actions">
-          <span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>
-          <span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>
-        </div>
-      </div>
-
-      <div class="job-board-metrics" aria-label="Job board status">
-        <span><strong>{{jobBoard.stats.total}}</strong> Total</span>
-        <span><strong>{{jobBoard.stats.open}}</strong> Open</span>
-        <span><strong>{{jobBoard.stats.active}}</strong> Active</span>
-        <span><strong>{{jobBoard.stats.review}}</strong> Review</span>
-        <span><strong>{{jobBoard.stats.payout}}</strong> Ready to Pay</span>
-        <span><strong>{{jobBoard.stats.archived}}</strong> Archived</span>
-      </div>
-
-      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs" }}
-
-      {{#if jobBoard.hasJobs}}
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/review-payout-queues.hbs" }}
-      {{else}}
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/empty-state.hbs" }}
-      {{/if}}
+{{!-- GM Datapad jobs surface — Phase 2 command board + contract wizard overlay. --}}
+<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs" data-gm-wizard-scope="jobs">
+  <div class="page-header job-board-header gm-phase2-header">
+    <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+    <div class="gm-app-header-copy">
+      <span class="gm-command-eyebrow">CONTRACT MANAGEMENT TERMINAL</span>
+      <h2>Job Board</h2>
+      <p>Mission pipeline, objective review, and reward payout.</p>
     </div>
+    <div class="job-board-header-actions gm-phase2-header-actions">
+      <span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>
+      <span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>
+      <button type="button" class="swse-ui-button primary gm-phase2-primary" data-gm-wizard-open="contract">
+        <i class="fa-solid fa-plus"></i> New Contract
+      </button>
+    </div>
+  </div>
+
+  <div class="job-board-metrics gm-phase2-metrics gm-phase9-metrics" aria-label="Job board status">
+    <span class="gm-phase9-metric"><strong>{{jobBoard.stats.total}}</strong>Total</span>
+    <span class="gm-phase9-metric"><strong>{{jobBoard.stats.open}}</strong>Open</span>
+    <span class="gm-phase9-metric"><strong>{{jobBoard.stats.active}}</strong>Active</span>
+    <span class="gm-phase9-metric attention"><strong>{{jobBoard.stats.review}}</strong>Review</span>
+    <span class="gm-phase9-metric payout"><strong>{{jobBoard.stats.payout}}</strong>Ready to Pay</span>
+    <span class="gm-phase9-metric muted"><strong>{{jobBoard.stats.archived}}</strong>Archived</span>
+  </div>
+
+  <section class="gm-phase9-job-ops-strip swse-ui-panel" aria-label="Job board operations summary">
+    <div>
+      <span class="gm-command-eyebrow">OPS SUMMARY</span>
+      <strong>{{jobBoard.stats.review}} objective review{{#unless (eq jobBoard.stats.review 1)}}s{{/unless}}</strong>
+      <p>Claims awaiting GM review before payout.</p>
+    </div>
+    <div>
+      <span class="gm-command-eyebrow">PAYOUT</span>
+      <strong>{{jobBoard.stats.payout}} contract{{#unless (eq jobBoard.stats.payout 1)}}s{{/unless}}</strong>
+      <p>Completed work ready for credit, XP, item, or asset settlement.</p>
+    </div>
+    <div>
+      <span class="gm-command-eyebrow">VISIBILITY</span>
+      <strong>{{#if jobBoard.creation.hasRecipients}}Player-linked{{else}}GM draft only{{/if}}</strong>
+      <p>{{#if jobBoard.creation.hasRecipients}}New contracts can target linked player characters.{{else}}No linked player characters found for public posting.{{/if}}</p>
+    </div>
+  </section>
+
+  {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs" }}
+
+  {{#if jobBoard.hasJobs}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs" }}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/review-payout-queues.hbs" }}
+  {{else}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/empty-state.hbs" }}
+  {{/if}}
+</div>

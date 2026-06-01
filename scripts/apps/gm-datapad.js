@@ -200,6 +200,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const appCounts = await this._getHomeBadgeCounts();
     const apps = this._getAppCards(appCounts);
     const gmShell = this._buildGmShellContext(apps, appCounts);
+    const urgentApps = this._buildUrgentApps(apps, appCounts);
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
@@ -208,6 +209,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       shellSurfaceVm: pageContext,
       apps,
       gmShell,
+      urgentApps,
+      hasUrgentApps: urgentApps.length > 0,
       appClusters: this._buildAppClusters(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
@@ -239,6 +242,20 @@ export class GMDatapad extends BaseSWSEAppV2 {
       serialLabel: `GM-CMD-${String(this.currentPage || 'home').toUpperCase()}`,
       dockApps: apps.filter((app) => app.id !== 'home')
     };
+  }
+
+  _buildUrgentApps(apps = [], counts = {}) {
+    const urgentIds = new Set(['approvals', 'jobs', 'trade']);
+    const failureCount = Number(counts.tradeFailed ?? 0);
+    return apps
+      .filter((app) => urgentIds.has(app.id) && (app.statusTone === 'crit' || Number(app.badgeCount ?? 0) > 0))
+      .map((app) => {
+        let urgentLabel = `${Number(app.badgeCount ?? 0)} ${app.label}`;
+        if (app.id === 'approvals') urgentLabel = `${Number(app.badgeCount ?? 0)} Approval Requests`;
+        if (app.id === 'jobs') urgentLabel = `${Number(app.badgeCount ?? 0)} Jobs Need Review`;
+        if (app.id === 'trade') urgentLabel = `${failureCount || Number(app.badgeCount ?? 0)} Failed Settlement${(failureCount || Number(app.badgeCount ?? 0)) === 1 ? '' : 's'}`;
+        return { ...app, urgentLabel };
+      });
   }
 
   _buildAppClusters(apps = [], counts = {}) {

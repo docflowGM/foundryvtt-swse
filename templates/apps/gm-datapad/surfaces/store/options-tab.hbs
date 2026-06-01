@@ -1,112 +1,103 @@
-{{!-- GM Store options tab. --}}
-        <section class="gm-store-tab-panel {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab-panel="options" {{#unless (eq currentTab 'options')}}hidden{{/unless}}>
-          <div class="gm-store-section-heading">
-            <div>
-              <span class="gm-command-eyebrow">STORE OPTIONS</span>
-              <h3>Market Policy</h3>
-              <p>Set the current shop posture, price environment, availability gates, and sale rules.</p>
-            </div>
+{{!-- GM Store options tab — Phase 3 command redesign. --}}
+        <section class="gm-store-tab-panel gm-phase3-store-options {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab-panel="options" {{#unless (eq currentTab 'options')}}hidden{{/unless}}>
+          <div class="gm-store-phase3-status-row">
+            <button type="button" class="gm-store-status-button {{#if storeOpen}}is-active is-open{{/if}}" data-store-open-set="true">
+              <span></span>
+              <strong>Store Open</strong>
+              <em>Players may browse and purchase</em>
+            </button>
+            <button type="button" class="gm-store-status-button {{#unless storeOpen}}is-active is-closed{{/unless}}" data-store-open-set="false">
+              <span></span>
+              <strong>Store Closed</strong>
+              <em>GM controls and review queues remain active</em>
+            </button>
           </div>
 
-          <div class="gm-store-options-grid">
-            <article class="gm-command-card gm-store-option-card">
-              <header>
-                <i class="fa-solid fa-power-off"></i>
-                <div>
-                  <h4>Store Status</h4>
-                  <p>Controls whether players can buy from the store.</p>
-                </div>
-              </header>
-              <label class="gm-store-toggle-row">
-                <input type="checkbox" name="storeOpen" {{#if storeOpen}}checked{{/if}}>
-                <span>Store Open</span>
+          <div class="gm-store-phase3-grid">
+            <article class="gm-command-card gm-store-policy-card">
+              <h4><i class="fa-solid fa-tag"></i> Pricing Policy</h4>
+              <label class="gm-store-policy-row">
+                <span><strong>Global Markup %</strong><em>Applied on top of base item price</em></span>
+                <input type="number" name="storeMarkup" min="-50" max="200" step="5" value="{{storeMarkup}}" data-store-markup-value-input>
               </label>
-              {{#unless storeOpen}}
-                <p class="gm-store-warning">Purchases are closed. GM controls remain available.</p>
-              {{/unless}}
+              <label class="gm-store-policy-row">
+                <span><strong>Max Discount %</strong><em>Negotiation ceiling used by store pricing UI</em></span>
+                <input type="number" name="storeDiscount" min="0" max="90" step="5" value="{{storeDiscount}}" data-store-discount-value-input>
+              </label>
+              <label class="gm-store-policy-row">
+                <span><strong>Auto-Accept Sell-Backs</strong><em>Automatically accept player item sales</em></span>
+                <input type="checkbox" name="autoAcceptSelling" {{#if autoAcceptSelling}}checked{{/if}}>
+              </label>
+              <label class="gm-store-policy-row {{#unless autoAcceptSelling}}is-muted{{/unless}}">
+                <span><strong>Sell-Back Floor %</strong><em>Percentage of base price for automatic sales</em></span>
+                <input type="number" name="autoSalePercent" min="10" max="100" step="5" value="{{autoSalePercent}}" {{#unless autoAcceptSelling}}disabled{{/unless}}>
+              </label>
             </article>
 
-            <article class="gm-command-card gm-store-option-card">
-              <header>
-                <i class="fa-solid fa-tags"></i>
-                <div>
-                  <h4>Pricing</h4>
-                  <p>Markup and discount feed the v2 pricing engine.</p>
-                </div>
-              </header>
-              <label class="gm-store-slider-row">
-                <span>Markup</span>
-                <input type="range" name="storeMarkup" min="0" max="200" step="5" value="{{storeMarkup}}">
-                <strong data-store-markup-value>{{storeMarkup}}%</strong>
+            <article class="gm-command-card gm-store-policy-card">
+              <h4><i class="fa-solid fa-shield-halved"></i> Restrictions &amp; Approvals</h4>
+              <div class="gm-store-policy-row is-readonly">
+                <span><strong>Require GM Approval Over</strong><em>Current display threshold for high-value purchases</em></span>
+                <input type="number" name="storeApprovalThreshold" value="{{storeApprovalPolicy.approvalThreshold}}" min="0" step="500">
+              </div>
+              <label class="gm-store-policy-row">
+                <span><strong>Restricted Items Visible</strong><em>Licensed/restricted catalog availability gate</em></span>
+                <input type="checkbox" name="availability-restricted" {{#if visibleRarities.restricted}}checked{{/if}}>
               </label>
-              <label class="gm-store-slider-row">
-                <span>Discount</span>
-                <input type="range" name="storeDiscount" min="0" max="90" step="5" value="{{storeDiscount}}">
-                <strong data-store-discount-value>{{storeDiscount}}%</strong>
+              <label class="gm-store-policy-row">
+                <span><strong>Military-Grade Items</strong><em>Heavy weapons, military armor, starship-grade stock</em></span>
+                <input type="checkbox" name="availability-military" {{#if visibleRarities.military}}checked{{/if}}>
               </label>
-              <p class="gm-store-note">Legacy buy modifier is mirrored from markup for older store surfaces.</p>
-            </article>
-
-            <article class="gm-command-card gm-store-option-card">
-              <header>
-                <i class="fa-solid fa-key"></i>
-                <div>
-                  <h4>Availability Gates</h4>
-                  <p>Global visibility by normalized store availability.</p>
-                </div>
-              </header>
-              <div class="gm-store-check-grid">
-                <label><input type="checkbox" name="availability-standard" {{#if visibleRarities.standard}}checked{{/if}}> Standard</label>
-                <label><input type="checkbox" name="availability-licensed" {{#if visibleRarities.licensed}}checked{{/if}}> Licensed</label>
-                <label><input type="checkbox" name="availability-rare" {{#if visibleRarities.rare}}checked{{/if}}> Rare</label>
-                <label><input type="checkbox" name="availability-restricted" {{#if visibleRarities.restricted}}checked{{/if}}> Restricted</label>
-                <label><input type="checkbox" name="availability-military" {{#if visibleRarities.military}}checked{{/if}}> Military</label>
-                <label><input type="checkbox" name="availability-illegal" {{#if visibleRarities.illegal}}checked{{/if}}> Illegal</label>
+              <label class="gm-store-policy-row">
+                <span><strong>Illegal Items Visible</strong><em>Black market / illegal availability gate</em></span>
+                <input type="checkbox" name="availability-illegal" {{#if visibleRarities.illegal}}checked{{/if}}>
+              </label>
+              <div class="gm-store-approval-summary">
+                <span class="gm-command-chip warn">{{storeApprovalPolicy.pendingSales}} Sale Requests</span>
+                <span class="gm-command-chip crit">{{storeApprovalPolicy.pendingCustomPurchases}} Custom Approvals</span>
               </div>
             </article>
 
-            <article class="gm-command-card gm-store-option-card">
-              <header>
-                <i class="fa-solid fa-boxes-stacked"></i>
-                <div>
-                  <h4>Category Access</h4>
-                  <p>Show or hide major inventory departments globally.</p>
-                </div>
-              </header>
-              <div class="gm-store-check-grid">
-                <label><input type="checkbox" name="type-weapons" {{#if visibleTypes.weapons}}checked{{/if}}> Weapons</label>
-                <label><input type="checkbox" name="type-armor" {{#if visibleTypes.armor}}checked{{/if}}> Armor</label>
-                <label><input type="checkbox" name="type-gear" {{#if visibleTypes.gear}}checked{{/if}}> Gear</label>
-                <label><input type="checkbox" name="type-droids" {{#if visibleTypes.droids}}checked{{/if}}> Droids</label>
-                <label><input type="checkbox" name="type-vehicles" {{#if visibleTypes.vehicles}}checked{{/if}}> Vehicles</label>
+            <article class="gm-command-card gm-store-policy-card gm-store-policy-card--wide">
+              <h4><i class="fa-solid fa-box-open"></i> Category Availability &amp; Markup</h4>
+              <p class="gm-phase2-hint">Toggles use the existing store visibility gates. Markup values now feed the Store Policy layer and stack on top of the global markup.</p>
+              <div class="gm-store-category-grid">
+                {{#each storeCategoryOptions}}
+                <label class="gm-store-category-card {{#if this.enabled}}is-on{{else}}is-off{{/if}}" title="{{this.note}}">
+                  <input type="checkbox" name="{{this.settingName}}" {{#if this.enabled}}checked{{/if}}>
+                  <span class="gm-store-category-head"><i class="{{this.icon}}"></i><b>{{#if this.enabled}}ON{{else}}OFF{{/if}}</b></span>
+                  <strong>{{this.name}}</strong>
+                  <span class="gm-store-category-note">{{this.note}}</span>
+                  <span class="gm-store-category-markup">+<input type="number" value="{{this.markup}}" min="-50" max="200" step="5" data-store-category-markup="{{this.id}}">%</span>
+                </label>
+                {{/each}}
               </div>
             </article>
 
-            <article class="gm-command-card gm-store-option-card gm-store-option-card--wide">
-              <header>
-                <i class="fa-solid fa-hand-holding-credit-card"></i>
-                <div>
-                  <h4>Selling Rules</h4>
-                  <p>Controls player sale requests and automatic resale valuation.</p>
-                </div>
-              </header>
-              <div class="gm-store-selling-grid">
-                <label class="gm-store-toggle-row">
-                  <input type="checkbox" name="autoAcceptSelling" {{#if autoAcceptSelling}}checked{{/if}}>
-                  <span>Automatically accept item sales</span>
-                </label>
-                <label class="gm-store-slider-row {{#unless autoAcceptSelling}}disabled{{/unless}}">
-                  <span>Automatic Sale Value</span>
-                  <input type="range" name="autoSalePercent" min="10" max="100" step="5" value="{{autoSalePercent}}" {{#unless autoAcceptSelling}}disabled{{/unless}}>
-                  <strong data-auto-sale-value>{{autoSalePercent}}%</strong>
-                </label>
-                <label class="gm-store-toggle-row">
-                  <input type="checkbox" name="disallowAutoSellNoPrice" {{#if disallowAutoSellNoPrice}}checked{{/if}}>
-                  <span>Disallow auto-selling items with no base price</span>
-                </label>
+            <article class="gm-command-card gm-store-policy-card">
+              <h4><i class="fa-solid fa-bell"></i> Notifications</h4>
+              <label class="gm-store-policy-row is-readonly">
+                <span><strong>Purchase Notifications</strong><em>Sale completions remain logged in transaction history</em></span>
+                <input type="checkbox" checked disabled>
+              </label>
+              <label class="gm-store-policy-row is-readonly">
+                <span><strong>Sell Notifications</strong><em>Pending sale requests surface in Approvals</em></span>
+                <input type="checkbox" checked disabled>
+              </label>
+              <label class="gm-store-policy-row is-readonly">
+                <span><strong>Stock Alerts</strong><em>{{storeAuditPolicy.stockAlerts}} tracked items need review</em></span>
+                <input type="checkbox" checked disabled>
+              </label>
+            </article>
+
+            <article class="gm-command-card gm-store-policy-card">
+              <h4><i class="fa-solid fa-clock-rotate-left"></i> History &amp; Audit</h4>
+              <div class="gm-store-policy-row is-readonly"><span><strong>History Retention</strong><em>Weeks of transaction history to keep</em></span><input type="number" value="{{storeAuditPolicy.historyRetentionWeeks}}" disabled></div>
+              <div class="gm-store-policy-row is-readonly"><span><strong>Rollback Window</strong><em>Days a transaction can be rolled back</em></span><input type="number" value="{{storeAuditPolicy.rollbackWindowDays}}" disabled></div>
+              <div class="gm-store-audit-stats">
+                <span><strong>{{storeAuditPolicy.transactionCount}}</strong>Transactions</span>
+                <span><strong>{{storeAuditPolicy.overrides}}</strong>Overrides</span>
               </div>
             </article>
           </div>
         </section>
-
-        {{!-- TAB 2: TRANSACTIONS LEDGER --}}

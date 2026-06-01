@@ -1,11 +1,18 @@
 {{!-- GM Bulletin messages-panel. --}}
 
-          <div class="bulletin-panel-header">
+          <div class="bulletin-panel-header gm-phase8-bulletin-panel-header">
             <div>
-              <h3>Manage Notices</h3>
-              <p>Author one-way GM-to-player notices. Use Messenger for conversations and replies.</p>
+              <span class="gm-command-eyebrow">MESSAGES</span>
+              <h3>Direct Notices</h3>
+              <p>One-way GM-to-player notices with recipient targeting and read-state tracking.</p>
             </div>
           </div>
+
+          <details class="bulletin-composer-accordion gm-phase8-bulletin-composer" open>
+            <summary>
+              <span><i class="fa-solid fa-paper-plane"></i> Compose Message</span>
+              <em>Subject, sender, recipients, priority, body</em>
+            </summary>
 
           <form class="bulletin-composer" data-bulletin-form="messages">
             <input type="hidden" name="recordId" value="{{messageEditorRecord.id}}">
@@ -104,8 +111,14 @@
               <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish Notice</button>
             </div>
           </form>
+          </details>
 
-          <div class="bulletin-record-grid">
+          <div class="gm-phase8-record-feed-header">
+            <span class="gm-command-eyebrow">MESSAGE THREADS</span>
+            <strong>{{messageRecords.length}}</strong>
+          </div>
+
+          <div class="bulletin-record-grid gm-phase8-record-feed">
             {{#each messageRecords}}
             <article class="bulletin-record-card message {{this.state}} {{this.recordTone}}">
               <div class="bulletin-record-meta">

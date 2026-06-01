@@ -1,34 +1,33 @@
-{{!-- GM Datapad trade surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-trade-console">
-      <div class="page-header trade-console-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <div>
-          <h2>GM Trade Console</h2>
-          <p>Approval queue, failed settlement diagnostics, and Messenger trade audit receipts.</p>
-        </div>
-        <div class="trade-console-header-actions">
-          <span class="trade-chip warn">{{tradeConsole.stats.approvals}} Approvals</span>
-          <span class="trade-chip crit">{{tradeConsole.stats.failed}} Failed</span>
-        </div>
-      </div>
-
-      <div class="trade-console-metrics" aria-label="Trade console status">
-        <span><strong>{{tradeConsole.stats.visible}}</strong> Visible</span>
-        <span><strong>{{tradeConsole.stats.approvals}}</strong> Approval</span>
-        <span><strong>{{tradeConsole.stats.active}}</strong> Active</span>
-        <span><strong>{{tradeConsole.stats.counter}}</strong> Counter</span>
-        <span><strong>{{tradeConsole.stats.failed}}</strong> Failed</span>
-        <span><strong>{{tradeConsole.stats.archived}}</strong> Archived</span>
-      </div>
-
-      <div class="trade-console-shell">
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/trade-board.hbs" }}
-
-      <div class="trade-console-lower-grid">
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/economy-repair.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/policy-panel.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/audit-panel.hbs" }}
-      </div>
+{{!-- GM Datapad trade surface — Phase 6 command layout polish. --}}
+<div class="gm-datapad-page gm-datapad-trade-console gm-phase6-command-surface gm-phase6-trade">
+  <div class="gm-phase6-command-header trade-console-header">
+    <button class="back-button swse-ui-button" data-nav-to="home"><i class="fa-solid fa-arrow-left"></i> Home</button>
+    <div class="gm-phase6-command-copy">
+      <span class="gm-command-eyebrow">TRANSACTION OPERATIONS BOARD</span>
+      <h2>{{pageTitle}}</h2>
+      <p>{{pageDescription}}</p>
     </div>
+    <div class="gm-phase6-command-metrics" aria-label="Trade console status">
+      <span class="gm-command-metric warn"><small>Approval</small><b>{{tradeConsole.stats.approvals}}</b></span>
+      <span class="gm-command-metric crit"><small>Failed</small><b>{{tradeConsole.stats.failed}}</b></span>
+      <span class="gm-command-metric"><small>Active</small><b>{{tradeConsole.stats.active}}</b></span>
+      <span class="gm-command-metric"><small>Visible</small><b>{{tradeConsole.stats.visible}}</b></span>
+    </div>
+  </div>
+
+  <div class="gm-phase6-command-strip {{#if tradeConsole.stats.failed}}is-critical{{else}}{{#if tradeConsole.stats.approvals}}is-warning{{/if}}{{/if}}">
+    <span><i class="fa-solid fa-shield-halved"></i> Atomic settlement watch</span>
+    <p>Trades remain routed through Messenger, TransactionEngine, and ActorEngine. This surface only reviews, approves, cancels, reconciles, or repairs existing records.</p>
+  </div>
+
+  <div class="trade-console-shell gm-phase6-major-shell">
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/trade-board.hbs" }}
+
+  <div class="trade-console-lower-grid gm-phase6-lower-grid">
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/economy-repair.hbs" }}
+
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/policy-panel.hbs" }}
+
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/audit-panel.hbs" }}
+  </div>
+</div>

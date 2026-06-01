@@ -1,46 +1,57 @@
-{{!-- GM Datapad bulletin surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-bulletin">
-      <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <h2>{{pageTitle}}</h2>
-        <p class="page-subtitle">{{pageDescription}}</p>
-      </div>
-
-      <div class="bulletin-console-metrics" aria-label="Bulletin console status">
-        <span><strong>{{bulletinStats.live}}</strong> Live</span>
-        <span><strong>{{bulletinStats.drafts}}</strong> Drafts</span>
-        <span><strong>{{bulletinStats.urgent}}</strong> Alerts</span>
-        <span><strong>{{bulletinStats.pinned}}</strong> Last Session</span>
-        <span><strong>{{bulletinStats.archived}}</strong> Archived</span>
-      </div>
-
-      <div class="bulletin-shell">
-        <aside class="bulletin-nav-grid">
-          {{#each bulletinNav}}
-          <button class="bulletin-nav-card {{#if (eq ../bulletinSection this.id)}}is-active{{/if}}" data-bulletin-section="{{this.id}}">
-            <span class="bulletin-nav-copy">
-              <span class="bulletin-nav-label">{{this.label}}</span>
-              <span class="bulletin-nav-hint">{{this.hint}}</span>
-            </span>
-            {{#if this.count}}<span class="bulletin-nav-count">{{this.count}}</span>{{/if}}
-          </button>
-          {{/each}}
-        </aside>
-
-        <section class="bulletin-surface swse-ui-panel">
-          {{#if (eq bulletinSection "events")}}
-          {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/events-panel.hbs" }}
-          {{else if (eq bulletinSection "holonews")}}
-          {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/holonews-panel.hbs" }}
-          {{else if (eq bulletinSection "messages")}}
-          {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/messages-panel.hbs" }}
-          {{else if (eq bulletinSection "players")}}
-          {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/player-state-panel.hbs" }}
-          {{else if (eq bulletinSection "party")}}
-          {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/party-state-panel.hbs" }}
-          {{/if}}
-        </section>
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/live-preview.hbs" }}
-      </div>
+{{!-- GM Datapad bulletin surface — Phase 8 command broadcast layout. --}}
+<div class="gm-datapad-page gm-datapad-bulletin gm-phase8-bulletin" data-shell-surface="bulletin">
+  <div class="gm-phase6-command-header gm-phase8-bulletin-header">
+    <button class="ph-back" type="button" data-nav-to="home">
+      <i class="fa-solid fa-arrow-left"></i>&nbsp;Home
+    </button>
+    <div class="gm-phase6-command-copy">
+      <span class="gm-command-eyebrow">COMM BROADCAST CONSOLE</span>
+      <h2>{{pageTitle}}</h2>
+      <p>{{pageDescription}}</p>
     </div>
+    <div class="gm-phase6-command-metrics" aria-label="Bulletin console status">
+      <div class="gm-command-metric ok"><small>Live</small><strong>{{bulletinStats.live}}</strong></div>
+      <div class="gm-command-metric"><small>Drafts</small><strong>{{bulletinStats.drafts}}</strong></div>
+      <div class="gm-command-metric warn"><small>Alerts</small><strong>{{bulletinStats.urgent}}</strong></div>
+      <div class="gm-command-metric info"><small>Pinned</small><strong>{{bulletinStats.pinned}}</strong></div>
+      <div class="gm-command-metric muted"><small>Archived</small><strong>{{bulletinStats.archived}}</strong></div>
+    </div>
+  </div>
+
+  <div class="gm-phase6-command-strip {{#if bulletinStats.urgent}}is-warning{{else}}is-info{{/if}} gm-phase8-bulletin-strip">
+    <span><i class="fa-solid fa-tower-broadcast"></i> Holonet operator mode</span>
+    <p>Events, HoloNews, messages, player status, and party state all publish through the existing Holonet/Bulletin contracts. Phase 8 only reshapes the command surface.</p>
+  </div>
+
+  <div class="bulletin-shell gm-phase8-bulletin-shell">
+    <aside class="bulletin-nav-grid gm-phase8-bulletin-nav" aria-label="Bulletin sections">
+      {{#each bulletinNav}}
+      <button class="bulletin-nav-card {{#if (eq ../bulletinSection this.id)}}is-active{{/if}}" data-bulletin-section="{{this.id}}">
+        <span class="bulletin-nav-copy">
+          <span class="bulletin-nav-label">{{this.label}}</span>
+          <span class="bulletin-nav-hint">{{this.hint}}</span>
+        </span>
+        {{#if this.count}}<span class="bulletin-nav-count">{{this.count}}</span>{{/if}}
+      </button>
+      {{/each}}
+    </aside>
+
+    <section class="bulletin-surface gm-phase8-bulletin-main swse-ui-panel">
+      {{#if (eq bulletinSection "events")}}
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/events-panel.hbs" }}
+      {{else if (eq bulletinSection "holonews")}}
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/holonews-panel.hbs" }}
+      {{else if (eq bulletinSection "messages")}}
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/messages-panel.hbs" }}
+      {{else if (eq bulletinSection "players")}}
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/player-state-panel.hbs" }}
+      {{else if (eq bulletinSection "party")}}
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/party-state-panel.hbs" }}
+      {{/if}}
+    </section>
+
+    <aside class="gm-phase8-bulletin-preview">
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/bulletin/live-preview.hbs" }}
+    </aside>
+  </div>
+</div>

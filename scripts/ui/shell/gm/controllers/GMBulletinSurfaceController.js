@@ -14,6 +14,7 @@ import { HolonewsGenerator } from '/systems/foundryvtt-swse/scripts/holonet/data
 import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js';
 import { HolonetComposerAssist } from '/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 
 export class GMBulletinSurfaceController {
   constructor(host) {
@@ -44,6 +45,7 @@ export class GMBulletinSurfaceController {
     this._wireLivePreview(pageElement, signal);
     this._wireBulletinForms(pageElement, signal);
     this._wireStateForms(pageElement, signal);
+    this._wirePartyRecoveryActions(pageElement, signal);
   }
 
   destroy() {
@@ -460,6 +462,35 @@ export class GMBulletinSurfaceController {
         await this.host._saveBulletinRecord(new FormData(messagesForm), 'messages');
       }, { signal });
     }
+  }
+
+  _wirePartyRecoveryActions(pageElement, signal) {
+    pageElement.querySelectorAll('[data-combat-recovery-action]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const action = button.dataset.combatRecoveryAction;
+        if (!action) return;
+        try {
+          button.disabled = true;
+          const result = await GMCombatRecoveryService.executeGroupAction(action, {
+            targetMode: 'party',
+            actorIds: [],
+            amount: 5
+          });
+          if (result?.success === false) {
+            ui?.notifications?.error?.(result.error || result.message || 'Combat recovery action failed.');
+            return;
+          }
+          ui?.notifications?.info?.(result?.message || 'Combat recovery action complete.');
+          await requestShellRender(this.host, { reason: 'gm-bulletin-party-recovery', surfaceId: 'bulletin' });
+        } catch (err) {
+          console.error('[GMBulletinSurfaceController] Party recovery action failed:', err);
+          ui?.notifications?.error?.(`Combat recovery failed: ${err.message}`);
+        } finally {
+          button.disabled = false;
+        }
+      }, { signal });
+    });
   }
 
   _wireStateForms(pageElement, signal) {

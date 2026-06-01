@@ -1,6 +1,6 @@
 {{!-- GM Jobs board columns and selected job detail rail. --}}
-      <div class="job-board-shell">
-        <section class="job-board-command swse-ui-panel">
+      <div class="job-board-shell gm-phase9-job-shell">
+        <section class="job-board-command swse-ui-panel gm-phase9-job-command">
           <div class="job-board-section-header">
             <div>
               <span class="gm-command-eyebrow">CONTRACT BOARD</span>
@@ -46,9 +46,9 @@
           </div>
         </section>
 
-        <aside class="job-board-rail swse-ui-panel">
+        <aside class="job-board-rail swse-ui-panel gm-phase9-job-rail">
           {{#if jobBoard.selectedJob}}
-          <div class="job-board-section-header compact">
+          <div class="job-board-section-header compact gm-phase9-dossier-header">
             <div>
               <span class="gm-command-eyebrow">DOSSIER</span>
               <h3>{{jobBoard.selectedJob.title}}</h3>
@@ -56,7 +56,14 @@
             <span class="job-board-chip {{jobBoard.selectedJob.statusTone}}">{{jobBoard.selectedJob.statusLabel}}</span>
           </div>
 
-          <div class="job-detail-client">
+          <div class="gm-phase9-dossier-metrics" aria-label="Selected contract summary">
+            <span><strong>{{jobBoard.selectedJob.requiredProgressLabel}}</strong>Required</span>
+            <span><strong>{{jobBoard.selectedJob.optionalProgressLabel}}</strong>Optional</span>
+            <span><strong>{{jobBoard.selectedJob.rewards.approvedCreditsLabel}}</strong>Credits</span>
+            <span><strong>{{jobBoard.selectedJob.rewards.approvedXpLabel}}</strong>XP</span>
+          </div>
+
+          <div class="job-detail-client gm-phase9-client-card">
             {{#if jobBoard.selectedJob.clientImage}}<img src="{{jobBoard.selectedJob.clientImage}}" alt="{{jobBoard.selectedJob.clientLabel}}">{{/if}}
             <div>
               <strong>{{jobBoard.selectedJob.clientLabel}}</strong>
@@ -67,15 +74,15 @@
 
           <label class="job-status-note">
             <span>Lifecycle GM Note</span>
-            <textarea rows="2" data-job-status-note placeholder="Optional reason for status override / lifecycle change"></textarea>
+            <textarea rows="2" data-job-status-note data-thread-id="{{jobBoard.selectedJob.threadId}}" placeholder="Optional reason for status override / lifecycle change"></textarea>
           </label>
-          <div class="job-detail-actions">
+          <div class="job-detail-actions gm-phase9-status-actions">
             {{#each jobBoard.statusActions}}
             <button type="button" class="swse-ui-button" data-job-status-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-status="{{this.value}}">{{this.label}}</button>
             {{/each}}
           </div>
 
-          <div class="job-detail-block">
+          <div class="job-detail-block gm-phase9-objective-block">
             <h4>Objectives</h4>
             <div class="job-objective-list">
               {{#each jobBoard.selectedJob.objectives}}
@@ -119,7 +126,7 @@
             </div>
           </div>
 
-          <div class="job-detail-block job-payout-panel">
+          <div class="job-detail-block job-payout-panel gm-phase9-payout-panel">
             <h4>Reward Distribution</h4>
             <div class="job-reward-summary">
               <span>Credits: <strong>{{jobBoard.selectedJob.rewards.approvedCreditsLabel}}</strong></span>

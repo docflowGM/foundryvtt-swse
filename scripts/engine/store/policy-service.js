@@ -31,6 +31,17 @@ export const STORE_TYPE_DEFAULTS = Object.freeze({
   vehicles: true
 });
 
+export const STORE_CATEGORY_MARKUP_DEFAULTS = Object.freeze({
+  weapons: 0,
+  armor: 0,
+  gear: 0,
+  droids: 10,
+  vehicles: 15,
+  restricted: 10,
+  military: 20,
+  illegal: 25
+});
+
 function asObject(value, fallback = {}) {
   return value && typeof value === 'object' && !Array.isArray(value) ? value : fallback;
 }
@@ -39,6 +50,19 @@ function asNumberOrNull(value) {
   if (value === '' || value === null || value === undefined) return null;
   const numeric = normalizeCredits(value);
   return Number.isFinite(numeric) ? Math.max(0, numeric) : null;
+}
+
+function asMarkupNumber(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.max(-100, Math.min(500, numeric)) : fallback;
+}
+
+function applyPercent(value, percent = 0) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return value;
+  const markup = asMarkupNumber(percent, 0);
+  if (!markup) return numeric;
+  return Math.max(0, Math.round(numeric * (1 + markup / 100)));
 }
 
 function itemId(item = {}) {
@@ -77,7 +101,26 @@ export function getStorePolicySettings() {
       ...SettingsHelper.getObject('visibleItemTypes', STORE_TYPE_DEFAULTS)
     },
     blacklistedItems: SettingsHelper.getArray('blacklistedItems', []),
-    inventoryPolicies: SettingsHelper.getObject('storeInventoryPolicies', {})
+    inventoryPolicies: SettingsHelper.getObject('storeInventoryPolicies', {}),
+    categoryMarkups: {
+      ...STORE_CATEGORY_MARKUP_DEFAULTS,
+      ...SettingsHelper.getObject('storeCategoryMarkups', STORE_CATEGORY_MARKUP_DEFAULTS)
+    }
+  };
+}
+
+export function getStoreCategoryMarkupForItem(item = {}, settings = getStorePolicySettings()) {
+  const typeKey = getStoreTypeKey(item);
+  const availabilityKey = getStoreAvailabilityKey(item);
+  const markups = asObject(settings.categoryMarkups, STORE_CATEGORY_MARKUP_DEFAULTS);
+  const typeMarkup = asMarkupNumber(markups[typeKey], STORE_CATEGORY_MARKUP_DEFAULTS[typeKey] ?? 0);
+  const availabilityMarkup = asMarkupNumber(markups[availabilityKey], STORE_CATEGORY_MARKUP_DEFAULTS[availabilityKey] ?? 0);
+  return {
+    typeKey,
+    availabilityKey,
+    typeMarkup,
+    availabilityMarkup,
+    totalMarkup: typeMarkup + availabilityMarkup
   };
 }
 
@@ -117,6 +160,8 @@ export function buildEffectiveStorePolicy(item = {}, settings = getStorePolicySe
   if (!blockedReason && outOfStock) blockedReason = 'Out of stock';
   if (!blockedReason && raw.requiresApproval) blockedReason = 'Requires GM approval';
 
+  const markup = getStoreCategoryMarkupForItem(item, settings);
+
   return {
     id,
     visible,
@@ -131,6 +176,8 @@ export function buildEffectiveStorePolicy(item = {}, settings = getStorePolicySe
     requiresApproval: raw.requiresApproval === true,
     overridePrice: raw.overridePrice,
     priceOverrideApplied: raw.overridePrice !== null,
+    categoryMarkup: markup.totalMarkup,
+    categoryMarkupBreakdown: markup,
     notes: raw.notes,
     canPurchase: visible && raw.available === true && !outOfStock && raw.requiresApproval !== true,
     blockedReason
@@ -157,6 +204,14 @@ export function applyStorePolicyToItem(item = {}, settings = getStorePolicySetti
     item.finalCost = policy.overridePrice;
     if (item.finalCostNew !== null && item.finalCostNew !== undefined) item.finalCostNew = policy.overridePrice;
     if (item.finalCostUsed !== null && item.finalCostUsed !== undefined) item.finalCostUsed = policy.overridePrice;
+  } else if (policy.categoryMarkup && item.storeCategoryMarkupApplied !== true) {
+    item.storeCategoryMarkupApplied = true;
+    item.storeCategoryMarkupPercent = policy.categoryMarkup;
+    item.storeCategoryMarkupBreakdown = policy.categoryMarkupBreakdown;
+
+    if (item.finalCost !== null && item.finalCost !== undefined) item.finalCost = applyPercent(item.finalCost, policy.categoryMarkup);
+    if (item.finalCostNew !== null && item.finalCostNew !== undefined) item.finalCostNew = applyPercent(item.finalCostNew, policy.categoryMarkup);
+    if (item.finalCostUsed !== null && item.finalCostUsed !== undefined) item.finalCostUsed = applyPercent(item.finalCostUsed, policy.categoryMarkup);
   }
 
   return item;

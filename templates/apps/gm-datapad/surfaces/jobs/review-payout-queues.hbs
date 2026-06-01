@@ -1,5 +1,5 @@
 {{!-- GM Jobs objective review and payout queues. --}}
-      <div class="job-queue-grid">
+      <div class="job-queue-grid gm-phase9-queue-grid">
         <section class="swse-ui-panel job-queue-panel">
           <div class="job-board-section-header compact">
             <div>
@@ -9,7 +9,7 @@
             <span class="job-board-chip attention">{{jobBoard.reviewItems.length}}</span>
           </div>
           {{#each jobBoard.reviewItems}}
-          <article class="job-queue-card">
+          <article class="job-queue-card gm-phase9-queue-card">
             <span class="job-board-chip review">{{this.statusLabel}}</span>
             <strong>{{this.jobTitle}}</strong>
             <p>{{this.typeLabel}}: {{this.title}}</p>
@@ -33,7 +33,7 @@
             <span class="job-board-chip payout">{{jobBoard.payoutItems.length}}</span>
           </div>
           {{#each jobBoard.payoutItems}}
-          <article class="job-queue-card">
+          <article class="job-queue-card gm-phase9-queue-card">
             <span class="job-board-chip payout">Ready</span>
             <strong>{{this.title}}</strong>
             <p>{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</p>

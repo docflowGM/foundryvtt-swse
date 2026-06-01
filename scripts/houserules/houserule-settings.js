@@ -97,6 +97,196 @@ export function registerHouseruleSettings() {
   });
 
   /* -------------------------------------------------------------------------- */
+  /*                              STORE / COMMERCE                              */
+  /* -------------------------------------------------------------------------- */
+
+  register('storeOpen', {
+    name: 'Store Open',
+    hint: 'When disabled, players cannot complete normal store purchases.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register('globalBuyModifier', {
+    name: 'Global Buy Modifier',
+    hint: 'Legacy store price modifier retained for older store surfaces.',
+    scope: 'world',
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  register('storeMarkup', {
+    name: 'Store Markup Percent',
+    hint: 'Global percentage markup applied to store prices.',
+    scope: 'world',
+    config: true,
+    type: Number,
+    default: 0
+  });
+
+  register('storeDiscount', {
+    name: 'Store Discount Percent',
+    hint: 'Maximum global discount percentage used by store pricing.',
+    scope: 'world',
+    config: true,
+    type: Number,
+    default: 0
+  });
+
+  register('storeApprovalThreshold', {
+    name: 'Store Approval Threshold',
+    hint: 'Purchases at or above this credit amount should be routed to GM approval when approval gates are enabled.',
+    scope: 'world',
+    config: true,
+    type: Number,
+    default: 5000
+  });
+
+  register('storeHistoryRetentionWeeks', {
+    name: 'Store History Retention Weeks',
+    hint: 'How many weeks of GM store transaction history to retain for review.',
+    scope: 'world',
+    config: false,
+    type: Number,
+    default: 52
+  });
+
+  register('storeRollbackWindowDays', {
+    name: 'Store Rollback Window Days',
+    hint: 'How many days a store transaction should remain eligible for GM rollback.',
+    scope: 'world',
+    config: false,
+    type: Number,
+    default: 30
+  });
+
+  register('store.requireGMApproval', {
+    name: 'Require GM Store Approval',
+    hint: 'Require GM approval for purchases governed by store approval policy.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('autoAcceptItemSales', {
+    name: 'Auto-Accept Store Sell-Backs',
+    hint: 'Automatically accept player item sale requests using the configured percentage.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  register('automaticSalePercentage', {
+    name: 'Automatic Sale Percentage',
+    hint: 'Percentage of base item price paid when sell-backs are auto-accepted.',
+    scope: 'world',
+    config: true,
+    type: Number,
+    default: 50
+  });
+
+  register('disallowAutoSellNoPrice', {
+    name: 'Disallow Auto Sell Without Price',
+    hint: 'Prevent automatic sell-back when an item has no valid price.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  register('visibleRarities', {
+    name: 'Store Visible Rarities',
+    hint: 'Internal GM store rarity/legality visibility policy.',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: {
+      standard: true,
+      licensed: true,
+      rare: false,
+      restricted: false,
+      military: false,
+      illegal: false,
+      common: true,
+      uncommon: true
+    }
+  });
+
+  register('visibleItemTypes', {
+    name: 'Store Visible Item Types',
+    hint: 'Internal GM store item-type visibility policy.',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: {
+      weapons: true,
+      armor: true,
+      gear: true,
+      droids: true,
+      vehicles: true
+    }
+  });
+
+  register('storeCategoryMarkups', {
+    name: 'Store Category Markups',
+    hint: 'Per-category store markup percentages controlled by the GM Datapad.',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: {
+      weapons: 0,
+      armor: 0,
+      gear: 0,
+      droids: 10,
+      vehicles: 15,
+      restricted: 10,
+      military: 20,
+      illegal: 25
+    }
+  });
+
+  register('blacklistedItems', {
+    name: 'Store Hidden Items',
+    hint: 'Legacy hidden item ID list retained for old store controls.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+  register('pendingSales', {
+    name: 'Pending Store Sale Requests',
+    hint: 'Internal queue of player sell-back requests awaiting GM review.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+  register('pendingCustomPurchases', {
+    name: 'Pending Custom Purchases',
+    hint: 'Internal queue of custom droid/vehicle/starship purchases awaiting GM review.',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: []
+  });
+
+  register('storeInventoryPolicies', {
+    name: 'Store Inventory Policies',
+    hint: 'Internal per-item GM store visibility, stock, approval, and price policy map.',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: {}
+  });
+
+  /* -------------------------------------------------------------------------- */
   /*                                 BACKGROUNDS                                */
   /* -------------------------------------------------------------------------- */
 

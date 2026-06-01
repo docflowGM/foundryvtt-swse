@@ -225,9 +225,12 @@ function jobCreationRecipients() {
 
 function clientTypeOptions() {
   return [
-    { value: 'mentor', label: 'Mentor' },
+    { value: 'npc', label: 'NPC Individual' },
     { value: 'faction', label: 'Faction' },
-    { value: 'npc', label: 'NPC / Actor' },
+    { value: 'organization', label: 'Organization' },
+    { value: 'anonymous', label: 'Anonymous' },
+    { value: 'party', label: 'The Party' },
+    { value: 'mentor', label: 'Mentor' },
     { value: 'customNpc', label: 'Custom NPC' }
   ];
 }

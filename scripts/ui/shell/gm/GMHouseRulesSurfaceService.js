@@ -2,6 +2,46 @@
 
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 
+
+const HOUSE_RULE_CATEGORY_META = {
+  characterCreation: {
+    label: 'Character Creation',
+    icon: 'fa-solid fa-user-gear',
+    tone: 'info',
+    description: 'Chargen gates, point-buy pools, backgrounds, droid construction, and Holonet player transfer policy.'
+  },
+  combat: {
+    label: 'Combat',
+    icon: 'fa-solid fa-crosshairs',
+    tone: 'warn',
+    description: 'Attack flow, critical hits, condition penalties, range handling, second wind, death, and combat adjudication.'
+  },
+  force: {
+    label: 'Force',
+    icon: 'fa-solid fa-jedi',
+    tone: 'info',
+    description: 'Force Training attribute, Force-sensitive boundaries, dark side rules, Force Point recovery, and temptation handling.'
+  },
+  recovery: {
+    label: 'Recovery & Conditions',
+    icon: 'fa-solid fa-heart-pulse',
+    tone: 'crit',
+    description: 'Recovery mechanics, healing skill integration, massive damage, surgery, revivify, and condition track behavior.'
+  },
+  skills: {
+    label: 'Skills & Talents',
+    icon: 'fa-solid fa-book-open-reader',
+    tone: 'ok',
+    description: 'Skill Focus variants, training progression, multiclass bonuses, talent cadence, grappling, and flanking options.'
+  },
+  vehicles: {
+    label: 'Vehicles & Space',
+    icon: 'fa-solid fa-rocket',
+    tone: 'info',
+    description: 'Space initiative, subsystem engine toggles, scale engine, vehicle controller rules, status effects, and banned species.'
+  }
+};
+
 const HOUSE_RULES_CATEGORIES = {
   characterCreation: [
     'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
@@ -182,17 +222,41 @@ const RULE_DESCRIPTIONS = {
 export class GMHouseRulesSurfaceService {
   static async buildViewModel(_host) {
     const rules = this.buildRulesByCategory();
-    const activeRuleCount = Object.values(rules)
-      .flat()
-      .filter((rule) => rule.enabled)
-      .length;
+    const ruleCategories = this.buildCategoryViewModels(rules);
+    const allRules = ruleCategories.flatMap((category) => category.rules);
+    const activeRuleCount = allRules.filter((rule) => rule.enabled).length;
+    const totalRuleCount = allRules.length;
 
     return {
       pageTitle: 'House Rules',
-      pageDescription: 'Game rule modifications',
+      pageDescription: 'Game rule modifications and campaign rule variants',
       rules,
-      activeRuleCount
+      ruleCategories,
+      activeRuleCount,
+      inactiveRuleCount: Math.max(totalRuleCount - activeRuleCount, 0),
+      totalRuleCount,
+      categoryCount: ruleCategories.length
     };
+  }
+
+  static buildCategoryViewModels(rules = this.buildRulesByCategory()) {
+    return this.getCategoryIds().map((id) => {
+      const categoryRules = rules[id] || [];
+      const meta = HOUSE_RULE_CATEGORY_META[id] || {};
+      const activeCount = categoryRules.filter((rule) => rule.enabled).length;
+      return {
+        id,
+        label: meta.label || id,
+        icon: meta.icon || 'fa-solid fa-sliders',
+        tone: meta.tone || 'info',
+        description: meta.description || '',
+        rules: categoryRules,
+        activeCount,
+        inactiveCount: Math.max(categoryRules.length - activeCount, 0),
+        totalCount: categoryRules.length,
+        hasActive: activeCount > 0
+      };
+    });
   }
 
   static buildRulesByCategory() {

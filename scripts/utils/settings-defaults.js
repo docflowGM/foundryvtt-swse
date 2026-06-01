@@ -36,6 +36,10 @@ export const SETTINGS_DEFAULTS = {
     globalBuyModifier: 0,
     storeMarkup: 0,
     storeDiscount: 0,
+    storeApprovalThreshold: 5000,
+    storeHistoryRetentionWeeks: 52,
+    storeRollbackWindowDays: 30,
+    "store.requireGMApproval": false,
     autoAcceptItemSales: false,
     automaticSalePercentage: 50,
     disallowAutoSellNoPrice: true,
@@ -55,6 +59,16 @@ export const SETTINGS_DEFAULTS = {
         gear: true,
         droids: true,
         vehicles: true
+    },
+    storeCategoryMarkups: {
+        weapons: 0,
+        armor: 0,
+        gear: 0,
+        droids: 10,
+        vehicles: 15,
+        restricted: 10,
+        military: 20,
+        illegal: 25
     },
     blacklistedItems: [],
     pendingSales: [],

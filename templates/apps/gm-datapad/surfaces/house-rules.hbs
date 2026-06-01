@@ -1,212 +1,95 @@
-{{!-- GM Datapad house-rules surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-house-rules swse-house-rules-datapad">
-      <div class="page-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <h2>{{pageTitle}}</h2>
-        <p class="page-subtitle">{{pageDescription}}</p>
+{{!-- GM Datapad house-rules command surface. --}}
+<div class="gm-datapad-page gm-datapad-house-rules gm-phase7-rules swse-house-rules-datapad" data-shell-surface="house-rules">
+  <div class="gm-phase6-command-header gm-phase7-rules-header">
+    <button class="ph-back" type="button" data-nav-to="home">
+      <i class="fa-solid fa-arrow-left"></i>&nbsp;Home
+    </button>
+    <div class="gm-phase6-command-copy">
+      <span class="gm-command-eyebrow">RULESET CONFIGURATION</span>
+      <h2>{{pageTitle}}</h2>
+      <p>{{pageDescription}}</p>
+    </div>
+    <div class="gm-phase6-command-metrics">
+      <div class="gm-command-metric ok">
+        <small>Active</small>
+        <strong>{{activeRuleCount}}</strong>
       </div>
-
-      <div class="datapad-body">
-
-        {{!-- CHARACTER CREATION --}}
-        {{#if rules.characterCreation}}
-        <div class="rule-category">
-          <div class="rule-category-header">
-            <span class="category-icon">⚙</span>
-            Character Creation
-          </div>
-
-          <div class="rule-list">
-            {{#each rules.characterCreation}}
-              <div class="rule-entry">
-                <div class="rule-info">
-                  <div class="rule-name">{{this.name}}</div>
-                  <div class="rule-description">{{this.description}}</div>
-                </div>
-
-                <div class="rule-toggle">
-                  <label class="cyber-switch">
-                    <input type="checkbox"
-                           data-rule-key="{{this.key}}"
-                           data-rule-type="{{this.type}}"
-                           {{#if this.enabled}}checked{{/if}}>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- COMBAT --}}
-        {{#if rules.combat}}
-        <div class="rule-category">
-          <div class="rule-category-header">
-            <span class="category-icon">⚔</span>
-            Combat
-          </div>
-
-          <div class="rule-list">
-            {{#each rules.combat}}
-              <div class="rule-entry">
-                <div class="rule-info">
-                  <div class="rule-name">{{this.name}}</div>
-                  <div class="rule-description">{{this.description}}</div>
-                </div>
-
-                <div class="rule-toggle">
-                  <label class="cyber-switch">
-                    <input type="checkbox"
-                           data-rule-key="{{this.key}}"
-                           data-rule-type="{{this.type}}"
-                           {{#if this.enabled}}checked{{/if}}>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- FORCE --}}
-        {{#if rules.force}}
-        <div class="rule-category">
-          <div class="rule-category-header">
-            <span class="category-icon">✦</span>
-            Force
-          </div>
-
-          <div class="rule-list">
-            {{#each rules.force}}
-              <div class="rule-entry">
-                <div class="rule-info">
-                  <div class="rule-name">{{this.name}}</div>
-                  <div class="rule-description">{{this.description}}</div>
-                </div>
-
-                <div class="rule-toggle">
-                  <label class="cyber-switch">
-                    <input type="checkbox"
-                           data-rule-key="{{this.key}}"
-                           data-rule-type="{{this.type}}"
-                           {{#if this.enabled}}checked{{/if}}>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- RECOVERY & CONDITIONS --}}
-        {{#if rules.recovery}}
-        <div class="rule-category">
-          <div class="rule-category-header">
-            <span class="category-icon">❤</span>
-            Recovery & Conditions
-          </div>
-
-          <div class="rule-list">
-            {{#each rules.recovery}}
-              <div class="rule-entry">
-                <div class="rule-info">
-                  <div class="rule-name">{{this.name}}</div>
-                  <div class="rule-description">{{this.description}}</div>
-                </div>
-
-                <div class="rule-toggle">
-                  <label class="cyber-switch">
-                    <input type="checkbox"
-                           data-rule-key="{{this.key}}"
-                           data-rule-type="{{this.type}}"
-                           {{#if this.enabled}}checked{{/if}}>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- SKILLS & TALENTS --}}
-        {{#if rules.skills}}
-        <div class="rule-category">
-          <div class="rule-category-header">
-            <span class="category-icon">📚</span>
-            Skills & Talents
-          </div>
-
-          <div class="rule-list">
-            {{#each rules.skills}}
-              <div class="rule-entry">
-                <div class="rule-info">
-                  <div class="rule-name">{{this.name}}</div>
-                  <div class="rule-description">{{this.description}}</div>
-                </div>
-
-                <div class="rule-toggle">
-                  <label class="cyber-switch">
-                    <input type="checkbox"
-                           data-rule-key="{{this.key}}"
-                           data-rule-type="{{this.type}}"
-                           {{#if this.enabled}}checked{{/if}}>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
-        {{!-- VEHICLES & SPACE --}}
-        {{#if rules.vehicles}}
-        <div class="rule-category">
-          <div class="rule-category-header">
-            <span class="category-icon">🚀</span>
-            Vehicles & Space Combat
-          </div>
-
-          <div class="rule-list">
-            {{#each rules.vehicles}}
-              <div class="rule-entry">
-                <div class="rule-info">
-                  <div class="rule-name">{{this.name}}</div>
-                  <div class="rule-description">{{this.description}}</div>
-                </div>
-
-                <div class="rule-toggle">
-                  <label class="cyber-switch">
-                    <input type="checkbox"
-                           data-rule-key="{{this.key}}"
-                           data-rule-type="{{this.type}}"
-                           {{#if this.enabled}}checked{{/if}}>
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-        {{/if}}
-
+      <div class="gm-command-metric muted">
+        <small>Inactive</small>
+        <strong>{{inactiveRuleCount}}</strong>
       </div>
-
-      {{!-- FOOTER STATUS --}}
-      <div class="datapad-footer">
-        <div class="status-line">
-          <span class="status-label">SYSTEM INTEGRITY:</span>
-          <span class="status-value">100%</span>
-        </div>
-        <div class="status-line">
-          <span class="status-label">ACTIVE OVERRIDES:</span>
-          <span class="status-value">{{activeRuleCount}}</span>
-        </div>
+      <div class="gm-command-metric info">
+        <small>Catalog</small>
+        <strong>{{totalRuleCount}}</strong>
+      </div>
+      <div class="gm-command-metric">
+        <small>Groups</small>
+        <strong>{{categoryCount}}</strong>
       </div>
     </div>
+  </div>
 
-    {{!-- Store Page --}}
+  <div class="gm-phase6-command-strip is-info gm-phase7-rules-strip">
+    <span><i class="fa-solid fa-triangle-exclamation"></i> GM AUTHORITY</span>
+    <p>House rules are campaign-wide settings. Changes are saved immediately and routed through the shell mutation guard so the datapad repaints in a coordinated pass.</p>
+  </div>
+
+  <div class="gm-phase7-rule-toolbar">
+    <label class="gm-phase7-rule-search">
+      <span>Search Rules</span>
+      <input type="search" data-house-rule-search placeholder="Search rule name or description…">
+    </label>
+    <div class="gm-phase7-rule-filter-row" role="toolbar" aria-label="House rule category filters">
+      <button type="button" class="gm-phase7-rule-filter is-active" data-house-rule-filter="all">All</button>
+      {{#each ruleCategories}}
+      <button type="button" class="gm-phase7-rule-filter" data-house-rule-filter="{{this.id}}">{{this.label}}</button>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="gm-phase7-rule-grid">
+    {{#each ruleCategories}}
+    <section class="gm-command-card gm-phase7-rule-category {{this.tone}}" data-house-rule-category="{{this.id}}">
+      <header class="gm-phase7-rule-category-header">
+        <div class="gm-phase7-rule-category-icon"><i class="{{this.icon}}"></i></div>
+        <div>
+          <span class="gm-command-eyebrow">{{this.id}}</span>
+          <h3>{{this.label}}</h3>
+          <p>{{this.description}}</p>
+        </div>
+        <div class="gm-phase7-rule-category-score {{#if this.hasActive}}ok{{else}}muted{{/if}}">
+          <small>Active</small>
+          <strong>{{this.activeCount}}/{{this.totalCount}}</strong>
+        </div>
+      </header>
+
+      <div class="gm-phase7-rule-list">
+        {{#each this.rules}}
+        <article class="gm-phase7-rule-entry {{#if this.enabled}}is-enabled{{/if}}" data-house-rule-row data-rule-category="{{../id}}" data-rule-search-text="{{this.name}} {{this.description}} {{this.key}}">
+          <div class="gm-phase7-rule-copy">
+            <div class="gm-phase7-rule-name">{{this.name}}</div>
+            <div class="gm-phase7-rule-description">{{this.description}}</div>
+            <div class="gm-phase7-rule-key">{{this.key}} · {{this.type}}</div>
+          </div>
+          <label class="gm-phase7-switch" title="Toggle {{this.name}}">
+            <input type="checkbox"
+                   data-rule-key="{{this.key}}"
+                   data-rule-type="{{this.type}}"
+                   {{#if this.enabled}}checked{{/if}}>
+            <span class="gm-phase7-switch-track"><span class="gm-phase7-switch-thumb"></span></span>
+          </label>
+        </article>
+        {{/each}}
+      </div>
+    </section>
+    {{/each}}
+  </div>
+
+  <div class="gm-phase7-rule-footer">
+    <span class="gm-command-eyebrow">SYSTEM INTEGRITY</span>
+    <strong>100%</strong>
+    <span class="gm-phase7-rule-footer-sep"></span>
+    <span class="gm-command-eyebrow">ACTIVE OVERRIDES</span>
+    <strong>{{activeRuleCount}}</strong>
+  </div>
+</div>

@@ -1,18 +1,43 @@
-{{!-- GM Datapad home surface: app launcher only. Navigation lives in the shared shell/dock. --}}
-<div class="gm-datapad-page gm-datapad-home gm-datapad-home--launcher-only" data-shell-region="surface-home">
-  <div class="app-cards-grid gm-shell-app-grid gm-shell-app-grid--home-only" aria-label="GM Datapad applications">
-    {{#each apps}}
-    <button class="app-card swse-home-tile gm-shell-app-card {{#if this.featured}}featured{{/if}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}"
-            title="{{this.description}}" type="button">
-      <span class="swse-home-tile-id">{{this.code}}</span>
-      <div class="app-card-icon swse-home-tile-icon">
+{{!-- GM Datapad home surface: command dashboard launcher. Navigation lives in the shared shell/dock. --}}
+<div class="gm-datapad-page gm-datapad-home gm-command-home" data-shell-region="surface-home">
+  {{#if hasUrgentApps}}
+  <section class="gm-command-urgent" aria-label="Critical GM actions">
+    <div class="gm-command-urgent__eyebrow">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>Critical — Requires Immediate GM Action</span>
+    </div>
+    <div class="gm-command-urgent__items">
+      {{#each urgentApps}}
+      <button type="button" class="gm-command-urgent__item {{this.statusTone}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}" title="{{this.description}}">
         <i class="{{this.icon}}"></i>
+        <span>{{this.urgentLabel}}</span>
+      </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <section class="gm-command-clusters" aria-label="GM Datapad applications">
+    {{#each appClusters}}
+    <div class="gm-command-cluster {{this.tone}}">
+      <header class="gm-command-cluster__header">
+        <h3>{{this.label}}</h3>
+        <span>{{this.countLabel}}</span>
+      </header>
+      <div class="gm-command-cluster__apps">
+        {{#each this.apps}}
+        <button class="gm-command-app-row {{this.statusTone}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}" title="{{this.description}}" type="button">
+          <span class="gm-command-app-row__code">{{this.code}}</span>
+          <span class="gm-command-app-row__icon"><i class="{{this.icon}}"></i></span>
+          <span class="gm-command-app-row__body">
+            <strong>{{this.label}}</strong>
+            <small>{{this.description}}</small>
+          </span>
+          {{#if this.badgeCount}}<span class="gm-command-app-row__badge {{this.badgeType}}">{{this.badgeCount}}</span>{{/if}}
+        </button>
+        {{/each}}
       </div>
-      <div class="app-card-label swse-home-tile-label">{{this.label}}</div>
-      <div class="app-card-desc">{{this.description}}</div>
-      <div class="swse-home-tile-status"><span class="swse-home-dot {{this.statusTone}}"></span><span>{{this.status}}</span></div>
-      {{#if this.badgeCount}}<span class="app-card-badge swse-home-badge {{this.badgeType}}">{{this.badgeCount}}</span>{{/if}}
-    </button>
+    </div>
     {{/each}}
-  </div>
+  </section>
 </div>

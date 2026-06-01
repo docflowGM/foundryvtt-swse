@@ -1,11 +1,18 @@
 {{!-- GM Bulletin events-panel. --}}
 
-          <div class="bulletin-panel-header">
+          <div class="bulletin-panel-header gm-phase8-bulletin-panel-header">
             <div>
-              <h3>Manage Events</h3>
-              <p>Broadcast campaign news, session recaps, and public Holonet updates.</p>
+              <span class="gm-command-eyebrow">EVENTS</span>
+              <h3>Campaign Broadcasts</h3>
+              <p>Composer accordion plus published, draft, urgent, and pinned event records.</p>
             </div>
           </div>
+
+          <details class="bulletin-composer-accordion gm-phase8-bulletin-composer" open>
+            <summary>
+              <span><i class="fa-solid fa-plus"></i> Add Event Broadcast</span>
+              <em>Headline, source, recipients, home placement, body</em>
+            </summary>
 
           <form class="bulletin-composer" data-bulletin-form="events">
             <input type="hidden" name="recordId" value="{{eventEditorRecord.id}}">
@@ -104,8 +111,14 @@
               <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish Event</button>
             </div>
           </form>
+          </details>
 
-          <div class="bulletin-record-grid">
+          <div class="gm-phase8-record-feed-header">
+            <span class="gm-command-eyebrow">EVENT RECORDS</span>
+            <strong>{{eventRecords.length}}</strong>
+          </div>
+
+          <div class="bulletin-record-grid gm-phase8-record-feed">
             {{#each eventRecords}}
             <article class="bulletin-record-card {{this.state}} {{this.recordTone}}">
               <div class="bulletin-record-meta">

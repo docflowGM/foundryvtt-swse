@@ -1,12 +1,33 @@
-{{!-- GM Bulletin player-state-panel. --}}
+{{!-- GM Bulletin player-state-panel — Phase 3 player state grid. --}}
 
-          <div class="bulletin-panel-header">
+          <div class="bulletin-panel-header gm-phase3-state-header">
             <div>
-              <h3>Manage Players</h3>
-              <p>Set current location, objective, and situation for individual player datapads.</p>
+              <span class="gm-command-eyebrow">PLAYER STATE GRID</span>
+              <h3>Players</h3>
+              <p>Per-player HP, condition, credits, online state, and home-screen state editor.</p>
             </div>
           </div>
-          <div class="bulletin-state-layout">
+
+          <div class="gm-player-state-grid">
+            {{#each playerStateCards}}
+            <article class="gm-player-state-card {{this.hpTone}} {{#if (eq ../selectedPlayerId this.actorId)}}is-active{{/if}}" data-select-player-state="{{this.actorId}}">
+              <div class="gm-player-state-kicker">Player: {{this.userName}}</div>
+              <h4>{{this.actorName}}</h4>
+              <div class="gm-player-state-stats">
+                <div class="gm-player-state-stat {{this.hpTone}}"><span>HP</span><strong>{{this.hpLabel}}</strong></div>
+                <div class="gm-player-state-stat {{this.conditionTone}}"><span>Condition</span><strong>{{this.conditionLabel}}</strong></div>
+                <div class="gm-player-state-stat"><span>Credits</span><strong>{{this.creditsLabel}}</strong></div>
+                <div class="gm-player-state-stat {{this.statusTone}}"><span>Status</span><strong>{{this.status}}</strong></div>
+              </div>
+              <div class="gm-player-state-hpbar"><span style="width: {{this.hpPercent}}%"></span></div>
+              <div class="gm-player-state-chips">
+                {{#each this.chips}}<span class="combat-recovery-chip {{this.tone}}">{{this.label}}</span>{{/each}}
+              </div>
+            </article>
+            {{/each}}
+          </div>
+
+          <div class="bulletin-state-layout gm-phase3-player-editor">
             <aside class="bulletin-player-list">
               {{#each bulletinPlayers}}
               <button class="bulletin-player-card {{#if (eq ../selectedPlayerId this.actorId)}}is-active{{/if}}" type="button" data-select-player-state="{{this.actorId}}">
@@ -27,7 +48,7 @@
               </label>
               <label>
                 <span>Current Situation</span>
-                <textarea name="situation" rows="6" placeholder="Currently onboard Wayfarer-class freighter. Last contact: Mid-Rim." data-holonet-editor="player-state">{{selectedPlayerState.situation}}</textarea>
+                <textarea name="situation" rows="5" placeholder="Currently onboard Wayfarer-class freighter. Last contact: Mid-Rim." data-holonet-editor="player-state">{{selectedPlayerState.situation}}</textarea>
               </label>
               <div class="bulletin-form-actions">
                 <button type="submit" class="swse-ui-button bulletin-primary-action">Save Player State</button>

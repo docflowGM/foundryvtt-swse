@@ -20,18 +20,32 @@ function actorCard(actor, extra = {}) {
   const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
   const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
   const conditionTrack = Number(actor.system?.conditionTrack?.value ?? actor.system?.condition?.track ?? 0) || 0;
+  const xpTotal = Number(actor.system?.xp?.total ?? actor.system?.xp?.value ?? actor.system?.experience ?? 0) || 0;
+  const credits = Number(actor.system?.credits ?? actor.system?.wealth?.credits ?? 0) || 0;
+  const flaggedParty = actor.getFlag?.('foundryvtt-swse', 'gmPartyMember') === true;
+  const inParty = Boolean(extra.partyActor || flaggedParty);
+  const hpRatio = hpMax > 0 ? hpValue / hpMax : 1;
+  const hpTone = hpMax <= 0 ? 'muted' : (hpValue <= 0 ? 'crit' : (hpRatio <= 0.5 ? 'warn' : 'ok'));
+  const typeChipClass = ['character', 'pc'].includes(actor.type) ? 'pc' : (actor.type === 'npc' ? 'npc' : (actor.type === 'droid' ? 'droid' : (actor.type === 'vehicle' ? 'vehicle' : '')));
+  const typeLabel = actor.type === 'character' ? 'PC' : String(actor.type || 'actor').toUpperCase();
   return {
     id: actor.id,
     name: actor.name,
     type: actor.type,
+    typeLabel,
+    typeChipClass,
     img: actor.img,
     ownerUsers,
     ownerLabel: ownerUsers.length ? ownerUsers.join(', ') : 'No linked player',
     hpValue,
     hpMax,
     hpLabel: hpMax ? `${hpValue}/${hpMax} HP` : 'HP unavailable',
+    hpTone,
     conditionTrack,
     conditionLabel: conditionTrack ? `CT ${conditionTrack}` : 'CT normal',
+    xpTotal,
+    credits,
+    inParty,
     inCombat: Boolean(extra.inCombat),
     inScene: Boolean(extra.inScene),
     sceneName: extra.sceneName || '',
@@ -58,14 +72,14 @@ export class GMWorkspaceSurfaceService {
     const sceneActorIds = new Set(sceneTokens.map(row => row.actor.id));
     const combatActorIds = new Set(combatants.map(row => row.actor.id));
 
-    const playerActors = uniqueActors(ownedActors.filter(actor => playerActorIds.has(actor.id)).map(actor => actorCard(actor)));
-    const sceneActors = uniqueActors(sceneTokens.map(({ token, actor }) => actorCard(actor, { inScene: true, sceneName: scene?.name ?? '', tokenName: token.name })));
-    const combatActors = uniqueActors(combatants.map(({ actor }) => actorCard(actor, { inCombat: true, inScene: sceneActorIds.has(actor.id), sceneName: scene?.name ?? '' })));
+    const playerActors = uniqueActors(ownedActors.filter(actor => playerActorIds.has(actor.id)).map(actor => actorCard(actor, { partyActor: true })));
+    const sceneActors = uniqueActors(sceneTokens.map(({ token, actor }) => actorCard(actor, { inScene: true, sceneName: scene?.name ?? '', tokenName: token.name, partyActor: playerActorIds.has(actor.id) })));
+    const combatActors = uniqueActors(combatants.map(({ actor }) => actorCard(actor, { inCombat: true, inScene: sceneActorIds.has(actor.id), sceneName: scene?.name ?? '', partyActor: playerActorIds.has(actor.id) })));
     const otherActors = uniqueActors(ownedActors
       .filter(actor => !playerActorIds.has(actor.id) && !sceneActorIds.has(actor.id) && !combatActorIds.has(actor.id))
-      .map(actor => actorCard(actor)));
+      .map(actor => actorCard(actor, { partyActor: playerActorIds.has(actor.id) })));
 
-    const gmActors = uniqueActors(ownedActors.map(actor => actorCard(actor)));
+    const gmActors = uniqueActors(ownedActors.map(actor => actorCard(actor, { partyActor: playerActorIds.has(actor.id) })));
     const factionSummary = FactionRegistryService.summarizeForWorkspace();
     const actorOptions = gmActors
       .map(actor => ({ id: actor.id, name: actor.name, type: actor.type, label: `${actor.name} (${actor.type})` }))

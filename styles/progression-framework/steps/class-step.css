@@ -1085,3 +1085,29 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
+
+.follower-template-card .prog-class-card__quote {
+  top: 1rem;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: auto;
+  inset: unset;
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  max-height: 5.5rem;
+  overflow: hidden;
+  padding: 0.75rem;
+}
+
+.follower-template-card .follower-template-card__rules {
+  z-index: 5;
+}
+
+.follower-template-card .prog-class-card__nameplate {
+  z-index: 6;
+}

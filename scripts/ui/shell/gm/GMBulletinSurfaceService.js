@@ -8,6 +8,7 @@ import { HolonewsGenerator } from '/systems/foundryvtt-swse/scripts/holonet/data
 import { HolonewsAutoPublisher } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js';
 import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js';
 import { HolonewsAtomPolicy } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-atom-policy.js';
+import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 
 export class GMBulletinSurfaceService {
   static async buildViewModel(host) {
@@ -21,6 +22,10 @@ export class GMBulletinSurfaceService {
     const selectedPlayerId = host.selectedPlayerStateActorId || bulletinPlayers[0]?.actorId || null;
     const selectedPlayerState = selectedPlayerId ? await HolonetStateService.getPlayerState(selectedPlayerId) : null;
     const partyState = await HolonetStateService.getPartyState();
+    const combatRecoveryView = await GMBulletinSurfaceService._safeCombatRecoveryView();
+    const combatRecovery = combatRecoveryView?.combatRecovery || { actors: [], metrics: {}, partyActors: [] };
+    const playerStateCards = GMBulletinSurfaceService._buildPlayerStateCards(bulletinPlayers, combatRecovery.actors || []);
+    const partyStateOverview = GMBulletinSurfaceService._buildPartyStateOverview(partyState, combatRecovery);
     const selectedPreviewUserId = host.selectedBulletinPreviewUserId || bulletinPlayers[0]?.userId || null;
     const selectedPreviewPlayer = bulletinPlayers.find((player) => player.userId === selectedPreviewUserId) || bulletinPlayers[0] || null;
     const selectedPreviewState = selectedPreviewPlayer?.actorId ? await HolonetStateService.getPlayerState(selectedPreviewPlayer.actorId) : selectedPlayerState;
@@ -40,7 +45,7 @@ export class GMBulletinSurfaceService {
       sector: host.holonewsArchiveFilters?.sector || '',
       category: host.holonewsArchiveFilters?.category || ''
     };
-    const filteredHolonewsViews = this._filterHolonewsRecords(holonewsViews, holonewsArchiveFilters);
+    const filteredHolonewsViews = GMBulletinSurfaceService._filterHolonewsRecords(holonewsViews, holonewsArchiveFilters);
     const usedHolonewsSeedIds = [...new Set(holonewsViews.map((record) => record.holonewsSeedId).filter(Boolean))];
     const holonewsWireFilters = {
       ...atomFilters,
@@ -65,7 +70,7 @@ export class GMBulletinSurfaceService {
     const messageEditorRecord = host._getBulletinEditorRecord(messageRecords, 'messages')
       ? host._buildBulletinRecordView(host._getBulletinEditorRecord(messageRecords, 'messages'))
       : null;
-    const previewRecord = this._selectPreviewRecord({
+    const previewRecord = GMBulletinSurfaceService._selectPreviewRecord({
       section: host.currentBulletinSection,
       eventEditorRecord,
       holonewsEditorRecord,
@@ -87,10 +92,12 @@ export class GMBulletinSurfaceService {
         { id: 'players', label: 'Players', count: bulletinPlayers.length, hint: 'Personal home status' },
         { id: 'party', label: 'Party', count: partyState?.situation || partyState?.objective || partyState?.location ? 1 : 0, hint: 'Shared home status' }
       ],
-      bulletinStats: this._buildStats([...eventViews, ...holonewsViews, ...messageViews]),
+      bulletinStats: GMBulletinSurfaceService._buildStats([...eventViews, ...holonewsViews, ...messageViews]),
       audienceOptions: host._getAudienceOptions(),
       audienceTypes: AUDIENCE_TYPE,
       bulletinPlayers,
+      playerStateCards,
+      partyStateOverview,
       selectedPlayerId,
       selectedPreviewUserId,
       selectedPreviewPlayer,
@@ -110,11 +117,11 @@ export class GMBulletinSurfaceService {
       holonewsUsedSeedCount: usedHolonewsSeedIds.length,
       holonewsArchiveTotalCount: holonewsViews.length,
       holonewsArchiveFilteredCount: filteredHolonewsViews.length,
-      holonewsArchiveStats: this._buildHolonewsArchiveStats(holonewsViews),
-      holonewsAutomation: this._buildHolonewsAutomationView(holonewsAutomationPolicy),
+      holonewsArchiveStats: GMBulletinSurfaceService._buildHolonewsArchiveStats(holonewsViews),
+      holonewsAutomation: GMBulletinSurfaceService._buildHolonewsAutomationView(holonewsAutomationPolicy),
       holonewsArchiveFilters,
-      holonewsArchiveStateOptions: this._getHolonewsStateOptions(),
-      holonewsArchiveTypeOptions: this._getHolonewsTypeOptions(),
+      holonewsArchiveStateOptions: GMBulletinSurfaceService._getHolonewsStateOptions(),
+      holonewsArchiveTypeOptions: GMBulletinSurfaceService._getHolonewsTypeOptions(),
       holonewsHideUsedSeeds: Boolean(host.holonewsHideUsedSeeds),
       holonewsWireFilters: {
         query: holonewsWireFilters.query,
@@ -130,7 +137,7 @@ export class GMBulletinSurfaceService {
       eventEditorRecord,
       holonewsEditorRecord,
       messageEditorRecord,
-      homePreview: this._buildHomePreview({ previewRecord, eventViews, holonewsViews, messageViews, selectedPlayerState: selectedPreviewState, partyState, selectedPreviewPlayer }),
+      homePreview: GMBulletinSurfaceService._buildHomePreview({ previewRecord, eventViews, holonewsViews, messageViews, selectedPlayerState: selectedPreviewState, partyState, selectedPreviewPlayer }),
       syntaxGuide: [
         '@ mention character, NPC, ship, faction, or location',
         '# add emphasis or a topic tag',
@@ -139,6 +146,93 @@ export class GMBulletinSurfaceService {
         'HoloNews ambient wire stories are ordinary background texture by default.',
         'Breaking News is GM-authored only and creates a red home alert.'
       ]
+    };
+  }
+
+
+  static async _safeCombatRecoveryView() {
+    try {
+      return await GMCombatRecoveryService.buildViewModel();
+    } catch (err) {
+      console.warn('[GMBulletinSurfaceService] Combat recovery view unavailable for bulletin state panels:', err);
+      return { combatRecovery: { actors: [], metrics: {}, partyActors: [] } };
+    }
+  }
+
+  static _buildPlayerStateCards(bulletinPlayers = [], combatActors = []) {
+    const combatByActorId = new Map((combatActors || []).map((card) => [String(card.id), card]));
+    return (bulletinPlayers || []).map((player) => {
+      const actor = player.actorId ? game.actors?.get?.(player.actorId) : null;
+      const combat = player.actorId ? combatByActorId.get(String(player.actorId)) : null;
+      const hpValue = Number(combat?.hpValue ?? actor?.system?.hp?.value ?? 0) || 0;
+      const hpMax = Number(combat?.hpMax ?? actor?.system?.hp?.max ?? 0) || 0;
+      const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100))) : 0;
+      const downed = combat?.downed === true || (hpMax > 0 && hpValue <= 0);
+      const wounded = combat?.wounded === true || (hpMax > 0 && hpValue > 0 && hpValue < hpMax);
+      const conditionCurrent = Number(combat?.conditionCurrent ?? actor?.system?.conditionTrack?.current ?? 0) || 0;
+      const statusUser = player.userId ? game.users?.get?.(player.userId) : null;
+      const online = statusUser?.active === true;
+      const credits = Number(actor?.system?.credits ?? actor?.system?.wealth?.credits ?? 0) || 0;
+      const chips = Array.isArray(combat?.statusChips) && combat.statusChips.length
+        ? combat.statusChips
+        : [{ label: actor ? 'Linked Actor' : 'No Linked Actor', tone: actor ? 'info' : 'muted' }];
+
+      return {
+        userId: player.userId,
+        userName: player.userName || statusUser?.name || 'Player',
+        actorId: player.actorId,
+        actorName: actor?.name || player.actorName || player.userName || 'Unlinked Player',
+        hpLabel: hpMax > 0 ? `${hpValue}/${hpMax}` : '—',
+        hpPercent,
+        hpTone: downed ? 'critical' : (wounded ? 'warning' : (hpMax > 0 ? 'stable' : 'muted')),
+        conditionLabel: combat?.conditionLabel ?? (conditionCurrent > 0 ? `-${conditionCurrent}` : '+0'),
+        conditionTone: combat?.conditionTone ?? (conditionCurrent > 0 ? 'warning' : 'stable'),
+        creditsLabel: actor ? credits.toLocaleString() : '—',
+        status: online ? 'Online' : 'Offline',
+        statusTone: online ? 'stable' : 'muted',
+        chips
+      };
+    });
+  }
+
+  static _buildPartyStateOverview(partyState = {}, combatRecovery = {}) {
+    const actors = Array.isArray(combatRecovery?.partyActors) && combatRecovery.partyActors.length
+      ? combatRecovery.partyActors
+      : (combatRecovery?.actors || []).filter((card) => card.partyActor === true);
+    const hpValue = actors.reduce((sum, card) => sum + (Number(card.hpValue) || 0), 0);
+    const hpMax = actors.reduce((sum, card) => sum + (Number(card.hpMax) || 0), 0);
+    const credits = actors.reduce((sum, card) => {
+      const actor = game.actors?.get?.(card.id);
+      return sum + (Number(actor?.system?.credits ?? actor?.system?.wealth?.credits ?? 0) || 0);
+    }, 0);
+    const down = actors.filter((card) => card.downed === true || (Number(card.hpMax || 0) > 0 && Number(card.hpValue || 0) <= 0)).length;
+    const wounded = actors.filter((card) => card.wounded === true).length;
+    const healthy = actors.filter((card) => !card.downed && !card.wounded && !card.ctImpaired).length;
+
+    return {
+      hpValue,
+      hpMax,
+      hpLabel: hpMax > 0 ? `${hpValue}/${hpMax}` : '—',
+      down,
+      wounded,
+      healthy,
+      credits,
+      creditsLabel: credits.toLocaleString(),
+      location: partyState?.location || '',
+      objective: partyState?.objective || '',
+      situation: partyState?.situation || '',
+      actors: actors.map((card) => ({
+        id: card.id,
+        name: card.name,
+        img: card.img,
+        typeLabel: card.typeLabel || 'Actor',
+        kindLabel: card.kindLabel || '',
+        hpLabel: card.hpLabel || '—',
+        hpPercent: Number(card.hpPercent || 0) || 0,
+        actionTone: card.actionTone || (card.downed ? 'critical' : (card.wounded || card.ctImpaired ? 'warning' : 'stable')),
+        conditionTone: card.conditionTone || 'stable',
+        conditionLabel: card.conditionLabel || '+0'
+      }))
     };
   }
 

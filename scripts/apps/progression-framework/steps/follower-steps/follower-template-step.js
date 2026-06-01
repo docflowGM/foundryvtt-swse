@@ -13,21 +13,21 @@ const TEMPLATE_CARD_META = Object.freeze({
   aggressive: {
     img: 'systems/foundryvtt-swse/assets/templates/soldier_brawler.webp',
     quote: 'Point me at the problem and get behind cover.',
-    type: 'Aggressive Asset',
+    type: 'Combat',
     skillText: 'Template Skill: Endurance',
     attributeText: 'Choose +2 STR or +2 CON'
   },
   defensive: {
     img: 'systems/foundryvtt-swse/assets/templates/soldier_tank.webp',
     quote: 'I hold the line so everyone else comes home.',
-    type: 'Defensive Asset',
+    type: 'Protection',
     skillText: 'Template Skill: Endurance',
     attributeText: 'Choose +2 DEX or +2 WIS'
   },
   utility: {
     img: 'systems/foundryvtt-swse/assets/templates/Worker.webp',
     quote: 'Right tool, right moment, no wasted motion.',
-    type: 'Utility Asset',
+    type: 'Support',
     skillText: 'Skill Training: choose one non-Force skill',
     attributeText: 'Choose +2 INT or +2 CHA'
   }

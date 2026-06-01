@@ -17,9 +17,9 @@
 
       <nav class="gm-store-tabs swse-ui-tabs swse-ui-frame" aria-label="Store control tabs">
         <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab="options" aria-selected="{{#if (eq currentTab 'options')}}true{{else}}false{{/if}}">Store Options</button>
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab="transactions" aria-selected="{{#if (eq currentTab 'transactions')}}true{{else}}false{{/if}}">Transactions</button>
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab="approvals" aria-selected="{{#if (eq currentTab 'approvals')}}true{{else}}false{{/if}}">Approvals</button>
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab="inventory" aria-selected="{{#if (eq currentTab 'inventory')}}true{{else}}false{{/if}}">Inventory</button>
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab="transactions" aria-selected="{{#if (eq currentTab 'transactions')}}true{{else}}false{{/if}}">Transactions <span>{{transactionStats.total}}</span></button>
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab="approvals" aria-selected="{{#if (eq currentTab 'approvals')}}true{{else}}false{{/if}}">Approvals <span>{{approvalQueueMetrics.total}}</span></button>
+        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab="inventory" aria-selected="{{#if (eq currentTab 'inventory')}}true{{else}}false{{/if}}">Inventory <span>{{inventoryStats.total}}</span></button>
       </nav>
 
       <div class="gm-store-tab-content swse-ui-panel">

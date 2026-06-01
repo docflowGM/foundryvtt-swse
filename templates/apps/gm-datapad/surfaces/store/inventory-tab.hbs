@@ -1,5 +1,5 @@
 {{!-- GM Store inventory tab. --}}
-        <section class="gm-store-tab-panel {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab-panel="inventory" {{#unless (eq currentTab 'inventory')}}hidden{{/unless}}>
+        <section class="gm-store-tab-panel gm-phase10-inventory {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab-panel="inventory" {{#unless (eq currentTab 'inventory')}}hidden{{/unless}}>
           <div class="gm-store-section-heading">
             <div>
               <span class="gm-command-eyebrow">INVENTORY</span>
@@ -17,7 +17,14 @@
           {{#if inventoryLoadError}}
             <p class="gm-store-warning">Inventory index could not be loaded: {{inventoryLoadError}}</p>
           {{else}}
-            <div class="gm-store-toolbar gm-store-inventory-toolbar">
+            <div class="gm-phase10-inventory-strip">
+              <article><span>Total Catalog</span><strong>{{inventoryStats.total}}</strong></article>
+              <article><span>Player Visible</span><strong>{{inventoryStats.visible}}</strong></article>
+              <article><span>Purchasable</span><strong>{{inventoryStats.available}}</strong></article>
+              <article><span>GM Approval</span><strong>{{inventoryStats.requiresApproval}}</strong></article>
+              <article><span>Price Overrides</span><strong>{{inventoryStats.overrides}}</strong></article>
+            </div>
+            <div class="gm-store-toolbar gm-store-inventory-toolbar gm-phase10-inventory-toolbar">
               <input type="search" class="swse-ui-input" data-store-inventory-filter="search" placeholder="Search inventory...">
               <select class="swse-ui-input" data-store-inventory-filter="type">
                 <option value="">All types</option>
@@ -41,7 +48,7 @@
               </select>
             </div>
 
-            <div class="gm-store-table-wrap gm-store-inventory-table-wrap">
+            <div class="gm-store-table-wrap gm-store-inventory-table-wrap gm-phase10-inventory-table-wrap">
               <table class="gm-store-table gm-store-inventory-table">
                 <thead>
                   <tr>
@@ -61,7 +68,7 @@
                 </thead>
                 <tbody>
                   {{#each inventoryRows}}
-                    <tr data-store-inventory-row data-item-id="{{this.id}}" data-search="{{this.searchText}}" data-type="{{this.type}}" data-availability="{{this.availabilityKey}}" data-visible="{{this.visible}}" data-available="{{this.available}}">
+                    <tr class="gm-phase10-inventory-row" data-store-inventory-row data-item-id="{{this.id}}" data-search="{{this.searchText}}" data-type="{{this.type}}" data-availability="{{this.availabilityKey}}" data-visible="{{this.visible}}" data-available="{{this.available}}">
                       <td><input type="checkbox" data-store-policy-field="visible" data-item-id="{{this.id}}" {{#if this.visible}}checked{{/if}} title="Show this item to players."></td>
                       <td><input type="checkbox" data-store-policy-field="available" data-item-id="{{this.id}}" {{#if this.available}}checked{{/if}} title="Allow this item to be bought."></td>
                       <td class="gm-store-quantity-cell">

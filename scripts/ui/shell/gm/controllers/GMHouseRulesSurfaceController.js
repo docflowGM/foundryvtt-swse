@@ -41,7 +41,7 @@ export class GMHouseRulesSurfaceController {
       }, { signal });
     });
 
-    pageElement.querySelectorAll('.rule-category').forEach((category) => {
+    pageElement.querySelectorAll('.rule-category, .gm-phase7-rule-category').forEach((category) => {
       category.addEventListener('mouseenter', (event) => {
         event.currentTarget.classList.add('hovered');
       }, { signal });
@@ -49,6 +49,8 @@ export class GMHouseRulesSurfaceController {
         event.currentTarget.classList.remove('hovered');
       }, { signal });
     });
+
+    this._wireRuleFiltering(pageElement, signal);
   }
 
   destroy() {

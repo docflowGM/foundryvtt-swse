@@ -1,23 +1,28 @@
-{{!-- GM Datapad approvals surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-approvals flexcol">
-      <div class="page-header gm-app-header gm-approval-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <div class="gm-app-header-copy">
-          <span class="gm-command-eyebrow">COMMAND QUEUE</span>
-          <h2>{{pageTitle}}</h2>
-          <p class="page-subtitle">{{pageDescription}}</p>
-        </div>
-        <div class="gm-approval-count-strip" aria-label="Approval queue counts">
-          <span><strong>{{approvalQueueCounts.total}}</strong>Total</span>
-          <span><strong>{{approvalQueueCounts.games}}</strong>Games</span>
-          <span><strong>{{approvalQueueCounts.droids}}</strong>Droids</span>
-          <span><strong>{{approvalQueueCounts.ships}}</strong>Ships</span>
-          <span><strong>{{approvalQueueCounts.storeItems}}</strong>Store</span>
-          <span><strong>{{approvalQueueCounts.factions}}</strong>Factions</span>
-        </div>
-      </div>
-
-      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/queue.hbs" }}
-
-      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/history.hbs" }}
+{{!-- GM Datapad approvals surface — Phase 6 command layout polish. --}}
+<div class="gm-datapad-page gm-datapad-approvals flexcol gm-phase6-command-surface gm-phase6-approvals">
+  <div class="gm-phase6-command-header gm-app-header gm-approval-header">
+    <button class="back-button swse-ui-button" data-nav-to="home"><i class="fa-solid fa-arrow-left"></i> Home</button>
+    <div class="gm-phase6-command-copy gm-app-header-copy">
+      <span class="gm-command-eyebrow">COMMAND QUEUE</span>
+      <h2>{{pageTitle}}</h2>
+      <p class="page-subtitle">{{pageDescription}}</p>
     </div>
+    <div class="gm-phase6-command-metrics gm-approval-count-strip" aria-label="Approval queue counts">
+      <span class="gm-command-metric crit"><small>Total</small><b>{{approvalQueueCounts.total}}</b></span>
+      <span class="gm-command-metric"><small>Games</small><b>{{approvalQueueCounts.games}}</b></span>
+      <span class="gm-command-metric"><small>Droids</small><b>{{approvalQueueCounts.droids}}</b></span>
+      <span class="gm-command-metric"><small>Ships</small><b>{{approvalQueueCounts.ships}}</b></span>
+      <span class="gm-command-metric"><small>Store</small><b>{{approvalQueueCounts.storeItems}}</b></span>
+      <span class="gm-command-metric"><small>Factions</small><b>{{approvalQueueCounts.factions}}</b></span>
+    </div>
+  </div>
+
+  <div class="gm-phase6-command-strip {{#if approvalQueueCounts.total}}is-critical{{/if}}">
+    <span><i class="fa-solid fa-check-circle"></i> Read-only packet first</span>
+    <p>Review requests before approval. Use Approve with Edits when the GM needs to adjust costs, droid systems, asset details, or restrictions.</p>
+  </div>
+
+  {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/queue.hbs" }}
+
+  {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/approvals/history.hbs" }}
+</div>

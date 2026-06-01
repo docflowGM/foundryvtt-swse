@@ -51,6 +51,7 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { applyStorePoliciesToIndex, consumeInventoryPolicyQuantities, restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
@@ -119,7 +120,15 @@ export class StoreEngine {
    * @returns {Object} { success, canPurchase, reason }
    */
   static canPurchase(context) {
-    const { actor, items = [], totalCost = 0 } = context;
+    const { actor, items = [], totalCost = 0, ignoreStoreClosed = false } = context;
+
+    if (!ignoreStoreClosed && SettingsHelper.getSafe('storeOpen', true) !== true) {
+      return {
+        success: true,
+        canPurchase: false,
+        reason: 'The store is currently closed by GM policy.'
+      };
+    }
 
     if (!actor || typeof actor !== 'object') {
       logger().warn('StoreEngine.canPurchase: Invalid actor', { actor });
@@ -294,6 +303,10 @@ export class StoreEngine {
     if (!actor) {
       logger().error('StoreEngine.purchase: No actor', {});
       return { success: false, error: 'No actor provided', transactionId: null };
+    }
+
+    if (SettingsHelper.getSafe('storeOpen', true) !== true) {
+      return { success: false, error: 'The store is currently closed by GM policy.', transactionId: null };
     }
 
     if (!actor.isOwner) {

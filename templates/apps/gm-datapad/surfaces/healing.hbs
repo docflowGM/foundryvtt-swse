@@ -1,33 +1,38 @@
-{{!-- GM Datapad healing surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-healing gm-combat-recovery">
-      <div class="page-header combat-recovery-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <div>
-          <h2>{{pageTitle}}</h2>
-          <p class="page-subtitle">{{pageDescription}}</p>
-        </div>
-        <div class="combat-recovery-status {{#if combatRecovery.hasActiveCombat}}active{{else}}idle{{/if}}">
-          <span class="status-label">Encounter</span>
-          <strong>{{combatRecovery.activeCombatLabel}}</strong>
-        </div>
-      </div>
-
-      <div class="combat-recovery-metrics" aria-label="Combat and recovery status">
-        <div class="combat-recovery-metric"><span>Roster</span><strong>{{combatRecovery.metrics.total}}</strong></div>
-        <div class="combat-recovery-metric"><span>Combatants</span><strong>{{combatRecovery.metrics.activeCombatants}}</strong></div>
-        <div class="combat-recovery-metric warning"><span>Wounded</span><strong>{{combatRecovery.metrics.wounded}}</strong></div>
-        <div class="combat-recovery-metric critical"><span>Down</span><strong>{{combatRecovery.metrics.downed}}</strong></div>
-        <div class="combat-recovery-metric warning"><span>CT Impaired</span><strong>{{combatRecovery.metrics.conditionImpaired}}</strong></div>
-        <div class="combat-recovery-metric info"><span>SW Spent</span><strong>{{combatRecovery.metrics.secondWindSpent}}</strong></div>
-        <div class="combat-recovery-metric critical"><span>Poisons</span><strong>{{combatRecovery.metrics.activePoisons}}</strong></div>
-        <div class="combat-recovery-metric warning"><span>Ongoing</span><strong>{{combatRecovery.metrics.ongoingEffects}}</strong></div>
-        <div class="combat-recovery-metric stable"><span>Rest Eligible</span><strong>{{combatRecovery.metrics.restEligible}}</strong></div>
-        <div class="combat-recovery-metric muted"><span>Droids</span><strong>{{combatRecovery.metrics.droids}}</strong></div>
-      </div>
-
-      <div class="combat-recovery-shell">
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/party-board.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/selected-actor-rail.hbs" }}
-      </div>
+{{!-- GM Datapad healing surface — Phase 6 command layout polish. --}}
+<div class="gm-datapad-page gm-datapad-healing gm-combat-recovery gm-phase6-command-surface gm-phase6-healing">
+  <div class="gm-phase6-command-header combat-recovery-header">
+    <button class="back-button swse-ui-button" data-nav-to="home"><i class="fa-solid fa-arrow-left"></i> Home</button>
+    <div class="gm-phase6-command-copy">
+      <span class="gm-command-eyebrow">COMBAT RECOVERY MANAGEMENT</span>
+      <h2>{{pageTitle}}</h2>
+      <p class="page-subtitle">{{pageDescription}}</p>
     </div>
+    <div class="gm-phase6-command-metrics" aria-label="Combat and recovery status">
+      <span class="gm-command-metric warn"><small>Wounded</small><b>{{combatRecovery.metrics.wounded}}</b></span>
+      <span class="gm-command-metric crit"><small>Down</small><b>{{combatRecovery.metrics.downed}}</b></span>
+      <span class="gm-command-metric stable"><small>Rest Eligible</small><b>{{combatRecovery.metrics.restEligible}}</b></span>
+      <span class="gm-command-metric muted"><small>Droids</small><b>{{combatRecovery.metrics.droids}}</b></span>
+    </div>
+  </div>
+
+  <div class="gm-phase6-command-strip is-info">
+    <span><i class="fa-solid fa-robot"></i> Droid recovery boundary</span>
+    <p>{{combatRecovery.rules.droidRestBoundary}}</p>
+    <strong class="combat-recovery-status {{#if combatRecovery.hasActiveCombat}}active{{else}}idle{{/if}}">{{combatRecovery.activeCombatLabel}}</strong>
+  </div>
+
+  <div class="combat-recovery-metrics gm-phase6-secondary-metrics" aria-label="Detailed combat and recovery status">
+    <div class="combat-recovery-metric"><span>Roster</span><strong>{{combatRecovery.metrics.total}}</strong></div>
+    <div class="combat-recovery-metric"><span>Combatants</span><strong>{{combatRecovery.metrics.activeCombatants}}</strong></div>
+    <div class="combat-recovery-metric warning"><span>CT Impaired</span><strong>{{combatRecovery.metrics.conditionImpaired}}</strong></div>
+    <div class="combat-recovery-metric info"><span>SW Spent</span><strong>{{combatRecovery.metrics.secondWindSpent}}</strong></div>
+    <div class="combat-recovery-metric critical"><span>Poisons</span><strong>{{combatRecovery.metrics.activePoisons}}</strong></div>
+    <div class="combat-recovery-metric warning"><span>Ongoing</span><strong>{{combatRecovery.metrics.ongoingEffects}}</strong></div>
+  </div>
+
+  <div class="combat-recovery-shell gm-phase6-major-shell">
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/party-board.hbs" }}
+
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/selected-actor-rail.hbs" }}
+  </div>
+</div>

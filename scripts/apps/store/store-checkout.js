@@ -967,11 +967,21 @@ function flattenCartForPurchase(cart) {
 
 
 function hasStoreApprovalRequirement(entry = {}) {
-    return entry?.requiresApproval === true
+    const explicitApproval = entry?.requiresApproval === true
         || entry?.storePolicy?.requiresApproval === true
         || entry?.item?.storePolicy?.requiresApproval === true
         || entry?.actor?.storePolicy?.requiresApproval === true
         || entry?.template?.storePolicy?.requiresApproval === true;
+    if (explicitApproval) return true;
+
+    const requireApproval = SettingsHelper.getSafe('store.requireGMApproval', false) === true;
+    if (!requireApproval) return false;
+
+    const threshold = Number(SettingsHelper.getSafe('storeApprovalThreshold', 5000)) || 0;
+    if (!(threshold > 0)) return true;
+
+    const cost = normalizeCredits(entry?.cost ?? entry?.finalCost ?? entry?.item?.finalCost ?? entry?.actor?.finalCost ?? entry?.template?.finalCost ?? 0);
+    return cost >= threshold;
 }
 
 function serializeApprovalSourceData(source = {}) {
@@ -1068,6 +1078,10 @@ async function submitStoreItemApprovalRequest(actor, approvalItems = []) {
  */
 export async function checkout(store, animateNumberCallback) {
     const actor = store.actor;
+    if (SettingsHelper.getSafe('storeOpen', true) !== true) {
+        ui.notifications.warn('The store is currently closed by GM policy.');
+        return { success: false, error: 'store-closed' };
+    }
     const credits = LedgerService.getCurrentCredits(actor);
 
     // Revalidate cart before checkout (re-price all items)

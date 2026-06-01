@@ -135,7 +135,8 @@ export class RuntimeContract {
       window.__SWSE_RENDER_TRACKING__ = new Map();
     }
 
-    if (window.__SWSE_RENDER_TRACKING__.has(appId)) {
+    const existing = window.__SWSE_RENDER_TRACKING__.get(appId);
+    if (existing && !existing.completed) {
       StructuredLogger.core(SEVERITY.WARN, 'Render already registered', { appId, appName });
     }
 

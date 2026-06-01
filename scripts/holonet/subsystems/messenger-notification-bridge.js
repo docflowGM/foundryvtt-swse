@@ -105,6 +105,8 @@ export class MessengerNotificationBridge {
     const notice = new HolonetNotification({
       sourceFamily: SOURCE_FAMILY.MESSENGER,
       sourceId: sourceRecord?.id ?? threadId ?? null,
+      threadId,
+      parentRecordId: sourceRecord?.id ?? null,
       intent,
       level,
       sender: HolonetSender.system('Holonet Alerts'),

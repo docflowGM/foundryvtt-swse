@@ -1,12 +1,47 @@
-{{!-- GM Bulletin party-state-panel. --}}
+{{!-- GM Bulletin party-state-panel — Phase 3 party state overview. --}}
 
-          <div class="bulletin-panel-header">
+          <div class="bulletin-panel-header gm-phase3-state-header">
             <div>
-              <h3>Manage Party</h3>
-              <p>Set party-wide opening state for the player Home experience.</p>
+              <span class="gm-command-eyebrow">PARTY STATE STRIP</span>
+              <h3>Party State</h3>
+              <p>Crew health overview, active conditions, party credits, and quick recovery actions.</p>
             </div>
           </div>
-          <form class="bulletin-state-editor" data-party-state-form>
+
+          <section class="gm-party-state-summary swse-ui-panel">
+            <div class="gm-party-state-metrics">
+              <span class="gm-command-metric warn"><b>{{partyStateOverview.hpLabel}}</b><em>Party HP</em></span>
+              <span class="gm-command-metric crit"><b>{{partyStateOverview.down}}</b><em>Down</em></span>
+              <span class="gm-command-metric warn"><b>{{partyStateOverview.wounded}}</b><em>Wounded</em></span>
+              <span class="gm-command-metric stable"><b>{{partyStateOverview.healthy}}</b><em>Healthy</em></span>
+              <span class="gm-command-metric"><b>{{partyStateOverview.creditsLabel}}</b><em>Party Credits</em></span>
+            </div>
+            <div class="gm-party-state-crew-list">
+              {{#each partyStateOverview.actors}}
+              <article class="gm-party-state-row {{this.actionTone}}">
+                <img src="{{this.img}}" alt="{{this.name}}">
+                <div>
+                  <strong>{{this.name}}</strong>
+                  <span>{{this.typeLabel}} · {{this.kindLabel}}</span>
+                </div>
+                <div class="gm-party-state-row-bar"><span style="width: {{this.hpPercent}}%"></span></div>
+                <span class="combat-recovery-chip {{this.actionTone}}">{{this.hpLabel}} HP</span>
+                <span class="combat-recovery-chip {{this.conditionTone}}">CT {{this.conditionLabel}}</span>
+              </article>
+              {{else}}
+              <p class="empty-st">No party actors are currently available to summarize.</p>
+              {{/each}}
+            </div>
+            <div class="gm-party-state-actions">
+              <button type="button" class="swse-ui-button swse-ui-button-primary" data-combat-recovery-action="natural-healing"><i class="fa-solid fa-heart-pulse"></i> Natural Healing</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="short-rest">Short Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="extended-rest">Extended Rest</button>
+              <button type="button" class="swse-ui-button" data-combat-recovery-action="encounter-reset">Encounter Reset</button>
+            </div>
+            <p class="gm-phase2-hint">Rest actions continue to use the existing Combat &amp; Recovery service; droids and vehicles remain repair-only and do not benefit from organic rest.</p>
+          </section>
+
+          <form class="bulletin-state-editor gm-party-state-editor" data-party-state-form>
             <label>
               <span>Party Location</span>
               <input type="text" name="location" value="{{partyState.location}}" placeholder="Docking Ring Aurek">
@@ -17,7 +52,7 @@
             </label>
             <label>
               <span>Party Situation</span>
-              <textarea name="situation" rows="6" placeholder="The party is starting aboard the freighter with Imperial patrols nearby." data-holonet-editor="party-state">{{partyState.situation}}</textarea>
+              <textarea name="situation" rows="5" placeholder="The party is starting aboard the freighter with Imperial patrols nearby." data-holonet-editor="party-state">{{partyState.situation}}</textarea>
             </label>
             <div class="bulletin-form-actions">
               <button type="submit" class="swse-ui-button bulletin-primary-action">Save Party State</button>

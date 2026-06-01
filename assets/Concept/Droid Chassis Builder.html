@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWSE — Droid Chassis Builder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   SWSE Droid Chassis Builder — Garage Construction Mode
+   Visual language: customization-bay.css token system
+   Three-rail workbench layout
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  --bg:        oklch(0.09 0.04 278);
+  --panel:     oklch(0.13 0.05 278);
+  --text:      #d8f7ff;
+  --muted:     #8fb8c5;
+  --faint:     color-mix(in oklch,#8fb8c5 55%,transparent);
+  --accent:    #7ee7ff;
+  --alt:       #ff71d9;
+  --border:    color-mix(in oklch,#7ee7ff 32%,transparent);
+  --border-s:  color-mix(in oklch,#7ee7ff 16%,transparent);
+  --glow:      0 0 18px color-mix(in oklch,#7ee7ff 26%,transparent);
+  --pos:       #65e6a5;
+  --neu:       #ffc857;
+  --neg:       #ff6b6b;
+  --cat-loco:  oklch(0.78 0.13 175);
+  --cat-proc:  oklch(0.75 0.20 305);
+  --cat-app:   oklch(0.80 0.13 110);
+  --cat-armor: oklch(0.72 0.10 60);
+  --cat-sens:  oklch(0.85 0.15 215);
+  --cat-comm:  oklch(0.80 0.13 195);
+  --cat-misc:  #7ee7ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:ui-monospace,'Cascadia Code',monospace;font-size:12px;color:var(--text);
+  background:var(--bg);display:flex;flex-direction:column}
+
+/* scanlines */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,color-mix(in oklch,white 4%,transparent) 3px 4px);
+  mix-blend-mode:screen;opacity:.32}
+
+/* ── APP SHELL ── */
+.app{display:flex;flex-direction:column;height:100vh;
+  background:radial-gradient(ellipse at 16% 0%,color-mix(in oklch,var(--alt) 14%,transparent),transparent 44%),
+    radial-gradient(ellipse at 84% 100%,color-mix(in oklch,var(--accent) 16%,transparent),transparent 40%),
+    var(--bg)}
+
+/* ── HEADER ── */
+.hdr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+  padding:8px 16px;background:color-mix(in oklch,black 50%,transparent);
+  border-bottom:1px solid var(--border-s);flex-shrink:0;z-index:10}
+.hdr-id{display:flex;align-items:center;gap:10px}
+.glyph{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:22px;color:var(--accent);border:1px solid var(--border);
+  background:color-mix(in oklch,black 55%,transparent);
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  box-shadow:var(--glow);flex-shrink:0}
+.hdr-title{font-size:15px;letter-spacing:.18em;text-transform:uppercase}
+.hdr-sub{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+.cfg{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cfg-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+select.dcb-sel{background:color-mix(in oklch,black 52%,transparent);color:var(--accent);
+  border:1px solid var(--border);padding:5px 8px;font-family:inherit;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+select.dcb-sel:focus{outline:1px solid var(--accent)}
+
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;border:1px solid currentColor;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.chip-mult{color:var(--neu);background:color-mix(in oklch,var(--neu) 10%,transparent)}
+.chip-valid{color:var(--pos);background:color-mix(in oklch,var(--pos) 10%,transparent)}
+.chip-warn{color:var(--neu);background:color-mix(in oklch,var(--neu) 10%,transparent)}
+.chip-bad{color:var(--neg);background:color-mix(in oklch,var(--neg) 10%,transparent)}
+
+.budget-strip{display:flex;align-items:center;gap:14px}
+.b-item{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.b-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.b-val{font-size:13px;font-weight:700;color:var(--text)}
+.b-val.pos{color:var(--pos)}.b-val.neu{color:var(--neu)}.b-val.neg{color:var(--neg)}
+.bbar-wrap{min-width:120px}
+.bbar{height:5px;background:color-mix(in oklch,black 50%,transparent);border:1px solid var(--border-s);overflow:hidden;margin-bottom:2px}
+.bbar-fill{height:100%;transition:width .3s,background .3s}
+.bbar-fill.ok{background:linear-gradient(90deg,var(--pos),var(--neu))}
+.bbar-fill.warn{background:var(--neu)}.bbar-fill.over{background:var(--neg)}
+.bbar-meta{font-size:7px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
+
+/* ── THREE-RAIL WORKGRID ── */
+.workgrid{display:grid;grid-template-columns:220px minmax(0,1fr) 290px;flex:1;min-height:0;overflow:hidden}
+
+/* ── SHARED PANEL ── */
+.panel{background:color-mix(in oklch,black 38%,transparent);border:1px solid var(--border-s);padding:9px}
+.panel-hd{display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;
+  margin-bottom:6px;border-bottom:1px dashed var(--border-s);
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.panel-hd strong{color:var(--text);font-size:12px}
+
+/* ── LEFT RAIL ── */
+.left-rail{display:flex;flex-direction:column;gap:8px;padding:10px;
+  border-right:1px solid var(--border-s);overflow-y:auto}
+.left-rail::-webkit-scrollbar{width:3px}
+.left-rail::-webkit-scrollbar-thumb{background:var(--border-s)}
+
+.inst-group-lbl{font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--alt);margin-bottom:3px}
+.inst-item{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;
+  background:color-mix(in oklch,black 44%,transparent);border:1px solid var(--border-s);
+  border-left:2px solid var(--accent);cursor:pointer;
+  transition:background .14s,border-color .14s}
+.inst-item:hover{background:color-mix(in oklch,var(--accent) 8%,transparent);border-color:var(--border)}
+.inst-item.cat-locomotion{border-left-color:var(--cat-loco)}
+.inst-item.cat-processor{border-left-color:var(--cat-proc)}
+.inst-item.cat-appendage{border-left-color:var(--cat-app)}
+.inst-item.cat-armor{border-left-color:var(--cat-armor)}
+.inst-item.cat-sensor{border-left-color:var(--cat-sens)}
+.inst-item.cat-comms{border-left-color:var(--cat-comm)}
+.inst-name{flex:1;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inst-cost{font-size:9px;color:var(--muted);white-space:nowrap}
+.inst-rm{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
+  background:none;border:1px solid color-mix(in oklch,var(--neg) 40%,transparent);color:var(--neg);
+  cursor:pointer;font-size:7px;transition:background .14s;flex-shrink:0}
+.inst-rm:hover{background:color-mix(in oklch,var(--neg) 18%,transparent)}
+.empty-slot{padding:4px 6px;font-size:8px;color:var(--faint);
+  border:1px dashed color-mix(in oklch,var(--accent) 14%,transparent);
+  letter-spacing:.1em;text-transform:uppercase;text-align:center;margin-bottom:2px}
+
+.brows{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.brow{display:flex;justify-content:space-between;align-items:center;font-size:9px;
+  padding:2px 0;border-top:1px dashed color-mix(in oklch,var(--accent) 9%,transparent);color:var(--muted)}
+.brow strong{font-size:12px;color:var(--text)}
+.brow strong.pos{color:var(--pos)}.brow strong.neu{color:var(--neu)}.brow strong.neg{color:var(--neg)}
+
+.checklist{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.ck-item{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted);letter-spacing:.04em}
+.ck-icon{width:12px;font-size:10px}
+.ck-done{color:var(--pos)}.ck-miss{color:var(--neg)}.ck-opt{color:var(--faint)}
+
+.deg-chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.ab-chip{padding:2px 6px;font-size:8px;border:1px solid currentColor;
+  clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.ab-pos{color:var(--pos)}.ab-neg{color:var(--neg)}
+
+.warn-item{display:flex;align-items:baseline;gap:5px;font-size:9px;padding:3px 0;
+  border-top:1px dashed color-mix(in oklch,var(--border) 35%,transparent)}
+.warn-item.w-neg{color:var(--neg)}.warn-item.w-warn{color:var(--neu)}
+
+/* ── MIDDLE RAIL ── */
+.mid-rail{display:flex;flex-direction:column;overflow-y:auto}
+.mid-rail::-webkit-scrollbar{width:3px}
+.mid-rail::-webkit-scrollbar-thumb{background:var(--border-s)}
+
+.browser-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:6px;
+  flex-wrap:wrap;padding:8px 12px;
+  background:color-mix(in oklch,oklch(0.09 0.04 278) 95%,transparent);
+  border-bottom:1px solid var(--border-s);backdrop-filter:blur(8px)}
+.search{flex:1;min-width:140px;background:color-mix(in oklch,black 50%,transparent);
+  color:var(--text);border:1px solid var(--border-s);padding:5px 8px;
+  font-family:inherit;font-size:10px}
+.search:focus{outline:1px solid var(--accent);border-color:var(--accent)}
+.search::placeholder{color:var(--faint)}
+
+.ftabs{display:flex;gap:3px;flex-wrap:wrap}
+.ftab{padding:4px 9px;font-family:inherit;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);background:color-mix(in oklch,black 44%,transparent);
+  border:1px solid var(--border-s);cursor:pointer;
+  clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);
+  transition:color .14s,background .14s,border-color .14s}
+.ftab:hover{color:var(--accent);background:color-mix(in oklch,var(--accent) 10%,transparent);border-color:var(--border)}
+.ftab.on{color:var(--accent);background:color-mix(in oklch,var(--accent) 16%,transparent);
+  border-color:color-mix(in oklch,var(--accent) 55%,transparent)}
+
+.toggle-btn{padding:4px 9px;font-family:inherit;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);background:color-mix(in oklch,black 44%,transparent);
+  border:1px solid var(--border-s);cursor:pointer;user-select:none;
+  clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);transition:color .14s,background .14s}
+.toggle-btn.on{color:var(--neu);background:color-mix(in oklch,var(--neu) 12%,transparent);
+  border-color:color-mix(in oklch,var(--neu) 38%,transparent)}
+
+.sys-groups{padding:10px 12px;display:flex;flex-direction:column;gap:14px}
+.sys-group{display:flex;flex-direction:column;gap:7px}
+.grp-lbl{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;padding-bottom:3px;border-bottom:1px dashed var(--border-s)}
+.cat-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.grp-count{font-size:7px;color:var(--faint);margin-left:auto}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:7px}
+
+/* ── SYSTEM CARD ── */
+.scard{--cc:var(--accent);display:flex;flex-direction:column;gap:4px;padding:9px;
+  background:color-mix(in oklch,black 45%,transparent);border:1px solid var(--border-s);
+  border-left:3px solid var(--cc);cursor:pointer;
+  transition:background .14s,border-color .14s,box-shadow .14s;user-select:none}
+.scard:hover{background:color-mix(in oklch,var(--cc) 8%,transparent);
+  border-color:color-mix(in oklch,var(--cc) 48%,transparent);
+  box-shadow:0 0 10px color-mix(in oklch,var(--cc) 16%,transparent)}
+.scard.focused{background:color-mix(in oklch,var(--cc) 12%,transparent);
+  border-color:color-mix(in oklch,var(--cc) 68%,transparent);
+  box-shadow:0 0 14px color-mix(in oklch,var(--cc) 24%,transparent)}
+.scard.installed{background:linear-gradient(135deg,color-mix(in oklch,var(--cc) 14%,transparent),color-mix(in oklch,black 45%,transparent))}
+.scard.cant{opacity:.48;cursor:not-allowed}
+.scard--locomotion{--cc:var(--cat-loco)}.scard--processor{--cc:var(--cat-proc)}
+.scard--appendage{--cc:var(--cat-app)}.scard--armor{--cc:var(--cat-armor)}
+.scard--sensor{--cc:var(--cat-sens)}.scard--comms{--cc:var(--cat-comm)}.scard--misc{--cc:var(--cat-misc)}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:5px}
+.card-name{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);line-height:1.2}
+.card-badges{display:flex;gap:2px;flex-shrink:0;flex-wrap:wrap}
+.badge{padding:1px 4px;font-size:7px;letter-spacing:.1em;text-transform:uppercase;border:1px solid currentColor}
+.badge-inst{color:var(--pos)}.badge-free{color:var(--neu)}.badge-req{color:var(--alt)}
+.badge-restr{color:var(--neg)}.badge-pc{color:var(--alt)}
+.card-desc{font-size:9px;color:var(--muted);line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-foot{display:flex;justify-content:space-between;font-size:8px;color:var(--cc);
+  letter-spacing:.1em;text-transform:uppercase;padding-top:4px;
+  border-top:1px dashed color-mix(in oklch,var(--cc) 20%,transparent)}
+.card-cost{color:var(--muted)}.card-avail{color:var(--faint)}
+
+/* ── RIGHT RAIL ── */
+.right-rail{display:flex;flex-direction:column;border-left:1px solid var(--border-s);overflow-y:auto}
+.right-rail::-webkit-scrollbar{width:3px}
+.right-rail::-webkit-scrollbar-thumb{background:var(--border-s)}
+
+.detail{display:flex;flex-direction:column;height:100%;padding:12px;gap:10px}
+.detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;color:var(--faint);text-align:center;padding:20px}
+.detail-empty i{font-size:28px;color:color-mix(in oklch,var(--accent) 22%,transparent)}
+.detail-empty p{font-size:9px;letter-spacing:.12em;text-transform:uppercase;line-height:1.6}
+.det-content{display:flex;flex-direction:column;gap:10px;flex:1}
+
+.det-hd{padding-bottom:8px;border-bottom:1px solid var(--border-s)}
+.det-cat{font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:3px}
+.det-name{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);line-height:1.2}
+.det-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.det-desc{font-size:10px;color:var(--muted);line-height:1.5}
+
+.cost-table{background:color-mix(in oklch,black 42%,transparent);border:1px solid var(--border-s);padding:8px;display:flex;flex-direction:column;gap:2px}
+.cost-row{display:flex;justify-content:space-between;font-size:9px;padding:2px 0;
+  border-top:1px dashed color-mix(in oklch,var(--accent) 8%,transparent);color:var(--muted)}
+.cost-row:first-child{border-top:none}
+.cost-row strong{color:var(--text)}
+.cost-row.total{color:var(--text);font-weight:700;padding-top:5px;border-top:1px solid var(--border-s)}
+.cost-row.impact-pos strong{color:var(--pos)}.cost-row.impact-neg strong{color:var(--neg)}
+.cost-row.impact-neu strong{color:var(--neu)}
+
+.det-section{display:flex;flex-direction:column;gap:3px}
+.det-section-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.feat-item{display:flex;align-items:baseline;gap:5px;font-size:9px;color:var(--muted);line-height:1.35}
+.feat-item::before{content:'▸';color:var(--accent);font-size:7px;flex-shrink:0}
+.rest-item::before{color:var(--neg)}
+
+.compat-row{display:flex;align-items:center;gap:7px;padding:7px 9px;font-size:9px;
+  letter-spacing:.08em;border:1px solid var(--border-s)}
+.compat-can{color:var(--pos);border-color:color-mix(in oklch,var(--pos) 34%,transparent);background:color-mix(in oklch,var(--pos) 8%,transparent)}
+.compat-inst{color:var(--neu);border-color:color-mix(in oklch,var(--neu) 34%,transparent);background:color-mix(in oklch,var(--neu) 8%,transparent)}
+.compat-no{color:var(--neg);border-color:color-mix(in oklch,var(--neg) 34%,transparent);background:color-mix(in oklch,var(--neg) 8%,transparent)}
+
+.action-area{display:flex;flex-direction:column;gap:5px;margin-top:auto;padding-top:10px;
+  border-top:1px dashed var(--border-s)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;
+  font-family:inherit;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  transition:background .14s,box-shadow .14s}
+.btn:disabled{cursor:not-allowed;opacity:.38}
+.btn-install{color:var(--pos);background:color-mix(in oklch,var(--pos) 14%,transparent);
+  border:1px solid color-mix(in oklch,var(--pos) 44%,transparent)}
+.btn-install:hover:not(:disabled){background:color-mix(in oklch,var(--pos) 22%,transparent);box-shadow:0 0 12px color-mix(in oklch,var(--pos) 24%,transparent)}
+.btn-remove{color:var(--neg);background:color-mix(in oklch,var(--neg) 12%,transparent);
+  border:1px solid color-mix(in oklch,var(--neg) 38%,transparent)}
+.btn-remove:hover:not(:disabled){background:color-mix(in oklch,var(--neg) 20%,transparent)}
+.btn-sec{color:var(--muted);background:color-mix(in oklch,black 42%,transparent);
+  border:1px solid var(--border-s)}
+.btn-sec:hover:not(:disabled){color:var(--text);border-color:var(--border)}
+
+/* ── FOOTER ── */
+.ftr{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 16px;background:color-mix(in oklch,black 52%,transparent);
+  border-top:1px solid var(--border-s);flex-shrink:0}
+.ftr-status{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.ftr-status span:first-child{color:var(--muted)}.ftr-status span:last-child{color:var(--text)}
+
+.no-results{padding:20px;text-align:center;color:var(--faint);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ HEADER ══ -->
+<header class="hdr">
+  <div class="hdr-id">
+    <div class="glyph">⏣</div>
+    <div>
+      <div class="hdr-title">Droid Chassis Builder</div>
+      <div class="hdr-sub">Garage Construction Mode · Chargen Draft</div>
+    </div>
+  </div>
+
+  <div class="cfg">
+    <div style="display:flex;align-items:center;gap:5px">
+      <span class="cfg-lbl">Degree</span>
+      <select class="dcb-sel" id="degSel">
+        <option value="">— Select —</option>
+        <option value="1st">1st Degree</option>
+        <option value="2nd">2nd Degree</option>
+        <option value="3rd">3rd Degree</option>
+        <option value="4th">4th Degree</option>
+        <option value="5th">5th Degree</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px">
+      <span class="cfg-lbl">Size</span>
+      <select class="dcb-sel" id="sizeSel">
+        <option value="fine">Fine</option>
+        <option value="diminutive">Diminutive</option>
+        <option value="tiny">Tiny</option>
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
+        <option value="huge">Huge</option>
+        <option value="gargantuan">Gargantuan</option>
+        <option value="colossal">Colossal</option>
+      </select>
+    </div>
+    <span class="chip chip-mult" id="multChip"><i class="fas fa-times-circle"></i> ×<span id="multVal">1</span></span>
+    <span class="chip chip-warn" id="validChip"><i class="fas fa-exclamation-triangle"></i> <span id="validTxt">Select Degree</span></span>
+  </div>
+
+  <div class="budget-strip">
+    <div class="b-item"><span class="b-lbl">Base</span><span class="b-val" id="hBase">2,000 cr</span></div>
+    <div class="b-item"><span class="b-lbl">Spent</span><span class="b-val" id="hSpent">0 cr</span></div>
+    <div class="b-item"><span class="b-lbl">Remaining</span><span class="b-val pos" id="hRemain">2,000 cr</span></div>
+    <div class="bbar-wrap">
+      <div class="bbar"><div class="bbar-fill ok" id="hBarFill" style="width:0%"></div></div>
+      <div class="bbar-meta">Budget Usage</div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ THREE-RAIL WORKGRID ══ -->
+<div class="workgrid">
+
+  <!-- LEFT RAIL -->
+  <aside class="left-rail">
+
+    <div class="panel">
+      <div class="panel-hd"><span>Installed Systems</span><strong id="instCount">0</strong></div>
+      <div id="instList"><div class="empty-slot">No systems installed</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Build Budget</span><strong id="lRemain">2,000 cr</strong></div>
+      <div class="brows">
+        <div class="brow"><span>Starting Budget</span><strong id="lBase">2,000 cr</strong></div>
+        <div class="brow"><span>Systems Cost</span><strong id="lSpent">0 cr</strong></div>
+        <div class="brow"><span>Remaining</span><strong class="pos" id="lRem">2,000 cr</strong></div>
+        <div class="brow"><span>Total Weight</span><strong id="lWt">0 kg</strong></div>
+      </div>
+      <div class="bbar" style="margin-top:8px"><div class="bbar-fill ok" id="lBarFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Required Systems</span></div>
+      <div class="checklist">
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-miss" id="ckDeg"></i><span>Droid Degree</span></div>
+        <div class="ck-item"><i class="fas fa-check-circle ck-icon ck-done" id="ckSz"></i><span>Droid Size</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-miss" id="ckLoco"></i><span>Locomotion</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-miss" id="ckProc"></i><span>Processor (Heuristic for PC)</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-opt" id="ckApp"></i><span>Appendage (Recommended)</span></div>
+      </div>
+    </div>
+
+    <div class="panel" id="degPanel" style="display:none">
+      <div class="panel-hd"><span>Degree Bonuses</span></div>
+      <div class="deg-chips" id="degBonuses" style="margin-top:4px"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Warnings</span><strong id="warnCount">0</strong></div>
+      <div id="warnList"><div style="font-size:8px;color:var(--faint);padding:3px 0;letter-spacing:.12em;text-transform:uppercase">No active warnings</div></div>
+    </div>
+
+  </aside>
+
+  <!-- MIDDLE RAIL -->
+  <section class="mid-rail">
+    <div class="browser-bar">
+      <input type="search" class="search" id="srch" placeholder="Search systems…">
+      <div class="ftabs" id="ftabs">
+        <button class="ftab on" data-f="all">All</button>
+        <button class="ftab" data-f="locomotion">Locomotion</button>
+        <button class="ftab" data-f="processor">Processors</button>
+        <button class="ftab" data-f="appendage">Appendages</button>
+        <button class="ftab" data-f="armor">Armor</button>
+        <button class="ftab" data-f="sensor">Sensors</button>
+        <button class="ftab" data-f="comms">Comms</button>
+        <button class="ftab" data-f="misc">Misc</button>
+      </div>
+      <button class="toggle-btn" id="affBtn"><i class="fas fa-coins"></i> Affordable</button>
+      <button class="toggle-btn" id="instBtn"><i class="fas fa-check"></i> Hide Installed</button>
+    </div>
+    <div class="sys-groups" id="sysGroups"></div>
+  </section>
+
+  <!-- RIGHT RAIL -->
+  <aside class="right-rail">
+    <div class="detail">
+      <div class="detail-empty" id="detEmpty">
+        <i class="fas fa-microchip"></i>
+        <p>Select a system from the browser to view full details and install controls</p>
+      </div>
+      <div class="det-content" id="detContent" style="display:none">
+        <div class="det-hd">
+          <div class="det-cat" id="dCat"></div>
+          <div class="det-name" id="dName"></div>
+          <div class="det-tags" id="dTags"></div>
+        </div>
+        <p class="det-desc" id="dDesc"></p>
+        <div class="cost-table">
+          <div class="cost-row"><span>Base Cost</span><strong id="dBase"></strong></div>
+          <div class="cost-row"><span>Size Multiplier</span><strong id="dMult"></strong></div>
+          <div class="cost-row total"><span>Adjusted Cost</span><strong id="dAdj"></strong></div>
+          <div class="cost-row impact-neg" id="dImpactRow"><span>Budget After Install</span><strong id="dAfter"></strong></div>
+        </div>
+        <div class="det-section" id="dFeatSec">
+          <div class="det-section-lbl">Features</div>
+          <div id="dFeats"></div>
+        </div>
+        <div class="det-section" id="dRestSec">
+          <div class="det-section-lbl">Restrictions</div>
+          <div id="dRests"></div>
+        </div>
+        <div class="compat-row compat-can" id="dCompat">
+          <i class="fas fa-check-circle" id="dCompatIcon"></i>
+          <span id="dCompatTxt">Can install</span>
+        </div>
+        <div class="action-area">
+          <button class="btn btn-install" id="dInstBtn"><i class="fas fa-download"></i> Install System</button>
+          <button class="btn btn-remove" id="dRemBtn" style="display:none"><i class="fas fa-trash-alt"></i> Remove System</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="ftr">
+  <button class="btn btn-sec"><i class="fas fa-chevron-left"></i> Back</button>
+  <div class="ftr-status">
+    <span>Build Status</span>
+    <span id="ftrStatus">Select Degree &amp; Size to begin</span>
+  </div>
+  <button class="btn btn-install" id="contBtn" disabled><i class="fas fa-chevron-right"></i> Continue to Class</button>
+</footer>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  SWSE Droid Chassis Builder — Interactive Prototype
+//  Data sourced from scripts/data/droid-systems.js
+//  Action hooks mirror chargen-droid.js contracts
+// ════════════════════════════════════════════════════════════
+
+// ── STATE ────────────────────────────────────────────────────
+const S = {
+  degree: '', size: 'medium',
+  budget: { base: 2000, spent: 0, remaining: 2000 },
+  installed: { locomotion: null, processor: null, appendages: [], accessories: [] },
+  weight: 0,
+  focused: null,
+  filter: 'all', query: '', affOnly: false, hideInst: false
+};
+
+// ── DATA (from droid-systems.js & chargen-droid.js) ───────────
+const CF = { fine:5, diminutive:5, tiny:5, small:2, medium:1, large:2, huge:5, gargantuan:10, colossal:20 };
+const DEG = {
+  '1st': { label:'1st Degree — Medical / Scientific',   bonuses:{ int:+2, wis:+2, str:-2 } },
+  '2nd': { label:'2nd Degree — Astromech / Technical',  bonuses:{ int:+2, cha:-2 } },
+  '3rd': { label:'3rd Degree — Protocol / Diplomatic',  bonuses:{ wis:+2, cha:+2, str:-2 } },
+  '4th': { label:'4th Degree — Security / Assassination',bonuses:{ dex:+2, int:-2, cha:-2 } },
+  '5th': { label:'5th Degree — Labor / Industrial',     bonuses:{ str:+4, int:-4, cha:-4 } }
+};
+
+const DATA = {
+  locomotion:[
+    { id:'walking',   name:'Walking',          category:'locomotion', availability:'—',
+      desc:'Versatile legged locomotion (bipedal, quadrupedal, or multi-legged). Most common for humanoid droids.',
+      speeds:{fine:4,diminutive:4,tiny:4,small:4,medium:6,large:8,huge:8,gargantuan:8,colossal:8},
+      costF:(sp,cf)=>Math.ceil(10*cf*sp*sp), wtF:(cf)=>5*cf,
+      features:['Versatile movement','Can use Climb skill'],
+      restrictions:['Difficult terrain penalties apply'], single:true },
+    { id:'wheeled',   name:'Wheeled',           category:'locomotion', availability:'—',
+      desc:'Powered wheels for fast movement on smooth surfaces. Cannot use Climb skill; difficult terrain penalties doubled.',
+      speeds:{fine:6,diminutive:6,tiny:6,small:6,medium:8,large:10,huge:10,gargantuan:10,colossal:10},
+      costF:(sp,cf)=>Math.ceil(5*cf*sp*sp), wtF:(cf)=>4*cf,
+      features:['High speed on flat terrain'],
+      restrictions:['Cannot use Climb skill','Double difficult terrain penalties'], single:true },
+    { id:'tracked',   name:'Tracked',           category:'locomotion', availability:'—',
+      desc:'Rigid treads for improved off-road traction. Ignores difficult terrain penalties.',
+      speeds:{fine:4,diminutive:4,tiny:4,small:4,medium:6,large:8,huge:8,gargantuan:8,colossal:8},
+      costF:(sp,cf)=>Math.ceil(20*cf*sp*sp), wtF:(cf)=>6*cf,
+      features:['Ignores difficult terrain'],
+      restrictions:['−5 penalty on all Climb checks'], single:true },
+    { id:'hovering',  name:'Hovering',          category:'locomotion', availability:'—',
+      desc:'Repulsorlift floats within 3 meters of ground. Fixed 6-square speed regardless of size.',
+      speeds:{fine:6,diminutive:6,tiny:6,small:6,medium:6,large:6,huge:6,gargantuan:6,colossal:6},
+      costF:(sp,cf)=>Math.ceil(100*cf*sp*sp), wtF:(cf)=>3*cf,
+      features:['Ignores difficult terrain','Hovers above ground','Fixed speed'],
+      restrictions:['Fixed 6-square speed','Within 3m of ground only'], single:true },
+    { id:'flying',    name:'Flying',            category:'locomotion', availability:'—',
+      desc:'Engine-based flight for unrestricted movement. No terrain penalties but significantly more expensive.',
+      speeds:{fine:9,diminutive:9,tiny:9,small:9,medium:12,large:12,huge:12,gargantuan:12,colossal:12},
+      costF:(sp,cf)=>Math.ceil(200*cf*sp*sp), wtF:(cf)=>3*cf,
+      features:['Unrestricted movement','No terrain penalties'],
+      restrictions:['Very expensive'], single:true },
+    { id:'underwater',name:'Underwater Drive',  category:'locomotion', availability:'Licensed',
+      desc:'Water propulsion granting swim speed equal to base speed. Standard for aquatic-environment droids.',
+      speeds:{fine:4,diminutive:4,tiny:4,small:4,medium:6,large:8,huge:8,gargantuan:8,colossal:8},
+      costF:(sp,cf)=>Math.ceil(20*cf*sp*sp), wtF:(cf)=>10*cf,
+      features:['Swim speed = base speed','Aquatic movement'],
+      restrictions:['Licensed availability'], single:true },
+    { id:'stationary',name:'Stationary Mount',  category:'locomotion', availability:'—',
+      desc:'Fixed installation — no movement. Used for turrets, emplacements, and stationary service droids.',
+      speeds:{fine:0,diminutive:0,tiny:0,small:0,medium:0,large:0,huge:0,gargantuan:0,colossal:0},
+      costF:()=>0, wtF:()=>0,
+      features:['No movement cost','Ideal for emplacement roles'],
+      restrictions:['Cannot move from fixed position'], single:true }
+  ],
+  processor:[
+    { id:'heuristic', name:'Heuristic Processor', category:'processor', availability:'—',
+      desc:'Advanced learning processor capable of independent reasoning. REQUIRED for playable droid characters. Free during initial construction.',
+      costF:()=>0, wtF:()=>5,
+      features:['Use skills untrained','Wield unproficient weapons (−5)','Creative instruction interpretation','Develops unique personality over time'],
+      restrictions:[], badges:['pc','free'], single:true },
+    { id:'basic',     name:'Basic Processor',     category:'processor', availability:'—',
+      desc:'Simple task-focused processor. Limited to literal interpretation. Cannot perform unprogrammed tasks.',
+      costF:()=>0, wtF:()=>5,
+      features:['Basic task execution','Pre-programmed responses'],
+      restrictions:['Cannot use untrained skills (except Acrobatics/Climb/Jump/Perception)','Cannot use unproficient weapons','PC droids cannot use this'],
+      single:true },
+    { id:'military',  name:'Military Processor',  category:'processor', availability:'Military',
+      desc:'Combat-optimised processor with relaxed ethical constraints. For military droids.',
+      costF:()=>5000, wtF:()=>10,
+      features:['Optimised for combat','Relaxed ethical constraints'],
+      restrictions:['Military availability only','Not available to most PC droids'], badges:['restr'], single:true }
+  ],
+  appendage:[
+    { id:'hand',       name:'Manipulator Hand',  category:'appendage', availability:'—',
+      desc:'Standard articulated hand. First 2 hands are free for all droids.',
+      cost:500, wt:2,
+      features:['Hold and manipulate objects','Fine motor control','First 2 free'],
+      restrictions:[], badges:['free'], single:false, freeUpTo:2 },
+    { id:'claw',       name:'Grasping Claw',     category:'appendage', availability:'—',
+      desc:'Heavy-duty claw for industrial or combat use. Creates unarmed attack. Less fine motor control.',
+      cost:750, wt:4,
+      features:['Heavy grasping','Creates unarmed attack'],
+      restrictions:['Reduced fine motor control'], single:false },
+    { id:'probe',      name:'Sensor Probe Arm',  category:'appendage', availability:'—',
+      desc:'Extendable probe arm with integrated sensors. Useful for technical and medical droids.',
+      cost:400, wt:1,
+      features:['Extendable reach','Integrated sensors','+2 Perception checks'],
+      restrictions:['Cannot grip heavy objects'], single:false },
+    { id:'tool-mount', name:'Tool Mount',        category:'appendage', availability:'—',
+      desc:'Integrated mount accepting standard tool attachments. Cannot grip objects.',
+      cost:300, wt:2,
+      features:['Accepts tool attachments','Integrated connection'],
+      restrictions:['Cannot grip objects; tool-only'], single:false }
+  ],
+  armor:[
+    { id:'light-plating',  name:'Light Plating',   category:'armor', availability:'—',
+      desc:'Basic protective plating. Reflex Defence bonus without significantly impeding movement.',
+      costF:(cf)=>Math.ceil(1500*cf), wtF:(cf)=>10*cf,
+      features:['Reflex Defence +2','Minimal movement penalty'], restrictions:[], single:true },
+    { id:'medium-plating', name:'Medium Plating',  category:'armor', availability:'—',
+      desc:'Standard combat plating. Balanced protection and mobility for field droids.',
+      costF:(cf)=>Math.ceil(3000*cf), wtF:(cf)=>20*cf,
+      features:['Reflex Defence +4'], restrictions:['Minor Dex penalty'], single:true },
+    { id:'heavy-plating',  name:'Heavy Plating',   category:'armor', availability:'Restricted',
+      desc:'Industrial-grade armour for combat or hazardous environments.',
+      costF:(cf)=>Math.ceil(6000*cf), wtF:(cf)=>40*cf,
+      features:['Reflex Defence +6','Heavy protection'], restrictions:['Significant Dex penalty','Restricted availability'], badges:['restr'], single:true }
+  ],
+  sensor:[
+    { id:'optical',   name:'Optical Sensors',    category:'sensor', availability:'—',
+      desc:'Enhanced optical processing for superior visual acuity and target acquisition.',
+      costF:(cf)=>Math.ceil(500*cf), wtF:()=>1,
+      features:['+2 Perception (visual)','Low-light vision'], restrictions:[], single:false },
+    { id:'thermal',   name:'Thermal Imaging',    category:'sensor', availability:'—',
+      desc:'Heat-detection sensors for tracking targets through smoke, darkness, and light cover.',
+      costF:(cf)=>Math.ceil(1200*cf), wtF:()=>2,
+      features:['Infrared vision','+4 Perception vs living targets','Ignores visual obscurement'],
+      restrictions:['Blinded by intense heat sources'], single:false },
+    { id:'motion',    name:'Motion Detector',    category:'sensor', availability:'—',
+      desc:'Passive motion detection alerting to movement within 30-square radius.',
+      costF:(cf)=>Math.ceil(800*cf), wtF:()=>1,
+      features:['Detects motion in 30-sq radius','+2 Initiative'], restrictions:[], single:false }
+  ],
+  comms:[
+    { id:'comlink',   name:'Integrated Comlink', category:'comms', availability:'—',
+      desc:'Short-range audio communication. Standard equipment for most droids. 25 km range.',
+      costF:()=>250, wtF:()=>0.5,
+      features:['Short-range audio comm','25 km range','Encrypted band option'], restrictions:[], single:false },
+    { id:'holo-proj', name:'Holographic Projector',category:'comms', availability:'—',
+      desc:'Projects holographic images and video feeds. Essential for diplomatic droids.',
+      costF:()=>1000, wtF:()=>1,
+      features:['Project holo images/video','1-metre projection range'], restrictions:['Requires power source'], single:false },
+    { id:'translator',name:'Translation Matrix', category:'comms', availability:'—',
+      desc:'Universal language translation. Covers 6 million+ languages and dialects.',
+      costF:()=>1500, wtF:()=>1,
+      features:['6 million+ languages','Written and spoken','+4 Diplomacy/Deception with translator'], restrictions:[], single:false }
+  ],
+  misc:[
+    { id:'repair-kit',name:'Integrated Repair Tools', category:'misc', availability:'—',
+      desc:'Built-in toolkit for self-repair and maintenance. Reduces field repair time.',
+      costF:()=>1500, wtF:()=>5,
+      features:['Self-repair capability','+2 Mechanics for self-repair','No external tools required'], restrictions:[], single:false },
+    { id:'data-store', name:'Expanded Data Storage',  category:'misc', availability:'—',
+      desc:'Additional storage for mission logs, maps, and technical databases.',
+      costF:()=>300, wtF:()=>1,
+      features:['10× standard capacity','Encrypted partitions','Rapid retrieval'], restrictions:[], single:false }
+  ]
+};
+
+const ALL = Object.values(DATA).flat();
+const CATS = {
+  locomotion:{ label:'Locomotion',      color:'var(--cat-loco)' },
+  processor: { label:'Processors',      color:'var(--cat-proc)' },
+  appendage: { label:'Appendages',      color:'var(--cat-app)'  },
+  armor:     { label:'Armor / Plating', color:'var(--cat-armor)'},
+  sensor:    { label:'Sensors',         color:'var(--cat-sens)' },
+  comms:     { label:'Communications',  color:'var(--cat-comm)' },
+  misc:      { label:'Miscellaneous',   color:'var(--cat-misc)' }
+};
+
+// ── HELPERS ──────────────────────────────────────────────────
+const cf = () => CF[S.size] || 1;
+const cr = n => (n||0).toLocaleString()+' cr';
+
+function sysCost(s) {
+  const f = cf(), sz = S.size;
+  if (s.costF) return s.category==='locomotion' ? s.costF(s.speeds[sz]||s.speeds.medium, f) : s.costF(f);
+  return s.cost||0;
+}
+function sysWt(s) { return s.wtF ? s.wtF(cf()) : (s.wt||0); }
+
+function isInst(s) {
+  if (s.category==='locomotion') return S.installed.locomotion?.id===s.id;
+  if (s.category==='processor')  return S.installed.processor?.id===s.id;
+  if (s.category==='appendage')  return S.installed.appendages.some(a=>a.id===s.id);
+  return S.installed.accessories.some(a=>a.id===s.id);
+}
+
+function refund(s) {
+  if (s.category==='locomotion'&&S.installed.locomotion) return S.installed.locomotion.cost;
+  if (s.category==='processor'&&S.installed.processor)   return S.installed.processor.cost;
+  return 0;
+}
+
+function canInstall(s) {
+  const cost = sysCost(s), ref = refund(s);
+  return (S.budget.remaining + ref) >= cost;
+}
+
+function getCompat(s) {
+  if (isInst(s)) return { cls:'compat-inst', icon:'fa-check-circle', txt:'Already installed — can remove below' };
+  if (!canInstall(s)) return { cls:'compat-no', icon:'fa-ban', txt:`Insufficient credits — need ${cr(sysCost(s))}` };
+  return { cls:'compat-can', icon:'fa-plus-circle', txt:'Can install' };
+}
+
+function find(id, cat) { return ALL.find(s=>s.id===id&&s.category===cat)||null; }
+
+// ── MUTATIONS ─────────────────────────────────────────────────
+function install(s) {
+  const cost = sysCost(s), wt = sysWt(s);
+  if (s.category==='locomotion') {
+    if (S.installed.locomotion) S.budget.spent -= S.installed.locomotion.cost;
+    S.installed.locomotion = {...s, cost, wt};
+    S.budget.spent += cost;
+  } else if (s.category==='processor') {
+    if (S.installed.processor) S.budget.spent -= S.installed.processor.cost;
+    S.installed.processor = {...s, cost, wt};
+    S.budget.spent += cost;
+  } else if (s.category==='appendage') {
+    let c = cost;
+    if (s.id==='hand') { const fh=S.installed.appendages.filter(a=>a.id==='hand'&&a.cost===0).length; if(fh<2) c=0; }
+    if (c > S.budget.remaining) { alert('Not enough credits!'); return; }
+    S.installed.appendages.push({...s, cost:c, wt});
+    S.budget.spent += c;
+  } else {
+    if (cost > S.budget.remaining) { alert('Not enough credits!'); return; }
+    S.installed.accessories.push({...s, cost, wt});
+    S.budget.spent += cost;
+  }
+  recalc(); refresh();
+}
+
+function remove(s) {
+  if (s.category==='locomotion'&&S.installed.locomotion) {
+    S.budget.spent -= S.installed.locomotion.cost; S.installed.locomotion = null;
+  } else if (s.category==='processor'&&S.installed.processor) {
+    if (S.installed.processor.id==='heuristic') return; // locked
+    S.budget.spent -= S.installed.processor.cost; S.installed.processor = null;
+  } else if (s.category==='appendage') {
+    const i = [...S.installed.appendages].map((a,i)=>a.id===s.id?i:-1).filter(i=>i>=0).pop();
+    if (i!=null&&i>=0) { S.budget.spent -= S.installed.appendages[i].cost; S.installed.appendages.splice(i,1); }
+  } else {
+    const i = S.installed.accessories.findIndex(a=>a.id===s.id);
+    if (i>=0) { S.budget.spent -= S.installed.accessories[i].cost; S.installed.accessories.splice(i,1); }
+  }
+  recalc(); refresh();
+}
+
+function recalcInstCosts() {
+  ['locomotion','processor'].forEach(slot => {
+    if (!S.installed[slot]) return;
+    const s = find(S.installed[slot].id, slot);
+    if (s) { S.installed[slot].cost = sysCost(s); S.installed[slot].wt = sysWt(s); }
+  });
+  S.installed.appendages.forEach((a,i) => {
+    if (a.cost===0) return;
+    const s = find(a.id,'appendage'); if(s) S.installed.appendages[i].cost = sysCost(s);
+  });
+  S.installed.accessories.forEach((a,i) => {
+    const s = find(a.id, a.category); if(s) S.installed.accessories[i].cost = sysCost(s);
+  });
+}
+
+function recalc() {
+  let sp=0, wt=0;
+  if (S.installed.locomotion) { sp+=S.installed.locomotion.cost; wt+=S.installed.locomotion.wt||0; }
+  if (S.installed.processor)  { sp+=S.installed.processor.cost;  wt+=S.installed.processor.wt||0; }
+  S.installed.appendages.forEach(a=>{ sp+=a.cost; wt+=a.wt||0; });
+  S.installed.accessories.forEach(a=>{ sp+=a.cost; wt+=a.wt||0; });
+  S.budget.spent = sp; S.budget.remaining = S.budget.base - sp; S.weight = wt;
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function refresh() { renderHdr(); renderLeft(); renderMid(); renderDetail(); renderFtr(); }
+
+function renderHdr() {
+  const f=cf(), rem=S.budget.remaining, pct=Math.min(100,(S.budget.spent/S.budget.base)*100);
+  document.getElementById('multVal').textContent = f;
+  document.getElementById('multChip').className = 'chip '+(f>1?'chip-warn':'chip-mult');
+  document.getElementById('hBase').textContent = cr(S.budget.base);
+  document.getElementById('hSpent').textContent = cr(S.budget.spent);
+  const rEl = document.getElementById('hRemain');
+  rEl.textContent = cr(rem); rEl.className = 'b-val '+(rem<0?'neg':rem===0?'neu':'pos');
+  const fill = document.getElementById('hBarFill');
+  fill.style.width = pct+'%'; fill.className = 'bbar-fill '+(rem<0?'over':pct>75?'warn':'ok');
+  const chip = document.getElementById('validChip'), txt = document.getElementById('validTxt');
+  const ico = chip.querySelector('i');
+  if (!S.degree)                                { chip.className='chip chip-warn'; txt.textContent='Select Degree'; ico.className='fas fa-exclamation-triangle'; }
+  else if (!S.installed.locomotion)             { chip.className='chip chip-warn'; txt.textContent='Needs Locomotion'; ico.className='fas fa-exclamation-triangle'; }
+  else if (!S.installed.processor)              { chip.className='chip chip-warn'; txt.textContent='Needs Processor'; ico.className='fas fa-exclamation-triangle'; }
+  else if (rem<0)                               { chip.className='chip chip-bad';  txt.textContent='Over Budget'; ico.className='fas fa-times-circle'; }
+  else                                          { chip.className='chip chip-valid';txt.textContent='Build Valid'; ico.className='fas fa-check-circle'; }
+}
+
+function renderLeft() {
+  // Installed list
+  const all = [];
+  if (S.installed.locomotion) all.push({...S.installed.locomotion, slot:'locomotion'});
+  if (S.installed.processor)  all.push({...S.installed.processor,  slot:'processor'});
+  S.installed.appendages.forEach(a => all.push({...a, slot:'appendage'}));
+  S.installed.accessories.forEach(a => all.push({...a, slot:a.category||'misc'}));
+  document.getElementById('instCount').textContent = all.length;
+
+  const groups = {};
+  all.forEach(s => { (groups[s.slot]||(groups[s.slot]=[])).push(s); });
+  const listEl = document.getElementById('instList');
+  if (!all.length) { listEl.innerHTML='<div class="empty-slot">No systems installed</div>'; }
+  else {
+    let h='';
+    Object.entries(groups).forEach(([g, items]) => {
+      h += `<div class="inst-group-lbl">${g}</div>`;
+      items.forEach(it => {
+        h += `<div class="inst-item cat-${g}" data-id="${it.id}" data-cat="${it.category}">
+          <span class="inst-name" title="${it.name}">${it.name}</span>
+          <span class="inst-cost">${it.cost===0?'Free':cr(it.cost)}</span>
+          <button class="inst-rm" data-rm-id="${it.id}" data-rm-cat="${it.category}"><i class="fas fa-times"></i></button>
+        </div>`;
+      });
+    });
+    listEl.innerHTML = h;
+    listEl.querySelectorAll('[data-rm-id]').forEach(b => b.addEventListener('click', e => {
+      e.stopPropagation(); const s=find(b.dataset.rmId, b.dataset.rmCat); if(s) remove(s);
+    }));
+    listEl.querySelectorAll('.inst-item[data-id]').forEach(el => el.addEventListener('click', () => {
+      const s=find(el.dataset.id,el.dataset.cat); if(s){ S.focused=s; renderMid(); renderDetail(); }
+    }));
+  }
+
+  // Budget
+  const rem = S.budget.remaining;
+  document.getElementById('lRemain').textContent = cr(rem);
+  document.getElementById('lBase').textContent   = cr(S.budget.base);
+  document.getElementById('lSpent').textContent  = cr(S.budget.spent);
+  const lrEl = document.getElementById('lRem');
+  lrEl.textContent = cr(rem); lrEl.className = rem<0?'neg':rem===0?'neu':'pos';
+  document.getElementById('lWt').textContent = S.weight.toFixed(1)+' kg';
+  const lf=document.getElementById('lBarFill'), pct=Math.min(100,(S.budget.spent/S.budget.base)*100);
+  lf.style.width=pct+'%'; lf.className='bbar-fill '+(rem<0?'over':pct>75?'warn':'ok');
+
+  // Checklist
+  const ck=(id,done,opt)=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.className = opt?'fas fa-circle ck-icon ck-opt': done?'fas fa-check-circle ck-icon ck-done':'fas fa-circle ck-icon ck-miss';
+  };
+  ck('ckDeg',!!S.degree); ck('ckSz',true);
+  ck('ckLoco',!!S.installed.locomotion); ck('ckProc',!!S.installed.processor);
+  ck('ckApp',S.installed.appendages.length>0,!S.installed.appendages.length);
+
+  // Degree bonuses
+  const dp=document.getElementById('degPanel'), db=document.getElementById('degBonuses');
+  if (S.degree&&DEG[S.degree]) {
+    dp.style.display=''; 
+    db.innerHTML = Object.entries(DEG[S.degree].bonuses).map(([k,v])=>
+      `<span class="ab-chip ${v>0?'ab-pos':'ab-neg'}">${k.toUpperCase()} ${v>0?'+':''}${v}</span>`
+    ).join('');
+  } else { dp.style.display='none'; }
+
+  // Warnings
+  const ws=[];
+  if (rem<0) ws.push({t:'neg',m:`Over budget by ${cr(Math.abs(rem))} — remove systems to proceed`});
+  if (!S.degree) ws.push({t:'warn',m:'No droid degree selected'});
+  if (!S.installed.locomotion) ws.push({t:'warn',m:'Locomotion system required'});
+  if (!S.installed.processor)  ws.push({t:'warn',m:'Processor required (Heuristic for PC droids)'});
+  document.getElementById('warnCount').textContent = ws.length;
+  document.getElementById('warnList').innerHTML = ws.length
+    ? ws.map(w=>`<div class="warn-item w-${w.t}"><i class="fas fa-${w.t==='neg'?'exclamation-circle':'exclamation-triangle'}"></i><span>${w.m}</span></div>`).join('')
+    : '<div style="font-size:8px;color:var(--faint);padding:3px 0;letter-spacing:.12em;text-transform:uppercase">No active warnings</div>';
+}
+
+function renderMid() {
+  const q = S.query.toLowerCase();
+  let html = '';
+  for (const [cat, meta] of Object.entries(CATS)) {
+    if (S.filter!=='all' && S.filter!==cat) continue;
+    const systems = (DATA[cat]||[]).filter(s => {
+      if (q && !s.name.toLowerCase().includes(q) && !(s.desc||'').toLowerCase().includes(q)) return false;
+      if (S.affOnly && !isInst(s) && !canInstall(s)) return false;
+      if (S.hideInst && isInst(s)) return false;
+      return true;
+    });
+    if (!systems.length) continue;
+    html += `<div class="sys-group" data-cat="${cat}">
+      <div class="grp-lbl" style="color:${meta.color}"><span class="cat-dot" style="background:${meta.color}"></span>${meta.label}<span class="grp-count">${systems.length}</span></div>
+      <div class="card-grid">${systems.map(s => renderCard(s,cat)).join('')}</div>
+    </div>`;
+  }
+  document.getElementById('sysGroups').innerHTML = html || '<div class="no-results">No systems match current filters</div>';
+  document.querySelectorAll('.scard').forEach(c => c.addEventListener('click', () => {
+    const s=find(c.dataset.id,c.dataset.cat); if(s){ S.focused=s; renderMid(); renderDetail(); }
+  }));
+}
+
+function renderCard(s, cat) {
+  const inst=isInst(s), aff=canInstall(s), foc=S.focused?.id===s.id&&S.focused?.category===s.category;
+  const cost=sysCost(s), spd=s.category==='locomotion'?` · ${s.speeds[S.size]||s.speeds.medium} sq/rd`:'';
+  const badges = [
+    inst?'<span class="badge badge-inst">Installed</span>':'',
+    s.badges?.includes('pc')?'<span class="badge badge-pc">PC Required</span>':'',
+    s.badges?.includes('free')&&!inst?'<span class="badge badge-free">Free</span>':'',
+    s.badges?.includes('restr')?'<span class="badge badge-restr">Restricted</span>':''
+  ].join('');
+  const cls = ['scard',`scard--${cat}`,inst?'installed':'',foc?'focused':'',(!aff&&!inst)?'cant':''].filter(Boolean).join(' ');
+  return `<div class="${cls}" data-id="${s.id}" data-cat="${s.category}">
+    <div class="card-head"><div class="card-name">${s.name}</div><div class="card-badges">${badges}</div></div>
+    <p class="card-desc">${s.desc}</p>
+    <div class="card-foot"><span class="card-cost">${cost===0?'Free':cr(cost)}${spd}</span><span class="card-avail">${s.availability||'—'}</span></div>
+  </div>`;
+}
+
+function renderDetail() {
+  const empty=document.getElementById('detEmpty'), content=document.getElementById('detContent');
+  if (!S.focused) { empty.style.display=''; content.style.display='none'; return; }
+  empty.style.display='none'; content.style.display='flex';
+  const s=S.focused, cost=sysCost(s), wt=sysWt(s), inst=isInst(s), compat=getCompat(s);
+  const ref=refund(s), after=inst?(S.budget.remaining+ref):(S.budget.remaining-cost+ref);
+  const catColor = { locomotion:'var(--cat-loco)',processor:'var(--cat-proc)',appendage:'var(--cat-app)',
+    armor:'var(--cat-armor)',sensor:'var(--cat-sens)',comms:'var(--cat-comm)',misc:'var(--cat-misc)' }[s.category]||'var(--accent)';
+
+  document.getElementById('dCat').textContent = CATS[s.category]?.label||s.category;
+  document.getElementById('dCat').style.color = catColor;
+  document.getElementById('dName').textContent = s.name;
+  document.getElementById('dDesc').textContent = s.desc;
+
+  const tags = [
+    inst?'<span class="badge badge-inst">Installed</span>':'',
+    s.badges?.includes('free')?'<span class="badge badge-free">Free</span>':'',
+    s.badges?.includes('pc')?'<span class="badge badge-pc">PC Required</span>':'',
+    s.badges?.includes('restr')?'<span class="badge badge-restr">Restricted</span>':'',
+    s.availability&&s.availability!=='—'?`<span class="badge">${s.availability}</span>`:''
+  ].join('');
+  document.getElementById('dTags').innerHTML = tags;
+
+  document.getElementById('dBase').textContent = cost===0?'Free':cr(cost);
+  document.getElementById('dMult').textContent = `×${cf()}`;
+  document.getElementById('dAdj').textContent  = cost===0?'Free':cr(cost);
+  document.getElementById('dAfter').textContent = cr(after);
+  const impRow = document.getElementById('dImpactRow');
+  impRow.className = 'cost-row '+(after<0&&!inst?'impact-neg':after===0?'impact-neu':'impact-pos');
+
+  const feats=document.getElementById('dFeats'), restEl=document.getElementById('dRests');
+  document.getElementById('dFeatSec').style.display = s.features?.length?'':'none';
+  feats.innerHTML = (s.features||[]).map(f=>`<div class="feat-item">${f}</div>`).join('');
+  document.getElementById('dRestSec').style.display = s.restrictions?.length?'':'none';
+  restEl.innerHTML = (s.restrictions||[]).map(r=>`<div class="feat-item rest-item">${r}</div>`).join('');
+
+  const cr2=document.getElementById('dCompat');
+  cr2.className='compat-row '+compat.cls;
+  cr2.querySelector('i').className='fas '+compat.icon;
+  document.getElementById('dCompatTxt').textContent = compat.txt;
+
+  const iBtn=document.getElementById('dInstBtn'), rBtn=document.getElementById('dRemBtn');
+  iBtn.style.display=inst?'none':''; rBtn.style.display=inst?'':'none';
+  iBtn.disabled = !canInstall(s);
+  rBtn.disabled = s.id==='heuristic';
+
+  const ni=iBtn.cloneNode(true), nr=rBtn.cloneNode(true);
+  iBtn.parentNode.replaceChild(ni,iBtn); rBtn.parentNode.replaceChild(nr,rBtn);
+  ni.addEventListener('click',()=>{ install(s); S.focused=s; renderDetail(); });
+  nr.addEventListener('click',()=>{ remove(s); S.focused=s; refresh(); });
+}
+
+function renderFtr() {
+  const ok = S.degree&&S.installed.locomotion&&S.installed.processor&&S.budget.remaining>=0;
+  const rem=S.budget.remaining;
+  document.getElementById('contBtn').disabled = !ok;
+  document.getElementById('ftrStatus').textContent = !S.degree ? 'Select a Droid Degree to begin'
+    : !S.installed.locomotion ? 'Locomotion system required'
+    : !S.installed.processor  ? 'Processor required (Heuristic for PC)'
+    : rem<0 ? `Over budget by ${cr(Math.abs(rem))} — remove systems`
+    : `Build valid · ${cr(rem)} remaining`;
+}
+
+// ── EVENTS ────────────────────────────────────────────────────
+document.getElementById('degSel').addEventListener('change', e => { S.degree=e.target.value; refresh(); });
+document.getElementById('sizeSel').addEventListener('change', e => {
+  S.size=e.target.value; recalcInstCosts(); recalc(); refresh();
+});
+document.getElementById('srch').addEventListener('input', e => { S.query=e.target.value; renderMid(); });
+document.getElementById('ftabs').addEventListener('click', e => {
+  const tab=e.target.closest('.ftab'); if(!tab) return;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  tab.classList.add('on'); S.filter=tab.dataset.f; renderMid();
+});
+document.getElementById('affBtn').addEventListener('click', function(){ S.affOnly=!S.affOnly; this.classList.toggle('on',S.affOnly); renderMid(); });
+document.getElementById('instBtn').addEventListener('click', function(){ S.hideInst=!S.hideInst; this.classList.toggle('on',S.hideInst); renderMid(); });
+
+// ── BOOT ──────────────────────────────────────────────────────
+refresh();
+</script>
+</body>
+</html>
