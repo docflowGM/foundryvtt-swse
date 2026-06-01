@@ -15,7 +15,7 @@ import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or
 import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 // PHASE 1: Import prepared context builders instead of direct engine access
-import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
+import { buildVehicleSheetContext, parseCargoString } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
 import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
 import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
@@ -24,6 +24,8 @@ import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/st
 import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { VehicleImportWizard } from "/systems/foundryvtt-swse/scripts/apps/vehicle-import-wizard.js";
+import { rollVehicleCrewSkill } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
 
 const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
@@ -49,6 +51,9 @@ const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
   'system.maxVelocity',
   'system.maneuver',
   'system.hyperdrive',
+  'system.hyperdrive_class',
+  'system.backupHyperdrive',
+  'system.backup_class',
   'system.crew',
   'system.crewQuality',
   'system.passengers',
@@ -238,15 +243,18 @@ export class SWSEV2VehicleSheet extends
     // ════════════════════════════════════════════════════════════════════════════
     // PHASE 1: Calculate cargo state for summary panel
     // ════════════════════════════════════════════════════════════════════════════
-    const cargoCapacity = actor.system?.cargo?.capacity ?? 500;
+    const parsedCargoCapacity = parseCargoString(actor.system?.cargo);
+    const cargoCapacity = parsedCargoCapacity.kilograms ?? 0;
     let totalCargoWeight = 0;
     const cargoItems = actor.items.filter(item => item.type === "equipment");
     for (const item of cargoItems) {
-      const weight = item.system?.weight ?? 0;
-      const quantity = item.system?.quantity ?? 1;
+      const weight = Number(item.system?.weight ?? 0) || 0;
+      const quantity = Number(item.system?.quantity ?? 1) || 1;
       totalCargoWeight += weight * quantity;
     }
-    const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
+    const cargoState = cargoCapacity > 0
+      ? totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal'
+      : 'unknown';
 
     // ════════════════════════════════════════════════════════════════════════════
     // PHASE 1: Build all house rule contexts through adapter (no direct reads)
@@ -584,7 +592,8 @@ export class SWSEV2VehicleSheet extends
         ev.preventDefault();
         const subsystem = ev.currentTarget?.dataset?.subsystem;
         if (!subsystem || !this.actor) return;
-        await SubsystemEngine.repairSubsystem(this.actor, subsystem);
+        const repaired = await SubsystemEngine.repairSubsystem(this.actor, subsystem);
+        if (!repaired) ui?.notifications?.info?.('No field repair was applied to that subsystem.');
       }, { signal });
     }
 
@@ -595,7 +604,8 @@ export class SWSEV2VehicleSheet extends
         ev.preventDefault();
         const zone = ev.currentTarget?.dataset?.zone;
         if (!zone || !this.actor) return;
-        await EnhancedShields.focusShields(this.actor, zone);
+        const changed = await EnhancedShields.focusShields(this.actor, zone);
+        if (!changed) ui?.notifications?.warn?.('Enhanced Shields is disabled or that shield focus could not be applied.');
       }, { signal });
     }
 
@@ -604,7 +614,8 @@ export class SWSEV2VehicleSheet extends
       equalizeBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
-        await EnhancedShields.equalizeShields(this.actor);
+        const changed = await EnhancedShields.equalizeShields(this.actor);
+        if (!changed) ui?.notifications?.warn?.('Enhanced Shields is disabled or shields could not be equalized.');
       }, { signal });
     }
 
@@ -623,7 +634,8 @@ export class SWSEV2VehicleSheet extends
           ? Math.min(4, current + 1)
           : Math.max(0, current - 1);
 
-        await EnhancedEngineer.allocatePower(this.actor, allocation);
+        const changed = await EnhancedEngineer.allocatePower(this.actor, allocation);
+        if (!changed) ui?.notifications?.warn?.('Enhanced Engineer is disabled or that power allocation is invalid.');
       }, { signal });
     }
 
@@ -634,7 +646,8 @@ export class SWSEV2VehicleSheet extends
         ev.preventDefault();
         const maneuver = ev.currentTarget?.dataset?.maneuver;
         if (!maneuver || !this.actor) return;
-        await EnhancedPilot.setManeuver(this.actor, maneuver);
+        const changed = await EnhancedPilot.setManeuver(this.actor, maneuver);
+        if (!changed) ui?.notifications?.warn?.('Enhanced Pilot is disabled or that maneuver could not be set.');
       }, { signal });
     }
 
@@ -645,7 +658,8 @@ export class SWSEV2VehicleSheet extends
         ev.preventDefault();
         const order = ev.currentTarget?.dataset?.order;
         if (!order || !this.actor) return;
-        await EnhancedCommander.issueOrder(this.actor, order);
+        const changed = await EnhancedCommander.issueOrder(this.actor, order);
+        if (!changed) ui?.notifications?.warn?.('Enhanced Commander is disabled or that order could not be issued.');
       }, { signal });
     }
 
@@ -656,7 +670,8 @@ export class SWSEV2VehicleSheet extends
       advancePhaseBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
-        await VehicleTurnController.advancePhase(this.actor);
+        const changed = await VehicleTurnController.advancePhase(this.actor);
+        if (changed === null) ui?.notifications?.info?.('Vehicle turn phase did not advance. Turn controller may be disabled or the turn may be complete.');
       }, { signal });
     }
 
@@ -674,22 +689,58 @@ export class SWSEV2VehicleSheet extends
     for (const btn of root.querySelectorAll('[data-action="useManeuver"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        if (!itemId || !this.actor) return;
-        const item = this.actor.items?.get(itemId);
-        if (!item) return;
-        await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: true });
+        if (!this.actor) return;
+        const ref = {
+          itemId: ev.currentTarget?.dataset?.itemId ?? null,
+          actorId: ev.currentTarget?.dataset?.actorId ?? null,
+          uuid: ev.currentTarget?.dataset?.itemUuid ?? null
+        };
+        await StarshipManeuversEngine.useManeuver(this.actor, ref);
+        await this.render();
       }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="regainManeuver"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        if (!itemId || !this.actor) return;
-        const item = this.actor.items?.get(itemId);
-        if (!item) return;
-        await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: false });
+        if (!this.actor) return;
+        const ref = {
+          itemId: ev.currentTarget?.dataset?.itemId ?? null,
+          actorId: ev.currentTarget?.dataset?.actorId ?? null,
+          uuid: ev.currentTarget?.dataset?.itemUuid ?? null
+        };
+        await StarshipManeuversEngine.regainManeuver(this.actor, ref);
+        await this.render();
+      }, { signal });
+    }
+
+    /* ---- CREW STATION SKILLS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="vehicle-crew-skill"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const station = ev.currentTarget?.dataset?.station;
+        const skill = ev.currentTarget?.dataset?.skill;
+        const weaponId = ev.currentTarget?.dataset?.weaponId;
+        if (!station || !skill || !this.actor) return;
+        await rollVehicleCrewSkill(this.actor, station, skill, {
+          weaponId,
+          skillUse: ev.currentTarget?.dataset?.use || undefined,
+          skillLabel: ev.currentTarget?.dataset?.label || undefined
+        });
+      }, { signal });
+    }
+
+    /* ---- VEHICLE IMPORT WIZARD ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="import-vehicle"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (!this.actor) return;
+        VehicleImportWizard.create({
+          actor: this.actor,
+          callback: () => this.render()
+        });
       }, { signal });
     }
 

@@ -130,7 +130,7 @@ function normalizeCategoryKey(raw) {
 }
 
 function inferDomain(categoryLabel, system) {
-  const joined = [categoryLabel, system.type, system.starshipSpeed, system.hyperdrive, system.hyperdrive_class]
+  const joined = [categoryLabel, system.type, system.starshipSpeed, system.hyperdrive_class, system.hyperdrive]
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
@@ -360,8 +360,8 @@ export function buildVehicleV2Context(actor, baseContext = {}) {
   const details = {
     challengeLevel: label(vehicle.challengeLevel),
     cover: label(vehicle.cover),
-    hyperdrive: label(firstPresent(vehicle.hyperdrive, vehicle.hyperdrive_class)),
-    backupHyperdrive: label(firstPresent(vehicle.backupHyperdrive, vehicle.backup_class)),
+    hyperdrive: label(firstPresent(vehicle.hyperdrive_class, vehicle.hyperdrive)),
+    backupHyperdrive: label(firstPresent(vehicle.backup_class, vehicle.backupHyperdrive)),
     availability: label(vehicle.availability),
     sourcebook: label(vehicle.sourcebook),
     page: label(vehicle.page)

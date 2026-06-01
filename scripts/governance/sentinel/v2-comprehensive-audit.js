@@ -88,7 +88,9 @@ export class V2ComprehensiveAudit {
       { path: 'scripts/sheets/v2/character-sheet.js', name: 'SWSEV2CharacterSheet', type: 'sheet' },
       // SWSEV2DroidSheet is deprecated/orphaned; droid actors use SWSEV2CharacterSheet.
       // SWSEV2NpcSheet is deprecated/orphaned; NPC actors use SWSEV2CharacterSheet.
-      { path: 'scripts/sheets/v2/vehicle-sheet.js', name: 'SWSEV2VehicleSheet', type: 'sheet' },
+      // { path: 'scripts/sheets/v2/npc-sheet.js', name: 'SWSEV2NpcSheet', type: 'sheet' },
+      // SWSEV2VehicleSheet is deprecated/orphaned; vehicle actors use SWSEV2CharacterSheet.
+      // { path: 'scripts/sheets/v2/vehicle-sheet.js', name: 'SWSEV2VehicleSheet', type: 'sheet' },
 
       // Applications
       { path: 'scripts/apps/dialogs/swse-dialog-v2.js', name: 'SWSEDialogV2', shouldExtend: 'SWSEApplicationV2' },

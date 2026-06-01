@@ -4,8 +4,6 @@
 // ============================================
 
 import { SWSE } from "./scripts/core/config.js";
-import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
-import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
@@ -88,25 +86,23 @@ Hooks.once("init", async () => {
   });
 
   // NPC actors intentionally use the same actor holopad/shell as characters.
-  // NPC-specific differences are layered inside the character sheet context/templates;
-  // the old NPC-only shell is deprecated and no longer registered.
+  // Nonheroic/follower/minion/beast/mount NPCs render NPC concept content inside
+  // that shell; heroic-promoted NPCs render full actor content permanently.
   Actors.registerSheet("swse", SWSEV2CharacterSheet, {
     types: ["npc"],
     label: "SWSE NPC Actor Sheet v2 (Actor Shell)",
     makeDefault: true
   });
 
-  Actors.registerSheet("swse", SWSEV2VehicleSheet, {
+  // Vehicle actors intentionally use the same actor holopad/shell as characters, droids, and NPCs.
+  // Vehicle-specific systems remain vehicle-native inside a shared actor shell; the old
+  // vehicle-only shell is deprecated and no longer registered as the default.
+  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
     types: ["vehicle"],
-    label: "SWSE Vehicle Sheet v2",
+    label: "SWSE Vehicle Actor Sheet v2 (Actor Shell)",
     makeDefault: true
   });
 
-  Actors.registerSheet("swse", SWSEVehicleSheet, {
-    types: ["vehicle"],
-    label: "SWSE Vehicle Sheet (Legacy)",
-    makeDefault: false
-  });
 
   Items.registerSheet("swse", SWSEItemSheet, {
     types: SWSE.itemTypes,

@@ -51,6 +51,15 @@ import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheet
 import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
 import { buildNpcConceptAbilities, buildNpcConceptSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc-sheet.js";
 import { applyActorSheetModeClasses, buildActorSheetModeContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/actor-sheet-mode.js";
+import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
+import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
+import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
+import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
+import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
+import { EnhancedEngineer } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-engineer.js";
+import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-pilot.js";
+import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
+import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
 import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
@@ -1912,6 +1921,17 @@ export class SWSEV2CharacterSheet extends
 
     applySheetInteractionMode(root, getStoredSheetMode(this.document));
 
+    if (this.document?.type === 'vehicle') {
+      this._wireVehicleActorModeEvents(root, signal);
+
+      if (this.actor?.id && !this._shellRouterRegistered) {
+        ShellRouter.register(this.actor.id, this);
+        this._shellRouterRegistered = true;
+      }
+      this._wireShellEvents(root, signal);
+      return;
+    }
+
     // Wire listeners to the sheet root
     this.activateListeners(root, { signal });
     activateCustomSkillsUI(this, root, { signal });
@@ -2136,9 +2156,11 @@ export class SWSEV2CharacterSheet extends
     const actorModeContext = buildActorSheetModeContext({ actor, editable: this.isEditable });
     const isDroidActor = actorModeContext.isDroidActor;
     const isNpcActor = actorModeContext.isNpcActor;
+    const isVehicleActor = actorModeContext.isVehicleActor;
     const isNpcActorDocument = actorModeContext.isNpcActorDocument;
     const isPromotedHeroicNpcActor = actorModeContext.isPromotedHeroicNpcActor;
     const useNpcConceptSheet = actorModeContext.useNpcConceptSheet;
+    const useVehicleSheet = actorModeContext.useVehicleSheet;
 
     // Sanity check: actor must be valid
     RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
@@ -2168,6 +2190,16 @@ export class SWSEV2CharacterSheet extends
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
     // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
     const derived = foundry.utils.duplicate(actor.system?.derived ?? {});
+
+    if (useVehicleSheet) {
+      return this._prepareVehicleActorSheetContext({
+        actor,
+        rawContext,
+        context,
+        actorModeContext,
+        derived
+      });
+    }
 
     if (useNpcConceptSheet) {
       try {
@@ -3415,6 +3447,8 @@ const forcePoints = [];
       isNpcActorDocument,
       isPromotedHeroicNpcActor,
       useNpcConceptSheet,
+      useVehicleSheet,
+      isVehicleActor,
       actorSheetModeLabel: actorModeContext.actorSheetMode?.label ?? (isDroidActor ? 'Droid Actor' : (isNpcActor ? 'NPC Actor' : 'Character Actor')),
       ...(droidSheetContext ? {
         droid: droidSheetContext.droid,
@@ -3503,6 +3537,415 @@ const forcePoints = [];
     this._currentContext = finalContext;
 
     return finalContext;
+  }
+
+  async _prepareVehicleActorSheetContext({ actor, context = {}, actorModeContext, derived = {} } = {}) {
+    if (actor?.type !== 'vehicle') {
+      throw new Error(`SWSEV2CharacterSheet vehicle mode requires actor type "vehicle", got "${actor?.type}"`);
+    }
+
+    const system = actor.system ?? {};
+    const cargoCapacity = Number(system?.cargo?.capacity ?? 500) || 500;
+    let totalCargoWeight = 0;
+    const cargoItems = Array.from(actor.items ?? []).filter(item => item.type === 'equipment');
+    for (const item of cargoItems) {
+      const weight = Number(item.system?.weight ?? 0) || 0;
+      const quantity = Number(item.system?.quantity ?? 1) || 1;
+      totalCargoWeight += weight * quantity;
+    }
+    const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
+
+    const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
+    const panelContext = buildVehicleSheetContext(actor, context, {
+      subsystemData: ruleContexts.subsystemData,
+      subsystemPenalties: ruleContexts.subsystemPenalties,
+      shieldZones: ruleContexts.shieldZones,
+      powerData: ruleContexts.powerData,
+      pilotData: ruleContexts.pilotData,
+      commanderData: ruleContexts.commanderData,
+      turnPhaseData: ruleContexts.turnPhaseData,
+      totalCargoWeight,
+      cargoState
+    });
+
+    let actionEconomy = null;
+    if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
+      try {
+        const combatId = game.combat.id;
+        const { ActionEconomyPersistence } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js');
+        const { ActionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js');
+        const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+        const state = ActionEngine.getVisualState(turnState);
+        const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+        const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
+        actionEconomy = { state, breakdown, enforcementMode };
+      } catch (err) {
+        swseLogger.warn('[SWSEV2CharacterSheet] Vehicle action economy context failed', {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          error: err?.message
+        });
+      }
+    }
+
+    let shellSurfaceVm = null;
+    let shellOverlayVm = null;
+    let shellDrawerVm = null;
+    const _safeCloneVm = (value) => {
+      try {
+        return foundry.utils.deepClone(value);
+      } catch (_err) {
+        return value;
+      }
+    };
+
+    if (this._shellSurface && this._shellSurface !== 'sheet') {
+      try {
+        const raw = await ShellSurfaceRegistry.buildSurfaceVm({
+          actor,
+          surfaceId: this._shellSurface,
+          surfaceOptions: this._shellSurfaceOptions,
+          shellHost: this
+        });
+        shellSurfaceVm = _safeCloneVm(raw);
+      } catch (err) {
+        swseLogger.error('[ShellHost] Vehicle surface VM build failed:', err);
+        shellSurfaceVm = { error: err.message, surfaceId: this._shellSurface };
+      }
+    }
+
+    if (this._shellOverlay) {
+      try {
+        const raw = await ShellSurfaceRegistry.buildOverlayVm({
+          actor,
+          overlayId: this._shellOverlay.overlayId,
+          overlayOptions: this._shellOverlay.options,
+          shellHost: this
+        });
+        shellOverlayVm = _safeCloneVm(raw);
+      } catch (err) {
+        swseLogger.error('[ShellHost] Vehicle overlay VM build failed:', err);
+        shellOverlayVm = { error: err.message };
+      }
+    }
+
+    if (this._shellDrawer) {
+      try {
+        const raw = await ShellSurfaceRegistry.buildDrawerVm({
+          actor,
+          drawerId: this._shellDrawer.drawerId,
+          drawerOptions: this._shellDrawer.options,
+          shellHost: this
+        });
+        shellDrawerVm = _safeCloneVm(raw);
+      } catch (err) {
+        swseLogger.error('[ShellHost] Vehicle drawer VM build failed:', err);
+        shellDrawerVm = { error: err.message };
+      }
+    }
+
+    const equipment = Array.from(actor.items ?? []).filter(item => item.type === 'equipment').map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: foundry.utils.duplicate(item.system ?? {})
+    }));
+    const weapons = Array.from(actor.items ?? []).filter(item => item.type === 'weapon').map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      img: item.img,
+      system: foundry.utils.duplicate(item.system ?? {})
+    }));
+    const ownedActorMap = {};
+    for (const entry of system.ownedActors || []) {
+      const ownedActor = game.actors?.get?.(entry.id);
+      if (ownedActor) {
+        ownedActorMap[entry.id] = {
+          id: ownedActor.id,
+          name: ownedActor.name,
+          type: ownedActor.type,
+          img: ownedActor.img
+        };
+      }
+    }
+
+    const hp = derived.hp ?? { value: 0, max: 1, percent: 0, warning: false, critical: false };
+    const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
+    const finalContext = {
+      ...context,
+      _sheetContractVersion: 1,
+      actor: {
+        id: actor.id,
+        uuid: actor.uuid,
+        name: actor.name,
+        type: actor.type,
+        img: actor.img
+      },
+      document: {
+        id: actor.id,
+        uuid: actor.uuid,
+        name: actor.name,
+        type: actor.type,
+        img: actor.img
+      },
+      system: foundry.utils.duplicate(system),
+      derived,
+      ...actorModeContext,
+      isVehicleActor: true,
+      useVehicleSheet: true,
+      actorSheetModeLabel: actorModeContext.actorSheetMode?.label ?? 'Vehicle Actor',
+      sheetTheme: sheetThemeContext.themeKey,
+      sheetThemeGroups: getActorSheetThemeGroups(sheetThemeContext.themeKey),
+      sheetMotionStyle: sheetThemeContext.motionStyle,
+      sheetMotionOptions: ThemeResolutionService.getMotionOptions(),
+      sheetThemeStyleInline: sheetThemeContext.themeStyleInline,
+      sheetMotionStyleInline: sheetThemeContext.motionStyleInline,
+      sheetSurfaceStyleInline: sheetThemeContext.surfaceStyleInline,
+      editable: this.isEditable,
+      user: {
+        id: game.user.id,
+        name: game.user.name,
+        role: game.user.role
+      },
+      actionEconomy,
+      hpPercent: Math.max(0, Math.min(100, Number(hp.percent ?? 0) || 0)),
+      hpWarning: hp.warning ?? false,
+      hpCritical: hp.critical ?? false,
+      ctWarning: Number(system?.conditionTrack?.current ?? 0) > 0,
+      cargoCapacity: Math.round(cargoCapacity * 100) / 100,
+      totalCargoWeight: Math.round(totalCargoWeight * 100) / 100,
+      cargoState,
+      items: Array.from(actor.items ?? []).map(item => ({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        img: item.img,
+        system: foundry.utils.duplicate(item.system ?? {})
+      })),
+      equipment,
+      weapons,
+      ownedActorMap,
+      ...panelContext,
+      houseRuleContexts: {
+        subsystemPanel: ruleContexts.subsystemData ? {
+          subsystemData: ruleContexts.subsystemData,
+          subsystemPenalties: ruleContexts.subsystemPenalties
+        } : null,
+        shieldPanel: ruleContexts.shieldZones ? { shieldZones: ruleContexts.shieldZones } : null,
+        powerPanel: ruleContexts.powerData || null,
+        pilotPanel: ruleContexts.pilotData || null,
+        commanderPanel: ruleContexts.commanderData || null,
+        turnPhasePanel: ruleContexts.turnPhaseData || null
+      },
+      starshipManeuvers: StarshipManeuversEngine.getManeuversForActor(actor),
+      shellSurface: this._shellSurface,
+      shellSurfaceOptions: this._shellSurfaceOptions,
+      shellOverlay: this._shellOverlay,
+      shellDrawer: this._shellDrawer,
+      shellIsSheet: this._shellSurface === 'sheet',
+      shellSurfaceVm,
+      shellOverlayVm,
+      shellDrawerVm
+    };
+
+    RenderAssertions.assertContextSerializable(finalContext, 'SWSEV2CharacterSheet.vehicle');
+    this._currentContext = finalContext;
+    return finalContext;
+  }
+
+  _requestedVehicleTab() {
+    const requested = this._shellSurfaceOptions?.tab || this.shellSurfaceOptions?.tab;
+    return typeof requested === 'string' && requested.trim() ? requested.trim() : 'overview';
+  }
+
+  _activateVehicleTab(root, tabName = 'overview') {
+    if (!(root instanceof HTMLElement)) return;
+    const requested = String(tabName || 'overview');
+    const hasRequestedTab = [...root.querySelectorAll('.sheet-content .tab')]
+      .some(tab => tab.dataset?.tab === requested);
+    const target = hasRequestedTab ? requested : 'overview';
+
+    root.querySelectorAll('.sheet-tabs .item').forEach(button => {
+      button.classList.toggle('active', button.dataset?.tab === target);
+    });
+
+    root.querySelectorAll('.sheet-content .tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset?.tab === target);
+    });
+  }
+
+  _wireVehicleActorModeEvents(root, signal) {
+    if (!(root instanceof HTMLElement)) return;
+
+    this._activateVehicleTab(root, this._requestedVehicleTab());
+
+    root.querySelectorAll('.sheet-tabs .item').forEach(tabBtn => {
+      tabBtn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const tabName = ev.currentTarget?.dataset?.tab;
+        if (!tabName) return;
+        this._activateVehicleTab(root, tabName);
+      }, { signal });
+    });
+
+    root.querySelectorAll('.swse-v2-condition-step').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const step = Number(ev.currentTarget?.dataset?.step);
+        if (!Number.isFinite(step)) return;
+        if (typeof this.actor?.setConditionTrackStep === 'function') {
+          await this.actor.setConditionTrackStep(step);
+        } else if (this.actor) {
+          await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
+        }
+      }, { signal });
+    });
+
+    const improveBtn = root.querySelector('.swse-v2-condition-improve');
+    improveBtn?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      await this.actor?.improveConditionTrack?.();
+    }, { signal });
+
+    const worsenBtn = root.querySelector('.swse-v2-condition-worsen');
+    worsenBtn?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      await this.actor?.worsenConditionTrack?.();
+    }, { signal });
+
+    root.querySelectorAll('.swse-v2-open-item').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
+        const item = this.actor?.items?.get?.(itemId);
+        item?.sheet?.render?.(true);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="open-owned"]').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        const ownedActor = actorId ? game.actors?.get?.(actorId) : null;
+        ownedActor?.sheet?.render?.(true);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="remove-owned"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (!actorId || !this.actor) return;
+        const owned = this.actor.system?.ownedActors?.filter(o => o.id !== actorId) || [];
+        await ActorEngine.updateActor(this.actor, { 'system.ownedActors': owned }, { source: 'vehicle-actor-shell-owned-actors' });
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="roll-weapon"], [data-action="roll-weapon-attack"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
+        if (!itemId || !this.actor) return;
+        const item = this.actor.items?.get?.(itemId);
+        if (!item) return;
+        if (typeof item.roll === 'function') await item.roll();
+        else await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="repair-subsystem"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const subsystem = ev.currentTarget?.dataset?.subsystem;
+        if (!subsystem || !this.actor) return;
+        await SubsystemEngine.repairSubsystem(this.actor, subsystem);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="shield-focus"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const zone = ev.currentTarget?.dataset?.zone;
+        if (!zone || !this.actor) return;
+        await EnhancedShields.focusShields(this.actor, zone);
+      }, { signal });
+    });
+
+    root.querySelector('[data-action="shield-equalize"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (!this.actor) return;
+      await EnhancedShields.equalizeShields(this.actor);
+    }, { signal });
+
+    root.querySelectorAll('[data-action="power-adjust"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const system = ev.currentTarget?.dataset?.system;
+        const direction = ev.currentTarget?.dataset?.direction;
+        if (!system || !direction || !this.actor) return;
+        const allocation = EnhancedEngineer.getPowerAllocation(this.actor);
+        const current = allocation?.[system] ?? 2;
+        allocation[system] = direction === 'up' ? Math.min(4, current + 1) : Math.max(0, current - 1);
+        await EnhancedEngineer.allocatePower(this.actor, allocation);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="set-maneuver"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const maneuver = ev.currentTarget?.dataset?.maneuver;
+        if (!maneuver || !this.actor) return;
+        await EnhancedPilot.setManeuver(this.actor, maneuver);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="set-order"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const order = ev.currentTarget?.dataset?.order;
+        if (!order || !this.actor) return;
+        await EnhancedCommander.issueOrder(this.actor, order);
+      }, { signal });
+    });
+
+    root.querySelector('[data-action="advance-phase"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (!this.actor) return;
+      await VehicleTurnController.advancePhase(this.actor);
+    }, { signal });
+
+    root.querySelector('[data-action="reset-turn"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (!this.actor) return;
+      await VehicleTurnController.startTurn(this.actor);
+    }, { signal });
+
+    root.querySelectorAll('[data-action="save-vehicle"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this._onSubmitVehicleActorForm(ev);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="customize-vehicle"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        if (!this.actor) return;
+        await this.setSurface('customization', {
+          source: 'vehicle-actor-sheet',
+          bayMode: 'shipyard',
+          mode: 'shipyard',
+          contextMode: 'modifyExisting',
+          targetActorId: this.actor.id
+        });
+        await this.requestSurfaceRender({
+          reason: 'vehicle-actor-sheet-shipyard-launch',
+          surfaceId: 'customization'
+        });
+      }, { signal });
+    });
   }
 
   /* ============================================================
@@ -6546,7 +6989,70 @@ const forcePoints = [];
    * @param {Event} event - Form submission event
    * @returns {Promise<void>}
    */
+
+  async _onSubmitVehicleActorForm(event) {
+    event?.preventDefault?.();
+    const writableExact = new Set([
+      'name',
+      'img',
+      'system.category',
+      'system.type',
+      'system.size',
+      'system.challengeLevel',
+      'system.cost',
+      'system.availability',
+      'system.hull.value',
+      'system.hull.max',
+      'system.shields.value',
+      'system.shields.max',
+      'system.shieldRating',
+      'system.damageReduction',
+      'system.reflexDefense',
+      'system.fortitudeDefense',
+      'system.damageThreshold',
+      'system.armorBonus',
+      'system.speed',
+      'system.maxVelocity',
+      'system.maneuver',
+      'system.hyperdrive',
+      'system.crew',
+      'system.crewQuality',
+      'system.passengers',
+      'system.cargo',
+      'system.payload',
+      'system.cover',
+      'system.notes',
+      'system.description',
+      'system.details.notes'
+    ]);
+    const writablePatterns = [
+      /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
+      /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
+    ];
+    const isWritable = (path) => writableExact.has(path) || writablePatterns.some(pattern => pattern.test(path));
+    const root = this.element instanceof HTMLElement ? this.element : null;
+    const source = event?.target?.closest?.('form') || root;
+    if (!source) return;
+
+    const allowed = {};
+    source.querySelectorAll?.('[name]')?.forEach((field) => {
+      const path = field.getAttribute('name');
+      if (!path || !isWritable(path)) return;
+      if (field.type === 'checkbox') allowed[path] = field.checked;
+      else allowed[path] = field.value;
+    });
+
+    if (!Object.keys(allowed).length) return;
+    const expanded = foundry.utils.expandObject(allowed);
+    await ActorEngine.updateActor(this.actor, expanded, {
+      source: 'vehicle-actor-shell-form-submit'
+    });
+  }
+
   async _onSubmitForm(event) {
+    if (this.document?.type === 'vehicle') {
+      return await this._onSubmitVehicleActorForm(event);
+    }
     // Phase 8: Delegate form submission to focused form module
     return await handleFormSubmission(this, event);
   }

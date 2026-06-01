@@ -1,0 +1,125 @@
+<section class="swse-vehicle-import-wizard">
+  <header class="swse-vehicle-import-header">
+    <div>
+      <div class="swse-vehicle-import-kicker">VEHICLE ARCHIVE IMPORT</div>
+      <h1>Import Vehicle</h1>
+    </div>
+    <button type="button" class="swse-vehicle-import-close" data-action="close">×</button>
+  </header>
+
+  <nav class="swse-vehicle-import-steps">
+    {{#each steps as |step|}}
+      <div class="swse-vehicle-import-step {{#if step.active}}is-active{{/if}} {{#if step.complete}}is-complete{{/if}}">
+        <span>{{step.num}}</span>
+        <div><strong>{{step.label}}</strong><small>{{step.meta}}</small></div>
+      </div>
+    {{/each}}
+  </nav>
+
+  {{#if error}}
+    <div class="swse-vehicle-import-error">{{error}}</div>
+  {{/if}}
+
+  <div class="swse-vehicle-import-body">
+    {{#if (eq step "browse")}}
+      <div class="swse-vehicle-import-filters">
+        <input type="search" data-field="search" value="{{query}}" placeholder="Search CR90, X-Wing, AT-ST, speeder bike..."/>
+        <select data-field="type">
+          <option value="">All Types</option>
+          {{#each filters.types as |type|}}<option value="{{type.value}}" {{#if (eq @root.selectedType type.value)}}selected{{/if}}>{{type.label}}</option>{{/each}}
+        </select>
+        <select data-field="pack">
+          <option value="">All Packs</option>
+          {{#each filters.packs as |pack|}}<option value="{{pack.value}}" {{#if (eq @root.selectedPack pack.value)}}selected{{/if}}>{{pack.label}}</option>{{/each}}
+        </select>
+        <select data-field="sort">
+          <option value="name" {{#if (eq selectedSort "name")}}selected{{/if}}>Sort: Name</option>
+          <option value="type" {{#if (eq selectedSort "type")}}selected{{/if}}>Sort: Type</option>
+          <option value="pack" {{#if (eq selectedSort "pack")}}selected{{/if}}>Sort: Pack</option>
+        </select>
+      </div>
+      <div class="swse-vehicle-import-results">
+        {{#each results as |entry|}}
+          <article class="swse-vehicle-import-row {{#if (eq @root.selected.id entry.id)}}is-selected{{/if}}" data-vehicle-entry-id="{{entry.id}}">
+            <img src="{{entry.img}}" alt="{{entry.name}}"/>
+            <div>
+              <h3>{{entry.name}}</h3>
+              <div class="swse-vehicle-import-meta">
+                <span>{{entry.type}}</span>
+                {{#if entry.category}}<span>{{entry.category}}</span>{{/if}}
+                {{#if entry.size}}<span>{{entry.size}}</span>{{/if}}
+                <span>{{entry.packLabel}}</span>
+              </div>
+            </div>
+          </article>
+        {{else}}
+          <div class="swse-vehicle-import-empty">No vehicles found in the canonical packs.</div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if (eq step "preview")}}
+      {{#if preview}}
+        <div class="swse-vehicle-import-preview">
+          <img src="{{preview.img}}" alt="{{preview.name}}"/>
+          <div class="swse-vehicle-import-preview-main">
+            <h2>{{preview.name}}</h2>
+            <div class="swse-vehicle-import-preview-grid">
+              <div><span>Pack</span><strong>{{preview.pack}}</strong></div>
+              <div><span>Type</span><strong>{{preview.type}}</strong></div>
+              <div><span>Category</span><strong>{{preview.category}}</strong></div>
+              <div><span>Size</span><strong>{{preview.size}}</strong></div>
+              <div><span>Crew</span><strong>{{preview.crew}}</strong></div>
+              <div><span>Cargo</span><strong>{{preview.cargo}}</strong></div>
+              <div><span>Hyperdrive</span><strong>{{preview.hyperdrive}}</strong></div>
+              <div><span>SR</span><strong>{{preview.sr}}</strong></div>
+              <div><span>CL</span><strong>{{preview.cl}}</strong></div>
+              <div><span>Cost</span><strong>{{preview.cost}}</strong></div>
+              <div class="wide"><span>Speed</span><strong>{{preview.speed}}</strong></div>
+            </div>
+          </div>
+        </div>
+      {{else}}
+        <div class="swse-vehicle-import-empty">Select a vehicle first.</div>
+      {{/if}}
+    {{/if}}
+
+    {{#if (eq step "mode")}}
+      <div class="swse-vehicle-import-mode-grid">
+        <button type="button" class="swse-vehicle-import-mode {{#if (eq mode "replace")}}is-selected{{/if}}" data-mode="replace">
+          <strong>Replace Statblock</strong>
+          <span>Replace this vehicle's system data with the selected compendium vehicle.</span>
+        </button>
+        <button type="button" class="swse-vehicle-import-mode {{#if (eq mode "merge")}}is-selected{{/if}}" data-mode="merge">
+          <strong>Merge Fields</strong>
+          <span>Apply the selected vehicle fields over the current vehicle without replacing the whole actor object.</span>
+        </button>
+      </div>
+      <div class="swse-vehicle-import-preserve">
+        <label><input type="checkbox" name="preserve.name" {{#if preserve.name}}checked{{/if}}/> Preserve current name</label>
+        <label><input type="checkbox" name="preserve.image" {{#if preserve.image}}checked{{/if}}/> Preserve current image</label>
+      </div>
+    {{/if}}
+
+    {{#if (eq step "confirm")}}
+      <div class="swse-vehicle-import-confirm">
+        <h2>Confirm Import</h2>
+        {{#if preview}}
+          <p>Apply <strong>{{preview.name}}</strong> to <strong>{{actor.name}}</strong> using <strong>{{mode}}</strong> mode.</p>
+          <p>This uses the Vehicle Import Engine and ActorEngine update pathway.</p>
+        {{else}}
+          <p>No vehicle selected.</p>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+
+  <footer class="swse-vehicle-import-footer">
+    <button type="button" class="swse-vehicle-action-btn" data-action="back" {{#unless canBack}}disabled{{/unless}}>Back</button>
+    {{#if (eq step "confirm")}}
+      <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="apply" {{#unless canApply}}disabled{{/unless}}>Apply Import</button>
+    {{else}}
+      <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="next" {{#unless canNext}}disabled{{/unless}}>Next</button>
+    {{/if}}
+  </footer>
+</section>

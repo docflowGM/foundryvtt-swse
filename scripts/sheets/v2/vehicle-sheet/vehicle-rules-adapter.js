@@ -25,21 +25,12 @@ export class VehicleRulesAdapter {
    * @returns {Object|null} Subsystem data or null
    */
   static buildSubsystemData(actor) {
-    // Check if rule is enabled
-    try {
-      if (!SubsystemEngine.enabled) {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-
-    // Rule is enabled; fetch data from engine
     try {
       const subsystems = SubsystemEngine.getSubsystems(actor);
       const penalties = SubsystemEngine.getAggregatePenalties(actor);
 
       return {
+        enabled: Boolean(SubsystemEngine.enabled),
         subsystemData: subsystems,
         subsystemPenalties: penalties
       };
@@ -57,23 +48,12 @@ export class VehicleRulesAdapter {
    * @returns {Object|null} Shield zone data or null
    */
   static buildShieldData(actor) {
-    // Check if rule is enabled
-    try {
-      if (!EnhancedShields.enabled) {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-
-    // Rule is enabled; fetch data from the existing shield engine.
     try {
       const shieldZones = EnhancedShields.getShieldState(actor);
-      if (!shieldZones) {
-        return null;
-      }
+      if (!shieldZones) return null;
 
       return {
+        enabled: Boolean(EnhancedShields.enabled),
         shieldZones
       };
     } catch (err) {
@@ -90,20 +70,13 @@ export class VehicleRulesAdapter {
    */
   static buildPowerData(actor) {
     try {
-      if (!EnhancedEngineer.enabled) {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-
-    try {
       const allocation = EnhancedEngineer.getPowerAllocation(actor);
       const budget = allocation?.budget ?? EnhancedEngineer.getPowerBudget(actor);
       const allocated = allocation?.spent ?? ((allocation?.weapons ?? 0) + (allocation?.shields ?? 0) + (allocation?.engines ?? 0));
 
       return {
         powerData: {
+          enabled: Boolean(EnhancedEngineer.enabled),
           budget,
           allocated,
           available: Math.max(0, budget - allocated),
@@ -129,18 +102,11 @@ export class VehicleRulesAdapter {
    */
   static buildPilotData(actor) {
     try {
-      if (!EnhancedPilot.enabled) {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-
-    try {
       const currentManeuver = EnhancedPilot.getCurrentManeuver(actor);
 
       return {
         pilotData: {
+          enabled: Boolean(EnhancedPilot.enabled),
           currentManeuver
         }
       };
@@ -158,18 +124,11 @@ export class VehicleRulesAdapter {
    */
   static buildCommanderData(actor) {
     try {
-      if (!EnhancedCommander.enabled) {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-
-    try {
       const currentOrder = EnhancedCommander.getCurrentOrder(actor);
 
       return {
         commanderData: {
+          enabled: Boolean(EnhancedCommander.enabled),
           currentOrder
         }
       };
@@ -187,18 +146,11 @@ export class VehicleRulesAdapter {
    */
   static buildTurnPhaseData(actor) {
     try {
-      if (!VehicleTurnController.enabled) {
-        return null;
-      }
-    } catch {
-      return null;
-    }
-
-    try {
       const turnState = VehicleTurnController.getTurnState(actor);
 
       return {
         turnPhaseData: {
+          enabled: Boolean(VehicleTurnController.enabled),
           turnState
         }
       };

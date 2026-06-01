@@ -1,0 +1,295 @@
+{{!-- Vehicle actor operational content; hosted by SWSEV2VehicleSheet or the shared actor shell. --}}
+<div class="swse-vehicle-actor-content swse-vehicle-sheet swse-vehicle-shell swse-vehicle-command-deck swse-vehicle-concept-sheet {{vehicleTypeFlags.cssClass}} v2 flexcol" data-vehicle-actor-content="true" data-vehicle-type="{{vehicleTypeFlags.vehicleType}}">
+<header class="sheet-header swse-ui-frame swse-vehicle-concept-header">
+    <div class="swse-vehicle-concept-portrait">
+      <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
+    </div>
+
+    <div class="swse-vehicle-concept-identity">
+      <div class="swse-vehicle-concept-kicker">VEHICLE DATAPAD // {{vehicleTypeFlags.typeLabel}}</div>
+      {{#if editable}}
+        <input class="swse-vehicle-name-input swse-vehicle-concept-name-input" name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
+      {{else}}
+        <h1 class="swse-vehicle-concept-name">{{actor.name}}</h1>
+      {{/if}}
+      <div class="swse-vehicle-concept-tags">
+        <span class="swse-vehicle-chip swse-vehicle-chip--type">{{vehiclePanels.headerSummaryPanel.typeLabel}}</span>
+        {{#if vehiclePanels.headerSummaryPanel.sizeLabel}}<span class="swse-vehicle-chip">{{vehiclePanels.headerSummaryPanel.sizeLabel}}</span>{{/if}}
+        {{#if vehiclePanels.headerSummaryPanel.category}}<span class="swse-vehicle-chip">{{vehiclePanels.headerSummaryPanel.category}}</span>{{/if}}
+        {{#if vehicleTypeFlags.supportsHyperdrive}}<span class="swse-vehicle-chip swse-vehicle-chip--positive">Hyperdrive</span>{{/if}}
+        {{#if vehicleTypeFlags.supportsShields}}<span class="swse-vehicle-chip swse-vehicle-chip--positive">Shields</span>{{/if}}
+      </div>
+    </div>
+
+    <div class="swse-vehicle-concept-actions">
+      <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">Shipyard</button>
+      {{#if editable}}
+        <button type="button" class="swse-vehicle-action-btn" data-action="import-vehicle">Import Vehicle</button>
+        <button type="submit" class="swse-vehicle-action-btn" data-action="save-vehicle">Save</button>
+      {{/if}}
+    </div>
+  </header>
+
+  <section class="swse-vehicle-resource-strip" aria-label="Vehicle resource strip">
+    {{#each vehicleResourceStrip.entries as |resource|}}
+      <div class="swse-vehicle-resource swse-vehicle-resource--{{resource.tone}}">
+        <div class="swse-vehicle-resource__label">{{resource.label}}</div>
+        {{#if resource.bar}}
+          <div class="swse-vehicle-resource__bar"><span style="width: {{resource.bar}}%"></span></div>
+        {{/if}}
+        <div class="swse-vehicle-resource__value">{{resource.value}}</div>
+        {{#if resource.badge}}<div class="swse-vehicle-mini-badge swse-vehicle-mini-badge--gap">{{resource.badge}}</div>{{/if}}
+      </div>
+    {{/each}}
+  </section>
+
+  <section class="sheet-body flexcol swse-vehicle-concept-body-shell">
+
+    <nav class="sheet-tabs tabs flexrow swse-ui-tabs swse-vehicle-tabs swse-vehicle-concept-tabs" data-group="primary">
+      {{#each vehicleConceptTabs as |tab|}}
+        <a class="item {{#if tab.active}}active{{/if}} {{#if tab.gm}}swse-vehicle-tab--gm{{/if}}" data-tab="{{tab.key}}">
+          {{tab.label}}
+          {{#if tab.badge}}<span class="swse-vehicle-tab-badge">{{tab.badge}}</span>{{/if}}
+        </a>
+      {{/each}}
+    </nav>
+
+    <section class="sheet-content swse-vehicle-content swse-vehicle-concept-content">
+
+      <section class="tab active flexcol" data-group="primary" data-tab="overview">
+        <div class="swse-vehicle-overview-grid">
+          <div class="swse-vehicle-overview-col">
+            {{#if vehiclePanels.headerSummaryPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs" panel=vehiclePanels.headerSummaryPanel}}
+            {{/if}}
+            {{#if vehiclePanels.hpConditionPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs" panel=vehiclePanels.hpConditionPanel}}
+            {{/if}}
+          </div>
+
+          <div class="swse-vehicle-scanner-col">
+            <div class="swse-vehicle-scanner swse-vehicle-panel">
+              <div class="swse-vehicle-scanner__ring swse-vehicle-scanner__ring--1"></div>
+              <div class="swse-vehicle-scanner__ring swse-vehicle-scanner__ring--2"></div>
+              <div class="swse-vehicle-scanner__crosshair swse-vehicle-scanner__crosshair--h"></div>
+              <div class="swse-vehicle-scanner__crosshair swse-vehicle-scanner__crosshair--v"></div>
+              <div class="swse-vehicle-scanner__sweep"></div>
+              <img src="{{actor.img}}" alt="{{actor.name}}"/>
+              <div class="swse-vehicle-scanner-caption">{{vehicleTypeFlags.typeLabel}}</div>
+            </div>
+            <div class="swse-vehicle-panel swse-vehicle-mini-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Flight Profile</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+                <div><span>Mode</span><strong>{{parsedSpeed.mode}}</strong></div>
+                <div><span>Character Scale</span><strong>{{parsedSpeed.character}}</strong></div>
+                <div><span>Starship Scale</span><strong>{{parsedSpeed.starship}}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="swse-vehicle-overview-col">
+            {{#if vehiclePanels.defensesPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs" panel=vehiclePanels.defensesPanel}}
+            {{/if}}
+            {{#if vehiclePanels.crewSummaryPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="swse-vehicle-overview-bottom">
+          {{#if vehiclePanels.cargoSummaryPanel}}
+            <div class="swse-vehicle-overview-bottom__item">{{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}</div>
+          {{/if}}
+          {{#if vehicleTypeFlags.supportsShipyard}}
+            <div class="swse-vehicle-panel swse-vehicle-overview-bottom__item swse-vehicle-shipyard-callout">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Shipyard</h3><span class="swse-vehicle-mini-badge">Operational Gateway</span></header>
+              <div class="swse-vehicle-panel-body">
+                <p>Vehicle sheet is the operational view. Purchases, refits, component installs, removals, and rebuilds belong in Shipyard.</p>
+                <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">Open Shipyard</button>
+              </div>
+            </div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="tab flexcol" data-group="primary" data-tab="stats">
+        <div class="swse-vehicle-stats-grid">
+          <div class="swse-vehicle-stats-col">
+            {{> "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/abilities-panel.hbs"}}
+            {{#if vehiclePanels.hpConditionPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs" panel=vehiclePanels.hpConditionPanel}}
+            {{/if}}
+          </div>
+          <div class="swse-vehicle-stats-col">
+            {{#if vehiclePanels.defensesPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs" panel=vehiclePanels.defensesPanel}}
+            {{/if}}
+            {{#if vehiclePanels.shieldManagementPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldManagementPanel}}
+            {{else}}
+              <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Shields</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Enhanced shield management is designed and will populate here when its rule context is active.</div></div>
+            {{/if}}
+            {{#if vehiclePanels.powerSummaryPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs" panel=vehiclePanels.powerSummaryPanel}}
+            {{/if}}
+          </div>
+        </div>
+      </section>
+
+      <section class="tab flexcol" data-group="primary" data-tab="crew">
+        {{#if vehiclePanels.crewSummaryPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
+        {{/if}}
+        {{#if vehiclePanels.crewAssignmentPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs" panel=vehiclePanels.crewAssignmentPanel}}
+        {{/if}}
+        {{#if vehiclePanels.commanderOrderPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs" panel=vehiclePanels.commanderOrderPanel}}
+        {{else}}
+          {{#if vehicleTypeFlags.supportsCrewCommandPanel}}
+            <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Commander Orders</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Commander order rules are not active yet. This area intentionally surfaces that gap instead of hiding the command deck.</div></div>
+          {{/if}}
+        {{/if}}
+      </section>
+
+      <section class="tab flexcol" data-group="primary" data-tab="cargo">
+        {{#if vehiclePanels.cargoSummaryPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
+        {{/if}}
+        {{#if vehiclePanels.cargoManifestPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs" panel=vehiclePanels.cargoManifestPanel}}
+        {{/if}}
+      </section>
+
+      {{#if vehicleTypeFlags.supportsManeuversTab}}
+      <section class="tab flexcol" data-group="primary" data-tab="maneuvers">
+        <div class="swse-vehicle-panel">
+          <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Starship Maneuvers</h3></header>
+          <div class="swse-vehicle-panel-body">
+            {{#if starshipManeuvers.length}}
+              <div class="swse-vehicle-card-list">
+                {{#each starshipManeuvers as |maneuver|}}
+                  <article class="swse-vehicle-list-card {{#if maneuver.spent}}is-spent{{/if}}">
+                    <div class="swse-vehicle-list-card-main">
+                      <strong>{{maneuver.name}}</strong>
+                      <span>{{maneuver.system.summary}}</span>
+                      <div class="swse-vehicle-card-meta">
+                        <span class="swse-vehicle-mini-badge">{{maneuver.sourceLabel}}</span>
+                        <span class="swse-vehicle-mini-badge">{{maneuver.system.action}}</span>
+                        {{#if maneuver.spent}}<span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">Spent</span>{{/if}}
+                      </div>
+                    </div>
+                    <div class="swse-vehicle-card-actions">
+                      {{#if maneuver.spent}}
+                        <button type="button" class="swse-vehicle-action-btn" data-action="regainManeuver" data-item-id="{{maneuver.itemId}}" data-actor-id="{{maneuver.actorId}}" data-item-uuid="{{maneuver.uuid}}">Ready</button>
+                      {{else}}
+                        <button type="button" class="swse-vehicle-action-btn" data-action="useManeuver" data-item-id="{{maneuver.itemId}}" data-actor-id="{{maneuver.actorId}}" data-item-uuid="{{maneuver.uuid}}">Use</button>
+                      {{/if}}
+                    </div>
+                  </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <p>No starship maneuvers are available from the vehicle or assigned crew.</p>
+            {{/if}}
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if vehicleTypeFlags.supportsOperationsTab}}
+      <section class="tab flexcol" data-group="primary" data-tab="operations">
+        {{#if actionEconomy}}
+          {{> "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/action-economy-indicator.hbs"
+              actionState=actionEconomy.state
+              actionBreakdown=actionEconomy.breakdown
+              swiftMax=actionEconomy.state.swiftMax}}
+        {{/if}}
+        {{#if vehiclePanels.weaponMountPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
+        {{/if}}
+        {{#if vehiclePanels.turnPhasePanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs" panel=vehiclePanels.turnPhasePanel}}
+        {{/if}}
+        {{#if vehiclePanels.pilotManeuverPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs" panel=vehiclePanels.pilotManeuverPanel}}
+        {{else}}
+          <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Pilot Maneuvers</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Enhanced Pilot data is not active yet. Basic station skill actions remain available from the crew tab.</div></div>
+        {{/if}}
+        {{#if vehiclePanels.subsystemDetailPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs" panel=vehiclePanels.subsystemDetailPanel}}
+        {{else}}
+          {{#if vehicleTypeFlags.supportsSubsystems}}
+            <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Subsystems</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Capital subsystem context is pending. This panel is intentionally reserved for the enhanced subsystem engine.</div></div>
+          {{/if}}
+        {{/if}}
+      </section>
+      {{/if}}
+
+      {{#if editable}}
+        <section class="tab flexcol" data-group="primary" data-tab="edit">
+          <div class="swse-vehicle-edit-grid">
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Identity</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Category<input name="system.category" type="text" value="{{editContext.identity.category}}"/></label>
+                <label>Type<input name="system.type" type="text" value="{{editContext.identity.type}}"/></label>
+                <label>Size<input name="system.size" type="text" value="{{editContext.identity.size}}"/></label>
+                <label>Challenge Level<input name="system.challengeLevel" type="number" value="{{editContext.details.challengeLevel}}" data-dtype="Number"/></label>
+                <label>Cost<input name="system.cost" type="text" value="{{editContext.details.cost}}"/></label>
+                <label>Availability<input name="system.availability" type="text" value="{{editContext.details.availability}}"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Hull / Shields</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Hull Current<input name="system.hull.value" type="number" value="{{editContext.hull.value}}" data-dtype="Number"/></label>
+                <label>Hull Max<input name="system.hull.max" type="number" value="{{editContext.hull.max}}" data-dtype="Number"/></label>
+                <label>Shield Current<input name="system.shields.value" type="number" value="{{editContext.shields.value}}" data-dtype="Number"/></label>
+                <label>Shield Max<input name="system.shields.max" type="number" value="{{editContext.shields.max}}" data-dtype="Number"/></label>
+                <label>Shield Rating<input name="system.shieldRating" type="text" value="{{editContext.shields.sr}}"/></label>
+                <label>Damage Reduction<input name="system.damageReduction" type="number" value="{{editContext.defenses.damageReduction}}" data-dtype="Number"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Defenses / Movement</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Reflex Defense<input name="system.reflexDefense" type="number" value="{{editContext.defenses.reflex}}" data-dtype="Number"/></label>
+                <label>Fortitude Defense<input name="system.fortitudeDefense" type="number" value="{{editContext.defenses.fortitude}}" data-dtype="Number"/></label>
+                <label>Damage Threshold<input name="system.damageThreshold" type="number" value="{{editContext.defenses.damageThreshold}}" data-dtype="Number"/></label>
+                <label>Armor Bonus<input name="system.armorBonus" type="number" value="{{editContext.defenses.armorBonus}}" data-dtype="Number"/></label>
+                <label>Speed<input name="system.speed" type="text" value="{{editContext.movement.speed}}"/></label>
+                <label>Max Velocity<input name="system.maxVelocity" type="text" value="{{editContext.movement.maxVelocity}}"/></label>
+                <label>Maneuver<input name="system.maneuver" type="text" value="{{editContext.movement.maneuver}}"/></label>
+                <label>Hyperdrive<input name="system.hyperdrive_class" type="text" value="{{system.hyperdrive_class}}"/></label>
+                <label>Backup Hyperdrive<input name="system.backup_class" type="text" value="{{system.backup_class}}"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Crew / Cargo</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Crew<input name="system.crew" type="text" value="{{editContext.crew.crew}}"/></label>
+                <label>Crew Quality<input name="system.crewQuality" type="text" value="{{editContext.crew.crewQuality}}"/></label>
+                <label>Passengers<input name="system.passengers" type="text" value="{{editContext.crew.passengers}}"/></label>
+                <label>Cargo<input name="system.cargo" type="text" value="{{editContext.crew.cargo}}"/></label>
+                <label>Payload<input name="system.payload" type="text" value="{{editContext.crew.payload}}"/></label>
+                <label>Cover<input name="system.cover" type="text" value="{{editContext.details.cover}}"/></label>
+              </div>
+            </section>
+          </div>
+        </section>
+      {{/if}}
+
+    </section>
+  </section>
+
+  {{#if vehicleAnnotation.visible}}
+    <footer class="swse-vehicle-annotation-bar">
+      {{#each vehicleAnnotation.chips as |chip|}}<span>{{chip.label}}</span>{{/each}}
+    </footer>
+  {{/if}}
+</div>

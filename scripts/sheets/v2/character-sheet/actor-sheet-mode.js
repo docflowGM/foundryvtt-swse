@@ -1,7 +1,7 @@
 /**
  * Actor sheet mode helpers for SWSEV2CharacterSheet.
  *
- * Player characters, player droids, and NPCs intentionally share the same
+ * Player characters, player droids, NPCs, and vehicles intentionally share the same
  * actor holopad/shell implementation. Actor-type differences are layered as
  * mode flags inside the shared character sheet instead of maintaining separate
  * shell stacks with duplicated chrome controls.
@@ -47,6 +47,16 @@ const ACTOR_MODE_CONFIG = {
     bottomEngraving: 'CEC ID 31 - CLASS A - NPC ACTOR SHELL',
     title: 'NPC Dossier',
     identityLabel: 'Species'
+  },
+  vehicle: {
+    id: 'vehicle',
+    label: 'Vehicle Actor',
+    shellClass: 'vehicle-actor',
+    dragTitle: 'Drag vehicle datapad. Double-click to minimize.',
+    dragLabel: 'Vehicle datapad drag rail. Double-click to minimize.',
+    bottomEngraving: 'CEC ID 31 - CLASS A - VEHICLE ACTOR SHELL',
+    title: 'Vehicle Dossier',
+    identityLabel: 'Frame'
   }
 };
 
@@ -105,6 +115,10 @@ export function isNpcActor(actor) {
   return normalizeActorType(actor) === 'npc';
 }
 
+export function isVehicleActor(actor) {
+  return normalizeActorType(actor) === 'vehicle';
+}
+
 export function buildActorSheetModeContext({ actor, editable = false } = {}) {
   const actorType = normalizeActorType(actor);
   const actorDocumentType = normalizeKey(actor?.type || actorType);
@@ -112,15 +126,18 @@ export function buildActorSheetModeContext({ actor, editable = false } = {}) {
   const config = ACTOR_MODE_CONFIG[actorType] ?? ACTOR_MODE_CONFIG.character;
   const droid = actorType === 'droid';
   const npc = actorType === 'npc';
+  const vehicle = actorType === 'vehicle';
   const shellClass = promotedHeroicNpc ? 'heroic-npc-actor' : config.shellClass;
 
   return {
     isDroidActor: droid,
     isNpcActor: npc,
+    isVehicleActor: vehicle,
     isNpcActorDocument: actorDocumentType === 'npc',
     isPromotedHeroicNpcActor: promotedHeroicNpc,
     isCharacterActor: actorType === 'character',
     useNpcConceptSheet: npc,
+    useVehicleSheet: vehicle,
     actorSheetMode: {
       id: config.id,
       actorType,
@@ -131,7 +148,9 @@ export function buildActorSheetModeContext({ actor, editable = false } = {}) {
       editable: Boolean(editable),
       promotedHeroicNpc,
       useNpcConceptSheet: npc,
-      showCharacterSheetContent: !npc,
+      useVehicleSheet: vehicle,
+      showCharacterSheetContent: !npc && !vehicle,
+      showVehicleSheetContent: vehicle,
       // Phase 3+ consumes these flags to alter actor-sheet content while keeping
       // the physical shell identical across character, droid, and NPC actors.
       hideSpeciesSection: droid,
@@ -140,6 +159,9 @@ export function buildActorSheetModeContext({ actor, editable = false } = {}) {
       droidSystemsReadOnly: droid,
       droidSystemsModificationSurface: droid ? 'garage' : null,
       showNpcControls: npc,
+      showVehicleControls: vehicle,
+      vehicleReadOnlySheet: vehicle,
+      vehicleModificationSurface: vehicle ? 'shipyard' : null,
       identityLabel: config.identityLabel
     },
     actorSheetFrame: {
@@ -149,8 +171,8 @@ export function buildActorSheetModeContext({ actor, editable = false } = {}) {
         `swse-actor-sheet-wrapper--${config.id}`,
         `swse-actor-sheet-wrapper--${shellClass}`
       ].join(' '),
-      dataSheetForm: 'character',
-      conceptSource: promotedHeroicNpc ? 'assets/Concept/Character Sheet v2.html' : (npc ? 'assets/Concept/NPC Concept Sheet.html' : 'assets/Concept/Character Sheet v2.html'),
+      dataSheetForm: vehicle ? 'vehicle' : 'character',
+      conceptSource: vehicle ? 'assets/Concept/Shipyard Builder.html' : (promotedHeroicNpc ? 'assets/Concept/Character Sheet v2.html' : (npc ? 'assets/Concept/NPC Concept Sheet.html' : 'assets/Concept/Character Sheet v2.html')),
       shellExtraClass: `swse-shell--${shellClass}`,
       tabletExtraClass: `swse-tablet--${shellClass}`,
       screenExtraClass: `swse-screen--${shellClass}`,
@@ -185,6 +207,7 @@ export function applyActorSheetModeClasses(root, actor) {
   root.dataset.promotedHeroicNpc = promotedHeroicNpc ? 'true' : 'false';
   root.classList.toggle('swse-sheet-actor-mode--droid', actorType === 'droid');
   root.classList.toggle('swse-sheet-actor-mode--npc', actorType === 'npc');
+  root.classList.toggle('swse-sheet-actor-mode--vehicle', actorType === 'vehicle');
   root.classList.toggle('swse-sheet-actor-mode--character', actorType === 'character');
   root.classList.toggle('swse-sheet-actor-mode--heroic-npc', promotedHeroicNpc);
 
@@ -196,6 +219,7 @@ export function applyActorSheetModeClasses(root, actor) {
     sheetShell.dataset.promotedHeroicNpc = promotedHeroicNpc ? 'true' : 'false';
     sheetShell.classList.toggle('swse-shell-actor-mode--droid', actorType === 'droid');
     sheetShell.classList.toggle('swse-shell-actor-mode--npc', actorType === 'npc');
+    sheetShell.classList.toggle('swse-shell-actor-mode--vehicle', actorType === 'vehicle');
     sheetShell.classList.toggle('swse-shell-actor-mode--character', actorType === 'character');
     sheetShell.classList.toggle('swse-shell-actor-mode--heroic-npc', promotedHeroicNpc);
     sheetShell.classList.add(`swse-shell--${activeShellClass}`);
