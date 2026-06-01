@@ -1,346 +1,348 @@
-{{!-- Droid Builder Work Surface — Progression Framework Integration --}}
-{{!-- Displays chassis configuration interface with systems, pricing, and build totals --}}
+{{!-- Droid Chassis Builder — Garage-style construction work surface --}}
+{{!-- Phase 3: three-rail visual layout using builderVm while preserving existing step actions. --}}
 
-<div class="prog-droid-builder swse-droid-builder-surface swse-ui-shell prog-droid-builder--datapad">
+{{#if builderVm}}
+<div class="prog-droid-builder prog-droid-builder--garage swse-droid-builder-surface swse-ui-shell" data-builder-mode="{{builderVm.contextMode}}">
   <div class="prog-droid-builder__hud">
-    <div class="prog-droid-builder__hud-tag"><span class="prog-droid-builder__hud-dot"></span>ASSEMBLY BUS</div>
-    <div class="prog-droid-builder__hud-tag">CHASSIS CONFIG</div>
-    <div class="prog-droid-builder__hud-tag prog-droid-builder__hud-tag--serial">DEG {{presentation.droidInfo.degree}} · SIZE {{presentation.droidInfo.size}}</div>
-  </div>
-  {{!-- BUILDER HEADER --}}
-  <div class="prog-droid-builder__header">
-    <h2 class="prog-droid-builder__title">{{presentation.title}}</h2>
-    <p class="prog-droid-builder__subtitle">{{presentation.subtitle}}</p>
+    <div class="prog-droid-builder__hud-tag"><span class="prog-droid-builder__hud-dot"></span>GARAGE CONSTRUCTION MODE</div>
+    <div class="prog-droid-builder__hud-tag">CHASSIS BUILDER</div>
+    <div class="prog-droid-builder__hud-tag prog-droid-builder__hud-tag--serial">{{builderVm.chassis.degreeLabel}} · {{builderVm.chassis.sizeLabel}}</div>
   </div>
 
-  {{!-- BUILD METRICS BANNER --}}
-  <div class="prog-droid-builder__datapad-note">Configure locomotion, processor, appendages, and accessories before final unit registration.</div>
-  {{#if presentation.availableSystems.constraintNote}}
-    <div class="prog-droid-builder__constraint-note">{{presentation.availableSystems.constraintNote}}</div>
-  {{/if}}
-  <div class="prog-droid-builder__metrics">
-    <div class="metric-chip">
-      <span class="metric-label">Systems</span>
-      <span class="metric-value">{{presentation.buildTotals.systemCount}}</span>
+  <header class="prog-droid-builder__header prog-droid-builder__garage-header">
+    <div>
+      <h2 class="prog-droid-builder__title">{{builderVm.title}}</h2>
+      <p class="prog-droid-builder__subtitle">{{builderVm.subtitle}}</p>
     </div>
-    <div class="metric-chip">
-      <span class="metric-label">Cost</span>
-      <span class="metric-value">{{presentation.buildTotals.totalCost}} cr</span>
+    <div class="prog-droid-builder__badge prog-droid-builder__badge--{{builderVm.validation.tone}}">
+      {{builderVm.validation.summary}}
     </div>
-    <div class="metric-chip">
-      <span class="metric-label">Weight</span>
-      <span class="metric-value">{{presentation.buildTotals.totalWeight}} kg</span>
-    </div>
-    <div class="metric-chip {{#if (lt presentation.buildTotals.creditsRemaining 0)}}metric-chip--warning{{/if}}">
-      <span class="metric-label">Credits Remaining</span>
-      <span class="metric-value">{{presentation.buildTotals.creditsRemaining}} cr</span>
-    </div>
-  </div>
+  </header>
 
-  {{!-- CHASSIS INFO --}}
-  <div class="prog-droid-builder__chassis-info">
-    <div class="chassis-spec">
-      <strong>Degree:</strong> {{presentation.droidInfo.degree}}
+  <section class="prog-droid-builder__builder-strip" aria-label="Droid chassis controls">
+    <div class="prog-droid-builder__control-group">
+      <label>Degree</label>
+      <select class="prog-droid-builder__select" disabled aria-label="Selected droid degree">
+        <option>{{builderVm.chassis.degreeLabel}}</option>
+      </select>
     </div>
-    <div class="chassis-spec">
-      <strong>Size:</strong> {{presentation.droidInfo.size}}
+    <div class="prog-droid-builder__control-group">
+      <label>Size</label>
+      <select class="prog-droid-builder__select" disabled aria-label="Selected droid size">
+        <option>{{builderVm.chassis.sizeLabel}}</option>
+      </select>
     </div>
-  </div>
+    <div class="prog-droid-builder__control-group">
+      <span class="prog-droid-builder__chip">Multiplier {{builderVm.chassis.multiplierLabel}}</span>
+      <span class="prog-droid-builder__chip">Systems {{builderVm.installedCount}}</span>
+      <span class="prog-droid-builder__chip prog-droid-builder__chip--{{builderVm.budget.tone}}">{{builderVm.budget.statusLabel}}</span>
+    </div>
+  </section>
 
-  {{!-- TABS FOR SYSTEM CATEGORIES --}}
-  <div class="prog-droid-builder__tabs">
-    <button class="prog-droid-builder__tab prog-droid-builder__tab--active" data-category="locomotion">
-      <i class="fas fa-shoe-prints"></i> Locomotion
-    </button>
-    <button class="prog-droid-builder__tab" data-category="processor">
-      <i class="fas fa-brain"></i> Processor
-    </button>
-    <button class="prog-droid-builder__tab" data-category="appendages">
-      <i class="fas fa-hand-paper"></i> Appendages
-    </button>
-    <button class="prog-droid-builder__tab" data-category="accessories">
-      <i class="fas fa-tools"></i> Accessories
-    </button>
-  </div>
-
-  {{!-- SYSTEM PANELS --}}
-  <div class="prog-droid-builder__panels">
-    {{!-- LOCOMOTION PANEL --}}
-    <div class="prog-droid-builder__panel prog-droid-builder__panel--active" data-panel="locomotion">
-      <div class="prog-droid-builder__panel-header">
-        <h3>Locomotion Systems</h3>
-        <p class="panel-description">Choose how your droid moves. Required for all droids.</p>
-      </div>
-
-      {{#if presentation.selectedSystems.locomotion}}
-        <div class="prog-droid-builder__selection-banner">
-          <i class="fas fa-check-circle"></i>
-          <div>
-            <strong>Selected:</strong> {{presentation.selectedSystems.locomotion.name}}
-            <div class="selection-specs">
-              Speed: {{presentation.selectedSystems.locomotion.speed}} squares
-              | Cost: {{presentation.selectedSystems.locomotion.cost}} cr
+  <div class="prog-droid-builder__workbench" data-droid-builder-workbench>
+    {{!-- LEFT RAIL: Current build, budget, checklist --}}
+    <aside class="prog-droid-builder__left-rail" aria-label="Current droid build">
+      <section class="prog-droid-builder__garage-panel prog-droid-builder__garage-summary">
+        <div class="prog-droid-builder__garage-head">
+          <h3>Current Build</h3>
+          <span>{{builderVm.mode}}</span>
+        </div>
+        <div class="prog-droid-builder__budget">
+          <div class="prog-droid-builder__budget-rows">
+            <div class="prog-droid-builder__budget-row">
+              <span>Starting Budget</span>
+              <strong>{{builderVm.budget.base}} cr</strong>
+            </div>
+            <div class="prog-droid-builder__budget-row">
+              <span>Spent</span>
+              <strong>{{builderVm.budget.spent}} cr</strong>
+            </div>
+            <div class="prog-droid-builder__budget-row">
+              <span>Remaining</span>
+              <strong class="prog-droid-builder__budget-value--{{builderVm.budget.tone}}">{{builderVm.budget.remaining}} cr</strong>
             </div>
           </div>
-          <button class="prog-droid-builder__remove-btn" data-action="remove-system" data-category="locomotion">
-            <i class="fas fa-times"></i> Remove
-          </button>
+          <div class="prog-droid-builder__budget-bar {{#if builderVm.budget.isOverBudget}}prog-droid-builder__budget-bar--over{{/if}}" aria-hidden="true"><span></span></div>
         </div>
-      {{/if}}
+      </section>
 
-      <div class="prog-droid-builder__systems-grid">
-        {{#each presentation.availableSystems.locomotion}}
-          {{#with ../}}
-            <div class="system-card {{#if (eq ../id presentation.selectedSystems.locomotion.id)}}system-card--selected{{/if}}
-                                 {{#if this.isSuggested}}prog-droid-system--suggested prog-droid-system--suggested-{{this.confidenceLevel}}{{/if}}"
-                 data-recommended="{{#if this.isSuggested}}true{{/if}}"
-                 data-confidence-level="{{this.confidenceLevel}}">
-              <h4>
-                {{this.name}}
-                {{#if this.badgeLabel}}
-                  <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
-                {{/if}}
-              </h4>
-              {{#if this.description}}
-                <p class="system-description">{{this.description}}</p>
-              {{/if}}
-              <div class="system-specs">
-                {{#if this.features}}
-                  <p><strong>Features:</strong> {{#each this.features}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
-                {{/if}}
-                <p><strong>Speed:</strong> {{this.speeds.medium}} squares (varies by size)</p>
-                <p><strong>Availability:</strong> {{this.availability}}</p>
-              </div>
-              <button class="system-action-btn" data-action="purchase-system" data-category="locomotion" data-id="{{this.id}}">
-                <i class="fas fa-shopping-cart"></i> Select System
-              </button>
-            </div>
-          {{/with}}
-        {{/each}}
-      </div>
-    </div>
-
-    {{!-- PROCESSOR PANEL --}}
-    <div class="prog-droid-builder__panel" data-panel="processor">
-      <div class="prog-droid-builder__panel-header">
-        <h3>Processor Systems</h3>
-        <p class="panel-description">Playable droids must have a Heuristic Processor.</p>
-      </div>
-
-      {{#if presentation.selectedSystems.processor}}
-        <div class="prog-droid-builder__selection-banner {{#if (eq presentation.selectedSystems.processor.id 'heuristic')}}selection-banner--free{{/if}}">
-          <i class="fas fa-check-circle"></i>
-          <div>
-            <strong>Selected:</strong> {{presentation.selectedSystems.processor.name}}
-            {{#if (eq presentation.selectedSystems.processor.id 'heuristic')}}
-              <span class="free-badge">FREE</span>
-            {{/if}}
-            <div class="selection-specs">
-              Cost: {{presentation.selectedSystems.processor.cost}} cr
-            </div>
-          </div>
-          {{#unless (eq presentation.selectedSystems.processor.id 'heuristic')}}
-            <button class="prog-droid-builder__remove-btn" data-action="remove-system" data-category="processor">
-              <i class="fas fa-times"></i> Reset to Heuristic
-            </button>
-          {{/unless}}
+      <section class="prog-droid-builder__garage-panel">
+        <div class="prog-droid-builder__garage-head">
+          <h3>Required Systems</h3>
+          <span>{{#if builderVm.validation.isValid}}READY{{else}}CHECK{{/if}}</span>
         </div>
-      {{/if}}
+        <ul class="prog-droid-builder__required-list">
+          {{#each builderVm.requiredChecklist}}
+            <li class="prog-droid-builder__check-item {{#if this.complete}}prog-droid-builder__check-item--complete{{else}}prog-droid-builder__check-item--missing{{/if}}">
+              <span class="prog-droid-builder__installed-item-name">{{this.label}}</span>
+              <span class="prog-droid-builder__badge prog-droid-builder__badge--{{this.tone}}">{{#if this.complete}}OK{{else}}REQ{{/if}}</span>
+              <small>{{this.message}}</small>
+            </li>
+          {{/each}}
+        </ul>
+      </section>
 
-      <div class="prog-droid-builder__systems-grid">
-        {{#each presentation.availableSystems.processors}}
-          {{#with ../}}
-            <div class="system-card {{#if (eq ../id presentation.selectedSystems.processor.id)}}system-card--selected{{/if}} {{#if (eq this.id 'heuristic')}}system-card--required{{/if}}">
-              <h4>
-                {{this.name}}
-                {{#if (eq this.id 'heuristic')}}
-                  <span class="required-badge">REQUIRED FOR PC</span>
-                {{/if}}
-              </h4>
-              <p class="system-description">{{this.description}}</p>
-              {{#if this.features}}
-                <p><strong>Features:</strong> {{#each this.features}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
-              {{/if}}
-              <p><strong>Cost:</strong> {{#if (or (eq this.id 'heuristic') this.isFree)}}Free{{else}}{{this.cost}} cr{{/if}}</p>
-              <p><strong>Availability:</strong> {{this.availability}}</p>
-              <button class="system-action-btn" data-action="purchase-system" data-category="processor" data-id="{{this.id}}">
-                <i class="fas fa-shopping-cart"></i> Select Processor
-              </button>
-            </div>
-          {{/with}}
-        {{/each}}
-      </div>
-    </div>
-
-    {{!-- APPENDAGES PANEL --}}
-    <div class="prog-droid-builder__panel" data-panel="appendages">
-      <div class="prog-droid-builder__panel-header">
-        <h3>Appendages</h3>
-        <p class="panel-description">Add limbs and manipulation tools. First 2 hands are free. At least one appendage required.</p>
-      </div>
-
-      {{#if presentation.selectedSystems.appendages}}
-        <div class="prog-droid-builder__selected-list">
-          <h4>Selected Appendages</h4>
-          <ul>
-            {{#each presentation.selectedSystems.appendages}}
-              <li class="selected-item">
-                <span>{{this.name}}</span>
-                <span class="cost-badge">{{#if this.cost}}{{this.cost}} cr{{else}}Free{{/if}}</span>
-                <button class="remove-btn" data-action="remove-system" data-category="appendage" data-id="{{this.id}}">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </li>
-            {{/each}}
-          </ul>
+      <section class="prog-droid-builder__garage-panel prog-droid-builder__scroll">
+        <div class="prog-droid-builder__garage-head">
+          <h3>Installed Systems</h3>
+          <span>{{builderVm.installedCount}}</span>
         </div>
-      {{/if}}
-
-      <div class="prog-droid-builder__systems-grid">
-        {{#each presentation.availableSystems.appendages}}
-          {{#with ../}}
-            {{#set "count" (countAppendages ../presentation.selectedSystems.appendages this.id)}}
-            {{#set "isFree" (isAppendageFree this.id)}}
-            <div class="system-card">
-              <h4>
-                {{this.name}}
-                {{#if (or (eq this.id 'hand') this.createsUnarmedAttack)}}
-                  <span class="appendage-badge">
-                    {{#if (eq this.id 'hand')}}FREE (2×){{else if this.createsUnarmedAttack}}Combat{{/if}}
-                  </span>
-                {{/if}}
-              </h4>
-              <p class="system-description">{{this.description}}</p>
-              {{#if this.features}}
-                <p><strong>Features:</strong> {{#each this.features}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>
-              {{/if}}
-              <p><strong>Cost:</strong> {{#if this.isFree}}Free{{else}}{{this.cost}} cr{{/if}}</p>
-              {{#if (gt count 0)}}
-                <p class="owned-count">Owned: {{count}}</p>
-              {{/if}}
-              <button class="system-action-btn" data-action="purchase-system" data-category="appendage" data-id="{{this.id}}">
-                <i class="fas fa-plus"></i> Add Appendage
-              </button>
-            </div>
-          {{/with}}
-        {{/each}}
-      </div>
-    </div>
-
-    {{!-- ACCESSORIES PANEL --}}
-    <div class="prog-droid-builder__panel" data-panel="accessories">
-      <div class="prog-droid-builder__panel-header">
-        <h3>Accessories & Optional Systems</h3>
-        <p class="panel-description">Add armor, sensors, shields, and other optional upgrades.</p>
-      </div>
-
-      {{#if presentation.selectedSystems.accessories}}
-        <div class="prog-droid-builder__selected-list">
-          <h4>Selected Accessories</h4>
-          <ul>
-            {{#each presentation.selectedSystems.accessories}}
-              <li class="selected-item">
-                <span>{{this.name}}</span>
-                <span class="cost-badge">{{this.cost}} cr</span>
-                <button class="remove-btn" data-action="remove-system" data-category="accessory" data-id="{{this.id}}" data-subcategory="{{this.category}}">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </li>
-            {{/each}}
-          </ul>
-        </div>
-      {{/if}}
-
-      <div class="prog-droid-builder__accessory-tabs">
-        <button class="accessory-tab accessory-tab--active" data-accessory-tab="armor">Armor</button>
-        <button class="accessory-tab" data-accessory-tab="communications">Communications</button>
-        <button class="accessory-tab" data-accessory-tab="sensors">Sensors</button>
-        <button class="accessory-tab" data-accessory-tab="shields">Shields</button>
-        <button class="accessory-tab" data-accessory-tab="translators">Translators</button>
-        <button class="accessory-tab" data-accessory-tab="miscellaneous">Miscellaneous</button>
-      </div>
-
-      <div class="prog-droid-builder__accessory-panels">
-        {{#each (getAccessoryCategories presentation.availableSystems.accessories)}}
-          <div class="accessory-panel {{#if @first}}accessory-panel--active{{/if}}" data-accessory-panel="{{@key}}">
-            {{#if this}}
-              <div class="prog-droid-builder__systems-grid">
-                {{#each this}}
-                  <div class="system-card">
-                    <h4>{{this.name}}</h4>
-                    {{#if this.description}}
-                      <p class="system-description">{{this.description}}</p>
-                    {{/if}}
-                    <div class="system-specs">
-                      {{#if this.type}}
-                        <p><strong>Type:</strong> {{this.type}}</p>
-                      {{/if}}
-                      {{#if this.bonus}}
-                        <p><strong>Bonus:</strong> {{this.bonus}}</p>
-                      {{/if}}
-                      {{#if this.sr}}
-                        <p><strong>Shield Rating:</strong> SR {{this.sr}}</p>
-                      {{/if}}
-                    </div>
-                    <p><strong>Cost:</strong> {{this.cost}} cr</p>
-                    <p><strong>Availability:</strong> {{this.availability}}</p>
-                    <button class="system-action-btn" data-action="purchase-system" data-category="accessory" data-id="{{this.id}}" data-subcategory="{{@../key}}">
-                      <i class="fas fa-plus"></i> Add Accessory
+        {{#each builderVm.installedGroups}}
+          <div class="prog-droid-builder__group-label">{{this.label}}</div>
+          <ul class="prog-droid-builder__installed-list">
+            {{#if this.items}}
+              {{#each this.items}}
+                <li class="prog-droid-builder__installed-item prog-droid-builder__installed-item--complete">
+                  <span class="prog-droid-builder__installed-item-name">{{this.name}}</span>
+                  <span class="prog-droid-builder__chip">{{this.cost}} cr</span>
+                  {{#unless this.isLocked}}
+                    <button class="prog-droid-builder__action prog-droid-builder__action--remove prog-droid-builder__action--compact"
+                            type="button"
+                            data-action="remove-system"
+                            data-category="{{this.removeAction.category}}"
+                            data-id="{{this.removeAction.id}}"
+                            data-subcategory="{{this.removeAction.subcategory}}">
+                      Remove
                     </button>
-                  </div>
+                  {{/unless}}
+                </li>
+              {{/each}}
+            {{else}}
+              <li class="prog-droid-builder__installed-item prog-droid-builder__installed-item--missing">
+                <span class="prog-droid-builder__installed-item-name">No {{this.label}} installed</span>
+                {{#if this.required}}<span class="prog-droid-builder__badge prog-droid-builder__badge--negative">Required</span>{{/if}}
+              </li>
+            {{/if}}
+          </ul>
+        {{/each}}
+      </section>
+    </aside>
+
+    {{!-- MIDDLE RAIL: Available systems browser --}}
+    <main class="prog-droid-builder__middle-rail" aria-label="Available droid systems">
+      <div class="prog-droid-builder__filter-bar">
+        <input class="prog-droid-builder__search" type="search" placeholder="Search components…" aria-label="Search droid systems" disabled>
+        <div class="prog-droid-builder__filter-tabs" role="tablist" aria-label="Droid system categories">
+          {{#each builderVm.availableGroups}}
+            <button class="prog-droid-builder__filter-tab prog-droid-builder__tab {{#if @first}}prog-droid-builder__tab--active{{/if}}"
+                    type="button"
+                    data-category="{{this.id}}">
+              {{this.label}}
+            </button>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="prog-droid-builder__scroll prog-droid-builder__systems-browser">
+        {{#each builderVm.availableGroups}}
+          <section class="prog-droid-builder__panel {{#if @first}}prog-droid-builder__panel--active{{/if}}" data-panel="{{this.id}}">
+            <div class="prog-droid-builder__garage-head">
+              <h3>{{this.label}}</h3>
+              <span>{{this.enabledCount}}/{{this.count}} available</span>
+            </div>
+            {{#if this.description}}
+              <p class="prog-droid-builder__detail-description">{{this.description}}</p>
+            {{/if}}
+
+            {{#if this.subgroups}}
+              {{#each this.subgroups}}
+                <div class="prog-droid-builder__group-label">{{this.label}}</div>
+                <div class="prog-droid-builder__card-grid">
+                  {{#each this.items}}
+                    <article class="prog-droid-builder__component-card prog-droid-builder__component-card--{{this.category}} {{#if this.isInstalled}}prog-droid-builder__component-card--installed{{/if}} {{#unless this.canInstall}}{{#unless this.isInstalled}}prog-droid-builder__component-card--disabled{{/unless}}{{/unless}}"
+                             data-component-id="{{this.id}}"
+                             data-component-category="{{this.category}}"
+                             data-component-subcategory="{{this.subcategory}}"
+                             aria-disabled="{{#if this.disabled}}true{{else}}false{{/if}}">
+                      <div class="prog-droid-builder__component-card-eyebrow">{{this.type}}</div>
+                      <h4 class="prog-droid-builder__component-card-title">{{this.name}}</h4>
+                      {{#if this.description}}<p class="prog-droid-builder__component-card-body">{{this.description}}</p>{{/if}}
+                      <div class="prog-droid-builder__component-card-meta">
+                        <span class="prog-droid-builder__chip">{{this.adjustedCost}} cr</span>
+                        {{#if this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--positive">Installed</span>{{/if}}
+                        {{#if this.isSuggested}}<span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Recommended</span>{{/if}}
+                        {{#unless this.canInstall}}{{#unless this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--negative">Blocked</span>{{/unless}}{{/unless}}
+                      </div>
+                      {{#if this.disabledReasons}}
+                        <div class="prog-droid-builder__component-card-body">
+                          {{#each this.disabledReasons}}<div>• {{this}}</div>{{/each}}
+                        </div>
+                      {{/if}}
+                      {{#if this.isInstalled}}
+                        {{#if this.canRemove}}
+                          <button class="prog-droid-builder__action prog-droid-builder__action--remove"
+                                  type="button"
+                                  data-action="remove-system"
+                                  data-category="{{this.removeAction.category}}"
+                                  data-id="{{this.removeAction.id}}"
+                                  data-subcategory="{{this.removeAction.subcategory}}">
+                            Remove
+                          </button>
+                        {{/if}}
+                      {{else}}
+                        <button class="prog-droid-builder__action prog-droid-builder__action--install"
+                                type="button"
+                                data-action="purchase-system"
+                                data-category="{{this.installAction.category}}"
+                                data-id="{{this.installAction.id}}"
+                                data-subcategory="{{this.installAction.subcategory}}"
+                                {{#unless this.canInstall}}disabled{{/unless}}>
+                          Install
+                        </button>
+                      {{/if}}
+                    </article>
+                  {{/each}}
+                </div>
+              {{/each}}
+            {{else}}
+              <div class="prog-droid-builder__card-grid">
+                {{#each this.items}}
+                  <article class="prog-droid-builder__component-card prog-droid-builder__component-card--{{this.category}} {{#if this.isInstalled}}prog-droid-builder__component-card--installed{{/if}} {{#unless this.canInstall}}{{#unless this.isInstalled}}prog-droid-builder__component-card--disabled{{/unless}}{{/unless}}"
+                           data-component-id="{{this.id}}"
+                           data-component-category="{{this.category}}"
+                           aria-disabled="{{#if this.disabled}}true{{else}}false{{/if}}">
+                    <div class="prog-droid-builder__component-card-eyebrow">{{this.type}}</div>
+                    <h4 class="prog-droid-builder__component-card-title">{{this.name}}</h4>
+                    {{#if this.description}}<p class="prog-droid-builder__component-card-body">{{this.description}}</p>{{/if}}
+                    <div class="prog-droid-builder__component-card-meta">
+                      <span class="prog-droid-builder__chip">{{this.adjustedCost}} cr</span>
+                      {{#if this.speed}}<span class="prog-droid-builder__chip">SPD {{this.speed}}</span>{{/if}}
+                      {{#if this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--positive">Installed</span>{{/if}}
+                      {{#if this.isSuggested}}<span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Recommended</span>{{/if}}
+                      {{#unless this.canInstall}}{{#unless this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--negative">Blocked</span>{{/unless}}{{/unless}}
+                    </div>
+                    {{#if this.disabledReasons}}
+                      <div class="prog-droid-builder__component-card-body">
+                        {{#each this.disabledReasons}}<div>• {{this}}</div>{{/each}}
+                      </div>
+                    {{/if}}
+                    {{#if this.isInstalled}}
+                      {{#if this.canRemove}}
+                        <button class="prog-droid-builder__action prog-droid-builder__action--remove"
+                                type="button"
+                                data-action="remove-system"
+                                data-category="{{this.removeAction.category}}"
+                                data-id="{{this.removeAction.id}}"
+                                data-subcategory="{{this.removeAction.subcategory}}">
+                          Remove
+                        </button>
+                      {{/if}}
+                    {{else}}
+                      <button class="prog-droid-builder__action prog-droid-builder__action--install"
+                              type="button"
+                              data-action="purchase-system"
+                              data-category="{{this.installAction.category}}"
+                              data-id="{{this.installAction.id}}"
+                              data-subcategory="{{this.installAction.subcategory}}"
+                              {{#unless this.canInstall}}disabled{{/unless}}>
+                        Install
+                      </button>
+                    {{/if}}
+                  </article>
                 {{/each}}
               </div>
-            {{else}}
-              <div class="no-accessories">
-                <p>No accessories in this category.</p>
-              </div>
             {{/if}}
-          </div>
+          </section>
         {{/each}}
       </div>
-    </div>
-  </div>
+    </main>
 
-  {{!-- BUILD STATUS --}}
-  <div class="prog-droid-builder__status">
-    {{#if buildComplete}}
-      <div class="status-banner status-banner--complete">
-        <i class="fas fa-check-circle"></i>
-        <span>Droid chassis configuration complete. Ready to proceed.</span>
-      </div>
-    {{else}}
-      <div class="status-banner status-banner--incomplete">
-        <i class="fas fa-exclamation-circle"></i>
-        <div class="status-issues">
-          <strong>Requirements not met:</strong>
-          <ul>
+    {{!-- RIGHT RAIL: Component detail / action panel --}}
+    <aside class="prog-droid-builder__right-rail" aria-label="Component detail">
+      <section class="prog-droid-builder__garage-panel prog-droid-builder__detail">
+        <div class="prog-droid-builder__garage-head">
+          <h3>Component Detail</h3>
+          <span>Action Rail</span>
+        </div>
+        {{#if builderVm.selectedDetail.isEmpty}}
+          <div class="prog-droid-builder__detail-empty">
+            <i class="fas fa-microchip"></i>
+            <p>{{builderVm.selectedDetail.message}}</p>
+          </div>
+        {{else}}
+          <div class="prog-droid-builder__detail-kicker">{{builderVm.selectedDetail.item.type}}</div>
+          <h3 class="prog-droid-builder__detail-title">{{builderVm.selectedDetail.item.name}}</h3>
+          {{#if builderVm.selectedDetail.item.description}}
+            <p class="prog-droid-builder__detail-description">{{builderVm.selectedDetail.item.description}}</p>
+          {{/if}}
+
+          <div class="prog-droid-builder__cost-table">
+            <div class="prog-droid-builder__cost-row"><span>Base Cost</span><strong>{{builderVm.selectedDetail.item.baseCost}}</strong></div>
+            <div class="prog-droid-builder__cost-row"><span>Size Multiplier</span><strong>{{builderVm.selectedDetail.item.sizeMultiplier}}</strong></div>
+            <div class="prog-droid-builder__cost-row prog-droid-builder__cost-row--total"><span>Adjusted Cost</span><strong>{{builderVm.selectedDetail.item.adjustedCost}} cr</strong></div>
+            <div class="prog-droid-builder__cost-row"><span>Budget Impact</span><strong>{{builderVm.selectedDetail.item.budgetImpactLabel}}</strong></div>
+            {{#if builderVm.selectedDetail.item.weight}}<div class="prog-droid-builder__cost-row"><span>Weight</span><strong>{{builderVm.selectedDetail.item.weight}} kg</strong></div>{{/if}}
+            {{#if builderVm.selectedDetail.item.speed}}<div class="prog-droid-builder__cost-row"><span>Speed</span><strong>{{builderVm.selectedDetail.item.speed}}</strong></div>{{/if}}
+          </div>
+
+          {{#if builderVm.selectedDetail.item.disabledReasons}}
+            <div class="prog-droid-builder__garage-panel">
+              <div class="prog-droid-builder__garage-head"><h3>Restrictions</h3><span>Blocked</span></div>
+              <ul class="prog-droid-builder__required-list">
+                {{#each builderVm.selectedDetail.item.disabledReasons}}
+                  <li class="prog-droid-builder__check-item prog-droid-builder__check-item--missing"><span>{{this}}</span></li>
+                {{/each}}
+              </ul>
+            </div>
+          {{else}}
+            <div class="prog-droid-builder__garage-panel">
+              <div class="prog-droid-builder__garage-head"><h3>Compatibility</h3><span>Ready</span></div>
+              <p class="prog-droid-builder__detail-description">This component is compatible with the current chassis view model.</p>
+            </div>
+          {{/if}}
+
+          <div class="prog-droid-builder__detail-actions">
+            {{#if builderVm.selectedDetail.item.isInstalled}}
+              {{#if builderVm.selectedDetail.item.canRemove}}
+                <button class="prog-droid-builder__action prog-droid-builder__action--remove"
+                        type="button"
+                        data-action="remove-system"
+                        data-category="{{builderVm.selectedDetail.item.removeAction.category}}"
+                        data-id="{{builderVm.selectedDetail.item.removeAction.id}}"
+                        data-subcategory="{{builderVm.selectedDetail.item.removeAction.subcategory}}">
+                  Remove Highlighted Component
+                </button>
+              {{else}}
+                <button class="prog-droid-builder__action" type="button" disabled>Required Component</button>
+              {{/if}}
+            {{else}}
+              <button class="prog-droid-builder__action prog-droid-builder__action--install"
+                      type="button"
+                      data-action="purchase-system"
+                      data-category="{{builderVm.selectedDetail.item.installAction.category}}"
+                      data-id="{{builderVm.selectedDetail.item.installAction.id}}"
+                      data-subcategory="{{builderVm.selectedDetail.item.installAction.subcategory}}"
+                      {{#unless builderVm.selectedDetail.item.canInstall}}disabled{{/unless}}>
+                Install Highlighted Component
+              </button>
+            {{/if}}
+          </div>
+        {{/if}}
+      </section>
+
+      <section class="prog-droid-builder__garage-panel">
+        <div class="prog-droid-builder__garage-head">
+          <h3>Build Status</h3>
+          <span>{{#if buildComplete}}Complete{{else}}Incomplete{{/if}}</span>
+        </div>
+        {{#if buildComplete}}
+          <div class="prog-droid-builder__chip prog-droid-builder__chip--positive">Droid chassis configuration complete</div>
+        {{else}}
+          <ul class="prog-droid-builder__required-list">
             {{#each buildIssues}}
-              <li>{{this}}</li>
+              <li class="prog-droid-builder__check-item prog-droid-builder__check-item--missing"><span>{{this}}</span></li>
             {{/each}}
           </ul>
-        </div>
-      </div>
-    {{/if}}
+        {{/if}}
+      </section>
+    </aside>
   </div>
 </div>
-
-{{!-- HANDLEBARS HELPERS --}}
-{{#*inline "countAppendages"}}
-  {{#each this}}
-    {{#if (eq this.id @root.appendageId)}}
-      {{@index}}
-    {{/if}}
-  {{/each}}
-{{/inline}}
-
-{{#*inline "isAppendageFree"}}
-  {{#if (or (eq this 'hand'))}}true{{else}}false{{/if}}
-{{/inline}}
-
-{{#*inline "getAccessoryCategories"}}
-  {{#if this}}
-    {{#each (keys this)}}
-      {{this}}
-    {{/each}}
-  {{/if}}
-{{/inline}}
+{{else}}
+<div class="prog-droid-builder prog-droid-builder--garage swse-droid-builder-surface swse-ui-shell">
+  <div class="prog-droid-builder__detail-empty">
+    <i class="fas fa-robot"></i>
+    <p>Droid construction state is not available.</p>
+  </div>
+</div>
+{{/if}}

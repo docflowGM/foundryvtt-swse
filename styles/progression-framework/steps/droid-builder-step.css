@@ -1614,3 +1614,87 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   Phase 3: Droid Chassis Builder three-rail surface
+   ============================================ */
+
+.progression-shell .prog-droid-builder--garage {
+  gap: 12px;
+  overflow: hidden;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__garage-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__header {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__builder-strip,
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__hud {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__systems-browser {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__panel {
+  min-height: 0;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__check-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__check-item small {
+  grid-column: 1 / -1;
+  color: var(--droid-bay-muted, var(--prog-text-dim));
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.progression-shell .prog-droid-builder__action--compact {
+  min-height: 24px;
+  padding: 4px 7px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__component-card .prog-droid-builder__action {
+  margin-top: auto;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__detail .prog-droid-builder__garage-panel {
+  clip-path: none;
+  padding: 9px;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__detail-actions .prog-droid-builder__action:disabled,
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__component-card .prog-droid-builder__action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__search:disabled,
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__select:disabled {
+  opacity: 0.78;
+  cursor: default;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__filter-tab.prog-droid-builder__tab--active {
+  color: var(--droid-bay-accent, var(--prog-accent));
+  background: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 12%, transparent);
+  border-color: var(--droid-bay-border, rgba(126, 231, 255, 0.34));
+}
