@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>GM Command Holopad — Redesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--acc:#70e2ff;--acc-t:#dff8ff;--pos:#7dffb2;--neg:#ff8b8b;--neu:#ffd166;--warn:#ffc857;--crit:#ff6b6b;--mono:'JetBrains Mono',monospace;--orb:'Orbitron',sans-serif;--body:'Space Grotesk',system-ui,sans-serif;--panel:rgba(4,12,24,.82);--border:rgba(112,226,255,.18)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:#020408;color:#dff8ff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* ── SHELL ── */
+.stage{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
+.scaler{width:1440px;height:900px;position:relative;flex-shrink:0}
+.tablet{position:relative;width:1440px;height:900px;border-radius:28px;border:1px solid color-mix(in srgb,#70e2ff 26%,rgba(0,0,0,.7));background:radial-gradient(circle at 18% 12%,color-mix(in srgb,#70e2ff 12%,transparent),transparent 32%),linear-gradient(145deg,rgba(14,20,32,.98),rgba(3,7,13,.98));box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),inset 0 0 48px rgba(0,0,0,.72),0 18px 42px rgba(0,0,0,.55);padding:44px 40px 52px;display:flex;flex-direction:column;overflow:hidden}
+.rivet{position:absolute;z-index:20;width:7px;height:7px;border-radius:999px;background:linear-gradient(145deg,rgba(105,118,138,.95),rgba(10,13,20,.95));box-shadow:inset 0 1px 1px rgba(255,255,255,.18),inset 0 -1px 2px rgba(0,0,0,.75)}
+.rivet.tl{top:14px;left:18px}.rivet.tr{top:14px;right:18px}.rivet.bl{bottom:14px;left:18px}.rivet.br{bottom:14px;right:18px}
+.camera{position:absolute;z-index:20;top:15px;left:50%;width:8px;height:8px;transform:translateX(-50%);border-radius:999px;background:radial-gradient(circle,rgba(112,226,255,.72),rgba(2,5,9,.92) 62%);box-shadow:inset 0 0 4px rgba(0,0,0,.9),0 0 9px rgba(112,226,255,.28)}
+.leds{position:absolute;z-index:20;top:28px;left:44px;display:flex;gap:14px}
+.led{width:6px;height:6px;border-radius:999px;background:#70e2ff;box-shadow:0 0 8px rgba(112,226,255,.56)}
+.led:nth-child(2){opacity:.42}.led:nth-child(3){opacity:.88}.led:nth-child(4){opacity:.34}
+.serial{position:absolute;z-index:20;top:13px;right:34px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:rgba(223,248,255,.42);text-transform:uppercase}
+.engrave{position:absolute;z-index:20;right:62px;bottom:13px;font-family:var(--mono);font-size:7px;letter-spacing:.22em;color:rgba(210,230,255,.22);text-transform:uppercase;pointer-events:none}
+.home-hw{position:absolute;z-index:20;left:50%;bottom:5px;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:92px;height:26px;padding:0 16px;border-radius:999px;border:1px solid rgba(0,240,255,.16);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(0,0,0,.34)),rgba(3,8,14,.74);color:rgba(223,248,255,.8);font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;cursor:pointer}
+.screen{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:18px;border:1px solid color-mix(in srgb,#70e2ff 22%,rgba(255,255,255,.04));background:linear-gradient(180deg,rgba(5,16,28,.96),rgba(2,6,12,.98));box-shadow:inset 0 0 36px rgba(0,0,0,.68),inset 0 0 0 1px rgba(255,255,255,.025)}
+.scan-v{position:absolute;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 4px);mix-blend-mode:screen;opacity:.32}
+.corner{position:absolute;z-index:2;pointer-events:none;width:18px;height:18px;border-color:rgba(112,226,255,.6)}
+.corner.tl{top:10px;left:10px;border-top:1px solid;border-left:1px solid}.corner.tr{top:10px;right:10px;border-top:1px solid;border-right:1px solid}
+.corner.bl{bottom:10px;left:10px;border-bottom:1px solid;border-left:1px solid}.corner.br{bottom:10px;right:10px;border-bottom:1px solid;border-right:1px solid}
+.screen-inner{position:relative;z-index:3;height:100%;display:flex;flex-direction:column;overflow:hidden}
+/* ── DOCK ── */
+.dock{display:flex;align-items:center;gap:6px;padding:6px 10px;flex-shrink:0;border-bottom:1px solid rgba(112,226,255,.12);background:rgba(2,6,14,.9)}
+.dock-home{display:flex;align-items:center;gap:5px;padding:5px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.22);background:rgba(112,226,255,.08);color:#dff8ff;font-size:11px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.dock-sep{width:1px;height:24px;background:rgba(112,226,255,.12);flex-shrink:0}
+.dock-status{flex:1;min-width:0;display:flex;flex-direction:column;padding:0 8px}
+.dock-ey{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(112,226,255,.66);text-transform:uppercase}
+.dock-lbl{font-size:11px;font-weight:700;color:#dff8ff}
+.dock-rd{font-size:9px;color:rgba(223,248,255,.52);font-style:italic}
+.dock-status.crit .dock-rd{color:#ff8b8b}.dock-status.warn .dock-rd{color:#ffc857}
+.dock-apps{display:flex;gap:3px;overflow-x:auto;scrollbar-width:none}
+.dock-app{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 6px;min-width:40px;border-radius:6px;border:1px solid rgba(112,226,255,.14);background:rgba(0,0,0,.22);color:rgba(223,248,255,.66);font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all 100ms;flex-shrink:0}
+.dock-app i{font-size:11px}
+.dock-app:hover{background:rgba(112,226,255,.09);border-color:rgba(112,226,255,.3)}
+.dock-app.is-active{background:rgba(112,226,255,.15);border-color:rgba(112,226,255,.48);color:#70e2ff;box-shadow:0 0 10px rgba(112,226,255,.12)}
+.dock-app.crit{border-color:rgba(255,107,107,.3)}.dock-app.warn{border-color:rgba(255,200,87,.28)}
+.dock-app b{position:absolute;top:-3px;right:-3px;min-width:14px;height:14px;padding:0 2px;border-radius:999px;background:rgba(255,107,107,.8);border:1px solid #ff6b6b;color:#fff;font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center}
+/* ── SURFACES ── */
+.surfs{flex:1;min-height:0;overflow:hidden;position:relative}
+.surf{display:none;height:100%;overflow-y:auto;padding:12px;flex-direction:column;gap:10px}
+.surf.on{display:flex}
+/* ── SHARED ── */
+.ey{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(112,226,255,.68);text-transform:uppercase}
+.panel{border:1px solid var(--border);border-radius:12px;background:var(--panel);padding:12px}
+.panel.crit{border-color:rgba(255,107,107,.32)}.panel.warn{border-color:rgba(255,200,87,.28)}
+.ph{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;border:1px solid rgba(112,226,255,.14);background:rgba(3,10,20,.82);flex-shrink:0}
+.ph-back{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.2);background:rgba(112,226,255,.07);color:#dff8ff;font-size:11px;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.ph h2{font-size:15px;margin:2px 0;color:#dff8ff;letter-spacing:.05em;text-transform:uppercase}
+.ph p{font-size:10px;color:rgba(223,248,255,.55);margin:1px 0 0}
+.mbar{display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
+.met{display:flex;flex-direction:column;gap:1px;padding:6px 10px;border-radius:8px;border:1px solid rgba(112,226,255,.16);background:rgba(3,10,20,.62);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(223,248,255,.56)}
+.met strong{display:block;font-size:16px;color:#70e2ff;line-height:1;margin-top:1px}
+.met.crit strong{color:#ff8b8b}.met.warn strong{color:#ffc857}.met.ok strong{color:#7dffb2}.met.muted strong{color:rgba(180,200,220,.52)}
+.chip{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(112,226,255,.18);background:rgba(112,226,255,.09);color:#dff8ff}
+.chip.crit{background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.32);color:#ffd0d0}
+.chip.warn{background:rgba(255,200,87,.12);border-color:rgba(255,200,87,.28);color:#fff3c0}
+.chip.ok{background:rgba(125,255,178,.12);border-color:rgba(125,255,178,.28);color:#7dffb2}
+.chip.info{background:rgba(112,226,255,.1);border-color:rgba(112,226,255,.24);color:#70e2ff}
+.chip.muted{background:rgba(180,200,220,.06);border-color:rgba(180,200,220,.16);color:rgba(180,200,220,.52)}
+.np{color:#7dffb2;font-weight:700}.nn{color:#ff8b8b;font-weight:700}.nu{color:#ffd166;font-weight:700}
+.lgain{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;color:#7dffb2;background:rgba(125,255,178,.1);border:1px solid rgba(125,255,178,.24);font-weight:700;font-family:var(--mono);font-size:11px}
+.lloss{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;color:#ff8b8b;background:rgba(255,139,139,.1);border:1px solid rgba(255,139,139,.22);font-weight:700;font-family:var(--mono);font-size:11px}
+.lflat{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;color:#ffd166;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.22);font-weight:700;font-family:var(--mono);font-size:11px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;border:1px solid rgba(112,226,255,.24);background:rgba(112,226,255,.07);color:#dff8ff;font-size:11px;cursor:pointer;font-family:var(--body);transition:background 100ms}
+.btn:hover{background:rgba(112,226,255,.15)}.btn.approve{border-color:rgba(125,255,178,.38);background:rgba(125,255,178,.09);color:#caffda}
+.btn.deny{border-color:rgba(255,107,107,.38);background:rgba(255,107,107,.09);color:#ffd0d0}
+.btn.primary{border-color:rgba(112,226,255,.48);background:rgba(112,226,255,.14);color:#70e2ff;box-shadow:0 0 14px rgba(112,226,255,.1)}
+.btn.sm{padding:3px 7px;font-size:10px}
+.empty-st{padding:20px;color:rgba(223,248,255,.36);text-align:center;font-style:italic;font-size:11px}
+/* ── HOME ── */
+.home-urgent{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,107,107,.34);background:rgba(8,2,4,.82);flex-shrink:0}
+.home-urgent-ey{width:100%;display:flex;align-items:center;gap:6px;margin-bottom:2px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,139,139,.82)}
+.urg-item{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:6px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.28);color:#ffd0d0;font-size:11px;font-weight:700;cursor:pointer;appearance:none}
+.clusters{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0}
+.cl{display:flex;flex-direction:column;gap:8px}.cl-col{display:flex;flex-direction:column;gap:10px}
+.cl-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 2px 5px;border-bottom:1px solid rgba(112,226,255,.12)}
+.cl-hdr h4{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(112,226,255,.7);margin:0}
+.cl-cnt{font-family:var(--mono);font-size:9px;color:rgba(223,248,255,.4)}.cl-cnt.crit{color:#ff8b8b}.cl-cnt.warn{color:#ffc857}
+.cl-apps{display:flex;flex-direction:column;gap:4px}
+.app-row{display:flex;align-items:center;border-radius:8px;border:1px solid rgba(112,226,255,.14);overflow:hidden;cursor:pointer;appearance:none;color:inherit;text-align:left;background:rgba(3,10,20,.72);transition:border-color 120ms,background 120ms}
+.app-row:hover{border-color:rgba(112,226,255,.38);background:rgba(112,226,255,.07)}
+.app-row.crit{border-color:rgba(255,107,107,.28)}.app-row.crit:hover{border-color:rgba(255,107,107,.52)}
+.app-row.warn{border-color:rgba(255,200,87,.22)}.app-row.warn:hover{border-color:rgba(255,200,87,.44)}
+.app-row-code{display:flex;align-items:center;justify-content:center;width:42px;min-height:36px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(112,226,255,.72);background:rgba(112,226,255,.06);border-right:1px solid rgba(112,226,255,.1)}
+.app-row.crit .app-row-code{color:#ff8b8b;background:rgba(255,107,107,.07);border-color:rgba(255,107,107,.12)}
+.app-row.warn .app-row-code{color:#ffc857;background:rgba(255,200,87,.07);border-color:rgba(255,200,87,.12)}
+.app-row-icon{display:flex;align-items:center;justify-content:center;width:30px;min-height:36px;font-size:12px;color:rgba(112,226,255,.68)}
+.app-row.crit .app-row-icon{color:#ff8b8b}.app-row.warn .app-row-icon{color:#ffc857}
+.app-row-body{flex:1;min-width:0;padding:5px 8px}
+.app-row-label{font-size:12px;font-weight:700;color:#dff8ff;letter-spacing:.02em}
+.app-row-desc{font-size:9px;color:rgba(223,248,255,.45);margin-top:1px}
+.app-row-badge{flex-shrink:0;min-width:22px;padding:0 5px;height:22px;margin:7px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:800}
+.app-row-badge.crit{background:rgba(255,107,107,.18);border:1px solid rgba(255,107,107,.38);color:#ffd0d0}
+.app-row-badge.warn{background:rgba(255,200,87,.16);border:1px solid rgba(255,200,87,.34);color:#fff3c0}
+.app-row-badge.info{background:rgba(112,226,255,.12);border:1px solid rgba(112,226,255,.26);color:#dff8ff}
+/* ── BULLETIN ── */
+.bull-layout{display:grid;grid-template-columns:210px 1fr;gap:10px;flex:1;min-height:0}
+.bull-nav{display:flex;flex-direction:column;gap:4px}
+.bull-nc{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;border-radius:8px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.62);cursor:pointer;transition:all 110ms}
+.bull-nc:hover,.bull-nc.on{border-color:rgba(112,226,255,.4);background:rgba(112,226,255,.09)}
+.bull-nc-lbl{font-size:11px;font-weight:700;color:#dff8ff}.bull-nc-sub{font-size:9px;color:rgba(223,248,255,.48);margin-top:1px}
+.bull-nc-cnt{min-width:20px;height:20px;padding:0 4px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:rgba(112,226,255,.12);border:1px solid rgba(112,226,255,.26);color:#dff8ff;font-family:var(--mono);font-size:10px;font-weight:800;flex-shrink:0}
+.bull-main{display:flex;flex-direction:column;gap:8px;min-height:0;overflow-y:auto;padding:12px;border-radius:10px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.62)}
+.bull-sec{display:none;flex-direction:column;gap:8px}.bull-sec.on{display:flex}
+.bull-hdr h3{margin:0 0 3px;color:#dff8ff;font-size:13px}.bull-hdr p{margin:0;font-size:10px;color:rgba(223,248,255,.54)}
+.bull-recs{display:flex;flex-direction:column;gap:6px}
+.bull-rec{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:9px;border:1px solid rgba(112,226,255,.14);background:rgba(2,8,16,.72)}
+.bull-rec.published{border-color:rgba(125,255,178,.22)}.bull-rec.draft{opacity:.82}.bull-rec.archived{opacity:.52;border-color:rgba(100,120,140,.16)}.bull-rec.breaking{border-color:rgba(255,107,107,.4)}
+.bull-rec h4{margin:0;font-size:12px;color:#dff8ff}.bull-rec p{font-size:10px;color:rgba(223,248,255,.65);line-height:1.4}
+.bull-rec-footer{display:flex;justify-content:space-between;align-items:center;gap:6px;padding-top:6px;border-top:1px solid rgba(112,226,255,.08)}
+.bull-rec-chips{display:flex;flex-wrap:wrap;gap:3px}.bull-rec-acts{display:flex;gap:3px}
+/* Composer widget */
+.bull-cmp-wrap{border-radius:9px;border:1px solid rgba(112,226,255,.16);background:rgba(3,10,20,.72);overflow:hidden;flex-shrink:0}
+.bull-cmp-trig{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;user-select:none}
+.bull-cmp-trig-l{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#dff8ff}
+.bull-cmp-body{display:none;padding:12px;border-top:1px solid rgba(112,226,255,.1);flex-direction:column;gap:8px}
+.bull-cmp-body.open{display:flex}
+.bfg{display:grid;grid-template-columns:1fr 1fr;gap:7px}.bfg.c3{grid-template-columns:1fr 1fr 1fr}.bfg.c1{grid-template-columns:1fr}
+.bfl{display:flex;flex-direction:column;gap:3px}
+.bfl>span{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(223,248,255,.44);font-family:var(--mono)}
+.b-in,.b-sel{padding:5px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.17);background:rgba(2,8,16,.88);color:#dff8ff;font-size:11px;font-family:var(--body);width:100%}
+.b-in:focus,.b-sel:focus{outline:none;border-color:rgba(112,226,255,.44)}
+.b-ta{padding:5px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.17);background:rgba(2,8,16,.88);color:#dff8ff;font-size:11px;resize:vertical;min-height:60px;width:100%}
+.b-ta:focus{outline:none;border-color:rgba(112,226,255,.44)}
+.b-rcpts{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.b-rcpt{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;border:1px solid rgba(112,226,255,.14);background:rgba(112,226,255,.05);color:rgba(223,248,255,.7);font-size:10px;cursor:pointer;user-select:none}
+.b-rcpt.on{border-color:rgba(125,255,178,.26);background:rgba(125,255,178,.06);color:#caffda}
+.b-tchips{display:flex;gap:4px;flex-wrap:wrap}
+.b-tc{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.13);background:rgba(0,0,0,.2);color:rgba(223,248,255,.58);font-size:10px;cursor:pointer;user-select:none}
+.b-tc.on{border-color:rgba(112,226,255,.36);background:rgba(112,226,255,.09);color:#70e2ff}
+.b-form-acts{display:flex;justify-content:flex-end;gap:5px;margin-top:2px}
+/* Holonews */
+.hn-rec{display:flex;flex-direction:column;gap:5px;padding:10px;border-radius:9px;border:1px solid rgba(112,226,255,.13);background:rgba(3,10,20,.72)}
+.hn-dateline{font-family:var(--mono);font-size:8px;color:rgba(112,226,255,.6);letter-spacing:.1em;text-transform:uppercase}
+.hn-source{font-size:9px;color:rgba(223,248,255,.5);margin-bottom:1px}
+.hn-headline{font-size:12px;font-weight:700;color:#dff8ff}.hn-deck{font-size:10px;color:rgba(223,248,255,.66);font-style:italic;margin-top:1px}
+.hn-body{font-size:10px;color:rgba(223,248,255,.54);line-height:1.4;margin-top:2px}
+/* Messages */
+.msg-rec{display:flex;flex-direction:column;gap:5px;padding:10px;border-radius:9px;border:1px solid rgba(112,226,255,.13);background:rgba(3,10,20,.72)}
+.msg-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.msg-to{font-size:9px;font-family:var(--mono);color:rgba(112,226,255,.66);text-transform:uppercase;letter-spacing:.08em}
+.msg-sub{font-size:12px;font-weight:700;color:#dff8ff;margin-top:1px}
+.msg-body{font-size:10px;color:rgba(223,248,255,.62);line-height:1.4}
+/* Player state */
+.ps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:8px}
+.ps-card{display:flex;flex-direction:column;gap:7px;padding:11px;border-radius:9px;border:1px solid rgba(112,226,255,.14);background:rgba(3,10,20,.68)}
+.ps-name{font-size:13px;font-weight:700;color:#dff8ff}
+.ps-player{font-size:9px;color:rgba(112,226,255,.6);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.ps-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:2px}
+.ps-stat{display:flex;flex-direction:column;gap:1px;padding:5px 7px;border-radius:6px;border:1px solid rgba(112,226,255,.1);background:rgba(0,0,0,.24)}
+.ps-stat span{font-size:8px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:rgba(223,248,255,.44)}
+.ps-stat strong{font-size:13px;color:#dff8ff;line-height:1}
+.ps-stat.crit strong{color:#ff8b8b}.ps-stat.warn strong{color:#ffc857}.ps-stat.ok strong{color:#7dffb2}
+/* Party state */
+.party-row{display:grid;grid-template-columns:28px 1fr auto auto;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;border:1px solid rgba(112,226,255,.12);background:rgba(3,10,20,.62)}
+.party-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.party-name{font-size:11px;font-weight:700;color:#dff8ff}.party-sub{font-size:9px;color:rgba(223,248,255,.48)}
+/* ── JOBS ── */
+#s-jobs,.fac-wiz-host{position:relative}
+.job-shell{display:grid;grid-template-columns:1fr 300px;gap:10px;flex:1;min-height:0}
+.job-kanban{display:flex;gap:6px;overflow-x:auto;min-height:0;padding-bottom:2px}
+.job-col{display:flex;flex-direction:column;gap:5px;min-width:150px;max-width:172px;flex-shrink:0}
+.job-col-hdr{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:6px 8px;border-radius:7px;border:1px solid rgba(112,226,255,.12);background:rgba(3,10,20,.6)}
+.job-col-hdr h4{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(112,226,255,.76);margin:0}
+.job-col-hdr span{font-family:var(--mono);font-size:12px;font-weight:800;color:rgba(223,248,255,.56)}
+.job-col-cards{display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1}
+.job-card{display:flex;flex-direction:column;gap:4px;padding:9px;border-radius:8px;border:1px solid rgba(112,226,255,.14);background:rgba(3,12,22,.72);cursor:pointer;text-align:left;appearance:none;color:inherit;transition:border-color 110ms}
+.job-card:hover{border-color:rgba(112,226,255,.34)}.job-card.crit{border-color:rgba(255,107,107,.26)}.job-card.warn{border-color:rgba(255,200,87,.22)}.job-card.is-selected{border-color:rgba(112,226,255,.56);box-shadow:0 0 12px rgba(112,226,255,.1)}
+.job-chip-row{display:flex;gap:3px;flex-wrap:wrap}
+.job-title{font-size:11px;font-weight:700;color:#dff8ff;line-height:1.3}.job-client{font-size:9px;color:rgba(223,248,255,.5)}.job-reward{font-family:var(--mono);font-size:10px;color:#7dffb2;font-weight:700}
+.job-rail{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0;padding:12px;border-radius:10px;border:1px solid rgba(112,226,255,.16);background:rgba(3,10,20,.62)}
+.job-rail h4{margin:0 0 6px;font-size:11px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(112,226,255,.76)}
+.job-rail-blk{display:flex;flex-direction:column;gap:6px}
+.obj-card{display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:8px;border:1px solid rgba(112,226,255,.12);background:rgba(2,8,16,.72)}
+.obj-head{display:flex;gap:3px;flex-wrap:wrap}.obj-title{font-size:11px;font-weight:700;color:#dff8ff}.obj-rewards{display:flex;gap:6px}.reward-val{font-family:var(--mono);font-size:10px;color:#7dffb2;font-weight:700}.obj-acts{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
+.queue-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0}
+.qpanel{display:flex;flex-direction:column;gap:6px}
+.qcard{display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:8px;border:1px solid rgba(112,226,255,.12);background:rgba(3,10,20,.62)}
+.qcard strong{font-size:11px;color:#dff8ff}.qcard p{font-size:10px;color:rgba(223,248,255,.6)}.qcard-acts{display:flex;gap:3px;margin-top:3px}
+/* ── WIZARDS (shared) ── */
+.wiz-ov{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;background:rgba(2,7,16,.97);border-radius:16px;animation:wizIn 180ms ease forwards}
+.wiz-ov.open{display:flex}
+@keyframes wizIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.wiz-bar{display:flex;align-items:center;gap:0;padding:9px 12px;flex-shrink:0;border-bottom:1px solid rgba(112,226,255,.12)}
+.wiz-steps{display:flex;align-items:center;flex:1;gap:0}
+.wiz-stab{display:flex;align-items:center;gap:5px;padding:5px 11px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(223,248,255,.32);border-bottom:2px solid transparent;transition:all 140ms;cursor:pointer}
+.wiz-stab.on{color:#70e2ff;border-color:#70e2ff}.wiz-stab.done{color:rgba(125,255,178,.7);border-color:rgba(125,255,178,.36)}
+.wiz-sn{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;border:1px solid rgba(112,226,255,.18);background:rgba(112,226,255,.05);color:rgba(112,226,255,.5)}
+.wiz-stab.on .wiz-sn{background:rgba(112,226,255,.18);border-color:rgba(112,226,255,.46);color:#70e2ff}.wiz-stab.done .wiz-sn{background:rgba(125,255,178,.12);border-color:rgba(125,255,178,.28);color:#7dffb2}
+.wiz-conn{flex:1;max-width:28px;height:1px;background:rgba(112,226,255,.12)}
+.wiz-x{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;border:1px solid rgba(255,107,107,.2);background:rgba(255,107,107,.06);color:rgba(255,139,139,.8);font-size:10px;cursor:pointer}
+.wiz-body{flex:1;min-height:0;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.wiz-pg{display:none;flex-direction:column;gap:10px}.wiz-pg.on{display:flex}
+.wiz-sec{display:flex;flex-direction:column;gap:7px;padding:12px;border-radius:9px;border:1px solid rgba(112,226,255,.14);background:rgba(3,10,20,.72)}
+.wiz-sec-ey{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(112,226,255,.68);margin-bottom:1px}
+.wiz-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:7px}
+.wiz-row.c2{grid-template-columns:1fr 1fr}.wiz-row.c3{grid-template-columns:1fr 1fr 1fr}
+.wiz-lbl{display:flex;flex-direction:column;gap:3px}
+.wiz-lbl>span{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(223,248,255,.45);font-family:var(--mono)}
+.wiz-in,.wiz-sel{padding:6px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.17);background:rgba(2,8,16,.9);color:#dff8ff;font-size:12px;font-family:var(--body);width:100%}
+.wiz-in:focus,.wiz-sel:focus{outline:none;border-color:rgba(112,226,255,.46)}
+.wiz-ta{padding:6px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.17);background:rgba(2,8,16,.9);color:#dff8ff;font-size:11px;resize:vertical;min-height:58px;width:100%}
+.wiz-ta:focus{outline:none;border-color:rgba(112,226,255,.46)}
+.wiz-tmpl-bar{display:flex;gap:4px;flex-wrap:wrap}
+.wiz-tmpl{padding:4px 9px;border-radius:5px;border:1px solid rgba(112,226,255,.16);background:rgba(112,226,255,.05);color:rgba(112,226,255,.7);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.wiz-tmpl:hover{background:rgba(112,226,255,.14);color:#70e2ff}
+.wiz-obj{display:flex;flex-direction:column;gap:7px;padding:11px;border-radius:8px;border:1px solid rgba(112,226,255,.13);background:rgba(2,8,16,.62)}
+.wiz-obj.req{border-color:rgba(255,200,87,.2)}.wiz-obj.bon{border-color:rgba(112,226,255,.08);opacity:.78}
+.wiz-obj-hdr{display:flex;align-items:center;gap:7px}
+.wiz-rwd{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:5px}
+.wiz-rwd-lbl{font-family:var(--mono);font-size:8px;color:rgba(112,226,255,.6);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:2px}
+.wiz-rwd-in{padding:5px 7px;border-radius:5px;border:1px solid rgba(112,226,255,.14);background:rgba(2,8,16,.9);color:#dff8ff;font-size:11px;font-family:var(--mono);width:100%}
+.wiz-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wiz-sum-card{padding:11px;border-radius:8px;border:1px solid rgba(112,226,255,.16);background:rgba(3,10,20,.72)}
+.wiz-sum-title{font-size:14px;font-weight:700;color:#dff8ff;margin-bottom:3px}
+.wiz-sum-meta{font-size:10px;color:rgba(223,248,255,.54);margin-bottom:6px}
+.wiz-rcpts{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.wiz-rcpt{display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.15);background:rgba(112,226,255,.05);color:rgba(223,248,255,.7);font-size:11px;cursor:pointer;user-select:none}
+.wiz-rcpt.on{border-color:rgba(125,255,178,.28);background:rgba(125,255,178,.07);color:#caffda}
+.wiz-sopts{display:flex;gap:7px;margin-top:3px}
+.wiz-sopt{display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:7px;border:1px solid rgba(112,226,255,.13);background:rgba(0,0,0,.22);cursor:pointer;font-size:11px;color:rgba(223,248,255,.66);user-select:none}
+.wiz-sopt.on{border-color:rgba(112,226,255,.38);background:rgba(112,226,255,.1);color:#70e2ff}
+.wiz-sdot{width:7px;height:7px;border-radius:50%;background:rgba(112,226,255,.22)}.wiz-sopt.on .wiz-sdot{background:#70e2ff;box-shadow:0 0 5px rgba(112,226,255,.5)}
+.wiz-delta{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.wiz-delta-lbl{font-size:8px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:2px}
+.wiz-delta-lbl.pos{color:rgba(125,255,178,.66)}.wiz-delta-lbl.neg{color:rgba(255,139,139,.66)}
+.wiz-delta-in{padding:5px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.16);background:rgba(2,8,16,.9);color:#dff8ff;font-size:14px;font-family:var(--mono);font-weight:700;width:100%;text-align:center}
+.wiz-actor-list{display:flex;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto;padding-right:4px}
+.wiz-actor-row{display:grid;grid-template-columns:26px 1fr 120px 70px;align-items:center;gap:7px;padding:7px 9px;border-radius:7px;border:1px solid rgba(112,226,255,.12);background:rgba(3,10,20,.62);cursor:pointer;user-select:none;transition:all 110ms}
+.wiz-actor-row.on{border-color:rgba(112,226,255,.38);background:rgba(112,226,255,.07)}
+.wiz-actor-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(112,226,255,.12)}
+.wiz-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid rgba(112,226,255,.1);flex-shrink:0}
+.wiz-prog{font-family:var(--mono);font-size:8px;color:rgba(223,248,255,.34);letter-spacing:.1em}
+.wiz-nav{display:flex;gap:5px}
+/* ── FACTIONS ── */
+.fac-wiz-host{display:flex;flex-direction:column;gap:10px}
+.fac-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0}
+.fac-reg-list{display:flex;flex-direction:column;gap:6px}
+.fac-reg-card{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:9px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.72)}
+.fac-reg-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.fac-reg-hdr strong{font-size:13px;color:#dff8ff}.fac-reg-hdr span{font-size:10px;color:rgba(223,248,255,.56);margin-top:1px;display:block}
+.fac-score{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 10px;border-radius:8px;border:1px solid rgba(112,226,255,.16);background:rgba(0,0,0,.28);font-family:var(--mono);text-align:center;flex-shrink:0;min-width:60px}
+.fac-score span{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(223,248,255,.48)}
+.fac-score strong{font-size:20px;line-height:1.1}
+.fac-score.pos strong{color:#7dffb2;text-shadow:0 0 12px rgba(125,255,178,.28)}.fac-score.neg strong{color:#ff8b8b;text-shadow:0 0 12px rgba(255,139,139,.28)}.fac-score.neu strong{color:#ffd166;text-shadow:0 0 12px rgba(255,209,102,.28)}
+.rel-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.rel-badge.ally{background:rgba(125,255,178,.12);color:#7dffb2;border:1px solid rgba(125,255,178,.28)}.rel-badge.patron{background:rgba(112,226,255,.1);color:#70e2ff;border:1px solid rgba(112,226,255,.24)}
+.rel-badge.neutral{background:rgba(255,209,102,.1);color:#ffd166;border:1px solid rgba(255,209,102,.24)}.rel-badge.rival{background:rgba(255,139,139,.1);color:#ff8b8b;border:1px solid rgba(255,139,139,.22)}
+.rel-badge.enemy{background:rgba(255,107,107,.14);color:#ffd0d0;border:1px solid rgba(255,107,107,.30)}.rel-badge.member{background:rgba(156,182,255,.12);color:#9cb6ff;border:1px solid rgba(156,182,255,.24)}
+.fac-rel-list{display:flex;flex-direction:column;gap:4px}
+.fac-rel-row{display:grid;grid-template-columns:34px 1fr auto auto auto;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid rgba(112,226,255,.12);background:rgba(3,10,20,.62)}
+.fac-rel-row .avatar{width:30px;height:30px;border-radius:50%;background:rgba(112,226,255,.14);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:rgba(223,248,255,.7)}
+.fac-rel-info strong{font-size:11px;color:#dff8ff;display:block}.fac-rel-info span{font-size:9px;color:rgba(223,248,255,.52)}
+.fac-mini-score{display:flex;flex-direction:column;align-items:center;min-width:48px;padding:3px 8px;border-radius:6px;border:1px solid rgba(112,226,255,.14);background:rgba(0,0,0,.26);font-family:var(--mono)}
+.fac-mini-score span{font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:rgba(223,248,255,.42)}.fac-mini-score strong{font-size:15px;line-height:1}
+.fac-mini-score.pos strong{color:#7dffb2}.fac-mini-score.neg strong{color:#ff8b8b}.fac-mini-score.neu strong{color:#ffd166}
+/* ── STORE ── */
+.store-tabs{display:flex;gap:3px;flex-shrink:0}
+.stab{padding:5px 12px;border-radius:6px;border:1px solid rgba(112,226,255,.16);background:rgba(0,0,0,.2);color:rgba(223,248,255,.7);font-size:11px;cursor:pointer}
+.stab:hover{background:rgba(112,226,255,.09)}.stab.on{background:rgba(112,226,255,.14);border-color:rgba(112,226,255,.44);color:#70e2ff}
+.st-table{width:100%;border-collapse:collapse;font-size:11px}
+.st-table th{padding:7px 8px;text-align:left;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(112,226,255,.68);border-bottom:1px solid rgba(112,226,255,.16)}
+.st-table td{padding:7px 8px;border-bottom:1px solid rgba(112,226,255,.07);color:rgba(223,248,255,.8)}
+.st-table tr:hover td{background:rgba(112,226,255,.04)}.st-table td.pos{color:#7dffb2;font-weight:700;font-family:var(--mono)}.st-table td.neg{color:#ff8b8b;font-weight:700;font-family:var(--mono)}
+/* Store Options */
+.sopt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sopt-card{display:flex;flex-direction:column;gap:7px;padding:12px;border-radius:9px;border:1px solid rgba(112,226,255,.14);background:rgba(3,10,20,.72)}
+.sopt-card.span2{grid-column:1/-1}
+.sopt-card h4{font-size:10px;color:rgba(112,226,255,.8);margin:0 0 2px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.sopt-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:5px 0;border-bottom:1px solid rgba(112,226,255,.07)}
+.sopt-row:last-child{border-bottom:none;padding-bottom:0}
+.sopt-rl strong{font-size:11px;color:#dff8ff;display:block}.sopt-rl em{font-style:normal;font-size:9px;color:rgba(223,248,255,.46)}
+.sopt-in{padding:4px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.16);background:rgba(2,8,16,.88);color:#dff8ff;font-size:12px;font-family:var(--mono);width:68px;text-align:right}
+.sopt-sel{padding:4px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.16);background:rgba(2,8,16,.88);color:#dff8ff;font-size:11px}
+.sst-toggle{display:flex;gap:7px;margin-bottom:6px;flex-shrink:0}
+.sst-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:8px;border:1px solid rgba(112,226,255,.15);background:rgba(0,0,0,.22);color:rgba(223,248,255,.62);font-size:13px;font-weight:700;cursor:pointer;transition:all 130ms}
+.sst-btn.is-open{border-color:rgba(125,255,178,.36);background:rgba(125,255,178,.08);color:#caffda}
+.sst-btn.is-closed{border-color:rgba(255,107,107,.32);background:rgba(255,107,107,.08);color:#ffd0d0}
+.sst-dot{width:9px;height:9px;border-radius:50%;background:rgba(223,248,255,.22);flex-shrink:0}
+.sst-btn.is-open .sst-dot{background:#7dffb2;box-shadow:0 0 7px rgba(125,255,178,.6)}.sst-btn.is-closed .sst-dot{background:#ff6b6b;box-shadow:0 0 7px rgba(255,107,107,.5)}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:5px}
+.cat-item{display:flex;flex-direction:column;gap:4px;padding:8px 9px;border-radius:7px;border:1px solid rgba(112,226,255,.13);background:rgba(2,8,16,.62);cursor:pointer;transition:all 110ms}
+.cat-item.on{border-color:rgba(125,255,178,.24);background:rgba(125,255,178,.05)}.cat-item.off{border-color:rgba(255,107,107,.18);background:rgba(255,107,107,.04);opacity:.7}
+.cat-ih{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.cat-icon{font-size:13px;color:rgba(112,226,255,.56)}.cat-item.on .cat-icon{color:#7dffb2}.cat-item.off .cat-icon{color:rgba(255,107,107,.56)}
+.cat-name{font-size:10px;font-weight:700;color:#dff8ff;margin-top:1px}
+.cat-mu{display:flex;align-items:center;gap:3px;font-family:var(--mono);font-size:9px;color:rgba(223,248,255,.48)}
+.cat-mu-in{width:36px;padding:2px 4px;border-radius:4px;border:1px solid rgba(112,226,255,.13);background:rgba(0,0,0,.28);color:#dff8ff;font-family:var(--mono);font-size:9px;text-align:center}
+/* ── TRADE ── */
+.trade-layout{display:grid;grid-template-columns:1fr 280px;gap:10px;flex:1;min-height:0}
+.trade-queues{display:flex;gap:6px;overflow-x:auto;flex:1;min-height:0}
+.trade-col{display:flex;flex-direction:column;gap:5px;min-width:165px}
+.trade-col-hdr{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:6px 8px;border-radius:7px;border:1px solid rgba(112,226,255,.12);background:rgba(3,10,20,.6)}
+.trade-col-hdr h4{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(112,226,255,.76);margin:0}
+.trade-card{display:flex;flex-direction:column;gap:4px;padding:9px;border-radius:8px;border:1px solid rgba(112,226,255,.14);background:rgba(3,12,22,.72);cursor:pointer;text-align:left;appearance:none;color:inherit}
+.trade-card.crit{border-color:rgba(255,107,107,.28)}.trade-card.warn{border-color:rgba(255,200,87,.24)}
+.trade-card strong{font-size:11px;color:#dff8ff}.trade-card span{font-size:9px;color:rgba(223,248,255,.52)}.trade-fail{font-size:9px;color:#ff8b8b}
+/* ── APPROVALS ── */
+.apr-layout{display:grid;grid-template-columns:240px 1fr 260px;gap:10px;flex:1;min-height:0}
+.apr-queue{display:flex;flex-direction:column;gap:4px;overflow-y:auto;min-height:0}
+.apr-qcard{display:grid;grid-template-columns:30px 1fr;gap:7px;align-items:start;padding:8px;border-radius:8px;border:1px solid rgba(112,226,255,.14);background:rgba(3,10,20,.62);cursor:pointer}
+.apr-qcard.on{border-color:rgba(112,226,255,.44);background:rgba(112,226,255,.08)}
+.apr-icon{width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(112,226,255,.18);background:rgba(112,226,255,.09);color:#70e2ff;font-size:13px}
+.apr-copy strong{font-size:11px;color:#dff8ff;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.apr-copy em{font-style:normal;font-size:9px;color:rgba(223,248,255,.56);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.apr-copy small{font-family:var(--mono);font-size:8px;color:rgba(112,226,255,.68);text-transform:uppercase;letter-spacing:.1em;display:block}
+.apr-detail{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0;padding:12px;border-radius:10px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.62)}
+.apr-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.apr-field{padding:7px;border-radius:7px;border:1px solid rgba(255,255,255,.04);background:rgba(0,0,0,.22)}
+.apr-field span{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(112,226,255,.66);margin-bottom:2px}
+.apr-field strong{font-size:12px;color:#dff8ff}
+.apr-rail{display:flex;flex-direction:column;gap:7px;overflow-y:auto;min-height:0;padding:12px;border-radius:10px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.62)}
+.apr-acts{display:flex;flex-direction:column;gap:4px}
+/* ── HEALING ── */
+.heal-tools{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.heal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.hcard{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:10px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.68)}
+.hcard.droid{border-color:rgba(112,226,255,.1);opacity:.82}.hcard.crit{border-color:rgba(255,107,107,.28)}.hcard.warn{border-color:rgba(255,200,87,.22)}
+.hcard-hdr{display:flex;align-items:center;gap:7px}
+.hcard-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.hcard-name{font-size:12px;font-weight:700;color:#dff8ff}.hcard-type{font-size:9px;color:rgba(223,248,255,.5)}.droid-tag{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(112,226,255,.48)}
+.hp-row{display:flex;justify-content:space-between;font-size:10px;color:rgba(223,248,255,.68)}.hp-row strong{color:#dff8ff}
+.hp-bar{height:4px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:1px 0}
+.hp-fill{height:100%;border-radius:999px}.hp-fill.hi{background:#7dffb2}.hp-fill.mi{background:#ffc857}.hp-fill.lo{background:#ff6b6b}
+.hchips{display:flex;flex-wrap:wrap;gap:3px}.hnote{font-size:9px;color:rgba(223,248,255,.48);font-style:italic}.hacts{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+/* ── HOUSE RULES ── */
+.hr-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rcat{border:1px solid rgba(112,226,255,.14);border-radius:10px;overflow:hidden;background:rgba(3,10,20,.62)}
+.rcat-hdr{display:flex;align-items:center;gap:7px;padding:8px 12px;border-bottom:1px solid rgba(112,226,255,.1);background:rgba(112,226,255,.05);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(112,226,255,.8)}
+.rentry{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(112,226,255,.06);transition:background 100ms}
+.rentry:last-child{border-bottom:none}.rentry:hover{background:rgba(112,226,255,.035)}
+.rname{font-size:12px;font-weight:600;color:#dff8ff}.rdesc{font-size:9px;color:rgba(223,248,255,.52);margin-top:1px;line-height:1.4}.rdesc.warn{color:#ffc857}
+.sw{display:flex;align-items:center;cursor:pointer;flex-shrink:0}
+.sw-track{width:30px;height:16px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(112,226,255,.18);position:relative;transition:background 200ms}
+.sw-track.on{background:rgba(112,226,255,.28);border-color:rgba(112,226,255,.5)}
+.sw-thumb{position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:999px;background:rgba(223,248,255,.66);transition:left 200ms}
+.sw-track.on .sw-thumb{left:16px;background:#70e2ff;box-shadow:0 0 5px rgba(112,226,255,.5)}
+/* ── WORKSPACE ── */
+.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px}
+.ws-card{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:9px;border:1px solid rgba(112,226,255,.14);background:rgba(3,10,20,.68)}
+.ws-card.in-party{border-color:rgba(112,226,255,.28)}
+.ws-img{height:64px;border-radius:7px;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:28px;opacity:.6}
+.ws-name{font-size:12px;font-weight:700;color:#dff8ff}.ws-meta{font-size:9px;color:rgba(223,248,255,.5)}.ws-acts{display:flex;gap:3px;flex-wrap:wrap}
+.type-chip{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:999px;font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em}
+.type-chip.pc{background:rgba(112,226,255,.09);color:#70e2ff;border:1px solid rgba(112,226,255,.2)}.type-chip.npc{background:rgba(255,200,87,.09);color:#ffc857;border:1px solid rgba(255,200,87,.2)}.type-chip.droid{background:rgba(125,255,178,.09);color:#7dffb2;border:1px solid rgba(125,255,178,.2)}.type-chip.vehicle{background:rgba(156,182,255,.09);color:#9cb6ff;border:1px solid rgba(156,182,255,.2)}
+.ws-party-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;user-select:none;border:1px solid rgba(112,226,255,.16);background:rgba(112,226,255,.07);color:rgba(112,226,255,.6);transition:all 120ms}
+.ws-party-chip.in{border-color:rgba(125,255,178,.28);background:rgba(125,255,178,.08);color:#7dffb2}
+.ws-qa{display:flex;flex-direction:column;gap:3px}
+.ws-qa-row{display:flex;align-items:center;gap:4px}
+.ws-qa-lbl{font-family:var(--mono);font-size:8px;color:rgba(112,226,255,.6);text-transform:uppercase;letter-spacing:.1em;min-width:50px}
+.ws-qa-amts{display:flex;gap:2px;flex:1;flex-wrap:wrap}
+.ws-qa-amt{padding:2px 5px;border-radius:4px;border:1px solid rgba(112,226,255,.14);background:rgba(112,226,255,.06);color:rgba(112,226,255,.8);font-family:var(--mono);font-size:9px;cursor:pointer;white-space:nowrap}
+.ws-qa-amt:hover{background:rgba(112,226,255,.16);color:#70e2ff}
+.ws-qa-amt.pos{border-color:rgba(125,255,178,.16);background:rgba(125,255,178,.06);color:rgba(125,255,178,.8)}.ws-qa-amt.pos:hover{background:rgba(125,255,178,.14);color:#7dffb2}
+/* ── SETTINGS ── */
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cfg-card{display:flex;flex-direction:column;gap:7px;padding:12px;border-radius:10px;border:1px solid rgba(112,226,255,.15);background:rgba(3,10,20,.72)}
+.cfg-card h4{font-size:12px;color:#dff8ff;margin:0 0 4px}
+.cfg-field{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(112,226,255,.07)}
+.cfg-field:last-child{border-bottom:none}
+.cfg-fl strong{font-size:11px;color:#dff8ff;display:block}.cfg-fl em{font-style:normal;font-size:9px;color:rgba(223,248,255,.5)}
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="scaler" id="scaler">
+<div class="tablet">
+  <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+  <div class="camera"></div>
+  <div class="leds"><div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div></div>
+  <div class="serial">GM-CMD · ACCESS TIER: COMMAND · SN-4421-Δ</div>
+  <div class="engrave">GM COMMAND HOLOPAD — OPS ACCESS — SHARED SHELL</div>
+  <button class="home-hw" onclick="nav('home')">⌂ HOME</button>
+  <div class="screen">
+    <div class="scan-v"></div>
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+    <div class="screen-inner">
+      <nav class="dock" id="dock" style="display:none">
+        <button class="dock-home" onclick="nav('home')"><i class="fa-solid fa-house"></i>&nbsp;Home</button>
+        <div class="dock-sep"></div>
+        <div class="dock-status" id="dstat"><span class="dock-ey" id="dcode">GM-CMD-OPS</span><span class="dock-lbl" id="dlbl">GM Operations</span><span class="dock-rd" id="drd">Ready</span></div>
+        <div class="dock-sep"></div>
+        <div class="dock-apps">
+          <button class="dock-app warn" data-id="bulletin" onclick="nav('bulletin')"><i class="fa-solid fa-newspaper"></i>COM<b>4</b></button>
+          <button class="dock-app crit" data-id="jobs" onclick="nav('jobs')"><i class="fa-solid fa-clipboard-list"></i>JOB<b>3</b></button>
+          <button class="dock-app" data-id="house-rules" onclick="nav('house-rules')"><i class="fa-solid fa-book"></i>RUL</button>
+          <button class="dock-app warn" data-id="store" onclick="nav('store')"><i class="fa-solid fa-store"></i>STR<b>2</b></button>
+          <button class="dock-app crit" data-id="trade" onclick="nav('trade')"><i class="fa-solid fa-right-left"></i>TRD<b>1</b></button>
+          <button class="dock-app crit" data-id="approvals" onclick="nav('approvals')"><i class="fa-solid fa-check-circle"></i>APR<b>2</b></button>
+          <button class="dock-app" data-id="healing" onclick="nav('healing')"><i class="fa-solid fa-heart-pulse"></i>MED</button>
+          <button class="dock-app" data-id="settings" onclick="nav('settings')"><i class="fa-solid fa-sliders"></i>CFG</button>
+          <button class="dock-app" data-id="workspace" onclick="nav('workspace')"><i class="fa-solid fa-users"></i>WRK</button>
+          <button class="dock-app" data-id="factions" onclick="nav('factions')"><i class="fa-solid fa-people-arrows"></i>FAC</button>
+        </div>
+      </nav>
+      <div class="surfs">
+
+<!-- ══ HOME ══ -->
+<div class="surf on" id="s-home">
+  <div class="home-urgent"><div class="home-urgent-ey"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;Critical — Requires Immediate GM Action</div>
+    <button class="urg-item" onclick="nav('approvals')"><i class="fa-solid fa-robot"></i>2 Approval Requests</button>
+    <button class="urg-item" onclick="nav('jobs')"><i class="fa-solid fa-clipboard-list"></i>3 Jobs Need Review</button>
+    <button class="urg-item" onclick="nav('trade')"><i class="fa-solid fa-right-left"></i>1 Failed Settlement</button>
+  </div>
+  <div class="clusters">
+    <div class="cl">
+      <div class="cl-hdr"><h4>Operations</h4><span class="cl-cnt crit">4 need action</span></div>
+      <div class="cl-apps">
+        <button class="app-row crit" data-app-card="jobs" onclick="nav('jobs')"><div class="app-row-code">JOB</div><div class="app-row-icon"><i class="fa-solid fa-clipboard-list"></i></div><div class="app-row-body"><div class="app-row-label">Job Board</div><div class="app-row-desc">Contracts, review queue, and payout</div></div><div class="app-row-badge crit">3</div></button>
+        <button class="app-row crit" data-app-card="trade" onclick="nav('trade')"><div class="app-row-code">TRD</div><div class="app-row-icon"><i class="fa-solid fa-right-left"></i></div><div class="app-row-body"><div class="app-row-label">Trade Console</div><div class="app-row-desc">Transfers, counter-offers, settlements</div></div><div class="app-row-badge crit">1</div></button>
+        <button class="app-row" data-app-card="healing" onclick="nav('healing')"><div class="app-row-code">MED</div><div class="app-row-icon"><i class="fa-solid fa-heart-pulse"></i></div><div class="app-row-body"><div class="app-row-label">Healing</div><div class="app-row-desc">Party recovery management</div></div><div class="app-row-badge info">3</div></button>
+        <button class="app-row" data-app-card="workspace" onclick="nav('workspace')"><div class="app-row-code">WRK</div><div class="app-row-icon"><i class="fa-solid fa-users"></i></div><div class="app-row-body"><div class="app-row-label">Workspace</div><div class="app-row-desc">GM actor access and roster</div></div><div class="app-row-badge info">12</div></button>
+        <button class="app-row" data-app-card="factions" onclick="nav('factions')"><div class="app-row-code">FAC</div><div class="app-row-icon"><i class="fa-solid fa-people-arrows"></i></div><div class="app-row-body"><div class="app-row-label">Factions</div><div class="app-row-desc">Relationship registry and party standings</div></div><div class="app-row-badge info">5</div></button>
+      </div>
+    </div>
+    <div class="cl-col">
+      <div class="cl"><div class="cl-hdr"><h4>Economy</h4><span class="cl-cnt warn">4 queued</span></div><div class="cl-apps">
+        <button class="app-row warn" data-app-card="store" onclick="nav('store')"><div class="app-row-code">STR</div><div class="app-row-icon"><i class="fa-solid fa-store"></i></div><div class="app-row-body"><div class="app-row-label">Store</div><div class="app-row-desc">Economy governance and transactions</div></div><div class="app-row-badge warn">2</div></button>
+        <button class="app-row crit" data-app-card="approvals" onclick="nav('approvals')"><div class="app-row-code">APR</div><div class="app-row-icon"><i class="fa-solid fa-check-circle"></i></div><div class="app-row-body"><div class="app-row-label">Approvals</div><div class="app-row-desc">Droids, ships, games, custom requests</div></div><div class="app-row-badge crit">2</div></button>
+      </div></div>
+      <div class="cl"><div class="cl-hdr"><h4>Holonet</h4><span class="cl-cnt">4 signals</span></div><div class="cl-apps">
+        <button class="app-row warn" data-app-card="bulletin" onclick="nav('bulletin')"><div class="app-row-code">COM</div><div class="app-row-icon"><i class="fa-solid fa-newspaper"></i></div><div class="app-row-body"><div class="app-row-label">Bulletin</div><div class="app-row-desc">Party and player broadcast notices</div></div><div class="app-row-badge warn">4</div></button>
+      </div></div>
+      <div class="cl"><div class="cl-hdr"><h4>Configuration</h4><span class="cl-cnt">ready</span></div><div class="cl-apps">
+        <button class="app-row" data-app-card="house-rules" onclick="nav('house-rules')"><div class="app-row-code">RUL</div><div class="app-row-icon"><i class="fa-solid fa-book"></i></div><div class="app-row-body"><div class="app-row-label">House Rules</div><div class="app-row-desc">Game rule modifications, 7 active</div></div></button>
+        <button class="app-row" data-app-card="settings" onclick="nav('settings')"><div class="app-row-code">CFG</div><div class="app-row-icon"><i class="fa-solid fa-sliders"></i></div><div class="app-row-body"><div class="app-row-label">Settings</div><div class="app-row-desc">Theme, policy, interface tuning</div></div></button>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BULLETIN ══ -->
+<div class="surf" id="s-bulletin">
+  <div class="ph">
+    <button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button>
+    <div><span class="ey">COMM BROADCAST CONSOLE</span><h2>Bulletin</h2><p>Holonet events, wire feeds, and player-state broadcasts</p></div>
+    <div class="mbar" style="margin-left:auto">
+      <div class="met ok"><span>Live</span><strong>4</strong></div>
+      <div class="met"><span>Drafts</span><strong>2</strong></div>
+      <div class="met warn"><span>Alerts</span><strong>1</strong></div>
+      <div class="met"><span>Archived</span><strong>11</strong></div>
+    </div>
+  </div>
+  <div class="bull-layout" style="flex:1;min-height:0">
+    <div class="bull-nav">
+      <div class="bull-nc on" onclick="bullSection(this,'events')"><div><div class="bull-nc-lbl">Events</div><div class="bull-nc-sub">Campaign news &amp; missions</div></div><span class="bull-nc-cnt">3</span></div>
+      <div class="bull-nc" onclick="bullSection(this,'holonews')"><div><div class="bull-nc-lbl">Holonews</div><div class="bull-nc-sub">Wire feed &amp; auto-publish</div></div><span class="bull-nc-cnt">2</span></div>
+      <div class="bull-nc" onclick="bullSection(this,'messages')"><div><div class="bull-nc-lbl">Messages</div><div class="bull-nc-sub">Direct party messages</div></div><span class="bull-nc-cnt">1</span></div>
+      <div class="bull-nc" onclick="bullSection(this,'players')"><div><div class="bull-nc-lbl">Players</div><div class="bull-nc-sub">Per-player character state</div></div></div>
+      <div class="bull-nc" onclick="bullSection(this,'party')"><div><div class="bull-nc-lbl">Party State</div><div class="bull-nc-sub">Crew health &amp; resources</div></div></div>
+    </div>
+    <div class="bull-main">
+      <!-- EVENTS -->
+      <div class="bull-sec on" id="bull-s-events">
+        <div class="bull-cmp-wrap">
+          <div class="bull-cmp-trig" onclick="toggleCmp('events')">
+            <div class="bull-cmp-trig-l"><span class="chip primary" style="background:rgba(112,226,255,.14);color:#70e2ff;border-color:rgba(112,226,255,.32)"><i class="fa-solid fa-plus"></i></span>Add Event Broadcast</div>
+            <span style="font-size:9px;color:rgba(223,248,255,.36)">▼</span>
+          </div>
+          <div class="bull-cmp-body" id="cmp-events">
+            <div class="bfg c3">
+              <div class="bfl"><span>Headline</span><input class="b-in" type="text" placeholder="Hyperlane disruption at @Docking Ring"></div>
+              <div class="bfl"><span>Category</span><input class="b-in" type="text" placeholder="news / mission / warning"></div>
+              <div class="bfl"><span>Priority</span><select class="b-sel"><option>Normal</option><option>High</option><option>Critical</option></select></div>
+            </div>
+            <div class="bfg c3">
+              <div class="bfl"><span>Published By</span><input class="b-in" type="text" placeholder="Galactic News Service"></div>
+              <div class="bfl"><span>Audience</span><select class="b-sel"><option>All Players</option><option>Party</option><option>One Player</option></select></div>
+              <div class="bfl"><span>Home Slot</span><select class="b-sel"><option>Comm Feed</option><option>Last Session</option></select></div>
+            </div>
+            <div class="bfl"><span>Recipients</span>
+              <div class="b-rcpts">
+                <span class="b-rcpt on" onclick="this.classList.toggle('on')"><input type="checkbox" checked hidden>✓ Ryn Ordo</span>
+                <span class="b-rcpt on" onclick="this.classList.toggle('on')"><input type="checkbox" checked hidden>✓ Kira Vance</span>
+                <span class="b-rcpt on" onclick="this.classList.toggle('on')"><input type="checkbox" checked hidden>✓ Tavo Arren</span>
+              </div>
+            </div>
+            <div class="b-tchips">
+              <span class="b-tc" onclick="this.classList.toggle('on')">Urgent alert</span>
+              <span class="b-tc" onclick="this.classList.toggle('on')">Pin as Last Session</span>
+              <span class="b-tc" onclick="this.classList.toggle('on')">Breaking News</span>
+            </div>
+            <div class="bfl"><span>Body</span><textarea class="b-ta" rows="4" placeholder="Imperial patrols spotted near @Wayfarer. Avoid #south docking ring until patrol window closes."></textarea></div>
+            <div class="b-form-acts"><button class="btn sm" data-submit-mode="draft">Save Draft</button><button class="btn sm primary" data-submit-mode="publish">Publish Event</button></div>
+          </div>
+        </div>
+        <div class="bull-recs">
+          <div class="bull-rec breaking"><div class="bull-rec-chips"><span class="chip ok">Published</span><span class="chip crit">Breaking</span><span class="chip">All Players</span><span class="chip muted">2/4 read</span></div><h4>Imperial Blockade — Ord Mantell Sector</h4><p>Three Victory-class Star Destroyers have assumed blockade formation. All civilian traffic redirected to secondary lanes.</p><div class="bull-rec-footer"><span style="font-size:9px;color:rgba(223,248,255,.44);font-family:var(--mono)">Jun 1 14:32</span><div class="bull-rec-acts"><button class="btn sm">Edit</button><button class="btn sm">Unpin</button><button class="btn sm">Archive</button></div></div></div>
+          <div class="bull-rec published"><div class="bull-rec-chips"><span class="chip ok">Published</span><span class="chip info">Pinned</span><span class="chip">Last Session</span><span class="chip muted">4/4 read</span></div><h4>Mission Debrief — Nar Shaddaa Extraction</h4><p>Your crew successfully extracted the Rebel contact. Casualties minimal; datapad secured.</p><div class="bull-rec-footer"><span style="font-size:9px;color:rgba(223,248,255,.44);font-family:var(--mono)">May 28 19:11</span><div class="bull-rec-acts"><button class="btn sm">Edit</button><button class="btn sm">Archive</button></div></div></div>
+          <div class="bull-rec draft"><div class="bull-rec-chips"><span class="chip muted">Draft</span><span class="chip">Normal</span></div><h4>Bounty Posted — Void Consortium</h4><p>40,000 cr bounty for the crew of the Rusty Bantha, last seen in the Outer Rim corridor.</p><div class="bull-rec-footer"><span style="font-size:9px;color:rgba(223,248,255,.44);font-family:var(--mono)">Draft</span><div class="bull-rec-acts"><button class="btn sm">Edit</button><button class="btn sm primary">Publish</button><button class="btn sm">Delete</button></div></div></div>
+        </div>
+      </div>
+      <!-- HOLONEWS -->
+      <div class="bull-sec" id="bull-s-holonews">
+        <div class="bull-cmp-wrap">
+          <div class="bull-cmp-trig" onclick="toggleCmp('holonews')">
+            <div class="bull-cmp-trig-l"><span class="chip primary" style="background:rgba(112,226,255,.14);color:#70e2ff;border-color:rgba(112,226,255,.32)"><i class="fa-solid fa-plus"></i></span>Add Holonews Entry</div>
+            <span style="font-size:9px;color:rgba(223,248,255,.36)">▼</span>
+          </div>
+          <div class="bull-cmp-body" id="cmp-holonews">
+            <div class="bfg c3"><div class="bfl"><span>News Source</span><input class="b-in" type="text" placeholder="Galactic News Service"></div><div class="bfl"><span>Dateline</span><input class="b-in" type="text" placeholder="CORUSCANT, CORE WORLDS"></div><div class="bfl"><span>Sector</span><input class="b-in" type="text" placeholder="Core / Outer Rim…"></div></div>
+            <div class="bfg c3"><div class="bfl"><span>Category</span><input class="b-in" type="text" placeholder="Politics / Crime…"></div><div class="bfl"><span>Priority</span><select class="b-sel"><option>Normal</option><option>High</option><option>Critical</option></select></div><div class="bfl"><span>Audience</span><select class="b-sel"><option>All Players</option><option>Party</option></select></div></div>
+            <div class="bfl"><span>Headline</span><input class="b-in" type="text" placeholder="Senate votes on Outer Rim aid package"></div>
+            <div class="bfl"><span>News Deck (subheadline)</span><input class="b-in" type="text" placeholder="Key facts summary line"></div>
+            <div class="bfl"><span>Body</span><textarea class="b-ta" rows="4" placeholder="Full wire story…"></textarea></div>
+            <div class="b-form-acts"><button class="btn sm" data-submit-mode="draft">Save Draft</button><button class="btn sm primary" data-submit-mode="publish">Publish to Wire</button></div>
+          </div>
+        </div>
+        <div class="bull-recs">
+          <div class="hn-rec"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="hn-dateline">CORUSCANT, CORE WORLDS · Jun 1</div><div class="hn-source">Galactic News Service</div></div><div style="display:flex;gap:4px"><span class="chip ok">Published</span><span class="chip warn">High</span></div></div><div class="hn-headline">Imperial Blockade — Ord Mantell Sector Enters Third Week</div><div class="hn-deck">Senior officials say no resolution is in sight as shipping losses mount.</div><div class="hn-body">Trade routes through the Outer Rim sector have been severely disrupted since the Imperial Navy assumed control of transit corridors near the Ord Mantell system, leaving dozens of cargo vessels stranded.</div><div style="display:flex;gap:4px;margin-top:4px"><button class="btn sm">Edit</button><button class="btn sm">Archive</button></div></div>
+          <div class="hn-rec"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="hn-dateline">NAR SHADDAA, HUTT SPACE · May 31</div><div class="hn-source">Underworld Wire</div></div><div style="display:flex;gap:4px"><span class="chip ok">Published</span><span class="chip">Normal</span></div></div><div class="hn-headline">Exchange Splinter Group Claims Warehouse District Seizures</div><div class="hn-deck">Low-level gang activity escalates amid leadership vacuum.</div><div class="hn-body">A breakaway faction of the Exchange has reportedly seized control of three major warehouses in the Duros sector of Nar Shaddaa, sources say.</div><div style="display:flex;gap:4px;margin-top:4px"><button class="btn sm">Edit</button><button class="btn sm">Archive</button></div></div>
+          <div class="hn-rec" style="opacity:.72;border-color:rgba(112,226,255,.1)"><div style="display:flex;justify-content:space-between"><div><div class="hn-dateline">BESPIN, CLOUD CITY · May 29</div><div class="hn-source">Cloud City Dispatch</div></div><span class="chip muted">Draft</span></div><div class="hn-headline">Baron Administrator Announces Cloud City Expansion Plans</div><div style="display:flex;gap:4px;margin-top:4px"><button class="btn sm">Edit</button><button class="btn sm primary">Publish</button><button class="btn sm">Delete</button></div></div>
+        </div>
+      </div>
+      <!-- MESSAGES -->
+      <div class="bull-sec" id="bull-s-messages">
+        <div class="bull-cmp-wrap">
+          <div class="bull-cmp-trig" onclick="toggleCmp('messages')">
+            <div class="bull-cmp-trig-l"><span class="chip primary" style="background:rgba(112,226,255,.14);color:#70e2ff;border-color:rgba(112,226,255,.32)"><i class="fa-solid fa-plus"></i></span>Compose Message</div>
+            <span style="font-size:9px;color:rgba(223,248,255,.36)">▼</span>
+          </div>
+          <div class="bull-cmp-body" id="cmp-messages">
+            <div class="bfg c2"><div class="bfl"><span>Audience</span><select class="b-sel"><option>All Players</option><option>Party</option><option>One Player</option><option>Selected Players</option></select></div><div class="bfl"><span>Recipients</span><div class="b-rcpts"><span class="b-rcpt on" onclick="this.classList.toggle('on')">Ryn Ordo</span><span class="b-rcpt on" onclick="this.classList.toggle('on')">Kira Vance</span><span class="b-rcpt" onclick="this.classList.toggle('on')">Tavo Arren</span></div></div></div>
+            <div class="bfl"><span>Subject</span><input class="b-in" type="text" placeholder="Your next assignment..."></div>
+            <div class="bfl"><span>Body</span><textarea class="b-ta" rows="4" placeholder="Message body. Use @mention for player names, #location for places."></textarea></div>
+            <div class="b-tchips"><span class="b-tc" onclick="this.classList.toggle('on')">Urgent</span><span class="b-tc" onclick="this.classList.toggle('on')">Notification</span></div>
+            <div class="b-form-acts"><button class="btn sm" data-submit-mode="draft">Save Draft</button><button class="btn sm primary" data-submit-mode="publish">Send Message</button></div>
+          </div>
+        </div>
+        <div class="bull-recs">
+          <div class="msg-rec"><div class="msg-hdr"><div><div class="msg-to">To: All Players · Jun 1</div><div class="msg-sub">Your services are required at Docking Bay 94</div></div><div style="display:flex;gap:4px"><span class="chip ok">Sent</span><span class="chip muted">3/3 read</span></div></div><div class="msg-body">The contact will meet you at 0200 hours. Come alone. Do not use comms in the docking sector. Payment on delivery.</div><div style="display:flex;gap:4px;margin-top:4px"><button class="btn sm">Edit</button><button class="btn sm">Archive</button></div></div>
+          <div class="msg-rec"><div class="msg-hdr"><div><div class="msg-to">To: Ryn Ordo · May 30</div><div class="msg-sub">Private: The informant's real name</div></div><div style="display:flex;gap:4px"><span class="chip ok">Sent</span><span class="chip muted">1/1 read</span></div></div><div class="msg-body">Her name is Lyra Voss. She worked for Imperial Intelligence before defecting. Approach with caution.</div><div style="display:flex;gap:4px;margin-top:4px"><button class="btn sm">Edit</button><button class="btn sm">Archive</button></div></div>
+        </div>
+      </div>
+      <!-- PLAYERS -->
+      <div class="bull-sec" id="bull-s-players">
+        <div class="bull-hdr"><h3>Player State</h3><p>Per-player character status, connection state, and quick GM notes.</p></div>
+        <div class="ps-grid">
+          <div class="ps-card"><div class="ps-player">Player: Alex</div><div class="ps-name">Ryn Ordo</div><div class="ps-stats"><div class="ps-stat warn"><span>HP</span><strong>24/52</strong></div><div class="ps-stat warn"><span>Condition</span><strong>−2</strong></div><div class="ps-stat"><span>Credits</span><strong>2,000</strong></div><div class="ps-stat ok"><span>Status</span><strong>Online</strong></div></div><div style="display:flex;gap:4px;margin-top:4px"><span class="chip warn">Wounded</span><span class="chip">SW Used</span></div></div>
+          <div class="ps-card"><div class="ps-player">Player: Jordan</div><div class="ps-name">Kira Vance</div><div class="ps-stats"><div class="ps-stat crit"><span>HP</span><strong>0/38</strong></div><div class="ps-stat crit"><span>Condition</span><strong>Down</strong></div><div class="ps-stat"><span>Credits</span><strong>3,050</strong></div><div class="ps-stat ok"><span>Status</span><strong>Online</strong></div></div><div style="display:flex;gap:4px;margin-top:4px"><span class="chip crit">Unconscious</span></div></div>
+          <div class="ps-card"><div class="ps-player">Player: Sam</div><div class="ps-name">Tavo Arren</div><div class="ps-stats"><div class="ps-stat ok"><span>HP</span><strong>44/44</strong></div><div class="ps-stat ok"><span>Condition</span><strong>+0</strong></div><div class="ps-stat"><span>Credits</span><strong>5,200</strong></div><div class="ps-stat ok"><span>Status</span><strong>Online</strong></div></div><div style="display:flex;gap:4px;margin-top:4px"><span class="chip ok">Healthy</span></div></div>
+          <div class="ps-card" style="border-color:rgba(180,200,220,.12);opacity:.6"><div class="ps-player">Player: Morgan</div><div class="ps-name">Vex-9 (Droid)</div><div class="ps-stats"><div class="ps-stat"><span>HP</span><strong>30/30</strong></div><div class="ps-stat muted"><span>Condition</span><strong>—</strong></div><div class="ps-stat"><span>Credits</span><strong>—</strong></div><div class="ps-stat muted"><span>Status</span><strong>Offline</strong></div></div><div style="display:flex;gap:4px;margin-top:4px"><span class="chip muted">Offline</span></div></div>
+        </div>
+      </div>
+      <!-- PARTY STATE -->
+      <div class="bull-sec" id="bull-s-party">
+        <div class="bull-hdr"><h3>Party State</h3><p>Crew health overview, active conditions, and resource summary.</p></div>
+        <div class="panel" style="flex-shrink:0">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <div class="met warn"><span>Party HP</span><strong>68/134</strong></div>
+            <div class="met crit"><span>Down</span><strong>1</strong></div>
+            <div class="met warn"><span>Wounded</span><strong>1</strong></div>
+            <div class="met ok"><span>Healthy</span><strong>2</strong></div>
+            <div class="met"><span>Party Credits</span><strong>10,250</strong></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div class="party-row"><div class="party-av" style="background:rgba(255,200,87,.14);color:#ffc857">R</div><div><div class="party-name">Ryn Ordo</div><div class="party-sub">Soldier 8 · Wounded</div></div><div class="hp-bar" style="width:100px;margin:0"><div class="hp-fill mi" style="width:46%"></div></div><span class="chip warn" style="font-size:8px">24/52 HP</span></div>
+            <div class="party-row"><div class="party-av" style="background:rgba(255,107,107,.14);color:#ff6b6b">K</div><div><div class="party-name">Kira Vance</div><div class="party-sub">Scoundrel 6 · Down</div></div><div class="hp-bar" style="width:100px;margin:0"><div class="hp-fill lo" style="width:0%"></div></div><span class="chip crit" style="font-size:8px">0/38 HP</span></div>
+            <div class="party-row"><div class="party-av" style="background:rgba(125,255,178,.14);color:#7dffb2">T</div><div><div class="party-name">Tavo Arren</div><div class="party-sub">Noble 7 · Healthy</div></div><div class="hp-bar" style="width:100px;margin:0"><div class="hp-fill hi" style="width:100%"></div></div><span class="chip ok" style="font-size:8px">44/44 HP</span></div>
+            <div class="party-row" style="opacity:.7"><div class="party-av" style="background:rgba(112,226,255,.1);color:#70e2ff"><i class="fa-solid fa-robot" style="font-size:11px"></i></div><div><div class="party-name">R3-V8</div><div class="party-sub">Droid · No rest benefit</div></div><div class="hp-bar" style="width:100px;margin:0"><div class="hp-fill hi" style="width:93%"></div></div><span class="chip info" style="font-size:8px">28/30 HP</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn primary" data-combat-recovery-action="natural-healing"><i class="fa-solid fa-heart-pulse"></i>&nbsp;Natural Healing</button>
+          <button class="btn" data-combat-recovery-action="extended-rest">Extended Rest</button>
+          <button class="btn" data-combat-recovery-action="short-rest">Short Rest</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JOBS ══ -->
+<div class="surf" id="s-jobs">
+  <!-- BOARD VIEW -->
+  <div id="jobs-board" style="display:contents">
+    <div class="ph">
+      <button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button>
+      <div><span class="ey">CONTRACT MANAGEMENT TERMINAL</span><h2>Job Board</h2><p>Mission pipeline, objective review, and reward payout</p></div>
+      <div class="mbar" style="margin-left:auto">
+        <div class="met"><span>Total</span><strong>8</strong></div>
+        <div class="met warn"><span>Review</span><strong>3</strong></div>
+        <div class="met ok"><span>Payout</span><strong>1</strong></div>
+        <div class="met"><span>Active</span><strong>4</strong></div>
+      </div>
+    </div>
+    <div class="job-shell" style="flex:1;min-height:0">
+      <div class="panel" style="display:flex;flex-direction:column;gap:8px;min-height:0;padding:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="ey">CONTRACT BOARD — MISSION PIPELINE</span>
+          <button class="btn sm primary" onclick="openWiz('cwiz')"><i class="fa-solid fa-plus"></i>&nbsp;New Contract</button>
+        </div>
+        <div class="job-kanban" style="flex:1;min-height:0">
+          <div class="job-col"><div class="job-col-hdr"><h4>Posted</h4><span>2</span></div><div class="job-col-cards">
+            <button class="job-card" onclick="selJob(this,'Extract the Slicer')"><div class="job-chip-row"><span class="chip">Posted</span></div><div class="job-title">Extract the Slicer</div><div class="job-client">Anonymous · Black Sun</div><div class="job-reward">+25,000 cr · +1,500 xp</div></button>
+            <button class="job-card" onclick="selJob(this,'Escort to Corellia')"><div class="job-chip-row"><span class="chip">Posted</span></div><div class="job-title">Escort to Corellia</div><div class="job-client">Corellian Shipping Guild</div><div class="job-reward">+8,000 cr · +600 xp</div></button>
+          </div></div>
+          <div class="job-col"><div class="job-col-hdr"><h4>Active</h4><span>2</span></div><div class="job-col-cards">
+            <button class="job-card" onclick="selJob(this,'The Kessel Gambit')"><div class="job-chip-row"><span class="chip info">In Progress</span></div><div class="job-title">The Kessel Gambit</div><div class="job-client">Pyke Syndicate</div><div class="job-reward">+40,000 cr · +2,000 xp</div></button>
+            <button class="job-card warn" onclick="selJob(this,'Recover Stolen Cargo')"><div class="job-chip-row"><span class="chip info">Accepted</span><span class="chip warn">Needs GM</span></div><div class="job-title">Recover Stolen Cargo</div><div class="job-client">Bespin Cloud City</div><div class="job-reward">+15,000 cr · +900 xp</div></button>
+          </div></div>
+          <div class="job-col"><div class="job-col-hdr" style="border-color:rgba(255,200,87,.24)"><h4>Review</h4><span style="color:#ffc857">3</span></div><div class="job-col-cards">
+            <button class="job-card crit is-selected" onclick="selJob(this,'Infiltrate the Vault',true)"><div class="job-chip-row"><span class="chip warn">Review</span><span class="chip crit">Needs GM</span></div><div class="job-title">Infiltrate the Vault</div><div class="job-client">Rebel Intelligence</div><div class="job-reward">+60,000 cr · +3,000 xp</div></button>
+          </div></div>
+          <div class="job-col"><div class="job-col-hdr" style="border-color:rgba(125,255,178,.22)"><h4>Complete</h4><span style="color:#7dffb2">1</span></div><div class="job-col-cards">
+            <button class="job-card" style="border-color:rgba(125,255,178,.18)" onclick="selJob(this,'Nar Shaddaa Extraction')"><div class="job-chip-row"><span class="chip ok">Complete</span><span class="chip ok">Pay Ready</span></div><div class="job-title">Nar Shaddaa Extraction</div><div class="job-client">Rebel Alliance</div><div class="job-reward">+30,000 cr · +2,400 xp</div></button>
+          </div></div>
+          <div class="job-col"><div class="job-col-hdr"><h4>Archived</h4><span>3</span></div><div class="job-col-cards"><div class="empty-st">3 archived</div></div></div>
+        </div>
+      </div>
+      <div class="job-rail" id="jrail">
+        <div id="jrail-empty" style="text-align:center;padding-top:24px;color:rgba(223,248,255,.32)"><i class="fa-solid fa-clipboard-list" style="font-size:28px;opacity:.3;display:block;margin-bottom:8px"></i>Select a job.</div>
+        <div id="jrail-body" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div><span class="ey">DOSSIER</span><div style="font-size:14px;font-weight:700;color:#dff8ff;margin-top:2px" id="jrail-title">Infiltrate the Vault</div></div><span class="chip warn">Review</span></div>
+          <div class="job-rail-blk"><h4>Objectives</h4>
+            <div class="obj-card"><div class="obj-head"><span class="chip crit">Required</span><span class="chip warn">Submitted</span></div><div class="obj-title">Breach inner vault without alarm</div><div class="obj-rewards"><span class="reward-val">+20,000 cr</span><span class="reward-val">+1,000 xp</span></div><div class="obj-acts"><button class="btn sm approve" data-job-objective-action data-objective-status="approved">Approve</button><button class="btn sm deny" data-job-objective-action data-objective-status="rejected">Reject</button><button class="btn sm" data-job-objective-action data-objective-status="failed">Fail</button></div></div>
+            <div class="obj-card" style="border-color:rgba(125,255,178,.16)"><div class="obj-head"><span class="chip">Optional</span><span class="chip ok">Approved</span></div><div class="obj-title">Recover secondary datapad</div><div class="obj-rewards"><span class="reward-val">+5,000 cr</span></div></div>
+          </div>
+          <div class="job-rail-blk"><h4>Reward Distribution</h4>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><span class="lgain">+60,000 cr</span><span style="font-size:11px;color:rgba(112,226,255,.8);font-family:var(--mono)">3,000 xp</span></div>
+            <button class="btn primary" style="width:100%;justify-content:center" data-job-distribution-form>Distribute Credits</button>
+          </div>
+          <div class="job-rail-blk"><h4>Status Actions</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+              <button class="btn sm" data-job-status-action data-status="accepted">Accept</button>
+              <button class="btn sm" data-job-status-action data-status="inProgress">In Progress</button>
+              <button class="btn sm" style="border-color:rgba(255,200,87,.32);color:#fff3c0" data-job-status-action data-status="review">Set Review</button>
+              <button class="btn sm approve" data-job-status-action data-status="complete">Complete</button>
+              <button class="btn sm deny" data-job-status-action data-status="cancelled">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="queue-grid" style="flex-shrink:0">
+      <div class="panel qpanel"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div><span class="ey">REVIEW QUEUE</span><div style="font-size:12px;font-weight:700;color:#dff8ff;margin-top:1px">Objective Claims</div></div><span class="chip warn">3</span></div>
+        <div class="qcard"><span class="chip warn">Pending Review</span><strong>Infiltrate the Vault — Breach inner vault</strong><p>Required objective · submitted by Ryn Ordo</p><div class="qcard-acts"><button class="btn sm approve" data-job-objective-action data-objective-status="approved">Approve</button><button class="btn sm deny" data-job-objective-action data-objective-status="rejected">Reject</button></div></div>
+      </div>
+      <div class="panel qpanel"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div><span class="ey">PAYOUT QUEUE</span><div style="font-size:12px;font-weight:700;color:#dff8ff;margin-top:1px">Completed Contracts</div></div><span class="chip ok">1</span></div>
+        <div class="qcard"><span class="chip ok">Ready</span><strong>Nar Shaddaa Extraction</strong><p><span class="lgain">+30,000 cr</span>&nbsp; 2,400 xp · Rebel Alliance</p><div class="qcard-acts"><button class="btn sm primary" data-job-select>Distribute Rewards</button></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- CONTRACT WIZARD OVERLAY -->
+  <div class="wiz-ov" id="cwiz">
+    <div class="wiz-bar">
+      <div class="wiz-steps">
+        <div class="wiz-stab on" id="cws-1"><div class="wiz-sn">1</div>Client</div>
+        <div class="wiz-conn"></div>
+        <div class="wiz-stab" id="cws-2"><div class="wiz-sn">2</div>Objectives</div>
+        <div class="wiz-conn"></div>
+        <div class="wiz-stab" id="cws-3"><div class="wiz-sn">3</div>Briefing</div>
+        <div class="wiz-conn"></div>
+        <div class="wiz-stab" id="cws-4"><div class="wiz-sn">4</div>Publish</div>
+      </div>
+      <button class="wiz-x" onclick="closeWiz('cwiz')">✕ Cancel</button>
+    </div>
+    <div class="wiz-body">
+      <!-- Step 1: Client -->
+      <div class="wiz-pg on" id="cwp-1">
+        <div class="wiz-sec"><div class="wiz-sec-ey">QUICK START TEMPLATES</div>
+          <div class="wiz-tmpl-bar"><button class="wiz-tmpl">Rebel Op</button><button class="wiz-tmpl">Syndicate Job</button><button class="wiz-tmpl">Corporate</button><button class="wiz-tmpl">Government</button><button class="wiz-tmpl">Personal Debt</button><button class="wiz-tmpl">Rescue</button></div>
+        </div>
+        <div class="wiz-sec"><div class="wiz-sec-ey">CLIENT IDENTIFICATION</div>
+          <div class="wiz-row c2">
+            <div class="wiz-lbl"><span>Client Type</span><select class="wiz-sel" name="clientType"><option>NPC Individual</option><option>Faction</option><option>Organization</option><option>Anonymous</option><option>The Party</option></select></div>
+            <div class="wiz-lbl"><span>Client / NPC Name</span><input class="wiz-in" type="text" name="clientName" placeholder="Rebel Alliance · Black Sun Vigo · Master Tholos"></div>
+          </div>
+          <div class="wiz-row c2">
+            <div class="wiz-lbl"><span>Faction Anchor</span><input class="wiz-in" type="text" name="clientFaction" placeholder="Optional faction relationship anchor"></div>
+            <div class="wiz-lbl"><span>Client Image / Sigil</span><input class="wiz-in" type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg"></div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(223,248,255,.72);cursor:pointer"><input type="checkbox" name="clientSave">&nbsp;Save as reusable contact</label>
+        </div>
+      </div>
+      <!-- Step 2: Objectives -->
+      <div class="wiz-pg" id="cwp-2">
+        <div class="wiz-obj req">
+          <div class="wiz-obj-hdr"><span class="chip warn">Required</span><span style="font-size:11px;font-weight:700;color:#dff8ff">Primary Objective</span></div>
+          <div class="wiz-lbl"><span>Objective Title</span><input class="wiz-in" type="text" name="primaryObjective" placeholder="Required primary objective description"></div>
+          <textarea class="wiz-ta" name="primaryDescription" rows="2" placeholder="Player-facing detail or GM memo"></textarea>
+          <div class="wiz-rwd">
+            <div><div class="wiz-rwd-lbl">Credits</div><input class="wiz-rwd-in" type="number" name="primaryCredits" min="0" step="500" placeholder="0"></div>
+            <div><div class="wiz-rwd-lbl">XP</div><input class="wiz-rwd-in" type="number" name="primaryXp" min="0" step="250" placeholder="0"></div>
+            <div><div class="wiz-rwd-lbl">Item Rewards</div><input class="wiz-rwd-in" type="text" name="primaryItems" placeholder="Blaster pistol, Medpac…"></div>
+          </div>
+        </div>
+        <div class="wiz-obj">
+          <div class="wiz-obj-hdr"><span class="chip">Optional</span><label style="display:flex;align-items:center;gap:5px;font-size:10px;cursor:pointer"><input type="checkbox" name="secondaryRequired">&nbsp;Make Required</label><span style="font-size:11px;font-weight:700;color:#dff8ff">Secondary Objective</span></div>
+          <div class="wiz-lbl"><span>Objective Title</span><input class="wiz-in" type="text" name="secondaryObjective" placeholder="Optional secondary objective"></div>
+          <textarea class="wiz-ta" name="secondaryDescription" rows="2" placeholder="Optional memo"></textarea>
+          <div class="wiz-rwd">
+            <div><div class="wiz-rwd-lbl">Credits</div><input class="wiz-rwd-in" type="number" name="secondaryCredits" min="0" step="500" placeholder="0"></div>
+            <div><div class="wiz-rwd-lbl">XP</div><input class="wiz-rwd-in" type="number" name="secondaryXp" min="0" step="250" placeholder="0"></div>
+            <div><div class="wiz-rwd-lbl">Items</div><input class="wiz-rwd-in" type="text" name="secondaryItems" placeholder="Optional"></div>
+          </div>
+        </div>
+        <div class="wiz-obj bon">
+          <div class="wiz-obj-hdr"><span class="chip info">Bonus Only</span><span style="font-size:11px;font-weight:700;color:#dff8ff">Tertiary Objective</span></div>
+          <div class="wiz-lbl"><span>Objective Title</span><input class="wiz-in" type="text" name="tertiaryObjective" placeholder="Always-optional bonus objective"></div>
+          <div class="wiz-rwd">
+            <div><div class="wiz-rwd-lbl">Credits</div><input class="wiz-rwd-in" type="number" name="tertiaryCredits" min="0" step="250" placeholder="0"></div>
+            <div><div class="wiz-rwd-lbl">XP</div><input class="wiz-rwd-in" type="number" name="tertiaryXp" min="0" step="100" placeholder="0"></div>
+            <div><div class="wiz-rwd-lbl">Items</div><input class="wiz-rwd-in" type="text" name="tertiaryItems" placeholder="Optional"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 3: Briefing -->
+      <div class="wiz-pg" id="cwp-3">
+        <div class="wiz-sec"><div class="wiz-sec-ey">CONTRACT TITLE</div>
+          <input class="wiz-in" type="text" name="title" placeholder="Retrieve artifact from Korriban" required style="font-size:14px">
+        </div>
+        <div class="wiz-sec"><div class="wiz-sec-ey">PLAYER-FACING BRIEFING</div>
+          <textarea class="wiz-ta" name="briefing" rows="4" placeholder="What the players are told about this contract. Supports @mentions and #locations."></textarea>
+          <textarea class="wiz-ta" name="instructions" rows="2" placeholder="Rendezvous / delivery instructions / conditions"></textarea>
+          <textarea class="wiz-ta" name="oocNote" rows="2" placeholder="(Optional) Out-of-character GM note to players"></textarea>
+        </div>
+        <div class="wiz-sec"><div class="wiz-sec-ey">FLAT REWARDS (paid regardless of objectives)</div>
+          <div class="wiz-row c2">
+            <div class="wiz-lbl"><span>Flat Credits</span><input class="wiz-in" type="number" name="flatCredits" min="0" step="500" placeholder="0"></div>
+            <div class="wiz-lbl"><span>Flat Item Notes</span><input class="wiz-in" type="text" name="flatItems" placeholder="Key, ship deed, access pass…"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 4: Publish -->
+      <div class="wiz-pg" id="cwp-4">
+        <div class="wiz-sum-grid">
+          <div class="wiz-sum-card">
+            <div class="wiz-sum-title" id="cwiz-summary-title">Contract Title</div>
+            <div class="wiz-sum-meta">Anonymous Client · Rebel Alliance</div>
+            <div class="wiz-sum-rwd"><span class="lgain">+60,000 cr</span><span style="color:#70e2ff;font-family:var(--mono);font-size:11px">3,000 xp</span></div>
+            <div style="font-size:10px;color:rgba(223,248,255,.52);margin-top:6px">3 objectives defined</div>
+          </div>
+          <div class="wiz-sum-card">
+            <div class="wiz-sec-ey" style="margin-bottom:6px">STATUS</div>
+            <div class="wiz-sopts">
+              <div class="wiz-sopt on" onclick="wizToggleSopt(this,'cstatus')"><div class="wiz-sdot"></div>Post Now</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'cstatus')"><div class="wiz-sdot"></div>Save Draft</div>
+            </div>
+          </div>
+        </div>
+        <div class="wiz-sec"><div class="wiz-sec-ey">VISIBLE TO (recipients)</div>
+          <div class="wiz-rcpts">
+            <div class="wiz-rcpt on" onclick="this.classList.toggle('on')">✓ Ryn Ordo</div>
+            <div class="wiz-rcpt on" onclick="this.classList.toggle('on')">✓ Kira Vance</div>
+            <div class="wiz-rcpt on" onclick="this.classList.toggle('on')">✓ Tavo Arren</div>
+          </div>
+        </div>
+        <div class="wiz-sec"><div class="wiz-sec-ey">FACTION CONSEQUENCES (optional)</div>
+          <div class="wiz-delta">
+            <div><div class="wiz-delta-lbl pos">Success Reputation Delta</div><input class="wiz-delta-in" type="number" name="factionSuccessDelta" step="1" placeholder="+0" value="0"></div>
+            <div><div class="wiz-delta-lbl neg">Failure Reputation Delta</div><input class="wiz-delta-in" type="number" name="factionFailureDelta" step="1" placeholder="0" value="0"></div>
+          </div>
+          <textarea class="wiz-ta" name="factionNotes" rows="2" style="margin-top:6px" placeholder="GM-only faction consequence notes"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="wiz-foot">
+      <span class="wiz-prog">Step <span id="cwiz-cur">1</span> of 4 — Contract Wizard</span>
+      <div class="wiz-nav">
+        <button class="btn" id="cw-back" style="visibility:hidden" onclick="cwizBack()"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back</button>
+        <button class="btn primary" id="cw-next" onclick="cwizNext()">Next: Objectives&nbsp;<i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FACTIONS ══ -->
+<div class="surf" id="s-factions">
+  <div class="ph">
+    <button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button>
+    <div><span class="ey">FACTION INTELLIGENCE LEDGER</span><h2>Factions</h2><p>Relationship registry and party-wide standing overview</p></div>
+    <div class="mbar" style="margin-left:auto">
+      <div class="met"><span>Registry</span><strong>5</strong></div>
+      <div class="met"><span>Relations</span><strong>12</strong></div>
+      <div class="met warn"><span>Pending</span><strong>2</strong></div>
+    </div>
+  </div>
+  <!-- faction wizard host (position:relative set by CSS) -->
+  <div class="fac-wiz-host" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px">
+    <div class="panel" style="flex-shrink:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div><span class="ey">CAMPAIGN REGISTRY</span><div style="font-size:13px;font-weight:700;color:#dff8ff;margin-top:2px">Known Factions</div></div>
+        <button class="btn sm primary" onclick="openWiz('fwiz')"><i class="fa-solid fa-plus"></i>&nbsp;Add Faction</button>
+      </div>
+      <div class="fac-reg-list">
+        <div class="fac-reg-card"><div class="fac-reg-hdr"><div><strong>Rebel Alliance</strong><span>Resistance · Scale 8 · Outer Rim</span><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span class="rel-badge patron">Patron</span><span style="font-size:9px;color:rgba(223,248,255,.48)">Primary sponsor</span></div></div><div style="display:flex;align-items:center;gap:8px"><div class="fac-score pos"><span>Score</span><strong>+12</strong></div><div style="display:flex;gap:3px"><button class="btn sm">Edit</button><button class="btn sm deny">Del</button></div></div></div></div>
+        <div class="fac-reg-card"><div class="fac-reg-hdr"><div><strong>Black Sun Syndicate</strong><span>Criminal Org · Scale 6 · Various</span><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span class="rel-badge rival">Rival</span><span style="font-size:9px;color:rgba(223,248,255,.48)">Run-in at Nar Shaddaa</span></div></div><div style="display:flex;align-items:center;gap:8px"><div class="fac-score neg"><span>Score</span><strong>−8</strong></div><div style="display:flex;gap:3px"><button class="btn sm">Edit</button><button class="btn sm deny">Del</button></div></div></div></div>
+        <div class="fac-reg-card"><div class="fac-reg-hdr"><div><strong>Galactic Empire</strong><span>Government · Scale 20 · Galaxy-wide</span><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span class="rel-badge enemy">Enemy</span><span style="font-size:9px;color:rgba(223,248,255,.48)">Actively hunting the crew</span></div></div><div style="display:flex;align-items:center;gap:8px"><div class="fac-score neg"><span>Score</span><strong>−22</strong></div><div style="display:flex;gap:3px"><button class="btn sm">Edit</button><button class="btn sm deny">Del</button></div></div></div></div>
+        <div class="fac-reg-card"><div class="fac-reg-hdr"><div><strong>Corellian Engineering Corp</strong><span>Manufacturer · Scale 7 · Corellia</span><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span class="rel-badge neutral">Neutral</span></div></div><div style="display:flex;align-items:center;gap:8px"><div class="fac-score neu"><span>Score</span><strong>+0</strong></div><div style="display:flex;gap:3px"><button class="btn sm">Edit</button><button class="btn sm deny">Del</button></div></div></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+        <div><span class="ey">PARTY-WIDE LEDGER</span><div style="font-size:13px;font-weight:700;color:#dff8ff;margin-top:2px">Actor Faction Relationships</div></div>
+        <div style="display:flex;gap:6px"><input type="search" data-gm-faction-search placeholder="Search…" style="padding:4px 9px;border-radius:6px;border:1px solid rgba(112,226,255,.18);background:rgba(0,0,0,.3);color:#dff8ff;font-size:10px"><select data-gm-faction-filter="relationshipType" style="padding:4px 8px;border-radius:6px;border:1px solid rgba(112,226,255,.18);background:rgba(0,0,0,.3);color:#dff8ff;font-size:10px"><option>All Types</option><option>Ally</option><option>Rival</option><option>Enemy</option><option>Patron</option></select></div>
+      </div>
+      <div class="fac-rel-list">
+        <div class="fac-rel-row" data-gm-faction-filter-row><div class="avatar" style="background:rgba(125,255,178,.14);color:#7dffb2">R</div><div class="fac-rel-info"><strong>Ryn Ordo</strong><span>Rebel Alliance</span></div><span class="rel-badge patron">Patron</span><div class="fac-mini-score pos"><span>Score</span><strong>+12</strong></div><div style="display:flex;gap:3px"><button class="btn sm approve" data-gm-faction-relationship-form>Save</button><button class="btn sm deny" data-gm-faction-action="remove-relationship">Rm</button></div></div>
+        <div class="fac-rel-row" data-gm-faction-filter-row><div class="avatar" style="background:rgba(255,107,107,.14);color:#ff6b6b">K</div><div class="fac-rel-info"><strong>Kira Vance</strong><span>Black Sun Syndicate</span></div><span class="rel-badge rival">Rival</span><div class="fac-mini-score neg"><span>Score</span><strong>−5</strong></div><div style="display:flex;gap:3px"><button class="btn sm" data-gm-faction-relationship-form>Save</button><button class="btn sm deny" data-gm-faction-action="remove-relationship">Rm</button></div></div>
+        <div class="fac-rel-row" data-gm-faction-filter-row><div class="avatar" style="background:rgba(255,209,102,.12);color:#ffd166">T</div><div class="fac-rel-info"><strong>Tavo Arren</strong><span>CorSec</span></div><span class="rel-badge neutral">Neutral</span><div class="fac-mini-score neu"><span>Score</span><strong>+0</strong></div><div style="display:flex;gap:3px"><button class="btn sm" data-gm-faction-relationship-form>Save</button><button class="btn sm deny" data-gm-faction-action="remove-relationship">Rm</button></div></div>
+      </div>
+    </div>
+    <!-- ADD FACTION WIZARD OVERLAY -->
+    <div class="wiz-ov" id="fwiz">
+      <div class="wiz-bar">
+        <div class="wiz-steps">
+          <div class="wiz-stab on" id="fws-1"><div class="wiz-sn">1</div>Identity</div>
+          <div class="wiz-conn"></div>
+          <div class="wiz-stab" id="fws-2"><div class="wiz-sn">2</div>Actors</div>
+          <div class="wiz-conn"></div>
+          <div class="wiz-stab" id="fws-3"><div class="wiz-sn">3</div>Notes</div>
+        </div>
+        <button class="wiz-x" onclick="closeWiz('fwiz')">✕ Cancel</button>
+      </div>
+      <div class="wiz-body">
+        <!-- Step 1: Identity -->
+        <div class="wiz-pg on" id="fwp-1">
+          <div class="wiz-sec"><div class="wiz-sec-ey">FACTION IDENTITY</div>
+            <div class="wiz-row c2"><div class="wiz-lbl"><span>Faction Name</span><input class="wiz-in" type="text" name="name" placeholder="Republic Remnant / Black Sun / CorSec" required></div><div class="wiz-lbl"><span>Type</span><input class="wiz-in" type="text" name="type" placeholder="Government, syndicate, guild, local gang…"></div></div>
+            <div class="wiz-row c3"><div class="wiz-lbl"><span>Planet</span><input class="wiz-in" type="text" name="planet" placeholder="Coruscant"></div><div class="wiz-lbl"><span>System / Region</span><input class="wiz-in" type="text" name="system" placeholder="Core Worlds"></div><div class="wiz-lbl"><span>Scale (1–20)</span><input class="wiz-in" type="number" name="scale" min="1" max="20" value="3"></div></div>
+            <div class="wiz-row c2"><div class="wiz-lbl"><span>Leader / Public Face</span><input class="wiz-in" type="text" name="leader" placeholder="Director Vex, Unknown"></div><div class="wiz-lbl"><span>Starting Score</span><input class="wiz-in" type="number" name="score" step="1" value="0" style="font-size:18px;font-family:var(--mono);text-align:center"></div></div>
+          </div>
+          <div class="wiz-sec"><div class="wiz-sec-ey">PRIMARY RELATIONSHIP TYPE</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              <div class="wiz-sopt on" onclick="wizToggleSopt(this,'frel')" style="border-color:rgba(112,226,255,.32);color:#70e2ff"><div class="wiz-sdot"></div>Neutral</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'frel')"><div class="wiz-sdot"></div>Patron</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'frel')"><div class="wiz-sdot"></div>Ally</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'frel')"><div class="wiz-sdot"></div>Rival</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'frel')"><div class="wiz-sdot"></div>Enemy</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'frel')"><div class="wiz-sdot"></div>Member</div>
+              <div class="wiz-sopt" onclick="wizToggleSopt(this,'frel')"><div class="wiz-sdot"></div>Client</div>
+            </div>
+          </div>
+        </div>
+        <!-- Step 2: Attach Actors -->
+        <div class="wiz-pg" id="fwp-2">
+          <div class="wiz-sec"><div class="wiz-sec-ey">ATTACH ACTORS — Click to select, then set relationship + starting score</div>
+            <div class="wiz-actor-list">
+              <div class="wiz-actor-row on" onclick="this.classList.toggle('on')"><div class="wiz-actor-av" style="color:#7dffb2">R</div><div><div style="font-size:11px;font-weight:700;color:#dff8ff">Ryn Ordo</div><div style="font-size:9px;color:rgba(223,248,255,.5)">Soldier 8 · PC</div></div><select class="wiz-sel" style="font-size:10px;padding:3px 6px" onclick="event.stopPropagation()"><option>Neutral</option><option>Patron</option><option>Ally</option><option>Rival</option><option>Enemy</option><option>Member</option></select><input type="number" class="wiz-in" style="font-size:13px;font-family:var(--mono);text-align:center;padding:3px 6px" value="0" onclick="event.stopPropagation()"></div>
+              <div class="wiz-actor-row on" onclick="this.classList.toggle('on')"><div class="wiz-actor-av" style="color:#ff8b8b">K</div><div><div style="font-size:11px;font-weight:700;color:#dff8ff">Kira Vance</div><div style="font-size:9px;color:rgba(223,248,255,.5)">Scoundrel 6 · PC</div></div><select class="wiz-sel" style="font-size:10px;padding:3px 6px" onclick="event.stopPropagation()"><option>Neutral</option><option>Patron</option><option>Ally</option><option>Rival</option><option selected>Enemy</option><option>Member</option></select><input type="number" class="wiz-in" style="font-size:13px;font-family:var(--mono);text-align:center;padding:3px 6px" value="-5" onclick="event.stopPropagation()"></div>
+              <div class="wiz-actor-row" onclick="this.classList.toggle('on')"><div class="wiz-actor-av" style="color:#ffd166">T</div><div><div style="font-size:11px;font-weight:700;color:#dff8ff">Tavo Arren</div><div style="font-size:9px;color:rgba(223,248,255,.5)">Noble 7 · PC</div></div><select class="wiz-sel" style="font-size:10px;padding:3px 6px" onclick="event.stopPropagation()"><option selected>Neutral</option><option>Patron</option><option>Ally</option><option>Rival</option><option>Enemy</option><option>Member</option></select><input type="number" class="wiz-in" style="font-size:13px;font-family:var(--mono);text-align:center;padding:3px 6px" value="0" onclick="event.stopPropagation()"></div>
+              <div class="wiz-actor-row" onclick="this.classList.toggle('on')"><div class="wiz-actor-av" style="color:#70e2ff"><i class="fa-solid fa-user-secret" style="font-size:10px"></i></div><div><div style="font-size:11px;font-weight:700;color:#dff8ff">Director Vex</div><div style="font-size:9px;color:rgba(223,248,255,.5)">Noble 9 · NPC</div></div><select class="wiz-sel" style="font-size:10px;padding:3px 6px" onclick="event.stopPropagation()"><option>Neutral</option><option>Patron</option><option>Ally</option><option>Rival</option><option>Enemy</option><option selected>Member</option></select><input type="number" class="wiz-in" style="font-size:13px;font-family:var(--mono);text-align:center;padding:3px 6px" value="8" onclick="event.stopPropagation()"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Step 3: Notes -->
+        <div class="wiz-pg" id="fwp-3">
+          <div class="wiz-sec"><div class="wiz-sec-ey">BENEFITS &amp; ACCESS</div>
+            <textarea class="wiz-ta" name="benefits" rows="3" placeholder="GM-governed benefits, discounts, access, or consequences for this faction relationship."></textarea>
+          </div>
+          <div class="wiz-sec"><div class="wiz-sec-ey">PUBLIC NOTES (player-visible)</div>
+            <textarea class="wiz-ta" name="notes" rows="3" placeholder="What players know about this faction. Shown in character datapad."></textarea>
+          </div>
+          <div class="wiz-sec"><div class="wiz-sec-ey">GM NOTES (private)</div>
+            <textarea class="wiz-ta" name="gmNotes" rows="3" placeholder="Private GM notes — future plot hooks, hidden agendas, true identity…"></textarea>
+          </div>
+          <div class="wiz-sec"><div class="wiz-sec-ey">SOURCE TYPE</div>
+            <select class="wiz-sel" name="source"><option>Player-Founded</option><option>GM Registry</option><option>Canon</option><option>Homebrew</option><option>Campaign-Specific</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="wiz-foot">
+        <span class="wiz-prog">Step <span id="fwiz-cur">1</span> of 3 — Add Faction</span>
+        <div class="wiz-nav">
+          <button class="btn" id="fw-back" style="visibility:hidden" onclick="fwizBack()"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back</button>
+          <button class="btn primary" id="fw-next" onclick="fwizNext()">Next: Attach Actors&nbsp;<i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STORE ══ -->
+<div class="surf" id="s-store">
+  <div class="ph">
+    <button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button>
+    <div><span class="ey">COMMERCE COMMAND</span><h2>Store</h2><p>Economy governance and transaction ledger</p></div>
+    <div class="mbar" style="margin-left:auto">
+      <div class="met ok"><span>Status</span><strong>OPEN</strong></div>
+      <div class="met"><span>Txns</span><strong>47</strong></div>
+      <div class="met warn"><span>Approvals</span><strong>2</strong></div>
+      <div class="met"><span>Inventory</span><strong>124</strong></div>
+    </div>
+  </div>
+  <div class="store-tabs">
+    <button class="stab on" onclick="storeTab(this,'options')">Store Options</button>
+    <button class="stab" onclick="storeTab(this,'transactions')">Transactions</button>
+    <button class="stab" onclick="storeTab(this,'approvals')">Approvals <span class="chip warn" style="font-size:9px">2</span></button>
+    <button class="stab" onclick="storeTab(this,'inventory')">Inventory</button>
+  </div>
+  <!-- OPTIONS TAB -->
+  <div id="sp-options" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:9px">
+    <div class="sst-toggle">
+      <button class="sst-btn is-open" onclick="sstToggle(this,'open')"><div class="sst-dot"></div>Store Open</button>
+      <button class="sst-btn" onclick="sstToggle(this,'closed')"><div class="sst-dot"></div>Store Closed</button>
+    </div>
+    <div class="sopt-grid">
+      <div class="sopt-card"><h4><i class="fa-solid fa-tag"></i>&nbsp; Pricing Policy</h4>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Global Markup %</strong><em>Applied on top of base item price</em></div><input type="number" class="sopt-in" value="0" min="-50" max="200" step="5"></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Allow Haggling</strong><em>Players can attempt Persuasion/Deception checks</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Haggling Skill</strong><em>Skill used for haggling attempts</em></div><select class="sopt-sel"><option>Persuasion</option><option>Deception</option><option>Either</option></select></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Max Discount %</strong><em>Floor — even a perfect roll can't go below this</em></div><input type="number" class="sopt-in" value="20" min="0" max="90" step="5"></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Min Sell Price %</strong><em>Percentage of base price for player sell-backs</em></div><input type="number" class="sopt-in" value="40" min="0" max="100" step="5"></div>
+      </div>
+      <div class="sopt-card"><h4><i class="fa-solid fa-shield-halved"></i>&nbsp; Restrictions &amp; Approvals</h4>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Require GM Approval Over</strong><em>Purchases above this amount need approval</em></div><input type="number" class="sopt-in" value="5000" min="0" step="500" style="width:80px"></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Restrict Droids</strong><em>Custom droids require GM approval</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Restrict Vehicles</strong><em>Vehicles require GM approval</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Restrict Starships</strong><em>Starships require GM approval</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Military-Grade Items</strong><em>Blaster rifles, heavy armor, etc.</em></div><select class="sopt-sel"><option>Available</option><option>Restricted</option><option>Unavailable</option></select></div>
+      </div>
+      <div class="sopt-card span2"><h4><i class="fa-solid fa-box-open"></i>&nbsp; Category Availability &amp; Markup</h4>
+        <p style="font-size:9px;color:rgba(223,248,255,.46);margin-bottom:8px">Click to enable/disable each category. Markup % stacks on top of global markup.</p>
+        <div class="cat-grid">
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-gun"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Weapons</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="0" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-shield"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Armor</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="0" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-toolbox"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Equipment</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="0" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-briefcase-medical"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Medical</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="0" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-robot"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Droids</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="10" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-car-side"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Vehicles</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="15" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+          <div class="cat-item off" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-rocket"></i></span><div class="sw-track" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Starships</div><div class="cat-mu" style="color:rgba(255,107,107,.5)">Disabled</div></div>
+          <div class="cat-item on" onclick="toggleCat(this)"><div class="cat-ih"><span class="cat-icon"><i class="fa-solid fa-microchip"></i></span><div class="sw-track on" style="transform:scale(.8)" onclick="event.stopPropagation();this.classList.toggle('on')"><div class="sw-thumb"></div></div></div><div class="cat-name">Tech / Cyber</div><div class="cat-mu">+<input class="cat-mu-in" type="number" value="5" min="-50" max="200" onclick="event.stopPropagation()">%</div></div>
+        </div>
+      </div>
+      <div class="sopt-card"><h4><i class="fa-solid fa-bell"></i>&nbsp; Notifications</h4>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Purchase Notifications</strong><em>Post to chat when a sale completes</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Sell Notifications</strong><em>Post to chat when a player sells an item</em></div><div class="sw"><div class="sw-track" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Stock Depletion Alerts</strong><em>Notify when tracked stock hits zero</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+      </div>
+      <div class="sopt-card"><h4><i class="fa-solid fa-clock-rotate-left"></i>&nbsp; History &amp; Audit</h4>
+        <div class="sopt-row"><div class="sopt-rl"><strong>History Retention</strong><em>Weeks of transaction history to keep</em></div><input type="number" class="sopt-in" value="52" min="1" max="520" step="4"></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Include Zero-Cost Items</strong><em>Log free items in transaction history</em></div><div class="sw"><div class="sw-track" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+        <div class="sopt-row"><div class="sopt-rl"><strong>Rollback Window (days)</strong><em>How long a transaction can be rolled back</em></div><input type="number" class="sopt-in" value="30" min="1" max="365" step="1"></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;padding-top:4px"><button class="btn primary"><i class="fa-solid fa-floppy-disk"></i>&nbsp;Save Store Options</button></div>
+  </div>
+  <!-- TRANSACTIONS TAB -->
+  <div id="sp-transactions" style="display:none;flex:1;overflow:auto;padding:0;border:1px solid rgba(112,226,255,.15);border-radius:12px;background:rgba(3,10,20,.72)">
+    <div style="padding:9px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(112,226,255,.1)">
+      <div><span class="ey">TRANSACTIONS</span><span style="font-size:12px;font-weight:700;color:#dff8ff;margin-left:8px">Sales History</span></div>
+      <div style="display:flex;gap:6px">
+        <select data-store-transaction-filter="actor" style="padding:3px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.16);background:rgba(0,0,0,.3);color:#dff8ff;font-size:10px"><option>All actors</option><option>Ryn Ordo</option><option>Kira Vance</option></select>
+        <select data-store-transaction-filter="status" style="padding:3px 8px;border-radius:5px;border:1px solid rgba(112,226,255,.16);background:rgba(0,0,0,.3);color:#dff8ff;font-size:10px"><option>All statuses</option><option>Success</option><option>Failed</option><option>Rolled Back</option></select>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="st-table" style="min-width:780px"><thead><tr><th>Time</th><th>Actor</th><th>Type</th><th>Item</th><th>Qty</th><th>Credit Impact</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead><tbody>
+      <tr><td style="font-family:var(--mono);font-size:10px">Jun 1 14:32</td><td>Ryn Ordo</td><td><span class="chip">Buy</span></td><td>Blaster Pistol</td><td>1</td><td class="neg">−500 cr</td><td style="font-family:var(--mono);font-size:10px">2,500→2,000</td><td><span class="chip ok">Success</span></td><td><button class="btn sm" data-action="rollback-transaction">Rollback</button></td></tr>
+      <tr><td style="font-family:var(--mono);font-size:10px">Jun 1 13:11</td><td>Kira Vance</td><td><span class="chip">Buy</span></td><td>Medpac ×3</td><td>3</td><td class="neg">−150 cr</td><td style="font-family:var(--mono);font-size:10px">3,200→3,050</td><td><span class="chip ok">Success</span></td><td><button class="btn sm" data-action="rollback-transaction">Rollback</button></td></tr>
+      <tr><td style="font-family:var(--mono);font-size:10px">May 31 09:22</td><td>Tavo Arren</td><td><span class="chip warn">Sell</span></td><td>Blaster Carbine</td><td>1</td><td class="pos">+1,200 cr</td><td style="font-family:var(--mono);font-size:10px">800→2,000</td><td><span class="chip ok">Success</span></td><td><span style="font-size:10px;color:rgba(223,248,255,.36)">Ledger only</span></td></tr>
+    </tbody></table></div>
+  </div>
+  <div id="sp-approvals" style="display:none;flex:1;overflow-y:auto"><div style="margin-bottom:8px"><span class="ey">2 PENDING APPROVALS</span></div><div class="panel warn" style="padding:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px"><div><span class="ey">SELL REQUEST</span><div style="font-weight:700;color:#dff8ff;margin:3px 0">Blaster Rifle — Ryn Ordo</div><div style="font-size:10px;color:rgba(223,248,255,.56)">Suggested: <span class="np">+2,400 cr</span></div></div><span class="chip warn">Pending</span></div><div style="display:flex;gap:5px;margin-top:8px"><button class="btn sm approve" data-action="approve-sale-request">Approve Suggested</button><button class="btn sm" data-action="counteroffer-sale-request">Custom Amount</button><button class="btn sm deny" data-action="deny-sale-request">Deny</button></div></div></div>
+  <div id="sp-inventory" style="display:none;flex:1;overflow-y:auto"><p style="color:rgba(223,248,255,.6);font-size:12px">Inventory — current stock levels, item catalog, availability controls.</p></div>
+</div>
+
+<!-- ══ TRADE ══ -->
+<div class="surf" id="s-trade">
+  <div class="ph"><button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button><div><span class="ey">TRANSACTION OPERATIONS BOARD</span><h2>Trade Console</h2><p>Approval queue, failed settlements, atomicity diagnostics</p></div><div class="mbar" style="margin-left:auto"><div class="met warn"><span>Approval</span><strong>1</strong></div><div class="met crit"><span>Failed</span><strong>1</strong></div><div class="met"><span>Active</span><strong>3</strong></div></div></div>
+  <div class="trade-layout" style="flex:1;min-height:0">
+    <div class="panel" style="display:flex;flex-direction:column;gap:8px;min-height:0;padding:10px">
+      <span class="ey">TRADE WATCH — MESSENGER TRANSFER QUEUES</span>
+      <div class="trade-queues" style="flex:1;min-height:0">
+        <div class="trade-col"><div class="trade-col-hdr"><h4>Approval</h4><span style="color:#ffc857">1</span></div><button class="trade-card warn" data-trade-select><div style="display:flex;gap:3px"><span class="chip warn">Approval</span></div><strong>Item Trade — Smuggler's Hold</strong><span>Kira Vance → Ryn Ordo</span></button></div>
+        <div class="trade-col"><div class="trade-col-hdr"><h4>Failed</h4><span style="color:#ff8b8b">1</span></div><button class="trade-card crit" data-trade-select><div style="display:flex;gap:3px"><span class="chip crit">Failed</span></div><strong>Credit Transfer 5,000 cr</strong><span>Ryn Ordo → Tavo-7</span><div class="trade-fail">Insufficient credits at settlement</div></button></div>
+        <div class="trade-col"><div class="trade-col-hdr"><h4>Active</h4><span>3</span></div><button class="trade-card" data-trade-select><div style="display:flex;gap:3px"><span class="chip info">Active</span></div><strong>Counter-offer Pending</strong><span>Party Fund → Kira Vance</span></button></div>
+        <div class="trade-col"><div class="trade-col-hdr"><h4>Archived</h4><span style="color:rgba(223,248,255,.38)">24</span></div><div class="empty-st">24 archived</div></div>
+      </div>
+    </div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:8px;overflow-y:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div><span class="ey">TRADE DOSSIER</span><div style="font-size:13px;font-weight:700;color:#dff8ff;margin-top:2px">Credit Transfer</div></div><span class="chip crit">Failed</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(112,226,255,.08)"><span style="font-size:10px;color:rgba(223,248,255,.52)">Amount</span><span class="lloss">−5,000 cr</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(112,226,255,.08)"><span style="font-size:10px;color:rgba(223,248,255,.52)">From</span><strong style="font-size:11px">Ryn Ordo</strong></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(112,226,255,.08)"><span style="font-size:10px;color:rgba(223,248,255,.52)">To</span><strong style="font-size:11px">Tavo-7</strong></div></div>
+      <div class="panel crit" style="padding:9px"><span class="ey" style="color:rgba(255,139,139,.8)">ATOMICITY FAILURE</span><div style="font-size:11px;color:#ffd0d0;margin-top:5px;line-height:1.4">Insufficient credits at settlement. Balance: 2,000 cr. Required: 5,000 cr. Rollback successful — no partial transfer occurred.</div></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><button class="btn approve" style="justify-content:center" data-trade-action="force-approve">Force Approve</button><button class="btn deny" style="justify-content:center" data-trade-action="cancel">Cancel Trade</button><button class="btn" style="justify-content:center" data-trade-action="flag">Flag for Review</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPROVALS ══ -->
+<div class="surf" id="s-approvals">
+  <div class="ph"><button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button><div><span class="ey">COMMAND QUEUE</span><h2>Approvals</h2><p>Pending game settlements, droids, ships, and store requests</p></div><div class="mbar" style="margin-left:auto"><div class="met crit"><span>Total</span><strong>2</strong></div><div class="met"><span>Droids</span><strong>1</strong></div><div class="met"><span>Games</span><strong>1</strong></div></div></div>
+  <div class="apr-layout" style="flex:1;min-height:0">
+    <div class="panel" style="min-height:0;overflow:hidden;padding:10px;display:flex;flex-direction:column;gap:6px"><span class="ey">REQUESTS</span>
+      <div class="apr-queue">
+        <div class="apr-qcard on" data-action="select-approval" data-approval-key="droid-ryn-r2"><div class="apr-icon" style="background:rgba(125,255,178,.1);color:#7dffb2"><i class="fa-solid fa-robot"></i></div><div class="apr-copy"><strong>R2 Series Astromech</strong><em>Ryn Ordo · 18,500 cr</em><small>Custom Droid</small></div></div>
+        <div class="apr-qcard" data-action="select-approval" data-approval-key="game-kira-sab"><div class="apr-icon"><i class="fa-solid fa-dice"></i></div><div class="apr-copy"><strong>Sabacc Game Settlement</strong><em>Kira Vance · 3,200 cr</em><small>Game Credits</small></div></div>
+      </div>
+    </div>
+    <div class="apr-detail">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid rgba(112,226,255,.12)"><div><span class="ey">Custom Droid</span><div style="font-size:15px;font-weight:700;color:#dff8ff;margin:3px 0">R2 Series Astromech</div><div style="font-size:10px;color:rgba(223,248,255,.54)">Ryn Ordo &nbsp;·&nbsp; <span class="nn">18,500 cr</span> &nbsp;·&nbsp; submitted today</div></div><span class="chip">Read-Only Review</span></div>
+      <div class="apr-grid">
+        <div class="apr-field"><span>Designation</span><strong>R2-D7 (pending)</strong></div>
+        <div class="apr-field"><span>Degree</span><strong>2nd Degree</strong></div>
+        <div class="apr-field"><span>Size</span><strong>Small</strong></div>
+        <div class="apr-field"><span>Locomotion</span><strong>Wheeled</strong></div>
+        <div class="apr-field"><span>Processor</span><strong>Superior</strong></div>
+        <div class="apr-field"><span>Cost</span><strong class="nn">18,500 cr</strong></div>
+        <div class="apr-field" style="grid-column:1/-1"><span>Appendages</span><strong>Retractable Arm ×2, Spot Welder, Computer Interface Arm</strong></div>
+      </div>
+    </div>
+    <div class="apr-rail">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="width:38px;height:38px;border-radius:999px;background:rgba(125,255,178,.09);border:1px solid rgba(125,255,178,.18);display:flex;align-items:center;justify-content:center;color:#7dffb2;font-size:16px"><i class="fa-solid fa-robot"></i></div><div><span class="ey">Selected</span><div style="font-weight:700;color:#dff8ff;font-size:13px;margin-top:1px">R2 Series Astromech</div></div></div>
+      <div class="panel" style="padding:9px"><div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between"><span style="font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:rgba(112,226,255,.66)">Requested For</span><strong style="font-size:11px">Ryn Ordo</strong></div><div style="display:flex;justify-content:space-between"><span style="font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:rgba(112,226,255,.66)">Approved Cost</span><strong class="nn">18,500 cr</strong></div></div></div>
+      <div class="panel" style="background:rgba(125,255,178,.04);border-color:rgba(125,255,178,.18);padding:9px"><span class="ey" style="color:rgba(125,255,178,.72)">Validation</span><p style="font-size:11px;color:rgba(223,248,255,.56);margin-top:5px">No blocking warnings detected.</p></div>
+      <div class="apr-acts"><button class="btn approve" style="justify-content:center" data-action="approval-approve"><i class="fa-solid fa-check"></i>&nbsp;Approve</button><button class="btn" style="justify-content:center" data-action="approval-enter-edit"><i class="fa-solid fa-pen-to-square"></i>&nbsp;Approve with Edits</button><button class="btn deny" style="justify-content:center" data-action="approval-deny"><i class="fa-solid fa-xmark"></i>&nbsp;Deny</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEALING ══ -->
+<div class="surf" id="s-healing">
+  <div class="ph"><button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button><div><span class="ey">COMBAT RECOVERY MANAGEMENT</span><h2>Healing</h2><p>Party recovery, condition tracking, and encounter reset</p></div><div class="mbar" style="margin-left:auto"><div class="met warn"><span>Wounded</span><strong>2</strong></div><div class="met crit"><span>Down</span><strong>1</strong></div><div class="met ok"><span>Rest Eligible</span><strong>3</strong></div><div class="met muted"><span>Droids</span><strong>1</strong></div></div></div>
+  <div class="heal-tools"><button class="btn primary" data-combat-recovery-action="natural-healing"><i class="fa-solid fa-heart-pulse"></i>&nbsp;Natural Healing</button><button class="btn" data-combat-recovery-action="short-rest">Short Rest</button><button class="btn" data-combat-recovery-action="extended-rest">Extended Rest</button><button class="btn" data-combat-recovery-action="encounter-reset">Encounter Reset</button></div>
+  <div class="heal-grid">
+    <div class="hcard warn"><div class="hcard-hdr"><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" name="combatRecoveryActorTarget" value="actor1"><span style="font-size:9px;color:rgba(223,248,255,.5)">Select</span></label><div class="hcard-av" style="background:rgba(255,200,87,.18);color:#ffc857">R</div><div><div class="hcard-name">Ryn Ordo</div><div class="hcard-type">Soldier 8 · PC</div></div><span class="chip" style="margin-left:auto">Combat</span></div>
+      <div class="hp-row"><span>HP</span><strong>24 / 52</strong></div><div class="hp-bar"><div class="hp-fill mi" style="width:46%"></div></div>
+      <div class="hp-row" style="margin-top:2px"><span>Condition</span><strong class="nn">Wounded (−2)</strong></div>
+      <div class="hchips"><span class="chip warn">Wounded</span><span class="chip ok">SW Ready</span></div>
+      <div class="hnote">Eligible for rest.</div>
+      <div class="hacts"><button class="btn sm approve" data-combat-actor-action="heal" data-actor-id="actor1">Heal</button><button class="btn sm" data-combat-actor-action="short-rest" data-actor-id="actor1">Short Rest</button><button class="btn sm" data-combat-actor-action="treat-injury" data-actor-id="actor1">Treat Injury</button></div>
+    </div>
+    <div class="hcard crit"><div class="hcard-hdr"><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" name="combatRecoveryActorTarget" value="actor2"><span style="font-size:9px;color:rgba(223,248,255,.5)">Select</span></label><div class="hcard-av" style="background:rgba(255,107,107,.18);color:#ff6b6b">K</div><div><div class="hcard-name">Kira Vance</div><div class="hcard-type">Scoundrel 6 · PC</div></div></div>
+      <div class="hp-row"><span>HP</span><strong>0 / 38</strong></div><div class="hp-bar"><div class="hp-fill lo" style="width:0%"></div></div>
+      <div class="hp-row" style="margin-top:2px"><span>Condition</span><strong class="nn">Unconscious</strong></div>
+      <div class="hchips"><span class="chip crit">Down</span><span class="chip crit">Unconscious</span></div>
+      <div class="hnote" style="color:rgba(255,139,139,.6)">Requires revival or stabilization.</div>
+      <div class="hacts"><button class="btn sm approve" data-combat-actor-action="revive" data-actor-id="actor2">Revive</button><button class="btn sm" data-combat-actor-action="stabilize" data-actor-id="actor2">Stabilize</button></div>
+    </div>
+    <div class="hcard" style="border-color:rgba(125,255,178,.18)"><div class="hcard-hdr"><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" name="combatRecoveryActorTarget" value="actor3"><span style="font-size:9px;color:rgba(223,248,255,.5)">Select</span></label><div class="hcard-av" style="background:rgba(125,255,178,.14);color:#7dffb2">T</div><div><div class="hcard-name">Tavo Arren</div><div class="hcard-type">Noble 7 · PC</div></div></div>
+      <div class="hp-row"><span>HP</span><strong>44 / 44</strong></div><div class="hp-bar"><div class="hp-fill hi" style="width:100%"></div></div>
+      <div class="hp-row" style="margin-top:2px"><span>Condition</span><strong class="np">Healthy</strong></div>
+      <div class="hchips"><span class="chip ok">Healthy</span><span class="chip ok">SW Ready</span></div>
+      <div class="hacts"><button class="btn sm" data-combat-actor-action="short-rest" data-actor-id="actor3">Short Rest</button><button class="btn sm" data-combat-actor-action="extended-rest" data-actor-id="actor3">Extended Rest</button></div>
+    </div>
+    <div class="hcard droid"><div class="hcard-hdr"><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" name="combatRecoveryActorTarget" value="actor4" data-party-actor="false"><span style="font-size:9px;color:rgba(223,248,255,.38)">Select</span></label><div class="hcard-av" style="background:rgba(112,226,255,.1);color:#70e2ff"><i class="fa-solid fa-robot"></i></div><div><div class="hcard-name">R3-V8</div><div class="hcard-type">Astromech Droid</div><div class="droid-tag">Droid · Repair Only</div></div></div>
+      <div class="hp-row"><span>HP</span><strong>28 / 30</strong></div><div class="hp-bar"><div class="hp-fill hi" style="width:93%"></div></div>
+      <div class="hchips"><span class="chip info">Droid</span><span class="chip muted">No Organic Rest</span></div>
+      <div class="hnote">Droids cannot benefit from organic rest. Repair actions only.</div>
+      <div class="hacts"><button class="btn sm" data-combat-actor-action="repair" data-actor-id="actor4">Repair</button><button class="btn sm" data-combat-actor-action="repair-skill" data-actor-id="actor4">Repair Check</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOUSE RULES ══ -->
+<div class="surf" id="s-house-rules">
+  <div class="ph"><button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button><div><span class="ey">RULESET CONFIGURATION</span><h2>House Rules</h2><p>Game rule modifications and variant options</p></div><div class="mbar" style="margin-left:auto"><div class="met ok"><span>Active</span><strong>7</strong></div><div class="met"><span>Inactive</span><strong>14</strong></div></div></div>
+  <div class="hr-cols">
+    <div class="rcat"><div class="rcat-hdr"><i class="fa-solid fa-user-gear"></i>&nbsp;&nbsp;Character Creation</div>
+      <div class="rentry"><div><div class="rname">Allow Near-Human Species</div><div class="rdesc">Enables custom near-human species creation.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="nearHumanSpecies"><div class="sw-thumb"></div></div></div></div>
+      <div class="rentry"><div><div class="rname">Starting Feat Override</div><div class="rdesc">All characters gain one additional bonus feat at 1st level.</div></div><div class="sw"><div class="sw-track" onclick="this.classList.toggle('on')" data-rule-key="startingFeatOverride"><div class="sw-thumb"></div></div></div></div>
+      <div class="rentry"><div><div class="rname">Heroic Origins Backstory</div><div class="rdesc">Players provide structured backstory for mentor recommendations.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="heroicOrigins"><div class="sw-thumb"></div></div></div></div>
+    </div>
+    <div class="rcat"><div class="rcat-hdr"><i class="fa-solid fa-sword"></i>&nbsp;&nbsp;Combat</div>
+      <div class="rentry"><div><div class="rname">Critical Hit Fumbles</div><div class="rdesc">Natural 1 on attack roll causes a critical fumble.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="critFumbles"><div class="sw-thumb"></div></div></div></div>
+      <div class="rentry"><div><div class="rname">Wound Threshold Variant</div><div class="rdesc rdesc warn">⚠ High Impact: Changes how the Wounded condition is applied.</div></div><div class="sw"><div class="sw-track" onclick="this.classList.toggle('on')" data-rule-key="woundThreshold"><div class="sw-thumb"></div></div></div></div>
+      <div class="rentry"><div><div class="rname">Flanking Bonus</div><div class="rdesc">+2 to attack when flanking with an ally.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="flankingBonus"><div class="sw-thumb"></div></div></div></div>
+    </div>
+    <div class="rcat"><div class="rcat-hdr"><i class="fa-solid fa-jedi"></i>&nbsp;&nbsp;Force Powers</div>
+      <div class="rentry"><div><div class="rname">Dark Side Points on Reuse</div><div class="rdesc">Using a Force power twice per encounter earns a Dark Side Point.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="darkSideReuse"><div class="sw-thumb"></div></div></div></div>
+      <div class="rentry"><div><div class="rname">Force Sensitivity Requirements</div><div class="rdesc">Non-Force-sensitive characters cannot attempt Force skills.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="forceSensReq"><div class="sw-thumb"></div></div></div></div>
+    </div>
+    <div class="rcat"><div class="rcat-hdr"><i class="fa-solid fa-heart-pulse"></i>&nbsp;&nbsp;Recovery &amp; Conditions</div>
+      <div class="rentry"><div><div class="rname">Extended Rest HP Floor</div><div class="rdesc">Extended rest restores HP to minimum 50% of max.</div></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')" data-rule-key="restHpFloor"><div class="sw-thumb"></div></div></div></div>
+      <div class="rentry"><div><div class="rname">Second Wind Full Reset</div><div class="rdesc">Second Wind usage resets fully on extended rest.</div></div><div class="sw"><div class="sw-track" onclick="this.classList.toggle('on')" data-rule-key="swRestReset"><div class="sw-thumb"></div></div></div></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border:1px solid rgba(112,226,255,.12);border-radius:8px;background:rgba(3,10,20,.52)">
+    <span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(112,226,255,.58)">Active Overrides:</span>
+    <span style="font-family:var(--mono);font-size:16px;font-weight:700;color:#70e2ff">7</span>
+  </div>
+</div>
+
+<!-- ══ WORKSPACE ══ -->
+<div class="surf" id="s-workspace">
+  <div class="ph"><button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button><div><span class="ey">GM ACTOR ACCESS</span><h2>Workspace</h2><p>All actors owned or accessible to the GM</p></div><div class="mbar" style="margin-left:auto"><div class="met"><span>Total</span><strong>12</strong></div><div class="met info"><span>PCs</span><strong>4</strong></div><div class="met"><span>NPCs</span><strong>6</strong></div><div class="met"><span>Droids</span><strong>2</strong></div></div></div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div><span class="ey">ROSTER</span></div>
+        <div style="display:flex;gap:6px">
+          <input type="search" placeholder="Search actors…" style="padding:3px 8px;border-radius:6px;border:1px solid rgba(112,226,255,.16);background:rgba(0,0,0,.3);color:#dff8ff;font-size:10px">
+          <select style="padding:3px 8px;border-radius:6px;border:1px solid rgba(112,226,255,.16);background:rgba(0,0,0,.3);color:#dff8ff;font-size:10px"><option>All Types</option><option>PC</option><option>NPC</option><option>Droid</option></select>
+        </div>
+      </div>
+      <div class="ws-grid">
+        <div class="ws-card in-party">
+          <div class="ws-img" style="color:rgba(112,226,255,.4)"><i class="fa-solid fa-user"></i></div>
+          <div class="ws-name">Ryn Ordo</div>
+          <div class="ws-meta">Soldier 8</div>
+          <div style="display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap">
+            <span class="type-chip pc">PC</span>
+            <span class="chip warn" style="font-size:8px">HP 24/52</span>
+            <span class="ws-party-chip in" onclick="this.classList.toggle('in')">● Party</span>
+          </div>
+          <div class="ws-acts"><button class="btn sm" data-open-actor="a1">Open Sheet</button><button class="btn sm" data-nav-to="healing">Recovery</button><button class="btn sm" data-nav-to="bulletin">Message</button></div>
+          <div class="ws-qa">
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Add XP</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+250</button><button class="ws-qa-amt pos">+500</button><button class="ws-qa-amt pos">+1k</button><button class="ws-qa-amt pos">+2k</button></div></div>
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Credits</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+100</button><button class="ws-qa-amt pos">+500</button><button class="ws-qa-amt pos">+1k</button><button class="ws-qa-amt" style="border-color:rgba(255,107,107,.16);background:rgba(255,107,107,.06);color:rgba(255,139,139,.8)">−500</button></div></div>
+          </div>
+        </div>
+        <div class="ws-card in-party">
+          <div class="ws-img" style="color:rgba(255,107,107,.4)"><i class="fa-solid fa-user"></i></div>
+          <div class="ws-name">Kira Vance</div>
+          <div class="ws-meta">Scoundrel 6</div>
+          <div style="display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap">
+            <span class="type-chip pc">PC</span>
+            <span class="chip crit" style="font-size:8px">Down</span>
+            <span class="ws-party-chip in" onclick="this.classList.toggle('in')">● Party</span>
+          </div>
+          <div class="ws-acts"><button class="btn sm" data-open-actor="a2">Open Sheet</button><button class="btn sm approve" data-nav-to="healing">Revive</button></div>
+          <div class="ws-qa">
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Add XP</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+250</button><button class="ws-qa-amt pos">+500</button><button class="ws-qa-amt pos">+1k</button></div></div>
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Credits</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+100</button><button class="ws-qa-amt pos">+500</button><button class="ws-qa-amt" style="border-color:rgba(255,107,107,.16);background:rgba(255,107,107,.06);color:rgba(255,139,139,.8)">−500</button></div></div>
+          </div>
+        </div>
+        <div class="ws-card in-party">
+          <div class="ws-img" style="color:rgba(112,226,255,.3)"><i class="fa-solid fa-robot"></i></div>
+          <div class="ws-name">R3-V8</div>
+          <div class="ws-meta">Astromech Droid</div>
+          <div style="display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap">
+            <span class="type-chip droid">Droid</span>
+            <span class="chip ok" style="font-size:8px">HP 28/30</span>
+            <span class="ws-party-chip in" onclick="this.classList.toggle('in')">● Party</span>
+          </div>
+          <div class="ws-acts"><button class="btn sm" data-open-actor="a4">Open Sheet</button><button class="btn sm" data-nav-to="healing">Repair</button></div>
+          <div class="ws-qa">
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Credits</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+100</button><button class="ws-qa-amt pos">+500</button><button class="ws-qa-amt" style="border-color:rgba(255,107,107,.16);background:rgba(255,107,107,.06);color:rgba(255,139,139,.8)">−100</button></div></div>
+          </div>
+        </div>
+        <div class="ws-card">
+          <div class="ws-img" style="color:rgba(255,200,87,.3)"><i class="fa-solid fa-user-secret"></i></div>
+          <div class="ws-name">Director Vex</div>
+          <div class="ws-meta">Noble 9 NPC</div>
+          <div style="display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap">
+            <span class="type-chip npc">NPC</span>
+            <span class="chip ok" style="font-size:8px">HP 44/44</span>
+            <span class="ws-party-chip" onclick="this.classList.toggle('in')">+ Add to Party</span>
+          </div>
+          <div class="ws-acts"><button class="btn sm" data-open-actor="a5">Open Sheet</button></div>
+          <div class="ws-qa">
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Add XP</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+250</button><button class="ws-qa-amt pos">+500</button><button class="ws-qa-amt pos">+1k</button></div></div>
+            <div class="ws-qa-row"><span class="ws-qa-lbl">Credits</span><div class="ws-qa-amts"><button class="ws-qa-amt pos">+100</button><button class="ws-qa-amt pos">+500</button></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div class="surf" id="s-settings">
+  <div class="ph"><button class="ph-back" onclick="nav('home')"><i class="fa-solid fa-arrow-left"></i>&nbsp;Home</button><div><span class="ey">INTERFACE CONFIGURATION</span><h2>Settings</h2><p>Holopad theme, motion preferences, and game policy</p></div></div>
+  <div class="cfg-grid">
+    <div class="cfg-card"><h4><i class="fa-solid fa-palette"></i>&nbsp;Theme</h4>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Color Palette</strong><em>Active accent color for the holopad shell</em></div><button class="btn sm">Choose</button></div>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Motion Intensity</strong><em>Controls animation speed and parallax effects</em></div><button class="btn sm">Normal</button></div>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Screen Scanlines</strong><em>Toggle CRT-style scan line overlay</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+    </div>
+    <div class="cfg-card"><h4><i class="fa-solid fa-dice-d20"></i>&nbsp;Game Policy</h4>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Store Open</strong><em>Players can browse and purchase from the store</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Trade Enabled</strong><em>Allow player-to-player Messenger trades</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Approval Required</strong><em>Require GM approval for custom purchases</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+      <div class="cfg-field"><div class="cfg-fl"><strong>Job Board Visible</strong><em>Players can see available jobs in their datapad</em></div><div class="sw"><div class="sw-track on" onclick="this.classList.toggle('on')"><div class="sw-thumb"></div></div></div></div>
+    </div>
+  </div>
+</div>
+
+      </div><!-- /surfs -->
+    </div><!-- /screen-inner -->
+  </div><!-- /screen -->
+</div><!-- /tablet -->
+</div><!-- /scaler -->
+</div><!-- /stage -->
+
+<script>
+// ── NAV ──
+const SURF_INFO = {
+  home:{code:'GM-CMD-OPS',lbl:'GM Operations',rd:'Ready',tone:''},
+  bulletin:{code:'GM-CMD-COM',lbl:'Bulletin',rd:'4 Live Broadcasts',tone:'warn'},
+  jobs:{code:'GM-CMD-JOB',lbl:'Job Board',rd:'Action Required',tone:'crit'},
+  'house-rules':{code:'GM-CMD-RUL',lbl:'House Rules',rd:'7 Active Overrides',tone:''},
+  store:{code:'GM-CMD-STR',lbl:'Store Control',rd:'2 Pending Approvals',tone:'warn'},
+  trade:{code:'GM-CMD-TRD',lbl:'Trade Console',rd:'1 Failed Settlement',tone:'crit'},
+  approvals:{code:'GM-CMD-APR',lbl:'Approvals',rd:'2 Requests Pending',tone:'crit'},
+  healing:{code:'GM-CMD-MED',lbl:'Healing',rd:'3 Eligible for Rest',tone:''},
+  settings:{code:'GM-CMD-CFG',lbl:'Settings',rd:'Configured',tone:''},
+  workspace:{code:'GM-CMD-WRK',lbl:'Workspace',rd:'12 Actors',tone:''},
+  factions:{code:'GM-CMD-FAC',lbl:'Factions',rd:'5 Registered',tone:''}
+};
+function nav(id){
+  document.querySelectorAll('.surf').forEach(s=>s.classList.remove('on'));
+  const s=document.getElementById('s-'+id);
+  if(s)s.classList.add('on');
+  const dock=document.getElementById('dock');
+  if(id==='home'){dock.style.display='none';return;}
+  dock.style.display='flex';
+  const info=SURF_INFO[id]||SURF_INFO.home;
+  document.getElementById('dcode').textContent=info.code;
+  document.getElementById('dlbl').textContent=info.lbl;
+  document.getElementById('drd').textContent=info.rd;
+  document.getElementById('dstat').className='dock-status '+info.tone;
+  document.querySelectorAll('.dock-app').forEach(b=>b.classList.toggle('is-active',b.dataset.id===id));
+}
+
+// ── STORE TABS ──
+function storeTab(el,id){
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  ['options','transactions','approvals','inventory'].forEach(t=>{
+    const p=document.getElementById('sp-'+t);
+    if(p)p.style.display=t===id?'':'none';
+  });
+}
+
+// ── STORE STATUS TOGGLE ──
+function sstToggle(btn,state){
+  document.querySelectorAll('.sst-btn').forEach(b=>b.classList.remove('is-open','is-closed'));
+  btn.classList.add('is-'+state);
+}
+
+// ── CATEGORY ITEMS ──
+function toggleCat(el){el.classList.toggle('on');el.classList.toggle('off');}
+
+// ── BULLETIN SECTION ──
+function bullSection(el,id){
+  document.querySelectorAll('.bull-nc').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.bull-sec').forEach(s=>s.classList.remove('on'));
+  const sec=document.getElementById('bull-s-'+id);
+  if(sec)sec.classList.add('on');
+}
+function toggleCmp(id){
+  const b=document.getElementById('cmp-'+id);
+  if(!b)return;
+  b.classList.toggle('open');
+}
+
+// ── JOB SELECTION ──
+function selJob(btn,title){
+  document.querySelectorAll('.job-card').forEach(c=>c.classList.remove('is-selected'));
+  btn.classList.add('is-selected');
+  const t=document.getElementById('jrail-title');
+  if(t)t.textContent=title;
+  document.getElementById('jrail-empty').style.display='none';
+  document.getElementById('jrail-body').style.display='flex';
+}
+document.getElementById('jrail-body').style.display='flex';
+
+// ── WIZARDS ──
+function openWiz(id){
+  const w=document.getElementById(id);
+  if(!w)return;
+  w.style.display='flex';
+  setTimeout(()=>w.classList.add('open'),10);
+}
+function closeWiz(id){
+  const w=document.getElementById(id);
+  if(!w)return;
+  w.classList.remove('open');
+  setTimeout(()=>{w.style.display='none';},200);
+}
+
+// Contract wizard
+let cPage=1;
+const cLabels=['Next: Objectives','Next: Briefing','Next: Publish','✓ Create Contract'];
+function setCPage(n){
+  cPage=n;
+  document.querySelectorAll('#cwiz .wiz-pg').forEach((p,i)=>p.classList.toggle('on',i+1===n));
+  document.querySelectorAll('[id^="cws-"]').forEach((t,i)=>{t.classList.remove('on','done');if(i+1===n)t.classList.add('on');else if(i+1<n)t.classList.add('done');});
+  document.getElementById('cwiz-cur').textContent=n;
+  document.getElementById('cw-next').innerHTML=cLabels[n-1]+(n<4?' &nbsp;<i class="fa-solid fa-arrow-right"></i>':'');
+  document.getElementById('cw-back').style.visibility=n===1?'hidden':'visible';
+}
+function cwizNext(){if(cPage<4)setCPage(cPage+1);else{closeWiz('cwiz');}}
+function cwizBack(){if(cPage>1)setCPage(cPage-1);}
+
+// Faction wizard
+let fPage=1;
+const fLabels=['Next: Attach Actors','Next: Notes','✓ Create Faction'];
+function setFPage(n){
+  fPage=n;
+  document.querySelectorAll('#fwiz .wiz-pg').forEach((p,i)=>p.classList.toggle('on',i+1===n));
+  document.querySelectorAll('[id^="fws-"]').forEach((t,i)=>{t.classList.remove('on','done');if(i+1===n)t.classList.add('on');else if(i+1<n)t.classList.add('done');});
+  document.getElementById('fwiz-cur').textContent=n;
+  document.getElementById('fw-next').innerHTML=fLabels[n-1]+(n<3?' &nbsp;<i class="fa-solid fa-arrow-right"></i>':'');
+  document.getElementById('fw-back').style.visibility=n===1?'hidden':'visible';
+}
+function fwizNext(){if(fPage<3)setFPage(fPage+1);else{closeWiz('fwiz');}}
+function fwizBack(){if(fPage>1)setFPage(fPage-1);}
+
+function wizToggleSopt(el,group){
+  const parent=el.closest('.wiz-pg')||el.closest('.wiz-body');
+  parent.querySelectorAll('.wiz-sopt').forEach(s=>{if(s.dataset.grp===group||!group)s.classList.remove('on');});
+  el.classList.add('on');
+}
+
+// ── SCALE ──
+function scale(){
+  const scaler=document.getElementById('scaler');
+  const s=Math.min(window.innerWidth/1440,window.innerHeight/900,1);
+  scaler.style.cssText=`transform:scale(${s});transform-origin:top left;width:1440px;height:900px`;
+  const stage=document.querySelector('.stage');
+  if(s<1){stage.style.alignItems='flex-start';stage.style.justifyContent='flex-start';stage.style.overflow='auto';}
+  else{stage.style.alignItems='center';stage.style.justifyContent='center';stage.style.overflow='hidden';}
+}
+window.addEventListener('resize',scale);
+scale();
+</script>
+</body>
+</html>

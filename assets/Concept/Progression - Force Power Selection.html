@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Progression — Force Power Selection</title>
+<meta name="viewport" content="width=1480"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent-h:190;--accent-c:.17;--accent-l:.82;
+  --accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-dim:oklch(.32 .08 var(--accent-h));
+  --screen:oklch(.13 .055 278);--screen-2:oklch(.18 .07 272);
+  --ink:oklch(.94 .04 190);--ink-dim:oklch(.72 .06 190);--ink-faint:oklch(.50 .05 190);
+  --pos:oklch(.82 .19 145);--neg:oklch(.70 .22 25);--zero:oklch(.88 .17 95);
+  --c-dark:oklch(.68 .28 22);--c-light:oklch(.78 .20 220);--c-tk:oklch(.72 .22 290);
+  --c-mind:oklch(.82 .18 65);
+  --font-body:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --font-display:'VT323',monospace;--font-syne:'Syne',sans-serif;
+  --anim:1;--scan:.025;
+}
+html,body{margin:0;padding:0;background:#05050a;color:var(--ink);font-family:var(--font-body);min-height:100vh;overflow-x:auto}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 28% 18%,oklch(.18 .10 320/.55),transparent 55%),radial-gradient(ellipse at 82% 88%,oklch(.18 .10 200/.50),transparent 55%),linear-gradient(180deg,#060612,#020205)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(to right,oklch(1 0 0/.015) 1px,transparent 1px),linear-gradient(to bottom,oklch(1 0 0/.015) 1px,transparent 1px);background-size:48px 48px}
+@keyframes lpulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+.stage{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:36px 20px}
+.datapad{width:min(1440px,100%);position:relative;padding:18px 18px 16px;background:linear-gradient(180deg,#1a1923 0%,#0d0c15 50%,#080810 100%);
+  clip-path:polygon(0 22px,22px 0,calc(100% - 60px) 0,calc(100% - 44px) 16px,calc(100% - 22px) 16px,100% 38px,100% calc(100% - 22px),calc(100% - 22px) 100%,22px 100%,0 calc(100% - 22px));
+  box-shadow:inset 0 1px 0 oklch(1 0 0/.06),inset 0 0 0 1px oklch(0 0 0/.6),0 40px 80px oklch(0 0 0/.8),0 0 100px oklch(var(--accent-l) var(--accent-c) var(--accent-h)/.10)}
+.rivet{position:absolute;width:5px;height:5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#5a5a6e 0%,#1a1a22 70%)}
+.rivet.tl{top:9px;left:14px}.rivet.tr{top:9px;right:14px}.rivet.bl{bottom:9px;left:14px}.rivet.br{bottom:9px;right:14px}
+.bezel-serial{position:absolute;top:3px;right:80px;font-family:var(--font-mono);font-size:9px;letter-spacing:.22em;color:oklch(.42 .03 260)}
+.screen{position:relative;background:radial-gradient(ellipse at 28% 8%,var(--screen-2) 0%,var(--screen) 50%,oklch(.07 .04 278) 100%);border:1px solid oklch(.3 .04 260/.6);border-radius:8px;padding:14px;overflow:hidden}
+.screen::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;background:repeating-linear-gradient(0deg,transparent 0 3px,oklch(1 0 0/var(--scan)) 3px 4px)}
+.screen::after{content:'';position:absolute;left:0;right:0;top:0;height:60%;pointer-events:none;z-index:4;background:linear-gradient(180deg,oklch(.95 .18 220/.025),transparent)}
+
+.hud{display:flex;align-items:center;justify-content:space-between;padding:4px 10px 8px;margin-bottom:8px;border-bottom:1px solid oklch(.85 .18 200/.18);font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
+.hud-l,.hud-r{display:flex;gap:14px;align-items:center}
+.hud-title{font-family:var(--font-display);font-size:18px;letter-spacing:.32em;color:var(--accent);text-shadow:0 0 10px oklch(.85 .18 200/.5)}
+.hud .pill{display:inline-flex;gap:6px;align-items:center}
+.hud .dot{width:6px;height:6px;border-radius:50%;background:var(--pos);box-shadow:0 0 6px var(--pos);animation:lpulse calc(1.4s/var(--anim)) ease-in-out infinite}
+
+.mentor-rail{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:10px 14px;margin-bottom:10px;background:linear-gradient(90deg,oklch(.18 .06 280/.6) 0%,oklch(.10 .04 278/.4) 100%);border:1px solid oklch(.85 .18 200/.18);border-left:3px solid var(--accent);position:relative;overflow:hidden}
+.mentor-rail::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 8% 50%,oklch(.85 .18 200/.08),transparent 40%);pointer-events:none}
+.mentor-portrait{width:56px;height:56px;border:1px solid oklch(.85 .18 200/.4);background:radial-gradient(circle at 40% 30%,oklch(.85 .18 200/.2),oklch(.08 .04 278) 70%);display:flex;align-items:center;justify-content:center;position:relative}
+.mentor-portrait::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,oklch(.85 .18 200/.08) 3px 4px);pointer-events:none}
+.mentor-portrait svg{width:40px;height:40px;color:var(--accent);position:relative;z-index:1}
+.mentor-text{font-family:var(--font-body);font-size:13px;color:var(--ink);line-height:1.45}
+.mentor-text .lbl{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;margin-bottom:4px}
+
+.step-rail{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;padding:10px 4px 10px;margin-bottom:6px}
+.step{position:relative;padding:8px 6px 8px 10px;background:oklch(0 0 0/.3);border:1px solid oklch(.85 .18 200/.08);font-family:var(--font-mono);transition:all .25s;cursor:default;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.step .num{font-family:var(--font-display);font-size:18px;color:var(--ink-faint);letter-spacing:.04em;line-height:1}
+.step .lbl{font-size:7.5px;letter-spacing:.24em;color:var(--ink-faint);text-transform:uppercase;margin-top:2px}
+.step .nm{font-size:9.5px;color:var(--ink-dim);font-weight:600;margin-top:1px;text-transform:uppercase;letter-spacing:.04em}
+.step.done{border-color:oklch(.82 .19 145/.3);background:oklch(.82 .19 145/.06)}
+.step.done .num{color:var(--pos)}
+.step.done::before{content:'✓';position:absolute;top:6px;right:8px;color:var(--pos);font-size:10px;font-weight:700}
+.step.active{border-color:var(--accent);background:linear-gradient(180deg,oklch(.85 .18 200/.14) 0%,oklch(.85 .18 200/.04) 100%);box-shadow:0 0 20px oklch(.85 .18 200/.2)}
+.step.active .num,.step.active .lbl,.step.active .nm{color:var(--accent)}
+.step.active::after{content:'';position:absolute;left:10%;right:10%;bottom:-1px;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+
+.utility-rail{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 12px;margin-bottom:12px;background:oklch(0 0 0/.3);border:1px solid oklch(.85 .18 200/.12)}
+.search-wrap{position:relative}
+.search-wrap input{width:100%;padding:7px 10px 7px 28px;background:oklch(0 0 0/.4);border:1px solid oklch(.85 .18 200/.2);color:var(--ink);font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;outline:none}
+.search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 10px oklch(.85 .18 200/.3)}
+.search-wrap::before{content:'◌';position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-family:var(--font-display);font-size:13px}
+.util-toggle{display:inline-flex;gap:6px;align-items:center;cursor:pointer;font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);padding:6px 10px;background:oklch(0 0 0/.4);border:1px solid oklch(1 0 0/.08);user-select:none;transition:all .15s;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.util-toggle:hover{color:var(--accent);border-color:oklch(.85 .18 200/.3)}
+.util-toggle.on{color:var(--accent);background:oklch(.85 .18 200/.12);border-color:oklch(.85 .18 200/.45);box-shadow:0 0 10px oklch(.85 .18 200/.2)}
+.util-toggle .sw{width:8px;height:8px;border:1px solid currentColor;display:inline-block}
+.util-toggle.on .sw{background:currentColor;box-shadow:0 0 6px currentColor}
+
+.three-body{display:grid;grid-template-columns:260px 1fr 310px;gap:12px;margin-bottom:10px}
+.rail{background:oklch(0 0 0/.32);border:1px solid oklch(.85 .18 200/.14);padding:14px;position:relative;overflow:hidden}
+.rail-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);padding-bottom:8px;margin-bottom:10px;border-bottom:1px dashed oklch(.85 .18 200/.22)}
+.rail-head .hint{color:var(--ink-faint);font-size:8px;letter-spacing:.15em}
+.rail-led{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 4px var(--accent);animation:lpulse calc(1.3s/var(--anim)) ease-in-out infinite}
+
+.identity-banner{position:relative;padding:12px;margin-bottom:12px;background:linear-gradient(135deg,oklch(.85 .18 200/.10) 0%,oklch(.55 .26 300/.08) 100%);border:1px solid oklch(.85 .18 200/.25);overflow:hidden}
+.identity-banner::before{content:'';position:absolute;left:-30px;top:-30px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,oklch(.85 .18 200/.18),transparent 60%)}
+.id-arch{font-family:var(--font-syne);font-weight:800;font-size:16px;letter-spacing:.04em;color:var(--accent);line-height:1.1;text-shadow:0 0 12px oklch(.85 .18 200/.4)}
+.id-char{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-dim);margin-top:6px}
+
+.dist{margin-bottom:14px}
+.dist-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+.dist-row{display:grid;grid-template-columns:1fr 24px;gap:6px;align-items:center;padding:3px 0}
+.dist-row .nm{font-family:var(--font-mono);font-size:9px;color:var(--ink-dim);letter-spacing:.04em}
+.dist-row .ct{font-family:var(--font-display);font-size:14px;color:var(--accent);text-align:right;line-height:1;letter-spacing:.04em}
+.dist-bar{grid-column:1/-1;height:4px;background:oklch(0 0 0/.6);position:relative;overflow:hidden}
+.dist-fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--ftk,var(--accent)),color-mix(in oklch,var(--ftk,var(--accent)) 30%,transparent));box-shadow:0 0 6px var(--ftk,var(--accent))}
+
+.work-surface{position:relative;min-height:580px;background:radial-gradient(ellipse at 50% 30%,oklch(.18 .07 270/.5) 0%,oklch(.10 .04 278/.5) 60%);border:1px solid oklch(.85 .18 200/.15);padding:18px;overflow:hidden}
+.work-surface::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 20% 10%,oklch(.85 .18 200/.06),transparent 50%),radial-gradient(ellipse at 80% 90%,oklch(.65 .26 320/.06),transparent 55%)}
+
+.ws-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;position:relative;z-index:2}
+.ws-title{font-family:var(--font-syne);font-weight:700;font-size:17px;letter-spacing:.04em;color:var(--ink)}
+.ws-counter{font-family:var(--font-display);font-size:20px;color:var(--accent);letter-spacing:.05em;text-shadow:0 0 10px oklch(.85 .18 200/.5)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;position:relative;z-index:1}
+.card{--cc:var(--accent);position:relative;padding:12px;background:color-mix(in oklch,var(--cc) 7%,oklch(.09 .03 285));border:1px solid color-mix(in oklch,var(--cc) 45%,transparent);border-radius:10px;cursor:pointer;transition:all .2s}
+.card.dark{--cc:var(--c-dark)}.card.light{--cc:var(--c-light)}.card.tk{--cc:var(--c-tk)}.card.mind{--cc:var(--c-mind)}
+.card:hover{border-color:var(--cc);background:color-mix(in oklch,var(--cc) 12%,oklch(.09 .03 285));box-shadow:0 0 20px color-mix(in oklch,var(--cc) 18%,transparent)}
+.card.selected{border-color:var(--cc);background:color-mix(in oklch,var(--cc) 16%,oklch(.09 .03 285));box-shadow:0 0 28px color-mix(in oklch,var(--cc) 32%,transparent),inset 0 0 0 1px color-mix(in oklch,var(--cc) 25%,transparent)}
+.card.owned{opacity:.45;cursor:default;pointer-events:none}
+.card.owned::after{content:'✓ OWNED';position:absolute;top:8px;right:8px;font-family:var(--font-mono);font-size:7px;letter-spacing:.2em;color:var(--pos);background:oklch(.82 .19 145/.12);border:1px solid oklch(.82 .19 145/.35);padding:2px 6px}
+.card-top{height:60px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;background:color-mix(in oklch,var(--cc) 9%,oklch(.07 .03 278));border-radius:6px;position:relative}
+.card-top::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,oklch(1 0 0/.022) 3px 4px)}
+.card-sym{font-family:var(--font-display);font-size:44px;color:var(--cc);position:relative;z-index:1}
+.card-name{font-family:var(--font-syne);font-weight:700;font-size:11.5px;color:var(--ink);line-height:1.3;margin-bottom:6px}
+.card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.tag{font-family:var(--font-mono);font-size:6.5px;letter-spacing:.18em;text-transform:uppercase;padding:2px 5px;border:1px solid color-mix(in oklch,var(--cc) 45%,transparent);color:var(--cc);background:color-mix(in oklch,var(--cc) 8%,transparent)}
+.card-desc{font-family:var(--font-mono);font-size:8px;line-height:1.5;color:var(--ink-dim)}
+
+.detail-empty{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--ink-faint);text-transform:uppercase;padding:30px 8px;text-align:center;opacity:.5}
+.dr-pname{font-family:var(--font-syne);font-weight:700;font-size:17px;color:var(--ink);letter-spacing:.01em;line-height:1.2;text-wrap:balance}
+.dr-pmeta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:var(--font-mono);font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px;margin-bottom:12px}
+.dr-pmeta .tier-tag{color:var(--cc,var(--accent));padding:2px 6px;border:1px solid var(--cc,var(--accent))}
+.dr-section{margin-bottom:12px}
+.dr-sl{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+.dr-desc{font-family:var(--font-body);font-size:11px;line-height:1.55;color:var(--ink-dim)}
+.dc-table{width:100%;border-collapse:collapse;margin-top:8px}
+.dc-table th{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);padding:4px 6px;text-align:left;border-bottom:1px solid oklch(1 0 0/.1)}
+.dc-table td{font-family:var(--font-mono);font-size:9px;color:var(--ink-dim);padding:5px 6px;border-bottom:1px solid oklch(1 0 0/.04);vertical-align:top;line-height:1.4}
+.dc-table td.dcn{font-family:var(--font-display);font-size:16px;color:var(--cc,var(--accent));text-align:center;width:40px}
+
+.progression-rail{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 18px;background:linear-gradient(180deg,oklch(0 0 0/.4),oklch(0 0 0/.6));border:1px solid oklch(.85 .18 200/.18);border-top:2px solid var(--accent);position:relative}
+.progression-rail::before{content:'';position:absolute;left:30px;right:30px;top:-2px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 12px var(--accent)}
+.pr-btn{padding:11px 22px;font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s;background:oklch(0 0 0/.5);border:1px solid oklch(.85 .18 200/.3);color:var(--ink-dim);clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.pr-btn:hover{color:var(--accent);border-color:var(--accent);box-shadow:0 0 14px oklch(.85 .18 200/.25)}
+.pr-btn.next{background:oklch(.85 .18 200/.16);border-color:var(--accent);color:var(--accent);text-shadow:0 0 8px oklch(.85 .18 200/.5)}
+.pr-btn.next:disabled{opacity:.35;cursor:not-allowed;background:oklch(0 0 0/.4);border-color:oklch(1 0 0/.1);color:var(--ink-faint);text-shadow:none;box-shadow:none}
+.pr-mid{display:flex;align-items:center;gap:14px;justify-content:center}
+.pr-slots{display:flex;gap:6px;align-items:center;font-family:var(--font-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
+.pr-slots .cnt{font-family:var(--font-display);font-size:24px;color:var(--accent);letter-spacing:.04em;line-height:1;text-shadow:0 0 10px oklch(.85 .18 200/.5)}
+.pr-slots .of{font-family:var(--font-display);font-size:14px;color:var(--ink-faint)}
+</style>
+</head>
+<body>
+<div class="stage"><div class="datapad">
+  <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+  <div class="bezel-serial">PE-FP-447-ΘΞΛ</div>
+
+  <div class="screen">
+    <div class="hud">
+      <div class="hud-l">
+        <span class="pill"><span class="dot"></span>SYNC</span>
+      </div>
+      <div class="hud-title">FORCE POWER SELECTION</div>
+      <div class="hud-r"></div>
+    </div>
+
+    <div class="mentor-rail">
+      <div class="mentor-portrait">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+      <div class="mentor-text">
+        <div class="lbl">◈ Progression Engine</div>
+        Select Force Powers to expand your repertoire. Powers cost a standard action and use your Use the Force check.
+      </div>
+      <div></div>
+    </div>
+
+    <div class="step-rail">
+      <div class="step done"><div class="num">01</div><div class="lbl">Select</div><div class="nm">Archetype</div></div>
+      <div class="step done"><div class="num">02</div><div class="lbl">Assign</div><div class="nm">Skills</div></div>
+      <div class="step done"><div class="num">03</div><div class="lbl">Choose</div><div class="nm">Feats</div></div>
+      <div class="step done"><div class="num">04</div><div class="lbl">Pick</div><div class="nm">Talents</div></div>
+      <div class="step active"><div class="num">05</div><div class="lbl">Select</div><div class="nm">Powers</div></div>
+      <div class="step"><div class="num">06</div><div class="lbl">Choose</div><div class="nm">Equip</div></div>
+      <div class="step"><div class="num">07</div><div class="lbl">Allocate</div><div class="nm">Ability</div></div>
+      <div class="step"><div class="num">08</div><div class="lbl">Review</div><div class="nm">Summary</div></div>
+      <div class="step"><div class="num">09</div><div class="lbl">Finalize</div><div class="nm">Commit</div></div>
+    </div>
+
+    <div class="utility-rail">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search powers..." id="search">
+      </div>
+      <div class="util-toggle" id="filtToggle">
+        <span class="sw"></span>
+        Filter: All
+      </div>
+    </div>
+
+    <div class="three-body">
+      <!-- Summary rail -->
+      <div class="rail summary-rail">
+        <div class="rail-head">
+          <span>◈ Build Identity</span>
+          <span class="rail-led"></span>
+        </div>
+        <div class="identity-banner">
+          <div class="id-arch">Jedi Guardian</div>
+          <div class="id-char">Kael Vorren · Level 3 · Human</div>
+        </div>
+        <div class="dist">
+          <div class="dist-head"><span>Descriptor Balance</span></div>
+          <div class="dist-row">
+            <span class="nm">Light Side</span><span class="ct" id="cntLight">1</span>
+            <div class="dist-bar"><div class="dist-fill" style="--ftk:var(--c-light);width:20%"></div></div>
+          </div>
+          <div class="dist-row">
+            <span class="nm">Dark Side</span><span class="ct" id="cntDark">0</span>
+            <div class="dist-bar"><div class="dist-fill" style="--ftk:var(--c-dark);width:0%"></div></div>
+          </div>
+          <div class="dist-row">
+            <span class="nm">Telekinetic</span><span class="ct" id="cntTK">0</span>
+            <div class="dist-bar"><div class="dist-fill" style="--ftk:var(--c-tk);width:0%"></div></div>
+          </div>
+          <div class="dist-row">
+            <span class="nm">Mind-Affecting</span><span class="ct" id="cntMind">0</span>
+            <div class="dist-bar"><div class="dist-fill" style="--ftk:var(--c-mind);width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Work surface -->
+      <div class="work-surface">
+        <div class="ws-head">
+          <div class="ws-title">Available Force Powers</div>
+          <div class="ws-counter"><span id="avail">12</span> total</div>
+        </div>
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <!-- Detail rail -->
+      <div class="rail detail-rail">
+        <div class="rail-head">
+          <span>◈ Power Details</span>
+          <span class="rail-led"></span>
+        </div>
+        <div id="detail">
+          <div class="detail-empty">Click a power card<br>to view details</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progression-rail">
+      <button class="pr-btn">◂ Previous</button>
+      <div class="pr-mid">
+        <div class="pr-slots">
+          <span class="cnt" id="selCnt">0</span>
+          <span class="of">/ 2</span>
+          <span>selected</span>
+        </div>
+      </div>
+      <button class="pr-btn next" id="confirm" disabled>Next Step ▸</button>
+    </div>
+  </div>
+</div></div>
+
+<script>
+const POWERS = [
+  {id:'battle_strike',p:'light',name:'Battle Strike',sym:'✦',tags:['light'],desc:'Channel the living Force into a devastating melee strike.',
+   full:'Make a UTF check as part of a melee attack. Your weapon strike carries the power of the living Force.',
+   dcs:[{dc:15,fx:'+1d6 damage on next melee attack this turn'},{dc:20,fx:'+2d6 damage; bypass DR'},{dc:25,fx:'+3d6 damage, bypass DR, push 1 sq'}]},
+  {id:'force_slam',p:'tk',name:'Force Slam',sym:'▼',tags:['tk'],desc:'Hurl a creature telekinetically into the ground.',
+   full:'Ranged attack vs Fortitude. Cover grants bonus; concealment penalizes your check.',
+   dcs:[{dc:15,fx:'2d6 damage; move target 1 square'},{dc:20,fx:'3d6 damage; knocked prone'},{dc:25,fx:'4d6 damage; prone and dazed 1 round'}]},
+  {id:'force_lightning',p:'dark',name:'Force Lightning',sym:'⚡',tags:['dark'],desc:'Dark Side electricity from your fingertips (DSP +1).',
+   full:'DARK SIDE: DSP +1 on use. No Force Point may be spent. Targets within 6 squares, LoS required.',
+   dcs:[{dc:15,fx:'3d6 electricity (one target in 6 sq)'},{dc:20,fx:'4d6 elec; stunned til end of next turn'},{dc:25,fx:'5d6; stunned; arc to adjacent (2d6)'}]},
+  {id:'dark_rage',p:'dark',name:'Dark Rage',sym:'⚔',tags:['dark'],desc:'Fuel strikes with dark-side fury (DSP +1).',
+   full:'DARK SIDE: DSP +1. Bonus lasts for rest of encounter. Rage clouds judgment.',
+   dcs:[{dc:15,fx:'+2 attack/damage rolls'},{dc:20,fx:'+4 attack/damage; resist 5 all dmg'},{dc:25,fx:'+4 attack/damage; resist 10; −2 Reflex & Will'}]},
+  {id:'move_object',p:'tk',name:'Move Object',sym:'◎',tags:['tk'],desc:'Telekinetically move objects or hurl them as weapons.',
+   full:'Move unattended objects or unwilling creatures (opposed UTF). Concealment applies penalties.',
+   dcs:[{dc:15,fx:'Move Medium object/creature 2 sq'},{dc:20,fx:'Large; 6 sq; hurl attack (2d6+Str)'},{dc:25,fx:'Huge; 12 sq; hurl (3d6+Str)'}]},
+  {id:'mind_trick',p:'mind',name:'Mind Trick',sym:'◉',tags:['mind'],desc:'Bend a weak-willed mind. No effect on mindless.',
+   full:'MIND-AFFECTING: No effect on mindless or immune. Plant confusion or false belief.',
+   dcs:[{dc:15,fx:'Target −2 on next attack/check'},{dc:20,fx:'Believe simple falsehood (1 min)'},{dc:25,fx:'Dazed for 1 round'}]},
+  {id:'vital_transfer',p:'light',name:'Vital Transfer',sym:'♦',tags:['light'],desc:'Channel living Force to heal wounds.',
+   full:'Touch or LoS. Heals willing living creature. Connects healer and target through the Force.',
+   dcs:[{dc:15,fx:'Restore 1d6 hp'},{dc:20,fx:'Restore 2d6 hp'},{dc:25,fx:'Restore 3d6 hp; remove one condition'}]},
+  {id:'force_grip',p:'dark',name:'Force Grip',sym:'⊗',tags:['dark','tk'],desc:'Dark Side telekinetic stranglehold (DSP +1).',
+   full:'DARK SIDE + TK: DSP +1. Vs Fort within 6 sq. Cover grants bonus to Fort Defense.',
+   dcs:[{dc:15,fx:'Restrained (−2 atk/def)'},{dc:20,fx:'Immobilized; 2d6 dmg/round'},{dc:25,fx:'3d6 dmg; helpless 1 round'}]},
+  {id:'rebuke',p:'light',name:'Rebuke',sym:'◆',tags:['light'],desc:'Redirect dark side attack back at attacker.',
+   full:'Reaction when targeted by dark-side Force power. UTF check opposes attacker.',
+   dcs:[{dc:15,fx:'Deflect; take half damage'},{dc:20,fx:'Reflect back at attacker'},{dc:25,fx:'Negate attack & heal 1d6'}]},
+  {id:'surge',p:'tk',name:'Surge',sym:'◈',tags:['tk'],desc:'Telekinetic burst pushes all nearby.',
+   full:'All creatures within 6 squares must resist with Fortitude or be pushed.',
+   dcs:[{dc:15,fx:'Push 1 square'},{dc:20,fx:'Push 2 squares'},{dc:25,fx:'Push 3 sq; knocked prone'}]},
+  {id:'sever_force',p:'dark',name:'Sever Force',sym:'⊘',tags:['dark','mind'],desc:'Dark Side suppression of Force connection (DSP +1).',
+   full:'DARK SIDE + MIND: DSP +1. Vs Will. Mindless creatures immune.',
+   dcs:[{dc:15,fx:'−2 penalty to UTF checks (1 round)'},{dc:20,fx:'−5 penalty to UTF (1 round)'},{dc:25,fx:'Cannot use UTF for 1 round'}]},
+  {id:'precognition',p:'light',name:'Precognition',sym:'◇',tags:['light'],desc:'See seconds into the future.',
+   full:'Swift action. Glimpse immediate future to gain tactical advantage. Lasts 1 round.',
+   dcs:[{dc:15,fx:'+2 insight to attack or save'},{dc:20,fx:'+4 insight to attack or save'},{dc:25,fx:'Reroll one attack or save'}]},
+];
+
+const OWNED = ['battle_strike','vital_transfer'];
+const MAX_SEL = 2;
+
+let filter = 'all';
+let selected = new Set();
+let focused = null;
+
+function updateCounts() {
+  const counts = {light:0,dark:0,tk:0,mind:0};
+  [...selected].forEach(id => {
+    const p = POWERS.find(x => x.id === id);
+    p.tags.forEach(t => {
+      if(t==='light') counts.light++;
+      if(t==='dark') counts.dark++;
+      if(t==='tk') counts.tk++;
+      if(t==='mind') counts.mind++;
+    });
+  });
+  OWNED.forEach(id => {
+    const p = POWERS.find(x => x.id === id);
+    p.tags.forEach(t => {
+      if(t==='light') counts.light++;
+      if(t==='dark') counts.dark++;
+      if(t==='tk') counts.tk++;
+      if(t==='mind') counts.mind++;
+    });
+  });
+  document.getElementById('cntLight').textContent = counts.light;
+  document.getElementById('cntDark').textContent = counts.dark;
+  document.getElementById('cntTK').textContent = counts.tk;
+  document.getElementById('cntMind').textContent = counts.mind;
+  document.querySelector('[id="cntLight"]').parentElement.querySelector('.dist-fill').style.width = (counts.light*20)+'%';
+  document.querySelector('[id="cntDark"]').parentElement.querySelector('.dist-fill').style.width = (counts.dark*20)+'%';
+  document.querySelector('[id="cntTK"]').parentElement.querySelector('.dist-fill').style.width = (counts.tk*20)+'%';
+  document.querySelector('[id="cntMind"]').parentElement.querySelector('.dist-fill').style.width = (counts.mind*20)+'%';
+}
+
+function showDetail(p) {
+  focused = p.id;
+  const cc = `var(--c-${p.p})`;
+  document.getElementById('detail').innerHTML = `
+    <div class="dr-pname">${p.name}</div>
+    <div class="dr-pmeta">
+      ${p.tags.map(t=>`<span class="tier-tag" style="--cc:${t==='light'?'var(--c-light)':t==='dark'?'var(--c-dark)':t==='tk'?'var(--c-tk)':'var(--c-mind)'}">${t}</span>`).join('')}
+    </div>
+    <div class="dr-section">
+      <div class="dr-sl">Description</div>
+      <div class="dr-desc">${p.full}</div>
+    </div>
+    <div class="dr-section">
+      <div class="dr-sl">DC Tiers</div>
+      <table class="dc-table">
+        <thead><tr><th>DC</th><th>Effect</th></tr></thead>
+        <tbody>
+          ${p.dcs.map(d=>`<tr><td class="dcn" style="--cc:${cc}">${d.dc}</td><td>${d.fx}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function render() {
+  const visible = POWERS.filter(p => {
+    const searchTerm = document.getElementById('search').value.toLowerCase();
+    if(searchTerm && !p.name.toLowerCase().includes(searchTerm) && !p.desc.toLowerCase().includes(searchTerm)) return false;
+    if(filter === 'all') return true;
+    return p.tags.includes(filter);
+  });
+  document.getElementById('avail').textContent = visible.length;
+  document.getElementById('selCnt').textContent = selected.size;
+  document.getElementById('confirm').disabled = selected.size !== MAX_SEL;
+
+  const html = visible.map(p => {
+    const isOwned = OWNED.includes(p.id);
+    const isSel = selected.has(p.id);
+    return `<div class="card ${p.p} ${isOwned?'owned':''} ${isSel?'selected':''}" data-id="${p.id}">
+      <div class="card-top"><div class="card-sym">${p.sym}</div></div>
+      <div class="card-name">${p.name}</div>
+      <div class="card-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-desc">${p.desc}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('grid').innerHTML = html;
+  updateCounts();
+}
+
+document.getElementById('grid').addEventListener('click', e => {
+  const card = e.target.closest('.card');
+  if(!card) return;
+  const id = card.dataset.id;
+  const p = POWERS.find(x => x.id === id);
+  if(card.classList.contains('owned')) {
+    showDetail(p);
+    return;
+  }
+  if(selected.has(id)) selected.delete(id);
+  else if(selected.size < MAX_SEL) selected.add(id);
+  showDetail(p);
+  render();
+});
+
+document.getElementById('search').addEventListener('input', render);
+
+document.getElementById('filtToggle').addEventListener('click', () => {
+  const opts = ['all','light','dark','tk','mind'];
+  const idx = opts.indexOf(filter);
+  filter = opts[(idx+1)%opts.length];
+  document.getElementById('filtToggle').textContent = 'Filter: '+filter.charAt(0).toUpperCase()+filter.slice(1);
+  if(filter==='all') document.getElementById('filtToggle').classList.remove('on');
+  else document.getElementById('filtToggle').classList.add('on');
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

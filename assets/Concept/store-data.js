@@ -368,6 +368,69 @@ window.STORE_INVENTORY = [
   { id: 'inv-7', name: 'Wookiee Pelt (uncleared)', glyph: 'w', category: 'equipment', slot: 'Trophy',         rarity: 'illegal',   base: 1800, cond: 'Frozen',qty: 1 }
 ];
 
+/* ============================================================
+ * Galactic Exchange Index (GEX) — CNBC-style stock ticker
+ * code, name, price (credits), change (%), sector
+ * Prices drift slightly on each load for a live feel.
+ * ============================================================ */
+window.STORE_STOCKS = [
+  /* Shipwrights & Drive Yards */
+  { code: 'KDY',  name: 'Kuat Drive Yards',                  price: 31200, change:  0.88, sector: 'Shipwright' },
+  { code: 'SFS',  name: 'Sienar Fleet Systems',              price: 18650, change:  3.42, sector: 'Shipwright' },
+  { code: 'SSF',  name: 'Santhe/Sienar Fleet Technologies',  price: 14200, change: -1.28, sector: 'Shipwright' },
+  { code: 'INCM', name: 'Incom Corporation',                 price:  6290, change: -4.07, sector: 'Shipwright' },
+  { code: 'CEC',  name: 'Corellian Engineering Corp',        price:  9340, change:  1.56, sector: 'Shipwright' },
+  { code: 'RHE',  name: 'Rothana Heavy Engineering',         price: 12500, change:  0.34, sector: 'Shipwright' },
+  { code: 'MDLM', name: 'MandalMotors',                      price:  7220, change: -2.45, sector: 'Shipwright' },
+  { code: 'LRC',  name: 'Loronar Corporation',               price:  4390, change:  1.22, sector: 'Shipwright' },
+  { code: 'PLSR', name: 'Pulsar Supertanker',                price:  8810, change: -0.54, sector: 'Shipwright' },
+
+  /* Weapons & Munitions */
+  { code: 'BLT',  name: 'BlasTech Industries',               price:  4712, change:  2.31, sector: 'Weapons'   },
+  { code: 'SSC',  name: 'SoroSuub Corporation',              price:  3180, change: -0.62, sector: 'Weapons'   },
+  { code: 'MSM',  name: 'Merr-Sonn Munitions',               price:  2760, change:  5.19, sector: 'Weapons'   },
+  { code: 'BWS',  name: 'Blackwater Systems',                price:  1940, change:  3.77, sector: 'Weapons'   },
+  { code: 'SYN',  name: 'Synchet Industries',                price:  1620, change: -1.40, sector: 'Weapons'   },
+
+  /* MegaCorps & Conglomerates */
+  { code: 'CZK',  name: 'Czerka Interstellar',               price:  8840, change: -1.14, sector: 'MegaCorp'  },
+  { code: 'DMSK', name: 'Damask Holdings',                   price: 24600, change:  0.19, sector: 'MegaCorp'  },
+  { code: 'TGM',  name: 'TransGalMeg Industries',            price:  5530, change: -2.08, sector: 'MegaCorp'  },
+  { code: 'TAGG', name: 'TaggeCo Holdings',                  price:  6100, change: -0.38, sector: 'MegaCorp'  },
+  { code: 'MTC',  name: 'Multycorp',                         price:  3290, change:  0.91, sector: 'MegaCorp'  },
+  { code: 'TRK',  name: 'Traken Industries',                 price:  2170, change:  1.63, sector: 'MegaCorp'  },
+
+  /* Droids */
+  { code: 'IA',   name: 'Industrial Automaton',              price:  5610, change:  2.08, sector: 'Droids'    },
+  { code: 'CBG',  name: 'Cybot Galactica',                   price:  4050, change: -1.90, sector: 'Droids'    },
+  { code: 'DRD',  name: 'Drunk Droid LLC',                   price:   310, change:  9.44, sector: 'Droids'    },
+
+  /* Trade, Resources & Cartel */
+  { code: 'TBNA', name: 'Tibanna Gas Consortium',            price:   940, change:  8.14, sector: 'Resources' },
+  { code: 'LMP',  name: 'LiMerge Power',                     price:  3760, change: -3.21, sector: 'Resources' },
+  { code: 'ORS',  name: 'Outer Rim Supply Co.',              price:  1480, change:  0.55, sector: 'Trade'     },
+  { code: 'BRT',  name: 'Bornaryn Trading',                  price:  2240, change: -0.77, sector: 'Trade'     },
+  { code: 'SMC',  name: 'Squib Merchandising Consortium',    price:   680, change:  4.30, sector: 'Trade'     },
+  { code: 'HCH',  name: 'Hutt Cartel Holdings',              price: 19800, change: -3.61, sector: 'Cartel'    },
+  { code: 'BSS',  name: 'Black Sun Securities',              price: 11100, change:  6.83, sector: 'Cartel'    },
+  { code: 'SME',  name: 'Second Mistake Enterprises',        price:   420, change: -7.02, sector: 'Cartel'    },
+
+  /* Vehicles & Infrastructure */
+  { code: 'ART',  name: 'Aratech Repulsor Co.',              price:  1880, change:  0.77, sector: 'Vehicles'  },
+  { code: 'CDS',  name: 'Coronet Durasteel',                 price:  2910, change:  1.44, sector: 'Materials' },
+  { code: 'KPH',  name: 'Kuat Photonics',                    price:  4450, change: -0.29, sector: 'Tech'      },
+  { code: 'GSAT', name: 'GalaxSat',                          price:  3380, change:  2.67, sector: 'Tech'      },
+  { code: 'NOI',  name: 'Nova Orion Industries',             price:  1760, change: -1.85, sector: 'Tech'      },
+  { code: 'TNTS', name: 'TaunTaun Steak Company',            price:    88, change: -0.11, sector: 'Food'      },
+];
+
+/* Seed small random drift so prices feel live on each load */
+window.STORE_STOCKS = window.STORE_STOCKS.map(s => ({
+  ...s,
+  price:  Math.round(s.price  * (1 + (Math.random() - 0.5) * 0.04)),
+  change: parseFloat((s.change + (Math.random() - 0.5) * 0.8).toFixed(2))
+}));
+
 /* Floor chatter ticker */
 window.STORE_RUMORS = [
   '◆ <em>HUTT CARTEL</em> levies <em>+8%</em> wartime markup on all Outer Rim energy weapons',

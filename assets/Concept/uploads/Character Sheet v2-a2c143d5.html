@@ -1,0 +1,1199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Character Sheet v2 — Datapad Holo</title>
+<meta name="viewport" content="width=1280" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Tweakable — overwritten by the Tweaks panel */
+    --vapor-pink:   oklch(0.72 0.26 350);
+    --vapor-purple: oklch(0.55 0.26 300);
+    --vapor-cyan:   oklch(0.85 0.18 200);
+    --screen-h: 278;
+    --screen-c-base: 0.055;
+    --screen-c-alt:  0.070;
+    --ink-h: 190;
+    --scan-strength: 0.03;   /* body/screen scanline overlay */
+    --anim-speed: 1;         /* 0.5 = half speed, 2 = double */
+    --glow-mult: 1;          /* global text/box glow multiplier */
+
+    /* Derived */
+    --accent-h: var(--ink-h); --accent-c: 0.17; --accent-l: 0.82;
+    --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+    --vapor-magenta: oklch(0.65 0.28 330);
+    --holo-blue: oklch(0.82 0.15 220);
+    --bg: oklch(0.10 0.03 285);
+    --screen:   oklch(0.13 var(--screen-c-base) var(--screen-h));
+    --screen-2: oklch(0.18 var(--screen-c-alt)  var(--screen-h));
+    --ink:       oklch(0.94 0.04 var(--accent-h));
+    --ink-dim:   oklch(0.72 0.06 var(--accent-h));
+    --ink-faint: oklch(0.50 0.05 var(--accent-h));
+    --pos: oklch(0.82 0.19 145);
+    --neg: oklch(0.70 0.22 25);
+    --zero: oklch(0.88 0.17 95);
+    --font-body: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-display: 'VT323', monospace;
+    --font-orbit: 'Orbitron', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #05050a; color: var(--ink); font-family: var(--font-body); min-height: 100vh; overflow-x: auto; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse at 28% 18%, oklch(0.18 0.10 320 / 0.55), transparent 55%),
+      radial-gradient(ellipse at 82% 88%, oklch(0.18 0.10 200 / 0.5), transparent 55%),
+      linear-gradient(180deg, #060612 0%, #020205 100%);
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100; mix-blend-mode: screen;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, oklch(1 0 0 / calc(var(--scan-strength) * 0.6)) 2px 3px);
+  }
+  .stage { min-height: 100vh; display: flex; justify-content: center; padding: 28px; }
+
+  /* Tablet frame */
+  .tablet {
+    position: relative; width: 1200px; padding: 36px 32px 44px;
+    border-radius: 22px;
+    background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%);
+    box-shadow:
+      inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+      inset 0 2px 0 0 oklch(0.55 0.03 270 / 0.4),
+      inset 0 -2px 0 0 oklch(0.05 0.02 270 / 0.9),
+      0 40px 80px oklch(0 0 0 / 0.7),
+      0 0 140px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.12);
+    animation: breathe calc(5.4s / var(--anim-speed)) ease-in-out infinite;
+  }
+  @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.002); } }
+  .rivet { position: absolute; width: 6px; height: 6px; border-radius: 50%;
+           background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%); }
+  .rivet.tl { top:12px; left:16px;} .rivet.tr{top:12px;right:16px;}
+  .rivet.bl { bottom:12px; left:16px;} .rivet.br{bottom:12px;right:16px;}
+  .bezel-serial { position:absolute; top:12px; right:38px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.22em; color: oklch(0.55 0.05 260); }
+  .bezel-manu { position:absolute; bottom:14px; right:38px; font-family:var(--font-display); font-size:12px; letter-spacing:0.4em; color: oklch(0.50 0.04 260); }
+  .bezel-fcc { position:absolute; bottom:14px; left:38px; font-family:var(--font-mono); font-size:8px; letter-spacing:0.2em; color: oklch(0.45 0.03 260); }
+  .bezel-led { position:absolute; width:5px; height:5px; border-radius:50%; background:var(--vapor-cyan); box-shadow:0 0 8px var(--vapor-cyan), 0 0 18px var(--vapor-cyan); }
+  .bezel-led.a{top:22px;left:48px; animation: ledPulse calc(1.6s / var(--anim-speed)) ease-in-out infinite;}
+  .bezel-led.b{top:22px;right:48px; animation: ledPulse calc(1.9s / var(--anim-speed)) ease-in-out infinite 0.3s; background:var(--pos); box-shadow:0 0 8px var(--pos),0 0 18px var(--pos);}
+  .bezel-led.c{bottom:24px;left:48px; animation: ledPulse calc(2.4s / var(--anim-speed)) ease-in-out infinite 0.6s; background:var(--vapor-pink); box-shadow:0 0 8px var(--vapor-pink),0 0 18px var(--vapor-pink);}
+  .bezel-led.d{bottom:24px;right:48px; animation: ledPulse calc(2.1s / var(--anim-speed)) ease-in-out infinite 0.9s; background:oklch(0.80 0.16 60); box-shadow:0 0 8px oklch(0.80 0.16 60),0 0 18px oklch(0.80 0.16 60);}
+  @keyframes ledPulse { 0%,100% { opacity:0.35; } 50% { opacity:1; } }
+
+  /* Screen */
+  .screen {
+    position: relative;
+    background: radial-gradient(ellipse at 30% 10%, var(--screen-2) 0%, var(--screen) 50%, oklch(0.08 0.04 278) 100%);
+    border: 1px solid oklch(0.3 0.04 260 / 0.6);
+    border-radius: 10px;
+    padding: 18px;
+    min-height: 880px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.6), inset 0 2px 14px oklch(0 0 0 / 0.5), inset 0 0 80px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.08);
+  }
+  .screen::before {
+    content:''; position:absolute; inset:0; pointer-events:none; z-index:5;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--scan-strength)) 3px 4px);
+  }
+  .scan-v {
+    position:absolute; left:0; right:0; top:0; height:140px; pointer-events:none; z-index:7;
+    background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%, oklch(1 0 0 / 0.1) 62%, transparent 100%);
+    animation: scanV calc(7s / var(--anim-speed)) linear infinite;
+  }
+  @keyframes scanV { 0%{transform:translateY(-160px);opacity:0.6;} 100%{transform:translateY(980px);opacity:0.3;} }
+  .corner { position:absolute; width:18px; height:18px; border:1px solid var(--vapor-cyan); pointer-events:none; opacity:0.6; z-index:8; }
+  .corner.tl{top:26px;left:26px;border-right:none;border-bottom:none;}
+  .corner.tr{top:26px;right:26px;border-left:none;border-bottom:none;}
+  .corner.bl{bottom:26px;left:26px;border-right:none;border-top:none;}
+  .corner.br{bottom:26px;right:26px;border-left:none;border-top:none;}
+
+  /* HUD datapad title bar */
+  .hud {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 4px 10px 10px; margin-bottom: 12px;
+    border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.25);
+    font-family: var(--font-mono); font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--ink-dim);
+  }
+  .hud-left,.hud-right{display:flex; gap:14px; align-items:center;}
+  .hud-title {
+    font-family: var(--font-display); font-size:18px; letter-spacing:0.3em;
+    color: var(--vapor-cyan); text-shadow: 0 0 10px oklch(var(--vapor-cyan) / 0.5);
+  }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--pos); box-shadow:0 0 6px var(--pos); animation: ledPulse 1.4s ease-in-out infinite; }
+  .dot.warn{background:var(--zero); box-shadow:0 0 6px var(--zero);}
+  .tag{display:inline-flex; align-items:center; gap:6px;}
+  .signal{display:inline-flex; gap:2px; align-items:flex-end; height:10px;}
+  .signal span{width:3px; background:var(--vapor-cyan); opacity:0.5;}
+  .signal span:nth-child(1){height:2px;} .signal span:nth-child(2){height:4px;} .signal span:nth-child(3){height:6px;opacity:0.8;} .signal span:nth-child(4){height:8px;opacity:1;}
+  .battery{display:inline-flex; gap:2px; align-items:center; padding:2px 4px; border:1px solid oklch(var(--vapor-cyan) / 0.4); border-radius:2px;}
+  .battery .cell{width:4px; height:7px; background:var(--pos);}
+  .battery .cell.empty{background:oklch(var(--vapor-cyan)/0.2);}
+
+  /* Aurebesh title strip */
+  .datapad-title {
+    font-family: var(--font-display);
+    text-align:center; font-size: 16px; letter-spacing: 0.5em;
+    color: var(--vapor-pink);
+    padding: 6px 0 8px;
+    border-bottom: 1px solid oklch(var(--vapor-cyan)/0.2);
+    margin-bottom: 14px;
+    text-shadow: 0 0 10px oklch(var(--vapor-pink)/0.5), 2px 0 0 oklch(var(--vapor-cyan)/0.4), -2px 0 0 oklch(var(--vapor-pink)/0.4);
+  }
+
+  /* =====================================================
+   * HEADER — identity row
+   * ===================================================== */
+  .sh-header {
+    display: grid; grid-template-columns: 128px 1fr 300px;
+    gap: 18px; align-items: stretch; margin-bottom: 16px;
+  }
+  .portrait-wrap {
+    position: relative; width: 128px; height: 128px;
+    border: 1px solid oklch(var(--vapor-cyan)/0.4);
+    background: linear-gradient(140deg, oklch(0 0 0 / 0.5), oklch(var(--vapor-purple) / 0.2));
+    display: flex; align-items: center; justify-content: center;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    overflow: hidden;
+  }
+  .portrait-wrap::before {
+    content:''; position:absolute; inset:0;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(var(--vapor-cyan) / 0.08) 3px 4px);
+    pointer-events:none; z-index:2;
+  }
+  .portrait-wrap::after {
+    content:''; position:absolute; left:0; right:0; top:0; height:14px;
+    background: linear-gradient(180deg, oklch(var(--vapor-cyan) / 0.4), transparent);
+    animation: portraitScan calc(3.4s / var(--anim-speed)) linear infinite; z-index:3; pointer-events:none;
+  }
+  @keyframes portraitScan { 0%{transform:translateY(0); opacity:0.8;} 100%{transform:translateY(128px); opacity:0.2;} }
+  .portrait-svg { width: 100%; height: 100%; color: var(--vapor-cyan); position:relative; z-index:1; }
+  .portrait-wrap .cert {
+    position:absolute; top:4px; right:4px; font-family:var(--font-mono); font-size:8px;
+    color:var(--vapor-cyan); letter-spacing:0.2em; background: oklch(0 0 0 / 0.5);
+    padding:1px 4px; z-index:4;
+  }
+
+  .identity-block {
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 6px 14px;
+    background: linear-gradient(90deg, oklch(var(--vapor-purple)/0.08) 0%, transparent 60%);
+    border-left: 2px solid var(--vapor-pink);
+    position: relative;
+  }
+  .identity-block::before {
+    content:''; position:absolute; top:0; bottom:0; right:0; width:1px;
+    background: linear-gradient(180deg, transparent 0%, oklch(var(--vapor-cyan)/0.4) 50%, transparent 100%);
+  }
+  .header-name {
+    font-family: var(--font-orbit); font-weight: 900;
+    font-size: 34px; letter-spacing: 0.06em;
+    color: var(--vapor-cyan);
+    text-shadow: 0 0 14px oklch(var(--vapor-cyan)/0.6), 2px 0 0 oklch(var(--vapor-pink)/0.4), -2px 0 0 oklch(var(--vapor-cyan)/0.3);
+  }
+  .identity-subline {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em;
+    color: var(--vapor-pink); text-transform: uppercase; margin-top: 6px;
+  }
+  .identity-subline .sep { color: var(--ink-faint); margin: 0 8px; }
+  .identity-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px;
+  }
+  .identity-meta .m {
+    background: oklch(0 0 0 / 0.35);
+    border: 1px solid oklch(var(--vapor-cyan)/0.2);
+    padding: 6px 8px; font-family: var(--font-mono);
+  }
+  .identity-meta .m .k { font-size:8px; letter-spacing:0.24em; color:var(--ink-faint); text-transform:uppercase; margin-bottom:2px;}
+  .identity-meta .m .v { font-family: var(--font-display); font-size: 18px; color: var(--vapor-cyan); letter-spacing: 0.08em;}
+
+  .level-block {
+    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, oklch(var(--vapor-pink)/0.12) 0%, oklch(var(--vapor-purple)/0.2) 100%);
+    border: 1px solid oklch(var(--vapor-pink)/0.4);
+    position: relative;
+  }
+  .level-block::before {
+    content:''; position:absolute; top:-1px; left:-1px; right:-1px; bottom:-1px;
+    border: 1px solid oklch(var(--vapor-cyan)/0.3); pointer-events:none;
+    animation: levelGlow calc(2.4s / var(--anim-speed)) ease-in-out infinite;
+  }
+  @keyframes levelGlow { 0%,100%{opacity:0.2;} 50%{opacity:0.7;} }
+  .level-row { display:flex; align-items:baseline; justify-content:space-between; gap: 10px; }
+  .level-num { font-family: var(--font-display); font-size: 56px; line-height: 0.85; color: var(--vapor-pink);
+    text-shadow: 0 0 16px var(--vapor-pink), 3px 0 0 oklch(var(--vapor-cyan)/0.5), -3px 0 0 oklch(var(--vapor-pink)/0.5);}
+  .level-stack { text-align:right; }
+  .level-stack .lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em; color: var(--ink-faint); text-transform:uppercase;}
+  .level-stack .class { font-family: var(--font-orbit); font-weight:700; font-size: 14px; color: var(--vapor-cyan); letter-spacing:0.1em;}
+  .level-stack .half { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.15em;}
+  .xp-bar { position: relative; height: 10px; background: oklch(0 0 0 / 0.6); border: 1px solid oklch(var(--vapor-cyan)/0.3); overflow:hidden;}
+  .xp-bar::before { content:''; position:absolute; inset:0; background: repeating-linear-gradient(90deg, transparent 0 8px, oklch(var(--vapor-cyan)/0.08) 8px 9px); }
+  .xp-fill {
+    position:absolute; left:0; top:0; bottom:0; width: 62%;
+    background: linear-gradient(90deg, var(--vapor-purple), var(--vapor-pink), var(--vapor-cyan));
+    box-shadow: 0 0 10px var(--vapor-pink);
+  }
+  .xp-fill::after { content:''; position:absolute; inset:0; background: repeating-linear-gradient(-45deg, transparent 0 6px, oklch(1 0 0 / 0.22) 6px 7px); animation: xpStripe calc(0.9s / var(--anim-speed)) linear infinite;}
+  @keyframes xpStripe { from{background-position:0 0;} to{background-position:20px 0;} }
+  .xp-text { display:flex; justify-content:space-between; font-family: var(--font-mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.2em; text-transform:uppercase; margin-top: 2px;}
+
+  /* =====================================================
+   * RESOURCE STRIP — HP, DP, FP, CT
+   * ===================================================== */
+  .resource-strip {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 14px; margin-bottom: 16px;
+  }
+  .rcard {
+    background: oklch(0 0 0 / 0.35);
+    border: 1px solid oklch(var(--vapor-cyan)/0.3);
+    padding: 10px 12px;
+    position: relative;
+  }
+  .rcard::before {
+    content:''; position:absolute; top:-1px; left:8px; width: 20px; height:2px; background: var(--vapor-cyan); box-shadow: 0 0 6px var(--vapor-cyan);
+  }
+  .rcard .rhead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 8px;}
+  .rcard .rlbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.32em; color: var(--ink-faint); text-transform:uppercase;}
+  .rcard .rval { font-family: var(--font-display); font-size: 28px; color: var(--vapor-cyan); letter-spacing:0.06em;}
+  .rcard.hp .rval { color: var(--pos); text-shadow: 0 0 12px oklch(0.82 0.19 145 / 0.6), 2px 0 0 oklch(var(--vapor-cyan)/0.4);}
+  .rcard.dp .rval { color: var(--vapor-pink); text-shadow: 0 0 12px var(--vapor-pink);}
+  .rcard.fp .rval { color: var(--zero); text-shadow: 0 0 12px var(--zero);}
+  .rcard.ct .rval { color: var(--neg); text-shadow: 0 0 12px var(--neg);}
+
+  /* HP segmented bar — 20 segments, color graded */
+  .hp-segs { display:flex; gap:2px; height: 18px; padding: 2px; background: oklch(0 0 0 / 0.6); border: 1px solid oklch(var(--vapor-cyan)/0.35); }
+  .hp-seg { flex:1; background: oklch(0.18 0.04 280); border-top: 1px solid oklch(0.25 0.04 280 / 0.5); position:relative; }
+  .hp-seg.on { box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.4), 0 0 6px var(--hp-color); background: var(--hp-color); }
+  .hp-seg.on::after { content:''; position:absolute; left:0; right:0; top:0; height:40%; background: linear-gradient(180deg, oklch(1 0 0 / 0.35), transparent);}
+  .hp-seg--red { --hp-color: oklch(0.65 0.26 25);}
+  .hp-seg--orange { --hp-color: oklch(0.72 0.22 50);}
+  .hp-seg--yellow { --hp-color: oklch(0.88 0.18 95);}
+  .hp-seg--yellowgreen { --hp-color: oklch(0.82 0.20 125);}
+  .hp-seg--green { --hp-color: oklch(0.82 0.22 145);}
+
+  .hp-sub { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; margin-top: 5px; color: var(--ink-dim); letter-spacing:0.2em; text-transform:uppercase;}
+  .hp-sub .temp { color: var(--vapor-cyan);}
+
+  /* Dots — DP / FP / CT */
+  .dots { display:flex; gap: 6px; flex-wrap:wrap; padding: 2px 0 4px; }
+  .dot-p {
+    width: 14px; height: 14px; border: 1px solid currentColor; position: relative;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); /* diamond */
+    transform: rotate(0);
+  }
+  .rcard.dp .dot-p { color: var(--vapor-pink);}
+  .rcard.fp .dot-p { color: var(--zero);}
+  .rcard.ct .dot-p { color: var(--neg); clip-path: circle(50%); border-radius:50%;}
+  .dot-p.on { background: currentColor; box-shadow: 0 0 8px currentColor;}
+
+  /* =====================================================
+   * TABS
+   * ===================================================== */
+  .tabs-bar {
+    display: flex; gap: 0;
+    border-bottom: 1px solid oklch(var(--vapor-cyan)/0.3);
+    margin-bottom: 16px;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  }
+  .tab {
+    padding: 10px 22px; cursor: pointer;
+    color: var(--ink-faint);
+    border: 1px solid transparent;
+    border-bottom: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    background: transparent;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--vapor-cyan); }
+  .tab.active {
+    color: var(--vapor-cyan);
+    background: linear-gradient(180deg, oklch(var(--vapor-cyan)/0.18) 0%, oklch(var(--vapor-cyan)/0.05) 100%);
+    border-color: oklch(var(--vapor-cyan)/0.4);
+    text-shadow: 0 0 8px oklch(var(--vapor-cyan)/0.6);
+  }
+  .tab.active::after {
+    content:''; position:absolute; left:10%; right:10%; bottom:-1px; height: 2px;
+    background: var(--vapor-cyan); box-shadow: 0 0 8px var(--vapor-cyan);
+  }
+  .tab-count { display:inline-block; margin-left:8px; font-family: var(--font-display); font-size: 14px; color: var(--vapor-pink); letter-spacing: 0.04em;}
+
+  /* =====================================================
+   * BODY LAYOUT — sidebar + main
+   * ===================================================== */
+  .sheet-body { display: grid; grid-template-columns: 330px 1fr; gap: 16px;}
+
+  /* =====================================================
+   * ABILITIES PANEL
+   * ===================================================== */
+  .panel {
+    background: oklch(0 0 0 / 0.3);
+    border: 1px solid oklch(var(--vapor-cyan)/0.2);
+    padding: 14px;
+    position: relative;
+  }
+  .panel-head {
+    display:flex; justify-content:space-between; align-items:center;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--vapor-cyan); padding-bottom: 8px; margin-bottom: 12px;
+    border-bottom: 1px dashed oklch(var(--vapor-cyan)/0.3);
+  }
+  .panel-head .hint { color: var(--ink-faint); font-size: 9px; letter-spacing: 0.2em;}
+  .panel-head .mini-led { width:5px; height:5px; border-radius:50%; background:var(--vapor-cyan); box-shadow: 0 0 4px var(--vapor-cyan); animation: ledPulse 1.3s ease-in-out infinite;}
+
+  .abilities {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .ab {
+    position: relative; padding: 10px;
+    background: linear-gradient(180deg, oklch(var(--vapor-purple)/0.1) 0%, oklch(0 0 0 / 0.4) 100%);
+    border: 1px solid oklch(var(--vapor-cyan)/0.3);
+    text-align: center;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+  .ab::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(var(--vapor-cyan)/0.04) 3px 4px);
+  }
+  .ab .ab-lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em; color: var(--vapor-pink); text-transform: uppercase;}
+  .ab .ab-val { font-family: var(--font-display); font-size: 38px; color: var(--vapor-cyan); line-height: 1; margin: 4px 0; letter-spacing: 0.05em;
+    text-shadow: 0 0 12px oklch(var(--vapor-cyan)/0.6), 2px 0 0 oklch(var(--vapor-pink)/0.35), -2px 0 0 oklch(var(--vapor-cyan)/0.35);}
+  .ab .ab-mod {
+    font-family: var(--font-orbit); font-weight: 700; font-size: 14px;
+    letter-spacing: 0.1em; padding: 3px 8px;
+    display: inline-block;
+    border: 1px solid currentColor;
+  }
+  .ab .ab-mod.positive { color: var(--pos); text-shadow: 0 0 8px oklch(0.82 0.19 145 / 0.5); }
+  .ab .ab-mod.negative { color: var(--neg); text-shadow: 0 0 8px oklch(0.70 0.22 25 / 0.5); }
+  .ab .ab-mod.zero { color: var(--zero); text-shadow: 0 0 8px oklch(0.88 0.17 95 / 0.5); }
+
+  /* =====================================================
+   * DEFENSES — hexes
+   * ===================================================== */
+  .defenses { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .def-hex {
+    position: relative; padding: 16px 10px 12px;
+    background: linear-gradient(145deg, oklch(var(--vapor-cyan)/0.10) 0%, oklch(0 0 0 / 0.5) 100%);
+    border: 1px solid oklch(var(--vapor-cyan)/0.4);
+    text-align: center;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+  .def-hex .lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em; color: var(--vapor-cyan); text-transform: uppercase; }
+  .def-hex .val { font-family: var(--font-display); font-size: 40px; color: var(--ink); line-height: 1; margin-top: 2px;
+    text-shadow: 0 0 12px oklch(var(--vapor-cyan)/0.5), 2px 0 0 oklch(var(--vapor-pink)/0.4);}
+  .def-hex .adj { font-family: var(--font-mono); font-size: 9px; color: var(--ink-faint); letter-spacing: 0.2em;}
+  .def-hex .adj.positive { color: var(--pos);}
+  .def-hex .adj.negative { color: var(--neg);}
+  .def-hex .adj.zero { color: var(--zero);}
+
+  /* =====================================================
+   * COMBAT MINI
+   * ===================================================== */
+  .combat-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cm {
+    padding: 8px; text-align: center;
+    background: oklch(0 0 0 / 0.4); border: 1px solid oklch(var(--vapor-pink)/0.3);
+  }
+  .cm .k { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.28em; color: var(--ink-faint); text-transform: uppercase;}
+  .cm .v { font-family: var(--font-display); font-size: 22px; color: var(--vapor-pink); letter-spacing: 0.05em;
+    text-shadow: 0 0 10px var(--vapor-pink);}
+
+  /* =====================================================
+   * SKILLS TABLE
+   * ===================================================== */
+  .skills-wrap { max-height: 680px; overflow-y: auto; padding-right: 4px; }
+  .skills-grid-header, .skills-grid-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 52px 14px 110px 46px 46px 46px 58px;
+    gap: 8px; align-items: center;
+    padding: 6px 8px;
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .skills-grid-header {
+    font-size: 9px; color: var(--vapor-cyan); letter-spacing: 0.25em; text-transform: uppercase;
+    border-bottom: 1px solid oklch(var(--vapor-cyan)/0.3);
+    background: linear-gradient(90deg, oklch(var(--vapor-cyan)/0.1), transparent 80%);
+    position: sticky; top:0; z-index: 2;
+  }
+  .skills-grid-row {
+    border-bottom: 1px solid oklch(var(--vapor-cyan)/0.08);
+    transition: background 0.18s;
+    position: relative;
+  }
+  .skills-grid-row:hover { background: oklch(var(--vapor-cyan)/0.05); }
+  .skills-grid-row.trained {
+    background: linear-gradient(90deg, oklch(var(--vapor-pink)/0.06) 0%, transparent 50%);
+  }
+  .skills-grid-row.trained::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background: var(--vapor-pink); box-shadow: 0 0 6px var(--vapor-pink);
+  }
+  .sk-check {
+    width: 14px; height: 14px; border: 1px solid oklch(var(--vapor-cyan)/0.5);
+    display:flex; align-items:center; justify-content:center;
+    background: oklch(0 0 0 / 0.5);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .sk-check.on { background: var(--vapor-pink); border-color: var(--vapor-pink); box-shadow: 0 0 8px var(--vapor-pink);}
+  .sk-check.on::after { content:'✓'; color: #0b0b14; font-weight: 700; font-size: 10px;}
+  .sk-check.locked { opacity: 0.3; cursor: not-allowed;}
+  .sk-name { color: var(--ink); font-weight: 500;}
+  .sk-name .ab-tag { color: var(--ink-faint); font-size: 9px; letter-spacing: 0.15em; margin-left: 6px; text-transform: uppercase;}
+  .sk-total { font-family: var(--font-display); font-size: 18px; text-align: center; letter-spacing: 0.05em;}
+  .sk-total.positive { color: var(--pos);}
+  .sk-total.negative { color: var(--neg);}
+  .sk-total.zero { color: var(--zero);}
+  .sk-pipe { color: var(--ink-faint); text-align:center;}
+  .sk-parts {
+    font-family: var(--font-mono); font-size: 9px; color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    display:flex; gap: 4px; align-items: center; justify-content: flex-start;
+  }
+  .sk-parts .chip {
+    padding: 1px 4px; background: oklch(0 0 0 / 0.4);
+    border: 1px solid oklch(var(--vapor-cyan)/0.2);
+  }
+  .sk-parts .chip.pos { color: var(--pos); border-color: oklch(0.82 0.19 145 / 0.4);}
+  .sk-parts .chip.neg { color: var(--neg); border-color: oklch(0.70 0.22 25 / 0.4);}
+
+  .sk-mini { text-align:center; font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim);}
+  .sk-focus { color: var(--zero); font-family: var(--font-display); font-size: 15px;}
+  .sk-roll {
+    padding: 4px 8px;
+    background: oklch(var(--vapor-cyan)/0.12); border: 1px solid oklch(var(--vapor-cyan)/0.4);
+    color: var(--vapor-cyan); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em;
+    cursor: pointer; text-transform: uppercase;
+    clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+    transition: all 0.15s;
+  }
+  .sk-roll:hover { background: oklch(var(--vapor-cyan)/0.25); box-shadow: 0 0 12px oklch(var(--vapor-cyan)/0.4);}
+
+  /* =====================================================
+   * COMMAND BAR (bottom)
+   * ===================================================== */
+  .cmd-bar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 16px; padding: 12px 14px;
+    background: linear-gradient(90deg, oklch(var(--vapor-purple)/0.12), oklch(var(--vapor-cyan)/0.08));
+    border: 1px solid oklch(var(--vapor-cyan)/0.3);
+  }
+  .cbtn {
+    padding: 8px 16px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    background: oklch(var(--vapor-cyan)/0.1); border: 1px solid oklch(var(--vapor-cyan)/0.5); color: var(--vapor-cyan);
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    cursor: pointer; transition: all 0.2s;
+    text-shadow: 0 0 6px oklch(var(--vapor-cyan)/0.5);
+  }
+  .cbtn:hover { background: oklch(var(--vapor-cyan)/0.25); box-shadow: 0 0 14px oklch(var(--vapor-cyan)/0.4);}
+  .cbtn.ready { border-color: var(--vapor-pink); color: var(--vapor-pink); background: oklch(var(--vapor-pink)/0.1); text-shadow: 0 0 8px oklch(var(--vapor-pink)/0.6); animation: btnReady calc(2s / var(--anim-speed)) ease-in-out infinite;}
+  @keyframes btnReady { 0%,100%{box-shadow:0 0 0 0 oklch(var(--vapor-pink)/0.5);} 50%{box-shadow:0 0 0 6px oklch(var(--vapor-pink)/0);} }
+  .cbtn.ghost { color: var(--ink-dim); border-color: oklch(var(--vapor-cyan)/0.2); background: transparent; text-shadow: none;}
+
+  /* =====================================================
+   * TAB CONTENT SWITCHING
+   * ===================================================== */
+  .tab-content { display:none; }
+  .tab-content.active { display:block; animation: tabIn calc(0.3s / var(--anim-speed)) ease-out;}
+  @keyframes tabIn { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform: translateY(0);} }
+
+  .gear-list { display:flex; flex-direction:column; gap:8px;}
+  .gear-row {
+    display:grid; grid-template-columns: 22px 1fr 80px 80px 50px; gap: 10px; align-items:center;
+    padding: 8px 12px; background: oklch(0 0 0 / 0.3); border: 1px solid oklch(var(--vapor-cyan)/0.15);
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .gear-row .icon { color: var(--vapor-cyan); font-family: var(--font-display); font-size: 16px; text-align:center;}
+  .gear-row .nm { color: var(--ink); }
+  .gear-row .nm .sub { display:block; font-size: 9px; color: var(--ink-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px;}
+  .gear-row .qty,.gear-row .wt { font-family: var(--font-display); font-size: 16px; color: var(--vapor-cyan); text-align:right; letter-spacing: 0.08em;}
+  .gear-row .eq { text-align:center; color: var(--pos); font-family: var(--font-mono); font-size: 9px; letter-spacing:0.2em;}
+
+  .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .feat-card {
+    padding: 10px 12px; background: linear-gradient(135deg, oklch(var(--vapor-pink)/0.06), transparent);
+    border: 1px solid oklch(var(--vapor-pink)/0.3); border-left: 3px solid var(--vapor-pink);
+    font-family: var(--font-mono);
+  }
+  .feat-card .fn { color: var(--vapor-cyan); font-family: var(--font-orbit); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; margin-bottom: 4px;}
+  .feat-card .fd { font-size: 10px; color: var(--ink-dim); line-height: 1.5; letter-spacing: 0.02em;}
+  .feat-card .ft { display:inline-block; margin-top: 6px; font-size: 8px; color: var(--vapor-pink); letter-spacing: 0.22em; text-transform: uppercase;}
+
+  .bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px;}
+  .bio-card {
+    padding: 12px 14px; background: oklch(0 0 0 / 0.3); border: 1px solid oklch(var(--vapor-cyan)/0.2);
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.7; color: var(--ink-dim);
+  }
+  .bio-card .k { color: var(--vapor-pink); font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; display:block; margin-bottom: 6px;}
+
+  /* scroll */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: oklch(0 0 0 / 0.3);}
+  ::-webkit-scrollbar-thumb { background: oklch(var(--vapor-cyan)/0.3); }
+  ::-webkit-scrollbar-thumb:hover { background: oklch(var(--vapor-cyan)/0.5); }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="tablet">
+    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+    <div class="bezel-led a"></div><div class="bezel-led b"></div><div class="bezel-led c"></div><div class="bezel-led d"></div>
+    <div class="bezel-serial">SN 4471-ΘΞΛ-00827</div>
+    <div class="bezel-fcc">CEC-ID 3T · CLASS-B · DO NOT OPEN</div>
+    <div class="bezel-manu">VERSA</div>
+
+    <div class="screen">
+      <div class="scan-v"></div>
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+      <!-- HUD -->
+      <div class="hud">
+        <div class="hud-left">
+          <span class="tag"><span class="dot"></span>LINK</span>
+          <span class="tag"><span class="dot warn"></span>CHAR-REC</span>
+          <span class="tag">ENC · AES-2048</span>
+        </div>
+        <div class="hud-title">CHARACTER RECORD // MK-VII</div>
+        <div class="hud-right">
+          <span class="tag"><span class="signal"><span></span><span></span><span></span><span></span></span></span>
+          <span class="tag battery"><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell empty"></span></span>
+          <span class="tag" id="clock">00:00 · UTC</span>
+        </div>
+      </div>
+
+      <div class="datapad-title">◇ CHARACTER DOSSIER ◇</div>
+
+      <!-- HEADER -->
+      <div class="sh-header">
+        <div class="portrait-wrap">
+          <span class="cert">CERT-Γ</span>
+          <svg class="portrait-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="50" cy="36" r="14"/>
+            <path d="M24 88 Q24 58 50 58 Q76 58 76 88"/>
+            <path d="M10 50 L90 50" stroke-dasharray="2 4" opacity="0.4"/>
+            <path d="M50 8 L50 96" stroke-dasharray="2 4" opacity="0.4"/>
+            <circle cx="50" cy="50" r="40" opacity="0.35"/>
+          </svg>
+        </div>
+
+        <div class="identity-block">
+          <div>
+            <div class="header-name">KAEL VORREN</div>
+            <div class="identity-subline">HUMAN <span class="sep">·</span> NOBLE <span class="sep">·</span> MALE <span class="sep">·</span> CORUSCANT</div>
+          </div>
+          <div class="identity-meta">
+            <div class="m"><div class="k">Age</div><div class="v">27</div></div>
+            <div class="m"><div class="k">Height</div><div class="v">1.82m</div></div>
+            <div class="m"><div class="k">Weight</div><div class="v">78kg</div></div>
+            <div class="m"><div class="k">Size</div><div class="v">MED</div></div>
+          </div>
+        </div>
+
+        <div class="level-block">
+          <div class="level-row">
+            <div class="level-num">08</div>
+            <div class="level-stack">
+              <div class="lbl">LEVEL</div>
+              <div class="class">NOBLE</div>
+              <div class="half">½-LVL · +4</div>
+            </div>
+          </div>
+          <div class="xp-bar"><div class="xp-fill"></div></div>
+          <div class="xp-text"><span>XP 28,400</span><span>45,000</span></div>
+        </div>
+      </div>
+
+      <!-- RESOURCE STRIP -->
+      <div class="resource-strip">
+        <div class="rcard hp">
+          <div class="rhead">
+            <div class="rlbl">▸ Vitality // HP</div>
+            <div class="rval">72 / 84</div>
+          </div>
+          <div class="hp-segs" id="hp-segs"></div>
+          <div class="hp-sub">
+            <span>Wounds: 12</span>
+            <span class="temp">Temp: +6</span>
+            <span>Threshold: 22</span>
+          </div>
+        </div>
+
+        <div class="rcard dp">
+          <div class="rhead"><div class="rlbl">Destiny</div><div class="rval">3 / 4</div></div>
+          <div class="dots">
+            <div class="dot-p on"></div><div class="dot-p on"></div><div class="dot-p on"></div><div class="dot-p"></div>
+          </div>
+        </div>
+
+        <div class="rcard fp">
+          <div class="rhead"><div class="rlbl">Force</div><div class="rval">5 / 6</div></div>
+          <div class="dots">
+            <div class="dot-p on"></div><div class="dot-p on"></div><div class="dot-p on"></div><div class="dot-p on"></div><div class="dot-p on"></div><div class="dot-p"></div>
+          </div>
+        </div>
+
+        <div class="rcard ct">
+          <div class="rhead"><div class="rlbl">Condition</div><div class="rval">-1</div></div>
+          <div class="dots">
+            <div class="dot-p on"></div><div class="dot-p"></div><div class="dot-p"></div><div class="dot-p"></div><div class="dot-p"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs-bar">
+        <button class="tab active" data-tab="summary">Summary</button>
+        <button class="tab" data-tab="skills">Skills<span class="tab-count">27</span></button>
+        <button class="tab" data-tab="combat">Combat</button>
+        <button class="tab" data-tab="feats">Feats / Talents<span class="tab-count">12</span></button>
+        <button class="tab" data-tab="gear">Inventory<span class="tab-count">18</span></button>
+        <button class="tab" data-tab="bio">Biography</button>
+      </div>
+
+      <!-- BODY -->
+      <div class="sheet-body">
+        <!-- Sidebar: always-visible abilities + defenses + combat mini -->
+        <aside class="sidebar" style="display:flex; flex-direction:column; gap:14px;">
+          <div class="panel">
+            <div class="panel-head"><span>◆ Attributes</span><span class="mini-led"></span></div>
+            <div class="abilities">
+              <div class="ab"><div class="ab-lbl">Str</div><div class="ab-val">14</div><div class="ab-mod positive">+2</div></div>
+              <div class="ab"><div class="ab-lbl">Dex</div><div class="ab-val">16</div><div class="ab-mod positive">+3</div></div>
+              <div class="ab"><div class="ab-lbl">Con</div><div class="ab-val">12</div><div class="ab-mod positive">+1</div></div>
+              <div class="ab"><div class="ab-lbl">Int</div><div class="ab-val">10</div><div class="ab-mod zero">+0</div></div>
+              <div class="ab"><div class="ab-lbl">Wis</div><div class="ab-val">08</div><div class="ab-mod negative">−1</div></div>
+              <div class="ab"><div class="ab-lbl">Cha</div><div class="ab-val">18</div><div class="ab-mod positive">+4</div></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span>◇ Defenses</span><span class="hint">base + lvl + mod</span></div>
+            <div class="defenses">
+              <div class="def-hex">
+                <div class="lbl">Fort</div>
+                <div class="val">22</div>
+                <div class="adj positive">+12</div>
+              </div>
+              <div class="def-hex">
+                <div class="lbl">Ref</div>
+                <div class="val">24</div>
+                <div class="adj positive">+14</div>
+              </div>
+              <div class="def-hex">
+                <div class="lbl">Will</div>
+                <div class="val">26</div>
+                <div class="adj positive">+16</div>
+              </div>
+              <div class="def-hex">
+                <div class="lbl">Flat-Ft</div>
+                <div class="val">22</div>
+                <div class="adj positive">+12</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><span>◈ Combat</span><span class="mini-led"></span></div>
+            <div class="combat-mini">
+              <div class="cm"><div class="k">Init</div><div class="v">+7</div></div>
+              <div class="cm"><div class="k">Speed</div><div class="v">6</div></div>
+              <div class="cm"><div class="k">BAB</div><div class="v">+6</div></div>
+              <div class="cm"><div class="k">Melee</div><div class="v">+8</div></div>
+              <div class="cm"><div class="k">Ranged</div><div class="v">+9</div></div>
+              <div class="cm"><div class="k">DT</div><div class="v">22</div></div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main content, tab-switched -->
+        <div class="main">
+          <!-- SUMMARY -->
+          <section class="tab-content active" data-tab="summary">
+            <div class="panel">
+              <div class="panel-head"><span>▸ Dossier Summary</span><span class="hint">at-a-glance</span></div>
+              <div class="bio-grid">
+                <div class="bio-card">
+                  <span class="k">Profession</span>
+                  Diplomat · Rim Envoy
+                </div>
+                <div class="bio-card">
+                  <span class="k">Affiliation</span>
+                  House Vorren · Galactic Alliance (sympathetic)
+                </div>
+                <div class="bio-card" style="grid-column: span 2;">
+                  <span class="k">Notable Mark</span>
+                  Service blade scar (right jaw) · holo-refracting signet ring (heirloom, House Vorren) · faint neural-link port behind left ear.
+                </div>
+              </div>
+            </div>
+
+            <div style="height:12px;"></div>
+
+            <div class="panel">
+              <div class="panel-head"><span>◈ Active Conditions</span><span class="hint">apply to rolls</span></div>
+              <div style="display:flex; gap: 10px; flex-wrap:wrap;">
+                <span style="padding:6px 12px; background: oklch(0.88 0.17 95 / 0.12); border:1px solid var(--zero); color: var(--zero); font-family:var(--font-mono); font-size:10px; letter-spacing:0.22em; text-transform:uppercase;">Condition −1 · all rolls</span>
+                <span style="padding:6px 12px; background: oklch(var(--vapor-cyan)/0.12); border:1px solid var(--vapor-cyan); color: var(--vapor-cyan); font-family:var(--font-mono); font-size:10px; letter-spacing:0.22em; text-transform:uppercase;">Inspired · +2 Cha checks</span>
+                <span style="padding:6px 12px; background: oklch(var(--vapor-pink)/0.12); border:1px solid var(--vapor-pink); color: var(--vapor-pink); font-family:var(--font-mono); font-size:10px; letter-spacing:0.22em; text-transform:uppercase;">Destiny: Redemption</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- SKILLS -->
+          <section class="tab-content" data-tab="skills">
+            <div class="panel">
+              <div class="panel-head"><span>▸ Skills Matrix</span><span class="hint">▣ trained · ½-lvl · abil · focus · misc</span></div>
+              <div class="skills-wrap">
+                <div class="skills-grid-header">
+                  <div></div><div>Skill</div><div>Total</div><div></div><div>Breakdown</div><div>½-Lvl</div><div>Abil</div><div>Focus</div><div>Roll</div>
+                </div>
+                <div id="skills-body"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- COMBAT -->
+          <section class="tab-content" data-tab="combat">
+            <div class="panel">
+              <div class="panel-head"><span>◈ Attacks</span><span class="hint">select to roll</span></div>
+              <div class="gear-list">
+                <div class="gear-row">
+                  <div class="icon">⚔</div>
+                  <div class="nm">Heirloom Sword<span class="sub">One-hand · finesse · sharp</span></div>
+                  <div class="qty">+11</div>
+                  <div class="wt">2d6+5</div>
+                  <div class="eq">EQ</div>
+                </div>
+                <div class="gear-row">
+                  <div class="icon">⬡</div>
+                  <div class="nm">Blaster Pistol<span class="sub">Ranged · accurate · 10/30/60</span></div>
+                  <div class="qty">+12</div>
+                  <div class="wt">3d6+4</div>
+                  <div class="eq">EQ</div>
+                </div>
+                <div class="gear-row">
+                  <div class="icon">◎</div>
+                  <div class="nm">Thermal Detonator<span class="sub">Area · 6-sq burst · 1 use</span></div>
+                  <div class="qty">+9</div>
+                  <div class="wt">8d6</div>
+                  <div class="eq" style="color: var(--ink-faint)">—</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- FEATS -->
+          <section class="tab-content" data-tab="feats">
+            <div class="panel">
+              <div class="panel-head"><span>◆ Feats &amp; Talents</span><span class="hint">passive + triggered</span></div>
+              <div class="feat-grid">
+                <div class="feat-card">
+                  <div class="fn">Inspire Confidence</div>
+                  <div class="fd">Once per encounter, grant an ally within 6 squares a +2 bonus on a single attack, skill check, or saving throw.</div>
+                  <div class="ft">Talent · Inspiration Tree</div>
+                </div>
+                <div class="feat-card">
+                  <div class="fn">Presence</div>
+                  <div class="fd">Your Cha modifier applies as a bonus to Initiative checks; you may swap with Dex on rolls where composure matters.</div>
+                  <div class="ft">Talent · Noble</div>
+                </div>
+                <div class="feat-card">
+                  <div class="fn">Weapon Proficiency (Pistols)</div>
+                  <div class="fd">No −5 nonproficiency penalty with pistols. Required for related feats.</div>
+                  <div class="ft">Feat · Combat</div>
+                </div>
+                <div class="feat-card">
+                  <div class="fn">Skill Focus (Persuasion)</div>
+                  <div class="fd">+5 to Persuasion checks. Stacks with Skill Training.</div>
+                  <div class="ft">Feat · General</div>
+                </div>
+                <div class="feat-card">
+                  <div class="fn">Linguist</div>
+                  <div class="fd">Speak one additional language per point of Int modifier (minimum 1).</div>
+                  <div class="ft">Feat · Heritage</div>
+                </div>
+                <div class="feat-card">
+                  <div class="fn">Point-Blank Shot</div>
+                  <div class="fd">+1 attack and damage with ranged weapons against targets within 6 squares.</div>
+                  <div class="ft">Feat · Combat</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- INVENTORY -->
+          <section class="tab-content" data-tab="gear">
+            <div class="panel">
+              <div class="panel-head"><span>◇ Inventory</span><span class="hint">load 28.4 / 45.0 kg</span></div>
+              <div class="gear-list" id="gear-list">
+                <div class="gear-row"><div class="icon">⚔</div><div class="nm">Heirloom Sword<span class="sub">House Vorren · monofil</span></div><div class="qty">1</div><div class="wt">2.0 kg</div><div class="eq">EQ</div></div>
+                <div class="gear-row"><div class="icon">⬡</div><div class="nm">Blaster Pistol<span class="sub">Merr-Sonn Q2</span></div><div class="qty">1</div><div class="wt">1.2 kg</div><div class="eq">EQ</div></div>
+                <div class="gear-row"><div class="icon">◎</div><div class="nm">Thermal Detonator<span class="sub">Class II · safed</span></div><div class="qty">2</div><div class="wt">0.8 kg</div><div class="eq" style="color:var(--ink-faint)">—</div></div>
+                <div class="gear-row"><div class="icon">⬢</div><div class="nm">Noble's Wardrobe<span class="sub">Formal · concealed weave</span></div><div class="qty">1</div><div class="wt">3.0 kg</div><div class="eq">EQ</div></div>
+                <div class="gear-row"><div class="icon">⌘</div><div class="nm">Comlink (long-range)<span class="sub">encrypted</span></div><div class="qty">1</div><div class="wt">0.2 kg</div><div class="eq">EQ</div></div>
+                <div class="gear-row"><div class="icon">◈</div><div class="nm">Datapad<span class="sub">VERSA MK-VII (this unit)</span></div><div class="qty">1</div><div class="wt">0.4 kg</div><div class="eq">EQ</div></div>
+                <div class="gear-row"><div class="icon">⟡</div><div class="nm">Signet Ring<span class="sub">Holo-refracting · heirloom</span></div><div class="qty">1</div><div class="wt">—</div><div class="eq">EQ</div></div>
+                <div class="gear-row"><div class="icon">◊</div><div class="nm">Credit Chip<span class="sub">2,400 cr</span></div><div class="qty">1</div><div class="wt">—</div><div class="eq" style="color:var(--ink-faint)">—</div></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- BIOGRAPHY -->
+          <section class="tab-content" data-tab="bio">
+            <div class="panel">
+              <div class="panel-head"><span>▸ Biography</span><span class="hint">editable</span></div>
+              <div class="bio-grid">
+                <div class="bio-card"><span class="k">Background</span>Noble · Court of Coruscant</div>
+                <div class="bio-card"><span class="k">Homeworld</span>Coruscant · Senate District</div>
+                <div class="bio-card"><span class="k">Languages</span>Basic · Huttese · High Galactic · Durese</div>
+                <div class="bio-card"><span class="k">Allegiances</span>House Vorren · Galactic Alliance</div>
+                <div class="bio-card" style="grid-column: span 2;"><span class="k">History</span>Raised among the Senate aristocracy, Kael turned from diplomacy to field work after the Vorren compound was raided. Now travels the Rim, trading favors for intel — searching for the saboteur who burned his family estate.</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Command bar -->
+      <div class="cmd-bar">
+        <button class="cbtn ready">► Roll Initiative</button>
+        <button class="cbtn">Short Rest</button>
+        <button class="cbtn">Second Wind</button>
+        <button class="cbtn">Spend Destiny</button>
+        <button class="cbtn">Level Up</button>
+        <button class="cbtn ghost">Edit Mode</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- Clock ---- */
+function tickClock() {
+  const d = new Date();
+  document.getElementById('clock').textContent =
+    `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}:${String(d.getUTCSeconds()).padStart(2,'0')} · UTC`;
+}
+tickClock(); setInterval(tickClock, 1000);
+
+/* ---- HP segments (20) ---- */
+(function(){
+  const wrap = document.getElementById('hp-segs');
+  const filled = 17; // 72/84 ≈ 17/20
+  const colorClass = (i) => i < 4 ? 'hp-seg--red'
+    : i < 8 ? 'hp-seg--orange'
+    : i < 12 ? 'hp-seg--yellow'
+    : i < 16 ? 'hp-seg--yellowgreen'
+    : 'hp-seg--green';
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement('div');
+    s.className = 'hp-seg ' + colorClass(i) + (i < filled ? ' on' : '');
+    wrap.appendChild(s);
+  }
+})();
+
+/* ---- Skills ---- */
+const SKILLS = [
+  { name:'Acrobatics',       ab:'Dex', trained:true,  total:+11, focus:0,  misc:0 },
+  { name:'Climb',            ab:'Str', trained:false, total:+6,  focus:0,  misc:0 },
+  { name:'Deception',        ab:'Cha', trained:true,  total:+13, focus:0,  misc:0 },
+  { name:'Endurance',        ab:'Con', trained:false, total:+5,  focus:0,  misc:0 },
+  { name:'Gather Information', ab:'Cha', trained:true, total:+18, focus:5, misc:0 },
+  { name:'Initiative',       ab:'Dex', trained:false, total:+7,  focus:0,  misc:0 },
+  { name:'Jump',             ab:'Str', trained:false, total:+6,  focus:0,  misc:0 },
+  { name:'Knowledge (Bureau.)', ab:'Int', trained:true, total:+9,  focus:0, misc:0 },
+  { name:'Knowledge (Galactic Lore)', ab:'Int', trained:true, total:+9, focus:0, misc:0 },
+  { name:'Knowledge (Social Sci.)', ab:'Int', trained:true, total:+9, focus:0, misc:0 },
+  { name:'Mechanics',        ab:'Int', trained:false, total:+4,  focus:0,  misc:0 },
+  { name:'Perception',       ab:'Wis', trained:false, total:+3,  focus:0,  misc:0 },
+  { name:'Persuasion',       ab:'Cha', trained:true,  total:+18, focus:5,  misc:0 },
+  { name:'Pilot',            ab:'Dex', trained:true,  total:+11, focus:0,  misc:0 },
+  { name:'Ride',             ab:'Dex', trained:false, total:+7,  focus:0,  misc:0 },
+  { name:'Stealth',          ab:'Dex', trained:false, total:+7,  focus:0,  misc:0 },
+  { name:'Survival',         ab:'Wis', trained:false, total:+3,  focus:0,  misc:0 },
+  { name:'Swim',             ab:'Str', trained:false, total:+6,  focus:0,  misc:-1 },
+  { name:'Treat Injury',     ab:'Wis', trained:false, total:+3,  focus:0,  misc:0 },
+  { name:'Use Computer',     ab:'Int', trained:true,  total:+9,  focus:0,  misc:0 },
+  { name:'Use the Force',    ab:'Cha', trained:false, total:+8,  focus:0,  misc:0 },
+];
+const ABMOD = { Str:2, Dex:3, Con:1, Int:0, Wis:-1, Cha:4 };
+const HALF = 4;
+const body = document.getElementById('skills-body');
+SKILLS.forEach(sk => {
+  const row = document.createElement('div');
+  row.className = 'skills-grid-row' + (sk.trained ? ' trained' : '');
+  const mod = ABMOD[sk.ab] || 0;
+  const cls = sk.total > 0 ? 'positive' : sk.total < 0 ? 'negative' : 'zero';
+  const modCls = mod > 0 ? 'pos' : mod < 0 ? 'neg' : '';
+  const miscCls = sk.misc > 0 ? 'pos' : sk.misc < 0 ? 'neg' : '';
+  const sign = v => (v >= 0 ? '+' : '') + v;
+  row.innerHTML = `
+    <div class="sk-check ${sk.trained ? 'on' : ''}"></div>
+    <div class="sk-name">${sk.name}<span class="ab-tag">${sk.ab}</span></div>
+    <div class="sk-total ${cls}">${sign(sk.total)}</div>
+    <div class="sk-pipe">│</div>
+    <div class="sk-parts">
+      <span class="chip">½ ${HALF}</span>
+      <span class="chip ${modCls}">${sk.ab} ${sign(mod)}</span>
+      ${sk.trained ? `<span class="chip pos">TR +5</span>` : ''}
+      ${sk.focus ? `<span class="chip pos">FC +${sk.focus}</span>` : ''}
+      ${sk.misc ? `<span class="chip ${miscCls}">M ${sign(sk.misc)}</span>` : ''}
+    </div>
+    <div class="sk-mini">+${HALF}</div>
+    <div class="sk-mini">${sign(mod)}</div>
+    <div class="sk-focus">${sk.focus ? '★' : '·'}</div>
+    <button class="sk-roll">Roll</button>
+  `;
+  body.appendChild(row);
+});
+
+/* ---- Tabs ---- */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.tab;
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.dataset.tab === t));
+  });
+});
+
+/* =====================================================
+ * TWEAKS PANEL (vanilla — no React)
+ * ===================================================== */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "vapor",
+  "scanStrength": 0.03,
+  "animSpeed": 1,
+  "glow": 1,
+  "breathing": true
+}/*EDITMODE-END*/;
+
+/* Each theme sets: cyan (main accent), pink (warm accent), purple (depth), screenH (hue), inkH (ink temperature) */
+const THEMES = {
+  vapor: { label:'Vaporwave',   cyan:'oklch(0.85 0.18 200)', pink:'oklch(0.72 0.26 350)', purple:'oklch(0.55 0.26 300)', screenH:278, inkH:190 },
+  holo:  { label:'Holo Blue',   cyan:'oklch(0.85 0.14 220)', pink:'oklch(0.78 0.15 240)', purple:'oklch(0.55 0.18 260)', screenH:235, inkH:220 },
+  imp:   { label:'Imperial',    cyan:'oklch(0.80 0.18 25)',  pink:'oklch(0.72 0.22 15)',  purple:'oklch(0.45 0.20 20)',  screenH:18,  inkH:25  },
+  reb:   { label:'Rebel Alert', cyan:'oklch(0.82 0.20 55)',  pink:'oklch(0.78 0.22 35)',  purple:'oklch(0.55 0.22 40)',  screenH:40,  inkH:60  },
+  jedi:  { label:'Jedi Archive',cyan:'oklch(0.85 0.14 175)', pink:'oklch(0.80 0.18 150)', purple:'oklch(0.48 0.15 160)', screenH:165, inkH:170 },
+  sith:  { label:'Sith Holocron',cyan:'oklch(0.75 0.22 15)', pink:'oklch(0.65 0.26 340)', purple:'oklch(0.40 0.22 350)', screenH:350, inkH:15  },
+  droid: { label:'Droid Amber', cyan:'oklch(0.82 0.17 75)',  pink:'oklch(0.78 0.20 55)',  purple:'oklch(0.50 0.18 60)',  screenH:60,  inkH:80  },
+  merc:  { label:'Merc Green',  cyan:'oklch(0.82 0.19 145)', pink:'oklch(0.78 0.20 120)', purple:'oklch(0.45 0.18 155)', screenH:150, inkH:145 },
+  cryo:  { label:'Cryo Ice',    cyan:'oklch(0.92 0.08 200)', pink:'oklch(0.85 0.10 210)', purple:'oklch(0.60 0.10 220)', screenH:215, inkH:205 },
+  blood: { label:'Blood Moon',  cyan:'oklch(0.72 0.24 20)',  pink:'oklch(0.65 0.26 10)',  purple:'oklch(0.38 0.20 10)',  screenH:12,  inkH:20  }
+};
+
+function applyTweaks(t) {
+  const r = document.documentElement.style;
+  const th = THEMES[t.theme] || THEMES.vapor;
+  r.setProperty('--vapor-cyan',   th.cyan);
+  r.setProperty('--vapor-pink',   th.pink);
+  r.setProperty('--vapor-purple', th.purple);
+  r.setProperty('--screen-h',     th.screenH);
+  r.setProperty('--ink-h',        th.inkH);
+  r.setProperty('--scan-strength', t.scanStrength);
+  r.setProperty('--anim-speed',    t.animSpeed);
+  r.setProperty('--glow-mult',     t.glow);
+  document.querySelector('.tablet').style.animationPlayState = t.breathing ? 'running' : 'paused';
+}
+
+/* --- Panel UI --- */
+const panelCSS = `
+  .twk-fab{position:fixed;right:14px;bottom:14px;z-index:99999;width:44px;height:44px;border-radius:50%;
+    background:linear-gradient(135deg,var(--vapor-pink),var(--vapor-cyan));
+    border:1px solid var(--vapor-cyan);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-size:22px;color:#0a0a12;
+    box-shadow:0 0 18px oklch(var(--vapor-cyan)/0.5), 0 6px 20px rgba(0,0,0,0.5);
+    transition:transform 0.2s;}
+  .twk-fab:hover{transform:scale(1.08) rotate(30deg);}
+  .twk-panel{position:fixed;right:14px;bottom:14px;z-index:99999;width:320px;max-height:calc(100vh - 28px);
+    display:none;flex-direction:column;
+    background:linear-gradient(180deg, oklch(0.14 0.06 var(--screen-h)) 0%, oklch(0.10 0.05 var(--screen-h)) 100%);
+    border:1px solid oklch(var(--vapor-cyan)/0.5);border-radius:4px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.7), 0 0 40px oklch(var(--vapor-cyan)/0.2);
+    font-family:var(--font-mono);color:var(--ink);overflow:hidden;}
+  .twk-panel.open{display:flex;}
+  .twk-panel::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,transparent 0 3px,oklch(1 0 0 / 0.025) 3px 4px);}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;
+    background:linear-gradient(90deg, oklch(var(--vapor-pink)/0.18), oklch(var(--vapor-cyan)/0.14));
+    border-bottom:1px solid oklch(var(--vapor-cyan)/0.3);cursor:move;user-select:none;}
+  .twk-hd b{font-family:var(--font-display);font-size:16px;letter-spacing:0.28em;color:var(--vapor-cyan);
+    text-shadow:0 0 8px oklch(var(--vapor-cyan)/0.6);}
+  .twk-x{background:transparent;border:1px solid oklch(var(--vapor-cyan)/0.4);color:var(--ink-dim);
+    width:20px;height:20px;cursor:pointer;font-family:var(--font-mono);font-size:11px;line-height:1;padding:0;}
+  .twk-x:hover{color:var(--vapor-pink);border-color:var(--vapor-pink);}
+  .twk-body{padding:14px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
+  .twk-sect{font-family:var(--font-mono);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;
+    color:var(--vapor-pink);padding-bottom:4px;border-bottom:1px dashed oklch(var(--vapor-cyan)/0.25);}
+  .twk-row{display:flex;flex-direction:column;gap:6px;}
+  .twk-lbl{display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.2em;
+    text-transform:uppercase;color:var(--ink-dim);}
+  .twk-lbl .v{color:var(--vapor-cyan);font-family:var(--font-display);font-size:14px;letter-spacing:0.05em;}
+  .twk-themes{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+  .twk-theme{position:relative;padding:8px 10px;cursor:pointer;text-align:left;
+    background:oklch(0 0 0 / 0.4);border:1px solid oklch(var(--vapor-cyan)/0.25);
+    font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-dim);
+    display:flex;align-items:center;gap:8px;transition:all 0.15s;
+    clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);}
+  .twk-theme:hover{border-color:oklch(var(--vapor-cyan)/0.5);color:var(--ink);}
+  .twk-theme.active{background:linear-gradient(90deg,oklch(var(--vapor-pink)/0.18),oklch(var(--vapor-cyan)/0.12));
+    border-color:var(--vapor-cyan);color:var(--vapor-cyan);
+    text-shadow:0 0 6px oklch(var(--vapor-cyan)/0.6);}
+  .twk-swatch{width:14px;height:14px;flex-shrink:0;border:1px solid rgba(255,255,255,0.3);
+    background:linear-gradient(135deg, var(--tc) 0%, var(--tc) 33%, var(--tp) 33%, var(--tp) 66%, var(--tpu) 66%, var(--tpu) 100%);}
+  .twk-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;background:oklch(0 0 0 / 0.6);
+    border:1px solid oklch(var(--vapor-cyan)/0.3);outline:none;}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--vapor-pink);
+    border:1px solid var(--vapor-cyan);cursor:pointer;box-shadow:0 0 8px var(--vapor-pink);
+    clip-path:polygon(50% 0, 100% 50%, 50% 100%, 0 50%);}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;background:var(--vapor-pink);
+    border:1px solid var(--vapor-cyan);cursor:pointer;box-shadow:0 0 8px var(--vapor-pink);border-radius:0;}
+  .twk-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+    padding:6px 10px;background:oklch(0 0 0 / 0.4);border:1px solid oklch(var(--vapor-cyan)/0.3);
+    font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-dim);}
+  .twk-sw{width:32px;height:14px;background:oklch(0 0 0 / 0.6);border:1px solid oklch(var(--vapor-cyan)/0.4);
+    position:relative;transition:all 0.2s;}
+  .twk-sw::after{content:'';position:absolute;top:1px;left:1px;width:10px;height:10px;
+    background:var(--ink-faint);transition:all 0.2s;}
+  .twk-toggle.on .twk-sw{background:oklch(var(--vapor-pink)/0.3);border-color:var(--vapor-pink);}
+  .twk-toggle.on .twk-sw::after{left:19px;background:var(--vapor-pink);box-shadow:0 0 6px var(--vapor-pink);}
+  .twk-toggle.on{color:var(--vapor-cyan);}
+  .twk-reset{background:transparent;border:1px solid oklch(var(--vapor-pink)/0.4);color:var(--vapor-pink);
+    padding:6px 10px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.24em;text-transform:uppercase;
+    cursor:pointer;clip-path:polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);}
+  .twk-reset:hover{background:oklch(var(--vapor-pink)/0.15);box-shadow:0 0 10px oklch(var(--vapor-pink)/0.4);}
+`;
+const st = document.createElement('style'); st.textContent = panelCSS; document.head.appendChild(st);
+
+const tweaks = { ...TWEAK_DEFAULTS };
+applyTweaks(tweaks);
+
+const fab = document.createElement('button');
+fab.className = 'twk-fab';
+fab.title = 'Tweaks';
+fab.innerHTML = '◈';
+document.body.appendChild(fab);
+
+const panel = document.createElement('div');
+panel.className = 'twk-panel';
+panel.innerHTML = `
+  <div class="twk-hd">
+    <b>◇ TWEAKS</b>
+    <button class="twk-x">✕</button>
+  </div>
+  <div class="twk-body">
+    <div class="twk-row">
+      <div class="twk-sect">◆ Color Theme</div>
+      <div class="twk-themes" id="twk-themes"></div>
+    </div>
+    <div class="twk-row">
+      <div class="twk-sect">▸ Display</div>
+      <div class="twk-row">
+        <div class="twk-lbl"><span>Scanlines</span><span class="v" id="v-scan"></span></div>
+        <input type="range" class="twk-slider" id="r-scan" min="0" max="0.12" step="0.005">
+      </div>
+      <div class="twk-row">
+        <div class="twk-lbl"><span>Animation speed</span><span class="v" id="v-anim"></span></div>
+        <input type="range" class="twk-slider" id="r-anim" min="0.25" max="2.5" step="0.25">
+      </div>
+      <div class="twk-row">
+        <div class="twk-lbl"><span>Glow</span><span class="v" id="v-glow"></span></div>
+        <input type="range" class="twk-slider" id="r-glow" min="0" max="2" step="0.1">
+      </div>
+      <label class="twk-toggle" id="t-breathe">
+        <span>Tablet breathing</span><span class="twk-sw"></span>
+      </label>
+    </div>
+    <div class="twk-row" style="align-items:flex-end;">
+      <button class="twk-reset" id="twk-reset">↺ Restore Defaults</button>
+    </div>
+  </div>
+`;
+document.body.appendChild(panel);
+
+/* Theme buttons */
+const themesWrap = panel.querySelector('#twk-themes');
+Object.entries(THEMES).forEach(([key, th]) => {
+  const b = document.createElement('button');
+  b.className = 'twk-theme' + (key === tweaks.theme ? ' active' : '');
+  b.dataset.theme = key;
+  b.style.setProperty('--tc', th.cyan);
+  b.style.setProperty('--tp', th.pink);
+  b.style.setProperty('--tpu', th.purple);
+  b.innerHTML = `<span class="twk-swatch"></span><span>${th.label}</span>`;
+  b.addEventListener('click', () => setTweak('theme', key));
+  themesWrap.appendChild(b);
+});
+
+function refreshUI() {
+  panel.querySelectorAll('.twk-theme').forEach(b => b.classList.toggle('active', b.dataset.theme === tweaks.theme));
+  panel.querySelector('#r-scan').value = tweaks.scanStrength;
+  panel.querySelector('#v-scan').textContent = (tweaks.scanStrength * 100).toFixed(1) + '%';
+  panel.querySelector('#r-anim').value = tweaks.animSpeed;
+  panel.querySelector('#v-anim').textContent = tweaks.animSpeed.toFixed(2) + '×';
+  panel.querySelector('#r-glow').value = tweaks.glow;
+  panel.querySelector('#v-glow').textContent = tweaks.glow.toFixed(1) + '×';
+  panel.querySelector('#t-breathe').classList.toggle('on', tweaks.breathing);
+}
+refreshUI();
+
+function setTweak(key, val) {
+  tweaks[key] = val;
+  applyTweaks(tweaks);
+  refreshUI();
+  try {
+    window.parent.postMessage({ type:'__edit_mode_set_keys', edits: { [key]: val } }, '*');
+  } catch(e){}
+}
+
+panel.querySelector('#r-scan').addEventListener('input', e => setTweak('scanStrength', parseFloat(e.target.value)));
+panel.querySelector('#r-anim').addEventListener('input', e => setTweak('animSpeed', parseFloat(e.target.value)));
+panel.querySelector('#r-glow').addEventListener('input', e => setTweak('glow', parseFloat(e.target.value)));
+panel.querySelector('#t-breathe').addEventListener('click', () => setTweak('breathing', !tweaks.breathing));
+panel.querySelector('#twk-reset').addEventListener('click', () => {
+  Object.entries(TWEAK_DEFAULTS).forEach(([k,v]) => tweaks[k] = v);
+  applyTweaks(tweaks); refreshUI();
+  try { window.parent.postMessage({ type:'__edit_mode_set_keys', edits: {...TWEAK_DEFAULTS} }, '*'); } catch(e){}
+});
+
+/* FAB + host protocol */
+function showPanel(){ panel.classList.add('open'); fab.style.display = 'none'; }
+function hidePanel(){
+  panel.classList.remove('open'); fab.style.display = 'flex';
+  try { window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*'); } catch(e){}
+}
+fab.addEventListener('click', showPanel);
+panel.querySelector('.twk-x').addEventListener('click', hidePanel);
+
+window.addEventListener('message', ev => {
+  const d = ev.data || {};
+  if (d.type === '__activate_edit_mode')   showPanel();
+  if (d.type === '__deactivate_edit_mode') hidePanel();
+});
+try { window.parent.postMessage({ type:'__edit_mode_available' }, '*'); } catch(e){}
+
+/* Drag */
+(function(){
+  const hd = panel.querySelector('.twk-hd');
+  let dragging = false, sx=0, sy=0, ox=0, oy=0;
+  hd.addEventListener('mousedown', e => {
+    if (e.target.closest('.twk-x')) return;
+    dragging = true; sx = e.clientX; sy = e.clientY;
+    const r = panel.getBoundingClientRect(); ox = r.left; oy = r.top;
+    panel.style.left = ox+'px'; panel.style.top = oy+'px'; panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    panel.style.left = (ox + e.clientX - sx) + 'px';
+    panel.style.top  = (oy + e.clientY - sy) + 'px';
+  });
+  window.addEventListener('mouseup', () => dragging = false);
+})();
+</script>
+</body>
+</html>

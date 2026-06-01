@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vehicle Sheet v2 — Design Doc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="nav" id="nav">
+    <p class="nav__brand">SWSE · Internal</p>
+    <h1 class="nav__title">Vehicle Sheet v2</h1>
+    <div class="nav__meta">
+      <div><b>Author</b> · Design</div>
+      <div><b>Status</b> · Draft v0.1</div>
+      <div><b>Audience</b> · Maintainer + future contributors</div>
+    </div>
+
+    <p class="nav__group">Frame</p>
+    <a href="#s1"><span class="num">01</span> Goals &amp; Non-Goals</a>
+    <a href="#s2"><span class="num">02</span> Existing Repo Inventory</a>
+    <a href="#s3"><span class="num">03</span> Module Boundaries</a>
+
+    <p class="nav__group">Sheet</p>
+    <a href="#s4"><span class="num">04</span> Data Model</a>
+    <a href="#s5"><span class="num">05</span> UI Layout</a>
+    <a href="#s6"><span class="num">06</span> Crew &amp; Skill Resolution</a>
+    <a href="#s7"><span class="num">07</span> Combat UI</a>
+    <a href="#s8"><span class="num">08</span> PiSWE Initiative</a>
+
+    <p class="nav__group">Authoring</p>
+    <a href="#s9"><span class="num">09</span> Shipyard Router</a>
+    <a href="#s10"><span class="num">10</span> Compendium Importer</a>
+
+    <p class="nav__group">Delivery</p>
+    <a href="#s11"><span class="num">11</span> Migration Plan</a>
+    <a href="#s12"><span class="num">12</span> Risks &amp; Open Qs</a>
+    <a href="#s13"><span class="num">13</span> Implementation Checklist</a>
+  </aside>
+
+  <main class="main">
+
+    <header class="doc-header">
+      <p class="doc-header__eyebrow">Design Document</p>
+      <h1 class="doc-header__title">Vehicle Sheet v2 — End-to-End Design</h1>
+      <p class="doc-header__lede">
+        A second-generation actor sheet for vehicles in the SWSE system, covering the sheet itself,
+        the Shipyard authoring surface, the compendium importer, contextual crew resolution,
+        the enhanced combat UI, and PiSWE-aware initiative integration. Written for the maintainer
+        and future contributors — terse where the codebase already answers the question, longer where
+        the design needs to land.
+      </p>
+      <div class="doc-header__meta">
+        <span><b>Repo</b> foundryvtt-swse</span>
+        <span><b>Surface</b> sheets/v2/vehicle-sheet/</span>
+        <span><b>Targets</b> Foundry v12+ &nbsp;·&nbsp; system v0.4.x</span>
+      </div>
+    </header>
+
+    <!-- ============== 01 ============== -->
+    <section class="s" id="s1">
+      <h2><span class="num">01</span>Goals &amp; Non-Goals</h2>
+      <p class="sub">// what this redesign is, and explicitly is not</p>
+
+      <h3>Goals</h3>
+      <ul>
+        <li><strong>One sheet, all vehicles.</strong> Starfighter, capital, walker, speeder, station, mount — same actor type, conditional panels driven by <code>system.category</code>.</li>
+        <li><strong>Editable when authoring, terse when playing.</strong> A read-mostly play view, with an "Edit" affordance that reveals the dense fields the GM cares about.</li>
+        <li><strong>Crew is contextual.</strong> Pilot is the only required slot; other stations appear based on the vehicle's actual capabilities (weapons present → gunner, shields present → shield op, etc).</li>
+        <li><strong>Houserule-aware.</strong> Enhanced Pilot/Engineer/Shields/Commander, SWES subsystems, vehicle turn controller, and the Ship-Based Initiative system all surface in the sheet only when their world settings are on.</li>
+        <li><strong>Authorable.</strong> Drag from compendium or the world Item directory; import flows live in a single Shipyard router that all entry points delegate to.</li>
+        <li><strong>v1 stays parseable.</strong> Existing world actors must round-trip without data loss; an idempotent migration pass adds v2 fields in place.</li>
+      </ul>
+
+      <h3>Non-Goals</h3>
+      <ul>
+        <li>Replacing <code>VehicleRules</code> or any engine module. The sheet consumes engine state; it does not own it.</li>
+        <li>Touching weapon-as-Item refactors — vehicle weapons stay in <code>system.weapons[]</code> for v2; a future v3 may promote them to Items.</li>
+        <li>Shipping a new combat tracker. PiSWE integration hooks into the existing combat-rules path, doesn't fork it.</li>
+        <li>Cross-system compatibility (foreign system imports). Out of scope for v1.</li>
+      </ul>
+
+      <div class="callout callout--note">
+        <div class="callout__label">Design pillar</div>
+        <p>Every panel on the sheet has a single owner: either <em>data</em> (rendered from <code>system</code>), <em>derived</em> (rendered from <code>VehicleRules</code> / engines), or <em>session</em> (rendered from <code>flags.swse.*</code>). No panel mixes the three; no panel writes outside its own lane.</p>
+      </div>
+    </section>
+
+    <!-- Sections 2+ are inlined below; kept in this single HTML so the side nav and
+         scroll-spy work without a build step. -->
+    <div id="content-host"></div>
+
+    <p class="footnote">
+      // design-docs/vehicle-sheet-v2/index.html · last touched in this draft pass
+    </p>
+  </main>
+</div>
+
+<!-- Content sections live in separate files for edit-friendliness; loaded inline below. -->
+<script src="content.js"></script>
+<script src="nav.js"></script>
+</body>
+</html>

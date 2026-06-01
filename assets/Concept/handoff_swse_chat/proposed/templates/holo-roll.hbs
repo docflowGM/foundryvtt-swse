@@ -1,0 +1,198 @@
+{{!--
+  Proposed updated templates/chat/holo-roll.hbs
+
+  Three surgical changes from the current file:
+    1. New data-* attributes on the card root (drives CSS rails)
+    2. Optional inline `--rail` from weaponVisual.colorHex
+    3. New .body wrapper with clickable .total + hidden .breakdown
+    4. Optional reaction strip when context.reactionContext is populated
+
+  buildHoloRollData() must surface:
+    - category            (already present)
+    - abilityKey          (NEW — see swse-roll-engine.js patch)
+    - forceDescriptor     (NEW)
+    - weaponVisual.colorHex  (already produced by WeaponVisualProfileResolver)
+    - reactionContext     (NEW — wrap existing swseDeriveChatReactions)
+    - context.reactionTimerSec, context.attackTotal (already in payload)
+--}}
+
+<div class="swse-chat-card swse-roll-card swse-roll-card--{{category}}"
+     data-swse-chat-surface="roll"
+     data-category="{{category}}"
+     {{#if abilityKey}}data-ability="{{abilityKey}}"{{/if}}
+     {{#if forceDescriptor}}data-descriptor="{{forceDescriptor}}"{{/if}}
+     {{#if weaponVisual.colorHex}}style="--rail: {{weaponVisual.colorHex}};"{{/if}}>
+
+  <span class="headtick" aria-hidden="true"></span>
+
+  {{#if title}}
+  <header class="head">
+    <span class="type-chip">
+      {{#if abilityKey}}<span class="ability-hex">{{uppercase abilityKey}}</span>{{else}}<span class="dot"></span>{{/if}}
+      {{title}}
+    </span>
+    <span class="who">{{actorName}}</span>
+    <span class="ts">{{formatTime timestamp}}</span>
+  </header>
+  {{/if}}
+
+  {{#if subtitle}}<h3 class="action">{{subtitle}}</h3>{{/if}}
+
+  {{#if weaponVisual}}
+  <div class="swse-roll-weapon-visual swse-roll-weapon-visual--{{weaponVisual.kind}}"
+       data-swse-weapon-visual="{{weaponVisual.kind}}">
+    <span class="swse-roll-weapon-visual__emitter" aria-hidden="true"></span>
+    <span class="swse-roll-weapon-visual__beam" aria-hidden="true"></span>
+    <span class="swse-roll-weapon-visual__label">{{weaponVisual.label}}</span>
+  </div>
+  {{/if}}
+
+  {{#if roll}}
+  <div class="body">
+    {{!-- Clickable total banner. JS toggles [data-expanded] on parent --}}
+    <button type="button" class="total" aria-expanded="false">
+      <span class="num">{{total}}</span>
+      <span class="label">{{#if context.totalLabel}}{{context.totalLabel}}{{else}}Total{{/if}}</span>
+      {{#if context.damageType}}<span class="dmg-type">{{context.damageType}}</span>{{/if}}
+    </button>
+
+    {{!-- Hidden until [data-expanded="true"] --}}
+    <div class="breakdown">
+      <div class="parts">
+        {{!-- d20 chip is injected at parts head by chat-card-toggle.js
+              when the message renders. If the engine prefers, it can
+              emit the d20 here directly and skip the JS injection. --}}
+        {{#each context.parts}}
+          <span class="part">{{label}} <b>{{value}}</b></span>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- ATTACK CRIT BANNER --}}
+  {{#if context.critBanner}}
+  <div class="crit-banner">{{context.critBanner}}</div>
+  {{/if}}
+
+  {{!-- FORCE DESCRIPTOR CHIPS --}}
+  {{#if context.descriptors}}
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0;">
+    {{#each context.descriptors}}
+      <span class="desc-chip" data-d="{{this}}">{{labelFor this}}</span>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{!-- FORCE DC TIER GAUGE --}}
+  {{#if context.tiers}}
+  <div class="tier-gauge" aria-label="DC tiers achieved">
+    {{#each context.tiers}}
+      <div class="seg {{#if hit}}hit{{/if}} {{#if top}}top{{/if}}">
+        <span class="dc">{{dc}}</span>
+        <span class="fx">{{effect}}</span>
+      </div>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{!-- OUTCOME / DC / VERDICT --}}
+  {{#if context.hasDc}}
+  <div class="outcome">
+    <span class="meta"><span class="k">DC</span><span class="v">{{context.dc}}</span></span>
+    {{#if context.margin}}<span class="meta"><span class="k">Margin</span><span class="v">{{context.margin}}</span></span>{{/if}}
+    {{#if context.target}}<span class="meta"><span class="k">Target</span><span class="v">{{context.target}}</span></span>{{/if}}
+    {{#if context.passed}}
+      <span class="verdict success">{{context.outcomeLabel}}</span>
+    {{else}}
+      <span class="verdict failure">{{context.outcomeLabel}}</span>
+    {{/if}}
+  </div>
+  {{/if}}
+
+  {{!-- CONTEXTUAL NOTES --}}
+  {{#if context.notes}}<div class="notes">{{{context.notes}}}</div>{{/if}}
+
+  {{!-- ACTION BUTTONS — Apply to Target is now ALWAYS rendered on combat cards --}}
+  {{#if context.actions}}
+  <div class="actions">
+    {{#each context.actions}}
+      <button type="button"
+              class="btn"
+              {{#each data}}data-{{@key}}="{{this}}" {{/each}}>
+        {{#if icon}}<span class="i">{{icon}}</span>{{/if}}{{label}}
+      </button>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{!-- DEFENDER-ONLY REACTIONS STRIP — populated by buildHoloRollData
+       wrapping swseDeriveChatReactions(). Render the whole strip only
+       when context.reactionContext.entries.length > 0. The host should
+       whisper the card to the defender OR emit a per-user companion
+       card so non-defenders never see this. --}}
+  {{#if context.reactionContext.entries.length}}
+  <div class="reactions-strip" role="group" aria-label="Available reactions">
+    <div class="head-line">
+      <span>Reaction Window</span>
+      <span class="you">— {{context.reactionContext.defenderName}}</span>
+      {{#if context.reactionContext.timerSec}}<span class="timer">{{context.reactionContext.timerSec}} s</span>{{/if}}
+    </div>
+    <div class="pills">
+      {{#each context.reactionContext.entries}}
+        <button type="button"
+                class="reaction-btn"
+                data-swse-reaction-key="{{key}}"
+                data-attack-event-id="{{../context.attackEventId}}"
+                {{#unless available}}disabled{{/unless}}>
+          <span class="glyph">{{icon}}</span>{{label}}
+          {{#if sub}}<span class="sub">{{sub}}</span>{{/if}}
+        </button>
+      {{/each}}
+    </div>
+    {{#if context.reactionContext.reason}}
+      <span class="reason">{{context.reactionContext.reason}}</span>
+    {{/if}}
+  </div>
+  {{/if}}
+
+  {{!-- LEGACY REROLL OPTIONS — preserved from existing template --}}
+  {{#if context.rerollOptions}}
+  <div class="actions">
+    {{#each context.rerollOptions}}
+      <button type="button"
+              class="btn swse-skill-reroll-btn"
+              data-actor-id="{{actorId}}"
+              data-skill-key="{{skillKey}}"
+              data-source-id="{{sourceId}}"
+              data-source-name="{{sourceName}}"
+              data-outcome="{{outcome}}"
+              data-original-total="{{originalTotal}}"
+              data-formula="{{formula}}">
+        <span class="i">⟲</span> {{label}}: Reroll ({{outcomeLabel}})
+      </button>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if context.attackRerollOptions}}
+  <div class="actions">
+    {{#each context.attackRerollOptions}}
+      <button type="button"
+              class="btn swse-attack-reroll-btn"
+              data-actor-id="{{actorId}}"
+              data-weapon-id="{{weaponId}}"
+              data-source-id="{{sourceId}}"
+              data-source-name="{{sourceName}}"
+              data-cost="{{cost}}"
+              data-outcome="{{outcome}}"
+              data-original-total="{{originalTotal}}"
+              data-formula="{{formula}}"
+              {{#unless canUse}}disabled{{/unless}}>
+        <span class="i">⟲</span> {{label}}: Reroll ({{outcomeLabel}})
+      </button>
+      {{#if disabledReason}}<span class="reason">{{disabledReason}}</span>{{/if}}
+    {{/each}}
+  </div>
+  {{/if}}
+</div>

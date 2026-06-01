@@ -1,0 +1,499 @@
+/* ============================================================================
+   GM DATAPAD — VISUAL REDESIGN PATCH
+   Append this entire block to: styles/apps/gm-datapad.css
+   
+   Design principle: GM effectiveness over immersion.
+   Every rule here adds or overrides for operational clarity.
+   No rules in this file break existing layout or remove functionality.
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SEMANTIC NUMBER / LEDGER CLASSES
+   Apply these everywhere a number has directional meaning.
+   ───────────────────────────────────────────────────────────────────────────── */
+.swse-num-positive,
+.gm-num-positive { color: #7dffb2; font-weight: 700; }
+
+.swse-num-negative,
+.gm-num-negative { color: #ff8b8b; font-weight: 700; }
+
+.swse-num-neutral,
+.gm-num-neutral  { color: #ffd166; font-weight: 700; }
+
+.swse-ledger-gain,
+.gm-ledger-gain {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 8px; border-radius: 999px;
+  color: #7dffb2;
+  background: rgba(125, 255, 178, 0.1);
+  border: 1px solid rgba(125, 255, 178, 0.26);
+  font-weight: 700;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 12px;
+}
+
+.swse-ledger-loss,
+.gm-ledger-loss {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 8px; border-radius: 999px;
+  color: #ff8b8b;
+  background: rgba(255, 139, 139, 0.1);
+  border: 1px solid rgba(255, 139, 139, 0.24);
+  font-weight: 700;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 12px;
+}
+
+.swse-ledger-flat,
+.gm-ledger-flat {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 8px; border-radius: 999px;
+  color: #ffd166;
+  background: rgba(255, 209, 102, 0.1);
+  border: 1px solid rgba(255, 209, 102, 0.24);
+  font-weight: 700;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HOME: CLUSTER LAYOUT OVERRIDE
+   Replaces flat app-cards-grid with a two-column cluster layout.
+   Requires urgentApps and appClusters in context (see home.hbs patch).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Critical action strip above clusters */
+.gm-home-urgent-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 107, 107, 0.34);
+  background: rgba(8, 2, 4, 0.82);
+  flex-shrink: 0;
+}
+.gm-home-urgent-rail--hidden { display: none; }
+.gm-home-urgent-eyebrow {
+  width: 100%;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 2px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255, 139, 139, 0.82);
+}
+.gm-urgent-action {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: 6px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.28);
+  color: #ffd0d0; font-size: 11px; font-weight: 700;
+  cursor: pointer; appearance: none;
+  transition: background 110ms;
+}
+.gm-urgent-action:hover { background: rgba(255, 107, 107, 0.2); }
+.gm-urgent-action i { color: #ff8b8b; font-size: 10px; }
+
+/* Two-column cluster grid */
+.gm-app-clusters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+.gm-app-cluster { display: flex; flex-direction: column; gap: 8px; }
+.gm-app-cluster-col { display: flex; flex-direction: column; gap: 10px; }
+
+.gm-cluster-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 0 2px 5px;
+  border-bottom: 1px solid rgba(112, 226, 255, 0.12);
+}
+.gm-cluster-header h4 {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(112, 226, 255, 0.7); margin: 0;
+}
+.gm-cluster-count {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px;
+  color: rgba(223, 248, 255, 0.4);
+}
+.gm-cluster-count.crit { color: #ff8b8b; }
+.gm-cluster-count.warn { color: #ffc857; }
+
+.gm-cluster-apps { display: flex; flex-direction: column; gap: 4px; }
+
+/* App row cards (replaces large icon cards on home) */
+.gm-app-row {
+  display: flex; align-items: center; gap: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  overflow: hidden;
+  cursor: pointer; appearance: none; color: inherit; text-align: left;
+  background: rgba(3, 10, 20, 0.72);
+  transition: border-color 120ms, background 120ms;
+}
+.gm-app-row:hover {
+  border-color: rgba(112, 226, 255, 0.38);
+  background: rgba(112, 226, 255, 0.07);
+}
+.gm-app-row.crit { border-color: rgba(255, 107, 107, 0.28); }
+.gm-app-row.crit:hover { border-color: rgba(255, 107, 107, 0.52); }
+.gm-app-row.warn { border-color: rgba(255, 200, 87, 0.22); }
+.gm-app-row.warn:hover { border-color: rgba(255, 200, 87, 0.44); }
+
+.gm-app-row-code {
+  display: flex; align-items: center; justify-content: center;
+  width: 42px; min-height: 36px;
+  font-family: var(--swse-font-mono, monospace); font-size: 9px;
+  font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(112, 226, 255, 0.72);
+  background: rgba(112, 226, 255, 0.06);
+  border-right: 1px solid rgba(112, 226, 255, 0.1);
+}
+.gm-app-row.crit .gm-app-row-code { color: #ff8b8b; background: rgba(255, 107, 107, 0.07); border-color: rgba(255, 107, 107, 0.12); }
+.gm-app-row.warn .gm-app-row-code { color: #ffc857; background: rgba(255, 200, 87, 0.07); border-color: rgba(255, 200, 87, 0.12); }
+
+.gm-app-row-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; min-height: 36px; font-size: 12px;
+  color: rgba(112, 226, 255, 0.68);
+}
+.gm-app-row.crit .gm-app-row-icon { color: #ff8b8b; }
+.gm-app-row.warn .gm-app-row-icon { color: #ffc857; }
+
+.gm-app-row-body { flex: 1; min-width: 0; padding: 5px 8px; }
+.gm-app-row-label { font-size: 12px; font-weight: 700; color: #dff8ff; letter-spacing: 0.02em; }
+.gm-app-row-desc  { font-size: 9px; color: rgba(223, 248, 255, 0.45); margin-top: 1px; }
+
+.gm-app-row-badge {
+  flex-shrink: 0; min-width: 22px; padding: 0 5px; height: 22px; margin: 7px;
+  border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--swse-font-mono, monospace); font-size: 10px; font-weight: 800;
+}
+.gm-app-row-badge.crit { background: rgba(255,107,107,.18); border: 1px solid rgba(255,107,107,.38); color: #ffd0d0; }
+.gm-app-row-badge.warn { background: rgba(255,200,87,.16); border: 1px solid rgba(255,200,87,.34); color: #fff3c0; }
+.gm-app-row-badge.info { background: rgba(112,226,255,.12); border: 1px solid rgba(112,226,255,.26); color: #dff8ff; }
+
+@media (max-width: 1100px) {
+  .gm-app-clusters { grid-template-columns: 1fr; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DOCK IMPROVEMENTS
+   Tighter spacing, better status tone propagation.
+   ───────────────────────────────────────────────────────────────────────────── */
+.gm-holopad-command-dock {
+  padding: 6px 10px;
+  gap: 6px;
+  border-bottom: 1px solid rgba(112, 226, 255, 0.12);
+  background: rgba(2, 6, 14, 0.9);
+}
+.gm-holopad-dock-status.crit { border-color: rgba(255, 107, 107, 0.28); }
+.gm-holopad-dock-status.crit .gm-command-eyebrow { color: rgba(255, 139, 139, 0.72); }
+.gm-holopad-dock-status.warn { border-color: rgba(255, 200, 87, 0.24); }
+
+/* Readiness sub-label under the active surface name */
+.gm-dock-readiness-label {
+  font-size: 9px; font-style: italic;
+  color: rgba(223, 248, 255, 0.48);
+}
+.gm-holopad-dock-status.crit .gm-dock-readiness-label { color: #ff8b8b; }
+.gm-holopad-dock-status.warn .gm-dock-readiness-label { color: #ffc857; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BULLETIN: STATE + PRIORITY CHIP COLORS
+   ───────────────────────────────────────────────────────────────────────────── */
+.bulletin-record-card.published { border-color: rgba(125, 255, 178, 0.24); }
+.bulletin-record-card.draft     { opacity: 0.82; }
+.bulletin-record-card.archived  { opacity: 0.52; border-color: rgba(100, 120, 140, 0.16); }
+.bulletin-record-card.breaking  { border-color: rgba(255, 107, 107, 0.42); }
+.bulletin-record-card.urgent    { border-color: rgba(255, 200, 87, 0.38); }
+.bulletin-record-card.pinned    { border-color: rgba(112, 226, 255, 0.38); }
+
+.bulletin-chip.published { background: rgba(125,255,178,.16); color: #7dffb2;  border: 1px solid rgba(125,255,178,.32); }
+.bulletin-chip.draft     { background: rgba(112,226,255,.08); color: rgba(112,226,255,.76); }
+.bulletin-chip.archived  { background: rgba(100,120,140,.14); color: rgba(180,200,220,.56); }
+.bulletin-chip.breaking  { background: rgba(255,107,107,.16); color: #ffd0d0; border: 1px solid rgba(255,107,107,.34); }
+.bulletin-chip.urgent    { background: rgba(255,200,87,.14);  color: #fff3c0; border: 1px solid rgba(255,200,87,.30); }
+.bulletin-chip.pinned    { background: rgba(112,226,255,.12); color: #70e2ff; }
+.bulletin-chip.priority  { font-weight: 800; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   JOB BOARD: REWARD / PENALTY COLORS
+   ───────────────────────────────────────────────────────────────────────────── */
+.job-card-reward,
+.job-reward-amount,
+.job-board-reward-label { color: #7dffb2; font-weight: 700; }
+
+.job-card-penalty,
+.job-penalty-amount { color: #ff8b8b; font-weight: 700; }
+
+.job-board-chip.attention {
+  background: rgba(255, 107, 107, 0.14);
+  color: #ffd0d0;
+  border: 1px solid rgba(255, 107, 107, 0.32);
+}
+.job-board-chip.payout {
+  background: rgba(125, 255, 178, 0.14);
+  color: #7dffb2;
+  border: 1px solid rgba(125, 255, 178, 0.28);
+}
+.job-board-chip.review {
+  background: rgba(255, 200, 87, 0.14);
+  color: #fff3c0;
+  border: 1px solid rgba(255, 200, 87, 0.28);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FACTIONS: SCORE COLORS + RELATIONSHIP BADGES
+   scoreClass values: positive / negative / neutral (from service)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Score inputs in inline editable forms */
+.gm-faction-score.positive input[name="score"],
+.gm-faction-score.positive strong,
+b.positive { color: #7dffb2 !important; }
+
+.gm-faction-score.negative input[name="score"],
+.gm-faction-score.negative strong,
+b.negative { color: #ff8b8b !important; }
+
+.gm-faction-score.neutral input[name="score"],
+.gm-faction-score.neutral strong,
+b.neutral  { color: #ffd166 !important; }
+
+/* Standalone score display chip (added in factions.hbs) */
+.gm-faction-score-chip {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 5px 10px; border-radius: 8px;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  background: rgba(0, 0, 0, 0.28);
+  font-family: var(--swse-font-mono, monospace); text-align: center;
+}
+.gm-faction-score-chip > span {
+  font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(223, 248, 255, 0.46);
+}
+.gm-faction-score-chip > strong { font-size: 20px; line-height: 1.1; }
+.gm-faction-score-chip.positive > strong { color: #7dffb2; text-shadow: 0 0 12px rgba(125,255,178,.28); }
+.gm-faction-score-chip.negative > strong { color: #ff8b8b; text-shadow: 0 0 12px rgba(255,139,139,.28); }
+.gm-faction-score-chip.neutral  > strong { color: #ffd166; text-shadow: 0 0 12px rgba(255,209,102,.28); }
+
+/* Relationship type badges */
+.gm-faction-rel-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px; border-radius: 999px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.gm-faction-rel-badge.ally    { background: rgba(125,255,178,.12); color: #7dffb2; border: 1px solid rgba(125,255,178,.28); }
+.gm-faction-rel-badge.patron  { background: rgba(112,226,255,.1);  color: #70e2ff; border: 1px solid rgba(112,226,255,.24); }
+.gm-faction-rel-badge.neutral { background: rgba(255,209,102,.1);  color: #ffd166; border: 1px solid rgba(255,209,102,.24); }
+.gm-faction-rel-badge.rival   { background: rgba(255,139,139,.1);  color: #ff8b8b; border: 1px solid rgba(255,139,139,.22); }
+.gm-faction-rel-badge.enemy   { background: rgba(255,107,107,.14); color: #ffd0d0; border: 1px solid rgba(255,107,107,.30); }
+.gm-faction-rel-badge.member  { background: rgba(156,182,255,.12); color: #9cb6ff; border: 1px solid rgba(156,182,255,.24); }
+.gm-faction-rel-badge.founded { background: rgba(255,209,102,.14); color: #ffd166; border: 1px solid rgba(255,209,102,.28); }
+.gm-faction-rel-badge.client  { background: rgba(156,182,255,.1);  color: #9cb6ff; border: 1px solid rgba(156,182,255,.2);  }
+.gm-faction-rel-badge.unknown { background: rgba(180,200,220,.08); color: rgba(180,200,220,.52); border: 1px solid rgba(180,200,220,.18); }
+
+/* Faction registry card improvements */
+.gm-faction-registry-card {
+  border-radius: 10px;
+  transition: border-color 120ms;
+}
+.gm-faction-registry-card:has(.positive) { border-color: rgba(125,255,178,.2); }
+.gm-faction-registry-card:has(.negative) { border-color: rgba(255,107,107,.2); }
+
+/* Relationship row inline score display */
+.gm-faction-rel-score {
+  display: flex; flex-direction: column; align-items: center; min-width: 52px;
+  padding: 3px 8px; border-radius: 6px;
+  border: 1px solid rgba(112,226,255,.12); background: rgba(0,0,0,.26);
+  font-family: var(--swse-font-mono, monospace);
+}
+.gm-faction-rel-score span  { font-size: 7px; text-transform: uppercase; letter-spacing: .1em; color: rgba(223,248,255,.42); }
+.gm-faction-rel-score strong{ font-size: 15px; line-height: 1; }
+.gm-faction-rel-score.positive strong { color: #7dffb2; }
+.gm-faction-rel-score.negative strong { color: #ff8b8b; }
+.gm-faction-rel-score.neutral  strong { color: #ffd166; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   STORE: TRANSACTION TABLE CREDIT COLUMNS
+   ───────────────────────────────────────────────────────────────────────────── */
+.gm-store-table td.amount.positive,
+.transactions-table td.amount.positive { color: #7dffb2 !important; font-weight: 700; }
+
+.gm-store-table td.amount.negative,
+.transactions-table td.amount.negative { color: #ff8b8b !important; font-weight: 700; }
+
+.gm-store-table td.amount.zero,
+.transactions-table td.amount.zero     { color: #ffd166 !important; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HEALING: ORGANIC / DROID DISTINCTION
+   ───────────────────────────────────────────────────────────────────────────── */
+.combat-recovery-card.droid {
+  opacity: 0.78;
+  border-color: rgba(112, 226, 255, 0.1) !important;
+}
+
+/* Visual label appended to droid card type */
+.combat-recovery-card.droid .combat-recovery-card-title span::after {
+  content: " · DROID";
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(112, 226, 255, 0.5);
+  font-style: normal;
+}
+
+/* HP bar color by fill level (add these classes in party-board.hbs) */
+.combat-recovery-hpbar span.hp-high  { background: #7dffb2; }
+.combat-recovery-hpbar span.hp-mid   { background: #ffc857; }
+.combat-recovery-hpbar span.hp-low   { background: #ff6b6b; }
+.combat-recovery-hpbar span.hp-empty { background: rgba(255,107,107,.4); width: 0; }
+
+/* Condition tone classes */
+.combat-recovery-stat-row strong.condition-healthy   { color: #7dffb2; }
+.combat-recovery-stat-row strong.condition-wounded   { color: #ffc857; }
+.combat-recovery-stat-row strong.condition-disabled  { color: #ff8b8b; }
+.combat-recovery-stat-row strong.condition-dying     { color: #ff4444; }
+
+/* Chip semantic tones in healing context */
+.combat-recovery-chip.stable   { background: rgba(125,255,178,.12); color: #7dffb2;  border: 1px solid rgba(125,255,178,.26); }
+.combat-recovery-chip.warning  { background: rgba(255,200,87,.12);  color: #ffc857;  border: 1px solid rgba(255,200,87,.26); }
+.combat-recovery-chip.critical { background: rgba(255,107,107,.12); color: #ff8b8b;  border: 1px solid rgba(255,107,107,.26); }
+.combat-recovery-chip.info     { background: rgba(112,226,255,.1);  color: #70e2ff;  border: 1px solid rgba(112,226,255,.22); }
+.combat-recovery-chip.muted    { background: rgba(180,200,220,.07); color: rgba(180,200,220,.5); }
+.combat-recovery-chip.droid    { background: rgba(112,226,255,.07); color: rgba(112,226,255,.6); border: 1px solid rgba(112,226,255,.14); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HOUSE RULES: CATEGORY GROUPING
+   ───────────────────────────────────────────────────────────────────────────── */
+.rule-category {
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(3, 10, 20, 0.62);
+}
+
+.rule-category-header {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 13px;
+  border-bottom: 1px solid rgba(112, 226, 255, 0.1);
+  background: rgba(112, 226, 255, 0.05);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(112, 226, 255, 0.8);
+}
+
+.rule-entry {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; padding: 9px 13px;
+  border-bottom: 1px solid rgba(112, 226, 255, 0.06);
+  transition: background 110ms;
+}
+.rule-entry:last-child { border-bottom: none; }
+.rule-entry:hover { background: rgba(112, 226, 255, 0.035); }
+
+.rule-name  { font-size: 12px; font-weight: 600; color: #dff8ff; }
+.rule-description { font-size: 10px; color: rgba(223, 248, 255, 0.52); margin-top: 2px; line-height: 1.4; }
+
+/* High-impact warning variant */
+.rule-entry.high-impact .rule-description { color: #ffc857; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WORKSPACE: ACTOR TYPE CHIPS
+   ───────────────────────────────────────────────────────────────────────────── */
+.gm-actor-type-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px; border-radius: 999px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.gm-actor-type-chip.character,
+.gm-actor-type-chip.pc     { background: rgba(112,226,255,.09); color: #70e2ff; border: 1px solid rgba(112,226,255,.2); }
+.gm-actor-type-chip.npc    { background: rgba(255,200,87,.09);  color: #ffc857; border: 1px solid rgba(255,200,87,.2); }
+.gm-actor-type-chip.droid  { background: rgba(125,255,178,.09); color: #7dffb2; border: 1px solid rgba(125,255,178,.2); }
+.gm-actor-type-chip.vehicle{ background: rgba(156,182,255,.09); color: #9cb6ff; border: 1px solid rgba(156,182,255,.2); }
+.gm-actor-type-chip.beast  { background: rgba(255,200,87,.09);  color: #ffc857; border: 1px solid rgba(255,200,87,.2); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TRADE: ATOMICITY / FAILED SETTLEMENT VISUAL
+   ───────────────────────────────────────────────────────────────────────────── */
+.trade-diagnostic-block.failed {
+  border-color: rgba(255, 107, 107, 0.34) !important;
+  background: rgba(8, 2, 4, 0.82);
+}
+.trade-diagnostic-block.failed .trade-failure-text { color: #ffd0d0; }
+
+.trade-dossier-row.positive .trade-dossier-value,
+.trade-dossier-row .trade-amount-gain { color: #7dffb2; font-weight: 700; }
+
+.trade-dossier-row.negative .trade-dossier-value,
+.trade-dossier-row .trade-amount-loss { color: #ff8b8b; font-weight: 700; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   APPROVAL HISTORY: DECISION COLORS
+   ───────────────────────────────────────────────────────────────────────────── */
+.gm-approval-history-row.approved { border-left: 3px solid rgba(125,255,178,.5); padding-left: 10px; }
+.gm-approval-history-row.denied   { border-left: 3px solid rgba(255,107,107,.5); padding-left: 10px; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GENERAL DENSITY / LAYOUT IMPROVEMENTS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Tighter page header for all GM surfaces */
+.gm-app-header {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  background: rgba(3, 10, 20, 0.82);
+}
+
+/* Filter bars — always visible on surfaces that have them */
+.gm-surface-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.gm-surface-filter-bar input,
+.gm-surface-filter-bar select {
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(112, 226, 255, 0.18);
+  background: rgba(0, 0, 0, 0.3);
+  color: #dff8ff;
+  font-size: 10px;
+}
+
+/* Improved metrics bar */
+.gm-metrics-bar {
+  display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0;
+}
+.gm-metric {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 6px 10px; border-radius: 8px;
+  border: 1px solid rgba(112, 226, 255, 0.15);
+  background: rgba(3, 10, 20, 0.62);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(223, 248, 255, 0.54);
+}
+.gm-metric strong { display: block; font-size: 16px; color: #70e2ff; line-height: 1; margin-top: 1px; }
+.gm-metric.crit strong  { color: #ff8b8b; }
+.gm-metric.warn strong  { color: #ffc857; }
+.gm-metric.ok   strong  { color: #7dffb2; }
+.gm-metric.muted strong { color: rgba(180, 200, 220, 0.5); }
+.gm-metric.info strong  { color: #70e2ff; }
+
+/* Two-column layout helper */
+.gm-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gm-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media (max-width: 1100px) {
+  .gm-two-col { grid-template-columns: 1fr; }
+  .gm-three-col { grid-template-columns: 1fr 1fr; }
+}
