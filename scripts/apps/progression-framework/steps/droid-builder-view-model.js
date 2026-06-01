@@ -747,16 +747,19 @@ export class DroidBuilderViewModelAdapter {
   }
 
   static #buildSelectedDetail(availableSystemsFlat, installedGroups, selectedComponentKey = null) {
-    const selected = selectedComponentKey
-      ? availableSystemsFlat.find(item => item.uid === selectedComponentKey)
-      : null;
-    const firstInstallable = availableSystemsFlat.find(item => item.canInstall) || availableSystemsFlat[0] || null;
-    const item = selected || firstInstallable;
+    if (!selectedComponentKey) {
+      return {
+        isEmpty: true,
+        message: 'Select a droid component in the middle rail to inspect cost, compatibility, and install/remove controls.',
+      };
+    }
+
+    const item = availableSystemsFlat.find(item => item.uid === selectedComponentKey) || null;
 
     if (!item) {
       return {
         isEmpty: true,
-        message: 'Select a droid component to inspect installation details.',
+        message: 'The selected component is no longer available for the current chassis. Select another component to continue.',
       };
     }
 
@@ -774,8 +777,11 @@ export class DroidBuilderViewModelAdapter {
     const warnings = [];
 
     for (const requirement of requiredChecklist || []) {
-      if (!requirement.complete && !errors.includes(requirement.message)) {
-        errors.push(requirement.message);
+      if (!requirement.complete) {
+        const message = requirement.message && requirement.message !== '0 installed'
+          ? requirement.message
+          : `${requirement.label} is required.`;
+        if (!errors.includes(message)) errors.push(message);
       }
     }
 

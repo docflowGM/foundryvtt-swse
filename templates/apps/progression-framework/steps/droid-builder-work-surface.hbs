@@ -1,7 +1,7 @@
 {{!-- Droid Chassis Builder — Garage-style construction work surface --}}
 {{!-- Phase 5: right-rail component selection/action flow using builderVm while preserving existing state contracts. --}}
 
-{{#if builderVm}}
+{{#if builderVm.chassis}}
 <div class="prog-droid-builder prog-droid-builder--garage swse-droid-builder-surface swse-ui-shell" data-builder-mode="{{builderVm.contextMode}}">
   <div class="prog-droid-builder__hud">
     <div class="prog-droid-builder__hud-tag"><span class="prog-droid-builder__hud-dot"></span>GARAGE CONSTRUCTION MODE</div>
@@ -131,7 +131,7 @@
     {{!-- MIDDLE RAIL: Available systems browser --}}
     <main class="prog-droid-builder__middle-rail" aria-label="Available droid systems">
       <div class="prog-droid-builder__filter-bar">
-        <input class="prog-droid-builder__search" type="search" placeholder="Search components…" aria-label="Search droid systems" disabled>
+        <input class="prog-droid-builder__search" type="search" placeholder="Search components…" aria-label="Search droid systems" data-action="filter-systems">
         <div class="prog-droid-builder__filter-tabs" role="tablist" aria-label="Droid system categories">
           {{#each builderVm.availableGroups}}
             <button class="prog-droid-builder__filter-tab prog-droid-builder__tab {{#if this.isActive}}prog-droid-builder__tab--active{{/if}}"
@@ -309,11 +309,15 @@
         {{#if buildComplete}}
           <div class="prog-droid-builder__chip prog-droid-builder__chip--positive">Droid chassis configuration complete</div>
         {{else}}
-          <ul class="prog-droid-builder__required-list">
-            {{#each buildIssues}}
-              <li class="prog-droid-builder__check-item prog-droid-builder__check-item--missing"><span>{{this}}</span></li>
-            {{/each}}
-          </ul>
+          {{#if buildIssues}}
+            <ul class="prog-droid-builder__required-list">
+              {{#each buildIssues}}
+                <li class="prog-droid-builder__check-item prog-droid-builder__check-item--missing"><span>{{this}}</span></li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p class="prog-droid-builder__detail-description">{{builderVm.validation.summary}}</p>
+          {{/if}}
         {{/if}}
       </section>
     </aside>

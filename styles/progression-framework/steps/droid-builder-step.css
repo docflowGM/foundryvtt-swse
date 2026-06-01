@@ -1831,3 +1831,41 @@
   width: 100%;
   justify-content: center;
 }
+
+
+/* ============================================
+   PHASE 6: CHARGEN INTEGRATION + VALIDATION POLISH
+   ============================================ */
+
+.progression-shell .prog-droid-builder__filter-empty {
+  margin: 10px 0 0;
+  padding: 14px;
+  border: 1px dashed color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 18%, transparent);
+  border-radius: 10px;
+  color: var(--droid-bay-muted, rgba(223, 248, 255, 0.52));
+  font-size: 11px;
+  text-align: center;
+  background: color-mix(in oklch, black 26%, transparent);
+}
+
+.progression-shell .prog-droid-builder__component-card--filtered-out {
+  display: none !important;
+}
+
+.progression-shell .prog-droid-builder__search:not(:disabled) {
+  border-color: rgba(112, 226, 255, 0.28);
+  background:
+    linear-gradient(180deg, rgba(112, 226, 255, 0.06), rgba(0, 0, 0, 0.26)),
+    rgba(2, 10, 20, 0.88);
+  color: var(--prog-text-heading, #eafcff);
+}
+
+.progression-shell .prog-droid-builder__search:not(:disabled):focus {
+  outline: none;
+  border-color: rgba(112, 226, 255, 0.58);
+  box-shadow: 0 0 0 1px rgba(112, 226, 255, 0.16), 0 0 14px rgba(112, 226, 255, 0.12);
+}
+
+.progression-shell .prog-droid-builder__detail-empty {
+  min-height: 140px;
+}

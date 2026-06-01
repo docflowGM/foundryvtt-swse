@@ -234,7 +234,22 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   async getStepData(context) {
     if (!this._droidState) {
-      return {};
+      const builderVm = DroidBuilderViewModelAdapter.build({
+        droidState: null,
+        contextMode: 'chargenDraft',
+      });
+      return {
+        droidState: null,
+        presentation: {},
+        builderVm,
+        readiness: builderVm.validation,
+        buildComplete: false,
+        buildIssues: builderVm.validation.errors || [],
+        hasSuggestions: false,
+        suggestedSystemIds: [],
+        suggestedSystems: [],
+        confidenceMap: {},
+      };
     }
 
     // PHASE D: Flatten PHASE D suggestions (organized by category) into array for display
@@ -304,6 +319,14 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: Support deferred state (allows progression without completing build)
    */
   getSelection() {
+    if (!this._droidState) {
+      return {
+        selected: [],
+        count: 0,
+        isComplete: false,
+      };
+    }
+
     // If deferred, treat as complete to allow progression
     if (this._droidState?.buildState?.isDeferred) {
       return {
@@ -327,6 +350,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: No blocking issues when deferred
    */
   getBlockingIssues() {
+    if (!this._droidState) {
+      return ['Droid construction state is not available. Return to the prior droid setup step and try again.'];
+    }
+
     // If deferred, don't block progression
     if (this._droidState?.buildState?.isDeferred) {
       return [];
@@ -454,8 +481,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: Deferred builds skip validation (handled by getBlockingIssues)
    */
   _validateDroidBuild() {
-    const sys = this._droidState.droidSystems;
-    const credits = this._droidState.droidCredits;
+    if (!this._droidState) {
+      return {
+        isValid: false,
+        issues: ['Droid construction state is not available.'],
+        summary: 'Droid construction state unavailable.',
+        isDeferred: false,
+      };
+    }
+
+    const sys = this._droidState.droidSystems || {};
+    const credits = this._droidState.droidCredits || { remaining: 0 };
     const isDeferred = this._droidState?.buildState?.isDeferred || false;
     const issues = [];
 
@@ -483,12 +519,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Check appendages (must have at least one)
-    if (!sys.appendages || sys.appendages.length === 0) {
+    if (!Array.isArray(sys.appendages) || sys.appendages.length === 0) {
       issues.push('At least one appendage required');
     }
 
     // Check budget
-    if (credits.remaining < 0) {
+    if (Number(credits.remaining || 0) < 0) {
       issues.push('Over budget - remove systems to proceed');
     }
 
@@ -1044,6 +1080,30 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Keep the selected/summary rail aligned with the in-progress droid draft.
+   */
+  renderSummaryPanel(context = {}) {
+    if (!this._droidState) return null;
+
+    const readiness = this._validateDroidBuild();
+    const builderVm = DroidBuilderViewModelAdapter.build({
+      droidState: this._droidState,
+      readiness,
+      contextMode: 'chargenDraft',
+      selectedComponentKey: this._selectedComponentKey,
+    });
+
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/droid-builder-summary.hbs',
+      data: {
+        actor: context?.shell?.actor || context?.actor || null,
+        builderVm,
+        readiness,
+      },
+    };
+  }
+
+  /**
    * Return work surface rendering spec.
    */
   renderWorkSurface(stepData) {
@@ -1114,11 +1174,48 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   validate() {
     const readiness = this._validateDroidBuild();
+    const warnings = this.getWarnings();
     return {
       isValid: readiness.isValid,
       errors: readiness.isValid ? [] : readiness.issues,
-      warnings: []
+      warnings,
     };
+  }
+
+  /**
+   * Return non-blocking warnings for the shell footer/status model.
+   */
+  getWarnings() {
+    if (!this._droidState || this._droidState?.buildState?.isDeferred) return [];
+    const warnings = [];
+    const credits = this._droidState.droidCredits || {};
+    const remaining = Number(credits.remaining || 0);
+    if (remaining === 0) warnings.push('Construction budget is fully allocated.');
+    return warnings;
+  }
+
+  /**
+   * Explain exactly why the shell cannot advance from this step.
+   */
+  getBlockerExplanation() {
+    const issues = this.getBlockingIssues();
+    if (!issues.length) return null;
+    return issues[0];
+  }
+
+  /**
+   * Provide footer pick/status counts for the progression shell.
+   */
+  getRemainingPicks() {
+    if (this._droidState?.buildState?.isDeferred) {
+      return [{ label: 'Build deferred', count: 0, isWarning: true }];
+    }
+    const readiness = this._validateDroidBuild();
+    return [{
+      label: readiness.isValid ? 'Build ready' : 'Build issues',
+      count: readiness.isValid ? 0 : readiness.issues.length,
+      isWarning: !readiness.isValid,
+    }];
   }
 
   /**
@@ -1167,9 +1264,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     return {
-      nextLabel: readiness.isValid ? 'Next: Attributes' : 'Complete Build',
-      confirmLabel: 'Finalize',
+      nextLabel: readiness.isValid ? 'Next: Attributes' : 'Resolve Droid Build',
+      confirmLabel: readiness.isValid ? 'Finalize Build' : 'Build Incomplete',
       isBlocked: !readiness.isValid,
+      statusText: readiness.summary,
     };
   }
 
@@ -1258,6 +1356,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         });
       });
 
+      // Search/filter within the component browser without triggering a shell rerender.
+      const searchInput = workSurfaceEl.querySelector('[data-action="filter-systems"]');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => this._onFilterSystems(e, workSurfaceEl));
+      }
+
       // Install system buttons. Keep purchase-system as a backwards-compatible alias.
       const purchaseButtons = workSurfaceEl.querySelectorAll('[data-action="purchase-system"], [data-action="install-system"]');
       purchaseButtons.forEach(btn => {
@@ -1319,6 +1423,43 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     swseLogger.debug('[DroidBuilderStep] Deferred droid build committed before reconciliation', deferredSelection);
   }
 
+  _rerenderShell(shell, reason = 'droid-builder-update') {
+    if (typeof shell?.requestRender === 'function') {
+      return shell.requestRender({ preserveScroll: true, reason });
+    }
+    if (typeof shell?.render === 'function') {
+      return shell.render({ preserveScroll: true });
+    }
+    return null;
+  }
+
+  _onFilterSystems(event, workSurfaceEl) {
+    const query = String(event.currentTarget?.value || '').trim().toLowerCase();
+    const panels = workSurfaceEl.querySelectorAll('.prog-droid-builder__panel');
+
+    panels.forEach(panel => {
+      let visibleCount = 0;
+      panel.querySelectorAll('.prog-droid-builder__component-card').forEach(card => {
+        const haystack = String(card.textContent || '').toLowerCase();
+        const visible = !query || haystack.includes(query);
+        card.classList.toggle('prog-droid-builder__component-card--filtered-out', !visible);
+        card.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+      panel.classList.toggle('prog-droid-builder__panel--filtered-empty', visibleCount === 0);
+      let empty = panel.querySelector('[data-filter-empty]');
+      if (!empty && visibleCount === 0) {
+        empty = document.createElement('div');
+        empty.dataset.filterEmpty = 'true';
+        empty.className = 'prog-droid-builder__filter-empty';
+        empty.textContent = 'No components match the current search.';
+        panel.appendChild(empty);
+      } else if (empty) {
+        empty.hidden = visibleCount !== 0;
+      }
+    });
+  }
+
   /**
    * Handle chassis degree changes from the builder strip.
    */
@@ -1330,7 +1471,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       ui.notifications.warn('Unable to change droid degree for this chassis.');
       return;
     }
-    shell?.render?.();
+    this._rerenderShell(shell, 'droid-builder-degree');
   }
 
   /**
@@ -1344,7 +1485,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       ui.notifications.warn('Unable to change droid size for this chassis.');
       return;
     }
-    shell?.render?.();
+    this._rerenderShell(shell, 'droid-builder-size');
   }
 
   /**
@@ -1406,7 +1547,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (!key) return;
 
     this._selectedComponentKey = key;
-    shell?.render?.();
+    this._rerenderShell(shell, 'droid-builder-select-component');
   }
 
   _componentKeyFromDataset(dataset = {}) {
@@ -1432,7 +1573,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (success) {
       this._selectedComponentKey = this._componentKeyFromDataset({ category, subcategory, id });
       // Trigger shell re-render to reflect state changes
-      shell?.render?.();
+      this._rerenderShell(shell, 'droid-builder-install-system');
       ui.notifications.info(`${id} system installed`);
     } else {
       ui.notifications.warn('Unable to install system - check credits and requirements');
@@ -1454,7 +1595,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (success) {
       this._selectedComponentKey = this._componentKeyFromDataset({ category, subcategory, id });
       // Trigger shell re-render to reflect state changes
-      shell?.render?.();
+      this._rerenderShell(shell, 'droid-builder-remove-system');
       ui.notifications.info(`${id} system removed`);
     }
   }
@@ -1473,6 +1614,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: Include buildState to track deferred/provisional/finalized status
    */
   async onItemCommitted(itemId, shell) {
+    if (!this._droidState) {
+      swseLogger.warn('[DroidBuilderStep.onItemCommitted] No droid state available to commit');
+      return;
+    }
+
+    const readiness = this._validateDroidBuild();
+    if (!readiness.isValid && !this._droidState?.buildState?.isDeferred) {
+      ui.notifications?.warn?.(readiness.issues?.[0] || 'Complete the droid build before continuing.');
+      return;
+    }
+
     // Store committed droid package in shell's committed selections map
     const selection = {
       isDroid: true,
@@ -1507,7 +1659,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Otherwise, automatically commit droid build when exiting this step
-    if (this._validateDroidBuild().isValid && !shell.committedSelections.has(this.descriptor.stepId)) {
+    const alreadyCommitted = !!shell?.committedSelections?.has?.(this.descriptor.stepId);
+    if (this._validateDroidBuild().isValid && !alreadyCommitted) {
       await this.onItemCommitted(null, shell);
     }
   }
