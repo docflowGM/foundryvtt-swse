@@ -1,4 +1,9 @@
 // scripts/sheets/v2/droid-sheet.js
+// @deprecated Droid actor sheets now use SWSEV2CharacterSheet and the actor
+// holopad shell. This droid-only sheet stack is intentionally orphaned and
+// must not be registered for actor type "droid". Reuse data helpers from this
+// folder only when migrating read-only Droid Systems content into the actor
+// sheet.
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 

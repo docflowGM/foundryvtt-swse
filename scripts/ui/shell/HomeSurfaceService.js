@@ -112,6 +112,35 @@ function isVehicleActor(actor) {
   return actor?.type === 'vehicle';
 }
 
+function isDroidActor(actor) {
+  return actor?.type === 'droid' || actor?.system?.isDroid === true;
+}
+
+function droidDegreeLabel(actor) {
+  const system = actor?.system ?? {};
+  const degree = system.droidDegree
+    ?? system.droid?.degree
+    ?? system.droidSystems?.degree
+    ?? system.droidSystems?.droidDegree
+    ?? system.droidSystems?.classification
+    ?? null;
+  if (!degree) return 'Droid Chassis';
+  return String(degree).replace(/[-_]+/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function droidSizeLabel(actor) {
+  const system = actor?.system ?? {};
+  const size = system.droidSize
+    ?? system.droid?.size
+    ?? system.droidSystems?.size
+    ?? system.droidSystems?.droidSize
+    ?? system.size
+    ?? null;
+  if (!size) return null;
+  return String(size).replace(/[-_]+/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+}
+
+
 function vehicleSystemLabel(actor) {
   const system = actor?.system ?? {};
   return String(
@@ -1085,8 +1114,12 @@ export class HomeSurfaceService {
     }
 
     const classItem = actor.items?.find(item => item.type === 'class');
+    const isDroid = isDroidActor(actor);
     const classDisplay = classItem?.name || 'No Class';
-    const species = actor.system?.species || 'No Species';
+    const droidSize = isDroid ? droidSizeLabel(actor) : null;
+    const species = isDroid
+      ? [droidDegreeLabel(actor), droidSize].filter(Boolean).join(' · ')
+      : (actor.system?.species || 'No Species');
     const affiliation = actor.system?.affiliation || 'Independent';
 
     const hpCurrent = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, 0));

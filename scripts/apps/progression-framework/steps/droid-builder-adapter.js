@@ -18,8 +18,11 @@ export class DroidBuilderAdapter {
   /**
    * Determine if character should use droid builder.
    */
-  static shouldUseDroidBuilder(characterData) {
-    return characterData?.isDroid === true;
+  static shouldUseDroidBuilder(characterData, actor = null) {
+    return actor?.type === 'droid'
+      || actor?.system?.isDroid === true
+      || characterData?.isDroid === true
+      || characterData?.system?.isDroid === true;
   }
 
   /**

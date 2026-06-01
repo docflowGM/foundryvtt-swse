@@ -50,7 +50,7 @@ This document describes the organization of the SWSE (Star Wars Saga Edition) Fo
 ### Legacy Components (Disabled)
 - **swse-actor.js** - Legacy character actor (v1, disabled, marked with @mutation-exception)
 - **swse-actor-sheet.js** - Legacy character sheet (v1, removed from registration)
-- **swse-droid.js** - Droid sheet (v1)
+- **swse-droid.js** - Deprecated/orphaned droid sheet shim; droid actors use the v2 actor shell
 - **swse-vehicle.js** - Vehicle sheet (v1)
 
 ### Utilities and Helpers

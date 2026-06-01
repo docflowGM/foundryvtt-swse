@@ -102,7 +102,8 @@ export const SWSE_TEMPLATES = [
   // V2 Actor Sheets
   // ==============================
   'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
+  // Deprecated/orphaned droid-only sheet shell templates are intentionally
+  // not preloaded. Droid actors now open through SWSEV2CharacterSheet.
   'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
 

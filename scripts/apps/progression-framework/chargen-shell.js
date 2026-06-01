@@ -25,6 +25,11 @@ import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
 
+function isDroidActorForChargen(actor) {
+  return actor?.type === 'droid'
+    || (actor?.type === 'character' && actor?.system?.isDroid === true);
+}
+
 // Phase 2: Legacy imports kept for backward compat during transition
 // These are now resolved via NODE_PLUGIN_MAP in node-descriptor-mapper.js
 import { IntroStep } from './steps/intro-step.js';
@@ -52,14 +57,17 @@ export class ChargenShell extends ProgressionShell {
    * @returns {string}
    */
   _getProgressionSubtype(mode, options) {
-    if (options.subtype) return options.subtype;
+    if (!this.actor) return options.subtype || 'actor';
 
-    if (!this.actor) return 'actor';
-
-    // Phase 1: Detect droid subtype based on actor system data
-    if (DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {})) {
+    // Droid player actors always use the droid chargen spine. Their chassis
+    // builder is the species-equivalent identity step, so they must never fall
+    // through to the biological Species step because of a stale/implicit actor
+    // subtype.
+    if (options.subtype === 'droid' || isDroidActorForChargen(this.actor) || DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {}, this.actor)) {
       return 'droid';
     }
+
+    if (options.subtype) return options.subtype;
 
     if (this.actor.type === 'npc') {
       try {

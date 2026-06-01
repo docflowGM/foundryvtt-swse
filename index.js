@@ -4,10 +4,8 @@
 // ============================================
 
 import { SWSE } from "./scripts/core/config.js";
-import { SWSEDroidSheet } from "./scripts/swse-droid.js";
 import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
-import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
 import { SWSEV2NpcSheet } from "./scripts/sheets/v2/npc-sheet.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
@@ -81,9 +79,12 @@ Hooks.once("init", async () => {
     makeDefault: true
   });
 
-  Actors.registerSheet("swse", SWSEV2DroidSheet, {
+  // Droid actors intentionally use the same actor holopad/shell as characters.
+  // Droid-specific differences are layered inside the character sheet context/templates;
+  // the old droid-only shell is deprecated and no longer registered.
+  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
     types: ["droid"],
-    label: "SWSE Droid Sheet v2",
+    label: "SWSE Droid Actor Sheet v2 (Actor Shell)",
     makeDefault: true
   });
 
@@ -91,12 +92,6 @@ Hooks.once("init", async () => {
     types: ["npc"],
     label: "SWSE NPC Sheet v2",
     makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEDroidSheet, {
-    types: ["droid"],
-    label: "SWSE Droid Sheet (Legacy)",
-    makeDefault: false
   });
 
   Actors.registerSheet("swse", SWSEV2VehicleSheet, {

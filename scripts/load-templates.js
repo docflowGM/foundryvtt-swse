@@ -102,20 +102,8 @@ export const SWSE_TEMPLATES = [
   // V2 Actor Sheets
   // ==============================
   'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/title-strip.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/header-block.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/resource-strip.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/tabs-bar.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/frame/sidebar.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/overview-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/abilities-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/skills-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/combat-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/talents-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/gear-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/systems-tab.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/tabs/biography-tab.hbs',
+  // Deprecated/orphaned droid-only sheet shell templates are intentionally
+  // not preloaded. Droid actors now open through SWSEV2CharacterSheet.
   'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
 

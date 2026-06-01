@@ -38,6 +38,13 @@ import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel } from '../..
 import { buildLevelUpEntitlementManifest } from '../../../engine/progression/utils/levelup-entitlement-manifest.js';
 import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 
+function isDroidActorForProgression(actor, progressionSession = null) {
+  return actor?.type === 'droid'
+    || actor?.system?.isDroid === true
+    || progressionSession?.subtype === 'droid'
+    || progressionSession?.droidContext?.isDroid === true;
+}
+
 export class ActiveStepComputer {
   /**
    * Compute the active step list for an actor in a given mode.
@@ -171,6 +178,12 @@ export class ActiveStepComputer {
   async _evaluateStepApplicability(node, actor, mode, progressionSession) {
     try {
       switch (node.nodeId) {
+        // Droid construction owns droid identity. Biological Species is never
+        // actionable for droid actors, even if an old session accidentally
+        // labels them with the generic actor subtype.
+        case 'species':
+          return !isDroidActorForProgression(actor, progressionSession);
+
         // Ability increases are level-event work in level-up, not an every-level chargen carryover.
         case 'attribute':
           return this._hasAttributeIncreaseWork(actor, progressionSession, mode);
@@ -467,7 +480,7 @@ export class ActiveStepComputer {
 
 
   _hasDroidBuilderWork(actor, progressionSession) {
-    if (progressionSession?.subtype === 'droid' || actor?.type === 'droid' || actor?.system?.isDroid) {
+    if (isDroidActorForProgression(actor, progressionSession)) {
       return true;
     }
     const context = progressionSession?.draftSelections?.pendingSpeciesContext || null;

@@ -1,4 +1,7 @@
 // FILE: scripts/swse-droid.js
+// @deprecated Droid actors no longer use a droid-specific sheet shell. The
+// default droid actor sheet is SWSEV2CharacterSheet registered for actor type
+// "droid" in index.js. This legacy AppV1 shim is intentionally not registered.
 // ============================================
 import { SWSEActorSheet } from "./swse-actor.js";
 
@@ -6,7 +9,7 @@ export class SWSEDroidSheet extends SWSEActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "droid", "swse-v2-sheet", "holo-theme"],
-      template: "systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs"
+      template: "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs"
     });
   }
 

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWSE — Shipyard Builder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   SWSE Shipyard Builder — Store Construction Mode
+   Visual language: customization-bay.css token system
+   Mirrors Droid Chassis Builder three-rail grammar
+   Data: stock-ships.json + vehicle-modifications/*.json
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  --bg:        oklch(0.09 0.04 278);
+  --panel:     oklch(0.13 0.05 278);
+  --text:      #d8f7ff;
+  --muted:     #8fb8c5;
+  --faint:     color-mix(in oklch,#8fb8c5 55%,transparent);
+  --accent:    #7ee7ff;
+  --alt:       #ff71d9;
+  --border:    color-mix(in oklch,#7ee7ff 32%,transparent);
+  --border-s:  color-mix(in oklch,#7ee7ff 16%,transparent);
+  --glow:      0 0 18px color-mix(in oklch,#7ee7ff 26%,transparent);
+  --pos:       #65e6a5;
+  --neu:       #ffc857;
+  --neg:       #ff6b6b;
+  /* category tokens (from customization-bay.css) */
+  --cat-hull:      oklch(0.74 0.12 260);
+  --cat-movement:  oklch(0.80 0.18 60);
+  --cat-hyperdrive:oklch(0.78 0.18 295);
+  --cat-defense:   oklch(0.82 0.14 200);
+  --cat-shields:   oklch(0.82 0.14 200);
+  --cat-weapons:   oklch(0.74 0.16 30);
+  --cat-accessory: oklch(0.75 0.10 90);
+  --cat-crew:      oklch(0.80 0.12 160);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:ui-monospace,'Cascadia Code',monospace;font-size:12px;color:var(--text);
+  background:var(--bg);display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,color-mix(in oklch,white 4%,transparent) 3px 4px);
+  mix-blend-mode:screen;opacity:.3}
+
+.app{display:flex;flex-direction:column;height:100vh;
+  background:radial-gradient(ellipse at 18% 0%,color-mix(in oklch,var(--alt) 14%,transparent),transparent 44%),
+    radial-gradient(ellipse at 84% 100%,color-mix(in oklch,var(--accent) 16%,transparent),transparent 40%),
+    var(--bg)}
+
+/* ── HEADER ── */
+.hdr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+  padding:8px 16px;background:color-mix(in oklch,black 50%,transparent);
+  border-bottom:1px solid var(--border-s);flex-shrink:0;z-index:10}
+.hdr-id{display:flex;align-items:center;gap:10px}
+.glyph{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:20px;color:var(--accent);border:1px solid var(--border);
+  background:color-mix(in oklch,black 55%,transparent);
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  box-shadow:var(--glow);flex-shrink:0}
+.hdr-title{font-size:15px;letter-spacing:.18em;text-transform:uppercase}
+.hdr-sub{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+/* config strip */
+.cfg{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cfg-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.cfg-val{font-size:11px;letter-spacing:.1em;color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;border:1px solid currentColor;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.chip-none{color:var(--muted);border-color:var(--border-s)}
+.chip-valid{color:var(--pos);background:color-mix(in oklch,var(--pos) 10%,transparent)}
+.chip-warn{color:var(--neu);background:color-mix(in oklch,var(--neu) 10%,transparent)}
+.chip-bad{color:var(--neg);background:color-mix(in oklch,var(--neg) 10%,transparent)}
+
+/* EP gauge */
+.ep-wrap{display:flex;flex-direction:column;gap:2px;min-width:140px}
+.ep-bar{height:7px;background:color-mix(in oklch,black 50%,transparent);border:1px solid var(--border-s);overflow:hidden}
+.ep-fill{height:100%;transition:width .3s,background .3s}
+.ep-fill.ok{background:linear-gradient(90deg,var(--pos),var(--accent))}
+.ep-fill.warn{background:var(--neu)}.ep-fill.full{background:var(--neg)}
+.ep-meta{display:flex;justify-content:space-between;font-size:8px;color:var(--faint);letter-spacing:.12em;text-transform:uppercase}
+
+/* credits strip */
+.credits-strip{display:flex;align-items:center;gap:14px}
+.c-item{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.c-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.c-val{font-size:13px;font-weight:700;color:var(--text)}
+.c-val.pos{color:var(--pos)}.c-val.neu{color:var(--neu)}.c-val.neg{color:var(--neg)}
+
+/* ── THREE-RAIL ── */
+.workgrid{display:grid;grid-template-columns:230px minmax(0,1fr) 300px;flex:1;min-height:0;overflow:hidden}
+
+/* shared rail */
+.left-rail,.right-rail{display:flex;flex-direction:column;gap:8px;padding:10px;overflow-y:auto}
+.left-rail{border-right:1px solid var(--border-s);background:color-mix(in oklch,black 24%,transparent)}
+.right-rail{border-left:1px solid var(--border-s);background:color-mix(in oklch,black 24%,transparent)}
+.mid-rail{display:flex;flex-direction:column;overflow-y:auto}
+.left-rail::-webkit-scrollbar,.mid-rail::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:3px}
+.left-rail::-webkit-scrollbar-thumb,.mid-rail::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:var(--border-s)}
+
+/* panel */
+.panel{background:color-mix(in oklch,black 38%,transparent);border:1px solid var(--border-s);padding:9px}
+.panel-hd{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:6px;margin-bottom:6px;border-bottom:1px dashed var(--border-s);
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.panel-hd strong{color:var(--text);font-size:11px}
+
+/* stat grid */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;font-size:9px;padding:2px 4px;
+  background:color-mix(in oklch,black 28%,transparent);border:1px solid transparent}
+.stat-lbl{color:var(--muted)}.stat-val{color:var(--text);font-weight:600}
+.stat-row.wide{grid-column:1/-1}
+
+/* installed mods list */
+.mod-group-lbl{font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--alt);margin-bottom:3px}
+.mod-item{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;
+  background:color-mix(in oklch,black 44%,transparent);border:1px solid var(--border-s);
+  border-left:2px solid var(--accent);cursor:pointer;transition:background .14s}
+.mod-item:hover{background:color-mix(in oklch,var(--accent) 8%,transparent)}
+.mod-item.cat-movement{border-left-color:var(--cat-movement)}
+.mod-item.cat-defense{border-left-color:var(--cat-defense)}
+.mod-item.cat-weapon{border-left-color:var(--cat-weapons)}
+.mod-item.cat-accessory{border-left-color:var(--cat-accessory)}
+.mod-name{flex:1;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-ep{font-size:8px;color:var(--muted);white-space:nowrap}
+.mod-cost{font-size:9px;color:var(--muted);white-space:nowrap}
+.mod-rm{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
+  background:none;border:1px solid color-mix(in oklch,var(--neg) 40%,transparent);color:var(--neg);
+  cursor:pointer;font-size:7px;transition:background .14s;flex-shrink:0}
+.mod-rm:hover{background:color-mix(in oklch,var(--neg) 18%,transparent)}
+.empty-slot{padding:4px 6px;font-size:8px;color:var(--faint);
+  border:1px dashed color-mix(in oklch,var(--accent) 14%,transparent);
+  letter-spacing:.1em;text-transform:uppercase;text-align:center;margin-bottom:2px}
+
+/* budget rows */
+.brows{display:flex;flex-direction:column;gap:2px}
+.brow{display:flex;justify-content:space-between;font-size:9px;padding:2px 0;
+  border-top:1px dashed color-mix(in oklch,var(--accent) 8%,transparent);color:var(--muted)}
+.brow strong{color:var(--text);font-size:11px}
+.brow strong.pos{color:var(--pos)}.brow strong.neu{color:var(--neu)}.brow strong.neg{color:var(--neg)}
+
+/* checklist */
+.checklist{display:flex;flex-direction:column;gap:3px}
+.ck-item{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted)}
+.ck-icon{width:12px;font-size:10px}
+.ck-done{color:var(--pos)}.ck-miss{color:var(--neg)}.ck-opt{color:var(--faint)}
+
+/* warnings */
+.warn-item{display:flex;align-items:baseline;gap:5px;font-size:9px;padding:3px 0;
+  border-top:1px dashed color-mix(in oklch,var(--border) 30%,transparent)}
+.w-neg{color:var(--neg)}.w-warn{color:var(--neu)}
+
+/* ── MIDDLE RAIL ── */
+/* Phase A: frame selection */
+.frame-select-wrap{padding:10px 12px;display:flex;flex-direction:column;gap:12px}
+.phase-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  padding-bottom:4px;border-bottom:1px dashed var(--border-s);display:flex;align-items:center;gap:7px}
+.phase-step{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
+  font-size:9px;border:1px solid var(--accent);color:var(--accent);
+  clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.frame-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px}
+
+.frame-card{--cc:var(--cat-hull);display:flex;flex-direction:column;gap:5px;padding:9px;
+  background:color-mix(in oklch,black 45%,transparent);border:1px solid var(--border-s);
+  border-left:3px solid var(--cc);cursor:pointer;user-select:none;
+  transition:background .14s,border-color .14s,box-shadow .14s}
+.frame-card:hover{background:color-mix(in oklch,var(--cc) 8%,transparent);border-color:color-mix(in oklch,var(--cc) 50%,transparent)}
+.frame-card.selected{background:color-mix(in oklch,var(--cc) 14%,transparent);border-color:color-mix(in oklch,var(--cc) 70%,transparent);box-shadow:0 0 14px color-mix(in oklch,var(--cc) 22%,transparent)}
+.frame-card--starfighter{--cc:oklch(0.78 0.18 295)}
+.frame-card--transport{--cc:oklch(0.78 0.13 175)}
+.frame-card--frigate{--cc:oklch(0.74 0.16 30)}
+.frame-card--colossal{--cc:oklch(0.74 0.12 260)}
+.frame-name{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text)}
+.frame-size{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--cc);margin-bottom:2px}
+.frame-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:3px}
+.fs{font-size:8px;color:var(--muted)}.fs strong{color:var(--text)}
+.frame-foot{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);
+  padding-top:4px;border-top:1px dashed color-mix(in oklch,var(--cc) 18%,transparent);letter-spacing:.08em}
+.frame-cost{color:var(--cc)}
+.frame-ep{color:var(--faint)}
+
+/* browser bar */
+.browser-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:8px 12px;background:color-mix(in oklch,oklch(0.09 0.04 278) 95%,transparent);
+  border-bottom:1px solid var(--border-s);backdrop-filter:blur(8px)}
+.search{flex:1;min-width:140px;background:color-mix(in oklch,black 50%,transparent);
+  color:var(--text);border:1px solid var(--border-s);padding:5px 8px;font-family:inherit;font-size:10px}
+.search:focus{outline:1px solid var(--accent);border-color:var(--accent)}
+.search::placeholder{color:var(--faint)}
+.ftabs{display:flex;gap:3px;flex-wrap:wrap}
+.ftab{padding:4px 9px;font-family:inherit;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);background:color-mix(in oklch,black 44%,transparent);
+  border:1px solid var(--border-s);cursor:pointer;
+  clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);transition:color .14s,background .14s}
+.ftab:hover{color:var(--accent);background:color-mix(in oklch,var(--accent) 10%,transparent)}
+.ftab.on{color:var(--accent);background:color-mix(in oklch,var(--accent) 16%,transparent);
+  border-color:color-mix(in oklch,var(--accent) 55%,transparent)}
+.toggle-btn{padding:4px 9px;font-family:inherit;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);background:color-mix(in oklch,black 44%,transparent);
+  border:1px solid var(--border-s);cursor:pointer;
+  clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);user-select:none;transition:color .14s,background .14s}
+.toggle-btn.on{color:var(--neu);background:color-mix(in oklch,var(--neu) 12%,transparent);
+  border-color:color-mix(in oklch,var(--neu) 38%,transparent)}
+
+/* system cards */
+.sys-groups{padding:10px 12px;display:flex;flex-direction:column;gap:14px}
+.sys-group{display:flex;flex-direction:column;gap:7px}
+.grp-lbl{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  padding-bottom:3px;border-bottom:1px dashed var(--border-s)}
+.cat-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.grp-count{font-size:7px;color:var(--faint);margin-left:auto}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px}
+
+.scard{--cc:var(--accent);display:flex;flex-direction:column;gap:4px;padding:9px;
+  background:color-mix(in oklch,black 45%,transparent);border:1px solid var(--border-s);
+  border-left:3px solid var(--cc);cursor:pointer;transition:background .14s,border-color .14s,box-shadow .14s;user-select:none}
+.scard:hover{background:color-mix(in oklch,var(--cc) 8%,transparent);border-color:color-mix(in oklch,var(--cc) 48%,transparent)}
+.scard.focused{background:color-mix(in oklch,var(--cc) 12%,transparent);border-color:color-mix(in oklch,var(--cc) 68%,transparent);box-shadow:0 0 14px color-mix(in oklch,var(--cc) 24%,transparent)}
+.scard.installed{background:linear-gradient(135deg,color-mix(in oklch,var(--cc) 14%,transparent),color-mix(in oklch,black 45%,transparent))}
+.scard.cant{opacity:.45;cursor:not-allowed}
+.scard--movement{--cc:var(--cat-movement)}.scard--defense{--cc:var(--cat-defense)}
+.scard--weapon{--cc:var(--cat-weapons)}.scard--accessory{--cc:var(--cat-accessory)}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:5px}
+.card-name{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);line-height:1.2}
+.card-badges{display:flex;gap:2px;flex-shrink:0;flex-wrap:wrap}
+.badge{padding:1px 4px;font-size:7px;letter-spacing:.1em;text-transform:uppercase;border:1px solid currentColor}
+.badge-inst{color:var(--pos)}.badge-restr{color:var(--neg)}.badge-mil{color:var(--alt)}.badge-ep0{color:var(--faint)}
+.card-desc{font-size:9px;color:var(--muted);line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-foot{display:flex;justify-content:space-between;font-size:8px;color:var(--cc);
+  letter-spacing:.1em;text-transform:uppercase;padding-top:4px;
+  border-top:1px dashed color-mix(in oklch,var(--cc) 20%,transparent)}
+.card-cost{color:var(--muted)}.card-ep{color:var(--faint)}
+
+/* ── RIGHT RAIL ── */
+.detail{display:flex;flex-direction:column;height:100%;padding:12px;gap:10px;min-height:0}
+.detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;color:var(--faint);text-align:center;padding:20px}
+.detail-empty i{font-size:28px;color:color-mix(in oklch,var(--accent) 22%,transparent)}
+.detail-empty p{font-size:9px;letter-spacing:.12em;text-transform:uppercase;line-height:1.6}
+.det-content{display:flex;flex-direction:column;gap:10px;flex:1;overflow-y:auto}
+.det-content::-webkit-scrollbar{width:3px}
+.det-content::-webkit-scrollbar-thumb{background:var(--border-s)}
+
+.det-hd{padding-bottom:8px;border-bottom:1px solid var(--border-s)}
+.det-cat{font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:3px}
+.det-name{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);line-height:1.2}
+.det-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.det-avail{font-size:8px;letter-spacing:.12em;text-transform:uppercase;margin-top:4px;color:var(--muted)}
+.det-desc{font-size:10px;color:var(--muted);line-height:1.5}
+
+.cost-table{background:color-mix(in oklch,black 42%,transparent);border:1px solid var(--border-s);padding:8px;display:flex;flex-direction:column;gap:2px}
+.cost-row{display:flex;justify-content:space-between;font-size:9px;padding:2px 0;
+  border-top:1px dashed color-mix(in oklch,var(--accent) 8%,transparent);color:var(--muted)}
+.cost-row:first-child{border-top:none}
+.cost-row strong{color:var(--text)}
+.cost-row.total{font-weight:700;padding-top:5px;border-top:1px solid var(--border-s);color:var(--text)}
+.cost-row.pos strong{color:var(--pos)}.cost-row.neg strong{color:var(--neg)}.cost-row.neu strong{color:var(--neu)}
+
+.ep-row{display:flex;align-items:center;gap:7px;padding:6px 8px;font-size:9px;
+  background:color-mix(in oklch,black 42%,transparent);border:1px solid var(--border-s)}
+.ep-badge{padding:2px 7px;font-size:9px;font-weight:700;border:1px solid currentColor;
+  clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.ep-ok{color:var(--pos)}.ep-short{color:var(--neg)}
+
+.det-section{display:flex;flex-direction:column;gap:3px}
+.det-section-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.feat-item{display:flex;align-items:baseline;gap:5px;font-size:9px;color:var(--muted);line-height:1.35}
+.feat-item::before{content:'▸';color:var(--accent);font-size:7px;flex-shrink:0}
+.rest-item::before{color:var(--neg)}
+
+.compat-row{display:flex;align-items:center;gap:7px;padding:7px 9px;font-size:9px;letter-spacing:.08em;border:1px solid var(--border-s)}
+.compat-can{color:var(--pos);border-color:color-mix(in oklch,var(--pos) 34%,transparent);background:color-mix(in oklch,var(--pos) 8%,transparent)}
+.compat-inst{color:var(--neu);border-color:color-mix(in oklch,var(--neu) 34%,transparent);background:color-mix(in oklch,var(--neu) 8%,transparent)}
+.compat-no{color:var(--neg);border-color:color-mix(in oklch,var(--neg) 34%,transparent);background:color-mix(in oklch,var(--neg) 8%,transparent)}
+
+/* nonstandard warning */
+.nonstandard-warn{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:9px;
+  color:var(--neg);border:1px solid color-mix(in oklch,var(--neg) 35%,transparent);
+  background:color-mix(in oklch,var(--neg) 7%,transparent)}
+
+.action-area{display:flex;flex-direction:column;gap:5px;margin-top:auto;padding-top:10px;
+  border-top:1px dashed var(--border-s)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;
+  font-family:inherit;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);transition:background .14s,box-shadow .14s}
+.btn:disabled{cursor:not-allowed;opacity:.38}
+.btn-install{color:var(--pos);background:color-mix(in oklch,var(--pos) 14%,transparent);border:1px solid color-mix(in oklch,var(--pos) 44%,transparent)}
+.btn-install:hover:not(:disabled){background:color-mix(in oklch,var(--pos) 22%,transparent);box-shadow:0 0 12px color-mix(in oklch,var(--pos) 24%,transparent)}
+.btn-remove{color:var(--neg);background:color-mix(in oklch,var(--neg) 12%,transparent);border:1px solid color-mix(in oklch,var(--neg) 38%,transparent)}
+.btn-remove:hover:not(:disabled){background:color-mix(in oklch,var(--neg) 20%,transparent)}
+.btn-primary{color:var(--accent);background:color-mix(in oklch,var(--accent) 12%,transparent);border:1px solid color-mix(in oklch,var(--accent) 44%,transparent)}
+.btn-primary:hover:not(:disabled){background:color-mix(in oklch,var(--accent) 22%,transparent)}
+.btn-sec{color:var(--muted);background:color-mix(in oklch,black 42%,transparent);border:1px solid var(--border-s)}
+.btn-sec:hover:not(:disabled){color:var(--text);border-color:var(--border)}
+
+/* ── FOOTER ── */
+.ftr{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 16px;background:color-mix(in oklch,black 52%,transparent);
+  border-top:1px solid var(--border-s);flex-shrink:0}
+.ftr-status{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.ftr-status span:first-child{color:var(--muted)}.ftr-status span:last-child{color:var(--text)}
+
+.no-results{padding:20px;text-align:center;color:var(--faint);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.no-frame{padding:20px;text-align:center;color:var(--faint);font-size:9px;letter-spacing:.12em;text-transform:uppercase;line-height:1.8}
+
+/* approval notice */
+.approval-notice{display:flex;align-items:center;gap:7px;padding:5px 9px;font-size:9px;
+  color:var(--neu);border:1px solid color-mix(in oklch,var(--neu) 35%,transparent);
+  background:color-mix(in oklch,var(--neu) 7%,transparent)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ HEADER ══ -->
+<header class="hdr">
+  <div class="hdr-id">
+    <div class="glyph">✦</div>
+    <div>
+      <div class="hdr-title">Shipyard Builder</div>
+      <div class="hdr-sub">Store Construction Mode · Marl Skindar's Outfitting Yard</div>
+    </div>
+  </div>
+
+  <div class="cfg">
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <span class="cfg-lbl">Frame</span>
+      <span class="cfg-val" id="hdrFrame">— None Selected —</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <span class="cfg-lbl">Size</span>
+      <span class="cfg-val" id="hdrSize">—</span>
+    </div>
+    <div class="ep-wrap" id="epWrap" style="display:none">
+      <div class="ep-bar"><div class="ep-fill ok" id="epFill" style="width:0%"></div></div>
+      <div class="ep-meta">
+        <span>EP <span id="epUsed">0</span>/<span id="epAvail">0</span></span>
+        <span id="epLabel">0 remaining</span>
+      </div>
+    </div>
+    <span class="chip chip-none" id="validChip"><i class="fas fa-circle" id="validIcon"></i> <span id="validTxt">Select a Frame</span></span>
+  </div>
+
+  <div class="credits-strip">
+    <div class="c-item"><span class="c-lbl">Player Credits</span><span class="c-val" id="hCredits">150,000 cr</span></div>
+    <div class="c-item"><span class="c-lbl">Build Total</span><span class="c-val" id="hTotal">0 cr</span></div>
+    <div class="c-item"><span class="c-lbl">Remaining</span><span class="c-val pos" id="hRemain">150,000 cr</span></div>
+  </div>
+</header>
+
+<!-- ══ THREE-RAIL ══ -->
+<div class="workgrid">
+
+  <!-- LEFT RAIL -->
+  <aside class="left-rail">
+
+    <div class="panel">
+      <div class="panel-hd"><span>Current Build</span><strong id="modCount">0 mods</strong></div>
+      <div id="modList"><div class="empty-slot">No frame selected</div></div>
+    </div>
+
+    <div class="panel" id="statsPanel" style="display:none">
+      <div class="panel-hd"><span>Frame Stats</span></div>
+      <div class="stat-grid" id="statGrid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Build Cost</span><strong id="lTotal">0 cr</strong></div>
+      <div class="brows">
+        <div class="brow"><span>Frame Base Cost</span><strong id="lFrameCost">0 cr</strong></div>
+        <div class="brow"><span>Modifications</span><strong id="lModCost">0 cr</strong></div>
+        <div class="brow"><span>Build Total</span><strong id="lBuildTotal">0 cr</strong></div>
+        <div class="brow"><span>Player Credits</span><strong id="lCredits">150,000 cr</strong></div>
+        <div class="brow"><span>Remaining</span><strong class="pos" id="lRemain">150,000 cr</strong></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Checklist</span></div>
+      <div class="checklist">
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-miss" id="ckFrame"></i><span>Frame selected</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-opt" id="ckHyper"></i><span>Hyperdrive (recommended)</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-opt" id="ckShield"></i><span>Shields (recommended)</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-opt" id="ckWeapon"></i><span>Weapons</span></div>
+        <div class="ck-item"><i class="fas fa-circle ck-icon ck-opt" id="ckBudget"></i><span>Credits sufficient</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><span>Warnings</span><strong id="warnCount">0</strong></div>
+      <div id="warnList"><div style="font-size:8px;color:var(--faint);padding:3px 0;letter-spacing:.12em;text-transform:uppercase">No active warnings</div></div>
+    </div>
+
+  </aside>
+
+  <!-- MIDDLE RAIL -->
+  <section class="mid-rail" id="midRail">
+    <!-- Phase A: Frame selection (shown when no frame chosen) -->
+    <div id="framePhase">
+      <div class="frame-select-wrap">
+        <div class="phase-lbl"><span class="phase-step">1</span>Select a Vessel Frame / Hull</div>
+        <div class="frame-grid" id="frameGrid"></div>
+      </div>
+    </div>
+
+    <!-- Phase B: Modification browser (shown after frame chosen) -->
+    <div id="modPhase" style="display:none">
+      <div class="browser-bar">
+        <input type="search" class="search" id="srch" placeholder="Search modifications…">
+        <div class="ftabs" id="ftabs">
+          <button class="ftab on" data-f="all">All</button>
+          <button class="ftab" data-f="movement">Movement</button>
+          <button class="ftab" data-f="defense">Defense</button>
+          <button class="ftab" data-f="weapon">Weapons</button>
+          <button class="ftab" data-f="accessory">Accessories</button>
+        </div>
+        <button class="toggle-btn" id="compatBtn"><i class="fas fa-check-circle"></i> Compatible Only</button>
+        <button class="btn btn-sec" id="changeFrameBtn" style="padding:4px 9px;font-size:8px;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)"><i class="fas fa-exchange-alt"></i> Change Frame</button>
+      </div>
+      <div class="sys-groups" id="sysGroups"></div>
+    </div>
+  </section>
+
+  <!-- RIGHT RAIL -->
+  <aside class="right-rail">
+    <div class="detail">
+      <div class="detail-empty" id="detEmpty">
+        <i class="fas fa-space-shuttle"></i>
+        <p>Select a frame, then choose a modification to view details and install controls</p>
+      </div>
+      <div class="det-content" id="detContent" style="display:none">
+        <div class="det-hd">
+          <div class="det-cat" id="dCat"></div>
+          <div class="det-name" id="dName"></div>
+          <div class="det-tags" id="dTags"></div>
+          <div class="det-avail" id="dAvail"></div>
+        </div>
+        <p class="det-desc" id="dDesc"></p>
+        <div class="cost-table">
+          <div class="cost-row"><span>Base Cost</span><strong id="dBase"></strong></div>
+          <div class="cost-row" id="dCostModRow"><span>Size Modifier (×<span id="dCostMod">1</span>)</span><strong id="dAdjCost"></strong></div>
+          <div class="cost-row" id="dNonstandardRow" style="display:none"><span>Nonstandard ×5</span><strong id="dNonstandardCost"></strong></div>
+          <div class="cost-row total"><span>Final Cost</span><strong id="dFinal"></strong></div>
+          <div class="cost-row" id="dImpactRow"><span>Credits After Install</span><strong id="dAfter"></strong></div>
+        </div>
+        <div class="ep-row">
+          <span style="color:var(--muted);font-size:9px">Emplacement Points</span>
+          <span class="ep-badge ep-ok" id="dEpBadge">0 EP</span>
+          <span style="color:var(--faint);font-size:8px" id="dEpRemain"></span>
+        </div>
+        <div class="det-section" id="dEffectSec">
+          <div class="det-section-lbl">Effect</div>
+          <div id="dEffect"></div>
+        </div>
+        <div class="det-section" id="dRestSec" style="display:none">
+          <div class="det-section-lbl">Size Restriction</div>
+          <div id="dRest"></div>
+        </div>
+        <div class="det-section" id="dWeaponSec" style="display:none">
+          <div class="det-section-lbl">Weapon Stats</div>
+          <div id="dWeaponStats"></div>
+        </div>
+        <div id="dNonstandardWarn" style="display:none" class="nonstandard-warn">
+          <i class="fas fa-exclamation-triangle"></i><span>Nonstandard modification — costs 5× the base adjusted price</span>
+        </div>
+        <div class="compat-row compat-can" id="dCompat">
+          <i class="fas fa-check-circle" id="dCompatIcon"></i><span id="dCompatTxt">Can install</span>
+        </div>
+        <div class="approval-notice" id="dApprovalNotice" style="display:none">
+          <i class="fas fa-gavel"></i><span>This modification may require GM approval before purchase</span>
+        </div>
+        <div class="action-area">
+          <button class="btn btn-install" id="dInstBtn"><i class="fas fa-wrench"></i> Install Modification</button>
+          <button class="btn btn-remove" id="dRemBtn" style="display:none"><i class="fas fa-trash-alt"></i> Remove Modification</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="ftr">
+  <button class="btn btn-sec"><i class="fas fa-arrow-left"></i> Back to Store</button>
+  <div class="ftr-status">
+    <span>Build Status</span>
+    <span id="ftrStatus">Select a vessel frame to begin</span>
+  </div>
+  <button class="btn btn-primary" id="submitBtn" disabled><i class="fas fa-credit-card"></i> Submit for Purchase</button>
+</footer>
+
+</div>
+<script>
+// ════════════════════════════════════════════════════════════
+//  SWSE Shipyard Builder — Interactive Prototype
+//  Data: stock-ships.json shapes + vehicle-modifications/*.json
+//  Cost engine: VehicleModificationManager contracts
+//  Store: StoreEngine.canPurchase + StoreEngine.purchase + VehicleFactory.buildMutationPlan
+//  Credits: LedgerService.getCurrentCredits (player's wallet, NOT chargen budget)
+// ════════════════════════════════════════════════════════════
+
+// ── STATE ────────────────────────────────────────────────────
+const S = {
+  playerCredits: 150000,
+  frame: null,           // selected stock ship
+  mods: [],              // installed modifications {mod, finalCost, ep, nonstandard}
+  focused: null,         // highlighted mod in detail panel
+  filter: 'all',
+  query: '',
+  compatOnly: false
+};
+
+// ── STOCK SHIPS (from data/stock-ships.json) ─────────────────
+const FRAMES = [
+  { name:'Light Fighter',      size:'Huge',                  str:34,  dex:20,  int:14,  hp:60,   dr:10, armor:3,  speedC:'16 sq',speedS:'5 sq', cost:30000,  costModifier:1,  crew:1,  pass:0,  cargo:'50 kg',     consumables:'2 Days',   ep:2, unusedEP:1,  type:'starfighter' },
+  { name:'Interceptor',        size:'Huge',                  str:38,  dex:24,  int:14,  hp:90,   dr:10, armor:3,  speedC:'16 sq',speedS:'6 sq', cost:100000, costModifier:1,  crew:1,  pass:0,  cargo:'50 kg',     consumables:'2 Days',   ep:5, unusedEP:1,  type:'starfighter' },
+  { name:'Superiority Fighter',size:'Gargantuan',            str:42,  dex:22,  int:14,  hp:120,  dr:10, armor:7,  speedC:'16 sq',speedS:'4 sq', cost:50000,  costModifier:2,  crew:1,  pass:0,  cargo:'50 kg',     consumables:'2 Days',   ep:5, unusedEP:1,  type:'starfighter' },
+  { name:'Bomber',             size:'Gargantuan',            str:46,  dex:18,  int:14,  hp:150,  dr:10, armor:8,  speedC:'16 sq',speedS:'3 sq', cost:50000,  costModifier:2,  crew:2,  pass:0,  cargo:'50 kg',     consumables:'2 Days',   ep:10, unusedEP:1, type:'starfighter' },
+  { name:'Light Freighter',    size:'Colossal',              str:42,  dex:10,  int:12,  hp:120,  dr:15, armor:12, speedC:'12 sq',speedS:'2 sq', cost:20000,  costModifier:5,  crew:2,  pass:6,  cargo:'100 Tons',  consumables:'2 Months', ep:5, unusedEP:10, type:'transport' },
+  { name:'Shuttle',            size:'Colossal',              str:46,  dex:14,  int:14,  hp:120,  dr:15, armor:12, speedC:'12 sq',speedS:'3 sq', cost:50000,  costModifier:5,  crew:4,  pass:8,  cargo:'20 Tons',   consumables:'1 Month',  ep:5, unusedEP:1,  type:'transport' },
+  { name:'Gunship',            size:'Colossal',              str:50,  dex:14,  int:16,  hp:150,  dr:15, armor:12, speedC:'12 sq',speedS:'3 sq', cost:200000, costModifier:5,  crew:4,  pass:4,  cargo:'5 Tons',    consumables:'1 Month',  ep:20, unusedEP:1, type:'transport' },
+  { name:'Heavy Freighter',    size:'Colossal (Frigate)',    str:56,  dex:10,  int:12,  hp:400,  dr:15, armor:12, speedC:'—',    speedS:'1 sq', cost:500000, costModifier:50, crew:10, pass:10, cargo:'100k Tons', consumables:'6 Months', ep:5,  unusedEP:1, type:'frigate' },
+  { name:'Corvette',           size:'Colossal (Frigate)',    str:58,  dex:18,  int:16,  hp:600,  dr:15, armor:12, speedC:'—',    speedS:'3 sq', cost:1000000,costModifier:50, crew:50, pass:200,cargo:'2k Tons',   consumables:'1 Year',   ep:20, unusedEP:5, type:'frigate' }
+];
+
+// ── MODIFICATIONS (from vehicle-modifications/*.json) ─────────
+const MODS = {
+  movement:[
+    { id:'atmospheric-thrusters',      name:'Atmospheric Thrusters',          category:'movement', ep:2, avail:'Common',   sizeRestr:'Colossal or Smaller',        cost:2000,  costType:'base',   desc:'Allows the starship to enter and maneuver in planetary atmospheres.', effect:'Vehicle can operate in atmosphere' },
+    { id:'atmospheric-thrusters-adv',  name:'Atmospheric Thrusters, Advanced',category:'movement', ep:5, avail:'Common',   sizeRestr:'Gargantuan or Smaller',      cost:5000,  costType:'base',   desc:'Exceptional atmospheric performance and maneuverability.',            effect:'+2 to Pilot checks in atmosphere' },
+    { id:'combat-thrusters',           name:'Combat Thrusters',               category:'movement', ep:1, avail:'Common',   sizeRestr:'Colossal',                   cost:2000,  costType:'base',   desc:'Enhanced maneuvering thrusters for combat situations.',               effect:'+1 to Pilot checks in combat' },
+    { id:'hyperdrive-075',             name:'Hyperdrive, Class 0.75',         category:'movement', ep:4, avail:'Military', sizeRestr:'Colossal (Cruiser) or Smaller',cost:5000, costType:'base',   desc:'Military-grade hyperdrive with exceptional speed.',                   effect:'Hyperdrive Class 0.75', isHyperdrive:true },
+    { id:'hyperdrive-1',               name:'Hyperdrive, Class 1',            category:'movement', ep:3, avail:'Licensed', sizeRestr:null,                         cost:3000,  costType:'base',   desc:'Standard fast hyperdrive used on most modern starships.',             effect:'Hyperdrive Class 1',    isHyperdrive:true },
+    { id:'hyperdrive-15',              name:'Hyperdrive, Class 1.5',          category:'movement', ep:3, avail:'Licensed', sizeRestr:null,                         cost:2500,  costType:'base',   desc:'Slightly slower than Class 1, but still quite capable.',              effect:'Hyperdrive Class 1.5',  isHyperdrive:true },
+    { id:'hyperdrive-2',               name:'Hyperdrive, Class 2',            category:'movement', ep:3, avail:'Common',   sizeRestr:null,                         cost:2000,  costType:'base',   desc:'A reliable mid-range hyperdrive found on most commercial vessels.',   effect:'Hyperdrive Class 2',    isHyperdrive:true },
+    { id:'hyperdrive-3',               name:'Hyperdrive, Class 3',            category:'movement', ep:2, avail:'Common',   sizeRestr:null,                         cost:1500,  costType:'base',   desc:'Budget hyperdrive — slow but affordable.',                            effect:'Hyperdrive Class 3',    isHyperdrive:true },
+    { id:'backup-hyperdrive',          name:'Backup Hyperdrive',              category:'movement', ep:1, avail:'Common',   sizeRestr:null,                         cost:1000,  costType:'base',   desc:'Emergency backup hyperdrive in case the primary fails.',              effect:'Backup Hyperdrive Class 10' }
+  ],
+  defense:[
+    { id:'armor-1',               name:'Starship Armor, +1',    category:'defense', ep:2,  avail:'Licensed',   sizeRestr:null,                           cost:2000,  costType:'base', desc:'Additional armor plating.',                                               effect:'+1 Armor bonus to Reflex Defense' },
+    { id:'armor-2',               name:'Starship Armor, +2',    category:'defense', ep:5,  avail:'Restricted', sizeRestr:'Colossal or Larger',           cost:5000,  costType:'base', desc:'Heavy armor plating for enhanced protection.',                           effect:'+2 Armor bonus to Reflex Defense' },
+    { id:'armor-3',               name:'Starship Armor, +3',    category:'defense', ep:10, avail:'Military',   sizeRestr:'Colossal (Frigate) or Larger', cost:10000, costType:'base', desc:'Military-grade armor for capital ships.',                                 effect:'+3 Armor bonus to Reflex Defense' },
+    { id:'jamming-suite',         name:'Jamming Suite',         category:'defense', ep:1,  avail:'Common',     sizeRestr:null,                           cost:5000,  costType:'base', desc:'Electronic countermeasures disrupting enemy sensors and targeting.',      effect:'+2 Pilot to avoid guided weapons' },
+    { id:'regenerating-shields',  name:'Regenerating Shields',  category:'defense', ep:2,  avail:'Restricted', sizeRestr:null,                           cost:3000,  costType:'base', desc:'Shield system that regenerates over time.',                               effect:'Shields 10, regenerate 5/round', isShield:true },
+    { id:'shields-10',            name:'Shields SR 10',         category:'defense', ep:3,  avail:'Licensed',   sizeRestr:null,                           cost:4000,  costType:'base', desc:'Basic deflector shield array for starfighters.',                         effect:'Shield Rating 10', isShield:true },
+    { id:'shields-20',            name:'Shields SR 20',         category:'defense', ep:5,  avail:'Licensed',   sizeRestr:'Colossal or Larger',           cost:8000,  costType:'base', desc:'Heavy-duty deflector shields for larger vessels.',                       effect:'Shield Rating 20', isShield:true },
+    { id:'shields-30',            name:'Shields SR 30',         category:'defense', ep:10, avail:'Military',   sizeRestr:'Colossal (Frigate) or Larger', cost:15000, costType:'base', desc:'Military-grade deflector shields for capital ships.',                    effect:'Shield Rating 30', isShield:true },
+    { id:'point-defense',         name:'Point-Defense System',  category:'defense', ep:2,  avail:'Restricted', sizeRestr:null,                           cost:6000,  costType:'base', desc:'Automated system targeting incoming missiles and torpedoes.',            effect:'-5 to guided weapon attacks targeting this ship' }
+  ],
+  weapon:[
+    { id:'blaster-cannon-light',  name:'Blaster Cannon, Light',  category:'weapon', ep:1, avail:'Licensed',   sizeRestr:null, cost:1200,  costType:'flat', desc:'Standard light blaster for small craft.',  effect:'Light blaster cannon',  weaponType:'Blaster',  damage:'3d10×2' },
+    { id:'blaster-cannon-medium', name:'Blaster Cannon, Medium', category:'weapon', ep:1, avail:'Restricted', sizeRestr:null, cost:2500,  costType:'flat', desc:'Medium-power blaster for combat vessels.',  effect:'Medium blaster cannon', weaponType:'Blaster',  damage:'4d10×2' },
+    { id:'blaster-cannon-heavy',  name:'Blaster Cannon, Heavy',  category:'weapon', ep:2, avail:'Military',   sizeRestr:null, cost:5500,  costType:'flat', desc:'Heavy blaster for military craft.',           effect:'Heavy blaster cannon',  weaponType:'Blaster',  damage:'5d10×2' },
+    { id:'ion-cannon-light',      name:'Ion Cannon, Light',       category:'weapon', ep:1, avail:'Licensed',   sizeRestr:null, cost:2000,  costType:'flat', desc:'Disables shields and ion-sensitive systems.', effect:'Ion damage 3d10×2',    weaponType:'Ion',      damage:'3d10×2 ion' },
+    { id:'ion-cannon-medium',     name:'Ion Cannon, Medium',      category:'weapon', ep:2, avail:'Restricted', sizeRestr:null, cost:4000,  costType:'flat', desc:'More powerful ion disruption cannon.',       effect:'Ion damage 5d10×2',    weaponType:'Ion',      damage:'5d10×2 ion' },
+    { id:'turbolaser-light',      name:'Turbolaser Battery, Light',category:'weapon',ep:5, avail:'Military',   sizeRestr:'Colossal or Larger', cost:20000, costType:'flat', desc:'Capital-scale weapons for frigates and larger.', effect:'Light turbolaser 9d10×2', weaponType:'Turbolaser', damage:'9d10×2' },
+    { id:'proton-torpedo',        name:'Proton Torpedo Launcher', category:'weapon', ep:2, avail:'Restricted', sizeRestr:null, cost:5000,  costType:'flat', desc:'Guided torpedo system for precision strikes.',  effect:'4d10×5 (guided)',       weaponType:'Missile',  damage:'4d10×5' },
+    { id:'concussion-missile',    name:'Concussion Missile Launcher',category:'weapon',ep:1,avail:'Licensed',   sizeRestr:null, cost:3000, costType:'flat', desc:'Area-effect missile for grouping targets.',    effect:'3d10×5 (guided)',       weaponType:'Missile',  damage:'3d10×5' },
+    { id:'tractor-beam',          name:'Tractor Beam',            category:'weapon', ep:2, avail:'Restricted', sizeRestr:'Colossal or Larger', cost:10000, costType:'flat', desc:'Immobilizes other vessels.',               effect:'Grapple vs Pilot (+10)', weaponType:'Special', damage:'—' }
+  ],
+  accessory:[
+    { id:'cargo-pod-light',       name:'Cargo Pod, Light',         category:'accessory', ep:0, avail:'Common',     sizeRestr:'Gargantuan or Larger', cost:500,   costType:'base', desc:'External cargo container.',                effect:'+10 tons cargo capacity' },
+    { id:'cargo-pod-medium',      name:'Cargo Pod, Medium',        category:'accessory', ep:1, avail:'Common',     sizeRestr:'Colossal or Larger',   cost:1000,  costType:'base', desc:'Large external cargo pod.',                effect:'+25 tons cargo capacity' },
+    { id:'cargo-jettison',        name:'Cargo Jettison System',    category:'accessory', ep:1, avail:'Licensed',   sizeRestr:null,                   cost:1000,  costType:'base', desc:'Emergency cargo release system.',           effect:'Jettison cargo as swift action' },
+    { id:'sensor-array',          name:'Sensor Array, Enhanced',   category:'accessory', ep:2, avail:'Common',     sizeRestr:null,                   cost:3000,  costType:'base', desc:'Extended sensor range and clarity.',        effect:'+2 Perception for sensor checks' },
+    { id:'passenger-cabin',       name:'Passenger Cabin Module',   category:'accessory', ep:2, avail:'Common',     sizeRestr:'Colossal or Larger',   cost:2000,  costType:'base', desc:'Comfortable cabin accommodations.',         effect:'+4 passengers' },
+    { id:'escape-pods',           name:'Escape Pod Module',        category:'accessory', ep:1, avail:'Common',     sizeRestr:null,                   cost:1500,  costType:'base', desc:'Emergency evacuation pods for crew.',       effect:'1 pod per 5 crew (auto-eject on 0 HP)' },
+    { id:'cloaking-hibridium',    name:'Cloaking Device, Hibridium',category:'accessory',ep:3, avail:'Military',   sizeRestr:'Colossal or Larger',   cost:50000, costType:'base', desc:'Rare cloaking technology, but detectable.',  effect:'Invisible to sensors (distorts nearby readings)' },
+    { id:'nav-computer',          name:'Navigation Computer, Advanced',category:'accessory',ep:1,avail:'Common',   sizeRestr:null,                   cost:2500,  costType:'base', desc:'Enhanced nav computer for faster plotting.', effect:'+2 to Pilot for astrogation, −1 round plot time' },
+    { id:'comm-array',            name:'Long-Range Comm Array',    category:'accessory', ep:1, avail:'Common',     sizeRestr:null,                   cost:1500,  costType:'base', desc:'Extends communication range significantly.',  effect:'Comm range ×10' }
+  ]
+};
+const ALL_MODS = Object.values(MODS).flat();
+const CAT_META = {
+  movement:  { label:'Movement & Propulsion', color:'var(--cat-movement)' },
+  defense:   { label:'Defense Systems',       color:'var(--cat-defense)'  },
+  weapon:    { label:'Weapon Systems',        color:'var(--cat-weapons)'  },
+  accessory: { label:'Accessories',           color:'var(--cat-accessory)'}
+};
+
+// ── COST ENGINE (VehicleModificationManager.calculateModificationCost) ──
+function modCost(mod, frame, nonstandard=false) {
+  if (!frame) return mod.cost || 0;
+  let base = mod.cost || 0;
+  if (mod.costType === 'base') base = Math.round(base * (frame.costModifier || 1));
+  if (nonstandard) base *= 5;
+  return base;
+}
+
+// ── SIZE ORDER (VehicleModificationManager._checkSizeRestriction) ──
+const SIZE_ORDER = ['large','huge','gargantuan','colossal','colossal (frigate)','colossal (cruiser)','colossal (station)'];
+function checkSizeRestr(shipSize, restr) {
+  if (!restr) return true;
+  const si = SIZE_ORDER.indexOf((shipSize||'').toLowerCase());
+  if (restr.includes('or Larger'))  { const ri=SIZE_ORDER.indexOf(restr.replace(' or Larger','').toLowerCase());  return si>=ri&&si!==-1; }
+  if (restr.includes('or Smaller')) { const ri=SIZE_ORDER.indexOf(restr.replace(' or Smaller','').toLowerCase()); return si<=ri&&si!==-1; }
+  return (shipSize||'').toLowerCase()===(restr||'').toLowerCase();
+}
+
+// ── NONSTANDARD DETECTION (simplified) ──
+function isNonstandard(mod, frame) {
+  if (!frame) return false;
+  const fn=frame.name.toLowerCase();
+  if (mod.isHyperdrive && (fn.includes('tie')||fn.includes('light fighter')||fn.includes('interceptor'))) return true;
+  if (mod.isShield    && fn.includes('tie')) return true;
+  return false;
+}
+
+// ── EP ENGINE ────────────────────────────────────────────────
+function epUsed() { return S.mods.reduce((s,m)=>s+(m.ep||0),0); }
+function epRemaining() { return S.frame ? S.frame.unusedEP - epUsed() : 0; }
+
+// ── TOTAL COST ────────────────────────────────────────────────
+function buildTotal() {
+  if (!S.frame) return 0;
+  const modsCost = S.mods.reduce((s,m)=>s+m.finalCost,0);
+  return S.frame.cost + modsCost;
+}
+
+// ── COMPAT CHECK ─────────────────────────────────────────────
+function getCompat(mod) {
+  if (!S.frame) return { ok:false, cls:'compat-no', icon:'fa-ban', txt:'Select a frame first' };
+  if (isInstalled(mod)) return { ok:true, installed:true, cls:'compat-inst', icon:'fa-check-circle', txt:'Installed — can remove below' };
+  if (!checkSizeRestr(S.frame.size, mod.sizeRestr)) return { ok:false, cls:'compat-no', icon:'fa-ban', txt:`Requires ${mod.sizeRestr}` };
+  if (mod.isHyperdrive && S.mods.some(m=>m.isHyperdrive)) return { ok:false, cls:'compat-no', icon:'fa-ban', txt:'Hyperdrive already installed (remove first)' };
+  if (mod.isShield     && S.mods.some(m=>m.isShield))     return { ok:false, cls:'compat-no', icon:'fa-ban', txt:'Shield system already installed (remove first)' };
+  const ep = mod.ep || 0;
+  if (ep > epRemaining()) return { ok:false, cls:'compat-no', icon:'fa-ban', txt:`Insufficient EP: needs ${ep}, have ${epRemaining()}` };
+  const ns = isNonstandard(mod, S.frame);
+  const cost = modCost(mod, S.frame, ns);
+  const remaining = S.playerCredits - buildTotal();
+  if (cost > remaining) return { ok:false, cls:'compat-no', icon:'fa-ban', txt:`Need ${cr(cost - remaining)} more credits` };
+  return { ok:true, cls:'compat-can', icon:'fa-plus-circle', txt:'Can install' };
+}
+
+function isInstalled(mod) { return S.mods.some(m=>m.id===mod.id); }
+
+// ── MUTATIONS ────────────────────────────────────────────────
+function installMod(mod) {
+  const ns = isNonstandard(mod, S.frame);
+  const cost = modCost(mod, S.frame, ns);
+  S.mods.push({ ...mod, finalCost:cost, nonstandard:ns });
+  refresh();
+}
+function removeMod(mod) {
+  S.mods = S.mods.filter(m=>m.id!==mod.id);
+  refresh();
+}
+function selectFrame(frame) {
+  S.frame = frame;
+  S.mods = [];
+  S.focused = null;
+  document.getElementById('framePhase').style.display = 'none';
+  document.getElementById('modPhase').style.display = '';
+  refresh();
+}
+
+// ── FORMAT ───────────────────────────────────────────────────
+const cr = n => (n||0).toLocaleString()+' cr';
+const catColor = cat => CAT_META[cat]?.color||'var(--accent)';
+
+// ── RENDER ────────────────────────────────────────────────────
+function refresh() { renderHdr(); renderLeft(); renderMid(); renderDetail(); renderFtr(); }
+
+function renderHdr() {
+  const f=S.frame;
+  document.getElementById('hdrFrame').textContent = f ? f.name : '— None Selected —';
+  document.getElementById('hdrSize').textContent  = f ? f.size : '—';
+  const epW=document.getElementById('epWrap');
+  if (f) {
+    epW.style.display='';
+    const used=epUsed(), avail=f.unusedEP, pct=avail>0?Math.min(100,(used/avail)*100):0;
+    document.getElementById('epUsed').textContent=used;
+    document.getElementById('epAvail').textContent=avail;
+    document.getElementById('epLabel').textContent=(avail-used)+' remaining';
+    const fill=document.getElementById('epFill');
+    fill.style.width=pct+'%'; fill.className='ep-fill '+(pct>=100?'full':pct>75?'warn':'ok');
+  } else { epW.style.display='none'; }
+
+  const total=buildTotal(), rem=S.playerCredits-total;
+  document.getElementById('hCredits').textContent=cr(S.playerCredits);
+  document.getElementById('hTotal').textContent=cr(total);
+  const rEl=document.getElementById('hRemain');
+  rEl.textContent=cr(rem); rEl.className='c-val '+(rem<0?'neg':rem===0?'neu':'pos');
+
+  const chip=document.getElementById('validChip'), icon=document.getElementById('validIcon'), txt=document.getElementById('validTxt');
+  if (!f)            { chip.className='chip chip-none'; icon.className='fas fa-circle'; txt.textContent='Select a Frame'; }
+  else if (rem<0)    { chip.className='chip chip-bad';  icon.className='fas fa-times-circle'; txt.textContent='Over Budget'; }
+  else if (epUsed()>f.unusedEP) { chip.className='chip chip-bad'; icon.className='fas fa-times-circle'; txt.textContent='Over EP'; }
+  else               { chip.className='chip chip-valid'; icon.className='fas fa-check-circle'; txt.textContent='Build Valid'; }
+}
+
+function renderLeft() {
+  const f=S.frame, total=buildTotal(), rem=S.playerCredits-total;
+  const modCostTotal=S.mods.reduce((s,m)=>s+m.finalCost,0);
+
+  // Installed mods
+  document.getElementById('modCount').textContent=S.mods.length+' mod'+(S.mods.length!==1?'s':'');
+  const ml=document.getElementById('modList');
+  if (!f)            { ml.innerHTML='<div class="empty-slot">No frame selected</div>'; }
+  else if (!S.mods.length) { ml.innerHTML='<div class="empty-slot">No modifications installed</div>'; }
+  else {
+    const grps={};
+    S.mods.forEach(m=>{ const c=m.category; (grps[c]||(grps[c]=[])).push(m); });
+    let h='';
+    Object.entries(grps).forEach(([cat,items])=>{
+      h+=`<div class="mod-group-lbl">${CAT_META[cat]?.label||cat}</div>`;
+      items.forEach(m=>{ h+=`<div class="mod-item cat-${cat}" data-mid="${m.id}" data-mcat="${m.category}">
+        <span class="mod-name" title="${m.name}">${m.name}</span>
+        <span class="mod-ep">${m.ep}EP</span>
+        <span class="mod-cost">${cr(m.finalCost)}</span>
+        <button class="mod-rm" data-rm="${m.id}"><i class="fas fa-times"></i></button>
+      </div>`; });
+    });
+    ml.innerHTML=h;
+    ml.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation(); const mod=ALL_MODS.find(m=>m.id===b.dataset.rm); if(mod) removeMod(mod);
+    }));
+    ml.querySelectorAll('[data-mid]').forEach(el=>el.addEventListener('click',()=>{
+      const mod=ALL_MODS.find(m=>m.id===el.dataset.mid&&m.category===el.dataset.mcat); if(mod){ S.focused=mod; renderMid(); renderDetail(); }
+    }));
+  }
+
+  // Stats panel
+  const sp=document.getElementById('statsPanel');
+  if (f) {
+    sp.style.display='';
+    document.getElementById('statGrid').innerHTML=`
+      <div class="stat-row"><span class="stat-lbl">STR</span><span class="stat-val">${f.str}</span></div>
+      <div class="stat-row"><span class="stat-lbl">DEX</span><span class="stat-val">${f.dex}</span></div>
+      <div class="stat-row"><span class="stat-lbl">INT</span><span class="stat-val">${f.int}</span></div>
+      <div class="stat-row"><span class="stat-lbl">HP</span><span class="stat-val">${f.hp}</span></div>
+      <div class="stat-row"><span class="stat-lbl">DR</span><span class="stat-val">${f.dr}</span></div>
+      <div class="stat-row"><span class="stat-lbl">Armor</span><span class="stat-val">+${f.armor}</span></div>
+      <div class="stat-row wide"><span class="stat-lbl">Speed</span><span class="stat-val">${f.speedC} / ${f.speedS} (starship)</span></div>
+      <div class="stat-row wide"><span class="stat-lbl">Crew / Pass</span><span class="stat-val">${f.crew} / ${f.pass}</span></div>
+      <div class="stat-row wide"><span class="stat-lbl">Cargo</span><span class="stat-val">${f.cargo}</span></div>
+      <div class="stat-row wide"><span class="stat-lbl">Cost Modifier</span><span class="stat-val">×${f.costModifier}</span></div>`;
+  } else { sp.style.display='none'; }
+
+  // Budget rows
+  document.getElementById('lTotal').textContent=cr(total);
+  document.getElementById('lFrameCost').textContent=f?cr(f.cost):'0 cr';
+  document.getElementById('lModCost').textContent=cr(modCostTotal);
+  document.getElementById('lBuildTotal').textContent=cr(total);
+  document.getElementById('lCredits').textContent=cr(S.playerCredits);
+  const lrEl=document.getElementById('lRemain');
+  lrEl.textContent=cr(rem); lrEl.className=rem<0?'neg':rem===0?'neu':'pos';
+
+  // Checklist
+  const ck=(id,done,opt)=>{ const el=document.getElementById(id); if(!el)return; el.className=opt?'fas fa-circle ck-icon ck-opt':done?'fas fa-check-circle ck-icon ck-done':'fas fa-circle ck-icon ck-miss'; };
+  ck('ckFrame',!!f); ck('ckBudget',rem>=0&&!!f,!f);
+  ck('ckHyper',S.mods.some(m=>m.isHyperdrive),!S.mods.some(m=>m.isHyperdrive));
+  ck('ckShield',S.mods.some(m=>m.isShield),!S.mods.some(m=>m.isShield));
+  ck('ckWeapon',S.mods.some(m=>m.category==='weapon'),!S.mods.some(m=>m.category==='weapon'));
+
+  // Warnings
+  const ws=[];
+  if (rem<0) ws.push({t:'neg',m:`Over budget by ${cr(Math.abs(rem))} — remove modifications`});
+  if (f&&epUsed()>f.unusedEP) ws.push({t:'neg',m:`EP exceeded: ${epUsed()}/${f.unusedEP} used`});
+  const ns=S.mods.filter(m=>m.nonstandard);
+  if (ns.length) ws.push({t:'warn',m:`${ns.length} nonstandard mod(s) at 5× cost: ${ns.map(m=>m.name).join(', ')}`});
+  const restricted=S.mods.filter(m=>m.avail==='Restricted'||m.avail==='Military');
+  if (restricted.length) ws.push({t:'warn',m:`${restricted.length} restricted/military mod(s) require GM approval`});
+  document.getElementById('warnCount').textContent=ws.length;
+  document.getElementById('warnList').innerHTML=ws.length
+    ? ws.map(w=>`<div class="warn-item w-${w.t}"><i class="fas fa-${w.t==='neg'?'exclamation-circle':'exclamation-triangle'}"></i><span>${w.m}</span></div>`).join('')
+    : '<div style="font-size:8px;color:var(--faint);padding:3px 0;letter-spacing:.12em;text-transform:uppercase">No active warnings</div>';
+}
+
+function renderFrameGrid() {
+  const typeColor={'starfighter':'frame-card--starfighter','transport':'frame-card--transport','frigate':'frame-card--frigate','colossal':'frame-card--colossal'};
+  document.getElementById('frameGrid').innerHTML = FRAMES.map(fr=>{
+    const sel=S.frame?.name===fr.name?'selected':'';
+    const cls=typeColor[fr.type]||'';
+    return `<div class="frame-card ${cls} ${sel}" data-fname="${fr.name}">
+      <div class="frame-size">${fr.size}</div>
+      <div class="frame-name">${fr.name}</div>
+      <div class="frame-stats">
+        <div class="fs">HP <strong>${fr.hp}</strong></div>
+        <div class="fs">DR <strong>${fr.dr}</strong></div>
+        <div class="fs">Crew <strong>${fr.crew}</strong></div>
+        <div class="fs">EP <strong>${fr.unusedEP}</strong></div>
+      </div>
+      <div class="frame-foot">
+        <span class="frame-cost">${cr(fr.cost)}</span>
+        <span class="frame-ep">×${fr.costModifier} mod</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.frame-card[data-fname]').forEach(c=>c.addEventListener('click',()=>{
+    const fr=FRAMES.find(f=>f.name===c.dataset.fname); if(fr) selectFrame(fr);
+  }));
+}
+
+function renderMid() {
+  if (!S.frame) { renderFrameGrid(); return; }
+  const q=S.query.toLowerCase();
+  let html='';
+  for (const [cat,meta] of Object.entries(CAT_META)) {
+    if (S.filter!=='all'&&S.filter!==cat) continue;
+    const items=(MODS[cat]||[]).filter(m=>{
+      if (q&&!m.name.toLowerCase().includes(q)&&!m.desc.toLowerCase().includes(q)) return false;
+      if (S.compatOnly) {
+        const c=getCompat(m);
+        if (!c.ok&&!c.installed) return false;
+      }
+      return true;
+    });
+    if (!items.length) continue;
+    html+=`<div class="sys-group">
+      <div class="grp-lbl" style="color:${meta.color}"><span class="cat-dot" style="background:${meta.color}"></span>${meta.label}<span class="grp-count">${items.length}</span></div>
+      <div class="card-grid">${items.map(m=>renderCard(m,cat)).join('')}</div>
+    </div>`;
+  }
+  document.getElementById('sysGroups').innerHTML=html||'<div class="no-results">No modifications match current filters</div>';
+  document.querySelectorAll('.scard[data-mid]').forEach(c=>c.addEventListener('click',()=>{
+    const mod=ALL_MODS.find(m=>m.id===c.dataset.mid); if(mod){ S.focused=mod; renderMid(); renderDetail(); }
+  }));
+}
+
+function renderCard(mod, cat) {
+  const inst=isInstalled(mod), compat=getCompat(mod), foc=S.focused?.id===mod.id;
+  const ns=isNonstandard(mod,S.frame), cost=modCost(mod,S.frame,ns);
+  const cls=['scard',`scard--${cat}`,inst?'installed':'',foc?'focused':'',(!compat.ok&&!compat.installed)?'cant':''].filter(Boolean).join(' ');
+  const badges=[
+    inst?'<span class="badge badge-inst">Installed</span>':'',
+    mod.avail==='Military'?'<span class="badge badge-mil">Military</span>':'',
+    mod.avail==='Restricted'?'<span class="badge badge-restr">Restricted</span>':'',
+    mod.ep===0?'<span class="badge badge-ep0">0 EP</span>':''
+  ].join('');
+  return `<div class="${cls}" data-mid="${mod.id}">
+    <div class="card-head"><div class="card-name">${mod.name}</div><div class="card-badges">${badges}</div></div>
+    <p class="card-desc">${mod.desc}</p>
+    <div class="card-foot">
+      <span class="card-cost">${cr(cost)}</span>
+      <span class="card-ep">${mod.ep} EP</span>
+    </div>
+  </div>`;
+}
+
+function renderDetail() {
+  const empty=document.getElementById('detEmpty'), content=document.getElementById('detContent');
+  if (!S.focused) { empty.style.display=''; content.style.display='none'; return; }
+  empty.style.display='none'; content.style.display='flex';
+  const mod=S.focused, f=S.frame, ns=f?isNonstandard(mod,f):false;
+  const cost=modCost(mod,f,ns), inst=isInstalled(mod), compat=getCompat(mod);
+  const remaining=S.playerCredits-buildTotal();
+  const after=inst?(remaining+mod.finalCost||cost):(remaining-cost);
+  const clr=catColor(mod.category);
+
+  document.getElementById('dCat').textContent=CAT_META[mod.category]?.label||mod.category;
+  document.getElementById('dCat').style.color=clr;
+  document.getElementById('dName').textContent=mod.name;
+  document.getElementById('dDesc').textContent=mod.desc;
+  document.getElementById('dAvail').textContent=`Availability: ${mod.avail||'Common'}`;
+
+  const tags=[
+    inst?'<span class="badge badge-inst">Installed</span>':'',
+    mod.avail==='Military'?'<span class="badge badge-mil">Military</span>':'',
+    mod.avail==='Restricted'?'<span class="badge badge-restr">Restricted</span>':'',
+    ns?'<span class="badge badge-restr">Nonstandard</span>':''
+  ].join('');
+  document.getElementById('dTags').innerHTML=tags;
+
+  // Cost table
+  const base=mod.cost||0, adjCost=f?Math.round(base*(f.costModifier||1)):base;
+  document.getElementById('dBase').textContent=cr(base);
+  document.getElementById('dCostMod').textContent=f?f.costModifier:1;
+  document.getElementById('dAdjCost').textContent=cr(adjCost);
+  const nsRow=document.getElementById('dNonstandardRow');
+  if (ns) { nsRow.style.display=''; document.getElementById('dNonstandardCost').textContent=cr(adjCost*5); }
+  else nsRow.style.display='none';
+  document.getElementById('dFinal').textContent=cr(cost);
+  document.getElementById('dAfter').textContent=cr(after);
+  const impRow=document.getElementById('dImpactRow');
+  impRow.className='cost-row '+(after<0&&!inst?'neg':after===0?'neu':'pos');
+
+  // EP
+  const epRem=epRemaining(), modEP=mod.ep||0;
+  document.getElementById('dEpBadge').textContent=modEP+' EP';
+  const epBadge=document.getElementById('dEpBadge');
+  epBadge.className='ep-badge '+(modEP>epRem&&!inst?'ep-short':'ep-ok');
+  document.getElementById('dEpRemain').textContent=f?`${epRem} EP remaining`:'';
+
+  // Effect
+  document.getElementById('dEffect').innerHTML=`<div class="feat-item">${mod.effect}</div>`;
+
+  // Size restriction
+  const rs=document.getElementById('dRestSec');
+  if (mod.sizeRestr) { rs.style.display=''; document.getElementById('dRest').innerHTML=`<div class="feat-item rest-item">${mod.sizeRestr}</div>`; }
+  else rs.style.display='none';
+
+  // Weapon stats
+  const ws=document.getElementById('dWeaponSec');
+  if (mod.weaponType) { ws.style.display=''; document.getElementById('dWeaponStats').innerHTML=`<div class="feat-item">Type: ${mod.weaponType}</div><div class="feat-item">Damage: ${mod.damage}</div>`; }
+  else ws.style.display='none';
+
+  // Nonstandard
+  document.getElementById('dNonstandardWarn').style.display=ns?'':'none';
+
+  // Compat
+  const cr2=document.getElementById('dCompat');
+  cr2.className='compat-row '+compat.cls;
+  cr2.querySelector('i').className='fas '+compat.icon;
+  document.getElementById('dCompatTxt').textContent=compat.txt;
+
+  // Approval notice
+  document.getElementById('dApprovalNotice').style.display=(mod.avail==='Restricted'||mod.avail==='Military')?'':'none';
+
+  // Buttons
+  const iBtn=document.getElementById('dInstBtn'), rBtn=document.getElementById('dRemBtn');
+  iBtn.style.display=inst?'none':''; rBtn.style.display=inst?'':'none';
+  iBtn.disabled=!compat.ok;
+
+  const ni=iBtn.cloneNode(true), nr=rBtn.cloneNode(true);
+  iBtn.parentNode.replaceChild(ni,iBtn); rBtn.parentNode.replaceChild(nr,rBtn);
+  ni.addEventListener('click',()=>{ installMod(mod); S.focused=mod; renderDetail(); });
+  nr.addEventListener('click',()=>{ removeMod(mod); S.focused=mod; refresh(); });
+}
+
+function renderFtr() {
+  const f=S.frame, rem=S.playerCredits-buildTotal(), ok=!!f&&rem>=0&&epUsed()<=(f?.unusedEP||0);
+  document.getElementById('submitBtn').disabled=!ok;
+  const restricted=S.mods.some(m=>m.avail==='Restricted'||m.avail==='Military');
+  document.getElementById('submitBtn').textContent=restricted?'⚖ Submit for GM Approval':'⬡ Submit for Purchase';
+  document.getElementById('ftrStatus').textContent=!f?'Select a vessel frame to begin':rem<0?`Over budget by ${cr(Math.abs(rem))} — remove modifications`:ok?`Build valid · ${cr(rem)} remaining · ${S.mods.length} mod(s)`:'Build incomplete';
+}
+
+// ── EVENTS ────────────────────────────────────────────────────
+document.getElementById('changeFrameBtn').addEventListener('click',()=>{
+  S.frame=null; S.mods=[]; S.focused=null;
+  document.getElementById('framePhase').style.display='';
+  document.getElementById('modPhase').style.display='none';
+  refresh();
+});
+document.getElementById('srch').addEventListener('input',e=>{ S.query=e.target.value; renderMid(); });
+document.getElementById('ftabs').addEventListener('click',e=>{
+  const tab=e.target.closest('.ftab'); if(!tab) return;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  tab.classList.add('on'); S.filter=tab.dataset.f; renderMid();
+});
+document.getElementById('compatBtn').addEventListener('click',function(){ S.compatOnly=!S.compatOnly; this.classList.toggle('on',S.compatOnly); renderMid(); });
+
+// ── BOOT ──────────────────────────────────────────────────────
+renderFrameGrid();
+refresh();
+</script>
+</body>
+</html>
