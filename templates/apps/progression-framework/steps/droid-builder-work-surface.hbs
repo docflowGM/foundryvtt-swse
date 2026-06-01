@@ -1,5 +1,5 @@
 {{!-- Droid Chassis Builder — Garage-style construction work surface --}}
-{{!-- Phase 3: three-rail visual layout using builderVm while preserving existing step actions. --}}
+{{!-- Phase 5: right-rail component selection/action flow using builderVm while preserving existing state contracts. --}}
 
 {{#if builderVm}}
 <div class="prog-droid-builder prog-droid-builder--garage swse-droid-builder-surface swse-ui-shell" data-builder-mode="{{builderVm.contextMode}}">
@@ -21,15 +21,27 @@
 
   <section class="prog-droid-builder__builder-strip" aria-label="Droid chassis controls">
     <div class="prog-droid-builder__control-group">
-      <label>Degree</label>
-      <select class="prog-droid-builder__select" disabled aria-label="Selected droid degree">
-        <option>{{builderVm.chassis.degreeLabel}}</option>
+      <label for="droid-builder-degree">Degree</label>
+      <select id="droid-builder-degree"
+              class="prog-droid-builder__select"
+              data-action="set-degree"
+              aria-label="Selected droid degree"
+              {{#if builderVm.chassis.degreeLocked}}disabled{{/if}}>
+        {{#each builderVm.chassis.degreeOptions}}
+          <option value="{{this.id}}" {{#if this.isSelected}}selected{{/if}} {{#if this.disabled}}disabled{{/if}}>{{this.label}} — {{this.roles}}</option>
+        {{/each}}
       </select>
     </div>
     <div class="prog-droid-builder__control-group">
-      <label>Size</label>
-      <select class="prog-droid-builder__select" disabled aria-label="Selected droid size">
-        <option>{{builderVm.chassis.sizeLabel}}</option>
+      <label for="droid-builder-size">Size</label>
+      <select id="droid-builder-size"
+              class="prog-droid-builder__select"
+              data-action="set-size"
+              aria-label="Selected droid size"
+              {{#if builderVm.chassis.sizeLocked}}disabled{{/if}}>
+        {{#each builderVm.chassis.sizeOptions}}
+          <option value="{{this.id}}" {{#if this.isSelected}}selected{{/if}} {{#if this.disabled}}disabled{{/if}}>{{this.label}} · {{this.multiplierLabel}} cost</option>
+        {{/each}}
       </select>
     </div>
     <div class="prog-droid-builder__control-group">
@@ -62,7 +74,7 @@
               <strong class="prog-droid-builder__budget-value--{{builderVm.budget.tone}}">{{builderVm.budget.remaining}} cr</strong>
             </div>
           </div>
-          <div class="prog-droid-builder__budget-bar {{#if builderVm.budget.isOverBudget}}prog-droid-builder__budget-bar--over{{/if}}" aria-hidden="true"><span></span></div>
+          <div class="prog-droid-builder__budget-bar {{#if builderVm.budget.isOverBudget}}prog-droid-builder__budget-bar--over{{/if}}" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{builderVm.budget.percentSpent}}" aria-label="Construction budget spent"><span style="width: {{builderVm.budget.percentSpent}}%;"></span></div>
         </div>
       </section>
 
@@ -92,19 +104,17 @@
           <ul class="prog-droid-builder__installed-list">
             {{#if this.items}}
               {{#each this.items}}
-                <li class="prog-droid-builder__installed-item prog-droid-builder__installed-item--complete">
+                <li class="prog-droid-builder__installed-item prog-droid-builder__installed-item--complete {{#if this.isSelected}}prog-droid-builder__installed-item--selected{{/if}}"
+                    role="button"
+                    tabindex="0"
+                    data-action="select-component"
+                    data-component-category="{{this.removeAction.category}}"
+                    data-component-id="{{this.removeAction.id}}"
+                    data-component-subcategory="{{this.removeAction.subcategory}}"
+                    data-component-uid="{{this.detailKey}}">
                   <span class="prog-droid-builder__installed-item-name">{{this.name}}</span>
                   <span class="prog-droid-builder__chip">{{this.cost}} cr</span>
-                  {{#unless this.isLocked}}
-                    <button class="prog-droid-builder__action prog-droid-builder__action--remove prog-droid-builder__action--compact"
-                            type="button"
-                            data-action="remove-system"
-                            data-category="{{this.removeAction.category}}"
-                            data-id="{{this.removeAction.id}}"
-                            data-subcategory="{{this.removeAction.subcategory}}">
-                      Remove
-                    </button>
-                  {{/unless}}
+                  <span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Inspect</span>
                 </li>
               {{/each}}
             {{else}}
@@ -124,7 +134,7 @@
         <input class="prog-droid-builder__search" type="search" placeholder="Search components…" aria-label="Search droid systems" disabled>
         <div class="prog-droid-builder__filter-tabs" role="tablist" aria-label="Droid system categories">
           {{#each builderVm.availableGroups}}
-            <button class="prog-droid-builder__filter-tab prog-droid-builder__tab {{#if @first}}prog-droid-builder__tab--active{{/if}}"
+            <button class="prog-droid-builder__filter-tab prog-droid-builder__tab {{#if this.isActive}}prog-droid-builder__tab--active{{/if}}"
                     type="button"
                     data-category="{{this.id}}">
               {{this.label}}
@@ -135,7 +145,7 @@
 
       <div class="prog-droid-builder__scroll prog-droid-builder__systems-browser">
         {{#each builderVm.availableGroups}}
-          <section class="prog-droid-builder__panel {{#if @first}}prog-droid-builder__panel--active{{/if}}" data-panel="{{this.id}}">
+          <section class="prog-droid-builder__panel {{#if this.isActive}}prog-droid-builder__panel--active{{/if}}" data-panel="{{this.id}}">
             <div class="prog-droid-builder__garage-head">
               <h3>{{this.label}}</h3>
               <span>{{this.enabledCount}}/{{this.count}} available</span>
@@ -149,10 +159,14 @@
                 <div class="prog-droid-builder__group-label">{{this.label}}</div>
                 <div class="prog-droid-builder__card-grid">
                   {{#each this.items}}
-                    <article class="prog-droid-builder__component-card prog-droid-builder__component-card--{{this.category}} {{#if this.isInstalled}}prog-droid-builder__component-card--installed{{/if}} {{#unless this.canInstall}}{{#unless this.isInstalled}}prog-droid-builder__component-card--disabled{{/unless}}{{/unless}}"
+                    <article class="prog-droid-builder__component-card prog-droid-builder__component-card--{{this.category}} {{#if this.isSelected}}prog-droid-builder__component-card--selected{{/if}} {{#if this.isInstalled}}prog-droid-builder__component-card--installed{{/if}} {{#unless this.canInstall}}{{#unless this.isInstalled}}prog-droid-builder__component-card--disabled{{/unless}}{{/unless}}"
+                             role="button"
+                             tabindex="0"
+                             data-action="select-component"
                              data-component-id="{{this.id}}"
                              data-component-category="{{this.category}}"
                              data-component-subcategory="{{this.subcategory}}"
+                             data-component-uid="{{this.uid}}"
                              aria-disabled="{{#if this.disabled}}true{{else}}false{{/if}}">
                       <div class="prog-droid-builder__component-card-eyebrow">{{this.type}}</div>
                       <h4 class="prog-droid-builder__component-card-title">{{this.name}}</h4>
@@ -168,28 +182,9 @@
                           {{#each this.disabledReasons}}<div>• {{this}}</div>{{/each}}
                         </div>
                       {{/if}}
-                      {{#if this.isInstalled}}
-                        {{#if this.canRemove}}
-                          <button class="prog-droid-builder__action prog-droid-builder__action--remove"
-                                  type="button"
-                                  data-action="remove-system"
-                                  data-category="{{this.removeAction.category}}"
-                                  data-id="{{this.removeAction.id}}"
-                                  data-subcategory="{{this.removeAction.subcategory}}">
-                            Remove
-                          </button>
-                        {{/if}}
-                      {{else}}
-                        <button class="prog-droid-builder__action prog-droid-builder__action--install"
-                                type="button"
-                                data-action="purchase-system"
-                                data-category="{{this.installAction.category}}"
-                                data-id="{{this.installAction.id}}"
-                                data-subcategory="{{this.installAction.subcategory}}"
-                                {{#unless this.canInstall}}disabled{{/unless}}>
-                          Install
-                        </button>
-                      {{/if}}
+                      <div class="prog-droid-builder__component-card-foot">
+                        <span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Select for Detail</span>
+                      </div>
                     </article>
                   {{/each}}
                 </div>
@@ -197,9 +192,14 @@
             {{else}}
               <div class="prog-droid-builder__card-grid">
                 {{#each this.items}}
-                  <article class="prog-droid-builder__component-card prog-droid-builder__component-card--{{this.category}} {{#if this.isInstalled}}prog-droid-builder__component-card--installed{{/if}} {{#unless this.canInstall}}{{#unless this.isInstalled}}prog-droid-builder__component-card--disabled{{/unless}}{{/unless}}"
+                  <article class="prog-droid-builder__component-card prog-droid-builder__component-card--{{this.category}} {{#if this.isSelected}}prog-droid-builder__component-card--selected{{/if}} {{#if this.isInstalled}}prog-droid-builder__component-card--installed{{/if}} {{#unless this.canInstall}}{{#unless this.isInstalled}}prog-droid-builder__component-card--disabled{{/unless}}{{/unless}}"
+                           role="button"
+                           tabindex="0"
+                           data-action="select-component"
                            data-component-id="{{this.id}}"
                            data-component-category="{{this.category}}"
+                           data-component-subcategory="{{this.subcategory}}"
+                           data-component-uid="{{this.uid}}"
                            aria-disabled="{{#if this.disabled}}true{{else}}false{{/if}}">
                     <div class="prog-droid-builder__component-card-eyebrow">{{this.type}}</div>
                     <h4 class="prog-droid-builder__component-card-title">{{this.name}}</h4>
@@ -216,28 +216,9 @@
                         {{#each this.disabledReasons}}<div>• {{this}}</div>{{/each}}
                       </div>
                     {{/if}}
-                    {{#if this.isInstalled}}
-                      {{#if this.canRemove}}
-                        <button class="prog-droid-builder__action prog-droid-builder__action--remove"
-                                type="button"
-                                data-action="remove-system"
-                                data-category="{{this.removeAction.category}}"
-                                data-id="{{this.removeAction.id}}"
-                                data-subcategory="{{this.removeAction.subcategory}}">
-                          Remove
-                        </button>
-                      {{/if}}
-                    {{else}}
-                      <button class="prog-droid-builder__action prog-droid-builder__action--install"
-                              type="button"
-                              data-action="purchase-system"
-                              data-category="{{this.installAction.category}}"
-                              data-id="{{this.installAction.id}}"
-                              data-subcategory="{{this.installAction.subcategory}}"
-                              {{#unless this.canInstall}}disabled{{/unless}}>
-                        Install
-                      </button>
-                    {{/if}}
+                    <div class="prog-droid-builder__component-card-foot">
+                      <span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Select for Detail</span>
+                    </div>
                   </article>
                 {{/each}}
               </div>
@@ -308,7 +289,7 @@
             {{else}}
               <button class="prog-droid-builder__action prog-droid-builder__action--install"
                       type="button"
-                      data-action="purchase-system"
+                      data-action="install-system"
                       data-category="{{builderVm.selectedDetail.item.installAction.category}}"
                       data-id="{{builderVm.selectedDetail.item.installAction.id}}"
                       data-subcategory="{{builderVm.selectedDetail.item.installAction.subcategory}}"

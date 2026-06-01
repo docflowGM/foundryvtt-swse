@@ -1698,3 +1698,136 @@
   background: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 12%, transparent);
   border-color: var(--droid-bay-border, rgba(126, 231, 255, 0.34));
 }
+
+
+/* ============================================
+   PHASE 4: CHASSIS CONTROL + BUDGET STATES
+   ============================================ */
+
+.progression-shell .prog-droid-builder__select:not(:disabled) {
+  cursor: pointer;
+  border-color: rgba(112, 226, 255, 0.38);
+  background:
+    linear-gradient(180deg, rgba(112, 226, 255, 0.08), rgba(0, 0, 0, 0.28)),
+    rgba(2, 10, 20, 0.88);
+  color: var(--prog-text-heading, #eafcff);
+}
+
+.progression-shell .prog-droid-builder__select:not(:disabled):hover,
+.progression-shell .prog-droid-builder__select:not(:disabled):focus {
+  outline: none;
+  border-color: rgba(112, 226, 255, 0.62);
+  box-shadow: 0 0 0 1px rgba(112, 226, 255, 0.16), 0 0 14px rgba(112, 226, 255, 0.14);
+}
+
+.progression-shell .prog-droid-builder__select:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.progression-shell .prog-droid-builder__budget-bar {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.progression-shell .prog-droid-builder__budget-bar span {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(125, 255, 178, 0.72), rgba(112, 226, 255, 0.82));
+  box-shadow: 0 0 10px rgba(125, 255, 178, 0.24);
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.progression-shell .prog-droid-builder__budget-bar--over {
+  border-color: rgba(255, 107, 107, 0.46);
+  background: rgba(255, 107, 107, 0.10);
+}
+
+.progression-shell .prog-droid-builder__budget-bar--over span {
+  width: 100% !important;
+  background: linear-gradient(90deg, rgba(255, 107, 107, 0.62), rgba(255, 139, 139, 0.92));
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.26);
+}
+
+.progression-shell .prog-droid-builder__budget-value--positive {
+  color: var(--prog-positive, #7dffb2);
+}
+
+.progression-shell .prog-droid-builder__budget-value--neutral {
+  color: var(--prog-neutral, #ffd166);
+}
+
+.progression-shell .prog-droid-builder__budget-value--negative {
+  color: var(--prog-negative, #ff8b8b);
+}
+
+.progression-shell .prog-droid-builder__badge--positive,
+.progression-shell .prog-droid-builder__chip--positive {
+  border-color: rgba(125, 255, 178, 0.32);
+  color: var(--prog-positive, #7dffb2);
+  background: rgba(125, 255, 178, 0.10);
+}
+
+.progression-shell .prog-droid-builder__badge--neutral,
+.progression-shell .prog-droid-builder__chip--neutral {
+  border-color: rgba(255, 209, 102, 0.32);
+  color: var(--prog-neutral, #ffd166);
+  background: rgba(255, 209, 102, 0.10);
+}
+
+.progression-shell .prog-droid-builder__badge--negative,
+.progression-shell .prog-droid-builder__chip--negative {
+  border-color: rgba(255, 107, 107, 0.36);
+  color: var(--prog-negative, #ff8b8b);
+  background: rgba(255, 107, 107, 0.11);
+}
+
+
+/* ============================================
+   PHASE 5: DETAIL RAIL SELECTION + ACTION FLOW
+   ============================================ */
+
+.progression-shell .prog-droid-builder__installed-item[role="button"] {
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.progression-shell .prog-droid-builder__installed-item[role="button"]:hover,
+.progression-shell .prog-droid-builder__installed-item[role="button"]:focus-visible,
+.progression-shell .prog-droid-builder__installed-item--selected {
+  border-color: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 52%, transparent);
+  background: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 10%, transparent);
+  box-shadow: 0 0 10px color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 14%, transparent);
+  outline: none;
+}
+
+.progression-shell .prog-droid-builder__component-card[role="button"]:focus-visible {
+  outline: 1px solid color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 72%, transparent);
+  outline-offset: 2px;
+}
+
+.progression-shell .prog-droid-builder__component-card-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 4px;
+  border-top: 1px dashed color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 12%, transparent);
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__component-card--selected {
+  border-color: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 68%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 13%, transparent), color-mix(in oklch, black 38%, transparent));
+  box-shadow: 0 0 18px color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 22%, transparent);
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__detail-actions .prog-droid-builder__action {
+  width: 100%;
+  justify-content: center;
+}
