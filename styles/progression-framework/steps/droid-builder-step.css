@@ -1614,3 +1614,392 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   Phase 3: Droid Chassis Builder three-rail surface
+   ============================================ */
+
+.progression-shell .prog-droid-builder--garage {
+  gap: 12px;
+  overflow: hidden;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__garage-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__header {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__builder-strip,
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__hud {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__systems-browser {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__panel {
+  min-height: 0;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__check-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__check-item small {
+  grid-column: 1 / -1;
+  color: var(--droid-bay-muted, var(--prog-text-dim));
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.progression-shell .prog-droid-builder__action--compact {
+  min-height: 24px;
+  padding: 4px 7px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__component-card .prog-droid-builder__action {
+  margin-top: auto;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__detail .prog-droid-builder__garage-panel {
+  clip-path: none;
+  padding: 9px;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__detail-actions .prog-droid-builder__action:disabled,
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__component-card .prog-droid-builder__action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__search:disabled,
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__select:disabled {
+  opacity: 0.78;
+  cursor: default;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__filter-tab.prog-droid-builder__tab--active {
+  color: var(--droid-bay-accent, var(--prog-accent));
+  background: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 12%, transparent);
+  border-color: var(--droid-bay-border, rgba(126, 231, 255, 0.34));
+}
+
+
+/* ============================================
+   PHASE 4: CHASSIS CONTROL + BUDGET STATES
+   ============================================ */
+
+.progression-shell .prog-droid-builder__select:not(:disabled) {
+  cursor: pointer;
+  border-color: rgba(112, 226, 255, 0.38);
+  background:
+    linear-gradient(180deg, rgba(112, 226, 255, 0.08), rgba(0, 0, 0, 0.28)),
+    rgba(2, 10, 20, 0.88);
+  color: var(--prog-text-heading, #eafcff);
+}
+
+.progression-shell .prog-droid-builder__select:not(:disabled):hover,
+.progression-shell .prog-droid-builder__select:not(:disabled):focus {
+  outline: none;
+  border-color: rgba(112, 226, 255, 0.62);
+  box-shadow: 0 0 0 1px rgba(112, 226, 255, 0.16), 0 0 14px rgba(112, 226, 255, 0.14);
+}
+
+.progression-shell .prog-droid-builder__select:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.progression-shell .prog-droid-builder__budget-bar {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.progression-shell .prog-droid-builder__budget-bar span {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(125, 255, 178, 0.72), rgba(112, 226, 255, 0.82));
+  box-shadow: 0 0 10px rgba(125, 255, 178, 0.24);
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.progression-shell .prog-droid-builder__budget-bar--over {
+  border-color: rgba(255, 107, 107, 0.46);
+  background: rgba(255, 107, 107, 0.10);
+}
+
+.progression-shell .prog-droid-builder__budget-bar--over span {
+  width: 100% !important;
+  background: linear-gradient(90deg, rgba(255, 107, 107, 0.62), rgba(255, 139, 139, 0.92));
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.26);
+}
+
+.progression-shell .prog-droid-builder__budget-value--positive {
+  color: var(--prog-positive, #7dffb2);
+}
+
+.progression-shell .prog-droid-builder__budget-value--neutral {
+  color: var(--prog-neutral, #ffd166);
+}
+
+.progression-shell .prog-droid-builder__budget-value--negative {
+  color: var(--prog-negative, #ff8b8b);
+}
+
+.progression-shell .prog-droid-builder__badge--positive,
+.progression-shell .prog-droid-builder__chip--positive {
+  border-color: rgba(125, 255, 178, 0.32);
+  color: var(--prog-positive, #7dffb2);
+  background: rgba(125, 255, 178, 0.10);
+}
+
+.progression-shell .prog-droid-builder__badge--neutral,
+.progression-shell .prog-droid-builder__chip--neutral {
+  border-color: rgba(255, 209, 102, 0.32);
+  color: var(--prog-neutral, #ffd166);
+  background: rgba(255, 209, 102, 0.10);
+}
+
+.progression-shell .prog-droid-builder__badge--negative,
+.progression-shell .prog-droid-builder__chip--negative {
+  border-color: rgba(255, 107, 107, 0.36);
+  color: var(--prog-negative, #ff8b8b);
+  background: rgba(255, 107, 107, 0.11);
+}
+
+
+/* ============================================
+   PHASE 5: DETAIL RAIL SELECTION + ACTION FLOW
+   ============================================ */
+
+.progression-shell .prog-droid-builder__installed-item[role="button"] {
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.progression-shell .prog-droid-builder__installed-item[role="button"]:hover,
+.progression-shell .prog-droid-builder__installed-item[role="button"]:focus-visible,
+.progression-shell .prog-droid-builder__installed-item--selected {
+  border-color: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 52%, transparent);
+  background: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 10%, transparent);
+  box-shadow: 0 0 10px color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 14%, transparent);
+  outline: none;
+}
+
+.progression-shell .prog-droid-builder__component-card[role="button"]:focus-visible {
+  outline: 1px solid color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 72%, transparent);
+  outline-offset: 2px;
+}
+
+.progression-shell .prog-droid-builder__component-card-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 4px;
+  border-top: 1px dashed color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 12%, transparent);
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__component-card--selected {
+  border-color: color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 68%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 13%, transparent), color-mix(in oklch, black 38%, transparent));
+  box-shadow: 0 0 18px color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 22%, transparent);
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__detail-actions .prog-droid-builder__action {
+  width: 100%;
+  justify-content: center;
+}
+
+
+/* ============================================
+   PHASE 6: CHARGEN INTEGRATION + VALIDATION POLISH
+   ============================================ */
+
+.progression-shell .prog-droid-builder__filter-empty {
+  margin: 10px 0 0;
+  padding: 14px;
+  border: 1px dashed color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 18%, transparent);
+  border-radius: 10px;
+  color: var(--droid-bay-muted, rgba(223, 248, 255, 0.52));
+  font-size: 11px;
+  text-align: center;
+  background: color-mix(in oklch, black 26%, transparent);
+}
+
+.progression-shell .prog-droid-builder__component-card--filtered-out {
+  display: none !important;
+}
+
+.progression-shell .prog-droid-builder__search:not(:disabled) {
+  border-color: rgba(112, 226, 255, 0.28);
+  background:
+    linear-gradient(180deg, rgba(112, 226, 255, 0.06), rgba(0, 0, 0, 0.26)),
+    rgba(2, 10, 20, 0.88);
+  color: var(--prog-text-heading, #eafcff);
+}
+
+.progression-shell .prog-droid-builder__search:not(:disabled):focus {
+  outline: none;
+  border-color: rgba(112, 226, 255, 0.58);
+  box-shadow: 0 0 0 1px rgba(112, 226, 255, 0.16), 0 0 14px rgba(112, 226, 255, 0.12);
+}
+
+.progression-shell .prog-droid-builder__detail-empty {
+  min-height: 140px;
+}
+
+
+/* ============================================
+   PHASE 7 + 8: REUSE READINESS, POLISH, RESPONSIVENESS
+   ============================================ */
+
+.progression-shell .prog-droid-builder--garage {
+  container-type: inline-size;
+}
+
+.progression-shell .prog-droid-builder__hud-tag--mode {
+  border-color: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 26%, transparent);
+  color: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 84%, white 8%);
+  background: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 8%, transparent);
+}
+
+.progression-shell .prog-droid-builder__context-note {
+  color: var(--droid-bay-muted, var(--prog-text-dim));
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.progression-shell .prog-droid-builder__context-note p {
+  margin: 0;
+}
+
+.progression-shell .prog-droid-builder__systems-browser {
+  padding-right: 4px;
+}
+
+.progression-shell .prog-droid-builder__panel {
+  display: none;
+}
+
+.progression-shell .prog-droid-builder__panel--active {
+  display: block;
+}
+
+.progression-shell .prog-droid-builder__component-card-body {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.progression-shell .prog-droid-builder__component-card--disabled:hover {
+  border-color: color-mix(in oklch, var(--droid-bay-negative, #ff6b6b) 30%, transparent);
+  box-shadow: 0 0 10px color-mix(in oklch, var(--droid-bay-negative, #ff6b6b) 10%, transparent);
+}
+
+.progression-shell .prog-droid-builder__detail-description {
+  line-height: 1.45;
+}
+
+.progression-shell .prog-droid-builder__cost-table {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder__right-rail > .prog-droid-builder__garage-panel,
+.progression-shell .prog-droid-builder__left-rail > .prog-droid-builder__garage-panel {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder__left-rail > .prog-droid-builder__scroll,
+.progression-shell .prog-droid-builder__systems-browser {
+  flex: 1 1 auto;
+}
+
+.progression-shell .prog-droid-builder__budget-row strong,
+.progression-shell .prog-droid-builder__cost-row strong {
+  white-space: nowrap;
+}
+
+.progression-shell .prog-droid-builder--mode-store-quote .prog-droid-builder__hud-tag--mode,
+.progression-shell .prog-droid-builder--mode-gm-draft .prog-droid-builder__hud-tag--mode {
+  border-color: color-mix(in oklch, var(--droid-bay-neutral, #ffc857) 32%, transparent);
+  color: var(--droid-bay-neutral, #ffc857);
+  background: color-mix(in oklch, var(--droid-bay-neutral, #ffc857) 8%, transparent);
+}
+
+.progression-shell .prog-droid-builder--mode-modify-existing .prog-droid-builder__hud-tag--mode {
+  border-color: color-mix(in oklch, var(--droid-bay-accent-alt, #ff71d9) 32%, transparent);
+  color: var(--droid-bay-accent-alt, #ff71d9);
+  background: color-mix(in oklch, var(--droid-bay-accent-alt, #ff71d9) 8%, transparent);
+}
+
+@media (min-width: 1181px) {
+  .progression-shell .prog-droid-builder__workbench {
+    grid-template-columns: minmax(220px, 0.78fr) minmax(400px, 1.48fr) minmax(300px, 0.98fr);
+  }
+
+  .progression-shell .prog-droid-builder__right-rail {
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .progression-shell .prog-droid-builder__right-rail > .prog-droid-builder__detail {
+    overflow-y: auto;
+  }
+}
+
+@media (max-height: 780px) {
+  .progression-shell .prog-droid-builder--garage {
+    gap: 8px;
+  }
+
+  .progression-shell .prog-droid-builder__hud,
+  .progression-shell .prog-droid-builder__builder-strip {
+    gap: 6px;
+  }
+
+  .progression-shell .prog-droid-builder__garage-panel,
+  .progression-shell .prog-droid-builder__component-card {
+    padding: 8px;
+  }
+
+  .progression-shell .prog-droid-builder__component-card {
+    min-height: 116px;
+  }
+
+  .progression-shell .prog-droid-builder__detail-empty {
+    min-height: 100px;
+  }
+}
+
+@container (max-width: 980px) {
+  .progression-shell .prog-droid-builder__builder-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .progression-shell .prog-droid-builder__control-group {
+    align-items: stretch;
+  }
+}

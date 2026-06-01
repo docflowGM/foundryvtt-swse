@@ -20,7 +20,14 @@ import { ProgressionRules } from '../../../engine/progression/ProgressionRules.j
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
-import { getDroidSizeDefaultLocomotion, getDroidSizeBaseSpeed, getDroidSizeCostFactor } from '../../../engine/progression/droids/droid-trait-rules.js';
+import {
+  DROID_DEGREE_PACKAGES,
+  DROID_SIZE_PACKAGES,
+  getDroidSizeDefaultLocomotion,
+  getDroidSizeBaseSpeed,
+  getDroidSizeCostFactor
+} from '../../../engine/progression/droids/droid-trait-rules.js';
+import { DroidBuilderViewModelAdapter } from './droid-builder-view-model.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -28,6 +35,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     this._droidState = null;
     this._suggestedSystems = [];  // Suggested droid systems
     this._buildMode = 'provisional'; // 'deferred' | 'provisional' | 'finalized'
+    this._selectedComponentKey = null;
   }
 
   /**
@@ -77,8 +85,20 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       baseCredits = 5000 - modelBaseCost; // Remaining budget after model cost
     }
 
-    // Get size for RAW defaults
-    const size = (speciesDroidBuilder?.defaultSize || actor?.system?.droidSize || 'medium').toLowerCase();
+    const draftDroid = shell?.progressionSession?.draftSelections?.droid || {};
+
+    // Get degree/size for RAW defaults. Prefer already-selected chargen draft values
+    // over the actor document so the builder reflects the previous droid identity step.
+    const degree = (speciesDroidBuilder?.fixedDegree
+      || draftDroid.droidDegree
+      || speciesDroidBuilder?.defaultDegree
+      || actor?.system?.droidDegree
+      || '1st-degree').toLowerCase();
+    const size = (speciesDroidBuilder?.fixedSize
+      || draftDroid.droidSize
+      || speciesDroidBuilder?.defaultSize
+      || actor?.system?.droidSize
+      || 'medium').toLowerCase();
     const defaultLocomotionId = getDroidSizeDefaultLocomotion(size);
     const defaultSpeed = getDroidSizeBaseSpeed(size);
     const costFactor = getDroidSizeCostFactor(size);
@@ -114,7 +134,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       isDroid: true,
       creationMode: creationMode,  // 'custom' or 'standard-model'
       isStandardModel: isStandardModel,
-      droidDegree: speciesDroidBuilder?.fixedDegree || speciesDroidBuilder?.defaultDegree || actor?.system?.droidDegree || '1st-degree',
+      droidDegree: degree,
       droidSize: size,
       speciesDroidBuilder: speciesDroidBuilder ? JSON.parse(JSON.stringify(speciesDroidBuilder)) : null,
       sourceSpecies: speciesContext?.identity?.name || null,
@@ -209,12 +229,39 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     return system.weightFormula(costFactor);
   }
 
+  _getDroidBuilderContextMode(shell = null) {
+    const droidContext = shell?.progressionSession?.droidContext || {};
+    return droidContext.contextMode
+      || droidContext.builderMode
+      || this.descriptor?.contextMode
+      || this.descriptor?.builderContextMode
+      || 'chargenDraft';
+  }
+
   /**
    * Provide step data to templates.
    */
   async getStepData(context) {
+    const shell = context?.shell || context?.progressionShell || null;
+    const contextMode = this._getDroidBuilderContextMode(shell);
+
     if (!this._droidState) {
-      return {};
+      const builderVm = DroidBuilderViewModelAdapter.build({
+        droidState: null,
+        contextMode,
+      });
+      return {
+        droidState: null,
+        presentation: {},
+        builderVm,
+        readiness: builderVm.validation,
+        buildComplete: false,
+        buildIssues: builderVm.validation.errors || [],
+        hasSuggestions: false,
+        suggestedSystemIds: [],
+        suggestedSystems: [],
+        confidenceMap: {},
+      };
     }
 
     // PHASE D: Flatten PHASE D suggestions (organized by category) into array for display
@@ -222,10 +269,19 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(suggestionsArray);
     const presentation = this._buildDroidPresentation(suggestedIds, confidenceMap);
     const readiness = this._validateDroidBuild();
+    const builderVm = DroidBuilderViewModelAdapter.build({
+      droidState: this._droidState,
+      readiness,
+      suggestedIds,
+      confidenceMap,
+      contextMode,
+      selectedComponentKey: this._selectedComponentKey,
+    });
 
     return {
       droidState: { ...this._droidState },
       presentation,
+      builderVm,
       readiness,
       buildComplete: readiness.isValid,
       buildIssues: readiness.issues,
@@ -275,6 +331,14 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: Support deferred state (allows progression without completing build)
    */
   getSelection() {
+    if (!this._droidState) {
+      return {
+        selected: [],
+        count: 0,
+        isComplete: false,
+      };
+    }
+
     // If deferred, treat as complete to allow progression
     if (this._droidState?.buildState?.isDeferred) {
       return {
@@ -298,6 +362,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: No blocking issues when deferred
    */
   getBlockingIssues() {
+    if (!this._droidState) {
+      return ['Droid construction state is not available. Return to the prior droid setup step and try again.'];
+    }
+
     // If deferred, don't block progression
     if (this._droidState?.buildState?.isDeferred) {
       return [];
@@ -425,8 +493,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: Deferred builds skip validation (handled by getBlockingIssues)
    */
   _validateDroidBuild() {
-    const sys = this._droidState.droidSystems;
-    const credits = this._droidState.droidCredits;
+    if (!this._droidState) {
+      return {
+        isValid: false,
+        issues: ['Droid construction state is not available.'],
+        summary: 'Droid construction state unavailable.',
+        isDeferred: false,
+      };
+    }
+
+    const sys = this._droidState.droidSystems || {};
+    const credits = this._droidState.droidCredits || { remaining: 0 };
     const isDeferred = this._droidState?.buildState?.isDeferred || false;
     const issues = [];
 
@@ -454,12 +531,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Check appendages (must have at least one)
-    if (!sys.appendages || sys.appendages.length === 0) {
+    if (!Array.isArray(sys.appendages) || sys.appendages.length === 0) {
       issues.push('At least one appendage required');
     }
 
     // Check budget
-    if (credits.remaining < 0) {
+    if (Number(credits.remaining || 0) < 0) {
       issues.push('Over budget - remove systems to proceed');
     }
 
@@ -507,16 +584,146 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   _getCostFactor() {
     const size = this._droidState?.droidSize || 'medium';
-    const costFactors = {
-      'tiny': 5,
-      'small': 2,
-      'medium': 1,
-      'large': 2,
-      'huge': 5,
-      'gargantuan': 10,
-      'colossal': 20
-    };
-    return costFactors[size] || 1;
+    return getDroidSizeCostFactor(size) || 1;
+  }
+
+  /**
+   * Update the droid degree from the builder header.
+   * Degree changes are chargen-draft mutations only and preserve installed systems.
+   */
+  setDroidDegree(degree, shell = null) {
+    if (!this._droidState) return false;
+    const normalized = String(degree || '').trim().toLowerCase();
+    if (!DROID_DEGREE_PACKAGES[normalized]) return false;
+
+    const fixedDegree = this._droidState.speciesDroidBuilder?.fixedDegree;
+    if (fixedDegree && String(fixedDegree).toLowerCase() !== normalized) {
+      swseLogger.warn('[DroidBuilderStep] Degree change blocked by fixed chassis profile', { fixedDegree, requested: normalized });
+      return false;
+    }
+
+    this._droidState.droidDegree = normalized;
+    this._droidState.buildState.isDeferred = false;
+    this._droidState.buildState.mode = 'provisional';
+    this._syncDraftDroidIdentity(shell);
+    return true;
+  }
+
+  /**
+   * Update the droid size and recalculate size-dependent costs.
+   */
+  setDroidSize(size, shell = null) {
+    if (!this._droidState) return false;
+    const normalized = String(size || '').trim().toLowerCase();
+    if (!DROID_SIZE_PACKAGES[normalized]) return false;
+
+    const fixedSize = this._droidState.speciesDroidBuilder?.fixedSize;
+    if (fixedSize && String(fixedSize).toLowerCase() !== normalized) {
+      swseLogger.warn('[DroidBuilderStep] Size change blocked by fixed chassis profile', { fixedSize, requested: normalized });
+      return false;
+    }
+
+    this._droidState.droidSize = normalized;
+    this._droidState.buildState.isDeferred = false;
+    this._droidState.buildState.mode = 'provisional';
+    this._refreshSizeDependentSystems();
+    this._syncDraftDroidIdentity(shell);
+    return true;
+  }
+
+  /**
+   * Keep session draft identity in sync so later steps/finalization see header changes.
+   */
+  _syncDraftDroidIdentity(shell) {
+    const draft = shell?.progressionSession?.draftSelections;
+    if (!draft) return;
+    if (!draft.droid) draft.droid = {};
+    draft.droid.droidDegree = this._droidState.droidDegree;
+    draft.droid.droidSize = this._droidState.droidSize;
+
+    if (shell?.progressionSession?.droidContext) {
+      shell.progressionSession.droidContext.degree = this._droidState.droidDegree;
+      shell.progressionSession.droidContext.size = this._droidState.droidSize;
+      shell.progressionSession.droidContext.degreePackage = DROID_DEGREE_PACKAGES[this._droidState.droidDegree];
+    }
+  }
+
+  /**
+   * Recalculate costs, weights, and speeds when the chassis size changes.
+   * Granted/default systems remain free, while purchased systems use existing formulas.
+   */
+  _refreshSizeDependentSystems() {
+    const sys = this._droidState?.droidSystems;
+    const credits = this._droidState?.droidCredits;
+    if (!sys || !credits) return;
+
+    const oldSpent = Number(credits.spent || 0);
+    let recalculatedSpent = 0;
+
+    if (sys.locomotion) {
+      const definition = DROID_SYSTEMS.locomotion?.find(system => system.id === sys.locomotion.id);
+      if (definition) {
+        const speed = this._calculateLocomotionSpeed(definition);
+        const weight = this._calculateWeight(definition);
+        const isGranted = !!sys.locomotion.isDefault || !!sys.locomotion.isGranted;
+        const cost = isGranted ? 0 : this._calculateLocomotionCost(definition, speed);
+        sys.locomotion = { ...sys.locomotion, name: definition.name, speed, weight, cost };
+      }
+      recalculatedSpent += Number(sys.locomotion.cost || 0);
+    }
+
+    if (sys.processor) {
+      const definition = DROID_SYSTEMS.processors?.find(system => system.id === sys.processor.id);
+      if (definition) {
+        const cost = this._calculateProcessorCost(definition);
+        const weight = this._calculateProcessorWeight(definition);
+        sys.processor = { ...sys.processor, name: definition.name, cost, weight };
+      }
+      recalculatedSpent += Number(sys.processor.cost || 0);
+    }
+
+    sys.appendages = (sys.appendages || []).map((appendage, index) => {
+      const lookupId = appendage.id === 'hand-1' || appendage.id === 'hand-2' ? 'hand' : appendage.id;
+      const definition = DROID_SYSTEMS.appendages?.find(system => system.id === lookupId);
+      if (!definition) return appendage;
+      const isGranted = !!appendage.isDefault || !!appendage.isGranted || appendage.id === 'hand-1' || appendage.id === 'hand-2' || (lookupId === 'hand' && index < 2 && Number(appendage.cost || 0) === 0);
+      const cost = isGranted ? 0 : this._calculateAppendageCost(definition);
+      const weight = this._calculateWeight(definition);
+      return { ...appendage, name: appendage.name || definition.name, cost, weight };
+    });
+    recalculatedSpent += (sys.appendages || []).reduce((sum, appendage) => sum + Number(appendage.cost || 0), 0);
+
+    sys.accessories = (sys.accessories || []).map(accessory => {
+      const category = accessory.category || accessory.subcategory;
+      const definition = DROID_SYSTEMS.accessories?.[category]?.find(system => system.id === accessory.id);
+      if (!definition) return accessory;
+      const cost = this._isSpeciesBonusEquipmentChoice('accessory', definition.id, category) && Number(accessory.cost || 0) === 0
+        ? 0
+        : this._calculateAccessoryCost(definition);
+      const weight = this._calculateWeight(definition);
+      return { ...accessory, name: definition.name, category, cost, weight, data: definition };
+    });
+    recalculatedSpent += (sys.accessories || []).reduce((sum, accessory) => sum + Number(accessory.cost || 0), 0);
+
+    sys.locomotionEnhancements = (sys.locomotionEnhancements || []).map(enhancement => {
+      const definition = DROID_SYSTEMS.locomotionEnhancements?.find(system => system.id === enhancement.id);
+      if (!definition) return enhancement;
+      return { ...enhancement, name: definition.name, cost: this._calculateEnhancementCost(definition), weight: 0 };
+    });
+    recalculatedSpent += (sys.locomotionEnhancements || []).reduce((sum, enhancement) => sum + Number(enhancement.cost || 0), 0);
+
+    sys.appendageEnhancements = (sys.appendageEnhancements || []).map(enhancement => {
+      const definition = DROID_SYSTEMS.appendageEnhancements?.find(system => system.id === enhancement.id);
+      if (!definition) return enhancement;
+      return { ...enhancement, name: definition.name, cost: this._calculateEnhancementCost(definition), weight: Number(enhancement.weight || 0) };
+    });
+    recalculatedSpent += (sys.appendageEnhancements || []).reduce((sum, enhancement) => sum + Number(enhancement.cost || 0), 0);
+
+    // Preserve the existing budget contract: spent tracks charged/purchased systems.
+    // When recalculation cannot identify any charged systems, keep the prior value.
+    credits.spent = Math.max(0, recalculatedSpent || oldSpent);
+    credits.remaining = Number(credits.base || 0) - Number(credits.spent || 0);
+    this._recalculateTotals();
   }
 
   /**
@@ -885,6 +1092,30 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Keep the selected/summary rail aligned with the in-progress droid draft.
+   */
+  renderSummaryPanel(context = {}) {
+    if (!this._droidState) return null;
+
+    const readiness = this._validateDroidBuild();
+    const builderVm = DroidBuilderViewModelAdapter.build({
+      droidState: this._droidState,
+      readiness,
+      contextMode,
+      selectedComponentKey: this._selectedComponentKey,
+    });
+
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/droid-builder-summary.hbs',
+      data: {
+        actor: context?.shell?.actor || context?.actor || null,
+        builderVm,
+        readiness,
+      },
+    };
+  }
+
+  /**
    * Return work surface rendering spec.
    */
   renderWorkSurface(stepData) {
@@ -955,11 +1186,48 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   validate() {
     const readiness = this._validateDroidBuild();
+    const warnings = this.getWarnings();
     return {
       isValid: readiness.isValid,
       errors: readiness.isValid ? [] : readiness.issues,
-      warnings: []
+      warnings,
     };
+  }
+
+  /**
+   * Return non-blocking warnings for the shell footer/status model.
+   */
+  getWarnings() {
+    if (!this._droidState || this._droidState?.buildState?.isDeferred) return [];
+    const warnings = [];
+    const credits = this._droidState.droidCredits || {};
+    const remaining = Number(credits.remaining || 0);
+    if (remaining === 0) warnings.push('Construction budget is fully allocated.');
+    return warnings;
+  }
+
+  /**
+   * Explain exactly why the shell cannot advance from this step.
+   */
+  getBlockerExplanation() {
+    const issues = this.getBlockingIssues();
+    if (!issues.length) return null;
+    return issues[0];
+  }
+
+  /**
+   * Provide footer pick/status counts for the progression shell.
+   */
+  getRemainingPicks() {
+    if (this._droidState?.buildState?.isDeferred) {
+      return [{ label: 'Build deferred', count: 0, isWarning: true }];
+    }
+    const readiness = this._validateDroidBuild();
+    return [{
+      label: readiness.isValid ? 'Build ready' : 'Build issues',
+      count: readiness.isValid ? 0 : readiness.issues.length,
+      isWarning: !readiness.isValid,
+    }];
   }
 
   /**
@@ -1008,9 +1276,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     return {
-      nextLabel: readiness.isValid ? 'Next: Attributes' : 'Complete Build',
-      confirmLabel: 'Finalize',
+      nextLabel: readiness.isValid ? 'Next: Attributes' : 'Resolve Droid Build',
+      confirmLabel: readiness.isValid ? 'Finalize Build' : 'Build Incomplete',
       isBlocked: !readiness.isValid,
+      statusText: readiness.summary,
     };
   }
 
@@ -1067,6 +1336,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         deferButton.addEventListener('click', (e) => this._onDeferBuild(e, shell, workSurfaceEl));
       }
 
+      // Chassis controls
+      const degreeSelect = workSurfaceEl.querySelector('[data-action="set-degree"]');
+      if (degreeSelect) {
+        degreeSelect.addEventListener('change', (e) => this._onSetDegree(e, shell));
+      }
+
+      const sizeSelect = workSurfaceEl.querySelector('[data-action="set-size"]');
+      if (sizeSelect) {
+        sizeSelect.addEventListener('change', (e) => this._onSetSize(e, shell));
+      }
+
       // Tab switching
       const tabs = workSurfaceEl.querySelectorAll('.prog-droid-builder__tab');
       tabs.forEach(tab => {
@@ -1079,8 +1359,23 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         tab.addEventListener('click', (e) => this._onAccessoryTabClick(e, workSurfaceEl));
       });
 
-      // Purchase system buttons
-      const purchaseButtons = workSurfaceEl.querySelectorAll('[data-action="purchase-system"]');
+      // Component selection: Phase 5 moves install/remove decisions to the right detail rail.
+      const componentSelectors = workSurfaceEl.querySelectorAll('[data-action="select-component"]');
+      componentSelectors.forEach(el => {
+        el.addEventListener('click', (e) => this._onSelectComponent(e, shell));
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') this._onSelectComponent(e, shell);
+        });
+      });
+
+      // Search/filter within the component browser without triggering a shell rerender.
+      const searchInput = workSurfaceEl.querySelector('[data-action="filter-systems"]');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => this._onFilterSystems(e, workSurfaceEl));
+      }
+
+      // Install system buttons. Keep purchase-system as a backwards-compatible alias.
+      const purchaseButtons = workSurfaceEl.querySelectorAll('[data-action="purchase-system"], [data-action="install-system"]');
       purchaseButtons.forEach(btn => {
         btn.addEventListener('click', (e) => this._onPurchaseSystem(e, shell, workSurfaceEl));
       });
@@ -1140,6 +1435,71 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     swseLogger.debug('[DroidBuilderStep] Deferred droid build committed before reconciliation', deferredSelection);
   }
 
+  _rerenderShell(shell, reason = 'droid-builder-update') {
+    if (typeof shell?.requestRender === 'function') {
+      return shell.requestRender({ preserveScroll: true, reason });
+    }
+    if (typeof shell?.render === 'function') {
+      return shell.render({ preserveScroll: true });
+    }
+    return null;
+  }
+
+  _onFilterSystems(event, workSurfaceEl) {
+    const query = String(event.currentTarget?.value || '').trim().toLowerCase();
+    const panels = workSurfaceEl.querySelectorAll('.prog-droid-builder__panel');
+
+    panels.forEach(panel => {
+      let visibleCount = 0;
+      panel.querySelectorAll('.prog-droid-builder__component-card').forEach(card => {
+        const haystack = String(card.textContent || '').toLowerCase();
+        const visible = !query || haystack.includes(query);
+        card.classList.toggle('prog-droid-builder__component-card--filtered-out', !visible);
+        card.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+      panel.classList.toggle('prog-droid-builder__panel--filtered-empty', visibleCount === 0);
+      let empty = panel.querySelector('[data-filter-empty]');
+      if (!empty && visibleCount === 0) {
+        empty = document.createElement('div');
+        empty.dataset.filterEmpty = 'true';
+        empty.className = 'prog-droid-builder__filter-empty';
+        empty.textContent = 'No components match the current search.';
+        panel.appendChild(empty);
+      } else if (empty) {
+        empty.hidden = visibleCount !== 0;
+      }
+    });
+  }
+
+  /**
+   * Handle chassis degree changes from the builder strip.
+   */
+  _onSetDegree(event, shell) {
+    event.preventDefault();
+    const degree = event.currentTarget?.value;
+    const success = this.setDroidDegree(degree, shell);
+    if (!success) {
+      ui.notifications.warn('Unable to change droid degree for this chassis.');
+      return;
+    }
+    this._rerenderShell(shell, 'droid-builder-degree');
+  }
+
+  /**
+   * Handle chassis size changes from the builder strip.
+   */
+  _onSetSize(event, shell) {
+    event.preventDefault();
+    const size = event.currentTarget?.value;
+    const success = this.setDroidSize(size, shell);
+    if (!success) {
+      ui.notifications.warn('Unable to change droid size for this chassis.');
+      return;
+    }
+    this._rerenderShell(shell, 'droid-builder-size');
+  }
+
   /**
    * Handle tab click to switch between system categories.
    */
@@ -1185,6 +1545,32 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Handle component card/installed item selection.
+   * The selected component drives the right rail detail/action panel.
+   */
+  _onSelectComponent(event, shell) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const target = event.currentTarget;
+    const key = target?.dataset?.componentUid
+      || this._componentKeyFromDataset(target?.dataset || {});
+
+    if (!key) return;
+
+    this._selectedComponentKey = key;
+    this._rerenderShell(shell, 'droid-builder-select-component');
+  }
+
+  _componentKeyFromDataset(dataset = {}) {
+    const category = dataset.componentCategory || dataset.category;
+    const subcategory = dataset.componentSubcategory || dataset.subcategory || 'base';
+    const id = dataset.componentId || dataset.id;
+    if (!category || !id) return null;
+    return `${category}:${subcategory || 'base'}:${id}`;
+  }
+
+  /**
    * Handle system purchase button click.
    */
   _onPurchaseSystem(event, shell, workSurfaceEl) {
@@ -1197,11 +1583,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const success = this.purchaseSystem(category, id, subcategory);
 
     if (success) {
+      this._selectedComponentKey = this._componentKeyFromDataset({ category, subcategory, id });
       // Trigger shell re-render to reflect state changes
-      shell.render();
-      ui.notifications.info(`${id} system purchased`);
+      this._rerenderShell(shell, 'droid-builder-install-system');
+      ui.notifications.info(`${id} system installed`);
     } else {
-      ui.notifications.warn('Unable to purchase system - check credits and requirements');
+      ui.notifications.warn('Unable to install system - check credits and requirements');
     }
   }
 
@@ -1218,8 +1605,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const success = this.removeSystem(category, id, subcategory);
 
     if (success) {
+      this._selectedComponentKey = this._componentKeyFromDataset({ category, subcategory, id });
       // Trigger shell re-render to reflect state changes
-      shell.render();
+      this._rerenderShell(shell, 'droid-builder-remove-system');
       ui.notifications.info(`${id} system removed`);
     }
   }
@@ -1238,6 +1626,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * PHASE A + B: Include buildState to track deferred/provisional/finalized status
    */
   async onItemCommitted(itemId, shell) {
+    if (!this._droidState) {
+      swseLogger.warn('[DroidBuilderStep.onItemCommitted] No droid state available to commit');
+      return;
+    }
+
+    const readiness = this._validateDroidBuild();
+    if (!readiness.isValid && !this._droidState?.buildState?.isDeferred) {
+      ui.notifications?.warn?.(readiness.issues?.[0] || 'Complete the droid build before continuing.');
+      return;
+    }
+
     // Store committed droid package in shell's committed selections map
     const selection = {
       isDroid: true,
@@ -1272,7 +1671,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Otherwise, automatically commit droid build when exiting this step
-    if (this._validateDroidBuild().isValid && !shell.committedSelections.has(this.descriptor.stepId)) {
+    const alreadyCommitted = !!shell?.committedSelections?.has?.(this.descriptor.stepId);
+    if (this._validateDroidBuild().isValid && !alreadyCommitted) {
       await this.onItemCommitted(null, shell);
     }
   }

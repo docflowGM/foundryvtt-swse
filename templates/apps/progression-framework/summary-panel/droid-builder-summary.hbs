@@ -1,0 +1,46 @@
+{{!-- Droid Builder summary rail — read-only snapshot of the active chassis draft. --}}
+<div class="prog-summary-panel prog-summary-panel--droid-builder">
+  <div class="prog-summary__identity">
+    <div class="prog-summary__portrait prog-holo-media prog-holo-media--avatar">
+      {{#if actor.img}}
+        <img class="prog-summary__portrait-img prog-holo-media__image" src="{{actor.img}}" alt="{{actor.name}}">
+      {{else}}
+        <div class="prog-summary__portrait-placeholder"><i class="fas fa-robot"></i></div>
+      {{/if}}
+    </div>
+    <div class="prog-summary__name">
+      {{#if actor.name}}{{actor.name}}{{else}}<span class="prog-summary__empty">Droid Draft</span>{{/if}}
+    </div>
+  </div>
+
+  <div class="prog-summary__build">
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Mode</span>
+      <span class="prog-summary__row-value">{{builderVm.contextProfile.modeLabel}}</span>
+    </div>
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Degree</span>
+      <span class="prog-summary__row-value">{{builderVm.chassis.degreeLabel}}</span>
+    </div>
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Size</span>
+      <span class="prog-summary__row-value">{{builderVm.chassis.sizeLabel}} · {{builderVm.chassis.multiplierLabel}}</span>
+    </div>
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Systems</span>
+      <span class="prog-summary__row-value">{{builderVm.installedCount}}</span>
+    </div>
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Budget</span>
+      <span class="prog-summary__row-value prog-droid-builder__budget-value--{{builderVm.budget.tone}}">
+        {{builderVm.budget.remaining}} cr left
+      </span>
+    </div>
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Status</span>
+      <span class="prog-summary__row-value prog-droid-builder__budget-value--{{builderVm.validation.tone}}">
+        {{#if builderVm.validation.isValid}}Ready{{else}}Needs Work{{/if}}
+      </span>
+    </div>
+  </div>
+</div>
