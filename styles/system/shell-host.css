@@ -639,6 +639,71 @@
   padding: 16px;
 }
 
+.swse-asset-bay-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 18%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklch, var(--swse-bg-dark, #0a0e1a) 75%, transparent);
+}
+
+.swse-asset-bay-toolbar__summary,
+.swse-asset-bay-mode-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swse-asset-bay-count,
+.swse-asset-bay-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 20%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 7%, transparent);
+  color: var(--swse-text-secondary, oklch(0.72 0.05 220));
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.swse-asset-bay-count strong { color: var(--swse-text-strong, #e8f4ff); }
+
+.swse-asset-bay-mode-pill {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.swse-asset-bay-mode-pill.is-active,
+.swse-asset-bay-mode-pill:hover {
+  color: var(--swse-accent, oklch(0.85 0.18 200));
+  border-color: color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 50%, transparent);
+  background: color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 15%, transparent);
+}
+
+.swse-asset-bay-boundary-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 9px 12px;
+  border: 1px solid color-mix(in oklch, var(--swse-gold, #e9d85b) 25%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--swse-gold, #e9d85b) 8%, transparent);
+  color: var(--swse-text-secondary, oklch(0.72 0.05 220));
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.swse-asset-bay-boundary-note strong { color: var(--swse-text-strong, #e8f4ff); }
+
 .swse-asset-bay-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -674,6 +739,30 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+.swse-asset-bay-card__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-bottom: 5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 22%, transparent);
+  background: color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 8%, transparent);
+  color: var(--swse-accent, oklch(0.85 0.18 200));
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-asset-bay-card--garage { border-color: color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 32%, transparent); }
+.swse-asset-bay-card--shipyard { border-color: color-mix(in oklch, var(--swse-gold, #e9d85b) 32%, transparent); }
+.swse-asset-bay-card--shipyard .swse-asset-bay-card__kicker {
+  border-color: color-mix(in oklch, var(--swse-gold, #e9d85b) 28%, transparent);
+  background: color-mix(in oklch, var(--swse-gold, #e9d85b) 8%, transparent);
+  color: var(--swse-gold, #e9d85b);
 }
 
 .swse-asset-bay-card__detail,
@@ -725,41 +814,4 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--swse-text-strong, #e8f4ff);
-}
-
-.swse-asset-bay-toolbar {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.swse-asset-bay-action--build {
-  flex: 0 1 auto;
-  min-width: 180px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.swse-asset-bay-card__ownership {
-  display: inline-flex;
-  width: fit-content;
-  margin-bottom: 5px;
-  padding: 2px 7px;
-  border: 1px solid color-mix(in oklch, var(--swse-accent, oklch(0.85 0.18 200)) 35%, transparent);
-  border-radius: 999px;
-  color: var(--swse-accent, oklch(0.85 0.18 200));
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.swse-asset-bay-card__ownership--shared,
-.swse-asset-bay-card__ownership--gm-linked {
-  border-color: color-mix(in oklch, var(--swse-warning, #ffc857) 45%, transparent);
-  color: var(--swse-warning, #ffc857);
-}
-
-.swse-asset-bay-card__ownership--unresolved {
-  border-color: color-mix(in oklch, var(--swse-danger, #ff6b6b) 45%, transparent);
-  color: var(--swse-danger, #ff6b6b);
 }

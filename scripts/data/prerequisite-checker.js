@@ -69,11 +69,6 @@ import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrer
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 
-function isForceSensitivityName(value) {
-    const key = normalizeLooseLookupKey(value);
-    return key === 'force sensitivity' || key === 'force sensitive';
-}
-
 function matchesForceSensitivity(value) {
     return isForceSensitivityName(value) || namesMatchLoosely(value, 'Force Sensitivity');
 }

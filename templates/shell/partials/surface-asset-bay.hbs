@@ -1,8 +1,9 @@
 {{!--
-  surface-asset-bay.hbs — Owned Droid Garage / Shipyard control point.
+  surface-asset-bay.hbs — Central owned-asset control point.
 
-  This is an owner dashboard, not a droid/vehicle sheet replacement.
-  Droid actors still use the Droid Sheet as their character sheet app.
+  This is an owner dashboard, not a replacement for droid or vehicle sheets.
+  Owned droids and ships/vehicles can be opened in their own shared actor sheet,
+  or routed into Garage/Shipyard for purchase, sale, install, removal, and refit.
 --}}
 
 <div class="swse-shell-surface swse-shell-surface--asset-bay"
@@ -18,25 +19,53 @@
       <span>Home</span>
     </button>
     <div class="swse-shell-surface__title">
-      <i class="fas {{#if (eq vm.mode 'shipyard')}}fa-rocket{{else}}fa-robot{{/if}}"></i>
+      <i class="fas {{vm.surfaceIcon}}"></i>
       <span>{{vm.title}}</span>
     </div>
     <div class="swse-shell-surface__subtitle">{{vm.subtitle}}</div>
+    <div class="swse-shell-surface__subtitle">Property management is separate from {{vm.actorName}}'s main character sheet.</div>
     {{#if vm.isGM}}<div class="swse-shell-surface__subtitle">GM: {{vm.grantHelp}}</div>{{/if}}
-    {{#if vm.canBuildNew}}
-      <div class="swse-asset-bay-toolbar">
-        <button type="button"
-                class="swse-asset-bay-action swse-asset-bay-action--build primary"
-                data-asset-bay-action="build-new"
-                title="{{vm.buildNewHelp}}">
-          <i class="fas fa-plus"></i>
-          <span>{{vm.buildNewLabel}}</span>
-        </button>
-      </div>
-    {{/if}}
   </div>
 
   <div class="swse-shell-surface__body swse-shell-surface__body--asset-bay">
+    <div class="swse-asset-bay-toolbar">
+      <div class="swse-asset-bay-toolbar__summary">
+        <span class="swse-asset-bay-count"><strong>{{vm.totalCount}}</strong> Assets</span>
+        <span class="swse-asset-bay-count"><strong>{{vm.droidCount}}</strong> Droids</span>
+        <span class="swse-asset-bay-count"><strong>{{vm.shipCount}}</strong> Ships / Vehicles</span>
+      </div>
+      {{#if vm.showModeFilters}}
+      <div class="swse-asset-bay-mode-pills" role="group" aria-label="Asset filters">
+        <button type="button"
+                class="swse-asset-bay-mode-pill {{#if vm.isAllMode}}is-active{{/if}}"
+                data-asset-bay-action="switch-mode"
+                data-bay-mode="all">
+          <i class="fas fa-warehouse"></i>
+          <span>All Assets</span>
+        </button>
+        <button type="button"
+                class="swse-asset-bay-mode-pill {{#if vm.isGarageMode}}is-active{{/if}}"
+                data-asset-bay-action="switch-mode"
+                data-bay-mode="garage">
+          <i class="fas fa-robot"></i>
+          <span>Garage</span>
+        </button>
+        <button type="button"
+                class="swse-asset-bay-mode-pill {{#if vm.isShipyardMode}}is-active{{/if}}"
+                data-asset-bay-action="switch-mode"
+                data-bay-mode="shipyard">
+          <i class="fas fa-rocket"></i>
+          <span>Shipyard</span>
+        </button>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="swse-asset-bay-boundary-note">
+      <i class="fas fa-info-circle"></i>
+      <span><strong>Sheet</strong> opens the owned actor for play and status. <strong>Garage/Shipyard</strong> is where credits, requests, installs, removals, sales, and refits happen.</span>
+    </div>
+
     {{#if vm.error}}
       <div class="swse-shell-surface__error">
         <i class="fas fa-exclamation-triangle"></i>
@@ -45,13 +74,13 @@
     {{else if vm.hasAssets}}
       <div class="swse-asset-bay-grid">
         {{#each vm.assets as |asset|}}
-          <article class="swse-asset-bay-card" data-asset-id="{{asset.actorId}}" data-asset-type="{{asset.type}}">
+          <article class="swse-asset-bay-card swse-asset-bay-card--{{asset.bayMode}}" data-asset-id="{{asset.actorId}}" data-asset-type="{{asset.type}}" data-bay-mode="{{asset.bayMode}}">
             <div class="swse-asset-bay-card__portrait">
               <img src="{{asset.img}}" alt="{{asset.name}}" />
             </div>
             <div class="swse-asset-bay-card__body">
+              <div class="swse-asset-bay-card__kicker"><i class="fas {{asset.kindIcon}}"></i> {{asset.kindLabel}}</div>
               <h3>{{asset.name}}</h3>
-              <div class="swse-asset-bay-card__ownership swse-asset-bay-card__ownership--{{asset.ownershipKind}}">{{asset.ownershipLabel}}</div>
               <div class="swse-asset-bay-card__detail">{{asset.detail}}</div>
               <div class="swse-asset-bay-card__status">{{asset.status}}</div>
             </div>
@@ -68,7 +97,7 @@
                       class="swse-asset-bay-action primary"
                       data-asset-bay-action="modify"
                       data-actor-id="{{asset.actorId}}"
-                      data-bay-mode="{{../vm.mode}}"
+                      data-bay-mode="{{asset.bayMode}}"
                       {{#unless asset.canModify}}disabled{{/unless}}>
                 <i class="fas fa-tools"></i>
                 <span>{{asset.modifyLabel}}</span>
@@ -78,7 +107,7 @@
                       class="swse-asset-bay-action"
                       data-asset-bay-action="grant-access"
                       data-actor-id="{{asset.actorId}}"
-                      data-bay-mode="{{../vm.mode}}">
+                      data-bay-mode="{{asset.bayMode}}">
                 <i class="fas fa-gift"></i>
                 <span>{{asset.grantAccessLabel}}</span>
               </button>
@@ -89,17 +118,9 @@
       </div>
     {{else}}
       <div class="swse-shell-empty-state">
-        <i class="fas {{#if (eq vm.mode 'shipyard')}}fa-rocket{{else}}fa-robot{{/if}}"></i>
+        <i class="fas {{vm.surfaceIcon}}"></i>
         <h3>{{vm.emptyTitle}}</h3>
         <p>{{vm.emptyText}}</p>
-        {{#if vm.canBuildNew}}
-          <button type="button"
-                  class="swse-asset-bay-action swse-asset-bay-action--build primary"
-                  data-asset-bay-action="build-new">
-            <i class="fas fa-plus"></i>
-            <span>{{vm.buildNewLabel}}</span>
-          </button>
-        {{/if}}
       </div>
     {{/if}}
   </div>

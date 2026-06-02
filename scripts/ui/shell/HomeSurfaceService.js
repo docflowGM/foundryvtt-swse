@@ -899,21 +899,38 @@ export class HomeSurfaceService {
         description: 'Pazaak, Sabacc, Dejarik, and Hintaro tables'
       },
       {
+        id: 'assets',
+        label: 'Asset\nBay',
+        icon: '▣',
+        routeId: 'asset-bay',
+        bayMode: 'all',
+        contextMode: 'manageAssets',
+        visible: assetSummary.totalCount > 0,
+        enabled: assetSummary.totalCount > 0,
+        badge: assetSummary.totalCount > 1 ? String(assetSummary.totalCount) : null,
+        badgeType: assetSummary.totalCount > 1 ? 'info' : null,
+        featured: assetSummary.totalCount > 0,
+        locked: false,
+        status: assetSummary.totalCount > 1 ? `${assetSummary.totalCount} ASSETS` : 'READY',
+        statusTone: '',
+        description: 'Central droid and ship property control point'
+      },
+      {
         id: 'ship',
         label: 'Shipyard',
         icon: '◈',
         routeId: 'asset-bay',
         bayMode: 'shipyard',
-        contextMode: assetSummary.vehicleCount > 0 ? 'modifyExisting' : 'storeConstruction',
-        visible: true,
-        enabled: true,
+        contextMode: 'modifyExisting',
+        visible: assetSummary.vehicleCount > 0,
+        enabled: assetSummary.vehicleCount > 0,
         badge: assetSummary.vehicleCount > 1 ? String(assetSummary.vehicleCount) : null,
         badgeType: assetSummary.vehicleCount > 1 ? 'info' : null,
         featured: false,
         locked: false,
-        status: assetSummary.vehicleCount > 1 ? `${assetSummary.vehicleCount} SHIPS` : assetSummary.vehicleCount === 1 ? 'READY' : 'BUILD',
-        statusTone: assetSummary.vehicleCount > 0 ? '' : 'warn',
-        description: assetSummary.vehicleCount > 0 ? 'Owned ship control point' : 'Build or commission a custom starship'
+        status: assetSummary.vehicleCount > 1 ? `${assetSummary.vehicleCount} SHIPS` : 'READY',
+        statusTone: '',
+        description: 'Filtered ship and vehicle property control point'
       },
       {
         id: 'garage',
@@ -930,7 +947,7 @@ export class HomeSurfaceService {
         locked: false,
         status: assetSummary.droidCount > 1 ? `${assetSummary.droidCount} UNITS` : 'READY',
         statusTone: '',
-        description: 'Owned droid control point'
+        description: 'Filtered droid property control point'
       },
       {
         id: 'allies',
@@ -1005,7 +1022,7 @@ export class HomeSurfaceService {
    * embedded inventory, or relationship links.
    */
   static _getOwnedAssetSummary(actor) {
-    if (!actor) return { droidCount: 0, vehicleCount: 0 };
+    if (!actor) return { droidCount: 0, vehicleCount: 0, totalCount: 0, hasDroids: false, hasVehicles: false, hasAssets: false };
 
     const system = actor.system ?? {};
     const relationships = asArray(system.relationships);
@@ -1033,11 +1050,16 @@ export class HomeSurfaceService {
       ...items.filter(item => ownedItemMatchesType(item, ['vehicle', 'ship', 'starship']))
     ];
 
+    const droidCount = droidRefs.filter(Boolean).length;
+    const vehicleCount = vehicleRefs.filter(Boolean).length;
+
     return {
-      droidCount: droidRefs.filter(Boolean).length,
-      vehicleCount: vehicleRefs.filter(Boolean).length,
+      droidCount,
+      vehicleCount,
+      totalCount: droidCount + vehicleCount,
       hasDroids: hasEntries(droidRefs),
-      hasVehicles: hasEntries(vehicleRefs)
+      hasVehicles: hasEntries(vehicleRefs),
+      hasAssets: droidCount + vehicleCount > 0
     };
   }
 

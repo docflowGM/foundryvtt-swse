@@ -43,11 +43,26 @@ function entryType(entry, actor = null) {
   ).toLowerCase();
 }
 
-function matchesMode(entry, mode, actor = null) {
+function normalizeBayMode(value) {
+  const mode = String(value || 'all').toLowerCase();
+  if (mode === 'garage' || mode === 'droid' || mode === 'droids') return 'garage';
+  if (mode === 'shipyard' || mode === 'ship' || mode === 'ships' || mode === 'vehicle' || mode === 'vehicles' || mode === 'starship') return 'shipyard';
+  return 'all';
+}
+
+function assetModeFor(entry, actor = null) {
   const type = entryType(entry, actor);
-  if (mode === 'garage') return type === 'droid';
-  if (mode === 'shipyard') return ['vehicle', 'ship', 'starship'].includes(type);
-  return false;
+  if (type === 'droid') return 'garage';
+  if (['vehicle', 'ship', 'starship'].includes(type)) return 'shipyard';
+  return null;
+}
+
+function matchesMode(entry, mode, actor = null) {
+  const normalizedMode = normalizeBayMode(mode);
+  const assetMode = assetModeFor(entry, actor);
+  if (!assetMode) return false;
+  if (normalizedMode === 'all') return true;
+  return normalizedMode === assetMode;
 }
 
 function displayName(entry, actor = null) {
@@ -81,38 +96,20 @@ function statusLine(entry, actor = null, mode = 'garage') {
   return `${hpText} · ${source}`;
 }
 
-function ownershipKind(entry, actor = null, ownerActor = null) {
-  const directOwnerId = normalizeId(entry?.ownerActorId ?? actor?.system?.ownedByActorId ?? actor?.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerActorId);
-  if (directOwnerId && directOwnerId === ownerActor?.id) return 'owned';
-
-  const ownerUserId = entry?.ownerUserId ?? actor?.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerUserId ?? null;
-  const ownerUser = ownerUserId ? game.users?.get?.(ownerUserId) : null;
-  if (ownerUser?.character?.id === ownerActor?.id) return 'owned';
-
-  if (actor && game.user?.isGM && actor.system?.ownedByActorId && actor.system.ownedByActorId !== ownerActor?.id) return 'gm-linked';
-  if (actor && Number(actor.ownership?.[game.user?.id] ?? 0) >= 3 && !directOwnerId) return 'shared';
-  return actor ? 'linked' : 'unresolved';
-}
-
-function ownershipLabel(kind, mode = 'garage') {
-  if (kind === 'owned') return 'Player-owned';
-  if (kind === 'shared') return mode === 'shipyard' ? 'Shared ship' : 'Shared droid';
-  if (kind === 'gm-linked') return 'GM-linked';
-  if (kind === 'unresolved') return 'Unresolved link';
-  return 'Linked asset';
-}
-
-
 function collectOwnedEntries(ownerActor, mode) {
+  const normalizedMode = normalizeBayMode(mode);
   const system = ownerActor?.system ?? {};
   const candidates = [
     ...asArray(system.ownedActors),
-    ...asArray(mode === 'garage' ? system.droids : system.vehicles),
-    ...asArray(mode === 'garage' ? system.assets?.droids : system.assets?.vehicles),
-    ...asArray(mode === 'shipyard' ? system.ships : []),
-    ...asArray(mode === 'shipyard' ? system.assets?.ships : []),
-    ...asArray(mode === 'garage' ? system.inventory?.droids : system.inventory?.vehicles),
-    ...asArray(mode === 'shipyard' ? system.inventory?.ships : [])
+    ...asArray(system.droids),
+    ...asArray(system.vehicles),
+    ...asArray(system.ships),
+    ...asArray(system.assets?.droids),
+    ...asArray(system.assets?.vehicles),
+    ...asArray(system.assets?.ships),
+    ...asArray(system.inventory?.droids),
+    ...asArray(system.inventory?.vehicles),
+    ...asArray(system.inventory?.ships)
   ];
 
   const seen = new Set();
@@ -121,11 +118,17 @@ function collectOwnedEntries(ownerActor, mode) {
   for (const entry of candidates) {
     if (!entry) continue;
     const actor = actorFromReference(entry);
-    if (!matchesMode(entry, mode, actor)) continue;
+    if (!matchesMode(entry, normalizedMode, actor)) continue;
+
+    const assetMode = assetModeFor(entry, actor);
+    if (!assetMode) continue;
+
     const id = normalizeId(actor?.id ?? entry?.id ?? entry?.actorId ?? entry?.uuid ?? displayName(entry, actor));
-    if (!id || seen.has(id)) continue;
-    seen.add(id);
-    const ownerKind = ownershipKind(entry, actor, ownerActor);
+    const dedupeKey = `${assetMode}:${id}`;
+    if (!id || seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+
+    const isShipyard = assetMode === 'shipyard';
     assets.push({
       id,
       actorId: actor?.id ?? id,
@@ -133,52 +136,74 @@ function collectOwnedEntries(ownerActor, mode) {
       name: displayName(entry, actor),
       img: displayImage(entry, actor),
       type: entryType(entry, actor),
-      detail: detailLine(entry, actor, mode),
-      status: statusLine(entry, actor, mode),
-      ownershipKind: ownerKind,
-      ownershipLabel: ownershipLabel(ownerKind, mode),
+      bayMode: assetMode,
+      kindLabel: isShipyard ? 'Ship / Vehicle' : 'Droid',
+      kindIcon: isShipyard ? 'fa-rocket' : 'fa-robot',
+      detail: detailLine(entry, actor, assetMode),
+      status: statusLine(entry, actor, assetMode),
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
       canModify: Boolean(actor?.id),
       canGrantAccess: Boolean(actor?.id && game.user?.isGM),
-      grantAccessLabel: mode === 'shipyard' ? 'Give / Share Ship' : 'Give Droid',
-      sheetLabel: mode === 'shipyard' ? 'See Ship Sheet' : 'See Droid Sheet',
-      modifyLabel: mode === 'shipyard' ? 'Modify in Shipyard' : 'Modify in Garage'
+      grantAccessLabel: isShipyard ? 'Give / Share Ship' : 'Give Droid',
+      sheetLabel: isShipyard ? 'Open Ship Sheet' : 'Open Droid Sheet',
+      modifyLabel: isShipyard ? 'Modify in Shipyard' : 'Modify in Garage'
     });
   }
 
-  return assets;
+  return assets.sort((a, b) => {
+    if (a.bayMode !== b.bayMode) return a.bayMode === 'garage' ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
 }
 
 export class AssetBaySurfaceService {
   static async buildViewModel(actor, options = {}) {
-    const mode = options.bayMode || options.mode || 'garage';
+    const mode = normalizeBayMode(options.bayMode || options.mode || 'all');
+    const assets = collectOwnedEntries(actor, mode);
+    const droidCount = assets.filter(asset => asset.bayMode === 'garage').length;
+    const shipCount = assets.filter(asset => asset.bayMode === 'shipyard').length;
     const isShipyard = mode === 'shipyard';
-    const assets = collectOwnedEntries(actor, isShipyard ? 'shipyard' : 'garage');
+    const isGarage = mode === 'garage';
 
     return {
       id: 'asset-bay',
-      mode: isShipyard ? 'shipyard' : 'garage',
-      title: isShipyard ? 'Shipyard' : 'Droid Garage',
+      mode,
+      isAllMode: mode === 'all',
+      isGarageMode: isGarage,
+      isShipyardMode: isShipyard,
+      title: isShipyard ? 'Shipyard' : isGarage ? 'Droid Garage' : 'Asset Bay',
+      surfaceIcon: isShipyard ? 'fa-rocket' : isGarage ? 'fa-robot' : 'fa-warehouse',
       subtitle: isShipyard
         ? 'Owned ship and vehicle control point'
-        : 'Owned droid property control point',
+        : isGarage
+          ? 'Owned droid property control point'
+          : 'Centralized owned droid, ship, and vehicle control point',
       actorId: actor?.id ?? '',
       actorName: actor?.name ?? '',
-      emptyTitle: isShipyard ? 'No owned ships linked' : 'No owned droids linked',
+      emptyTitle: isShipyard
+        ? 'No owned ships linked'
+        : isGarage
+          ? 'No owned droids linked'
+          : 'No owned assets linked',
       emptyText: isShipyard
-        ? 'Ships and vehicles purchased, granted, or linked to this actor appear here. You can also commission a new custom starship from this surface.'
-        : 'Droids purchased, granted, or linked to this actor appear here. Droid PC sheets remain their own character sheet app.',
-      canBuildNew: isShipyard,
-      buildNewLabel: 'Build New Ship',
-      buildNewHelp: 'Open Shipyard Builder in store-construction mode for this character wallet.',
+        ? 'Ships and vehicles purchased, granted, or linked to this actor appear here.'
+        : isGarage
+          ? 'Droids purchased, granted, or linked to this actor appear here. Droid PC actors remain their own actor sheet.'
+          : 'Owned droids, ships, and vehicles appear here after purchase, GM grant, or relationship linking. This keeps property management separate from the main character sheet.',
       assets,
       count: assets.length,
+      droidCount,
+      shipCount,
+      totalCount: assets.length,
       hasAssets: assets.length > 0,
+      showModeFilters: mode === 'all' || droidCount > 0 || shipCount > 0,
       isGM: Boolean(game.user?.isGM),
       grantHelp: isShipyard
         ? 'GM tools can grant one shared ship to one or more owner actors without copying it.'
-        : 'GM tools can grant a droid to an owner actor without routing through store purchase.'
+        : isGarage
+          ? 'GM tools can grant a droid to an owner actor without routing through store purchase.'
+          : 'GM tools can grant shared ships or owned droids without copying player character sheets.'
     };
   }
 }

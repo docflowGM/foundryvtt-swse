@@ -496,9 +496,11 @@ export function ShellHostMixin(BaseClass) {
     }
 
     /**
-     * Wire Garage / Shipyard owner dashboard actions.
-     * The dashboard controls owned property actors; it does not replace a droid
-     * PC/NPC actor's own Droid Sheet app.
+     * Wire Asset Bay owner dashboard actions.
+     * Asset Bay is the centralized control point for owned property actors.
+     * It opens owned droid/vehicle actor sheets for play/status, and routes
+     * modifications into Garage or Shipyard so property management stays
+     * separate from the owner's main character sheet.
      */
     _wireAssetBaySurfaceEvents(root) {
       const surfaceRoot = root.querySelector('[data-shell-region="surface-asset-bay"]');
@@ -509,23 +511,22 @@ export function ShellHostMixin(BaseClass) {
           ev.preventDefault();
           if (el.disabled) return;
           const action = el.dataset.assetBayAction;
-          const actorId = el.dataset.actorId;
           if (!action) return;
 
-          if (action === 'build-new') {
-            const bayMode = el.dataset.bayMode || surfaceRoot.dataset.bayMode || 'shipyard';
-            if (bayMode !== 'shipyard') return;
-            const { VehicleModificationApp } = await import('/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js');
-            await VehicleModificationApp.open(this.actor || this.document, {
-              source: 'asset-bay',
-              ownerActorId: this.actor?.id ?? this.document?.id ?? null,
-              contextMode: 'storeConstruction',
-              mode: 'shipyard'
+          if (action === 'switch-mode') {
+            const bayMode = el.dataset.bayMode || 'all';
+            await this.setSurface('asset-bay', {
+              source: 'asset-bay-filter',
+              bayMode,
+              mode: bayMode
             });
+            await this.requestSurfaceRender({ reason: `asset-bay-${bayMode}-filter`, surfaceId: 'asset-bay' });
             return;
           }
 
+          const actorId = el.dataset.actorId;
           if (!actorId) return;
+
           const targetActor = game.actors?.get?.(String(actorId).replace(/^Actor\./, '')) ?? null;
           if (!targetActor) {
             ui.notifications?.warn?.('That owned actor could not be found.');
@@ -540,17 +541,6 @@ export function ShellHostMixin(BaseClass) {
 
           if (action === 'modify') {
             const bayMode = el.dataset.bayMode || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
-            if (bayMode === 'shipyard' && targetActor.type === 'vehicle') {
-              const { VehicleModificationApp } = await import('/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js');
-              await VehicleModificationApp.open(this.actor || this.document, {
-                source: 'asset-bay',
-                ownerActorId: this.actor?.id ?? this.document?.id ?? null,
-                targetVehicle: targetActor,
-                contextMode: 'modifyExisting',
-                mode: 'shipyard'
-              });
-              return;
-            }
             await this.setSurface('customization', {
               source: 'asset-bay',
               returnSurface: 'asset-bay',
