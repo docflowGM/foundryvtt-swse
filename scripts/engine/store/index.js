@@ -19,7 +19,7 @@
  */
 
 import { loadRawStoreData } from "/systems/foundryvtt-swse/scripts/engine/store/loader.js";
-import { normalizeStoreItem, filterValidStoreItems } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
+import { normalizeStoreItem, filterValidStoreItems, summarizeStoreValidation, getStoreItemLookupIds } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
 import { categorizeItem } from "/systems/foundryvtt-swse/scripts/engine/store/categorizer.js";
 import { applyPricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -51,6 +51,22 @@ function ensureTypeStructure(index, type) {
   return index.byType.get(type);
 }
 
+function shouldLogStoreValidationSummary(validationSummary, level = 'warn') {
+  const key = JSON.stringify({
+    level,
+    total: validationSummary?.total ?? 0,
+    valid: validationSummary?.valid ?? 0,
+    invalid: validationSummary?.invalid ?? 0,
+    byReason: validationSummary?.byReason || {}
+  });
+  const cacheKey = '__swseStoreValidationSummaryLogKeys';
+  const root = globalThis;
+  root[cacheKey] ||= new Set();
+  if (root[cacheKey].has(key)) return false;
+  root[cacheKey].add(key);
+  return true;
+}
+
 /* ----------------------------------------------------------- */
 /* MAIN ENTRY POINT                                             */
 /* ----------------------------------------------------------- */
@@ -80,15 +96,27 @@ export async function buildStoreIndex({ useCache = true } = {}) {
   /* -------------------------------------- */
   /* 2B. Filter invalid items (P0-4)        */
   /* -------------------------------------- */
-  const filtered = normalized.filter(item => {
-    const isValid = filterValidStoreItems([item]).length > 0;
-    if (!isValid) {
-      SWSELogger.warn(`[Store] Excluding invalid item: ${item.name} (${item.id})`, {
-        reason: item.cost == null ? 'missing_cost' : 'unknown'
-      });
+  const validationSummary = summarizeStoreValidation(normalized);
+  if (validationSummary.invalid > 0) {
+    const hasWarnableIssues = Object.keys(validationSummary.byReason || {})
+      .some(reason => !['excluded_by_flag', 'service_not_inventory', 'notPubliclyAvailable'].includes(reason));
+    const payload = {
+      total: validationSummary.total,
+      valid: validationSummary.valid,
+      invalid: validationSummary.invalid,
+      byReason: validationSummary.byReason,
+      examples: validationSummary.examples
+    };
+    if (hasWarnableIssues) {
+      if (shouldLogStoreValidationSummary(validationSummary, 'warn')) {
+        SWSELogger.warn('[Store] Excluding invalid catalog entries', payload);
+      }
+    } else if (shouldLogStoreValidationSummary(validationSummary, 'debug')) {
+      SWSELogger.debug('[Store] Excluding non-purchasable catalog entries', payload);
     }
-    return isValid;
-  });
+  }
+
+  const filtered = filterValidStoreItems(normalized);
 
   /* -------------------------------------- */
   /* 3. Categorize + apply pricing           */
@@ -110,8 +138,11 @@ export async function buildStoreIndex({ useCache = true } = {}) {
   };
 
   for (const item of processed) {
-    // ID lookup
-    index.byId.set(item.id, item);
+    // ID lookup. The canonical ID is primary, but raw/UUID aliases are
+    // retained so older cart entries and UI handlers can still resolve.
+    for (const lookupId of getStoreItemLookupIds(item)) {
+      index.byId.set(lookupId, item);
+    }
 
     // Type grouping
     const typeGroup = ensureTypeStructure(index, item.type);

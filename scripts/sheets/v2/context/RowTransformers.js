@@ -37,12 +37,20 @@ export class RowTransformers {
    * PHASE 5: Include natural weapons as auto-equipped
    */
   static toInventoryRow(item, isEditable) {
-    // PHASE 5: Natural weapons with autoEquipped flag are always equipped
+    // PHASE 5: Natural weapons with autoEquipped flag are always equipped.
+    // Keep this in sync with combat attack hydration: the Gear tab and Combat tab
+    // must agree about what is equipped/readied/active.
+    const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(String(value || '').toLowerCase());
     const isNaturalWeapon = item.flags?.swse?.autoEquipped === true;
-    const equipped = Boolean(item.system?.equipped) || isNaturalWeapon;
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: item.actor });
     const isLightsaber = visualProfile.isLightsaber;
     const activated = visualProfile.active;
+    const equipped = truthy(item.system?.equipped)
+      || truthy(item.system?.isEquipped)
+      || truthy(item.system?.readied)
+      || truthy(item.system?.equippable?.equipped)
+      || truthy(item.flags?.swse?.equipped)
+      || isNaturalWeapon;
 
     return {
       id: item.id,

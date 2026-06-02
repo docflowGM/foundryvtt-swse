@@ -38,7 +38,7 @@ function loadCache() {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    if (!parsed.metadata.loadedAt || !parsed.metadata.version || (parsed.items.length + parsed.actors.length) === 0) {
+    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 4 || (parsed.items.length + parsed.actors.length) === 0) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -89,6 +89,44 @@ function mergeSourceCounts(...sources) {
   return merged;
 }
 
+
+function annotatePackSource(doc, packName) {
+  if (!doc || !packName) return doc;
+  try {
+    Object.defineProperty(doc, '__storeSourcePack', {
+      value: packName,
+      configurable: true,
+      enumerable: false,
+      writable: true
+    });
+  } catch (err) {
+    try { doc.__storeSourcePack = packName; } catch (_ignored) { /* no-op */ }
+  }
+  return doc;
+}
+
+function serializeStoreDocument(doc, fallbackSource = {}) {
+  const obj = doc?.toObject ? doc.toObject() : { ...(doc || {}) };
+  const pack = doc?.__storeSourcePack
+    || doc?.pack
+    || obj?.pack
+    || fallbackSource.pack
+    || null;
+  const documentId = obj?._id || doc?.id || obj?.id || null;
+  const uuid = doc?.uuid || obj?.uuid || (pack && documentId ? `Compendium.${pack}.${documentId}` : null);
+
+  obj.__storeSource = {
+    source: pack ? 'compendium' : 'world',
+    pack: pack || null,
+    collection: pack || null,
+    documentId,
+    uuid,
+    documentName: doc?.documentName || obj?.documentName || fallbackSource.documentName || null
+  };
+
+  return obj;
+}
+
 /* ------------------------------------------- */
 /* SAFE FETCH HELPERS                           */
 /* ------------------------------------------- */
@@ -101,7 +139,7 @@ async function safeGetPackDocuments(packName) {
   }
 
   try {
-    const docs = await pack.getDocuments();
+    const docs = (await pack.getDocuments()).map(doc => annotatePackSource(doc, packName));
     return { docs, found: true, packName };
   } catch (err) {
     console.error(`SWSE Store | Cannot load pack: ${packName}`, err);
@@ -215,7 +253,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const metadata = {
-    version: 3,
+    version: 4,
     loadedAt: Date.now(),
     packsUsed: flattenPackNames([
       STORE_PACKS.WEAPON_PACKS,
@@ -243,8 +281,8 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   };
 
   const result = {
-    items: allItems.map(i => i.toObject ? i.toObject() : i),
-    actors: allActors.map(a => a.toObject ? a.toObject() : a),
+    items: allItems.map(i => serializeStoreDocument(i, { documentName: 'Item' })),
+    actors: allActors.map(a => serializeStoreDocument(a, { documentName: 'Actor' })),
     metadata
   };
 

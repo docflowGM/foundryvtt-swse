@@ -442,6 +442,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-gear-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-concept-content.hbs',
   'systems/foundryvtt-swse/templates/sheets/_sheet-skeleton.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-games.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/games/surface-games-library.hbs',

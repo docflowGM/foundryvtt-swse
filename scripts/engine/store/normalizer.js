@@ -7,6 +7,79 @@
 
 import { buildStoreCostRecord } from '/systems/foundryvtt-swse/scripts/engine/store/cost-registry.js';
 
+const STORE_FLAG_SCOPE = 'foundryvtt-swse';
+
+function slugifyStoreIdentity(value, fallback = 'unknown') {
+  const slug = String(value ?? '')
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || fallback;
+}
+
+function readFlag(obj, scope, key) {
+  return obj?.flags?.[scope]?.[key] ?? obj?.flags?.swse?.[key] ?? null;
+}
+
+function sourceIdToPack(sourceId) {
+  const text = String(sourceId || '');
+  const match = text.match(/^Compendium\.([^\s.]+\.[^\s.]+)\./);
+  return match?.[1] || null;
+}
+
+function sourceIdToDocId(sourceId) {
+  const text = String(sourceId || '');
+  const match = text.match(/^Compendium\.[^\s.]+\.[^\s.]+\.([^\s.]+)$/);
+  return match?.[1] || null;
+}
+
+function buildStoreIdentity(obj, prefix = 'item') {
+  const sys = obj?.system || {};
+  const rawId = obj?._id || obj?.id || obj?.__storeSource?.documentId || null;
+  const coreSourceId = readFlag(obj, 'core', 'sourceId');
+  const storeSource = obj?.__storeSource || readFlag(obj, STORE_FLAG_SCOPE, 'storeSource') || {};
+  const pack = storeSource.pack
+    || storeSource.collection
+    || obj?.pack
+    || sourceIdToPack(coreSourceId)
+    || null;
+  const docId = rawId || sourceIdToDocId(coreSourceId) || slugifyStoreIdentity(obj?.name || sys.name || prefix);
+  const typePart = slugifyStoreIdentity(prefix || obj?.type || sys.type || 'item', 'item');
+  const namePart = slugifyStoreIdentity(obj?.name || sys.name || docId, 'unnamed');
+  const sourcePart = pack ? String(pack).trim() : 'world';
+  const docPart = rawId ? String(rawId).trim() : slugifyStoreIdentity(docId || namePart, namePart);
+  const canonicalId = pack
+    ? `${sourcePart}.${docPart}`
+    : `world.${typePart}.${docPart}`;
+  const uuid = storeSource.uuid
+    || obj?.uuid
+    || (pack && rawId ? `Compendium.${pack}.${rawId}` : null);
+
+  return {
+    id: canonicalId,
+    canonicalId,
+    rawId,
+    sourcePack: pack || 'world',
+    sourceUuid: uuid,
+    sourceId: coreSourceId || uuid || null,
+    sourceKey: `${sourcePart}:${slugifyStoreIdentity(docId || namePart, namePart)}`
+  };
+}
+
+export function getStoreItemLookupIds(item = {}) {
+  return [...new Set([
+    item.id,
+    item.canonicalId,
+    item.rawId,
+    item.sourceId,
+    item.sourceUuid,
+    item.sourceKey
+  ]
+    .filter(value => value !== undefined && value !== null && String(value).trim() !== '')
+    .map(value => String(value)))];
+}
+
 /* ----------------------------------------------- */
 /* RARITY CLASSIFICATION (ENGINE)                   */
 /* ----------------------------------------------- */
@@ -39,24 +112,7 @@ function getRarityLabel(rarityClass) {
 /* ----------------------------------------------- */
 
 function ensureId(obj, prefix = 'item') {
-  const id = obj._id || obj.id;
-  if (id) {return id;}
-
-  const logger = globalThis.swseLogger || console;
-  const slugSource = String(obj.name || obj.type || 'unknown')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'unknown';
-  const fallbackId = `${prefix}-${slugSource}`;
-
-  logger.warn(`[StoreEngine] Item has no canonical ID. Using fallback ID for runtime hydration:`, {
-    name: obj.name || 'Unknown',
-    type: obj.type || 'unknown',
-    source: obj.pack || 'world',
-    fallbackId
-  });
-
-  return fallbackId;
+  return buildStoreIdentity(obj, prefix).id;
 }
 
 /* ----------------------------------------------- */
@@ -142,7 +198,8 @@ function extractRarity(obj) {
 export function normalizeStoreItem(raw) {
   const sys = raw.system || {};
 
-  const id = ensureId(raw, raw.type || 'item');
+  const identity = buildStoreIdentity(raw, raw.type || 'item');
+  const id = identity.id || ensureId(raw, raw.type || 'item');
   const name = safeString(raw.name || sys.name || 'Unnamed Item');
   const img = safeImg(raw);
   const type = normalizeType(raw);
@@ -154,6 +211,12 @@ export function normalizeStoreItem(raw) {
 
   return {
     id,
+    canonicalId: identity.canonicalId,
+    rawId: identity.rawId,
+    sourcePack: identity.sourcePack,
+    sourceUuid: identity.sourceUuid,
+    sourceId: identity.sourceId,
+    sourceKey: identity.sourceKey,
     name,
     img,
     type,          // weapon, armor, equipment, droid, vehicle
@@ -220,83 +283,112 @@ export function normalizeActors(rawActors) {
  * @returns {Array<StoreItem>}
  */
 /**
- * P1-1: Enhanced filtering with detailed logging for excluded items
+ * Return a compact validation issue for a normalized store item.
+ * Null means the item can proceed into categorization/pricing.
+ */
+export function getStoreItemValidationIssue(item = {}) {
+  if (!item.name || String(item.name).trim() === '') {
+    return { reason: 'missing_name', level: 'warn' };
+  }
+
+  if (!item.type) {
+    return { reason: 'missing_type', level: 'warn' };
+  }
+
+  if (item.doc?.flags?.swse?.excludeFromStore || item.doc?.flags?.[STORE_FLAG_SCOPE]?.excludeFromStore) {
+    return { reason: 'excluded_by_flag', level: 'debug' };
+  }
+
+  if (item.type === 'service') {
+    return { reason: 'service_not_inventory', level: 'debug' };
+  }
+
+  if (item.costStatus === 'unavailable') {
+    return { reason: item.unavailabilityReason || 'unavailable', level: 'debug' };
+  }
+
+  if (item.costStatus === 'missing') {
+    return { reason: 'missing_cost', level: 'warn' };
+  }
+
+  const isPriced = item.costStatus === 'priced' || item.costStatus === 'conditional';
+  if (!isPriced) {
+    return { reason: 'invalid_cost_status', level: 'warn' };
+  }
+
+  return null;
+}
+
+function compactItemExample(item = {}, issue = {}) {
+  return {
+    name: item.name || 'Unnamed Item',
+    id: item.id || item.rawId || item._id || null,
+    rawId: item.rawId || null,
+    sourcePack: item.sourcePack || 'world',
+    type: item.type || null,
+    reason: issue.reason || 'unknown'
+  };
+}
+
+export function summarizeStoreValidation(items = []) {
+  const summary = {
+    total: Array.isArray(items) ? items.length : 0,
+    valid: 0,
+    invalid: 0,
+    byReason: {},
+    examples: []
+  };
+
+  for (const item of items || []) {
+    const issue = getStoreItemValidationIssue(item);
+    if (!issue) {
+      summary.valid += 1;
+      continue;
+    }
+    summary.invalid += 1;
+    summary.byReason[issue.reason] = (summary.byReason[issue.reason] || 0) + 1;
+    if (summary.examples.length < 12 && issue.level !== 'debug') {
+      summary.examples.push(compactItemExample(item, issue));
+    }
+  }
+
+  return summary;
+}
+
+function logValidationSummary(summary, logger = globalThis.swseLogger || console) {
+  if (!summary?.invalid) return;
+  const warnReasons = Object.entries(summary.byReason || {})
+    .filter(([reason]) => !['excluded_by_flag', 'service_not_inventory', 'notPubliclyAvailable'].includes(reason));
+  const payload = {
+    total: summary.total,
+    valid: summary.valid,
+    invalid: summary.invalid,
+    byReason: summary.byReason,
+    examples: summary.examples
+  };
+
+  if (warnReasons.length > 0) {
+    logger.warn?.('[Store] Excluded invalid catalog entries', payload);
+  } else {
+    logger.debug?.('[Store] Excluded non-purchasable catalog entries', payload);
+  }
+}
+
+/**
+ * Filter and validate normalized items.
+ * Logging is summarized once instead of emitted per item.
+ *
  * @param {Array} items - items to validate
+ * @param {Object} options
+ * @param {Boolean} options.logSummary - whether to emit a compact aggregate log
  * @returns {Array} valid items
  */
-export function filterValidStoreItems(items) {
-  const logger = globalThis.swseLogger || console;
-
-  return items.filter(item => {
-    // Must have a name
-    if (!item.name || item.name.trim() === '') {
-      logger.warn(`[Store] Excluded item: no name`, {
-        id: item.id || item._id,
-        type: item.type
-      });
-      return false;
-    }
-
-    // Must have a valid type
-    if (!item.type) {
-      logger.warn(`[Store] Excluded item: no type`, {
-        name: item.name,
-        id: item.id || item._id
-      });
-      return false;
-    }
-
-    // Skip items explicitly excluded from store
-    if (item.doc?.flags?.swse?.excludeFromStore) {
-      logger.debug(`[Store] Excluded item: marked excludeFromStore`, {
-        name: item.name,
-        id: item.id || item._id
-      });
-      return false;
-    }
-
-    // Services are not store inventory items
-    // They are contextual expenses, not purchasable goods
-    if (item.type === 'service') {
-      logger.debug(`[Store] Excluded item: type=service`, {
-        name: item.name,
-        id: item.id || item._id
-      });
-      return false;
-    }
-
-    // Exclude unavailable entries (explicit "not publicly available")
-    if (item.costStatus === 'unavailable') {
-      logger.debug(`[Store] Excluded item: unavailable`, {
-        name: item.name,
-        id: item.id || item._id,
-        reason: item.unavailabilityReason
-      });
-      return false;
-    }
-
-    // Exclude missing pricing (no usable cost information)
-    if (item.costStatus === 'missing') {
-      logger.warn(`[Store] Excluded item: missing pricing`, {
-        name: item.name,
-        id: item.id || item._id,
-        type: item.type
-      });
-      return false;
-    }
-
-    // Item must have valid pricing
-    const isPriced = item.costStatus === 'priced' || item.costStatus === 'conditional';
-    if (!isPriced) {
-      logger.warn(`[Store] Excluded item: invalid pricing status`, {
-        name: item.name,
-        id: item.id || item._id,
-        costStatus: item.costStatus,
-        type: item.type
-      });
-      return false;
-    }
-
-    return true;
-  });
+export function filterValidStoreItems(items, options = {}) {
+  const { logSummary = false } = options || {};
+  const list = Array.isArray(items) ? items : [];
+  const filtered = list.filter(item => !getStoreItemValidationIssue(item));
+  if (logSummary) {
+    logValidationSummary(summarizeStoreValidation(list));
+  }
+  return filtered;
 }

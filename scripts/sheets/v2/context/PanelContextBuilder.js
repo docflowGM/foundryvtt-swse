@@ -808,14 +808,38 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildSecondWindPanel() {
-    const maxHp = Number(this.system.hp?.max) || 1;
-    const baseHealing = Math.ceil(maxHp * 0.25);
-    const storedHealing = Number(this.system.secondWind?.healing) || 0;
+    const hpState = this.system.hp ?? {};
+    const maxHp = safePanelNumber(
+      this.system.derived?.hp?.max ??
+      this.system.derived?.hp?.total ??
+      hpState.max ??
+      hpState.total,
+      1
+    );
+    const isDroidActor = this.actor?.type === 'droid' || this.system?.isDroid === true;
+    const conTotal = isDroidActor
+      ? 0
+      : safePanelNumber(
+        this.system.derived?.attributes?.con?.total ??
+        this.system.attributes?.con?.total ??
+        ((safePanelNumber(this.system.attributes?.con?.base, 10))
+          + safePanelNumber(this.system.attributes?.con?.racial, 0)
+          + safePanelNumber(this.system.attributes?.con?.enhancement, 0)
+          + safePanelNumber(this.system.attributes?.con?.temp, 0)),
+        10
+      );
+
+    // SWSE RAW: Second Wind heals the better of one-quarter max HP or CON score.
+    // Use stored override only when it is positive; otherwise hydrate a real
+    // playable default instead of leaving the concept sheet blank.
+    const baseHealing = Math.max(Math.floor(maxHp / 4), conTotal);
+    const storedHealing = safePanelNumber(this.system.secondWind?.healing, 0);
     const healing = storedHealing > 0 ? storedHealing : baseHealing;
-    const rawUses = Number(this.system.secondWind?.uses);
+
     const rawMax = Number(this.system.secondWind?.max);
-    const max = Math.max(0, Number.isFinite(rawMax) ? rawMax : 1);
-    const uses = Math.max(0, Math.min(max, Number.isFinite(rawUses) ? rawUses : 0));
+    const max = Math.max(1, Number.isFinite(rawMax) && rawMax > 0 ? rawMax : 1);
+    const rawUses = Number(this.system.secondWind?.uses);
+    const uses = Math.max(0, Math.min(max, Number.isFinite(rawUses) ? rawUses : max));
     const pips = Array.from({ length: max }, (_, index) => ({
       index,
       active: index < uses,

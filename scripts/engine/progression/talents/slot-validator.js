@@ -10,6 +10,17 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TreeUnlockManager } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-unlock-manager.js";
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";  // Phase 2: Derived authority
 
+function normalizeTreeAccessKey(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/['’`]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export class TalentSlotValidator {
   /**
    * Validate if a talent can be selected for a specific slot
@@ -61,7 +72,8 @@ export class TalentSlotValidator {
       };
       const allowedTrees = authorityActor ? getAllowedTalentTrees(authorityActor, authoritySlot) : [];
 
-      if (allowedTrees.length > 0 && !allowedTrees.includes(talentTree)) {
+      const allowedTreeKeys = new Set((allowedTrees || []).map(normalizeTreeAccessKey).filter(Boolean));
+      if (allowedTreeKeys.size > 0 && !allowedTreeKeys.has(normalizeTreeAccessKey(talentTree))) {
         errors.push(
           `Talent tree "${talentTree}" is not accessible for ${slot.slotType} slot. ` +
           `Allowed trees: ${allowedTrees.join(', ')}`

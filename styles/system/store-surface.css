@@ -1289,3 +1289,78 @@ footer.swse-store-surface__footer {
   text-transform: uppercase;
   text-align: center;
 }
+
+/* Stability pass: shell-native store opens directly to Browse and owns the scroll chain. */
+.swse-shell-surface--store {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--store .swse-store-surface,
+.swse-shell-surface--store .swse-store-surface__tablet,
+.swse-shell-surface--store .swse-store-surface__screen,
+.swse-shell-surface--store .swse-store-surface__browse {
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.swse-shell-surface--store .swse-store-surface {
+  height: 100%;
+  overflow: hidden;
+}
+
+.swse-shell-surface--store .swse-store-surface__tablet {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.swse-shell-surface--store .swse-store-surface__screen {
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.swse-shell-surface--store .swse-store-surface__filters,
+.swse-shell-surface--store .swse-store-surface__category-tabs,
+.swse-shell-surface--store .swse-store-surface__subnav {
+  flex: 0 0 auto;
+}
+
+.swse-shell-surface--store .swse-store-surface__browse {
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.swse-shell-surface--store .swse-store-surface__grid,
+.swse-shell-surface--store .swse-store-surface__rail,
+.swse-shell-surface--store .swse-store-surface__pane {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.swse-store-surface__load-more-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 12px 8px 16px;
+}
+
+.swse-store-surface__load-more {
+  border: 1px solid oklch(0.82 0.18 200 / 0.65);
+  background: linear-gradient(90deg, oklch(0.72 0.26 350 / 0.16), oklch(0.82 0.18 200 / 0.12));
+  color: oklch(0.90 0.08 200);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  padding: 9px 16px;
+  text-transform: uppercase;
+}
+
+.swse-store-surface__load-more span {
+  color: oklch(0.72 0.26 350);
+  margin-left: 8px;
+}

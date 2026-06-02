@@ -463,8 +463,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
     await this._loadReviewsData();
     this.loadingOverlay?.advancePhase?.();
 
-    // PHASE 4: Wire suggestion engine for all items
-    if (this.actor) {
+    // PHASE 4: Wire suggestion engine for all items.
+    // Shell-native store uses render windowing and can defer expensive scoring
+    // so opening the store never blocks the character sheet.
+    if (this.actor && !this._shellSkipInitialSuggestions) {
       await this._generateSuggestionsForAllItems();
     }
     this.loadingOverlay?.advancePhase?.();
@@ -819,7 +821,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       costUsed: item.finalCostUsed ?? undefined,
 
       // Legacy field for some views
-      finalCost,
+      finalCost: finalCost,
       priceLabel: Number.isFinite(Number(displayCost)) ? Number(displayCost).toLocaleString() : '—',
       priceOverrideApplied: item.priceOverrideApplied === true,
 
@@ -1385,7 +1387,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     });
 
     if (!thread.isValid || thread.reviews.length === 0) {
-      console.warn('[SWSE Store] Review thread assembly failed', thread);
+      SWSELogger.debug('[SWSE Store] Review thread assembly unavailable', thread);
       return null;
     }
 

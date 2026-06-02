@@ -875,6 +875,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       mentorName: 'Delta',
       mentorTitle: 'FIELD MOD SPECIALIST',
       mentorHead: 'DELTA · FIELD MOD SPECIALIST',
+      mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/delta.png',
       mentorText
     };
   }
@@ -891,6 +892,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       mentorName: 'Miraj',
       mentorTitle: 'SABER WORKBENCH GUIDE',
       mentorHead: 'MIRAJ · SABER WORKBENCH GUIDE',
+      mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/miraj.png',
       mentorText
     };
   }
@@ -1074,6 +1076,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         mentorName: 'Delta',
         mentorTitle: 'FIELD MOD SPECIALIST',
         mentorHead: 'DELTA · FIELD MOD SPECIALIST',
+        mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/delta.png',
         mentorText
       };
     }
@@ -1299,6 +1302,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
 
       case 'select-lightsaber-chassis': {
+        if (!this._canChangeLightsaberChassis()) {
+          ui.notifications.info('This saber is in tuning mode; its chassis is fixed until full construction is unlocked.');
+          return;
+        }
         this._lightsaber.selectedChassisId = target?.dataset?.key;
         this._lightsaber.selectedAccessoryIds = this._lightsaber.selectedAccessoryIds.filter(id => this._isLightsaberAccessoryCompatible(id));
         if (!this._isLightsaberCrystalCompatible(this._lightsaber.selectedCrystalId)) {
@@ -1532,6 +1539,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     this.onRoot('click', '[data-action="select-lightsaber-chassis"]', async (event, target) => {
       event.preventDefault();
+      if (!this._canChangeLightsaberChassis()) {
+        ui.notifications.info('This saber is in tuning mode; its chassis is fixed until full construction is unlocked.');
+        return;
+      }
       this._lightsaber.selectedChassisId = target.dataset.key;
       this._lightsaber.selectedAccessoryIds = this._lightsaber.selectedAccessoryIds.filter(id => this._isLightsaberAccessoryCompatible(id));
       if (!this._isLightsaberCrystalCompatible(this._lightsaber.selectedCrystalId)) {
@@ -1640,13 +1651,19 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     if (editItem && LightsaberConstructionEngine.isLightsaberItem(editItem)) {
       const editState = LightsaberConstructionEngine.getEditState(editItem);
       ls.selectedChassisId ||= editState.chassisId || editItem.system?.chassisId || this._catalogs.chassis[0]?.id || null;
-      ls.selectedCrystalId ||= editState.crystalId || this._catalogs.crystals.find(cr => /ilum/i.test(cr.name))?.id || this._catalogs.crystals[0]?.id || null;
+      if (!this._findLightsaberCatalogOption('chassis', ls.selectedChassisId)) {
+        ls.selectedChassisId = this._catalogs.chassis.find(ch => ch.system?.chassisId === 'standard' || /standard/i.test(ch.name || ''))?.id || this._catalogs.chassis[0]?.id || null;
+      }
+      ls.selectedCrystalId ||= editState.crystalId || this._catalogs.crystals.find(cr => /kyber|ilum/i.test(cr.name || ''))?.id || this._catalogs.crystals[0]?.id || null;
+      if (!this._findLightsaberCatalogOption('crystals', ls.selectedCrystalId)) {
+        ls.selectedCrystalId = this._catalogs.crystals.find(cr => /kyber|ilum/i.test(cr.name || ''))?.id || this._catalogs.crystals[0]?.id || null;
+      }
       if (!ls.selectedAccessoryIds.length && Array.isArray(editState.accessoryIds)) ls.selectedAccessoryIds = [...editState.accessoryIds];
       ls.selectedBladeColor ||= editState.bladeColor || DEFAULT_BLADE_COLOR;
       return;
     }
-    ls.selectedChassisId ||= this._catalogs.chassis.find(ch => ch.system?.chassisId === 'standard')?.id || this._catalogs.chassis[0]?.id || null;
-    ls.selectedCrystalId ||= this._catalogs.crystals.find(cr => /ilum/i.test(cr.name))?.id || this._catalogs.crystals[0]?.id || null;
+    ls.selectedChassisId ||= this._catalogs.chassis.find(ch => ch.system?.chassisId === 'standard' || /standard/i.test(ch.name || ''))?.id || this._catalogs.chassis[0]?.id || null;
+    ls.selectedCrystalId ||= this._catalogs.crystals.find(cr => /kyber|ilum/i.test(cr.name || ''))?.id || this._catalogs.crystals[0]?.id || null;
     ls.selectedBladeColor ||= DEFAULT_BLADE_COLOR;
   }
 
@@ -1656,10 +1673,51 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
   _resolveBladeColorOptions(crystal) {
+    const identity = `${crystal?.id || ''} ${crystal?._id || ''} ${crystal?.name || ''}`.toLowerCase();
+    if (identity.includes('kyber') || identity.includes('ilum') || identity.includes('standard')) return VARIES_COLOR_LIST;
     const raw = String(crystal?.system?.lightsaber?.bladeColor || crystal?.bladeColor || 'varies').toLowerCase();
     if (!raw || raw === 'varies' || raw.includes('varies')) return VARIES_COLOR_LIST;
     const options = raw.split(/\s+or\s+|\//i).map(part => part.trim()).filter(Boolean);
     return options.length ? options : VARIES_COLOR_LIST;
+  }
+
+  _isActorEligibleForLightsaberConstruction() {
+    const level = Number(this.actor?.system?.level ?? this.actor?.system?.details?.level ?? 1) || 1;
+    if (level < 7) return false;
+    const items = Array.from(this.actor?.items ?? []);
+    const hasForceSensitivity = items.some(item => item?.type === 'feat' && /force\s+sensitiv(e|ity)/i.test(item?.name || ''));
+    const hasJediClass = items.some(item => item?.type === 'class' && /jedi/i.test(item?.name || '') && (Number(item?.system?.level ?? 1) || 1) > 0);
+    const classEntries = Object.values(this.actor?.system?.classes ?? {});
+    const systemHasJedi = classEntries.some(cls => /jedi/i.test(String(cls?.name || cls?.label || cls?.id || '')) && (Number(cls?.level ?? 1) || 1) > 0);
+    return hasForceSensitivity || hasJediClass || systemHasJedi;
+  }
+
+  _canChangeLightsaberChassis(editItem = null) {
+    const target = editItem ?? (this._lightsaber?.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null);
+    if (target) return false;
+    return this._isActorEligibleForLightsaberConstruction();
+  }
+
+  _buildLightsaberEditPreview({ chassis, crystal, accessories = [] } = {}) {
+    const crystalCost = Number(crystal?.system?.cost ?? crystal?.cost ?? 0) || 0;
+    const accessoryCost = accessories.reduce((sum, accessory) => sum + (Number(accessory?.system?.cost ?? accessory?.cost ?? 0) || 0), 0);
+    const crystalDcMod = Number(crystal?.system?.lightsaber?.buildDcModifier ?? crystal?.buildDcModifier ?? 0) || 0;
+    const accessoryDcMod = accessories.reduce((sum, accessory) => sum + (Number(accessory?.system?.lightsaber?.buildDcModifier ?? accessory?.buildDcModifier ?? 0) || 0), 0);
+    const modifier = Number(this.actor?.system?.skills?.useTheForce?.total ?? 0) || 0;
+    const finalDc = Math.max(0, crystalDcMod + accessoryDcMod);
+    return {
+      success: !!(chassis && crystal),
+      chassis,
+      crystal,
+      accessories,
+      finalDc,
+      totalCost: crystalCost + accessoryCost,
+      modifier,
+      take10Total: modifier + 10,
+      canTake10: true,
+      timeHours: 0,
+      mode: 'tune'
+    };
   }
 
 
@@ -1723,6 +1781,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const chassis = this._findLightsaberCatalogOption('chassis', this._lightsaber.selectedChassisId);
     const crystal = this._findLightsaberCatalogOption('crystals', this._lightsaber.selectedCrystalId);
     const slotState = this._getLightsaberAccessorySlotState();
+    const selectedAccessories = this._lightsaber.selectedAccessoryIds
+      .map(id => this._findLightsaberCatalogOption('accessories', id))
+      .filter(Boolean);
+    const canChangeChassis = this._canChangeLightsaberChassis(editItem);
     const lightsaberVisualProfile = WeaponVisualProfileResolver.resolve(editItem, {
       actor: this.actor,
       lightsaberState: this._lightsaber,
@@ -1735,10 +1797,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       selected: key === lightsaberVisualProfile.bladeColor
     }));
     const config = this._getLightsaberConfig();
-    const preview = chassis && crystal ? await LightsaberConstructionEngine.getBuildPreview(this.actor, config) : null;
+    const preview = editItem
+      ? this._buildLightsaberEditPreview({ chassis, crystal, accessories: selectedAccessories })
+      : (chassis && crystal ? await LightsaberConstructionEngine.getBuildPreview(this.actor, config) : null);
     const credits = Number(this.actor.system?.credits ?? 0) || 0;
     const totalCost = Number(preview?.totalCost ?? 0) || 0;
-    const canBuild = !!(chassis && crystal && preview?.success && !slotState.isOverflowing && (this._lightsaber.selectedCheckMode !== 'take10' || preview?.canTake10));
+    const canBuild = editItem
+      ? !!(chassis && crystal && preview?.success && !slotState.isOverflowing)
+      : !!(chassis && crystal && preview?.success && !slotState.isOverflowing && (this._lightsaber.selectedCheckMode !== 'take10' || preview?.canTake10));
     const bladeHex = lightsaberVisualProfile.bladeHex;
     const hiltKind = this._normalizeLightsaberHiltKind(chassis);
     return {
@@ -1776,7 +1842,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       },
       ...(await this._getLightsaberMentorContext(editItem)),
       lightsaber: {
-        mode: editItem ? 'edit' : 'construct',
+        mode: editItem ? 'tuning existing blade' : (canChangeChassis ? 'construct' : 'construction locked'),
+        showChassis: canChangeChassis,
+        chassisLocked: !canChangeChassis,
+        selectedChassisName: chassis?.name || 'Fixed Chassis',
+        chassisLockReason: editItem
+          ? 'This is an existing/free lightsaber. Chassis construction is locked; tune the crystal, blade color, and hilt accessories instead.'
+          : 'Full chassis construction unlocks at level 7 for Jedi or Force-sensitive characters.',
         bladeHex,
         visualProfile: lightsaberVisualProfile,
         hiltKind,
@@ -1822,7 +1894,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         slotPercent: slotState.totalAvailable > 0 ? Math.min(100, Math.max(0, Math.round((slotState.usedSlots / slotState.totalAvailable) * 100))) : 0,
         maxTemplatesPerItem: 0,
         canApply: canBuild,
-        blockedReason: canBuild ? null : (slotState.isOverflowing ? 'Accessory slot budget exceeded.' : (this._lightsaber.selectedCheckMode === 'take10' && preview && !preview.canTake10 ? 'Take 10 does not meet the build DC.' : 'Select a valid chassis and crystal configuration.')),
+        blockedReason: canBuild ? null : (slotState.isOverflowing ? 'Accessory slot budget exceeded.' : (editItem ? 'Select a compatible crystal and hilt configuration.' : (this._lightsaber.selectedCheckMode === 'take10' && preview && !preview.canTake10 ? 'Take 10 does not meet the build DC.' : 'Full lightsaber construction requires level 7 and Force sensitivity.'))),
         applyLabel: editItem ? 'Tune Lightsaber' : (canBuild ? `Forge Lightsaber (${totalCost} cr)` : (slotState.isOverflowing ? 'Accessory Slot Overflow' : 'Forge Blocked'))
       }
     };

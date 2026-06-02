@@ -2023,15 +2023,21 @@ export class ProgressionFinalizer {
     itemData.system = foundry.utils.mergeObject(itemData.system || {}, {
       equipped: true,
       carried: true,
-      category: itemData.system?.category || 'lightsaber',
-      subcategory: itemData.system?.subcategory || itemData.system?.subtype || 'lightsaber',
-      weaponCategory: 'melee',
-      weaponType: 'melee',
+      category: 'lightsaber',
+      subcategory: 'lightsaber',
+      subtype: 'lightsaber',
+      itemType: 'lightsaber',
+      itemCategory: 'lightsaber',
+      workbenchCategory: 'lightsaber',
+      weaponCategory: itemData.system?.weaponCategory || 'melee',
+      weaponType: itemData.system?.weaponType || 'melee',
       rangeProfile: 'melee',
       equippable: {
         equipped: true,
         slot: 'hand',
       },
+      traits: [...new Set([...(Array.isArray(itemData.system?.traits) ? itemData.system.traits : []), 'Lightsaber'])],
+      properties: [...new Set([...(Array.isArray(itemData.system?.properties) ? itemData.system.properties : []), 'Lightsaber'])],
     }, { inplace: false, recursive: true, overwrite: true });
     itemData.flags = foundry.utils.mergeObject(itemData.flags || {}, {
       swse: {
@@ -2041,6 +2047,13 @@ export class ProgressionFinalizer {
           selectionId: 'weapon-lightsaber',
           countIndex: 0,
         },
+        classStarterEquipment: true,
+        autoEquipped: true,
+        sourceClass: 'Jedi',
+        isLightsaber: true,
+      },
+      'foundryvtt-swse': {
+        isLightsaber: true,
         classStarterEquipment: true,
         autoEquipped: true,
         sourceClass: 'Jedi',
@@ -2132,8 +2145,12 @@ export class ProgressionFinalizer {
         ammunition: { type: 'none', current: 0, max: 0 },
         weaponCategory: 'melee',
         proficiency: 'exotic',
+        subtype: 'lightsaber',
         subcategory: 'lightsaber',
         category: 'lightsaber',
+        itemType: 'lightsaber',
+        itemCategory: 'lightsaber',
+        workbenchCategory: 'lightsaber',
         combat: {
           attack: { ability: 'str', bonus: 0 },
           damage: { dice: '2d8', bonus: 0, type: 'energy', ability: 'str' },
@@ -2144,7 +2161,10 @@ export class ProgressionFinalizer {
         traits: ['Lightsaber', 'Critical 19-20', 'Exotic', 'Armor-Piercing'],
       },
       effects: [],
-      flags: {},
+      flags: {
+        swse: { isLightsaber: true },
+        'foundryvtt-swse': { isLightsaber: true },
+      },
     };
   }
 

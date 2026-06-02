@@ -1,113 +1,43 @@
 [
   {
-    "id": "1st_degree_droid_talent_tree",
-    "sourceId": "a212850887fe41da",
-    "key": "1st_degree_droid_talent_tree",
-    "displayName": "1st-Degree Droid Talent Tree",
-    "name": "1st-Degree Droid Talent Tree",
-    "talentCount": 7,
+    "id": "1stdegree-droid",
+    "displayName": "1stdegree Droid",
+    "talentCount": 1,
     "talents": [
-      "Dull the Pain",
-      "Interrogator",
-      "Medical Droid",
-      "Known Vulnerability",
-      "Medical Analyzer",
-      "Science Analyzer",
-      "Triage Scan"
-    ],
-    "tags": [
-      "droid",
-      "1st_degree"
-    ],
-    "degree": "1st-degree"
+      "Medical Droid"
+    ]
   },
   {
-    "id": "2nd_degree_droid_talent_tree",
-    "sourceId": "ad499981ddb8450e",
-    "key": "2nd_degree_droid_talent_tree",
-    "displayName": "2nd-Degree Droid Talent Tree",
-    "name": "2nd-Degree Droid Talent Tree",
-    "talentCount": 7,
+    "id": "2nddegree-droid",
+    "displayName": "2nddegree Droid",
+    "talentCount": 1,
     "talents": [
-      "Adept Assistant",
-      "Mechanics Mastery",
-      "Vehicle Mechanic",
-      "Burst Transfer",
-      "On-Board System Link",
-      "Quick Astrogation",
-      "Scomp Link Slicer"
-    ],
-    "tags": [
-      "droid",
-      "2nd_degree"
-    ],
-    "degree": "2nd-degree"
+      "Burst Transfer"
+    ]
   },
   {
-    "id": "3rd_degree_droid_talent_tree",
-    "sourceId": "af077700c1b8433f",
-    "key": "3rd_degree_droid_talent_tree",
-    "displayName": "3rd-Degree Droid Talent Tree",
-    "name": "3rd-Degree Droid Talent Tree",
-    "talentCount": 7,
+    "id": "3rddegree-droid",
+    "displayName": "3rddegree Droid",
+    "talentCount": 1,
     "talents": [
-      "Etiquette",
-      "Helpful",
-      "Protocol",
-      "Nuanced",
-      "Observant",
-      "Supervising Droid",
-      "Talkdroid"
-    ],
-    "tags": [
-      "droid",
-      "3rd_degree"
-    ],
-    "degree": "3rd-degree"
+      "Observant"
+    ]
   },
   {
-    "id": "4th_degree_droid_talent_tree",
-    "sourceId": "73814706c00849c6",
-    "key": "4th_degree_droid_talent_tree",
-    "displayName": "4th-Degree Droid Talent Tree",
-    "name": "4th-Degree Droid Talent Tree",
-    "talentCount": 7,
+    "id": "4thdegree-droid",
+    "displayName": "4thdegree Droid",
+    "talentCount": 1,
     "talents": [
-      "Combat Repairs",
-      "Droid Smash",
-      "Targeting Package",
-      "Just a Scratch",
-      "Target Acquisition",
-      "Target Lock",
-      "Weapons Power Surge"
-    ],
-    "tags": [
-      "droid",
-      "4th_degree"
-    ],
-    "degree": "4th-degree"
+      "Target Acquisition"
+    ]
   },
   {
-    "id": "5th_degree_droid_talent_tree",
-    "sourceId": "c4e48efaad1f49af",
-    "key": "5th_degree_droid_talent_tree",
-    "displayName": "5th-Degree Droid Talent Tree",
-    "name": "5th-Degree Droid Talent Tree",
-    "talentCount": 7,
+    "id": "5thdegree-droid",
+    "displayName": "5thdegree Droid",
+    "talentCount": 1,
     "talents": [
-      "Cargo Hauler",
-      "Environmentally Shielded",
-      "Power Supply",
-      "Durable",
-      "Heavy-Duty Actuators",
-      "Load Launcher",
-      "Task Optimization"
-    ],
-    "tags": [
-      "droid",
-      "5th_degree"
-    ],
-    "degree": "5th-degree"
+      "Heavy-Duty Actuators"
+    ]
   },
   {
     "id": "ace-pilot",
@@ -115,6 +45,15 @@
     "talentCount": 1,
     "talents": [
       "Escort"
+    ]
+  },
+  {
+    "id": "advance-patrol",
+    "displayName": "Advance Patrol",
+    "talentCount": 2,
+    "talents": [
+      "Forward Patrol",
+      "Watchful Step"
     ]
   },
   {
@@ -133,15 +72,33 @@
     ]
   },
   {
+    "id": "agent-of-ossus",
+    "displayName": "Agent Of Ossus",
+    "talentCount": 1,
+    "talents": [
+      "Buried Presence"
+    ]
+  },
+  {
+    "id": "aingtii-monk",
+    "displayName": "Aingtii Monk",
+    "talentCount": 1,
+    "talents": [
+      "Aura of Freedom"
+    ]
+  },
+  {
     "id": "alter",
     "displayName": "Alter",
-    "talentCount": 15,
+    "talentCount": 17,
     "talents": [
       "Aversion",
       "Disciplined Strike",
+      "Force Bond",
       "Force Flow",
       "Illusion",
       "Illusion Bond",
+      "Illusions",
       "Influence Savant",
       "Link",
       "Masquerade",
@@ -157,20 +114,31 @@
   {
     "id": "ambusher",
     "displayName": "Ambusher",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Ambush Specialist",
       "Destructive Ambusher",
       "Keep It Going",
+      "Keep Them Reeling",
       "Perceptive Ambusher",
       "Spring the Trap"
     ]
   },
   {
+    "id": "anticipation",
+    "displayName": "Anticipation",
+    "talentCount": 2,
+    "talents": [
+      "Forewarn Allies",
+      "Get Down"
+    ]
+  },
+  {
     "id": "armor-specialist",
     "displayName": "Armor Specialist",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
+      "Armor Mastery",
       "Armored Defense",
       "Improved Armored Defense",
       "Juggernaut",
@@ -196,6 +164,20 @@
     ]
   },
   {
+    "id": "autonomy",
+    "displayName": "Autonomy",
+    "talentCount": 7,
+    "talents": [
+      "Defensive Electronics",
+      "Ion Resistance 10",
+      "Just a Droid",
+      "Modification Specialist",
+      "Repair Self",
+      "Soft Reset",
+      "Swift Droid"
+    ]
+  },
+  {
     "id": "awareness",
     "displayName": "Awareness",
     "talentCount": 8,
@@ -211,14 +193,41 @@
     ]
   },
   {
+    "id": "baran-do-sage",
+    "displayName": "Baran Do Sage",
+    "talentCount": 1,
+    "talents": [
+      "Enhanced Danger Sense"
+    ]
+  },
+  {
     "id": "beastwarden",
     "displayName": "Beastwarden",
-    "talentCount": 4,
+    "talentCount": 7,
     "talents": [
+      "Animal Companion",
       "Bonded Mount",
+      "Calming Aura",
       "Entreat Beast",
+      "Nature Sense",
       "Soothing Presence",
       "Wild Sense"
+    ]
+  },
+  {
+    "id": "blackguard-wilder",
+    "displayName": "Blackguard Wilder",
+    "talentCount": 1,
+    "talents": [
+      "Blackguard Initiate"
+    ]
+  },
+  {
+    "id": "blazing-chain",
+    "displayName": "Blazing Chain",
+    "talentCount": 1,
+    "talents": [
+      "Rising Panic"
     ]
   },
   {
@@ -234,11 +243,22 @@
     ]
   },
   {
+    "id": "bomarr-monk",
+    "displayName": "Bomarr Monk",
+    "talentCount": 3,
+    "talents": [
+      "Droid Receptacle",
+      "Serene Courage",
+      "Shedding of the Body"
+    ]
+  },
+  {
     "id": "bothan-spynet",
     "displayName": "Bothan Spynet",
-    "talentCount": 6,
+    "talentCount": 7,
     "talents": [
       "Bothan Resources",
+      "Extended Critical Range",
       "Knowledge is Life",
       "Knowledge is Power",
       "Knowledge is Strength",
@@ -249,9 +269,11 @@
   {
     "id": "bounty-hunter",
     "displayName": "Bounty Hunter",
-    "talentCount": 11,
+    "talentCount": 13,
     "talents": [
+      "Detective",
       "Dread",
+      "Electronic Trail",
       "Fearsome",
       "Hunter's Mark",
       "Hunter's Target",
@@ -267,12 +289,13 @@
   {
     "id": "brawler",
     "displayName": "Brawler",
-    "talentCount": 18,
+    "talentCount": 19,
     "talents": [
       "Bayonet Master",
       "Cantina Brawler",
       "Counterpunch",
       "Devastating Melee Smash",
+      "Entangler",
       "Experienced Brawler",
       "Expert Grappler",
       "Grabber",
@@ -287,6 +310,14 @@
       "Sucker Punch",
       "Unbalance Strike",
       "Unrelenting Assault"
+    ]
+  },
+  {
+    "id": "brigand",
+    "displayName": "Brigand",
+    "talentCount": 1,
+    "talents": [
+      "Cheap Trick"
     ]
   },
   {
@@ -332,6 +363,24 @@
     ]
   },
   {
+    "id": "chalactan-adept",
+    "displayName": "Chalactan Adept",
+    "talentCount": 1,
+    "talents": [
+      "Lesser Mark of Illumination"
+    ]
+  },
+  {
+    "id": "cloner",
+    "displayName": "Cloner",
+    "talentCount": 3,
+    "talents": [
+      "Clone Scientist",
+      "Mass Cloning",
+      "Retrovirus"
+    ]
+  },
+  {
     "id": "collaborator",
     "displayName": "Collaborator",
     "talentCount": 5,
@@ -346,9 +395,17 @@
   {
     "id": "commando",
     "displayName": "Commando",
-    "talentCount": 1,
+    "talentCount": 9,
     "talents": [
-      "Ambush (Republic Commando)"
+      "Ambush (Republic Commando)",
+      "Battle Analysis",
+      "Cover Fire",
+      "Dedicated Protector",
+      "Demolitionist",
+      "Hard Target",
+      "Indomitable",
+      "Keep Them at Bay",
+      "Tough as Nails"
     ]
   },
   {
@@ -385,6 +442,15 @@
     ]
   },
   {
+    "id": "cowardice",
+    "displayName": "Cowardice",
+    "talentCount": 2,
+    "talents": [
+      "Feign Harmlessness",
+      "Not in the Face"
+    ]
+  },
+  {
     "id": "critical-master",
     "displayName": "Critical Master",
     "talentCount": 7,
@@ -401,12 +467,13 @@
   {
     "id": "dark-side",
     "displayName": "Dark Side",
-    "talentCount": 15,
+    "talentCount": 16,
     "talents": [
       "Consumed by Darkness",
       "Dark Presence",
       "Dark Preservation",
       "Dark Side Bane",
+      "Dark Side Maelstrom",
       "Dark Side Savant",
       "Dark Side Scourge",
       "Drain Knowledge",
@@ -423,32 +490,71 @@
   {
     "id": "dark-side-devotee",
     "displayName": "Dark Side Devotee",
-    "talentCount": 6,
+    "talentCount": 7,
     "talents": [
       "Channel Aggression",
       "Channel Anger",
       "Crippling Strike",
       "Dark Side Talisman",
+      "Embrace Dark Side",
       "Embrace the Dark Side",
       "Greater Dark Side Talisman"
     ]
   },
   {
+    "id": "dathomiri-witch",
+    "displayName": "Dathomiri Witch",
+    "talentCount": 3,
+    "talents": [
+      "Adept Spellcaster",
+      "Binding Sickle",
+      "Dathomiri Hunter"
+    ]
+  },
+  {
+    "id": "defensive-duelist",
+    "displayName": "Defensive Duelist",
+    "talentCount": 2,
+    "talents": [
+      "Defensive Stance",
+      "Steady Strike"
+    ]
+  },
+  {
+    "id": "disciple-of-twilight",
+    "displayName": "Disciple Of Twilight",
+    "talentCount": 1,
+    "talents": [
+      "Cloak of Shadows"
+    ]
+  },
+  {
     "id": "disgrace",
     "displayName": "Disgrace",
-    "talentCount": 5,
+    "talentCount": 7,
     "talents": [
+      "Ambush",
       "Castigate",
       "Dirty Tactics",
+      "Draw Fire",
       "Misplaced Loyalty",
       "Two-Faced",
       "Unreadable"
     ]
   },
   {
+    "id": "droid-commander",
+    "displayName": "Droid Commander",
+    "talentCount": 2,
+    "talents": [
+      "Droid Defense",
+      "Expanded Sensors"
+    ]
+  },
+  {
     "id": "duelist",
     "displayName": "Duelist",
-    "talentCount": 11,
+    "talentCount": 14,
     "talents": [
       "Force Fortification",
       "Greater Weapon Focus (lightsabers)",
@@ -457,10 +563,22 @@
       "Improved Redirect",
       "Improved Riposte",
       "Lightsaber Form Savant",
+      "Lightsaber Throw",
       "Multiattack Proficiency (lightsabers)",
+      "Riposte",
       "Severing Strike",
       "Shoto Master",
-      "Thrown Lightsaber Mastery"
+      "Thrown Lightsaber Mastery",
+      "Weapon Specialization (Lightsabers)"
+    ]
+  },
+  {
+    "id": "ember-of-vahl",
+    "displayName": "Ember Of Vahl",
+    "talentCount": 2,
+    "talents": [
+      "Empowered Weapon",
+      "Initiate of Vahl"
     ]
   },
   {
@@ -475,6 +593,22 @@
       "Respected Officer",
       "Slowing Stun",
       "Takedown"
+    ]
+  },
+  {
+    "id": "exceptional-followers",
+    "displayName": "Exceptional Followers",
+    "talentCount": 1,
+    "talents": [
+      "Akk Dog Master"
+    ]
+  },
+  {
+    "id": "exile",
+    "displayName": "Exile",
+    "talentCount": 1,
+    "talents": [
+      "Galactic Guidance"
     ]
   },
   {
@@ -500,9 +634,10 @@
   {
     "id": "felucian-shaman",
     "displayName": "Felucian Shaman",
-    "talentCount": 1,
+    "talentCount": 2,
     "talents": [
-      "Charm Beast"
+      "Charm Beast",
+      "Infused Weapon"
     ]
   },
   {
@@ -520,10 +655,14 @@
   {
     "id": "force-adept",
     "displayName": "Force Adept",
-    "talentCount": 2,
+    "talentCount": 6,
     "talents": [
+      "Equilibrium",
       "Force Power Adept",
-      "Fortified Body"
+      "Force Treatment",
+      "Fortified Body",
+      "Indomitable class feature",
+      "Mystical Link"
     ]
   },
   {
@@ -542,24 +681,35 @@
   {
     "id": "force-item",
     "displayName": "Force Item",
-    "talentCount": 8,
+    "talentCount": 10,
     "talents": [
       "Attune Weapon",
       "Empower Weapon",
+      "Empowered",
       "Focused Force Talisman",
       "Force Talisman",
       "Force Throw",
       "Greater Focused Force Talisman",
       "Greater Force Talisman",
+      "Lasting Ichor Item",
       "Primitive Block"
+    ]
+  },
+  {
+    "id": "force-warrior",
+    "displayName": "Force Warrior",
+    "talentCount": 1,
+    "talents": [
+      "Defensive Roll"
     ]
   },
   {
     "id": "fortune",
     "displayName": "Fortune",
-    "talentCount": 12,
+    "talentCount": 13,
     "talents": [
       "Avert Disaster",
+      "Better Lucky than Dead",
       "Dumb Luck",
       "Fool's Luck",
       "Fortune's Favor",
@@ -576,12 +726,13 @@
   {
     "id": "fringer",
     "displayName": "Fringer",
-    "talentCount": 8,
+    "talentCount": 9,
     "talents": [
       "Barter",
       "Flee",
       "Fringe Savant",
       "Jury-Rigger",
+      "Keep it Together",
       "Long Stride",
       "Sidestep",
       "Surge",
@@ -591,13 +742,22 @@
   {
     "id": "fugitive-commander",
     "displayName": "Fugitive Commander",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Disciplined Trickery",
       "Group Perception",
       "Hasty Withdrawal",
       "Stalwart Subordinates",
+      "Stay in the Fight",
       "Stealthy Withdrawal"
+    ]
+  },
+  {
+    "id": "galactic-senator",
+    "displayName": "Galactic Senator",
+    "talentCount": 1,
+    "talents": [
+      "Diplomatic Poise"
     ]
   },
   {
@@ -622,6 +782,14 @@
       "Omens",
       "Target Visions",
       "Temporal Awareness"
+    ]
+  },
+  {
+    "id": "genoharadan",
+    "displayName": "Genoharadan",
+    "talentCount": 1,
+    "talents": [
+      "Manipulating Strike"
     ]
   },
   {
@@ -756,10 +924,11 @@
   {
     "id": "infamy",
     "displayName": "Infamy",
-    "talentCount": 10,
+    "talentCount": 11,
     "talents": [
       "Fear Me",
       "Frighten",
+      "Inspire Fear",
       "Inspire Fear I",
       "Inspire Fear II",
       "Inspire Fear III",
@@ -785,28 +954,48 @@
   {
     "id": "influence",
     "displayName": "Influence",
-    "talentCount": 6,
+    "talentCount": 8,
     "talents": [
+      "Allure",
       "Demand Surrender",
       "Fluster",
       "Improved Weaken Resolve",
       "Intimidating Defense",
       "Presence",
+      "Seducer",
       "Weaken Resolve"
     ]
   },
   {
     "id": "inspiration",
     "displayName": "Inspiration",
-    "talentCount": 7,
+    "talentCount": 9,
     "talents": [
       "Beloved",
+      "Bolster",
       "Bolster Ally",
       "Ignite Fervor",
       "Inspire Confidence",
       "Inspire Haste",
       "Inspire Zeal",
+      "Inspired",
       "Willpower"
+    ]
+  },
+  {
+    "id": "jal-shey",
+    "displayName": "Jal Shey",
+    "talentCount": 1,
+    "talents": [
+      "Force Delay"
+    ]
+  },
+  {
+    "id": "jedaii-ranger",
+    "displayName": "Jedaii Ranger",
+    "talentCount": 1,
+    "talents": [
+      "In Balance"
     ]
   },
   {
@@ -844,13 +1033,14 @@
   {
     "id": "jedi-archivist",
     "displayName": "Jedi Archivist",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Direct",
       "Impart Knowledge",
       "Insight of the Force",
       "Master Advisor",
-      "Scholarly Knowledge"
+      "Scholarly Knowledge",
+      "Skilled Advisor"
     ]
   },
   {
@@ -868,19 +1058,20 @@
   {
     "id": "jedi-battlemaster",
     "displayName": "Jedi Battlemaster",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Defensive Circle",
       "Force Revive",
       "Jedi Battle Commander",
       "Mobile Attack (lightsabers)",
+      "Multiattack Proficiency (lightsabers)",
       "Slashing Charge"
     ]
   },
   {
     "id": "jedi-consular",
     "displayName": "Jedi Consular",
-    "talentCount": 10,
+    "talentCount": 21,
     "talents": [
       "Adept Negotiator",
       "Adversary Lore",
@@ -889,24 +1080,44 @@
       "Collective Visions",
       "Consular's Vitality",
       "Consular's Wisdom",
+      "Demand Surrender",
+      "Entreat Aid",
+      "Force of Will",
       "Force Persuasion",
+      "Guiding Strikes",
+      "Improved Consular's Vitality",
+      "Jedi Healer",
       "Know Weakness",
-      "Master Negotiator"
+      "Master Negotiator",
+      "Recall",
+      "Renew Vision",
+      "Visionary Attack",
+      "Visionary Defense",
+      "WatchCircle Initiate"
     ]
   },
   {
     "id": "jedi-guardian",
     "displayName": "Jedi Guardian",
-    "talentCount": 8,
+    "talentCount": 17,
     "talents": [
       "Acrobatic Recovery",
       "Battle Meditation",
-      "Close Maneuvering",
-      "Defensive Acuity",
       "Elusive Target",
       "Force Intuition",
+      "Resilience",
+      "Close Maneuvering",
+      "Cover Escape",
+      "Defensive Acuity",
+      "Exposing Strike",
+      "Forceful Warrior",
+      "Grenade Defense",
       "Guardian Strike",
-      "Improved Battle Meditation"
+      "Hold the Line",
+      "Immovable",
+      "Improved Battle Meditation",
+      "Mobile Combatant",
+      "Force Meld"
     ]
   },
   {
@@ -967,23 +1178,36 @@
   {
     "id": "jedi-sentinel",
     "displayName": "Jedi Sentinel",
-    "talentCount": 4,
+    "talentCount": 15,
     "talents": [
       "Clear Mind",
+      "Dampen Presence",
+      "Dark Retaliation",
+      "Dark Side Bane",
+      "Dark Side Scourge",
+      "Dark Side Sense",
       "Force Haze",
+      "Gradual Resistance",
+      "Master of the Great Hunt",
       "Persistent Haze",
+      "Reap Retribution",
+      "Resist the Dark Side",
+      "Sentinel's Observation",
+      "Steel Resolve",
       "Unseen Eyes"
     ]
   },
   {
     "id": "jedi-shadow",
     "displayName": "Jedi Shadow",
-    "talentCount": 5,
+    "talentCount": 7,
     "talents": [
       "Dark Deception",
       "Improved Sentinel Strike",
       "Improved Sentinel's Gambit",
       "Rebuke the Dark",
+      "Sentinel Strike",
+      "Sentinel's Gambit",
       "Taint of the Dark Side"
     ]
   },
@@ -1002,23 +1226,65 @@
   {
     "id": "jedi-weapon-master",
     "displayName": "Jedi Weapon Master",
-    "talentCount": 4,
+    "talentCount": 5,
     "talents": [
       "Combat Trance",
       "Improvised Weapon Master",
+      "Shoto Pin Block",
       "Twin Weapon Mastery",
       "Twin Weapon Style"
     ]
   },
   {
+    "id": "jensaarai-defender",
+    "displayName": "Jensaarai Defender",
+    "talentCount": 1,
+    "talents": [
+      "Force Cloak"
+    ]
+  },
+  {
+    "id": "jumptrooper",
+    "displayName": "Jumptrooper",
+    "talentCount": 7,
+    "talents": [
+      "Avoid Collisions",
+      "Crash Landings",
+      "Extended Sputters",
+      "Mobility",
+      "Reflexive Tilting",
+      "Rough Landings",
+      "Special:"
+    ]
+  },
+  {
+    "id": "keetael",
+    "displayName": "Keetael",
+    "talentCount": 1,
+    "talents": [
+      "Visions"
+    ]
+  },
+  {
+    "id": "kilian-ranger",
+    "displayName": "Kilian Ranger",
+    "talentCount": 3,
+    "talents": [
+      "Shield Gauntlet Defense",
+      "Shield Gauntlet Deflect",
+      "Siang Lance Mastery"
+    ]
+  },
+  {
     "id": "knight-s-armor",
     "displayName": "Knight S Armor",
-    "talentCount": 6,
+    "talentCount": 7,
     "talents": [
       "Armor Mastery",
       "Armor Mastery",
       "Armored Augmentation I",
       "Armored Augmentation II",
+      "Armored Defense",
       "Cortosis Defense",
       "Cortosis Retaliation"
     ]
@@ -1033,6 +1299,22 @@
       "Praetoria Ishu",
       "Praetoria Vonil",
       "Strength of the Empire"
+    ]
+  },
+  {
+    "id": "korunnai-adept",
+    "displayName": "Korunnai Adept",
+    "talentCount": 1,
+    "talents": [
+      "Akk Dog Master"
+    ]
+  },
+  {
+    "id": "krath",
+    "displayName": "Krath",
+    "talentCount": 1,
+    "talents": [
+      "Illusion"
     ]
   },
   {
@@ -1064,15 +1346,17 @@
   {
     "id": "lightsaber-combat",
     "displayName": "Lightsaber Combat",
-    "talentCount": 9,
+    "talentCount": 11,
     "talents": [
       "Block",
       "Deflect",
       "Lightsaber Defense",
+      "Weapon Specialization (Lightsabers)",
       "Lightsaber Throw",
+      "Redirect Shot",
+      "Cortosis Gauntlet Block",
       "Precise Redirect",
       "Precision",
-      "Redirect Shot",
       "Riposte",
       "Shoto Focus"
     ]
@@ -1080,20 +1364,25 @@
   {
     "id": "lightsaber-forms",
     "displayName": "Lightsaber Forms",
-    "talentCount": 12,
+    "talentCount": 17,
     "talents": [
+      "Acrobatic Recovery",
       "Ataru",
+      "Deflect",
       "Djem So",
       "Jar'Kai",
       "Juyo",
+      "Lightsaber Defense",
       "Makashi",
       "Niman",
+      "Redirect Shot",
       "Shien",
       "Shii-Cho",
       "Sokan",
       "Soresu",
       "Trakata",
-      "Vaapad"
+      "Vaapad",
+      "Weapon Specialization (Lightsabers)"
     ]
   },
   {
@@ -1122,6 +1411,14 @@
     ]
   },
   {
+    "id": "luka-sene",
+    "displayName": "Luka Sene",
+    "talentCount": 1,
+    "talents": [
+      "Field Detection"
+    ]
+  },
+  {
     "id": "malkite-poisoner",
     "displayName": "Malkite Poisoner",
     "talentCount": 5,
@@ -1145,15 +1442,43 @@
     ]
   },
   {
+    "id": "master-of-intrigue",
+    "displayName": "Master Of Intrigue",
+    "talentCount": 1,
+    "talents": [
+      "Advanced Planning"
+    ]
+  },
+  {
     "id": "master-of-teras-kasi",
     "displayName": "Master Of Teras Kasi",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Ignore Damage Reduction",
       "Teras Kasi Basics",
       "Teras Kasi Mastery",
+      "Teräs Käsi Basics",
       "Unarmed Counterstrike",
       "Unarmed Parry"
+    ]
+  },
+  {
+    "id": "master-of-the-amphistaff",
+    "displayName": "Master Of The Amphistaff",
+    "talentCount": 1,
+    "talents": [
+      "Amphistaff Block"
+    ]
+  },
+  {
+    "id": "master-scout",
+    "displayName": "Master Scout",
+    "talentCount": 4,
+    "talents": [
+      "Acute Senses",
+      "Jury-Rigger",
+      "Long Stride",
+      "Tripwire"
     ]
   },
   {
@@ -1177,6 +1502,24 @@
     ]
   },
   {
+    "id": "matukai-adept",
+    "displayName": "Matukai Adept",
+    "talentCount": 1,
+    "talents": [
+      "Wan-Shen Kata"
+    ]
+  },
+  {
+    "id": "mechanic",
+    "displayName": "Mechanic",
+    "talentCount": 3,
+    "talents": [
+      "Engineering Savant",
+      "Patient Builder",
+      "Quick Fix"
+    ]
+  },
+  {
     "id": "melee-duelist",
     "displayName": "Melee Duelist",
     "talentCount": 10,
@@ -1196,23 +1539,38 @@
   {
     "id": "melee-specialist",
     "displayName": "Melee Specialist",
-    "talentCount": 5,
+    "talentCount": 7,
     "talents": [
       "Accurate Blow",
       "Close-Quarters Fighter",
       "Ignore Armor",
       "Improved Stunning Strike",
+      "Melee Smash",
+      "Stunning Strike",
       "Whirling Death"
     ]
   },
   {
     "id": "mercenary",
     "displayName": "Mercenary",
-    "talentCount": 3,
+    "talentCount": 8,
     "talents": [
+      "Commanding Presence",
+      "Dirty Fighting",
+      "Feared Warrior",
+      "Focused Warrior",
       "Mercenary's Determination",
       "Mercenary's Grit",
-      "Mercenary's Teamwork"
+      "Mercenary's Teamwork",
+      "Ruthless"
+    ]
+  },
+  {
+    "id": "midichlorian",
+    "displayName": "Midichlorian",
+    "talentCount": 1,
+    "talents": [
+      "Voices"
     ]
   },
   {
@@ -1235,9 +1593,10 @@
   {
     "id": "military-tactics",
     "displayName": "Military Tactics",
-    "talentCount": 12,
+    "talentCount": 13,
     "talents": [
       "Assault Tactics",
+      "Commander's Prerogative",
       "Deployment Tactics",
       "Exploit Weakness",
       "Field Tactics",
@@ -1254,11 +1613,12 @@
   {
     "id": "misfortune",
     "displayName": "Misfortune",
-    "talentCount": 15,
+    "talentCount": 16,
     "talents": [
       "Befuddle",
       "Cunning Strategist",
       "Dastardly Attack",
+      "Dastardly Strike",
       "Disruptive",
       "Hesitate",
       "Improved Skirmisher",
@@ -1271,6 +1631,23 @@
       "Sudden Strike",
       "Walk the Line",
       "Weakening Strike"
+    ]
+  },
+  {
+    "id": "mobile-scout",
+    "displayName": "Mobile Scout",
+    "talentCount": 1,
+    "talents": [
+      "Expert Rider"
+    ]
+  },
+  {
+    "id": "morgukai-warrior",
+    "displayName": "Morgukai Warrior",
+    "talentCount": 2,
+    "talents": [
+      "Cortosis Staff Block",
+      "Morgukai Resolve"
     ]
   },
   {
@@ -1288,9 +1665,11 @@
   {
     "id": "naval-officer",
     "displayName": "Naval Officer",
-    "talentCount": 5,
+    "talentCount": 7,
     "talents": [
+      "Born Leader",
       "Combined Fire",
+      "Combined Fire (Naval)",
       "Fleet Deployment",
       "Fleet Tactics",
       "It's a Trap",
@@ -1346,6 +1725,22 @@
     ]
   },
   {
+    "id": "outsider",
+    "displayName": "Outsider",
+    "talentCount": 1,
+    "talents": [
+      "Outsider's Eye"
+    ]
+  },
+  {
+    "id": "override",
+    "displayName": "Override",
+    "talentCount": 1,
+    "talents": [
+      "Directed Action"
+    ]
+  },
+  {
     "id": "pathfinder",
     "displayName": "Pathfinder",
     "talentCount": 10,
@@ -1392,7 +1787,7 @@
   {
     "id": "privateer",
     "displayName": "Privateer",
-    "talentCount": 8,
+    "talentCount": 9,
     "talents": [
       "Armored Spacer",
       "Attract Privateer",
@@ -1401,6 +1796,7 @@
       "Blaster and Blade III",
       "Boarder",
       "Ion Mastery",
+      "Multiattack Proficiency (advanced melee)",
       "Preserving Shot"
     ]
   },
@@ -1419,11 +1815,12 @@
   {
     "id": "protection",
     "displayName": "Protection",
-    "talentCount": 8,
+    "talentCount": 9,
     "talents": [
       "Armored Guard",
       "Bodyguard's Sacrifice",
       "Guard's Endurance",
+      "Harm's Way",
       "Lifesaver",
       "Out of Harm's Way",
       "Roll With It",
@@ -1446,12 +1843,13 @@
   {
     "id": "rebel-recruiter",
     "displayName": "Rebel Recruiter",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Bolstered Numbers",
       "Noble Sacrifice",
       "Recruit Enemy",
       "Stay in the Fight",
+      "Stay in the Fight (Recruit)",
       "Team Recruiting"
     ]
   },
@@ -1481,14 +1879,35 @@
   {
     "id": "republic-commando",
     "displayName": "Republic Commando",
-    "talentCount": 6,
+    "talentCount": 8,
     "talents": [
       "Ambush",
+      "Ambush (Republic Commando)",
+      "Gun Club",
       "Higher Yield",
       "Rapid Reload",
       "Shoulder to Shoulder",
       "Strength in Numbers",
       "Weapon Shift"
+    ]
+  },
+  {
+    "id": "revolutionary",
+    "displayName": "Revolutionary",
+    "talentCount": 1,
+    "talents": [
+      "Make an Example"
+    ]
+  },
+  {
+    "id": "rocket-jumper",
+    "displayName": "Rocket Jumper",
+    "talentCount": 4,
+    "talents": [
+      "Burning Assault",
+      "Improved Trajectory",
+      "Jet Pack Training",
+      "Jet Pack Withdraw"
     ]
   },
   {
@@ -1517,6 +1936,15 @@
     ]
   },
   {
+    "id": "science",
+    "displayName": "Science",
+    "talentCount": 2,
+    "talents": [
+      "Identify Creature",
+      "Poisoncraft"
+    ]
+  },
+  {
     "id": "scoundrel",
     "displayName": "Scoundrel",
     "talentCount": 2,
@@ -1528,10 +1956,12 @@
   {
     "id": "sense",
     "displayName": "Sense",
-    "talentCount": 13,
+    "talentCount": 16,
     "talents": [
+      "Battle Meditation",
       "Dark Side Sense",
       "Feel the Force",
+      "Force Meld",
       "Force Perception",
       "Force Pilot",
       "Force Reflexes",
@@ -1541,8 +1971,17 @@
       "Instinctive Navigation",
       "Motion of the Future",
       "Psychometry",
+      "Reference Book: Star Wars Saga Edition Starships of the Galaxy",
       "Shift Sense",
       "Visions"
+    ]
+  },
+  {
+    "id": "seyugi-dervish",
+    "displayName": "Seyugi Dervish",
+    "talentCount": 1,
+    "talents": [
+      "Seyugi Cyclone"
     ]
   },
   {
@@ -1558,9 +1997,28 @@
     ]
   },
   {
+    "id": "sharpshooter",
+    "displayName": "Sharpshooter",
+    "talentCount": 3,
+    "talents": [
+      "Draw a Bead",
+      "Pinning Shot",
+      "Precision Shot"
+    ]
+  },
+  {
+    "id": "shockboxer",
+    "displayName": "Shockboxer",
+    "talentCount": 2,
+    "talents": [
+      "Retaliation Jab",
+      "Stinging Jab"
+    ]
+  },
+  {
     "id": "sith",
     "displayName": "Sith",
-    "talentCount": 11,
+    "talentCount": 13,
     "talents": [
       "Affliction",
       "Dark Healing",
@@ -1571,15 +2029,18 @@
       "Drain Force",
       "Force Deception",
       "Improved Dark Healing",
+      "Sith Alchemy (create)",
       "Stolen Form",
+      "Weapon Specialization (Lightsabers)",
       "Wicked Strike"
     ]
   },
   {
     "id": "sith-alchemy",
     "displayName": "Sith Alchemy",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
+      "Block",
       "Cause Mutation",
       "Rapid Alchemy",
       "Sith Alchemy",
@@ -1610,6 +2071,17 @@
       "Security Slicer",
       "Trace",
       "Virus"
+    ]
+  },
+  {
+    "id": "smashball-pro",
+    "displayName": "Smashball Pro",
+    "talentCount": 4,
+    "talents": [
+      "Centerbreaker Charge",
+      "Linebreaker Charge",
+      "Smashball Pass",
+      "Suktub Defender"
     ]
   },
   {
@@ -1674,15 +2146,35 @@
     ]
   },
   {
+    "id": "sorcerer-of-tund",
+    "displayName": "Sorcerer Of Tund",
+    "talentCount": 2,
+    "talents": [
+      "Adept Spellcaster",
+      "Delusion"
+    ]
+  },
+  {
     "id": "spacer",
     "displayName": "Spacer",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
+      "Cramped Quarters Fighting",
       "Hyperdriven",
       "Make a Break for It",
       "Spacehound",
       "Starship Raider",
       "Stellar Warrior"
+    ]
+  },
+  {
+    "id": "specialized-droid",
+    "displayName": "Specialized Droid",
+    "talentCount": 3,
+    "talents": [
+      "Hotwire",
+      "Power Boost",
+      "Power Surge"
     ]
   },
   {
@@ -1699,6 +2191,17 @@
     ]
   },
   {
+    "id": "squad-leader",
+    "displayName": "Squad Leader",
+    "talentCount": 4,
+    "talents": [
+      "Commanding Officer",
+      "Coordinated Tactics",
+      "Fire at Will",
+      "Squad Actions"
+    ]
+  },
+  {
     "id": "squadron-leader",
     "displayName": "Squadron Leader",
     "talentCount": 4,
@@ -1707,6 +2210,14 @@
       "Regroup",
       "Squadron Maneuvers",
       "Squadron Tactics"
+    ]
+  },
+  {
+    "id": "superior-skills",
+    "displayName": "Superior Skills",
+    "talentCount": 1,
+    "talents": [
+      "Critical Skill Success"
     ]
   },
   {
@@ -1745,6 +2256,14 @@
     ]
   },
   {
+    "id": "treatment",
+    "displayName": "Treatment",
+    "talentCount": 1,
+    "talents": [
+      "Steady Hands"
+    ]
+  },
+  {
     "id": "trickery",
     "displayName": "Trickery",
     "talentCount": 6,
@@ -1758,6 +2277,18 @@
     ]
   },
   {
+    "id": "trooper",
+    "displayName": "Trooper",
+    "talentCount": 5,
+    "talents": [
+      "Comrades in Arms",
+      "Focused Targeting",
+      "Phalanx",
+      "Stick Together",
+      "Watch Your Back"
+    ]
+  },
+  {
     "id": "turret",
     "displayName": "Turret",
     "talentCount": 6,
@@ -1768,6 +2299,14 @@
       "Ion Turret",
       "Stun Turret",
       "Turret Self-Destruct"
+    ]
+  },
+  {
+    "id": "tyia-adept",
+    "displayName": "Tyia Adept",
+    "talentCount": 1,
+    "talents": [
+      "Tyia Adept"
     ]
   },
   {
@@ -1810,25 +2349,79 @@
     ]
   },
   {
+    "id": "veteran",
+    "displayName": "Veteran",
+    "talentCount": 2,
+    "talents": [
+      "Seen It All",
+      "Tested in Battle"
+    ]
+  },
+  {
+    "id": "warden-of-the-sky",
+    "displayName": "Warden Of The Sky",
+    "talentCount": 1,
+    "talents": [
+      "Telekinetic Strike"
+    ]
+  },
+  {
+    "id": "warrior",
+    "displayName": "Warrior",
+    "talentCount": 3,
+    "talents": [
+      "Ranged Disarm",
+      "Warrior's Awareness",
+      "Weapon Proficiency (Simple Weapons)"
+    ]
+  },
+  {
     "id": "weapon-master",
     "displayName": "Weapon Master",
-    "talentCount": 7,
+    "talentCount": 10,
     "talents": [
       "Controlled Burst",
+      "Devastating Attack",
       "Exotic Weapon Mastery",
       "Greater Devastating Attack",
       "Greater Penetrating Attack",
       "Greater Weapon Focus",
       "Greater Weapon Specialization",
-      "Multiattack Proficiency (heavy)"
+      "Multiattack Proficiency (heavy)",
+      "Multiattack Proficiency (rifles)",
+      "Penetrating Attack"
+    ]
+  },
+  {
+    "id": "weapon-specialist",
+    "displayName": "Weapon Specialist",
+    "talentCount": 6,
+    "talents": [
+      "Crushing Assault",
+      "Disarming Attack",
+      "Impaling Assault",
+      "Improved Suppression Fire",
+      "Stinging Assault",
+      "Weapon Specialization"
+    ]
+  },
+  {
+    "id": "white-current-adept",
+    "displayName": "White Current Adept",
+    "talentCount": 2,
+    "talents": [
+      "Force Immersion",
+      "White Current Adept"
     ]
   },
   {
     "id": "wingman",
     "displayName": "Wingman",
-    "talentCount": 4,
+    "talentCount": 6,
     "talents": [
       "Concentrate All Fire",
+      "Escort",
+      "Escort Pilot",
       "Lose Pursuit",
       "Run Interference",
       "Wingman Retribution"
@@ -1844,6 +2437,52 @@
       "Curved Throw",
       "Surprising Weapons",
       "Veiled Biotech"
+    ]
+  },
+  {
+    "id": "order-of-shasa",
+    "displayName": "Order of Shasa",
+    "talentCount": 4,
+    "talents": [
+      "Deception Awareness",
+      "Greater Weapon Focus (Fira)",
+      "Progenitor's Call",
+      "Waveform"
+    ]
+  },
+  {
+    "id": "bando-gora-captain",
+    "displayName": "Bando Gora Captain",
+    "talentCount": 4,
+    "talents": [
+      "Bando Gora Surge",
+      "Force Fighter",
+      "Resist Enervation",
+      "Victorious Force Mastery"
+    ]
+  },
+  {
+    "id": "believer-disciple",
+    "displayName": "Believer Disciple",
+    "talentCount": 5,
+    "talents": [
+      "Believer Intuition",
+      "Defense Boost",
+      "Hardiness",
+      "High Impact",
+      "Sith Reverence"
+    ]
+  },
+  {
+    "id": "iron-knight",
+    "displayName": "Iron Knight",
+    "talentCount": 5,
+    "talents": [
+      "Droid Duelist",
+      "Force Repair",
+      "Heal Droid",
+      "Mask Presence",
+      "Silicon Mind"
     ]
   }
 ]

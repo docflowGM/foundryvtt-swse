@@ -8,77 +8,201 @@
     "lightsaber-combat": {
       "name": "Lightsaber Combat",
       "descriptor": "Core lightsaber mastery and combat forms",
-      "tags": ["lightsaber", "melee", "accuracy", "damage", "defense", "jediSynergy"]
+      "tags": [
+        "lightsaber",
+        "melee",
+        "accuracy",
+        "damage",
+        "defense",
+        "jediSynergy"
+      ]
     },
     "armor-specialist": {
       "name": "Armor Specialist",
       "descriptor": "Armor, defense, and durability mastery",
-      "tags": ["armor", "defender", "durability", "defense", "support"]
+      "tags": [
+        "armor",
+        "defender",
+        "durability",
+        "defense",
+        "support"
+      ]
     },
     "force-control": {
       "name": "Force Control",
       "descriptor": "Force power control and precision",
-      "tags": ["force", "control", "utility", "mind", "jediSynergy"]
+      "tags": [
+        "force",
+        "control",
+        "utility",
+        "mind",
+        "jediSynergy"
+      ]
     },
     "force-offense": {
       "name": "Force Offense",
       "descriptor": "Offensive Force power development",
-      "tags": ["force", "damage", "offense", "control", "jediSynergy"]
+      "tags": [
+        "force",
+        "damage",
+        "offense",
+        "control",
+        "jediSynergy"
+      ]
     },
     "force-defense": {
       "name": "Force Defense",
       "descriptor": "Defensive Force power development",
-      "tags": ["force", "defense", "utility", "support", "jediSynergy"]
+      "tags": [
+        "force",
+        "defense",
+        "utility",
+        "support",
+        "jediSynergy"
+      ]
     },
     "telekinetic-mastery": {
       "name": "Telekinetic Mastery",
       "descriptor": "Telekinetic Force powers and control",
-      "tags": ["force", "telekinetic", "control", "utility", "damage", "jediSynergy"]
+      "tags": [
+        "force",
+        "telekinetic",
+        "control",
+        "utility",
+        "damage",
+        "jediSynergy"
+      ]
     },
     "mind-affecting": {
       "name": "Mind Affecting",
       "descriptor": "Mind-affecting Force powers and mental control",
-      "tags": ["force", "mind", "control", "debuff", "socialSynergy", "jediSynergy"]
+      "tags": [
+        "force",
+        "mind",
+        "control",
+        "debuff",
+        "socialSynergy",
+        "jediSynergy"
+      ]
     },
     "healing": {
       "name": "Healing Arts",
       "descriptor": "Healing and restoration powers",
-      "tags": ["healing", "support", "utility", "light", "jediSynergy"]
+      "tags": [
+        "healing",
+        "support",
+        "utility",
+        "light",
+        "jediSynergy"
+      ]
     },
     "melee-combat": {
       "name": "Melee Combat",
       "descriptor": "Melee combat techniques and mastery",
-      "tags": ["melee", "damage", "accuracy", "defense"]
+      "tags": [
+        "melee",
+        "damage",
+        "accuracy",
+        "defense"
+      ]
     },
     "ranged-combat": {
       "name": "Ranged Combat",
       "descriptor": "Ranged weapon and tactical skills",
-      "tags": ["ranged", "damage", "accuracy", "utility"]
+      "tags": [
+        "ranged",
+        "damage",
+        "accuracy",
+        "utility"
+      ]
     },
     "piloting": {
       "name": "Piloting",
       "descriptor": "Vehicle and starship piloting",
-      "tags": ["pilotSynergy", "utility", "mobility", "control"]
+      "tags": [
+        "pilotSynergy",
+        "utility",
+        "mobility",
+        "control"
+      ]
     },
     "stealth": {
       "name": "Stealth and Infiltration",
       "descriptor": "Stealth, infiltration, and evasion",
-      "tags": ["stealth", "utility", "mobility", "control", "socialSynergy"]
+      "tags": [
+        "stealth",
+        "utility",
+        "mobility",
+        "control",
+        "socialSynergy"
+      ]
     },
     "social-influence": {
       "name": "Social Influence",
       "descriptor": "Social skills and influence",
-      "tags": ["socialSynergy", "utility", "control"]
+      "tags": [
+        "socialSynergy",
+        "utility",
+        "control"
+      ]
     },
     "acrobatics": {
       "name": "Acrobatics and Movement",
       "descriptor": "Movement, acrobatics, and mobility",
-      "tags": ["mobility", "utility", "defense"]
+      "tags": [
+        "mobility",
+        "utility",
+        "defense"
+      ]
     },
     "tech-expertise": {
       "name": "Technical Expertise",
       "descriptor": "Technical skills and tech knowledge",
-      "tags": ["utility", "control", "tech"]
+      "tags": [
+        "utility",
+        "control",
+        "tech"
+      ]
+    },
+    "order-of-shasa": {
+      "name": "Order of Shasa",
+      "descriptor": "The Order of Shasa is still developing training techniques and abilities, taking most of their influence from Manaan's oceans.",
+      "tags": [
+        "force",
+        "force-tradition",
+        "tradition",
+        "utility"
+      ]
+    },
+    "bando-gora-captain": {
+      "name": "Bando Gora Captain",
+      "descriptor": "The cultists of The Bando Gora have a reputation for being merciless, and you are no exception.",
+      "tags": [
+        "force",
+        "force-tradition",
+        "tradition",
+        "utility"
+      ]
+    },
+    "believer-disciple": {
+      "name": "Believer Disciple",
+      "descriptor": "The Believers follow the teachings of The Sith from ancient times and strive to extend the influence of The Dark Side of The Force.",
+      "tags": [
+        "force",
+        "force-tradition",
+        "tradition",
+        "utility"
+      ]
+    },
+    "iron-knight": {
+      "name": "Iron Knight",
+      "descriptor": "The Iron Knights are silicon-based creatures that use Droids as their physical bodies to interact with the galaxy, affecting Droids and machinery through The Force.",
+      "tags": [
+        "force",
+        "force-tradition",
+        "tradition",
+        "utility"
+      ]
     }
   }
 }

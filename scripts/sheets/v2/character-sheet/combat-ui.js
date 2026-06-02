@@ -148,7 +148,11 @@ export function activateCombatUI(sheet, html, { signal } = {}) {
       if (!weaponId) return;
 
       const weapon = sheet.actor.items.get(weaponId);
-      if (!weapon || weapon.type !== "weapon") return;
+      const isRollableWeapon = !!weapon && (['weapon', 'lightsaber'].includes(weapon.type)
+        || weapon.system?.damage
+        || weapon.system?.damageFormula
+        || weapon.system?.weapon?.damage);
+      if (!isRollableWeapon) return;
 
       await sheet._runCanonicalAttack(weapon, {
         source: "combat-tab"

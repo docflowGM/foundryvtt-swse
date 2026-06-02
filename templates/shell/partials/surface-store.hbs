@@ -15,10 +15,7 @@
   </div>
   {{else if vm.storeContext}}
 
-  {{#unless vm.splashComplete}}
-  {{> "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs" vm.storeSplash}}
-  {{else}}
-
+  {{!-- Store splash is intentionally bypassed for stability. Deprecated path retained in templates/apps/store/store-splash.hbs. --}}
   <section class="swse-store-surface">
     <form class="swse-store-surface__tablet" autocomplete="off">
 
@@ -108,7 +105,7 @@
             </select>
           </div>
           <div class="swse-store-surface__filter-count">
-            <span data-results-count>{{vm.storeContext.visibleItemCount}}</span> listings
+            <span data-results-count>{{vm.storeContext.renderedItemCount}}</span>/<span>{{vm.storeContext.visibleItemCount}}</span> listings
           </div>
           <button type="button" class="swse-store-surface__filter-clear" data-action="clear-filters">✕ CLEAR</button>
         </section>
@@ -225,6 +222,13 @@
               </div>
             </div>
             {{/each}}
+            {{#if vm.storeContext.hasMoreItems}}
+            <div class="swse-store-surface__load-more-row">
+              <button type="button" class="swse-store-surface__load-more" data-action="store-load-more" data-next-limit="{{vm.storeContext.nextRenderLimit}}">
+                LOAD MORE STOCK → <span>{{vm.storeContext.renderedItemCount}}/{{vm.storeContext.visibleItemCount}}</span>
+              </button>
+            </div>
+            {{/if}}
           </div>
 
           {{!-- Side rail: Selected product or mini cart --}}
@@ -439,14 +443,13 @@
 
       </main>
     </form>
-  {{/unless}}
+  </section>
 
-    {{else}}
-    <div class="swse-store-surface__error">
-      <i class="fas fa-exclamation-triangle"></i>
-      <span>Unable to load store.</span>
-    </div>
-    {{/if}}
-    </section>
+  {{else}}
+  <div class="swse-store-surface__error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Unable to load store.</span>
+  </div>
+  {{/if}}
 
 </div>

@@ -68,6 +68,7 @@ export class StoreSurfaceController {
         // Phase 2: Clear subcategory/family when switching categories
         this._setOptions({
           currentCategory: category,
+          storeRenderLimit: 36,
           currentSubcategory: null,
           currentFamily: null,
           currentView: 'browse',
@@ -84,6 +85,7 @@ export class StoreSurfaceController {
         // Keep current category, clear family when selecting a specific subcategory
         this._setOptions({
           currentSubcategory: subcategory,
+          storeRenderLimit: 36,
           currentFamily: null,
           currentView: 'browse',
           selectedProductId: null
@@ -99,6 +101,7 @@ export class StoreSurfaceController {
         // Keep current category and subcategory, change family filter
         this._setOptions({
           currentFamily: family,
+          storeRenderLimit: 36,
           currentView: 'browse',
           selectedProductId: null
         });
@@ -114,6 +117,7 @@ export class StoreSurfaceController {
           currentFamily: null,        // Phase 2: Clear family filter
           currentView: 'browse',
           selectedProductId: null,
+          storeRenderLimit: 36,
           search: '',
           availability: 'all',
           sort: 'default'
@@ -256,6 +260,14 @@ export class StoreSurfaceController {
       }, { signal });
     });
 
+    root.querySelectorAll('[data-action="store-load-more"]').forEach(el => {
+      el.addEventListener('click', ev => {
+        ev.preventDefault();
+        const next = Number(ev.currentTarget?.dataset?.nextLimit ?? 0) || 72;
+        this._setOptions({ storeRenderLimit: next });
+      }, { signal });
+    });
+
     this._clientSort(root);
     this._focusHotDeal(root);
   }
@@ -340,6 +352,7 @@ export class StoreSurfaceController {
       search: '',
       availability: 'all',
       sort: 'default',
+      storeRenderLimit: 36,
       ...patch
     });
   }

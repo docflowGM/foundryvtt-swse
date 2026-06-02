@@ -867,7 +867,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const unarmedAttack = context.combat?.unarmedAttack ?? null;
   const unarmedAttackEntry = unarmedAttack ? {
     id: 'virtual-unarmed-attack',
-    name: unarmedAttack.name || 'Unarmed Attack',
+    name: unarmedAttack.name || 'Unarmed Strike',
     sourceType: 'unarmed',
     virtual: true,
     attackTotal: Number(unarmedAttack.attackTotal ?? unarmedAttack.attackBonus ?? context.bab ?? 0) || 0,
@@ -877,8 +877,8 @@ export function buildConceptSheetViewModel(context = {}) {
     critRange: unarmedAttack.critRange || '20',
     critMult: unarmedAttack.critMult || 'x2',
     range: unarmedAttack.range || 'Melee',
-    weaponName: unarmedAttack.name || 'Unarmed Attack',
-    weaponType: unarmedAttack.weaponType || 'Simple · Melee',
+    weaponName: unarmedAttack.name || 'Unarmed Strike',
+    weaponType: unarmedAttack.weaponType || 'Unarmed · Melee',
     tags: [
       ...(unarmedAttack.martialArtsStep ? [`Martial Arts ${unarmedAttack.martialArtsStep}`] : []),
       ...(unarmedAttack.noProvokeOpportunity ? ['No AoO'] : [])
@@ -897,7 +897,29 @@ export function buildConceptSheetViewModel(context = {}) {
   const skillCount = asArray(context.skillsPanel?.skills).length || Object.keys(context.derived?.skills ?? {}).length;
   const gearGroups = buildInventoryGroups(context.inventoryPanel);
   const actionGroups = buildActionGroups(context.combatActions);
-  const equippedEntries = inventoryEntries.filter((entry) => entry?.equipped);
+  const virtualUnarmedLoadoutEntry = unarmedAttackEntry ? {
+    ...unarmedAttackEntry,
+    id: 'swse-virtual-unarmed',
+    type: 'weapon',
+    typeLabel: 'Innate Weapon',
+    equipped: true,
+    quantity: 1,
+    weight: 0,
+    value: 0,
+    hasAttackProfile: true,
+    isVirtual: true,
+    virtual: true,
+    isNaturalWeapon: true,
+    canEdit: false,
+    canInspect: false,
+    activationLabel: '',
+    attackTotalClass: toSignedClass(unarmedAttackEntry.attackTotal),
+    tags: Array.from(new Set(['Always Available', 'Unarmed', ...asArray(unarmedAttackEntry.tags)]))
+  } : null;
+  const equippedEntries = [
+    ...(virtualUnarmedLoadoutEntry ? [virtualUnarmedLoadoutEntry] : []),
+    ...inventoryEntries.filter((entry) => entry?.equipped)
+  ];
   const totalWeight = Number(context.inventoryPanel?.totalWeight) || 0;
   const credits = Number(actor?.system?.credits) || 0;
   const biography = flags?.biography || '';

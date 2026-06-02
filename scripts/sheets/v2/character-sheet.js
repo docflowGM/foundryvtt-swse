@@ -20,6 +20,7 @@ import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/c
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
@@ -1864,6 +1865,16 @@ export class SWSEV2CharacterSheet extends
     this._tabletInitialPositionApplied = true;
   }
 
+  /**
+   * Override Foundry's native _onClickTab to prevent it from calling changeTab
+   * without a tab group, which throws "You must pass both the tab and tab group
+   * identifier". Tab switching is handled entirely by UIStateManager via the
+   * delegated data-action="sheet-tab" listener wired in _onRender.
+   */
+  _onClickTab(event) {
+    // Intentional no-op: UIStateManager owns all tab switching for this sheet.
+  }
+
   async _onRender(context, options) {
     if (this._shellSurface === 'home') {
       const guard = this._homeRenderGuard ??= { starts: [], suppressUntil: 0, delayedRender: null, lastRequestKey: '', lastRequestAt: 0, warnedAt: 0 };
@@ -1874,13 +1885,6 @@ export class SWSEV2CharacterSheet extends
 
     // ═══ DIAGNOSTICS: Capture state at render start ═══
     characterSheetDiagnostics.snapshot('_onRender START (before positioning)', this);
-
-    // Positioning diagnostics
-    const el = this.element?.[0];
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      swseLogger.log(`[SWSE Sheet Position Debug] _onRender START: actor=${this.actor?.name}, position={left:${this.position?.left}, top:${this.position?.top}}, element rect={left:${rect.left}, top:${rect.top}, width:${rect.width}, height:${rect.height}}`);
-    }
 
     // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
     // PROBLEM: Previous code called setPosition repeatedly during a 5-second window,
@@ -2235,6 +2239,10 @@ export class SWSEV2CharacterSheet extends
     const isPromotedHeroicNpcActor = actorModeContext.isPromotedHeroicNpcActor;
     const useNpcConceptSheet = actorModeContext.useNpcConceptSheet;
     const useVehicleSheet = actorModeContext.useVehicleSheet;
+
+    // Hoisted here so references earlier in _prepareContext (e.g. equippedWeapon
+    // checks at ~line 2741) can safely access it before the panel-build phase.
+    let panelContexts = {};
 
     // Sanity check: actor must be valid
     RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
@@ -2689,21 +2697,65 @@ export class SWSEV2CharacterSheet extends
     // derived-attacks failure.
     const attacksBundle = derived?.attacks;
     let attacksList = Array.isArray(attacksBundle?.list) ? attacksBundle.list : [];
+    const actorItems = Array.from(actor?.items ?? []);
     const isEquippedForAttack = (item) => {
-      const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(String(value || '').toLowerCase());
+      const truthy = (value) => {
+        if (value === true || Number(value) === 1) return true;
+        if (value && typeof value === 'object') return truthy(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+        return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
+      };
       const system = item?.system ?? {};
       return truthy(system.equipped)
         || truthy(system.isEquipped)
+        || truthy(system.equipStatus)
+        || truthy(system.status)
+        || truthy(system.state)
         || truthy(system.active)
+        || truthy(system.activated)
+        || truthy(system.readied)
         || truthy(system.equippable?.equipped)
+        || truthy(system.equippable?.active)
         || truthy(system.activation?.active)
+        || truthy(item?.flags?.swse?.equipped)
         || truthy(item?.flags?.swse?.autoEquipped);
     };
-    const expectedItemBackedAttackCount = Array.from(actor?.items ?? []).filter(item =>
-      ['weapon', 'lightsaber'].includes(item?.type) && isEquippedForAttack(item)
-    ).length;
+    const hasWeaponDamageProfile = (item) => {
+      const system = item?.system ?? {};
+      return [system.damage, system.damageFormula, system.damageRoll, system.formula, system.weapon?.damage, system.attack?.damage, system.rolls?.damage]
+        .some((value) => value !== undefined && value !== null && value !== '');
+    };
+    const isAttackItemForSheet = (item) => {
+      if (!item) return false;
+      if (['weapon', 'lightsaber'].includes(item.type)) return true;
+      if (!hasWeaponDamageProfile(item)) return false;
+      const system = item.system ?? {};
+      const text = [item.type, item.name, system.type, system.itemType, system.category, system.itemCategory, system.equipmentType, system.weaponType, system.weaponCategory, system.weaponGroup, system.group, system.subtype]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
+    };
+    const equippedAttackItemIds = new Set(actorItems
+      .filter(item => isAttackItemForSheet(item) && isEquippedForAttack(item))
+      .map(item => item.id));
+
+    // The Gear tab is the user-facing evidence that a weapon is equipped. If the
+    // inventory panel sees an equipped weapon row, treat that as an expected combat
+    // attack even when actor preparation is between derived passes.
+    const inventoryWeaponRows = Array.isArray(panelContexts?.inventoryPanel?.grouped?.Weapons)
+      ? panelContexts.inventoryPanel.grouped.Weapons
+      : [];
+    for (const row of inventoryWeaponRows) {
+      if ((row?.equipped === true || row?.activated === true) && row?.id) {
+        equippedAttackItemIds.add(row.id);
+      }
+    }
+
+    const expectedItemBackedAttackCount = equippedAttackItemIds.size;
     const missingAttackBundle = !attacksBundle || !Array.isArray(attacksBundle.list);
-    const missingExpectedItemBackedAttacks = expectedItemBackedAttackCount > 0 && attacksList.length === 0;
+    const derivedAttackWeaponIds = new Set(attacksList.map((attack) => attack?.weaponId ?? attack?.itemId ?? attack?.sourceId).filter(Boolean));
+    const missingExpectedItemBackedAttacks = expectedItemBackedAttackCount > 0
+      && Array.from(equippedAttackItemIds).some((id) => !derivedAttackWeaponIds.has(id));
 
     // Derived remains authoritative, but the combat tab must stay usable during
     // the short prepare/render window before async derived attacks have landed.
@@ -2715,7 +2767,7 @@ export class SWSEV2CharacterSheet extends
         expectedItemBackedAttackCount,
         derivedAttacks: attacksBundle
       });
-      attacksList = this._buildAttacksFallback(actor);
+      attacksList = this._buildAttacksFallback(actor, { inventoryPanel: panelContexts?.inventoryPanel });
 
       if (CONFIG?.SWSE?.debug?.contractObservability) {
         warnMissingDerivedOutput('Attacks', 'derived.attacks.list', actor.name);
@@ -2990,7 +3042,9 @@ const forcePoints = [];
     // buildHeaderHpSegments() uses the same HP data as all other HP displays
     const headerHpSegments = buildHeaderHpSegments(actor);
 
-    let panelContexts = {};
+    // panelContexts is declared at the top of _prepareContext so early references
+    // (e.g. equipped-weapon checks) don't throw "cannot access before initialization".
+    panelContexts = {};
 
     // ═════════════════════════════════════════════════════════════════
     // PHASE 8: CONTRACT OBSERVABILITY — CRITICAL LITMUS TESTS
@@ -5349,7 +5403,11 @@ const forcePoints = [];
         if (!weaponId) return;
 
         const weapon = this.actor.items.get(weaponId);
-        if (!weapon || weapon.type !== "weapon") return;
+        const isRollableWeapon = !!weapon && (['weapon', 'lightsaber'].includes(weapon.type)
+          || weapon.system?.damage
+          || weapon.system?.damageFormula
+          || weapon.system?.weapon?.damage);
+        if (!isRollableWeapon) return;
 
         const modResult = await showRollModifiersDialog({
           title: `${weapon.name} Attack`,
@@ -5617,10 +5675,15 @@ const forcePoints = [];
         const isRecovery = power.system?.discarded ?? false;
 
         try {
+          const rollOptions = isRecovery
+            ? null
+            : await promptForcePowerRollOptions({ actor: this.actor, power, sourceElement: button });
+          if (!isRecovery && !rollOptions) return;
+
           const result = await mutateAndRepaint(this, () => (
             isRecovery
               ? ForceExecutor.activateForce(this.actor, itemId, true)
-              : ForceExecutor.executeForcePower(this.actor, itemId)
+              : ForceExecutor.executeForcePower(this.actor, itemId, rollOptions)
           ), {
             reason: isRecovery ? 'force-power-recover' : 'force-power-use',
             surfaceId: this._shellSurface ?? 'sheet',
@@ -6374,10 +6437,72 @@ const forcePoints = [];
    * @param {Actor} actor - The character actor
    * @returns {Array} Array of basic attack objects from equipped weapons
    */
-  _buildAttacksFallback(actor) {
+  _buildAttacksFallback(actor, options = {}) {
+    const truthy = (value) => {
+      if (value === true || Number(value) === 1) return true;
+      if (value && typeof value === 'object') return truthy(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+      return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
+    };
+    const firstDefined = (...values) => values.find((value) => value !== undefined && value !== null && value !== '');
+    const normalizeDamageFormula = (value, fallback = '1d6') => {
+      let candidate = value;
+      if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+        candidate = firstDefined(candidate.formula, candidate.value, candidate.base, candidate.dice, candidate.roll, candidate.primary);
+      }
+      return candidate !== undefined && candidate !== null && candidate !== '' ? String(candidate) : fallback;
+    };
+    const hasWeaponDamageProfile = (item) => {
+      const system = item?.system ?? {};
+      return firstDefined(system.damage, system.damageFormula, system.damageRoll, system.formula, system.weapon?.damage, system.attack?.damage, system.rolls?.damage) !== undefined;
+    };
+    const isAttackItem = (item) => {
+      if (!item) return false;
+      if (['weapon', 'lightsaber'].includes(item.type)) return true;
+      if (!hasWeaponDamageProfile(item)) return false;
+      const system = item.system ?? {};
+      const text = [item.type, item.name, system.type, system.itemType, system.category, system.itemCategory, system.equipmentType, system.weaponType, system.weaponCategory, system.weaponGroup, system.group, system.subtype]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
+    };
+    const isEquipped = (item) => {
+      const system = item?.system ?? {};
+      return truthy(system.equipped)
+        || truthy(system.isEquipped)
+        || truthy(system.equipStatus)
+        || truthy(system.status)
+        || truthy(system.state)
+        || truthy(system.active)
+        || truthy(system.activated)
+        || truthy(system.readied)
+        || truthy(system.equippable?.equipped)
+        || truthy(system.equippable?.active)
+        || truthy(system.activation?.active)
+        || truthy(item?.flags?.swse?.equipped)
+        || truthy(item?.flags?.swse?.autoEquipped);
+    };
+
+    const actorItems = Array.from(actor?.items ?? []);
+    const byId = new Map(actorItems.map((item) => [item.id, item]));
+    const equippedWeapons = new Map();
+
+    for (const item of actorItems) {
+      if (isAttackItem(item) && isEquipped(item)) equippedWeapons.set(item.id, item);
+    }
+
+    const inventoryWeaponRows = Array.isArray(options?.inventoryPanel?.grouped?.Weapons)
+      ? options.inventoryPanel.grouped.Weapons
+      : [];
+    for (const row of inventoryWeaponRows) {
+      if (!(row?.equipped === true || row?.activated === true) || !row?.id) continue;
+      const item = byId.get(row.id);
+      if (item && isAttackItem(item)) equippedWeapons.set(item.id, item);
+    }
+
     swseLogger.debug(`[Attacks] Display rescue rebuild used because derived.attacks.list is not ready.`, {
       actor: actor.name,
-      equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0,
+      equippedWeapons: equippedWeapons.size,
       warning: 'This indicates DerivedCalculator did not properly compute attacks'
     });
 
@@ -6391,47 +6516,45 @@ const forcePoints = [];
       );
     }
 
-    const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(String(value || '').toLowerCase());
-    const equippedWeapons = (actor?.items ?? []).filter(item => {
-      const system = item?.system ?? {};
-      return ['weapon', 'lightsaber'].includes(item?.type) && (
-        truthy(system.equipped)
-        || truthy(system.isEquipped)
-        || truthy(system.active)
-        || truthy(system.equippable?.equipped)
-        || truthy(system.activation?.active)
-        || truthy(item?.flags?.swse?.autoEquipped)
-      );
-    });
-
     const babValue = actor.system?.derived?.bab;
     const baseAttackBonus = Number(
       typeof babValue === 'object' ? (babValue.total ?? babValue.value ?? 0) :
       (babValue ?? actor.system?.baseAttackBonus ?? actor.system?.bab ?? 0)
     ) || 0;
 
-    return equippedWeapons.map(weapon => ({
-      id: `attack-${weapon.id}`,
-      name: weapon.name,
-      weaponId: weapon.id,
-      weaponName: weapon.name,
-      weaponType: weapon.system?.weaponCategory,
-      attackBonus: weapon.system?.attackBonus ?? 0,
-      attackTotal: (Number(weapon.system?.attackBonus ?? 0) || 0) + baseAttackBonus,
-      attackAttribute: weapon.system?.attackAttribute ?? 'str',
-      damageFormula: weapon.system?.damage ?? '1d6',
-      damageBonus: weapon.system?.damageBonus ?? '',
-      critRange: weapon.system?.criticalRange ?? '20',
-      critMult: weapon.system?.criticalMultiplier ?? 'x2',
-      tags: [],
-      weaponProperties: {},
-      breakdown: {
-        attack: [],
-        damage: [],
-        conditional: []
-      }
-    }));
+    return Array.from(equippedWeapons.values()).map(weapon => {
+      const system = weapon.system ?? {};
+      const itemAttackBonus = Number(firstDefined(system.attackTotal, system.attackBonus, system.toHit, 0)) || 0;
+      const weaponType = firstDefined(system.weaponType, system.weaponCategory, system.weaponGroup, system.category, weapon.type, 'weapon');
+      return {
+        id: `attack-${weapon.id}`,
+        name: weapon.name,
+        sourceType: 'weapon',
+        sourceId: weapon.id,
+        weaponId: weapon.id,
+        itemId: weapon.id,
+        weaponName: weapon.name,
+        weaponType,
+        type: weaponType,
+        attackBonus: itemAttackBonus + baseAttackBonus,
+        attackTotal: itemAttackBonus + baseAttackBonus,
+        attackAttribute: system.attackAttribute ?? 'str',
+        damageFormula: normalizeDamageFormula(firstDefined(system.damageFormula, system.damage, system.damageRoll, system.formula, system.weapon?.damage, system.attack?.damage, system.rolls?.damage)),
+        damageBonus: system.damageBonus ?? '',
+        critRange: firstDefined(system.critRange, system.criticalRange, system.weapon?.critRange, '20'),
+        critMult: firstDefined(system.critMult, system.criticalMultiplier, system.weapon?.critMult, 'x2'),
+        range: firstDefined(system.rangeFormatted, typeof system.range === 'string' ? system.range : system.range?.value, system.range?.label, system.weapon?.range, 'Melee'),
+        tags: Array.isArray(system.tags) ? system.tags : Array.isArray(system.properties) ? system.properties : [],
+        weaponProperties: Array.isArray(system.weaponProperties) ? system.weaponProperties : Array.isArray(system.properties) ? system.properties : [],
+        breakdown: {
+          attack: system.attackBreakdown ?? [],
+          damage: system.damageBreakdown ?? [],
+          conditional: []
+        }
+      };
+    });
   }
+
 
   /* ============================================================
      PHASE 10: SKILL USE HELPERS

@@ -48,6 +48,59 @@ export class LightsaberConstructionEngine {
     }
   }
 
+  static #getDefaultKyberCrystalOption() {
+    return {
+      id: 'lightsaber-crystal-standard-kyber',
+      _id: 'lightsaber-crystal-standard-kyber',
+      name: 'Standard Kyber Crystal',
+      img: 'assets/ui/customization/kyber-crystal-outline.svg',
+      type: 'weaponUpgrade',
+      system: {
+        cost: 0,
+        weight: 0,
+        upgradeSlots: 1,
+        rarity: 'common',
+        category: 'crystal',
+        lightsaber: {
+          category: 'crystal',
+          crystalType: 'kyber',
+          family: 'kyber',
+          buildDcModifier: 0,
+          compatibleChassis: ['standard', 'double', 'short', 'great', 'pike', 'shoto', 'crossguard', 'dual-phase', 'dueling', 'lightwhip', 'longhandle'],
+          bladeColor: 'Varies'
+        },
+        description: '<p>A standard attuned Kyber crystal. Its blade color is chosen by the builder and has no additional mechanical modifier.</p>',
+        modifiers: []
+      },
+      flags: { swse: { virtualBaseline: true }, 'foundryvtt-swse': { virtualBaseline: true } },
+      description: '<p>A standard attuned Kyber crystal. Its blade color is chosen by the builder and has no additional mechanical modifier.</p>',
+      rarity: 'common',
+      buildDcModifier: 0,
+      cost: 0,
+      compatibleChassis: ['standard', 'double', 'short', 'great', 'pike', 'shoto', 'crossguard', 'dual-phase', 'dueling', 'lightwhip', 'longhandle'],
+      bladeColor: 'Varies'
+    };
+  }
+
+  static #withDefaultKyberCrystal(crystals = []) {
+    const summarized = crystals
+      .filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'crystal')
+      .map(i => this.#summarizeOption(i));
+    const hasBaselineKyber = summarized.some(option => {
+      const text = [
+        option.id,
+        option._id,
+        option.name,
+        option.system?.lightsaber?.crystalType,
+        option.system?.lightsaber?.family
+      ].filter(Boolean).join(' ').toLowerCase();
+      const hasNoMechanicalPayload = !(Array.isArray(option.system?.modifiers) && option.system.modifiers.length)
+        && Number(option.system?.lightsaber?.buildDcModifier ?? option.buildDcModifier ?? 0) === 0;
+      return hasNoMechanicalPayload && /\b(standard[- ]?)?kyber\b|\bdefault[- ]?crystal\b/.test(text);
+    });
+    return hasBaselineKyber ? summarized : [this.#getDefaultKyberCrystalOption(), ...summarized];
+  }
+
   static async getCatalogOptions() {
     if (this._catalogCache) return this._catalogCache;
     const getDocs = async (packId, fallback = []) => {
@@ -70,7 +123,7 @@ export class LightsaberConstructionEngine {
 
     this._catalogCache = {
       chassis: chassis.filter(i => this.isLightsaberItem(i) && i.system?.constructible === true).map(i => this.#summarizeOption(i)),
-      crystals: crystals.filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'crystal').map(i => this.#summarizeOption(i)),
+      crystals: this.#withDefaultKyberCrystal(crystals),
       accessories: accessories.filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'accessory').map(i => this.#summarizeOption(i))
     };
     return this._catalogCache;
@@ -78,11 +131,40 @@ export class LightsaberConstructionEngine {
 
   static isLightsaberItem(item) {
     if (!item) return false;
-    return item.type === 'lightsaber' || (item.type === 'weapon' && (item.system?.subtype === 'lightsaber' || item.system?.weaponCategory === 'lightsaber'));
+    const system = item.system || {};
+    if (item.type === 'lightsaber' || system.type === 'lightsaber') return true;
+    if (item.flags?.swse?.isLightsaber || item.flags?.['foundryvtt-swse']?.isLightsaber) return true;
+    if (system.lightsaber || system.chassisId || system.constructible === true) return true;
+    if (String(item.type || '').toLowerCase() !== 'weapon') return false;
+
+    const tokens = [
+      item.name,
+      system.subtype,
+      system.subcategory,
+      system.category,
+      system.itemType,
+      system.itemCategory,
+      system.weaponCategory,
+      system.weaponSubtype,
+      system.weaponType,
+      system.group,
+      system.family,
+      ...(Array.isArray(system.properties) ? system.properties : []),
+      ...(Array.isArray(system.traits) ? system.traits : []),
+      ...(Array.isArray(system.tags) ? system.tags : [])
+    ]
+      .filter(value => value !== undefined && value !== null)
+      .map(value => String(value).toLowerCase())
+      .join(' ');
+    return /\blightsabers?\b|\blightfoils?\b/.test(tokens);
   }
 
   static getOwnedLightsabers(actor) {
-    return (actor?.items ?? []).filter(item => this.isLightsaberItem(item));
+    const collection = actor?.items ?? [];
+    const items = Array.isArray(collection)
+      ? collection
+      : (typeof collection.values === 'function' ? Array.from(collection.values()) : []);
+    return items.filter(item => this.isLightsaberItem(item));
   }
 
   static hasSelfBuiltLightsaber(actor) {
@@ -410,11 +492,48 @@ export class LightsaberConstructionEngine {
    * Check if an upgrade is compatible with a chassis
    * @private
    */
-  static #isCompatible(compatibleChassis, chassisId) {
-    if (!compatibleChassis || !Array.isArray(compatibleChassis)) {
-      return false;
+  static #normalizeCompatibilityToken(value) {
+    return String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[_\s]+/g, '-')
+      .replace(/[^a-z0-9-]+/g, '')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  static #getChassisCompatibilityKeys(chassisId) {
+    const base = this.#normalizeCompatibilityToken(chassisId);
+    const keys = new Set([base].filter(Boolean));
+    if (/lightfoil|dueling|makashi|foil/.test(base)) {
+      keys.add('dueling');
+      keys.add('standard');
     }
-    return compatibleChassis.includes("*") || compatibleChassis.includes(chassisId);
+    if (/shoto|short/.test(base)) {
+      keys.add('short');
+      keys.add('shoto');
+      keys.add('standard');
+    }
+    if (/double/.test(base)) keys.add('double');
+    if (/great/.test(base)) keys.add('great');
+    if (/pike|longhandle/.test(base)) {
+      keys.add('pike');
+      keys.add('longhandle');
+    }
+    if (/crossguard|cross/.test(base)) keys.add('crossguard');
+    if (/dual-phase|dualphase/.test(base)) keys.add('dual-phase');
+    if (/lightwhip|whip/.test(base)) keys.add('lightwhip');
+    if (!keys.size) keys.add('standard');
+    return keys;
+  }
+
+  static #isCompatible(compatibleChassis, chassisId) {
+    if (!compatibleChassis || !Array.isArray(compatibleChassis) || !compatibleChassis.length) {
+      return true;
+    }
+    if (compatibleChassis.includes("*")) return true;
+    const allowed = new Set(compatibleChassis.map(value => this.#normalizeCompatibilityToken(value)).filter(Boolean));
+    const chassisKeys = this.#getChassisCompatibilityKeys(chassisId);
+    return [...chassisKeys].some(key => allowed.has(key));
   }
 
   /**

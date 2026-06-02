@@ -1076,3 +1076,110 @@
     top: 0;
   }
 }
+
+/* Lightsaber tuning stability pass ------------------------------------------------
+ * Existing/free sabers are modified, not reconstructed: the chassis rail is
+ * collapsed and the detail pane owns scrolling while crystal, color, and hilt
+ * accessories remain visible and usable.
+ */
+.swse-customization-mentor .mentor-avatar {
+  overflow: hidden;
+  position: relative;
+}
+
+.swse-customization-mentor .mentor-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+.swse-customization-mentor.mentor-miraj .mentor-avatar {
+  border-color: color-mix(in oklch, var(--icw-positive), transparent 35%);
+  box-shadow: inset 0 0 18px color-mix(in oklch, var(--icw-positive), transparent 76%), 0 0 14px color-mix(in oklch, var(--icw-positive), transparent 70%);
+}
+
+.swse-item-customization-workbench .swse-customization-screen,
+.swse-customization-stage .swse-customization-screen {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .swse-customization-workarea,
+.swse-customization-stage .swse-customization-workarea {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .workbench-detail,
+.swse-customization-stage .workbench-detail {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable;
+}
+
+.swse-item-customization-workbench .workbench-detail > .lightsaber-workspace,
+.swse-customization-stage .workbench-detail > .lightsaber-workspace {
+  display: grid !important;
+  grid-template-columns: minmax(290px, 0.95fr) minmax(320px, 1fr) !important;
+  grid-template-areas:
+    "stage crystal"
+    "stage color"
+    "chassis accessories" !important;
+  align-items: start !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding-bottom: 18px;
+}
+
+.swse-item-customization-workbench .ls-panel-chassis--locked,
+.swse-customization-stage .ls-panel-chassis--locked {
+  min-height: 0;
+}
+
+.swse-item-customization-workbench .ls-locked-chassis-card,
+.swse-customization-stage .ls-locked-chassis-card {
+  border: 1px dashed color-mix(in oklch, var(--icw-cyan), transparent 66%);
+  background: oklch(0 0 0 / 0.28);
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  line-height: 1.45;
+  padding: 10px;
+}
+
+.swse-item-customization-workbench .ls-panel-crystal .card-list,
+.swse-item-customization-workbench .ls-panel-accessories .card-list,
+.swse-customization-stage .ls-panel-crystal .card-list,
+.swse-customization-stage .ls-panel-accessories .card-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  max-height: clamp(230px, 34vh, 390px) !important;
+  overflow-y: auto !important;
+}
+
+.swse-item-customization-workbench .ls-panel-color,
+.swse-customization-stage .ls-panel-color {
+  min-height: 0;
+}
+
+.swse-item-customization-workbench .blade-color-grid,
+.swse-customization-stage .blade-color-grid {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+@media (max-width: 1180px) {
+  .swse-item-customization-workbench .workbench-detail > .lightsaber-workspace,
+  .swse-customization-stage .workbench-detail > .lightsaber-workspace {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "stage"
+      "crystal"
+      "color"
+      "accessories"
+      "chassis" !important;
+  }
+}

@@ -252,7 +252,7 @@ function getWeaponFamily(subcategory = '') {
  * @param {Object} item - Store item with system.armorType or name
  * @returns {string} 'Light Armor' | 'Medium Armor' | 'Heavy Armor' | 'Energy Shields'
  */
-function normalizeArmorSubcategory(item = {}) {
+export function normalizeArmorSubcategory(item = {}) {
   const sys = safeSystem(item) || {};
   const name = String(item.name || '').toLowerCase();
   const armorType = String(sys.armorType || sys.category || '').toLowerCase();
@@ -314,11 +314,17 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
 
   const normalizeCategoryKey = (cat) => {
     const lower = String(cat || '').toLowerCase();
-    if (lower === 'weapons') return 'weapons';
-    if (lower === 'armor') return 'armor';
-    if (lower === 'gear' || lower === 'equipment') return 'gear';
-    if (lower === 'droids') return 'droids';
-    if (lower === 'vehicles') return 'vehicles';
+    if (!lower) return '';
+    if (lower.includes('weapon')) return 'weapons';
+    if (lower.includes('armor')) return 'armor';
+    if (lower.includes('droid')) return 'droids';
+    if (lower.includes('vehicle') || lower.includes('starship') || lower.includes('ship')) return 'vehicles';
+    if (lower.includes('gear') || lower.includes('equipment')) return 'gear';
+    if (lower.includes('medical')) return 'medical';
+    if (lower.includes('tech')) return 'tech';
+    if (lower.includes('tool')) return 'tools';
+    if (lower.includes('survival')) return 'survival';
+    if (lower.includes('security')) return 'security';
     return lower.replace(/\s+/g, '-');
   };
 

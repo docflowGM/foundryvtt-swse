@@ -141,6 +141,17 @@ export class CandidatePoolBuilder {
    * Also enriches candidates with tree context (Phase 2F: Tag Inheritance)
    * @private
    */
+  static _normalizeTreeAccessKey(value) {
+    return String(value ?? '')
+      .toLowerCase()
+      .trim()
+      .replace(/&/g, ' and ')
+      .replace(/['’`]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
   static _filterTalentCandidates(actor, slotContext, allCandidates) {
     // Get allowed trees for this slot
     const allowedTrees = getAllowedTalentTrees(actor, slotContext);
@@ -154,9 +165,10 @@ export class CandidatePoolBuilder {
     }
 
     // Filter to candidates in allowed trees
+    const allowedTreeKeys = new Set((allowedTrees || []).map(tree => this._normalizeTreeAccessKey(tree)).filter(Boolean));
     const filtered = allCandidates.filter((candidate) => {
-      const treeId = candidate.system?.talent_tree || candidate.system?.tree_id;
-      return allowedTrees.includes(treeId);
+      const treeId = candidate.system?.talent_tree || candidate.system?.talentTree || candidate.system?.tree || candidate.system?.tree_id || candidate.treeId || candidate.treeName;
+      return allowedTreeKeys.has(this._normalizeTreeAccessKey(treeId));
     });
 
     // Enrich each candidate with tree context (Phase 2F: Tag Inheritance)

@@ -19,6 +19,50 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { SpeciesActivatedAbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/species/species-activated-ability-engine.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
 
+
+function isTruthyEquipState(value) {
+  if (value === true || Number(value) === 1) return true;
+  if (value && typeof value === 'object') return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+  return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
+}
+
+function hasWeaponDamageProfile(item) {
+  const system = item?.system ?? {};
+  return [system.damage, system.damageFormula, system.damageRoll, system.formula, system.weapon?.damage, system.attack?.damage, system.rolls?.damage]
+    .some((value) => value !== undefined && value !== null && value !== '');
+}
+
+function isRollableWeaponItem(item) {
+  if (!item) return false;
+  if (['weapon', 'lightsaber'].includes(item.type)) return true;
+  if (!hasWeaponDamageProfile(item)) return false;
+  const system = item.system ?? {};
+  const text = [item.type, item.name, system.type, system.itemType, system.category, system.itemCategory, system.equipmentType, system.weaponType, system.weaponCategory, system.weaponGroup, system.group, system.subtype]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
+}
+
+function isEquippedWeaponItem(item) {
+  const system = item?.system ?? {};
+  return isRollableWeaponItem(item) && (
+    isTruthyEquipState(system.equipped)
+    || isTruthyEquipState(system.isEquipped)
+    || isTruthyEquipState(system.equipStatus)
+    || isTruthyEquipState(system.status)
+    || isTruthyEquipState(system.state)
+    || isTruthyEquipState(system.active)
+    || isTruthyEquipState(system.activated)
+    || isTruthyEquipState(system.readied)
+    || isTruthyEquipState(system.equippable?.equipped)
+    || isTruthyEquipState(system.equippable?.active)
+    || isTruthyEquipState(system.activation?.active)
+    || isTruthyEquipState(item?.flags?.swse?.equipped)
+    || isTruthyEquipState(item?.flags?.swse?.autoEquipped)
+  );
+}
+
 export class CombatEngine {
 
   /* -------------------------------------------- */
@@ -388,9 +432,10 @@ export class CombatEngine {
   static _resolveAttackWeapon(actor, actionKey) {
     if (!actor || !actionKey) return null;
     if (String(actionKey).startsWith('combat:')) {
-      return actor.items?.find?.(item => item.type === 'weapon' && item.system?.equipped === true) ?? null;
+      return actor.items?.find?.(item => isEquippedWeaponItem(item)) ?? null;
     }
-    return actor.items?.get?.(actionKey) ?? null;
+    const direct = actor.items?.get?.(actionKey) ?? null;
+    return isRollableWeaponItem(direct) ? direct : null;
   }
 
   /* -------------------------------------------- */
@@ -477,10 +522,7 @@ export class CombatEngine {
       if (actionKey?.startsWith('combat:')) {
         // Universal combat action - resolve to a weapon
         // For now, use the actor's primary equipped weapon
-        weapon = actor.items.find(item =>
-          item.type === 'weapon' &&
-          item.system?.equipped === true
-        );
+        weapon = actor.items.find(item => isEquippedWeaponItem(item));
 
         if (!weapon) {
           SWSELogger.warn(`[CombatEngine.rollAttack] No equipped weapon found for action ${actionKey}`);
@@ -490,7 +532,7 @@ export class CombatEngine {
       } else {
         // Try direct item lookup
         weapon = actor.items.get(actionKey);
-        if (!weapon || !weapon.system?.damage) {
+        if (!isRollableWeaponItem(weapon)) {
           SWSELogger.warn(`[CombatEngine.rollAttack] Action ${actionKey} is not a valid weapon`);
           ui.notifications.warn(`Cannot find weapon for action ${actionKey}`);
           return { success: false, reason: 'Invalid weapon action' };
@@ -621,7 +663,7 @@ export class CombatEngine {
     }
 
     // Validate equipped weapon
-    const weapon = actor.items.find(i => i.type === 'weapon' && i.system?.equipped === true);
+    const weapon = actor.items.find(i => isEquippedWeaponItem(i));
     if (!weapon) {
       ui.notifications.warn('Equip a weapon to perform Coup de Grace');
       return;

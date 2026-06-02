@@ -70,7 +70,7 @@ function parseHotDeals(splash) {
     const parsed = JSON.parse(node.textContent);
     return { groups: Array.isArray(parsed.groups) ? parsed.groups : [], hydrated: Boolean(parsed.hydrated) };
   } catch (err) {
-    console.warn('[RendarrStoreSplash] Failed to parse hot deals JSON:', err);
+    SWSELogger.warn('[RendarrStoreSplash] Failed to parse hot deals JSON:', err);
     return { groups: [], hydrated: false };
   }
 }
@@ -187,11 +187,11 @@ function updateRateCard(splash) {
 
 /* ── Hot Items Grid ── */
 const HOT_SLOTS = [
-  { label: 'Weapons',   icon: '⚡', keys: ['melee-weapons', 'ranged-weapons', 'weapon'] },
-  { label: 'Armor',     icon: '🛡', keys: ['armor'] },
-  { label: 'Gear',      icon: '⚙', keys: ['gear', 'equipment', 'medical'] },
-  { label: 'Droids',    icon: '◈', keys: ['droid-parts', 'droid'] },
-  { label: 'Ships',     icon: '◭', keys: ['starship-mods', 'vehicle', 'ship'] },
+  { label: 'Weapons', icon: '⚡', keys: ['melee-weapons', 'ranged-weapons'] },
+  { label: 'Armor', icon: '🛡', keys: ['light-armor', 'medium-armor', 'heavy-armor', 'energy-shields', 'armor'] },
+  { label: 'Gear', icon: '⚙', keys: ['medical', 'tech-gear', 'tools', 'survival-gear', 'security-gear', 'field-gear'] },
+  { label: 'Droids', icon: '◈', keys: ['droids'] },
+  { label: 'Vehicles', icon: '◭', keys: ['vehicles'] },
 ];
 
 function buildHotCardHTML(item, slot, index) {
@@ -205,7 +205,10 @@ function buildHotCardHTML(item, slot, index) {
     data-item-id="${escapeHtml(item.id || '')}"
     data-item-name="${escapeHtml(item.name || '')}"
     data-category="${escapeHtml(item.categoryKey || '')}"
-    data-store-category="${escapeHtml(item.storeCategory || item.categoryKey || '')}"
+    data-store-category="${escapeHtml(item.storeCategory || item.targetCategory || item.categoryKey || '')}"
+    data-target-category="${escapeHtml(item.targetCategory || item.storeCategory || '')}"
+    data-target-subcategory="${escapeHtml(item.targetSubcategory || '')}"
+    data-target-family="${escapeHtml(item.targetFamily || '')}"
     style="animation-delay:${index * 60}ms">
     <span class="ren-hot-card__rank">№${String(index + 1).padStart(2, '0')}</span>
     <span class="ren-hot-card__tag">${escapeHtml(item.tag || item.rarity || 'CATALOG')}</span>
@@ -234,7 +237,10 @@ function getHotDeckForSlot(groups, slot) {
       ...item,
       displayCategory: item.displayCategory || group.category || slot.label,
       categoryKey: item.categoryKey || group.categoryKey,
-      storeCategory: item.storeCategory || item.categoryKey || group.categoryKey
+      storeCategory: item.storeCategory || item.targetCategory || item.categoryKey || group.categoryKey,
+      targetCategory: item.targetCategory || item.storeCategory || '',
+      targetSubcategory: item.targetSubcategory || '',
+      targetFamily: item.targetFamily || ''
     })));
 
   if (matchedItems.length > 1) return matchedItems;
@@ -245,7 +251,10 @@ function getHotDeckForSlot(groups, slot) {
     ...item,
     displayCategory: item.displayCategory || group.category || slot.label,
     categoryKey: item.categoryKey || group.categoryKey,
-    storeCategory: item.storeCategory || item.categoryKey || group.categoryKey
+    storeCategory: item.storeCategory || item.targetCategory || item.categoryKey || group.categoryKey,
+    targetCategory: item.targetCategory || item.storeCategory || '',
+    targetSubcategory: item.targetSubcategory || '',
+    targetFamily: item.targetFamily || ''
   })));
   return matchedItems.length ? [...matchedItems, ...fallbackItems.filter(item => item.id !== matchedItems[0].id)] : fallbackItems;
 }
@@ -340,6 +349,11 @@ export function initRendarrStoreSplash(root, options = {}) {
   if (!splash) return () => {};
 
   const signal = options.signal;
+  SWSELogger.debug('[RendarrStoreSplash] init', {
+    status: splash.dataset.storeStatus,
+    motion: splash.dataset.storeMotion,
+    rotationMs: splash.dataset.hotRotationMs
+  });
   const motionOff = motionStyleFor(splash) === 'off'
     || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const state = {
@@ -363,6 +377,7 @@ export function initRendarrStoreSplash(root, options = {}) {
   const continueHandler = async (event) => {
     event?.preventDefault?.();
     event?.stopPropagation?.();
+    SWSELogger.debug('[RendarrStoreSplash] continue requested');
     await options.onContinue?.(event);
   };
   splash.querySelectorAll(continueSelector).forEach(btn => {
@@ -380,18 +395,24 @@ export function initRendarrStoreSplash(root, options = {}) {
     if (!target) return;
     event.preventDefault();
     event.stopPropagation();
-    await options.onHotDealOpen?.({
+    const payload = {
       id: target.dataset.itemId,
       name: target.dataset.itemName,
       category: target.dataset.storeCategory || target.dataset.category,
-      normalizedCategory: target.dataset.category
-    }, event);
+      normalizedCategory: target.dataset.category,
+      targetCategory: target.dataset.targetCategory || '',
+      targetSubcategory: target.dataset.targetSubcategory || '',
+      targetFamily: target.dataset.targetFamily || ''
+    };
+    SWSELogger.debug('[RendarrStoreSplash] hot deal requested', payload);
+    await options.onHotDealOpen?.(payload, event);
   }, { signal });
 
   splash.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      await options.onContinue?.(event);
+      SWSELogger.debug('[RendarrStoreSplash] continue requested');
+    await options.onContinue?.(event);
     }
   }, { signal });
 
@@ -484,8 +505,8 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
     if (sheetShell) ThemeResolutionService.applyToElement(sheetShell, { actor: this.actor });
     this._cleanupSplash = initRendarrStoreSplash(root, {
       signal,
-      onContinue: () => this._proceedToStore(),
-      onHotDealOpen: () => this._proceedToStore()
+      onContinue: () => this._proceedToStore({ source: 'standalone-continue' }),
+      onHotDealOpen: (payload) => this._proceedToStore({ source: 'standalone-hot-deal', payload })
     });
   }
 
@@ -508,7 +529,8 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
     await this._proceedToStore();
   }
 
-  async _proceedToStore() {
+  async _proceedToStore(payload = {}) {
+    SWSELogger.debug('[SWSEStoreSplashV2] proceed requested', { actor: this.actor?.name, payload });
     await this.close();
   }
 }

@@ -12,6 +12,7 @@ import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/sh
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createSafeEmbeddedItem } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 import { mutateAndRepaint } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
+import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 
 /**
  * Handle force card discard animation
@@ -185,10 +186,15 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       const isRecovery = power.system?.discarded ?? false;
 
       try {
+        const rollOptions = isRecovery
+          ? null
+          : await promptForcePowerRollOptions({ actor: sheet.actor, power, sourceElement: button });
+        if (!isRecovery && !rollOptions) return;
+
         const result = await mutateAndRepaint(sheet, () => (
           isRecovery
             ? ForceExecutor.activateForce(sheet.actor, itemId, true)
-            : ForceExecutor.executeForcePower(sheet.actor, itemId)
+            : ForceExecutor.executeForcePower(sheet.actor, itemId, rollOptions)
         ), {
           reason: isRecovery ? 'force-power-recover' : 'force-power-use',
           surfaceId: sheet._shellSurface ?? 'sheet',
@@ -196,8 +202,6 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         });
         if (result.success) {
           ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
-          // Show holopad roll companion — ForceExecutor.activateForce does not roll dice;
-          // this is a use/discard action, so we display the action outcome only.
           showHolopadRollCompanion(button, result, {
             kind: 'force',
             title: isRecovery ? 'Force Recovered' : 'Force Used',

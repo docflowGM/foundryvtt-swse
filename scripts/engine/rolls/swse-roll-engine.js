@@ -514,6 +514,9 @@ export class SWSERollEngine {
     if (Number.isFinite(Number(context?.customModifier)) && Number(context.customModifier) !== 0) {
       parts.push({ kind: 'bonus', label: 'Modifier', value: this._formatSigned(context.customModifier) });
     }
+    if (Number.isFinite(Number(context?.forcePointBonus)) && Number(context.forcePointBonus) > 0) {
+      parts.push({ kind: 'bonus', label: 'Force Point', value: this._formatSigned(context.forcePointBonus) });
+    }
     if (Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
       parts.push({ kind: 'bonus', label: 'Feat Bonus', value: this._formatSigned(context.featSkillBonus) });
     }
@@ -558,6 +561,10 @@ export class SWSERollEngine {
       const passed = context?.passed ?? context?.success ?? (Number.isFinite(total) ? total >= dc : null);
       meta.push({ key: category === 'attack' ? 'Target' : 'DC', value: String(dcRaw) });
       if (Number.isFinite(total)) meta.push({ key: 'Margin', value: this._formatSigned(total - dc) });
+      if (category === 'force') {
+        if (context?.forceResolvedTier) meta.push({ key: 'Tier', value: String(context.forceResolvedTier) });
+        if (context?.forceResolvedEffect) meta.push({ key: 'Effect', value: this._stripHtml(context.forceResolvedEffect) });
+      }
       return {
         state: passed ? 'success' : 'failure',
         label: context?.outcomeLabel ?? (passed ? (category === 'attack' ? 'Hit' : 'Success') : (category === 'attack' ? 'Miss' : 'Failure')),

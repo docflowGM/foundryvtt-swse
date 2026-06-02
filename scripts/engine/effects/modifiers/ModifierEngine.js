@@ -103,6 +103,71 @@ export class ModifierEngine {
   }
 
   /**
+   * Compatibility collector used by legacy combat preview/resolution code.
+   *
+   * Newer modifier consumers generally call getAllModifiers(), aggregateTarget(),
+   * or ModifierEngineExtensions.getModifiersForDomain().  Some combat paths still
+   * ask for collectModifiers(actor, { domain, context }).  Keep that contract here
+   * so a missing adapter method never blocks an action card or roll dialog.
+   *
+   * @param {Actor} actor
+   * @param {Object} query
+   * @param {string} query.domain - Domain/target to collect, such as attack.
+   * @param {Object} query.context - Optional roll/action context.
+   * @returns {Promise<Array>} Applicable modifier records.
+   */
+  static async collectModifiers(actor, query = {}) {
+    if (!actor) return [];
+
+    const requestedDomain = String(query?.domain ?? query?.target ?? '').trim();
+    const requestedLower = requestedDomain.toLowerCase();
+    const allModifiers = await this.getAllModifiers(actor);
+
+    const matchesDomain = (mod) => {
+      if (!requestedLower) return true;
+      const candidates = [];
+      const pushCandidate = (value) => {
+        if (value == null) return;
+        if (Array.isArray(value)) {
+          value.forEach(pushCandidate);
+          return;
+        }
+        candidates.push(String(value).toLowerCase());
+      };
+
+      pushCandidate(mod?.target);
+      pushCandidate(mod?.domain);
+      pushCandidate(mod?.appliesTo);
+      pushCandidate(mod?.key);
+
+      if (requestedLower === 'attack') {
+        return candidates.some(value => value === 'attack' || value === 'attack.roll' || value.startsWith('attack.'));
+      }
+
+      if (requestedLower === 'bonushitpoints' || requestedLower === 'bonus-hit-points') {
+        return candidates.some(value => ['bonushitpoints', 'bonus-hit-points', 'bonushp', 'hp.bonus', 'hp.temp', 'temporary-hit-points'].includes(value));
+      }
+
+      return candidates.some(value => value === requestedLower || value.startsWith(`${requestedLower}.`));
+    };
+
+    return allModifiers
+      .filter(mod => matchesDomain(mod))
+      .filter(mod => {
+        try {
+          return ConditionEvaluator.evaluateAll(actor, mod?.conditions, query?.context ?? {});
+        } catch (_err) {
+          return true;
+        }
+      })
+      .map(mod => ({
+        ...mod,
+        label: mod?.label ?? mod?.name ?? mod?.source ?? 'Modifier',
+        value: Number(mod?.value ?? mod?.modifier ?? 0) || 0
+      }));
+  }
+
+  /**
    * Aggregate all modifiers: collect, group by target, apply stacking
    *
    * PHASE 2: Evaluate conditions during aggregation.

@@ -347,11 +347,27 @@ export class SuggestionEngine {
             // Graceful fallback - continue without archetype
         }
 
+        const normalizeTreeAccessKey = (value) => String(value ?? '')
+            .toLowerCase()
+            .trim()
+            .replace(/&/g, ' and ')
+            .replace(/['’`]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+
         // ========== PHASE 2.1: TREE AUTHORITY FILTERING ==========
         // Filter candidate pool by derived authority BEFORE scoring
         // Heroic slot is used for suggestions (broadest valid access)
-        const heroicSlot = { slotType: 'heroic' };
+        const heroicSlot = {
+            slotType: 'heroic',
+            classModel: pendingData?.classModel || pendingData?.selectedClass || pendingData?.class || null,
+            selectedClass: pendingData?.selectedClass || pendingData?.classModel || pendingData?.class || null,
+            selectedFeats: pendingData?.selectedFeats || pendingData?.feats || null,
+            pendingData,
+        };
         const allowedTrees = getAllowedTalentTrees(actor, heroicSlot);
+        const allowedTreeKeys = new Set((allowedTrees || []).map(normalizeTreeAccessKey).filter(Boolean));
 
         const accessibleTalents = talents.filter(talent => {
             // Get talent's tree ID (multiple possible field names for compatibility)
@@ -363,7 +379,7 @@ export class SuggestionEngine {
             if (!treeId) return true;
 
             // Only include talents whose tree is in allowed list
-            const isAccessible = allowedTrees.includes(treeId);
+            const isAccessible = allowedTreeKeys.has(normalizeTreeAccessKey(treeId));
 
             if (!isAccessible) {
                 SWSELogger.log(

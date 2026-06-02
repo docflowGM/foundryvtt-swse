@@ -8164,3 +8164,148 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
   min-height: 0 !important;
   overflow-y: auto !important;
 }
+
+/* 2026-06-02: Combat action browser polish
+   One accordion level per action economy, wheel-safe scrolling, and inline rules tokens. */
+.swse-concept-panel--combat-actions {
+  min-height: 520px;
+}
+
+.swse-concept-combat-main .swse-concept-action-groups--combat {
+  max-height: min(68vh, 720px) !important;
+  min-height: 360px;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.swse-concept-action-group--combat {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--swse-theme-border, rgba(0, 216, 255, 0.28)) 78%, transparent) !important;
+  background: color-mix(in srgb, var(--swse-theme-surface-bg, rgba(3, 12, 22, 0.86)) 82%, transparent) !important;
+}
+
+.swse-concept-action-group--combat + .swse-concept-action-group--combat {
+  margin-top: 10px;
+}
+
+.swse-concept-action-group__toggle {
+  width: 100%;
+  border: 0;
+  color: var(--swse-theme-text-primary, #dff8ff);
+  cursor: pointer;
+  text-align: left;
+}
+
+.swse-concept-action-group__toggle:hover {
+  background: color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 10%, transparent) !important;
+}
+
+.swse-concept-action-group__toggle i {
+  margin-left: auto;
+  color: var(--swse-theme-accent, #00d8ff);
+  transition: transform 140ms ease;
+}
+
+.swse-concept-action-group--combat.is-collapsed .swse-concept-action-group__body {
+  display: none;
+}
+
+.swse-concept-action-group--combat.is-collapsed .swse-concept-action-group__toggle i {
+  transform: rotate(-90deg);
+}
+
+.swse-concept-action-group--combat .swse-concept-action-list {
+  padding: 8px 10px 12px;
+}
+
+.swse-concept-action-row--combat small {
+  display: block;
+  margin-top: 4px;
+  color: var(--swse-theme-text-primary, #dff8ff) !important;
+  font-size: 0.72rem !important;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+
+.swse-action-token {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.swse-action-token--skill {
+  color: var(--swse-skill-accent, #4cc9f0);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--swse-skill-accent, #4cc9f0) 26%, transparent);
+}
+
+.swse-action-token--dc {
+  color: #ffb84d;
+  text-shadow: 0 0 8px rgba(255, 184, 77, 0.28);
+}
+
+.swse-action-token--bonus {
+  color: #61d66f;
+  text-shadow: 0 0 8px rgba(97, 214, 111, 0.24);
+}
+
+.swse-action-token--penalty {
+  color: #ff5f6d;
+  text-shadow: 0 0 8px rgba(255, 95, 109, 0.24);
+}
+
+
+/* 2026-06-02: Combat action accordion height repair
+   Single scroll region on the outer container; individual group bodies flow
+   naturally so all categories are visible without nested scrollbars. Panel
+   height increased ~50% so more entries are visible at once. */
+.swse-concept-panel--combat-actions {
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(900px, 90vh, 1200px) !important;
+}
+
+.swse-concept-panel--combat-actions > .swse-concept-panel__header {
+  flex: 0 0 auto;
+}
+
+.swse-concept-combat-main .swse-concept-action-groups--combat {
+  flex: 1 1 auto;
+  min-height: 700px !important;
+  max-height: clamp(840px, 88vh, 1120px) !important;
+}
+
+.swse-concept-action-group--combat.is-expanded {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.swse-concept-action-group--combat .swse-concept-action-group__body {
+  min-height: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.swse-concept-action-group--combat.is-expanded .swse-concept-action-group__body {
+  max-height: clamp(280px, 36vh, 480px);
+}
+
+.swse-concept-action-group--combat .swse-concept-action-group__body::-webkit-scrollbar,
+.swse-concept-combat-main .swse-concept-action-groups--combat::-webkit-scrollbar {
+  width: 8px;
+}
+
+.swse-concept-action-group--combat .swse-concept-action-group__body::-webkit-scrollbar-thumb,
+.swse-concept-combat-main .swse-concept-action-groups--combat::-webkit-scrollbar-thumb {
+  background: rgba(0, 216, 255, 0.35);
+  border-radius: 999px;
+}
+
+.swse-concept-action-group--combat .swse-concept-action-group__body::-webkit-scrollbar-track,
+.swse-concept-combat-main .swse-concept-action-groups--combat::-webkit-scrollbar-track {
+  background: rgba(3, 10, 18, 0.45);
+}

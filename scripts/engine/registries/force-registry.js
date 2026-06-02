@@ -210,12 +210,15 @@ export class ForceRegistry {
     // Define all force domain packs
     const packs = [
       { key: `${systemId}.forcepowers`, type: 'power' },
+      // Lightsaber form powers are selected through the same Force Power suite.
+      // Keep them in the power domain so Force Training slots can spend on them.
+      { key: `${systemId}.lightsaberformpowers`, type: 'power', category: 'lightsaber-form' },
       { key: `${systemId}.forcetechniques`, type: 'technique' },
       { key: `${systemId}.forcesecrets`, type: 'secret' }
     ];
 
-    for (const { key, type } of packs) {
-      await this._loadFromPack(key, type);
+    for (const { key, type, category } of packs) {
+      await this._loadFromPack(key, type, { category });
     }
   }
 
@@ -225,8 +228,9 @@ export class ForceRegistry {
    * @param {string} packKey - Compendium pack key
    * @param {string} type - Force item type (power, technique, secret)
    */
-  static async _loadFromPack(packKey, type) {
+  static async _loadFromPack(packKey, type, options = {}) {
     const pack = game?.packs?.get(packKey);
+    const normalizeOptions = { ...options, packKey };
     if (!pack) {
       SWSELogger.warn(
         `[ForceRegistry] Compendium pack "${packKey}" not found. Skipping.`
@@ -242,7 +246,7 @@ export class ForceRegistry {
           continue;
         }
 
-        const entry = this._normalizeEntry(doc, type);
+        const entry = this._normalizeEntry(doc, type, normalizeOptions);
         this._entries.push(entry);
 
         // Index by id
@@ -286,11 +290,11 @@ export class ForceRegistry {
    * @param {string} type - Force item type (power, technique, secret)
    * @returns {ForceRegistryEntry}
    */
-  static _normalizeEntry(doc, type) {
+  static _normalizeEntry(doc, type, options = {}) {
     const system = doc.system || {};
 
     // Extract and normalize category
-    let category = system.category || system.forceCategory || null;
+    let category = system.category || system.forceCategory || options.category || null;
     if (category) {
       category = String(category).toLowerCase().trim() || null;
     }
@@ -301,6 +305,11 @@ export class ForceRegistry {
       tags = [];
     }
     tags = tags.map(t => String(t).toLowerCase().trim()).filter(t => t);
+    if (String(options.packKey || '').includes('lightsaberformpowers')) {
+      for (const tag of ['lightsaber-form', 'form-power']) {
+        if (!tags.includes(tag)) tags.push(tag);
+      }
+    }
 
     // Normalize prerequisite block across force schemas
     const rawPrereqs = system.prerequisites ?? system.prerequisite ?? null;

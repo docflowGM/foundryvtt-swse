@@ -45,13 +45,29 @@ function allItemText(item) {
 
 export function isForcePowerItem(item) {
   if (!item) return false;
+
   const type = normalizeText(item.type).replace(/\s+/g, '');
+  const name = normalizeText(item.name);
   const system = item.system ?? {};
+  const executionModel = String(system.executionModel ?? system.abilityMeta?.executionModel ?? '').toUpperCase();
+
+  // Force Training, Force Sensitivity, and other Force-tagged feats are unlocks,
+  // not Force Powers.  The Force Suite hand should only contain executable
+  // Force Power entries, otherwise feats can appear as usable power cards and
+  // consume the visual power count.
+  if (name === 'force training' || name === 'force sensitivity') return false;
+
   if (type === 'forcepower' || type === 'force-power') return true;
-  if (system.executionModel === 'FORCE_POWER') return true;
-  if (system.abilityMeta?.executionModel === 'FORCE_POWER') return true;
+  if (executionModel === 'FORCE_POWER') return true;
   if (system.forcePower === true || system.isForcePower === true) return true;
-  return includesAny(allItemText(item), ['force power']);
+
+  // Older imports sometimes used loose tags instead of a dedicated type, but
+  // feat/ability/class/talent documents with Force-related text must not be
+  // promoted into the Force Suite merely because their rules mention powers.
+  if (['feat', 'ability', 'class', 'talent'].includes(type)) return false;
+
+  const text = allItemText(item);
+  return includesAny(text, ['force power']) && !includesAny(text, ['force training', 'force sensitivity']);
 }
 
 export function isFeatLikeItem(item) {

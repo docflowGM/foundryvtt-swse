@@ -7,9 +7,203 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { TalentTreeRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentTreeRegistry.js";
+import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
 import { resolveClassModel, getClassTalentTreeLookupKeys } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
-import { getDroidTalentTreeName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js";
+
+const FORCE_GENERIC_TREE_KEYS = [
+  'alter',
+  'control',
+  'dark-side',
+  'sense',
+  'light-side',
+  'guardian-spirit',
+];
+
+const FORCE_TRADITION_TREE_RULES = [
+  ['jensaarai-defender', ['the jensaarai', 'jensaarai']],
+  ['dathomiri-witch', ['the witches of dathomir', 'witches of dathomir', 'dathomiri witch']],
+  ['jal-shey', ['the jal shey', 'jal shey']],
+  ['keetael', ['the keetael', 'keetael']],
+  ['krath', ['the krath', 'krath']],
+  ['luka-sene', ['the luka sene', 'luka sene']],
+  ['order-of-shasa', ['the order of shasa', 'order of shasa']],
+  ['agent-of-ossus', ['the agents of ossus', 'agents of ossus', 'agent of ossus']],
+  ['felucian-shaman', ['the felucian shamans', 'felucian shamans', 'felucian shaman']],
+  ['bando-gora-captain', ['the bando gora', 'bando gora']],
+  ['believer-disciple', ['the believers', 'believers', 'believer']],
+  ['korunnai-adept', ['the korunnai', 'korunnai']],
+  ['disciple-of-twilight', ['the disciples of twilight', 'disciples of twilight', 'disciple of twilight']],
+  ['ember-of-vahl', ['the ember of vahl', 'ember of vahl']],
+  ['aing-tii-monk', ['the aing tii monks', 'aing tii monks', 'aing tii', 'aingtii monk']],
+  ['baran-do-sage', ['the baran do sages', 'baran do sages', 'baran do']],
+  ['iron-knight', ['the iron knights', 'iron knights', 'iron knight']],
+  ['matukai-adept', ['the matukai', 'matukai']],
+  ['seyugi-dervish', ['the seyugi dervishes', 'seyugi dervishes', 'seyugi dervish']],
+  ['shaper-of-kro-var', ['the shapers of kro var', 'shapers of kro var', 'shaper of kro var']],
+  ['tyia-adept', ['the tyia', 'tyia']],
+  ['warden-of-the-sky', ['the wardens of the sky', 'wardens of the sky', 'warden of the sky']],
+  ['white-current-adept', ['the fallanassi', 'fallanassi', 'white current']],
+  ['zeison-sha-warrior', ['the zeison sha', 'zeison sha']],
+  ['kilian-ranger', ['the kilian rangers', 'kilian rangers', 'kilian ranger']],
+  ['blazing-chain', ['the blazing chain', 'blazing chain']],
+];
+
+const ANY_FORCE_TREE_CLASSES = new Set(['force disciple', 'jedi master', 'sith lord']);
+
+function normalizeAccessKey(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/['’`]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function normalizeLabel(value) {
+  return normalizeAccessKey(value).replace(/-/g, ' ').trim();
+}
+
+function unique(values) {
+  return [...new Set((values || []).map(value => String(value || '').trim()).filter(Boolean))];
+}
+
+function uniqueObjects(values) {
+  const seen = new Set();
+  const out = [];
+  for (const value of values || []) {
+    if (!value) continue;
+    const key = String(value._id || value.id || value.name || value.className || JSON.stringify(value)).trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(value);
+  }
+  return out;
+}
+
+function collectValues(value, out = []) {
+  if (!value) return out;
+  if (Array.isArray(value)) {
+    for (const item of value) collectValues(item, out);
+    return out;
+  }
+  if (value instanceof Map) {
+    for (const item of value.values()) collectValues(item, out);
+    return out;
+  }
+  if (typeof value === 'object') {
+    out.push(value.name, value.label, value.id, value.key, value.slug, value.value);
+    collectValues(value.item, out);
+    collectValues(value.feat, out);
+    collectValues(value.document, out);
+    return out;
+  }
+  out.push(value);
+  return out;
+}
+
+function contextHasForceSensitivity(context = {}) {
+  if (!context) return false;
+  if (context.forceSensitive === true || context.hasForceSensitivity === true) return true;
+  if (context.system?.progression?.forceSensitive === true || context.system?.forceSensitive === true) return true;
+
+  const values = [];
+  collectValues(context.selectedFeats, values);
+  collectValues(context.feats, values);
+  collectValues(context.pendingFeats, values);
+  collectValues(context.committedFeats, values);
+  collectValues(context.draftSelections?.feats, values);
+  collectValues(context.selections?.feats, values);
+  collectValues(context.pendingData?.feats, values);
+  collectValues(context.pendingData?.selectedFeats, values);
+
+  return values.some(value => /force\s+sensitivity/i.test(String(value || '')));
+}
+
+function getTreeKeys(tree) {
+  return [tree?.id, tree?.sourceId, tree?.key, tree?.name, tree?.displayName]
+    .map(normalizeAccessKey)
+    .filter(Boolean);
+}
+
+function resolveTalentTreeKeys(canonicalKeys = []) {
+  const wanted = new Set(canonicalKeys.map(normalizeAccessKey).filter(Boolean));
+  const keys = [];
+
+  for (const tree of TalentTreeDB.all?.() || []) {
+    const treeKeys = getTreeKeys(tree);
+    if (!treeKeys.some(key => wanted.has(key))) continue;
+    keys.push(tree.id, tree.sourceId, tree.name, tree.key);
+  }
+
+  return unique(keys);
+}
+
+export function actorHasForceSensitivity(actor, context = {}) {
+  if (contextHasForceSensitivity(context)) return true;
+  if (!actor) return false;
+
+  const domains = actor.system?.progression?.unlockedDomains || [];
+  if (Array.isArray(domains) && domains.includes('force')) return true;
+  if (actor.system?.progression?.forceSensitive === true) return true;
+  if (actor.system?.forceSensitive === true) return true;
+
+  const items = actor.items?.contents || actor.items || [];
+  const itemList = Array.isArray(items) ? items : Array.from(items || []);
+  return itemList.some(item => item?.type === 'feat' && /force\s+sensitivity/i.test(item?.name || ''));
+}
+
+export function getActorForceTraditions(actor) {
+  const values = [];
+  const add = (value) => {
+    if (Array.isArray(value)) {
+      for (const item of value) add(item);
+      return;
+    }
+    if (value && typeof value === 'object') {
+      values.push(value.name, value.label, value.id, value.key, value.tradition);
+      return;
+    }
+    if (value) values.push(value);
+  };
+
+  add(actor?.system?.forceTradition);
+  add(actor?.system?.forceTraditions);
+  add(actor?.system?.progression?.forceTradition);
+  add(actor?.system?.progression?.forceTraditions);
+  add(actor?.system?.traditions);
+  add(actor?.flags?.swse?.forceTradition);
+  add(actor?.flags?.swse?.forceTraditions);
+
+  return unique(values.map(normalizeLabel).filter(Boolean));
+}
+
+function getForceTraditionTreeKeys(actor) {
+  const traditions = new Set(getActorForceTraditions(actor));
+  if (!traditions.size) return [];
+
+  const treeKeys = [];
+  for (const [treeKey, aliases] of FORCE_TRADITION_TREE_RULES) {
+    const allowed = aliases.map(normalizeLabel).some(alias => traditions.has(alias));
+    if (allowed) treeKeys.push(treeKey);
+  }
+
+  return resolveTalentTreeKeys(treeKeys);
+}
+
+export function getForceTalentTreeAccessKeys(actor, { includeGeneric = true, includeTraditions = true } = {}) {
+  const keys = [];
+  if (includeGeneric) keys.push(...resolveTalentTreeKeys(FORCE_GENERIC_TREE_KEYS));
+  if (includeTraditions) keys.push(...getForceTraditionTreeKeys(actor));
+  return unique(keys);
+}
+
+function classGrantsAnyForceTreeAccess(classDoc) {
+  const model = resolveClassModel(classDoc) || classDoc || {};
+  const className = normalizeLabel(model.name || model.className || model.system?.class_name || classDoc?.name || '');
+  return ANY_FORCE_TREE_CLASSES.has(className);
+}
 
 /**
  * Get allowed talent trees for a given slot
@@ -41,53 +235,23 @@ export function getAllowedTalentTrees(actor, slot) {
     ].filter(Boolean);
   };
 
-  const extractDroidDegree = () => {
-    const activeShell = globalThis.game?.__swseActiveProgressionShell;
-    const selections = slot?.shell?.progressionSession?.draftSelections || activeShell?.progressionSession?.draftSelections || {};
-    const droid = selections.droid || selections.droidBuild || selections.droidPackage || selections.droidSystems || {};
-    const candidates = [
-      slot?.droidDegree,
-      droid.degree,
-      droid.droidDegree,
-      droid.selectedDegree,
-      droid.chassis?.degree,
-      droid.chassis?.droidDegree,
-      selections.droidDegree,
-      selections.pendingDroidContext?.degree,
-      selections.pendingDroidContext?.droidDegree,
-      actor.system?.droidDegree,
-      actor.system?.species,
-      actor.system?.details?.species,
-    ];
-    for (const value of candidates) {
-      const text = String(value || '').toLowerCase();
-      const match = text.match(/([1-5])(?:st|nd|rd|th)?[-_\s]*degree/);
-      if (match) return `${match[1]}${match[1] === '1' ? 'st' : match[1] === '2' ? 'nd' : match[1] === '3' ? 'rd' : 'th'}-degree`;
-      const wordMap = { first: '1st-degree', second: '2nd-degree', third: '3rd-degree', fourth: '4th-degree', fifth: '5th-degree' };
-      for (const [word, degree] of Object.entries(wordMap)) {
-        if (text.includes(word)) return degree;
-      }
-    }
-    return null;
-  };
+  const selectedClassDocs = uniqueObjects([
+    slot.classModel,
+    slot.class,
+    slot.selectedClass,
+    slot.classDoc,
+    slot.pendingData?.classModel,
+    slot.pendingData?.selectedClass,
+    slot.pendingData?.class,
+  ]);
 
-  const droidDegreeTreeKeys = () => {
-    const degree = extractDroidDegree();
-    const treeName = degree ? getDroidTalentTreeName(degree) : null;
-    if (!treeName) return [];
-    const compact = treeName.replace(/\s*Talent\s+Tree$/i, '');
-    return [treeName, compact, compact.replace(/-/g, ' '), compact.replace(/[\s-]+/g, '')]
-      .map(value => String(value || '').trim())
-      .filter(Boolean);
-  };
-
-  const ownedClassDocs = [
+  const ownedClassDocs = uniqueObjects([
+    ...selectedClassDocs,
     ...(Array.isArray(actor.system?.classes) ? actor.system.classes : []),
     ...(actor.items?.filter?.(item => item?.type === 'class') || []),
-  ];
+  ]);
 
   // Rule 1: Class slots restrict to the selected/owning class's access list.
-  // Trees categorize talents; they do not own talents or grant selections by themselves.
   if (slot.slotType === "class") {
     const selectedClass = slot.classModel || slot.class || slot.selectedClass || null;
     const classDoc = selectedClass || ownedClassDocs.find(c =>
@@ -95,67 +259,45 @@ export function getAllowedTalentTrees(actor, slot) {
     );
     const keys = normalizeAccessKeys(classDoc);
 
+    if (classGrantsAnyForceTreeAccess(classDoc) && actorHasForceSensitivity(actor, slot)) {
+      keys.push(...getForceTalentTreeAccessKeys(actor, { includeGeneric: true, includeTraditions: true }));
+    }
+
     SWSELogger.log(
       `[TreeAuthority] Class slot: ${keys.length} tree access keys for ${classDoc?.name || slot.classId || 'selected class'}`
     );
-    return [...new Set(keys)];
+    return unique(keys);
   }
 
   // Rule 2: Heroic slots can access multiple tree categories derived from classes/domains.
   if (slot.slotType === "heroic") {
-    // Add all trees from character's existing classes plus the pending chargen/level-up class.
-    const selectedClass = slot.classModel || slot.class || slot.selectedClass || null;
-    const heroicClassDocs = [
-      ...ownedClassDocs,
-      ...(selectedClass ? [selectedClass] : []),
-    ];
-    const seenClassKeys = new Set();
-    for (const classDoc of heroicClassDocs) {
-      const classKey = String(classDoc?.id || classDoc?._id || classDoc?.name || classDoc?.system?.class_name || '').toLowerCase();
-      if (classKey && seenClassKeys.has(classKey)) continue;
-      if (classKey) seenClassKeys.add(classKey);
+    for (const classDoc of ownedClassDocs) {
       const keys = normalizeAccessKeys(classDoc);
       if (keys.length) {
         allowedTrees.push(...keys);
         SWSELogger.log(
-          `[TreeAuthority] Heroic slot: Added ${keys.length} tree access keys from class ${classDoc.name || classDoc?.system?.class_name || classKey}`
+          `[TreeAuthority] Heroic slot: Added ${keys.length} tree access keys from class ${classDoc.name}`
         );
       }
     }
 
-    const droidKeys = droidDegreeTreeKeys();
-    if (droidKeys.length) {
-      allowedTrees.push(...droidKeys);
-      SWSELogger.log(`[TreeAuthority] Heroic slot: Added ${droidKeys.length} Droid degree tree access keys for ${extractDroidDegree()}`);
-    }
-
-    // Add Force trees only if Force domain is unlocked
-    const unlockedDomains = actor.system?.progression?.unlockedDomains || [];
-    if (unlockedDomains.includes("force")) {
-      try {
-        // Get Force talent trees from registry
-        // NOTE: This assumes Force trees are tagged/identifiable in registry
-        const forceTreeIds = TalentTreeRegistry.getTreesByDomain?.("force") || [];
-        if (forceTreeIds.length > 0) {
-          allowedTrees.push(...forceTreeIds);
-          SWSELogger.log(
-            `[TreeAuthority] Heroic slot: Added ${forceTreeIds.length} Force trees (domain unlocked)`
-          );
-        }
-      } catch (err) {
-        SWSELogger.warn("[TreeAuthority] Failed to retrieve Force trees:", err);
+    if (actorHasForceSensitivity(actor, slot)) {
+      const forceTreeKeys = getForceTalentTreeAccessKeys(actor, { includeGeneric: true, includeTraditions: true });
+      if (forceTreeKeys.length) {
+        allowedTrees.push(...forceTreeKeys);
+        SWSELogger.log(
+          `[TreeAuthority] Heroic slot: Added ${forceTreeKeys.length} Force trees from Force Sensitivity/tradition access`
+        );
       }
     }
 
-    // Return deduplicated list
-    const deduplicated = [...new Set(allowedTrees)];
+    const deduplicated = unique(allowedTrees);
     SWSELogger.log(
       `[TreeAuthority] Heroic slot: Total ${deduplicated.length} allowed trees`
     );
     return deduplicated;
   }
 
-  // Invalid slot type
   SWSELogger.warn(
     `[TreeAuthority] Unknown slot type: ${slot.slotType}. Denying access.`
   );
@@ -167,14 +309,17 @@ export function getAllowedTalentTrees(actor, slot) {
  * @param {Object} actor - Actor document
  * @param {Object} slot - TalentSlot object
  * @param {string} treeId - Tree ID to check
- * @returns {boolean} True if tree is allowed for this slot
+ * @returns {boolean} True if tree is allowed
  */
 export function isTreeAccessible(actor, slot, treeId) {
-  const allowed = getAllowedTalentTrees(actor, slot);
-  return allowed.includes(treeId);
+  const allowed = getAllowedTalentTrees(actor, slot).map(normalizeAccessKey);
+  return allowed.includes(normalizeAccessKey(treeId));
 }
 
 export default {
   getAllowedTalentTrees,
+  getForceTalentTreeAccessKeys,
+  actorHasForceSensitivity,
+  getActorForceTraditions,
   isTreeAccessible
 };

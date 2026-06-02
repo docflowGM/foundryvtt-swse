@@ -100,6 +100,143 @@ function getClassSelection(shell) {
     || null;
 }
 
+
+function getPendingSpeciesContext(shell) {
+  return shell?.progressionSession?.draftSelections?.pendingSpeciesContext
+    || shell?.progressionSession?.getSelection?.('pendingSpeciesContext')
+    || shell?.draftSelections?.pendingSpeciesContext
+    || shell?.committedSelections?.get?.('pendingSpeciesContext')
+    || shell?.buildIntent?.getSelection?.('pendingSpeciesContext')
+    || shell?.progressionSession?.draftSelections?.species?.pendingContext
+    || shell?.draftSelections?.species?.pendingContext
+    || null;
+}
+
+function canonicalSkillKey(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const compact = raw.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const map = {
+    usetheforce: 'useTheForce',
+    useforce: 'useTheForce',
+    utf: 'useTheForce',
+    knowledgegalacticlore: 'knowledgeGalacticLore',
+    knowledgebureaucracy: 'knowledgeBureaucracy',
+    knowledgephysicalsciences: 'knowledgePhysicalSciences',
+    knowledgelifesciences: 'knowledgeLifeSciences',
+    knowledgesocialsciences: 'knowledgeSocialSciences',
+    knowledgetechnology: 'knowledgeTechnology',
+    knowledgetactics: 'knowledgeTactics',
+    knowledgexenology: 'knowledgeXenology',
+  };
+  return map[compact] || raw.replace(/[^A-Za-z0-9]+(.)/g, (_m, c) => String(c || '').toUpperCase()).replace(/^[A-Z]/, c => c.toLowerCase());
+}
+
+function collectTrainedSkillKeysFromSelection(raw, out = new Set()) {
+  if (!raw) return out;
+
+  const add = (value, fallbackKey = null) => {
+    const ref = typeof value === 'string'
+      ? value
+      : (value?.key || value?.id || value?.skill || value?.skillId || value?.name || value?.label || fallbackKey);
+    const key = canonicalSkillKey(ref);
+    if (key) out.add(key);
+  };
+
+  const addExplicitMap = (map) => {
+    if (!map || typeof map !== 'object' || Array.isArray(map)) return;
+    for (const [key, value] of Object.entries(map)) {
+      if (value === true) add(key);
+      else if (value && typeof value === 'object' && value.trained === true) add(value, key);
+    }
+  };
+
+  if (Array.isArray(raw)) {
+    raw.forEach(value => add(value));
+  } else if (typeof raw === 'object') {
+    if (Array.isArray(raw.trained)) raw.trained.forEach(value => add(value));
+    else if (Array.isArray(raw.selected)) raw.selected.forEach(value => add(value));
+    else if (Array.isArray(raw.skills)) raw.skills.forEach(value => add(value));
+    else if (raw.trainedSkills && typeof raw.trainedSkills === 'object') addExplicitMap(raw.trainedSkills);
+    else if (raw.trained && typeof raw.trained === 'object') addExplicitMap(raw.trained);
+    else if (raw.selected && typeof raw.selected === 'object') addExplicitMap(raw.selected);
+    else addExplicitMap(raw);
+  }
+
+  return out;
+}
+
+function getPendingTrainedSkillKeys(actor, shell) {
+  const keys = new Set();
+  collectTrainedSkillKeysFromSelection(shell?.progressionSession?.draftSelections?.skills, keys);
+  collectTrainedSkillKeysFromSelection(shell?.progressionSession?.getSelection?.('skills'), keys);
+  collectTrainedSkillKeysFromSelection(shell?.draftSelections?.skills, keys);
+  collectTrainedSkillKeysFromSelection(shell?.draftSelections?.get?.('skills'), keys);
+  collectTrainedSkillKeysFromSelection(shell?.committedSelections?.get?.('skills'), keys);
+  collectTrainedSkillKeysFromSelection(shell?.buildIntent?.getSelection?.('skills'), keys);
+
+  const actorSkills = actor?.system?.skills || {};
+  for (const [key, value] of Object.entries(actorSkills)) {
+    if (value?.trained === true) keys.add(canonicalSkillKey(key));
+  }
+
+  return keys;
+}
+
+function speciesBonusFeatRequirementsMet(requirements = [], { actor = null, shell = null } = {}) {
+  if (!Array.isArray(requirements) || requirements.length === 0) return true;
+  const trainedSkillKeys = getPendingTrainedSkillKeys(actor, shell);
+
+  for (const req of requirements) {
+    const type = String(req?.type || '').trim();
+    if (type === 'skillTrained') {
+      const skillKey = canonicalSkillKey(req.skill || req.skillId || req.key || req.name);
+      if (!skillKey || !trainedSkillKeys.has(skillKey)) return false;
+    } else {
+      // Attribute/BAB conditions are finalized after actor recalculation; do not
+      // expose their grants as pending progression entitlements during chargen.
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function getPendingSpeciesBonusFeatEntries(actor, shell) {
+  const context = getPendingSpeciesContext(shell);
+  if (!context) return [];
+
+  const speciesName = context.identity?.name || context.name || 'Species';
+  const traits = Array.isArray(context.traits) ? context.traits : [];
+  const entries = [];
+
+  for (const trait of traits) {
+    if (trait?.classification !== 'grant' || trait?.source !== 'bonusFeat') continue;
+    for (const grant of trait.grants || []) {
+      if (grant?.grantType !== 'feat' || !grant?.target) continue;
+      const requirements = Array.isArray(grant.requirements) ? grant.requirements : [];
+      const hasStructuredRequirements = requirements.length > 0;
+      const hasFreeformOnly = !!grant.condition && !hasStructuredRequirements;
+      if (hasFreeformOnly) continue;
+      if (!speciesBonusFeatRequirementsMet(requirements, { actor, shell })) continue;
+
+      entries.push({
+        id: `species-bonus-feat-${canonicalSkillKey(speciesName)}-${canonicalSkillKey(grant.target)}`,
+        name: grant.target,
+        system: {},
+        sourceType: 'pending',
+        source: 'pending',
+        pendingSource: 'speciesBonusFeat',
+        species: speciesName,
+        condition: grant.condition || null,
+        requirements,
+      });
+    }
+  }
+
+  return entries;
+}
+
 function getPendingFeatEntries(shell) {
   const sessionFeats = shell?.progressionSession?.draftSelections?.feats;
   const directDraftFeats = shell?.draftSelections?.feats;
@@ -113,6 +250,11 @@ function getPendingFeatEntries(shell) {
   ];
 
   const actor = shell?.actor || null;
+
+  for (const speciesGrant of getPendingSpeciesBonusFeatEntries(actor, shell)) {
+    rawEntries.push(speciesGrant);
+  }
+
   const classSelection = getClassSelection(shell);
   if (actor && classSelection) {
     const pendingState = {

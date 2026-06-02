@@ -164,7 +164,7 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
   const noProvokeOpportunity = unarmedAttackDoesNotProvoke(actor);
   return {
     id: options.id ?? 'swse-virtual-unarmed',
-    name: options.name ?? `Unarmed Attack${appendageLabel}`,
+    name: options.name ?? `Unarmed Strike${appendageLabel}`,
     type: 'weapon',
     img: options.img ?? actor?.img ?? 'icons/svg/fist.svg',
     flags: {
@@ -181,7 +181,7 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
       damageType: 'bludgeoning',
       attackAttribute: 'str',
       meleeOrRanged: 'melee',
-      weaponType: 'simple',
+      weaponType: 'unarmed',
       weaponGroup: 'simple',
       proficiency: 'simple',
       equipped: true,
@@ -212,6 +212,12 @@ export function buildUnarmedAttackContext(actor, options = {}) {
     damage: weapon.system.damage,
     damageType: weapon.system.damageType,
     range: 'Melee',
+    weaponType: 'Unarmed · Melee',
+    tags: [
+      'Always Available',
+      ...(weapon.flags.swse.martialArtsStep ? [`Martial Arts ${weapon.flags.swse.martialArtsStep}`] : []),
+      ...(weapon.flags.swse.noProvokeOpportunity ? ['No AoO'] : [])
+    ],
     weapon
   };
 }

@@ -24,6 +24,47 @@ import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { calculateMaxForcePoints, initializeActorForcePoints } from "/systems/foundryvtt-swse/scripts/data/force-points.js";
 
+function normalizeStarterLightsaberItemData(itemData = {}) {
+  const data = foundry.utils.deepClone(itemData || {});
+  delete data._id;
+  data.name = data.name || 'Lightsaber';
+  data.type = data.type || 'weapon';
+  data.system = foundry.utils.mergeObject(data.system || {}, {
+    equipped: true,
+    carried: true,
+    category: 'lightsaber',
+    subcategory: 'lightsaber',
+    subtype: 'lightsaber',
+    itemType: 'lightsaber',
+    itemCategory: 'lightsaber',
+    workbenchCategory: 'lightsaber',
+    weaponCategory: data.system?.weaponCategory || 'melee',
+    weaponType: data.system?.weaponType || 'melee',
+    rangeProfile: 'melee',
+    equippable: {
+      equipped: true,
+      slot: 'hand',
+    },
+    traits: [...new Set([...(Array.isArray(data.system?.traits) ? data.system.traits : []), 'Lightsaber'])],
+    properties: [...new Set([...(Array.isArray(data.system?.properties) ? data.system.properties : []), 'Lightsaber'])],
+  }, { inplace: false, recursive: true, overwrite: true });
+  data.flags = foundry.utils.mergeObject(data.flags || {}, {
+    swse: {
+      isLightsaber: true,
+      classStarterEquipment: true,
+      autoEquipped: true,
+      sourceClass: 'Jedi',
+    },
+    'foundryvtt-swse': {
+      isLightsaber: true,
+      classStarterEquipment: true,
+      autoEquipped: true,
+      sourceClass: 'Jedi',
+    },
+  }, { inplace: false, recursive: true });
+  return data;
+}
+
 /**
  * Handle class selection
  */
@@ -513,7 +554,7 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
               // Find the actual document to get all properties
               const actualLightsaber = docs.find(d => d._id === lightsaber._id);
               if (actualLightsaber) {
-                weaponItems.push(actualLightsaber.toObject());
+                weaponItems.push(normalizeStarterLightsaberItemData(actualLightsaber.toObject()));
               }
             } else {
               SWSELogger.warn('CharGen | Lightsaber weapon not found in compendium');

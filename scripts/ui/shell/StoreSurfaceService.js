@@ -221,6 +221,9 @@ export class StoreSurfaceService {
         onCheckoutComplete: null,
         onClose: null
       });
+      // Shell browse owns its own render window.  Full suggestion scoring can be
+      // deferred so opening the store does not freeze the character sheet.
+      inst._shellSkipInitialSuggestions = true;
       await inst._initialize();
       _instanceCache.set(actor.id, inst);
       return inst;
@@ -285,7 +288,10 @@ export class StoreSurfaceService {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'No actor selected' };
       }
 
-      const splashComplete = Boolean(options.splashComplete || options.enteredStore || options.currentView);
+      // Temporary stability mode: bypass the store splash and enter Browse directly.
+      // The splash remains in the repo as a deprecated path, but the shell-native
+      // store should not hydrate hot-item/splash state before the real catalog.
+      const splashComplete = true;
 
       // P0 safety: the splash screen must remain interactive.  The full store
       // catalog invokes suggestion scoring for every listing, which can be
@@ -370,6 +376,16 @@ export class StoreSurfaceService {
       const visibleItems = currentCategory
         ? allItems.filter(item => (item.category ?? '').toLowerCase() === currentCategory)
         : allItems;
+
+      const baseRenderLimit = Number(options.storeRenderLimit ?? 36) || 36;
+      const selectedProductId = options.selectedProductId ?? storeContext.selectedProduct?.id ?? null;
+      let renderLimit = Math.max(12, baseRenderLimit);
+      if (selectedProductId) {
+        const selectedIndex = visibleItems.findIndex(item => item?.id === selectedProductId);
+        if (selectedIndex >= renderLimit) renderLimit = selectedIndex + 1;
+      }
+      const renderedItems = visibleItems.slice(0, renderLimit);
+      const hasMoreItems = renderedItems.length < visibleItems.length;
       const splashContext = StoreSurfaceService.buildSplashContext(actor, storeContext, { ...options, splashComplete });
 
       // Phase 2: Include navigation model
@@ -400,9 +416,13 @@ export class StoreSurfaceService {
       }
 
       const safeContext = {
-        allItems: visibleItems,
+        allItems: renderedItems,
         totalItems: allItems.length,
         visibleItemCount: visibleItems.length,
+        renderedItemCount: renderedItems.length,
+        renderLimit,
+        hasMoreItems,
+        nextRenderLimit: Math.min(visibleItems.length, renderLimit + 36),
         credits: storeContext.credits ?? 0,
         cartCount: storeContext.cartCount ?? 0,
         cartTotal: storeContext.cartTotal ?? 0,

@@ -112,9 +112,69 @@ function isItemEquipped(item) {
   return isTruthyEquipState(system.equipped)
     || isTruthyEquipState(system.isEquipped)
     || isTruthyEquipState(system.active)
+    || isTruthyEquipState(system.activated)
+    || isTruthyEquipState(system.readied)
     || isTruthyEquipState(system.equippable?.equipped)
+    || isTruthyEquipState(system.equippable?.active)
     || isTruthyEquipState(system.activation?.active)
+    || isTruthyEquipState(item?.flags?.swse?.equipped)
     || isTruthyEquipState(item?.flags?.swse?.autoEquipped);
+}
+
+function firstDefined(...values) {
+  return values.find((value) => value !== undefined && value !== null && value !== '');
+}
+
+function normalizeDamageFormula(value, fallback = '1d6') {
+  let candidate = value;
+  if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+    candidate = firstDefined(
+      candidate.formula,
+      candidate.value,
+      candidate.base,
+      candidate.dice,
+      candidate.roll,
+      candidate.primary
+    );
+  }
+  return candidate !== undefined && candidate !== null && candidate !== '' ? String(candidate) : fallback;
+}
+
+function hasWeaponDamageProfile(item) {
+  const system = item?.system ?? {};
+  return firstDefined(
+    system.damage,
+    system.damageFormula,
+    system.damageRoll,
+    system.formula,
+    system.weapon?.damage,
+    system.attack?.damage,
+    system.rolls?.damage
+  ) !== undefined;
+}
+
+function isAttackItem(item) {
+  if (!item) return false;
+  if (['weapon', 'lightsaber'].includes(item.type)) return true;
+  if (!hasWeaponDamageProfile(item)) return false;
+
+  const system = item.system ?? {};
+  const text = [
+    item.type,
+    item.name,
+    system.type,
+    system.itemType,
+    system.category,
+    system.itemCategory,
+    system.equipmentType,
+    system.weaponType,
+    system.weaponCategory,
+    system.weaponGroup,
+    system.group,
+    system.subtype
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
 }
 
 /**
@@ -349,32 +409,51 @@ function normalizeAttackEntry(attack = {}, actor = null) {
 }
 
 function mirrorAttacks(actor, system) {
-  const weapons = (actor?.items ?? []).filter(i => ['weapon', 'lightsaber'].includes(i?.type));
+  const weapons = (actor?.items ?? []).filter(i => isAttackItem(i));
   const list = [];
 
   for (const w of weapons) {
-    // PHASE 4: Include equipped weapons OR natural weapons with autoEquipped flag
+    // Include equipped/readied/activated weapons, lightsabers, and natural weapons with autoEquipped flag.
     if (!isItemEquipped(w)) continue;
 
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);
+    const damageFormula = normalizeDamageFormula(firstDefined(
+      data.damageFormula,
+      data.damage,
+      data.damageRoll,
+      data.formula,
+      data.weapon?.damage,
+      data.attack?.damage,
+      data.rolls?.damage
+    ));
+    const rangeValue = firstDefined(
+      data.rangeFormatted,
+      typeof data.range === 'string' ? data.range : data.range?.value,
+      data.range?.label,
+      data.weapon?.range,
+      data.meleeOrRanged === 'ranged' ? 'Ranged' : null
+    ) ?? 'Melee';
 
     const rawAttack = {
       id: w.id,
       itemId: w.id,
+      weaponId: w.id,
       sourceId: w.id,
       sourceType: 'weapon',
       name: w.name,
+      weaponName: w.name,
       img: w.img ?? '',
-      damage: data.damage ?? '',
-      damageFormula: data.damage ?? '',
-      range: data.rangeFormatted ?? (typeof data.range === "string" ? data.range : data.range?.value) ?? 'Melee',
-      type: data.weaponType ?? data.category ?? 'weapon',
-      notes: data.notes ?? '',
+      damage: damageFormula,
+      damageFormula,
+      range: rangeValue,
+      type: firstDefined(data.weaponType, data.weaponCategory, data.weaponGroup, data.category, w.type, 'weapon'),
+      weaponType: firstDefined(data.weaponType, data.weaponCategory, data.weaponGroup, data.category, w.type, 'weapon'),
+      notes: data.notes ?? data.description ?? '',
       actionId: `item:${w.id}:attack`,
       resources,
-      critRange: data.critRange ?? data.criticalRange ?? '20',
-      critMult: data.critMult ?? data.criticalMultiplier ?? 'x2',
+      critRange: firstDefined(data.critRange, data.criticalRange, data.weapon?.critRange, '20'),
+      critMult: firstDefined(data.critMult, data.criticalMultiplier, data.weapon?.critMult, 'x2'),
       weaponProperties: Array.isArray(data.weaponProperties)
         ? data.weaponProperties
         : Array.isArray(data.properties)

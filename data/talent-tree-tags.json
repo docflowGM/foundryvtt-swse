@@ -916,5 +916,37 @@
     "tags": [
       "utility"
     ]
+  },
+  "order-of-shasa": {
+    "tags": [
+      "force",
+      "force-tradition",
+      "tradition",
+      "utility"
+    ]
+  },
+  "bando-gora-captain": {
+    "tags": [
+      "force",
+      "force-tradition",
+      "tradition",
+      "utility"
+    ]
+  },
+  "believer-disciple": {
+    "tags": [
+      "force",
+      "force-tradition",
+      "tradition",
+      "utility"
+    ]
+  },
+  "iron-knight": {
+    "tags": [
+      "force",
+      "force-tradition",
+      "tradition",
+      "utility"
+    ]
   }
 }

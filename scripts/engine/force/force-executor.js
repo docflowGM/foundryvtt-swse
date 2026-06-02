@@ -51,15 +51,11 @@ export class ForceExecutor {
       // Update owned force-power state through the embedded-document path.
       // The older nested actor update shape ({ items: { [id]: ... } }) does
       // not update owned Items reliably in Foundry v13.
-      await ActorEngine.apply(actor, {
-        updateEmbedded: [{
-          _id: powerId,
-          update: {
-            'system.discarded': recover ? false : true,
-            [recover ? 'system.lastRecovered' : 'system.lastUsed']: Date.now()
-          }
-        }]
-      }, { source: recover ? 'force-power-recover' : 'force-power-use', render: false });
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+        _id: powerId,
+        'system.discarded': recover ? false : true,
+        [recover ? 'system.lastRecovered' : 'system.lastUsed']: Date.now()
+      }], { source: recover ? 'force-power-recover' : 'force-power-use', render: false });
 
       // Check for dark side usage (optional mechanic)
       const hasDarkSide = power.system?.darkSideOption || false;
@@ -108,60 +104,77 @@ export class ForceExecutor {
     try {
       const power = actor.items.get(powerId);
       if (!power) throw new Error("Force power not found");
-
-      const baseDC = Number(
-        options.baseDC ??
-        power.system?.useTheForce ??
-        power.system?.dc ??
-        power.system?.DC ??
-        power.system?.dcChart?.[0]?.dc ??
-        10
-      ) || 10;
-      const bonus = Number.isFinite(Number(options.bonus))
-        ? Number(options.bonus)
-        : Number(
-            actor.system?.derived?.skillsByKey?.useTheForce?.total ??
-            actor.system?.derived?.skills?.useTheForce?.total ??
-            actor.system?.skills?.useTheForce?.total ??
-            0
-          ) || 0;
-      const useForce = options.useForce === true;
+      if (power.type !== "force-power") throw new Error(`${power.name} is not a Force power`);
 
       // Check if power is already discarded
       if (power.system?.discarded) {
         throw new Error(`${power.name} is already discarded`);
       }
 
-      // Validate Force Point expenditure
-      let spentForce = false;
+      const system = power.system ?? {};
+      const defaultDC = this._getPowerBaseDC(power);
+      const baseDC = Number(options.baseDC ?? defaultDC) || defaultDC;
+      const defaultBonus = this._getUseTheForceTotal(actor);
+      const baseBonus = Number.isFinite(Number(options.baseBonus))
+        ? Number(options.baseBonus)
+        : Number.isFinite(Number(options.bonus))
+          ? Number(options.bonus)
+          : defaultBonus;
+      const customModifier = Number(options.customModifier ?? options.situationalModifier ?? 0) || 0;
+      const rollBonus = baseBonus + customModifier;
+      const useForce = options.useForce === true;
+
+      // Validate Force Point expenditure before rolling.
       if (useForce) {
         const fpValue = SchemaAdapters.getForcePoints(actor);
         if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
-        spentForce = true;
       }
+
+      const dcChart = this._getPowerDcRows(power);
+      const descriptors = this._getPowerDescriptors(power);
+      const primaryDescriptor = this._resolvePrimaryDescriptor(descriptors);
 
       // Roll the force power check through the shared roll execution layer.
       const rollResult = await RollCore.execute({
         actor,
         domain: 'force-power.activation',
-        baseBonus: bonus,
-        rollOptions: { baseDice: '1d20' },
+        baseBonus: rollBonus,
+        rollOptions: {
+          baseDice: '1d20',
+          useForce,
+          forcePointCount: useForce ? 1 : 0
+        },
         rollData: actor.getRollData?.() ?? {},
-        context: { powerId, powerName: power.name }
+        context: {
+          powerId,
+          powerName: power.name,
+          sourceItemId: powerId,
+          itemName: power.name,
+          category: 'force',
+          type: 'force-power',
+          baseDC,
+          baseBonus,
+          customModifier,
+          forceDescriptor: primaryDescriptor,
+          forceDescriptors: descriptors,
+          dcChart
+        }
       });
       if (!rollResult.success || !rollResult.roll) {
         throw new Error(rollResult.error || 'Force power roll failed');
       }
+
       const roll = rollResult.roll;
-
-      const total = rollResult.finalTotal;
-      const isCritical = roll.dice[0].results[0].result === 20;
-      const isFumble = roll.dice[0].results[0].result === 1;
-
-      // Check if successful
+      const total = Number(rollResult.finalTotal ?? roll.total ?? 0) || 0;
+      const d20 = roll.dice?.find?.(die => Number(die.faces) === 20);
+      const d20Result = d20?.results?.find?.(r => r.active !== false) ?? d20?.results?.[0] ?? null;
+      const isCritical = Number(d20Result?.result) === 20;
+      const isFumble = Number(d20Result?.result) === 1;
       const success = total >= baseDC;
+      const resolvedTier = this._resolvePowerTier(power, total);
+      const resolvedEffect = resolvedTier?.effect || (success ? this._text(system.effect || system.summary || '') : 'Power check failed. No effect resolved.');
 
       // Handle natural 20 effects
       if (isCritical) {
@@ -173,26 +186,31 @@ export class ForceExecutor {
         await ForceEngine.gainDarkSidePoint(actor, `Failed use of ${power.name}`);
       }
 
-      // Spend Force Point if applicable
-      if (spentForce) {
+      // Spend Force Point if RollCore successfully included the Force Point bonus.
+      const forcePointBonus = Number(rollResult.forcePointBonus ?? rollResult.breakdown?.forcePointBonus ?? 0) || 0;
+      if (useForce && forcePointBonus > 0) {
         const currentFP = SchemaAdapters.getForcePoints(actor);
-        const plan = {
-          update: {
-            "system.forcePoints.value": Math.max(0, currentFP - 1)
-          }
-        };
-        await ActorEngine.apply(actor, plan);
+        await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(Math.max(0, currentFP - 1)), {
+          source: 'force-power-force-point-spend'
+        });
       }
 
-      // Mark power as used
-      await this.activateForce(actor, powerId, false);
+      // Mark power as used/discarded through the embedded-document path. Do not call
+      // activateForce() here because that method posts a simple use/recover message;
+      // force power execution should create exactly one rich roll card.
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+        _id: powerId,
+        'system.discarded': true,
+        'system.lastUsed': Date.now()
+      }], { source: 'force-power-use', render: false });
 
       // Apply force power effects if successful
+      let appliedEffects = [];
       if (success) {
-        await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total);
+        appliedEffects = await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total);
       }
 
-      // Generate chat message
+      // Generate rich concept chat message
       await this._generateForcePowerRollMessage(
         actor,
         power,
@@ -200,7 +218,18 @@ export class ForceExecutor {
         total,
         baseDC,
         success,
-        isCritical
+        isCritical,
+        {
+          baseBonus,
+          customModifier,
+          forcePointBonus,
+          forceDescriptor: primaryDescriptor,
+          forceDescriptors: descriptors,
+          dcChart,
+          resolvedTier,
+          resolvedEffect,
+          appliedEffects
+        }
       );
 
       return {
@@ -210,7 +239,11 @@ export class ForceExecutor {
         isCritical,
         isFumble,
         powerName: power.name,
-        forcePowerSpent: spentForce
+        forcePowerSpent: forcePointBonus > 0,
+        discarded: true,
+        resolvedTier,
+        resolvedEffect,
+        appliedEffects
       };
     } catch (err) {
       console.error("Force power execution failed:", err);
@@ -244,15 +277,11 @@ export class ForceExecutor {
         throw new Error("No force powers to recover");
       }
 
-      await ActorEngine.apply(actor, {
-        updateEmbedded: powersToRecover.map(power => ({
-          _id: power.id,
-          update: {
-            'system.discarded': false,
-            'system.lastRecovered': Date.now()
-          }
-        }))
-      }, { source: 'force-power-recover-all', render: false });
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
+        _id: power.id,
+        'system.discarded': false,
+        'system.lastRecovered': Date.now()
+      })), { source: 'force-power-recover-all', render: false });
 
       // Remove any active effects from recovered powers
       for (const power of powersToRecover) {
@@ -280,6 +309,87 @@ export class ForceExecutor {
       ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
       return { success: false, error: err.message };
     }
+  }
+
+  static _text(value = '') {
+    if (value && typeof value === 'object') {
+      value = value.value ?? value.description ?? value.text ?? value.label ?? '';
+    }
+    const text = String(value ?? '');
+    if (!text) return '';
+    if (typeof document !== 'undefined') {
+      const div = document.createElement('div');
+      div.innerHTML = text;
+      return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+    return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  static _getUseTheForceTotal(actor) {
+    const candidates = [
+      actor?.system?.derived?.skillsByKey?.useTheForce?.total,
+      actor?.system?.derived?.skills?.useTheForce?.total,
+      actor?.system?.skills?.useTheForce?.total,
+      actor?.system?.skills?.useTheForce?.value,
+      actor?.system?.skills?.useTheForce?.mod
+    ];
+    for (const candidate of candidates) {
+      const n = Number(candidate);
+      if (Number.isFinite(n)) return n;
+    }
+    return 0;
+  }
+
+  static _getPowerBaseDC(power) {
+    const system = power?.system ?? {};
+    const firstChartDc = Array.isArray(system.dcChart) ? system.dcChart.find(row => row?.dc != null)?.dc : null;
+    return Number(system.useTheForce ?? system.dc ?? system.DC ?? firstChartDc ?? 10) || 10;
+  }
+
+  static _getPowerDcRows(power) {
+    const chart = Array.isArray(power?.system?.dcChart) ? power.system.dcChart : [];
+    return chart
+      .map(row => ({
+        dc: Number(row?.dc ?? row?.DC ?? row?.target ?? row?.threshold),
+        effect: this._text(row?.effect || row?.description || row?.text || row?.label || '')
+      }))
+      .filter(row => Number.isFinite(row.dc) && row.effect)
+      .sort((a, b) => a.dc - b.dc);
+  }
+
+  static _resolvePowerTier(power, total) {
+    const numericTotal = Number(total);
+    if (!Number.isFinite(numericTotal)) return null;
+    let best = null;
+    for (const row of this._getPowerDcRows(power)) {
+      if (numericTotal >= row.dc) best = row;
+    }
+    return best;
+  }
+
+  static _getPowerDescriptors(power) {
+    const system = power?.system ?? {};
+    const raw = [];
+    const add = value => {
+      if (Array.isArray(value)) value.forEach(add);
+      else if (value != null && String(value).trim()) raw.push(String(value).trim());
+    };
+    add(system.descriptor);
+    add(system.descriptors);
+    add(system.tags);
+    add(system.discipline);
+    return [...new Set(raw)].slice(0, 6);
+  }
+
+  static _resolvePrimaryDescriptor(descriptors = []) {
+    const joined = descriptors.join(' ').toLowerCase();
+    if (joined.includes('dark')) return 'dark';
+    if (joined.includes('tele') || joined.includes('tk') || joined.includes('move')) return 'tk';
+    if (joined.includes('mind') || joined.includes('affect')) return 'mind';
+    if (joined.includes('form') || joined.includes('lightsaber')) return 'form';
+    if (joined.includes('light')) return 'light';
+    if (joined.includes('control') || joined.includes('alter') || joined.includes('sense')) return 'light';
+    return 'light';
   }
 
   /**
@@ -320,27 +430,56 @@ export class ForceExecutor {
     total,
     baseDC,
     success,
-    isCritical
+    isCritical,
+    extra = {}
   ) {
     try {
-      const successText = success ? "SUCCESS" : "FAILURE";
-      const successClass = success ? "success" : "failure";
+      const resolvedTier = extra.resolvedTier ?? this._resolvePowerTier(power, total);
+      const resolvedEffect = extra.resolvedEffect || resolvedTier?.effect || (success ? this._text(power.system?.effect || power.system?.summary || '') : 'Power check failed. No effect resolved.');
+      const dcChart = extra.dcChart?.length ? extra.dcChart : this._getPowerDcRows(power);
+      const forceDescriptors = extra.forceDescriptors?.length ? extra.forceDescriptors : this._getPowerDescriptors(power);
+      const forceDescriptor = extra.forceDescriptor || this._resolvePrimaryDescriptor(forceDescriptors);
+      const margin = Number(total) - Number(baseDC);
 
-      const content = `
-        <div class="swse-force-roll">
-          <h3>${actor.name} uses ${power.name}</h3>
-          <div class="roll-result ${successClass}">
-            <strong>Check:</strong> ${total} vs DC ${baseDC}
-            <div class="result-text">${successText}</div>
-            ${isCritical ? '<div class="critical">CRITICAL SUCCESS!</div>' : ""}
-          </div>
-          <div class="roll-formula">${roll.formula}</div>
-        </div>
-      `;
-
-      await SWSEChat.postHTML({
+      await SWSEChat.postRoll({
         actor,
-        content
+        roll,
+        flavor: `${actor.name} uses ${power.name}`,
+        context: {
+          category: 'force',
+          type: 'force-power',
+          itemName: power.name,
+          sourceItemId: power.id,
+          powerId: power.id,
+          label: power.name,
+          typeChipLabel: 'Force Power · UTF',
+          totalLabel: 'UTF Check',
+          dc: baseDC,
+          success,
+          outcomeLabel: success ? 'Resolved' : 'Failed',
+          forceDescriptor,
+          forceDescriptors,
+          dcChart,
+          forceResolvedTier: resolvedTier?.dc ? `DC ${resolvedTier.dc}` : '',
+          forceResolvedEffect: resolvedEffect,
+          baseBonus: extra.baseBonus,
+          customModifier: extra.customModifier,
+          forcePointBonus: extra.forcePointBonus,
+          appliedEffectCount: Array.isArray(extra.appliedEffects) ? extra.appliedEffects.length : 0,
+          margin
+        },
+        flags: {
+          swse: {
+            forcePower: true,
+            powerId: power.id,
+            powerName: power.name,
+            dc: baseDC,
+            success,
+            resolvedEffect,
+            resolvedTierDc: resolvedTier?.dc ?? null,
+            isCritical
+          }
+        }
       });
     } catch (err) {
       console.error("Force roll message generation failed:", err);

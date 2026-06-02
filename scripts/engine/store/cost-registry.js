@@ -16,6 +16,31 @@
  * - costNumeric is treated as packed helper, not scalar truth
  */
 
+
+function parseCreditNumber(value) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+  if (typeof value !== 'string') return null;
+  const cleaned = value
+    .replace(/[,\s]/g, '')
+    .replace(/credits?|cr|credit/gi, '')
+    .trim();
+  if (!cleaned || /^[-—]+$/.test(cleaned)) return null;
+  const number = Number(cleaned);
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+
+function isUnavailableText(value) {
+  if (typeof value !== 'string') return false;
+  const normalized = value.toLowerCase().trim();
+  return normalized.includes('not publicly available')
+    || normalized.includes('not available')
+    || normalized.includes('unavailable')
+    || normalized === 'n/a'
+    || normalized === 'na';
+}
+
 /**
  * Build store cost record from raw document
  * @param {Object} rawDoc - Raw item document from pack
@@ -58,12 +83,14 @@ export function buildStoreCostRecord(rawDoc) {
     }
   }
 
-  // Detect scalar numeric pricing
-  if (typeof costNumeric === 'number' && costNumeric > 0) {
+  // Detect scalar numeric pricing. Prefer the explicit numeric helper, but
+  // tolerate source packs that keep cost as a string like "1,500 cr".
+  const parsedCostNumeric = parseCreditNumber(costNumeric);
+  if (parsedCostNumeric !== null) {
     return {
       costStatus: 'priced',
       pricingMode: 'single',
-      baseCost: costNumeric,
+      baseCost: parsedCostNumeric,
       baseCostNew: null,
       baseCostUsed: null,
       requiresCondition: false,
@@ -73,11 +100,12 @@ export function buildStoreCostRecord(rawDoc) {
     };
   }
 
-  if (typeof cost === 'number' && cost > 0) {
+  const parsedCost = parseCreditNumber(cost);
+  if (parsedCost !== null) {
     return {
       costStatus: 'priced',
       pricingMode: 'single',
-      baseCost: cost,
+      baseCost: parsedCost,
       baseCostNew: null,
       baseCostUsed: null,
       requiresCondition: false,
@@ -204,6 +232,8 @@ export function isStorePurchasable(record, options = {}) {
  * Private: Check if cost field contains unavailability string
  */
 function isUnavailableCost(cost) {
+  if (isUnavailableText(cost)) return true;
+
   if (typeof cost !== 'object' || cost === null) {
     return false;
   }
@@ -211,14 +241,7 @@ function isUnavailableCost(cost) {
   const newVal = cost.new;
   const usedVal = cost.used;
 
-  if (typeof newVal === 'string' && newVal.includes('not publicly available')) {
-    return true;
-  }
-  if (typeof usedVal === 'string' && usedVal.includes('not publicly available')) {
-    return true;
-  }
-
-  return false;
+  return isUnavailableText(newVal) && isUnavailableText(usedVal);
 }
 
 /**
@@ -236,18 +259,10 @@ function isStructuredCost(cost) {
  * Private: Extract numeric new/used values, filtering out string placeholders
  */
 function extractStructuredCost(cost) {
-  let validNew = null;
-  let validUsed = null;
-
-  if (typeof cost.new === 'number') {
-    validNew = cost.new > 0 ? cost.new : null;
-  }
-
-  if (typeof cost.used === 'number') {
-    validUsed = cost.used > 0 ? cost.used : null;
-  }
-
-  return { validNew, validUsed };
+  return {
+    validNew: parseCreditNumber(cost.new),
+    validUsed: parseCreditNumber(cost.used)
+  };
 }
 
 /**

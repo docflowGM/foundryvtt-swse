@@ -76,6 +76,6 @@ export const STORE_RULES = {
   },
 
   // Cache invalidation
-  CACHE_KEY: 'swse-store-cache-v3',
+  CACHE_KEY: 'swse-store-cache-v4',
   CACHE_TTL: 1000 * 60 * 60 * 24  // 24 hours
 };

@@ -13,8 +13,10 @@
         </div>
       </header>
 
-      <section class="swse-customization-mentor">
-        <div class="mentor-avatar">⌬</div>
+      <section class="swse-customization-mentor {{#if (eq mentorKey 'miraj')}}mentor-miraj{{else}}mentor-delta{{/if}}">
+        <div class="mentor-avatar">
+          {{#if mentorPortrait}}<img src="{{mentorPortrait}}" alt="{{mentorName}}" class="mentor-avatar-img">{{else}}⌬{{/if}}
+        </div>
         <div class="mentor-copy">
           <div class="mentor-head">{{mentorHead}}</div>
           <div class="mentor-text" data-workbench-mentor-text data-mentor="{{mentorKey}}" data-raw-text="{{mentorText}}">{{mentorText}}</div>
@@ -118,6 +120,7 @@
               </div>
             </section>
 
+            {{#if lightsaber.showChassis}}
             <section class="detail-panel panel ls-panel-chassis">
               <div class="panel-head"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
               <div class="card-list">
@@ -130,6 +133,15 @@
                 {{/each}}
               </div>
             </section>
+            {{else}}
+            <section class="detail-panel panel ls-panel-chassis ls-panel-chassis--locked">
+              <div class="panel-head"><span>Chassis Locked</span><span class="hint">{{lightsaber.selectedChassisName}}</span></div>
+              <div class="ls-locked-chassis-card">
+                <div class="card-top"><span class="card-name">{{lightsaber.selectedChassisName}}</span><span class="card-cost">Fixed</span></div>
+                <span class="card-desc">{{lightsaber.chassisLockReason}}</span>
+              </div>
+            </section>
+            {{/if}}
 
             <section class="detail-panel panel ls-panel-crystal">
               <div class="panel-head"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>

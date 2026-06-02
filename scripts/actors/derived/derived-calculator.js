@@ -38,6 +38,56 @@ import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 export class DerivedCalculator {
+
+  /**
+   * Resolve class levels from the canonical progression ledger when present,
+   * with an embedded class-item fallback for newly-created/migrating actors.
+   *
+   * Several V2 chargen paths now materialize class items before the older
+   * system.progression.classLevels ledger is populated.  BAB and defense class
+   * bonuses must not show as zero during that window; class items are already
+   * the sheet-visible source for class/level identity, so use them as the
+   * authoritative fallback for derived calculations.
+   *
+   * @param {Actor} actor
+   * @param {Array} classLevels
+   * @returns {Array<{class:string, level:number}>}
+   */
+  static _resolveClassLevels(actor, classLevels = []) {
+    const normalizeEntry = (entry = {}) => {
+      const className = entry.class
+        ?? entry.name
+        ?? entry.className
+        ?? entry.classId
+        ?? entry.id
+        ?? null;
+      const level = Number(entry.level ?? entry.value ?? entry.levels ?? 0) || 0;
+      if (!className || level <= 0) return null;
+      return { class: String(className), level };
+    };
+
+    const fromProgression = Array.isArray(classLevels)
+      ? classLevels.map(normalizeEntry).filter(Boolean)
+      : [];
+    if (fromProgression.length > 0) return fromProgression;
+
+    const classItems = Array.from(actor?.items ?? []).filter((item) => item?.type === 'class');
+    const fromItems = classItems.map((item) => {
+      const system = item?.system ?? {};
+      const className = system.className
+        ?? system.class_name
+        ?? system.name
+        ?? system.classId
+        ?? item?.name
+        ?? null;
+      const level = Number(system.level ?? system.levels ?? system.value ?? 0) || 0;
+      if (!className || level <= 0) return null;
+      return { class: String(className), level };
+    }).filter(Boolean);
+
+    return fromItems;
+  }
+
   /**
    * Compute all derived values for an actor.
    * Called from prepareDerivedData() during recalculation pass.
@@ -51,7 +101,7 @@ export class DerivedCalculator {
       MutationIntegrityLayer.recordDerivedRecalc();
 
       const prog = actor.system.progression || {};
-      const classLevels = prog.classLevels || [];
+      const classLevels = this._resolveClassLevels(actor, prog.classLevels || []);
 
       // ========================================
       // PHASE 0: Modifier Pipeline Integration

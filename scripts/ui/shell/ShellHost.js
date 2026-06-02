@@ -419,6 +419,18 @@ export function ShellHostMixin(BaseClass) {
         this._messengerSurfaceController?.destroy?.();
       }
 
+      if (this._shellSurface === 'store') {
+        void import('/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js').then(({ StoreSurfaceController }) => {
+          if (this._shellSurface !== 'store' || !this.element) return;
+          this._storeSurfaceController ??= new StoreSurfaceController(this, this.actor || this.document);
+          this._storeSurfaceController.attach(this.element);
+        }).catch(err => {
+          SWSELogger.error('[ShellHost] Store surface event wiring failed:', err);
+        });
+      } else {
+        this._storeSurfaceController?.destroy?.();
+      }
+
       if (this._shellDrawer?.drawerId === 'holonet-notifications') {
         void this._wireHolonetNotificationDrawerEvents(root).catch(err => {
           SWSELogger.error('[ShellHost] Holonet notification drawer event wiring failed:', err);

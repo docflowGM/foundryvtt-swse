@@ -206,6 +206,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-gear-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-concept-content.hbs',
 
   // ==============================
   // Legacy NPC Partials

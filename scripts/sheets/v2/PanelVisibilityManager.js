@@ -20,7 +20,7 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
       overview: ['portraitPanel', 'biographyPanel', 'healthPanel', 'defensePanel', 'secondWindPanel', 'resourcesPanel', 'languagesPanel'],
       abilities: ['abilitiesPanel'],
       skills: ['skillsPanel'],
-      combat: ['healthPanel', 'defensePanel', 'resourcesPanel'],
+      combat: ['healthPanel', 'defensePanel', 'secondWindPanel', 'resourcesPanel'],
       talents: ['talentPanel', 'featPanel', 'racialAbilitiesPanel'],
       force: ['forcePowersPanel'],
       gear: ['inventoryPanel', 'armorSummaryPanel', 'equipmentLedgerPanel'],
