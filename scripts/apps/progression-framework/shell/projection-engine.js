@@ -233,10 +233,23 @@ export class ProjectionEngine {
   static _projectDroid(draftSelections) {
     const droidSelection = draftSelections.droid;
     if (!droidSelection) return null;
+    const systems = droidSelection.droidSystems || droidSelection.systems || null;
     return {
-      credits: droidSelection.droidCredits?.total || 0,
+      degree: droidSelection.droidDegree || null,
+      size: droidSelection.droidSize || null,
+      credits: droidSelection.droidCredits?.total || droidSelection.droidCredits?.base || 0,
       remaining: droidSelection.droidCredits?.remaining || 0,
-      systems: droidSelection.systems || [],
+      droidSystems: systems,
+      systems: Array.isArray(systems)
+        ? systems
+        : [
+            systems?.locomotion,
+            systems?.processor,
+            ...(systems?.appendages || []),
+            ...(systems?.accessories || []),
+            ...(systems?.locomotionEnhancements || []),
+            ...(systems?.appendageEnhancements || []),
+          ].filter(Boolean),
       buildState: droidSelection.buildState || {},
     };
   }

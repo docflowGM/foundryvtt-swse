@@ -539,8 +539,11 @@ export class SuggestionEngineCoordinator {
    */
   static async suggestDroidSystems(systems, actor, pendingData = {}, options = {}) {
     try {
-      // Validate that this is a droid character
-      if (!actor || !actor.system?.isDroid) {
+      // Validate that this is a droid character.
+      // During chargen the actor hasn't been saved yet so actor.type === 'droid'
+      // is the reliable check; actor.system.isDroid is only set post-save.
+      const isDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
+      if (!actor || !isDroid) {
         SWSELogger.warn('[Coordinator] suggestDroidSystems called for non-droid character');
         return {};
       }

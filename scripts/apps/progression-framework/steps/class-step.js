@@ -423,7 +423,7 @@ export class ClassStep extends ProgressionStepPlugin {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
-    const pendingData = shell?.buildIntent?.toCharacterData?.() || {};
+    const pendingData = this._buildPendingPrerequisiteData(shell);
     const eligibility = this._classEligibility.get(entry.id) || this._evaluateClassEligibilityForDisplay(entry, shell, pendingData);
     if (eligibility?.eligible === false) {
       swseLogger.warn('[ClassStep] Blocked commit of unavailable class', {
@@ -711,7 +711,7 @@ export class ClassStep extends ProgressionStepPlugin {
       });
     }
 
-    const pendingData = shell?.buildIntent?.toCharacterData?.() || {};
+    const pendingData = this._buildPendingPrerequisiteData(shell);
     this._classEligibility = new Map();
     filtered = filtered.map(c => {
       const eligibility = this._evaluateClassEligibilityForDisplay(c, shell, pendingData);
@@ -814,6 +814,18 @@ export class ClassStep extends ProgressionStepPlugin {
     };
   }
 
+
+
+  _buildPendingPrerequisiteData(shell = null) {
+    const characterData = shell?.buildIntent?.toCharacterData?.() || {};
+    const draftSelections = shell?.progressionSession?.draftSelections || shell?.draftSelections || {};
+    return {
+      ...characterData,
+      ...draftSelections,
+      draftSelections,
+      progressionSession: shell?.progressionSession || null
+    };
+  }
 
   _evaluateClassEligibilityForDisplay(classData, shell = null, pendingData = {}) {
     const baseEligibility = evaluateClassEligibility({

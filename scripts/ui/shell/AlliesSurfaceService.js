@@ -582,6 +582,18 @@ async function loadFollowerCreator() {
   }
 }
 
+async function reconcileCompanionEntitlements(actor) {
+  if (!actor || actor.isOwner !== true) return;
+
+  try {
+    const mod = await import('/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-hooks.js');
+    await mod.reconcileFollowerSlotsForActor?.(actor);
+    await mod.reconcileFollowerEnhancementsForActor?.(actor);
+  } catch (err) {
+    SWSELogger.warn('[AlliesSurfaceService] Companion entitlement reconciliation failed:', err);
+  }
+}
+
 async function loadMinionCreator() {
   try {
     const mod = await import('/systems/foundryvtt-swse/scripts/apps/minion-creator.js');
@@ -663,6 +675,8 @@ export class AlliesSurfaceService {
 
   static async _buildCompanions(actor, options = {}) {
     if (!actor) return this._emptyCompanions(options);
+
+    await reconcileCompanionEntitlements(actor);
 
     const FollowerCreator = await loadFollowerCreator();
     const MinionCreator = await loadMinionCreator();

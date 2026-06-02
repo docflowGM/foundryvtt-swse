@@ -1,3 +1,4 @@
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
@@ -234,13 +235,28 @@ function buildInventoryGroups(inventoryPanel) {
 
   return order
     .map((label) => {
-      const entries = asArray(grouped[label]).map((entry) => ({
-        ...entry,
-        quantity: Number(entry?.quantity) || 1,
-        weight: Number(entry?.weight) || 0,
-        value: Number(entry?.value) || 0,
-        tags: asArray(entry?.tags)
-      }));
+      const entries = asArray(grouped[label]).map((entry) => {
+        const itemLike = {
+          ...entry,
+          type: entry?.type || entry?.itemType || (label === 'Weapons' ? 'weapon' : label === 'Armor' ? 'armor' : entry?.type),
+          system: entry?.system || entry?.raw?.system || entry
+        };
+        const visualProfile = WeaponVisualProfileResolver.resolve(itemLike, { actor: inventoryPanel?.actor });
+        const activated = visualProfile?.active === true || itemLike.system?.activated === true || itemLike.system?.active === true;
+
+        return {
+          ...entry,
+          quantity: Number(entry?.quantity) || 1,
+          weight: Number(entry?.weight) || 0,
+          value: Number(entry?.value) || 0,
+          tags: asArray(entry?.tags),
+          isLightsaber: visualProfile?.isLightsaber === true,
+          activated,
+          activationLabel: activated ? 'Deactivate' : 'Activate',
+          bladeColor: visualProfile?.bladeColor || null,
+          bladeHex: visualProfile?.bladeHex || null
+        };
+      });
 
       return {
         id: label.toLowerCase(),

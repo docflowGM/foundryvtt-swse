@@ -201,7 +201,8 @@ export class SelectedRailContext {
 
     // Path-specific sections
     if (pathType.includes('droid')) {
-      sections.push(this._buildDroidSection(projection, currentStepId));
+      const droidSection = this._buildDroidSection(projection, session, currentStepId);
+      if (droidSection) sections.push(droidSection);
     }
 
     if (pathType.includes('beast')) {
@@ -619,17 +620,33 @@ export class SelectedRailContext {
    * Build droid-specific section.
    * @private
    */
-  static _buildDroidSection(projection, currentStepId) {
-    if (!projection.droid) return null;
-
+  static _buildDroidSection(projection, session, currentStepId) {
+    const draftDroid = session?.draftSelections?.droid || null;
+    const droid = projection?.droid || null;
+    const systems = draftDroid?.droidSystems || droid?.droidSystems || null;
     const items = [];
 
-    if (projection.droid.systems && projection.droid.systems.length > 0) {
+    const add = (label, value) => {
+      if (value === undefined || value === null || value === '') return;
       items.push({
-        label: 'Systems',
-        value: `${projection.droid.systems.length}`,
+        label,
+        value: String(value),
         isCurrent: currentStepId === 'droid-builder' || currentStepId === 'final-droid-configuration',
       });
+    };
+
+    add('Degree', draftDroid?.droidDegree || droid?.degree);
+    add('Size', draftDroid?.droidSize || droid?.size);
+    add('Locomotion', systems?.locomotion?.name || systems?.locomotion?.id);
+    add('Processor', systems?.processor?.name || systems?.processor?.id);
+
+    (systems?.appendages || []).forEach((system, index) => add(`Appendage ${index + 1}`, system?.name || system?.id));
+    (systems?.accessories || []).forEach((system, index) => add(`Accessory ${index + 1}`, system?.name || system?.id));
+    (systems?.locomotionEnhancements || []).forEach((system, index) => add(`Locomotion Mod ${index + 1}`, system?.name || system?.id));
+    (systems?.appendageEnhancements || []).forEach((system, index) => add(`Appendage Mod ${index + 1}`, system?.name || system?.id));
+
+    if (!items.length && Array.isArray(droid?.systems)) {
+      droid.systems.forEach((system, index) => add(`System ${index + 1}`, system?.name || system?.id || system));
     }
 
     return items.length > 0

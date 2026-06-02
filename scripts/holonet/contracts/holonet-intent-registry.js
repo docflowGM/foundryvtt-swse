@@ -13,70 +13,70 @@ export class HolonetIntentRegistry {
     [INTENT_TYPE.MENTOR_LEVEL_AVAILABLE]: {
       label: 'Mentor: Level Available',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'high',
       icon: 'fas fa-star'
     },
     [INTENT_TYPE.MENTOR_LEVEL_COMPLETED]: {
       label: 'Mentor: Level Completed',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'high',
       icon: 'fas fa-trophy'
     },
     [INTENT_TYPE.MENTOR_CHOICE_REVIEW]: {
       label: 'Mentor: Choice Review',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'normal',
       icon: 'fas fa-magnifying-glass'
     },
     [INTENT_TYPE.MENTOR_BUILD_AFFIRMATION]: {
       label: 'Mentor: Build Affirmation',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'low',
       icon: 'fas fa-thumbs-up'
     },
     [INTENT_TYPE.MENTOR_BUILD_WARNING]: {
       label: 'Mentor: Build Warning',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'high',
       icon: 'fas fa-exclamation-triangle'
     },
     [INTENT_TYPE.MENTOR_OPTION_REVEALED]: {
       label: 'Mentor: Option Revealed',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'normal',
       icon: 'fas fa-lightbulb'
     },
     [INTENT_TYPE.MENTOR_STORY_UNLOCKED]: {
       label: 'Mentor: Story Unlocked',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'high',
       icon: 'fas fa-book-open'
     },
     [INTENT_TYPE.MENTOR_STORY_BLOCKED]: {
       label: 'Mentor: Story Blocked',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'normal',
       icon: 'fas fa-lock'
     },
     [INTENT_TYPE.MENTOR_CHECK_IN]: {
       label: 'Mentor: Check In',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'low',
       icon: 'fas fa-handshake'
     },
     [INTENT_TYPE.MENTOR_TRAINING_REMINDER]: {
       label: 'Mentor: Training Reminder',
       category: 'mentor',
-      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.MENTOR_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'normal',
       icon: 'fas fa-dumbbell'
     },
@@ -85,28 +85,28 @@ export class HolonetIntentRegistry {
     [INTENT_TYPE.SYSTEM_TRANSACTION_APPROVED]: {
       label: 'Transaction Approved',
       category: 'system',
-      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'normal',
       icon: 'fas fa-check-circle'
     },
     [INTENT_TYPE.SYSTEM_TRANSACTION_DENIED]: {
       label: 'Transaction Denied',
       category: 'system',
-      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'high',
       icon: 'fas fa-times-circle'
     },
     [INTENT_TYPE.SYSTEM_TRANSACTION_CLEARED]: {
       label: 'Transaction Cleared',
       category: 'system',
-      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'normal',
       icon: 'fas fa-eraser'
     },
     [INTENT_TYPE.SYSTEM_ORDER_READY]: {
       label: 'Order Ready',
       category: 'system',
-      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'high',
       icon: 'fas fa-box'
     },
@@ -172,6 +172,77 @@ export class HolonetIntentRegistry {
       defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'normal',
       icon: 'fas fa-coins'
+    },
+
+    [INTENT_TYPE.SYSTEM_HOME_TASK]: {
+      label: 'Home Task',
+      category: 'system',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED],
+      priority: 'normal',
+      icon: 'fas fa-list-check'
+    },
+    [INTENT_TYPE.TRAINING_AVAILABLE]: {
+      label: 'Training Available',
+      category: 'training',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'high',
+      icon: 'fas fa-arrow-up'
+    },
+    [INTENT_TYPE.TRAINING_COMPLETED]: {
+      label: 'Training Completed',
+      category: 'training',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-certificate'
+    },
+    [INTENT_TYPE.WORKBENCH_AVAILABLE]: {
+      label: 'Workbench Available',
+      category: 'workbench',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED],
+      priority: 'normal',
+      icon: 'fas fa-screwdriver-wrench'
+    },
+    [INTENT_TYPE.GARAGE_UPDATED]: {
+      label: 'Garage Updated',
+      category: 'garage',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-robot'
+    },
+    [INTENT_TYPE.SHIPYARD_UPDATED]: {
+      label: 'Shipyard Updated',
+      category: 'shipyard',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-ship'
+    },
+    [INTENT_TYPE.ALLIES_SLOT_OPEN]: {
+      label: 'Allies Slot Open',
+      category: 'allies',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED],
+      priority: 'normal',
+      icon: 'fas fa-user-plus'
+    },
+    [INTENT_TYPE.ALLIES_UPDATED]: {
+      label: 'Allies Updated',
+      category: 'allies',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-users'
+    },
+    [INTENT_TYPE.FACTION_REPUTATION_CHANGED]: {
+      label: 'Faction Reputation Changed',
+      category: 'faction',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-scale-balanced'
+    },
+    [INTENT_TYPE.FACTION_JOB_COMPLETED]: {
+      label: 'Faction Job Completed',
+      category: 'faction',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-handshake'
     },
 
     // Authored communication intents
@@ -338,7 +409,7 @@ export class HolonetIntentRegistry {
     [INTENT_TYPE.STORE_CLOSED]: {
       label: 'Store Closed',
       category: 'store',
-      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE],
+      defaultSurfaces: [SURFACE_TYPE.STORE_NOTICE, SURFACE_TYPE.HOME_FEED],
       priority: 'low',
       icon: 'fas fa-door-closed'
     },
@@ -429,6 +500,64 @@ export class HolonetIntentRegistry {
       defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
       priority: 'normal',
       icon: 'fas fa-bandage'
+    },
+
+    // Holopad games notifications
+    [INTENT_TYPE.GAME_INVITE_RECEIVED]: {
+      label: 'Game Invite Received',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-dice'
+    },
+    [INTENT_TYPE.GAME_INVITE_ACCEPTED]: {
+      label: 'Game Invite Accepted',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE],
+      priority: 'normal',
+      icon: 'fas fa-check'
+    },
+    [INTENT_TYPE.GAME_INVITE_DECLINED]: {
+      label: 'Game Invite Declined',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE],
+      priority: 'normal',
+      icon: 'fas fa-xmark'
+    },
+    [INTENT_TYPE.GAME_TURN_READY]: {
+      label: 'Game Turn Ready',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'high',
+      icon: 'fas fa-chess'
+    },
+    [INTENT_TYPE.GAME_WAGER_ESCROWED]: {
+      label: 'Game Wager Escrowed',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE],
+      priority: 'normal',
+      icon: 'fas fa-coins'
+    },
+    [INTENT_TYPE.GAME_WAGER_SETTLED]: {
+      label: 'Game Wager Settled',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-scale-balanced'
+    },
+    [INTENT_TYPE.GAME_COMPLETED]: {
+      label: 'Game Completed',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE],
+      priority: 'normal',
+      icon: 'fas fa-flag-checkered'
+    },
+    [INTENT_TYPE.GAME_PRIZE_AWARDED]: {
+      label: 'Game Prize Awarded',
+      category: 'games',
+      defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.GAMES_NOTICE, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+      priority: 'normal',
+      icon: 'fas fa-trophy'
     }
   };
 
@@ -478,6 +607,17 @@ export class HolonetIntentRegistry {
         priority: 'normal',
         icon: 'fas fa-message'
       };
+    }
+    for (const prefix of ['ship.', 'droid.', 'follower.', 'game.', 'garage.', 'shipyard.', 'allies.', 'faction.', 'training.', 'workbench.']) {
+      if (str.startsWith(prefix)) {
+        return {
+          label: str.replace(prefix, '').replace(/_/g, ' '),
+          category: prefix.replace('.', ''),
+          defaultSurfaces: [SURFACE_TYPE.HOME_FEED, SURFACE_TYPE.NOTIFICATION_BUBBLE],
+          priority: 'normal',
+          icon: 'fas fa-circle-info'
+        };
+      }
     }
     // Complete unknown — safe fallback
     return {

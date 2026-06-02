@@ -1523,45 +1523,15 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   _computeLevelupWealthCreditGrant(actor, selections = {}, selectedClass = null, session = null) {
-    const hasWealth = this._hasWealthTalent(actor, selections);
-    if (!hasWealth) return 0;
-
-    // Inline lineage-eligibility check: talentTreeIds first, then name fallback
-    const isLineageClass = (classEntry) => {
-      const classModel = ProgressionContentAuthority.resolveClass(classEntry) || classEntry || {};
-      const treeIds = classModel?.system?.talentTreeIds;
-      if (Array.isArray(treeIds) && treeIds.length) {
-        return treeIds.map(t => String(t || '').toLowerCase().trim()).includes('lineage');
-      }
-      const key = String(classModel?.name || classModel?.label || classModel?.id || classEntry?.name || classEntry || '')
-        .toLowerCase().replace(/[^a-z0-9]+/g, '');
-      return key === 'noble' || key === 'corporateagent';
+    const effectiveSelections = {
+      ...(selections || {}),
+      class: selectedClass || selections?.class || session?.getSelection?.('class') || session?.draftSelections?.class || null,
     };
-
-    // Count all lineage-eligible class levels already on the actor (pre-mutation)
-    const effectiveClass = selectedClass || selections.class;
-    let lineageLevelCount = 0;
-    for (const classItem of ActorAbilityBridge.getClasses(actor)) {
-      if (isLineageClass(classItem)) {
-        lineageLevelCount += Math.max(0, Number(classItem?.level ?? classItem?.system?.level ?? 0) || 0);
-      }
-    }
-    // Add 1 for the newly-selected class if it is lineage-eligible
-    if (isLineageClass(effectiveClass)) lineageLevelCount += 1;
-    if (lineageLevelCount === 0) return 0;
-
-    // Guard against double-processing the same character level-up
-    try {
-      const levelContext = buildLevelUpEventContext(actor, session || globalThis.game?.swse?.currentProgressionShell?.progressionSession, { selectedClass: effectiveClass });
-      const characterLevel = Number(levelContext?.enteringLevel || 1) || 1;
-      const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-      const grantedCharLevels = history?.['swse.talent.wealth']?.characterLevelsGranted || [];
-      if (grantedCharLevels.map(Number).includes(characterLevel)) return 0;
-    } catch (_err) {
-      // Cannot determine level context; proceed with grant
-    }
-
-    return Math.max(0, lineageLevelCount * 5000);
+    return ProgressionFinalizer._computeLevelupWealthCreditGrant(actor, effectiveSelections, {
+      mode: 'levelup',
+      progressionSession: session || globalThis.game?.swse?.currentProgressionShell?.progressionSession || null,
+      targetLevel: session?.targetLevel,
+    });
   }
 
   _hasWealthTalent(actor, selections = {}) {

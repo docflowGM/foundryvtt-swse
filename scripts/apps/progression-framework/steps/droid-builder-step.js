@@ -48,6 +48,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       this._droidState = this._initializeDroidState(shell.actor, shell);
     }
 
+    if (this._droidState) {
+      this._refreshSizeDependentSystems();
+      this._normalizeDroidCredits();
+      this._syncDraftDroidIdentity(shell);
+    }
+
     // Get suggested droid systems
     await this._getSuggestedSystems(shell.actor, shell);
   }
@@ -62,40 +68,65 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       return null;
     }
 
-    const speciesContext = shell?.progressionSession?.draftSelections?.pendingSpeciesContext || null;
+    const session = shell?.progressionSession || null;
+    const speciesContext = session?.draftSelections?.pendingSpeciesContext || null;
     const speciesDroidBuilder = speciesContext?.metadata?.droidBuilder || speciesContext?.ledger?.rules?.droidBuilder || null;
+    const draftDroid = session?.draftSelections?.droid && typeof session.draftSelections.droid === 'object'
+      ? session.draftSelections.droid
+      : {};
+    const droidContext = session?.droidContext || {};
 
-    // Check if actor is a droid character or an organic species that requires a droid-shell builder.
-    const isDroid = actor?.system?.isDroid || !!speciesDroidBuilder?.required;
+    // Check if this is a droid chargen participant.  Newly-created droid PCs can
+    // enter the builder before the live actor document has been materialized as a
+    // droid, so the subtype/session context must be authoritative here.
+    const isDroid = actor?.type === 'droid'
+      || actor?.system?.isDroid === true
+      || session?.subtype === 'droid'
+      || droidContext?.isDroid === true
+      || draftDroid?.isDroid === true
+      || !!draftDroid?.droidSystems
+      || !!speciesDroidBuilder?.required;
     if (!isDroid) {
+      swseLogger.warn('[DroidBuilderStep] Refusing to initialize droid state for non-droid context', {
+        actorType: actor?.type,
+        actorIsDroid: actor?.system?.isDroid === true,
+        subtype: session?.subtype,
+        hasDroidContext: !!session?.droidContext,
+        hasDraftDroid: Object.keys(draftDroid || {}).length > 0,
+      });
       return null;
     }
 
+    this._ensureDroidSessionContext(shell, actor, draftDroid);
+
     // Get creation mode from session
-    const creationMode = speciesDroidBuilder?.mode || shell?.progressionSession?.droidContext?.creationMode || 'custom';
+    const creationMode = speciesDroidBuilder?.mode
+      || draftDroid.creationMode
+      || shell?.progressionSession?.droidContext?.creationMode
+      || 'custom';
     const isStandardModel = creationMode === 'standard-model';
 
     // Get house rule settings
-    let baseCredits = ProgressionRules.getDroidConstructionCredits(); // Default 1000 for custom
+    let baseCredits = Number(draftDroid?.droidCredits?.base ?? ProgressionRules.getDroidConstructionCredits()); // Default 1000 for custom
     const allowOverflow = ProgressionRules.droidOverflowEnabled();
 
     // RAW: Standard model droids have a 5000 credit cap total (includes model base cost)
     if (isStandardModel) {
-      const modelBaseCost = shell?.progressionSession?.draftSelections?.droid?.standardModelBaseCost || 0;
-      baseCredits = 5000 - modelBaseCost; // Remaining budget after model cost
+      const modelBaseCost = Number(draftDroid?.standardModelBaseCost ?? draftDroid?.droidCredits?.standardModelBaseCost ?? 0);
+      baseCredits = Math.max(0, 5000 - modelBaseCost); // Remaining budget after model cost
     }
-
-    const draftDroid = shell?.progressionSession?.draftSelections?.droid || {};
 
     // Get degree/size for RAW defaults. Prefer already-selected chargen draft values
     // over the actor document so the builder reflects the previous droid identity step.
     const degree = (speciesDroidBuilder?.fixedDegree
       || draftDroid.droidDegree
+      || shell?.progressionSession?.droidContext?.degree
       || speciesDroidBuilder?.defaultDegree
       || actor?.system?.droidDegree
       || '1st-degree').toLowerCase();
     const size = (speciesDroidBuilder?.fixedSize
       || draftDroid.droidSize
+      || shell?.progressionSession?.droidContext?.size
       || speciesDroidBuilder?.defaultSize
       || actor?.system?.droidSize
       || 'medium').toLowerCase();
@@ -103,16 +134,18 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const defaultSpeed = getDroidSizeBaseSpeed(size);
     const costFactor = getDroidSizeCostFactor(size);
 
-    // Initialize with actor's current droid state, or RAW defaults
-    const droidSystems = actor?.system?.droidSystems || {
+    const defaultDroidSystems = {
       locomotion: {
         id: defaultLocomotionId,
         name: this._getLocomotionName(defaultLocomotionId),
         speed: defaultSpeed,
         costFactor: costFactor,
-        cost: this._calculateLocomotionCost(defaultLocomotionId, defaultSpeed, costFactor),
+        // The chassis' default locomotion is part of the baseline frame in chargen.
+        // It should not consume construction credits until the player replaces it.
+        cost: 0,
         weight: this._calculateLocomotionWeight(defaultLocomotionId, costFactor),
-        isDefault: true
+        isDefault: true,
+        isGranted: true
       },
       processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5 },
       appendages: [
@@ -126,11 +159,21 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       totalWeight: 0
     };
 
+    // Initialize from recovered draft first, then actor document, then RAW defaults.
+    // Empty/partial objects are merged with required defaults so the first real
+    // droid chargen step never renders an unavailable-state dead end.
+    const droidSystems = this._mergeDroidSystemsWithDefaults(
+      defaultDroidSystems,
+      draftDroid?.droidSystems || actor?.system?.droidSystems || null
+    );
+
     // Deep copy systems to avoid mutating actor data directly during building
     const systemsCopy = JSON.parse(JSON.stringify(droidSystems));
+    const spentCredits = Number(draftDroid?.droidCredits?.spent ?? actor?.system?.droidCredits?.spent ?? 0);
+    const standardModelBaseCost = Number(draftDroid?.standardModelBaseCost ?? draftDroid?.droidCredits?.standardModelBaseCost ?? 0);
 
     // PHASE A + B: Extended state model for budget-aware deferred construction
-    return {
+    const initializedState = {
       isDroid: true,
       creationMode: creationMode,  // 'custom' or 'standard-model'
       isStandardModel: isStandardModel,
@@ -145,12 +188,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       // PHASE A + B: Budget tracking (use-it-or-lose-it)
       droidCredits: {
         base: baseCredits,
-        spent: actor?.system?.droidCredits?.spent || 0,
-        remaining: baseCredits - (actor?.system?.droidCredits?.spent || 0),
+        spent: spentCredits,
+        remaining: baseCredits - spentCredits,
         // New: Track whether overflow into general credits is allowed
         allowOverflow: allowOverflow,
         // Standard model: track total cap (5000) vs budget remaining
-        standardModelBaseCost: isStandardModel ? shell?.progressionSession?.draftSelections?.droid?.standardModelBaseCost || 0 : 0,
+        standardModelBaseCost: isStandardModel ? standardModelBaseCost : 0,
         maxTotalCost: isStandardModel ? 5000 : Infinity
       },
 
@@ -198,6 +241,117 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       // PHASE A + B: Suggestion mode hint
       suggestionMode: 'preview'  // 'preview' (provisional) | 'final' (finalized)
     };
+
+    this._normalizeDroidCredits(initializedState);
+    return initializedState;
+  }
+
+  /**
+   * Normalize droid construction accounting so remaining credits are always
+   * derived from the authoritative base/spent pair instead of stale recovered
+   * session data.
+   * @private
+   */
+  _normalizeDroidCredits(state = this._droidState) {
+    if (!state) return null;
+    if (!state.droidCredits || typeof state.droidCredits !== 'object') {
+      state.droidCredits = {};
+    }
+
+    const credits = state.droidCredits;
+    const fallbackBase = ProgressionRules.getDroidConstructionCredits();
+    const base = Number.isFinite(Number(credits.base)) ? Number(credits.base) : fallbackBase;
+    const spent = Number.isFinite(Number(credits.spent)) ? Math.max(0, Number(credits.spent)) : 0;
+
+    credits.base = base;
+    credits.spent = spent;
+    credits.remaining = base - spent;
+    credits.allowOverflow = !!credits.allowOverflow;
+    if (state.isStandardModel) {
+      credits.standardModelBaseCost = Number(credits.standardModelBaseCost || state.standardModelBaseCost || 0);
+      credits.maxTotalCost = Number.isFinite(Number(credits.maxTotalCost)) ? Number(credits.maxTotalCost) : 5000;
+    }
+
+    return credits;
+  }
+
+  /**
+   * Ensure a droid chargen session has the context normally seeded by the droid
+   * subtype adapter. Inline recovery can restore directly into the builder before
+   * a live actor document has droid-shaped system data, so the builder maintains
+   * the minimum context it needs to render and validate safely.
+   * @private
+   */
+  _ensureDroidSessionContext(shell, actor, draftDroid = {}) {
+    const session = shell?.progressionSession;
+    if (!session) return;
+
+    if (!session.droidContext || typeof session.droidContext !== 'object') {
+      session.droidContext = {};
+    }
+
+    const degree = draftDroid?.droidDegree || session.droidContext.degree || actor?.system?.droidDegree || '1st-degree';
+    const size = draftDroid?.droidSize || session.droidContext.size || actor?.system?.droidSize || 'medium';
+
+    session.subtype = session.subtype || 'droid';
+    session.droidContext = {
+      ...session.droidContext,
+      isDroid: true,
+      creationMode: session.droidContext.creationMode || draftDroid?.creationMode || 'custom',
+      pointBuyPool: Number(session.droidContext.pointBuyPool || 20),
+      excludedAbilities: Array.isArray(session.droidContext.excludedAbilities) ? session.droidContext.excludedAbilities : ['con'],
+      conBase: 0,
+      degree,
+      degreePackage: session.droidContext.degreePackage || DROID_DEGREE_PACKAGES[String(degree).toLowerCase()] || null,
+      size,
+      attributeGenerationConfig: session.droidContext.attributeGenerationConfig || {
+        abilityCount: 5,
+        abilityKeys: ['STR', 'DEX', 'INT', 'WIS', 'CHA'],
+        abilitySystemKeys: ['str', 'dex', 'int', 'wis', 'cha'],
+        standardRollCount: 5,
+        organicDiceCount: 18,
+        organicGroupCount: 5,
+        organicDropCount: 3,
+        arrays: {
+          standard: [15, 14, 13, 12, 10],
+          highPower: [16, 14, 12, 10, 8],
+        },
+      },
+    };
+  }
+
+  /**
+   * Merge recovered/actor droid systems over required RAW defaults.  This keeps
+   * partial legacy data from producing a null builder state or an empty surface.
+   * @private
+   */
+  _mergeDroidSystemsWithDefaults(defaultSystems, existingSystems = null) {
+    const defaults = JSON.parse(JSON.stringify(defaultSystems || {}));
+    const existing = existingSystems && typeof existingSystems === 'object'
+      ? JSON.parse(JSON.stringify(existingSystems))
+      : {};
+
+    const merged = {
+      ...defaults,
+      ...existing,
+      locomotion: existing.locomotion || defaults.locomotion || null,
+      processor: existing.processor || defaults.processor || null,
+      appendages: Array.isArray(existing.appendages) && existing.appendages.length > 0
+        ? existing.appendages
+        : (defaults.appendages || []),
+      accessories: Array.isArray(existing.accessories) ? existing.accessories : (defaults.accessories || []),
+      locomotionEnhancements: Array.isArray(existing.locomotionEnhancements)
+        ? existing.locomotionEnhancements
+        : (defaults.locomotionEnhancements || []),
+      appendageEnhancements: Array.isArray(existing.appendageEnhancements)
+        ? existing.appendageEnhancements
+        : (defaults.appendageEnhancements || []),
+    };
+
+    merged.totalCost = Number.isFinite(Number(existing.totalCost)) ? Number(existing.totalCost) : Number(defaults.totalCost || 0);
+    merged.totalWeight = Number.isFinite(Number(existing.totalWeight)) ? Number(existing.totalWeight) : Number(defaults.totalWeight || 0);
+
+    return merged;
   }
 
   /**
@@ -263,6 +417,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         confidenceMap: {},
       };
     }
+
+    this._normalizeDroidCredits();
+    this._syncDraftDroidIdentity(shell);
 
     // PHASE D: Flatten PHASE D suggestions (organized by category) into array for display
     const suggestionsArray = this._flattenDroidSuggestions(this._suggestedSystems);
@@ -638,14 +795,56 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const draft = shell?.progressionSession?.draftSelections;
     if (!draft) return;
     if (!draft.droid) draft.droid = {};
+    draft.droid.isDroid = true;
+    this._normalizeDroidCredits();
+    draft.droid.creationMode = this._droidState.creationMode || 'custom';
     draft.droid.droidDegree = this._droidState.droidDegree;
     draft.droid.droidSize = this._droidState.droidSize;
+    draft.droid.droidSystems = JSON.parse(JSON.stringify(this._droidState.droidSystems || {}));
+    draft.droid.droidCredits = JSON.parse(JSON.stringify(this._droidState.droidCredits || {}));
+    draft.droid.buildState = JSON.parse(JSON.stringify(this._droidState.buildState || {}));
 
     if (shell?.progressionSession?.droidContext) {
       shell.progressionSession.droidContext.degree = this._droidState.droidDegree;
       shell.progressionSession.droidContext.size = this._droidState.droidSize;
       shell.progressionSession.droidContext.degreePackage = DROID_DEGREE_PACKAGES[this._droidState.droidDegree];
     }
+  }
+
+  /**
+   * Remove duplicate singleton installs that can be produced by repeated event
+   * binding or fast double-clicks before the shell finishes re-rendering.
+   * Appendages are intentionally left alone because multiple limbs can be valid.
+   * @private
+   */
+  _dedupeInstalledSingletonSystems() {
+    const sys = this._droidState?.droidSystems;
+    if (!sys) return false;
+
+    let changed = false;
+    const dedupeByKey = (items, keyFn) => {
+      if (!Array.isArray(items)) return [];
+      const seen = new Set();
+      const deduped = [];
+      for (const item of items) {
+        if (!item) continue;
+        const key = keyFn(item);
+        if (key && seen.has(key)) {
+          changed = true;
+          continue;
+        }
+        if (key) seen.add(key);
+        deduped.push(item);
+      }
+      if (deduped.length !== items.length) changed = true;
+      return deduped;
+    };
+
+    sys.accessories = dedupeByKey(sys.accessories, item => `${item.category || item.subcategory || 'base'}:${item.id || ''}`);
+    sys.locomotionEnhancements = dedupeByKey(sys.locomotionEnhancements, item => item.id || '');
+    sys.appendageEnhancements = dedupeByKey(sys.appendageEnhancements, item => item.id || '');
+
+    return changed;
   }
 
   /**
@@ -657,7 +856,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const credits = this._droidState?.droidCredits;
     if (!sys || !credits) return;
 
-    const oldSpent = Number(credits.spent || 0);
+    this._dedupeInstalledSingletonSystems();
+
     let recalculatedSpent = 0;
 
     if (sys.locomotion) {
@@ -719,10 +919,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     });
     recalculatedSpent += (sys.appendageEnhancements || []).reduce((sum, enhancement) => sum + Number(enhancement.cost || 0), 0);
 
-    // Preserve the existing budget contract: spent tracks charged/purchased systems.
-    // When recalculation cannot identify any charged systems, keep the prior value.
-    credits.spent = Math.max(0, recalculatedSpent || oldSpent);
-    credits.remaining = Number(credits.base || 0) - Number(credits.spent || 0);
+    // Spent tracks charged/purchased systems only. A fresh chargen chassis with
+    // only granted defaults should therefore remain at 0 spent / full budget.
+    credits.spent = Math.max(0, Number(recalculatedSpent || 0));
+    this._normalizeDroidCredits();
     this._recalculateTotals();
   }
 
@@ -734,7 +934,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (!this._droidState) return false;
 
     const sys = this._droidState.droidSystems;
-    const credits = this._droidState.droidCredits;
+    const credits = this._normalizeDroidCredits();
     let system = null;
     let cost = 0;
 
@@ -743,6 +943,11 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         swseLogger.warn('[DroidBuilderStep] System blocked by species droid-builder constraints', {
           category, id, subcategory, sourceSpecies: this._droidState?.sourceSpecies,
         });
+        return false;
+      }
+
+      if (this._isSingletonSystemInstalled(category, id, subcategory)) {
+        swseLogger.warn('[DroidBuilderStep] Duplicate singleton install ignored', { category, id, subcategory });
         return false;
       }
 
@@ -859,7 +1064,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       if (cost > 0) {
         credits.spent += cost;
       }
-      credits.remaining = credits.base - credits.spent;
+      this._normalizeDroidCredits();
       this._recalculateTotals();
 
       return true;
@@ -867,6 +1072,37 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       swseLogger.error('[DroidBuilderStep.purchaseSystem]', e);
       return false;
     }
+  }
+
+  /**
+   * Systems represented as single install rows should not be added twice.
+   * This protects against duplicated click bindings and rapid double-clicks.
+   * Locomotion and processor are replacement slots, so they are not blocked here.
+   * @private
+   */
+  _isSingletonSystemInstalled(category, id, subcategory = null) {
+    const sys = this._droidState?.droidSystems || {};
+    const normalizedCategory = String(category || '').trim();
+    const normalizedId = String(id || '').trim();
+    const normalizedSubcategory = subcategory == null ? null : String(subcategory).trim();
+
+    if (!normalizedId) return false;
+    if (normalizedCategory === 'accessory') {
+      return (sys.accessories || []).some(accessory => {
+        const itemSubcategory = accessory.category || accessory.subcategory || null;
+        return accessory.id === normalizedId && (!normalizedSubcategory || itemSubcategory === normalizedSubcategory);
+      });
+    }
+
+    if (normalizedCategory === 'enhancement' || normalizedCategory === 'locomotionEnhancement') {
+      return (sys.locomotionEnhancements || []).some(enhancement => enhancement.id === normalizedId);
+    }
+
+    if (normalizedCategory === 'appendageEnhancement') {
+      return (sys.appendageEnhancements || []).some(enhancement => enhancement.id === normalizedId);
+    }
+
+    return false;
   }
 
   _isSpeciesBonusEquipmentChoice(category, id, subcategory = null) {
@@ -888,7 +1124,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (!this._droidState) return false;
 
     const sys = this._droidState.droidSystems;
-    const credits = this._droidState.droidCredits;
+    const credits = this._normalizeDroidCredits();
 
     try {
       if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) {
@@ -937,7 +1173,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         }
       }
 
-      credits.remaining = credits.base - credits.spent;
+      this._normalizeDroidCredits();
       this._recalculateTotals();
 
       return true;
@@ -1097,6 +1333,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   renderSummaryPanel(context = {}) {
     if (!this._droidState) return null;
 
+    const shell = context?.shell || context?.progressionShell || null;
+    const contextMode = this._getDroidBuilderContextMode(shell);
     const readiness = this._validateDroidBuild();
     const builderVm = DroidBuilderViewModelAdapter.build({
       droidState: this._droidState,
@@ -1133,21 +1371,25 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
+    const readiness = this._validateDroidBuild();
+    const suggestionsArray = this._flattenDroidSuggestions(this._suggestedSystems);
+    const { suggestedIds, confidenceMap } = this.formatSuggestionsForDisplay(suggestionsArray);
+    const builderVm = DroidBuilderViewModelAdapter.build({
+      droidState: this._droidState,
+      readiness,
+      suggestedIds,
+      confidenceMap,
+      contextMode: 'chargenDraft',
+      selectedComponentKey: this._selectedComponentKey,
+    });
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-details.hbs',
       data: {
-        droidInfo: {
-          degree: this._droidState.droidDegree,
-          size: this._droidState.droidSize,
-        },
-        selectedSystems: this._droidState.droidSystems,
-        categories: this._getSystemCategories(),
-        creditsBase: this._droidState.droidCredits.base,
-        creditsSpent: this._droidState.droidCredits.spent,
-        creditsRemaining: this._droidState.droidCredits.remaining,
-        totalCost: this._droidState.droidSystems.totalCost,
-        totalWeight: this._droidState.droidSystems.totalWeight,
-        systemCount: this._countSelectedSystems(),
+        builderVm,
+        readiness,
+        buildComplete: readiness.isValid,
+        buildIssues: readiness.issues,
       },
     };
   }
@@ -1374,15 +1616,19 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         searchInput.addEventListener('input', (e) => this._onFilterSystems(e, workSurfaceEl));
       }
 
-      // Install system buttons. Keep purchase-system as a backwards-compatible alias.
-      const purchaseButtons = workSurfaceEl.querySelectorAll('[data-action="purchase-system"], [data-action="install-system"]');
+      // Install/remove buttons may live in the shell details rail, outside the work surface.
+      const rootEl = shell?.getRootElement?.() || workSurfaceEl;
+      const purchaseButtons = rootEl.querySelectorAll('[data-action="purchase-system"], [data-action="install-system"]');
       purchaseButtons.forEach(btn => {
+        if (btn.dataset.swseDroidBuilderPurchaseWired === 'true') return;
+        btn.dataset.swseDroidBuilderPurchaseWired = 'true';
         btn.addEventListener('click', (e) => this._onPurchaseSystem(e, shell, workSurfaceEl));
       });
 
-      // Remove system buttons
-      const removeButtons = workSurfaceEl.querySelectorAll('[data-action="remove-system"]');
+      const removeButtons = rootEl.querySelectorAll('[data-action="remove-system"]');
       removeButtons.forEach(btn => {
+        if (btn.dataset.swseDroidBuilderRemoveWired === 'true') return;
+        btn.dataset.swseDroidBuilderRemoveWired = 'true';
         btn.addEventListener('click', (e) => this._onRemoveSystem(e, shell, workSurfaceEl));
       });
     } catch (e) {
@@ -1575,7 +1821,13 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   _onPurchaseSystem(event, shell, workSurfaceEl) {
     event.preventDefault();
+    event.stopPropagation();
+
     const btn = event.currentTarget;
+    if (!btn || btn.dataset.swseDroidBuilderActionBusy === 'true') return;
+    btn.dataset.swseDroidBuilderActionBusy = 'true';
+    btn.disabled = true;
+
     const category = btn.dataset.category;
     const id = btn.dataset.id;
     const subcategory = btn.dataset.subcategory;
@@ -1588,6 +1840,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       this._rerenderShell(shell, 'droid-builder-install-system');
       ui.notifications.info(`${id} system installed`);
     } else {
+      btn.dataset.swseDroidBuilderActionBusy = 'false';
+      btn.disabled = false;
       ui.notifications.warn('Unable to install system - check credits and requirements');
     }
   }
@@ -1597,7 +1851,13 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   _onRemoveSystem(event, shell, workSurfaceEl) {
     event.preventDefault();
+    event.stopPropagation();
+
     const btn = event.currentTarget;
+    if (!btn || btn.dataset.swseDroidBuilderActionBusy === 'true') return;
+    btn.dataset.swseDroidBuilderActionBusy = 'true';
+    btn.disabled = true;
+
     const category = btn.dataset.category;
     const id = btn.dataset.id;
     const subcategory = btn.dataset.subcategory;
@@ -1609,6 +1869,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       // Trigger shell re-render to reflect state changes
       this._rerenderShell(shell, 'droid-builder-remove-system');
       ui.notifications.info(`${id} system removed`);
+    } else {
+      btn.dataset.swseDroidBuilderActionBusy = 'false';
+      btn.disabled = false;
     }
   }
 

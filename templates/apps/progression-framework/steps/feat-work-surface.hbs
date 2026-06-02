@@ -129,6 +129,70 @@
     {{/if}}
   </div>
 
+  {{#if hasSearchQuery}}
+  <section class="feat-group feat-search-results-group">
+    <div class="group-header group-header--static feat-search-results-header">
+      <div class="header-content">
+        <i class="fa-solid fa-magnifying-glass group-icon"></i>
+        <h3 class="group-title">Search Results</h3>
+        <span class="feat-search-query-pill">{{searchQueryLabel}}</span>
+        <span class="feat-count-badge">{{searchResultCount}}</span>
+      </div>
+    </div>
+
+    {{#if searchResults.length}}
+    <div class="feat-list feat-search-results-list">
+      {{#each searchResults as |feat|}}
+      <div class="feat-item feat-search-result {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
+           style="--feat-tree-indent: {{feat.treeIndent}};"
+           data-feat-id="{{feat.id}}"
+           data-item-id="{{feat.id}}"
+           data-action="focus-item"
+           {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
+        {{#if feat.iconPath}}
+        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
+          <img class="feat-item__icon-image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
+          <div class="feat-item__icon-scan"></div>
+        </div>
+        {{/if}}
+        <div class="feat-item-content">
+          <span class="feat-name">{{feat.name}}</span>
+          <div class="feat-search-result-meta-line">
+            <span class="feat-subcategory-pill">{{feat.searchCategoryLabel}}</span>
+            {{#if feat.subcategory}}<span class="feat-subcategory-pill feat-subcategory-pill--muted">{{feat.subcategory}}</span>{{/if}}
+            {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
+          </div>
+          {{#if feat.prerequisiteLine}}
+            <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
+              <i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}
+            </span>
+          {{/if}}
+          {{#if feat.shortSummary}}<span class="feat-search-summary">{{feat.shortSummary}}</span>{{/if}}
+        </div>
+        <div class="feat-item-meta">
+          {{#if feat.isSuggested}}
+          <span class="feat-synergy-badge">synergy</span>
+          {{/if}}
+          {{#unless feat.isAvailable}}
+            <span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>
+          {{else}}
+            <span class="feat-search-jump-chip">Open</span>
+            <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+          {{/unless}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="feat-search-empty">
+      <i class="fa-solid fa-radar"></i>
+      <span>No feats match “{{searchQueryLabel}}” in the current {{#if showAll}}full browser{{else}}legal-only list{{/if}}.</span>
+      {{#unless showAll}}<span class="feat-search-empty__hint">Toggle Showing All to inspect locked or prerequisite-gated feats.</span>{{/unless}}
+    </div>
+    {{/if}}
+  </section>
+  {{/if}}
+
   {{!-- Granted Starting Feats (Class, Species, Background) --}}
   {{#if grantedFeatsList}}
   <section class="feat-group granted-feats-group">

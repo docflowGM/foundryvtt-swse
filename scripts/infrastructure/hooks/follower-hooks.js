@@ -20,6 +20,23 @@ function _randomId() {
   return foundry.utils.randomID?.() ?? Math.random().toString(36).slice(2);
 }
 
+function _isFollowerOwnerActor(actor) {
+  if (!actor) return false;
+  if (actor.type === 'character') return true;
+
+  // Playable droid PCs may use the droid actor type during/after the v2
+  // chargen migration. Owned garage/property droids normally will not carry
+  // follower-granting talents, but this keeps legitimate droid PCs from being
+  // excluded from follower-slot grants.
+  if (actor.type === 'droid') return true;
+
+  return false;
+}
+
+function _resolveItemOwner(item) {
+  return item?.parent ?? item?.actor ?? null;
+}
+
 function _getSlots(actor) {
   return actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
 }
@@ -113,13 +130,13 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
  * @returns {Promise<Array>} The reconciled slot array
  */
 export async function reconcileFollowerEnhancementsForActor(actor) {
-  if (!actor || actor.type !== 'character') return;
+  if (!_isFollowerOwnerActor(actor)) return;
   await FollowerManager.reconcileEnhancementsForOwner(actor);
   await MinionManager.reconcileTalentsForOwner(actor);
 }
 
 export async function reconcileFollowerSlotsForActor(actor) {
-  if (!actor || actor.type !== 'character') return [];
+  if (!_isFollowerOwnerActor(actor)) return [];
 
   const talents = Array.from(actor.items || []).filter(item => item.type === 'talent' && FOLLOWER_TALENT_CONFIG[item.name]);
   const slots = _getSlots(actor).map(slot => ({ ...slot }));
@@ -191,8 +208,8 @@ export function initializeFollowerHooks() {
     if (game.user.id !== userId) return;
     if (item.type !== 'talent') return;
 
-    const actor = item.actor;
-    if (!actor || actor.type !== 'character') return;
+    const actor = _resolveItemOwner(item);
+    if (!_isFollowerOwnerActor(actor)) return;
 
     if (FollowerManager.isEnhancementTalent(item.name)) {
       await FollowerManager.applyEnhancement(actor, item);
@@ -224,8 +241,8 @@ export function initializeFollowerHooks() {
     // PHASE 10: Guard against cascading follower deletion loops
     if (options?.meta?.guardKey === 'follower-cleanup') return;
 
-    const actor = item.actor;
-    if (!actor || actor.type !== 'character') return;
+    const actor = _resolveItemOwner(item);
+    if (!_isFollowerOwnerActor(actor)) return;
 
     if (FollowerManager.isEnhancementTalent(item.name)) {
       await FollowerManager.removeEnhancement(actor, item);
@@ -271,9 +288,22 @@ export function initializeFollowerHooks() {
     await _setPendingDetachment(actor, item, uniqueFilled);
   });
 
+  Hooks.on('swse:progression:completed', async (data = {}) => {
+    const actor = data?.actor;
+    if (!_isFollowerOwnerActor(actor)) return;
+    if (actor.isOwner !== true && game.user?.isGM !== true) return;
+
+    try {
+      await reconcileFollowerSlotsForActor(actor);
+      await reconcileFollowerEnhancementsForActor(actor);
+    } catch (err) {
+      swseLogger?.warn?.(`[FollowerHooks] Progression reconciliation failed for ${actor?.name}:`, err);
+    }
+  });
+
   Hooks.on('updateActor', async (actor, changes, options, userId) => {
     if (game.user.id !== userId) return;
-    if (actor.type !== 'character') return;
+    if (!_isFollowerOwnerActor(actor)) return;
 
     // If follower stats need updating, do it elsewhere; keep this hook minimal.
     if (changes.system?.level) {

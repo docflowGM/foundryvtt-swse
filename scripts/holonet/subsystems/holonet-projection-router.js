@@ -4,7 +4,7 @@
  * Routes records to their target surfaces (Home feed, Bulletin, Messenger, etc.)
  */
 
-import { SURFACE_TYPE } from '../contracts/enums.js';
+import { SOURCE_FAMILY, SURFACE_TYPE } from '../contracts/enums.js';
 import { HolonetIntentRegistry } from '../contracts/holonet-intent-registry.js';
 import { HolonetProjectionSurface } from '../contracts/holonet-projection-surface.js';
 
@@ -49,6 +49,38 @@ const BUILTIN_RULES = {
   'builtin:store-notice': (record) => {
     if (record.sourceFamily === 'store') {
       return [SURFACE_TYPE.STORE_NOTICE];
+    }
+    return [];
+  },
+  /** Player-facing broadcasts always have a Home feed projection. */
+  'builtin:player-broadcast-home-feed': (record) => {
+    const homeFamilies = new Set([
+      SOURCE_FAMILY.MENTOR,
+      SOURCE_FAMILY.STORE,
+      SOURCE_FAMILY.PROGRESSION,
+      SOURCE_FAMILY.BULLETIN,
+      SOURCE_FAMILY.MESSENGER,
+      SOURCE_FAMILY.SYSTEM,
+      SOURCE_FAMILY.GM_AUTHORED,
+      SOURCE_FAMILY.SHIP,
+      SOURCE_FAMILY.HEALING,
+      SOURCE_FAMILY.DROID,
+      SOURCE_FAMILY.FOLLOWER,
+      SOURCE_FAMILY.GAMES,
+      SOURCE_FAMILY.TRAINING,
+      SOURCE_FAMILY.WORKBENCH,
+      SOURCE_FAMILY.GARAGE,
+      SOURCE_FAMILY.SHIPYARD,
+      SOURCE_FAMILY.ALLIES,
+      SOURCE_FAMILY.FACTION
+    ].filter(Boolean));
+    if (homeFamilies.has(record.sourceFamily)) return [SURFACE_TYPE.HOME_FEED];
+    return [];
+  },
+  /** Game records also have the game notice surface. */
+  'builtin:games-notice': (record) => {
+    if (record.sourceFamily === SOURCE_FAMILY.GAMES || String(record.intent ?? '').startsWith('game.')) {
+      return [SURFACE_TYPE.GAMES_NOTICE];
     }
     return [];
   }

@@ -110,8 +110,8 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
         abilitySystemKeys: ['str', 'dex', 'int', 'wis', 'cha'],
         // Standard rolling: 5 rolls instead of 6 (no CON roll)
         standardRollCount: 5,
-        // Organic rolling: 18d6 = 5 groups × 3 dice + 3 global drops
-        organicDiceCount: 18,
+        // Organic rolling: 15d6 = 5 groups × 3 dice (no CON roll)
+        organicDiceCount: 15,
         organicGroupCount: 5,
         organicDropCount: 3,
         // Predefined arrays without CON slot — SWSE RAW compliant
@@ -148,25 +148,28 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
       swseLogger.debug('[DroidAdapter] Force steps suppressed for droid', { suppressed });
     }
 
-    // Route based on droid creation mode
-    const creationMode = session.droidContext?.creationMode || 'custom';
-    let prioritized;
-
-    if (creationMode === 'standard-model') {
-      // Galactic Profile seeds the model data; DroidBuilder/Garage Construction
-      // Mode owns final chassis/systems confirmation. The old standalone
-      // droid-model step is deprecated and intentionally not part of the spine.
-      prioritized = ['intro', 'droid-builder', 'class'];
-    } else {
-      // DroidBuilder/Garage Construction Mode owns degree, size, chassis, and
-      // systems. The old standalone droid-degree step is deprecated and
-      // intentionally not part of the spine.
-      prioritized = ['intro', 'droid-builder', 'attribute'];
+    // Only chargen gets the droid chassis-first spine. Level-up keeps the
+    // registry/computer order so normal event gating remains authoritative.
+    if (session?.mode && session.mode !== 'chargen') {
+      return filtered;
     }
 
+    // Route based on droid creation mode. Droid player characters still use the
+    // same post-identity character spine as organic actors: attributes, class,
+    // L1 mentor survey, background, skills, feats, talents, and summary. The
+    // droid builder replaces biological Species; it must not remove Background
+    // or the L1 survey.
+    const creationMode = session.droidContext?.creationMode || 'custom';
+    const prioritized = creationMode === 'standard-model'
+      ? ['intro', 'droid-builder', 'attribute', 'class', 'l1-survey', 'background']
+      : ['intro', 'droid-builder', 'attribute', 'class', 'l1-survey', 'background'];
+
     const ordered = [];
+    const hasOrCanInject = (stepId) => filtered.includes(stepId)
+      || ['l1-survey', 'background'].includes(stepId);
+
     for (const stepId of prioritized) {
-      if (filtered.includes(stepId)) ordered.push(stepId);
+      if (hasOrCanInject(stepId) && !ordered.includes(stepId)) ordered.push(stepId);
     }
 
     // Add remaining steps in their natural order
@@ -180,6 +183,51 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
       ordered
     });
     return ordered;
+  }
+
+  async contributeProjection(projectedData, session, actor) {
+    const isDroid = session?.subtype === 'droid'
+      || session?.droidContext?.isDroid === true
+      || session?.draftSelections?.droid?.isDroid === true
+      || actor?.type === 'droid'
+      || actor?.system?.isDroid === true;
+
+    if (!isDroid) return projectedData;
+
+    const droidBuild = session?.draftSelections?.droid || {};
+    const degree = droidBuild.droidDegree || session?.droidContext?.degree || actor?.system?.droidDegree || '1st-degree';
+    const size = droidBuild.droidSize || session?.droidContext?.size || actor?.system?.droidSize || 'medium';
+
+    projectedData.metadata = {
+      ...(projectedData.metadata || {}),
+      isDroid: true,
+      hasConstitution: false,
+      droidDegree: degree,
+      droidSize: size,
+    };
+
+    projectedData.droid = {
+      ...(projectedData.droid || {}),
+      ...(droidBuild || {}),
+      isDroid: true,
+      droidDegree: degree,
+      droidSize: size,
+    };
+
+    if (projectedData.attributes && typeof projectedData.attributes === 'object') {
+      const attrs = { ...projectedData.attributes };
+      delete attrs.con;
+      projectedData.attributes = attrs;
+    }
+
+    if (projectedData.identity) {
+      projectedData.identity = {
+        ...projectedData.identity,
+        species: null,
+      };
+    }
+
+    return projectedData;
   }
 
   // ---------------------------------------------------------------------------
@@ -254,6 +302,23 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
   // ---------------------------------------------------------------------------
 
   async validateReadiness(session, actor) {
+    const isLevelup = session?.mode === 'levelup' || session?.mode === 'progression';
+    const actorIsDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
+
+    // Droid chassis construction is a chargen-only prerequisite. Existing droid
+    // PCs advancing through level-up already have their droid identity/systems
+    // on the actor, and level-up sessions intentionally do not carry a fresh
+    // draftSelections.droid build payload. Do not block dry-run/confirmation on
+    // a missing chargen build in that path.
+    if (isLevelup && actorIsDroid) {
+      swseLogger.debug('[DroidAdapter] Droid level-up readiness accepted from actor state', {
+        actorId: actor?.id,
+        droidDegree: actor?.system?.droidDegree,
+        droidSize: actor?.system?.droidSize,
+      });
+      return;
+    }
+
     const droidBuild = session.draftSelections?.droid;
 
     if (!droidBuild?.isDroid) {

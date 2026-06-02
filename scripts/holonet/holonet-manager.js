@@ -300,6 +300,50 @@ export class HolonetManager {
     }
   }
 
+
+  /**
+   * Publish a player-facing update to Holonet's Home feed. This is the preferred
+   * app-facing API for Garage, Shipyard, Allies, Factions, Training, Mentors,
+   * Games, and other systems that need to tell a player something.
+   *
+   * @param {Object} opts
+   * @param {string|string[]} [opts.recipients] Stable recipient id(s), e.g. player:<userId>
+   * @param {string} [opts.title]
+   * @param {string} [opts.body]
+   * @param {string} [opts.intent]
+   * @param {string} [opts.sourceFamily]
+   * @param {string} [opts.senderLabel]
+   * @param {string} [opts.level]
+   * @param {Object} [opts.metadata]
+   * @returns {Promise<boolean>}
+   */
+  static async homeNotice({
+    recipients = null,
+    title = '',
+    body = '',
+    intent = INTENT_TYPE.SYSTEM_NEW_EVENT,
+    sourceFamily = SOURCE_FAMILY.SYSTEM,
+    senderLabel = 'Holonet',
+    level = 'info',
+    metadata = {}
+  } = {}) {
+    return this.notify({
+      recipients,
+      title,
+      body,
+      intent,
+      sourceFamily,
+      category: metadata?.category ?? 'UPDATE',
+      level,
+      metadata: {
+        ...metadata,
+        homeFeed: true,
+        senderLabel
+      }
+    });
+  }
+
+
   // ─── Read State API ────────────────────────────────────────────────────
   /**
    * Mark all unread records as read for a recipient.

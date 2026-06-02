@@ -11,6 +11,7 @@
  */
 
 import { hydrateHolonetRecord, hydrateHolonetThread } from '../contracts/record-factory.js';
+import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js';
 
 export class HolonetStorage {
   static NS = 'foundryvtt-swse';
@@ -33,7 +34,11 @@ export class HolonetStorage {
   static #writeQueue = Promise.resolve();
 
   static async #enqueueWrite(label, fn) {
-    const run = this.#writeQueue.catch(() => undefined).then(fn);
+    // Wrap fn in ShellMutationGuard so settings writes from shell call stacks
+    // don't trigger the "Direct mutation detected" warning. Storage writes are
+    // pure data persistence and don't require shell repaint coordination.
+    const guarded = () => ShellMutationGuard.withDocumentMutation(null, fn);
+    const run = this.#writeQueue.catch(() => undefined).then(guarded);
     this.#writeQueue = run.catch(err => {
       console.error(`[HolonetStorage] queued write failed (${label}):`, err);
     });

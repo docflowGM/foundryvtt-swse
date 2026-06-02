@@ -8129,3 +8129,38 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
 .swse-character-sheet-form-root.swse-sheet-actor-mode--droid .system-chip .swse-droid-operate-button {
   justify-self: end;
 }
+
+/* Home surface dashboard reflow: keep comms tall and move session/status left. */
+.swse.sheet.actor.character.v2 .swse-home-surface {
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-home-holo-stage {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-home-left-stack,
+.swse.sheet.actor.character.v2 .swse-home-side-stack {
+  align-self: stretch !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-home-left-stack .swse-home-actor-widget {
+  align-self: stretch !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-home-comm-card {
+  min-height: 0 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-home-feed {
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}

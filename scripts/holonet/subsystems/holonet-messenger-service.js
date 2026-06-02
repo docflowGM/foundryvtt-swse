@@ -961,6 +961,22 @@ export class HolonetMessengerService {
         isSide: meta.threadType === THREAD_TYPE.SIDE,
         isNpcThread: meta.threadType === THREAD_TYPE.NPC,
         isJob: meta.threadType === THREAD_TYPE.JOB,
+        job: meta.job ? {
+          ...meta.job,
+          status: meta.job.status || 'posted',
+          statusLabel: this._jobStatusLabel(meta.job.status || 'posted'),
+          rewardCreditsLabel: meta.job.rewardCredits ? formatCredits(meta.job.rewardCredits) : '',
+          rewardItemUuids: safeArray(meta.job.rewardItemUuids),
+          hasItemRewards: safeArray(meta.job.rewardItemUuids).length > 0,
+          objectives: normalizeJobObjectiveEntries(meta.job).map(objective => ({
+            ...objective,
+            label: jobObjectiveLabel(objective),
+            statusLabel: jobObjectiveStatusLabel(objective.status),
+            rewardCreditsLabel: objective.rewardCredits ? formatCredits(objective.rewardCredits) : '',
+            isRequired: Boolean(objective.required || String(objective.type || '').toLowerCase() === 'primary')
+          })),
+          hasObjectives: normalizeJobObjectiveEntries(meta.job).length > 0
+        } : null,
         isPrivate: meta.threadType === THREAD_TYPE.PRIVATE || meta.threadType === THREAD_TYPE.NPC,
         threadType: meta.threadType,
         ownerId: meta.ownerId,
@@ -1372,10 +1388,16 @@ export class HolonetMessengerService {
     const composition = this._buildCompositionVm(actor, selectedThread, participantId, options);
     const pinnedMessages = messages.filter(m => m.isPinned);
     const presence = getActorPresence(actor);
+    const requestedAppMode = String(options.appMode || '').trim().toLowerCase();
+    const appMode = requestedAppMode === 'jobs' ? 'jobs' : 'chat';
+    const jobThreads = threads.filter(thread => thread.isJob);
 
     return {
       id: 'messenger',
       title: 'Messenger',
+      appMode,
+      jobThreads,
+      hasJobThreads: jobThreads.length > 0,
       actorName: actor?.name ?? '',
       actorId: actor?.id ?? null,
       actorCredits: creditsOf(actor),

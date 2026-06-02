@@ -15,6 +15,12 @@
 import { AurebeshTranslator } from "/systems/foundryvtt-swse/scripts/ui/dialogue/aurebesh-translator.js";
 import { TRANSLATION_PRESETS, MENTOR_PRESET_MAP } from "/systems/foundryvtt-swse/scripts/ui/dialogue/translation-presets.js";
 
+function mentorTrace(...args) {
+  if (globalThis.SWSE_MENTOR_TRACE === true) {
+    try { console.debug(...args); } catch (_err) {}
+  }
+}
+
 export class MentorTranslationIntegration {
   /**
    * Settings for Aurebesh translation
@@ -62,7 +68,7 @@ export class MentorTranslationIntegration {
     } = options;
 
     // [DEBUG] Translation render tracking
-    console.log('[SWSE Translation Debug] MentorTranslationIntegration.render() called', {
+    mentorTrace('[SWSE Translation Debug] MentorTranslationIntegration.render() called', {
       text_length: text?.length ?? 0,
       text_first_40: text?.slice?.(0, 40) ?? '(null)',
       container_exists: !!container,
@@ -72,7 +78,7 @@ export class MentorTranslationIntegration {
     });
 
     if (!text || !container) {
-      console.warn('[SWSE Translation Debug] MentorTranslationIntegration: missing text or container', {
+      mentorTrace('[SWSE Translation Debug] MentorTranslationIntegration: missing text or container', {
         text_empty: !text,
         container_null: !container,
       });
@@ -92,7 +98,7 @@ export class MentorTranslationIntegration {
     const enabled = force || (this.settings.enabled && userFlagValue);
 
     // [DEBUG] Translation enabled state
-    console.log('[SWSE Translation Debug] MentorTranslationIntegration translation enabled check', {
+    mentorTrace('[SWSE Translation Debug] MentorTranslationIntegration translation enabled check', {
       enabled,
       force,
       settings_enabled: this.settings.enabled,
@@ -101,7 +107,7 @@ export class MentorTranslationIntegration {
 
     if (!enabled) {
       // Just render plain text
-      console.log('[SWSE Translation Debug] Translation DISABLED — rendering plain text', {
+      mentorTrace('[SWSE Translation Debug] Translation DISABLED — rendering plain text', {
         text_length: text.length,
       });
       container.textContent = text;
@@ -119,7 +125,7 @@ export class MentorTranslationIntegration {
     await this._ensureCSSLoaded();
 
     // [DEBUG] About to render with translation
-    console.log('[SWSE Translation Debug] About to call AurebeshTranslator.render()', {
+    mentorTrace('[SWSE Translation Debug] About to call AurebeshTranslator.render()', {
       text_length: text.length,
       preset,
       container_tag: container.tagName,
@@ -137,7 +143,7 @@ export class MentorTranslationIntegration {
         container.dataset.preset = preset;
 
         // [DEBUG] onComplete callback
-        console.log('[SWSE Translation Debug] AurebeshTranslator.render() onComplete callback fired');
+        mentorTrace('[SWSE Translation Debug] AurebeshTranslator.render() onComplete callback fired');
 
         onComplete();
       },
@@ -145,7 +151,7 @@ export class MentorTranslationIntegration {
     });
 
     // [DEBUG] Translation render completed
-    console.log('[SWSE Translation Debug] MentorTranslationIntegration.render() completed', {
+    mentorTrace('[SWSE Translation Debug] MentorTranslationIntegration.render() completed', {
       result_tag: result?.tagName ?? '(null)',
     });
 

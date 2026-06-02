@@ -141,7 +141,8 @@ export function registerActorHooks() {
 
     Hooks.once('ready', () => {
         for (const actor of game.actors?.contents || []) {
-            if (actor?.type !== 'character') continue;
+            const canOwnFollowers = actor?.type === 'character' || actor?.type === 'droid';
+            if (!canOwnFollowers) continue;
             reconcileFollowerSlotsForActor(actor).catch((err) => {
                 SWSELogger.warn(`[Followers] Slot reconciliation failed for ${actor?.name}:`, err);
             });

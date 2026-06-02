@@ -181,6 +181,10 @@ export class UnlockAdapter {
       ? grant.skills.map((entry) => String(entry || '').trim()).filter(Boolean)
       : [];
 
+    if (typeof grant?.skills === 'string' && grant.skills.trim() && grant.skills.trim() !== 'selectedChoice') {
+      skills.push(grant.skills.trim());
+    }
+
     const selected = ability?.system?.selectedChoice || ability?.system?.selectedChoices;
     const selectedEntry = Array.isArray(selected) ? selected[0] : selected;
     const selectedSkill = typeof selectedEntry === 'string'

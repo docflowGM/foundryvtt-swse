@@ -36,6 +36,12 @@ const STEP_CHOICE_TYPE = {
  * Mentor Rail — manages mentor portrait, dialogue with AurebeshTranslator,
  * mood, and collapse state.
  */
+function mentorTrace(...args) {
+  if (globalThis.SWSE_MENTOR_TRACE === true) {
+    try { console.debug(...args); } catch (_err) {}
+  }
+}
+
 export class MentorRail {
   constructor(shell) {
     this.shell = shell;
@@ -132,7 +138,7 @@ export class MentorRail {
 
     // [DEBUG] Sequence tracking
     const speakNum = ProgressionDebugCapture?.nextMentorSpeak?.() ?? 0;
-    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] speak() called`, {
+    mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] speak() called`, {
       text_length: dialogueText.length,
       text_first_40: dialogueText.slice(0, 40),
       mood: mood,
@@ -153,7 +159,7 @@ export class MentorRail {
 
     // Abort any in-flight animation before starting or queuing a replacement.
     if (this._animationAbort) {
-      console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Aborting prior animation`, {
+      mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] Aborting prior animation`, {
         prior_signal_aborted: this._animationAbort.signal?.aborted ?? '(unknown)',
       });
       this._animationAbort.abort();
@@ -161,7 +167,7 @@ export class MentorRail {
     }
 
     if (!(container instanceof HTMLElement)) {
-      console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] No live mentor dialogue container; queueing pending dialogue`);
+      mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] No live mentor dialogue container; queueing pending dialogue`);
       this._queuePendingDialogue(dialogueText, mood);
       return;
     }
@@ -173,12 +179,12 @@ export class MentorRail {
     this._animationAbort = new AbortController();
     const { signal } = this._animationAbort;
 
-    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] New AbortController created`, {
+    mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] New AbortController created`, {
       signal_aborted: signal.aborted,
     });
 
     // [DEBUG] DOM search logging
-    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] DOM container search`, {
+    mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] DOM container search`, {
       shell_element_exists: !!shell.element,
       mentor_dialogue_found: !!container,
       container_tag: container?.tagName ?? '(null)',
@@ -192,7 +198,7 @@ export class MentorRail {
     try {
       // [DEBUG] Pre-render logging
       const mentorTextNode = container.querySelector('[data-mentor-text]');
-      console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] About to call MentorTranslationIntegration.render()`, {
+      mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] About to call MentorTranslationIntegration.render()`, {
         mentor_text_element: !!mentorTextNode,
         mentor_text_tag: mentorTextNode?.tagName ?? '(null)',
       });
@@ -203,18 +209,18 @@ export class MentorRail {
         mentor: shell.mentor.name || shell.mentor.mentorId,
         onComplete: () => {
           // [DEBUG] Callback execution logging
-          console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] onComplete callback fired`, {
+          mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] onComplete callback fired`, {
             signal_aborted: signal.aborted,
             isAnimating_before_cleanup: this.shell.mentor?.isAnimating ?? '(null)',
           });
 
           if (!signal.aborted) {
-            console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Signal NOT aborted, executing cleanup`);
+            mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] Signal NOT aborted, executing cleanup`);
             this.shell.mentor.currentDialogue = dialogueText;
             this.shell.mentor.animationState = 'complete';
             this.shell.mentor.isAnimating = false;
           } else {
-            console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Signal WAS aborted, skipping cleanup`);
+            mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] Signal WAS aborted, skipping cleanup`);
           }
         },
       });
@@ -236,7 +242,7 @@ export class MentorRail {
     }
 
     // [DEBUG] Final state logging
-    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] speak() completed`, {
+    mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] speak() completed`, {
       final_isAnimating: this.shell.mentor?.isAnimating ?? '(null)',
       final_currentDialogue: this.shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
       signal_aborted: signal.aborted,
@@ -252,7 +258,7 @@ export class MentorRail {
     if (!descriptor) return;
 
     // [DEBUG] speakForStep entry
-    console.log('[SWSE Translation Debug] speakForStep() called', {
+    mentorTrace('[SWSE Translation Debug] speakForStep() called', {
       descriptor_stepId: descriptor.stepId,
       descriptor_label: descriptor.label,
     });
@@ -265,7 +271,7 @@ export class MentorRail {
     );
     const mentorObj = guidance?.mentor || getStepMentorObject(this.shell?.actor ?? null, this.shell) || this._getMentorObject();
     if (!mentorObj) {
-      console.log('[SWSE Translation Debug] speakForStep() early return — no mentor object');
+      mentorTrace('[SWSE Translation Debug] speakForStep() early return — no mentor object');
       return;
     }
 
@@ -283,7 +289,7 @@ export class MentorRail {
       || `You are at the ${descriptor.label} step.`;
 
     // [DEBUG] Text resolution
-    console.log('[SWSE Translation Debug] speakForStep() resolved text', {
+    mentorTrace('[SWSE Translation Debug] speakForStep() resolved text', {
       choiceType: guidance?.choiceType,
       textSource: guidance?.textSource,
       mentorId: mentorKey,
@@ -295,11 +301,11 @@ export class MentorRail {
     });
 
     if (text) {
-      console.log('[SWSE Translation Debug] speakForStep() calling speak() with text');
+      mentorTrace('[SWSE Translation Debug] speakForStep() calling speak() with text');
       await this.speak(text);
-      console.log('[SWSE Translation Debug] speakForStep() speak() completed');
+      mentorTrace('[SWSE Translation Debug] speakForStep() speak() completed');
     } else {
-      console.log('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
+      mentorTrace('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
     }
   }
 

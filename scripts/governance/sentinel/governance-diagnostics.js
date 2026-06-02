@@ -237,15 +237,24 @@ export class GovernanceDiagnostics {
    * @returns {Object} Guardrail verification results
    */
   static verifyGuardrails() {
-    const results = {
+    const actorEngine = globalThis.SWSE?.ActorEngine
+      ?? globalThis.game?.swse?.ActorEngine
+      ?? globalThis.ActorEngine
+      ?? null;
+
+    const checks = {
       mutationInterceptor: typeof MutationInterceptor?.setContext === 'function',
       enforcementLevel: MutationInterceptor.getEnforcementLevel?.() !== null,
-      actorEngineAvailable: typeof ActorEngine !== 'undefined',
-      loggerAvailable: typeof SWSELogger !== 'undefined',
+      actorEngineAvailable: typeof actorEngine?.updateActor === 'function',
+      loggerAvailable: typeof SWSELogger !== 'undefined'
+    };
+
+    const results = {
+      ...checks,
       timestamp: new Date().toISOString()
     };
 
-    const allOK = Object.values(results).every(v => v === true);
+    const allOK = Object.values(checks).every(v => v === true);
     console.log(allOK
       ? '✅ All governance guardrails active'
       : '❌ Some guardrails missing'

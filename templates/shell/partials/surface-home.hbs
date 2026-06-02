@@ -80,62 +80,81 @@
       {{!-- HOLO-STAGE (3-COLUMN LAYOUT) --}}
       <div class="swse-home-holo-stage">
 
-        {{!-- LEFT COLUMN: ACTOR WIDGET --}}
-        <div class="swse-home-actor-widget">
-          <div class="swse-home-actor-head">
-            <div class="swse-home-actor-portrait">
-              {{#if actor.img}}
-              <img src="{{actor.img}}" alt="{{actor.name}}" />
+        {{!-- LEFT COLUMN: ACTOR WIDGET + SESSION STATUS --}}
+        <div class="swse-home-left-stack">
+          <div class="swse-home-actor-widget">
+            <div class="swse-home-actor-head">
+              <div class="swse-home-actor-portrait">
+                {{#if actor.img}}
+                <img src="{{actor.img}}" alt="{{actor.name}}" />
+                {{else}}
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <circle cx="50" cy="34" r="14"/>
+                  <path d="M22 86 q0 -22 28 -22 t28 22"/>
+                </svg>
+                {{/if}}
+              </div>
+              <div>
+                <div class="swse-home-actor-name">{{actor.name}}</div>
+                <div class="swse-home-actor-sub">{{vm.classDisplay}} · {{vm.species}} · {{vm.affiliation}}</div>
+              </div>
+            </div>
+
+            <div class="swse-home-actor-vitals">
+              <div class="swse-home-vital hp">
+                <span class="swse-home-vital-lbl">HP</span>
+                <div class="swse-home-vital-bar">
+                  <div class="swse-home-vital-fill" style="width: {{vm.hpPercent}}%;"></div>
+                </div>
+                <span class="swse-home-vital-val">{{vm.hpCurrent}} / {{vm.hpMax}}</span>
+              </div>
+              <div class="swse-home-vital fp">
+                <span class="swse-home-vital-lbl">FP</span>
+                <div class="swse-home-vital-bar">
+                  <div class="swse-home-vital-fill" style="width: {{vm.fpPercent}}%;"></div>
+                </div>
+                <span class="swse-home-vital-val">{{vm.fpCurrent}} / {{vm.fpMax}}</span>
+              </div>
+              <div class="swse-home-vital dt">
+                <span class="swse-home-vital-lbl">DT</span>
+                <div class="swse-home-vital-bar">
+                  <div class="swse-home-vital-fill" style="width: {{vm.dtPercent}}%;"></div>
+                </div>
+                <span class="swse-home-vital-val">{{vm.dt}}</span>
+              </div>
+              <div class="swse-home-vital xp">
+                <span class="swse-home-vital-lbl">XP</span>
+                <div class="swse-home-vital-bar">
+                  <div class="swse-home-vital-fill" style="width: {{vm.xpPercent}}%;"></div>
+                </div>
+                <span class="swse-home-vital-val">{{vm.xpCurrent}} / {{vm.xpMax}}</span>
+              </div>
+            </div>
+          </div>
+
+          {{!-- LAST SESSION / CURRENT STATUS --}}
+          <div class="swse-home-side-card swse-home-session-card">
+            <div class="swse-home-side-head">
+              <span>▸ Last Session</span>
+              <span class="swse-home-side-hint">status</span>
+            </div>
+            <div class="swse-home-session-status">
+              {{#if vm.currentState.situation}}
+              <span class="em">[STATUS]</span> {{vm.currentState.situation}}
+              {{#if vm.currentState.updatedAt}}<br><span class="swse-home-session-updated">Updated {{vm.currentState.updatedAt}}</span>{{/if}}
               {{else}}
-              <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.4">
-                <circle cx="50" cy="34" r="14"/>
-                <path d="M22 86 q0 -22 28 -22 t28 22"/>
-              </svg>
+              <span class="em">[STATUS]</span> No active objective. Awaiting orders.
               {{/if}}
             </div>
-            <div>
-              <div class="swse-home-actor-name">{{actor.name}}</div>
-              <div class="swse-home-actor-sub">{{vm.classDisplay}} · {{vm.species}} · {{vm.affiliation}}</div>
+            {{#if vm.lastSession}}
+            {{#if vm.lastSession.imageUrl}}
+            <img class="swse-home-session-image" src="{{vm.lastSession.imageUrl}}" alt="{{vm.lastSession.title}}">
+            {{/if}}
+            <div class="swse-home-session-preview">
+              {{{vm.lastSession.preview}}}
             </div>
-          </div>
-
-          <div class="swse-home-actor-vitals">
-            <div class="swse-home-vital hp">
-              <span class="swse-home-vital-lbl">HP</span>
-              <div class="swse-home-vital-bar">
-                <div class="swse-home-vital-fill" style="width: {{vm.hpPercent}}%;"></div>
-              </div>
-              <span class="swse-home-vital-val">{{vm.hpCurrent}} / {{vm.hpMax}}</span>
-            </div>
-            <div class="swse-home-vital fp">
-              <span class="swse-home-vital-lbl">FP</span>
-              <div class="swse-home-vital-bar">
-                <div class="swse-home-vital-fill" style="width: {{vm.fpPercent}}%;"></div>
-              </div>
-              <span class="swse-home-vital-val">{{vm.fpCurrent}} / {{vm.fpMax}}</span>
-            </div>
-            <div class="swse-home-vital dt">
-              <span class="swse-home-vital-lbl">DT</span>
-              <div class="swse-home-vital-bar">
-                <div class="swse-home-vital-fill" style="width: {{vm.dtPercent}}%;"></div>
-              </div>
-              <span class="swse-home-vital-val">{{vm.dt}}</span>
-            </div>
-            <div class="swse-home-vital xp">
-              <span class="swse-home-vital-lbl">XP</span>
-              <div class="swse-home-vital-bar">
-                <div class="swse-home-vital-fill" style="width: {{vm.xpPercent}}%;"></div>
-              </div>
-              <span class="swse-home-vital-val">{{vm.xpCurrent}} / {{vm.xpMax}}</span>
-            </div>
-          </div>
-
-          <div class="swse-home-actor-blurb">
-            {{#if vm.currentState.situation}}
-            <span class="em">[STATUS]</span> {{vm.currentState.situation}}
-            {{#if vm.currentState.updatedAt}}<br><span style="font-size: 9px; color: var(--ink-faint);">Updated {{vm.currentState.updatedAt}}</span>{{/if}}
             {{else}}
-            <span class="em">[STATUS]</span> No active objective. Awaiting orders.
+            <p class="swse-home-feed-empty">No recap has been published yet.</p>
             {{/if}}
           </div>
         </div>
@@ -232,7 +251,7 @@
         {{!-- RIGHT COLUMN: SIDE STACK --}}
         <div class="swse-home-side-stack">
           {{!-- COMM FEED --}}
-          <div class="swse-home-side-card">
+          <div class="swse-home-side-card swse-home-comm-card">
             <div class="swse-home-side-head">
               <span>◆ Comm Feed</span>
               <span class="swse-home-side-hint">
@@ -245,15 +264,24 @@
             </div>
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
-              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" {{#if this.recordId}}data-holonet-record-id="{{this.recordId}}"{{/if}} {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.routeId}}data-route-id="{{this.routeId}}"{{/if}} {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}>
+              <button class="swse-home-feed-row {{this.category}} {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" {{#if this.recordId}}data-holonet-record-id="{{this.recordId}}"{{/if}} {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.routeId}}data-route-id="{{this.routeId}}"{{/if}} {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}>
                 {{#if this.imageUrl}}
                 <span class="swse-home-feed-thumb"><img src="{{this.imageUrl}}" alt="{{this.title}}"></span>
                 {{else}}
                 <span class="swse-home-feed-ico {{this.category}}">{{this.icon}}</span>
                 {{/if}}
-                <span><span class="em">{{this.sender}}</span>{{#if this.isBreakingNews}} <span class="swse-home-feed-alert swse-home-feed-alert--breaking">BREAKING NEWS</span>{{else if this.isUrgent}} <span class="swse-home-feed-alert">ALERT</span>{{/if}} — {{{this.preview}}}</span>
-                <span class="swse-home-feed-time">{{this.timestamp}}</span>
-                {{#if this.isUnread}}<span class="swse-home-feed-ack">ACK</span>{{/if}}
+                <span class="swse-home-feed-main">
+                  <span class="swse-home-feed-meta">
+                    <span class="swse-home-feed-source">{{this.sender}}</span>
+                    {{#if this.title}}<span class="swse-home-feed-title">{{this.title}}</span>{{/if}}
+                    {{#if this.isBreakingNews}}<span class="swse-home-feed-alert swse-home-feed-alert--breaking">BREAKING</span>{{else if this.isUrgent}}<span class="swse-home-feed-alert">ALERT</span>{{/if}}
+                  </span>
+                  <span class="swse-home-feed-preview">{{{this.preview}}}</span>
+                </span>
+                <span class="swse-home-feed-side">
+                  {{#if this.timestamp}}<span class="swse-home-feed-time">{{this.timestamp}}</span>{{/if}}
+                  {{#if this.isUnread}}<span class="swse-home-feed-ack">ACK</span>{{/if}}
+                </span>
               </button>
               {{else}}
               <p class="swse-home-feed-empty">No Holonet traffic yet.</p>
@@ -261,39 +289,6 @@
             </div>
           </div>
 
-          {{!-- QUICK GLANCE --}}
-          <div class="swse-home-side-card">
-            <div class="swse-home-side-head">
-              <span>◇ Quick Glance</span>
-              <span class="swse-home-side-hint">live</span>
-            </div>
-            <div class="swse-home-glance-grid">
-              {{#each vm.quickGlance}}
-              <div class="swse-home-glance">
-                <div class="swse-home-glance-k">{{this.label}}</div>
-                <div class="swse-home-glance-v {{this.tone}}">{{this.value}}</div>
-              </div>
-              {{/each}}
-            </div>
-          </div>
-
-          {{!-- LAST SESSION --}}
-          <div class="swse-home-side-card">
-            <div class="swse-home-side-head">
-              <span>▸ Last Session</span>
-              <span class="swse-home-side-hint">recap</span>
-            </div>
-            {{#if vm.lastSession}}
-            {{#if vm.lastSession.imageUrl}}
-            <img class="swse-home-session-image" src="{{vm.lastSession.imageUrl}}" alt="{{vm.lastSession.title}}">
-            {{/if}}
-            <div style="font-family: var(--font-mono); font-size: 10px; line-height: 1.55; color: var(--ink-dim);">
-              {{{vm.lastSession.preview}}}
-            </div>
-            {{else}}
-            <p class="swse-home-feed-empty">No recap has been published yet.</p>
-            {{/if}}
-          </div>
         </div>
       </div>
 

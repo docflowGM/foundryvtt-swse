@@ -294,7 +294,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-comments',
     category: 'canonical',
     modes: ['chargen'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['class'],
@@ -316,7 +316,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-book',
     category: 'canonical',
     modes: ['chargen'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 

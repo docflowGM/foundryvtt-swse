@@ -27,6 +27,7 @@ export class InventoryEngine {
 
     const currentEquipped = item.system?.equipped === true;
     const newValue = !currentEquipped;
+    const isLightsaber = WeaponVisualProfileResolver.isLightsaber(item);
 
     const updates = [];
 
@@ -66,6 +67,10 @@ export class InventoryEngine {
     await ActorEngine.updateOwnedItems(actor, updates, {
       source: "InventoryEngine.toggleEquip"
     });
+
+    if (isLightsaber) {
+      await LightsaberLightSync.syncActorTokenLight(actor, item);
+    }
   }
 
 

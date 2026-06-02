@@ -984,6 +984,68 @@ export class FeatStep extends ProgressionStepPlugin {
   // Step Plugin Methods
   // ---------------------------------------------------------------------------
 
+  _buildFeatDisplayEntry(feat, extra = {}) {
+    const featId = feat?._id || feat?.id || feat?.name || '';
+    return {
+      _id: feat?._id || feat?.id,
+      id: feat?.id || feat?._id,
+      name: feat?.name || 'Unknown Feat',
+      category: feat?.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
+      categoryKey: this._getFeatCategory(feat),
+      subcategory: feat?.subcategory || '',
+      prerequisiteLine: feat?.prerequisiteLine || this._getPrerequisiteLine(feat),
+      isSuggested: this._suggestedFeats.some(s => (s?._id || s?.id || s?.name) === (feat?._id || feat?.id || feat?.name)),
+      isFocused: featId === this._focusedFeatId,
+      isSelected: featId === this._selectedFeatId,
+      isAvailable: feat?.isAvailable !== false,
+      isOwned: !!feat?.isOwned,
+      isGranted: !!feat?.isGranted,
+      unavailabilityReason: feat?.unavailabilityReason || null,
+      missingPrerequisites: this._dedupeReasonList(feat?.missingPrerequisites || []),
+      blockingReasons: this._dedupeReasonList(feat?.blockingReasons || []),
+      treeIndent: feat?.treeIndent || 0,
+      shortSummary: feat?.shortSummary || '',
+      uiBroadTags: feat?.uiBroadTags || [],
+      iconPath: resolveFeatIconPath(feat) || feat?.iconPath || feat?.img || '',
+      ...extra,
+    };
+  }
+
+  _getSearchResultFeats() {
+    const query = String(this._searchQuery || '').trim().toLowerCase();
+    if (!query) return [];
+
+    const source = this._showAll ? this._allFeats : this._legalFeats;
+    const seen = new Set();
+    const scoreMatch = (feat) => {
+      const name = String(feat?.name || '').toLowerCase();
+      const prereq = String(feat?.prerequisiteLine || feat?.prerequisiteText || feat?.system?.prerequisite || '').toLowerCase();
+      const desc = this._getFeatDescription(feat).toLowerCase();
+      if (name === query) return 0;
+      if (name.startsWith(query)) return 1;
+      if (name.includes(query)) return 2;
+      if (prereq.includes(query)) return 3;
+      if (desc.includes(query)) return 4;
+      return 999;
+    };
+
+    return [...(source || [])]
+      .map(feat => ({ feat, score: scoreMatch(feat) }))
+      .filter(entry => entry.score < 999)
+      .sort((a, b) => {
+        if (a.score !== b.score) return a.score - b.score;
+        return String(a.feat?.name || '').localeCompare(String(b.feat?.name || ''));
+      })
+      .filter(({ feat }) => {
+        const key = String(feat?._id || feat?.id || feat?.name || '').toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 24)
+      .map(({ feat }) => feat);
+  }
+
   async getStepData(context) {
     // Prepare grouped feats for display
     const groupedDisplay = {};
@@ -1001,26 +1063,7 @@ export class FeatStep extends ProgressionStepPlugin {
         icon: group.icon,
         isSuggested: group.isSuggested,
         isExpanded: this._expandedCategories.has(categoryKey),
-        feats: featsToShow.map(feat => ({
-          _id: feat._id || feat.id,
-          id: feat.id || feat._id,
-          name: feat.name,
-          category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
-          subcategory: feat.subcategory || '',
-          prerequisiteLine: feat.prerequisiteLine || this._getPrerequisiteLine(feat),
-          isSuggested: this._suggestedFeats.some(s => (s._id || s.id) === (feat._id || feat.id)),
-          isFocused: (feat._id || feat.id) === this._focusedFeatId,
-          isSelected: (feat._id || feat.id) === this._selectedFeatId,
-          isAvailable: feat.isAvailable !== false,
-          isOwned: !!feat.isOwned,
-          isGranted: !!feat.isGranted,
-          unavailabilityReason: feat.unavailabilityReason || null,
-          missingPrerequisites: this._dedupeReasonList(feat.missingPrerequisites || []),
-          blockingReasons: this._dedupeReasonList(feat.blockingReasons || []),
-          treeIndent: feat.treeIndent || 0,
-          shortSummary: feat.shortSummary || '',
-          uiBroadTags: feat.uiBroadTags || [],
-        })),
+        feats: featsToShow.map(feat => this._buildFeatDisplayEntry(feat)),
         visibleCount: Math.min(featsToShow.length, FEATS_PER_CATEGORY_INITIAL),
         totalCount: featsToShow.length,
         canExpand: featsToShow.length > FEATS_PER_CATEGORY_INITIAL,
@@ -1074,29 +1117,25 @@ export class FeatStep extends ProgressionStepPlugin {
     for (const suggestion of this._suggestedFeats || []) {
       [suggestion?._id, suggestion?.id, suggestion?.name].filter(Boolean).forEach(value => suggestedIds.add(String(value)));
     }
-    const flatFeatList = this._filterFeatsBySearch(this._legalFeats).map(feat => ({
-      _id: feat._id || feat.id,
-      id: feat.id || feat._id,
-      name: feat.name,
-      category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
-      subcategory: feat.subcategory || '',
-      prerequisiteLine: feat.prerequisiteLine || this._getPrerequisiteLine(feat),
-      isSuggested: [feat._id, feat.id, feat.name].filter(Boolean).some(value => suggestedIds.has(String(value))),
-      isFocused: (feat._id || feat.id) === this._focusedFeatId,
-      isSelected: (feat._id || feat.id) === this._selectedFeatId,
-      isAvailable: feat.isAvailable !== false,
-      isOwned: !!feat.isOwned,
-      isGranted: !!feat.isGranted,
-      unavailabilityReason: feat.unavailabilityReason || null,
-      treeIndent: feat.treeIndent || 0,
-      shortSummary: feat.shortSummary || '',
-      uiBroadTags: feat.uiBroadTags || [],
-      iconPath: feat.iconPath || feat.img || '',
+    const flatFeatList = this._filterFeatsBySearch(this._legalFeats).map(feat => this._buildFeatDisplayEntry(feat, {
+      isSuggested: [feat?._id, feat?.id, feat?.name].filter(Boolean).some(value => suggestedIds.has(String(value))),
     }));
+
+    const normalizedSearchQuery = String(this._searchQuery || '').trim();
+    const searchResults = normalizedSearchQuery
+      ? this._getSearchResultFeats().map(feat => this._buildFeatDisplayEntry(feat, {
+        isSearchResult: true,
+        searchCategoryLabel: feat?.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
+      }))
+      : [];
 
     return {
       groupedFeats: groupedDisplay,
       flatFeatList,
+      searchResults,
+      hasSearchQuery: !!normalizedSearchQuery,
+      searchQueryLabel: normalizedSearchQuery,
+      searchResultCount: searchResults.length,
       isMulticlassStartingFeatSlot,
       focusedFeatId: this._focusedFeatId,
       selectedFeatId: this._selectedFeatId,

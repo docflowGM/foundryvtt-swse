@@ -160,7 +160,17 @@ export class HomeSurfaceController {
     const frame = () => {
       if (!this._abortController) return; // Destroyed
 
-      // Check if disc is still visible/in-flow
+      // Stop permanently if this controller belongs to a stale home DOM.
+      // Surface transitions remove the old home tree; continuing the RAF loop on
+      // disconnected nodes can keep stale shell/controller state alive and make
+      // later home renders look like a render storm.
+      if (!this.root?.isConnected || !this._disc?.isConnected || !this._needle?.isConnected) {
+        this.destroy();
+        return;
+      }
+
+      // Check if disc is still visible/in-flow. Hidden-but-connected surfaces may
+      // occur during AppV2 layout transitions, so pause but keep the controller.
       if (!this._disc.offsetParent) {
         this._animationFrameId = requestAnimationFrame(frame);
         return;

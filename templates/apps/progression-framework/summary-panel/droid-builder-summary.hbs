@@ -1,4 +1,4 @@
-{{!-- Droid Builder summary rail — read-only snapshot of the active chassis draft. --}}
+{{!-- Droid Builder summary rail — persistent read-only chassis draft snapshot. --}}
 <div class="prog-summary-panel prog-summary-panel--droid-builder">
   <div class="prog-summary__identity">
     <div class="prog-summary__portrait prog-holo-media prog-holo-media--avatar">
@@ -13,28 +13,22 @@
     </div>
   </div>
 
-  <div class="prog-summary__build">
+  <div class="prog-summary__build prog-summary__build--droid">
     <div class="prog-summary__row">
       <span class="prog-summary__row-label">Mode</span>
       <span class="prog-summary__row-value">{{builderVm.contextProfile.modeLabel}}</span>
     </div>
     <div class="prog-summary__row">
       <span class="prog-summary__row-label">Degree</span>
-      <span class="prog-summary__row-value">{{builderVm.chassis.degreeLabel}}</span>
+      <span class="prog-summary__row-value prog-summary__row-value--bright">{{builderVm.chassis.degreeLabel}}</span>
     </div>
     <div class="prog-summary__row">
       <span class="prog-summary__row-label">Size</span>
-      <span class="prog-summary__row-value">{{builderVm.chassis.sizeLabel}} · {{builderVm.chassis.multiplierLabel}}</span>
+      <span class="prog-summary__row-value prog-summary__row-value--bright">{{builderVm.chassis.sizeLabel}} · {{builderVm.chassis.multiplierLabel}}</span>
     </div>
     <div class="prog-summary__row">
-      <span class="prog-summary__row-label">Systems</span>
-      <span class="prog-summary__row-value">{{builderVm.installedCount}}</span>
-    </div>
-    <div class="prog-summary__row">
-      <span class="prog-summary__row-label">Budget</span>
-      <span class="prog-summary__row-value prog-droid-builder__budget-value--{{builderVm.budget.tone}}">
-        {{builderVm.budget.remaining}} cr left
-      </span>
+      <span class="prog-summary__row-label">Credits</span>
+      <span class="prog-summary__row-value prog-droid-builder__budget-value--{{builderVm.budget.tone}}">{{builderVm.budget.remaining}} cr left</span>
     </div>
     <div class="prog-summary__row">
       <span class="prog-summary__row-label">Status</span>
@@ -42,5 +36,32 @@
         {{#if builderVm.validation.isValid}}Ready{{else}}Needs Work{{/if}}
       </span>
     </div>
+
+    <div class="prog-summary__section-title">Selected Systems</div>
+    {{#each builderVm.selectionSummary}}
+      <div class="prog-summary__selection-group prog-summary__selection-group--{{this.tone}}">
+        <div class="prog-summary__selection-head">
+          <span>{{this.label}}</span>
+          {{#if this.required}}
+            {{#if this.isComplete}}
+              <strong class="prog-summary__status prog-summary__status--positive">Fulfilled</strong>
+            {{else}}
+              <strong class="prog-summary__status prog-summary__status--negative">Required</strong>
+            {{/if}}
+          {{else}}
+            <strong class="prog-summary__status prog-summary__status--neutral">Optional</strong>
+          {{/if}}
+        </div>
+        {{#if this.items}}
+          <ul class="prog-summary__selection-list">
+            {{#each this.items}}
+              <li>{{this.name}}</li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <div class="prog-summary__selection-empty">{{this.emptyLabel}}</div>
+        {{/if}}
+      </div>
+    {{/each}}
   </div>
 </div>

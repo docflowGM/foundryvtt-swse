@@ -24,21 +24,21 @@ export class HolonetEngine {
     return true;
   }
 
-  static async publish(record, { skipSocket = false } = {}) {
+  static async publish(record, { skipSocket = false, suppressLocalHook = false } = {}) {
     if (!record) return false;
     if (!game.user?.isGM && !skipSocket) {
       HolonetSocketService.emitRequest('publish-record', { record: record.toJSON?.() ?? record });
       return true;
     }
-    return this._publishAsGm(record);
+    return this._publishAsGm(record, { suppressLocalHook });
   }
 
   /** @private — GM-side publish pipeline broken into explicit phases */
-  static async _publishAsGm(record) {
+  static async _publishAsGm(record, { suppressLocalHook = false } = {}) {
     try {
       this.prepareRecordForPublish(record);
       await this._persistRecord(record);
-      this.emitPreparedRecordPublished(record);
+      if (!suppressLocalHook) this.emitPreparedRecordPublished(record);
       return true;
     } catch (err) {
       console.error('[Holonet] Failed to publish record:', err);

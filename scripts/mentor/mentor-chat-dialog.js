@@ -133,6 +133,10 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
     // Get all mentors unlocked via classes
     const unlockedMentors = this._getUnlockedMentors();
+    if (!this.selectedMentor && unlockedMentors.length > 0) {
+      this.selectedMentor = unlockedMentors[0];
+      this.currentResponse = this._buildMentorGreeting(this.selectedMentor);
+    }
 
     // Get available topics for selected mentor
     const availableTopics = this._getAvailableTopics();
@@ -153,25 +157,62 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
    * @returns {Array} Array of unique mentor objects with metadata
    */
   _getUnlockedMentors() {
-    const classItems = this.actor.items.filter(i => i.type === 'class');
     const mentorMap = new Map();
+    const addMentorForClass = (className, unlockedBy = className) => {
+      if (!className) return;
+      const mentor = getMentorForClass(className);
+      if (!mentor) return;
+      const mentorKey = Object.keys(MENTORS).find(k => MENTORS[k] === mentor);
+      if (mentorKey && !mentorMap.has(mentorKey)) {
+        mentorMap.set(mentorKey, {
+          key: mentorKey,
+          mentor: mentor,
+          unlockedBy
+        });
+      }
+    };
 
-    // Get mentors for each class
+    const classItems = this.actor.items?.filter?.(i => i.type === 'class') || [];
     for (const classItem of classItems) {
-      const mentor = getMentorForClass(classItem.name);
-      if (mentor) {
-        const mentorKey = Object.keys(MENTORS).find(k => MENTORS[k] === mentor);
-        if (mentorKey && !mentorMap.has(mentorKey)) {
-          mentorMap.set(mentorKey, {
-            key: mentorKey,
-            mentor: mentor,
-            unlockedBy: classItem.name
-          });
-        }
+      addMentorForClass(classItem.name, classItem.name);
+    }
+
+    const system = this.actor.system || {};
+    const progressionLevels = system.progression?.classLevels;
+    if (Array.isArray(progressionLevels)) {
+      for (const entry of progressionLevels) {
+        addMentorForClass(entry?.name || entry?.className || entry?.class || entry?.id, entry?.name || entry?.className || entry?.class || entry?.id);
+      }
+    } else if (progressionLevels && typeof progressionLevels === 'object') {
+      for (const [className, entry] of Object.entries(progressionLevels)) {
+        addMentorForClass(entry?.name || entry?.className || className, entry?.name || entry?.className || className);
       }
     }
 
+    const systemClasses = system.classes;
+    if (Array.isArray(systemClasses)) {
+      for (const entry of systemClasses) addMentorForClass(entry?.name || entry?.className || entry?.id, entry?.name || entry?.className || entry?.id);
+    } else if (systemClasses && typeof systemClasses === 'object') {
+      for (const [className, entry] of Object.entries(systemClasses)) addMentorForClass(entry?.name || entry?.className || className, entry?.name || entry?.className || className);
+    }
+
+    addMentorForClass(system.className || system.details?.class || system.details?.className, system.className || system.details?.class || system.details?.className);
+
     return Array.from(mentorMap.values());
+  }
+
+  _buildMentorGreeting(mentorEntry) {
+    const mentor = mentorEntry?.mentor || mentorEntry;
+    const voiceData = MentorSuggestionVoice.SUGGESTION_VOICES[mentor?.name];
+    const introductions = Array.isArray(voiceData?.introduction) ? voiceData.introduction : [];
+    const introduction = introductions.length > 0
+      ? introductions[Math.floor(Math.random() * introductions.length)]
+      : `${mentor?.name || 'Your mentor'} studies you for a moment, then waits for your question.`;
+
+    return {
+      introduction,
+      advice: null
+    };
   }
 
   /**
@@ -211,17 +252,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
       mentor: MENTORS[mentorKey]
     };
 
-    // Generate introduction message
-    const voiceData = MentorSuggestionVoice.SUGGESTION_VOICES[this.selectedMentor.mentor.name];
-    if (voiceData && voiceData.introduction) {
-      const introductions = voiceData.introduction;
-      const randomIntro = introductions[Math.floor(Math.random() * introductions.length)];
-
-      this.currentResponse = {
-        introduction: randomIntro,
-        advice: null
-      };
-    }
+    this.currentResponse = this._buildMentorGreeting(this.selectedMentor);
 
     await this.render();
   }
@@ -260,17 +291,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     this.currentTopic = null;
     this.currentResponse = null;
 
-    // Regenerate introduction
-    const voiceData = MentorSuggestionVoice.SUGGESTION_VOICES[this.selectedMentor.mentor.name];
-    if (voiceData && voiceData.introduction) {
-      const introductions = voiceData.introduction;
-      const randomIntro = introductions[Math.floor(Math.random() * introductions.length)];
-
-      this.currentResponse = {
-        introduction: randomIntro,
-        advice: null
-      };
-    }
+    this.currentResponse = this._buildMentorGreeting(this.selectedMentor);
 
     this.render();
   }

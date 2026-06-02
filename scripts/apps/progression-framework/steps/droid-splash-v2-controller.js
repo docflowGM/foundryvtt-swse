@@ -244,9 +244,7 @@ export function buildDroidSplashV2Context(options = {}) {
   const translation = stage?.translation || null;
   const translationComplete = Boolean(translation) && effectiveLocalizedMode;
   const translationTarget = translation?.targetText || 'Unit online. Droid assembly complete.';
-  const translationSource = translationComplete
-    ? translationTarget
-    : (translation?.sourceText || '01010101 01001110 01001001 01010100');
+  const translationSource = translation?.sourceText || '01010101 01001110 01001001 01010100';
 
   return {
     introVariant: 'droid-v2',
@@ -282,8 +280,8 @@ export function buildDroidSplashV2Context(options = {}) {
     translationLabel: translationComplete ? 'Basic translation' : (effectiveLocalizedMode ? (translation?.label || 'Binary translation') : toBinaryText(translation?.label || 'Binary translation')),
     translationSource,
     translationTarget,
-    translationDisplayTarget: '',
-    sourceMode: translationComplete ? 'basic' : 'binary',
+    translationDisplayTarget: translationComplete ? translationTarget : '',
+    sourceMode: 'binary',
 
     diagTitle: effectiveLocalizedMode ? 'Channel Diagnostics' : toBinaryText('Channel Diagnostics'),
     registryTitle: effectiveLocalizedMode ? 'Chassis Registry' : toBinaryText('Chassis Registry'),

@@ -9,6 +9,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentTreeRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentTreeRegistry.js";
 import { resolveClassModel, getClassTalentTreeLookupKeys } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { getDroidTalentTreeName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js";
 
 /**
  * Get allowed talent trees for a given slot
@@ -40,6 +41,46 @@ export function getAllowedTalentTrees(actor, slot) {
     ].filter(Boolean);
   };
 
+  const extractDroidDegree = () => {
+    const activeShell = globalThis.game?.__swseActiveProgressionShell;
+    const selections = slot?.shell?.progressionSession?.draftSelections || activeShell?.progressionSession?.draftSelections || {};
+    const droid = selections.droid || selections.droidBuild || selections.droidPackage || selections.droidSystems || {};
+    const candidates = [
+      slot?.droidDegree,
+      droid.degree,
+      droid.droidDegree,
+      droid.selectedDegree,
+      droid.chassis?.degree,
+      droid.chassis?.droidDegree,
+      selections.droidDegree,
+      selections.pendingDroidContext?.degree,
+      selections.pendingDroidContext?.droidDegree,
+      actor.system?.droidDegree,
+      actor.system?.species,
+      actor.system?.details?.species,
+    ];
+    for (const value of candidates) {
+      const text = String(value || '').toLowerCase();
+      const match = text.match(/([1-5])(?:st|nd|rd|th)?[-_\s]*degree/);
+      if (match) return `${match[1]}${match[1] === '1' ? 'st' : match[1] === '2' ? 'nd' : match[1] === '3' ? 'rd' : 'th'}-degree`;
+      const wordMap = { first: '1st-degree', second: '2nd-degree', third: '3rd-degree', fourth: '4th-degree', fifth: '5th-degree' };
+      for (const [word, degree] of Object.entries(wordMap)) {
+        if (text.includes(word)) return degree;
+      }
+    }
+    return null;
+  };
+
+  const droidDegreeTreeKeys = () => {
+    const degree = extractDroidDegree();
+    const treeName = degree ? getDroidTalentTreeName(degree) : null;
+    if (!treeName) return [];
+    const compact = treeName.replace(/\s*Talent\s+Tree$/i, '');
+    return [treeName, compact, compact.replace(/-/g, ' '), compact.replace(/[\s-]+/g, '')]
+      .map(value => String(value || '').trim())
+      .filter(Boolean);
+  };
+
   const ownedClassDocs = [
     ...(Array.isArray(actor.system?.classes) ? actor.system.classes : []),
     ...(actor.items?.filter?.(item => item?.type === 'class') || []),
@@ -62,15 +103,30 @@ export function getAllowedTalentTrees(actor, slot) {
 
   // Rule 2: Heroic slots can access multiple tree categories derived from classes/domains.
   if (slot.slotType === "heroic") {
-    // Add all trees from character's classes
-    for (const classDoc of ownedClassDocs) {
+    // Add all trees from character's existing classes plus the pending chargen/level-up class.
+    const selectedClass = slot.classModel || slot.class || slot.selectedClass || null;
+    const heroicClassDocs = [
+      ...ownedClassDocs,
+      ...(selectedClass ? [selectedClass] : []),
+    ];
+    const seenClassKeys = new Set();
+    for (const classDoc of heroicClassDocs) {
+      const classKey = String(classDoc?.id || classDoc?._id || classDoc?.name || classDoc?.system?.class_name || '').toLowerCase();
+      if (classKey && seenClassKeys.has(classKey)) continue;
+      if (classKey) seenClassKeys.add(classKey);
       const keys = normalizeAccessKeys(classDoc);
       if (keys.length) {
         allowedTrees.push(...keys);
         SWSELogger.log(
-          `[TreeAuthority] Heroic slot: Added ${keys.length} tree access keys from class ${classDoc.name}`
+          `[TreeAuthority] Heroic slot: Added ${keys.length} tree access keys from class ${classDoc.name || classDoc?.system?.class_name || classKey}`
         );
       }
+    }
+
+    const droidKeys = droidDegreeTreeKeys();
+    if (droidKeys.length) {
+      allowedTrees.push(...droidKeys);
+      SWSELogger.log(`[TreeAuthority] Heroic slot: Added ${droidKeys.length} Droid degree tree access keys for ${extractDroidDegree()}`);
     }
 
     // Add Force trees only if Force domain is unlocked

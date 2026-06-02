@@ -485,11 +485,21 @@ export class MessengerSurfaceController {
     const conversation = messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]');
     const unreadThreadId = conversation?.querySelector('.swse-msg-row--unread') ? conversation.dataset.threadId : null;
 
+    messengerRoot.querySelectorAll('[data-holonet-action="set-app-mode"][data-app-mode]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const appMode = String(el.dataset.appMode || 'chat').trim().toLowerCase() === 'jobs' ? 'jobs' : 'chat';
+        await this.setSurface('messenger', { appMode, compose: false, source: 'messenger' });
+        await this._refreshMessengerSurface({ appMode, compose: false, source: 'messenger' });
+      });
+    });
+
     messengerRoot.querySelectorAll('[data-holonet-action="open-compose"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        await this.setSurface('messenger', { compose: true, source: 'messenger' });
-        await this._refreshMessengerSurface({ compose: true });
+        await this.setSurface('messenger', { appMode: 'chat', compose: true, source: 'messenger' });
+        await this._refreshMessengerSurface({ appMode: 'chat', compose: true });
       });
     });
 
@@ -510,8 +520,8 @@ export class MessengerSurfaceController {
         ev.preventDefault();
         const threadId = ev.currentTarget.dataset.threadId;
         if (!threadId) return;
-        await this.setSurface('messenger', { threadId, source: 'messenger', messageLimit: this._defaultMessageLimit(), highlightRecordId: '' });
-        await this._refreshMessengerSurface({ threadId, compose: false, messageLimit: this._defaultMessageLimit(), highlightRecordId: '' });
+        await this.setSurface('messenger', { threadId, appMode: 'chat', source: 'messenger', messageLimit: this._defaultMessageLimit(), highlightRecordId: '' });
+        await this._refreshMessengerSurface({ threadId, appMode: 'chat', compose: false, messageLimit: this._defaultMessageLimit(), highlightRecordId: '' });
       });
     });
 

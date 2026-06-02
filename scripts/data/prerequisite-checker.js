@@ -1041,6 +1041,8 @@ export class PrerequisiteChecker {
                 return this._checkFeatLegacy(prereq, actor, pending);
             case 'talent':
                 return this._checkTalentLegacy(prereq, actor, pending);
+            case 'talent_tree_count':
+                return this._checkTalentTreeCountLegacy(prereq, actor, pending);
             case 'weapon_proficiency':
             case 'weaponProficiency':
                 return this._checkWeaponProficiencyCondition(prereq, actor, pending);
@@ -1137,6 +1139,38 @@ export class PrerequisiteChecker {
         return {
             met,
             message: !met ? `Requires ${required} talent(s) from ${prereq.tree} (you have ${actual})` : ''
+        };
+    }
+
+
+    static _checkTalentTreeCountLegacy(prereq, actor, pending) {
+        const normalizeTree = (value) => normalizeTalentTreeId(String(value || '').replace(/\s*Talent\s+Tree$/i, ''));
+        const requiredTrees = (prereq.trees || []).map(normalizeTree).filter(Boolean);
+        const allTalents = [
+            ...actor.items?.filter(i => i.type === 'talent') || [],
+            ...(pending.selectedTalents || [])
+        ];
+
+        const matchingTalents = allTalents.filter(talent => {
+            const treeCandidates = [
+                talent?.treeId,
+                talent?.talentTree,
+                talent?.treeName,
+                talent?.system?.treeId,
+                talent?.system?.talentTreeId,
+                talent?.system?.talent_tree,
+                talent?.system?.talentTree,
+                talent?.sourceTreeName,
+                talent?.sourceTreeId,
+            ].filter(Boolean).map(normalizeTree);
+            return treeCandidates.some(key => requiredTrees.includes(key));
+        });
+
+        const required = Number(prereq.count || 1);
+        const actual = matchingTalents.length;
+        return {
+            met: actual >= required,
+            message: actual >= required ? '' : `Requires ${required} talent(s) from ${prereq.trees.join(', ')} (you have ${actual})`
         };
     }
 
@@ -1468,7 +1502,21 @@ export class PrerequisiteChecker {
 
         // FIX MEDIUM #2: Normalize whitespace before parsing
         // Collapse multiple spaces to single space for consistent parsing
-        const normalized = prereqString.replace(/\s+/g, ' ');
+        const normalized = prereqString.replace(/\s+/g, ' ').trim();
+
+        // Tree-count talent requirements contain prose ORs that should not be
+        // split into generic groups before the tree parser sees the full clause.
+        const anyTalentTreeMatch = normalized.match(/^Any\s+(?:(\d+|one|two|three)\s+)?Talents?\s+from\s+the\s+(.+?)\s+Talent\s+Trees?(?:|,|;|$)/i);
+        if (anyTalentTreeMatch) {
+            const countWord = String(anyTalentTreeMatch[1] || '1').toLowerCase();
+            const countMap = { one: 1, two: 2, three: 3 };
+            const count = Number(countWord) || countMap[countWord] || 1;
+            const treeText = anyTalentTreeMatch[2]
+                .replace(/\s+or\s+/gi, ',')
+                .replace(/\s+and\s+/gi, ',');
+            const trees = treeText.split(',').map(t => t.trim()).filter(Boolean);
+            return [{ type: 'talent_tree_count', trees, count }];
+        }
 
         // Check for OR logic (case-insensitive, handles multiple spaces)
         const hasOr = /\s+or\s+/i.test(normalized);

@@ -16,6 +16,7 @@ import { HolonetFeedService } from '/systems/foundryvtt-swse/scripts/holonet/sub
 import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js';
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js';
+import { HomeFeedTaskEmitter } from '/systems/foundryvtt-swse/scripts/holonet/emitters/home-feed-task-emitter.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 
@@ -176,7 +177,21 @@ function sourceIcon(record) {
     case SOURCE_FAMILY.MESSENGER: return '✉';
     case SOURCE_FAMILY.STORE: return '¤';
     case SOURCE_FAMILY.APPROVALS: return '✓';
-    case SOURCE_FAMILY.PROGRESSION: return '▲';
+    case SOURCE_FAMILY.PROGRESSION:
+    case SOURCE_FAMILY.TRAINING:
+      return '▲';
+    case SOURCE_FAMILY.WORKBENCH: return '✦';
+    case SOURCE_FAMILY.GARAGE:
+    case SOURCE_FAMILY.DROID:
+      return '◇';
+    case SOURCE_FAMILY.SHIPYARD:
+    case SOURCE_FAMILY.SHIP:
+      return '△';
+    case SOURCE_FAMILY.ALLIES:
+    case SOURCE_FAMILY.FOLLOWER:
+      return '✹';
+    case SOURCE_FAMILY.FACTION: return '◆';
+    case SOURCE_FAMILY.GAMES: return '◈';
     case SOURCE_FAMILY.BULLETIN:
     case SOURCE_FAMILY.GM_AUTHORED:
       return '◎';
@@ -186,7 +201,11 @@ function sourceIcon(record) {
 }
 
 function sourceLabel(record) {
-  return record?.sender?.actorName || record?.sender?.systemLabel || record?.sender?.label || 'Holonet';
+  return record?.sender?.actorName
+    || record?.sender?.systemLabel
+    || record?.sender?.label
+    || record?.metadata?.senderLabel
+    || 'Holonet';
 }
 
 function categoryLabel(record) {
@@ -196,20 +215,21 @@ function categoryLabel(record) {
 
 export class HomeSurfaceService {
   static async buildViewModel(actor) {
-    const [progressionSummary, upgradeSummary, holonetSummary, alliesSummary] = await Promise.all([
+    const [progressionSummary, upgradeSummary, alliesSummary] = await Promise.all([
       this._getProgressionSummary(actor),
       this._getUpgradeSummary(actor),
-      this._getHolonetSummary(actor),
       this._getAlliesSummary(actor)
     ]);
+
+    await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary);
+    const holonetSummary = await this._getHolonetSummary(actor);
 
     const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary);
     const actorData = this._buildActorData(actor);
     const lockScreenState = this._buildLockScreenState(actor);
 
-    const localFeed = this._buildLocalCommFeed(actor, progressionSummary, upgradeSummary, alliesSummary);
-    const commFeed = this._mergeCommFeed(localFeed, holonetSummary.commFeed);
-    const alerts = this._mergeLocalAlerts(holonetSummary.alerts, localFeed);
+    const commFeed = holonetSummary.commFeed;
+    const alerts = holonetSummary.alerts;
 
     return {
       id: 'home',
@@ -434,6 +454,23 @@ export class HomeSurfaceService {
   }
 
 
+  static async _publishHomeTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}) {
+    try {
+      const recipientIds = this._homeRecipientIds(actor);
+      if (!actor || !recipientIds.length) return;
+      await HomeFeedTaskEmitter.emitHomeTasks({
+        actor,
+        recipientIds,
+        progressionSummary,
+        upgradeSummary,
+        alliesSummary
+      });
+    } catch (err) {
+      SWSELogger.warn('[HomeSurfaceService] Holonet home task sync failed:', err);
+    }
+  }
+
+
   static _homeRecipientIds(actor) {
     const ids = [];
     if (game.user?.isGM) ids.push(...actorOwnerRecipientIds(actor));
@@ -487,82 +524,6 @@ export class HomeSurfaceService {
   }
 
 
-  static _buildLocalCommFeed(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}) {
-    const nowLabel = 'live';
-    const entries = [];
-
-    if (progressionSummary.visible && progressionSummary.enabled && (progressionSummary.badge || progressionSummary.routeId === 'chargen')) {
-      const isSetup = progressionSummary.routeId === 'chargen';
-      entries.push({
-        id: 'local-progression',
-        routeId: progressionSummary.routeId || 'progression',
-        title: isSetup ? 'Character setup available' : 'Training available',
-        sender: 'Datapad',
-        category: 'TASK',
-        icon: '▲',
-        preview: progressionSummary.description || (isSetup ? 'Complete character creation.' : 'A level-up or training step is available.'),
-        timestamp: nowLabel,
-        priority: 'normal',
-        isUnread: true
-      });
-    }
-
-    if (upgradeSummary.visible && upgradeSummary.enabled && upgradeSummary.badge) {
-      entries.push({
-        id: 'local-workbench',
-        routeId: 'workbench',
-        title: 'Workbench upgrades available',
-        sender: 'Workbench',
-        category: 'TASK',
-        icon: '✦',
-        preview: `${upgradeSummary.badge} item${String(upgradeSummary.badge) === '1' ? '' : 's'} can be upgraded or modified.`,
-        timestamp: nowLabel,
-        priority: 'normal',
-        isUnread: true
-      });
-    }
-
-    const openAllies = Number(alliesSummary.openSlots ?? alliesSummary.pending ?? 0);
-    if (openAllies > 0) {
-      entries.push({
-        id: 'local-allies',
-        routeId: 'allies',
-        title: 'Allies slot open',
-        sender: 'Allies',
-        category: 'TASK',
-        icon: '✹',
-        preview: `${openAllies} companion slot${openAllies === 1 ? '' : 's'} can be filled from the Allies app.`,
-        timestamp: nowLabel,
-        priority: 'normal',
-        isUnread: true
-      });
-    }
-
-    return entries;
-  }
-
-  static _mergeCommFeed(localFeed = [], holonetFeed = []) {
-    const merged = [];
-    const seen = new Set();
-    for (const entry of [...localFeed, ...(holonetFeed || [])]) {
-      if (!entry?.id || seen.has(entry.id)) continue;
-      seen.add(entry.id);
-      merged.push(entry);
-    }
-    return merged.slice(0, 6);
-  }
-
-  static _mergeLocalAlerts(alerts = {}, localFeed = []) {
-    const localCount = (localFeed || []).filter(entry => entry?.isUnread).length;
-    if (!localCount) return alerts;
-    const chips = [...(alerts?.chips || [])];
-    chips.push({ key: 'local-tasks', label: 'TASK', count: localCount });
-    return {
-      ...alerts,
-      total: Number(alerts?.total || 0) + localCount,
-      chips
-    };
-  }
 
   static _buildAlertChips(summary = {}) {
     const chips = [];

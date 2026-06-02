@@ -655,6 +655,14 @@ export class SWSEV2CharacterSheet extends
     // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
     this._shellSurface = 'home';
     this._shellSurfaceOptions = {};
+    this._homeRenderGuard = {
+      starts: [],
+      suppressUntil: 0,
+      delayedRender: null,
+      lastRequestKey: '',
+      lastRequestAt: 0,
+      warnedAt: 0
+    };
     ShellMutationGuard.install(this, { label: 'SWSEV2CharacterSheet', logger: swseLogger });
     this._shellUiStatePreserver = ShellUiStatePreserver.install(this, { logger: swseLogger });
     this._shellSurfaceState = new ShellSurfaceState({ home: this._shellSurfaceOptions });
@@ -669,8 +677,47 @@ export class SWSEV2CharacterSheet extends
     this.forcePowerExecutionEnabled = true;
   }
 
+  _shouldSuppressHomeRender(args = []) {
+    if (this._shellSurface !== 'home') return false;
+    const isSoftRender = args.length === 0 || args[0] === false || args[0] == null;
+    if (!isSoftRender) return false;
+
+    const guard = this._homeRenderGuard ??= { starts: [], suppressUntil: 0, delayedRender: null, lastRequestKey: '', lastRequestAt: 0, warnedAt: 0 };
+    const now = Date.now();
+    guard.starts = (guard.starts || []).filter(ts => now - ts < 1800);
+
+    if (now < Number(guard.suppressUntil || 0)) {
+      if (!guard.delayedRender) {
+        guard.delayedRender = window.setTimeout(() => {
+          guard.delayedRender = null;
+          if (this.rendered && this._shellSurface === 'home') {
+            void this.requestSurfaceRender({ reason: 'home-render-storm-recovery', surfaceId: 'home' });
+          }
+        }, Math.max(120, Number(guard.suppressUntil || 0) - now));
+      }
+      return true;
+    }
+
+    if (guard.starts.length >= 12) {
+      guard.suppressUntil = now + 900;
+      if (now - Number(guard.warnedAt || 0) > 5000) {
+        guard.warnedAt = now;
+        swseLogger.warn('[SWSEV2CharacterSheet] Suppressed a home-surface render storm; a recovery render will run after the storm window.', {
+          actorId: this.actor?.id,
+          actorName: this.actor?.name,
+          recentHomeRenders: guard.starts.length
+        });
+      }
+      return true;
+    }
+
+    return false;
+  }
+
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
   async render(...args) {
+    if (this._shouldSuppressHomeRender(args)) return this;
+
     // Render loop prevention: queue one follow-up render instead of dropping
     // legitimate mutation-driven rerenders while the sheet is still painting.
     if (this._isRendering) {
@@ -748,6 +795,15 @@ export class SWSEV2CharacterSheet extends
   }
 
   requestSurfaceRender({ reason = 'surface-render', surfaceId = this._shellSurface, preserveUi = true } = {}) {
+    const guard = this._homeRenderGuard ??= { starts: [], suppressUntil: 0, delayedRender: null, lastRequestKey: '', lastRequestAt: 0, warnedAt: 0 };
+    const now = Date.now();
+    const requestKey = `${surfaceId || this._shellSurface}:${reason || 'surface-render'}`;
+    if ((surfaceId || this._shellSurface) === 'home' && guard.lastRequestKey === requestKey && now - Number(guard.lastRequestAt || 0) < 80) {
+      return this._shellRenderPromise || Promise.resolve(this);
+    }
+    guard.lastRequestKey = requestKey;
+    guard.lastRequestAt = now;
+
     if (this._shellRenderPromise) {
       if (preserveUi) this._shellUiStatePreserver?.capture?.(this.element, { surfaceId, reason: `${reason}:coalesced-before-render` });
       return this._shellRenderPromise;
@@ -773,7 +829,12 @@ export class SWSEV2CharacterSheet extends
    */
   async setSurface(surfaceId, options = {}) {
     const normalizedSurfaceId = surfaceId === 'upgrade' ? 'workbench' : surfaceId;
+    const previousSurfaceId = this._shellSurface;
     swseLogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${normalizedSurfaceId}`);
+    if (previousSurfaceId === 'home' && normalizedSurfaceId !== 'home') {
+      this._homeController?.destroy?.();
+      this._homeController = null;
+    }
     this._shellSurface = normalizedSurfaceId;
     const nextOptions = this._ensureShellSurfaceState().patch(normalizedSurfaceId, options ?? {});
     ShellMutationGuard.withSurfaceOptionsMutation(this, () => { this._shellSurfaceOptions = nextOptions; });
@@ -1804,6 +1865,13 @@ export class SWSEV2CharacterSheet extends
   }
 
   async _onRender(context, options) {
+    if (this._shellSurface === 'home') {
+      const guard = this._homeRenderGuard ??= { starts: [], suppressUntil: 0, delayedRender: null, lastRequestKey: '', lastRequestAt: 0, warnedAt: 0 };
+      const now = Date.now();
+      guard.starts = (guard.starts || []).filter(ts => now - ts < 1800);
+      guard.starts.push(now);
+    }
+
     // ═══ DIAGNOSTICS: Capture state at render start ═══
     characterSheetDiagnostics.snapshot('_onRender START (before positioning)', this);
 
@@ -2115,6 +2183,12 @@ export class SWSEV2CharacterSheet extends
   async _onClose(options) {
     // Cleanup all event listeners on close
     this._renderAbort?.abort();
+    this._homeController?.destroy?.();
+    this._homeController = null;
+    if (this._homeRenderGuard?.delayedRender) {
+      window.clearTimeout(this._homeRenderGuard.delayedRender);
+      this._homeRenderGuard.delayedRender = null;
+    }
 
     // Phase 6: Clear UI state on close (will be fresh on next open)
     this.uiStateManager.clear();

@@ -3022,3 +3022,48 @@
   max-height: none;
   overflow: visible;
 }
+
+/* Droid/class talent planner: keep list and graph on the same hydration source and make the choice rail scrollable. */
+.progression-shell .talent-stage-graph.talent-planner-stage {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell .talent-stage-graph .talent-planner-grid--holomap {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell .talent-stage-graph .talent-choice-panel--holomap {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell .talent-stage-graph .talent-choice-section {
+  min-height: 0;
+}
+
+.progression-shell .talent-stage-graph .talent-choice-section--available,
+.progression-shell .talent-stage-graph .talent-choice-section--locked[open] {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.progression-shell .talent-stage-graph .talent-choice-list {
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.35rem;
+}
+
+.progression-shell .talent-stage-graph .talent-choice-section--available .talent-choice-list {
+  flex: 1 1 auto;
+}
+
+.progression-shell .talent-stage-graph .talent-choice-panel__header {
+  flex: 0 0 auto;
+}

@@ -286,6 +286,7 @@ function attachPanZoom(svg, width, height) {
 
   svg.addEventListener('pointerdown', (event) => {
     if (event.button !== 0) return;
+    if (event.target?.closest?.('.prog-talent-orb-node')) return;
     dragging = true;
     last = { x: event.clientX, y: event.clientY };
     svg.classList.add('is-panning');

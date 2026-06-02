@@ -237,8 +237,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
             : '';
       approval.frameLabel = stockShip.name ?? approval.vehicleTemplateName ?? approval.draftData?.baseTemplate ?? '';
       approval.modificationSummary = modifications.length
-        ? modifications.map((mod) => `${mod?.name ?? mod?.id ?? 'Modification'} (${mod?.emplacementPoints ?? mod?.ep ?? 0} EP, ${normalizeCredits(mod?.finalCost ?? mod?.cost ?? 0).toLocaleString()} cr${mod?.nonstandard ? ', nonstandard ×5' : ''})`).join('
-')
+        ? modifications.map((mod) => `${mod?.name ?? mod?.id ?? 'Modification'} (${mod?.emplacementPoints ?? mod?.ep ?? 0} EP, ${normalizeCredits(mod?.finalCost ?? mod?.cost ?? 0).toLocaleString()} cr${mod?.nonstandard ? ', nonstandard ×5' : ''})`).join('\n')
         : (approval.draftData?.details || 'No modification details recorded.');
       approval.epSummary = approval.type === 'vehicle' && epAvailable
         ? `${epUsed}/${epAvailable} EP used`

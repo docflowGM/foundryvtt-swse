@@ -217,7 +217,10 @@ export class LanguageStep extends ProgressionStepPlugin {
       .map(entry => typeof entry === 'string' ? entry : (entry?.name || entry?.label || entry?.id || entry?.slug))
       .map(name => String(name || '').trim())
       .filter(Boolean);
-    if (names.length > 0) this._selectedBonusLanguages = Array.from(new Set(names));
+    const filteredNames = this.isLevelup?.(shell)
+      ? names.filter(name => !this._isFullKnownLanguageName(name))
+      : names;
+    if (filteredNames.length > 0) this._selectedBonusLanguages = Array.from(new Set(filteredNames));
   }
 
   async _commitLanguageSelection(shell) {

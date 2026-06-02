@@ -73,6 +73,9 @@ export function ShellHostMixin(BaseClass) {
     /** @type {Set<string>} Player-originated Messenger socket requests waiting for GM commit sync. */
     _messengerPendingRequestIds = new Set();
 
+    /** @type {{starts:number[], suppressUntil:number, delayedRender:number|null, warnedAt:number}} Home render storm circuit breaker. */
+    _homeRenderGuard = { starts: [], suppressUntil: 0, delayedRender: null, warnedAt: 0 };
+
     // ─── Accessors ──────────────────────────────────────────────────────────────
 
     get shellSurface() { return this._shellSurface; }
@@ -131,6 +134,29 @@ export function ShellHostMixin(BaseClass) {
     }
 
     requestSurfaceRender({ reason = 'surface-render', surfaceId = this._shellSurface, preserveUi = true } = {}) {
+      const guard = this._homeRenderGuard ??= { starts: [], suppressUntil: 0, delayedRender: null, warnedAt: 0 };
+      const now = Date.now();
+      if ((surfaceId || this._shellSurface) === 'home') {
+        guard.starts = (guard.starts || []).filter(ts => now - ts < 1800);
+        if (now < Number(guard.suppressUntil || 0)) {
+          if (!guard.delayedRender) {
+            guard.delayedRender = window.setTimeout(() => {
+              guard.delayedRender = null;
+              if (this.rendered && this._shellSurface === 'home') void this.requestSurfaceRender({ reason: 'home-render-storm-recovery', surfaceId: 'home' });
+            }, Math.max(120, Number(guard.suppressUntil || 0) - now));
+          }
+          return Promise.resolve(this);
+        }
+        if (guard.starts.length >= 12) {
+          guard.suppressUntil = now + 900;
+          if (now - Number(guard.warnedAt || 0) > 5000) {
+            guard.warnedAt = now;
+            SWSELogger.warn('[ShellHost] Suppressed a home-surface render storm; a recovery render will run after the storm window.');
+          }
+          return Promise.resolve(this);
+        }
+      }
+
       if (this._shellRenderPromise) {
       if (preserveUi) this._shellUiStatePreserver?.capture?.(this.element, { surfaceId, reason: `${reason}:coalesced-before-render` });
       return this._shellRenderPromise;
@@ -287,6 +313,12 @@ export function ShellHostMixin(BaseClass) {
      * and register with ShellRouter.
      */
     async _onRender(context, options) {
+      if (this._shellSurface === 'home') {
+        const guard = this._homeRenderGuard ??= { starts: [], suppressUntil: 0, delayedRender: null, warnedAt: 0 };
+        const now = Date.now();
+        guard.starts = (guard.starts || []).filter(ts => now - ts < 1800);
+        guard.starts.push(now);
+      }
       await super._onRender(context, options);
       this._shellUiStatePreserver?.restore?.(this.element, { surfaceId: this._shellSurface });
 
@@ -920,6 +952,10 @@ export function ShellHostMixin(BaseClass) {
         CustomizationSurfaceAdapter.destroyForHost?.(this);
       } catch (err) {
         SWSELogger.warn('[ShellHost] Failed to destroy customization adapters for closing host:', err);
+      }
+      if (this._homeRenderGuard?.delayedRender) {
+        window.clearTimeout(this._homeRenderGuard.delayedRender);
+        this._homeRenderGuard.delayedRender = null;
       }
       if (this._holonetSyncHookId != null) {
         Hooks.off('swseHolonetUpdated', this._holonetSyncHookId);

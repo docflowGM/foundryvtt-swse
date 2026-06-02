@@ -45,6 +45,21 @@ export const ACTOR_ATTRIBUTE_GENERATION_CONFIG = Object.freeze({
   }
 });
 
+/** Droid attribute generation config: droids have no Constitution score. */
+export const DROID_ATTRIBUTE_GENERATION_CONFIG = Object.freeze({
+  abilityCount: 5,
+  abilityKeys: ['STR', 'DEX', 'INT', 'WIS', 'CHA'],
+  abilitySystemKeys: ['str', 'dex', 'int', 'wis', 'cha'],
+  standardRollCount: 5,
+  organicDiceCount: 15,
+  organicGroupCount: 5,
+  organicDropCount: 0,
+  arrays: {
+    standard: [15, 14, 13, 12, 10],
+    highPower: [16, 14, 12, 10, 8]
+  }
+});
+
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -81,12 +96,38 @@ export class AttributeStep extends ProgressionStepPlugin {
     this._speciesFixedOverrideRequested = false;
   }
 
+  _isDroidContext(shell) {
+    const session = shell?.progressionSession || {};
+    const actor = shell?.actor || null;
+    return session?.subtype === 'droid'
+      || session?.droidContext?.isDroid === true
+      || actor?.type === 'droid'
+      || actor?.system?.isDroid === true
+      || session?.draftSelections?.droid?.isDroid === true;
+  }
+
   getGenerationConfig(shell) {
-    return shell?.progressionSession?.droidContext?.attributeGenerationConfig
-      ?? ACTOR_ATTRIBUTE_GENERATION_CONFIG;
+    const sessionConfig = shell?.progressionSession?.droidContext?.attributeGenerationConfig;
+    if (this._isDroidContext(shell)) {
+      return {
+        ...DROID_ATTRIBUTE_GENERATION_CONFIG,
+        ...(sessionConfig && typeof sessionConfig === 'object' ? sessionConfig : {}),
+        abilityCount: 5,
+        abilityKeys: ['STR', 'DEX', 'INT', 'WIS', 'CHA'],
+        abilitySystemKeys: ['str', 'dex', 'int', 'wis', 'cha'],
+        standardRollCount: 5,
+        organicDiceCount: 15,
+        organicGroupCount: 5,
+        organicDropCount: 0,
+      };
+    }
+    return sessionConfig ?? ACTOR_ATTRIBUTE_GENERATION_CONFIG;
   }
 
   getPointBuyPool(shell) {
+    if (this._isDroidContext(shell)) {
+      return Number(shell?.progressionSession?.droidContext?.pointBuyPool || 20);
+    }
     return shell?.progressionSession?.droidContext?.pointBuyPool
       ?? HouseRuleService.getNumber('livingPointBuyPool', HouseRuleService.getNumber('pointBuyPool', 25));
   }
@@ -97,7 +138,9 @@ export class AttributeStep extends ProgressionStepPlugin {
 
   _getExcludedSet(shell) {
     const excluded = shell?.progressionSession?.droidContext?.excludedAbilities ?? [];
-    return new Set(excluded.map(k => String(k).toLowerCase()));
+    const normalized = excluded.map(k => String(k).toLowerCase());
+    if (this._isDroidContext(shell) && !normalized.includes('con')) normalized.push('con');
+    return new Set(normalized);
   }
 
   _getAssignableAbilityKeys(shell) {
@@ -443,11 +486,26 @@ export class AttributeStep extends ProgressionStepPlugin {
     return this._method === 'organic' ? 3 : 1;
   }
 
+  _normalizeAbilityKey(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  _normalizePoolAssignments(shell) {
+    if (!Array.isArray(this._scorePool)) return;
+    const assignable = new Set(this._getAssignableAbilityKeys(shell).map(key => this._normalizeAbilityKey(key)));
+    for (const item of this._scorePool) {
+      const normalized = this._normalizeAbilityKey(item?.assignedTo);
+      item.assignedTo = normalized && assignable.has(normalized) ? normalized : null;
+    }
+  }
+
   _getAssignedPoolItems(ability) {
-    return this._scorePool.filter(item => item.assignedTo === ability);
+    const abilityKey = this._normalizeAbilityKey(ability);
+    return this._scorePool.filter(item => this._normalizeAbilityKey(item?.assignedTo) === abilityKey);
   }
 
   _recomputeAttributesFromPool(shell) {
+    this._normalizePoolAssignments(shell);
     const attributes = this._buildUnassignedAttributes(shell);
     const assignableKeys = this._getAssignableAbilityKeys(shell);
     const slotsPerAbility = this._getAssignmentsPerAbility(shell);
@@ -499,8 +557,14 @@ export class AttributeStep extends ProgressionStepPlugin {
     const cleanPool = this._scorePool.map(item => ({ ...item, assignedTo: null }));
     const byValue = [...cleanPool].sort((a, b) => Number(b.value || 0) - Number(a.value || 0));
     const used = new Set();
+    const assignable = new Set(this._getAssignableAbilityKeys(shell).map(key => this._normalizeAbilityKey(key)));
+    const assignableKeys = Array.from(assignable);
+    const slotsPerAbility = mode === 'organic' ? 3 : 1;
 
     for (const [ability, assignedValues] of Object.entries(plan || {})) {
+      const abilityKey = this._normalizeAbilityKey(ability);
+      if (!assignable.has(abilityKey)) continue;
+
       const values = mode === 'organic'
         ? (Array.isArray(assignedValues) ? assignedValues : [])
         : [assignedValues];
@@ -509,8 +573,21 @@ export class AttributeStep extends ProgressionStepPlugin {
         const idx = byValue.findIndex((item, i) => !used.has(i) && Number(item.value) === Number(value));
         if (idx >= 0) {
           used.add(idx);
-          byValue[idx].assignedTo = ability;
+          byValue[idx].assignedTo = abilityKey;
         }
+      }
+    }
+
+    // The shared attribute planner may still return a six-stat plan when the
+    // live actor has not become a droid document yet. Fill any droid-only gaps
+    // from the remaining generated values so STR/DEX/INT/WIS/CHA can lock
+    // without waiting for a nonexistent Constitution assignment.
+    for (const abilityKey of assignableKeys) {
+      while (byValue.filter(item => item.assignedTo === abilityKey).length < slotsPerAbility) {
+        const nextIndex = byValue.findIndex((item, i) => !used.has(i) && !item.assignedTo);
+        if (nextIndex < 0) break;
+        used.add(nextIndex);
+        byValue[nextIndex].assignedTo = abilityKey;
       }
     }
 
@@ -597,8 +674,8 @@ export class AttributeStep extends ProgressionStepPlugin {
     const slotsPerAbility = this._getAssignmentsPerAbility(shell);
 
     if (slotsPerAbility === 1) {
-      const currentOccupant = this._scorePool.find(item => item.assignedTo === abilityKey && item.id !== selected.id);
-      const previousAbility = selected.assignedTo;
+      const currentOccupant = this._scorePool.find(item => this._normalizeAbilityKey(item?.assignedTo) === abilityKey && item.id !== selected.id);
+      const previousAbility = this._normalizeAbilityKey(selected.assignedTo);
 
       if (currentOccupant) currentOccupant.assignedTo = null;
       if (previousAbility && previousAbility !== abilityKey && currentOccupant) {
@@ -633,13 +710,14 @@ export class AttributeStep extends ProgressionStepPlugin {
     if (!this._getAssignableAbilityKeys(shell).includes(abilityKey)) return;
 
     this._scorePool.forEach(entry => {
-      if (entry.assignedTo === abilityKey) entry.assignedTo = null;
+      if (this._normalizeAbilityKey(entry?.assignedTo) === abilityKey) entry.assignedTo = null;
     });
     this._recomputeAttributesFromPool(shell);
     this._committed = false;
   }
 
   _areAllPooledAbilitiesAssigned(shell) {
+    this._normalizePoolAssignments(shell);
     const slotsPerAbility = this._getAssignmentsPerAbility(shell);
     return this._getAssignableAbilityKeys(shell).every((key) => {
       const assigned = this._getAssignedPoolItems(key).length;
@@ -1053,6 +1131,9 @@ export class AttributeStep extends ProgressionStepPlugin {
       speciesMods,
       finalValues,
       modifiers,
+      abilityKeys: this._getAbilityKeys(shell),
+      excludedAbilities: Array.from(this._getExcludedSet(shell)),
+      isDroidAttributeSet: this._isDroidContext(shell),
     });
   }
 
@@ -1140,9 +1221,9 @@ export class AttributeStep extends ProgressionStepPlugin {
     }
 
     if (!this._committed) {
-      return [{ label: 'Lock Attributes to continue', count: 0, isWarning: true }];
+      return [{ label: 'Attribute lock', count: 1, total: 1, isWarning: true }];
     }
-    return [{ label: 'Attributes locked', count: 0, isWarning: false }];
+    return [];
   }
 
   async getStepData(context) {

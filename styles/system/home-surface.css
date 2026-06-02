@@ -172,15 +172,25 @@
 .swse-home-holo-stage {
   position: relative;
   display: grid;
-  grid-template-columns: 280px 1fr 280px;
+  grid-template-columns: 280px minmax(0, 1fr) 280px;
   gap: 16px;
   padding: 12px 8px;
   z-index: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
    LEFT COLUMN: Actor Widget
    ─────────────────────────────────────────────────────────────────────────── */
+.swse-home-left-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  align-self: stretch;
+}
+
 .swse-home-actor-widget {
   background: oklch(0 0 0 / 0.32);
   border: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
@@ -745,7 +755,9 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  align-self: flex-start;
+  align-self: stretch;
+  min-height: 0;
+  height: 100%;
 }
 
 .swse-home-side-card {
@@ -753,6 +765,18 @@
   border: 1px solid color-mix(in oklab, var(--vapor-cyan) 22%, transparent);
   padding: 12px 14px;
   position: relative;
+}
+
+.swse-home-comm-card {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.swse-home-session-card {
+  flex: 1 1 auto;
+  min-height: 180px;
 }
 
 .swse-home-side-card::before {
@@ -789,10 +813,13 @@
 
 .swse-home-feed {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 6px;
-  max-height: 180px;
-  overflow: visible;
+  max-height: none;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .swse-home-feed::-webkit-scrollbar {
@@ -812,15 +839,126 @@
   text-align: center;
 }
 
+/* Compact comm feed rows: these are status messages, not large app buttons. */
 .swse-home-feed-row {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 12%, transparent);
+  border-left: 2px solid color-mix(in oklab, var(--vapor-cyan) 55%, transparent);
+  border-radius: 0;
+  background: color-mix(in oklab, var(--panel-bg) 42%, transparent);
+  box-shadow: none;
+  margin: 0;
+  padding: 5px 7px;
   display: grid;
-  grid-template-columns: 14px 1fr auto;
-  gap: 8px;
-  align-items: center;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 7px;
+  align-items: start;
+  justify-items: stretch;
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.4;
+  font-size: 9px;
+  line-height: 1.28;
   color: var(--ink-dim);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.swse-home-feed-row:hover,
+.swse-home-feed-row:focus-visible {
+  border-color: color-mix(in oklab, var(--vapor-cyan) 45%, transparent);
+  background: color-mix(in oklab, var(--vapor-cyan) 8%, transparent);
+  outline: none;
+}
+
+.swse-home-feed-row.is-unread {
+  border-left-color: var(--zero);
+}
+
+.swse-home-feed-row.is-urgent,
+.swse-home-feed-row.is-breaking-news {
+  border-left-color: var(--neg);
+}
+
+.swse-home-feed-row.has-image {
+  grid-template-columns: 24px minmax(0, 1fr);
+}
+
+.swse-home-feed-thumb {
+  width: 22px;
+  height: 22px;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 26%, transparent);
+  background: color-mix(in oklab, black 40%, transparent);
+}
+
+.swse-home-feed-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swse-home-feed-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.swse-home-feed-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-home-feed-source {
+  color: var(--ink);
+  font-weight: 700;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-home-feed-title {
+  color: var(--ink-faint);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-home-feed-source + .swse-home-feed-title::before {
+  content: "— ";
+  color: color-mix(in oklab, var(--vapor-cyan) 42%, transparent);
+}
+
+.swse-home-feed-preview {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--ink-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.swse-home-feed-preview p,
+.swse-home-feed-preview div {
+  display: inline;
+  margin: 0;
 }
 
 .swse-home-feed-ico {
@@ -851,6 +989,68 @@
   color: var(--ink-faint);
   font-size: 9px;
   letter-spacing: 0.12em;
+}
+
+
+.swse-home-feed-time {
+  flex: 0 0 auto;
+  max-width: 42%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-home-feed-ack {
+  flex: 0 0 auto;
+  padding: 0 4px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+  color: var(--vapor-cyan);
+  font-size: 8px;
+  line-height: 1.15;
+  letter-spacing: 0.1em;
+}
+
+.swse-home-feed-alert {
+  flex: 0 0 auto;
+  margin-left: 0;
+  padding: 0 4px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.swse-home-session-status {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed color-mix(in oklab, var(--vapor-cyan) 18%, transparent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.swse-home-session-status .em {
+  color: var(--vapor-cyan);
+}
+
+.swse-home-session-updated {
+  color: var(--ink-faint);
+  font-size: 9px;
+}
+
+.swse-home-session-preview {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--ink-dim);
+}
+
+.swse-home-session-image {
+  display: block;
+  width: 100%;
+  max-height: 110px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 18%, transparent);
 }
 
 /* Quick Glance */
@@ -1353,7 +1553,7 @@
 }
 
 .swse-home-feed-row.has-image {
-  grid-template-columns: 24px 1fr auto;
+  grid-template-columns: 24px minmax(0, 1fr);
 }
 
 /* HoloNews breaking alert projection */
@@ -1370,4 +1570,200 @@
   background: oklch(0.62 0.24 28 / 0.24);
   color: oklch(0.98 0.12 38);
   font-weight: 900;
+}
+
+/* Home comm feed compact pass: keep feed entries from inheriting app-button proportions. */
+.swse-home-comm-card .swse-home-feed-row {
+  min-height: 0;
+  max-height: none;
+  grid-template-columns: 14px minmax(0, 1fr);
+  padding: 5px 7px;
+  font-size: 9px;
+  line-height: 1.28;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.swse-home-comm-card .swse-home-feed-row.has-image {
+  grid-template-columns: 24px minmax(0, 1fr);
+}
+
+.swse-home-comm-card .swse-home-feed-meta,
+.swse-home-comm-card .swse-home-feed-preview {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.swse-home-comm-card .swse-home-feed-alert {
+  margin-left: 0;
+  padding: 0 4px;
+  line-height: 1.15;
+}
+
+.swse-home-comm-card .swse-home-feed-time {
+  max-width: 42%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Comm feed fidelity pass: compact, readable status rows with concept-like color hierarchy. */
+.swse-home-comm-card .swse-home-feed {
+  gap: 7px;
+  padding: 1px 2px 2px 0;
+}
+
+.swse-home-comm-card .swse-home-feed-row {
+  min-height: 42px;
+  grid-template-columns: 18px minmax(0, 1fr) 42px;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 18%, transparent);
+  border-left: 3px solid color-mix(in oklab, var(--vapor-cyan) 70%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--vapor-cyan) 7%, transparent), transparent 42%),
+    linear-gradient(180deg, rgba(8, 20, 31, 0.74), rgba(4, 11, 18, 0.54));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 0 12px color-mix(in oklab, var(--vapor-cyan) 5%, transparent);
+  color: var(--ink-dim);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.swse-home-comm-card .swse-home-feed-row:hover,
+.swse-home-comm-card .swse-home-feed-row:focus-visible {
+  transform: translateX(-1px);
+  border-color: color-mix(in oklab, var(--vapor-cyan) 52%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--vapor-cyan) 14%, transparent), transparent 48%),
+    linear-gradient(180deg, rgba(9, 27, 40, 0.86), rgba(5, 14, 22, 0.66));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 18px color-mix(in oklab, var(--vapor-cyan) 14%, transparent);
+}
+
+.swse-home-comm-card .swse-home-feed-row.warn {
+  border-left-color: var(--zero);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--zero) 11%, transparent), transparent 44%),
+    linear-gradient(180deg, rgba(8, 20, 31, 0.74), rgba(4, 11, 18, 0.54));
+}
+
+.swse-home-comm-card .swse-home-feed-row.crit,
+.swse-home-comm-card .swse-home-feed-row.is-urgent,
+.swse-home-comm-card .swse-home-feed-row.is-breaking-news {
+  border-left-color: var(--neg);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--neg) 13%, transparent), transparent 46%),
+    linear-gradient(180deg, rgba(26, 8, 18, 0.82), rgba(5, 10, 17, 0.56));
+}
+
+.swse-home-comm-card .swse-home-feed-row.pos {
+  border-left-color: var(--pos);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--pos) 10%, transparent), transparent 44%),
+    linear-gradient(180deg, rgba(8, 22, 22, 0.76), rgba(4, 11, 18, 0.54));
+}
+
+.swse-home-comm-card .swse-home-feed-row.has-image {
+  grid-template-columns: 26px minmax(0, 1fr) 42px;
+}
+
+.swse-home-comm-card .swse-home-feed-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+}
+
+.swse-home-comm-card .swse-home-feed-ico {
+  width: 18px;
+  min-width: 18px;
+  font-size: 15px;
+  text-align: center;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.swse-home-comm-card .swse-home-feed-main {
+  gap: 3px;
+}
+
+.swse-home-comm-card .swse-home-feed-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.swse-home-comm-card .swse-home-feed-source {
+  color: var(--ink);
+  font-weight: 800;
+  text-shadow: 0 0 8px color-mix(in oklab, var(--vapor-cyan) 14%, transparent);
+}
+
+.swse-home-comm-card .swse-home-feed-title {
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.swse-home-comm-card .swse-home-feed-preview {
+  color: var(--ink-dim);
+  font-size: 10.5px;
+  line-height: 1.32;
+  -webkit-line-clamp: 2;
+}
+
+.swse-home-comm-card .swse-home-feed-preview .em,
+.swse-home-comm-card .swse-home-feed-row .em {
+  color: var(--vapor-cyan);
+  font-weight: 700;
+}
+
+.swse-home-feed-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  min-width: 38px;
+  max-width: 42px;
+  font-family: var(--font-mono);
+}
+
+.swse-home-comm-card .swse-home-feed-time {
+  max-width: 100%;
+  color: var(--ink-faint);
+  font-size: 8px;
+  line-height: 1;
+  letter-spacing: 0.1em;
+}
+
+.swse-home-comm-card .swse-home-feed-ack,
+.swse-home-comm-card .swse-home-feed-alert {
+  padding: 1px 4px;
+  border-color: color-mix(in oklab, var(--vapor-cyan) 46%, transparent);
+  background: color-mix(in oklab, var(--vapor-cyan) 8%, transparent);
+  color: var(--vapor-cyan);
+  font-size: 7px;
+  line-height: 1.1;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.swse-home-comm-card .swse-home-feed-alert {
+  color: var(--zero);
+  border-color: color-mix(in oklab, var(--zero) 48%, transparent);
+  background: color-mix(in oklab, var(--zero) 10%, transparent);
+}
+
+.swse-home-comm-card .swse-home-feed-alert--breaking {
+  color: oklch(0.98 0.12 38);
+  border-color: oklch(0.72 0.25 28 / 0.55);
+  background: oklch(0.62 0.24 28 / 0.24);
 }

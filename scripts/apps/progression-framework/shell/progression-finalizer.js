@@ -880,18 +880,25 @@ export class ProgressionFinalizer {
       };
 
       const explicitCreditDelta = Number(summary.creditDelta || 0) || 0;
-      const inferredCreditDelta = explicitCreditDelta || this._computeLevelupWealthCreditGrant(actor, selections, sessionState);
+      const canonicalWealthDelta = this._computeLevelupWealthCreditGrant(actor, selections, sessionState);
+      const includesWealth = this._levelupCreditDeltaIncludesWealth(summary, selections, actor) || canonicalWealthDelta > 0;
+      const inferredCreditDelta = includesWealth
+        ? Math.max(explicitCreditDelta, canonicalWealthDelta)
+        : (explicitCreditDelta || canonicalWealthDelta);
       if (inferredCreditDelta !== 0) {
         const currentCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
         set['system.credits'] = Math.max(0, currentCredits + inferredCreditDelta);
+        const rawCreditSources = Array.isArray(summary.creditDeltaSources) ? summary.creditDeltaSources : [];
+        const nonWealthSources = rawCreditSources.filter(source => this._normalizeNameKey(source?.label || source?.source || '') !== 'wealthtalent');
+        const creditSources = includesWealth
+          ? [...nonWealthSources, { label: 'Wealth Talent', amount: inferredCreditDelta, tone: 'wealth' }]
+          : (rawCreditSources.length ? rawCreditSources : [{ label: 'Progression Credits', amount: inferredCreditDelta, tone: 'credits' }]);
         set['system.progression.lastCreditDelta'] = {
           amount: inferredCreditDelta,
-          sources: Array.isArray(summary.creditDeltaSources) && summary.creditDeltaSources.length
-            ? summary.creditDeltaSources
-            : [{ label: 'Wealth Talent', amount: inferredCreditDelta, tone: 'wealth' }],
+          sources: creditSources,
           timestamp: new Date().toISOString(),
         };
-        if (this._levelupCreditDeltaIncludesWealth(summary, selections, actor)) {
+        if (includesWealth) {
           set['flags.swse.progressionHistory'] = this._withLevelupWealthProgressionHistory(actor, selections, sessionState, inferredCreditDelta);
         }
       }
@@ -1218,17 +1225,64 @@ export class ProgressionFinalizer {
     return (summary.creditDeltaSources || []).some(source => this._normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
   }
 
+  static _readClassLevelValue(classEntry = null) {
+    return Math.max(0, Number(
+      classEntry?.system?.level
+      ?? classEntry?.system?.levels
+      ?? classEntry?.system?.rank
+      ?? classEntry?.level
+      ?? classEntry?.classLevel
+      ?? 0
+    ) || 0);
+  }
+
+  static _classAggregationKey(classEntry = null) {
+    return this._normalizeNameKey(
+      classEntry?.system?.classId
+      || classEntry?.system?.sourceId
+      || classEntry?.system?.className
+      || classEntry?.classId
+      || classEntry?.sourceId
+      || classEntry?.id
+      || classEntry?.name
+      || classEntry?.className
+      || classEntry
+    );
+  }
+
+  static _resolveLevelupSelectedClass(selections = {}, sessionState = {}) {
+    return selections?.class
+      || sessionState?.progressionSession?.getSelection?.('class')
+      || sessionState?.progressionSession?.draftSelections?.class
+      || sessionState?.draftSelections?.class
+      || sessionState?.class
+      || null;
+  }
+
   static _getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, sessionState = {}) {
-    let lineageLevelCount = 0;
+    const lineageLevelsByClass = new Map();
+    const addClassLevel = (classEntry) => {
+      if (!classEntry || !this._isLineageEligibleClass(classEntry)) return;
+      const key = this._classAggregationKey(classEntry);
+      if (!key) return;
+      const level = this._readClassLevelValue(classEntry);
+      lineageLevelsByClass.set(key, Math.max(lineageLevelsByClass.get(key) || 0, level));
+    };
+
     for (const classItem of actor?.items || []) {
-      if (classItem?.type !== 'class') continue;
-      if (!this._isLineageEligibleClass(classItem)) continue;
-      lineageLevelCount += Math.max(0, Number(classItem?.system?.level ?? classItem?.level ?? 0) || 0);
+      if (classItem?.type === 'class') addClassLevel(classItem);
+    }
+    for (const classEntry of Array.isArray(actor?.system?.classes) ? actor.system.classes : []) {
+      addClassLevel(classEntry);
+    }
+    for (const classEntry of Array.isArray(actor?.system?.progression?.classLevels) ? actor.system.progression.classLevels : []) {
+      addClassLevel(classEntry);
     }
 
-    const selectedClass = selections.class;
+    let lineageLevelCount = Array.from(lineageLevelsByClass.values()).reduce((sum, level) => sum + level, 0);
+    const selectedClass = this._resolveLevelupSelectedClass(selections, sessionState);
     if (this._isLineageEligibleClass(selectedClass)) {
-      // The actor still contains the pre-level-up class items at finalization time.
+      // The actor still contains the pre-level-up class state at finalization time.
       // Add this event's selected class level once so Noble 1 grants 5000, Noble 2
       // grants 10000, and non-Lineage classes after Noble keep paying based on the
       // existing Noble/Lineage levels.

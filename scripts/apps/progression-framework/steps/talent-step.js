@@ -680,6 +680,67 @@ export class TalentStep extends ProgressionStepPlugin {
     return keys;
   }
 
+  _getSelectedClassForTreeAuthority(shell) {
+    const selections = shell?.progressionSession?.draftSelections || {};
+    const committed = shell?.committedSelections || null;
+    const candidates = [
+      selections.class,
+      selections.selectedClass,
+      selections.classSelection,
+      selections.progressionClass,
+      committed?.get?.('class'),
+      shell?.buildIntent?.getSelection?.('class'),
+      this._classId ? { id: this._classId, name: this._classId } : null,
+    ].filter(Boolean);
+
+    for (const candidate of candidates) {
+      const model = resolveClassModel(candidate);
+      if (model) return model;
+      if (candidate?.name || candidate?.id || candidate?.system) return candidate;
+    }
+    return null;
+  }
+
+  _getDroidDegreeForTreeAuthority(shell) {
+    const activeShell = globalThis.game?.__swseActiveProgressionShell;
+    const candidateShell = shell || activeShell;
+    const selections = candidateShell?.progressionSession?.draftSelections || {};
+    const droid = selections.droid || selections.droidBuild || selections.droidPackage || selections.droidSystems || {};
+    const candidates = [
+      droid.degree,
+      droid.droidDegree,
+      droid.selectedDegree,
+      droid.chassis?.degree,
+      droid.chassis?.droidDegree,
+      selections.droidDegree,
+      selections.pendingDroidContext?.degree,
+      selections.pendingDroidContext?.droidDegree,
+      candidateShell?.actor?.system?.droidDegree,
+      candidateShell?.actor?.system?.species,
+      candidateShell?.actor?.system?.details?.species,
+    ];
+    for (const value of candidates) {
+      const text = String(value || '').toLowerCase();
+      const match = text.match(/([1-5])(?:st|nd|rd|th)?[-_\s]*degree/);
+      if (match) return `${match[1]}${match[1] === '1' ? 'st' : match[1] === '2' ? 'nd' : match[1] === '3' ? 'rd' : 'th'}-degree`;
+      const wordMap = { first: '1st-degree', second: '2nd-degree', third: '3rd-degree', fourth: '4th-degree', fifth: '5th-degree' };
+      for (const [word, degree] of Object.entries(wordMap)) {
+        if (text.includes(word)) return degree;
+      }
+    }
+    return null;
+  }
+
+  _getDroidTalentTreeAccessKeys(shell) {
+    const degree = this._getDroidDegreeForTreeAuthority(shell);
+    const treeName = degree ? getDroidTalentTreeName(degree) : null;
+    if (!treeName) return [];
+    const compact = treeName.replace(/\s*Talent\s+Tree$/i, '');
+    return [treeName, compact, compact.replace(/-/g, ' '), compact.replace(/[\s-]+/g, '')]
+      .map(value => String(value || '').trim())
+      .filter(Boolean);
+  }
+
   _slotKey() {
     return String(this.descriptor?.stepId || this.descriptor?.id || this._slotType || 'talent-slot');
   }
@@ -698,7 +759,7 @@ export class TalentStep extends ProgressionStepPlugin {
   async _getAvailableTrees(shell) {
     const actor = shell?.actor || null;
     const allTrees = this._allTrees || [];
-    const committedClass = shell?.committedSelections?.get?.('class') || shell?.buildIntent?.getSelection?.('class') || null;
+    const selectedClass = this._getSelectedClassForTreeAuthority(shell);
 
     // Resolve class model using canonical helper (primary source)
     let classModel = null;
@@ -707,15 +768,15 @@ export class TalentStep extends ProgressionStepPlugin {
     emitTalentStepTrace('AVAILABLE_TREES_START', {
       slotType: this._slotType,
       actorName: actor?.name || null,
-      committedClass: committedClass?.name || committedClass?.id || committedClass || null,
+      selectedClass: selectedClass?.name || selectedClass?.id || null,
       allTreeCount: allTrees.length,
     });
 
-    if (committedClass) {
-      classModel = resolveClassModel(committedClass);
+    if (selectedClass) {
+      classModel = resolveClassModel(selectedClass) || selectedClass;
       if (classModel) {
         allowedIds = this._getClassTalentTreeAccessKeys(classModel);
-        SWSELogger.debug(`[TalentStep] Resolved class model "${classModel.name}" with ${allowedIds.length} talent tree access keys`);
+        SWSELogger.debug(`[TalentStep] Resolved class model "${classModel.name || selectedClass?.name || selectedClass?.id}" with ${allowedIds.length} talent tree access keys`);
       }
     }
 
@@ -723,12 +784,21 @@ export class TalentStep extends ProgressionStepPlugin {
       allowedIds = Array.from(new Set([
         ...this._collectActorUnlockedTalentTreeKeys(actor),
         ...allowedIds,
+        ...this._getDroidTalentTreeAccessKeys(shell),
       ].map(value => String(value || '').trim()).filter(Boolean)));
     }
 
-    // Fallback: Use actor authority only for levelup context when class is unresolved
-    if (actor && allowedIds.length === 0 && !committedClass) {
-      const slot = { slotType: this._slotType, classId: this._classId || null };
+    // Fallback: Use actor authority only for levelup context when class is unresolved.
+    // Pass the selected class and droid degree as slot context so authority can be additive.
+    if (actor && allowedIds.length === 0 && !selectedClass) {
+      const slot = {
+        slotType: this._slotType,
+        classId: this._classId || null,
+        classModel,
+        selectedClass,
+        droidDegree: this._getDroidDegreeForTreeAuthority(shell),
+        shell,
+      };
       try {
         allowedIds = getAllowedTalentTrees(actor, slot) || [];
         SWSELogger.debug(`[TalentStep] Fallback to actor authority: ${allowedIds.length} trees allowed`);
@@ -742,17 +812,18 @@ export class TalentStep extends ProgressionStepPlugin {
       emitTalentStepTrace('AVAILABLE_TREES_EMPTY', {
         reason: 'class-slot-no-allowed-ids',
         slotType: this._slotType,
-        committedClass: committedClass?.name || committedClass?.id || committedClass || null,
+        selectedClass: selectedClass?.name || selectedClass?.id || null,
         resolvedClassModel: classModel?.name || null,
       });
       console.warn('[TalentStep] No class talent trees allowed in this context (fail-closed)');
       return [];
     }
 
-    // For heroic slots, use all available trees if no restriction
+    // For heroic slots, use all available trees if no restriction. Droid degree trees
+    // are additive to class access; they must never replace Noble/Soldier/etc. trees.
     const normalizedAllowed = new Set((allowedIds || []).map(normalizeTalentTreeAccessKey).filter(Boolean));
-    let available = allTrees.filter(tree => {
-      if (!normalizedAllowed.size) return this._slotType === 'heroic';  // heroic: allow all if no restriction
+    const available = allTrees.filter(tree => {
+      if (!normalizedAllowed.size) return this._slotType === 'heroic';
       const treeIds = [tree.id, tree.sourceId, tree.name, tree.key, tree.displayName].filter(Boolean).map(normalizeTalentTreeAccessKey);
       return treeIds.some(id => normalizedAllowed.has(id));
     });
@@ -1360,22 +1431,8 @@ export class TalentStep extends ProgressionStepPlugin {
   _getTreeBrowserData(context) {
     let filteredTrees = this._filterTreesBySearch(this._allTrees);
 
-    // SWSE RAW: Filter droid talent trees by degree if droid progression
-    if (this._isDroidProgression) {
-      const droidDegree = context?.shell?.progressionSession?.draftSelections?.droid?.droidDegree ||
-                         context?.shell?.actor?.system?.droidDegree ||
-                         '1st-degree';
-      const allowedTreeName = getDroidTalentTreeName(droidDegree);
-
-      // Filter to show only the degree-appropriate talent tree + any universal droid talents
-      filteredTrees = filteredTrees.filter(tree =>
-        tree.name === allowedTreeName ||
-        tree.tags?.includes('droid-universal') ||
-        tree.category === 'droid-universal'
-      );
-    }
-
-    // Continue with filtered trees
+    // Droid degree trees are already handled by _getAvailableTrees as additive
+    // authority. Do not re-filter here, or class trees disappear for droid heroes.
 
     // Get committed talents from session and order them canonically
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];

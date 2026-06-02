@@ -754,8 +754,8 @@ export class IntroStep extends ProgressionStepPlugin {
     $surface.on('click', '.prog-intro-surface', (event) => {
       if (!this._complete && !this._isSkipping) {
         this._skipIntro();
-        // Shell will re-render on next tick, which will show completion state
-        this.descriptor._shell?.render(false);
+        // Shell will re-render on next tick, which will show completion state.
+        (this._shell || this._lastShell)?.render?.(false);
       }
     });
 
@@ -940,7 +940,9 @@ export class IntroStep extends ProgressionStepPlugin {
       if (key === ' ' || key === 'spacebar') {
         if (!this._complete && !this._isSkipping) {
           this._skipIntro();
-          this._applyActorV2StageDOM?.(await this.getStepData?.());
+          const stepData = await this.getStepData?.();
+          if (this._isDroidIntro) this._applyDroidV2StageDOM(stepData);
+          else this._applyActorV2StageDOM?.(stepData);
           await (this._shell || this._lastShell)?.render?.(false);
         }
         return;
@@ -1313,37 +1315,60 @@ export class IntroStep extends ProgressionStepPlugin {
 
   /**
    * Droid-v2 boot sequence animation.
-   * Progresses through 7 stages, updating context via buildDroidSplashV2Context.
-   * Calls shell.render() for each stage to update the UI.
+   * Progresses through 7 stages by mutating the mounted splash DOM directly.
+   * Inline holopad hosting is expensive to re-render every few hundred ms; doing
+   * so caused the player to see a static first frame followed by the final state.
+   * This mirrors the actor-v2 splash approach: one initial render, direct stage
+   * updates, and one final render when the boot sequence is ready for input.
    * Respects cancellation and session invalidation.
    */
   async runDroidV2BootSequence(shell, sessionToken) {
     try {
       swseLogger.debug('[IntroStep.runDroidV2BootSequence] Starting droid-v2 boot sequence');
 
-      // Stage durations (in ms)
-      const stageDurations = [280, 260, 260, 320, 280, 260, 260];  // 7 stages
+      const stageCount = 7;
+      const stageDurations = [650, 750, 800, 850, 950, 850, 750];
+      const frameMs = 80;
 
-      for (let stageIndex = 0; stageIndex < 7; stageIndex++) {
-        // Exit early if intro was cancelled
+      for (let stageIndex = 0; stageIndex < stageCount; stageIndex += 1) {
         if (!this._introRunning || this._sessionToken !== sessionToken) {
           swseLogger.debug('[IntroStep.runDroidV2BootSequence] Sequence cancelled');
           return;
         }
 
-        // Update stage index and render
         this._droidV2StageIndex = stageIndex;
-        await shell.render(false);
+        const stageData = await this.getStepData();
+        this._applyDroidV2StageDOM(stageData);
 
-        // Run translation animation at stage 4 (binary-chatter)
         if (stageIndex === 4) {
           await this.runSplashTranslation(shell, 'binary');
         }
 
-        // Wait for stage duration
-        const duration = stageDurations[stageIndex] || 260;
-        await delay(duration);
+        const nextData = buildDroidSplashV2Context({
+          stageIndex: Math.min(stageCount - 1, stageIndex + 1),
+          currentTime: this._getCurrentTime(),
+          localizedMode: this._localizedMode,
+          sessionId: this._shell?.actor?.id || 'DR-00000',
+          isComplete: false,
+        });
+        const startPct = Number(stageData?.progressPercent) || 0;
+        const endPct = Number(nextData?.progressPercent) || startPct;
+        const duration = stageDurations[stageIndex] || 750;
+        const stageStartedAt = Date.now();
+
+        while (Date.now() - stageStartedAt < duration) {
+          if (!this._introRunning || this._sessionToken !== sessionToken) return;
+          const elapsed = Date.now() - stageStartedAt;
+          const t = Math.max(0, Math.min(1, elapsed / duration));
+          const pct = Math.round(startPct + ((endPct - startPct) * t));
+          this._setDroidV2ProgressDOM(pct);
+          await delay(frameMs);
+        }
       }
+
+      this._droidV2StageIndex = stageCount - 1;
+      this._applyDroidV2StageDOM(await this.getStepData());
+      this._setDroidV2ProgressDOM(100);
 
       swseLogger.debug('[IntroStep.runDroidV2BootSequence] Boot sequence complete');
     } catch (err) {
@@ -1413,6 +1438,168 @@ export class IntroStep extends ProgressionStepPlugin {
     } catch (err) {
       swseLogger.error('[IntroStep.runActorV2BootSequence] Error:', err);
       await this._failOpenPastIntro(shell, 'actor-v2-boot-error');
+    }
+  }
+
+  _applyDroidV2StageDOM(data = {}) {
+    const root = this._workSurfaceEl;
+    if (!root?.isConnected) return;
+
+    const surface = root.matches?.('.prog-intro-surface--droid-v2')
+      ? root
+      : root.querySelector?.('.prog-intro-surface--droid-v2');
+    surface?.classList?.toggle?.('prog-intro-surface--localized', data.localizedMode === true);
+    surface?.classList?.toggle?.('prog-intro-surface--foreign', data.localizedMode !== true);
+    surface?.classList?.toggle?.('is-complete', data.isComplete === true);
+
+    const setText = (selector, value) => {
+      const el = root.querySelector(selector);
+      if (el) el.textContent = value ?? '';
+    };
+
+    setText('.hud-title', data.hudTitle);
+    setText('.bezel-label', data.bezelLabel);
+    setText('.bezel-serial', data.bezelSerial);
+    setText('[data-role="clock"]', this._getCurrentTime());
+    setText('[data-role="core-glyph"]', data.coreGlyph);
+    setText('[data-role="status-label"]', data.statusLabel);
+    setText('[data-role="status-msg"]', data.statusMessage);
+    setText('[data-role="status-src"]', data.statusSource);
+    setText('[data-role="intro-progress-percent"]', `${Math.round(Number(data.progressPercent) || 0)}%`);
+    setText('[data-role="current-task"]', data.currentTask);
+    setText('[data-role="task-count"]', data.taskCount);
+
+    const bootStageTag = root.querySelector('[data-role="boot-stage-tag"]');
+    if (bootStageTag) {
+      const dot = bootStageTag.querySelector('.dot');
+      bootStageTag.textContent = '';
+      if (dot) bootStageTag.appendChild(dot);
+      bootStageTag.append(document.createTextNode(data.bootStageTag || 'POST'));
+    }
+
+    const loaderFill = root.querySelector('[data-role="loader-fill"]');
+    if (loaderFill) loaderFill.style.width = `${Math.max(0, Math.min(100, Number(data.progressPercent) || 0))}%`;
+
+    for (const channel of data.channels || []) {
+      const row = root.querySelector(`.channel[data-ch="${CSS.escape(channel.id)}"]`);
+      if (!row) continue;
+      row.classList.remove('ok', 'warn', 'err');
+      if (channel.stateClass) row.classList.add(channel.stateClass);
+      const label = row.querySelector('.lbl');
+      if (label) label.textContent = channel.label || '';
+      const fill = row.querySelector('.fill');
+      if (fill) fill.style.width = `${Math.max(0, Math.min(100, Number(channel.pct) || 0))}%`;
+      const val = row.querySelector('.val');
+      if (val) val.textContent = channel.displayValue || '00';
+    }
+
+    const updateKeyValueCard = (selector, entries = []) => {
+      const card = root.querySelector(selector);
+      if (!card) return;
+      const rows = Array.from(card.children);
+      for (let i = 0; i < entries.length; i += 1) {
+        const entry = entries[i];
+        let row = rows[i];
+        if (!row) {
+          row = document.createElement('div');
+          row.innerHTML = '<span class="k"></span> <span class="v"></span>';
+          card.appendChild(row);
+        }
+        const key = row.querySelector('.k');
+        const value = row.querySelector('.v');
+        if (key) key.textContent = entry.key ?? '';
+        if (value) {
+          value.textContent = entry.value ?? '';
+          value.className = `v ${entry.valueClass || ''}`.trim();
+        }
+      }
+      rows.slice(entries.length).forEach(row => row.remove());
+    };
+
+    updateKeyValueCard('.droid-registry-card', data.registryMeta || []);
+    updateKeyValueCard('.droid-process-card', data.processMeta || []);
+
+    const log = root.querySelector('[data-role="boot-log"]');
+    if (log) {
+      log.replaceChildren(...(data.logLines || []).map((line) => {
+        const row = document.createElement('div');
+        row.className = 'log-line';
+        const time = document.createElement('span');
+        time.className = 't';
+        time.textContent = `[${line.time || '00:00:00'}]`;
+        const tag = document.createElement('span');
+        tag.className = line.tagClass || 'tag-info';
+        tag.textContent = `[${line.tag || 'INFO'}]`;
+        const text = document.createElement('span');
+        text.className = 'txt';
+        text.textContent = line.text || '';
+        row.append(time, tag, document.createTextNode(' '), text);
+        return row;
+      }));
+    }
+
+    const zone = root.querySelector('[data-role="translate-zone"]');
+    const src = root.querySelector('[data-role="trans-src"]');
+    const dst = root.querySelector('[data-role="trans-dst"]');
+    setText('.translate .lbl', data.translationLabel);
+    if (src) {
+      src.textContent = data.translationSource || '';
+      src.classList.remove('basic', 'aurebesh', 'binary');
+      src.classList.add(data.sourceMode || 'binary');
+    }
+    if (dst) {
+      dst.textContent = data.translationComplete ? (data.translationTarget || '') : (data.translationDisplayTarget || '');
+    }
+    if (zone) {
+      zone.classList.toggle('on', data.isTranslating === true || data.translationComplete === true);
+      zone.classList.toggle('is-translated', data.translationComplete === true);
+    }
+
+    this._setDroidV2ProgressDOM(Number(data.progressPercent) || 0);
+    this._applyDroidV2IdentityDOM(data);
+  }
+
+  _setDroidV2ProgressDOM(percent) {
+    const root = this._workSurfaceEl;
+    if (!root?.isConnected) return;
+
+    const safePercent = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+    const percentEl = root.querySelector('[data-role="intro-progress-percent"]');
+    if (percentEl) percentEl.textContent = `${safePercent}%`;
+    const fill = root.querySelector('[data-role="loader-fill"]');
+    if (fill) fill.style.width = `${safePercent}%`;
+  }
+
+  _applyDroidV2IdentityDOM(data = {}) {
+    const root = this._workSurfaceEl;
+    if (!root?.isConnected) return;
+
+    const identityCard = root.querySelector('[data-role="identity-card"]');
+    identityCard?.classList?.toggle?.('on', data.showIdentity === true);
+    if (!identityCard || !data.identity) return;
+
+    const setWithin = (selector, value) => {
+      const el = identityCard.querySelector(selector);
+      if (el) el.textContent = value ?? '';
+    };
+    setWithin('.badge', data.identity.badge);
+    setWithin('.name', data.identity.name);
+    setWithin('.sub', data.identity.sub);
+
+    const metaGrid = identityCard.querySelector('.meta-grid');
+    if (metaGrid) {
+      metaGrid.replaceChildren(...(data.identity.meta || []).map((entry) => {
+        const row = document.createElement('div');
+        row.className = 'm';
+        const key = document.createElement('div');
+        key.className = 'k';
+        key.textContent = entry.key ?? '';
+        const value = document.createElement('div');
+        value.className = 'v';
+        value.textContent = entry.value ?? '';
+        row.append(key, value);
+        return row;
+      }));
     }
   }
 
@@ -1597,7 +1784,9 @@ export class IntroStep extends ProgressionStepPlugin {
       this._setTranslationFallbackText(stepData);
       this._localizedMode = true;
       this._setSurfaceLocalizationDOM(true);
-      this._applyActorV2StageDOM?.(await this.getStepData?.());
+      const localizedStepData = await this.getStepData?.();
+      if (isDroidV2) this._applyDroidV2StageDOM(localizedStepData);
+      else this._applyActorV2StageDOM?.(localizedStepData);
 
       swseLogger.debug('[IntroStep.runSplashTranslation] Translation animation complete');
     } catch (err) {
@@ -1607,7 +1796,9 @@ export class IntroStep extends ProgressionStepPlugin {
         this._setTranslationFallbackText(stepData);
         this._localizedMode = true;
         this._setSurfaceLocalizationDOM(true);
-        this._applyActorV2StageDOM?.(await this.getStepData?.());
+        const localizedStepData = await this.getStepData?.();
+        if (isDroidV2) this._applyDroidV2StageDOM(localizedStepData);
+        else this._applyActorV2StageDOM?.(localizedStepData);
       } catch (fallbackErr) {
         swseLogger.error('[IntroStep.runSplashTranslation] Fallback translation failed:', fallbackErr);
       }
@@ -1947,8 +2138,14 @@ export class IntroStep extends ProgressionStepPlugin {
 
   _setSurfaceLocalizationDOM(localizedMode) {
     if (!this._workSurfaceEl) return;
-    this._workSurfaceEl.classList.toggle('prog-intro-surface--localized', localizedMode);
-    this._workSurfaceEl.classList.toggle('prog-intro-surface--foreign', !localizedMode);
+    const surfaces = [
+      this._workSurfaceEl,
+      this._workSurfaceEl.querySelector?.('.prog-intro-surface')
+    ].filter(Boolean);
+    for (const surface of surfaces) {
+      surface.classList.toggle('prog-intro-surface--localized', localizedMode);
+      surface.classList.toggle('prog-intro-surface--foreign', !localizedMode);
+    }
   }
 
   _getStateClassForTone(tone) {

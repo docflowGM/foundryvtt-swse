@@ -448,6 +448,78 @@ export class ActiveStepComputer {
       .replace(/^_|_$/g, '');
   }
 
+
+  _normalizeLanguageKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+
+  _extractLanguageKeys(rawSelection) {
+    const keys = [];
+    const pushEntry = (entry, fallbackKey = null) => {
+      if (!entry) return;
+      if (typeof entry === 'string') {
+        keys.push(entry);
+        return;
+      }
+      if (entry === true && fallbackKey) {
+        keys.push(fallbackKey);
+        return;
+      }
+      if (typeof entry !== 'object') return;
+      if (entry.known === false || entry.selected === false || entry.enabled === false) return;
+      const key = entry.key || entry.id || entry.slug || entry.name || entry.label || entry.language || fallbackKey;
+      if (key) keys.push(key);
+    };
+
+    const visit = (value) => {
+      if (!value) return;
+      if (Array.isArray(value)) {
+        value.forEach(entry => pushEntry(entry));
+        return;
+      }
+      if (typeof value === 'object') {
+        for (const [key, entry] of Object.entries(value)) {
+          if (entry === true) pushEntry(key);
+          else pushEntry(entry, key);
+        }
+      }
+    };
+
+    visit(rawSelection?.known ?? rawSelection?.selected ?? rawSelection?.languages ?? rawSelection);
+    return Array.from(new Set(keys.map(key => this._normalizeLanguageKey(key)).filter(Boolean)));
+  }
+
+  _getActorKnownLanguageKeys(actor) {
+    const system = actor?.system || {};
+    const keys = [];
+    const collect = (value) => {
+      if (!value) return;
+      if (Array.isArray(value)) {
+        value.forEach(entry => keys.push(...this._extractLanguageKeys([entry])));
+        return;
+      }
+      if (typeof value === 'object') {
+        keys.push(...this._extractLanguageKeys(value));
+      }
+    };
+
+    collect(system.languages);
+    collect(system.languages?.known);
+    collect(system.details?.languages);
+    collect(system.details?.languages?.known);
+    collect(system.traits?.languages);
+    collect(system.traits?.languages?.value);
+    collect(system.progression?.languages);
+    collect(system.progression?.languages?.known);
+
+    return new Set(keys.map(key => this._normalizeLanguageKey(key)).filter(Boolean));
+  }
+
   _hasBaseClassSurveyWork(actor, progressionSession) {
     const context = buildLevelUpEventContext(actor, progressionSession);
     if (!context?.isNewBaseClass) return false;
@@ -519,9 +591,10 @@ export class ActiveStepComputer {
       ));
     }
 
-    const selectedLanguages = Array.isArray(progressionSession?.draftSelections?.languages)
-      ? progressionSession.draftSelections.languages.length
-      : 0;
+    const selectedKeys = this._extractLanguageKeys(progressionSession?.draftSelections?.languages);
+    const selectedLanguages = mode === 'levelup'
+      ? selectedKeys.filter(key => !this._getActorKnownLanguageKeys(actor).has(key)).length
+      : selectedKeys.length;
 
     return selectedLanguages < bonusSlots;
   }

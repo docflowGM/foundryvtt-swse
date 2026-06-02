@@ -200,19 +200,24 @@ export class UnlockContractValidator {
 
     // skills may be omitted or empty for choice-based grants (e.g. Skill Training
     // feat) where the skill is resolved at runtime from ability.system.selectedChoice.
-    // The handler exits cleanly when skills is empty, so only validate when present.
+    // Existing compendium/world items may also use the sentinel string
+    // "selectedChoice" for this unresolved runtime choice. Treat that as a
+    // valid legacy/choice marker instead of failing actor preparation at boot.
     if (skills !== undefined && skills !== null) {
-      if (!Array.isArray(skills)) {
-        errors.push(`${prefix}.skills must be an array of skill IDs`);
+      const isChoiceSentinel = typeof skills === 'string' && skills.trim() === 'selectedChoice';
+      if (!isChoiceSentinel && !Array.isArray(skills)) {
+        errors.push(`${prefix}.skills must be an array of skill IDs or the selectedChoice sentinel`);
         return;
       }
 
-      // Validate each skill is a string
-      for (let i = 0; i < skills.length; i++) {
-        if (typeof skills[i] !== 'string' || skills[i].trim() === '') {
-          errors.push(
-            `${prefix}.skills[${i}] must be a non-empty string`
-          );
+      if (Array.isArray(skills)) {
+        // Validate each skill is a string
+        for (let i = 0; i < skills.length; i++) {
+          if (typeof skills[i] !== 'string' || skills[i].trim() === '') {
+            errors.push(
+              `${prefix}.skills[${i}] must be a non-empty string`
+            );
+          }
         }
       }
     }

@@ -2697,3 +2697,77 @@
   overflow-y: auto;
   padding: 14px 16px;
 }
+
+/* V2 play-space hardening: keep table UIs from collapsing inside the shell. */
+.swse-games-surface .swse-pazaak-board-shell,
+.swse-games-surface .swse-dejarik-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(360px, 1.6fr) minmax(180px, 0.7fr);
+  gap: 12px;
+  align-items: stretch;
+  min-height: 520px;
+  height: min(70vh, 720px);
+}
+
+.swse-games-surface .swse-pazaak-board,
+.swse-games-surface .swse-dejarik-board-shell,
+.swse-games-surface .swse-pazaak-rail,
+.swse-games-surface .swse-dejarik-rail {
+  min-height: 460px;
+  border: 1px solid rgba(125, 216, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(4, 12, 22, 0.82);
+  box-shadow: inset 0 0 28px rgba(26, 145, 255, 0.12);
+}
+
+.swse-games-surface .swse-pazaak-board,
+.swse-games-surface .swse-dejarik-board-shell {
+  display: grid;
+  grid-template-rows: minmax(120px, 1fr) minmax(150px, 1.2fr) minmax(120px, 1fr);
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.swse-games-surface .swse-pazaak-rail,
+.swse-games-surface .swse-dejarik-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.swse-games-surface .swse-pazaak-seat-row,
+.swse-games-surface .swse-pazaak-slot-row,
+.swse-games-surface .swse-pazaak-hand-dock,
+.swse-games-surface .swse-dejarik-board-stage {
+  min-height: 96px;
+  border: 1px solid rgba(125, 216, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.swse-games-surface .swse-dejarik-board-stage {
+  min-height: 420px;
+  aspect-ratio: 1 / 1;
+  place-self: center;
+  width: min(100%, 560px);
+  display: grid;
+  place-items: center;
+}
+
+.swse-games-surface .swse-dejarik-svg,
+.swse-games-surface .dejarik-board-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 1100px) {
+  .swse-games-surface .swse-pazaak-board-shell,
+  .swse-games-surface .swse-dejarik-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}

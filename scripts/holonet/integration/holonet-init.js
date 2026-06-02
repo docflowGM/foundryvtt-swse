@@ -220,6 +220,13 @@ export function registerHolonetSources() {
   HolonetSourceRegistry.register('ship', ShipSource);
   HolonetSourceRegistry.register('droid', DroidSource);
   HolonetSourceRegistry.register('follower', FollowerSource);
+  HolonetSourceRegistry.register('training', SystemSource);
+  HolonetSourceRegistry.register('workbench', SystemSource);
+  HolonetSourceRegistry.register('garage', DroidSource);
+  HolonetSourceRegistry.register('shipyard', ShipSource);
+  HolonetSourceRegistry.register('allies', FollowerSource);
+  HolonetSourceRegistry.register('faction', SystemSource);
+  HolonetSourceRegistry.register('games', SystemSource);
   console.log('[Holonet] Sources registered');
 }
 

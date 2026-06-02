@@ -1621,6 +1621,8 @@
 
 .progression-shell .prog-droid-builder--garage {
   gap: 12px;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -1641,10 +1643,26 @@
   flex-shrink: 0;
 }
 
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__workbench {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell .prog-droid-builder--garage .prog-droid-builder__filter-bar {
+  flex: 0 0 auto;
+}
+
 .progression-shell .prog-droid-builder--garage .prog-droid-builder__systems-browser {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 10px;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 18px;
 }
 
 .progression-shell .prog-droid-builder--garage .prog-droid-builder__panel {
@@ -2002,4 +2020,162 @@
   .progression-shell .prog-droid-builder__control-group {
     align-items: stretch;
   }
+}
+
+/* ============================================
+   Droid builder rail reshuffle: component detail lives in shell details rail
+   ============================================ */
+.progression-shell .prog-droid-builder__workbench--browser {
+  grid-template-columns: minmax(190px, 0.66fr) minmax(520px, 1.7fr);
+}
+
+.progression-shell .prog-droid-builder--detail-panel {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.progression-shell .prog-droid-builder--detail-panel::before {
+  display: none;
+}
+
+.progression-shell .prog-droid-builder--detail-panel .prog-droid-builder__detail {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 16px;
+}
+
+.progression-shell .prog-droid-builder__detail-subpanel {
+  clip-path: none;
+  padding: 9px;
+}
+
+.progression-shell .prog-droid-builder__system-head {
+  align-items: flex-start;
+}
+
+.progression-shell .prog-droid-builder__system-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.progression-shell .prog-droid-builder__system-description {
+  margin: -2px 0 12px;
+  color: color-mix(in oklch, var(--droid-bay-text, #d8f7ff) 82%, transparent);
+  font-size: 11px;
+  line-height: 1.48;
+  text-shadow: 0 0 8px color-mix(in oklch, var(--droid-bay-accent, #7ee7ff) 12%, transparent);
+}
+
+.progression-shell .prog-droid-builder__select:not(:disabled) {
+  appearance: none;
+  padding-right: 28px;
+  color: var(--droid-bay-positive, #65e6a5);
+  font-weight: 900;
+  border-color: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 58%, transparent);
+  background-color: rgba(2, 10, 20, 0.92);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--droid-bay-positive, #65e6a5) 50%),
+    linear-gradient(135deg, var(--droid-bay-positive, #65e6a5) 50%, transparent 50%),
+    linear-gradient(180deg, rgba(101, 230, 165, 0.10), rgba(0, 0, 0, 0.30));
+  background-position:
+    calc(100% - 15px) 50%,
+    calc(100% - 10px) 50%,
+    0 0;
+  background-size:
+    5px 5px,
+    5px 5px,
+    100% 100%;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 14%, transparent),
+    0 0 10px color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 13%, transparent);
+}
+
+.progression-shell .prog-droid-builder__select:not(:disabled):hover,
+.progression-shell .prog-droid-builder__select:not(:disabled):focus {
+  border-color: color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 78%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 24%, transparent),
+    0 0 16px color-mix(in oklch, var(--droid-bay-positive, #65e6a5) 22%, transparent);
+}
+
+.progression-shell .prog-droid-builder__select option {
+  color: #dfffee;
+  background: #061522;
+  font-weight: 700;
+}
+
+@media (min-width: 1181px) {
+  .progression-shell .prog-droid-builder__workbench--browser {
+    grid-template-columns: minmax(190px, 0.62fr) minmax(560px, 1.72fr);
+  }
+}
+
+@media (max-width: 1180px) {
+  .progression-shell .prog-droid-builder__workbench--browser {
+    grid-template-columns: minmax(180px, 0.72fr) minmax(300px, 1.28fr);
+  }
+}
+
+/* ============================================
+   Droid chargen workspace scroll chain
+   The shell footer is fixed; the center work surface owns vertical scrolling.
+   Avoid trapping the builder in a 100%-height inner panel with nested strip-only
+   scrollbars, so Current Build, Required Systems, category text, and cards remain
+   reachable as one continuous workspace.
+   ============================================ */
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface {
+  height: auto;
+  min-height: auto;
+  flex: 0 0 auto;
+  overflow: visible;
+  padding-bottom: calc(var(--prog-footer-height, 56px) + 20px);
+}
+
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__workbench,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__workbench {
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
+  align-items: start;
+}
+
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__left-rail,
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__middle-rail,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__left-rail,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__middle-rail {
+  min-height: auto;
+  overflow: visible;
+}
+
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__systems-browser,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__systems-browser {
+  flex: 0 0 auto;
+  max-height: none;
+  overflow: visible;
+  padding-bottom: 36px;
+}
+
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__left-rail > .prog-droid-builder__scroll,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__left-rail > .prog-droid-builder__scroll {
+  flex: 0 0 auto;
+  max-height: none;
+  overflow: visible;
+}
+
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__panel,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__panel {
+  min-height: auto;
+  overflow: visible;
+}
+
+.progression-shell [data-region="work-surface"] > .prog-droid-builder--garage .prog-droid-builder__card-grid,
+.progression-shell [data-region="work-surface"] .prog-droid-builder--garage.swse-droid-builder-surface .prog-droid-builder__card-grid {
+  overflow: visible;
 }

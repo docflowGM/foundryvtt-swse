@@ -36,6 +36,18 @@ export const INTENT_TYPE = {
   SYSTEM_BULLETIN_UPDATED: 'system.bulletin_updated',
   SYSTEM_APPROVAL_RESOLVED: 'system.approval_resolved',
   SYSTEM_CREDITS_DEPOSITED: 'system.credits_deposited',
+  SYSTEM_HOME_TASK: 'system.home_task',
+
+  // App/task notices
+  TRAINING_AVAILABLE: 'training.available',
+  TRAINING_COMPLETED: 'training.completed',
+  WORKBENCH_AVAILABLE: 'workbench.available',
+  GARAGE_UPDATED: 'garage.updated',
+  SHIPYARD_UPDATED: 'shipyard.updated',
+  ALLIES_SLOT_OPEN: 'allies.slot_open',
+  ALLIES_UPDATED: 'allies.updated',
+  FACTION_REPUTATION_CHANGED: 'faction.reputation_changed',
+  FACTION_JOB_COMPLETED: 'faction.job_completed',
 
   // Authored communication
   BULLETIN_EVENT: 'authored.bulletin_event',
@@ -157,7 +169,13 @@ export const SOURCE_FAMILY = {
   HEALING: 'healing',
   DROID: 'droid',
   FOLLOWER: 'follower',
-  GAMES: 'games'
+  GAMES: 'games',
+  TRAINING: 'training',
+  WORKBENCH: 'workbench',
+  GARAGE: 'garage',
+  SHIPYARD: 'shipyard',
+  ALLIES: 'allies',
+  FACTION: 'faction'
 };
 
 export const AUDIENCE_TYPE = {

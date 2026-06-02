@@ -1,120 +1,86 @@
-{{!-- Droid Builder Details Panel — Focused Information Surface --}}
-
-<div class="prog-droid-builder-details">
-  {{!-- BUILD SUMMARY --}}
-  <div class="details-section details-section--build-summary">
-    <h3>Build Summary</h3>
-
-    <div class="summary-grid">
-      <div class="summary-item">
-        <label>Droid Degree</label>
-        <strong>{{droidInfo.degree}}</strong>
-      </div>
-
-      <div class="summary-item">
-        <label>Size</label>
-        <strong>{{droidInfo.size}}</strong>
-      </div>
-
-      <div class="summary-item">
-        <label>Locomotion</label>
-        <span>{{#if selectedSystems.locomotion}}{{selectedSystems.locomotion.name}}{{else}}<em>Not selected</em>{{/if}}</span>
-      </div>
-
-      <div class="summary-item">
-        <label>Processor</label>
-        <span>{{#if selectedSystems.processor}}{{selectedSystems.processor.name}}{{else}}<em>Not selected</em>{{/if}}</span>
-      </div>
-
-      <div class="summary-item">
-        <label>Appendages</label>
-        <span>{{selectedSystems.appendages.length}} selected</span>
-      </div>
-
-      <div class="summary-item">
-        <label>Accessories</label>
-        <span>{{selectedSystems.accessories.length}} selected</span>
-      </div>
-    </div>
-  </div>
-
-  {{!-- SYSTEM CATEGORIES GUIDE --}}
-  <div class="details-section details-section--systems-guide">
-    <h3>System Categories</h3>
-
-    <div class="categories-list">
-      {{#each categories}}
-        <div class="category-guide">
-          <h4>
-            {{this.name}}
-            {{#if this.required}}<span class="required-label">Required</span>{{else}}<span class="optional-label">Optional</span>{{/if}}
-          </h4>
-          <p>{{this.description}}</p>
-          {{#if this.note}}
-            <p class="category-note"><em>{{this.note}}</em></p>
-          {{/if}}
-        </div>
-      {{/each}}
-    </div>
-  </div>
-
-  {{!-- RESOURCE LEDGER --}}
-  <div class="details-section details-section--budget">
-    <h3>Resource Ledger</h3>
-
-    <div class="budget-display">
-      <div class="budget-row">
-        <span class="budget-label">Base Credits</span>
-        <strong class="budget-value">{{creditsBase}} cr</strong>
-      </div>
-
-      <div class="budget-row">
-        <span class="budget-label">Spent</span>
-        <span class="budget-value">{{creditsSpent}} cr</span>
-      </div>
-
-      <div class="budget-row {{#if (lt creditsRemaining 0)}}budget-row--overbudget{{/if}}">
-        <span class="budget-label">Remaining</span>
-        <strong class="budget-value {{#if (lt creditsRemaining 0)}}budget-value--warning{{/if}}">{{creditsRemaining}} cr</strong>
-      </div>
+{{!-- Droid Builder Details Panel — focused component action rail. --}}
+<div class="prog-droid-builder prog-droid-builder--garage prog-droid-builder--detail-panel">
+  <section class="prog-droid-builder__garage-panel prog-droid-builder__detail">
+    <div class="prog-droid-builder__garage-head">
+      <h3>Component Detail</h3>
+      <span>{{builderVm.contextProfile.actionRailLabel}}</span>
     </div>
 
-    {{#if (lt creditsRemaining 0)}}
-      <div class="budget-warning">
-        <i class="fas fa-exclamation-triangle"></i>
-        <p>Your droid build exceeds available credits. Remove systems to proceed.</p>
-      </div>
-    {{else if (gt creditsRemaining 0)}}
-      <div class="budget-note">
-        <p>You have {{creditsRemaining}} credits available for additional systems or upgrades.</p>
+    {{#if builderVm.selectedDetail.isEmpty}}
+      <div class="prog-droid-builder__detail-empty">
+        <i class="fas fa-microchip"></i>
+        <p>{{builderVm.selectedDetail.message}}</p>
       </div>
     {{else}}
-      <div class="budget-complete">
-        <i class="fas fa-check-circle"></i>
-        <p>Budget fully allocated to droid systems.</p>
+      <div class="prog-droid-builder__detail-kicker">{{builderVm.selectedDetail.item.type}}</div>
+      <h3 class="prog-droid-builder__detail-title">{{builderVm.selectedDetail.item.name}}</h3>
+
+      {{#if builderVm.selectedDetail.item.description}}
+        <p class="prog-droid-builder__detail-description">{{builderVm.selectedDetail.item.description}}</p>
+      {{/if}}
+
+      <div class="prog-droid-builder__cost-table">
+        <div class="prog-droid-builder__cost-row"><span>Base Cost</span><strong>{{builderVm.selectedDetail.item.baseCost}}</strong></div>
+        <div class="prog-droid-builder__cost-row"><span>Size Multiplier</span><strong>{{builderVm.selectedDetail.item.sizeMultiplier}}</strong></div>
+        <div class="prog-droid-builder__cost-row prog-droid-builder__cost-row--total"><span>Adjusted Cost</span><strong>{{builderVm.selectedDetail.item.adjustedCost}} cr</strong></div>
+        <div class="prog-droid-builder__cost-row"><span>Budget Impact</span><strong>{{builderVm.selectedDetail.item.budgetImpactLabel}}</strong></div>
+        {{#if builderVm.selectedDetail.item.weight}}<div class="prog-droid-builder__cost-row"><span>Weight</span><strong>{{builderVm.selectedDetail.item.weight}} kg</strong></div>{{/if}}
+        {{#if builderVm.selectedDetail.item.speed}}<div class="prog-droid-builder__cost-row"><span>Speed</span><strong>{{builderVm.selectedDetail.item.speed}}</strong></div>{{/if}}
+      </div>
+
+      {{#if builderVm.selectedDetail.item.features}}
+        <div class="prog-droid-builder__garage-panel prog-droid-builder__detail-subpanel">
+          <div class="prog-droid-builder__garage-head"><h3>Effects</h3><span>System Text</span></div>
+          <ul class="prog-droid-builder__required-list">
+            {{#each builderVm.selectedDetail.item.features}}
+              <li class="prog-droid-builder__check-item prog-droid-builder__check-item--complete"><span>{{this}}</span></li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+
+      {{#if builderVm.selectedDetail.item.disabledReasons}}
+        <div class="prog-droid-builder__garage-panel prog-droid-builder__detail-subpanel">
+          <div class="prog-droid-builder__garage-head"><h3>Restrictions</h3><span>Blocked</span></div>
+          <ul class="prog-droid-builder__required-list">
+            {{#each builderVm.selectedDetail.item.disabledReasons}}
+              <li class="prog-droid-builder__check-item prog-droid-builder__check-item--missing"><span>{{this}}</span></li>
+            {{/each}}
+          </ul>
+        </div>
+      {{else}}
+        <div class="prog-droid-builder__garage-panel prog-droid-builder__detail-subpanel">
+          <div class="prog-droid-builder__garage-head"><h3>Compatibility</h3><span>Ready</span></div>
+          <p class="prog-droid-builder__detail-description">This component is compatible with the current chassis and builder context.</p>
+        </div>
+      {{/if}}
+
+      <div class="prog-droid-builder__detail-actions">
+        {{#if builderVm.selectedDetail.item.isInstalled}}
+          {{#if builderVm.selectedDetail.item.canRemove}}
+            <button class="prog-droid-builder__action prog-droid-builder__action--remove"
+                    type="button"
+                    data-action="remove-system"
+                    data-category="{{builderVm.selectedDetail.item.removeAction.category}}"
+                    data-id="{{builderVm.selectedDetail.item.removeAction.id}}"
+                    data-subcategory="{{builderVm.selectedDetail.item.removeAction.subcategory}}">
+              Remove Highlighted Component
+            </button>
+          {{else}}
+            <button class="prog-droid-builder__action" type="button" disabled>Required Component</button>
+          {{/if}}
+        {{else}}
+          <button class="prog-droid-builder__action prog-droid-builder__action--install"
+                  type="button"
+                  data-action="install-system"
+                  data-category="{{builderVm.selectedDetail.item.installAction.category}}"
+                  data-id="{{builderVm.selectedDetail.item.installAction.id}}"
+                  data-subcategory="{{builderVm.selectedDetail.item.installAction.subcategory}}"
+                  {{#unless builderVm.selectedDetail.item.canInstall}}disabled{{/unless}}>
+            Install Highlighted Component
+          </button>
+        {{/if}}
       </div>
     {{/if}}
-  </div>
-
-  {{!-- BUILD TOTALS --}}
-  <div class="details-section details-section--totals">
-    <h3>Build Totals</h3>
-
-    <div class="totals-grid">
-      <div class="total-item">
-        <label>Total Cost</label>
-        <strong>{{totalCost}} cr</strong>
-      </div>
-
-      <div class="total-item">
-        <label>Total Weight</label>
-        <strong>{{totalWeight}} kg</strong>
-      </div>
-
-      <div class="total-item">
-        <label>Systems Count</label>
-        <strong>{{systemCount}}</strong>
-      </div>
-    </div>
-  </div>
+  </section>
 </div>

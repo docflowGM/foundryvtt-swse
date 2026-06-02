@@ -1,5 +1,115 @@
 [
   {
+    "id": "1st_degree_droid_talent_tree",
+    "sourceId": "a212850887fe41da",
+    "key": "1st_degree_droid_talent_tree",
+    "displayName": "1st-Degree Droid Talent Tree",
+    "name": "1st-Degree Droid Talent Tree",
+    "talentCount": 7,
+    "talents": [
+      "Dull the Pain",
+      "Interrogator",
+      "Medical Droid",
+      "Known Vulnerability",
+      "Medical Analyzer",
+      "Science Analyzer",
+      "Triage Scan"
+    ],
+    "tags": [
+      "droid",
+      "1st_degree"
+    ],
+    "degree": "1st-degree"
+  },
+  {
+    "id": "2nd_degree_droid_talent_tree",
+    "sourceId": "ad499981ddb8450e",
+    "key": "2nd_degree_droid_talent_tree",
+    "displayName": "2nd-Degree Droid Talent Tree",
+    "name": "2nd-Degree Droid Talent Tree",
+    "talentCount": 7,
+    "talents": [
+      "Adept Assistant",
+      "Mechanics Mastery",
+      "Vehicle Mechanic",
+      "Burst Transfer",
+      "On-Board System Link",
+      "Quick Astrogation",
+      "Scomp Link Slicer"
+    ],
+    "tags": [
+      "droid",
+      "2nd_degree"
+    ],
+    "degree": "2nd-degree"
+  },
+  {
+    "id": "3rd_degree_droid_talent_tree",
+    "sourceId": "af077700c1b8433f",
+    "key": "3rd_degree_droid_talent_tree",
+    "displayName": "3rd-Degree Droid Talent Tree",
+    "name": "3rd-Degree Droid Talent Tree",
+    "talentCount": 7,
+    "talents": [
+      "Etiquette",
+      "Helpful",
+      "Protocol",
+      "Nuanced",
+      "Observant",
+      "Supervising Droid",
+      "Talkdroid"
+    ],
+    "tags": [
+      "droid",
+      "3rd_degree"
+    ],
+    "degree": "3rd-degree"
+  },
+  {
+    "id": "4th_degree_droid_talent_tree",
+    "sourceId": "73814706c00849c6",
+    "key": "4th_degree_droid_talent_tree",
+    "displayName": "4th-Degree Droid Talent Tree",
+    "name": "4th-Degree Droid Talent Tree",
+    "talentCount": 7,
+    "talents": [
+      "Combat Repairs",
+      "Droid Smash",
+      "Targeting Package",
+      "Just a Scratch",
+      "Target Acquisition",
+      "Target Lock",
+      "Weapons Power Surge"
+    ],
+    "tags": [
+      "droid",
+      "4th_degree"
+    ],
+    "degree": "4th-degree"
+  },
+  {
+    "id": "5th_degree_droid_talent_tree",
+    "sourceId": "c4e48efaad1f49af",
+    "key": "5th_degree_droid_talent_tree",
+    "displayName": "5th-Degree Droid Talent Tree",
+    "name": "5th-Degree Droid Talent Tree",
+    "talentCount": 7,
+    "talents": [
+      "Cargo Hauler",
+      "Environmentally Shielded",
+      "Power Supply",
+      "Durable",
+      "Heavy-Duty Actuators",
+      "Load Launcher",
+      "Task Optimization"
+    ],
+    "tags": [
+      "droid",
+      "5th_degree"
+    ],
+    "degree": "5th-degree"
+  },
+  {
     "id": "knight-s-resolve",
     "displayName": "Knight S Resolve",
     "talentCount": 5,

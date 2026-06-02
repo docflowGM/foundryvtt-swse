@@ -1803,14 +1803,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
     }
 
-    // ── DEBUG: shell region ownership verification ──
+    // Optional shell region trace. Keep this off by default; dumping HTML every
+    // render makes Chrome's console unreadable during chargen rerenders.
     const isIntroMode = currentDescriptor?.stepId === 'intro';
-    console.log('[ProgressionShell] active step =', currentDescriptor?.stepId);
-    console.log('[ProgressionShell] isIntroMode =', isIntroMode);
-    console.log('[ProgressionShell] workSurfaceHtml payload =', workSurfaceHtml?.slice?.(0, 120) ?? '(null)');
-    console.log('[ProgressionShell] detailsPanelHtml payload =', detailsPanelHtml?.slice?.(0, 120) ?? '(null)');
-    console.log('[ProgressionShell] summaryPanelHtml payload =', summaryPanelHtml?.slice?.(0, 120) ?? '(null)');
-    // ── END DEBUG ──
+    if (globalThis.SWSE_PROGRESS_RENDER_TRACE === true) {
+      swseLogger.debug('[ProgressionShell] region payload summary', {
+        activeStep: currentDescriptor?.stepId || null,
+        isIntroMode,
+        workSurfaceLength: String(workSurfaceHtml || '').length,
+        detailsPanelLength: String(detailsPanelHtml || '').length,
+        summaryPanelLength: String(summaryPanelHtml || '').length,
+        workSurfacePreview: String(workSurfaceHtml || '').slice(0, 80),
+        detailsPanelPreview: String(detailsPanelHtml || '').slice(0, 80),
+        summaryPanelPreview: String(summaryPanelHtml || '').slice(0, 80),
+      });
+    }
 
     // Phase 8: Log hydration diagnostics
     diagnostics.logToConsole();
@@ -1821,14 +1828,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Render mentor-rail template with mentor and collapse state
     if (this.mentorRail) {
       try {
-        // [DEBUG] Translation bootstrap tracking
-        console.log('[SWSE Translation Debug] [_prepareContext] Rendering mentor-rail template with mentor state:', {
-          currentDialogue: this.mentor.currentDialogue ?? '(empty)',
-          currentDialogue_length: this.mentor.currentDialogue?.length ?? 0,
-          isAnimating: this.mentor.isAnimating,
-          animationState: this.mentor.animationState,
-          renderNum,
-        });
+        if (globalThis.SWSE_MENTOR_TRACE === true) {
+          swseLogger.debug('[MentorRail] rendering mentor rail template', {
+            currentDialogueLength: this.mentor.currentDialogue?.length ?? 0,
+            isAnimating: this.mentor.isAnimating,
+            animationState: this.mentor.animationState,
+            renderNum,
+          });
+        }
 
         const mentorRailModel = {
           ...this.mentor,
@@ -1843,13 +1850,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
           }
         );
 
-        // [DEBUG] Log template result
-        console.log('[SWSE Translation Debug] [_prepareContext] mentor-rail template rendered:', {
-          html_includes_fallback: partsHtml.mentorRail?.includes?.('Awaiting your decision') ?? false,
-          html_includes_currentDialogue: partsHtml.mentorRail?.includes?.(this.mentor.currentDialogue) ?? false,
-          html_length: partsHtml.mentorRail?.length ?? 0,
-          renderNum,
-        });
+        if (globalThis.SWSE_MENTOR_TRACE === true) {
+          swseLogger.debug('[MentorRail] mentor rail template rendered', {
+            includesFallback: partsHtml.mentorRail?.includes?.('Awaiting your decision') ?? false,
+            includesCurrentDialogue: partsHtml.mentorRail?.includes?.(this.mentor.currentDialogue) ?? false,
+            htmlLength: partsHtml.mentorRail?.length ?? 0,
+            renderNum,
+          });
+        }
       } catch (err) {
         console.error('[ProgressionShell] Failed to render mentor-rail:', err);
         partsHtml.mentorRail = null;

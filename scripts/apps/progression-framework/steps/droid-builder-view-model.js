@@ -31,12 +31,12 @@ const CATEGORY_LABELS = {
 };
 
 const CATEGORY_DESCRIPTIONS = {
-  locomotion: 'Movement platform and mobility profile.',
-  processor: 'Core processor and behavioral architecture.',
-  appendage: 'Manipulators, claws, tools, and mounts.',
-  accessory: 'Optional installed droid systems and equipment.',
-  locomotionEnhancement: 'Enhancements that modify the active locomotion package.',
-  appendageEnhancement: 'Enhancements that modify installed appendages.',
+  locomotion: 'How the chassis moves through the scene: walking frames, wheels, tracks, repulsors, hovers, and other mobility platforms. This choice sets the droid\'s baseline movement profile before later enhancements modify it.',
+  processor: 'The droid\'s behavioral core. Player droids need a heuristic processor so the chassis can reason, learn, and operate independently rather than following only narrow programmed instructions.',
+  appendage: 'Manipulation hardware: hands, tool mounts, claws, probes, legs, and other limbs that let the droid interact with objects, weapons, equipment, and the environment.',
+  accessory: 'Optional systems that expand the chassis beyond the required core: sensors, communications, armor, shields, tool packages, storage, and specialized installed hardware.',
+  locomotionEnhancement: 'Mobility upgrades that attach to or modify the selected locomotion package, improving movement options or adapting the chassis to unusual terrain.',
+  appendageEnhancement: 'Upgrades that attach to installed appendages, improving manipulation, tool use, or specialized limb functions.',
 };
 
 const REQUIRED_GROUPS = new Set(['locomotion', 'processor', 'appendage']);
@@ -203,6 +203,7 @@ export class DroidBuilderViewModelAdapter {
       availableSystemsFlat,
       selectedDetail,
       validation,
+      selectionSummary: this.#buildSelectionSummary(installedGroups),
       warnings: validation.warnings,
       errors: validation.errors,
       reusableHosts: ['chargenDraft', 'buildNew', 'modifyExisting', 'storeQuote', 'followerDraft', 'gmDraft'],
@@ -228,6 +229,7 @@ export class DroidBuilderViewModelAdapter {
       availableGroups: [],
       availableSystemsFlat: [],
       selectedDetail: { isEmpty: true, message: 'Select a droid component to inspect installation details.' },
+      selectionSummary: [],
       validation: {
         isValid: false,
         tone: 'warning',
@@ -280,7 +282,9 @@ export class DroidBuilderViewModelAdapter {
   static #normalizeCredits(credits = {}, systems = {}) {
     const spent = Number(credits.spent ?? systems.totalCost ?? 0) || 0;
     const base = Number(credits.base ?? 0) || 0;
-    const remaining = Number(credits.remaining ?? (base - spent)) || 0;
+    // Remaining is derived, not authoritative. Session recovery can restore stale
+    // remaining values from old drafts, but base/spent is the actual budget ledger.
+    const remaining = base - spent;
     return {
       ...credits,
       base,
@@ -293,7 +297,7 @@ export class DroidBuilderViewModelAdapter {
   static #buildBudget(credits) {
     const base = Number(credits.base || 0);
     const spent = Number(credits.spent || 0);
-    const remaining = Number(credits.remaining ?? (base - spent));
+    const remaining = base - spent;
     let tone = 'positive';
     if (remaining < 0) tone = 'negative';
     else if (remaining === 0) tone = 'neutral';
@@ -425,6 +429,30 @@ export class DroidBuilderViewModelAdapter {
     };
   }
 
+  static #buildSelectionSummary(installedGroups = []) {
+    return (installedGroups || []).map(group => ({
+      id: group.id,
+      label: group.label,
+      required: !!group.required,
+      isComplete: !!group.isComplete,
+      tone: group.isComplete ? 'positive' : (group.required ? 'negative' : 'neutral'),
+      items: (group.items || []).map(item => ({
+        id: item.id,
+        name: item.name,
+        cost: item.cost,
+        type: item.type,
+      })),
+      emptyLabel: group.required ? 'Not selected' : 'None installed',
+    }));
+  }
+
+  static #isGroupFulfilled(groupId, systems = {}) {
+    if (groupId === 'locomotion') return !!systems.locomotion;
+    if (groupId === 'processor') return !!systems.processor;
+    if (groupId === 'appendage') return (systems.appendages || []).length > 0;
+    return true;
+  }
+
   static #buildInstalledLookup(installedGroups) {
     const lookup = new Map();
     for (const group of installedGroups || []) {
@@ -538,11 +566,18 @@ export class DroidBuilderViewModelAdapter {
       subcategory: null,
     }));
 
+    const isRequired = REQUIRED_GROUPS.has(actionCategory);
+    const isFulfilled = this.#isGroupFulfilled(id, context.droidState?.droidSystems || {});
+
     return {
       id,
       actionCategory,
       label,
       description: CATEGORY_DESCRIPTIONS[id] || CATEGORY_DESCRIPTIONS[actionCategory] || '',
+      isRequired,
+      isFulfilled,
+      requirementStatusLabel: isRequired ? (isFulfilled ? 'Fulfilled' : 'Required') : 'Optional',
+      requirementTone: isRequired ? (isFulfilled ? 'positive' : 'negative') : 'neutral',
       count: items.length,
       enabledCount: items.filter(item => item.canInstall).length,
       disabledCount: items.filter(item => !item.canInstall).length,
@@ -579,6 +614,10 @@ export class DroidBuilderViewModelAdapter {
       actionCategory: 'accessory',
       label: CATEGORY_LABELS.accessory,
       description: CATEGORY_DESCRIPTIONS.accessory,
+      isRequired: false,
+      isFulfilled: true,
+      requirementStatusLabel: 'Optional',
+      requirementTone: 'neutral',
       count: items.length,
       enabledCount: items.filter(item => item.canInstall).length,
       disabledCount: items.filter(item => !item.canInstall).length,

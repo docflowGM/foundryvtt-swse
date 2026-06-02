@@ -18,6 +18,7 @@ import { initializeSceneControls } from "./scripts/scene-controls/init.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
+import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
@@ -56,8 +57,12 @@ Hooks.once("init", async () => {
   CONFIG.SWSE = SWSE;
   game.swse = {
     data: SWSEData,
-    SWSE: SWSE
+    SWSE: SWSE,
+    ActorEngine
   };
+
+  globalThis.SWSE ??= {};
+  globalThis.SWSE.ActorEngine = ActorEngine;
 
   // -------------------------------
   // Document Classes

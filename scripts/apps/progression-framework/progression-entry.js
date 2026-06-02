@@ -129,6 +129,20 @@ function _isChargenIncomplete(actor, options = {}) {
 }
 
 
+
+function _isFollowerOwnerActor(actor) {
+  if (!actor) return false;
+  if (actor.type === 'character') return true;
+  if (actor.type !== 'droid') return false;
+
+  return actor.system?.isDroid === true
+    || actor.system?.swse?.progressionSubtype === 'droid'
+    || actor.system?.progression?.subtype === 'droid'
+    || actor.getFlag?.('foundryvtt-swse', 'progressionSubtype') === 'droid'
+    || actor.getFlag?.('foundryvtt-swse', 'isPlayableDroid') === true
+    || actor.getFlag?.('swse', 'isPlayableDroid') === true;
+}
+
 function _createTransientProgressionActor({ actorType = 'character', subtype = null, isDroid = false, name = null, system = {} } = {}) {
   const ActorClass = CONFIG?.Actor?.documentClass;
   if (!ActorClass) {
@@ -340,9 +354,14 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     return;
   }
 
-  if (ownerActor.type !== 'character') {
-    ui?.notifications?.error?.('Followers can only be created for character actors.');
-    SWSELogger.error('[Follower Progression] Non-character owner');
+  if (!_isFollowerOwnerActor(ownerActor)) {
+    ui?.notifications?.error?.('Followers can only be created for character or playable droid actors.');
+    SWSELogger.error('[Follower Progression] Invalid follower owner', {
+      owner: ownerActor?.name || null,
+      type: ownerActor?.type || null,
+      isDroid: ownerActor?.system?.isDroid === true,
+      progressionSubtype: ownerActor?.system?.swse?.progressionSubtype || ownerActor?.system?.progression?.subtype || null,
+    });
     return;
   }
 
