@@ -396,7 +396,7 @@ function buildClassesSection(actor, pending) {
     if (entry) ingest(entry);
   }
 
-  const totalLevel = actor?.system?.level ?? Array.from(levelsByClass.values()).reduce((a, b) => a + b, 0) || 1;
+  const totalLevel = (actor?.system?.level ?? Array.from(levelsByClass.values()).reduce((a, b) => a + b, 0)) || 1;
   const bab = calculateBab(actor);
 
   return {
