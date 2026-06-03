@@ -8309,3 +8309,126 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
 .swse-concept-combat-main .swse-concept-action-groups--combat::-webkit-scrollbar-track {
   background: rgba(3, 10, 18, 0.45);
 }
+
+
+/* ─── 2026-06-03 Hard Holopad Control Hitbox Repair ────────────────────────
+ * The actor tablet has accumulated several legacy top-bezel/drag rules with
+ * !important declarations.  This late, high-specificity block makes the drag
+ * strip non-intercepting and gives the GM-style window controls a reliable,
+ * physically lower, no-drag hit target.
+ */
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
+.swse-sheet-v2-shell--concept .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 120 !important;
+  top: 12px !important;
+  left: 96px !important;
+  right: 410px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  pointer-events: none !important;
+  cursor: default !important;
+  touch-action: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
+.swse-sheet-v2-shell--concept .swse-tablet-drag-handle {
+  pointer-events: none !important;
+  cursor: default !important;
+  touch-action: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--concept .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 2147483600 !important;
+  top: 20px !important;
+  right: 24px !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: calc(100% - 64px) !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 5px 10px !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border-radius: 12px !important;
+  background: linear-gradient(180deg, rgba(14, 24, 38, 0.98), rgba(2, 8, 14, 0.92)) !important;
+  border: 1px solid color-mix(in srgb, var(--vapor-cyan, #00f0ff) 34%, transparent) !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.58), 0 0 20px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 20%, transparent) !important;
+  transform: translateZ(0) !important;
+  pointer-events: auto !important;
+  cursor: default !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+.swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > * {
+  position: relative !important;
+  z-index: 2147483601 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept button.swse-tablet-control,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept button.swse-tablet-control,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control,
+.swse-sheet-v2-shell--concept button.swse-tablet-control,
+.swse-sheet-v2-shell--concept .swse-tablet-control {
+  position: relative !important;
+  z-index: 2147483602 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 9px !important;
+  border: 1px solid rgba(0, 240, 255, 0.26) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(0,0,0,0.38)), rgba(3,8,14,0.84) !important;
+  color: var(--swse-accent-text, #dff8ff) !important;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.72), 0 0 12px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 18%, transparent) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control--close,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control--close,
+.swse-sheet-v2-shell--concept .swse-tablet-control--close {
+  font-size: 22px !important;
+  padding-bottom: 2px !important;
+}

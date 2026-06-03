@@ -467,6 +467,21 @@ function itemCategory(item) {
   return 'Gear';
 }
 
+function composerSearchKey(...values) {
+  const raw = values
+    .map(value => String(value ?? '').trim())
+    .filter(Boolean)
+    .join(' ');
+  const ascii = raw
+    .normalize?.('NFKD')
+    ?.replace(/[\u0300-\u036f]/g, '')
+    ?.replace(/[\u2013\u2014]/g, '-')
+    ?? raw.replace(/[\u2013\u2014]/g, '-');
+  const spaced = ascii.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const dashed = ascii.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return [raw, ascii, spaced, dashed].filter(Boolean).join(' ');
+}
+
 
 function actorAssetCategory(actor) {
   const type = String(actor?.type || '').toLowerCase();
@@ -1276,11 +1291,36 @@ export class HolonetMessengerService {
   }
 
   static _buildInventoryComposerVm(actor) {
-    const rows = (actor?.items?.contents ?? [])
-      .filter(item => item?.type && !['feat', 'talent', 'forcePower', 'language', 'skill', 'class', 'species'].includes(item.type))
+    const collection = actor?.items;
+    const contents = Array.isArray(collection?.contents)
+      ? collection.contents
+      : (typeof collection?.map === 'function' ? collection.map(item => item) : safeArray(collection));
+    const excludedTypes = new Set(['feat', 'talent', 'forcepower', 'language', 'skill', 'class', 'species']);
+    const rows = contents
+      .filter(item => item?.type && !excludedTypes.has(String(item.type).toLowerCase()))
       .map(item => {
         const quantity = getItemQuantity(item);
         const category = itemCategory(item);
+        const value = Number(item.system?.cost ?? item.system?.price ?? item.system?.value ?? 0) || 0;
+        const systemTags = [
+          item.system?.weaponType,
+          item.system?.weaponGroup,
+          item.system?.meleeOrRanged,
+          item.system?.armorType,
+          item.system?.equipmentType,
+          item.system?.itemType,
+          item.system?.slot
+        ];
+        const equipped = item.system?.equipped === true
+          || item.system?.isEquipped === true
+          || item.system?.equippable?.equipped === true
+          || item.flags?.swse?.equipped === true;
+        const summaryParts = [
+          category,
+          quantity > 1 ? `Qty ${quantity}` : 'Qty 1',
+          value ? formatCredits(value) : '',
+          equipped ? 'Equipped' : ''
+        ].filter(Boolean);
         return {
           id: item.id,
           uuid: item.uuid,
@@ -1291,12 +1331,36 @@ export class HolonetMessengerService {
           img: item.img || 'icons/svg/item-bag.svg',
           quantity,
           canSplit: quantity > 1,
-          value: Number(item.system?.cost ?? item.system?.price ?? item.system?.value ?? 0) || 0
+          value,
+          valueLabel: value ? formatCredits(value) : '',
+          equipped,
+          statusLabel: equipped ? 'Equipped' : '',
+          summary: summaryParts.join(' // '),
+          searchKey: composerSearchKey(item.name, item.type, category, ...systemTags, equipped ? 'equipped' : '')
         };
       })
-      .sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
-    const categories = Array.from(new Set(rows.map(row => row.category))).map(name => ({ name, items: rows.filter(row => row.category === name) }));
-    return { items: rows, categories };
+      .sort((a, b) => a.name.localeCompare(b.name) || a.category.localeCompare(b.category));
+    const categories = Array.from(new Set(rows.map(row => row.category))).map(name => {
+      const categoryRows = rows.filter(row => row.category === name);
+      return {
+        name,
+        itemCount: categoryRows.length,
+        countLabel: `${categoryRows.length} item${categoryRows.length === 1 ? '' : 's'}`,
+        searchKey: composerSearchKey(name),
+        rows: categoryRows,
+        items: categoryRows
+      };
+    });
+    return {
+      items: rows,
+      rows,
+      flatItems: rows,
+      categories,
+      itemCount: rows.length,
+      itemCountLabel: `${rows.length} owned item${rows.length === 1 ? '' : 's'}`,
+      hasItems: rows.length > 0,
+      emptyMessage: rows.length ? '' : 'No tradeable owned inventory found on this actor.'
+    };
   }
 
   static _buildAssetComposerVm(actor) {

@@ -301,13 +301,26 @@ export class SWSEV2DroidSheet extends
    */
   _wireDroidShellSurfaceEvents(root = null, signal = null) {
     if (!(root instanceof HTMLElement)) return;
+    this._shieldTabletWindowControls(root, signal);
+    this._wireTabletWindowControlHitboxFallback(root, signal);
 
     // Droid-only tablet hardware controls. Shared shell actions are wired by
     // ShellHostMixin._wireShellEvents() during super._onRender().
-    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      this.close();
-    }, { signal });
+    root.querySelectorAll('[data-action="tablet-close"]').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.close();
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="tablet-minimize"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._minimizeTabletWindow?.();
+      }, { signal });
+    });
 
     root.querySelectorAll('[data-action="tablet-home"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
@@ -355,15 +368,114 @@ export class SWSEV2DroidSheet extends
   }
 
 
+  async _minimizeTabletWindow() {
+    try {
+      if (typeof this.minimize === 'function') {
+        await this.minimize();
+        return;
+      }
+      const appRoot = this.element?.closest?.('.application') || this.element;
+      const nativeMinimize = appRoot?.querySelector?.('[data-action="minimize"], .window-header .header-button.minimize');
+      if (nativeMinimize) nativeMinimize.click();
+    } catch (err) {
+      console.warn('[SWSEDroidSheet] Failed to minimize datapad shell.', err);
+    }
+  }
+
+
+
+  _shieldTabletWindowControls(root, signal) {
+    const controls = root?.querySelectorAll?.('[data-shell-window-control], [data-no-drag="true"], .swse-tablet-no-drag, .swse-tablet-hardware-rail, .swse-tablet-top-right-rail') || [];
+    controls.forEach((control) => {
+      const stopWindowDrag = (ev) => {
+        ev.stopPropagation();
+      };
+      control.addEventListener('pointerdown', stopWindowDrag, { signal, capture: true });
+      control.addEventListener('mousedown', stopWindowDrag, { signal, capture: true });
+      control.addEventListener('dblclick', stopWindowDrag, { signal, capture: true });
+      control.addEventListener('dragstart', stopWindowDrag, { signal, capture: true });
+    });
+  }
+
+
+
+  _wireTabletWindowControlHitboxFallback(root, signal) {
+    if (!(root instanceof HTMLElement)) return;
+
+    const controlSelector = '[data-action="tablet-close"], [data-action="tablet-expand"], [data-action="tablet-minimize"], [data-action="tablet-home"]';
+    const findControlAtPoint = (ev) => {
+      const x = Number(ev.clientX);
+      const y = Number(ev.clientY);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+
+      let best = null;
+      let bestScore = Number.POSITIVE_INFINITY;
+      const controls = Array.from(root.querySelectorAll(controlSelector))
+        .filter((el) => el instanceof HTMLElement && el.offsetParent !== null);
+
+      for (const control of controls) {
+        const rect = control.getBoundingClientRect();
+        if (!rect.width || !rect.height) continue;
+
+        // Inflate the logical hitbox because the tablet drag chrome sits very
+        // close to these controls and some browsers report the bezel as the
+        // pointer target. The visual buttons stay compact; the usable target
+        // is intentionally forgiving.
+        const padX = Math.max(16, Math.min(24, rect.width * 0.75));
+        const padY = Math.max(14, Math.min(22, rect.height * 0.75));
+        const left = rect.left - padX;
+        const right = rect.right + padX;
+        const top = rect.top - padY;
+        const bottom = rect.bottom + padY;
+        if (x < left || x > right || y < top || y > bottom) continue;
+
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const score = Math.hypot(x - cx, y - cy);
+        if (score < bestScore) {
+          best = control;
+          bestScore = score;
+        }
+      }
+      return best;
+    };
+
+    root.addEventListener('pointerdown', (ev) => {
+      if (ev.button !== 0) return;
+      const target = ev.target instanceof Element ? ev.target : null;
+      if (target?.closest?.('button.swse-tablet-control')) return;
+
+      const control = findControlAtPoint(ev);
+      if (!control) return;
+
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      control.click();
+    }, { signal, capture: true });
+  }
+
   _wireTabletWindowDrag(root, signal) {
     const dragHandles = root.querySelectorAll('[data-action="tablet-drag"], [data-shell-chrome="top"]');
     if (!dragHandles.length) return;
 
-    const isInteractive = (target) => !!target?.closest?.('button, input, select, textarea, a, [contenteditable="true"], [data-route-id], [data-shell-action]');
+    const isInteractive = (target) => !!target?.closest?.('button, input, select, textarea, a, [contenteditable="true"], [data-route-id], [data-shell-action], [data-shell-window-control], [data-no-drag="true"], .swse-tablet-no-drag, .swse-tablet-hardware-rail, .swse-tablet-top-right-rail');
 
     dragHandles.forEach((handle) => {
+      handle.addEventListener('dblclick', async (ev) => {
+        if (isInteractive(ev.target)) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._minimizeTabletWindow();
+      }, { signal });
+
       handle.addEventListener('pointerdown', (ev) => {
         if (ev.button !== 0 || isInteractive(ev.target)) return;
+        if (ev.detail >= 2) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          void this._minimizeTabletWindow();
+          return;
+        }
         ev.preventDefault();
         const startX = ev.clientX;
         const startY = ev.clientY;

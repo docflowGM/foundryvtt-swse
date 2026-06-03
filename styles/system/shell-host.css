@@ -815,3 +815,28 @@
   text-transform: uppercase;
   color: var(--swse-text-strong, #e8f4ff);
 }
+
+/* Workbench inline body scroll fix: the shell surface is fixed-height; the
+   injected workbench middle region must be allowed to scroll while the footer
+   stays pinned. */
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] .swse-customization-workarea {
+  flex: 1 1 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] .workbench-detail {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] .workbench-detail > .detail-grid,
+.swse.sheet.actor.character.v2 .swse-shell-surface-host[data-shell-surface="workbench"] .workbench-detail > .lightsaber-workspace {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+}
+

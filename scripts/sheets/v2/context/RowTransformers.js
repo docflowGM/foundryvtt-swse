@@ -40,11 +40,20 @@ export class RowTransformers {
     // PHASE 5: Natural weapons with autoEquipped flag are always equipped.
     // Keep this in sync with combat attack hydration: the Gear tab and Combat tab
     // must agree about what is equipped/readied/active.
-    const truthy = (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(String(value || '').toLowerCase());
+    const truthy = (value) => {
+      if (value === true || Number(value) === 1) return true;
+      if (value && typeof value === 'object') {
+        return truthy(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+      }
+      return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'natural'].includes(String(value || '').toLowerCase());
+    };
     const isNaturalWeapon = item.flags?.swse?.autoEquipped === true;
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: item.actor });
     const isLightsaber = visualProfile.isLightsaber;
-    const activated = visualProfile.active;
+    const armorType = String(item.system?.armorType ?? item.system?.armor?.type ?? '').toLowerCase();
+    const isEnergyShield = item.type === 'armor' && (armorType === 'shield' || Number(item.system?.shieldRating ?? 0) > 0);
+    const canToggleActivated = isLightsaber || isEnergyShield || typeof item.system?.activated === 'boolean';
+    const activated = visualProfile.active || item.system?.activated === true || item.system?.active === true;
     const equipped = truthy(item.system?.equipped)
       || truthy(item.system?.isEquipped)
       || truthy(item.system?.readied)
@@ -67,10 +76,17 @@ export class RowTransformers {
       equipped,
       activated,
       isLightsaber,
-      canToggleActivated: isLightsaber,
+      isEnergyShield,
+      shieldRating: safeNumber(item.system?.shieldRating, 0),
+      currentSR: safeNumber(item.system?.currentSR, 0),
+      canToggleActivated,
       activationLabel: activated ? "Deactivate" : "Activate",
-      activationTitle: activated ? "Deactivate lightsaber blade" : "Activate lightsaber blade",
-      activationStateLabel: activated ? "Blade Active" : "Blade Inactive",
+      activationTitle: activated
+        ? (isEnergyShield ? "Deactivate energy shield" : "Deactivate lightsaber blade")
+        : (isEnergyShield ? "Activate energy shield" : "Activate lightsaber blade"),
+      activationStateLabel: activated
+        ? (isEnergyShield ? "Shield Active" : "Blade Active")
+        : (isEnergyShield ? "Shield Inactive" : "Blade Inactive"),
       visualProfile,
       visualKind: visualProfile.kind,
       visualColorKey: visualProfile.primaryColor,

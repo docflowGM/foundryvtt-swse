@@ -153,7 +153,25 @@ export class DefenseCalculator {
     const refStateBonus = await this._getStateModifiers(actor, 'reflex', context) + getSystemActiveDefenseBonus(actor, 'reflex');
     const willStateBonus = await this._getStateModifiers(actor, 'will', context) + getSystemActiveDefenseBonus(actor, 'will');
 
-    const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped) ?? null;
+    const isEnergyShieldArmor = (item) => {
+      if (!item || item.type !== 'armor') return false;
+      const system = item.system || {};
+      const tokens = [
+        item.name,
+        system.armorType,
+        system.subtype,
+        system.category,
+        system.equipmentType,
+        Array.isArray(system.traits) ? system.traits.join(' ') : ''
+      ].filter(Boolean).join(' ').toLowerCase();
+      return /energy[\s_-]*shield/.test(tokens) || (tokens.includes('shield') && system.shieldRating !== undefined);
+    };
+
+    // Personal energy shields are defensive generators/accessories, not armor
+    // replacement. They grant SR against Energy damage when activated and may
+    // impose active-use penalties, but they do not override heroic-level Reflex
+    // contribution like worn armor does.
+    const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
     const hasArmoredDefense = actor.items?.some(item => item.name === 'Armored Defense') ?? false;
     const hasImprovedArmoredDefense = actor.items?.some(item => item.name === 'Improved Armored Defense') ?? false;
 

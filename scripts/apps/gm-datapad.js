@@ -853,9 +853,34 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
   _wireSharedHolopadFrameEvents(root) {
-    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      this.close();
+    this._shieldSharedHolopadWindowControls(root);
+    this._wireSharedHolopadControlHitboxFallback(root);
+
+    root.querySelectorAll('[data-action="tablet-close"]').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.close();
+      });
+    });
+
+    root.querySelectorAll('[data-action="tablet-minimize"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._minimizeSharedHolopadWindow?.();
+      });
+    });
+
+    root.querySelectorAll('[data-shell-chrome="top"], [data-action="tablet-drag"], .swse-sheet-v2-shell--gm-datapad').forEach(el => {
+      el.addEventListener('dblclick', async (ev) => {
+        if (ev.target?.closest?.('button, input, select, textarea, a, [contenteditable="true"], [data-route-id], [data-shell-action], [data-shell-window-control], [data-no-drag="true"], .swse-tablet-no-drag, .swse-tablet-hardware-rail, .swse-tablet-top-right-rail')) return;
+        const target = ev.target instanceof Element ? ev.target : null;
+        if (target?.closest?.('.swse-v2-screen--concept')) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._minimizeSharedHolopadWindow?.();
+      });
     });
 
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
@@ -865,6 +890,80 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     this._wireSharedHolopadDrag(root);
     this._wireSharedHolopadResize(root);
+  }
+
+
+
+  _shieldSharedHolopadWindowControls(root) {
+    const controls = root?.querySelectorAll?.('[data-shell-window-control], [data-no-drag="true"], .swse-tablet-no-drag, .swse-tablet-hardware-rail, .swse-tablet-top-right-rail') || [];
+    controls.forEach((control) => {
+      const stopWindowDrag = (ev) => {
+        ev.stopPropagation();
+      };
+      control.addEventListener('pointerdown', stopWindowDrag, { capture: true });
+      control.addEventListener('mousedown', stopWindowDrag, { capture: true });
+      control.addEventListener('dblclick', stopWindowDrag, { capture: true });
+      control.addEventListener('dragstart', stopWindowDrag, { capture: true });
+    });
+  }
+
+
+
+  _wireSharedHolopadControlHitboxFallback(root) {
+    if (!(root instanceof HTMLElement)) return;
+    if (root.dataset.swseControlHitboxFallback === 'true') return;
+    root.dataset.swseControlHitboxFallback = 'true';
+
+    const controlSelector = '[data-action="tablet-close"], [data-action="tablet-expand"], [data-action="tablet-minimize"], [data-action="tablet-home"]';
+    const findControlAtPoint = (ev) => {
+      const x = Number(ev.clientX);
+      const y = Number(ev.clientY);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+
+      let best = null;
+      let bestScore = Number.POSITIVE_INFINITY;
+      const controls = Array.from(root.querySelectorAll(controlSelector))
+        .filter((el) => el instanceof HTMLElement && el.offsetParent !== null);
+
+      for (const control of controls) {
+        const rect = control.getBoundingClientRect();
+        if (!rect.width || !rect.height) continue;
+        const padX = Math.max(16, Math.min(24, rect.width * 0.75));
+        const padY = Math.max(14, Math.min(22, rect.height * 0.75));
+        if (x < rect.left - padX || x > rect.right + padX || y < rect.top - padY || y > rect.bottom + padY) continue;
+        const score = Math.hypot(x - (rect.left + rect.width / 2), y - (rect.top + rect.height / 2));
+        if (score < bestScore) {
+          best = control;
+          bestScore = score;
+        }
+      }
+      return best;
+    };
+
+    root.addEventListener('pointerdown', (ev) => {
+      if (ev.button !== 0) return;
+      const target = ev.target instanceof Element ? ev.target : null;
+      if (target?.closest?.('button.swse-tablet-control')) return;
+      const control = findControlAtPoint(ev);
+      if (!control) return;
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      control.click();
+    }, { capture: true });
+  }
+
+  async _minimizeSharedHolopadWindow() {
+    try {
+      if (typeof this.minimize === 'function') {
+        await this.minimize();
+        return;
+      }
+      const appRoot = this.element?.closest?.('.application') || this.element;
+      const nativeMinimize = appRoot?.querySelector?.('[data-action="minimize"], .window-header .header-button.minimize');
+      if (nativeMinimize) nativeMinimize.click();
+    } catch (err) {
+      SWSELogger.warn('[GM Datapad] Failed to minimize shared holopad window.', err);
+    }
   }
 
   _toggleSharedHolopadExpand() {
@@ -897,6 +996,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
     handles.forEach((handle) => {
       handle.addEventListener('pointerdown', (ev) => {
         if (ev.button !== 0 || ev.target?.closest?.('button, input, select, textarea, a, [contenteditable="true"]')) return;
+        if (ev.detail >= 2) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          void this._minimizeSharedHolopadWindow();
+          return;
+        }
         ev.preventDefault();
         const startX = ev.clientX;
         const startY = ev.clientY;

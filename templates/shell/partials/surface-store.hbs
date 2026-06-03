@@ -211,7 +211,7 @@
                 <span class="swse-store-surface__card-price">$ {{this.finalCost}}</span>
                 {{/if}}
                 <div class="swse-store-surface__card-actions">
-                  <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">DETAILS</button>
+                  <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">{{#if (eq ../vm.storeContext.selectedProductId this.id)}}COLLAPSE{{else}}DETAILS{{/if}}</button>
                   {{#if (eq this.type 'vehicle')}}
                   <button type="button" class="swse-store-surface__card-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">USED</button>
                   <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">NEW</button>
@@ -220,6 +220,32 @@
                   {{/if}}
                 </div>
               </div>
+              {{#if (eq ../vm.storeContext.selectedProductId this.id)}}
+              <div class="swse-store-surface__card-expand">
+                <div class="swse-store-surface__card-expand-head">
+                  <span>{{../vm.storeContext.selectedProduct.rarityLabel}}</span>
+                  <span>{{../vm.storeContext.selectedProduct.availability}}</span>
+                  <span>$ {{../vm.storeContext.selectedProduct.price}}</span>
+                </div>
+                {{#if ../vm.storeContext.selectedProduct.suggestionBullets.length}}
+                <ul class="swse-store-surface__card-expand-bullets">
+                  {{#each ../vm.storeContext.selectedProduct.suggestionBullets}}<li>{{this}}</li>{{/each}}
+                </ul>
+                {{/if}}
+                {{#if ../vm.storeContext.selectedProduct.description}}
+                <div class="swse-store-surface__card-expand-desc">{{{../vm.storeContext.selectedProduct.description}}}</div>
+                {{/if}}
+                {{#if ../vm.storeContext.selectedProduct.techDetailsHtml}}
+                <div class="swse-store-surface__card-expand-tech">{{{../vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
+                {{/if}}
+                {{#if ../vm.storeContext.selectedProduct.flavorReviewsHtml}}
+                <div class="swse-store-surface__card-expand-reviews">
+                  <div class="swse-store-surface__card-expand-title">Marketplace Reviews</div>
+                  {{{../vm.storeContext.selectedProduct.flavorReviewsHtml}}}
+                </div>
+                {{/if}}
+              </div>
+              {{/if}}
             </div>
             {{/each}}
             {{#if vm.storeContext.hasMoreItems}}
@@ -231,74 +257,8 @@
             {{/if}}
           </div>
 
-          {{!-- Side rail: Selected product or mini cart --}}
+          {{!-- Side rail: cart / wallet only. Product details expand inside cards. --}}
           <aside class="swse-store-surface__rail">
-            {{#if vm.storeContext.selectedProduct}}
-            <div class="swse-store-surface__detail-panel">
-              <div class="swse-store-surface__detail-header">
-                <button type="button" class="swse-store-surface__detail-back" data-action="detail-back">← BACK</button>
-                <span class="swse-store-surface__detail-rar swse-store-surface__detail-rar-{{vm.storeContext.selectedProduct.rarityClass}}">{{vm.storeContext.selectedProduct.rarityLabel}}</span>
-                <span class="swse-store-surface__detail-avail">{{vm.storeContext.selectedProduct.availability}}</span>
-              </div>
-              <div class="swse-store-surface__detail-body">
-                <div class="swse-store-surface__detail-media">
-                  {{#if vm.storeContext.selectedProduct.img}}
-                  <img class="swse-store-surface__detail-img" src="{{vm.storeContext.selectedProduct.img}}" alt="{{vm.storeContext.selectedProduct.name}}"/>
-                  {{else}}
-                  <div class="swse-store-surface__detail-glyph">{{vm.storeContext.selectedProduct.glyph}}</div>
-                  {{/if}}
-                  <div class="swse-store-surface__detail-price-stack">
-                    {{#if vm.storeContext.selectedProduct.requiresCondition}}
-                    <div class="swse-store-surface__detail-price-line"><span>NEW</span><strong>$ {{vm.storeContext.selectedProduct.newCost}}</strong></div>
-                    <div class="swse-store-surface__detail-price-line"><span>USED</span><strong>$ {{vm.storeContext.selectedProduct.usedCost}}</strong></div>
-                    {{else}}
-                    <div class="swse-store-surface__detail-price-line is-primary"><span>PRICE</span><strong>$ {{vm.storeContext.selectedProduct.price}}</strong></div>
-                    {{/if}}
-                  </div>
-                </div>
-                <div class="swse-store-surface__detail-info">
-                  <h2 class="swse-store-surface__detail-name">{{vm.storeContext.selectedProduct.name}}</h2>
-                  <div class="swse-store-surface__detail-catline">
-                    <span>{{vm.storeContext.selectedProduct.typeLabel}}</span>
-                    {{#if vm.storeContext.selectedProduct.category}}<span>{{vm.storeContext.selectedProduct.category}}</span>{{/if}}
-                    {{#if vm.storeContext.selectedProduct.subcategory}}<span>{{vm.storeContext.selectedProduct.subcategory}}</span>{{/if}}
-                  </div>
-                  {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}
-                  <div class="swse-store-surface__detail-tier swse-store-surface__detail-tier-{{vm.storeContext.selectedProduct.suggestion.tier}}">
-                    ◆ {{vm.storeContext.selectedProduct.suggestionTierLabel}} for your build
-                  </div>
-                  {{/if}}
-                  {{#if vm.storeContext.selectedProduct.suggestionBullets.length}}
-                  <ul class="swse-store-surface__detail-bullets">
-                    {{#each vm.storeContext.selectedProduct.suggestionBullets}}
-                    <li>{{this}}</li>
-                    {{/each}}
-                  </ul>
-                  {{/if}}
-                  {{#if vm.storeContext.selectedProduct.description}}
-                  <div class="swse-store-surface__detail-desc">{{{vm.storeContext.selectedProduct.description}}}</div>
-                  {{/if}}
-                  {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
-                  <div class="swse-store-surface__detail-tech">{{{vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
-                  {{/if}}
-                </div>
-              </div>
-              <div class="swse-store-surface__detail-foot">
-                {{#if vm.storeContext.selectedProduct.requiresCondition}}
-                <button type="button" class="swse-store-surface__btn" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">+ ADD USED</button>
-                <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">+ ADD NEW</button>
-                {{else}}
-                <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">+ ADD TO CART</button>
-                {{/if}}
-              </div>
-              {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
-              <div class="swse-store-surface__detail-reviews">
-                <div class="swse-store-surface__detail-reviews-title">Marketplace Reviews</div>
-                {{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}
-              </div>
-              {{/if}}
-            </div>
-            {{else}}
             <div class="swse-store-surface__mini-cart">
               {{#if vm.storeContext.cartEntries.length}}
               <div class="swse-store-surface__mini-cart-header">STAGED ({{vm.storeContext.cartCount}})</div>
@@ -322,7 +282,7 @@
               </div>
               {{/if}}
             </div>
-            {{/if}}
+
           </aside>
         </section>
 

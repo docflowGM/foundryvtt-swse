@@ -6,13 +6,10 @@
  * through `game.packs.get(id).render(true)`. This repair installs a narrow,
  * capture-phase fallback opener for native compendium pack rows.
  *
- * Step 4 hardening:
- * - does not rely on `#compendium` existing during init
- * - installs on document capture so root-level/bubble-level handlers cannot
- *   swallow the click before the fallback sees it
- * - resolves pack ids from V13 data attrs, Compendium UUIDs, child attrs, or
- *   pack label text as a last resort
- * - exposes status/probe helpers instead of returning a bare boolean
+ * Important invariant: the resolver must never resolve a click from a broad
+ * directory container. A broad container contains many pack cards, so label or
+ * child-attribute fallback there will always drift toward the first visible
+ * pack. Every open must resolve from the clicked card/row itself.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
@@ -23,18 +20,83 @@ const ROOT_FLAG = '__swseCompendiumClickRepairRoots';
 
 let registered = false;
 
-const PACK_ELEMENT_SELECTOR = [
+const ROOT_SELECTOR = [
+  '#sidebar #compendium',
+  '#sidebar .compendium-sidebar',
+  '#sidebar [data-tab="compendium"]',
+  '#sidebar [data-application-part="directory"]',
+  '#compendium',
+  '.compendium-sidebar'
+].join(',');
+
+const PACK_DATA_SELECTOR = [
   '[data-pack]',
   '[data-pack-id]',
   '[data-collection]',
   '[data-collection-id]',
-  '[data-uuid^="Compendium."]',
-  'li.directory-item.compendium',
-  'li.compendium.directory-item',
+  '[data-uuid^="Compendium."]'
+].join(',');
+
+const PACK_ROW_SELECTOR = [
+  'li.directory-item',
+  'li.compendium',
+  'li.pack',
   '.directory-item.compendium',
   '.compendium.directory-item',
   '.compendium-pack',
-  '.pack'
+  '.pack-card',
+  '.pack-row',
+  '[role="listitem"]',
+  '[data-pack]',
+  '[data-pack-id]',
+  '[data-collection]',
+  '[data-collection-id]',
+  '[data-uuid^="Compendium."]'
+].join(',');
+
+const TITLE_SELECTOR = [
+  '.pack-title',
+  '.entry-name',
+  '.document-name',
+  '.directory-item-name',
+  '.compendium-name',
+  '.pack-name',
+  '.name',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'label',
+  'a',
+  'span'
+].join(',');
+
+const POINT_CANDIDATE_SELECTOR = [
+  PACK_ROW_SELECTOR,
+  'button',
+  'article',
+  'li',
+  'div'
+].join(',');
+
+const BROAD_CONTAINER_SELECTOR = [
+  'html',
+  'body',
+  'main',
+  'aside',
+  'section',
+  'nav',
+  'ol',
+  'ul',
+  '#sidebar',
+  '#sidebar-content',
+  '#compendium',
+  '.sidebar-tab',
+  '.directory-list',
+  '.directory',
+  '.tab',
+  '[data-application-part="directory"]',
+  '[data-application-part="content"]'
 ].join(',');
 
 const CONTROL_SELECTOR = [
@@ -49,8 +111,7 @@ const CONTROL_SELECTOR = [
   '.context',
   '.context-menu',
   '.control',
-  'button',
-  'a[href]',
+  'button[data-action]:not([data-action="open"]):not([data-action="render"]):not([data-action="browse"]):not([data-action="view"])',
   'input',
   'select',
   'textarea'
@@ -63,27 +124,25 @@ function _getApplicationElement(appOrRoot = null) {
   return null;
 }
 
-function _queryRoots() {
-  const roots = new Set();
+function _cleanLabel(text) {
+  return String(text ?? '')
+    .replace(/foundryvtt-swse/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\b\d+\b/g, '')
+    .replace(/[\u{1F300}-\u{1FAFF}]/gu, '')
+    .trim()
+    .toLowerCase();
+}
 
-  const direct = _getApplicationElement(ui?.compendium);
-  if (direct) roots.add(direct);
+function _allPacks() {
+  if (Array.isArray(game.packs?.contents)) return game.packs.contents;
+  if (typeof game.packs?.filter === 'function') return game.packs.filter(() => true);
+  return Array.from(game.packs ?? []);
+}
 
-  for (const selector of [
-    '#sidebar #compendium',
-    '#sidebar .compendium-sidebar',
-    '#sidebar [data-tab="compendium"]',
-    '#sidebar [data-application-part="directory"]',
-    '#compendium',
-    '.compendium-sidebar',
-    '[data-application-part="directory"]'
-  ]) {
-    for (const el of document.querySelectorAll(selector)) {
-      if (el instanceof HTMLElement) roots.add(el);
-    }
-  }
-
-  return Array.from(roots);
+function _packLabel(pack) {
+  const meta = pack?.metadata ?? {};
+  return meta.label ?? pack?.title ?? pack?.collection ?? meta.id ?? '';
 }
 
 function _normalizePackId(value) {
@@ -92,10 +151,29 @@ function _normalizePackId(value) {
 
   if (raw.startsWith('Compendium.')) {
     const parts = raw.split('.').filter(Boolean);
-    if (parts.length >= 3) return `${parts[1]}.${parts[2]}`;
+    if (parts.length >= 3) {
+      const collection = `${parts[1]}.${parts[2]}`;
+      return game.packs?.has?.(collection) ? collection : null;
+    }
   }
 
-  if (raw.includes('.') && game.packs?.has?.(raw)) return raw;
+  return raw.includes('.') && game.packs?.has?.(raw) ? raw : null;
+}
+
+function _resolvePackIdFromText(text) {
+  const label = _cleanLabel(text);
+  if (!label) return null;
+
+  const packs = _allPacks();
+  const exact = packs.filter(pack => _cleanLabel(_packLabel(pack)) === label);
+  if (exact.length === 1) return exact[0].collection;
+
+  const contained = packs.filter(pack => {
+    const packLabel = _cleanLabel(_packLabel(pack));
+    return packLabel && label.includes(packLabel);
+  });
+  if (contained.length === 1) return contained[0].collection;
+
   return null;
 }
 
@@ -123,125 +201,195 @@ function _candidateValuesFromElement(element) {
   return values.filter(v => v != null && String(v).trim() !== '');
 }
 
-function _resolvePackIdFromElement(element) {
+function _resolvePackIdFromData(element) {
   if (!(element instanceof HTMLElement)) return null;
-
-  // 1. Try the element's own data attributes first. This avoids scanning all
-  //    descendants when a broad container element is matched by .closest().
   for (const candidate of _candidateValuesFromElement(element)) {
     const packId = _normalizePackId(candidate);
-    if (packId && game.packs?.has?.(packId)) return packId;
+    if (packId) return packId;
   }
-
-  // 2. Foundry V13 can put the pack id on a direct child control (header/button)
-  //    rather than the row container. Only scan immediate children to avoid
-  //    pulling in sibling rows from a parent container.
-  for (const child of element.children) {
-    for (const candidate of _candidateValuesFromElement(child)) {
-      const packId = _normalizePackId(candidate);
-      if (packId && game.packs?.has?.(packId)) return packId;
-    }
-  }
-
-  return _resolvePackIdFromLabel(element);
-}
-
-function _cleanLabel(text) {
-  return String(text ?? '')
-    .replace(/\s+/g, ' ')
-    .replace(/\b\d+\b/g, '')
-    .trim()
-    .toLowerCase();
-}
-
-function _resolvePackIdFromLabel(element) {
-  if (!(element instanceof HTMLElement)) return null;
-
-  const labelSource = element.querySelector('.pack-title, .entry-name, .document-name, h3, h4, label')
-    || element;
-  const label = _cleanLabel(labelSource.textContent);
-  if (!label) return null;
-
-  const matches = game.packs?.filter?.((pack) => {
-    const meta = pack?.metadata ?? {};
-    const packLabel = _cleanLabel(meta.label ?? pack.title ?? pack.collection ?? pack.metadata?.id);
-    return packLabel && packLabel === label;
-  }) ?? [];
-
-  if (matches.length === 1) return matches[0].collection;
-
-  // Last resort: some rows include the label plus document count or controls.
-  const loose = game.packs?.filter?.((pack) => {
-    const meta = pack?.metadata ?? {};
-    const packLabel = _cleanLabel(meta.label ?? pack.title ?? pack.collection ?? pack.metadata?.id);
-    return packLabel && (label.includes(packLabel) || packLabel.includes(label));
-  }) ?? [];
-
-  return loose.length === 1 ? loose[0].collection : null;
+  return null;
 }
 
 function _isInsideCompendiumDirectory(element) {
   if (!(element instanceof Element)) return false;
-
-  if (element.closest('#sidebar #compendium, #sidebar .compendium-sidebar, #sidebar [data-tab="compendium"]')) {
-    return true;
-  }
+  if (element.closest(ROOT_SELECTOR)) return true;
 
   const directory = element.closest('[data-application-part="directory"]');
   if (!directory) return false;
 
-  // Do not hijack actor/item/journal directories. Only claim a generic V13
-  // directory when it contains compendium-ish rows or pack ids.
-  return !!directory.querySelector(PACK_ELEMENT_SELECTOR);
+  if (directory.querySelector(PACK_DATA_SELECTOR)) return true;
+  return Array.from(directory.querySelectorAll(TITLE_SELECTOR))
+    .some(el => _resolvePackIdFromText(el.textContent || el.getAttribute?.('title') || el.dataset?.tooltip));
 }
 
-function _findPackElement(target) {
+function _queryRoots() {
+  const roots = new Set();
+
+  const direct = _getApplicationElement(ui?.compendium);
+  if (direct) roots.add(direct);
+
+  for (const selector of [ROOT_SELECTOR, '[data-application-part="directory"]']) {
+    for (const el of document.querySelectorAll(selector)) {
+      if (el instanceof HTMLElement && _isInsideCompendiumDirectory(el)) roots.add(el);
+    }
+  }
+
+  return Array.from(roots);
+}
+
+function _nearestRoot(element) {
+  if (!(element instanceof Element)) return null;
+  const explicit = element.closest(ROOT_SELECTOR);
+  if (explicit instanceof HTMLElement) return explicit;
+  const directory = element.closest('[data-application-part="directory"]');
+  return directory instanceof HTMLElement && _isInsideCompendiumDirectory(directory) ? directory : null;
+}
+
+function _visibleText(element) {
+  if (!(element instanceof HTMLElement)) return '';
+  const title = element.getAttribute('title') || element.dataset?.tooltip || '';
+  const aria = element.getAttribute('aria-label') || '';
+  const own = element.textContent || '';
+  return `${title} ${aria} ${own}`;
+}
+
+function _packIdsInElementText(element) {
+  if (!(element instanceof HTMLElement)) return [];
+  const text = _cleanLabel(_visibleText(element));
+  if (!text) return [];
+
+  const matches = [];
+  for (const pack of _allPacks()) {
+    const label = _cleanLabel(_packLabel(pack));
+    if (label && text.includes(label)) matches.push(pack.collection);
+  }
+  return Array.from(new Set(matches));
+}
+
+function _hasSinglePackLabel(element) {
+  return _packIdsInElementText(element).length === 1;
+}
+
+function _isBroadContainer(element) {
+  if (!(element instanceof HTMLElement)) return true;
+  if (element.matches(BROAD_CONTAINER_SELECTOR)) return true;
+  if (element.querySelectorAll?.(PACK_ROW_SELECTOR)?.length > 1) return true;
+  if (_packIdsInElementText(element).length > 1) return true;
+  return false;
+}
+
+function _resolvePackIdFromRow(element) {
+  if (!(element instanceof HTMLElement) || _isBroadContainer(element)) return null;
+
+  const ownData = _resolvePackIdFromData(element);
+  if (ownData) return ownData;
+
+  // Only use descendant data when this candidate is a single-card row. This is
+  // the guard that prevents a directory/list container from opening its first
+  // child every time.
+  for (const child of Array.from(element.querySelectorAll(PACK_DATA_SELECTOR))) {
+    if (!(child instanceof HTMLElement)) continue;
+    const childData = _resolvePackIdFromData(child);
+    if (childData) return childData;
+  }
+
+  const titleTexts = Array.from(element.querySelectorAll(TITLE_SELECTOR))
+    .map(el => _visibleText(el))
+    .filter(Boolean);
+  for (const text of titleTexts) {
+    const packId = _resolvePackIdFromText(text);
+    if (packId) return packId;
+  }
+
+  const textMatches = _packIdsInElementText(element);
+  return textMatches.length === 1 ? textMatches[0] : null;
+}
+
+function _rectContainsPoint(element, x, y) {
+  if (!(element instanceof HTMLElement)) return false;
+  const rect = element.getBoundingClientRect();
+  if (!rect || rect.width <= 0 || rect.height <= 0) return false;
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
+function _scoreCandidate(element) {
+  const rect = element.getBoundingClientRect();
+  const area = Math.max(1, rect.width * rect.height);
+  const depth = (() => {
+    let count = 0;
+    let node = element;
+    while (node?.parentElement) {
+      count += 1;
+      node = node.parentElement;
+    }
+    return count;
+  })();
+  return { area, depth };
+}
+
+function _findPackElementFromPoint(event) {
+  const target = event?.target;
+  if (!(target instanceof Element)) return null;
+
+  const root = _nearestRoot(target);
+  if (!(root instanceof HTMLElement)) return null;
+
+  const x = Number(event.clientX);
+  const y = Number(event.clientY);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+
+  const candidates = Array.from(root.querySelectorAll(POINT_CANDIDATE_SELECTOR))
+    .filter(el => el instanceof HTMLElement)
+    .filter(el => _rectContainsPoint(el, x, y))
+    .filter(el => !_isBroadContainer(el) || _hasSinglePackLabel(el))
+    .map(el => ({ el, packId: _resolvePackIdFromRow(el), score: _scoreCandidate(el) }))
+    .filter(candidate => candidate.packId)
+    .sort((a, b) => (a.score.area - b.score.area) || (b.score.depth - a.score.depth));
+
+  const best = candidates[0];
+  return best ? { element: best.el, packId: best.packId } : null;
+}
+
+function _findPackElementFromPath(event) {
+  const target = event?.target;
   if (!(target instanceof Element)) return null;
   if (!_isInsideCompendiumDirectory(target)) return null;
 
-  // Prefer the nearest explicit pack-bearing ancestor.
-  const explicit = target.closest(PACK_ELEMENT_SELECTOR);
-  if (explicit instanceof HTMLElement && _isInsideCompendiumDirectory(explicit)) {
-    const id = _resolvePackIdFromElement(explicit);
-    if (id) return { element: explicit, packId: id };
-  }
+  const path = typeof event.composedPath === 'function'
+    ? event.composedPath().filter(el => el instanceof HTMLElement)
+    : [];
 
-  // Walk row ancestors and resolve from descendants/text.
-  let node = target;
-  while (node && node instanceof HTMLElement && node !== document.body) {
-    const maybeRow = node.matches?.('li, .directory-item, .compendium, .pack, article, div') ? node : null;
-    if (maybeRow) {
-      const id = _resolvePackIdFromElement(maybeRow);
-      if (id) return { element: maybeRow, packId: id };
+  const seen = new Set();
+  for (const el of path) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (seen.has(el)) continue;
+    seen.add(el);
+    if (!_isInsideCompendiumDirectory(el)) break;
+    if (el.matches(ROOT_SELECTOR) || el.matches(BROAD_CONTAINER_SELECTOR)) break;
+
+    const row = el.matches(PACK_ROW_SELECTOR) ? el : el.closest?.(PACK_ROW_SELECTOR);
+    for (const candidate of [el, row]) {
+      if (!(candidate instanceof HTMLElement) || seen.has(candidate)) continue;
+      seen.add(candidate);
+      const packId = _resolvePackIdFromRow(candidate);
+      if (packId) return { element: candidate, packId };
     }
-    node = node.parentElement;
   }
 
   return null;
 }
 
+function _findPackElementFromEvent(event) {
+  return _findPackElementFromPoint(event) || _findPackElementFromPath(event);
+}
+
 function _isControlClick(target, packElement) {
   if (!(target instanceof Element) || !(packElement instanceof HTMLElement)) return false;
-
-  const actionElement = target.closest('[data-action]');
-  const action = String(actionElement?.dataset?.action ?? '').toLowerCase();
-
-  // Open-like actions are allowed to fall through to the fallback; everything
-  // else is likely a header/search/folder/import/lock control.
-  if (actionElement && action && !['open', 'render', 'browse', 'view'].includes(action)) {
-    return true;
-  }
 
   const control = target.closest(CONTROL_SELECTOR);
   if (!control) return false;
   if (control === packElement) return false;
-
-  // A row title can be an anchor in some Foundry skins; allow it when it still
-  // belongs to the same resolved pack row.
-  if (control instanceof HTMLElement && _resolvePackIdFromElement(control) === _resolvePackIdFromElement(packElement)) {
-    return false;
-  }
-
+  if (packElement.contains(control) && _resolvePackIdFromRow(control) === _resolvePackIdFromRow(packElement)) return false;
   return true;
 }
 
@@ -250,7 +398,7 @@ async function _openPackFromEvent(event, source = 'document') {
     if (event.defaultPrevented) return false;
     if (!(event.target instanceof Element)) return false;
 
-    const resolved = _findPackElement(event.target);
+    const resolved = _findPackElementFromEvent(event);
     if (!resolved?.packId) return false;
     if (_isControlClick(event.target, resolved.element)) return false;
 
@@ -306,13 +454,16 @@ function _installAllRoots() {
 
 function _status() {
   const roots = _queryRoots();
-  const explicitPackRows = document.querySelectorAll(PACK_ELEMENT_SELECTOR).length;
+  const packDataRows = document.querySelectorAll(PACK_DATA_SELECTOR).length;
+  const resolvableTitles = Array.from(document.querySelectorAll(TITLE_SELECTOR))
+    .filter(el => _resolvePackIdFromText(el.textContent || el.getAttribute?.('title') || el.dataset?.tooltip)).length;
   return {
     registered,
     documentInstalled: !!document[DOCUMENT_FLAG],
     rootsFound: roots.length,
     rootsWithRepairFlag: roots.filter(root => root.dataset?.[REPAIR_FLAG] === 'true').length,
-    explicitPackRows,
+    packDataRows,
+    resolvableTitles,
     packsLoaded: game.packs?.size ?? 0,
     rootSelectorsMayBeStale: roots.length === 0
   };
@@ -343,13 +494,14 @@ export function registerCompendiumDirectoryClickRepair() {
     globalThis.SWSE.debug ??= {};
     globalThis.SWSE.debug.repairCompendiumClicks = () => _installAllRoots();
     globalThis.SWSE.debug.compendiumClickRepairStatus = () => _status();
+    globalThis.SWSE.debug.resolveCompendiumClickTarget = (element = document.activeElement) => _resolvePackIdFromRow(element);
     globalThis.SWSE.debug.openCompendiumPack = (packIdOrLabel) => {
       const raw = String(packIdOrLabel ?? '').trim();
       const byId = game.packs?.get?.(raw);
       if (byId) return byId.render(true);
 
-      const label = _cleanLabel(raw);
-      const match = game.packs?.find?.((pack) => _cleanLabel(pack.metadata?.label ?? pack.title) === label);
+      const matchId = _resolvePackIdFromText(raw);
+      const match = matchId ? game.packs?.get?.(matchId) : null;
       return match ? match.render(true) : null;
     };
 

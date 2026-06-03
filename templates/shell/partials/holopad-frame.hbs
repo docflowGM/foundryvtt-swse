@@ -26,12 +26,13 @@
         <div class="swse-tablet-drag-handle" data-action="tablet-drag" aria-hidden="true"></div>
       </div>
 
-      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail" aria-label="{{#if controlsLabel}}{{controlsLabel}}{{else}}Tablet identity and window controls{{/if}}">
+      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail swse-tablet-window-controls swse-tablet-no-drag" data-shell-window-control="true" data-no-drag="true" draggable="false" aria-label="{{#if controlsLabel}}{{controlsLabel}}{{else}}Tablet identity and window controls{{/if}}">
         <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="{{#if serialAria}}{{serialAria}}{{else}}SN 4471-0EA-00827{{/if}}">{{#if serialLabel}}{{serialLabel}}{{else}}SN4471-0EA-00827{{/if}}</span>
         <span class="swse-tablet-status-lights" aria-hidden="true"><span></span><span></span><span></span></span>
-        <button type="button" class="swse-tablet-control swse-tablet-control--home" data-action="{{#if topHomeAction}}{{topHomeAction}}{{else}}tablet-home{{/if}}"{{#if topHomeNavTo}} data-nav-to="{{topHomeNavTo}}"{{/if}} title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
-        <button type="button" class="swse-tablet-control swse-tablet-control--expand" data-action="{{#if expandAction}}{{expandAction}}{{else}}tablet-expand{{/if}}" title="Expand" aria-label="Expand">⛶</button>
-        <button type="button" class="swse-tablet-control swse-tablet-control--close" data-action="{{#if closeAction}}{{closeAction}}{{else}}tablet-close{{/if}}" title="Close" aria-label="Close">×</button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--home swse-tablet-no-drag" data-shell-window-control="true" data-no-drag="true" draggable="false" data-action="{{#if topHomeAction}}{{topHomeAction}}{{else}}tablet-home{{/if}}"{{#if topHomeNavTo}} data-nav-to="{{topHomeNavTo}}"{{/if}} title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--minimize swse-tablet-no-drag" data-shell-window-control="true" data-no-drag="true" draggable="false" data-action="{{#if minimizeAction}}{{minimizeAction}}{{else}}tablet-minimize{{/if}}" title="Minimize" aria-label="Minimize">−</button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--expand swse-tablet-no-drag" data-shell-window-control="true" data-no-drag="true" draggable="false" data-action="{{#if expandAction}}{{expandAction}}{{else}}tablet-expand{{/if}}" title="Expand" aria-label="Expand">⛶</button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--close swse-tablet-no-drag" data-shell-window-control="true" data-no-drag="true" draggable="false" data-action="{{#if closeAction}}{{closeAction}}{{else}}tablet-close{{/if}}" title="Close" aria-label="Close">×</button>
       </div>
 
       <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true"><span></span><span></span><span></span><span></span></div>

@@ -250,9 +250,19 @@ function buildInventoryGroups(inventoryPanel) {
           weight: Number(entry?.weight) || 0,
           value: Number(entry?.value) || 0,
           tags: asArray(entry?.tags),
-          isLightsaber: visualProfile?.isLightsaber === true,
+          isLightsaber: visualProfile?.isLightsaber === true || entry?.isLightsaber === true,
+          isEnergyShield: entry?.isEnergyShield === true,
+          shieldRating: Number(entry?.shieldRating) || 0,
+          currentSR: Number(entry?.currentSR) || 0,
           activated,
+          canToggleActivated: entry?.canToggleActivated === true || visualProfile?.isLightsaber === true || entry?.isEnergyShield === true,
           activationLabel: activated ? 'Deactivate' : 'Activate',
+          activationTitle: activated
+            ? (entry?.isEnergyShield ? 'Deactivate energy shield' : 'Deactivate lightsaber blade')
+            : (entry?.isEnergyShield ? 'Activate energy shield' : 'Activate lightsaber blade'),
+          activationStateLabel: activated
+            ? (entry?.isEnergyShield ? 'Shield Active' : 'Blade Active')
+            : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
           bladeHex: visualProfile?.bladeHex || null
         };
@@ -270,27 +280,39 @@ function buildInventoryGroups(inventoryPanel) {
 }
 
 function buildActionGroups(combatActions) {
-  return asArray(combatActions?.groups).map((group) => ({
-    label: group?.label || 'Actions',
-    count: Number(group?.count) || 0,
-    subgroups: asArray(group?.subgroups).map((subgroup) => ({
+  const normalizeItem = (item) => ({
+    key: item?.key || item?.id || '',
+    name: item?.name || 'Unnamed Action',
+    sourceName: item?.sourceName || item?.source || '',
+    actionType: item?.actionType || item?.type || '',
+    cost: item?.cost ?? '',
+    executable: item?.executable !== false,
+    useLabel: item?.useLabel || 'Use',
+    description: normalizeText(item?.description || item?.notes),
+    itemId: item?.itemId || '',
+    resources: asArray(item?.resources),
+    relatedSkills: asArray(item?.relatedSkills)
+  });
+
+  return asArray(combatActions?.groups).map((group, index) => {
+    const subgroups = asArray(group?.subgroups).map((subgroup) => ({
       label: subgroup?.label || 'Actions',
       count: Number(subgroup?.count) || 0,
-      items: asArray(subgroup?.items).map((item) => ({
-        key: item?.key || item?.id || '',
-        name: item?.name || 'Unnamed Action',
-        sourceName: item?.sourceName || item?.source || '',
-        actionType: item?.actionType || item?.type || '',
-        cost: item?.cost ?? '',
-        executable: item?.executable !== false,
-        useLabel: item?.useLabel || 'Use',
-        description: normalizeText(item?.description || item?.notes),
-        itemId: item?.itemId || '',
-        resources: asArray(item?.resources),
-        relatedSkills: asArray(item?.relatedSkills)
-      }))
-    }))
-  }));
+      items: asArray(subgroup?.items).map(normalizeItem)
+    }));
+    const directItems = asArray(group?.items).map(normalizeItem);
+    const flattenedItems = directItems.length
+      ? directItems
+      : subgroups.flatMap((subgroup) => subgroup.items);
+
+    return {
+      key: group?.key || group?.id || String(group?.label || `actions-${index}`).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || `actions-${index}`,
+      label: group?.label || 'Actions',
+      count: Number(group?.count) || flattenedItems.length,
+      items: flattenedItems,
+      subgroups
+    };
+  }).filter((group) => group.items.length > 0 || group.subgroups.length > 0);
 }
 
 function buildAbilityTab(abilities) {

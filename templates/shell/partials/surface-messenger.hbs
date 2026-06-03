@@ -931,27 +931,48 @@
 
       {{#if (eq vm.composition.type "items")}}
       <form class="hl-composition-form" data-holonet-action="submit-item-composer" data-thread-id="{{vm.composition.threadId}}">
-        <div class="hl-help">Step 1: choose inventory. Step 2: choose recipient(s). Single-quantity items require one explicit recipient unless quantity can be split.</div>
-        <label class="hl-field"><span>Filter</span><input type="search" data-holonet-item-filter placeholder="Search inventory..."></label>
-        <div class="hl-item-composer-list">
-          {{#each vm.composition.inventory.categories}}
-          <section class="hl-item-category" data-item-category="{{this.name}}">
-            <h4>{{this.name}}</h4>
-            {{#each this.items}}
-            <label class="hl-item-row" data-item-name="{{this.name}} {{this.typeLabel}}">
+        <div class="hl-help hl-trade-guide">
+          <strong>Trade flow:</strong> open this actor's owned inventory, click the items to add, choose recipient(s), then gift them or request credits/terms in exchange. Compendium items must be added to the actor first before players can offer them.
+        </div>
+        <div class="hl-inventory-launch-row">
+          <div>
+            <div class="hl-label hl-label--accent">Selected cargo</div>
+            <div class="hl-subtle">{{#if vm.composition.inventory.itemCountLabel}}{{vm.composition.inventory.itemCountLabel}} available{{else}}Owned inventory picker{{/if}}</div>
+          </div>
+          <button class="hl-btn-accent hl-open-inventory-btn" data-holonet-action="toggle-inventory-picker" type="button" aria-expanded="false">Open Inventory</button>
+        </div>
+        <div class="hl-selected-cargo" data-holonet-selected-items>
+          <div class="hl-selected-cargo-empty" data-holonet-selected-items-empty>No items selected yet.</div>
+        </div>
+        {{#if vm.composition.inventory.hasItems}}
+        <section class="hl-inventory-picker" data-holonet-inventory-picker hidden>
+          <div class="hl-filter-row">
+            <label class="hl-field"><span>Filter inventory</span><input type="search" data-holonet-item-filter autocomplete="off" spellcheck="false" placeholder="Search item, type, equipped, value..."></label>
+            <button class="hl-ghost-btn hl-filter-clear" data-holonet-action="clear-item-filter" type="button">Clear</button>
+          </div>
+          <div class="hl-item-composer-list hl-item-composer-list--flat" data-holonet-item-list>
+            {{#each vm.composition.inventory.items}}
+            <label class="hl-item-row hl-inventory-item-row" data-item-id="{{this.id}}" data-item-name="{{this.name}}" data-item-type="{{this.typeLabel}}" data-item-summary="{{this.summary}}" data-item-search="{{this.searchKey}}">
               <input type="checkbox" name="itemIds" value="{{this.id}}">
               {{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span class="hl-avatar hl-avatar--blank">▣</span>{{/if}}
-              <span><b>{{this.name}}</b><small>{{this.typeLabel}} · Qty {{this.quantity}}{{#if this.value}} · {{this.value}} cr{{/if}}</small></span>
-              <input type="range" name="quantity.{{this.id}}" min="1" max="{{this.quantity}}" value="1">
+              <span class="hl-item-row__main">
+                <b>{{this.name}}</b>
+                <small>{{this.summary}}</small>
+              </span>
+              {{#if this.statusLabel}}<span class="hl-chip hl-item-status">{{this.statusLabel}}</span>{{else}}<span class="hl-chip muted">Inventory</span>{{/if}}
+              <span class="hl-qty-control"><span>Qty</span><input type="number" name="quantity.{{this.id}}" min="1" max="{{this.quantity}}" value="1"></span>
             </label>
             {{/each}}
-          </section>
-          {{/each}}
-        </div>
+            <div class="hl-item-empty hl-item-empty--filter" data-holonet-item-filter-empty hidden>No matching owned items. Clear the filter or add the item to this actor first.</div>
+          </div>
+        </section>
+        {{else}}
+        <div class="hl-item-empty">{{vm.composition.inventory.emptyMessage}}</div>
+        {{/if}}
         <label class="hl-field"><span>Memo</span><input type="text" name="memo" maxlength="120" placeholder="Optional trade memo"></label>
         <div class="hl-trade-terms">
-          <label><input type="radio" name="tradeIntent" value="gift" checked> Send / gift these items</label>
-          <label><input type="radio" name="tradeIntent" value="trade"> Request trade terms</label>
+          <label class="hl-trade-toggle"><input type="radio" name="tradeIntent" value="gift" checked><span><b>Send / gift these items</b><small>Recipient can accept or decline the transfer.</small></span></label>
+          <label class="hl-trade-toggle"><input type="radio" name="tradeIntent" value="trade"><span><b>Request trade terms</b><small>Attach requested credits or a note for a counter-offer.</small></span></label>
           <label class="hl-field"><span>Requested Credits</span><input type="number" name="requestedCredits" min="0" step="1" placeholder="0"></label>
           <label class="hl-field"><span>Requested Items / Notes</span><input type="text" name="requestedItemsNote" maxlength="160" placeholder="Optional: ask for an item, service, or mixed trade"></label>
         </div>

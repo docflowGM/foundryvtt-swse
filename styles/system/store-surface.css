@@ -1364,3 +1364,51 @@ footer.swse-store-surface__footer {
   color: oklch(0.72 0.26 350);
   margin-left: 8px;
 }
+
+
+/* Authoritative store scroll-chain fix: let the store body scroll instead of
+   trapping the mouse wheel in clipped grid rows. */
+.swse-shell-surface--store .swse-store-surface__screen {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable both-edges;
+  overscroll-behavior: contain;
+}
+
+.swse-shell-surface--store .swse-store-surface__browse {
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+  align-items: start !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__grid,
+.swse-shell-surface--store .swse-store-surface__rail,
+.swse-shell-surface--store .swse-store-surface__pane {
+  max-height: none !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__grid {
+  overflow: visible !important;
+}
+
+.swse-store-surface__card-expanded {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px;
+  border-top: 1px dashed oklch(0.82 0.18 200 / 0.35);
+  background: oklch(0 0 0 / 0.22);
+}
+
+.swse-store-surface__card-expanded .swse-store-surface__detail-price-stack {
+  max-width: 360px;
+}
+
+.swse-store-surface__card-expanded-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}

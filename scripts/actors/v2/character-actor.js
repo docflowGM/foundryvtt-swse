@@ -100,11 +100,14 @@ function safeNumber(value, fallback = 0) {
 }
 
 function isTruthyEquipState(value) {
-  if (value === true) return true;
-  if (typeof value === 'string') {
-    return ['true', '1', 'yes', 'equipped', 'on', 'active'].includes(value.toLowerCase());
+  if (value === true || Number(value) === 1) return true;
+  if (value && typeof value === 'object') {
+    return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
   }
-  return Number(value) === 1;
+  if (typeof value === 'string') {
+    return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'natural'].includes(value.toLowerCase());
+  }
+  return false;
 }
 
 function isItemEquipped(item) {
@@ -112,7 +115,6 @@ function isItemEquipped(item) {
   return isTruthyEquipState(system.equipped)
     || isTruthyEquipState(system.isEquipped)
     || isTruthyEquipState(system.active)
-    || isTruthyEquipState(system.activated)
     || isTruthyEquipState(system.readied)
     || isTruthyEquipState(system.equippable?.equipped)
     || isTruthyEquipState(system.equippable?.active)

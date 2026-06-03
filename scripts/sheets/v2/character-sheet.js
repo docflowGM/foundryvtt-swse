@@ -2711,7 +2711,6 @@ export class SWSEV2CharacterSheet extends
         || truthy(system.status)
         || truthy(system.state)
         || truthy(system.active)
-        || truthy(system.activated)
         || truthy(system.readied)
         || truthy(system.equippable?.equipped)
         || truthy(system.equippable?.active)
@@ -2746,7 +2745,7 @@ export class SWSEV2CharacterSheet extends
       ? panelContexts.inventoryPanel.grouped.Weapons
       : [];
     for (const row of inventoryWeaponRows) {
-      if ((row?.equipped === true || row?.activated === true) && row?.id) {
+      if (row?.equipped === true && row?.id) {
         equippedAttackItemIds.add(row.id);
       }
     }
@@ -3474,6 +3473,8 @@ const forcePoints = [];
       buildMode,
       actionEconomy,
       xpLevelReady,
+      combat,
+      combatActions,
       derived,
       abilities,
       xpData,
@@ -5186,7 +5187,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="edit"], [data-action="configure"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -5202,6 +5203,9 @@ const forcePoints = [];
             break;
           case "equip":
             await InventoryEngine.toggleEquip(this.actor, itemId);
+            break;
+          case "toggle-activated":
+            await InventoryEngine.toggleActivated(this.actor, itemId);
             break;
           case "edit":
             item.sheet.render(true);
@@ -6474,7 +6478,6 @@ const forcePoints = [];
         || truthy(system.status)
         || truthy(system.state)
         || truthy(system.active)
-        || truthy(system.activated)
         || truthy(system.readied)
         || truthy(system.equippable?.equipped)
         || truthy(system.equippable?.active)
@@ -6495,7 +6498,7 @@ const forcePoints = [];
       ? options.inventoryPanel.grouped.Weapons
       : [];
     for (const row of inventoryWeaponRows) {
-      if (!(row?.equipped === true || row?.activated === true) || !row?.id) continue;
+      if (row?.equipped !== true || !row?.id) continue;
       const item = byId.get(row.id);
       if (item && isAttackItem(item)) equippedWeapons.set(item.id, item);
     }

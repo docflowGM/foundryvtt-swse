@@ -8031,3 +8031,339 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Shared holopad chrome usability override for the GM datapad, loaded after
+ * the generic shell styles. */
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-top-right-rail {
+  z-index: 10020 !important;
+  top: 8px !important;
+  right: 14px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  gap: 8px !important;
+  padding: 4px 10px !important;
+  border-radius: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-control {
+  width: 32px !important;
+  min-width: 32px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  font-size: 16px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-control--close {
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  padding-bottom: 2px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-control--expand,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-control--minimize {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+
+/* ─── Final Shared Holopad Control Hitbox Repair ───────────────────────────
+ * Loaded late in system.json, after the older actor concept sheet chrome rules.
+ * Keep drag affordance away from the control cluster and give every shared
+ * holopad the same reliable GM-style button size/click target.
+ */
+.swse-sheet-v2-shell--concept .swse-v2-tablet--concept {
+  cursor: default !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 180 !important;
+  top: 14px !important;
+  left: 92px !important;
+  right: 430px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  touch-action: none !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-drag-handle {
+  position: absolute !important;
+  inset: 5px 24px !important;
+  z-index: 1 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  pointer-events: none !important;
+  cursor: inherit !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--concept .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 2147483000 !important;
+  top: 12px !important;
+  right: 28px !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: calc(100% - 56px) !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  padding: 5px 10px !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(180deg, rgba(14, 24, 38, 0.98), rgba(2, 8, 14, 0.92)) !important;
+  border: 1px solid color-mix(in srgb, var(--vapor-cyan, #00f0ff) 32%, transparent) !important;
+  box-shadow:
+    inset 0 0 14px rgba(0, 0, 0, 0.58),
+    0 0 20px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 20%, transparent) !important;
+  transform: translateZ(0) !important;
+  isolation: isolate !important;
+  pointer-events: auto !important;
+  cursor: default !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
+.swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+.swse-sheet-v2-shell--concept .swse-tablet-no-drag {
+  position: relative !important;
+  z-index: 2147483001 !important;
+  pointer-events: auto !important;
+  cursor: default !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-serial--aurebesh {
+  max-width: 168px !important;
+  pointer-events: none !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-status-lights {
+  pointer-events: none !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-control,
+.swse-sheet-v2-shell--concept button.swse-tablet-control {
+  position: relative !important;
+  z-index: 2147483002 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border-radius: 9px !important;
+  border: 1px solid rgba(0,240,255,0.24) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(0,0,0,0.38)),
+    rgba(3,8,14,0.84) !important;
+  color: var(--swse-accent-text, #dff8ff) !important;
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,0.72),
+    0 0 12px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 18%, transparent) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-control--close,
+.swse-sheet-v2-shell--concept button.swse-tablet-control--close {
+  font-size: 23px !important;
+  font-weight: 900 !important;
+  padding-bottom: 2px !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-control--expand,
+.swse-sheet-v2-shell--concept .swse-tablet-control--minimize,
+.swse-sheet-v2-shell--concept button.swse-tablet-control--expand,
+.swse-sheet-v2-shell--concept button.swse-tablet-control--minimize {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-control__home-glyph::before {
+  width: 11px !important;
+  height: 11px !important;
+  margin: 7px auto 0 !important;
+}
+
+.swse-sheet-v2-shell--concept .swse-tablet-control:hover,
+.swse-sheet-v2-shell--concept .swse-tablet-control:focus-visible,
+.swse-sheet-v2-shell--concept button.swse-tablet-control:hover,
+.swse-sheet-v2-shell--concept button.swse-tablet-control:focus-visible {
+  outline: none !important;
+  border-color: var(--vapor-cyan, #00f0ff) !important;
+  box-shadow:
+    inset 0 0 14px rgba(0, 240, 255, 0.18),
+    0 0 18px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 46%, transparent) !important;
+}
+
+@media (max-width: 860px) {
+  .swse-sheet-v2-shell--concept .swse-tablet-top-bezel {
+    left: 72px !important;
+    right: 330px !important;
+  }
+
+  .swse-sheet-v2-shell--concept .swse-tablet-serial--aurebesh {
+    max-width: 84px !important;
+  }
+}
+
+
+/* ─── 2026-06-03 Hard Holopad Control Hitbox Repair ────────────────────────
+ * The actor tablet has accumulated several legacy top-bezel/drag rules with
+ * !important declarations.  This late, high-specificity block makes the drag
+ * strip non-intercepting and gives the GM-style window controls a reliable,
+ * physically lower, no-drag hit target.
+ */
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
+.swse-sheet-v2-shell--concept .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 120 !important;
+  top: 12px !important;
+  left: 96px !important;
+  right: 410px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  pointer-events: none !important;
+  cursor: default !important;
+  touch-action: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
+.swse-sheet-v2-shell--concept .swse-tablet-drag-handle {
+  pointer-events: none !important;
+  cursor: default !important;
+  touch-action: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--concept .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 2147483600 !important;
+  top: 20px !important;
+  right: 24px !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: calc(100% - 64px) !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 5px 10px !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border-radius: 12px !important;
+  background: linear-gradient(180deg, rgba(14, 24, 38, 0.98), rgba(2, 8, 14, 0.92)) !important;
+  border: 1px solid color-mix(in srgb, var(--vapor-cyan, #00f0ff) 34%, transparent) !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.58), 0 0 20px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 20%, transparent) !important;
+  transform: translateZ(0) !important;
+  pointer-events: auto !important;
+  cursor: default !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+.swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > * {
+  position: relative !important;
+  z-index: 2147483601 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept button.swse-tablet-control,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept button.swse-tablet-control,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control,
+.swse-sheet-v2-shell--concept button.swse-tablet-control,
+.swse-sheet-v2-shell--concept .swse-tablet-control {
+  position: relative !important;
+  z-index: 2147483602 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 9px !important;
+  border: 1px solid rgba(0, 240, 255, 0.26) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(0,0,0,0.38)), rgba(3,8,14,0.84) !important;
+  color: var(--swse-accent-text, #dff8ff) !important;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.72), 0 0 12px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 18%, transparent) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control--close,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control--close,
+.swse-sheet-v2-shell--concept .swse-tablet-control--close {
+  font-size: 22px !important;
+  padding-bottom: 2px !important;
+}

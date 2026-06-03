@@ -218,94 +218,6 @@ export class MessengerSurfaceController {
     this._syncHolonetComposerAttachments(form);
   }
 
-
-  _messengerDraftFormKey(form, index = null) {
-    if (!(form instanceof HTMLFormElement)) return null;
-    const action = form.dataset?.holonetAction || form.getAttribute?.('data-holonet-action') || 'form';
-    const threadId = form.dataset?.threadId || form.closest?.('[data-thread-id]')?.dataset?.threadId || this._shellSurfaceOptions?.threadId || 'new';
-    const forms = Array.from(form.closest?.('[data-shell-region="surface-messenger"]')?.querySelectorAll?.('form[data-holonet-action]') ?? []);
-    const formIndex = Number.isInteger(index) ? index : Math.max(0, forms.indexOf(form));
-    return `${action}:${threadId}:${formIndex}`;
-  }
-
-  _isDraftField(field) {
-    if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement)) return false;
-    if (!field.name) return false;
-    const type = String(field.type || '').toLowerCase();
-    return !['button', 'submit', 'reset', 'file', 'hidden'].includes(type);
-  }
-
-  _captureMessengerFormDrafts(messengerRoot) {
-    if (!messengerRoot) return {};
-    const drafts = {};
-    const forms = Array.from(messengerRoot.querySelectorAll('form[data-holonet-action]'));
-    forms.forEach((form, index) => {
-      const key = this._messengerDraftFormKey(form, index);
-      if (!key) return;
-      const fields = Array.from(form.elements ?? []).filter(field => this._isDraftField(field));
-      const entries = fields.map((field, fieldIndex) => {
-        const type = String(field.type || field.tagName || '').toLowerCase();
-        const base = { name: field.name, type, index: fieldIndex };
-        if (field instanceof HTMLSelectElement && field.multiple) {
-          return { ...base, selectedValues: Array.from(field.selectedOptions).map(option => option.value) };
-        }
-        if (type === 'checkbox' || type === 'radio') return { ...base, value: field.value, checked: Boolean(field.checked) };
-        return { ...base, value: field.value ?? '' };
-      });
-      if (entries.length) drafts[key] = { action: form.dataset?.holonetAction || '', entries };
-    });
-    return drafts;
-  }
-
-  _restoreMessengerFormDrafts(messengerRoot, drafts = null) {
-    const stored = drafts || this.getSurfaceState?.('messenger')?.composeDrafts || this.getSurfaceState?.('messenger')?.uiState?.composeDrafts || {};
-    if (!messengerRoot || !stored || typeof stored !== 'object') return;
-    const forms = Array.from(messengerRoot.querySelectorAll('form[data-holonet-action]'));
-    forms.forEach((form, index) => {
-      const key = this._messengerDraftFormKey(form, index);
-      const draft = key ? stored[key] : null;
-      if (!draft?.entries?.length) return;
-      const fields = Array.from(form.elements ?? []).filter(field => this._isDraftField(field));
-      draft.entries.forEach((entry) => {
-        const sameName = fields.filter(field => field.name === entry.name);
-        const field = sameName[entry.index] || fields[entry.index] || sameName[0];
-        if (!field || field.disabled) return;
-        const type = String(field.type || field.tagName || '').toLowerCase();
-        if (field instanceof HTMLSelectElement && field.multiple && Array.isArray(entry.selectedValues)) {
-          Array.from(field.options).forEach(option => { option.selected = entry.selectedValues.includes(option.value); });
-          return;
-        }
-        if (type === 'checkbox' || type === 'radio') {
-          if (entry.value == null || field.value === entry.value) field.checked = Boolean(entry.checked);
-          return;
-        }
-        if (entry.value != null) field.value = entry.value;
-      });
-    });
-    this._syncMessengerThreadTypeCards(messengerRoot);
-  }
-
-  _syncMessengerFormDraftState(messengerRoot) {
-    if (!messengerRoot || typeof this.patchSurfaceState !== 'function') return;
-    this.patchSurfaceState('messenger', {
-      composeDrafts: this._captureMessengerFormDrafts(messengerRoot)
-    }, { render: false });
-  }
-
-  _clearMessengerFormDraft(form = null) {
-    if (typeof this.patchSurfaceState !== 'function') return;
-    const current = this.getSurfaceState?.('messenger')?.composeDrafts || {};
-    if (!form) {
-      this.patchSurfaceState('messenger', { composeDrafts: {} }, { render: false });
-      return;
-    }
-    const key = this._messengerDraftFormKey(form);
-    if (!key || !current[key]) return;
-    const next = { ...current };
-    delete next[key];
-    this.patchSurfaceState('messenger', { composeDrafts: next }, { render: false });
-  }
-
   _wireHolonetAttachmentDrops(messengerRoot) {
     messengerRoot.querySelectorAll('[data-holonet-drop-zone]').forEach(zone => {
       zone.addEventListener('dragover', ev => {
@@ -369,8 +281,14 @@ export class MessengerSurfaceController {
       messageAtBottom,
       infoScrollTop: messengerRoot.querySelector('.hl-info-panel')?.scrollTop ?? 0,
       composeScrollTop: messengerRoot.querySelector('.hl-compose-scroll')?.scrollTop ?? 0,
-      composeDrafts: this._captureMessengerFormDrafts(messengerRoot),
       activeState,
+      formDrafts: Array.from(messengerRoot.querySelectorAll('form')).map(form => ({
+        action: form.dataset.holonetAction || '',
+        values: Array.from(form.querySelectorAll('input[type="text"], input[type="search"], textarea')).reduce((acc, field) => {
+          if (field.name) acc[field.name] = field.value ?? '';
+          return acc;
+        }, {})
+      })),
       ...overrides
     };
     this._patchMessengerUiState(state);
@@ -405,8 +323,6 @@ export class MessengerSurfaceController {
       const compose = messengerRoot.querySelector('.hl-compose-scroll');
       if (compose && Number.isFinite(state.composeScrollTop)) compose.scrollTop = state.composeScrollTop;
 
-      this._restoreMessengerFormDrafts(messengerRoot, state.composeDrafts);
-
       const conversation = messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]');
       if (conversation) {
         if (state.scrollToBottom || state.messageAtBottom) conversation.scrollTop = conversation.scrollHeight;
@@ -424,6 +340,15 @@ export class MessengerSurfaceController {
       }
 
       const activeState = state.activeState;
+      for (const draft of (state.formDrafts || [])) {
+        const form = messengerRoot.querySelector(`form[data-holonet-action="${draft.action}"]`);
+        if (!form) continue;
+        for (const [name,val] of Object.entries(draft.values||{})) {
+          const field=form.querySelector(`[name="${name}"]`);
+          if (field) field.value = val;
+        }
+      }
+
       if (activeState?.selector && activeState.value != null) {
         const field = messengerRoot.querySelector(activeState.selector);
         if (field && !field.disabled) {
@@ -499,48 +424,6 @@ export class MessengerSurfaceController {
     window.setTimeout(() => { this._messengerActionRefreshQueued = false; }, 150);
   }
 
-  _wireMessengerScrollFallback(messengerRoot, signal = null) {
-    if (!(messengerRoot instanceof HTMLElement)) return;
-    const scrollSelectors = [
-      '.hl-compose-scroll',
-      '.hl-tlist-scroll',
-      '.hl-messages',
-      '.hl-info-panel',
-      '.hl-job-grid',
-      '.hl-jobboard-view'
-    ];
-
-    const findScrollTarget = (target) => {
-      if (!(target instanceof Element)) return null;
-      for (const selector of scrollSelectors) {
-        const match = target.closest(selector);
-        if (match instanceof HTMLElement) return match;
-      }
-      return null;
-    };
-
-    const canScroll = (el) => el instanceof HTMLElement && (el.scrollHeight - el.clientHeight) > 1;
-
-    messengerRoot.addEventListener('wheel', (ev) => {
-      const scrollTarget = findScrollTarget(ev.target);
-      if (!canScroll(scrollTarget)) return;
-
-      const before = scrollTarget.scrollTop;
-      const max = Math.max(0, scrollTarget.scrollHeight - scrollTarget.clientHeight);
-      const next = Math.max(0, Math.min(max, before + ev.deltaY));
-      if (next === before) {
-        // Keep the canvas/hotbar from eating wheel events when the cursor is
-        // inside a Messenger scroll region, even at the scroll boundary.
-        ev.stopPropagation();
-        return;
-      }
-
-      scrollTarget.scrollTop = next;
-      ev.preventDefault();
-      ev.stopPropagation();
-    }, { capture: true, passive: false, signal });
-  }
-
   _scheduleThreadFilterRefresh(form) {
     if (!form) return;
     const data = new FormData(form);
@@ -570,14 +453,6 @@ export class MessengerSurfaceController {
     if (signal?.aborted || !messengerRoot.isConnected) return;
     this._wireHolonetAttachmentDrops(messengerRoot);
     this._restoreHolonetComposerAttachments(messengerRoot);
-    this._restoreMessengerFormDrafts(messengerRoot);
-    this._wireMessengerScrollFallback(messengerRoot, signal);
-
-    const syncDrafts = () => this._syncMessengerFormDraftState(messengerRoot);
-    messengerRoot.querySelectorAll('form[data-holonet-action]').forEach(form => {
-      form.addEventListener('input', syncDrafts, { capture: true });
-      form.addEventListener('change', syncDrafts, { capture: true });
-    });
 
     messengerRoot.querySelectorAll('form[data-holonet-action="thread-filter"]').forEach(form => {
       form.addEventListener('submit', async (ev) => {
@@ -709,124 +584,21 @@ export class MessengerSurfaceController {
       });
     });
 
-    const normalizeComposerFilter = (value) => String(value || '')
-      .normalize?.('NFKD')
-      ?.replace(/[\u0300-\u036f]/g, '')
-      ?.replace(/[\u2013\u2014]/g, '-')
-      ?.toLowerCase()
-      ?.replace(/[^a-z0-9]+/g, ' ')
-      ?.trim()
-      ?? String(value || '').toLowerCase().trim();
-
-    const applyItemFilter = (input) => {
-      const query = normalizeComposerFilter(input.value);
-      let visibleRowsTotal = 0;
-      const flatRows = Array.from(messengerRoot.querySelectorAll('.hl-inventory-item-row[data-item-search], .hl-item-row[data-item-search]:not([data-asset-name])'));
-      if (flatRows.length) {
-        flatRows.forEach(row => {
-          const rowKey = normalizeComposerFilter(row.dataset.itemSearch || row.dataset.itemName || row.textContent || '');
-          const match = !query || rowKey.includes(query);
-          row.hidden = !match;
-          if (match) visibleRowsTotal += 1;
-        });
-      } else {
-        messengerRoot.querySelectorAll('.hl-item-category[data-item-category]').forEach(category => {
-          let visibleRows = 0;
-          const categoryKey = normalizeComposerFilter(category.dataset.itemCategorySearch || category.dataset.itemCategory || '');
-          category.querySelectorAll('.hl-item-row[data-item-search], .hl-item-row[data-item-name]').forEach(row => {
-            const rowKey = normalizeComposerFilter(row.dataset.itemSearch || row.dataset.itemName || row.textContent || '');
-            const match = !query || rowKey.includes(query) || categoryKey.includes(query);
-            row.hidden = !match;
-            if (match) visibleRows += 1;
-          });
-          category.hidden = Boolean(query && visibleRows === 0);
-          visibleRowsTotal += visibleRows;
-        });
-      }
-      const empty = messengerRoot.querySelector('[data-holonet-item-filter-empty]');
-      if (empty) empty.hidden = !(query && visibleRowsTotal === 0);
-    };
-
-    const updateSelectedInventoryPreview = (scope = messengerRoot) => {
-      const output = scope.querySelector('[data-holonet-selected-items]');
-      if (!output) return;
-      const empty = scope.querySelector('[data-holonet-selected-items-empty]');
-      const rows = Array.from(scope.querySelectorAll('.hl-inventory-item-row'));
-      const selectedRows = rows.filter(row => row.querySelector('input[type="checkbox"]')?.checked);
-      output.querySelectorAll('.hl-selected-cargo-chip').forEach(el => el.remove());
-      selectedRows.forEach(row => {
-        const checkbox = row.querySelector('input[type="checkbox"]');
-        const qtyInput = row.querySelector('.hl-qty-control input');
-        const qty = Math.max(1, Number(qtyInput?.value || 1) || 1);
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'hl-selected-cargo-chip';
-        chip.dataset.itemId = checkbox?.value || row.dataset.itemId || '';
-        const name = document.createElement('span');
-        name.textContent = row.dataset.itemName || row.querySelector('b')?.textContent || 'Item';
-        const meta = document.createElement('small');
-        meta.textContent = `${row.dataset.itemType || 'Item'} × ${qty}`;
-        const removeIcon = document.createElement('i');
-        removeIcon.className = 'fas fa-times';
-        removeIcon.setAttribute('aria-hidden', 'true');
-        chip.append(name, meta, removeIcon);
-        chip.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          if (checkbox) checkbox.checked = false;
-          updateSelectedInventoryPreview(scope);
-        });
-        output.appendChild(chip);
-      });
-      if (empty) empty.hidden = selectedRows.length > 0;
-    };
-
-    messengerRoot.querySelectorAll('[data-holonet-action="toggle-inventory-picker"]').forEach(button => {
-      button.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        const picker = messengerRoot.querySelector('[data-holonet-inventory-picker]');
-        if (!picker) return;
-        const shouldOpen = picker.hidden;
-        picker.hidden = !shouldOpen;
-        button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-        button.textContent = shouldOpen ? 'Hide Inventory' : 'Open Inventory';
-        if (shouldOpen) {
-          const search = picker.querySelector('[data-holonet-item-filter]');
-          search?.focus?.();
-        }
-      });
-    });
-
-    messengerRoot.querySelectorAll('.hl-inventory-item-row input[type="checkbox"], .hl-inventory-item-row .hl-qty-control input').forEach(input => {
-      input.addEventListener('change', () => updateSelectedInventoryPreview(messengerRoot));
-      input.addEventListener('input', () => updateSelectedInventoryPreview(messengerRoot));
-    });
-    updateSelectedInventoryPreview(messengerRoot);
-
     messengerRoot.querySelectorAll('[data-holonet-item-filter]').forEach(input => {
-      input.addEventListener('input', () => applyItemFilter(input));
-      input.addEventListener('search', () => applyItemFilter(input));
-      applyItemFilter(input);
-    });
-
-    messengerRoot.querySelectorAll('[data-holonet-action="clear-item-filter"]').forEach(el => {
-      el.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        const input = messengerRoot.querySelector('[data-holonet-item-filter]');
-        if (!input) return;
-        input.value = '';
-        applyItemFilter(input);
-        input.focus();
+      input.addEventListener('input', () => {
+        const query = String(input.value || '').trim().toLowerCase();
+        messengerRoot.querySelectorAll('.hl-item-row[data-item-name]').forEach(row => {
+          const haystack = String(row.dataset.itemName || '').toLowerCase();
+          row.hidden = Boolean(query && !haystack.includes(query));
+        });
       });
     });
 
     messengerRoot.querySelectorAll('[data-holonet-asset-filter]').forEach(input => {
       input.addEventListener('input', () => {
-        const query = normalizeComposerFilter(input.value);
+        const query = String(input.value || '').trim().toLowerCase();
         messengerRoot.querySelectorAll('.hl-item-row[data-asset-name]').forEach(row => {
-          const haystack = normalizeComposerFilter(row.dataset.assetName || row.textContent || '');
+          const haystack = String(row.dataset.assetName || '').toLowerCase();
           row.hidden = Boolean(query && !haystack.includes(query));
         });
       });
@@ -905,7 +677,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.sendMessage({ actor, body, imageUrl, threadId, recipientIds, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId: result?.threadId ?? threadId, compose: false, scrollToBottom: true });
       });
@@ -925,7 +696,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.createThread({ actor, body, title, threadType, recipientIds, imageUrl, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId: result?.threadId ?? null, compose: Boolean(result?.pending && !result?.threadId), scrollToBottom: true });
       });
@@ -947,7 +717,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.createJobPosting({ actor, title, body, contactRecipientId, recipientIds, rewardCredits, rewardItems, rewardItemUuids, attachments });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId: result?.threadId ?? null, compose: false, scrollToBottom: true });
       });
@@ -982,7 +751,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.threadAction({ actor, threadId, action, recipientIds });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId, compose: false });
       });
@@ -1007,7 +775,6 @@ export class MessengerSurfaceController {
         }
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
       });
@@ -1026,7 +793,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.threadAction({ actor, threadId, action, amount, recipientId });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
       });
@@ -1059,7 +825,6 @@ export class MessengerSurfaceController {
           notes: String(data.get('notes') || '').trim()
         });
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
       });
@@ -1078,7 +843,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, itemUuids });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
       });
@@ -1099,7 +863,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'offer-item-counter', recordId, counterCredits, counterItemIds, counterMemo });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
       });
@@ -1121,7 +884,6 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'offer-asset-counter', recordId, counterCredits, counterItemIds, counterAssetIds, counterMemo });
         this._noteMessengerPendingResult(result);
         this._clearHolonetComposerAttachments(form);
-        this._clearMessengerFormDraft(form);
         form.reset();
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
       });

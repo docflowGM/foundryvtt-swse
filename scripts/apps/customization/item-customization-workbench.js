@@ -136,6 +136,55 @@ function compactWorkbenchToken(value) {
   return normalizeWorkbenchToken(value).replace(/_/g, '');
 }
 
+function isEnergyShieldItem(item) {
+  if (!item || item.type !== 'armor') return false;
+  const system = getWorkbenchItemSystem(item);
+  const tokens = [
+    item.name,
+    system?.armorType,
+    system?.subtype,
+    system?.category,
+    system?.equipmentType,
+    system?.family,
+    system?.traits?.join?.(' ')
+  ].filter(Boolean).join(' ');
+  return /energy[_\s-]*shield|shield/i.test(tokens) && (system?.shieldRating !== undefined || /energy[_\s-]*shield/i.test(tokens));
+}
+
+const ENERGY_SHIELD_RULES = [
+  { sr: 5, type: 'Light Armor', proficiency: 'Light', maxDex: 4, armorCheckPenalty: -2, cost: 500 },
+  { sr: 10, type: 'Light Armor', proficiency: 'Light', maxDex: 4, armorCheckPenalty: -2, cost: 2000 },
+  { sr: 15, type: 'Medium Armor', proficiency: 'Medium', maxDex: 3, armorCheckPenalty: -5, cost: 4500 },
+  { sr: 20, type: 'Medium Armor', proficiency: 'Medium', maxDex: 3, armorCheckPenalty: -5, cost: 8000 },
+  { sr: 25, type: 'Heavy Armor', proficiency: 'Heavy', maxDex: 2, armorCheckPenalty: -10, cost: 12500 },
+  { sr: 30, type: 'Heavy Armor', proficiency: 'Heavy', maxDex: 2, armorCheckPenalty: -10, cost: 18000 }
+];
+
+function getEnergyShieldRules(item) {
+  const system = getWorkbenchItemSystem(item);
+  const sr = Number(system?.shieldRating ?? system?.sr ?? system?.currentSR ?? String(item?.name || '').match(/SR\s*(\d+)/i)?.[1] ?? 0) || 0;
+  const table = ENERGY_SHIELD_RULES.find(row => row.sr === sr) || null;
+  const armorType = String(system?.armorProficiencyRequired || table?.proficiency || system?.armorType || 'Light').toLowerCase();
+  const typeLabel = table?.type || (armorType.includes('heavy') ? 'Heavy Armor' : armorType.includes('medium') ? 'Medium Armor' : 'Light Armor');
+  const proficiency = table?.proficiency || (typeLabel.split(' ')[0] || 'Light');
+  const maxDex = Number(system?.maxDexBonus ?? system?.maxDex ?? system?.limits?.maxDex ?? table?.maxDex);
+  const armorCheckPenalty = Number(system?.armorCheckPenalty ?? system?.limits?.checkPenalty ?? table?.armorCheckPenalty ?? 0) || 0;
+  const chargesMax = Number(system?.charges?.max ?? system?.maxCharges ?? 5) || 5;
+  const chargesCurrent = Number(system?.charges?.current ?? system?.charges?.value ?? chargesMax) || chargesMax;
+  return {
+    sr,
+    typeLabel,
+    proficiency,
+    maxDex: Number.isFinite(maxDex) ? maxDex : null,
+    armorCheckPenalty,
+    cost: Number(system?.cost ?? system?.costNumeric ?? system?.economics?.cost ?? table?.cost ?? 0) || 0,
+    chargesCurrent,
+    chargesMax,
+    activated: !!(system?.activated || system?.active || system?.currentSR > 0),
+    currentSR: Number(system?.currentSR ?? 0) || 0
+  };
+}
+
 function getWorkbenchItemId(item) {
   return item?.id ?? item?._id ?? item?.uuid ?? item?.name ?? null;
 }
@@ -255,7 +304,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       selectedAccessoryIds: [],
       selectedBladeColor: DEFAULT_BLADE_COLOR,
       selectedCheckMode: 'roll',
-      selectedOwnedSaberId: itemId || null
+      selectedOwnedSaberId: itemId || null,
+      activeTab: 'crystal',
+      inspectedComponent: null
     };
   }
 
@@ -710,7 +761,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       if (system.stun || system.hasStunSetting) areas.push('stun_setting');
       if (system.autofire || system.hasAutofire) areas.push('autofire');
     }
-    if (['armor', 'bodysuit'].includes(item.type)) {
+    if (['armor', 'bodysuit'].includes(item.type) && !isEnergyShieldItem(item)) {
       areas.push('defensive_material', 'joint_protection');
     }
 
@@ -793,6 +844,20 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
   _getHeroStats(item, preview) {
+    if (isEnergyShieldItem(item)) {
+      const shield = getEnergyShieldRules(item);
+      return [
+        { key: 'SR', value: shield.sr || '—' },
+        { key: 'Type', value: shield.typeLabel },
+        { key: 'Max Dex', value: shield.maxDex === null ? '—' : `+${shield.maxDex}` },
+        { key: 'ACP', value: shield.armorCheckPenalty || 0 },
+        { key: 'Charges', value: `${shield.chargesCurrent}/${shield.chargesMax}` },
+        { key: 'Cost', value: `${shield.cost} cr` },
+        { key: 'Slots', value: `${preview.slotState.usedSlots}/${preview.slotState.totalAvailable}` },
+        { key: 'Reflex', value: 'No Override' }
+      ];
+    }
+
     const stats = [];
     stats.push({ key: 'Cost', value: `${Number(item.system?.cost ?? 0) || 0} cr` });
     stats.push({ key: 'Slots', value: `${preview.slotState.usedSlots}/${preview.slotState.totalAvailable}` });
@@ -802,6 +867,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     stats.push({ key: 'Templates', value: `${templateCount}/${GearTemplatesEngine.getTemplateLimit()}` });
     return stats;
   }
+
 
   async _getWorkbenchDialogue(mentorKey, path, fallback = '') {
     const cacheKey = `${mentorKey}:${path.join('.')}`;
@@ -843,6 +909,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     if (/vibro/.test(raw)) return 'vibro';
     if (/grenade|explosive|thrown/.test(raw)) return 'grenade';
     if (/melee|simple|advanced/.test(raw)) return 'melee';
+    if (/energy[_\s-]*shield|shield/.test(raw)) return 'shield';
     if (/powered/.test(raw)) return 'powered';
     if (/heavy/.test(raw)) return 'heavy';
     if (/medium/.test(raw)) return 'medium';
@@ -862,11 +929,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const category = this._getCategoryForItem(item);
     const subtype = this._getItemSubtypeKey(item);
     const categoryPath = category === 'weapons' ? 'weapons' : (category === 'armor' ? 'armor' : 'gear');
-    const fallback = category === 'weapons'
-      ? `Weapon on the bench. Good. We tune the frame, keep the slots honest, and make sure it does what you need when the room gets ugly.`
-      : category === 'armor'
-        ? `Armor is a platform. Plate, flex, seals, weight — every change makes a trade, so we make the trade on purpose.`
-        : `Utility gear is where clever people become problems. Pick the mod that solves the job, not the one that only looks fancy.`;
+    const fallback = isEnergyShieldItem(item)
+      ? `Energy shield on the bench. It does not make you harder to hit; it eats energy damage while it is active. Tune the generator, preserve the charges, and don't confuse SR with armor.`
+      : category === 'weapons'
+        ? `Weapon on the bench. Good. We tune the frame, keep the slots honest, and make sure it does what you need when the room gets ugly.`
+        : category === 'armor'
+          ? `Armor is a platform. Plate, flex, seals, weight — every change makes a trade, so we make the trade on purpose.`
+          : `Utility gear is where clever people become problems. Pick the mod that solves the job, not the one that only looks fancy.`;
     const mentorText = await this._getWorkbenchDialogue('delta', ['workshop', categoryPath, subtype], fallback)
       || await this._getWorkbenchDialogue('delta', ['workshop', categoryPath, 'default'], fallback)
       || await this._getWorkbenchDialogue('delta', ['workshop', 'default'], fallback);
@@ -1039,15 +1108,18 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       appearance.push({ key: 'Accent', action: 'set-accent', value: draft.accentColor, options: ACCENT_SWATCHES.map(hex => ({ key: hex, hex, label: hex, selected: draft.accentColor === hex })) });
     }
 
+    const energyShield = isEnergyShieldItem(item) ? getEnergyShieldRules(item) : null;
     return {
       id: getWorkbenchItemId(item),
       name: item.name,
       category,
-      subtitle,
+      subtitle: energyShield ? `${energyShield.typeLabel} · Energy Shield` : subtitle,
       img: item.img,
       description: this._stripHtml(item.system?.description || item.system?.details || item.system?.shortDescription || ''),
       stats: this._getHeroStats(item, preview),
-      appearance
+      appearance,
+      isEnergyShield: !!energyShield,
+      energyShield
     };
   }
 
@@ -1082,6 +1154,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     }
 
     const draft = this._getDraft(item);
+    const energyShieldItem = isEnergyShieldItem(item);
+    if (energyShieldItem) draft.selectedUpgrades = [];
     const preview = this._getPreview(item, draft);
     const currentCategory = categories.find(entry => entry.key === this.selectedCategory);
     const currentSearch = this._getSearchForCategory(this.selectedCategory);
@@ -1102,17 +1176,19 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         };
       });
 
-    const upgrades = this._getUpgradeCatalog(item, draft);
+    const upgrades = energyShieldItem ? [] : this._getUpgradeCatalog(item, draft);
     const templates = this._getTemplateCards(item, draft);
     const structuralActions = {
       sizeIncrease: {
         selected: !!draft.structural?.sizeIncreaseApplied,
-        disabled: ['lightsaber', 'droid'].includes(item.type),
+        disabled: ['lightsaber', 'droid'].includes(item.type) || energyShieldItem,
         label: 'Increase Size / Bulk',
-        description: ['armor', 'bodysuit'].includes(item.type)
-          ? 'Increase this armor one weight class heavier for +1 upgrade slot.'
-          : 'Increase the item one size step for +1 upgrade slot.',
-        effect: STRUCTURAL_DETAILS.size_increase.effect
+        description: energyShieldItem
+          ? 'Energy shields are forearm/upper-arm generators; their Shield Rating is changed by shield model, not by armor bulk stripping.'
+          : (['armor', 'bodysuit'].includes(item.type)
+            ? 'Increase this armor one weight class heavier for +1 upgrade slot.'
+            : 'Increase the item one size step for +1 upgrade slot.'),
+        effect: energyShieldItem ? 'Not available for energy shields' : STRUCTURAL_DETAILS.size_increase.effect
       },
       strips: this._getStrippableAreas(item, draft)
     };
@@ -1129,6 +1205,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       inventoryItems,
       currentItem: this._getItemSummary(item, draft, preview),
       ...(await this._getWorkshopMentorContext(item)),
+      isEnergyShield: energyShieldItem,
+      energyShield: energyShieldItem ? getEnergyShieldRules(item) : null,
       upgrades,
       templates,
       structuralActions,
@@ -1166,6 +1244,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         if (!itemId) return;
         if (this.selectedCategory === 'lightsaber') {
           this._lightsaber.selectedOwnedSaberId = itemId;
+          this._lightsaber.activeTab = 'crystal';
+          this._lightsaber.inspectedComponent = null;
           this._rememberSelectedItem('lightsaber', itemId);
         } else {
           this.selectedItemId = itemId;
@@ -1301,6 +1381,24 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
 
+      case 'set-lightsaber-tab': {
+        const tab = target?.dataset?.tab || 'crystal';
+        if (tab === 'chassis' && !this._canChangeLightsaberChassis()) return;
+        this._lightsaber.activeTab = tab;
+        this._lightsaber.inspectedComponent = null;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'inspect-lightsaber-component': {
+        const type = target?.dataset?.componentType;
+        const key = target?.dataset?.key;
+        if (!type || !key) return;
+        this._lightsaber.inspectedComponent = { type, key };
+        await this._renderPreservingUi();
+        return;
+      }
+
       case 'select-lightsaber-chassis': {
         if (!this._canChangeLightsaberChassis()) {
           ui.notifications.info('This saber is in tuning mode; its chassis is fixed until full construction is unlocked.');
@@ -1317,13 +1415,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
 
       case 'select-lightsaber-crystal': {
-        if (target?.classList?.contains?.('disabled')) return;
         const key = target?.dataset?.key;
-        if (!this._isLightsaberCrystalCompatible(key)) {
+        if (!key) return;
+        const isTuning = this._isLightsaberTuningMode();
+        if (!isTuning && (target?.classList?.contains?.('disabled') || !this._isLightsaberCrystalCompatible(key))) {
           ui.notifications.warn('That crystal is not compatible with the selected chassis.');
           return;
         }
         this._lightsaber.selectedCrystalId = key;
+        this._lightsaber.activeTab = 'crystal';
+        this._lightsaber.inspectedComponent = { type: 'crystal', key };
         const crystal = this._catalogs.crystals.find(option => option.id === key || option._id === key);
         const preferred = this._resolveBladeColorOptions(crystal)[0];
         if (preferred) this._lightsaber.selectedBladeColor = preferred;
@@ -1334,10 +1435,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       case 'toggle-lightsaber-accessory': {
         const id = target?.dataset?.key;
         if (!id) return;
-        if (target?.classList?.contains?.('disabled') || !this._isLightsaberAccessoryCompatible(id)) {
+        const isTuning = this._isLightsaberTuningMode();
+        if (!isTuning && (target?.classList?.contains?.('disabled') || !this._isLightsaberAccessoryCompatible(id))) {
           ui.notifications.warn('That accessory is not compatible with the selected chassis.');
           return;
         }
+        this._lightsaber.activeTab = 'hilt';
+        this._lightsaber.inspectedComponent = { type: 'accessory', key: id };
         const ids = this._lightsaber.selectedAccessoryIds;
         const idx = ids.indexOf(id);
         if (idx >= 0) ids.splice(idx, 1);
@@ -1356,8 +1460,23 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
 
       case 'set-lightsaber-color': {
-        this._lightsaber.selectedBladeColor = target?.dataset?.key;
+        const key = target?.dataset?.key;
+        if (!key) return;
+        this._lightsaber.selectedBladeColor = key;
+        this._lightsaber.activeTab = 'color';
+        this._lightsaber.inspectedComponent = { type: 'color', key };
+        this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
         await this._renderPreservingUi();
+        return;
+      }
+
+      case 'open-lightsaber-color-modal': {
+        this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.add?.('open');
+        return;
+      }
+
+      case 'close-lightsaber-color-modal': {
+        this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
         return;
       }
 
@@ -1417,6 +1536,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       event.preventDefault();
       if (this.selectedCategory === 'lightsaber') {
         this._lightsaber.selectedOwnedSaberId = target.dataset.itemId;
+        this._lightsaber.activeTab = 'crystal';
+        this._lightsaber.inspectedComponent = null;
         this._rememberSelectedItem('lightsaber', target.dataset.itemId);
       } else {
         this.selectedItemId = target.dataset.itemId;
@@ -1537,6 +1658,24 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
 
 
+    this.onRoot('click', '[data-action="set-lightsaber-tab"]', async (event, target) => {
+      event.preventDefault();
+      const tab = target.dataset.tab || 'crystal';
+      if (tab === 'chassis' && !this._canChangeLightsaberChassis()) return;
+      this._lightsaber.activeTab = tab;
+      this._lightsaber.inspectedComponent = null;
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="inspect-lightsaber-component"]', async (event, target) => {
+      event.preventDefault();
+      const type = target.dataset.componentType;
+      const key = target.dataset.key;
+      if (!type || !key) return;
+      this._lightsaber.inspectedComponent = { type, key };
+      await this._renderPreservingUi();
+    });
+
     this.onRoot('click', '[data-action="select-lightsaber-chassis"]', async (event, target) => {
       event.preventDefault();
       if (!this._canChangeLightsaberChassis()) {
@@ -1569,10 +1708,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.onRoot('click', '[data-action="toggle-lightsaber-accessory"]', async (event, target) => {
       event.preventDefault();
       const id = target.dataset.key;
-      if (target.classList.contains('disabled') || !this._isLightsaberAccessoryCompatible(id)) {
+      if (!id) return;
+      const isTuning = this._isLightsaberTuningMode();
+      if (!isTuning && (target.classList.contains('disabled') || !this._isLightsaberAccessoryCompatible(id))) {
         ui.notifications.warn('That accessory is not compatible with the selected chassis.');
         return;
       }
+      this._lightsaber.activeTab = 'hilt';
+      this._lightsaber.inspectedComponent = { type: 'accessory', key: id };
       const ids = this._lightsaber.selectedAccessoryIds;
       const idx = ids.indexOf(id);
       if (idx >= 0) ids.splice(idx, 1);
@@ -1591,8 +1734,23 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     this.onRoot('click', '[data-action="set-lightsaber-color"]', async (event, target) => {
       event.preventDefault();
-      this._lightsaber.selectedBladeColor = target.dataset.key;
+      const key = target.dataset.key;
+      if (!key) return;
+      this._lightsaber.selectedBladeColor = key;
+      this._lightsaber.activeTab = 'color';
+      this._lightsaber.inspectedComponent = { type: 'color', key };
+      this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
       await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="open-lightsaber-color-modal"]', (event) => {
+      event.preventDefault();
+      this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.add?.('open');
+    });
+
+    this.onRoot('click', '[data-action="close-lightsaber-color-modal"]', (event) => {
+      event.preventDefault();
+      this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
     });
 
     this.onRoot('click', '[data-action="set-lightsaber-check-mode"]', async (event, target) => {
@@ -1645,14 +1803,45 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     await this.#applyCurrentItem();
   }
 
+  _getStandardLightsaberChassis() {
+    const candidates = this._catalogs.chassis || [];
+    return candidates.find(ch => {
+      const id = String(ch?.system?.chassisId || ch?.id || ch?._id || '').toLowerCase();
+      const name = String(ch?.name || '').toLowerCase();
+      return id === 'standard' || id === 'lightsaber-chassis-standard' || id === 'standard_lightsaber' || name === 'lightsaber (standard)' || name === 'standard lightsaber' || (/standard/.test(name) && /lightsaber/.test(name));
+    }) || candidates.find(ch => {
+      const id = String(ch?.system?.chassisId || ch?.id || ch?._id || '').toLowerCase();
+      const name = String(ch?.name || '').toLowerCase();
+      const joined = `${id} ${name}`;
+      return /lightsaber/.test(joined) && !/foil|lightfoil|short|shoto|double|cross|pike|whip|curved|great|archaic|modern/.test(joined);
+    }) || candidates[0] || null;
+  }
+
+  _isGenericStarterLightsaber(item) {
+    if (!item) return false;
+    const name = String(item.name || '').trim().toLowerCase();
+    if (!/lightsaber/.test(name)) return false;
+    return !/lightfoil|shoto|short|double|crossguard|curved|pike|whip|great/.test(name);
+  }
+
+  _isLightsaberTuningMode() {
+    const editItem = this._lightsaber?.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
+    return !!editItem;
+  }
+
   _hydrateLightsaberDefaults() {
     const ls = this._lightsaber;
     const editItem = ls.selectedOwnedSaberId ? this._getActorItemById(ls.selectedOwnedSaberId) : null;
     if (editItem && LightsaberConstructionEngine.isLightsaberItem(editItem)) {
       const editState = LightsaberConstructionEngine.getEditState(editItem);
-      ls.selectedChassisId ||= editState.chassisId || editItem.system?.chassisId || this._catalogs.chassis[0]?.id || null;
+      const standardChassis = this._getStandardLightsaberChassis();
+      if (this._isGenericStarterLightsaber(editItem)) {
+        ls.selectedChassisId = standardChassis?.id || standardChassis?._id || standardChassis?.system?.chassisId || null;
+      } else {
+        ls.selectedChassisId ||= editState.chassisId || editItem.system?.chassisId || standardChassis?.id || this._catalogs.chassis[0]?.id || null;
+      }
       if (!this._findLightsaberCatalogOption('chassis', ls.selectedChassisId)) {
-        ls.selectedChassisId = this._catalogs.chassis.find(ch => ch.system?.chassisId === 'standard' || /standard/i.test(ch.name || ''))?.id || this._catalogs.chassis[0]?.id || null;
+        ls.selectedChassisId = standardChassis?.id || standardChassis?._id || standardChassis?.system?.chassisId || this._catalogs.chassis[0]?.id || null;
       }
       ls.selectedCrystalId ||= editState.crystalId || this._catalogs.crystals.find(cr => /kyber|ilum/i.test(cr.name || ''))?.id || this._catalogs.crystals[0]?.id || null;
       if (!this._findLightsaberCatalogOption('crystals', ls.selectedCrystalId)) {
@@ -1662,7 +1851,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       ls.selectedBladeColor ||= editState.bladeColor || DEFAULT_BLADE_COLOR;
       return;
     }
-    ls.selectedChassisId ||= this._catalogs.chassis.find(ch => ch.system?.chassisId === 'standard' || /standard/i.test(ch.name || ''))?.id || this._catalogs.chassis[0]?.id || null;
+    const standardChassis = this._getStandardLightsaberChassis();
+    ls.selectedChassisId ||= standardChassis?.id || standardChassis?._id || standardChassis?.system?.chassisId || this._catalogs.chassis[0]?.id || null;
     ls.selectedCrystalId ||= this._catalogs.crystals.find(cr => /kyber|ilum/i.test(cr.name || ''))?.id || this._catalogs.crystals[0]?.id || null;
     ls.selectedBladeColor ||= DEFAULT_BLADE_COLOR;
   }
@@ -1729,6 +1919,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   _isLightsaberCrystalCompatible(id) {
     const crystal = this._findLightsaberCatalogOption('crystals', id);
     if (!crystal) return false;
+    if (this._isLightsaberTuningMode()) return true;
     const compatible = crystal.system?.lightsaber?.compatibleChassis || crystal.compatibleChassis || [];
     if (!Array.isArray(compatible) || !compatible.length || compatible.includes('*')) return true;
     return compatible.includes(this._getSelectedLightsaberChassisId());
@@ -1737,6 +1928,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   _isLightsaberAccessoryCompatible(id) {
     const accessory = this._findLightsaberCatalogOption('accessories', id);
     if (!accessory) return false;
+    if (this._isLightsaberTuningMode()) return true;
     const compatible = accessory.system?.lightsaber?.compatibleChassis || accessory.compatibleChassis || [];
     if (!Array.isArray(compatible) || !compatible.length || compatible.includes('*')) return true;
     return compatible.includes(this._getSelectedLightsaberChassisId());
@@ -1763,6 +1955,26 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
 
+  _getLightsaberHeroStats({ editItem, chassis, preview, slotState, totalCost } = {}) {
+    const system = editItem?.system || {};
+    const chassisSystem = chassis?.system || {};
+    const name = String(editItem?.name || chassis?.name || '').toLowerCase();
+    const damage = system.damage || system.damageDice || chassisSystem.damage || chassisSystem.damageDice || (name.includes('shoto') || name.includes('short') ? '2d6' : '2d8');
+    const critical = system.critical || system.crit || system.threatRange || chassisSystem.critical || chassisSystem.crit || (name.includes('lightsaber') ? '19-20' : '20');
+    const damageType = system.damageType || chassisSystem.damageType || 'Energy';
+    const range = system.range || chassisSystem.range || 'Melee';
+    return [
+      { key: 'Damage', value: damage },
+      { key: 'Critical', value: critical },
+      { key: 'Damage Type', value: damageType },
+      { key: 'Range', value: range },
+      { key: 'Build DC', value: preview?.finalDc ?? 0 },
+      { key: 'Cost', value: `${Number(totalCost ?? 0) || 0} cr` },
+      { key: 'UTF +10', value: preview?.take10Total ?? '—' },
+      { key: 'Slots', value: `${slotState?.usedSlots ?? 0}/${slotState?.totalAvailable ?? 0}` }
+    ];
+  }
+
   _normalizeLightsaberHiltKind(chassis) {
     const raw = String(chassis?.system?.chassisId || chassis?.id || '').toLowerCase();
     if (raw.includes('double')) return 'double';
@@ -1775,6 +1987,98 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return 'standard';
   }
 
+
+  _getLightsaberActiveTab(canChangeChassis = false) {
+    const allowed = new Set(['crystal', 'hilt', 'color']);
+    if (canChangeChassis) allowed.add('chassis');
+    const tab = this._lightsaber.activeTab || 'crystal';
+    return allowed.has(tab) ? tab : 'crystal';
+  }
+
+  _buildLightsaberComponentIntel({ activeTab, chassis, crystal, accessories = [], colorOptions = [] } = {}) {
+    const inspected = this._lightsaber.inspectedComponent;
+    const selectedColor = colorOptions.find(option => option.selected) || colorOptions[0] || null;
+    let component = null;
+    if (inspected?.type === 'crystal') component = this._findLightsaberCatalogOption('crystals', inspected.key);
+    if (inspected?.type === 'accessory') component = this._findLightsaberCatalogOption('accessories', inspected.key);
+    if (inspected?.type === 'chassis') component = this._findLightsaberCatalogOption('chassis', inspected.key);
+    if (inspected?.type === 'color') component = selectedColor;
+
+    let kind = 'Crystal';
+    if (!component) {
+      if (activeTab === 'hilt') {
+        component = accessories[accessories.length - 1] || this._catalogs.accessories?.[0] || null;
+        kind = 'Hilt Accessory';
+      } else if (activeTab === 'color') {
+        component = selectedColor;
+        kind = 'Blade Color';
+      } else if (activeTab === 'chassis') {
+        component = chassis;
+        kind = 'Chassis';
+      } else {
+        component = crystal;
+        kind = 'Kyber Crystal';
+      }
+    } else if (inspected?.type === 'accessory') kind = 'Hilt Accessory';
+    else if (inspected?.type === 'chassis') kind = 'Chassis';
+    else if (inspected?.type === 'color') kind = 'Blade Color';
+    else kind = 'Kyber Crystal';
+
+    if (!component) {
+      return {
+        kind: 'Selection Intel',
+        name: 'No component selected',
+        description: 'Choose a crystal, hilt accessory, or blade color to inspect its effect here.',
+        fields: []
+      };
+    }
+
+    if (kind === 'Blade Color') {
+      return {
+        kind,
+        name: component.label || component.key || this._lightsaber.selectedBladeColor || 'Blade Color',
+        description: 'Blade color is a visual resonance pass. The available palette is governed by the selected crystal.',
+        colorHex: component.hex,
+        fields: [
+          { key: 'Color', value: component.label || component.key || '—' },
+          { key: 'Source', value: 'Selected crystal' },
+          { key: 'Cost', value: '0 cr' }
+        ]
+      };
+    }
+
+    const system = component.system || {};
+    const description = this._stripHtml(system.description || component.description || 'No rules text is recorded for this component yet.');
+    const cost = Number(system.cost ?? system.baseCost ?? component.cost ?? 0) || 0;
+    const dc = Number(system.lightsaber?.buildDcModifier ?? system.baseBuildDc ?? component.buildDcModifier ?? 0) || 0;
+    const slotCost = Number(system.lightsaber?.upgradeSlots ?? system.upgradeSlots ?? component.slotCost ?? 0) || 0;
+    const bladeColor = system.lightsaber?.bladeColor || component.bladeColor || null;
+    const selected = (kind === 'Kyber Crystal' && (component.id === this._lightsaber.selectedCrystalId || component._id === this._lightsaber.selectedCrystalId))
+      || (kind === 'Hilt Accessory' && this._lightsaber.selectedAccessoryIds.includes(component.id))
+      || (kind === 'Chassis' && (component.id === this._lightsaber.selectedChassisId || component.system?.chassisId === this._lightsaber.selectedChassisId));
+    const fields = [
+      { key: 'Cost', value: `${cost} cr` }
+    ];
+    if (kind === 'Kyber Crystal') {
+      fields.push({ key: 'Blade Color', value: bladeColor || 'Varies' });
+      fields.push({ key: 'Build DC', value: dc >= 0 ? `+${dc}` : String(dc) });
+    } else if (kind === 'Hilt Accessory') {
+      fields.push({ key: 'Slots', value: slotCost || 1 });
+      fields.push({ key: 'Build DC', value: dc >= 0 ? `+${dc}` : String(dc) });
+    } else if (kind === 'Chassis') {
+      fields.push({ key: 'Damage', value: system.damage || system.damageDice || '—' });
+      fields.push({ key: 'Slots', value: system.upgradeSlots ?? '—' });
+    }
+    fields.push({ key: 'Status', value: selected ? 'Selected' : 'Available' });
+    return {
+      kind,
+      name: component.name || component.label || component.id || 'Component',
+      description,
+      selected,
+      fields
+    };
+  }
+
   async _prepareLightsaberContext(visibleCategories) {
     const ownedSabers = LightsaberConstructionEngine.getOwnedLightsabers(this.actor);
     const editItem = this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
@@ -1785,6 +2089,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       .map(id => this._findLightsaberCatalogOption('accessories', id))
       .filter(Boolean);
     const canChangeChassis = this._canChangeLightsaberChassis(editItem);
+    const activeTab = this._getLightsaberActiveTab(canChangeChassis);
+    this._lightsaber.activeTab = activeTab;
     const lightsaberVisualProfile = WeaponVisualProfileResolver.resolve(editItem, {
       actor: this.actor,
       lightsaberState: this._lightsaber,
@@ -1796,6 +2102,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       hex: BLADE_COLOR_MAP[key] || '#00ffff',
       selected: key === lightsaberVisualProfile.bladeColor
     }));
+    const componentIntel = this._buildLightsaberComponentIntel({ activeTab, chassis, crystal, accessories: selectedAccessories, colorOptions });
     const config = this._getLightsaberConfig();
     const preview = editItem
       ? this._buildLightsaberEditPreview({ chassis, crystal, accessories: selectedAccessories })
@@ -1833,16 +2140,23 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         subtitle: editItem ? 'tuning existing blade' : 'construct new blade',
         img: editItem?.img || chassis?.img,
         description: this._stripHtml(chassis?.system?.description || chassis?.description) || 'Select a chassis, kyber crystal, blade color, and hilt accessories. The construction engine remains the authority for DC, cost, and final mutation.',
-        stats: [
-          { key: 'Build DC', value: preview?.finalDc ?? '—' },
-          { key: 'Cost', value: `${totalCost} cr` },
-          { key: 'UTF +10', value: preview?.take10Total ?? '—' },
-          { key: 'Slots', value: `${slotState.usedSlots}/${slotState.totalAvailable}` }
-        ]
+        stats: this._getLightsaberHeroStats({ editItem, chassis, preview, slotState, totalCost })
       },
       ...(await this._getLightsaberMentorContext(editItem)),
       lightsaber: {
         mode: editItem ? 'tuning existing blade' : (canChangeChassis ? 'construct' : 'construction locked'),
+        activeTab,
+        tabCrystal: activeTab === 'crystal',
+        tabHilt: activeTab === 'hilt',
+        tabColor: activeTab === 'color',
+        tabChassis: activeTab === 'chassis',
+        tabs: [
+          { key: 'crystal', label: 'Crystal', active: activeTab === 'crystal' },
+          { key: 'hilt', label: 'Hilt', active: activeTab === 'hilt' },
+          ...(canChangeChassis ? [{ key: 'chassis', label: 'Chassis', active: activeTab === 'chassis' }] : []),
+          { key: 'color', label: 'Blade Color', active: activeTab === 'color' }
+        ],
+        componentIntel,
         showChassis: canChangeChassis,
         chassisLocked: !canChangeChassis,
         selectedChassisName: chassis?.name || 'Fixed Chassis',
@@ -1865,7 +2179,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           rarity: option.system?.rarity || option.rarity || 'common',
           bladeColor: option.system?.lightsaber?.bladeColor || option.bladeColor || 'Varies',
           selected: option.id === this._lightsaber.selectedCrystalId,
-          incompatible: !this._isLightsaberCrystalCompatible(option.id)
+          incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberCrystalCompatible(option.id)
         })),
         accessories: this._catalogs.accessories.map(option => ({
           ...option,
@@ -1873,7 +2187,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           cost: Number(option.system?.cost ?? option.cost ?? 0) || 0,
           buildDcModifier: Number(option.system?.lightsaber?.buildDcModifier ?? option.buildDcModifier ?? 0) || 0,
           selected: this._lightsaber.selectedAccessoryIds.includes(option.id),
-          incompatible: !this._isLightsaberAccessoryCompatible(option.id),
+          incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberAccessoryCompatible(option.id),
           slotCost: Number(option.system?.lightsaber?.upgradeSlots ?? option.system?.upgradeSlots ?? 1) || 1
         })),
         colorOptions,

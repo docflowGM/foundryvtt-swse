@@ -15,6 +15,20 @@ import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/en
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
 
+function isTruthyState(value) {
+  if (value === true || Number(value) === 1) return true;
+  if (value && typeof value === "object") {
+    return isTruthyState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+  }
+  return ["true", "1", "yes", "equipped", "worn", "held", "readied", "ready", "on", "active"].includes(String(value || "").toLowerCase());
+}
+
+function isEnergyShield(item) {
+  const system = item?.system ?? {};
+  const armorType = String(system.armorType ?? system.armor?.type ?? "").toLowerCase();
+  return item?.type === "armor" && (armorType === "shield" || Number(system.shieldRating ?? 0) > 0);
+}
+
 
 export class InventoryEngine {
   /**
@@ -25,7 +39,9 @@ export class InventoryEngine {
     const item = actor?.items?.get(itemId);
     if (!actor || !item) return;
 
-    const currentEquipped = item.system?.equipped === true;
+    const currentEquipped = isTruthyState(item.system?.equipped)
+      || isTruthyState(item.system?.isEquipped)
+      || isTruthyState(item.system?.equippable?.equipped);
     const newValue = !currentEquipped;
     const isLightsaber = WeaponVisualProfileResolver.isLightsaber(item);
 
@@ -93,10 +109,30 @@ export class InventoryEngine {
     };
 
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
+    const shield = isEnergyShield(item);
 
     if (visualProfile.isLightsaber && next) {
       update["flags.foundryvtt-swse.emitLight"] = true;
       update["flags.foundryvtt-swse.bladeColor"] = visualProfile.bladeColor;
+    }
+
+    if (shield) {
+      const shieldRating = Number(item.system?.shieldRating ?? 0) || 0;
+      const currentCharges = Number(item.system?.charges?.current ?? item.system?.charges?.value ?? 0) || 0;
+      if (next) {
+        if (shieldRating <= 0) {
+          ui?.notifications?.warn?.(`${item.name} has no Shield Rating to activate.`);
+          return;
+        }
+        if (currentCharges <= 0) {
+          ui?.notifications?.warn?.(`${item.name} has no charges remaining.`);
+          return;
+        }
+        update["system.currentSR"] = shieldRating;
+        update["system.charges.current"] = Math.max(0, currentCharges - 1);
+      } else {
+        update["system.currentSR"] = 0;
+      }
     }
 
     await ActorEngine.updateOwnedItems(actor, [update], {

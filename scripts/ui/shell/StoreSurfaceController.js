@@ -41,6 +41,7 @@ export class StoreSurfaceController {
     if (this._attachSplash(root, signal)) return;
 
     this._hydrateControls(root);
+    this._attachScrollBridge(root, signal);
 
     root.querySelectorAll('[data-shell-action="return-to-home"]').forEach(el => {
       el.addEventListener('click', async ev => {
@@ -391,6 +392,33 @@ export class StoreSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
+  }
+
+  _attachScrollBridge(root, signal) {
+    root.addEventListener('wheel', event => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+      const selectors = [
+        '.swse-store-surface__grid',
+        '.swse-store-surface__browse',
+        '.swse-store-surface__screen',
+        '.swse-store-surface__pane',
+        '.swse-store-surface__rail',
+        '.swse-store-surface__card-expand-desc',
+        '.swse-store-surface__card-expand-tech',
+        '.swse-store-surface__card-expand-reviews'
+      ];
+      const scroller = selectors
+        .map(sel => target.closest(sel))
+        .find(el => el && el.scrollHeight > el.clientHeight + 2);
+      if (!scroller) return;
+      const before = scroller.scrollTop;
+      scroller.scrollTop += event.deltaY;
+      if (scroller.scrollTop !== before) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, { signal, passive: false });
   }
 
   _hydrateControls(root) {

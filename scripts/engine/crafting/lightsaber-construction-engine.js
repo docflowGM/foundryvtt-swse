@@ -238,7 +238,8 @@ export class LightsaberConstructionEngine {
     });
     if (!resolved.success) return resolved;
 
-    const { crystal, accessories } = resolved;
+    const { chassis, crystal, accessories } = resolved;
+    const resolvedChassisId = chassis?.system?.chassisId || chassis?.id || config?.chassisItemId || weapon.system?.chassisId || 'standard';
     const modifiers = [];
     if (Array.isArray(crystal.system?.modifiers)) modifiers.push(...crystal.system.modifiers);
     for (const accessory of accessories) {
@@ -252,16 +253,17 @@ export class LightsaberConstructionEngine {
     const update = {
       _id: weapon.id,
       name: `${baseName}${suffix}`,
+      'system.chassisId': resolvedChassisId,
       'system.modifiers': modifiers,
       'flags.foundryvtt-swse.bladeColor': config?.bladeColor || 'blue',
       'flags.swse.bladeColor': config?.bladeColor || 'blue',
       'flags.foundryvtt-swse.lightsaberConfig': {
-        chassisId: weapon.system?.chassisId ?? null,
+        chassisId: resolvedChassisId,
         crystalId: crystal.id,
         accessoryIds: accessories.map(a => a.id)
       },
       'flags.swse.lightsaberConfig': {
-        chassisId: weapon.system?.chassisId ?? null,
+        chassisId: resolvedChassisId,
         crystalId: crystal.id,
         accessoryIds: accessories.map(a => a.id)
       }

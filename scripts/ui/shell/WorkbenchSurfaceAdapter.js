@@ -112,6 +112,8 @@ export class WorkbenchSurfaceAdapter {
    * @returns {Promise<void>}
    */
   async afterInlineRender(surfaceRoot) {
+    this._installScrollBridge(surfaceRoot);
+
     const mentorNode = surfaceRoot?.querySelector?.('[data-workbench-mentor-text]');
     if (!mentorNode || mentorNode.dataset.translationHydrated === 'true') return;
 
@@ -131,6 +133,27 @@ export class WorkbenchSurfaceAdapter {
       SWSELogger.error('[WorkbenchSurfaceAdapter] Mentor translation failed:', err);
       mentorNode.textContent = text;
     }
+  }
+
+  _installScrollBridge(surfaceRoot) {
+    const root = surfaceRoot?.querySelector?.('.swse-customization-stage') || surfaceRoot;
+    const body = root?.querySelector?.('.workbench-detail > .detail-grid, .workbench-detail > .lightsaber-workspace, .workbench-detail');
+    if (!root || !body || root.dataset.workbenchScrollBridge === 'true') return;
+    root.dataset.workbenchScrollBridge = 'true';
+
+    root.addEventListener('wheel', event => {
+      const delta = event.deltaY || 0;
+      if (!delta) return;
+      const explicitScroller = event.target?.closest?.('.inventory-list, .card-list, .detail-rail-scroll');
+      if (explicitScroller) {
+        const canScrollDown = explicitScroller.scrollTop + explicitScroller.clientHeight < explicitScroller.scrollHeight - 1;
+        const canScrollUp = explicitScroller.scrollTop > 0;
+        if ((delta > 0 && canScrollDown) || (delta < 0 && canScrollUp)) return;
+      }
+      if (body.scrollHeight <= body.clientHeight + 1) return;
+      body.scrollTop += delta;
+      event.preventDefault();
+    }, { passive: false });
   }
 
   /**

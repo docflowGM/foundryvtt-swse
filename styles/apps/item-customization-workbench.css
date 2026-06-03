@@ -1183,3 +1183,463 @@
       "chassis" !important;
   }
 }
+
+/* Energy shield and lightsaber tuning hardening pass ---------------------- */
+.swse-item-customization-workbench .lightsaber-workspace,
+.swse-customization-stage .lightsaber-workspace {
+  grid-template-columns: minmax(330px, 0.95fr) minmax(360px, 1fr) !important;
+  grid-template-areas:
+    "stage crystal"
+    "chassis accessories" !important;
+  align-items: start !important;
+  overflow: visible !important;
+  padding-bottom: 28px !important;
+}
+
+.swse-item-customization-workbench .ls-panel-color,
+.swse-customization-stage .ls-panel-color { display: none !important; }
+
+.swse-item-customization-workbench .ls-panel-crystal,
+.swse-item-customization-workbench .ls-panel-accessories,
+.swse-customization-stage .ls-panel-crystal,
+.swse-customization-stage .ls-panel-accessories {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+.swse-item-customization-workbench details.detail-panel > summary.panel-head,
+.swse-customization-stage details.detail-panel > summary.panel-head {
+  cursor: pointer;
+  list-style: none;
+}
+
+.swse-item-customization-workbench details.detail-panel > summary.panel-head::-webkit-details-marker,
+.swse-customization-stage details.detail-panel > summary.panel-head::-webkit-details-marker { display: none; }
+
+.swse-item-customization-workbench details.detail-panel > summary.panel-head::after,
+.swse-customization-stage details.detail-panel > summary.panel-head::after {
+  content: 'COLLAPSE';
+  color: var(--icw-pink);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+}
+
+.swse-item-customization-workbench details.detail-panel:not([open]) > summary.panel-head::after,
+.swse-customization-stage details.detail-panel:not([open]) > summary.panel-head::after { content: 'EXPAND'; }
+
+.swse-item-customization-workbench details.detail-panel:not([open]),
+.swse-customization-stage details.detail-panel:not([open]) { min-height: 0 !important; }
+
+.swse-item-customization-workbench .ls-color-cta,
+.swse-customization-stage .ls-color-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in oklch, var(--blade-color), var(--icw-border) 45%);
+  background: linear-gradient(90deg, color-mix(in oklch, var(--blade-color), transparent 88%), oklch(0 0 0 / 0.45));
+}
+
+.swse-item-customization-workbench .ls-color-current,
+.swse-customization-stage .ls-color-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-item-customization-workbench .ls-color-dot,
+.swse-customization-stage .ls-color-dot {
+  width: 28px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--blade-color);
+  box-shadow: 0 0 8px var(--blade-color), 0 0 18px var(--blade-color);
+}
+
+.swse-item-customization-workbench .ls-color-open,
+.swse-item-customization-workbench .ls-color-close,
+.swse-customization-stage .ls-color-open,
+.swse-customization-stage .ls-color-close {
+  border: 1px solid var(--icw-cyan);
+  background: color-mix(in oklch, var(--icw-cyan), transparent 88%);
+  color: var(--icw-cyan);
+  cursor: pointer;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 7px 10px;
+}
+
+.swse-item-customization-workbench .ls-color-close,
+.swse-customization-stage .ls-color-close {
+  padding: 2px 8px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.swse-item-customization-workbench .ls-color-modal,
+.swse-customization-stage .ls-color-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-item-customization-workbench .ls-color-modal.open,
+.swse-customization-stage .ls-color-modal.open { display: flex; }
+
+.swse-item-customization-workbench .ls-color-modal__backdrop,
+.swse-customization-stage .ls-color-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: oklch(0 0 0 / 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.swse-item-customization-workbench .ls-color-modal__panel,
+.swse-customization-stage .ls-color-modal__panel {
+  position: relative;
+  width: min(680px, 84vw);
+  max-height: 78vh;
+  overflow: auto;
+  box-shadow: 0 0 40px color-mix(in oklch, var(--icw-cyan), transparent 70%), 0 30px 80px oklch(0 0 0 / 0.8);
+}
+
+.swse-item-customization-workbench .ls-color-modal__panel .blade-color-grid,
+.swse-customization-stage .ls-color-modal__panel .blade-color-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+/* Make all tint/swatch chips read as actual color chips, not empty outline boxes. */
+.swse-item-customization-workbench .swatch-grid,
+.swse-customization-stage .swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(26px, 1fr));
+  gap: 7px;
+}
+
+.swse-item-customization-workbench .swatch,
+.swse-customization-stage .swatch {
+  min-height: 28px;
+  aspect-ratio: 1.4 / 1;
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in oklch, var(--swatch), white 22%) 0 22%, transparent 42%),
+    linear-gradient(180deg, color-mix(in oklch, var(--swatch), white 6%), color-mix(in oklch, var(--swatch), black 22%)) !important;
+  box-shadow: inset 0 0 0 2px oklch(0 0 0 / 0.55), 0 0 10px color-mix(in oklch, var(--swatch), transparent 45%) !important;
+}
+
+/* Energy shields are generators, not armor replacement. Show SR/activation rules first. */
+.swse-item-customization-workbench .energy-shield-rules,
+.swse-customization-stage .energy-shield-rules {
+  margin-bottom: 12px;
+  background:
+    radial-gradient(circle at 12% 50%, color-mix(in oklch, var(--icw-cyan), transparent 78%), transparent 34%),
+    linear-gradient(135deg, color-mix(in oklch, var(--icw-cyan), transparent 93%), var(--icw-panel));
+}
+
+.swse-item-customization-workbench .energy-shield-grid,
+.swse-customization-stage .energy-shield-grid {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.swse-item-customization-workbench .energy-shield-emitter,
+.swse-customization-stage .energy-shield-emitter {
+  position: relative;
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklch, var(--icw-cyan), transparent 68%);
+  background: radial-gradient(circle at center, color-mix(in oklch, var(--icw-cyan), transparent 82%), oklch(0 0 0 / 0.5));
+  overflow: hidden;
+}
+
+.swse-item-customization-workbench .shield-ring,
+.swse-customization-stage .shield-ring {
+  position: absolute;
+  border: 1px solid color-mix(in oklch, var(--icw-cyan), transparent 35%);
+  border-radius: 50%;
+  box-shadow: 0 0 18px color-mix(in oklch, var(--icw-cyan), transparent 65%);
+}
+
+.swse-item-customization-workbench .shield-ring-a,
+.swse-customization-stage .shield-ring-a { width: 108px; height: 108px; }
+.swse-item-customization-workbench .shield-ring-b,
+.swse-customization-stage .shield-ring-b { width: 78px; height: 78px; border-style: dashed; }
+
+.swse-item-customization-workbench .shield-core,
+.swse-customization-stage .shield-core {
+  position: relative;
+  z-index: 1;
+  font-family: var(--swse-font-display, 'VT323', monospace);
+  font-size: 34px;
+  color: var(--icw-cyan);
+  text-shadow: 0 0 12px var(--icw-cyan);
+}
+
+.swse-item-customization-workbench .energy-shield-rule-copy,
+.swse-customization-stage .energy-shield-rule-copy {
+  display: grid;
+  gap: 8px;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--icw-dim);
+}
+
+.swse-item-customization-workbench .energy-shield-rule-copy p,
+.swse-customization-stage .energy-shield-rule-copy p { margin: 0; }
+
+.swse-item-customization-workbench .energy-shield-rule-copy strong,
+.swse-customization-stage .energy-shield-rule-copy strong { color: var(--icw-cyan); }
+
+.swse-item-customization-workbench .energy-shield-detail-grid,
+.swse-customization-stage .energy-shield-detail-grid {
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 0.8fr) minmax(250px, 0.9fr);
+}
+
+@media (max-width: 1180px) {
+  .swse-item-customization-workbench .lightsaber-workspace,
+  .swse-customization-stage .lightsaber-workspace {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "stage"
+      "crystal"
+      "accessories"
+      "chassis" !important;
+  }
+  .swse-item-customization-workbench .energy-shield-grid,
+  .swse-customization-stage .energy-shield-grid { grid-template-columns: 1fr; }
+}
+
+/* -------------------------------------------------------------------------
+ * Workbench layout stabilization: lightsaber tabbed tuner + energy shields
+ * ------------------------------------------------------------------------- */
+.swse-item-customization-workbench .workbench-detail,
+.swse-customization-stage .workbench-detail {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .workbench-detail > .lightsaber-workspace--tabs,
+.swse-customization-stage .workbench-detail > .lightsaber-workspace--tabs {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px) !important;
+  grid-template-areas: none !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+  padding-bottom: 8px !important;
+}
+
+.swse-item-customization-workbench .lightsaber-workspace--tabs > .ls-tab-stage,
+.swse-customization-stage .lightsaber-workspace--tabs > .ls-tab-stage,
+.swse-item-customization-workbench .lightsaber-workspace--tabs > .ls-forge-rail,
+.swse-customization-stage .lightsaber-workspace--tabs > .ls-forge-rail {
+  min-height: 0 !important;
+}
+
+.swse-item-customization-workbench .ls-tab-stage,
+.swse-customization-stage .ls-tab-stage {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .ls-tab-row,
+.swse-customization-stage .ls-tab-row {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+  border-bottom: 1px solid color-mix(in oklch, var(--icw-cyan), transparent 74%);
+}
+
+.swse-item-customization-workbench .ls-tab-btn,
+.swse-customization-stage .ls-tab-btn {
+  border: 1px solid color-mix(in oklch, var(--icw-cyan), transparent 55%);
+  border-bottom: 0;
+  background: color-mix(in oklch, var(--icw-cyan), transparent 92%);
+  color: var(--icw-dim);
+  cursor: pointer;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+}
+
+.swse-item-customization-workbench .ls-tab-btn.active,
+.swse-customization-stage .ls-tab-btn.active {
+  color: var(--icw-cyan);
+  background: linear-gradient(180deg, color-mix(in oklch, var(--icw-cyan), transparent 78%), color-mix(in oklch, var(--icw-pink), transparent 92%));
+  box-shadow: 0 0 12px color-mix(in oklch, var(--icw-cyan), transparent 76%);
+}
+
+.swse-item-customization-workbench .ls-tab-panel,
+.swse-customization-stage .ls-tab-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-item-customization-workbench .panel-head.compact,
+.swse-customization-stage .panel-head.compact {
+  flex: 0 0 auto;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+}
+
+.swse-item-customization-workbench .ls-tab-card-grid,
+.swse-customization-stage .ls-tab-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  align-content: start !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+  padding-right: 6px !important;
+}
+
+.swse-item-customization-workbench .ls-tab-card-grid .config-card,
+.swse-customization-stage .ls-tab-card-grid .config-card {
+  min-height: 86px;
+}
+
+.swse-item-customization-workbench .ls-forge-rail,
+.swse-customization-stage .ls-forge-rail {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .lightsaber-workspace--tabs .ls-forge-stage,
+.swse-customization-stage .lightsaber-workspace--tabs .ls-forge-stage {
+  grid-area: auto !important;
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+.swse-item-customization-workbench .lightsaber-workspace--tabs .ls-blade-render,
+.swse-customization-stage .lightsaber-workspace--tabs .ls-blade-render {
+  min-height: 132px !important;
+  height: 132px !important;
+}
+
+.swse-item-customization-workbench .ls-component-intel,
+.swse-customization-stage .ls-component-intel {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .ls-component-intel .rail-detail-card,
+.swse-customization-stage .ls-component-intel .rail-detail-card {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.swse-item-customization-workbench .ls-intel-color-chip,
+.swse-customization-stage .ls-intel-color-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 8px 0;
+}
+
+.swse-item-customization-workbench .ls-intel-color-chip > span,
+.swse-customization-stage .ls-intel-color-chip > span {
+  width: 42px;
+  height: 14px;
+  border: 1px solid var(--icw-cyan);
+  background: var(--weapon-color, var(--icw-cyan));
+  box-shadow: 0 0 12px var(--weapon-color, var(--icw-cyan));
+}
+
+.swse-item-customization-workbench .ls-rail-lock-note,
+.swse-customization-stage .ls-rail-lock-note {
+  margin-top: 10px;
+}
+
+.swse-item-customization-workbench .ls-tab-color-grid,
+.swse-customization-stage .ls-tab-color-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.swse-item-customization-workbench .ls-check-mode,
+.swse-customization-stage .ls-check-mode,
+.swse-item-customization-workbench .lightsaber-workspace--tabs .ls-forge-summary,
+.swse-customization-stage .lightsaber-workspace--tabs .ls-forge-summary {
+  display: none !important;
+}
+
+/* Energy shield workbench: no generic armor modification column. */
+.swse-item-customization-workbench .energy-shield-detail-grid,
+.swse-customization-stage .energy-shield-detail-grid {
+  display: grid !important;
+  grid-template-columns: minmax(250px, 1fr) minmax(250px, 1fr) minmax(300px, 0.95fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.swse-item-customization-workbench .energy-shield-maintenance-panel,
+.swse-customization-stage .energy-shield-maintenance-panel {
+  grid-column: 1;
+}
+
+.swse-item-customization-workbench .energy-shield-detail-grid .appearance-panel,
+.swse-customization-stage .energy-shield-detail-grid .appearance-panel {
+  grid-column: 1 / span 2 !important;
+}
+
+.swse-item-customization-workbench .energy-shield-detail-grid .detail-rail,
+.swse-customization-stage .energy-shield-detail-grid .detail-rail {
+  grid-column: 3 !important;
+  grid-row: 1 / span 3 !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-item-customization-workbench .workbench-detail > .lightsaber-workspace--tabs,
+  .swse-customization-stage .workbench-detail > .lightsaber-workspace--tabs,
+  .swse-item-customization-workbench .energy-shield-detail-grid,
+  .swse-customization-stage .energy-shield-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .swse-item-customization-workbench .energy-shield-detail-grid .appearance-panel,
+  .swse-customization-stage .energy-shield-detail-grid .appearance-panel,
+  .swse-item-customization-workbench .energy-shield-detail-grid .detail-rail,
+  .swse-customization-stage .energy-shield-detail-grid .detail-rail {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+}

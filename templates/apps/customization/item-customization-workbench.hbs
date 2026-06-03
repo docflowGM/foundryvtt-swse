@@ -90,99 +90,174 @@
           </div>
 
           {{#if isLightsaber}}
-          <div class="lightsaber-workspace">
-            <section class="detail-panel panel ls-forge-stage">
-              <div class="panel-head">
-                <span>✦ Forge Preview</span>
-                <span class="hint">{{lightsaber.mode}}</span>
-              </div>
-              <div class="ls-blade-render {{lightsaber.hiltKind}}" style="--blade-color: {{lightsaber.bladeHex}};">
-                <span class="ls-blade ls-left"></span>
-                <span class="ls-hilt"></span>
-                <span class="ls-blade ls-right"></span>
-                <span class="ls-crossguard ls-crossguard-a"></span>
-                <span class="ls-crossguard ls-crossguard-b"></span>
-              </div>
-              <div class="ls-forge-summary">
-                {{#each currentItem.stats}}
-                <div class="hero-stat"><span class="key">{{key}}</span><span class="value">{{value}}</span></div>
+          <div class="lightsaber-workspace lightsaber-workspace--tabs">
+            <section class="detail-panel panel ls-tab-stage">
+              <div class="panel-head"><span>Workbench Focus</span><span class="hint">{{lightsaber.mode}}</span></div>
+              <nav class="ls-tab-row" aria-label="Lightsaber tuning sections">
+                {{#each lightsaber.tabs}}
+                <button type="button" class="ls-tab-btn {{#if active}}active{{/if}}" data-action="set-lightsaber-tab" data-tab="{{key}}">{{label}}</button>
                 {{/each}}
-              </div>
-              <div class="ls-check-mode">
-                <button type="button" class="variant-row {{#if lightsaber.rollSelected}}selected{{/if}}" data-action="set-lightsaber-check-mode" data-key="roll">
-                  <span class="variant-name">Roll Use the Force</span>
-                  <span class="variant-desc">Let the dice decide whether Miraj smiles.</span>
-                </button>
-                <button type="button" class="variant-row {{#if lightsaber.take10Selected}}selected{{/if}} {{#unless lightsaber.preview.canTake10}}disabled{{/unless}}" data-action="set-lightsaber-check-mode" data-key="take10" {{#unless lightsaber.preview.canTake10}}disabled{{/unless}}>
-                  <span class="variant-name">Take 10</span>
-                  <span class="variant-desc">Allowed only when UTF + 10 meets the build DC.</span>
-                </button>
-              </div>
+              </nav>
+
+              {{#if lightsaber.tabCrystal}}
+              <section class="ls-tab-panel" data-lightsaber-tab-panel="crystal">
+                <div class="panel-head compact"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>
+                <div class="ls-tab-card-grid">
+                  {{#each lightsaber.crystals}}
+                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" {{#if incompatible}}disabled{{/if}} title="{{description}}">
+                    <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                    <span class="card-desc">{{description}}</span>
+                    <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag">{{bladeColor}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+                  </button>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+
+              {{#if lightsaber.tabHilt}}
+              <section class="ls-tab-panel" data-lightsaber-tab-panel="hilt">
+                <div class="panel-head compact"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
+                <div class="ls-tab-card-grid">
+                  {{#each lightsaber.accessories}}
+                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" {{#if incompatible}}disabled{{/if}} title="{{description}}">
+                    <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                    <span class="card-desc">{{description}}</span>
+                    <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+                  </button>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+
+              {{#if lightsaber.tabColor}}
+              <section class="ls-tab-panel" data-lightsaber-tab-panel="color">
+                <div class="panel-head compact"><span>Blade Color</span><span class="hint">based on crystal</span></div>
+                <div class="weapon-color-picker blade-color-grid ls-tab-color-grid" aria-label="Blade Color">
+                  {{#each lightsaber.colorOptions}}
+                  <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" title="{{label}}" aria-label="Blade color {{label}}">
+                    <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
+                    <span class="weapon-color-label">{{label}}</span>
+                  </button>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+
+              {{#if lightsaber.tabChassis}}
+              <section class="ls-tab-panel" data-lightsaber-tab-panel="chassis">
+                <div class="panel-head compact"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
+                <div class="ls-tab-card-grid">
+                  {{#each lightsaber.chassis}}
+                  <button type="button" class="config-card {{#if selected}}selected{{/if}}" data-action="select-lightsaber-chassis" data-key="{{id}}" title="{{description}}">
+                    <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                    <span class="card-desc">{{description}}</span>
+                    <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
+                  </button>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
             </section>
 
-            {{#if lightsaber.showChassis}}
-            <section class="detail-panel panel ls-panel-chassis">
-              <div class="panel-head"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
-              <div class="card-list">
-                {{#each lightsaber.chassis}}
-                <button type="button" class="config-card {{#if selected}}selected{{/if}}" data-action="select-lightsaber-chassis" data-key="{{id}}">
-                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-                  <span class="card-desc">{{description}}</span>
-                  <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
+            <aside class="ls-forge-rail">
+              <section class="detail-panel panel ls-forge-stage">
+                <div class="panel-head">
+                  <span>✦ Forge Preview</span>
+                  <span class="hint">{{lightsaber.mode}}</span>
+                </div>
+                <div class="ls-blade-render {{lightsaber.hiltKind}}" style="--blade-color: {{lightsaber.bladeHex}};">
+                  <span class="ls-blade ls-left"></span>
+                  <span class="ls-hilt"></span>
+                  <span class="ls-blade ls-right"></span>
+                  <span class="ls-crossguard ls-crossguard-a"></span>
+                  <span class="ls-crossguard ls-crossguard-b"></span>
+                </div>
+                <div class="ls-color-cta" style="--blade-color: {{lightsaber.bladeHex}};">
+                  <span class="ls-color-current"><span class="ls-color-dot"></span> Blade color</span>
+                  <button type="button" class="ls-color-open" data-action="open-lightsaber-color-modal">Choose Color</button>
+                </div>
+                <div class="ls-color-modal" data-lightsaber-color-modal aria-hidden="true">
+                  <div class="ls-color-modal__backdrop" data-action="close-lightsaber-color-modal"></div>
+                  <div class="ls-color-modal__panel panel">
+                    <div class="panel-head"><span>Choose Blade Color</span><button type="button" class="ls-color-close" data-action="close-lightsaber-color-modal">×</button></div>
+                    <div class="weapon-color-picker blade-color-grid" aria-label="Blade Color">
+                      {{#each lightsaber.colorOptions}}
+                      <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" title="{{label}}" aria-label="Blade color {{label}}">
+                        <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
+                        <span class="weapon-color-label">{{label}}</span>
+                      </button>
+                      {{/each}}
+                    </div>
+                  </div>
+                </div>
+                {{#unless lightsaber.showChassis}}
+                <div class="ls-locked-chassis-card ls-rail-lock-note">
+                  <div class="card-top"><span class="card-name">{{lightsaber.selectedChassisName}}</span><span class="card-cost">Fixed</span></div>
+                  <span class="card-desc">{{lightsaber.chassisLockReason}}</span>
+                </div>
+                {{/unless}}
+              </section>
+
+              <section class="detail-panel panel ls-component-intel">
+                <div class="panel-head"><span>Selected Component Intel</span><span class="hint">{{lightsaber.componentIntel.kind}}</span></div>
+                <article class="rail-detail-card {{#if lightsaber.componentIntel.selected}}selected{{/if}}" {{#if lightsaber.componentIntel.colorHex}}style="--weapon-color: {{lightsaber.componentIntel.colorHex}}"{{/if}}>
+                  <div class="rail-detail-top"><span>{{lightsaber.componentIntel.name}}</span><span>{{lightsaber.componentIntel.kind}}</span></div>
+                  {{#if lightsaber.componentIntel.colorHex}}<div class="ls-intel-color-chip"><span></span>{{lightsaber.componentIntel.name}}</div>{{/if}}
+                  <dl class="rail-detail-fields">
+                    <div><dt>Detail</dt><dd>{{lightsaber.componentIntel.description}}</dd></div>
+                    {{#each lightsaber.componentIntel.fields}}
+                    <div><dt>{{key}}</dt><dd>{{value}}</dd></div>
+                    {{/each}}
+                  </dl>
+                </article>
+              </section>
+            </aside>
+          </div>
+          {{else}}
+          {{#if isEnergyShield}}
+          <section class="energy-shield-rules panel">
+            <div class="panel-head"><span>Energy Shield Operating Profile</span><span class="hint">SR {{energyShield.sr}} · {{energyShield.typeLabel}}</span></div>
+            <div class="energy-shield-grid">
+              <div class="energy-shield-emitter">
+                <span class="shield-ring shield-ring-a"></span>
+                <span class="shield-ring shield-ring-b"></span>
+                <span class="shield-core">SR {{energyShield.sr}}</span>
+              </div>
+              <div class="energy-shield-rule-copy">
+                <p><strong>Inactive:</strong> Worn but inert. No Reflex override, no Max Dex cap, no armor check penalty, and no Shield Rating.</p>
+                <p><strong>Activated:</strong> Swift Action, consumes 1 charge, lasts until encounter end, and grants SR {{energyShield.sr}} against Energy damage only.</p>
+                <p><strong>Penalty:</strong> While active, applies Max Dex {{#if energyShield.maxDex}}+{{energyShield.maxDex}}{{else}}—{{/if}} and ACP {{energyShield.armorCheckPenalty}}. Without Armor Proficiency ({{energyShield.proficiency}}), apply -5 Reflex and deny Dex bonus, but do not remove heroic level bonus.</p>
+              </div>
+            </div>
+          </section>
+          {{/if}}
+          <div class="detail-grid {{#if isEnergyShield}}energy-shield-detail-grid{{/if}}">
+            {{#if isEnergyShield}}
+            <section class="detail-panel panel energy-shield-maintenance-panel">
+              <div class="panel-head">
+                <span>Shield Structural / Maintenance</span>
+                <span class="hint">generator-safe only</span>
+              </div>
+              <div class="card-list structural-list">
+                <article class="config-card installed">
+                  <span class="card-top"><span class="card-name">Power Cell Housing</span><span class="card-cost">Charges</span></span>
+                  <span class="card-desc">Energy shields are tuned through generator maintenance and compatible templates, not normal armor plating mods.</span>
+                  <span class="card-tags"><span class="tag">5 charges</span><span class="tag">Swift activate</span></span>
+                </article>
+                <article class="config-card disabled">
+                  <span class="card-top"><span class="card-name">Armor Modification Surface</span><span class="card-cost">Illegal</span></span>
+                  <span class="card-desc">Normal armor modifications cannot be taken on an energy shield unless a rule/template explicitly says it works on energy shields.</span>
+                  <span class="card-tags"><span class="tag state">No armor mods</span></span>
+                </article>
+                {{#each structuralActions.strips}}
+                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-strip" data-key="{{key}}">
+                  <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
+                  {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
                 </button>
                 {{/each}}
               </div>
             </section>
             {{else}}
-            <section class="detail-panel panel ls-panel-chassis ls-panel-chassis--locked">
-              <div class="panel-head"><span>Chassis Locked</span><span class="hint">{{lightsaber.selectedChassisName}}</span></div>
-              <div class="ls-locked-chassis-card">
-                <div class="card-top"><span class="card-name">{{lightsaber.selectedChassisName}}</span><span class="card-cost">Fixed</span></div>
-                <span class="card-desc">{{lightsaber.chassisLockReason}}</span>
-              </div>
-            </section>
-            {{/if}}
-
-            <section class="detail-panel panel ls-panel-crystal">
-              <div class="panel-head"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>
-              <div class="card-list">
-                {{#each lightsaber.crystals}}
-                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" {{#if incompatible}}disabled{{/if}}>
-                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-                  <span class="card-desc">{{description}}</span>
-                  <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag">{{bladeColor}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
-                </button>
-                {{/each}}
-              </div>
-            </section>
-
-            <section class="detail-panel panel ls-panel-accessories">
-              <div class="panel-head"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
-              <div class="card-list">
-                {{#each lightsaber.accessories}}
-                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" {{#if incompatible}}disabled{{/if}}>
-                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-                  <span class="card-desc">{{description}}</span>
-                  <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
-                </button>
-                {{/each}}
-              </div>
-            </section>
-
-            <section class="detail-panel panel ls-panel-color appearance-panel">
-              <div class="panel-head"><span>Blade Color</span><span class="hint">live emitter</span></div>
-              <div class="weapon-color-picker blade-color-grid" aria-label="Blade Color">
-                {{#each lightsaber.colorOptions}}
-                <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" title="{{label}}" aria-label="Blade color {{label}}">
-                  <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
-                  <span class="weapon-color-label">{{label}}</span>
-                </button>
-                {{/each}}
-              </div>
-            </section>
-          </div>
-          {{else}}
-          <div class="detail-grid">
             <section class="detail-panel panel">
               <div class="panel-head">
                 <span>Modifications</span>
@@ -210,6 +285,7 @@
                 {{/if}}
               </div>
             </section>
+            {{/if}}
 
             <section class="detail-panel panel">
               <div class="panel-head">
@@ -240,6 +316,7 @@
               </div>
             </section>
 
+            {{#unless isEnergyShield}}
             <section class="detail-panel panel">
               <div class="panel-head">
                 <span>Structural Changes</span>
@@ -260,6 +337,7 @@
                 {{/each}}
               </div>
             </section>
+            {{/unless}}
 
             <aside class="detail-rail panel">
               <div class="panel-head">
