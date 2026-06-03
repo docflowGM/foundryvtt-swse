@@ -68,9 +68,10 @@ const FEAT_IDS = {
     'Melee Defense': '3a847230d573a623',
     'Rapid Strike': 'ccb33e58342499a3',
     'Surgical Expertise': 'f9ae5b531ae01fd0',
-    'Skill Focus (Knowledge (Bureaucracy))': '1592aaedf4b6e40a',
-    'Skill Focus (Stealth)': '1592aaedf4b6e40a',
-    'Skill Focus (Mechanics)': '1592aaedf4b6e40a',
+    // NOTE: Scoped Skill Focus variants (e.g. Skill Focus (Stealth)) are intentionally
+    // not mapped here. All scoped Skill Focus entries share the same base feat ID,
+    // which would cause false positives (any Skill Focus satisfying a specific variant).
+    // Scoped feat matching uses the choice-aware path in prerequisite-checker.js instead.
     'Weapon Focus (Melee Weapon)': 'c41814601364b643',
     'Martial Arts II': '5bedd71f0eead6b9',
     'Biotech Specialist': 'bf6c01fa590a3f75',

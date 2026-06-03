@@ -25,6 +25,8 @@ import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/sugg
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { actorIsDroidLike, getActorSpeciesNames, namesMatchLoosely, resolveCanonicalSpeciesName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { calculatePrestigeDelay } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 
@@ -72,6 +74,100 @@ const SPECIES_CLASS_AFFINITY = {
 };
 const SPECIES_TAPER_END_LEVEL = 8;
 const STARTING_CLASS_DECAY_END_LEVEL = 5;
+
+function normalizeSuggestionNameKey(value) {
+    return String(value ?? '')
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+        .replace(/[\u2010-\u2015]/g, '-')
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+}
+
+function extractSuggestionBaseName(value) {
+    return String(value ?? '').replace(/\s*\([^)]*\)\s*$/g, '').trim();
+}
+
+function getSuggestionChoiceLabels(choice) {
+    const labels = [];
+    const visit = (entry) => {
+        if (!entry) return;
+        if (Array.isArray(entry) || entry instanceof Set) {
+            for (const nested of entry) visit(nested);
+            return;
+        }
+        if (typeof entry === 'string') {
+            labels.push(entry);
+            return;
+        }
+        const label = entry.label || entry.name || entry.skill || entry.skillKey || entry.value || entry.id || '';
+        if (label) labels.push(label);
+    };
+    visit(choice);
+    return labels;
+}
+
+function addSuggestionFeatName(set, entry) {
+    const name = typeof entry === 'string' ? entry : (entry?.name || entry?.featName || entry?.label || '');
+    if (!name) return;
+    set.add(normalizeSuggestionNameKey(name));
+
+    const choice = typeof entry === 'object'
+        ? (entry?.system?.selectedChoice ?? entry?.system?.selectedChoices ?? entry?.selectedChoice ?? entry?.choice ?? entry?.choiceValue)
+        : null;
+    const base = extractSuggestionBaseName(name);
+    for (const choiceLabel of getSuggestionChoiceLabels(choice)) {
+        if (base) set.add(normalizeSuggestionNameKey(`${base} (${choiceLabel})`));
+    }
+}
+
+function resolveSuggestionTalentTreeKey(value) {
+    if (!value) return null;
+    const raw = String(value).trim();
+    if (!raw) return null;
+    const tree = TalentTreeDB.get?.(raw)
+        || TalentTreeDB.bySourceId?.(raw)
+        || TalentTreeDB.byName?.(raw);
+    if (tree?.id) return tree.id;
+    return normalizeTalentTreeId(raw.replace(/\s*Talent\s+Tree$/i, ''));
+}
+
+function getSuggestionTalentTreeKeys(talent) {
+    if (!talent) return [];
+    const keys = new Set();
+    const add = (value) => {
+        const key = resolveSuggestionTalentTreeKey(value);
+        if (key) keys.add(key);
+    };
+
+    [
+        talent?.treeId,
+        talent?.talentTree,
+        talent?.talentTreeId,
+        talent?.treeName,
+        talent?.system?.treeId,
+        talent?.system?.talentTreeId,
+        talent?.system?.talent_tree,
+        talent?.system?.talentTree,
+        talent?.system?.tree,
+        talent?.sourceTreeName,
+        talent?.sourceTreeId,
+        talent?.flags?.swse?.treeId,
+        talent?.flags?.swse?.talentTreeId,
+    ].forEach(add);
+
+    [
+        talent?.id,
+        talent?._id,
+        talent?.flags?.swse?.id,
+        talent?.name,
+    ].forEach((talentId) => add(TalentTreeDB.getTreeForTalent?.(talentId)));
+
+    return Array.from(keys);
+}
+
 
 // ──────────────────────────────────────────────────────────────
 // CLASS SUGGESTION ENGINE CLASS
@@ -226,40 +322,49 @@ export class ClassSuggestionEngine {
     static async _buildActorState(actor, pendingData = {}) {
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Building state for actor ${actor.id} (${actor.name})`);
 
-        // Get owned feats (names, lowercased for comparison)
-        const ownedFeats = new Set(
-            actor.items
-                .filter(i => i.type === 'feat')
-                .map(f => f.name.toLowerCase())
-        );
+        // Get owned feats. Use the same normalized identity style as the
+        // prerequisite engine, including selected-choice variants such as
+        // "Skill Focus (Stealth)".
+        const ownedFeats = new Set();
+        actor.items
+            .filter(i => i.type === 'feat')
+            .forEach(f => addSuggestionFeatName(ownedFeats, f));
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned feats (${ownedFeats.size}):`, Array.from(ownedFeats));
 
         // Add pending feats
         (pendingData.selectedFeats || []).forEach(f => {
-            ownedFeats.add((f.name || f).toLowerCase());
+            addSuggestionFeatName(ownedFeats, f);
         });
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending feats (${ownedFeats.size}):`, Array.from(ownedFeats));
 
-        // Get owned talents (names, lowercased)
+        // Get owned talents (normalized for comparison)
         const ownedTalents = new Set(
             actor.items
                 .filter(i => i.type === 'talent')
-                .map(t => t.name.toLowerCase())
+                .map(t => normalizeSuggestionNameKey(t.name))
         );
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned talents (${ownedTalents.size}):`, Array.from(ownedTalents));
 
         // Add pending talents
         (pendingData.selectedTalents || []).forEach(t => {
-            ownedTalents.add((t.name || t).toLowerCase());
+            ownedTalents.add(normalizeSuggestionNameKey(t.name || t));
         });
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending talents (${ownedTalents.size}):`, Array.from(ownedTalents));
 
-        // Get talent trees the character has talents from
-        const talentTrees = new Set(
-            actor.items
-                .filter(i => i.type === 'talent' && i.system?.tree)
-                .map(t => t.system.tree.toLowerCase())
-        );
+        // Get talent trees the character has talents from. Actor talent items
+        // usually store the compendium tree sourceId, while prestige requirements
+        // use display names like "Awareness"; resolve through TalentTreeDB.
+        const talentTrees = new Set();
+        const talentTreeSelections = [];
+        const recordTalentTreeKeys = (talent) => {
+            const keys = getSuggestionTalentTreeKeys(talent);
+            keys.forEach(key => talentTrees.add(key));
+            if (keys.length > 0) talentTreeSelections.push(keys);
+        };
+        actor.items
+            .filter(i => i.type === 'talent')
+            .forEach(recordTalentTreeKeys);
+        (pendingData.selectedTalents || []).forEach(recordTalentTreeKeys);
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Talent trees (${talentTrees.size}):`, Array.from(talentTrees));
 
         // Get trained skills (skill keys)
@@ -332,6 +437,7 @@ export class ClassSuggestionEngine {
             ownedFeats,
             ownedTalents,
             talentTrees,
+            talentTreeSelections,
             trainedSkills,
             highestAbility,
             highestScore,
@@ -494,7 +600,7 @@ export class ClassSuggestionEngine {
         // Check feats
         if (prereqData.feats) {
             for (const featName of prereqData.feats) {
-                if (!actorState.ownedFeats.has(featName.toLowerCase())) {
+                if (!actorState.ownedFeats.has(normalizeSuggestionNameKey(featName))) {
                     missing.push({
                         type: 'feat',
                         name: featName,
@@ -508,7 +614,7 @@ export class ClassSuggestionEngine {
         // Check featsOr (alternative feats)
         if (prereqData.featsOr && prereqData.featsOr.length > 0) {
             const hasAny = prereqData.featsOr.some(f =>
-                actorState.ownedFeats.has(f.toLowerCase())
+                actorState.ownedFeats.has(normalizeSuggestionNameKey(f))
             );
             if (!hasAny) {
                 missing.push({
@@ -523,7 +629,7 @@ export class ClassSuggestionEngine {
         // Check talents (specific named talents)
         if (prereqData.talents && Array.isArray(prereqData.talents)) {
             for (const talentName of prereqData.talents) {
-                if (!actorState.ownedTalents.has(talentName.toLowerCase())) {
+                if (!actorState.ownedTalents.has(normalizeSuggestionNameKey(talentName))) {
                     missing.push({
                         type: 'talent',
                         name: talentName,
@@ -537,12 +643,14 @@ export class ClassSuggestionEngine {
         // Check talent count from specific trees
         if (prereqData.talents && typeof prereqData.talents === 'number' && prereqData.talentTrees) {
             const requiredCount = prereqData.talents;
-            const validTrees = prereqData.talentTrees.map(t => t.toLowerCase());
+            const validTrees = prereqData.talentTrees.map(resolveSuggestionTalentTreeKey).filter(Boolean);
 
-            // Count talents from valid trees
+            // Count matching talent instances, not just unique tree names.
+            // A character with two Awareness talents must count as 2, not 1.
             let count = 0;
-            for (const tree of actorState.talentTrees) {
-                if (validTrees.some(vt => tree.includes(vt.toLowerCase()))) {
+            const talentTreeSelections = actorState.talentTreeSelections || Array.from(actorState.talentTrees).map(key => [key]);
+            for (const treeKeys of talentTreeSelections) {
+                if (treeKeys.some(tree => validTrees.includes(tree))) {
                     count++;
                 }
             }
@@ -603,8 +711,8 @@ export class ClassSuggestionEngine {
         if (prereqData.powers && prereqData.powers.length > 0) {
             for (const power of prereqData.powers) {
                 // Check if actor has this force power
-                const hasPower = actorState.ownedFeats.has(power.toLowerCase()) ||
-                                 actorState.ownedTalents.has(power.toLowerCase());
+                const hasPower = actorState.ownedFeats.has(normalizeSuggestionNameKey(power)) ||
+                                 actorState.ownedTalents.has(normalizeSuggestionNameKey(power));
                 if (!hasPower) {
                     missing.push({
                         type: 'power',
@@ -928,7 +1036,7 @@ export class ClassSuggestionEngine {
         // Check feat synergy
         if (synergy.feats) {
             for (const feat of synergy.feats) {
-                if (actorState.ownedFeats.has(feat.toLowerCase())) {
+                if (actorState.ownedFeats.has(normalizeSuggestionNameKey(feat))) {
                     score += 1;
                 }
             }
@@ -937,7 +1045,7 @@ export class ClassSuggestionEngine {
         // Check talent tree synergy
         if (synergy.talentTrees) {
             for (const tree of synergy.talentTrees) {
-                if (actorState.talentTrees.has(tree.toLowerCase())) {
+                if (actorState.talentTrees.has(resolveSuggestionTalentTreeKey(tree))) {
                     score += 1;
                 }
             }
@@ -946,7 +1054,7 @@ export class ClassSuggestionEngine {
         // Check talent synergy
         if (synergy.talents) {
             for (const talent of synergy.talents) {
-                if (actorState.ownedTalents.has(talent.toLowerCase())) {
+                if (actorState.ownedTalents.has(normalizeSuggestionNameKey(talent))) {
                     score += 2; // Specific talent match is strong
                 }
             }
@@ -989,7 +1097,7 @@ export class ClassSuggestionEngine {
         // Check feats
         if (synergy.feats) {
             const matchingFeats = synergy.feats.filter(f =>
-                actorState.ownedFeats.has(f.toLowerCase())
+                actorState.ownedFeats.has(normalizeSuggestionNameKey(f))
             );
             if (matchingFeats.length > 0) {
                 reasons.push(`Builds on your feats`);
@@ -999,7 +1107,7 @@ export class ClassSuggestionEngine {
         // Check talent trees
         if (synergy.talentTrees) {
             const matchingTrees = synergy.talentTrees.filter(t =>
-                actorState.talentTrees.has(t.toLowerCase())
+                actorState.talentTrees.has(resolveSuggestionTalentTreeKey(t))
             );
             if (matchingTrees.length > 0) {
                 reasons.push(`Expands your talent options`);

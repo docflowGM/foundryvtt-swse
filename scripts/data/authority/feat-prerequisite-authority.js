@@ -96,7 +96,9 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "name": "Double Attack",
     "prerequisite": "Base Attack Bonus +6",
     "benefit": "Make an extra attack with chosen weapon during Full Attack, -5 penalty to all attacks.",
-    "description": "Make an extra attack with chosen weapon during Full Attack, -5 penalty to all attacks."
+    "description": "Make an extra attack with chosen weapon during Full Attack, -5 penalty to all attacks.",
+    "isScopedChoice": true,
+    "choiceKind": "weapon-group"
   },
   "dreadful_rage": {
     "name": "Dreadful Rage",
@@ -126,7 +128,9 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "name": "Exotic Weapon Proficiency",
     "prerequisite": "Base Attack Bonus +1",
     "benefit": "Wield an Exotic Weapon without penalty.",
-    "description": "Wield an Exotic Weapon without penalty."
+    "description": "Wield an Exotic Weapon without penalty.",
+    "isScopedChoice": true,
+    "choiceKind": "weapon-group"
   },
   "extra_rage": {
     "name": "Extra Rage",
@@ -156,13 +160,16 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "name": "Force Sensitivity",
     "prerequisite": "Non-Droid",
     "benefit": "You can make Use the Force checks and gain access to Force Talents.",
-    "description": "You can make Use the Force checks and gain access to Force Talents."
+    "description": "You can make Use the Force checks and gain access to Force Talents.",
+    "isForceSensitive": true
   },
   "force_training": {
     "name": "Force Training",
     "prerequisite": "Force Sensitivity",
     "benefit": "Learn a number of Force Powers equal to 1 + your Wisdom modifier (minimum 1).",
-    "description": "Learn a number of Force Powers equal to 1 + your Wisdom modifier (minimum 1)."
+    "description": "Learn a number of Force Powers equal to 1 + your Wisdom modifier (minimum 1).",
+    "isForceFeat": true,
+    "requiresForceSensitive": true
   },
   "great_cleave": {
     "name": "Great Cleave",
@@ -300,7 +307,9 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "name": "Skill Focus",
     "prerequisite": "None",
     "benefit": "Gain +5 competence bonus on Skill Checks with one Trained Skill.",
-    "description": "Gain +5 competence bonus on Skill Checks with one Trained Skill."
+    "description": "Gain +5 competence bonus on Skill Checks with one Trained Skill.",
+    "isScopedChoice": true,
+    "choiceKind": "skill"
   },
   "skill_training": {
     "name": "Skill Training",
@@ -348,7 +357,9 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "name": "Triple Attack",
     "prerequisite": "Base Attack Bonus +11, Double Attack (Chosen Weapon)",
     "benefit": "Make second extra attack with chosen weapon during Full Attack, additional -5 penalty to all attacks.",
-    "description": "Make second extra attack with chosen weapon during Full Attack, additional -5 penalty to all attacks."
+    "description": "Make second extra attack with chosen weapon during Full Attack, additional -5 penalty to all attacks.",
+    "isScopedChoice": true,
+    "choiceKind": "weapon-group"
   },
   "triple_crit": {
     "name": "Triple Crit",
@@ -372,13 +383,17 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "name": "Weapon Focus",
     "prerequisite": "Proficient with Chosen Weapon",
     "benefit": "+1 bonus on attack rolls with chosen weapon.",
-    "description": "+1 bonus on attack rolls with chosen weapon."
+    "description": "+1 bonus on attack rolls with chosen weapon.",
+    "isScopedChoice": true,
+    "choiceKind": "weapon-group"
   },
   "weapon_proficiency": {
     "name": "Weapon Proficiency",
     "prerequisite": "None",
     "benefit": "Ignore -5 penalty on attack rolls with weapons of a particular type.",
-    "description": "Ignore -5 penalty on attack rolls with weapons of a particular type."
+    "description": "Ignore -5 penalty on attack rolls with weapons of a particular type.",
+    "isScopedChoice": true,
+    "choiceKind": "weapon-group"
   },
   "whirlwind_attack": {
     "name": "Whirlwind Attack",

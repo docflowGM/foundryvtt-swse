@@ -1,18 +1,44 @@
 /**
- * AbilityEngine
+ * AbilityEngine — Phase 6: Authority Boundary Realignment
  *
- * Sovereign authority on ability acquisition legality.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │  AUTHORITY BOUNDARY: PUBLIC "MAY I ACQUIRE?" DOOR                  │
+ * │                                                                     │
+ * │  AbilityEngine = "May I?" (acquisition legality authority)         │
+ * │  ↓ delegates to                                                     │
+ * │  PrerequisiteChecker / PrerequisiteEvaluator = "Do the rules say?" │
+ * │  ↓ uses                                                             │
+ * │  ActorPrerequisiteSnapshot + PrerequisiteNormalizer = "What does   │
+ * │  the actor have and what do the requirements mean?"                 │
+ * │  ↓ result flows back up to                                          │
+ * │  AbilityEngine returns canonical result to UI / progression        │
+ * │  ↓                                                                  │
+ * │  ActorEngine / MutationCoordinator applies if legal                │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
  * Responsibilities:
  * - Evaluate whether an actor can acquire a specific item (feat, talent, class, etc.)
- * - Delegate to PrerequisiteChecker for prerequisite evaluation
- * - Return standardized legality assessment
- * - Handle card panel models for actor sheets (legacy)
+ * - Delegate to PrerequisiteChecker for all prerequisite evaluation — do NOT re-implement rules
+ * - Return standardized legality assessment including unresolved/advisory requirements
+ * - Surface advisory/table-state requirements so UI can distinguish hard-fail from advisory
  *
- * ARCHITECTURAL POSITION:
- * This is the ONLY entry point for "is this legal to acquire?" questions.
- * Selection UI calls this directly.
- * SuggestionEngine does NOT call PrerequisiteChecker directly; it only reads results from this.
+ * Result shape (stable API):
+ *   {
+ *     legal: boolean,            // All HARD prerequisites met — can acquire now
+ *     eligible: boolean,         // Alias for legal (for Phase 4 suggestion engine)
+ *     permanentlyBlocked: boolean,
+ *     missingPrereqs: string[],  // Hard failures (backward compat alias for missing)
+ *     missing: string[],         // Hard failures
+ *     blockingReasons: string[], // Hard failures (backward compat alias)
+ *     reasons: string[],         // Alias for blockingReasons
+ *     unresolved: string[],      // Advisory / table-state prerequisites (NOT auto-verifiable)
+ *     advisory: string[],        // Alias for unresolved
+ *     warnings: string[],        // Non-blocking concerns
+ *     evaluation: {}             // Phase 3 detailed evaluation data (for debugging)
+ *   }
+ *
+ * CALLERS: chargen-feats-talents, talent steps, MutationCoordinator, PrerequisiteIntegrityChecker
+ * DO NOT CALL: PrerequisiteChecker directly from UI — always go through AbilityEngine
  */
 
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
@@ -118,19 +144,39 @@ export class AbilityEngine {
       }
 
       // Convert PrerequisiteChecker result to standardized format
+      // Phase 6: surface unresolved/advisory from Phase 3 checker result
+      const missing = result.missing || [];
+      const unresolved = result.unresolved || [];  // advisory / table-state prerequisites
+      const warnings = result.warnings || [];
+      const legal = result.met === true;
+
       emitAbilityTrace('EVALUATE_RESULT', {
         actorName: actor?.name || null,
         candidateName: typeof candidate === 'string' ? candidate : candidate?.name || candidate?.id || null,
         candidateType: type,
-        met: result?.met === true,
-        missing: result?.missing || [],
+        met: legal,
+        missing,
+        unresolved,
         detailsKeys: Object.keys(result?.details || {}),
       });
+
       return {
-        legal: result.met === true,
-        permanentlyBlocked: false, // PrerequisiteChecker doesn't distinguish permanent blocks; assume all are temporary
-        missingPrereqs: result.missing || [],
-        blockingReasons: result.missing || [] // For now, missing preqs = blocking reasons
+        legal,
+        eligible: legal,                 // Phase 4 alias — legal right now
+        permanentlyBlocked: false,       // PrerequisiteChecker doesn't distinguish; assume temporary
+        // Hard prerequisite failures
+        missingPrereqs: missing,         // backward compat
+        missing,
+        blockingReasons: missing,        // backward compat
+        reasons: missing,
+        // Advisory / unresolvable prerequisites (table-state, GM approval, org membership, etc.)
+        // These do NOT block acquisition mechanically but should be visible to UI/suggestions
+        unresolved,
+        advisory: unresolved,
+        // Non-blocking concerns
+        warnings,
+        // Phase 3 detailed evaluation (for debugging / diagnostics)
+        evaluation: { details: result.details || {}, met: legal },
       };
     } catch (err) {
       emitAbilityTrace('EVALUATE_FAILED', {
@@ -142,9 +188,16 @@ export class AbilityEngine {
       SWSELogger.error('[AbilityEngine.evaluateAcquisition]', err);
       return {
         legal: false,
+        eligible: false,
         permanentlyBlocked: true,
         missingPrereqs: ['Evaluation error'],
-        blockingReasons: [err.message || 'Unknown error evaluating prerequisites']
+        missing: ['Evaluation error'],
+        blockingReasons: [err.message || 'Unknown error evaluating prerequisites'],
+        reasons: [err.message || 'Unknown error evaluating prerequisites'],
+        unresolved: [],
+        advisory: [],
+        warnings: [],
+        evaluation: {},
       };
     }
   }
@@ -248,19 +301,36 @@ export class AbilityEngine {
 
     try {
       const result = PrerequisiteChecker.checkPrestigeClassPrerequisites(actor, className, pending);
+      const missing = result.missing || [];
+      const unresolved = result.unresolved || [];
+      const legal = result.met === true;
       return {
-        legal: result.met === true,
+        legal,
+        eligible: legal,
         permanentlyBlocked: false,
-        missingPrereqs: result.missing || [],
-        blockingReasons: result.missing || []
+        missingPrereqs: missing,
+        missing,
+        blockingReasons: missing,
+        reasons: missing,
+        unresolved,
+        advisory: unresolved,
+        warnings: result.warnings || [],
+        evaluation: { details: result.details || {}, special: result.special || null },
       };
     } catch (err) {
       SWSELogger.error('[AbilityEngine.evaluatePrestigeClassAcquisition]', err);
       return {
         legal: false,
+        eligible: false,
         permanentlyBlocked: true,
         missingPrereqs: ['Evaluation error'],
-        blockingReasons: [err.message || 'Unknown error evaluating prerequisites']
+        missing: ['Evaluation error'],
+        blockingReasons: [err.message || 'Unknown error evaluating prerequisites'],
+        reasons: [err.message || 'Unknown error evaluating prerequisites'],
+        unresolved: [],
+        advisory: [],
+        warnings: [],
+        evaluation: {},
       };
     }
   }

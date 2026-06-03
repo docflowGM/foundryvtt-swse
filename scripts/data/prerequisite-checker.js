@@ -1,11 +1,37 @@
 // ============================================
 // FILE: scripts/data/prerequisite-checker.js
-// UNIFIED Prerequisite Validator (v3)
+// UNIFIED Prerequisite Validator (v3) — Phase 6: Authority Boundary Realignment
 // ============================================
+//
+// ┌─────────────────────────────────────────────────────────────────────┐
+// │  AUTHORITY BOUNDARY: INTERNAL PREREQUISITE RULES JUDGE             │
+// │                                                                     │
+// │  PrerequisiteChecker / PrerequisiteEvaluator = "Do the rules say?" │
+// │                                                                     │
+// │  This module is NOT the public acquisition legality door.          │
+// │  The public door is AbilityEngine.evaluateAcquisition().           │
+// │                                                                     │
+// │  Call hierarchy:                                                    │
+// │    AbilityEngine.evaluateAcquisition()                             │
+// │      → PrerequisiteChecker (this file)                             │
+// │          → ActorPrerequisiteSnapshot (actor-state inventory)       │
+// │          → PrerequisiteNormalizer (requirement translator)         │
+// │          → PrerequisiteEvaluator (structured rule evaluator)       │
+// │      → result: { met, missing, unresolved, details }               │
+// │    AbilityEngine wraps result in public shape                      │
+// │    ActorEngine / MutationCoordinator applies if legal              │
+// │                                                                     │
+// │  DO NOT call PrerequisiteChecker directly from UI or suggestion    │
+// │  engines — always go through AbilityEngine.                        │
+// └─────────────────────────────────────────────────────────────────────┘
+//
 
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { buildActorPrerequisiteSnapshot } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js";
+import { normalizePrestigePrerequisites, normalizeFeatPrerequisites, normalizeTalentPrerequisites, PrerequisiteNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-normalizer.js";
+import { PrerequisiteEvaluator } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-evaluator.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -101,6 +127,31 @@ export class PrerequisiteChecker {
         }
     }
 
+    /**
+     * Build a prerequisite snapshot for the given actor and pending state.
+     * The snapshot normalizes actor-owned and pending items into indexable
+     * sets so prerequisite checks can query one canonical state object.
+     *
+     * @param {Object} actor - Actor document
+     * @param {Object} [pending={}] - Pending chargen/levelup selections
+     * @returns {Object} Frozen snapshot with feats, talents, classes, etc.
+     */
+    static buildSnapshot(actor, pending = {}) {
+        return buildActorPrerequisiteSnapshot(actor, pending);
+    }
+
+    /**
+     * Normalize prerequisites for any item into canonical structured records.
+     * Phase 2: exposes the PrerequisiteNormalizer through the checker's public API.
+     *
+     * @param {*} input - Raw prerequisites (string, array, document, prestige class name)
+     * @param {Object} [options={}]
+     * @returns {Object[]} Array of normalized prerequisite records
+     */
+    static normalizePrerequisites(input, options = {}) {
+        return PrerequisiteNormalizer.normalize(input, options);
+    }
+
     static _getCanonicalContent(type, item) {
         const name = typeof item === 'string' ? item : (item?.name || item?.label || '');
         return getCanonicalContentAuthority(type, name);
@@ -176,6 +227,10 @@ export class PrerequisiteChecker {
     static _actorHasNamedItem(actor, pending, itemType, requiredName) {
         const baseName = this._getChoiceBaseName(requiredName);
         const predicate = (item) => {
+            if (itemType === 'feat') {
+                return featEntryMatchesRequirement(item, requiredName);
+            }
+
             const itemName = item?.name || '';
             return namesMatchLoosely(itemName, requiredName) ||
                 (baseName && namesMatchLoosely(itemName, baseName)) ||
@@ -571,8 +626,14 @@ export class PrerequisiteChecker {
             return { met: true, missing: [], details: {} };
         }
 
+        // Phase 1: Build normalized snapshot once for the whole check
+        const snapshot = buildActorPrerequisiteSnapshot(actor, pending);
+
+        // Phase 2: Normalize prerequisites into canonical records for diagnostics
+        const { normalized: _normalizedPrereqs } = normalizePrestigePrerequisites(className);
+
         const missing = [];
-        const details = {};
+        const details = { _snapshot: snapshot, _normalizedPrereqs };
 
         // Check minimum level with house rule support
         if (prereqs.minLevel) {
@@ -640,9 +701,22 @@ export class PrerequisiteChecker {
             }
         }
 
-        // Check talents
+        // Check talents (Phase 1: use snapshot for tree-count checks)
         if (prereqs.talents) {
-            const talentCheck = checkTalents(actor, prereqs.talents);
+            let talentCheck;
+            if (prereqs.talents.trees && snapshot) {
+                // Use snapshot's normalized tree index for accurate counting
+                const required = prereqs.talents.count || 1;
+                const actual = snapshot.talents.countInTrees(prereqs.talents.trees);
+                talentCheck = {
+                    met: actual >= required,
+                    actual,
+                    required,
+                    message: actual >= required ? '' : `${required} talent(s) from: ${prereqs.talents.trees.join(', ')} (you have ${actual})`
+                };
+            } else {
+                talentCheck = checkTalents(actor, prereqs.talents);
+            }
             details.talents = talentCheck;
             if (!talentCheck.met) {
                 missing.push(talentCheck.message);
@@ -678,7 +752,7 @@ export class PrerequisiteChecker {
 
         // Check Species
         if (prereqs.species) {
-            const speciesCheck = checkSpecies(actor, prereqs.species);
+            const speciesCheck = checkSpecies(actor, prereqs.species, pending);
             details.species = speciesCheck;
             if (!speciesCheck.met) {
                 missing.push(`Must be: ${prereqs.species.join(' or ')}`);
@@ -696,20 +770,29 @@ export class PrerequisiteChecker {
 
         // Special conditions. Table-state requirements remain advisory, but
         // explicit droid special text is a semantic actor predicate.
+        // Phase 3: non-droid special text is surfaced as advisory/unresolved
+        // so suggestion engines and UIs can display it — it does NOT hard-fail.
+        const unresolved = [];
         if (prereqs.special) {
-            details.special = prereqs.special;
-            if (!prereqs.isDroid && /must\s+be\s+a?\s*droid/i.test(String(prereqs.special))) {
+            const specialText = String(prereqs.special);
+            details.special = specialText;
+            if (!prereqs.isDroid && /must\s+be\s+a?\s*droid/i.test(specialText)) {
                 const droidCheck = this._checkIsDroidCondition({ type: 'isDroid' }, actor, pending);
                 details.isDroid = droidCheck;
                 if (!droidCheck.met) {
                     missing.push('Must be a Droid');
                 }
+            } else {
+                // Advisory: cannot auto-verify, surface it for display
+                unresolved.push(specialText);
+                details.unresolved = unresolved;
             }
         }
 
         return {
             met: missing.length === 0,
             missing,
+            unresolved,
             details,
             special: prereqs.special || null
         };
@@ -779,7 +862,7 @@ export class PrerequisiteChecker {
 
     /**
      * Evaluate normalized prerequisites (from prerequisite-normalizer).
-     * Merged from prerequisite-validator.js.
+     * Phase 3: Delegates to PrerequisiteEvaluator with a Phase 1 snapshot.
      *
      * @private
      */
@@ -788,21 +871,24 @@ export class PrerequisiteChecker {
             return { met: true, missing: [], details: {} };
         }
 
-        const missing = [];
-        const details = {};
+        // Phase 3: build snapshot once, evaluate via canonical evaluator
+        const snapshot = buildActorPrerequisiteSnapshot(actor, pending);
+        const houseruleFeats = this.getHouseruleGrantedFeats();
 
-        for (const prereq of parsed) {
-            const result = this._checkNormalizedCondition(prereq, actor, pending);
-            if (!result.met) {
-                missing.push(result.message);
-                details[prereq.type] = result;
-            }
-        }
+        const evalResult = PrerequisiteEvaluator.evaluate(snapshot, parsed, { houseruleFeats, actor, pending });
+
+        const details = {
+            _evaluator: 'phase3',
+            satisfied: evalResult.satisfied,
+            unresolved: evalResult.unresolved,
+            warnings: evalResult.warnings,
+        };
 
         return {
-            met: missing.length === 0,
-            missing,
-            details
+            met: evalResult.passed,
+            missing: evalResult.missing,
+            unresolved: evalResult.unresolved,
+            details,
         };
     }
 
@@ -936,6 +1022,18 @@ export class PrerequisiteChecker {
             }
             case 'feat': {
                 const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.featName || '');
+                // Phase 3: scoped feat — must match both base feat AND choice
+                if (prereq.choice && (prereq.choice.name || prereq.choice.key)) {
+                    const choiceName = prereq.choice.name || prereq.choice.key || '';
+                    const snapshot = buildActorPrerequisiteSnapshot(actor, pending);
+                    const hasChoice = snapshot.feats.hasChoice(requiredFeatName, choiceName)
+                        || snapshot.feats.hasChoice(requiredFeatName, prereq.choice.key || '');
+                    const label = choiceName;
+                    return {
+                        met: hasChoice,
+                        message: !hasChoice ? `Requires ${requiredFeatName} (${label})` : '',
+                    };
+                }
                 const hasFeat = this._actorHasNamedItem(actor, pending, 'feat', requiredFeatName) ||
                     this.getHouseruleGrantedFeats().some(name => namesMatchLoosely(name, requiredFeatName));
                 return {
@@ -949,6 +1047,22 @@ export class PrerequisiteChecker {
                 return {
                     met: hasTalent,
                     message: !hasTalent ? `Requires the talent ${requiredTalentName}` : ''
+                };
+            }
+            // Phase 3: talent tree count — use snapshot for accurate per-talent counting
+            case 'talent_count': {
+                const snapshot = buildActorPrerequisiteSnapshot(actor, pending);
+                const required = Number(prereq.count || prereq.min || 1);
+                const trees = Array.isArray(prereq.trees) ? prereq.trees : [];
+                const treeKeys = trees.map((t) => t.key || t.name || '').filter(Boolean);
+                const actual = treeKeys.length > 0
+                    ? snapshot.talents.countInTrees(treeKeys)
+                    : (snapshot.talents.items?.length ?? 0);
+                const treeLabel = trees.map((t) => t.name || t.key).join(', ') || 'any tree';
+                const met = actual >= required;
+                return {
+                    met,
+                    message: !met ? `Requires ${required} talent(s) from ${treeLabel} (you have ${actual})` : '',
                 };
             }
             case 'force_sensitive': {
@@ -1007,6 +1121,18 @@ export class PrerequisiteChecker {
                 return {
                     met,
                     message: !met ? `Requires ${prereq.alignment} alignment (your DSP: ${dspValue}/${wisdom})` : ''
+                };
+            }
+            // Phase 3: unknown / table_state — do NOT silently satisfy.
+            // These are advisory: not a hard fail but visible to callers.
+            case 'unknown':
+            case 'table_state': {
+                const raw = prereq.raw || prereq.name || prereq.key || prereq.type || '';
+                return {
+                    met: false,
+                    advisory: true,
+                    unresolved: true,
+                    message: `Requires: ${raw} (cannot be automatically verified — check with GM)`,
                 };
             }
             default:
@@ -1138,58 +1264,29 @@ export class PrerequisiteChecker {
     }
 
     static _checkTalentFromTreeCondition(prereq, actor, pending) {
-        const allTalents = [
-            ...actor.items?.filter(i => i.type === 'talent') || [],
-            ...(pending.selectedTalents || [])
-        ];
-
-        const matchingTalents = allTalents.filter(t => {
-            const treeName = t.system?.talentTree || t.system?.talent_tree;
-            if (!treeName) {return false;}
-            const normalized = normalizeTalentTreeId(treeName);
-            const required = normalizeTalentTreeId(prereq.tree);
-            return normalized === required;
-        });
-
-        const required = prereq.count || 1;
-        const actual = matchingTalents.length;
-        const met = actual >= required;
+        // Phase 1: Use snapshot for accurate tree-based talent counting
+        const snapshot = buildActorPrerequisiteSnapshot(actor, pending);
+        const treeName = prereq.tree || '';
+        const requiredCount = prereq.count || 1;
+        const actual = snapshot.talents.countInTrees([treeName]);
+        const met = actual >= requiredCount;
 
         return {
             met,
-            message: !met ? `Requires ${required} talent(s) from ${prereq.tree} (you have ${actual})` : ''
+            message: !met ? `Requires ${requiredCount} talent(s) from ${treeName} (you have ${actual})` : ''
         };
     }
 
 
     static _checkTalentTreeCountLegacy(prereq, actor, pending) {
-        const normalizeTree = (value) => normalizeTalentTreeId(String(value || '').replace(/\s*Talent\s+Tree$/i, ''));
-        const requiredTrees = (prereq.trees || []).map(normalizeTree).filter(Boolean);
-        const allTalents = [
-            ...actor.items?.filter(i => i.type === 'talent') || [],
-            ...(pending.selectedTalents || [])
-        ];
-
-        const matchingTalents = allTalents.filter(talent => {
-            const treeCandidates = [
-                talent?.treeId,
-                talent?.talentTree,
-                talent?.treeName,
-                talent?.system?.treeId,
-                talent?.system?.talentTreeId,
-                talent?.system?.talent_tree,
-                talent?.system?.talentTree,
-                talent?.sourceTreeName,
-                talent?.sourceTreeId,
-            ].filter(Boolean).map(normalizeTree);
-            return treeCandidates.some(key => requiredTrees.includes(key));
-        });
-
+        // Phase 1: Use snapshot for accurate tree-based talent counting
+        const snapshot = buildActorPrerequisiteSnapshot(actor, pending);
+        const trees = prereq.trees || [];
         const required = Number(prereq.count || 1);
-        const actual = matchingTalents.length;
+        const actual = snapshot.talents.countInTrees(trees);
         return {
             met: actual >= required,
-            message: actual >= required ? '' : `Requires ${required} talent(s) from ${prereq.trees.join(', ')} (you have ${actual})`
+            message: actual >= required ? '' : `Requires ${required} talent(s) from ${trees.join(', ')} (you have ${actual})`
         };
     }
 
@@ -1592,6 +1689,11 @@ export class PrerequisiteChecker {
             return this._isPlaceholderWeaponTarget(weaponGroup)
                 ? { type: 'weapon_proficiency' }
                 : { type: 'weapon_proficiency', weaponGroup };
+        }
+
+        const scopedChoiceFeat = parseScopedFeatRequirement(part);
+        if (scopedChoiceFeat && isChoiceScopedFeatBase(scopedChoiceFeat.baseName)) {
+            return { type: 'feat', featName: scopedChoiceFeat.canonicalText, name: scopedChoiceFeat.canonicalText };
         }
 
         const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
@@ -2188,8 +2290,10 @@ export class PrerequisiteChecker {
 
         return feats.some(f =>
             f.id === slugOrUuid ||
-            f.system?.slug === slugOrUuid ||
-            f.name?.toLowerCase() === slugOrUuid?.toLowerCase()
+            f._id === slugOrUuid ||
+            f.flags?.swse?.id === slugOrUuid ||
+            namesMatchLoosely(f.system?.slug, slugOrUuid) ||
+            featEntryMatchesRequirement(f, slugOrUuid)
         );
     }
 
@@ -2208,8 +2312,10 @@ export class PrerequisiteChecker {
 
         return talents.some(t =>
             t.id === slugOrUuid ||
-            t.system?.slug === slugOrUuid ||
-            t.name?.toLowerCase() === slugOrUuid?.toLowerCase()
+            t._id === slugOrUuid ||
+            t.flags?.swse?.id === slugOrUuid ||
+            namesMatchLoosely(t.system?.slug, slugOrUuid) ||
+            namesMatchLoosely(t.name, slugOrUuid)
         );
     }
 
@@ -2386,6 +2492,139 @@ function getTrainedSkills(actor) {
     return skills;
 }
 
+
+function resolveTalentTreeKey(value) {
+    if (!value) return null;
+    const raw = String(value).trim();
+    if (!raw) return null;
+
+    const tree = TalentTreeDB.get?.(raw)
+        || TalentTreeDB.bySourceId?.(raw)
+        || TalentTreeDB.byName?.(raw);
+    if (tree?.id) return tree.id;
+
+    return normalizeTalentTreeId(raw.replace(/\s*Talent\s+Tree$/i, ''));
+}
+
+function getTalentTreeIdentityKeys(talent) {
+    if (!talent) return [];
+    const keys = new Set();
+    const addTree = (value) => {
+        const key = resolveTalentTreeKey(value);
+        if (key) keys.add(key);
+    };
+
+    // Direct fields first. These may be normalized names, stable IDs, or legacy
+    // compendium source IDs; resolve through TalentTreeDB before string compare.
+    [
+        talent?.treeId,
+        talent?.talentTree,
+        talent?.talentTreeId,
+        talent?.treeName,
+        talent?.system?.treeId,
+        talent?.system?.talentTreeId,
+        talent?.system?.talent_tree,
+        talent?.system?.talentTree,
+        talent?.system?.tree,
+        talent?.sourceTreeName,
+        talent?.sourceTreeId,
+        talent?.flags?.swse?.treeId,
+        talent?.flags?.swse?.talentTreeId,
+    ].forEach(addTree);
+
+    // SSOT inverse lookup. The built TalentTreeDB indexes both compendium talent
+    // IDs and audited talent names, so this catches actor items copied from packs
+    // that only retained their own ID/name and a raw tree sourceId.
+    [
+        talent?.id,
+        talent?._id,
+        talent?.flags?.swse?.id,
+        talent?.name,
+    ].forEach((talentId) => addTree(TalentTreeDB.getTreeForTalent?.(talentId)));
+
+    return Array.from(keys);
+}
+
+function parseScopedFeatRequirement(requiredFeat) {
+    const text = String(requiredFeat || '').replace(/\s+/g, ' ').trim();
+    const open = text.indexOf('(');
+    const close = text.endsWith(')') ? text.length - 1 : -1;
+    if (open <= 0 || close <= open) return null;
+
+    const baseName = text.slice(0, open).trim();
+    const choice = text.slice(open + 1, close).trim();
+    if (!baseName || !choice) return null;
+
+    return {
+        baseName,
+        choice,
+        canonicalText: `${baseName} (${choice})`,
+    };
+}
+
+function isChoiceScopedFeatBase(baseName) {
+    const key = normalizeLooseLookupKey(baseName);
+    return [
+        'skill focus',
+        'weapon focus',
+        'greater weapon focus',
+        'weapon specialization',
+        'greater weapon specialization',
+        'weapon proficiency',
+    ].includes(key);
+}
+
+function getEntryChoiceLabels(entry) {
+    const labels = [];
+    const push = (value) => {
+        if (!value) return;
+        if (Array.isArray(value) || value instanceof Set) {
+            for (const nested of value) push(nested);
+            return;
+        }
+        const label = FeatChoiceResolver.getChoiceLabel?.(value) || (typeof value === 'string' ? value : '');
+        if (label) labels.push(label);
+    };
+
+    push(entry?.system?.selectedChoice);
+    push(entry?.system?.selectedChoices);
+    push(entry?.selectedChoice);
+    push(entry?.selectedChoices);
+    push(entry?.choice);
+    push(entry?.choiceValue);
+
+    const scopedName = parseScopedFeatRequirement(entry?.name || '');
+    if (scopedName?.choice) labels.push(scopedName.choice);
+
+    return labels;
+}
+
+function entryChoiceMatches(entry, requiredChoice) {
+    return getEntryChoiceLabels(entry).some(label => namesMatchLoosely(label, requiredChoice));
+}
+
+function featNameMatchesBase(entryName, requiredBase) {
+    if (!entryName || !requiredBase) return false;
+    if (namesMatchLoosely(entryName, requiredBase)) return true;
+    const entryScoped = parseScopedFeatRequirement(entryName);
+    if (entryScoped?.baseName && namesMatchLoosely(entryScoped.baseName, requiredBase)) return true;
+    return false;
+}
+
+function featEntryMatchesRequirement(entry, requiredFeat) {
+    const entryName = entry?.name || String(entry || '');
+    const scoped = parseScopedFeatRequirement(requiredFeat);
+
+    if (scoped && isChoiceScopedFeatBase(scoped.baseName)) {
+        return featNameMatchesBase(entryName, scoped.baseName) && entryChoiceMatches(entry, scoped.choice);
+    }
+
+    const requiredBase = extractBaseFeatName(String(requiredFeat || ''));
+    const normalized = requiredBase.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const entryBase = extractBaseFeatName(entryName);
+    return entryBase.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
+}
+
 /**
  * Check if actor has all required feats.
  * Supports:
@@ -2407,7 +2646,7 @@ function checkFeats(actor, requiredFeats, pending = {}) {
         ...(pending.grantedFeats || []),
         ...(pending.grantedProficiencies || []),
     ];
-    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
+    const allFeats = [...actorFeats, ...grantedFeats.map(f => typeof f === 'string' ? { name: f } : f)];
 
     const missing = [];
 
@@ -2461,7 +2700,7 @@ function checkFeatsAny(actor, requiredFeats, pending = {}) {
         ...(pending.grantedFeats || []),
         ...(pending.grantedProficiencies || []),
     ];
-    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
+    const allFeats = [...actorFeats, ...grantedFeats.map(f => typeof f === 'string' ? { name: f } : f)];
 
     for (const feat of requiredFeats) {
         // Handle flag-based checks
@@ -2526,18 +2765,12 @@ function getActorFeats(actor) {
 
 /**
  * Check if a feat name matches, with support for scoped feats.
- * For example, "Weapon Focus (Melee Weapon)" will match any "Weapon Focus" feat.
+ * Scoped requirements such as "Skill Focus (Stealth)" must match both the
+ * base feat and the stored/chosen scope; unscoped requirements match by base name.
  * @private
  */
 function hasFeatMatch(actorFeats, requiredFeat) {
-    // Extract base feat name if scoped (e.g., "Weapon Focus (Melee Weapon)" -> "Weapon Focus")
-    const baseFeat = extractBaseFeatName(requiredFeat);
-    const normalized = baseFeat.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-    return actorFeats.some(f => {
-        const fname = f.name ? f.name : f.toString();
-        return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
-    });
+    return actorFeats.some(f => featEntryMatchesRequirement(f, requiredFeat));
 }
 
 /**
@@ -2781,21 +3014,21 @@ function checkDarkSideScore(actor, requirement, className = null) {
 /**
  * Check species requirement.
  */
-function checkSpecies(actor, allowedSpecies) {
+function checkSpecies(actor, allowedSpecies, pending = {}) {
     if (!actor || !allowedSpecies || allowedSpecies.length === 0) {
         return { met: true };
     }
 
-    const actorSpecies = actor.system?.species || actor.system?.race || '';
-
-    const normalized = actorSpecies.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const met = allowedSpecies.some(s =>
-        s.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
+    const speciesNames = getActorSpeciesNames(actor, pending);
+    const legacySpecies = actor.system?.species || actor.system?.race || '';
+    const candidates = new Set([legacySpecies, ...speciesNames].filter(Boolean));
+    const met = Array.from(candidates).some(candidate =>
+        allowedSpecies.some(required => namesMatchLoosely(candidate, required))
     );
 
     return {
         met,
-        actual: actorSpecies,
+        actual: Array.from(candidates),
         required: allowedSpecies
     };
 }
@@ -2862,22 +3095,8 @@ function checkDroidSystems(actor, requiredSystems) {
  * @private
  */
 function getCanonicalTalentTreeId(talent) {
-    if (!talent) return null;
-
-    // Try various field names that might contain tree identity
-    const treeId =
-        talent.treeId ||
-        talent.system?.treeId ||
-        talent.system?.talentTree ||
-        talent.system?.talent_tree ||
-        talent.system?.category ||
-        talent.category ||
-        null;
-
-    if (!treeId) return null;
-
-    // Normalize the tree ID before returning
-    return normalizeTalentTreeId(treeId);
+    const keys = getTalentTreeIdentityKeys(talent);
+    return keys[0] || null;
 }
 
 /**
