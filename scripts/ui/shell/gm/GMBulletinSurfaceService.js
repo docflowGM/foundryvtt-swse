@@ -9,6 +9,7 @@ import { HolonewsAutoPublisher } from '/systems/foundryvtt-swse/scripts/holonet/
 import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/bulletin-contact-registry.js';
 import { HolonewsAtomPolicy } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-atom-policy.js';
 import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
+import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
 
 export class GMBulletinSurfaceService {
   static async buildViewModel(host) {
@@ -37,6 +38,7 @@ export class GMBulletinSurfaceService {
     const eventViews = allEventViews.filter((record) => !record.isHolonews);
     const holonewsViews = allEventViews.filter((record) => record.isHolonews);
     const messageViews = messageRecords.map((record) => host._buildBulletinRecordView(record));
+    const secretNoteRecords = await HolonetMessengerService.getSecretNoteConsoleView();
     const holonewsArchiveFilters = {
       query: String(host.holonewsArchiveFilters?.query || '').trim(),
       state: host.holonewsArchiveFilters?.state || '',
@@ -134,6 +136,7 @@ export class GMBulletinSurfaceService {
       holonewsPriorities: HolonewsGenerator.priorities(),
       holonewsAtomControlPreviewCount: HolonewsGenerator.count(atomFilters),
       messageRecords: messageViews,
+      secretNoteRecords,
       eventEditorRecord,
       holonewsEditorRecord,
       messageEditorRecord,

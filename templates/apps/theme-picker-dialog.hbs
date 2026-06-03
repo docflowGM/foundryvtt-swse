@@ -1,0 +1,15 @@
+<div class="swse-theme-picker">
+  <p class="swse-theme-picker__intro">
+    Choose your preferred Holopad interface theme. You can change this at any time from Holopad Settings.
+  </p>
+  <div class="swse-theme-picker__options">
+    {{#each themes}}
+    <button type="button" class="swse-theme-picker__option" data-theme="{{this.value}}">
+      <span class="swse-theme-picker__swatch swse-theme-{{this.value}}"></span>
+      <span class="swse-theme-picker__label">{{this.label}}</span>
+    </button>
+    {{else}}
+    <p class="swse-theme-picker__empty">No themes are currently available.</p>
+    {{/each}}
+  </div>
+</div>

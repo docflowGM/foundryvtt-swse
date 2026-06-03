@@ -113,6 +113,89 @@
           </form>
           </details>
 
+          <details class="bulletin-composer-accordion gm-secret-note-console" open>
+            <summary>
+              <span><i class="fa-solid fa-user-secret"></i> Secret Notes</span>
+              <em>GM clues, puzzle images, rewards, and self-destruct messages</em>
+            </summary>
+            <form class="bulletin-composer" data-action="secret-note-create">
+              <div class="bulletin-form-grid">
+                <label>
+                  <span>Note Title</span>
+                  <input type="text" name="title" placeholder="Encrypted clue, puzzle fragment, game prize...">
+                </label>
+                <label>
+                  <span>Image / Puzzle Path</span>
+                  <input type="text" name="imageUrl" placeholder="Optional image path or URL">
+                </label>
+                <label>
+                  <span>Source</span>
+                  <select name="source">
+                    <option value="gm-note">GM Note</option>
+                    <option value="messenger">Messenger</option>
+                    <option value="job">Job Reward</option>
+                    <option value="game">Game Reward</option>
+                    <option value="puzzle">Puzzle Drop</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Self-Destruct</span>
+                  <select name="expiresAfterSeconds">
+                    <option value="0">Persistent</option>
+                    <option value="30">30 seconds after reveal</option>
+                    <option value="60">60 seconds after reveal</option>
+                    <option value="300">5 minutes after reveal</option>
+                  </select>
+                </label>
+              </div>
+              <div class="bulletin-recipient-picker">
+                <span>Recipient Players</span>
+                <div class="bulletin-recipient-list">
+                  {{#each bulletinPlayers}}
+                  <label class="bulletin-recipient-chip">
+                    <input type="checkbox" name="recipientIds" value="player:{{this.userId}}">
+                    <span>{{this.actorName}}</span>
+                  </label>
+                  {{/each}}
+                </div>
+              </div>
+              <label class="bulletin-body-field">
+                <span>Secret Body</span>
+                <textarea name="body" rows="5" placeholder="Write the secret clue, puzzle text, reward instructions, or message."></textarea>
+              </label>
+              <div class="bulletin-form-actions">
+                <button type="submit" class="swse-ui-button bulletin-primary-action">Transmit Secret Note</button>
+              </div>
+            </form>
+            <div class="gm-phase8-record-feed-header">
+              <span class="gm-command-eyebrow">ISSUED SECRET NOTES</span>
+              <strong>{{secretNoteRecords.length}}</strong>
+            </div>
+            <div class="bulletin-record-grid gm-phase8-record-feed gm-secret-note-feed">
+              {{#each secretNoteRecords}}
+              <article class="bulletin-record-card message secret-note">
+                <div class="bulletin-record-meta">
+                  <span class="bulletin-chip urgent">SECRET</span>
+                  <span class="bulletin-chip category">{{this.sourceLabel}}</span>
+                  <span class="bulletin-chip state">{{this.status}}</span>
+                  {{#if this.selfDestruct}}<span class="bulletin-chip breaking">SELF-DESTRUCT</span>{{/if}}
+                </div>
+                <h4>{{this.title}}</h4>
+                <div class="bulletin-record-sender">To {{this.recipientsLabel}}</div>
+                {{#if this.expiryLabel}}<p class="holonet-rendered-text">{{this.expiryLabel}}</p>{{/if}}
+                <div class="bulletin-record-footer">
+                  <span>{{this.createdAt}}</span>
+                  <div class="bulletin-record-actions">
+                    <button type="button" class="swse-ui-button" data-action="secret-note-destroy" data-record-id="{{this.id}}">Destroy</button>
+                  </div>
+                </div>
+              </article>
+              {{else}}
+              <p class="placeholder">No secret notes issued yet.</p>
+              {{/each}}
+            </div>
+          </details>
+
           <div class="gm-phase8-record-feed-header">
             <span class="gm-command-eyebrow">MESSAGE THREADS</span>
             <strong>{{messageRecords.length}}</strong>

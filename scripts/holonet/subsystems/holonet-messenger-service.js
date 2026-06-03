@@ -159,6 +159,49 @@ function normalizeAttachmentList(attachments = []) {
     .slice(0, 8);
 }
 
+function normalizeSecretNotePayload({ title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note' } = {}) {
+  const cleanTitle = String(title || '').trim() || 'Secret Note';
+  const cleanBody = String(body || '').trim();
+  const cleanImageUrl = String(imageUrl || '').trim();
+  const seconds = Math.max(0, Math.min(86400, Math.floor(Number(expiresAfterSeconds || 0) || 0)));
+  return {
+    id: foundry.utils.randomID(),
+    title: cleanTitle,
+    body: cleanBody,
+    imageUrl: cleanImageUrl,
+    attachments: normalizeAttachmentList(attachments),
+    source: String(source || 'gm-note').trim() || 'gm-note',
+    status: 'sealed',
+    selfDestruct: seconds > 0,
+    expiresAfterSeconds: seconds,
+    createdAt: nowIso(),
+    openedAt: null,
+    expiresAt: null,
+    destroyedAt: null
+  };
+}
+
+function secretNoteSourceLabel(source = '') {
+  const map = {
+    'gm-note': 'GM Note',
+    messenger: 'Messenger',
+    job: 'Job Reward',
+    game: 'Game Reward',
+    puzzle: 'Puzzle Drop'
+  };
+  const key = String(source || '').trim();
+  return map[key] || (key ? key.replace(/[-_]+/g, ' ').replace(/\w/g, c => c.toUpperCase()) : 'GM Note');
+}
+
+function formatSecretNoteExpiry(expiresAt = null) {
+  if (!expiresAt) return '';
+  const time = Date.parse(expiresAt);
+  if (!Number.isFinite(time)) return '';
+  const remaining = Math.max(0, Math.ceil((time - Date.now()) / 1000));
+  if (remaining <= 0) return 'self-destruct pending';
+  return remaining === 1 ? '1 second remaining' : `${remaining} seconds remaining`;
+}
+
 function extractMentions(body = '') {
   return Array.from(new Set(String(body || '').match(/@[A-Za-z0-9_.:-]+/g) ?? []));
 }
@@ -1040,6 +1083,7 @@ export class HolonetMessengerService {
     const itemTransfer = message.metadata?.itemTransfer ?? null;
     const assetTransfer = message.metadata?.assetTransfer ?? null;
     const gameInvite = message.metadata?.gameInvite ?? null;
+    const secretNote = message.metadata?.secretNote ?? null;
     const attachments = normalizeAttachmentList(message.metadata?.attachments ?? []);
     return {
       id: message.id,
@@ -1067,10 +1111,49 @@ export class HolonetMessengerService {
       assetTransfer: assetTransfer ? this._assetTransferVm(message, assetTransfer, actor, participantId) : null,
       hasGameInvite: Boolean(gameInvite),
       gameInvite: gameInvite ? this._gameInviteVm(message, gameInvite, actor, participantId) : null,
+      hasSecretNote: Boolean(secretNote),
+      secretNote: secretNote ? this._secretNoteVm(message, secretNote, actor, participantId) : null,
       hasReceipt: Boolean(receipt),
       receipt,
       hasJobCard: Boolean(job),
       job
+    };
+  }
+
+  static _secretNoteVm(message, note = {}, actor, participantId) {
+    const isGm = Boolean(game.user?.isGM);
+    const openedAt = String(note.openedAt || '').trim();
+    const expiresAt = String(note.expiresAt || '').trim();
+    const expiresAtMs = expiresAt ? Date.parse(expiresAt) : 0;
+    const destroyedAt = String(note.destroyedAt || '').trim();
+    const isExpired = Boolean(expiresAtMs && Date.now() >= expiresAtMs);
+    const isOpen = Boolean(isGm || openedAt);
+    const isSealed = !isOpen && !destroyedAt;
+    const body = String(note.body || '').trim();
+    return {
+      id: note.id || message.id,
+      recordId: message.id,
+      title: String(note.title || message.title || 'Secret Note'),
+      source: String(note.source || 'gm-note'),
+      sourceLabel: secretNoteSourceLabel(note.source),
+      status: destroyedAt ? 'destroyed' : (isExpired ? 'expiring' : (openedAt ? 'open' : 'sealed')),
+      body,
+      bodyHtml: renderMarkup(body || 'Encrypted note payload is empty.'),
+      imageUrl: note.imageUrl && isImagePath(note.imageUrl) ? String(note.imageUrl).trim() : null,
+      attachments: normalizeAttachmentList(note.attachments ?? []),
+      hasAttachments: normalizeAttachmentList(note.attachments ?? []).length > 0,
+      expiresAfterSeconds: Math.max(0, Math.floor(Number(note.expiresAfterSeconds || 0) || 0)),
+      selfDestruct: Boolean(note.selfDestruct),
+      openedAt,
+      expiresAt,
+      expiresAtMs: Number.isFinite(expiresAtMs) ? expiresAtMs : 0,
+      expiryLabel: formatSecretNoteExpiry(expiresAt),
+      isOpen,
+      isSealed,
+      isExpired,
+      canReveal: Boolean(!isGm && isSealed),
+      canDestroy: Boolean(isGm),
+      canAutoDestroy: Boolean(note.selfDestruct && openedAt && !destroyedAt)
     };
   }
 
@@ -1401,7 +1484,7 @@ export class HolonetMessengerService {
       mode,
       title: type === 'credits'
         ? (mode === 'request' ? 'Coruscant Credit Union // Request Credits' : 'Coruscant Credit Union // Send Credits')
-        : 'Holonet Cargo Transfer',
+        : (type === 'secret-note' ? 'Encrypted GM Note // Secret Transmission' : 'Holonet Cargo Transfer'),
       threadId: selectedThread.id,
       actorName: actor?.name ?? 'Actor',
       actorCredits: creditsOf(actor),
@@ -1896,6 +1979,174 @@ export class HolonetMessengerService {
       status: 'open',
       statusHistory: []
     }];
+  }
+
+
+  static async issueSecretNote({ actor, threadId = null, recipientIds = [], title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', senderRecipientId = null } = {}) {
+    const payload = {
+      actorId: actor?.id ?? null,
+      threadId: String(threadId || '').trim() || null,
+      recipientIds: this._normalizeRecipientIds(recipientIds),
+      title: String(title || '').trim(),
+      body: String(body || '').trim(),
+      imageUrl: String(imageUrl || '').trim(),
+      attachments: normalizeAttachmentList(attachments),
+      expiresAfterSeconds: Number(expiresAfterSeconds || 0) || 0,
+      source: String(source || 'gm-note').trim() || 'gm-note',
+      senderUserId: game.user?.id ?? null,
+      senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
+    };
+    if (!payload.body && !payload.imageUrl && !payload.attachments.length) return false;
+    if (!game.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('issue-secret-note', payload);
+      return { pending: true, requestId, threadId: payload.threadId ?? null };
+    }
+    return this._gmIssueSecretNote(payload);
+  }
+
+  static async _gmIssueSecretNote({ actorId = null, threadId = null, recipientIds = [], title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
+    if (!game.user?.isGM) return false;
+    const actor = actorId ? game.actors?.get(actorId) : null;
+    const senderRecipient = this._recipientForActorContext(actor, { senderUserId: senderUserId || requesterId || game.user?.id, senderRecipientId });
+    let thread = threadId ? await HolonetStorage.getThread(threadId) : null;
+    const requestedRecipients = this._normalizeRecipientIds(recipientIds).map(id => this._recipientFromStableId(id)).filter(Boolean);
+    if (!thread) {
+      if (!requestedRecipients.length) return false;
+      thread = await HolonetThreadService.createThread(title || 'Secret GM Note', uniqueRecipients([senderRecipient, ...requestedRecipients]), {
+        sourceFamily: SOURCE_FAMILY.MESSENGER,
+        threadType: THREAD_TYPE.SIDE,
+        ownerId: senderRecipient?.id ?? null,
+        ownerLabel: recipientDisplayName(senderRecipient),
+        pendingInvites: [],
+        declinedBy: [],
+        mutedBy: {},
+        archivedBy: {},
+        createdByUserId: senderUserId || requesterId || game.user?.id || null,
+        gmObserverIds: this._gmObserverRecipients().map(r => r.id)
+      });
+    }
+    if (!thread) return false;
+    this._ensureGmObservers(thread);
+    const meta = getThreadMeta(thread);
+    if (requestedRecipients.length) {
+      const existing = new Set(safeArray(thread.participants).map(p => p.id));
+      for (const recipient of requestedRecipients) {
+        if (!existing.has(recipient.id)) thread.participants.push(recipient);
+      }
+    }
+    meta.gmObserverIds = Array.from(new Set([...safeArray(meta.gmObserverIds), ...this._gmObserverRecipients().map(r => r.id)]));
+    const recipients = this._messageRecipientsForThread(thread);
+    const note = normalizeSecretNotePayload({ title, body, imageUrl, attachments, expiresAfterSeconds, source });
+    note.createdByUserId = senderUserId || requesterId || game.user?.id || null;
+    const sender = HolonetSender.system('GM Encrypted Note');
+    const message = MessengerSource.createMessage({
+      sender,
+      audience: HolonetAudience.threadParticipants(recipients.map(r => r.id)),
+      body: `[Encrypted GM Note] ${note.title}`,
+      threadId: thread.id,
+      metadata: {
+        categoryId: HolonetPreferences.CATEGORIES.MESSAGES,
+        senderRecipientId: senderRecipient?.id ?? null,
+        secretNote: note,
+        imageUrl: null,
+        attachments: [],
+        mentions: extractMentions(body)
+      }
+    });
+    message.intent = INTENT_TYPE.GM_MESSAGE;
+    message.recipients = recipients;
+    message.projections = [
+      { surfaceType: SURFACE_TYPE.MESSENGER_THREAD, recordId: message.id, isPinned: false, metadata: { threadId: thread.id, secretNote: true } },
+      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: message.id, isPinned: false, metadata: { threadId: thread.id, secretNote: true } }
+    ];
+    const result = await HolonetThreadService.publishMessageToThread({ thread, message, senderRecipient, publishOptions: { skipSocket: true }, markSenderRead: true });
+    if (result?.ok) this._emitMessengerSync(this._threadSyncPayload(result.threadId, { messageId: result.messageId, requestId, requesterId, secretNote: true }));
+    return result?.ok ? { threadId: result.threadId, messageId: result.messageId, requestId } : false;
+  }
+
+  static async openSecretNote({ actor, recordId } = {}) {
+    const payload = { actorId: actor?.id ?? null, recordId: String(recordId || '').trim(), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+    if (!payload.recordId) return false;
+    if (!game.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('open-secret-note', payload);
+      return { pending: true, requestId, recordId: payload.recordId };
+    }
+    return this._gmOpenSecretNote(payload);
+  }
+
+  static async _gmOpenSecretNote({ recordId = '', requesterId = null, senderRecipientId = null } = {}) {
+    if (!game.user?.isGM || !recordId) return false;
+    const record = await HolonetStorage.getRecord(recordId);
+    const note = record?.metadata?.secretNote;
+    if (!record || !note || note.destroyedAt) return false;
+    if (!game.users?.get(requesterId)?.isGM) {
+      const requesterRecipient = String(senderRecipientId || (requesterId ? `player:${requesterId}` : '')).trim();
+      if (requesterRecipient && !hasRecipient(record.recipients, requesterRecipient)) return false;
+    }
+    if (!note.openedAt) note.openedAt = nowIso();
+    note.status = 'open';
+    const seconds = Math.max(0, Math.floor(Number(note.expiresAfterSeconds || 0) || 0));
+    if (note.selfDestruct && seconds > 0 && !note.expiresAt) {
+      note.expiresAt = new Date(Date.now() + (seconds * 1000)).toISOString();
+    }
+    record.updatedAt = nowIso();
+    await HolonetStorage.saveRecord(record);
+    this._emitMessengerSync(this._threadSyncPayload(record.threadId, { messageId: record.id, secretNote: true, opened: true }));
+    return { ok: true, recordId: record.id, threadId: record.threadId };
+  }
+
+  static async destroySecretNote({ actor, recordId, reason = 'destroyed' } = {}) {
+    const payload = { actorId: actor?.id ?? null, recordId: String(recordId || '').trim(), reason: String(reason || 'destroyed'), requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+    if (!payload.recordId) return false;
+    if (!game.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('destroy-secret-note', payload);
+      return { pending: true, requestId, recordId: payload.recordId };
+    }
+    return this._gmDestroySecretNote(payload);
+  }
+
+  static async _gmDestroySecretNote({ recordId = '', requesterId = null, senderRecipientId = null, reason = 'destroyed' } = {}) {
+    if (!game.user?.isGM || !recordId) return false;
+    const record = await HolonetStorage.getRecord(recordId);
+    if (!record?.metadata?.secretNote) return false;
+    const note = record.metadata.secretNote;
+    const requester = requesterId ? game.users?.get(requesterId) : null;
+    const requesterIsGm = Boolean(requester?.isGM || game.user?.isGM && !requesterId);
+    const requesterRecipient = String(senderRecipientId || (requesterId ? `player:${requesterId}` : '')).trim();
+    const expired = note.expiresAt && Date.now() >= Date.parse(note.expiresAt);
+    if (!requesterIsGm && !expired) return false;
+    if (!requesterIsGm && requesterRecipient && !hasRecipient(record.recipients, requesterRecipient)) return false;
+    const threadId = record.threadId ?? null;
+    const threads = await HolonetStorage.getAllThreads();
+    for (const thread of threads) {
+      if (!safeArray(thread.messageIds).includes(recordId)) continue;
+      thread.messageIds = safeArray(thread.messageIds).filter(id => id !== recordId);
+      await HolonetStorage.saveThread(thread);
+    }
+    await HolonetStorage.deleteRecord(recordId);
+    this._emitMessengerSync(this._threadSyncPayload(threadId, { messageId: recordId, secretNote: true, destroyed: true, reason }));
+    return { ok: true, recordId, threadId };
+  }
+
+  static async getSecretNoteConsoleView() {
+    const records = (await HolonetStorage.getAllRecords()).filter(record => record?.metadata?.secretNote);
+    return records
+      .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+      .map(record => {
+        const note = record.metadata.secretNote || {};
+        return {
+          id: record.id,
+          threadId: record.threadId,
+          title: note.title || 'Secret Note',
+          sourceLabel: secretNoteSourceLabel(note.source),
+          status: note.destroyedAt ? 'Destroyed' : (note.openedAt ? 'Opened' : 'Sealed'),
+          selfDestruct: Boolean(note.selfDestruct),
+          expiryLabel: formatSecretNoteExpiry(note.expiresAt),
+          createdAt: note.createdAt || record.createdAt,
+          openedAt: note.openedAt || '',
+          recipientsLabel: safeArray(record.recipients).filter(r => !String(r.id || '').startsWith('gm:')).map(recipientDisplayName).join(', ') || 'Thread recipients'
+        };
+      });
   }
 
   static async sendMessage({ actor, body, threadId = null, recipientIds = [], imageUrl = '', attachments = [], senderRecipientId = null }) {

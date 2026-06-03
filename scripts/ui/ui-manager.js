@@ -101,25 +101,28 @@ export class UIManager {
 
 class ThemePickerDialog extends BaseSWSEAppV2 {
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "swse-theme-picker",
+  static DEFAULT_OPTIONS = {
+    id: "swse-theme-picker",
+    tag: "div",
+    window: {
       title: "Choose Your Theme",
-      template: "systems/foundryvtt-swse/templates/apps/theme-picker-dialog.hbs",
-      position: {
-        width: 400,
-        height: "auto"
-      },
-      window: {
-        resizable: false
-      }
-    });
-  }
+      icon: "fa-solid fa-palette",
+      resizable: false
+    },
+    position: {
+      width: 400,
+      height: "auto"
+    }
+  };
+
+  static PARTS = {
+    content: { template: "systems/foundryvtt-swse/templates/apps/theme-picker-dialog.hbs" }
+  };
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     return foundry.utils.mergeObject(context, {
-      themes: ThemeResolutionService.getThemeOptions().map(option => option.value)
+      themes: ThemeResolutionService.getThemeOptions()
     });
   }
 

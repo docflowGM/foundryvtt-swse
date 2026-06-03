@@ -15,6 +15,7 @@ import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holone
 import { HolonetComposerAssist } from '/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
+import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
 
 export class GMBulletinSurfaceController {
   constructor(host) {
@@ -45,7 +46,42 @@ export class GMBulletinSurfaceController {
     this._wireLivePreview(pageElement, signal);
     this._wireBulletinForms(pageElement, signal);
     this._wireStateForms(pageElement, signal);
+    this._wireSecretNoteConsole(pageElement, signal);
     this._wirePartyRecoveryActions(pageElement, signal);
+  }
+
+  _wireSecretNoteConsole(pageElement, signal) {
+    pageElement.querySelectorAll('[data-action="secret-note-destroy"][data-record-id]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const recordId = event.currentTarget.dataset.recordId;
+        if (!recordId) return;
+        await HolonetMessengerService.destroySecretNote({ recordId, reason: 'gm-console' });
+        await requestShellRender(this.host, { reason: 'gm-secret-note-destroy' });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('form[data-action="secret-note-create"]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const body = String(data.get('body') || '').trim();
+        const imageUrl = String(data.get('imageUrl') || '').trim();
+        if (!recipientIds.length || (!body && !imageUrl)) return;
+        await HolonetMessengerService.issueSecretNote({
+          actor: null,
+          recipientIds,
+          title: String(data.get('title') || '').trim(),
+          body,
+          imageUrl,
+          expiresAfterSeconds: Number(data.get('expiresAfterSeconds') || 0) || 0,
+          source: String(data.get('source') || 'gm-note') || 'gm-note'
+        });
+        form.reset();
+        await requestShellRender(this.host, { reason: 'gm-secret-note-create' });
+      }, { signal });
+    });
   }
 
   destroy() {

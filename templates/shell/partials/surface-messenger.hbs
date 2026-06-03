@@ -647,6 +647,40 @@
                   {{/if}}
                   <div class="swse-msg-bubble hl-msg-bubble {{#if this.isOwn}}swse-msg-bubble--own{{else}}swse-msg-bubble--other{{/if}}">
                     {{#unless this.sameSenderAsPrevious}}<div class="swse-msg__sender hl-msg-meta">{{this.senderLabel}}</div>{{/unless}}
+                    {{#if this.hasSecretNote}}
+                    <div class="hl-secret-note-card {{#if this.secretNote.isSealed}}is-sealed{{/if}}" data-record-id="{{this.id}}" {{#if this.secretNote.canAutoDestroy}}data-secret-note-expire-ms="{{this.secretNote.expiresAtMs}}"{{/if}}>
+                      <div class="hl-secret-note-head">
+                        <span class="hl-secret-note-sigil">✷</span>
+                        <div>
+                          <div class="hl-label hl-label--accent">{{this.secretNote.sourceLabel}}</div>
+                          <h4>{{this.secretNote.title}}</h4>
+                        </div>
+                        <span class="hl-chip warn">{{this.secretNote.status}}</span>
+                      </div>
+                      {{#if this.secretNote.isSealed}}
+                      <p class="hl-secret-note-locked">Encrypted payload sealed. Reveal only when the player is ready to receive this clue.</p>
+                      <div class="hl-credit-actions">
+                        <button class="hl-btn-accent" data-holonet-action="reveal-secret-note" data-record-id="{{this.id}}" type="button">Reveal Note</button>
+                      </div>
+                      {{else}}
+                      <div class="hl-secret-note-body holonet-rendered-text">{{{this.secretNote.bodyHtml}}}</div>
+                      {{#if this.secretNote.imageUrl}}<img class="swse-msg__image hl-msg-image" src="{{this.secretNote.imageUrl}}" alt="Secret note image">{{/if}}
+                      {{#if this.secretNote.hasAttachments}}
+                      <div class="hl-attachments">
+                        {{#each this.secretNote.attachments}}
+                        <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}}</small></div>
+                        {{/each}}
+                      </div>
+                      {{/if}}
+                      {{#if this.secretNote.selfDestruct}}<p class="hl-secret-note-countdown">This message will self-destruct: {{this.secretNote.expiryLabel}}</p>{{/if}}
+                      {{/if}}
+                      {{#if this.secretNote.canDestroy}}
+                      <div class="hl-credit-actions">
+                        <button class="hl-icon-btn red" data-holonet-action="destroy-secret-note" data-record-id="{{this.id}}" data-reason="gm-destroy" type="button">Destroy Note</button>
+                      </div>
+                      {{/if}}
+                    </div>
+                    {{else}}
                     <div class="swse-msg__body hl-msg-text">{{{this.bodyHtml}}}</div>
                     {{#if this.imageUrl}}<img class="swse-msg__image hl-msg-image" src="{{this.imageUrl}}" alt="Holonet attachment">{{/if}}
                     {{#if this.hasAttachments}}
@@ -655,6 +689,7 @@
                       <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}}</small></div>
                       {{/each}}
                     </div>
+                    {{/if}}
                     {{/if}}
                     <div class="swse-msg__time hl-msg-time">
                       <span>{{this.createdAt}}</span>
@@ -704,6 +739,9 @@
                 {{/if}}
                 {{#if vm.transferPolicy.assetTradesEnabled}}
                 <button class="hl-attach-opt" data-holonet-action="open-asset-composer" data-thread-id="{{vm.selectedThread.id}}" type="button"><span class="hl-attach-opt-icon">▣</span><span>Ship / Droid</span></button>
+                {{/if}}
+                {{#if vm.isGm}}
+                <button class="hl-attach-opt hl-attach-opt--secret" data-holonet-action="open-secret-note-composer" data-thread-id="{{vm.selectedThread.id}}" type="button"><span class="hl-attach-opt-icon">✷</span><span>Secret Note</span></button>
                 {{/if}}
               </div>
               <div class="hl-drop-zone hl-drop-zone--compact" data-holonet-drop-zone data-holonet-drop-input="attachmentUuids">
@@ -992,6 +1030,47 @@
         {{/if}}
         <div class="hl-composition-actions">
           <button class="swse-btn swse-btn--primary hl-btn-accent" type="submit">Continue / Send Offer</button>
+          <button class="swse-btn hl-icon-btn" data-holonet-action="close-composer" type="button">Cancel</button>
+        </div>
+      </form>
+      {{/if}}
+
+      {{#if (eq vm.composition.type "secret-note")}}
+      <form class="hl-composition-form hl-secret-note-form" data-holonet-action="submit-secret-note-composer" data-thread-id="{{vm.composition.threadId}}">
+        <div class="hl-help">Create a GM-only clue, puzzle, image, or secret transmission. Players can reveal it when ready; optional self-destruct starts after reveal.</div>
+        <label class="hl-field"><span>Note Title</span><input type="text" name="title" maxlength="80" placeholder="Encrypted clue, puzzle fragment, strange signal..."></label>
+        <label class="hl-field"><span>Secret Message</span><textarea name="body" rows="5" placeholder="The message, clue, or puzzle text the player will see after reveal."></textarea></label>
+        <label class="hl-field"><span>Image / Puzzle Path</span><input type="text" name="imageUrl" placeholder="Optional image path or URL"></label>
+        <div class="hl-form-grid">
+          <label class="hl-field"><span>Source</span>
+            <select name="source">
+              <option value="messenger">Messenger</option>
+              <option value="job">Job Reward</option>
+              <option value="game">Game Reward</option>
+              <option value="puzzle">Puzzle Drop</option>
+              <option value="gm-note">GM Note</option>
+            </select>
+          </label>
+          <label class="hl-field"><span>Self-Destruct</span>
+            <select name="expiresAfterSeconds">
+              <option value="0">Persistent</option>
+              <option value="30">30 seconds after reveal</option>
+              <option value="60">60 seconds after reveal</option>
+              <option value="300">5 minutes after reveal</option>
+            </select>
+          </label>
+        </div>
+        <div class="hl-recipient-picker">
+          <div class="hl-label">Optional extra recipients</div>
+          <div class="hl-subtle">The current thread receives the note. Add recipients here only if they should be added to this thread too.</div>
+          <div class="hl-recipient-grid">
+            {{#each vm.composition.targets}}
+            <label class="hl-recipient-row"><input type="checkbox" name="recipientIds" value="{{this.id}}"><span>{{this.label}}</span><small>{{this.typeLabel}}</small></label>
+            {{/each}}
+          </div>
+        </div>
+        <div class="hl-composition-actions">
+          <button class="swse-btn swse-btn--primary hl-btn-accent" type="submit">Transmit Secret Note</button>
           <button class="swse-btn hl-icon-btn" data-holonet-action="close-composer" type="button">Cancel</button>
         </div>
       </form>

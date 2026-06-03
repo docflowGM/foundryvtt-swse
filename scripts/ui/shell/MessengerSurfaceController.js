@@ -699,6 +699,17 @@ export class MessengerSurfaceController {
       });
     });
 
+    messengerRoot.querySelectorAll('[data-holonet-action="open-secret-note-composer"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const threadId = el.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+        if (!threadId || !game.user?.isGM) return;
+        await this.setSurface('messenger', { threadId, compose: false, compositionType: 'secret-note', source: 'messenger' });
+        await this._refreshMessengerSurface({ threadId, compose: false, compositionType: 'secret-note' });
+      });
+    });
+
     messengerRoot.querySelectorAll('[data-holonet-action="close-composer"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -885,6 +896,27 @@ export class MessengerSurfaceController {
         const memo = String(data.get('memo') || '').trim();
         if (!threadId || !recipientId || !assetIds.length) return;
         const result = await HolonetMessengerService.offerAssetTransfer({ actor, threadId, recipientId, assetIds, requestedCredits, memo });
+        this._noteMessengerPendingResult(result);
+        await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
+        await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
+      });
+    });
+
+    messengerRoot.querySelectorAll('form[data-holonet-action="submit-secret-note-composer"]').forEach(form => {
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (!game.user?.isGM) return;
+        const data = new FormData(form);
+        const threadId = form.dataset.threadId || this._shellSurfaceOptions?.threadId || null;
+        const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+        const title = String(data.get('title') || '').trim();
+        const body = String(data.get('body') || '').trim();
+        const imageUrl = String(data.get('imageUrl') || '').trim();
+        const expiresAfterSeconds = Number(data.get('expiresAfterSeconds') || 0) || 0;
+        const source = String(data.get('source') || 'messenger').trim() || 'messenger';
+        if (!threadId || (!body && !imageUrl)) return;
+        const result = await HolonetMessengerService.issueSecretNote({ actor, threadId, recipientIds, title, body, imageUrl, expiresAfterSeconds, source });
         this._noteMessengerPendingResult(result);
         await this.setSurface('messenger', { threadId, compose: false, source: 'messenger' });
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
@@ -1172,15 +1204,59 @@ export class MessengerSurfaceController {
       });
     });
 
+
+    messengerRoot.querySelectorAll('[data-holonet-action="reveal-secret-note"][data-record-id]').forEach(button => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const recordId = button.dataset.recordId;
+        const result = await HolonetMessengerService.openSecretNote({ actor, recordId });
+        this._noteMessengerPendingResult(result);
+        await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
+      });
+    });
+
+    messengerRoot.querySelectorAll('[data-holonet-action="destroy-secret-note"][data-record-id]').forEach(button => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const recordId = button.dataset.recordId;
+        const result = await HolonetMessengerService.destroySecretNote({ actor, recordId, reason: button.dataset.reason || 'destroyed' });
+        this._noteMessengerPendingResult(result);
+        await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
+      });
+    });
+
     messengerRoot.querySelectorAll('.hl-mode-card input[name="threadType"]').forEach(input => {
       input.addEventListener('change', () => this._syncMessengerThreadTypeCards(messengerRoot));
     });
     this._syncMessengerThreadTypeCards(messengerRoot);
+    this._wireSecretNoteSelfDestructTimers(messengerRoot, actor);
     this._restoreMessengerUiState(root);
 
     if (unreadThreadId) {
       this._queueMessengerThreadRead(unreadThreadId, HolonetMessengerService);
     }
+  }
+
+
+  _wireSecretNoteSelfDestructTimers(messengerRoot, actor = this.actor) {
+    messengerRoot?.querySelectorAll?.('[data-secret-note-expire-ms][data-record-id]').forEach(el => {
+      const recordId = el.dataset.recordId;
+      const expiresAtMs = Number(el.dataset.secretNoteExpireMs || 0);
+      if (!recordId || !Number.isFinite(expiresAtMs) || expiresAtMs <= 0) return;
+      const delay = Math.max(0, expiresAtMs - Date.now()) + 250;
+      window.setTimeout(async () => {
+        const stillVisible = this.rendered && this._shellSurface === 'messenger' && this.element?.querySelector?.(`[data-record-id="${this._cssEscape(recordId)}"]`);
+        if (!stillVisible) return;
+        try {
+          await HolonetMessengerService.destroySecretNote({ actor, recordId, reason: 'self-destruct' });
+          await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
+        } catch (err) {
+          SWSELogger.warn('[MessengerSurfaceController] Secret note self-destruct failed:', err);
+        }
+      }, Math.min(delay, 2147483000));
+    });
   }
 
   _syncMessengerThreadTypeCards(messengerRoot) {

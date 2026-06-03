@@ -152,6 +152,18 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmCreateJobPosting(data);
         break;
       }
+      case 'issue-secret-note': {
+        await HolonetMessengerService._gmIssueSecretNote(data);
+        break;
+      }
+      case 'open-secret-note': {
+        await HolonetMessengerService._gmOpenSecretNote(data);
+        break;
+      }
+      case 'destroy-secret-note': {
+        await HolonetMessengerService._gmDestroySecretNote(data);
+        break;
+      }
       case 'offer-credit-transfer': {
         await HolonetMessengerService._gmOfferCreditTransfer(data);
         break;
