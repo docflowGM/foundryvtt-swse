@@ -1,67 +1,118 @@
-<div class="swse-welcome">
-  <h2>⭐ Welcome to Star Wars Saga Edition!</h2>
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
+  frameOuterClass="swse-first-run-frame swse-ui-shell swse-datapad flexcol"
+  frameDataApp="first-run-experience"
+  frameStyleInline=themeStyleInline
+  frameStyleInlineExtra=motionStyleInline
+  shellSurface=shellSurface
+  shellTheme=themeKey
+  shellMotionStyle=motionStyle
+  shellStyleInline=themeStyleInline
+  shellStyleInlineExtra=motionStyleInline
+  shellExtraClass="swse-sheet-v2-shell--first-run"
+  tabletExtraClass="swse-first-run-tablet"
+  screenExtraClass="swse-first-run-screen-shell"
+  serialLabel="FRX-1138-WELCOME"
+  serialAria="First run welcome datapad"
+  controlsLabel="First run welcome controls"
+  topHomeAction="open-gm-window"
+  topHomeNavTo="home"
+  closeAction="first-run-close"
+  expandAction="first-run-expand"
+  dragTitle="First-run welcome datapad"
+  dragLabel="First-run welcome datapad drag rail"
+  showResize=true
+}}
+  <div class="swse-datapad swse-screen swse-first-run-screen flexcol">
+    <div class="swse-shell-surface swse-shell-surface--welcome" data-shell-region="first-run-welcome">
+      <div class="swse-shell-surface__header swse-welcome-header">
+        <div>
+          <div class="swse-welcome-kicker">FIRST RUN TRANSMISSION</div>
+          <div class="swse-welcome-title">Welcome to Star Wars Saga Edition</div>
+        </div>
+        <button class="swse-btn ghost" data-action="open-gm-window" type="button">
+          <i class="fa-solid fa-tablet-screen-button"></i>
+          <span>Open GM Window</span>
+        </button>
+      </div>
 
-  <div class="section">
-    <p>This system provides comprehensive support for SWSE gameplay on Foundry VTT v13+. Here's what you need to know:</p>
-  </div>
+      <div class="swse-shell-surface__body swse-welcome-body">
+        <section class="swse-welcome-hero swse-panel">
+          <div class="swse-welcome-hero__sigil"><i class="fa-solid fa-jedi"></i></div>
+          <div class="swse-welcome-hero__copy">
+            <h2>Hello there, {{gmName}}.</h2>
+            <p>
+              Thank you for launching this table. This system has been built with a lot of care to make
+              Star Wars Saga Edition feel fast, cinematic, readable, and alive inside Foundry VTT.
+            </p>
+            <p>
+              The goal is simple: help players build memorable heroes, give GMs better campaign tools,
+              and let the table spend less time hunting for buttons and more time telling Star Wars stories.
+            </p>
+          </div>
+        </section>
 
-  <div class="section">
-    <h3>🎭 Character Generation</h3>
-    <ul>
-      <li><strong>Guided Chargen:</strong> Use the Character Generation tool to build characters step-by-step</li>
-      <li><strong>Auto-Calculation:</strong> Attributes, skills, defenses, and BAB calculate automatically</li>
-      <li><strong>Mentor System:</strong> Get explanations and recommendations as you build</li>
-      <li><strong>Templates:</strong> Pre-built species, classes, and prestige classes available</li>
-    </ul>
-  </div>
+        <section class="swse-welcome-note swse-panel">
+          <div class="swse-panel-head">◆ What this datapad is trying to do</div>
+          <p>
+            SWSE is a wonderfully crunchy game. This project tries to keep that depth while presenting it through
+            guided flows, contextual advice, automation where it helps, and in-world tools that feel like they belong
+            at the table.
+          </p>
+        </section>
 
-  <div class="tip">
-    <strong>Tip:</strong> First-time GMs should read the Mentor system explanations—they explain SWSE rules in context.
-  </div>
+        <section class="swse-welcome-feature-grid">
+          {{#each welcomeFeatures}}
+          <article class="swse-welcome-feature swse-panel">
+            <div class="swse-welcome-feature__icon"><i class="{{this.icon}}"></i></div>
+            <div class="swse-welcome-feature__text">
+              <h3>{{this.title}}</h3>
+              <p>{{this.text}}</p>
+            </div>
+          </article>
+          {{/each}}
+        </section>
 
-  <div class="section">
-    <h3>🎲 Combat & Progression</h3>
-    <ul>
-      <li><strong>Combat Resolution:</strong> Roll attacks and damage with automatic skill/feat calculations</li>
-      <li><strong>Level-Up System:</strong> Guided advancement with class feature recommendations</li>
-      <li><strong>Force Powers:</strong> Full Force power system with resource tracking</li>
-      <li><strong>Vehicles:</strong> Starship and vehicle rules with crew positions</li>
-    </ul>
-  </div>
+        <section class="swse-welcome-note swse-panel swse-welcome-note--suggestions">
+          <div class="swse-panel-head">◇ A note about suggestions</div>
+          <p>
+            The surveys offered throughout a character's life matter. They give the suggestion engine a sense of
+            who the character is, what they value, and what kind of path they may be walking. But the most important
+            signal is still the player's choices. The system is here to advise, not to take the character away from them.
+          </p>
+        </section>
 
-  <div class="tip">
-    <strong>Tip:</strong> Hover over buttons and icons to see tooltips explaining each feature.
-  </div>
+        <section class="swse-welcome-note swse-panel">
+          <div class="swse-panel-head">✦ Where to go next</div>
+          <p>
+            Open the GM Window to manage the campaign side of the system. Players can use their Holopad to register,
+            train, level up, review settings, and open the System Manual from the Settings app when they want a guided tour.
+          </p>
+        </section>
 
-  <div class="section">
-    <h3>📚 Core Concepts</h3>
-    <ul>
-      <li><strong>System Settings:</strong> Configure rules variants and house rules in System Settings</li>
-      <li><strong>Compendium Packs:</strong> All weapons, armor, feats, and talents are in compendium packs (searchable)</li>
-      <li><strong>Actions & Automation:</strong> Many combat actions are automated—click action buttons for quick resolution</li>
-      <li><strong>Destiny Points:</strong> Tracked per character; spend in combat for bonuses or rerolls</li>
-    </ul>
-  </div>
+        <div class="swse-welcome-footer-row">
+          <label class="swse-welcome-checkbox">
+            <input type="checkbox" id="swse-no-welcome-again" />
+            <span>Don't show this again</span>
+          </label>
 
-  <div class="section">
-    <h3>🔗 Get Help</h3>
-    <ul>
-      <li>Hover over UI elements for tooltips</li>
-      <li>Read the <a href="https://github.com/docflowGM/foundryvtt-swse" target="_blank">system documentation</a></li>
-      <li>Join the <a href="https://discord.gg/Sdwd7CgmaJ" target="_blank">community Discord</a></li>
-    </ul>
+          <div class="swse-welcome-actions">
+            <button class="swse-btn ghost" data-action="open-gm-window" type="button">
+              <i class="fa-solid fa-tablet-screen-button"></i>
+              <span>Open GM Window</span>
+            </button>
+            <button class="swse-btn primary" data-action="got-it" type="button">
+              <i class="fa-solid fa-check"></i>
+              <span>Begin the Session</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="checkbox-group">
-    <label>
-      <input type="checkbox" id="swse-no-welcome-again" />
-      Don't show this again
-    </label>
-  </div>
-
-  <div class="dialog-buttons">
-    <button class="btn btn-primary" data-action="got-it">
-      <i class="fa-solid fa-check"></i> Got It!
-    </button>
-  </div>
-</div>
+{{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs"
+  bottomHomeAction="open-gm-window"
+  bottomHomeTitle="Open GM Window"
+  bottomHomeLabel="Open GM Window"
+  bottomEngraving="WELCOME DATAPAD - FIRST RUN EXPERIENCE - DEFAULT HOLOSHELL THEME"
+  showResize=true
+}}

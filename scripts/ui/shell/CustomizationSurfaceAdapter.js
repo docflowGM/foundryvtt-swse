@@ -28,6 +28,16 @@ export class CustomizationSurfaceAdapter {
     return this._registry.get(this.key(actorId, mode)) ?? null;
   }
 
+  static getForActor(actorId, mode = 'garage') {
+    if (!actorId) return null;
+    const exact = this.get(actorId, mode);
+    if (exact) return exact;
+    for (const [key, adapter] of this._registry.entries()) {
+      if (key.startsWith(`${actorId}-`)) return adapter;
+    }
+    return null;
+  }
+
   static getOrCreate(shellHost, actor, options = {}) {
     const mode = options.bayMode || options.mode || (actor?.type === 'vehicle' ? 'shipyard' : 'garage');
     const key = this.key(actor.id, mode);
@@ -103,6 +113,10 @@ export class CustomizationSurfaceAdapter {
       return;
     }
     await app.handleInlineAction(action, target);
+    const nextMode = app.mode || this.options.mode || this.options.bayMode;
+    if (this.actor?.id && nextMode) {
+      this.constructor._registry.set(this.constructor.key(this.actor.id, nextMode), this);
+    }
   }
 
   async _getApp() {

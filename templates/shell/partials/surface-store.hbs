@@ -30,7 +30,7 @@
         </div>
         <div class="swse-store-surface__hud-right">
           <span class="swse-store-surface__hud-lbl">RESERVE</span>
-          <span class="swse-store-surface__hud-credits">$ {{vm.actorCredits}}</span>
+          <span class="swse-store-surface__hud-credits">{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span>
         </div>
       </header>
 
@@ -51,10 +51,10 @@
         </div>
         <div class="swse-store-surface__credits-block">
           <span class="swse-store-surface__credits-lbl">ACCOUNT</span>
-          <span class="swse-store-surface__credits-val">$ {{vm.actorCredits}}</span>
+          <span class="swse-store-surface__credits-val">{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span>
           {{#if vm.storeContext.cartCount}}
-          <span class="swse-store-surface__credits-delta neg">−$ {{vm.storeContext.cartTotal}} staged</span>
-          <span class="swse-store-surface__credits-reserve">$ {{vm.storeContext.pageContext.cartRemaining}} after</span>
+          <span class="swse-store-surface__credits-delta neg">−{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}} staged</span>
+          <span class="swse-store-surface__credits-reserve">{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}} after</span>
           {{/if}}
         </div>
       </header>
@@ -126,7 +126,7 @@
         {{#if children}}
         <nav class="swse-store-surface__subnav">
           {{!-- "All [Category]" reset chip --}}
-          <button type="button" class="swse-store-surface__subcat-chip {{#unless ../../../vm.storeContext.currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="">
+          <button type="button" class="swse-store-surface__subcat-chip {{#unless ../../../vm.storeContext.currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="">
             All {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
           </button>
 
@@ -138,7 +138,7 @@
             <div class="swse-store-surface__family-chips">
               {{#each familyGroups.melee}}
               <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                      data-action="subcategory-nav" data-subcategory="{{label}}">
+                      data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
                 {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
               </button>
               {{/each}}
@@ -152,7 +152,7 @@
             <div class="swse-store-surface__family-chips">
               {{#each familyGroups.ranged}}
               <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                      data-action="subcategory-nav" data-subcategory="{{label}}">
+                      data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
                 {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
               </button>
               {{/each}}
@@ -164,7 +164,7 @@
           {{!-- OTHER CATEGORIES: List all subcategories --}}
           {{#each children}}
           <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                  data-action="subcategory-nav" data-subcategory="{{label}}">
+                  data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
             {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
           </button>
           {{/each}}
@@ -184,7 +184,9 @@
                  data-item-type="{{this.type}}"
                  data-name="{{this.name}}"
                  data-category="{{this.category}}"
+                 data-category-key="{{this.categoryKey}}"
                  data-subcategory="{{this.subcategory}}"
+                 data-subcategory-key="{{this.subcategoryKey}}"
                  data-availability="{{this.availability}}"
                  data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
                  data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
@@ -206,9 +208,9 @@
               </div>
               <div class="swse-store-surface__card-foot">
                 {{#if this.costUsed}}
-                <span class="swse-store-surface__card-price">NEW $ {{this.cost}} · USED $ {{this.costUsed}}</span>
+                <span class="swse-store-surface__card-price">NEW {{@root.vm.storeContext.currencySymbol}} {{this.cost}} · USED {{@root.vm.storeContext.currencySymbol}} {{this.costUsed}}</span>
                 {{else}}
-                <span class="swse-store-surface__card-price">$ {{this.finalCost}}</span>
+                <span class="swse-store-surface__card-price">{{@root.vm.storeContext.currencySymbol}} {{this.finalCost}}</span>
                 {{/if}}
                 <div class="swse-store-surface__card-actions">
                   <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">{{#if (eq ../vm.storeContext.selectedProductId this.id)}}COLLAPSE{{else}}DETAILS{{/if}}</button>
@@ -225,7 +227,7 @@
                 <div class="swse-store-surface__card-expand-head">
                   <span>{{../vm.storeContext.selectedProduct.rarityLabel}}</span>
                   <span>{{../vm.storeContext.selectedProduct.availability}}</span>
-                  <span>$ {{../vm.storeContext.selectedProduct.price}}</span>
+                  <span>{{@root.vm.storeContext.currencySymbol}} {{../vm.storeContext.selectedProduct.price}}</span>
                 </div>
                 {{#if ../vm.storeContext.selectedProduct.suggestionBullets.length}}
                 <ul class="swse-store-surface__card-expand-bullets">
@@ -267,13 +269,13 @@
                 <div class="swse-store-surface__mini-cart-item">
                   <div class="swse-store-surface__mini-cart-name">{{this.name}}</div>
                   <div class="swse-store-surface__mini-cart-qty">×{{this.qty}}</div>
-                  <div class="swse-store-surface__mini-cart-price">$ {{this.cost}}</div>
+                  <div class="swse-store-surface__mini-cart-price">{{@root.vm.storeContext.currencySymbol}} {{this.cost}}</div>
                 </div>
                 {{/each}}
               </div>
               <div class="swse-store-surface__mini-cart-summary">
-                <div class="swse-store-surface__mini-cart-row"><span>TOTAL</span><strong>$ {{vm.storeContext.cartTotal}}</strong></div>
-                <div class="swse-store-surface__mini-cart-row"><span>REMAINING</span><strong>$ {{vm.storeContext.pageContext.cartRemaining}}</strong></div>
+                <div class="swse-store-surface__mini-cart-row"><span>TOTAL</span><strong>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}}</strong></div>
+                <div class="swse-store-surface__mini-cart-row"><span>REMAINING</span><strong>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}}</strong></div>
               </div>
               {{else}}
               <div class="swse-store-surface__mini-cart-empty">
@@ -305,7 +307,7 @@
                 <div class="swse-store-surface__cart-type">{{this.summary}}</div>
               </div>
               <div class="swse-store-surface__cart-qty">×{{this.qty}}</div>
-              <div class="swse-store-surface__cart-linecost">$ {{this.cost}}</div>
+              <div class="swse-store-surface__cart-linecost">{{@root.vm.storeContext.currencySymbol}} {{this.cost}}</div>
               <button type="button" class="swse-store-surface__btn swse-store-surface__btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
             </div>
             {{/each}}
@@ -313,15 +315,15 @@
           <div class="swse-store-surface__cart-summary">
             <div class="swse-store-surface__cart-summary-row">
               <span>TOTAL</span>
-              <span class="swse-store-surface__cart-total">$ {{vm.storeContext.cartTotal}}</span>
+              <span class="swse-store-surface__cart-total">{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}}</span>
             </div>
             <div class="swse-store-surface__cart-summary-row dim">
               <span>AVAILABLE</span>
-              <span>$ {{vm.actorCredits}}</span>
+              <span>{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span>
             </div>
             <div class="swse-store-surface__cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
               <span>RESERVE AFTER TRADE</span>
-              <span>$ {{vm.storeContext.pageContext.cartRemaining}}</span>
+              <span>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}}</span>
             </div>
             <div class="swse-store-surface__cart-actions">
               <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR CART</button>
@@ -351,14 +353,14 @@
             <div class="swse-store-surface__checkout-row">
               <span class="swse-store-surface__checkout-row-name">{{this.name}}</span>
               <span class="swse-store-surface__checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
-              <span class="swse-store-surface__checkout-row-cost">$ {{this.cost}}</span>
+              <span class="swse-store-surface__checkout-row-cost">{{@root.vm.storeContext.currencySymbol}} {{this.cost}}</span>
             </div>
             {{/each}}
           </div>
           <div class="swse-store-surface__checkout-ledger">
-            <div class="swse-store-surface__checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>$ {{vm.actorCredits}}</span></div>
-            <div class="swse-store-surface__checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−$ {{vm.storeContext.cartTotal}}</span></div>
-            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>$ {{vm.storeContext.pageContext.cartRemaining}}</span></div>
+            <div class="swse-store-surface__checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span></div>
+            <div class="swse-store-surface__checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}}</span></div>
+            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}}</span></div>
           </div>
           <div class="swse-store-surface__checkout-actions">
             <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
@@ -381,11 +383,11 @@
             <div class="swse-store-surface__history-entry">
               <div class="swse-store-surface__history-entry-header">
                 <span class="swse-store-surface__history-date">{{this.timestamp}}</span>
-                <span class="swse-store-surface__history-total">$ {{this.total}}</span>
+                <span class="swse-store-surface__history-total">{{@root.vm.storeContext.currencySymbol}} {{this.total}}</span>
               </div>
               <div class="swse-store-surface__history-items">
                 {{#each this.items}}
-                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} (${{this.cost}})</span>
+                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} ({{@root.vm.storeContext.currencySymbol}}{{this.cost}})</span>
                 {{/each}}
               </div>
             </div>

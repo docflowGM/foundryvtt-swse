@@ -8,6 +8,7 @@ import { initializeTooltipDiscovery } from "/systems/foundryvtt-swse/scripts/cor
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';
@@ -51,6 +52,16 @@ export async function resetWelcome() {
   }
 }
 
+async function openGmDatapad() {
+  try {
+    const { GMDatapad } = await import('/systems/foundryvtt-swse/scripts/apps/gm-datapad.js');
+    GMDatapad.open?.('home');
+  } catch (err) {
+    SWSELogger.error('[FirstRunExperience] Failed to open GM Datapad:', err);
+    ui?.notifications?.error?.(`Failed to open GM Datapad: ${err.message}`);
+  }
+}
+
 /* -------------------------------------------- */
 /* Welcome Dialog */
 /* -------------------------------------------- */
@@ -59,14 +70,14 @@ class WelcomeDialog extends BaseSWSEAppV2 {
 
   static DEFAULT_OPTIONS = {
     id: 'swse-welcome-dialog',
-    classes: ['swse-app'],
+    classes: ['swse-app', 'swse-first-run-window', 'swse-datapad-container'],
     position: {
-      width: 600,
-      height: 500
+      width: 900,
+      height: 740
     },
     window: {
       icon: 'fa-solid fa-star',
-      title: '⭐ Welcome to SWSE for Foundry VTT',
+      title: 'Welcome to SWSE for Foundry VTT',
       resizable: true
     }
   };
@@ -78,7 +89,44 @@ class WelcomeDialog extends BaseSWSEAppV2 {
   };
 
   async _prepareContext() {
-    return {};
+    const themeContext = ThemeResolutionService.buildSurfaceContext({ preferActor: false });
+    return {
+      ...themeContext,
+      shellSurface: 'first-run',
+      gmName: game?.user?.name || 'Game Master',
+      welcomeFeatures: [
+        {
+          icon: 'fa-solid fa-user-astronaut',
+          title: 'Guided character creation',
+          text: 'New heroes can register through the datapad, move step by step through chargen, and see the system explain what matters as choices come up.'
+        },
+        {
+          icon: 'fa-solid fa-route',
+          title: 'Full progression engine',
+          text: 'Level-ups, class features, talents, feats, skills, Force options, and summary review are presented as one guided advancement flow.'
+        },
+        {
+          icon: 'fa-solid fa-jedi',
+          title: 'Mentors with personality',
+          text: 'Mentors give flavor, context, and advice so advancement feels like part of the character\'s story instead of a spreadsheet.'
+        },
+        {
+          icon: 'fa-solid fa-lightbulb',
+          title: 'Suggestion engine',
+          text: 'Surveys across a character\'s life help the engine understand the character, but the player\'s actual choices have the greatest impact.'
+        },
+        {
+          icon: 'fa-solid fa-tablet-screen-button',
+          title: 'Holopad applications',
+          text: 'Players can reach training, stores, games, allies, messaging, settings, and other campaign tools from an in-world datapad shell.'
+        },
+        {
+          icon: 'fa-solid fa-dice-d20',
+          title: 'Table support tools',
+          text: 'Combat actions, Force powers, droids, vehicles, ships, followers, jobs, factions, and GM operations are being brought into one cohesive play space.'
+        }
+      ]
+    };
   }
 
   _onRender(context, options) {
@@ -87,20 +135,57 @@ class WelcomeDialog extends BaseSWSEAppV2 {
     const root = this.element;
     if (!root) return;
 
-    const button = root.querySelector('[data-action="got-it"]');
-    if (button) {
-      button.addEventListener('click', async () => {
-        const checkbox = root.querySelector('#swse-no-welcome-again');
-        const noAgain = checkbox?.checked ?? false;
+    root.querySelector('[data-action="got-it"]')?.addEventListener('click', async () => {
+      const checkbox = root.querySelector('#swse-no-welcome-again');
+      const noAgain = checkbox?.checked ?? false;
 
-        if (noAgain) {
-          await markWelcomeShown();
-        }
+      if (noAgain) {
+        await markWelcomeShown();
+      }
 
-        await initializeTooltipDiscovery();
+      await initializeTooltipDiscovery();
+      this.close();
+    });
+
+    root.querySelectorAll('[data-action="open-gm-window"], [data-action="tablet-home"]').forEach(button => {
+      button.addEventListener('click', async ev => {
+        ev.preventDefault();
+        await openGmDatapad();
+      });
+    });
+
+    root.querySelectorAll('[data-action="first-run-close"], [data-action="tablet-close"]').forEach(button => {
+      button.addEventListener('click', ev => {
+        ev.preventDefault();
         this.close();
       });
+    });
+
+    root.querySelectorAll('[data-action="first-run-expand"], [data-action="tablet-expand"]').forEach(button => {
+      button.addEventListener('click', ev => {
+        ev.preventDefault();
+        this._toggleExpanded();
+      });
+    });
+  }
+
+  _toggleExpanded() {
+    const width = Math.min(window.innerWidth - 80, 1180);
+    const height = Math.min(window.innerHeight - 80, 860);
+    const current = this.position ?? {};
+    const isExpanded = current.width >= width - 8 && current.height >= height - 8;
+
+    if (isExpanded) {
+      this.setPosition({ width: 900, height: 740 });
+      return;
     }
+
+    this.setPosition({
+      width,
+      height,
+      left: Math.max(24, Math.round((window.innerWidth - width) / 2)),
+      top: Math.max(24, Math.round((window.innerHeight - height) / 2))
+    });
   }
 }
 

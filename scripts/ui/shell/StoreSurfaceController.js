@@ -20,6 +20,24 @@ import {
 import { StoreSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceService.js';
 import { initRendarrStoreSplash } from '/systems/foundryvtt-swse/scripts/apps/store/store-splash.js';
 
+function normalizeStoreFilterValue(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function normalizeAvailabilityText(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
 export class StoreSurfaceController {
   /**
    * @param {object} host - Character sheet (has _shellSurfaceOptions, render, setSurface)
@@ -82,12 +100,11 @@ export class StoreSurfaceController {
     root.querySelectorAll('[data-action="subcategory-nav"]').forEach(el => {
       el.addEventListener('click', ev => {
         ev.preventDefault();
-        const subcategory = el.dataset.subcategory ?? null;
-        // Keep current category, clear family when selecting a specific subcategory
+        const subcategory = el.dataset.subcategory || null;
         this._setOptions({
           currentSubcategory: subcategory,
           storeRenderLimit: 36,
-          currentFamily: null,
+          currentFamily: el.dataset.family || null,
           currentView: 'browse',
           selectedProductId: null
         });
@@ -478,19 +495,23 @@ export class StoreSurfaceController {
     const searchVal = (root.querySelector('#ss-search')?.value ?? '').toLowerCase();
     const availVal = (root.querySelector('#ss-avail')?.value ?? 'all').toLowerCase();
     const categoryVal = (this._host._shellSurfaceOptions?.currentCategory ?? '').toLowerCase();
+    const subcategoryVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentSubcategory ?? '');
 
     let visible = 0;
     root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
       const name = (card.dataset.name ?? '').toLowerCase();
-      const cat = (card.dataset.category ?? '').toLowerCase();
+      const cat = (card.dataset.categoryKey || card.dataset.category || '').toLowerCase();
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
-      const avail = (card.dataset.availability ?? '').toLowerCase();
+      const subtypeKey = normalizeStoreFilterValue(card.dataset.subcategory || '');
+      const avail = normalizeAvailabilityText(card.dataset.availability ?? '');
+      const requestedAvail = normalizeAvailabilityText(availVal);
 
       const matchSearch = !searchVal || name.includes(searchVal) || cat.includes(searchVal) || subtype.includes(searchVal);
-      const matchAvail = availVal === 'all' || avail.startsWith(availVal);
+      const matchAvail = !requestedAvail || requestedAvail === 'all' || avail.split(/\s+/).includes(requestedAvail) || avail.includes(requestedAvail);
       const matchCategory = !categoryVal || cat === categoryVal;
+      const matchSubcategory = !subcategoryVal || subtypeKey === subcategoryVal;
 
-      const show = matchSearch && matchAvail && matchCategory;
+      const show = matchSearch && matchAvail && matchCategory && matchSubcategory;
       card.style.display = show ? '' : 'none';
       if (show) visible += 1;
     });

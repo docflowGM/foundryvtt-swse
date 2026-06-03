@@ -9,10 +9,36 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
-import { buildStoreNavigationModel } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
+import { buildStoreNavigationModel, normalizeArmorSubcategory } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
+import { getStoreCurrencySymbol } from '/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js';
 
 // Module-level cache: actorId → SWSEStore instance
 const _instanceCache = new Map();
+
+function _normalizeStoreFilterValue(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function _categoryKey(item = {}) {
+  const raw = String(item.category ?? item.type ?? '').trim().toLowerCase();
+  if (!raw) return '';
+  if (raw.includes('weapon')) return 'weapons';
+  if (raw.includes('armor')) return 'armor';
+  if (raw.includes('droid')) return 'droids';
+  if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
+  if (raw.includes('gear') || raw.includes('equipment')) return 'gear';
+  return raw.replace(/\s+/g, '-');
+}
+
+function _navSubcategory(item = {}) {
+  if (_categoryKey(item) === 'armor') return normalizeArmorSubcategory(item);
+  return String(item.subcategory ?? item.system?.subcategory ?? item.system?.category ?? '').trim();
+}
 
 const STORE_SPLASH_COMPANIES = [
   ['Adarian government', 'ADG'], ['AestheTech Incorporated', 'ATI'], ['Arlen-Dempler Luxury Speeders', 'ADLS'],
@@ -267,7 +293,7 @@ export class StoreSurfaceService {
       hotDeals,
       hotDealsJson: _safeJson({ groups: hotDeals.groups, hydrated: hotDeals.hydrated }),
       tickerPreview: _buildTickerPreview(),
-      currencySymbol: storeContext.currencySymbol ?? '$',
+      currencySymbol: storeContext.currencySymbol ?? getStoreCurrencySymbol(),
       accountTier: credits >= 5000 ? 'Priority Trade Access' : credits >= 1000 ? 'Verified Customer Account' : 'Public Exchange Access',
       terminalId: actor?.id ? `ACT-${String(actor.id).slice(-6).toUpperCase()}` : 'PUB-0000',
       vendorLink: actor ? 'REN-DARR VERIFIED' : 'PUBLIC CATALOG LINK',
@@ -372,10 +398,14 @@ export class StoreSurfaceService {
       const currentView = storeContext.currentView ?? 'browse';
       const cartRemaining = storeContext.pageContext?.cartRemaining ?? 0;
       const currentCategory = (storeContext.currentCategory ?? '').toLowerCase();
+      const currentSubcategory = storeContext.currentSubcategory ?? null;
       const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
-      const visibleItems = currentCategory
-        ? allItems.filter(item => (item.category ?? '').toLowerCase() === currentCategory)
-        : allItems;
+      const visibleItems = allItems.filter(item => {
+        const matchesCategory = !currentCategory || _categoryKey(item) === currentCategory;
+        const matchesSubcategory = !currentSubcategory
+          || _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory);
+        return matchesCategory && matchesSubcategory;
+      });
 
       const baseRenderLimit = Number(options.storeRenderLimit ?? 36) || 36;
       const selectedProductId = options.selectedProductId ?? storeContext.selectedProduct?.id ?? null;
@@ -430,6 +460,9 @@ export class StoreSurfaceService {
         currentView,
         isBrowseOrDetail: currentView === 'browse' || currentView === 'detail',
         currentCategory: storeContext.currentCategory ?? '',
+        currentSubcategory: storeContext.currentSubcategory ?? null,
+        currentFamily: storeContext.currentFamily ?? null,
+        currencySymbol: storeContext.currencySymbol ?? getStoreCurrencySymbol(),
         currentCategoryLabel: storeContext.currentCategoryLabel ?? 'All Listings',
         categorySummary: storeContext.categorySummary ?? [],
         navigationModel,  // Phase 2: Include navigation model

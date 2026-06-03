@@ -168,9 +168,14 @@
       </section>
 
       <section class="bay-section">
-        <header class="bay-section__head">
+        <header class="bay-section__head bay-section__head--actions">
           <h2>Systems / Parts</h2>
-          <span data-swse-tooltip-key="{{#if (eq mode 'shipyard')}}shipyard.systemBays{{else}}garage.systems{{/if}}">Engine-sourced options</span>
+          <div class="bay-section__actions">
+            <span data-swse-tooltip-key="{{#if (eq mode 'shipyard')}}shipyard.systemBays{{else}}garage.systems{{/if}}">Engine-sourced options</span>
+            <button type="button" class="bay-section-action" data-action="browse-systems">
+              {{#if (eq mode 'shipyard')}}Browse Ship Systems{{else}}Browse New Droid Systems{{/if}}
+            </button>
+          </div>
         </header>
 
         {{#if garageFocus}}

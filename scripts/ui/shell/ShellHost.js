@@ -469,14 +469,6 @@ export function ShellHostMixin(BaseClass) {
           const surfaceOptions = { source: 'home' };
           if (el.dataset.bayMode) surfaceOptions.bayMode = el.dataset.bayMode;
           if (el.dataset.contextMode) surfaceOptions.contextMode = el.dataset.contextMode;
-          if (el.dataset.workbenchCategory) {
-            surfaceOptions.category = el.dataset.workbenchCategory;
-            surfaceOptions.initialCategory = el.dataset.workbenchCategory;
-          }
-          if (el.dataset.initialCategory) surfaceOptions.initialCategory = el.dataset.initialCategory;
-          if (el.dataset.mode) surfaceOptions.mode = el.dataset.mode;
-          if (el.dataset.routeIntent) surfaceOptions.routeIntent = el.dataset.routeIntent;
-          if (el.dataset.entryPoint) surfaceOptions.entryPoint = el.dataset.entryPoint;
           if (el.dataset.tabTarget) surfaceOptions.tab = el.dataset.tabTarget;
           await this.setSurface(routeId, surfaceOptions);
           await this.requestSurfaceRender({ reason: `${routeId}-home-launch`, surfaceId: routeId });
@@ -539,8 +531,13 @@ export function ShellHostMixin(BaseClass) {
           const targetActorId = surfaceRoot.dataset.actorId
             || this._shellSurfaceOptions?.targetActorId
             || this.actor?.id;
-          const adapter = CustomizationSurfaceAdapter.get(targetActorId, mode);
-          await adapter?.handleAction?.(action, target);
+          const adapter = CustomizationSurfaceAdapter.getForActor?.(targetActorId, mode)
+            || CustomizationSurfaceAdapter.get?.(targetActorId, mode);
+          if (!adapter) {
+            SWSELogger.warn(`[ShellHost] No customization adapter found for ${targetActorId}/${mode}`);
+            return;
+          }
+          await adapter.handleAction?.(action, target);
         } catch (err) {
           SWSELogger.error(`[ShellHost] Customization surface action failed:`, err);
         }

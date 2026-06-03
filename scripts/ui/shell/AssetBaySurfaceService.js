@@ -32,15 +32,25 @@ function actorFromReference(entry) {
   return game.actors?.get?.(id) ?? null;
 }
 
+function normalizeAssetType(value) {
+  const raw = String(value ?? '').toLowerCase().trim();
+  if (!raw) return '';
+  if (raw === 'droid' || raw === 'asset-droid' || raw === 'owned-droid' || raw === 'follower-droid') return 'droid';
+  if (['vehicle', 'ship', 'starship', 'asset-vehicle', 'asset-ship', 'owned-vehicle', 'owned-ship'].includes(raw)) return 'vehicle';
+  if (raw.includes('droid')) return 'droid';
+  if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('starship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicle';
+  return raw;
+}
+
 function entryType(entry, actor = null) {
-  return String(
+  return normalizeAssetType(
     actor?.type
     ?? entry?.type
     ?? entry?.actorType
     ?? entry?.documentType
     ?? entry?.kind
     ?? ''
-  ).toLowerCase();
+  );
 }
 
 function normalizeBayMode(value) {
@@ -53,7 +63,7 @@ function normalizeBayMode(value) {
 function assetModeFor(entry, actor = null) {
   const type = entryType(entry, actor);
   if (type === 'droid') return 'garage';
-  if (['vehicle', 'ship', 'starship'].includes(type)) return 'shipyard';
+  if (type === 'vehicle') return 'shipyard';
   return null;
 }
 
@@ -71,6 +81,42 @@ function displayName(entry, actor = null) {
 
 function displayImage(entry, actor = null) {
   return actor?.img || entry?.img || entry?.image || entry?.thumbnail || 'icons/svg/mystery-man.svg';
+}
+
+function ownedItemReferences(ownerActor) {
+  const refs = [];
+  for (const item of asArray(ownerActor?.items)) {
+    const type = normalizeAssetType(item?.type ?? item?.system?.type ?? item?.system?.assetType);
+    if (!['droid', 'vehicle'].includes(type)) continue;
+    refs.push({
+      id: item.system?.actorId ?? item.system?.linkedActorId ?? item.flags?.['foundryvtt-swse']?.actorId ?? item.id,
+      uuid: item.system?.actorUuid ?? item.system?.uuid ?? item.flags?.['foundryvtt-swse']?.actorUuid ?? '',
+      name: item.name,
+      img: item.img,
+      type,
+      itemId: item.id,
+      source: 'item'
+    });
+  }
+  return refs;
+}
+
+function followerSlotReferences(ownerActor) {
+  const refs = [];
+  for (const slot of asArray(ownerActor?.getFlag?.('foundryvtt-swse', 'followerSlots'))) {
+    const actorId = slot?.createdActorId ?? slot?.actorId ?? slot?.id;
+    if (!actorId) continue;
+    refs.push({
+      id: actorId,
+      actorId,
+      uuid: slot?.createdActorUuid ?? slot?.actorUuid ?? `Actor.${actorId}`,
+      name: slot?.name ?? slot?.label ?? 'Linked Follower',
+      type: slot?.actorType ?? slot?.type ?? slot?.kind ?? '',
+      source: 'follower-slot',
+      slotId: slot?.id
+    });
+  }
+  return refs;
 }
 
 function detailLine(entry, actor = null, mode = 'garage') {
@@ -109,7 +155,11 @@ function collectOwnedEntries(ownerActor, mode) {
     ...asArray(system.assets?.ships),
     ...asArray(system.inventory?.droids),
     ...asArray(system.inventory?.vehicles),
-    ...asArray(system.inventory?.ships)
+    ...asArray(system.inventory?.ships),
+    ...asArray(system.relationships),
+    ...asArray(ownerActor?.getFlag?.('foundryvtt-swse', 'followers')),
+    ...followerSlotReferences(ownerActor),
+    ...ownedItemReferences(ownerActor)
   ];
 
   const seen = new Set();

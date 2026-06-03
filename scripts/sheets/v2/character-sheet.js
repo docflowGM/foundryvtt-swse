@@ -1705,13 +1705,20 @@ export class SWSEV2CharacterSheet extends
         const { CustomizationSurfaceAdapter } = await import(
           '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
         );
-        const mode = this._shellSurfaceOptions?.bayMode
+        const mode = surfaceRoot.dataset.bayMode
+          || this._shellSurfaceOptions?.bayMode
           || this._shellSurfaceOptions?.mode
           || (this.actor?.type === 'vehicle' ? 'shipyard' : 'garage');
-        const adapter = CustomizationSurfaceAdapter._registry.get(`${this.actor.id}-${mode}`);
-        if (adapter) {
-          await adapter.handleAction(action, target);
+        const targetActorId = surfaceRoot.dataset.actorId
+          || this._shellSurfaceOptions?.targetActorId
+          || this.actor?.id;
+        const adapter = CustomizationSurfaceAdapter.getForActor?.(targetActorId, mode)
+          || CustomizationSurfaceAdapter.get?.(targetActorId, mode);
+        if (!adapter) {
+          swseLogger.warn(`[CharacterSheet] No customization adapter found for ${targetActorId}/${mode}`);
+          return;
         }
+        await adapter.handleAction(action, target);
       } catch (err) {
         swseLogger.error(`[CharacterSheet] Customization surface action "${action}" failed:`, err);
       }
@@ -4559,7 +4566,7 @@ const forcePoints = [];
       if (!abilityKey) return;
 
       try {
-        const result = await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true, showDialog: true });
+        const result = await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true });
 
       } catch (err) {
         // console.error("Ability roll failed:", err);
@@ -4580,8 +4587,7 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true,
-          showDialog: true
+          showRollCompanion: true
         });
       } catch (err) {
         // console.error("Initiative roll failed:", err);
@@ -4795,8 +4801,7 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true,
-          showDialog: true
+          showRollCompanion: true
         });
       } catch (err) {
         ui?.notifications?.error?.(`Unarmed attack failed: ${err.message}`);
@@ -4845,8 +4850,7 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true,
-          showDialog: true
+          showRollCompanion: true
         });
       } catch (err) {
         // console.error("Attack roll failed:", err);
@@ -4885,8 +4889,7 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true,
-          showDialog: true
+          showRollCompanion: true
         });
       } catch (err) {
         // console.error("Damage roll failed:", err);
@@ -5441,8 +5444,7 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true,
-          showDialog: true
+          showRollCompanion: true
         });
       }, { signal });
     });

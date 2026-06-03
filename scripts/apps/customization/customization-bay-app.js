@@ -73,7 +73,7 @@ const MODE_CONFIG = Object.freeze({
 
 const CONTEXT_OPTIONS = Object.freeze([
   { key: CONTEXT_MODE.BUILD_NEW, label: "Build New", tooltipKey: "bay.context.buildNew" },
-  { key: CONTEXT_MODE.MODIFY_EXISTING, label: "Modify Existing", tooltipKey: "bay.context.modifyExisting" },
+  { key: CONTEXT_MODE.MODIFY_EXISTING, label: "Modify / Browse Systems", tooltipKey: "bay.context.modifyExisting" },
   { key: CONTEXT_MODE.STORE_QUOTE, label: "Store Quote", tooltipKey: "bay.context.storeQuote" },
   { key: CONTEXT_MODE.CHARGEN_DRAFT, label: "Chargen Draft", tooltipKey: "bay.context.chargenDraft" }
 ]);
@@ -343,6 +343,9 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
         break;
       case "set-context":
         this.#setContextMode(target?.dataset?.context);
+        break;
+      case "browse-systems":
+        this.#browseSystems();
         break;
       case "add-system":
         this.#toggleAddition(target?.dataset?.systemId);
@@ -730,6 +733,15 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   #resetSelections() {
     this.selectedAdditions.clear();
     this.selectedRemovals.clear();
+    this.render({ force: true });
+  }
+
+  #browseSystems() {
+    this.contextMode = CONTEXT_MODE.MODIFY_EXISTING;
+    this.focusMode = 'browse-systems';
+    ui.notifications.info(this.mode === MODE.SHIPYARD
+      ? 'Browse ship systems below, stage installs/removals, then apply through the Shipyard engine.'
+      : 'Browse droid systems below, stage installs/removals, then apply through the Droid Garage engine.');
     this.render({ force: true });
   }
 

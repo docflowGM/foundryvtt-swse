@@ -840,3 +840,38 @@
   max-height: 100% !important;
 }
 
+
+
+/* Garage / Shipyard scroll + action safety across every V2 actor shell. */
+.swse-shell-surface--customization,
+.swse-shell-surface--customization .swse-shell-surface__body--customization,
+.swse-shell-surface--customization .swse-customization-bay {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--customization .bay-workgrid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--customization .bay-left-rail,
+.swse-shell-surface--customization .bay-main,
+.swse-shell-surface--customization .bay-right-rail {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.swse-shell-surface--asset-bay,
+.swse-shell-surface--asset-bay .swse-shell-surface__body--asset-bay {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}

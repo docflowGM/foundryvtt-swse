@@ -5,6 +5,28 @@
 
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 
+function normalizeAvailability(value) {
+    return String(value ?? '')
+        .trim()
+        .toLowerCase()
+        .replace(/[’']/g, '')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+}
+
+function matchesAvailability(availability, filterValue) {
+    const filter = normalizeAvailability(filterValue);
+    if (!filter || filter === 'all') {return true;}
+    const text = normalizeAvailability(availability);
+    if (!text) {return false;}
+    return text.split(/\s+/).includes(filter) || text.includes(filter);
+}
+
+function countVisibleProductItems(panel) {
+    return Array.from(panel.querySelectorAll('.product-item'))
+        .filter(item => item.style.display !== 'none').length;
+}
+
 /**
  * Apply availability filter to currently visible items
  * @param {HTMLElement} doc - The document element
@@ -40,26 +62,14 @@ export function applyAvailabilityFilter(doc, filterValue, itemsById) {
         // Get the availability from the item's system data
         const availability = itemData.system?.availability || itemData.system?.sourcebook?.availability || '';
 
-        // Show or hide based on filter
-        if (filterValue === 'all') {
-            // Show all items
-            item.style.display = '';
-        } else {
-            // Normalize both values for case-insensitive, whitespace-tolerant comparison
-            // Handle cases like "Military, Rare" or "Restricted, Rare"
-            const availabilityNormalized = availability.toLowerCase().trim();
-            const filterNormalized = filterValue.toLowerCase().trim();
-
-            if (availabilityNormalized.includes(filterNormalized)) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        }
+        // Show or hide based on filter.  Availability often contains compound
+        // values such as "Restricted, Rare"; matching must be token/substring
+        // based instead of exact equality.
+        item.style.display = matchesAvailability(availability, filterValue) ? '' : 'none';
     });
 
     // If all items are hidden, show the empty message
-    const visibleItems = activePanel.querySelectorAll('.product-item[style=""]').length;
+    const visibleItems = countVisibleProductItems(activePanel);
     const emptyMessage = activePanel.querySelector('.empty-message');
 
     if (visibleItems === 0 && !emptyMessage) {
@@ -114,7 +124,7 @@ export function applySearchFilter(doc, searchTerm) {
     });
 
     // Show message if no items visible
-    const visibleItems = activePanel.querySelectorAll('.product-item[style=""]').length;
+    const visibleItems = countVisibleProductItems(activePanel);
     let searchEmptyMsg = activePanel.querySelector('.search-empty-message');
 
     if (visibleItems === 0 && searchTerm !== '') {

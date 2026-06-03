@@ -17,6 +17,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 const FLAG_SCOPE = 'foundryvtt-swse';
 const FLAG_DISABLED_USERS = 'datapad.registrationPromptDisabledUsers';
 const SESSION_SUPPRESSION_KEY = 'swse.datapadRegistrationPromptSuppressed';
+const PROMPT_LOCK_KEY = 'swse.datapadRegistrationPromptLock';
 
 function getSessionSuppressionSet() {
   if (!globalThis[SESSION_SUPPRESSION_KEY]) {
@@ -97,16 +98,16 @@ function buildDatapadRegistrationContent(actor) {
   return `
     <section class="swse-datapad-registration-prompt" data-theme="${theme.themeKey}" style="${theme.surfaceStyleInline}">
       <div class="swse-datapad-registration-prompt__kicker">FIRST ACCESS DETECTED</div>
-      <h2>Datapad Access Granted</h2>
+      <h2>New Datapad Granted</h2>
       <p class="swse-datapad-registration-prompt__lead">
-        Congratulations on unlocking your first datapad, <strong>${actorName}</strong>.
+        You have been granted a new datapad, <strong>${actorName}</strong>.
       </p>
       <p>
-        This unit has not completed user registration. Registration will calibrate identity profile,
-        species data, training records, combat readiness, and starting equipment authorization.
+        This unit has not completed registration. Initialization will route you to the same
+        training/chargen sequence available from the home screen training app.
       </p>
       <p class="swse-datapad-registration-prompt__question">
-        Would you like to begin user registration now?
+        Would you like to initialize registration?
       </p>
     </section>
   `;
@@ -114,28 +115,23 @@ function buildDatapadRegistrationContent(actor) {
 
 async function showDatapadRegistrationPrompt(actor) {
   return SWSEDialogV2.wait({
-    title: 'Datapad Access Granted',
+    title: 'New Datapad Granted',
     content: buildDatapadRegistrationContent(actor),
     buttons: {
-      begin: {
+      yes: {
         icon: '<i class="fa-solid fa-fingerprint"></i>',
-        label: 'Begin User Registration',
+        label: 'Yes — Initialize Registration',
         class: 'swse-dialog-button--primary',
-        callback: () => 'begin'
+        callback: () => 'yes'
       },
-      later: {
-        icon: '<i class="fa-solid fa-clock"></i>',
-        label: 'Remind Me Later',
-        callback: () => 'later'
-      },
-      skip: {
+      no: {
         icon: '<i class="fa-solid fa-ban"></i>',
-        label: 'Skip for This Character',
+        label: 'No — Do Not Show Again',
         class: 'swse-dialog-button--danger',
-        callback: () => 'skip'
+        callback: () => 'no'
       }
     },
-    default: 'begin',
+    default: 'yes',
     render: (html) => {
       const root = html?.[0] ?? html;
       if (root instanceof HTMLElement) {
@@ -145,7 +141,7 @@ async function showDatapadRegistrationPrompt(actor) {
   }, {
     classes: ['swse-datapad-registration-dialog'],
     position: { width: 560, height: 'auto' },
-    window: { title: 'Datapad Access Granted', icon: 'fa-solid fa-tablet-screen-button' }
+    window: { title: 'New Datapad Granted', icon: 'fa-solid fa-tablet-screen-button' }
   });
 }
 
@@ -162,28 +158,125 @@ export async function maybePromptForDatapadRegistration(sheet) {
   const disabledUsers = await getDisabledPromptUsers(actor);
   if (disabledUsers?.[user.id]) return;
 
+  const lock = getPromptLock();
+  if (lock.active) return;
+
   sheet._swseDatapadRegistrationPromptActive = true;
+  lock.active = true;
   try {
     const choice = await showDatapadRegistrationPrompt(actor);
 
-    if (choice === 'begin') {
+    if (choice === 'yes') {
       getSessionSuppressionSet().add(actorUserKey);
       await launchProgression(actor, { source: 'datapad-registration-prompt' });
       return;
     }
 
-    if (choice === 'skip') {
+    if (choice === 'no') {
+      // "No" is permanent for this user/actor pair. This prevents the prompt
+      // from returning after canvas reloads or future sheet renders.
       await setPromptDisabledForUser(actor, user.id);
-      getSessionSuppressionSet().add(actorUserKey);
-      return;
     }
 
-    // "Remind Me Later" suppresses only for this browser session so the prompt
-    // does not immediately reopen during sheet rerenders.
+    // Closing the prompt suppresses only this browser session.
     getSessionSuppressionSet().add(actorUserKey);
   } catch (err) {
     swseLogger.error('[Datapad Registration] Prompt failed', err);
   } finally {
+    lock.active = false;
     sheet._swseDatapadRegistrationPromptActive = false;
   }
+}
+
+
+function getPromptLock() {
+  if (!globalThis[PROMPT_LOCK_KEY]) {
+    globalThis[PROMPT_LOCK_KEY] = { active: false };
+  }
+  return globalThis[PROMPT_LOCK_KEY];
+}
+
+function getOwnedRegistrationCandidates({ user = game?.user } = {}) {
+  if (!game?.actors || !user || user.isGM) return [];
+  return Array.from(game.actors)
+    .filter((actor) => shouldPromptForDatapadRegistration(actor, { user }))
+    .sort((a, b) => String(a?.name ?? '').localeCompare(String(b?.name ?? '')));
+}
+
+async function promptForActorFromCanvas(actor, { source = 'canvas' } = {}) {
+  const user = game?.user;
+  if (!actor || !user || user.isGM) return false;
+  if (!shouldPromptForDatapadRegistration(actor, { user })) return false;
+
+  const actorUserKey = getActorUserKey(actor, user.id);
+  if (getSessionSuppressionSet().has(actorUserKey)) return false;
+
+  const disabledUsers = await getDisabledPromptUsers(actor);
+  if (disabledUsers?.[user.id]) return false;
+
+  const lock = getPromptLock();
+  if (lock.active) return false;
+
+  lock.active = true;
+  try {
+    const choice = await showDatapadRegistrationPrompt(actor);
+
+    if (choice === 'yes') {
+      getSessionSuppressionSet().add(actorUserKey);
+      await launchProgression(actor, { source: `datapad-registration-${source}` });
+      return true;
+    }
+
+    if (choice === 'no') {
+      await setPromptDisabledForUser(actor, user.id);
+    }
+    getSessionSuppressionSet().add(actorUserKey);
+    return true;
+  } catch (err) {
+    swseLogger.error('[Datapad Registration] Canvas prompt failed', err);
+    return false;
+  } finally {
+    lock.active = false;
+  }
+}
+
+export async function maybePromptForDatapadRegistrationFromCanvas({ source = 'canvas' } = {}) {
+  const user = game?.user;
+  if (!user || user.isGM) return false;
+
+  const candidates = getOwnedRegistrationCandidates({ user });
+  if (!candidates.length) return false;
+
+  return promptForActorFromCanvas(candidates[0], { source });
+}
+
+export function initializeDatapadRegistrationOnboarding() {
+  if (!game?.user || game.user.isGM) return;
+  if (globalThis.__swseDatapadRegistrationOnboardingInitialized) return;
+  globalThis.__swseDatapadRegistrationOnboardingInitialized = true;
+
+  const scheduleCanvasPrompt = (source = 'canvas') => {
+    window.setTimeout(() => {
+      maybePromptForDatapadRegistrationFromCanvas({ source }).catch((err) => {
+        swseLogger.warn('[Datapad Registration] Scheduled onboarding prompt failed', err);
+      });
+    }, 250);
+  };
+
+  if (canvas?.ready) scheduleCanvasPrompt('ready');
+  else Hooks.once('canvasReady', () => scheduleCanvasPrompt('canvasReady'));
+
+  Hooks.on('createActor', (actor) => {
+    if (shouldPromptForDatapadRegistration(actor, { user: game?.user })) {
+      scheduleCanvasPrompt('actor-created');
+    }
+  });
+
+  Hooks.on('updateActor', (actor, changes = {}) => {
+    const ownershipChanged = Object.prototype.hasOwnProperty.call(changes ?? {}, 'ownership')
+      || Object.prototype.hasOwnProperty.call(changes ?? {}, 'permission');
+    if (ownershipChanged || shouldPromptForDatapadRegistration(actor, { user: game?.user })) {
+      scheduleCanvasPrompt('actor-updated');
+    }
+  });
 }

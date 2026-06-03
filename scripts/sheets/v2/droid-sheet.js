@@ -658,11 +658,20 @@ export class SWSEV2DroidSheet extends
         const { CustomizationSurfaceAdapter } = await import(
           '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
         );
-        const mode = this._shellSurfaceOptions?.bayMode
+        const mode = surfaceRoot.dataset.bayMode
+          || this._shellSurfaceOptions?.bayMode
           || this._shellSurfaceOptions?.mode
           || (this.actor?.type === 'vehicle' ? 'shipyard' : 'garage');
-        const adapter = CustomizationSurfaceAdapter._registry?.get?.(`${this.actor.id}-${mode}`);
-        await adapter?.handleAction?.(action, target);
+        const targetActorId = surfaceRoot.dataset.actorId
+          || this._shellSurfaceOptions?.targetActorId
+          || this.actor?.id;
+        const adapter = CustomizationSurfaceAdapter.getForActor?.(targetActorId, mode)
+          || CustomizationSurfaceAdapter.get?.(targetActorId, mode);
+        if (!adapter) {
+          SWSELogger.warn(`[SWSEV2DroidSheet] No customization adapter found for ${targetActorId}/${mode}`);
+          return;
+        }
+        await adapter.handleAction?.(action, target);
       } catch (err) {
         SWSELogger.error(`[SWSEV2DroidSheet] Customization surface action "${action}" failed:`, err);
       }

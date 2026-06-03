@@ -232,6 +232,10 @@ export class ForceRegistry {
     const pack = game?.packs?.get(packKey);
     const normalizeOptions = { ...options, packKey };
     if (!pack) {
+      if (String(packKey || '').includes('lightsaberformpowers')) {
+        await this._loadLightsaberFormPowersFromData(packKey, type, normalizeOptions);
+        return;
+      }
       SWSELogger.warn(
         `[ForceRegistry] Compendium pack "${packKey}" not found. Skipping.`
       );
@@ -247,35 +251,7 @@ export class ForceRegistry {
         }
 
         const entry = this._normalizeEntry(doc, type, normalizeOptions);
-        this._entries.push(entry);
-
-        // Index by id
-        this._byId.set(entry.id, entry);
-
-        // Index by name (lowercase for case-insensitive lookup)
-        this._byName.set(entry.name.toLowerCase(), entry);
-
-        // Index by type
-        if (!this._byType.has(type)) {
-          this._byType.set(type, []);
-        }
-        this._byType.get(type).push(entry);
-
-        // Index by category
-        if (entry.category) {
-          if (!this._byCategory.has(entry.category)) {
-            this._byCategory.set(entry.category, []);
-          }
-          this._byCategory.get(entry.category).push(entry);
-        }
-
-        // Index by tags
-        for (const tag of entry.tags) {
-          if (!this._byTag.has(tag)) {
-            this._byTag.set(tag, []);
-          }
-          this._byTag.get(tag).push(entry);
-        }
+        this._indexEntry(entry, type);
       }
     } catch (err) {
       SWSELogger.error(`[ForceRegistry] Failed to load from pack "${packKey}":`, err);
@@ -290,6 +266,75 @@ export class ForceRegistry {
    * @param {string} type - Force item type (power, technique, secret)
    * @returns {ForceRegistryEntry}
    */
+  static _indexEntry(entry, type) {
+    if (!entry?.id || !entry?.name) return;
+
+    this._entries.push(entry);
+    this._byId.set(entry.id, entry);
+    this._byName.set(entry.name.toLowerCase(), entry);
+
+    if (!this._byType.has(type)) {
+      this._byType.set(type, []);
+    }
+    this._byType.get(type).push(entry);
+
+    if (entry.category) {
+      if (!this._byCategory.has(entry.category)) {
+        this._byCategory.set(entry.category, []);
+      }
+      this._byCategory.get(entry.category).push(entry);
+    }
+
+    for (const tag of entry.tags || []) {
+      if (!this._byTag.has(tag)) {
+        this._byTag.set(tag, []);
+      }
+      this._byTag.get(tag).push(entry);
+    }
+  }
+
+  static async _loadLightsaberFormPowersFromData(packKey, type, options = {}) {
+    const path = 'systems/foundryvtt-swse/data/lightsaber-form-powers.json';
+    try {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      const data = await response.json();
+      const powers = Array.isArray(data?.powers) ? data.powers : [];
+      for (const power of powers) {
+        const slug = normalizeForcePowerAssetSlug(power.name);
+        const tags = Array.from(new Set([
+          ...(Array.isArray(power.tags) ? power.tags : []),
+          'lightsaber-form',
+          'form-power'
+        ].map(tag => String(tag || '').toLowerCase().trim()).filter(Boolean)));
+        const system = {
+          ...power,
+          category: options.category || 'lightsaber-form',
+          tags,
+          description: power.description || '',
+          source: power.source || data.description || 'Jedi Academy Training Manual'
+        };
+        this._indexEntry({
+          id: slug || foundry?.utils?.randomID?.() || `lightsaber-form-${powers.indexOf(power)}`,
+          uuid: null,
+          name: power.name,
+          type,
+          category: 'lightsaber-form',
+          tags,
+          prerequisites: { raw: power.prerequisites ?? null },
+          description: power.description || '',
+          source: system.source,
+          img: toSystemAssetPath(FORCE_POWER_ASSET_BY_SLUG[slug] || 'assets/icons/force-powers/force-power-31.png'),
+          pack: packKey || 'data:lightsaber-form-powers',
+          system
+        }, type);
+      }
+      SWSELogger.warn(`[ForceRegistry] Compendium pack "${packKey}" not found. Loaded ${powers.length} lightsaber form powers from data fallback.`);
+    } catch (err) {
+      SWSELogger.warn(`[ForceRegistry] Compendium pack "${packKey}" not found and data fallback failed. Skipping.`, err);
+    }
+  }
+
   static _normalizeEntry(doc, type, options = {}) {
     const system = doc.system || {};
 

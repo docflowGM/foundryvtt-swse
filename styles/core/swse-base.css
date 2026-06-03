@@ -42,3 +42,42 @@
   padding: 0;
 }
 
+
+/* SWSE credit marker: small local SVG + text fallback for Galactic Credit displays. */
+.credits-icon,
+.credits-symbol,
+.sheet-credits-symbol,
+.swse-npc-credits-symbol,
+.swse-credit-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.85em;
+  margin-right: 0.12em;
+  color: currentColor;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 0 8px currentColor;
+}
+
+.credits-icon::before,
+.credits-symbol::before,
+.sheet-credits-symbol::before,
+.swse-npc-credits-symbol::before,
+.swse-credit-symbol::before {
+  content: "";
+  width: 0.82em;
+  height: 0.82em;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask: url('/systems/foundryvtt-swse/assets/icons/credit-symbol.svg') center / contain no-repeat;
+  mask: url('/systems/foundryvtt-swse/assets/icons/credit-symbol.svg') center / contain no-repeat;
+}
+
+.credits-icon,
+.credits-symbol,
+.sheet-credits-symbol,
+.swse-npc-credits-symbol,
+.swse-credit-symbol {
+  font-size: 0;
+}

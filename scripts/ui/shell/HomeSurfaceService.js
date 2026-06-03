@@ -19,7 +19,6 @@ import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/hol
 import { HomeFeedTaskEmitter } from '/systems/foundryvtt-swse/scripts/holonet/emitters/home-feed-task-emitter.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
-import { LightsaberConstructionEngine } from '/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js';
 
 function supportedTypesForMentor(actor) {
   return ['character', 'droid', 'npc'].includes(actor?.type);
@@ -81,20 +80,34 @@ function hasEntries(value) {
   return asArray(value).filter(Boolean).length > 0;
 }
 
+function normalizeAssetType(value) {
+  const raw = String(value ?? '').toLowerCase().trim();
+  if (!raw) return '';
+  if (raw === 'droid' || raw === 'asset-droid' || raw === 'owned-droid' || raw === 'follower-droid') return 'droid';
+  if (['vehicle', 'ship', 'starship', 'asset-vehicle', 'asset-ship', 'owned-vehicle', 'owned-ship'].includes(raw)) return 'vehicle';
+  if (raw.includes('droid')) return 'droid';
+  if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('starship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicle';
+  return raw;
+}
+
 function relationshipMatchesType(relationship, acceptedTypes = []) {
-  const type = String(
-    relationship?.type
+  const accepted = acceptedTypes.map(normalizeAssetType);
+  const actor = game?.actors?.get?.(String(relationship?.id ?? relationship?.actorId ?? '').replace(/^Actor\./, '')) ?? null;
+  const type = normalizeAssetType(
+    actor?.type
+    ?? relationship?.type
     ?? relationship?.actorType
     ?? relationship?.documentType
     ?? relationship?.kind
     ?? ''
-  ).toLowerCase();
-  return acceptedTypes.includes(type);
+  );
+  return accepted.includes(type);
 }
 
 function ownedItemMatchesType(item, acceptedTypes = []) {
-  const type = String(item?.type ?? '').toLowerCase();
-  return acceptedTypes.includes(type);
+  const accepted = acceptedTypes.map(normalizeAssetType);
+  const type = normalizeAssetType(item?.type ?? item?.system?.type ?? item?.system?.assetType ?? '');
+  return accepted.includes(type);
 }
 
 function formatTimestamp(value) {
@@ -216,17 +229,16 @@ function categoryLabel(record) {
 
 export class HomeSurfaceService {
   static async buildViewModel(actor) {
-    const lightsaberConstructionSummary = this._getLightsaberConstructionSummary(actor);
     const [progressionSummary, upgradeSummary, alliesSummary] = await Promise.all([
       this._getProgressionSummary(actor),
-      this._getUpgradeSummary(actor, lightsaberConstructionSummary),
+      this._getUpgradeSummary(actor),
       this._getAlliesSummary(actor)
     ]);
 
-    await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary, lightsaberConstructionSummary);
+    await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary);
     const holonetSummary = await this._getHolonetSummary(actor);
 
-    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary, lightsaberConstructionSummary);
+    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary);
     const actorData = this._buildActorData(actor);
     const lockScreenState = this._buildLockScreenState(actor);
 
@@ -252,7 +264,6 @@ export class HomeSurfaceService {
       currentState: holonetSummary.currentState,
       commFeed,
       lastSession: holonetSummary.lastSession,
-      lightsaberConstruction: lightsaberConstructionSummary,
       lastSeenAgo: this._formatLastSeen(),
       stardate: this._formatStardate(),
       hpCurrent: actorData.hpCurrent,
@@ -326,59 +337,20 @@ export class HomeSurfaceService {
     }
   }
 
-  static async _getUpgradeSummary(actor, lightsaberConstructionSummary = {}) {
+  static async _getUpgradeSummary(actor) {
     try {
       if (!actor) return { visible: false, enabled: false, badge: null };
       const { ItemCustomizationWorkbench } = await import('/systems/foundryvtt-swse/scripts/apps/customization/item-customization-workbench.js');
       const customizable = Array.from(actor.items ?? []).filter(item => ItemCustomizationWorkbench.supportsItem(item));
-      const saberReady = !!lightsaberConstructionSummary.available;
-      if (customizable.length === 0 && !saberReady) return { visible: false, enabled: false, badge: null };
+      if (customizable.length === 0) return { visible: false, enabled: false, badge: null };
       return {
         visible: true,
         enabled: true,
-        badge: saberReady ? 'SABER' : (customizable.length > 0 ? String(customizable.length) : null),
-        itemCount: customizable.length,
-        lightsaberReady: saberReady,
-        route: saberReady ? lightsaberConstructionSummary.route : null
+        badge: customizable.length > 0 ? String(customizable.length) : null
       };
     } catch (err) {
       SWSELogger.warn('[HomeSurfaceService] Workbench summary failed:', err);
       return { visible: false, enabled: false, badge: null };
-    }
-  }
-
-  static _getLightsaberConstructionSummary(actor) {
-    try {
-      if (!actor || !['character', 'npc'].includes(actor.type)) return { visible: false, available: false, enabled: false, badge: null, route: null };
-      const eligibility = LightsaberConstructionEngine.getEligibility(actor) || {};
-      const hasSelfBuilt = LightsaberConstructionEngine.hasSelfBuiltLightsaber(actor);
-      const deferred = actor.getFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred') === true;
-      const available = !!eligibility.eligible && !hasSelfBuilt;
-      const route = {
-        surface: 'workbench',
-        category: 'lightsaber',
-        initialCategory: 'lightsaber',
-        mode: 'construct',
-        routeIntent: 'lightsaber-construction',
-        entryPoint: 'home'
-      };
-      return {
-        visible: available,
-        available,
-        enabled: available,
-        deferred,
-        hasSelfBuilt,
-        reason: eligibility.reason || null,
-        badge: available ? 'SABER' : null,
-        status: available ? 'SABER READY' : 'LOCKED',
-        routeId: 'workbench',
-        route,
-        title: 'Lightsaber Construction Available',
-        body: 'MIRAJ · CRYSTAL-SINGER: The cave is open. You are ready to construct your own lightsaber.'
-      };
-    } catch (err) {
-      SWSELogger.warn('[HomeSurfaceService] Lightsaber construction summary failed:', err);
-      return { visible: false, available: false, enabled: false, badge: null, route: null, reason: 'Eligibility could not be evaluated.' };
     }
   }
 
@@ -496,7 +468,7 @@ export class HomeSurfaceService {
   }
 
 
-  static async _publishHomeTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {}) {
+  static async _publishHomeTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}) {
     try {
       const recipientIds = this._homeRecipientIds(actor);
       if (!actor || !recipientIds.length) return;
@@ -505,8 +477,7 @@ export class HomeSurfaceService {
         recipientIds,
         progressionSummary,
         upgradeSummary,
-        alliesSummary,
-        lightsaberConstructionSummary
+        alliesSummary
       });
     } catch (err) {
       SWSELogger.warn('[HomeSurfaceService] Holonet home task sync failed:', err);
@@ -573,8 +544,6 @@ export class HomeSurfaceService {
     if (summary.messages > 0) chips.push({ key: 'messages', label: 'MSG', count: summary.messages });
     if (summary.transactions > 0) chips.push({ key: 'transactions', label: 'STORE', count: summary.transactions });
     if (summary.mentor > 0) chips.push({ key: 'mentor', label: 'MENTOR', count: summary.mentor });
-    const workbench = Number(summary.bySourceFamily?.[SOURCE_FAMILY.WORKBENCH] ?? 0) || 0;
-    if (workbench > 0) chips.push({ key: 'workbench', label: 'FORGE', count: workbench });
     if (summary.approvals > 0 && game.user?.isGM) chips.push({ key: 'approvals', label: 'APPROVAL', count: summary.approvals });
     return chips;
   }
@@ -606,7 +575,6 @@ export class HomeSurfaceService {
 
   static _mapFeedRecord(record, recipientIds, { featured = false } = {}) {
     const body = record?.body || '';
-    const route = record?.metadata?.route || {};
     return {
       id: record.id,
       recordId: record.id,
@@ -619,13 +587,6 @@ export class HomeSurfaceService {
       timestamp: formatTimestamp(record.publishedAt || record.createdAt),
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
       priority: record.priority || record.metadata?.priority || 'normal',
-      routeId: record.metadata?.routeId || route.surface || null,
-      workbenchCategory: record.metadata?.workbenchCategory || route.category || null,
-      initialCategory: record.metadata?.initialCategory || route.initialCategory || null,
-      mode: record.metadata?.mode || route.mode || null,
-      routeIntent: record.metadata?.routeIntent || route.routeIntent || null,
-      entryPoint: record.metadata?.entryPoint || route.entryPoint || null,
-      tab: record.metadata?.tab || route.tab || null,
       isBreakingNews: record.metadata?.breakingNews === true,
       isUrgent: record.metadata?.breakingNews === true || record.metadata?.urgent === true || record.priority === 'critical',
       isUnread: uniqueStrings(Array.isArray(recipientIds) ? recipientIds : [recipientIds]).some(id => Boolean(record.isUnreadBy?.(id)))
@@ -826,7 +787,7 @@ export class HomeSurfaceService {
   /**
    * Build app tiles with radial positioning, badge types, and state flags
    */
-  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}, lightsaberConstructionSummary = {}) {
+  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}) {
     if (isVehicleActor(actor)) return this._buildVehicleAppTiles(actor, holonetSummary);
     const assetSummary = this._getOwnedAssetSummary(actor);
     const gamesEnabled = (() => {
@@ -869,23 +830,18 @@ export class HomeSurfaceService {
       },
       {
         id: 'workbench',
-        label: lightsaberConstructionSummary.available ? 'Saber\nForge' : 'Workbench',
+        label: 'Workbench',
         icon: '✦',
         routeId: 'workbench',
-        visible: upgradeSummary.visible || lightsaberConstructionSummary.available,
-        enabled: upgradeSummary.enabled || lightsaberConstructionSummary.available,
-        badge: lightsaberConstructionSummary.available ? 'SABER' : upgradeSummary.badge,
-        badgeType: lightsaberConstructionSummary.available ? 'crit' : (upgradeSummary.badge ? 'info' : null),
-        featured: !!lightsaberConstructionSummary.available,
-        locked: !(upgradeSummary.enabled || lightsaberConstructionSummary.available) && (upgradeSummary.visible || lightsaberConstructionSummary.available),
-        status: lightsaberConstructionSummary.available ? 'SABER READY' : (upgradeSummary.badge ? `${upgradeSummary.badge} ITEMS` : 'NONE'),
-        statusTone: lightsaberConstructionSummary.available || upgradeSummary.badge ? 'warn' : '',
-        description: lightsaberConstructionSummary.available ? 'Construct your self-built lightsaber' : 'Upgrade gear and equipment',
-        category: lightsaberConstructionSummary.available ? 'lightsaber' : null,
-        initialCategory: lightsaberConstructionSummary.available ? 'lightsaber' : null,
-        mode: lightsaberConstructionSummary.available ? 'construct' : null,
-        routeIntent: lightsaberConstructionSummary.available ? 'lightsaber-construction' : null,
-        entryPoint: lightsaberConstructionSummary.available ? 'home-tile' : null
+        visible: upgradeSummary.visible,
+        enabled: upgradeSummary.enabled,
+        badge: upgradeSummary.badge,
+        badgeType: upgradeSummary.badge ? 'info' : null,
+        featured: false,
+        locked: !upgradeSummary.enabled && upgradeSummary.visible,
+        status: upgradeSummary.badge ? `${upgradeSummary.badge} ITEMS` : 'NONE',
+        statusTone: upgradeSummary.badge ? 'warn' : '',
+        description: 'Upgrade gear and equipment'
       },
       {
         id: 'store',
@@ -1047,7 +1003,19 @@ export class HomeSurfaceService {
     const relationships = asArray(system.relationships);
     const items = asArray(actor.items);
 
-    const ownedActorLinks = asArray(system.ownedActors);
+    const followerSlots = asArray(actor.getFlag?.('foundryvtt-swse', 'followerSlots'))
+      .map(slot => ({
+        id: slot?.createdActorId ?? slot?.actorId ?? slot?.id,
+        actorId: slot?.createdActorId ?? slot?.actorId ?? slot?.id,
+        type: slot?.actorType ?? slot?.type ?? slot?.kind ?? '',
+        name: slot?.name ?? slot?.label
+      }))
+      .filter(entry => entry.id);
+    const ownedActorLinks = [
+      ...asArray(system.ownedActors),
+      ...asArray(actor.getFlag?.('foundryvtt-swse', 'followers')),
+      ...followerSlots
+    ];
     const droidRefs = [
       ...ownedActorLinks.filter(entry => relationshipMatchesType(entry, ['droid']) || game.actors?.get?.(String(entry?.id ?? entry?.actorId ?? '').replace(/^Actor\./, ''))?.type === 'droid'),
       ...asArray(system.droids),

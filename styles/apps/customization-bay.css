@@ -200,6 +200,34 @@
   clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
 }
 
+.bay-section__head--actions {
+  align-items: flex-start;
+}
+
+.bay-section__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bay-section-action {
+  padding: 6px 10px;
+  color: var(--bay-accent);
+  background: color-mix(in oklch, var(--bay-accent) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--bay-accent) 45%, transparent);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.bay-section-action:hover {
+  box-shadow: var(--bay-glow);
+}
+
 .bay-mentor {
   display: grid;
   grid-template-columns: 78px 1fr;
@@ -753,4 +781,32 @@
   .bay-mentor {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* Scroll safety: Garage/Shipyard surfaces must never clip long system lists. */
+.swse-customization-bay {
+  min-height: 0;
+  max-height: calc(100vh - 96px);
+}
+
+.swse-customization-bay .bay-workgrid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-customization-bay .bay-left-rail,
+.swse-customization-bay .bay-main,
+.swse-customization-bay .bay-right-rail {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding-right: 4px;
+}
+
+.swse-customization-bay .bay-system-groups,
+.swse-customization-bay .bay-card-grid {
+  min-height: 0;
 }

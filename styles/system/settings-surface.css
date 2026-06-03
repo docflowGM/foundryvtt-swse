@@ -200,3 +200,128 @@
   border-color: var(--swse-accent, #70e2ff);
   background: color-mix(in srgb, var(--swse-accent, #70e2ff) 12%, transparent);
 }
+
+/* System Manual — readable help file embedded in the shared Holopad Settings surface. */
+.swse-system-manual {
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.swse-system-manual__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.swse-system-manual__header h2 {
+  margin: 3px 0 0;
+  color: var(--swse-accent, #70e2ff);
+  font-family: var(--swse-font-display, var(--swse-font-mono, monospace));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent);
+}
+
+.swse-system-manual__chip {
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent);
+  border-radius: 999px;
+  color: var(--swse-accent, #70e2ff);
+  background: color-mix(in srgb, var(--swse-accent, #70e2ff) 10%, transparent);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-system-manual__intro {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--swse-accent, #70e2ff);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--swse-accent, #70e2ff) 8%, transparent);
+  color: color-mix(in srgb, var(--swse-ink, #dff8ff) 84%, transparent);
+  line-height: 1.55;
+}
+
+.swse-system-manual__pages {
+  display: grid;
+  gap: 12px;
+}
+
+.swse-system-manual-page {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--swse-accent, #70e2ff) 7%, transparent), transparent 38%),
+    rgba(0, 0, 0, 0.22);
+}
+
+.swse-system-manual-page__index {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent);
+  border-radius: 14px;
+  color: var(--swse-accent, #70e2ff);
+  background: color-mix(in srgb, var(--swse-accent, #70e2ff) 9%, transparent);
+  font-family: var(--swse-font-display, var(--swse-font-mono, monospace));
+  font-size: 1.1rem;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--swse-accent, #70e2ff) 30%, transparent);
+}
+
+.swse-system-manual-page h3 {
+  margin: 2px 0 6px;
+  color: var(--swse-accent, #70e2ff);
+  font-family: var(--swse-font-display, var(--swse-font-mono, monospace));
+  letter-spacing: 0.06em;
+}
+
+.swse-system-manual-page p {
+  margin: 0 0 8px;
+  color: color-mix(in srgb, var(--swse-ink, #dff8ff) 86%, transparent);
+  line-height: 1.55;
+}
+
+.swse-system-manual-page ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.swse-system-manual-page li {
+  margin-bottom: 6px;
+  color: color-mix(in srgb, var(--swse-ink, #dff8ff) 80%, transparent);
+  line-height: 1.45;
+}
+
+.swse-system-manual-page--aurabesh .swse-system-manual-page__content,
+.swse-system-manual-page--aurabesh .swse-system-manual-page__content * {
+  font-family: var(--swse-font-aurabesh, 'Aurabesh', var(--swse-font-body, sans-serif)) !important;
+  letter-spacing: 0.08em;
+}
+
+.swse-system-manual-page--aurabesh {
+  border-color: color-mix(in srgb, var(--swse-pos, #7dffb2) 32%, transparent);
+  background:
+    radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--swse-pos, #7dffb2) 12%, transparent), transparent 46%),
+    rgba(0, 0, 0, 0.26);
+}
+
+@media (max-width: 700px) {
+  .swse-system-manual__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .swse-system-manual-page {
+    grid-template-columns: 1fr;
+  }
+}

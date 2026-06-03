@@ -146,5 +146,5 @@ export async function resolveStoreDescription(item) {
 }
 
 export function getStoreCurrencySymbol() {
-  return '$';
+  return '◈';
 }

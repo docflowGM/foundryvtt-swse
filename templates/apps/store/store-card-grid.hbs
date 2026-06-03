@@ -59,7 +59,7 @@
     {{#if children}}
     <div class="store-subcat-nav">
       {{!-- "All [Category]" reset chip --}}
-      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="">
+      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="">
         All {{label}}<span class="store-chip-count">{{count}}</span>
       </button>
 
@@ -71,7 +71,7 @@
         <div class="store-family-chips">
           {{#each familyGroups.melee}}
           <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../../currentSubcategory)}}active{{/if}}"
-                  data-action="subcategory-nav" data-subcategory="{{label}}">
+                  data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
             {{label}}<span class="store-chip-count">{{count}}</span>
           </button>
           {{/each}}
@@ -85,7 +85,7 @@
         <div class="store-family-chips">
           {{#each familyGroups.ranged}}
           <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../../currentSubcategory)}}active{{/if}}"
-                  data-action="subcategory-nav" data-subcategory="{{label}}">
+                  data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
             {{label}}<span class="store-chip-count">{{count}}</span>
           </button>
           {{/each}}
@@ -97,7 +97,7 @@
       {{!-- OTHER CATEGORIES: List all subcategories --}}
       {{#each children}}
       <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../currentSubcategory)}}active{{/if}}"
-              data-action="subcategory-nav" data-subcategory="{{label}}">
+              data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
         {{label}}<span class="store-chip-count">{{count}}</span>
       </button>
       {{/each}}
@@ -349,7 +349,7 @@
       <div class="card-grid-container">
         <div class="products-grid" id="products-grid">
           {{#each allItems}}
-            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
+            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
               <div class="card-header">
                 {{#if this.suggestion}}
                   <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>

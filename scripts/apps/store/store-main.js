@@ -31,7 +31,8 @@ import {
   getRarityClass,
   getRarityLabel,
   getCostValue,
-  buildStoreNavigationModel
+  buildStoreNavigationModel,
+  normalizeArmorSubcategory
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
@@ -63,6 +64,60 @@ function emptyCart() {
 
 function asArray(v) {
   return Array.isArray(v) ? v : [];
+}
+
+function normalizeStoreFilterValue(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function normalizeAvailabilityText(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function getStoreAvailabilityText(itemOrView = {}) {
+  const sys = itemOrView.system ?? itemOrView.data ?? {};
+  return String(
+    sys.availability
+    ?? itemOrView.availability
+    ?? itemOrView.rarityLabel
+    ?? itemOrView.rarityClass
+    ?? ''
+  ).trim();
+}
+
+function storeItemCategoryKey(itemOrView = {}) {
+  const raw = String(itemOrView.category ?? itemOrView.type ?? '').trim().toLowerCase();
+  if (!raw) return '';
+  if (raw.includes('weapon')) return 'weapons';
+  if (raw.includes('armor')) return 'armor';
+  if (raw.includes('droid')) return 'droids';
+  if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
+  if (raw.includes('gear') || raw.includes('equipment')) return 'gear';
+  return raw.replace(/\s+/g, '-');
+}
+
+function getStoreNavigationSubcategory(itemOrView = {}) {
+  const categoryKey = storeItemCategoryKey(itemOrView);
+  if (categoryKey === 'armor') return normalizeArmorSubcategory(itemOrView);
+  return String(itemOrView.subcategory ?? itemOrView.system?.subcategory ?? itemOrView.system?.category ?? '').trim();
+}
+
+function availabilityMatches(itemOrView = {}, filterValue = '') {
+  const filter = normalizeAvailabilityText(filterValue);
+  if (!filter || filter === 'all') return true;
+  const availability = normalizeAvailabilityText(getStoreAvailabilityText(itemOrView));
+  if (!availability) return false;
+  return availability.split(/\s+/).includes(filter) || availability.includes(filter);
 }
 
 export class SWSEStore extends BaseSWSEAppV2 {
@@ -236,6 +291,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
       cartEntries,
       currentView,
       currentCategory: this.currentCategory,
+      currentSubcategory: this.currentSubcategory,
+      currentFamily: this.currentFamily,
       currentCategoryLabel,
       categorySummary,
       selectedProduct,
@@ -682,34 +739,38 @@ export class SWSEStore extends BaseSWSEAppV2 {
       const suggestion = this.suggestions.get(item.id);
       const view = this._viewFromItem(item);
 
-      // Add category for filtering
+      // Add category/subcategory for filtering.  The visible navigation uses
+      // normalized category keys (weapons/armor/etc.) while compendium data often
+      // stores labels (Weapons/Armor). Keep both forms aligned here.
       view.category = item.category || item.type || '';
-      view.availability = (item.rarityLabel || item.system?.availability || '').toString();
+      view.categoryKey = storeItemCategoryKey(item);
+      view.subcategory = getStoreNavigationSubcategory(item);
+      view.subcategoryKey = normalizeStoreFilterValue(view.subcategory);
+      view.availability = getStoreAvailabilityText(item) || 'Standard';
+      view.availabilityKey = normalizeAvailabilityText(view.availability);
       view.price = view.finalCost;
       view.canPurchase = view.storePolicy?.canPurchase !== false;
       view.blockedReason = view.storePolicy?.blockedReason || '';
 
-      // Phase 2: Apply category/subcategory/family filtering
-      // Skip items that don't match the active filter
+      // Phase 2: Apply category/subcategory/family filtering.
       if (this.currentCategory) {
-        const itemCategory = (item.category || item.type || '').toLowerCase();
+        const itemCategory = storeItemCategoryKey(item);
         const filterCategory = String(this.currentCategory).toLowerCase();
         if (itemCategory !== filterCategory) {
           continue;
         }
       }
 
-      // Phase 2: Filter by subcategory if active
       if (this.currentSubcategory) {
-        const itemSubcategory = String(item.subcategory || '');
-        if (itemSubcategory !== this.currentSubcategory) {
+        const itemSubcategory = normalizeStoreFilterValue(getStoreNavigationSubcategory(item));
+        const filterSubcategory = normalizeStoreFilterValue(this.currentSubcategory);
+        if (itemSubcategory !== filterSubcategory) {
           continue;
         }
       }
 
-      // Phase 2: Filter by weapon family if active (secondary filter within weapons)
       if (this.currentFamily && this.currentCategory === 'weapons') {
-        const itemSubcategory = String(item.subcategory || '').toLowerCase();
+        const itemSubcategory = String(getStoreNavigationSubcategory(item)).toLowerCase();
         const familyMatch = this.currentFamily === 'melee'
           ? (itemSubcategory.includes('melee') || itemSubcategory.includes('lightsaber') || itemSubcategory.includes('exotic'))
           : (itemSubcategory.includes('ranged') || itemSubcategory.includes('pistol') || itemSubcategory.includes('rifle') || itemSubcategory.includes('heavy'));
@@ -829,7 +890,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
       rarityLabel: item.rarityLabel || getRarityLabel(rarityClass),
       system: sys,
       type: item.type,
-      subcategory: item.subcategory || sys.subcategory || sys.category || '',
+      categoryKey: storeItemCategoryKey(item),
+      subcategory: getStoreNavigationSubcategory(item),
+      subcategoryKey: normalizeStoreFilterValue(getStoreNavigationSubcategory(item)),
+      availability: getStoreAvailabilityText(item) || 'Standard',
+      availabilityKey: normalizeAvailabilityText(getStoreAvailabilityText(item) || 'Standard'),
       typeLabel: this._getItemTypeLabel(item.type),
       storePolicy
     };
@@ -904,6 +969,19 @@ export class SWSEStore extends BaseSWSEAppV2 {
     root.querySelectorAll('[data-action="category-nav"]').forEach(btn => {
       btn.addEventListener('click', ev => {
         this.currentCategory = ev.currentTarget?.dataset?.category || '';
+        this.currentSubcategory = null;
+        this.currentFamily = null;
+        this.currentPage = 1;
+        this.currentView = 'browse';
+        this.render();
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="subcategory-nav"]').forEach(btn => {
+      btn.addEventListener('click', ev => {
+        this.currentSubcategory = ev.currentTarget?.dataset?.subcategory || null;
+        this.currentFamily = ev.currentTarget?.dataset?.family || null;
+        this.currentPage = 1;
         this.currentView = 'browse';
         this.render();
       }, { signal });
@@ -911,6 +989,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     root.querySelectorAll('[data-action="clear-filters"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentCategory = '';
+        this.currentSubcategory = null;
+        this.currentFamily = null;
         this.currentPage = 1;
         const searchInput = root.querySelector('#store-search');
         const availability = root.querySelector('#store-availability-filter');
@@ -1144,15 +1224,15 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       const name = (item.name || '').toLowerCase();
       const desc = (item.system?.description || '').toString().toLowerCase();
-      // Normalize category and availability to lowercase for case-insensitive matching
-      const category = (card.dataset.category || '').toLowerCase();
-      const availability = (card.dataset.availability || '').toLowerCase();
+      const cardCategory = (card.dataset.categoryKey || card.dataset.category || '').toLowerCase();
+      const cardSubcategory = normalizeStoreFilterValue(card.dataset.subcategory || '');
 
       const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
-      const matchesCategory = !categoryFilter || category === categoryFilter.toLowerCase();
-      const matchesAvailability = !availabilityFilter || availability === availabilityFilter.toLowerCase();
+      const matchesCategory = !categoryFilter || cardCategory === String(categoryFilter).toLowerCase();
+      const matchesSubcategory = !this.currentSubcategory || cardSubcategory === normalizeStoreFilterValue(this.currentSubcategory);
+      const matchesAvailability = availabilityMatches(item, availabilityFilter);
 
-      if (matchesSearch && matchesCategory && matchesAvailability) {
+      if (matchesSearch && matchesCategory && matchesSubcategory && matchesAvailability) {
         visibleCards.push({ card, item });
       }
     });
@@ -1210,6 +1290,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (allBtn) {
       allBtn.classList.toggle('is-active', !categoryFilter);
     }
+    root.querySelectorAll('[data-action="subcategory-nav"]').forEach(btn => {
+      const sub = btn.dataset.subcategory || '';
+      const isActive = normalizeStoreFilterValue(sub) === normalizeStoreFilterValue(this.currentSubcategory || '');
+      btn.classList.toggle('is-active', isActive);
+      btn.classList.toggle('active', isActive);
+    });
 
     // Render pagination controls
     this._renderPaginationControls(root, this.currentPage, totalPages);

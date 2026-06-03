@@ -16,6 +16,7 @@ import { validateCoreData, registerSafetyDiagnostics } from "/systems/foundryvtt
 import { registerMutationSafety } from "/systems/foundryvtt-swse/scripts/core/mutation-safety.js";
 import { registerDiagnosticsCommand } from "/systems/foundryvtt-swse/scripts/core/v1-api-scanner.js";
 import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
+import { initializeDatapadRegistrationOnboarding } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/chargen-onboarding.js";
 
 // Phase 6: Product-Grade Finish
 import {
@@ -358,6 +359,7 @@ export function registerHardeningHooks() {
   // Validate on ready
   Hooks.once('ready', async () => {
     await validateSystemReady();
+    initializeDatapadRegistrationOnboarding();
 
     // GM can open status panel (safe to access game.user here)
     if (game.user?.isGM) {

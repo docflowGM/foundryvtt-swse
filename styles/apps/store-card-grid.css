@@ -498,3 +498,65 @@
   opacity: 0.55;
   filter: grayscale(0.35);
 }
+
+/* P0 store filter/stock stability: keep the catalog pane constrained and internally scrollable. */
+.swse-app-store .window-content {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.swse-app-store .swse-sheet,
+.swse-app-store .store-shell,
+.swse-store-ui.store-shell {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.swse-store-ui .store-header,
+.swse-store-ui .store-tabs,
+.swse-store-ui .store-filter-bar,
+.swse-store-ui .store-scanline {
+  flex: 0 0 auto;
+}
+
+.swse-store-ui .store-viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-store-ui .store-pane-browse {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-store-ui .store-pane-browse .card-grid-container,
+.swse-store-ui .store-detail-main,
+.swse-store-ui .store-cart-list,
+.swse-store-ui .store-history-layout,
+.swse-store-ui .checkout-ledger-list {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.swse-store-ui .store-subcat-nav {
+  flex: 0 0 auto;
+  max-height: 112px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.swse-store-ui .store-subcat-chip.active,
+.swse-store-ui .store-subcat-chip.is-active {
+  border-color: rgba(255, 214, 102, 0.55);
+  color: var(--holo-yellow, #ffd666);
+  box-shadow: 0 0 0 1px rgba(255, 214, 102, 0.14), 0 0 14px rgba(255, 214, 102, 0.10);
+}

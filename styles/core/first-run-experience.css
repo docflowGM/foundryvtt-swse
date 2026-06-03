@@ -1,113 +1,256 @@
 /**
  * First Run Experience Styles
- * Welcome and setup flow UI
+ * Uses the shared holopad/tablet shell language instead of a standalone modal skin.
  */
 
-.swse-first-run-container {
-  background: linear-gradient(135deg, #0a0e1a 0%, #16213e 100%);
-  border-radius: 12px;
-  padding: 2rem;
-  min-height: 500px;
-  text-align: center;
+.swse-first-run-window .window-content {
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
-.swse-first-run-container h2 {
-  color: #00d9ff;
-  font-size: 2.2rem;
-  margin: 0 0 1rem 0;
-  text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+.swse-first-run-frame,
+.swse-first-run-frame .swse-sheet-v2-shell,
+.swse-first-run-frame .swse-v2-tablet,
+.swse-first-run-frame .swse-v2-screen,
+.swse-first-run-frame .swse-first-run-screen {
+  min-height: 0;
 }
 
-.swse-first-run-container h3 {
-  color: #aaa;
-  font-size: 1.2rem;
-  margin: 1rem 0;
+.swse-first-run-frame {
+  width: 100%;
+  height: 100%;
+  color: var(--swse-ink, #dff8ff);
 }
 
-.swse-first-run-container p {
-  color: #e0e0e0;
-  font-size: 1rem;
-  line-height: 1.6;
-  max-width: 600px;
-  margin: 1rem auto;
+.swse-first-run-frame .swse-sheet-v2-shell,
+.swse-first-run-frame .swse-v2-tablet,
+.swse-first-run-frame .swse-v2-screen {
+  height: 100%;
 }
 
-.swse-first-run-container .welcome-icon {
-  font-size: 4rem;
-  margin: 1rem 0;
-  animation: pulse 2s ease-in-out infinite;
+.swse-first-run-screen {
+  height: 100%;
+  overflow: hidden;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.swse-first-run-container .feature-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin: 2rem 0;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-}
-
-.swse-first-run-container .feature-item {
-  padding: 1rem;
-  background: rgba(10, 116, 218, 0.1);
-  border: 1px solid #0a74da;
-  border-radius: 6px;
-  transition: all 0.3s;
-}
-
-.swse-first-run-container .feature-item:hover {
-  background: rgba(0, 217, 255, 0.1);
-  border-color: #00d9ff;
-  transform: translateY(-3px);
-}
-
-.swse-first-run-container .feature-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.swse-first-run-container .action-buttons {
-  margin: 2rem 0;
+.swse-shell-surface--welcome {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 14px;
+  padding: 14px;
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent), transparent 38%),
+    linear-gradient(180deg, rgba(1, 9, 18, 0.72), rgba(1, 5, 12, 0.92));
+}
+
+.swse-welcome-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 24%, transparent);
+  border-radius: 16px;
+  background: rgba(3, 12, 22, 0.72);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.24), 0 0 18px color-mix(in srgb, var(--swse-accent, #70e2ff) 10%, transparent);
+}
+
+.swse-welcome-kicker,
+.swse-system-manual__kicker,
+.swse-system-manual-page__kicker {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--swse-accent, #70e2ff) 72%, white 8%);
+}
+
+.swse-welcome-title {
+  margin-top: 3px;
+  font-family: var(--swse-font-display, var(--swse-font-mono, monospace));
+  font-size: clamp(1.15rem, 2vw, 1.85rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--swse-accent, #70e2ff);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--swse-accent, #70e2ff) 34%, transparent);
+}
+
+.swse-welcome-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.swse-welcome-body .swse-panel,
+.swse-system-manual.swse-panel {
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 20%, transparent);
+  border-radius: 16px;
+  background: rgba(2, 8, 16, 0.68);
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.32);
+}
+
+.swse-welcome-hero {
+  display: grid;
+  grid-template-columns: minmax(74px, 110px) 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.swse-welcome-hero__sigil {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 36%, transparent);
+  background: radial-gradient(circle, color-mix(in srgb, var(--swse-accent, #70e2ff) 20%, transparent), rgba(0, 0, 0, 0.24));
+  color: var(--swse-accent, #70e2ff);
+  font-size: 2.35rem;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--swse-accent, #70e2ff) 44%, transparent);
+}
+
+.swse-welcome-hero h2 {
+  margin: 0 0 8px;
+  color: var(--swse-accent, #70e2ff);
+  font-family: var(--swse-font-display, var(--swse-font-mono, monospace));
+  letter-spacing: 0.06em;
+}
+
+.swse-welcome-hero p,
+.swse-welcome-note p,
+.swse-welcome-feature p,
+.swse-system-manual__intro,
+.swse-system-manual-page p,
+.swse-system-manual-page li {
+  color: color-mix(in srgb, var(--swse-ink, #dff8ff) 86%, transparent);
+  line-height: 1.55;
+}
+
+.swse-welcome-note {
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.swse-welcome-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.swse-welcome-feature {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  padding: 14px;
+}
+
+.swse-welcome-feature__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent);
+  color: var(--swse-accent, #70e2ff);
+  background: color-mix(in srgb, var(--swse-accent, #70e2ff) 8%, transparent);
+}
+
+.swse-welcome-feature h3 {
+  margin: 0 0 6px;
+  color: var(--swse-accent, #70e2ff);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.swse-welcome-feature p,
+.swse-welcome-note p,
+.swse-welcome-hero p {
+  margin: 0 0 8px;
+}
+
+.swse-welcome-note--suggestions {
+  border-color: color-mix(in srgb, var(--swse-pos, #7dffb2) 28%, transparent);
+}
+
+.swse-welcome-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0 2px;
+}
+
+.swse-welcome-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: color-mix(in srgb, var(--swse-ink, #dff8ff) 72%, transparent);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-welcome-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.swse-first-run-container button {
-  padding: 12px 24px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
+.swse-first-run-frame .swse-btn,
+.swse-shell-surface--welcome .swse-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 8px 13px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.26);
+  color: color-mix(in srgb, var(--swse-ink, #dff8ff) 84%, transparent);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s;
-  font-weight: bold;
 }
 
-.swse-first-run-container .btn-primary {
-  background: #0a74da;
-  color: #e0e0e0;
+.swse-first-run-frame .swse-btn:hover,
+.swse-shell-surface--welcome .swse-btn:hover {
+  color: var(--swse-accent, #70e2ff);
+  border-color: var(--swse-accent, #70e2ff);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--swse-accent, #70e2ff) 24%, transparent);
 }
 
-.swse-first-run-container .btn-primary:hover {
-  background: #00d9ff;
-  color: #000;
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+.swse-first-run-frame .swse-btn.primary,
+.swse-shell-surface--welcome .swse-btn.primary {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--swse-accent, #70e2ff) 26%, transparent), rgba(0, 0, 0, 0.22));
+  color: var(--swse-accent, #70e2ff);
 }
 
-.swse-first-run-container .btn-secondary {
-  background: transparent;
-  color: #00d9ff;
-  border: 2px solid #00d9ff;
-}
+@media (max-width: 760px) {
+  .swse-welcome-header,
+  .swse-welcome-footer-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
 
-.swse-first-run-container .btn-secondary:hover {
-  background: #00d9ff;
-  color: #000;
+  .swse-welcome-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-welcome-hero__sigil {
+    width: 72px;
+    height: 72px;
+  }
 }
