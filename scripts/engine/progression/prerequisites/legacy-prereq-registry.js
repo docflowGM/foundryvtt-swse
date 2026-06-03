@@ -2,6 +2,7 @@ import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/ski
 import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry as CanonicalTalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { isDroidProgressionActor } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 
 const SIZE_ORDER = ['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'];
 
@@ -151,8 +152,16 @@ export function getActorSpeciesNames(actor, pending = {}) {
 }
 
 export function actorIsDroidLike(actor, pending = {}) {
+  if (isDroidProgressionActor(actor, pending)) return true;
   if (actor?.system?.isDroid === true) return true;
+  if (actor?.flags?.swse?.isDroid === true || actor?.flags?.foundryvttSwse?.isDroid === true) return true;
+  if (actor?.getFlag?.('foundryvtt-swse', 'isDroid') === true || actor?.getFlag?.('swse', 'isDroid') === true) return true;
   if (actor?.system?.type === 'droid' || actor?.type === 'droid') return true;
+  if (actor?.system?.noConstitution === true || actor?.system?.droidSystems) return true;
+  if (actor?.system?.droidDegree || actor?.system?.degree) return true;
+  if (pending?.isDroid === true || pending?.droidConfig?.isDroid === true || pending?.droid?.isDroid === true) return true;
+  if (pending?.subtype === 'droid' || pending?.progressionSubtype === 'droid') return true;
+  if (pending?.droidContext?.isDroid === true || pending?.followerKind === 'droid') return true;
 
   const pendingSpecies = getActorSpeciesNames(actor, pending);
   return pendingSpecies.some((name) => normalizeLookupKey(name) === 'droid');

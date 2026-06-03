@@ -1146,7 +1146,10 @@ export function buildConceptSheetViewModel(context = {}) {
       groups: gearGroups,
       equippedArmor: context.armorSummaryPanel?.equippedArmor || null,
       ledgerWeight: context.equipmentLedgerPanel?.totalEquipmentWeight || '',
-      hasUpgradeableItems: !!context.inventoryPanel?.hasUpgradeableItems
+      hasUpgradeableItems: !!context.inventoryPanel?.hasUpgradeableItems,
+      lightsaberConstructionAvailable: !!context.lightsaberConstructionAvailable,
+      lightsaberConstructionDeferred: !!context.lightsaberConstructionDeferred,
+      lightsaberConstructionBlockedReason: context.lightsaberConstructionBlockedReason || null
     },
     biography: {
       profileCards: isDroidActor ? [

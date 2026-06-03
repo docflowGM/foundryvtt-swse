@@ -1,3 +1,5 @@
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+
 /**
  * Force power roll configuration dialog.
  * UI-only helper for character/NPC sheets; force execution remains in ForceExecutor.
@@ -64,34 +66,64 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
   const summary = cleanText(power?.system?.effect || power?.system?.summary || power?.system?.description || '');
   const dcRows = Array.isArray(power?.system?.dcChart) ? power.system.dcChart.slice(0, 4) : [];
   const rowsHtml = dcRows.length ? `
-    <div class="swse-force-roll-dialog__tiers">
-      ${dcRows.map(row => `<span><b>DC ${escapeHtml(row.dc ?? '')}</b> ${escapeHtml(cleanText(row.effect || row.description || ''))}</span>`).join('')}
+    <div class="rcd-tiers">
+      ${dcRows.map(row => `<div class="rcd-tier"><span class="rcd-tier-dc">DC ${escapeHtml(row.dc ?? '')}</span><span class="rcd-tier-fx">${escapeHtml(cleanText(row.effect || row.description || ''))}</span></div>`).join('')}
     </div>` : '';
 
   const content = `
-    <form class="swse-force-roll-dialog">
-      <p class="swse-force-roll-dialog__hint">Configure the Use the Force check before expending <strong>${escapeHtml(power.name)}</strong>.</p>
-      ${summary ? `<p class="swse-force-roll-dialog__summary">${escapeHtml(summary)}</p>` : ''}
-      ${rowsHtml}
-      <div class="form-group">
-        <label>Use the Force total</label>
-        <input type="number" name="baseBonus" value="${baseBonus}" step="1">
+    <div class="swse-force-roll-config rcd" style="--accent-rgb:180,140,255">
+      <header class="rcd-header">
+        <div class="rcd-header-bg"></div>
+        <div class="rcd-header-content">
+          <span class="rcd-type-chip">◇ Force</span>
+          <span class="rcd-roll-name">${escapeHtml(power.name)}</span>
+          <span class="rcd-actor">${escapeHtml(actor.name ?? 'Actor')}</span>
+        </div>
+      </header>
+      <div class="rcd-formula-strip">
+        <span class="rcd-formula-text">1d20 + Use the Force</span>
+        <span class="rcd-formula-base-mod">base +${baseBonus}</span>
+        <span class="rcd-formula-chips"><span class="rcd-fchip">power</span><span class="rcd-fchip">dc ${baseDC}</span></span>
       </div>
-      <div class="form-group">
-        <label>Situational modifier</label>
-        <input type="number" name="customModifier" value="0" step="1">
+      <div class="rcd-body">
+        <form class="swse-force-roll-dialog rcd-main">
+          <section class="swse-roll-config-panel">
+            <h4>Power Intel</h4>
+            <p class="swse-roll-config-note">Configure the Use the Force check before expending <strong>${escapeHtml(power.name)}</strong>.</p>
+            ${summary ? `<p class="swse-force-roll-dialog__summary">${escapeHtml(summary)}</p>` : ''}
+            ${rowsHtml}
+          </section>
+          <section class="swse-roll-config-panel">
+            <h4>Roll Inputs</h4>
+            <div class="swse-roll-config-grid">
+              <label>Use the Force Total<input type="number" name="baseBonus" value="${baseBonus}" step="1"></label>
+              <label>Situational Modifier<input type="number" name="customModifier" value="0" step="1"></label>
+              <label>Target DC<input type="number" name="baseDC" value="${baseDC}" step="1"></label>
+            </div>
+          </section>
+          <section class="swse-roll-config-panel swse-roll-config-panel--resources">
+            <h4>Resources</h4>
+            <label class="rcd-resource ${boosted ? 'rcd-res-active' : ''} ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
+              <span class="rcd-res-header"><input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Spend Force Point</span></span>
+              <span class="rcd-res-detail">${fpValue <= 0 ? 'No Force Points available.' : `${fpValue} Force Points available.`}</span>
+            </label>
+          </section>
+        </form>
+        <aside class="rcd-rail">
+          <section class="rcd-rail-sec rcd-rail-sec--preview">
+            <div class="rcd-rail-lbl">Projected Outcome</div>
+            <div class="rcd-preview-formula">1d20 + ${baseBonus}</div>
+            <div class="rcd-preview-total">${baseBonus + 10}</div>
+            <div class="rcd-preview-label">Take 10 reference</div>
+            <div class="rcd-preview-dc ${(baseBonus + 10) >= baseDC ? 'pass' : 'fail'}">Take 10 ${(baseBonus + 10) >= baseDC ? 'meets' : 'misses'} DC ${baseDC}</div>
+          </section>
+          <section class="rcd-rail-sec">
+            <div class="rcd-rail-lbl">Execution</div>
+            <p class="swse-roll-config-note">The final roll is still handled by the Force executor. This dialog only collects bonuses, DC, and Force Point intent.</p>
+          </section>
+        </aside>
       </div>
-      <div class="form-group">
-        <label>Target DC</label>
-        <input type="number" name="baseDC" value="${baseDC}" step="1">
-      </div>
-      <div class="form-group swse-force-roll-dialog__check">
-        <label>
-          <input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}>
-          Spend Force Point for bonus die ${fpValue <= 0 ? '(none available)' : `(${fpValue} available)`}
-        </label>
-      </div>
-    </form>`;
+    </div>`;
 
   return new Promise(resolve => {
     let settled = false;
@@ -101,7 +133,7 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
       resolve(value);
     };
 
-    new Dialog({
+    new SWSEDialogV2({
       title: `Use ${power.name}`,
       content,
       buttons: {
@@ -123,6 +155,12 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
       },
       default: 'roll',
       close: () => finish(null)
+    }, {
+      id: 'swse-force-roll-config',
+      classes: ['swse-roll-config-dialog-v2', 'swse-force-roll-dialog-app'],
+      width: 900,
+      height: 640,
+      resizable: true
     }).render(true);
   });
 }

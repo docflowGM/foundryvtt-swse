@@ -549,11 +549,27 @@
 }
 
 .feat-details-panel .feat-name {
-  font-size: 1.3rem;
+  font-size: clamp(0.95rem, 1.55vw, 1.28rem);
   font-weight: 700;
   color: var(--sheet-text-strong);
   margin: 0;
   letter-spacing: 0.02em;
+  line-height: 1.12;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
+
+
+.feat-details-panel .feat-details-hero {
+  min-width: 0;
+}
+
+.feat-details-panel .feat-details-icon {
+  width: clamp(68px, 7vw, 92px);
+  height: clamp(68px, 7vw, 92px);
+  min-width: clamp(68px, 7vw, 92px);
 }
 
 .feat-meta-badges {

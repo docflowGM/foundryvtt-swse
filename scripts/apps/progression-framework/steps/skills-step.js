@@ -61,6 +61,7 @@ export class SkillsStep extends ProgressionStepPlugin {
 
     // Event listener cleanup
     this._renderAbort = null;
+    this._noChoiceAutoAdvanceStepId = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -211,6 +212,7 @@ try {
     }
 
     await this._loadExtraSkillUses(shell);
+    this._scheduleNoChoiceAutoAdvance(shell);
 
     const prunedCount = this._pruneInvalidTrainedSkills(shell);
     if (prunedCount > 0) {
@@ -920,8 +922,15 @@ renderDetailsPanel(focusedItem) {
     });
   }
 
+  _getAbilityRecord(character = {}, abilityKey = 'int') {
+    return character?.abilities?.[abilityKey]
+      || character?.attributes?.[abilityKey]
+      || character?.stats?.abilities?.[abilityKey]
+      || {};
+  }
+
   _getAbilityScore(character = {}, abilityKey = 'int') {
-    const ability = character?.abilities?.[abilityKey] || character?.attributes?.[abilityKey] || {};
+    const ability = this._getAbilityRecord(character, abilityKey);
     const explicit = Number(ability.total ?? ability.score ?? ability.value);
     if (Number.isFinite(explicit)) return explicit;
     const base = Number(ability.base ?? 10);
@@ -940,10 +949,26 @@ renderDetailsPanel(focusedItem) {
     return Math.floor(((Number.isFinite(safe) ? safe : 10) - 10) / 2);
   }
 
+  _getAbilityModifier(character = {}, abilityKey = 'int') {
+    const ability = this._getAbilityRecord(character, abilityKey);
+    const stored = Number(ability.mod ?? ability.modifier);
+    if (Number.isFinite(stored)) return Math.floor(stored);
+    return this._abilityModifier(this._getAbilityScore(character, abilityKey));
+  }
+
+  _getPendingAbilityIncrease(shell, abilityKey = 'int') {
+    const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
+    const increases = attributes?.increases || attributes?.abilityIncreases || {};
+    return Math.max(0, Number(increases?.[abilityKey] ?? 0) || 0);
+  }
+
   _getPendingAbilityScore(shell, character = {}, abilityKey = 'int') {
     const current = this._getAbilityScore(character, abilityKey);
     const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
     if (!attributes) return current;
+    const increase = this._getPendingAbilityIncrease(shell, abilityKey);
+    if (increase <= 0 && String(attributes?.mode || '') === 'levelup-ability-increase') return current;
+
     const direct = Number(
       attributes?.finalValues?.[abilityKey]
         ?? attributes?.values?.[abilityKey]
@@ -951,20 +976,37 @@ renderDetailsPanel(focusedItem) {
         ?? attributes?.[abilityKey]?.value
         ?? attributes?.[abilityKey]
     );
-    if (Number.isFinite(direct)) return direct;
-    const increase = Number(attributes?.increases?.[abilityKey] ?? 0);
-    if (Number.isFinite(increase) && increase > 0) return current + increase;
+    if (Number.isFinite(direct) && (increase > 0 || String(attributes?.mode || '') !== 'levelup-ability-increase')) return direct;
+    if (increase > 0) return current + increase;
     return current;
   }
 
   _getPendingIntModifierDelta(shell, character = {}) {
-    const currentMod = this._abilityModifier(this._getAbilityScore(character, 'int'));
     const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
-    const explicitPendingMod = Number(attributes?.modifiers?.int);
-    const pendingMod = Number.isFinite(explicitPendingMod)
-      ? explicitPendingMod
-      : this._abilityModifier(this._getPendingAbilityScore(shell, character, 'int'));
+    const intIncrease = this._getPendingAbilityIncrease(shell, 'int');
+    if (String(attributes?.mode || '') === 'levelup-ability-increase' && intIncrease <= 0) return 0;
+
+    const currentMod = this._getAbilityModifier(character, 'int');
+    const pendingMod = this._abilityModifier(this._getPendingAbilityScore(shell, character, 'int'));
     return Math.max(0, pendingMod - currentMod);
+  }
+
+  _hasNoLevelupSkillChoices(shell) {
+    return this.isLevelup(shell) && Math.max(0, Number(this._allowedCount || 0)) <= 0 && this._trainedCount <= 0;
+  }
+
+  _scheduleNoChoiceAutoAdvance(shell) {
+    if (!this._hasNoLevelupSkillChoices(shell)) return false;
+    const stepId = shell?.progressionSession?.currentStepId || shell?.steps?.[shell.currentStepIndex]?.stepId || 'skills';
+    if (this._noChoiceAutoAdvanceStepId === stepId) return true;
+    this._noChoiceAutoAdvanceStepId = stepId;
+    globalThis.setTimeout?.(() => {
+      const currentStepId = shell?.progressionSession?.currentStepId || shell?.steps?.[shell.currentStepIndex]?.stepId || null;
+      if (currentStepId !== stepId) return;
+      if (!this._hasNoLevelupSkillChoices(shell)) return;
+      void shell?._maybeScheduleAutoAdvance?.({ source: 'skills-no-new-choices' });
+    }, 120);
+    return true;
   }
 
   _resolveLevelupAllowedSkillCount(shell, character) {

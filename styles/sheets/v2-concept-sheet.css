@@ -8432,3 +8432,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   font-size: 22px !important;
   padding-bottom: 2px !important;
 }
+
+/* Gear-tab lightsaber construction milestone callout */
+.swse-concept-panel--saber-ready {
+  border-color: color-mix(in oklab, var(--swse-force, #9d7cff) 55%, transparent);
+  box-shadow: 0 0 20px color-mix(in oklab, var(--swse-force, #9d7cff) 22%, transparent);
+}
+
+.swse-concept-panel--saber-ready .swse-concept-panel__header {
+  align-items: center;
+  gap: 1rem;
+}

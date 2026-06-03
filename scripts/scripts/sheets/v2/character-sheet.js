@@ -3552,7 +3552,7 @@ const forcePoints = [];
       if (!abilityKey) return;
 
       try {
-        const result = await SWSERoll.rollAbility(this.actor, abilityKey);
+        const result = await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true, showDialog: true });
         if (result?.roll) {
           const abilityLabels = { str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' };
           showHolopadRollCompanion(button, result, {

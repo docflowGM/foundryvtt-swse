@@ -2,6 +2,16 @@
 {{!-- Shows browsable force power cards with owned/pending/reselection counts. --}}
 
 <div class="prog-force-power-browse swse-force-selector swse-store-stage">
+  {{#if noNewPowerChoices}}
+    <section class="prog-force-power-no-choice-banner" aria-label="No new Force Power choices">
+      <i class="fas fa-forward-step" aria-hidden="true"></i>
+      <div>
+        <strong>No new Force Power choices</strong>
+        <p>{{noNewPowerChoicesMessage}}</p>
+      </div>
+    </section>
+  {{/if}}
+
   {{#if hasTrainingSummary}}
     <section class="prog-force-power-training-summary" aria-label="Force Power training allowance">
       <div class="prog-force-power-training-summary__main">

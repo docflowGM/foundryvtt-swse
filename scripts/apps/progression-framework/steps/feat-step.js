@@ -141,6 +141,133 @@ function getGrantedFeatName(grant) {
 }
 
 
+function iterableValues(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  if (value instanceof Set || value instanceof Map) return Array.from(value.values());
+  if (typeof value.values === 'function' && typeof value !== 'string') {
+    try { return Array.from(value.values()); } catch (_err) { return []; }
+  }
+  if (typeof value === 'object' && Array.isArray(value.contents)) return value.contents;
+  return [];
+}
+
+function getEntrySelectedChoiceLabel(entry) {
+  const choice = entry?.system?.selectedChoice
+    ?? entry?.system?.selectedChoices
+    ?? entry?.selectedChoice
+    ?? entry?.choice
+    ?? entry?.choiceValue
+    ?? null;
+  return FeatChoiceResolver.getChoiceLabel?.(choice) || '';
+}
+
+function addFeatOwnershipEntry(set, entry) {
+  const name = getGrantedFeatName(entry);
+  if (name) addFeatOwnershipName(set, name);
+
+  const choiceLabel = getEntrySelectedChoiceLabel(entry);
+  if (!choiceLabel || !name) return;
+
+  const baseName = String(name || '').replace(/\s*\([^)]*\)\s*$/g, '').trim();
+  if (!baseName) return;
+  addFeatOwnershipName(set, `${baseName} (${choiceLabel})`);
+  addFeatOwnershipName(set, `${name} (${choiceLabel})`);
+}
+
+function collectFeatPrerequisiteTokens(text, baseName) {
+  const raw = String(text || '');
+  const lower = raw.toLowerCase();
+  const needle = String(baseName || '').toLowerCase();
+  const tokens = [];
+  let index = 0;
+
+  while (needle && index < raw.length) {
+    const found = lower.indexOf(needle, index);
+    if (found < 0) break;
+    let cursor = found + needle.length;
+    while (cursor < raw.length && /\s/.test(raw[cursor])) cursor += 1;
+
+    if (raw[cursor] !== '(') {
+      tokens.push(baseName);
+      index = cursor + 1;
+      continue;
+    }
+
+    let depth = 0;
+    let end = cursor;
+    for (; end < raw.length; end += 1) {
+      const char = raw[end];
+      if (char === '(') depth += 1;
+      else if (char === ')') {
+        depth -= 1;
+        if (depth === 0) break;
+      }
+    }
+
+    if (depth === 0 && end > cursor) {
+      const inside = raw.slice(cursor + 1, end).trim();
+      tokens.push(inside ? `${baseName} (${inside})` : baseName);
+      index = end + 1;
+    } else {
+      tokens.push(baseName);
+      index = cursor + 1;
+    }
+  }
+
+  return [...new Set(tokens.map(token => String(token || '').replace(/\s+/g, ' ').trim()).filter(Boolean))];
+}
+
+function collectChoiceFeatPrerequisiteAlternatives(text) {
+  const raw = String(text || '');
+  const tokens = [
+    ...collectFeatPrerequisiteTokens(raw, 'Skill Focus'),
+  ];
+
+  if (!tokens.length) return [];
+
+  // These textual prerequisite lines commonly encode alternate choices, e.g.
+  // "Skill Focus (Knowledge A) or Skill Focus (Knowledge B)". Treat each
+  // "or" group as one requirement that can be satisfied by any listed token.
+  if (/\bor\b/i.test(raw) && tokens.length > 1) {
+    return [tokens];
+  }
+  return tokens.map(token => [token]);
+}
+
+function buildFeatPrerequisiteOwnershipNames(actor, pendingAbilityData = {}, extraNames = new Set()) {
+  const names = new Set();
+
+  for (const item of iterableValues(actor?.items)) {
+    if (item?.type === 'feat') addFeatOwnershipEntry(names, item);
+  }
+
+  for (const pool of [pendingAbilityData?.selectedFeats, pendingAbilityData?.grantedFeats, pendingAbilityData?.grantedProficiencies]) {
+    for (const entry of iterableValues(pool)) addFeatOwnershipEntry(names, entry);
+  }
+
+  for (const name of extraNames || []) addFeatOwnershipName(names, name);
+  return names;
+}
+
+function getUnmetChoiceFeatPrerequisites(feat, ownedFeatNames = new Set()) {
+  const raw = feat?.prerequisiteText
+    || feat?.prerequisiteLine
+    || feat?.system?.prerequisite
+    || feat?.system?.prerequisites
+    || '';
+  const alternatives = collectChoiceFeatPrerequisiteAlternatives(raw);
+  const missing = [];
+
+  for (const group of alternatives) {
+    const satisfied = group.some(token => hasFeatOwnershipName(ownedFeatNames, token));
+    if (!satisfied) missing.push(group.join(' or '));
+  }
+
+  return missing;
+}
+
+
 export class FeatStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -421,6 +548,8 @@ export class FeatStep extends ProgressionStepPlugin {
       });
     }
 
+    const textualFeatPrereqOwnership = buildFeatPrerequisiteOwnershipNames(actor, pendingAbilityData, classGrantedFeats);
+
     for (const feat of this._allFeats) {
       if (isMulticlassStartingFeatSlot && !multiclassStartingFeatNames.has(normalizeManifestName(feat?.name || feat?.id || feat?._id))) {
         continue;
@@ -441,6 +570,13 @@ export class FeatStep extends ProgressionStepPlugin {
         const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData) || {};
         status.missingPrerequisites = this._dedupeReasonList(Array.isArray(assessment.missingPrereqs) ? assessment.missingPrereqs : []);
         status.blockingReasons = this._dedupeReasonList(Array.isArray(assessment.blockingReasons) ? assessment.blockingReasons : []);
+        const unmetChoiceFeatPrereqs = getUnmetChoiceFeatPrerequisites(feat, textualFeatPrereqOwnership);
+        if (unmetChoiceFeatPrereqs.length) {
+          status.missingPrerequisites = this._dedupeReasonList([
+            ...status.missingPrerequisites,
+            ...unmetChoiceFeatPrereqs,
+          ]);
+        }
 
         const slotValidation = await FeatSlotValidator.validateFeatForSlot(
           feat,
@@ -456,7 +592,7 @@ export class FeatStep extends ProgressionStepPlugin {
           i.type === 'feat' && hasFeatOwnershipName(new Set(getFeatOwnershipKeys(i.name)), feat.name)
         );
 
-        if (!assessment?.legal) {
+        if (!assessment?.legal || unmetChoiceFeatPrereqs.length > 0) {
           status.unavailabilityReason = this._formatUnavailableReason(status.missingPrerequisites, status.blockingReasons, 'Prerequisites not met');
         } else if (!status.slotCompatible) {
           status.blockingReasons = status.blockingReasons.length ? status.blockingReasons : this._dedupeReasonList([slotValidation?.reason || 'Not valid for this feat slot']);

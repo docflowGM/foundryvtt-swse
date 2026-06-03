@@ -192,3 +192,24 @@
   transition: none !important;
   animation: none !important;
 }
+
+/* Resizable custom roll dialog safety */
+.swse-custom-roll-app .window-content,
+.swse-custom-roll-app [data-application-content] {
+  height: 100%;
+  overflow: hidden;
+}
+
+.swse-custom-roll-dialog {
+  max-height: 100%;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--custom-roll-accent) 35%, transparent) transparent;
+}
+
+.swse-custom-roll-dialog::-webkit-scrollbar { width: 6px; }
+.swse-custom-roll-dialog::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--custom-roll-accent) 35%, transparent);
+  border-radius: 4px;
+}

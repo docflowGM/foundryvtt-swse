@@ -8,6 +8,7 @@ import { MELEE_UPGRADES, MELEE_ACCENT_COLORS, DEFAULT_MELEE_ACCENT } from "/syst
 import { ARMOR_UPGRADES } from "/systems/foundryvtt-swse/scripts/data/armor-upgrades.js";
 import { GEAR_MODS, GEAR_VARIANTS, DEFAULT_GEAR_VARIANT, DEFAULT_GEAR_ACCENT } from "/systems/foundryvtt-swse/scripts/data/gear-mods.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
+import { MirajAttunementApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/miraj-attunement-app.js";
 import { BLADE_COLOR_MAP, VARIES_COLOR_LIST, DEFAULT_BLADE_COLOR } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
@@ -276,14 +277,17 @@ function getWorkbenchItemDebugShape(item) {
 }
 
 export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
-  constructor(actor, { itemId = null, category = null, mode = 'owned', sourceItem = null, applyMode = null, onStage = null } = {}) {
+  constructor(actor, { itemId = null, category = null, initialCategory = null, mode = 'owned', sourceItem = null, applyMode = null, onStage = null, routeIntent = null, entryPoint = null } = {}) {
     super({});
     this.actor = actor;
     this.mode = mode;
+    this.initialCategory = initialCategory || category || null;
+    this.routeIntent = routeIntent || null;
+    this.entryPoint = entryPoint || null;
     this.applyMode = applyMode || (mode === 'store-stage' ? 'stage-to-cart' : 'apply-owned');
     this.sourceItem = sourceItem || null;
     this.onStage = typeof onStage === 'function' ? onStage : null;
-    this.selectedCategory = category;
+    this.selectedCategory = category || initialCategory || null;
     this.selectedItemId = itemId;
     this._selectedByCategory = new Map();
     if (category && itemId) this._selectedByCategory.set(category, itemId);
@@ -304,8 +308,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       selectedAccessoryIds: [],
       selectedBladeColor: DEFAULT_BLADE_COLOR,
       selectedCheckMode: 'roll',
-      selectedOwnedSaberId: itemId || null,
-      activeTab: 'crystal',
+      constructionResult: null,
+      selectedOwnedSaberId: (this.selectedCategory === 'lightsaber' && mode === 'construct') ? null : (itemId || null),
+      activeTab: (this.selectedCategory === 'lightsaber' && mode === 'construct') ? 'chassis' : 'crystal',
       inspectedComponent: null
     };
   }
@@ -533,6 +538,55 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return rememberedId || null;
   }
 
+  _getLightsaberConstructionSummary() {
+    try {
+      const eligibility = LightsaberConstructionEngine.getEligibility(this.actor) || {};
+      const hasSelfBuilt = LightsaberConstructionEngine.hasSelfBuiltLightsaber(this.actor);
+      const deferred = this.actor?.getFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred') === true;
+      const available = !!eligibility.eligible && !hasSelfBuilt;
+      return {
+        visible: available || deferred || this.routeIntent === 'lightsaber-construction' || this.mode === 'construct',
+        available,
+        eligible: !!eligibility.eligible,
+        deferred,
+        hasSelfBuilt,
+        reason: eligibility.reason || (hasSelfBuilt ? 'This actor has already completed a self-built lightsaber milestone.' : null),
+        route: {
+          surface: 'workbench',
+          category: 'lightsaber',
+          initialCategory: 'lightsaber',
+          mode: 'construct',
+          routeIntent: 'lightsaber-construction',
+          entryPoint: this.entryPoint || 'workbench'
+        }
+      };
+    } catch (error) {
+      console.warn('SWSE [Workbench] lightsaber construction summary failed', { actor: this.actor?.name, error });
+      return { visible: false, available: false, eligible: false, deferred: false, hasSelfBuilt: false, reason: 'Eligibility could not be evaluated.', route: null };
+    }
+  }
+
+  _isLightsaberConstructionRoute() {
+    const summary = this._getLightsaberConstructionSummary();
+    return this.selectedCategory === 'lightsaber'
+      && (this.mode === 'construct' || this.routeIntent === 'lightsaber-construction')
+      && !summary.hasSelfBuilt
+      && !this._lightsaber?.selectedOwnedSaberId;
+  }
+
+  _enterLightsaberConstructionMode(entryPoint = 'workbench') {
+    this.selectedCategory = 'lightsaber';
+    this.initialCategory = 'lightsaber';
+    this.mode = 'construct';
+    this.routeIntent = 'lightsaber-construction';
+    this.entryPoint = entryPoint || this.entryPoint || 'workbench';
+    this.selectedItemId = null;
+    this._lightsaber.selectedOwnedSaberId = null;
+    this._lightsaber.activeTab = 'chassis';
+    this._lightsaber.inspectedComponent = null;
+    this._lightsaber.constructionResult = null;
+  }
+
   _getVisibleCategories() {
     const items = this._getActorItems();
     const byCategory = {
@@ -569,9 +623,15 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     this._logInventoryScan({ items, byCategory, rejected, sourceCategory });
 
+    const constructionSummary = this._getLightsaberConstructionSummary();
+    const forceLightsaberForge = constructionSummary.available
+      || this.routeIntent === 'lightsaber-construction'
+      || this.mode === 'construct'
+      || this.selectedCategory === 'lightsaber';
+
     return CATEGORY_ORDER
-      .map(entry => ({ ...entry, items: byCategory[entry.key] || [] }))
-      .filter(entry => entry.items.length > 0);
+      .map(entry => ({ ...entry, items: byCategory[entry.key] || [], forceVisible: entry.key === 'lightsaber' && forceLightsaberForge }))
+      .filter(entry => entry.items.length > 0 || entry.forceVisible);
   }
 
   _ensureSelection() {
@@ -590,6 +650,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.search = this._getSearchForCategory(this.selectedCategory);
 
     if (this.selectedCategory === 'lightsaber') {
+      if (this._isLightsaberConstructionRoute()) {
+        this._lightsaber.selectedOwnedSaberId = null;
+        this._lightsaber.activeTab ||= 'chassis';
+        return { categories, item: null };
+      }
       const rememberedSaber = this._selectedByCategory.get('lightsaber');
       if (!this._lightsaber.selectedOwnedSaberId && rememberedSaber) this._lightsaber.selectedOwnedSaberId = rememberedSaber;
       if (this._lightsaber.selectedOwnedSaberId && !currentCategory.items.find(item => getWorkbenchItemId(item) === this._lightsaber.selectedOwnedSaberId)) {
@@ -1132,7 +1197,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const motionStyleInline = buildActorSheetMotionStyle(motionStyle);
     const shellContext = { themeKey, motionStyle, themeStyleInline, motionStyleInline };
     const { categories, item } = this._ensureSelection();
-    const visibleCategories = categories.map(category => ({ ...category, active: category.key === this.selectedCategory, count: category.items.length, special: category.special }));
+    const lightsaberConstruction = this._getLightsaberConstructionSummary();
+    const visibleCategories = categories.map(category => ({
+      ...category,
+      active: category.key === this.selectedCategory,
+      count: category.key === 'lightsaber' && lightsaberConstruction.available && category.items.length === 0 ? 'READY' : category.items.length,
+      special: category.special
+    }));
     if (this.selectedCategory === 'lightsaber') {
       return { ...shellContext, ...(await this._prepareLightsaberContext(visibleCategories)) };
     }
@@ -1142,6 +1213,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         ...shellContext,
         actor: this.actor,
         categories: visibleCategories,
+        lightsaberConstruction,
         hasItems: false,
         isStoreStageMode: this._isStoreStageMode(),
         mentorKey: 'delta',
@@ -1198,6 +1270,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       ...shellContext,
       actor: this.actor,
       categories: visibleCategories,
+      lightsaberConstruction,
       hasItems: true,
       search: currentSearch,
       hasSearch: !!currentSearch,
@@ -1235,6 +1308,12 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         this.selectedCategory = target?.dataset?.category || this.selectedCategory;
         this.search = this._getSearchForCategory(this.selectedCategory);
         if (this.selectedCategory !== 'lightsaber') this.selectedItemId = this._selectedByCategory.get(this.selectedCategory) || null;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'start-lightsaber-construction': {
+        this._enterLightsaberConstructionMode(target?.dataset?.entryPoint || 'workbench');
         await this._renderPreservingUi();
         return;
       }
@@ -1383,7 +1462,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
       case 'set-lightsaber-tab': {
         const tab = target?.dataset?.tab || 'crystal';
-        if (tab === 'chassis' && !this._canChangeLightsaberChassis()) return;
+        if ((tab === 'chassis' || tab === 'review') && !this._canChangeLightsaberChassis()) return;
         this._lightsaber.activeTab = tab;
         this._lightsaber.inspectedComponent = null;
         await this._renderPreservingUi();
@@ -1391,8 +1470,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
 
       case 'inspect-lightsaber-component': {
-        const type = target?.dataset?.componentType;
-        const key = target?.dataset?.key;
+        const type = target?.dataset?.componentType || target?.dataset?.lightsaberInspectType;
+        const key = target?.dataset?.key || target?.dataset?.lightsaberInspectKey;
         if (!type || !key) return;
         this._lightsaber.inspectedComponent = { type, key };
         await this._renderPreservingUi();
@@ -1405,6 +1484,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           return;
         }
         this._lightsaber.selectedChassisId = target?.dataset?.key;
+        this._lightsaber.constructionResult = null;
         this._lightsaber.selectedAccessoryIds = this._lightsaber.selectedAccessoryIds.filter(id => this._isLightsaberAccessoryCompatible(id));
         if (!this._isLightsaberCrystalCompatible(this._lightsaber.selectedCrystalId)) {
           const firstCompatible = this._catalogs.crystals.find(option => this._isLightsaberCrystalCompatible(option.id));
@@ -1423,6 +1503,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           return;
         }
         this._lightsaber.selectedCrystalId = key;
+        this._lightsaber.constructionResult = null;
         this._lightsaber.activeTab = 'crystal';
         this._lightsaber.inspectedComponent = { type: 'crystal', key };
         const crystal = this._catalogs.crystals.find(option => option.id === key || option._id === key);
@@ -1441,6 +1522,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           return;
         }
         this._lightsaber.activeTab = 'hilt';
+        this._lightsaber.constructionResult = null;
         this._lightsaber.inspectedComponent = { type: 'accessory', key: id };
         const ids = this._lightsaber.selectedAccessoryIds;
         const idx = ids.indexOf(id);
@@ -1463,6 +1545,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         const key = target?.dataset?.key;
         if (!key) return;
         this._lightsaber.selectedBladeColor = key;
+        this._lightsaber.constructionResult = null;
         this._lightsaber.activeTab = 'color';
         this._lightsaber.inspectedComponent = { type: 'color', key };
         this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
@@ -1484,7 +1567,36 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         if (target?.disabled || target?.classList?.contains?.('disabled')) return;
         const mode = target?.dataset?.key;
         if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
+        this._lightsaber.constructionResult = null;
         await this._renderPreservingUi();
+        return;
+      }
+
+      case 'lightsaber-step-next':
+      case 'lightsaber-step-prev': {
+        const tab = target?.dataset?.tab;
+        if (tab) {
+          this._lightsaber.activeTab = tab;
+          this._lightsaber.inspectedComponent = null;
+          await this._renderPreservingUi();
+        }
+        return;
+      }
+
+      case 'attempt-lightsaber-construction': {
+        const mode = target?.dataset?.mode;
+        if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
+        await this.#applyCurrentItem();
+        return;
+      }
+
+      case 'begin-lightsaber-attunement': {
+        await this._openMirajAttunementFromResult();
+        return;
+      }
+
+      case 'dismiss-lightsaber-success': {
+        await this.close();
         return;
       }
 
@@ -1496,6 +1608,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           this._lightsaber.selectedAccessoryIds = [];
           this._lightsaber.selectedBladeColor = DEFAULT_BLADE_COLOR;
           this._lightsaber.selectedCheckMode = 'roll';
+          this._lightsaber.constructionResult = null;
           if (editItem) this._lightsaber.selectedOwnedSaberId = getWorkbenchItemId(editItem);
           this._hydrateLightsaberDefaults();
         } else {
@@ -1658,10 +1771,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
 
 
+    this.onRoot('click', '[data-action="start-lightsaber-construction"]', async (event, target) => {
+      event.preventDefault();
+      this._enterLightsaberConstructionMode(target.dataset.entryPoint || 'workbench');
+      await this._renderPreservingUi();
+    });
+
     this.onRoot('click', '[data-action="set-lightsaber-tab"]', async (event, target) => {
       event.preventDefault();
       const tab = target.dataset.tab || 'crystal';
-      if (tab === 'chassis' && !this._canChangeLightsaberChassis()) return;
+      if ((tab === 'chassis' || tab === 'review') && !this._canChangeLightsaberChassis()) return;
       this._lightsaber.activeTab = tab;
       this._lightsaber.inspectedComponent = null;
       await this._renderPreservingUi();
@@ -1683,6 +1802,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
       this._lightsaber.selectedChassisId = target.dataset.key;
+      this._lightsaber.constructionResult = null;
       this._lightsaber.selectedAccessoryIds = this._lightsaber.selectedAccessoryIds.filter(id => this._isLightsaberAccessoryCompatible(id));
       if (!this._isLightsaberCrystalCompatible(this._lightsaber.selectedCrystalId)) {
         const firstCompatible = this._catalogs.crystals.find(option => this._isLightsaberCrystalCompatible(option.id));
@@ -1693,12 +1813,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     this.onRoot('click', '[data-action="select-lightsaber-crystal"]', async (event, target) => {
       event.preventDefault();
-      if (target.classList.contains('disabled')) return;
-      if (!this._isLightsaberCrystalCompatible(target.dataset.key)) {
+      const isTuning = this._isLightsaberTuningMode();
+      if (!isTuning && target.classList.contains('disabled')) return;
+      if (!isTuning && !this._isLightsaberCrystalCompatible(target.dataset.key)) {
         ui.notifications.warn('That crystal is not compatible with the selected chassis.');
         return;
       }
       this._lightsaber.selectedCrystalId = target.dataset.key;
+      this._lightsaber.constructionResult = null;
+      this._lightsaber.activeTab = 'crystal';
+      this._lightsaber.inspectedComponent = { type: 'crystal', key: target.dataset.key };
       const crystal = this._catalogs.crystals.find(option => option.id === target.dataset.key || option._id === target.dataset.key);
       const preferred = this._resolveBladeColorOptions(crystal)[0];
       if (preferred) this._lightsaber.selectedBladeColor = preferred;
@@ -1715,6 +1839,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
       this._lightsaber.activeTab = 'hilt';
+      this._lightsaber.constructionResult = null;
       this._lightsaber.inspectedComponent = { type: 'accessory', key: id };
       const ids = this._lightsaber.selectedAccessoryIds;
       const idx = ids.indexOf(id);
@@ -1737,6 +1862,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       const key = target.dataset.key;
       if (!key) return;
       this._lightsaber.selectedBladeColor = key;
+      this._lightsaber.constructionResult = null;
       this._lightsaber.activeTab = 'color';
       this._lightsaber.inspectedComponent = { type: 'color', key };
       this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
@@ -1758,6 +1884,41 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       if (target.disabled || target.classList.contains('disabled')) return;
       const mode = target.dataset.key;
       if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
+      this._lightsaber.constructionResult = null;
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="lightsaber-step-next"], [data-action="lightsaber-step-prev"]', async (event, target) => {
+      event.preventDefault();
+      const tab = target.dataset.tab;
+      if (!tab) return;
+      this._lightsaber.activeTab = tab;
+      this._lightsaber.inspectedComponent = null;
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="attempt-lightsaber-construction"]', async (event, target) => {
+      event.preventDefault();
+      const mode = target.dataset.mode;
+      if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
+      await this.#applyCurrentItem();
+    });
+
+    this.onRoot('click', '[data-action="begin-lightsaber-attunement"]', async (event) => {
+      event.preventDefault();
+      await this._openMirajAttunementFromResult();
+    });
+
+    this.onRoot('click', '[data-action="dismiss-lightsaber-success"]', async (event) => {
+      event.preventDefault();
+      await this.close();
+    });
+
+    this.onRoot('pointerover', '[data-lightsaber-inspect-type][data-lightsaber-inspect-key]', async (_event, target) => {
+      const type = target.dataset.lightsaberInspectType;
+      const key = target.dataset.lightsaberInspectKey;
+      if (!type || !key) return;
+      this._lightsaber.inspectedComponent = { type, key };
       await this._renderPreservingUi();
     });
 
@@ -1885,7 +2046,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   _canChangeLightsaberChassis(editItem = null) {
     const target = editItem ?? (this._lightsaber?.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null);
     if (target) return false;
-    return this._isActorEligibleForLightsaberConstruction();
+    const summary = this._getLightsaberConstructionSummary();
+    return !!summary.available;
   }
 
   _buildLightsaberEditPreview({ chassis, crystal, accessories = [] } = {}) {
@@ -1990,9 +2152,144 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
   _getLightsaberActiveTab(canChangeChassis = false) {
     const allowed = new Set(['crystal', 'hilt', 'color']);
-    if (canChangeChassis) allowed.add('chassis');
-    const tab = this._lightsaber.activeTab || 'crystal';
-    return allowed.has(tab) ? tab : 'crystal';
+    if (canChangeChassis) {
+      allowed.add('chassis');
+      allowed.add('review');
+    }
+    const fallback = canChangeChassis ? 'chassis' : 'crystal';
+    const tab = this._lightsaber.activeTab || fallback;
+    return allowed.has(tab) ? tab : fallback;
+  }
+
+  _formatLightsaberEligibilityReason(reason = '') {
+    const labels = {
+      no_actor: 'No actor is available for lightsaber construction.',
+      insufficient_heroic_level: 'Requires heroic level 7 or higher.',
+      insufficient_jedi_level: 'The selected construction mode requires Jedi class levels.',
+      missing_force_sensitivity: 'Requires Force Sensitivity.',
+      missing_lightsaber_proficiency: 'Requires Weapon Proficiency (Lightsabers).',
+      insufficient_funds: 'Insufficient credits for the selected construction package.',
+      invalid_config: 'Select a valid chassis, crystal, hilt, and blade color configuration.',
+      incompatible_component: 'One or more selected components are incompatible.',
+      roll_failed: 'The Use the Force check did not meet the construction DC.',
+      construction_error: 'The construction engine could not complete the attempt.',
+      eligibility_check_error: 'Eligibility could not be evaluated.',
+      already_built: 'This actor has already completed a self-built lightsaber milestone.'
+    };
+    return labels[reason] || String(reason || 'Lightsaber construction is not currently available.');
+  }
+
+  _getLightsaberConstructionModeSetting() {
+    try {
+      return game?.settings?.get?.(game.system.id, 'lightsaberConstructionMode') || 'raw';
+    } catch (_error) {
+      return 'raw';
+    }
+  }
+
+  _getLightsaberConstructionRequirements() {
+    const mode = this._getLightsaberConstructionModeSetting();
+    if (mode === 'jediOnly') return 'Jedi 7 + Force Sensitive + Weapon Proficiency (Lightsabers)';
+    if (mode === 'heroicAndJedi') return 'Heroic 7 + Jedi 1 + Force Sensitive + Weapon Proficiency (Lightsabers)';
+    return 'Heroic 7 + Force Sensitive + Weapon Proficiency (Lightsabers)';
+  }
+
+  _getLightsaberStepState({ canChangeChassis = false, activeTab = 'crystal' } = {}) {
+    const steps = canChangeChassis
+      ? [
+        { key: 'chassis', label: 'Chassis', number: 1, selected: !!this._lightsaber.selectedChassisId },
+        { key: 'crystal', label: 'Crystal', number: 2, selected: !!this._lightsaber.selectedCrystalId },
+        { key: 'hilt', label: 'Hilt', number: 3, selected: true },
+        { key: 'color', label: 'Blade Color', number: 4, selected: !!this._lightsaber.selectedBladeColor },
+        { key: 'review', label: 'Review', number: 5, selected: false }
+      ]
+      : [
+        { key: 'crystal', label: 'Crystal', number: 1, selected: !!this._lightsaber.selectedCrystalId },
+        { key: 'hilt', label: 'Hilt', number: 2, selected: true },
+        { key: 'color', label: 'Blade Color', number: 3, selected: !!this._lightsaber.selectedBladeColor }
+      ];
+    const activeIndex = Math.max(0, steps.findIndex(step => step.key === activeTab));
+    return steps.map((step, index) => ({
+      ...step,
+      active: step.key === activeTab,
+      done: index < activeIndex && step.selected
+    }));
+  }
+
+  _getLightsaberStepNavigation(steps = [], activeTab = 'crystal') {
+    const index = Math.max(0, steps.findIndex(step => step.key === activeTab));
+    return {
+      previous: index > 0 ? steps[index - 1]?.key : null,
+      next: index < steps.length - 1 ? steps[index + 1]?.key : null,
+      isReview: activeTab === 'review'
+    };
+  }
+
+  _buildLightsaberBuildSummary({ chassis, crystal, accessories = [], preview = null, credits = 0, totalCost = 0 } = {}) {
+    const baseDc = Number(chassis?.system?.baseBuildDc ?? preview?.baseDc ?? (chassis ? 20 : 0)) || 0;
+    const crystalDcMod = Number(crystal?.system?.lightsaber?.buildDcModifier ?? crystal?.buildDcModifier ?? 0) || 0;
+    const accessoryDcMod = accessories.reduce((sum, accessory) => sum + (Number(accessory?.system?.lightsaber?.buildDcModifier ?? accessory?.buildDcModifier ?? 0) || 0), 0);
+    const finalDc = Number(preview?.finalDc ?? preview?.dc ?? (baseDc ? baseDc + crystalDcMod + accessoryDcMod : 0)) || 0;
+    const modifier = Number(preview?.modifier ?? this.actor?.system?.skills?.useTheForce?.total ?? 0) || 0;
+    const take10Total = Number(preview?.take10Total ?? (modifier + 10)) || 0;
+    const canTake10 = !!preview?.canTake10 || (!!finalDc && take10Total >= finalDc);
+    return {
+      baseDc,
+      crystalDcMod,
+      accessoryDcMod,
+      crystalDcText: crystalDcMod >= 0 ? `+ ${crystalDcMod}` : `− ${Math.abs(crystalDcMod)}`,
+      accessoryDcText: accessoryDcMod >= 0 ? `+ ${accessoryDcMod}` : `− ${Math.abs(accessoryDcMod)}`,
+      finalDc: finalDc || '—',
+      modifier,
+      take10Total,
+      canTake10,
+      take10Text: finalDc ? `Take 10 = ${take10Total} ${take10Total >= finalDc ? 'passes' : 'fails'} DC ${finalDc}` : 'Take 10 pending',
+      totalCost,
+      credits,
+      affordable: credits >= totalCost,
+      after: credits - totalCost
+    };
+  }
+
+  _getLightsaberResultView(result = null) {
+    if (!result) return null;
+    const success = !!result.success;
+    const finalDc = result.finalDc ?? result.dc ?? '—';
+    const rollTotal = result.rollTotal ?? result.total ?? null;
+    const modifier = result.modifier ?? 0;
+    const rollRaw = result.rollRaw ?? (Number.isFinite(Number(rollTotal)) ? Number(rollTotal) - Number(modifier || 0) : null);
+    const mode = result.checkMode === 'take10' ? 'take10' : 'roll';
+    return {
+      success,
+      fail: !success,
+      finalDc,
+      rollTotal: rollTotal ?? '—',
+      modifier,
+      rollRaw: mode === 'roll' ? rollRaw : null,
+      checkMode: mode,
+      title: success ? 'Lightsaber Forged' : 'Construction Failed',
+      message: success
+        ? `Success — DC ${finalDc} met. Credits were deducted and the lightsaber was created through the construction engine.`
+        : `${this._formatLightsaberEligibilityReason(result.reason || 'roll_failed')} No item was created and credits were not deducted.`,
+      itemId: result.itemId ?? null,
+      cost: result.cost ?? null
+    };
+  }
+
+  _getCreatedLightsaberFromResult(result = null) {
+    const itemId = result?.itemId || this._lightsaber?.constructionResult?.itemId;
+    if (!itemId) return null;
+    return this._getActorItemById(itemId);
+  }
+
+  async _openMirajAttunementFromResult() {
+    const weapon = this._getCreatedLightsaberFromResult();
+    if (!weapon) {
+      ui.notifications?.warn?.('The forged lightsaber could not be found for attunement. You can attune later from the sheet.');
+      return;
+    }
+    new MirajAttunementApp(this.actor, weapon).render(true);
+    await this.close();
   }
 
   _buildLightsaberComponentIntel({ activeTab, chassis, crystal, accessories = [], colorOptions = [] } = {}) {
@@ -2002,7 +2299,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     if (inspected?.type === 'crystal') component = this._findLightsaberCatalogOption('crystals', inspected.key);
     if (inspected?.type === 'accessory') component = this._findLightsaberCatalogOption('accessories', inspected.key);
     if (inspected?.type === 'chassis') component = this._findLightsaberCatalogOption('chassis', inspected.key);
-    if (inspected?.type === 'color') component = selectedColor;
+    if (inspected?.type === 'color') component = colorOptions.find(option => option.key === inspected.key) || selectedColor;
 
     let kind = 'Crystal';
     if (!component) {
@@ -2088,7 +2385,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const selectedAccessories = this._lightsaber.selectedAccessoryIds
       .map(id => this._findLightsaberCatalogOption('accessories', id))
       .filter(Boolean);
+    const constructionSummary = this._getLightsaberConstructionSummary();
+    const constructionMode = !editItem && (this.mode === 'construct' || this.routeIntent === 'lightsaber-construction' || constructionSummary.available);
     const canChangeChassis = this._canChangeLightsaberChassis(editItem);
+    if (constructionMode && !canChangeChassis) this._lightsaber.activeTab = this._lightsaber.activeTab === 'chassis' ? 'crystal' : this._lightsaber.activeTab;
     const activeTab = this._getLightsaberActiveTab(canChangeChassis);
     this._lightsaber.activeTab = activeTab;
     const lightsaberVisualProfile = WeaponVisualProfileResolver.resolve(editItem, {
@@ -2109,14 +2409,23 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       : (chassis && crystal ? await LightsaberConstructionEngine.getBuildPreview(this.actor, config) : null);
     const credits = Number(this.actor.system?.credits ?? 0) || 0;
     const totalCost = Number(preview?.totalCost ?? 0) || 0;
+    const canRoll = !!(chassis && crystal && preview?.success && !slotState.isOverflowing);
+    const canTake10Build = !!(canRoll && preview?.canTake10);
     const canBuild = editItem
-      ? !!(chassis && crystal && preview?.success && !slotState.isOverflowing)
-      : !!(chassis && crystal && preview?.success && !slotState.isOverflowing && (this._lightsaber.selectedCheckMode !== 'take10' || preview?.canTake10));
+      ? canRoll
+      : !!(canRoll && (this._lightsaber.selectedCheckMode !== 'take10' || canTake10Build));
     const bladeHex = lightsaberVisualProfile.bladeHex;
     const hiltKind = this._normalizeLightsaberHiltKind(chassis);
+    const steps = this._getLightsaberStepState({ canChangeChassis, activeTab });
+    const navigation = this._getLightsaberStepNavigation(steps, activeTab);
+    const buildSummary = this._buildLightsaberBuildSummary({ chassis, crystal, accessories: selectedAccessories, preview, credits, totalCost });
+    const resultView = this._getLightsaberResultView(this._lightsaber.constructionResult);
+    const alreadyBuiltNotice = constructionSummary.hasSelfBuilt && !constructionSummary.available;
+    const ineligibleNotice = !editItem && !constructionSummary.available && !constructionSummary.hasSelfBuilt;
     return {
       actor: this.actor,
       categories: visibleCategories,
+      lightsaberConstruction: constructionSummary,
       hasItems: true,
       isLightsaber: true,
       isStoreStageMode: false,
@@ -2145,24 +2454,32 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       ...(await this._getLightsaberMentorContext(editItem)),
       lightsaber: {
         mode: editItem ? 'tuning existing blade' : (canChangeChassis ? 'construct' : 'construction locked'),
+        constructionMode,
+        route: constructionSummary.route,
         activeTab,
         tabCrystal: activeTab === 'crystal',
         tabHilt: activeTab === 'hilt',
         tabColor: activeTab === 'color',
         tabChassis: activeTab === 'chassis',
-        tabs: [
-          { key: 'crystal', label: 'Crystal', active: activeTab === 'crystal' },
-          { key: 'hilt', label: 'Hilt', active: activeTab === 'hilt' },
-          ...(canChangeChassis ? [{ key: 'chassis', label: 'Chassis', active: activeTab === 'chassis' }] : []),
-          { key: 'color', label: 'Blade Color', active: activeTab === 'color' }
-        ],
+        tabReview: activeTab === 'review',
+        tabs: steps,
+        navigation,
+        buildSummary,
+        result: resultView,
+        showSuccessOverlay: !!resultView?.success && !editItem,
+        createdWeaponName: this._lightsaber.constructionResult?.weaponName || resultView?.itemId || 'Self-built lightsaber',
+        ineligibleNotice,
+        alreadyBuiltNotice,
+        eligibilityReasonLabel: this._formatLightsaberEligibilityReason(constructionSummary.reason || (constructionSummary.hasSelfBuilt ? 'already_built' : '')),
+        constructionModeSetting: this._getLightsaberConstructionModeSetting(),
+        constructionRequirements: this._getLightsaberConstructionRequirements(),
         componentIntel,
         showChassis: canChangeChassis,
         chassisLocked: !canChangeChassis,
         selectedChassisName: chassis?.name || 'Fixed Chassis',
         chassisLockReason: editItem
           ? 'This is an existing/free lightsaber. Chassis construction is locked; tune the crystal, blade color, and hilt accessories instead.'
-          : 'Full chassis construction unlocks at level 7 for Jedi or Force-sensitive characters.',
+          : (constructionSummary.reason || 'Full chassis construction unlocks at level 7 for eligible Force-sensitive lightsaber users.'),
         bladeHex,
         visualProfile: lightsaberVisualProfile,
         hiltKind,
@@ -2192,10 +2509,29 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         })),
         colorOptions,
         checkMode: this._lightsaber.selectedCheckMode,
+        canRoll,
+        canTake10Build,
         rollSelected: this._lightsaber.selectedCheckMode === 'roll',
         take10Selected: this._lightsaber.selectedCheckMode === 'take10',
         preview,
-        slotState
+        slotState,
+        review: {
+          chassisName: chassis?.name || 'No chassis selected',
+          crystalName: crystal?.name || 'No crystal selected',
+          accessoryNames: selectedAccessories.map(accessory => accessory.name).join(', ') || 'None',
+          bladeColor: this._lightsaber.selectedBladeColor || DEFAULT_BLADE_COLOR,
+          buildDc: preview?.finalDc ?? preview?.dc ?? '—',
+          useTheForce: preview?.modifier ?? '—',
+          take10: preview?.take10Total ?? '—',
+          totalCost,
+          affordable: credits >= totalCost,
+          after: credits - totalCost,
+          damage: preview?.chassis?.system?.damage || chassis?.system?.damage || chassis?.system?.damageDice || '—',
+          critical: preview?.chassis?.system?.critical || preview?.chassis?.system?.crit || chassis?.system?.critical || chassis?.system?.crit || '19-20',
+          damageType: preview?.chassis?.system?.damageType || chassis?.system?.damageType || 'Energy and Slashing',
+          range: preview?.chassis?.system?.range || chassis?.system?.range || 'Melee',
+          timeHours: preview?.timeHours ?? 24
+        }
       },
       upgrades: [],
       templates: [],
@@ -2251,6 +2587,67 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.close();
   }
 
+
+  async _emitLightsaberConstructionComplete(result = {}) {
+    try {
+      const [engineMod, notificationMod, recipientMod, senderMod, audienceMod, projectionMod, enumsMod] = await Promise.all([
+        import('/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js'),
+        import('/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-notification.js'),
+        import('/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-recipient.js'),
+        import('/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-sender.js'),
+        import('/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js'),
+        import('/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-projection-surface.js'),
+        import('/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js')
+      ]);
+      const { HolonetEngine } = engineMod;
+      const { HolonetNotification } = notificationMod;
+      const { HolonetRecipient } = recipientMod;
+      const { HolonetSender } = senderMod;
+      const { HolonetAudience } = audienceMod;
+      const { HolonetProjectionSurface } = projectionMod;
+      const { INTENT_TYPE, SOURCE_FAMILY, SURFACE_TYPE } = enumsMod;
+      const recipients = [];
+      for (const user of Array.from(game.users ?? [])) {
+        if (!user || user.isGM) continue;
+        if (user.character?.id === this.actor?.id) recipients.push(`player:${user.id}`);
+        const level = Number(this.actor?.ownership?.[user.id] ?? this.actor?._source?.ownership?.[user.id] ?? 0);
+        if (level >= 2) recipients.push(`player:${user.id}`);
+      }
+      if (game.user?.isGM) recipients.push(`gm:${game.user.id}`);
+      else if (game.user?.id) recipients.push(`player:${game.user.id}`);
+      const recipientIds = [...new Set(recipients.filter(Boolean))];
+      if (!recipientIds.length) return;
+      const recipientObjects = recipientIds.map(id => HolonetRecipient.fromStableId?.(id) || { id, label: id });
+      const record = new HolonetNotification({
+        intent: INTENT_TYPE.WORKBENCH_AVAILABLE,
+        sender: HolonetSender.system('Miraj · Crystal-Singer'),
+        audience: HolonetAudience.selectedPlayers(recipientIds),
+        recipients: recipientObjects,
+        title: 'Lightsaber Constructed',
+        body: `${this.actor?.name || 'The Force user'} has completed a self-built lightsaber. The weapon has been added to the gear ledger.`,
+        sourceFamily: SOURCE_FAMILY.WORKBENCH,
+        sourceId: this.actor?.id ?? null,
+        level: 'info',
+        icon: '✦',
+        metadata: {
+          actorId: this.actor?.id ?? null,
+          actorName: this.actor?.name ?? null,
+          itemId: result?.itemId ?? null,
+          category: 'MILESTONE',
+          priority: 'normal',
+          routeId: 'sheet',
+          tab: 'gear',
+          generatedBy: 'LightsaberConstructionWorkbench'
+        },
+        projections: []
+      });
+      record.projections = [new HolonetProjectionSurface({ surfaceType: SURFACE_TYPE.HOME_FEED, recordId: record.id })];
+      await HolonetEngine.publish(record, { skipSocket: false, suppressLocalHook: true });
+    } catch (error) {
+      console.warn('SWSE [Workbench] failed to publish lightsaber completion Holonet notice', error);
+    }
+  }
+
   async _applyLightsaber() {
     const editItem = this._lightsaber.selectedOwnedSaberId ? this._getActorItemById(this._lightsaber.selectedOwnedSaberId) : null;
     const config = this._getLightsaberConfig();
@@ -2259,16 +2656,49 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       ui.notifications.warn('This lightsaber configuration exceeds available accessory slots.');
       return;
     }
-    const result = editItem
-      ? await LightsaberConstructionEngine.applyEdits(this.actor, editItem, config)
-      : await LightsaberConstructionEngine.attemptConstruction(this.actor, config);
-    if (!result?.success) {
-      ui.notifications.error(`Lightsaber workbench failed: ${result?.reason || 'unknown_error'}`);
-      return;
+
+    this._pendingApply = true;
+    this._lightsaber.constructionResult = null;
+    await this._renderPreservingUi();
+
+    try {
+      const result = editItem
+        ? await LightsaberConstructionEngine.applyEdits(this.actor, editItem, config)
+        : await LightsaberConstructionEngine.attemptConstruction(this.actor, config);
+
+      if (!result?.success) {
+        this._lightsaber.constructionResult = {
+          ...result,
+          success: false,
+          checkMode: config.checkMode
+        };
+        ui.notifications.warn(`Lightsaber workbench failed: ${result?.reason || 'unknown_error'}`);
+        await this._renderPreservingUi();
+        return;
+      }
+
+      if (editItem) {
+        ui.notifications.info('Lightsaber tuning applied.');
+        await this.close();
+        this.actor?.sheet?.render?.(true);
+        return;
+      }
+
+      const forged = this._getActorItemById(result.itemId);
+      this._lightsaber.constructionResult = {
+        ...result,
+        success: true,
+        checkMode: config.checkMode,
+        bladeColor: config.bladeColor,
+        weaponName: forged?.name || 'Self-built lightsaber'
+      };
+      ui.notifications.info('Lightsaber forged.');
+      await this._emitLightsaberConstructionComplete(result);
+      this.actor?.sheet?.render?.(true);
+      await this._renderPreservingUi();
+    } finally {
+      this._pendingApply = false;
     }
-    ui.notifications.info(editItem ? 'Lightsaber tuning applied.' : 'Lightsaber forged.');
-    this.close();
-    this.actor?.sheet?.render?.(true);
   }
 
   async #applyCurrentItem() {

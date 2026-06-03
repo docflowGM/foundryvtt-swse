@@ -23,6 +23,17 @@
         </div>
       </section>
 
+      {{#if lightsaberConstruction.available}}
+      <section class="swse-lightsaber-construction-callout panel">
+        <div>
+          <span class="callout-eyebrow">Milestone Ready</span>
+          <strong>Lightsaber construction is available.</strong>
+          <p>Open the Saber Forge wizard path without needing an existing lightsaber in inventory.</p>
+        </div>
+        <button type="button" class="primary-action saber-ready-action" data-action="start-lightsaber-construction" data-entry-point="workbench-callout">Construct Lightsaber</button>
+      </section>
+      {{/if}}
+
       {{#if hasItems}}
       <nav class="swse-customization-tabs">
         {{#each categories}}
@@ -49,7 +60,7 @@
           </div>
           <div class="inventory-list">
             {{#unless hasInventoryResults}}
-            <div class="inventory-empty">No items match this filter.</div>
+            <div class="inventory-empty">{{#if isLightsaber}}No existing lightsabers found. Use Construct Lightsaber to begin the self-built forge path.{{else}}No items match this filter.{{/if}}</div>
             {{/unless}}
             {{#each inventoryItems}}
             <button type="button" class="inventory-item {{#if active}}active{{/if}}" data-action="select-item" data-item-id="{{id}}">
@@ -90,24 +101,61 @@
           </div>
 
           {{#if isLightsaber}}
-          <div class="lightsaber-workspace lightsaber-workspace--tabs">
-            <section class="detail-panel panel ls-tab-stage">
-              <div class="panel-head"><span>Workbench Focus</span><span class="hint">{{lightsaber.mode}}</span></div>
-              <nav class="ls-tab-row" aria-label="Lightsaber tuning sections">
+          <div class="lightsaber-workspace lightsaber-workspace--tabs lightsaber-construction-wizard {{#if lightsaber.constructionMode}}lightsaber-workspace--construction{{/if}}" data-lightsaber-route-mode="{{lightsaber.route.mode}}" data-lightsaber-route-intent="{{lightsaber.route.routeIntent}}" data-lightsaber-wizard-stage="{{lightsaber.activeTab}}" style="--blade-color: {{lightsaber.bladeHex}};">
+            <section class="detail-panel panel ls-tab-stage ls-wizard-main">
+              <div class="panel-head ls-wizard-head">
+                <span>{{#if lightsaber.constructionMode}}Lightsaber Construction Wizard{{else}}Lightsaber Tuning{{/if}}</span>
+                <span class="hint">{{lightsaber.mode}}</span>
+              </div>
+
+              {{#if lightsaber.ineligibleNotice}}
+              <div class="ls-eligibility-banner ineligible">
+                <strong>Construction Locked</strong>
+                <span>{{lightsaber.eligibilityReasonLabel}}</span>
+                <small>Mode: {{lightsaber.constructionModeSetting}} · Requires {{lightsaber.constructionRequirements}}</small>
+              </div>
+              {{/if}}
+
+              {{#if lightsaber.alreadyBuiltNotice}}
+              <div class="ls-eligibility-banner built">
+                <strong>Lightsaber Already Constructed</strong>
+                <span>This actor already has a self-built lightsaber. Construction mode is hidden; tune the existing blade from the Crystal, Hilt, and Blade Color tabs.</span>
+              </div>
+              {{/if}}
+
+              <nav class="ls-step-rail" aria-label="Lightsaber construction steps">
                 {{#each lightsaber.tabs}}
-                <button type="button" class="ls-tab-btn {{#if active}}active{{/if}}" data-action="set-lightsaber-tab" data-tab="{{key}}">{{label}}</button>
+                <button type="button" class="ls-step {{#if active}}active{{/if}} {{#if done}}done{{/if}}" data-action="set-lightsaber-tab" data-tab="{{key}}">
+                  <span class="ls-step-index">{{number}}</span>
+                  <span>{{label}}</span>
+                </button>
                 {{/each}}
               </nav>
+
+              {{#if lightsaber.tabChassis}}
+              <section class="ls-tab-panel" data-lightsaber-tab-panel="chassis">
+                <div class="panel-head compact"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
+                <div class="ls-tab-card-grid">
+                  {{#each lightsaber.chassis}}
+                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}}" data-action="select-lightsaber-chassis" data-key="{{id}}" data-lightsaber-inspect-type="chassis" data-lightsaber-inspect-key="{{id}}" data-component-type="chassis" title="{{description}}">
+                    <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                    <span class="card-desc">{{description}}</span>
+                    <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
+                  </button>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
 
               {{#if lightsaber.tabCrystal}}
               <section class="ls-tab-panel" data-lightsaber-tab-panel="crystal">
                 <div class="panel-head compact"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.crystals}}
-                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" {{#if incompatible}}disabled{{/if}} title="{{description}}">
+                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{id}}" data-component-type="crystal" {{#if incompatible}}disabled{{/if}} title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
-                    <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag">{{bladeColor}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+                    <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag">{{bladeColor}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
                   </button>
                   {{/each}}
                 </div>
@@ -119,7 +167,7 @@
                 <div class="panel-head compact"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.accessories}}
-                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" {{#if incompatible}}disabled{{/if}} title="{{description}}">
+                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{id}}" data-component-type="accessory" {{#if incompatible}}disabled{{/if}} title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
@@ -131,10 +179,10 @@
 
               {{#if lightsaber.tabColor}}
               <section class="ls-tab-panel" data-lightsaber-tab-panel="color">
-                <div class="panel-head compact"><span>Blade Color</span><span class="hint">based on crystal</span></div>
+                <div class="panel-head compact"><span>Blade Color</span><span class="hint">reactive blade tint</span></div>
                 <div class="weapon-color-picker blade-color-grid ls-tab-color-grid" aria-label="Blade Color">
                   {{#each lightsaber.colorOptions}}
-                  <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" title="{{label}}" aria-label="Blade color {{label}}">
+                  <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" data-lightsaber-inspect-type="color" data-lightsaber-inspect-key="{{key}}" data-component-type="color" title="{{label}}" aria-label="Blade color {{label}}">
                     <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
                     <span class="weapon-color-label">{{label}}</span>
                   </button>
@@ -143,20 +191,57 @@
               </section>
               {{/if}}
 
-              {{#if lightsaber.tabChassis}}
-              <section class="ls-tab-panel" data-lightsaber-tab-panel="chassis">
-                <div class="panel-head compact"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
-                <div class="ls-tab-card-grid">
-                  {{#each lightsaber.chassis}}
-                  <button type="button" class="config-card {{#if selected}}selected{{/if}}" data-action="select-lightsaber-chassis" data-key="{{id}}" title="{{description}}">
-                    <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-                    <span class="card-desc">{{description}}</span>
-                    <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
-                  </button>
-                  {{/each}}
+              {{#if lightsaber.tabReview}}
+              <section class="ls-tab-panel ls-tab-panel--review" data-lightsaber-tab-panel="review">
+                <div class="panel-head compact"><span>Review / Construct</span><span class="hint">engine-authorized</span></div>
+                <div class="ls-review-grid ls-review-grid--full">
+                  <article><span>Chassis</span><strong>{{lightsaber.review.chassisName}}</strong></article>
+                  <article><span>Crystal</span><strong>{{lightsaber.review.crystalName}}</strong></article>
+                  <article><span>Hilt</span><strong>{{lightsaber.review.accessoryNames}}</strong></article>
+                  <article><span>Blade Color</span><strong>{{lightsaber.review.bladeColor}}</strong></article>
+                  <article><span>Damage</span><strong>{{lightsaber.review.damage}}</strong></article>
+                  <article><span>Critical</span><strong>{{lightsaber.review.critical}}</strong></article>
+                  <article><span>Damage Type</span><strong>{{lightsaber.review.damageType}}</strong></article>
+                  <article><span>Range</span><strong>{{lightsaber.review.range}}</strong></article>
+                  <article><span>Build DC</span><strong>{{lightsaber.review.buildDc}}</strong></article>
+                  <article><span>Use the Force</span><strong>{{lightsaber.review.useTheForce}}</strong></article>
+                  <article><span>Take 10</span><strong>{{lightsaber.review.take10}}</strong></article>
+                  <article><span>Total Cost</span><strong>{{lightsaber.review.totalCost}} cr</strong></article>
+                </div>
+
+                <div class="ls-review-checks">
+                  <div class="ls-check-mode">
+                    <button type="button" class="{{#if lightsaber.rollSelected}}active{{/if}}" data-action="set-lightsaber-check-mode" data-key="roll">Roll Use the Force</button>
+                    <button type="button" class="{{#if lightsaber.take10Selected}}active{{/if}}" data-action="set-lightsaber-check-mode" data-key="take10">Take 10</button>
+                  </div>
+                  <div class="ls-affordability {{#if lightsaber.review.affordable}}ok{{else}}bad{{/if}}">
+                    <span>Credits</span>
+                    <strong>{{footer.credits}} cr → {{lightsaber.review.after}} cr</strong>
+                    <small>{{#if lightsaber.review.affordable}}Affordable{{else}}Insufficient credits{{/if}}</small>
+                  </div>
+                </div>
+
+                {{#if lightsaber.result}}
+                <div class="ls-roll-result {{#if lightsaber.result.success}}success{{else}}failure{{/if}}">
+                  <span class="ls-roll-label">{{lightsaber.result.title}}</span>
+                  <strong>{{lightsaber.result.rollTotal}}</strong>
+                  <p>{{lightsaber.result.message}}</p>
+                  {{#if lightsaber.result.rollRaw}}<small>d20 {{lightsaber.result.rollRaw}} + UtF {{lightsaber.result.modifier}} vs DC {{lightsaber.result.finalDc}}</small>{{/if}}
+                </div>
+                {{/if}}
+
+                <div class="ls-review-actions">
+                  <button type="button" class="action ghost" data-action="attempt-lightsaber-construction" data-mode="take10" {{#unless lightsaber.canTake10Build}}disabled{{/unless}}>Construct via Take 10</button>
+                  <button type="button" class="action primary" data-action="attempt-lightsaber-construction" data-mode="roll" {{#unless lightsaber.canRoll}}disabled{{/unless}}>Roll Use the Force</button>
                 </div>
               </section>
               {{/if}}
+
+              <div class="ls-wizard-nav">
+                {{#if lightsaber.navigation.previous}}<button type="button" class="action ghost" data-action="lightsaber-step-prev" data-tab="{{lightsaber.navigation.previous}}">← Back</button>{{/if}}
+                <span class="ls-wizard-rules"><span>24 hr uninterrupted</span><span>No Take 20</span><span>Use the Force</span></span>
+                {{#if lightsaber.navigation.next}}<button type="button" class="action primary" data-action="lightsaber-step-next" data-tab="{{lightsaber.navigation.next}}">{{#if lightsaber.tabColor}}Review →{{else}}Next →{{/if}}</button>{{/if}}
+              </div>
             </section>
 
             <aside class="ls-forge-rail">
@@ -173,7 +258,7 @@
                   <span class="ls-crossguard ls-crossguard-b"></span>
                 </div>
                 <div class="ls-color-cta" style="--blade-color: {{lightsaber.bladeHex}};">
-                  <span class="ls-color-current"><span class="ls-color-dot"></span> Blade color</span>
+                  <span class="ls-color-current"><span class="ls-color-dot"></span> {{lightsaber.review.bladeColor}} blade</span>
                   <button type="button" class="ls-color-open" data-action="open-lightsaber-color-modal">Choose Color</button>
                 </div>
                 <div class="ls-color-modal" data-lightsaber-color-modal aria-hidden="true">
@@ -211,7 +296,31 @@
                   </dl>
                 </article>
               </section>
+
+              <section class="detail-panel panel ls-build-summary">
+                <div class="panel-head"><span>Build Summary</span><span class="hint">DC {{lightsaber.buildSummary.finalDc}}</span></div>
+                <div class="ls-dc-row">
+                  <span>DC {{lightsaber.buildSummary.baseDc}}</span>
+                  <span>{{lightsaber.buildSummary.crystalDcText}}</span>
+                  <span>{{lightsaber.buildSummary.accessoryDcText}}</span>
+                  <strong>{{lightsaber.buildSummary.finalDc}}</strong>
+                </div>
+                <div class="ls-summary-line {{#if lightsaber.buildSummary.canTake10}}ok{{else}}bad{{/if}}">{{lightsaber.buildSummary.take10Text}}</div>
+                <div class="ls-summary-line {{#if lightsaber.buildSummary.affordable}}ok{{else}}bad{{/if}}">{{lightsaber.buildSummary.totalCost}} cr total · {{lightsaber.buildSummary.credits}} cr available</div>
+              </section>
             </aside>
+
+            {{#if lightsaber.showSuccessOverlay}}
+            <div class="ls-success-overlay">
+              <div class="ls-success-beam" style="--blade-color: {{lightsaber.bladeHex}};"></div>
+              <h3>Lightsaber Forged</h3>
+              <p>{{lightsaber.createdWeaponName}} resonates with the Force. The construction engine stored builtBy, builtAt, bladeColor, and lightsaberConfig, then cleared the construction milestone flags.</p>
+              <div class="ls-success-actions">
+                <button type="button" class="action primary" data-action="begin-lightsaber-attunement">Attune Now — Summon Miraj</button>
+                <button type="button" class="action ghost" data-action="dismiss-lightsaber-success">Attune Later</button>
+              </div>
+            </div>
+            {{/if}}
           </div>
           {{else}}
           {{#if isEnergyShield}}

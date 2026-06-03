@@ -574,13 +574,14 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
   // Lightsaber Construction Mode
   game.settings.register('foundryvtt-swse', 'lightsaberConstructionMode', {
     name: 'Lightsaber Construction Mode',
-    hint: 'Controls how lightsaber construction validation is enforced: raw (no restrictions) or standard (with level gating).',
+    hint: 'Controls who can construct a self-built lightsaber milestone. Raw supports non-Jedi Force traditions; Jedi modes add class-level gates.',
     scope: 'world',
     config: true,
     type: String,
     choices: {
-      raw: 'Raw (No Restrictions)',
-      standard: 'Standard (With Level Gating)'
+      raw: 'Raw: Heroic 7 + Force Sensitive + Lightsaber Proficiency',
+      heroicAndJedi: 'Heroic 7 + Jedi 1 + Force Sensitive + Lightsaber Proficiency',
+      jediOnly: 'Jedi 7 + Force Sensitive + Lightsaber Proficiency'
     },
     default: 'raw'
   });

@@ -64,6 +64,7 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     // Event listener cleanup
     this._renderAbort = null;
+    this._noChoiceAutoAdvanceStepId = null;
   }
 
 
@@ -264,6 +265,7 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     // Get suggested languages from SuggestionService
     await this._getSuggestedLanguages(shell.actor, shell);
+    this._scheduleNoChoiceAutoAdvance(shell);
 
     // Wire up mentor
     shell.mentor.askMentorEnabled = false;
@@ -282,6 +284,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     // plus document and guard by active step.
     this._syncUtilityState(shell);
     this._attachUtilityListeners(shell, signal);
+    this._scheduleNoChoiceAutoAdvance(shell);
 
     // Legacy in-surface search input support, if older templates still render it.
     const searchInput = shell.element.querySelector('.lang-search-input');
@@ -667,8 +670,15 @@ export class LanguageStep extends ProgressionStepPlugin {
     return intDelta + ownedLinguistSlotsFromIntDelta + pendingLinguistSlots + this._countPendingLanguageEntitlementSlots(shell);
   }
 
+  _getActorAbilityRecord(actor, abilityKey = 'int') {
+    return actor?.system?.abilities?.[abilityKey]
+      || actor?.system?.attributes?.[abilityKey]
+      || actor?.system?.stats?.abilities?.[abilityKey]
+      || {};
+  }
+
   _getActorAbilityScore(actor, abilityKey = 'int') {
-    const ability = actor?.system?.abilities?.[abilityKey] || actor?.system?.attributes?.[abilityKey] || {};
+    const ability = this._getActorAbilityRecord(actor, abilityKey);
     const explicit = Number(ability.total ?? ability.score ?? ability.value);
     if (Number.isFinite(explicit)) return explicit;
     const base = Number(ability.base ?? 10);
@@ -687,10 +697,26 @@ export class LanguageStep extends ProgressionStepPlugin {
     return Math.floor(((Number.isFinite(safe) ? safe : 10) - 10) / 2);
   }
 
+  _getActorAbilityModifier(actor, abilityKey = 'int') {
+    const ability = this._getActorAbilityRecord(actor, abilityKey);
+    const stored = Number(ability.mod ?? ability.modifier);
+    if (Number.isFinite(stored)) return Math.floor(stored);
+    return this._abilityModifier(this._getActorAbilityScore(actor, abilityKey));
+  }
+
+  _getPendingAbilityIncrease(shell, abilityKey = 'int') {
+    const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
+    const increases = attributes?.increases || attributes?.abilityIncreases || {};
+    return Math.max(0, Number(increases?.[abilityKey] ?? 0) || 0);
+  }
+
   _getPendingAbilityScore(actor, shell, abilityKey = 'int') {
     const current = this._getActorAbilityScore(actor, abilityKey);
     const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
     if (!attributes) return current;
+    const increase = this._getPendingAbilityIncrease(shell, abilityKey);
+    if (increase <= 0 && String(attributes?.mode || '') === 'levelup-ability-increase') return current;
+
     const direct = Number(
       attributes?.finalValues?.[abilityKey]
         ?? attributes?.values?.[abilityKey]
@@ -698,20 +724,39 @@ export class LanguageStep extends ProgressionStepPlugin {
         ?? attributes?.[abilityKey]?.value
         ?? attributes?.[abilityKey]
     );
-    if (Number.isFinite(direct)) return direct;
-    const increase = Number(attributes?.increases?.[abilityKey] ?? 0);
-    if (Number.isFinite(increase) && increase > 0) return current + increase;
+    if (Number.isFinite(direct) && (increase > 0 || String(attributes?.mode || '') !== 'levelup-ability-increase')) return direct;
+    if (increase > 0) return current + increase;
     return current;
   }
 
   _getPendingIntModifierDelta(actor, shell) {
-    const currentMod = this._abilityModifier(this._getActorAbilityScore(actor, 'int'));
     const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
-    const explicitPendingMod = Number(attributes?.modifiers?.int);
-    const pendingMod = Number.isFinite(explicitPendingMod)
-      ? explicitPendingMod
-      : this._abilityModifier(this._getPendingAbilityScore(actor, shell, 'int'));
+    const intIncrease = this._getPendingAbilityIncrease(shell, 'int');
+    if (String(attributes?.mode || '') === 'levelup-ability-increase' && intIncrease <= 0) return 0;
+
+    const currentMod = this._getActorAbilityModifier(actor, 'int');
+    const pendingMod = this._abilityModifier(this._getPendingAbilityScore(actor, shell, 'int'));
     return Math.max(0, pendingMod - currentMod);
+  }
+
+  _hasNoLevelupLanguageChoices(shell) {
+    return this.isLevelup?.(shell) === true
+      && Math.max(0, Number(this._bonusLanguagesAvailable || 0)) <= 0
+      && this._selectedBonusLanguages.length <= 0;
+  }
+
+  _scheduleNoChoiceAutoAdvance(shell) {
+    if (!this._hasNoLevelupLanguageChoices(shell)) return false;
+    const stepId = shell?.progressionSession?.currentStepId || shell?.steps?.[shell.currentStepIndex]?.stepId || 'languages';
+    if (this._noChoiceAutoAdvanceStepId === stepId) return true;
+    this._noChoiceAutoAdvanceStepId = stepId;
+    globalThis.setTimeout?.(() => {
+      const currentStepId = shell?.progressionSession?.currentStepId || shell?.steps?.[shell.currentStepIndex]?.stepId || null;
+      if (currentStepId !== stepId) return;
+      if (!this._hasNoLevelupLanguageChoices(shell)) return;
+      void shell?._maybeScheduleAutoAdvance?.({ source: 'languages-no-new-choices' });
+    }, 120);
+    return true;
   }
 
   _countOwnedLinguistInstances(actor) {

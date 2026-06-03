@@ -15,6 +15,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
 import { FollowerTemplateStep } from './steps/follower-steps/follower-template-step.js';
+import { FollowerDroidBuilderStep } from './steps/follower-steps/follower-droid-builder-step.js';
 import { FollowerBackgroundStep } from './steps/follower-steps/follower-background-step.js';
 import { FollowerSkillsStep } from './steps/follower-steps/follower-skills-step.js';
 import { FollowerLanguageStep } from './steps/follower-steps/follower-language-step.js';
@@ -42,6 +43,14 @@ export class FollowerShell extends ProgressionShell {
         category: StepCategory.CANONICAL,
         type: StepType.IDENTITY,
         pluginClass: FollowerSpeciesStep,
+      }),
+      createStepDescriptor({
+        stepId: 'droid-builder',
+        label: 'Droid Systems',
+        icon: 'fa-robot',
+        category: StepCategory.CATEGORY_SPECIFIC,
+        type: StepType.BUILD,
+        pluginClass: FollowerDroidBuilderStep,
       }),
       createStepDescriptor({
         stepId: 'follower-template',
@@ -188,6 +197,14 @@ export class FollowerShell extends ProgressionShell {
   _shouldSkipFollowerStep(stepId) {
     const draft = this.progressionSession?.draftSelections || {};
     const templateType = String(draft.templateType || '').toLowerCase();
+    const isDroid = draft.followerKind === 'droid'
+      || draft.droidConfig?.isDroid === true
+      || String(draft.speciesName || '').toLowerCase() === 'droid';
+
+    // Droid followers do not use the organic species browser. They route into
+    // the shared droid systems builder instead.
+    if (stepId === 'species' && isDroid) return true;
+    if (stepId === 'droid-builder' && !isDroid) return true;
 
     // Utility followers choose one broad practical skill. Aggressive and
     // Defensive followers get their template skill package automatically, so
@@ -238,7 +255,9 @@ export class FollowerShell extends ProgressionShell {
 
     if (!draft.followerKind) missing.push('Choose Living Being or Droid.');
     if (isDroid) {
-      if (!draft.droidConfig?.abilityChoice) missing.push('Choose the droid chassis ability bonus.');
+      if (!draft.droidConfig?.isDroid) missing.push('Configure the droid follower chassis.');
+      if (!draft.droidConfig?.droidSystems && !draft.droid?.droidSystems) missing.push('Configure the droid follower systems.');
+      if (draft.startingCredits === null || draft.startingCredits === undefined) missing.push('Roll the droid follower chassis budget.');
     } else if (!draft.speciesName && !draft.species?.name) {
       missing.push('Choose a follower species.');
     }

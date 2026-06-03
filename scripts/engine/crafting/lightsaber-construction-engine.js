@@ -366,11 +366,12 @@ export class LightsaberConstructionEngine {
       const skill = actor.system.skills?.useTheForce;
       const modifier = skill?.total ?? 0;
       let rollTotal = 0;
+      let rollRaw = null;
       const checkMode = config?.checkMode === 'take10' ? 'take10' : 'roll';
       if (checkMode === 'take10') {
         rollTotal = modifier + 10;
         if (rollTotal < finalDc) {
-          return { success: false, reason: 'take10_insufficient', finalDc, rollTotal, modifier };
+          return { success: false, reason: 'take10_insufficient', finalDc, rollTotal, modifier, checkMode };
         }
       } else {
         const formula = `1d20 + ${modifier}`;
@@ -383,6 +384,7 @@ export class LightsaberConstructionEngine {
           return { success: false, reason: "roll_failed" };
         }
         rollTotal = roll.total;
+        rollRaw = Number(rollTotal) - Number(modifier || 0);
       }
 
       // Step 8: Check roll result
@@ -392,7 +394,9 @@ export class LightsaberConstructionEngine {
           reason: "roll_failed",
           finalDc,
           rollTotal,
-          modifier
+          modifier,
+          rollRaw,
+          checkMode
         };
       }
 
@@ -422,6 +426,7 @@ export class LightsaberConstructionEngine {
         try {
           await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred');
           await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionAvailable');
+          await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionPrompted');
         } catch (_err) {}
 
         return {
@@ -430,7 +435,9 @@ export class LightsaberConstructionEngine {
           finalDc,
           rollTotal,
           modifier,
-          cost: totalCost
+          cost: totalCost,
+          rollRaw,
+          checkMode
         };
       } catch (err) {
         SWSELogger.error("Construction mutation failed:", err);
@@ -625,7 +632,8 @@ export class LightsaberConstructionEngine {
 
     try {
       // Get construction mode setting
-      const mode = game?.settings?.get?.(game.system.id, "lightsaberConstructionMode") || "raw";
+      const rawMode = game?.settings?.get?.(game.system.id, "lightsaberConstructionMode") || "raw";
+      const mode = rawMode === "standard" ? "raw" : rawMode;
 
       // Get level authorities (NOT raw field access)
       const heroicLevel = getHeroicLevel(actor);

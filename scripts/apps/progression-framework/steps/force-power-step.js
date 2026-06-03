@@ -55,6 +55,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._suggestedPowers = [];  // Suggested force powers
     this._renderAbort = null;
     this._utilityUnlisteners = [];
+    this._noChoiceAutoAdvanceStepId = null;
   }
 
   get descriptor() { return this._descriptor; }
@@ -143,6 +144,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
     shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
     shell.element.addEventListener('prog:utility:sort', onSort, { signal });
+
+    this._scheduleNoChoiceAutoAdvance(shell);
 
     this._utilityUnlisteners = [
       () => shell.element?.removeEventListener('prog:utility:search', onSearch),
@@ -256,6 +259,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       entitlementReasons: [...this._entitlementReasons],
       hasTrainingSummary: this._totalPowerTraining > 0 || this._entitlementReasons.length > 0 || removedTotal > 0,
       hasSuggestions,
+      noNewPowerChoices: this._hasNoNewPowerChoices(),
+      noNewPowerChoicesMessage: 'No new Force Power choices were granted by this level. Continuing automatically.',
       suggestedPowerIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
         acc[id] = data;
@@ -438,6 +443,27 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     };
   }
 
+  _hasNoNewPowerChoices() {
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    return effectiveBudget <= 0 && totalSelected <= 0;
+  }
+
+  _scheduleNoChoiceAutoAdvance(shell) {
+    if (!this._hasNoNewPowerChoices()) return false;
+    const stepId = shell?.progressionSession?.currentStepId || shell?.steps?.[shell.currentStepIndex]?.stepId || 'force-powers';
+    if (this._noChoiceAutoAdvanceStepId === stepId) return true;
+    this._noChoiceAutoAdvanceStepId = stepId;
+
+    globalThis.setTimeout?.(() => {
+      const currentStepId = shell?.progressionSession?.currentStepId || shell?.steps?.[shell.currentStepIndex]?.stepId || null;
+      if (currentStepId !== stepId) return;
+      if (!this._hasNoNewPowerChoices()) return;
+      void shell?._maybeScheduleAutoAdvance?.({ source: 'force-power-no-new-choices' });
+    }, 120);
+    return true;
+  }
+
   /**
    * Validation — check that enough power selections are made (counting stacks).
    * Example: "Move Object ×2, Surge ×1" = 3 picks, if 3 allowed then valid.
@@ -492,9 +518,11 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       });
       const removedTotal = this._sumCounts(this._removedPowerCounts);
       if (removedTotal > 0) summaryParts.push(`${removedTotal} replacement slot${removedTotal === 1 ? '' : 's'} opened`);
-      const label = summaryParts.length > 0
-        ? `✓ ${summaryParts.join(', ')}`
-        : `✓ ${totalSelected} Selected`;
+      const label = effectiveBudget <= 0
+        ? 'Force Powers: no new choices'
+        : (summaryParts.length > 0
+          ? `✓ ${summaryParts.join(', ')}`
+          : `✓ ${totalSelected} Selected`);
       return [{ label, count: 0, total: Math.max(0, Number(effectiveBudget || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
     }
 

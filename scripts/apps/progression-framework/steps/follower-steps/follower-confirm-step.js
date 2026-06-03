@@ -359,6 +359,16 @@ export class FollowerConfirmStep extends FollowerStepBase {
       }
       choices.droidConfig.spentCredits = summary.spent;
       choices.droidConfig.lostCredits = Math.max(0, Number(choices.startingCredits || 0) - summary.spent);
+      choices.droidConfig.droidCredits = {
+        ...(choices.droidConfig.droidCredits || {}),
+        base: Number(choices.startingCredits || choices.droidConfig.droidCredits?.base || 0),
+        budget: Number(choices.startingCredits || choices.droidConfig.droidCredits?.budget || choices.droidConfig.droidCredits?.base || 0),
+        spent: summary.spent,
+        remaining: Math.max(0, Number(choices.startingCredits || choices.droidConfig.droidCredits?.base || 0) - summary.spent),
+        lost: Math.max(0, Number(choices.startingCredits || choices.droidConfig.droidCredits?.base || 0) - summary.spent),
+        unspentCreditsLost: true,
+        allowOverflow: false
+      };
       this.saveFollowerChoice(shell, 'droidConfig', choices.droidConfig);
     }
 
@@ -375,12 +385,47 @@ export class FollowerConfirmStep extends FollowerStepBase {
   }
 
   _getDroidBudgetSummary(choices, droidConfig) {
-    const systems = Array.isArray(droidConfig?.optionalSystems) ? droidConfig.optionalSystems : [];
-    const spent = systems.reduce((sum, system) => sum + Number(system.cost || 0), 0);
+    const builderCredits = droidConfig?.droidCredits || {};
+    const droidSystems = droidConfig?.droidSystems || droidConfig?.droidBuild?.droidSystems || {};
+    const fallbackSystems = Array.isArray(droidConfig?.optionalSystems) ? droidConfig.optionalSystems : [];
+    const systems = this._collectPurchasedDroidSystems(droidSystems, fallbackSystems);
+    const explicitSpent = Number(builderCredits.spent ?? droidConfig?.spentCredits);
+    const spent = Number.isFinite(explicitSpent)
+      ? explicitSpent
+      : systems.reduce((sum, system) => sum + Number(system.cost || 0), 0);
     return {
       spent,
-      systems: systems.map(system => `${system.name} (${system.cost} cr)`).join(', ')
+      systems: systems.map(system => `${this._displayDroidSystemName(system)} (${Number(system.cost || 0)} cr)`).join(', ')
     };
+  }
+
+  _collectPurchasedDroidSystems(droidSystems = {}, fallbackSystems = []) {
+    const purchased = [];
+    const add = (entry) => {
+      if (!entry || typeof entry !== 'object') return;
+      const cost = Number(entry.cost || entry.system?.cost || 0);
+      if (entry.isDefault || entry.isGranted) return;
+      if (cost <= 0) return;
+      purchased.push(entry);
+    };
+
+    const addArray = (entries) => {
+      if (!Array.isArray(entries)) return;
+      for (const entry of entries) add(entry);
+    };
+
+    addArray(droidSystems.appendages);
+    addArray(droidSystems.accessories);
+    addArray(droidSystems.locomotionEnhancements);
+    addArray(droidSystems.appendageEnhancements);
+    addArray(droidSystems.optionalSystems);
+
+    if (!purchased.length) addArray(fallbackSystems);
+    return purchased;
+  }
+
+  _displayDroidSystemName(system = {}) {
+    return system.name || system.label || system.id || system.key || 'Droid System';
   }
 
   _displayDefense(key) {

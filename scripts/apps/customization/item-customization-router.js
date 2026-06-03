@@ -77,8 +77,11 @@ function openResolvedItemCustomization(actor, item = null, options = {}) {
 
   try {
     const sourceItem = options.sourceItem || item || null;
-    const category = resolveCustomizationCategory(sourceItem, options.initialCategory || options.category);
+    const requestedCategory = options.initialCategory || options.category;
+    const category = resolveCustomizationCategory(sourceItem, requestedCategory);
     const itemId = sourceItem?.id || sourceItem?._id || options.itemId || null;
+    const mode = options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned');
+    const initialCategory = category || requestedCategory || 'weapons';
 
     if (sourceItem && !ItemCustomizationWorkbench.supportsItem(sourceItem)) {
       ui?.notifications?.warn?.(`No customization available for ${sourceItem.type}`);
@@ -89,11 +92,14 @@ function openResolvedItemCustomization(actor, item = null, options = {}) {
     // ShellRouter opens/focuses the actor sheet when needed, then routes inline.
     return ShellRouter.openSurface(actor, 'workbench', {
       itemId,
-      category: category || 'weapons',
-      mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned'),
+      category: initialCategory,
+      initialCategory,
+      mode,
       sourceItem,
       applyMode: options.applyMode,
-      onStage: options.onStage
+      onStage: options.onStage,
+      routeIntent: options.routeIntent || options.intent || (initialCategory === 'lightsaber' && mode === 'construct' ? 'lightsaber-construction' : null),
+      entryPoint: options.entryPoint || options.source || null
     });
   } catch (error) {
     console.error('[CustomizationRouter] Failed to open customization UI', error);
@@ -133,10 +139,14 @@ export async function openItemCustomizationByReference(actorRef, itemRef = null,
 }
 
 export function openLightsaberWorkbench(actor, item = null, options = {}) {
+  const mode = options.mode || (item ? 'owned' : 'construct');
   return openItemCustomization(actor, item, {
     ...options,
+    category: 'lightsaber',
     initialCategory: 'lightsaber',
-    mode: options.mode || (item ? 'owned' : 'construct')
+    mode,
+    routeIntent: options.routeIntent || (mode === 'construct' ? 'lightsaber-construction' : null),
+    entryPoint: options.entryPoint || 'lightsaber-router'
   });
 }
 

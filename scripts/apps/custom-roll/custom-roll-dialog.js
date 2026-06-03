@@ -19,11 +19,12 @@ export class CustomRollDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-custom-roll-dialog',
     tag: 'section',
+    position: { width: 520, height: 620 },
     window: {
       title: 'Custom Roll',
-      width: 460,
-      height: 'auto',
-      resizable: false
+      resizable: true,
+      draggable: true,
+      frame: true
     },
     classes: ['swse', 'swse-custom-roll-app', 'swse-datapad-container']
   };

@@ -192,6 +192,7 @@ export const PRESTIGE_PREREQUISITES = {
     'Independent Droid': {
         uuid: 'swse-prestige-independent-droid',
         minLevel: 3,
+        isDroid: true,
         skills: ['Use Computer'],
         droidSystems: ['Heuristic Processor']
     },
@@ -267,6 +268,7 @@ export const PRESTIGE_PREREQUISITES = {
     'Droid Commander': {
         uuid: 'swse-prestige-droid-commander',
         minLevel: 7,
+        isDroid: true,
         skills: ['Knowledge (Tactics)', 'Use Computer'],
         talents: {
             count: 1,

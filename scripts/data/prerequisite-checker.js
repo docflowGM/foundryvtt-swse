@@ -593,6 +593,17 @@ export class PrerequisiteChecker {
             }
         }
 
+        // Check droid-only prestige contracts. Some droid prestige classes
+        // also express this through systems/special text, but the actor predicate
+        // must be semantic so droid actors qualify and organic actors do not.
+        if (prereqs.isDroid === true) {
+            const droidCheck = this._checkIsDroidCondition({ type: 'isDroid' }, actor, pending);
+            details.isDroid = droidCheck;
+            if (!droidCheck.met) {
+                missing.push('Must be a Droid');
+            }
+        }
+
         // Check minimum BAB
         if (prereqs.minBAB) {
             const bab = getBaseAttackBonus(actor);
@@ -683,9 +694,17 @@ export class PrerequisiteChecker {
             }
         }
 
-        // Special conditions
+        // Special conditions. Table-state requirements remain advisory, but
+        // explicit droid special text is a semantic actor predicate.
         if (prereqs.special) {
             details.special = prereqs.special;
+            if (!prereqs.isDroid && /must\s+be\s+a?\s*droid/i.test(String(prereqs.special))) {
+                const droidCheck = this._checkIsDroidCondition({ type: 'isDroid' }, actor, pending);
+                details.isDroid = droidCheck;
+                if (!droidCheck.met) {
+                    missing.push('Must be a Droid');
+                }
+            }
         }
 
         return {
@@ -2789,15 +2808,46 @@ function checkDroidSystems(actor, requiredSystems) {
         return { met: true, missing: [] };
     }
 
-    const actorSystems = actor.system?.droidSystems || [];
+    if (!actorIsDroidLike(actor)) {
+        return { met: false, missing: ['Droid'] };
+    }
+
+    const rawSystems = actor.system?.droidSystems || actor.system?.systems || {};
+    const entries = [];
+    const pushSystem = (value) => {
+        if (!value) return;
+        if (typeof value === 'string') {
+            entries.push(value);
+            return;
+        }
+        if (Array.isArray(value)) {
+            value.forEach(pushSystem);
+            return;
+        }
+        if (typeof value === 'object') {
+            const named = value.name || value.label || value.id || value.type || value.category;
+            if (named) entries.push(named);
+            for (const nested of Object.values(value)) {
+                if (nested && (Array.isArray(nested) || typeof nested === 'object')) pushSystem(nested);
+            }
+        }
+    };
+    pushSystem(rawSystems);
+
+    // Droid player/follower construction grants a heuristic processor by rule;
+    // the actor data may store it as a nested processor object, a granted system,
+    // or only through droid actor flags. Treat droid actors as having it unless
+    // a non-heuristic processor is explicitly modeled in the future.
+    if (actorIsDroidLike(actor) && !entries.some(entry => /heuristic/i.test(String(entry)))) {
+        entries.push('Heuristic Processor');
+    }
+
+    const normalizedEntries = entries.map(entry => String(entry).toLowerCase().replace(/[^a-z0-9]/g, ''));
     const missing = [];
 
     for (const system of requiredSystems) {
-        const normalized = system.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = actorSystems.some(s =>
-            (typeof s === 'string' ? s : s.name).toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
-        );
-
+        const normalized = String(system).toLowerCase().replace(/[^a-z0-9]/g, '');
+        const found = normalizedEntries.some(entry => entry === normalized || entry.includes(normalized) || normalized.includes(entry));
         if (!found) {
             missing.push(system);
         }

@@ -13,6 +13,18 @@
     </div>
   </section>
 
+  {{#if conceptLayout.gear.lightsaberConstructionAvailable}}
+    <section class="swse-concept-panel swse-concept-panel--saber-ready">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Lightsaber Construction Available</h3>
+          <p class="swse-concept-panel__hint">Your self-built lightsaber milestone is ready. Open the Saber Forge in the Workbench.</p>
+        </div>
+        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="construct-lightsaber">Construct Lightsaber</button>
+      </header>
+    </section>
+  {{/if}}
+
   <div class="swse-concept-card-grid swse-concept-card-grid--gear-top">
     <article class="swse-concept-info-card swse-concept-info-card--stat swse-concept-info-card--editable">
       <span>Credits</span>

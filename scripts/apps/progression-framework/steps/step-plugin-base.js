@@ -352,7 +352,21 @@ export class ProgressionStepPlugin {
    * @returns {boolean}
    */
   isMode(shell, mode) {
-    return shell?.mode === mode;
+    const normalizeMode = (value) => String(value || '')
+      .trim()
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
+
+    const target = normalizeMode(mode);
+    const candidates = [
+      shell?.mode,
+      shell?.progressionSession?.mode,
+      shell?.progressionSession?.draftSelections?.mode,
+      shell?.options?.mode,
+    ].map(normalizeMode);
+
+    return candidates.some(candidate => candidate === target);
   }
 
   /**

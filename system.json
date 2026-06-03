@@ -128,6 +128,7 @@
     "styles/system/chat-surfaces.css",
     "styles/system/chat-card-v2.css",
     "styles/system/roll-configurator-v2.css",
+    "styles/apps/combat-roll-config.css",
     "styles/system/scene-controls.css",
     "styles/system/gm-datapad-scene-control.css",
     "styles/apps/custom-roll-dialog.css",

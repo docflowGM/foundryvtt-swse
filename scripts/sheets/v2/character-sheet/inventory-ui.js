@@ -110,6 +110,21 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
     }, { signal });
   });
 
+  html.querySelectorAll('[data-action="construct-lightsaber"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const actor = sheet.actor;
+      if (!actor) return;
+      await openItemCustomization(actor, null, {
+        initialCategory: 'lightsaber',
+        category: 'lightsaber',
+        mode: 'construct',
+        routeIntent: 'lightsaber-construction',
+        entryPoint: 'gear-tab'
+      });
+    }, { signal });
+  });
+
   // Open item sheet
   html.querySelectorAll('[data-action="open-item"]').forEach(button => {
     button.addEventListener("click", (event) => {

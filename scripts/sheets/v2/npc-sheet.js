@@ -1406,7 +1406,8 @@ export class SWSEV2NpcSheet extends
           sourceElement: rollButton,
           companionSource: rollButton,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       } catch (err) {
         console.error('NPC ability roll failed:', err);

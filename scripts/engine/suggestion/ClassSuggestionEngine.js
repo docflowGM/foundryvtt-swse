@@ -24,7 +24,7 @@ import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scr
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
-import { getActorSpeciesNames, namesMatchLoosely, resolveCanonicalSpeciesName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { actorIsDroidLike, getActorSpeciesNames, namesMatchLoosely, resolveCanonicalSpeciesName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { calculatePrestigeDelay } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 
@@ -322,6 +322,7 @@ export class ClassSuggestionEngine {
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Character level: ${characterLevel}`);
 
         const speciesNames = getActorSpeciesNames(actor, pendingData);
+        const isDroid = actorIsDroidLike(actor, pendingData);
         const startingClass = pendingData?.startingClass || actor.getFlag?.('foundryvtt-swse', 'startingClass') || actor.getFlag?.('swse', 'startingClass') || null;
         const baseClassLevel = Object.entries(actor.system?.classes || {})
             .filter(([className]) => BASE_CLASSES.includes(className))
@@ -341,6 +342,7 @@ export class ClassSuggestionEngine {
             baseClassLevel,
             startingClass,
             speciesNames,
+            isDroid,
             // Combined set for prereq checking
             ownedPrereqs: new Set([...ownedFeats, ...ownedTalents])
         };
@@ -463,6 +465,17 @@ export class ClassSuggestionEngine {
             });
         }
 
+        // Check droid-only prestige contracts in the suggestion layer too.
+        if (prereqData.isDroid === true || /must\s+be\s+a?\s*droid/i.test(String(prereqData.special || ''))) {
+            if (!actorState.isDroid) {
+                missing.push({
+                    type: 'is_droid',
+                    display: 'Must be a Droid',
+                    shortDisplay: 'Droid'
+                });
+            }
+        }
+
         // Check skills (training)
         if (prereqData.skills) {
             for (const skillName of prereqData.skills) {
@@ -568,6 +581,20 @@ export class ClassSuggestionEngine {
                     options: requiredSpecies,
                     display: `Species: ${requiredSpecies.join(' or ')}`,
                     shortDisplay: requiredSpecies.join('/')
+                });
+            }
+        }
+
+        // Check droid systems. This mirrors the canonical prerequisite
+        // engine closely enough for mentor/suggestion ranking; the real legality
+        // decision still comes from AbilityEngine/PrerequisiteChecker.
+        if (prereqData.droidSystems && prereqData.droidSystems.length > 0) {
+            if (!actorState.isDroid) {
+                missing.push({
+                    type: 'droid_systems',
+                    required: prereqData.droidSystems,
+                    display: `Droid Systems: ${prereqData.droidSystems.join(', ')}`,
+                    shortDisplay: 'Droid Systems'
                 });
             }
         }

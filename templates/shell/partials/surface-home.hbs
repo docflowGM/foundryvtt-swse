@@ -201,6 +201,11 @@
                     data-route-id="{{this.routeId}}"
                     {{#if this.bayMode}}data-bay-mode="{{this.bayMode}}"{{/if}}
                     {{#if this.contextMode}}data-context-mode="{{this.contextMode}}"{{/if}}
+                    {{#if this.category}}data-workbench-category="{{this.category}}"{{/if}}
+                    {{#if this.initialCategory}}data-initial-category="{{this.initialCategory}}"{{/if}}
+                    {{#if this.mode}}data-mode="{{this.mode}}"{{/if}}
+                    {{#if this.routeIntent}}data-route-intent="{{this.routeIntent}}"{{/if}}
+                    {{#if this.entryPoint}}data-entry-point="{{this.entryPoint}}"{{/if}}
                     {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}
                     type="button"
                     {{#unless this.enabled}}disabled{{/unless}}>
@@ -264,7 +269,7 @@
             </div>
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
-              <button class="swse-home-feed-row {{this.category}} {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" {{#if this.recordId}}data-holonet-record-id="{{this.recordId}}"{{/if}} {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.routeId}}data-route-id="{{this.routeId}}"{{/if}} {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}>
+              <button class="swse-home-feed-row {{this.category}} {{#if this.isUnread}}is-unread{{/if}} {{#if this.isUrgent}}is-urgent{{/if}} {{#if this.isBreakingNews}}is-breaking-news{{/if}} {{#if this.imageUrl}}has-image{{/if}}" type="button" {{#if this.recordId}}data-holonet-record-id="{{this.recordId}}"{{/if}} {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}} {{#if this.routeId}}data-route-id="{{this.routeId}}"{{/if}} {{#if this.workbenchCategory}}data-workbench-category="{{this.workbenchCategory}}"{{/if}} {{#if this.initialCategory}}data-initial-category="{{this.initialCategory}}"{{/if}} {{#if this.mode}}data-mode="{{this.mode}}"{{/if}} {{#if this.routeIntent}}data-route-intent="{{this.routeIntent}}"{{/if}} {{#if this.entryPoint}}data-entry-point="{{this.entryPoint}}"{{/if}} {{#if this.tab}}data-tab-target="{{this.tab}}"{{/if}}>
                 {{#if this.imageUrl}}
                 <span class="swse-home-feed-thumb"><img src="{{this.imageUrl}}" alt="{{this.title}}"></span>
                 {{else}}

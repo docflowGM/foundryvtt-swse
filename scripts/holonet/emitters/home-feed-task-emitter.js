@@ -37,11 +37,11 @@ export class HomeFeedTaskEmitter {
     }
   }
 
-  static async emitHomeTasks({ actor, recipientIds = [], progressionSummary = {}, upgradeSummary = {}, alliesSummary = {} } = {}) {
+  static async emitHomeTasks({ actor, recipientIds = [], progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {} } = {}) {
     const recipients = uniqueStrings(recipientIds);
     if (!actor || !recipients.length) return [];
 
-    const tasks = this._buildTasks(actor, progressionSummary, upgradeSummary, alliesSummary);
+    const tasks = this._buildTasks(actor, progressionSummary, upgradeSummary, alliesSummary, lightsaberConstructionSummary);
     const emitted = [];
     const now = Date.now();
     this._pruneRecent(now);
@@ -71,7 +71,7 @@ export class HomeFeedTaskEmitter {
     return emitted;
   }
 
-  static _buildTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}) {
+  static _buildTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {}) {
     const actorId = actor?.id ?? 'unknown';
     const entries = [];
 
@@ -93,7 +93,7 @@ export class HomeFeedTaskEmitter {
       });
     }
 
-    if (upgradeSummary.visible && upgradeSummary.enabled && upgradeSummary.badge) {
+    if (upgradeSummary.visible && upgradeSummary.enabled && upgradeSummary.badge && !lightsaberConstructionSummary.available) {
       const count = String(upgradeSummary.badge);
       entries.push({
         key: `home-task:${actorId}:workbench:${count}`,
@@ -107,6 +107,32 @@ export class HomeFeedTaskEmitter {
         category: 'TASK',
         level: 'info',
         priority: 'normal',
+        icon: '✦'
+      });
+    }
+
+    if (lightsaberConstructionSummary.available) {
+      const route = lightsaberConstructionSummary.route || {
+        surface: 'workbench',
+        category: 'lightsaber',
+        initialCategory: 'lightsaber',
+        mode: 'construct',
+        routeIntent: 'lightsaber-construction',
+        entryPoint: 'home-feed'
+      };
+      entries.push({
+        key: `home-task:${actorId}:lightsaber-construction:available`,
+        routeId: 'workbench',
+        route,
+        title: lightsaberConstructionSummary.title || 'Lightsaber Construction Available',
+        body: lightsaberConstructionSummary.body || 'MIRAJ · CRYSTAL-SINGER: The cave is open. You are ready to construct your own lightsaber.',
+        badge: 'SABER',
+        intent: INTENT_TYPE.WORKBENCH_AVAILABLE,
+        sourceFamily: SOURCE_FAMILY.WORKBENCH,
+        senderLabel: 'Miraj · Crystal-Singer',
+        category: 'TASK',
+        level: 'warning',
+        priority: 'high',
         icon: '✦'
       });
     }
@@ -163,6 +189,12 @@ export class HomeFeedTaskEmitter {
         category: task.category ?? 'TASK',
         priority: task.priority ?? 'normal',
         routeId: task.routeId ?? null,
+        route: task.route ?? null,
+        workbenchCategory: task.route?.category ?? null,
+        initialCategory: task.route?.initialCategory ?? null,
+        mode: task.route?.mode ?? null,
+        routeIntent: task.route?.routeIntent ?? null,
+        entryPoint: task.route?.entryPoint ?? null,
         badge: task.badge ?? null,
         homeTaskKey: task.key,
         homeTaskFingerprint: fingerprint,

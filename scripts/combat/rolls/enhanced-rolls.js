@@ -1415,22 +1415,69 @@ export class SWSERoll {
         : Number.isFinite(Number(actor?.system?.derived?.attributes?.[abilityKey]?.mod))
           ? Number(actor.system.derived.attributes[abilityKey].mod)
           : Math.floor((Number(ability.total ?? ability.value ?? ability.base ?? 10) - 10) / 2);
+
+      let modifiers = {
+        customModifier: Number(options?.customModifier || 0),
+        situationalBonus: Number(options?.situationalBonus || 0),
+        useForcePoint: options?.useForcePoint === true || options?.useForce === true,
+        checkMode: options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll'),
+        rollMode: options?.rollMode || ''
+      };
+
+      if (options.showDialog === true) {
+        const dialogResult = await showRollModifiersDialog({
+          title: `${abilityLabel} Check`,
+          rollType: 'ability',
+          actor,
+          abilityKey,
+          baseBonus: abilityMod,
+          showCover: false,
+          showConcealment: false
+        });
+
+        if (!dialogResult) { return null; }
+
+        modifiers = {
+          ...modifiers,
+          customModifier: Number(dialogResult.customModifier || 0),
+          situationalBonus: Number(dialogResult.situationalBonus || 0),
+          useForcePoint: dialogResult.useForcePoint === true,
+          checkMode: dialogResult.checkMode || 'roll',
+          rollMode: dialogResult.rollMode || modifiers.rollMode,
+          rollNote: dialogResult.rollNote || '',
+          targetContext: dialogResult.targetContext || null,
+          situational: dialogResult.situational || {}
+        };
+      }
+
+      const checkMode = String(modifiers.checkMode || 'roll').toLowerCase();
+      const takeXValue = checkMode === 'take20' ? 20 : checkMode === 'take10' ? 10 : Number(options.takeXValue || 10);
+      const isTakeX = checkMode === 'take10' || checkMode === 'take20' || options.isTakeX === true;
+      const totalBaseBonus = abilityMod + Number(modifiers.customModifier || 0) + Number(modifiers.situationalBonus || 0);
+
       const rollResult = await RollCore.execute({
         actor,
         domain: `ability.${abilityKey}`,
-        baseBonus: abilityMod,
+        baseBonus: totalBaseBonus,
         context: {
           ...options,
           rollType: 'ability',
           abilityKey,
           abilityLabel,
-          label: `${abilityLabel} Check`
+          label: `${abilityLabel} Check`,
+          baseBonus: abilityMod,
+          customModifier: Number(modifiers.customModifier || 0),
+          situationalBonus: Number(modifiers.situationalBonus || 0),
+          checkMode,
+          targetContext: modifiers.targetContext || null,
+          rollNote: modifiers.rollNote || '',
+          situational: modifiers.situational || {}
         },
         rollOptions: {
           baseDice: '1d20',
-          useForce: options.useForce === true,
-          isTakeX: options.isTakeX === true,
-          takeXValue: options.takeXValue
+          useForce: modifiers.useForcePoint === true,
+          isTakeX,
+          takeXValue
         },
         rollData: actor.getRollData?.() ?? {}
       });
@@ -1440,7 +1487,10 @@ export class SWSERoll {
         return null;
       }
 
-      const roll = rollResult.roll;
+      let roll = rollResult.roll;
+      if (!roll && rollResult.isTakeX) {
+        roll = await new Roll(String(rollResult.finalTotal), actor.getRollData?.() ?? {}).evaluate({ async: true });
+      }
       const total = rollResult.finalTotal;
       const d20 = rollResult.baseRoll;
       const dc = options.dc;
@@ -1465,6 +1515,7 @@ export class SWSERoll {
           actor,
           flavor: `${abilityLabel} Check`,
           flags: { swse: { rollType: 'ability', abilityKey } },
+          rollMode: modifiers.rollMode || options.rollMode || null,
           context: {
             ...options,
             rollType: 'ability',
@@ -1472,6 +1523,13 @@ export class SWSERoll {
             abilityLabel,
             label: `${abilityLabel} Check`,
             baseBonus: abilityMod,
+            customModifier: Number(modifiers.customModifier || 0),
+            situationalBonus: Number(modifiers.situationalBonus || 0),
+            checkMode,
+            takeXValue: rollResult.isTakeX ? takeXValue : null,
+            targetContext: modifiers.targetContext || null,
+            rollNote: modifiers.rollNote || '',
+            situational: modifiers.situational || {},
             dc,
             success,
             margin,

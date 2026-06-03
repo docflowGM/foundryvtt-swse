@@ -6,11 +6,10 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}),
     {
       id: "swse-combat-roll-config",
-      classes: ["swse", "holo-console"],
+      classes: ["swse", "holo-console", "swse-combat-roll-config-app"],
       template: "systems/foundryvtt-swse/templates/apps/combat/combat-roll-config-dialog.hbs",
-      width: 520,
-      height: "auto",
-      title: "Tactical Targeting Console"
+      position: { width: 940, height: 680 },
+      window: { title: "Tactical Targeting Console", resizable: true, draggable: true, frame: true }
     }
   );
 
@@ -46,8 +45,20 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
       );
     }
 
+    preview = preview ?? {};
+    preview.attackOptions = Array.isArray(preview.attackOptions) ? preview.attackOptions : [];
+    preview.breakdown = Array.isArray(preview.breakdown) ? preview.breakdown : [];
+
+    const actionTitle = this.actionData?.label
+      ?? this.actionData?.name
+      ?? this.actionData?.title
+      ?? this.actionData?.key
+      ?? this.actionData?.id
+      ?? (this.actionData?.domain === 'initiative' ? 'Initiative' : 'Combat Roll');
+
     return foundry.utils.mergeObject(context, {
       action: this.actionData,
+      actionTitle,
       options: this.optionsData,
       preview
     });

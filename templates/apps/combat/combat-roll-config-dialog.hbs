@@ -1,87 +1,113 @@
-<div class="swse-roll-console">
+<div class="swse-combat-roll-config rcd" style="--accent-rgb:255,100,140">
+  <header class="rcd-header">
+    <div class="rcd-header-bg"></div>
+    <div class="rcd-header-content">
+      <span class="rcd-type-chip">⊕ {{#if (eq action.domain "initiative")}}initiative{{else}}attack{{/if}}</span>
+      <span class="rcd-roll-name">{{actionTitle}}</span>
+      <span class="rcd-actor">Tactical Targeting Console</span>
+    </div>
+  </header>
 
-  <div class="console-section">
-    <label>Range</label>
-    <select name="range">
-      <option value="pointblank">Point Blank</option>
-      <option value="normal" selected>Normal</option>
-      <option value="long">Long</option>
-      <option value="extreme">Extreme</option>
-    </select>
+  <div class="rcd-formula-strip">
+    <span class="rcd-formula-text">Projected total {{preview.total}}</span>
+    <span class="rcd-formula-base-mod">combat action resolver</span>
+    <span class="rcd-formula-chips">
+      <span class="rcd-fchip">{{#if (eq action.domain "initiative")}}initiative{{else}}weapon{{/if}}</span>
+      <span class="rcd-fchip">live preview</span>
+    </span>
   </div>
 
-  <div class="console-section">
-    <label>Cover</label>
-    <select name="cover">
-      <option value="none">None</option>
-      <option value="partial">Partial</option>
-      <option value="improved">Improved</option>
-      <option value="total">Total</option>
-    </select>
-  </div>
+  <div class="rcd-body">
+    <main class="rcd-main">
+      {{#unless (eq action.domain "initiative")}}
+      <section class="swse-roll-config-panel">
+        <h4>Target Context</h4>
+        <div class="swse-roll-config-grid">
+          <label>Range
+            <select name="range">
+              <option value="pointblank" {{#if (eq options.range "pointblank")}}selected{{/if}}>Point Blank</option>
+              <option value="normal" {{#if (eq options.range "normal")}}selected{{/if}}>Normal</option>
+              <option value="long" {{#if (eq options.range "long")}}selected{{/if}}>Long</option>
+              <option value="extreme" {{#if (eq options.range "extreme")}}selected{{/if}}>Extreme</option>
+            </select>
+          </label>
+          <label>Cover
+            <select name="cover">
+              <option value="none" {{#if (eq options.cover "none")}}selected{{/if}}>None</option>
+              <option value="partial" {{#if (eq options.cover "partial")}}selected{{/if}}>Partial</option>
+              <option value="improved" {{#if (eq options.cover "improved")}}selected{{/if}}>Improved</option>
+              <option value="total" {{#if (eq options.cover "total")}}selected{{/if}}>Total</option>
+            </select>
+          </label>
+          <label>Concealment
+            <select name="concealment">
+              <option value="none" {{#if (eq options.concealment "none")}}selected{{/if}}>None</option>
+              <option value="partial" {{#if (eq options.concealment "partial")}}selected{{/if}}>Partial</option>
+              <option value="total" {{#if (eq options.concealment "total")}}selected{{/if}}>Total</option>
+            </select>
+          </label>
+          <label>Misc Modifier
+            <input type="number" name="misc" value="{{options.misc}}" step="1">
+          </label>
+        </div>
+      </section>
 
-  <div class="console-section">
-    <label>Concealment</label>
-    <select name="concealment">
-      <option value="none">None</option>
-      <option value="partial">Partial</option>
-      <option value="total">Total</option>
-    </select>
-  </div>
+      <section class="swse-roll-config-panel swse-roll-config-panel--resources">
+        <h4>Resources</h4>
+        <div class="rcd-resources">
+          <label class="rcd-resource {{#if options.aim}}rcd-res-active{{/if}}">
+            <span class="rcd-res-header"><input type="checkbox" name="aim" {{#if options.aim}}checked{{/if}}> <span class="rcd-res-icon">⌖</span><span class="rcd-res-name">Aim</span></span>
+            <span class="rcd-res-detail">Apply the aiming state when the action economy allows it.</span>
+          </label>
+          <label class="rcd-resource {{#if options.force}}rcd-res-active{{/if}}">
+            <span class="rcd-res-header"><input type="checkbox" name="force" {{#if options.force}}checked{{/if}}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Force Point</span></span>
+            <span class="rcd-res-detail">Spend a Force Point through the existing combat roll pipeline.</span>
+          </label>
+        </div>
+      </section>
+      {{/unless}}
 
-  <div class="console-section toggles">
-    <label><input type="checkbox" name="aim"> Aim</label>
-    <label><input type="checkbox" name="force"> Spend Force Point</label>
-  </div>
-
-  <div class="console-section">
-    <label>Misc Modifier</label>
-    <input type="number" name="misc" value="0">
-  </div>
-
-  {{#if preview.attackOptions.length}}
-  <div class="console-section combat-options">
-    <h4>Attack Options</h4>
-    {{#each preview.attackOptions}}
-      <div class="combat-option-row combat-option-{{this.control}} {{#if this.disabled}}disabled{{/if}}">
-        {{#if (eq this.control "slider")}}
-          <label for="combat-option-{{this.id}}">{{this.label}}</label>
-          <div class="combat-option-slider">
-            <input id="combat-option-{{this.id}}" type="range" name="combatOptions.{{this.id}}" min="{{this.min}}" max="{{this.max}}" step="{{this.step}}" value="{{this.value}}" {{#if this.disabled}}disabled{{/if}}>
-            <span class="combat-option-value">{{this.value}} / {{this.max}}</span>
+      {{#if preview.attackOptions.length}}
+      <section class="swse-roll-config-panel combat-options">
+        <h4>Attack Options</h4>
+        {{#each preview.attackOptions}}
+          <div class="swse-roll-config-option combat-option-row combat-option-{{this.control}} {{#if this.disabled}}swse-roll-config-option--disabled{{/if}}">
+            {{#if (eq this.control "slider")}}
+              <span><b>{{this.label}}</b>{{#if this.summary}}<small>{{this.summary}}</small>{{/if}}</span>
+              <input id="combat-option-{{this.id}}" type="range" name="combatOptions.{{this.id}}" min="{{this.min}}" max="{{this.max}}" step="{{this.step}}" value="{{this.value}}" {{#if this.disabled}}disabled{{/if}}>
+              <span class="combat-option-value">{{this.value}} / {{this.max}}</span>
+            {{else}}
+              <input type="checkbox" name="combatOptions.{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}}>
+              <span><b>{{this.label}}</b>{{#if this.summary}}<small>{{this.summary}}</small>{{/if}}</span>
+            {{/if}}
+            {{#if this.warning}}<p class="warning">{{this.warning}}</p>{{/if}}
           </div>
-          {{#if this.summary}}<p class="hint">{{this.summary}}</p>{{/if}}
-        {{else if (eq this.control "toggle")}}
-          <label>
-            <input type="checkbox" name="combatOptions.{{this.id}}" {{#if this.checked}}checked{{/if}}>
-            {{this.label}}
-          </label>
-          {{#if this.summary}}<p class="hint">{{this.summary}}</p>{{/if}}
-        {{else}}
-          <label>
-            <input type="checkbox" name="combatOptions.{{this.id}}" {{#if this.checked}}checked{{/if}}>
-            {{this.label}}
-          </label>
-          {{#if this.summary}}<p class="hint">{{this.summary}}</p>{{/if}}
-        {{/if}}
-        {{#if this.warning}}<p class="warning">{{this.warning}}</p>{{/if}}
-      </div>
-    {{/each}}
-  </div>
-  {{/if}}
+        {{/each}}
+      </section>
+      {{/if}}
+    </main>
 
-  <div class="console-preview">
-    <h4>Projected Outcome</h4>
-    <div class="preview-total">{{preview.total}}</div>
-    <ul>
-      {{#each preview.breakdown}}
-        <li>{{this.label}}: {{this.value}}</li>
-      {{/each}}
-    </ul>
+    <aside class="rcd-rail">
+      <section class="rcd-rail-sec rcd-rail-sec--preview">
+        <div class="rcd-rail-lbl">Projected Outcome</div>
+        <div class="rcd-preview-formula">CombatEngine preview</div>
+        <div class="rcd-preview-total">{{preview.total}}</div>
+        <div class="rcd-preview-label">current total</div>
+      </section>
+      <section class="rcd-rail-sec">
+        <div class="rcd-rail-lbl">Breakdown</div>
+        {{#each preview.breakdown}}
+          <div class="rcd-bd-row"><span class="rcd-bd-label">{{this.label}}</span><span class="rcd-bd-val">{{this.value}}</span></div>
+        {{/each}}
+      </section>
+      <section class="rcd-rail-sec">
+        <div class="rcd-rail-lbl">Execution</div>
+        <p class="swse-roll-config-note">The final click delegates to the existing CombatEngine roll path. This panel is configuration only.</p>
+      </section>
+    </aside>
   </div>
 
-  <div class="console-actions">
-    <button type="button" class="roll-attack">Execute</button>
-  </div>
-
+  <footer class="rcd-footer">
+    <button type="button" class="rcd-btn rcd-btn-pri roll-attack"><i class="fa-solid fa-dice-d20"></i> Execute</button>
+  </footer>
 </div>

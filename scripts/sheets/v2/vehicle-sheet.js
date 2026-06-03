@@ -937,7 +937,8 @@ export class SWSEV2VehicleSheet extends
           sourceElement: rollButton,
           companionSource: rollButton,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       } catch (err) {
         console.error("Vehicle ability roll failed:", err);

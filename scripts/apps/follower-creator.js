@@ -724,23 +724,20 @@ static async createFollower(owner, templateType, grantingTalent = null) {
 
         if (persistentChoices.droidConfig?.isDroid) {
             const droidConfig = persistentChoices.droidConfig;
+            const droidSystems = this._resolveFollowerDroidSystems(droidConfig);
+            const droidCredits = this._resolveFollowerDroidCredits(persistentChoices, droidConfig);
             materialUpdates['system.isDroid'] = true;
             materialUpdates['system.noConstitution'] = true;
             materialUpdates['system.droidSize'] = droidConfig.size || 'medium';
             materialUpdates['system.size'] = droidConfig.size || 'medium';
             materialUpdates['system.speed'] = droidConfig.speed || 6;
             materialUpdates['system.movement.walk'] = droidConfig.speed || 6;
-            materialUpdates['system.droidSystems'] = {
-                baseSystems: droidConfig.baseSystems || [],
-                optionalSystems: droidConfig.optionalSystems || [],
-                allowedOptionalCategories: droidConfig.allowedOptionalCategories || []
-            };
-            materialUpdates['system.droidCredits'] = {
-                budget: Number(persistentChoices.startingCredits || 0),
-                spent: Number(droidConfig.spentCredits || 0),
-                lost: Number(droidConfig.lostCredits || 0),
-                unspentCreditsLost: true
-            };
+            materialUpdates['system.droidSystems'] = droidSystems;
+            materialUpdates['system.droidCredits'] = droidCredits;
+            materialUpdates['system.progression.droidConfig.droidSystems'] = droidSystems;
+            materialUpdates['system.progression.droidConfig.droidCredits'] = droidCredits;
+            materialUpdates['system.progression.droidConfig.spentCredits'] = droidCredits.spent;
+            materialUpdates['system.progression.droidConfig.lostCredits'] = droidCredits.lost;
             materialUpdates['system.credits'] = 0;
             materialUpdates['flags.foundryvtt-swse.isDroid'] = true;
         } else if (persistentChoices.startingCredits !== undefined && persistentChoices.startingCredits !== null) {
@@ -870,6 +867,66 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     }
 
     /**
+     * Normalize the shared droid-builder payload for follower actor writes.
+     * Droid followers use the normal DroidBuilderStep state shape, not a
+     * follower-only optional-system list.  These helpers preserve that payload
+     * while still filling the older baseSystems/optionalSystems compatibility
+     * fields consumed by existing sheet/deriver code.
+     * @private
+     */
+    static _resolveFollowerDroidSystems(droidConfig = {}) {
+        const systems = droidConfig.droidSystems && typeof droidConfig.droidSystems === 'object'
+            ? structuredClone(droidConfig.droidSystems)
+            : null;
+
+        const baseSystems = Array.isArray(droidConfig.baseSystems) ? structuredClone(droidConfig.baseSystems) : [];
+        const optionalSystems = Array.isArray(droidConfig.optionalSystems) ? structuredClone(droidConfig.optionalSystems) : [];
+        const allowedOptionalCategories = Array.isArray(droidConfig.allowedOptionalCategories)
+            ? Array.from(droidConfig.allowedOptionalCategories)
+            : [];
+
+        if (systems) {
+            systems.baseSystems = Array.isArray(systems.baseSystems) ? systems.baseSystems : baseSystems;
+            systems.optionalSystems = Array.isArray(systems.optionalSystems) ? systems.optionalSystems : optionalSystems;
+            systems.allowedOptionalCategories = Array.isArray(systems.allowedOptionalCategories)
+                ? systems.allowedOptionalCategories
+                : allowedOptionalCategories;
+            return systems;
+        }
+
+        return { baseSystems, optionalSystems, allowedOptionalCategories };
+    }
+
+    /** @private */
+    static _resolveFollowerDroidCredits(persistentChoices = {}, droidConfig = {}) {
+        const builderCredits = droidConfig.droidCredits && typeof droidConfig.droidCredits === 'object'
+            ? structuredClone(droidConfig.droidCredits)
+            : {};
+        const base = Number(
+            builderCredits.base
+            ?? builderCredits.budget
+            ?? persistentChoices.startingCredits
+            ?? 0
+        );
+        const spent = Number(builderCredits.spent ?? droidConfig.spentCredits ?? 0);
+        const remaining = Number.isFinite(Number(builderCredits.remaining))
+            ? Number(builderCredits.remaining)
+            : Math.max(0, base - spent);
+        const lost = Number(builderCredits.lost ?? droidConfig.lostCredits ?? Math.max(0, base - spent));
+
+        return {
+            ...builderCredits,
+            base,
+            budget: Number(builderCredits.budget ?? base),
+            spent,
+            remaining,
+            lost,
+            unspentCreditsLost: true,
+            allowOverflow: false
+        };
+    }
+
+    /**
      * Create a follower from a mutation bundle (from the progression spine).
      * Phase 3: Called by FollowerShell after progression completes.
      *
@@ -891,6 +948,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
             const droidConfig = persistentChoices?.droidConfig?.isDroid ? persistentChoices.droidConfig : null;
             const isDroidFollower = !!droidConfig;
+            const droidSystems = isDroidFollower ? this._resolveFollowerDroidSystems(droidConfig) : undefined;
+            const droidCredits = isDroidFollower ? this._resolveFollowerDroidCredits(persistentChoices, droidConfig) : undefined;
             const followerName = this._resolveFollowerName(owner, templateType, persistentChoices);
 
             // Create actor from derived state
@@ -911,17 +970,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                     abilities: followerState.abilities,
                     hp: followerState.hp,
                     credits: isDroidFollower ? 0 : Number(persistentChoices?.startingCredits || 0),
-                    droidSystems: isDroidFollower ? {
-                        baseSystems: droidConfig.baseSystems || [],
-                        optionalSystems: droidConfig.optionalSystems || [],
-                        allowedOptionalCategories: droidConfig.allowedOptionalCategories || []
-                    } : undefined,
-                    droidCredits: isDroidFollower ? {
-                        budget: Number(persistentChoices?.startingCredits || 0),
-                        spent: Number(droidConfig.spentCredits || 0),
-                        lost: Number(droidConfig.lostCredits || 0),
-                        unspentCreditsLost: true
-                    } : undefined,
+                    droidSystems,
+                    droidCredits,
                     baseAttackBonus: followerState.baseAttackBonus ?? followerState.bab,
                     progression: {
                         followerChoices: persistentChoices,
@@ -1071,12 +1121,24 @@ static async createFollower(owner, templateType, grantingTalent = null) {
 
             if (persistentChoices?.droidConfig?.isDroid) {
                 const droidConfig = persistentChoices.droidConfig;
+                const droidSystems = this._resolveFollowerDroidSystems(droidConfig);
+                const droidCredits = this._resolveFollowerDroidCredits(persistentChoices, droidConfig);
                 updateData['system.isDroid'] = true;
                 updateData['system.noConstitution'] = true;
                 updateData['system.droidSize'] = droidConfig.size || 'medium';
                 updateData['system.size'] = droidConfig.size || 'medium';
                 updateData['system.speed'] = droidConfig.speed || 6;
                 updateData['system.movement.walk'] = droidConfig.speed || 6;
+                updateData['system.droidSystems'] = droidSystems;
+                updateData['system.droidCredits'] = droidCredits;
+                updateData['system.progression.droidConfig'] = {
+                    ...droidConfig,
+                    droidSystems,
+                    droidCredits,
+                    spentCredits: droidCredits.spent,
+                    lostCredits: droidCredits.lost
+                };
+                updateData['system.credits'] = 0;
                 updateData['flags.foundryvtt-swse.isDroid'] = true;
             } else {
                 if (followerState.size) updateData['system.size'] = followerState.size;

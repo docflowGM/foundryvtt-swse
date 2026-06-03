@@ -12,6 +12,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
+import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 
 /**
  * Roll a skill check using unified RollCore pipeline
@@ -278,6 +279,45 @@ export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   }
   const abilityTotal = Number.isFinite(Number(ability.total)) ? Number(ability.total) : Number(ability.base ?? 10);
   const abilityMod = Number.isFinite(Number(ability.mod)) ? Number(ability.mod) : Math.floor((abilityTotal - 10) / 2);
+  const abilityLabel = ABILITY_LABELS[key] || utils?.string?.capitalize?.(key) || String(key || 'Ability').replace(/\b\w/g, c => c.toUpperCase());
+
+  let modifiers = {
+    customModifier: Number(options?.customModifier || 0),
+    situationalBonus: Number(options?.situationalBonus || 0),
+    useForcePoint: options?.useForcePoint === true,
+    checkMode: options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll'),
+    rollMode: options?.rollMode || ''
+  };
+
+  if (options.showDialog === true) {
+    const dialogResult = await showRollModifiersDialog({
+      title: `${abilityLabel} Check`,
+      rollType: 'ability',
+      actor,
+      abilityKey: key,
+      baseBonus: abilityMod,
+      showCover: false,
+      showConcealment: false
+    });
+
+    if (!dialogResult) { return null; }
+
+    modifiers = {
+      ...modifiers,
+      customModifier: Number(dialogResult.customModifier || 0),
+      situationalBonus: Number(dialogResult.situationalBonus || 0),
+      useForcePoint: dialogResult.useForcePoint === true,
+      checkMode: dialogResult.checkMode || 'roll',
+      rollMode: dialogResult.rollMode || modifiers.rollMode,
+      rollNote: dialogResult.rollNote || '',
+      targetContext: dialogResult.targetContext || null,
+      situational: dialogResult.situational || {}
+    };
+  }
+
+  const checkMode = String(modifiers.checkMode || 'roll').toLowerCase();
+  const takeXValue = checkMode === 'take20' ? 20 : checkMode === 'take10' ? 10 : 10;
+  const isTakeX = checkMode === 'take10' || checkMode === 'take20';
 
   // === UNIFIED ROLL EXECUTION via RollCore ===
   // This ensures ModifierEngine applies all bonuses (species traits, feats, effects, conditions)
@@ -285,18 +325,25 @@ export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: abilityMod + Number(options?.customModifier || 0),
+    baseBonus: abilityMod + Number(modifiers.customModifier || 0) + Number(modifiers.situationalBonus || 0),
     rollOptions: {
       baseDice: '1d20',
-      useForce: options?.useForcePoint === true,
-      isTakeX: options?.take10 === true,
-      takeXValue: 10
+      useForce: modifiers.useForcePoint === true,
+      isTakeX,
+      takeXValue
     },
     context: {
       abilityKey: key,
       dc: options?.dc,
       category: options?.category,
-      label: ABILITY_LABELS[key] || key.toUpperCase()
+      label: abilityLabel,
+      rollType: 'ability',
+      checkMode,
+      customModifier: Number(modifiers.customModifier || 0),
+      situationalBonus: Number(modifiers.situationalBonus || 0),
+      targetContext: modifiers.targetContext || null,
+      rollNote: modifiers.rollNote || '',
+      situational: modifiers.situational || {}
     }
   });
 
@@ -306,17 +353,29 @@ export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   }
 
   // === RENDER TO CHAT ===
-  const abilityLabel = ABILITY_LABELS[key] || utils?.string?.capitalize?.(key) || String(key || 'Ability').replace(/\b\w/g, c => c.toUpperCase());
-  if (rollResult.roll) {
+  let chatRoll = rollResult.roll;
+  if (!chatRoll && rollResult.isTakeX) {
+    chatRoll = await new Roll(String(rollResult.finalTotal), actor.getRollData?.() ?? {}).evaluate({ async: true });
+  }
+  if (chatRoll) {
     await SWSEChat.postRoll({
-      roll: rollResult.roll,
+      roll: chatRoll,
       actor,
+      rollMode: modifiers.rollMode || options.rollMode || null,
       flavor: `<strong>${abilityLabel} Check</strong><br/>Modifier: ${rollResult.modifierTotal >= 0 ? '+' : ''}${rollResult.modifierTotal}`,
       context: {
         label: `${abilityLabel} Check`,
         abilityKey: key,
+        rollType: 'ability',
         dc: options?.dc,
-        customModifier: Number(options?.customModifier || 0)
+        customModifier: Number(modifiers.customModifier || 0),
+        situationalBonus: Number(modifiers.situationalBonus || 0),
+        checkMode,
+        takeXValue: rollResult.isTakeX ? takeXValue : null,
+        targetContext: modifiers.targetContext || null,
+        rollNote: modifiers.rollNote || '',
+        situational: modifiers.situational || {},
+        ...options
       }
     });
   }

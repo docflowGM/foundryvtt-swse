@@ -3067,3 +3067,40 @@
 .progression-shell .talent-stage-graph .talent-choice-panel__header {
   flex: 0 0 auto;
 }
+
+/* Progression polish: give talent list mode enough vertical room for readable names. */
+.progression-shell .talent-planner-stage--list .talent-choice-panel--holomap {
+  min-height: min(68vh, 620px);
+}
+
+.progression-shell .talent-planner-stage--list .talent-choice-section--available {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.progression-shell .talent-planner-stage--list .talent-choice-section--available .talent-choice-list {
+  max-height: none;
+  overflow-y: auto;
+}
+
+.progression-shell .talent-choice-card {
+  min-height: 58px;
+}
+
+.progression-shell .talent-choice-card__main h6 {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.18;
+}
+
+.progression-shell .talent-choice-card__main p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.progression-shell .talent-planner-stage--list .talent-choice-card__main p {
+  -webkit-line-clamp: 3;
+}
+

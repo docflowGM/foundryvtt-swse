@@ -432,6 +432,288 @@ function optionCard(option) {
   </label>`;
 }
 
+
+function signNumber(value) {
+  const n = Number(value) || 0;
+  return `${n >= 0 ? '+' : ''}${n}`;
+}
+
+const ABILITY_ROLL_ACCENTS = Object.freeze({
+  str: '255,138,61',
+  dex: '97,214,111',
+  con: '255,209,102',
+  int: '76,201,240',
+  wis: '199,125,255',
+  cha: '255,92,190'
+});
+
+function normalizeAbilityKey(abilityKey) {
+  const raw = String(abilityKey ?? '').trim().toLowerCase().replace(/[^a-z]/g, '');
+  if (!raw) return '';
+  const aliases = {
+    strength: 'str',
+    dexterity: 'dex',
+    constitution: 'con',
+    intelligence: 'int',
+    wisdom: 'wis',
+    charisma: 'cha'
+  };
+  const key = aliases[raw] ?? raw.slice(0, 3);
+  return Object.prototype.hasOwnProperty.call(ABILITY_ROLL_ACCENTS, key) ? key : '';
+}
+
+function getAbilityRollAccent(abilityKey) {
+  const key = normalizeAbilityKey(abilityKey);
+  return ABILITY_ROLL_ACCENTS[key] ?? '100,220,160';
+}
+
+function getActorLevel(actor) {
+  return Number(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.classes?.level ?? 0) || 0;
+}
+
+function getAbilityModifier(actor, abilityKey) {
+  const key = normalizeAbilityKey(abilityKey);
+  if (!key) return 0;
+  const candidates = [
+    actor?.system?.abilities?.[key]?.mod,
+    actor?.system?.abilities?.[key]?.modifier,
+    actor?.system?.abilities?.[key]?.value,
+    actor?.system?.derived?.abilities?.[key]?.mod,
+    actor?.system?.derived?.abilities?.[key]?.modifier
+  ];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n)) return n;
+  }
+  return 0;
+}
+
+function getSkillTotal(actor, skillKey) {
+  const key = String(skillKey ?? '');
+  if (!key) return 0;
+  const direct = actor?.system?.skills?.[key];
+  const derivedByKey = actor?.system?.derived?.skillsByKey?.[key] ?? actor?.system?.derived?.skills?.[key];
+  const derivedList = Array.isArray(actor?.system?.derived?.skills?.list)
+    ? actor.system.derived.skills.list.find(s => s?.key === key)
+    : null;
+  const candidates = [
+    derivedByKey?.total,
+    derivedList?.total,
+    direct?.total,
+    direct?.value,
+    direct?.mod
+  ];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n)) return n;
+  }
+  return getAbilityModifier(actor, direct?.ability ?? direct?.abilityKey ?? direct?.attribute);
+}
+
+function getWeaponAttackBonus(actor, weapon) {
+  const system = weapon?.system ?? {};
+  const candidates = [
+    system.attackBonus,
+    system.attack?.bonus,
+    system.equippedAttackBonus,
+    system.derived?.attackBonus,
+    system.derived?.attack?.bonus,
+    weapon?.flags?.swse?.attackBonus
+  ];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n)) return n;
+  }
+  const ability = isRangedWeapon(weapon) ? 'dex' : 'str';
+  const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;
+  return bab + getAbilityModifier(actor, ability) + (Number(system.enhancementBonus ?? system.attackEnhancement ?? 0) || 0);
+}
+
+function getDamageModifier(weapon) {
+  const system = weapon?.system ?? {};
+  const candidates = [system.damageBonus, system.damage?.bonus, system.derived?.damageBonus, system.damageModifier];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n)) return n;
+  }
+  return 0;
+}
+
+function getRollBaseTotal(model) {
+  if (model.rollType === 'skill' || model.rollType === 'force' || model.rollType === 'force-power') return getSkillTotal(model.actor, model.skillKey || 'useTheForce');
+  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon);
+  if (model.rollType === 'damage') return getDamageModifier(model.weapon);
+  if (model.rollType === 'initiative') return getSkillTotal(model.actor, 'initiative');
+  return getAbilityModifier(model.actor, model.abilityKey);
+}
+
+function getRollAccent(model) {
+  if (model.rollType === 'attack') return model.ranged ? '255,100,140' : '232,64,96';
+  if (model.rollType === 'damage') return '255,140,60';
+  if (model.rollType === 'force' || model.rollType === 'force-power' || model.skillKey === 'useTheForce') return '180,140,255';
+  if (model.rollType === 'initiative') return '255,180,60';
+  if (model.rollType === 'ability') return getAbilityRollAccent(model.abilityKey);
+  return '127,230,255';
+}
+
+function getRollIcon(model) {
+  if (model.rollType === 'attack') return model.ranged ? '⊕' : '⚔';
+  if (model.rollType === 'damage') return '◆';
+  if (model.rollType === 'force' || model.rollType === 'force-power' || model.skillKey === 'useTheForce') return '◇';
+  if (model.rollType === 'initiative') return '▶';
+  if (model.rollType === 'ability') return '⬡';
+  return '◈';
+}
+
+function getTake10State(model) {
+  const attackLike = model.rollType === 'attack' || model.rollType === 'damage' || model.rollType === 'initiative';
+  const forceLike = model.rollType === 'force' || model.rollType === 'force-power' || model.skillKey === 'useTheForce';
+  return {
+    available: !attackLike && !forceLike,
+    note: attackLike ? 'Unavailable for attack, damage, and initiative rolls.' : forceLike ? 'Usually unavailable for active Force power use in combat.' : 'Available when the character is not threatened or distracted.'
+  };
+}
+
+function buildCheckModeCards(model) {
+  const base = Number(model.baseTotal ?? 0) || 0;
+  const take10 = getTake10State(model);
+  const take20Available = take10.available && model.rollType !== 'ability';
+  return `<section class="swse-roll-config-panel swse-roll-config-panel--checks">
+    <h4>Check Mode</h4>
+    <input type="hidden" name="checkMode" value="roll" data-rcd-check-mode />
+    <div class="rcd-check-cards" data-rcd-check-cards>
+      <button type="button" class="rcd-check-card rcd-check-active" data-check-mode="roll">
+        <span class="rcd-check-name">Roll</span>
+        <span class="rcd-check-total">1d20 ${signNumber(base)}</span>
+        <span class="rcd-check-note">Roll normally and apply selected modifiers.</span>
+      </button>
+      <button type="button" class="rcd-check-card ${take10.available ? '' : 'rcd-check-disabled'}" data-check-mode="take10" ${take10.available ? '' : 'disabled'}>
+        <span class="rcd-check-name">Take 10</span>
+        <span class="rcd-check-total">${10 + base}</span>
+        <span class="rcd-check-note">${escapeHTML(take10.note)}</span>
+      </button>
+      <button type="button" class="rcd-check-card ${take20Available ? '' : 'rcd-check-disabled'}" data-check-mode="take20" ${take20Available ? '' : 'disabled'}>
+        <span class="rcd-check-name">Take 20</span>
+        <span class="rcd-check-total">${20 + base}</span>
+        <span class="rcd-check-note">Requires time and no consequence for failure.</span>
+      </button>
+    </div>
+  </section>`;
+}
+
+function buildResourceCards(model, showForcePoint) {
+  const fpDisabled = !showForcePoint || !model.fp.has ? 'disabled' : '';
+  return `<section class="swse-roll-config-panel swse-roll-config-panel--resources">
+    <h4>Resources</h4>
+    <input type="hidden" name="useForcePoint" value="" data-rcd-force-point />
+    <div class="rcd-resources">
+      <button type="button" class="rcd-resource ${fpDisabled ? 'rcd-resource-disabled' : ''}" data-resource-toggle="forcePoint" ${fpDisabled}>
+        <span class="rcd-res-header"><span class="rcd-res-icon">✦</span><span class="rcd-res-name">Force Point</span></span>
+        <span class="rcd-res-detail">${model.fp.value}/${model.fp.max} available. Add the system Force Point bonus during roll execution.</span>
+      </button>
+      <button type="button" class="rcd-resource rcd-resource-disabled" disabled>
+        <span class="rcd-res-header"><span class="rcd-res-icon">◆</span><span class="rcd-res-name">Destiny Point</span></span>
+        <span class="rcd-res-detail">Reserved for Destiny workflows. Not spent by this modifier dialog.</span>
+      </button>
+    </div>
+  </section>`;
+}
+
+function buildRollModeRow(model) {
+  const publicSelected = (game.settings?.get?.('core', 'rollMode') ?? 'publicroll') === 'publicroll' ? 'active' : '';
+  return `<section class="swse-roll-config-panel swse-roll-config-panel--roll-mode">
+    <h4>Roll Mode</h4>
+    <div class="rcd-roll-mode">
+      <button type="button" class="rcd-mode-btn ${publicSelected}" data-roll-mode="publicroll">Public</button>
+      <button type="button" class="rcd-mode-btn" data-roll-mode="gmroll">GM</button>
+      <button type="button" class="rcd-mode-btn" data-roll-mode="blindroll">Blind GM</button>
+      <button type="button" class="rcd-mode-btn" data-roll-mode="selfroll">Self</button>
+    </div>
+    <input type="hidden" name="rollMode" value="${escapeHTML(game.settings?.get?.('core', 'rollMode') ?? 'publicroll')}" data-rcd-roll-mode />
+  </section>`;
+}
+
+function buildRollPreviewRail(model) {
+  const source = model.weaponName || model.skillKey || model.abilityKey || model.title;
+  const base = Number(model.baseTotal ?? 0) || 0;
+  const dc = model.targetRows?.[0]?.defense ?? 15;
+  const hitChance = Math.max(5, Math.min(95, (21 - Math.max(1, Number(dc) - base)) * 5));
+  const breakdownRows = model.breakdown?.length ? model.breakdown : [{ label: 'Base Bonus', value: base }];
+  return `<aside class="rcd-rail">
+    <section class="rcd-rail-sec rcd-rail-sec--preview">
+      <div class="rcd-rail-lbl">Projected Outcome</div>
+      <div class="rcd-preview-formula" data-rcd-formula>1d20 ${signNumber(base)}</div>
+      <div class="rcd-preview-total" data-rcd-preview-total>${signNumber(base)}</div>
+      <div class="rcd-preview-label">Current Modifier</div>
+      <div class="rcd-preview-dc pending" data-rcd-dc-state>Target/DC: ${escapeHTML(dc)} · preview only</div>
+      <div class="rcd-preview-prob">Estimated roll chance</div>
+      <div class="rcd-prob-bar"><span class="rcd-prob-fill" data-rcd-prob-fill style="width:${hitChance}%"></span></div>
+    </section>
+    <section class="rcd-rail-sec">
+      <div class="rcd-rail-lbl">Source Intel</div>
+      <div class="swse-roll-config-source"><b>${escapeHTML(source)}</b><span>${escapeHTML(model.actorName || 'No actor')}</span></div>
+      ${model.rangeProfile ? `<p class="swse-roll-config-note">Range profile: ${escapeHTML(model.rangeProfile.profileName ?? model.rangeProfile.profileSlug ?? 'Custom')}</p>` : ''}
+      ${model.weapon ? `<p class="swse-roll-config-note">${model.ranged ? 'Ranged' : 'Melee'} attack profile. Combat options below are filtered from known actor/item capabilities.</p>` : ''}
+    </section>
+    <section class="rcd-rail-sec">
+      <div class="rcd-rail-lbl">Breakdown</div>
+      <div class="rcd-breakdown" data-rcd-breakdown>
+        ${breakdownRows.map(row => `<div class="rcd-bd-row"><span class="rcd-bd-label">${escapeHTML(row.label)}</span><span class="rcd-bd-val">${signNumber(row.value ?? 0)}</span></div>`).join('')}
+        <div class="rcd-bd-row"><span class="rcd-bd-label">Custom</span><span class="rcd-bd-val" data-rcd-custom-bd>+0</span></div>
+        <div class="rcd-bd-row"><span class="rcd-bd-label">Situational</span><span class="rcd-bd-val" data-rcd-situational-bd>+0</span></div>
+        <div class="rcd-bd-total"><span class="rcd-bd-total-label">Total</span><span class="rcd-bd-total-val" data-rcd-bd-total>${signNumber(base)}</span></div>
+      </div>
+    </section>
+  </aside>`;
+}
+
+function wireRollConfigDialog(html) {
+  const root = html?.[0] ?? html;
+  const form = root?.querySelector?.('.swse-roll-config-v2');
+  if (!form) return;
+  const shell = form.closest('.swse-roll-config-shell') ?? form;
+  const base = Number(form.dataset.baseTotal ?? 0) || 0;
+  const sign = value => `${value >= 0 ? '+' : ''}${value}`;
+  const update = () => {
+    const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
+    let situational = 0;
+    for (const name of ['aiming','charging','flanking','higherGround','pointBlank']) {
+      if (form.querySelector(`[name="${name}"]`)?.checked) {
+        situational += name === 'higherGround' || name === 'pointBlank' ? 1 : 2;
+      }
+    }
+    const total = base + custom + situational;
+    form.querySelector('[data-rcd-custom-bd]')?.replaceChildren(document.createTextNode(sign(custom)));
+    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(situational)));
+    form.querySelector('[data-rcd-bd-total]')?.replaceChildren(document.createTextNode(sign(total)));
+    form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
+    form.querySelector('[data-rcd-formula]')?.replaceChildren(document.createTextNode(`1d20 ${sign(total)}`));
+  };
+  shell.querySelectorAll('[data-check-mode]').forEach(btn => btn.addEventListener('click', event => {
+    const card = event.currentTarget;
+    if (card.disabled) return;
+    shell.querySelectorAll('[data-check-mode]').forEach(other => other.classList.toggle('rcd-check-active', other === card));
+    const input = form.querySelector('[data-rcd-check-mode]');
+    if (input) input.value = card.dataset.checkMode || 'roll';
+  }));
+  shell.querySelectorAll('[data-resource-toggle="forcePoint"]').forEach(btn => btn.addEventListener('click', event => {
+    const card = event.currentTarget;
+    if (card.disabled) return;
+    card.classList.toggle('rcd-res-active');
+    const input = form.querySelector('[data-rcd-force-point]');
+    if (input) input.value = card.classList.contains('rcd-res-active') ? 'on' : '';
+  }));
+  shell.querySelectorAll('[data-roll-mode]').forEach(btn => btn.addEventListener('click', event => {
+    const target = event.currentTarget;
+    shell.querySelectorAll('[data-roll-mode]').forEach(other => other.classList.toggle('active', other === target));
+    const input = form.querySelector('[data-rcd-roll-mode]');
+    if (input) input.value = target.dataset.rollMode || 'publicroll';
+  }));
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  update();
+}
+
 async function buildRollConfigModel(options = {}) {
   const actor = options.actor ?? null;
   const weapon = options.weapon ?? options.item ?? null;
@@ -444,6 +726,33 @@ async function buildRollConfigModel(options = {}) {
   const ranged = weapon ? isRangedWeapon(weapon) : false;
   const melee = weapon ? isMeleeWeapon(weapon) : false;
   const combatOptions = weapon ? CombatOptionResolver.summarizeAttackOptions(actor, weapon, { attackType: ranged ? 'ranged' : 'melee' }) : [];
+
+  const baseTotal = Number(options.baseBonus ?? getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
+  const breakdown = [];
+  if (rollType === 'skill' || rollType === 'force' || rollType === 'force-power') {
+    const skill = actor?.system?.skills?.[skillKey || 'useTheForce'];
+    const ability = abilityKey ?? skill?.ability ?? skill?.abilityKey ?? skill?.attribute;
+    const abilityMod = getAbilityModifier(actor, ability);
+    const trained = isSkillTrained(actor, skillKey || 'useTheForce') ? 5 : 0;
+    const halfLevel = Math.floor(getActorLevel(actor) / 2);
+    breakdown.push({ label: `${String(ability ?? '').toUpperCase() || 'Ability'} Modifier`, value: abilityMod });
+    if (halfLevel) breakdown.push({ label: 'Half Level', value: halfLevel });
+    if (trained) breakdown.push({ label: 'Trained', value: trained });
+    const misc = baseTotal - abilityMod - halfLevel - trained;
+    if (misc) breakdown.push({ label: 'Other Bonuses', value: misc });
+  } else if (rollType === 'attack') {
+    const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;
+    const ability = ranged ? 'dex' : 'str';
+    const abilityMod = getAbilityModifier(actor, ability);
+    if (bab) breakdown.push({ label: 'Base Attack Bonus', value: bab });
+    if (abilityMod) breakdown.push({ label: `${ability.toUpperCase()} Modifier`, value: abilityMod });
+    const misc = baseTotal - bab - abilityMod;
+    if (misc) breakdown.push({ label: 'Weapon / Other', value: misc });
+  } else if (rollType === 'ability') {
+    breakdown.push({ label: `${String(abilityKey ?? '').toUpperCase() || 'Ability'} Modifier`, value: baseTotal });
+  } else {
+    breakdown.push({ label: 'Base Bonus', value: baseTotal });
+  }
 
   return {
     title: options.title ?? 'Roll Configuration',
@@ -469,12 +778,17 @@ async function buildRollConfigModel(options = {}) {
     targetRows,
     combatantRows: combatantRows(),
     rangeProfile,
-    combatOptions
+    combatOptions,
+    baseTotal,
+    breakdown,
+    accentRgb: getRollAccent({ rollType, ranged, skillKey, abilityKey }),
+    abilityAccentKey: normalizeAbilityKey(abilityKey),
+    icon: getRollIcon({ rollType, ranged, skillKey, abilityKey })
   };
 }
 
 function buildTargetPanel(model) {
-  const needsTarget = ['attack', 'force', 'force-power', 'save', 'damage'].includes(String(model.rollType));
+  const needsTarget = ['attack', 'force', 'force-power', 'save', 'damage', 'ability'].includes(String(model.rollType));
   if (!needsTarget) return '';
   const targetOptions = model.targetRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
   const combatantOptions = model.combatantRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
@@ -612,28 +926,56 @@ export async function showRollModifiersDialog(options = {}) {
   } = options;
 
   const model = await buildRollConfigModel({ ...options, title, rollType, actor, weapon });
-  const content = `<form class="swse-roll-config-v2">
-    <header class="swse-roll-config-header">
-      <div><span class="swse-roll-config-kicker">PRE-ROLL CONFIGURATION</span><h3>${escapeHTML(title)}</h3></div>
-      <div class="swse-roll-config-type">${escapeHTML(rollType)}</div>
-    </header>
-    <section class="swse-roll-config-panel swse-roll-config-panel--summary">
-      <h4>Source</h4>
-      <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName || model.skillKey || model.abilityKey || title)}</b><span>${escapeHTML(model.actorName || 'No actor')}</span></div>
-    </section>
-    ${buildTargetPanel(model)}
-    ${buildWeaponPanel(model)}
-    ${buildDefenseActionPanel(model)}
-    ${showCover && rollType === 'attack' ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''}
-    ${buildForcePointPanel(model, showForcePoint)}
-    <section class="swse-roll-config-panel">
-      <h4>Situational</h4>
-      <div class="swse-roll-config-grid">
-        <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
-        <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
+  const abilityAccentClass = model.rollType === 'ability' && model.abilityAccentKey ? ` swse-roll-config-shell--ability swse-roll-config-ability--${model.abilityAccentKey}` : '';
+  const abilityData = model.rollType === 'ability' && model.abilityAccentKey ? ` data-ability="${escapeHTML(model.abilityAccentKey)}"` : '';
+  const content = `<div class="swse-roll-config-shell rcd${abilityAccentClass}"${abilityData} style="--accent-rgb:${escapeHTML(model.accentRgb)}">
+    <header class="rcd-header">
+      <div class="rcd-header-bg"></div>
+      <div class="rcd-header-content">
+        <span class="rcd-type-chip">${escapeHTML(model.icon)} ${escapeHTML(rollType)}</span>
+        <span class="rcd-roll-name">${escapeHTML(title)}</span>
+        <span class="rcd-actor">${escapeHTML(model.actorName || 'No actor')}</span>
       </div>
-    </section>
-  </form>`;
+    </header>
+    <div class="rcd-formula-strip">
+      <span class="rcd-formula-text" data-rcd-formula>1d20 ${signNumber(model.baseTotal)}</span>
+      <span class="rcd-formula-base-mod">base ${signNumber(model.baseTotal)}</span>
+      <span class="rcd-formula-chips"><span class="rcd-fchip">${escapeHTML(rollType)}</span>${model.weaponName ? `<span class="rcd-fchip">${escapeHTML(model.ranged ? 'ranged' : 'melee')}</span>` : ''}</span>
+    </div>
+    <div class="rcd-body">
+      <form class="swse-roll-config-v2" data-base-total="${Number(model.baseTotal) || 0}">
+        <main class="rcd-main">
+          <section class="swse-roll-config-panel swse-roll-config-panel--summary">
+            <h4>Source</h4>
+            <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName || model.skillKey || model.abilityKey || title)}</b><span>${escapeHTML(model.actorName || 'No actor')}</span></div>
+          </section>
+          ${buildCheckModeCards(model)}
+          ${buildTargetPanel(model)}
+          ${buildWeaponPanel(model)}
+          ${buildDefenseActionPanel(model)}
+          ${showCover && rollType === 'attack' ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''}
+          ${buildResourceCards(model, showForcePoint)}
+          ${buildRollModeRow(model)}
+          <section class="swse-roll-config-panel">
+            <h4>Situational</h4>
+            <div class="swse-roll-config-grid">
+              <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
+              <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
+            </div>
+            <div class="swse-roll-config-subpanel">
+              <h5>Quick Toggles</h5>
+              <label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aiming</b><small>+2 attack when the action applies.</small></span></label>
+              <label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>+2 attack, usually -2 defenses until next turn.</small></span></label>
+              <label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>
+              <label class="swse-roll-config-option"><input type="checkbox" name="higherGround" /> <span><b>Higher Ground</b><small>+1 when applicable.</small></span></label>
+              <label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank</b><small>+1 attack/damage in close range.</small></span></label>
+            </div>
+          </section>
+        </main>
+        ${buildRollPreviewRail(model)}
+      </form>
+    </div>
+  </div>`;
 
   return new Promise(resolve => {
     new SWSEDialogV2({
@@ -670,6 +1012,8 @@ export async function showRollModifiersDialog(options = {}) {
               concealment,
               customModifier,
               useForcePoint: data.get('useForcePoint') === 'on',
+              checkMode: data.get('checkMode') || 'roll',
+              rollMode: data.get('rollMode') || '',
               forcePointMode: data.get('useForcePoint') === 'on' ? (rollType === 'force' || rollType === 'force-power' ? 'force-power' : 'roll') : 'none',
               twoHanded: data.get('grip') === 'two-handed',
               grip: data.get('grip') || null,
@@ -701,7 +1045,14 @@ export async function showRollModifiersDialog(options = {}) {
         },
         cancel: { icon: '<i class="fa-solid fa-times"></i>', label: 'Cancel', callback: () => resolve(null) }
       },
-      default: 'roll'
+      default: 'roll',
+      render: html => wireRollConfigDialog(html)
+    }, {
+      id: 'swse-roll-configurator-v2',
+      classes: ['swse-roll-config-dialog-v2'],
+      width: 940,
+      height: 680,
+      resizable: true
     }).render(true);
   });
 }

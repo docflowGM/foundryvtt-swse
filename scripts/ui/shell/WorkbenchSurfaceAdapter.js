@@ -208,11 +208,24 @@ export class WorkbenchSurfaceAdapter {
     const workbench = this._workbench;
     if (!workbench) return;
 
-    if (options.category !== undefined && options.category !== null) {
-      workbench.selectedCategory = options.category;
+    const requestedCategory = options.category ?? options.initialCategory;
+    if (requestedCategory !== undefined && requestedCategory !== null) {
+      workbench.selectedCategory = requestedCategory;
+      workbench.initialCategory = options.initialCategory || requestedCategory;
     }
+    if (options.mode !== undefined && options.mode !== null) {
+      workbench.mode = options.mode;
+    }
+    if (options.routeIntent !== undefined) workbench.routeIntent = options.routeIntent || null;
+    if (options.entryPoint !== undefined) workbench.entryPoint = options.entryPoint || null;
     if (options.itemId !== undefined) {
       workbench.selectedItemId = options.itemId || null;
+      if (workbench.selectedCategory === 'lightsaber') workbench._lightsaber.selectedOwnedSaberId = options.itemId || null;
+    }
+    if (workbench.selectedCategory === 'lightsaber' && (workbench.mode === 'construct' || workbench.routeIntent === 'lightsaber-construction')) {
+      workbench.selectedItemId = null;
+      workbench._lightsaber.selectedOwnedSaberId = null;
+      workbench._lightsaber.activeTab ||= 'chassis';
     }
 
     const selectedByCategory = options.selectedByCategory;
@@ -243,7 +256,11 @@ export class WorkbenchSurfaceAdapter {
 
     return this._shellHost.patchSurfaceState('workbench', {
       category: workbench.selectedCategory ?? null,
+      initialCategory: workbench.initialCategory ?? workbench.selectedCategory ?? null,
       itemId: workbench.selectedItemId ?? null,
+      mode: workbench.mode ?? 'owned',
+      routeIntent: workbench.routeIntent ?? null,
+      entryPoint: workbench.entryPoint ?? null,
       search: workbench.search ?? '',
       searchByCategory,
       selectedByCategory
@@ -255,7 +272,8 @@ export class WorkbenchSurfaceAdapter {
   }
 
   _ensureWorkbench(actor, options) {
-    const category = options.category || 'weapons';
+    const category = options.category || options.initialCategory || 'weapons';
+    const initialCategory = options.initialCategory || category;
     const itemId = options.itemId || null;
     const mode = options.mode || 'owned';
 
@@ -268,10 +286,13 @@ export class WorkbenchSurfaceAdapter {
       this._workbench = new ItemCustomizationWorkbench(actor, {
         itemId,
         category,
+        initialCategory,
         mode,
         sourceItem: options.sourceItem ?? null,
         applyMode: options.applyMode ?? null,
-        onStage: options.onStage ?? null
+        onStage: options.onStage ?? null,
+        routeIntent: options.routeIntent ?? null,
+        entryPoint: options.entryPoint ?? null
       });
 
       // CRITICAL: Override _renderPreservingUi to redirect to shell re-render.

@@ -809,7 +809,8 @@ function wireConceptAbilityPanelControls(sheet, root, signal) {
         sourceElement: rollButton,
         companionSource: rollButton,
         sheet,
-        showRollCompanion: true
+        showRollCompanion: true,
+        showDialog: true
       });
     } catch (err) {
       console.error("Droid ability roll failed:", err);

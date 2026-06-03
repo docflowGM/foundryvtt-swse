@@ -4559,7 +4559,7 @@ const forcePoints = [];
       if (!abilityKey) return;
 
       try {
-        const result = await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true });
+        const result = await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true, showDialog: true });
 
       } catch (err) {
         // console.error("Ability roll failed:", err);
@@ -4580,7 +4580,8 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       } catch (err) {
         // console.error("Initiative roll failed:", err);
@@ -4794,7 +4795,8 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       } catch (err) {
         ui?.notifications?.error?.(`Unarmed attack failed: ${err.message}`);
@@ -4843,7 +4845,8 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       } catch (err) {
         // console.error("Attack roll failed:", err);
@@ -4882,7 +4885,8 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       } catch (err) {
         // console.error("Damage roll failed:", err);
@@ -5437,7 +5441,8 @@ const forcePoints = [];
           sourceElement: button,
           companionSource: button,
           sheet: this,
-          showRollCompanion: true
+          showRollCompanion: true,
+          showDialog: true
         });
       }, { signal });
     });

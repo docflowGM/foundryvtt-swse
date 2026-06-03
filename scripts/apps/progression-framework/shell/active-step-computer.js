@@ -304,8 +304,15 @@ export class ActiveStepComputer {
     return Math.max(entitlementSlots, featSlots) + intDeltaSlots;
   }
 
+  _getActorAbilityRecord(actor, abilityKey = 'int') {
+    return actor?.system?.abilities?.[abilityKey]
+      || actor?.system?.attributes?.[abilityKey]
+      || actor?.system?.stats?.abilities?.[abilityKey]
+      || {};
+  }
+
   _getActorAbilityScore(actor, abilityKey = 'int') {
-    const ability = actor?.system?.abilities?.[abilityKey] || actor?.system?.attributes?.[abilityKey] || {};
+    const ability = this._getActorAbilityRecord(actor, abilityKey);
     const explicit = Number(ability.total ?? ability.score ?? ability.value);
     if (Number.isFinite(explicit)) return explicit;
     const base = Number(ability.base ?? 10);
@@ -324,10 +331,26 @@ export class ActiveStepComputer {
     return Math.floor(((Number.isFinite(safe) ? safe : 10) - 10) / 2);
   }
 
+  _getActorAbilityModifier(actor, abilityKey = 'int') {
+    const ability = this._getActorAbilityRecord(actor, abilityKey);
+    const stored = Number(ability.mod ?? ability.modifier);
+    if (Number.isFinite(stored)) return Math.floor(stored);
+    return this._abilityModifier(this._getActorAbilityScore(actor, abilityKey));
+  }
+
+  _getPendingAbilityIncrease(progressionSession, abilityKey = 'int') {
+    const attributes = progressionSession?.draftSelections?.attributes || null;
+    const increases = attributes?.increases || attributes?.abilityIncreases || {};
+    return Math.max(0, Number(increases?.[abilityKey] ?? 0) || 0);
+  }
+
   _getPendingAbilityScore(actor, progressionSession, abilityKey = 'int') {
     const current = this._getActorAbilityScore(actor, abilityKey);
     const attributes = progressionSession?.draftSelections?.attributes || null;
     if (!attributes) return current;
+
+    const increase = this._getPendingAbilityIncrease(progressionSession, abilityKey);
+    if (increase <= 0 && String(attributes?.mode || '') === 'levelup-ability-increase') return current;
 
     const direct = Number(
       attributes?.finalValues?.[abilityKey]
@@ -336,20 +359,23 @@ export class ActiveStepComputer {
         ?? attributes?.[abilityKey]?.value
         ?? attributes?.[abilityKey]
     );
-    if (Number.isFinite(direct)) return direct;
+    if (Number.isFinite(direct) && (increase > 0 || String(attributes?.mode || '') !== 'levelup-ability-increase')) return direct;
 
-    const increase = Number(attributes?.increases?.[abilityKey] ?? 0);
-    if (Number.isFinite(increase) && increase > 0) return current + increase;
+    if (increase > 0) return current + increase;
     return current;
   }
 
   _getPendingIntModifierDelta(actor, progressionSession) {
-    const currentMod = this._abilityModifier(this._getActorAbilityScore(actor, 'int'));
     const attributes = progressionSession?.draftSelections?.attributes || null;
-    const explicitPendingMod = Number(attributes?.modifiers?.int);
-    const pendingMod = Number.isFinite(explicitPendingMod)
-      ? explicitPendingMod
-      : this._abilityModifier(this._getPendingAbilityScore(actor, progressionSession, 'int'));
+    const intIncrease = this._getPendingAbilityIncrease(progressionSession, 'int');
+
+    // Level-up skills/languages are only owed when Intelligence itself increased
+    // and that increase crossed a modifier breakpoint. Do not treat the
+    // attribute-step snapshot of all ability modifiers as a new INT grant.
+    if (String(attributes?.mode || '') === 'levelup-ability-increase' && intIncrease <= 0) return 0;
+
+    const currentMod = this._getActorAbilityModifier(actor, 'int');
+    const pendingMod = this._abilityModifier(this._getPendingAbilityScore(actor, progressionSession, 'int'));
     return Math.max(0, pendingMod - currentMod);
   }
 

@@ -22,10 +22,10 @@
     </div>
 
     <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card prog-finalization-card">
-      <div class="prog-section-header"><span><i class="fas fa-coins"></i> Starting Credits</span></div>
+      <div class="prog-section-header"><span><i class="fas fa-coins"></i> {{#if droidConfig}}Droid Chassis Budget{{else}}Starting Credits{{/if}}</span></div>
       <div class="prog-finalization-status {{#if creditsResolved}}is-resolved{{else}}is-required{{/if}}">
         <span>{{#if creditsResolved}}Resolved{{else}}Required{{/if}}</span>
-        <strong>{{#if creditsResolved}}{{choices.startingCredits}} cr{{else}}Roll or take max credits{{/if}}</strong>
+        <strong>{{#if creditsResolved}}{{choices.startingCredits}} cr{{else}}{{#if droidConfig}}Roll droid chassis budget{{else}}Roll or take max credits{{/if}}{{/if}}</strong>
       </div>
       <div class="prog-summary-delta-grid">
         <div class="prog-summary-delta-row"><span>Owner Base Class</span><strong>{{#if creditModel.className}}{{creditModel.className}}{{else}}Unknown{{/if}}</strong></div>
@@ -33,14 +33,19 @@
         <div class="prog-summary-delta-row"><span>Maximum</span><strong>{{#if creditModel.max}}{{creditModel.max}} cr{{else}}0 cr{{/if}}</strong></div>
       </div>
       {{#unless creditsResolved}}
+      {{#unless droidConfig}}
       <div class="prog-finalization-actions">
         <button type="button" class="prog-finalization-btn prog-finalization-btn--primary take-max-credits-btn"><i class="fas fa-arrow-up-short-wide"></i> Take Max</button>
         <button type="button" class="prog-finalization-btn roll-credits-btn"><i class="fas fa-dice-d20"></i> Roll Starting Credits</button>
       </div>
       {{/unless}}
+      {{/unless}}
       {{#if droidBudget}}
         <div class="prog-credit-source-list">
           <div class="prog-credit-source prog-credit-source--neutral"><span>Droid optional systems</span><strong>{{droidBudget.spent}} cr</strong></div>
+        </div>
+        <div class="prog-summary-delta-grid">
+          <div class="prog-summary-delta-row"><span>Selected Systems</span><strong>{{#if droidBudget.systems}}{{droidBudget.systems}}{{else}}None{{/if}}</strong></div>
         </div>
       {{/if}}
     </div>
