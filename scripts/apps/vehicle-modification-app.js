@@ -94,6 +94,12 @@ export class VehicleModificationApp extends SWSEApplication {
     popOut: true
   };
 
+  static PARTS = {
+    form: {
+      template: 'systems/foundryvtt-swse/templates/apps/vehicle-modification.hbs'
+    }
+  };
+
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 

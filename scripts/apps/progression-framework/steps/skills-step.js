@@ -27,6 +27,8 @@ import { BackgroundLedgerCompatibility } from '/systems/foundryvtt-swse/scripts/
 import { extractDescriptionText, normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ExtraSkillUseRegistry } from '/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js';
 import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js';
+import { buildActorPrerequisiteSnapshot } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -141,6 +143,19 @@ try {
   swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
   this._allSkills = [];
 }
+
+    // Build the feat registry opportunistically so a player who chooses
+    // Force Sensitivity and then returns to Skills can be detected even if an
+    // older draft stored only a feat id/key instead of the canonical name.
+    try {
+      if (!FeatRegistry.isBuilt && typeof FeatRegistry.build === 'function') {
+        await FeatRegistry.build();
+      }
+    } catch (featErr) {
+      swseLogger.warn('[SkillsStep] Feat registry unavailable while resolving Force Sensitivity skill access; continuing with draft/actor detection only', {
+        error: featErr?.message || String(featErr),
+      });
+    }
 
     // Phase 2.7: Filter to Beast skill list if applicable
     if (this._isBeast) {
@@ -1086,6 +1101,181 @@ renderDetailsPanel(focusedItem) {
     return value ? String(value).toLowerCase() : null;
   }
 
+  _hasForceSensitivitySkillAccess(shell) {
+    if (this._isDroid) return false;
+
+    const pending = this._buildForceSensitivityPendingData(shell);
+    try {
+      const snapshot = buildActorPrerequisiteSnapshot(shell?.actor || null, pending);
+      if (snapshot?.force?.forceSensitive === true) return true;
+    } catch (err) {
+      swseLogger.debug('[SkillsStep] Force Sensitivity prerequisite snapshot failed; using local draft scan fallback', {
+        error: err?.message || String(err),
+      });
+    }
+
+    return this._containsForceSensitivity([
+      pending.selectedFeats,
+      pending.grantedFeats,
+      pending.selectedClass,
+      pending.classDoc,
+      shell?.progressionSession?.currentProjection?.abilities?.feats,
+      shell?.actor?.items?.contents || shell?.actor?.items || [],
+    ]);
+  }
+
+  _buildForceSensitivityPendingData(shell) {
+    const draft = shell?.progressionSession?.draftSelections || {};
+    const committed = shell?.committedSelections || null;
+    const buildIntentData = shell?.buildIntent?.toCharacterData?.() || {};
+
+    const selectedFeats = this._flattenSelectionValues([
+      draft.feats,
+      draft.generalFeat,
+      draft.classFeat,
+      draft.pendingFeat,
+      committed?.get?.('feats'),
+      committed?.get?.('feat'),
+      committed?.get?.('general-feat'),
+      committed?.get?.('generalFeat'),
+      committed?.get?.('class-feat'),
+      committed?.get?.('classFeat'),
+      buildIntentData.feats,
+      buildIntentData.selectedFeats,
+      shell?.progressionSession?.pendingState?.feats,
+      shell?.progressionSession?.pendingState?.selectedFeats,
+    ]);
+
+    const grantedFeats = this._flattenSelectionValues([
+      draft.grantedFeats,
+      draft.pendingGrantedFeats,
+      draft.pendingAbilityData?.grantedFeats,
+      draft.pendingEntitlements?.grantedFeats,
+      shell?.progressionSession?.pendingState?.grantedFeats,
+      shell?.progressionSession?.currentProjection?.abilities?.feats,
+    ]);
+
+    const selectedClass = draft.class
+      || committed?.get?.('class')
+      || buildIntentData.class
+      || buildIntentData.classes?.[0]
+      || null;
+
+    return {
+      selectedFeats,
+      grantedFeats,
+      selectedClass,
+      classDoc: selectedClass,
+      forceSensitive: draft.forceSensitive === true
+        || draft.pendingAbilityData?.forceSensitive === true
+        || shell?.progressionSession?.pendingState?.forceSensitive === true
+        || buildIntentData.forceSensitive === true,
+      droidContext: shell?.progressionSession?.droidContext || null,
+      isDroid: this._isDroid,
+    };
+  }
+
+  _flattenSelectionValues(values = []) {
+    const flattened = [];
+    const visit = (value) => {
+      if (!value) return;
+      if (Array.isArray(value)) {
+        value.forEach(visit);
+        return;
+      }
+      if (value instanceof Set) {
+        Array.from(value).forEach(visit);
+        return;
+      }
+      if (value instanceof Map) {
+        Array.from(value.values()).forEach(visit);
+        return;
+      }
+      flattened.push(value);
+    };
+    visit(values);
+    return flattened;
+  }
+
+  _containsForceSensitivity(values = []) {
+    return this._flattenSelectionValues(values).some(value => this._isForceSensitivitySelection(value));
+  }
+
+  _isForceSensitivitySelection(value) {
+    if (!value) return false;
+
+    if (typeof value === 'string') {
+      return this._isForceSensitivityToken(value);
+    }
+
+    if (typeof value !== 'object') return false;
+
+    const candidates = [
+      value.name,
+      value.label,
+      value.featName,
+      value.displayName,
+      value.id,
+      value._id,
+      value.key,
+      value.slug,
+      value.system?.name,
+      value.system?.label,
+      value.system?.featName,
+      value.system?.key,
+      value.value?.name,
+      value.value?.label,
+      value.value?.id,
+      value.value?._id,
+    ];
+
+    return candidates.some(candidate => this._isForceSensitivityToken(candidate));
+  }
+
+  _isForceSensitivityToken(value) {
+    const text = String(value || '').trim();
+    if (!text) return false;
+    const normalized = text
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+
+    if (normalized === 'force sensitivity' || normalized === 'force sensitive') return true;
+
+    const registryFeat = this._resolveFeatFromRegistryToken(text);
+    const registryName = registryFeat?.name || registryFeat?.label || '';
+    const registryKey = registryName
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+
+    return registryKey === 'force sensitivity' || registryKey === 'force sensitive';
+  }
+
+  _resolveFeatFromRegistryToken(token) {
+    const text = String(token || '').trim();
+    if (!text || !FeatRegistry?.isBuilt) return null;
+
+    const direct = FeatRegistry.get?.(text) || FeatRegistry.byKey?.(text);
+    if (direct) return direct;
+
+    const lower = text.toLowerCase();
+    return (FeatRegistry.list?.() || []).find(feat => {
+      const ids = [feat?.id, feat?._id, feat?.key, feat?.slug, feat?.system?.key]
+        .map(value => String(value || '').trim().toLowerCase())
+        .filter(Boolean);
+      return ids.includes(lower);
+    }) || null;
+  }
+
   _deriveAvailableSkills(shell) {
     const classSelection =
       shell?.progressionSession?.getSelection?.('class')
@@ -1095,6 +1285,9 @@ renderDetailsPanel(focusedItem) {
     const classModel = this._resolveSelectedClassData(classSelection);
 
     const classSkillRefs = this._getAllGrantedClassSkillRefs(shell, classModel);
+    if (this._hasForceSensitivitySkillAccess(shell)) {
+      classSkillRefs.push('Use the Force');
+    }
     const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
     const backgroundSkillRefs = this._getBackgroundSkillRefs(shell);
     const backgroundSkillMatches = this._matchSkillsFromRefs(backgroundSkillRefs);

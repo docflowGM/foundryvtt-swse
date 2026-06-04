@@ -50,6 +50,32 @@
 }
 
 /**
+ * Store surface: same host constraint as chargen/progression. Without this the
+ * store surface content-sizes past the absolutely-positioned host and gets
+ * clipped, so the browse grid and side rail never receive a bounded height and
+ * cannot scroll. Targeted via the [data-shell-surface="store"] attribute the
+ * host always carries, so it works regardless of shell modifier classes.
+ */
+.swse-shell-surface-host[data-shell-surface="store"] {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface-host[data-shell-surface="store"] > .swse-shell-surface--store {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+/**
  * Sheet-mode layers anchor (for overlays/drawers when in sheet mode).
  * Floats above the sheet body without blocking the sheet.
  */

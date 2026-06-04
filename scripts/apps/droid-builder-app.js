@@ -23,6 +23,7 @@ export class DroidBuilderApp extends SWSEApplication {
     this.templateId = options.templateId || null; // For TEMPLATE mode
     this.conversionSeed = options.conversionSeed || null; // For CONVERT_FROM_STATBLOCK mode
     this.requireApproval = options.requireApproval ?? false; // GM approval gate
+    this.onSubmitForApproval = typeof options.onSubmitForApproval === 'function' ? options.onSubmitForApproval : null;
 
     // UI state: in-memory copy of droid systems for validation
     // Note: TEMPLATE mode initialization is async, handled in _prepareContext
@@ -128,6 +129,12 @@ export class DroidBuilderApp extends SWSEApplication {
       draggable: true
     }
   );
+
+  static PARTS = {
+    form: {
+      template: 'systems/foundryvtt-swse/templates/apps/droid-builder.hbs'
+    }
+  };
 
   /**
    * Compute dynamic title based on mode
@@ -658,6 +665,33 @@ export class DroidBuilderApp extends SWSEApplication {
     });
 
     if (!confirmed) {return;}
+
+    if (this.requireApproval && this.onSubmitForApproval) {
+      const snapshot = {
+        characterData: {
+          name: this.droidSystems.name || `${this.actor?.name || 'Custom'} Droid`,
+          droidDegree: this.droidSystems.degree,
+          droidSize: this.droidSystems.size,
+          type: 'droid'
+        },
+        choices: { droidSystems: foundry.utils.deepClone(this.droidSystems) },
+        droidSystems: foundry.utils.deepClone(this.droidSystems),
+        mode: this.mode,
+        sourceActorId: this.actor?.id ?? null,
+        submittedAt: Date.now()
+      };
+      const submitted = await this.onSubmitForApproval({
+        snapshot,
+        droidSystems: foundry.utils.deepClone(this.droidSystems),
+        actor: this.actor,
+        cost: this.droidSystems.credits?.spent ?? 0,
+        mode: this.mode
+      });
+      if (submitted !== false) {
+        await this.close();
+        return;
+      }
+    }
 
     // Phase 3b: Emit finalize hook for Store to listen
     // Hook listeners handle approval gates and credit deduction

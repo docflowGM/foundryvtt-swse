@@ -1572,7 +1572,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
 
     try {
         // Determine if GM approval is required (world setting)
-        const requireApproval = SettingsHelper.getSafe('store.requireGMApproval', false);
+        const requireApproval = true; // Store-side custom builds always route through GM approval.
 
         // Set up hook listener for droid finalization
         const hookId = Hooks.on('swse:droidFinalized', async (data) => {
@@ -1608,7 +1608,8 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
         // Launch builder
         await DroidBuilderApp.open(actor, {
             mode: 'NEW',
-            requireApproval: requireApproval
+            requireApproval: requireApproval,
+            onSubmitForApproval: async ({ snapshot, cost }) => submitDraftDroidForApproval(snapshot, actor, cost)
         });
 
         SWSELogger.log('SWSE Store | Launched DroidBuilderApp for actor:', { actor: actor.name });
@@ -1759,7 +1760,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         if (!confirmed) return;
 
         // Launch builder in TEMPLATE mode
-        const requireApproval = SettingsHelper.getSafe('store.requireGMApproval', false);
+        const requireApproval = true; // Store-side custom builds always route through GM approval.
 
         // Set up hook listener (same as buildDroidWithBuilder)
         const hookId = Hooks.on('swse:droidFinalized', async (data) => {
@@ -1783,7 +1784,8 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         await DroidBuilderApp.open(actor, {
             mode: 'TEMPLATE',
             templateId: selectedTemplate.id,
-            requireApproval: requireApproval
+            requireApproval: requireApproval,
+            onSubmitForApproval: async ({ snapshot, cost }) => submitDraftDroidForApproval(snapshot, actor, cost)
         });
 
         SWSELogger.log('SWSE Store | Launched DroidBuilderApp from template:', {

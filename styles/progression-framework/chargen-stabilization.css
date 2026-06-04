@@ -126,3 +126,142 @@
   border-radius: 10px !important;
   box-shadow: none !important;
 }
+
+/* ============================================================================
+   PHASE 1 RESPONSIVE PROGRESSION SHELL
+
+   Goal: keep the progression/level-up workflow usable on small laptops and
+   ultrawide monitors without changing any step logic. The shell owns the
+   viewport; rails and work/detail panels scroll independently; footer actions
+   remain visible.
+   ============================================================================ */
+
+.application.progression-shell > section.window-content,
+.application.progression-shell > .window-content,
+.application.progression-shell [data-part="shell"],
+.application.progression-shell .progression-shell,
+.application.progression-shell .swse-screen,
+.application.progression-shell .prog-main-column {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.progression-shell .swse-screen {
+  width: min(100%, 1800px) !important;
+  max-width: 1800px !important;
+  margin-inline: auto !important;
+}
+
+.progression-shell .prog-main-column {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.progression-shell [data-region="progress-rail"],
+.progression-shell [data-region="utility-bar"],
+.progression-shell [data-region="action-footer"] {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  z-index: 30 !important;
+}
+
+.progression-shell .prog-content-row {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+}
+
+.progression-shell [data-region="summary-panel"],
+.progression-shell [data-region="work-surface"],
+.progression-shell [data-region="details-panel"] {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+}
+
+.progression-shell [data-region="work-surface"] {
+  flex: 1 1 auto !important;
+}
+
+.progression-shell [data-region="action-footer"] {
+  flex-basis: var(--prog-footer-height, 56px) !important;
+  min-height: var(--prog-footer-height, 56px) !important;
+  max-height: var(--prog-footer-height, 56px) !important;
+  overflow: visible !important;
+}
+
+/* The step counter should not scroll away while browsing long feat/talent lists. */
+.progression-shell .prog-step-context-banner {
+  position: sticky;
+  top: 0;
+  z-index: 24;
+  backdrop-filter: blur(8px);
+}
+
+/* The progress rail is a horizontal stepper; make overflow intentional. */
+.progression-shell .prog-progress-rail__list {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-gutter: stable;
+}
+
+/* Collapse low-value rails sooner on narrow sheets so the workspace stays useful. */
+@media (max-width: 1400px) {
+  .progression-shell [data-region="summary-panel"] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .progression-shell [data-region="details-panel"] {
+    display: none !important;
+  }
+
+  .progression-shell .prog-content-row {
+    gap: 0 !important;
+  }
+}
+
+/* Short screens need a denser mentor band and less decorative chrome. */
+@media (max-height: 820px) {
+  .progression-shell [data-region="mentor-rail"] {
+    height: 104px !important;
+    min-height: 104px !important;
+    max-height: 104px !important;
+  }
+
+  .progression-shell [data-region="mentor-rail"][data-collapsed="true"] {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+  }
+
+  .progression-shell .prog-phase-banner {
+    padding-block: 6px !important;
+  }
+}
+
+@media (max-height: 700px) {
+  .progression-shell .prog-phase-banner {
+    display: none !important;
+  }
+
+  .progression-shell [data-region="mentor-rail"] {
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+  }
+
+  .progression-shell [data-region="progress-rail"] {
+    min-height: 36px !important;
+    padding-block: 4px !important;
+  }
+
+  .progression-shell [data-region="utility-bar"] {
+    --prog-utility-bar-height: 40px;
+  }
+}

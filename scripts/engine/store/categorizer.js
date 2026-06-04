@@ -48,30 +48,74 @@ const Category = {
 /* ---------------------------------------------------------- */
 
 /**
- * Categorize weapon using system data ONLY (no name inference)
- * Authority: item.system.category > item.system.range (melee/ranged)
+ * Canonical, player-facing weapon subcategory labels keyed by the values found
+ * in item.system.category. Title-cased so the store subnav reads cleanly
+ * (matching how Armor renders "Light Armor", "Heavy Armor", etc.).
+ */
+const WEAPON_CATEGORY_LABELS = {
+  simple: 'Simple Weapons',
+  advanced: 'Advanced Melee',
+  lightsaber: 'Lightsabers',
+  pistol: 'Pistols',
+  pistols: 'Pistols',
+  rifle: 'Rifles',
+  rifles: 'Rifles',
+  heavy: 'Heavy Weapons',
+  grenade: 'Grenades',
+  grenades: 'Grenades',
+  exotic: 'Exotic Weapons'
+};
+
+/**
+ * Fallback mapping from the source compendium pack to a canonical subcategory.
+ * Weapons are split by subtype across packs, so the pack is an authoritative
+ * signal when system.category is missing (e.g. lightsabers carry no category).
+ */
+const WEAPON_PACK_LABELS = {
+  'weapons-simple': 'Simple Weapons',
+  'weapons-pistols': 'Pistols',
+  'weapons-rifles': 'Rifles',
+  'weapons-heavy': 'Heavy Weapons',
+  'weapons-grenades': 'Grenades',
+  'weapons-exotic': 'Exotic Weapons',
+  'weapons-lightsabers': 'Lightsabers'
+};
+
+/**
+ * Categorize weapon into a clean, canonical subtype.
  *
- * SSOT Violation Detection:
- * - If system.category missing, log warning and use fallback
- * - Never infer category from name (anti-v1 pattern)
+ * Authority order (no name inference — anti-v1 pattern):
+ *   1. system.category mapped to a canonical label
+ *   2. source compendium pack (weapons are split by subtype across packs)
+ *   3. system.range as a last-resort structural fallback
  */
 function categorizeWeapon(item) {
-  // PRIMARY: Check if system.category is already defined
-  const sysCategory = safeString(item.system?.category || '').trim();
+  // PRIMARY: map system.category to a canonical label.
+  const sysCategory = safeString(item.system?.category || '').toLowerCase();
+  if (sysCategory && WEAPON_CATEGORY_LABELS[sysCategory]) {
+    return WEAPON_CATEGORY_LABELS[sysCategory];
+  }
+
+  // SECONDARY: derive from the source pack (split-by-subtype compendiums).
+  const pack = safeString(item.sourcePack || '').toLowerCase();
+  for (const [packKey, label] of Object.entries(WEAPON_PACK_LABELS)) {
+    if (pack.includes(packKey)) {
+      return label;
+    }
+  }
+
+  // If system.category held an unmapped but non-empty value, preserve it
+  // (Title-cased) rather than discarding the authored data.
   if (sysCategory) {
-    // System data defines it; use as-is
-    return sysCategory;
+    return sysCategory.charAt(0).toUpperCase() + sysCategory.slice(1);
   }
 
-  // FALLBACK: Use range field if system.category not available
-  // This is acceptable fallback (structural property, not name-based)
+  // FALLBACK: structural range field (not name-based).
   const range = safeString(item.system?.range || '').toLowerCase();
-
   if (range === 'melee') {
-    return 'Simple Melee';  // Default for melee; refinement requires system.category
+    return 'Advanced Melee';
   }
 
-  // Treat all ranged as generic unless system.category specifies
   return 'Ranged Weapons';
 }
 

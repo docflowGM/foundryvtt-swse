@@ -44,7 +44,6 @@
       <input type="text" id="store-search" class="store-search-input" placeholder="SEARCH LISTINGS..." aria-label="Search store items"/>
     </div>
     <div class="store-filter-cats">
-      <button type="button" class="store-chip {{#unless currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
       {{#each categorySummary}}
         <button type="button" class="store-chip {{#if (eq ../currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
           {{label}}<span class="store-chip-count">{{count}}</span>
@@ -338,14 +337,23 @@
 
     {{else}}
     <div class="store-pane store-pane-browse">
+      {{#if (eq currentCategory 'droids')}}
       <div class="store-browse-actions">
         <button type="button" class="create-custom-droid holo-btn secondary">
-          <i class="fa-solid fa-robot"></i> Build Droid
+          <i class="fa-solid fa-robot"></i> Build Custom Droid
         </button>
         <button type="button" class="build-droid-from-template holo-btn secondary">
           <i class="fa-solid fa-clone"></i> From Template
         </button>
       </div>
+      {{/if}}
+      {{#if (eq currentCategory 'vehicles')}}
+      <div class="store-browse-actions">
+        <button type="button" class="create-custom-starship holo-btn secondary">
+          <i class="fa-solid fa-rocket"></i> Build Ship / Vehicle
+        </button>
+      </div>
+      {{/if}}
       <div class="card-grid-container">
         <div class="products-grid" id="products-grid">
           {{#each allItems}}

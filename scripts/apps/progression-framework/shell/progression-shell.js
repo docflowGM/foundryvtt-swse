@@ -2087,6 +2087,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
         // Wire delegated action handling for step-specific actions
         // This allows plugins to define step-specific actions via handleAction() method
         this._wirePluginActions(html, plugin);
+
+        // Hotfix: double-clicking an option card should commit/select it using
+        // the same existing handlers as the Choose/Train buttons. This is
+        // deliberately delegated from the shell so every step with the canonical
+        // data-item-id/focus-item contract gets the behavior without duplicating
+        // listeners in each plugin.
+        this._wireDoubleClickSelection(html, plugin);
       }
     }
 
@@ -2171,6 +2178,94 @@ export class ProgressionShell extends SWSEApplicationV2 {
         swseLogger.error(`[ProgressionShell] Plugin action "${action}" failed:`, err);
       }
     }, { signal: this._pluginActionAbort.signal });
+  }
+
+  /**
+   * Wire double-click selection for progression option rows/cards.
+   *
+   * Single-click remains focus/preview. Double-click promotes the same row to a
+   * real selection by reusing the current step's existing commit or action
+   * handler. This keeps species, class, feat, talent, language, force powers,
+   * maneuvers, and any future data-item-id rows on one shared contract.
+   *
+   * @param {HTMLElement} html
+   * @param {Object} plugin
+   * @private
+   */
+  _wireDoubleClickSelection(html, plugin) {
+    if (!html) return;
+
+    if (this._doubleClickSelectionAbort) {
+      this._doubleClickSelectionAbort.abort();
+    }
+    this._doubleClickSelectionAbort = new AbortController();
+    const signal = this._doubleClickSelectionAbort.signal;
+
+    const commitFromEvent = async (event, { requireDoubleClick = false } = {}) => {
+      if (requireDoubleClick && Number(event?.detail || 0) < 2) return;
+      const rawTarget = event?.target;
+      if (!(rawTarget instanceof Element)) return;
+
+      // Do not hijack native controls. Double-clicking a button should behave
+      // like a button; double-clicking the card background should select it.
+      if (rawTarget.closest('button, a, input, textarea, select, option')) return;
+
+      const row = rawTarget.closest([
+        '[data-action="focus-item"]',
+        '[data-item-id]',
+        '[data-feat-id]',
+        '[data-talent-id]',
+        '[data-skill-row]',
+        '[data-skill-id]',
+        '[data-skill]',
+        '[data-power-id]',
+        '[data-maneuver-id]',
+        '[data-language-id]'
+      ].join(','));
+
+      if (!row || !html.contains(row)) return;
+
+      event.preventDefault?.();
+      event.stopPropagation?.();
+      event.stopImmediatePropagation?.();
+
+      // Some rows select through a nested action button rather than
+      // onItemCommitted (skills, language add, custom component selectors). Use
+      // that existing button path first when present and enabled.
+      const nestedAction = row.querySelector([
+        'button[data-action]:not([data-action="focus-item"]):not([disabled])',
+        '[role="button"][data-action]:not([data-action="focus-item"]):not([aria-disabled="true"])'
+      ].join(','));
+      if (nestedAction instanceof HTMLElement) {
+        nestedAction.click();
+        return;
+      }
+
+      const rowAction = row.dataset?.action;
+      if (rowAction && rowAction !== 'focus-item' && typeof plugin?.handleAction === 'function') {
+        try {
+          await this._withSuppressedLegacyMentorSpeech(() => plugin.handleAction(rowAction, event, row, this));
+        } catch (err) {
+          swseLogger.error(`[ProgressionShell] Double-click action "${rowAction}" failed:`, err);
+        }
+        return;
+      }
+
+      if (typeof plugin?.onItemCommitted === 'function') {
+        await this._onCommitItem(event, row);
+      }
+    };
+
+    // Capture the second click as well as the browser dblclick event. This makes
+    // the gesture reliable even when the first click focuses the row and causes a
+    // preserved-scroll repaint before the native dblclick event would normally
+    // fire on the old DOM node.
+    html.addEventListener('click', (event) => {
+      void commitFromEvent(event, { requireDoubleClick: true });
+    }, { signal, capture: true });
+    html.addEventListener('dblclick', (event) => {
+      void commitFromEvent(event, { requireDoubleClick: false });
+    }, { signal });
   }
 
   // ---------------------------------------------------------------------------

@@ -39,6 +39,7 @@ import { PendingEntitlementService } from '../services/pending-entitlement-servi
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
+import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -302,6 +303,7 @@ export class FeatStep extends ProgressionStepPlugin {
     // Event listener cleanup
     this._renderAbort = null;            // AbortController for automatic listener cleanup
     this._isDroidProgression = false;
+    this._suppressNextAutoAdvance = false; // Used when a modal choice intentionally keeps the player on/backtracks from the feat step.
   }
 
   // ---------------------------------------------------------------------------
@@ -393,18 +395,22 @@ export class FeatStep extends ProgressionStepPlugin {
     const { signal } = this._renderAbort;
 
     const onSearch = e => {
+      if (e.detail?.handledByStepHook) return;
       this._searchQuery = e.detail.query || '';
-      shell.render();
+      this._expandMatchingCategoriesForSearch();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.();
     };
     const onFilter = e => {
+      if (e.detail?.handledByStepHook) return;
       const { filterId, value } = e.detail || {};
       this._filters = this._filters || {};
       this._filters[filterId] = value;
-      shell.render();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter' }) ?? shell?.render?.();
     };
     const onSort = e => {
+      if (e.detail?.handledByStepHook) return;
       this._sortBy = e.detail?.sortId || 'alpha-asc';
-      shell.render();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort' }) ?? shell?.render?.();
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -427,6 +433,31 @@ export class FeatStep extends ProgressionStepPlugin {
       }, { signal });
     });
 
+  }
+
+  async onUtilityChange({ type, detail = {}, shell } = {}) {
+    if (type === 'search') {
+      this._searchQuery = detail.query || '';
+      this._expandMatchingCategoriesForSearch();
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (type === 'sort') {
+      this._sortBy = detail.sortId || 'alpha-asc';
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (type === 'filter') {
+      const { filterId, value } = detail;
+      this._filters = this._filters || {};
+      if (filterId) this._filters[filterId] = value;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter' }) ?? shell?.render?.());
+      return true;
+    }
+
+    return false;
   }
 
   async handleAction(action, event, target, shell) {
@@ -1148,20 +1179,25 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getSearchResultFeats() {
-    const query = String(this._searchQuery || '').trim().toLowerCase();
+    const query = this._normalizeSearchText(this._searchQuery);
     if (!query) return [];
 
-    const source = this._showAll ? this._allFeats : this._legalFeats;
+    // Search should be a reliable lookup, not another collapsed category filter.
+    // Use the full evaluated catalog so unavailable feats still appear with their
+    // lock reason; on commit, existing legality checks still prevent illegal picks.
+    const source = this._allFeats?.length ? this._allFeats : this._legalFeats;
     const seen = new Set();
     const scoreMatch = (feat) => {
-      const name = String(feat?.name || '').toLowerCase();
-      const prereq = String(feat?.prerequisiteLine || feat?.prerequisiteText || feat?.system?.prerequisite || '').toLowerCase();
-      const desc = this._getFeatDescription(feat).toLowerCase();
+      const name = this._normalizeSearchText(feat?.name);
+      const prereq = this._normalizeSearchText(feat?.prerequisiteLine || feat?.prerequisiteText || feat?.system?.prerequisite || feat?.system?.prerequisites || '');
+      const desc = this._normalizeSearchText(this._getFeatDescription(feat));
+      const tags = this._normalizeSearchText([feat?.subcategory, ...(feat?.uiBroadTags || [])].filter(Boolean).join(' '));
       if (name === query) return 0;
       if (name.startsWith(query)) return 1;
       if (name.includes(query)) return 2;
-      if (prereq.includes(query)) return 3;
-      if (desc.includes(query)) return 4;
+      if (tags.includes(query)) return 3;
+      if (prereq.includes(query)) return 4;
+      if (desc.includes(query)) return 5;
       return 999;
     };
 
@@ -1180,6 +1216,44 @@ export class FeatStep extends ProgressionStepPlugin {
       })
       .slice(0, 24)
       .map(({ feat }) => feat);
+  }
+
+  _normalizeSearchText(value) {
+    return String(value || '')
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  _searchMatchesFeat(feat, query = this._normalizeSearchText(this._searchQuery)) {
+    if (!query) return false;
+    const haystack = this._normalizeSearchText([
+      feat?.name,
+      feat?.subcategory,
+      feat?.featTypeLabel,
+      feat?.prerequisiteLine,
+      feat?.prerequisiteText,
+      feat?.system?.prerequisite,
+      feat?.system?.prerequisites,
+      ...(feat?.uiBroadTags || []),
+      this._getFeatDescription(feat),
+    ].filter(Boolean).join(' '));
+    return haystack.includes(query);
+  }
+
+  _expandMatchingCategoriesForSearch() {
+    const query = this._normalizeSearchText(this._searchQuery);
+    if (!query || !this._groupedFeats) return;
+
+    for (const [categoryKey, group] of Object.entries(this._groupedFeats)) {
+      if ((group?.feats || []).some(feat => this._searchMatchesFeat(feat, query))) {
+        this._expandedCategories.add(categoryKey);
+      }
+    }
   }
 
   async getStepData(context) {
@@ -1499,6 +1573,96 @@ export class FeatStep extends ProgressionStepPlugin {
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, nextSelection);
     }
+
+    if (this._shouldPromptForForceSensitivitySkillReturn(feat, { shell, nextSelection, isTogglingOff })) {
+      await this._offerForceSensitivitySkillReturn(shell);
+    }
+  }
+
+  _shouldPromptForForceSensitivitySkillReturn(feat, { shell = null, nextSelection = null, isTogglingOff = false } = {}) {
+    if (!nextSelection || isTogglingOff) return false;
+    if (!this.isChargen(shell)) return false;
+    const stepId = this.descriptor?.stepId || shell?.progressionSession?.currentStepId || '';
+    if (stepId !== 'general-feat' && stepId !== 'class-feat') return false;
+    return this._isForceSensitivityFeat(feat);
+  }
+
+  _isForceSensitivityFeat(feat) {
+    const candidates = [
+      feat?.name,
+      feat?.label,
+      feat?.id,
+      feat?._id,
+      feat?.system?.slug,
+      feat?.system?.key,
+    ];
+    return candidates.some(value => {
+      const key = normalizeFeatNameKey(value);
+      return key === 'force sensitivity' || key === 'force sensitive';
+    });
+  }
+
+  async _offerForceSensitivitySkillReturn(shell) {
+    this._suppressNextAutoAdvance = true;
+
+    let returnToSkills = false;
+    try {
+      const result = await SWSEDialogV2.wait({
+        title: 'Class Skills Updated',
+        content: `
+          <p><strong>Force Sensitivity</strong> changes your class skill list.</p>
+          <p><strong>Use the Force</strong> is now a class skill for this character.</p>
+          <p>Would you like to return to Skill Selection now so you can rearrange your trained skills?</p>
+        `,
+        buttons: {
+          returnSkills: {
+            icon: '<i class="fa-solid fa-arrow-left"></i>',
+            label: 'Return to Skills',
+            callback: () => 'return-skills',
+          },
+          stay: {
+            icon: '<i class="fa-solid fa-check"></i>',
+            label: 'Stay Here',
+            callback: () => 'stay',
+          },
+        },
+        default: 'returnSkills',
+      }, {
+        width: 480,
+        classes: ['swse-force-sensitivity-skill-return-dialog'],
+      });
+      returnToSkills = result === 'return-skills' || result === 'returnSkills';
+    } catch (err) {
+      swseLogger.warn('[FeatStep] Failed to show Force Sensitivity skill return prompt', {
+        error: err?.message || String(err),
+      });
+      return;
+    }
+
+    if (!returnToSkills) return;
+
+    globalThis.setTimeout?.(() => {
+      void this._navigateBackToSkillsStep(shell);
+    }, 0);
+  }
+
+  async _navigateBackToSkillsStep(shell) {
+    const stepIndex = shell?.getStepIndex?.('skills')
+      ?? shell?.steps?.findIndex?.(descriptor => descriptor?.stepId === 'skills')
+      ?? -1;
+
+    if (!Number.isInteger(stepIndex) || stepIndex < 0) {
+      ui.notifications?.warn?.('The Skills step is not currently available.');
+      return;
+    }
+
+    if (stepIndex >= Number(shell?.currentStepIndex ?? 0)) {
+      ui.notifications?.warn?.('Skill Selection is not behind the current step in this progression flow.');
+      return;
+    }
+
+    shell?._cancelAutoAdvance?.('force-sensitivity-return-to-skills');
+    await shell?.navigateToStep?.(stepIndex, { source: 'force-sensitivity-return-to-skills' });
   }
 
   // ---------------------------------------------------------------------------
@@ -1734,6 +1898,11 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getAutoAdvanceConfig(shell) {
+    if (this._suppressNextAutoAdvance) {
+      this._suppressNextAutoAdvance = false;
+      return { enabled: false };
+    }
+
     return {
       enabled: true,
       delayMs: 700,

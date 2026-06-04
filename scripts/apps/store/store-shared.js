@@ -236,6 +236,25 @@ export function getRarityLabel(rarityClass) {
  */
 function getWeaponFamily(subcategory = '') {
   const sub = String(subcategory || '').toLowerCase();
+
+  // Explicit mapping for canonical subtype labels (authoritative).
+  const explicit = {
+    'simple weapons': 'ranged',
+    'pistols': 'ranged',
+    'rifles': 'ranged',
+    'heavy weapons': 'ranged',
+    'grenades': 'ranged',
+    'ranged weapons': 'ranged',
+    'advanced melee': 'melee',
+    'lightsabers': 'melee',
+    'exotic weapons': 'melee',
+    'simple melee': 'melee'
+  };
+  if (explicit[sub]) {
+    return explicit[sub];
+  }
+
+  // Substring fallback for any non-canonical/legacy labels.
   if (sub.includes('melee') || sub.includes('lightsaber') || sub.includes('exotic')) {
     return 'melee';
   }
@@ -393,6 +412,22 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
           family
         })));
       }
+
+      // Sort weapon children by canonical subtype order so the Melee/Ranged
+      // chip rows read consistently regardless of pack/category iteration order.
+      const weaponOrder = [
+        'Simple Weapons', 'Pistols', 'Rifles', 'Heavy Weapons', 'Grenades',
+        'Advanced Melee', 'Lightsabers', 'Exotic Weapons',
+        'Ranged Weapons', 'Simple Melee'
+      ];
+      children.sort((a, b) => {
+        const aIdx = weaponOrder.indexOf(a.label);
+        const bIdx = weaponOrder.indexOf(b.label);
+        if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
+        if (aIdx === -1) return 1;
+        if (bIdx === -1) return -1;
+        return aIdx - bIdx;
+      });
     } else if (categoryKey === 'armor') {
       // ARMOR: Normalize to Light/Medium/Heavy/Energy Shields
       const normalizedBySubcategory = new Map();
