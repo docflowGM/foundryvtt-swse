@@ -859,6 +859,9 @@ function wireDragAndDrop(sheet, root, signal) {
   }, { signal });
 
   root.addEventListener("drop", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation?.();
     sheet._onDrop(e);
-  }, { signal });
+  }, { signal, capture: true });
 }

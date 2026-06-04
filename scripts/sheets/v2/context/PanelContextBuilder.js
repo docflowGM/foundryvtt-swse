@@ -1371,7 +1371,7 @@ export class PanelContextBuilder {
       system.movement?.speed ??
       0
     ) || 0;
-    const initiativeTotal = Number(derived.initiative?.total) || 0;
+    const initiativeTotal = Number(derived.skills?.initiative?.total ?? derived.initiative?.total) || 0;
     const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
 
     // BAB: system.baseAttackBonus is the authoritative editable field

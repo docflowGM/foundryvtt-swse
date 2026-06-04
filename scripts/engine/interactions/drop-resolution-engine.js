@@ -30,6 +30,7 @@
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class DropResolutionEngine {
+  static _recentDropKeys = new Map();
   /**
    * Main entry point: resolve drop to mutationPlan + UI feedback
    *
@@ -53,6 +54,11 @@ export class DropResolutionEngine {
       // Normalize drop source (compendium or UUID)
       const normalized = await this._normalizeDrop(dropData);
       if (!normalized) return null;
+
+      if (this._isDuplicateDropEvent(actor, dropData, normalized)) {
+        console.debug('DropResolutionEngine.resolve: duplicate drop event suppressed');
+        return null;
+      }
 
       // Route by document type
       if (normalized.type === 'Item') {

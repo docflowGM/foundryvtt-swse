@@ -406,10 +406,24 @@ export function getClassTalentTreeLookupKeys(classModel) {
  * @returns {number} Hit die (6, 8, 10, or 12)
  */
 export function getClassHitDie(classModel) {
-  if (!classModel || ![6, 8, 10, 12].includes(classModel.hitDie)) {
-    return 10; // Safe default
+  const candidates = [
+    classModel?.hitDie,
+    classModel?.hit_die,
+    classModel?.system?.hitDie,
+    classModel?.system?.hit_die,
+  ];
+
+  for (const candidate of candidates) {
+    if (Number.isFinite(Number(candidate))) {
+      const numeric = Number(candidate);
+      if ([4, 6, 8, 10, 12].includes(numeric)) return numeric;
+    }
+
+    const match = String(candidate || '').match(/(?:1?d)?(4|6|8|10|12)\b/i);
+    if (match) return Number(match[1]);
   }
-  return classModel.hitDie;
+
+  return 10; // Safe default for heroic class resolution callers
 }
 
 /**

@@ -6,7 +6,9 @@
   <div class="swse-vehicle-panel-body">
     <div class="swse-vehicle-station-list">
       {{#each panel.stations as |station|}}
-        <div class="swse-vehicle-station-row {{#if station.occupied}}swse-vehicle-station-row--occupied{{/if}}">
+        <div class="swse-vehicle-station-row {{#if station.occupied}}swse-vehicle-station-row--occupied{{/if}}"
+             data-crew-station="{{station.key}}"
+             data-drop-zone="crew-station">
           <div class="swse-vehicle-station-meta">
             <div class="swse-vehicle-station-name">{{station.label}}</div>
             <div class="swse-vehicle-station-status">{{station.occupantName}}</div>

@@ -48,6 +48,26 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
+
+  const collectPendingForceTrainingCount = () => {
+    const containers = [
+      shell?.getSelection?.('feats'),
+      shell?.buildIntent?.getSelection?.('feats'),
+      shell?.draftSelections?.feats,
+      shell?.committedSelections?.get?.('feats'),
+      shell?.progressionSession?.draftSelections?.feats,
+    ];
+    let count = 0;
+    for (const value of containers) {
+      const entries = Array.isArray(value) ? value : (value ? [value] : []);
+      for (const entry of entries) {
+        const name = normalizeGrantName(entry?.name || entry?.label || entry?.title || entry);
+        if (name === 'force training') count += Number(entry?.count || 1) || 1;
+      }
+    }
+    return count;
+  };
+
   const actorHasForceSensitivity = () => {
     const items = Array.from(actor?.items || []);
     return items.some((item) => item?.type === 'feat' && /force sensitiv(?:e|ity)/i.test(String(item?.name || '')));
@@ -161,32 +181,23 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       swseLogger.debug(`[ForceSuiteResolution.ForcePower] No class selection in shell for ${actorName}`, { sessionId });
     }
 
-    // Force Sensitivity grants the first Force Power training slot. During chargen
-    // this is often a pending class auto-grant (Jedi) rather than an actor item,
-    // so it must be counted from the provisional class grant ledger. Count it
-    // once only; it is not repeatable.
+    // Force Sensitivity unlocks the Force suite but does not grant a Force Power slot.
+    // Actual Force Power picks come from Force Training or explicit class grants.
     try {
       const classGrantsForceSensitivity = selectedClassGrantsForceSensitivity(committedClass);
       const ownedForceSensitivity = actorHasForceSensitivity();
       const pendingForceSensitivityFeat = FeatGrantEntitlementResolver.getFeatEntries(actor, { shell, includePending: true })
         .some((entry) => normalizeGrantName(entry?.name) === 'force sensitivity');
-      // In level-up, Force Sensitivity itself is only access metadata; it must not
-      // reopen the Force Power picker by itself. New Force Power purchases are
-      // driven by explicit force_power_grants or Force Training slot entitlements.
-      const forceSensitivityApplies = !isLevelUpLike
-        && (classGrantsForceSensitivity || ownedForceSensitivity || pendingForceSensitivityFeat);
-      if (forceSensitivityApplies) {
-        totalEntitlements += 1;
-        reasons.push('Force Sensitive grants +1 Force Power training');
-        diagnostics.forceSensitivityEntitlement = {
-          total: 1,
-          classGrant: classGrantsForceSensitivity,
-          actorOwned: ownedForceSensitivity,
-          pendingFeat: pendingForceSensitivityFeat,
-        };
+      diagnostics.forceSensitivityAccess = {
+        classGrant: classGrantsForceSensitivity,
+        actorOwned: ownedForceSensitivity,
+        pendingFeat: pendingForceSensitivityFeat,
+      };
+      if (classGrantsForceSensitivity || ownedForceSensitivity || pendingForceSensitivityFeat) {
+        reasons.push('Force Sensitive access detected (no Force Power slot granted)');
       }
     } catch (forceSensitivityErr) {
-      swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Sensitive entitlement exception for ${actorName}`, {
+      swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Sensitive access exception for ${actorName}`, {
         sessionId,
         error: forceSensitivityErr.message,
       });
@@ -221,10 +232,18 @@ export async function resolveForcePowerEntitlements(shell, actor) {
         forceTrainingSlots
       });
 
-      if (forceTrainingSlots > 0) {
-        totalEntitlements += forceTrainingSlots;
-        reasons.push(`Force Training entitlement slots: ${forceTrainingSlots}`);
-        diagnostics.forceTrainingEntitlements = { total: forceTrainingSlots, entries: forceTrainingEntitlements.length };
+      let finalForceTrainingSlots = forceTrainingSlots;
+      const pendingForceTrainingCount = collectPendingForceTrainingCount();
+      if (pendingForceTrainingCount > 0 && finalForceTrainingSlots === 0) {
+        const slotsPerInstance = FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance?.(actor, shell) || 1;
+        finalForceTrainingSlots = pendingForceTrainingCount * slotsPerInstance;
+        reasons.push(`Pending Force Training selection slots: ${finalForceTrainingSlots}`);
+      }
+
+      if (finalForceTrainingSlots > 0) {
+        totalEntitlements += finalForceTrainingSlots;
+        reasons.push(`Force Training entitlement slots: ${finalForceTrainingSlots}`);
+        diagnostics.forceTrainingEntitlements = { total: finalForceTrainingSlots, entries: forceTrainingEntitlements.length, pendingForceTrainingCount };
       }
     } catch (entitlementErr) {
       swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Training entitlement exception for ${actorName}`, {

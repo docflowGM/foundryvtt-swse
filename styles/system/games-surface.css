@@ -2771,3 +2771,92 @@
     height: auto;
   }
 }
+
+/* Beta hotfix: keep Pazaak setup compact and table-like while players lock side decks. */
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept {
+  grid-template-columns: minmax(210px, 0.34fr) minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 0;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup__side,
+.swse-games-surface.is-table-mode .swse-pazaak-setup__main {
+  min-width: 0;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup__side {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-opponent-card,
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-rules-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-card-catalog,
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-build-catalog {
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  max-height: min(42vh, 360px);
+  align-content: start;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-catalog-card {
+  min-height: 104px;
+  padding: 7px;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-card-face {
+  min-height: 48px;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-card-face b {
+  font-size: 16px;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept .swse-pazaak-card-desc {
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-build-head {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-lock-top {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-build-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 26%, transparent);
+  border-radius: 12px;
+  background: color-mix(in oklab, #03121b 94%, transparent);
+  box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.34), inset 0 0 18px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 8%, transparent);
+  padding: 10px;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept.is-ready-to-lock .swse-pazaak-build-actions,
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept.is-ready-to-lock .swse-pazaak-lock-top {
+  box-shadow: 0 0 18px color-mix(in oklab, var(--vapor-cyan, #39f7ff) 22%, transparent);
+}
+
+@media (max-width: 1100px) {
+  .swse-games-surface.is-table-mode .swse-pazaak-setup--concept {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-games-surface.is-table-mode .swse-pazaak-setup__side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

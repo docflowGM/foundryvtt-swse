@@ -533,6 +533,20 @@ export class DerivedCalculator {
         };
       }
 
+      // Initiative is a skill in SWSE.  The early derived.initiative seed keeps
+      // legacy consumers alive during this compute pass, but the final canonical
+      // value must mirror the fully computed Initiative skill total so quick
+      // stats, sheet rolls, and the Skills tab agree.
+      const initiativeSkill = updates['system.derived.skills']?.initiative;
+      if (initiativeSkill && Number.isFinite(Number(initiativeSkill.total))) {
+        updates['system.derived.initiative'] = {
+          dexModifier: dexMod,
+          adjustment: initiativeAdjustment,
+          skillTotal: Number(initiativeSkill.total),
+          total: Number(initiativeSkill.total)
+        };
+      }
+
       
       // ========================================
       // Damage Threshold (Hardened Safe Setting Access)

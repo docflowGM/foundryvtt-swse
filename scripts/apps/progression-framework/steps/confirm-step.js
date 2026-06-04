@@ -25,6 +25,7 @@ import { ProgressionRules } from '../../../engine/progression/ProgressionRules.j
 import { AurebeshTranslator } from '../../../ui/dialogue/aurebesh-translator.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { resolveLevelUpHitDie } from '../../../apps/levelup/levelup-shared.js';
 
 export class ConfirmStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -517,30 +518,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
    * Extract hit die from class data.
    */
   _extractHitDie(classData) {
-    if (!classData) return 6; // Default to d6
-
-    // Try system.hitDie field first
-    if (classData.system?.hitDie) {
-      const match = classData.system.hitDie.match(/d(\d+)/);
-      if (match) return parseInt(match[1], 10);
-    }
-
-    // Fallback to standard mapping by class name (from levelup-shared.js)
-    const classHitDice = {
-      'Elite Trooper': 12, 'Independent Droid': 12,
-      'Assassin': 10, 'Bounty Hunter': 10, 'Droid Commander': 10, 'Gladiator': 10,
-      'Imperial Knight': 10, 'Jedi': 10, 'Jedi Knight': 10, 'Jedi Master': 10,
-      'Master Privateer': 10, 'Martial Arts Master': 10, 'Pathfinder': 10,
-      'Sith Apprentice': 10, 'Sith Lord': 10, 'Soldier': 10, 'Vanguard': 10,
-      'Ace Pilot': 8, 'Beast Rider': 8, 'Charlatan': 8, 'Corporate Agent': 8,
-      'Crime Lord': 8, 'Enforcer': 8, 'Force Adept': 8, 'Force Disciple': 8,
-      'Gunslinger': 8, 'Improviser': 8, 'Infiltrator': 8, 'Medic': 8,
-      'Melee Duelist': 8, 'Military Engineer': 8, 'Officer': 8, 'Outlaw': 8,
-      'Saboteur': 8, 'Scout': 8, 'Shaper': 8,
-      'Noble': 6, 'Scoundrel': 6, 'Slicer': 6
-    };
-
-    return classHitDice[classData.name] || 6;
+    return resolveLevelUpHitDie(classData);
   }
 
   /**

@@ -217,15 +217,18 @@ function itemQuantity(item) {
 }
 
 function buildNpcConceptItemRow(item, typeOverride = null) {
+  const type = item?.type || typeOverride || 'item';
+  const isWeapon = type === 'weapon' || item?.system?.weaponType || item?.system?.damage || item?.system?.attackBonus !== undefined;
   return {
     id: item?.id ?? null,
     name: item?.name || 'Unnamed',
-    type: item?.type || typeOverride || 'item',
+    type,
     typeLabel: itemTypeLabel(typeOverride || item?.type),
     img: item?.img || null,
     quantity: itemQuantity(item),
     summary: itemDescription(item),
-    canOpen: Boolean(item?.id)
+    canOpen: Boolean(item?.id),
+    canRollAttack: Boolean(item?.id && isWeapon)
   };
 }
 
@@ -497,6 +500,11 @@ const NPC_SHEET_WRITABLE_EXACT_PATHS = new Set([
   'system.challengeLevel',
   'system.level',
   'system.credits',
+  'system.hp.value',
+  'system.health.value',
+  'system.conditionTrack.value',
+  'system.darkSideScore.value',
+  'system.forcePoints.value',
   'system.notes',
   'system.bio',
   'system.biography',
@@ -518,6 +526,11 @@ const NPC_QUIET_FIELD_PATHS = new Set([
   'system.speed',
   'system.challengeLevel',
   'system.credits',
+  'system.hp.value',
+  'system.health.value',
+  'system.conditionTrack.value',
+  'system.darkSideScore.value',
+  'system.forcePoints.value',
   'system.notes',
   'system.bio',
   'system.biography',
@@ -658,7 +671,7 @@ export class SWSEV2NpcSheet extends
       derived: plainClone(system?.derived ?? actor.system?.derived ?? {}, {}),
       // Items: map to plain objects to avoid Collection/DataModel serialization issues
       items: Array.from(actor.items ?? []).map(item => buildSerializableItemContext(item)),
-      editable: this.isEditable,
+      editable: this.isEditable !== false && (actor.isOwner === true || actor.testUserPermission?.(game.user, 'OWNER') === true),
       // User data (serializable primitives only)
       user: {
         id: game.user?.id ?? null,
@@ -1053,7 +1066,7 @@ export class SWSEV2NpcSheet extends
       }
     }
 
-    // Item sheet opening
+    // Item sheet opening / weapon attack rolling
     for (const el of root.querySelectorAll('.swse-v2-open-item')) {
       el.addEventListener('click', (ev) => {
         ev.preventDefault();
@@ -1062,6 +1075,28 @@ export class SWSEV2NpcSheet extends
         if (!itemId) {return;}
         const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
+      }, { signal });
+    }
+
+    for (const el of root.querySelectorAll('[data-action="roll-npc-weapon"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        const weapon = itemId ? this.actor?.items?.get(itemId) : null;
+        if (!weapon) return;
+        try {
+          await SWSERoll.rollAttack(this.actor, weapon, {
+            sourceElement: ev.currentTarget,
+            companionSource: ev.currentTarget,
+            sheet: this,
+            showRollCompanion: true,
+            showDialog: true
+          });
+        } catch (err) {
+          console.error('NPC weapon attack roll failed:', err);
+          ui?.notifications?.error?.(`NPC attack roll failed: ${err.message}`);
+        }
       }, { signal });
     }
 

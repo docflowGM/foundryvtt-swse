@@ -8,6 +8,121 @@ import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/
 import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { resolveClassModel, getClassHitDie } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+
+
+const CLASS_HIT_DICE = Object.freeze({
+  // d12 classes
+  'elite trooper': 12,
+  'independent droid': 12,
+  // d10 classes
+  assassin: 10,
+  'bounty hunter': 10,
+  'droid commander': 10,
+  gladiator: 10,
+  'imperial knight': 10,
+  jedi: 10,
+  'jedi knight': 10,
+  'jedi master': 10,
+  'master privateer': 10,
+  'martial arts master': 10,
+  pathfinder: 10,
+  'sith apprentice': 10,
+  'sith lord': 10,
+  soldier: 10,
+  vanguard: 10,
+  // d8 classes
+  'ace pilot': 8,
+  'beast rider': 8,
+  charlatan: 8,
+  'corporate agent': 8,
+  'crime lord': 8,
+  enforcer: 8,
+  'force adept': 8,
+  'force disciple': 8,
+  gunslinger: 8,
+  improviser: 8,
+  infiltrator: 8,
+  medic: 8,
+  'melee duelist': 8,
+  'military engineer': 8,
+  officer: 8,
+  outlaw: 8,
+  saboteur: 8,
+  scout: 8,
+  shaper: 8,
+  // d6 classes
+  noble: 6,
+  scoundrel: 6,
+  slicer: 6,
+});
+
+function normalizeClassNameKey(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
+function parseHitDieValue(value) {
+  if (Number.isFinite(Number(value))) {
+    const numeric = Number(value);
+    return [4, 6, 8, 10, 12].includes(numeric) ? numeric : null;
+  }
+  const match = String(value || '').match(/(?:1?d)?(4|6|8|10|12)\b/i);
+  return match ? Number(match[1]) : null;
+}
+
+/**
+ * Resolve a class hit die from any live level-up class payload.
+ * Uses the canonical class registry first, then explicit numeric/string fields,
+ * then a Saga class-name fallback. This prevents level-up HP from falling back
+ * to d6 when thin class payloads carry system.hitDie: 10 or only a class id.
+ *
+ * @param {object|string} classDoc - class item/model/selection/name
+ * @returns {number} hit die size
+ */
+export function resolveLevelUpHitDie(classDoc) {
+  const resolved = resolveClassModel(classDoc) || null;
+  const canonical = resolved ? getClassHitDie(resolved) : null;
+  if ([4, 6, 8, 10, 12].includes(canonical)) return canonical;
+
+  const candidates = [
+    classDoc?.system?.hitDie,
+    classDoc?.system?.hit_die,
+    classDoc?.hitDie,
+    classDoc?.hit_die,
+    resolved?.system?.hitDie,
+    resolved?.system?.hit_die,
+    resolved?.hitDie,
+    resolved?.hit_die,
+  ];
+  for (const candidate of candidates) {
+    const parsed = parseHitDieValue(candidate);
+    if (parsed) return parsed;
+  }
+
+  const nameCandidates = [
+    resolved?.name,
+    resolved?.className,
+    classDoc?.name,
+    classDoc?.className,
+    classDoc?.displayName,
+    typeof classDoc === 'string' ? classDoc : null,
+  ].filter(Boolean);
+
+  for (const name of nameCandidates) {
+    const key = normalizeClassNameKey(name);
+    if (CLASS_HIT_DICE[key]) return CLASS_HIT_DICE[key];
+  }
+
+  SWSELogger.warn('SWSE LevelUp | Could not resolve class hit die; defaulting to d6', {
+    className: classDoc?.name || classDoc?.className || classDoc?.id || classDoc,
+    payloadKeys: classDoc && typeof classDoc === 'object' ? Object.keys(classDoc) : [],
+  });
+  return 6;
+}
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)
@@ -267,72 +382,15 @@ export function getsMilestoneFeat(newLevel) {
  */
 export function calculateHPGain(classDoc, actor, newLevel) {
   // Check if this is a nonheroic class
-  const isNonheroic = classDoc.system.isNonheroic || false;
+  const isNonheroic = classDoc?.system?.isNonheroic || classDoc?.isNonheroic || false;
+  const hitDie = isNonheroic ? 4 : resolveLevelUpHitDie(classDoc);
 
-  let hitDie;
+  SWSELogger.log(`SWSE LevelUp | HP hit die resolved: d${hitDie}`, {
+    className: classDoc?.name || classDoc?.className || classDoc?.id || '(unknown)',
+    newLevel,
+    isNonheroic,
+  });
 
-  // NONHEROIC RULE: Nonheroic characters gain 1d4 HP + CON per level
-  if (isNonheroic) {
-    hitDie = 4;
-  } else {
-    // SWSE Official Hit Dice by Class
-    const classHitDice = {
-      // d12 classes
-      'Elite Trooper': 12,
-      'Independent Droid': 12,
-      // d10 classes
-      'Assassin': 10,
-      'Bounty Hunter': 10,
-      'Droid Commander': 10, // Changed from d6
-      'Gladiator': 10,
-      'Imperial Knight': 10,
-      'Jedi': 10,
-      'Jedi Knight': 10,
-      'Jedi Master': 10,
-      'Master Privateer': 10,
-      'Martial Arts Master': 10,
-      'Pathfinder': 10,
-      'Sith Apprentice': 10,
-      'Sith Lord': 10,
-      'Soldier': 10,
-      'Vanguard': 10,
-      // d8 classes
-      'Ace Pilot': 8, // Changed from d6
-      'Beast Rider': 8,
-      'Charlatan': 8,
-      'Corporate Agent': 8,
-      'Crime Lord': 8, // Changed from d6
-      'Enforcer': 8,
-      'Force Adept': 8, // Changed from d6
-      'Force Disciple': 8,
-      'Gunslinger': 8,
-      'Improviser': 8,
-      'Infiltrator': 8,
-      'Medic': 8,
-      'Melee Duelist': 8,
-      'Military Engineer': 8,
-      'Officer': 8, // Changed from d6
-      'Outlaw': 8,
-      'Saboteur': 8, // Changed from d6
-      'Scout': 8,
-      'Shaper': 8,
-      // d6 classes
-      'Noble': 6,
-      'Scoundrel': 6,
-      'Slicer': 6
-    };
-
-    // Get hit die - first check our mapping by class name, then fall back to class data
-    const className = classDoc.name;
-    hitDie = classHitDice[className];
-
-    if (!hitDie) {
-      // Fallback: parse from class data
-      const hitDieString = getClassProperty(classDoc, 'hitDie', '1d6');
-      hitDie = parseInt(hitDieString.match(/\d+d(\d+)/)?.[1] || '6', 10);
-      SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
-    }
-  }
   // Use centralized HP generator engine
   const hpGain = HPGeneratorEngine.calculateHPGain(actor, newLevel, hitDie, {
     context: 'levelup',

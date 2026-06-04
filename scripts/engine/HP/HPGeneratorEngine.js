@@ -21,6 +21,7 @@ export class HPGeneratorEngine {
    */
   static calculateHPGain(actor, newLevel, hitDie, options = {}) {
     const { context = 'levelup', isNonheroic = false } = options;
+    const die = this.#normalizeHitDie(hitDie);
 
     // Get settings with safe defaults
     const hpGeneration = ProgressionRules.getHPGeneration();
@@ -34,29 +35,29 @@ export class HPGeneratorEngine {
 
     // Early levels get maximum HP
     if (newLevel <= maxHPLevels) {
-      hpGain = hitDie + conMod;
+      hpGain = die + conMod;
       SWSELogger.log(
         `[HPGeneratorEngine] Level ${newLevel} (auto-max): ${hpGain} HP ` +
-          `(d${hitDie} ${conMod >= 0 ? '+' : ''}${conMod})`
+          `(d${die} ${conMod >= 0 ? '+' : ''}${conMod})`
       );
     } else {
       // Apply generation method
       switch (hpGeneration) {
         case 'maximum':
-          hpGain = hitDie + conMod;
+          hpGain = die + conMod;
           break;
 
         case 'average':
-          hpGain = Math.floor(hitDie / 2) + 1 + conMod;
+          hpGain = Math.floor(die / 2) + 1 + conMod;
           break;
 
         case 'roll':
-          hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
+          hpGain = Math.floor(Math.random() * die) + 1 + conMod;
           break;
 
         case 'average_minimum': {
-          const rolled = Math.floor(Math.random() * hitDie) + 1;
-          const average = Math.floor(hitDie / 2) + 1;
+          const rolled = Math.floor(Math.random() * die) + 1;
+          const average = Math.floor(die / 2) + 1;
           hpGain = Math.max(rolled, average) + conMod;
           break;
         }
@@ -65,12 +66,12 @@ export class HPGeneratorEngine {
           SWSELogger.warn(
             `[HPGeneratorEngine] Unknown method "${hpGeneration}", using average`
           );
-          hpGain = Math.floor(hitDie / 2) + 1 + conMod;
+          hpGain = Math.floor(die / 2) + 1 + conMod;
       }
 
       SWSELogger.log(
         `[HPGeneratorEngine] Level ${newLevel} (${hpGeneration}): ${hpGain} HP ` +
-          `(d${hitDie} ${conMod >= 0 ? '+' : ''}${conMod})${
+          `(d${die} ${conMod >= 0 ? '+' : ''}${conMod})${
             isNonheroic ? ' [nonheroic]' : ''
           }`
       );
@@ -80,6 +81,20 @@ export class HPGeneratorEngine {
     const finalHPGain = Math.max(1, hpGain);
 
     return finalHPGain;
+  }
+
+
+  static #normalizeHitDie(hitDie) {
+    if (Number.isFinite(Number(hitDie))) {
+      const numeric = Number(hitDie);
+      if ([4, 6, 8, 10, 12].includes(numeric)) return numeric;
+    }
+
+    const match = String(hitDie || '').match(/(?:1?d)?(4|6|8|10|12)\b/i);
+    if (match) return Number(match[1]);
+
+    SWSELogger.warn(`[HPGeneratorEngine] Invalid hit die "${hitDie}"; defaulting to d6`);
+    return 6;
   }
 
   /**

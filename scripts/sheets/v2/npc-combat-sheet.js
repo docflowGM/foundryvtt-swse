@@ -328,8 +328,11 @@ export class SWSEV2CombatNpcSheet extends
     // Bind drop event to authoritative _onDrop handler
     // This routes drops through DropResolutionEngine for unified item/actor handling
     root.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation?.();
       this._onDrop(e);
-    });
+    }, { capture: true });
 
     RenderAssertions.assertRenderComplete(
       this,

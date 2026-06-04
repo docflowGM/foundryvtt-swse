@@ -34,6 +34,7 @@ import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryv
 import { getDroidTalentTreeName } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleTalentCombination } from '/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js';
 
 function emitTalentStepTrace(label, payload = {}) {
   // Only emit traces if debug mode is explicitly enabled
@@ -1265,7 +1266,8 @@ export class TalentStep extends ProgressionStepPlugin {
     }
 
     // Use talent tree membership authority for deterministic, registry-based membership
-    const talents = await getTalentMembership(tree);
+    let talents = await getTalentMembership(tree);
+    talents = HouseRuleTalentCombination.processBlockDeflectCombination(talents);
 
     // Diagnostic logging (once per tree enter)
     emitTalentStepTrace('TREE_TALENT_LOOKUP', {

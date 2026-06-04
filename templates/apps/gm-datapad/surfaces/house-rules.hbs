@@ -47,7 +47,7 @@
     </div>
   </div>
 
-  <div class="gm-phase7-rule-grid">
+  <div class="gm-phase7-rule-grid" data-house-rule-grid>
     {{#each ruleCategories}}
     <section class="gm-command-card gm-phase7-rule-category {{this.tone}}" data-house-rule-category="{{this.id}}">
       <header class="gm-phase7-rule-category-header">
@@ -83,6 +83,11 @@
       </div>
     </section>
     {{/each}}
+  </div>
+
+  <div class="gm-phase7-rule-empty" data-house-rule-empty hidden>
+    <i class="fa-solid fa-filter-circle-xmark"></i>
+    <span>No house rules match the current filter.</span>
   </div>
 
   <div class="gm-phase7-rule-footer">

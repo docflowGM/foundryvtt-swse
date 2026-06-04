@@ -217,6 +217,26 @@
 
     <section class="tab flexcol" data-tab-group="primary" data-tab="stats">
       <div class="swse-npc-col-stack">
+        {{#if editable}}
+        <section class="swse-npc-card swse-npc-card--edit-basics">
+          <header class="swse-npc-card__header">
+            <div>
+              <h3 class="swse-section-title">Editable NPC Fields</h3>
+              <p class="swse-npc-card__subhead">GM-safe direct fields. Changes save when the field loses focus or changes.</p>
+            </div>
+          </header>
+          <div class="swse-npc-card__body swse-npc-edit-grid">
+            <label><span>Species</span><input type="text" name="system.race" value="{{system.race}}"></label>
+            <label><span>Class</span><input type="text" name="system.className" value="{{system.className}}"></label>
+            <label><span>Level</span><input type="number" name="system.level" value="{{system.level}}" min="0" step="1"></label>
+            <label><span>Challenge</span><input type="text" name="system.challengeLevel" value="{{system.challengeLevel}}"></label>
+            <label><span>Size</span><input type="text" name="system.size" value="{{system.size}}"></label>
+            <label><span>Speed</span><input type="text" name="system.speed" value="{{system.speed}}"></label>
+            <label><span>HP</span><input type="number" name="system.hp.value" value="{{system.hp.value}}" min="0" step="1"></label>
+            <label><span>Credits</span><input type="number" name="system.credits" value="{{system.credits}}" min="0" step="1"></label>
+          </div>
+        </section>
+        {{/if}}
         <section class="swse-npc-card swse-npc-card--abilities">
           <header class="swse-npc-card__header">
             <div>
@@ -230,7 +250,11 @@
                 {{#each npcConcept.abilities as |ability|}}
                   <div class="swse-npc-ability-card {{#if ability.isPrimary}}primary{{/if}} {{#if ability.isLowest}}lowest{{/if}}">
                     <span class="swse-npc-ability-label">{{ability.abbr}}</span>
-                    <strong class="swse-npc-ability-score">{{ability.score}}</strong>
+                    {{#if ../editable}}
+                      <input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.base" value="{{ability.score}}" step="1">
+                    {{else}}
+                      <strong class="swse-npc-ability-score">{{ability.score}}</strong>
+                    {{/if}}
                     <span class="swse-npc-ability-mod {{ability.modifierClass}}">{{ability.mod}}</span>
                   </div>
                 {{/each}}
@@ -329,6 +353,9 @@
               <div class="swse-npc-gear-row">
                 <button type="button" class="swse-npc-gear-name {{#if item.canOpen}}swse-v2-open-item{{/if}}" data-item-id="{{item.id}}">{{item.name}}</button>
                 <div class="swse-npc-gear-meta"><span>{{item.typeLabel}}</span><span>×{{item.quantity}}</span></div>
+                {{#if item.canRollAttack}}
+                  <button type="button" class="swse-npc-gear-roll" data-action="roll-npc-weapon" data-item-id="{{item.id}}">Roll Attack</button>
+                {{/if}}
               </div>
             {{/each}}
           {{else}}

@@ -164,6 +164,25 @@ function tryTalentSideMembership(tree) {
   }) || [];
 }
 
+
+function supplementKnownTreeMembership(tree, talents = []) {
+  const treeKey = normalizeTalentTreeKey(tree?.name || tree?.id || tree?.sourceId);
+  if (treeKey !== 'armor-specialist') return talents;
+
+  const seen = new Set((talents || []).map(talent => talent?.id || talent?._id || talent?.name).filter(Boolean));
+  const supplementalNames = ['Armored Defense'];
+  const supplemented = [...talents];
+  for (const name of supplementalNames) {
+    const talent = TalentRegistry.getByName?.(name);
+    const id = talent?.id || talent?._id || talent?.name;
+    if (talent && id && !seen.has(id)) {
+      supplemented.unshift(talent);
+      seen.add(id);
+    }
+  }
+  return supplemented;
+}
+
 function tryRegistryLookup(registry, tree) {
   if (!tree || !registry) return null;
 
@@ -311,7 +330,7 @@ export async function getTalentMembership(tree) {
       `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
       `${resolved.length} talents found from talent-side tree fields`
     );
-    return resolved;
+    return supplementKnownTreeMembership(tree, resolved);
   }
 
   // FALLBACK 1: Try registry lookup
@@ -341,7 +360,7 @@ export async function getTalentMembership(tree) {
         `${registryEntry.talents.length} registry talents → ${resolved.length} resolved` +
         (missingNames.length > 0 ? ` (${missingNames.length} missing)` : '')
       );
-      return resolved;
+      return supplementKnownTreeMembership(tree, resolved);
     }
   }
 
@@ -353,7 +372,7 @@ export async function getTalentMembership(tree) {
       `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
       `${resolved.length} talents found via registry category scan`
     );
-    return resolved;
+    return supplementKnownTreeMembership(tree, resolved);
   }
 
   // FALLBACK 3: Resolve talentIds directly
@@ -364,7 +383,7 @@ export async function getTalentMembership(tree) {
       `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
       `${resolved.length} talents resolved from talentIds array`
     );
-    return resolved;
+    return supplementKnownTreeMembership(tree, resolved);
   }
 
   // ZERO TALENT RESOLUTION - emit diagnostic

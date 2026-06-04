@@ -3022,13 +3022,13 @@ const forcePoints = [];
 
     // XP System Configuration and Progress
     const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
-    const xpEnabled = xpSystem !== 'disabled';
+    const xpEnabled = xpSystem !== 'disabled' && HouseRuleService.get('enableExperienceSystem') !== false;
     const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0, level: actor.system.level ?? 1 };
     const xpDisplayLevel = Math.max(1, Number(actor.system.level ?? xpDerived.level ?? 1));
     const xpTotal = Number(xpDerived.total ?? actor.system?.xp?.total ?? 0) || 0;
     const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
     const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
-    const xpLevelReady = xpPercent >= 100;
+    const xpLevelReady = !xpEnabled || xpPercent >= 100;
     const xpSegments = Array.from({ length: 20 }, (_, index) => ({
       index,
       filled: ((index + 1) / 20) * 100 <= xpPercent + 0.0001
@@ -3041,7 +3041,8 @@ const forcePoints = [];
       xpToNext: nextLevelAtDisplay !== null ? Math.max(0, nextLevelAtDisplay - xpTotal) : 0,
       percentRounded: xpPercent,
       segments: xpSegments,
-      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
+      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress',
+      advisoryOnly: !xpEnabled
     };
 
     // PHASE 7.5: HEADER SEGMENTS: Consume canonical HP view-model
@@ -5073,8 +5074,11 @@ const forcePoints = [];
     // Bind drop event to authoritative _onDrop handler
     // This routes drops through DropResolutionEngine for unified item/actor handling
     html.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation?.();
       this._onDrop(e);
-    }, { signal });
+    }, { signal, capture: true });
   }
 
   /* ============================================================

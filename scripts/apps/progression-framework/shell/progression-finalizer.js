@@ -25,6 +25,7 @@ import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/p
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
@@ -959,6 +960,13 @@ export class ProgressionFinalizer {
         if (s.focused !== undefined || sessionState.mode === 'chargen') set[`system.skills.${key}.focused`] = s.focused !== undefined ? !!s.focused : false;
         if (s.selectedAbility !== undefined || sessionState.mode === 'chargen') set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
       }
+    }
+
+
+    const skillFocusKeys = this._extractSkillFocusKeysFromSelections(selections);
+    for (const key of skillFocusKeys) {
+      if (!key) continue;
+      set[`system.skills.${key}.focused`] = true;
     }
 
     if (sessionState.mode === 'levelup' && levelUpManifest?.classSkills?.length) {

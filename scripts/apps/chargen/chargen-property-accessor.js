@@ -138,8 +138,8 @@ export function getHitDie(classDoc) {
     systemHitDieAlt: classDoc?.system?.hit_die
   });
 
-  // Try to parse formats: "1d10", "d10", or "10"
-  const match = hitDieString.match(/(\d+)$/);
+  // Try to parse formats: "1d10", "d10", numeric 10, or string "10"
+  const match = String(hitDieString).match(/(\d+)$/);
   if (match && match[1]) {
     const result = parseInt(match[1], 10);
     SWSELogger.log(`CharGen | getHitDie() parsed "${hitDieString}" -> d${result} for "${classDoc?.name}"`);

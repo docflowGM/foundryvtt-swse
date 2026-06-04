@@ -8367,3 +8367,103 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   font-size: 22px !important;
   padding-bottom: 2px !important;
 }
+
+/* Beta hardening: House Rules filtering + breathing room. */
+.gm-datapad-house-rules [hidden],
+.gm-datapad-house-rules .is-filtered-out {
+  display: none !important;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-toolbar {
+  gap: 12px;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-filter-row {
+  align-items: center;
+  row-gap: 7px;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-filter {
+  min-height: 24px;
+  white-space: nowrap;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr));
+  gap: 13px;
+  align-items: start;
+  padding-right: 8px;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-category {
+  gap: 12px;
+  overflow: visible;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-category-header {
+  align-items: start;
+  min-width: 0;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-category-header > div:nth-child(2),
+.gm-datapad-house-rules .gm-phase7-rule-copy {
+  min-width: 0;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-list {
+  gap: 8px;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-entry {
+  align-items: start;
+  min-height: 66px;
+  padding: 10px;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-name,
+.gm-datapad-house-rules .gm-phase7-rule-description,
+.gm-datapad-house-rules .gm-phase7-rule-key,
+.gm-datapad-house-rules .gm-phase7-rule-category-header h3,
+.gm-datapad-house-rules .gm-phase7-rule-category-header p {
+  overflow-wrap: anywhere;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-name {
+  line-height: 1.22;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-description {
+  line-height: 1.42;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-category-score,
+.gm-datapad-house-rules .gm-phase7-switch {
+  flex: 0 0 auto;
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-empty {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 200, 87, 0.18);
+  border-radius: 10px;
+  background: rgba(255, 200, 87, 0.07);
+  color: rgba(255, 224, 150, 0.82);
+  font: 800 10px/1.2 var(--swse-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1120px) and (min-width: 760px) {
+  .gm-datapad-house-rules .gm-phase7-rule-category-header {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .gm-datapad-house-rules .gm-phase7-rule-grid {
+    grid-template-columns: 1fr;
+  }
+}

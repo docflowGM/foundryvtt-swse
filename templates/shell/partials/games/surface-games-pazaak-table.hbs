@@ -1,7 +1,7 @@
 {{!-- Pazaak active-table partial. Phase 4 reskins the production engine with the concept table layout. --}}
 <div class="swse-pazaak-table" data-pazaak-session-id="{{vm.activeTable.sessionId}}">
   {{#if vm.activeTable.pazaak.showSetup}}
-  <section class="swse-pazaak-setup swse-pazaak-setup--concept">
+  <section class="swse-pazaak-setup swse-pazaak-setup--concept {{#if vm.activeTable.pazaak.lockDeckReady}}is-ready-to-lock{{/if}}">
     <aside class="swse-pazaak-setup__side">
       <div class="swse-pazaak-rules-card swse-pazaak-opponent-card">
         <span class="swse-games-kicker">SIDE DECK RULES</span>
@@ -43,6 +43,7 @@
           <b><span data-pazaak-selected-count>{{vm.activeTable.pazaak.selectedCount}}</span><small>/{{vm.activeTable.pazaak.sideDeckSize}}</small></b>
           <span>cards selected</span>
         </div>
+        <button type="submit" class="swse-games-primary swse-pazaak-lock-top" {{#unless vm.activeTable.pazaak.lockDeckReady}}disabled{{/unless}}>Lock Deck &amp; Deal</button>
       </div>
 
       <div class="swse-pazaak-card-catalog swse-pazaak-build-catalog">

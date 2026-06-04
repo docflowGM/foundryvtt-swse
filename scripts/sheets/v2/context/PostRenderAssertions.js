@@ -127,7 +127,7 @@ export class PostRenderAssertions {
       const aspectRatio = computedStyle?.aspectRatio;
       if (aspectRatio && aspectRatio !== 'auto') {
         // Log for debugging but don't fail - aspect ratios are hints, not hard requirements
-        console.log(`[PostRender] ${panelKey} aspect ratio: ${aspectRatio}`);
+        this._debug(`${panelKey} aspect ratio: ${aspectRatio}`);
       }
     }
   }
@@ -159,7 +159,7 @@ export class PostRenderAssertions {
       // even when the currently active tab intentionally does not render them.
       // Only warn loudly for critical panels; otherwise keep the diagnostic quiet.
       if (!critical && activeTabId) {
-        console.debug?.(`[PostRender] ${panelKey} root (${rootSelector}) not present on active tab "${activeTabId}"; skipped.`);
+        this._debug(`${panelKey} root (${rootSelector}) not present on active tab "${activeTabId}"; skipped.`);
         return;
       }
       this._reportViolation(`${panelKey} root (${rootSelector}) not found`, critical);
@@ -181,7 +181,7 @@ export class PostRenderAssertions {
     // Phase 4.5: Validate SVG structure for SVG-backed panels
     this._assertSVGStructure(panelKey, root, def);
 
-    console.log(`[PostRender] ✓ ${panelKey} passed`, {
+    this._debug(`✓ ${panelKey} passed`, {
       root: rootSelector,
       elements: Object.keys(expectedElements).length,
       svgBacked: def.svgBacked ?? false
@@ -195,12 +195,29 @@ export class PostRenderAssertions {
    * @param {Object} context - Render context
    * @param {Array<string>} visiblePanels - List of panel keys that should be checked (if null, check all)
    */
+  static _diagnosticsEnabled() {
+    return Boolean(
+      CONFIG?.SWSE?.postRenderDiagnostics ||
+      CONFIG?.SWSE?.strictMode ||
+      game?.settings?.get?.('foundryvtt-swse', 'postRenderDiagnostics') ||
+      globalThis.sessionStorage?.getItem?.('swse.postRenderAssertions') === '1'
+    );
+  }
+
+  static _debug(message, data = undefined) {
+    if (!this._diagnosticsEnabled()) return;
+    if (data === undefined) console.debug?.(`[PostRender] ${message}`);
+    else console.debug?.(`[PostRender] ${message}`, data);
+  }
+
   static runAll(html, context, visiblePanels = null) {
-    console.group('[PostRender] Registry-Driven Panel DOM Assertions');
+    const diagnostics = this._diagnosticsEnabled();
+    if (diagnostics) console.groupCollapsed?.('[PostRender] Registry-Driven Panel DOM Assertions');
+
     try {
       const shellSurface = context?.shellSurface ?? context?.shell?.surface ?? null;
       if (shellSurface && shellSurface !== 'sheet') {
-        console.log(`[PostRender] Skipping sheet-panel assertions while shell surface "${shellSurface}" is active.`);
+        this._debug(`Skipping sheet-panel assertions while shell surface "${shellSurface}" is active.`);
         return;
       }
 
@@ -210,16 +227,17 @@ export class PostRenderAssertions {
       for (const panelKey of panelsToCheck) {
         const def = PANEL_REGISTRY[panelKey];
         if (!def) {
-          console.warn(`[PostRender] Unknown panel: ${panelKey}`);
+          this._reportViolation(`Unknown panel: ${panelKey}`, false);
           continue;
         }
         this._assertPanel(panelKey, html, context);
       }
-      console.log('[PostRender] All assertions completed');
+      this._debug('All assertions completed');
     } catch (err) {
       console.error('[PostRender] ASSERTION FAILED (strict mode):', err.message);
       if (CONFIG?.SWSE?.strictMode) throw err;
+    } finally {
+      if (diagnostics) console.groupEnd?.();
     }
-    console.groupEnd();
   }
 }

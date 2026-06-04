@@ -19,7 +19,9 @@ export class GMHouseRulesSurfaceController {
     this.destroy();
     this._abort = new AbortController();
     const signal = this._abort.signal;
-    const pageElement = root.querySelector('.gm-datapad-house-rules');
+    const pageElement = root.matches?.('.gm-datapad-house-rules')
+      ? root
+      : root.querySelector('.gm-datapad-house-rules');
     if (!pageElement) return;
 
     pageElement.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
@@ -51,6 +53,85 @@ export class GMHouseRulesSurfaceController {
     });
 
     this._wireRuleFiltering(pageElement, signal);
+  }
+
+  _wireRuleFiltering(pageElement, signal) {
+    const searchInput = pageElement.querySelector('[data-house-rule-search]');
+    const filterButtons = Array.from(pageElement.querySelectorAll('[data-house-rule-filter]'));
+    const rows = Array.from(pageElement.querySelectorAll('[data-house-rule-row]'));
+    const categories = Array.from(pageElement.querySelectorAll('[data-house-rule-category]'));
+    const emptyState = pageElement.querySelector('[data-house-rule-empty]');
+
+    if (!searchInput && !filterButtons.length) return;
+
+    const normalize = (value) => String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[\s_-]+/g, '');
+
+    let activeFilter = normalize(filterButtons.find((button) => button.classList.contains('is-active'))?.dataset.houseRuleFilter) || 'all';
+
+    const setHidden = (element, hidden) => {
+      if (!element) return;
+      element.hidden = hidden;
+      element.classList.toggle('is-filtered-out', hidden);
+      element.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+    };
+
+    const applyFilters = () => {
+      const query = String(searchInput?.value ?? '').trim().toLowerCase();
+      let visibleCount = 0;
+
+      rows.forEach((row) => {
+        const category = normalize(row.dataset.ruleCategory);
+        const haystack = String(row.dataset.ruleSearchText || row.textContent || '').toLowerCase();
+        const matchesCategory = activeFilter === 'all' || category === activeFilter;
+        const matchesSearch = !query || haystack.includes(query);
+        const visible = matchesCategory && matchesSearch;
+
+        setHidden(row, !visible);
+        if (visible) visibleCount += 1;
+      });
+
+      categories.forEach((categoryEl) => {
+        const category = normalize(categoryEl.dataset.houseRuleCategory);
+        const categoryMatches = activeFilter === 'all' || category === activeFilter;
+        const hasVisibleRows = Array.from(categoryEl.querySelectorAll('[data-house-rule-row]')).some((row) => !row.hidden);
+        setHidden(categoryEl, !(categoryMatches && hasVisibleRows));
+      });
+
+      if (emptyState) {
+        emptyState.hidden = visibleCount > 0;
+        emptyState.classList.toggle('is-filtered-out', visibleCount > 0);
+      }
+    };
+
+    searchInput?.addEventListener('input', applyFilters, { signal });
+    searchInput?.addEventListener('search', applyFilters, { signal });
+
+    pageElement.addEventListener('click', (event) => {
+      const button = event.target.closest?.('[data-house-rule-filter]');
+      if (!button || !pageElement.contains(button)) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      activeFilter = normalize(button.dataset.houseRuleFilter || 'all') || 'all';
+      filterButtons.forEach((candidate) => {
+        const active = candidate === button;
+        candidate.classList.toggle('is-active', active);
+        candidate.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      applyFilters();
+    }, { signal });
+
+    filterButtons.forEach((button) => {
+      const active = normalize(button.dataset.houseRuleFilter) === activeFilter;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    applyFilters();
   }
 
   destroy() {

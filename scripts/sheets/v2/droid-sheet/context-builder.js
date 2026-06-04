@@ -272,14 +272,15 @@ export class DroidSheetContextBuilder {
     const xpTotal = Number(xpDerived.total ?? this.system?.xp?.total ?? 0) || 0;
     const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
     const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
-    const xpLevelReady = xpPercent >= 100;
+    const xpLevelReady = !xpEnabled || xpPercent >= 100;
     const xpData = {
       level: xpDisplayLevel,
       total: xpTotal,
       nextLevelAt: nextLevelAtDisplay,
       xpToNext: nextLevelAtDisplay !== null ? Math.max(0, nextLevelAtDisplay - xpTotal) : 0,
       percentRounded: xpPercent,
-      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
+      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress',
+      advisoryOnly: !xpEnabled
     };
 
     const headerHpSegments = buildHeaderHpSegments(this.actor);

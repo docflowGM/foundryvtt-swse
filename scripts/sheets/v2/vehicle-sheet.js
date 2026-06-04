@@ -779,8 +779,11 @@ export class SWSEV2VehicleSheet extends
     // Bind drop event to authoritative _onDrop handler
     // This routes drops through appropriate engine for unified item/actor handling
     root.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation?.();
       this._onDrop(e);
-    });
+    }, { capture: true });
 
     RenderAssertions.assertRenderComplete(
       this,
