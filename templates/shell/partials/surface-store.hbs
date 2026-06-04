@@ -118,8 +118,7 @@
           <button type="button" class="swse-store-surface__filter-clear" data-action="clear-filters">✕ CLEAR</button>
         </section>
 
-        <nav class="swse-store-surface__category-tabs">
-          <button type="button" class="swse-store-surface__category-chip {{#unless vm.storeContext.currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
+        <nav class="swse-store-surface__category-tabs" aria-label="Store departments">
           {{#each vm.storeContext.categorySummary}}
           <button type="button" class="swse-store-surface__category-chip {{#if (eq ../vm.storeContext.currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
             {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
@@ -132,12 +131,7 @@
         {{#each vm.storeContext.navigationModel.topCategories}}
         {{#if (eq key ../vm.storeContext.currentCategory)}}
         {{#if children}}
-        <nav class="swse-store-surface__subnav">
-          {{!-- "All [Category]" reset chip --}}
-          <button type="button" class="swse-store-surface__subcat-chip {{#unless ../../../vm.storeContext.currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="">
-            All {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
-          </button>
-
+        <nav class="swse-store-surface__subnav" aria-label="Store department subcategories">
           {{#if (eq key 'weapons')}}
           {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
           {{#if familyGroups.melee}}
@@ -176,6 +170,18 @@
             {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
           </button>
           {{/each}}
+          {{#if (eq key 'vehicles')}}
+          <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--builder"
+                  data-action="store-build-from-scratch" data-builder-kind="vehicle">
+            + Create Custom Ship
+          </button>
+          {{/if}}
+          {{#if (eq key 'droids')}}
+          <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--builder"
+                  data-action="store-build-from-scratch" data-builder-kind="droid">
+            + Create Custom Droid
+          </button>
+          {{/if}}
           {{/if}}
         </nav>
         {{/if}}

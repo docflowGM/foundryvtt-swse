@@ -3597,3 +3597,197 @@ footer.swse-store-surface__footer {
   from { text-shadow: 0 0 4px color-mix(in srgb, var(--swse-theme-accent, #53d7ff) 50%, transparent); }
   to { text-shadow: 0 0 12px color-mix(in srgb, var(--swse-theme-accent, #53d7ff) 86%, transparent); }
 }
+
+/* ============================================================ */
+/* Store layout beta repair: compact header, no global All tab, */
+/* and reliable nested scrolling for catalog/rail panes.         */
+/* ============================================================ */
+.swse-shell-surface--store,
+.swse-shell-surface--store .swse-store-surface,
+.swse-shell-surface--store .swse-store-surface__tablet {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__tablet {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  padding: 8px 10px 10px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__scan-v,
+.swse-shell-surface--store .swse-store-surface__corner,
+.swse-shell-surface--store .swse-store-surface__tablet::before {
+  position: absolute !important;
+  flex: none !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__hud {
+  order: 1 !important;
+  flex: 0 0 auto !important;
+  min-height: 24px !important;
+  padding: 2px 8px 5px !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__hero {
+  order: 2 !important;
+  flex: 0 0 auto !important;
+  grid-template-columns: 54px minmax(0, 1fr) minmax(138px, auto) !important;
+  gap: 10px !important;
+  min-height: 58px !important;
+  padding: 6px 10px !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__rendarr-portrait {
+  width: 52px !important;
+  height: 52px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__rendarr-name {
+  font-size: 13px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__rendarr-sub {
+  font-size: 8px !important;
+  line-height: 1.15 !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__rendarr-quote {
+  min-height: 0 !important;
+  margin-top: 3px !important;
+  padding: 3px 8px !important;
+  font-size: 9px !important;
+  line-height: 1.2 !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__credits-block {
+  padding-left: 10px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__credits-val {
+  font-size: 20px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__tabs {
+  order: 3 !important;
+  flex: 0 0 auto !important;
+  min-height: 28px !important;
+  padding: 0 4px !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__tab {
+  padding: 5px 14px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__screen {
+  order: 4 !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__filters,
+.swse-shell-surface--store .swse-store-surface__category-tabs,
+.swse-shell-surface--store .swse-store-surface__subnav {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  max-height: 78px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+}
+
+.swse-shell-surface--store .swse-store-surface__filters {
+  align-items: center !important;
+  min-height: 38px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__filter-search {
+  min-width: 260px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__search-input,
+.swse-shell-surface--store .swse-store-surface__select {
+  min-height: 28px !important;
+  height: 28px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__category-chip,
+.swse-shell-surface--store .swse-store-surface__subcat-chip {
+  flex: 0 0 auto !important;
+  padding: 4px 9px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__family-group {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__family-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__browse-layout {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__cards-grid,
+.swse-shell-surface--store .swse-store-surface__rail,
+.swse-shell-surface--store .swse-store-surface__pane-cart,
+.swse-shell-surface--store .swse-store-surface__pane-checkout,
+.swse-shell-surface--store .swse-store-surface__pane-history,
+.swse-shell-surface--store .swse-store-surface__mini-cart-list,
+.swse-shell-surface--store .swse-store-surface__detail-shell {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--store-accent) 44%, transparent) color-mix(in oklch, black 30%, transparent);
+}
+
+.swse-shell-surface--store .swse-store-surface__cards-grid {
+  align-content: start !important;
+  max-height: 100% !important;
+  padding: 8px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__rail {
+  max-height: 100% !important;
+  padding-right: 3px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__side-card {
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-shell-surface--store .swse-store-surface__rail {
+    max-height: 36vh !important;
+  }
+}
+
+.swse-shell-surface--store .swse-store-surface__subcat-chip--builder {
+  border-color: color-mix(in oklch, var(--store-accent-2) 58%, transparent) !important;
+  color: var(--store-accent-2) !important;
+  background: linear-gradient(90deg, color-mix(in oklch, var(--store-accent-2) 17%, transparent), color-mix(in oklch, black 40%, transparent)) !important;
+}

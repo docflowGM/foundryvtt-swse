@@ -102,7 +102,7 @@ function storeItemCategoryKey(itemOrView = {}) {
   if (raw.includes('armor')) return 'armor';
   if (raw.includes('droid')) return 'droids';
   if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
-  if (raw.includes('gear') || raw.includes('equipment')) return 'gear';
+  if (raw.includes('gear') || raw.includes('equipment') || raw.includes('medical') || raw.includes('security') || raw.includes('survival') || raw.includes('tech') || raw.includes('tool')) return 'gear';
   return raw.replace(/\s+/g, '-');
 }
 
@@ -195,7 +195,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this._closeHandled = false;
 
     this.currentView = 'browse';
-    this.currentCategory = '';
+    this.currentCategory = 'weapons';
     this.currentSubcategory = null;  // Phase 2: Secondary nav support
     this.currentFamily = null;        // Phase 2: Weapon family grouping
     this.selectedProductId = null;
@@ -392,22 +392,40 @@ export class SWSEStore extends BaseSWSEAppV2 {
   }
 
   _buildCategorySummary(allItems = []) {
+    const canonicalLabels = {
+      weapons: 'Weapons',
+      armor: 'Armor',
+      gear: 'Equipment',
+      equipment: 'Equipment',
+      vehicles: 'Vehicles',
+      droids: 'Droids'
+    };
+    const canonicalOrder = ['weapons', 'armor', 'gear', 'equipment', 'vehicles', 'droids'];
     const labels = new Map();
     const counts = new Map();
     for (const item of allItems) {
       const key = safeString(item.category || item.type || 'other').toLowerCase();
       counts.set(key, (counts.get(key) || 0) + 1);
       if (!labels.has(key)) {
-        labels.set(key, safeString(item.category || item.type || 'Other'));
+        labels.set(key, canonicalLabels[key] || safeString(item.category || item.type || 'Other'));
       }
     }
     return [...counts.entries()]
       .map(([key, count]) => ({ key, count, label: labels.get(key) || key }))
-      .sort((a, b) => a.label.localeCompare(b.label));
+      .sort((a, b) => {
+        const ai = canonicalOrder.indexOf(a.key);
+        const bi = canonicalOrder.indexOf(b.key);
+        if (ai !== -1 || bi !== -1) {
+          if (ai === -1) return 1;
+          if (bi === -1) return -1;
+          return ai - bi;
+        }
+        return a.label.localeCompare(b.label);
+      });
   }
 
   _getCurrentCategoryLabel(categorySummary = []) {
-    if (!this.currentCategory) {return 'All Listings';}
+    if (!this.currentCategory) {return 'Weapons';}
     return categorySummary.find(category => category.key === this.currentCategory)?.label || this.currentCategory;
   }
 
@@ -988,7 +1006,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     });
     root.querySelectorAll('[data-action="clear-filters"]').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.currentCategory = '';
+        this.currentCategory = 'weapons';
         this.currentSubcategory = null;
         this.currentFamily = null;
         this.currentPage = 1;

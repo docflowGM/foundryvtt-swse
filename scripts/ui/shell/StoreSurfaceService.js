@@ -31,7 +31,7 @@ function _categoryKey(item = {}) {
   if (raw.includes('armor')) return 'armor';
   if (raw.includes('droid')) return 'droids';
   if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
-  if (raw.includes('gear') || raw.includes('equipment')) return 'gear';
+  if (raw.includes('gear') || raw.includes('equipment') || raw.includes('medical') || raw.includes('security') || raw.includes('survival') || raw.includes('tech') || raw.includes('tool')) return 'gear';
   return raw.replace(/\s+/g, '-');
 }
 
@@ -552,7 +552,7 @@ export class StoreSurfaceService {
       // has even entered the store.
       {
         const previousCategory = storeInstance.currentCategory ?? '';
-        if (options.currentCategory !== undefined) storeInstance.currentCategory = options.currentCategory ?? '';
+        if (options.currentCategory !== undefined) storeInstance.currentCategory = options.currentCategory || 'weapons';
         // Phase 2: Sync subcategory/family state
         if (options.currentSubcategory !== undefined) storeInstance.currentSubcategory = options.currentSubcategory ?? null;
         if (options.currentFamily !== undefined) storeInstance.currentFamily = options.currentFamily ?? null;
@@ -573,7 +573,7 @@ export class StoreSurfaceService {
 
       const currentView = storeContext.currentView ?? 'browse';
       const cartRemaining = storeContext.pageContext?.cartRemaining ?? 0;
-      const currentCategory = (storeContext.currentCategory ?? '').toLowerCase();
+      const currentCategory = (storeContext.currentCategory || 'weapons').toLowerCase();
       const currentSubcategory = storeContext.currentSubcategory ?? null;
       const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
       const visibleItems = allItems.filter(item => {
@@ -592,14 +592,14 @@ export class StoreSurfaceService {
       }
       const renderedItems = visibleItems.slice(0, renderLimit).map(_decorateStoreCardItem);
       const hasMoreItems = renderedItems.length < visibleItems.length;
-      const builderActions = _buildScratchBuilderActions(storeContext.currentCategory ?? '');
+      const builderActions = _buildScratchBuilderActions(storeContext.currentCategory || 'weapons');
       const splashContext = StoreSurfaceService.buildSplashContext(actor, storeContext, { ...options, splashComplete });
 
       // Phase 2: Include navigation model
       const navigationModel = storeContext.navigationModel ?? buildStoreNavigationModel(
         storeInstance.storeInventory,
         {
-          activeCategory: storeContext.currentCategory ?? '',
+          activeCategory: storeContext.currentCategory || 'weapons',
           activeSubcategory: storeContext.currentSubcategory ?? null,
           activeFamily: storeContext.currentFamily ?? null
         }
@@ -633,6 +633,12 @@ export class StoreSurfaceService {
         cartEntries: rawCartEntries
       });
 
+      const categorySummary = (navigationModel.topCategories ?? []).map(category => ({
+        key: category.key,
+        label: category.label,
+        count: category.count
+      }));
+
       const safeContext = {
         allItems: renderedItems,
         totalItems: allItems.length,
@@ -647,12 +653,12 @@ export class StoreSurfaceService {
         cartEntries: rawCartEntries,
         currentView,
         isBrowseOrDetail: currentView === 'browse' || currentView === 'detail',
-        currentCategory: storeContext.currentCategory ?? '',
+        currentCategory: storeContext.currentCategory || 'weapons',
         currentSubcategory: storeContext.currentSubcategory ?? null,
         currentFamily: storeContext.currentFamily ?? null,
         currencySymbol: storeContext.currencySymbol ?? getStoreCurrencySymbol(),
-        currentCategoryLabel: storeContext.currentCategoryLabel ?? 'All Listings',
-        categorySummary: storeContext.categorySummary ?? [],
+        currentCategoryLabel: storeContext.currentCategoryLabel ?? 'Weapons',
+        categorySummary,
         builderActions,
         hasBuilderActions: builderActions.length > 0,
         navigationModel,  // Phase 2: Include navigation model

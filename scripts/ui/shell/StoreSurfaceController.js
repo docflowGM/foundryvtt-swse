@@ -136,7 +136,7 @@ export class StoreSurfaceController {
       el.addEventListener('click', ev => {
         ev.preventDefault();
         this._setOptions({
-          currentCategory: '',
+          currentCategory: 'weapons',
           currentSubcategory: null,  // Phase 2: Clear secondary nav
           currentFamily: null,        // Phase 2: Clear family filter
           currentView: 'browse',
@@ -419,7 +419,7 @@ export class StoreSurfaceController {
       enteredStore: true,
       splashComplete: true,
       currentView: 'browse',
-      currentCategory: '',
+      currentCategory: 'weapons',
       currentSubcategory: null,
       currentFamily: null,
       selectedProductId: null,
@@ -441,7 +441,7 @@ export class StoreSurfaceController {
       // Prefer the real store category for filtering. The normalized category is
       // retained only as a fallback because values like "ranged-weapons" are
       // splash buckets, not always actual store category keys.
-      currentCategory: category || normalizedCategory || '',
+      currentCategory: category || normalizedCategory || 'weapons',
       search: name || '',
       hotDealFocusId: id || null
     });

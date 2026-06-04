@@ -300,17 +300,10 @@ export function normalizeArmorSubcategory(item = {}) {
  * }
  */
 export function buildStoreNavigationModel(inventory = {}, options = {}) {
-  const { activeCategory = '', activeSubcategory = null, activeFamily = null } = options;
+  const { activeCategory = 'weapons', activeSubcategory = null, activeFamily = null } = options;
 
   const byCategory = inventory.byCategory || new Map();
   const allItems = inventory.allItems || [];
-
-  // Count items per category (flat count of all items in category)
-  const categoryItemCounts = new Map();
-  for (const item of allItems) {
-    const cat = item.category || 'Other';
-    categoryItemCounts.set(cat, (categoryItemCounts.get(cat) || 0) + 1);
-  }
 
   const normalizeCategoryKey = (cat) => {
     const lower = String(cat || '').toLowerCase();
@@ -319,29 +312,50 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
     if (lower.includes('armor')) return 'armor';
     if (lower.includes('droid')) return 'droids';
     if (lower.includes('vehicle') || lower.includes('starship') || lower.includes('ship')) return 'vehicles';
-    if (lower.includes('gear') || lower.includes('equipment')) return 'gear';
-    if (lower.includes('medical')) return 'medical';
-    if (lower.includes('tech')) return 'tech';
-    if (lower.includes('tool')) return 'tools';
-    if (lower.includes('survival')) return 'survival';
-    if (lower.includes('security')) return 'security';
+    if (lower.includes('gear') || lower.includes('equipment') || lower.includes('medical') || lower.includes('tech') || lower.includes('tool') || lower.includes('survival') || lower.includes('security')) return 'gear';
     return lower.replace(/\s+/g, '-');
   };
 
-  // Build top-level categories
-  const topCategories = [
-    {
-      key: 'all',
-      label: 'All',
-      count: allItems.length,
-      active: activeCategory === ''
-    }
-  ];
+  const canonicalCategoryLabels = {
+    weapons: 'Weapons',
+    armor: 'Armor',
+    gear: 'Equipment',
+    vehicles: 'Vehicles',
+    droids: 'Droids'
+  };
 
-  // Add each category with its children
+  const normalizedCategories = new Map();
   for (const [category, subMap] of byCategory.entries()) {
     const categoryKey = normalizeCategoryKey(category);
-    const categoryCount = categoryItemCounts.get(category) || 0;
+    if (!categoryKey) continue;
+    if (!normalizedCategories.has(categoryKey)) {
+      normalizedCategories.set(categoryKey, {
+        key: categoryKey,
+        label: canonicalCategoryLabels[categoryKey] || category,
+        count: 0,
+        subMap: new Map()
+      });
+    }
+    const bucket = normalizedCategories.get(categoryKey);
+    for (const [subcategory, items] of subMap.entries()) {
+      const existing = bucket.subMap.get(subcategory) ?? [];
+      const nextItems = Array.isArray(items) ? items : [];
+      bucket.subMap.set(subcategory, existing.concat(nextItems));
+      bucket.count += nextItems.length;
+    }
+  }
+
+  // Build top-level categories. Deliberately no global All bucket; the store
+  // opens into Weapons and narrows from there so the UI never renders the
+  // full catalog at once.
+  const topCategories = [];
+
+  // Add each category with its children
+  for (const categoryBucket of normalizedCategories.values()) {
+    const category = categoryBucket.label;
+    const categoryKey = categoryBucket.key;
+    const subMap = categoryBucket.subMap;
+    const categoryCount = categoryBucket.count;
 
     // Build children (subcategories) for this category
     const children = [];
@@ -443,8 +457,8 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
     });
   }
 
-  // Normalize top-level order: All, Weapons, Armor, Gear, Droids, Vehicles, Others
-  const priorityOrder = ['all', 'weapons', 'armor', 'gear', 'droids', 'vehicles'];
+  // Normalize top-level order: Weapons first, then the big store departments.
+  const priorityOrder = ['weapons', 'armor', 'gear', 'vehicles', 'droids'];
   topCategories.sort((a, b) => {
     const aIdx = priorityOrder.indexOf(a.key);
     const bIdx = priorityOrder.indexOf(b.key);
