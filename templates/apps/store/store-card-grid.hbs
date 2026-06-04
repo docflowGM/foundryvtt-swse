@@ -16,8 +16,8 @@
     </div>
     <div class="store-credits-block">
       <div class="store-credits-label">ACCOUNT</div>
-      <div class="store-credits-val"><span class="credits-icon">{{currencySymbol}}</span>{{credits}}</div>
-      <div class="store-credits-reserve">Reserve {{currencySymbol}} {{pageContext.cartRemaining}}</div>
+      <div class="store-credits-val">{{credits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
+      <div class="store-credits-reserve">Reserve {{pageContext.cartRemaining}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
       <div class="store-credits-cart">Cart: <span data-cart-count>{{cartCount}}</span></div>
     </div>
   </div>
@@ -152,7 +152,7 @@
               <div class="detail-chip">{{selectedProduct.availability}}</div>
               {{#if selectedProduct.suggestionTierLabel}}<div class="detail-chip highlight">{{selectedProduct.suggestionTierLabel}}</div>{{/if}}
             </div>
-            <div class="store-detail-price"><span class="credits-icon">{{currencySymbol}}</span> {{selectedProduct.priceLabel}}{{#if selectedProduct.priceOverrideApplied}} <span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
+            <div class="store-detail-price">{{selectedProduct.priceLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span>{{#if selectedProduct.priceOverrideApplied}} <span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
             {{#unless selectedProduct.canPurchase}}<div class="store-policy-lock store-policy-lock--detail"><i class="fa-solid fa-lock"></i> {{selectedProduct.blockedReason}}</div>{{/unless}}
             <div class="store-detail-qty-row">
               <button type="button" class="detail-qty-minus holo-btn secondary">−</button>
@@ -226,7 +226,7 @@
                   <div class="cart-item-name">{{name}}</div>
                   <div class="cart-item-type">{{type}}</div>
                 </div>
-                <div class="cart-item-cost">{{../currencySymbol}} {{cost}}</div>
+                <div class="cart-item-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
                 <button type="button" class="cart-item-remove holo-btn secondary" data-action="remove-cart-row" data-type="{{type}}" data-id="{{id}}">
                   <i class="fa-solid fa-times"></i>
                 </button>
@@ -241,8 +241,8 @@
         </div>
         <div class="store-cart-summary swse-holo-card">
           <div class="detail-section-title">Totals</div>
-          <div class="summary-line"><span>Subtotal</span><strong>{{currencySymbol}} {{cartTotal}}</strong></div>
-          <div class="summary-line"><span>Remaining</span><strong>{{currencySymbol}} {{cartRemaining}}</strong></div>
+          <div class="summary-line"><span>Subtotal</span><strong>{{cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+          <div class="summary-line"><span>Remaining</span><strong>{{cartRemaining}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
           <div class="rail-action-cluster stacked">
             <button type="button" class="checkout-btn holo-btn" id="checkout-cart">Proceed to Checkout</button>
             <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">Clear Cart</button>
@@ -272,7 +272,7 @@
                 <div class="checkout-ledger-row">
                   <span class="checkout-ledger-name">{{name}}</span>
                   <span class="checkout-ledger-type">{{type}}</span>
-                  <span class="checkout-ledger-cost">{{../currencySymbol}} {{cost}}</span>
+                  <span class="checkout-ledger-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
                 </div>
               {{/each}}
             </div>
@@ -282,9 +282,9 @@
         </section>
         <aside class="store-checkout-summary swse-holo-card">
           <div class="detail-section-title">Settlement</div>
-          <div class="summary-line"><span>Available</span><strong>{{currencySymbol}} {{credits}}</strong></div>
-          <div class="summary-line"><span>Debit</span><strong>{{currencySymbol}} {{cartTotal}}</strong></div>
-          <div class="summary-line"><span>Reserve After Trade</span><strong>{{currencySymbol}} <span id="cart-remaining">{{pageContext.cartRemaining}}</span></strong></div>
+          <div class="summary-line"><span>Available</span><strong>{{credits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+          <div class="summary-line"><span>Debit</span><strong>{{cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+          <div class="summary-line"><span>Reserve After Trade</span><strong><span id="cart-remaining">{{pageContext.cartRemaining}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
           <div class="checkout-guidance">Confirm the trade to issue all manifest lines and archive the transaction.</div>
           <div class="rail-action-cluster stacked">
             <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">Confirm Trade</button>
@@ -313,14 +313,14 @@
               <div class="history-entry">
                 <div class="history-header">
                   <span class="history-date"><i class="fa-solid fa-calendar"></i> {{timestamp}}</span>
-                  <span class="history-total"><span class="credits-icon">{{../currencySymbol}}</span> {{total}}</span>
+                  <span class="history-total">{{total}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
                 </div>
                 <div class="history-items">
                   {{#each items}}
                     <div class="history-item">
                       <span class="item-name">{{name}}</span>
                       <span class="item-qty">×{{qty}}</span>
-                      <span class="item-cost"><span class="credits-icon">{{../../currencySymbol}}</span>{{cost}}</span>
+                      <span class="item-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
                     </div>
                   {{/each}}
                 </div>
@@ -356,7 +356,7 @@
                 {{/if}}
               </div>
               <div class="card-body">
-                <div class="glyph-panel"><div class="store-glyph" aria-hidden="true">{{this.glyph}}</div></div>
+                <div class="glyph-panel"><div class="store-glyph" aria-hidden="true">{{#if this.cardLetter}}{{this.cardLetter}}{{else}}{{this.glyph}}{{/if}}</div></div>
                 <h4 class="card-title">{{this.name}}</h4>
                 {{#if this.suggestion.bullets}}
                   <div class="card-explanations">
@@ -367,7 +367,7 @@
                   <span class="detail-chip">{{this.category}}</span>
                   <span class="detail-chip">{{this.availability}}</span>
                 </div>
-                <div class="card-price"><span class="credits-icon">{{../currencySymbol}}</span><span class="price-amount">{{this.priceLabel}}</span>{{#if this.priceOverrideApplied}}<span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
+                <div class="card-price"><span class="price-amount">{{this.priceLabel}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span>{{#if this.priceOverrideApplied}}<span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
                 {{#unless this.canPurchase}}<div class="store-policy-lock"><i class="fa-solid fa-lock"></i> {{this.blockedReason}}</div>{{/unless}}
               </div>
               <div class="card-footer">

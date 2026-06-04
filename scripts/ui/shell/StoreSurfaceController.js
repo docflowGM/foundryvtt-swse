@@ -14,7 +14,9 @@ import {
   addVehicleToCart,
   removeFromCartById,
   clearCart,
-  checkout
+  checkout,
+  buildDroidWithBuilder,
+  createCustomStarship
 } from '/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js';
 
 import { StoreSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceService.js';
@@ -36,6 +38,10 @@ function normalizeAvailabilityText(value) {
     .replace(/[’']/g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+function cartEntryCount(cart = {}) {
+  return (cart.items?.length ?? 0) + (cart.droids?.length ?? 0) + (cart.vehicles?.length ?? 0);
 }
 
 export class StoreSurfaceController {
@@ -140,6 +146,15 @@ export class StoreSurfaceController {
           availability: 'all',
           sort: 'default'
         });
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="store-build-from-scratch"]').forEach(el => {
+      el.addEventListener('click', async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const kind = ev.currentTarget?.dataset?.builderKind || ev.currentTarget?.dataset?.mode || '';
+        await this._openScratchBuilder(kind);
       }, { signal });
     });
 
@@ -253,8 +268,17 @@ export class StoreSurfaceController {
     });
 
     root.querySelectorAll('[data-action="proceed-checkout"]').forEach(el => {
-      el.addEventListener('click', ev => {
+      el.addEventListener('click', async ev => {
         ev.preventDefault();
+        ev.stopPropagation();
+        const store = await StoreSurfaceService.getOrCreateInstance(this._actor);
+        if (!store) return;
+        store.cart = store._loadCartFromActor();
+        if (cartEntryCount(store.cart) <= 0) {
+          ui.notifications?.warn?.('Your cart is empty. Add at least one listing before checkout.');
+          this._setOptions({ currentView: 'cart', selectedProductId: null });
+          return;
+        }
         this._setOptions({ currentView: 'checkout', selectedProductId: null });
       }, { signal });
     });
@@ -269,12 +293,44 @@ export class StoreSurfaceController {
     root.querySelectorAll('[data-action="confirm-checkout"]').forEach(el => {
       el.addEventListener('click', async ev => {
         ev.preventDefault();
+        ev.stopPropagation();
+        const button = ev.currentTarget;
+        if (button?.dataset?.busy === 'true') return;
         const store = await StoreSurfaceService.getOrCreateInstance(this._actor);
         if (!store) return;
         store.cart = store._loadCartFromActor();
-        const result = await checkout(store, null);
-        const view = result?.success ? 'history' : 'cart';
-        this._setOptions({ currentView: view, selectedProductId: null });
+        if (cartEntryCount(store.cart) <= 0) {
+          ui.notifications?.warn?.('Nothing to settle — your cart is empty.');
+          this._setOptions({ currentView: 'cart', selectedProductId: null });
+          return;
+        }
+
+        try {
+          button.dataset.busy = 'true';
+          button.disabled = true;
+          button.classList.add('is-processing');
+          const originalLabel = button.textContent;
+          button.textContent = 'VERIFYING TRADE…';
+
+          const result = await checkout(store, null);
+          if (!result?.success) {
+            ui.notifications?.warn?.(result?.error || 'Checkout did not complete. Review the cart and try again.');
+          }
+          const view = result?.success ? 'history' : 'cart';
+          this._setOptions({ currentView: view, selectedProductId: null });
+
+          button.textContent = originalLabel;
+        } catch (err) {
+          console.error('[SWSE Store] Checkout action failed:', err);
+          ui.notifications?.error?.('Checkout failed before the Transaction Engine could complete the trade.');
+          this._setOptions({ currentView: 'cart', selectedProductId: null });
+        } finally {
+          if (button) {
+            button.dataset.busy = 'false';
+            button.disabled = false;
+            button.classList.remove('is-processing');
+          }
+        }
       }, { signal });
     });
 
@@ -391,6 +447,27 @@ export class StoreSurfaceController {
     });
   }
 
+
+  async _openScratchBuilder(kind = '') {
+    const normalized = String(kind || '').toLowerCase().trim();
+    if (!this._actor) {
+      ui.notifications?.warn?.('Open a character actor before launching a custom build.');
+      return;
+    }
+
+    if (normalized === 'droid' || normalized === 'droids' || normalized === 'garage') {
+      await buildDroidWithBuilder(this._actor, null);
+      return;
+    }
+
+    if (normalized === 'vehicle' || normalized === 'vehicles' || normalized === 'ship' || normalized === 'shipyard' || normalized === 'starship') {
+      await createCustomStarship(this._actor, null);
+      return;
+    }
+
+    ui.notifications?.warn?.('Unknown custom build type. Select the Droid or Vehicle store tab first.');
+  }
+
   _focusHotDeal(root) {
     const focusId = this._host._shellSurfaceOptions?.hotDealFocusId;
     if (!focusId) return;
@@ -423,12 +500,15 @@ export class StoreSurfaceController {
         '.swse-store-surface__rail',
         '.swse-store-surface__card-expand-desc',
         '.swse-store-surface__card-expand-tech',
-        '.swse-store-surface__card-expand-reviews'
+        '.swse-store-surface__card-expand-reviews',
+        '.swse-store-surface__detail-section--scroll',
+        '.swse-store-surface__detail-card'
       ];
       const scroller = selectors
         .map(sel => target.closest(sel))
-        .find(el => el && el.scrollHeight > el.clientHeight + 2);
-      if (!scroller) return;
+        .find(el => el && el.scrollHeight > el.clientHeight + 2)
+        || root.querySelector('.swse-store-surface__screen');
+      if (!scroller || scroller.scrollHeight <= scroller.clientHeight + 2) return;
       const before = scroller.scrollTop;
       scroller.scrollTop += event.deltaY;
       if (scroller.scrollTop !== before) {
@@ -452,13 +532,25 @@ export class StoreSurfaceController {
     const store = await StoreSurfaceService.getOrCreateInstance(this._actor);
     if (!store) return;
 
-    if (itemType === 'vehicle') {
-      await addVehicleToCart(store, id, condition || 'new', null);
-    } else if (itemType === 'droid') {
-      await addDroidToCart(store, id, null);
-    } else {
-      await addItemToCart(store, id, null);
+    store.cart = store._loadCartFromActor();
+    const beforeCount = cartEntryCount(store.cart);
+
+    try {
+      if (itemType === 'vehicle') {
+        await addVehicleToCart(store, id, condition || 'new', null);
+      } else if (itemType === 'droid') {
+        await addDroidToCart(store, id, null);
+      } else {
+        await addItemToCart(store, id, null);
+      }
+    } catch (err) {
+      console.error('[SWSE Store] Failed to stage listing:', err);
+      ui.notifications?.error?.('Could not stage that listing.');
+      return;
     }
+
+    const afterCount = cartEntryCount(store.cart);
+    if (afterCount <= beforeCount) return;
 
     await store._persistCart();
 

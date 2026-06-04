@@ -4,7 +4,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
-import { CombatRollConfigDialog } from "/systems/foundryvtt-swse/scripts/apps/combat/combat-roll-config-dialog.js";
+// CombatRollConfigDialog (Tactical Targeting Console) intentionally removed — deprecated, orphaned, pending deletion.
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
@@ -4926,12 +4926,24 @@ const forcePoints = [];
     }, { signal, capture: false });
 
     // Progression buttons (Chargen/LevelUp) — route inline inside this holopad.
+    // Level Up: incomplete actors go to chargen, completed actors go to progression.
     html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="cmd-chargen"], [data-action="cmd-levelup"]');
       if (!button) return;
       ev.preventDefault();
       try {
-        const surfaceId = button.dataset.action === 'cmd-chargen' ? 'chargen' : 'progression';
+        let surfaceId;
+        if (button.dataset.action === 'cmd-chargen') {
+          surfaceId = 'chargen';
+        } else {
+          // cmd-levelup: mirror Home/Training app routing
+          const sys = this.actor?.system ?? {};
+          const chargenCompleted = this.actor?.getFlag?.('foundryvtt-swse', 'chargen.completed') === true
+            || sys?.progression?.chargenComplete === true
+            || sys?.swse?.chargenComplete === true
+            || Number(sys.level ?? 1) > 0;
+          surfaceId = chargenCompleted ? 'progression' : 'chargen';
+        }
         await this.setSurface(surfaceId, {
           source: 'sheet',
           skipIntro: surfaceId !== 'chargen'
@@ -6812,6 +6824,57 @@ const forcePoints = [];
   }
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
+    // --- Attack routing via Roll Configurator V2 ---
+    // Show the preroller FIRST so cancelling never spends the combat action.
+    const weaponId = actionData?.weaponId ?? actionData?.itemId ?? null;
+    const isAttackAction = actionData?.isAttack === true
+      || actionData?.domain === 'attack'
+      || String(actionData?.category ?? '').toLowerCase() === 'attack'
+      || Boolean(weaponId);
+
+    if (isAttackAction) {
+      // 1. Resolve weapon: direct ID → equipped weapon/lightsaber → virtual unarmed fallback
+      let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
+      if (!weapon) {
+        weapon = this.actor.items.find(i =>
+          ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped
+        ) ?? null;
+      }
+      if (!weapon) {
+        weapon = buildVirtualUnarmedWeapon(this.actor);
+      }
+
+      // 2. Show preroller — do NOT spend economy until user confirms
+      const modResult = await showRollModifiersDialog({
+        title: weapon?.name ? `${weapon.name} Attack` : 'Attack',
+        rollType: 'attack',
+        actor: this.actor,
+        weapon,
+        sourceElement: options?.sourceElement ?? null,
+        sheet: this
+      });
+      if (modResult === null) return null; // Cancelled — economy untouched
+
+      // 3. Now spend the economy
+      const attackEconomyType = this._deriveCombatActionEconomyType(actionData);
+      const allowed = await this._applyActionEconomy(attackEconomyType, {
+        source: options?.source ?? "combat-action",
+        actionId,
+        actionName: actionData?.name ?? actionId
+      });
+      if (!allowed) return null;
+
+      // 4. Roll
+      return await SWSERoll.rollAttack(this.actor, weapon, {
+        ...modResult,
+        source: options?.source ?? "combat-action",
+        sourceElement: options?.sourceElement ?? null,
+        sheet: this,
+        showRollCompanion: true
+      });
+    }
+
+    // --- Standard (non-attack) path ---
     const actionType = this._deriveCombatActionEconomyType(actionData);
     const allowed = await this._applyActionEconomy(actionType, {
       source: options?.source ?? "combat-action",
@@ -6833,21 +6896,13 @@ const forcePoints = [];
         if (engineResult) return engineResult;
       }
     } catch (err) {
-      console.warn("[PHASE E] CombatEngine.executeAction failed, falling back to config dialog once:", err);
+      console.warn("[PHASE E] CombatEngine.executeAction failed, falling through:", err);
     }
 
-    if (actionData && Object.keys(actionData).length > 0) {
-      // Item-backed derived actions, including species abilities, should route through the actor.
-      if (String(actionId || '').startsWith('item:') && typeof this.actor?.useAction === 'function') {
-        const result = await this.actor.useAction(actionId, { ...options, actionData });
-        if (result) return result;
-      }
-
-      return new CombatRollConfigDialog(this.actor, {
-        id: actionId,
-        ...actionData,
-        ...options
-      }).render(true);
+    // Item-backed derived actions route through the actor.
+    if (String(actionId || '').startsWith('item:') && typeof this.actor?.useAction === 'function') {
+      const result = await this.actor.useAction(actionId, { ...options, actionData });
+      if (result) return result;
     }
 
     if (typeof this.actor?.useAction === 'function') {

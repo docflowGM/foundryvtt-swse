@@ -80,12 +80,18 @@ function itemFromActor(actor, itemId) {
 
 async function handleLegacyDamageRollButton(event, button, message) {
   event.preventDefault();
+  event.stopPropagation();
 
-  const actor = actorFromId(message?.speaker?.actor);
+  const actor = actorFromId(button.dataset.actorId)
+    || actorFromId(button.dataset.attacker)
+    || actorFromId(message?.speaker?.actor);
   const weaponId = button.dataset.weaponId;
   const weapon = itemFromActor(actor, weaponId);
 
   if (!actor || !weapon) {
+    const actorLabel = button.dataset.actorId || message?.speaker?.actor || 'missing actor';
+    const weaponLabel = weaponId || 'missing weapon';
+    console.warn('[SWSE Chat] Damage roll context could not be resolved.', { actor: actorLabel, weapon: weaponLabel, messageId: message?.id });
     ui?.notifications?.warn?.('Damage roll context could not be resolved.');
     return;
   }
@@ -94,14 +100,16 @@ async function handleLegacyDamageRollButton(event, button, message) {
   await SWSERoll.rollDamage(actor, weapon, {
     isCritical: button.dataset.isCrit === 'true',
     critMultiplier: Number.parseInt(button.dataset.critMult, 10) || 2,
-    twoHanded: button.dataset.twoHanded === 'true'
+    twoHanded: button.dataset.twoHanded === 'true',
+    target: actorFromId(button.dataset.target) || null
   });
 }
 
 async function handleCombatDamageRollButton(event, button) {
   event.preventDefault();
+  event.stopPropagation();
 
-  const attacker = actorFromId(button.dataset.attacker);
+  const attacker = actorFromId(button.dataset.attacker || button.dataset.actorId);
   const target = actorFromId(button.dataset.target);
   const weapon = itemFromActor(attacker, button.dataset.weapon);
 

@@ -16,8 +16,16 @@
   {{else if vm.storeContext}}
 
   {{!-- Store splash is intentionally bypassed for stability. Deprecated path retained in templates/apps/store/store-splash.hbs. --}}
-  <section class="swse-store-surface">
+  <section class="swse-store-surface"
+           data-theme="{{vm.sheetTheme}}"
+           data-motion-style="{{vm.sheetMotionStyle}}"
+           style="{{vm.surfaceStyleInline}}">
     <form class="swse-store-surface__tablet" autocomplete="off">
+      <div class="swse-store-surface__scan-v" aria-hidden="true"></div>
+      <span class="swse-store-surface__corner swse-store-surface__corner--tl" aria-hidden="true"></span>
+      <span class="swse-store-surface__corner swse-store-surface__corner--tr" aria-hidden="true"></span>
+      <span class="swse-store-surface__corner swse-store-surface__corner--bl" aria-hidden="true"></span>
+      <span class="swse-store-surface__corner swse-store-surface__corner--br" aria-hidden="true"></span>
 
       <header class="swse-store-surface__hud">
         <button class="swse-store-surface__hud-back" data-shell-action="return-to-home" type="button" title="Return to Home">
@@ -30,7 +38,7 @@
         </div>
         <div class="swse-store-surface__hud-right">
           <span class="swse-store-surface__hud-lbl">RESERVE</span>
-          <span class="swse-store-surface__hud-credits">{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span>
+          <span class="swse-store-surface__hud-credits">{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
         </div>
       </header>
 
@@ -51,10 +59,10 @@
         </div>
         <div class="swse-store-surface__credits-block">
           <span class="swse-store-surface__credits-lbl">ACCOUNT</span>
-          <span class="swse-store-surface__credits-val">{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span>
+          <span class="swse-store-surface__credits-val">{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
           {{#if vm.storeContext.cartCount}}
-          <span class="swse-store-surface__credits-delta neg">−{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}} staged</span>
-          <span class="swse-store-surface__credits-reserve">{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}} after</span>
+          <span class="swse-store-surface__credits-delta neg">−{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span> staged</span>
+          <span class="swse-store-surface__credits-reserve">{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span> after</span>
           {{/if}}
         </div>
       </header>
@@ -175,8 +183,8 @@
         {{/each}}
         {{/if}}
 
-        <section class="swse-store-surface__browse">
-          <div class="swse-store-surface__grid">
+        <section class="swse-store-surface__browse swse-store-surface__browse-layout">
+          <div class="swse-store-surface__grid swse-store-surface__cards-grid">
 
             {{#each vm.storeContext.allItems}}
             <div class="swse-store-surface__card swse-store-surface__card--rar-{{this.rarityClass}} {{#if (eq ../vm.storeContext.selectedProductId this.id)}}is-selected{{/if}}"
@@ -191,12 +199,11 @@
                  data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
                  data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
               <span class="swse-store-surface__card-rar-tag">{{this.rarityLabel}}</span>
-              <div class="swse-store-surface__card-hero">
-                {{#if this.img}}
-                <img class="swse-store-surface__card-thumb" src="{{this.img}}" alt="{{this.name}}"/>
-                {{else}}
-                <div class="swse-store-surface__card-glyph-panel"><span class="swse-store-surface__card-glyph">{{this.glyph}}</span></div>
-                {{/if}}
+              <div class="swse-store-surface__card-hero" aria-hidden="true">
+                <div class="swse-store-surface__card-glyph-panel">
+                  <span class="swse-store-surface__card-glyph">{{#if this.cardLetter}}{{this.cardLetter}}{{else}}{{this.glyph}}{{/if}}</span>
+                </div>
+                <span class="swse-store-surface__card-glyph-label">{{#if this.glyphLabel}}{{this.glyphLabel}}{{else}}{{this.typeLabel}}{{/if}}</span>
               </div>
               <div class="swse-store-surface__card-body">
                 <div class="swse-store-surface__card-name">{{this.name}}</div>
@@ -208,9 +215,9 @@
               </div>
               <div class="swse-store-surface__card-foot">
                 {{#if this.costUsed}}
-                <span class="swse-store-surface__card-price">NEW {{@root.vm.storeContext.currencySymbol}} {{this.cost}} · USED {{@root.vm.storeContext.currencySymbol}} {{this.costUsed}}</span>
+                <span class="swse-store-surface__card-price">NEW {{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span> · USED {{this.costUsed}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
                 {{else}}
-                <span class="swse-store-surface__card-price">{{@root.vm.storeContext.currencySymbol}} {{this.finalCost}}</span>
+                <span class="swse-store-surface__card-price">{{this.finalCost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
                 {{/if}}
                 <div class="swse-store-surface__card-actions">
                   <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">{{#if (eq ../vm.storeContext.selectedProductId this.id)}}COLLAPSE{{else}}DETAILS{{/if}}</button>
@@ -223,29 +230,8 @@
                 </div>
               </div>
               {{#if (eq ../vm.storeContext.selectedProductId this.id)}}
-              <div class="swse-store-surface__card-expand">
-                <div class="swse-store-surface__card-expand-head">
-                  <span>{{../vm.storeContext.selectedProduct.rarityLabel}}</span>
-                  <span>{{../vm.storeContext.selectedProduct.availability}}</span>
-                  <span>{{@root.vm.storeContext.currencySymbol}} {{../vm.storeContext.selectedProduct.price}}</span>
-                </div>
-                {{#if ../vm.storeContext.selectedProduct.suggestionBullets.length}}
-                <ul class="swse-store-surface__card-expand-bullets">
-                  {{#each ../vm.storeContext.selectedProduct.suggestionBullets}}<li>{{this}}</li>{{/each}}
-                </ul>
-                {{/if}}
-                {{#if ../vm.storeContext.selectedProduct.description}}
-                <div class="swse-store-surface__card-expand-desc">{{{../vm.storeContext.selectedProduct.description}}}</div>
-                {{/if}}
-                {{#if ../vm.storeContext.selectedProduct.techDetailsHtml}}
-                <div class="swse-store-surface__card-expand-tech">{{{../vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
-                {{/if}}
-                {{#if ../vm.storeContext.selectedProduct.flavorReviewsHtml}}
-                <div class="swse-store-surface__card-expand-reviews">
-                  <div class="swse-store-surface__card-expand-title">Marketplace Reviews</div>
-                  {{{../vm.storeContext.selectedProduct.flavorReviewsHtml}}}
-                </div>
-                {{/if}}
+              <div class="swse-store-surface__card-selected-note">
+                <span>LISTING ROUTED TO DETAIL RAIL</span>
               </div>
               {{/if}}
             </div>
@@ -259,31 +245,198 @@
             {{/if}}
           </div>
 
-          {{!-- Side rail: cart / wallet only. Product details expand inside cards. --}}
+          {{!-- Side rail: listing inspection + commerce rail. --}}
           <aside class="swse-store-surface__rail">
-            <div class="swse-store-surface__mini-cart">
-              {{#if vm.storeContext.cartEntries.length}}
-              <div class="swse-store-surface__mini-cart-header">STAGED ({{vm.storeContext.cartCount}})</div>
-              <div class="swse-store-surface__mini-cart-list">
-                {{#each vm.storeContext.cartEntries}}
-                <div class="swse-store-surface__mini-cart-item">
-                  <div class="swse-store-surface__mini-cart-name">{{this.name}}</div>
-                  <div class="swse-store-surface__mini-cart-qty">×{{this.qty}}</div>
-                  <div class="swse-store-surface__mini-cart-price">{{@root.vm.storeContext.currencySymbol}} {{this.cost}}</div>
-                </div>
-                {{/each}}
+            <section class="swse-store-surface__side-card swse-store-surface__detail-card {{#if vm.storeContext.selectedProduct}}is-active{{else}}is-empty{{/if}}">
+              <div class="swse-store-surface__side-head">
+                <span>◇ Listing Inspect</span>
+                <span class="hint">{{#if vm.storeContext.selectedProduct}}selected{{else}}idle{{/if}}</span>
               </div>
-              <div class="swse-store-surface__mini-cart-summary">
-                <div class="swse-store-surface__mini-cart-row"><span>TOTAL</span><strong>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}}</strong></div>
-                <div class="swse-store-surface__mini-cart-row"><span>REMAINING</span><strong>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}}</strong></div>
+              {{#if vm.storeContext.selectedProduct}}
+              <div class="swse-store-surface__detail-shell">
+                <div class="swse-store-surface__detail-topline">
+                  <div class="swse-store-surface__detail-glyph">
+                    <span>{{#if vm.storeContext.selectedProduct.cardLetter}}{{vm.storeContext.selectedProduct.cardLetter}}{{else}}{{vm.storeContext.selectedProduct.glyph}}{{/if}}</span>
+                    <small>{{#if vm.storeContext.selectedProduct.glyphLabel}}{{vm.storeContext.selectedProduct.glyphLabel}}{{else}}{{vm.storeContext.selectedProduct.typeLabel}}{{/if}}</small>
+                  </div>
+                  <div class="swse-store-surface__detail-title-block">
+                    <div class="swse-store-surface__detail-name">{{vm.storeContext.selectedProduct.name}}</div>
+                    <div class="swse-store-surface__detail-subtitle">{{vm.storeContext.selectedProduct.typeLabel}} · {{vm.storeContext.selectedProduct.category}}{{#if vm.storeContext.selectedProduct.subcategory}} · {{vm.storeContext.selectedProduct.subcategory}}{{/if}}</div>
+                    <div class="swse-store-surface__detail-tags">
+                      <span>{{vm.storeContext.selectedProduct.rarityLabel}}</span>
+                      <span>{{vm.storeContext.selectedProduct.availability}}</span>
+                      {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}<span>{{vm.storeContext.selectedProduct.suggestionTierLabel}}</span>{{/if}}
+                    </div>
+                  </div>
+                  <button type="button" class="swse-store-surface__detail-close" data-action="detail-back" title="Clear selected listing">×</button>
+                </div>
+
+                <div class="swse-store-surface__detail-price-strip">
+                  {{#each vm.storeContext.selectedProductDetail.priceOptions}}
+                  <div class="swse-store-surface__detail-price-option">
+                    <span>{{label}}</span>
+                    <strong>{{valueLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong>
+                  </div>
+                  {{/each}}
+                </div>
+
+                <div class="swse-store-surface__detail-summary">{{vm.storeContext.selectedProductDetail.summary}}</div>
+
+                {{#if vm.storeContext.selectedProductDetail.rows.length}}
+                <div class="swse-store-surface__detail-specs">
+                  {{#each vm.storeContext.selectedProductDetail.rows}}
+                  <div class="swse-store-surface__detail-spec-row"><span>{{label}}</span><strong>{{value}}</strong></div>
+                  {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if vm.storeContext.selectedProduct.suggestionBullets.length}}
+                <div class="swse-store-surface__detail-section">
+                  <div class="swse-store-surface__detail-section-title">Fit Notes</div>
+                  <ul class="swse-store-surface__detail-bullets">
+                    {{#each vm.storeContext.selectedProduct.suggestionBullets}}<li>{{this}}</li>{{/each}}
+                  </ul>
+                </div>
+                {{/if}}
+
+                {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
+                <div class="swse-store-surface__detail-section swse-store-surface__detail-section--scroll">
+                  <div class="swse-store-surface__detail-section-title">Technical Readout</div>
+                  {{{vm.storeContext.selectedProduct.techDetailsHtml}}}
+                </div>
+                {{/if}}
+
+                {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
+                <div class="swse-store-surface__detail-section swse-store-surface__detail-section--scroll">
+                  <div class="swse-store-surface__detail-section-title">Marketplace Reviews</div>
+                  {{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}
+                </div>
+                {{/if}}
+
+                <div class="swse-store-surface__detail-actions">
+                  {{#if (eq vm.storeContext.selectedProduct.type 'vehicle')}}
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">USED MODEL</button>
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">NEW MODEL</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="store-build-from-scratch" data-builder-kind="vehicle">BUILD FROM SCRATCH</button>
+                  {{else}}
+                  {{#if (eq vm.storeContext.selectedProduct.type 'droid')}}
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="droid">ADD DROID</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="store-build-from-scratch" data-builder-kind="droid">BUILD FROM SCRATCH</button>
+                  {{else}}
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">ADD TO CART</button>
+                  {{/if}}
+                  {{/if}}
+                </div>
               </div>
               {{else}}
-              <div class="swse-store-surface__mini-cart-empty">
-                <div class="swse-store-surface__mini-cart-empty-glyph">◳</div>
-                <div class="swse-store-surface__mini-cart-empty-msg">No items staged</div>
+              <div class="swse-store-surface__detail-empty">
+                <div class="swse-store-surface__detail-empty-glyph">⌁</div>
+                <div class="swse-store-surface__detail-empty-title">No listing selected</div>
+                <div class="swse-store-surface__detail-empty-copy">Click any market card to route its stats, pricing, and notes into this rail.</div>
               </div>
               {{/if}}
-            </div>
+            </section>
+            {{#if vm.storeContext.hasBuilderActions}}
+            <section class="swse-store-surface__side-card swse-store-surface__builder-card">
+              <div class="swse-store-surface__side-head">
+                <span>Custom Build</span>
+                <span class="hint">Scratch</span>
+              </div>
+              <div class="swse-store-surface__builder-actions">
+                {{#each vm.storeContext.builderActions}}
+                <button type="button"
+                        class="swse-store-surface__builder-btn swse-store-surface__builder-btn--{{tone}}"
+                        data-action="store-build-from-scratch"
+                        data-builder-kind="{{key}}">
+                  <span class="swse-store-surface__builder-icon">{{icon}}</span>
+                  <span class="swse-store-surface__builder-copy">
+                    <strong>{{label}}</strong>
+                    <small>{{sublabel}}</small>
+                  </span>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+            {{/if}}
+
+            <section class="swse-store-surface__side-card swse-store-surface__cart-card">
+              <div class="swse-store-surface__side-head">
+                <span>◇ Cart</span>
+                <span class="hint">{{#if vm.storeContext.cartCount}}{{vm.storeContext.cartCount}} staged{{else}}empty{{/if}}</span>
+              </div>
+              <div class="swse-store-surface__mini-cart">
+                {{#if vm.storeContext.cartEntries.length}}
+                <div class="swse-store-surface__mini-cart-list">
+                  {{#each vm.storeContext.cartEntries}}
+                  <div class="swse-store-surface__mini-cart-item">
+                    <div class="swse-store-surface__mini-cart-name">{{this.name}}</div>
+                    <div class="swse-store-surface__mini-cart-qty">×{{this.qty}}</div>
+                    <div class="swse-store-surface__mini-cart-price">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
+                  </div>
+                  {{/each}}
+                </div>
+                <div class="swse-store-surface__mini-cart-summary">
+                  <div class="swse-store-surface__mini-cart-row"><span>SUBTOTAL</span><strong>{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+                  <div class="swse-store-surface__mini-cart-row"><span>AFTER HAUL</span><strong>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+                </div>
+                <div class="swse-store-surface__rail-actions">
+                  <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="cart">▸ OPEN CART</button>
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>SETTLE</button>
+                </div>
+                {{else}}
+                <div class="swse-store-surface__mini-cart-empty">
+                  <div class="swse-store-surface__mini-cart-empty-glyph">◳</div>
+                  <div class="swse-store-surface__mini-cart-empty-msg">No items staged</div>
+                  <div class="swse-store-surface__mini-cart-empty-sub">Click a card's <span>+ ADD</span> to start a haul.</div>
+                </div>
+                <div class="swse-store-surface__rail-actions">
+                  <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="browse">▸ BROWSE FLOOR</button>
+                </div>
+                {{/if}}
+              </div>
+            </section>
+
+            <section class="swse-store-surface__side-card swse-store-surface__wallet-card">
+              <div class="swse-store-surface__side-head">
+                <span>◇ Wallet</span>
+                <span class="hint">SAGA std.</span>
+              </div>
+              <div class="swse-store-surface__wallet-grid">
+                <div class="swse-store-surface__wallet-cell">
+                  <span>Balance</span>
+                  <strong>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong>
+                </div>
+                <div class="swse-store-surface__wallet-cell {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
+                  <span>After Haul</span>
+                  <strong>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="swse-store-surface__side-card swse-store-surface__market-card">
+              <div class="swse-store-surface__side-head">
+                <span>◇ Market Feed</span>
+                <span class="hint">Live</span>
+              </div>
+              <div class="swse-store-surface__market-line"><span>Category</span><strong>{{vm.storeContext.currentCategoryLabel}}</strong></div>
+              <div class="swse-store-surface__market-line"><span>Listings</span><strong>{{vm.storeContext.visibleItemCount}}</strong></div>
+              <div class="swse-store-surface__market-line"><span>Rendered</span><strong>{{vm.storeContext.renderedItemCount}}</strong></div>
+            </section>
+
+            <section class="swse-store-surface__side-card swse-store-surface__chatter-card">
+              <div class="swse-store-surface__side-head">
+                <span>◇ Floor Chatter</span>
+                <span class="hint">live</span>
+              </div>
+              <div class="swse-store-surface__ticker" aria-label="Store chatter feed">
+                <div class="swse-store-surface__ticker-track">
+                  <span>Rendarr: No refunds on thermal detonators.</span>
+                  <span>Outer Rim surplus just cleared customs.</span>
+                  <span>Licensed stock may need GM approval.</span>
+                  <span>Used vehicles are inspected, not blessed.</span>
+                </div>
+              </div>
+            </section>
 
           </aside>
         </section>
@@ -307,7 +460,7 @@
                 <div class="swse-store-surface__cart-type">{{this.summary}}</div>
               </div>
               <div class="swse-store-surface__cart-qty">×{{this.qty}}</div>
-              <div class="swse-store-surface__cart-linecost">{{@root.vm.storeContext.currencySymbol}} {{this.cost}}</div>
+              <div class="swse-store-surface__cart-linecost">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
               <button type="button" class="swse-store-surface__btn swse-store-surface__btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
             </div>
             {{/each}}
@@ -315,19 +468,26 @@
           <div class="swse-store-surface__cart-summary">
             <div class="swse-store-surface__cart-summary-row">
               <span>TOTAL</span>
-              <span class="swse-store-surface__cart-total">{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}}</span>
+              <span class="swse-store-surface__cart-total">{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
             </div>
             <div class="swse-store-surface__cart-summary-row dim">
               <span>AVAILABLE</span>
-              <span>{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span>
+              <span>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
             </div>
             <div class="swse-store-surface__cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
               <span>RESERVE AFTER TRADE</span>
-              <span>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}}</span>
+              <span>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
             </div>
+            {{#if vm.storeContext.hasCheckoutWarnings}}
+            <div class="swse-store-surface__checkout-status {{#if vm.storeContext.cartRemainingNeg}}warn{{/if}}">
+              {{#each vm.storeContext.checkoutWarnings}}
+              <div class="swse-store-surface__checkout-status-line">{{this}}</div>
+              {{/each}}
+            </div>
+            {{/if}}
             <div class="swse-store-surface__cart-actions">
               <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR CART</button>
-              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="proceed-checkout">PROCEED TO CHECKOUT →</button>
+              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>PROCEED TO CHECKOUT →</button>
             </div>
           </div>
           {{else}}
@@ -353,18 +513,25 @@
             <div class="swse-store-surface__checkout-row">
               <span class="swse-store-surface__checkout-row-name">{{this.name}}</span>
               <span class="swse-store-surface__checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
-              <span class="swse-store-surface__checkout-row-cost">{{@root.vm.storeContext.currencySymbol}} {{this.cost}}</span>
+              <span class="swse-store-surface__checkout-row-cost">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
             </div>
             {{/each}}
           </div>
           <div class="swse-store-surface__checkout-ledger">
-            <div class="swse-store-surface__checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>{{@root.vm.storeContext.currencySymbol}} {{vm.actorCredits}}</span></div>
-            <div class="swse-store-surface__checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.cartTotal}}</span></div>
-            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>{{@root.vm.storeContext.currencySymbol}} {{vm.storeContext.pageContext.cartRemaining}}</span></div>
+            <div class="swse-store-surface__checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span></div>
+            <div class="swse-store-surface__checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span></div>
+            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span></div>
           </div>
+          {{#if vm.storeContext.hasCheckoutWarnings}}
+          <div class="swse-store-surface__checkout-status {{#if vm.storeContext.cartRemainingNeg}}warn{{/if}}">
+            {{#each vm.storeContext.checkoutWarnings}}
+            <div class="swse-store-surface__checkout-status-line">{{this}}</div>
+            {{/each}}
+          </div>
+          {{/if}}
           <div class="swse-store-surface__checkout-actions">
             <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
-            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--confirm" data-action="confirm-checkout">◈ CONFIRM TRADE</button>
+            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--confirm" data-action="confirm-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>◈ CONFIRM TRADE</button>
           </div>
           {{else}}
           <div class="swse-store-surface__empty">
@@ -383,11 +550,11 @@
             <div class="swse-store-surface__history-entry">
               <div class="swse-store-surface__history-entry-header">
                 <span class="swse-store-surface__history-date">{{this.timestamp}}</span>
-                <span class="swse-store-surface__history-total">{{@root.vm.storeContext.currencySymbol}} {{this.total}}</span>
+                <span class="swse-store-surface__history-total">{{this.total}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
               </div>
               <div class="swse-store-surface__history-items">
                 {{#each this.items}}
-                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} ({{@root.vm.storeContext.currencySymbol}}{{this.cost}})</span>
+                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} ({{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span>)</span>
                 {{/each}}
               </div>
             </div>

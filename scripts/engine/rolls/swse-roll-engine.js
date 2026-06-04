@@ -147,12 +147,13 @@ function swseChatBuildEventContext(context = {}, category = 'roll', reactionCont
   };
 }
 
-function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = false) {
+function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = false, actor = null) {
   if (context.showDamageAction === false) return null;
   const weaponId = context.weaponId ?? context.itemId ?? weapon?.id ?? '';
   if (!weaponId || context.disableDamageAction === true) return null;
   const critMultiplier = Number(context.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2;
   return {
+    actorId: context.actorId ?? context.attackerId ?? actor?.id ?? '',
     weaponId,
     isCritical: context.isCritical === true || isCritical === true,
     critMultiplier,
@@ -222,7 +223,7 @@ export class SWSERollEngine {
     const forceTierGauge = category === 'force' ? swseChatBuildForceTierGauge(roll.total, safeContext) : [];
     const reactionContext = swseChatBuildReactionContext(actor, safeContext);
     const eventContext = swseChatBuildEventContext(safeContext, category, reactionContext);
-    const damageAction = category === 'attack' ? swseChatBuildDamageAction(safeContext, weapon, isCritical) : null;
+    const damageAction = category === 'attack' ? swseChatBuildDamageAction(safeContext, weapon, isCritical, actor) : null;
 
     return {
       chatSvg: buildChatSvgContext(),

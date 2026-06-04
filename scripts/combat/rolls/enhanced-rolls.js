@@ -553,7 +553,7 @@ export class SWSERoll {
 
           ${attackRerollHTML}
 
-          <button class="swse-roll-damage" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}" data-two-handed="${modifiers.twoHanded || false}">
+          <button class="swse-roll-damage" data-actor-id="${actor.id}" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}" data-two-handed="${modifiers.twoHanded || false}">
             <i class="fa-solid fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
           </button>
         </div>

@@ -1,6 +1,20 @@
+/**
+ * @deprecated TACTICAL TARGETING CONSOLE — ORPHANED, PENDING DELETION
+ *
+ * This class (CombatRollConfigDialog / "Tactical Targeting Console") is no longer
+ * wired into the character sheet or any active code path. It has been replaced by
+ * the Roll Configurator V2 preroller (showRollModifiersDialog in roll-config.js).
+ *
+ * DO NOT re-import or re-use this module. It exists only until a cleanup pass
+ * removes it entirely. Safe to delete.
+ *
+ * Disconnected: character-sheet.js (combat action attack routing)
+ * Replacement: scripts/rolls/roll-config.js → showRollModifiersDialog
+ */
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 
+/** @deprecated See file-level deprecation notice above. */
 export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}),

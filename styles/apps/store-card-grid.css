@@ -560,3 +560,131 @@
   color: var(--holo-yellow, #ffd666);
   box-shadow: 0 0 0 1px rgba(255, 214, 102, 0.14), 0 0 14px rgba(255, 214, 102, 0.10);
 }
+
+/* Beta compact catalog pass: smaller cards, letter labels, and floating Rendarr hologram. */
+.store-mentor-rail,
+.store-header {
+  grid-template-columns: 58px 1fr auto;
+  gap: 10px;
+  padding: 8px 12px;
+}
+
+.shopkeeper-portrait,
+.store-portrait {
+  width: 58px;
+  height: 62px;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+  position: relative;
+  animation: store-rendarr-float 4.8s ease-in-out infinite;
+}
+
+.shopkeeper-portrait::before,
+.store-portrait::before {
+  content: '';
+  position: absolute;
+  inset: -10px -12px;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, rgba(79, 209, 197, 0.24), transparent 68%);
+  filter: blur(4px);
+}
+
+.shopkeeper-portrait::after,
+.store-portrait::after {
+  content: '';
+  position: absolute;
+  inset: -8px -10px;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(79, 209, 197, 0.20) 4px 5px);
+  mix-blend-mode: screen;
+  animation: store-rendarr-holo-scan 2.8s linear infinite;
+}
+
+.rendarr-image,
+.store-portrait .rendarr-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(1) sepia(1) hue-rotate(145deg) saturate(2.2) brightness(1.05) contrast(1.12) drop-shadow(0 0 8px rgba(79, 209, 197, 0.48));
+  opacity: 0.86;
+}
+
+@keyframes store-rendarr-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes store-rendarr-holo-scan {
+  0% { transform: translateY(-8px); opacity: 0.42; }
+  50% { opacity: 0.72; }
+  100% { transform: translateY(8px); opacity: 0.42; }
+}
+
+.store-work-surface .products-grid {
+  grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
+  gap: 7px;
+}
+
+.store-work-surface .holo-card.product-card {
+  padding: 7px;
+  gap: 6px;
+  border-radius: 8px;
+}
+
+.store-work-surface .card-header,
+.store-work-surface .card-meta-row,
+.store-work-surface .card-footer {
+  gap: 4px;
+}
+
+.store-work-surface .glyph-panel {
+  min-height: 34px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 6px;
+  justify-content: initial;
+  padding: 3px 5px;
+}
+
+.store-work-surface .store-glyph {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(79, 209, 197, 0.28);
+  background: rgba(79, 209, 197, 0.06);
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--swse-font-display, monospace);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.store-work-surface .card-title {
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.store-work-surface .card-explanations {
+  gap: 2px;
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.store-work-surface .detail-chip,
+.store-work-surface .suggestion-badge {
+  padding: 2px 5px;
+  font-size: 7px;
+}
+
+.store-work-surface .card-price,
+.store-work-surface .store-detail-price {
+  font-size: 14px;
+}
+
+.store-work-surface .holo-btn {
+  padding: 5px 7px;
+  font-size: 8px;
+}

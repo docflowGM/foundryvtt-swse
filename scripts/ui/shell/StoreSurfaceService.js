@@ -106,6 +106,180 @@ function _marketChange(seed = Math.random()) {
   };
 }
 
+
+function _storeCardLetter(item = {}) {
+  const type = String(item.type || '').toLowerCase();
+  const categoryKey = _categoryKey(item);
+  const category = String(item.category || '').toLowerCase();
+  const name = String(item.name || '').trim();
+
+  if (type === 'vehicle' || categoryKey === 'vehicles') return 'V';
+  if (type === 'droid' || categoryKey === 'droids') return 'D';
+  if (categoryKey === 'weapons' || category.includes('weapon')) return 'W';
+  if (categoryKey === 'armor' || category.includes('armor')) return 'A';
+  if (category.includes('medical')) return 'M';
+  if (categoryKey === 'gear' || categoryKey === 'equipment') return 'G';
+  return (name[0] || 'C').toUpperCase();
+}
+
+function _storeCardLabel(item = {}) {
+  const categoryKey = _categoryKey(item);
+  const labels = {
+    weapons: 'Weapon',
+    armor: 'Armor',
+    gear: 'Gear',
+    equipment: 'Gear',
+    droids: 'Droid',
+    vehicles: 'Vehicle'
+  };
+  return labels[categoryKey] || item.typeLabel || item.type || 'Catalog';
+}
+
+function _decorateStoreCardItem(item = {}) {
+  return {
+    ...item,
+    cardLetter: item.cardLetter || _storeCardLetter(item),
+    glyphLabel: item.glyphLabel || _storeCardLabel(item)
+  };
+}
+
+
+function _storePriceLabel(value) {
+  const numeric = Number(value ?? 0);
+  if (!Number.isFinite(numeric)) return '—';
+  return numeric.toLocaleString();
+}
+
+function _countRawCartEntries(cart = {}) {
+  return (cart.items?.length ?? 0) + (cart.droids?.length ?? 0) + (cart.vehicles?.length ?? 0);
+}
+
+function _countApprovalEntries(cart = {}) {
+  const entries = [
+    ...(cart.items ?? []),
+    ...(cart.droids ?? []),
+    ...(cart.vehicles ?? [])
+  ];
+  return entries.filter(entry => entry?.requiresApproval === true || entry?.approvalRequired === true).length;
+}
+
+function _buildCheckoutState({ storeInstance, storeContext = {}, credits = 0, cartTotal = 0, cartEntries = [] } = {}) {
+  const rawCart = storeInstance?.cart ?? {};
+  const cartCount = Number(storeContext.cartCount ?? cartEntries.length ?? _countRawCartEntries(rawCart)) || 0;
+  const storeOpen = SettingsHelper.getSafe?.('storeOpen', true) !== false;
+  const cartRemainingActual = Number(credits ?? 0) - Number(cartTotal ?? 0);
+  const approvalCount = _countApprovalEntries(rawCart);
+  const warnings = [];
+
+  if (!storeOpen) warnings.push('Store is currently closed by GM policy.');
+  if (cartCount <= 0) warnings.push('Cart is empty.');
+  if (cartRemainingActual < 0) {
+    warnings.push(`Projected reserve is short by ${Math.abs(cartRemainingActual).toLocaleString()} credits. Checkout will ask the Transaction Engine to verify before anything changes.`);
+  }
+  if (approvalCount > 0) {
+    warnings.push(`${approvalCount} staged listing${approvalCount === 1 ? '' : 's'} require GM approval and may be queued instead of purchased immediately.`);
+  }
+
+  const checkoutBlocked = !storeOpen || cartCount <= 0;
+  return {
+    storeOpen,
+    cartCount,
+    approvalCount,
+    hasApprovalEntries: approvalCount > 0,
+    cartRemainingActual,
+    cartRemainingActualLabel: cartRemainingActual.toLocaleString(),
+    cartRemainingNeg: cartRemainingActual < 0,
+    checkoutBlocked,
+    canCheckout: !checkoutBlocked,
+    checkoutBlockedReason: !storeOpen ? 'Store is closed by GM policy.' : cartCount <= 0 ? 'Cart is empty.' : '',
+    checkoutWarnings: warnings,
+    hasCheckoutWarnings: warnings.length > 0
+  };
+}
+
+function _stripHtml(value = '') {
+  return String(value ?? '')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function _buildSelectedProductDetail(product = null) {
+  if (!product) {
+    return {
+      hasProduct: false,
+      rows: [],
+      priceOptions: [],
+      summary: 'Select a listing to inspect stats, policy, pricing, and Rendarr\'s notes.'
+    };
+  }
+
+  const rows = [
+    { label: 'Type', value: product.typeLabel || product.type || 'Catalog' },
+    { label: 'Category', value: product.category || product.categoryKey || 'General' },
+    { label: 'Subcategory', value: product.subcategory || '—' },
+    { label: 'Availability', value: product.availability || product.rarityLabel || 'Standard' },
+    { label: 'Policy', value: product.blockedReason ? product.blockedReason : (product.canPurchase === false ? 'Blocked' : 'Purchasable') }
+  ].filter(row => row.value !== undefined && row.value !== null && String(row.value).trim() !== '');
+
+  const priceOptions = product.requiresCondition
+    ? [
+        { label: 'New', value: product.newCost, valueLabel: _storePriceLabel(product.newCost), condition: 'new' },
+        { label: 'Used', value: product.usedCost, valueLabel: _storePriceLabel(product.usedCost), condition: 'used' }
+      ].filter(option => Number.isFinite(Number(option.value)))
+    : [{ label: 'Price', value: product.price ?? product.finalCost ?? product.cost, valueLabel: _storePriceLabel(product.price ?? product.finalCost ?? product.cost), condition: '' }];
+
+  const summaryText = _stripHtml(product.descriptionBasic || product.description || product.descriptionAurebesh || '')
+    || product.suggestionBullets?.[0]
+    || product.mentorReview
+    || 'No listing description available.';
+
+  return {
+    hasProduct: true,
+    id: product.id,
+    rows,
+    priceOptions,
+    summary: summaryText.length > 220 ? `${summaryText.slice(0, 217)}...` : summaryText,
+    isVehicle: product.type === 'vehicle',
+    isDroid: product.type === 'droid',
+    canPurchase: product.canPurchase !== false,
+    blockedReason: product.blockedReason || ''
+  };
+}
+
+function _buildScratchBuilderActions(currentCategory = '') {
+  const key = _normalizeStoreFilterValue(currentCategory || '');
+  const isDroidCategory = key === 'droids' || key === 'droid' || key.includes('droid');
+  const isVehicleCategory = key === 'vehicles' || key === 'vehicle' || key === 'ships' || key === 'shipyard'
+    || key.includes('vehicle') || key.includes('ship') || key.includes('speeder') || key.includes('walker');
+
+  if (isDroidCategory) {
+    return [{
+      key: 'droid',
+      label: 'Build Droid From Scratch',
+      sublabel: 'Launch Droid Builder',
+      icon: 'D',
+      tone: 'droid'
+    }];
+  }
+  if (isVehicleCategory) {
+    return [{
+      key: 'vehicle',
+      label: 'Build Ship / Vehicle From Scratch',
+      sublabel: 'Launch Shipyard Builder',
+      icon: 'V',
+      tone: 'vehicle'
+    }];
+  }
+  return [];
+}
+
 function _buildTickerPreview(count = 18) {
   return STORE_SPLASH_COMPANIES.slice(0, count).map(([name, ticker]) => ({
     name,
@@ -271,8 +445,9 @@ export class StoreSurfaceService {
     const storeOpen = Boolean(SettingsHelper.getSafe('storeOpen', true));
     const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
     const hotDeals = _buildHotDealsFromItems(allItems);
-    const sheetTheme = ThemeResolutionService.resolveThemeKey(null, { actor });
-    const sheetMotionStyle = ThemeResolutionService.resolveMotionStyle(null, { actor });
+    const themeContext = ThemeResolutionService.buildSurfaceContext({ actor });
+    const sheetTheme = themeContext.themeKey;
+    const sheetMotionStyle = themeContext.motionStyle;
     const credits = Number(storeContext.credits ?? actor?.system?.credits ?? 0) || 0;
 
     return {
@@ -280,6 +455,7 @@ export class StoreSurfaceService {
       credits,
       sheetTheme,
       sheetMotionStyle,
+      surfaceStyleInline: themeContext.surfaceStyleInline,
       storeOpen,
       storeStatusLabel: storeOpen ? 'OPEN' : 'CLOSED',
       marketIndexLabel: '+000.0%',
@@ -414,8 +590,9 @@ export class StoreSurfaceService {
         const selectedIndex = visibleItems.findIndex(item => item?.id === selectedProductId);
         if (selectedIndex >= renderLimit) renderLimit = selectedIndex + 1;
       }
-      const renderedItems = visibleItems.slice(0, renderLimit);
+      const renderedItems = visibleItems.slice(0, renderLimit).map(_decorateStoreCardItem);
       const hasMoreItems = renderedItems.length < visibleItems.length;
+      const builderActions = _buildScratchBuilderActions(storeContext.currentCategory ?? '');
       const splashContext = StoreSurfaceService.buildSplashContext(actor, storeContext, { ...options, splashComplete });
 
       // Phase 2: Include navigation model
@@ -445,6 +622,17 @@ export class StoreSurfaceService {
         }
       }
 
+      const rawCartEntries = Array.isArray(storeContext.cartEntries) ? storeContext.cartEntries : [];
+      const cartTotal = Number(storeContext.cartTotal ?? 0) || 0;
+      const credits = Number(storeContext.credits ?? 0) || 0;
+      const checkoutState = _buildCheckoutState({
+        storeInstance,
+        storeContext,
+        credits,
+        cartTotal,
+        cartEntries: rawCartEntries
+      });
+
       const safeContext = {
         allItems: renderedItems,
         totalItems: allItems.length,
@@ -453,10 +641,10 @@ export class StoreSurfaceService {
         renderLimit,
         hasMoreItems,
         nextRenderLimit: Math.min(visibleItems.length, renderLimit + 36),
-        credits: storeContext.credits ?? 0,
-        cartCount: storeContext.cartCount ?? 0,
-        cartTotal: storeContext.cartTotal ?? 0,
-        cartEntries: storeContext.cartEntries ?? [],
+        credits,
+        cartCount: checkoutState.cartCount,
+        cartTotal,
+        cartEntries: rawCartEntries,
         currentView,
         isBrowseOrDetail: currentView === 'browse' || currentView === 'detail',
         currentCategory: storeContext.currentCategory ?? '',
@@ -465,14 +653,27 @@ export class StoreSurfaceService {
         currencySymbol: storeContext.currencySymbol ?? getStoreCurrencySymbol(),
         currentCategoryLabel: storeContext.currentCategoryLabel ?? 'All Listings',
         categorySummary: storeContext.categorySummary ?? [],
+        builderActions,
+        hasBuilderActions: builderActions.length > 0,
         navigationModel,  // Phase 2: Include navigation model
         pageContext: storeContext.pageContext ?? {},
-        cartRemainingNeg: cartRemaining < 0,
+        cartRemainingActual: checkoutState.cartRemainingActual,
+        cartRemainingActualLabel: checkoutState.cartRemainingActualLabel,
+        cartRemainingNeg: checkoutState.cartRemainingNeg,
+        storeOpen: checkoutState.storeOpen,
+        checkoutBlocked: checkoutState.checkoutBlocked,
+        canCheckout: checkoutState.canCheckout,
+        checkoutBlockedReason: checkoutState.checkoutBlockedReason,
+        checkoutWarnings: checkoutState.checkoutWarnings,
+        hasCheckoutWarnings: checkoutState.hasCheckoutWarnings,
+        approvalCount: checkoutState.approvalCount,
+        hasApprovalEntries: checkoutState.hasApprovalEntries,
         purchaseHistoryEntries: storeContext.purchaseHistoryEntries ?? [],
         purchaseHistoryCount: storeContext.purchaseHistoryCount ?? 0,
         rendarrImage: storeContext.rendarrImage ?? '',
         rendarrWelcome: storeContext.rendarrWelcome ?? '',
-        selectedProduct: storeContext.selectedProduct ?? null,
+        selectedProduct: storeContext.selectedProduct ? _decorateStoreCardItem(storeContext.selectedProduct) : null,
+        selectedProductDetail: _buildSelectedProductDetail(storeContext.selectedProduct),
         selectedProductId: options.selectedProductId ?? storeContext.selectedProduct?.id ?? null,
         isGM: storeContext.isGM ?? false,
         filters: {
@@ -486,9 +687,10 @@ export class StoreSurfaceService {
         id: 'store',
         title: 'Rendarr\'s Outfitters',
         actorName: actor.name,
-        actorCredits: storeContext.credits ?? 0,
+        actorCredits: credits,
         sheetTheme: splashContext.sheetTheme,
         sheetMotionStyle: splashContext.sheetMotionStyle,
+        surfaceStyleInline: splashContext.surfaceStyleInline,
         splashComplete,
         storeSplash: splashContext,
         storeContext: safeContext

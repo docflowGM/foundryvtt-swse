@@ -39,6 +39,15 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
   default: false
 });
 
+game.settings.register('foundryvtt-swse', 'postRenderDiagnostics', {
+  name: 'Post-Render Diagnostics',
+  hint: 'Enable post-render DOM assertions for debugging sheet panel rendering.',
+  scope: 'client',
+  config: true,
+  type: Boolean,
+  default: false
+});
+
   game.settings.register("foundryvtt-swse", "darkSideMaxMultiplier", {
     name: "Dark Side Max Multiplier",
     hint: "Multiplier applied to Wisdom score to determine maximum Dark Side Score.",
