@@ -2,10 +2,11 @@
  * Talent Tree Membership Authority
  *
  * Deterministic source of truth for talent tree membership.
- * Implements robust fallback chain:
- * 1. Registry lookup by normalized ID/key
- * 2. TalentRegistry category scanning (if registry returns 0)
- * 3. Direct talentIds resolution (if scanning returns 0)
+ *
+ * The important invariant here is additive hydration: if one source resolves
+ * some talents for a tree, we still merge every other known source before
+ * returning. Earlier versions returned as soon as talent-side fields produced
+ * any result, which made partially tagged trees silently drop valid talents.
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
@@ -13,10 +14,11 @@ import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/tale
 
 let cachedRegistry = null;
 let registryLoadPromise = null;
-let diagnosticCache = new Set(); // Prevent duplicate diagnostics
+const diagnosticCache = new Set();
+const auditCache = new Set();
 
 /**
- * Normalize a tree ID to stable key format
+ * Normalize a tree ID to stable key format.
  */
 function normalizeTreeKey(name) {
   return String(name ?? '')
@@ -27,8 +29,56 @@ function normalizeTreeKey(name) {
     .replace(/^-|-$/g, '');
 }
 
+function normalizeTalentTreeKey(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function normalizeTalentRefKey(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getTalentIdentity(talent) {
+  return String(talent?.id || talent?._id || talent?.uuid || talent?.name || '').trim();
+}
+
+function getTreeIdentityKeys(tree) {
+  return [...new Set([
+    tree?.id,
+    tree?.sourceId,
+    tree?.key,
+    tree?.name,
+    tree?.displayName,
+    tree?.system?.treeId,
+    tree?.system?.key,
+    tree?.system?.talent_tree,
+  ].map(normalizeTalentTreeKey).filter(Boolean))];
+}
+
+function getClaimedTalentRefs(tree, registryEntry = null) {
+  return [...new Set([
+    ...(Array.isArray(registryEntry?.talents) ? registryEntry.talents : []),
+    ...(Array.isArray(tree?.talentNames) ? tree.talentNames : []),
+    ...(Array.isArray(tree?.talentIds) ? tree.talentIds : []),
+    ...(Array.isArray(tree?.system?.talentNames) ? tree.system.talentNames : []),
+    ...(Array.isArray(tree?.system?.talentIds) ? tree.system.talentIds : []),
+  ].map(value => String(value ?? '').trim()).filter(Boolean))];
+}
+
 /**
- * Load the talent tree membership registry from data files
+ * Load the talent tree membership registry from data files.
  */
 async function loadRegistry() {
   if (cachedRegistry) {
@@ -41,7 +91,6 @@ async function loadRegistry() {
 
   registryLoadPromise = (async () => {
     try {
-      // Try generated registry first
       let data = null;
       try {
         const response = await fetch('/systems/foundryvtt-swse/data/generated/talent-trees.registry.json');
@@ -53,37 +102,36 @@ async function loadRegistry() {
         SWSELogger.warn(`[TalentTreeMembershipAuthority] Failed to load generated registry: ${err.message}`);
       }
 
-      // Fall back to fixes registry if needed
       if (!data) {
         try {
           const response = await fetch('/systems/foundryvtt-swse/data/fixes/talent-trees.registry.json');
           if (response.ok) {
             data = await response.json();
-            SWSELogger.debug('[TalentTreeMembershipAuthority] Loaded fixes talent-trees.registry.json (fallback)');
+            SWSELogger.debug('[TalentTreeMembershipAuthority] Loaded fixes talent-trees.registry.json fallback');
           }
         } catch (err) {
           SWSELogger.warn(`[TalentTreeMembershipAuthority] Failed to load fixes registry: ${err.message}`);
         }
       }
 
-      // Convert array to map keyed by tree id and normalized key
+      cachedRegistry = new Map();
       if (Array.isArray(data)) {
-        cachedRegistry = new Map();
         for (const tree of data) {
-          if (tree.id && Array.isArray(tree.talents)) {
-            cachedRegistry.set(tree.id, tree);
-            // Also index by normalized key if available
-            const key = tree.key || normalizeTreeKey(tree.displayName || tree.name || tree.id);
-            if (key && key !== tree.id) {
-              cachedRegistry.set(key, tree);
-            }
+          if (!tree?.id || !Array.isArray(tree.talents)) continue;
+          const keys = [
+            tree.id,
+            tree.key,
+            tree.name,
+            tree.displayName,
+            normalizeTreeKey(tree.displayName || tree.name || tree.id),
+            normalizeTalentTreeKey(tree.displayName || tree.name || tree.id),
+          ].filter(Boolean);
+          for (const key of keys) {
+            cachedRegistry.set(key, tree);
           }
         }
-        SWSELogger.debug(
-          `[TalentTreeMembershipAuthority] Registry loaded: ${cachedRegistry.size} entries`
-        );
+        SWSELogger.debug(`[TalentTreeMembershipAuthority] Registry loaded: ${cachedRegistry.size} lookup keys`);
       } else {
-        cachedRegistry = new Map();
         SWSELogger.warn('[TalentTreeMembershipAuthority] Registry data is not an array');
       }
 
@@ -100,30 +148,47 @@ async function loadRegistry() {
   return registryLoadPromise;
 }
 
-/**
- * FALLBACK 1: Try registry lookup by ID and normalized key
- */
-function normalizeTalentTreeKey(value) {
-  return String(value ?? '')
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+function resolveTalentReference(ref) {
+  const raw = String(ref ?? '').trim();
+  if (!raw) return null;
+
+  const direct = TalentRegistry.getById?.(raw) || TalentRegistry.getByName?.(raw);
+  if (direct) return direct;
+
+  const normalized = normalizeTalentRefKey(raw);
+  if (!normalized) return null;
+
+  return (TalentRegistry.getAll?.() || []).find(talent => {
+    const candidates = [
+      talent?.id,
+      talent?._id,
+      talent?.name,
+      talent?.uuid,
+      talent?.system?.slug,
+      talent?.system?.id,
+      talent?.system?.name,
+      talent?.flags?.swse?.id,
+      talent?.flags?.swse?.slug,
+    ];
+    return candidates.some(candidate => normalizeTalentRefKey(candidate) === normalized);
+  }) || null;
 }
 
-function getTreeIdentityKeys(tree) {
-  return [...new Set([
-    tree?.id,
-    tree?.sourceId,
-    tree?.key,
-    tree?.name,
-    tree?.displayName,
-    tree?.system?.treeId,
-    tree?.system?.key,
-    tree?.system?.talent_tree,
-  ].map(normalizeTalentTreeKey).filter(Boolean))];
+function mergeTalentList(target, talents, source, seen, sourceStats) {
+  let added = 0;
+  for (const talent of talents || []) {
+    const id = getTalentIdentity(talent);
+    const fallbackKey = normalizeTalentRefKey(talent?.name || talent?.id || talent?._id);
+    const key = id || fallbackKey;
+    if (!key || seen.has(key)) continue;
+    target.push(talent);
+    seen.add(key);
+    added += 1;
+  }
+  sourceStats[source] = {
+    raw: Array.isArray(talents) ? talents.length : 0,
+    added,
+  };
 }
 
 /**
@@ -139,16 +204,14 @@ function tryTalentSideMembership(tree) {
   for (const key of keys) {
     const matches = TalentRegistry.getByTree?.(key) || [];
     for (const talent of matches) {
-      const id = talent?.id || talent?._id || talent?.name;
+      const id = getTalentIdentity(talent);
       if (!id || seenIds.has(id)) continue;
       resolved.push(talent);
       seenIds.add(id);
     }
   }
 
-  if (resolved.length > 0) return resolved;
-
-  return TalentRegistry.search?.(talent => {
+  const scanMatches = TalentRegistry.search?.(talent => {
     const talentKeys = [
       talent?.treeId,
       talent?.treeName,
@@ -162,19 +225,31 @@ function tryTalentSideMembership(tree) {
     ].map(normalizeTalentTreeKey).filter(Boolean);
     return talentKeys.some(key => keys.includes(key));
   }) || [];
-}
 
+  for (const talent of scanMatches) {
+    const id = getTalentIdentity(talent);
+    if (!id || seenIds.has(id)) continue;
+    resolved.push(talent);
+    seenIds.add(id);
+  }
+
+  return resolved;
+}
 
 function supplementKnownTreeMembership(tree, talents = []) {
   const treeKey = normalizeTalentTreeKey(tree?.name || tree?.id || tree?.sourceId);
-  if (treeKey !== 'armor-specialist') return talents;
+  const supplementalNamesByTree = {
+    'armor-specialist': ['Armored Defense'],
+  };
 
-  const seen = new Set((talents || []).map(talent => talent?.id || talent?._id || talent?.name).filter(Boolean));
-  const supplementalNames = ['Armored Defense'];
+  const supplementalNames = supplementalNamesByTree[treeKey] || [];
+  if (!supplementalNames.length) return talents;
+
+  const seen = new Set((talents || []).map(getTalentIdentity).filter(Boolean));
   const supplemented = [...talents];
   for (const name of supplementalNames) {
-    const talent = TalentRegistry.getByName?.(name);
-    const id = talent?.id || talent?._id || talent?.name;
+    const talent = resolveTalentReference(name);
+    const id = getTalentIdentity(talent);
     if (talent && id && !seen.has(id)) {
       supplemented.unshift(talent);
       seen.add(id);
@@ -186,215 +261,182 @@ function supplementKnownTreeMembership(tree, talents = []) {
 function tryRegistryLookup(registry, tree) {
   if (!tree || !registry) return null;
 
-  // Try by ID first
-  if (tree.id && registry.has(tree.id)) {
-    return registry.get(tree.id);
-  }
+  const keys = [
+    tree.id,
+    tree.sourceId,
+    tree.key,
+    tree.name,
+    tree.displayName,
+    normalizeTreeKey(tree.name),
+    normalizeTreeKey(tree.displayName),
+    ...getTreeIdentityKeys(tree),
+  ].filter(Boolean);
 
-  // Try by normalized key from name
-  if (tree.name) {
-    const normalizedKey = normalizeTreeKey(tree.name);
-    if (registry.has(normalizedKey)) {
-      return registry.get(normalizedKey);
-    }
-  }
-
-  // Try by sourceId if present
-  if (tree.sourceId && registry.has(tree.sourceId)) {
-    return registry.get(tree.sourceId);
+  for (const key of keys) {
+    if (registry.has(key)) return registry.get(key);
   }
 
   return null;
 }
 
 /**
- * FALLBACK 2: Scan TalentRegistry by category/tree name
+ * FALLBACK: Scan TalentRegistry by category/tree name.
  */
 function tryRegistryScan(tree) {
   if (!tree || !tree.name) return [];
 
-  // Try exact tree name as category
-  let talents = TalentRegistry.getByCategory?.(tree.name) || [];
-  if (talents.length > 0) {
-    return talents;
+  const keys = getTreeIdentityKeys(tree);
+  const exactNames = [...new Set([tree.name, tree.displayName, tree.id, tree.sourceId].filter(Boolean))];
+
+  const categoryMatches = [];
+  for (const name of exactNames) {
+    categoryMatches.push(...(TalentRegistry.getByCategory?.(name) || []));
+    categoryMatches.push(...(TalentRegistry.getByCategory?.(normalizeTreeKey(name)) || []));
+  }
+  if (categoryMatches.length > 0) {
+    return categoryMatches;
   }
 
-  // Try normalized name as category
-  const normalized = normalizeTreeKey(tree.name);
-  talents = TalentRegistry.getByCategory?.(normalized) || [];
-  if (talents.length > 0) {
-    return talents;
-  }
-
-  // Scan all talents for talentTree field matching
-  talents = TalentRegistry.search?.(talent => {
-    const treeField = talent.talentTree || talent.category || '';
-    const treeName = String(treeField).toLowerCase();
-    const targetName = String(tree.name).toLowerCase();
-    return treeName === targetName || treeName.includes(targetName);
+  return TalentRegistry.search?.(talent => {
+    const talentKeys = [
+      talent?.talentTree,
+      talent?.category,
+      talent?.treeName,
+      talent?.treeId,
+      talent?.system?.talent_tree,
+      talent?.system?.talentTree,
+      talent?.system?.tree,
+      talent?.system?.treeId,
+    ].map(normalizeTalentTreeKey).filter(Boolean);
+    return talentKeys.some(key => keys.includes(key));
   }) || [];
-
-  return talents;
 }
 
 /**
- * FALLBACK 3: Resolve talentIds array directly
+ * FALLBACK: Resolve talentNames/talentIds arrays directly.
  */
 function tryTalentIdResolution(tree) {
-  if (!tree) return [];
-
-  const talentRefs = [
-    ...(Array.isArray(tree.talentNames) ? tree.talentNames : []),
-    ...(Array.isArray(tree.talentIds) ? tree.talentIds : []),
-    ...(Array.isArray(tree.system?.talentNames) ? tree.system.talentNames : []),
-    ...(Array.isArray(tree.system?.talentIds) ? tree.system.talentIds : []),
-  ].filter(Boolean);
-
+  const talentRefs = getClaimedTalentRefs(tree);
   if (!talentRefs.length) return [];
 
   const resolved = [];
   const seenIds = new Set();
-
-  for (const talentId of talentRefs) {
-    if (!talentId) continue;
-
-    // Try by ID
-    const talent = TalentRegistry.getById?.(talentId);
-    if (talent) {
-      const id = talent.id || talent._id;
-      if (id && !seenIds.has(id)) {
-        resolved.push(talent);
-        seenIds.add(id);
-      }
-      continue;
-    }
-
-    // Try by name (if talentId looks like a name)
-    const talentByName = TalentRegistry.getByName?.(talentId);
-    if (talentByName) {
-      const id = talentByName.id || talentByName._id;
-      if (id && !seenIds.has(id)) {
-        resolved.push(talentByName);
-        seenIds.add(id);
-      }
+  for (const talentRef of talentRefs) {
+    const talent = resolveTalentReference(talentRef);
+    const id = getTalentIdentity(talent);
+    if (talent && id && !seenIds.has(id)) {
+      resolved.push(talent);
+      seenIds.add(id);
     }
   }
-
   return resolved;
 }
 
-/**
- * Emit diagnostic for zero-talent trees (once per tree)
- */
 function emitDiagnostic(tree, methods) {
-  const key = `${tree.id || tree.name}`;
-  if (diagnosticCache.has(key)) {
-    return; // Already logged
-  }
+  const key = `zero:${tree?.id || tree?.name}`;
+  if (diagnosticCache.has(key)) return;
   diagnosticCache.add(key);
 
   SWSELogger.warn(
-    `[TalentTreeMembershipAuthority] DIAGNOSTIC: Tree "${tree.name}" (id: ${tree.id}, sourceId: ${tree.sourceId || 'none'}) ` +
-    `resolved 0 talents. talent refs count: ${((tree.talentNames || []).length + (tree.talentIds || []).length)}. ` +
+    `[TalentTreeMembershipAuthority] DIAGNOSTIC: Tree "${tree?.name}" (id: ${tree?.id}, sourceId: ${tree?.sourceId || 'none'}) ` +
+    `resolved 0 talents. talent refs count: ${((tree?.talentNames || []).length + (tree?.talentIds || []).length)}. ` +
     `Methods tried: ${methods.join(', ')}. ` +
     `TalentRegistry total: ${TalentRegistry.count?.() || 0} talents.`
   );
 }
 
+function emitMembershipAudit(tree, audit) {
+  const expectedCount = Math.max(Number(tree?.talentCount) || 0, audit.claimedRefs.length);
+  const shouldWarn = audit.missingClaimRefs.length > 0 || (expectedCount > 0 && audit.resolvedCount < expectedCount);
+  const auditKey = `${shouldWarn ? 'warn' : 'debug'}:${tree?.id || tree?.name}:${audit.resolvedCount}:${audit.missingClaimRefs.join('|')}`;
+  if (auditCache.has(auditKey)) return;
+  auditCache.add(auditKey);
+
+  const payload = {
+    treeId: tree?.id || null,
+    treeName: tree?.name || null,
+    sourceStats: audit.sourceStats,
+    claimedCount: audit.claimedRefs.length,
+    expectedCount,
+    resolvedCount: audit.resolvedCount,
+    missingClaimRefs: audit.missingClaimRefs,
+    resolvedTalentNames: audit.resolvedTalents.map(talent => talent?.name || talent?.id || '(unknown)'),
+  };
+
+  if (shouldWarn) {
+    SWSELogger.warn('[TalentTreeMembershipAuthority] Talent tree hydration incomplete', payload);
+  } else {
+    SWSELogger.debug('[TalentTreeMembershipAuthority] Talent tree hydration audit', payload);
+  }
+}
+
 /**
- * Get talent membership for a tree with robust fallback chain
+ * Get talent membership for a tree with additive source merging.
  *
  * @param {Object} tree - Talent tree object with id, name, sourceId, talentIds
  * @returns {Promise<Array>} Array of resolved talent entries
  */
 export async function getTalentMembership(tree) {
-  if (!tree) {
-    return [];
-  }
+  if (!tree) return [];
 
-  // Ensure TalentRegistry is initialized
   if (!TalentRegistry.isInitialized?.()) {
     await TalentRegistry.initialize?.();
   }
 
-  // Load the registry
   const registry = await loadRegistry();
   const methodsTried = [];
+  const merged = [];
+  const seen = new Set();
+  const sourceStats = {};
 
-  // PRIMARY: talent-side membership. Talents declare which tree they belong to;
-  // tree-side talent lists are fallback hints only.
   methodsTried.push('talent-side-membership');
-  let resolved = tryTalentSideMembership(tree);
-  if (resolved.length > 0) {
-    SWSELogger.debug(
-      `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
-      `${resolved.length} talents found from talent-side tree fields`
-    );
-    return supplementKnownTreeMembership(tree, resolved);
-  }
+  mergeTalentList(merged, tryTalentSideMembership(tree), 'talent-side-membership', seen, sourceStats);
 
-  // FALLBACK 1: Try registry lookup
   const registryEntry = tryRegistryLookup(registry, tree);
+  const claimedRefs = getClaimedTalentRefs(tree, registryEntry);
+
   if (registryEntry && Array.isArray(registryEntry.talents)) {
     methodsTried.push('registry-lookup');
-    const resolved = [];
-    const seenIds = new Set();
-    const missingNames = [];
-
-    for (const talentName of registryEntry.talents) {
-      const talent = TalentRegistry.getByName?.(talentName);
-      if (talent) {
-        const talentId = talent.id || talent._id;
-        if (talentId && !seenIds.has(talentId)) {
-          resolved.push(talent);
-          seenIds.add(talentId);
-        }
-      } else {
-        missingNames.push(talentName);
-      }
+    const registryResolved = [];
+    for (const talentRef of registryEntry.talents) {
+      const talent = resolveTalentReference(talentRef);
+      if (talent) registryResolved.push(talent);
     }
-
-    if (resolved.length > 0) {
-      SWSELogger.debug(
-        `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
-        `${registryEntry.talents.length} registry talents → ${resolved.length} resolved` +
-        (missingNames.length > 0 ? ` (${missingNames.length} missing)` : '')
-      );
-      return supplementKnownTreeMembership(tree, resolved);
-    }
+    mergeTalentList(merged, registryResolved, 'registry-lookup', seen, sourceStats);
   }
 
-  // FALLBACK 2: Scan TalentRegistry by category
   methodsTried.push('registry-scan');
-  resolved = tryRegistryScan(tree);
-  if (resolved.length > 0) {
-    SWSELogger.debug(
-      `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
-      `${resolved.length} talents found via registry category scan`
-    );
-    return supplementKnownTreeMembership(tree, resolved);
-  }
+  mergeTalentList(merged, tryRegistryScan(tree), 'registry-scan', seen, sourceStats);
 
-  // FALLBACK 3: Resolve talentIds directly
   methodsTried.push('talentIds-resolution');
-  resolved = tryTalentIdResolution(tree);
-  if (resolved.length > 0) {
-    SWSELogger.debug(
-      `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
-      `${resolved.length} talents resolved from talentIds array`
-    );
-    return supplementKnownTreeMembership(tree, resolved);
+  mergeTalentList(merged, tryTalentIdResolution(tree), 'talentIds-resolution', seen, sourceStats);
+
+  const supplemented = supplementKnownTreeMembership(tree, merged);
+  const finalSeen = new Set(supplemented.map(talent => normalizeTalentRefKey(talent?.name || talent?.id || talent?._id)).filter(Boolean));
+  const missingClaimRefs = claimedRefs.filter(ref => !resolveTalentReference(ref) && !finalSeen.has(normalizeTalentRefKey(ref)));
+
+  emitMembershipAudit(tree, {
+    sourceStats,
+    claimedRefs,
+    missingClaimRefs,
+    resolvedCount: supplemented.length,
+    resolvedTalents: supplemented,
+  });
+
+  if (supplemented.length > 0) {
+    return supplemented;
   }
 
-  // ZERO TALENT RESOLUTION - emit diagnostic
   emitDiagnostic(tree, methodsTried);
   return [];
 }
 
 /**
- * Clear the cached registry (for testing/reload)
+ * Clear the cached registry (for testing/reload).
  */
 export function clearCache() {
   cachedRegistry = null;
   registryLoadPromise = null;
+  diagnosticCache.clear();
+  auditCache.clear();
 }

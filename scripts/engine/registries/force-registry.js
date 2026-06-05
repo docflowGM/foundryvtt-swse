@@ -751,21 +751,30 @@ export class ForceRegistry {
       return null;
     }
 
-    // Determine which pack this entry came from
-    const packMap = {
+    // Prefer the origin pack recorded during registry normalization.  This is
+    // required for lightsaber form powers, which are type="power" but live in
+    // foundryvtt-swse.lightsaberformpowers rather than foundryvtt-swse.forcepowers.
+    const fallbackPackMap = {
       'power': 'forcepowers',
       'technique': 'forcetechniques',
       'secret': 'forcesecrets'
     };
-
-    const packSuffix = packMap[entry.type];
-    if (!packSuffix) {
-      return null;
-    }
-
     const systemId = game?.system?.id || 'foundryvtt-swse';
-    const packKey = `${systemId}.${packSuffix}`;
-    const pack = game?.packs?.get(packKey);
+    const fallbackSuffix = fallbackPackMap[entry.type];
+    const packCandidates = [
+      entry.pack,
+      fallbackSuffix ? `${systemId}.${fallbackSuffix}` : null
+    ].filter(Boolean);
+
+    let pack = null;
+    let selectedPackKey = null;
+    for (const packKey of packCandidates) {
+      pack = game?.packs?.get(packKey);
+      if (pack) {
+        selectedPackKey = packKey;
+        break;
+      }
+    }
 
     if (!pack) {
       return null;
@@ -774,7 +783,7 @@ export class ForceRegistry {
     try {
       return await pack.getDocument(id);
     } catch (err) {
-      SWSELogger.warn(`[ForceRegistry] Failed to fetch document ${id} from ${packKey}:`, err);
+      SWSELogger.warn(`[ForceRegistry] Failed to fetch document ${id} from ${selectedPackKey}:`, err);
       return null;
     }
   }

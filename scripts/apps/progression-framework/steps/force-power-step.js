@@ -677,19 +677,105 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   async _computeLegalPowers(actor, shell = null) {
     this._legalPowers = [];
 
-    // Build pending state including class-granted features
+    // Build pending state including class-granted features and feat choices made
+    // earlier in the same chargen/level-up session.
     const pending = this._buildPendingStateWithClassGrants(actor, shell);
+    const rejectedSamples = [];
 
     for (const power of this._allPowers) {
-      // PHASE 3.1: Pass pending state so prerequisites see class-granted features
-      const assessment = AbilityEngine.evaluateAcquisition(actor, power, pending);
+      try {
+        // PHASE 3.1: Pass pending state so prerequisites see class-granted features
+        const assessment = AbilityEngine.evaluateAcquisition(actor, power, pending);
 
-      if (assessment.legal) {
-        this._legalPowers.push(power);
+        if (assessment.legal) {
+          this._legalPowers.push(power);
+        } else if (rejectedSamples.length < 20) {
+          rejectedSamples.push({
+            id: power?.id || power?._id || null,
+            name: power?.name || '(unnamed power)',
+            reason: assessment?.reason || assessment?.message || assessment?.failureReason || null,
+            missing: assessment?.missing || assessment?.missingPrerequisites || null,
+          });
+        }
+      } catch (err) {
+        if (rejectedSamples.length < 20) {
+          rejectedSamples.push({
+            id: power?.id || power?._id || null,
+            name: power?.name || '(unnamed power)',
+            reason: `assessment exception: ${err.message}`,
+          });
+        }
       }
     }
 
+    if ((this._remainingPicks > 0 || this._totalPowerTraining > 0) && this._allPowers.length === 0) {
+      swseLogger.warn('[ForcePowerStep] Force Power entitlement exists but ForceRegistry returned no powers', {
+        entitlementSummary: this._entitlementSummary,
+        pending,
+      });
+    } else if ((this._remainingPicks > 0 || this._totalPowerTraining > 0) && this._legalPowers.length === 0) {
+      swseLogger.warn('[ForcePowerStep] Force Power entitlement exists but no legal powers resolved', {
+        entitlementSummary: this._entitlementSummary,
+        allPowerCount: this._allPowers.length,
+        pendingClass: pending?.selectedClass?.name || pending?.selectedClass || null,
+        pendingFeatNames: (pending?.selectedFeats || []).map(feat => feat?.name || feat?.label || feat).filter(Boolean),
+        grantedFeatNames: (pending?.grantedFeats || []).map(feat => feat?.name || feat?.label || feat).filter(Boolean),
+        rejectedSamples,
+      });
+    }
+
     swseLogger.debug(`[ForcePowerStep] Legal powers: ${this._legalPowers.length} of ${this._allPowers.length}`);
+  }
+
+  /**
+   * Convert any selection container to a flat array.
+   * @private
+   */
+  _asSelectionArray(value) {
+    if (!value) return [];
+    return Array.isArray(value) ? value : [value];
+  }
+
+  /**
+   * Collect pending selections from all known shell/session surfaces.
+   * @private
+   */
+  _collectPendingSelections(shell, key, characterDataValue = []) {
+    const values = [
+      characterDataValue,
+      shell?.getSelection?.(key),
+      shell?.buildIntent?.getSelection?.(key),
+      shell?.draftSelections?.[key],
+      shell?.draftSelections?.get?.(key),
+      shell?.committedSelections?.get?.(key),
+      shell?.progressionSession?.draftSelections?.[key],
+      shell?.progressionSession?.getSelection?.(key),
+    ];
+    const merged = [];
+    const seen = new Set();
+    for (const value of values) {
+      for (const entry of this._asSelectionArray(value)) {
+        if (!entry) continue;
+        const identity = entry.id || entry._id || entry.uuid || entry.name || entry.label || `${typeof entry}:${merged.length}`;
+        if (seen.has(identity)) continue;
+        seen.add(identity);
+        merged.push(entry);
+      }
+    }
+    return merged;
+  }
+
+  _getPendingClassSelection(shell, characterData = {}) {
+    return shell?.getSelection?.('class')
+      || shell?.buildIntent?.getSelection?.('class')
+      || shell?.committedSelections?.get?.('class')
+      || shell?.draftSelections?.class
+      || shell?.draftSelections?.get?.('class')
+      || shell?.progressionSession?.draftSelections?.class
+      || shell?.progressionSession?.getSelection?.('class')
+      || characterData.classes?.[0]
+      || characterData.class
+      || null;
   }
 
   /**
@@ -699,15 +785,15 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   _buildPendingStateWithClassGrants(actor, shell = null) {
     const characterData = shell?.buildIntent?.toCharacterData?.() || shell?.progressionSession?.toCharacterData?.() || {};
     const basePending = {
-      selectedClass: shell?.committedSelections?.get?.('class') || shell?.progressionSession?.draftSelections?.class || characterData.classes?.[0] || null,
-      selectedFeats: characterData.feats || shell?.progressionSession?.draftSelections?.feats || [],
-      selectedTalents: characterData.talents || shell?.progressionSession?.draftSelections?.talents || [],
-      selectedSkills: [],
-      skillRanks: {},
+      selectedClass: this._getPendingClassSelection(shell, characterData),
+      selectedFeats: this._collectPendingSelections(shell, 'feats', characterData.feats),
+      selectedTalents: this._collectPendingSelections(shell, 'talents', characterData.talents),
+      selectedSkills: this._collectPendingSelections(shell, 'skills', characterData.skills),
+      skillRanks: characterData.skillRanks || shell?.draftSelections?.skillRanks || shell?.progressionSession?.draftSelections?.skillRanks || {},
       grantedFeats: [],
     };
 
-    // Derive class-granted features
+    // Derive class-granted features.
     const selectedClass = basePending.selectedClass;
     if (selectedClass && actor) {
       const ledger = buildClassGrantLedger(actor, selectedClass, basePending);

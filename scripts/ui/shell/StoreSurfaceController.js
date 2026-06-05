@@ -494,23 +494,49 @@ export class StoreSurfaceController {
       if (!target) return;
       const selectors = [
         '.swse-store-surface__grid',
+        '.swse-store-surface__cards-grid',
         '.swse-store-surface__browse',
+        '.swse-store-surface__browse-layout',
         '.swse-store-surface__screen',
         '.swse-store-surface__pane',
         '.swse-store-surface__rail',
+        '.swse-store-surface__detail-shell',
+        '.swse-store-surface__cart-list',
+        '.swse-store-surface__mini-cart-list',
+        '.swse-store-surface__checkout-manifest',
+        '.swse-store-surface__history-list',
         '.swse-store-surface__card-expand-desc',
         '.swse-store-surface__card-expand-tech',
         '.swse-store-surface__card-expand-reviews',
         '.swse-store-surface__detail-section--scroll',
         '.swse-store-surface__detail-card'
       ];
-      const scroller = selectors
-        .map(sel => target.closest(sel))
-        .find(el => el && el.scrollHeight > el.clientHeight + 2)
-        || root.querySelector('.swse-store-surface__screen');
-      if (!scroller || scroller.scrollHeight <= scroller.clientHeight + 2) return;
+      const candidates = [];
+      for (const sel of selectors) {
+        const el = target.closest(sel);
+        if (el && !candidates.includes(el)) candidates.push(el);
+      }
+      for (const sel of [
+        '.swse-store-surface__cards-grid',
+        '.swse-store-surface__rail',
+        '.swse-store-surface__screen'
+      ]) {
+        const el = root.querySelector(sel);
+        if (el && !candidates.includes(el)) candidates.push(el);
+      }
+
+      const delta = Number(event.deltaY || 0);
+      const direction = Math.sign(delta);
+      const scroller = candidates.find(el => {
+        if (!el || el.scrollHeight <= el.clientHeight + 2) return false;
+        if (direction > 0) return el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+        if (direction < 0) return el.scrollTop > 0;
+        return true;
+      });
+      if (!scroller) return;
+
       const before = scroller.scrollTop;
-      scroller.scrollTop += event.deltaY;
+      scroller.scrollTop += delta;
       if (scroller.scrollTop !== before) {
         event.preventDefault();
         event.stopPropagation();

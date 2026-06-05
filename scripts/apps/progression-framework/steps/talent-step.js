@@ -48,6 +48,19 @@ function emitTalentStepTrace(label, payload = {}) {
   }
 }
 
+const talentStepHydrationAuditCache = new Set();
+
+function normalizeTalentAuditName(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 
 function normalizeTalentTreeAccessKey(value) {
   return String(value ?? '')
@@ -1252,6 +1265,38 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
+
+  _emitTreeHydrationAudit(tree, talents = []) {
+    const expectedNames = [
+      ...(Array.isArray(tree?.talentNames) ? tree.talentNames : []),
+      ...(Array.isArray(tree?.system?.talentNames) ? tree.system.talentNames : []),
+    ].map(value => String(value ?? '').trim()).filter(Boolean);
+    const expectedCount = Math.max(Number(tree?.talentCount) || 0, expectedNames.length);
+    const resolvedNames = new Set((talents || []).map(talent => normalizeTalentAuditName(talent?.name || talent?.id || talent?._id)).filter(Boolean));
+    const missingExpectedNames = expectedNames.filter(name => !resolvedNames.has(normalizeTalentAuditName(name)));
+
+    const shouldWarn = missingExpectedNames.length > 0 || (expectedCount > 0 && talents.length < expectedCount);
+    const key = `${shouldWarn ? 'warn' : 'debug'}:${tree?.id || tree?.name}:${talents.length}:${missingExpectedNames.join('|')}`;
+    if (talentStepHydrationAuditCache.has(key)) return;
+    talentStepHydrationAuditCache.add(key);
+
+    const payload = {
+      treeId: tree?.id || null,
+      treeName: tree?.name || null,
+      expectedCount,
+      expectedNames,
+      resolvedCount: talents.length,
+      resolvedTalentNames: talents.map(talent => talent?.name || talent?.id || '(unknown)'),
+      missingExpectedNames,
+    };
+
+    if (shouldWarn) {
+      SWSELogger.warn('[TalentStep] Talent tree hydration incomplete after membership resolution', payload);
+    } else {
+      emitTalentStepTrace('TREE_TALENT_HYDRATION_AUDIT', payload);
+    }
+  }
+
   /**
    * Get talents for a specific tree
    * HARDENED: Verify registry initialization, log missing talents, provide diagnostics
@@ -1276,6 +1321,7 @@ export class TalentStep extends ProgressionStepPlugin {
       resolvedTalentNames: talents.map(t => t?.name || t?.id || '(unknown)'),
       talentCount: talents.length,
     });
+    this._emitTreeHydrationAudit(tree, talents);
 
     if (talents.length > 0) {
       SWSELogger.debug(

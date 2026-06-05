@@ -14,7 +14,8 @@
       "type": "energy"
     },
     "source": "Core Rulebook",
-    "description": "A standard lightsaber with a single blade. The fundamental weapon of the Jedi and other Force users."
+    "description": "A standard lightsaber with a single blade. The fundamental weapon of the Jedi and other Force users.",
+    "cost": 3000
   },
   {
     "id": "lightsaber-chassis-double",
@@ -25,13 +26,14 @@
     "chassisId": "double",
     "constructible": true,
     "baseBuildDc": 20,
-    "baseCost": 3000,
+    "baseCost": 3500,
     "damage": {
       "dice": "2d8",
       "type": "energy"
     },
     "source": "Core Rulebook",
-    "description": "A double-bladed lightsaber with blades on both ends. Requires specialized training to use effectively."
+    "description": "A double-bladed lightsaber with blades on both ends. Requires specialized training to use effectively.",
+    "cost": 7000
   },
   {
     "id": "lightsaber-crystal-ilum",
@@ -42,7 +44,12 @@
     "upgradeSlots": 1,
     "rarity": "common",
     "buildDcModifier": 0,
-    "compatibleChassis": ["standard", "double", "short", "crossguard"],
+    "compatibleChassis": [
+      "standard",
+      "double",
+      "short",
+      "crossguard"
+    ],
     "modifiers": [
       {
         "type": "attack",
@@ -62,7 +69,9 @@
     "upgradeSlots": 1,
     "rarity": "common",
     "buildDcModifier": 0,
-    "compatibleChassis": ["*"],
+    "compatibleChassis": [
+      "*"
+    ],
     "modifiers": [
       {
         "type": "attack",
@@ -82,7 +91,9 @@
     "upgradeSlots": 1,
     "rarity": "rare",
     "buildDcModifier": 0,
-    "compatibleChassis": ["*"],
+    "compatibleChassis": [
+      "*"
+    ],
     "modifiers": [
       {
         "type": "attack",
@@ -102,7 +113,9 @@
     "upgradeSlots": 0,
     "rarity": "common",
     "buildDcModifier": 0,
-    "compatibleChassis": ["*"],
+    "compatibleChassis": [
+      "*"
+    ],
     "modifiers": [],
     "source": "Core Rulebook",
     "description": "A mechanical safety lock for the lightsaber blade. Prevents accidental activation. No mechanical game effect."

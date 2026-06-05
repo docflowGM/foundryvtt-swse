@@ -192,12 +192,34 @@ static async collectAvailablePowers(actor) {
   try {
     await ForceRegistry.ensureInitialized?.();
     const entries = ForceRegistry.getByType?.('power') || [];
-    const docs = [];
+    const powers = [];
     for (const entry of entries) {
       const doc = await ForceRegistry.getDocumentByRef?.(entry, 'power');
-      if (doc) docs.push(doc);
+      if (doc) {
+        powers.push(doc);
+        continue;
+      }
+
+      // Lightsaber form powers and other registry/data-backed entries may not
+      // always hydrate as compendium documents.  Do not drop them from picker
+      // inventory; registry entries carry the same acquisition-facing fields.
+      powers.push({
+        _id: entry.id,
+        id: entry.id,
+        uuid: entry.uuid,
+        name: entry.name,
+        type: entry.type === 'power' ? 'force-power' : entry.type,
+        img: entry.img || 'icons/svg/item-bag.svg',
+        system: {
+          ...(entry.system || {}),
+          category: entry.category || entry.system?.category,
+          tags: Array.isArray(entry.tags) ? entry.tags : (entry.system?.tags || []),
+          description: entry.description || entry.system?.description || entry.system?.effect || ''
+        },
+        flags: { swse: { forceRegistryFallback: true, sourcePack: entry.pack || null } }
+      });
     }
-    return docs;
+    return powers;
   } catch (e) {
     swseLogger.error('ForcePowerEngine: Failed to collect powers from registry', e);
     return [];

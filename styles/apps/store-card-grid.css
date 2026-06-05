@@ -766,3 +766,66 @@
   margin: 0 4px 0 0;
   min-width: 44px;
 }
+
+/* ============================================================ */
+/* Standalone store beta scroll authority repair               */
+/* ============================================================ */
+.swse-app-store .window-content,
+.swse-app-store .window-content > .swse-sheet,
+.swse-app-store .window-content > .swse-sheet > .swse-store-ui,
+.swse-app-store .swse-sheet,
+.swse-app-store .swse-store-ui.store-shell,
+.swse-store-ui.store-shell {
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
+.swse-app-store .swse-store-ui.store-shell,
+.swse-store-ui.store-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.swse-store-ui .store-header,
+.swse-store-ui .store-tabs,
+.swse-store-ui .store-filter-bar,
+.swse-store-ui .store-scanline {
+  flex: 0 0 auto !important;
+}
+
+.swse-store-ui .store-viewport {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.swse-store-ui .store-pane,
+.swse-store-ui .store-pane-browse {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse-store-ui .store-pane-browse .card-grid-container,
+.swse-store-ui .store-detail-main,
+.swse-store-ui .store-cart-list,
+.swse-store-ui .store-history-layout,
+.swse-store-ui .checkout-ledger-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+}

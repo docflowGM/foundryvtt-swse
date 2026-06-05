@@ -215,7 +215,8 @@ export class ChargenDataCache {
       talents: 'foundryvtt-swse.talents',
       classes: 'foundryvtt-swse.classes',
       droids: 'foundryvtt-swse.droids',
-      forcePowers: 'foundryvtt-swse.forcepowers'
+      forcePowers: 'foundryvtt-swse.forcepowers',
+      lightsaberFormPowers: 'foundryvtt-swse.lightsaberformpowers'
     };
 
     const packs = {};
@@ -369,6 +370,31 @@ export class ChargenDataCache {
 
     if (errors.length > 0) {
       SWSELogger.warn(`[CACHE-LOAD] Failed to load: ${errors.join(', ')}`);
+    }
+
+    // Lightsaber form powers are Force Power Suite options.  The legacy
+    // chargen picker historically only loaded foundryvtt-swse.forcepowers,
+    // which made form powers invisible even though the v2 ForceRegistry treats
+    // foundryvtt-swse.lightsaberformpowers as the same selectable domain.
+    if (Array.isArray(packs.lightsaberFormPowers) && packs.lightsaberFormPowers.length > 0) {
+      const seen = new Set((packs.forcePowers || []).map(p => String(p._id || p.id || p.name || '').toLowerCase()));
+      const formPowers = packs.lightsaberFormPowers
+        .map(power => ({
+          ...power,
+          system: {
+            ...(power.system || {}),
+            category: power.system?.category || 'lightsaber-form',
+            tags: Array.from(new Set([...(Array.isArray(power.system?.tags) ? power.system.tags : []), 'lightsaber-form', 'form-power']))
+          }
+        }))
+        .filter(power => {
+          const key = String(power._id || power.id || power.name || '').toLowerCase();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      packs.forcePowers = [...(packs.forcePowers || []), ...formPowers];
+      SWSELogger.log(`[CACHE-LOAD] Force powers merged with ${formPowers.length} lightsaber form powers; total=${packs.forcePowers.length}`);
     }
 
     // Summary of loaded packs

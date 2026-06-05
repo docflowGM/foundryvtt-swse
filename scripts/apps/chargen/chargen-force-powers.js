@@ -66,24 +66,9 @@ export async function _onSelectForcePower(event) {
       selectedPowers: this.characterData.powers || []
     };
 
-    // Check power level requirement (must have 5 levels in Force-using class per power level)
-    const powerLevel = power.system?.powerLevel || 1;
-    const requiredLevels = powerLevel * 5;
-    // Calculate force levels from classes - look up class docs to check force sensitivity
-    const forceLevels = (this.characterData.classes || [])
-      .filter(c => {
-        // Defensive lookup: try ID first, fall back to name
-        const classDoc = _findClassItem(this._packs?.classes || [], c);
-        return classDoc?.system?.forceSensitive === true;
-      })
-      .reduce((sum, cls) => sum + (cls.level || 1), 0);
-
-    if (forceLevels < requiredLevels) {
-      ui.notifications.warn(
-        `Cannot select "${power.name}": Requires ${requiredLevels} levels in a Force-using class (you have ${forceLevels})`
-      );
-      return;
-    }
+    // SWSE Force Training grants picks from the Force Power Suite. Do not treat
+    // system.powerLevel as a spell-level acquisition gate; migrated data uses it
+    // for metadata/DC grouping and that old filter hid valid level-1 choices.
 
     // Check other prerequisites
     const assessment = AbilityEngine.evaluateAcquisition(tempActor, power, pendingData);
@@ -126,6 +111,7 @@ export function _getForcePowersNeeded() {
   // This is the ACTUAL source of the capability, not the Jedi class itself
 
   const selectedFeats = this.characterData.feats || [];
+  const featName = (feat) => String(feat?.name || feat?.label || feat || '').toLowerCase();
 
   // Get feats granted by the selected class
   const selectedClass = this.characterData.classes?.[0];
@@ -139,9 +125,9 @@ export function _getForcePowersNeeded() {
 
   // Check if Force Sensitivity feat is present (via selection OR class grant)
   const hasForceSensitivity = selectedFeats.some(f =>
-    f.name.toLowerCase().includes('force sensitivity')
+    featName(f).includes('force sensitivity')
   ) || grantedFeats.some(name =>
-    name.toLowerCase().includes('force sensitivity')
+    String(name || '').toLowerCase().includes('force sensitivity')
   );
 
   if (hasForceSensitivity) {
@@ -152,7 +138,7 @@ export function _getForcePowersNeeded() {
   // Check 2: Force Training feat (each grants 1 + WIS/CHA modifier, min 1)
   // Force Training itself is the source - not dependent on other feats
   const forceTrainingFeats = selectedFeats.filter(f =>
-    f.name.toLowerCase().includes('force training')
+    featName(f).includes('force training')
   );
 
   if (forceTrainingFeats.length > 0) {
@@ -265,25 +251,15 @@ export async function _getAvailableForcePowers() {
     return [];
   }
 
-  // For level 1 characters, only show level 1 force powers
-  // Higher level force powers require 5 levels per power level in a Force-using class
-  const characterLevel = this.characterData.level || 1;
-  // Calculate force levels from classes - look up class docs to check force sensitivity
-  const forceLevels = (this.characterData.classes || [])
-    .filter(c => {
-      // Defensive lookup: try ID first, fall back to name
-      const classDoc = _findClassItem(this._packs?.classes || [], c);
-      return classDoc?.system?.forceSensitive === true;
-    })
-    .reduce((sum, cls) => sum + (cls.level || 1), 0);
+  // SWSE Saga does not gate ordinary Force Training picks by a spell-like
+  // "power level" progression.  Several migrated compendium records use
+  // system.powerLevel as an activation/DC grouping field; treating that field
+  // as a 5-level acquisition requirement hid valid powers such as Corruption.
+  // Eligibility is handled by the prerequisite engine and by the Force Training
+  // slot budget, so the picker should enumerate the full Force Power Suite.
+  const availablePowers = [...this._packs.forcePowers];
 
-  const availablePowers = this._packs.forcePowers.filter(power => {
-    const powerLevel = power.system?.powerLevel || 1;
-    const requiredLevels = powerLevel * 5;
-    return forceLevels >= requiredLevels;
-  });
-
-  SWSELogger.log(`CharGen | Available force powers: ${availablePowers.length} (character has ${forceLevels} force-using class levels)`);
+  SWSELogger.log(`CharGen | Available force powers: ${availablePowers.length} selectable suite options`);
 
   // Add suggestion metadata to force powers
   try {

@@ -14,6 +14,7 @@ import { resolveClassModel } from './class-resolution.js';
 import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel, getClassLevelProgressionEntry } from './levelup-event-context.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/services/pending-entitlement-service.js';
 
 /**
  * Resolve Force Power entitlements from shell and engine state
@@ -54,18 +55,47 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       shell?.getSelection?.('feats'),
       shell?.buildIntent?.getSelection?.('feats'),
       shell?.draftSelections?.feats,
+      shell?.draftSelections?.get?.('feats'),
       shell?.committedSelections?.get?.('feats'),
       shell?.progressionSession?.draftSelections?.feats,
+      shell?.progressionSession?.getSelection?.('feats'),
     ];
     let count = 0;
     for (const value of containers) {
       const entries = Array.isArray(value) ? value : (value ? [value] : []);
+      let containerCount = 0;
       for (const entry of entries) {
         const name = normalizeGrantName(entry?.name || entry?.label || entry?.title || entry);
-        if (name === 'force training') count += Number(entry?.count || 1) || 1;
+        if (name === 'force training') containerCount += Number(entry?.count || 1) || 1;
       }
+      count = Math.max(count, containerCount);
     }
     return count;
+  };
+
+  const collectPendingEntitlements = () => {
+    const containers = [
+      shell?.getSelection?.('pendingEntitlements'),
+      shell?.buildIntent?.getSelection?.('pendingEntitlements'),
+      shell?.draftSelections?.pendingEntitlements,
+      shell?.draftSelections?.get?.('pendingEntitlements'),
+      shell?.committedSelections?.get?.('pendingEntitlements'),
+      shell?.progressionSession?.draftSelections?.pendingEntitlements,
+      shell?.progressionSession?.getSelection?.('pendingEntitlements'),
+    ];
+    const entries = [];
+    const seen = new Set();
+    for (const value of containers) {
+      const list = Array.isArray(value) ? value : (value ? [value] : []);
+      for (const entry of list) {
+        if (!entry) continue;
+        const key = entry.id || entry._id || `${entry.type || ''}:${entry.sourceId || ''}:${entry.sourceName || ''}:${entry.count || ''}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        entries.push(entry);
+      }
+    }
+    return entries;
   };
 
   const actorHasForceSensitivity = () => {
@@ -234,16 +264,31 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
       let finalForceTrainingSlots = forceTrainingSlots;
       const pendingForceTrainingCount = collectPendingForceTrainingCount();
+      const pendingEntitlements = collectPendingEntitlements();
+      const pendingEntitlementSlots = PendingEntitlementService.countUnspentByType(
+        pendingEntitlements,
+        'force_power_pick'
+      );
       if (pendingForceTrainingCount > 0 && finalForceTrainingSlots === 0) {
         const slotsPerInstance = FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance?.(actor, shell) || 1;
         finalForceTrainingSlots = pendingForceTrainingCount * slotsPerInstance;
         reasons.push(`Pending Force Training selection slots: ${finalForceTrainingSlots}`);
       }
+      if (pendingEntitlementSlots > finalForceTrainingSlots) {
+        finalForceTrainingSlots = pendingEntitlementSlots;
+        reasons.push(`Pending Force Power entitlement slots: ${pendingEntitlementSlots}`);
+      }
 
       if (finalForceTrainingSlots > 0) {
         totalEntitlements += finalForceTrainingSlots;
         reasons.push(`Force Training entitlement slots: ${finalForceTrainingSlots}`);
-        diagnostics.forceTrainingEntitlements = { total: finalForceTrainingSlots, entries: forceTrainingEntitlements.length, pendingForceTrainingCount };
+        diagnostics.forceTrainingEntitlements = {
+          total: finalForceTrainingSlots,
+          entries: forceTrainingEntitlements.length,
+          pendingForceTrainingCount,
+          pendingEntitlementCount: pendingEntitlements.length,
+          pendingEntitlementSlots,
+        };
       }
     } catch (entitlementErr) {
       swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Training entitlement exception for ${actorName}`, {
@@ -278,10 +323,21 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
     // Already selected (from pending or actor state)
     try {
-      const pendingForcePowers = shell?.buildIntent?.getSelection?.('forcePowers') || [];
-      const pendingCount = Array.isArray(pendingForcePowers)
-        ? pendingForcePowers.reduce((sum, p) => sum + (p.count || 1), 0)
-        : 0;
+      const pendingContainers = [
+        shell?.getSelection?.('forcePowers'),
+        shell?.buildIntent?.getSelection?.('forcePowers'),
+        shell?.draftSelections?.forcePowers,
+        shell?.draftSelections?.get?.('forcePowers'),
+        shell?.committedSelections?.get?.('forcePowers'),
+        shell?.progressionSession?.draftSelections?.forcePowers,
+        shell?.progressionSession?.getSelection?.('forcePowers'),
+      ];
+      let pendingCount = 0;
+      for (const value of pendingContainers) {
+        const entries = Array.isArray(value) ? value : (value ? [value] : []);
+        const containerCount = entries.reduce((sum, entry) => sum + (Number(entry?.count || 1) || 1), 0);
+        pendingCount = Math.max(pendingCount, containerCount);
+      }
 
       const actorCount = actor?.system?.progression?.forcePowers?.length ?? 0;
       alreadySelected = isLevelUpLike ? pendingCount : (pendingCount > 0 ? pendingCount : actorCount);

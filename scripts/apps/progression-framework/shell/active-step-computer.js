@@ -216,7 +216,7 @@ export class ActiveStepComputer {
 
         // Force powers: applicable if entitlements > used count
         case 'force-powers':
-          return await this._hasForcePowerChoices(actor, progressionSession);
+          return await this._hasForcePowerChoices(actor, progressionSession, mode);
 
         // Force secrets/techniques: applicable if entitlements exist
         case 'force-secrets':
@@ -709,24 +709,30 @@ export class ActiveStepComputer {
    * Check if force power entitlements exist and have unfilled slots.
    * @private
    */
-  async _hasForcePowerChoices(actor, progressionSession) {
+  async _hasForcePowerChoices(actor, progressionSession, mode = progressionSession?.mode || null) {
     try {
       const { resolveForcePowerEntitlements } = await import(
         '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
       );
-      const entitlements = await resolveForcePowerEntitlements(progressionSession, actor);
+      const shellLike = {
+        ...(progressionSession || {}),
+        actor: progressionSession?.actor || actor || null,
+        mode: mode || progressionSession?.mode || null,
+      };
+      const entitlements = await resolveForcePowerEntitlements(shellLike, actor);
       if (!(entitlements.remaining > 0)) return false;
-      const isLevelUpLike = progressionSession?.mode === 'levelup';
+      const isLevelUpLike = (mode || progressionSession?.mode || shellLike.mode) === 'levelup';
       if (!isLevelUpLike) return true;
 
       // Level-up should not open the Force Power surface solely because the
       // actor/class has Force access metadata. The entitlement resolver must
       // identify a concrete current-event source: explicit class force power
-      // grants or pending Force Training slot grants.
+      // grants, pending Force Training slot grants, or pending Force Power
+      // entitlements produced by the feat selection step.
       const manifest = buildLevelUpEntitlementManifest(actor, progressionSession);
       const classGrantCount = Number(manifest?.choices?.forcePowerChoices || 0) || 0;
       const hasConcreteReason = (entitlements.reasons || []).some(reason =>
-        /force training|force_power_grants|force power entitlement|class level/i.test(String(reason || ''))
+        /force training|force_power_grants|force power entitlement|pending force power|class level/i.test(String(reason || ''))
       );
       return classGrantCount > 0 || hasConcreteReason;
     } catch (err) {
@@ -954,7 +960,8 @@ export class ActiveStepComputer {
           return await this._checkPrerequisiteActivation(
             node,
             actor,
-            progressionSession
+            progressionSession,
+            mode
           );
 
         case ActivationPolicy.CONDITIONAL:
@@ -990,12 +997,12 @@ export class ActiveStepComputer {
    * @returns {Promise<boolean>}
    * @private
    */
-  async _checkPrerequisiteActivation(node, actor, progressionSession) {
+  async _checkPrerequisiteActivation(node, actor, progressionSession, mode = progressionSession?.mode || null) {
     // Force powers: use the same shell-aware entitlement resolver used by
     // applicability. This sees pending class auto-grants such as Jedi's Force
     // Sensitivity during chargen, not just already-created actor feat items.
     if (node.nodeId === 'force-powers') {
-      return await this._hasForcePowerChoices(actor, progressionSession);
+      return await this._hasForcePowerChoices(actor, progressionSession, mode);
     }
 
     // Force secrets: PHASE 3 - check real class grant budget (not proxy signals)
