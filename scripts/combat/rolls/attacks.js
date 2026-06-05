@@ -131,6 +131,20 @@ function buildExtraWeaponDiceFormula(baseFormula, extraDice) {
   return ` + ${count}${die}`;
 }
 
+const DAMAGE_DIE_LADDER = [2, 3, 4, 6, 8, 10, 12];
+
+function stepDamageDieFormula(baseFormula, steps = 0) {
+  const count = Number(steps ?? 0);
+  if (!Number.isFinite(count) || count === 0) return String(baseFormula ?? '1d6');
+  return String(baseFormula ?? '1d6').replace(/(\d*)d(\d+)/gi, (match, diceCount, sidesText) => {
+    const sides = Number(sidesText);
+    const index = DAMAGE_DIE_LADDER.indexOf(sides);
+    if (index < 0) return match;
+    const nextIndex = Math.max(0, Math.min(DAMAGE_DIE_LADDER.length - 1, index + count));
+    return `${diceCount || '1'}d${DAMAGE_DIE_LADDER[nextIndex]}`;
+  });
+}
+
 /**
  * Compute complete attack bonus from all SWSE factors.
  * PHASE 4: Includes state-dependent modifiers
@@ -319,7 +333,7 @@ export async function rollDamage(actor, weapon, options = {}) {
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
   const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
 
-  const base = weapon.system?.damage ?? weapon.damage ?? '1d6';
+  const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
   const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
   const formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
 
@@ -386,7 +400,9 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
 
   const rollFormula = `1d20 + ${atkBonus}`;
-  const dmgFormula = `${weapon.system?.damage ?? weapon.damage ?? '1d6'} + ${dmgBonus}`;
+  const dmgBase = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
+  const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
+  const dmgFormula = `${dmgBase}${dmgExtraDice} + ${dmgBonus}`;
 
   const attackRoll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
   const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(dmgFormula);

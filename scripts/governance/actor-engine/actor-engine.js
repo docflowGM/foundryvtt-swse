@@ -2022,8 +2022,12 @@ export const ActorEngine = {
         return { success: false, reason: 'No Second Wind uses remaining' };
       }
 
-      // Healing amount delegated to SecondWindRules
-      const heal = SecondWindRules.calculateHealingAmount(maxHP, conScore);
+      // Healing amount delegated to SecondWindRules, then adjusted by explicit feat rules.
+      let heal = SecondWindRules.calculateHealingAmount(maxHP, conScore) + Number(secondWindFeatRules.extraHealing || 0);
+      const impetuousMoveSelected = options.impetuousMove === true || options.halfHealingForMovement === true;
+      if (secondWindFeatRules.halfHealingForMovement && impetuousMoveSelected) {
+        heal = Math.max(0, Math.floor(heal / 2));
+      }
 
       const newHP = Math.min(currentHP + heal, maxHP);
       const actualHealing = newHP - currentHP;
@@ -2053,7 +2057,7 @@ export const ActorEngine = {
         improvements['system.actions.moveAction'] = (actor.system.actions?.moveAction ?? 0) + 1;
       }
 
-      if (secondWindFeatRules.grantMovementOnUse) {
+      if (secondWindFeatRules.grantMovementOnUse && (!secondWindFeatRules.halfHealingForMovement || impetuousMoveSelected)) {
         improvements['system.actions.movement'] = (actor.system.actions?.movement ?? 0) + 1;
       }
 
@@ -2066,6 +2070,12 @@ export const ActorEngine = {
         await actor.setFlag?.('foundryvtt-swse', 'forcefulRecoveryPending', {
           source: 'Forceful Recovery',
           note: 'Regain one expended Force power after catching a Second Wind.',
+          timestamp: Date.now()
+        });
+      }
+      if (secondWindFeatRules.delayedHealing) {
+        await actor.setFlag?.('foundryvtt-swse', 'delayedSecondWindHealing', {
+          ...secondWindFeatRules.delayedHealing,
           timestamp: Date.now()
         });
       }
@@ -2092,7 +2102,8 @@ export const ActorEngine = {
         conditionImproved: improvedSecondWind ? true : false,
         newCondition: improvedSecondWind ? Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1) : undefined,
         grantedMoveAction: secondWindFeatRules.grantMoveActionOnUse ? true : undefined,
-        grantedMovement: secondWindFeatRules.grantMovementOnUse ? true : undefined
+        grantedMovement: (secondWindFeatRules.grantMovementOnUse && (!secondWindFeatRules.halfHealingForMovement || impetuousMoveSelected)) ? true : undefined,
+        delayedHealing: secondWindFeatRules.delayedHealing ?? undefined
       };
 
     } catch (err) {
@@ -3795,6 +3806,7 @@ export const ActorEngine = {
       const level = Math.max(1, actor.system.level ?? 1);
       const isDroid = actor.type === 'droid';
       const bonusHP = actor.system.hp?.bonus ?? 0;
+      const featHPBonus = MetaResourceFeatResolver.getHitPointMaxBonus(actor);
 
       // Compute CON modifier from canonical persistent path (system.attributes),
       // falling back to compatibility mirror (system.abilities) for old actors.
@@ -3823,7 +3835,7 @@ export const ActorEngine = {
       // CANONICAL formula: base + per-level gains + CON at every level + bonus
       // DO NOT split into baseHP + levelGains + conGains separately (avoids misreading)
       const newHPMax = Math.max(1,
-        hpAtFirstLevel + (level - 1) * hpPerLevel + (conMod * level) + bonusHP
+        hpAtFirstLevel + (level - 1) * hpPerLevel + (conMod * level) + bonusHP + featHPBonus
       );
 
       // Guardrail: Only update if value changed (idempotency)
@@ -3836,6 +3848,7 @@ export const ActorEngine = {
           hpPerLevel,
           conMod,
           bonusHP,
+        featHPBonus,
           isDroid,
           result: newHPMax
         });
@@ -3850,6 +3863,7 @@ export const ActorEngine = {
         conTotal: conBase + conRacial + conEnhancement + conTemp,
         conMod,
         bonusHP,
+        featHPBonus,
         isDroid,
         oldValue: currentMax,
         newValue: newHPMax

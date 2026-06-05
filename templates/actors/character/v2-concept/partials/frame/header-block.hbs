@@ -82,6 +82,9 @@
       {{/unless}}
       <button type="button" data-action="open-settings-app" class="swse-concept-btn">Settings</button>
       <button type="button" data-action="toggle-help-mode" class="swse-concept-btn swse-concept-btn--help" title="{{helpLevelDescription}}">{{helpLevelLabel}}</button>
+      {{#if biographyPanel.identity.canEdit}}
+        <button type="button" data-action="reset-character" class="swse-concept-btn swse-concept-btn--danger" title="Reset this character to a blank slate">⟳ Reset</button>
+      {{/if}}
     </div>
   </div>
 

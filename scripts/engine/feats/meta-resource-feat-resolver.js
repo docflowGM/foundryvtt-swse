@@ -93,6 +93,80 @@ export class MetaResourceFeatResolver {
     return dieSize;
   }
 
+  static getHitPointMaxBonus(actor) {
+    let total = 0;
+    const level = Math.max(1, Number(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.progression?.level ?? 1) || 1);
+
+    for (const item of getActorFeatItems(actor)) {
+      const rules = getResourceRules(item, 'hitPoints');
+      for (const rule of rules) {
+        const value = Number(rule.value ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        switch (rule?.type) {
+          case 'MAX_BONUS_PER_LEVEL':
+            total += value * level;
+            break;
+          case 'MAX_BONUS':
+            total += value;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    // Compatibility fallback for older embedded actors that still have the feat
+    // but not the normalized resourceRules payload.
+    const hasNormalizedToughness = getActorFeatItems(actor).some(item => {
+      if (normalizeName(item?.name) !== 'toughness') return false;
+      return getResourceRules(item, 'hitPoints').length > 0;
+    });
+    if (!hasNormalizedToughness && this.hasFeat(actor, 'Toughness')) total += level;
+
+    return total;
+  }
+
+  static getDamageThresholdRules(actor) {
+    const rules = {
+      flatBonus: 0,
+      useWillAsBase: false,
+      useBestFortitudeOrWill: false,
+      displayNotes: []
+    };
+
+    for (const item of getActorFeatItems(actor)) {
+      const itemRules = getResourceRules(item, 'damageThreshold');
+      for (const rule of itemRules) {
+        switch (rule?.type) {
+          case 'FLAT_BONUS': {
+            const value = Number(rule.value ?? 0);
+            if (Number.isFinite(value)) rules.flatBonus += value;
+            break;
+          }
+          case 'USE_WILL_AS_BASE':
+            rules.useWillAsBase = true;
+            rules.useBestFortitudeOrWill = rule.useBest !== false;
+            break;
+          case 'DISPLAY_NOTE':
+            if (rule.note) rules.displayNotes.push({ sourceName: item.name, note: rule.note });
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    // Compatibility fallback for older embedded actors/packs. Improved Damage
+    // Threshold is intentionally not name-fallbacked here because older actor
+    // items often already expose it as a defense.damageThreshold modifier.
+    if (!rules.useWillAsBase && this.hasFeat(actor, 'Fight Through Pain')) {
+      rules.useWillAsBase = true;
+      rules.useBestFortitudeOrWill = true;
+    }
+
+    return rules;
+  }
+
   static getSecondWindRules(actor) {
     const rules = {
       extraUseMultiplier: 0,
@@ -103,6 +177,9 @@ export class MetaResourceFeatResolver {
       regainForcePowerOnUse: false,
       grantMoveActionOnUse: false,
       grantMovementOnUse: false,
+      extraHealing: 0,
+      halfHealingForMovement: false,
+      delayedHealing: null,
       displayNotes: []
     };
 
@@ -133,6 +210,30 @@ export class MetaResourceFeatResolver {
             break;
           case 'GRANT_MOVEMENT_ON_USE':
             rules.grantMovementOnUse = true;
+            break;
+          case 'EXTRA_HEALING': {
+            const value = Number(rule.value ?? 0);
+            if (Number.isFinite(value)) rules.extraHealing += value;
+            break;
+          }
+          case 'EXTRA_HEALING_CON_MOD_MULTIPLIER': {
+            const multiplier = Number(rule.multiplier ?? 1) || 1;
+            const minimum = Number(rule.minimum ?? 0) || 0;
+            const conMod = Number(actor?.system?.derived?.attributes?.con?.mod ?? actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0) || 0;
+            rules.extraHealing += Math.max(minimum, conMod * multiplier);
+            break;
+          }
+          case 'HALF_HEALING_FOR_MOVEMENT':
+            rules.halfHealingForMovement = true;
+            rules.grantMovementOnUse = true;
+            break;
+          case 'DELAYED_HEALING_ON_USE':
+            rules.delayedHealing = {
+              amountPerTurn: Number(rule.amountPerTurn ?? 5) || 5,
+              limit: rule.limit ?? 'fullHpOrEncounterEnd',
+              oncePer: rule.oncePer ?? 'day',
+              source: rule.source ?? 'Regenerative Healing'
+            };
             break;
           case 'DISPLAY_NOTE':
             if (rule.note) rules.displayNotes.push({ sourceName: item.name, note: rule.note });

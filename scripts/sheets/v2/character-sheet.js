@@ -1014,6 +1014,32 @@ export class SWSEV2CharacterSheet extends
       }, { signal });
     });
 
+    // Reset Character — destructive, requires confirmation
+    root.querySelectorAll('[data-action="reset-character"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const confirmed = await Dialog.confirm({
+          title: '⚠ Reset Character',
+          content: `
+            <div style="text-align:center;padding:8px 0 4px;">
+              <p style="font-size:14px;font-weight:700;color:#ff6b6b;margin:0 0 8px;">
+                This will reset <strong>${this.actor.name}</strong> to a blank slate.
+              </p>
+              <p style="font-size:12px;color:rgba(255,255,255,.65);margin:0;">
+                All items, progression, skills, and history will be permanently deleted.<br>
+                <strong>This cannot be undone.</strong>
+              </p>
+            </div>`,
+          yes: { label: 'Yes, Reset', icon: '<i class="fa-solid fa-trash"></i>' },
+          no:  { label: 'No, Go Back', icon: '<i class="fa-solid fa-arrow-left"></i>' },
+          defaultYes: false
+        });
+        if (!confirmed) return;
+        await this._resetCharacterToBlank();
+      }, { signal });
+    });
+
     root.querySelectorAll('[data-shell-action="open-home"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -5966,6 +5992,51 @@ const forcePoints = [];
         width: 340
       }).render(true);
     });
+  }
+
+  /**
+   * Wipe all items and reset system data to a blank-slate character.
+   * Called only after the user confirms the destructive reset dialog.
+   */
+  async _resetCharacterToBlank() {
+    const actor = this.actor;
+    try {
+      // Delete all embedded items
+      const itemIds = actor.items.map(i => i.id);
+      if (itemIds.length) {
+        await actor.deleteEmbeddedDocuments('Item', itemIds);
+      }
+
+      // Reset system fields to blank defaults
+      await actor.update({
+        'system.level': 1,
+        'system.race': '',
+        'system.class': '',
+        'system.classes': [],
+        'system.xp.value': 0,
+        'system.hp.value': 0,
+        'system.hp.max': 0,
+        'system.credits': 0,
+        'system.forcePoints.value': 0,
+        'system.forcePoints.max': 0,
+        'system.progression': {},
+        'system.skills': {},
+        'system.attributes': {},
+        'system.abilities': {},
+        'system.languages': [],
+        'system.languageIds': [],
+        'flags.foundryvtt-swse': {}
+      }, { source: 'reset-character' });
+
+      // Return to chargen surface
+      await this.setSurface('chargen', { source: 'reset', skipIntro: false });
+      await this.requestSurfaceRender({ reason: 'character-reset', surfaceId: 'chargen' });
+
+      ui?.notifications?.info?.(`${actor.name} has been reset.`);
+    } catch (err) {
+      swseLogger.error('[CharacterSheet] Reset failed:', err);
+      ui?.notifications?.error?.(`Reset failed: ${err.message}`);
+    }
   }
 
   async _createAndOpenBlankItem(itemType) {

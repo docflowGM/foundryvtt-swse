@@ -259,6 +259,90 @@ function contextManeuver(context = {}) {
   return normalizeKey(context.maneuver ?? context.attackManeuver ?? context.combatManeuver ?? context.actionId ?? context.actionType ?? "");
 }
 
+function weaponText(weapon) {
+  const system = weapon?.system ?? {};
+  const fields = [
+    weapon?.name,
+    system.weaponType,
+    system.weaponGroup,
+    system.group,
+    system.category,
+    system.type,
+    system.subtype,
+    system.traits?.join?.(" "),
+    system.properties?.join?.(" ")
+  ];
+  return fields.map(value => normalizeKey(value)).filter(Boolean).join(" ");
+}
+
+function weaponMatchesGroup(weapon, groups = [], context = {}) {
+  const wanted = (Array.isArray(groups) ? groups : [groups]).map(normalizeKey).filter(Boolean);
+  if (!wanted.length) return false;
+  const haystack = weaponText(weapon);
+  const attackType = getAttackType(weapon, context);
+
+  return wanted.some(group => {
+    if (!group) return false;
+    if (haystack.includes(group)) return true;
+    if ((group.includes("simple") && group.includes("melee")) && haystack.includes("simple") && attackType === "melee") return true;
+    if ((group.includes("simple") && group.includes("ranged")) && haystack.includes("simple") && attackType === "ranged") return true;
+    if (group.includes("lightsaber") && haystack.includes("lightsaber")) return true;
+    if (group.includes("unarmed") && isUnarmedWeapon(weapon, context)) return true;
+    return false;
+  });
+}
+
+function isUnarmedWeapon(weapon, context = {}) {
+  if (context.unarmed === true || context.attackFamily === "unarmed") return true;
+  const text = weaponText(weapon);
+  return text.includes("unarmed") || text.includes("natural-weapon") || normalizeKey(weapon?.name).includes("unarmed");
+}
+
+function collectWeaponRuleModifiers(actor, weapon, context = {}) {
+  const result = {
+    damageBonus: 0,
+    damageExtraWeaponDice: 0,
+    damageDiceStepBonus: 0,
+    damageDieStepIncreases: 0,
+    flags: {},
+    breakdown: []
+  };
+
+  for (const item of actorItems(actor)) {
+    const rules = item?.system?.abilityMeta?.rules;
+    if (!Array.isArray(rules)) continue;
+    for (const rule of rules) {
+      switch (rule?.type) {
+        case "WEAPON_DAMAGE_DIE_STEP": {
+          if (!weaponMatchesGroup(weapon, rule.weaponGroups ?? rule.groups ?? [], context)) continue;
+          const value = Number(rule.value ?? 0);
+          if (!Number.isFinite(value) || value === 0) continue;
+          result.damageExtraWeaponDice += value;
+          result.breakdown.push({ label: item.name, value, type: "damageExtraWeaponDice" });
+          break;
+        }
+        case "UNARMED_DAMAGE_STEP": {
+          if (!isUnarmedWeapon(weapon, context)) continue;
+          const value = Number(rule.value ?? rule.steps ?? rule.params?.steps ?? 0);
+          if (!Number.isFinite(value) || value === 0) continue;
+          result.damageDieStepIncreases += value;
+          result.breakdown.push({ label: item.name, value, type: "damageDieStepIncrease" });
+          break;
+        }
+        case "UNARMED_DOES_NOT_PROVOKE_AOO": {
+          if (!isUnarmedWeapon(weapon, context)) continue;
+          result.flags.unarmedDoesNotProvokeAoO = true;
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }
+
+  return result;
+}
+
 function weaponSupportsAutofire(weapon, context = {}) {
   if (context.autofire === true || context.attackMode === "autofire") return true;
   const system = weapon?.system ?? {};
@@ -271,7 +355,7 @@ function weaponSupportsAutofire(weapon, context = {}) {
 
 function optionAllowedForWeapon(option, weapon, context = {}) {
   const attackType = getAttackType(weapon, context);
-  if (option.requiresAttackType && attackType !== "unknown" && attackType !== option.requiresAttackType) {
+  if (option.requiresAttackType && option.requiresAttackType !== "any" && attackType !== "unknown" && attackType !== option.requiresAttackType) {
     return false;
   }
 
@@ -281,6 +365,15 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
 
   if (option.requiresAutofire && !weaponSupportsAutofire(weapon, context)) {
     return false;
+  }
+
+  if (option.requiresWeaponGroups && !weaponMatchesGroup(weapon, option.requiresWeaponGroups, context)) {
+    return false;
+  }
+
+  if (option.requiresOption) {
+    const combat = context?.combatOptions ?? context?.attackOptions ?? {};
+    if (!combat?.[option.requiresOption]) return false;
   }
 
   if (option.requiresRangeBand) {
@@ -377,6 +470,7 @@ export class CombatOptionResolver {
       damageBonus: 0,
       damageDiceStepBonus: 0,
       damageExtraWeaponDice: 0,
+      damageDieStepIncreases: 0,
       defenseModifiers: [],
       flags: {},
       breakdown: []
@@ -423,6 +517,14 @@ export class CombatOptionResolver {
       }
       if (option.control === "flag") result.flags[option.id] = true;
     }
+
+    const ruleModifiers = collectWeaponRuleModifiers(actor, weapon, options);
+    result.damageBonus += ruleModifiers.damageBonus || 0;
+    result.damageExtraWeaponDice += ruleModifiers.damageExtraWeaponDice || 0;
+    result.damageDiceStepBonus += ruleModifiers.damageDiceStepBonus || 0;
+    result.damageDieStepIncreases += ruleModifiers.damageDieStepIncreases || 0;
+    result.breakdown.push(...(ruleModifiers.breakdown || []));
+    Object.assign(result.flags, ruleModifiers.flags || {});
 
     return result;
   }

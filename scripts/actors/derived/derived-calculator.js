@@ -36,6 +36,7 @@ import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-sws
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 export class DerivedCalculator {
 
@@ -573,7 +574,13 @@ export class DerivedCalculator {
         const modifyFormula = safeGet('modifyDamageThresholdFormula', false);
 
         const fortitudeTotal = (updates['system.derived.defenses']?.fortitude?.total) ?? 10;
-        let damageThreshold = fortitudeTotal + getDamageThresholdSizeBonus(actor);
+        const willTotal = (updates['system.derived.defenses']?.will?.total) ?? actor?.system?.derived?.defenses?.will?.total ?? 10;
+        const thresholdFeatRules = MetaResourceFeatResolver.getDamageThresholdRules(actor);
+        const thresholdDefenseBase = thresholdFeatRules.useWillAsBase
+          ? (thresholdFeatRules.useBestFortitudeOrWill ? Math.max(fortitudeTotal, willTotal) : willTotal)
+          : fortitudeTotal;
+        const damageThresholdAdjustment = (modifierMap['defense.damageThreshold'] || 0) + (thresholdFeatRules.flatBonus || 0);
+        let damageThreshold = thresholdDefenseBase + getDamageThresholdSizeBonus(actor) + damageThresholdAdjustment;
 
         if (enableEnhanced && modifyFormula) {
 

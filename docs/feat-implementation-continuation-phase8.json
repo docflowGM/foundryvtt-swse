@@ -1,0 +1,160 @@
+{
+  "phase": "phase8-feat-implementation-continuation",
+  "purpose": "Continue implementing feats from the refreshed descriptions after phases 1-7, prioritizing mechanics that can be safely handled by existing resource, derived, combat option, and roll-context engines.",
+  "sourceInputs": [
+    "packs/feats.db after phases 1-7",
+    "/mnt/data/swse_feats.json",
+    "/mnt/data/swse_feat_index.json",
+    "/mnt/data/swse_feats_foundry_seed.json"
+  ],
+  "designPrinciples": [
+    "Do not add conditional bonuses to static sheet totals.",
+    "Use existing engines rather than parallel feat systems.",
+    "Convert false scaffold attack modifiers into explicit resource rules or attack options.",
+    "Only automate high-confidence mechanics; leave complex prompt/UI flows as partial metadata when the engine cannot fully apply them yet."
+  ],
+  "implementedGroups": {
+    "hitPointAndDamageThresholdRules": [
+      {
+        "feat": "Toughness",
+        "implementation": "resourceRules.hitPoints MAX_BONUS_PER_LEVEL",
+        "consumer": "ActorEngine.recomputeHP via MetaResourceFeatResolver.getHitPointMaxBonus",
+        "notes": "Old flat hp.max +5 modifier disabled because Toughness is +1 HP per character level."
+      },
+      {
+        "feat": "Improved Damage Threshold",
+        "implementation": "resourceRules.damageThreshold FLAT_BONUS +5",
+        "consumer": "DerivedCalculator via MetaResourceFeatResolver.getDamageThresholdRules",
+        "notes": "Old defense.damageThreshold modifier disabled to avoid double counting."
+      },
+      {
+        "feat": "Fight Through Pain",
+        "implementation": "resourceRules.damageThreshold USE_WILL_AS_BASE",
+        "consumer": "DerivedCalculator via MetaResourceFeatResolver.getDamageThresholdRules",
+        "notes": "Old fake attack modifier disabled. Damage Threshold now uses the better of Fortitude or Will when this feat is present."
+      }
+    ],
+    "secondWindRules": [
+      {
+        "feat": "Resurgence",
+        "implementation": "GRANT_MOVE_ACTION_ON_USE",
+        "consumer": "ActorEngine.applySecondWind"
+      },
+      {
+        "feat": "Recovering Surge",
+        "implementation": "CONDITION_RECOVERY_ON_USE",
+        "consumer": "SecondWindRules.calculateConditionRecovery and ActorEngine.applySecondWind"
+      },
+      {
+        "feat": "Unstoppable Combatant",
+        "implementation": "IGNORE_ENCOUNTER_CAP",
+        "consumer": "SecondWindRules.canUseSecondWind"
+      },
+      {
+        "feat": "Resurgent Vitality",
+        "implementation": "EXTRA_HEALING_CON_MOD_MULTIPLIER",
+        "consumer": "MetaResourceFeatResolver.getSecondWindRules and ActorEngine.applySecondWind"
+      },
+      {
+        "feat": "Fast Surge",
+        "implementation": "ACTION_COST free",
+        "consumer": "SecondWindRules.canUseSecondWind",
+        "notes": "False attack modifier disabled."
+      },
+      {
+        "feat": "Vitality Surge",
+        "implementation": "ALLOW_ABOVE_HALF_HP",
+        "consumer": "SecondWindRules.canUseSecondWind",
+        "notes": "False attack modifier disabled."
+      },
+      {
+        "feat": "Forceful Recovery",
+        "implementation": "REGAIN_FORCE_POWER_ON_USE",
+        "consumer": "ActorEngine.applySecondWind sets forcefulRecoveryPending flag"
+      },
+      {
+        "feat": "Impetuous Move",
+        "implementation": "HALF_HEALING_FOR_MOVEMENT",
+        "consumer": "ActorEngine.applySecondWind when options.impetuousMove or options.halfHealingForMovement is true",
+        "status": "partial_until_ui_exposes_choice"
+      },
+      {
+        "feat": "Regenerative Healing",
+        "implementation": "DELAYED_HEALING_ON_USE flag payload",
+        "consumer": "ActorEngine.applySecondWind stores delayedSecondWindHealing flag",
+        "status": "partial_until_turn_end_healing_runner_consumes_flag"
+      }
+    ],
+    "combatOptions": [
+      {
+        "feat": "Zero Range",
+        "implementation": "ATTACK_OPTION zeroRange",
+        "effect": "+1 attack and +1 weapon die damage against adjacent/same-space point-blank targets"
+      },
+      {
+        "feat": "Flurry",
+        "implementation": "ATTACK_OPTION flurry",
+        "effect": "+2 melee attack with light/lightsaber weapon context and -5 Reflex rider until next turn"
+      },
+      {
+        "feat": "Rebel Military Training",
+        "implementation": "ATTACK_OPTION rebelMilitaryTraining",
+        "effect": "Running Attack rider granting +2 dodge Reflex until next turn"
+      }
+    ],
+    "weaponDamageRuleHooks": [
+      {
+        "ruleType": "UNARMED_DAMAGE_STEP",
+        "consumer": "CombatOptionResolver and attacks.js",
+        "usedBy": ["Martial Arts I", "Martial Arts II", "Martial Arts III"],
+        "effect": "Steps the unarmed base damage die upward before rolling damage."
+      },
+      {
+        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
+        "consumer": "CombatOptionResolver and attacks.js",
+        "usedBy": ["Primitive Warrior"],
+        "effect": "Adds extra weapon damage dice when the weapon group matches."
+      },
+      {
+        "ruleType": "UNARMED_DOES_NOT_PROVOKE_AOO",
+        "consumer": "CombatOptionResolver flags",
+        "usedBy": ["Martial Arts I"],
+        "effect": "Exposes a contextual flag that unarmed attacks do not provoke attacks of opportunity."
+      }
+    ]
+  },
+  "filesChanged": [
+    "docs/feat-implementation-continuation-phase8.json",
+    "packs/feats.db",
+    "scripts/actors/derived/derived-calculator.js",
+    "scripts/combat/rolls/attacks.js",
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js",
+    "scripts/governance/actor-engine/actor-engine.js"
+  ],
+  "deferred": [
+    {
+      "area": "Impetuous Move UI",
+      "reason": "ActorEngine supports the option flag, but the Second Wind UI still needs a player-facing checkbox/action to pass options.impetuousMove."
+    },
+    {
+      "area": "Regenerative Healing turn runner",
+      "reason": "ActorEngine records delayed healing metadata, but a combat turn/end-of-turn consumer is still needed to apply 5 HP per turn automatically."
+    },
+    {
+      "area": "Defense riders from attack options",
+      "reason": "CombatOptionResolver now emits defenseModifiers, but runtime application/display of temporary defense riders depends on the caller/UI using that payload."
+    }
+  ],
+  "validation": {
+    "nodeCheck": [
+      "scripts/engine/feats/meta-resource-feat-resolver.js",
+      "scripts/governance/actor-engine/actor-engine.js",
+      "scripts/actors/derived/derived-calculator.js",
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/combat/rolls/attacks.js"
+    ],
+    "jsonl": "packs/feats.db parsed as valid JSONL with 419 rows",
+    "runtimeFoundryTested": false
+  }
+}
