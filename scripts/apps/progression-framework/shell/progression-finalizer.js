@@ -1389,6 +1389,30 @@ export class ProgressionFinalizer {
     return resolved;
   }
 
+  /**
+   * Extract canonical skill keys for any Skill Focus feats in the current selections.
+   * E.g. "Skill Focus (Perception)" → ['perception']
+   *
+   * @param {Object} selections - Draft selections from the progression session
+   * @returns {string[]} Canonical skill keys to mark as focused
+   */
+  static _extractSkillFocusKeysFromSelections(selections = {}) {
+    const feats = [
+      ...(Array.isArray(selections.feats) ? selections.feats : []),
+      ...(Array.isArray(selections.selectedFeats) ? selections.selectedFeats : []),
+    ];
+    const keys = [];
+    for (const feat of feats) {
+      const name = String(feat?.name || feat?.label || feat || '').trim();
+      const match = name.match(/^Skill\s+Focus\s*\(([^)]+)\)/i);
+      if (!match) continue;
+      const skillName = match[1].trim();
+      const key = this._canonicalSkillKey(skillName);
+      if (key) keys.push(key);
+    }
+    return keys;
+  }
+
   static _extractActorLanguageNames(actor) {
     const languages = actor?.system?.languages || [];
     if (Array.isArray(languages)) {
