@@ -2302,5 +2302,5 @@ export function validateHouleruleManifest() {
   return { errors, warnings, ok };
 }
 
-// Re-export alias so existing HOULERULE_MANIFEST references still work
-export { HOULERULE_MANIFEST as HOUSERULE_MANIFEST };
+// HOUSERULE_MANIFEST is already exported at the top of this file (export const HOUSERULE_MANIFEST = [...])
+// The re-export below was a duplicate and caused a SyntaxError — removed.
