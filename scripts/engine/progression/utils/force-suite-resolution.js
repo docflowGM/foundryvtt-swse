@@ -70,7 +70,20 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       }
       count = Math.max(count, containerCount);
     }
-    return count;
+
+    // Some feat flows store only a pending entitlement record by the time the
+    // active-step computer asks whether Force Powers should open. Count those
+    // Force Training source records too so a stale/legacy quantity of 1 does
+    // not collapse the Force Training formula to a single power.
+    const entitlementEntries = collectPendingEntitlements();
+    const entitlementCount = entitlementEntries.reduce((sum, entry) => {
+      const sourceName = normalizeGrantName(entry?.source?.featName || entry?.sourceName || entry?.name || '');
+      const type = String(entry?.type || entry?.kind || entry?.grantType || '').toLowerCase();
+      if (sourceName !== 'force training' && !/force[_ -]?power/.test(type)) return sum;
+      return sum + (Number(entry?.source?.count || 1) || 1);
+    }, 0);
+
+    return Math.max(count, entitlementCount);
   };
 
   const collectPendingEntitlements = () => {
@@ -269,10 +282,13 @@ export async function resolveForcePowerEntitlements(shell, actor) {
         pendingEntitlements,
         'force_power_pick'
       );
-      if (pendingForceTrainingCount > 0 && finalForceTrainingSlots === 0) {
+      if (pendingForceTrainingCount > 0) {
         const slotsPerInstance = FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance?.(actor, shell) || 1;
-        finalForceTrainingSlots = pendingForceTrainingCount * slotsPerInstance;
-        reasons.push(`Pending Force Training selection slots: ${finalForceTrainingSlots}`);
+        const formulaSlots = pendingForceTrainingCount * slotsPerInstance;
+        if (formulaSlots > finalForceTrainingSlots) {
+          finalForceTrainingSlots = formulaSlots;
+          reasons.push(`Pending Force Training formula slots: ${finalForceTrainingSlots}`);
+        }
       }
       if (pendingEntitlementSlots > finalForceTrainingSlots) {
         finalForceTrainingSlots = pendingEntitlementSlots;

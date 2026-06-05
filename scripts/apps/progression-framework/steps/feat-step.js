@@ -1813,22 +1813,31 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getPendingAbilityModifier(shell, abilityKey) {
+    const keyMap = {
+      strength: 'str', str: 'str',
+      dexterity: 'dex', dex: 'dex',
+      constitution: 'con', con: 'con',
+      intelligence: 'int', int: 'int',
+      wisdom: 'wis', wis: 'wis',
+      charisma: 'cha', cha: 'cha',
+    };
+    const key = keyMap[String(abilityKey || '').toLowerCase()] || abilityKey;
     const pending = shell?.progressionSession?.draftSelections?.attributes || {};
     const values = pending?.values && typeof pending.values === 'object' ? pending.values : pending || {};
     const actorSystem = shell?.actor?.system || {};
-    const actorAbility = actorSystem.abilities?.[abilityKey] || actorSystem.attributes?.[abilityKey] || actorSystem.stats?.[abilityKey] || {};
+    const actorAbility = actorSystem.abilities?.[key] || actorSystem.attributes?.[key] || actorSystem.stats?.[key] || {};
 
     const candidates = [
-      { value: pending?.modifiers?.[abilityKey], kind: 'modifier' },
-      { value: values?.[abilityKey]?.mod, kind: 'modifier' },
-      { value: values?.[abilityKey]?.modifier, kind: 'modifier' },
+      { value: pending?.modifiers?.[key], kind: 'modifier' },
+      { value: values?.[key]?.mod, kind: 'modifier' },
+      { value: values?.[key]?.modifier, kind: 'modifier' },
+      { value: pending?.finalValues?.[key], kind: 'score' },
+      { value: values?.[key]?.score, kind: 'score' },
+      { value: values?.[key]?.base, kind: 'score' },
+      { value: values?.[key]?.value, kind: 'score' },
+      { value: values?.[key], kind: 'score' },
       { value: actorAbility?.mod, kind: 'modifier' },
       { value: actorAbility?.modifier, kind: 'modifier' },
-      { value: pending?.finalValues?.[abilityKey], kind: 'score' },
-      { value: values?.[abilityKey]?.score, kind: 'score' },
-      { value: values?.[abilityKey]?.base, kind: 'score' },
-      { value: values?.[abilityKey]?.value, kind: 'score' },
-      { value: values?.[abilityKey], kind: 'score' },
       { value: actorAbility?.total, kind: 'score' },
       { value: actorAbility?.value, kind: 'score' },
       { value: actorAbility?.base, kind: 'score' },

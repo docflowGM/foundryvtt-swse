@@ -471,43 +471,118 @@ function getActorLevel(actor) {
   return Number(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.classes?.level ?? 0) || 0;
 }
 
+function abilityScoreToMod(value) {
+  const score = Number(value);
+  return Number.isFinite(score) ? Math.floor((score - 10) / 2) : null;
+}
+
 function getAbilityModifier(actor, abilityKey) {
   const key = normalizeAbilityKey(abilityKey);
   if (!key) return 0;
-  const candidates = [
-    actor?.system?.abilities?.[key]?.mod,
-    actor?.system?.abilities?.[key]?.modifier,
-    actor?.system?.abilities?.[key]?.value,
-    actor?.system?.derived?.abilities?.[key]?.mod,
-    actor?.system?.derived?.abilities?.[key]?.modifier
+
+  const attrs = actor?.system?.attributes?.[key] ?? {};
+  const ability = actor?.system?.abilities?.[key] ?? {};
+  const derivedAttr = actor?.system?.derived?.attributes?.[key] ?? {};
+  const derivedAbility = actor?.system?.derived?.abilities?.[key] ?? {};
+
+  const directCandidates = [
+    attrs.mod,
+    attrs.modifier,
+    derivedAttr.mod,
+    derivedAttr.modifier,
+    ability.mod,
+    ability.modifier,
+    derivedAbility.mod,
+    derivedAbility.modifier
   ];
-  for (const candidate of candidates) {
+  for (const candidate of directCandidates) {
     const n = Number(candidate);
     if (Number.isFinite(n)) return n;
   }
-  return 0;
+
+  const scoreCandidates = [
+    attrs.total,
+    attrs.value,
+    ability.total,
+    ability.value
+  ];
+  for (const candidate of scoreCandidates) {
+    const mod = abilityScoreToMod(candidate);
+    if (mod !== null) return mod;
+  }
+
+  const rebuiltScore = Number(attrs.base ?? ability.base ?? 10)
+    + Number(attrs.racial ?? attrs.species ?? ability.racial ?? ability.species ?? 0)
+    + Number(attrs.enhancement ?? attrs.misc ?? ability.enhancement ?? ability.misc ?? 0)
+    + Number(attrs.temp ?? ability.temp ?? 0);
+  const rebuiltMod = abilityScoreToMod(rebuiltScore);
+  return rebuiltMod ?? 0;
+}
+
+function getSkillData(actor, skillKey) {
+  const key = String(skillKey ?? '');
+  const direct = actor?.system?.skills?.[key] ?? {};
+  const derivedByKey = actor?.system?.derived?.skillsByKey?.[key] ?? actor?.system?.derived?.skills?.[key] ?? {};
+  const derivedList = Array.isArray(actor?.system?.derived?.skills?.list)
+    ? actor.system.derived.skills.list.find(s => s?.key === key) ?? {}
+    : {};
+  return { direct, derivedByKey, derivedList };
+}
+
+function getSkillAbilityKey(actor, skillKey) {
+  const { direct, derivedByKey, derivedList } = getSkillData(actor, skillKey);
+  const fallbackBySkill = {
+    acrobatics: 'dex', climb: 'str', deception: 'cha', endurance: 'con', gatherInformation: 'cha',
+    initiative: 'dex', jump: 'str', mechanics: 'int', perception: 'wis', persuasion: 'cha',
+    pilot: 'dex', ride: 'dex', stealth: 'dex', survival: 'wis', swim: 'str',
+    treatInjury: 'wis', useComputer: 'int', useTheForce: 'cha'
+  };
+  return direct.selectedAbility
+    || direct.ability
+    || direct.abilityKey
+    || direct.attribute
+    || derivedByKey.selectedAbility
+    || derivedByKey.ability
+    || derivedByKey.abilityKey
+    || derivedList.selectedAbility
+    || derivedList.ability
+    || derivedList.abilityKey
+    || fallbackBySkill[skillKey]
+    || 'str';
+}
+
+function getSkillComponentTotal(actor, skillKey) {
+  const { direct, derivedByKey, derivedList } = getSkillData(actor, skillKey);
+  const abilityKey = getSkillAbilityKey(actor, skillKey);
+  const abilityMod = getAbilityModifier(actor, abilityKey);
+  const halfLevel = Math.floor(getActorLevel(actor) / 2);
+  const trained = (direct.trained === true || derivedByKey.trained === true || derivedList.trained === true) ? 5 : 0;
+  const focus = (direct.focused === true || derivedByKey.focused === true || derivedList.focused === true) ? 5 : 0;
+  const misc = Number(direct.miscMod ?? derivedByKey.miscMod ?? derivedList.miscMod ?? 0) || 0;
+  const species = Number(direct.speciesBonus ?? derivedByKey.speciesBonus ?? derivedList.speciesBonus ?? 0) || 0;
+  const armor = Number(derivedByKey.armorPenalty ?? derivedList.armorPenalty ?? 0) || 0;
+  const condition = Number(derivedByKey.conditionPenalty ?? derivedList.conditionPenalty ?? 0) || 0;
+  return abilityMod + halfLevel + trained + focus + misc + species + armor + condition;
 }
 
 function getSkillTotal(actor, skillKey) {
   const key = String(skillKey ?? '');
   if (!key) return 0;
-  const direct = actor?.system?.skills?.[key];
-  const derivedByKey = actor?.system?.derived?.skillsByKey?.[key] ?? actor?.system?.derived?.skills?.[key];
-  const derivedList = Array.isArray(actor?.system?.derived?.skills?.list)
-    ? actor.system.derived.skills.list.find(s => s?.key === key)
-    : null;
-  const candidates = [
-    derivedByKey?.total,
-    derivedList?.total,
-    direct?.total,
-    direct?.value,
-    direct?.mod
-  ];
+  const componentTotal = getSkillComponentTotal(actor, key);
+
+  // Use the Force is especially sensitive to stale legacy totals because Force
+  // Focus/Skill Focus can be represented both as a checkbox and as an item bonus.
+  // The roll dialog should show the RAW component total: ability + half level +
+  // trained + focus + misc/penalties, not duplicated passive effects.
+  if (key === 'useTheForce') return componentTotal;
+
+  const { direct, derivedByKey, derivedList } = getSkillData(actor, key);
+  const candidates = [derivedByKey?.total, derivedList?.total, direct?.total, direct?.value, direct?.mod];
   for (const candidate of candidates) {
     const n = Number(candidate);
     if (Number.isFinite(n)) return n;
   }
-  return getAbilityModifier(actor, direct?.ability ?? direct?.abilityKey ?? direct?.attribute);
+  return componentTotal;
 }
 
 function getWeaponAttackBonus(actor, weapon) {
@@ -730,15 +805,18 @@ async function buildRollConfigModel(options = {}) {
   const baseTotal = Number(options.baseBonus ?? getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
   const breakdown = [];
   if (rollType === 'skill' || rollType === 'force' || rollType === 'force-power') {
-    const skill = actor?.system?.skills?.[skillKey || 'useTheForce'];
-    const ability = abilityKey ?? skill?.ability ?? skill?.abilityKey ?? skill?.attribute;
+    const key = skillKey || 'useTheForce';
+    const { direct, derivedByKey, derivedList } = getSkillData(actor, key);
+    const ability = abilityKey ?? getSkillAbilityKey(actor, key);
     const abilityMod = getAbilityModifier(actor, ability);
-    const trained = isSkillTrained(actor, skillKey || 'useTheForce') ? 5 : 0;
+    const trained = isSkillTrained(actor, key) ? 5 : 0;
+    const focus = (direct.focused === true || derivedByKey.focused === true || derivedList.focused === true) ? 5 : 0;
     const halfLevel = Math.floor(getActorLevel(actor) / 2);
     breakdown.push({ label: `${String(ability ?? '').toUpperCase() || 'Ability'} Modifier`, value: abilityMod });
     if (halfLevel) breakdown.push({ label: 'Half Level', value: halfLevel });
     if (trained) breakdown.push({ label: 'Trained', value: trained });
-    const misc = baseTotal - abilityMod - halfLevel - trained;
+    if (focus) breakdown.push({ label: 'Focus', value: focus });
+    const misc = baseTotal - abilityMod - halfLevel - trained - focus;
     if (misc) breakdown.push({ label: 'Other Bonuses', value: misc });
   } else if (rollType === 'attack') {
     const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;

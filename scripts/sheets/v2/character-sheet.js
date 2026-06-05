@@ -86,6 +86,7 @@ import { mutateAndRepaint, mutateShellOnly } from "/systems/foundryvtt-swse/scri
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 // Phase 8: Contract observability and runtime verification
@@ -1019,7 +1020,7 @@ export class SWSEV2CharacterSheet extends
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        const confirmed = await Dialog.confirm({
+        const confirmed = await SWSEDialogV2.confirm({
           title: '⚠ Reset Character',
           content: `
             <div style="text-align:center;padding:8px 0 4px;">
@@ -1031,9 +1032,10 @@ export class SWSEV2CharacterSheet extends
                 <strong>This cannot be undone.</strong>
               </p>
             </div>`,
-          yes: { label: 'Yes, Reset', icon: '<i class="fa-solid fa-trash"></i>' },
-          no:  { label: 'No, Go Back', icon: '<i class="fa-solid fa-arrow-left"></i>' },
-          defaultYes: false
+          yes: () => true,
+          no: () => false,
+          defaultYes: false,
+          options: { width: 420 }
         });
         if (!confirmed) return;
         await this._resetCharacterToBlank();
@@ -2543,11 +2545,13 @@ export class SWSEV2CharacterSheet extends
       const focusedBonus = skillData.focused ? 5 : 0;
       const trainedBonus = skillData.trained ? 5 : 0;
       const fallbackTotal = abilityMod + halfLevel + safeMiscMod + trainedBonus + focusedBonus;
-      const safeTotal = Number.isFinite(Number(derivedData.total))
-        ? Number(derivedData.total)
-        : Number.isFinite(Number(skillData.total))
-          ? Number(skillData.total)
-          : fallbackTotal;
+      const safeTotal = key === 'useTheForce'
+        ? fallbackTotal
+        : Number.isFinite(Number(derivedData.total))
+          ? Number(derivedData.total)
+          : Number.isFinite(Number(skillData.total))
+            ? Number(skillData.total)
+            : fallbackTotal;
 
       return {
         key,
@@ -5956,14 +5960,18 @@ const forcePoints = [];
         buttons: {
           legal: {
             icon: '<i class="fa-solid fa-book-open"></i>',
-            label: `Pick from Compendium`,
+            label: `Choose Legal ${label}`,
             callback: async () => {
               try {
                 await this.setSurface('progression', {
-                  source: 'sheet',
+                  source: 'sheet-direct-add',
                   stepId,
                   currentStep: stepId,
-                  mode: 'freeAdd'
+                  targetStep: stepId,
+                  mode: 'freeAdd',
+                  singleStep: true,
+                  singleStepDomain: itemType === 'feat' ? 'feats' : 'talents',
+                  returnSurface: 'sheet'
                 });
                 await this.requestSurfaceRender({ reason: `${itemType}-step-launch`, surfaceId: 'progression' });
               } catch (err) {

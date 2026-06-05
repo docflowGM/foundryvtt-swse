@@ -16,6 +16,8 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { ProgressionFinalizer } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js';
 
 export class ProgressionSurfaceAdapter {
   /** @type {Map<string, ProgressionSurfaceAdapter>} Registry per actor id */
@@ -58,6 +60,10 @@ export class ProgressionSurfaceAdapter {
     const existing = this._registry.get(key);
     if (existing?._ready) {
       existing._shellHost = shellHost;
+      if (existing._app) {
+        existing._app._singleStepMode = options?.singleStep === true;
+        existing._app._singleStepDomain = options?.singleStepDomain || null;
+      }
       await existing._navigateToRequestedStep(options);
       return existing;
     }
@@ -335,13 +341,21 @@ export class ProgressionSurfaceAdapter {
         case 'continue':
         case 'next-step':
         case 'skip-intro':
-          await this._app._onNextStep(event, target);
+          if (this._app._singleStepMode === true && descriptor?.stepId !== 'intro') {
+            await this._completeSingleStepSelection(event, target);
+          } else {
+            await this._app._onNextStep(event, target);
+          }
+          break;
+        case 'confirm-step':
+          if (this._app._singleStepMode === true) {
+            await this._completeSingleStepSelection(event, target);
+          } else {
+            await this._app._onConfirmStep(event, target);
+          }
           break;
         case 'previous-step':
           await this._app._onPreviousStep(event, target);
-          break;
-        case 'confirm-step':
-          await this._app._onConfirmStep(event, target);
           break;
         case 'jump-step':
           await this._app._onJumpStep(event, target);
@@ -496,20 +510,71 @@ export class ProgressionSurfaceAdapter {
     if (!targetStep || !this._app || !this._ready) return false;
 
     const index = this._app.steps?.findIndex?.((descriptor) => descriptor?.stepId === targetStep) ?? -1;
-    if (index < 0 || index === this._app.currentStepIndex) return false;
+    if (index < 0) return false;
 
     try {
-      if (typeof this._app.navigateToStep === 'function') {
-        await this._app.navigateToStep(targetStep, { source: options.source || 'inline-target-step' });
-      } else {
-        this._app.currentStepIndex = index;
-        await this._app._activateStep?.(index);
+      // Inline sheet launches are allowed to jump directly to a requested step.
+      // ProgressionShell.navigateToStep intentionally blocks forward navigation
+      // for normal level-up rails, so direct sheet tools must use _activateStep.
+      if (index !== this._app.currentStepIndex) {
+        await this._app._activateStep?.(index, {
+          source: options.source || 'inline-target-step',
+          restoreIndex: this._app.currentStepIndex
+        });
       }
+      this._app.progressionSession.currentStepId = this._app.steps?.[this._app.currentStepIndex]?.stepId ?? targetStep;
       await requestShellRender(this._shellHost, { reason: 'progression-surface-refresh', surfaceId: this.mode === 'chargen' ? 'chargen' : 'progression' });
       return true;
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Failed to navigate to requested step:', err);
       return false;
+    }
+  }
+
+  async _completeSingleStepSelection(event, target) {
+    if (!this._app || this._app.isProcessing) return;
+    const descriptor = this._app.steps?.[this._app.currentStepIndex] ?? null;
+    const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
+    if (!descriptor || !plugin) return;
+
+    try {
+      const blockingIssues = plugin.getBlockingIssues?.() ?? [];
+      if (blockingIssues.length) {
+        ui?.notifications?.warn?.(blockingIssues[0]);
+        return;
+      }
+      if (typeof plugin.syncFromDom === 'function') plugin.syncFromDom(this._app);
+      await plugin.onStepExit?.(this._app, { direction: 'single-step-confirm' });
+      this._app._syncLegacyCommittedSelectionsFromSession?.();
+
+      const domain = this._app._singleStepDomain || (/talent/i.test(descriptor.stepId) ? 'talents' : 'feats');
+      const selections = this._app.progressionSession?.draftSelections || {};
+      const scopedSelections = {
+        feats: domain === 'feats' ? (Array.isArray(selections.feats) ? selections.feats : []) : [],
+        talents: domain === 'talents' ? (Array.isArray(selections.talents) ? selections.talents : []) : []
+      };
+      const compiled = await ProgressionFinalizer._compileProgressionAbilityItems(
+        this._app.actor,
+        scopedSelections,
+        {
+          mode: 'sheet-add',
+          sessionId: `sheet-add-${domain}-${Date.now()}`,
+          progressionSession: this._app.progressionSession
+        }
+      );
+
+      const items = Array.isArray(compiled?.items) ? compiled.items : [];
+      if (!items.length) {
+        ui?.notifications?.warn?.(`Choose a ${domain === 'feats' ? 'feat' : 'talent'} before confirming.`);
+        return;
+      }
+
+      await ActorEngine.createEmbeddedDocuments(this._app.actor, 'Item', items, { source: `sheet-direct-add-${domain}` });
+      ui?.notifications?.info?.(`Added ${items.map(item => item.name).filter(Boolean).join(', ') || (domain === 'feats' ? 'feat' : 'talent')}.`);
+      await this.completeAndReturnToSheet();
+    } catch (err) {
+      SWSELogger.error('[ProgressionSurfaceAdapter] Single-step confirmation failed:', err);
+      ui?.notifications?.error?.(`Could not add selection: ${err?.message || err}`);
     }
   }
 
@@ -540,6 +605,8 @@ export class ProgressionSurfaceAdapter {
       app._embeddedInHolopad = true;
       app._inlineSurfaceAdapter = this;
       app._inlineShellHost = this._shellHost;
+      app._singleStepMode = options?.singleStep === true;
+      app._singleStepDomain = options?.singleStepDomain || null;
 
       // Inline holopad launches must never spawn a standalone recovery dialog.
       // The old RecoverySessionDialog is an ApplicationV2 window and currently

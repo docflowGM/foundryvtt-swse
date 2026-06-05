@@ -99,15 +99,69 @@
           <div class="gm-phase7-rule-copy">
             <div class="gm-phase7-rule-name">{{this.name}}</div>
             <div class="gm-phase7-rule-description">{{this.description}}</div>
-            <div class="gm-phase7-rule-key">{{this.key}} · {{this.type}}</div>
+            <div class="gm-phase7-rule-key">{{this.key}} · {{this.controlLabel}}</div>
           </div>
-          <label class="gm-phase7-switch" title="Toggle {{this.name}}">
-            <input type="checkbox"
-                   data-rule-key="{{this.key}}"
-                   data-rule-type="{{this.type}}"
-                   {{#if this.enabled}}checked{{/if}}>
-            <span class="gm-phase7-switch-track"><span class="gm-phase7-switch-thumb"></span></span>
-          </label>
+          <div class="gm-house-rule-control gm-house-rule-control--{{this.controlKind}}" data-rule-control-wrap data-rule-key="{{this.key}}">
+            {{#if this.isBoolean}}
+            <label class="gm-phase7-switch gm-phase7-switch--labeled" title="Set {{this.name}}">
+              <input type="checkbox"
+                     data-rule-control
+                     data-rule-key="{{this.key}}"
+                     data-rule-type="{{this.type}}"
+                     {{#if this.enabled}}checked{{/if}}>
+              <span class="gm-phase7-switch-track"><span class="gm-phase7-switch-thumb"></span></span>
+              <span class="gm-house-rule-control__state">{{this.displayValue}}</span>
+            </label>
+            {{else if this.hasChoices}}
+            <label class="gm-house-rule-control__field">
+              <span>{{this.controlLabel}}</span>
+              <select data-rule-control data-rule-key="{{this.key}}" data-rule-type="{{this.type}}">
+                {{#each this.choices}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            {{else if this.isNumber}}
+            <label class="gm-house-rule-control__field gm-house-rule-number-field">
+              <span>{{this.controlLabel}}</span>
+              {{#if this.useSlider}}
+              <input type="range"
+                     data-rule-control
+                     data-rule-number-slider
+                     data-rule-key="{{this.key}}"
+                     data-rule-type="{{this.type}}"
+                     value="{{this.value}}"
+                     min="{{this.min}}"
+                     max="{{this.max}}"
+                     step="{{this.step}}">
+              {{/if}}
+              <input type="number"
+                     data-rule-control
+                     data-rule-number-input
+                     data-rule-key="{{this.key}}"
+                     data-rule-type="{{this.type}}"
+                     value="{{this.value}}"
+                     {{#if this.min}}min="{{this.min}}"{{/if}}
+                     {{#if this.max}}max="{{this.max}}"{{/if}}
+                     step="{{this.step}}">
+            </label>
+            {{else if this.isArray}}
+            <label class="gm-house-rule-control__field">
+              <span>{{this.controlLabel}}</span>
+              <textarea data-rule-control data-rule-key="{{this.key}}" data-rule-type="{{this.type}}" rows="3">{{this.displayValue}}</textarea>
+            </label>
+            {{else if this.isObject}}
+            <label class="gm-house-rule-control__field">
+              <span>{{this.controlLabel}}</span>
+              <textarea data-rule-control data-rule-key="{{this.key}}" data-rule-type="{{this.type}}" rows="4">{{this.displayValue}}</textarea>
+            </label>
+            {{else}}
+            <label class="gm-house-rule-control__field">
+              <span>{{this.controlLabel}}</span>
+              <input type="text" data-rule-control data-rule-key="{{this.key}}" data-rule-type="{{this.type}}" value="{{this.value}}">
+            </label>
+            {{/if}}
+          </div>
         </article>
         {{/if}}
         {{/each}}

@@ -21,6 +21,51 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 
+function getActorFeatItems(actor) {
+  try {
+    return Array.from(actor?.items ?? []).filter(item => item?.type === 'feat' && item?.system?.disabled !== true);
+  } catch (_err) {
+    return [];
+  }
+}
+
+function collectDefenseAbilityRule(actor, defenseKey) {
+  const key = String(defenseKey || '').toLowerCase();
+  for (const item of getActorFeatItems(actor)) {
+    const rules = item?.system?.abilityMeta?.defenseAbilityRules;
+    if (!Array.isArray(rules)) continue;
+    for (const rule of rules) {
+      if (String(rule?.type || '').toUpperCase() !== 'USE_BETTER_ABILITY') continue;
+      if (String(rule?.defense || '').toLowerCase() !== key) continue;
+      const abilities = Array.isArray(rule.abilities) ? rule.abilities.map(a => String(a || '').toLowerCase().slice(0, 3)).filter(Boolean) : [];
+      if (abilities.length) return { ...rule, abilities, sourceName: item.name };
+    }
+  }
+  return null;
+}
+
+function resolveDefenseAbility(actor, defenseKey, defaultAbilityKey, getAbilityMod) {
+  const fallbackKey = String(defaultAbilityKey || '').toLowerCase().slice(0, 3);
+  let best = { key: fallbackKey, mod: getAbilityMod(fallbackKey, 0), sourceName: null };
+  const rule = collectDefenseAbilityRule(actor, defenseKey);
+  if (!rule) return best;
+
+  for (const ability of rule.abilities) {
+    const mod = getAbilityMod(ability, 0);
+    if (mod > best.mod) best = { key: ability, mod, sourceName: rule.sourceName };
+  }
+  return best;
+}
+
+function hasDefenseArmorRule(actor, ruleType) {
+  const target = String(ruleType || '').toUpperCase();
+  for (const item of getActorFeatItems(actor)) {
+    const rules = item?.system?.abilityMeta?.defenseArmorRules;
+    if (!Array.isArray(rules)) continue;
+    if (rules.some(rule => String(rule?.type || '').toUpperCase() === target)) return true;
+  }
+  return false;
+}
 
 function getSystemActiveDefenseBonus(actor, defenseType) {
   const effects = Array.isArray(actor?.system?.activeEffects) ? actor.system.activeEffects : [];
@@ -217,8 +262,10 @@ export class DefenseCalculator {
     const fortSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'fortitude');
     const willSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'will');
 
-    const reflexAbilityKey = String(reflexState.ability || 'dex').toLowerCase();
-    let reflexAbilityMod = getAbilityMod(reflexAbilityKey, 0);
+    let reflexAbilityKey = String(reflexState.ability || 'dex').toLowerCase();
+    let reflexAbilityResolution = resolveDefenseAbility(actor, 'reflex', reflexAbilityKey, getAbilityMod);
+    reflexAbilityKey = reflexAbilityResolution.key;
+    let reflexAbilityMod = reflexAbilityResolution.mod;
     const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
     const reflexMiscBonus = getMiscBonus(reflexState);
     const reflexArmorBonus = Number(reflexState.armor ?? equippedArmor?.system?.defenseBonus ?? equippedArmor?.system?.armorBonus ?? 0) || 0;
@@ -244,20 +291,32 @@ export class DefenseCalculator {
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
     // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
     // Do not allow stale legacy data (system.defenses.fortitude.ability = 'con') to override this.
-    const fortAbilityKey = isDroidActor ? 'str' : String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
-    const fortAbilityMod = getAbilityMod(fortAbilityKey, 0);
+    let fortAbilityKey = isDroidActor ? 'str' : String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
+    let fortAbilityResolution = { key: fortAbilityKey, mod: getAbilityMod(fortAbilityKey, 0), sourceName: null };
+    if (!isDroidActor) {
+      fortAbilityResolution = resolveDefenseAbility(actor, 'fortitude', fortAbilityKey, getAbilityMod);
+      fortAbilityKey = fortAbilityResolution.key;
+    }
+    const fortAbilityMod = fortAbilityResolution.mod;
     const fortClassBonus = Number(computedFortClassBonus ?? fortitudeState.classBonus ?? 0) || 0;
     const fortMiscBonus = getMiscBonus(fortitudeState);
     const fortArmorBonus = Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0;
     const fortBase = 10 + heroicLevel + fortClassBonus + fortAbilityMod + fortArmorBonus;
     const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortSpeciesBonus + fortStateBonus + fortAdjust + conditionPenalty);
 
-    const willAbilityKey = String(willState.ability || 'wis').toLowerCase();
-    const willAbilityMod = getAbilityMod(willAbilityKey, 0);
+    let willAbilityKey = String(willState.ability || 'wis').toLowerCase();
+    const willAbilityResolution = resolveDefenseAbility(actor, 'will', willAbilityKey, getAbilityMod);
+    willAbilityKey = willAbilityResolution.key;
+    const willAbilityMod = willAbilityResolution.mod;
     const willClassBonus = Number(computedWillClassBonus ?? willState.classBonus ?? 0) || 0;
     const willMiscBonus = getMiscBonus(willState);
+    const willArmorBonus = hasDefenseArmorRule(actor, 'APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL')
+      && equippedArmor
+      && equippedArmor.system?.proficient !== false
+      ? Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0
+      : 0;
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
-    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willStateBonus + willAdjust + conditionPenalty);
+    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + willStateBonus + willAdjust + conditionPenalty);
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a
@@ -307,7 +366,7 @@ export class DefenseCalculator {
         levelContribution: heroicLevel,
         speciesBonus: willSpeciesBonus,
         miscBonus: willMiscBonus,
-        armorBonus: 0,
+        armorBonus: willArmorBonus,
         abilityKey: willAbilityKey,
         abilityMod: willAbilityMod,
         conditionPenalty

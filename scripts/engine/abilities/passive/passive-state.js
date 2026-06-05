@@ -27,6 +27,48 @@
  * - turn.* — Turn/round state
  * - target.* — Target condition state
  */
+
+function normalizeToken(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function contextHasToken(context, fields, wanted) {
+  const targets = new Set((Array.isArray(wanted) ? wanted : [wanted]).map(normalizeToken).filter(Boolean));
+  if (!targets.size) return false;
+  const values = [];
+  for (const field of fields) {
+    const value = context?.[field];
+    if (Array.isArray(value)) values.push(...value);
+    else if (value && typeof value === 'object') values.push(...Object.values(value));
+    else if (value !== undefined && value !== null) values.push(value);
+  }
+  return values.some(value => targets.has(normalizeToken(value)) || [...targets].some(target => normalizeToken(value).includes(target)));
+}
+
+function equippedWeaponText(actor) {
+  try {
+    return Array.from(actor?.items ?? [])
+      .filter(item => item?.type === 'weapon' && item?.system?.equipped !== false)
+      .map(item => [
+        item?.name,
+        item?.system?.weaponType,
+        item?.system?.weaponGroup,
+        item?.system?.group,
+        item?.system?.category,
+        item?.system?.subtype
+      ].filter(Boolean).join(' '))
+      .join(' ')
+      .toLowerCase();
+  } catch (_err) {
+    return '';
+  }
+}
+
 export const PASSIVE_STATE_PREDICATES = {
   // ============================================
   // DEFENSE PREDICATES
@@ -101,14 +143,22 @@ export const PASSIVE_STATE_PREDICATES = {
    * Applies when using melee weapon
    */
   "attack.with-melee": (actor, context) => {
-    return context?.weapon?.system?.attackAttribute === 'str' || false;
+    if (context?.attackType === 'melee' || context?.weaponType === 'melee') return true;
+    const weapon = context?.weapon ?? context?.item ?? context?.attackItem;
+    const text = [weapon?.name, weapon?.system?.weaponType, weapon?.system?.weaponGroup, weapon?.system?.category, weapon?.system?.type]
+      .filter(Boolean).join(' ').toLowerCase();
+    return context?.weapon?.system?.attackAttribute === 'str' || text.includes('melee') || text.includes('lightsaber') || text.includes('unarmed') || false;
   },
 
   /**
    * Applies when using ranged weapon
    */
   "attack.with-ranged": (actor, context) => {
-    return context?.weapon?.system?.attackAttribute === 'dex' || false;
+    if (context?.attackType === 'ranged' || context?.weaponType === 'ranged') return true;
+    const weapon = context?.weapon ?? context?.item ?? context?.attackItem;
+    const text = [weapon?.name, weapon?.system?.weaponType, weapon?.system?.weaponGroup, weapon?.system?.category, weapon?.system?.type]
+      .filter(Boolean).join(' ').toLowerCase();
+    return context?.weapon?.system?.attackAttribute === 'dex' || text.includes('ranged') || text.includes('pistol') || text.includes('rifle') || text.includes('blaster') || false;
   },
 
   /**
@@ -169,6 +219,50 @@ export const PASSIVE_STATE_PREDICATES = {
   },
 
   /**
+   * Applies when a defense/check is against a mind-affecting effect.
+   */
+  "effect.mind-affecting": (actor, context) => {
+    return context?.mindAffecting === true || contextHasToken(context, ['effectTags', 'tags', 'traits', 'effectType', 'descriptor'], ['mind-affecting', 'mind affecting']);
+  },
+
+  /**
+   * Applies when a defense/check is against a fear effect.
+   */
+  "effect.fear": (actor, context) => {
+    return context?.fearEffect === true || context?.isFear === true || contextHasToken(context, ['effectTags', 'tags', 'traits', 'effectType', 'descriptor'], 'fear');
+  },
+
+  /**
+   * Applies when the effect specifically targets Dexterity.
+   */
+  "effect.targets-dexterity": (actor, context) => {
+    return context?.targetedAbility === 'dex' || context?.abilityTargeted === 'dex' || contextHasToken(context, ['targetedAbilities', 'abilityTargets', 'effectTags'], ['dex', 'dexterity']);
+  },
+
+  /**
+   * Applies when the effect specifically targets Wisdom.
+   */
+  "effect.targets-wisdom": (actor, context) => {
+    return context?.targetedAbility === 'wis' || context?.abilityTargeted === 'wis' || contextHasToken(context, ['targetedAbilities', 'abilityTargets', 'effectTags'], ['wis', 'wisdom']);
+  },
+
+  /**
+   * Applies against natural hazards such as atmospheric hazards or severe weather.
+   */
+  "hazard.natural": (actor, context) => {
+    return context?.naturalHazard === true || contextHasToken(context, ['hazardTags', 'hazardType', 'effectTags', 'tags'], ['natural', 'atmospheric', 'weather', 'environmental']);
+  },
+
+  /**
+   * Applies while wielding an Atlatl or Cesta.
+   */
+  "weapon.atlatl-or-cesta-equipped": (actor, context) => {
+    const text = [equippedWeaponText(actor), context?.weapon?.name, context?.weapon?.system?.weaponGroup, context?.weapon?.system?.category]
+      .filter(Boolean).join(' ').toLowerCase();
+    return text.includes('atlatl') || text.includes('cesta');
+  },
+
+  /**
    * Applies only when the current defense is against an attack of opportunity
    * provoked by movement, such as Mobility. Missing context fails closed.
    */
@@ -201,6 +295,8 @@ export const PASSIVE_STATE_PREDICATES = {
    * Applies when character moved at least 2 squares this turn
    */
   "movement.while-moving": (actor, context) => {
+    const explicit = Number(context?.movementSquaresThisTurn ?? context?.squaresMoved ?? context?.movementUsed ?? NaN);
+    if (Number.isFinite(explicit)) return explicit >= 2;
     const movementUsed = actor.system?.derived?.movement?.movementUsed || 0;
     return movementUsed >= 2 || false;
   },
@@ -259,6 +355,7 @@ export const PASSIVE_STATE_PREDICATES = {
    * Applies on character's current turn
    */
   "turn.on-current-turn": (actor, context) => {
+    if (context?.currentTurn === true || context?.isCurrentTurn === true || context?.actorTurn === true) return true;
     return actor.system?.derived?.isCurrentTurn === true || false;
   },
 
@@ -344,6 +441,22 @@ export const PASSIVE_STATE_PREDICATES = {
   "target.is-prone": (actor, context) => {
     const target = context?.target;
     return target?.system?.derived?.isProne === true || false;
+  },
+
+  /**
+   * Target is flat-footed or otherwise denied its Dexterity bonus.
+   */
+  "target.is-flat-footed": (actor, context) => {
+    const target = context?.target;
+    return context?.targetFlatFooted === true || context?.flatFootedTarget === true || target?.system?.derived?.isFlatFooted === true || false;
+  },
+
+  /**
+   * Target is denied Dexterity bonus to Reflex Defense.
+   */
+  "target.denied-dex-bonus": (actor, context) => {
+    const target = context?.target;
+    return context?.targetDeniedDexBonus === true || context?.deniedDexBonus === true || context?.targetFlatFooted === true || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true || false;
   },
 
   /**

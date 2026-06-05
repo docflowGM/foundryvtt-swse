@@ -8533,3 +8533,131 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   padding: 2px 4px;
   line-height: 1.4;
 }
+
+/* Beta pass: make the GM datapad frameless window movable even after the
+   safe-position code writes important inline coordinates. */
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-top-bezel {
+  z-index: 2147482500 !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  touch-action: none !important;
+  user-select: none !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-top-bezel:active {
+  cursor: grabbing !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-drag-handle {
+  pointer-events: none !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-top-right-rail,
+.swse-sheet-v2-shell--gm-datapad .swse-tablet-top-right-rail *,
+.swse-sheet-v2-shell--gm-datapad [data-no-drag="true"] {
+  cursor: default !important;
+  touch-action: manipulation !important;
+}
+
+/* Beta pass: contextual house-rule controls. */
+.gm-datapad-house-rules .gm-phase7-rule-entry {
+  align-items: center;
+  gap: 14px;
+}
+
+.gm-datapad-house-rules .gm-house-rule-control {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: min(360px, 42%);
+  max-width: min(440px, 48%);
+}
+
+.gm-datapad-house-rules .gm-house-rule-control__field {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  color: rgba(210, 244, 255, 0.82);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gm-datapad-house-rules .gm-house-rule-control__field input,
+.gm-datapad-house-rules .gm-house-rule-control__field select,
+.gm-datapad-house-rules .gm-house-rule-control__field textarea {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #00f0ff) 28%, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  background: rgba(2, 12, 20, 0.78);
+  color: rgba(236, 252, 255, 0.95);
+  padding: 7px 9px;
+  font-family: var(--swse-font-primary, inherit);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.gm-datapad-house-rules .gm-house-rule-control__field textarea {
+  resize: vertical;
+  min-height: 76px;
+}
+
+.gm-datapad-house-rules .gm-house-rule-number-field {
+  grid-template-columns: 1fr 96px;
+  align-items: center;
+}
+
+.gm-datapad-house-rules .gm-house-rule-number-field > span {
+  grid-column: 1 / -1;
+}
+
+.gm-datapad-house-rules .gm-house-rule-number-field input[type="range"] {
+  padding: 0;
+  min-height: 28px;
+}
+
+.gm-datapad-house-rules .gm-house-rule-number-field input[type="number"] {
+  text-align: right;
+}
+
+.gm-datapad-house-rules .gm-phase7-switch--labeled {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gm-datapad-house-rules .gm-house-rule-control__state {
+  min-width: 34px;
+  color: rgba(212, 246, 255, 0.86);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 980px) {
+  .gm-datapad-house-rules .gm-phase7-rule-entry {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gm-datapad-house-rules .gm-house-rule-control {
+    justify-content: stretch;
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+.gm-datapad-house-rules .gm-phase7-rule-entry--species-picker {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 980px) {
+  .gm-datapad-house-rules .gm-phase7-rule-entry {
+    grid-template-columns: 1fr;
+  }
+}

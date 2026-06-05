@@ -48,6 +48,22 @@ const HOUSE_RULE_CATEGORY_META = {
   }
 };
 
+const NUMBER_CONTROL_RANGES = {
+  pointBuyPool: { min: 15, max: 45, step: 1 },
+  droidPointBuyPool: { min: 10, max: 40, step: 1 },
+  livingPointBuyPool: { min: 10, max: 45, step: 1 },
+  droidConstructionCredits: { min: 0, max: 10000, step: 100 },
+  holonetPartyFundDefaultCutPercent: { min: 0, max: 100, step: 5 },
+  backgroundSelectionCount: { min: 1, max: 3, step: 1 },
+  deathSaveDC: { min: 5, max: 30, step: 1 },
+  conditionTrackCap: { min: 0, max: 5, step: 1 },
+  weaponRangeMultiplier: { min: 0.25, max: 3, step: 0.25 },
+  skillFocusActivationLevel: { min: 1, max: 20, step: 1 },
+  darkSideMaxMultiplier: { min: 1, max: 5, step: 1 },
+  grappleDCBonus: { min: 0, max: 5, step: 1 },
+  customRecoveryHP: { min: 0, max: 50, step: 1 }
+};
+
 const HOUSE_RULES_CATEGORIES = {
   characterCreation: [
     'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
@@ -320,6 +336,10 @@ export class GMHouseRulesSurfaceService {
     const choices = this.buildChoiceOptions(manifest?.choices, value);
     const hasChoices = choices.length > 0;
     const enabled = type === 'boolean' ? value === true : value !== undefined && value !== null && String(value) !== '';
+    const min = this.getNumberMin(key, manifest);
+    const max = this.getNumberMax(key, manifest);
+    const step = this.getNumberStep(key, manifest);
+    const useSlider = type === 'number' && min !== '' && max !== '';
 
     return {
       key,
@@ -338,9 +358,12 @@ export class GMHouseRulesSurfaceService {
       isArray: type === 'array',
       isObject: type === 'object',
       isEditableText: type === 'string' && !hasChoices,
-      min: this.getNumberMin(key, manifest),
-      max: this.getNumberMax(key, manifest),
-      step: this.getNumberStep(key, manifest),
+      min,
+      max,
+      step,
+      useSlider,
+      controlKind: this.getControlKind(type, hasChoices, useSlider),
+      controlLabel: this.getControlLabel(type, hasChoices, useSlider, key),
       status: manifest?.status || 'registered'
     };
   }
@@ -367,24 +390,45 @@ export class GMHouseRulesSurfaceService {
   }
 
   static formatRuleValue(value, type) {
-    if (type === 'boolean') return value ? 'Enabled' : 'Disabled';
+    if (type === 'boolean') return value ? 'Yes' : 'No';
     if (type === 'array') return Array.isArray(value) ? value.join(', ') : '';
     if (type === 'object') {
-      try { return JSON.stringify(value); } catch (_err) { return '[object]'; }
+      try { return JSON.stringify(value, null, 2); } catch (_err) { return '[object]'; }
     }
     return String(value ?? '');
   }
 
-  static getNumberMin(_key, manifest) {
-    return manifest?.range?.min ?? manifest?.min ?? '';
+  static getControlKind(type, hasChoices, useSlider) {
+    if (type === 'boolean') return 'toggle';
+    if (hasChoices) return 'select';
+    if (type === 'number' && useSlider) return 'slider';
+    if (type === 'number') return 'number';
+    if (type === 'array') return 'list';
+    if (type === 'object') return 'json';
+    return 'text';
   }
 
-  static getNumberMax(_key, manifest) {
-    return manifest?.range?.max ?? manifest?.max ?? '';
+  static getControlLabel(type, hasChoices, useSlider, key = '') {
+    if (key === 'bannedSpecies') return 'Species list';
+    if (type === 'boolean') return 'Yes / No';
+    if (hasChoices) return 'Choose option';
+    if (type === 'number' && useSlider) return 'Adjust value';
+    if (type === 'number') return 'Enter number';
+    if (type === 'array') return 'One item per line or comma separated';
+    if (type === 'object') return 'JSON configuration';
+    return 'Enter text';
   }
 
-  static getNumberStep(_key, manifest) {
-    return manifest?.range?.step ?? manifest?.step ?? 1;
+  static getNumberMin(key, manifest) {
+    return manifest?.range?.min ?? manifest?.min ?? NUMBER_CONTROL_RANGES[key]?.min ?? '';
+  }
+
+  static getNumberMax(key, manifest) {
+    return manifest?.range?.max ?? manifest?.max ?? NUMBER_CONTROL_RANGES[key]?.max ?? '';
+  }
+
+  static getNumberStep(key, manifest) {
+    return manifest?.range?.step ?? manifest?.step ?? NUMBER_CONTROL_RANGES[key]?.step ?? 1;
   }
 
   static getRuleName(key) {

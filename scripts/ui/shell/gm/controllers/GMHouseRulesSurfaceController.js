@@ -24,24 +24,7 @@ export class GMHouseRulesSurfaceController {
       : root.querySelector('.gm-datapad-house-rules');
     if (!pageElement) return;
 
-    pageElement.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-      checkbox.addEventListener('change', async (event) => {
-        const key = event.target.dataset.ruleKey;
-        const checked = event.target.checked;
-        if (!key) return;
-
-        try {
-          await mutateAndRepaint(this.host, () => HouseRuleService.set(key, checked), {
-            reason: 'gm-house-rule-toggle',
-            surfaceId: 'house-rules'
-          });
-          SWSELogger.info(`[GMDatapad House Rules] Updated ${key} = ${checked}`);
-        } catch (err) {
-          SWSELogger.error(`[GMDatapad House Rules] Failed to update ${key}:`, err);
-          event.target.checked = !checked;
-        }
-      }, { signal });
-    });
+    this._wireRuleControls(pageElement, signal);
 
     pageElement.querySelectorAll('.rule-category, .gm-phase7-rule-category').forEach((category) => {
       category.addEventListener('mouseenter', (event) => {
@@ -54,6 +37,107 @@ export class GMHouseRulesSurfaceController {
 
     this._wireRuleFiltering(pageElement, signal);
     this._wireBannedSpeciesPicker(pageElement, signal);
+  }
+
+
+  _coerceRuleControlValue(control) {
+    const type = String(control?.dataset?.ruleType || '').toLowerCase();
+
+    if (type === 'boolean') return control.checked === true;
+    if (type === 'number') {
+      const parsed = Number(control.value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    if (type === 'array') {
+      return String(control.value || '')
+        .split(/[\n,]/)
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+    }
+    if (type === 'object') {
+      const raw = String(control.value || '').trim();
+      if (!raw) return {};
+      return JSON.parse(raw);
+    }
+
+    return String(control.value ?? '');
+  }
+
+  _setControlValue(control, value) {
+    if (!control) return;
+    const type = String(control.dataset.ruleType || '').toLowerCase();
+    if (type === 'boolean') {
+      control.checked = value === true;
+      return;
+    }
+    if (type === 'array' && Array.isArray(value)) {
+      control.value = value.join(', ');
+      return;
+    }
+    if (type === 'object' && value && typeof value === 'object') {
+      try {
+        control.value = JSON.stringify(value, null, 2);
+        return;
+      } catch (_err) {
+        // Fall through to string assignment.
+      }
+    }
+    control.value = value ?? '';
+  }
+
+  _syncNumberCompanions(pageElement, source) {
+    if (!source?.dataset?.ruleKey) return;
+    if (String(source.dataset.ruleType || '').toLowerCase() !== 'number') return;
+    const key = source.dataset.ruleKey;
+    pageElement.querySelectorAll(`[data-rule-control][data-rule-key="${CSS.escape(key)}"]`).forEach((control) => {
+      if (control !== source && String(control.dataset.ruleType || '').toLowerCase() === 'number') {
+        control.value = source.value;
+      }
+    });
+  }
+
+  _wireRuleControls(pageElement, signal) {
+    const controls = Array.from(pageElement.querySelectorAll('[data-rule-control][data-rule-key]'));
+    const commit = async (control) => {
+      const key = control?.dataset?.ruleKey;
+      if (!key) return;
+
+      const previousValue = control.type === 'checkbox' ? control.checked : control.value;
+      let value;
+      try {
+        value = this._coerceRuleControlValue(control);
+      } catch (err) {
+        SWSELogger.error(`[GMDatapad House Rules] Invalid value for ${key}:`, err);
+        ui.notifications?.error?.(`Invalid value for ${key}. Object rules must be valid JSON.`);
+        return;
+      }
+
+      this._syncNumberCompanions(pageElement, control);
+
+      try {
+        await mutateAndRepaint(this.host, () => HouseRuleService.set(key, value), {
+          reason: 'gm-house-rule-control',
+          surfaceId: 'house-rules'
+        });
+        SWSELogger.info(`[GMDatapad House Rules] Updated ${key} =`, value);
+      } catch (err) {
+        SWSELogger.error(`[GMDatapad House Rules] Failed to update ${key}:`, err);
+        this._setControlValue(control, previousValue);
+      }
+    };
+
+    controls.forEach((control) => {
+      if (control.matches?.('[data-rule-number-slider]')) {
+        control.addEventListener('input', () => this._syncNumberCompanions(pageElement, control), { signal });
+      }
+      control.addEventListener('change', () => { void commit(control); }, { signal });
+      control.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' || control.tagName === 'TEXTAREA') return;
+        event.preventDefault();
+        control.blur?.();
+        void commit(control);
+      }, { signal });
+    });
   }
 
   _wireBannedSpeciesPicker(pageElement, signal) {

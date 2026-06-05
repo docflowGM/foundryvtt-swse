@@ -1,0 +1,185 @@
+{
+  "phase": "phase12-next-feat-implementation-batch",
+  "source": "Current repo snapshot layered through Phase 11, plus refreshed feat descriptions from packs/feats.db and uploaded scrape seed.",
+  "summary": {
+    "changedFeatRows": 33,
+    "engineChanges": [
+      "PASSIVE_STATE_PREDICATES now understands mind-affecting/fear/ability-targeting/natural-hazard/atlatl-cesta/flat-footed contexts.",
+      "CombatOptionResolver now supports target flat-footed/denied-Dex requirements, extra ability-mod damage, critical threat thresholds, critical multiplier minimums, and target defense type overrides.",
+      "Attack rolls can use option-provided critical thresholds and target-defense overrides.",
+      "CombatOptionResolver now consumes selected-choice weapon critical multiplier rules for Triple Crit-style feats."
+    ]
+  },
+  "changedFeats": [
+    {
+      "name": "Forceful Will",
+      "status": "mind_affecting_will_phase12",
+      "description": "+2 Will Defense against mind-affecting effects; failed Will reroll once per encounter."
+    },
+    {
+      "name": "Headstrong",
+      "status": "fear_will_phase12",
+      "description": "+2 Will Defense against fear effects; failed Will reroll once per encounter."
+    },
+    {
+      "name": "Resilient Reflexes",
+      "status": "dexterity_reflex_phase12",
+      "description": "+2 Reflex Defense against effects that target Dexterity; failed check reroll once per encounter."
+    },
+    {
+      "name": "Resilient Will",
+      "status": "wisdom_will_phase12",
+      "description": "+2 Will Defense against effects that target Wisdom; failed check reroll once per encounter."
+    },
+    {
+      "name": "Hard Target",
+      "status": "moving_ranged_reflex_phase12",
+      "description": "+2 Reflex Defense against ranged attacks while moving at least 2 squares on your turn."
+    },
+    {
+      "name": "Mobile Fighting",
+      "status": "movement_aoo_reflex_phase12",
+      "description": "+2 Reflex Defense against attacks of opportunity provoked by movement; withdraw movement rider is metadata."
+    },
+    {
+      "name": "Mobility",
+      "status": "mobility_aoo_reflex_phase12",
+      "description": "+5 dodge bonus to Reflex Defense against movement-provoked attacks of opportunity."
+    },
+    {
+      "name": "Scion of Dorin",
+      "status": "natural_hazard_fortitude_phase12",
+      "description": "+5 species bonus to Fortitude Defense against natural/atmospheric hazards."
+    },
+    {
+      "name": "Warrior Heritage",
+      "status": "atlatl_cesta_will_phase12",
+      "description": "+2 morale bonus to Will Defense while wielding an Atlatl or Cesta."
+    },
+    {
+      "name": "Unwavering Focus",
+      "status": "unwavering_focus_metadata_phase12",
+      "description": "Reaction: impose -2 on a mind-affecting skill check targeting your Will Defense."
+    },
+    {
+      "name": "Increased Resistance",
+      "status": "increased_resistance_metadata_phase12",
+      "description": "Triggered Fortitude bonus after an enemy fails to affect your Fortitude Defense; tracked as a temporary defense rider, not a permanent bonus."
+    },
+    {
+      "name": "Survivor of Ryloth",
+      "status": "survivor_of_ryloth_metadata_phase12",
+      "description": "Survival check can replace Fortitude Defense against extreme heat/cold for you and up to 10 allies."
+    },
+    {
+      "name": "Ample Foraging",
+      "status": "ample_foraging_metadata_phase12",
+      "description": "Basic Survival food grants consumers +2 morale Fortitude until the next day; this is an applied ally buff, not the actor's static Fortitude."
+    },
+    {
+      "name": "Shrewd Bargainer",
+      "status": "shrewd_bargainer_metadata_phase12",
+      "description": "Suppress opponents' insight and morale bonuses to Will Defense in bargaining/social contexts; metadata only until opposed social resolution consumes it."
+    },
+    {
+      "name": "Flèche",
+      "status": "fleche_attack_option_phase12",
+      "description": "Converted from false attack bonus to a charge critical-threshold option."
+    },
+    {
+      "name": "Attack Combo (Melee)",
+      "status": "attackComboMelee_attack_option_phase12",
+      "description": "Converted from false attack bonus to a follow-up damage option that adds +1 weapon die after the combo is primed."
+    },
+    {
+      "name": "Attack Combo (Ranged)",
+      "status": "attackComboRanged_attack_option_phase12",
+      "description": "Converted from false attack bonus to a follow-up damage option that adds +1 weapon die after the combo is primed."
+    },
+    {
+      "name": "Attack Combo (Fire and Strike)",
+      "status": "attackComboFireAndStrike_attack_option_phase12",
+      "description": "Converted from false attack bonus to a follow-up damage option that adds +1 weapon die after the combo is primed."
+    },
+    {
+      "name": "Echani Training",
+      "status": "echaniSingleUnarmedStrike_attack_option_phase12",
+      "description": "Implemented the single-unarmed-attack damage bonus as an optional roll toggle and preserved the once/encounter knock-prone rider metadata."
+    },
+    {
+      "name": "K'tara Training",
+      "status": "ktaraFlatFootedStrike_attack_option_phase12",
+      "description": "Converted from false defense metadata to an unarmed flat-footed target damage option."
+    },
+    {
+      "name": "Wrruushi Training",
+      "status": "wrruushiFortitudeStrike_attack_option_phase12",
+      "description": "Converted from false defense bonus to an unarmed Fortitude-targeting option and bonus-hit-point rider metadata."
+    },
+    {
+      "name": "Slammer",
+      "status": "slammer_attack_option_phase12",
+      "description": "Converted from false melee attack bonus to a Slammer unarmed damage/rider option."
+    },
+    {
+      "name": "Hijkata Training",
+      "status": "hijkataCounterattack_attack_option_phase12",
+      "description": "Converted from false +1/+2 attack metadata to the actual unarmed opportunity counterattack option."
+    },
+    {
+      "name": "Tae-Jitsu Training",
+      "status": "taeJitsuCritical_attack_option_phase12",
+      "description": "Converted false attack metadata into passive unarmed critical/rider metadata."
+    },
+    {
+      "name": "Steadying Position",
+      "status": "steadying_position_phase12",
+      "description": "When prone and aiming with a ranged attack, target loses Dexterity bonus to Reflex; represented as a flag option, not +2 attack."
+    },
+    {
+      "name": "Halt",
+      "status": "halt_phase12",
+      "description": "Attack-of-opportunity rider with Weapon Focus that can halt movement and knock prone; not a flat attack bonus."
+    },
+    {
+      "name": "Frightening Cleave",
+      "status": "frightening_cleave_phase12",
+      "description": "Post-Cleave area debuff; not a flat attack bonus."
+    },
+    {
+      "name": "Opportunistic Trickery",
+      "status": "opportunistic_trickery_phase12",
+      "description": "Sacrifice an AoO to reduce target Reflex by 2; not an attack bonus."
+    },
+    {
+      "name": "Improved Opportunistic Trickery",
+      "status": "improved_opportunistic_trickery_phase12",
+      "description": "Sacrifice an AoO to reduce target Reflex by 5; not an attack bonus."
+    },
+    {
+      "name": "Erratic Target",
+      "status": "erratic_target_phase12",
+      "description": "Trade up to 2 squares of speed for Dodge bonus after moving; not an attack bonus."
+    },
+    {
+      "name": "Devastating Bellow",
+      "status": "devastating_bellow_phase12",
+      "description": "Improves Ithorian bellow damage to 4d6 and half on miss; not an attack bonus."
+    },
+    {
+      "name": "Triple Crit",
+      "status": "triple_crit_critical_phase12",
+      "description": "Selected weapon critical hits use at least x3 multiplier."
+    },
+    {
+      "name": "Triple Crit Specialist",
+      "status": "triple_crit_specialist_critical_phase12",
+      "description": "Selected weapon critical hits use at least x3 multiplier; Triple Crit Specialist also carries the CT rider."
+    }
+  ],
+  "runtimeNotes": [
+    "Contextual defense bonuses still require callers to pass the correct context flags/tags; they remain excluded from static sheet totals.",
+    "Several rider rules are intentionally metadata-only until a future action/reaction UI consumes them.",
+    "Attack options are exposed through the existing CombatOptionResolver contract and should be selected by the player when their trigger is true."
+  ]
+}

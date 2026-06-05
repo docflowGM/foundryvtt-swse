@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "phase": "11",
+  "title": "Feat implementation continuation — skill/defense/action metadata pass",
+  "source": "Current repo snapshot plus phase 1-10 changed-files stack; refreshed descriptions and uploaded scrape seed used where available.",
+  "summary": {
+    "featRowsTouched": 20,
+    "executableEngineChanges": 3,
+    "skillResolverBackfills": 2,
+    "defenseCalculatorBackfills": 1,
+    "attackOptionBackfills": 5,
+    "metadataOnlyFutureHookRules": 12,
+    "descriptionBackfillsFromUploadedSeed": 16
+  },
+  "changedFeats": [
+    {
+      "name": "Spray Shot",
+      "id": "0066c394e5d636fb",
+      "summary": "Converted manual feat into autofire attack-option metadata."
+    },
+    {
+      "name": "Improved Charge",
+      "id": "0166fcdddc548545",
+      "summary": "Converted manual charge movement exception into combat-option flag metadata."
+    },
+    {
+      "name": "Expert Droid Repair",
+      "id": "029c3935e9bed6eb",
+      "summary": "Converted manual mapping into Mechanics/Repair Droid multi-target metadata."
+    },
+    {
+      "name": "Galactic Alliance Military Training",
+      "id": "03593bdccdd70fa2",
+      "summary": "Converted needs-review metadata into condition-track mitigation rule metadata."
+    },
+    {
+      "name": "Slippery Maneuver",
+      "id": "03e16cbf16cdc81d",
+      "summary": "Added Dodge-target and Withdraw metadata; no static Reflex bonus."
+    },
+    {
+      "name": "Indomitable Will",
+      "id": "0794112a41461b05",
+      "summary": "Refined conditional Will modifier to mind-affecting context and added defense reroll metadata."
+    },
+    {
+      "name": "Scion of Dorin",
+      "id": "08a15012d82f0d16",
+      "summary": "Refined Fortitude bonus to natural-hazard context and Species type."
+    },
+    {
+      "name": "Pincer",
+      "id": "09d4eedfce05c6a3",
+      "summary": "Converted manual mapping into explicit Pin/Grapple rider metadata."
+    },
+    {
+      "name": "Forceful Throw",
+      "id": "10a017a020aa4a9c",
+      "summary": "Implemented Move Object-specific Use the Force +2 through SkillFeatResolver."
+    },
+    {
+      "name": "Rapport",
+      "id": "a2708e8daf121947",
+      "summary": "Converted manual mapping into Aid Another support metadata."
+    },
+    {
+      "name": "Resilient Strength",
+      "id": "a65c4d3ad1c3202f",
+      "summary": "Implemented as DefenseCalculator best-of STR/CON Fortitude ability rule."
+    },
+    {
+      "name": "Expert Briber",
+      "id": "a6890bb21adad47e",
+      "summary": "Converted manual mapping into Haggle/Bribery DC-adjustment metadata."
+    },
+    {
+      "name": "Logic Upgrade: Tactician",
+      "id": "a75d5d6b3ce5bc6f",
+      "summary": "Converted manual mapping into Aid Another attack-support metadata."
+    },
+    {
+      "name": "Warrior Heritage",
+      "id": "a9a59c85cddbda1f",
+      "summary": "Refined Will bonus to Atlatl/Cesta wielding context and morale type."
+    },
+    {
+      "name": "Lasting Influence",
+      "id": "ad740c563485664d",
+      "summary": "Removed false Will-defense shape and added Persuasion follow-up metadata."
+    },
+    {
+      "name": "Droidcraft",
+      "id": "ae4dece84c32c3ac",
+      "summary": "Converted manual mapping into Repair Droid time-override metadata."
+    },
+    {
+      "name": "K'thri Training",
+      "id": "b00e0a883da4edda",
+      "summary": "Removed false +2 attack and added unarmed swift-attack option with base-only damage flag."
+    },
+    {
+      "name": "Teräs Käsi Training",
+      "id": "b0feacaeae4860e9",
+      "summary": "Removed false +2 attack and added unarmed hit rider for -5 effective Damage Threshold."
+    },
+    {
+      "name": "Instinctive Defense",
+      "id": "b26497554169ac38",
+      "summary": "Hardened existing Force Point defense resource metadata and marked as ACTIVE/RESOURCE."
+    },
+    {
+      "name": "Forceful Vitality",
+      "id": "ffd5fecab0550bb6",
+      "summary": "Implemented Endurance +2 and once/encounter failed-reroll metadata consumed by SkillFeatResolver."
+    }
+  ],
+  "engineChanges": [
+    {
+      "file": "scripts/actors/derived/defense-calculator.js",
+      "change": "Fortitude Defense now consumes defenseAbilityRules, enabling Resilient Strength to use the better of STR/CON."
+    },
+    {
+      "file": "scripts/engine/combat/combat-option-resolver.js",
+      "change": "Attack options can now require unarmed weapons and can mark selected attacks as base-damage-only."
+    },
+    {
+      "file": "scripts/combat/rolls/attacks.js",
+      "change": "Damage rolling respects the base-damage-only flag for special unarmed options such as K’thri Training."
+    }
+  ],
+  "runtimeStatus": {
+    "staticallyValidated": true,
+    "foundryRuntimeTested": false,
+    "notes": [
+      "Skill bonuses/rerolls use existing SkillFeatResolver paths.",
+      "Resilient Strength is executable through DefenseCalculator.",
+      "Attack options appear through CombatOptionResolver where the UI exposes combat options.",
+      "Aid Another, condition-track mitigation, Dodge-target capacity, and skill-use time/DC metadata are prepared for future UI/service hooks but not fully automated here."
+    ]
+  }
+}

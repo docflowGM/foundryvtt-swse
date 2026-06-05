@@ -414,6 +414,9 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
     damageExtraWeaponDice: 0,
     damageDiceStepBonus: 0,
     damageDieStepIncreases: 0,
+    criticalDamageDieStepBonus: 0,
+    criticalMultiplierMin: null,
+    targetEffectsOnCritical: [],
     flags: {},
     breakdown: []
   };
@@ -465,6 +468,26 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
           result.breakdown.push({ label: item.name, value, type: "attackAbilityBonus" });
           break;
         }
+        case "CRITICAL_DAMAGE_DIE_STEP": {
+          if (rule.requiresUnarmed && !isUnarmedWeapon(weapon, context)) continue;
+          if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;
+          if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, context)) continue;
+          const value = Number(rule.value ?? rule.steps ?? 0);
+          if (!Number.isFinite(value) || value === 0) continue;
+          result.criticalDamageDieStepBonus += value;
+          result.breakdown.push({ label: item.name, value, type: "criticalDamageDieStepBonus" });
+          break;
+        }
+        case "WEAPON_CRITICAL_MULTIPLIER_MIN": {
+          if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;
+          if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, context)) continue;
+          const value = Number(rule.value ?? rule.multiplier ?? rule.minimum ?? 0);
+          if (!Number.isFinite(value) || value <= 0) continue;
+          result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, value);
+          if (Array.isArray(rule.targetEffectsOnCritical)) result.targetEffectsOnCritical.push(...rule.targetEffectsOnCritical.map(effect => ({ ...effect, sourceName: item.name })));
+          result.breakdown.push({ label: item.name, value, type: "criticalMultiplierMin" });
+          break;
+        }
           default:
             break;
         }
@@ -504,6 +527,10 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
     return false;
   }
 
+  if (option.requiresUnarmed && !isUnarmedWeapon(weapon, context)) {
+    return false;
+  }
+
   if (option.requiresWeaponGroups && !weaponMatchesGroup(weapon, option.requiresWeaponGroups, context)) {
     return false;
   }
@@ -528,6 +555,18 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
     for (const flag of required.map(String)) {
       if (context[flag] !== true && !flags.has(flag)) return false;
     }
+  }
+
+  if (option.requiresTargetFlatFooted) {
+    const target = context?.target;
+    const flatFooted = context.targetFlatFooted === true || context.flatFootedTarget === true || target?.system?.derived?.isFlatFooted === true;
+    if (!flatFooted) return false;
+  }
+
+  if (option.requiresTargetDeniedDexBonus) {
+    const target = context?.target;
+    const deniedDex = context.targetDeniedDexBonus === true || context.deniedDexBonus === true || context.targetFlatFooted === true || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true;
+    if (!deniedDex) return false;
   }
 
   if (option.requiresOpportunityAttack && context.opportunityAttack !== true && context.attackOfOpportunity !== true && context.isAttackOfOpportunity !== true) {
@@ -633,17 +672,36 @@ export class CombatOptionResolver {
       damageExtraWeaponDice: 0,
       damageDieStepIncreases: 0,
       defenseModifiers: [],
+      targetEffectsOnHit: [],
+      criticalThreatNaturalMin: null,
+      criticalMultiplierMin: null,
+      criticalDamageDieStepBonus: 0,
+      targetDefenseType: null,
+      targetEffectsOnCritical: [],
       flags: {},
       breakdown: []
     };
 
     for (const option of active) {
       const value = option.control === "passive" ? 1 : option.selectedValue;
+      const flagActive = option.control === "flag"
+        ? Boolean(options?.combatOptions?.[option.id] ?? options?.attackOptions?.[option.id])
+        : true;
+      if (option.control === "flag" && !flagActive) continue;
       if (option.control !== "flag" && option.control !== "passive" && value <= 0) continue;
 
       let attack = 0;
       if (Number.isFinite(Number(option.attackModifier))) attack += Number(option.attackModifier) * value;
       if (option.attackModifierFormula === "-value") attack -= value;
+      if (typeof option.attackModifierFormula === "string" && option.attackModifierFormula.startsWith("context.")) {
+        const key = option.attackModifierFormula.slice("context.".length);
+        const contextValue = Number(options?.[key] ?? options?.combatOptions?.[key] ?? options?.attackOptions?.[key] ?? 0);
+        if (Number.isFinite(contextValue)) {
+          const max = Number(option.maxContextValue ?? option.max ?? contextValue);
+          const multiplier = Number(option.contextMultiplier ?? 1);
+          attack += Math.max(0, Math.min(contextValue, Number.isFinite(max) ? max : contextValue)) * multiplier;
+        }
+      }
       attack += getRangePenaltyAdjustment(option, options);
       if (attack) {
         result.attackBonus += attack;
@@ -654,6 +712,19 @@ export class CombatOptionResolver {
       if (Number.isFinite(Number(option.damageModifier))) damage += Number(option.damageModifier) * value;
       if (option.damageModifierFormula === "value") damage += value;
       if (option.damageModifierFormula === "halfLevel") damage += Math.floor(actorLevel(actor) / 2) * value;
+      if (typeof option.damageModifierFormula === "string" && option.damageModifierFormula.startsWith("context.")) {
+        const key = option.damageModifierFormula.slice("context.".length);
+        const contextValue = Number(options?.[key] ?? options?.combatOptions?.[key] ?? options?.attackOptions?.[key] ?? 0);
+        if (Number.isFinite(contextValue)) damage += contextValue * value;
+      }
+      if (option.damageAbilityBonus) {
+        const abilityRule = option.damageAbilityBonus;
+        const ability = String(abilityRule.ability ?? abilityRule.key ?? 'str').toLowerCase().slice(0, 3);
+        const multiplier = Number(abilityRule.multiplier ?? 1) || 1;
+        const minimum = Number(abilityRule.minimum ?? 0) || 0;
+        const abilityValue = Math.max(minimum, actorAbilityMod(actor, ability) * multiplier);
+        if (Number.isFinite(abilityValue) && abilityValue !== 0) damage += abilityValue * value;
+      }
       if (damage) {
         result.damageBonus += damage;
         result.breakdown.push({ label: option.label, value: damage, type: "damage" });
@@ -673,6 +744,46 @@ export class CombatOptionResolver {
         result.breakdown.push({ label: `${option.label} ${defense.target ?? "defense"}`, value, type: "defense" });
       }
 
+      if (Array.isArray(option.targetEffectsOnHit) && value > 0) {
+        for (const effect of option.targetEffectsOnHit) {
+          const resolved = { ...effect, sourceOption: option.id, sourceName: option.label };
+          if (typeof resolved.valueFormula === "string" && resolved.valueFormula === "selectedValue") resolved.value = value;
+          if (typeof resolved.valueFormula === "string" && resolved.valueFormula === "negativeSelectedValue") resolved.value = -Math.abs(value);
+          result.targetEffectsOnHit.push(resolved);
+        }
+      }
+
+      const criticalThreshold = Number(option.criticalThreatNaturalMin ?? option.criticalThreatMin ?? 0);
+      if (Number.isFinite(criticalThreshold) && criticalThreshold > 1) {
+        result.criticalThreatNaturalMin = result.criticalThreatNaturalMin
+          ? Math.min(result.criticalThreatNaturalMin, criticalThreshold)
+          : criticalThreshold;
+        result.breakdown.push({ label: `${option.label} critical threshold`, value: criticalThreshold, type: "criticalThreatNaturalMin" });
+      }
+
+      const criticalMultiplierMin = Number(option.criticalMultiplierMin ?? option.critMultiplierMin ?? 0);
+      if (Number.isFinite(criticalMultiplierMin) && criticalMultiplierMin > 0) {
+        result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, criticalMultiplierMin);
+      }
+
+      const criticalDamageStep = Number(option.criticalDamageDieStepBonus ?? 0) * value;
+      if (Number.isFinite(criticalDamageStep) && criticalDamageStep !== 0) {
+        result.criticalDamageDieStepBonus += criticalDamageStep;
+      }
+
+      if (Array.isArray(option.targetEffectsOnCritical)) {
+        result.targetEffectsOnCritical.push(...option.targetEffectsOnCritical.map(effect => ({ ...effect, sourceOption: option.id, sourceName: option.label })));
+      }
+
+      if (option.targetDefenseType) {
+        result.targetDefenseType = String(option.targetDefenseType).toLowerCase();
+      }
+
+      if (option.suppressDamageAbilityAndLevel === true || option.damageMode === "baseOnly") {
+        result.flags.damageBaseOnly = true;
+        result.breakdown.push({ label: `${option.label} base damage only`, value: 0, type: "damageMode" });
+      }
+
       if (Array.isArray(option.suppresses)) {
         for (const suppressed of option.suppresses) result.flags[`suppresses.${suppressed}`] = true;
       }
@@ -686,6 +797,9 @@ export class CombatOptionResolver {
     result.damageExtraWeaponDice += ruleModifiers.damageExtraWeaponDice || 0;
     result.damageDiceStepBonus += ruleModifiers.damageDiceStepBonus || 0;
     result.damageDieStepIncreases += ruleModifiers.damageDieStepIncreases || 0;
+    result.criticalDamageDieStepBonus += ruleModifiers.criticalDamageDieStepBonus || 0;
+    result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, ruleModifiers.criticalMultiplierMin || 0) || null;
+    result.targetEffectsOnCritical.push(...(ruleModifiers.targetEffectsOnCritical || []));
     result.breakdown.push(...(ruleModifiers.breakdown || []));
     Object.assign(result.flags, ruleModifiers.flags || {});
 

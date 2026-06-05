@@ -267,6 +267,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
 
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
   const atkBonus = computeAttackBonus(actor, weapon, null, options) + getFightingDefensivelyAttackPenalty(actor, options) + Number(options.customModifier || 0) + Number(options.situationalBonus || 0);
 
   const rollFormula = `1d20 + ${atkBonus}`;
@@ -277,19 +278,23 @@ export async function rollAttack(actor, weapon, options = {}) {
     weaponId: weapon.id
   });
 
-  const resolvedTarget = resolveTargetContext(options, getTargetActorFromOptions(options));
+  const targetContextOptions = optionModifiers.targetDefenseType && !options.targetContext
+    ? { ...options, targetContext: { defenseType: optionModifiers.targetDefenseType } }
+    : options;
+  const resolvedTarget = resolveTargetContext(targetContextOptions, getTargetActorFromOptions(options));
   const target = resolvedTarget.target;
   const targetReflex = resolvedTarget.defenseValue;
   const isHit = targetReflex != null ? roll.total >= targetReflex : null;
   const d20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
-  const isCritical = Number(d20) === 20;
+  const criticalThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
+  const isCritical = Number(d20) === 20 || (Number.isFinite(criticalThreshold) && criticalThreshold < 20 && Number(d20) >= criticalThreshold && isHit !== false);
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
 
   await SWSEChat.postRoll({
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
@@ -304,8 +309,10 @@ export async function rollAttack(actor, weapon, options = {}) {
       success: isHit,
       outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
       isCritical,
-      critMultiplier: weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2,
+      critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
       reactionContext,
+      targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
+      targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
       sourceElement: options?.sourceElement ?? null,
       companionSource: options?.companionSource ?? null,
       sheet: options?.sheet ?? null,
@@ -320,6 +327,11 @@ export async function rollAttack(actor, weapon, options = {}) {
  * Compute SWSE damage bonus for a weapon
  */
 function computeDamageBonus(actor, weapon, context = {}) {
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
+  if (optionModifiers?.flags?.damageBaseOnly === true) {
+    return getWeaponFlatDamageBonus(weapon);
+  }
+
   const halfLvl = getEffectiveHalfLevel(actor);
 
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
@@ -341,7 +353,8 @@ export async function rollDamage(actor, weapon, options = {}) {
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
   const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
 
-  const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
+  const criticalStepBonus = (options?.critical === true || options?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
+  const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', (optionModifiers.damageDieStepIncreases ?? 0) + criticalStepBonus);
   const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
   const formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
 
@@ -435,7 +448,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     roll: attackRoll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
@@ -449,8 +462,9 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
       success: isHit,
       outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
       isCritical,
-      critMultiplier: weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2,
-      reactionContext
+      critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+      reactionContext,
+      targetEffectsOnHit: optionModifiers.targetEffectsOnHit || []
     }
   });
 

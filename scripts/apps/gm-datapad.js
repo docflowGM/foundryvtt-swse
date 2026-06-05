@@ -1009,9 +1009,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
         const startTop = Number(this.position?.top) || root.getBoundingClientRect().top || 0;
         const onMove = (moveEv) => {
           moveEv.preventDefault();
-          this.setPosition({
+          this._gmTabletExpanded = false;
+          this._applyGmDatapadPosition({
             left: startLeft + (moveEv.clientX - startX),
-            top: startTop + (moveEv.clientY - startY)
+            top: startTop + (moveEv.clientY - startY),
+            width: Number(this.position?.width) || root.getBoundingClientRect().width || GM_TABLET_BASE_WIDTH,
+            height: Number(this.position?.height) || root.getBoundingClientRect().height || GM_TABLET_BASE_HEIGHT
           });
         };
         const onEnd = () => {
@@ -1071,10 +1074,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
             height = clamp(startBottom - top, GM_TABLET_MIN_HEIGHT, startBottom - 8);
           }
           this._gmTabletExpanded = false;
-          this.setPosition({ left, top, width, height });
-          const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-          el?.style?.setProperty?.('--swse-tablet-scaled-width', `${Math.round(width)}px`);
-          el?.style?.setProperty?.('--swse-tablet-scaled-height', `${Math.round(height)}px`);
+          this._applyGmDatapadPosition({ left, top, width, height });
         };
         const onEnd = (upEv) => {
           handle.releasePointerCapture?.(upEv?.pointerId ?? ev.pointerId);

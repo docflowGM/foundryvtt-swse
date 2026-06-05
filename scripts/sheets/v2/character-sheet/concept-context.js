@@ -401,12 +401,21 @@ function buildSkillsTab(context, abilities, identity) {
       const abilityAccentClass = selectedAbility ? `swse-ability-accent--${selectedAbility}` : 'swse-ability-accent--none';
       const extraUsesGrouped = buildSkillUseGroups(skill?.extraUsesGrouped ?? systemSkill?.extraUsesGrouped);
       const extraUsesCount = extraUsesGrouped.reduce((sum, group) => sum + group.entries.length, 0);
-      const total = Number.isFinite(Number(skill?.total)) ? Number(skill.total) : Number(systemSkill?.total) || 0;
       const derivedAbilityMod = Number(context.derived?.attributes?.[selectedAbility]?.mod);
       const abilityMod = Number.isFinite(Number(skill?.abilityMod))
         ? Number(skill.abilityMod)
         : (Number.isFinite(derivedAbilityMod) ? derivedAbilityMod : 0);
       const miscMod = Number.isFinite(Number(systemSkill?.miscMod)) ? Number(systemSkill.miscMod) : Number(skill?.miscMod) || 0;
+      const halfLevelValue = Number(skill?.halfLevel) || Math.floor((Number(identity?.level) || Number(context.actor?.system?.level) || 1) / 2);
+      const componentTotal = abilityMod
+        + halfLevelValue
+        + (systemSkill?.trained === true || skill?.trained === true ? 5 : 0)
+        + (systemSkill?.focused === true || skill?.focused === true ? 5 : 0)
+        + miscMod
+        + (Number(skill?.armorPenalty) || 0);
+      const total = key === 'useTheForce'
+        ? componentTotal
+        : (Number.isFinite(Number(skill?.total)) ? Number(skill.total) : Number(systemSkill?.total) || componentTotal);
 
       return {
         key,
@@ -419,8 +428,8 @@ function buildSkillsTab(context, abilities, identity) {
         selectedAbilityLabel: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
         abilityMod,
         abilityModClass: toSignedClass(abilityMod),
-        halfLevel: Number(skill?.halfLevel) || 0,
-        halfLevelClass: toSignedClass(skill?.halfLevel),
+        halfLevel: halfLevelValue,
+        halfLevelClass: toSignedClass(halfLevelValue),
         miscMod,
         miscModClass: toSignedClass(miscMod),
         tooltipKey: skillTooltipKey,
