@@ -470,6 +470,20 @@ export class DerivedCalculator {
 
               // Apply each modifier in the PASSIVE/STATE item
               for (const modifier of meta.modifiers) {
+                const scopedModifier = {
+                  ...modifier,
+                  mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
+                  applicationScope: modifier.applicationScope || meta.applicationScope,
+                  staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
+                  requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
+                  requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
+                  predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
+                };
+
+                if (!ModifierEngine.isModifierAllowedInContext(actor, scopedModifier, skillContext, { staticSheet: true })) {
+                  continue;
+                }
+
                 // Check if this modifier applies to skill checks or this specific skill
                 const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
                 const appliesToSkill = targets.some(t =>

@@ -1813,29 +1813,36 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getPendingAbilityModifier(shell, abilityKey) {
-    const pending = shell?.progressionSession?.draftSelections?.attributes;
+    const pending = shell?.progressionSession?.draftSelections?.attributes || {};
     const values = pending?.values && typeof pending.values === 'object' ? pending.values : pending || {};
-    const raw = pending?.modifiers?.[abilityKey]
-      ?? pending?.finalValues?.[abilityKey]
-      ?? values?.[abilityKey]?.score
-      ?? values?.[abilityKey]?.base
-      ?? values?.[abilityKey]?.value
-      ?? values?.[abilityKey]
-      ?? shell?.actor?.system?.abilities?.[abilityKey]?.mod
-      ?? shell?.actor?.system?.abilities?.[abilityKey]?.modifier
-      ?? shell?.actor?.system?.abilities?.[abilityKey]?.base
-      ?? shell?.actor?.system?.abilities?.[abilityKey]?.value
-      ?? 10;
+    const actorSystem = shell?.actor?.system || {};
+    const actorAbility = actorSystem.abilities?.[abilityKey] || actorSystem.attributes?.[abilityKey] || actorSystem.stats?.[abilityKey] || {};
 
-    const numeric = Number(raw);
-    if (!Number.isFinite(numeric)) return 0;
+    const candidates = [
+      { value: pending?.modifiers?.[abilityKey], kind: 'modifier' },
+      { value: values?.[abilityKey]?.mod, kind: 'modifier' },
+      { value: values?.[abilityKey]?.modifier, kind: 'modifier' },
+      { value: actorAbility?.mod, kind: 'modifier' },
+      { value: actorAbility?.modifier, kind: 'modifier' },
+      { value: pending?.finalValues?.[abilityKey], kind: 'score' },
+      { value: values?.[abilityKey]?.score, kind: 'score' },
+      { value: values?.[abilityKey]?.base, kind: 'score' },
+      { value: values?.[abilityKey]?.value, kind: 'score' },
+      { value: values?.[abilityKey], kind: 'score' },
+      { value: actorAbility?.total, kind: 'score' },
+      { value: actorAbility?.value, kind: 'score' },
+      { value: actorAbility?.base, kind: 'score' },
+    ];
 
-    // If the stored value already looks like a modifier, use it as-is.
-    if (numeric >= -5 && numeric <= 10 && (raw === shell?.actor?.system?.abilities?.[abilityKey]?.mod || raw === shell?.actor?.system?.abilities?.[abilityKey]?.modifier)) {
-      return Math.floor(numeric);
+    for (const candidate of candidates) {
+      const numeric = Number(candidate.value);
+      if (!Number.isFinite(numeric)) continue;
+      return candidate.kind === 'modifier'
+        ? Math.floor(numeric)
+        : Math.floor((numeric - 10) / 2);
     }
 
-    return Math.floor((numeric - 10) / 2);
+    return 0;
   }
 
   async _syncFeatPendingEntitlements(shell, featSelections = []) {

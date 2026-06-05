@@ -115,6 +115,22 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
   };
 }
 
+
+function getPrimaryDamageDieFormula(baseFormula) {
+  const match = String(baseFormula ?? '').match(/(?:^|[^\d])(\d*)d(\d+)/i);
+  if (!match) return null;
+  const sides = Number(match[2]);
+  return Number.isFinite(sides) && sides > 0 ? `d${sides}` : null;
+}
+
+function buildExtraWeaponDiceFormula(baseFormula, extraDice) {
+  const count = Number(extraDice ?? 0);
+  if (!Number.isFinite(count) || count <= 0) return '';
+  const die = getPrimaryDamageDieFormula(baseFormula);
+  if (!die) return '';
+  return ` + ${count}${die}`;
+}
+
 /**
  * Compute complete attack bonus from all SWSE factors.
  * PHASE 4: Includes state-dependent modifiers
@@ -304,7 +320,8 @@ export async function rollDamage(actor, weapon, options = {}) {
   const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
 
   const base = weapon.system?.damage ?? weapon.damage ?? '1d6';
-  const formula = `${base} + ${dmgBonus}`;
+  const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
+  const formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
 

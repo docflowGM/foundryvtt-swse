@@ -22,6 +22,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 
 /**
  * Force Power step — both Generic (force-powers) for level-up use.
@@ -644,11 +645,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     const forceTrainingFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 
     if (forceTrainingFeats.length > 0) {
-      const wisMod = actor.system?.abilities?.wis?.mod ?? 0;
-      const wisOrChaMod = actor.system?.abilities?.cha?.mod ?? wisMod;
+      const grantsForThisFeat = FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance(actor, null);
 
       for (let i = 0; i < forceTrainingFeats.length; i++) {
-        const grantsForThisFeat = Math.max(1, 1 + wisOrChaMod);
         totalEntitlements += grantsForThisFeat;
         reasons.push(`Force Training (${i + 1}) grants +${grantsForThisFeat}`);
       }

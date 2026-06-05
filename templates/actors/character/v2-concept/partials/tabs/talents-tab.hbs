@@ -81,6 +81,7 @@
                   <span class="swse-concept-chip swse-concept-chip--neutral">Build Plan</span>
                 {{else}}
                   <button type="button" class="swse-concept-btn" data-action="open-ability" data-item-id="{{feat.id}}">Inspect</button>
+                  <button type="button" class="swse-concept-btn swse-concept-btn--danger" data-action="delete-feat" data-item-id="{{feat.id}}" title="Remove feat">✕</button>
                 {{/if}}
               </div>
             </article>
@@ -125,6 +126,7 @@
                         <span class="swse-concept-chip swse-concept-chip--neutral">Build Plan</span>
                       {{else}}
                         <button type="button" class="swse-concept-btn" data-action="open-ability" data-item-id="{{talent.id}}">Inspect</button>
+                        <button type="button" class="swse-concept-btn swse-concept-btn--danger" data-action="delete-talent" data-item-id="{{talent.id}}" title="Remove talent">✕</button>
                       {{/if}}
                     </div>
                   </div>

@@ -15,6 +15,28 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 // Cache for feat metadata
 let _featMetadataCache = null;
 
+function normalizeFeatMetadataKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[‘’‛′']/g, '')
+    .replace(/[‐-―]/g, '-')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function getFeatMetadataEntry(metadata, featName) {
+  const feats = metadata?.feats || {};
+  if (feats[featName]) return feats[featName];
+  const wanted = normalizeFeatMetadataKey(featName);
+  if (!wanted) return null;
+  for (const [name, entry] of Object.entries(feats)) {
+    if (normalizeFeatMetadataKey(name) === wanted) return entry;
+  }
+  return null;
+}
+
 /**
  * Load feat metadata from JSON file
  * @returns {Promise<Object>} Feat metadata object
@@ -94,7 +116,7 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
 
   // Assign feats to categories with enhanced metadata
   feats.forEach(feat => {
-    const featMeta = metadata.feats[feat.name];
+    const featMeta = getFeatMetadataEntry(metadata, feat.name);
     const isOwned = ownedFeats.includes(feat.name);
     const isRepeatable = repeatableFeats.some(rf => feat.name.includes(rf) || rf.includes(feat.name));
 

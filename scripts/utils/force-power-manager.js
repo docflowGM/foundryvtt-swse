@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { launchProgressionSuiteStep } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-suite-launcher.js";
@@ -146,8 +147,15 @@ export class ForcePowerManager {
    * @returns {Promise<void>}
    */
   static async handleForceSensitivity(actor) {
-    // Force Sensitivity grants 1 force power
-    await this.selectForcePowers(actor, 1, 'Force Sensitivity - Select 1 Power');
+    // RAW/default: Force Sensitivity unlocks Force rules access but does not
+    // grant a Force Power. The optional house rule preserves the older +1 pick.
+    if (ForceRules.forceSensitivityGrantsForcePower()) {
+      await this.selectForcePowers(actor, 1, 'Force Sensitivity - Select 1 Power');
+    } else {
+      SWSELogger.debug('SWSE | Force Powers | Force Sensitivity added without power grant; house rule is disabled', {
+        actor: actor?.name || null
+      });
+    }
 
     if (!actor.system.forceSuite) {
       await globalThis.SWSE.ActorEngine.updateActor(actor, {

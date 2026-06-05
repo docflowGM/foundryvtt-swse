@@ -1,0 +1,987 @@
+{
+  "schemaVersion": 1,
+  "phase": "6-description-and-choice-backfill",
+  "purpose": "Use newly scraped feat data to fill available missing/stub descriptions and backfill prompt-on-selection choice metadata identified in Phase 5.",
+  "inputs": [
+    "/mnt/data/swse_feats.json",
+    "/mnt/data/swse_feat_index.json",
+    "/mnt/data/swse_feats_foundry_seed.json"
+  ],
+  "changedFiles": [
+    "packs/feats.db",
+    "data/feat-choice-options.json",
+    "scripts/engine/progression/feats/feat-choice-resolver.js",
+    "scripts/engine/abilities/passive/passive-adapter.js",
+    "docs/feat-description-and-choice-backfill-phase6.json"
+  ],
+  "summary": {
+    "totalFeatRows": 419,
+    "scrapeSeedRows": 355,
+    "descriptionsFilledFromSeed": 68,
+    "remainingDescriptionGaps": 72,
+    "choiceBackfilledFeatRows": 14,
+    "registryChoiceKindsAddedOrUpdated": 13
+  },
+  "descriptionsFilledFromSeed": [
+    {
+      "name": "Wary Sentries",
+      "id": "0053d97632b02e4a",
+      "sourceUrl": "https://swse.fandom.com/wiki/Wary_Sentries",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Unwavering Focus",
+      "id": "0214e9586b6c8bb5",
+      "sourceUrl": "https://swse.fandom.com/wiki/Unwavering_Focus",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Increased Resistance",
+      "id": "0365722a629eed1f",
+      "sourceUrl": "https://swse.fandom.com/wiki/Increased_Resistance",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Primitive Warrior",
+      "id": "047f06ec480d841f",
+      "sourceUrl": "https://swse.fandom.com/wiki/Primitive_Warrior",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Pitiless Warrior",
+      "id": "08896a9f860ebca9",
+      "sourceUrl": "https://swse.fandom.com/wiki/Pitiless_Warrior",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Scion of Dorin",
+      "id": "08a15012d82f0d16",
+      "sourceUrl": "https://swse.fandom.com/wiki/Scion_of_Dorin",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Mounted Regiment",
+      "id": "0e9aa3d941f4eb80",
+      "sourceUrl": "https://swse.fandom.com/wiki/Mounted_Regiment",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Ascension Specialists",
+      "id": "125c328c4573890a",
+      "sourceUrl": "https://swse.fandom.com/wiki/Ascension_Specialists",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Confident Success",
+      "id": "139a80972fc3b8ee",
+      "sourceUrl": "https://swse.fandom.com/wiki/Confident_Success",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Technical Experts",
+      "id": "18779d9a72b47a12",
+      "sourceUrl": "https://swse.fandom.com/wiki/Technical_Experts",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Strong Bellow",
+      "id": "1a9091174116f6ff",
+      "sourceUrl": "https://swse.fandom.com/wiki/Strong_Bellow",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Wrruushi Training",
+      "id": "1d0291d930abda15",
+      "sourceUrl": "https://swse.fandom.com/wiki/Wrruushi_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Medical Team",
+      "id": "1d27dfb8ce491836",
+      "sourceUrl": "https://swse.fandom.com/wiki/Medical_Team",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "K'tara Training",
+      "id": "1dfbddf5f1aa57c3",
+      "sourceUrl": "https://swse.fandom.com/wiki/K'tara_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Quick Comeback",
+      "id": "21a0af5ef58172a0",
+      "sourceUrl": "https://swse.fandom.com/wiki/Quick_Comeback",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Ample Foraging",
+      "id": "223a5c14f2ea4737",
+      "sourceUrl": "https://swse.fandom.com/wiki/Ample_Foraging",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Sharp Senses",
+      "id": "2357f4a68fe571fb",
+      "sourceUrl": "https://swse.fandom.com/wiki/Sharp_Senses",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Wroshyr Rage",
+      "id": "2ed1a3257175feb9",
+      "sourceUrl": "https://swse.fandom.com/wiki/Wroshyr_Rage",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Binary Mind",
+      "id": "33905755bbb1ca10",
+      "sourceUrl": "https://swse.fandom.com/wiki/Binary_Mind",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Justice Seeker",
+      "id": "3595086bb17d4303",
+      "sourceUrl": "https://swse.fandom.com/wiki/Justice_Seeker",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Veteran Spacer",
+      "id": "423c5fffe7abe449",
+      "sourceUrl": "https://swse.fandom.com/wiki/Veteran_Spacer",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Keen Scent",
+      "id": "46d70ac7db6872f6",
+      "sourceUrl": "https://swse.fandom.com/wiki/Keen_Scent",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Resurgent Vitality",
+      "id": "47f21e32233bb910",
+      "sourceUrl": "https://swse.fandom.com/wiki/Resurgent_Vitality",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Aquatic Specialists",
+      "id": "55483fd350b3ba28",
+      "sourceUrl": "https://swse.fandom.com/wiki/Aquatic_Specialists",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Perfect Intuition",
+      "id": "5a2ba2f28bc5ee01",
+      "sourceUrl": "https://swse.fandom.com/wiki/Perfect_Intuition",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Tae-Jitsu Training",
+      "id": "6b6a0dc594ad4e3c",
+      "sourceUrl": "https://swse.fandom.com/wiki/Tae-Jitsu_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Hijkata Training",
+      "id": "6dcb59b199dba6a1",
+      "sourceUrl": "https://swse.fandom.com/wiki/Hijkata_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Perfect Swimmer",
+      "id": "70c842436bbb6330",
+      "sourceUrl": "https://swse.fandom.com/wiki/Perfect_Swimmer",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Unhindered Approach",
+      "id": "72183c573d1cc44e",
+      "sourceUrl": "https://swse.fandom.com/wiki/Unhindered_Approach",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Nimble Team",
+      "id": "752b00692fa5376b",
+      "sourceUrl": "https://swse.fandom.com/wiki/Nimble_Team",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Covert Operatives",
+      "id": "75daa55c22ffed5e",
+      "sourceUrl": "https://swse.fandom.com/wiki/Covert_Operatives",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Slicer Team",
+      "id": "77c897590b4000f6",
+      "sourceUrl": "https://swse.fandom.com/wiki/Slicer_Team",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Stava Training",
+      "id": "836f80dd762cf155",
+      "sourceUrl": "https://swse.fandom.com/wiki/Stava_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Flawless Pilot",
+      "id": "87969fb8b12ff507",
+      "sourceUrl": "https://swse.fandom.com/wiki/Flawless_Pilot",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Survivor of Ryloth",
+      "id": "90a258aae2583994",
+      "sourceUrl": "https://swse.fandom.com/wiki/Survivor_of_Ryloth",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Disarming Charm",
+      "id": "9567c9e2fe8416e6",
+      "sourceUrl": "https://swse.fandom.com/wiki/Disarming_Charm",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Mind of Reason",
+      "id": "987bdca14576cf2f",
+      "sourceUrl": "https://swse.fandom.com/wiki/Mind_of_Reason",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Inborn Resilience",
+      "id": "9d70c309eb95da5e",
+      "sourceUrl": "https://swse.fandom.com/wiki/Inborn_Resilience",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Devastating Bellow",
+      "id": "9f1305cc6ada5d7a",
+      "sourceUrl": "https://swse.fandom.com/wiki/Devastating_Bellow",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Warrior Heritage",
+      "id": "a9a59c85cddbda1f",
+      "sourceUrl": "https://swse.fandom.com/wiki/Warrior_Heritage",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Lasting Influence",
+      "id": "ad740c563485664d",
+      "sourceUrl": "https://swse.fandom.com/wiki/Lasting_Influence",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "K'thri Training",
+      "id": "b00e0a883da4edda",
+      "sourceUrl": "https://swse.fandom.com/wiki/K'thri_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Teräs Käsi Training",
+      "id": "b0feacaeae4860e9",
+      "sourceUrl": "https://swse.fandom.com/wiki/Ter%C3%A4s_K%C3%A4si_Training",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Fringe Benefits",
+      "id": "b1299c242802a260",
+      "sourceUrl": "https://swse.fandom.com/wiki/Fringe_Benefits",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Unified Squadron",
+      "id": "b1970c18996d44dd",
+      "sourceUrl": "https://swse.fandom.com/wiki/Unified_Squadron",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Tireless Squad",
+      "id": "b648515a5e8dd612",
+      "sourceUrl": "https://swse.fandom.com/wiki/Tireless_Squad",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Mon Calamari Shipwright",
+      "id": "bb16070b5fdfccf4",
+      "sourceUrl": "https://swse.fandom.com/wiki/Mon_Calamari_Shipwright",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Regenerative Healing",
+      "id": "be1346b0cfb5ea78",
+      "sourceUrl": "https://swse.fandom.com/wiki/Regenerative_Healing",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Instinctive Perception",
+      "id": "bf71e5f4171547ef",
+      "sourceUrl": "https://swse.fandom.com/wiki/Instinctive_Perception",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Master Tracker",
+      "id": "d133d3fad058c35f",
+      "sourceUrl": "https://swse.fandom.com/wiki/Master_Tracker",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Hunter's Instincts",
+      "id": "d2e86b15327ae544",
+      "sourceUrl": "https://swse.fandom.com/wiki/Hunter's_Instincts",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Jedi Heritage",
+      "id": "d3c4ae9f793b8573",
+      "sourceUrl": "https://swse.fandom.com/wiki/Jedi_Heritage",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Bothan Will",
+      "id": "d40dea327376ec90",
+      "sourceUrl": "https://swse.fandom.com/wiki/Bothan_Will",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Fast Swimmer",
+      "id": "d874a33284de77e4",
+      "sourceUrl": "https://swse.fandom.com/wiki/Fast_Swimmer",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Wilderness Specialists",
+      "id": "daf0594fbb48e61e",
+      "sourceUrl": "https://swse.fandom.com/wiki/Wilderness_Specialists",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Bowcaster Marksman",
+      "id": "db82e1df17c3110b",
+      "sourceUrl": "https://swse.fandom.com/wiki/Bowcaster_Marksman",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Spacer's Surge",
+      "id": "dd6ad0e712e9a314",
+      "sourceUrl": "https://swse.fandom.com/wiki/Spacer's_Surge",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Shrewd Bargainer",
+      "id": "df58db54c4b53539",
+      "sourceUrl": "https://swse.fandom.com/wiki/Shrewd_Bargainer",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Deep Sight",
+      "id": "e4de79f4993a6690",
+      "sourceUrl": "https://swse.fandom.com/wiki/Deep_Sight",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Thick Skin",
+      "id": "e97cc5c5128a55ce",
+      "sourceUrl": "https://swse.fandom.com/wiki/Thick_Skin",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Darkness Dweller",
+      "id": "eaf7079b977d60b7",
+      "sourceUrl": "https://swse.fandom.com/wiki/Darkness_Dweller",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Imperceptible Liar",
+      "id": "ec8b6bb889f65dea",
+      "sourceUrl": "https://swse.fandom.com/wiki/Imperceptible_Liar",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Clawed Subspecies",
+      "id": "edd8bb64c18d9a8a",
+      "sourceUrl": "https://swse.fandom.com/wiki/Clawed_Subspecies",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Read the Winds",
+      "id": "f5be1207aa6b1817",
+      "sourceUrl": "https://swse.fandom.com/wiki/Read_the_Winds",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Sure Climber",
+      "id": "f8748ba7993b6b17",
+      "sourceUrl": "https://swse.fandom.com/wiki/Sure_Climber",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Gungan Weapon Master",
+      "id": "f916516eeeaae10b",
+      "sourceUrl": "https://swse.fandom.com/wiki/Gungan_Weapon_Master",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Nature Specialist",
+      "id": "f965ca153bb13aaf",
+      "sourceUrl": "https://swse.fandom.com/wiki/Nature_Specialist",
+      "previousState": "legacy_stub"
+    },
+    {
+      "name": "Forest Stalker",
+      "id": "febbb0f05c8a0883",
+      "sourceUrl": "https://swse.fandom.com/wiki/Forest_Stalker",
+      "previousState": "legacy_stub"
+    }
+  ],
+  "remainingDescriptionGaps": [
+    {
+      "name": "Forceful Strike",
+      "id": "02ac414f546a539a",
+      "state": "blank"
+    },
+    {
+      "name": "Low Profile",
+      "id": "058de949e909d9ae",
+      "state": "blank"
+    },
+    {
+      "name": "Indomitable Will",
+      "id": "0794112a41461b05",
+      "state": "blank"
+    },
+    {
+      "name": "Wounding Strike",
+      "id": "07d3c95e72608e00",
+      "state": "blank"
+    },
+    {
+      "name": "Saber Throw",
+      "id": "08dbd76457db101f",
+      "state": "blank"
+    },
+    {
+      "name": "Stealthy",
+      "id": "0c53cb8b7c29d865",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Throw",
+      "id": "10a017a020aa4a9c",
+      "state": "blank"
+    },
+    {
+      "name": "Hard Target",
+      "id": "1301d047e26db40d",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Will",
+      "id": "17e317292814e13e",
+      "state": "blank"
+    },
+    {
+      "name": "Reactive Awareness",
+      "id": "17f4a0850e94dc7d",
+      "state": "blank"
+    },
+    {
+      "name": "Lucky Shot",
+      "id": "18f535b84cff63c3",
+      "state": "blank"
+    },
+    {
+      "name": "Logic Upgrade: Self-Defense",
+      "id": "191aacaecaa92ce1",
+      "state": "legacy_stub"
+    },
+    {
+      "name": "Stunning Strike",
+      "id": "19ca8f89351e8fee",
+      "state": "blank"
+    },
+    {
+      "name": "Improved Stun",
+      "id": "2bad688298402481",
+      "state": "blank"
+    },
+    {
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "id": "2cc20fb67232f92f",
+      "state": "legacy_stub"
+    },
+    {
+      "name": "Weapon Proficiency (Simple Weapons)",
+      "id": "2d680cc46a7972da",
+      "state": "blank"
+    },
+    {
+      "name": "Triple Crit Specialist",
+      "id": "2f2fa438a6fb54a0",
+      "state": "blank"
+    },
+    {
+      "name": "Spring Attack",
+      "id": "32ab40ebbd9bbc16",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Saber Throw",
+      "id": "37cb4455a70876ad",
+      "state": "blank"
+    },
+    {
+      "name": "Noble Fencing Style",
+      "id": "3b1c70b0f6844126",
+      "state": "blank"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "id": "3ca2ebe34da486a5",
+      "state": "blank"
+    },
+    {
+      "name": "Reactive Stealth",
+      "id": "3cd647b126f1d171",
+      "state": "blank"
+    },
+    {
+      "name": "Mobile Fighting",
+      "id": "3f2e1b77ef19e244",
+      "state": "blank"
+    },
+    {
+      "name": "Elusive Target",
+      "id": "3fae4e25ba7ad3c2",
+      "state": "blank"
+    },
+    {
+      "name": "Reckless Charge",
+      "id": "4025202b97ec451d",
+      "state": "blank"
+    },
+    {
+      "name": "Heavy Weapon Proficiency",
+      "id": "41a9ce755ecffb5b",
+      "state": "blank"
+    },
+    {
+      "name": "Force Focus",
+      "id": "44ddf3506444cbbd",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Grip",
+      "id": "465434fb7b44aee1",
+      "state": "blank"
+    },
+    {
+      "name": "Grappling Strike",
+      "id": "473c68193cb5df26",
+      "state": "blank"
+    },
+    {
+      "name": "Delay Damage",
+      "id": "4eed406661d3313f",
+      "state": "blank"
+    },
+    {
+      "name": "Headstrong",
+      "id": "54d6201340a6757f",
+      "state": "blank"
+    },
+    {
+      "name": "Improved Grapple",
+      "id": "5824e2360feb505a",
+      "state": "blank"
+    },
+    {
+      "name": "Educated",
+      "id": "5cc1216874c79087",
+      "state": "blank"
+    },
+    {
+      "name": "Keen Force Mind",
+      "id": "647d77a8f5ab9af3",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Slam",
+      "id": "6673cd53493a9d6c",
+      "state": "blank"
+    },
+    {
+      "name": "Trustworthy",
+      "id": "6d8ce2807c579289",
+      "state": "blank"
+    },
+    {
+      "name": "Redirect Shot",
+      "id": "6f98dd888bef8d7b",
+      "state": "blank"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "id": "75ff82e2dd80091d",
+      "state": "blank"
+    },
+    {
+      "name": "Weapon Proficiency (Rifles)",
+      "id": "765ff8a34e58acac",
+      "state": "blank"
+    },
+    {
+      "name": "Frightening Presence",
+      "id": "7767bd8542b4edbd",
+      "state": "blank"
+    },
+    {
+      "name": "Weapon Specialization",
+      "id": "7cd5ebe725910cb2",
+      "state": "blank"
+    },
+    {
+      "name": "Weapon Proficiency (Heavy Weapons)",
+      "id": "8329a353aa3899be",
+      "state": "blank"
+    },
+    {
+      "name": "Intimidating Presence",
+      "id": "83abd1c384b58c3c",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Telekinesis",
+      "id": "8566edcae3a2f18c",
+      "state": "blank"
+    },
+    {
+      "name": "Heroic Surge",
+      "id": "867e3fbd13642016",
+      "state": "blank"
+    },
+    {
+      "name": "Two-Weapon Fighting",
+      "id": "88cdedff38b610c0",
+      "state": "blank"
+    },
+    {
+      "name": "Improved Knock Prone",
+      "id": "9138c70e1ae07fe1",
+      "state": "blank"
+    },
+    {
+      "name": "Fast Talk",
+      "id": "9768963c7a36237d",
+      "state": "blank"
+    },
+    {
+      "name": "Great Fortitude",
+      "id": "9a89576b3cc1347e",
+      "state": "blank"
+    },
+    {
+      "name": "Logic Upgrade: Tactician",
+      "id": "a75d5d6b3ce5bc6f",
+      "state": "legacy_stub"
+    },
+    {
+      "name": "Intuitive Initiative",
+      "id": "ae5c34d352d6dff7",
+      "state": "blank"
+    },
+    {
+      "name": "Frightful Presence",
+      "id": "b2296a4d5cef8a61",
+      "state": "blank"
+    },
+    {
+      "name": "Hew",
+      "id": "b7d60764c9cb6bbd",
+      "state": "blank"
+    },
+    {
+      "name": "Lightning Reflexes",
+      "id": "bee76d01da40677d",
+      "state": "blank"
+    },
+    {
+      "name": "Knock Prone",
+      "id": "c9522152ffa425f9",
+      "state": "blank"
+    },
+    {
+      "name": "Harm’s Way",
+      "id": "ce946668c5b57410",
+      "state": "blank"
+    },
+    {
+      "name": "Advanced Melee Weapon Proficiency",
+      "id": "cf28ec45cabaff59",
+      "state": "blank"
+    },
+    {
+      "name": "Logic Upgrade: Skill Swap",
+      "id": "d48614f7ae500a5b",
+      "state": "legacy_stub"
+    },
+    {
+      "name": "Frightening Presence",
+      "id": "d612e7a708edf75b",
+      "state": "blank"
+    },
+    {
+      "name": "Skill Challenge: Last Resort",
+      "id": "db547ac84af63b06",
+      "state": "legacy_stub"
+    },
+    {
+      "name": "Forceful Weapon",
+      "id": "db564cc6f9879ec8",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Warrior",
+      "id": "dbdacb522c14d7e1",
+      "state": "blank"
+    },
+    {
+      "name": "Resilient Reflexes",
+      "id": "e5ab9392378400ec",
+      "state": "blank"
+    },
+    {
+      "name": "Weapon Proficiency (Pistols)",
+      "id": "e5d361d01d1b44e4",
+      "state": "blank"
+    },
+    {
+      "name": "Conditioned",
+      "id": "e99d9284a73cf505",
+      "state": "blank"
+    },
+    {
+      "name": "Surgical Precision",
+      "id": "eb33f5e4b5f6318c",
+      "state": "blank"
+    },
+    {
+      "name": "Skill Challenge: Recovery",
+      "id": "ef64dc738a6afeeb",
+      "state": "legacy_stub"
+    },
+    {
+      "name": "Friendly Fire Avoidance",
+      "id": "f504c1a7962f08d8",
+      "state": "blank"
+    },
+    {
+      "name": "Resilient Will",
+      "id": "f82323ee06f59735",
+      "state": "blank"
+    },
+    {
+      "name": "Resilient Talent",
+      "id": "fda012e3b2b1e55f",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Stun",
+      "id": "ff76bea42641ca5b",
+      "state": "blank"
+    },
+    {
+      "name": "Forceful Vitality",
+      "id": "ffd5fecab0550bb6",
+      "state": "blank"
+    }
+  ],
+  "choiceBackfills": [
+    {
+      "name": "Educated",
+      "id": "5cc1216874c79087",
+      "choiceKind": "two_knowledge_skills",
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.educated",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Converted from disabled hard-coded Knowledge modifiers to two selected-choice static modifiers."
+      ]
+    },
+    {
+      "name": "Inborn Resilience",
+      "id": "9d70c309eb95da5e",
+      "choiceKind": "defense_reallocation",
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.inborn_resilience",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Backfilled defense reallocation prompt and static selected-choice modifiers."
+      ]
+    },
+    {
+      "name": "Double Attack",
+      "id": "357807a5ceb77203",
+      "choiceKind": "double_attack_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.double_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose one proficient weapon group or exotic weapon for the extra Full Attack option."
+      ]
+    },
+    {
+      "name": "Triple Attack",
+      "id": "648a4f16669056f0",
+      "choiceKind": "triple_attack_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.triple_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose one Double Attack weapon choice for the second extra Full Attack option."
+      ]
+    },
+    {
+      "name": "Relentless Attack",
+      "id": "30cb2abcd11bf1bd",
+      "choiceKind": "double_attack_followup_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.relentless_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose the Double Attack weapon choice this feat modifies."
+      ]
+    },
+    {
+      "name": "Savage Attack",
+      "id": "aaa730a68f195111",
+      "choiceKind": "double_attack_followup_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.savage_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose the Double Attack weapon choice this feat modifies."
+      ]
+    },
+    {
+      "name": "Return Fire",
+      "id": "80c52cf7838095c1",
+      "choiceKind": "return_fire_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.return_fire_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose the Weapon Focus choice that can be used with Return Fire."
+      ]
+    },
+    {
+      "name": "Withdrawal Strike",
+      "id": "caad1a8c13bf01a1",
+      "choiceKind": "melee_weapon_or_group",
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.withdrawal_strike_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose a melee weapon group or melee exotic weapon."
+      ]
+    },
+    {
+      "name": "Triple Crit",
+      "id": "3d4a4e93ced26712",
+      "choiceKind": "specific_weapon",
+      "choiceSource": "actorInventory",
+      "storagePath": "flags.swse.choices.triple_crit_weapon",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose one proficient weapon; actor inventory supplies concrete weapon options when available."
+      ]
+    },
+    {
+      "name": "Superior Tech",
+      "id": "a717435c8094e7fb",
+      "choiceKind": "tech_category",
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.superior_tech",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose Armor, Weapons, Droids, Vehicles, or Devices."
+      ]
+    },
+    {
+      "name": "Nikto Survival",
+      "id": "6179746c48e30c26",
+      "choiceKind": "nikto_subspecies",
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.nikto_survival",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose the Nikto subspecies/native environment package."
+      ]
+    },
+    {
+      "name": "Mission Specialist",
+      "id": "b7f51561e60fefe6",
+      "choiceKind": "trained_skill",
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.mission_specialist_skill",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose one trained skill to share with allies."
+      ]
+    },
+    {
+      "name": "Adaptable Talent",
+      "id": "25ce950a142f969d",
+      "choiceKind": "talent_choice",
+      "choiceSource": "actorState",
+      "storagePath": "flags.swse.choices.adaptable_talent",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose one owned talent for the adaptable talent swap rule."
+      ]
+    },
+    {
+      "name": "Recurring Success",
+      "id": "5535b5d495f381f5",
+      "choiceKind": "once_per_encounter_ability_choice",
+      "choiceSource": "actorState",
+      "storagePath": "flags.swse.choices.recurring_success",
+      "status": "phase6_choice_backfilled",
+      "notes": [
+        "Choose one once-per-encounter feat or talent."
+      ]
+    }
+  ],
+  "registryChoiceKindsAddedOrUpdated": [
+    "two_knowledge_skills",
+    "defense_reallocation",
+    "tech_category",
+    "nikto_subspecies",
+    "trained_skill",
+    "talent_choice",
+    "once_per_encounter_ability_choice",
+    "specific_weapon",
+    "double_attack_weapon",
+    "triple_attack_weapon",
+    "double_attack_followup_weapon",
+    "return_fire_weapon",
+    "melee_weapon_or_group"
+  ],
+  "notes": [
+    "Descriptions were filled only when the existing pack description was blank or a legacy one-line stub and the uploaded Foundry seed had an exact normalized name match.",
+    "Educated and Inborn Resilience now have executable selected-choice static modifiers.",
+    "Weapon/action feats now require persistent choices at selection time but remain excluded from static sheet totals until roll/action context wiring consumes those choices."
+  ],
+  "validation": [
+    "node --check scripts/engine/progression/feats/feat-choice-resolver.js",
+    "node --check scripts/engine/abilities/passive/passive-adapter.js",
+    "packs/feats.db parsed as valid JSONL with 419 rows",
+    "data/feat-choice-options.json parsed as valid JSON",
+    "docs/feat-description-and-choice-backfill-phase6.json parsed as valid JSON"
+  ],
+  "implementedRuntimeSupport": [
+    "FeatChoiceResolver can now resolve actor-inventory choices for specific-weapon feats.",
+    "FeatChoiceResolver can now resolve actor-state choices for owned talent and once-per-encounter feat/talent choices.",
+    "FeatChoiceResolver can now resolve Double Attack dependent choices for Triple Attack, Relentless Attack, and Savage Attack.",
+    "PassiveAdapter can now resolve selected-choice modifier targets from composite choices using property/index metadata.",
+    "PassiveAdapter now normalizes selected skill choices to the repo canonical camelCase skill keys used by actor.system.skills."
+  ]
+}

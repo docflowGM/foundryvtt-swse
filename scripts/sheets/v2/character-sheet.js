@@ -5862,7 +5862,7 @@ const forcePoints = [];
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        await this._createAndOpenBlankItem('feat');
+        await this._showAddAbilityDialog('feat');
       }, { signal });
     });
 
@@ -5885,8 +5885,8 @@ const forcePoints = [];
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
-
         await InventoryEngine.removeItem(this.actor, itemId);
+        await this.requestSurfaceRender({ reason: 'feat-deleted' });
       }, { signal });
     });
 
@@ -5895,8 +5895,76 @@ const forcePoints = [];
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        await this._createAndOpenBlankItem('talent');
+        await this._showAddAbilityDialog('talent');
       }, { signal });
+    });
+
+    // Delete talent button
+    html.querySelectorAll('[data-action="delete-talent"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+        await InventoryEngine.removeItem(this.actor, itemId);
+        await this.requestSurfaceRender({ reason: 'talent-deleted' });
+      }, { signal });
+    });
+  }
+
+  /**
+   * Show a two-option dialog when the player clicks Add Feat / Add Talent.
+   * - "Pick from Compendium" → opens the progression feat/talent step inline
+   * - "Add Custom" → creates a blank item and opens its sheet for editing
+   */
+  async _showAddAbilityDialog(itemType) {
+    const label = itemType === 'feat' ? 'Feat' : 'Talent';
+    const stepId = itemType === 'feat' ? 'general-feat' : 'general-talent';
+
+    return new Promise((resolve) => {
+      new Dialog({
+        title: `Add ${label}`,
+        content: `
+          <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,.75);">
+            How would you like to add a ${label.toLowerCase()}?
+          </p>`,
+        buttons: {
+          legal: {
+            icon: '<i class="fa-solid fa-book-open"></i>',
+            label: `Pick from Compendium`,
+            callback: async () => {
+              try {
+                await this.setSurface('progression', {
+                  source: 'sheet',
+                  stepId,
+                  currentStep: stepId,
+                  mode: 'freeAdd'
+                });
+                await this.requestSurfaceRender({ reason: `${itemType}-step-launch`, surfaceId: 'progression' });
+              } catch (err) {
+                swseLogger.error(`[CharacterSheet] ${label} step launch failed:`, err);
+              }
+              resolve();
+            }
+          },
+          custom: {
+            icon: '<i class="fa-solid fa-pen"></i>',
+            label: `Add Custom ${label}`,
+            callback: async () => {
+              await this._createAndOpenBlankItem(itemType);
+              resolve();
+            }
+          },
+          cancel: {
+            icon: '<i class="fa-solid fa-times"></i>',
+            label: 'Cancel',
+            callback: () => resolve()
+          }
+        },
+        default: 'legal'
+      }, {
+        classes: ['swse', 'swse-dialog'],
+        width: 340
+      }).render(true);
     });
   }
 

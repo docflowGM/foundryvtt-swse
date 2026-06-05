@@ -65,6 +65,36 @@
 
       <div class="gm-phase7-rule-list">
         {{#each this.rules}}
+        {{#if (eq this.key "bannedSpecies")}}
+        {{!-- Special: bannedSpecies gets a searchable checkbox species picker --}}
+        <article class="gm-phase7-rule-entry gm-phase7-rule-entry--species-picker {{#if this.enabled}}is-enabled{{/if}}"
+                 data-house-rule-row data-rule-category="{{../id}}"
+                 data-rule-search-text="{{this.name}} {{this.description}} {{this.key}}">
+          <div class="gm-phase7-rule-copy">
+            <div class="gm-phase7-rule-name">{{this.name}}</div>
+            <div class="gm-phase7-rule-description">{{this.description}}</div>
+            <div class="gm-phase7-rule-key">{{this.key}} · species picker</div>
+          </div>
+          <div class="gm-species-picker" data-species-picker>
+            <input type="search" class="gm-species-picker__search" placeholder="Filter species…" data-species-search>
+            <div class="gm-species-picker__list" data-species-list>
+              {{#each ../../bannedSpeciesOptions}}
+              <label class="gm-species-picker__item" data-species-name="{{this.name}}">
+                <input type="checkbox"
+                       class="gm-species-picker__checkbox"
+                       data-banned-species-checkbox
+                       data-species-name="{{this.name}}"
+                       {{#if this.banned}}checked{{/if}}>
+                <span>{{this.name}}</span>
+              </label>
+              {{/each}}
+            </div>
+            <div class="gm-species-picker__footer">
+              <span data-banned-count>{{#each ../../bannedSpeciesOptions}}{{#if this.banned}}✗ {{this.name}}{{/if}}{{/each}}</span>
+            </div>
+          </div>
+        </article>
+        {{else}}
         <article class="gm-phase7-rule-entry {{#if this.enabled}}is-enabled{{/if}}" data-house-rule-row data-rule-category="{{../id}}" data-rule-search-text="{{this.name}} {{this.description}} {{this.key}}">
           <div class="gm-phase7-rule-copy">
             <div class="gm-phase7-rule-name">{{this.name}}</div>
@@ -79,6 +109,7 @@
             <span class="gm-phase7-switch-track"><span class="gm-phase7-switch-thumb"></span></span>
           </label>
         </article>
+        {{/if}}
         {{/each}}
       </div>
     </section>

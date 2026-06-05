@@ -3527,6 +3527,28 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     return metadata[className] || { icon: 'fa-user', description: 'Unknown class' };
   }
 
+  _normalizeFeatMetadataKey(value) {
+    return String(value || '')
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  _getFeatMetadataEntry(featName) {
+    const feats = this._featMetadata?.feats || {};
+    if (feats[featName]) return feats[featName];
+    const wanted = this._normalizeFeatMetadataKey(featName);
+    if (!wanted) return null;
+    for (const [name, entry] of Object.entries(feats)) {
+      if (this._normalizeFeatMetadataKey(name) === wanted) return entry;
+    }
+    return null;
+  }
+
   /**
    * Organize feats by category using feat metadata
    */
@@ -3548,7 +3570,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Organize feats
     for (const feat of feats) {
-      const metadata = this._featMetadata.feats[feat.name];
+      const metadata = this._getFeatMetadataEntry(feat.name);
       if (metadata && metadata.category && categorized[metadata.category]) {
         // Extract feat level (for feats like "Martial Arts I", "Dual Weapon Mastery II", etc.)
         const { level: featLevel } = this._extractFeatLevel(feat.name);

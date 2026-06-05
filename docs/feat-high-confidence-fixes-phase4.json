@@ -1,0 +1,253 @@
+{
+  "report": "SWSE feat high-confidence fixes",
+  "phase": "4",
+  "source": {
+    "base": "Phase 3 working repo after static-vs-conditional guardrails",
+    "featPack": "packs/feats.db"
+  },
+  "purpose": "Apply only high-confidence fixes after Phase 3: RAW-safe Force Sensitivity behavior, robust Force Training slot math, cleaner prerequisite text, and safer metadata categorization lookup.",
+  "changedFiles": [
+    "packs/feats.db",
+    "scripts/engine/force/ForceRules.js",
+    "scripts/engine/force/ForceTrainingEngine.js",
+    "scripts/utils/force-power-manager.js",
+    "scripts/apps/progression-framework/steps/force-power-step.js",
+    "scripts/apps/progression-framework/steps/feat-step.js",
+    "scripts/apps/chargen/chargen-main.js",
+    "scripts/apps/levelup/levelup-feats.js",
+    "docs/feat-high-confidence-fixes-phase4.json"
+  ],
+  "summary": {
+    "totalFeatRows": 419,
+    "blankPrerequisitesNormalizedToNone": 14,
+    "blankPrerequisitesRemaining": 0,
+    "featMetadataExactMissesBeforeNormalizedLookup": 73,
+    "featMetadataRowsRecoveredByNormalizedLookup": 4,
+    "featMetadataRowsStillMissingAfterNormalizedLookup": 69
+  },
+  "fixes": [
+    {
+      "area": "Force Sensitivity legacy hook",
+      "files": [
+        "scripts/engine/force/ForceRules.js",
+        "scripts/utils/force-power-manager.js"
+      ],
+      "change": "Added ForceRules.forceSensitivityGrantsForcePower() and made ForcePowerManager.handleForceSensitivity respect it.",
+      "result": "RAW/default behavior no longer opens a Force Power picker when Force Sensitivity is added outside V2 progression. The old +1 Force Power behavior still works only when the default-off house rule is enabled."
+    },
+    {
+      "area": "Force Training ability modifier",
+      "files": [
+        "scripts/engine/force/ForceTrainingEngine.js",
+        "scripts/apps/progression-framework/steps/force-power-step.js"
+      ],
+      "change": "Centralized actor-only Force Training slot math on FeatGrantEntitlementResolver and made ForceTrainingEngine read abilities/attributes/stats safely.",
+      "result": "Fallback Force Power selection now uses the configured Force Training ability instead of accidentally preferring Charisma whenever a CHA mod exists."
+    },
+    {
+      "area": "Pending ability modifier math",
+      "files": [
+        "scripts/apps/progression-framework/steps/feat-step.js"
+      ],
+      "change": "Rewrote pending ability modifier lookup to distinguish already-computed modifiers from ability scores.",
+      "result": "Language and other feat entitlements no longer risk converting a pending modifier like +3 into floor((3 - 10) / 2)."
+    },
+    {
+      "area": "Blank prerequisite normalization",
+      "files": [
+        "packs/feats.db"
+      ],
+      "change": "Converted blank system.prerequisite strings to None for obvious no-prerequisite feats.",
+      "result": "Prerequisite display/parsing is consistent: blank no-prerequisite feats now say None."
+    },
+    {
+      "area": "Metadata category lookup",
+      "files": [
+        "scripts/apps/chargen/chargen-main.js",
+        "scripts/apps/levelup/levelup-feats.js"
+      ],
+      "change": "Added normalized feat metadata lookup fallback for case/punctuation/apostrophe differences.",
+      "result": "Armor Proficiency lowercase variants and Harm's Way curly apostrophe now resolve existing metadata instead of falling into misc/uncategorized in legacy chargen/level-up surfaces."
+    }
+  ],
+  "blankPrerequisiteRowsNormalized": [
+    {
+      "line": 26,
+      "id": "0c53cb8b7c29d865",
+      "name": "Stealthy"
+    },
+    {
+      "line": 80,
+      "id": "2d680cc46a7972da",
+      "name": "Weapon Proficiency (Simple Weapons)"
+    },
+    {
+      "line": 112,
+      "id": "41a9ce755ecffb5b",
+      "name": "Heavy Weapon Proficiency"
+    },
+    {
+      "line": 143,
+      "id": "54d6201340a6757f",
+      "name": "Headstrong"
+    },
+    {
+      "line": 155,
+      "id": "5cc1216874c79087",
+      "name": "Educated"
+    },
+    {
+      "line": 179,
+      "id": "6d8ce2807c579289",
+      "name": "Trustworthy"
+    },
+    {
+      "line": 199,
+      "id": "765ff8a34e58acac",
+      "name": "Weapon Proficiency (Rifles)"
+    },
+    {
+      "line": 212,
+      "id": "8329a353aa3899be",
+      "name": "Weapon Proficiency (Heavy Weapons)"
+    },
+    {
+      "line": 218,
+      "id": "867e3fbd13642016",
+      "name": "Heroic Surge"
+    },
+    {
+      "line": 253,
+      "id": "9a89576b3cc1347e",
+      "name": "Great Fortitude"
+    },
+    {
+      "line": 308,
+      "id": "bee76d01da40677d",
+      "name": "Lightning Reflexes"
+    },
+    {
+      "line": 338,
+      "id": "cf28ec45cabaff59",
+      "name": "Advanced Melee Weapon Proficiency"
+    },
+    {
+      "line": 374,
+      "id": "e5d361d01d1b44e4",
+      "name": "Weapon Proficiency (Pistols)"
+    },
+    {
+      "line": 382,
+      "id": "e99d9284a73cf505",
+      "name": "Conditioned"
+    }
+  ],
+  "metadataLookupRecoveredRows": [
+    {
+      "name": "Armor Proficiency (light)",
+      "matchedMetadataName": "Armor Proficiency (Light)"
+    },
+    {
+      "name": "Armor Proficiency (heavy)",
+      "matchedMetadataName": "Armor Proficiency (Heavy)"
+    },
+    {
+      "name": "Harm’s Way",
+      "matchedMetadataName": "Harm's Way"
+    },
+    {
+      "name": "Armor Proficiency (medium)",
+      "matchedMetadataName": "Armor Proficiency (Medium)"
+    }
+  ],
+  "metadataLookupStillMissingRows": [
+    "Ample Foraging",
+    "Aquatic Specialists",
+    "Ascension Specialists",
+    "Binary Mind",
+    "Bothan Will",
+    "Bowcaster Marksman",
+    "Clawed Subspecies",
+    "Confident Success",
+    "Covert Operatives",
+    "Darkness Dweller",
+    "Deep Sight",
+    "Devastating Bellow",
+    "Disarming Charm",
+    "Fast Swimmer",
+    "Flawless Pilot",
+    "Forest Stalker",
+    "Fringe Benefits",
+    "Gungan Weapon Master",
+    "Heroic Surge",
+    "Hijkata Training",
+    "Hunter's Instincts",
+    "Imperceptible Liar",
+    "Inborn Resilience",
+    "Increased Resistance",
+    "Instinctive Perception",
+    "Jedi Heritage",
+    "Justice Seeker",
+    "K'tara Training",
+    "K'thri Training",
+    "Keen Scent",
+    "Lasting Influence",
+    "Master Tracker",
+    "Medical Team",
+    "Mind of Reason",
+    "Mon Calamari Shipwright",
+    "Mounted Regiment",
+    "Nature Specialist",
+    "Nimble Team",
+    "Perfect Intuition",
+    "Perfect Swimmer",
+    "Pitiless Warrior",
+    "Primitive Warrior",
+    "Quick Comeback",
+    "Read the Winds",
+    "Regenerative Healing",
+    "Resurgent Vitality",
+    "Scion of Dorin",
+    "Sharp Senses",
+    "Shrewd Bargainer",
+    "Slicer Team",
+    "Spacer's Surge",
+    "Stava Training",
+    "Strong Bellow",
+    "Sure Climber",
+    "Survivor of Ryloth",
+    "Tae-Jitsu Training",
+    "Technical Experts",
+    "Teräs Käsi Training",
+    "Thick Skin",
+    "Tireless Squad",
+    "Unhindered Approach",
+    "Unified Squadron",
+    "Unwavering Focus",
+    "Veteran Spacer",
+    "Warrior Heritage",
+    "Wary Sentries",
+    "Wilderness Specialists",
+    "Wroshyr Rage",
+    "Wrruushi Training"
+  ],
+  "deferred": [
+    "The remaining metadata-missing feats are not simple spelling/case/apostrophe aliases; they need actual category/tag authoring rather than automatic guessing.",
+    "Educated still needs a real two-Knowledge-skill choice workflow before its disabled hard-coded Knowledge modifiers can become active.",
+    "Frightening Presence remains disabled as a defense modifier and still needs a Frightful Presence resolution hook.",
+    "Existing actors with old embedded feat items may need item refresh/remigration to inherit updated pack metadata."
+  ],
+  "validation": {
+    "nodeCheck": [
+      "scripts/apps/chargen/chargen-main.js",
+      "scripts/apps/levelup/levelup-feats.js",
+      "scripts/apps/progression-framework/steps/feat-step.js",
+      "scripts/apps/progression-framework/steps/force-power-step.js",
+      "scripts/engine/force/ForceRules.js",
+      "scripts/engine/force/ForceTrainingEngine.js",
+      "scripts/utils/force-power-manager.js"
+    ],
+    "jsonlParsed": "packs/feats.db",
+    "runtimeTestedInFoundry": false
+  }
+}

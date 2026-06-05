@@ -133,6 +133,22 @@ export const PENALTY_CATEGORIES = {
 };
 
 export class ModifierEngineExtensions {
+  static #modifierMatchesDomain(modifier, domain) {
+    const target = String(modifier?.target || '').toLowerCase();
+    const explicitDomain = String(modifier?.domain || '').toLowerCase();
+    const requested = String(domain || '').toLowerCase();
+
+    if (!requested) return true;
+    if (target === requested || explicitDomain === requested) return true;
+
+    if (requested === 'attack') return target === 'attack.roll' || target.startsWith('attack.');
+    if (requested === 'damage') return target.startsWith('damage.');
+    if (requested === 'skill') return target.startsWith('skill.');
+    if (requested === 'initiative') return target === 'initiative.total';
+
+    return false;
+  }
+
   /**
    * Get all modifiers for a specific domain.
    *
@@ -169,9 +185,16 @@ export class ModifierEngineExtensions {
       const allModifiers = await ModifierEngine.getAllModifiers(actor);
 
       // Filter to domain-specific modifiers
-      const domainModifiers = allModifiers.filter(m => {
-        return m.target === domain || m.domain === domain;
-      });
+      const context = options?.context ?? options ?? {};
+      const domainModifiers = allModifiers
+        .filter(m => this.#modifierMatchesDomain(m, domain))
+        .filter(m => {
+          try {
+            return ModifierEngine.isModifierAllowedInContext(actor, m, context, { staticSheet: false });
+          } catch (_err) {
+            return false;
+          }
+        });
 
       swseLogger.debug(`[ModifierEngineExtensions] Found ${domainModifiers.length} modifiers for ${domain}`);
 

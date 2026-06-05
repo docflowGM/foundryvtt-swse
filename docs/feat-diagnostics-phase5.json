@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "phase": "5-runtime-diagnostics",
+  "purpose": "Document and extend debug-only diagnostics for feat selection and choice handling. These logs are gated behind the existing SWSE debug mode and must not change rules execution.",
+  "changedFiles": [
+    "scripts/engine/progression/feats/feat-diagnostics.js",
+    "scripts/engine/progression/feats/feat-choice-resolver.js",
+    "docs/feat-diagnostics-phase5.json",
+    "docs/feat-choice-required-audit-phase5.json"
+  ],
+  "diagnosticHooks": [
+    {
+      "hook": "FeatDiagnostics.traceEligibilitySummary",
+      "emittedFrom": [
+        "scripts/apps/progression-framework/steps/feat-step.js"
+      ],
+      "answers": "How many feats were legal, and why were unavailable feats blocked? Buckets include prerequisites, slot mismatch, already owned, already granted, evaluation error, and other unavailable."
+    },
+    {
+      "hook": "FeatDiagnostics.traceChoiceRequirement",
+      "emittedFrom": [
+        "scripts/apps/progression-framework/steps/feat-step.js",
+        "scripts/apps/choices/feat-choice-dialog.js"
+      ],
+      "answers": "When a selected feat requires an immediate choice, what choice kind/source/resolution is expected and what value was selected?"
+    },
+    {
+      "hook": "FeatDiagnostics.traceChoiceOptionResolution",
+      "emittedFrom": [
+        "scripts/engine/progression/feats/feat-choice-resolver.js"
+      ],
+      "answers": "When the resolver builds a choice list, how many options were found, what are examples, and did the choice derive from fixed options, prerequisites, or a grant pool?"
+    },
+    {
+      "hook": "FeatDiagnostics.traceChoiceAudit",
+      "emittedFrom": [
+        "scripts/engine/progression/feats/feat-choice-resolver.js"
+      ],
+      "answers": "Which owned feats have missing required choices or invalid stored choices?"
+    },
+    {
+      "hook": "FeatDiagnostics.tracePendingEntitlements",
+      "emittedFrom": [
+        "scripts/apps/progression-framework/steps/feat-step.js"
+      ],
+      "answers": "Which feat selections created, retained, or removed pending entitlements such as Force Power picks, language picks, skill-training slots, or starship maneuver picks?"
+    },
+    {
+      "hook": "FeatDiagnostics.traceModifierExclusion",
+      "emittedFrom": [
+        "scripts/engine/effects/modifiers/ModifierEngine.js"
+      ],
+      "answers": "Why a passive/conditional modifier was excluded from a static sheet or roll context."
+    }
+  ],
+  "debugGate": "All diagnostics use swseLogger.isDev(), which depends on existing SWSE debug mode/HouseRuleService debugMode behavior.",
+  "validation": [
+    "node --check scripts/engine/progression/feats/feat-diagnostics.js",
+    "node --check scripts/engine/progression/feats/feat-choice-resolver.js",
+    "python JSON parse check for docs/feat-choice-required-audit-phase5.json and docs/feat-diagnostics-phase5.json"
+  ]
+}

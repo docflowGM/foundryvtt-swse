@@ -53,6 +53,46 @@ export class GMHouseRulesSurfaceController {
     });
 
     this._wireRuleFiltering(pageElement, signal);
+    this._wireBannedSpeciesPicker(pageElement, signal);
+  }
+
+  _wireBannedSpeciesPicker(pageElement, signal) {
+    const picker = pageElement.querySelector('[data-species-picker]');
+    if (!picker) return;
+
+    // Search/filter
+    const searchInput = picker.querySelector('[data-species-search]');
+    const items = Array.from(picker.querySelectorAll('[data-species-name]'));
+
+    searchInput?.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      items.forEach(item => {
+        const name = (item.dataset.speciesName || '').toLowerCase();
+        item.style.display = (!q || name.includes(q)) ? '' : 'none';
+      });
+    }, { signal });
+
+    // Checkbox changes — collect all checked, save as comma-separated string
+    picker.addEventListener('change', async (event) => {
+      const checkbox = event.target.closest('[data-banned-species-checkbox]');
+      if (!checkbox) return;
+
+      const allChecked = Array.from(picker.querySelectorAll('[data-banned-species-checkbox]:checked'))
+        .map(cb => cb.dataset.speciesName)
+        .filter(Boolean);
+
+      const value = allChecked.join(', ');
+      try {
+        await mutateAndRepaint(this.host, () => HouseRuleService.set('bannedSpecies', value), {
+          reason: 'gm-banned-species-toggle',
+          surfaceId: 'house-rules'
+        });
+        SWSELogger.info(`[GMDatapad House Rules] bannedSpecies = "${value}"`);
+      } catch (err) {
+        SWSELogger.error('[GMDatapad House Rules] Failed to update bannedSpecies:', err);
+        checkbox.checked = !checkbox.checked;
+      }
+    }, { signal });
   }
 
   _wireRuleFiltering(pageElement, signal) {

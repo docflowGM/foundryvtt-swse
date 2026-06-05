@@ -45,9 +45,9 @@ export class ModifierDomainResolver {
       }
 
       // Get attack-related domain modifiers
-      const attackBonus = await ModifierEngineExtensions.getModifiersForDomain(attacker, 'attack');
-      const damageBonus = await ModifierEngineExtensions.getModifiersForDomain(attacker, 'damage');
-      const initiativeBonus = await ModifierEngineExtensions.getModifiersForDomain(attacker, 'initiative');
+      const attackBonus = await ModifierEngineExtensions.getModifiersForDomain(attacker, 'attack', options);
+      const damageBonus = await ModifierEngineExtensions.getModifiersForDomain(attacker, 'damage', options);
+      const initiativeBonus = await ModifierEngineExtensions.getModifiersForDomain(attacker, 'initiative', options);
 
       // Get penalties
       const conditionPenalty = await ModifierEngineExtensions.getPenaltyForCategory(attacker, 'condition');
@@ -133,7 +133,7 @@ export class ModifierDomainResolver {
       }
 
       // Get skill domain bonus
-      const skillBonus = await ModifierEngineExtensions.getModifiersForDomain(actor, 'skill');
+      const skillBonus = await ModifierEngineExtensions.getModifiersForDomain(actor, 'skill', { ...options, context: { ...(options?.context || {}), skillName: skillKey } });
 
       // Get penalties
       const conditionPenalty = await ModifierEngineExtensions.getPenaltyForCategory(actor, 'condition');
@@ -224,7 +224,7 @@ export class ModifierDomainResolver {
 
       // Get defense domain bonus
       const domainKey = `defense.${defenseType}`;
-      const defenseBonus = await ModifierEngineExtensions.getModifiersForDomain(actor, domainKey);
+      const defenseBonus = await ModifierEngineExtensions.getModifiersForDomain(actor, domainKey, { ...options, context: { ...(options?.context || {}), defenseType } });
 
       // Get penalties
       const conditionPenalty = await ModifierEngineExtensions.getPenaltyForCategory(actor, 'condition');

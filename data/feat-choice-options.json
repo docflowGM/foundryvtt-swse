@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "purpose": "Canonical option registry for feat and talent choices that must be resolved immediately at selection time or backfilled later.",
   "notes": [
     "Phase 2 establishes backend choice-source models for future dialogs/backfill.",
@@ -7,7 +7,8 @@
     "prerequisiteDerived choices are resolved from actor state created by provider feats.",
     "grantPool choices are deferred to their dedicated progression registries.",
     "Weapon Proficiency is one grouped feat. Exotic proficiency is a nested branch, not a separate primary choice surface.",
-    "Phase 6 maps supported selected-choice feats to executable modifier/unlock metadata while leaving attack-option feats as rule hooks until roll context consumes them."
+    "Phase 6 maps supported selected-choice feats to executable modifier/unlock metadata while leaving attack-option feats as rule hooks until roll context consumes them.",
+    "Phase 6 adds fixed and actor-derived option kinds for prompt-on-selection feats identified in the Phase 5 audit."
   ],
   "choiceKinds": {
     "weapon_proficiency": {
@@ -201,6 +202,500 @@
       "minimum": 1,
       "dynamic": true,
       "storagePath": "flags.swse.pendingEntitlements.language_pick"
+    },
+    "two_knowledge_skills": {
+      "label": "Educated",
+      "mode": "two_knowledge_skills",
+      "repeatable": false,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.educated",
+      "options": [
+        {
+          "id": "knowledgeBureaucracy__knowledgeGalacticLore",
+          "value": "knowledgeBureaucracy__knowledgeGalacticLore",
+          "label": "Knowledge (Bureaucracy) + Knowledge (Galactic Lore)",
+          "targets": [
+            "knowledgeBureaucracy",
+            "knowledgeGalacticLore"
+          ],
+          "skills": [
+            "knowledgeBureaucracy",
+            "knowledgeGalacticLore"
+          ]
+        },
+        {
+          "id": "knowledgeBureaucracy__knowledgeLifeSciences",
+          "value": "knowledgeBureaucracy__knowledgeLifeSciences",
+          "label": "Knowledge (Bureaucracy) + Knowledge (Life Sciences)",
+          "targets": [
+            "knowledgeBureaucracy",
+            "knowledgeLifeSciences"
+          ],
+          "skills": [
+            "knowledgeBureaucracy",
+            "knowledgeLifeSciences"
+          ]
+        },
+        {
+          "id": "knowledgeBureaucracy__knowledgePhysicalSciences",
+          "value": "knowledgeBureaucracy__knowledgePhysicalSciences",
+          "label": "Knowledge (Bureaucracy) + Knowledge (Physical Sciences)",
+          "targets": [
+            "knowledgeBureaucracy",
+            "knowledgePhysicalSciences"
+          ],
+          "skills": [
+            "knowledgeBureaucracy",
+            "knowledgePhysicalSciences"
+          ]
+        },
+        {
+          "id": "knowledgeBureaucracy__knowledgeSocialSciences",
+          "value": "knowledgeBureaucracy__knowledgeSocialSciences",
+          "label": "Knowledge (Bureaucracy) + Knowledge (Social Sciences)",
+          "targets": [
+            "knowledgeBureaucracy",
+            "knowledgeSocialSciences"
+          ],
+          "skills": [
+            "knowledgeBureaucracy",
+            "knowledgeSocialSciences"
+          ]
+        },
+        {
+          "id": "knowledgeBureaucracy__knowledgeTactics",
+          "value": "knowledgeBureaucracy__knowledgeTactics",
+          "label": "Knowledge (Bureaucracy) + Knowledge (Tactics)",
+          "targets": [
+            "knowledgeBureaucracy",
+            "knowledgeTactics"
+          ],
+          "skills": [
+            "knowledgeBureaucracy",
+            "knowledgeTactics"
+          ]
+        },
+        {
+          "id": "knowledgeBureaucracy__knowledgeTechnology",
+          "value": "knowledgeBureaucracy__knowledgeTechnology",
+          "label": "Knowledge (Bureaucracy) + Knowledge (Technology)",
+          "targets": [
+            "knowledgeBureaucracy",
+            "knowledgeTechnology"
+          ],
+          "skills": [
+            "knowledgeBureaucracy",
+            "knowledgeTechnology"
+          ]
+        },
+        {
+          "id": "knowledgeGalacticLore__knowledgeLifeSciences",
+          "value": "knowledgeGalacticLore__knowledgeLifeSciences",
+          "label": "Knowledge (Galactic Lore) + Knowledge (Life Sciences)",
+          "targets": [
+            "knowledgeGalacticLore",
+            "knowledgeLifeSciences"
+          ],
+          "skills": [
+            "knowledgeGalacticLore",
+            "knowledgeLifeSciences"
+          ]
+        },
+        {
+          "id": "knowledgeGalacticLore__knowledgePhysicalSciences",
+          "value": "knowledgeGalacticLore__knowledgePhysicalSciences",
+          "label": "Knowledge (Galactic Lore) + Knowledge (Physical Sciences)",
+          "targets": [
+            "knowledgeGalacticLore",
+            "knowledgePhysicalSciences"
+          ],
+          "skills": [
+            "knowledgeGalacticLore",
+            "knowledgePhysicalSciences"
+          ]
+        },
+        {
+          "id": "knowledgeGalacticLore__knowledgeSocialSciences",
+          "value": "knowledgeGalacticLore__knowledgeSocialSciences",
+          "label": "Knowledge (Galactic Lore) + Knowledge (Social Sciences)",
+          "targets": [
+            "knowledgeGalacticLore",
+            "knowledgeSocialSciences"
+          ],
+          "skills": [
+            "knowledgeGalacticLore",
+            "knowledgeSocialSciences"
+          ]
+        },
+        {
+          "id": "knowledgeGalacticLore__knowledgeTactics",
+          "value": "knowledgeGalacticLore__knowledgeTactics",
+          "label": "Knowledge (Galactic Lore) + Knowledge (Tactics)",
+          "targets": [
+            "knowledgeGalacticLore",
+            "knowledgeTactics"
+          ],
+          "skills": [
+            "knowledgeGalacticLore",
+            "knowledgeTactics"
+          ]
+        },
+        {
+          "id": "knowledgeGalacticLore__knowledgeTechnology",
+          "value": "knowledgeGalacticLore__knowledgeTechnology",
+          "label": "Knowledge (Galactic Lore) + Knowledge (Technology)",
+          "targets": [
+            "knowledgeGalacticLore",
+            "knowledgeTechnology"
+          ],
+          "skills": [
+            "knowledgeGalacticLore",
+            "knowledgeTechnology"
+          ]
+        },
+        {
+          "id": "knowledgeLifeSciences__knowledgePhysicalSciences",
+          "value": "knowledgeLifeSciences__knowledgePhysicalSciences",
+          "label": "Knowledge (Life Sciences) + Knowledge (Physical Sciences)",
+          "targets": [
+            "knowledgeLifeSciences",
+            "knowledgePhysicalSciences"
+          ],
+          "skills": [
+            "knowledgeLifeSciences",
+            "knowledgePhysicalSciences"
+          ]
+        },
+        {
+          "id": "knowledgeLifeSciences__knowledgeSocialSciences",
+          "value": "knowledgeLifeSciences__knowledgeSocialSciences",
+          "label": "Knowledge (Life Sciences) + Knowledge (Social Sciences)",
+          "targets": [
+            "knowledgeLifeSciences",
+            "knowledgeSocialSciences"
+          ],
+          "skills": [
+            "knowledgeLifeSciences",
+            "knowledgeSocialSciences"
+          ]
+        },
+        {
+          "id": "knowledgeLifeSciences__knowledgeTactics",
+          "value": "knowledgeLifeSciences__knowledgeTactics",
+          "label": "Knowledge (Life Sciences) + Knowledge (Tactics)",
+          "targets": [
+            "knowledgeLifeSciences",
+            "knowledgeTactics"
+          ],
+          "skills": [
+            "knowledgeLifeSciences",
+            "knowledgeTactics"
+          ]
+        },
+        {
+          "id": "knowledgeLifeSciences__knowledgeTechnology",
+          "value": "knowledgeLifeSciences__knowledgeTechnology",
+          "label": "Knowledge (Life Sciences) + Knowledge (Technology)",
+          "targets": [
+            "knowledgeLifeSciences",
+            "knowledgeTechnology"
+          ],
+          "skills": [
+            "knowledgeLifeSciences",
+            "knowledgeTechnology"
+          ]
+        },
+        {
+          "id": "knowledgePhysicalSciences__knowledgeSocialSciences",
+          "value": "knowledgePhysicalSciences__knowledgeSocialSciences",
+          "label": "Knowledge (Physical Sciences) + Knowledge (Social Sciences)",
+          "targets": [
+            "knowledgePhysicalSciences",
+            "knowledgeSocialSciences"
+          ],
+          "skills": [
+            "knowledgePhysicalSciences",
+            "knowledgeSocialSciences"
+          ]
+        },
+        {
+          "id": "knowledgePhysicalSciences__knowledgeTactics",
+          "value": "knowledgePhysicalSciences__knowledgeTactics",
+          "label": "Knowledge (Physical Sciences) + Knowledge (Tactics)",
+          "targets": [
+            "knowledgePhysicalSciences",
+            "knowledgeTactics"
+          ],
+          "skills": [
+            "knowledgePhysicalSciences",
+            "knowledgeTactics"
+          ]
+        },
+        {
+          "id": "knowledgePhysicalSciences__knowledgeTechnology",
+          "value": "knowledgePhysicalSciences__knowledgeTechnology",
+          "label": "Knowledge (Physical Sciences) + Knowledge (Technology)",
+          "targets": [
+            "knowledgePhysicalSciences",
+            "knowledgeTechnology"
+          ],
+          "skills": [
+            "knowledgePhysicalSciences",
+            "knowledgeTechnology"
+          ]
+        },
+        {
+          "id": "knowledgeSocialSciences__knowledgeTactics",
+          "value": "knowledgeSocialSciences__knowledgeTactics",
+          "label": "Knowledge (Social Sciences) + Knowledge (Tactics)",
+          "targets": [
+            "knowledgeSocialSciences",
+            "knowledgeTactics"
+          ],
+          "skills": [
+            "knowledgeSocialSciences",
+            "knowledgeTactics"
+          ]
+        },
+        {
+          "id": "knowledgeSocialSciences__knowledgeTechnology",
+          "value": "knowledgeSocialSciences__knowledgeTechnology",
+          "label": "Knowledge (Social Sciences) + Knowledge (Technology)",
+          "targets": [
+            "knowledgeSocialSciences",
+            "knowledgeTechnology"
+          ],
+          "skills": [
+            "knowledgeSocialSciences",
+            "knowledgeTechnology"
+          ]
+        },
+        {
+          "id": "knowledgeTactics__knowledgeTechnology",
+          "value": "knowledgeTactics__knowledgeTechnology",
+          "label": "Knowledge (Tactics) + Knowledge (Technology)",
+          "targets": [
+            "knowledgeTactics",
+            "knowledgeTechnology"
+          ],
+          "skills": [
+            "knowledgeTactics",
+            "knowledgeTechnology"
+          ]
+        }
+      ],
+      "effectTarget": "skill.selectedPair",
+      "effectValue": 5
+    },
+    "defense_reallocation": {
+      "label": "Inborn Resilience",
+      "mode": "defense_reallocation",
+      "repeatable": false,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.inborn_resilience",
+      "options": [
+        {
+          "id": "decrease_fortitude__increase_reflex",
+          "value": "decrease_fortitude__increase_reflex",
+          "label": "Reduce Fortitude Defense to +0; increase Reflex Defense to +2",
+          "decrease": "fortitude",
+          "increase": "reflex"
+        },
+        {
+          "id": "decrease_fortitude__increase_will",
+          "value": "decrease_fortitude__increase_will",
+          "label": "Reduce Fortitude Defense to +0; increase Will Defense to +2",
+          "decrease": "fortitude",
+          "increase": "will"
+        },
+        {
+          "id": "decrease_reflex__increase_fortitude",
+          "value": "decrease_reflex__increase_fortitude",
+          "label": "Reduce Reflex Defense to +0; increase Fortitude Defense to +2",
+          "decrease": "reflex",
+          "increase": "fortitude"
+        },
+        {
+          "id": "decrease_reflex__increase_will",
+          "value": "decrease_reflex__increase_will",
+          "label": "Reduce Reflex Defense to +0; increase Will Defense to +2",
+          "decrease": "reflex",
+          "increase": "will"
+        },
+        {
+          "id": "decrease_will__increase_fortitude",
+          "value": "decrease_will__increase_fortitude",
+          "label": "Reduce Will Defense to +0; increase Fortitude Defense to +2",
+          "decrease": "will",
+          "increase": "fortitude"
+        },
+        {
+          "id": "decrease_will__increase_reflex",
+          "value": "decrease_will__increase_reflex",
+          "label": "Reduce Will Defense to +0; increase Reflex Defense to +2",
+          "decrease": "will",
+          "increase": "reflex"
+        }
+      ],
+      "effectTarget": "defense.reallocatedSpeciesBonus",
+      "effectValue": "decrease one by 1; increase one by 1"
+    },
+    "tech_category": {
+      "label": "Superior Tech",
+      "mode": "equipment_category",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.superior_tech",
+      "options": [
+        {
+          "id": "armor",
+          "value": "armor",
+          "label": "Armor"
+        },
+        {
+          "id": "weapons",
+          "value": "weapons",
+          "label": "Weapons"
+        },
+        {
+          "id": "droids",
+          "value": "droids",
+          "label": "Droids"
+        },
+        {
+          "id": "vehicles",
+          "value": "vehicles",
+          "label": "Vehicles"
+        },
+        {
+          "id": "devices",
+          "value": "devices",
+          "label": "Devices"
+        }
+      ]
+    },
+    "nikto_subspecies": {
+      "label": "Nikto Survival",
+      "mode": "nikto_subspecies",
+      "repeatable": false,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.nikto_survival",
+      "options": [
+        {
+          "id": "kajain-sa-nikto",
+          "value": "kajain-sa-nikto",
+          "label": "Kajain'sa'Nikto"
+        },
+        {
+          "id": "kadas-sa-nikto",
+          "value": "kadas-sa-nikto",
+          "label": "Kadas'sa'Nikto"
+        },
+        {
+          "id": "esral-sa-nikto",
+          "value": "esral-sa-nikto",
+          "label": "Esral'sa'Nikto"
+        },
+        {
+          "id": "gluss-sa-nikto",
+          "value": "gluss-sa-nikto",
+          "label": "Gluss'sa'Nikto"
+        },
+        {
+          "id": "mshento-su-nikto",
+          "value": "mshento-su-nikto",
+          "label": "M'shento'su'Nikto"
+        }
+      ]
+    },
+    "trained_skill": {
+      "label": "Trained Skill",
+      "mode": "trained_skill",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.trained_skill",
+      "optionsSource": "actorSkills.trained"
+    },
+    "talent_choice": {
+      "label": "Talent Choice",
+      "mode": "owned_talent",
+      "repeatable": false,
+      "choiceSource": "actorState",
+      "storagePath": "flags.swse.choices.talent_choice",
+      "optionsSource": "actorTalents"
+    },
+    "once_per_encounter_ability_choice": {
+      "label": "Once-per-Encounter Ability",
+      "mode": "owned_feat_or_talent",
+      "repeatable": true,
+      "choiceSource": "actorState",
+      "storagePath": "flags.swse.choices.recurring_success",
+      "optionsSource": "actorFeatsAndTalents.oncePerEncounter"
+    },
+    "specific_weapon": {
+      "label": "Specific Weapon",
+      "mode": "owned_or_unarmed_weapon",
+      "repeatable": true,
+      "choiceSource": "actorInventory",
+      "storagePath": "flags.swse.choices.specific_weapon",
+      "optionsSource": "actorWeaponsPlusUnarmed"
+    },
+    "double_attack_weapon": {
+      "label": "Double Attack Weapon",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.double_attack_weapon",
+      "derivesFrom": [
+        "weapon_proficiency"
+      ],
+      "consumes": "weapon_proficiency",
+      "provides": "double_attack_weapon"
+    },
+    "triple_attack_weapon": {
+      "label": "Triple Attack Weapon",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.triple_attack_weapon",
+      "derivesFrom": [
+        "double_attack_weapon"
+      ],
+      "consumes": "double_attack_weapon",
+      "provides": "triple_attack_weapon"
+    },
+    "double_attack_followup_weapon": {
+      "label": "Double Attack Follow-Up Weapon",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.double_attack_followup_weapon",
+      "derivesFrom": [
+        "double_attack_weapon"
+      ],
+      "consumes": "double_attack_weapon"
+    },
+    "return_fire_weapon": {
+      "label": "Return Fire Weapon",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.return_fire_weapon",
+      "derivesFrom": [
+        "weapon_focus"
+      ],
+      "consumes": "weapon_focus"
+    },
+    "melee_weapon_or_group": {
+      "label": "Melee Weapon or Group",
+      "mode": "melee_weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.melee_weapon_or_group",
+      "derivesFrom": [
+        "weapon_proficiency"
+      ],
+      "consumes": "weapon_proficiency"
     }
   },
   "weaponGroups": [

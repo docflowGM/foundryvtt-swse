@@ -1,0 +1,143 @@
+{
+  "report": "SWSE feat static-vs-conditional metadata application",
+  "phase": "3",
+  "source": {
+    "repoSnapshot": "foundryvtt-swse-main (21).zip",
+    "featPack": "packs/feats.db",
+    "phase25Report": "docs/feat-passive-conditional-metadata-phase2-5.json"
+  },
+  "purpose": "Apply the Phase 2.5 passive/conditional metadata split to feat records and harden static sheet math so only always-on static bonuses enter actor totals.",
+  "staticSheetRule": "Only staticSheetPolicy include, plus selected_choice_only after a concrete target is resolved, may enter static actor-sheet totals. roll_context_only, contextual_only, exclude, manual_only, and manual_review fail closed during static preparation.",
+  "summary": {
+    "totalRows": 419,
+    "metadataTaggedRows": 419,
+    "modifierRowsTouched": 342,
+    "staticIncludeRows": 9,
+    "staticExcludedOrContextRows": 207,
+    "manualReviewRows": 203
+  },
+  "byStaticSheetPolicy": {
+    "contextual_only": 135,
+    "exclude": 7,
+    "include": 9,
+    "include_or_display_condition": 2,
+    "manual_only": 197,
+    "manual_or_contextual_only": 15,
+    "manual_review": 6,
+    "not_a_modifier": 14,
+    "roll_context_only": 24,
+    "selected_choice_only": 10
+  },
+  "byMechanicsMode": {
+    "active": 9,
+    "conditional": 147,
+    "grant_unlock": 14,
+    "manual": 197,
+    "needs_review": 9,
+    "passive": 25,
+    "passive_choice_required": 18
+  },
+  "highConfidenceActions": [
+    {
+      "name": "Point-Blank Shot",
+      "id": "05459ac4d439f229",
+      "action": "corrected_point_blank_modifiers",
+      "details": "Changed broad/duplicate attack bonus into +1 ranged attack and +1 ranged damage gated by ranged + point-blank predicates."
+    },
+    {
+      "name": "Educated",
+      "id": "5cc1216874c79087",
+      "action": "disabled_hardcoded_choice_modifiers",
+      "details": "Disabled hard-coded Knowledge skill bonuses until the two chosen Knowledge skills are stored on the feat instance."
+    },
+    {
+      "name": "Frightening Presence",
+      "id": "7767bd8542b4edbd",
+      "action": "disabled_wrong_defense_modifier",
+      "details": "Disabled Will Defense modifier because the feat improves Frightful Presence outcome rather than actor Will Defense."
+    },
+    {
+      "name": "Point Blank Shot",
+      "id": "c301a0f533f15ce4",
+      "action": "corrected_point_blank_modifiers",
+      "details": "Changed broad/duplicate attack bonus into +1 ranged attack and +1 ranged damage gated by ranged + point-blank predicates."
+    },
+    {
+      "name": "Frightening Presence",
+      "id": "d612e7a708edf75b",
+      "action": "disabled_wrong_defense_modifier",
+      "details": "Disabled Will Defense modifier because the feat improves Frightful Presence outcome rather than actor Will Defense."
+    }
+  ],
+  "engineChanges": [
+    {
+      "file": "scripts/engine/abilities/passive/passive-adapter.js",
+      "change": "Canonical passive modifiers now carry mechanicsMode, applicationScope, staticSheetPolicy, runtime-context flags, selected choice, and predicate requirements."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "change": "Added context/static-sheet gating so aggregateAll/aggregateTarget/getModifierDetail/buildModifierBreakdown exclude conditional and roll-context modifiers from static totals."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+      "change": "Domain modifier resolution now respects runtime context and domain prefixes such as attack.bonus, damage.ranged, and skill.*."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/ModifierDomainResolver.js",
+      "change": "Attack, damage, skill, and defense domain resolution now passes caller context through to modifier filtering."
+    },
+    {
+      "file": "scripts/actors/derived/defense-calculator.js",
+      "change": "Direct PASSIVE/STATE defense scanning now respects Phase 3 staticSheetPolicy and runtime-context flags."
+    },
+    {
+      "file": "scripts/actors/derived/derived-calculator.js",
+      "change": "Direct PASSIVE/STATE skill scanning now respects Phase 3 staticSheetPolicy and runtime-context flags."
+    },
+    {
+      "file": "scripts/engine/abilities/passive/passive-state.js",
+      "change": "Added predicate helpers for choice-backed weapon roll matching, Dodge target checks, movement-provoked attacks of opportunity, Frightful Presence action context, and enemy-failed-Will triggers."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "change": "Selected-choice static modifiers now require an actual resolved selected choice before entering static totals."
+    }
+  ],
+  "importantExamples": [
+    {
+      "name": "Improved Defenses",
+      "classification": "passive/static_actor/include",
+      "result": "Still contributes +1 to Fortitude, Reflex, and Will static totals."
+    },
+    {
+      "name": "Weapon Focus",
+      "classification": "passive/selected_weapon_roll_context/roll_context_only",
+      "result": "Available all the time for the chosen weapon, but never a global static attack bonus."
+    },
+    {
+      "name": "Dodge",
+      "classification": "conditional/targeted_defense_context/exclude",
+      "result": "No longer allowed to inflate static Reflex Defense."
+    },
+    {
+      "name": "Mobility",
+      "classification": "conditional/movement_opportunity_attack_context/exclude",
+      "result": "No longer allowed to inflate static Reflex Defense."
+    },
+    {
+      "name": "Frightening Presence",
+      "classification": "conditional/frightful_presence_resolution_context/exclude",
+      "result": "Wrong Will Defense modifier disabled; needs a Frightful Presence resolution hook later."
+    },
+    {
+      "name": "Educated",
+      "classification": "passive_choice_required/selected_knowledge_skill_static_context/selected_choice_only",
+      "result": "Hard-coded Knowledge bonuses disabled until the selected Knowledge skills are stored."
+    }
+  ],
+  "deferred": [
+    "Toughness is marked static/passive for now, but its +HP-per-level scaling should be audited separately.",
+    "Many manual_only feats still need explicit automation design before they can move from notes/manual handling into real mechanics.",
+    "Existing actors with embedded old feat items may need item refresh/remigration if their embedded item data predates this pack metadata."
+  ]
+}

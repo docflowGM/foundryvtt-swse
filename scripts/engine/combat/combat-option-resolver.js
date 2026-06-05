@@ -63,8 +63,27 @@ const DEFAULT_ATTACK_OPTIONS = {
     control: "toggle",
     requiresAttackType: "ranged",
     requiresAim: true,
-    damageDiceStepBonus: 1,
-    summary: "When aiming with a ranged weapon, deal +1 die of damage."
+    damageExtraWeaponDice: 1,
+    summary: "When aiming with a ranged weapon, deal +1 weapon die of damage."
+  },
+  burstFire: {
+    id: "burstFire",
+    label: "Burst Fire",
+    control: "toggle",
+    requiresAttackType: "ranged",
+    requiresAutofire: true,
+    attackModifier: -5,
+    damageExtraWeaponDice: 2,
+    ammunitionCost: 5,
+    summary: "Use autofire against one target: -5 attack, +2 weapon dice, spend five shots."
+  },
+  farShot: {
+    id: "farShot",
+    label: "Far Shot",
+    control: "passive",
+    requiresAttackType: "ranged",
+    rangePenaltyAdjustment: "oneStepCloser",
+    summary: "Treat short, medium, and long range as one range band closer."
   },
   preciseShot: {
     id: "preciseShot",
@@ -86,8 +105,43 @@ const DEFAULT_ATTACK_OPTIONS = {
     control: "toggle",
     requiresAttackType: "melee",
     requiresCharge: true,
-    damageModifier: 2,
-    summary: "When charging with a melee attack, gain +2 damage."
+    attackModifier: 2,
+    damageModifierFormula: "halfLevel",
+    summary: "When charging with a melee attack, gain +2 attack and add half level to damage."
+  },
+  chargingFire: {
+    id: "chargingFire",
+    label: "Charging Fire",
+    control: "flag",
+    requiresAttackType: "ranged",
+    requiresCharge: true,
+    suppresses: ["chargeAttackBonus"],
+    defenseModifier: {
+      target: "defense.reflex",
+      type: "untyped",
+      value: -2,
+      duration: "untilStartOfNextTurn"
+    },
+    summary: "Make a ranged attack at the end of a charge without the normal charge attack bonus."
+  },
+  improvedDisarm: {
+    id: "improvedDisarm",
+    label: "Improved Disarm",
+    control: "toggle",
+    requiresAttackType: "melee",
+    requiresManeuver: "disarm",
+    attackModifier: 5,
+    suppresses: ["failedDisarmCounterattack"],
+    summary: "Gain +5 on melee attacks made specifically to disarm."
+  },
+  mightySwing: {
+    id: "mightySwing",
+    label: "Mighty Swing",
+    control: "toggle",
+    requiresAttackType: "melee",
+    requiresSwiftActions: 2,
+    damageExtraWeaponDice: 1,
+    summary: "Spend two swift actions to add one weapon die to your next melee attack."
   }
 };
 
@@ -164,11 +218,77 @@ function actorBAB(actor) {
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
+function actorLevel(actor) {
+  const candidates = [
+    actor?.system?.details?.level,
+    actor?.system?.level,
+    actor?.system?.attributes?.level,
+    actor?.system?.progression?.level,
+    actor?.system?.progression?.characterLevel
+  ];
+  for (const candidate of candidates) {
+    const value = Number(candidate);
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+  return 1;
+}
+
+function normalizeRangeBand(value) {
+  const key = normalizeKey(value);
+  if (key === "pointblank" || key === "point-blank" || key === "close") return "point-blank";
+  if (key === "short") return "short";
+  if (key === "medium") return "medium";
+  if (key === "long") return "long";
+  return key || "";
+}
+
+function getRangeBand(context = {}) {
+  return normalizeRangeBand(context.rangeBand ?? context.rangeCategory ?? context.range ?? "");
+}
+
+function getRangePenaltyAdjustment(option, context = {}) {
+  if (option.rangePenaltyAdjustment !== "oneStepCloser") return 0;
+  const band = getRangeBand(context);
+  if (band === "short") return 2;
+  if (band === "medium") return 3;
+  if (band === "long") return 5;
+  return 0;
+}
+
+function contextManeuver(context = {}) {
+  return normalizeKey(context.maneuver ?? context.attackManeuver ?? context.combatManeuver ?? context.actionId ?? context.actionType ?? "");
+}
+
+function weaponSupportsAutofire(weapon, context = {}) {
+  if (context.autofire === true || context.attackMode === "autofire") return true;
+  const system = weapon?.system ?? {};
+  if (system.autofire === true || system.properties?.autofire === true) return true;
+  const text = [system.fireMode, system.properties?.join?.(" "), system.traits?.join?.(" "), weapon?.name]
+    .map(value => String(value ?? "").toLowerCase())
+    .join(" ");
+  return text.includes("autofire");
+}
+
 function optionAllowedForWeapon(option, weapon, context = {}) {
   const attackType = getAttackType(weapon, context);
   if (option.requiresAttackType && attackType !== "unknown" && attackType !== option.requiresAttackType) {
     return false;
   }
+
+  if (option.requiresManeuver && contextManeuver(context) !== normalizeKey(option.requiresManeuver)) {
+    return false;
+  }
+
+  if (option.requiresAutofire && !weaponSupportsAutofire(weapon, context)) {
+    return false;
+  }
+
+  if (option.requiresRangeBand) {
+    const allowed = Array.isArray(option.requiresRangeBand) ? option.requiresRangeBand : [option.requiresRangeBand];
+    const band = getRangeBand(context);
+    if (!allowed.map(normalizeRangeBand).includes(band)) return false;
+  }
+
   return true;
 }
 
@@ -202,6 +322,17 @@ function hydrateOption(raw, actor, weapon, context = {}) {
   if (merged.requiresCharge && !context?.charge) {
     merged.warning = merged.warning ?? "Requires a charge context.";
   }
+  if (merged.requiresManeuver && contextManeuver(context) !== normalizeKey(merged.requiresManeuver)) {
+    merged.warning = merged.warning ?? `Requires ${merged.requiresManeuver}.`;
+  }
+  if (merged.requiresAutofire && !weaponSupportsAutofire(weapon, context)) {
+    merged.warning = merged.warning ?? "Requires an autofire-capable weapon or autofire attack mode.";
+  }
+
+  if (merged.control === "passive") {
+    merged.checked = true;
+    merged.value = 1;
+  }
 
   return merged;
 }
@@ -234,8 +365,8 @@ export class CombatOptionResolver {
   static summarizeAttackOptions(actor, weapon, options = {}) {
     const available = this.getAvailableAttackOptions(actor, weapon, options);
     return available.map(option => {
-      const value = selectedValue(options, option.id);
-      return { ...option, selectedValue: value, active: value > 0 || (option.control === "flag" && Boolean(options?.combatOptions?.[option.id])) };
+      const value = option.control === "passive" ? 1 : selectedValue(options, option.id);
+      return { ...option, selectedValue: value, active: option.control === "passive" || value > 0 || (option.control === "flag" && Boolean(options?.combatOptions?.[option.id])) };
     });
   }
 
@@ -245,18 +376,20 @@ export class CombatOptionResolver {
       attackBonus: 0,
       damageBonus: 0,
       damageDiceStepBonus: 0,
+      damageExtraWeaponDice: 0,
       defenseModifiers: [],
       flags: {},
       breakdown: []
     };
 
     for (const option of active) {
-      const value = option.selectedValue;
-      if (option.control !== "flag" && value <= 0) continue;
+      const value = option.control === "passive" ? 1 : option.selectedValue;
+      if (option.control !== "flag" && option.control !== "passive" && value <= 0) continue;
 
       let attack = 0;
       if (Number.isFinite(Number(option.attackModifier))) attack += Number(option.attackModifier) * value;
       if (option.attackModifierFormula === "-value") attack -= value;
+      attack += getRangePenaltyAdjustment(option, options);
       if (attack) {
         result.attackBonus += attack;
         result.breakdown.push({ label: option.label, value: attack, type: "attack" });
@@ -265,19 +398,22 @@ export class CombatOptionResolver {
       let damage = 0;
       if (Number.isFinite(Number(option.damageModifier))) damage += Number(option.damageModifier) * value;
       if (option.damageModifierFormula === "value") damage += value;
+      if (option.damageModifierFormula === "halfLevel") damage += Math.floor(actorLevel(actor) / 2) * value;
       if (damage) {
         result.damageBonus += damage;
         result.breakdown.push({ label: option.label, value: damage, type: "damage" });
       }
 
-      const diceSteps = Number(option.damageDiceStepBonus ?? 0) * value;
-      if (diceSteps) {
-        result.damageDiceStepBonus += diceSteps;
-        result.breakdown.push({ label: `${option.label} damage die step`, value: diceSteps, type: "damageDiceStep" });
+      const extraWeaponDice = Number(option.damageExtraWeaponDice ?? option.damageDiceStepBonus ?? 0) * value;
+      if (extraWeaponDice) {
+        result.damageExtraWeaponDice += extraWeaponDice;
+        result.damageDiceStepBonus += extraWeaponDice;
+        result.breakdown.push({ label: `${option.label} extra weapon dice`, value: extraWeaponDice, type: "damageExtraWeaponDice" });
       }
 
       if (option.defenseModifier && value > 0) {
-        const defense = { ...option.defenseModifier, value };
+        const defenseValue = Number(option.defenseModifier.value ?? value);
+        const defense = { ...option.defenseModifier, value: Number.isFinite(defenseValue) ? defenseValue : value };
         result.defenseModifiers.push(defense);
         result.breakdown.push({ label: `${option.label} ${defense.target ?? "defense"}`, value, type: "defense" });
       }

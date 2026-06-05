@@ -18,6 +18,7 @@ import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/we
 import { StructuredRuleEvaluator } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/StructuredRuleEvaluator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/condition-evaluator.js";
+import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 
 export class ModifierEngine {
   /**
@@ -42,6 +43,75 @@ export class ModifierEngine {
    */
   static _safeArray(value) {
     return Array.isArray(value) ? value : [];
+  }
+
+  static _hasRuntimeContext(context = {}) {
+    return !!context && typeof context === 'object' && Object.keys(context).length > 0;
+  }
+
+  static _modifierPredicates(modifier = {}) {
+    const explicit = Array.isArray(modifier.predicateRequirements) ? modifier.predicateRequirements : [];
+    const legacy = Array.isArray(modifier.predicates) ? modifier.predicates : [];
+    return [...new Set([...explicit, ...legacy].filter(Boolean))];
+  }
+
+  static _hasRequiredSelectedChoice(modifier = {}) {
+    if (modifier.requiresSelectedChoice !== true) return true;
+    if (modifier.choiceResolved === true) return true;
+    const selected = modifier.selectedChoice || modifier.selectedChoices;
+    if (Array.isArray(selected)) return selected.length > 0;
+    return !!selected;
+  }
+
+  /**
+   * Phase 3 static-vs-context guard.
+   *
+   * Default actor preparation is a static sheet context. Only true always-on
+   * modifiers, plus selected-choice static modifiers that have already resolved
+   * to a concrete target, may enter static totals. Roll/context/target-specific
+   * modifiers fail closed until the caller supplies a real runtime context and
+   * their predicates pass.
+   */
+  static isModifierAllowedInContext(actor, modifier = {}, context = {}, options = {}) {
+    if (!modifier || modifier.enabled === false) return false;
+
+    const policy = String(modifier.staticSheetPolicy || 'include');
+    const staticSheet = options?.staticSheet === true;
+    const runtimeRequired = modifier.requiresRuntimeContext === true;
+
+    if (staticSheet) {
+      if (policy === 'selected_choice_only') return this._hasRequiredSelectedChoice(modifier);
+      return policy === 'include' || policy === 'selected_choice_only';
+    }
+
+    if (!this._hasRequiredSelectedChoice(modifier)) return false;
+
+    if (['manual_only', 'manual_review', 'not_a_modifier'].includes(policy)) {
+      return false;
+    }
+
+    const hasRuntimeContext = this._hasRuntimeContext(context);
+    if ((runtimeRequired || ['roll_context_only', 'contextual_only', 'manual_or_contextual_only', 'exclude'].includes(policy)) && !hasRuntimeContext) {
+      return false;
+    }
+
+    const predicates = this._modifierPredicates(modifier);
+    if (predicates.length > 0) {
+      if (!hasRuntimeContext) return false;
+      try {
+        const predicateContext = {
+          ...context,
+          modifier,
+          selectedChoice: context?.selectedChoice ?? modifier.selectedChoice ?? null
+        };
+        return evaluateStatePredicates(actor, predicates, predicateContext);
+      } catch (err) {
+        swseLogger.warn(`[ModifierEngine] Predicate evaluation failed for ${modifier.sourceName || modifier.id || 'modifier'}`, err);
+        return false;
+      }
+    }
+
+    return true;
   }
 
   static async getAllModifiers(actor) {
@@ -153,6 +223,7 @@ export class ModifierEngine {
 
     return allModifiers
       .filter(mod => matchesDomain(mod))
+      .filter(mod => this.isModifierAllowedInContext(actor, mod, query?.context ?? {}, { staticSheet: false }))
       .filter(mod => {
         try {
           return ConditionEvaluator.evaluateAll(actor, mod?.conditions, query?.context ?? {});
@@ -181,7 +252,8 @@ export class ModifierEngine {
     const aggregated = {};
 
     // Group by target
-    const byTarget = ModifierUtils.groupByTarget(allModifiers);
+    const staticModifiers = allModifiers.filter(mod => this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }));
+    const byTarget = ModifierUtils.groupByTarget(staticModifiers);
 
     // For each target, evaluate conditions, resolve stacking and sum
     for (const [target, modsForTarget] of byTarget.entries()) {
@@ -218,6 +290,7 @@ export class ModifierEngine {
     const allModifiers = await this.getAllModifiers(actor);
     // PHASE 2: Filter based on conditions
     const applicableModifiers = allModifiers.filter(mod =>
+      this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }) &&
       ConditionEvaluator.evaluateAll(actor, mod.conditions)
     );
     return ModifierUtils.calculateModifierTotal(applicableModifiers, target);
@@ -236,6 +309,7 @@ export class ModifierEngine {
     const allModifiers = await this.getAllModifiers(actor);
     // PHASE 2: Filter based on conditions
     const applicableModifiers = allModifiers.filter(mod =>
+      this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }) &&
       ConditionEvaluator.evaluateAll(actor, mod.conditions)
     );
     return ModifierUtils.getModifierDetail(applicableModifiers, target);
@@ -256,7 +330,8 @@ export class ModifierEngine {
    */
   static async buildModifierBreakdown(actor, targets = []) {
     const allModifiers = await this.getAllModifiers(actor);
-    return ModifierUtils.buildModifierBreakdown(allModifiers, targets);
+    const staticModifiers = allModifiers.filter(mod => this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }));
+    return ModifierUtils.buildModifierBreakdown(staticModifiers, targets);
   }
 
   /**

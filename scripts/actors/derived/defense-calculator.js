@@ -19,6 +19,7 @@ import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/
 import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js"; // STATIC import (no dynamic)
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 
 
 function getSystemActiveDefenseBonus(actor, defenseType) {
@@ -357,8 +358,24 @@ export class DefenseCalculator {
           continue;
         }
 
+        const isStaticSheetContext = !context || Object.keys(context).length === 0;
+
         // Apply each modifier in the PASSIVE/STATE item
         for (const modifier of meta.modifiers) {
+          const scopedModifier = {
+            ...modifier,
+            mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
+            applicationScope: modifier.applicationScope || meta.applicationScope,
+            staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
+            requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
+            requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
+            predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
+          };
+
+          if (!ModifierEngine.isModifierAllowedInContext(actor, scopedModifier, context, { staticSheet: isStaticSheetContext })) {
+            continue;
+          }
+
           // Check if this modifier applies to the current defense type
           const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
           const appliesToDefense = targets.some(t => t === `defense.${defenseType}` || t === 'defense');

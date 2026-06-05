@@ -11,6 +11,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FeatDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-diagnostics.js";
 
 const REGISTRY_PATH = 'systems/foundryvtt-swse/data/feat-choice-options.json';
 const DEFAULT_CHOICE_ROOT = 'system.selectedChoice';
@@ -259,7 +260,12 @@ export class FeatChoiceResolver {
       'greater_weapon_focus',
       'weapon_specialization',
       'greater_weapon_specialization',
-      'force_power_focus'
+      'force_power_focus',
+      'double_attack_weapon',
+      'triple_attack_weapon',
+      'double_attack_followup_weapon',
+      'return_fire_weapon',
+      'melee_weapon_or_group'
     ].includes(kind)) {
       return 'prerequisiteDerived';
     }
@@ -270,6 +276,8 @@ export class FeatChoiceResolver {
     ].includes(kind)) {
       return 'grantPool';
     }
+    if (kind === 'specific_weapon') return 'actorInventory';
+    if (kind === 'talent_choice' || kind === 'once_per_encounter_ability_choice') return 'actorState';
     return 'fixed';
   }
 
@@ -364,20 +372,30 @@ export class FeatChoiceResolver {
 
     const source = this.inferChoiceSource(itemOrFeat);
     const kind = meta.choiceKind;
+    let options = [];
 
     if (source === 'fixed') {
-      return this._resolveFixedOptions(actor, registry, meta, kind, itemOrFeat, context);
+      options = this._resolveFixedOptions(actor, registry, meta, kind, itemOrFeat, context);
+    } else if (source === 'prerequisiteDerived') {
+      options = this._resolvePrerequisiteDerivedOptions(actor, registry, meta, kind, context);
+    } else if (source === 'grantPool') {
+      options = this._resolveGrantPoolOptions(actor, registry, meta, kind, context);
+    } else if (source === 'actorInventory') {
+      options = this.getOwnedWeaponChoices(actor, context?.pending || context);
+    } else if (source === 'actorState') {
+      options = this._resolveActorStateOptions(actor, registry, meta, kind, context);
     }
 
-    if (source === 'prerequisiteDerived') {
-      return this._resolvePrerequisiteDerivedOptions(actor, registry, meta, kind, context);
-    }
+    FeatDiagnostics.traceChoiceOptionResolution({
+      actor,
+      feat: itemOrFeat,
+      choiceMeta: meta,
+      choiceSource: source,
+      options,
+      context,
+    });
 
-    if (source === 'grantPool') {
-      return this._resolveGrantPoolOptions(actor, registry, meta, kind, context);
-    }
-
-    return [];
+    return options;
   }
 
   static _resolveFixedOptions(actor, registry, meta, kind, itemOrFeat = null, context = {}) {
@@ -396,6 +414,10 @@ export class FeatChoiceResolver {
 
     if (kind === 'skill_training') {
       return this._resolveSkillChoiceOptions(actor, context, { excludeTrained: true });
+    }
+
+    if (kind === 'trained_skill') {
+      return this._resolveSkillChoiceOptions(actor, context, { trainedOnly: true });
     }
 
     const def = registry.choiceKinds?.[kind];
@@ -474,9 +496,34 @@ export class FeatChoiceResolver {
         }));
       case 'force_power_focus':
         return this.getOwnedForcePowerChoices(actor);
+      case 'double_attack_weapon':
+        return this.getWeaponFocusEligibleChoices(actor, registry, context?.pending || context);
+      case 'triple_attack_weapon':
+        return this.getDoubleAttackChoices(actor, context?.pending || context).map((entry) => ({
+          ...entry,
+          prerequisiteSource: 'double_attack'
+        }));
+      case 'double_attack_followup_weapon':
+        return this.getDoubleAttackChoices(actor, context?.pending || context).map((entry) => ({
+          ...entry,
+          prerequisiteSource: 'double_attack'
+        }));
+      case 'return_fire_weapon':
+        return this.getWeaponFocusChoices(actor, context?.pending || context).map((entry) => ({
+          ...entry,
+          prerequisiteSource: 'weapon_focus'
+        }));
+      case 'melee_weapon_or_group':
+        return this.getMeleeWeaponProficiencyChoices(actor, registry, context?.pending || context);
       default:
         return [];
     }
+  }
+
+  static _resolveActorStateOptions(actor, registry, meta, kind, context = {}) {
+    if (kind === 'talent_choice') return this.getOwnedTalentChoices(actor, context?.pending || context);
+    if (kind === 'once_per_encounter_ability_choice') return this.getOncePerEncounterAbilityChoices(actor, context?.pending || context);
+    return [];
   }
 
   static _resolveGrantPoolOptions(actor, registry, meta, kind) {
@@ -499,6 +546,12 @@ export class FeatChoiceResolver {
     const entry = Array.isArray(choice) ? choice[0] : choice;
     if (!entry) return '';
     if (typeof entry === 'string') return stableKey(entry);
+    if (Array.isArray(entry.targets) && entry.targets.length) {
+      return entry.targets.map(value => stableKey(value)).filter(Boolean).join('__');
+    }
+    if (entry.decrease && entry.increase) {
+      return `decrease_${stableKey(entry.decrease)}__increase_${stableKey(entry.increase)}`;
+    }
     if (entry.group === 'exotic' || entry.branch === 'exotic' || entry.weapon) {
       return `exotic:${stableKey(entry.category || entry.exoticCategory || 'unknown')}:${stableKey(entry.weapon || entry.value || entry.id)}`;
     }
@@ -676,6 +729,108 @@ export class FeatChoiceResolver {
     }));
   }
 
+  static getMeleeWeaponProficiencyChoices(actor, registry = this._registry || {}, pending = {}) {
+    const meleeGroups = new Set(['simple', 'advanced-melee', 'lightsabers']);
+    return this.getWeaponProficiencyChoices(actor, registry, pending)
+      .filter((entry) => {
+        if (entry?.group === 'exotic') return String(entry?.category || '').toLowerCase() === 'melee';
+        const group = stableKey(entry?.group || entry?.value || entry?.id);
+        return meleeGroups.has(group);
+      })
+      .map((entry) => ({
+        ...entry,
+        prerequisiteSource: 'weapon_proficiency',
+        meleeOnly: true,
+        locked: false,
+        editable: true
+      }));
+  }
+
+  static getDoubleAttackChoices(actor, pending = {}) {
+    return this._getChoiceEntriesByFeatName(actor, 'Double Attack', pending);
+  }
+
+  static getOwnedWeaponChoices(actor, pending = {}) {
+    const results = [];
+    const add = (entry, source = 'actor.item', locked = false) => {
+      const label = typeof entry === 'string' ? entry : entry?.name || entry?.label || entry?.weapon || entry?.id;
+      if (!label) return;
+      results.push({
+        id: stableKey(label),
+        value: stableKey(label),
+        label: String(label),
+        weapon: String(label),
+        kind: 'specific_weapon',
+        source,
+        locked: Boolean(locked),
+        editable: !locked
+      });
+    };
+
+    add('Unarmed Attack', 'default.unarmed', true);
+    for (const item of asArray(actor?.items)) {
+      const type = String(item?.type || '').toLowerCase();
+      const systemType = String(item?.system?.itemType || item?.system?.type || item?.system?.category || '').toLowerCase();
+      if (type === 'weapon' || systemType.includes('weapon')) add(item, `item:${item.name}`);
+    }
+    for (const entry of asArray(pending?.weapons || pending?.selectedWeapons)) add(entry, 'pending.weapon');
+    return uniqueById(results);
+  }
+
+  static getOwnedTalentChoices(actor, pending = {}) {
+    const results = [];
+    const add = (entry, source = 'actor.talent', locked = false) => {
+      const label = typeof entry === 'string' ? entry : entry?.name || entry?.label || entry?.talent || entry?.id;
+      if (!label) return;
+      results.push({
+        id: stableKey(label),
+        value: stableKey(label),
+        label: String(label),
+        talent: String(label),
+        kind: 'talent',
+        source,
+        locked: Boolean(locked),
+        editable: !locked
+      });
+    };
+    for (const item of this.getActorTalentItems(actor)) add(item, `talent:${item.name}`);
+    for (const entry of asArray(pending?.selectedTalents || pending?.talents)) add(entry, 'pending.talent');
+    return uniqueById(results);
+  }
+
+  static getOncePerEncounterAbilityChoices(actor, pending = {}) {
+    const results = [];
+    const add = (entry, source = 'actor', locked = false) => {
+      const label = typeof entry === 'string' ? entry : entry?.name || entry?.label || entry?.id;
+      if (!label) return;
+      const system = typeof entry === 'object' ? (entry.system || {}) : {};
+      const searchable = [
+        label,
+        system.description?.value,
+        system.description,
+        system.benefit,
+        system.effect,
+        system.shortSummary,
+        system.abilityMeta?.conditionSummary,
+        JSON.stringify(system.abilityMeta || {})
+      ].filter(Boolean).join(' ').toLowerCase();
+      if (!/once per encounter|1\/encounter|one additional time per encounter|per encounter/.test(searchable)) return;
+      results.push({
+        id: stableKey(`${source}:${label}`),
+        value: stableKey(label),
+        label: String(label),
+        kind: String(entry?.type || 'ability'),
+        source,
+        locked: Boolean(locked),
+        editable: !locked
+      });
+    };
+    for (const item of [...this.getActorFeatItems(actor), ...this.getActorTalentItems(actor)]) add(item, `${item.type}:${item.name}`);
+    for (const entry of asArray(pending?.selectedFeats || pending?.feats)) add(entry, 'pending.feat');
+    for (const entry of asArray(pending?.selectedTalents || pending?.talents)) add(entry, 'pending.talent');
+    return uniqueById(results);
+  }
+
   static getWeaponFocusChoices(actor, pending = {}) {
     return this._getChoiceEntriesByKind(actor, 'weapon_focus', pending);
   }
@@ -753,6 +908,20 @@ export class FeatChoiceResolver {
     return asArray(stored).map(normalizeChoiceEntry).filter(Boolean);
   }
 
+  static _getChoiceEntriesByFeatName(actor, featName, pending = {}) {
+    const target = nameKey(featName);
+    const owned = [];
+    for (const item of this.getAvailableFeatItems(actor, pending)) {
+      if (nameKey(item?.name) !== target) continue;
+      const stored = this.getStoredChoice(actor, item);
+      for (const entry of asArray(stored)) {
+        const normalized = normalizeChoiceEntry(entry);
+        if (normalized) owned.push({ ...normalized, source: `feat:${item.name}`, itemId: item.id || item._id });
+      }
+    }
+    return uniqueById(owned);
+  }
+
   static _findExoticCategory(registry, weapon) {
     const key = String(weapon || '').toLowerCase();
     for (const category of Object.keys(registry.exoticWeapons || {})) {
@@ -791,6 +960,18 @@ export class FeatChoiceResolver {
       greater_weapon_specialization: {
         providers: () => this._getChoiceEntriesByKind(actor, 'weapon_specialization', pending),
         message: (label) => `Requires Weapon Specialization with ${label}.`
+      },
+      triple_attack_weapon: {
+        providers: () => this.getDoubleAttackChoices(actor, pending),
+        message: (label) => `Requires Double Attack with ${label}.`
+      },
+      double_attack_followup_weapon: {
+        providers: () => this.getDoubleAttackChoices(actor, pending),
+        message: (label) => `Requires Double Attack with ${label}.`
+      },
+      return_fire_weapon: {
+        providers: () => this.getWeaponFocusChoices(actor, pending),
+        message: (label) => `Requires Weapon Focus with ${label}.`
       }
     };
 
@@ -839,6 +1020,13 @@ export class FeatChoiceResolver {
       });
     }
 
+    FeatDiagnostics.traceChoiceAudit({
+      actor,
+      label: 'missing required choices',
+      items: missing,
+      includeTalents,
+    });
+
     return missing;
   }
 
@@ -863,6 +1051,13 @@ export class FeatChoiceResolver {
         });
       }
     }
+    FeatDiagnostics.traceChoiceAudit({
+      actor,
+      label: 'invalid stored choices',
+      items: invalid,
+      includeTalents: false,
+    });
+
     return invalid;
   }
 

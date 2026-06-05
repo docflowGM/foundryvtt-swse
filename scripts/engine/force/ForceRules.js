@@ -31,6 +31,10 @@ export class ForceRules {
     return HouseRuleService.getBoolean('forceSensitiveJediOnly', false);
   }
 
+  static forceSensitivityGrantsForcePower() {
+    return HouseRuleService.getBoolean('forceSensitivityGrantsForcePower', false);
+  }
+
   static allowSuiteReselection() {
     return HouseRuleService.getBoolean('allowSuiteReselection', false);
   }

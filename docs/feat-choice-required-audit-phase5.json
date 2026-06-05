@@ -1,0 +1,1422 @@
+{
+  "schemaVersion": 2,
+  "phase": "5-diagnostics-and-choice-required-audit",
+  "generatedFrom": "packs/feats.db after Phase 4 fixes",
+  "purpose": "Add/record diagnostics for feat eligibility, choice resolution, pending entitlements, and identify feats that need a player-facing choice upon selection.",
+  "notes": [
+    "This report does not rewrite feat mechanics. It identifies choice-required and choice-dependent feats for Phase 6 implementation/backfill.",
+    "A choice upon selection is different from a choice made later when the feat is activated, targets an enemy, or modifies a roll.",
+    "Grouped Weapon Proficiency requires a prompt; fixed variants such as Weapon Proficiency (Pistols) do not because the chosen group is already encoded in the feat row.",
+    "No additional standalone scraped feat-description input was visible in /mnt/data at generation time; existing repo scrape reports under tools/ were cross-referenced."
+  ],
+  "changedFiles": [
+    "docs/feat-choice-required-audit-phase5.json",
+    "docs/feat-diagnostics-phase5.json",
+    "scripts/engine/progression/feats/feat-diagnostics.js",
+    "scripts/engine/progression/feats/feat-choice-resolver.js"
+  ],
+  "summary": {
+    "totalFeatRows": 419,
+    "mappedImmediateChoiceFeats": 10,
+    "mappedDeferredGrantChoiceFeats": 3,
+    "alreadyResolvedStaticVariants": 9,
+    "missingPersistentSelectionMetadata": 14,
+    "derivedOrInheritedChoiceDependencies": 1,
+    "runtimeChoicesNotFeatSelectionExamples": 12,
+    "existingRepoScrapedRecords": 287,
+    "existingRepoUpdatedDocumentsFromScrape": 279,
+    "existingRepoDbOnlyDocumentsLeftUnchanged": 140,
+    "additionalTopLevelScrapeInputsSeen": [
+      "swse_phase4_blank_prereq_changes.json"
+    ]
+  },
+  "highPriorityNextBackfills": [
+    {
+      "name": "Double Attack",
+      "id": "357807a5ceb77203",
+      "packLine": 94,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 86,
+      "prerequisite": "Base Attack Bonus +6",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Make an extra attack with chosen weapon during Full Attack, -5 penalty to all attacks.",
+      "benefitPreview": "Choose a single Exotic Weapon or weapon group with which you are proficient. When you use the Full Attack action, you may make one additional attack when wielding such a weapon. However, you take a -5 penalty on all attack rolls until your next turn because you're trading precisi",
+      "why": [
+        "Choose one proficient weapon group or exotic weapon."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Recurring Success",
+      "id": "5535b5d495f381f5",
+      "packLine": 144,
+      "featType": "general",
+      "sourcebook": "Galaxy of Intrigue",
+      "page": 23,
+      "prerequisite": "None",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "once_per_encounter_ability_choice",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Gain extra use of a 1/encounter Talent or Feat.",
+      "benefitPreview": "When you select this Feat, choose one Talent or Feat that can normally be used once per encounter. You can use that Talent or Feat one additional time per encounter.",
+      "why": [
+        "When selected, choose one once-per-encounter talent or feat."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Educated",
+      "id": "5cc1216874c79087",
+      "packLine": 155,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 86,
+      "prerequisite": "None",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "two_knowledge_skills",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Choose two Knowledge skills.",
+      "benefitPreview": "Choose two Knowledge skills. You gain a +5 bonus on checks with those skills.",
+      "why": [
+        "Choose two Knowledge skills; Phase 3 disabled hard-coded bonuses until choices are stored."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Triple Attack",
+      "id": "648a4f16669056f0",
+      "packLine": 171,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "Base Attack Bonus +11, Double Attack (Chosen Weapon)",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Make second extra attack with chosen weapon during Full Attack, additional -5 penalty to all attacks.",
+      "benefitPreview": "Choose a single Exotic Weapon or weapon group. When you use the Full Attack Action, you may make one additional attack when wielding such a Weapon. However, you take a -5 penalty on all attack rolls until your next turn because you're trading precision for speed. The extra attack",
+      "why": [
+        "Choose one weapon group or exotic weapon; should usually derive/validate from Double Attack."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Superior Tech",
+      "id": "a717435c8094e7fb",
+      "packLine": 269,
+      "featType": "general",
+      "sourcebook": "Scum and Villainy",
+      "page": 29,
+      "prerequisite": "Intelligence 17, Tech Specialist, 9th Character Level",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "tech_category",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Install superior equipment upgrades.",
+      "benefitPreview": "Select one of the following: Armor, Weapons, Droids, Vehicles, or Devices. You can install advanced Traits when modifying the selected type of equipment. These Traits replace the Traits granted by the Tech Specialist Feat. You may still use the Tech Specialist options if you so c",
+      "why": [
+        "Select one category: Armor, Weapons, Droids, Vehicles, or Devices."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Inborn Resilience",
+      "id": "9d70c309eb95da5e",
+      "packLine": 259,
+      "featType": "species",
+      "sourcebook": "Star Wars Saga Edition",
+      "page": 0,
+      "prerequisite": "Zabrak",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "defense_reallocation",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "Reduce one Defense bonus but increase another.",
+      "benefitPreview": "Reduce one Defense bonus but increase another.",
+      "why": [
+        "User identified this as a selection feat; rules require choosing one species Defense bonus to reduce and another to increase."
+      ],
+      "priority": "high"
+    }
+  ],
+  "mappedImmediateChoices": [
+    {
+      "name": "Skill Focus",
+      "id": "1592aaedf4b6e40a",
+      "packLine": 38,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 88,
+      "prerequisite": "None",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "skill_focus",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "execution_mapped_phase6",
+        "choiceKind": "skill_focus",
+        "repeatable": true,
+        "storagePath": "flags.swse.choices.skill_focus",
+        "choiceSource": "fixed",
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.skill_focus",
+        "effectTarget": "skill.selected",
+        "effectValue": 5
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Gain +5 competence bonus on Skill Checks with one Trained Skill.",
+      "benefitPreview": "Choose one Skill in which you are Trained. You gain a +5 competence bonus on all Skill Checks made with that Skill.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Exotic Weapon Proficiency",
+      "id": "1ea7da65feb15b18",
+      "packLine": 54,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 86,
+      "prerequisite": "Base Attack Bonus +1",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "tagged_for_later_dialog_backfill",
+        "choiceKind": "weapon_proficiency",
+        "routeThrough": "Weapon Proficiency",
+        "branch": "exotic",
+        "repeatable": true,
+        "legacyChoiceAliasOf": "Weapon Proficiency",
+        "optionRegistry": "data/feat-choice-options.json#weapon_proficiency.exotic",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "notes": "Legacy feat row retained for compatibility; future UI should prefer the grouped Weapon Proficiency feat exotic branch.",
+        "choiceSource": "fixed",
+        "provides": "weapon_proficiency",
+        "resultShape": "exotic_weapon"
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Wield an Exotic Weapon without penalty.",
+      "benefitPreview": "Select a single weapon from either the Exotic Weapons (Melee) or Exotic Weapons (Ranged) weapon groups; you make attack rolls with the selected weapon without penalty.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "id": "3ca2ebe34da486a5",
+      "packLine": 102,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "Weapon Specialization with selected weapon group, base attack bonus +12",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "greater_weapon_specialization",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "execution_mapped_phase6",
+        "choiceKind": "greater_weapon_specialization",
+        "repeatable": true,
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.greater_weapon_specialization",
+        "storagePath": "flags.swse.choices.greater_weapon_specialization",
+        "choiceSource": "prerequisiteDerived",
+        "derivesFrom": [
+          "weapon_specialization"
+        ],
+        "consumes": "weapon_specialization",
+        "provides": "greater_weapon_specialization",
+        "effectTarget": "damage.weapon",
+        "effectValue": 2
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You gain a +2 bonus on damage rolls with the selected weapon group.",
+      "benefitPreview": "You gain a +2 bonus on damage rolls with the selected weapon group. This stacks with Weapon Specialization.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Force Focus",
+      "id": "44ddf3506444cbbd",
+      "packLine": 120,
+      "featType": "force",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 94,
+      "prerequisite": "Trained in Use the Force",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "force_power_focus",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "tagged_for_later_dialog_backfill",
+        "choiceKind": "force_power_focus",
+        "repeatable": false,
+        "storagePath": "flags.swse.choices.force_power_focus",
+        "choiceSource": "prerequisiteDerived",
+        "derivesFrom": [
+          "owned_force_powers"
+        ],
+        "consumes": "owned_force_powers",
+        "provides": "force_power_focus",
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.force_power_focus"
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat.",
+      "benefitPreview": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "id": "75ff82e2dd80091d",
+      "packLine": 198,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "Weapon Focus with selected weapon group, base attack bonus +8",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "greater_weapon_focus",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "execution_mapped_phase6",
+        "choiceKind": "greater_weapon_focus",
+        "repeatable": true,
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.greater_weapon_focus",
+        "storagePath": "flags.swse.choices.greater_weapon_focus",
+        "choiceSource": "prerequisiteDerived",
+        "derivesFrom": [
+          "weapon_focus"
+        ],
+        "consumes": "weapon_focus",
+        "provides": "greater_weapon_focus",
+        "effectTarget": "attack.bonus",
+        "effectValue": 1
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You gain a +1 bonus on attack rolls with the selected weapon group.",
+      "benefitPreview": "You gain a +1 bonus on attack rolls with the selected weapon group. This stacks with Weapon Focus.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Weapon Specialization",
+      "id": "7cd5ebe725910cb2",
+      "packLine": 205,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 88,
+      "prerequisite": "Soldier level 4, Weapon Focus with selected weapon group",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "weapon_specialization",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "execution_mapped_phase6",
+        "choiceKind": "weapon_specialization",
+        "repeatable": true,
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.weapon_specialization",
+        "storagePath": "flags.swse.choices.weapon_specialization",
+        "choiceSource": "prerequisiteDerived",
+        "derivesFrom": [
+          "weapon_focus"
+        ],
+        "consumes": "weapon_focus",
+        "provides": "weapon_specialization",
+        "effectTarget": "damage.weapon",
+        "effectValue": 2
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You gain a +2 bonus on damage rolls with the selected weapon group.",
+      "benefitPreview": "You gain a +2 bonus on damage rolls with the selected weapon group.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Skill Training",
+      "id": "a9f6de36f24ef202",
+      "packLine": 274,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 88,
+      "prerequisite": "None",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "skill_training",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "execution_mapped_phase6",
+        "choiceKind": "skill_training",
+        "choiceSource": "fixed",
+        "repeatable": true,
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.skill_training",
+        "storagePath": "flags.swse.choices.skill_training",
+        "effectTarget": "skillTraining.selected"
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You become Trained in one Class Skill.",
+      "benefitPreview": "Choose one Untrained Skill from your list of Class Skills. You become Trained in that Skill.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Weapon Focus",
+      "id": "c41814601364b643",
+      "packLine": 320,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 88,
+      "prerequisite": "Proficient with Chosen Weapon",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "weapon_focus",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "execution_mapped_phase6",
+        "choiceKind": "weapon_focus",
+        "repeatable": true,
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.weapon_focus",
+        "storagePath": "flags.swse.choices.weapon_focus",
+        "choiceSource": "prerequisiteDerived",
+        "derivesFrom": [
+          "weapon_proficiency"
+        ],
+        "consumes": "weapon_proficiency",
+        "provides": "weapon_focus",
+        "effectTarget": "attack.bonus",
+        "effectValue": 1
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "+1 bonus on attack rolls with chosen weapon.",
+      "benefitPreview": "Choose a single Exotic Weapon or weapon group, you gain a +1 bonus on all attack rolls you make using the selected Exotic Weapon or weapon group.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Weapon Proficiency",
+      "id": "ecc2471ac96ec2d4",
+      "packLine": 389,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "None",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "tagged_for_later_dialog_backfill",
+        "choiceKind": "weapon_proficiency",
+        "repeatable": true,
+        "optionRegistry": "data/feat-choice-options.json#weapon_proficiency",
+        "storagePath": "flags.swse.choices.weaponProficiency",
+        "notes": "Single grouped feat. Dialog should show weapon groups; choosing exotic opens melee/ranged and then a specific exotic weapon.",
+        "choiceSource": "fixed",
+        "provides": "weapon_proficiency",
+        "resultShape": "weapon_group_or_exotic_weapon"
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Ignore -5 penalty on attack rolls with weapons of a particular type.",
+      "benefitPreview": "Choose one Weapon Group. You are proficient with all weapons of the selected group. Weapon Groups include the following: - Simple Weapons (includes Simple Weapons (Melee), Simple Weapons (Ranged), and Grenades) - Pistols - Rifles - Lightsabers - Heavy Weapons (includes both Heavy",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Droid Focus",
+      "id": "f4f3706e393976b3",
+      "packLine": 400,
+      "featType": "general",
+      "sourcebook": "Scavenger's Guide to Droids",
+      "page": 20,
+      "prerequisite": "Trained in Mechanics and Use Computer",
+      "status": "mapped_immediate_choice",
+      "choiceKind": "droid_class_focus",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": {
+        "resolution": "immediate",
+        "required": true,
+        "status": "tagged_for_later_dialog_backfill",
+        "choiceKind": "droid_class_focus",
+        "repeatable": false,
+        "storagePath": "flags.swse.choices.droid_class_focus",
+        "choiceSource": "fixed",
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.droid_class_focus"
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "+1 bonus to certain Skills and Defenses when dealing with a selected class of Droid.",
+      "benefitPreview": "Select a degree of Droid (1st-Degree, 2nd-Degree, 3rd-Degree, 4th-Degree, or 5th-Degree). You gain a +1 bonus to Deception, Mechanics, Perception, Persuasion, and Use Computer checks when used on or against a Droid of the selected degree, and a +1 bonus to all Defenses against at",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution immediate"
+      ],
+      "priority": "normal"
+    }
+  ],
+  "mappedDeferredGrantChoices": [
+    {
+      "name": "Starship Tactics",
+      "id": "376d805d1b73f7e6",
+      "packLine": 96,
+      "featType": "general",
+      "sourcebook": "Starships of the Galaxy",
+      "page": 30,
+      "prerequisite": "Vehicular Combat, Trained in Pilot",
+      "status": "mapped_deferred_grant_choice",
+      "choiceKind": "starship_maneuver_pick",
+      "choiceTiming": "resolved_in_later_progression_step",
+      "choiceMeta": {
+        "resolution": "grant_entitlement",
+        "required": true,
+        "status": "deferred_grant_step_not_immediate_choice",
+        "choiceKind": "starship_maneuver_pick",
+        "storagePath": "flags.swse.pendingEntitlements.starship_maneuver_pick",
+        "choiceSource": "grantPool",
+        "grantType": "starship_maneuver",
+        "grantRegistry": "starshipManeuver",
+        "countFormula": "max(1, 1 + wisdomModifier)",
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.starship_maneuver_pick",
+        "ability": "wis",
+        "minimum": 1,
+        "dynamic": true,
+        "repeatable": true
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You are trained to make use of Starship Maneuvers and are skilled at space combat.",
+      "benefitPreview": "You add to your Starship Maneuver Suite a number of Starship Maneuvers equal to 1 + your Wisdom modifier (minimum 1). You can add the same Starship Maneuver more than once.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution grant_entitlement"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Linguist",
+      "id": "5afd91fb081e576b",
+      "packLine": 151,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "Intelligence 13",
+      "status": "mapped_deferred_grant_choice",
+      "choiceKind": "language_pick",
+      "choiceTiming": "resolved_in_later_progression_step",
+      "choiceMeta": {
+        "resolution": "grant_entitlement",
+        "required": true,
+        "status": "deferred_grant_step_not_immediate_choice",
+        "choiceKind": "language_pick",
+        "storagePath": "flags.swse.pendingEntitlements.language_pick",
+        "choiceSource": "grantPool",
+        "grantType": "language",
+        "grantRegistry": "language",
+        "countFormula": "max(1, 1 + intelligenceModifier)",
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.language_pick",
+        "ability": "int",
+        "minimum": 1,
+        "dynamic": true,
+        "repeatable": true
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Gain bonus Languages equal to 1 + your Intelligence modifier (minimum 1).",
+      "benefitPreview": "You gain a number of additional Languages equal to 1 + your Intelligence modifier (Minimum 1).",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution grant_entitlement"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Force Training",
+      "id": "9b7b869a86f39190",
+      "packLine": 256,
+      "featType": "force",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 94,
+      "prerequisite": "Force Sensitivity, Trained in Use the Force.",
+      "status": "mapped_deferred_grant_choice",
+      "choiceKind": "force_power_pick",
+      "choiceTiming": "resolved_in_later_progression_step",
+      "choiceMeta": {
+        "resolution": "grant_entitlement",
+        "required": true,
+        "status": "deferred_grant_step_not_immediate_choice",
+        "choiceKind": "force_power_pick",
+        "storagePath": "flags.swse.pendingEntitlements.force_power_pick",
+        "choiceSource": "grantPool",
+        "grantType": "force_power",
+        "grantRegistry": "forcePower",
+        "countFormula": "max(1, 1 + configuredForceTrainingAbilityModifier)",
+        "optionRegistry": "data/feat-choice-options.json#choiceKinds.force_power_pick",
+        "minimum": 1,
+        "dynamic": true,
+        "repeatable": true
+      },
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Learn a number of Force Powers equal to 1 + your Wisdom modifier (minimum 1).",
+      "benefitPreview": "You add to your Force Power Suite a number of Force Powers equal to 1 + your Wisdom modifier (Minimum 1). You can add the same Force Power more than once.",
+      "why": [
+        "choiceMeta.required true",
+        "choiceMeta.resolution grant_entitlement"
+      ],
+      "priority": "normal"
+    }
+  ],
+  "missingPersistentSelectionMetadata": [
+    {
+      "name": "Adaptable Talent",
+      "id": "25ce950a142f969d",
+      "packLine": 68,
+      "featType": "general",
+      "sourcebook": "Galaxy of Intrigue",
+      "page": 23,
+      "prerequisite": "None",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "talent_choice",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Temporarily gain access to an additional Talent.",
+      "benefitPreview": "Choose one Talent that you meet the prerequisites for, from a Class you possess. Once per day, after at least 6 hours of rest, you can choose to swap out one of your current Talents for the Talent you chose for this Feat. The Talent you swap out cannot be the prerequisite for any",
+      "why": [
+        "Benefit begins with choosing one talent that can later be swapped."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Relentless Attack",
+      "id": "30cb2abcd11bf1bd",
+      "packLine": 87,
+      "featType": "general",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 30,
+      "prerequisite": "Double Attack (Chosen Weapon)",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Gain a bonus on attack rolls after missing a target.",
+      "benefitPreview": "Choose one weapon group or Exotic Weapon for which you have the Double Attack Feat. Whenever you miss a target with that weapon, you gain a +2 competence bonus on your next attack roll made before the end of your next turn against the missed target.",
+      "why": [
+        "Choose one Double Attack weapon group or exotic weapon."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Double Attack",
+      "id": "357807a5ceb77203",
+      "packLine": 94,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 86,
+      "prerequisite": "Base Attack Bonus +6",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Make an extra attack with chosen weapon during Full Attack, -5 penalty to all attacks.",
+      "benefitPreview": "Choose a single Exotic Weapon or weapon group with which you are proficient. When you use the Full Attack action, you may make one additional attack when wielding such a weapon. However, you take a -5 penalty on all attack rolls until your next turn because you're trading precisi",
+      "why": [
+        "Choose one proficient weapon group or exotic weapon."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Triple Crit",
+      "id": "3d4a4e93ced26712",
+      "packLine": 104,
+      "featType": "general",
+      "sourcebook": "Galaxy at War",
+      "page": 27,
+      "prerequisite": "Base Attack Bonus +8",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "specific_weapon",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Deal triple damage on a Critical Hit.",
+      "benefitPreview": "Choose one Weapon with which you are proficient. When you score a Critical Hit with the selected weapon, you deal triple damage. You may select \" Unarmed Attack \" as a Weapon for purposes of this Feat.",
+      "why": [
+        "Choose one proficient weapon; Unarmed Attack is allowed."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Recurring Success",
+      "id": "5535b5d495f381f5",
+      "packLine": 144,
+      "featType": "general",
+      "sourcebook": "Galaxy of Intrigue",
+      "page": 23,
+      "prerequisite": "None",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "once_per_encounter_ability_choice",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Gain extra use of a 1/encounter Talent or Feat.",
+      "benefitPreview": "When you select this Feat, choose one Talent or Feat that can normally be used once per encounter. You can use that Talent or Feat one additional time per encounter.",
+      "why": [
+        "When selected, choose one once-per-encounter talent or feat."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Educated",
+      "id": "5cc1216874c79087",
+      "packLine": 155,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 86,
+      "prerequisite": "None",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "two_knowledge_skills",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Choose two Knowledge skills.",
+      "benefitPreview": "Choose two Knowledge skills. You gain a +5 bonus on checks with those skills.",
+      "why": [
+        "Choose two Knowledge skills; Phase 3 disabled hard-coded bonuses until choices are stored."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Nikto Survival",
+      "id": "6179746c48e30c26",
+      "packLine": 161,
+      "featType": "general",
+      "sourcebook": "Unknown Regions",
+      "page": 26,
+      "prerequisite": "Nikto",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "nikto_subspecies",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "Reroll Survival checks in native environment.",
+      "benefitPreview": "Select a Nikto subspecies: Kajain'sa'Nikto (Desert), Kadas'sa'Nikto (Forest), Esral'sa'Nikto (Mountains), Gluss'sa'Nikto (Ocean), M'shento'su,Nikto (Arctic). In addition to the usual Nikto Species Traits, when operating in an environment advantageous to your native subspecies, yo",
+      "why": [
+        "Select a Nikto subspecies and bind the environmental reroll to that subspecies."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Triple Attack",
+      "id": "648a4f16669056f0",
+      "packLine": 171,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "Base Attack Bonus +11, Double Attack (Chosen Weapon)",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Make second extra attack with chosen weapon during Full Attack, additional -5 penalty to all attacks.",
+      "benefitPreview": "Choose a single Exotic Weapon or weapon group. When you use the Full Attack Action, you may make one additional attack when wielding such a Weapon. However, you take a -5 penalty on all attack rolls until your next turn because you're trading precision for speed. The extra attack",
+      "why": [
+        "Choose one weapon group or exotic weapon; should usually derive/validate from Double Attack."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Return Fire",
+      "id": "80c52cf7838095c1",
+      "packLine": 210,
+      "featType": "general",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 21,
+      "prerequisite": "Dexterity 15, Quick Draw, Weapon Focus (Chosen Weapon)",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You may make a single ranged attack as a Reaction to a ranged attack against you that misses.",
+      "benefitPreview": "Select one Exotic Weapon or Weapon Group for which you possess the Weapon Focus feat. Once per encounter as a Reaction, you can make a single ranged attack with the chosen weapon against an enemy that misses you with a ranged attack, provided you have line of sight to the enemy.",
+      "why": [
+        "Select one Weapon Focus weapon group or exotic weapon."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Superior Tech",
+      "id": "a717435c8094e7fb",
+      "packLine": 269,
+      "featType": "general",
+      "sourcebook": "Scum and Villainy",
+      "page": 29,
+      "prerequisite": "Intelligence 17, Tech Specialist, 9th Character Level",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "tech_category",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Install superior equipment upgrades.",
+      "benefitPreview": "Select one of the following: Armor, Weapons, Droids, Vehicles, or Devices. You can install advanced Traits when modifying the selected type of equipment. These Traits replace the Traits granted by the Tech Specialist Feat. You may still use the Tech Specialist options if you so c",
+      "why": [
+        "Select one category: Armor, Weapons, Droids, Vehicles, or Devices."
+      ],
+      "priority": "high"
+    },
+    {
+      "name": "Savage Attack",
+      "id": "aaa730a68f195111",
+      "packLine": 275,
+      "featType": "general",
+      "sourcebook": "Galaxy at War",
+      "page": 27,
+      "prerequisite": "Double Attack (Chosen Weapon)",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Add +1 die of damage when successful on a Full Attack.",
+      "benefitPreview": "Choose one weapon groups or Exotic Weapon you have selected for the Double Attack Feat. When you use a Full Attack Action and successfully hit the target with your first attack, you deal +1 die of damage on each successful attack remaining in the Full Attack made against that tar",
+      "why": [
+        "Choose one weapon group or exotic weapon selected for Double Attack."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Mission Specialist",
+      "id": "b7f51561e60fefe6",
+      "packLine": 300,
+      "featType": "general",
+      "sourcebook": "Galaxy at War",
+      "page": 24,
+      "prerequisite": "None",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "trained_skill",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Grant bonus to allies' Untrained Skill Checks with a particular Skill.",
+      "benefitPreview": "Choose one Skill in which you are Trained. Allies who are not Trained in that Skill gain a +2 competence bonus to the Skill while they are within 12 squares of you.",
+      "why": [
+        "Choose one trained skill to share with allies."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Withdrawal Strike",
+      "id": "caad1a8c13bf01a1",
+      "packLine": 326,
+      "featType": "general",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 30,
+      "prerequisite": "Base Attack Bonus +5",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "melee_weapon_or_group",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Adjacent opponents can not use the Withdraw Action.",
+      "benefitPreview": "When taking this Feat, select a single Exotic Weapon (Melee) or melee weapon group with which you are proficient. When wielding that chosen Exotic Weapon (Melee) or melee weapon from the chosen group, adjacent opponents may not Withdraw from squares you threaten. They may still m",
+      "why": [
+        "When taking this feat, select a melee exotic weapon or melee weapon group."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Inborn Resilience",
+      "id": "9d70c309eb95da5e",
+      "packLine": 259,
+      "featType": "species",
+      "sourcebook": "Star Wars Saga Edition",
+      "page": 0,
+      "prerequisite": "Zabrak",
+      "status": "missing_persistent_selection_metadata",
+      "choiceKind": "defense_reallocation",
+      "choiceTiming": "prompt_on_selection",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "Reduce one Defense bonus but increase another.",
+      "benefitPreview": "Reduce one Defense bonus but increase another.",
+      "why": [
+        "User identified this as a selection feat; rules require choosing one species Defense bonus to reduce and another to increase."
+      ],
+      "priority": "high"
+    }
+  ],
+  "derivedOrInheritedChoiceDependencies": [
+    {
+      "name": "Triple Crit Specialist",
+      "id": "2f2fa438a6fb54a0",
+      "packLine": 85,
+      "featType": "general",
+      "sourcebook": "Galaxy at War",
+      "page": 27,
+      "prerequisite": "Triple Crit, Weapon Specialization with selected weapon group",
+      "status": "derived_or_inherited_choice_dependency",
+      "choiceKind": "weapon_or_weapon_group",
+      "choiceTiming": "derive_from_existing_choice",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track.",
+      "benefitPreview": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track.",
+      "why": [
+        "References selected weapon group from Triple Crit / Weapon Specialization. Needs dependency validation, not necessarily a fresh choice."
+      ],
+      "priority": "normal"
+    }
+  ],
+  "alreadyResolvedStaticVariants": [
+    {
+      "name": "Weapon Proficiency (Simple Weapons)",
+      "id": "2d680cc46a7972da",
+      "packLine": 80,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "weapon_proficiency",
+        "value": "simple",
+        "grants": [
+          "simple"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You are proficient with simple weapons and do not take the -5 penalty when using them.",
+      "benefitPreview": "You are proficient with simple weapons and do not take the -5 penalty when using them.",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Heavy Weapon Proficiency",
+      "id": "41a9ce755ecffb5b",
+      "packLine": 112,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "weapon_proficiency",
+        "value": "heavy-weapons",
+        "grants": [
+          "heavy-weapons"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
+      "benefitPreview": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Weapon Proficiency (Rifles)",
+      "id": "765ff8a34e58acac",
+      "packLine": 199,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "weapon_proficiency",
+        "value": "rifles",
+        "grants": [
+          "rifles"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You are proficient with rifles and do not take the -5 penalty when using them.",
+      "benefitPreview": "You are proficient with rifles and do not take the -5 penalty when using them.",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Armor Proficiency (light)",
+      "id": "773ec00effc7e96f",
+      "packLine": 200,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 85,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "armor_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "armor_proficiency",
+        "value": "light",
+        "grants": [
+          "light"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "No penalty on attacks and no Armor Check Penalty while wearing Light Armor.",
+      "benefitPreview": "When you wear Light Armor, you take no Armor Check Penalty on attack rolls or Skill Checks. Additionally, you benefit from all of the armor's special Equipment bonuses (if any).",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Weapon Proficiency (Heavy Weapons)",
+      "id": "8329a353aa3899be",
+      "packLine": 212,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "weapon_proficiency",
+        "value": "heavy-weapons",
+        "grants": [
+          "heavy-weapons"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
+      "benefitPreview": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Armor Proficiency (heavy)",
+      "id": "859d6b9f49118499",
+      "packLine": 217,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 85,
+      "prerequisite": "Armor Proficiency (Light) Feat, Armor Proficiency (Medium) Feat",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "armor_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "armor_proficiency",
+        "value": "heavy",
+        "grants": [
+          "light",
+          "medium",
+          "heavy"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "No penalty on attacks and no Armor Check Penalty while wearing Light Armor, Medium Armor, or Heavy Armor.",
+      "benefitPreview": "When you wear Heavy Armor, you take no Armor Check Penalty on attack rolls or Skill Checks. Additionally, you benefit from all of the armor's special Equipment bonuses (if any).",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Advanced Melee Weapon Proficiency",
+      "id": "cf28ec45cabaff59",
+      "packLine": 338,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 85,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "weapon_proficiency",
+        "value": "advanced-melee",
+        "grants": [
+          "advanced-melee"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them.",
+      "benefitPreview": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them.",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Armor Proficiency (medium)",
+      "id": "d445051370a88a7f",
+      "packLine": 344,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 85,
+      "prerequisite": "Armor Proficiency (Light) Feat",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "armor_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "armor_proficiency",
+        "value": "medium",
+        "grants": [
+          "light",
+          "medium"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "No penalty on attacks and no Armor Check Penalty while wearing Light Armor or Medium Armor.",
+      "benefitPreview": "When you wear Medium Armor, you take no Armor Check Penalty on attack rolls or Skill Checks. Additionally, you benefit from all of the armor's special Equipment bonuses (if any).",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Weapon Proficiency (Pistols)",
+      "id": "e5d361d01d1b44e4",
+      "packLine": 374,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 87,
+      "prerequisite": "None",
+      "status": "already_resolved_static_variant",
+      "choiceKind": "weapon_proficiency",
+      "choiceTiming": "no_prompt_fixed_variant",
+      "choiceMeta": {
+        "resolution": "already_resolved_static_variant",
+        "required": false,
+        "choiceKind": "weapon_proficiency",
+        "value": "pistols",
+        "grants": [
+          "pistols"
+        ]
+      },
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "You are proficient with pistols and do not take the -5 penalty when using them.",
+      "benefitPreview": "You are proficient with pistols and do not take the -5 penalty when using them.",
+      "why": [
+        "Static compendium variant already specifies the choice"
+      ],
+      "priority": "normal"
+    }
+  ],
+  "runtimeChoicesNotFeatSelectionExamples": [
+    {
+      "name": "Power Attack",
+      "id": "3f76464c43c73f84",
+      "packLine": 107,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 88,
+      "prerequisite": "Strength 13",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Trade attack bonus for damage on melee attacks (up to your Base Attack Bonus).",
+      "benefitPreview": "On your turn, before making an attack roll, you may choose to subtract a number from all melee attack rolls and add the same number to all melee damage rolls. This number may not exceed your Base Attack Bonus. The penalty on attacks and bonus on damage rolls applies until the sta",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Power Blast",
+      "id": "935212056c7968c8",
+      "packLine": 238,
+      "featType": "general",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 28,
+      "prerequisite": "None",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Trade attack bonus for damage on ranged attacks (up to your Base Attack Bonus).",
+      "benefitPreview": "As a Swift Action, before making an attack roll, you can choose to subtract a number from all ranged attack rolls and add the same number to all ranged damage rolls. This number cannot exceed your Base Attack Bonus. The penalty on attacks and bonus on damage applies until the sta",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Dodge",
+      "id": "45366d4f3a5e443d",
+      "packLine": 121,
+      "featType": "general",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 84,
+      "prerequisite": "Dexterity 13",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Gain a +1 dodge bonus to Reflex Defense against a selected target.",
+      "benefitPreview": "During your turn, you designate an opponent and receive a +1 dodge bonus to your Reflex Defense against attacks from that opponent. You can select a new opponent on any action. A situation that makes you lose your Dexterity bonus to Reflex Defense (if any) also makes you lose dod",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Targeted Area",
+      "id": "9c904590c02fb30a",
+      "packLine": 257,
+      "featType": "general",
+      "sourcebook": "Unknown Regions",
+      "page": 27,
+      "prerequisite": "Base Attack Bonus +5",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "Deal an additional 5 points of damage against one target within a successful Area Attack.",
+      "benefitPreview": "When you make a successful Area Attack with a weapon with which you are proficient, select a target hit by the attack. That target takes an additional 5 points of damage from the attack, before applying the effect of the Evasion Talent.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Leader of Droids",
+      "id": "59e495de34a23def",
+      "packLine": 149,
+      "featType": "general",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 25,
+      "prerequisite": "None",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": false,
+      "shortSummary": "Allied Droids benefit from your beneficial Mind-Affecting effects.",
+      "benefitPreview": "Whenever you provide a beneficial, Mind-Affecting effect to your allies, you may select from among these allies a number of Droids equal to your Intelligence modifier (minimum 1). The Droids you designate ignore their Mind-Affecting immunity with regards to this effect, provided ",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Forceful Recovery",
+      "id": "627b92fefdc552d2",
+      "packLine": 163,
+      "featType": "force",
+      "sourcebook": "The Force Unleashed Campaign Guide",
+      "page": 34,
+      "prerequisite": "Force Sensitivity, Force Training",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Regain one Force Power when you catch a Second Wind.",
+      "benefitPreview": "Whenever you catch a Second Wind, choose one expended Force Power and return that power to your Force Power Suite.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Stay Up",
+      "id": "4788389dadb5cb0a",
+      "packLine": 127,
+      "featType": "general",
+      "sourcebook": "Scum and Villainy",
+      "page": 28,
+      "prerequisite": "Trained in Endurance",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Move 1 step down Condition Track to reduce damage.",
+      "benefitPreview": "Once per encounter, when you would normally take damage from an attack, you can instead choose to take half damage and move -1 step along the Condition Track.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Fatal Hit",
+      "id": "ebe730776cd3e310",
+      "packLine": 387,
+      "featType": "general",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 18,
+      "prerequisite": "Strength 13, Dexterity 13",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You automatically kill an enemy that you reduce to 0 Hit Points, and you can perform a Coup de Grace as a Standard Action.",
+      "benefitPreview": "When your attack drops a target to 0 Hit Points, you may choose to automatically kill that enemy even if the damage does not exceed the target's Damage Threshold. In addition, you can perform the Coup de Grace Action as a Standard Action.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Impetuous Move",
+      "id": "f401ac70ee67def1",
+      "packLine": 397,
+      "featType": "general",
+      "sourcebook": "Scum and Villainy",
+      "page": 25,
+      "prerequisite": "Constitution 13",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Move when you catch a Second Wind.",
+      "benefitPreview": "When you catch a Second Wind, you can choose to regain only half of the Hit Points you normally would with a Second Wind and immediately Move up to half of your Speed. This movement does not provoke Attacks of Opportunity.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Brink of Death",
+      "id": "f4e8244a4c8bb9a0",
+      "packLine": 399,
+      "featType": "general",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": 17,
+      "prerequisite": "None",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Attacks that would kill your enemy reduces them to 0 Hit Points instead.",
+      "benefitPreview": "When you deal sufficient damage on an attack to kill a target, you may instead choose to reduce the target to 0 Hit Points, leaving it Unconscious but alive. Normal rules for being at 0 Hit Points apply.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Friendly Fire Avoidance",
+      "id": "f504c1a7962f08d8",
+      "packLine": 401,
+      "featType": "general",
+      "sourcebook": "Galaxy at War",
+      "page": 25,
+      "prerequisite": "Dex 13, Point Blank Shot",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks.",
+      "benefitPreview": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks.",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    },
+    {
+      "name": "Bantha Rush",
+      "id": "fc1e5f0a2367debb",
+      "packLine": 413,
+      "featType": "general",
+      "sourcebook": "Galaxy at War",
+      "page": 23,
+      "prerequisite": "Strength 13, Base Attack Bonus +1",
+      "status": "runtime_context_choice_not_feat_selection",
+      "choiceKind": null,
+      "choiceTiming": "chosen_when_used_or_triggered",
+      "choiceMeta": null,
+      "abilityMetaRequiresSelectedChoice": true,
+      "shortSummary": "Push opponent 1 square after making a successful melee attack.",
+      "benefitPreview": "After making a successful melee attack against an opponent up to one size category larger than you, you can choose to move that opponent 1 square in any direction as a Free Action. You can't Bantha Rush an opponent that's being Grabbed or Grappled, and you can't Bantha Rush your ",
+      "why": [
+        "Choice/selection language occurs during activation, targeting, or encounter use; do not prompt during feat acquisition."
+      ],
+      "priority": "normal"
+    }
+  ],
+  "scrapeStatus": {
+    "repoReportPath": "tools/feat_compendium_update_report.json",
+    "repoScrapedRecords": 287,
+    "repoUpdatedDocuments": 279,
+    "repoDbOnlyDocumentsLeftUnchanged": 140,
+    "repoScrapeOnlyRecords": 8,
+    "note": "I did not see the additional scraped files in /mnt/data during this Phase 5 generation. If they are supplied in a later snapshot, rerun this audit and merge those descriptions into the Phase 1 gap list."
+  }
+}

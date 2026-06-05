@@ -233,6 +233,9 @@ export class GMHouseRulesSurfaceService {
     const activeRuleCount = allRules.filter((rule) => rule.enabled).length;
     const totalRuleCount = allRules.length;
 
+    // Load species list for the bannedSpecies checkbox picker
+    const bannedSpeciesOptions = await this._buildBannedSpeciesOptions();
+
     return {
       pageTitle: 'House Rules',
       pageDescription: 'Game rule modifications and campaign rule variants',
@@ -241,8 +244,35 @@ export class GMHouseRulesSurfaceService {
       activeRuleCount,
       inactiveRuleCount: Math.max(totalRuleCount - activeRuleCount, 0),
       totalRuleCount,
-      categoryCount: ruleCategories.length
+      categoryCount: ruleCategories.length,
+      bannedSpeciesOptions
     };
+  }
+
+  /** Load all species from the compendium and mark which are currently banned. */
+  static async _buildBannedSpeciesOptions() {
+    try {
+      const pack = game.packs.get('foundryvtt-swse.species');
+      if (!pack) return [];
+
+      const docs = await pack.getDocuments();
+      const bannedRaw = SettingsHelper.getString('bannedSpecies', '');
+      const bannedSet = new Set(
+        bannedRaw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+      );
+
+      return docs
+        .map(d => ({ name: d.name, id: d.id }))
+        .filter(d => d.name)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(d => ({
+          name: d.name,
+          id: d.id,
+          banned: bannedSet.has(d.name.toLowerCase())
+        }));
+    } catch (err) {
+      return [];
+    }
   }
 
   static buildCategoryViewModels(rules = this.buildRulesByCategory()) {

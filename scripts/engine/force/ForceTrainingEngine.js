@@ -24,12 +24,15 @@ export class ForceTrainingEngine {
    */
   static getForceAbilityModifier(actor) {
     const attribute = ForceTrainingEngine.getTrainingAttribute();
+    const abilityKey = attribute === 'charisma' ? 'cha' : 'wis';
+    const system = actor?.system || {};
+    const ability = system.abilities?.[abilityKey] || system.attributes?.[abilityKey] || system.stats?.[abilityKey] || {};
 
-    if (attribute === 'charisma') {
-      return actor.system.attributes.cha?.mod || 0;
-    } else {
-      return actor.system.attributes.wis?.mod || 0;
-    }
+    const explicitModifier = Number(ability.mod ?? ability.modifier);
+    if (Number.isFinite(explicitModifier)) return Math.floor(explicitModifier);
+
+    const score = Number(ability.total ?? ability.value ?? ability.base ?? 10);
+    return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
   }
 
   /**

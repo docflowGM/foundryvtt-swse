@@ -67,6 +67,18 @@ export const PASSIVE_STATE_PREDICATES = {
     return context?.defenseType === 'will' || false;
   },
 
+  /**
+   * Applies only when a defense context confirms the attacker is the opponent
+   * designated for Dodge. Missing context fails closed so Dodge never inflates
+   * the default Reflex Defense total.
+   */
+  "defense.designated-dodge-target": (actor, context) => {
+    if (context?.designatedDodgeTarget === true) return true;
+    const targetId = context?.dodgeTargetId || context?.selectedTargetId || context?.selectedChoice;
+    const attackerId = context?.attacker?.id || context?.attackerId;
+    return !!targetId && !!attackerId && String(targetId) === String(attackerId);
+  },
+
   // ============================================
   // ATTACK PREDICATES
   // ============================================
@@ -99,6 +111,46 @@ export const PASSIVE_STATE_PREDICATES = {
     return context?.weapon?.system?.attackAttribute === 'dex' || false;
   },
 
+  /**
+   * Applies when a roll is being made with the weapon group/exotic weapon chosen
+   * by a choice-backed feat such as Weapon Focus. This intentionally fails closed
+   * if either the selected choice or weapon context is missing.
+   */
+  "attack.weapon-matches-selected-choice": (actor, context) => {
+    const normalize = (value) => String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    const selected = context?.selectedChoice || context?.modifier?.selectedChoice || context?.ability?.system?.selectedChoice;
+    const entry = Array.isArray(selected) ? selected[0] : selected;
+    const selectedValue = typeof entry === 'string'
+      ? entry
+      : (entry?.value || entry?.id || entry?.group || entry?.weapon || entry?.label || entry?.name);
+    const selectedKey = normalize(selectedValue);
+    if (!selectedKey) return false;
+
+    const weapon = context?.weapon || context?.item || context?.attackItem;
+    if (!weapon) return false;
+
+    const system = weapon.system || {};
+    const candidates = [
+      weapon.name,
+      system.weaponGroup,
+      system.group,
+      system.weaponCategory,
+      system.category,
+      system.subtype,
+      system.type,
+      system.baseWeapon,
+      system.proficiencyGroup
+    ].map(normalize).filter(Boolean);
+
+    return candidates.includes(selectedKey);
+  },
+
 
   /**
    * Applies when the current ranged attack/damage context is inside point-blank range.
@@ -114,6 +166,31 @@ export const PASSIVE_STATE_PREDICATES = {
     if (context?.pointBlankRange === true || context?.isPointBlank === true) return true;
     const band = String(context?.rangeBand || context?.rangeCategory || '').toLowerCase().replace(/_/g, '-');
     return band === 'point-blank' || band === 'pointblank';
+  },
+
+  /**
+   * Applies only when the current defense is against an attack of opportunity
+   * provoked by movement, such as Mobility. Missing context fails closed.
+   */
+  "movement.opportunity-attack-from-movement": (actor, context) => {
+    const isAoo = context?.attackOfOpportunity === true || context?.isAttackOfOpportunity === true;
+    const fromMovement = context?.triggeredByMovement === true || context?.movementProvoked === true || context?.provokedBy === 'movement';
+    return isAoo && fromMovement;
+  },
+
+  /**
+   * Action-specific hook used by feats that modify Frightful Presence resolution.
+   */
+  "action.frightful-presence": (actor, context) => {
+    const action = String(context?.actionId || context?.actionType || context?.actionName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return action === 'frightful-presence';
+  },
+
+  /**
+   * Trigger hook for mechanics that require an enemy failing to overcome Will.
+   */
+  "trigger.enemy-failed-will": (actor, context) => {
+    return context?.enemyFailedWill === true || context?.targetFailedWill === true || context?.willCheckFailed === true;
   },
 
   // ============================================

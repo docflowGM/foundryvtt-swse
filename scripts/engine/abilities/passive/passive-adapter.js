@@ -255,6 +255,16 @@ export class PassiveAdapter {
       enabled: rawModifier.enabled !== false,  // Default to enabled
       priority: rawModifier.priority || 500,  // Default priority (middle of 0-1000 range)
       conditions: rawModifier.conditions || [],
+      predicates: Array.isArray(rawModifier.predicates) ? rawModifier.predicates : [],
+      mechanicsMode: rawModifier.mechanicsMode || ability?.system?.abilityMeta?.mechanicsMode || 'passive',
+      applicationScope: rawModifier.applicationScope || ability?.system?.abilityMeta?.applicationScope || 'static_actor',
+      staticSheetPolicy: rawModifier.staticSheetPolicy || ability?.system?.abilityMeta?.staticSheetPolicy || 'include',
+      requiresRuntimeContext: rawModifier.requiresRuntimeContext ?? ability?.system?.abilityMeta?.requiresRuntimeContext ?? false,
+      requiresSelectedChoice: rawModifier.requiresSelectedChoice ?? ability?.system?.abilityMeta?.requiresSelectedChoice ?? false,
+      selectedChoice: ability?.system?.selectedChoice || ability?.system?.selectedChoices || null,
+      choiceResolved: !!(ability?.system?.selectedChoice || ability?.system?.selectedChoices || rawModifier.targetFromSelectedChoice),
+      predicateRequirements: rawModifier.predicateRequirements || ability?.system?.abilityMeta?.predicateRequirements || [],
+      conditionSummary: rawModifier.conditionSummary || ability?.system?.abilityMeta?.conditionSummary || '',
       description: rawModifier.description || `${sourceName} modifier`
     };
   }
@@ -276,19 +286,44 @@ export class PassiveAdapter {
     if (!rawModifier?.targetFromSelectedChoice) return rawModifier?.target || null;
 
     const selected = ability?.system?.selectedChoice || ability?.system?.selectedChoices;
-    const entry = Array.isArray(selected) ? selected[0] : selected;
+    const config = rawModifier.targetFromSelectedChoice;
+    const entry = this._selectChoiceEntry(selected, config);
     if (!entry) return null;
 
-    const rawValue = typeof entry === 'string'
-      ? entry
-      : (entry.value || entry.id || entry.skill || entry.defense || entry.group || entry.weapon || entry.label || entry.name);
+    const rawValue = this._choiceTargetValue(entry, config);
     const key = this._normalizeChoiceTargetKey(rawValue);
     if (!key) return null;
 
-    const config = rawModifier.targetFromSelectedChoice;
     const prefix = typeof config === 'string' ? config : (config.prefix || '');
     const suffix = typeof config === 'object' ? (config.suffix || '') : '';
     return `${prefix}${key}${suffix}`;
+  }
+
+  static _selectChoiceEntry(selected, config = {}) {
+    const index = typeof config === 'object' && Number.isInteger(config.index) ? config.index : 0;
+    if (Array.isArray(selected)) return selected[index] ?? selected[0] ?? null;
+    return selected || null;
+  }
+
+  static _choiceTargetValue(entry, config = {}) {
+    if (!entry) return '';
+    if (typeof entry === 'string') return entry;
+
+    if (typeof config === 'object' && config.property) {
+      const propertyValue = entry?.[config.property];
+      if (Array.isArray(propertyValue)) {
+        const index = Number.isInteger(config.index) ? config.index : 0;
+        return propertyValue[index] ?? propertyValue[0] ?? '';
+      }
+      if (propertyValue !== undefined && propertyValue !== null) return propertyValue;
+    }
+
+    if (Array.isArray(entry.targets)) {
+      const index = typeof config === 'object' && Number.isInteger(config.index) ? config.index : 0;
+      return entry.targets[index] ?? entry.targets[0] ?? '';
+    }
+
+    return entry.value || entry.id || entry.skill || entry.defense || entry.group || entry.weapon || entry.label || entry.name;
   }
 
   /**
@@ -299,12 +334,28 @@ export class PassiveAdapter {
    * @returns {string}
    */
   static _normalizeChoiceTargetKey(value) {
-    return String(value || '')
-      .trim()
-      .toLowerCase()
+    const raw = String(value || '').trim();
+    const compact = raw.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '');
+    const canonical = {
+      gatherinformation: 'gatherInformation',
+      knowledgebureaucracy: 'knowledgeBureaucracy',
+      knowledgegalacticlore: 'knowledgeGalacticLore',
+      knowledgegalactichistory: 'knowledgeGalacticLore',
+      knowledgelifesciences: 'knowledgeLifeSciences',
+      knowledgephysicalsciences: 'knowledgePhysicalSciences',
+      knowledgesocialsciences: 'knowledgeSocialSciences',
+      knowledgetactics: 'knowledgeTactics',
+      knowledgetechnology: 'knowledgeTechnology',
+      treatinjury: 'treatInjury',
+      usecomputer: 'useComputer',
+      usetheforce: 'useTheForce'
+    };
+    if (canonical[compact]) return canonical[compact];
+    return raw
       .replace(/&/g, ' and ')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+      .replace(/[^a-zA-Z0-9]+(.)/g, (_match, chr) => String(chr || '').toUpperCase())
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .replace(/^./, chr => chr.toLowerCase());
   }
 
   /**

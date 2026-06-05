@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "phase": "7",
+  "purpose": "Backfill Phase 1-4 findings after Phase 6 description fills, replacing scaffolded numeric feat metadata with better passive/resource/attack-option/rider metadata where the refreshed descriptions made intent clear.",
+  "inputs": [
+    "docs/feat-description-fill-gaps-phase1.json",
+    "docs/feat-metadata-implementation-audit-phase2.json",
+    "docs/feat-passive-conditional-metadata-phase2-5.json",
+    "docs/feat-static-context-audit-phase3.json",
+    "docs/feat-high-confidence-fixes-phase4.json",
+    "docs/feat-description-and-choice-backfill-phase6.json",
+    "/mnt/data/swse_feats.json",
+    "/mnt/data/swse_feat_index.json",
+    "/mnt/data/swse_feats_foundry_seed.json"
+  ],
+  "changedFiles": [
+    "packs/feats.db",
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/combat/rolls/attacks.js",
+    "docs/feat-description-metadata-reimplementation-phase7.json"
+  ],
+  "summary": {
+    "featRowsReimplementedOrReclassified": 20,
+    "numericScaffoldBonusesRemoved": 10,
+    "attackOptionsBackfilledOrRefined": 6,
+    "riderOrReactionRulesBackfilled": 10,
+    "resourceRulesReclassified": 3,
+    "staticPassiveRulesCorrected": 1
+  },
+  "changedFeats": [
+    {
+      "name": "Burst Fire",
+      "id": "0d4d7c147c48cdab",
+      "previousMechanicsMode": "manual",
+      "newMechanicsMode": "active",
+      "newApplicationScope": "attack_option",
+      "reason": "Exposed as a deliberate combat option or passive roll-context option, not a static actor-sheet modifier."
+    },
+    {
+      "name": "Vehicular Combat",
+      "id": "1f2f70d34a17667d",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "vehicle_reaction_context",
+      "reason": "Once per round reaction while piloting: make Pilot check to negate a vehicle/starship hit; also grants proficiency with pilot-operated vehicle weapons."
+    },
+    {
+      "name": "Cleave",
+      "id": "32d1cd4b09ec0d3b",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "extra_attack_on_drop",
+      "reason": "After reducing a target to 0 HP, grant one immediate extra melee attack once per round."
+    },
+    {
+      "name": "Throw",
+      "id": "3eed0b4f1227cf91",
+      "previousMechanicsMode": "manual",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "grapple_rider",
+      "reason": "Successful Trip through grapple can throw the target and deal unarmed damage."
+    },
+    {
+      "name": "Acrobatic Strike",
+      "id": "419a502e59264382",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "post_tumble_attack_context",
+      "reason": "Applies only after a successful Tumble to avoid an attack of opportunity and only against that foe before the end of the current turn."
+    },
+    {
+      "name": "Extra Second Wind",
+      "id": "4e57ee834c301ad8",
+      "previousMechanicsMode": "manual",
+      "newMechanicsMode": "passive_resource",
+      "newApplicationScope": "secondWind_resource",
+      "reason": "Adds one extra Second Wind use per day/recovery cycle; encounter cap remains unchanged."
+    },
+    {
+      "name": "Force Boon",
+      "id": "53444cc061d81627",
+      "previousMechanicsMode": "manual",
+      "newMechanicsMode": "passive_resource",
+      "newApplicationScope": "forcePoints_resource",
+      "reason": "Always grants +3 maximum Force Points each level."
+    },
+    {
+      "name": "Whirlwind Attack",
+      "id": "600f43af4edb16f7",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "multi_target_melee_action",
+      "reason": "Full-round melee action against each opponent within reach; no standing attack bonus."
+    },
+    {
+      "name": "Strong in the Force",
+      "id": "71892687abbed346",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "passive_resource",
+      "newApplicationScope": "forcePoints_resource",
+      "reason": "Changes Force Point dice to d8 when Force Points are spent."
+    },
+    {
+      "name": "Crush",
+      "id": "7bc21d4a74b95be5",
+      "previousMechanicsMode": "manual",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "grapple_rider",
+      "reason": "Successful Pin can immediately deal unarmed or claw damage; this is not an attack bonus."
+    },
+    {
+      "name": "Great Cleave",
+      "id": "8a5cb28f625d6f02",
+      "previousMechanicsMode": "manual",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "extra_attack_on_drop",
+      "reason": "Uses Cleave but removes the once-per-round limit."
+    },
+    {
+      "name": "Improved Damage Threshold",
+      "id": "96666de28ba99b64",
+      "previousMechanicsMode": "passive_choice_required",
+      "newMechanicsMode": "passive",
+      "newApplicationScope": "static_actor",
+      "reason": "Always-on +5 Damage Threshold."
+    },
+    {
+      "name": "Trip",
+      "id": "a8511e47656ef4dd",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "grapple_rider",
+      "reason": "Successful grapple may knock the opponent prone; this is not an attack modifier."
+    },
+    {
+      "name": "Charging Fire",
+      "id": "a945e2f5ffb5a7ed",
+      "previousMechanicsMode": "passive_choice_required",
+      "newMechanicsMode": "active",
+      "newApplicationScope": "attack_option",
+      "reason": "Exposed as a deliberate combat option or passive roll-context option, not a static actor-sheet modifier."
+    },
+    {
+      "name": "Far Shot",
+      "id": "b5a8d5899e02139c",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "roll_context_option",
+      "reason": "Passive for eligible rolls only. Missing range/action context fails closed and never changes static sheet totals."
+    },
+    {
+      "name": "Pin",
+      "id": "c238f3f722689a3a",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "grapple_rider",
+      "reason": "Successful grapple may pin the opponent; this is not an attack modifier."
+    },
+    {
+      "name": "Improved Disarm",
+      "id": "ce473e52f90b160a",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "active",
+      "newApplicationScope": "attack_option",
+      "reason": "Exposed as a deliberate combat option or passive roll-context option, not a static actor-sheet modifier."
+    },
+    {
+      "name": "Mighty Swing",
+      "id": "dd2c0e394cdf08ba",
+      "previousMechanicsMode": "conditional",
+      "newMechanicsMode": "active",
+      "newApplicationScope": "attack_option",
+      "reason": "Exposed as a deliberate combat option or passive roll-context option, not a static actor-sheet modifier."
+    },
+    {
+      "name": "Powerful Charge",
+      "id": "e73873cdc77a6451",
+      "previousMechanicsMode": "active",
+      "newMechanicsMode": "active",
+      "newApplicationScope": "attack_option",
+      "reason": "Exposed as a deliberate combat option or passive roll-context option, not a static actor-sheet modifier."
+    },
+    {
+      "name": "Bantha Rush",
+      "id": "fc1e5f0a2367debb",
+      "previousMechanicsMode": "passive_choice_required",
+      "newMechanicsMode": "conditional",
+      "newApplicationScope": "post_hit_movement_rider",
+      "reason": "After a successful melee hit, optionally push an eligible opponent 1 square; no attack bonus is granted."
+    }
+  ],
+  "highValueFixes": [
+    {
+      "name": "Far Shot",
+      "fix": "Removed fake +2 ranged attack scaffold and replaced it with a one-range-band-closer roll-context rule."
+    },
+    {
+      "name": "Charging Fire",
+      "fix": "Removed inherited charge-style +2 attack scaffold; modeled as ranged charge option with normal Reflex penalty and suppressed charge attack bonus."
+    },
+    {
+      "name": "Improved Disarm",
+      "fix": "Changed broad melee +5 into a disarm-only attack option."
+    },
+    {
+      "name": "Cleave / Bantha Rush / Pin / Trip / Whirlwind Attack",
+      "fix": "Removed false numeric attack modifiers and represented them as action/rider metadata."
+    },
+    {
+      "name": "Improved Damage Threshold",
+      "fix": "Changed from choice-required to true always-on +5 Damage Threshold."
+    },
+    {
+      "name": "Force Boon / Strong in the Force / Extra Second Wind",
+      "fix": "Reclassified existing resourceRules from manual placeholders to passive resource metadata."
+    }
+  ],
+  "deferred": [
+    {
+      "area": "Toughness",
+      "reason": "Description confirms +1 HP per character level, but HP is owned by ActorEngine/recomputeHP. Needs a dedicated HP-scaling hook, not a simple static hp.max +N modifier."
+    },
+    {
+      "area": "Damage extra dice rendering",
+      "reason": "Phase 7 passes extra weapon dice through CombatOptionResolver and rollDamage for common weapon-die formulas, but complex weapon formulas still need runtime testing."
+    },
+    {
+      "area": "Rider execution UI",
+      "reason": "Rider rules are now explicit metadata, but post-hit/grapple/vehicle reaction UI surfaces may still need dedicated buttons/prompts."
+    }
+  ],
+  "validation": [
+    "node --check scripts/engine/combat/combat-option-resolver.js",
+    "node --check scripts/combat/rolls/attacks.js",
+    "packs/feats.db parsed as valid JSONL with 419 rows",
+    "docs/feat-description-metadata-reimplementation-phase7.json parsed as valid JSON"
+  ]
+}
