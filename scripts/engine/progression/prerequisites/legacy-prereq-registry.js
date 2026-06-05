@@ -82,19 +82,33 @@ export function resolveCanonicalSpeciesName(rawName) {
   return match?.name || toTitleCase(input);
 }
 
+const _ATHLETICS_COMPONENT_KEYS = new Set(['acrobatics', 'climb', 'jump', 'swim']);
+function _athleticsOn() {
+  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
+  catch { return false; }
+}
+
 export function resolveCanonicalSkillKey(rawName) {
   const input = String(rawName ?? '').trim();
   if (!input) return null;
 
   const canonical = canonicalizeSkillKey(input);
-  if (canonical) return canonical;
+  if (canonical) {
+    // Athletics consolidation: redirect component skill keys → 'athletics' when house rule on.
+    if (_athleticsOn() && _ATHLETICS_COMPONENT_KEYS.has(canonical)) return 'athletics';
+    return canonical;
+  }
 
   const compact = input.replace(/\s+/g, ' ').trim();
   if (/^knowledge\s*\(/i.test(compact)) {
-    return canonicalizeSkillKey(compact);
+    const k = canonicalizeSkillKey(compact);
+    if (_athleticsOn() && _ATHLETICS_COMPONENT_KEYS.has(k)) return 'athletics';
+    return k;
   }
 
-  return canonicalizeSkillKey(toTitleCase(compact));
+  const k = canonicalizeSkillKey(toTitleCase(compact));
+  if (_athleticsOn() && _ATHLETICS_COMPONENT_KEYS.has(k)) return 'athletics';
+  return k;
 }
 
 export function normalizePendingSkillKeys(selectedSkills) {

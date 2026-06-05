@@ -29,6 +29,7 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
+import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
   buildLevelUpFinalizationReceipt,
@@ -487,8 +488,9 @@ export class ProgressionFinalizer {
     const species = selections.species || null;
     const pendingSpeciesContext = selections.pendingSpeciesContext || species?.pendingContext || null;
     const clazz = selections.class || null;
-    const background = selections.background || null;
-    const pendingBackgroundContext = selections.pendingBackgroundContext || background?.pendingContext || null;
+    const backgroundsEnabled = sessionState.mode !== 'chargen' || ChargenRules.backgroundsEnabled();
+    const background = backgroundsEnabled ? (selections.background || null) : null;
+    const pendingBackgroundContext = backgroundsEnabled ? (selections.pendingBackgroundContext || background?.pendingContext || null) : null;
     const languages = selections.languages || [];
     const skills = selections.skills || [];
     const isDroidProgression = isDroidProgressionActor(actor, {
@@ -1378,7 +1380,13 @@ export class ProgressionFinalizer {
       usecomputer: 'useComputer',
       usetheforce: 'useTheForce',
     };
-    return map[normalized] || raw;
+    const resolved = map[normalized] || raw;
+    // Athletics consolidation: redirect component keys → 'athletics' when house rule is on.
+    const athleticsComponents = new Set(['acrobatics', 'climb', 'jump', 'swim']);
+    if (athleticsComponents.has(resolved.toLowerCase())) {
+      try { if (game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true) return 'athletics'; } catch { /* off */ }
+    }
+    return resolved;
   }
 
   static _extractActorLanguageNames(actor) {

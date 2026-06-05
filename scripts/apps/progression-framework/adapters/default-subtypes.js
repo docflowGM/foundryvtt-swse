@@ -22,6 +22,7 @@ import { seedFollowerSession, validateFollowerEntitlement } from './follower-ses
 import { deriveFollowerStats, getFollowerDerivationContext, deriveFollowerStateForApply } from './follower-deriver.js';
 import { DroidBuilderAdapter } from '../steps/droid-builder-adapter.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { ChargenRules } from '../../../engine/chargen/ChargenRules.js';
 import {
   getDroidDegreePackage,
   getDroidBehavioralProfile,
@@ -160,13 +161,15 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
     // droid builder replaces biological Species; it must not remove Background
     // or the L1 survey.
     const creationMode = session.droidContext?.creationMode || 'custom';
+    const backgroundStepsEnabled = ChargenRules.backgroundsEnabled();
     const prioritized = creationMode === 'standard-model'
-      ? ['intro', 'droid-builder', 'attribute', 'class', 'l1-survey', 'background']
-      : ['intro', 'droid-builder', 'attribute', 'class', 'l1-survey', 'background'];
+      ? ['intro', 'droid-builder', 'attribute', 'class', 'l1-survey', ...(backgroundStepsEnabled ? ['background'] : [])]
+      : ['intro', 'droid-builder', 'attribute', 'class', 'l1-survey', ...(backgroundStepsEnabled ? ['background'] : [])];
 
     const ordered = [];
+    const injectableSteps = backgroundStepsEnabled ? ['l1-survey', 'background'] : ['l1-survey'];
     const hasOrCanInject = (stepId) => filtered.includes(stepId)
-      || ['l1-survey', 'background'].includes(stepId);
+      || injectableSteps.includes(stepId);
 
     for (const stepId of prioritized) {
       if (hasOrCanInject(stepId) && !ordered.includes(stepId)) ordered.push(stepId);

@@ -38,6 +38,7 @@ import {
   categorizeError
 } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { ChargenRules } from "/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js";
 
 export class CharacterGeneratorApp extends SWSEApplicationV2 {
   /**
@@ -50,6 +51,11 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   static async open(actor, options = {}) {
     if (!actor) {
       ui.notifications.error('No actor selected');
+      return null;
+    }
+
+    if (!options.fullMode && !ChargenRules.backgroundsEnabled()) {
+      ui.notifications?.warn?.('Background selection is disabled by campaign house rule.');
       return null;
     }
 
@@ -75,9 +81,10 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
 
     // Step state tracking
     this.currentStepIndex = 0;
+    const backgroundStepsEnabled = ChargenRules.backgroundsEnabled();
     this.steps = fullMode
-      ? ['background', 'class', 'abilities']
-      : ['background'];
+      ? [...(backgroundStepsEnabled ? ['background'] : []), 'class', 'abilities']
+      : (backgroundStepsEnabled ? ['background'] : []);
 
     // Track selections and compilation results
     this.stepSelections = {}; // { stepId: userInput }

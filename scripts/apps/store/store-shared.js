@@ -234,12 +234,14 @@ export function getRarityLabel(rarityClass) {
  * @param {string} subcategory - e.g., "Pistols", "Simple Melee", "Lightsabers"
  * @returns {string} 'melee' | 'ranged'
  */
-function getWeaponFamily(subcategory = '') {
+export function getWeaponFamily(subcategory = '') {
   const sub = String(subcategory || '').toLowerCase();
 
   // Explicit mapping for canonical subtype labels (authoritative).
   const explicit = {
     'simple weapons': 'ranged',
+    'simple ranged': 'ranged',
+    'simple melee': 'melee',
     'pistols': 'ranged',
     'rifles': 'ranged',
     'heavy weapons': 'ranged',
@@ -247,18 +249,19 @@ function getWeaponFamily(subcategory = '') {
     'ranged weapons': 'ranged',
     'advanced melee': 'melee',
     'lightsabers': 'melee',
-    'exotic weapons': 'melee',
-    'simple melee': 'melee'
+    'exotic weapons': 'ranged',
+    'exotic ranged': 'ranged',
+    'exotic melee': 'melee'
   };
   if (explicit[sub]) {
     return explicit[sub];
   }
 
   // Substring fallback for any non-canonical/legacy labels.
-  if (sub.includes('melee') || sub.includes('lightsaber') || sub.includes('exotic')) {
+  if (sub.includes('melee') || sub.includes('lightsaber')) {
     return 'melee';
   }
-  if (sub.includes('ranged') || sub.includes('pistol') || sub.includes('rifle') || sub.includes('heavy')) {
+  if (sub.includes('ranged') || sub.includes('pistol') || sub.includes('rifle') || sub.includes('heavy') || sub.includes('grenade')) {
     return 'ranged';
   }
   return 'ranged'; // Default fallback
@@ -416,9 +419,9 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       // Sort weapon children by canonical subtype order so the Melee/Ranged
       // chip rows read consistently regardless of pack/category iteration order.
       const weaponOrder = [
-        'Simple Weapons', 'Pistols', 'Rifles', 'Heavy Weapons', 'Grenades',
-        'Advanced Melee', 'Lightsabers', 'Exotic Weapons',
-        'Ranged Weapons', 'Simple Melee'
+        'Simple Ranged', 'Pistols', 'Rifles', 'Heavy Weapons', 'Grenades', 'Exotic Ranged',
+        'Simple Melee', 'Advanced Melee', 'Lightsabers', 'Exotic Melee',
+        'Simple Weapons', 'Exotic Weapons', 'Ranged Weapons'
       ];
       children.sort((a, b) => {
         const aIdx = weaponOrder.indexOf(a.label);
@@ -483,13 +486,41 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       children.sort((a, b) => a.label.localeCompare(b.label));
     }
 
-    topCategories.push({
+    const topCategory = {
       key: categoryKey,
       label: category,
       count: categoryCount,
       active: activeCategory === categoryKey,
       children: children.length > 0 ? children : undefined
-    });
+    };
+
+    if (categoryKey === 'weapons' && children.length > 0) {
+      const byFamily = new Map();
+      for (const child of children) {
+        const family = child.family || getWeaponFamily(child.label);
+        if (!byFamily.has(family)) byFamily.set(family, []);
+        byFamily.get(family).push({ ...child, family, active: activeSubcategory === child.label });
+      }
+      topCategory.familyGroups = Object.fromEntries(byFamily);
+      const familyOrder = ['ranged', 'melee', 'other'];
+      topCategory.familyTabs = Array.from(byFamily.entries())
+        .map(([family, group]) => ({
+          family,
+          label: family === 'ranged' ? 'Ranged' : family === 'melee' ? 'Melee' : 'Other',
+          count: group.reduce((sum, child) => sum + (Number(child.count) || 0), 0),
+          active: activeFamily === family
+        }))
+        .sort((a, b) => {
+          const aIdx = familyOrder.indexOf(a.family);
+          const bIdx = familyOrder.indexOf(b.family);
+          if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
+          if (aIdx === -1) return 1;
+          if (bIdx === -1) return -1;
+          return aIdx - bIdx;
+        });
+    }
+
+    topCategories.push(topCategory);
   }
 
   // Normalize top-level order: Weapons first, then the big store departments.

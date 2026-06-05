@@ -11,6 +11,7 @@
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
@@ -27,7 +28,7 @@ export class FollowerShell extends ProgressionShell {
   }
 
   _getCanonicalDescriptors() {
-    return [
+    const descriptors = [
       createStepDescriptor({
         stepId: 'follower-origin',
         label: 'Follower Type',
@@ -93,6 +94,9 @@ export class FollowerShell extends ProgressionShell {
         pluginClass: FollowerConfirmStep,
       }),
     ];
+
+    if (ChargenRules.backgroundsEnabled()) return descriptors;
+    return descriptors.filter(descriptor => descriptor?.stepId !== 'background');
   }
 
   constructor(actor, mode = 'follower', options = {}) {

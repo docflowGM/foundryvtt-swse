@@ -89,18 +89,38 @@ const WEAPON_PACK_LABELS = {
  *   2. source compendium pack (weapons are split by subtype across packs)
  *   3. system.range as a last-resort structural fallback
  */
+function getWeaponRangeFamily(item) {
+  const sys = item.system || {};
+  const weaponCategory = safeString(sys.weaponCategory || '').toLowerCase();
+  const range = safeString(sys.range || sys.rangeType || '').toLowerCase();
+  if (weaponCategory.includes('melee') || range === 'melee') return 'melee';
+  if (weaponCategory.includes('ranged') || /\d/.test(range) || range.includes('squares')) return 'ranged';
+  return '';
+}
+
+function splitWeaponSubtype(label, item) {
+  const family = getWeaponRangeFamily(item);
+  if (label === 'Simple Weapons') {
+    return family === 'melee' ? 'Simple Melee' : 'Simple Ranged';
+  }
+  if (label === 'Exotic Weapons') {
+    return family === 'melee' ? 'Exotic Melee' : 'Exotic Ranged';
+  }
+  return label;
+}
+
 function categorizeWeapon(item) {
   // PRIMARY: map system.category to a canonical label.
   const sysCategory = safeString(item.system?.category || '').toLowerCase();
   if (sysCategory && WEAPON_CATEGORY_LABELS[sysCategory]) {
-    return WEAPON_CATEGORY_LABELS[sysCategory];
+    return splitWeaponSubtype(WEAPON_CATEGORY_LABELS[sysCategory], item);
   }
 
   // SECONDARY: derive from the source pack (split-by-subtype compendiums).
   const pack = safeString(item.sourcePack || '').toLowerCase();
   for (const [packKey, label] of Object.entries(WEAPON_PACK_LABELS)) {
     if (pack.includes(packKey)) {
-      return label;
+      return splitWeaponSubtype(label, item);
     }
   }
 

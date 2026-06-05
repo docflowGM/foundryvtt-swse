@@ -122,9 +122,11 @@ export class StoreSurfaceController {
       el.addEventListener('click', ev => {
         ev.preventDefault();
         const family = el.dataset.family ?? null;
-        // Keep current category and subcategory, change family filter
+        // Family folders are parent filters; clear any stale subtype so Ranged/Melee
+        // cannot be starved by a subtype from the other folder.
         this._setOptions({
           currentFamily: family,
+          currentSubcategory: null,
           storeRenderLimit: 36,
           currentView: 'browse',
           selectedProductId: null
@@ -494,49 +496,23 @@ export class StoreSurfaceController {
       if (!target) return;
       const selectors = [
         '.swse-store-surface__grid',
-        '.swse-store-surface__cards-grid',
-        '.swse-store-surface__browse',
-        '.swse-store-surface__browse-layout',
-        '.swse-store-surface__screen',
-        '.swse-store-surface__pane',
         '.swse-store-surface__rail',
-        '.swse-store-surface__detail-shell',
-        '.swse-store-surface__cart-list',
+        '.swse-store-surface__pane',
         '.swse-store-surface__mini-cart-list',
-        '.swse-store-surface__checkout-manifest',
-        '.swse-store-surface__history-list',
         '.swse-store-surface__card-expand-desc',
         '.swse-store-surface__card-expand-tech',
         '.swse-store-surface__card-expand-reviews',
         '.swse-store-surface__detail-section--scroll',
-        '.swse-store-surface__detail-card'
-      ];
-      const candidates = [];
-      for (const sel of selectors) {
-        const el = target.closest(sel);
-        if (el && !candidates.includes(el)) candidates.push(el);
-      }
-      for (const sel of [
-        '.swse-store-surface__cards-grid',
-        '.swse-store-surface__rail',
+        '.swse-store-surface__detail-card',
         '.swse-store-surface__screen'
-      ]) {
-        const el = root.querySelector(sel);
-        if (el && !candidates.includes(el)) candidates.push(el);
-      }
-
-      const delta = Number(event.deltaY || 0);
-      const direction = Math.sign(delta);
-      const scroller = candidates.find(el => {
-        if (!el || el.scrollHeight <= el.clientHeight + 2) return false;
-        if (direction > 0) return el.scrollTop + el.clientHeight < el.scrollHeight - 1;
-        if (direction < 0) return el.scrollTop > 0;
-        return true;
-      });
-      if (!scroller) return;
-
+      ];
+      const scroller = selectors
+        .map(sel => target.closest(sel))
+        .find(el => el && el.scrollHeight > el.clientHeight + 2)
+        || root.querySelector('.swse-store-surface__screen');
+      if (!scroller || scroller.scrollHeight <= scroller.clientHeight + 2) return;
       const before = scroller.scrollTop;
-      scroller.scrollTop += delta;
+      scroller.scrollTop += event.deltaY;
       if (scroller.scrollTop !== before) {
         event.preventDefault();
         event.stopPropagation();
@@ -614,6 +590,7 @@ export class StoreSurfaceController {
     const availVal = (root.querySelector('#ss-avail')?.value ?? 'all').toLowerCase();
     const categoryVal = (this._host._shellSurfaceOptions?.currentCategory ?? '').toLowerCase();
     const subcategoryVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentSubcategory ?? '');
+    const familyVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentFamily ?? '');
 
     let visible = 0;
     root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
@@ -621,6 +598,7 @@ export class StoreSurfaceController {
       const cat = (card.dataset.categoryKey || card.dataset.category || '').toLowerCase();
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
       const subtypeKey = normalizeStoreFilterValue(card.dataset.subcategory || '');
+      const familyKey = normalizeStoreFilterValue(card.dataset.family || '');
       const avail = normalizeAvailabilityText(card.dataset.availability ?? '');
       const requestedAvail = normalizeAvailabilityText(availVal);
 
@@ -628,8 +606,9 @@ export class StoreSurfaceController {
       const matchAvail = !requestedAvail || requestedAvail === 'all' || avail.split(/\s+/).includes(requestedAvail) || avail.includes(requestedAvail);
       const matchCategory = !categoryVal || cat === categoryVal;
       const matchSubcategory = !subcategoryVal || subtypeKey === subcategoryVal;
+      const matchFamily = !(categoryVal === 'weapons' && familyVal) || familyKey === familyVal;
 
-      const show = matchSearch && matchAvail && matchCategory && matchSubcategory;
+      const show = matchSearch && matchAvail && matchCategory && matchSubcategory && matchFamily;
       card.style.display = show ? '' : 'none';
       if (show) visible += 1;
     });

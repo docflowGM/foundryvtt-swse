@@ -1727,7 +1727,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   _getSteps() {
     if (this.actor && this._startedWithActor && !this._createdActorDuringSession) {
-      return ['abilities', 'class', 'background', 'feats', 'talents', 'skills', 'languages', 'summary'];
+      const existingActorSteps = ['abilities', 'class', 'background', 'feats', 'talents', 'skills', 'languages', 'summary'];
+      return ChargenRules.backgroundsEnabled()
+        ? existingActorSteps
+        : existingActorSteps.filter(step => step !== 'background');
     }
 
     // Include type selection (living/droid) after name
@@ -3203,16 +3206,19 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
               reflex: 0,
               will: 0
             },
-            classSkills: [
-              'acrobatics', 'climb', 'deception', 'endurance',
-              'gatherInformation', 'initiative', 'jump',
-              'knowledgeBureaucracy', 'knowledgeGalacticLore',
-              'knowledgeLifeSciences', 'knowledgePhysicalSciences',
-              'knowledgeSocialSciences', 'knowledgeTactics',
-              'knowledgeTechnology', 'mechanics', 'perception',
-              'persuasion', 'pilot', 'ride', 'stealth', 'survival',
-              'swim', 'treatInjury', 'useComputer'
-            ],
+            classSkills: (() => {
+              const _ac = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+              return [
+                ...(_ac ? ['athletics'] : ['acrobatics', 'climb', 'jump', 'swim']),
+                'deception', 'endurance', 'gatherInformation', 'initiative',
+                'knowledgeBureaucracy', 'knowledgeGalacticLore',
+                'knowledgeLifeSciences', 'knowledgePhysicalSciences',
+                'knowledgeSocialSciences', 'knowledgeTactics',
+                'knowledgeTechnology', 'mechanics', 'perception',
+                'persuasion', 'pilot', 'ride', 'stealth', 'survival',
+                'treatInjury', 'useComputer'
+              ];
+            })(),
             forceSensitive: false,
             talentTrees: []
           }

@@ -284,7 +284,9 @@ export class FeatStep extends ProgressionStepPlugin {
     this._groupedFeats = {};             // Feats grouped by category
     this._suggestedFeats = [];           // Top suggested feats (from SuggestionService)
     this._focusedFeatId = null;          // Currently focused feat
-    this._selectedFeatId = null;         // Committed feat for this slot
+    this._selectedFeatId = null;         // Primary/last committed feat for this slot (legacy single-selection API)
+    this._selectedFeatIds = [];          // All committed feat IDs for this slot (Human L1 and other multi-feat budgets)
+    this._requiredFeatCount = 1;         // Number of picks owed by this feat step
     this._searchQuery = '';              // Search filter
     this._showAll = false;               // Toggle: show ineligible feats
     this._expandedCategories = new Set();// Which categories are expanded
@@ -332,9 +334,11 @@ export class FeatStep extends ProgressionStepPlugin {
       .map(f => normalizeFeatRuntime(f, { mapping: this._mapping }))
       .map(feat => attachFeatIconPath(feat));
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
-    const existingFeat = this._getCommittedFeatForSlot(shell);
-    this._selectedFeatId = existingFeat?.id || existingFeat?._id || null;
-    this._selectedFeatItem = existingFeat || null;
+    this._requiredFeatCount = this._getRequiredFeatCount(shell);
+    const existingFeats = this._getCommittedFeatsForSlot(shell);
+    this._selectedFeatIds = existingFeats.map(feat => feat?.id || feat?._id || feat?.name).filter(Boolean);
+    this._selectedFeatId = this._selectedFeatIds[0] || null;
+    this._selectedFeatItem = existingFeats[0] || null;
 
     emitFeatStepTrace('STEP_ENTER_START', {
       stepId: this.descriptor?.stepId || null,
@@ -803,8 +807,81 @@ export class FeatStep extends ProgressionStepPlugin {
       : [];
   }
 
+  _getCommittedFeatsForSlot(shell) {
+    return this._getCommittedFeatSelections(shell).filter(feat => this._isFeatSelectionForThisSlot(feat));
+  }
+
   _getCommittedFeatForSlot(shell) {
-    return this._getCommittedFeatSelections(shell).find(feat => feat?.slotType === this._slotType) || null;
+    return this._getCommittedFeatsForSlot(shell)[0] || null;
+  }
+
+  _isFeatSelectionForThisSlot(feat) {
+    const slotType = String(feat?.slotType || '').toLowerCase();
+    if (this._slotType === 'class') {
+      return slotType === 'class' || String(feat?.source || '').toLowerCase().includes('class');
+    }
+    if (!slotType) {
+      const source = String(feat?.source || '').toLowerCase();
+      return !source.includes('class') && !source.includes('multiclass-starting-feat');
+    }
+    return slotType === this._slotType || (this._slotType === 'heroic' && slotType === 'general');
+  }
+
+  _getRequiredFeatCount(shell) {
+    if (this._slotType === 'class') return 1;
+
+    const mode = shell?.mode || shell?.progressionSession?.mode || 'chargen';
+    if (mode === 'levelup') {
+      const manifest = this._getLevelupManifest(shell);
+      const count = Number(manifest?.generalFeat?.count ?? manifest?.generalFeat?.requiredCount ?? 0);
+      if (Number.isFinite(count) && count > 0) return Math.max(1, Math.floor(count));
+      return manifest?.generalFeat?.required === true ? 1 : 0;
+    }
+
+    const draft = shell?.progressionSession?.draftSelections || {};
+    const species = draft.species || null;
+    const pendingSpeciesContext = draft.pendingSpeciesContext || species?.pendingContext || species?.pendingSpeciesContext || null;
+    const explicitCount = Number(
+      pendingSpeciesContext?.entitlements?.featsRequired
+      ?? species?.entitlements?.featsRequired
+      ?? species?.featsRequired
+      ?? shell?.actor?.system?.featsRequired
+    );
+    if (Number.isFinite(explicitCount) && explicitCount >= 0) {
+      return Math.floor(explicitCount);
+    }
+
+    const speciesName = String(
+      species?.speciesName
+      || species?.name
+      || species?.label
+      || species?.id
+      || pendingSpeciesContext?.identity?.speciesName
+      || pendingSpeciesContext?.identity?.name
+      || ''
+    ).toLowerCase();
+    const isHumanLike = speciesName === 'human' || speciesName === 'near-human' || speciesName === 'near human';
+    const isNPC = shell?.actor?.type === 'npc' || shell?.progressionSession?.subtype === 'npc';
+    return isHumanLike ? (isNPC ? 3 : 2) : (isNPC ? 2 : 1);
+  }
+
+  _getSelectedFeatIdsForSlot(shell) {
+    return this._getCommittedFeatsForSlot(shell)
+      .map(feat => feat?.id || feat?._id || feat?.name)
+      .filter(Boolean);
+  }
+
+  _isFeatIdSelected(featId) {
+    const key = String(featId || '');
+    return !!key && (this._selectedFeatIds || []).some(id => String(id) === key);
+  }
+
+  _isFeatSelected(featOrId) {
+    const candidates = typeof featOrId === 'object'
+      ? [featOrId?._id, featOrId?.id, featOrId?.name]
+      : [featOrId];
+    const selected = new Set((this._selectedFeatIds || []).map(id => String(id)));
+    return candidates.filter(Boolean).some(value => selected.has(String(value)));
   }
 
   _buildCanonicalFeatSelection(feat, shell = null) {
@@ -1163,7 +1240,7 @@ export class FeatStep extends ProgressionStepPlugin {
       prerequisiteLine: feat?.prerequisiteLine || this._getPrerequisiteLine(feat),
       isSuggested: this._suggestedFeats.some(s => (s?._id || s?.id || s?.name) === (feat?._id || feat?.id || feat?.name)),
       isFocused: featId === this._focusedFeatId,
-      isSelected: featId === this._selectedFeatId,
+      isSelected: this._isFeatSelected(feat),
       isAvailable: feat?.isAvailable !== false,
       isOwned: !!feat?.isOwned,
       isGranted: !!feat?.isGranted,
@@ -1305,9 +1382,12 @@ export class FeatStep extends ProgressionStepPlugin {
     // PHASE 2 UX: Micro-progress — show slot progress
     // Note: For a single feat slot, this step shows 0-1 selection
     // For normalized Feat step (Phase: Normalized Steps), this will show dual subsection progress
-    const slotSelections = committedFeats.filter(feat => feat?.slotType === this._slotType);
+    this._requiredFeatCount = this._getRequiredFeatCount(context?.shell || context);
+    const slotSelections = committedFeats.filter(feat => this._isFeatSelectionForThisSlot(feat));
+    this._selectedFeatIds = slotSelections.map(feat => feat?.id || feat?._id || feat?.name).filter(Boolean);
+    this._selectedFeatId = this._selectedFeatIds[0] || null;
     const selectedCount = slotSelections.length;
-    const requiredCount = 1; // Single feat slot per step
+    const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
     const remainingCount = Math.max(0, requiredCount - selectedCount);
     const isComplete = remainingCount === 0;
 
@@ -1367,10 +1447,13 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getSelection() {
-    const isComplete = !!this._selectedFeatId;
+    const selected = [...(this._selectedFeatIds || [])];
+    const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
+    const isComplete = selected.length >= requiredCount;
     return {
-      selected: this._selectedFeatId ? [this._selectedFeatId] : [],
-      count: this._selectedFeatId ? 1 : 0,
+      selected,
+      count: selected.length,
+      required: requiredCount,
       isComplete,
     };
   }
@@ -1409,7 +1492,7 @@ export class FeatStep extends ProgressionStepPlugin {
     attachFeatIconPath(feat);
     const featId = feat._id || feat.id;
     const isSuggested = this._suggestedFeats.some(s => (s._id || s.id) === featId);
-    const isSelected = featId === this._selectedFeatId;
+    const isSelected = this._isFeatSelected(feat);
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalizedDetails = normalizeDetailPanelData(feat, 'feat', {
@@ -1484,15 +1567,17 @@ export class FeatStep extends ProgressionStepPlugin {
 
     const featId = feat._id || feat.id;
     const currentSelections = this._getCommittedFeatSelections(shell);
-    const slotSelections = currentSelections.filter(entry => entry?.slotType !== this._slotType);
-    const isTogglingOff = this._selectedFeatId === featId;
+    const otherSlotSelections = currentSelections.filter(entry => !this._isFeatSelectionForThisSlot(entry));
+    const currentSlotSelections = currentSelections.filter(entry => this._isFeatSelectionForThisSlot(entry));
+    const requiredCount = Math.max(0, Number(this._getRequiredFeatCount(shell) || 0));
+    const isTogglingOff = currentSlotSelections.some(entry => String(entry?.id || entry?._id || entry?.name || '') === String(featId));
     let nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat, shell);
     if (nextSelection) {
       const choiceMeta = FeatChoiceResolver.getChoiceMeta(feat);
       const choiceSource = FeatChoiceResolver.inferChoiceSource(feat);
       if (choiceMeta?.required && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
-        pendingForChoice.selectedFeats = slotSelections;
+        pendingForChoice.selectedFeats = currentSlotSelections;
         const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, {
           title: `Choose: ${feat.name}`,
           context: { pending: pendingForChoice }
@@ -1554,24 +1639,41 @@ export class FeatStep extends ProgressionStepPlugin {
         };
       }
     }
-    const nextSelections = nextSelection ? [...slotSelections, nextSelection] : slotSelections;
+    let nextSlotSelections;
+    if (isTogglingOff) {
+      nextSlotSelections = currentSlotSelections.filter(entry => String(entry?.id || entry?._id || entry?.name || '') !== String(featId));
+    } else if (this._slotType === 'heroic' && requiredCount > 1) {
+      if (currentSlotSelections.length >= requiredCount) {
+        ui.notifications?.warn?.(`You have already selected ${requiredCount} general feats. Remove one before choosing another.`);
+        return;
+      }
+      nextSlotSelections = nextSelection ? [...currentSlotSelections, nextSelection] : currentSlotSelections;
+    } else {
+      // Preserve prior single-slot behavior for class feats and ordinary one-pick general feats.
+      nextSlotSelections = nextSelection ? [nextSelection] : [];
+    }
+    const nextSelections = [...otherSlotSelections, ...nextSlotSelections];
 
-    this._selectedFeatId = nextSelection?.id || null;
-    this._selectedFeatItem = nextSelection || null;
+    this._selectedFeatIds = nextSlotSelections.map(entry => entry?.id || entry?._id || entry?.name).filter(Boolean);
+    this._selectedFeatId = nextSelection?.id || this._selectedFeatIds[0] || null;
+    this._selectedFeatItem = nextSelection || nextSlotSelections[0] || null;
 
     emitFeatStepTrace('ITEM_COMMITTED', {
       featId,
       featName: feat?.name || null,
       selectedFeatId: this._selectedFeatId,
+      selectedFeatIds: this._selectedFeatIds,
       slotType: this._slotType,
+      requiredCount,
       totalSelections: nextSelections.length,
+      slotSelections: nextSlotSelections.length,
     });
 
     await this._commitNormalized(shell, 'feats', nextSelections);
     await this._syncFeatPendingEntitlements(shell, nextSelections);
 
     if (shell?.committedSelections && this.descriptor?.stepId) {
-      shell.committedSelections.set(this.descriptor.stepId, nextSelection);
+      shell.committedSelections.set(this.descriptor.stepId, nextSlotSelections.length === 1 ? nextSlotSelections[0] : nextSlotSelections);
     }
 
     if (this._shouldPromptForForceSensitivitySkillReturn(feat, { shell, nextSelection, isTogglingOff })) {
@@ -1846,8 +1948,11 @@ export class FeatStep extends ProgressionStepPlugin {
     const warnings = [];
 
     // Safety net: if there are no legal choices, step is auto-valid/skippable
-    if (!this._noChoicesAvailable && !this._selectedFeatId) {
-      issues.push('No feat selected');
+    const selectedCount = (this._selectedFeatIds || []).length;
+    const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
+    if (!this._noChoicesAvailable && selectedCount < requiredCount) {
+      const remaining = requiredCount - selectedCount;
+      issues.push(`Select ${remaining} more feat${remaining === 1 ? '' : 's'}`);
     }
 
     return {
@@ -1861,8 +1966,11 @@ export class FeatStep extends ProgressionStepPlugin {
     if (this._noChoicesAvailable) {
       return [];
     }
-    if (!this._selectedFeatId) {
-      return [`Select a ${this._slotType === 'class' ? 'Class' : 'General'} Feat`];
+    const selectedCount = (this._selectedFeatIds || []).length;
+    const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
+    if (selectedCount < requiredCount) {
+      const remaining = requiredCount - selectedCount;
+      return [`Select ${remaining} more ${this._slotType === 'class' ? 'Class' : 'General'} Feat${remaining === 1 ? '' : 's'}`];
     }
     return [];
   }
@@ -1874,9 +1982,12 @@ export class FeatStep extends ProgressionStepPlugin {
     if (this._noChoicesAvailable) {
       return null;
     }
-    if (!this._selectedFeatId) {
+    const selectedCount = (this._selectedFeatIds || []).length;
+    const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
+    if (selectedCount < requiredCount) {
       const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
-      return `Choose a ${slotTypeLabel} Feat to continue`;
+      const remaining = requiredCount - selectedCount;
+      return `Choose ${remaining} more ${slotTypeLabel} Feat${remaining === 1 ? '' : 's'} to continue`;
     }
     return null;
   }
@@ -1920,13 +2031,14 @@ export class FeatStep extends ProgressionStepPlugin {
       return [{ label: `${slotTypeLabel}: no legal options`, count: 0, total: 0, selected: 0, isWarning: false }];
     }
 
-    const selected = this._selectedFeatId ? 1 : 0;
+    const selected = (this._selectedFeatIds || []).length;
+    const total = Math.max(0, Number(this._requiredFeatCount || 0));
     return [{
       label: this._slotType === 'class' ? 'Class Feat' : 'General Feat',
-      count: Math.max(0, 1 - selected),
-      total: 1,
+      count: Math.max(0, total - selected),
+      total,
       selected,
-      isWarning: selected === 0,
+      isWarning: selected < total,
     }];
   }
 
@@ -1936,17 +2048,21 @@ export class FeatStep extends ProgressionStepPlugin {
     let statusText = '';
     if (this._noChoicesAvailable) {
       statusText = `${slotTypeLabel} Feat: No legal options — safe to skip`;
-    } else if (this._selectedFeatId) {
-      const feat = this._getFeat(this._selectedFeatId);
-      statusText = `${slotTypeLabel} Feat: ${feat?.name || 'Selected'}`;
+    } else if ((this._selectedFeatIds || []).length) {
+      const selectedNames = (this._selectedFeatIds || [])
+        .map(id => this._getFeat(id)?.name || id)
+        .filter(Boolean);
+      statusText = `${slotTypeLabel} Feat: ${selectedNames.join(', ')}`;
     } else {
       statusText = `${slotTypeLabel} Feat not yet chosen`;
     }
 
+    const selectedCount = (this._selectedFeatIds || []).length;
+    const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
     return {
       mode: 'feat-selection',
       statusText,
-      isComplete: this._noChoicesAvailable || !!this._selectedFeatId,
+      isComplete: this._noChoicesAvailable || selectedCount >= requiredCount,
       slotType: this._slotType,
     };
   }

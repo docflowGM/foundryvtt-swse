@@ -786,19 +786,66 @@ export class TalentStep extends ProgressionStepPlugin {
       allTreeCount: allTrees.length,
     });
 
+    // Classes that grant access to all Force Talent Trees in their class slot.
+    const FORCE_TALENT_TREES = [
+      'alter', 'control', 'dark-side', 'sense', 'light-side', 'guardian-spirit'
+    ];
+    const FORCE_SENSITIVE_CLASSES = new Set([
+      'jedi', 'jedi-knight', 'force-adept', 'force-disciple',
+      'jedi-master', 'sith-apprentice', 'sith-lord', 'imperial-knight'
+    ]);
+
     if (selectedClass) {
       classModel = resolveClassModel(selectedClass) || selectedClass;
       if (classModel) {
         allowedIds = this._getClassTalentTreeAccessKeys(classModel);
         SWSELogger.debug(`[TalentStep] Resolved class model "${classModel.name || selectedClass?.name || selectedClass?.id}" with ${allowedIds.length} talent tree access keys`);
+
+        // RAW: These force-using classes may select Force Talent Trees in their class slot.
+        const classKey = String(
+          classModel.id || classModel.classId || classModel.name || selectedClass?.id || selectedClass?.name || ''
+        ).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+        if (FORCE_SENSITIVE_CLASSES.has(classKey)) {
+          allowedIds = [...new Set([...allowedIds, ...FORCE_TALENT_TREES])];
+          SWSELogger.debug(`[TalentStep] Force Talent Trees added for force-using class "${classKey}"`);
+        }
       }
     }
 
     if (this._slotType === 'heroic') {
+      // RAW: Force Sensitivity grants access to all Force Talent Trees.
+      // Detect it from actor-owned feats OR pending draft selections in the shell.
+      // (FORCE_TALENT_TREES is defined above, shared with the class slot block)
+
+      const actorHasForceSensitivity = (actor?.items?.contents ?? actor?.items ?? [])
+        .some(i => i?.type === 'feat' && /force sensitiv(?:e|ity)/i.test(String(i?.name || '')));
+
+      const pendingFeats = shell?.progressionSession?.draftSelections?.feats
+        ?? shell?.buildIntent?.getSelection?.('feats')
+        ?? [];
+      const pendingHasForceSensitivity = Array.isArray(pendingFeats)
+        && pendingFeats.some(f => /force sensitiv(?:e|ity)/i.test(String(f?.name || f || '')));
+
+      // Also check class-granted force sensitivity (e.g. Jedi)
+      const classGrantsForceSensitivity = (() => {
+        try {
+          const sel = this._getSelectedClassForTreeAuthority(shell);
+          if (!sel || !actor) return false;
+          const ledger = buildClassGrantLedger(actor, sel, {});
+          return ledger?.forceSensitive === true
+            || Array.from(ledger?.grantedFeats || []).some(g =>
+              /force sensitiv(?:e|ity)/i.test(String(g?.name || ''))
+            );
+        } catch { return false; }
+      })();
+
+      const hasForceSensitivity = actorHasForceSensitivity || pendingHasForceSensitivity || classGrantsForceSensitivity;
+
       allowedIds = Array.from(new Set([
         ...this._collectActorUnlockedTalentTreeKeys(actor),
         ...allowedIds,
         ...this._getDroidTalentTreeAccessKeys(shell),
+        ...(hasForceSensitivity ? FORCE_TALENT_TREES : []),
       ].map(value => String(value || '').trim()).filter(Boolean)));
     }
 

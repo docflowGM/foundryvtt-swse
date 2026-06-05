@@ -138,7 +138,24 @@ try {
     const skillRegistry = SkillRegistry.getInstance?.() || SkillRegistry;
     rawSkills = await skillRegistry.getSkills?.() || [];
   }
-  this._allSkills = (rawSkills || []).map((skill) => this._normalizeSkillRecord(skill)).filter(Boolean);
+  let normalizedSkills = (rawSkills || []).map((skill) => this._normalizeSkillRecord(skill)).filter(Boolean);
+
+  // Athletics consolidation: if registry didn't already merge (e.g. built before setting changed),
+  // do it here so the step's skill list is always consistent.
+  const _athleticsStepOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+  if (_athleticsStepOn) {
+    const _compKeys = new Set(['acrobatics', 'climb', 'jump', 'swim']);
+    const hasAthletics = normalizedSkills.some(s => (s.key || '').toLowerCase() === 'athletics');
+    normalizedSkills = normalizedSkills.filter(s => !_compKeys.has((s.key || '').toLowerCase()));
+    if (!hasAthletics) {
+      normalizedSkills.push(this._normalizeSkillRecord({
+        id: 'athletics', _id: 'athletics', name: 'Athletics',
+        system: { ability: 'dex', key: 'athletics' }, classes: {}
+      }));
+    }
+  }
+
+  this._allSkills = normalizedSkills;
 } catch (err) {
   swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
   this._allSkills = [];
@@ -1762,6 +1779,19 @@ renderDetailsPanel(focusedItem) {
       );
       // Return empty - force explicit update of source
       return [];
+    }
+
+    // Athletics consolidation: any ref to Acrobatics/Climb/Jump/Swim → Athletics.
+    // This covers class skills, species bonuses, background skills, and any other ref.
+    const _athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+    if (_athleticsOn) {
+      const _componentLookupKeys = new Set(['acrobatics', 'climb', 'jump', 'swim']);
+      if (_componentLookupKeys.has(rawKey) || _componentLookupKeys.has(simpleKey)) {
+        const athleticsSkill = this._allSkills.find(s =>
+          (s.key || '').toLowerCase() === 'athletics' || (s.name || '').toLowerCase() === 'athletics'
+        );
+        return athleticsSkill ? [athleticsSkill] : [];
+      }
     }
 
     const match = this._allSkills.find(skill => {

@@ -126,46 +126,38 @@
           {{/each}}
         </nav>
 
-        {{!-- Phase 2: Secondary navigation for subcategories --}}
+        {{!-- Secondary navigation for subcategories/folders --}}
         {{#if vm.storeContext.navigationModel.topCategories}}
         {{#each vm.storeContext.navigationModel.topCategories}}
         {{#if (eq key ../vm.storeContext.currentCategory)}}
         {{#if children}}
         <nav class="swse-store-surface__subnav" aria-label="Store department subcategories">
           {{#if (eq key 'weapons')}}
-          {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
-          {{#if familyGroups.melee}}
-          <div class="swse-store-surface__family-group">
-            <div class="swse-store-surface__family-label">Melee</div>
-            <div class="swse-store-surface__family-chips">
-              {{#each familyGroups.melee}}
-              <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                      data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
-                {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
-              </button>
-              {{/each}}
-            </div>
+          <div class="swse-store-surface__family-tabs" aria-label="Weapon folders">
+            <button type="button" class="swse-store-surface__family-chip {{#unless ../vm.storeContext.currentFamily}}active{{/unless}}"
+                    data-action="family-nav" data-family="">
+              All Weapons<span class="swse-store-surface__chip-count">{{count}}</span>
+            </button>
+            {{#each familyTabs}}
+            <button type="button" class="swse-store-surface__family-chip {{#if active}}active{{/if}}"
+                    data-action="family-nav" data-family="{{family}}">
+              {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+            </button>
+            {{/each}}
           </div>
-          {{/if}}
 
-          {{#if familyGroups.ranged}}
-          <div class="swse-store-surface__family-group">
-            <div class="swse-store-surface__family-label">Ranged</div>
-            <div class="swse-store-surface__family-chips">
-              {{#each familyGroups.ranged}}
-              <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                      data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
-                {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
-              </button>
-              {{/each}}
-            </div>
+          <div class="swse-store-surface__subcategory-strip" aria-label="Weapon subfolders">
+            {{#each children}}
+            <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--{{family}} {{#if active}}active{{/if}}"
+                    data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
+              {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+            </button>
+            {{/each}}
           </div>
-          {{/if}}
-
           {{else}}
           {{!-- OTHER CATEGORIES: List all subcategories --}}
           {{#each children}}
-          <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+          <button type="button" class="swse-store-surface__subcat-chip {{#if active}}active{{/if}}"
                   data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
             {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
           </button>
@@ -201,6 +193,7 @@
                  data-category-key="{{this.categoryKey}}"
                  data-subcategory="{{this.subcategory}}"
                  data-subcategory-key="{{this.subcategoryKey}}"
+                 data-family="{{this.weaponFamily}}"
                  data-availability="{{this.availability}}"
                  data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
                  data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">

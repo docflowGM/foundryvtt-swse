@@ -1,0 +1,22 @@
+{
+  "inputDb": "/mnt/data/feats.db",
+  "inputScrape": "/mnt/data/swse_feats.json",
+  "outputDb": "/mnt/data/feats.updated.db",
+  "dbDocuments": 419,
+  "scrapedRecords": 287,
+  "updatedDocuments": 279,
+  "dbOnlyDocumentsLeftUnchanged": 140,
+  "scrapeOnlyRecords": 8,
+  "prerequisiteTextChanged": 23,
+  "duplicateScrapeKeys": {
+    "staggering attack": [
+      "Staggering Attack",
+      "Staggering Attack (GaW)"
+    ]
+  },
+  "reports": {
+    "csv": "/mnt/data/feat_compendium_update_report.csv",
+    "unmatchedDb": "/mnt/data/feat_compendium_unmatched_db.csv",
+    "unmatchedScrape": "/mnt/data/feat_compendium_unmatched_scrape.csv"
+  }
+}

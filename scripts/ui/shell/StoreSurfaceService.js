@@ -9,7 +9,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
-import { buildStoreNavigationModel, normalizeArmorSubcategory } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
+import { buildStoreNavigationModel, normalizeArmorSubcategory, getWeaponFamily } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
 import { getStoreCurrencySymbol } from '/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js';
 
 // Module-level cache: actorId → SWSEStore instance
@@ -38,6 +38,10 @@ function _categoryKey(item = {}) {
 function _navSubcategory(item = {}) {
   if (_categoryKey(item) === 'armor') return normalizeArmorSubcategory(item);
   return String(item.subcategory ?? item.system?.subcategory ?? item.system?.category ?? '').trim();
+}
+
+function _navFamily(item = {}) {
+  return _categoryKey(item) === 'weapons' ? getWeaponFamily(_navSubcategory(item)) : '';
 }
 
 const STORE_SPLASH_COMPANIES = [
@@ -139,7 +143,8 @@ function _decorateStoreCardItem(item = {}) {
   return {
     ...item,
     cardLetter: item.cardLetter || _storeCardLetter(item),
-    glyphLabel: item.glyphLabel || _storeCardLabel(item)
+    glyphLabel: item.glyphLabel || _storeCardLabel(item),
+    weaponFamily: item.weaponFamily || _navFamily(item)
   };
 }
 
@@ -575,12 +580,16 @@ export class StoreSurfaceService {
       const cartRemaining = storeContext.pageContext?.cartRemaining ?? 0;
       const currentCategory = (storeContext.currentCategory || 'weapons').toLowerCase();
       const currentSubcategory = storeContext.currentSubcategory ?? null;
+      const currentFamily = storeContext.currentFamily ?? null;
       const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
       const visibleItems = allItems.filter(item => {
-        const matchesCategory = !currentCategory || _categoryKey(item) === currentCategory;
+        const itemCategory = _categoryKey(item);
+        const matchesCategory = !currentCategory || itemCategory === currentCategory;
         const matchesSubcategory = !currentSubcategory
           || _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory);
-        return matchesCategory && matchesSubcategory;
+        const matchesFamily = !(currentCategory === 'weapons' && currentFamily)
+          || getWeaponFamily(_navSubcategory(item)) === currentFamily;
+        return matchesCategory && matchesSubcategory && matchesFamily;
       });
 
       const baseRenderLimit = Number(options.storeRenderLimit ?? 36) || 36;

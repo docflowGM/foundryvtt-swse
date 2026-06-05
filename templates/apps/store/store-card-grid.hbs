@@ -63,39 +63,26 @@
       </button>
 
       {{#if (eq key 'weapons')}}
-      {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
-      {{#if familyGroups.melee}}
-      <div class="store-family-group">
-        <div class="store-family-label">Melee</div>
-        <div class="store-family-chips">
-          {{#each familyGroups.melee}}
-          <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../../currentSubcategory)}}active{{/if}}"
-                  data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
-            {{label}}<span class="store-chip-count">{{count}}</span>
-          </button>
-          {{/each}}
-        </div>
+      <div class="store-family-tabs" aria-label="Weapon folders">
+        <button type="button" class="store-chip store-family-chip {{#unless ../../../currentFamily}}active{{/unless}}" data-action="family-nav" data-family="">
+          All Weapons<span class="store-chip-count">{{count}}</span>
+        </button>
+        {{#each familyTabs}}
+        <button type="button" class="store-chip store-family-chip {{#if active}}active{{/if}}" data-action="family-nav" data-family="{{family}}">
+          {{label}}<span class="store-chip-count">{{count}}</span>
+        </button>
+        {{/each}}
       </div>
-      {{/if}}
-
-      {{#if familyGroups.ranged}}
-      <div class="store-family-group">
-        <div class="store-family-label">Ranged</div>
-        <div class="store-family-chips">
-          {{#each familyGroups.ranged}}
-          <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../../currentSubcategory)}}active{{/if}}"
-                  data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
-            {{label}}<span class="store-chip-count">{{count}}</span>
-          </button>
-          {{/each}}
-        </div>
-      </div>
-      {{/if}}
-
+      {{#each children}}
+      <button type="button" class="store-chip store-subcat-chip store-subcat-chip--{{family}} {{#if active}}active{{/if}}"
+              data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
+        {{label}}<span class="store-chip-count">{{count}}</span>
+      </button>
+      {{/each}}
       {{else}}
       {{!-- OTHER CATEGORIES: List all subcategories --}}
       {{#each children}}
-      <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../currentSubcategory)}}active{{/if}}"
+      <button type="button" class="store-chip store-subcat-chip {{#if active}}active{{/if}}"
               data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
         {{label}}<span class="store-chip-count">{{count}}</span>
       </button>
@@ -357,7 +344,7 @@
       <div class="card-grid-container">
         <div class="products-grid" id="products-grid">
           {{#each allItems}}
-            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
+            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-family="{{this.weaponFamily}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
               <div class="card-header">
                 {{#if this.suggestion}}
                   <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>

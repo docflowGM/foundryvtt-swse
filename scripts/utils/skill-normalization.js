@@ -1,3 +1,15 @@
+const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
+const ATHLETICS_COMPONENT_NAMES = ['Acrobatics', 'Climb', 'Jump', 'Swim'];
+
+/**
+ * Returns true when the Athletics Consolidation house rule is active.
+ * Cached per call to avoid repeated setting reads in tight loops.
+ */
+function athleticsConsolidationActive() {
+  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
+  catch { return false; }
+}
+
 const CANONICAL_SKILL_DEFS = {
   acrobatics: { label: 'Acrobatics', defaultAbility: 'dex', untrained: true, armorPenalty: true },
   climb: { label: 'Climb', defaultAbility: 'str', untrained: true, armorPenalty: true },
@@ -23,7 +35,10 @@ const CANONICAL_SKILL_DEFS = {
   swim: { label: 'Swim', defaultAbility: 'str', untrained: true, armorPenalty: true },
   treatInjury: { label: 'Treat Injury', defaultAbility: 'wis', untrained: true, armorPenalty: false },
   useComputer: { label: 'Use Computer', defaultAbility: 'int', untrained: true, armorPenalty: false },
-  useTheForce: { label: 'Use the Force', defaultAbility: 'cha', untrained: true, armorPenalty: false }
+  useTheForce: { label: 'Use the Force', defaultAbility: 'cha', untrained: true, armorPenalty: false },
+  // Athletics: consolidated skill (house rule). Always present so feat prereq data
+  // that already references "Athletics" or "athletics" resolves correctly at all times.
+  athletics: { label: 'Athletics', defaultAbility: 'dex', untrained: true, armorPenalty: true, _consolidated: true }
 };
 
 const SKILL_KEY_ALIASES = {
@@ -73,7 +88,10 @@ const SKILL_KEY_ALIASES = {
   'Use Computer': 'useComputer',
   useComputer: 'useComputer',
   'Use the Force': 'useTheForce',
-  useTheForce: 'useTheForce'
+  useTheForce: 'useTheForce',
+  // Athletics consolidated skill aliases
+  'Athletics': 'athletics',
+  athletics: 'athletics'
 };
 
 function coerceBoolean(value) {

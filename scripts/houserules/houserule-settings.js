@@ -715,6 +715,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register('forceSensitivityGrantsForcePower', {
+    name: 'Force Sensitivity Grants a Force Power (House Rule)',
+    hint: 'When enabled, the Force Sensitivity feat grants 1 Force Power pick at character creation. RAW: Force Sensitivity does not grant a Force Power — only Force Training does.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register('darkSideMaxMultiplier', {
     name: 'Dark Side Max Score Multiplier',
     hint: 'Maximum Dark Side score = Wisdom × Multiplier.',

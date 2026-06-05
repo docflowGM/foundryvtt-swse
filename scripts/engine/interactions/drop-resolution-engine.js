@@ -314,6 +314,111 @@ function handleEquipment(actor, item) {
 }
 
 /**
+ * Handle species drop: overwrite actor's race/species.
+ * Sets system.race to the dropped species name and stores the pack ID as a flag.
+ */
+function handleSpecies(actor, item) {
+  const speciesName = item.name ?? item.system?.canonicalName ?? '';
+  if (!speciesName) {
+    console.warn('Drop rejected: species item has no name');
+    return null;
+  }
+
+  return {
+    mutationPlan: {
+      update: {
+        'system.race': speciesName,
+        'flags.foundryvtt-swse.species.id': item.id ?? item._id ?? null,
+        'flags.foundryvtt-swse.species.name': speciesName,
+        'flags.foundryvtt-swse.species.img': item.img ?? null,
+      }
+    },
+    uiTargetTab: 'overview'
+  };
+}
+
+/**
+ * Handle class drop: add 1 level of the dropped class to the actor.
+ * - If the actor already has that class item, increments its system.level.
+ * - If not, creates a new class item at level 1.
+ * - Increments system.level and updates system.progression.classLevels.
+ */
+function handleClass(actor, item) {
+  const className = item.name ?? item.system?.class_name ?? '';
+  const classId = item.system?.classId ?? item.id ?? item._id ?? '';
+  if (!className) {
+    console.warn('Drop rejected: class item has no name');
+    return null;
+  }
+
+  const currentLevel = Number(actor.system?.level ?? 1) || 1;
+  const newLevel = currentLevel + 1;
+
+  // Find existing class item on the actor
+  const existingClassItem = actor.items.find(i =>
+    i.type === 'class' && (
+      i.system?.classId === classId ||
+      i.name === className
+    )
+  );
+
+  const existingClassLevel = Number(existingClassItem?.system?.level ?? 0) || 0;
+  const newClassLevel = existingClassLevel + 1;
+
+  // Build updated classLevels array
+  const existingClassLevels = Array.isArray(actor.system?.progression?.classLevels)
+    ? actor.system.progression.classLevels
+    : [];
+  const updatedClassLevels = (() => {
+    const byId = new Map(existingClassLevels.map(e => [e.classId ?? e.class, e]));
+    byId.set(classId || className, {
+      class: className,
+      classId: classId || className,
+      level: newClassLevel
+    });
+    return Array.from(byId.values());
+  })();
+
+  const mutationPlan = {
+    update: {
+      'system.level': newLevel,
+      'system.progression.classLevels': updatedClassLevels,
+      'system.progression.lastLeveledClass': {
+        characterLevel: newLevel,
+        classId: classId || className,
+        className,
+        classLevel: newClassLevel,
+        timestamp: new Date().toISOString()
+      }
+    }
+  };
+
+  if (existingClassItem) {
+    mutationPlan.updateEmbedded = [{
+      _id: existingClassItem.id,
+      update: { 'system.level': newClassLevel }
+    }];
+  } else {
+    mutationPlan.createEmbedded = [{
+      type: 'Item',
+      data: {
+        ...item.toObject(),
+        system: {
+          ...(item.toObject?.()?.system ?? {}),
+          level: 1,
+          classId: classId || className
+        }
+      }
+    }];
+  }
+
+  return {
+    mutationPlan,
+    uiTargetTab: 'overview'
+  };
+}
+
+/**
  * Shared helper: create item mutation with embedded format
  *
  * @private
@@ -346,5 +451,7 @@ const DROP_RULES = {
   energyShield: handleEnergyShield,
   forcePower: handleForcePower,
   classFeature: handleClassFeature,
-  equipment: handleEquipment
+  equipment: handleEquipment,
+  species: handleSpecies,
+  class: handleClass
 };

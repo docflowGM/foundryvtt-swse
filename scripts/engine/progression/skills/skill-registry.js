@@ -80,6 +80,43 @@ export const SkillRegistry = {
       }
 
       this.isBuilt = true;
+
+      // Athletics Consolidation house rule: remove component skills, inject Athletics.
+      const athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
+      if (athleticsOn) {
+        const componentKeys = ['acrobatics', 'climb', 'jump', 'swim'];
+        const componentNames = ['Acrobatics', 'Climb', 'Jump', 'Swim'];
+        // Merge class grants from components into Athletics
+        const mergedClasses = {};
+        for (const key of componentKeys) {
+          const entry = this._byKey.get(key);
+          if (entry) {
+            Object.assign(mergedClasses, entry.classes || {});
+            this.skills.delete(entry.name.toLowerCase());
+            this._byId.delete(entry.id);
+            this._byKey.delete(key);
+          }
+          for (const name of componentNames) {
+            this.skills.delete(name.toLowerCase());
+          }
+        }
+        if (!this._byKey.has('athletics')) {
+          const athleticsEntry = {
+            id: 'athletics', _id: 'athletics',
+            name: 'Athletics', key: 'athletics',
+            ability: 'dex', system: { ability: 'dex', key: 'athletics' },
+            classes: mergedClasses,
+            pack: 'consolidated', document: null,
+            _consolidated: true,
+            _componentKeys: componentKeys,
+          };
+          this.skills.set('athletics', athleticsEntry);
+          this._byId.set('athletics', athleticsEntry);
+          this._byKey.set('athletics', athleticsEntry);
+        }
+        SWSELogger.log('[SkillRegistry] Athletics consolidation active: merged acrobatics/climb/jump/swim → athletics');
+      }
+
       const logMsg = hasSplitKnowledgeSkills
         ? `SkillRegistry built: ${this.skills.size} skills loaded (including split Knowledge skills)`
         : `SkillRegistry built: ${this.skills.size} skills loaded`;

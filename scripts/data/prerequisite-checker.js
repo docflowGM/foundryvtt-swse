@@ -167,6 +167,46 @@ export class PrerequisiteChecker {
         return null;
     }
 
+    /** Keys of the four skills that collapse into Athletics. */
+    static _ATHLETICS_COMPONENTS = ['acrobatics', 'climb', 'jump', 'swim'];
+
+    /**
+     * Check if a resolved skill key is trained on the actor.
+     * When athletics consolidation is on and skillKey === 'athletics',
+     * returns true if any component skill is trained.
+     */
+    static _actorSkillTrained(actor, skillKey, pendingSkillKeys = []) {
+        if (skillKey === 'athletics') {
+            const keys = this._ATHLETICS_COMPONENTS;
+            return keys.some(k =>
+                actor.system?.skills?.[k]?.trained === true || pendingSkillKeys.includes(k)
+            ) || actor.system?.skills?.athletics?.trained === true || pendingSkillKeys.includes('athletics');
+        }
+        return (actor.system?.skills?.[skillKey]?.trained === true) || pendingSkillKeys.includes(skillKey);
+    }
+
+    /**
+     * Get the effective total for a skill, checking all component keys when consolidated.
+     */
+    static _actorSkillTotal(actor, skillKey) {
+        if (skillKey === 'athletics') {
+            const vals = this._ATHLETICS_COMPONENTS.map(k => Number(actor.system?.skills?.[k]?.total ?? 0));
+            return Math.max(...vals, Number(actor.system?.skills?.athletics?.total ?? 0));
+        }
+        return Number(actor.system?.skills?.[skillKey]?.total ?? actor.system?.skills?.[skillKey]?.value ?? 0);
+    }
+
+    /**
+     * Get effective skill ranks, checking all component keys when consolidated.
+     */
+    static _actorSkillRanks(actor, skillKey) {
+        if (skillKey === 'athletics') {
+            const vals = this._ATHLETICS_COMPONENTS.map(k => Number(actor.system?.skills?.[k]?.ranks ?? 0));
+            return Math.max(...vals, Number(actor.system?.skills?.athletics?.ranks ?? 0));
+        }
+        return Number(actor.system?.skills?.[skillKey]?.ranks ?? 0);
+    }
+
     static _getChoiceBaseName(rawName) {
         const input = String(rawName ?? '').trim();
         if (!input) return '';
@@ -918,8 +958,7 @@ export class PrerequisiteChecker {
             case 'skill_trained': {
                 const skillKey = this._resolveSkillKeyOrId(prereq.skill || prereq.skillId || prereq.skillName || prereq.name || '');
                 const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
-                const trained = (skillKey && actor.system?.skills?.[skillKey]?.trained) ||
-                    (skillKey && pendingSkillKeys.includes(skillKey));
+                const trained = skillKey && this._actorSkillTrained(actor, skillKey, pendingSkillKeys);
                 return {
                     met: !!trained,
                     message: !trained ? `Requires training in ${prereq.skillName || prereq.name || skillKey}` : ''
@@ -927,7 +966,7 @@ export class PrerequisiteChecker {
             }
             case 'skill_ranks': {
                 const skillKey = this._resolveSkillKeyOrId(prereq.skill || prereq.skillId || prereq.skillName || prereq.name || '');
-                const ranks = skillKey ? (actor.system?.skills?.[skillKey]?.ranks ?? 0) : 0;
+                const ranks = skillKey ? this._actorSkillRanks(actor, skillKey) : 0;
                 const met = ranks >= (prereq.ranks ?? 0);
                 return {
                     met,
@@ -1200,8 +1239,7 @@ export class PrerequisiteChecker {
     static _checkSkillTrainedCondition(prereq, actor, pending) {
         const skillKey = this._resolveSkillKeyOrId(prereq.skill || prereq.skillId || prereq.skillName || prereq.name || '');
         const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
-        const trained = (skillKey && actor.system?.skills?.[skillKey]?.trained) ||
-            (skillKey && pendingSkillKeys.includes(skillKey));
+        const trained = skillKey && this._actorSkillTrained(actor, skillKey, pendingSkillKeys);
         return {
             met: !!trained,
             message: !trained ? `Requires training in ${prereq.skillName || prereq.name || skillKey}` : ''
@@ -1863,9 +1901,7 @@ export class PrerequisiteChecker {
         if (!skillKey) {return { met: true, message: '' };}
 
         const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
-        const isTrained = actor.system?.skills?.[skillKey]?.trained || false;
-        const isPending = pendingSkillKeys.includes(skillKey);
-        const met = isTrained || isPending;
+        const met = this._actorSkillTrained(actor, skillKey, pendingSkillKeys);
         return {
             met,
             message: !met ? `Requires training in ${prereq.skillName}` : ''
@@ -1876,7 +1912,7 @@ export class PrerequisiteChecker {
         const skillKey = prereq.skillKey || this._resolveSkillKeyOrId(prereq.skillName);
         if (!skillKey) {return { met: true, message: '' };}
 
-        const currentRanks = actor.system?.skills?.[skillKey]?.ranks ?? 0;
+        const currentRanks = this._actorSkillRanks(actor, skillKey);
         const pendingRanks = pending.skillRanks?.[skillKey] ?? 0;
         const totalRanks = currentRanks + pendingRanks;
         const met = totalRanks >= prereq.ranks;

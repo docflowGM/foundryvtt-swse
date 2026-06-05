@@ -36,8 +36,9 @@ export class FollowerDetailsStep extends FollowerStepBase {
       this._choices = this.getFollowerChoices(shell);
       this._templates = await this.getFollowerTemplates();
       this._templateType = this._choices.templateType;
-      this._backgroundEnabled = HouseRuleService.getBoolean('enableFollowerBackgrounds', true);
-      this._selectedBackground = this._choices.backgroundChoice || null;
+      this._backgroundEnabled = HouseRuleService.getBoolean('enableBackgrounds', true)
+        && HouseRuleService.getBoolean('enableFollowerBackgrounds', true);
+      this._selectedBackground = this._backgroundEnabled ? (this._choices.backgroundChoice || null) : null;
       this._selectedHumanBonus = this._choices.humanTemplateBonus || null;
 
       if (this._backgroundEnabled) {
@@ -299,7 +300,7 @@ export class FollowerDetailsStep extends FollowerStepBase {
 
     this.saveFollowerChoice(shell, 'skillChoices', this._selectedSkills);
     this.saveFollowerChoice(shell, 'languageChoices', this._allChosenLanguages());
-    if (this._selectedBackground) this.saveFollowerChoice(shell, 'backgroundChoice', this._selectedBackground);
+    if (this._backgroundEnabled && this._selectedBackground) this.saveFollowerChoice(shell, 'backgroundChoice', this._selectedBackground);
     if (this._selectedHumanBonus) this.saveFollowerChoice(shell, 'humanTemplateBonus', this._selectedHumanBonus);
     return true;
   }

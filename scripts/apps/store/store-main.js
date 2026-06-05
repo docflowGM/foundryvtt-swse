@@ -32,7 +32,8 @@ import {
   getRarityLabel,
   getCostValue,
   buildStoreNavigationModel,
-  normalizeArmorSubcategory
+  normalizeArmorSubcategory,
+  getWeaponFamily
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
@@ -764,6 +765,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       view.categoryKey = storeItemCategoryKey(item);
       view.subcategory = getStoreNavigationSubcategory(item);
       view.subcategoryKey = normalizeStoreFilterValue(view.subcategory);
+      view.weaponFamily = view.categoryKey === 'weapons' ? getWeaponFamily(view.subcategory) : '';
       view.availability = getStoreAvailabilityText(item) || 'Standard';
       view.availabilityKey = normalizeAvailabilityText(view.availability);
       view.price = view.finalCost;
@@ -788,11 +790,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
       }
 
       if (this.currentFamily && this.currentCategory === 'weapons') {
-        const itemSubcategory = String(getStoreNavigationSubcategory(item)).toLowerCase();
-        const familyMatch = this.currentFamily === 'melee'
-          ? (itemSubcategory.includes('melee') || itemSubcategory.includes('lightsaber') || itemSubcategory.includes('exotic'))
-          : (itemSubcategory.includes('ranged') || itemSubcategory.includes('pistol') || itemSubcategory.includes('rifle') || itemSubcategory.includes('heavy'));
-        if (!familyMatch) {
+        const itemFamily = getWeaponFamily(getStoreNavigationSubcategory(item));
+        if (itemFamily !== this.currentFamily) {
           continue;
         }
       }
@@ -911,6 +910,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       categoryKey: storeItemCategoryKey(item),
       subcategory: getStoreNavigationSubcategory(item),
       subcategoryKey: normalizeStoreFilterValue(getStoreNavigationSubcategory(item)),
+      weaponFamily: storeItemCategoryKey(item) === 'weapons' ? getWeaponFamily(getStoreNavigationSubcategory(item)) : '',
       availability: getStoreAvailabilityText(item) || 'Standard',
       availabilityKey: normalizeAvailabilityText(getStoreAvailabilityText(item) || 'Standard'),
       typeLabel: this._getItemTypeLabel(item.type),
@@ -989,6 +989,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
         this.currentCategory = ev.currentTarget?.dataset?.category || '';
         this.currentSubcategory = null;
         this.currentFamily = null;
+        this.currentPage = 1;
+        this.currentView = 'browse';
+        this.render();
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="family-nav"]').forEach(btn => {
+      btn.addEventListener('click', ev => {
+        this.currentFamily = ev.currentTarget?.dataset?.family || null;
+        this.currentSubcategory = null;
         this.currentPage = 1;
         this.currentView = 'browse';
         this.render();
@@ -1244,13 +1254,15 @@ export class SWSEStore extends BaseSWSEAppV2 {
       const desc = (item.system?.description || '').toString().toLowerCase();
       const cardCategory = (card.dataset.categoryKey || card.dataset.category || '').toLowerCase();
       const cardSubcategory = normalizeStoreFilterValue(card.dataset.subcategory || '');
+      const cardFamily = card.dataset.family || getWeaponFamily(card.dataset.subcategory || '');
 
       const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
       const matchesCategory = !categoryFilter || cardCategory === String(categoryFilter).toLowerCase();
       const matchesSubcategory = !this.currentSubcategory || cardSubcategory === normalizeStoreFilterValue(this.currentSubcategory);
+      const matchesFamily = !(this.currentCategory === 'weapons' && this.currentFamily) || cardFamily === this.currentFamily;
       const matchesAvailability = availabilityMatches(item, availabilityFilter);
 
-      if (matchesSearch && matchesCategory && matchesSubcategory && matchesAvailability) {
+      if (matchesSearch && matchesCategory && matchesSubcategory && matchesFamily && matchesAvailability) {
         visibleCards.push({ card, item });
       }
     });

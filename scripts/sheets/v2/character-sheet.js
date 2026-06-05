@@ -2387,15 +2387,17 @@ export class SWSEV2CharacterSheet extends
     derived.damage.conditionHelpless ??= false;
 
     // SWSE Skills Registry - CANONICAL: Must match Actor data model / derived calculator keys exactly.
-    // Do not introduce merged, renamed, or homebrew-only aliases here.
+    // Athletics consolidation house rule: Acrobatics + Climb + Jump + Swim → Athletics.
+    const _athleticsOn = (() => { try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; } catch { return false; } })();
     const SWSE_SKILL_DEFINITIONS = {
-      acrobatics: { label: 'Acrobatics', ability: 'dex' },
-      climb: { label: 'Climb', ability: 'str' },
+      ...(!_athleticsOn ? { acrobatics: { label: 'Acrobatics', ability: 'dex' } } : {}),
+      ...(!_athleticsOn ? { climb: { label: 'Climb', ability: 'str' } } : {}),
       deception: { label: 'Deception', ability: 'cha' },
       endurance: { label: 'Endurance', ability: 'con' },
       gatherInformation: { label: 'Gather Information', ability: 'cha' },
       initiative: { label: 'Initiative', ability: 'dex' },
-      jump: { label: 'Jump', ability: 'str' },
+      ...(!_athleticsOn ? { jump: { label: 'Jump', ability: 'str' } } : {}),
+      ...(_athleticsOn ? { athletics: { label: 'Athletics', ability: 'dex', _consolidated: true } } : {}),
       knowledgeBureaucracy: { label: 'Knowledge (Bureaucracy)', ability: 'int' },
       knowledgeGalacticLore: { label: 'Knowledge (Galactic Lore)', ability: 'int' },
       knowledgeLifeSciences: { label: 'Knowledge (Life Sciences)', ability: 'int' },
@@ -2410,7 +2412,7 @@ export class SWSEV2CharacterSheet extends
       ride: { label: 'Ride', ability: 'dex' },
       stealth: { label: 'Stealth', ability: 'dex' },
       survival: { label: 'Survival', ability: 'wis' },
-      swim: { label: 'Swim', ability: 'str' },
+      ...(!_athleticsOn ? { swim: { label: 'Swim', ability: 'str' } } : {}),
       treatInjury: { label: 'Treat Injury', ability: 'wis' },
       useComputer: { label: 'Use Computer', ability: 'int' },
       useTheForce: { label: 'Use the Force', ability: 'cha' }
@@ -2470,9 +2472,23 @@ export class SWSEV2CharacterSheet extends
     const systemSkills = system.skills ?? {};
     const derivedSkills = canonicalDerivedSkills;
 
+    const _athleticsComponentKeys = ['acrobatics', 'climb', 'jump', 'swim'];
     const skillsList = Object.entries(SWSE_SKILL_DEFINITIONS).map(([key, definition]) => {
-      const skillData = systemSkills[key] ?? {};
-      const derivedData = derivedSkills[key] ?? {};
+      // Athletics consolidation: derive from max of component skills
+      const isConsolidated = definition._consolidated === true;
+      const skillData = isConsolidated
+        ? {
+            trained: _athleticsComponentKeys.some(k => systemSkills[k]?.trained === true),
+            focused: _athleticsComponentKeys.some(k => systemSkills[k]?.focused === true),
+            favorite: _athleticsComponentKeys.some(k => systemSkills[k]?.favorite === true),
+            classSkill: _athleticsComponentKeys.some(k => systemSkills[k]?.classSkill === true),
+            miscMod: _athleticsComponentKeys.reduce((sum, k) => sum + (Number(systemSkills[k]?.miscMod) || 0), 0),
+            extraUses: []
+          }
+        : (systemSkills[key] ?? {});
+      const derivedData = isConsolidated
+        ? { total: Math.max(..._athleticsComponentKeys.map(k => Number((derivedSkills[k] ?? systemSkills[k])?.total ?? 0)), 0) }
+        : (derivedSkills[key] ?? {});
 
       // Get selected ability from user data
       const selectedAbilityKey = skillData.selectedAbility ?? definition.ability ?? 'str';

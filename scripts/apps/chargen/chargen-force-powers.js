@@ -130,9 +130,16 @@ export function _getForcePowersNeeded() {
     String(name || '').toLowerCase().includes('force sensitivity')
   );
 
-  if (hasForceSensitivity) {
+  // RAW: Force Sensitivity does NOT grant a Force Power — only Force Training does.
+  // House rule (default off): enable 'forceSensitivityGrantsForcePower' to restore the +1.
+  const houseRuleFSGrantsPower = (() => {
+    try { return game.settings.get('foundryvtt-swse', 'forceSensitivityGrantsForcePower') === true; }
+    catch { return false; }
+  })();
+
+  if (hasForceSensitivity && houseRuleFSGrantsPower) {
     powerCount += 1;
-    SWSELogger.log(`CharGen | Force Sensitivity feat: +1 power`);
+    SWSELogger.log(`CharGen | Force Sensitivity feat: +1 power (house rule active)`);
   }
 
   // Check 2: Force Training feat (each grants 1 + WIS/CHA modifier, min 1)

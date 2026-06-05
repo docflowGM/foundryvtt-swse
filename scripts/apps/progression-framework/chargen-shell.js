@@ -24,6 +24,7 @@ import { RolloutSettings } from './rollout/rollout-settings.js';
 import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
+import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 
 function isDroidActorForChargen(actor) {
   return actor?.type === 'droid'
@@ -185,6 +186,7 @@ export class ChargenShell extends ProgressionShell {
 
       // Convert active node IDs to StepDescriptors with plugins wired
       let descriptors = mapNodesToDescriptors(activeNodeIds);
+      descriptors = this._filterDisabledBackgroundStep(descriptors);
 
       if (this.progressionSession?.profilePickerMode === true && !this.progressionSession?.profileStepsComplete) {
         descriptors = this._injectGalacticProfileDescriptors(descriptors);
@@ -210,6 +212,11 @@ export class ChargenShell extends ProgressionShell {
     }
   }
 
+
+  _filterDisabledBackgroundStep(descriptors = []) {
+    if (ChargenRules.backgroundsEnabled()) return descriptors || [];
+    return (descriptors || []).filter(descriptor => descriptor?.stepId !== 'background');
+  }
 
   _injectGalacticProfileDescriptors(descriptors) {
     const profileDescriptors = [
@@ -287,7 +294,7 @@ export class ChargenShell extends ProgressionShell {
         }
       }
 
-      return droidSteps.map(config =>
+      return this._filterDisabledBackgroundStep(droidSteps).map(config =>
         createStepDescriptor({
           ...config,
           category: config.category ?? StepCategory.CANONICAL,
@@ -307,7 +314,7 @@ export class ChargenShell extends ProgressionShell {
       return config;
     });
 
-    return stepConfigs.map(config =>
+    return this._filterDisabledBackgroundStep(stepConfigs).map(config =>
       createStepDescriptor({
         ...config,
         category: config.category ?? StepCategory.CANONICAL,
