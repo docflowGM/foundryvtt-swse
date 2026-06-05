@@ -233,6 +233,18 @@ function actorLevel(actor) {
   return 1;
 }
 
+function actorAbilityMod(actor, ability) {
+  const key = String(ability || '').toLowerCase().slice(0, 3);
+  if (!key) return 0;
+  const value = SchemaAdapters.getAbilityMod?.(actor, key)
+    ?? actor?.system?.derived?.attributes?.[key]?.mod
+    ?? actor?.system?.abilities?.[key]?.mod
+    ?? actor?.system?.attributes?.[key]?.mod
+    ?? 0;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
 function normalizeRangeBand(value) {
   const key = normalizeKey(value);
   if (key === "pointblank" || key === "point-blank" || key === "close") return "point-blank";
@@ -298,8 +310,106 @@ function isUnarmedWeapon(weapon, context = {}) {
   return text.includes("unarmed") || text.includes("natural-weapon") || normalizeKey(weapon?.name).includes("unarmed");
 }
 
+function flattenChoiceValues(value, results = []) {
+  if (!value) return results;
+  if (Array.isArray(value)) {
+    for (const entry of value) flattenChoiceValues(entry, results);
+    return results;
+  }
+  if (typeof value === "string") {
+    results.push(value);
+    return results;
+  }
+  if (typeof value === "object") {
+    for (const key of ["value", "id", "group", "weapon", "weaponGroup", "label", "name", "choice", "selected"]) {
+      if (value[key]) flattenChoiceValues(value[key], results);
+    }
+    if (Array.isArray(value.targets)) flattenChoiceValues(value.targets, results);
+  }
+  return results;
+}
+
+function getSelectedChoiceValues(item, context = {}) {
+  const values = [];
+  flattenChoiceValues(context.selectedChoice, values);
+  flattenChoiceValues(context.selectedChoices, values);
+  flattenChoiceValues(item?.system?.selectedChoice, values);
+  flattenChoiceValues(item?.system?.selectedChoices, values);
+  flattenChoiceValues(item?.system?.choiceMeta?.selectedChoice, values);
+  return [...new Set(values.map(String).map(v => v.trim()).filter(Boolean))];
+}
+
+function weaponMatchesSelectedChoice(item, weapon, context = {}) {
+  const choices = getSelectedChoiceValues(item, context);
+  if (!choices.length) return false;
+  return choices.some(choice => weaponMatchesGroup(weapon, choice, context));
+}
+
+function isPointBlankContext(context = {}) {
+  return context.pointBlankRange === true || context.isPointBlank === true || getRangeBand(context) === "point-blank";
+}
+
+function modifierAppliesToWeaponRoll(item, modifier, weapon, context = {}) {
+  if (!modifier || modifier.enabled === false) return false;
+  const predicates = Array.isArray(modifier.predicates) ? modifier.predicates : [];
+  for (const predicate of predicates) {
+    switch (predicate) {
+      case "attack.weapon-matches-selected-choice":
+        if (!weaponMatchesSelectedChoice(item, weapon, context)) return false;
+        break;
+      case "attack.with-ranged":
+        if (getAttackType(weapon, context) !== "ranged") return false;
+        break;
+      case "attack.with-melee":
+        if (getAttackType(weapon, context) !== "melee") return false;
+        break;
+      case "range.within-point-blank":
+        if (!isPointBlankContext(context)) return false;
+        break;
+      default:
+        // Post-roll/target/defense/turn predicates cannot safely be evaluated
+        // while building an attack or damage formula. They belong to explicit
+        // combat options, rider rules, or reaction hooks.
+        return false;
+    }
+  }
+  return true;
+}
+
+function collectModifierRollBonuses(item, weapon, context = {}) {
+  const result = { attackBonus: 0, damageBonus: 0, breakdown: [] };
+  const modifiers = item?.system?.abilityMeta?.modifiers;
+  if (!Array.isArray(modifiers)) return result;
+
+  for (const modifier of modifiers) {
+    if (!modifierAppliesToWeaponRoll(item, modifier, weapon, context)) continue;
+    const value = Number(modifier.value ?? 0);
+    if (!Number.isFinite(value) || value === 0) continue;
+    const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
+    for (const target of targets.map(t => String(t || ""))) {
+      if (target === "attack" || target === "attack.bonus") {
+        // The generic PASSIVE/STATE attack path cannot see item.selectedChoice,
+        // so selected-weapon attack bonuses are handled here. Non-choice
+        // attack predicates are left to explicit attack options or legacy state
+        // evaluation to avoid double-counting Point-Blank Shot.
+        const selectedChoiceOnly = (modifier.predicates || []).includes("attack.weapon-matches-selected-choice");
+        if (!selectedChoiceOnly) continue;
+        result.attackBonus += value;
+        result.breakdown.push({ label: modifier.description || item.name, value, type: "attack" });
+      } else if (target === "damage" || target === "damage.weapon" || target === "damage.ranged" || target === "damage.melee") {
+        result.damageBonus += value;
+        result.breakdown.push({ label: modifier.description || item.name, value, type: "damage" });
+      }
+    }
+  }
+
+  return result;
+}
+
 function collectWeaponRuleModifiers(actor, weapon, context = {}) {
   const result = {
+    attackBonus: 0,
+    attackAbilityBonus: 0,
     damageBonus: 0,
     damageExtraWeaponDice: 0,
     damageDiceStepBonus: 0,
@@ -310,9 +420,9 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
 
   for (const item of actorItems(actor)) {
     const rules = item?.system?.abilityMeta?.rules;
-    if (!Array.isArray(rules)) continue;
-    for (const rule of rules) {
-      switch (rule?.type) {
+    if (Array.isArray(rules)) {
+      for (const rule of rules) {
+        switch (rule?.type) {
         case "WEAPON_DAMAGE_DIE_STEP": {
           if (!weaponMatchesGroup(weapon, rule.weaponGroups ?? rule.groups ?? [], context)) continue;
           const value = Number(rule.value ?? 0);
@@ -334,10 +444,37 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
           result.flags.unarmedDoesNotProvokeAoO = true;
           break;
         }
-        default:
+        case "ATTACK_ABILITY_SUBSTITUTION": {
+          if (!weaponMatchesGroup(weapon, rule.weaponGroups ?? rule.groups ?? [], context)) continue;
+          const from = String(rule.fromAbility || "str").toLowerCase().slice(0, 3);
+          const to = String(rule.toAbility || "dex").toLowerCase().slice(0, 3);
+          const fromMod = actorAbilityMod(actor, from);
+          const toMod = actorAbilityMod(actor, to);
+          const value = rule.useBetter === false ? (toMod - fromMod) : Math.max(0, toMod - fromMod);
+          if (!value) continue;
+          result.attackAbilityBonus += value;
+          result.breakdown.push({ label: item.name, value, type: "attackAbilitySubstitution" });
           break;
+        }
+        case "ATTACK_ABILITY_BONUS": {
+          if (!weaponMatchesGroup(weapon, rule.weaponGroups ?? rule.groups ?? [], context)) continue;
+          const ability = String(rule.ability || "str").toLowerCase().slice(0, 3);
+          const value = actorAbilityMod(actor, ability);
+          if (!value) continue;
+          result.attackAbilityBonus += value;
+          result.breakdown.push({ label: item.name, value, type: "attackAbilityBonus" });
+          break;
+        }
+          default:
+            break;
+        }
       }
     }
+
+    const modifierRollBonuses = collectModifierRollBonuses(item, weapon, context);
+    result.attackBonus += modifierRollBonuses.attackBonus || 0;
+    result.damageBonus += modifierRollBonuses.damageBonus || 0;
+    result.breakdown.push(...(modifierRollBonuses.breakdown || []));
   }
 
   return result;
@@ -380,6 +517,29 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
     const allowed = Array.isArray(option.requiresRangeBand) ? option.requiresRangeBand : [option.requiresRangeBand];
     const band = getRangeBand(context);
     if (!allowed.map(normalizeRangeBand).includes(band)) return false;
+  }
+
+  if (option.requiresContextFlags) {
+    const required = Array.isArray(option.requiresContextFlags) ? option.requiresContextFlags : [option.requiresContextFlags];
+    const flags = new Set([
+      ...(Array.isArray(context.flags) ? context.flags : []),
+      ...(Array.isArray(context.contextFlags) ? context.contextFlags : [])
+    ].map(String));
+    for (const flag of required.map(String)) {
+      if (context[flag] !== true && !flags.has(flag)) return false;
+    }
+  }
+
+  if (option.requiresOpportunityAttack && context.opportunityAttack !== true && context.attackOfOpportunity !== true && context.isAttackOfOpportunity !== true) {
+    return false;
+  }
+
+  if (option.excludesWeaponGroups && weaponMatchesGroup(weapon, option.excludesWeaponGroups, context)) {
+    return false;
+  }
+
+  if (option.excludesAreaAttack && (context.isAreaAttack === true || context.areaAttack === true || weapon?.system?.areaAttack === true || weapon?.system?.isAreaAttack === true)) {
+    return false;
   }
 
   return true;
@@ -467,6 +627,7 @@ export class CombatOptionResolver {
     const active = this.summarizeAttackOptions(actor, weapon, options);
     const result = {
       attackBonus: 0,
+      attackAbilityBonus: 0,
       damageBonus: 0,
       damageDiceStepBonus: 0,
       damageExtraWeaponDice: 0,
@@ -519,6 +680,8 @@ export class CombatOptionResolver {
     }
 
     const ruleModifiers = collectWeaponRuleModifiers(actor, weapon, options);
+    result.attackBonus += ruleModifiers.attackBonus || 0;
+    result.attackAbilityBonus += ruleModifiers.attackAbilityBonus || 0;
     result.damageBonus += ruleModifiers.damageBonus || 0;
     result.damageExtraWeaponDice += ruleModifiers.damageExtraWeaponDice || 0;
     result.damageDiceStepBonus += ruleModifiers.damageDiceStepBonus || 0;

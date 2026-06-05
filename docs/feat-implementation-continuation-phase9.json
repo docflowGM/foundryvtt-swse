@@ -1,0 +1,132 @@
+{
+  "phase": "phase9-feat-implementation-continuation",
+  "title": "Feat implementation continuation from refreshed descriptions",
+  "createdBy": "ChatGPT",
+  "scope": {
+    "goal": "Continue converting description-backed feat metadata away from placeholder numeric modifiers and toward executable roll-context rules, attack options, ability substitutions, and explicit rider/resource metadata.",
+    "sourceOfTruth": [
+      "packs/feats.db refreshed feat descriptions and benefits",
+      "swse_feats_foundry_seed.json uploaded scrape seed where matching descriptions exist",
+      "Phase 1-8 docs/reports already in docs/"
+    ],
+    "runtimeTesting": "Static validation only; Foundry runtime testing still required."
+  },
+  "engineChanges": [
+    {
+      "file": "scripts/engine/combat/combat-option-resolver.js",
+      "changes": [
+        "Consumes selected-choice weapon modifiers for attack and damage rolls, fixing Weapon Focus / Greater Weapon Focus / Weapon Specialization / Greater Weapon Specialization style metadata when the chosen weapon group is stored on the feat item.",
+        "Consumes safe roll-context damage modifiers such as Point-Blank Shot damage.ranged when the range context is point-blank.",
+        "Adds attack ability contribution hooks for feats such as Weapon Finesse and Mighty Throw.",
+        "Adds support for attack option gates: requiresContextFlags, requiresOpportunityAttack, excludesWeaponGroups, and excludesAreaAttack."
+      ]
+    },
+    {
+      "file": "scripts/combat/rolls/attacks.js",
+      "changes": [
+        "Attack rolls now include CombatOptionResolver attackAbilityBonus so Weapon Finesse and Mighty Throw can affect the roll formula without changing base weapon data.",
+        "Generic migrated PASSIVE/STATE attack modifiers now fail closed unless explicitly marked allowLegacyStateAttackBonus, preventing old placeholder +2 attack rows from silently applying during weapon rolls. Curated feat roll behavior now goes through CombatOptionResolver rules/options instead."
+      ]
+    }
+  ],
+  "featBackfills": [
+    {
+      "name": "Weapon Finesse",
+      "status": "attack_ability_rule_phase9",
+      "implementation": "Adds ATTACK_ABILITY_SUBSTITUTION for light melee weapons/lightsabers: use Dexterity instead of Strength when better.",
+      "oldScaffold": "Disabled old +2 melee attack modifier."
+    },
+    {
+      "name": "Mighty Throw",
+      "status": "attack_ability_rule_phase9",
+      "implementation": "Adds ATTACK_ABILITY_BONUS for thrown weapons/grenades using Strength modifier; records range-extension rule note.",
+      "oldScaffold": "Disabled old +2 ranged attack modifier."
+    },
+    {
+      "name": "Point-Blank Shot",
+      "status": "roll_modifier_consumed_phase9",
+      "implementation": "+1 ranged attack remains context-gated; +1 ranged damage is now consumed by CombatOptionResolver when rangeBand/pointBlankRange indicates point-blank range."
+    },
+    {
+      "name": "Power Blast",
+      "status": "attack_option_phase9",
+      "implementation": "Adds ranged slider attack option: subtract up to BAB from attack and add same amount to damage; excludes area attacks."
+    },
+    {
+      "name": "Sniper Shot",
+      "status": "attack_option_phase9",
+      "implementation": "Adds ranged toggle attack option: +2 attack and -5 Reflex rider; excludes heavy/vehicle weapon groups."
+    },
+    {
+      "name": "Reckless Charge",
+      "status": "attack_option_phase9",
+      "implementation": "Adds melee charge toggle: +2 attack and -2 Reflex rider."
+    },
+    {
+      "name": "Opportunistic Shooter",
+      "status": "attack_option_phase9",
+      "implementation": "Adds passive ranged attack-of-opportunity option gated by opportunityAttack/isAttackOfOpportunity context."
+    },
+    {
+      "name": "Separatist Military Training",
+      "status": "attack_option_phase9",
+      "implementation": "Adds adjacent-ally attack option with correct +1 attack bonus instead of old +2 scaffold."
+    },
+    {
+      "name": "Improved Knock Prone",
+      "status": "attack_option_phase9",
+      "implementation": "Adds maneuver-gated +5 attack option for knock-prone attacks."
+    },
+    {
+      "name": "Battering Attack",
+      "status": "rider_effect_phase9",
+      "implementation": "Records Bantha Rush movement rider: target is also knocked prone. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Grappling Strike",
+      "status": "rider_effect_phase9",
+      "implementation": "Records melee-hit rider: free grapple attempt without provoking. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Wounding Strike",
+      "status": "rider_effect_phase9",
+      "implementation": "Records once-per-encounter melee-hit condition-track rider. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Pinpoint Accuracy",
+      "status": "rider_effect_phase9",
+      "implementation": "Records Aiming Accuracy damage rider: damaged target cannot Recover until end of next turn. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Collateral Damage",
+      "status": "rider_effect_phase9",
+      "implementation": "Records Rapid Shot secondary-attack rider at -2 for half damage once per turn. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Follow Through",
+      "status": "rider_effect_phase9",
+      "implementation": "Records melee-drop rider: move up to speed once per turn. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Fortifying Recovery",
+      "status": "recover_action_resource_phase9",
+      "implementation": "Records Recover action bonus HP rule: 2 x Constitution modifier, minimum 2. Old generic +2 attack modifier disabled."
+    },
+    {
+      "name": "Pitiless Warrior",
+      "status": "bonus_hp_rider_phase9",
+      "implementation": "Records on-kill temporary bonus HP rule: 5 + half character level until encounter end. Old generic +2 attack modifier disabled."
+    }
+  ],
+  "knownDeferred": [
+    "Rider metadata such as Battering Attack, Pinpoint Accuracy, Collateral Damage, Follow Through, Fortifying Recovery, and Pitiless Warrior is now explicit but still needs runtime buttons/event hooks where no central post-hit/recover/on-kill hook exists yet.",
+    "Power Blast special-case Strength 13 non-vehicle penalty is not yet automated; the main BAB trade is implemented.",
+    "Mighty Throw range extension is recorded as a rule note but range-band UI automation still needs a range calculator seam.",
+    "Context-gated options require the relevant caller to pass flags such as allyAdjacent, opportunityAttack, charge, maneuver, rangeBand, or pointBlankRange."
+  ],
+  "validation": [
+    "node --check scripts/engine/combat/combat-option-resolver.js",
+    "node --check scripts/combat/rolls/attacks.js",
+    "packs/feats.db parsed as valid JSONL with 419 rows"
+  ]
+}

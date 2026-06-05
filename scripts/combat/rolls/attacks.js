@@ -165,14 +165,16 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   }
 
   const bab = SchemaAdapters.getBAB(actor);
+  const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
 
   // RAW attack rolls use BAB + ability modifier. They do not add half level;
-  // BAB already carries the level-based attack progression.
-  const abilityMod = SchemaAdapters.getAbilityMod(actor, getWeaponAttackAbility(actor, weapon));
+  // BAB already carries the level-based attack progression. Feat rules such as
+  // Weapon Finesse and Mighty Throw may add/substitute ability contribution in
+  // the combat-option resolver so the base weapon formula stays canonical.
+  const abilityMod = SchemaAdapters.getAbilityMod(actor, getWeaponAttackAbility(actor, weapon)) + Number(attackOptionModifiers.attackAbilityBonus || 0);
 
   const miscBonus = getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon, context);
-  const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
   const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
 
   // Condition Track penalty (read from authoritative derived source)
@@ -223,6 +225,12 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
           // Evaluate predicates (all must be true)
           const predicates = modifier.predicates || [];
           const predicatesMatch = evaluateStatePredicates(actor, predicates, enrichedContext);
+
+          // Generic PASSIVE/STATE attack modifiers are now fail-closed unless
+          // explicitly marked safe. Most migrated feat rows used placeholder
+          // +2 attack modifiers for text-only riders; curated attack options
+          // and selected-weapon modifier handling live in CombatOptionResolver.
+          if (modifier.allowLegacyStateAttackBonus !== true) continue;
 
           if (predicatesMatch && modifier.value) {
             stateBonus += modifier.value;
