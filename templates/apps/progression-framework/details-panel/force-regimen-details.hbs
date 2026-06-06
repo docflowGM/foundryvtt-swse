@@ -1,0 +1,40 @@
+<div class="prog-details prog-force-regimen-details">
+  <header class="prog-details__header">
+    <span class="prog-details__icon"><i class="fas fa-person-praying"></i></span>
+    <div>
+      <h2>{{regimen.name}}</h2>
+      <p>{{regimen.group}}</p>
+    </div>
+  </header>
+
+  {{#if regimen.summary}}<p class="prog-details__summary">{{regimen.summary}}</p>{{/if}}
+  {{#if canonicalDescription}}<div class="prog-details__description">{{canonicalDescription}}</div>{{/if}}
+
+  <dl class="prog-details__facts">
+    {{#if regimen.time}}<div><dt>Time</dt><dd>{{regimen.time}}</dd></div>{{/if}}
+    {{#if regimen.targets}}<div><dt>Targets</dt><dd>{{regimen.targets}}</dd></div>{{/if}}
+    {{#if regimen.requirements}}<div><dt>Requirements</dt><dd>{{regimen.requirements}}</dd></div>{{/if}}
+    <div><dt>Duration</dt><dd>{{regimen.system.duration}}</dd></div>
+  </dl>
+
+  {{#if regimen.dcTiers.length}}
+    <section class="prog-details__section">
+      <h3>Use the Force Results</h3>
+      <table class="prog-force-regimen-dc-table">
+        <thead><tr><th>DC</th><th>Effect</th></tr></thead>
+        <tbody>
+        {{#each regimen.dcTiers as |tier|}}
+          <tr><td>{{tier.dc}}</td><td>{{tier.effect}}</td></tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </section>
+  {{/if}}
+
+  <footer class="prog-details__footer">
+    <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{regimen.id}}" type="button" {{#unless canAddMore}}disabled{{/unless}}>
+      {{buttonLabel}}
+    </button>
+    {{#if selectedCount}}<span class="prog-details__selected-count">Selected ×{{selectedCount}}</span>{{/if}}
+  </footer>
+</div>

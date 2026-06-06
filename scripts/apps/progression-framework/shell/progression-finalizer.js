@@ -1859,6 +1859,7 @@ export class ProgressionFinalizer {
       feats: ['general-feat'],
       talents: ['general-talent'],
       forcePowers: ['force-powers'],
+      forceRegimens: ['force-regimens'],
       starshipManeuvers: ['starship-maneuvers', 'starship-maneuver'],
     };
     for (const [canonical, aliases] of Object.entries(legacyAliases)) {
@@ -2277,6 +2278,7 @@ export class ProgressionFinalizer {
       { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
       { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
       { key: 'forcePowers', type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
+      { key: 'forceRegimens', type: 'force-regimen', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'regimen'), allowDuplicates: false },
       { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
       { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
       { key: 'medicalSecrets', type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },

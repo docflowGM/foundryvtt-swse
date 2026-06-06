@@ -167,6 +167,31 @@
         </div>
       </section>
 
+      {{#if techSpecialist.canUse}}
+      <section class="bay-section bay-section--tech-specialist">
+        <header class="bay-section__head bay-section__head--actions">
+          <h2>Tech Specialist</h2>
+          <div class="bay-section__actions">
+            <span>{{techSpecialist.walletName}} modifying {{techSpecialist.subjectName}}</span>
+            <button type="button" class="bay-section-action" data-action="open-tech-specialist" {{#unless techSpecialist.canInstall}}disabled{{/unless}}>Install Trait</button>
+            {{#if techSpecialist.canDesignateSignature}}<button type="button" class="bay-section-action" data-action="designate-signature-device">Make Signature Device</button>{{/if}}
+          </div>
+        </header>
+        <p class="bay-muted">{{techSpecialist.hint}}</p>
+        {{#if techSpecialist.installedTraits.length}}
+        <div class="bay-card-grid">
+          {{#each techSpecialist.installedTraits}}
+          <article class="bay-part-card bay-part-card--tech {{#if active}}installed{{/if}}">
+            <div class="bay-part-card__head"><strong>{{name}}</strong><span>{{tier}}</span></div>
+            <p>{{benefit}}</p>
+            <button type="button" class="bay-part-card__action" data-action="toggle-tech-signature-trait" data-trait-id="{{id}}">{{#if active}}Active{{else}}Set Active{{/if}}</button>
+          </article>
+          {{/each}}
+        </div>
+        {{/if}}
+      </section>
+      {{/if}}
+
       <section class="bay-section">
         <header class="bay-section__head bay-section__head--actions">
           <h2>Systems / Parts</h2>

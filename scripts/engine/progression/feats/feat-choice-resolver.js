@@ -408,12 +408,21 @@ export class FeatChoiceResolver {
         .filter(option => !owned.has(this.getSelectedChoiceKey(option)));
     }
 
+    if (kind === 'tech_category') {
+      return this._resolveTechCategoryOptions(actor, registry, meta, context);
+    }
+
     if (kind === 'skill_focus') {
       return this._resolveSkillChoiceOptions(actor, context, { trainedOnly: true });
     }
 
     if (kind === 'skill_training') {
       return this._resolveSkillChoiceOptions(actor, context, { excludeTrained: true });
+    }
+
+    if (kind === 'droid_untrained_skill') {
+      const options = this._resolveSkillChoiceOptions(actor, context, { excludeTrained: true });
+      return options.filter(option => !['use_the_force', 'usetheforce', 'useTheForce'].includes(String(option?.id || option?.value || '').trim()));
     }
 
     if (kind === 'trained_skill') {
@@ -423,6 +432,45 @@ export class FeatChoiceResolver {
     const def = registry.choiceKinds?.[kind];
     const options = def?.options || def?.fixedOptions || [];
     return uniqueById(options.map(normalizeChoiceEntry).filter(Boolean));
+  }
+
+  static _resolveTechCategoryOptions(actor, registry, meta = {}, context = {}) {
+    const def = registry.choiceKinds?.tech_category || {};
+    const allOptions = uniqueById((def.options || meta.options || meta.fixedOptions || [])
+      .map(normalizeChoiceEntry)
+      .filter(Boolean));
+    const pending = context?.pending || context || {};
+    const currentItemId = meta?.itemId || context?.itemId || null;
+    const selectedKeys = new Set();
+
+    const addChoice = (choice) => {
+      const key = this.getSelectedChoiceKey(choice);
+      if (key) selectedKeys.add(key);
+    };
+
+    const inspectFeat = (item) => {
+      if (!item) return;
+      const name = stableKey(item.name || item.system?.name || item.label || '');
+      if (name !== 'superior_tech') return;
+      const id = item.id || item._id || item.itemId || null;
+      if (currentItemId && id && id === currentItemId) return;
+      const choice = item.system?.selectedChoice
+        ?? item.system?.selectedChoices
+        ?? item.selectedChoice
+        ?? item.choice
+        ?? item.choiceValue;
+      addChoice(choice);
+    };
+
+    for (const item of this.getActorFeatItems(actor)) inspectFeat(item);
+    for (const item of asArray(pending?.selectedFeats)) inspectFeat(item);
+    for (const item of asArray(pending?.grantedFeats)) inspectFeat(item);
+
+    const actorState = this.getActorChoiceState(actor);
+    const actorStored = actorState?.superior_tech ?? actorState?.tech_category;
+    for (const entry of asArray(actorStored)) addChoice(entry);
+
+    return allOptions.filter(option => !selectedKeys.has(this.getSelectedChoiceKey(option)));
   }
 
   static _resolveSkillChoiceOptions(actor, context = {}, { trainedOnly = false, excludeTrained = false } = {}) {

@@ -810,3 +810,14 @@
 .swse-customization-bay .bay-card-grid {
   min-height: 0;
 }
+
+/* Phase 21: Tech Specialist contextual modification bay panel */
+.bay-section--tech-specialist {
+  border-color: rgba(80, 220, 255, 0.28);
+}
+.bay-section--tech-specialist .bay-part-card--tech {
+  border-color: rgba(80, 220, 255, 0.24);
+}
+.bay-section--tech-specialist .bay-part-card--tech.installed {
+  box-shadow: 0 0 0 1px rgba(115, 240, 255, 0.35), 0 0 18px rgba(80, 220, 255, 0.14);
+}

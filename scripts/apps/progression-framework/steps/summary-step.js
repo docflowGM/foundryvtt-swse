@@ -41,6 +41,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       skillRows: [],
       combatStats: [],
       forcePowers: [],
+      forceRegimens: [],
       startingCredits: 0,
       creditsState: null,
       creditLedger: { current: 0, pending: 0, final: 0, sources: [] },
@@ -414,6 +415,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     this._summary.talentSelections = projection?.abilities?.talents || ProgressionContentAuthority.normalizeSelectionList('talent', selections.talents);
     this._summary.talents = this._summary.talentSelections.map(talent => this._displayName(talent)).filter(Boolean);
     this._summary.forcePowers = (projection?.abilities?.forcePowers || []).map(power => this._displayName(power)).filter(Boolean);
+    this._summary.forceRegimens = (projection?.abilities?.forceRegimens || []).map(regimen => this._displayName(regimen)).filter(Boolean);
     this._refreshChargenCreditsState(shell, projection, selections);
     this._summary.startingCredits = Number(this._creditsState.amount || 0);
     this._summary.creditsState = { ...this._creditsState };
@@ -606,6 +608,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     const addedFeats = this._getAddedNames(actor, projection?.abilities?.feats, 'feat');
     const addedTalents = this._getAddedNames(actor, projection?.abilities?.talents, 'talent');
     const addedForcePowers = this._getAddedNames(actor, projection?.abilities?.forcePowers, 'force-power');
+    const addedForceRegimens = this._getAddedNames(actor, projection?.abilities?.forceRegimens, 'force-regimen');
     const addedForceTechniques = this._getSelectionNames(selections.forceTechniques);
     const addedForceSecrets = this._getSelectionNames(selections.forceSecrets);
     const addedMedicalSecrets = this._getSelectionNames(selections.medicalSecrets);

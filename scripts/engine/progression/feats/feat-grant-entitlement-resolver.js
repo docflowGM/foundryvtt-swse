@@ -24,18 +24,8 @@ function normalizeName(value) {
 }
 
 function getAbilityModifier(actor, abilityKey, shell = null) {
-  const rawKey = String(abilityKey || '').trim().toLowerCase();
-  const keyMap = {
-    strength: 'str', str: 'str',
-    dexterity: 'dex', dex: 'dex',
-    constitution: 'con', con: 'con',
-    intelligence: 'int', int: 'int',
-    wisdom: 'wis', wis: 'wis',
-    charisma: 'cha', cha: 'cha',
-  };
-  const key = keyMap[rawKey] || rawKey;
+  const key = String(abilityKey || '').toLowerCase();
   if (!actor || !key) return 0;
-
   const system = actor.system || {};
   const shellDraftAttributes = shell?.progressionSession?.draftSelections?.attributes
     ?? shell?.draftSelections?.attributes
@@ -45,32 +35,26 @@ function getAbilityModifier(actor, abilityKey, shell = null) {
     ? globalThis.game.__swseActiveProgressionShell.progressionSession?.draftSelections?.attributes
     : null;
   const draftAttributes = shellDraftAttributes || globalDraftAttributes;
-
-  const readKeyed = (container, ability) => {
-    if (!container || !ability) return undefined;
-    return container?.[ability] ?? container?.[Object.entries(keyMap).find(([, short]) => short === ability)?.[0]];
-  };
-  const draftValue = readKeyed(draftAttributes?.finalValues, key)
-    ?? readKeyed(draftAttributes?.values, key)
-    ?? (Number.isFinite(Number(readKeyed(draftAttributes?.baseValues, key))) && Number.isFinite(Number(readKeyed(draftAttributes?.speciesMods, key)))
-      ? Number(readKeyed(draftAttributes.baseValues, key)) + Number(readKeyed(draftAttributes.speciesMods, key))
+  const draftValue = draftAttributes?.finalValues?.[key]
+    ?? draftAttributes?.values?.[key]
+    ?? (Number.isFinite(Number(draftAttributes?.baseValues?.[key])) && Number.isFinite(Number(draftAttributes?.speciesMods?.[key]))
+      ? Number(draftAttributes.baseValues[key]) + Number(draftAttributes.speciesMods[key])
       : null);
-
-  // Pending chargen/level-up attributes must outrank the actor's currently
-  // persisted ability record. Otherwise Force Training selected during chargen
-  // sees the blank/new actor's WIS/CHA modifier and only grants one power.
-  const pendingModifier = Number(readKeyed(draftAttributes?.modifiers, key));
-  if (Number.isFinite(pendingModifier)) return Math.floor(pendingModifier);
-
-  const pendingScore = Number(draftValue);
-  if (Number.isFinite(pendingScore)) return Math.floor((pendingScore - 10) / 2);
-
-  const actorAbility = system.abilities?.[key] || system.attributes?.[key] || system.stats?.[key] || {};
-  const persistedModifier = Number(actorAbility?.mod ?? actorAbility?.modifier);
-  if (Number.isFinite(persistedModifier)) return Math.floor(persistedModifier);
-
-  const persistedScore = Number(actorAbility?.total ?? actorAbility?.value ?? actorAbility?.base);
-  return Number.isFinite(persistedScore) ? Math.floor((persistedScore - 10) / 2) : 0;
+  const candidates = [
+    draftAttributes?.modifiers?.[key],
+    system.abilities?.[key]?.mod,
+    system.abilities?.[key]?.modifier,
+    system.attributes?.[key]?.mod,
+    system.attributes?.[key]?.modifier,
+    system.stats?.[key]?.mod,
+    system.stats?.[key]?.modifier
+  ];
+  for (const value of candidates) {
+    const number = Number(value);
+    if (Number.isFinite(number)) return number;
+  }
+  const score = Number(draftValue ?? system.attributes?.[key]?.total ?? system.attributes?.[key]?.value ?? system.abilities?.[key]?.value);
+  return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
 }
 
 function getRegisteredSetting(moduleId, key, fallback = null) {
@@ -315,6 +299,10 @@ export class FeatGrantEntitlementResolver {
     return Math.max(1, 1 + getForceTrainingAbilityModifier(actor, shell));
   }
 
+  static getForceRegimenSlotsPerInstance(actor, shell = null) {
+    return Math.max(1, 1 + getAbilityModifier(actor, 'wis', shell));
+  }
+
   static getStarshipTacticsSlotsPerInstance(actor, shell = null) {
     return Math.max(1, 1 + Math.max(0, getAbilityModifier(actor, 'wis', shell)));
   }
@@ -376,6 +364,25 @@ export class FeatGrantEntitlementResolver {
         minimum: 1,
         repeatable: true,
         dynamic: true
+      }];
+    }
+
+    if (name === 'force regimen mastery') {
+      const count = this.getForceRegimenSlotsPerInstance(actor, options.shell || null);
+      return [{
+        grantType: 'forceRegimenSlots',
+        registry: 'forceRegimen',
+        sourceType,
+        sourceItemId,
+        sourceName,
+        sourceIndex: index,
+        count,
+        countFormula: 'max(1, 1 + wisdomModifier)',
+        ability: 'wis',
+        minimum: 1,
+        repeatable: true,
+        dynamic: true,
+        unlockDomain: 'force-regimens'
       }];
     }
 

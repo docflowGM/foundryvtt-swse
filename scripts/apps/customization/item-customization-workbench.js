@@ -18,6 +18,7 @@ import { UpgradeSlotEngine } from "/systems/foundryvtt-swse/scripts/engine/custo
 import { SafetyEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/safety-engine.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
+import { TechSpecialistModificationService } from "/systems/foundryvtt-swse/scripts/engine/customization/tech-specialist-modification-service.js";
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 
 const APP_ID = 'swse-item-customization-workbench';
@@ -1277,6 +1278,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       hasInventoryResults: inventoryItems.length > 0,
       inventoryItems,
       currentItem: this._getItemSummary(item, draft, preview),
+      techSpecialist: TechSpecialistModificationService.getUiContext(this.actor, item, { subjectKind: 'item' }),
       ...(await this._getWorkshopMentorContext(item)),
       isEnergyShield: energyShieldItem,
       energyShield: energyShieldItem ? getEnergyShieldRules(item) : null,
@@ -1630,6 +1632,31 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
 
+      case 'open-tech-specialist': {
+        const subject = this._getCurrentItem();
+        if (!subject) return;
+        await TechSpecialistModificationService.openModificationDialog({ actor: this.actor, subject, subjectKind: 'item' });
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'designate-signature-device': {
+        const subject = this._getCurrentItem();
+        if (!subject) return;
+        await TechSpecialistModificationService.designateSignatureDevice(this.actor, subject);
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'toggle-tech-signature-trait': {
+        const subject = this._getCurrentItem();
+        const traitId = target?.dataset?.traitId;
+        if (!subject || !traitId) return;
+        await TechSpecialistModificationService.toggleActiveSignatureTrait(this.actor, subject, traitId);
+        await this._renderPreservingUi();
+        return;
+      }
+
       default:
         return;
     }
@@ -1922,6 +1949,31 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       await this._renderPreservingUi();
     });
 
+    this.onRoot('click', '[data-action="open-tech-specialist"]', async (event) => {
+      event.preventDefault();
+      const subject = this._getCurrentItem();
+      if (!subject) return;
+      await TechSpecialistModificationService.openModificationDialog({ actor: this.actor, subject, subjectKind: 'item' });
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="designate-signature-device"]', async (event) => {
+      event.preventDefault();
+      const subject = this._getCurrentItem();
+      if (!subject) return;
+      await TechSpecialistModificationService.designateSignatureDevice(this.actor, subject);
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="toggle-tech-signature-trait"]', async (event, target) => {
+      event.preventDefault();
+      const subject = this._getCurrentItem();
+      const traitId = target.dataset.traitId;
+      if (!subject || !traitId) return;
+      await TechSpecialistModificationService.toggleActiveSignatureTrait(this.actor, subject, traitId);
+      await this._renderPreservingUi();
+    });
+
     this.onRoot('click', '[data-action="reset-item"]', async (event) => {
       event.preventDefault();
       if (this.selectedCategory === 'lightsaber') {
@@ -2112,8 +2164,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       .filter(Boolean);
     const usedSlots = selected.reduce((sum, accessory) => sum + Number(accessory.system?.lightsaber?.upgradeSlots ?? accessory.system?.upgradeSlots ?? 1), 0);
     const chassis = this._findLightsaberCatalogOption('chassis', this._lightsaber.selectedChassisId);
-    const totalAvailable = Number(chassis?.system?.upgradeSlots ?? chassis?.system?.lightsaber?.upgradeSlots ?? 3) || 3;
-    return { usedSlots, totalAvailable, freeSlots: totalAvailable - usedSlots, isOverflowing: usedSlots > totalAvailable };
+    const baseAvailable = Number(chassis?.system?.upgradeSlots ?? chassis?.system?.lightsaber?.upgradeSlots ?? 3) || 3;
+    const techSpecialistBonus = (TechSpecialistModificationService.hasFeat(this.actor, 'Tech Specialist') && !this._isLightsaberTuningMode()) ? 1 : 0;
+    const totalAvailable = baseAvailable + techSpecialistBonus;
+    return { usedSlots, totalAvailable, baseAvailable, techSpecialistBonus, freeSlots: totalAvailable - usedSlots, isOverflowing: usedSlots > totalAvailable };
   }
 
 
@@ -2452,6 +2506,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         stats: this._getLightsaberHeroStats({ editItem, chassis, preview, slotState, totalCost })
       },
       ...(await this._getLightsaberMentorContext(editItem)),
+      techSpecialist: editItem ? TechSpecialistModificationService.getUiContext(this.actor, editItem, { subjectKind: 'item', subjectType: 'weapon' }) : TechSpecialistModificationService.getUiContext(this.actor, { name: 'Lightsaber Construction', type: 'weapon', system: { cost: totalCost || 0 }, flags: {} }, { subjectKind: 'item', subjectType: 'weapon' }),
       lightsaber: {
         mode: editItem ? 'tuning existing blade' : (canChangeChassis ? 'construct' : 'construction locked'),
         constructionMode,

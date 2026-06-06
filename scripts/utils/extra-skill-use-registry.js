@@ -2,6 +2,29 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/treat-injury-medical-secret-resolver.js";
 
+
+function normalizeText(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function compactKey(value) {
+  return normalizeText(value).replace(/\s+/g, '');
+}
+
+function appendSentence(text, sentence) {
+  const base = String(text ?? '').trim();
+  const note = String(sentence ?? '').trim();
+  if (!note) return base;
+  if (base.includes(note)) return base;
+  return `${base}${base ? ' ' : ''}${note}`.trim();
+}
+
 /**
  * ExtraSkillUseRegistry
  *
@@ -65,6 +88,10 @@ export class ExtraSkillUseRegistry {
 
     if (skillKey === 'treatInjury') {
       hydrated = this._appendMedicalSecretVirtualUses(hydrated, actor);
+    }
+
+    if (skillKey === 'survival') {
+      hydrated = this._applySurvivalFeatEnhancements(hydrated, actor);
     }
 
     return includeInaccessible ? hydrated : hydrated.filter((item) => item.accessible !== false);
@@ -164,6 +191,87 @@ export class ExtraSkillUseRegistry {
         },
       },
     ];
+  }
+
+  static _actorHasFeat(actor, featName) {
+    if (!actor || !featName) return false;
+    const wanted = normalizeText(featName);
+    const items = typeof actor.items?.filter === 'function'
+      ? actor.items.filter(item => item?.type === 'feat')
+      : Array.from(actor.items ?? []).filter(item => item?.type === 'feat');
+    return items.some(item => normalizeText(item?.name) === wanted && item?.system?.disabled !== true);
+  }
+
+  static _applySurvivalFeatEnhancements(items, actor) {
+    if (!actor) return items;
+    let hydrated = Array.isArray(items) ? [...items] : [];
+
+    if (this._actorHasFeat(actor, 'Ample Foraging')) {
+      hydrated = hydrated.map((item) => {
+        const labelKey = compactKey(item?.label ?? item?.name ?? item?.key ?? '');
+        if (!labelKey.includes('basicsurvival')) return item;
+        const note = 'Ample Foraging: if creatures consume the food found by this Basic Survival check, they gain a +2 morale bonus to Fortitude Defense until the start of the next day; the GM adjudicates who consumed the food and when the benefit expires.';
+        const description = appendSentence(item.description || item.effect || '', note);
+        return {
+          ...item,
+          description,
+          effect: appendSentence(item.effect || item.description || '', note),
+          featEnhanced: true,
+          featEnhancements: [
+            ...(Array.isArray(item.featEnhancements) ? item.featEnhancements : []),
+            {
+              feat: 'Ample Foraging',
+              type: 'basic-survival-food-fortitude-bonus',
+              note,
+              bonus: { defense: 'fortitude', type: 'morale', value: 2, duration: 'untilStartOfNextDay' }
+            }
+          ],
+          sourceType: item.sourceType ?? 'feat-enhanced',
+          sourceLabel: [item.sourceLabel, 'Ample Foraging'].filter(Boolean).join(', ')
+        };
+      });
+    }
+
+    if (this._actorHasFeat(actor, 'Survivor of Ryloth')) {
+      const exists = hydrated.some(item => compactKey(item?.key ?? item?.label ?? item?.name ?? '') === 'survivorofryloth');
+      if (!exists) {
+        const note = 'Once per hour in extreme heat or extreme cold, make a Survival check. You and up to 10 allies can use the result in place of Fortitude Defense against the hourly Extreme Heat or Extreme Cold attack; GM adjudicates environment timing and affected allies.';
+        hydrated.push({
+          key: 'survivor-of-ryloth',
+          label: 'Survivor of Ryloth',
+          name: 'Survivor of Ryloth',
+          skillKey: 'survival',
+          dc: 'Use result as Fortitude Defense',
+          time: 'once per hour',
+          description: note,
+          effect: note,
+          trainedOnly: false,
+          accessible: true,
+          hidden: false,
+          featEnhanced: true,
+          featEnhancements: [{ feat: 'Survivor of Ryloth', type: 'extreme-temperature-fortitude-substitution', note }],
+          sourceType: 'feat',
+          sourceLabel: 'Survivor of Ryloth',
+          _source: {
+            name: 'Survivor of Ryloth',
+            type: 'extra-skill-use',
+            system: {
+              application: 'Survivor of Ryloth',
+              skill: 'survival',
+              trainedOnly: false,
+              dc: 'Use result as Fortitude Defense',
+              time: 'once per hour',
+              description: note,
+              effect: note,
+              featRequired: 'Survivor of Ryloth',
+              category: 'feat-skill-use'
+            }
+          }
+        });
+      }
+    }
+
+    return hydrated;
   }
 
   static _groupBySkill(items) {

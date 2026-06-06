@@ -12,7 +12,8 @@ import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/sh
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createSafeEmbeddedItem } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 import { mutateAndRepaint } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
-import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 
 /**
  * Handle force card discard animation
@@ -320,6 +321,44 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         }
       } catch (err) {
         ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+
+  // Force Regimens: roll UTF, resolve the DC tier, then move the card to active/discard lane.
+  html.querySelectorAll('[data-action="use-force-regimen"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+      const regimen = sheet.actor.items.get(itemId);
+      if (!regimen || regimen.type !== 'force-regimen') return;
+      try {
+        const rollOptions = await promptForceRegimenRollOptions({ actor: sheet.actor, regimen, sourceElement: button });
+        if (!rollOptions) return;
+        const result = await mutateAndRepaint(sheet, () => ForceRegimenExecutor.executeRegimen(sheet.actor, itemId, rollOptions), {
+          reason: 'force-regimen-use',
+          surfaceId: sheet._shellSurface ?? 'sheet',
+          preserveUi: true
+        });
+        if (result?.success) {
+          ui?.notifications?.info?.(`${result.regimenName || 'Force Regimen'} is active until long rest.`);
+          showHolopadRollCompanion(button, result, {
+            kind: 'force-regimen',
+            title: 'Force Regimen',
+            itemName: regimen.name,
+            actorName: sheet.actor?.name,
+            actor: sheet.actor,
+            sourceItem: regimen,
+            forceDescriptor: regimen.system?.category === 'lightsaber-training' ? 'form' : 'light',
+          });
+          sheet.render?.(false);
+        } else {
+          ui?.notifications?.warn?.(result?.error || 'Force Regimen could not be used.');
+        }
+      } catch (err) {
+        ui?.notifications?.error?.(`Force Regimen failed: ${err.message}`);
       }
     }, { signal });
   });

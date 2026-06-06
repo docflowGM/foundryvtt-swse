@@ -7,6 +7,7 @@ import { SkillsStep } from '../steps/skills-step.js';
 import { ForcePowerStep } from '../steps/force-power-step.js';
 import { ForceSecretStep } from '../steps/force-secret-step.js';
 import { ForceTechniqueStep } from '../steps/force-technique-step.js';
+import { ForceRegimenStep } from '../steps/force-regimen-step.js';
 import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
 import { ForceAuthorityEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js';
 import { ManeuverAuthorityEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js';
@@ -18,6 +19,7 @@ export const ConditionalStepKey = Object.freeze({
   FORCE_POWERS: 'force-powers',
   FORCE_SECRETS: 'force-secrets',
   FORCE_TECHNIQUES: 'force-techniques',
+  FORCE_REGIMENS: 'force-regimens',
   STARSHIP_MANEUVERS: 'starship-maneuvers',
   FINAL_DROID_CONFIGURATION: 'final-droid-configuration',
 });
@@ -53,6 +55,7 @@ export class ConditionalStepResolver {
       [ConditionalStepKey.FORCE_POWERS, this._checkForcePowersUnlocked(actor, context)],
       [ConditionalStepKey.FORCE_SECRETS, this._checkForceSecretsUnlocked(actor, context)],
       [ConditionalStepKey.FORCE_TECHNIQUES, this._checkForceTechniquesUnlocked(actor, context)],
+      [ConditionalStepKey.FORCE_REGIMENS, this._checkForceRegimensUnlocked(actor, context)],
       [ConditionalStepKey.STARSHIP_MANEUVERS, this._checkStarshipManeuversUnlocked(actor, context)],
     ];
 
@@ -122,6 +125,22 @@ export class ConditionalStepResolver {
     return entitlements.remaining > 0 ? { active: true, reason: 'Class force technique grant available' } : { active: false, reason: null };
   }
 
+  async _checkForceRegimensUnlocked(actor, context = {}) {
+    try {
+      const total = FeatGrantEntitlementResolver.totalForGrantType(actor, 'forceRegimenSlots', { shell: context?.shell, includePending: true });
+      const pending = context?.shell?.buildIntent?.getSelection?.('forceRegimens')
+        || context?.shell?.progressionSession?.draftSelections?.forceRegimens
+        || [];
+      const pendingCount = Array.isArray(pending) ? pending.reduce((sum, entry) => sum + (Number(entry?.count ?? 1) || 0), 0) : 0;
+      const owned = actor?.items?.filter((i) => String(i?.type || '') === 'force-regimen')?.length ?? 0;
+      const remaining = Math.max(0, total - owned - pendingCount);
+      return remaining > 0 ? { active: true, reason: 'Force Regimen Mastery selections available' } : { active: false, reason: null };
+    } catch (err) {
+      console.warn('[ConditionalStepResolver] Error checking force regimen grants:', err);
+      return { active: false, reason: null };
+    }
+  }
+
   async _checkStarshipManeuversUnlocked(actor, context = {}) {
     try {
       const options = { shell: context?.shell, includePending: true };
@@ -147,6 +166,7 @@ const CONDITIONAL_STEP_CONFIG = {
   [ConditionalStepKey.FORCE_POWERS]: { label: 'Force Powers', icon: 'fa-hand-sparkles', type: StepType.SELECTION, isSkippable: false, pluginClass: ForcePowerStep },
   [ConditionalStepKey.FORCE_SECRETS]: { label: 'Force Secrets', icon: 'fa-eye-slash', type: StepType.SELECTION, isSkippable: false, pluginClass: ForceSecretStep },
   [ConditionalStepKey.FORCE_TECHNIQUES]: { label: 'Force Techniques', icon: 'fa-book-sparkles', type: StepType.SELECTION, isSkippable: false, pluginClass: ForceTechniqueStep },
+  [ConditionalStepKey.FORCE_REGIMENS]: { label: 'Force Regimens', icon: 'fa-person-praying', type: StepType.SELECTION, isSkippable: false, pluginClass: ForceRegimenStep },
   [ConditionalStepKey.STARSHIP_MANEUVERS]: { label: 'Starship Maneuvers', icon: 'fa-rocket', type: StepType.SELECTION, isSkippable: false, pluginClass: StarshipManeuverStep },
   [ConditionalStepKey.FINAL_DROID_CONFIGURATION]: { label: 'Final Droid Configuration', icon: 'fa-robot', type: StepType.BUILD, isSkippable: false, pluginClass: null },
 };

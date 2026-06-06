@@ -70,6 +70,39 @@
     </div>
     {{/if}}
 
+
+    {{#if conceptLayout.force.forceSuite.regimens.length}}
+    <div class="fs-section fs-section--regimens">
+      <div class="fs-head">
+        <span class="fs-head-lbl cy">⬢ Force Regimens</span>
+        <span class="fs-head-cnt cy">{{conceptLayout.force.forceSuite.counts.regimen}}</span>
+        <div class="fs-line cy"></div>
+        <span class="fs-head-rule">Downtime training · Use the Force check · Clears on long rest</span>
+      </div>
+      <div class="fs-hand force-card-grid" data-force-regimen-hand="force">
+        {{#each conceptLayout.force.forceSuite.regimens as |regimen|}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-regimen-card.hbs" regimen=regimen}}
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if conceptLayout.force.forceSuite.lightsaberRegimens.length}}
+    <div class="fs-section fs-section--regimens fs-section--lightsaber-regimens">
+      <div class="fs-head">
+        <span class="fs-head-lbl pk">⬢ Lightsaber Regimens</span>
+        <span class="fs-head-cnt pk">{{conceptLayout.force.forceSuite.lightsaberRegimens.length}}</span>
+        <div class="fs-line pk"></div>
+        <span class="fs-head-rule">Lightsaber training · Use the Force check · Clears on long rest</span>
+      </div>
+      <div class="fs-hand force-card-grid" data-force-regimen-hand="lightsaber">
+        {{#each conceptLayout.force.forceSuite.lightsaberRegimens as |regimen|}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-regimen-card.hbs" regimen=regimen}}
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
     <section class="disc-wrap">
       <div class="disc-head">
         <span class="disc-title">◇ Discard Pile</span>
@@ -112,6 +145,19 @@
           {{else}}
             <span class="disc-empty">No spent powers</span>
           {{/if}}
+
+        {{#if conceptLayout.force.forceSuite.regimenDiscard.length}}
+          <div class="disc-pile disc-pile--regimens" data-force-regimen-discard-pile>
+            {{#each conceptLayout.force.forceSuite.regimenDiscard as |regimen|}}
+              <button type="button"
+                      class="disc-chip disc-chip--regimen"
+                      data-action="end-force-regimen"
+                      data-item-id="{{regimen.id}}">
+                End {{regimen.name}}
+              </button>
+            {{/each}}
+          </div>
+        {{/if}}
         </div>
       </div>
     </section>

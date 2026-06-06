@@ -993,6 +993,11 @@ export class PanelContextBuilder {
       };
     });
 
+    // Extract actor-owned Force Regimens. They behave like Force cards: ready vs spent/discarded.
+    const forceRegimens = Array.from(this.actor?.items ?? []).filter(i => String(i?.type || '') === 'force-regimen');
+    const regimenHand = forceRegimens.filter(r => !(r.system?.spent || r.system?.discarded));
+    const regimenDiscard = forceRegimens.filter(r => r.system?.spent || r.system?.discarded);
+
     // Extract secrets and techniques from derived (pre-computed by actor engine)
     const secrets = this.derived.forceSecrets?.list ?? [];
     const techniques = this.derived.forceTechniques?.list ?? [];
@@ -1002,6 +1007,10 @@ export class PanelContextBuilder {
       discard,
       secrets,
       techniques,
+      regimens: regimenHand,
+      regimenDiscard,
+      hasRegimens: regimenHand.length > 0,
+      hasRegimenDiscard: regimenDiscard.length > 0,
       hasHand: hand.length > 0,
       hasDiscard: discard.length > 0,
       hasSecrets: secrets.length > 0,

@@ -9,6 +9,7 @@ import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
+import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 
 /**
  * Open mentor conversation dialog
@@ -80,6 +81,26 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
         ui?.notifications?.info?.('Effect removed.');
       } catch (err) {
         ui?.notifications?.warn?.(`Failed to remove effect: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+
+  // Force Regimen active-effect card: End Effect.
+  html.querySelectorAll('[data-action="end-force-regimen"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const effectOrItemId = button.dataset.effectId || button.dataset.ruleId || button.dataset.itemId;
+      try {
+        const result = await ForceRegimenExecutor.endRegimen(sheet.actor, effectOrItemId);
+        if (result?.success) {
+          ui?.notifications?.info?.('Force Regimen effect ended.');
+          sheet.render?.(false);
+        } else {
+          ui?.notifications?.warn?.(result?.error || 'Force Regimen effect could not be ended.');
+        }
+      } catch (err) {
+        ui?.notifications?.error?.(`Ending Force Regimen failed: ${err.message}`);
       }
     }, { signal });
   });

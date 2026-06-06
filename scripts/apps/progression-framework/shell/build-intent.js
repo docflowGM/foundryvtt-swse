@@ -72,6 +72,7 @@ export class BuildIntent {
         'general-talent': 'talents',
         'class-talent': 'talents',
         'force-powers': 'forcePowers',
+      'force-regimens': 'forceRegimens',
         'starship-maneuver': 'starshipManeuvers',
         'starship-maneuvers': 'starshipManeuvers',
         'droid-builder': 'droid',
