@@ -336,6 +336,8 @@ export class DerivedCalculator {
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
       const hasForceIntuition = this._hasTalentNamed(actor, 'Force Intuition');
+      const hasForceDeception = this._hasTalentNamed(actor, 'Force Deception');
+      const hasForceTreatment = this._hasTalentNamed(actor, 'Force Treatment');
 
       // Get occupation bonus from actor flags
       let occupationBonus = null;
@@ -420,11 +422,23 @@ export class DerivedCalculator {
         // during progression. Treat that chosen skill as trained for derived totals.
         const logicUpgradeSkillSwap = this._hasLogicUpgradeSkillSwapForSkill(actor, skillKey);
         const rankedMode = isRankedModeEnabled();
-        let isTrained = Boolean(skill.trained || logicUpgradeSkillSwap || (hasForceIntuition && skillKey === 'initiative')); // Standard mode: stored, feat-backed, or talent-backed training
+        let isTrained = Boolean(
+          skill.trained ||
+          logicUpgradeSkillSwap ||
+          (hasForceIntuition && skillKey === 'initiative') ||
+          (hasForceDeception && skillKey === 'deception') ||
+          (hasForceTreatment && skillKey === 'treatInjury')
+        ); // Standard mode: stored, feat-backed, or talent-backed training
         if (rankedMode) {
           const ranks = skill.ranks || 0;
           total += ranks;
-          isTrained = Boolean(deriveTrainedFromRanks(ranks) || logicUpgradeSkillSwap || (hasForceIntuition && skillKey === 'initiative')); // Derived trained status
+          isTrained = Boolean(
+            deriveTrainedFromRanks(ranks) ||
+            logicUpgradeSkillSwap ||
+            (hasForceIntuition && skillKey === 'initiative') ||
+            (hasForceDeception && skillKey === 'deception') ||
+            (hasForceTreatment && skillKey === 'treatInjury')
+          ); // Derived trained status
         } else {
           // Standard mode: use traditional trained +5 bonus
           if (isTrained) {
@@ -552,6 +566,31 @@ export class DerivedCalculator {
           armorPenalty: armorPenalty,
           conditionPenalty: conditionPenalty
         };
+      }
+
+      const applyUseTheForceSkillSubstitution = (targetKey, markerKey) => {
+        const targetSkill = updates['system.derived.skills']?.[targetKey];
+        const useTheForceSkill = updates['system.derived.skills']?.useTheForce;
+        const targetTotal = Number(targetSkill?.total);
+        const useTheForceTotal = Number(useTheForceSkill?.total);
+        if (!targetSkill || !Number.isFinite(targetTotal) || !Number.isFinite(useTheForceTotal)) return false;
+        if (useTheForceTotal <= targetTotal) return false;
+
+        updates['system.derived.skills'][targetKey] = {
+          ...targetSkill,
+          total: useTheForceTotal,
+          [markerKey]: true,
+          substitutedFromSkill: 'useTheForce',
+          substitutedBaseTotal: targetTotal
+        };
+        return true;
+      };
+
+      if (hasForceDeception) {
+        applyUseTheForceSkillSubstitution('deception', 'forceDeceptionSubstitution');
+      }
+      if (hasForceTreatment) {
+        applyUseTheForceSkillSubstitution('treatInjury', 'forceTreatmentSubstitution');
       }
 
       // Initiative is a skill in SWSE.  The early derived.initiative seed keeps

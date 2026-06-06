@@ -133,6 +133,18 @@ function actorHasArmorSpecialistArmorMastery(actor) {
   });
 }
 
+function actorHasKnightArmorMastery(actor) {
+  return Array.from(actor?.items ?? []).some(item => {
+    if (item?.type !== 'talent') return false;
+    if (String(item?.name || '').trim().toLowerCase() !== 'armor mastery') return false;
+    const treeId = String(item?.system?.treeId || '').trim();
+    const text = getTalentText(item);
+    return treeId === 'ea01d740c91888b3'
+      || (text.includes('heroic level') && text.includes('half armor bonus'))
+      || text.includes('counts as armored and improved armored defense');
+  });
+}
+
 function collectDefenseAbilityRule(actor, defenseKey) {
   const key = String(defenseKey || '').toLowerCase();
   for (const item of getActorFeatItems(actor)) {
@@ -323,8 +335,9 @@ export class DefenseCalculator {
     // contribution like worn armor does.
     const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
     const armorProficient = equippedArmor ? actorHasArmorProficiency(actor, equippedArmor) : false;
-    const hasArmoredDefense = actorHasTalent(actor, 'Armored Defense');
-    const hasImprovedArmoredDefense = actorHasTalent(actor, 'Improved Armored Defense');
+    const hasKnightArmorMastery = actorHasKnightArmorMastery(actor);
+    const hasArmoredDefense = actorHasTalent(actor, 'Armored Defense') || hasKnightArmorMastery;
+    const hasImprovedArmoredDefense = actorHasTalent(actor, 'Improved Armored Defense') || hasKnightArmorMastery;
     const hasArmorMastery = actorHasArmorSpecialistArmorMastery(actor);
     const hasSecondSkin = actorHasTalent(actor, 'Second Skin');
 

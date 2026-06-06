@@ -1,0 +1,730 @@
+{
+  "summary": {
+    "phase": "T9 Force prestige / Imperial Knight cleanup",
+    "scope": [
+      "Sith tree used by Sith Apprentice and Sith Lord",
+      "Sith Commander",
+      "Dark Side Devotee non-talisman talents",
+      "Force Adept",
+      "Imperial Inquisitor",
+      "Knight's Armor",
+      "Knight's Resolve"
+    ],
+    "deferredByUserRequest": [
+      "Sith Alchemy tree and Sith Alchemy create/craft workflows",
+      "Force talismans and dark side talismans",
+      "attuned/empowered weapon item workflows"
+    ],
+    "talentDocumentsChanged": 40,
+    "implementedExistingOwnerCount": 3,
+    "extraneousAutomationRemovedCount": 37,
+    "persistentChoicePickerCount": 2,
+    "needsHumanReviewCount": 4,
+    "deferredTalentCountNotModified": 15,
+    "broadFailClosedBehaviorAdded": false,
+    "treeSpecificJsFilesCreated": false
+  },
+  "implementationPrinciples": [
+    "Book descriptions remain the canonical rules text; this pass changes runtime metadata/effects to match those descriptions.",
+    "Conditional bonuses against target types, ally positioning, line of sight, or temporary activation states were punted to GM/player or future runtime prompts.",
+    "The Ability Engine/passive metadata remains the data authority; derived calculators only gained narrow existing-owner support for skill substitution and Imperial Knight armor math.",
+    "Talismans, attuned/empowered weapons, and Sith Alchemy were not implemented in this pass by user request."
+  ],
+  "implementedExistingOwner": [
+    {
+      "name": "Force Deception",
+      "id": "a40e25585a6f8c2b",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "implemented_existing_owner",
+      "enginePath": "DerivedCalculator.prepareDerivedData -> Force Deception skill substitution",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Treat Deception as trained and use Use the Force total when higher. Reroll substitution remains Force/skill-roll prompt work.",
+      "recommendedAction": "Keep as-is"
+    },
+    {
+      "name": "Force Treatment",
+      "id": "181da7f36b9fba9d",
+      "tree": "Force Adept",
+      "source": "Force Adept",
+      "bucket": "implemented_existing_owner",
+      "enginePath": "DerivedCalculator.prepareDerivedData -> Force Treatment skill substitution",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Treat Treat Injury as trained and use Use the Force total when higher. Medkit/medpac exception is table/skill-use note until skill-use prompts support it.",
+      "recommendedAction": "Keep as-is"
+    },
+    {
+      "name": "Armor Mastery",
+      "id": "d9e707f23fffc2af",
+      "tree": "Knight's Armor",
+      "source": "Imperial Knight",
+      "bucket": "implemented_existing_owner",
+      "enginePath": "DefenseCalculator armor Reflex level-term rule",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Counts as Armored Defense and Improved Armored Defense while proficiently wearing armor; no separate flat Reflex modifier.",
+      "recommendedAction": "Keep as-is"
+    }
+  ],
+  "extraneousAutomationRemoved": [
+    {
+      "name": "Dark Healing",
+      "id": "008b28849b74234d",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Spend Force Point, make ranged attack against target Fortitude, damage/heal resolution.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Dark Scourge",
+      "id": "08fc3247755c5ebe",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "+1 attack only against Jedi characters; target identity/class is GM/player adjudicated.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Drain Force",
+      "id": "2056998b5afa4e00",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter reaction after damaging Force-sensitive opponent; force power/force point resource exchange.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Affliction",
+      "id": "776a0fa8ae532ccc",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Delayed Force damage only after damaging a single opponent with a Force power.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Dark Healing Field",
+      "id": "89a8c710bb68901c",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter multi-target Dark Healing field with Use the Force vs Fortitude.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Improved Dark Healing",
+      "id": "b03db168b3f23da0",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Upgrade to Dark Healing range/failure behavior; should attach to a future Dark Healing action, not actor totals.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Dark Side Adept",
+      "id": "cfdd73f3d939799d",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Reroll Use the Force check only when activating a [Dark Side] Force power; keep reroll.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Wicked Strike",
+      "id": "d350b28e72652d29",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Critical hit with lightsaber plus Force Point spend moves target down condition track.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Dark Side Master",
+      "id": "d4fe49ef1701891e",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Reroll [Dark Side] Force power Use the Force check with Force Point option to keep better result.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Power of Hatred",
+      "id": "51a8e7a193955f11",
+      "tree": "Sith Commander",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter swift action grants nearby/visible low-HP allies temporary HP.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Focus Terror",
+      "id": "98c720992c5b428e",
+      "tree": "Sith Commander",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter swift action affects allies in 12 squares/LOS with condition track movement and penalties.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Incite Rage",
+      "id": "b8a9dd4c950a96f5",
+      "tree": "Sith Commander",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter aura grants allies rage attack bonus and Reflex penalty while conditions remain true.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Desperate Measures",
+      "id": "d11f6beaa5f93e66",
+      "tree": "Sith Commander",
+      "source": "Sith Apprentice",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter swift action lets allies make immediate attacks at penalty.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Channel Anger",
+      "id": "37ee909a7de54768",
+      "tree": "Dark Side Devotee",
+      "source": "Force Adept",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Swift action Force Point rage buff with duration, skill restrictions, and later condition-track penalty.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Crippling Strike",
+      "id": "8b3cb561c294fa11",
+      "tree": "Dark Side Devotee",
+      "source": "Force Adept",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Critical hit plus Force Point reduces target speed until fully healed.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Channel Aggression",
+      "id": "ef3ec55015c60bda",
+      "tree": "Dark Side Devotee",
+      "source": "Force Adept",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Free Action Force Point extra damage after hitting flanked/dex-denied target; target state is punted.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Mystical Link",
+      "id": "45c4e72d74c44acb",
+      "tree": "Force Adept",
+      "source": "",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "DC 30 Use the Force check produces GM-selected benefit; no fixed static bonus.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Cower Enemies",
+      "id": "0e36a04342959256",
+      "tree": "Imperial Inquisitor",
+      "source": "Force Adept",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Persuasion/Intimidate area use; needs skill-use resolver, not attack bonus.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Force Interrogation",
+      "id": "2acaa4620d396fe9",
+      "tree": "Imperial Inquisitor",
+      "source": "Force Adept",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "After damaging creature(s) with Force power, immediate Persuasion/Intimidate against damaged target.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Inquisition",
+      "id": "76ff0ba56aa3864b",
+      "tree": "Imperial Inquisitor",
+      "source": "Force Adept",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Attack and damage bonus only against Force-sensitive targets; punt target adjudication.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Oath of Duty",
+      "id": "001ae84d5862af55",
+      "tree": "Knight's Resolve",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Ally within 12/LOS hits with lightsaber; temporary HP until next turn.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Praetoria Ishu",
+      "id": "16aa9efd54967320",
+      "tree": "Knight's Resolve",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Allows Block/Deflect for adjacent ally attacks; reaction flow needs prompt.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Strength of the Empire",
+      "id": "2b808a4a90614f92",
+      "tree": "Knight's Resolve",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Next lightsaber attack gains +1 die after ally trigger; Ward/Cover note is separate ally-cover context.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Praetoria Vonil",
+      "id": "4723e1eb351e07ae",
+      "tree": "Knight's Resolve",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "+1 damage die only with single lightsaber two-handed after moving at least 1 square.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Knight's Morale",
+      "id": "e3b7d8c87441a1f0",
+      "tree": "Knight's Resolve",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Temporary +1 morale to defenses after ally trigger until next turn; not static Reflex.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Armored Augmentation II",
+      "id": "51588e91f335bb67",
+      "tree": "Knight's Armor",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Only when Armored Augmentation I is active; DR is encounter active effect, not permanent Fortitude.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Armored Augmentation I",
+      "id": "98355ed4f6473028",
+      "tree": "Knight's Armor",
+      "source": "Imperial Knight",
+      "bucket": "extraneous_automation_removed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Once-per-encounter Force Point swift action adds armor Reflex bonus to Damage Threshold until encounter end.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    }
+  ],
+  "gmPlayerOrRuntimeManaged": [
+    {
+      "name": "Cortosis Retaliation",
+      "id": "22ce14b57f9b8c1a",
+      "tree": "Knight's Armor",
+      "source": "Imperial Knight",
+      "bucket": "gm_player_or_runtime_managed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "After successful Cortosis Gauntlet parry, optional immediate attack of opportunity.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Cortosis Defense",
+      "id": "dfe97e928928efc3",
+      "tree": "Knight's Armor",
+      "source": "Imperial Knight",
+      "bucket": "gm_player_or_runtime_managed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "+2 only on opposed Unarmed roll using Cortosis Gauntlet against lightsaber attack.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Unsettling Presence",
+      "id": "dd488c2dc43d14ab",
+      "tree": "Imperial Inquisitor",
+      "source": "Force Adept",
+      "bucket": "gm_player_or_runtime_managed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Force Point aura with Use the Force check versus Will; encounter aura needs active-effect workflow.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Embrace the Dark Side",
+      "id": "8e1ee6d1c756450f96d4d5eaa9657e47",
+      "tree": "Dark Side Devotee",
+      "source": "",
+      "bucket": "gm_player_or_runtime_managed",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Reroll Use the Force check when using [Dark Side] Force power; keep reroll.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    }
+  ],
+  "needsPersistentChoicePicker": [
+    {
+      "name": "Stolen Form",
+      "id": "f9352f317ad2f695",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "needs_persistent_choice_picker",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Choose a Lightsaber Forms talent and gain it for benefit/prerequisites; needs progression picker.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Force Power Adept",
+      "id": "90d9a2e7dbc160d1",
+      "tree": "Force Adept",
+      "source": "Force Adept",
+      "bucket": "needs_persistent_choice_picker",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Choose one known Force power; when using it, spend Force Point to roll twice/keep better.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    }
+  ],
+  "needsHumanReview": [
+    {
+      "name": "Equilibrium",
+      "id": "328a880e60f2320f",
+      "tree": "Force Adept",
+      "source": "",
+      "bucket": "needs_human_review",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Compendium text appears merged/duplicated; review exact talent/class-feature source before automation.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Embrace Dark Side",
+      "id": "3cc9552cfab59676",
+      "tree": "Dark Side Devotee",
+      "source": "Force Adept",
+      "bucket": "needs_human_review",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Sparse source text in compendium; review alongside Embrace the Dark Side/dark-side reroll rules.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Indomitable class feature",
+      "id": "3df46d093b31411d",
+      "tree": "Force Adept",
+      "source": "",
+      "bucket": "needs_human_review",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Mind-affecting allow/deny behavior is class feature / GM adjudication, not actor static bonus.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    },
+    {
+      "name": "Fortified Body",
+      "id": "6714ab8e28708f50",
+      "tree": "Force Adept",
+      "source": "Force Adept",
+      "bucket": "needs_human_review",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": false,
+      "effectsAfterPatch": 0,
+      "reason": "Disease/poison/radiation immunity should be condition-resolver metadata when such resolver exists.",
+      "recommendedAction": "No static automation; build runtime prompt only when appropriate."
+    }
+  ],
+  "deferredByUserRequestNotModified": [
+    {
+      "name": "Sith Alchemy (create)",
+      "id": "8a6fc1f368226b7b",
+      "tree": "Sith",
+      "source": "Sith Apprentice",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 1,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Sith Alchemy (craft)",
+      "id": "4d6c2d2398c33ba7",
+      "tree": "Sith Alchemy",
+      "source": "Sith Apprentice",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Rapid Alchemy",
+      "id": "69420a9a5ff5d8b9",
+      "tree": "Sith Alchemy",
+      "source": "Sith Apprentice",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Sith Alchemy Specialist",
+      "id": "9bee4563b328def7",
+      "tree": "Sith Alchemy",
+      "source": "Sith Apprentice",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Cause Mutation",
+      "id": "c59de6f440c92832",
+      "tree": "Sith Alchemy",
+      "source": "Sith Apprentice",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Sith Alchemy",
+      "id": "eb4f3e8660bc476589d0323d4cc00845",
+      "tree": "Sith Alchemy",
+      "source": "",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Greater Force Talisman",
+      "id": "0c636cdbb63cdba3",
+      "tree": "Force Item",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 1,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Focused Force Talisman",
+      "id": "12eea831f06c45f7",
+      "tree": "Force Item",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Greater Focused Force Talisman",
+      "id": "4ae840aaa4e0eba0",
+      "tree": "Force Item",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Force Talisman",
+      "id": "66b23ee79bd33bf1",
+      "tree": "Force Item",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 1,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Empowered",
+      "id": "35350a8b3d2a4810",
+      "tree": "Force Item",
+      "source": "",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Empower Weapon",
+      "id": "5218d5971b78119b",
+      "tree": "Force Item",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Primitive Block",
+      "id": "d043a3c0494345ac",
+      "tree": "Force Item",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 0,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Greater Dark Side Talisman",
+      "id": "c8bf9ab9d1f8588a",
+      "tree": "Dark Side Devotee",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 1,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    },
+    {
+      "name": "Dark Side Talisman",
+      "id": "e96812723ff4eb04",
+      "tree": "Dark Side Devotee",
+      "source": "Force Adept",
+      "bucket": "deferred_by_user_request",
+      "enginePath": "Ability Engine metadata / GM-player managed",
+      "staticImpactAfterPatch": true,
+      "effectsAfterPatch": 1,
+      "reason": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass.",
+      "recommendedAction": "Deferred: talismans, attuned/empowered weapons, and Sith Alchemy will be handled in a dedicated pass."
+    }
+  ],
+  "codeChanges": [
+    {
+      "file": "scripts/actors/derived/derived-calculator.js",
+      "reason": "Force Deception and Force Treatment are safe derived skill substitutions: mark the affected skill trained and use Use the Force total when higher.",
+      "talents": [
+        "Force Deception",
+        "Force Treatment"
+      ]
+    },
+    {
+      "file": "scripts/actors/derived/defense-calculator.js",
+      "reason": "Imperial Knight Armor Mastery uses the existing armor defense calculation path and counts as Armored Defense + Improved Armored Defense while proficiently armored, rather than adding a flat Reflex modifier.",
+      "talents": [
+        "Armor Mastery (Knight's Armor)"
+      ]
+    }
+  ],
+  "recommendedNextPatchOrder": [
+    "Build or curate the talisman/attuned weapon/Sith Alchemy item workflows as a dedicated pass.",
+    "Add runtime prompt/action support for Dark Healing and Dark Healing Field.",
+    "Add Force-suite reroll prompt support for Dark Side Adept / Dark Side Master / Embrace the Dark Side / Force Power Adept.",
+    "Add active encounter buff support for Channel Anger and Armored Augmentation I/II.",
+    "Add persistent picker support for Stolen Form and Force Power Adept.",
+    "Add GM/player notes for target-specific bonuses such as Dark Scourge and Inquisition."
+  ]
+}
