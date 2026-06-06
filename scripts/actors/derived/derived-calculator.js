@@ -414,16 +414,19 @@ export class DerivedCalculator {
         total += speciesBonus;
 
         // Add training/rank bonus
-        // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus
+        // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus.
+        // Logic Upgrade: Skill Swap selects one currently-untrained non-UTF droid skill
+        // during progression. Treat that chosen skill as trained for derived totals.
+        const logicUpgradeSkillSwap = this._hasLogicUpgradeSkillSwapForSkill(actor, skillKey);
         const rankedMode = isRankedModeEnabled();
-        let isTrained = skill.trained; // Standard mode: use stored boolean
+        let isTrained = Boolean(skill.trained || logicUpgradeSkillSwap); // Standard mode: stored or feat-backed training
         if (rankedMode) {
           const ranks = skill.ranks || 0;
           total += ranks;
-          isTrained = deriveTrainedFromRanks(ranks); // Derived trained status
+          isTrained = Boolean(deriveTrainedFromRanks(ranks) || logicUpgradeSkillSwap); // Derived trained status
         } else {
           // Standard mode: use traditional trained +5 bonus
-          if (skill.trained) {
+          if (isTrained) {
             total += 5;
           }
         }
@@ -534,7 +537,9 @@ export class DerivedCalculator {
           total: total,
           abilityMod: abilityMod,
           selectedAbility: abilityKey,
-          trained: skill.trained || false,
+          trained: isTrained || false,
+          baseTrained: skill.trained || false,
+          logicUpgradeSkillSwap: logicUpgradeSkillSwap || false,
           focused: skill.focused || false,
           miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
           speciesBonus: speciesBonus,
@@ -653,6 +658,31 @@ export class DerivedCalculator {
       swseLogger.error(`DerivedCalculator.computeAll failed for ${actor?.name ?? 'unknown'}`, err);
       throw err;
     }
+  }
+
+
+  static _hasLogicUpgradeSkillSwapForSkill(actor, skillKey) {
+    const target = String(skillKey || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!target || target === 'usetheforce') return false;
+    if (!actor?.items) return false;
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    for (const item of actor.items) {
+      if (String(item?.name || '').toLowerCase() !== 'logic upgrade: skill swap') continue;
+      const choice = item.system?.selectedChoice ?? item.system?.selectedChoices;
+      const candidates = [];
+      const visit = (value) => {
+        if (!value) return;
+        if (Array.isArray(value)) return value.forEach(visit);
+        if (typeof value === 'object') {
+          for (const key of ['id', 'value', 'skill', 'skillKey', 'label', 'name']) visit(value[key]);
+          return;
+        }
+        candidates.push(value);
+      };
+      visit(choice);
+      if (candidates.some(candidate => normalize(candidate) === target)) return true;
+    }
+    return false;
   }
 
   static _hasSkillFocusModifierForSkill(actor, skillKey) {

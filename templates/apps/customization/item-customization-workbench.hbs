@@ -100,6 +100,26 @@
             </div>
           </div>
 
+          {{#if techSpecialist.canUse}}
+          <section class="detail-panel panel tech-specialist-panel">
+            <div class="panel-head compact"><span>Tech Specialist</span><span class="hint">{{techSpecialist.subjectType}}</span></div>
+            <p class="panel-note">{{techSpecialist.hint}}</p>
+            {{#if techSpecialist.installedTraits.length}}
+            <div class="tech-trait-list">
+              {{#each techSpecialist.installedTraits}}
+              <button type="button" class="tech-trait-chip {{#if active}}active{{/if}}" data-action="toggle-tech-signature-trait" data-trait-id="{{id}}">
+                <strong>{{name}}</strong><span>{{tier}}</span>
+              </button>
+              {{/each}}
+            </div>
+            {{/if}}
+            <div class="tech-actions">
+              <button type="button" class="action primary" data-action="open-tech-specialist" {{#unless techSpecialist.canInstall}}disabled{{/unless}}>Install Tech Trait</button>
+              {{#if techSpecialist.canDesignateSignature}}<button type="button" class="action ghost" data-action="designate-signature-device">Make Signature Device</button>{{/if}}
+            </div>
+          </section>
+          {{/if}}
+
           {{#if isLightsaber}}
           <div class="lightsaber-workspace lightsaber-workspace--tabs lightsaber-construction-wizard {{#if lightsaber.constructionMode}}lightsaber-workspace--construction{{/if}}" data-lightsaber-route-mode="{{lightsaber.route.mode}}" data-lightsaber-route-intent="{{lightsaber.route.routeIntent}}" data-lightsaber-wizard-stage="{{lightsaber.activeTab}}" style="--blade-color: {{lightsaber.bladeHex}};">
             <section class="detail-panel panel ls-tab-stage ls-wizard-main">
@@ -165,6 +185,7 @@
               {{#if lightsaber.tabHilt}}
               <section class="ls-tab-panel" data-lightsaber-tab-panel="hilt">
                 <div class="panel-head compact"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
+                {{#if lightsaber.slotState.techSpecialistBonus}}<p class="panel-note">Tech Specialist grants one additional hilt modification slot during construction.</p>{{/if}}
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.accessories}}
                   <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{id}}" data-component-type="accessory" {{#if incompatible}}disabled{{/if}} title="{{description}}">

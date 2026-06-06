@@ -1,0 +1,56 @@
+{{!-- Force Regimen Selection Work Surface --}}
+<div class="prog-force-regimen-browse swse-force-regimen-selector swse-store-stage">
+  {{#if hasSelectionBudget}}
+    <section class="prog-force-power-training-summary" aria-label="Force Regimen training allowance">
+      <div class="prog-force-power-training-summary__main">
+        <span class="prog-force-power-training-summary__label">Force Regimen Mastery</span>
+        <strong class="prog-force-power-training-summary__count">{{selectedCount}} / {{selectionBudget}}</strong>
+        <span class="prog-force-power-training-summary__remaining">{{remainingPicks}} remaining</span>
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if categoryGroups.length}}
+    {{#each categoryGroups as |group|}}
+      <section class="prog-force-regimen-category prog-force-regimen-category--{{group.css}}">
+        <header class="prog-force-regimen-category__header">
+          <span class="prog-force-regimen-category__pip"></span>
+          <h3>{{group.label}}</h3>
+          <span>{{group.regimens.length}} entries</span>
+        </header>
+        <div class="prog-force-regimen-grid" role="list">
+          {{#each group.regimens as |regimen|}}
+            <article class="prog-force-regimen-card prog-force-regimen-card--{{regimen.categoryCss}} {{#if (lookup ../../committedCounts regimen.id)}}prog-force-regimen-card--selected{{/if}}"
+                     data-action="focus-item"
+                     data-item-id="{{regimen.id}}"
+                     tabindex="0"
+                     role="option"
+                     aria-selected="{{#if (lookup ../../committedCounts regimen.id)}}true{{else}}false{{/if}}">
+              <div class="prog-force-regimen-card__stripe"></div>
+              <div class="prog-force-regimen-card__header">
+                <h4>{{regimen.name}}</h4>
+                {{#if (lookup ../../committedCounts regimen.id)}}
+                  <span class="prog-force-regimen-card__count">×{{lookup ../../committedCounts regimen.id}}</span>
+                {{/if}}
+              </div>
+              <div class="prog-force-regimen-card__meta">
+                <span>{{regimen.categoryLabel}}</span>
+                {{#if regimen.time}}<span>{{regimen.time}}</span>{{/if}}
+                {{#if regimen.targets}}<span>{{regimen.targets}}</span>{{/if}}
+              </div>
+              {{#if regimen.summary}}<p>{{truncate regimen.summary 120}}</p>{{/if}}
+              <div class="prog-force-regimen-card__state">
+                {{#if (lookup ../../committedCounts regimen.id)}}Selected{{else}}Available{{/if}}
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+    {{/each}}
+  {{else}}
+    <div class="prog-force-power-browse__empty">
+      <i class="fas fa-person-praying" aria-hidden="true"></i>
+      <p>No Force Regimens match your search.</p>
+    </div>
+  {{/if}}
+</div>

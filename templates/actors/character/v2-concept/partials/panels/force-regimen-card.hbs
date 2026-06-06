@@ -1,0 +1,25 @@
+<article class="force-card swse-concept-force-card swse-force-regimen-card swse-force-regimen-card--{{regimen.type}}" data-item-id="{{regimen.id}}" data-tags="{{regimen.tagString}}">
+  <div class="swse-concept-force-card__copy">
+    <strong class="force-name">{{regimen.name}}</strong>
+    <p>{{regimen.blurb}}</p>
+  </div>
+  <div class="swse-concept-chip-row">
+    {{#each regimen.tags as |tag|}}
+      <span class="swse-concept-chip swse-concept-chip--neutral">{{tag}}</span>
+    {{/each}}
+    {{#if regimen.time}}<span class="swse-concept-chip swse-concept-chip--neutral">{{regimen.time}}</span>{{/if}}
+  </div>
+  {{#if regimen.activeTier}}
+    <div class="swse-force-regimen-card__active-result">
+      <strong>Active:</strong> DC {{regimen.activeTier.dc}}{{#if regimen.activeRollTotal}} · UTF {{regimen.activeRollTotal}}{{/if}}
+      <span>{{regimen.activeEffectText}}</span>
+    </div>
+  {{/if}}
+  <div class="swse-concept-ledger-row__actions">
+    {{#if regimen.discarded}}
+      <button type="button" class="swse-concept-btn" data-action="end-force-regimen" data-item-id="{{regimen.id}}">End Effect</button>
+    {{else}}
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="use-force-regimen" data-item-id="{{regimen.id}}">Use</button>
+    {{/if}}
+  </div>
+</article>

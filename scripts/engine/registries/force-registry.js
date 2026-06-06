@@ -3,8 +3,9 @@
  *
  * Canonical enumeration authority for all Force-related items in the system.
  *
- * Covers three force domains:
+ * Covers four force domains:
  * - Force Powers (combat abilities)
+ * - Force Regimens (training routines)
  * - Force Techniques (advanced methods)
  * - Force Secrets (restricted knowledge)
  *
@@ -22,7 +23,7 @@
  * - Contain UI code
  *
  * Architecture:
- * - Single registry handles all three force domains via type field
+ * - Single registry handles all force domains via type field
  * - Pure enumeration, no rule logic
  * - Acts as SSOT for force item inventory
  * - Compatible with AbilityEngine, SuggestionEngine, UI layers
@@ -147,7 +148,7 @@ function resolveForcePowerImage(doc, type) {
  * @property {string} id - Stable identifier (usually _id from compendium)
  * @property {string} uuid - Compendium UUID
  * @property {string} name - Human-readable name
- * @property {string} type - Type: "power", "technique", or "secret"
+ * @property {string} type - Type: "power", "regimen", "technique", or "secret"
  * @property {string|null} category - Force category (universal, jedi, sith, etc.)
  * @property {string[]} tags - Normalized tags array
  * @property {Object} prerequisites - Prerequisite metadata (NOT evaluated)
@@ -210,6 +211,7 @@ export class ForceRegistry {
     // Define all force domain packs
     const packs = [
       { key: `${systemId}.forcepowers`, type: 'power' },
+      { key: `${systemId}.forceregimens`, type: 'regimen' },
       // Lightsaber form powers are selected through the same Force Power suite.
       // Keep them in the power domain so Force Training slots can spend on them.
       { key: `${systemId}.lightsaberformpowers`, type: 'power', category: 'lightsaber-form' },
@@ -226,7 +228,7 @@ export class ForceRegistry {
    * Load a single force compendium pack
    * @private
    * @param {string} packKey - Compendium pack key
-   * @param {string} type - Force item type (power, technique, secret)
+   * @param {string} type - Force item type (power, regimen, technique, secret)
    */
   static async _loadFromPack(packKey, type, options = {}) {
     const pack = game?.packs?.get(packKey);
@@ -263,7 +265,7 @@ export class ForceRegistry {
    * Normalize a compendium force document into registry entry
    * @private
    * @param {*} doc - Compendium document
-   * @param {string} type - Force item type (power, technique, secret)
+   * @param {string} type - Force item type (power, regimen, technique, secret)
    * @returns {ForceRegistryEntry}
    */
   static _indexEntry(entry, type) {
@@ -756,6 +758,7 @@ export class ForceRegistry {
     // foundryvtt-swse.lightsaberformpowers rather than foundryvtt-swse.forcepowers.
     const fallbackPackMap = {
       'power': 'forcepowers',
+      'regimen': 'forceregimens',
       'technique': 'forcetechniques',
       'secret': 'forcesecrets'
     };

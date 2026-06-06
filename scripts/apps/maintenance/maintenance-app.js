@@ -1,6 +1,7 @@
 // scripts/apps/maintenance/maintenance-app.js
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 
 export class MaintenanceApp extends SWSEApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEApplication.DEFAULT_OPTIONS ?? {}),
@@ -45,6 +46,17 @@ async _onRender(context, options) {
 
   async _onLongRest() {
     swseLogger.info('Long rest clicked');
-    ui.notifications?.info('Long rest executed (placeholder)');
+    const actors = canvas?.tokens?.controlled?.map?.(token => token.actor)?.filter(Boolean) || [];
+    const unique = Array.from(new Map(actors.map(actor => [actor.id, actor])).values());
+    if (!unique.length) {
+      ui.notifications?.warn('Select one or more actor tokens before triggering long rest.');
+      return;
+    }
+    let cleared = 0;
+    for (const actor of unique) {
+      const result = await ForceRegimenExecutor.clearForLongRest(actor, { source: 'gm-long-rest' });
+      cleared += Number(result?.ended || 0) || 0;
+    }
+    ui.notifications?.info(`Long rest executed. Cleared ${cleared} Force Regimen effect(s).`);
   }
 }

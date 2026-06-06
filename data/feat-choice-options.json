@@ -696,6 +696,16 @@
         "weapon_proficiency"
       ],
       "consumes": "weapon_proficiency"
+    },
+    "droid_untrained_skill": {
+      "label": "Logic Upgrade: Skill Swap",
+      "mode": "untrained_droid_skill",
+      "repeatable": false,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.logic_upgrade_skill_swap",
+      "optionsSource": "actorLegalUntrainedSkillsExceptUseTheForce",
+      "effectTarget": "skillTraining.selected",
+      "note": "Choose one skill the droid is not trained in. Use the Force is excluded because droids cannot use it."
     }
   },
   "weaponGroups": [

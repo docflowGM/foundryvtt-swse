@@ -318,6 +318,7 @@ export class ProgressionContentAuthority {
       forcePower: (value) => this.resolveForce(value, 'power'),
       forceTechnique: (value) => this.resolveForce(value, 'technique'),
       forceSecret: (value) => this.resolveForce(value, 'secret'),
+      forceRegimen: (value) => this.resolveForce(value, 'regimen'),
       medicalSecret: (value) => this.resolveMedicalSecret(value),
     }[kind];
 

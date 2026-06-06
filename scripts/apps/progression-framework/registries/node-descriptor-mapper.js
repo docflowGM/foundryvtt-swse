@@ -31,6 +31,7 @@ import { LevelupReviewStep } from '../steps/levelup-review-step.js';
 import { ForcePowerStep } from '../steps/force-power-step.js';
 import { ForceSecretStep } from '../steps/force-secret-step.js';
 import { ForceTechniqueStep } from '../steps/force-technique-step.js';
+import { ForceRegimenStep } from '../steps/force-regimen-step.js';
 import { MedicalSecretStep } from '../steps/medical-secret-step.js';
 import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
 import { FinalDroidConfigurationStep } from '../steps/final-droid-configuration-step.js';
@@ -60,6 +61,7 @@ const NODE_PLUGIN_MAP = {
   'force-powers': ForcePowerStep,
   'force-secrets': ForceSecretStep,
   'force-techniques': ForceTechniqueStep,
+  'force-regimens': ForceRegimenStep,
   'medical-secrets': MedicalSecretStep,
   'starship-maneuvers': StarshipManeuverStep,
   'levelup-review': LevelupReviewStep,
