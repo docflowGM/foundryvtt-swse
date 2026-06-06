@@ -3104,3 +3104,68 @@
   -webkit-line-clamp: 3;
 }
 
+
+/* Runtime tuning: give the talent holomap/list stage enough vertical room.
+   The concept shell can leave the planner grid with too little remaining height,
+   so the graph and legal-choice list need their own minimum working area. */
+.talent-holomap-stage .talent-planner-grid--holomap {
+  min-height: clamp(520px, calc(100vh - 430px), 740px);
+  align-items: stretch;
+}
+
+.talent-holomap-stage .talent-choice-panel--holomap,
+.talent-holomap-stage .talent-map-panel--holomap {
+  min-height: clamp(520px, calc(100vh - 430px), 740px);
+}
+
+.talent-holomap-stage .talent-choice-section--available {
+  flex: 1 1 64%;
+  display: flex;
+  flex-direction: column;
+}
+
+.talent-holomap-stage .talent-choice-section--locked {
+  flex: 0 1 36%;
+  min-height: 2.8rem;
+}
+
+.talent-holomap-stage .talent-choice-list {
+  flex: 1 1 auto;
+}
+
+.talent-holomap-stage .talent-graph-container--holomap {
+  min-height: clamp(430px, calc(100vh - 540px), 640px);
+}
+
+.talent-holomap-stage .talent-graph-viewport--holomap,
+.talent-holomap-stage .talent-graph-canvas--holomap,
+.talent-holomap-stage .prog-talent-tree-svg--holomap {
+  min-height: clamp(410px, calc(100vh - 570px), 610px);
+}
+
+.talent-planner-stage--list.talent-holomap-stage .talent-choice-panel--holomap,
+.talent-planner-stage--map.talent-holomap-stage .talent-map-panel--holomap {
+  min-height: clamp(600px, calc(100vh - 360px), 820px);
+}
+
+.talent-planner-stage--map.talent-holomap-stage .talent-graph-container--holomap,
+.talent-planner-stage--map.talent-holomap-stage .talent-graph-viewport--holomap,
+.talent-planner-stage--map.talent-holomap-stage .talent-graph-canvas--holomap,
+.talent-planner-stage--map.talent-holomap-stage .prog-talent-tree-svg--holomap {
+  min-height: clamp(510px, calc(100vh - 470px), 730px);
+}
+
+@media (max-height: 760px) {
+  .talent-holomap-stage .talent-planner-grid--holomap,
+  .talent-holomap-stage .talent-choice-panel--holomap,
+  .talent-holomap-stage .talent-map-panel--holomap {
+    min-height: 460px;
+  }
+
+  .talent-holomap-stage .talent-graph-container--holomap,
+  .talent-holomap-stage .talent-graph-viewport--holomap,
+  .talent-holomap-stage .talent-graph-canvas--holomap,
+  .talent-holomap-stage .prog-talent-tree-svg--holomap {
+    min-height: 350px;
+  }
+}
