@@ -289,7 +289,9 @@ export class FeatStep extends ProgressionStepPlugin {
     this._requiredFeatCount = 1;         // Number of picks owed by this feat step
     this._searchQuery = '';              // Search filter
     this._showAll = false;               // Toggle: show ineligible feats
-    this._expandedCategories = new Set();// Which categories are expanded
+    this._expandedCategories = new Set();// Legacy expand state retained for compatibility
+    this._activeCategory = null;         // Category currently shown in the body browser
+    this._categorySidebarCollapsed = false; // Lets players widen the feat list after choosing a category
 
     // UI state
     this._selectedFeatItem = null;       // The actual feat item for display
@@ -380,11 +382,13 @@ export class FeatStep extends ProgressionStepPlugin {
       suggestedCount: this._suggestedFeats.length,
     });
 
-    // Expand suggested category by default, collapse others
+    // Category-browser default: suggested first when present, otherwise first hydrated category.
     this._expandedCategories.clear();
     if (this._suggestedFeats.length > 0) {
       this._expandedCategories.add('suggested');
     }
+    this._ensureActiveCategory();
+    this._categorySidebarCollapsed = false;
 
     // Enable mentor
     shell.mentor.askMentorEnabled = true;
@@ -401,7 +405,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const onSearch = e => {
       if (e.detail?.handledByStepHook) return;
       this._searchQuery = e.detail.query || '';
-      this._expandMatchingCategoriesForSearch();
+      this._syncSidebarForSearch();
       shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.();
     };
     const onFilter = e => {
@@ -442,7 +446,7 @@ export class FeatStep extends ProgressionStepPlugin {
   async onUtilityChange({ type, detail = {}, shell } = {}) {
     if (type === 'search') {
       this._searchQuery = detail.query || '';
-      this._expandMatchingCategoriesForSearch();
+      this._syncSidebarForSearch();
       await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.());
       return true;
     }
@@ -482,6 +486,7 @@ export class FeatStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       this._showAll = !this._showAll;
       this._refreshGroupedFeats();
+      this._ensureActiveCategory();
       shell?.render?.();
       return true;
     }
@@ -490,6 +495,36 @@ export class FeatStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       const panelId = target?.dataset?.panel;
       this._openFilterPanel = this._openFilterPanel === panelId ? null : panelId;
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'select-feat-category') {
+      event?.preventDefault?.();
+      const category = target?.dataset?.category || target?.closest?.('[data-category]')?.dataset?.category;
+      if (!category) return true;
+      this._activeCategory = category;
+      this._searchQuery = '';
+      this._expandedCategories.add(category);
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'toggle-feat-category-sidebar') {
+      event?.preventDefault?.();
+      this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'reset-feat-browser') {
+      event?.preventDefault?.();
+      this._searchQuery = '';
+      this._selectedTypes.clear();
+      this._selectedTags.clear();
+      this._openFilterPanel = null;
+      this._categorySidebarCollapsed = false;
+      this._ensureActiveCategory();
       shell?.render?.();
       return true;
     }
@@ -1333,6 +1368,43 @@ export class FeatStep extends ProgressionStepPlugin {
     }
   }
 
+  _ensureActiveCategory() {
+    const keys = Object.keys(this._groupedFeats || {});
+    if (!keys.length) {
+      this._activeCategory = null;
+      return null;
+    }
+
+    if (this._activeCategory && this._groupedFeats?.[this._activeCategory]) {
+      return this._activeCategory;
+    }
+
+    this._activeCategory = this._groupedFeats?.suggested ? 'suggested' : keys[0];
+    if (this._activeCategory) this._expandedCategories.add(this._activeCategory);
+    return this._activeCategory;
+  }
+
+  _syncSidebarForSearch() {
+    const hasQuery = !!String(this._searchQuery || '').trim();
+    if (hasQuery) {
+      this._categorySidebarCollapsed = true;
+      this._expandMatchingCategoriesForSearch();
+      return;
+    }
+    this._ensureActiveCategory();
+  }
+
+  _buildCategoryBrowserOptions(groupedDisplay = {}) {
+    return Object.entries(groupedDisplay || {}).map(([categoryKey, group]) => ({
+      key: categoryKey,
+      label: group?.label || this._toTitleCase(categoryKey),
+      icon: group?.icon || this._getCategoryIcon(categoryKey),
+      totalCount: Number(group?.totalCount || 0),
+      isSuggested: !!group?.isSuggested,
+      isActive: categoryKey === this._activeCategory,
+    }));
+  }
+
   async getStepData(context) {
     // Prepare grouped feats for display
     const groupedDisplay = {};
@@ -1419,6 +1491,16 @@ export class FeatStep extends ProgressionStepPlugin {
       }))
       : [];
 
+    this._ensureActiveCategory();
+    let categoryOptions = this._buildCategoryBrowserOptions(groupedDisplay);
+    if (!normalizedSearchQuery && categoryOptions.length && !categoryOptions.some(option => option.isActive)) {
+      this._activeCategory = categoryOptions[0].key;
+      categoryOptions = this._buildCategoryBrowserOptions(groupedDisplay);
+    }
+    const activeCategoryKey = normalizedSearchQuery ? null : this._activeCategory;
+    const activeCategory = activeCategoryKey ? groupedDisplay?.[activeCategoryKey] : null;
+    const activeCategoryFeats = activeCategory?.feats || [];
+
     return {
       groupedFeats: groupedDisplay,
       flatFeatList,
@@ -1437,6 +1519,15 @@ export class FeatStep extends ProgressionStepPlugin {
       orderedSelections,
       // PHASE 2 UX: Slot progress
       slotProgress,
+      // Category-browser body state
+      categoryOptions,
+      activeCategoryKey,
+      activeCategory,
+      activeCategoryFeats,
+      activeCategoryLabel: activeCategory?.label || '',
+      activeCategoryIcon: activeCategory?.icon || '',
+      activeCategoryCount: activeCategoryFeats.length,
+      categorySidebarCollapsed: !!normalizedSearchQuery || !!this._categorySidebarCollapsed,
       // Filter state
       typeOptions,
       tagOptions,
@@ -1813,31 +1904,22 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getPendingAbilityModifier(shell, abilityKey) {
-    const keyMap = {
-      strength: 'str', str: 'str',
-      dexterity: 'dex', dex: 'dex',
-      constitution: 'con', con: 'con',
-      intelligence: 'int', int: 'int',
-      wisdom: 'wis', wis: 'wis',
-      charisma: 'cha', cha: 'cha',
-    };
-    const key = keyMap[String(abilityKey || '').toLowerCase()] || abilityKey;
     const pending = shell?.progressionSession?.draftSelections?.attributes || {};
     const values = pending?.values && typeof pending.values === 'object' ? pending.values : pending || {};
     const actorSystem = shell?.actor?.system || {};
-    const actorAbility = actorSystem.abilities?.[key] || actorSystem.attributes?.[key] || actorSystem.stats?.[key] || {};
+    const actorAbility = actorSystem.abilities?.[abilityKey] || actorSystem.attributes?.[abilityKey] || actorSystem.stats?.[abilityKey] || {};
 
     const candidates = [
-      { value: pending?.modifiers?.[key], kind: 'modifier' },
-      { value: values?.[key]?.mod, kind: 'modifier' },
-      { value: values?.[key]?.modifier, kind: 'modifier' },
-      { value: pending?.finalValues?.[key], kind: 'score' },
-      { value: values?.[key]?.score, kind: 'score' },
-      { value: values?.[key]?.base, kind: 'score' },
-      { value: values?.[key]?.value, kind: 'score' },
-      { value: values?.[key], kind: 'score' },
+      { value: pending?.modifiers?.[abilityKey], kind: 'modifier' },
+      { value: values?.[abilityKey]?.mod, kind: 'modifier' },
+      { value: values?.[abilityKey]?.modifier, kind: 'modifier' },
       { value: actorAbility?.mod, kind: 'modifier' },
       { value: actorAbility?.modifier, kind: 'modifier' },
+      { value: pending?.finalValues?.[abilityKey], kind: 'score' },
+      { value: values?.[abilityKey]?.score, kind: 'score' },
+      { value: values?.[abilityKey]?.base, kind: 'score' },
+      { value: values?.[abilityKey]?.value, kind: 'score' },
+      { value: values?.[abilityKey], kind: 'score' },
       { value: actorAbility?.total, kind: 'score' },
       { value: actorAbility?.value, kind: 'score' },
       { value: actorAbility?.base, kind: 'score' },

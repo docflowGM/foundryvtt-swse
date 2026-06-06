@@ -1,9 +1,8 @@
 {{!-- Feat Work Surface --}}
-{{!-- Quick-reference grouped feat browser. Middle body stays compact; right body owns details. --}}
+{{!-- Summary and detail rails stay outside this template; this body rail owns feat browsing only. --}}
 
 <div class="feat-work-surface prog-quickref-stage">
 
-  {{!-- PHASE 2 UX: Micro-progress indicator --}}
   {{#if slotProgress}}
   <div class="prog-micro-progress prog-micro-progress--feats">
     {{#if slotProgress.isComplete}}
@@ -22,7 +21,6 @@
   </div>
   {{/if}}
 
-
   {{#if isMulticlassStartingFeatSlot}}
   <section class="feat-group feat-group--flat-list multiclass-starting-feats">
     <div class="group-header group-header--static">
@@ -40,15 +38,9 @@
            data-feat-id="{{feat.id}}"
            data-item-id="{{feat.id}}"
            data-action="focus-item">
-        {{#if feat.iconPath}}
-        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
-          <img class="feat-item__icon-image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
-          <div class="feat-item__icon-scan"></div>
-        </div>
-        {{/if}}
         <div class="feat-item-content">
           <span class="feat-name">{{feat.name}}</span>
-          {{#if feat.subcategory}}<span class="feat-subcategory-pill">{{feat.subcategory}}</span>{{/if}}
+          {{#if feat.shortSummary}}<span class="feat-search-summary">{{feat.shortSummary}}</span>{{/if}}
           {{#if feat.prerequisiteLine}}
             <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
               <i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}
@@ -75,294 +67,170 @@
   </section>
   {{else}}
 
-  {{!-- Type & Tag Filter Bar --}}
-  <div class="feat-filter-bar">
-    <button class="feat-filter-btn feat-show-all-toggle{{#if showAll}} is-open{{/if}}"
-            data-action="toggle-show-all-feats" type="button"
-            title="Toggle between legal selectable feats and the full hydrated feat browser">
-      <i class="fa-solid {{#if showAll}}fa-eye{{else}}fa-eye-slash{{/if}}"></i>
-      <span>{{#if showAll}}Showing All{{else}}Legal Only{{/if}}</span>
-      <span class="feat-filter-active-count">{{#if showAll}}{{allFeatCount}}{{else}}{{legalFeatCount}}{{/if}}</span>
-    </button>
-    {{!-- Type dropdown --}}
-    {{#if typeOptions}}
-    <div class="feat-filter-group">
-      <button class="feat-filter-btn{{#if (eq openFilterPanel 'type')}} is-open{{/if}}"
-              data-action="open-filter-panel" data-panel="type" type="button">
-        <span>Type</span>
-        {{#if selectedTypesCount}}<span class="feat-filter-active-count">{{selectedTypesCount}}</span>{{/if}}
-        <i class="fa-solid fa-chevron-{{#if (eq openFilterPanel 'type')}}up{{else}}down{{/if}}"></i>
+  <div class="feat-browser-toolbar">
+    <div class="feat-browser-toolbar__left">
+      <button class="feat-filter-btn feat-show-all-toggle{{#if showAll}} is-open{{/if}}"
+              data-action="toggle-show-all-feats" type="button"
+              title="Toggle between legal selectable feats and the full hydrated feat browser">
+        <i class="fa-solid {{#if showAll}}fa-eye{{else}}fa-eye-slash{{/if}}"></i>
+        <span>{{#if showAll}}Showing All{{else}}Legal Only{{/if}}</span>
+        <span class="feat-filter-active-count">{{#if showAll}}{{allFeatCount}}{{else}}{{legalFeatCount}}{{/if}}</span>
       </button>
-      {{#if (eq openFilterPanel 'type')}}
-      <div class="feat-filter-panel">
-        {{#each typeOptions}}
-        <label class="feat-filter-option">
-          <input type="checkbox" data-filter-group="type" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
-          <span class="feat-filter-option__label">{{this.label}}</span>
-        </label>
-        {{/each}}
-      </div>
-      {{/if}}
-    </div>
-    {{/if}}
 
-    {{!-- Tags dropdown --}}
-    {{#if tagOptions}}
-    <div class="feat-filter-group">
-      <button class="feat-filter-btn{{#if (eq openFilterPanel 'tag')}} is-open{{/if}}"
-              data-action="open-filter-panel" data-panel="tag" type="button">
-        <span>Tags</span>
-        {{#if selectedTagsCount}}<span class="feat-filter-active-count">{{selectedTagsCount}}</span>{{/if}}
-        <i class="fa-solid fa-chevron-{{#if (eq openFilterPanel 'tag')}}up{{else}}down{{/if}}"></i>
-      </button>
-      {{#if (eq openFilterPanel 'tag')}}
-      <div class="feat-filter-panel">
-        {{#each tagOptions}}
-        <label class="feat-filter-option">
-          <input type="checkbox" data-filter-group="tag" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
-          <span class="feat-filter-option__label">{{this.label}}</span>
-        </label>
-        {{/each}}
-      </div>
+      {{#if hasSearchQuery}}
+      <span class="feat-browser-mode-pill feat-browser-mode-pill--search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Search: {{searchQueryLabel}}
+      </span>
+      {{else}}
+      <span class="feat-browser-mode-pill">
+        <i class="fa-solid {{activeCategoryIcon}}"></i>
+        {{activeCategoryLabel}}
+      </span>
       {{/if}}
     </div>
-    {{/if}}
+
+    <div class="feat-browser-toolbar__right">
+      <button class="feat-filter-btn" data-action="reset-feat-browser" type="button" title="Clear feat search and filters">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>Reset</span>
+      </button>
+      {{#unless hasSearchQuery}}
+      <button class="feat-filter-btn feat-category-collapse-toggle" data-action="toggle-feat-category-sidebar" type="button">
+        <i class="fa-solid {{#if categorySidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
+        <span>{{#if categorySidebarCollapsed}}Show Categories{{else}}Collapse Categories{{/if}}</span>
+      </button>
+      {{/unless}}
+    </div>
   </div>
 
-  {{#if hasSearchQuery}}
-  <section class="feat-group feat-search-results-group">
-    <div class="group-header group-header--static feat-search-results-header">
-      <div class="header-content">
-        <i class="fa-solid fa-magnifying-glass group-icon"></i>
-        <h3 class="group-title">Search Results</h3>
-        <span class="feat-search-query-pill">{{searchQueryLabel}}</span>
+  <section class="feat-browser {{#if categorySidebarCollapsed}}feat-browser--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}feat-browser--search-mode{{/if}}">
+    {{#unless hasSearchQuery}}
+    {{#unless categorySidebarCollapsed}}
+    <aside class="feat-category-sidebar" aria-label="Feat categories">
+      <div class="feat-category-sidebar__header">
+        <span>Categories</span>
+        <button class="feat-category-sidebar__collapse" data-action="toggle-feat-category-sidebar" type="button" title="Collapse categories">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+      </div>
+      <div class="feat-category-list">
+        {{#each categoryOptions as |category|}}
+        <button class="feat-category-button {{#if category.isActive}}active{{/if}} {{#if category.isSuggested}}suggested{{/if}}"
+                data-action="select-feat-category"
+                data-category="{{category.key}}"
+                type="button">
+          <span class="feat-category-button__main">
+            <i class="fa-solid {{category.icon}}"></i>
+            <span>{{category.label}}</span>
+          </span>
+          <span class="feat-category-button__count">{{category.totalCount}}</span>
+        </button>
+        {{/each}}
+      </div>
+    </aside>
+    {{/unless}}
+    {{/unless}}
+
+    <main class="feat-results-pane">
+      {{#if hasSearchQuery}}
+      <header class="feat-results-pane__header feat-results-pane__header--search">
+        <div>
+          <h3><i class="fa-solid fa-magnifying-glass"></i> Search Results</h3>
+          <p>Only feats related to your search are shown here.</p>
+        </div>
         <span class="feat-count-badge">{{searchResultCount}}</span>
-      </div>
-    </div>
+      </header>
 
-    {{#if searchResults.length}}
-    <div class="feat-list feat-search-results-list">
-      {{#each searchResults as |feat|}}
-      <div class="feat-item feat-search-result {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
-           style="--feat-tree-indent: {{feat.treeIndent}};"
-           data-feat-id="{{feat.id}}"
-           data-item-id="{{feat.id}}"
-           data-action="focus-item"
-           {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
-        {{#if feat.iconPath}}
-        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
-          <img class="feat-item__icon-image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
-          <div class="feat-item__icon-scan"></div>
-        </div>
-        {{/if}}
-        <div class="feat-item-content">
-          <span class="feat-name">{{feat.name}}</span>
-          <div class="feat-search-result-meta-line">
-            <span class="feat-subcategory-pill">{{feat.searchCategoryLabel}}</span>
-            {{#if feat.subcategory}}<span class="feat-subcategory-pill feat-subcategory-pill--muted">{{feat.subcategory}}</span>{{/if}}
-            {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
+      {{#if searchResults.length}}
+      <div class="feat-compact-list feat-search-results-list">
+        {{#each searchResults as |feat|}}
+        <div class="feat-compact-row {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
+             style="--feat-tree-indent: {{feat.treeIndent}};"
+             data-feat-id="{{feat.id}}"
+             data-item-id="{{feat.id}}"
+             data-action="focus-item"
+             {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
+          <div class="feat-compact-row__content">
+            <div class="feat-compact-row__line feat-compact-row__line--primary">
+              <span class="feat-name">{{feat.name}}</span>
+              {{#if feat.shortSummary}}<span class="feat-quick-summary">{{feat.shortSummary}}</span>{{/if}}
+            </div>
+            <div class="feat-compact-row__line feat-compact-row__line--meta">
+              <span class="feat-subcategory-pill">{{feat.searchCategoryLabel}}</span>
+              {{#if feat.prerequisiteLine}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}</span>{{/if}}
+              {{#if feat.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+              {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
+              {{#unless feat.isAvailable}}<span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>{{/unless}}
+            </div>
           </div>
-          {{#if feat.prerequisiteLine}}
-            <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
-              <i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}
-            </span>
-          {{/if}}
-          {{#if feat.shortSummary}}<span class="feat-search-summary">{{feat.shortSummary}}</span>{{/if}}
+          <div class="feat-compact-row__state">
+            {{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}
+          </div>
         </div>
-        <div class="feat-item-meta">
-          {{#if feat.isSuggested}}
-          <span class="feat-synergy-badge">synergy</span>
-          {{/if}}
-          {{#unless feat.isAvailable}}
-            <span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>
-          {{else}}
-            <span class="feat-search-jump-chip">Open</span>
-            <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
-          {{/unless}}
-        </div>
+        {{/each}}
       </div>
-      {{/each}}
-    </div>
-    {{else}}
-    <div class="feat-search-empty">
-      <i class="fa-solid fa-radar"></i>
-      <span>No feats match “{{searchQueryLabel}}” in the feat catalog.</span>
-      <span class="feat-search-empty__hint">Try a shorter name, prerequisite, or tag.</span>
-    </div>
-    {{/if}}
-  </section>
-  {{/if}}
-
-  {{!-- Granted Starting Feats (Class, Species, Background) --}}
-  {{#if grantedFeatsList}}
-  <section class="feat-group granted-feats-group">
-    <div class="group-header">
-      <div class="header-content">
-        <i class="fa-solid fa-gift group-icon"></i>
-        <h3 class="group-title">Granted Starting Feats</h3>
-        <span class="feat-count-badge">{{grantedFeatsList.length}}</span>
-      </div>
-    </div>
-
-    <div class="feat-list granted-list">
-      {{#each grantedFeatsList}}
-      <div class="feat-item granted-feat {{#if this.isFocused}}focused{{/if}}"
-           style="--feat-tree-indent: {{this.treeIndent}};"
-           data-feat-id="{{this.id}}"
-           data-item-id="{{this.id}}"
-           data-action="focus-item">
-        <div class="feat-item-content">
-          <span class="feat-name">{{this.name}}</span>
-          {{#if this.subcategory}}<span class="feat-subcategory-pill">{{this.subcategory}}</span>{{/if}}
-          {{#if this.missingPrerequisites}}
-            <span class="feat-prereq-line">Prerequisites: {{#each this.missingPrerequisites}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>
-          {{else}}
-            <span class="feat-prereq-line">{{this.prerequisiteLine}}</span>
-          {{/if}}
-        </div>
-        <div class="feat-item-meta">
-          <span class="feat-grant-badge"><i class="fa-solid fa-crown"></i> Class Grant</span>
-        </div>
-      </div>
-      {{/each}}
-    </div>
-  </section>
-  {{/if}}
-
-  {{#if groupedFeats.suggested}}
-  <section class="feat-group suggested-group">
-    <div class="group-header" data-action="toggle-category" data-category="suggested">
-      <div class="header-content">
-        <i class="fa-solid fa-star group-icon"></i>
-        <h3 class="group-title">Suggested for Your Build</h3>
-        <span class="feat-count-badge">{{groupedFeats.suggested.feats.length}}</span>
-      </div>
-      <button class="expand-toggle {{#if groupedFeats.suggested.isExpanded}}expanded{{/if}}">
-        <i class="fa-solid fa-chevron-down"></i>
-      </button>
-    </div>
-
-    {{#if groupedFeats.suggested.isExpanded}}
-    <div class="feat-list suggested-list">
-      {{#each groupedFeats.suggested.feats}}
-      <div class="feat-item suggested-feat {{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}} {{#unless this.isAvailable}}unavailable{{/unless}}"
-           style="--feat-tree-indent: {{this.treeIndent}};"
-           data-feat-id="{{this.id}}"
-           data-item-id="{{this.id}}"
-           data-action="focus-item">
-        {{#if this.iconPath}}
-        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
-          <img class="feat-item__icon-image prog-holo-media__image" src="{{this.iconPath}}" alt="{{this.name}}" title="{{this.name}}">
-          <div class="feat-item__icon-scan"></div>
-        </div>
-        {{/if}}
-        <div class="feat-item-content">
-          <span class="feat-name">{{this.name}}</span>
-          {{#if this.subcategory}}<span class="feat-subcategory-pill">{{this.subcategory}}</span>{{/if}}
-          <span class="feat-prereq-line">{{this.prerequisiteLine}}</span>
-        </div>
-        <div class="feat-item-meta">
-          <span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Suggested</span>
-          <span class="feat-state-indicator">{{#if this.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
-        </div>
-      </div>
-      {{/each}}
-    </div>
-    {{/if}}
-  </section>
-  {{/if}}
-
-  {{#each groupedFeats as |group categoryKey|}}
-  {{#unless (eq categoryKey "suggested")}}
-  <section class="feat-group category-group">
-    <div class="group-header" data-action="toggle-category" data-category="{{categoryKey}}">
-      <div class="header-content">
-        <i class="fa-solid {{group.icon}} group-icon"></i>
-        <h3 class="group-title">{{group.label}}</h3>
-        <span class="feat-count-badge">{{group.totalCount}}</span>
-      </div>
-      <button class="expand-toggle {{#if group.isExpanded}}expanded{{/if}}">
-        <i class="fa-solid fa-chevron-down"></i>
-      </button>
-    </div>
-
-    {{#if group.isExpanded}}
-    <div class="feat-list category-list">
-      {{#each group.feats as |feat idx|}}
-      {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
-      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
-           style="--feat-tree-indent: {{feat.treeIndent}};"
-           data-feat-id="{{feat.id}}"
-           data-item-id="{{feat.id}}"
-           data-action="focus-item"
-           {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
-        {{#if feat.iconPath}}
-        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
-          <img class="feat-item__icon-image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
-          <div class="feat-item__icon-scan"></div>
-        </div>
-        {{/if}}
-        <div class="feat-item-content">
-          <span class="feat-name">{{feat.name}}</span>
-          {{#if feat.subcategory}}<span class="feat-subcategory-pill">{{feat.subcategory}}</span>{{/if}}
-          {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
-          {{!-- PHASE 6 UX: Show prerequisite line more prominently --}}
-          {{#if feat.prerequisiteLine}}
-            <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
-              <i class="fa-solid fa-link-slash"></i> {{feat.prerequisiteLine}}
-            </span>
-          {{/if}}
-          {{!-- Unavailability details are shown in the tooltip and details rail.
-               Keep the row compact so prerequisites are not repeated twice. --}}
-        </div>
-        <div class="feat-item-meta">
-          {{#if feat.isSuggested}}
-          <span class="feat-synergy-badge">synergy</span>
-          {{/if}}
-          {{#unless feat.isAvailable}}
-            <span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>
-          {{else}}
-            <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
-          {{/unless}}
-        </div>
+      {{else}}
+      <div class="feat-search-empty">
+        <i class="fa-solid fa-radar"></i>
+        <span>No feats match “{{searchQueryLabel}}” in the feat catalog.</span>
+        <span class="feat-search-empty__hint">Try a shorter name, prerequisite, or tag.</span>
       </div>
       {{/if}}
-      {{/each}}
+      {{else}}
+      <header class="feat-results-pane__header">
+        <div>
+          <h3><i class="fa-solid {{activeCategoryIcon}}"></i> {{activeCategoryLabel}}</h3>
+          <p>Select a feat to inspect it in the detail rail.</p>
+        </div>
+        <span class="feat-count-badge">{{activeCategoryCount}}</span>
+      </header>
 
-      {{#if group.canExpand}}
-      <div class="feat-show-more">
-        <p class="small-text">{{subtract group.totalCount group.visibleCount}} more {{group.label}} feats...</p>
+      {{#if activeCategoryFeats.length}}
+      <div class="feat-compact-list">
+        {{#each activeCategoryFeats as |feat|}}
+        <div class="feat-compact-row {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}} {{#if feat.isSuggested}}suggested{{/if}}"
+             style="--feat-tree-indent: {{feat.treeIndent}};"
+             data-feat-id="{{feat.id}}"
+             data-item-id="{{feat.id}}"
+             data-action="focus-item"
+             {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
+          <div class="feat-compact-row__content">
+            <div class="feat-compact-row__line feat-compact-row__line--primary">
+              <span class="feat-name">{{feat.name}}</span>
+              {{#if feat.shortSummary}}<span class="feat-quick-summary">{{feat.shortSummary}}</span>{{/if}}
+            </div>
+            <div class="feat-compact-row__line feat-compact-row__line--meta">
+              {{#if feat.prerequisiteLine}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}</span>{{/if}}
+              {{#if feat.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+              {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
+              {{#unless feat.isAvailable}}<span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>{{/unless}}
+            </div>
+          </div>
+          <div class="feat-compact-row__state">
+            {{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="empty-message feat-browser-empty">
+        <i class="fa-solid fa-hexagon-exclamation"></i>
+        <p class="empty-title">No Feats in This View</p>
+        <p class="empty-description">Try another category, clear search, or toggle Show All to inspect locked options.</p>
       </div>
       {{/if}}
-    </div>
-    {{/if}}
+      {{/if}}
+    </main>
   </section>
-  {{/unless}}
-  {{/each}}
 
   {{#unless groupedFeats}}
   <section class="feat-group empty-state">
     <div class="empty-message">
-      {{!-- PHASE 8 UX: Enhanced empty state with helpful guidance --}}
       <i class="fa-solid fa-hexagon-exclamation"></i>
       <p class="empty-title">No {{#if showAll}}more{{else}}Available{{/if}} Feats</p>
-      {{#if showAll}}
-        <p class="empty-description">You've explored all available feats. Every feat either:</p>
-        <ul class="empty-reasons">
-          <li>Has already been selected by you</li>
-          <li>Does not meet your character's prerequisites</li>
-          <li>Is restricted by your class or species</li>
-        </ul>
-        <p class="empty-hint">Try reviewing your earlier choices if you need different options.</p>
-      {{else}}
-        <p class="empty-description">No feats meet your current character prerequisites. Your current build:</p>
-        <ul class="empty-reasons">
-          <li>May not have unlocked certain feats yet</li>
-          <li>May require specific abilities or classes</li>
-          <li>May have restrictions based on species or level</li>
-        </ul>
-        <p class="empty-hint"><strong>Tip:</strong> Enable "Show All" to see what prerequisites are blocking each feat. You can review your earlier choices to unlock more options.</p>
-      {{/if}}
+      <p class="empty-description">No feats meet this slot's current display rules.</p>
+      <p class="empty-hint"><strong>Tip:</strong> Enable "Show All" to inspect blocked feat prerequisites.</p>
     </div>
   </section>
   {{/unless}}
