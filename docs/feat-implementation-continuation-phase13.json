@@ -1,0 +1,147 @@
+{
+  "phase": "phase13-next-feat-implementation-batch",
+  "source": "Current repo snapshot layered through Phase 12; updated feat summaries/descriptions used where available.",
+  "summary": {
+    "changedFeatRows": 32,
+    "engineChanges": [
+      "CombatOptionResolver now supports requiresAreaAttack and attackModifierFormula: heroicLevel/halfLevel.",
+      "CombatOptionResolver now prevents multiple attack ability substitutions from stacking the same base ability delta.",
+      "SkillFeatResolver can match skill bonuses against a feat's selected choice, enabling Force Focus to apply to the selected Force Power only."
+    ]
+  },
+  "changedFeats": [
+    {
+      "name": "Forceful Stun",
+      "status": "forceful_stun_skill_bonus_phase13"
+    },
+    {
+      "name": "Forceful Weapon",
+      "status": "forceful_weapon_skill_bonus_phase13"
+    },
+    {
+      "name": "Forceful Saber Throw",
+      "status": "forceful_saber_throw_skill_bonus_phase13"
+    },
+    {
+      "name": "Force Focus",
+      "status": "force_focus_skill_bonus_phase13"
+    },
+    {
+      "name": "Forceful Strike",
+      "status": "forceful_strike_metadata_phase13"
+    },
+    {
+      "name": "Forceful Telekinesis",
+      "status": "forceful_telekinesis_metadata_phase13"
+    },
+    {
+      "name": "Cunning Attack",
+      "status": "cunningAttack_attack_option_phase13"
+    },
+    {
+      "name": "Prime Shot",
+      "status": "primeShot_attack_option_phase13"
+    },
+    {
+      "name": "Aiming Accuracy",
+      "status": "aimingAccuracy_attack_option_phase13"
+    },
+    {
+      "name": "Improved Stun",
+      "status": "improvedStun_attack_option_phase13"
+    },
+    {
+      "name": "Improved Rapid Strike",
+      "status": "improvedRapidStrike_attack_option_phase13"
+    },
+    {
+      "name": "Targeted Area",
+      "status": "targetedArea_attack_option_phase13"
+    },
+    {
+      "name": "Advantageous Attack",
+      "status": "advantageousAttack_attack_option_phase13"
+    },
+    {
+      "name": "Cornered",
+      "status": "cornered_attack_option_phase13"
+    },
+    {
+      "name": "Angled Throw",
+      "status": "angledThrow_attack_option_phase13"
+    },
+    {
+      "name": "Friendly Fire Avoidance",
+      "status": "friendlyFireAvoidance_attack_option_phase13"
+    },
+    {
+      "name": "Forceful Blast",
+      "status": "forcefulBlast_attack_option_phase13"
+    },
+    {
+      "name": "Noble Fencing Style",
+      "status": "noble_fencing_style_metadata_phase13"
+    },
+    {
+      "name": "Quick Draw",
+      "status": "quick_draw_metadata_phase13"
+    },
+    {
+      "name": "Deft Charge",
+      "status": "deft_charge_metadata_phase13"
+    },
+    {
+      "name": "Bad Feeling",
+      "status": "bad_feeling_metadata_phase13"
+    },
+    {
+      "name": "Force Readiness",
+      "status": "force_readiness_metadata_phase13"
+    },
+    {
+      "name": "Master of Disguise",
+      "status": "master_of_disguise_skill_bonus_phase13"
+    },
+    {
+      "name": "Gearhead",
+      "status": "gearhead_metadata_phase13"
+    },
+    {
+      "name": "Quick Skill",
+      "status": "quick_skill_metadata_phase13"
+    },
+    {
+      "name": "Coordinated Attack",
+      "status": "coordinated_attack_metadata_phase13"
+    },
+    {
+      "name": "Starship Tactics",
+      "status": "starship_tactics_metadata_phase13"
+    },
+    {
+      "name": "Fast Talk",
+      "status": "fast_talk_metadata_phase13"
+    },
+    {
+      "name": "Silver Tongue",
+      "status": "silver_tongue_metadata_phase13"
+    },
+    {
+      "name": "Intimidating Presence",
+      "status": "intimidating_presence_metadata_phase13"
+    },
+    {
+      "name": "Combat Trickery",
+      "status": "combat_trickery_metadata_phase13"
+    },
+    {
+      "name": "Intimidator",
+      "status": "intimidator_metadata_phase13"
+    }
+  ],
+  "runtimeNotes": [
+    "Attack options require the relevant context flags from the preroller/action UI before they apply.",
+    "Metadata-only rider/action rules are explicitly non-static and await consuming UI/action hooks.",
+    "Force Focus requires its selected Force Power to be stored on the feat item for applicationFromSelectedChoice matching."
+  ]
+}

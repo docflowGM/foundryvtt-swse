@@ -232,7 +232,9 @@ export async function rollDamage(actor, weapon, context = {}) {
     if (npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
       const roll = await RollEngine.safeRoll(flatFormula);
       if (roll) {
-        await SWSEChat.postRoll({
+        roll.swseDamageFormula = flatFormula;
+        if (context.suppressChat !== true) {
+          await SWSEChat.postRoll({
           roll,
           actor,
           flavor: `${actor.name} — ${weapon.name} Damage`,
@@ -292,6 +294,9 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
+  if (roll) {
+    roll.swseDamageFormula = formula;
+  }
 
   // Build flavor text with breakdown
   let flavor = `${weapon.name} Damage`;
@@ -313,19 +318,21 @@ export async function rollDamage(actor, weapon, context = {}) {
     ui.notifications.info(notification);
   }
 
-  await SWSEChat.postRoll({
-    roll,
-    actor,
-    flavor,
-    context: {
-      type: 'damage',
-      weaponId: weapon.id,
-      weapon,
-      isCritical: context.isCritical === true,
-      critMultiplier,
-      damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? ''
-    }
-  });
+  if (context.suppressChat !== true) {
+    await SWSEChat.postRoll({
+      roll,
+      actor,
+      flavor,
+      context: {
+        type: 'damage',
+        weaponId: weapon.id,
+        weapon,
+        isCritical: context.isCritical === true,
+        critMultiplier,
+        damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? ''
+      }
+    });
+  }
 
   return roll;
 }

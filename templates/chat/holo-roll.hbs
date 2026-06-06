@@ -146,6 +146,27 @@
     </div>
   {{/if}}
 
+  {{#if attackDamage}}
+    <div class="swse-attack-damage-result">
+      <div class="swse-attack-damage-line">
+        <span class="k">{{attackDamage.label}}</span>
+        <span class="v">{{attackDamage.total}}</span>
+        {{#if attackDamage.damageType}}<span class="dmg-type">{{attackDamage.damageType}}</span>{{/if}}
+      </div>
+      {{#if attackDamage.formula}}<div class="formula">{{attackDamage.formula}}</div>{{/if}}
+      <div class="actions swse-damage-actions">
+        <button type="button"
+                class="btn swse-apply-damage-btn"
+                data-attacker="{{attackDamage.actorId}}"
+                data-target="{{attackDamage.targetId}}"
+                data-weapon="{{attackDamage.weaponId}}"
+                data-amount="{{attackDamage.total}}">
+          <span class="i">▸</span>Apply Damage
+        </button>
+      </div>
+    </div>
+  {{/if}}
+
   {{#if damageAction}}
     <div class="actions swse-damage-actions">
       <button type="button"

@@ -1,0 +1,138 @@
+{
+  "phase": "phase14-next-feat-implementation-batch",
+  "scope": "Continue implementing feats from updated descriptions using existing engines and safe metadata.",
+  "source_repo": "foundryvtt-swse-main (22).zip with phases 1-13 changed-file patches overlaid before this pass",
+  "summary": {
+    "featRowsTouched": 50,
+    "forceAndUseTheForceSkillBonuses": 5,
+    "attackRerollRules": 2,
+    "attackOptionOrWeaponFamilyRules": 8,
+    "conditionTrackAndDamageRules": 9,
+    "temporaryForcePointOrForceTrainingMetadata": 4,
+    "proficiencyGrantMetadata": 4,
+    "multiattackMetadataHooks": 4,
+    "actionReactionOrUtilityHooks": 14,
+    "engineFilesUpdated": 3
+  },
+  "implemented_engine_support": [
+    {
+      "file": "scripts/engine/combat/combat-option-resolver.js",
+      "changes": [
+        "Attack options can now require Aim or Charge context instead of only warning about it.",
+        "Attack options can now require weapon text, damage type, excluded damage type, and target type.",
+        "This allows feats such as Droid Hunter, Sport Hunter, Riflemaster, Disabler, Anointed Hunter, and Mandalorian Training to be represented without fake static bonuses."
+      ]
+    },
+    {
+      "file": "scripts/engine/feats/meta-resource-feat-resolver.js",
+      "changes": [
+        "Attack reroll options can now be filtered by attack type, vehicle weapon status, weapon text, and damage type.",
+        "Gunnery Specialist can now expose only for Vehicle Weapon attacks instead of every attack."
+      ]
+    },
+    {
+      "file": "scripts/combat/rolls/attacks.js",
+      "changes": [
+        "Attack reroll options are now built after hit/miss resolution so missed-attack triggers such as Desperate Gambit can be filtered correctly.",
+        "Reroll context now carries the original attack options, target, and isHit state."
+      ]
+    }
+  ],
+  "feat_groups": {
+    "force_skill_bonuses": [
+      "Forceful Grip",
+      "Forceful Slam",
+      "Keen Force Mind",
+      "Forceful Strike",
+      "Forceful Telekinesis"
+    ],
+    "attack_rerolls": [
+      "Gunnery Specialist",
+      "Instinctive Attack"
+    ],
+    "skill_reroll_or_skill_context": [
+      "Intuitive Initiative",
+      "Instinctive Perception",
+      "Risk Taker",
+      "Elder's Knowledge"
+    ],
+    "weapon_family_or_attack_options": [
+      "Anointed Hunter",
+      "Mandalorian Training",
+      "Droid Hunter",
+      "Sport Hunter",
+      "Riflemaster",
+      "Disabler"
+    ],
+    "condition_track_and_damage": [
+      "Galactic Alliance Military Training",
+      "Ion Shielding",
+      "Shake It Off",
+      "Sadistic Strike",
+      "Rancor Crush",
+      "Bone Crusher",
+      "Frightening Presence",
+      "Quick Comeback"
+    ],
+    "force_point_or_force_training_metadata": [
+      "Jedi Heritage",
+      "Jedi Familiarity",
+      "Spacer's Surge",
+      "Instinctive Perception"
+    ],
+    "defensive_or_resistance_metadata": [
+      "Binary Mind",
+      "Poison Resistance",
+      "Tumble Defense"
+    ],
+    "active_action_or_reaction_hooks": [
+      "Frightful Presence",
+      "Lightning Draw",
+      "Close Combat Escape",
+      "Dive for Cover",
+      "Advantageous Cover",
+      "Republic Military Training",
+      "Hold Together",
+      "Rapid Assault",
+      "Never Surrender",
+      "Fatal Hit"
+    ],
+    "proficiency_grants": [
+      "Armor Proficiency (light)",
+      "Armor Proficiency (medium)",
+      "Armor Proficiency (heavy)",
+      "Exotic Weapon Proficiency"
+    ],
+    "multiattack_hooks": [
+      "Two-Weapon Fighting",
+      "Dual Weapon Mastery I",
+      "Dual Weapon Mastery II",
+      "Dual Weapon Mastery III"
+    ]
+  },
+  "high_confidence_executable_changes": [
+    "Forceful Grip and Forceful Slam now expose +2 Use the Force bonuses only for matching Force Power activation contexts.",
+    "Keen Force Mind now exposes +2 Use the Force only for mind-affecting Force Power contexts.",
+    "Gunnery Specialist now exposes a once-per-encounter Vehicle Weapon attack reroll that keeps the second result.",
+    "Instinctive Attack now exposes a Force Point attack reroll that keeps the better result.",
+    "Galactic Alliance Military Training, Ion Shielding, Shake It Off, and Sadistic Strike now use resourceRules/conditionTrack rules already read by existing resolver/listener code.",
+    "Droid Hunter can now apply damage bonuses through roll context when the target is a droid and when ion damage is identified.",
+    "Sport Hunter, Riflemaster, and Disabler now expose weapon-family damage-die/property metadata instead of manual placeholders.",
+    "Attack reroll filtering now has hit/miss context available."
+  ],
+  "metadata_only_or_future_hook_changes": [
+    "Rancor Crush, Bone Crusher, Frightening Presence, Quick Comeback, Forceful Strike, Forceful Telekinesis, Jedi Heritage, Jedi Familiarity, Spacer's Surge, Binary Mind, Poison Resistance, Tumble Defense, and several action/reaction feats now have explicit metadata but still need their consuming UI/event hooks before they are fully automatic.",
+    "Armor/Exotic proficiency metadata is now explicit, but equipment proficiency enforcement still depends on the equipment/attack preparation path consuming proficiencyGrants.",
+    "Two-weapon and Dual Weapon Mastery metadata is explicit, but full multiattack UI needs to consume multiAttackRules."
+  ],
+  "validation": {
+    "nodeCheck": [
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/engine/feats/meta-resource-feat-resolver.js",
+      "scripts/combat/rolls/attacks.js"
+    ],
+    "jsonlPackParse": "packs/feats.db parsed as valid JSONL with 419 rows",
+    "docsParse": "docs/feat-implementation-continuation-phase14.json parsed as valid JSON"
+  },
+  "runtimeTesting": "Not runtime-tested in Foundry."
+}

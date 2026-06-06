@@ -273,11 +273,6 @@ export async function rollAttack(actor, weapon, options = {}) {
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
 
-  const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
-    formula: rollFormula,
-    weaponId: weapon.id
-  });
-
   const targetContextOptions = optionModifiers.targetDefenseType && !options.targetContext
     ? { ...options, targetContext: { defenseType: optionModifiers.targetDefenseType } }
     : options;
@@ -289,6 +284,13 @@ export async function rollAttack(actor, weapon, options = {}) {
   const criticalThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
   const isCritical = Number(d20) === 20 || (Number.isFinite(criticalThreshold) && criticalThreshold < 20 && Number(d20) >= criticalThreshold && isHit !== false);
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
+  const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
+    ...options,
+    formula: rollFormula,
+    weaponId: weapon.id,
+    isHit,
+    target
+  });
 
   await SWSEChat.postRoll({
     roll,
@@ -431,11 +433,6 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const atkTotal = attackRoll?.total;
   const dmgTotal = damageRoll?.total;
 
-  const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
-    formula: rollFormula,
-    weaponId: weapon.id
-  });
-
   // Post attack roll card
   const target = getTargetActorFromOptions(options);
   const targetReflex = getTargetReflex(target);
@@ -443,6 +440,13 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const attackD20 = attackRoll?.dice?.[0]?.results?.[0]?.result ?? null;
   const isCritical = Number(attackD20) === 20;
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, attackRoll.total);
+  const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
+    ...options,
+    formula: rollFormula,
+    weaponId: weapon.id,
+    isHit,
+    target
+  });
 
   await SWSEChat.postRoll({
     roll: attackRoll,

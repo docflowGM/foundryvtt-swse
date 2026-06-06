@@ -147,6 +147,23 @@ function swseChatBuildEventContext(context = {}, category = 'roll', reactionCont
   };
 }
 
+
+function swseChatBuildAttackDamage(context = {}) {
+  const damage = context.attackDamage ?? null;
+  if (!damage || !Number.isFinite(Number(damage.total))) return null;
+  return {
+    total: Number(damage.total),
+    formula: String(damage.formula ?? '').trim(),
+    damageType: String(damage.damageType ?? '').trim(),
+    actorId: String(damage.actorId ?? context.actorId ?? context.attackerId ?? '').trim(),
+    targetId: String(damage.targetId ?? context.targetId ?? '').trim(),
+    weaponId: String(damage.weaponId ?? context.weaponId ?? context.itemId ?? '').trim(),
+    isCritical: damage.isCritical === true,
+    critMultiplier: Number(damage.critMultiplier ?? context.critMultiplier ?? 2) || 2,
+    label: String(damage.label ?? 'Damage').trim() || 'Damage'
+  };
+}
+
 function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = false, actor = null) {
   if (context.showDamageAction === false) return null;
   const weaponId = context.weaponId ?? context.itemId ?? weapon?.id ?? '';
@@ -223,7 +240,8 @@ export class SWSERollEngine {
     const forceTierGauge = category === 'force' ? swseChatBuildForceTierGauge(roll.total, safeContext) : [];
     const reactionContext = swseChatBuildReactionContext(actor, safeContext);
     const eventContext = swseChatBuildEventContext(safeContext, category, reactionContext);
-    const damageAction = category === 'attack' ? swseChatBuildDamageAction(safeContext, weapon, isCritical, actor) : null;
+    const attackDamage = category === 'attack' ? swseChatBuildAttackDamage(safeContext) : null;
+    const damageAction = category === 'attack' && !attackDamage ? swseChatBuildDamageAction(safeContext, weapon, isCritical, actor) : null;
 
     return {
       chatSvg: buildChatSvgContext(),
@@ -269,6 +287,7 @@ export class SWSERollEngine {
       forceTierGauge,
       reactionContext,
       eventContext,
+      attackDamage,
       damageAction
     };
   }

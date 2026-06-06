@@ -9,6 +9,7 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
@@ -86,7 +87,6 @@ import { mutateAndRepaint, mutateShellOnly } from "/systems/foundryvtt-swse/scri
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 // Phase 8: Contract observability and runtime verification
@@ -2545,13 +2545,11 @@ export class SWSEV2CharacterSheet extends
       const focusedBonus = skillData.focused ? 5 : 0;
       const trainedBonus = skillData.trained ? 5 : 0;
       const fallbackTotal = abilityMod + halfLevel + safeMiscMod + trainedBonus + focusedBonus;
-      const safeTotal = key === 'useTheForce'
-        ? fallbackTotal
-        : Number.isFinite(Number(derivedData.total))
-          ? Number(derivedData.total)
-          : Number.isFinite(Number(skillData.total))
-            ? Number(skillData.total)
-            : fallbackTotal;
+      const safeTotal = Number.isFinite(Number(derivedData.total))
+        ? Number(derivedData.total)
+        : Number.isFinite(Number(skillData.total))
+          ? Number(skillData.total)
+          : fallbackTotal;
 
       return {
         key,
@@ -5960,18 +5958,14 @@ const forcePoints = [];
         buttons: {
           legal: {
             icon: '<i class="fa-solid fa-book-open"></i>',
-            label: `Choose Legal ${label}`,
+            label: `Pick from Compendium`,
             callback: async () => {
               try {
                 await this.setSurface('progression', {
-                  source: 'sheet-direct-add',
+                  source: 'sheet',
                   stepId,
                   currentStep: stepId,
-                  targetStep: stepId,
-                  mode: 'freeAdd',
-                  singleStep: true,
-                  singleStepDomain: itemType === 'feat' ? 'feats' : 'talents',
-                  returnSurface: 'sheet'
+                  mode: 'freeAdd'
                 });
                 await this.requestSurfaceRender({ reason: `${itemType}-step-launch`, surfaceId: 'progression' });
               } catch (err) {
@@ -6993,6 +6987,7 @@ const forcePoints = [];
     const isAttackAction = actionData?.isAttack === true
       || actionData?.domain === 'attack'
       || String(actionData?.category ?? '').toLowerCase() === 'attack'
+      || this._combatActionLooksLikeAttack(actionData)
       || Boolean(weaponId);
 
     if (isAttackAction) {
@@ -7037,6 +7032,47 @@ const forcePoints = [];
       });
     }
 
+    // --- Skill-backed combat action routing via Roll Configurator V2 ---
+    // Core combat-action rows are often reference data, not actor item actions.
+    // If the row names a related skill, open the same preroller used by the rest
+    // of the sheet and roll that skill after the player confirms.
+    const skillKey = this._resolveCombatActionSkillKey(actionData);
+    if (skillKey) {
+      const modResult = await showRollModifiersDialog({
+        title: `${actionData?.name ?? actionId} — ${this._labelSkillKey(skillKey)}`,
+        rollType: skillKey === 'useTheForce' ? 'force' : 'skill',
+        actor: this.actor,
+        skillKey,
+        sourceElement: options?.sourceElement ?? null,
+        sheet: this,
+        showCover: false,
+        showConcealment: false
+      });
+      if (modResult === null) return null;
+
+      const actionType = this._deriveCombatActionEconomyType(actionData);
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "combat-action",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        skillKey
+      });
+      if (!allowed) return null;
+
+      const dc = this._extractCombatActionDc(actionData);
+      return await rollSkillCheck(this.actor, skillKey, {
+        ...modResult,
+        dc,
+        actionId,
+        actionData,
+        source: options?.source ?? "combat-action",
+        sourceElement: options?.sourceElement ?? null,
+        companionSource: options?.sourceElement ?? null,
+        sheet: this,
+        showRollCompanion: true
+      });
+    }
+
     // --- Standard (non-attack) path ---
     const actionType = this._deriveCombatActionEconomyType(actionData);
     const allowed = await this._applyActionEconomy(actionType, {
@@ -7075,6 +7111,145 @@ const forcePoints = [];
 
     ui?.notifications?.warn?.("Combat action could not be executed.");
     return null;
+  }
+
+  _combatActionLooksLikeAttack(actionData = {}) {
+    const values = [];
+    const pushValue = (value) => {
+      if (value === null || value === undefined) return;
+      if (Array.isArray(value)) {
+        value.forEach(pushValue);
+        return;
+      }
+      if (typeof value === 'object') {
+        pushValue(value.skill ?? value.key ?? value.id ?? value.name ?? value.label ?? value.value);
+        return;
+      }
+      values.push(String(value));
+    };
+    pushValue(actionData?.name);
+    pushValue(actionData?.category);
+    pushValue(actionData?.domain);
+    pushValue(actionData?.relatedSkill);
+    pushValue(actionData?.relatedSkills);
+    const text = values.join(' ').toLowerCase();
+    return /\battack( roll)?\b/.test(text) || /\bautofire\b/.test(text) || /\bburst fire\b/.test(text);
+  }
+
+  _resolveCombatActionSkillKey(actionData = {}) {
+    const values = [];
+    const pushValue = (value) => {
+      if (value === null || value === undefined) return;
+      if (Array.isArray(value)) {
+        value.forEach(pushValue);
+        return;
+      }
+      if (typeof value === 'object') {
+        pushValue(value.skill ?? value.key ?? value.id ?? value.name ?? value.label ?? value.value);
+        return;
+      }
+      values.push(String(value));
+    };
+
+    pushValue(actionData?.skillKey);
+    pushValue(actionData?.skill);
+    pushValue(actionData?.relatedSkill);
+    pushValue(actionData?.relatedSkills);
+
+    // Combat action data often says "Attack Roll". That should stay in the
+    // attack preroller path and not be treated as a skill check.
+    const combined = values.join(' ').toLowerCase();
+    if (combined.includes('attack') || combined.includes('grapple')) return null;
+
+    for (const value of values) {
+      const key = this._normalizeCombatActionSkillKey(value);
+      if (key) return key;
+    }
+    return null;
+  }
+
+  _normalizeCombatActionSkillKey(value) {
+    const raw = String(value ?? '').trim();
+    if (!raw) return null;
+
+    const byPackId = {
+      '2b9e43f710664b31': 'useTheForce',
+      '34a9c3f170eb9f40': 'climb',
+      '35df8faa4878f2c5': 'endurance',
+      '426945d1fc765a5d': 'survival',
+      '43c5941072ec78af': 'perception',
+      '633a13c5fa6101d7': 'treatInjury',
+      '6d2ac22d9fcf402f': 'stealth',
+      '745a5686d6f21e8c': 'mechanics',
+      '8f5e21f92d6d976b': 'useComputer',
+      '9410ce2dfb6cefcb': 'deception',
+      '97f68d85ad68b921': 'jump',
+      'a3855d8f08016487': 'knowledge',
+      'a6c5e98148aad9a9': 'acrobatics',
+      'b554f3e5a55ad53f': 'persuasion',
+      'b8dad0c963f046c6': 'pilot',
+      'c9bf381579013b18': 'gatherInformation',
+      'cb5493f65f0bdb62': 'initiative',
+      'd0b0f5e45327b476': 'ride',
+      'f77c3576d22552fe': 'swim'
+    };
+    if (byPackId[raw]) return byPackId[raw];
+
+    const compact = raw
+      .toLowerCase()
+      .replace(/\([^)]*\)/g, ' ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+
+    const aliases = [
+      ['use the force', 'useTheForce'],
+      ['use computer', 'useComputer'],
+      ['treat injury', 'treatInjury'],
+      ['gather information', 'gatherInformation'],
+      ['sleight of hand', 'stealth'],
+      ['stealth', 'stealth'],
+      ['acrobatics', 'acrobatics'],
+      ['deception', 'deception'],
+      ['endurance', 'endurance'],
+      ['initiative', 'initiative'],
+      ['jump', 'jump'],
+      ['knowledge', 'knowledge'],
+      ['mechanics', 'mechanics'],
+      ['perception', 'perception'],
+      ['persuasion', 'persuasion'],
+      ['pilot', 'pilot'],
+      ['ride', 'ride'],
+      ['survival', 'survival'],
+      ['swim', 'swim'],
+      ['climb', 'climb']
+    ];
+
+    for (const [needle, key] of aliases) {
+      if (compact.includes(needle)) return key;
+    }
+    return null;
+  }
+
+  _extractCombatActionDc(actionData = {}) {
+    const dc = actionData?.dc ?? actionData?.DC ?? actionData?.system?.dc ?? null;
+    if (typeof dc === 'number' && Number.isFinite(dc)) return dc;
+    if (typeof dc === 'object' && dc) {
+      const value = dc.value ?? dc.target ?? null;
+      if (Number.isFinite(Number(value))) return Number(value);
+      return null;
+    }
+    const match = String(dc ?? '').match(/-?\d+/);
+    return match ? Number(match[0]) : null;
+  }
+
+  _labelSkillKey(skillKey) {
+    const skills = CONFIG?.SWSE?.skills ?? {};
+    const label = skills?.[skillKey]?.label ?? skills?.[skillKey]?.name;
+    if (label) return label;
+    return String(skillKey || 'Skill')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/[\-_]+/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
   }
 
   async _resolveActionEconomyModules() {

@@ -1,0 +1,137 @@
+{
+  "phase": "15",
+  "title": "Feat implementation continuation - manual-safe teamwork and remaining skill/resource metadata batch",
+  "summary": {
+    "featRowsTouched": 24,
+    "teamworkSkillFeatsImproved": 13,
+    "teamworkFeatsWithManualNearbyAllyClauses": 13,
+    "nonTeamFeatRowsImproved": 11,
+    "engineFilesUpdated": [
+      "scripts/engine/skills/skill-feat-resolver.js"
+    ],
+    "packFilesUpdated": [
+      "packs/feats.db"
+    ]
+  },
+  "manualAutomationPolicy": {
+    "policy": "Do not pretend the system knows battlefield positioning, nearby allies, formations, or whether allies share a teamwork feat unless a specific future UI/runtime context explicitly supplies that information.",
+    "implementedAutomatically": [
+      "Clear always-on base skill bonuses such as the +3 competence bonus on team-feat skill checks.",
+      "Skill/Force/resource metadata where the triggering context is already represented by existing roll or skill-use systems."
+    ],
+    "leftManual": [
+      "Nearby-ally scaling such as +1 per ally within 12 squares.",
+      "Aid Another overrides that require knowing a specific assisting ally has the feat.",
+      "Mount/vehicle/bodyguard/team formation reactions that need map state, target identity, or GM adjudication."
+    ]
+  },
+  "changedFeats": [
+    {
+      "name": "Wary Sentries",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Mounted Regiment",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Ascension Specialists",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Technical Experts",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Medical Team",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Aquatic Specialists",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Unhindered Approach",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Nimble Team",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Covert Operatives",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Slicer Team",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Unified Squadron",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Tireless Squad",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Wilderness Specialists",
+      "change": "Base +3 competence skill bonus is implemented; nearby-ally scaling, Aid Another overrides, and battlefield/teamwork clauses are preserved as manual player/GM resolution metadata instead of automated positioning logic."
+    },
+    {
+      "name": "Confident Success",
+      "change": "Converted manual placeholder into skill-success Force Point resource metadata."
+    },
+    {
+      "name": "Logic Upgrade: Self-Defense",
+      "change": "Converted manual placeholder into active temporary defense-choice metadata; final defense choice remains player/GM controlled."
+    },
+    {
+      "name": "Perfect Intuition",
+      "change": "Standardized species reroll-improvement metadata and retained compatible skill reroll option."
+    },
+    {
+      "name": "Perfect Swimmer",
+      "change": "Standardized species reroll-improvement metadata and retained compatible skill reroll option."
+    },
+    {
+      "name": "Combat Reflexes",
+      "change": "Converted manual placeholder into reaction/Attack of Opportunity capability metadata; actual opportunity triggers remain table/runtime controlled."
+    },
+    {
+      "name": "Flawless Pilot",
+      "change": "Standardized species reroll-improvement metadata and retained compatible skill reroll option."
+    },
+    {
+      "name": "Pall of the Dark Side",
+      "change": "Hardened Use the Force bonus to enforce minimum +1 and Sense Force/resist-detection context."
+    },
+    {
+      "name": "Informer",
+      "change": "Expanded existing Perception-for-Gather-Information substitution with considered-trained, time-reduction, and reroll-substitution metadata."
+    },
+    {
+      "name": "Metamorph",
+      "change": "Converted manual placeholder into active shapeshift/size-choice metadata."
+    },
+    {
+      "name": "Read the Winds",
+      "change": "Converted manual placeholder into Perception context metadata for ignoring concealment/cover penalties when appropriate."
+    },
+    {
+      "name": "Forest Stalker",
+      "change": "Standardized species reroll-improvement metadata and retained compatible skill reroll option."
+    }
+  ],
+  "engineChanges": [
+    {
+      "file": "scripts/engine/skills/skill-feat-resolver.js",
+      "change": "Skill bonus formula resolution now clamps formula-based values with min/max support. Removed the attempted nearby-ally scaling automation from this phase; team feat scaling is intentionally manual/table-managed."
+    }
+  ],
+  "notes": [
+    "This phase was adjusted after user guidance: feats that require nearby allies, positioning, formation state, or other heavy battlefield automation should be treated as flavor/manual metadata unless the current engine can resolve them honestly.",
+    "Team feats now implement their clear base +3 competence skill bonus but do not automatically count nearby allies. Their descriptions and teamworkRules preserve the extra clauses for player/GM resolution.",
+    "No runtime Foundry test was run in this environment. JSON and JS syntax validation were run after patching."
+  ]
+}

@@ -32,6 +32,60 @@ function buildRollJson(roll) {
   catch (_err) { return null; }
 }
 
+function normalizeToken(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function getWeaponText(weapon = null) {
+  const system = weapon?.system ?? {};
+  const fields = [
+    weapon?.name,
+    system.weaponType,
+    system.weaponGroup,
+    system.group,
+    system.category,
+    system.subtype,
+    system.type,
+    system.damageType,
+    system.damage?.type,
+    system.traits,
+    system.properties
+  ];
+  const flat = [];
+  for (const field of fields) {
+    if (Array.isArray(field)) flat.push(...field);
+    else if (field && typeof field === 'object') flat.push(...Object.values(field));
+    else if (field !== undefined && field !== null) flat.push(field);
+  }
+  return flat.map(normalizeToken).filter(Boolean).join(' ');
+}
+
+function getAttackType(weapon = null, context = {}) {
+  const explicit = normalizeToken(context.attackType ?? context.rangeType ?? context.weaponType ?? '');
+  if (explicit.includes('ranged')) return 'ranged';
+  if (explicit.includes('melee')) return 'melee';
+  const text = getWeaponText(weapon);
+  if (text.includes('ranged') || text.includes('pistol') || text.includes('rifle') || text.includes('blaster') || text.includes('bowcaster') || text.includes('grenade')) return 'ranged';
+  if (text.includes('melee') || text.includes('lightsaber') || text.includes('unarmed') || text.includes('blade')) return 'melee';
+  return 'unknown';
+}
+
+function textIncludesAny(text, values = []) {
+  const wanted = (Array.isArray(values) ? values : [values]).map(normalizeToken).filter(Boolean);
+  if (!wanted.length) return false;
+  return wanted.some(value => text.includes(value));
+}
+
+function attackRerollRuleMatches(rule = {}, weapon = null, context = {}) {
+  if (rule.requiresAttackType && getAttackType(weapon, context) !== String(rule.requiresAttackType).toLowerCase()) return false;
+  const text = getWeaponText(weapon);
+  if (rule.requiresVehicleWeapon && !text.includes('vehicle')) return false;
+  if (rule.requiresWeaponText && !textIncludesAny(text, rule.requiresWeaponText)) return false;
+  if (rule.requiresDamageType && !textIncludesAny(text, rule.requiresDamageType)) return false;
+  if (rule.excludesDamageType && textIncludesAny(text, rule.excludesDamageType)) return false;
+  return true;
+}
+
 function getForcePowerItems(actor) {
   try {
     return Array.from(actor?.items ?? []).filter(item => item?.type === 'force-power');
@@ -361,6 +415,8 @@ export class MetaResourceFeatResolver {
 
     return rules
       .filter(rule => {
+        if (!attackRerollRuleMatches(rule.rule ?? {}, weapon, context)) return false;
+
         // Filter based on trigger requirement
         const trigger = rule.rule?.trigger;
         if (trigger === 'missedAttack' && isHit !== false) {

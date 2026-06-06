@@ -219,7 +219,7 @@ export class SkillFeatResolver {
 
       for (const rule of rules) {
         if (!this._ruleMatchesSkill(rule, normalizedSkill)) continue;
-        if (!this._ruleMatchesContext(rule, context)) continue;
+        if (!this._ruleMatchesContext(rule, context, item)) continue;
 
         const value = this._resolveRuleValue(actor, rule);
         if (!Number.isFinite(value) || value === 0) continue;
@@ -252,7 +252,7 @@ export class SkillFeatResolver {
 
       for (const rule of rules) {
         if (!this._ruleMatchesSkill(rule, normalizedSkill)) continue;
-        if (!this._ruleMatchesContext(rule, context)) continue;
+        if (!this._ruleMatchesContext(rule, context, item)) continue;
 
         options.push({
           id: rule.id ?? `${item.id}-${options.length}`,
@@ -280,7 +280,7 @@ export class SkillFeatResolver {
 
       for (const rule of rules) {
         if (rule.fromSkill && normalizedCurrent && !this._skillMatchesAny(normalizedCurrent, [rule.fromSkill])) continue;
-        if (!this._ruleMatchesContext(rule, { ...context, skillUse })) continue;
+        if (!this._ruleMatchesContext(rule, { ...context, skillUse }, item)) continue;
 
         const toSkill = this.normalizeSkillKey(rule.toSkill);
         if (!toSkill) continue;
@@ -428,7 +428,7 @@ export class SkillFeatResolver {
     return false;
   }
 
-  static _ruleMatchesContext(rule, context = {}) {
+  static _ruleMatchesContext(rule, context = {}, sourceItem = null) {
     const skillUse = context?.skillUse ?? context?.use ?? null;
     const identity = this.getSkillUseIdentity(skillUse ?? {});
 
@@ -444,6 +444,32 @@ export class SkillFeatResolver {
           || identity.compactLabels.some(label => label.includes(compact));
       });
       if (!matched) return false;
+    }
+
+    if (rule.applicationFromSelectedChoice === true) {
+      const selected = [];
+      const visit = (value) => {
+        if (!value) return;
+        if (Array.isArray(value)) return value.forEach(visit);
+        if (typeof value === 'object') {
+          for (const key of ['value', 'id', 'label', 'name', 'choice', 'selected', 'power', 'forcePower']) visit(value[key]);
+          if (Array.isArray(value.targets)) visit(value.targets);
+          return;
+        }
+        const text = String(value).trim();
+        if (text) selected.push(text);
+      };
+      visit(context?.selectedChoice);
+      visit(context?.selectedChoices);
+      visit(sourceItem?.system?.selectedChoice);
+      visit(sourceItem?.system?.selectedChoices);
+      visit(sourceItem?.system?.choiceMeta?.selectedChoice);
+      const selectedNormalized = [...new Set(selected)].map(normalizeText).filter(Boolean);
+      const selectedCompact = [...new Set(selected)].map(compactKey).filter(Boolean);
+      if (!selectedNormalized.length && !selectedCompact.length) return false;
+      const matchedSelected = selectedNormalized.some(fragment => identity.normalizedLabels.some(label => fragment && label.includes(fragment)))
+        || selectedCompact.some(fragment => identity.compactLabels.some(label => fragment && label.includes(fragment)));
+      if (!matchedSelected) return false;
     }
 
     const useKeys = Array.isArray(rule.useKeys) ? rule.useKeys : [];
@@ -468,6 +494,15 @@ export class SkillFeatResolver {
   static _resolveRuleValue(actor, rule = {}) {
     if (Number.isFinite(Number(rule.value))) return Number(rule.value);
 
+    const clamp = (value) => {
+      const minimum = Number(rule.minimum ?? rule.min ?? Number.NEGATIVE_INFINITY);
+      const maximum = Number(rule.maximum ?? rule.maxValue ?? rule.max ?? Number.POSITIVE_INFINITY);
+      let result = Number(value) || 0;
+      if (Number.isFinite(minimum)) result = Math.max(minimum, result);
+      if (Number.isFinite(maximum)) result = Math.min(maximum, result);
+      return result;
+    };
+
     switch (rule.valueFormula) {
       case 'halfDarkSideScore': {
         const dsp = Number(
@@ -476,7 +511,7 @@ export class SkillFeatResolver {
           ?? actor?.system?.details?.darkSideScore
           ?? 0
         );
-        return Math.floor(Math.max(0, dsp) / 2);
+        return clamp(Math.floor(Math.max(0, dsp) / 2));
       }
       case 'abilityModifier': {
         const ability = String(rule.ability ?? '').toLowerCase();
@@ -485,7 +520,7 @@ export class SkillFeatResolver {
           ?? getPropertySafe(actor, `system.attributes.${ability}.mod`, null)
           ?? getPropertySafe(actor, `system.derived.attributes.${ability}.mod`, null)
           ?? 0;
-        return Number(value) || 0;
+        return clamp(Number(value) || 0);
       }
       default:
         return 0;

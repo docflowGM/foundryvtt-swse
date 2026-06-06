@@ -287,6 +287,43 @@ function weaponText(weapon) {
   return fields.map(value => normalizeKey(value)).filter(Boolean).join(" ");
 }
 
+function weaponDamageText(weapon) {
+  const system = weapon?.system ?? {};
+  const fields = [
+    system.damageType,
+    system.damage?.type,
+    system.damageTypes,
+    system.traits,
+    system.properties,
+    weapon?.name
+  ];
+  const flat = [];
+  for (const field of fields) {
+    if (Array.isArray(field)) flat.push(...field);
+    else if (field && typeof field === "object") flat.push(...Object.values(field));
+    else if (field !== undefined && field !== null) flat.push(field);
+  }
+  return flat.map(value => normalizeKey(value)).filter(Boolean).join(" ");
+}
+
+function targetText(context = {}) {
+  const target = context?.target ?? context?.targetActor ?? null;
+  const system = target?.system ?? {};
+  const fields = [
+    target?.type,
+    target?.name,
+    system.species,
+    system.species?.name,
+    system.species?.value,
+    system.details?.species,
+    system.details?.creatureType,
+    system.actorType,
+    system.vehicleType,
+    ...(Array.isArray(system.traits) ? system.traits : [])
+  ];
+  return fields.map(value => normalizeKey(value)).filter(Boolean).join(" ");
+}
+
 function weaponMatchesGroup(weapon, groups = [], context = {}) {
   const wanted = (Array.isArray(groups) ? groups : [groups]).map(normalizeKey).filter(Boolean);
   if (!wanted.length) return false;
@@ -302,6 +339,13 @@ function weaponMatchesGroup(weapon, groups = [], context = {}) {
     if (group.includes("unarmed") && isUnarmedWeapon(weapon, context)) return true;
     return false;
   });
+}
+
+function textMatchesAny(haystack, values = []) {
+  const wanted = (Array.isArray(values) ? values : [values]).map(normalizeKey).filter(Boolean);
+  if (!wanted.length) return false;
+  const text = String(haystack || "");
+  return wanted.some(value => text.includes(value));
 }
 
 function isUnarmedWeapon(weapon, context = {}) {
@@ -455,8 +499,17 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
           const toMod = actorAbilityMod(actor, to);
           const value = rule.useBetter === false ? (toMod - fromMod) : Math.max(0, toMod - fromMod);
           if (!value) continue;
-          result.attackAbilityBonus += value;
-          result.breakdown.push({ label: item.name, value, type: "attackAbilitySubstitution" });
+          // Multiple ability-substitution feats can apply to the same weapon family
+          // (for example Weapon Finesse and Noble Fencing Style). Only the best
+          // substitution should change the base attack ability; stacking each
+          // delta would double-count the original Strength modifier.
+          const previous = Number(result.flags._attackAbilitySubstitutionValue || 0);
+          if (value <= previous) continue;
+          const delta = value - previous;
+          result.attackAbilityBonus += delta;
+          result.flags._attackAbilitySubstitutionValue = value;
+          result.flags._attackAbilitySubstitutionSource = item.name;
+          result.breakdown.push({ label: item.name, value: delta, type: "attackAbilitySubstitution" });
           break;
         }
         case "ATTACK_ABILITY_BONUS": {
@@ -523,6 +576,14 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
     return false;
   }
 
+  if (option.requiresAim && context.aim !== true) {
+    return false;
+  }
+
+  if (option.requiresCharge && context.charge !== true) {
+    return false;
+  }
+
   if (option.requiresAutofire && !weaponSupportsAutofire(weapon, context)) {
     return false;
   }
@@ -532,6 +593,22 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
   }
 
   if (option.requiresWeaponGroups && !weaponMatchesGroup(weapon, option.requiresWeaponGroups, context)) {
+    return false;
+  }
+
+  if (option.requiresWeaponText && !textMatchesAny(weaponText(weapon), option.requiresWeaponText)) {
+    return false;
+  }
+
+  if (option.requiresDamageType && !textMatchesAny(weaponDamageText(weapon), option.requiresDamageType)) {
+    return false;
+  }
+
+  if (option.excludesDamageType && textMatchesAny(weaponDamageText(weapon), option.excludesDamageType)) {
+    return false;
+  }
+
+  if (option.requiresTargetType && !textMatchesAny(targetText(context), option.requiresTargetType)) {
     return false;
   }
 
@@ -570,6 +647,10 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
   }
 
   if (option.requiresOpportunityAttack && context.opportunityAttack !== true && context.attackOfOpportunity !== true && context.isAttackOfOpportunity !== true) {
+    return false;
+  }
+
+  if (option.requiresAreaAttack && context.areaAttack !== true && context.isAreaAttack !== true && weapon?.system?.areaAttack !== true && weapon?.system?.isAreaAttack !== true) {
     return false;
   }
 
@@ -693,6 +774,8 @@ export class CombatOptionResolver {
       let attack = 0;
       if (Number.isFinite(Number(option.attackModifier))) attack += Number(option.attackModifier) * value;
       if (option.attackModifierFormula === "-value") attack -= value;
+      if (option.attackModifierFormula === "heroicLevel") attack += actorLevel(actor) * value;
+      if (option.attackModifierFormula === "halfLevel") attack += Math.floor(actorLevel(actor) / 2) * value;
       if (typeof option.attackModifierFormula === "string" && option.attackModifierFormula.startsWith("context.")) {
         const key = option.attackModifierFormula.slice("context.".length);
         const contextValue = Number(options?.[key] ?? options?.combatOptions?.[key] ?? options?.attackOptions?.[key] ?? 0);

@@ -35,6 +35,35 @@ import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/r
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 
 
+
+function getWeaponDamageFormula(weapon) {
+  const system = weapon?.system ?? {};
+  const candidates = [
+    system.damage,
+    system.damageFormula,
+    system.damageRoll,
+    system.formula,
+    system.weapon?.damage,
+    system.attack?.damage,
+    system.rolls?.damage
+  ];
+  for (let candidate of candidates) {
+    if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+      candidate = candidate.formula ?? candidate.value ?? candidate.base ?? candidate.dice ?? candidate.roll ?? candidate.primary;
+    }
+    if (candidate !== undefined && candidate !== null && String(candidate).trim()) {
+      return String(candidate).trim();
+    }
+  }
+  return '';
+}
+
+function getWeaponDamageType(weapon) {
+  const value = weapon?.system?.damageType ?? weapon?.system?.damage?.type ?? weapon?.system?.damageTypes ?? '';
+  if (Array.isArray(value)) return value.filter(Boolean).join(', ');
+  return String(value ?? '').trim();
+}
+
 function hasFightingDefensivelyEffect(actor) {
   return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
 }
@@ -445,6 +474,36 @@ export class SWSERoll {
         critConfirmed = confirmResult.confirmed;
       }
 
+      const damageFormula = getWeaponDamageFormula(weapon);
+      let attackDamage = null;
+      if (damageFormula) {
+        try {
+          const damageRoll = await rollDamage(actor, weapon, {
+            ...options,
+            target,
+            suppressChat: true,
+            isCritical: critConfirmed,
+            critMultiplier: critConfirmed ? critMultiplier : 1,
+            twoHanded: modifiers.twoHanded || false
+          });
+          if (damageRoll) {
+            attackDamage = {
+              total: damageRoll.total,
+              formula: damageRoll.swseDamageFormula ?? damageRoll.formula ?? damageFormula,
+              damageType: getWeaponDamageType(weapon),
+              actorId: actor.id,
+              targetId: target?.id ?? '',
+              weaponId: weapon.id,
+              isCritical: critConfirmed,
+              critMultiplier,
+              label: critConfirmed ? `Damage ×${critMultiplier}` : 'Damage'
+            };
+          }
+        } catch (err) {
+          swseLogger.warn('[SWSERoll] Attack damage roll failed; posting attack only.', err);
+        }
+      }
+
       // Build result object
       const result = {
         roll,
@@ -461,7 +520,8 @@ export class SWSERoll {
         isHit,
         concealmentMiss: !concealmentResult.hit,
         coverBonus,
-        modifiers
+        modifiers,
+        damage: attackDamage
       };
 
       // Record in roll history
@@ -620,7 +680,9 @@ export class SWSERoll {
           sourceElement: options?.sourceElement ?? null,
           companionSource: options?.companionSource ?? null,
           sheet: options?.sheet ?? null,
-          showRollCompanion: options?.showRollCompanion !== false
+          showRollCompanion: options?.showRollCompanion !== false,
+          showDamageAction: !attackDamage,
+          attackDamage
         }
       });
 
