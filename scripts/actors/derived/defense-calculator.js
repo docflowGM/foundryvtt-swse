@@ -29,6 +29,110 @@ function getActorFeatItems(actor) {
   }
 }
 
+
+function normalizeArmorCategory(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw) return '';
+  if (raw.includes('heavy')) return 'heavy';
+  if (raw.includes('medium')) return 'medium';
+  if (raw.includes('light')) return 'light';
+  return raw;
+}
+
+function armorRank(value) {
+  const category = normalizeArmorCategory(value);
+  if (category === 'light') return 1;
+  if (category === 'medium') return 2;
+  if (category === 'heavy') return 3;
+  return 0;
+}
+
+function getArmorCategory(armor) {
+  const system = armor?.system || {};
+  return normalizeArmorCategory(
+    system.armorProficiencyRequired ||
+    system.armorType ||
+    system.type ||
+    system.category ||
+    system.subtype ||
+    'light'
+  );
+}
+
+function actorHasArmorProficiency(actor, armor) {
+  const required = getArmorCategory(armor);
+  const requiredRank = armorRank(required);
+  if (!requiredRank) return false;
+
+  const candidates = [];
+  const armorProficiency = actor?.system?.armorProficiency;
+  if (armorProficiency && typeof armorProficiency === 'object') {
+    for (const [key, value] of Object.entries(armorProficiency)) {
+      if (value === true) candidates.push(key);
+    }
+  }
+
+  const structured = actor?.system?.proficiencies?.armor;
+  if (structured instanceof Set) candidates.push(...structured);
+  else if (Array.isArray(structured)) candidates.push(...structured);
+  else if (structured && typeof structured === 'object') {
+    for (const [key, value] of Object.entries(structured)) {
+      if (value === true) candidates.push(key);
+    }
+  }
+
+  const legacyList = actor?.system?.armorProficiencies;
+  if (Array.isArray(legacyList)) candidates.push(...legacyList);
+
+  const unlockArmor = actor?._unlockGrants?.proficiencies?.armor;
+  if (unlockArmor instanceof Set) candidates.push(...unlockArmor);
+  else if (Array.isArray(unlockArmor)) candidates.push(...unlockArmor);
+
+  for (const item of actor?.items ?? []) {
+    if (item?.type !== 'feat') continue;
+    const name = String(item?.name || '').toLowerCase();
+    if (!name.includes('armor proficiency')) continue;
+    if (name.includes('heavy')) candidates.push('heavy');
+    else if (name.includes('medium')) candidates.push('medium');
+    else if (name.includes('light')) candidates.push('light');
+  }
+
+  return candidates.some(candidate => armorRank(candidate) >= requiredRank);
+}
+
+function getTalentText(item) {
+  const description = item?.system?.description;
+  return [
+    item?.system?.benefit,
+    typeof description === 'string' ? description : description?.value,
+    item?.system?.category,
+    item?.system?.treeId,
+    item?.system?.talent_tree,
+    item?.system?.tree
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function actorHasTalent(actor, talentName) {
+  const wanted = String(talentName || '').trim().toLowerCase();
+  if (!wanted) return false;
+  return Array.from(actor?.items ?? []).some(item =>
+    item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === wanted
+  );
+}
+
+function actorHasArmorSpecialistArmorMastery(actor) {
+  return Array.from(actor?.items ?? []).some(item => {
+    if (item?.type !== 'talent') return false;
+    if (String(item?.name || '').trim().toLowerCase() !== 'armor mastery') return false;
+    const treeId = String(item?.system?.treeId || '').trim();
+    const text = getTalentText(item);
+    return treeId === '17cec542331cb4e4'
+      || text.includes('maximum dexterity')
+      || text.includes('max dexterity')
+      || text.includes('max dex');
+  });
+}
+
 function collectDefenseAbilityRule(actor, defenseKey) {
   const key = String(defenseKey || '').toLowerCase();
   for (const item of getActorFeatItems(actor)) {
@@ -218,8 +322,11 @@ export class DefenseCalculator {
     // impose active-use penalties, but they do not override heroic-level Reflex
     // contribution like worn armor does.
     const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
-    const hasArmoredDefense = actor.items?.some(item => item.name === 'Armored Defense') ?? false;
-    const hasImprovedArmoredDefense = actor.items?.some(item => item.name === 'Improved Armored Defense') ?? false;
+    const armorProficient = equippedArmor ? actorHasArmorProficiency(actor, equippedArmor) : false;
+    const hasArmoredDefense = actorHasTalent(actor, 'Armored Defense');
+    const hasImprovedArmoredDefense = actorHasTalent(actor, 'Improved Armored Defense');
+    const hasArmorMastery = actorHasArmorSpecialistArmorMastery(actor);
+    const hasSecondSkin = actorHasTalent(actor, 'Second Skin');
 
     const getAbilityMod = (abilityKey, fallback = 0) => {
       const key = String(abilityKey || '').toLowerCase();
@@ -268,18 +375,22 @@ export class DefenseCalculator {
     let reflexAbilityMod = reflexAbilityResolution.mod;
     const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
     const reflexMiscBonus = getMiscBonus(reflexState);
-    const reflexArmorBonus = Number(reflexState.armor ?? equippedArmor?.system?.defenseBonus ?? equippedArmor?.system?.armorBonus ?? 0) || 0;
+    let reflexArmorBonus = Number(reflexState.armor ?? equippedArmor?.system?.defenseBonus ?? equippedArmor?.system?.armorBonus ?? 0) || 0;
+    if (equippedArmor && armorProficient && hasSecondSkin) {
+      reflexArmorBonus += 1;
+    }
     if (equippedArmor) {
       const maxAbilityBonus = Number(equippedArmor.system?.maxDexBonus);
       if (Number.isFinite(maxAbilityBonus)) {
-        reflexAbilityMod = Math.min(reflexAbilityMod, maxAbilityBonus);
+        const effectiveMaxAbilityBonus = armorProficient && hasArmorMastery ? maxAbilityBonus + 1 : maxAbilityBonus;
+        reflexAbilityMod = Math.min(reflexAbilityMod, effectiveMaxAbilityBonus);
       }
     }
     let reflexLevelTerm = heroicLevel;
     if (equippedArmor) {
-      if (hasImprovedArmoredDefense) {
+      if (armorProficient && hasImprovedArmoredDefense) {
         reflexLevelTerm = Math.max(heroicLevel + Math.floor(reflexArmorBonus / 2), reflexArmorBonus);
-      } else if (hasArmoredDefense) {
+      } else if (armorProficient && hasArmoredDefense) {
         reflexLevelTerm = Math.max(heroicLevel, reflexArmorBonus);
       } else {
         reflexLevelTerm = reflexArmorBonus;
@@ -300,7 +411,12 @@ export class DefenseCalculator {
     const fortAbilityMod = fortAbilityResolution.mod;
     const fortClassBonus = Number(computedFortClassBonus ?? fortitudeState.classBonus ?? 0) || 0;
     const fortMiscBonus = getMiscBonus(fortitudeState);
-    const fortArmorBonus = Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0;
+    let fortArmorBonus = equippedArmor && armorProficient
+      ? Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0
+      : 0;
+    if (equippedArmor && armorProficient && hasSecondSkin) {
+      fortArmorBonus += 1;
+    }
     const fortBase = 10 + heroicLevel + fortClassBonus + fortAbilityMod + fortArmorBonus;
     const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortSpeciesBonus + fortStateBonus + fortAdjust + conditionPenalty);
 
@@ -312,7 +428,7 @@ export class DefenseCalculator {
     const willMiscBonus = getMiscBonus(willState);
     const willArmorBonus = hasDefenseArmorRule(actor, 'APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL')
       && equippedArmor
-      && equippedArmor.system?.proficient !== false
+      && armorProficient
       ? Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0
       : 0;
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
