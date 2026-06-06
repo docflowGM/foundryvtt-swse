@@ -90,6 +90,39 @@ export function isMeleeWeapon(weapon) {
   return /melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|claw/.test(category);
 }
 
+
+function actorHasTalentNamed(actor, names = []) {
+  const wanted = new Set((Array.isArray(names) ? names : [names]).map(normalizeSelector).filter(Boolean));
+  if (!wanted.size) return false;
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (!item || item.type !== 'talent') continue;
+      if (wanted.has(normalizeSelector(item.name))) return true;
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+export function isLightsaberWeapon(weapon) {
+  const system = weapon?.system ?? {};
+  const properties = Array.isArray(system.properties) ? system.properties : [];
+  const candidates = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    ...properties
+  ].map(normalizeSelector);
+  return candidates.some(value => value.includes('lightsaber'));
+}
+
 export function isThrownMeleeWeapon(weapon) {
   const system = weapon?.system ?? {};
   const text = [system.range, system.rangeType, system.category, system.subcategory, system.properties?.join?.(' '), weapon?.name]
@@ -151,8 +184,14 @@ export function getDamageAbilityContribution(actor, weapon, options = {}) {
   const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
   const isLight = options.isLight === true;
   const twoHanded = options.forceTwoHanded === true || options.twoHanded === true;
+  const usesAtaruLightsaberDamage = actorHasTalentNamed(actor, 'Ataru')
+    && isLightsaberWeapon(weapon)
+    && (selector === 'str' || selector === 'str2' || selector === '2str');
+  const effectiveSelector = usesAtaruLightsaberDamage
+    ? (selector === 'str2' || selector === '2str' ? '2dex' : 'dex')
+    : selector;
 
-  switch (selector) {
+  switch (effectiveSelector) {
     case 'str':
       return (twoHanded && !isLight) ? strMod * 2 : strMod;
     case 'str2':
@@ -197,6 +236,7 @@ export const CombatStatRules = Object.freeze({
   getWeaponFlatAttackBonus,
   getWeaponFlatDamageBonus,
   isAreaAttack,
+  isLightsaberWeapon,
   isMeleeWeapon,
   isRangedWeapon,
   isThrownMeleeWeapon,
