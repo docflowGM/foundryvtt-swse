@@ -1,0 +1,821 @@
+{
+  "phase": "Phase 16 - next feat implementation batch",
+  "sourceRepo": "foundryvtt-swse-main (22).zip plus Phase 10-15 changed-file patches applied before this pass",
+  "policyNotes": [
+    "Tech Specialist and Force Regimen Mastery are intentionally deferred because they require dedicated UI/pickers.",
+    "Starship Designer and Cybernetic Surgery are punted to GM/player handling.",
+    "Linguist is treated as implemented through the chargen/progression language step.",
+    "Positioning-heavy or table-state-heavy effects are stored as explicit metadata, not fake static bonuses."
+  ],
+  "summary": {
+    "featRowsTouched": 51,
+    "activeNonPuntedUnincorporatedRemaining": 41,
+    "deferredMajorUiFeats": 2,
+    "puntedToGmPlayerFeats": 2,
+    "reclassifiedImplementedFeats": 1
+  },
+  "engineSupportAdded": [
+    "CombatOptionResolver: attack options can require a selected-choice match from another feat, used for Critical Strike / Autofire Sweep / Autofire Assault with Weapon Focus.",
+    "SkillFeatResolver: skill bonuses can require target type and selected target choice, used for Droid Focus.",
+    "SkillFeatResolver: abilityDelta value formula supports rules such as Mind of Reason using Wisdom instead of Intelligence when better."
+  ],
+  "touchedFeats": [
+    {
+      "line": 32,
+      "name": "Grazing Shot",
+      "mechanicsMode": "active",
+      "applicationScope": "ranged_multi_target_attack_option",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "ranged_followup_metadata_phase16",
+      "summary": "Grazing Shot: after a successful ranged attack, make a second attack against a nearby line-of-sight target and split damage only if the second attack hits."
+    },
+    {
+      "line": 52,
+      "name": "Force Regimen Mastery",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "force_regimen_picker_required",
+      "staticSheetPolicy": "deferred",
+      "implementationStatus": "deferred_major_ui_picker",
+      "summary": "Force Regimen Mastery is intentionally deferred; it requires dedicated Force regimen UI/picker work."
+    },
+    {
+      "line": 67,
+      "name": "Disturbing Presence",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "deception_movement_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_rule_phase16",
+      "summary": "Disturbing Presence: DC 15 Deception lets you move through threatened/fighting spaces without provoking; spaces cost double movement."
+    },
+    {
+      "line": 74,
+      "name": "Tactical Advantage",
+      "mechanicsMode": "conditional",
+      "applicationScope": "attack_of_opportunity_hit_reposition",
+      "staticSheetPolicy": "reaction_metadata",
+      "implementationStatus": "aoo_hit_reaction_metadata_phase16",
+      "summary": "Tactical Advantage: damaging with an attack of opportunity lets you move 1 square without provoking."
+    },
+    {
+      "line": 75,
+      "name": "Hideous Visage",
+      "mechanicsMode": "active",
+      "applicationScope": "deception_fear_encounter_power",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_action_phase16",
+      "summary": "Hideous Visage: once per encounter swift Deception vs Will pushes the target and gives it -1 attack until your next turn."
+    },
+    {
+      "line": 93,
+      "name": "Improved Bantha Rush",
+      "mechanicsMode": "conditional",
+      "applicationScope": "bantha_rush_push_distance",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "bantha_rush_rider_metadata_phase16",
+      "summary": "Improved Bantha Rush: Bantha Rush push distance increases by half Strength modifier, minimum 2 squares total."
+    },
+    {
+      "line": 115,
+      "name": "Tech Specialist",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "customization_picker_required",
+      "staticSheetPolicy": "deferred",
+      "implementationStatus": "deferred_major_ui_picker",
+      "summary": "Tech Specialist is intentionally deferred; it requires a dedicated customization UI/picker and should not be represented by fake passive bonuses."
+    },
+    {
+      "line": 119,
+      "name": "Duck and Cover",
+      "mechanicsMode": "active",
+      "applicationScope": "area_attack_avoidance_reaction",
+      "staticSheetPolicy": "reaction_metadata",
+      "implementationStatus": "reaction_metadata_phase16",
+      "summary": "Duck and Cover: when you avoid an area attack, dive for cover as a reaction/positioning rider."
+    },
+    {
+      "line": 127,
+      "name": "Stay Up",
+      "mechanicsMode": "active",
+      "applicationScope": "damage_reduction_condition_tradeoff",
+      "staticSheetPolicy": "reaction_metadata",
+      "implementationStatus": "damage_reaction_metadata_phase16",
+      "summary": "Stay Up: once per encounter take half damage from an attack and move -1 step on the Condition Track."
+    },
+    {
+      "line": 137,
+      "name": "Opportunistic Retreat",
+      "mechanicsMode": "active",
+      "applicationScope": "attack_of_opportunity_trade_for_movement",
+      "staticSheetPolicy": "reaction_metadata",
+      "implementationStatus": "reaction_metadata_phase16",
+      "summary": "Opportunistic Retreat: forgo an Attack of Opportunity to move at half speed."
+    },
+    {
+      "line": 147,
+      "name": "Improved Grapple",
+      "mechanicsMode": "conditional",
+      "applicationScope": "grapple_attack_context",
+      "staticSheetPolicy": "roll_context_only",
+      "implementationStatus": "attack_option_phase16",
+      "summary": "Improved Grapple: +5 on grapple checks and suppresses the normal attack of opportunity for initiating a grapple."
+    },
+    {
+      "line": 148,
+      "name": "Improved Sleight of Hand",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "deception_stealth_sleight_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_rule_phase16",
+      "summary": "Improved Sleight of Hand: use Deception to aid Stealth for sleight of hand and use Stealth to draw/pass hidden objects."
+    },
+    {
+      "line": 151,
+      "name": "Linguist",
+      "mechanicsMode": "implemented",
+      "applicationScope": "chargen_language_step",
+      "staticSheetPolicy": "implemented",
+      "implementationStatus": "implemented_by_language_step",
+      "summary": "Linguist is treated as implemented through the chargen/progression language step rather than feat modifier metadata."
+    },
+    {
+      "line": 157,
+      "name": "Experienced Medic",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "treat_injury_surgery_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_rule_phase16",
+      "summary": "Experienced Medic: perform surgery on multiple creatures at the same time."
+    },
+    {
+      "line": 162,
+      "name": "Knife Trick",
+      "mechanicsMode": "conditional",
+      "applicationScope": "concealed_weapon_opportunity_context",
+      "staticSheetPolicy": "reaction_metadata",
+      "implementationStatus": "concealed_weapon_aoo_metadata_phase16",
+      "summary": "Knife Trick: concealed weapon threatens squares and can be drawn for an Attack of Opportunity."
+    },
+    {
+      "line": 166,
+      "name": "Turn and Burn",
+      "mechanicsMode": "active",
+      "applicationScope": "withdraw_movement_rule",
+      "staticSheetPolicy": "action_metadata",
+      "implementationStatus": "action_metadata_phase16",
+      "summary": "Turn and Burn: improves Withdraw movement through threatened squares."
+    },
+    {
+      "line": 167,
+      "name": "Impulsive Flight",
+      "mechanicsMode": "active",
+      "applicationScope": "withdraw_movement_rule",
+      "staticSheetPolicy": "action_metadata",
+      "implementationStatus": "action_metadata_phase16",
+      "summary": "Impulsive Flight: withdraw faster; movement validation remains action metadata."
+    },
+    {
+      "line": 175,
+      "name": "Demoralizing Strike",
+      "mechanicsMode": "conditional",
+      "applicationScope": "aoo_damage_intimidate_context",
+      "staticSheetPolicy": "reaction_metadata",
+      "implementationStatus": "aoo_skill_rider_phase16",
+      "summary": "Demoralizing Strike: after damaging with an attack of opportunity, make a free Persuasion check to Intimidate."
+    },
+    {
+      "line": 178,
+      "name": "Scavenger",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "perception_scavenge_build_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_rule_phase16",
+      "summary": "Scavenger: one-hour Perception-based scavenging produces construction materials equal to check result x 30 credits."
+    },
+    {
+      "line": 194,
+      "name": "Returning Bug",
+      "mechanicsMode": "conditional",
+      "applicationScope": "missed_thrown_bug_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "miss_rider_metadata_phase16",
+      "summary": "Returning Bug: missed Razor Bug or Thud Bug attacks return the weapon to hand."
+    },
+    {
+      "line": 203,
+      "name": "Biotech Surgery",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "treat_injury_bio_implant_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_rule_phase16",
+      "summary": "Biotech Surgery: enables Treat Injury installation of Bio-Implants; self-installation penalty and Surgical Expertise timing are metadata."
+    },
+    {
+      "line": 208,
+      "name": "Overwhelming Attack",
+      "mechanicsMode": "active",
+      "applicationScope": "attack_negation_penalty_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "attack_negation_metadata_phase16",
+      "summary": "Overwhelming Attack: two swift actions; target takes -5 on rolls/checks to negate your next attack this round."
+    },
+    {
+      "line": 211,
+      "name": "Multi-Grab",
+      "mechanicsMode": "active",
+      "applicationScope": "grab_multi_target_action",
+      "staticSheetPolicy": "action_metadata",
+      "implementationStatus": "action_metadata_phase16",
+      "summary": "Multi-Grab: standard action to make separate Grab attacks against two adjacent targets while both hands are empty."
+    },
+    {
+      "line": 213,
+      "name": "Stava Training",
+      "mechanicsMode": "conditional",
+      "applicationScope": "unarmed_charge_grapple_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "grapple_size_and_charge_rider_phase16",
+      "summary": "Stava Training: treat Grab/Grapple as one size larger and add an immediate Grab rider after a successful unarmed charge."
+    },
+    {
+      "line": 248,
+      "name": "Bantha Herder",
+      "mechanicsMode": "conditional",
+      "applicationScope": "ranged_hit_will_push_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "ranged_push_rider_phase16",
+      "summary": "Bantha Herder: ranged damage can push Large-or-smaller targets if the attack total also equals/exceeds Will Defense."
+    },
+    {
+      "line": 249,
+      "name": "Mind of Reason",
+      "mechanicsMode": "conditional",
+      "applicationScope": "intelligence_skill_roll_context",
+      "staticSheetPolicy": "skill_roll_context_only",
+      "implementationStatus": "skill_ability_delta_phase16",
+      "summary": "Mind of Reason: use Wisdom instead of Intelligence for Intelligence-based skill checks when better."
+    },
+    {
+      "line": 250,
+      "name": "Unswerving Resolve",
+      "mechanicsMode": "conditional",
+      "applicationScope": "resist_fear_mind_affecting_resource_context",
+      "staticSheetPolicy": "resource_metadata",
+      "implementationStatus": "temporary_force_point_metadata_phase16",
+      "summary": "Unswerving Resolve: gain a temporary Force Point when a Fear or Mind-Affecting effect fails to affect you."
+    },
+    {
+      "line": 255,
+      "name": "Feat of Strength",
+      "mechanicsMode": "active",
+      "applicationScope": "strength_check_skill_use_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_resource_metadata_phase16",
+      "summary": "Feat of Strength: once per encounter Take 10 or Take 20 on one Strength check or Strength-related skill check."
+    },
+    {
+      "line": 263,
+      "name": "Flash and Clear",
+      "mechanicsMode": "conditional",
+      "applicationScope": "burst_splash_damage_concealment",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "attack_rider_metadata_phase16",
+      "summary": "Flash and Clear: damaging with a Burst or Splash weapon grants concealment against that target until your next turn."
+    },
+    {
+      "line": 289,
+      "name": "Cybernetic Surgery",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "gm_player_cybernetic_surgery",
+      "staticSheetPolicy": "manual_punted",
+      "implementationStatus": "punted_to_gm_player",
+      "summary": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure."
+    },
+    {
+      "line": 290,
+      "name": "Suppression Fire",
+      "mechanicsMode": "active",
+      "applicationScope": "aid_another_suppression_context",
+      "staticSheetPolicy": "manual_or_table_context",
+      "implementationStatus": "aid_another_rider_metadata_phase16",
+      "summary": "Suppression Fire: Aid Another suppression rider against Will Defense; battlefield cover behavior is preserved as metadata, not automated."
+    },
+    {
+      "line": 296,
+      "name": "Long Haft Strike",
+      "mechanicsMode": "conditional",
+      "applicationScope": "weapon_property_context",
+      "staticSheetPolicy": "weapon_metadata",
+      "implementationStatus": "weapon_property_metadata_phase16",
+      "summary": "Long Haft Strike: Lightsaber Pike or Long-Handle Lightsaber can be treated as a double weapon."
+    },
+    {
+      "line": 299,
+      "name": "Hew",
+      "mechanicsMode": "conditional",
+      "applicationScope": "power_attack_damage_reduction_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "power_attack_rider_metadata_phase16",
+      "summary": "Hew: when Power Attack is used, ignore damage reduction equal to BAB. Damage reduction application remains a damage-resolution hook."
+    },
+    {
+      "line": 301,
+      "name": "Mechanical Martial Arts",
+      "mechanicsMode": "conditional",
+      "applicationScope": "unarmed_hit_rider",
+      "staticSheetPolicy": "roll_context_only",
+      "implementationStatus": "unarmed_hit_rider_phase16",
+      "summary": "Mechanical Martial Arts: unarmed damage imposes a melee attack/damage penalty on the target until the start of your next turn."
+    },
+    {
+      "line": 305,
+      "name": "Unleashed",
+      "mechanicsMode": "grant_unlock",
+      "applicationScope": "unleashed_ability_access",
+      "staticSheetPolicy": "capability_metadata",
+      "implementationStatus": "unlock_metadata_phase16",
+      "summary": "Unleashed: unlocks Unleashed Abilities that spend Destiny Points; Force Unleashed abilities still require Force Sensitivity."
+    },
+    {
+      "line": 307,
+      "name": "Increased Agility",
+      "mechanicsMode": "passive_capability",
+      "applicationScope": "movement_climb_swim_jump_context",
+      "staticSheetPolicy": "derived_metadata",
+      "implementationStatus": "movement_capability_metadata_phase16",
+      "summary": "Increased Agility: +2 squares to Climb Speed, Swim Speed, and Jump distance; retain Dex bonus while climbing."
+    },
+    {
+      "line": 325,
+      "name": "Autofire Assault",
+      "mechanicsMode": "conditional",
+      "applicationScope": "autofire_sustained_area_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "attack_option_phase16",
+      "summary": "Autofire Assault: sustained autofire with a Weapon Focus weapon reduces the autofire penalty and adds +1 weapon die."
+    },
+    {
+      "line": 331,
+      "name": "Hobbling Strike",
+      "mechanicsMode": "conditional",
+      "applicationScope": "extra_damage_tradeoff_speed_reduction",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "attack_rider_metadata_phase16",
+      "summary": "Hobbling Strike: trade Sneak Attack/Rapid Shot/Rapid Strike extra damage to reduce target speed by 1 square until encounter end."
+    },
+    {
+      "line": 333,
+      "name": "Implant Training",
+      "mechanicsMode": "passive_capability",
+      "applicationScope": "implant_condition_track_context",
+      "staticSheetPolicy": "condition_metadata",
+      "implementationStatus": "condition_defense_metadata_phase16",
+      "summary": "Implant Training: suppresses the extra implant condition-track step and implant Will Defense penalty."
+    },
+    {
+      "line": 346,
+      "name": "Droid Shield Mastery",
+      "mechanicsMode": "active",
+      "applicationScope": "droid_shield_recharge_context",
+      "staticSheetPolicy": "action_metadata",
+      "implementationStatus": "shield_action_metadata_phase16",
+      "summary": "Droid Shield Mastery: automatically succeed to restore SR by 5 and recharge shields using two swift actions."
+    },
+    {
+      "line": 349,
+      "name": "Vehicle Systems Expertise",
+      "mechanicsMode": "active",
+      "applicationScope": "vehicle_systems_action_context",
+      "staticSheetPolicy": "action_metadata",
+      "implementationStatus": "vehicle_action_metadata_phase16",
+      "summary": "Vehicle Systems Expertise: Recharge Shields or Reroute Power with two swift actions, with once/encounter DC 30 one-swift option."
+    },
+    {
+      "line": 353,
+      "name": "Critical Strike",
+      "mechanicsMode": "active",
+      "applicationScope": "melee_critical_attack_option",
+      "staticSheetPolicy": "roll_context_only",
+      "implementationStatus": "attack_option_phase16",
+      "summary": "Critical Strike: spend two swift actions to improve the critical threat of a melee attack with a Weapon Focus weapon."
+    },
+    {
+      "line": 354,
+      "name": "Pistoleer",
+      "mechanicsMode": "conditional",
+      "applicationScope": "pistol_family_roll_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "weapon_family_metadata_phase16",
+      "summary": "Pistoleer: pistol-family benefits are explicit metadata; Hold-Out Blaster early-combat attack bonus is roll-context supported."
+    },
+    {
+      "line": 377,
+      "name": "Fleet-Footed",
+      "mechanicsMode": "conditional",
+      "applicationScope": "running_attack_movement_context",
+      "staticSheetPolicy": "action_metadata",
+      "implementationStatus": "movement_metadata_phase16",
+      "summary": "Fleet-Footed: when moving both before and after a Running Attack, speed increases by 2 squares until end of turn."
+    },
+    {
+      "line": 379,
+      "name": "Starship Designer",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "gm_player_starship_design",
+      "staticSheetPolicy": "manual_punted",
+      "implementationStatus": "punted_to_gm_player",
+      "summary": "Starship Designer is punted to GM/player handling; no automatic implementation should be attempted in feat metadata."
+    },
+    {
+      "line": 385,
+      "name": "Darkness Dweller",
+      "mechanicsMode": "conditional",
+      "applicationScope": "proximity_stealth_penalty_aura",
+      "staticSheetPolicy": "manual_or_table_context",
+      "implementationStatus": "aura_metadata_phase16",
+      "summary": "Darkness Dweller: nearby enemies take a Stealth penalty; proximity is table/token context and not a static skill modifier."
+    },
+    {
+      "line": 388,
+      "name": "Imperceptible Liar",
+      "mechanicsMode": "conditional",
+      "applicationScope": "deception_force_point_die_context",
+      "staticSheetPolicy": "resource_metadata",
+      "implementationStatus": "force_point_skill_die_metadata_phase16",
+      "summary": "Imperceptible Liar: increase the Force Point die type when adding Force Points to Deception checks."
+    },
+    {
+      "line": 400,
+      "name": "Droid Focus",
+      "mechanicsMode": "conditional_choice_required",
+      "applicationScope": "selected_droid_degree_context",
+      "staticSheetPolicy": "roll_context_only",
+      "implementationStatus": "choice_skill_defense_metadata_phase16",
+      "summary": "Droid Focus: selected droid-degree context gives +1 on listed skills and +1 defenses against that droid degree."
+    },
+    {
+      "line": 409,
+      "name": "Surgical Expertise",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "treat_injury_surgery_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "implementationStatus": "skill_use_rule_phase16",
+      "summary": "Surgical Expertise: surgery takes 10 minutes instead of 1 hour."
+    },
+    {
+      "line": 411,
+      "name": "Artillery Shot",
+      "mechanicsMode": "conditional",
+      "applicationScope": "burst_splash_area_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "area_attack_metadata_phase16",
+      "summary": "Artillery Shot: proficient Burst/Splash weapon attacks beyond point-blank affect two additional adjacent squares."
+    },
+    {
+      "line": 412,
+      "name": "Autofire Sweep",
+      "mechanicsMode": "active",
+      "applicationScope": "autofire_cone_attack_context",
+      "staticSheetPolicy": "roll_context_metadata",
+      "implementationStatus": "autofire_area_metadata_phase16",
+      "summary": "Autofire Sweep: Weapon Focus autofire attack can target all creatures in a 6-square cone from a visible point in point-blank range."
+    }
+  ],
+  "remainingActiveNonPuntedBacklog": [
+    {
+      "line": 79,
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Catastrophic Failures in a Skill Challenge occur less frequently, and with milder results."
+    },
+    {
+      "line": 81,
+      "name": "Impersonate",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Shapeshift to impersonate a specific person."
+    },
+    {
+      "line": 82,
+      "name": "Dreadful Countenance",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Marked as Sith, your appearance inspires awe, dread, and fear in all who view it."
+    },
+    {
+      "line": 88,
+      "name": "Signature Device",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Install two Traits."
+    },
+    {
+      "line": 95,
+      "name": "Justice Seeker",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Gain a bonus to damage rolls against those who harm your allies."
+    },
+    {
+      "line": 110,
+      "name": "Hasty Modification",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Swap one Trait for another Trait."
+    },
+    {
+      "line": 114,
+      "name": "Destructive Force",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Deal damage to adjacent targets when you damage objects and Vehicles."
+    },
+    {
+      "line": 116,
+      "name": "Maniacal Charge",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Intimidate your enemies when Charging, preventing adjacent characters from making Attacks of Opportunity and denying your target its Dexterity bonus."
+    },
+    {
+      "line": 136,
+      "name": "Blaster Barrage",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Automatically Aid Another when using Autofire attacks."
+    },
+    {
+      "line": 138,
+      "name": "Stand Tall",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "When you take damage, nearby allies attack your attacker."
+    },
+    {
+      "line": 139,
+      "name": "Sith Military Training",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Upon debilitating an opponent, you can cause other opponents to lose heart."
+    },
+    {
+      "line": 149,
+      "name": "Leader of Droids",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Allied Droids benefit from your beneficial Mind-Affecting effects."
+    },
+    {
+      "line": 154,
+      "name": "Wicked Strike",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Gain extra attack on a second target upon damaging the first target."
+    },
+    {
+      "line": 172,
+      "name": "Distracting Droid",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Attempt to deny enemies within 6 squares their next Move Action, with a chance to make enemies Flat-Footed."
+    },
+    {
+      "line": 181,
+      "name": "Crossfire",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Redirect missed attacks against Soft Cover."
+    },
+    {
+      "line": 193,
+      "name": "Acrobatic Ally",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Hoist or toss an ally of your size or smaller up to 2 squares."
+    },
+    {
+      "line": 207,
+      "name": "Imperial Military Training",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Negate one Mind-Affecting effect per encounter."
+    },
+    {
+      "line": 243,
+      "name": "Disarming Charm",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Gain a bonus to Skill Checks on targets whose Attitude you have improved."
+    },
+    {
+      "line": 276,
+      "name": "Mounted Defense",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "You are able to react to incoming attacks, using you Mount or Speeder Bike to absorb attacks against you."
+    },
+    {
+      "line": 285,
+      "name": "Fringe Benefits",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Reduce the cost multiplier of goods bought on the Black Market."
+    },
+    {
+      "line": 291,
+      "name": "A Few Maneuvers",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "You can weave, juke, and roll to avoid enemy fire in the thick of combat."
+    },
+    {
+      "line": 303,
+      "name": "Mon Calamari Shipwright",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Reroute Power more quickly and without the risk of failure."
+    },
+    {
+      "line": 309,
+      "name": "Biotech Specialist",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Make custom modifications to Yuuzhan Vong Biotech."
+    },
+    {
+      "line": 313,
+      "name": "Knock Heads",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "You may knock two opponents' heads together after a successful Multi-Grab."
+    },
+    {
+      "line": 321,
+      "name": "Coordinated Barrage",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Allow an ally to deal more damage when you aid their attack."
+    },
+    {
+      "line": 327,
+      "name": "Hyperblazer",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Cut all calculation time and Use Computer penalties by half when making Use Computer checks for Astrogation in the Hyperspace tangle. Reduce Hyperspace mapping time by half."
+    },
+    {
+      "line": 336,
+      "name": "Multi-Targeting",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "You can spread your Aim action across multiple consecutive rounds."
+    },
+    {
+      "line": 337,
+      "name": "Momentum Strike",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "You know how to put the weight of your momentum into attacks while riding a Mount or Speeder Bike."
+    },
+    {
+      "line": 345,
+      "name": "Logic Upgrade: Skill Swap",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Swap a Trained Skill for an Untrained Skill on the fly."
+    },
+    {
+      "line": 352,
+      "name": "Officer Candidacy Training",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Gain a bonus to your Rank and Privilege Score."
+    },
+    {
+      "line": 355,
+      "name": "Tactical Genius",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "You are a master at using multiple starship tactics over the course of long space combats."
+    },
+    {
+      "line": 357,
+      "name": "Skill Challenge: Last Resort",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Reroll a third failed Skill Check during a Skill Challenge, keeping the better result."
+    },
+    {
+      "line": 368,
+      "name": "Friends in Low Places",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Reduce Black Market cost multiplier for Restricted Items by 1."
+    },
+    {
+      "line": 369,
+      "name": "Grab Back",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "As a Reaction, make a Grab or Grapple attack following a failed Grab or Grapple attack made against you."
+    },
+    {
+      "line": 370,
+      "name": "Shield Surge",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Trade Vehicle's Shield Rating for damage taken."
+    },
+    {
+      "line": 372,
+      "name": "Trample",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "When using the Mounted Charge Action, attack enemies between you and your target."
+    },
+    {
+      "line": 376,
+      "name": "Meat Shield",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Gain Cover bonus equal to opponent's Cover bonus."
+    },
+    {
+      "line": 380,
+      "name": "Sensor Link",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Share sensor data instantly with an ally."
+    },
+    {
+      "line": 392,
+      "name": "Skill Challenge: Recovery",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Treat a Skill Challenge as if it had the Recovery effect."
+    },
+    {
+      "line": 399,
+      "name": "Brink of Death",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Attacks that would kill your enemy reduces them to 0 Hit Points instead."
+    },
+    {
+      "line": 415,
+      "name": "Resilient Talent",
+      "mechanicsMode": "manual",
+      "applicationScope": "manual_or_unimplemented",
+      "shortSummary": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute."
+    }
+  ],
+  "deferredMajorUi": [
+    {
+      "line": 52,
+      "name": "Force Regimen Mastery",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "force_regimen_picker_required",
+      "shortSummary": "Learn a number of Force Regimens equal to 1 + your Wisdom modifier (minimum of 1)."
+    },
+    {
+      "line": 115,
+      "name": "Tech Specialist",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "customization_picker_required",
+      "shortSummary": "You can make custom modifications to Armor, Weapons, Vehicles, Droids, and Devices."
+    }
+  ],
+  "puntedToGmPlayer": [
+    {
+      "line": 289,
+      "name": "Cybernetic Surgery",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "gm_player_cybernetic_surgery",
+      "shortSummary": "Install a Cybernetic Prosthesis onto a living being."
+    },
+    {
+      "line": 379,
+      "name": "Starship Designer",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "gm_player_starship_design",
+      "shortSummary": "You are trained to design (and redesign) Starships."
+    }
+  ],
+  "implementedElsewhere": [
+    {
+      "line": 151,
+      "name": "Linguist",
+      "mechanicsMode": "implemented",
+      "applicationScope": "chargen_language_step",
+      "shortSummary": "Gain bonus Languages equal to 1 + your Intelligence modifier (minimum 1)."
+    }
+  ],
+  "validation": {
+    "nodeCheck": [
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/engine/skills/skill-feat-resolver.js"
+    ],
+    "packsFeatsDbRows": 419,
+    "runtimeTestedInFoundry": false
+  }
+}

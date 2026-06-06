@@ -389,6 +389,16 @@ function weaponMatchesSelectedChoice(item, weapon, context = {}) {
   return choices.some(choice => weaponMatchesGroup(weapon, choice, context));
 }
 
+function actorHasFeatSelectedChoiceMatchingWeapon(actor, featNames = [], weapon, context = {}) {
+  const wanted = (Array.isArray(featNames) ? featNames : [featNames]).map(normalizeKey).filter(Boolean);
+  if (!wanted.length) return false;
+  for (const item of actorItems(actor)) {
+    if (!wanted.includes(normalizeKey(item?.name))) continue;
+    if (weaponMatchesSelectedChoice(item, weapon, context)) return true;
+  }
+  return false;
+}
+
 function isPointBlankContext(context = {}) {
   return context.pointBlankRange === true || context.isPointBlank === true || getRangeBand(context) === "point-blank";
 }
@@ -566,7 +576,7 @@ function weaponSupportsAutofire(weapon, context = {}) {
   return text.includes("autofire");
 }
 
-function optionAllowedForWeapon(option, weapon, context = {}) {
+function optionAllowedForWeapon(option, actor, weapon, context = {}) {
   const attackType = getAttackType(weapon, context);
   if (option.requiresAttackType && option.requiresAttackType !== "any" && attackType !== "unknown" && attackType !== option.requiresAttackType) {
     return false;
@@ -597,6 +607,10 @@ function optionAllowedForWeapon(option, weapon, context = {}) {
   }
 
   if (option.requiresWeaponText && !textMatchesAny(weaponText(weapon), option.requiresWeaponText)) {
+    return false;
+  }
+
+  if (option.requiresFeatSelectedChoiceMatch && !actorHasFeatSelectedChoiceMatchingWeapon(actor, option.requiresFeatSelectedChoiceMatch, weapon, context)) {
     return false;
   }
 
@@ -726,7 +740,7 @@ export class CombatOptionResolver {
       for (const rule of getFeatRules(item)) {
         const option = hydrateOption(rule, actor, weapon, context);
         if (!option?.id) continue;
-        if (!optionAllowedForWeapon(option, weapon, context)) continue;
+        if (!optionAllowedForWeapon(option, actor, weapon, context)) continue;
         option.sourceItemId = item.id;
         option.sourceName = item.name;
         if (!options.some(existing => existing.id === option.id)) options.push(option);

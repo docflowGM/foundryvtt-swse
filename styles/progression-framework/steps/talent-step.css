@@ -3169,3 +3169,73 @@
     min-height: 350px;
   }
 }
+
+/* Talent planner scroll hardening: the full body and the choice rails must remain usable
+   even when the holomap is tall. The graph viewport keeps its own drag/zoom behavior. */
+.progression-shell[data-step-id*="talent"] [data-region="work-surface"] {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-work-surface {
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.2rem;
+  scrollbar-gutter: stable;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-stage-graph.talent-planner-stage {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-planner-grid--holomap {
+  overflow: visible;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-choice-panel--holomap,
+.progression-shell[data-step-id*="talent"] .talent-map-panel--holomap {
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-choice-section--available,
+.progression-shell[data-step-id*="talent"] .talent-choice-section--locked[open] {
+  min-height: 0;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-choice-section--available .talent-choice-list,
+.progression-shell[data-step-id*="talent"] .talent-choice-section--locked[open] .talent-choice-list {
+  min-height: 0;
+  max-height: min(54vh, 560px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-planner-stage--list .talent-choice-section--available .talent-choice-list {
+  max-height: min(72vh, 760px);
+}
+
+.progression-shell[data-step-id*="talent"] .talent-graph-container--holomap {
+  overflow: visible;
+}
+
+.progression-shell[data-step-id*="talent"] .talent-graph-viewport--holomap {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+@media (max-height: 760px) {
+  .progression-shell[data-step-id*="talent"] .talent-choice-section--available .talent-choice-list,
+  .progression-shell[data-step-id*="talent"] .talent-choice-section--locked[open] .talent-choice-list {
+    max-height: 44vh;
+  }
+}

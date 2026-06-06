@@ -117,6 +117,60 @@ function compactKey(value) {
   return normalizeText(value).replace(/\s+/g, '');
 }
 
+function flattenChoiceValues(value, results = []) {
+  if (!value) return results;
+  if (Array.isArray(value)) {
+    value.forEach(entry => flattenChoiceValues(entry, results));
+    return results;
+  }
+  if (typeof value === 'object') {
+    for (const key of ['value', 'id', 'label', 'name', 'choice', 'selected']) flattenChoiceValues(value[key], results);
+    if (Array.isArray(value.targets)) flattenChoiceValues(value.targets, results);
+    return results;
+  }
+  const text = String(value).trim();
+  if (text) results.push(text);
+  return results;
+}
+
+function getSelectedChoiceValues(sourceItem = null, context = {}) {
+  const values = [];
+  flattenChoiceValues(context?.selectedChoice, values);
+  flattenChoiceValues(context?.selectedChoices, values);
+  flattenChoiceValues(sourceItem?.system?.selectedChoice, values);
+  flattenChoiceValues(sourceItem?.system?.selectedChoices, values);
+  flattenChoiceValues(sourceItem?.system?.choiceMeta?.selectedChoice, values);
+  return [...new Set(values.map(normalizeText).filter(Boolean))];
+}
+
+function targetText(context = {}) {
+  const target = context?.target ?? context?.targetActor ?? context?.subject ?? null;
+  const system = target?.system ?? {};
+  const fields = [
+    target?.type,
+    target?.name,
+    system.actorType,
+    system.creatureType,
+    system.droidDegree,
+    system.degree,
+    system.details?.droidDegree,
+    system.details?.creatureType,
+    system.details?.species,
+    system.species,
+    system.species?.name,
+    system.species?.value,
+    ...(Array.isArray(system.traits) ? system.traits : [])
+  ];
+  return fields.map(normalizeText).filter(Boolean).join(' ');
+}
+
+function textIncludesAny(haystack, values = []) {
+  const wanted = (Array.isArray(values) ? values : [values]).map(normalizeText).filter(Boolean);
+  if (!wanted.length) return false;
+  const text = normalizeText(haystack);
+  return wanted.some(value => text.includes(value));
+}
+
 function getPropertySafe(object, path, fallback = undefined) {
   if (!object || !path) return fallback;
   try {
@@ -488,6 +542,15 @@ export class SkillFeatResolver {
       if (!requiredFlags.every(flag => flags.has(String(flag)))) return false;
     }
 
+    if (rule.requiresTargetType && !textIncludesAny(targetText(context), rule.requiresTargetType)) return false;
+
+    if (rule.requiresTargetSelectedChoice === true || rule.targetTypeFromSelectedChoice === true) {
+      const choices = getSelectedChoiceValues(sourceItem, context);
+      if (!choices.length) return false;
+      const text = targetText(context);
+      if (!choices.some(choice => text.includes(choice))) return false;
+    }
+
     return true;
   }
 
@@ -514,13 +577,28 @@ export class SkillFeatResolver {
         return clamp(Math.floor(Math.max(0, dsp) / 2));
       }
       case 'abilityModifier': {
-        const ability = String(rule.ability ?? '').toLowerCase();
+        const ability = String(rule.ability ?? '').toLowerCase().slice(0, 3);
         if (!ability) return 0;
         const value = getPropertySafe(actor, `system.abilities.${ability}.mod`, null)
           ?? getPropertySafe(actor, `system.attributes.${ability}.mod`, null)
           ?? getPropertySafe(actor, `system.derived.attributes.${ability}.mod`, null)
           ?? 0;
         return clamp(Number(value) || 0);
+      }
+      case 'abilityDelta': {
+        const from = String(rule.fromAbility ?? '').toLowerCase().slice(0, 3);
+        const to = String(rule.toAbility ?? '').toLowerCase().slice(0, 3);
+        if (!from || !to) return 0;
+        const fromValue = Number(getPropertySafe(actor, `system.abilities.${from}.mod`, null)
+          ?? getPropertySafe(actor, `system.attributes.${from}.mod`, null)
+          ?? getPropertySafe(actor, `system.derived.attributes.${from}.mod`, null)
+          ?? 0) || 0;
+        const toValue = Number(getPropertySafe(actor, `system.abilities.${to}.mod`, null)
+          ?? getPropertySafe(actor, `system.attributes.${to}.mod`, null)
+          ?? getPropertySafe(actor, `system.derived.attributes.${to}.mod`, null)
+          ?? 0) || 0;
+        const delta = rule.useBetter === false ? (toValue - fromValue) : Math.max(0, toValue - fromValue);
+        return clamp(delta);
       }
       default:
         return 0;
