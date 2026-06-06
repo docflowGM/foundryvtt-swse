@@ -254,6 +254,49 @@ export const PASSIVE_STATE_PREDICATES = {
   },
 
   /**
+   * Applies while the actor has a lightsaber equipped/readied or the current
+   * roll context is using a lightsaber. This is equipment context, not a
+   * permanent actor bonus. Missing weapon context falls back to owned equipped
+   * weapon text so sheet-side equipped-defense talents such as Niman can work.
+   */
+  "weapon.lightsaber-equipped": (actor, context) => {
+    const weapon = context?.weapon ?? context?.item ?? context?.attackItem;
+    const text = [
+      equippedWeaponText(actor),
+      weapon?.name,
+      weapon?.system?.weaponType,
+      weapon?.system?.weaponGroup,
+      weapon?.system?.weaponCategory,
+      weapon?.system?.category,
+      weapon?.system?.subcategory,
+      weapon?.system?.subtype,
+      ...(Array.isArray(weapon?.system?.properties) ? weapon.system.properties : [])
+    ].filter(Boolean).join(' ').toLowerCase();
+    return text.includes('lightsaber');
+  },
+
+  /**
+   * Applies when the current attack/damage context uses a lightsaber. Unlike
+   * weapon.lightsaber-equipped, this requires an actual roll item so damage
+   * bonuses do not apply just because another lightsaber is equipped.
+   */
+  "weapon.lightsaber": (actor, context) => {
+    const weapon = context?.weapon ?? context?.item ?? context?.attackItem;
+    if (!weapon) return false;
+    const text = [
+      weapon?.name,
+      weapon?.system?.weaponType,
+      weapon?.system?.weaponGroup,
+      weapon?.system?.weaponCategory,
+      weapon?.system?.category,
+      weapon?.system?.subcategory,
+      weapon?.system?.subtype,
+      ...(Array.isArray(weapon?.system?.properties) ? weapon.system.properties : [])
+    ].filter(Boolean).join(' ').toLowerCase();
+    return text.includes('lightsaber');
+  },
+
+  /**
    * Applies while wielding an Atlatl or Cesta.
    */
   "weapon.atlatl-or-cesta-equipped": (actor, context) => {

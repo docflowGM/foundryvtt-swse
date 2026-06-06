@@ -1,0 +1,449 @@
+{
+  "schema": "swse.talent-jedi-tree-cleanup-phase-t7",
+  "phase": "T7",
+  "scope": "First Jedi-tree cleanup pass focused on core Jedi, Jedi Sentinel/Guardian/Consular, Lightsaber Combat, Lightsaber Forms, and Duelist seams that had proven or obvious live-runtime bad metadata.",
+  "principles": [
+    "Descriptions in packs/talents.db are treated as canonical book text.",
+    "Ability Engine/passive state/modifier/derived calculators remain the implementation authority.",
+    "No tree-specific JS files were created.",
+    "Missing staticSheetPolicy was not treated as a bug.",
+    "Conditionals requiring unknown target, ally, positioning, dark-side-source, or reaction state were punted to GM/player or future runtime resolver metadata."
+  ],
+  "summary": {
+    "talentDocumentsAfterCleanup": 1004,
+    "talentTreesAfterCleanup": 189,
+    "jediWeaponSpecializationLightsabersDocumentsRemaining": 1,
+    "genericSoldierWeaponSpecializationDocumentsRemaining": 1,
+    "deletedDuplicateWeaponSpecializationLightsabersIds": [
+      "00a9210772a64a19",
+      "0ebd5b2c63024627"
+    ],
+    "deletedGenericJediWeaponSpecializationId": "41426ecd7fade0b0",
+    "runtimePatchesApplied": true,
+    "foundryRuntimeTested": false
+  },
+  "implementedOrCorrected": [
+    {
+      "name": "Force Intuition",
+      "ids": [
+        "00deb8b4cce303b6"
+      ],
+      "trees": [
+        "jedi-guardian"
+      ],
+      "bucket": "implemented_through_derived_calculator",
+      "engineOwner": "DerivedCalculator",
+      "actionTaken": "Removed bogus defense modifier/effect and implemented Initiative trained + Use the Force substitution in DerivedCalculator.",
+      "note": "Also marks derived Initiative with forceIntuitionSubstitution metadata when Use the Force is used."
+    },
+    {
+      "name": "Niman",
+      "ids": [
+        "7842befd5a8713c5"
+      ],
+      "trees": [
+        "2bc2572e852832e4"
+      ],
+      "bucket": "implemented_equipped_context",
+      "engineOwner": "Passive State + DefenseCalculator",
+      "actionTaken": "Converted to equipped-lightsaber defense context: +1 Reflex and +1 Will only while a lightsaber is equipped/readied.",
+      "note": "Uses new weapon.lightsaber-equipped predicate; not an unconditional static bonus."
+    },
+    {
+      "name": "Weapon Specialization (Lightsabers)",
+      "ids": [
+        "bcd9981b3c6a46dc"
+      ],
+      "trees": [
+        "lightsaber-combat"
+      ],
+      "bucket": "implemented_roll_context",
+      "engineOwner": "PASSIVE/STATE + Damage Roll + ModifierEngine",
+      "actionTaken": "Deduped to one canonical Jedi/lightsaber-only talent and converted to +2 damage only on lightsaber melee damage rolls.",
+      "note": "Soldier generic Weapon Specialization remains separate for a future persistent weapon-group picker."
+    },
+    {
+      "name": "Greater Weapon Specialization (Lightsabers)",
+      "ids": [
+        "9cda854b5448414f"
+      ],
+      "trees": [
+        "b3c5d90b5036f39b"
+      ],
+      "bucket": "implemented_roll_context",
+      "engineOwner": "PASSIVE/STATE + Damage Roll + ModifierEngine",
+      "actionTaken": "Converted to additional +2 damage only on lightsaber melee damage rolls; stacks with Weapon Specialization.",
+      "note": "No permanent damage-sheet inflation."
+    }
+  ],
+  "removedBogusStaticOrLiveBonuses": [
+    {
+      "name": "Resist the Dark Side",
+      "ids": [
+        "3331d4b2b88e446f"
+      ],
+      "trees": [
+        "36f18f3e974feb33"
+      ],
+      "bucket": "gm_player_or_future_force_context",
+      "engineOwner": "Future Force Context Resolver",
+      "actionTaken": "Removed static +5 all-defense modifiers.",
+      "note": "Applies only against dark-side Force powers or dark Force-users; system does not currently know that descriptor/source in static prep."
+    },
+    {
+      "name": "Gradual Resistance",
+      "ids": [
+        "291937f2d45a01bc"
+      ],
+      "trees": [
+        "36f18f3e974feb33"
+      ],
+      "bucket": "gm_player_or_future_force_context",
+      "engineOwner": "Future Force Context Resolver",
+      "actionTaken": "Removed static all-defense modifiers.",
+      "note": "Requires confirming repeated uses or force-specific condition; no always-on defense."
+    },
+    {
+      "name": "Visionary Defense",
+      "ids": [
+        "153f4b3c6510023d"
+      ],
+      "trees": [
+        "e99cfa9db8493573"
+      ],
+      "bucket": "gm_player_or_future_context",
+      "engineOwner": "Future Force/Defense Context Resolver",
+      "actionTaken": "Removed static Reflex modifier.",
+      "note": "Conditional context, not permanent Reflex."
+    },
+    {
+      "name": "Lightsaber Defense",
+      "ids": [
+        "e8bf1222fd6289e4"
+      ],
+      "trees": [
+        "lightsaber-combat"
+      ],
+      "bucket": "future_active_combat_state",
+      "engineOwner": "Future Combat State / Active Effect",
+      "actionTaken": "Removed permanent Reflex modifier.",
+      "note": "Swift-action deflection bonus until next turn; requires activation and flat-footed awareness state."
+    },
+    {
+      "name": "Makashi",
+      "ids": [
+        "8ddbb7f6d4a11725"
+      ],
+      "trees": [
+        "2bc2572e852832e4"
+      ],
+      "bucket": "future_active_combat_state",
+      "engineOwner": "Future Combat State / Active Effect",
+      "actionTaken": "Removed permanent Reflex modifier and legacy active-effect generation.",
+      "note": "Only improves active Lightsaber Defense while wielding a single one-handed lightsaber."
+    },
+    {
+      "name": "Shii-Cho",
+      "ids": [
+        "c116f6249f4f47c9"
+      ],
+      "trees": [
+        "2bc2572e852832e4"
+      ],
+      "bucket": "future_block_deflect_state",
+      "engineOwner": "Future Block/Deflect Resolver",
+      "actionTaken": "Removed bogus melee attack/damage Active Effect.",
+      "note": "Canon effect reduces cumulative Block/Deflect penalty; it is not +1 attack/damage."
+    },
+    {
+      "name": "Djem So",
+      "ids": [
+        "9dfce712a60a097f"
+      ],
+      "trees": [
+        "2bc2572e852832e4"
+      ],
+      "bucket": "future_reaction_prompt",
+      "engineOwner": "Future Reaction/Force Point Resolver",
+      "actionTaken": "Removed bogus attack/damage style metadata and legacy active-effect generation.",
+      "note": "Reaction counterattack after being hit by melee and spending a Force Point."
+    },
+    {
+      "name": "Juyo",
+      "ids": [
+        "5fd19be0deca1115"
+      ],
+      "trees": [
+        "2bc2572e852832e4"
+      ],
+      "bucket": "future_runtime_target_state",
+      "engineOwner": "Future Encounter Target/Reroll Resolver",
+      "actionTaken": "Removed bogus skill/attack style metadata and legacy active-effect generation.",
+      "note": "Needs once-per-encounter target designation and attack reroll state."
+    },
+    {
+      "name": "Block",
+      "ids": [
+        "9379daa94a228c04"
+      ],
+      "trees": [
+        "lightsaber-combat"
+      ],
+      "bucket": "future_reaction_prompt",
+      "engineOwner": "Future Block/Deflect Resolver",
+      "actionTaken": "Removed bogus attack modifier.",
+      "note": "Reaction Use the Force check; no passive attack bonus."
+    },
+    {
+      "name": "Redirect Shot",
+      "ids": [
+        "941c1dfd00e697da"
+      ],
+      "trees": [
+        "lightsaber-combat"
+      ],
+      "bucket": "future_deflect_followup_prompt",
+      "engineOwner": "Future Block/Deflect/Redirect Resolver",
+      "actionTaken": "Removed bogus ranged attack modifier.",
+      "note": "Only after successful Deflect; needs prompt/target context."
+    },
+    {
+      "name": "Precise Redirect",
+      "ids": [
+        "515d69c71897e431"
+      ],
+      "trees": [
+        "lightsaber-combat"
+      ],
+      "bucket": "future_deflect_followup_prompt",
+      "engineOwner": "Future Block/Deflect/Redirect Resolver",
+      "actionTaken": "Removed bogus attack/damage metadata.",
+      "note": "Only modifies redirected shots after Deflect."
+    },
+    {
+      "name": "Battle Meditation",
+      "ids": [
+        "9461c7aa79dd07c6"
+      ],
+      "trees": [
+        "jedi-guardian"
+      ],
+      "bucket": "gm_player_or_future_ally_force_context",
+      "engineOwner": "Future Ally/Force Support Resolver",
+      "actionTaken": "Removed live ally attack effect.",
+      "note": "Requires activation/ally context; no passive actor attack bonus."
+    },
+    {
+      "name": "Dark Side Bane",
+      "ids": [
+        "97a771d1f4627521"
+      ],
+      "trees": [
+        "36f18f3e974feb33"
+      ],
+      "bucket": "gm_player_or_future_force_context",
+      "engineOwner": "Future Force Context Resolver",
+      "actionTaken": "Removed live force damage effect.",
+      "note": "Conditional dark-side/Force context; no always-on force damage."
+    },
+    {
+      "name": "Dark Side Scourge",
+      "ids": [
+        "2e96f06be6b9def8"
+      ],
+      "trees": [
+        "36f18f3e974feb33"
+      ],
+      "bucket": "gm_player_or_future_target_context",
+      "engineOwner": "Future Target Context Resolver",
+      "actionTaken": "Removed bogus attack/damage metadata.",
+      "note": "Requires target dark-side identity/creature context; punted."
+    },
+    {
+      "name": "Force Haze",
+      "ids": [
+        "f098749cb8767a5f"
+      ],
+      "trees": [
+        "36f18f3e974feb33"
+      ],
+      "bucket": "gm_player_or_future_force_context",
+      "engineOwner": "Future Force/Stealth Context Resolver",
+      "actionTaken": "Removed bogus Reflex metadata.",
+      "note": "Activated/concealment-style effect; no passive Reflex bonus."
+    },
+    {
+      "name": "Resilience",
+      "ids": [
+        "0dde210ea6d197ef"
+      ],
+      "trees": [
+        "jedi-guardian"
+      ],
+      "bucket": "manual_action",
+      "engineOwner": "Manual/Combat Option",
+      "actionTaken": "Removed static Fortitude interpretation.",
+      "note": "Full-round action to move up condition track; no passive Fortitude."
+    },
+    {
+      "name": "Steel Resolve",
+      "ids": [
+        "3e18acc25d6c03db"
+      ],
+      "trees": [
+        "36f18f3e974feb33"
+      ],
+      "bucket": "manual_action_or_combat_option",
+      "engineOwner": "Future Combat Option",
+      "actionTaken": "Removed static Fortitude interpretation.",
+      "note": "Description is not a passive Fortitude bonus."
+    },
+    {
+      "name": "Vigilance",
+      "ids": [
+        "abe485644b195f0b"
+      ],
+      "trees": [
+        "77e3817ba5cfa0d5"
+      ],
+      "bucket": "gm_player_or_future_ally_context",
+      "engineOwner": "Future Ally Context Resolver",
+      "actionTaken": "Removed static ally Reflex interpretation.",
+      "note": "Ally/positioning context; no permanent self defense."
+    },
+    {
+      "name": "Defensive Circle",
+      "ids": [
+        "d838141fe404a9fb"
+      ],
+      "trees": [
+        "dfc4142435b4356d"
+      ],
+      "bucket": "gm_player_or_future_ally_context",
+      "engineOwner": "Future Ally Context Resolver",
+      "actionTaken": "Removed static Reflex interpretation.",
+      "note": "Requires circle/ally conditions not known by sheet prep."
+    },
+    {
+      "name": "Jedi Quarry",
+      "ids": [
+        "dfb9e58c7bcb095c"
+      ],
+      "trees": [
+        "44554c28675292b6"
+      ],
+      "bucket": "gm_player_or_future_target_context",
+      "engineOwner": "Future Target/Mobility Context Resolver",
+      "actionTaken": "Removed static speed interpretation.",
+      "note": "Requires designated quarry/movement context; no permanent speed."
+    }
+  ],
+  "weaponSpecializationCleanup": {
+    "canonicalJediLightsaberTalentId": "bcd9981b3c6a46dc",
+    "deletedDuplicateIds": [
+      "00a9210772a64a19",
+      "0ebd5b2c63024627",
+      "41426ecd7fade0b0"
+    ],
+    "updatedTrees": [
+      "Lightsaber Forms",
+      "Duelist"
+    ],
+    "alsoReferencedTreesAfterCleanup": [
+      "Lightsaber Combat",
+      "Lightsaber Forms",
+      "Duelist",
+      "Sith"
+    ],
+    "soldierGenericKept": {
+      "id": "869168cd679ee5d1",
+      "tree": "Weapon Specialist",
+      "recommendedFutureWork": "Persistent weapon-group/category picker for Soldier generic Weapon Specialization."
+    }
+  },
+  "newRuntimeSupport": [
+    {
+      "file": "scripts/engine/abilities/passive/passive-state.js",
+      "change": "Added weapon.lightsaber-equipped and weapon.lightsaber predicates for equipment-context defense and roll-context damage."
+    },
+    {
+      "file": "scripts/combat/rolls/damage.js",
+      "change": "PASSIVE/STATE damage bonuses now honor ModifierEngine context guards and predicate requirements before adding to damage rolls."
+    },
+    {
+      "file": "scripts/actors/derived/derived-calculator.js",
+      "change": "Force Intuition now trains Initiative and substitutes Use the Force total for Initiative when higher."
+    },
+    {
+      "file": "scripts/engine/talent/talents.js",
+      "change": "Removed legacy active-effect generation for several Jedi/lightsaber forms that were not passive numeric bonuses."
+    }
+  ],
+  "reviewOrPuntBucket": [
+    {
+      "talent": "Shien",
+      "reason": "Current pack description is blank; existing deflect metadata should be reviewed against canon before removal or automation."
+    },
+    {
+      "talent": "Soresu",
+      "reason": "Canon reroll for failed Block/Deflect Use the Force checks needs Block/Deflect resolver state; current disabled metadata is harmless."
+    },
+    {
+      "talent": "Sokan",
+      "reason": "Take 10/Tumble movement-square behavior requires skill-use/movement resolver, not static speed."
+    },
+    {
+      "talent": "Trakata",
+      "reason": "Two-swift Feint option requires combat action UI/skill-use prompt."
+    },
+    {
+      "talent": "Vaapad",
+      "reason": "Natural 19/20 critical threat with caveat needs attack roll critical-threshold support for lightsabers."
+    },
+    {
+      "talent": "Force Persuasion",
+      "reason": "Appears to have a plausible skill substitution effect; left untouched until skill-substitution audit."
+    },
+    {
+      "talent": "Greater Weapon Focus (lightsabers)",
+      "reason": "Existing system.attacks.lightsaber effect may be current attack owner; left untouched until attack-path validation."
+    },
+    {
+      "talent": "Shoto Focus",
+      "reason": "Requires dual-wield/shoto equipped context; left untouched until weapon equipment-context audit."
+    }
+  ],
+  "recommendedNextPatchOrder": [
+    "Block/Deflect action-state resolver and reaction prompts",
+    "Lightsaber Defense active toggle/temporary defense effect",
+    "Makashi/Shii-Cho/Soresu form interactions with Block/Deflect/Lightsaber Defense",
+    "Vaapad critical-threat support for lightsaber attack rolls",
+    "Soldier generic Weapon Specialization persistent picker",
+    "Force-context resolver for dark-side source/descriptor detection",
+    "Ally/area aura context for Battle Meditation/Defensive Circle/Vigilance",
+    "Skill substitution audit for Force Persuasion and similar Jedi talents"
+  ],
+  "validation": {
+    "nodeCheckPassed": [
+      "scripts/engine/abilities/passive/passive-state.js",
+      "scripts/combat/rolls/damage.js",
+      "scripts/actors/derived/derived-calculator.js",
+      "scripts/engine/talent/talents.js"
+    ],
+    "jsonlParsed": [
+      "packs/talents.db",
+      "packs/talent_trees.db"
+    ],
+    "treeReferencesMissingTalentIds": 0,
+    "foundryRuntimeTested": false
+  },
+  "changedFiles": [
+    "packs/talents.db",
+    "packs/talent_trees.db",
+    "scripts/engine/abilities/passive/passive-state.js",
+    "scripts/combat/rolls/damage.js",
+    "scripts/actors/derived/derived-calculator.js",
+    "scripts/engine/talent/talents.js",
+    "docs/talent-jedi-tree-cleanup-phase-t7.json"
+  ]
+}

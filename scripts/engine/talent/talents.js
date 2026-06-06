@@ -70,7 +70,7 @@ export const TALENT_EFFECTS = {
 
   'Resilience': {
     effects: [],
-    description: '+1 Fortitude Defense'
+    description: 'Full-round action to move +2 steps up the Condition Track; no passive Fortitude bonus'
   },
 
   'Iron Will': {
@@ -251,13 +251,8 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Weapon Specialization': {
-    effects: [{
-      key: 'system.damage.weaponGroup',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: '+2 damage with weapon group'
+    effects: [],
+    description: 'Choice-backed +2 damage with selected weapon group; handled by picker/rule metadata, not a generic damage effect'
   },
 
   'Greater Weapon Specialization': {
@@ -742,43 +737,18 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Shii-Cho': {
-    effects: [{
-      key: 'system.lightsaberForm.shiicho',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Shii-Cho lightsaber form'
+    effects: [],
+    description: 'Reduces cumulative Block/Deflect penalty; handled by future Block/Deflect action-state resolver'
   },
 
   'Makashi': {
-    effects: [{
-      key: 'system.lightsaberForm.makashi',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.defenses.reflex.vsMelee',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Makashi form +1 Reflex vs melee'
+    effects: [],
+    description: 'Improves active Lightsaber Defense while wielding a single one-handed lightsaber; no passive Reflex effect'
   },
 
   'Soresu': {
-    effects: [{
-      key: 'system.lightsaberForm.soresu',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.defenses.reflex.vsRanged',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Soresu form +1 Reflex vs ranged'
+    effects: [],
+    description: 'Reroll failed Use the Force checks for Block/Deflect; no passive Reflex bonus'
   },
 
   'Shien': {
@@ -792,43 +762,18 @@ export const TALENT_EFFECTS = {
   },
 
   'Djem So': {
-    effects: [{
-      key: 'system.lightsaberForm.djemso',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.damage.lightsaber',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Djem So form +1 lightsaber damage'
+    effects: [],
+    description: 'Reaction Force Point counterattack after being hit by melee; no passive lightsaber damage'
   },
 
   'Niman': {
-    effects: [{
-      key: 'system.lightsaberForm.niman',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Niman lightsaber form'
+    effects: [],
+    description: 'Equipped-context +1 Reflex and Will while wielding a lightsaber; handled by PASSIVE/STATE metadata'
   },
 
   'Juyo': {
-    effects: [{
-      key: 'system.lightsaberForm.juyo',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.attacks.lightsaber',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: 'Juyo form +2 lightsaber attack'
+    effects: [],
+    description: 'Once-per-encounter target designation/reroll option; no passive lightsaber attack bonus'
   },
 
   'Vaapad': {
@@ -842,18 +787,8 @@ export const TALENT_EFFECTS = {
   },
 
   'Sokan': {
-    effects: [{
-      key: 'system.lightsaberForm.sokan',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.speed.bonus',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Sokan form +1 square speed'
+    effects: [],
+    description: 'Take 10 on Acrobatics/Tumble and movement-through-threatened-squares handling; no passive speed bonus'
   },
 
   'Trakata': {
