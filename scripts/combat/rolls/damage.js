@@ -244,6 +244,7 @@ export async function rollDamage(actor, weapon, context = {}) {
       return roll;
     }
   }
+  }
 
 
   const baseFormula = weapon.system?.damage ?? '1d6';

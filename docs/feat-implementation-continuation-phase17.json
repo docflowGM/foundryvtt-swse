@@ -1,0 +1,360 @@
+{
+  "phase": "Phase 17 - remaining feat backlog incorporation pass",
+  "sourceRepo": "foundryvtt-swse-main (22).zip plus Phase 1-16 changed-file patches applied before this pass",
+  "policyNotes": [
+    "Tech Specialist and Force Regimen Mastery remain deferred major UI/picker work.",
+    "Starship Designer and Cybernetic Surgery remain punted to GM/player handling.",
+    "Linguist remains treated as implemented through the chargen/progression language step.",
+    "Nearby allies, battlefield positioning, mounted positioning, soft cover targets, and Skill Challenge structures are kept as explicit metadata/manual table context rather than fake static automation.",
+    "This phase removes the remaining Phase 16 manual_or_unimplemented active backlog by either implementing engine-consumable rules, adding explicit metadata hooks, or reclassifying picker/table-heavy feats."
+  ],
+  "summary": {
+    "featRowsTouched": 41,
+    "engineConsumableRows": 8,
+    "metadataOnlyRows": 24,
+    "newlyDeferredRows": 5,
+    "newlyPuntedRows": 4,
+    "remainingManualOrNeedsReviewRows": 0
+  },
+  "engineConsumableFeats": [
+    {
+      "line": 82,
+      "name": "Dreadful Countenance",
+      "mechanicsMode": "conditional",
+      "applicationScope": "fear_skill_reroll_context",
+      "implementationStatus": "skill_reroll_phase17",
+      "summary": "Dreadful Countenance grants rerolls for Persuasion or Use the Force checks used for Fear effects; the reroll result must be kept."
+    },
+    {
+      "line": 95,
+      "name": "Justice Seeker",
+      "mechanicsMode": "conditional",
+      "applicationScope": "damage_roll_context",
+      "implementationStatus": "attack_option_phase17",
+      "summary": "Justice Seeker adds +2 damage against targets that damaged one of your allies since the end of your last turn."
+    },
+    {
+      "line": 154,
+      "name": "Wicked Strike",
+      "mechanicsMode": "conditional",
+      "applicationScope": "rapid_strike_followup_attack",
+      "implementationStatus": "attack_option_phase17",
+      "summary": "Wicked Strike adds a once-per-turn second attack at -2 against another target within reach after damaging with a non-area Rapid Strike attack."
+    },
+    {
+      "line": 181,
+      "name": "Crossfire",
+      "mechanicsMode": "conditional",
+      "applicationScope": "ranged_miss_soft_cover_followup",
+      "implementationStatus": "attack_option_phase17",
+      "summary": "Crossfire lets you attack the creature providing Soft Cover after missing the covered target with a ranged attack, once per round."
+    },
+    {
+      "line": 207,
+      "name": "Imperial Military Training",
+      "mechanicsMode": "active",
+      "applicationScope": "mind_affecting_negation_resource",
+      "implementationStatus": "resource_rule_phase17",
+      "summary": "Imperial Military Training negates one Mind-Affecting effect affecting/targeting you once per encounter as a free action on your turn."
+    },
+    {
+      "line": 243,
+      "name": "Disarming Charm",
+      "mechanicsMode": "conditional",
+      "applicationScope": "attitude_improved_social_skill_context",
+      "implementationStatus": "skill_bonus_phase17",
+      "summary": "Disarming Charm gives +2 circumstance to Deception or Persuasion checks against a target whose attitude you improved for 24 hours."
+    },
+    {
+      "line": 337,
+      "name": "Momentum Strike",
+      "mechanicsMode": "conditional",
+      "applicationScope": "mounted_or_speeder_melee_damage_context",
+      "implementationStatus": "attack_option_phase17",
+      "summary": "Momentum Strike adds +1 weapon die to melee attacks while riding a mount or speeder bike if the mount/vehicle has already moved at least its speed this turn."
+    },
+    {
+      "line": 369,
+      "name": "Grab Back",
+      "mechanicsMode": "conditional",
+      "applicationScope": "grab_grapple_defense_reaction_context",
+      "implementationStatus": "grapple_reaction_phase17",
+      "summary": "Grab Back grants +2 Reflex against Grab/Grapple and lets you make a Grab/Grapple reaction when an enemy misses you with one."
+    }
+  ],
+  "metadataOnlyFeats": [
+    {
+      "line": 81,
+      "name": "Impersonate",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "deception_impersonation_context",
+      "implementationStatus": "skill_use_rule_phase17",
+      "summary": "Impersonate enables Shapeshift-based impersonation as a Deception use; voice/appearance matching and specific-person disguise remain skill-use metadata."
+    },
+    {
+      "line": 114,
+      "name": "Destructive Force",
+      "mechanicsMode": "conditional",
+      "applicationScope": "object_vehicle_destruction_rider",
+      "implementationStatus": "attack_rider_metadata_phase17",
+      "summary": "Destructive Force is a destruction rider: when an object/vehicle is reduced to 0 HP and damage equals/exceeds DT, adjacent targets take 1 die of the same damage type."
+    },
+    {
+      "line": 116,
+      "name": "Maniacal Charge",
+      "mechanicsMode": "active",
+      "applicationScope": "charge_intimidate_context",
+      "implementationStatus": "charge_skill_rider_phase17",
+      "summary": "Maniacal Charge adds a free Intimidate/Persuasion rider while charging; successful checks suppress AoOs from passed enemies and deny the target Dexterity/flat-foot it until your next turn."
+    },
+    {
+      "line": 136,
+      "name": "Blaster Barrage",
+      "mechanicsMode": "conditional",
+      "applicationScope": "autofire_ally_bonus_context",
+      "implementationStatus": "autofire_rider_metadata_phase17",
+      "summary": "Blaster Barrage creates a +2 circumstance bonus for allies making Autofire attacks against targets you damaged with Autofire until your next turn."
+    },
+    {
+      "line": 139,
+      "name": "Sith Military Training",
+      "mechanicsMode": "active",
+      "applicationScope": "defense_debuff_reaction_context",
+      "implementationStatus": "reaction_rider_metadata_phase17",
+      "summary": "Sith Military Training is a once-per-encounter reaction when you drop a target or exceed DT, imposing -2 defenses on enemies within 6 squares of that target; range/target set remains context metadata."
+    },
+    {
+      "line": 149,
+      "name": "Leader of Droids",
+      "mechanicsMode": "active",
+      "applicationScope": "nearby_ally_or_positioning_context",
+      "implementationStatus": "table_context_metadata_phase17",
+      "summary": "Leader of Droids lets selected willing Droid allies benefit from your beneficial Mind-Affecting effects; effect propagation is explicit metadata/table-managed."
+    },
+    {
+      "line": 172,
+      "name": "Distracting Droid",
+      "mechanicsMode": "active",
+      "applicationScope": "persuasion_area_debuff_context",
+      "implementationStatus": "skill_use_action_phase17",
+      "summary": "Distracting Droid is a standard action Persuasion vs Will area effect against enemies within 6 squares that can see/hear you; success denies a move action, success by 10 also flat-foots."
+    },
+    {
+      "line": 193,
+      "name": "Acrobatic Ally",
+      "mechanicsMode": "active",
+      "applicationScope": "nearby_ally_or_positioning_context",
+      "implementationStatus": "table_context_metadata_phase17",
+      "summary": "Acrobatic Ally is a coordinated movement stunt requiring adjacent ally, shared initiative, DC 20 Acrobatics, and positioning adjudication; kept as explicit action metadata."
+    },
+    {
+      "line": 276,
+      "name": "Mounted Defense",
+      "mechanicsMode": "active",
+      "applicationScope": "nearby_ally_or_positioning_context",
+      "implementationStatus": "table_context_metadata_phase17",
+      "summary": "Mounted Defense redirects one attack per encounter from you to your mount/speeder after the roll but before damage; mount/vehicle target handling remains reaction metadata."
+    },
+    {
+      "line": 285,
+      "name": "Fringe Benefits",
+      "mechanicsMode": "passive_capability",
+      "applicationScope": "black_market_cost_context",
+      "implementationStatus": "commerce_metadata_phase17",
+      "summary": "Fringe Benefits reduces Black Market cost multiplier by 2, minimum x1; store/black-market automation can consume this commerce metadata later."
+    },
+    {
+      "line": 291,
+      "name": "A Few Maneuvers",
+      "mechanicsMode": "conditional",
+      "applicationScope": "vehicle_piloting_defense_context",
+      "implementationStatus": "vehicle_defense_metadata_phase17",
+      "summary": "A Few Maneuvers grants +2 dodge Reflex to a Colossal-or-smaller vehicle you pilot and harmlessly self-destructs missile/torpedo misses by 5+; vehicle context remains metadata."
+    },
+    {
+      "line": 303,
+      "name": "Mon Calamari Shipwright",
+      "mechanicsMode": "active",
+      "applicationScope": "vehicle_systems_action_context",
+      "implementationStatus": "vehicle_action_metadata_phase17",
+      "summary": "Mon Calamari Shipwright reduces vehicle condition recovery to two swift actions and automatically succeeds on Reroute Power Mechanics checks."
+    },
+    {
+      "line": 313,
+      "name": "Knock Heads",
+      "mechanicsMode": "conditional",
+      "applicationScope": "multi_grab_followup_damage",
+      "implementationStatus": "multi_grab_rider_metadata_phase17",
+      "summary": "Knock Heads is a Multi-Grab follow-up that deals 1d6 + Strength modifier bludgeoning damage to both grabbed adjacent targets and treats DT as 5 lower."
+    },
+    {
+      "line": 321,
+      "name": "Coordinated Barrage",
+      "mechanicsMode": "conditional",
+      "applicationScope": "aid_another_damage_scaling_context",
+      "implementationStatus": "aid_another_rider_metadata_phase17",
+      "summary": "Coordinated Barrage scales an aided ally attack by +1 die per 3 points over target Reflex, capped by aiding allies with the feat or +5 dice; ally-count handling remains table/context metadata."
+    },
+    {
+      "line": 327,
+      "name": "Hyperblazer",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "use_computer_astrogation_hyperspace_tangle",
+      "implementationStatus": "skill_use_rule_phase17",
+      "summary": "Hyperblazer halves Hyperspace Tangle astrogation time/penalties and halves hyperspace mapping time; stored as Use Computer astrogation metadata."
+    },
+    {
+      "line": 336,
+      "name": "Multi-Targeting",
+      "mechanicsMode": "active",
+      "applicationScope": "aim_action_persistence_context",
+      "implementationStatus": "aim_metadata_phase17",
+      "summary": "Multi-Targeting lets a Droid spread Aim swift actions across rounds and attack other targets without losing Aim unless the aimed subject leaves line of sight."
+    },
+    {
+      "line": 352,
+      "name": "Officer Candidacy Training",
+      "mechanicsMode": "passive",
+      "applicationScope": "organization_score_context",
+      "implementationStatus": "organization_score_metadata_phase17",
+      "summary": "Officer Candidacy Training grants +2 to Rank and Privilege Organization Score."
+    },
+    {
+      "line": 355,
+      "name": "Tactical Genius",
+      "mechanicsMode": "conditional",
+      "applicationScope": "starship_maneuver_recovery_context",
+      "implementationStatus": "starship_maneuver_metadata_phase17",
+      "summary": "Tactical Genius refreshes all spent Starship Maneuvers at the end of any round in which you roll a natural 20 on an attack roll."
+    },
+    {
+      "line": 368,
+      "name": "Friends in Low Places",
+      "mechanicsMode": "passive_capability",
+      "applicationScope": "license_black_market_context",
+      "implementationStatus": "commerce_metadata_phase17",
+      "summary": "Friends in Low Places substitutes Gather Information for Knowledge (Bureaucracy) for licenses and reduces Restricted/Military Black Market multipliers by 1."
+    },
+    {
+      "line": 370,
+      "name": "Shield Surge",
+      "mechanicsMode": "active",
+      "applicationScope": "vehicle_shield_damage_reduction_context",
+      "implementationStatus": "shield_reaction_metadata_phase17",
+      "summary": "Shield Surge lets a Droid/Cyborg with a vehicle data link trade remaining vehicle SR to reduce damage after shields are reduced."
+    },
+    {
+      "line": 372,
+      "name": "Trample",
+      "mechanicsMode": "conditional",
+      "applicationScope": "mounted_charge_area_attack_context",
+      "implementationStatus": "mounted_charge_metadata_phase17",
+      "summary": "Trample lets a mount make a free natural weapon attack against each enemy whose square it charges through, plus the normal end-of-charge attack."
+    },
+    {
+      "line": 376,
+      "name": "Meat Shield",
+      "mechanicsMode": "conditional",
+      "applicationScope": "soft_cover_defense_context",
+      "implementationStatus": "cover_defense_metadata_phase17",
+      "summary": "Meat Shield treats you as having cover from an opponent who attacks you while you have cover provided by another character/creature/droid."
+    },
+    {
+      "line": 380,
+      "name": "Sensor Link",
+      "mechanicsMode": "active",
+      "applicationScope": "nearby_ally_or_positioning_context",
+      "implementationStatus": "table_context_metadata_phase17",
+      "summary": "Sensor Link broadcasts sensor input to an ally within 24 squares; mutual Sensor Link grants +2 Perception and otherwise enables Aid Another without line of sight."
+    },
+    {
+      "line": 399,
+      "name": "Brink of Death",
+      "mechanicsMode": "conditional",
+      "applicationScope": "damage_resolution_nonlethal_choice",
+      "implementationStatus": "damage_resolution_metadata_phase17",
+      "summary": "Brink of Death lets you choose to reduce a target to 0 HP and unconscious instead of killing it when your attack would kill."
+    }
+  ],
+  "deferredPickerOrMajorFeatureFeats": [
+    {
+      "line": 88,
+      "name": "Signature Device",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "customization_picker_required",
+      "implementationStatus": "deferred_major_ui_picker",
+      "summary": "Signature Device depends on Tech Specialist/customization trait selection and item designation, so it is deferred to the dedicated customization UI/picker work."
+    },
+    {
+      "line": 110,
+      "name": "Hasty Modification",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "customization_picker_required",
+      "implementationStatus": "deferred_major_ui_picker",
+      "summary": "Hasty Modification depends on Tech Specialist trait swapping and item modification UI, so it is deferred to the dedicated customization UI/picker work."
+    },
+    {
+      "line": 309,
+      "name": "Biotech Specialist",
+      "mechanicsMode": "deferred_major_ui",
+      "applicationScope": "customization_picker_required",
+      "implementationStatus": "deferred_major_ui_picker",
+      "summary": "Biotech Specialist is a custom biotechnology modification system and needs dedicated modification UI/picker support rather than fake passive modifiers."
+    },
+    {
+      "line": 345,
+      "name": "Logic Upgrade: Skill Swap",
+      "mechanicsMode": "deferred_runtime_picker",
+      "applicationScope": "skill_training_swap_runtime_picker",
+      "implementationStatus": "deferred_runtime_picker_phase17",
+      "summary": "Logic Upgrade: Skill Swap requires choosing a trained and untrained skill at runtime, so it is deferred to a small skill-swap picker rather than fake automation."
+    },
+    {
+      "line": 415,
+      "name": "Resilient Talent",
+      "mechanicsMode": "deferred_runtime_picker",
+      "applicationScope": "temporary_talent_picker_required",
+      "implementationStatus": "deferred_runtime_picker_phase17",
+      "summary": "Resilient Talent requires a once-per-day temporary talent picker from classes you have levels in, so it is deferred to dedicated picker/effect UI."
+    }
+  ],
+  "puntedOrTableManagedFeats": [
+    {
+      "line": 79,
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "skill_challenge_table_context",
+      "implementationStatus": "punted_to_skill_challenge_table_resolution",
+      "summary": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed."
+    },
+    {
+      "line": 138,
+      "name": "Stand Tall",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "nearby_ally_or_positioning_context",
+      "implementationStatus": "table_context_metadata_phase17",
+      "summary": "Stand Tall is a nearby-ally reaction feat: once per encounter when you take damage, allies within 6 squares/LOS may attack the attacker. Nearby ally and LOS handling remains GM/table-managed."
+    },
+    {
+      "line": 357,
+      "name": "Skill Challenge: Last Resort",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "skill_challenge_table_context",
+      "implementationStatus": "punted_to_skill_challenge_table_resolution",
+      "summary": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed."
+    },
+    {
+      "line": 392,
+      "name": "Skill Challenge: Recovery",
+      "mechanicsMode": "manual_punted",
+      "applicationScope": "skill_challenge_table_context",
+      "implementationStatus": "punted_to_skill_challenge_table_resolution",
+      "summary": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed."
+    }
+  ],
+  "remainingManualOrNeedsReviewRows": [],
+  "validation": {
+    "packsFeatsDbRows": 419,
+    "runtimeTestedInFoundry": false
+  }
+}
