@@ -61,6 +61,22 @@ function actorItems(actor) {
   }
 }
 
+function hasResolvedChoice(item) {
+  const system = item?.system ?? {};
+  const choice = system.selectedChoice ?? system.selectedChoices;
+  if (Array.isArray(choice)) return choice.length > 0;
+  if (choice && typeof choice === "object") return Object.keys(choice).length > 0;
+  return choice !== undefined && choice !== null && String(choice).trim() !== "";
+}
+
+function choiceLabel(item) {
+  const choice = item?.system?.selectedChoice ?? item?.system?.selectedChoices;
+  const entry = Array.isArray(choice) ? choice[0] : choice;
+  if (!entry) return "";
+  if (typeof entry === "string") return entry;
+  return entry.label || entry.weapon || entry.group || entry.value || entry.id || "";
+}
+
 function cloneData(value) {
   try {
     if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -138,6 +154,10 @@ function normalizeActionCard(item, rawCard, index = 0) {
   );
   const description = String(rawCard.description ?? rawCard.notes ?? rawCard.summary ?? "").trim();
   const manualResolution = rawCard.manualResolution === true || rawCard.resolutionMode === "manual" || rawCard.resolutionMode === "reference";
+  const requiresSelectedChoice = rawCard.requiresSelectedChoice === true || item?.system?.abilityMeta?.requiresSelectedChoice === true;
+  const selectedChoiceLabel = choiceLabel(item);
+  const choiceMissing = requiresSelectedChoice && !hasResolvedChoice(item);
+  const notes = rawCard.notes || rawCard.summary || description;
 
   return {
     key: `ability:${itemId}:${actionId}`,
@@ -153,17 +173,24 @@ function normalizeActionCard(item, rawCard, index = 0) {
     actionType,
     type: actionType,
     cost: rawCard.cost ?? rawCard.actionCost ?? rawCard.action?.cost ?? 1,
-    notes: rawCard.notes || rawCard.summary || description,
+    notes: choiceMissing ? `${notes} Resolve this ability's required selection before using it.` : notes,
     description,
     relatedSkills: normalizeRelatedSkills(rawCard.relatedSkills),
-    resources: normalizeResourceBadges(rawCard.resources ?? rawCard.frequency ?? rawCard.uses),
-    executable: rawCard.executable !== false,
+    resources: [
+      ...normalizeResourceBadges(rawCard.resources ?? rawCard.frequency ?? rawCard.uses),
+      ...(selectedChoiceLabel ? [`Choice: ${selectedChoiceLabel}`] : []),
+      ...(choiceMissing ? ['Choice required'] : [])
+    ],
+    executable: rawCard.executable !== false && !choiceMissing,
     useLabel: rawCard.useLabel || (manualResolution ? "Use / Note" : "Use"),
     manualResolution,
     resolutionMode: rawCard.resolutionMode || (manualResolution ? "manual" : "auto"),
     spendAction: rawCard.spendAction !== false,
     isAttack: rawCard.isAttack === true,
-    requiresSelectedChoice: rawCard.requiresSelectedChoice === true || item?.system?.abilityMeta?.requiresSelectedChoice === true,
+    requiresSelectedChoice,
+    choiceMissing,
+    selectedChoiceLabel,
+    disabledReason: choiceMissing ? 'This ability requires a selected choice from chargen/level-up before it can be used.' : '',
     requiredContext: cloneData(rawCard.requiredContext ?? rawCard.requirements ?? []),
     targetHint: rawCard.targetHint || rawCard.target || "",
     ruleData: cloneData(rawCard.ruleData ?? rawCard)
