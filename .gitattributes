@@ -1,0 +1,38 @@
+# Normalize line endings to LF in the repository for all text files.
+# Prevents CRLF/LF churn that can bury real conflicts and corrupt merges,
+# especially across Windows and other environments.
+* text=auto eol=lf
+
+# Explicit text types (kept LF in the repo, checked out as LF)
+*.js     text eol=lf
+*.mjs    text eol=lf
+*.cjs    text eol=lf
+*.json   text eol=lf
+*.css    text eol=lf
+*.scss   text eol=lf
+*.html   text eol=lf
+*.hbs    text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.svg    text eol=lf
+*.db     text eol=lf
+
+# Binary files: never touch line endings
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.otf    binary
+*.eot    binary
+*.mp3    binary
+*.ogg    binary
+*.wav    binary
+*.webm   binary
+*.mp4    binary
+*.pdf    binary
