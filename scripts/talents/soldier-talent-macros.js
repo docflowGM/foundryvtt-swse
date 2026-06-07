@@ -46,7 +46,7 @@ export class SoldierTalentMacros {
       return;
     }
 
-    ui.notifications.info(`${selectedActor.name} has Melee Smash! Add 1d6 extra damage to melee attacks!`);
+    ui.notifications.info(`${selectedActor.name} has Melee Smash! Add +1 damage to melee attacks.`);
   }
 
   /**

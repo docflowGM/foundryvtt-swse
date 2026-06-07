@@ -54,13 +54,8 @@ export const TALENT_EFFECTS = {
   },
 
   'Tough as Nails': {
-    effects: [{
-      key: 'system.damageThreshold.misc',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 Damage Threshold'
+    effects: [],
+    description: "System-owned by SecondWindRules/ActorEngine: increases second wind capacity. No ActiveEffect is generated here."
   },
 
   'Hardiness': {
@@ -70,7 +65,7 @@ export const TALENT_EFFECTS = {
 
   'Resilience': {
     effects: [],
-    description: 'Full-round action to move +2 steps up the Condition Track; no passive Fortitude bonus'
+    description: '+1 Fortitude Defense'
   },
 
   'Iron Will': {
@@ -252,27 +247,17 @@ export const TALENT_EFFECTS = {
 
   'Weapon Specialization': {
     effects: [],
-    description: 'Choice-backed +2 damage with selected weapon group; handled by picker/rule metadata, not a generic damage effect'
+    description: "Choice-required Soldier talent. The selected weapon group/exotic weapon should be handled by a persistent picker and roll-context damage hook, not a generic ActiveEffect."
   },
 
   'Greater Weapon Specialization': {
-    effects: [{
-      key: 'system.damage.weaponGroup',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: 'Additional +2 damage with weapon group'
+    effects: [],
+    description: "Choice-required Soldier talent. The selected weapon group/exotic weapon should be handled by a persistent picker and roll-context damage hook, not a generic ActiveEffect."
   },
 
   'Melee Smash': {
-    effects: [{
-      key: 'system.damage.melee',
-      mode: 2,
-      value: '1d6',
-      priority: 20
-    }],
-    description: '+1d6 melee damage (two-handed)'
+    effects: [],
+    description: "Implemented by the talent item PASSIVE/STATE roll-context modifier: +1 damage on melee damage rolls. No ActiveEffect is generated here."
   },
 
   'Devastating Attack (Lightsabers)': {
@@ -737,18 +722,43 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Shii-Cho': {
-    effects: [],
-    description: 'Reduces cumulative Block/Deflect penalty; handled by future Block/Deflect action-state resolver'
+    effects: [{
+      key: 'system.lightsaberForm.shiicho',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }],
+    description: 'Shii-Cho lightsaber form'
   },
 
   'Makashi': {
-    effects: [],
-    description: 'Improves active Lightsaber Defense while wielding a single one-handed lightsaber; no passive Reflex effect'
+    effects: [{
+      key: 'system.lightsaberForm.makashi',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }, {
+      key: 'system.defenses.reflex.vsMelee',
+      mode: 2,
+      value: '1',
+      priority: 20
+    }],
+    description: 'Makashi form +1 Reflex vs melee'
   },
 
   'Soresu': {
-    effects: [],
-    description: 'Reroll failed Use the Force checks for Block/Deflect; no passive Reflex bonus'
+    effects: [{
+      key: 'system.lightsaberForm.soresu',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }, {
+      key: 'system.defenses.reflex.vsRanged',
+      mode: 2,
+      value: '1',
+      priority: 20
+    }],
+    description: 'Soresu form +1 Reflex vs ranged'
   },
 
   'Shien': {
@@ -762,18 +772,43 @@ export const TALENT_EFFECTS = {
   },
 
   'Djem So': {
-    effects: [],
-    description: 'Reaction Force Point counterattack after being hit by melee; no passive lightsaber damage'
+    effects: [{
+      key: 'system.lightsaberForm.djemso',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }, {
+      key: 'system.damage.lightsaber',
+      mode: 2,
+      value: '1',
+      priority: 20
+    }],
+    description: 'Djem So form +1 lightsaber damage'
   },
 
   'Niman': {
-    effects: [],
-    description: 'Equipped-context +1 Reflex and Will while wielding a lightsaber; handled by PASSIVE/STATE metadata'
+    effects: [{
+      key: 'system.lightsaberForm.niman',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }],
+    description: 'Niman lightsaber form'
   },
 
   'Juyo': {
-    effects: [],
-    description: 'Once-per-encounter target designation/reroll option; no passive lightsaber attack bonus'
+    effects: [{
+      key: 'system.lightsaberForm.juyo',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }, {
+      key: 'system.attacks.lightsaber',
+      mode: 2,
+      value: '2',
+      priority: 20
+    }],
+    description: 'Juyo form +2 lightsaber attack'
   },
 
   'Vaapad': {
@@ -787,8 +822,18 @@ export const TALENT_EFFECTS = {
   },
 
   'Sokan': {
-    effects: [],
-    description: 'Take 10 on Acrobatics/Tumble and movement-through-threatened-squares handling; no passive speed bonus'
+    effects: [{
+      key: 'system.lightsaberForm.sokan',
+      mode: 5,
+      value: 'true',
+      priority: 20
+    }, {
+      key: 'system.speed.bonus',
+      mode: 2,
+      value: '1',
+      priority: 20
+    }],
+    description: 'Sokan form +1 square speed'
   },
 
   'Trakata': {
@@ -836,23 +881,13 @@ export const TALENT_EFFECTS = {
   },
 
   'Long Stride': {
-    effects: [{
-      key: 'system.speed.base',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: '+2 squares base speed'
+    effects: [],
+    description: "Implemented by the talent item PASSIVE/MODIFIER with ARMOR_CATEGORY context: +2 speed while wearing light armor or no armor. No ActiveEffect is generated here."
   },
 
   'Swift Strider': {
-    effects: [{
-      key: 'system.speed.base',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: '+1 square base speed'
+    effects: [],
+    description: "Runtime movement/action option. Table-managed until movement/action context can adjudicate it."
   },
 
   'Rapid Reaction': {
@@ -904,93 +939,48 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Sneak Attack': {
-    effects: [{
-      key: 'system.sneakAttack.dice',
-      mode: 2,
-      value: '1d6',
-      priority: 20
-    }],
-    description: '+1d6 sneak attack damage'
+    effects: [],
+    description: "Runtime/GM target-context damage. Do not create a persistent damage effect."
   },
 
   'Improved Sneak Attack': {
-    effects: [{
-      key: 'system.sneakAttack.dice',
-      mode: 2,
-      value: '1d6',
-      priority: 25
-    }],
-    description: 'Additional +1d6 sneak attack damage'
+    effects: [],
+    description: "Runtime/GM target-context damage. Do not create a persistent damage effect."
   },
 
   'Master Sneak Attack': {
-    effects: [{
-      key: 'system.sneakAttack.dice',
-      mode: 2,
-      value: '1d6',
-      priority: 30
-    }],
-    description: 'Additional +1d6 sneak attack damage'
+    effects: [],
+    description: "Runtime/GM target-context damage. Do not create a persistent damage effect."
   },
 
   'Skirmisher': {
-    effects: [{
-      key: 'system.damage.skirmish',
-      mode: 2,
-      value: '1d6',
-      priority: 20
-    }],
-    description: '+1d6 damage when moving'
+    effects: [],
+    description: "Runtime movement/target-context damage. Do not create a persistent damage effect."
   },
 
   'Improved Skirmisher': {
-    effects: [{
-      key: 'system.damage.skirmish',
-      mode: 2,
-      value: '1d6',
-      priority: 25
-    }],
-    description: 'Additional +1d6 skirmish damage'
+    effects: [],
+    description: "Runtime movement/target-context damage. Do not create a persistent damage effect."
   },
 
   'Lucky Shot': {
-    effects: [{
-      key: 'system.attacks.luckyShot',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Lucky Shot ability'
+    effects: [],
+    description: "Runtime reroll/attack option. Do not create a persistent ActiveEffect flag here."
   },
 
   'Gambler': {
-    effects: [{
-      key: 'system.gambling.bonus',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 gambling checks'
+    effects: [],
+    description: "Skill-use context talent. Do not create a generic gambling bonus effect until Gamble/Wisdom-check context is implemented."
   },
 
   "Fortune's Favor": {
-    effects: [{
-      key: 'system.destiny.reroll',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: "Fortune's Favor reroll ability"
+    effects: [],
+    description: "Runtime critical-hit action option. Do not create a persistent reroll or destiny effect."
   },
 
   'Knack': {
-    effects: [{
-      key: 'system.skills.untrained.bonus',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: '+2 to untrained skill checks'
+    effects: [],
+    description: "Runtime skill reroll option. Do not create a static untrained-skill bonus."
   },
 
   // ============================================================================
@@ -1092,63 +1082,33 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Acute Senses': {
-    effects: [{
-      key: 'system.skills.perception.misc',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: '+2 Perception'
+    effects: [],
+    description: "Runtime reroll option for Perception/Use Sensors. Do not create a static Perception bonus."
   },
 
   'Expert Tracker': {
-    effects: [{
-      key: 'system.skills.survival.tracking',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 Survival to track'
+    effects: [],
+    description: "Tracking-specific Survival context. Do not create a static Survival bonus."
   },
 
   'Improved Stealth': {
-    effects: [{
-      key: 'system.skills.stealth.misc',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 Stealth'
+    effects: [],
+    description: "Runtime reroll option for Stealth. Do not create a static Stealth bonus."
   },
 
   'Hidden Movement': {
-    effects: [{
-      key: 'system.stealth.hiddenMovement',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Hidden Movement ability'
+    effects: [],
+    description: "Movement/Stealth context talent. Table-managed until movement and stealth context can adjudicate it."
   },
 
   'Total Concealment': {
-    effects: [{
-      key: 'system.stealth.totalConcealment',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Total Concealment ability'
+    effects: [],
+    description: "Stealth/concealment context talent. Table-managed until stealth visibility context can adjudicate it."
   },
 
   'Surefooted': {
-    effects: [{
-      key: 'system.movement.surefooted',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Ignore difficult terrain'
+    effects: [],
+    description: "Movement/terrain context talent. Table-managed until movement terrain context can adjudicate it."
   },
 
   'Bantha Rush': {
@@ -1162,13 +1122,8 @@ export const TALENT_EFFECTS = {
   },
 
   'Improved Initiative': {
-    effects: [{
-      key: 'system.skills.initiative.misc',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 Initiative'
+    effects: [],
+    description: "Runtime initiative reroll option. Do not create a static Initiative bonus."
   },
 
   // ============================================================================
@@ -1206,13 +1161,8 @@ export const TALENT_EFFECTS = {
   },
 
   'Indomitable': {
-    effects: [{
-      key: 'system.condition.indomitable',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Indomitable ability'
+    effects: [],
+    description: "Runtime condition-track recovery option. Do not create a persistent condition flag here."
   },
 
   'Battle Hardened': {
