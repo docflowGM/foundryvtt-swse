@@ -91,6 +91,30 @@ export function isMeleeWeapon(weapon) {
 }
 
 
+export function isLightMeleeWeapon(weapon) {
+  if (!isMeleeWeapon(weapon)) return false;
+  const system = weapon?.system ?? {};
+  if (system.light === true || system.isLight === true || system.properties?.includes?.('light')) return true;
+  const text = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    Array.isArray(system.properties) ? system.properties.join(' ') : ''
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /light\s+melee|knife|dagger|short\s+sword|vibroblade/.test(text);
+}
+
+function actorIsProficientWithWeapon(weapon) {
+  return weapon?.system?.proficient !== false;
+}
+
+
 function actorHasTalentNamed(actor, names = []) {
   const wanted = new Set((Array.isArray(names) ? names : [names]).map(normalizeSelector).filter(Boolean));
   if (!wanted.size) return false;
@@ -134,12 +158,21 @@ export function isThrownMeleeWeapon(weapon) {
 export function getWeaponAttackAbility(actor, weapon) {
   const system = weapon?.system ?? {};
   const explicit = String(system.attackAttribute ?? system.combat?.attack?.ability ?? '').toLowerCase();
+  const defaultAbility = isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
+  let resolved = defaultAbility;
+
   if (explicit) {
-    if (explicit.includes('dex')) return 'dex';
-    if (explicit.includes('str')) return 'str';
-    return explicit;
+    if (explicit.includes('dex')) resolved = 'dex';
+    else if (explicit.includes('str')) resolved = 'str';
+    else resolved = explicit;
   }
-  return isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
+
+  const usesNobleFencingStyle = actorHasTalentNamed(actor, 'Noble Fencing Style')
+    && resolved === 'str'
+    && actorIsProficientWithWeapon(weapon)
+    && (isLightsaberWeapon(weapon) || isLightMeleeWeapon(weapon));
+
+  return usesNobleFencingStyle ? 'cha' : resolved;
 }
 
 
@@ -184,9 +217,18 @@ export function getDamageAbilityContribution(actor, weapon, options = {}) {
   const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
   const isLight = options.isLight === true;
   const twoHanded = options.forceTwoHanded === true || options.twoHanded === true;
+  const strengthDamageSelector = selector === 'str' || selector === 'str2' || selector === '2str';
   const usesAtaruLightsaberDamage = actorHasTalentNamed(actor, 'Ataru')
     && isLightsaberWeapon(weapon)
-    && (selector === 'str' || selector === 'str2' || selector === '2str');
+    && strengthDamageSelector;
+  const usesMasterOfEleganceDamage = actorHasTalentNamed(actor, 'Master of Elegance')
+    && isLightMeleeWeapon(weapon)
+    && strengthDamageSelector;
+
+  if (usesMasterOfEleganceDamage) {
+    return (twoHanded || selector === 'str2' || selector === '2str') ? dexMod * 2 : dexMod;
+  }
+
   const effectiveSelector = usesAtaruLightsaberDamage
     ? (selector === 'str2' || selector === '2str' ? '2dex' : 'dex')
     : selector;
@@ -237,6 +279,7 @@ export const CombatStatRules = Object.freeze({
   getWeaponFlatDamageBonus,
   isAreaAttack,
   isLightsaberWeapon,
+  isLightMeleeWeapon,
   isMeleeWeapon,
   isRangedWeapon,
   isThrownMeleeWeapon,

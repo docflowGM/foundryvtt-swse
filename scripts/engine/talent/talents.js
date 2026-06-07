@@ -137,13 +137,8 @@ export const TALENT_EFFECTS = {
   },
 
   'Greater Weapon Focus': {
-    effects: [{
-      key: 'system.attacks.weaponGroup',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Additional +1 attack with weapon group'
+    effects: [],
+    description: "Choice-required Weapon Master talent. The selected weapon group/exotic weapon should be handled by a persistent picker and roll-context attack hook, not a generic ActiveEffect."
   },
 
   'Point Blank Shot': {
