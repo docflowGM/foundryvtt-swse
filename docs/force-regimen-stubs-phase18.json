@@ -1,0 +1,41 @@
+{
+  "phase": "phase18-force-regimen-stubs",
+  "summary": "Created Force Regimen stub data and pack entries using names only. Exact individual regimen language and automation are intentionally pending.",
+  "createdFiles": [
+    "data/force-regimens.json",
+    "packs/forceregimens.db"
+  ],
+  "updatedFiles": [
+    "system.json",
+    "template.json",
+    "scripts/engine/registries/force-registry.js",
+    "packs/feats.db"
+  ],
+  "regimenCount": 12,
+  "groups": {
+    "Force Training Regimens": [
+      "Awaken Force Sensitivity",
+      "Eyes of the Force",
+      "Oxygen Bottle",
+      "Quiet the Mind",
+      "Telekinetic Practice"
+    ],
+    "Lightsaber Training Regimens": [
+      "Sparring Practice",
+      "Training Remote",
+      "Vo'ren's First Cadence",
+      "Vo'ren's Second Cadence",
+      "Vo'ren's Third Cadence",
+      "Vo'ren's Fourth Cadence",
+      "Vo'ren's Fifth Cadence"
+    ]
+  },
+  "futureWork": [
+    "Replace stub effect/special text with exact regimen language.",
+    "Create Force Regimen selection step for chargen and level-up.",
+    "Create Force tab UI section for known and active Force Regimens.",
+    "Create active-regimen application/expiration flow after individual mechanics are known.",
+    "Revisit Force Regimen Mastery feat entitlement generation once the picker exists."
+  ],
+  "forceRegimenMasteryStatus": "Stub data and pack are available; feat remains deferred until chargen/level-up picker and Force-tab UI are implemented."
+}

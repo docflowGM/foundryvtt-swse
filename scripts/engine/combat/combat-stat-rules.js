@@ -90,6 +90,135 @@ export function isMeleeWeapon(weapon) {
   return /melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|claw/.test(category);
 }
 
+
+export function isLightMeleeWeapon(weapon) {
+  if (!isMeleeWeapon(weapon)) return false;
+  const system = weapon?.system ?? {};
+  if (system.light === true || system.isLight === true || system.properties?.includes?.('light')) return true;
+  const text = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    Array.isArray(system.properties) ? system.properties.join(' ') : ''
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /light\s+melee|knife|dagger|short\s+sword|vibroblade/.test(text);
+}
+
+export function isAdvancedMeleeWeapon(weapon) {
+  if (!isMeleeWeapon(weapon)) return false;
+  const system = weapon?.system ?? {};
+  const text = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    Array.isArray(system.properties) ? system.properties.join(' ') : ''
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /advanced\s+melee/.test(text) || text.includes('advanced melee weapons');
+}
+
+export function isPistolWeapon(weapon) {
+  const system = weapon?.system ?? {};
+  const text = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    Array.isArray(system.properties) ? system.properties.join(' ') : ''
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /\bpistol\b|\bpistols\b/.test(text);
+}
+
+export function isVehicleWeapon(weapon) {
+  const system = weapon?.system ?? {};
+  if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true;
+  const properties = Array.isArray(system.properties) ? system.properties : [];
+  const traits = Array.isArray(system.traits) ? system.traits : [];
+  const candidates = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    system.itemType,
+    system.sourceType,
+    ...properties,
+    ...traits
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /vehicle\s+weapon|vehicle-weapon|starship\s+weapon|starship-weapon|weapon\s+system|weapon-system|turbolaser|laser\s+cannon|ion\s+cannon|proton\s+torpedo|concussion\s+missile/.test(candidates);
+}
+
+function isEquippedWeapon(item) {
+  const system = item?.system ?? {};
+  return item?.type === 'weapon'
+    && (system.equipped === true || system.equippable?.equipped === true || String(system.status || '').toLowerCase() === 'equipped');
+}
+
+function actorHasEquippedPistol(actor) {
+  try {
+    return Array.from(actor?.items ?? []).some(item => isEquippedWeapon(item) && isPistolWeapon(item));
+  } catch (_err) {
+    return false;
+  }
+}
+
+function actorIsProficientWithWeapon(weapon) {
+  return weapon?.system?.proficient !== false;
+}
+
+
+function actorHasTalentNamed(actor, names = []) {
+  const wanted = new Set((Array.isArray(names) ? names : [names]).map(normalizeSelector).filter(Boolean));
+  if (!wanted.size) return false;
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (!item || item.type !== 'talent') continue;
+      if (wanted.has(normalizeSelector(item.name))) return true;
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+export function isLightsaberWeapon(weapon) {
+  const system = weapon?.system ?? {};
+  const properties = Array.isArray(system.properties) ? system.properties : [];
+  const candidates = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    ...properties
+  ].map(normalizeSelector);
+  return candidates.some(value => value.includes('lightsaber'));
+}
+
 export function isThrownMeleeWeapon(weapon) {
   const system = weapon?.system ?? {};
   const text = [system.range, system.rangeType, system.category, system.subcategory, system.properties?.join?.(' '), weapon?.name]
@@ -101,12 +230,21 @@ export function isThrownMeleeWeapon(weapon) {
 export function getWeaponAttackAbility(actor, weapon) {
   const system = weapon?.system ?? {};
   const explicit = String(system.attackAttribute ?? system.combat?.attack?.ability ?? '').toLowerCase();
+  const defaultAbility = isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
+  let resolved = defaultAbility;
+
   if (explicit) {
-    if (explicit.includes('dex')) return 'dex';
-    if (explicit.includes('str')) return 'str';
-    return explicit;
+    if (explicit.includes('dex')) resolved = 'dex';
+    else if (explicit.includes('str')) resolved = 'str';
+    else resolved = explicit;
   }
-  return isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
+
+  const usesNobleFencingStyle = actorHasTalentNamed(actor, 'Noble Fencing Style')
+    && resolved === 'str'
+    && actorIsProficientWithWeapon(weapon)
+    && (isLightsaberWeapon(weapon) || isLightMeleeWeapon(weapon));
+
+  return usesNobleFencingStyle ? 'cha' : resolved;
 }
 
 
@@ -150,9 +288,28 @@ export function getDamageAbilityContribution(actor, weapon, options = {}) {
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
   const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
   const isLight = options.isLight === true;
-  const twoHanded = options.forceTwoHanded === true || options.twoHanded === true;
+  const strengthDamageSelector = selector === 'str' || selector === 'str2' || selector === '2str';
+  const usesBlasterAndBladeTwoHanded = actorHasTalentNamed(actor, 'Blaster and Blade II')
+    && isAdvancedMeleeWeapon(weapon)
+    && actorHasEquippedPistol(actor)
+    && strengthDamageSelector;
+  const twoHanded = options.forceTwoHanded === true || options.twoHanded === true || usesBlasterAndBladeTwoHanded;
+  const usesAtaruLightsaberDamage = actorHasTalentNamed(actor, 'Ataru')
+    && isLightsaberWeapon(weapon)
+    && strengthDamageSelector;
+  const usesMasterOfEleganceDamage = actorHasTalentNamed(actor, 'Master of Elegance')
+    && isLightMeleeWeapon(weapon)
+    && strengthDamageSelector;
 
-  switch (selector) {
+  if (usesMasterOfEleganceDamage) {
+    return (twoHanded || selector === 'str2' || selector === '2str') ? dexMod * 2 : dexMod;
+  }
+
+  const effectiveSelector = usesAtaruLightsaberDamage
+    ? (selector === 'str2' || selector === '2str' ? '2dex' : 'dex')
+    : selector;
+
+  switch (effectiveSelector) {
     case 'str':
       return (twoHanded && !isLight) ? strMod * 2 : strMod;
     case 'str2':
@@ -197,8 +354,11 @@ export const CombatStatRules = Object.freeze({
   getWeaponFlatAttackBonus,
   getWeaponFlatDamageBonus,
   isAreaAttack,
+  isLightsaberWeapon,
+  isLightMeleeWeapon,
   isMeleeWeapon,
   isRangedWeapon,
+  isVehicleWeapon,
   isThrownMeleeWeapon,
   normalizeCombatSize
 });

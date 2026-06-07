@@ -335,6 +335,9 @@ export class DerivedCalculator {
       const halfLevel = getEffectiveHalfLevel(actor);
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
+      const hasForceIntuition = this._hasTalentNamed(actor, 'Force Intuition');
+      const hasForceDeception = this._hasTalentNamed(actor, 'Force Deception');
+      const hasForceTreatment = this._hasTalentNamed(actor, 'Force Treatment');
 
       // Get occupation bonus from actor flags
       let occupationBonus = null;
@@ -414,16 +417,31 @@ export class DerivedCalculator {
         total += speciesBonus;
 
         // Add training/rank bonus
-        // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus
+        // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus.
+        // Logic Upgrade: Skill Swap selects one currently-untrained non-UTF droid skill
+        // during progression. Treat that chosen skill as trained for derived totals.
+        const logicUpgradeSkillSwap = this._hasLogicUpgradeSkillSwapForSkill(actor, skillKey);
         const rankedMode = isRankedModeEnabled();
-        let isTrained = skill.trained; // Standard mode: use stored boolean
+        let isTrained = Boolean(
+          skill.trained ||
+          logicUpgradeSkillSwap ||
+          (hasForceIntuition && skillKey === 'initiative') ||
+          (hasForceDeception && skillKey === 'deception') ||
+          (hasForceTreatment && skillKey === 'treatInjury')
+        ); // Standard mode: stored, feat-backed, or talent-backed training
         if (rankedMode) {
           const ranks = skill.ranks || 0;
           total += ranks;
-          isTrained = deriveTrainedFromRanks(ranks); // Derived trained status
+          isTrained = Boolean(
+            deriveTrainedFromRanks(ranks) ||
+            logicUpgradeSkillSwap ||
+            (hasForceIntuition && skillKey === 'initiative') ||
+            (hasForceDeception && skillKey === 'deception') ||
+            (hasForceTreatment && skillKey === 'treatInjury')
+          ); // Derived trained status
         } else {
           // Standard mode: use traditional trained +5 bonus
-          if (skill.trained) {
+          if (isTrained) {
             total += 5;
           }
         }
@@ -534,7 +552,9 @@ export class DerivedCalculator {
           total: total,
           abilityMod: abilityMod,
           selectedAbility: abilityKey,
-          trained: skill.trained || false,
+          trained: isTrained || false,
+          baseTrained: skill.trained || false,
+          logicUpgradeSkillSwap: logicUpgradeSkillSwap || false,
           focused: skill.focused || false,
           miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
           speciesBonus: speciesBonus,
@@ -548,17 +568,59 @@ export class DerivedCalculator {
         };
       }
 
+      const applyUseTheForceSkillSubstitution = (targetKey, markerKey) => {
+        const targetSkill = updates['system.derived.skills']?.[targetKey];
+        const useTheForceSkill = updates['system.derived.skills']?.useTheForce;
+        const targetTotal = Number(targetSkill?.total);
+        const useTheForceTotal = Number(useTheForceSkill?.total);
+        if (!targetSkill || !Number.isFinite(targetTotal) || !Number.isFinite(useTheForceTotal)) return false;
+        if (useTheForceTotal <= targetTotal) return false;
+
+        updates['system.derived.skills'][targetKey] = {
+          ...targetSkill,
+          total: useTheForceTotal,
+          [markerKey]: true,
+          substitutedFromSkill: 'useTheForce',
+          substitutedBaseTotal: targetTotal
+        };
+        return true;
+      };
+
+      if (hasForceDeception) {
+        applyUseTheForceSkillSubstitution('deception', 'forceDeceptionSubstitution');
+      }
+      if (hasForceTreatment) {
+        applyUseTheForceSkillSubstitution('treatInjury', 'forceTreatmentSubstitution');
+      }
+
       // Initiative is a skill in SWSE.  The early derived.initiative seed keeps
       // legacy consumers alive during this compute pass, but the final canonical
       // value must mirror the fully computed Initiative skill total so quick
       // stats, sheet rolls, and the Skills tab agree.
       const initiativeSkill = updates['system.derived.skills']?.initiative;
       if (initiativeSkill && Number.isFinite(Number(initiativeSkill.total))) {
+        let initiativeTotal = Number(initiativeSkill.total);
+        let substitutedFromUseTheForce = false;
+        const useTheForceSkill = updates['system.derived.skills']?.useTheForce;
+        const useTheForceTotal = Number(useTheForceSkill?.total);
+        if (hasForceIntuition && Number.isFinite(useTheForceTotal) && useTheForceTotal > initiativeTotal) {
+          initiativeTotal = useTheForceTotal;
+          substitutedFromUseTheForce = true;
+          updates['system.derived.skills'].initiative = {
+            ...initiativeSkill,
+            total: initiativeTotal,
+            forceIntuitionSubstitution: true,
+            substitutedFromSkill: 'useTheForce',
+            substitutedBaseTotal: Number(initiativeSkill.total)
+          };
+        }
+
         updates['system.derived.initiative'] = {
           dexModifier: dexMod,
           adjustment: initiativeAdjustment,
-          skillTotal: Number(initiativeSkill.total),
-          total: Number(initiativeSkill.total)
+          skillTotal: initiativeTotal,
+          total: initiativeTotal,
+          forceIntuitionSubstitution: substitutedFromUseTheForce
         };
       }
 
@@ -653,6 +715,37 @@ export class DerivedCalculator {
       swseLogger.error(`DerivedCalculator.computeAll failed for ${actor?.name ?? 'unknown'}`, err);
       throw err;
     }
+  }
+
+  static _hasTalentNamed(actor, talentName) {
+    const target = String(talentName || '').trim().toLowerCase();
+    if (!target || !actor?.items) return false;
+    return Array.from(actor.items).some(item => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === target);
+  }
+
+
+  static _hasLogicUpgradeSkillSwapForSkill(actor, skillKey) {
+    const target = String(skillKey || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!target || target === 'usetheforce') return false;
+    if (!actor?.items) return false;
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    for (const item of actor.items) {
+      if (String(item?.name || '').toLowerCase() !== 'logic upgrade: skill swap') continue;
+      const choice = item.system?.selectedChoice ?? item.system?.selectedChoices;
+      const candidates = [];
+      const visit = (value) => {
+        if (!value) return;
+        if (Array.isArray(value)) return value.forEach(visit);
+        if (typeof value === 'object') {
+          for (const key of ['id', 'value', 'skill', 'skillKey', 'label', 'name']) visit(value[key]);
+          return;
+        }
+        candidates.push(value);
+      };
+      visit(choice);
+      if (candidates.some(candidate => normalize(candidate) === target)) return true;
+    }
+    return false;
   }
 
   static _hasSkillFocusModifierForSkill(actor, skillKey) {

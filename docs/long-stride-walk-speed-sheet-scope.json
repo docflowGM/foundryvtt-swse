@@ -1,0 +1,67 @@
+{
+  "phase": "long-stride-walk-speed-sheet-scope",
+  "created": "2026-06-07",
+  "summary": {
+    "talent": "Long Stride",
+    "finding": "T11 already limited the bonus to no armor or light armor. This pass makes the modifier explicitly target walking speed and fixes sheet displays to read the derived walk-speed total instead of legacy system.speed.total.",
+    "patched": true,
+    "runtimeTestedInFoundry": false
+  },
+  "runtimePath": {
+    "talentData": "packs/talents.db -> Long Stride -> system.abilityMeta.modifiers[0]",
+    "condition": "ARMOR_CATEGORY none/light via ConditionEvaluator",
+    "modifierTarget": "speed.walk",
+    "aggregation": "ModifierEngine.aggregateAll includes speed.walk; computeModifierBundle combines legacy speed.base and speed.walk into derived speed",
+    "derivedOutput": "system.derived.speed.total and system.derived.speed.walk",
+    "sheetOutput": "character sheet header and resources panel display derived walking speed"
+  },
+  "changes": [
+    {
+      "file": "packs/talents.db",
+      "change": "Long Stride modifier target changed from speed.base to speed.walk and marked affectedMovementModes:['walk']."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/ModifierEngine.js",
+      "change": "Added speed.walk to static target breakdown and combined speed.walk with legacy speed.base only for character walking-speed total."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/ModifierEngineExtensions.js",
+      "change": "Added movement domain for speed.walk and clarified speed.base as legacy walking-speed support."
+    },
+    {
+      "file": "scripts/engine/effects/modifiers/modifier-unification-schema.js",
+      "change": "Added canonical speed.walk namespace."
+    },
+    {
+      "file": "scripts/actors/v2/character-actor.js",
+      "change": "Mirrors derived.speed.walk and prefers it for identity speed display."
+    },
+    {
+      "file": "scripts/sheets/v2/context/PanelContextBuilder.js",
+      "change": "Combat/resource panel contexts prefer derived.speed.walk and expose base/adjustment display values."
+    },
+    {
+      "file": "scripts/sheets/v2/character-sheet.js",
+      "change": "Top-level sheet speed context prefers derived.speed.walk."
+    },
+    {
+      "file": "templates/actors/character/v2/character-sheet.hbs",
+      "change": "Combat snapshot now displays Walk Speed from the sheet speed context."
+    },
+    {
+      "file": "templates/actors/character/v2/partials/resources-panel.hbs",
+      "change": "Combat Metrics now displays read-only Walk Speed total with base/adjustment note instead of editing system.speed using the derived total."
+    }
+  ],
+  "scopeNotes": [
+    "This does not modify system.movement.fly, system.movement.climb, or system.movement.swim.",
+    "Legacy speed.base modifiers remain supported for armor penalties, encumbrance, and older data paths.",
+    "Long Stride still applies to static sheet walk speed only when the actor has no armor or light armor equipped. Medium/heavy armor causes the ARMOR_CATEGORY condition to fail."
+  ],
+  "validation": [
+    "node --check passed for all changed JS files.",
+    "packs/talents.db parses as JSONL.",
+    "packs/talent_trees.db parses as JSONL.",
+    "No Foundry runtime test was performed."
+  ]
+}

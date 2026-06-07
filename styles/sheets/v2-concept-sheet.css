@@ -8450,3 +8450,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   align-items: center;
   gap: 1rem;
 }
+
+
+/* Phase 20: Force Regimen cards on Force suite */
+.swse-force-regimen-card { border-color: rgba(53, 214, 255, 0.28); background: linear-gradient(135deg, rgba(20, 80, 110, 0.35), rgba(7, 13, 22, 0.85)); }
+.swse-force-regimen-card--lightsaber-regimen { border-color: rgba(255, 99, 206, 0.32); background: linear-gradient(135deg, rgba(105, 38, 110, 0.40), rgba(7, 13, 22, 0.85)); }
+.disc-chip--regimen { border-color: rgba(255, 214, 102, 0.45); }
+.disc-pile--regimens { margin-top: 0.55rem; }

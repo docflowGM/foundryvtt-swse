@@ -387,7 +387,7 @@ export class ModifierEngine {
       // Build modifier breakdown for storage
       const skillTargets = this._getAllSkillTargets(actor);
       const defenseTargets = ['defense.fortitude', 'defense.reflex', 'defense.will', 'defense.damageThreshold'];
-      const allTargets = [...skillTargets, ...defenseTargets, 'hp.max', 'bab.total', 'initiative.total', 'speed.base'];
+      const allTargets = [...skillTargets, ...defenseTargets, 'hp.max', 'bab.total', 'initiative.total', 'speed.base', 'speed.walk'];
 
       const modifierBreakdown = ModifierUtils.buildModifierBreakdown(allModifiers, allTargets);
 
@@ -468,12 +468,18 @@ export class ModifierEngine {
         // SPEED (Computed Bundle)
         // ========================================
         if (derived.speed) {
-          const speedModifier = modifierMap['speed.base'] || 0;
+          // Character speed is walking speed in SWSE actor data. Keep legacy
+          // speed.base support for armor/encumbrance, but allow talents such as
+          // Long Stride to declare speed.walk so they do not imply fly/climb/swim.
+          const speedModifier = (modifierMap['speed.base'] || 0) + (modifierMap['speed.walk'] || 0);
           const baseSpeed = derived.speed.base || 0;
+          const totalSpeed = Math.max(0, baseSpeed + speedModifier);
 
           bundle.speed = {
-            total: Math.max(0, baseSpeed + speedModifier),
-            adjustment: speedModifier
+            total: totalSpeed,
+            walk: totalSpeed,
+            adjustment: speedModifier,
+            mode: 'walk'
           };
         }
       }
@@ -569,10 +575,12 @@ export class ModifierEngine {
         derived.initiative.total = bundle.initiative;
         derived.initiative.adjustment = bundle.initiativeAdjustment;
 
-        // SPEED
+        // SPEED / WALKING SPEED
         if (bundle.speed && derived.speed) {
           derived.speed.total = bundle.speed.total;
+          derived.speed.walk = bundle.speed.walk ?? bundle.speed.total;
           derived.speed.adjustment = bundle.speed.adjustment;
+          derived.speed.mode = bundle.speed.mode ?? 'walk';
         }
 
         // MODIFIER BREAKDOWN

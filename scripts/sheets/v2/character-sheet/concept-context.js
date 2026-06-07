@@ -401,21 +401,12 @@ function buildSkillsTab(context, abilities, identity) {
       const abilityAccentClass = selectedAbility ? `swse-ability-accent--${selectedAbility}` : 'swse-ability-accent--none';
       const extraUsesGrouped = buildSkillUseGroups(skill?.extraUsesGrouped ?? systemSkill?.extraUsesGrouped);
       const extraUsesCount = extraUsesGrouped.reduce((sum, group) => sum + group.entries.length, 0);
+      const total = Number.isFinite(Number(skill?.total)) ? Number(skill.total) : Number(systemSkill?.total) || 0;
       const derivedAbilityMod = Number(context.derived?.attributes?.[selectedAbility]?.mod);
       const abilityMod = Number.isFinite(Number(skill?.abilityMod))
         ? Number(skill.abilityMod)
         : (Number.isFinite(derivedAbilityMod) ? derivedAbilityMod : 0);
       const miscMod = Number.isFinite(Number(systemSkill?.miscMod)) ? Number(systemSkill.miscMod) : Number(skill?.miscMod) || 0;
-      const halfLevelValue = Number(skill?.halfLevel) || Math.floor((Number(identity?.level) || Number(context.actor?.system?.level) || 1) / 2);
-      const componentTotal = abilityMod
-        + halfLevelValue
-        + (systemSkill?.trained === true || skill?.trained === true ? 5 : 0)
-        + (systemSkill?.focused === true || skill?.focused === true ? 5 : 0)
-        + miscMod
-        + (Number(skill?.armorPenalty) || 0);
-      const total = key === 'useTheForce'
-        ? componentTotal
-        : (Number.isFinite(Number(skill?.total)) ? Number(skill.total) : Number(systemSkill?.total) || componentTotal);
 
       return {
         key,
@@ -428,8 +419,8 @@ function buildSkillsTab(context, abilities, identity) {
         selectedAbilityLabel: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
         abilityMod,
         abilityModClass: toSignedClass(abilityMod),
-        halfLevel: halfLevelValue,
-        halfLevelClass: toSignedClass(halfLevelValue),
+        halfLevel: Number(skill?.halfLevel) || 0,
+        halfLevelClass: toSignedClass(skill?.halfLevel),
         miscMod,
         miscModClass: toSignedClass(miscMod),
         tooltipKey: skillTooltipKey,
@@ -660,6 +651,38 @@ function normalizeForcePower(power, discarded = false, options = {}) {
   };
 }
 
+
+function normalizeForceRegimen(regimen, discarded = false) {
+  const system = regimen?.system ?? {};
+  const category = String(system.category || '').trim() || 'force-training';
+  const tags = [category === 'lightsaber-training' ? 'Lightsaber' : 'Force', 'Regimen'];
+  const dcRows = Array.isArray(system.dcTiers) ? system.dcTiers.map((tier) => ({ dc: tier.dc, effect: tier.effect })) : [];
+  return {
+    id: regimen?.id || regimen?._id || '',
+    name: regimen?.name || 'Unnamed Force Regimen',
+    img: '',
+    p: category === 'lightsaber-training' ? 'form' : 'force',
+    type: category === 'lightsaber-training' ? 'lightsaber-regimen' : 'force-regimen',
+    category,
+    categoryLabel: category === 'lightsaber-training' ? 'Lightsaber Regimen' : 'Force Regimen',
+    tags,
+    tagString: tags.join(' '),
+    blurb: forceTextExcerpt(system.summary || system.effect || system.descriptionText || '', 150),
+    summary: forceTextExcerpt(system.summary || system.descriptionText || '', 160),
+    desc: forceText(system.descriptionText || system.effect || ''),
+    time: system.time || '',
+    targets: system.targets || '',
+    requirements: system.requirements || '',
+    dcRows,
+    hasDcRows: dcRows.length > 0,
+    discarded,
+    activeTier: system.activeTier || null,
+    activeRollTotal: system.activeRollTotal ?? null,
+    activeEffectText: system.activeTier?.effect || '',
+    canUse: !discarded && !!(regimen?.id || regimen?._id),
+  };
+}
+
 function normalizeForceFeature(entry, fallbackLabel) {
   return {
     id: entry?.id || '',
@@ -675,6 +698,8 @@ export function buildForceTab(context) {
   const discard = asArray(context.forcePowersPanel?.discard).map((power) => normalizeForcePower(power, true));
   const techniques = asArray(context.forcePowersPanel?.techniques).map((entry) => normalizeForceFeature(entry, 'Unnamed Technique'));
   const secrets = asArray(context.forcePowersPanel?.secrets).map((entry) => normalizeForceFeature(entry, 'Unnamed Secret'));
+  const regimens = asArray(context.forcePowersPanel?.regimens).map((entry) => normalizeForceRegimen(entry, false));
+  const regimenDiscard = asArray(context.forcePowersPanel?.regimenDiscard).map((entry) => normalizeForceRegimen(entry, true));
   const tags = Array.from(new Set([...hand, ...discard].flatMap((power) => power.tags))).sort((a, b) => a.localeCompare(b));
   const forcefulRecoveryPending = MetaResourceFeatResolver.getForcefulRecoveryPending(actor);
   const forcefulRecovery = forcefulRecoveryPending ? {
@@ -688,6 +713,8 @@ export function buildForceTab(context) {
   // Force Suite: split hand into force powers vs lightsaber form powers
   const forceSuiteHand = hand.filter((power) => power.type !== 'form');
   const forceSuiteForms = hand.filter((power) => power.type === 'form');
+  const forceSuiteRegimens = regimens.filter((regimen) => regimen.type === 'force-regimen');
+  const forceSuiteLightsaberRegimens = regimens.filter((regimen) => regimen.type === 'lightsaber-regimen');
 
   // Resolve Use the Force total from the skills panel
   const skillsEntries = asArray(context.skillsPanel?.skills ?? context.skillsPanel?.entries);
@@ -718,9 +745,14 @@ export function buildForceTab(context) {
     forcePowers: forceSuiteHand,
     formPowers: forceSuiteForms,
     discarded: discard,
+    regimens: forceSuiteRegimens,
+    lightsaberRegimens: forceSuiteLightsaberRegimens,
+    regimenDiscard,
     counts: {
       force: forceSuiteHand.length,
       form: forceSuiteForms.length,
+      regimen: regimens.length,
+      regimenDiscard: regimenDiscard.length,
       discard: discard.length
     },
     forcefulRecovery,
@@ -735,6 +767,7 @@ export function buildForceTab(context) {
       { label: 'Discarded', value: String(discard.length) },
       { label: 'Techniques', value: String(techniques.length) },
       { label: 'Secrets', value: String(secrets.length) },
+      { label: 'Regimens', value: String(regimens.length) },
       { label: 'Dark Side', value: `${Number(context.darkSidePanel?.value) || 0}/${Number(context.darkSidePanel?.max) || 0}` },
       { label: 'Force Tags', value: String(tags.length) }
     ],
@@ -742,8 +775,10 @@ export function buildForceTab(context) {
     discard,
     techniques,
     secrets,
+    regimens,
+    regimenDiscard,
     tags,
-    hasAnything: hand.length > 0 || discard.length > 0 || techniques.length > 0 || secrets.length > 0,
+    hasAnything: hand.length > 0 || discard.length > 0 || techniques.length > 0 || secrets.length > 0 || regimens.length > 0 || regimenDiscard.length > 0,
     forcefulRecovery,
     forceSuite,
     constructionAvailable: !!context.lightsaberConstructionAvailable,

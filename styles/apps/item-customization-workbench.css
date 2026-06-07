@@ -2126,3 +2126,66 @@
     padding-inline: 4px;
   }
 }
+
+/* Phase 21: Tech Specialist contextual modification panel */
+.tech-specialist-panel {
+  border-color: rgba(80, 220, 255, 0.28);
+}
+.tech-specialist-panel .panel-note,
+.swse-tech-specialist-dialog .hint {
+  color: var(--swse-muted, #9fb7c9);
+  font-size: 0.85rem;
+  margin: 0.35rem 0 0.65rem;
+}
+.tech-actions,
+.tech-trait-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.tech-trait-chip {
+  border: 1px solid rgba(80, 220, 255, 0.28);
+  border-radius: 10px;
+  background: rgba(4, 18, 30, 0.78);
+  color: inherit;
+  padding: 0.45rem 0.65rem;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.tech-trait-chip.active {
+  box-shadow: 0 0 0 1px rgba(115, 240, 255, 0.42), 0 0 18px rgba(80, 220, 255, 0.18);
+}
+.swse-tech-specialist-dialog .swse-tech-trait-list {
+  display: grid;
+  gap: 0.45rem;
+  max-height: 420px;
+  overflow: auto;
+}
+.swse-tech-specialist-dialog .swse-tech-trait-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.55rem;
+  align-items: start;
+  border: 1px solid rgba(80, 220, 255, 0.2);
+  border-radius: 10px;
+  padding: 0.55rem;
+}
+.swse-tech-specialist-dialog .swse-tech-trait-row.disabled {
+  opacity: 0.48;
+}
+.swse-tech-specialist-dialog .swse-tech-trait-row span {
+  display: grid;
+  gap: 0.15rem;
+}
+.swse-tech-specialist-dialog .swse-tech-trait-row small,
+.swse-tech-specialist-dialog .swse-tech-trait-row em {
+  color: var(--swse-muted, #9fb7c9);
+}
+.swse-tech-specialist-dialog .swse-tech-take10 {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.65rem;
+}

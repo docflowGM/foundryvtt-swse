@@ -19,6 +19,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
+import { TechSpecialistModificationService } from "/systems/foundryvtt-swse/scripts/engine/customization/tech-specialist-modification-service.js";
 
 const SYSTEM_ID = "foundryvtt-swse";
 
@@ -374,6 +375,15 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       case "apply-build":
         await this.#applyBuild();
         break;
+      case "open-tech-specialist":
+        await this.#openTechSpecialist();
+        break;
+      case "designate-signature-device":
+        await this.#designateSignatureDevice();
+        break;
+      case "toggle-tech-signature-trait":
+        await this.#toggleTechSignatureTrait(target?.dataset?.traitId);
+        break;
       default:
         break;
     }
@@ -439,6 +449,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.degree)} · ${humanize(profile.size)}`,
       budget: this.#buildBudget(currentCredits, previewSummary.netCost),
+      techSpecialist: this.#buildTechSpecialistContext(MODE.GARAGE),
       canApply: true,
       runtimeLane: true
     };
@@ -519,6 +530,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.vehicleType)} · ${humanize(this.contextMode)}`,
       budget: this.#buildBudget(currentCredits, previewSummary.netCost),
+      techSpecialist: this.#buildTechSpecialistContext(MODE.SHIPYARD),
       canApply: true,
       runtimeLane: true
     };
@@ -762,6 +774,45 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
 
   #notifyDraft() {
     ui.notifications.info("Draft save is a future persistence hook. No actor data was changed.");
+  }
+
+  #getWalletActor() {
+    return TechSpecialistModificationService.resolveWalletActor(this.actor);
+  }
+
+  #buildTechSpecialistContext(mode = this.mode) {
+    if (!this.actor) return { canUse: false };
+    const wallet = this.#getWalletActor();
+    const subjectType = mode === MODE.SHIPYARD ? 'vehicle' : 'droid';
+    const context = TechSpecialistModificationService.getUiContext(wallet, this.actor, { subjectKind: 'actor', subjectType });
+    return {
+      ...context,
+      walletName: wallet?.name || this.actor?.name || '',
+      subjectName: this.actor?.name || '',
+      mode
+    };
+  }
+
+  async #openTechSpecialist() {
+    if (!this.actor) return;
+    const wallet = this.#getWalletActor();
+    const subjectType = this.mode === MODE.SHIPYARD ? 'vehicle' : 'droid';
+    await TechSpecialistModificationService.openModificationDialog({ actor: wallet, walletActor: wallet, subject: this.actor, subjectKind: 'actor', subjectType });
+    await this.render({ force: true });
+  }
+
+  async #designateSignatureDevice() {
+    if (!this.actor) return;
+    const wallet = this.#getWalletActor();
+    await TechSpecialistModificationService.designateSignatureDevice(wallet, this.actor, { subjectKind: 'actor', subjectType: this.mode === MODE.SHIPYARD ? 'vehicle' : 'droid' });
+    await this.render({ force: true });
+  }
+
+  async #toggleTechSignatureTrait(traitId) {
+    if (!this.actor || !traitId) return;
+    const wallet = this.#getWalletActor();
+    await TechSpecialistModificationService.toggleActiveSignatureTrait(wallet, this.actor, traitId);
+    await this.render({ force: true });
   }
 
   async #applyBuild() {

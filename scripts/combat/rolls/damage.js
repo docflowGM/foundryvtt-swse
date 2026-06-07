@@ -5,6 +5,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
@@ -169,8 +170,19 @@ function computePassiveStateDamageBonus(actor, weapon, context = {}) {
       const modifiers = item.system?.abilityMeta?.modifiers;
       if (!Array.isArray(modifiers)) continue;
 
+      const meta = item.system?.abilityMeta || {};
       for (const modifier of modifiers) {
-        if (modifier.enabled === false) continue;
+        const scopedModifier = {
+          ...modifier,
+          mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
+          applicationScope: modifier.applicationScope || meta.applicationScope,
+          staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
+          requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
+          requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
+          predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
+        };
+
+        if (!ModifierEngine.isModifierAllowedInContext(actor, scopedModifier, enrichedContext, { staticSheet: false })) continue;
 
         const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
         const appliesToDamage = targets.some((target) => {

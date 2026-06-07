@@ -253,6 +253,26 @@ export const PASSIVE_STATE_PREDICATES = {
     return context?.naturalHazard === true || contextHasToken(context, ['hazardTags', 'hazardType', 'effectTags', 'tags'], ['natural', 'atmospheric', 'weather', 'environmental']);
   },
 
+
+  /**
+   * Applies while the current weapon/equipped weapon is a lightsaber.
+   */
+  "weapon.lightsaber": (actor, context) => {
+    const weapon = context?.weapon ?? context?.item ?? context?.attackItem;
+    const text = [
+      equippedWeaponText(actor),
+      weapon?.name,
+      weapon?.system?.weaponGroup,
+      weapon?.system?.group,
+      weapon?.system?.weaponCategory,
+      weapon?.system?.category,
+      weapon?.system?.subcategory,
+      weapon?.system?.subtype,
+      Array.isArray(weapon?.system?.properties) ? weapon.system.properties.join(' ') : ''
+    ].filter(Boolean).join(' ').toLowerCase();
+    return text.includes('lightsaber');
+  },
+
   /**
    * Applies while wielding an Atlatl or Cesta.
    */

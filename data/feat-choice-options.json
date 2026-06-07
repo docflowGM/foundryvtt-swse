@@ -696,6 +696,175 @@
         "weapon_proficiency"
       ],
       "consumes": "weapon_proficiency"
+    },
+    "droid_untrained_skill": {
+      "label": "Logic Upgrade: Skill Swap",
+      "mode": "untrained_droid_skill",
+      "repeatable": false,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.logic_upgrade_skill_swap",
+      "optionsSource": "actorLegalUntrainedSkillsExceptUseTheForce",
+      "effectTarget": "skillTraining.selected",
+      "note": "Choose one skill the droid is not trained in. Use the Force is excluded because droids cannot use it."
+    },
+    "weapon_group_or_exotic": {
+      "label": "Weapon Group or Exotic Weapon",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.weapon_group_or_exotic",
+      "derivesFrom": [
+        "weapon_proficiency"
+      ],
+      "consumes": "weapon_proficiency",
+      "provides": "weapon_group_or_exotic",
+      "optionsSource": "actorWeaponProficiencies"
+    },
+    "weapon_focus_choice": {
+      "label": "Weapon Focus Choice",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.weapon_focus_choice",
+      "derivesFrom": [
+        "weapon_focus"
+      ],
+      "consumes": "weapon_focus",
+      "provides": "weapon_focus_choice",
+      "optionsSource": "actorWeaponFocusChoices"
+    },
+    "triple_crit_specialist_weapon": {
+      "label": "Triple Crit Specialist Weapon",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.triple_crit_specialist_weapon",
+      "derivesFrom": [
+        "weapon_specialization"
+      ],
+      "consumes": "weapon_specialization",
+      "provides": "triple_crit_specialist_weapon",
+      "optionsSource": "actorWeaponSpecializationChoices"
+    },
+    "owned_force_power": {
+      "label": "Known Force Power",
+      "mode": "owned_force_power",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "storagePath": "flags.swse.choices.owned_force_power",
+      "optionsSource": "actorForcePowers"
+    },
+    "vehicle_type": {
+      "label": "Vehicle Type",
+      "mode": "fixed_vehicle_type",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.vehicle_type",
+      "options": [
+        {
+          "id": "air-speeder",
+          "value": "air-speeder",
+          "label": "Air Speeder"
+        },
+        {
+          "id": "capital-ship",
+          "value": "capital-ship",
+          "label": "Capital Ship"
+        },
+        {
+          "id": "ground-vehicle",
+          "value": "ground-vehicle",
+          "label": "Ground Vehicle"
+        },
+        {
+          "id": "space-transport",
+          "value": "space-transport",
+          "label": "Space Transport"
+        },
+        {
+          "id": "speeder-bike",
+          "value": "speeder-bike",
+          "label": "Speeder Bike"
+        },
+        {
+          "id": "starfighter",
+          "value": "starfighter",
+          "label": "Starfighter"
+        },
+        {
+          "id": "walker",
+          "value": "walker",
+          "label": "Walker"
+        }
+      ]
+    },
+    "knowledge_field": {
+      "label": "Knowledge Field",
+      "mode": "fixed_skill_field",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.knowledge_field",
+      "options": [
+        {
+          "id": "knowledge_bureaucracy",
+          "value": "knowledge_bureaucracy",
+          "label": "Knowledge (Bureaucracy)"
+        },
+        {
+          "id": "knowledge_galactic_lore",
+          "value": "knowledge_galactic_lore",
+          "label": "Knowledge (Galactic Lore)"
+        },
+        {
+          "id": "knowledge_life_sciences",
+          "value": "knowledge_life_sciences",
+          "label": "Knowledge (Life Sciences)"
+        },
+        {
+          "id": "knowledge_physical_sciences",
+          "value": "knowledge_physical_sciences",
+          "label": "Knowledge (Physical Sciences)"
+        },
+        {
+          "id": "knowledge_social_sciences",
+          "value": "knowledge_social_sciences",
+          "label": "Knowledge (Social Sciences)"
+        },
+        {
+          "id": "knowledge_tactics",
+          "value": "knowledge_tactics",
+          "label": "Knowledge (Tactics)"
+        },
+        {
+          "id": "knowledge_technology",
+          "value": "knowledge_technology",
+          "label": "Knowledge (Technology)"
+        }
+      ]
+    },
+    "medical_treatment_method": {
+      "label": "Medical Treatment Method",
+      "mode": "fixed_medical_treatment",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.medical_treatment_method",
+      "options": [
+        {
+          "id": "treat_disease",
+          "value": "treat_disease",
+          "label": "Treat Disease"
+        },
+        {
+          "id": "treat_poison",
+          "value": "treat_poison",
+          "label": "Treat Poison"
+        },
+        {
+          "id": "treat_radiation",
+          "value": "treat_radiation",
+          "label": "Treat Radiation"
+        }
+      ]
     }
   },
   "weaponGroups": [

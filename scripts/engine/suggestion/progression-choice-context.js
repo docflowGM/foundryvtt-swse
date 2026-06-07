@@ -59,7 +59,7 @@ export function buildProgressionChoiceContext(actor, pendingData = {}, { kind = 
   addItems(talentEntitlements, pendingData?.resolvedGrantedTalents);
 
   if (readBooleanSetting('weaponFinesseDefault', false)) addName(featEntitlements, 'Weapon Finesse');
-  if (readBooleanSetting('pointBlankShotDefault', false)) addName(featEntitlements, 'Point Blank Shot');
+  if (readBooleanSetting('pointBlankShotDefault', false)) addName(featEntitlements, 'Point-Blank Shot');
   if (readBooleanSetting('powerAttackDefault', false)) addName(featEntitlements, 'Power Attack');
   if (readBooleanSetting('preciseShotDefault', false)) addName(featEntitlements, 'Precise Shot');
   if (readBooleanSetting('dodgeDefault', false)) addName(featEntitlements, 'Dodge');

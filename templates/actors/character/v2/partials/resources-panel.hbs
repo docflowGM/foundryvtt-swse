@@ -7,8 +7,13 @@
     <div class="resources-group-header">Combat Metrics</div>
     <div class="resources-subgrid resources-subgrid--combat-metrics">
       <div class="resource">
-        <div class="label">Speed</div>
-        <input type="number" name="system.speed" value="{{resourcesPanel.combatMetrics.speed}}" min="0" step="1" class="small-input"/>
+        <div class="label">Walk Speed</div>
+        <div class="value-row">
+          <span class="value">{{resourcesPanel.combatMetrics.walkSpeed}}</span>
+          {{#if resourcesPanel.combatMetrics.speedAdjustment}}
+            <span class="resource-subtle">base {{resourcesPanel.combatMetrics.speedBase}} {{resourcesPanel.combatMetrics.speedAdjustmentLabel}}</span>
+          {{/if}}
+        </div>
       </div>
 
       <div class="resource" data-swse-tooltip="Initiative" title="Initiative — click for breakdown">

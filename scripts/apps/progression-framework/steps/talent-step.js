@@ -21,6 +21,8 @@ import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/tale
 import { getAllowedTalentTrees } from '/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js';
 import { getTalentMembership } from '/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-tree-membership-authority.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
+import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
+import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
@@ -2374,7 +2376,74 @@ export class TalentStep extends ProgressionStepPlugin {
         return;
       }
 
-      const nextSelection = (!isTogglingOff && talent) ? this._buildCanonicalTalentSelection(talent) : null;
+      let nextSelection = (!isTogglingOff && talent) ? this._buildCanonicalTalentSelection(talent) : null;
+      if (nextSelection) {
+        const choiceMeta = FeatChoiceResolver.getChoiceMeta(talent);
+        const choiceSource = FeatChoiceResolver.inferChoiceSource(talent);
+        if (choiceMeta?.required && choiceSource !== 'grantPool') {
+          const pendingForChoice = this._buildPendingAbilityData(shell);
+          pendingForChoice.selectedTalents = currentSelections;
+          const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, talent, {
+            title: `Choose: ${talent.name}`,
+            context: { pending: pendingForChoice }
+          });
+          if (!selectedChoice) {
+            emitTalentStepTrace('ITEM_COMMIT_CANCELLED_FOR_CHOICE', {
+              talentId,
+              talentName: talent?.name || null,
+              choiceKind: choiceMeta?.choiceKind || null,
+            });
+            return;
+          }
+
+          const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, talent, selectedChoice, { pending: pendingForChoice });
+          if (!choiceValidation.valid) {
+            ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || 'That talent choice is not currently legal.');
+            emitTalentStepTrace('ITEM_COMMIT_REJECTED_FOR_CHOICE_LEGALITY', {
+              talentId,
+              talentName: talent?.name || null,
+              choiceKind: choiceMeta?.choiceKind || null,
+              errors: choiceValidation.errors || [],
+            });
+            return;
+          }
+
+          const candidateWithChoice = {
+            ...talent,
+            system: {
+              ...(talent.system || {}),
+              selectedChoice
+            }
+          };
+          const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(shell.actor, candidateWithChoice, {
+            ...pendingForChoice,
+            selectedChoice,
+            candidateChoice: selectedChoice
+          });
+          if (choiceAwareAssessment?.legal === false) {
+            const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || ['Talent prerequisites are not met for that selected choice.'];
+            ui.notifications?.warn?.(reasons.join(' '));
+            emitTalentStepTrace('ITEM_COMMIT_REJECTED_FOR_PREREQ_LEGALITY', {
+              talentId,
+              talentName: talent?.name || null,
+              choiceKind: choiceMeta?.choiceKind || null,
+              reasons,
+            });
+            return;
+          }
+
+          nextSelection = {
+            ...nextSelection,
+            system: {
+              ...(nextSelection.system || {}),
+              selectedChoice,
+              choiceResolved: true,
+              choiceResolvedAt: new Date().toISOString()
+            }
+          };
+        }
+      }
+
       const nextSelections = nextSelection ? [...slotSelections, nextSelection] : slotSelections;
 
       this._selectedTalentId = nextSelection?.id || null;

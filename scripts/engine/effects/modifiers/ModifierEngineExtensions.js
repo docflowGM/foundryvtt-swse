@@ -71,11 +71,19 @@ export const MODIFIER_DOMAINS = {
 
   // Movement domain
   'speed.base': {
-    name: 'Speed',
+    name: 'Walk Speed',
     category: 'movement',
     stackingRule: 'additive', // All speed bonuses stack
     bonusCap: null,
-    description: 'Bonuses to movement speed'
+    description: 'Legacy bonuses to character walking speed'
+  },
+
+  'speed.walk': {
+    name: 'Walk Speed',
+    category: 'movement',
+    stackingRule: 'additive',
+    bonusCap: null,
+    description: 'Bonuses to walking speed only'
   },
 
   // Initiative domain

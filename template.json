@@ -489,6 +489,7 @@
       "extra-skill-use",
       "feat",
       "force-power",
+      "force-regimen",
       "language",
       "maneuver",
       "skill",
@@ -934,6 +935,39 @@
       },
       "special": {},
       "talentHooks": []
+    },
+    "force-regimen": {
+      "templates": [
+        "base"
+      ],
+      "category": "force-training",
+      "group": "Force Training Regimens",
+      "sourcebook": "Jedi Academy Training Manual",
+      "sourceUrl": "",
+      "summary": "",
+      "effect": "",
+      "special": "",
+      "duration": "24 hours",
+      "activeLimit": 1,
+      "learnedBy": "Force Regimen Mastery",
+      "implementationStatus": "details_backfilled_activation_pending",
+      "tags": [],
+      "mechanicsMode": "force_regimen_metadata",
+      "time": "",
+      "targets": "",
+      "requirements": "",
+      "descriptionText": "",
+      "check": {
+        "skill": "useTheForce",
+        "ability": "charisma",
+        "penalty": null
+      },
+      "dcTiers": [],
+      "structuredBenefits": [],
+      "automation": {
+        "status": "metadata_only_until_regimen_activation_ui_exists",
+        "notes": ""
+      }
     }
   }
 }

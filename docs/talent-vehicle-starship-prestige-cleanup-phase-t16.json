@@ -1,0 +1,728 @@
+{
+  "phase": "T16 vehicle/starship prestige cleanup",
+  "scope": {
+    "category": "Vehicle/starship prestige trees centered on Ace Pilot and shared vehicle talents",
+    "treeNames": [
+      "Expert Pilot",
+      "Gunner",
+      "Spacer",
+      "Squadron Leader",
+      "Blockade Runner",
+      "Wingman"
+    ],
+    "treeSummaries": [
+      {
+        "name": "Expert Pilot",
+        "id": "b17c1515c06361d6",
+        "talentCount": 12
+      },
+      {
+        "name": "Gunner",
+        "id": "43ead399d82b8142",
+        "talentCount": 7
+      },
+      {
+        "name": "Spacer",
+        "id": "5ea8c79492d40713",
+        "talentCount": 6
+      },
+      {
+        "name": "Squadron Leader",
+        "id": "dc1b8c5ce2a70394",
+        "talentCount": 4
+      },
+      {
+        "name": "Blockade Runner",
+        "id": "296772ab8e69c9ef",
+        "talentCount": 5
+      },
+      {
+        "name": "Wingman",
+        "id": "5f355ad4093d2bf8",
+        "talentCount": 6
+      }
+    ]
+  },
+  "summary": {
+    "talentDocumentsReviewed": 40,
+    "talentDocumentsChanged": 40,
+    "removedLegacyModifierRows": 34,
+    "removedEmbeddedActiveEffects": 11,
+    "combatActionCardsAdded": 16,
+    "contextualRulesAdded": 4,
+    "broadRuntimePatches": false,
+    "treeSpecificJsFilesCreated": false,
+    "codeFilesChanged": [
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/engine/combat/combat-stat-rules.js",
+      "scripts/combat/rolls/attacks.js",
+      "scripts/engine/combat/weapons-engine.js"
+    ]
+  },
+  "implementedContextual": [
+    {
+      "name": "Great Shot",
+      "id": "221eb131fcb23585",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "implemented_contextual",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        {
+          "id": "great-shot",
+          "type": "ATTACK_OPTION",
+          "owner": "CombatOptionResolver"
+        }
+      ],
+      "recommendedAction": "Runtime-supported through existing attack/combat option path."
+    },
+    {
+      "name": "Starship Raider",
+      "id": "224906e573330bf2",
+      "trees": [
+        "Spacer"
+      ],
+      "classification": "implemented_contextual",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        {
+          "id": "starship-raider",
+          "type": "ATTACK_OPTION",
+          "owner": "CombatOptionResolver"
+        }
+      ],
+      "recommendedAction": "Runtime-supported through existing attack/combat option path."
+    },
+    {
+      "name": "Expert Gunner",
+      "id": "befaa195df06b274",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "implemented_contextual",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        {
+          "id": "expert-gunner",
+          "type": "ATTACK_OPTION",
+          "owner": "CombatOptionResolver"
+        }
+      ],
+      "recommendedAction": "Runtime-supported through existing attack/combat option path."
+    },
+    {
+      "name": "Spacehound",
+      "id": "fe0c3a64ca460542",
+      "trees": [
+        "Spacer"
+      ],
+      "classification": "implemented_contextual",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        {
+          "id": "spacehound-starship-weapon-proficiency",
+          "type": "WEAPON_PROFICIENCY_OVERRIDE",
+          "owner": "attack pipeline"
+        }
+      ],
+      "recommendedAction": "Runtime-supported through existing attack/combat option path."
+    }
+  ],
+  "combatActionCards": [
+    {
+      "name": "Watch This",
+      "id": "0b04910aaabc51ba",
+      "trees": [
+        "Blockade Runner"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "watch-this",
+          "name": "Watch This",
+          "actionType": "move"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Blind Spot",
+      "id": "0be2881047fe9919",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "blind-spot",
+          "name": "Blind Spot",
+          "actionType": "swift"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Regroup",
+      "id": "10a43f0f9d4b31f5",
+      "trees": [
+        "Squadron Leader"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "regroup",
+          "name": "Regroup",
+          "actionType": "standard"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Quick Trigger",
+      "id": "12ffb24378b60c13",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "quick-trigger",
+          "name": "Quick Trigger",
+          "actionType": "reaction"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Make a Break for It",
+      "id": "294bad1c8a7b4132",
+      "trees": [
+        "Spacer"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "make-a-break-for-it",
+          "name": "Make a Break for It",
+          "actionType": "move"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Hyperdriven",
+      "id": "29f73c36cabdeaf5",
+      "trees": [
+        "Spacer"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "hyperdriven",
+          "name": "Hyperdriven",
+          "actionType": "reaction"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Full Throttle",
+      "id": "34ff9dc64050028d",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [
+        {
+          "id": "full-throttle-all-out-movement",
+          "name": "Full Throttle: All-Out Movement",
+          "actionType": "full-round"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Synchronized Fire",
+      "id": "388f30468a80f221",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "synchronized-fire",
+          "name": "Synchronized Fire",
+          "actionType": "standard"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Wingman Retribution",
+      "id": "3c4c26a54de7c1c1",
+      "trees": [
+        "Wingman"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "wingman-retribution",
+          "name": "Wingman Retribution",
+          "actionType": "reaction"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Wingman",
+      "id": "60b02b78caed8e16",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "wingman-assist",
+          "name": "Wingman",
+          "actionType": "swift"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Close Scrape",
+      "id": "66ed448a3a2e82bc",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "close-scrape",
+          "name": "Close Scrape",
+          "actionType": "reaction"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Concentrate All Fire",
+      "id": "6f6cd1c453dc1828",
+      "trees": [
+        "Wingman"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "concentrate-all-fire",
+          "name": "Concentrate All Fire",
+          "actionType": "standard"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Begin Attack Run",
+      "id": "7e0b34a95b5f465d",
+      "trees": [
+        "Squadron Leader"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [
+        {
+          "id": "begin-attack-run",
+          "name": "Begin Attack Run",
+          "actionType": "swift"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Squadron Maneuvers",
+      "id": "991dbfc3a436b5a1",
+      "trees": [
+        "Squadron Leader"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "squadron-maneuvers",
+          "name": "Squadron Maneuvers",
+          "actionType": "standard"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Run Interference",
+      "id": "9fd409d9ceaf6733",
+      "trees": [
+        "Wingman"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "run-interference",
+          "name": "Run Interference",
+          "actionType": "reaction"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    },
+    {
+      "name": "Keep It Together",
+      "id": "b7d5a1bc3d40b964",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        {
+          "id": "keep-it-together",
+          "name": "Keep It Together",
+          "actionType": "reaction"
+        }
+      ],
+      "addedContextualRules": [],
+      "recommendedAction": "Manual action card now appears in the correct action economy lane; deeper automation can come later."
+    }
+  ],
+  "cleanedGmPlayerOrFutureVehicleSubsystem": [
+    {
+      "name": "Renowned Pilot",
+      "id": "38e64db2b516759a",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Vehicle Focus",
+      "id": "4764dc69f0d11695",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Crippling Hit",
+      "id": "4a78bd6bfe03eb8c",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Improved Attack Run",
+      "id": "538d7499a66a3672",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Outrun",
+      "id": "57caba8565b88056",
+      "trees": [
+        "Blockade Runner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Escort",
+      "id": "6f3641f0ff39fc90",
+      "trees": [
+        "Wingman"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Small Target",
+      "id": "70a06f3be4e9c216",
+      "trees": [
+        "Blockade Runner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Escort Pilot",
+      "id": "7aa3eec9b7f748ef",
+      "trees": [
+        "Wingman"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Close Cover",
+      "id": "9af262765ace3af1",
+      "trees": [
+        "Blockade Runner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Punch Through",
+      "id": "a0099db14b3fc3e7",
+      "trees": [
+        "Blockade Runner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Lose Pursuit",
+      "id": "b1bfca51996bb303",
+      "trees": [
+        "Wingman"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Relentless Pursuit",
+      "id": "b7caecab09bb3f77",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Juke",
+      "id": "d001094556c97a92",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "System Hit",
+      "id": "da9e6511f3ae8435",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Squadron Tactics",
+      "id": "ec12bc7f161a0893",
+      "trees": [
+        "Squadron Leader"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Vehicular Evasion",
+      "id": "f0cf0ad742a5e014",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Dogfight Gunner",
+      "id": "f52cadb1ae252d0c",
+      "trees": [
+        "Gunner"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Elusive Dogfighter",
+      "id": "fead6e3522fd458a",
+      "trees": [
+        "Expert Pilot"
+      ],
+      "classification": "cleaned_gm_player_or_future_vehicle_subsystem",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    }
+  ],
+  "metadataOnlyNoRuntimeRisk": [
+    {
+      "name": "Cramped Quarters Fighting",
+      "id": "2b424f7cc4115acf",
+      "trees": [
+        "Spacer"
+      ],
+      "classification": "metadata_only_no_runtime_risk",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    },
+    {
+      "name": "Stellar Warrior",
+      "id": "f92583cf04620d84",
+      "trees": [
+        "Spacer"
+      ],
+      "classification": "metadata_only_no_runtime_risk",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "recommendedAction": "Leave to GM/player or future vehicle/dogfight/squadron subsystem unless a precise runtime owner is added."
+    }
+  ],
+  "vehicleSubsystemDeferred": [
+    "Dogfight state and opposed Pilot roll tracking",
+    "Vehicle/squadron adjacency and line-of-sight tracking",
+    "Damage Threshold trigger automation for vehicle condition-track prevention or extra condition movement",
+    "Starship maneuver sharing and squadron-wide granted actions",
+    "Aboard-starship scene context for personal weapon attacks"
+  ],
+  "recommendedNextPatchOrder": [
+    "Tech/engineering prestige trees: Military Engineer, Saboteur, Improviser, Outlaw Tech, Procurement",
+    "Medical/biotech prestige trees: Medic and Shaper",
+    "Droid prestige trees: Independent Droid and Droid Commander",
+    "Remaining unarmed/martial niche trees: Martial Arts Master / Master of Teras Kasi if not already handled"
+  ],
+  "implementedContextualNotes": [
+    "Expert Gunner and Great Shot are implemented through existing CombatOptionResolver attack-option metadata and require vehicle/starship weapon context.",
+    "Starship Raider is represented as a context-gated attack option that only applies when a caller explicitly supplies aboardStarship context; it does not alter static sheet totals.",
+    "Spacehound starship/vehicle weapon proficiency override is implemented in the attack roll and weapon breakdown pipelines; low/zero gravity and space sickness remain GM/player or future environment-context handling."
+  ]
+}

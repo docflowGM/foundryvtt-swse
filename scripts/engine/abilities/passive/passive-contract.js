@@ -154,7 +154,21 @@ export class PassiveContractValidator {
    * @throws {Error}
    */
   static validateRule(meta) {
-    if (!meta?.rule) throw new Error("PASSIVE RULE missing rule block");
+    const rules = Array.isArray(meta?.rules) ? meta.rules : (meta?.rule ? [meta.rule] : []);
+    if (!rules.length) throw new Error("PASSIVE RULE missing rule block");
+
+    for (const rule of rules) {
+      if (!rule || typeof rule !== 'object') {
+        throw new Error("PASSIVE RULE entry must be an object");
+      }
+      if (!rule.type || !isValidRule(rule.type)) {
+        throw new Error(`PASSIVE RULE has invalid rule type: ${rule?.type}`);
+      }
+      if (!hasRuleDefinition(rule.type)) {
+        throw new Error(`PASSIVE RULE missing definition for type: ${rule.type}`);
+      }
+    }
+
     return true;
   }
 

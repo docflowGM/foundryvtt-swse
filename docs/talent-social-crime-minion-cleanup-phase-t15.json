@@ -1,0 +1,594 @@
+{
+  "phase": "T15",
+  "title": "Social / crime / minion prestige talent cleanup",
+  "scope": {
+    "categories": [
+      "Crime Lord",
+      "Master Privateer",
+      "Charlatan",
+      "Outlaw"
+    ],
+    "trees": [
+      {
+        "tree": "Infamy",
+        "count": 9
+      },
+      {
+        "tree": "Mastermind",
+        "count": 13
+      },
+      {
+        "tree": "Outlaw",
+        "count": 8
+      },
+      {
+        "tree": "Piracy",
+        "count": 7
+      },
+      {
+        "tree": "Privateer",
+        "count": 9
+      },
+      {
+        "tree": "Trickery",
+        "count": 6
+      }
+    ]
+  },
+  "summary": {
+    "reviewedTalentDocuments": 52,
+    "changedTalentDocuments": 52,
+    "removedLegacyModifierRows": 39,
+    "removedEmbeddedActiveEffects": 6,
+    "addedCombatActionCards": 31,
+    "minionSubsystemTalentsPreserved": 10,
+    "equippedContextTalentsImplementedInCode": 2,
+    "dataReviewTalents": 1,
+    "broadRuntimePatches": false,
+    "treeSpecificJsFilesCreated": false
+  },
+  "implementationNotes": [
+    "Crime Lord and Master Privateer minion talents are preserved as follower/minion subsystem-owned. They are not passive actor modifiers.",
+    "Action-economy talents expose manual combat action cards through abilityMeta.combatActions and AbilityCombatActionResolver so they appear in the correct combat action economy lane.",
+    "Conditional/social/target/ally auras were punted to GM/player management unless the system can truthfully know and execute the context.",
+    "Missing staticSheetPolicy is not treated as a bug. Only live legacy modifiers/effects in this scoped bucket were removed when they contradicted canon descriptions."
+  ],
+  "codedFixes": [
+    {
+      "name": "Armored Spacer",
+      "owner": "DefenseCalculator.actorHasArmorProficiency",
+      "behavior": "Armored Space Suit counts as proficient when the actor owns Armored Spacer.",
+      "staticSheetImpact": "Only affects equipped Armored Space Suit proficiency/armor calculation; no flat static bonus."
+    },
+    {
+      "name": "Blaster and Blade II",
+      "owner": "CombatStatRules.getDamageAbilityContribution",
+      "behavior": "Advanced melee weapon damage treats the weapon as two-handed while actor has Blaster and Blade II and an equipped pistol.",
+      "staticSheetImpact": "Roll/equipped context only; no passive attack or damage modifier."
+    }
+  ],
+  "combatActionCardsSeeded": [
+    {
+      "name": "Fear Me",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Fear Me",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Frighten",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Frighten",
+          "actionType": "free",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Terrify",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Terrify",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Bodyguard I",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Bodyguard",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Impel Ally I",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Impel Ally I",
+          "actionType": "swift",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Impel Ally II",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Impel Ally II",
+          "actionType": "swift",
+          "cost": 2
+        }
+      ]
+    },
+    {
+      "name": "Impel Ally III",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Impel Ally III",
+          "actionType": "swift",
+          "cost": 3
+        }
+      ]
+    },
+    {
+      "name": "Inspire Wrath",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Inspire Wrath",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Tactical Superiority",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Tactical Superiority",
+          "actionType": "swift",
+          "cost": 2
+        }
+      ]
+    },
+    {
+      "name": "Tactical Withdrawal",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Tactical Withdrawal",
+          "actionType": "swift",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Urgency",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "actions": [
+        {
+          "name": "Urgency",
+          "actionType": "swift",
+          "cost": 3
+        }
+      ]
+    },
+    {
+      "name": "Confounding Attack",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Confounding Attack",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Double Up",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Double Up",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Opportunistic Defense",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Opportunistic Defense",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Preternatural Senses",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Preternatural Senses",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Seize the Moment",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Seize the Moment",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Tangle Up",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Tangle Up",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Uncanny Instincts",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "actions": [
+        {
+          "name": "Uncanny Instincts",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Bloodthirsty",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Bloodthirsty Coup de Grace",
+          "actionType": "move",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Fight to the Death",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Fight to the Death",
+          "actionType": "swift",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Keep Them Reeling (Piracy)",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Keep Them Reeling",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Raider's Surge",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Raider's Surge",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Blaster and Blade I",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Blaster and Blade I",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Blaster and Blade III",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Blaster and Blade III",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Preserving Shot",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "actions": [
+        {
+          "name": "Preserving Shot",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Cunning Distraction",
+      "tree": "Trickery",
+      "category": "Charlatan",
+      "actions": [
+        {
+          "name": "Cunning Distraction",
+          "actionType": "free",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Damaging Deception",
+      "tree": "Trickery",
+      "category": "Charlatan",
+      "actions": [
+        {
+          "name": "Damaging Deception",
+          "actionType": "standard",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Distracting Shout",
+      "tree": "Trickery",
+      "category": "Charlatan",
+      "actions": [
+        {
+          "name": "Distracting Shout",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Improved Soft Cover",
+      "tree": "Trickery",
+      "category": "Charlatan",
+      "actions": [
+        {
+          "name": "Improved Soft Cover",
+          "actionType": "swift",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Innocuous",
+      "tree": "Trickery",
+      "category": "Charlatan",
+      "actions": [
+        {
+          "name": "Innocuous",
+          "actionType": "swift",
+          "cost": 1
+        }
+      ]
+    },
+    {
+      "name": "Treacherous",
+      "tree": "Trickery",
+      "category": "Charlatan",
+      "actions": [
+        {
+          "name": "Treacherous",
+          "actionType": "reaction",
+          "cost": 1
+        }
+      ]
+    }
+  ],
+  "minionSubsystemPreserved": [
+    {
+      "name": "Attract Minion",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Wealth of Allies",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Frighten",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Bodyguard I",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Bodyguard II",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Attract Privateer",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Shared Notoriety",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Bodyguard III",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Fear Me",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    },
+    {
+      "name": "Shelter",
+      "tree": "Mastermind",
+      "category": "Crime Lord",
+      "owner": "FOLLOWER_TALENT_CONFIG + follower-hooks + MinionCreator/MinionManager + minion action rule cards"
+    }
+  ],
+  "gmPlayerManaged": [
+    {
+      "name": "Notorious (Infamy)",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Boarder",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Raider's Frenzy",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Inspire Fear II",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Savage Reputation",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Unsavory Reputation",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Inspire Fear III",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Inspire Fear I",
+      "tree": "Infamy",
+      "category": "Crime Lord",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    },
+    {
+      "name": "Take Them Alive",
+      "tree": "Piracy",
+      "category": "Master Privateer",
+      "reason": "Reviewed in phase T15. This talent depends on target identity, ally/minion state, line of sight, positioning, encounter timing, or GM adjudication. It should not mutate permanent actor sheet totals."
+    }
+  ],
+  "needsFutureRuntimeHook": [
+    {
+      "name": "Multiattack Proficiency (advanced melee)",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "owner": "Future Full Attack / multiattack penalty resolver",
+      "reason": "Fixed in T15 from persistent-choice bucket to fixed advanced-melee roll context. This talent affects Full Attack multiattack penalties only and should not mutate static attack totals."
+    },
+    {
+      "name": "Ion Mastery",
+      "tree": "Privateer",
+      "category": "Master Privateer",
+      "owner": "Future attack/damage roll-context resolver",
+      "reason": "Reviewed in phase T15. This talent applies only in an ion-weapon attack/damage context and needs a roll-context hook; passive attack/damage ActiveEffects are removed."
+    }
+  ],
+  "dataReview": [
+    {
+      "name": "Find an Opening",
+      "tree": "Outlaw",
+      "category": "Outlaw",
+      "reason": "Reviewed in phase T15. The current description is only \"Seize the Moment\" and appears incomplete or merged; no runtime automation should be inferred from this record."
+    }
+  ],
+  "recommendedNextPatchOrder": [
+    "Verify combat action cards render in the correct action economy lanes on the character sheet.",
+    "Add real usage tracking for once-per-encounter/once-per-round action cards.",
+    "Connect minion action cards to the existing MinionActionsMechanics chat helpers where possible.",
+    "Implement Ion Mastery in the attack/damage roll-context resolver.",
+    "Implement Multiattack Proficiency reductions in the future Full Attack sequence executor.",
+    "Repair or confirm the incomplete Find an Opening compendium description before automation."
+  ]
+}

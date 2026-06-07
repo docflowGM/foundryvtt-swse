@@ -230,6 +230,9 @@ export class ActiveStepComputer {
         case 'force-techniques':
           return this._hasForceTechniqueChoices(actor, progressionSession);
 
+        case 'force-regimens':
+          return this._hasForceRegimenChoices(actor, progressionSession);
+
         case 'medical-secrets':
           return this._hasMedicalSecretChoices(actor, progressionSession);
 
@@ -795,6 +798,28 @@ export class ActiveStepComputer {
   }
 
   /**
+   * Check if Force Regimen Mastery grants unfilled regimen choices.
+   * @private
+   */
+  async _hasForceRegimenChoices(actor, progressionSession) {
+    try {
+      const { FeatGrantEntitlementResolver } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js'
+      );
+      const shell = this._buildProgressionAuthorityOptions?.(actor, progressionSession)?.shell || { actor, progressionSession };
+      const total = FeatGrantEntitlementResolver.totalForGrantType(actor, 'forceRegimenSlots', { shell, includePending: true });
+      if (!(total > 0)) return false;
+      const pending = progressionSession?.draftSelections?.forceRegimens || progressionSession?.getSelection?.('forceRegimens') || [];
+      const pendingCount = Array.isArray(pending) ? pending.reduce((sum, entry) => sum + (Number(entry?.count ?? 1) || 0), 0) : 0;
+      const owned = actor?.items?.filter((item) => String(item?.type || '') === 'force-regimen')?.length ?? 0;
+      return Math.max(0, total - owned - pendingCount) > 0;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error checking force regimen grants:', err);
+      return false;
+    }
+  }
+
+  /**
    * Check if Medic Medical Secret entitlements exist.
    * Uses real class grant budget instead of proxy signals.
    * @private
@@ -1011,6 +1036,10 @@ export class ActiveStepComputer {
     // Force techniques: PHASE 3 - check real class grant budget (not proxy signals)
     if (node.nodeId === 'force-techniques') {
       return await this._hasForceTechniqueChoices(actor, progressionSession);
+    }
+
+    if (node.nodeId === 'force-regimens') {
+      return await this._hasForceRegimenChoices(actor, progressionSession);
     }
 
     // Medical secrets: check real class grant budget

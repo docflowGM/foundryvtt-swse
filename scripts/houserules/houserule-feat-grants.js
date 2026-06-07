@@ -27,7 +27,7 @@ const GRANT_MAPPINGS = {
     { type: 'feat', name: 'Weapon Finesse', id: '252b67d6e31c377e' }
   ],
   pointBlankShotDefault: [
-    { type: 'feat', name: 'Point Blank Shot', id: 'c301a0f533f15ce4' }
+    { type: 'feat', name: 'Point-Blank Shot', id: '05459ac4d439f229' }
   ],
   powerAttackDefault: [
     { type: 'feat', name: 'Power Attack', id: '3f76464c43c73f84' }

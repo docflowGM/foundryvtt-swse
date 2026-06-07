@@ -20,6 +20,7 @@ import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-not
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
+import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
@@ -2841,6 +2842,7 @@ export class SWSEV2CharacterSheet extends
     const destinyPointsMax = Number(system.destinyPoints?.max ?? 0) || 0;
 
     const speed = Number(
+      derived?.speed?.walk ??
       derived?.speed?.total ??
       derived?.identity?.speed ??
       system.speed?.total ??
@@ -2957,21 +2959,34 @@ const forcePoints = [];
     const registerAction = (grouped, action) => {
       const key = action.key || action.id || slugAction(action.name);
       const actionType = normalizeActionEconomy(action.actionType || action.type || action.action?.type || action.costType || 'standard');
+      const relatedSkills = action.relatedSkills || action.system?.relatedSkills || [];
+      const manualResolution = action.manualResolution === true || action.resolutionMode === 'manual' || action.resolutionMode === 'reference';
       const row = {
         key,
         id: key,
         name: action.name || action.label || 'Combat Action',
         sourceName: action.sourceName || action.source || action.system?.source || 'Combat Action',
+        sourceType: action.sourceType || action.itemType || action.system?.sourceType || '',
+        sourceActionId: action.sourceActionId || action.actionId || '',
         actionType,
         type: actionType,
         cost: action.cost ?? action.actionCost ?? action.action?.cost ?? 1,
         notes: action.notes || action.description || action.system?.notes || action.system?.description || '',
         description: action.description || action.notes || action.system?.description || action.system?.notes || '',
-        relatedSkills: action.relatedSkills || action.system?.relatedSkills || [],
+        relatedSkills,
+        hasRelatedSkills: Array.isArray(relatedSkills) ? relatedSkills.length > 0 : !!relatedSkills,
         resources: action.resources || [],
-        itemId: action.itemId || '',
+        itemId: action.itemId || action.sourceItemId || '',
         executable: action.executable !== false,
-        useLabel: action.useLabel || 'Use'
+        useLabel: action.useLabel || (manualResolution ? 'Use / Note' : 'Use'),
+        manualResolution,
+        resolutionMode: action.resolutionMode || (manualResolution ? 'manual' : 'auto'),
+        spendAction: action.spendAction !== false,
+        requiresSelectedChoice: action.requiresSelectedChoice === true,
+        requiredContext: action.requiredContext || [],
+        targetHint: action.targetHint || '',
+        ruleData: action.ruleData || null,
+        isAttack: action.isAttack === true
       };
       if (!grouped[actionType]) grouped[actionType] = [];
       grouped[actionType].push(row);
@@ -2990,8 +3005,8 @@ const forcePoints = [];
             ...action,
             key: action.key || `combat:${index}`,
             sourceName: 'Combat Actions Compendium',
-            executable: true,
-            useLabel: action.relatedSkills?.length ? 'Roll / Use' : 'Use'
+            executable: action.executable !== false,
+            useLabel: action.executable === false ? 'Review' : (action.relatedSkills?.length ? 'Roll / Use' : 'Use')
           });
         });
         loadedAny = mappedActions.length > 0;
@@ -3041,13 +3056,24 @@ const forcePoints = [];
         });
       }
 
+      // Include action cards exposed by owned feats and talents. These are
+      // source-item-owned action cards, not bespoke tree-specific code.
+      for (const action of AbilityCombatActionResolver.getActions(this.actor)) {
+        registerAction(grouped, action);
+      }
+
       for (const eco of economyOrder) {
         const items = grouped[eco] || [];
         if (!items.length) continue;
         items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
         combatActions.groups.push({
+          key: eco,
+          id: eco,
+          economy: eco,
           label: economyLabel(eco),
           count: items.length,
+          actions: items,
+          items,
           subgroups: [{
             label: economyLabel(eco),
             count: items.length,
@@ -6981,6 +7007,30 @@ const forcePoints = [];
   }
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
+    // --- Manual/reference ability action cards ---
+    // Multi-action feats/talents often unlock named actions whose real effect
+    // still needs table or future engine resolution. Surface and track the
+    // correct action economy without pretending a passive modifier or single
+    // generic attack fully resolves the canon text.
+    if (actionData?.manualResolution === true || actionData?.resolutionMode === 'manual' || actionData?.resolutionMode === 'reference') {
+      const actionType = this._deriveCombatActionEconomyType(actionData);
+      if (actionData?.spendAction !== false) {
+        const allowed = await this._applyActionEconomy(actionType, {
+          source: options?.source ?? "ability-combat-action",
+          actionId,
+          actionName: actionData?.name ?? actionId,
+          sourceName: actionData?.sourceName ?? null,
+          sourceType: actionData?.sourceType ?? null
+        });
+        if (!allowed) return null;
+      }
+
+      return await this._announceManualCombatAction(actionId, actionData, {
+        ...options,
+        actionType
+      });
+    }
+
     // --- Attack routing via Roll Configurator V2 ---
     // Show the preroller FIRST so cancelling never spends the combat action.
     const weaponId = actionData?.weaponId ?? actionData?.itemId ?? null;
@@ -7111,6 +7161,48 @@ const forcePoints = [];
 
     ui?.notifications?.warn?.("Combat action could not be executed.");
     return null;
+  }
+
+  async _announceManualCombatAction(actionId, actionData = {}, options = {}) {
+    const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+
+    const title = escape(actionData?.name ?? actionId ?? 'Combat Action');
+    const source = escape(actionData?.sourceName ?? actionData?.source ?? 'Ability');
+    const actionType = escape(this._normalizeActionEconomyType(options?.actionType ?? actionData?.actionType ?? actionData?.type ?? 'standard'));
+    const description = escape(actionData?.description ?? actionData?.notes ?? 'Resolve this action using the source ability text.');
+    const resources = Array.isArray(actionData?.resources) ? actionData.resources.filter(Boolean).map(escape) : [];
+    const requirements = Array.isArray(actionData?.requiredContext) ? actionData.requiredContext.filter(Boolean).map(escape) : [];
+
+    const content = `
+      <section class="swse-chat-card swse-chat-card--manual-action">
+        <header class="swse-chat-card__header">
+          <strong>${title}</strong>
+          <span>${source}</span>
+        </header>
+        <div class="swse-chat-card__body">
+          <p><strong>Action:</strong> ${actionType}</p>
+          ${resources.length ? `<p><strong>Use:</strong> ${resources.join(', ')}</p>` : ''}
+          ${requirements.length ? `<p><strong>Requirements:</strong> ${requirements.join(', ')}</p>` : ''}
+          <p>${description}</p>
+        </div>
+      </section>`;
+
+    try {
+      return await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content
+      });
+    } catch (err) {
+      console.warn('[SWSE] Failed to create manual combat action chat card:', err);
+      ui?.notifications?.info?.(`${actionData?.name ?? actionId}: ${actionData?.description ?? actionData?.notes ?? 'Resolve manually.'}`);
+      return { manual: true, actionId, actionData };
+    }
   }
 
   _combatActionLooksLikeAttack(actionData = {}) {
