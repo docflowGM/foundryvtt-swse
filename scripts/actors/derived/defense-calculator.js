@@ -59,10 +59,28 @@ function getArmorCategory(armor) {
   );
 }
 
+function isArmoredSpaceSuitArmor(armor) {
+  if (!armor || armor.type !== 'armor') return false;
+  const system = armor.system || {};
+  const text = [
+    armor.name,
+    system.armorType,
+    system.category,
+    system.subtype,
+    system.description,
+    Array.isArray(system.traits) ? system.traits.join(' ') : ''
+  ].filter(Boolean).join(' ').toLowerCase();
+  return text.includes('armored space suit') || text.includes('armoured space suit');
+}
+
 function actorHasArmorProficiency(actor, armor) {
   const required = getArmorCategory(armor);
   const requiredRank = armorRank(required);
   if (!requiredRank) return false;
+
+  if (isArmoredSpaceSuitArmor(armor) && actorHasTalent(actor, 'Armored Spacer')) {
+    return true;
+  }
 
   const candidates = [];
   const armorProficiency = actor?.system?.armorProficiency;

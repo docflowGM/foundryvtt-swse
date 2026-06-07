@@ -110,6 +110,55 @@ export function isLightMeleeWeapon(weapon) {
   return /light\s+melee|knife|dagger|short\s+sword|vibroblade/.test(text);
 }
 
+export function isAdvancedMeleeWeapon(weapon) {
+  if (!isMeleeWeapon(weapon)) return false;
+  const system = weapon?.system ?? {};
+  const text = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    Array.isArray(system.properties) ? system.properties.join(' ') : ''
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /advanced\s+melee/.test(text) || text.includes('advanced melee weapons');
+}
+
+export function isPistolWeapon(weapon) {
+  const system = weapon?.system ?? {};
+  const text = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    Array.isArray(system.properties) ? system.properties.join(' ') : ''
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /\bpistol\b|\bpistols\b/.test(text);
+}
+
+function isEquippedWeapon(item) {
+  const system = item?.system ?? {};
+  return item?.type === 'weapon'
+    && (system.equipped === true || system.equippable?.equipped === true || String(system.status || '').toLowerCase() === 'equipped');
+}
+
+function actorHasEquippedPistol(actor) {
+  try {
+    return Array.from(actor?.items ?? []).some(item => isEquippedWeapon(item) && isPistolWeapon(item));
+  } catch (_err) {
+    return false;
+  }
+}
+
 function actorIsProficientWithWeapon(weapon) {
   return weapon?.system?.proficient !== false;
 }
@@ -216,8 +265,12 @@ export function getDamageAbilityContribution(actor, weapon, options = {}) {
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
   const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
   const isLight = options.isLight === true;
-  const twoHanded = options.forceTwoHanded === true || options.twoHanded === true;
   const strengthDamageSelector = selector === 'str' || selector === 'str2' || selector === '2str';
+  const usesBlasterAndBladeTwoHanded = actorHasTalentNamed(actor, 'Blaster and Blade II')
+    && isAdvancedMeleeWeapon(weapon)
+    && actorHasEquippedPistol(actor)
+    && strengthDamageSelector;
+  const twoHanded = options.forceTwoHanded === true || options.twoHanded === true || usesBlasterAndBladeTwoHanded;
   const usesAtaruLightsaberDamage = actorHasTalentNamed(actor, 'Ataru')
     && isLightsaberWeapon(weapon)
     && strengthDamageSelector;
