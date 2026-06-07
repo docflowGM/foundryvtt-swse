@@ -45,6 +45,7 @@ export const UNIFIED_TARGET_NAMESPACE = {
   initiative: 'initiative.total',
   speed: {
     base: 'speed.base',
+    walk: 'speed.walk',
     run: 'speed.run'
   },
 

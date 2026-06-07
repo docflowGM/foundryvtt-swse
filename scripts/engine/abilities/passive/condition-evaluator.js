@@ -43,6 +43,9 @@ export class ConditionEvaluator {
         case "EQUIPPED_ITEM_TYPE":
           return this._hasEquippedItemType(actor, condition.value);
 
+        case "ARMOR_CATEGORY":
+          return this._hasArmorCategory(actor, condition.value);
+
         case "ACTOR_FLAG":
           return this._checkActorFlag(actor, condition.value);
 
@@ -82,6 +85,74 @@ export class ConditionEvaluator {
     }
 
     return conditions.every(cond => this.evaluate(actor, cond));
+  }
+
+
+  static _normalizeToken(value) {
+    return String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  static _isEnergyShieldArmor(item) {
+    const text = [
+      item?.name,
+      item?.system?.type,
+      item?.system?.armorType,
+      item?.system?.category,
+      item?.system?.subcategory,
+      item?.system?.equipmentType
+    ].filter(Boolean).join(' ').toLowerCase();
+    return text.includes('energy shield') || text.includes('shield generator');
+  }
+
+  static _equippedArmor(actor) {
+    if (!actor?.items) return null;
+    return Array.from(actor.items).find(item =>
+      item?.type === 'armor'
+      && item?.system?.equipped === true
+      && !this._isEnergyShieldArmor(item)
+    ) ?? null;
+  }
+
+  /**
+   * Check current equipped armor category.
+   *
+   * ARMOR_CATEGORY accepts a string or array. Supported useful values are:
+   * - none / unarmored / no-armor
+   * - light / medium / heavy
+   * - none-or-light / light-or-none
+   */
+  static _hasArmorCategory(actor, categoryValue) {
+    const requested = (Array.isArray(categoryValue) ? categoryValue : [categoryValue])
+      .flatMap(value => String(value ?? '').split(/[|,]/g))
+      .map(value => this._normalizeToken(value))
+      .filter(Boolean);
+    if (!requested.length) return false;
+
+    const wantsNone = requested.some(value => ['none', 'unarmored', 'no-armor', 'no-armor-equipped', 'none-or-light', 'light-or-none'].includes(value));
+    const wantsLight = requested.some(value => ['light', 'light-armor', 'none-or-light', 'light-or-none'].includes(value));
+    const armor = this._equippedArmor(actor);
+
+    if (!armor) return wantsNone;
+
+    const system = armor.system || {};
+    const text = [
+      armor.name,
+      system.armorType,
+      system.type,
+      system.category,
+      system.subcategory,
+      system.equipmentType
+    ].map(value => this._normalizeToken(value)).join(' ');
+
+    if (wantsLight && text.includes('light')) return true;
+    if (requested.some(value => ['medium', 'medium-armor'].includes(value)) && text.includes('medium')) return true;
+    if (requested.some(value => ['heavy', 'heavy-armor'].includes(value)) && text.includes('heavy')) return true;
+    return false;
   }
 
   /**

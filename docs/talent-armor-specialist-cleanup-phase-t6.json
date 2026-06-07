@@ -1,0 +1,72 @@
+{
+  "phase": "T6 Armor Specialist cleanup",
+  "scope": "Armor Specialist talent tree and the shared Armored Defense talent source data",
+  "summary": {
+    "tree": "Armor Specialist",
+    "treeId": "17cec542331cb4e4",
+    "talentsReviewed": 6,
+    "runtimePatchesApplied": true,
+    "dataCleanupApplied": true,
+    "broadFailClosedAdded": false,
+    "treeSpecificJsCreated": false
+  },
+  "talents": [
+    {
+      "name": "Armored Defense",
+      "classification": "real; implemented correctly by DefenseCalculator after proficiency-gate cleanup",
+      "removedExtraneous": [
+        "flat +1 defense.reflex passive modifier",
+        "disabled migrated Active Effect"
+      ],
+      "engineOwner": "DefenseCalculator"
+    },
+    {
+      "name": "Improved Armored Defense",
+      "classification": "real; implemented correctly by DefenseCalculator after proficiency-gate cleanup",
+      "removedExtraneous": [
+        "flat +2 defense.reflex passive modifier",
+        "disabled migrated Active Effect"
+      ],
+      "engineOwner": "DefenseCalculator"
+    },
+    {
+      "name": "Armor Mastery",
+      "classification": "real; now wired in DefenseCalculator as +1 effective max ability/Dex cap while proficiently armored",
+      "removedExtraneous": [
+        "disabled manual attack placeholder metadata"
+      ],
+      "engineOwner": "DefenseCalculator"
+    },
+    {
+      "name": "Juggernaut",
+      "classification": "real; now wired in ModifierEngine armor speed penalty path while proficiently armored",
+      "removedExtraneous": [
+        "disabled manual attack placeholder metadata",
+        "stale global armor speedPenalty Active Effect"
+      ],
+      "engineOwner": "ModifierEngine"
+    },
+    {
+      "name": "Second Skin",
+      "classification": "real; now wired in DefenseCalculator as armor Reflex +1 and Fort equipment +1 while proficiently armored",
+      "removedExtraneous": [
+        "nonfunctional PASSIVE/STATE defense predicates",
+        "stale maxDex Active Effect"
+      ],
+      "engineOwner": "DefenseCalculator"
+    },
+    {
+      "name": "Shield Expert",
+      "classification": "real but not static; needs runtime shield/SR recovery action",
+      "removedExtraneous": [
+        "bogus attack +2 PASSIVE/STATE metadata"
+      ],
+      "engineOwner": "future ResourceReactionSystem or shield action flow"
+    }
+  ],
+  "notes": [
+    "The Ability Engine remains authoritative. Armor Specialist talents are retained as PASSIVE/STATE metadata unless they are owned by existing defense/speed runtime paths.",
+    "No broad missing-staticSheetPolicy behavior was added.",
+    "Knight's Armor duplicate Armor Mastery was intentionally not patched in this pass; it should be handled with the Knight's Armor tree."
+  ]
+}

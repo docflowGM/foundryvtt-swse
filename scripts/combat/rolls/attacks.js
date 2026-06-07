@@ -3,7 +3,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
-import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
@@ -23,6 +23,28 @@ function getTargetActorFromOptions(options = {}) {
 
 function hasFightingDefensivelyEffect(actor) {
   return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
+}
+
+function actorHasTalentNamed(actor, names = []) {
+  const wanted = new Set((Array.isArray(names) ? names : [names])
+    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
+    .filter(Boolean));
+  if (!wanted.size) return false;
+  try {
+    return Array.from(actor?.items ?? []).some(item => {
+      if (item?.type !== 'talent') return false;
+      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      return wanted.has(key);
+    });
+  } catch (_err) {
+    return false;
+  }
+}
+
+function actorIsProficientForAttack(actor, weapon) {
+  const explicit = weapon?.system?.proficient;
+  if (explicit !== false) return true;
+  return actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon);
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -188,7 +210,7 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   const attackPenalty = actor.system.attackPenalty ?? 0;
 
   // Weapon proficiency
-  const proficient = weapon.system?.proficient ?? true;
+  const proficient = actorIsProficientForAttack(actor, weapon);
   const proficiencyPenalty = proficient ? 0 : -5;
 
   // Talent bonuses from linked talents

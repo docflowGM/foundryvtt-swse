@@ -1,0 +1,299 @@
+{
+  "phase": "T8 Jedi Knight / Jedi Master tree cleanup",
+  "created": "2026-06-06",
+  "scope": {
+    "baseline": "Uploaded repo snapshot with Armor Specialist cleanup and T7 Jedi cleanup applied before this pass.",
+    "treesReviewed": [
+      "Duelist",
+      "Lightsaber Forms",
+      "Jedi Battlemaster",
+      "Jedi Shadow",
+      "Jedi Watchman",
+      "Jedi Archivist",
+      "Jedi Healer",
+      "Jedi Artisan",
+      "Jedi Instructor",
+      "Jedi Investigator",
+      "Jedi Refugee",
+      "Jedi Weapon Master",
+      "Jedi Master class Duelist access"
+    ],
+    "outOfScope": [
+      "Imperial Knight trees such as Knight's Armor and Knight's Resolve",
+      "Broad tree membership reshaping",
+      "New tree-specific JS files",
+      "Full Force-suite UI/picker implementation"
+    ]
+  },
+  "summary": {
+    "talentDocumentsPatched": 25,
+    "realRuntimeImplementationsAdded": 3,
+    "extraneousActiveEffectsRemoved": 12,
+    "talentsPuntedToGmPlayerOrRuntimePrompt": 20,
+    "activeEffectsIntentionallyRetained": 2,
+    "treeMembershipChanges": 0,
+    "broadEngineArchitectureChanges": 0,
+    "badLivePassiveOrActiveEffectEntriesCleaned": 19
+  },
+  "implementedOrVerified": [
+    {
+      "name": "Ataru",
+      "id": "0b3f4075ed84aee0",
+      "tree": "Lightsaber Forms",
+      "status": "implemented",
+      "enginePath": "CombatStatRules.getDamageAbilityContribution",
+      "reason": "The book text is a damage ability substitution, not a flat bonus. Damage contribution now uses Dexterity instead of Strength for lightsaber damage, including doubled Dexterity when two-handed. The old unused ActiveEffect flag was removed."
+    },
+    {
+      "name": "Vaapad",
+      "id": "87c0a929a04eb870",
+      "tree": "Lightsaber Forms",
+      "status": "implemented contextual",
+      "enginePath": "CombatOptionResolver",
+      "reason": "The book text modifies lightsaber critical threat range only during lightsaber attacks. It is now exposed as a passive attack option for lightsabers with criticalThreatNaturalMin 19; it does not affect static sheet totals."
+    },
+    {
+      "name": "Greater Weapon Focus (Lightsabers)",
+      "id": "3038f4c26de19e39",
+      "tree": "Duelist",
+      "status": "implemented contextual",
+      "enginePath": "Attack roll PASSIVE/STATE path with explicit allowLegacyStateAttackBonus",
+      "reason": "The book text grants +1 on melee attack rolls with lightsabers. The old ActiveEffect system.attacks.lightsaber was removed and replaced with a roll-context attack modifier that requires melee + lightsaber context."
+    },
+    {
+      "name": "Greater Weapon Specialization (Lightsabers)",
+      "id": "9cda854b5448414f",
+      "tree": "Duelist",
+      "status": "verified from previous pass",
+      "enginePath": "Damage roll PASSIVE/STATE path",
+      "reason": "Already implemented as +2 melee damage only with lightsabers; no change in this pass."
+    },
+    {
+      "name": "Niman",
+      "id": "7842befd5a8713c5",
+      "tree": "Lightsaber Forms",
+      "status": "verified from previous pass",
+      "enginePath": "DefenseCalculator PASSIVE/STATE context predicates",
+      "reason": "Already implemented as +1 Reflex and +1 Will only while wielding/equipping a lightsaber; no change in this pass."
+    },
+    {
+      "name": "Dark Deception",
+      "id": "d1561acfdeac3d78",
+      "tree": "Jedi Shadow",
+      "status": "partially retained",
+      "enginePath": "ActiveEffect for Deception class skill only; Force-sense spoof punted",
+      "reason": "The bogus attack modifier was removed. The class-skill ActiveEffect was retained because the data includes a class-skill component. The Force-sensing Dark Side Score spoof remains GM/player or future Force-sense context."
+    },
+    {
+      "name": "Force Veil",
+      "id": "4fa3e301abad7a48",
+      "tree": "Jedi Refugee",
+      "status": "retained low-risk metadata/effect",
+      "enginePath": "No known static actor total consumer",
+      "reason": "The existing detection_range ActiveEffect is not a defense/attack/skill/speed/HP static total modifier. It was not touched in this pass."
+    },
+    {
+      "name": "Force Treatment",
+      "id": "a6ad65c1275faa33",
+      "tree": "Jedi Healer",
+      "status": "implemented by existing skill-use action link",
+      "enginePath": "TalentActionLinker / talent-action-links.json / talent-granted-abilities.json",
+      "reason": "The incorrect global Treat Injury trained ActiveEffect was removed. The existing action link rolls Use the Force as a Treat Injury substitute, which matches the core implementation direction."
+    }
+  ],
+  "extraneousRuntimeRemoved": [
+    {
+      "name": "Lightsaber Throw",
+      "id": "e54ecc0ff06e61f3",
+      "removed": "Bogus defense.reflex +2 modifier",
+      "correctHandling": "Thrown-lightsaber attack option plus return prompt; no Reflex bonus."
+    },
+    {
+      "name": "Severing Strike",
+      "id": "efd3308a8ccc22c6",
+      "removed": "Bogus attack +2 modifier and limb_loss ActiveEffect",
+      "correctHandling": "GM/player adjudicated rider after a qualifying lightsaber hit would kill and exceeds DT."
+    },
+    {
+      "name": "Lightsaber Form Savant",
+      "id": "fcc6357b5b33dbb7",
+      "removed": "Bogus once-per-round attack +2 modifier",
+      "correctHandling": "Once-per-encounter Force suite return prompt for [Lightsaber Form] powers."
+    },
+    {
+      "name": "Shien",
+      "id": "e0223a2b572f2ef5",
+      "removed": "Global ranged attack +5 modifier and deflect attack ActiveEffect",
+      "correctHandling": "Only applies to redirected/deflected shots; needs Block/Deflect/Redirect Shot context."
+    },
+    {
+      "name": "Slashing Charge",
+      "id": "d587fb91aedddd09",
+      "removed": "Bogus once-per-round attack +2 modifier",
+      "correctHandling": "Charge + Block/Riposte runtime context; GM/player until that flow carries the needed state."
+    },
+    {
+      "name": "Taint of the Dark Side",
+      "id": "3f5b1b3566f16ff5",
+      "removed": "Bogus once-per-round attack +2 modifier",
+      "correctHandling": "Persistent [Dark Side] Force Power choice and once-per-encounter no-DSS prompt."
+    },
+    {
+      "name": "Sentinel Strike",
+      "id": "cf2d518039afd828",
+      "removed": "Flatfooted damage flag ActiveEffect",
+      "correctHandling": "Target-context extra damage; punted until target denied-Dex/flat-footed context is reliable in attack and Force damage flows."
+    },
+    {
+      "name": "Improved Sentinel Strike",
+      "id": "f836070c4a153ba0",
+      "removed": "Permanent sentinel damage die ActiveEffect",
+      "correctHandling": "Only upgrades Sentinel Strike when Sentinel Strike applies."
+    },
+    {
+      "name": "Watchman's Advance",
+      "id": "e3927fc5314cc492",
+      "removed": "Surprise attack ActiveEffect",
+      "correctHandling": "Surprise-round ally action economy; GM/player or future encounter prompt."
+    },
+    {
+      "name": "Sheltering Stance",
+      "id": "f541b5e57c5af27e",
+      "removed": "Bogus attack +2 ally-nearby modifier",
+      "correctHandling": "Adjacent ally Block/Deflect permission; GM/player until Block/Deflect knows target adjacency."
+    },
+    {
+      "name": "Skilled Advisor",
+      "id": "35cbdbe9c91ba1d0",
+      "removed": "Generic skill +2 ally-nearby modifier",
+      "correctHandling": "Ally-targeted temporary next-skill-check bonus prompt."
+    },
+    {
+      "name": "Direct",
+      "id": "81154e9fc33e43b3",
+      "removed": "Bogus attack +2 ally-nearby modifier",
+      "correctHandling": "Ally Force-suite returned-power prompt."
+    },
+    {
+      "name": "Healing Boost",
+      "id": "0e6a784501100693",
+      "removed": "Bogus movement attack +1 modifier",
+      "correctHandling": "Vital Transfer healing modifier only."
+    },
+    {
+      "name": "Soothe",
+      "id": "3713870862584269",
+      "removed": "Bogus movement attack +1 modifier and generic healing ActiveEffect",
+      "correctHandling": "Vital Transfer runtime option: CT improvement instead of healing with self CT cost."
+    },
+    {
+      "name": "Lightsaber Specialist",
+      "id": "6fe17dc4f0f03c12",
+      "removed": "Generic blockDeflect action ActiveEffect with no verified consumer",
+      "correctHandling": "Block/Deflect Use the Force bonus only with a self-built lightsaber."
+    },
+    {
+      "name": "Masterwork Lightsaber",
+      "id": "a64c01df9eba3147",
+      "removed": "Bogus attack +2 when-hit modifier",
+      "correctHandling": "Lightsaber construction choice + damage die reroll prompt for self-built lightsaber."
+    },
+    {
+      "name": "Prepared for Danger",
+      "id": "aa5b9fe99274274a",
+      "removed": "Force Point recovery ActiveEffect",
+      "correctHandling": "Spend unspent Farseeing to regain another Force Power as a swift action."
+    },
+    {
+      "name": "Shoto Pin Block",
+      "id": "ab4b51be30dfa9bc",
+      "removed": "Bogus melee attack +2 modifier",
+      "correctHandling": "Block-with-shoto rider restricting attacker melee attacks; GM/player until Block flow supports target restrictions."
+    },
+    {
+      "name": "Master Advisor",
+      "id": "e6c4f05db6ac6c06",
+      "removed": "Empty ActiveEffect and disabled placeholder modifier",
+      "correctHandling": "Temporary Force Point grant tied to Skilled Advisor resolution."
+    }
+  ],
+  "gmPlayerManagedOrNeedsPrompt": [
+    "Lightsaber Throw",
+    "Severing Strike",
+    "Lightsaber Form Savant",
+    "Shien",
+    "Slashing Charge",
+    "Taint of the Dark Side",
+    "Sentinel Strike",
+    "Improved Sentinel Strike",
+    "Watchman's Advance",
+    "Sheltering Stance",
+    "Skilled Advisor",
+    "Direct",
+    "Healing Boost",
+    "Improved Healing Boost",
+    "Soothe",
+    "Lightsaber Specialist",
+    "Masterwork Lightsaber",
+    "Prepared for Danger",
+    "Shoto Pin Block",
+    "Master Advisor"
+  ],
+  "needsPersistentChoicePicker": [
+    {
+      "name": "Taint of the Dark Side",
+      "optionSource": "Force powers with the [Dark Side] descriptor",
+      "notes": "Choose the power when the talent is selected; runtime prompt handles once-per-encounter no-DSS use."
+    },
+    {
+      "name": "Share Talent",
+      "optionSource": "Eligible Lightsaber Combat, Duelist, or Lightsaber Forms talents",
+      "notes": "Not patched in this pass; should be handled by a future Jedi Instructor picker pass."
+    },
+    {
+      "name": "Share Force Secret / Share Force Technique",
+      "optionSource": "Known Force Secrets / Force Techniques",
+      "notes": "Not patched in this pass; requires progression picker and ally runtime grant prompt."
+    }
+  ],
+  "needsUserReview": [
+    {
+      "name": "Shien",
+      "reason": "The pack description is empty and only the benefit text is present. The old automation was clearly wrong, but exact UX should be reviewed when Block/Deflect/Redirect Shot prompts are built."
+    },
+    {
+      "name": "Lightsaber Forms tree membership",
+      "reason": "The tree appears to include prerequisite/base lightsaber talents alongside actual forms. I did not reshape membership in this pass because it can affect progression availability."
+    },
+    {
+      "name": "Multiattack Proficiency (lightsabers)",
+      "reason": "The pack row has sparse/empty book text in this snapshot; leave for a later data-quality pass."
+    },
+    {
+      "name": "Force Veil",
+      "reason": "Retained as low-risk because it is not currently a static actor total modifier, but future detection/sense systems should decide whether system.stealth.detection_range is the right field."
+    }
+  ],
+  "recommendedNextPatchOrder": [
+    "Build/verify Block + Deflect + Redirect Shot runtime flow, then wire Shien, Lightsaber Specialist, Sheltering Stance, Shoto Pin Block, and Slashing Charge.",
+    "Build Force suite spend/regain prompt family for Lightsaber Form Savant, Direct, Prepared for Danger, Taint of the Dark Side, Healing Boost, Improved Healing Boost, and Soothe.",
+    "Add target-context support for flat-footed/denied-Dex riders before automating Sentinel Strike.",
+    "Review Lightsaber Forms tree membership separately before removing prerequisite/base talents from the tree.",
+    "Do Jedi Instructor persistent-choice talents as a dedicated picker pass."
+  ],
+  "filesChanged": [
+    "packs/talents.db",
+    "scripts/engine/combat/combat-stat-rules.js",
+    "docs/talent-jedi-knight-master-cleanup-phase-t8.json"
+  ],
+  "validation": {
+    "nodeCheck": [
+      "scripts/engine/combat/combat-stat-rules.js"
+    ],
+    "jsonlParse": [
+      "packs/talents.db",
+      "packs/talent_trees.db"
+    ],
+    "runtimeFoundryTested": false
+  }
+}

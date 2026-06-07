@@ -261,6 +261,10 @@ export class FeatChoiceResolver {
       'weapon_specialization',
       'greater_weapon_specialization',
       'force_power_focus',
+      'owned_force_power',
+      'weapon_group_or_exotic',
+      'weapon_focus_choice',
+      'triple_crit_specialist_weapon',
       'double_attack_weapon',
       'triple_attack_weapon',
       'double_attack_followup_weapon',
@@ -543,7 +547,20 @@ export class FeatChoiceResolver {
           prerequisiteSource: 'weapon_specialization'
         }));
       case 'force_power_focus':
-        return this.getOwnedForcePowerChoices(actor);
+      case 'owned_force_power':
+        return this.getOwnedForcePowerChoices(actor, { descriptors: meta?.forceDescriptors || meta?.descriptors || [] });
+      case 'weapon_group_or_exotic':
+        return this.getWeaponFocusEligibleChoices(actor, registry, context?.pending || context);
+      case 'weapon_focus_choice':
+        return this.getWeaponFocusChoices(actor, context?.pending || context).map((entry) => ({
+          ...entry,
+          prerequisiteSource: 'weapon_focus'
+        }));
+      case 'triple_crit_specialist_weapon':
+        return this._getChoiceEntriesByKind(actor, 'weapon_specialization', context?.pending || context).map((entry) => ({
+          ...entry,
+          prerequisiteSource: 'weapon_specialization'
+        }));
       case 'double_attack_weapon':
         return this.getWeaponFocusEligibleChoices(actor, registry, context?.pending || context);
       case 'triple_attack_weapon':
@@ -557,6 +574,7 @@ export class FeatChoiceResolver {
           prerequisiteSource: 'double_attack'
         }));
       case 'return_fire_weapon':
+      case 'weapon_focus_choice':
         return this.getWeaponFocusChoices(actor, context?.pending || context).map((entry) => ({
           ...entry,
           prerequisiteSource: 'weapon_focus'
@@ -569,7 +587,12 @@ export class FeatChoiceResolver {
   }
 
   static _resolveActorStateOptions(actor, registry, meta, kind, context = {}) {
-    if (kind === 'talent_choice') return this.getOwnedTalentChoices(actor, context?.pending || context);
+    if (kind === 'talent_choice') {
+      return this.getOwnedTalentChoices(actor, context?.pending || context, {
+        allowedTreeNames: meta?.allowedTreeNames || meta?.talentTrees || [],
+        allowedTreeIds: meta?.allowedTreeIds || []
+      });
+    }
     if (kind === 'once_per_encounter_ability_choice') return this.getOncePerEncounterAbilityChoices(actor, context?.pending || context);
     return [];
   }
@@ -825,11 +848,28 @@ export class FeatChoiceResolver {
     return uniqueById(results);
   }
 
-  static getOwnedTalentChoices(actor, pending = {}) {
+  static getOwnedTalentChoices(actor, pending = {}, { allowedTreeNames = [], allowedTreeIds = [] } = {}) {
     const results = [];
+    const allowedNames = new Set(asArray(allowedTreeNames).map(stableKey).filter(Boolean));
+    const allowedIds = new Set(asArray(allowedTreeIds).map(stableKey).filter(Boolean));
+    const passesTreeFilter = (entry) => {
+      if (!allowedNames.size && !allowedIds.size) return true;
+      if (!entry || typeof entry !== 'object') return false;
+      const system = entry.system || {};
+      const candidateIds = [
+        entry.treeId, entry.sourceTreeId, entry.talentTreeId,
+        system.treeId, system.sourceTreeId, system.talentTreeId, system.talent_tree, system.talentTree
+      ].map(stableKey).filter(Boolean);
+      if (candidateIds.some(id => allowedIds.has(id))) return true;
+      const candidateNames = [
+        entry.treeName, entry.sourceTreeName, entry.talentTreeName, entry.category,
+        system.treeName, system.sourceTreeName, system.talentTreeName, system.tree, system.category, system.talent_tree, system.talentTree
+      ].map(stableKey).filter(Boolean);
+      return candidateNames.some(name => allowedNames.has(name));
+    };
     const add = (entry, source = 'actor.talent', locked = false) => {
       const label = typeof entry === 'string' ? entry : entry?.name || entry?.label || entry?.talent || entry?.id;
-      if (!label) return;
+      if (!label || !passesTreeFilter(entry)) return;
       results.push({
         id: stableKey(label),
         value: stableKey(label),
@@ -904,9 +944,26 @@ export class FeatChoiceResolver {
     }));
   }
 
-  static getOwnedForcePowerChoices(actor) {
+  static getOwnedForcePowerChoices(actor, { descriptors = [] } = {}) {
     const owned = [];
+    const wantedDescriptors = new Set(asArray(descriptors).map(stableKey).filter(Boolean));
+    const textForEntry = (entry) => {
+      if (!entry || typeof entry !== 'object') return String(entry || '');
+      const system = entry.system || {};
+      const description = typeof system.description === 'object' ? system.description?.value : system.description;
+      return [
+        entry.name, entry.label, entry.power, entry.id,
+        system.name, system.label, system.power, system.descriptor, system.descriptors, system.tags,
+        description, system.summary, system.shortSummary
+      ].flatMap(value => Array.isArray(value) ? value : [value]).filter(Boolean).join(' ');
+    };
+    const hasRequiredDescriptor = (entry) => {
+      if (!wantedDescriptors.size) return true;
+      const text = stableKey(textForEntry(entry));
+      return Array.from(wantedDescriptors).some(descriptor => text.includes(descriptor));
+    };
     const add = (entry, source = 'actor', locked = false) => {
+      if (!hasRequiredDescriptor(entry)) return;
       const label = typeof entry === 'string' ? entry : entry?.name || entry?.label || entry?.power || entry?.id;
       if (!label) return;
       owned.push({
@@ -1020,6 +1077,18 @@ export class FeatChoiceResolver {
       return_fire_weapon: {
         providers: () => this.getWeaponFocusChoices(actor, pending),
         message: (label) => `Requires Weapon Focus with ${label}.`
+      },
+      weapon_group_or_exotic: {
+        providers: () => this.getWeaponProficiencyChoices(actor, registry, pending),
+        message: (label) => `Requires proficiency with ${label}.`
+      },
+      weapon_focus_choice: {
+        providers: () => this.getWeaponFocusChoices(actor, pending),
+        message: (label) => `Requires Weapon Focus with ${label}.`
+      },
+      triple_crit_specialist_weapon: {
+        providers: () => this._getChoiceEntriesByKind(actor, 'weapon_specialization', pending),
+        message: (label) => `Requires Weapon Specialization with ${label}.`
       }
     };
 
@@ -1079,9 +1148,13 @@ export class FeatChoiceResolver {
   }
 
 
-  static async getInvalidChoices(actor) {
+  static async getInvalidChoices(actor, { includeTalents = false } = {}) {
     const invalid = [];
-    for (const item of this.getActorFeatItems(actor)) {
+    const items = [
+      ...this.getActorFeatItems(actor),
+      ...(includeTalents ? this.getActorTalentItems(actor) : [])
+    ];
+    for (const item of items) {
       const meta = this.getChoiceMeta(item);
       if (!meta?.required || !this.hasStoredChoice(actor, item)) continue;
       if (this.isClassGrantedItem(item)) continue;
@@ -1103,7 +1176,7 @@ export class FeatChoiceResolver {
       actor,
       label: 'invalid stored choices',
       items: invalid,
-      includeTalents: false,
+      includeTalents,
     });
 
     return invalid;

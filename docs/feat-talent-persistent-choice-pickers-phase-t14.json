@@ -1,0 +1,848 @@
+{
+  "phase": "T14 feat/talent persistent choice picker scan and fix",
+  "summary": {
+    "totalFeatsScanned": 414,
+    "totalTalentsScanned": 1005,
+    "requiredChoiceItemsAfterPatch": 44,
+    "requiredChoiceFeatsAfterPatch": 29,
+    "requiredChoiceTalentsAfterPatch": 15,
+    "newOrRepairedFeatChoiceItems": 1,
+    "newOrRepairedTalentChoiceItems": 15,
+    "needsDedicatedPickerOrDataReview": 6,
+    "runtimeChoiceNotSelectionExamples": 7,
+    "broadRuntimePatches": 0,
+    "treeSpecificJsFilesCreated": 0
+  },
+  "whatChanged": [
+    "TalentStep now uses the same FeatChoiceResolver/FeatChoiceDialog path as FeatStep for system.choiceMeta.required items.",
+    "FeatChoiceResolver now resolves generic weapon-group/exotic choices, Weapon Focus-derived choices, Weapon Specialization-derived Triple Crit Specialist choices, owned Force power choices, and filtered owned-talent choices.",
+    "The choice option registry now includes weapon_group_or_exotic, weapon_focus_choice, triple_crit_specialist_weapon, owned_force_power, vehicle_type, knowledge_field, and medical_treatment_method contexts.",
+    "Ability combat-action cards now show selected-choice labels and mark unresolved choice-required cards as not executable for legacy actors."
+  ],
+  "doubleAttackValidation": {
+    "name": "Double Attack",
+    "status": "alreadyHadChoiceMetaAndNowConfirmed",
+    "choiceKind": "double_attack_weapon",
+    "choiceSource": "prerequisiteDerived",
+    "options": "Weapon groups or exotic weapons from actor/pending Weapon Proficiency choices.",
+    "progressionBehavior": "FeatStep prompts immediately when selected; the selected choice is stored on system.selectedChoice and survives finalization.",
+    "combatActionBehavior": "Its Full-Round action card requires a resolved selected choice and displays the choice label when present."
+  },
+  "newOrRepairedFeatChoices": [
+    {
+      "name": "Triple Crit Specialist",
+      "id": "2f2fa438a6fb54a0",
+      "type": "feat",
+      "choiceKind": "triple_crit_specialist_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.triple_crit_specialist_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    }
+  ],
+  "newOrRepairedTalentChoices": [
+    {
+      "name": "Greater Penetrating Attack",
+      "id": "1718ec6cdf765a57",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_penetrating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Share Talent",
+      "id": "2f00c50f3bf6bf5a",
+      "type": "talent",
+      "choiceKind": "talent_choice",
+      "choiceSource": "actorState",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.share_talent",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Accurate Blow",
+      "id": "32df92c3114b5c94",
+      "type": "talent",
+      "choiceKind": "melee_weapon_or_group",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.accurate_blow_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Devastating Attack",
+      "id": "383915a7d11e1225",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.devastating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Disarming Attack",
+      "id": "456a0aa44da5105c",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.disarming_attack_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Vehicle Focus",
+      "id": "4764dc69f0d11695",
+      "type": "talent",
+      "choiceKind": "vehicle_type",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.vehicle_focus_type",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "id": "642c6c8643db7470",
+      "type": "talent",
+      "choiceKind": "greater_weapon_focus",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_weapon_focus",
+      "status": "phase14_existing_choice_confirmed",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Penetrating Attack",
+      "id": "7d547902b8d9109e",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.penetrating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Weapon Specialization",
+      "id": "869168cd679ee5d1",
+      "type": "talent",
+      "choiceKind": "weapon_specialization",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.weapon_specialization",
+      "status": "phase14_existing_choice_confirmed",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Force Power Adept",
+      "id": "90d9a2e7dbc160d1",
+      "type": "talent",
+      "choiceKind": "owned_force_power",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.force_power_adept_power",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Squadron Maneuvers",
+      "id": "991dbfc3a436b5a1",
+      "type": "talent",
+      "choiceKind": "talent_choice",
+      "choiceSource": "actorState",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.squadron_maneuvers_talent",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Flurry Attack",
+      "id": "9e2092257b53cd21",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.flurry_attack_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Devastating Attack",
+      "id": "d3b19d5e369f579d",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_devastating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Brutal Attack",
+      "id": "d9f47bfdde76475f",
+      "type": "talent",
+      "choiceKind": "weapon_focus_choice",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.brutal_attack_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "id": "e9820b341bf94de1",
+      "type": "talent",
+      "choiceKind": "greater_weapon_specialization",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_weapon_specialization",
+      "status": "phase14_existing_choice_confirmed",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    }
+  ],
+  "allRequiredChoiceItemsAfterPatch": [
+    {
+      "name": "Skill Focus",
+      "id": "1592aaedf4b6e40a",
+      "type": "feat",
+      "choiceKind": "skill_focus",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.skill_focus",
+      "status": "execution_mapped_phase6",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Exotic Weapon Proficiency",
+      "id": "1ea7da65feb15b18",
+      "type": "feat",
+      "choiceKind": "weapon_proficiency",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.weaponProficiency",
+      "status": "tagged_for_later_dialog_backfill",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Adaptable Talent",
+      "id": "25ce950a142f969d",
+      "type": "feat",
+      "choiceKind": "talent_choice",
+      "choiceSource": "actorState",
+      "resolution": "immediate",
+      "repeatable": false,
+      "storagePath": "flags.swse.choices.adaptable_talent",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Triple Crit Specialist",
+      "id": "2f2fa438a6fb54a0",
+      "type": "feat",
+      "choiceKind": "triple_crit_specialist_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.triple_crit_specialist_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Relentless Attack",
+      "id": "30cb2abcd11bf1bd",
+      "type": "feat",
+      "choiceKind": "double_attack_followup_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.relentless_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Double Attack",
+      "id": "357807a5ceb77203",
+      "type": "feat",
+      "choiceKind": "double_attack_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.double_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Starship Tactics",
+      "id": "376d805d1b73f7e6",
+      "type": "feat",
+      "choiceKind": "starship_maneuver_pick",
+      "choiceSource": "grantPool",
+      "resolution": "deferred",
+      "repeatable": true,
+      "storagePath": "flags.swse.pendingEntitlements.starship_maneuver_pick",
+      "status": "phase13_grant_pool_metadata",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "id": "3ca2ebe34da486a5",
+      "type": "feat",
+      "choiceKind": "greater_weapon_specialization",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_weapon_specialization",
+      "status": "execution_mapped_phase6",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Triple Crit",
+      "id": "3d4a4e93ced26712",
+      "type": "feat",
+      "choiceKind": "specific_weapon",
+      "choiceSource": "actorInventory",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.triple_crit_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Force Focus",
+      "id": "44ddf3506444cbbd",
+      "type": "feat",
+      "choiceKind": "force_power_focus",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.force_power_focus",
+      "status": "phase13_choice_executable",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Recurring Success",
+      "id": "5535b5d495f381f5",
+      "type": "feat",
+      "choiceKind": "once_per_encounter_ability_choice",
+      "choiceSource": "actorState",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.recurring_success",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Linguist",
+      "id": "5afd91fb081e576b",
+      "type": "feat",
+      "choiceKind": "language_pick",
+      "choiceSource": "grantPool",
+      "resolution": "grant_entitlement",
+      "repeatable": true,
+      "storagePath": "flags.swse.pendingEntitlements.language_pick",
+      "status": "deferred_grant_step_not_immediate_choice",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Educated",
+      "id": "5cc1216874c79087",
+      "type": "feat",
+      "choiceKind": "two_knowledge_skills",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": false,
+      "storagePath": "flags.swse.choices.educated",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Nikto Survival",
+      "id": "6179746c48e30c26",
+      "type": "feat",
+      "choiceKind": "nikto_subspecies",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": false,
+      "storagePath": "flags.swse.choices.nikto_survival",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Triple Attack",
+      "id": "648a4f16669056f0",
+      "type": "feat",
+      "choiceKind": "triple_attack_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.triple_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "id": "75ff82e2dd80091d",
+      "type": "feat",
+      "choiceKind": "greater_weapon_focus",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_weapon_focus",
+      "status": "execution_mapped_phase6",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Weapon Specialization",
+      "id": "7cd5ebe725910cb2",
+      "type": "feat",
+      "choiceKind": "weapon_specialization",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.weapon_specialization",
+      "status": "execution_mapped_phase6",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Return Fire",
+      "id": "80c52cf7838095c1",
+      "type": "feat",
+      "choiceKind": "return_fire_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.return_fire_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Force Training",
+      "id": "9b7b869a86f39190",
+      "type": "feat",
+      "choiceKind": "force_power_pick",
+      "choiceSource": "grantPool",
+      "resolution": "grant_entitlement",
+      "repeatable": true,
+      "storagePath": "flags.swse.pendingEntitlements.force_power_pick",
+      "status": "deferred_grant_step_not_immediate_choice",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Inborn Resilience",
+      "id": "9d70c309eb95da5e",
+      "type": "feat",
+      "choiceKind": "defense_reallocation",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": false,
+      "storagePath": "flags.swse.choices.inborn_resilience",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Superior Tech",
+      "id": "a717435c8094e7fb",
+      "type": "feat",
+      "choiceKind": "tech_category",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.superior_tech",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Skill Training",
+      "id": "a9f6de36f24ef202",
+      "type": "feat",
+      "choiceKind": "skill_training",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.skill_training",
+      "status": "execution_mapped_phase6",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Savage Attack",
+      "id": "aaa730a68f195111",
+      "type": "feat",
+      "choiceKind": "double_attack_followup_weapon",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.savage_attack_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Mission Specialist",
+      "id": "b7f51561e60fefe6",
+      "type": "feat",
+      "choiceKind": "trained_skill",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.mission_specialist_skill",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Weapon Focus",
+      "id": "c41814601364b643",
+      "type": "feat",
+      "choiceKind": "weapon_focus",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.weapon_focus",
+      "status": "execution_mapped_phase6",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Withdrawal Strike",
+      "id": "caad1a8c13bf01a1",
+      "type": "feat",
+      "choiceKind": "melee_weapon_or_group",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.withdrawal_strike_weapon",
+      "status": "phase6_choice_backfilled",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Logic Upgrade: Skill Swap",
+      "id": "d48614f7ae500a5b",
+      "type": "feat",
+      "choiceKind": "droid_untrained_skill",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": false,
+      "storagePath": "system.selectedChoice",
+      "status": null,
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Weapon Proficiency",
+      "id": "ecc2471ac96ec2d4",
+      "type": "feat",
+      "choiceKind": "weapon_proficiency",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.weaponProficiency",
+      "status": "tagged_for_later_dialog_backfill",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Droid Focus",
+      "id": "f4f3706e393976b3",
+      "type": "feat",
+      "choiceKind": "droid_class_focus",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": false,
+      "storagePath": "flags.swse.choices.droid_class_focus",
+      "status": "tagged_for_later_dialog_backfill",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Penetrating Attack",
+      "id": "1718ec6cdf765a57",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_penetrating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Share Talent",
+      "id": "2f00c50f3bf6bf5a",
+      "type": "talent",
+      "choiceKind": "talent_choice",
+      "choiceSource": "actorState",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.share_talent",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Accurate Blow",
+      "id": "32df92c3114b5c94",
+      "type": "talent",
+      "choiceKind": "melee_weapon_or_group",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.accurate_blow_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Devastating Attack",
+      "id": "383915a7d11e1225",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.devastating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Disarming Attack",
+      "id": "456a0aa44da5105c",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.disarming_attack_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Vehicle Focus",
+      "id": "4764dc69f0d11695",
+      "type": "talent",
+      "choiceKind": "vehicle_type",
+      "choiceSource": "fixed",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.vehicle_focus_type",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "id": "642c6c8643db7470",
+      "type": "talent",
+      "choiceKind": "greater_weapon_focus",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_weapon_focus",
+      "status": "phase14_existing_choice_confirmed",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Penetrating Attack",
+      "id": "7d547902b8d9109e",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.penetrating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Weapon Specialization",
+      "id": "869168cd679ee5d1",
+      "type": "talent",
+      "choiceKind": "weapon_specialization",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.weapon_specialization",
+      "status": "phase14_existing_choice_confirmed",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Force Power Adept",
+      "id": "90d9a2e7dbc160d1",
+      "type": "talent",
+      "choiceKind": "owned_force_power",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.force_power_adept_power",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Squadron Maneuvers",
+      "id": "991dbfc3a436b5a1",
+      "type": "talent",
+      "choiceKind": "talent_choice",
+      "choiceSource": "actorState",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.squadron_maneuvers_talent",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Flurry Attack",
+      "id": "9e2092257b53cd21",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.flurry_attack_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Devastating Attack",
+      "id": "d3b19d5e369f579d",
+      "type": "talent",
+      "choiceKind": "weapon_group_or_exotic",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_devastating_attack",
+      "status": "phase14_choice_kind_wired",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Brutal Attack",
+      "id": "d9f47bfdde76475f",
+      "type": "talent",
+      "choiceKind": "weapon_focus_choice",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.brutal_attack_weapon",
+      "status": "phase14_persistent_choice_seeded",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "id": "e9820b341bf94de1",
+      "type": "talent",
+      "choiceKind": "greater_weapon_specialization",
+      "choiceSource": "prerequisiteDerived",
+      "resolution": "immediate",
+      "repeatable": true,
+      "storagePath": "flags.swse.choices.greater_weapon_specialization",
+      "status": "phase14_existing_choice_confirmed",
+      "optionsOwner": "FeatChoiceResolver / FeatChoiceDialog"
+    }
+  ],
+  "needsDedicatedPickerOrDataReview": [
+    {
+      "name": "Stolen Form",
+      "type": "talent",
+      "reason": "Requires choosing a legal talent from the Lightsaber Forms tree, not merely an owned talent. Needs a tree-source talent picker that can evaluate prerequisites for the chosen child talent."
+    },
+    {
+      "name": "Blackguard Initiate",
+      "type": "talent",
+      "reason": "Description/data appears to contain merged Blackguard entries. The first paragraph needs a Force-power choice, but source pool may be tradition-based rather than currently owned powers."
+    },
+    {
+      "name": "Aura of Freedom",
+      "type": "talent",
+      "reason": "Description/data appears merged with other Force talents. It mentions choosing a [Dark Side] or [Light Side] Force power in suite, which needs descriptor-filtered Force suite picker after data cleanup."
+    },
+    {
+      "name": "Identify Creature",
+      "type": "talent",
+      "reason": "Description appears to include multiple merged Knowledge-related talents. The Knowledge Field choice should be seeded only after the correct talent row is split/cleaned."
+    },
+    {
+      "name": "Steady Hands",
+      "type": "talent",
+      "reason": "Description appears to include multiple medical talents. The Treat Disease/Poison/Radiation choice should be seeded only after the correct talent row is split/cleaned."
+    },
+    {
+      "name": "Heavy-Duty Actuators",
+      "type": "talent",
+      "reason": "Description appears merged with skill-optimization text. Needs data cleanup before a trained-skill picker is safe."
+    }
+  ],
+  "runtimeChoicesNotChargenChoices": [
+    {
+      "name": "Power Attack",
+      "type": "feat",
+      "reason": "Choose a penalty amount when used, not at chargen/level-up."
+    },
+    {
+      "name": "Power Blast",
+      "type": "feat",
+      "reason": "Choose a penalty amount when used, not at chargen/level-up."
+    },
+    {
+      "name": "Dodge",
+      "type": "feat",
+      "reason": "Designate/select target opponent during play, not when selected."
+    },
+    {
+      "name": "Stay Up",
+      "type": "feat",
+      "reason": "Choose whether to use the once-per-encounter damage substitution when hit."
+    },
+    {
+      "name": "Forceful Recovery",
+      "type": "feat",
+      "reason": "Choose an expended Force Power when catching Second Wind."
+    },
+    {
+      "name": "Targeted Area",
+      "type": "feat",
+      "reason": "Select target hit by an area attack at runtime."
+    },
+    {
+      "name": "Fatal Hit",
+      "type": "feat",
+      "reason": "Choose whether to kill target when trigger occurs."
+    }
+  ],
+  "recommendedNextActions": [
+    "Use this picker path for all future persistent feat/talent selections; do not add one-off modals per tree.",
+    "Next cleanup should split obviously merged talent descriptions before seeding choices for Identify Creature, Steady Hands, Blackguard Initiate, Aura of Freedom, and Heavy-Duty Actuators.",
+    "Build a dedicated tree-source talent picker for Stolen Form because it chooses a legal Lightsaber Forms talent, not an already-owned talent.",
+    "Later, the Full Attack executor should consume Double Attack/Triple Attack selected choices to automate the multiattack sequence and penalties."
+  ],
+  "validation": {
+    "jsonlPacksParsed": [
+      "packs/feats.db",
+      "packs/talents.db"
+    ],
+    "jsonParsed": [
+      "data/feat-choice-options.json"
+    ],
+    "nodeCheckPassed": [
+      "scripts/apps/progression-framework/steps/talent-step.js",
+      "scripts/apps/choices/feat-choice-dialog.js",
+      "scripts/engine/progression/feats/feat-choice-resolver.js",
+      "scripts/engine/combat/ability-combat-action-resolver.js"
+    ],
+    "foundryRuntimeTested": false
+  }
+}

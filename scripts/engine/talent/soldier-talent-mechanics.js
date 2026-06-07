@@ -153,7 +153,7 @@ export class SoldierTalentMechanics {
       return false;
     }
 
-    // Adds extra 1d6 damage to melee attacks
+    // Adds +1 damage to melee attacks; the roll-context modifier owns the actual damage bonus.
     return true;
   }
 

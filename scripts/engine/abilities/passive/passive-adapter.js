@@ -509,14 +509,15 @@ export class PassiveAdapter {
 
     // Get rule metadata
     const meta = ability.system.abilityMeta;
-    if (!meta?.rules || !Array.isArray(meta.rules)) {
+    const rules = Array.isArray(meta?.rules) ? meta.rules : (meta?.rule ? [meta.rule] : []);
+    if (!rules.length) {
       throw new Error(
         `PASSIVE RULE ${ability.name} missing or invalid rules array`
       );
     }
 
     // Process each rule
-    for (const rule of meta.rules) {
+    for (const rule of rules) {
       try {
         // Check conditions if present
         if (rule.conditions?.length) {
@@ -539,10 +540,10 @@ export class PassiveAdapter {
     }
 
     // Log registration
-    if (meta.rules.length > 0) {
+    if (rules.length > 0) {
       swseLogger.debug(
         `[PassiveAdapter] RULE ${ability.name} ` +
-        `registering ${meta.rules.length} rules for ${actor.name}`
+        `registering ${rules.length} rules for ${actor.name}`
       );
     }
   }

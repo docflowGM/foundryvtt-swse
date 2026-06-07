@@ -222,13 +222,37 @@ export class FeatChoiceDialog {
       ? 'This feat unlocks progression slots. The dedicated progression step resolves the granted selections later.'
       : '';
 
-    const simpleWeaponGroupChoice = ['weapon_focus', 'greater_weapon_focus', 'weapon_specialization', 'greater_weapon_specialization']
-      .includes(String(meta.choiceKind || '').toLowerCase());
+    const choiceKind = String(meta.choiceKind || '').toLowerCase();
+    const simpleWeaponGroupChoice = [
+      'weapon_focus',
+      'greater_weapon_focus',
+      'weapon_specialization',
+      'greater_weapon_specialization',
+      'weapon_group_or_exotic',
+      'weapon_focus_choice',
+      'double_attack_weapon',
+      'triple_attack_weapon',
+      'double_attack_followup_weapon',
+      'return_fire_weapon',
+      'melee_weapon_or_group',
+      'triple_crit_specialist_weapon'
+    ].includes(choiceKind);
+    const choiceMessages = {
+      skill_focus: 'Pick the trained skill this ability should apply to.',
+      skill_training: 'Pick the skill this ability should train.',
+      trained_skill: 'Pick the trained skill this ability should apply to.',
+      owned_force_power: 'Pick the Force power this talent should apply to.',
+      force_power_focus: 'Pick the Force power this feat should apply to.',
+      talent_choice: 'Pick the talent this ability should reference.',
+      vehicle_type: 'Pick the vehicle type this talent should apply to.',
+      knowledge_field: 'Pick the Knowledge field this talent should apply to.',
+      medical_treatment_method: 'Pick the medical treatment method this talent should apply to.'
+    };
 
     let selected = await FeatChoiceAppV2.prompt({
-      title: title || `Choose: ${itemOrFeat?.name || 'Feat Choice'}`,
-      heading: `${itemOrFeat?.name || 'Feat'} requires a choice.`,
-      message: simpleWeaponGroupChoice ? 'Pick the weapon group this feat should apply to.' : 'Pick the option this feat should apply to.',
+      title: title || `Choose: ${itemOrFeat?.name || 'Ability Choice'}`,
+      heading: `${itemOrFeat?.name || 'Ability'} requires a choice.`,
+      message: simpleWeaponGroupChoice ? 'Pick the weapon group or qualifying weapon this ability should apply to.' : (choiceMessages[choiceKind] || 'Pick the option this ability should apply to.'),
       helper,
       options,
       selectedKey,

@@ -9,7 +9,7 @@
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { getDamageAbilityContribution, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageAbilityContribution, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class WeaponsEngine {
@@ -20,6 +20,27 @@ export class WeaponsEngine {
 
   static hasWeaponTalent(actor, talentKey) {
     return actor?.system?.weaponTalentFlags?.[talentKey] === true;
+  }
+
+  static hasTalentNamed(actor, names = []) {
+    const wanted = new Set((Array.isArray(names) ? names : [names])
+      .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
+      .filter(Boolean));
+    if (!wanted.size) return false;
+    try {
+      return Array.from(actor?.items ?? []).some(item => {
+        if (item?.type !== 'talent') return false;
+        const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+        return wanted.has(key);
+      });
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  static isProficientForAttack(actor, weapon) {
+    if (weapon?.system?.proficient !== false) return true;
+    return this.hasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon);
   }
 
   static getWeaponProperty(weapon, property) {
@@ -107,7 +128,7 @@ export class WeaponsEngine {
 
         /* ---------------- Proficiency ---------------- */
 
-        const proficient = weapon.system?.proficient ?? true;
+        const proficient = this.isProficientForAttack(actor, weapon);
 
         if (!proficient) {
           modifiers.push(createModifier({
@@ -398,8 +419,7 @@ export class WeaponsEngine {
     const abilityMod = SchemaAdapters.getAbilityMod(actor, abilityKey);
     const enhancement = getWeaponFlatAttackBonus(weapon);
 
-    const proficient =
-      weapon.system?.proficient ?? true;
+    const proficient = this.isProficientForAttack(actor, weapon);
 
     const proficiencyPenalty = proficient ? 0 : -5;
 

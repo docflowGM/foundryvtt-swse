@@ -236,28 +236,6 @@ function tryTalentSideMembership(tree) {
   return resolved;
 }
 
-function supplementKnownTreeMembership(tree, talents = []) {
-  const treeKey = normalizeTalentTreeKey(tree?.name || tree?.id || tree?.sourceId);
-  const supplementalNamesByTree = {
-    'armor-specialist': ['Armored Defense'],
-  };
-
-  const supplementalNames = supplementalNamesByTree[treeKey] || [];
-  if (!supplementalNames.length) return talents;
-
-  const seen = new Set((talents || []).map(getTalentIdentity).filter(Boolean));
-  const supplemented = [...talents];
-  for (const name of supplementalNames) {
-    const talent = resolveTalentReference(name);
-    const id = getTalentIdentity(talent);
-    if (talent && id && !seen.has(id)) {
-      supplemented.unshift(talent);
-      seen.add(id);
-    }
-  }
-  return supplemented;
-}
-
 function tryRegistryLookup(registry, tree) {
   if (!tree || !registry) return null;
 
@@ -411,20 +389,19 @@ export async function getTalentMembership(tree) {
   methodsTried.push('talentIds-resolution');
   mergeTalentList(merged, tryTalentIdResolution(tree), 'talentIds-resolution', seen, sourceStats);
 
-  const supplemented = supplementKnownTreeMembership(tree, merged);
-  const finalSeen = new Set(supplemented.map(talent => normalizeTalentRefKey(talent?.name || talent?.id || talent?._id)).filter(Boolean));
+  const finalSeen = new Set(merged.map(talent => normalizeTalentRefKey(talent?.name || talent?.id || talent?._id)).filter(Boolean));
   const missingClaimRefs = claimedRefs.filter(ref => !resolveTalentReference(ref) && !finalSeen.has(normalizeTalentRefKey(ref)));
 
   emitMembershipAudit(tree, {
     sourceStats,
     claimedRefs,
     missingClaimRefs,
-    resolvedCount: supplemented.length,
-    resolvedTalents: supplemented,
+    resolvedCount: merged.length,
+    resolvedTalents: merged,
   });
 
-  if (supplemented.length > 0) {
-    return supplemented;
+  if (merged.length > 0) {
+    return merged;
   }
 
   emitDiagnostic(tree, methodsTried);

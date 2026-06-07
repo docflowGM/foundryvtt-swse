@@ -1,0 +1,1712 @@
+{
+  "phase": "T11 Scout / Scoundrel / Soldier tree cleanup",
+  "summary": {
+    "treesReviewed": 37,
+    "treeNamesReviewed": [
+      "Fortune",
+      "Misfortune",
+      "Slicer",
+      "Spacer",
+      "Outlaw Tech",
+      "Malkite Poisoner",
+      "Run and Gun",
+      "Smuggling",
+      "Opportunist",
+      "Recklessness",
+      "Yuuzhan Vong Biotech",
+      "Awareness",
+      "Camouflage",
+      "Fringer",
+      "Survivor",
+      "Hyperspace Explorer",
+      "Spy",
+      "Reconnaissance",
+      "Surveillance",
+      "Unpredictable",
+      "Versatility",
+      "Armor Specialist",
+      "Brawler",
+      "Commando",
+      "Weapon Specialist",
+      "Rocket Jumper",
+      "Mercenary",
+      "Squad Leader",
+      "Trooper",
+      "Ambusher",
+      "Brute Squad",
+      "Exceptional Followers",
+      "Mobile Scout",
+      "Gunslinger",
+      "Sharpshooter",
+      "Master Scout",
+      "Melee Specialist"
+    ],
+    "talentDocumentsReviewed": 222,
+    "talentDocumentsChangedInScope": 207,
+    "abilityMetaModifierRowsRemovedInScope": 209,
+    "embeddedActiveEffectRowsRemovedInScope": 63,
+    "abilityMetaModifierRowsAddedInScope": 0,
+    "embeddedActiveEffectRowsAddedInScope": 0,
+    "legacyTalentEffectDefinitionsCleared": 23,
+    "missingTreeIds": [],
+    "missingTalentIds": [],
+    "broadFailClosedBehaviorAdded": false,
+    "treeSpecificJsFilesCreated": false,
+    "treeReferenceValidationMissingIdsAfterPatch": 0
+  },
+  "engineChanges": [
+    {
+      "file": "scripts/engine/abilities/passive/condition-evaluator.js",
+      "change": "Added ARMOR_CATEGORY condition support for equipment-aware passive modifiers such as Long Stride."
+    },
+    {
+      "file": "scripts/engine/abilities/passive/passive-state.js",
+      "change": "Added weapon.lightsaber predicate support so existing lightsaber roll-context modifiers can evaluate correctly."
+    },
+    {
+      "file": "scripts/engine/talent/talents.js",
+      "change": "Cleared obsolete ActiveEffect definitions for scoped talents whose canon effects are contextual, picker-required, or already owned elsewhere."
+    },
+    {
+      "file": "scripts/engine/talent/soldier-talent-mechanics.js",
+      "change": "Corrected Melee Smash comment from +1d6 to +1."
+    },
+    {
+      "file": "scripts/talents/soldier-talent-macros.js",
+      "change": "Corrected Melee Smash user notification from +1d6 to +1."
+    }
+  ],
+  "implementedOrCorrected": [
+    {
+      "name": "Melee Smash",
+      "id": "e0ee525f4109cfde",
+      "classification": "implemented roll-context",
+      "owner": "Ability Engine / Passive State / damage roll context",
+      "recommendedAction": "Uses +1 melee damage PASSIVE/STATE modifier with attack.with-melee predicate."
+    },
+    {
+      "name": "Long Stride",
+      "id": "618472c99f355949",
+      "classification": "implemented equipment-context static movement",
+      "owner": "Ability Engine / Passive Adapter / ConditionEvaluator",
+      "recommendedAction": "Uses +2 speed PASSIVE/MODIFIER with ARMOR_CATEGORY none/light context."
+    }
+  ],
+  "preservedExistingSystemOwned": [
+    {
+      "name": "Tough as Nails",
+      "id": "916b0a6197bf85a6",
+      "classification": "already implemented / preserved",
+      "owner": "SecondWindRules / ActorEngine",
+      "recommendedAction": "Compendium and TALENT_EFFECTS no longer create bogus Damage Threshold; second-wind capacity stays system-owned."
+    },
+    {
+      "name": "Cover Fire",
+      "id": "049820827d7ef32b",
+      "classification": "already implemented / preserved",
+      "owner": "SoldierTalentMechanics / TalentEffectEngine",
+      "recommendedAction": "Kept as action/talent mechanic, not passive attack/defense metadata."
+    }
+  ],
+  "needsPersistentChoicePicker": [
+    {
+      "name": "Weapon Specialization",
+      "id": "869168cd679ee5d1",
+      "classification": "needs persistent choice picker",
+      "owner": "Progression picker + roll-context damage hook",
+      "recommendedAction": "Generic Soldier version must choose weapon group/exotic; no generic damage effect."
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "id": null,
+      "classification": "needs persistent choice picker",
+      "owner": "Progression picker + roll-context damage hook",
+      "recommendedAction": "Same selected weapon group/exotic should drive additional damage."
+    }
+  ],
+  "followerSubsystemReview": [
+    {
+      "tree": "Exceptional Followers",
+      "classification": "follower subsystem review",
+      "notes": "Akk dog/follower talents should grant or modify owned followers through follower services, not actor passive bonuses."
+    },
+    {
+      "tree": "Squad Leader",
+      "classification": "follower/subordinate/action subsystem review",
+      "notes": "Squad/command talents grant follower actions, ally commands, or tactical options; preserve for follower/action-card pass."
+    },
+    {
+      "tree": "Trooper",
+      "classification": "ally/follower/positioning review",
+      "notes": "Most Trooper talents depend on allies, adjacency, cover, or coordinated action and should not be passive sheet bonuses."
+    }
+  ],
+  "gmPlayerManagedBuckets": [
+    {
+      "bucket": "target conditionals",
+      "examples": [
+        "Sneak Attack",
+        "Skirmisher",
+        "Dastardly Strike",
+        "target-type attack bonuses"
+      ],
+      "policy": "Punt/GM-player until attack target state exactly supports the condition."
+    },
+    {
+      "bucket": "ally positioning / line of sight / cover",
+      "examples": [
+        "Squad Leader",
+        "Trooper",
+        "Reconnaissance",
+        "Surveillance"
+      ],
+      "policy": "Do not automate as sheet bonuses; use GM/player notes or future action cards."
+    },
+    {
+      "bucket": "skill-use rerolls and narrow applications",
+      "examples": [
+        "Knack",
+        "Acute Senses",
+        "Improved Stealth",
+        "Expert Tracker",
+        "Gambler"
+      ],
+      "policy": "No static skill bonuses; future skill-use resolver prompts can own them."
+    },
+    {
+      "bucket": "movement/terrain/action economy",
+      "examples": [
+        "Swift Strider",
+        "Surefooted",
+        "Hidden Movement",
+        "Total Concealment"
+      ],
+      "policy": "GM/player or future movement/stealth context."
+    },
+    {
+      "bucket": "crafting/gear/device/poison/biotech",
+      "examples": [
+        "Outlaw Tech",
+        "Malkite Poisoner",
+        "Yuuzhan Vong Biotech"
+      ],
+      "policy": "Keep as metadata/table-managed until item/crafting workflows own them."
+    }
+  ],
+  "legacyTalentEffectsCleared": [
+    "Tough as Nails",
+    "Weapon Specialization",
+    "Greater Weapon Specialization",
+    "Melee Smash",
+    "Long Stride",
+    "Swift Strider",
+    "Sneak Attack",
+    "Improved Sneak Attack",
+    "Master Sneak Attack",
+    "Skirmisher",
+    "Improved Skirmisher",
+    "Lucky Shot",
+    "Gambler",
+    "Fortune's Favor",
+    "Knack",
+    "Acute Senses",
+    "Expert Tracker",
+    "Improved Stealth",
+    "Hidden Movement",
+    "Total Concealment",
+    "Surefooted",
+    "Improved Initiative",
+    "Indomitable"
+  ],
+  "importantDataCorrections": [
+    {
+      "name": "Armor Specialist tree membership",
+      "action": "Restored Armored Defense to Armor Specialist talent tree because later baseline zips had clobbered the T6 tree fix."
+    },
+    {
+      "name": "Melee Smash",
+      "action": "Corrected from bogus +1d6/half-level style metadata to canon +1 melee damage through roll-context passive state."
+    },
+    {
+      "name": "Long Stride",
+      "action": "Corrected from unconditional +2 speed to +2 speed only with no armor or light armor."
+    },
+    {
+      "name": "Generic Weapon Specialization",
+      "action": "Removed bogus universal defense/melee damage/effect metadata; left as persistent picker requirement."
+    },
+    {
+      "name": "Canonical Weapon Specialization (Lightsabers) tree references",
+      "action": "Replaced two stale missing duplicate IDs in Lightsaber Forms and Duelist with the surviving canonical Weapon Specialization (Lightsabers) talent ID so talent tree references validate cleanly."
+    }
+  ],
+  "doNotPatchYet": [
+    {
+      "area": "Follower talents",
+      "reason": "Need follower subsystem/UI pass for owned followers, follower feats, and follower-granted attack actions."
+    },
+    {
+      "area": "Target-specific attack bonuses/damage",
+      "reason": "User explicitly requested these be punted unless exact target context is available."
+    },
+    {
+      "area": "Vehicle/starship/scout-space talents",
+      "reason": "Need vehicle/crew/action systems to own them truthfully."
+    },
+    {
+      "area": "Outlaw Tech / Poison / Biotech crafting",
+      "reason": "Need item/crafting workflow pass, not passive actor bonuses."
+    }
+  ],
+  "changedTalentDocuments": [
+    {
+      "id": "5319a796f2c4ff64",
+      "name": "Fool's Luck",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "5459cc5eedf15c8d",
+      "name": "Ricochet Shot",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "5fbf1a3504865fba",
+      "name": "Lucky Shot",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "7a024dac260bf9ec",
+      "name": "Dumb Luck",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "8e4475b0f99633f3",
+      "name": "Gambler",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "a64632cafe74b864",
+      "name": "Lucky Stop",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "aacde500ec811cd4",
+      "name": "Fortune's Favor",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "ac6baadb9d65ff7f",
+      "name": "Knack",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "bea59db82b097eea",
+      "name": "Better Lucky than Dead",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "beae25ca4ed40eea",
+      "name": "Unlikely Shot",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "e07f87b5dbcf035f",
+      "name": "Labyrinthine Mind",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "e435b618793d8bc7",
+      "name": "Uncanny Luck",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "f453d09361b02e5a",
+      "name": "Avert Disaster",
+      "treeMemberships": [
+        "Fortune"
+      ]
+    },
+    {
+      "id": "08c80cfea1a3b886",
+      "name": "Sudden Strike",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "1505abc8babeeb84",
+      "name": "Sneak Attack",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "1b26576c71db3b1b",
+      "name": "Befuddle",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "1c381292494e3139",
+      "name": "Hesitate",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "3f8f5305eabc525e",
+      "name": "Walk the Line",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "6b09fe0c6fe98367",
+      "name": "Sow Confusion",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "7b23e0812d6a8985",
+      "name": "Skirmisher",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "91b335f8565b90ef",
+      "name": "Disruptive",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "94adb5de4d3a7b20",
+      "name": "Cunning Strategist",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "9c1e0b0566cb45c2",
+      "name": "Weakening Strike",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "9e4345faaaa94dd8",
+      "name": "Dastardly Strike",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "dd69400f0069f846",
+      "name": "Improved Skirmisher",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "e97177f243cb2b0a",
+      "name": "Seize Object",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "f16128ef7a76aa03",
+      "name": "Stymie",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "f5a4088480c005ae",
+      "name": "Dastardly Attack",
+      "treeMemberships": [
+        "Misfortune"
+      ]
+    },
+    {
+      "id": "0290634450ab1637",
+      "name": "Electronic Sabotage",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "319c5ded54dbc4e6",
+      "name": "Electronic Forgery",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "51ee1b777709cc4e",
+      "name": "Security Slicer",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "54065380bb20e8d8",
+      "name": "Trace",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "8d8937a416fc0d81",
+      "name": "Gimmick",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "aa964478cf5b30e8",
+      "name": "Virus",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "bae4b0a8a3554cca",
+      "name": "Master Slicer",
+      "treeMemberships": [
+        "Slicer"
+      ]
+    },
+    {
+      "id": "224906e573330bf2",
+      "name": "Starship Raider",
+      "treeMemberships": [
+        "Spacer"
+      ]
+    },
+    {
+      "id": "294bad1c8a7b4132",
+      "name": "Make a Break for It",
+      "treeMemberships": [
+        "Spacer"
+      ]
+    },
+    {
+      "id": "29f73c36cabdeaf5",
+      "name": "Hyperdriven",
+      "treeMemberships": [
+        "Spacer"
+      ]
+    },
+    {
+      "id": "2b424f7cc4115acf",
+      "name": "Cramped Quarters Fighting",
+      "treeMemberships": [
+        "Spacer"
+      ]
+    },
+    {
+      "id": "f92583cf04620d84",
+      "name": "Stellar Warrior",
+      "treeMemberships": [
+        "Spacer"
+      ]
+    },
+    {
+      "id": "fe0c3a64ca460542",
+      "name": "Spacehound",
+      "treeMemberships": [
+        "Spacer"
+      ]
+    },
+    {
+      "id": "111b0a9d1f8d5111",
+      "name": "Personalized Modifications",
+      "treeMemberships": [
+        "Outlaw Tech"
+      ]
+    },
+    {
+      "id": "36f8497081dce05a",
+      "name": "Fast Repairs",
+      "treeMemberships": [
+        "Outlaw Tech"
+      ]
+    },
+    {
+      "id": "d2b9069670413a43",
+      "name": "Hot Wire",
+      "treeMemberships": [
+        "Outlaw Tech"
+      ]
+    },
+    {
+      "id": "458647466717fcc2",
+      "name": "Numbing Poison",
+      "treeMemberships": [
+        "Malkite Poisoner"
+      ]
+    },
+    {
+      "id": "661899f73e20f2ce",
+      "name": "Modify Poison",
+      "treeMemberships": [
+        "Malkite Poisoner"
+      ]
+    },
+    {
+      "id": "744c2eaaa48e15af",
+      "name": "Malkite Techniques",
+      "treeMemberships": [
+        "Malkite Poisoner"
+      ]
+    },
+    {
+      "id": "b9c850fce4aa9c55",
+      "name": "Vicious Poison",
+      "treeMemberships": [
+        "Malkite Poisoner"
+      ]
+    },
+    {
+      "id": "c5726f0e65f643ab",
+      "name": "Undetectable Poison",
+      "treeMemberships": [
+        "Malkite Poisoner"
+      ]
+    },
+    {
+      "id": "119725589e32a35a",
+      "name": "Strike and Run",
+      "treeMemberships": [
+        "Run and Gun"
+      ]
+    },
+    {
+      "id": "32a76fe000898f90",
+      "name": "Cheap Shot",
+      "treeMemberships": [
+        "Run and Gun"
+      ]
+    },
+    {
+      "id": "93770927eba5446d",
+      "name": "Opportunistic Strike",
+      "treeMemberships": [
+        "Run and Gun"
+      ]
+    },
+    {
+      "id": "a1a905019e7f17c0",
+      "name": "Slippery Strike",
+      "treeMemberships": [
+        "Run and Gun"
+      ]
+    },
+    {
+      "id": "f0bfcfc354862328",
+      "name": "No Escape",
+      "treeMemberships": [
+        "Run and Gun"
+      ]
+    },
+    {
+      "id": "0681e1ea8e72f362",
+      "name": "Illicit Dealings",
+      "treeMemberships": [
+        "Smuggling"
+      ]
+    },
+    {
+      "id": "234f9d660d14220c",
+      "name": "Hidden Weapons",
+      "treeMemberships": [
+        "Smuggling"
+      ]
+    },
+    {
+      "id": "64cfde2d0cf6c523",
+      "name": "Art of Concealment",
+      "treeMemberships": [
+        "Smuggling"
+      ]
+    },
+    {
+      "id": "b92e61669b29d090",
+      "name": "Surprise Strike",
+      "treeMemberships": [
+        "Smuggling"
+      ]
+    },
+    {
+      "id": "eeed98748becb161",
+      "name": "Fast Talker",
+      "treeMemberships": [
+        "Smuggling"
+      ]
+    },
+    {
+      "id": "4bdb0bda258c609e",
+      "name": "Thrive on Chaos",
+      "treeMemberships": [
+        "Opportunist"
+      ]
+    },
+    {
+      "id": "893c4fd12df55469",
+      "name": "Slip By",
+      "treeMemberships": [
+        "Opportunist"
+      ]
+    },
+    {
+      "id": "a3ab3f2ad47c8775",
+      "name": "Vindication",
+      "treeMemberships": [
+        "Opportunist"
+      ]
+    },
+    {
+      "id": "c2403caee49be74b",
+      "name": "Advantageous Opening",
+      "treeMemberships": [
+        "Opportunist"
+      ]
+    },
+    {
+      "id": "dd6b66af4a67b0a3",
+      "name": "Retribution",
+      "treeMemberships": [
+        "Opportunist"
+      ]
+    },
+    {
+      "id": "04b9cb3683c6e485",
+      "name": "Risk for Reward",
+      "treeMemberships": [
+        "Recklessness"
+      ]
+    },
+    {
+      "id": "4c689ac688e80c9e",
+      "name": "Trick Step",
+      "treeMemberships": [
+        "Recklessness"
+      ]
+    },
+    {
+      "id": "a3d0ac66cac192ec",
+      "name": "Hit the Deck",
+      "treeMemberships": [
+        "Recklessness"
+      ]
+    },
+    {
+      "id": "ad418fa7b1716364",
+      "name": "Find Openings",
+      "treeMemberships": [
+        "Recklessness"
+      ]
+    },
+    {
+      "id": "c2d2d55ee60f886f",
+      "name": "Lure Closer",
+      "treeMemberships": [
+        "Recklessness"
+      ]
+    },
+    {
+      "id": "6ef0900cd62869e7",
+      "name": "Surprising Weapons",
+      "treeMemberships": [
+        "Yuuzhan Vong Biotech"
+      ]
+    },
+    {
+      "id": "76eb427551c6495c",
+      "name": "Curved Throw",
+      "treeMemberships": [
+        "Yuuzhan Vong Biotech"
+      ]
+    },
+    {
+      "id": "a86559a808738c98",
+      "name": "Biotech Adept",
+      "treeMemberships": [
+        "Yuuzhan Vong Biotech"
+      ]
+    },
+    {
+      "id": "b66c142c79341858",
+      "name": "Veiled Biotech",
+      "treeMemberships": [
+        "Yuuzhan Vong Biotech"
+      ]
+    },
+    {
+      "id": "bed279ef3c81c42d",
+      "name": "Bugbite",
+      "treeMemberships": [
+        "Yuuzhan Vong Biotech"
+      ]
+    },
+    {
+      "id": "16e18057bc92365c",
+      "name": "Expert Tracker",
+      "treeMemberships": [
+        "Awareness"
+      ]
+    },
+    {
+      "id": "18bbce2836989fc5",
+      "name": "Weak Point",
+      "treeMemberships": [
+        "Awareness"
+      ]
+    },
+    {
+      "id": "97eeb67b9428f0eb",
+      "name": "Reset Initiative",
+      "treeMemberships": [
+        "Awareness"
+      ]
+    },
+    {
+      "id": "9840f0e8b8f53bb5",
+      "name": "Improved Initiative",
+      "treeMemberships": [
+        "Awareness"
+      ]
+    },
+    {
+      "id": "aca0598e9b0eb935",
+      "name": "Keen Shot",
+      "treeMemberships": [
+        "Awareness"
+      ]
+    },
+    {
+      "id": "df9c364e91826cbf",
+      "name": "Uncanny Dodge I",
+      "treeMemberships": [
+        "Awareness"
+      ]
+    },
+    {
+      "id": "073115894cad8cf9",
+      "name": "Improved Stealth",
+      "treeMemberships": [
+        "Camouflage"
+      ]
+    },
+    {
+      "id": "11065e811d738b6e",
+      "name": "Hunker Down",
+      "treeMemberships": [
+        "Camouflage"
+      ]
+    },
+    {
+      "id": "9d183b40a16b1376",
+      "name": "Total Concealment",
+      "treeMemberships": [
+        "Camouflage"
+      ]
+    },
+    {
+      "id": "bca8ce9a488cf3d8",
+      "name": "Shadow Striker",
+      "treeMemberships": [
+        "Camouflage"
+      ]
+    },
+    {
+      "id": "d0dad96e182d63d4",
+      "name": "Hidden Movement",
+      "treeMemberships": [
+        "Camouflage"
+      ]
+    },
+    {
+      "id": "f25d28252bade7d1",
+      "name": "Hide in Plain Sight",
+      "treeMemberships": [
+        "Camouflage"
+      ]
+    },
+    {
+      "id": "0a0681811f43b128",
+      "name": "Surge",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "6408bc9e8f582f5d",
+      "name": "Barter",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "9211e3f6268b3413",
+      "name": "Keep it Together",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "9ee88ce289527ed3",
+      "name": "Flee",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "b4ae0f26326cdf71",
+      "name": "Sidestep",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "cae4f000dcfddd99",
+      "name": "Swift Strider",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "d4a9f83d180934b5",
+      "name": "Fringe Savant",
+      "treeMemberships": [
+        "Fringer"
+      ]
+    },
+    {
+      "id": "5400bc8cb1200624",
+      "name": "Evasion",
+      "treeMemberships": [
+        "Survivor"
+      ]
+    },
+    {
+      "id": "c7c5ac9608d29c5b",
+      "name": "Extreme Effort",
+      "treeMemberships": [
+        "Survivor"
+      ]
+    },
+    {
+      "id": "ca79321246ae6986",
+      "name": "Sprint",
+      "treeMemberships": [
+        "Survivor"
+      ]
+    },
+    {
+      "id": "f87bd82a892f69ea",
+      "name": "Surefooted",
+      "treeMemberships": [
+        "Survivor"
+      ]
+    },
+    {
+      "id": "0c5026168620dbae",
+      "name": "Vehicle Sneak",
+      "treeMemberships": [
+        "Hyperspace Explorer"
+      ]
+    },
+    {
+      "id": "54e32a12afb28906",
+      "name": "Guidance",
+      "treeMemberships": [
+        "Hyperspace Explorer"
+      ]
+    },
+    {
+      "id": "6315a1a7aaf758d5",
+      "name": "Hidden Attacker",
+      "treeMemberships": [
+        "Hyperspace Explorer"
+      ]
+    },
+    {
+      "id": "89914a75353f8810",
+      "name": "Hyperspace Savant",
+      "treeMemberships": [
+        "Hyperspace Explorer"
+      ]
+    },
+    {
+      "id": "ae7accbdad82989e",
+      "name": "Deep-Space Gambit",
+      "treeMemberships": [
+        "Hyperspace Explorer"
+      ]
+    },
+    {
+      "id": "55988579a1906e5e",
+      "name": "Incognito",
+      "treeMemberships": [
+        "Spy"
+      ]
+    },
+    {
+      "id": "8070dbbea2886bbd",
+      "name": "Improved Surveillance",
+      "treeMemberships": [
+        "Spy"
+      ]
+    },
+    {
+      "id": "9215a487a59862f3",
+      "name": "Traceless Tampering",
+      "treeMemberships": [
+        "Spy"
+      ]
+    },
+    {
+      "id": "a18d67d9fd947f68",
+      "name": "Blend In",
+      "treeMemberships": [
+        "Spy"
+      ]
+    },
+    {
+      "id": "a810b68876f7e44e",
+      "name": "Intimate Knowledge",
+      "treeMemberships": [
+        "Spy"
+      ]
+    },
+    {
+      "id": "f23b63464e0aeff7",
+      "name": "Surveillance",
+      "treeMemberships": [
+        "Spy"
+      ]
+    },
+    {
+      "id": "510541d890629be0",
+      "name": "Get Into Position",
+      "treeMemberships": [
+        "Reconnaissance"
+      ]
+    },
+    {
+      "id": "84a9654b80238daf",
+      "name": "Close-Combat Assault",
+      "treeMemberships": [
+        "Reconnaissance"
+      ]
+    },
+    {
+      "id": "cf16d7c9bb7a70ad",
+      "name": "Reconnaissance Actions",
+      "treeMemberships": [
+        "Reconnaissance"
+      ]
+    },
+    {
+      "id": "ff3c38adbb101622",
+      "name": "Reconnaissance Team Leader",
+      "treeMemberships": [
+        "Reconnaissance"
+      ]
+    },
+    {
+      "id": "792ee3a45bf6f002",
+      "name": "Hidden Eyes",
+      "treeMemberships": [
+        "Surveillance"
+      ]
+    },
+    {
+      "id": "a8973662a2f1cf0f",
+      "name": "Spotter",
+      "treeMemberships": [
+        "Surveillance"
+      ]
+    },
+    {
+      "id": "adacf682b6ccf21c",
+      "name": "Seek and Destroy",
+      "treeMemberships": [
+        "Surveillance"
+      ]
+    },
+    {
+      "id": "b48e17b423ae8300",
+      "name": "Advanced Intel",
+      "treeMemberships": [
+        "Surveillance"
+      ]
+    },
+    {
+      "id": "cb018e0f620614fd",
+      "name": "Hunt the Hunter",
+      "treeMemberships": [
+        "Surveillance"
+      ]
+    },
+    {
+      "id": "147f70a2b815f34e",
+      "name": "Aggressive Surge",
+      "treeMemberships": [
+        "Unpredictable"
+      ]
+    },
+    {
+      "id": "2d486ece7350cedf",
+      "name": "Blast Back",
+      "treeMemberships": [
+        "Unpredictable"
+      ]
+    },
+    {
+      "id": "55b2475e42ce79f2",
+      "name": "Second Strike",
+      "treeMemberships": [
+        "Unpredictable"
+      ]
+    },
+    {
+      "id": "99c685b0631a5601",
+      "name": "Swerve",
+      "treeMemberships": [
+        "Unpredictable"
+      ]
+    },
+    {
+      "id": "cb4b14a242fbee71",
+      "name": "Fade Away",
+      "treeMemberships": [
+        "Unpredictable"
+      ]
+    },
+    {
+      "id": "02bf213d8104b017",
+      "name": "Unbalancing Adaptation",
+      "treeMemberships": [
+        "Versatility"
+      ]
+    },
+    {
+      "id": "22d2c4b0d4d9b784",
+      "name": "Quick on Your Feet",
+      "treeMemberships": [
+        "Versatility"
+      ]
+    },
+    {
+      "id": "8a5c6b01f67caa85",
+      "name": "Ready and Willing",
+      "treeMemberships": [
+        "Versatility"
+      ]
+    },
+    {
+      "id": "ded0046215380b0c",
+      "name": "Defensive Protection",
+      "treeMemberships": [
+        "Versatility"
+      ]
+    },
+    {
+      "id": "ef8a59509a45df46",
+      "name": "Adapt and Survive",
+      "treeMemberships": [
+        "Versatility"
+      ]
+    },
+    {
+      "id": "0b2c53ed53f20751",
+      "name": "Unrelenting Assault",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "12e6b524fc6959b6",
+      "name": "Unbalance Strike",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "430b73348460715e",
+      "name": "Cantina Brawler",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "4356ac9986934fbf",
+      "name": "Hammerblow",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "6044037b6eb3ede9",
+      "name": "Sucker Punch",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "6a52361527b64513",
+      "name": "Entangler",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "89d557f60251f4a5",
+      "name": "Strong Grab",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "916a526d8c166005",
+      "name": "Expert Grappler",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "95ae8969ac50b180",
+      "name": "Make Do",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "ae6c41da173f1385",
+      "name": "Grabber",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "b6e600188cf5597f",
+      "name": "Bayonet Master",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "bab0b5d081e304b6",
+      "name": "Experienced Brawler",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "d7e9b15e21ea1c4e",
+      "name": "Devastating Melee Smash",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "da6a06aaf630376d",
+      "name": "Man Down",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "e1ac13b319b66c76",
+      "name": "Counterpunch",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "ffe31e578e9abeee",
+      "name": "Pick a Fight",
+      "treeMemberships": [
+        "Brawler"
+      ]
+    },
+    {
+      "id": "456a0aa44da5105c",
+      "name": "Disarming Attack",
+      "treeMemberships": [
+        "Weapon Specialist"
+      ]
+    },
+    {
+      "id": "869168cd679ee5d1",
+      "name": "Weapon Specialization",
+      "treeMemberships": [
+        "Weapon Specialist"
+      ]
+    },
+    {
+      "id": "86a8e796b6c4deae",
+      "name": "Impaling Assault",
+      "treeMemberships": [
+        "Weapon Specialist"
+      ]
+    },
+    {
+      "id": "bf6bcc2fc31411d2",
+      "name": "Improved Suppression Fire",
+      "treeMemberships": [
+        "Weapon Specialist"
+      ]
+    },
+    {
+      "id": "cdb01f90827fad8c",
+      "name": "Stinging Assault",
+      "treeMemberships": [
+        "Weapon Specialist"
+      ]
+    },
+    {
+      "id": "e1cb0fd81f7f6d44",
+      "name": "Crushing Assault",
+      "treeMemberships": [
+        "Weapon Specialist"
+      ]
+    },
+    {
+      "id": "4c23c64e3ab8dcc6",
+      "name": "Jet Pack Withdraw",
+      "treeMemberships": [
+        "Rocket Jumper"
+      ]
+    },
+    {
+      "id": "be617461ca46a5ad",
+      "name": "Burning Assault",
+      "treeMemberships": [
+        "Rocket Jumper"
+      ]
+    },
+    {
+      "id": "d3a642f2ceb21ed4",
+      "name": "Jet Pack Training",
+      "treeMemberships": [
+        "Rocket Jumper"
+      ]
+    },
+    {
+      "id": "f96f1d48cf6604c2",
+      "name": "Improved Trajectory",
+      "treeMemberships": [
+        "Rocket Jumper"
+      ]
+    },
+    {
+      "id": "2c27842384e55cb2",
+      "name": "Mercenary's Grit",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "42f9f503f5e26de7",
+      "name": "Focused Warrior",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "438e13c99c7b53a6",
+      "name": "Commanding Presence",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "a4629f24bd571414",
+      "name": "Mercenary's Determination",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "adfb725d20faade5",
+      "name": "Ruthless",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "c07b6c68e715b9ff",
+      "name": "Dirty Fighting",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "cfd5d3f677b2bf1a",
+      "name": "Feared Warrior",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "fbaab00b6eab02a3",
+      "name": "Mercenary's Teamwork",
+      "treeMemberships": [
+        "Mercenary"
+      ]
+    },
+    {
+      "id": "4559e2e975f552fa",
+      "name": "Coordinated Tactics",
+      "treeMemberships": [
+        "Squad Leader"
+      ]
+    },
+    {
+      "id": "a4fca56a9a3853a6",
+      "name": "Squad Actions",
+      "treeMemberships": [
+        "Squad Leader"
+      ]
+    },
+    {
+      "id": "bd34fd5bbc4a14fb",
+      "name": "Commanding Officer",
+      "treeMemberships": [
+        "Squad Leader"
+      ]
+    },
+    {
+      "id": "fa113b33ac66c3b9",
+      "name": "Fire at Will",
+      "treeMemberships": [
+        "Squad Leader"
+      ]
+    },
+    {
+      "id": "6c52d837af948ca0",
+      "name": "Focused Targeting",
+      "treeMemberships": [
+        "Trooper"
+      ]
+    },
+    {
+      "id": "729a17e25b873f4f",
+      "name": "Stick Together",
+      "treeMemberships": [
+        "Trooper"
+      ]
+    },
+    {
+      "id": "a0c97d4ca8a2d34d",
+      "name": "Watch Your Back",
+      "treeMemberships": [
+        "Trooper"
+      ]
+    },
+    {
+      "id": "d4dcafa34cda98c2",
+      "name": "Comrades in Arms",
+      "treeMemberships": [
+        "Trooper"
+      ]
+    },
+    {
+      "id": "e02a3171a6862f02",
+      "name": "Phalanx",
+      "treeMemberships": [
+        "Trooper"
+      ]
+    },
+    {
+      "id": "24bf81bc6d74fafd",
+      "name": "Keep Them Reeling",
+      "treeMemberships": [
+        "Ambusher"
+      ]
+    },
+    {
+      "id": "34f21902e365a861",
+      "name": "Keep It Going",
+      "treeMemberships": [
+        "Ambusher"
+      ]
+    },
+    {
+      "id": "5d608b1083cfc31d",
+      "name": "Destructive Ambusher",
+      "treeMemberships": [
+        "Ambusher"
+      ]
+    },
+    {
+      "id": "c2b0b6dcba513cca",
+      "name": "Spring the Trap",
+      "treeMemberships": [
+        "Ambusher"
+      ]
+    },
+    {
+      "id": "e835b21a01ae2ee7",
+      "name": "Ambush Specialist",
+      "treeMemberships": [
+        "Ambusher"
+      ]
+    },
+    {
+      "id": "f4c2b1e5cdf5551a",
+      "name": "Perceptive Ambusher",
+      "treeMemberships": [
+        "Ambusher"
+      ]
+    },
+    {
+      "id": "2cf48b8aa712d19d",
+      "name": "Melee Brute",
+      "treeMemberships": [
+        "Brute Squad"
+      ]
+    },
+    {
+      "id": "3a4ef3559a002c6f",
+      "name": "Gang Leader",
+      "treeMemberships": [
+        "Brute Squad"
+      ]
+    },
+    {
+      "id": "5f92ad8d44c9055c",
+      "name": "Squad Brutality",
+      "treeMemberships": [
+        "Brute Squad"
+      ]
+    },
+    {
+      "id": "91bb6515cf153d46",
+      "name": "Melee Opportunist",
+      "treeMemberships": [
+        "Brute Squad"
+      ]
+    },
+    {
+      "id": "e38263c4acc245fe",
+      "name": "Squad Superiority",
+      "treeMemberships": [
+        "Brute Squad"
+      ]
+    },
+    {
+      "id": "e9aec3a7b011e17a",
+      "name": "Melee Assault",
+      "treeMemberships": [
+        "Brute Squad"
+      ]
+    },
+    {
+      "id": "e6055a514a784387",
+      "name": "Akk Dog Master",
+      "treeMemberships": [
+        "Exceptional Followers"
+      ]
+    },
+    {
+      "id": "b9169c3ac22d4652",
+      "name": "Expert Rider",
+      "treeMemberships": [
+        "Mobile Scout"
+      ]
+    },
+    {
+      "id": "52f51a77fd60f56f",
+      "name": "Debilitating Shot",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "855d544f08e54afc",
+      "name": "Mobile Attack (pistols)",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "86c10d63bba2d9c8",
+      "name": "Trigger Work",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "92a32b96dacae82d",
+      "name": "Knockdown Shot",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "a1e013f8cfc15a86",
+      "name": "Improved Quick Draw",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "a6e38142447c64a9",
+      "name": "Ranged Flank",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "b1afecfea833a2a5",
+      "name": "Deceptive Shot",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "b812c197daea93fd",
+      "name": "Multiattack Proficiency (pistols)",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "bb484bdbc96c96ad",
+      "name": "Blind Shot",
+      "treeMemberships": [
+        "Gunslinger"
+      ]
+    },
+    {
+      "id": "45d8f7a583314692",
+      "name": "Draw a Bead",
+      "treeMemberships": [
+        "Sharpshooter"
+      ]
+    },
+    {
+      "id": "604fde784454445d",
+      "name": "Precision Shot",
+      "treeMemberships": [
+        "Sharpshooter"
+      ]
+    },
+    {
+      "id": "aa39089c21cf488f",
+      "name": "Pinning Shot",
+      "treeMemberships": [
+        "Sharpshooter"
+      ]
+    },
+    {
+      "id": "618472c99f355949",
+      "name": "Long Stride",
+      "treeMemberships": [
+        "Master Scout"
+      ]
+    },
+    {
+      "id": "9992fb4ee6ab40df",
+      "name": "Tripwire",
+      "treeMemberships": [
+        "Master Scout"
+      ]
+    },
+    {
+      "id": "e15a3408b9474354",
+      "name": "Jury-Rigger",
+      "treeMemberships": [
+        "Master Scout"
+      ]
+    },
+    {
+      "id": "f0166d26d9f6252a",
+      "name": "Acute Senses",
+      "treeMemberships": [
+        "Master Scout"
+      ]
+    },
+    {
+      "id": "32df92c3114b5c94",
+      "name": "Accurate Blow",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    },
+    {
+      "id": "680d3741dcaea6fe",
+      "name": "Improved Stunning Strike",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    },
+    {
+      "id": "8063a6b94b1de530",
+      "name": "Close-Quarters Fighter",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    },
+    {
+      "id": "9292819462b46074",
+      "name": "Stunning Strike",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    },
+    {
+      "id": "98a88ebf26ac318a",
+      "name": "Whirling Death",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    },
+    {
+      "id": "dbfcec98f38c8e2f",
+      "name": "Ignore Armor",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    },
+    {
+      "id": "e0ee525f4109cfde",
+      "name": "Melee Smash",
+      "treeMemberships": [
+        "Melee Specialist"
+      ]
+    }
+  ]
+}
