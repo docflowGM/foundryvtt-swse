@@ -145,6 +145,29 @@ export function isPistolWeapon(weapon) {
   return /\bpistol\b|\bpistols\b/.test(text);
 }
 
+export function isVehicleWeapon(weapon) {
+  const system = weapon?.system ?? {};
+  if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true;
+  const properties = Array.isArray(system.properties) ? system.properties : [];
+  const traits = Array.isArray(system.traits) ? system.traits : [];
+  const candidates = [
+    weapon?.name,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    system.itemType,
+    system.sourceType,
+    ...properties,
+    ...traits
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  return /vehicle\s+weapon|vehicle-weapon|starship\s+weapon|starship-weapon|weapon\s+system|weapon-system|turbolaser|laser\s+cannon|ion\s+cannon|proton\s+torpedo|concussion\s+missile/.test(candidates);
+}
+
 function isEquippedWeapon(item) {
   const system = item?.system ?? {};
   return item?.type === 'weapon'
@@ -335,6 +358,7 @@ export const CombatStatRules = Object.freeze({
   isLightMeleeWeapon,
   isMeleeWeapon,
   isRangedWeapon,
+  isVehicleWeapon,
   isThrownMeleeWeapon,
   normalizeCombatSize
 });

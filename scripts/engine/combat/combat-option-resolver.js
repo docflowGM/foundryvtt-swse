@@ -281,10 +281,27 @@ function weaponText(weapon) {
     system.category,
     system.type,
     system.subtype,
+    system.itemType,
+    system.sourceType,
     system.traits?.join?.(" "),
     system.properties?.join?.(" ")
   ];
   return fields.map(value => normalizeKey(value)).filter(Boolean).join(" ");
+}
+
+function isVehicleWeapon(weapon, context = {}) {
+  if (context.vehicleWeapon === true || context.starshipWeapon === true || context.weaponSystem === true) return true;
+  const system = weapon?.system ?? {};
+  if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true;
+  const text = weaponText(weapon);
+  return text.includes('vehicle-weapon')
+    || text.includes('starship-weapon')
+    || text.includes('weapon-system')
+    || text.includes('turbolaser')
+    || text.includes('laser-cannon')
+    || text.includes('ion-cannon')
+    || text.includes('proton-torpedo')
+    || text.includes('concussion-missile');
 }
 
 function weaponDamageText(weapon) {
@@ -607,6 +624,10 @@ function optionAllowedForWeapon(option, actor, weapon, context = {}) {
   }
 
   if (option.requiresWeaponText && !textMatchesAny(weaponText(weapon), option.requiresWeaponText)) {
+    return false;
+  }
+
+  if (option.requiresVehicleWeapon && !isVehicleWeapon(weapon, context)) {
     return false;
   }
 
