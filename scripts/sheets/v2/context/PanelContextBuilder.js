@@ -1306,6 +1306,7 @@ export class PanelContextBuilder {
    */
   buildCombatStatsPanel() {
     const speedValue = Number(
+      this.derived.speed?.walk ??
       this.derived.speed?.total ??
       this.derived.identity?.speed ??
       this.system.speed?.total ??
@@ -1317,6 +1318,7 @@ export class PanelContextBuilder {
     ) || 0;
     const speed = {
       value: speedValue,
+      mode: 'walk',
       label: `${speedValue} sq`
     };
 
@@ -1371,6 +1373,7 @@ export class PanelContextBuilder {
 
     // COMBAT METRICS - engine-owned sources
     const speed = Number(
+      derived.speed?.walk ??
       derived.speed?.total ??
       derived.identity?.speed ??
       system.speed?.total ??
@@ -1380,6 +1383,9 @@ export class PanelContextBuilder {
       system.movement?.speed ??
       0
     ) || 0;
+    const speedBase = Number(derived.speed?.base ?? system.speed?.base ?? system.speed?.value ?? system.speed ?? system.movement?.walk ?? 0) || 0;
+    const speedAdjustment = Number(derived.speed?.adjustment ?? (speed - speedBase)) || 0;
+    const speedAdjustmentLabel = speedAdjustment === 0 ? '' : `${speedAdjustment > 0 ? '+' : ''}${speedAdjustment}`;
     const initiativeTotal = Number(derived.skills?.initiative?.total ?? derived.initiative?.total) || 0;
     const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
 
@@ -1405,6 +1411,12 @@ export class PanelContextBuilder {
     const panel = {
       combatMetrics: {
         speed,
+        walkSpeed: speed,
+        speedBase,
+        speedAdjustment,
+        speedAdjustmentLabel,
+        speedMode: 'walk',
+        speedLabel: `${speed} sq`,
         initiativeTotal,
         perceptionTotal,
         bab,

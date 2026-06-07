@@ -2841,6 +2841,7 @@ export class SWSEV2CharacterSheet extends
     const destinyPointsMax = Number(system.destinyPoints?.max ?? 0) || 0;
 
     const speed = Number(
+      derived?.speed?.walk ??
       derived?.speed?.total ??
       derived?.identity?.speed ??
       system.speed?.total ??

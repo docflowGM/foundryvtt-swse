@@ -387,7 +387,7 @@ export class ModifierEngine {
       // Build modifier breakdown for storage
       const skillTargets = this._getAllSkillTargets(actor);
       const defenseTargets = ['defense.fortitude', 'defense.reflex', 'defense.will', 'defense.damageThreshold'];
-      const allTargets = [...skillTargets, ...defenseTargets, 'hp.max', 'bab.total', 'initiative.total', 'speed.base'];
+      const allTargets = [...skillTargets, ...defenseTargets, 'hp.max', 'bab.total', 'initiative.total', 'speed.base', 'speed.walk'];
 
       const modifierBreakdown = ModifierUtils.buildModifierBreakdown(allModifiers, allTargets);
 
@@ -468,12 +468,18 @@ export class ModifierEngine {
         // SPEED (Computed Bundle)
         // ========================================
         if (derived.speed) {
-          const speedModifier = modifierMap['speed.base'] || 0;
+          // Character speed is walking speed in SWSE actor data. Keep legacy
+          // speed.base support for armor/encumbrance, but allow talents such as
+          // Long Stride to declare speed.walk so they do not imply fly/climb/swim.
+          const speedModifier = (modifierMap['speed.base'] || 0) + (modifierMap['speed.walk'] || 0);
           const baseSpeed = derived.speed.base || 0;
+          const totalSpeed = Math.max(0, baseSpeed + speedModifier);
 
           bundle.speed = {
-            total: Math.max(0, baseSpeed + speedModifier),
-            adjustment: speedModifier
+            total: totalSpeed,
+            walk: totalSpeed,
+            adjustment: speedModifier,
+            mode: 'walk'
           };
         }
       }
@@ -569,10 +575,12 @@ export class ModifierEngine {
         derived.initiative.total = bundle.initiative;
         derived.initiative.adjustment = bundle.initiativeAdjustment;
 
-        // SPEED
+        // SPEED / WALKING SPEED
         if (bundle.speed && derived.speed) {
           derived.speed.total = bundle.speed.total;
+          derived.speed.walk = bundle.speed.walk ?? bundle.speed.total;
           derived.speed.adjustment = bundle.speed.adjustment;
+          derived.speed.mode = bundle.speed.mode ?? 'walk';
         }
 
         // MODIFIER BREAKDOWN
@@ -1128,86 +1136,29 @@ export class ModifierEngine {
       const armorSystem = equippedArmor.system;
       const armorName = equippedArmor.name || 'Unknown Armor';
       const armorId = equippedArmor.id;
-      const armorType = (armorSystem.armorProficiencyRequired || armorSystem.armorType || 'light').toLowerCase();
-
-      const normalizeArmorCategory = (value) => {
-        const raw = String(value || '').trim().toLowerCase();
-        if (raw.includes('heavy')) return 'heavy';
-        if (raw.includes('medium')) return 'medium';
-        if (raw.includes('light')) return 'light';
-        return raw;
-      };
-      const armorRank = (value) => {
-        const category = normalizeArmorCategory(value);
-        if (category === 'light') return 1;
-        if (category === 'medium') return 2;
-        if (category === 'heavy') return 3;
-        return 0;
-      };
-      const hasTalent = (talentName) => {
-        const wanted = String(talentName || '').trim().toLowerCase();
-        return Array.from(actor?.items ?? []).some(item =>
-          item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === wanted
-        );
-      };
-      const hasArmorSpecialistArmorMastery = () => {
-        return Array.from(actor?.items ?? []).some(item => {
-          if (item?.type !== 'talent') return false;
-          if (String(item?.name || '').trim().toLowerCase() !== 'armor mastery') return false;
-          const description = item?.system?.description;
-          const text = [
-            item?.system?.benefit,
-            typeof description === 'string' ? description : description?.value,
-            item?.system?.category,
-            item?.system?.treeId,
-            item?.system?.talent_tree,
-            item?.system?.tree
-          ].filter(Boolean).join(' ').toLowerCase();
-          return String(item?.system?.treeId || '').trim() === '17cec542331cb4e4'
-            || text.includes('maximum dexterity')
-            || text.includes('max dexterity')
-            || text.includes('max dex');
-        });
-      };
+      const armorType = (armorSystem.armorType || 'light').toLowerCase();
 
       // ===== ARMOR PROFICIENCY CHECK =====
-      const requiredRank = armorRank(armorType || 'light');
-      const proficiencyCandidates = [];
+      // PHASE 4: Structured proficiency lookup (legacy fallback removed)
+      // Proficiency is tracked via actor system flags for each armor type
       const actorProfs = actor?.system?.proficiencies?.armor || {};
-      if (actorProfs instanceof Set) proficiencyCandidates.push(...actorProfs);
-      else if (Array.isArray(actorProfs)) proficiencyCandidates.push(...actorProfs);
-      else if (actorProfs && typeof actorProfs === 'object') {
-        for (const [key, value] of Object.entries(actorProfs)) {
-          if (value === true) proficiencyCandidates.push(key);
-        }
+      let isProficient = false;
+
+      if (armorType === 'light') {
+        isProficient = actorProfs.light === true;
+      } else if (armorType === 'medium') {
+        isProficient = actorProfs.medium === true;
+      } else if (armorType === 'heavy') {
+        isProficient = actorProfs.heavy === true;
       }
-      const armorProficiency = actor?.system?.armorProficiency || {};
-      if (armorProficiency && typeof armorProficiency === 'object') {
-        for (const [key, value] of Object.entries(armorProficiency)) {
-          if (value === true) proficiencyCandidates.push(key);
-        }
-      }
-      const legacyArmorProfs = actor?.system?.armorProficiencies;
-      if (Array.isArray(legacyArmorProfs)) proficiencyCandidates.push(...legacyArmorProfs);
-      const unlockArmor = actor?._unlockGrants?.proficiencies?.armor;
-      if (unlockArmor instanceof Set) proficiencyCandidates.push(...unlockArmor);
-      else if (Array.isArray(unlockArmor)) proficiencyCandidates.push(...unlockArmor);
-      for (const item of actor?.items ?? []) {
-        if (item?.type !== 'feat') continue;
-        const name = String(item?.name || '').toLowerCase();
-        if (!name.includes('armor proficiency')) continue;
-        if (name.includes('heavy')) proficiencyCandidates.push('heavy');
-        else if (name.includes('medium')) proficiencyCandidates.push('medium');
-        else if (name.includes('light')) proficiencyCandidates.push('light');
-      }
-      const isProficient = requiredRank > 0 && proficiencyCandidates.some(candidate => armorRank(candidate) >= requiredRank);
 
       // ===== TALENT CHECKS =====
+      // PHASE 4: Structured talent identifier lookup (legacy fallback removed)
+      // Talents are identified by structured flags on actor system
       const talentFlags = actor?.system?.talentFlags || {};
-      let hasArmoredDefense = talentFlags.armoredDefense === true || hasTalent('Armored Defense');
-      let hasImprovedArmoredDefense = talentFlags.improvedArmoredDefense === true || hasTalent('Improved Armored Defense');
-      let hasArmorMastery = talentFlags.armorMastery === true || hasArmorSpecialistArmorMastery();
-      let hasJuggernaut = talentFlags.juggernaut === true || hasTalent('Juggernaut');
+      let hasArmoredDefense = talentFlags.armoredDefense === true;
+      let hasImprovedArmoredDefense = talentFlags.improvedArmoredDefense === true;
+      let hasArmorMastery = talentFlags.armorMastery === true;
 
       // ===== REFLEX DEFENSE BONUS =====
       const baseArmorBonus = armorSystem.defenseBonus || 0;
@@ -1344,10 +1295,6 @@ export class ModifierEngine {
       } else {
         // Negate the penalty for modifier (which adds to speed)
         speedPenalty = -speedPenalty;
-      }
-
-      if (isProficient && hasJuggernaut) {
-        speedPenalty = 0;
       }
 
       if (speedPenalty !== 0) {
