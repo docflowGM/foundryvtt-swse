@@ -19,6 +19,8 @@ import { StructuredRuleEvaluator } from "/systems/foundryvtt-swse/scripts/engine
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/condition-evaluator.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
+import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
 export class ModifierEngine {
   /**
@@ -163,6 +165,9 @@ export class ModifierEngine {
       // Source 9: Active Effects (Phase D - temporary/duration-based)
       modifiers.push(...this._safeArray(this._getActiveEffectModifiers(actor)));
 
+      // Source 9b: User-friendly SWSE Active Effect intents from actor/item effects.
+      modifiers.push(...this._safeArray(this._getEffectIntentModifiers(actor)));
+
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
 
       return modifiers;
@@ -191,7 +196,12 @@ export class ModifierEngine {
 
     const requestedDomain = String(query?.domain ?? query?.target ?? '').trim();
     const requestedLower = requestedDomain.toLowerCase();
-    const allModifiers = await this.getAllModifiers(actor);
+    const baseModifiers = await this.getAllModifiers(actor);
+    const contextualModifiers = this.getEffectIntentModifiersForContext(actor, {
+      context: query?.context ?? {},
+      includeBroad: false
+    });
+    const allModifiers = [...baseModifiers, ...contextualModifiers];
 
     const matchesDomain = (mod) => {
       if (!requestedLower) return true;
@@ -236,6 +246,91 @@ export class ModifierEngine {
         label: mod?.label ?? mod?.name ?? mod?.source ?? 'Modifier',
         value: Number(mod?.value ?? mod?.modifier ?? 0) || 0
       }));
+  }
+
+
+  /**
+   * Collect SWSE Basic Active Effect intent modifiers that need a live roll/action
+   * context to be safely applied. Broad always-on/self intents are collected by
+   * getAllModifiers(); this method optionally includes them for legacy roll paths
+   * that do not otherwise ask the ModifierEngine for global attack/damage mods.
+   *
+   * @param {Actor} actor
+   * @param {Object} query
+   * @param {Object} query.context - Roll/action context, such as weapon or skill.
+   * @param {boolean} query.includeBroad - Include broad non-contextual intents.
+   * @returns {Modifier[]}
+   */
+  static getEffectIntentModifiersForContext(actor, query = {}) {
+    const modifiers = [];
+    if (!actor) return modifiers;
+
+    const context = query?.context ?? {};
+    const includeBroad = query?.includeBroad === true;
+
+    const collectFromEffect = (effect, item = null) => {
+      try {
+        if (!EffectIntentEngine.hasIntent(effect)) return;
+
+        const broadData = EffectIntentEngine.toModifierData(effect, { actor, item });
+        if (includeBroad && broadData) {
+          modifiers.push(createModifier({
+            source: ModifierSource.EFFECT,
+            ...broadData
+          }));
+        }
+
+        // Avoid double-counting broad self effects when contextual resolution is
+        // only being used to add scoped/filtered roll-time effects.
+        if (broadData) return;
+
+        const contextualData = EffectIntentEngine.toContextualModifierData(effect, { actor, item, context });
+        if (!contextualData) return;
+        modifiers.push(createModifier({
+          source: ModifierSource.EFFECT,
+          ...contextualData
+        }));
+      } catch (err) {
+        swseLogger.warn(`[ModifierEngine] Failed to collect contextual SWSE effect intent modifier`, err);
+      }
+    };
+
+    try {
+      for (const effect of Array.from(actor?.effects ?? [])) {
+        const origin = String(effect?.origin ?? effect?.sourceName ?? '');
+        if (/\bItem\b/.test(origin)) continue;
+        collectFromEffect(effect, null);
+      }
+
+      for (const item of Array.from(actor?.items ?? [])) {
+        for (const effect of Array.from(item?.effects ?? [])) {
+          collectFromEffect(effect, item);
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting contextual SWSE effect intent modifiers:`, err);
+    }
+
+    return modifiers;
+  }
+
+  /**
+   * Resolve a roll-time modifier total for Basic effect intents.
+   * Used by legacy/non-RollCore attack and damage paths so the Basic builder can
+   * drive scoped effects like "+2 with pistols" without broad actor leakage.
+   *
+   * @param {Actor} actor
+   * @param {string} target
+   * @param {Object} context
+   * @param {Object} options
+   * @returns {number}
+   */
+  static getEffectIntentModifierTotalForContext(actor, target, context = {}, options = {}) {
+    const modifiers = this.getEffectIntentModifiersForContext(actor, {
+      context,
+      includeBroad: options?.includeBroad === true
+    });
+    return ModifierUtils.calculateModifierTotal(modifiers, target);
   }
 
   /**
@@ -286,13 +381,28 @@ export class ModifierEngine {
    * @param {string} target - Target key
    * @returns {number}
    */
-  static async aggregateTarget(actor, target) {
-    const allModifiers = await this.getAllModifiers(actor);
-    // PHASE 2: Filter based on conditions
-    const applicableModifiers = allModifiers.filter(mod =>
-      this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }) &&
-      ConditionEvaluator.evaluateAll(actor, mod.conditions)
-    );
+  static async aggregateTarget(actor, target, options = {}) {
+    const context = options?.context ?? {};
+    const hasRuntimeContext = this._hasRuntimeContext(context);
+    const baseModifiers = await this.getAllModifiers(actor);
+    const contextualModifiers = hasRuntimeContext
+      ? this.getEffectIntentModifiersForContext(actor, { context, includeBroad: false })
+      : [];
+    const allModifiers = [...baseModifiers, ...contextualModifiers];
+    // PHASE 2: Filter based on conditions. Contextual roll-time modifiers are
+    // evaluated with runtime context; broad sheet modifiers keep static policy.
+    const applicableModifiers = allModifiers.filter(mod => {
+      const isContextualIntent = mod?.source === ModifierSource.EFFECT && Array.isArray(mod?.conditions) && mod.conditions.some(cond => String(cond || '').includes(':'));
+      const allowed = isContextualIntent
+        ? this.isModifierAllowedInContext(actor, mod, context, { staticSheet: false })
+        : this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true });
+      if (!allowed) return false;
+      try {
+        return ConditionEvaluator.evaluateAll(actor, mod.conditions, isContextualIntent ? context : undefined);
+      } catch (_err) {
+        return true;
+      }
+    });
     return ModifierUtils.calculateModifierTotal(applicableModifiers, target);
   }
 
@@ -1126,17 +1236,19 @@ export class ModifierEngine {
     if (!actor) return modifiers;
 
     try {
-      // Find equipped armor
-      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system?.equipped);
+      // Find equipped body armor. Energy shields are armor-backed items, but they
+      // contribute SR/activation state rather than armor Reflex/Fortitude bonuses.
+      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system?.equipped && !isEnergyShieldItem(i));
 
       if (!equippedArmor) {
         return modifiers; // No armor equipped
       }
 
       const armorSystem = equippedArmor.system;
+      const armorStats = resolveArmorData(equippedArmor);
       const armorName = equippedArmor.name || 'Unknown Armor';
       const armorId = equippedArmor.id;
-      const armorType = (armorSystem.armorType || 'light').toLowerCase();
+      const armorType = armorStats.armorType || 'light';
 
       // ===== ARMOR PROFICIENCY CHECK =====
       // PHASE 4: Structured proficiency lookup (legacy fallback removed)
@@ -1161,7 +1273,7 @@ export class ModifierEngine {
       let hasArmorMastery = talentFlags.armorMastery === true;
 
       // ===== REFLEX DEFENSE BONUS =====
-      const baseArmorBonus = armorSystem.defenseBonus || 0;
+      const baseArmorBonus = armorStats.reflexBonus || 0;
       const actorLevel = actor?.system?.level || 1;
       if (baseArmorBonus !== 0) {
         // Calculate talent-adjusted armor bonus
@@ -1195,7 +1307,7 @@ export class ModifierEngine {
       // ===== FORTITUDE DEFENSE BONUS (Equipment) =====
       // Only apply equipment bonus if proficient
       if (isProficient) {
-        const fortBonus = armorSystem.equipmentBonus || armorSystem.fortBonus || 0;
+        const fortBonus = armorStats.fortitudeBonus || 0;
         if (fortBonus !== 0) {
           try {
             modifiers.push(createModifier({
@@ -1216,7 +1328,7 @@ export class ModifierEngine {
       }
 
       // ===== MAX DEX BONUS ENFORCEMENT =====
-      let maxDex = armorSystem.maxDexBonus ?? null;
+      let maxDex = armorStats.maxDexBonus ?? null;
       if (Number.isInteger(maxDex)) {
         // Armor Mastery increases max dex by +1
         if (hasArmorMastery) {
@@ -1243,7 +1355,7 @@ export class ModifierEngine {
       }
 
       // ===== ARMOR CHECK PENALTY (Skills) =====
-      let acpValue = armorSystem.armorCheckPenalty || 0;
+      let acpValue = armorStats.armorCheckPenalty || 0;
       if (!isProficient) {
         // Apply proficiency penalty if not proficient
         const proficiencyPenalty = {
@@ -1315,9 +1427,11 @@ export class ModifierEngine {
         }
       }
 
-      // ===== REFLEX DEFENSE EQUIPMENT BONUS (if proficient) =====
+      // ===== LEGACY REFLEX EQUIPMENT BONUS (deprecated ambiguous field) =====
+      // New armor data should use defenseBonus/reflexBonus via resolveArmorData().
+      // Keep this fallback readable for old compendium/world armor until migration.
       if (isProficient) {
-        const reflexEquipmentBonus = armorSystem.equipmentBonus || 0;
+        const reflexEquipmentBonus = armorStats.legacyEquipmentBonus || 0;
         if (reflexEquipmentBonus !== 0) {
           try {
             modifiers.push(createModifier({
@@ -1860,6 +1974,61 @@ export class ModifierEngine {
       swseLogger.warn(`[ModifierEngine] Error collecting active effects:`, err);
       return modifiers;
     }
+  }
+
+
+  /**
+   * Collect modifiers from SWSE Basic Active Effect intents.
+   *
+   * The entity dialog stores Basic effects as plain-English intent flags on real
+   * Foundry ActiveEffects. This call-site is the bridge from that player-facing
+   * authoring model into the canonical ModifierEngine pipeline. Advanced raw
+   * ActiveEffect changes remain preserved for power users, but Basic effects do
+   * not require users to know internal system paths.
+   *
+   * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
+   */
+  static _getEffectIntentModifiers(actor) {
+    const modifiers = [];
+    if (!actor) return modifiers;
+
+    const collectFromEffect = (effect, item = null) => {
+      try {
+        if (!EffectIntentEngine.hasIntent(effect)) return;
+        const modifierData = EffectIntentEngine.toModifierData(effect, { actor, item });
+        if (!modifierData) return;
+        modifiers.push(createModifier({
+          source: ModifierSource.EFFECT,
+          ...modifierData
+        }));
+      } catch (err) {
+        swseLogger.warn(`[ModifierEngine] Failed to collect SWSE effect intent modifier`, err);
+      }
+    };
+
+    try {
+      for (const effect of Array.from(actor?.effects ?? [])) {
+        const origin = String(effect?.origin ?? effect?.sourceName ?? '');
+        // Transferred item effects can appear on actor.effects in some Foundry
+        // builds. Item-originated SWSE intents are collected from the owned
+        // item below so they can evaluate equipped/activated state without
+        // double-counting. Actor-authored effects still collect here.
+        if (/\bItem\b/.test(origin)) continue;
+        collectFromEffect(effect, null);
+      }
+
+      for (const item of Array.from(actor?.items ?? [])) {
+        for (const effect of Array.from(item?.effects ?? [])) {
+          collectFromEffect(effect, item);
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting SWSE effect intent modifiers:`, err);
+    }
+
+    return modifiers;
   }
 
   /**

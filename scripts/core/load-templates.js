@@ -228,6 +228,25 @@ export const SWSE_TEMPLATES = [
   // Item Sheets
   // ==============================
   'systems/foundryvtt-swse/templates/items/base/item-sheet.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/entity-dialog.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/entity-create-browser.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/header.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/tabs.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/footer.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/description.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-weapon.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-armor.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-shield.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-item.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-feat.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-talent.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-force-power.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-custom-skill.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/body-unsupported.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/prereqs.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/dc-chart.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/validation-panel.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/effects.hbs',
 
   // ==============================
   // Progression Applications (Legacy & New Shell)

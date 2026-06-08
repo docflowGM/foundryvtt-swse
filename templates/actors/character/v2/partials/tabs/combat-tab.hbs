@@ -1,0 +1,46 @@
+{{!-- SWSE V2 Combat Tab: composed combat surface. --}}
+<section class="swse-combat-tab-v2" data-combat-tab-root>
+  {{#if actionEconomy}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+        actionEconomy=actionEconomy
+        actionState=actionEconomy.state
+        actionBreakdown=actionEconomy.breakdown
+        swiftMax=actionEconomy.swiftMax}}
+  {{else}}
+    <div class="swse-panel swse-combat-notice">
+      <div class="swse-panel-title">Action Economy</div>
+      <div class="swse-empty">No active combat turn is currently tracking this actor.</div>
+    </div>
+  {{/if}}
+
+  <div class="swse-combat-row swse-combat-row--split">
+    <div class="swse-panel swse-combat-initiative-panel">
+      <div class="swse-panel-title">Initiative</div>
+      <div class="swse-combat-init-card">
+        <span>Roll</span>
+        <strong>{{numberFormat initiativeTotal decimals=0 sign=true}}</strong>
+        <button type="button" data-action="roll-skill" data-skill="initiative">Roll d20</button>
+      </div>
+    </div>
+
+    <div class="swse-panel swse-combat-vitals-panel">
+      <div class="swse-panel-title">Combat Vitals</div>
+      <div class="swse-combat-vitals-grid">
+        <div><span>BAB</span><strong>{{numberFormat bab decimals=0 sign=true}}</strong></div>
+        <div><span>Speed</span><strong>{{speed}}</strong></div>
+        <div><span>DT</span><strong>{{derived.damageThreshold}}</strong></div>
+        <div><span>Grapple</span><strong>{{numberFormat grappleBonus decimals=0 sign=true}}</strong></div>
+        <div><span>Perception</span><strong>{{numberFormat perceptionTotal decimals=0 sign=true}}</strong></div>
+        <div><span>CL</span><strong>{{system.level}}</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swse-combat-row swse-combat-row--split swse-combat-row--status">
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-status-panel.hbs"}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/effective-defenses-panel.hbs"}}
+  </div>
+
+  {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+  {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-actions-panel.hbs"}}
+</section>

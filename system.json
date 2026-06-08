@@ -68,6 +68,7 @@
     "styles/sheets/v2-vehicle-sheet.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/item-sheet.css",
+    "styles/dialogs/entity-dialog.css",
     "styles/apps/chargen/chargen.css",
     "scripts/ui/dialogue/dialogue-effects.css",
     "scripts/ui/action-palette/action-palette.css",

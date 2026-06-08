@@ -1,0 +1,32 @@
+{{!-- Effective defense display: engine base + declared situational state. --}}
+<section class="swse-panel swse-effective-defenses-panel" data-effective-defenses-panel>
+  <div class="swse-panel-title">Effective Defenses</div>
+
+  <div class="swse-effective-defense-list">
+    {{#each effectiveDefenses.rows as |row|}}
+      <div class="swse-effective-defense-row {{#if row.boosted}}is-boosted{{/if}} {{#if row.blocked}}is-blocked{{/if}}" data-defense="{{row.key}}">
+        <div class="swse-effective-defense-main">
+          <div class="swse-effective-defense-label">
+            <span>{{row.abbrev}}</span>
+            <small>base {{row.base}}</small>
+          </div>
+          <div class="swse-effective-defense-formula">
+            <span class="formula-chip">Engine {{row.base}}</span>
+            {{#if row.adjustmentLabel}}<span class="formula-op">+</span><span class="formula-chip situational">{{row.adjustmentLabel}}</span>{{/if}}
+          </div>
+          {{#if row.chips.length}}
+            <div class="swse-effective-defense-chips">
+              {{#each row.chips as |chip|}}
+                <span class="defense-chip {{chip.tone}}">{{chip.label}}{{#if chip.valueLabel}} {{chip.valueLabel}}{{/if}}</span>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+        <div class="swse-effective-defense-total">
+          <strong>{{#if row.blocked}}BLOCK{{else}}{{row.effective}}{{/if}}</strong>
+          <span>{{#if row.blocked}}total cover{{else}}effective{{/if}}</span>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</section>

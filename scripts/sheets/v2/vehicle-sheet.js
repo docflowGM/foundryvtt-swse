@@ -27,6 +27,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { VehicleImportWizard } from "/systems/foundryvtt-swse/scripts/apps/vehicle-import-wizard.js";
 import { rollVehicleCrewSkill } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
+import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js";
 
 const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
   'name',
@@ -178,6 +179,12 @@ export class SWSEV2VehicleSheet extends
     // then launch Vehicle Sheet / Shipyard / stations inside the shared shell.
     this._shellSurface = 'home';
     this._shellSurfaceOptions = {};
+    ShellUiStatePreserver.install(this);
+  }
+
+  render(...args) {
+    this._shellUiStatePreserver?.capture?.(this.element, { surfaceId: this._shellSurface });
+    return super.render(...args);
   }
 
   async _prepareContext(options) {
@@ -383,6 +390,9 @@ export class SWSEV2VehicleSheet extends
 
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
+
+    // Restore scroll, focus, and form-control values preserved before this render.
+    this._shellUiStatePreserver?.restore?.(this.element, { surfaceId: this._shellSurface });
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) {

@@ -1,0 +1,118 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--mechanic">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">Talent Record</div>
+    <h3>{{item.name}}</h3>
+    <p>{{#if entityDialog.talent.conditionSummary}}{{entityDialog.talent.conditionSummary}}{{else}}Talent data uses the existing tree/category/ability metadata already present in the repo.{{/if}}</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Tree</span><strong>{{entityDialog.talent.treeLabel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Exec</span><strong>{{entityDialog.talent.executionModel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Choice</span><strong>{{#if entityDialog.talent.choiceRequired}}Required{{else}}None{{/if}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Effects</span><strong>{{entityDialog.talent.effectCount}}</strong></div>
+  </div>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Tree / Source</h3>
+
+    <div class="form-field">
+      <label>Talent Tree</label>
+      <input type="text" name="system.tree" value="{{entityDialog.talent.tree}}" placeholder="Jedi Guardian" />
+      <p class="swse-entity-dialog__field-note">Canonical display field for the dialog. Compatibility aliases are preserved by the item data.</p>
+    </div>
+
+    <div class="form-field">
+      <label>Talent Tree Alias</label>
+      <input type="text" name="system.talentTree" value="{{entityDialog.talent.talentTree}}" placeholder="Jedi Guardian" />
+    </div>
+
+    <div class="form-field">
+      <label>Category / Parent Class</label>
+      <input type="text" name="system.category" value="{{entityDialog.talent.category}}" placeholder="Jedi / Noble / Sith Apprentice" />
+    </div>
+
+    <div class="form-field">
+      <label>Tree ID</label>
+      <input type="text" name="system.treeId" value="{{entityDialog.talent.treeId}}" placeholder="tree document or registry id" />
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Runtime Metadata</h3>
+
+    <div class="form-field">
+      <label>Execution Model</label>
+      <input type="text" name="system.executionModel" value="{{entityDialog.talent.executionModel}}" placeholder="PASSIVE" />
+    </div>
+
+    <div class="form-field">
+      <label>Subtype</label>
+      <input type="text" name="system.subType" value="{{entityDialog.talent.subType}}" placeholder="STATE / RULE / MODIFIER" />
+    </div>
+
+    <div class="form-field">
+      <label>Mechanics Mode</label>
+      <input type="text" name="system.abilityMeta.mechanicsMode" value="{{entityDialog.talent.mechanicsMode}}" placeholder="passive / conditional / manual" />
+    </div>
+
+    <div class="form-field">
+      <label>Application Scope</label>
+      <input type="text" name="system.abilityMeta.applicationScope" value="{{entityDialog.talent.applicationScope}}" placeholder="skill_substitution / combat_action" />
+    </div>
+  </section>
+</div>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/prereqs.hbs}}
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Uses / Choice</h3>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Uses Current</label>
+        <input type="number" name="system.uses.current" value="{{entityDialog.talent.usesCurrent}}" data-dtype="Number" min="0" />
+      </div>
+      <div class="form-field">
+        <label>Uses Max</label>
+        <input type="number" name="system.uses.max" value="{{entityDialog.talent.usesMax}}" data-dtype="Number" min="0" />
+      </div>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.uses.perEncounter" {{#if entityDialog.talent.usesPerEncounter}}checked{{/if}} /> Per Encounter</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.uses.perDay" {{#if entityDialog.talent.usesPerDay}}checked{{/if}} /> Per Day</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.choiceMeta.required" {{#if entityDialog.talent.choice.required}}checked{{/if}} /> Requires Choice</label>
+    </div>
+
+    <div class="form-field">
+      <label>Selected Choice</label>
+      <input type="text" name="system.selectedChoice" value="{{entityDialog.talent.choice.selected}}" placeholder="Resolved choice on owned talent" />
+    </div>
+  </section>
+</div>
+
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Rules Text</h3>
+  <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="form-field form-field--full">
+      <label>Benefit</label>
+      <textarea name="system.benefit" rows="7">{{entityDialog.talent.benefit}}</textarea>
+    </div>
+    <div class="form-field form-field--full">
+      <label>Special / Notes</label>
+      <textarea name="system.special" rows="7">{{entityDialog.talent.special}}</textarea>
+    </div>
+  </div>
+
+  <div class="form-field form-field--full">
+    <label>Tags</label>
+    <input type="text" name="system.tags" value="{{entityDialog.talent.tagsText}}" placeholder="jedi, force, passive" />
+  </div>
+</section>
+
+<section class="item-editor__section swse-entity-dialog__callout swse-entity-dialog__callout--resolver">
+  <h3 class="item-editor__section-title">Talent Resolver Notes</h3>
+  <p class="swse-entity-dialog__hint">{{#if entityDialog.talent.implementedBy}}Implemented by: {{entityDialog.talent.implementedBy}}. {{/if}}{{#if entityDialog.talent.staticSheetPolicy}}Static policy: {{entityDialog.talent.staticSheetPolicy}}.{{else}}This phase displays existing talent metadata and leaves runtime implementation ownership unchanged.{{/if}}</p>
+</section>

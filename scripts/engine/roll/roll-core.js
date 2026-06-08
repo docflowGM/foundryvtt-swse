@@ -88,8 +88,13 @@ export class RollCore {
 
     try {
       // === STEP 1: Gather Modifiers via ModifierEngine ===
-      const allModifiers = await ModifierEngine.getAllModifiers(actor);
-      const modifierTotal = await ModifierEngine.aggregateTarget(actor, domain);
+      const baseModifiers = await ModifierEngine.getAllModifiers(actor);
+      const contextualModifiers = ModifierEngine.getEffectIntentModifiersForContext(actor, {
+        context,
+        includeBroad: false
+      });
+      const allModifiers = [...baseModifiers, ...contextualModifiers];
+      const modifierTotal = await ModifierEngine.aggregateTarget(actor, domain, { context });
 
       // === STEP 2: Determine Base Roll ===
       const baseDice = rollOptions.baseDice || '1d20';

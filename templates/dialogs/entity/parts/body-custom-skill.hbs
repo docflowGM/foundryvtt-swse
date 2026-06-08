@@ -1,0 +1,99 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--skill">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">Skill Record</div>
+    <h3>{{item.name}}</h3>
+    <p>Custom skills remain normal <code>skill</code> items. The dialog uses the existing skill ability/classes fields so progression and skill rollers keep reading the same data.</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Ability</span><strong>{{entityDialog.skill.ability}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Trained</span><strong>{{#if entityDialog.skill.trainedOnly}}Only{{else}}No{{/if}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>ACP</span><strong>{{#if entityDialog.skill.armorCheckPenalty}}Yes{{else}}No{{/if}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>DC Rows</span><strong>{{entityDialog.skill.dcTable.length}}</strong></div>
+  </div>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Skill Mechanics</h3>
+
+    <div class="form-field">
+      <label>Governing Ability</label>
+      <select name="system.ability">
+        {{#each entityDialog.skill.abilityOptions}}
+        <option value="{{this.value}}" {{#if (eq ../entityDialog.skill.ability this.value)}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label>Action Type</label>
+      <select name="system.actionType">
+        <option value="free" {{#if (eq entityDialog.skill.actionType "free")}}selected{{/if}}>Free</option>
+        <option value="swift" {{#if (eq entityDialog.skill.actionType "swift")}}selected{{/if}}>Swift</option>
+        <option value="move" {{#if (eq entityDialog.skill.actionType "move")}}selected{{/if}}>Move</option>
+        <option value="standard" {{#if (eq entityDialog.skill.actionType "standard")}}selected{{/if}}>Standard</option>
+        <option value="full" {{#if (eq entityDialog.skill.actionType "full")}}selected{{/if}}>Full-Round</option>
+        <option value="reaction" {{#if (eq entityDialog.skill.actionType "reaction")}}selected{{/if}}>Reaction</option>
+        <option value="minutes" {{#if (eq entityDialog.skill.actionType "minutes")}}selected{{/if}}>Minutes</option>
+        <option value="hours" {{#if (eq entityDialog.skill.actionType "hours")}}selected{{/if}}>Hours</option>
+      </select>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.trainedOnly" {{#if entityDialog.skill.trainedOnly}}checked{{/if}} /> Trained Only</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.armorCheckPenalty" {{#if entityDialog.skill.armorCheckPenalty}}checked{{/if}} /> Armor Check Penalty</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.retry" {{#if entityDialog.skill.retry}}checked{{/if}} /> Retry Allowed</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.takeTen" {{#if entityDialog.skill.takeTen}}checked{{/if}} /> Take 10</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.takeTwenty" {{#if entityDialog.skill.takeTwenty}}checked{{/if}} /> Take 20</label>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Class Skill Access</h3>
+    <div class="swse-entity-dialog__class-skill-grid">
+      {{#each entityDialog.skill.classes}}
+      <div class="form-field">
+        <label>{{this.name}}</label>
+        <input type="text" name="system.classes.{{this.name}}" value="{{this.value}}" placeholder="true, false, or requirement" />
+      </div>
+      {{/each}}
+    </div>
+    <p class="swse-entity-dialog__field-note">Existing skill documents use booleans or requirement text here, so the editor preserves that flexible shape.</p>
+  </section>
+</div>
+
+{{> systems/foundryvtt-swse/templates/dialogs/entity/parts/dc-chart.hbs}}
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Rules Text</h3>
+    <div class="form-field form-field--full">
+      <label>Benefit / Use</label>
+      <textarea name="system.benefit" rows="5">{{entityDialog.skill.benefit}}</textarea>
+    </div>
+    <div class="form-field form-field--full">
+      <label>Usage Notes</label>
+      <textarea name="system.usageNotes" rows="3">{{entityDialog.skill.usageNotes}}</textarea>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Synergies / Tags</h3>
+    {{#if entityDialog.skill.synergies.length}}
+    <div class="swse-entity-dialog__mini-table">
+      {{#each entityDialog.skill.synergies}}
+      <div class="swse-entity-dialog__mini-row">
+        <input type="text" name="system.synergies.{{this.index}}.name" value="{{this.name}}" placeholder="Source skill" />
+        <input type="text" name="system.synergies.{{this.index}}.bonus" value="{{this.bonus}}" placeholder="+2" />
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="swse-entity-dialog__empty-state swse-entity-dialog__empty-state--mini">No synergies defined.</div>
+    {{/if}}
+    <div class="form-field form-field--full">
+      <label>Tags</label>
+      <input type="text" name="system.tags" value="{{entityDialog.skill.tagsText}}" placeholder="custom, social, trained_only" />
+    </div>
+  </section>
+</div>

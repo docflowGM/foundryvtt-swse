@@ -1,6 +1,7 @@
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FLAG_SCOPE = 'swse';
@@ -348,9 +349,25 @@ function applyTraitSystemUpdatesToItem(update, subject, trait, sign = 1) {
   const amount = rawAmount * (Number(sign) < 0 ? -1 : 1);
   if (kind === 'weaponAttack') update['system.attackBonus'] = currentNumber(subject, ['system.attackBonus', 'system.combat.attack.bonus'], 0) + amount;
   if (kind === 'weaponDamage') update['system.flatDamageBonus'] = currentNumber(subject, ['system.flatDamageBonus', 'system.damageFlatBonus', 'system.combat.damage.bonus'], 0) + amount;
-  if (kind === 'maxDex') update['system.maxDexBonus'] = currentNumber(subject, ['system.maxDexBonus', 'system.maxDex', 'system.limits.maxDex'], 0) + amount;
-  if (kind === 'fortEquipment') update['system.equipmentBonus'] = currentNumber(subject, ['system.equipmentBonus', 'system.fortBonus'], 0) + amount;
-  if (kind === 'armorReflex') update['system.armorBonus'] = currentNumber(subject, ['system.armorBonus', 'system.reflexBonus'], 0) + amount;
+  if (kind === 'maxDex') {
+    const armor = subject?.type === 'armor' ? resolveArmorData(subject) : null;
+    const next = (armor?.maxDexBonus ?? currentNumber(subject, ['system.maxDexBonus', 'system.maxDex', 'system.limits.maxDex'], 0)) + amount;
+    update['system.maxDexBonus'] = next;
+    update['system.maxDex'] = next === null ? 999 : next;
+  }
+  if (kind === 'fortEquipment') {
+    const armor = subject?.type === 'armor' ? resolveArmorData(subject) : null;
+    const next = (armor?.fortitudeBonus ?? currentNumber(subject, ['system.fortitudeBonus', 'system.fortBonus'], 0)) + amount;
+    update['system.fortitudeBonus'] = next;
+    update['system.fortBonus'] = next;
+  }
+  if (kind === 'armorReflex') {
+    const armor = subject?.type === 'armor' ? resolveArmorData(subject) : null;
+    const next = (armor?.reflexBonus ?? currentNumber(subject, ['system.defenseBonus', 'system.reflexBonus', 'system.armorBonus'], 0)) + amount;
+    update['system.defenseBonus'] = next;
+    update['system.reflexBonus'] = next;
+    update['system.armorBonus'] = next;
+  }
   if (kind === 'upgradeSlot') update['system.upgradeSlots'] = currentNumber(subject, ['system.upgradeSlots'], 0) + amount;
   if (kind === 'damageReduction') update['system.damageReduction'] = currentNumber(subject, ['system.damageReduction', 'system.dr'], 0) + amount;
   if (kind === 'selectiveFire') {

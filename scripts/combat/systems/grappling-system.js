@@ -16,6 +16,48 @@ import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
 import { ActorAbilityBridge } from '../../adapters/ActorAbilityBridge.js';
 import MetaResourceFeatResolver from '/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js';
+import { buildVirtualUnarmedWeapon } from '/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js';
+
+
+function swseNormalizeName(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function swseActorItems(actor) {
+  try {
+    return Array.from(actor?.items ?? []);
+  } catch (_err) {
+    return [];
+  }
+}
+
+function swseActorHasTalent(actor, name) {
+  const wanted = swseNormalizeName(name);
+  return swseActorItems(actor).some(item => item?.type === 'talent' && item?.system?.disabled !== true && swseNormalizeName(item.name) === wanted);
+}
+
+function swseTalentGrappleBonus(actor, mode) {
+  let total = 0;
+  for (const item of swseActorItems(actor)) {
+    if (!['talent', 'feat'].includes(item?.type) || item?.system?.disabled === true) continue;
+    const rules = item?.system?.abilityMeta?.grappleRules ?? [];
+    if (!Array.isArray(rules)) continue;
+    for (const rule of rules) {
+      if (rule?.type !== 'GRAPPLE_BONUS') continue;
+      const modes = Array.isArray(rule.modes) ? rule.modes : [rule.mode ?? rule.context].filter(Boolean);
+      if (modes.length && !modes.includes(mode)) continue;
+      const bonus = Number(rule.bonus ?? rule.value ?? 0);
+      if (Number.isFinite(bonus)) total += bonus;
+    }
+  }
+  return total;
+}
+
+function swseGrabAttackPenalty(actor) {
+  if (swseActorHasTalent(actor, 'Grabber')) return 0;
+  if (swseActorHasTalent(actor, 'Entangler')) return -2;
+  return -5;
+}
 
 export class SWSEGrappling {
 
@@ -35,7 +77,16 @@ export class SWSEGrappling {
     if (!attacker || !target) {return;}
 
     const weapon = this._getUnarmedAttack(attacker);
-    const { roll, total } = await SWSERoll.rollAttack(attacker, weapon);
+    const grabPenalty = swseGrabAttackPenalty(attacker);
+    const attackResult = await SWSERoll.rollAttack(attacker, weapon, {
+      customModifier: grabPenalty,
+      maneuver: 'grab',
+      actionId: 'grab',
+      combatOptions: { grab: true },
+      target
+    });
+    const roll = attackResult?.roll ?? attackResult;
+    const total = Number(attackResult?.total ?? attackResult?.roll?.total ?? roll?.total ?? 0);
 
     // Hit resolution pipeline
     const baseReflex = target.system.defenses?.reflex?.total ?? 10;
@@ -146,6 +197,7 @@ export class SWSEGrappling {
     const speciesGrapple = speciesCombat.grapple || 0;
 
     let bonus = bab + str + sizeMod + speciesGrapple;
+    bonus += swseTalentGrappleBonus(actor, context.mode);
 
     if (context.mode === 'resistGrapple') {
       bonus += MetaResourceFeatResolver.getGrappleResistanceBonus(actor, { mode: 'resistGrapple' });
@@ -163,11 +215,7 @@ export class SWSEGrappling {
   }
 
   static _getUnarmedAttack(actor) {
-    return {
-      name: 'Unarmed Grab',
-      img: 'icons/svg/punch.svg',
-      system: { attackAttribute: 'str', damage: '1d4', ranged: false }
-    };
+    return buildVirtualUnarmedWeapon(actor, { name: 'Unarmed Grab' });
   }
 
   static async _applyState(actor, state, sourceActor) {

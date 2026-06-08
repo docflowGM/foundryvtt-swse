@@ -1,0 +1,123 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--force" data-force-accent="{{entityDialog.forcePower.accent}}">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">Force Power Record</div>
+    <h3>{{item.name}}</h3>
+    <p>Descriptor, DC chart, suite state, and activation data are read from the existing Force Power schema. Descriptor changes retint the dialog live; they do not create a new item type.</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Descriptor</span><strong>{{entityDialog.forcePower.descriptorText}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>UTF DC</span><strong>{{entityDialog.forcePower.useTheForce}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Action</span><strong>{{entityDialog.forcePower.time}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>DC Rows</span><strong>{{entityDialog.forcePower.dcTierCount}}</strong></div>
+  </div>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Power Identity</h3>
+
+    <div class="form-field">
+      <label>Discipline</label>
+      <select name="system.discipline" class="force-discipline-select" data-force-accent-control>
+        <option value="general" {{#if (eq entityDialog.forcePower.discipline "general")}}selected{{/if}}>General</option>
+        <option value="light" {{#if (eq entityDialog.forcePower.discipline "light")}}selected{{/if}}>Light</option>
+        <option value="dark" {{#if (eq entityDialog.forcePower.discipline "dark")}}selected{{/if}}>Dark</option>
+        <option value="dark-side" {{#if (eq entityDialog.forcePower.discipline "dark-side")}}selected{{/if}}>Dark Side</option>
+        <option value="telekinetic" {{#if (eq entityDialog.forcePower.discipline "telekinetic")}}selected{{/if}}>Telekinetic</option>
+        <option value="telepathic" {{#if (eq entityDialog.forcePower.discipline "telepathic")}}selected{{/if}}>Telepathic / Mind</option>
+        <option value="vital" {{#if (eq entityDialog.forcePower.discipline "vital")}}selected{{/if}}>Vital / Healing</option>
+        <option value="control" {{#if (eq entityDialog.forcePower.discipline "control")}}selected{{/if}}>Control</option>
+      </select>
+    </div>
+
+    <div class="form-field form-field--full">
+      <label>Descriptors</label>
+      <input type="text" name="system.descriptor" value="{{entityDialog.forcePower.descriptorInput}}" placeholder="Dark Side, Mind-Affecting, Telekinetic" data-force-accent-control />
+      <p class="swse-entity-dialog__field-note">Saved as the existing <code>system.descriptor</code> descriptor list.</p>
+    </div>
+
+    <div class="form-field">
+      <label>Power Level</label>
+      <input type="number" name="system.powerLevel" value="{{entityDialog.forcePower.powerLevel}}" data-dtype="Number" min="0" />
+    </div>
+
+    <div class="form-field">
+      <label>Use the Force DC</label>
+      <input type="number" name="system.useTheForce" value="{{entityDialog.forcePower.useTheForce}}" data-dtype="Number" min="0" />
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Activation</h3>
+
+    <div class="form-field">
+      <label>Action / Time</label>
+      <input type="text" name="system.time" value="{{entityDialog.forcePower.time}}" placeholder="Standard Action" />
+    </div>
+
+    <div class="form-field">
+      <label>Range</label>
+      <input type="text" name="system.range" value="{{entityDialog.forcePower.range}}" placeholder="6 squares" />
+    </div>
+
+    <div class="form-field">
+      <label>Target</label>
+      <input type="text" name="system.target" value="{{entityDialog.forcePower.target}}" placeholder="One creature, object, area..." />
+    </div>
+
+    <div class="form-field">
+      <label>Duration</label>
+      <input type="text" name="system.duration" value="{{entityDialog.forcePower.duration}}" placeholder="Instantaneous" />
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.maintainable" {{#if entityDialog.forcePower.maintainable}}checked{{/if}} /> Maintainable</label>
+    </div>
+  </section>
+</div>
+
+{{> systems/foundryvtt-swse/templates/dialogs/entity/parts/dc-chart.hbs}}
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Rules Text</h3>
+    <div class="form-field form-field--full">
+      <label>Effect</label>
+      <textarea name="system.effect" rows="6">{{entityDialog.forcePower.effect}}</textarea>
+    </div>
+    <div class="form-field form-field--full">
+      <label>Special</label>
+      <textarea name="system.special" rows="4">{{entityDialog.forcePower.special}}</textarea>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Suite State / Metadata</h3>
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Uses Current</label>
+        <input type="number" name="system.uses.current" value="{{entityDialog.forcePower.usesCurrent}}" data-dtype="Number" min="0" />
+      </div>
+      <div class="form-field">
+        <label>Uses Max</label>
+        <input type="number" name="system.uses.max" value="{{entityDialog.forcePower.usesMax}}" data-dtype="Number" min="0" />
+      </div>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.inSuite" {{#if entityDialog.forcePower.inSuite}}checked{{/if}} /> In Suite</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.spent" {{#if entityDialog.forcePower.spent}}checked{{/if}} /> Spent</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.discarded" {{#if entityDialog.forcePower.discarded}}checked{{/if}} /> Discarded</label>
+    </div>
+
+    <div class="form-field form-field--full">
+      <label>Tags</label>
+      <input type="text" name="system.tags" value="{{entityDialog.forcePower.tagsText}}" placeholder="force_power, telekinetic, standard_action" />
+    </div>
+
+    <div class="form-field">
+      <label>Execution Model</label>
+      <input type="text" name="system.executionModel" value="{{entityDialog.forcePower.executionModel}}" placeholder="FORCE_POWER" />
+    </div>
+  </section>
+</div>

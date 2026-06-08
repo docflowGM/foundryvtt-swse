@@ -20,6 +20,7 @@ import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progressio
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 function getActorFeatItems(actor) {
   try {
@@ -48,13 +49,10 @@ function armorRank(value) {
 }
 
 function getArmorCategory(armor) {
-  const system = armor?.system || {};
+  const armorData = resolveArmorData(armor);
   return normalizeArmorCategory(
-    system.armorProficiencyRequired ||
-    system.armorType ||
-    system.type ||
-    system.category ||
-    system.subtype ||
+    armor?.system?.armorProficiencyRequired ||
+    armorData.armorType ||
     'light'
   );
 }
@@ -333,25 +331,14 @@ export class DefenseCalculator {
     const refStateBonus = await this._getStateModifiers(actor, 'reflex', context) + getSystemActiveDefenseBonus(actor, 'reflex');
     const willStateBonus = await this._getStateModifiers(actor, 'will', context) + getSystemActiveDefenseBonus(actor, 'will');
 
-    const isEnergyShieldArmor = (item) => {
-      if (!item || item.type !== 'armor') return false;
-      const system = item.system || {};
-      const tokens = [
-        item.name,
-        system.armorType,
-        system.subtype,
-        system.category,
-        system.equipmentType,
-        Array.isArray(system.traits) ? system.traits.join(' ') : ''
-      ].filter(Boolean).join(' ').toLowerCase();
-      return /energy[\s_-]*shield/.test(tokens) || (tokens.includes('shield') && system.shieldRating !== undefined);
-    };
+    const isEnergyShieldArmor = (item) => item?.type === 'armor' && isEnergyShieldItem(item);
 
     // Personal energy shields are defensive generators/accessories, not armor
     // replacement. They grant SR against Energy damage when activated and may
     // impose active-use penalties, but they do not override heroic-level Reflex
     // contribution like worn armor does.
     const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
+    const equippedArmorStats = equippedArmor ? resolveArmorData(equippedArmor) : null;
     const armorProficient = equippedArmor ? actorHasArmorProficiency(actor, equippedArmor) : false;
     const hasKnightArmorMastery = actorHasKnightArmorMastery(actor);
     const hasArmoredDefense = actorHasTalent(actor, 'Armored Defense') || hasKnightArmorMastery;
@@ -406,12 +393,12 @@ export class DefenseCalculator {
     let reflexAbilityMod = reflexAbilityResolution.mod;
     const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
     const reflexMiscBonus = getMiscBonus(reflexState);
-    let reflexArmorBonus = Number(reflexState.armor ?? equippedArmor?.system?.defenseBonus ?? equippedArmor?.system?.armorBonus ?? 0) || 0;
+    let reflexArmorBonus = Number(reflexState.armor ?? equippedArmorStats?.reflexBonus ?? 0) || 0;
     if (equippedArmor && armorProficient && hasSecondSkin) {
       reflexArmorBonus += 1;
     }
     if (equippedArmor) {
-      const maxAbilityBonus = Number(equippedArmor.system?.maxDexBonus);
+      const maxAbilityBonus = Number(equippedArmorStats?.maxDexBonus);
       if (Number.isFinite(maxAbilityBonus)) {
         const effectiveMaxAbilityBonus = armorProficient && hasArmorMastery ? maxAbilityBonus + 1 : maxAbilityBonus;
         reflexAbilityMod = Math.min(reflexAbilityMod, effectiveMaxAbilityBonus);
@@ -443,7 +430,7 @@ export class DefenseCalculator {
     const fortClassBonus = Number(computedFortClassBonus ?? fortitudeState.classBonus ?? 0) || 0;
     const fortMiscBonus = getMiscBonus(fortitudeState);
     let fortArmorBonus = equippedArmor && armorProficient
-      ? Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0
+      ? Number(equippedArmorStats?.fortitudeBonus ?? 0) || 0
       : 0;
     if (equippedArmor && armorProficient && hasSecondSkin) {
       fortArmorBonus += 1;
@@ -460,7 +447,7 @@ export class DefenseCalculator {
     const willArmorBonus = hasDefenseArmorRule(actor, 'APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL')
       && equippedArmor
       && armorProficient
-      ? Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0
+      ? Number(equippedArmorStats?.fortitudeBonus ?? 0) || 0
       : 0;
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
     const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + willStateBonus + willAdjust + conditionPenalty);

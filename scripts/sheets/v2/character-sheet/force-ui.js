@@ -73,7 +73,10 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       event.stopPropagation();
       try {
         const doc = await createSafeEmbeddedItem(sheet.actor, 'force-power', { source: 'force-panel-add-force-power' });
-        doc?.sheet?.render?.(true);
+        if (doc?.sheet) {
+          doc.sheet._entityDialogMode = 'create';
+          doc.sheet.render(true);
+        }
         sheet.render?.(false);
       } catch (err) {
         ui?.notifications?.error?.(`Failed to create Force Power: ${err.message}`);
@@ -88,7 +91,10 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       event.stopPropagation();
       try {
         const doc = await createSafeEmbeddedItem(sheet.actor, 'maneuver', { source: 'starship-suite-add-maneuver' });
-        doc?.sheet?.render?.(true);
+        if (doc?.sheet) {
+          doc.sheet._entityDialogMode = 'create';
+          doc.sheet.render(true);
+        }
         sheet.render?.(false);
       } catch (err) {
         ui?.notifications?.error?.(`Failed to create Starship Maneuver: ${err.message}`);

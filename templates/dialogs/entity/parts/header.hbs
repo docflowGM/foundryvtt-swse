@@ -1,0 +1,134 @@
+    <header class="item-editor__header">
+      <div class="item-editor__identity">
+        {{!-- Thumbnail image --}}
+        <img src="{{item.img}}" alt="{{item.name}}" class="item-editor__image" title="{{item.name}}" />
+
+        {{!-- Identity fields: name + type + category/branch selectors --}}
+        <div class="item-editor__identity-fields">
+          <div class="form-field form-field--name">
+            <label>Name</label>
+            <input type="text" name="name" value="{{item.name}}" placeholder="Item Name" />
+          </div>
+
+          <div class="item-editor__identity-row">
+            <div class="form-field">
+              <label>Type</label>
+              <select name="type" class="item-type-select" {{#if itemId}}disabled{{/if}}>
+                <option value="weapon" {{#if (eq item.type "weapon")}}selected{{/if}}>Weapon</option>
+                <option value="armor" {{#if (eq item.type "armor")}}selected{{/if}}>Armor</option>
+                <option value="equipment" {{#if (eq item.type "equipment")}}selected{{/if}}>Equipment</option>
+                <option value="feat" {{#if (eq item.type "feat")}}selected{{/if}}>Feat</option>
+                <option value="talent" {{#if (eq item.type "talent")}}selected{{/if}}>Talent</option>
+                <option value="force-power" {{#if (eq item.type "force-power")}}selected{{/if}}>Force Power</option>
+                <option value="skill" {{#if (eq item.type "skill")}}selected{{/if}}>Custom Skill</option>
+                <option value="maneuver" {{#if (eq item.type "maneuver")}}selected{{/if}}>Maneuver</option>
+                {{#unless (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment") (eq item.type "feat") (eq item.type "talent") (eq item.type "force-power") (eq item.type "skill") (eq item.type "maneuver"))}}
+                <option value="{{item.type}}" selected>{{item.type}}</option>
+                {{/unless}}
+              </select>
+            </div>
+
+            {{!-- WEAPON: Melee or Ranged (first selector) --}}
+            {{#if (eq item.type "weapon")}}
+            <div class="form-field">
+              <label>Branch</label>
+              <select name="system.meleeOrRanged" class="melee-or-ranged-select">
+                <option value="melee" {{#if (eq system.meleeOrRanged "melee")}}selected{{/if}}>Melee</option>
+                <option value="ranged" {{#if (eq system.meleeOrRanged "ranged")}}selected{{/if}}>Ranged</option>
+              </select>
+            </div>
+            {{else if (eq item.type "armor")}}
+            {{!-- ARMOR: Armor Type --}}
+            <div class="form-field">
+              <label>Category</label>
+              <select name="system.armorType" class="item-category-select">
+                <option value="light" {{#if (eq system.armorType "light")}}selected{{/if}}>Light</option>
+                <option value="medium" {{#if (eq system.armorType "medium")}}selected{{/if}}>Medium</option>
+                <option value="heavy" {{#if (eq system.armorType "heavy")}}selected{{/if}}>Heavy</option>
+                <option value="shield" {{#if (eq system.armorType "shield")}}selected{{/if}}>Shield</option>
+              </select>
+            </div>
+            {{else if (eq item.type "equipment")}}
+            {{!-- EQUIPMENT: Generic category --}}
+            <div class="form-field">
+              <label>Category</label>
+              <select name="system.category" class="item-category-select">
+                <option value="gear" {{#if (eq system.category "gear")}}selected{{/if}}>Gear</option>
+                <option value="consumable" {{#if (eq system.category "consumable")}}selected{{/if}}>Consumable</option>
+                <option value="medical" {{#if (eq system.category "medical")}}selected{{/if}}>Medical</option>
+              </select>
+            </div>
+            {{else if (eq item.type "feat")}}
+            <div class="form-field">
+              <label>Feat Type</label>
+              <select name="system.featType" class="item-category-select">
+                <option value="general" {{#if (eq system.featType "general")}}selected{{/if}}>General</option>
+                <option value="class_feature" {{#if (eq system.featType "class_feature")}}selected{{/if}}>Class Feature</option>
+                <option value="force" {{#if (eq system.featType "force")}}selected{{/if}}>Force</option>
+                <option value="species" {{#if (eq system.featType "species")}}selected{{/if}}>Species</option>
+                <option value="bonus" {{#if (eq system.featType "bonus")}}selected{{/if}}>Bonus</option>
+              </select>
+            </div>
+            {{else if (eq item.type "talent")}}
+            <div class="form-field">
+              <label>Talent Tree</label>
+              <input type="text" name="system.tree" value="{{system.tree}}" placeholder="e.g., Lineage" />
+            </div>
+            {{/if}}
+          </div>
+
+          {{!-- WEAPON: Weapon Category (second selector, filtered by melee/ranged) --}}
+          {{#if (eq item.type "weapon")}}
+          <div class="form-field">
+            <label>Category</label>
+            <select name="system.weaponCategory" class="weapon-category-select">
+              {{#if (eq system.meleeOrRanged "melee")}}
+              <option value="advanced" {{#if (eq system.weaponCategory "advanced")}}selected{{/if}}>Advanced</option>
+              <option value="lightsaber" {{#if (eq system.weaponCategory "lightsaber")}}selected{{/if}}>Lightsaber</option>
+              <option value="melee-exotic" {{#if (eq system.weaponCategory "melee-exotic")}}selected{{/if}}>Melee Exotic</option>
+              <option value="natural" {{#if (eq system.weaponCategory "natural")}}selected{{/if}}>Natural</option>
+              <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+              {{else}}
+              <option value="heavy" {{#if (eq system.weaponCategory "heavy")}}selected{{/if}}>Heavy</option>
+              <option value="pistols" {{#if (eq system.weaponCategory "pistols")}}selected{{/if}}>Pistols</option>
+              <option value="ranged-exotic" {{#if (eq system.weaponCategory "ranged-exotic")}}selected{{/if}}>Ranged Exotic</option>
+              <option value="rifles" {{#if (eq system.weaponCategory "rifles")}}selected{{/if}}>Rifles</option>
+              <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+              {{/if}}
+            </select>
+          </div>
+          {{/if}}
+
+          {{#if (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment"))}}
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="system.equipped" {{#if system.equipped}}checked{{/if}} />
+              Equipped
+            </label>
+          </div>
+          {{/if}}
+
+          {{!-- Action buttons: Manage Upgrades + Customize --}}
+          {{#if (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment"))}}
+          <div class="item-editor__toolbar">
+            <button type="button" class="swse-btn swse-btn--action open-upgrade-app">
+              <i class="{{getIconClass 'cog'}}"></i> Manage Upgrades
+            </button>
+
+            {{#if (eq item.type "weapon")}}
+            {{#if (eq system.weaponCategory "lightsaber")}}
+            <button type="button" class="swse-btn swse-btn--action customize-lightsaber">
+              <i class="{{getIconClass 'wand2'}}"></i> Customize Lightsaber
+            </button>
+            {{/if}}
+            {{#if (and (eq system.meleeOrRanged "ranged") (ne system.weaponCategory "simple"))}}
+            <button type="button" class="swse-btn swse-btn--action customize-blaster">
+              <i class="{{getIconClass 'palette'}}"></i> Blaster Color
+            </button>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    </header>

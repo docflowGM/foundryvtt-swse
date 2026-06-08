@@ -176,7 +176,9 @@ export class DamageResolutionEngine {
         damage: remainingDamage,
         actor,
         damageType,
-        weapon: options.weapon || null
+        weapon: options.weapon || null,
+        sourceActor: source,
+        options
       });
 
       // Validation (debug only)

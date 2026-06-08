@@ -1,0 +1,116 @@
+{
+  "phase": "T25",
+  "title": "Pathfinder / Beastwarden / survival-exploration talent cleanup",
+  "scope": {
+    "request": "Next batch after T24: Pathfinder / Beastwarden / survival-exploration trees",
+    "treeNames": [
+      "Pathfinder",
+      "Beastwarden",
+      "Survivor",
+      "Reconnaissance",
+      "Master Scout",
+      "Mobile Scout",
+      "Hyperspace Explorer"
+    ],
+    "treeSummaries": [
+      {
+        "name": "Pathfinder",
+        "talentCount": 10,
+        "changed": 10
+      },
+      {
+        "name": "Beastwarden",
+        "talentCount": 7,
+        "changed": 7
+      },
+      {
+        "name": "Survivor",
+        "talentCount": 4,
+        "changed": 4
+      },
+      {
+        "name": "Reconnaissance",
+        "talentCount": 4,
+        "changed": 4
+      },
+      {
+        "name": "Master Scout",
+        "talentCount": 4,
+        "changed": 4
+      },
+      {
+        "name": "Mobile Scout",
+        "talentCount": 1,
+        "changed": 1
+      },
+      {
+        "name": "Hyperspace Explorer",
+        "talentCount": 5,
+        "changed": 5
+      }
+    ]
+  },
+  "summary": {
+    "treesReviewed": 7,
+    "talentDocumentsChanged": 35,
+    "removedLegacyModifierRows": 18,
+    "removedEmbeddedActiveEffects": 5,
+    "combatActionCardsAddedOrRefreshed": 37,
+    "runtimeRulesAddedOrRefreshed": 28,
+    "talentTreesTagged": 7,
+    "codeFilesChanged": [
+      "scripts/engine/combat/reactions/reaction-engine.js",
+      "scripts/engine/combat/reactions/reaction-registry.js"
+    ]
+  },
+  "implementationNotes": [
+    "Safe Zone and Pathfinder follow-on talents no longer mutate the owner with cover, Reflex, attack, or recovery bonuses. They are zone/ally/enemy context cards and reference rules.",
+    "Beastwarden talents no longer apply fake Will/Reflex/attack modifiers. Beast attitude, bonded mount, and companion mechanics are surfaced as action/reference cards for the existing companion and reaction/action surfaces.",
+    "Survivor movement and area-damage talents are metadata-cleaned. Evasion remains owned by the existing area attack damage flow, while Sprint/Surefooted are movement context rules.",
+    "Reconnaissance team talents are follower-context actions/references instead of owner attack modifiers.",
+    "Deep-Space Gambit is now registered with the ReactionEngine as a once-per-encounter incoming-attack reaction."
+  ],
+  "remainingLimitations": [
+    "Safe Zone placement and zone occupancy are not yet map-token automated; cards intentionally preserve GM/player zone adjudication.",
+    "Animal Companion and Reconnaissance Team Leader still depend on follower/companion creation workflows rather than direct compendium mutation from the talent item.",
+    "Deep-Space Gambit can surface and report through the reaction engine, but actual attack reroll mutation depends on the attack-card event bridge supporting reroll replacement.",
+    "Calming Aura source text remains incomplete in the current compendium; this phase removed the unsafe fake modifier and flagged it as source-text review instead of inventing mechanics."
+  ],
+  "changedTalentNames": [
+    "Acute Senses",
+    "Animal Companion",
+    "Bonded Mount",
+    "Bunker Blaster",
+    "Calming Aura",
+    "Close-Combat Assault",
+    "Deep-Space Gambit",
+    "Defensive Measures",
+    "Enhance Cover",
+    "Entreat Beast",
+    "Escort Fighter",
+    "Evasion",
+    "Expert Rider",
+    "Extreme Effort",
+    "Get Into Position",
+    "Guidance",
+    "Hidden Attacker",
+    "Hyperspace Savant",
+    "Jury-Rigger",
+    "Launch Point",
+    "Long Stride",
+    "Nature Sense",
+    "Obscuring Defenses",
+    "Reconnaissance Actions",
+    "Reconnaissance Team Leader",
+    "Relocate",
+    "Safe Passage",
+    "Safe Zone",
+    "Soothing Presence",
+    "Sprint",
+    "Surefooted",
+    "Tripwire",
+    "Vehicle Sneak",
+    "Wild Sense",
+    "Zone of Recuperation"
+  ]
+}

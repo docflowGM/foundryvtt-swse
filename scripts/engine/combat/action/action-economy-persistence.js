@@ -17,6 +17,58 @@ export class ActionEconomyPersistence {
   static FLAG_KEY = "actionEconomy";
   static SCOPE = "foundryvtt-swse";
 
+  static getReactionMax(actor) {
+    const raw = actor?.system?.combat?.reactionsMax
+      ?? actor?.system?.reactions?.max
+      ?? actor?.system?.actionEconomy?.reactionsMax
+      ?? actor?.getFlag?.(this.SCOPE, 'reactionsMax')
+      ?? 1;
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
+  }
+
+  static normalizeTurnState(turnState = {}, actor = null) {
+    const base = ActionEngine.startTurn();
+    const maxReactions = this.getReactionMax(actor);
+    const rawReaction = turnState.reactions ?? {};
+    const reactionMax = Math.max(1, Number(rawReaction.max ?? maxReactions) || maxReactions);
+    const reactionCurrent = Math.max(0, Math.min(reactionMax, Number(rawReaction.current ?? rawReaction.remaining ?? reactionMax) || 0));
+
+    return {
+      ...base,
+      ...turnState,
+      remaining: { ...base.remaining, ...(turnState.remaining ?? {}) },
+      degraded: { ...base.degraded, ...(turnState.degraded ?? {}) },
+      fullRoundUsed: turnState.fullRoundUsed === true,
+      reactions: {
+        current: reactionCurrent,
+        max: reactionMax
+      },
+      history: Array.isArray(turnState.history) ? turnState.history : []
+    };
+  }
+
+  static startTurn(actor = null) {
+    return this.normalizeTurnState(ActionEngine.startTurn(), actor);
+  }
+
+  static #snapshotTurnState(turnState = {}) {
+    const { history: _history, ...rest } = turnState ?? {};
+    return JSON.parse(JSON.stringify(rest));
+  }
+
+  static #pushHistory(turnState, entry = {}) {
+    const history = Array.isArray(turnState?.history) ? [...turnState.history] : [];
+    const scrubbed = {
+      ...entry,
+      before: entry.before ? this.#snapshotTurnState(entry.before) : undefined,
+      after: entry.after ? this.#snapshotTurnState(entry.after) : undefined,
+      timestamp: Date.now()
+    };
+    history.push(scrubbed);
+    return { ...turnState, history };
+  }
+
   /**
    * Get current turn state for an actor in a combat
    * @param {Actor} actor - The actor
@@ -24,17 +76,17 @@ export class ActionEconomyPersistence {
    * @returns {Object} Turn state { remaining, degraded, fullRoundUsed }
    */
   static getTurnState(actor, combatId) {
-    if (!actor) return ActionEngine.startTurn();
+    if (!actor) return this.startTurn();
 
     const flag = actor.getFlag(this.SCOPE, this.FLAG_KEY);
 
-    // If flag exists and matches current combat, return it
+    // If flag exists and matches current combat, return normalized state.
     if (flag && flag.combatId === combatId) {
-      return flag.turnState;
+      return this.normalizeTurnState(flag.turnState, actor);
     }
 
-    // Otherwise, return fresh turn state
-    return ActionEngine.startTurn();
+    // Otherwise, return fresh turn state.
+    return this.startTurn(actor);
   }
 
   /**
@@ -48,7 +100,7 @@ export class ActionEconomyPersistence {
 
     await actor.setFlag(this.SCOPE, this.FLAG_KEY, {
       combatId: combatId,
-      turnState: turnState,
+      turnState: this.normalizeTurnState(turnState, actor),
       timestamp: Date.now()
     });
   }
@@ -59,7 +111,7 @@ export class ActionEconomyPersistence {
    * @param {string} combatId
    */
   static async resetTurnState(actor, combatId) {
-    await this.setTurnState(actor, combatId, ActionEngine.startTurn());
+    await this.setTurnState(actor, combatId, this.startTurn(actor));
   }
 
   /**
@@ -106,7 +158,7 @@ export class ActionEconomyPersistence {
    * @param {string} combatId
    * @param {Object} consumeResult - From ActionEngine.consume()
    */
-  static async commitConsumption(actor, combatId, consumeResult) {
+  static async commitConsumption(actor, combatId, consumeResult, metadata = {}) {
     if (!consumeResult.allowed) {
       console.warn(
         `[SWSE] Attempted to commit invalid consumption for ${actor.name}`
@@ -114,7 +166,52 @@ export class ActionEconomyPersistence {
       return;
     }
 
-    await this.setTurnState(actor, combatId, consumeResult.turnState);
+    const before = this.getTurnState(actor, combatId);
+    const after = this.normalizeTurnState(consumeResult.turnState, actor);
+    const withHistory = this.#pushHistory(after, {
+      type: 'action',
+      actionType: metadata.actionType ?? metadata.type ?? 'action',
+      before,
+      after,
+      metadata
+    });
+    await this.setTurnState(actor, combatId, withHistory);
+  }
+
+  static async spendReaction(actor, combatId, metadata = {}) {
+    const before = this.getTurnState(actor, combatId);
+    const current = Number(before.reactions?.current ?? 1) || 0;
+    if (current <= 0) {
+      return { allowed: false, turnState: before, violations: ['INSUFFICIENT_REACTION'] };
+    }
+
+    const after = this.#pushHistory({
+      ...before,
+      reactions: {
+        current: current - 1,
+        max: Number(before.reactions?.max ?? 1) || 1
+      }
+    }, {
+      type: 'reaction',
+      actionType: 'reaction',
+      before,
+      metadata
+    });
+    await this.setTurnState(actor, combatId, after);
+    return { allowed: true, turnState: after, consumed: { reaction: 1 }, violations: [] };
+  }
+
+  static async undoLast(actor, combatId) {
+    const current = this.getTurnState(actor, combatId);
+    const history = Array.isArray(current.history) ? [...current.history] : [];
+    const last = history.pop();
+    if (!last?.before) {
+      return { allowed: false, turnState: current, reason: 'NO_HISTORY' };
+    }
+
+    const restored = this.normalizeTurnState({ ...last.before, history }, actor);
+    await this.setTurnState(actor, combatId, restored);
+    return { allowed: true, turnState: restored, undone: last };
   }
 }
 

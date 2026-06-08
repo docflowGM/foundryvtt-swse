@@ -108,6 +108,10 @@ import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-cl
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
+import { EntityCreateBrowser } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/entity-create-browser.js";
+import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
+import { FullAttackExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js";
+import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
 const SHEET_MODE_STORAGE_PREFIX = 'swse.sheetMode';
@@ -3061,6 +3065,11 @@ const forcePoints = [];
       for (const action of AbilityCombatActionResolver.getActions(this.actor)) {
         registerAction(grouped, action);
       }
+      // Combined-feat synthetic action cards (cross-feat interactions).
+      for (const action of CombinedFeatActionResolver.getActions(this.actor)) {
+        registerAction(grouped, action);
+      }
+
 
       for (const eco of economyOrder) {
         const items = grouped[eco] || [];
@@ -5871,7 +5880,18 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // === INVENTORY: ADD ITEM BUTTONS (Gear tab) ===
+    // === INVENTORY: CREATE ENTITY / ADD ITEM BUTTONS (Gear tab) ===
+    html.addEventListener("click", async (event) => {
+      const browserButton = event.target.closest('[data-action="open-entity-browser"]');
+      if (!browserButton) return;
+      event.preventDefault();
+      event.stopPropagation();
+      new EntityCreateBrowser({
+        actor: this.actor,
+        initialType: browserButton.dataset.initialType || 'weapon'
+      }).render(true);
+    }, { signal, capture: false });
+
     html.addEventListener("click", async (event) => {
       const button = event.target.closest('[data-action="add-item"]');
       if (!button) return;
@@ -5892,16 +5912,7 @@ const forcePoints = [];
       this._pendingAddItemTypes.add(itemType);
 
       try {
-        const doc = await createSafeEmbeddedItem(this.actor, itemType, {
-          shieldMode: itemType === "shield",
-          source: `character-sheet-add-${itemType}`
-        });
-
-        // Explicitly re-render to ensure derived item mirrors are populated for the UI.
-        if (doc && this.render) {
-          await this.requestSurfaceRender({ reason: 'embedded-item-created' });
-        }
-        ui.notifications.info(`Created new ${doc?.type || itemType}`);
+        await this._createAndOpenBlankItem(itemType);
       } catch (err) {
         ui.notifications.error(`Failed to create item: ${err.message}`);
       } finally {
@@ -6071,18 +6082,28 @@ const forcePoints = [];
     const safeType = String(itemType || '').trim();
     if (!safeType) return null;
 
-    const itemData = createSafeItemData(safeType);
+    const itemData = createSafeItemData(safeType, {
+      shieldMode: safeType === 'shield',
+      name: safeType === 'shield' ? 'New Energy Shield' : undefined
+    });
     const label = itemData.name.replace(/^New\s+/, '') || safeType;
 
     try {
       addItemEditorTrace('sheet-create-and-open-before', { actor: summarizeActorItems(this.actor), itemType: safeType, label });
-      const doc = await createSafeEmbeddedItem(this.actor, safeType, { source: `character-sheet-add-${safeType}` });
+      const doc = await createSafeEmbeddedItem(this.actor, safeType, {
+        shieldMode: safeType === 'shield',
+        name: safeType === 'shield' ? 'New Energy Shield' : undefined,
+        source: `character-sheet-add-${safeType}`
+      });
       addItemEditorTrace('sheet-create-and-open-after-create', {
         actor: summarizeActorItems(this.actor),
         itemType: safeType,
         created: doc ? { id: doc.id, name: doc.name, type: doc.type } : null
       });
-      doc?.sheet?.render?.(true);
+      if (doc?.sheet) {
+        doc.sheet._entityDialogMode = 'create';
+        doc.sheet.render(true);
+      }
       await this.requestSurfaceRender({ reason: 'embedded-item-created' });
       return doc ?? null;
     } catch (err) {
@@ -6165,7 +6186,10 @@ const forcePoints = [];
       const doc = await createSafeEmbeddedItem(this.actor, this._currentItemType, {
         source: `character-sheet-modal-custom-${this._currentItemType}`
       });
-      doc?.sheet?.render?.(true);
+      if (doc?.sheet) {
+        doc.sheet._entityDialogMode = 'create';
+        doc.sheet.render(true);
+      }
       await this.requestSurfaceRender({ reason: 'embedded-item-created' });
     } catch (err) {
       ui?.notifications?.error?.(`Failed to create ${this._currentItemType}: ${err.message}`);
@@ -7012,6 +7036,30 @@ const forcePoints = [];
     // still needs table or future engine resolution. Surface and track the
     // correct action economy without pretending a passive modifier or single
     // generic attack fully resolves the canon text.
+    // --- Full Attack routing ---
+    if (actionData?.resolutionMode === 'fullAttack') {
+      const pkgFromId = {
+        'double-attack':       FULL_ATTACK_PACKAGES.DOUBLE_ATTACK,
+        'triple-attack':       FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
+        'two-weapon-fighting': FULL_ATTACK_PACKAGES.TWO_WEAPON,
+        'double-weapon-attack':FULL_ATTACK_PACKAGES.DOUBLE_WEAPON,
+      };
+      const requestedPackage =
+        actionData?.ruleData?.requestedPackage ??
+        pkgFromId[actionId] ??
+        FULL_ATTACK_PACKAGES.NORMAL;
+      const actionCostOverride = actionData?.cost ?? actionData?.actionCost ?? null;
+      return await FullAttackExecutor.execute(this.actor, {
+        requestedPackage,
+        actionCostOverride,
+        actionId,
+        actionData,
+        source: options?.source ?? "full-attack",
+        sourceElement: options?.sourceElement ?? null,
+        sheet: this
+      });
+    }
+
     if (actionData?.manualResolution === true || actionData?.resolutionMode === 'manual' || actionData?.resolutionMode === 'reference') {
       const actionType = this._deriveCombatActionEconomyType(actionData);
       if (actionData?.spendAction !== false) {
@@ -7110,6 +7158,7 @@ const forcePoints = [];
       if (!allowed) return null;
 
       const dc = this._extractCombatActionDc(actionData);
+      const combinedFeatBonus = CombinedFeatActionResolver.getSkillBonus(this.actor, skillKey, actionId);
       return await rollSkillCheck(this.actor, skillKey, {
         ...modResult,
         dc,

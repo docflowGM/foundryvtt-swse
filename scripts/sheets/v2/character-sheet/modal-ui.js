@@ -94,6 +94,7 @@ async function handleModalNo(sheet) {
   try {
     const doc = await Item.create(itemData, { parent: sheet.actor });
     if (doc) {
+      doc.sheet._entityDialogMode = 'create';
       doc.sheet.render(true);
     }
   } catch (err) {

@@ -1,0 +1,816 @@
+{
+  "phase": "T17",
+  "title": "Tech / engineering prestige talent cleanup",
+  "generatedAt": "2026-06-07",
+  "scope": {
+    "recommendedFrom": "docs/talent-vehicle-starship-prestige-cleanup-phase-t16.json",
+    "treeNames": [
+      "Improviser",
+      "Military Engineer",
+      "Outlaw Tech",
+      "Procurement",
+      "Sabotage"
+    ],
+    "treeIds": {
+      "Improviser": "7f37422819d7be6f",
+      "Military Engineer": "e32009b1b0aee8c9",
+      "Outlaw Tech": "f1657b1d23a4c7dc",
+      "Procurement": "a0d6323d6c1bf911",
+      "Sabotage": "8897a36d59662ee9"
+    }
+  },
+  "summary": {
+    "talentDocumentsReviewed": 29,
+    "talentDocumentsChanged": 29,
+    "removedLegacyModifierRows": 26,
+    "removedEmbeddedActiveEffects": 5,
+    "combatActionCardsAddedOrRefreshed": 13,
+    "contextualRulesAddedOrRefreshed": 1,
+    "broadRuntimePatches": false,
+    "treeSpecificJsFilesCreated": false,
+    "codeFilesChanged": [
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/combat/rolls/attacks.js",
+      "scripts/engine/combat/CombatEngine.js"
+    ]
+  },
+  "implementedContextual": [
+    {
+      "name": "Breach Cover",
+      "id": "da891615bb87a9e6",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "contextual_runtime_rule",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "breach-cover"
+      ],
+      "owner": "CombatOptionResolver / attack pipeline"
+    }
+  ],
+  "combatActionCards": [
+    {
+      "name": "Personalized Modifications",
+      "id": "111b0a9d1f8d5111",
+      "tree": "Outlaw Tech",
+      "category": "Scoundrel",
+      "classification": "combat_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "personalized-modifications"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Repairs on the Fly",
+      "id": "16dd1c81c5145dd8",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "repairs-on-the-fly"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Problem Solver",
+      "id": "16f53472844251a7",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "problem-solver"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Device Jammer",
+      "id": "5db4343762664d95",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "device-jammer"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Improved Jury-Rig",
+      "id": "6e3c1c77acfb0141",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "improved-jury-rig"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Droid Jammer",
+      "id": "80a24150fd2f3163",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "droid-jammer"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Vehicular Boost",
+      "id": "856812052aa6c6d2",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "vehicular-boost"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Capture Droid",
+      "id": "9ae263137f27e220",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "capture-droid"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Mine Mastery",
+      "id": "9ceea9d860aab046",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "place-mine"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Skilled Demolitionist",
+      "id": "c3a67c14c713a7a3",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "set-detonator"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Tech Savant",
+      "id": "e53cad01df3f27dd",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "tech-savant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Right Gear for the Job",
+      "id": "f09f37cda0fc10e1",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [
+        "right-gear-for-the-job"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Sabotage Device",
+      "id": "fbe4b1551ef49a84",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "sabotage-device"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    }
+  ],
+  "cleanedFutureRuntimeContext": [
+    {
+      "name": "Quick Modifications",
+      "id": "1e32cec439c5ecad",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_field_created_weapon_builder"
+    },
+    {
+      "name": "Prepared Explosive",
+      "id": "32029a2f0dbb7104",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_explosive_area_resolver"
+    },
+    {
+      "name": "Fast Repairs",
+      "id": "36f8497081dce05a",
+      "tree": "Outlaw Tech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_jury_rig_repair_resolver"
+    },
+    {
+      "name": "Just What Is Needed",
+      "id": "5cd160036d6bba05",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_repair_resolver"
+    },
+    {
+      "name": "Shaped Explosion",
+      "id": "7ab4fcbe5a8b7714",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_explosive_area_resolver"
+    },
+    {
+      "name": "Improvised Device",
+      "id": "84d4e92693185028",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_improvised_device_builder"
+    },
+    {
+      "name": "Excellent Kit",
+      "id": "85318987b48d5caa",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_store_item_purchase_resolver"
+    },
+    {
+      "name": "Breaching Explosive",
+      "id": "96d4cfaa29cab92b",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_object_damage_resolver"
+    },
+    {
+      "name": "Only the Finest",
+      "id": "b5eba49d8305b689",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_black_market_store_resolver"
+    },
+    {
+      "name": "Custom Model",
+      "id": "b8472ec0498d2c20",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_improvised_device_builder"
+    },
+    {
+      "name": "Droid Expert",
+      "id": "befa9b2b15e54ff0",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_repair_resolver"
+    },
+    {
+      "name": "Hot Wire",
+      "id": "d2b9069670413a43",
+      "tree": "Outlaw Tech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_use_substitution_resolver"
+    },
+    {
+      "name": "Bigger Bang",
+      "id": "dc61d67946b1c1d6",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_improvised_device_attack_resolver"
+    },
+    {
+      "name": "Extreme Explosion",
+      "id": "ddf81a7bb146ed87",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_explosive_area_resolver"
+    }
+  ],
+  "gmPlayerManaged": [
+    {
+      "name": "Black Market Buyer",
+      "id": "c006a4be6de26139",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "gm_player_managed",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "gm_player_managed_black_market_context"
+    }
+  ],
+  "dataReview": [
+    {
+      "name": "Bigger Bang",
+      "reason": "The compendium record still only has the short benefit text \"Improvised Device deals +1 damage die.\" The blank rendered description was filled from that benefit, but a future exact-text pass should verify the source wording."
+    }
+  ],
+  "recommendedNextPatchOrder": [
+    "Medical/biotech prestige trees: Advanced Medicine, Shaper, and Yuuzhan Vong Biotech cleanup.",
+    "Droid trees: 1st-5th degree Droid, Specialized Droid, and Droid Commander cleanup.",
+    "Remaining unarmed/martial niche tree: Master of Teras Kasi cleanup.",
+    "Future subsystem pass: repair/jury-rig/explosive/item-builder/store workflows should consume the T17 metadata instead of actor passive modifiers."
+  ],
+  "notes": [
+    "No broad fail-open static modifiers were added.",
+    "Action-economy cards are manual/reference cards only; they do not execute bespoke repair, explosive, or store mutations.",
+    "Breach Cover is the only contextual runtime rule in this pass and is limited to area/burst/splash attack contexts where cover bonuses are present."
+  ],
+  "allReviewedTalents": [
+    {
+      "name": "Personalized Modifications",
+      "id": "111b0a9d1f8d5111",
+      "tree": "Outlaw Tech",
+      "category": "Scoundrel",
+      "classification": "combat_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "personalized-modifications"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Repairs on the Fly",
+      "id": "16dd1c81c5145dd8",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "repairs-on-the-fly"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Problem Solver",
+      "id": "16f53472844251a7",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "problem-solver"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Quick Modifications",
+      "id": "1e32cec439c5ecad",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_field_created_weapon_builder"
+    },
+    {
+      "name": "Prepared Explosive",
+      "id": "32029a2f0dbb7104",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_explosive_area_resolver"
+    },
+    {
+      "name": "Fast Repairs",
+      "id": "36f8497081dce05a",
+      "tree": "Outlaw Tech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_jury_rig_repair_resolver"
+    },
+    {
+      "name": "Just What Is Needed",
+      "id": "5cd160036d6bba05",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_repair_resolver"
+    },
+    {
+      "name": "Device Jammer",
+      "id": "5db4343762664d95",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "device-jammer"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Improved Jury-Rig",
+      "id": "6e3c1c77acfb0141",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "improved-jury-rig"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Shaped Explosion",
+      "id": "7ab4fcbe5a8b7714",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_explosive_area_resolver"
+    },
+    {
+      "name": "Droid Jammer",
+      "id": "80a24150fd2f3163",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "droid-jammer"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Improvised Device",
+      "id": "84d4e92693185028",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_improvised_device_builder"
+    },
+    {
+      "name": "Excellent Kit",
+      "id": "85318987b48d5caa",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_store_item_purchase_resolver"
+    },
+    {
+      "name": "Vehicular Boost",
+      "id": "856812052aa6c6d2",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "vehicular-boost"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Breaching Explosive",
+      "id": "96d4cfaa29cab92b",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_object_damage_resolver"
+    },
+    {
+      "name": "Capture Droid",
+      "id": "9ae263137f27e220",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "capture-droid"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Mine Mastery",
+      "id": "9ceea9d860aab046",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "place-mine"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Only the Finest",
+      "id": "b5eba49d8305b689",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_black_market_store_resolver"
+    },
+    {
+      "name": "Custom Model",
+      "id": "b8472ec0498d2c20",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_improvised_device_builder"
+    },
+    {
+      "name": "Droid Expert",
+      "id": "befa9b2b15e54ff0",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_repair_resolver"
+    },
+    {
+      "name": "Black Market Buyer",
+      "id": "c006a4be6de26139",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "gm_player_managed",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "gm_player_managed_black_market_context"
+    },
+    {
+      "name": "Skilled Demolitionist",
+      "id": "c3a67c14c713a7a3",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "set-detonator"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Hot Wire",
+      "id": "d2b9069670413a43",
+      "tree": "Outlaw Tech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_use_substitution_resolver"
+    },
+    {
+      "name": "Breach Cover",
+      "id": "da891615bb87a9e6",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "contextual_runtime_rule",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "breach-cover"
+      ],
+      "owner": "CombatOptionResolver / attack pipeline"
+    },
+    {
+      "name": "Bigger Bang",
+      "id": "dc61d67946b1c1d6",
+      "tree": "Improviser",
+      "category": "Improviser",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_improvised_device_attack_resolver"
+    },
+    {
+      "name": "Extreme Explosion",
+      "id": "ddf81a7bb146ed87",
+      "tree": "Sabotage",
+      "category": "Saboteur",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_explosive_area_resolver"
+    },
+    {
+      "name": "Tech Savant",
+      "id": "e53cad01df3f27dd",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "tech-savant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Right Gear for the Job",
+      "id": "f09f37cda0fc10e1",
+      "tree": "Procurement",
+      "category": "Improviser",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [
+        "right-gear-for-the-job"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "name": "Sabotage Device",
+      "id": "fbe4b1551ef49a84",
+      "tree": "Military Engineer",
+      "category": "Military Engineer",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "sabotage-device"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    }
+  ]
+}

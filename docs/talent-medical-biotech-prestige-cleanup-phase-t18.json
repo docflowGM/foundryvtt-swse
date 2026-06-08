@@ -1,0 +1,701 @@
+{
+  "phase": "T18",
+  "title": "Medical / biotech prestige talent cleanup plus Implant tree",
+  "generatedAt": "2026-06-07",
+  "scope": {
+    "recommendedFrom": "docs/talent-tech-engineering-prestige-cleanup-phase-t17.json",
+    "userAddendum": "Fold in the Implant tree too.",
+    "treeNames": [
+      "Advanced Medicine",
+      "Shaper",
+      "Yuuzhan Vong Biotech",
+      "Implant"
+    ],
+    "treeIds": {
+      "Advanced Medicine": "61725c845d26ade0",
+      "Shaper": "cdbee578d65154fc",
+      "Yuuzhan Vong Biotech": "33c3210fcac8c664",
+      "Implant": "d8a71a6c5b2b7581"
+    }
+  },
+  "summary": {
+    "talentDocumentsReviewed": 24,
+    "talentDocumentsChanged": 24,
+    "removedLegacyModifierRows": 19,
+    "removedEmbeddedActiveEffects": 2,
+    "combatActionCardsAddedOrRefreshed": 12,
+    "contextualRulesAddedOrRefreshed": 2,
+    "broadRuntimePatches": false,
+    "treeSpecificJsFilesCreated": false,
+    "codeFilesChanged": []
+  },
+  "implementedContextual": [
+    {
+      "id": "bed279ef3c81c42d",
+      "name": "Bugbite",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "contextual_runtime_rule",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "bugbite"
+      ],
+      "owner": "CombatOptionResolver / weapon rule modifier path"
+    },
+    {
+      "id": "76eb427551c6495c",
+      "name": "Curved Throw",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "contextual_runtime_rule_and_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "curved-throw"
+      ],
+      "addedContextualRules": [
+        "curved-throw"
+      ],
+      "owner": "CombatOptionResolver + AbilityCombatActionResolver"
+    }
+  ],
+  "combatActionCards": [
+    {
+      "id": "2fdf215a5da99e00",
+      "name": "Adrenaline Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "adrenaline-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "58a602ec4aa5b2dd",
+      "name": "Extra First Aid",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "extra-first-aid"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "58e37d40d3aa7d4b",
+      "name": "Precision Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "precision-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "684e15133a9cc1e2",
+      "name": "Battlefield Medic",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "battlefield-medic-first-aid"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "7f792f0e531e9abb",
+      "name": "Expedient Mending",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "expedient-mending"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "94b1951d4795f602",
+      "name": "Resilience Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "resilience-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "aeb8d3e495605f71",
+      "name": "Bring Them Back",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "bring-them-back-revivify"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "b66c142c79341858",
+      "name": "Veiled Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "combat_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "veiled-biotech-draw"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "cb0dcc59f7ced910",
+      "name": "Strength Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "strength-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "d6d3b0a2ec01ca9a",
+      "name": "Speed Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "speed-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "ddece484fcea9c84",
+      "name": "Medical Miracle",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "medical-miracle"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "76eb427551c6495c",
+      "name": "Curved Throw",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "contextual_runtime_rule_and_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "curved-throw"
+      ],
+      "addedContextualRules": [
+        "curved-throw"
+      ],
+      "owner": "CombatOptionResolver + AbilityCombatActionResolver"
+    }
+  ],
+  "cleanedFutureRuntimeContext": [
+    {
+      "id": "2c18d68d5e294dc8",
+      "name": "Natural Healing",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_treat_injury_kit_requirement_resolver"
+    },
+    {
+      "id": "6ef0900cd62869e7",
+      "name": "Surprising Weapons",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_post_hit_target_state_resolver"
+    },
+    {
+      "id": "a86559a808738c98",
+      "name": "Biotech Adept",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_reroll_resolver"
+    },
+    {
+      "id": "bebc181408831371",
+      "name": "Master Mender",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_biotech_mending_resolver"
+    },
+    {
+      "id": "bf0c791fe21df919",
+      "name": "Skilled Implanter",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_bio_implant_surgery_resolver"
+    },
+    {
+      "id": "c1d9d20e7789da33",
+      "name": "Second Chance",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_treat_injury_failure_resolver"
+    },
+    {
+      "id": "d0c46d08ea867ae0",
+      "name": "Emergency Team",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_aid_another_treat_injury_resolver"
+    },
+    {
+      "id": "ec18c61d653ce3e4",
+      "name": "Steady Under Pressure",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_reroll_resolver"
+    },
+    {
+      "id": "f9047f30ef6712af",
+      "name": "Expert Shaper",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_reroll_resolver"
+    },
+    {
+      "id": "fc91564e800719be",
+      "name": "Biotech Mastery",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_biotech_crafting_resolver"
+    }
+  ],
+  "metadataOrReference": [
+    {
+      "id": "893158dcfe246ad7",
+      "name": "Implant (general)",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "metadata_or_reference_record",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "GM/player or future implant condition resolver"
+    }
+  ],
+  "reviewedTalents": [
+    {
+      "id": "684e15133a9cc1e2",
+      "name": "Battlefield Medic",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "battlefield-medic-first-aid"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "aeb8d3e495605f71",
+      "name": "Bring Them Back",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "bring-them-back-revivify"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "d0c46d08ea867ae0",
+      "name": "Emergency Team",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_aid_another_treat_injury_resolver"
+    },
+    {
+      "id": "58a602ec4aa5b2dd",
+      "name": "Extra First Aid",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "extra-first-aid"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "ddece484fcea9c84",
+      "name": "Medical Miracle",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "medical-miracle"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "2c18d68d5e294dc8",
+      "name": "Natural Healing",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_treat_injury_kit_requirement_resolver"
+    },
+    {
+      "id": "c1d9d20e7789da33",
+      "name": "Second Chance",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_treat_injury_failure_resolver"
+    },
+    {
+      "id": "ec18c61d653ce3e4",
+      "name": "Steady Under Pressure",
+      "tree": "Advanced Medicine",
+      "category": "Medic",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_reroll_resolver"
+    },
+    {
+      "id": "2fdf215a5da99e00",
+      "name": "Adrenaline Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "adrenaline-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "893158dcfe246ad7",
+      "name": "Implant (general)",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "metadata_or_reference_record",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "GM/player or future implant condition resolver"
+    },
+    {
+      "id": "58e37d40d3aa7d4b",
+      "name": "Precision Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "precision-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "94b1951d4795f602",
+      "name": "Resilience Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "resilience-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "d6d3b0a2ec01ca9a",
+      "name": "Speed Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "speed-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "cb0dcc59f7ced910",
+      "name": "Strength Implant",
+      "tree": "Implant",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "strength-implant"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "fc91564e800719be",
+      "name": "Biotech Mastery",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_biotech_crafting_resolver"
+    },
+    {
+      "id": "7f792f0e531e9abb",
+      "name": "Expedient Mending",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "expedient-mending"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    },
+    {
+      "id": "f9047f30ef6712af",
+      "name": "Expert Shaper",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_reroll_resolver"
+    },
+    {
+      "id": "bebc181408831371",
+      "name": "Master Mender",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_biotech_mending_resolver"
+    },
+    {
+      "id": "bf0c791fe21df919",
+      "name": "Skilled Implanter",
+      "tree": "Shaper",
+      "category": "Shaper",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 1,
+      "removedEffects": 1,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_bio_implant_surgery_resolver"
+    },
+    {
+      "id": "a86559a808738c98",
+      "name": "Biotech Adept",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_skill_reroll_resolver"
+    },
+    {
+      "id": "bed279ef3c81c42d",
+      "name": "Bugbite",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "contextual_runtime_rule",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "bugbite"
+      ],
+      "owner": "CombatOptionResolver / weapon rule modifier path"
+    },
+    {
+      "id": "76eb427551c6495c",
+      "name": "Curved Throw",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "contextual_runtime_rule_and_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "curved-throw"
+      ],
+      "addedContextualRules": [
+        "curved-throw"
+      ],
+      "owner": "CombatOptionResolver + AbilityCombatActionResolver"
+    },
+    {
+      "id": "6ef0900cd62869e7",
+      "name": "Surprising Weapons",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "cleaned_future_runtime_context",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [],
+      "owner": "future_post_hit_target_state_resolver"
+    },
+    {
+      "id": "b66c142c79341858",
+      "name": "Veiled Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "category": "Scoundrel",
+      "classification": "combat_action_card",
+      "removedModifierRows": 0,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "veiled-biotech-draw"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver"
+    }
+  ],
+  "notes": [
+    "This pass removes unsafe generic migrated modifiers from medical, biotech, and implant talents rather than letting them apply as always-on attack/defense bonuses.",
+    "Implant talents are surfaced as manual standard-action cards because their bonuses are granted to adjacent willing living recipients for encounter duration, not passively to the owning actor.",
+    "Bugbite uses the existing weapon-rule modifier path to add +1 weapon die only for Razor Bug and Thud Bug contexts.",
+    "Curved Throw uses a swift action card plus an optional attack flag that suppresses cover only for the next Thud Bug/Razor Bug attack when selected.",
+    "Biotech surgery, mending, crafting, and skill-reroll talents are left as cleaned future-runtime contexts until their owning subsystem exists."
+  ],
+  "nextRecommendedBatch": {
+    "suggestedTheme": "Remaining Force/biotech/social edge cases or any talent tree still carrying migrated generic modifiers/effects after T18.",
+    "suggestedAuditQuery": "Scan remaining talents.db for abilityMeta.modifiers and embedded effects outside already-cleaned phase tags."
+  }
+}

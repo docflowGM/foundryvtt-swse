@@ -1,0 +1,128 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--mechanic">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">Feat Record</div>
+    <h3>{{item.name}}</h3>
+    <p>{{#if entityDialog.feat.shortSummary}}{{entityDialog.feat.shortSummary}}{{else}}Feat data is stored on the existing <code>system.*</code> feat fields and surfaced here through the feat resolver.{{/if}}</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Type</span><strong>{{entityDialog.feat.featTypeLabel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Exec</span><strong>{{entityDialog.feat.executionModel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Choice</span><strong>{{#if entityDialog.feat.choiceRequired}}Required{{else}}None{{/if}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Effects</span><strong>{{entityDialog.feat.effectCount}}</strong></div>
+  </div>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Classification</h3>
+
+    <div class="form-field">
+      <label>Feat Type</label>
+      <select name="system.featType" class="item-category-select">
+        {{#each entityDialog.feat.featTypeOptions}}
+        <option value="{{this.value}}" {{#if (eq ../entityDialog.feat.featType this.value)}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label>Source Book</label>
+      <input type="text" name="system.sourcebook" value="{{entityDialog.feat.sourcebook}}" placeholder="Saga Edition Core Rulebook" />
+    </div>
+
+    <div class="form-field">
+      <label>Page</label>
+      <input type="number" name="system.page" value="{{entityDialog.feat.page}}" data-dtype="Number" min="0" />
+    </div>
+
+    <div class="form-field form-field--full">
+      <label>Tags</label>
+      <input type="text" name="system.tags" value="{{entityDialog.feat.tagsText}}" placeholder="general, offense, choice_required" />
+      <p class="swse-entity-dialog__field-note">Saved back to the existing <code>system.tags</code> array.</p>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Runtime Metadata</h3>
+
+    <div class="form-field">
+      <label>Execution Model</label>
+      <input type="text" name="system.executionModel" value="{{entityDialog.feat.executionModel}}" placeholder="PASSIVE" />
+    </div>
+
+    <div class="form-field">
+      <label>Subtype</label>
+      <input type="text" name="system.subType" value="{{entityDialog.feat.subType}}" placeholder="STATE / MODIFIER / RULE" />
+    </div>
+
+    <div class="form-field">
+      <label>Mechanics Mode</label>
+      <input type="text" name="system.abilityMeta.mechanicsMode" value="{{entityDialog.feat.mechanicsMode}}" placeholder="passive / conditional / manual" />
+    </div>
+
+    <div class="form-field">
+      <label>Application Scope</label>
+      <input type="text" name="system.abilityMeta.applicationScope" value="{{entityDialog.feat.applicationScope}}" placeholder="skill_roll / attack_option / defense" />
+    </div>
+  </section>
+</div>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/prereqs.hbs}}
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Choice On Selection</h3>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.choiceMeta.required" {{#if entityDialog.feat.choice.required}}checked{{/if}} /> Requires Choice</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.choiceMeta.repeatable" {{#if entityDialog.feat.choice.repeatable}}checked{{/if}} /> Repeatable</label>
+    </div>
+
+    <div class="form-field">
+      <label>Choice Kind</label>
+      <input type="text" name="system.choiceMeta.choiceKind" value="{{entityDialog.feat.choice.kind}}" placeholder="skill_focus / weapon_group / armor_type" />
+    </div>
+
+    <div class="form-field">
+      <label>Choice Label</label>
+      <input type="text" name="system.choiceMeta.label" value="{{entityDialog.feat.choice.label}}" placeholder="Weapon Group" />
+    </div>
+
+    <div class="form-field">
+      <label>Selected Choice</label>
+      <input type="text" name="system.selectedChoice" value="{{entityDialog.feat.choice.selected}}" placeholder="Resolved choice on owned item" />
+    </div>
+
+    <div class="form-field">
+      <label>Storage Path</label>
+      <input type="text" name="system.choiceMeta.storagePath" value="{{entityDialog.feat.choice.storagePath}}" placeholder="flags.swse.choices..." />
+    </div>
+  </section>
+</div>
+
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Rules Text</h3>
+  <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="form-field form-field--full">
+      <label>Benefit / Effect</label>
+      <textarea name="system.benefit" rows="6">{{entityDialog.feat.benefit}}</textarea>
+    </div>
+    <div class="form-field form-field--full">
+      <label>Special</label>
+      <textarea name="system.special" rows="6">{{entityDialog.feat.special}}</textarea>
+    </div>
+    <div class="form-field form-field--full">
+      <label>Normal</label>
+      <textarea name="system.normalText" rows="3">{{entityDialog.feat.normalText}}</textarea>
+    </div>
+    <div class="form-field form-field--full">
+      <label>Short Summary</label>
+      <textarea name="system.shortSummary" rows="3">{{entityDialog.feat.shortSummary}}</textarea>
+    </div>
+  </div>
+</section>
+
+<section class="item-editor__section swse-entity-dialog__callout swse-entity-dialog__callout--resolver">
+  <h3 class="item-editor__section-title">Feat Resolver Notes</h3>
+  <p class="swse-entity-dialog__hint">{{#if entityDialog.feat.conditionSummary}}{{entityDialog.feat.conditionSummary}}{{else}}This phase surfaces existing feat metadata. It does not rewrite feat mechanics or migrate prerequisites yet.{{/if}}</p>
+</section>

@@ -1,0 +1,126 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--item">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">Gear Profile</div>
+    <h3>{{item.name}}</h3>
+    <p>General equipment uses the existing <code>equipment</code> item schema. Categories here are presentation/store/inventory helpers, not new item types.</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Category</span><strong>{{entityDialog.equipment.categoryLabel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Qty</span><strong>{{entityDialog.equipment.quantity}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Weight</span><strong>{{entityDialog.equipment.totalWeight}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Cost</span><strong>{{entityDialog.equipment.cost}}</strong></div>
+  </div>
+</section>
+
+<section class="item-editor__section swse-entity-dialog__callout swse-entity-dialog__callout--resolver">
+  <h3 class="item-editor__section-title">Equipment Data Source</h3>
+  <p class="swse-entity-dialog__hint">This body reads quantity, encumbrance, store value, and workbench metadata from the existing equipment fields. It adds no parallel gear model; it simply makes those current fields easier to edit.</p>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col swse-entity-dialog__gear-grid">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Inventory</h3>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Category</label>
+        <select name="system.category">
+          {{#each entityDialog.equipment.categoryOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.category this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Size</label>
+        <select name="system.size">
+          {{#each entityDialog.equipment.sizeOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.size this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Quantity</label>
+        <input type="number" name="system.quantity" value="{{entityDialog.equipment.quantity}}" min="1" step="1" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Weight</label>
+        <input type="number" name="system.weight" value="{{entityDialog.equipment.weight}}" step="0.1" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Cost</label>
+        <input type="number" name="system.cost" value="{{entityDialog.equipment.cost}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Value</label>
+        <input type="number" name="system.value" value="{{entityDialog.equipment.value}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Availability</label>
+        <select name="system.restriction">
+          {{#each entityDialog.equipment.availabilityOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.restriction this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Total Weight</label>
+        <input type="number" value="{{entityDialog.equipment.totalWeight}}" disabled />
+        <p class="swse-entity-dialog__field-note">Readout only: quantity × weight. Encumbrance continues to use <code>system.quantity</code> and <code>system.weight</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Workbench / Store Hooks</h3>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Upgrade Slots</label>
+        <input type="number" name="system.upgradeSlots" value="{{entityDialog.equipment.upgradeSlots}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Template Cost</label>
+        <input type="number" name="system.templateCost" value="{{entityDialog.equipment.templateCost}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Primary Template</label>
+        <input type="text" name="system.gearTemplate" value="{{entityDialog.equipment.gearTemplate}}" placeholder="Existing template key" />
+      </div>
+
+      <div class="form-field">
+        <label>Secondary Template</label>
+        <input type="text" name="system.gearTemplateSecondary" value="{{entityDialog.equipment.gearTemplateSecondary}}" placeholder="Optional secondary template" />
+      </div>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.equipped" {{#if entityDialog.equipment.equipped}}checked{{/if}} /> Equipped</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.integrated" {{#if entityDialog.equipment.integrated}}checked{{/if}} /> Integrated</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.sizeIncreaseApplied" {{#if entityDialog.equipment.sizeIncreaseApplied}}checked{{/if}} /> Size Increase Applied</label>
+    </div>
+  </section>
+</div>
+
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Tags & Notes</h3>
+  <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="form-field form-field--full">
+      <label>Tags (comma-separated)</label>
+      <input type="text" name="system.tags" value="{{entityDialog.equipment.tagsText}}" placeholder="medical, consumable, security" />
+    </div>
+
+    <div class="form-field form-field--full">
+      <label>Properties (comma-separated)</label>
+      <input type="text" name="system.properties" value="{{entityDialog.equipment.propertiesText}}" placeholder="single-use, container, toolkit" />
+    </div>
+  </div>
+</section>

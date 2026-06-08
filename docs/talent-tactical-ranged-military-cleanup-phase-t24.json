@@ -1,0 +1,598 @@
+{
+  "phase": "T24",
+  "title": "Tactical ranged / military leftover talent cleanup",
+  "scope": {
+    "treeNames": [
+      "Turret",
+      "Jumptrooper",
+      "Advance Patrol",
+      "Republic Commando",
+      "Vanguard",
+      "Carbineer",
+      "Pistoleer",
+      "Critical Master",
+      "Weapon Master"
+    ],
+    "treeSummaries": [
+      {
+        "name": "Advance Patrol",
+        "changed": 2,
+        "talentCount": 2
+      },
+      {
+        "name": "Carbineer",
+        "changed": 8,
+        "talentCount": 8
+      },
+      {
+        "name": "Critical Master",
+        "changed": 5,
+        "talentCount": 7
+      },
+      {
+        "name": "Jumptrooper",
+        "changed": 7,
+        "talentCount": 7
+      },
+      {
+        "name": "Pistoleer",
+        "changed": 5,
+        "talentCount": 5
+      },
+      {
+        "name": "Republic Commando",
+        "changed": 7,
+        "talentCount": 7
+      },
+      {
+        "name": "Turret",
+        "changed": 6,
+        "talentCount": 6
+      },
+      {
+        "name": "Vanguard",
+        "changed": 8,
+        "talentCount": 8
+      },
+      {
+        "name": "Weapon Master",
+        "changed": 9,
+        "talentCount": 10
+      }
+    ]
+  },
+  "summary": {
+    "treesReviewed": 9,
+    "talentDocumentsChanged": 57,
+    "removedLegacyModifierRows": 18,
+    "removedEmbeddedActiveEffects": 7,
+    "combatActionCardsAddedOrRefreshed": 34,
+    "runtimeRulesAddedOrRefreshed": 21,
+    "codeFilesChanged": [
+      "scripts/engine/combat/combat-option-resolver.js"
+    ]
+  },
+  "implementationNotes": [
+    "Turret talents no longer mutate the owning actor defense/actions through stale ActiveEffects; they are action/reference cards until a turret actor subsystem owns the created turret.",
+    "Jumptrooper and Advance Patrol contextual movement/surprise/initiative talents no longer apply always-on attack, skill, or Reflex bonuses.",
+    "Critical Master riders now use a lightweight rule path that exposes targetEffectsOnCritical on attack cards; final target mutation remains GM/runtime-applied.",
+    "Weapon Master selected-choice hit riders expose DR/DT adjustments on attack cards without permanent sheet mutation.",
+    "Greater Weapon Focus/Specialization use safe selected-choice roll-context modifiers, so they only apply when the chosen weapon group/exotic weapon matches the rolled weapon.",
+    "Carbineer, Pistoleer, Vanguard, Republic Commando combat options use CombatOptionResolver flags/options where existing context is sufficient."
+  ],
+  "changedTalents": [
+    {
+      "id": "2b44b253e4174300",
+      "name": "Forward Patrol",
+      "tree": "Advance Patrol",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "fc4dd5a981974626",
+      "name": "Watchful Step",
+      "tree": "Advance Patrol",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "9b337a844329fa17",
+      "name": "Blowback",
+      "tree": "Carbineer",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "7d30702a5a2640a4",
+      "name": "Close Contact",
+      "tree": "Carbineer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "ecb678c47bb2cb43",
+      "name": "Multiattack Proficiency (rifles)",
+      "tree": "Carbineer",
+      "actions": 0,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "970d8d555645604d",
+      "name": "Old Faithful",
+      "tree": "Carbineer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "f5fcf2752e99961a",
+      "name": "Opportunity Fire",
+      "tree": "Carbineer",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "d24b04541998b27b",
+      "name": "Rifle Master",
+      "tree": "Carbineer",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "554e245686231855",
+      "name": "Shoot from the Hip",
+      "tree": "Carbineer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "2c1268268212d135",
+      "name": "Snap Shot",
+      "tree": "Carbineer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "72ccf7bbe3048453",
+      "name": "Deny Move",
+      "tree": "Critical Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "9e2092257b53cd21",
+      "name": "Flurry Attack",
+      "tree": "Critical Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "9d235eba6b3e5daf",
+      "name": "Knockback",
+      "tree": "Critical Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "874ffa6b66cf2c37",
+      "name": "Reduce Defense",
+      "tree": "Critical Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "c80edefd9c32ad02",
+      "name": "Reduce Mobility",
+      "tree": "Critical Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "cc78c981176d4fed",
+      "name": "Avoid Collisions",
+      "tree": "Jumptrooper",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "67a08d46f24c4fdd",
+      "name": "Crash Landings",
+      "tree": "Jumptrooper",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "61c9413bde23411a",
+      "name": "Extended Sputters",
+      "tree": "Jumptrooper",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "1bda3fdaa84240d3",
+      "name": "Mobility",
+      "tree": "Jumptrooper",
+      "actions": 0,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "d1418afeaa3f40ec",
+      "name": "Reflexive Tilting",
+      "tree": "Jumptrooper",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "395daa7cd6f14b8f",
+      "name": "Rough Landings",
+      "tree": "Jumptrooper",
+      "actions": 3,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "707dd4f0b5c744a6",
+      "name": "Special:",
+      "tree": "Jumptrooper",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "c41461c3bdd0165d",
+      "name": "Dash and Blast",
+      "tree": "Pistoleer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "433c2e9c0e71aceb",
+      "name": "Flanking Foe",
+      "tree": "Pistoleer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "52a4914cca90cc4d",
+      "name": "Guaranteed Shot",
+      "tree": "Pistoleer",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "223ba62ffbabb9c2",
+      "name": "Hailfire",
+      "tree": "Pistoleer",
+      "actions": 1,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "c219dc05ccc7db81",
+      "name": "Twin Shot",
+      "tree": "Pistoleer",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "c5996de1e3c69c04",
+      "name": "Ambush (Republic Commando)",
+      "tree": "Republic Commando",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "bff3997bbdecc98a",
+      "name": "Gun Club",
+      "tree": "Republic Commando",
+      "actions": 1,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "fb003bc00401f0b7",
+      "name": "Higher Yield",
+      "tree": "Republic Commando",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "f8922fbb1ac0b6d3",
+      "name": "Rapid Reload",
+      "tree": "Republic Commando",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "b2a9f60d6647fcc4",
+      "name": "Shoulder to Shoulder",
+      "tree": "Republic Commando",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "22674c41b3d185be",
+      "name": "Strength in Numbers",
+      "tree": "Republic Commando",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "032242fb87215e06",
+      "name": "Weapon Shift",
+      "tree": "Republic Commando",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "7b56d0b92582ae88",
+      "name": "Blaster Turret I",
+      "tree": "Turret",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "1b1f818e56956bc5",
+      "name": "Blaster Turret II",
+      "tree": "Turret",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "aa2a3697eeab3e35",
+      "name": "Blaster Turret III",
+      "tree": "Turret",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "c2f332d1e74e3e1a",
+      "name": "Ion Turret",
+      "tree": "Turret",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "8a551fd42b051d0e",
+      "name": "Stun Turret",
+      "tree": "Turret",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "17ec736c3984fe43",
+      "name": "Turret Self-Destruct",
+      "tree": "Turret",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "d6f62f5d8b003e14",
+      "name": "Enhanced Vision",
+      "tree": "Vanguard",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "1584c86ad48d7b81",
+      "name": "Impenetrable Cover",
+      "tree": "Vanguard",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "fb495a33cd53da43",
+      "name": "Invisible Attacker",
+      "tree": "Vanguard",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "10a678b2b7e3ac0e",
+      "name": "Mark the Target",
+      "tree": "Vanguard",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "f7b8af6b2e6b50c3",
+      "name": "Maximize Cover",
+      "tree": "Vanguard",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "f75fa286772de3e7",
+      "name": "Shellshock",
+      "tree": "Vanguard",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "148e7a10a55d6ed3",
+      "name": "Soften the Target",
+      "tree": "Vanguard",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "bd6cbb85cf7fc8a2",
+      "name": "Triangulate",
+      "tree": "Vanguard",
+      "actions": 1,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "3e35df4fce7082a3",
+      "name": "Controlled Burst",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "383915a7d11e1225",
+      "name": "Devastating Attack",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "fb103ac0e4501e95",
+      "name": "Exotic Weapon Mastery",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "d3b19d5e369f579d",
+      "name": "Greater Devastating Attack",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "1718ec6cdf765a57",
+      "name": "Greater Penetrating Attack",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "642c6c8643db7470",
+      "name": "Greater Weapon Focus",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 0,
+      "modifierRows": 1,
+      "effects": 0
+    },
+    {
+      "id": "e9820b341bf94de1",
+      "name": "Greater Weapon Specialization",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 0,
+      "modifierRows": 1,
+      "effects": 0
+    },
+    {
+      "id": "1b3d5d3260391867",
+      "name": "Multiattack Proficiency (heavy)",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 0,
+      "modifierRows": 0,
+      "effects": 0
+    },
+    {
+      "id": "7d547902b8d9109e",
+      "name": "Penetrating Attack",
+      "tree": "Weapon Master",
+      "actions": 0,
+      "rules": 1,
+      "modifierRows": 0,
+      "effects": 0
+    }
+  ]
+}

@@ -123,7 +123,20 @@ export const RULE_TYPES = {
    * Increases unarmed attack damage by N die steps.
    * Params: { steps: number }
    */
-  UNARMED_DAMAGE_STEP: 'UNARMED_DAMAGE_STEP'
+  UNARMED_DAMAGE_STEP: 'UNARMED_DAMAGE_STEP',
+
+  /**
+   * UNARMED_EXTRA_WEAPON_DICE
+   * Adds N extra weapon dice to unarmed or natural weapon damage.
+   * Params: { value: number }
+   */
+  UNARMED_EXTRA_WEAPON_DICE: 'UNARMED_EXTRA_WEAPON_DICE',
+
+  /**
+   * IGNORE_DAMAGE_REDUCTION_IF_OVERCOME
+   * Ignore target DR when qualifying unarmed/natural weapon damage exceeds DR.
+   */
+  IGNORE_DAMAGE_REDUCTION_IF_OVERCOME: 'IGNORE_DAMAGE_REDUCTION_IF_OVERCOME'
 };
 
 /**

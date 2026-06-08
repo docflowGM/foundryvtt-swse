@@ -988,6 +988,32 @@ function readNestedFormEntries(form, prefix) {
 }
 
 /**
+ * Return the charging situational label, adjusted for combined feats.
+ * Dodge + Charging Fire (KotOR CG): charging Reflex penalty is -1 instead of -2.
+ * @param {Actor|null} actor
+ * @returns {string}
+ */
+function _chargingLabel(actor) {
+  try {
+    if (actor) {
+      const items = Array.from(actor?.items ?? []);
+      const hasDodge = items.some(i =>
+        String(i?.type ?? '').toLowerCase() === 'feat' &&
+        String(i?.name ?? '').trim().toLowerCase() === 'dodge'
+      );
+      const hasChargingFire = items.some(i =>
+        String(i?.type ?? '').toLowerCase() === 'feat' &&
+        String(i?.name ?? '').trim().toLowerCase() === 'charging fire'
+      );
+      if (hasDodge && hasChargingFire) {
+        return '+2 attack, -1 Ref defense until next turn. (Dodge + Charging Fire combined feat)';
+      }
+    }
+  } catch { /* graceful fallback */ }
+  return '+2 attack, usually -2 defenses until next turn.';
+}
+
+/**
  * Show a contextual Roll Configurator V2 before making a roll.
  * Backward compatible return shape: customModifier, cover, concealment,
  * situationalBonus, coverBonus, missChance, useForcePoint, twoHanded.
@@ -1043,7 +1069,7 @@ export async function showRollModifiersDialog(options = {}) {
             <div class="swse-roll-config-subpanel">
               <h5>Quick Toggles</h5>
               <label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aiming</b><small>+2 attack when the action applies.</small></span></label>
-              <label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>+2 attack, usually -2 defenses until next turn.</small></span></label>
+              <label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="higherGround" /> <span><b>Higher Ground</b><small>+1 when applicable.</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank</b><small>+1 attack/damage in close range.</small></span></label>

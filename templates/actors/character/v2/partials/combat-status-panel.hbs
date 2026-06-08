@@ -1,0 +1,82 @@
+{{!-- Declared combat state: no LoS, wall, or safe-zone automation. --}}
+<section class="swse-panel swse-combat-status-panel" data-combat-status-panel>
+  <div class="swse-panel-title">Combat Status / Modes</div>
+
+  <div class="swse-combat-status-section">
+    <div class="swse-combat-status-heading">
+      <span>Cover</span>
+      <small>Player / GM declared</small>
+    </div>
+    <label class="swse-combat-cover-select">
+      <span>Behind Cover</span>
+      <select data-action="swse-combat-cover-mode" {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+        {{#each combatStatus.coverOptions as |option|}}
+          <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+        {{/each}}
+      </select>
+    </label>
+    <div class="swse-combat-status-help {{#if combatStatus.coverIsTotal}}is-warning{{/if}}">
+      <strong>Note:</strong> Cover is declared by the player or GM. The system applies the chosen defense modifier, but does not calculate line of sight, walls, or safe zones.
+    </div>
+  </div>
+
+  <div class="swse-combat-status-section">
+    <div class="swse-combat-status-heading">
+      <span>Defensive Mode</span>
+      <small>Cover can stack with either mode</small>
+    </div>
+    <div class="swse-defensive-mode-grid" role="group" aria-label="Defensive mode">
+      {{#each combatStatus.defensiveModes as |mode|}}
+        <button type="button"
+                class="swse-defensive-mode {{#if mode.active}}is-active{{/if}}"
+                data-action="swse-combat-defensive-mode"
+                data-mode="{{mode.value}}"
+                {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
+          <span>{{mode.label}}</span>
+          <small>{{mode.detail}}</small>
+        </button>
+      {{/each}}
+    </div>
+    <div class="swse-combat-status-help">
+      Fighting Defensively and Full Defense are mutually exclusive. Enabling Full Defense during active combat spends a Standard action and locks attacks through the canonical roller.
+    </div>
+  </div>
+
+  <div class="swse-combat-status-section swse-combat-conditions-strip">
+    <button type="button"
+            class="swse-condition-toggle {{#if combatStatus.prone}}is-active{{/if}}"
+            data-action="swse-combat-toggle-prone"
+            {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+      <span>Prone</span>
+      <small>Conditional: ranged/melee dependent</small>
+    </button>
+  </div>
+
+
+  <div class="swse-combat-status-section swse-combat-declaration-tools">
+    <div class="swse-combat-status-heading">
+      <span>Declarations</span>
+      <small>GM / table adjudication</small>
+    </div>
+    <div class="swse-combat-declaration-actions">
+      <button type="button"
+              class="swse-combat-declaration-btn"
+              data-action="swse-combat-broadcast-status"
+              {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+        Broadcast Status
+      </button>
+      {{#if combatStatus.hasSafeZone}}
+        <button type="button"
+                class="swse-combat-declaration-btn is-safe-zone"
+                data-action="swse-combat-declare-safe-zone"
+                {{#unless combatStatus.canDeclareSafeZone}}disabled{{/unless}}>
+          Declare Safe Zone
+        </button>
+      {{/if}}
+    </div>
+    <div class="swse-combat-status-help">
+      Broadcast cards make declared states visible in chat. Safe Zone is posted as a declaration card only; it does not create templates, walls, or automatic map geometry.
+    </div>
+  </div>
+
+</section>

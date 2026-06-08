@@ -94,6 +94,37 @@ export function getMartialArtsStep(actor) {
   return Math.max(explicitSteps, fallbackSteps);
 }
 
+function getAllOwnedRules(actor) {
+  const rules = [];
+  for (const item of Array.from(actor?.items ?? [])) {
+    const abilityRules = item?.system?.abilityMeta?.rules;
+    if (!Array.isArray(abilityRules)) continue;
+    for (const rule of abilityRules) {
+      if (!rule?.type) continue;
+      rules.push({ ...rule, sourceItemId: item.id, sourceName: item.name });
+    }
+  }
+  return rules;
+}
+
+export function getUnarmedFamilyExtraWeaponDice(actor) {
+  const rules = getAllOwnedRules(actor).filter(rule => String(rule.type) === 'UNARMED_EXTRA_WEAPON_DICE');
+  let total = 0;
+  const highestByKey = new Map();
+  for (const rule of rules) {
+    const value = Math.max(0, ruleNumber(rule, ['value', 'dice', 'extraDice'], 0));
+    if (!value) continue;
+    const stackingKey = String(rule.stackingKey || rule.stackKey || rule.id || '').trim();
+    if (stackingKey && rule.stacking === 'highest') {
+      highestByKey.set(stackingKey, Math.max(highestByKey.get(stackingKey) || 0, value));
+    } else {
+      total += value;
+    }
+  }
+  for (const value of highestByKey.values()) total += value;
+  return total;
+}
+
 export function unarmedAttackDoesNotProvoke(actor) {
   const hasExplicitRule = getFeatRules(actor).some(rule => String(rule.type) === 'UNARMED_DOES_NOT_PROVOKE_AOO');
   return hasExplicitRule || actorHasFeat(actor, 'Martial Arts I');
@@ -136,6 +167,21 @@ function compareDamageFormula(a, b) {
   return DIE_STEPS.indexOf(a) - DIE_STEPS.indexOf(b);
 }
 
+function getPrimaryDamageDieFormula(baseFormula) {
+  const match = String(baseFormula ?? '').match(/(?:^|[^\d])(\d*)d(\d+)/i);
+  if (!match) return null;
+  const sides = Number(match[2]);
+  return Number.isFinite(sides) && sides > 0 ? `d${sides}` : null;
+}
+
+function appendExtraWeaponDice(baseFormula, extraDice) {
+  const count = Number(extraDice ?? 0);
+  if (!Number.isFinite(count) || count <= 0) return String(baseFormula ?? '1');
+  const die = getPrimaryDamageDieFormula(baseFormula);
+  if (!die) return String(baseFormula ?? '1');
+  return `${baseFormula} + ${count}${die}`;
+}
+
 export function getBaseUnarmedDamage(actor, options = {}) {
   const size = normalizeSize(actor);
   const isDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
@@ -158,8 +204,10 @@ export function getUnarmedDamage(actor, options = {}) {
 }
 
 export function buildVirtualUnarmedWeapon(actor, options = {}) {
-  const damage = getUnarmedDamage(actor, options);
+  const baseDamage = getUnarmedDamage(actor, options);
   const martialArtsStep = getMartialArtsStep(actor);
+  const extraWeaponDice = getUnarmedFamilyExtraWeaponDice(actor);
+  const damage = appendExtraWeaponDice(baseDamage, extraWeaponDice);
   const appendageLabel = options.appendage?.name ? ` (${options.appendage.name})` : '';
   const noProvokeOpportunity = unarmedAttackDoesNotProvoke(actor);
   return {
@@ -173,6 +221,9 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
         unarmed: true,
         droidAppendage: actor?.type === 'droid' || actor?.system?.isDroid === true,
         martialArtsStep,
+        martialArtsDamageApplied: true,
+        unarmedExtraWeaponDice: extraWeaponDice,
+        unarmedExtraWeaponDiceApplied: extraWeaponDice > 0,
         noProvokeOpportunity
       }
     },
@@ -192,7 +243,7 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
       attackOptions: {
         noProvokeOpportunity
       },
-      description: `Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Strength modifier via the damage pipeline, and Martial Arts feat die-step increases.${noProvokeOpportunity ? ' Martial Arts I prevents this unarmed attack from provoking attacks of opportunity.' : ''}`
+      description: `Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Martial Arts feat die-step increases, unarmed-family extra weapon dice from talents, and Strength modifier via the damage pipeline.${noProvokeOpportunity ? ' Martial Arts I prevents this unarmed attack from provoking attacks of opportunity.' : ''}`
     }
   };
 }
@@ -207,6 +258,7 @@ export function buildUnarmedAttackContext(actor, options = {}) {
     isUnarmed: true,
     isDroidAppendage: weapon.flags.swse.droidAppendage,
     martialArtsStep: weapon.flags.swse.martialArtsStep,
+    unarmedExtraWeaponDice: weapon.flags.swse.unarmedExtraWeaponDice,
     noProvokeOpportunity: weapon.flags.swse.noProvokeOpportunity === true,
     provokesOpportunityAttack: weapon.system.provokesOpportunityAttack !== false,
     damage: weapon.system.damage,
@@ -216,6 +268,7 @@ export function buildUnarmedAttackContext(actor, options = {}) {
     tags: [
       'Always Available',
       ...(weapon.flags.swse.martialArtsStep ? [`Martial Arts ${weapon.flags.swse.martialArtsStep}`] : []),
+      ...(weapon.flags.swse.unarmedExtraWeaponDice ? [`+${weapon.flags.swse.unarmedExtraWeaponDice} weapon die`] : []),
       ...(weapon.flags.swse.noProvokeOpportunity ? ['No AoO'] : [])
     ],
     weapon
@@ -228,6 +281,7 @@ export const UnarmedAttackHelper = Object.freeze({
   getBaseUnarmedDamage,
   getMartialArtsStep,
   getUnarmedDamage,
+  getUnarmedFamilyExtraWeaponDice,
   unarmedAttackDoesNotProvoke,
   increaseDamageDie
 });

@@ -5,8 +5,10 @@ export class CustomLanguageDialog extends SWSEApplicationV2 {
 
   static DEFAULT_OPTIONS = {
     id: 'swse-custom-language-dialog',
-    classes: ['swse-custom-language-dialog-app'],
-    template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/custom-language-dialog.hbs',
+    classes: [
+      ...(SWSEApplicationV2.DEFAULT_OPTIONS?.classes || []),
+      'swse-custom-language-dialog-app',
+    ],
     position: {
       width: 440,
       height: 'auto',
@@ -16,6 +18,12 @@ export class CustomLanguageDialog extends SWSEApplicationV2 {
       resizable: false,
       minimizable: false,
       frame: true,
+    },
+  };
+
+  static PARTS = {
+    content: {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/custom-language-dialog.hbs',
     },
   };
 

@@ -1,0 +1,165 @@
+{
+  "phase": "T20",
+  "title": "Martial Arts Master / Master of Teras Kasi talent cleanup",
+  "generatedAt": "2026-06-07",
+  "scope": {
+    "requestedByUser": "Teras Kasi along with the Martial Arts Master trees; include the virtual Unarmed Strike surface and natural weapons for all unarmed-family effects.",
+    "treeNames": [
+      "Master of Teras Kasi",
+      "Awareness (reviewed as the second Martial Arts Master class tree; no new unsafe rows found in this pass)"
+    ],
+    "treeIds": {
+      "ba726f623e42f849": "Master of Teras Kasi",
+      "1c48d1cd9ab1f5c8": "Awareness"
+    },
+    "naturalWeaponPolicy": "For this cleanup pass, species natural weapons count as unarmed-family attacks for unarmed strike feat/talent improvements. This matches the user's provided FAQ/TLDR direction and avoids leaving claw/bite/talon weapons behind when a rule says it improves unarmed attacks."
+  },
+  "summary": {
+    "talentDocumentsReviewed": 13,
+    "talentDocumentsChanged": 6,
+    "removedLegacyModifierRows": 6,
+    "removedEmbeddedActiveEffects": 0,
+    "combatActionCardsAddedOrRefreshed": 3,
+    "contextualRulesAddedOrRefreshed": 4,
+    "broadRuntimePatches": true,
+    "codeFilesChanged": [
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/engine/combat/resolvers/damage-reduction-resolver.js",
+      "scripts/engine/combat/damage-mitigation-manager.js",
+      "scripts/engine/combat/damage-resolution-engine.js",
+      "scripts/engine/combat/unarmed-attack-helper.js",
+      "scripts/engine/abilities/passive/rule-types.js",
+      "scripts/engine/execution/rules/rule-enum.js",
+      "scripts/engine/execution/rules/rule-definitions.js"
+    ]
+  },
+  "implementedContextual": [
+    {
+      "id": "222327492c484b4a",
+      "name": "Teräs Käsi Basics",
+      "tree": "Master of Teras Kasi",
+      "classification": "contextual_runtime_rule",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "UNARMED_EXTRA_WEAPON_DICE"
+      ],
+      "owner": "CombatOptionResolver + UnarmedAttackHelper",
+      "notes": "Removed the unsafe migrated +2 melee attack row. The talent now adds one extra weapon die to virtual Unarmed Strike and species natural weapon damage. The duplicate Teras/Teräs compendium rows share a highest-stacking key so accidental duplicate ownership does not double-count the extra die."
+    },
+    {
+      "id": "67bddb17ae2770f3",
+      "name": "Teras Kasi Basics",
+      "tree": "Master of Teras Kasi",
+      "classification": "contextual_runtime_rule_duplicate_spelling_variant",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "UNARMED_EXTRA_WEAPON_DICE"
+      ],
+      "owner": "CombatOptionResolver + UnarmedAttackHelper",
+      "notes": "Kept the duplicate spelling variant because this pass does not delete compendium documents. Runtime stacking is guarded by stackingKey=teras-kasi-basics-extra-die."
+    },
+    {
+      "id": "566e0020c5866222",
+      "name": "Ignore Damage Reduction",
+      "tree": "Master of Teras Kasi",
+      "classification": "contextual_runtime_rule",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [],
+      "addedContextualRules": [
+        "IGNORE_DAMAGE_REDUCTION_IF_OVERCOME"
+      ],
+      "owner": "DamageReductionResolver",
+      "notes": "DamageReductionResolver now supports attacker-owned rules that ignore DR when post-SR unarmed/natural weapon damage exceeds the target's DR value. This requires the damage packet to carry sourceActor and weapon context."
+    }
+  ],
+  "combatActionCards": [
+    {
+      "id": "379019c29b37d717",
+      "name": "Unarmed Parry",
+      "tree": "Master of Teras Kasi",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "unarmed-parry"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver",
+      "notes": "Reaction timing, Fight Defensively state, incoming melee attack roll, awareness, flat-footed state, and cumulative -2 parry penalties are manual context. The old +2 melee attack row was removed."
+    },
+    {
+      "id": "3282f9b1d3769f9c",
+      "name": "Unarmed Counterstrike",
+      "tree": "Master of Teras Kasi",
+      "classification": "combat_action_card",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "unarmed-counterstrike"
+      ],
+      "addedContextualRules": [],
+      "owner": "AbilityCombatActionResolver",
+      "notes": "Triggered by a successful Unarmed Parry. Surfaced as a manual reaction card and tells the player to use virtual Unarmed Strike or a natural weapon against the parried attacker."
+    },
+    {
+      "id": "69da2f9701ef65b4",
+      "name": "Teras Kasi Mastery",
+      "tree": "Master of Teras Kasi",
+      "classification": "combat_action_card_and_future_executor_rule",
+      "removedModifierRows": 1,
+      "removedEffects": 0,
+      "addedCombatActions": [
+        "teras-kasi-mastery-full-attack"
+      ],
+      "addedContextualRules": [
+        "FULL_ATTACK_AS_STANDARD"
+      ],
+      "owner": "AbilityCombatActionResolver; future FullAttackExecutor",
+      "notes": "Adds a standard-action reference card for unarmed/natural-weapon-only Full Attack. Full automation should be delegated to the FullAttackExecutor workstream."
+    }
+  ],
+  "runtimeNotes": [
+    "CombatOptionResolver now treats flags.swse.isNaturalWeapon, system.naturalWeapon/system.isNaturalWeapon, species-natural-weapon source, and common claw/bite/talon/etc text as unarmed-family weapons for unarmed rules.",
+    "UnarmedAttackHelper now folds unarmed-family extra weapon dice into the virtual Unarmed Strike display/roll surface and flags those dice as already applied so CombatOptionResolver does not add them again for the virtual weapon.",
+    "CombatOptionResolver now avoids double-applying Martial Arts die-step rules to the virtual Unarmed Strike because UnarmedAttackHelper already builds that damage into the virtual weapon.",
+    "Real species natural weapon items still receive Martial Arts die-step and Teras Kasi extra-die improvements through CombatOptionResolver at roll time."
+  ],
+  "validation": {
+    "nodeCheck": [
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/engine/combat/resolvers/damage-reduction-resolver.js",
+      "scripts/engine/combat/damage-mitigation-manager.js",
+      "scripts/engine/combat/damage-resolution-engine.js",
+      "scripts/engine/combat/unarmed-attack-helper.js",
+      "scripts/engine/abilities/passive/rule-types.js",
+      "scripts/engine/execution/rules/rule-enum.js",
+      "scripts/engine/execution/rules/rule-definitions.js"
+    ],
+    "jsonlParsed": [
+      "packs/talents.db"
+    ],
+    "jsonParsed": [
+      "docs/talent-martial-arts-master-cleanup-phase-t20.json"
+    ],
+    "smokeTests": [
+      "DamageReductionResolver bypasses DR for a source actor with Ignore Damage Reduction when natural weapon damage exceeds DR, and does not bypass when damage does not exceed DR."
+    ]
+  },
+  "remainingLimitations": [
+    "Unarmed Parry and Unarmed Counterstrike remain manual reaction cards because the system does not yet have a reaction sequence executor that can compare the parry roll to the incoming attack roll and automatically negate the attack.",
+    "Teras Kasi Mastery is prepared for the FullAttackExecutor but remains a manual standard-action launcher/reference until that executor exists.",
+    "Ignore Damage Reduction needs attack damage application callers to preserve sourceActor and weapon context when applying damage; the resolver support is now present."
+  ],
+  "nextRecommendedBatch": {
+    "treeNames": [
+      "Brawler",
+      "Shockboxer"
+    ],
+    "reason": "These adjacent unarmed/martial trees share the same virtual Unarmed Strike and natural weapon surface and should be audited after Master of Teras Kasi."
+  }
+}

@@ -32,6 +32,12 @@
       <i class="fas fa-tools"></i> Upgrades
     </button>
     {{/if}}
+    <button type="button"
+            class="upgrade-workshop-launch inventory-create-entity-btn"
+            data-action="open-entity-browser"
+            title="Open the SWSE Entity Builder">
+      <i class="fas fa-plus-square"></i> Entity Builder
+    </button>
   </div>
 
   {{#if inventoryPanel.hasEntries}}
@@ -72,6 +78,7 @@
         <button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="weapon">Add Weapon</button>
         <button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="armor">Add Armor</button>
         <button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>
+        <button type="button" class="inventory-add-btn" data-action="open-entity-browser">Entity Builder</button>
       </div>
     </div>
 

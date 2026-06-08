@@ -1,0 +1,33 @@
+{
+  "phase": "T26",
+  "title": "Hunter / pursuit / fear talent cleanup",
+  "scopeTrees": [
+    "Bothan Spynet",
+    "Bounty Hunter",
+    "Brigand",
+    "Cowardice",
+    "Force Hunter",
+    "Genoharadan",
+    "Genohardan",
+    "Infamy",
+    "Infiltration",
+    "Master Of Intrigue",
+    "Outlaw"
+  ],
+  "talentDocumentsChanged": 59,
+  "legacyModifierRowsRemoved": 24,
+  "embeddedActiveEffectsRemoved": 2,
+  "combatActionCardsAddedOrRefreshed": 59,
+  "runtimeRulesAddedOrRefreshed": 12,
+  "notes": [
+    "Bounty Hunter, Force Hunter, Outlaw, Cowardice, Infamy, Bothan Spynet, Infiltration, Genoharadan/Genohardan, Brigand, and Master of Intrigue were reviewed as one hunter/pursuit/fear phase.",
+    "Unsafe migrated always-on modifiers/effects were removed from the scoped trees except the safe static +1 insight Fortitude/Will rows on Jedi Hunter.",
+    "Target-specific, fear, minion, stealth, pursuit, and reaction effects now surface as action/reference cards or opt-in attack options rather than permanent actor mutations.",
+    "Jedi Hunter now exposes the Force Sensitivity damage die as a target-checked attack option while preserving its static defense bonuses."
+  ],
+  "remainingLimitations": [
+    "Several reaction cards depend on future post-hit/post-miss/post-damage event windows; the data now has reaction keys/metadata but not all triggers are automatically surfaced by the chat bridge.",
+    "Compendium source text for Outlaw duplicate Seize the Moment/Find an Opening and Infamy Notorious remains garbled; those entries are flagged for exact-text review instead of inventing mechanics.",
+    "Bothan Spynet target-analysis benefits still require the player/GM to confirm the successful Knowledge/Gather Information check and valid target before toggling attack options."
+  ]
+}

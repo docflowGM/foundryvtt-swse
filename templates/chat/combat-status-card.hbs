@@ -1,0 +1,42 @@
+<section class="swse-chat-card swse-roll-card--combat-status {{#if isSafeZone}}swse-roll-card--safe-zone{{/if}}" data-swse-chat-card-v2="true" data-swse-combat-status-card="true">
+  <div class="corners" aria-hidden="true"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+  <div class="headtick" aria-hidden="true"></div>
+
+  <header class="head">
+    <div class="type-chip"><span class="dot"></span>{{#if isSafeZone}}TACTICAL DECLARATION{{else}}COMBAT STATUS{{/if}}</div>
+    <div class="who">{{actorName}}</div>
+    {{#if round}}<div class="ts">R{{round}}{{#if turn}} · T{{turn}}{{/if}}</div>{{/if}}
+  </header>
+
+  <div class="body swse-combat-status-chat-body">
+    <div class="action">{{title}}</div>
+
+    {{#if hasChips}}
+      <div class="swse-combat-status-chat-chips">
+        {{#each chips as |chip|}}
+          <span class="swse-combat-status-chat-chip is-{{chip.tone}}">{{chip.label}}</span>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="notes">No defensive status is currently declared.</div>
+    {{/if}}
+
+    {{#if isSafeZone}}
+      <div class="swse-combat-status-chat-rules">
+        {{#each safeZoneLines as |line|}}
+          <p>{{line}}</p>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="meta swse-combat-status-chat-meta">
+        <span class="k">Cover</span><span class="v">{{status.coverLabel}}</span>
+        <span class="k">Mode</span><span class="v">{{status.defensiveModeLabel}}</span>
+        <span class="k">Prone</span><span class="v">{{#if status.prone}}Yes{{else}}No{{/if}}</span>
+      </div>
+    {{/if}}
+
+    {{#if note}}
+      <div class="notes">{{note}}</div>
+    {{/if}}
+  </div>
+</section>

@@ -1,0 +1,95 @@
+{
+  "phase": "T21",
+  "title": "Brawler + Shockboxer talent cleanup, with Teras Kasi reaction addendum",
+  "scope": {
+    "trees": [
+      { "name": "Brawler", "treeId": "67fdd8dce9abd6c1" },
+      { "name": "Shockboxer", "treeId": "abc3466390fe4050" },
+      { "name": "Master of Teras Kasi", "treeId": "ba726f623e42f849", "scopeNote": "Addendum only for Unarmed Parry and Unarmed Counterstrike reaction wiring from T20." }
+    ],
+    "talentDocumentsReviewedOrChanged": 20
+  },
+  "summary": {
+    "unsafeLegacyModifiersRemoved": 2,
+    "embeddedActiveEffectsRemoved": 0,
+    "combatActionCardsAddedOrRefreshed": 16,
+    "runtimeAttackOptionsAddedOrRefreshed": 8,
+    "grappleRuntimeHooksAdded": 3,
+    "reactionRegistryEntriesAdded": [
+      "unarmedParry",
+      "unarmedCounterstrike",
+      "retaliationJab"
+    ],
+    "naturalWeaponPolicy": "Any rule in this batch that says unarmed attacks uses the same unarmed-family surface as the virtual Unarmed Strike and species natural weapons."
+  },
+  "runtimeWork": [
+    {
+      "owner": "ReactionEngine / ReactionRegistry",
+      "changes": [
+        "ReactionEngine now derives reaction keys from owned feat/talent abilityMeta in addition to actor.system.derived.reactions.",
+        "Unarmed Parry is registered as an ON_ATTACK_DECLARED reaction for incoming melee attacks while the defender is fighting defensively and not flat-footed.",
+        "Unarmed Parry rolls an unarmed-family weapon, preferring an owned natural/unarmed weapon and falling back to the virtual Unarmed Strike.",
+        "Incoming attack cards now carry attackTotal/DC into reaction buttons so Unarmed Parry can compare against the attack roll like Block/Deflect compare against a DC.",
+        "Unarmed Counterstrike is registered as an ON_REACTION_SUCCESS follow-up and is announced when Unarmed Parry succeeds.",
+        "Retaliation Jab is registered for future ON_ATTACK_MISSED reaction windows, while remaining a truthful reaction lane card today."
+      ]
+    },
+    {
+      "owner": "CombatOptionResolver",
+      "changes": [
+        "Added attackAbilityBonus support for opt-in attack options such as Hammerblow.",
+        "Added halfLevelMinusOne damage formula support so Devastating Melee Smash can add the net extra over Melee Smash instead of double-counting the base +1.",
+        "Brawler/Shockboxer unarmed options use requiresUnarmed, which already treats species natural weapons as unarmed-family attacks."
+      ]
+    },
+    {
+      "owner": "SWSEGrappling",
+      "changes": [
+        "Grab attempts now use the virtual Unarmed Grab weapon, so unarmed-family damage/proficiency surface is shared.",
+        "Grab attack penalty is reduced to -2 for Entangler and 0 for Grabber.",
+        "Grapple checks now read GRAPPLE_BONUS rules from owned talent/feat metadata, enabling Expert Grappler's +2 competence bonus."
+      ]
+    }
+  ],
+  "talentChanges": [
+    { "name": "Unarmed Parry", "status": "reaction_engine_wired", "notes": "Grants unarmedParry reaction key and incoming attack reaction pill support." },
+    { "name": "Unarmed Counterstrike", "status": "reaction_followup_registered", "notes": "Registered as follow-up after successful Unarmed Parry; still not auto-fired until reaction-success chaining is expanded." },
+    { "name": "Cantina Brawler", "status": "runtime_attack_option", "notes": "+2 attack/damage while flanked is now an opt-in unarmed/natural weapon option." },
+    { "name": "Hammerblow", "status": "runtime_attack_option", "notes": "Adds Strength modifier one extra time to unarmed-family attack rolls when toggled for empty-hands context." },
+    { "name": "Sucker Punch", "status": "runtime_attack_option", "notes": "Exports target AoO suppression as an on-hit rider for denied-Dex melee attacks." },
+    { "name": "Entangler", "status": "grapple_hook_and_card", "notes": "Grab penalty reduction to -2 is wired; ongoing target attack penalty remains state/manual." },
+    { "name": "Strong Grab", "status": "combat_action_card", "notes": "Break-action increase is a manual grabbed-target state card." },
+    { "name": "Expert Grappler", "status": "grapple_hook", "notes": "+2 competence bonus on Grapple checks wired through SWSEGrappling." },
+    { "name": "Make Do", "status": "runtime_attack_option", "notes": "Improvised weapon penalty suppression exposed as a contextual attack flag." },
+    { "name": "Grabber", "status": "grapple_hook_and_card", "notes": "Normal Grab -5 penalty is removed in SWSEGrappling." },
+    { "name": "Bayonet Master", "status": "combat_action_card", "notes": "Full Attack/double-weapon package remains carded until FullAttackExecutor handles bayonet-as-double-weapon." },
+    { "name": "Experienced Brawler", "status": "combat_action_cards", "notes": "Three once-per-encounter standard-action sub-actions surfaced as explicit cards." },
+    { "name": "Devastating Melee Smash", "status": "runtime_attack_option", "notes": "Declared melee attack option adds net half-level-over-Melee-Smash damage." },
+    { "name": "Man Down", "status": "reaction_card", "notes": "Ally-downed movement trigger surfaced as reaction card." },
+    { "name": "Counterpunch", "status": "reaction_card", "notes": "Fight Defensively AoO trigger surfaced as reaction card." },
+    { "name": "Pick a Fight", "status": "combat_action_card", "notes": "Surprise-round morale aura and encounter target memory surfaced as marker card." },
+    { "name": "Unrelenting Assault", "status": "combat_action_card", "notes": "Miss/negated melee damage rider surfaced; future post-attack miss hook can consume riderRules." },
+    { "name": "Unbalance Strike", "status": "combat_action_card", "notes": "Grappled-target Strength-to-attack suppression remains manual/contextual." },
+    { "name": "Stinging Jab", "status": "runtime_attack_option", "notes": "Unsafe +2 attack modifier removed; half-damage rider is an opt-in unarmed/natural weapon hit option." },
+    { "name": "Retaliation Jab", "status": "reaction_registered_and_carded", "notes": "Unsafe +2 attack modifier removed; registered for future ON_ATTACK_MISSED reaction window and surfaced as lane card." }
+  ],
+  "validation": {
+    "nodeCheckFiles": [
+      "scripts/engine/combat/reactions/reaction-engine.js",
+      "scripts/engine/combat/reactions/reaction-registry.js",
+      "scripts/combat/rolls/attacks.js",
+      "scripts/combat/rolls/enhanced-rolls.js",
+      "scripts/engine/rolls/swse-roll-engine.js",
+      "scripts/ui/chat/chat-interaction-bridge.js",
+      "scripts/engine/combat/combat-option-resolver.js",
+      "scripts/combat/systems/grappling-system.js"
+    ],
+    "packsTalentsDbJsonlParsed": true,
+    "auditJsonParsed": true
+  },
+  "remainingLimitations": [
+    "Retaliation Jab's ON_ATTACK_MISSED reaction is registered, but the current attack chat flow opens reaction windows before attack resolution. A future post-miss event hook should surface it automatically.",
+    "Unarmed Counterstrike is registered as a reaction-success follow-up, but the current reaction engine does not yet chain ON_REACTION_SUCCESS buttons automatically.",
+    "Bayonet Master needs a specialized FullAttackExecutor package for bayonet-as-double-weapon handling before it should become executable automation."
+  ]
+}

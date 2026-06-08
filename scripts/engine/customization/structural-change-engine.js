@@ -1,5 +1,6 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
+import { resolveArmorData } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 
 function clone(data) { return foundry.utils.deepClone(data); }
 
@@ -144,14 +145,23 @@ export class StructuralChangeEngine {
     };
 
     if (profile.category === 'armor') {
+      const armor = resolveArmorData(item);
       if (areaKey === 'defensive_material') {
-        update['system.defenseBonus'] = Math.max(0, (Number(item.system?.defenseBonus) || 0) - 1);
-        update['system.equipmentBonus'] = Math.max(0, (Number(item.system?.equipmentBonus) || 0) - 1);
+        const nextReflex = Math.max(0, (Number(armor.reflexBonus) || 0) - 1);
+        const nextFortitude = Math.max(0, (Number(armor.fortitudeBonus) || 0) - 1);
+        update['system.defenseBonus'] = nextReflex;
+        update['system.reflexBonus'] = nextReflex;
+        update['system.armorBonus'] = nextReflex;
+        update['system.fortitudeBonus'] = nextFortitude;
+        update['system.fortBonus'] = nextFortitude;
         update['system.strippedFeatures.defensiveMaterial'] = true;
       }
       if (areaKey === 'joint_protection') {
+        const currentMaxDex = armor.maxDexBonus ?? 0;
+        const nextMaxDex = currentMaxDex - 1;
         update['system.weight'] = (Number(item.system?.weight) || 0) * 2;
-        update['system.maxDexBonus'] = (Number(item.system?.maxDexBonus) || 0) - 1;
+        update['system.maxDexBonus'] = nextMaxDex;
+        update['system.maxDex'] = nextMaxDex === null ? 999 : nextMaxDex;
         update['system.strippedFeatures.jointProtection'] = true;
       }
     } else {

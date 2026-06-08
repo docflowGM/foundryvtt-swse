@@ -1,51 +1,56 @@
-{{!-- Action Economy Indicator
-     Displays current turn state with visual hierarchy of actions
-     States: available (green), used (red), degraded (orange)
+{{!-- SWSE V2 Action Economy Ladder
+     Uses the canonical ActionEngine turn state through the sheet context.
+     This partial is display-only; spending remains routed through _applyActionEconomy.
 --}}
 
-<div class="swse-action-economy-indicator">
-  <div class="indicator-label">Action Economy</div>
-
-  <div class="action-hierarchy">
-    {{!-- Full Round Row --}}
-    <div class="action-node action-state-{{actionState.full}}"
-         title="Full Round (both Standard and Move actions)">
-      <span class="action-name">Full Round</span>
-      <span class="action-status">{{actionState.full}}</span>
+<div class="swse-action-economy-ladder" data-action-economy-root>
+  <div class="swse-action-economy-head">
+    <div>
+      <span class="swse-action-economy-eyebrow">Turn Resources</span>
+      <strong>Action Economy</strong>
     </div>
-
-    <div class="hierarchy-arrow">↓</div>
-
-    {{!-- Standard Action Row --}}
-    <div class="action-node action-state-{{actionState.standard}}"
-         title="Standard Action (one attack, one-turn feat, etc.)">
-      <span class="action-name">Standard</span>
-      <span class="action-status">{{actionState.standard}}</span>
-    </div>
-
-    <div class="hierarchy-arrow">↓</div>
-
-    {{!-- Move Action Row --}}
-    <div class="action-node action-state-{{actionState.move}}"
-         title="Move Action (move, draw weapon, etc.)">
-      <span class="action-name">Move</span>
-      <span class="action-status">{{actionState.move}}</span>
-    </div>
-
-    <div class="hierarchy-arrow">↓</div>
-
-    {{!-- Swift Action Row --}}
-    <div class="action-node action-state-{{actionState.swift}}"
-         title="Swift Actions (up to {{swiftMax}}/turn)">
-      <span class="action-name">Swift</span>
-      <span class="action-status">{{actionState.swift}}</span>
-    </div>
+    <span class="swse-action-economy-mode">{{actionEconomy.enforcementModeLabel}}</span>
   </div>
 
-  {{!-- Tooltip/Breakdown --}}
-  <div class="action-breakdown">
-    {{#each actionBreakdown}}
-      <div class="breakdown-line">{{this}}</div>
+  {{#if actionEconomy.readOnlyReason}}
+    <div class="swse-action-economy-notice">{{actionEconomy.readOnlyReason}}</div>
+  {{/if}}
+
+  <div class="swse-action-ladder-grid">
+    {{#each actionEconomy.steps as |step|}}
+      <div class="swse-action-step {{step.cssClass}}"
+           data-economy-step="{{step.key}}"
+           data-can-spend="{{#if step.canSpend}}true{{else}}false{{/if}}"
+           aria-disabled="{{#if step.canSpend}}false{{else}}true{{/if}}"
+           title="{{step.tooltip}}">
+        <span class="swse-action-step-label">{{step.label}}</span>
+        <span class="swse-action-step-pips" aria-hidden="true">
+          {{#if step.infinite}}
+            <span class="swse-action-pip swse-action-pip--infinite">∞</span>
+          {{else}}
+            {{#each step.pips as |pip|}}
+              <span class="swse-action-pip {{#if pip.on}}is-on{{/if}}"></span>
+            {{/each}}
+          {{/if}}
+        </span>
+        <span class="swse-action-step-state">{{step.stateLabel}}</span>
+      </div>
     {{/each}}
   </div>
+
+  <div class="swse-action-economy-toolbar">
+    <div class="swse-action-economy-summary">
+      Remaining: <strong>{{actionEconomy.summary}}</strong>
+    </div>
+    <button type="button" class="swse-action-economy-reset" data-action="swse-action-economy-undo" {{#unless actionEconomy.canUndo}}disabled{{/unless}}>Undo</button>
+    <button type="button" class="swse-action-economy-reset" data-action="new-round" {{#unless actionEconomy.canReset}}disabled{{/unless}}>Reset Turn</button>
+  </div>
+
+  {{#if actionEconomy.breakdown.length}}
+    <div class="swse-action-breakdown">
+      {{#each actionEconomy.breakdown as |line|}}
+        <span>{{line}}</span>
+      {{/each}}
+    </div>
+  {{/if}}
 </div>

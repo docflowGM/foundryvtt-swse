@@ -61,16 +61,21 @@ export class DamageMitigationManager {
     damage,
     actor,
     damageType = 'normal',
-    weapon = null
+    weapon = null,
+    sourceActor = null,
+    attacker = null,
+    options = {}
   }) {
     if (!actor || typeof damage !== 'number' || damage < 0) {
       throw new Error('DamageMitigationManager: invalid damage params');
     }
 
     const context = {
+      ...(options && typeof options === 'object' ? options : {}),
       weapon,
       damageType,
-      damageType
+      sourceActor: sourceActor ?? attacker ?? options?.sourceActor ?? options?.attacker ?? null,
+      attacker: attacker ?? sourceActor ?? options?.attacker ?? options?.sourceActor ?? null
     };
 
     const breakdown = [];

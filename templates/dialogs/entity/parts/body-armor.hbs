@@ -1,0 +1,203 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--armor">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">{{#if entityDialog.armor.isEnergyShield}}Shield Profile{{else}}Armor Profile{{/if}}</div>
+    <h3>{{item.name}}</h3>
+    <p>{{#if entityDialog.armor.isEnergyShield}}Energy shields remain armor-backed records and are resolved as SR/charge equipment rather than body armor defense.{{else}}Armor records use the canonical armor resolver for all displayed defense, penalty, proficiency, and store/workbench values.{{/if}}</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Type</span><strong>{{entityDialog.armor.armorTypeLabel}}</strong></div>
+    {{#if entityDialog.armor.isEnergyShield}}
+    <div class="swse-entity-dialog__stat"><span>SR</span><strong>{{entityDialog.armor.currentSR}} / {{entityDialog.armor.shieldRating}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Charges</span><strong>{{entityDialog.armor.chargesCurrent}} / {{entityDialog.armor.chargesMax}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>State</span><strong>{{#if entityDialog.armor.activated}}Active{{else}}Inactive{{/if}}</strong></div>
+    {{else}}
+    <div class="swse-entity-dialog__stat"><span>Ref</span><strong>+{{entityDialog.armor.reflexBonus}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Fort</span><strong>+{{entityDialog.armor.fortitudeBonus}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Max Dex</span><strong>{{entityDialog.armor.maxDexLabel}}</strong></div>
+    {{/if}}
+  </div>
+</section>
+
+<section class="item-editor__section swse-entity-dialog__callout swse-armor-ssot-callout">
+  <h3 class="item-editor__section-title">Armor Data Source</h3>
+  <p class="swse-entity-dialog__hint">This editor reads armor through the canonical armor resolver and writes through the canonical armor writer. Safe legacy aliases are normalized on save; ambiguous legacy fields are preserved until every consumer migrates to the resolver.</p>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col">
+  <div class="item-editor__col">
+    <section class="item-editor__section">
+      <h3 class="item-editor__section-title">Classification</h3>
+
+      <div class="form-field">
+        <label>Armor Type</label>
+        <select name="system.armorType" class="armor-type-select">
+          {{#each entityDialog.armor.armorTypeOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.armor.armorType this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+        <p class="swse-entity-dialog__field-note">Energy Shield is still <code>item.type = armor</code> with <code>system.armorType = shield</code>.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Size</label>
+        <select name="system.size">
+          {{#each entityDialog.armor.sizeOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.armor.size this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Availability</label>
+        <select name="system.restriction">
+          {{#each entityDialog.armor.availabilityOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.armor.restriction this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </section>
+
+    {{#unless entityDialog.armor.isEnergyShield}}
+    <section class="item-editor__section">
+      <h3 class="item-editor__section-title">Defense</h3>
+
+      <div class="form-field">
+        <label>Reflex Armor Bonus</label>
+        <input type="number" name="system.defenseBonus" value="{{entityDialog.armor.reflexBonus}}" data-dtype="Number" />
+        <p class="swse-entity-dialog__field-note">Canonical write field: <code>system.defenseBonus</code>. Legacy Reflex aliases are mirrored on save.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Fortitude Equipment Bonus</label>
+        <input type="number" name="system.fortitudeBonus" value="{{entityDialog.armor.fortitudeBonus}}" data-dtype="Number" />
+        <p class="swse-entity-dialog__field-note">Canonical write field: <code>system.fortitudeBonus</code>.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Max Dex Bonus</label>
+        <input type="number" name="system.maxDexBonus" value="{{entityDialog.armor.maxDexInput}}" data-dtype="Number" placeholder="blank = uncapped" />
+      </div>
+
+      <div class="form-field">
+        <label>Armor Check Penalty</label>
+        <input type="number" name="system.armorCheckPenalty" value="{{entityDialog.armor.armorCheckPenalty}}" data-dtype="Number" />
+      </div>
+    </section>
+    {{else}}
+    <section class="item-editor__section">
+      <h3 class="item-editor__section-title">Shield Rating</h3>
+
+      <div class="form-field">
+        <label>Shield Rating (Max)</label>
+        <input type="number" name="system.shieldRating" value="{{entityDialog.armor.shieldRating}}" data-dtype="Number" min="0" />
+      </div>
+
+      <div class="form-field">
+        <label>Current SR</label>
+        <input type="number" name="system.currentSR" value="{{entityDialog.armor.currentSR}}" data-dtype="Number" min="0" max="{{entityDialog.armor.shieldRating}}" />
+      </div>
+
+      <div class="form-field">
+        <label>Charges Current</label>
+        <input type="number" name="system.charges.current" value="{{entityDialog.armor.chargesCurrent}}" data-dtype="Number" min="0" max="{{entityDialog.armor.chargesMax}}" />
+      </div>
+
+      <div class="form-field">
+        <label>Charges Max</label>
+        <input type="number" name="system.charges.max" value="{{entityDialog.armor.chargesMax}}" data-dtype="Number" min="0" />
+      </div>
+
+      <div class="form-field">
+        <label>Max Dex Bonus</label>
+        <input type="number" name="system.maxDexBonus" value="{{entityDialog.armor.maxDexInput}}" data-dtype="Number" placeholder="blank = uncapped" />
+      </div>
+
+      <div class="form-field">
+        <label>Armor Check Penalty</label>
+        <input type="number" name="system.armorCheckPenalty" value="{{entityDialog.armor.armorCheckPenalty}}" data-dtype="Number" />
+      </div>
+    </section>
+    {{/unless}}
+  </div>
+
+  <div class="item-editor__col">
+    <section class="item-editor__section">
+      <h3 class="item-editor__section-title">Inventory / Store</h3>
+
+      <div class="form-field">
+        <label>Weight (kg)</label>
+        <input type="number" name="system.weight" value="{{entityDialog.armor.weight}}" step="0.1" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Cost (credits)</label>
+        <input type="number" name="system.cost" value="{{entityDialog.armor.cost}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Value</label>
+        <input type="number" name="system.value" value="{{entityDialog.armor.value}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Upgrade Slots</label>
+        <input type="number" name="system.upgradeSlots" value="{{entityDialog.armor.upgradeSlots}}" data-dtype="Number" />
+      </div>
+
+      {{#unless entityDialog.armor.isEnergyShield}}
+      <div class="form-field">
+        <label>Speed Penalty (squares)</label>
+        <input type="number" name="system.speedPenalty" value="{{entityDialog.armor.speedPenalty}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Equipment Perception Bonus</label>
+        <input type="number" name="system.equipmentPerceptionBonus" value="{{entityDialog.armor.perceptionBonus}}" data-dtype="Number" />
+      </div>
+      {{/unless}}
+    </section>
+
+    <section class="item-editor__section">
+      <h3 class="item-editor__section-title">Workbench Hooks</h3>
+      <div class="form-field">
+        <label>Primary Template</label>
+        <input type="text" name="system.gearTemplate" value="{{entityDialog.armor.gearTemplate}}" />
+      </div>
+      <div class="form-field">
+        <label>Secondary Template</label>
+        <input type="text" name="system.gearTemplateSecondary" value="{{entityDialog.armor.gearTemplateSecondary}}" />
+      </div>
+      <div class="form-field">
+        <label>Template Cost</label>
+        <input type="number" name="system.templateCost" value="{{entityDialog.armor.templateCost}}" data-dtype="Number" />
+      </div>
+
+      <div class="swse-entity-dialog__toggle-grid">
+        <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.equipped" {{#if entityDialog.armor.equipped}}checked{{/if}} /> Equipped</label>
+        <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.integrated" {{#if entityDialog.armor.integrated}}checked{{/if}} /> Integrated</label>
+        <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.sizeIncreaseApplied" {{#if entityDialog.armor.sizeIncreaseApplied}}checked{{/if}} /> Size Increase Applied</label>
+        {{#unless entityDialog.armor.isEnergyShield}}
+        <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.isPoweredArmor" {{#if entityDialog.armor.isPoweredArmor}}checked{{/if}} /> Powered Armor</label>
+        {{/unless}}
+      </div>
+    </section>
+  </div>
+</div>
+
+{{#unless entityDialog.armor.isEnergyShield}}
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Modifiers</h3>
+
+  <div class="form-field form-field--full">
+    <label>Special Features</label>
+    <textarea name="system.features" rows="2">{{entityDialog.armor.features}}</textarea>
+  </div>
+
+  <div class="form-field form-field--checkbox">
+    <label>
+      <input type="checkbox" name="system.armorProficiency" {{#if entityDialog.armor.hasRequiredProficiency}}checked{{/if}} />
+      Has Required Proficiency
+    </label>
+  </div>
+</section>
+{{/unless}}

@@ -7,6 +7,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
+import { buildArmorSystemData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const TYPE_ALIASES = Object.freeze({
   gear: 'equipment',
@@ -110,32 +111,15 @@ function buildSystemData(type, options = {}) {
         }
       };
     case 'armor':
-      return {
+      return buildArmorSystemData({
         ...baseSystem('', 'Manual'),
         armorType: options.shieldMode ? 'shield' : 'light',
-        reflexBonus: 0,
-        defenseBonus: 0,
-        fortitudeBonus: 0,
-        fortBonus: 0,
-        equipmentBonus: 0,
-        maxDex: 999,
-        maxDexBonus: 999,
         weight: 0,
         cost: 0,
         value: 0,
-        equipmentPerceptionBonus: 0,
-        armorProficiency: false,
-        features: '',
-        shieldRating: 0,
-        currentSR: 0,
-        armorProficiencyRequired: '',
-        charges: { current: options.shieldMode ? 0 : 5, max: options.shieldMode ? 0 : 5 },
-        activated: false,
-        equipped: false,
-        gearTemplate: '',
-        gearTemplateSecondary: '',
-        templateCost: 0
-      };
+        upgradeSlots: 1,
+        charges: { current: 0, max: 0 }
+      }, { shieldMode: !!options.shieldMode });
     case 'equipment':
       return {
         ...baseSystem('', 'Manual'),
@@ -259,10 +243,13 @@ export function createSafeItemData(kind, options = {}) {
 
   const label = options.label || labelForType(type);
   const name = options.name || `New ${label}`;
-  const system = {
+  const rawSystem = {
     ...buildSystemData(type, options),
     ...(options.system || {})
   };
+  const system = type === 'armor'
+    ? buildArmorSystemData(rawSystem, { shieldMode: !!options.shieldMode || rawSystem.armorType === 'shield' })
+    : rawSystem;
 
   return {
     name,

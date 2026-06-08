@@ -1,4 +1,5 @@
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 
 function safeNumber(value, fallback = 0) {
@@ -50,10 +51,10 @@ export class RowTransformers {
     const isNaturalWeapon = item.flags?.swse?.autoEquipped === true;
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: item.actor });
     const isLightsaber = visualProfile.isLightsaber;
-    const armorType = String(item.system?.armorType ?? item.system?.armor?.type ?? '').toLowerCase();
-    const isEnergyShield = item.type === 'armor' && (armorType === 'shield' || Number(item.system?.shieldRating ?? 0) > 0);
+    const armorStats = item.type === 'armor' ? resolveArmorData(item) : null;
+    const isEnergyShield = armorStats?.isEnergyShield === true;
     const canToggleActivated = isLightsaber || isEnergyShield || typeof item.system?.activated === 'boolean';
-    const activated = visualProfile.active || item.system?.activated === true || item.system?.active === true;
+    const activated = visualProfile.active || item.system?.activated === true || item.system?.active === true || (isEnergyShield && armorStats?.activated === true);
     const equipped = truthy(item.system?.equipped)
       || truthy(item.system?.isEquipped)
       || truthy(item.system?.readied)
@@ -77,8 +78,9 @@ export class RowTransformers {
       activated,
       isLightsaber,
       isEnergyShield,
-      shieldRating: safeNumber(item.system?.shieldRating, 0),
-      currentSR: safeNumber(item.system?.currentSR, 0),
+      shieldRating: armorStats?.shieldRating ?? safeNumber(item.system?.shieldRating, 0),
+      currentSR: armorStats?.currentSR ?? safeNumber(item.system?.currentSR, 0),
+      armorStats,
       canToggleActivated,
       activationLabel: activated ? "Deactivate" : "Activate",
       activationTitle: activated
@@ -110,21 +112,28 @@ export class RowTransformers {
    * Transform armor item into summary display
    */
   static toArmorSummaryRow(item) {
+    const armor = resolveArmorData(item);
     return {
       id: item.id,
       uuid: item.uuid,
       name: item.name || 'Unnamed Armor',
       img: item.img || '/images/icons/svg/mystery-man.svg',
       type: 'armor',
-      armorType: item.system?.armorType || 'Light Armor',
+      armorType: armor.armorTypeLabel,
+      armorTypeKey: armor.armorType,
       weight: safeNumber(item.system?.weight, 0),
       isPowered: Boolean(item.system?.isPowered),
+      isEnergyShield: armor.isEnergyShield,
       upgradeSlots: safeNumber(item.system?.upgradeSlots, 0),
-      reflexBonus: safeNumber(item.system?.reflexBonus ?? item.system?.defenseBonus ?? item.system?.reflex, 0),
-      fortBonus: safeNumber(item.system?.fortitudeBonus ?? item.system?.fortBonus ?? item.system?.fort, 0),
-      maxDexBonus: safeNumber(item.system?.maxDex ?? item.system?.maxDexBonus, 0),
-      armorCheckPenalty: safeNumber(item.system?.armorCheckPenalty ?? item.system?.acp, 0),
-      speedPenalty: safeNumber(item.system?.speedPenalty, 0)
+      reflexBonus: armor.reflexBonus,
+      fortBonus: armor.fortitudeBonus,
+      maxDexBonus: armor.maxDexBonus,
+      maxDexLabel: armor.maxDexLabel,
+      armorCheckPenalty: armor.armorCheckPenalty,
+      speedPenalty: armor.speedPenalty,
+      shieldRating: armor.shieldRating,
+      currentSR: armor.currentSR,
+      armorStats: armor
     };
   }
 

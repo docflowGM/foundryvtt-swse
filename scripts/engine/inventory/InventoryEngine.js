@@ -11,6 +11,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
@@ -24,9 +25,7 @@ function isTruthyState(value) {
 }
 
 function isEnergyShield(item) {
-  const system = item?.system ?? {};
-  const armorType = String(system.armorType ?? system.armor?.type ?? "").toLowerCase();
-  return item?.type === "armor" && (armorType === "shield" || Number(system.shieldRating ?? 0) > 0);
+  return isEnergyShieldItem(item);
 }
 
 
@@ -47,10 +46,10 @@ export class InventoryEngine {
 
     const updates = [];
 
-    // Shields are modeled as armor items with armorType === "shield".
-    const itemArmorType = String(item.system?.armorType ?? "").toLowerCase();
-    const isShield = item.type === "armor" && itemArmorType === "shield";
-    const isBodyArmor = item.type === "armor" && itemArmorType !== "shield";
+    // Shields are modeled as armor items and resolved through the armor SSOT.
+    const itemArmor = item.type === "armor" ? resolveArmorData(item) : null;
+    const isShield = itemArmor?.isEnergyShield === true;
+    const isBodyArmor = item.type === "armor" && !isShield;
 
     // If equipping BODY armor, unequip other equipped BODY armor first.
     // Do NOT unequip shields.
@@ -60,8 +59,7 @@ export class InventoryEngine {
         if (i.type !== "armor") return false;
         if (i.system?.equipped !== true) return false;
 
-        const otherArmorType = String(i.system?.armorType ?? "").toLowerCase();
-        return otherArmorType !== "shield";
+        return !isEnergyShield(i);
       });
 
       for (const armorItem of otherBodyArmor) {
@@ -117,8 +115,9 @@ export class InventoryEngine {
     }
 
     if (shield) {
-      const shieldRating = Number(item.system?.shieldRating ?? 0) || 0;
-      const currentCharges = Number(item.system?.charges?.current ?? item.system?.charges?.value ?? 0) || 0;
+      const armorStats = resolveArmorData(item);
+      const shieldRating = Number(armorStats.shieldRating ?? 0) || 0;
+      const currentCharges = Number(armorStats.chargesCurrent ?? 0) || 0;
       if (next) {
         if (shieldRating <= 0) {
           ui?.notifications?.warn?.(`${item.name} has no Shield Rating to activate.`);

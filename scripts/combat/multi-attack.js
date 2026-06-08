@@ -309,6 +309,332 @@ export function getEquippedWeapons(actor) {
   return equipped;
 }
 
+// ============================================================================
+// MULTIATTACK PROFICIENCY RESOLVER
+// ============================================================================
+
+/**
+ * Map a WEAPON_GROUPS value to the actor system path key used by AE talent effects.
+ * @param {string} weaponGroup
+ * @returns {string|null}
+ */
+function weaponGroupToSystemKey(weaponGroup) {
+  const MAP = {
+    [WEAPON_GROUPS.RIFLES]: 'rifles',
+    [WEAPON_GROUPS.PISTOLS]: 'pistols',
+    [WEAPON_GROUPS.HEAVY]: 'heavy',
+    [WEAPON_GROUPS.LIGHTSABERS]: 'lightsabers',
+    [WEAPON_GROUPS.SIMPLE]: 'simple',
+    [WEAPON_GROUPS.ADVANCED_MELEE]: 'advancedMelee',
+    [WEAPON_GROUPS.EXOTIC]: 'exotic',
+  };
+  return MAP[weaponGroup] ?? null;
+}
+
+/**
+ * Get the total Multiattack Proficiency penalty reduction for a weapon group.
+ *
+ * Primary source: Active Effect totals stored at system.attacks.{group}.multiattack.
+ * Fallback: direct item scan (for actors whose AEs haven't been applied yet).
+ *
+ * Each rank of Multiattack Proficiency reduces the multiattack penalty by 2.
+ *
+ * @param {Actor} actor
+ * @param {string} weaponGroup - One of WEAPON_GROUPS values
+ * @returns {number} Total reduction (positive integer, e.g. 4 for two ranks)
+ */
+export function getMultiattackReduction(actor, weaponGroup) {
+  if (!actor || !weaponGroup) {return 0;}
+
+  // Try AE-derived system path first
+  const systemKey = weaponGroupToSystemKey(weaponGroup);
+  if (systemKey) {
+    const aeValue = actor.system?.attacks?.[systemKey]?.multiattack;
+    if (Number.isFinite(Number(aeValue)) && Number(aeValue) > 0) {
+      return Number(aeValue);
+    }
+  }
+
+  // Fallback: scan owned talents/feats for matching Multiattack Proficiency entries
+  const normalizedGroup = String(weaponGroup).toLowerCase();
+  let total = 0;
+  for (const item of actor.items ?? []) {
+    if (item.type !== 'talent' && item.type !== 'feat') {continue;}
+    const name = (item.name ?? '').toLowerCase();
+    if (!name.includes('multiattack proficiency')) {continue;}
+    // Match the weapon group in the name, e.g. "multiattack proficiency (rifles)"
+    if (name.includes(normalizedGroup) ||
+        (normalizedGroup === WEAPON_GROUPS.ADVANCED_MELEE && (name.includes('advanced melee') || name.includes('advanced-melee'))) ||
+        (normalizedGroup === WEAPON_GROUPS.HEAVY && name.includes('heavy weapon'))) {
+      total += 2;
+    }
+  }
+  return total;
+}
+
+// ============================================================================
+// FULL ATTACK SEQUENCE PLANNER
+// ============================================================================
+
+/**
+ * Valid package types for buildFullAttackSequence.
+ * @readonly
+ */
+export const FULL_ATTACK_PACKAGES = Object.freeze({
+  NORMAL: 'normal',
+  DOUBLE_ATTACK: 'doubleAttack',
+  TRIPLE_ATTACK: 'tripleAttack',
+  TWO_WEAPON: 'twoWeapon',
+  DOUBLE_WEAPON: 'doubleWeapon',
+});
+
+/**
+ * Build a canonical Full Attack sequence plan.
+ *
+ * This is the Single Source of Truth for all Full Attack penalty math.
+ * It never rolls dice — it returns a data structure the executor consumes.
+ *
+ * @param {Actor} actor
+ * @param {Object} options
+ * @param {string} options.requestedPackage - One of FULL_ATTACK_PACKAGES values
+ * @param {Item} [options.primaryWeapon] - Override primary weapon (default: equipped primary)
+ * @param {Item} [options.offhandWeapon]  - Override offhand weapon
+ * @param {string} [options.actionCostOverride] - 'standard' | 'full-round' (default: 'full-round')
+ * @returns {{legal:boolean, packageType:string, actionType:string, attacks:Array, warnings:string[], breakdown:string[]}}
+ */
+export function buildFullAttackSequence(actor, options = {}) {
+  const result = {
+    legal: false,
+    packageType: options.requestedPackage ?? FULL_ATTACK_PACKAGES.NORMAL,
+    actionType: options.actionCostOverride ?? 'full-round',
+    attacks: [],
+    warnings: [],
+    breakdown: [],
+  };
+
+  if (!actor) {
+    result.warnings.push('No actor provided.');
+    return result;
+  }
+
+  // Resolve weapons
+  const equipped = getEquippedWeapons(actor);
+  const primaryWeapon = options.primaryWeapon ?? equipped.primary;
+  const offhandWeapon = options.offhandWeapon ?? (equipped.isDoubleWeapon ? null : equipped.offhand);
+
+  if (!primaryWeapon) {
+    result.warnings.push('No weapon equipped. Equip a weapon before using Full Attack.');
+    return result;
+  }
+
+  const pkg = result.packageType;
+
+  // ── Normal Full Attack ────────────────────────────────────────────────────
+  if (pkg === FULL_ATTACK_PACKAGES.NORMAL) {
+    result.legal = true;
+    result.attacks.push({
+      weapon: primaryWeapon,
+      label: `${primaryWeapon.name} — Attack 1`,
+      weaponGroup: getWeaponGroup(primaryWeapon),
+      basePenalty: 0,
+      reduction: 0,
+      finalPenalty: 0,
+      penaltySource: 'Normal Full Attack',
+    });
+    result.breakdown.push('Normal Full Attack: no multiattack penalty.');
+    return result;
+  }
+
+  // ── Double Attack ─────────────────────────────────────────────────────────
+  if (pkg === FULL_ATTACK_PACKAGES.DOUBLE_ATTACK) {
+    const weaponGroup = getWeaponGroup(primaryWeapon);
+    const doubleGroups = getDoubleAttackGroups(actor);
+
+    if (!weaponGroup || !doubleGroups.has(weaponGroup)) {
+      result.warnings.push(
+        `Double Attack: actor does not have Double Attack for ${weaponGroup ?? 'this weapon'}.`
+      );
+      return result;
+    }
+
+    const basePenalty = -5;
+    const reduction = getMultiattackReduction(actor, weaponGroup);
+    const finalPenalty = Math.min(0, basePenalty + reduction);
+
+    result.legal = true;
+    for (let i = 0; i < 2; i++) {
+      result.attacks.push({
+        weapon: primaryWeapon,
+        label: `${primaryWeapon.name} — Attack ${i + 1}`,
+        weaponGroup,
+        basePenalty,
+        reduction,
+        finalPenalty,
+        penaltySource: reduction > 0
+          ? `Double Attack + Multiattack Proficiency (${weaponGroup})`
+          : 'Double Attack',
+      });
+    }
+    result.breakdown.push(`Double Attack (${weaponGroup}): base penalty ${basePenalty}`);
+    if (reduction > 0) {
+      result.breakdown.push(`Multiattack Proficiency (${weaponGroup}): +${reduction} reduction`);
+    }
+    result.breakdown.push(`Final penalty per attack: ${finalPenalty}`);
+    return result;
+  }
+
+  // ── Triple Attack ─────────────────────────────────────────────────────────
+  if (pkg === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK) {
+    const weaponGroup = getWeaponGroup(primaryWeapon);
+    const doubleGroups = getDoubleAttackGroups(actor);
+    const tripleGroups = getTripleAttackGroups(actor);
+
+    const hasDouble = weaponGroup && doubleGroups.has(weaponGroup);
+    const hasTriple = weaponGroup && tripleGroups.has(weaponGroup);
+
+    if (!hasDouble) {
+      result.warnings.push(`Triple Attack requires Double Attack (${weaponGroup ?? 'this weapon'}).`);
+      return result;
+    }
+    if (!hasTriple) {
+      result.warnings.push(`Actor does not have Triple Attack (${weaponGroup ?? 'this weapon'}).`);
+      return result;
+    }
+
+    const basePenalty = -10;
+    const reduction = getMultiattackReduction(actor, weaponGroup);
+    const finalPenalty = Math.min(0, basePenalty + reduction);
+
+    result.legal = true;
+    for (let i = 0; i < 3; i++) {
+      result.attacks.push({
+        weapon: primaryWeapon,
+        label: `${primaryWeapon.name} — Attack ${i + 1}`,
+        weaponGroup,
+        basePenalty,
+        reduction,
+        finalPenalty,
+        penaltySource: reduction > 0
+          ? `Triple Attack + Multiattack Proficiency (${weaponGroup})`
+          : 'Triple Attack',
+      });
+    }
+    result.breakdown.push(`Triple Attack (${weaponGroup}): base penalty ${basePenalty}`);
+    if (reduction > 0) {
+      result.breakdown.push(`Multiattack Proficiency (${weaponGroup}): +${reduction} reduction`);
+    }
+    result.breakdown.push(`Final penalty per attack: ${finalPenalty}`);
+    return result;
+  }
+
+  // ── Two-Weapon Attack ─────────────────────────────────────────────────────
+  if (pkg === FULL_ATTACK_PACKAGES.TWO_WEAPON) {
+    if (!offhandWeapon || offhandWeapon.id === primaryWeapon.id) {
+      result.warnings.push('Two-Weapon Attack requires two separate equipped weapons.');
+      return result;
+    }
+
+    const dwmLevel = getDualWeaponMasteryLevel(actor);
+    const primaryProficient = primaryWeapon.system?.proficient !== false;
+    const offhandProficient = offhandWeapon.system?.proficient !== false;
+    const dwmEligible = primaryProficient && offhandProficient;
+
+    const basePenalty = -10;
+    let finalPenalty = basePenalty;
+    let penaltySource = 'Two-Weapon Attack';
+    let dwmNote = '';
+
+    if (dwmLevel >= 1 && dwmEligible) {
+      finalPenalty = getDualWeaponPenalty(dwmLevel);
+      penaltySource = `Two-Weapon Attack + Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]}`;
+      dwmNote = `Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]} reduces penalty to ${finalPenalty}`;
+    } else if (dwmLevel >= 1 && !dwmEligible) {
+      dwmNote = `Dual Weapon Mastery available but not applied: not proficient with ${!primaryProficient ? primaryWeapon.name : offhandWeapon.name}`;
+      result.warnings.push(dwmNote);
+    }
+
+    result.legal = true;
+    result.attacks.push({
+      weapon: primaryWeapon,
+      label: `${primaryWeapon.name} — Main Hand`,
+      weaponGroup: getWeaponGroup(primaryWeapon),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+    result.attacks.push({
+      weapon: offhandWeapon,
+      label: `${offhandWeapon.name} — Off Hand`,
+      weaponGroup: getWeaponGroup(offhandWeapon),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+
+    result.breakdown.push(`Two-Weapon Attack: base penalty ${basePenalty} to all attacks`);
+    if (dwmNote) {result.breakdown.push(dwmNote);}
+    result.breakdown.push(`Final penalty per attack: ${finalPenalty}`);
+    return result;
+  }
+
+  // ── Double-Weapon Attack ──────────────────────────────────────────────────
+  if (pkg === FULL_ATTACK_PACKAGES.DOUBLE_WEAPON) {
+    const doubleWep = equipped.isDoubleWeapon ? equipped.primary : primaryWeapon;
+    if (!doubleWep || !isDoubleWeapon(doubleWep)) {
+      result.warnings.push('Double-Weapon Attack requires a double weapon to be equipped.');
+      return result;
+    }
+
+    const dwmLevel = getDualWeaponMasteryLevel(actor);
+    const proficient = doubleWep.system?.proficient !== false;
+    const dwmEligible = proficient;
+
+    const basePenalty = -10;
+    let finalPenalty = basePenalty;
+    let penaltySource = 'Double-Weapon Attack';
+    let dwmNote = '';
+
+    if (dwmLevel >= 1 && dwmEligible) {
+      finalPenalty = getDualWeaponPenalty(dwmLevel);
+      penaltySource = `Double-Weapon Attack + Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]}`;
+      dwmNote = `Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]} reduces penalty to ${finalPenalty}`;
+    } else if (dwmLevel >= 1 && !dwmEligible) {
+      dwmNote = `Dual Weapon Mastery available but not applied: not proficient with ${doubleWep.name}`;
+      result.warnings.push(dwmNote);
+    }
+
+    result.legal = true;
+    result.attacks.push({
+      weapon: doubleWep,
+      label: `${doubleWep.name} — Primary End`,
+      weaponGroup: getWeaponGroup(doubleWep),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+    result.attacks.push({
+      weapon: doubleWep,
+      label: `${doubleWep.name} — Secondary End`,
+      weaponGroup: getWeaponGroup(doubleWep),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+
+    result.breakdown.push(`Double-Weapon Attack: base penalty ${basePenalty} to all attacks`);
+    if (dwmNote) {result.breakdown.push(dwmNote);}
+    result.breakdown.push(`Final penalty per attack: ${finalPenalty}`);
+    return result;
+  }
+
+  result.warnings.push(`Unknown package type: ${pkg}`);
+  return result;
+}
+
 /**
  * Calculate full attack configuration for an actor
  *
@@ -582,4 +908,361 @@ export default {
   calculateFullAttackConfig,
   showFullAttackDialog,
   generateFullAttackCard
+};
+    });
+    result.attacks.push({
+      weapon: offhandWeapon,
+      label: `${offhandWeapon.name} — Off Hand`,
+      weaponGroup: getWeaponGroup(offhandWeapon),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+
+    result.breakdown.push(`Two-Weapon Attack: base penalty ${basePenalty} to all attacks`);
+    if (dwmNote) {result.breakdown.push(dwmNote);}
+    result.breakdown.push(`Final penalty per attack: ${finalPenalty}`);
+    return result;
+  }
+
+  // ── Double-Weapon Attack ──────────────────────────────────────────────────
+  if (pkg === FULL_ATTACK_PACKAGES.DOUBLE_WEAPON) {
+    const doubleWep = equipped.isDoubleWeapon ? equipped.primary : primaryWeapon;
+    if (!doubleWep || !isDoubleWeapon(doubleWep)) {
+      result.warnings.push('Double-Weapon Attack requires a double weapon to be equipped.');
+      return result;
+    }
+
+    const dwmLevel = getDualWeaponMasteryLevel(actor);
+    const proficient = doubleWep.system?.proficient !== false;
+    const dwmEligible = proficient;
+
+    const basePenalty = -10;
+    let finalPenalty = basePenalty;
+    let penaltySource = 'Double-Weapon Attack';
+    let dwmNote = '';
+
+    if (dwmLevel >= 1 && dwmEligible) {
+      finalPenalty = getDualWeaponPenalty(dwmLevel);
+      penaltySource = `Double-Weapon Attack + Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]}`;
+      dwmNote = `Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]} reduces penalty to ${finalPenalty}`;
+    } else if (dwmLevel >= 1 && !dwmEligible) {
+      dwmNote = `Dual Weapon Mastery available but not applied: not proficient with ${doubleWep.name}`;
+      result.warnings.push(dwmNote);
+    }
+
+    result.legal = true;
+    result.attacks.push({
+      weapon: doubleWep,
+      label: `${doubleWep.name} — Primary End`,
+      weaponGroup: getWeaponGroup(doubleWep),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+    result.attacks.push({
+      weapon: doubleWep,
+      label: `${doubleWep.name} — Secondary End`,
+      weaponGroup: getWeaponGroup(doubleWep),
+      basePenalty,
+      reduction: basePenalty - finalPenalty,
+      finalPenalty,
+      penaltySource,
+    });
+
+    result.breakdown.push(`Double-Weapon Attack: base penalty ${basePenalty} to all attacks`);
+    if (dwmNote) {result.breakdown.push(dwmNote);}
+    result.breakdown.push(`Final penalty per attack: ${finalPenalty}`);
+    return result;
+  }
+
+  result.warnings.push(`Unknown package type: ${pkg}`);
+  return result;
+}
+
+// ============================================================================
+// FULL ATTACK DIALOG
+// ============================================================================
+
+/**
+ * Show a dialog to configure and confirm a Full Attack sequence.
+ *
+ * Returns the confirmed sequence object, or null if cancelled.
+ *
+ * @param {Actor} actor
+ * @param {Object} options
+ * @param {string} [options.requestedPackage] - Pre-selected package type
+ * @param {Item}   [options.primaryWeapon]
+ * @param {Item}   [options.offhandWeapon]
+ * @returns {Promise<Object|null>} The sequence from buildFullAttackSequence, or null
+ */
+export async function showFullAttackDialog(actor, options = {}) {
+  const equipped = getEquippedWeapons(actor);
+  const primaryWeapon = options.primaryWeapon ?? equipped.primary;
+  const offhandWeapon = options.offhandWeapon ?? (equipped.isDoubleWeapon ? null : equipped.offhand);
+
+  if (!primaryWeapon) {
+    ui.notifications.warn('No weapon equipped for Full Attack.');
+    return null;
+  }
+
+  // Determine which packages are available to offer
+  const doubleGroups = getDoubleAttackGroups(actor);
+  const tripleGroups = getTripleAttackGroups(actor);
+  const primaryGroup = getWeaponGroup(primaryWeapon);
+
+  const packages = [];
+
+  // Always offer Normal Full Attack
+  packages.push({ value: FULL_ATTACK_PACKAGES.NORMAL, label: 'Normal Full Attack' });
+
+  // Double / Triple Attack
+  if (primaryGroup && doubleGroups.has(primaryGroup)) {
+    packages.push({ value: FULL_ATTACK_PACKAGES.DOUBLE_ATTACK, label: 'Double Attack' });
+    if (tripleGroups.has(primaryGroup)) {
+      packages.push({ value: FULL_ATTACK_PACKAGES.TRIPLE_ATTACK, label: 'Triple Attack' });
+    }
+  }
+
+  // Two-weapon / double-weapon
+  if (offhandWeapon && offhandWeapon.id !== primaryWeapon.id) {
+    packages.push({ value: FULL_ATTACK_PACKAGES.TWO_WEAPON, label: 'Two-Weapon Attack' });
+  }
+  if (equipped.isDoubleWeapon || isDoubleWeapon(primaryWeapon)) {
+    packages.push({ value: FULL_ATTACK_PACKAGES.DOUBLE_WEAPON, label: 'Double-Weapon Attack' });
+  }
+
+  // Default selection
+  const defaultPkg = options.requestedPackage && packages.some(p => p.value === options.requestedPackage)
+    ? options.requestedPackage
+    : packages[0].value;
+
+  return new Promise((resolve) => {
+    // Build initial preview
+    const buildPreview = (pkg) => {
+      const seq = buildFullAttackSequence(actor, {
+        requestedPackage: pkg,
+        primaryWeapon,
+        offhandWeapon,
+      });
+
+      const attackRows = seq.attacks.map((atk, i) => {
+        const pen = atk.finalPenalty !== 0 ? ` <span style="color:#c00">(${atk.finalPenalty})</span>` : '';
+        return `<li style="margin:2px 0">${atk.label}${pen}</li>`;
+      }).join('');
+
+      const breakdownRows = seq.breakdown.map(b => `<li style="font-size:0.85em;color:#666">${b}</li>`).join('');
+      const warningRows = seq.warnings.map(w => `<li style="color:#c00;font-size:0.85em">${w}</li>`).join('');
+
+      return `
+        <ul style="margin:4px 0 0 0;padding-left:1.2em">${attackRows}</ul>
+        ${breakdownRows ? `<ul style="margin:6px 0 0 0;padding-left:1.2em">${breakdownRows}</ul>` : ''}
+        ${warningRows  ? `<ul style="margin:4px 0 0 0;padding-left:1.2em">${warningRows}</ul>`  : ''}
+      `;
+    };
+
+    const pkgOptions = packages.map(p =>
+      `<option value="${p.value}" ${p.value === defaultPkg ? 'selected' : ''}>${p.label}</option>`
+    ).join('');
+
+    const content = `
+      <form style="padding:4px">
+        <div class="form-group">
+          <label><b>Attack Package</b></label>
+          <select id="fa-pkg-select" style="width:100%">${pkgOptions}</select>
+        </div>
+        <div id="fa-preview" style="margin-top:8px">${buildPreview(defaultPkg)}</div>
+      </form>
+    `;
+
+    const d = new Dialog({
+      title: 'Full Attack',
+      content,
+      buttons: {
+        roll: {
+          icon: '<i class="fas fa-dice-d20"></i>',
+          label: 'Roll Full Attack',
+          callback: (html) => {
+            const pkg = html.find('#fa-pkg-select').val();
+            const seq = buildFullAttackSequence(actor, {
+              requestedPackage: pkg,
+              primaryWeapon,
+              offhandWeapon,
+            });
+            if (!seq.legal) {
+              ui.notifications.warn(seq.warnings.join(' '));
+              resolve(null);
+            } else {
+              resolve(seq);
+            }
+          }
+        },
+        cancel: {
+          label: 'Cancel',
+          callback: () => resolve(null)
+        }
+      },
+      default: 'roll',
+      render: (html) => {
+        html.find('#fa-pkg-select').on('change', (ev) => {
+          html.find('#fa-preview').html(buildPreview(ev.target.value));
+        });
+      },
+      close: () => resolve(null)
+    });
+    d.render(true);
+  });
+}
+
+// ============================================================================
+// LEGACY FUNCTIONS (kept for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use buildFullAttackSequence() instead.
+ * Calculate full attack configuration for an actor.
+ */
+export function calculateFullAttackConfig(actor, primaryWeapon, offhandWeapon = null, options = {}) {
+  const config = {
+    attacks: [],
+    breakdown: [],
+    isFullAttack: true,
+    dwmLevel: 0,
+    hasDoubleAttack: false,
+    hasTripleAttack: false,
+    usingDualWeapons: false,
+    usingDoubleWeapon: false,
+    doubleAttackPenalty: 0,
+    twoWeaponPenalty: 0
+  };
+
+  if (!actor || !primaryWeapon) {return config;}
+
+  const primaryGroup = getWeaponGroup(primaryWeapon);
+  const doubleAttackGroups = getDoubleAttackGroups(actor);
+  const tripleAttackGroups = getTripleAttackGroups(actor);
+  const dwmLevel = getDualWeaponMasteryLevel(actor);
+
+  config.dwmLevel = dwmLevel;
+
+  const isDouble = isDoubleWeapon(primaryWeapon);
+  const hasTwoWeapons = offhandWeapon && offhandWeapon.id !== primaryWeapon.id;
+  const usingMultipleWeapons = isDouble || hasTwoWeapons;
+
+  config.usingDoubleWeapon = isDouble;
+  config.usingDualWeapons = usingMultipleWeapons;
+
+  const twoWeaponPenalty = usingMultipleWeapons ? getDualWeaponPenalty(dwmLevel) : 0;
+  config.twoWeaponPenalty = twoWeaponPenalty;
+
+  const doubleAttackWeapon = options.doubleAttackWeapon || 'primary';
+  const selectedWeapon = doubleAttackWeapon === 'offhand' && offhandWeapon ? offhandWeapon : primaryWeapon;
+  const selectedGroup = doubleAttackWeapon === 'offhand' ? getWeaponGroup(offhandWeapon) : primaryGroup;
+
+  const hasDoubleAttack = selectedGroup && doubleAttackGroups.has(selectedGroup);
+  const hasTripleAttack = selectedGroup && tripleAttackGroups.has(selectedGroup) && hasDoubleAttack;
+
+  config.hasDoubleAttack = hasDoubleAttack;
+  config.hasTripleAttack = hasTripleAttack;
+  config.doubleAttackPenalty = hasTripleAttack ? -10 : (hasDoubleAttack ? -5 : 0);
+
+  const primaryLabel = isDouble ? `${primaryWeapon.name} (Primary End)` : primaryWeapon.name;
+  const primaryPenalty = (doubleAttackWeapon === 'primary' && hasDoubleAttack) ? config.doubleAttackPenalty : 0;
+
+  config.attacks.push({
+    weapon: primaryWeapon,
+    label: primaryLabel,
+    attackNumber: 1,
+    source: 'primary',
+    penalty: primaryPenalty,
+    penaltySource: primaryPenalty !== 0 ? (hasTripleAttack ? 'Triple Attack' : 'Double Attack') : null
+  });
+
+  if (hasDoubleAttack) {
+    config.attacks.push({
+      weapon: selectedWeapon,
+      label: `${selectedWeapon.name} (Double Attack)`,
+      attackNumber: 2,
+      source: 'doubleAttack',
+      penalty: config.doubleAttackPenalty,
+      penaltySource: hasTripleAttack ? 'Triple Attack' : 'Double Attack'
+    });
+    if (hasTripleAttack) {
+      config.attacks.push({
+        weapon: selectedWeapon,
+        label: `${selectedWeapon.name} (Triple Attack)`,
+        attackNumber: 3,
+        source: 'tripleAttack',
+        penalty: config.doubleAttackPenalty,
+        penaltySource: 'Triple Attack'
+      });
+    }
+    config.breakdown.push(
+      hasTripleAttack
+        ? `Triple Attack: -10 on all ${selectedWeapon.name} attacks`
+        : `Double Attack: -5 on all ${selectedWeapon.name} attacks`
+    );
+  }
+
+  if (usingMultipleWeapons) {
+    const offhandLabel = isDouble
+      ? `${primaryWeapon.name} (Secondary End)`
+      : (offhandWeapon?.name || 'Off-hand');
+    config.attacks.push({
+      weapon: offhandWeapon || primaryWeapon,
+      label: offhandLabel,
+      attackNumber: config.attacks.length + 1,
+      source: 'offhand',
+      penalty: twoWeaponPenalty,
+      penaltySource: twoWeaponPenalty !== 0
+        ? `Two-Weapon${dwmLevel > 0 ? ` (DWM ${['I','II','III'][dwmLevel-1]})` : ''}`
+        : 'Two-Weapon (DWM III)'
+    });
+    config.breakdown.push(
+      twoWeaponPenalty !== 0
+        ? `Two-Weapon Fighting: ${twoWeaponPenalty} on off-hand attack`
+        : 'Two-Weapon Fighting: no penalty (DWM III)'
+    );
+  }
+
+  config.attacks.forEach((atk, idx) => { atk.attackNumber = idx + 1; });
+  return config;
+}
+
+/**
+ * @deprecated Use showFullAttackDialog() instead.
+ */
+export function generateFullAttackCard(actor, results, config) {
+  if (!actor || !Array.isArray(results)) {
+    return '<div class="swse-full-attack-card"><p>Invalid full attack data.</p></div>';
+  }
+  const attacksHtml = results.map((result, idx) => {
+    const attack = config.attacks[idx];
+    const rollHtml = result.roll ? `<div class="roll">${result.roll.formula}</div>` : '';
+    const totalHtml = result.roll ? `<div class="total">${result.roll.total}</div>` : '';
+    return `<div class="attack-result"><div class="attack-label">${attack?.label || `Attack ${idx+1}`}</div><div class="attack-details">${rollHtml}${totalHtml}</div></div>`;
+  }).join('');
+  return `<div class="swse-full-attack-card"><div class="actor-name">${actor.name}</div><div class="attack-sequence">${attacksHtml}</div></div>`;
+}
+
+export default {
+  WEAPON_GROUPS,
+  FULL_ATTACK_PACKAGES,
+  MULTI_ATTACK_FEATS,
+  getWeaponGroup,
+  isDoubleWeapon,
+  extractWeaponGroupFromFeat,
+  getDoubleAttackGroups,
+  getTripleAttackGroups,
+  getDualWeaponMasteryLevel,
+  getDualWeaponPenalty,
+  getOffhandWeapon,
+  getEquippedWeapons,
+  getMultiattackReduction,
+  buildFullAttackSequence,
+  showFullAttackDialog,
+  calculateFullAttackConfig,
+  generateFullAttackCard,
 };

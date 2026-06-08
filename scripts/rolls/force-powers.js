@@ -47,16 +47,44 @@ export async function rollForcePower(actor, itemId, options = {}) {
   // Power DC if specified in item
   const powerDC = item.system?.dc ?? 15;
 
+  const useTheForceTotal = [
+    actor.system?.derived?.skills?.useTheForce?.total,
+    actor.system?.derived?.skills?.['use-the-force']?.total,
+    actor.system?.skills?.useTheForce?.total,
+    actor.system?.skills?.useTheForce?.value,
+    actor.system?.skills?.['use-the-force']?.total,
+    actor.system?.skills?.['use-the-force']?.value
+  ].map(Number).find(Number.isFinite) ?? 0;
+
   // === UNIFIED ROLL EXECUTION via RollCore ===
-  const domain = 'force-power';
+  const domain = 'force-power.activation';
   const rollResult = await RollCore.execute({
     actor,
     domain,
+    baseBonus: useTheForceTotal,
     rollOptions: {
       baseDice: '1d20',
       useForce: options.useForce || false
     },
-    context: { itemId, itemName: item.name, powerDC }
+    context: {
+      item,
+      itemId,
+      sourceItem: item,
+      sourceItemId: itemId,
+      itemName: item.name,
+      powerId: itemId,
+      powerName: item.name,
+      category: 'force',
+      rollCategory: 'force',
+      type: 'force-power',
+      forcePower: true,
+      powerDC,
+      baseBonus: useTheForceTotal,
+      forceDescriptor: item.system?.descriptor ?? item.system?.descriptors?.[0] ?? item.system?.tags?.[0] ?? item.system?.discipline ?? null,
+      forceDescriptors: item.system?.descriptors ?? item.system?.tags ?? [item.system?.descriptor, item.system?.discipline].filter(Boolean),
+      descriptors: item.system?.descriptors ?? item.system?.tags ?? [item.system?.descriptor, item.system?.discipline].filter(Boolean),
+      tags: item.system?.tags ?? item.system?.descriptors ?? []
+    }
   });
 
   if (!rollResult.success) {

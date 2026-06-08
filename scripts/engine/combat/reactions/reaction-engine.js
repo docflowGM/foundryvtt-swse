@@ -19,6 +19,123 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+function normalizeReactionKey(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  const key = raw
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
+    .replace(/[^a-zA-Z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+  const aliases = {
+    block: "block",
+    deflect: "deflect",
+    counterattack: "counterattack",
+    "force-reflection": "forceReflection",
+    forcerreflection: "forceReflection",
+    evasion: "evasion",
+    "unarmed-parry": "unarmedParry",
+    unarmedparry: "unarmedParry",
+    "unarmed-counterstrike": "unarmedCounterstrike",
+    unarmedcounterstrike: "unarmedCounterstrike",
+    "retaliation-jab": "retaliationJab",
+    retaliationjab: "retaliationJab",
+    "primitive-block": "primitiveBlock",
+    primitiveblock: "primitiveBlock",
+    "intimidating-defense": "intimidatingDefense",
+    intimidatingdefense: "intimidatingDefense",
+    "deep-space-gambit": "deepSpaceGambit",
+    deepspacegambit: "deepSpaceGambit",
+    "lightsaber-evasion": "lightsaberEvasion",
+    lightsaberevasion: "lightsaberEvasion",
+    "preternatural-senses": "preternaturalSenses",
+    preternaturalsenses: "preternaturalSenses",
+    "feign-harmlessness": "feignHarmlessness",
+    feignharmlessness: "feignHarmlessness",
+    "uncanny-instincts": "uncannyInstincts",
+    uncannyinstincts: "uncannyInstincts"
+  };
+  return aliases[key] ?? raw;
+}
+
+function actorItems(actor) {
+  try {
+    return Array.from(actor?.items ?? []);
+  } catch (_err) {
+    return [];
+  }
+}
+
+function normalizeText(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function collectItemReactionKeys(item) {
+  const keys = [];
+  const meta = item?.system?.abilityMeta ?? {};
+  const push = value => {
+    if (!value) return;
+    if (Array.isArray(value)) {
+      value.forEach(push);
+      return;
+    }
+    if (typeof value === "object") {
+      push(value.key ?? value.id ?? value.reactionKey ?? value.registryKey);
+      return;
+    }
+    const normalized = normalizeReactionKey(value);
+    if (normalized) keys.push(normalized);
+  };
+
+  push(meta.reactionKey);
+  push(meta.reactionKeys);
+  push(meta.reactions);
+  push(meta.grantedReactions);
+
+  for (const card of [
+    ...(Array.isArray(meta.combatActions) ? meta.combatActions : []),
+    ...(Array.isArray(meta.actionCards) ? meta.actionCards : []),
+    ...(Array.isArray(meta.grantedCombatActions) ? meta.grantedCombatActions : [])
+  ]) {
+    if (card?.reactionKey) push(card.reactionKey);
+    else if (card?.resolutionMode === "reaction") push(card.id ?? card.key ?? card.name);
+  }
+
+  const nameKey = normalizeReactionKey(item?.name);
+  if (["unarmedParry", "unarmedCounterstrike", "retaliationJab", "primitiveBlock", "intimidatingDefense", "deepSpaceGambit", "lightsaberEvasion", "preternaturalSenses", "feignHarmlessness", "uncannyInstincts", "block", "deflect"].includes(nameKey)) {
+    keys.push(nameKey);
+  }
+
+  return keys;
+}
+
+function collectActorReactionKeys(actor) {
+  const keys = new Set();
+  const derived = actor?.system?.derived?.reactions;
+  if (Array.isArray(derived)) {
+    for (const key of derived) {
+      const normalized = normalizeReactionKey(key);
+      if (normalized) keys.add(normalized);
+    }
+  }
+
+  for (const item of actorItems(actor)) {
+    if (item?.system?.disabled === true) continue;
+    for (const key of collectItemReactionKeys(item)) {
+      if (key) keys.add(key);
+    }
+  }
+
+  return Array.from(keys);
+}
+
 export class ReactionEngine {
   /**
    * Get available reactions for a defender in a given attack context
@@ -39,8 +156,10 @@ export class ReactionEngine {
       return [];
     }
 
-    // Get defender's reaction keys from derived data
-    const reactionKeys = defender.system?.derived?.reactions || [];
+    // Get defender reaction keys from derived data and owned ability metadata.
+    // Talent/feat cleanup phases surface reaction-capable abilities via
+    // abilityMeta rather than mutating permanent derived data.
+    const reactionKeys = collectActorReactionKeys(defender);
     if (!Array.isArray(reactionKeys) || reactionKeys.length === 0) {
       return [];
     }
@@ -113,11 +232,45 @@ export class ReactionEngine {
       }
     }
 
-    // Additional condition checks can go here as system grows
-    // - requiresTalents
-    // - requiresWeaponTag
-    // - requiresDefense
-    // etc.
+    if (conditions.requiresFightingDefensively === true) {
+      if (attackContext.fightingDefensively !== true && attackContext.defenderFightingDefensively !== true) {
+        return false;
+      }
+    }
+
+    if (conditions.requiresNotFlatFooted === true) {
+      if (attackContext.flatFooted === true || attackContext.defenderFlatFooted === true) {
+        return false;
+      }
+    }
+
+    if (conditions.requiresAttackMissed === true) {
+      if (attackContext.attackMissed !== true && attackContext.missed !== true) {
+        return false;
+      }
+    }
+
+    if (conditions.requiresReactionKey && attackContext.reactionKey !== conditions.requiresReactionKey) {
+      return false;
+    }
+
+    if (conditions.requiresWeaponText) {
+      const wanted = (Array.isArray(conditions.requiresWeaponText) ? conditions.requiresWeaponText : [conditions.requiresWeaponText])
+        .map(normalizeText)
+        .filter(Boolean);
+      const weapon = attackContext.weapon ?? attackContext.item ?? attackContext.attackItem ?? null;
+      const weaponText = [
+        weapon?.name,
+        weapon?.system?.weaponType,
+        weapon?.system?.weaponGroup,
+        weapon?.system?.category,
+        weapon?.system?.type,
+        ...(Array.isArray(weapon?.system?.properties) ? weapon.system.properties : [])
+      ].map(normalizeText).join(" ");
+      if (wanted.length && !wanted.some(value => weaponText.includes(value))) {
+        return false;
+      }
+    }
 
     return true;
   }
@@ -181,27 +334,40 @@ export class ReactionEngine {
     }
 
     try {
-      // ─── 2. Check frequency limit (reactions are once per round) ──────────
-      const limitCheck = ActivationLimitEngine.canActivate(
-        defender,
-        reactionKey,
-        LimitType.ROUND,
-        1
-      );
+      // ─── 2. Check frequency limit ────────────────────────────────────────
+      const usage = reactionDef.usage ?? {};
+      const limitType = usage.perEncounter === true
+        ? LimitType.ENCOUNTER
+        : usage.perRound === true
+          ? LimitType.ROUND
+          : null;
+      const maxUses = usage.perEncounter === true
+        ? Number(usage.maxPerEncounter ?? usage.maxPerRound ?? 1)
+        : Number(usage.maxPerRound ?? 1);
 
-      if (!limitCheck.allowed) {
-        SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${limitCheck.reason}`);
-        await SWSEChat.postMessage({
-          flavor: `❌ ${reactionDef.label}`,
-          content: `Reaction already used this round`,
-          actor: defender
-        });
-        return {
-          success: false,
-          error: limitCheck.reason,
-          modifiedDamage: null,
-          resultMessage: 'Reaction already used this round'
-        };
+      if (limitType) {
+        const limitCheck = ActivationLimitEngine.canActivate(
+          defender,
+          reactionKey,
+          limitType,
+          Number.isFinite(maxUses) && maxUses > 0 ? maxUses : 1
+        );
+
+        if (!limitCheck.allowed) {
+          const cadence = limitType === LimitType.ENCOUNTER ? 'encounter' : 'round';
+          SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${limitCheck.reason}`);
+          await SWSEChat.postMessage({
+            flavor: `❌ ${reactionDef.label}`,
+            content: `Reaction already used this ${cadence}`,
+            actor: defender
+          });
+          return {
+            success: false,
+            error: limitCheck.reason,
+            modifiedDamage: null,
+            resultMessage: `Reaction already used this ${cadence}`
+          };
+        }
       }
 
       // ─── 3. Verify cost ───────────────────────────────────────────────────
@@ -251,7 +417,9 @@ export class ReactionEngine {
       }
 
       // ─── 6. Record activation ──────────────────────────────────────────────
-      ActivationLimitEngine.recordActivation(defender, reactionKey, LimitType.ROUND);
+      if (limitType) {
+        ActivationLimitEngine.recordActivation(defender, reactionKey, limitType);
+      }
 
       // ─── 7. Post result ────────────────────────────────────────────────────
       const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;

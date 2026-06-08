@@ -37,6 +37,7 @@ import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/sha
 import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -48,6 +49,20 @@ function projectItem(item) {
   projection.range = item?.system?.range ?? item?.system?.rangeText ?? "";
   projection.attackBonus = item?.system?.attackBonus ?? item?.system?.attack ?? null;
   projection.integrated = item?.system?.integrated === true || Boolean(item?.flags?.swse?.integrated);
+  if (item?.type === "armor") {
+    const armor = resolveArmorData(item);
+    projection.armor = armor;
+    projection.armorType = armor.armorType;
+    projection.armorTypeLabel = armor.armorTypeLabel;
+    projection.isEnergyShield = armor.isEnergyShield;
+    projection.reflexBonus = armor.reflexBonus;
+    projection.fortitudeBonus = armor.fortitudeBonus;
+    projection.maxDexBonus = armor.maxDexBonus;
+    projection.armorCheckPenalty = armor.armorCheckPenalty;
+    projection.speedPenalty = armor.speedPenalty;
+    projection.shieldRating = armor.shieldRating;
+    projection.currentSR = armor.currentSR;
+  }
   return projection;
 }
 

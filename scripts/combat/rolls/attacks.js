@@ -8,6 +8,7 @@ import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/co
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -45,6 +46,71 @@ function actorIsProficientForAttack(actor, weapon) {
   const explicit = weapon?.system?.proficient;
   if (explicit !== false) return true;
   return actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon);
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : value == null ? [] : [value];
+}
+
+function normalizeRollKey(value = '') {
+  return String(value ?? '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9_-]/g, '')
+    .toLowerCase();
+}
+
+function buildEffectIntentRollContext(weapon, options = {}, extra = {}) {
+  const system = weapon?.system ?? {};
+  const weaponGroup = options.weaponGroup
+    ?? system.weaponGroup
+    ?? system.group
+    ?? system.proficiencyGroup
+    ?? system.category
+    ?? '';
+  const weaponCategory = options.weaponCategory
+    ?? options.attackType
+    ?? system.weaponCategory
+    ?? system.category
+    ?? system.type
+    ?? system.meleeOrRanged
+    ?? system.weaponRangeType
+    ?? '';
+  const damageType = options.damageType
+    ?? system.damageType
+    ?? system.damage?.type
+    ?? '';
+  const damageTypes = [
+    ...asArray(options.damageTypes),
+    ...asArray(system.damageTypes),
+    ...asArray(damageType)
+  ].map(normalizeRollKey).filter(Boolean);
+
+  return {
+    ...(options || {}),
+    ...(extra || {}),
+    item: weapon,
+    itemId: weapon?.id ?? weapon?._id ?? options.itemId ?? options.weaponId ?? '',
+    weapon,
+    weaponId: weapon?.id ?? weapon?._id ?? options.weaponId ?? '',
+    weaponGroup,
+    group: weaponGroup,
+    weaponCategory,
+    category: weaponCategory,
+    attackType: weaponCategory,
+    damageType,
+    damageTypes,
+    customTags: Array.isArray(options.customTags) ? options.customTags : []
+  };
+}
+
+function getBasicEffectIntentBonus(actor, target, weapon, options = {}, extra = {}) {
+  try {
+    return ModifierEngine.getEffectIntentModifierTotalForContext(actor, target, buildEffectIntentRollContext(weapon, options, extra), { includeBroad: true });
+  } catch (err) {
+    console.warn(`[SWSE] Failed to apply Basic effect intents for ${target}`, err);
+    return 0;
+  }
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -264,6 +330,12 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
     console.error('Error evaluating PASSIVE/STATE in attack bonus:', err);
   }
 
+  // User-friendly Basic Active Effect intents. These include broad attack
+  // bonuses and scoped roll-time effects such as +2 with pistols or +1 with
+  // ranged attacks. Context matching happens in EffectIntentEngine so scoped
+  // bonuses cannot leak into unrelated attack rolls.
+  const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.attack', weapon, context, { rollType: 'attack' });
+
   // Total attack bonus (RAW)
   return (
     bab +
@@ -276,7 +348,8 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
     talentBonus +
     stateBonus +
     (attackOptionModifiers.attackBonus || 0) +
-    (rageModifiers.attackBonus || 0)
+    (rageModifiers.attackBonus || 0) +
+    basicEffectBonus
   );
 }
 
@@ -290,7 +363,8 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
 
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const atkBonus = computeAttackBonus(actor, weapon, null, options) + getFightingDefensivelyAttackPenalty(actor, options) + Number(options.customModifier || 0) + Number(options.situationalBonus || 0);
+  const sequencePenalty = Number(options.sequencePenalty ?? 0);
+  const atkBonus = computeAttackBonus(actor, weapon, null, options) + getFightingDefensivelyAttackPenalty(actor, options) + Number(options.customModifier || 0) + Number(options.situationalBonus || 0) + sequencePenalty;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
@@ -314,7 +388,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     target
   });
 
-  await SWSEChat.postRoll({
+  if (!options.suppressChat) await SWSEChat.postRoll({
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
@@ -344,7 +418,30 @@ export async function rollAttack(actor, weapon, options = {}) {
     }
   });
 
-  return roll;
+  const attackResult = {
+    roll,
+    total: roll.total,
+    atkBonus,
+    sequencePenalty,
+    isHit,
+    isCritical,
+    critThreat: isCritical,
+    concealmentMiss: false,
+    concealmentMissChance: 0,
+    confirmationRoll: null,
+    d20,
+    target,
+    targetReflex,
+    resolvedTarget,
+    weaponId: weapon.id,
+    weapon,
+    critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+    reactionContext,
+    attackRerollOptions,
+    targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
+    targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
+  };
+  return attackResult;
 }
 
 /**
@@ -361,6 +458,7 @@ function computeDamageBonus(actor, weapon, context = {}) {
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
   bonus += getDamageAbilityContribution(actor, weapon);
   bonus += RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
+  bonus += getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
 
   return bonus;
 }

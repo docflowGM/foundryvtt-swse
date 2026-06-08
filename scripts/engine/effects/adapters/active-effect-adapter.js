@@ -9,11 +9,13 @@
 
 import {
   actorEffects,
+  actorItems,
   normalizeName,
   effectDurationText,
   summarizeEffectChanges
 } from "./effect-card-utils.js";
 import { EffectStateFlags } from "../effect-state-flags.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
 export class ActiveEffectAdapter {
   /**
@@ -27,97 +29,30 @@ export class ActiveEffectAdapter {
     const { options = {} } = context;
     const { includeInactiveEffects = false } = options;
 
-    return actorEffects(actor)
-      .filter(effect => includeInactiveEffects || effect?.disabled !== true)
-      .map(effect => {
-        // Try to read metadata (Phase 6)
-        let metadata = null;
-        try {
-          metadata = EffectStateFlags.read(effect);
-        } catch (err) {
-          console.warn("SWSE | ActiveEffectAdapter: metadata read failed", effect?.name, err);
-        }
+    const cards = [];
+    const items = actorItems(actor);
+    const ownedItemEffectNames = new Set();
+    for (const item of items) {
+      for (const effect of Array.from(item?.effects ?? [])) {
+        if (effect?.name) ownedItemEffectNames.add(String(effect.name));
+      }
+    }
 
-        // Fallback: compute existing data
-        const effectChanges = summarizeEffectChanges(effect);
-        const duration = effectDurationText(effect);
+    for (const effect of actorEffects(actor).filter(effect => includeInactiveEffects || effect?.disabled !== true)) {
+      const origin = String(effect?.origin ?? effect?.sourceName ?? '');
+      if (/\bItem\b/.test(origin) && effect?.name && ownedItemEffectNames.has(String(effect.name))) continue;
+      cards.push(this.#buildEffectCard(effect, { actor, item: null, includeRemoveAction: true }));
+    }
 
-        // Build card with metadata preference, fallback to existing behavior
-        // Helper: humanize sourceType for display (e.g., "forcePower" → "Force Power")
-        const humanizeSourceType = (type) => {
-          if (!type) return null;
-          return String(type)
-            .replace(/([A-Z])/g, ' $1')  // Add space before capitals
-            .replace(/^./, c => c.toUpperCase()) // Capitalize first letter
-            .trim();
-        };
+    for (const item of items) {
+      for (const effect of Array.from(item?.effects ?? [])) {
+        if (!includeInactiveEffects && effect?.disabled === true) continue;
+        const card = this.#buildOwnedItemEffectCard(effect, { actor, item });
+        if (card) cards.push(card);
+      }
+    }
 
-        const card = {
-          id: `effect-${effect.id ?? normalizeName(effect.name)}`,
-          label: metadata?.sourceName ?? effect.name ?? effect.label ?? "Active Effect",
-          type: "activeEffect", // MUST remain "activeEffect" for activeEffectCount stability
-          severity: metadata?.severity ?? effect?.flags?.swse?.severity ?? "info",
-          source: metadata?.sourceName ?? (metadata?.sourceType ? humanizeSourceType(metadata.sourceType) : (effect?.origin ?? effect?.flags?.swse?.sourceName ?? "Active Effect")),
-          text: metadata?.summary ?? (effectChanges.length ? effectChanges.join("; ") : duration),
-          gmEnforced: false,
-          mechanical: true,
-          icon: metadata?.icon ?? effect.icon ?? effect.img ?? null
-        };
-
-        // Build details array, avoiding duplication
-        const detailsSet = new Set();
-
-        // Add metadata details if available
-        if (metadata?.details && Array.isArray(metadata.details)) {
-          metadata.details.forEach(d => detailsSet.add(d));
-        }
-
-        // Add duration unless already in metadata details
-        if (duration && !detailsSet.has(`Duration: ${duration}`)) {
-          detailsSet.add(`Duration: ${duration}`);
-        }
-
-        // Add effect changes unless already in metadata details
-        if (effectChanges && Array.isArray(effectChanges)) {
-          effectChanges.forEach(d => {
-            if (!detailsSet.has(d)) {
-              detailsSet.add(d);
-            }
-          });
-        }
-
-        card.details = Array.from(detailsSet);
-
-        // Merge tags if metadata present
-        if (metadata?.tags && Array.isArray(metadata.tags)) {
-          const baseTags = ["activeEffect"];
-          const allTags = new Set([...baseTags, ...metadata.tags]);
-          card.tags = Array.from(allTags);
-        } else {
-          card.tags = ["activeEffect"];
-        }
-
-        // Add metadata fields if present (additive, not replacing)
-        if (metadata?.family) card.family = metadata.family;
-        if (metadata?.effectType) card.effectType = metadata.effectType;
-
-        // Phase 7: Add remove-active-effect action if appropriate
-        // Only emit for removable effects with valid effect id
-        if (effect?.id && metadata?.removable !== false) {
-          card.actions = [
-            {
-              id: "remove-active-effect",
-              label: "Remove",
-              dataAction: "remove-active-effect",
-              actorId: actor?.id ?? "",
-              effectId: effect.id,
-              gmOnly: false
-            }
-          ];
-        }
-
-        return card;
-      });
+    return cards.filter(Boolean);
   }
 }
 

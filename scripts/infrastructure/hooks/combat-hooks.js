@@ -20,6 +20,7 @@ import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
 
 let lastCombatBannerKey = '';
@@ -79,6 +80,15 @@ export function registerCombatHooks() {
         description: 'Track combat turns and log current combatant',
         category: 'combat',
         enabled: automationEnabled
+    });
+
+    // Basic SWSE Active Effect lifecycle should remain reliable even when broader automation is disabled.
+    HooksRegistry.register('combatTurn', handleBasicEffectLifecycle, {
+        id: 'combat-turn-basic-effect-lifecycle',
+        priority: 1,
+        description: 'Expire Basic SWSE Active Effects with turn/round durations',
+        category: 'combat',
+        enabled: true
     });
 
     // Combat turn - condition recovery (AFTER turn tracking)
@@ -148,6 +158,16 @@ function handleCombatTurn(combat, updateData, updateOptions) {
     void postCombatBanner(combat);
 }
 
+async function handleBasicEffectLifecycle(combat, updateData, updateOptions) {
+    const actor = combat?.combatant?.actor;
+    if (!actor) return;
+    try {
+        await EffectIntentEngine.expireManagedEffectsForActor(actor, { combat, timing: 'turn-start' });
+    } catch (err) {
+        SWSELogger.warn('[CombatHooks] Basic effect lifecycle expiration failed', err);
+    }
+}
+
 /**
  * Handle condition recovery at turn start
  * Prompts player to attempt condition track recovery
@@ -195,6 +215,9 @@ async function handleCombatEnd(combat, options, userId) {
         if (!actor) {continue;}
 
         try {
+            // Expire encounter-duration Basic SWSE Active Effects before resetting other encounter state.
+            await EffectIntentEngine.expireManagedEffectsForActor(actor, { combat, timing: 'combat-end' });
+
             // Reset species encounter traits
             await SpeciesRerollHandler.resetEncounterTraits(actor);
             SWSELogger.log(`Reset species traits for ${actor.name}`);

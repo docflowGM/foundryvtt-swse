@@ -15,6 +15,7 @@ import { SWSE_RACES } from "/systems/foundryvtt-swse/scripts/core/races.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollForcePower } from "/systems/foundryvtt-swse/scripts/rolls/force-powers.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const CONDITION_PENALTIES = {
   normal: 0, "-1": -1, "-2": -2, "-5": -5, "-10": -10, helpless: -100
@@ -104,13 +105,14 @@ export class SWSEActor extends Actor {
   }
 
   _applyArmorData() {
-    const armor = this.items.find(i => i.type === "armor" && i.system?.equipped);
+    const armor = this.items.find(i => i.type === "armor" && i.system?.equipped && !isEnergyShieldItem(i));
     const def = this.system.defenses?.reflex;
     if (!def) return;
 
     if (armor) {
-      def.armor = armor.system.defenseBonus || 0;
-      def.maxDex = armor.system.maxDex;
+      const armorStats = resolveArmorData(armor);
+      def.armor = armorStats.reflexBonus || 0;
+      def.maxDex = armorStats.maxDexBonus;
       def.maxSpeed = armor.system.maxSpeed;
     } else {
       def.armor = 0;

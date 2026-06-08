@@ -1,0 +1,25 @@
+<section class="item-editor__section swse-entity-dialog__dc-editor">
+  <h3 class="item-editor__section-title">{{entityDialog.dcEditor.title}}</h3>
+  <div class="swse-entity-dialog__dc-table {{#if (eq entityDialog.dcEditor.kind "skill")}}swse-entity-dialog__dc-table--skill{{/if}}" data-entity-array-list="{{entityDialog.dcEditor.path}}">
+    <div class="swse-entity-dialog__dc-row swse-entity-dialog__dc-row--head {{#if entityDialog.dcEditor.withDescription}}swse-entity-dialog__dc-row--with-description{{/if}}">
+      <span>DC</span><span>Effect</span>{{#if entityDialog.dcEditor.withDescription}}<span>Description</span>{{/if}}<span></span>
+    </div>
+    {{#each entityDialog.dcEditor.rows}}
+    <div class="swse-entity-dialog__dc-row {{#if ../entityDialog.dcEditor.withDescription}}swse-entity-dialog__dc-row--with-description{{/if}}" data-entity-array-row data-entity-array-index="{{this.index}}">
+      <input type="number" name="{{../entityDialog.dcEditor.path}}.{{this.index}}.dc" value="{{this.dc}}" data-dtype="Number" min="0" />
+      <input type="text" name="{{../entityDialog.dcEditor.path}}.{{this.index}}.effect" value="{{this.effect}}" placeholder="Effect / outcome" />
+      {{#if ../entityDialog.dcEditor.withDescription}}
+      <input type="text" name="{{../entityDialog.dcEditor.path}}.{{this.index}}.description" value="{{this.description}}" placeholder="Narrative description" />
+      {{/if}}
+      <button type="button" class="swse-entity-dialog__icon-btn" data-entity-array-remove title="Remove row">×</button>
+    </div>
+    {{/each}}
+  </div>
+  {{#unless entityDialog.dcEditor.hasRows}}
+  <div class="swse-entity-dialog__empty-state swse-entity-dialog__empty-state--inline">{{entityDialog.dcEditor.empty}}</div>
+  {{/unless}}
+  <div class="swse-entity-dialog__toolbar-row">
+    <button type="button" class="swse-btn swse-btn--small" data-entity-array-add="{{entityDialog.dcEditor.path}}" data-entity-array-kind="dc" data-entity-array-description="{{#if entityDialog.dcEditor.withDescription}}true{{else}}false{{/if}}">+ {{entityDialog.dcEditor.addLabel}}</button>
+    <span class="swse-entity-dialog__field-note">Structured rows save alongside existing rules text; they do not erase descriptions.</span>
+  </div>
+</section>

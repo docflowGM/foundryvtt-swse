@@ -2,6 +2,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
+import { rollAttack as canonicalRollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
 import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
@@ -334,19 +335,17 @@ export class SWSERoll {
    * @returns {Promise<Object|null>} Attack result object or null
    */
   static async rollAttack(actor, weapon, options = {}) {
-    // Validate inputs
     if (!actor || !weapon) {
       ui.notifications.error('Attack failed: missing actor or weapon.');
       return null;
     }
 
     try {
-      // Get modifiers from dialog if requested
       let modifiers = {
         cover: options.cover || 'none',
         concealment: options.concealment || 'none',
-        customModifier: options.customModifier || 0,
-        situationalBonus: 0,
+        customModifier: Number(options.customModifier || 0) || 0,
+        situationalBonus: Number(options.situationalBonus || 0) || 0,
         useForcePoint: options.useForcePoint || false
       };
 
@@ -355,14 +354,15 @@ export class SWSERoll {
           title: `${weapon.name} Attack`,
           rollType: 'attack',
           actor,
-          weapon
+          weapon,
+          sourceElement: options?.sourceElement ?? null,
+          sheet: options?.sheet ?? null
         });
 
-        if (!dialogResult) {return null;} // Cancelled
+        if (!dialogResult) return null;
         modifiers = { ...modifiers, ...dialogResult };
       }
 
-      // Create roll context for hooks
       const context = {
         actor,
         weapon,
@@ -373,329 +373,56 @@ export class SWSERoll {
         fpBonus: 0
       };
 
-      // Call pre-roll hook (can modify context or cancel roll)
       if (!callPreRollHook(ROLL_HOOKS.PRE_ATTACK, context)) {
         return { cancelled: true };
       }
 
-      // Check action economy (if in combat)
-      // Enforce action economy through persistence layer (same as UI buttons)
-      const combatant = game.combat?.turns?.find(t => t.actorId === actor.id);
-      if (combatant && actor.system?.combatActions) {
-        // Get persistent turn state from ActionEconomyPersistence (V2 format)
-        const persistedV2State = ActionEconomyPersistence.getTurnState(actor, game.combat.id);
-
-        // Check if action can be consumed (preview, don't mutate yet)
-        const ActionEngineV2 = (await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js")).default;
-        const attackCost = { standard: 1, move: 0, swift: 0 }; // Standard attack action
-        const actionCheck = ActionEngineV2.previewConsume(persistedV2State, attackCost);
-
-        if (!actionCheck.allowed) {
-          swseLogger.warn(`[ActionEngine] Attack blocked: ${actionCheck.violations.join(', ')}`, { actor: actor.name, weapon: weapon.name });
-          ui.notifications.warn(`Action blocked: Insufficient actions`);
-          return { blocked: true, reason: actionCheck.violations.join(', ') };
-        }
-
-        // If allowed, consume and persist through V2 engine
-        const consumeResult = ActionEngineV2.consume(persistedV2State, attackCost);
-        if (consumeResult.allowed) {
-          await ActionEconomyPersistence.commitConsumption(actor, game.combat.id, consumeResult);
-          swseLogger.log(`[ActionEngine] Consumed standard action for ${actor.name}`);
-        }
-
-        // Track for diagnostics
-        context.actionCheck = { allowed: actionCheck.allowed, violations: actionCheck.violations };
-        context.turnState = persistedV2State;
-      }
-
-      // Force Point before roll
       const fpBonus = (options.skipFP || !modifiers.useForcePoint)
         ? 0
         : await this.promptForcePointUse(actor, 'attack roll');
       context.fpBonus = fpBonus;
 
-      // Calculate attack bonus
-      const atkBonus = computeAttackBonus(actor, weapon);
-      const totalBonus = atkBonus + getFightingDefensivelyAttackPenalty(actor, modifiers) + fpBonus + modifiers.customModifier + modifiers.situationalBonus;
-      context.attackBonus = totalBonus;
+      const roll = await canonicalRollAttack(actor, weapon, {
+        ...options,
+        ...modifiers,
+        target: context.target,
+        forcePointBonus: fpBonus,
+        fpBonus,
+        sourceElement: options?.sourceElement ?? null,
+        companionSource: options?.companionSource ?? null,
+        sheet: options?.sheet ?? null,
+        showRollCompanion: options?.showRollCompanion !== false
+      });
 
-      // Build formula
-      const formula = `1d20 + ${totalBonus}`;
-      context.formula = formula;
+      if (!roll) return null;
 
-      // Perform the roll
-      const roll = await this._safeRoll(formula);
-      if (!roll) {return null;}
-
-      // Get the d20 result
-      const d20 = roll.dice[0].results[0].result;
-
-      // Get weapon crit properties (with rule support for range and multiplier)
-      const critRange = getEffectiveCritRange(actor, weapon);
-      const critMultiplier = getCriticalMultiplier(actor, weapon);
-
-      // Analyze critical threat
-      const critAnalysis = analyzeCriticalThreat(d20, critRange);
-
-      // Check concealment
-      let concealmentResult = { hit: true };
-      const missChance = getConcealmentMissChance(modifiers.concealment);
-      if (missChance > 0) {
-        concealmentResult = await rollConcealmentCheck(missChance, actor);
-      }
-
-      // Get target defense for comparison. Token targets are preferred, but
-      // manual/GM-adjudication target contexts support theater-of-the-mind play.
-      const coverBonus = getCoverBonus(modifiers.cover);
-      const resolvedTarget = resolveTargetContext({ ...options, targetContext: modifiers.targetContext ?? options.targetContext }, context.target, coverBonus);
-      const target = resolvedTarget.target;
-      const targetReflex = resolvedTarget.defenseValue;
-
-      // Determine hit/miss
-      const isHit = targetReflex !== null
-        ? roll.total >= targetReflex && concealmentResult.hit
-        : null;
-
-      // Handle critical confirmation for expanded threat ranges
-      let critConfirmed = critAnalysis.autoConfirmed;
-      let confirmationRoll = null;
-
-      if (critAnalysis.needsConfirmation && isHit !== false && targetReflex !== null) {
-        // Roll confirmation for expanded threat range (not nat 20)
-        const confirmResult = await rollCriticalConfirmation({
-          actor,
-          weapon,
-          attackBonus: totalBonus,
-          targetDefense: targetReflex,
-          fpBonus,
-          originalD20: d20
-        });
-        confirmationRoll = confirmResult.roll;
-        critConfirmed = confirmResult.confirmed;
-      }
-
-      const damageFormula = getWeaponDamageFormula(weapon);
-      let attackDamage = null;
-      if (damageFormula) {
-        try {
-          const damageRoll = await rollDamage(actor, weapon, {
-            ...options,
-            target,
-            suppressChat: true,
-            isCritical: critConfirmed,
-            critMultiplier: critConfirmed ? critMultiplier : 1,
-            twoHanded: modifiers.twoHanded || false
-          });
-          if (damageRoll) {
-            attackDamage = {
-              total: damageRoll.total,
-              formula: damageRoll.swseDamageFormula ?? damageRoll.formula ?? damageFormula,
-              damageType: getWeaponDamageType(weapon),
-              actorId: actor.id,
-              targetId: target?.id ?? '',
-              weaponId: weapon.id,
-              isCritical: critConfirmed,
-              critMultiplier,
-              label: critConfirmed ? `Damage ×${critMultiplier}` : 'Damage'
-            };
-          }
-        } catch (err) {
-          swseLogger.warn('[SWSERoll] Attack damage roll failed; posting attack only.', err);
-        }
-      }
-
-      // Build result object
+      const attackContext = roll.swseAttackContext ?? {};
       const result = {
         roll,
-        d20,
+        d20: roll?.dice?.[0]?.results?.[0]?.result ?? null,
         total: roll.total,
-        attackBonus: totalBonus,
+        attackBonus: attackContext.attackBonus ?? null,
         fpBonus,
-        isCritThreat: critAnalysis.isThreat,
-        isNat20: critAnalysis.isNat20,
-        critConfirmed,
-        critMultiplier,
-        confirmationRoll,
-        targetReflex,
-        isHit,
-        concealmentMiss: !concealmentResult.hit,
-        coverBonus,
+        isCritThreat: attackContext.isCritical === true,
+        isNat20: Number(roll?.dice?.[0]?.results?.[0]?.result ?? 0) === 20,
+        critConfirmed: attackContext.isCritical === true,
+        critMultiplier: attackContext.critMultiplier ?? Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, 2),
+        targetReflex: attackContext.targetDefenseValue ?? null,
+        isHit: attackContext.isHit ?? null,
+        coverBonus: attackContext.defenseAdjustment ?? 0,
         modifiers,
-        damage: attackDamage
+        canonical: true
       };
 
-      // Record in roll history
       RollHistory.record({
         roll,
         actor,
         type: 'attack',
-        result: { isHit, isCrit: critConfirmed, targetReflex },
+        result: { isHit: result.isHit, isCrit: result.critConfirmed, targetReflex: result.targetReflex },
         context
       });
 
-      // Build chat card
-      const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
-        formula,
-        weaponId: weapon.id,
-        isHit
-      });
-      const attackRerollHTML = attackRerollOptions.length ? `
-        <div class="swse-attack-reroll-options">
-          <strong>Available attack rerolls:</strong>
-          ${attackRerollOptions.map(option => `
-            <button type="button"
-                    class="swse-attack-reroll-btn"
-                    data-actor-id="${option.actorId}"
-                    data-weapon-id="${option.weaponId}"
-                    data-source-id="${option.sourceId}"
-                    data-source-name="${option.sourceName}"
-                    data-cost="${option.cost}"
-                    data-outcome="${option.outcome}"
-                    data-original-total="${option.originalTotal}"
-                    data-formula="${option.formula}"
-                    data-d20="${result.d20}"
-                    data-rule="${option.rule ? JSON.stringify(option.rule) : ''}"
-                    ${option.canUse ? '' : 'disabled'}>
-              <i class="fa-solid fa-dice"></i> ${option.label}: Reroll (${option.outcomeLabel})
-            </button>
-            ${option.disabledReason ? `<div class="swse-roll-hint">${option.disabledReason}</div>` : ''}
-          `).join('')}
-        </div>
-      ` : '';
-      const bonusString = `${atkBonus >= 0 ? '+' : ''}${atkBonus}`;
-      const hitMissHTML = targetReflex !== null ? `
-        <div class="attack-vs-defense">
-          <span class="vs-label">vs Reflex</span>
-          <span class="target-defense">${targetReflex}</span>
-          ${coverBonus > 0 ? `<span class="cover-note">(+${coverBonus} cover)</span>` : ''}
-        </div>
-        <div class="attack-outcome ${isHit ? (critConfirmed ? 'critical' : 'hit') : 'miss'}">
-          ${concealmentResult.hit === false
-            ? '<i class="fa-solid fa-eye-slash"></i> Miss (Concealment)'
-            : isHit
-              ? (critConfirmed
-                ? `<i class="fa-solid fa-star"></i> CRITICAL HIT! (×${critMultiplier} damage)`
-                : '<i class="fa-solid fa-check"></i> Hit!')
-              : '<i class="fa-solid fa-times"></i> Miss'}
-        </div>
-      ` : '';
-
-      const html = `
-        <div class="swse-attack-card ${critAnalysis.isThreat ? 'crit-threat' : ''} ${isHit === false ? 'miss' : ''}">
-          <div class="attack-header">
-            <img src="${weapon.img}" height="40" />
-            <h3>${weapon.name} — Attack</h3>
-          </div>
-
-          <div class="attack-result">
-            <div class="roll-total">${roll.total}</div>
-            <div class="roll-d20">d20: ${d20}${critAnalysis.isNat20 ? ' <i class="fa-solid fa-star" title="Natural 20!"></i>' : ''}</div>
-            <div class="roll-formula">${formula}</div>
-            <div class="roll-bonus">
-              Attack Bonus: ${bonusString}
-              ${fpBonus ? `, FP +${fpBonus}` : ''}
-              ${modifiers.situationalBonus ? `, Sit. +${modifiers.situationalBonus}` : ''}
-              ${modifiers.customModifier ? `, Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}` : ''}
-            </div>
-          </div>
-
-          ${critAnalysis.isThreat ? `
-            <div class="crit-banner ${critConfirmed ? 'confirmed' : 'unconfirmed'}">
-              ${critConfirmed
-                ? (critAnalysis.isNat20
-                  ? `<i class="fa-solid fa-star"></i> NATURAL 20 — CRITICAL HIT! (×${critMultiplier})`
-                  : `<i class="fa-solid fa-crosshairs"></i> CRITICAL CONFIRMED! (×${critMultiplier})`)
-                : `<i class="fa-solid fa-crosshairs"></i> Critical Threat (unconfirmed)`}
-            </div>
-          ` : ''}
-
-          ${hitMissHTML}
-
-          ${attackRerollHTML}
-
-          <button class="swse-roll-damage" data-actor-id="${actor.id}" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}" data-two-handed="${modifiers.twoHanded || false}">
-            <i class="fa-solid fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
-          </button>
-        </div>
-      `;
-
-      let reactionContext = null;
-      try {
-        const attackMode = String(weapon?.system?.meleeOrRanged ?? weapon?.system?.weaponRangeType ?? '').toLowerCase();
-        const attackType = attackMode.includes('range') || attackMode.includes('ranged') ? 'ranged' : 'melee';
-        const damageTypes = weapon?.system?.damageTypes ?? weapon?.system?.damageType ?? weapon?.system?.damage?.type ?? [];
-        const availableReactions = target
-          ? ReactionEngine.getAvailableReactions(target, {
-              attacker: actor,
-              weapon,
-              attackType,
-              damageTypes: Array.isArray(damageTypes) ? damageTypes : [damageTypes].filter(Boolean),
-              trigger: 'ON_ATTACK_DECLARED'
-            })
-          : [];
-        if (availableReactions.length) {
-          reactionContext = {
-            attacker: actor,
-            attackerId: actor.id,
-            defender: target,
-            defenderId: target.id,
-            defenderName: target.name,
-            timerLabel: '6.0 s',
-            reason: `Incoming ${attackType} attack total ${roll.total}.`,
-            reactions: availableReactions.map(reaction => ({
-              ...reaction,
-              available: true,
-              sublabel: reaction.key === 'block' || reaction.key === 'deflect' ? `DC ${roll.total} · UTF` : ''
-            }))
-          };
-        }
-      } catch (err) {
-        swseLogger.warn('[SWSERoll] Failed to derive attack reaction context', err);
-      }
-
-      const message = await SWSEChat.postRoll({
-        roll,
-        actor,
-        flavor: `${weapon.name} Attack`,
-        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
-        context: {
-          type: 'attack',
-          weaponId: weapon.id,
-          weapon,
-          attackRerollOptions,
-          target,
-          targetName: resolvedTarget.targetName ?? target?.name ?? '',
-          targetContext: resolvedTarget,
-          targetDefense: resolvedTarget.defenseType === 'dc' ? 'DC' : resolvedTarget.defenseType === 'fortitude' ? 'Fortitude' : resolvedTarget.defenseType === 'will' ? 'Will' : 'Reflex',
-          dc: targetReflex,
-          passed: isHit,
-          success: isHit,
-          outcomeLabel: concealmentResult.hit === false ? 'Miss · Concealment' : critConfirmed ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
-          isCritical: critConfirmed,
-          critMultiplier,
-          customModifier: modifiers.customModifier,
-          situationalMods: modifiers.situationalBonus,
-          baseBonus: totalBonus,
-          reactionContext,
-          sourceElement: options?.sourceElement ?? null,
-          companionSource: options?.companionSource ?? null,
-          sheet: options?.sheet ?? null,
-          showRollCompanion: options?.showRollCompanion !== false,
-          showDamageAction: !attackDamage,
-          attackDamage
-        }
-      });
-
-      result.message = message;
-
-      // Show 3D dice if available
-      if (game.dice3d) {
-        await game.dice3d.showForRoll(roll, game.user, true);
-      }
-
-      // Call post-roll hook
       callPostRollHook(ROLL_HOOKS.POST_ATTACK, { ...context, result });
-
       return result;
 
     } catch (err) {

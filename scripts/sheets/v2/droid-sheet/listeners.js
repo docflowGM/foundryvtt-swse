@@ -321,7 +321,10 @@ function wireFeatTalentButtons(sheet, root, signal) {
         game.swse.progression.openFeatSelector(sheet.document);
       } else {
         const doc = await createSafeEmbeddedItem(sheet.document, 'feat', { source: 'droid-sheet-add-feat' });
-        doc?.sheet?.render?.(true);
+        if (doc?.sheet) {
+          doc.sheet._entityDialogMode = 'create';
+          doc.sheet.render(true);
+        }
       }
     }, { signal });
   }
@@ -333,7 +336,10 @@ function wireFeatTalentButtons(sheet, root, signal) {
         game.swse.progression.openTalentSelector(sheet.document);
       } else {
         const doc = await createSafeEmbeddedItem(sheet.document, 'talent', { source: 'droid-sheet-add-talent' });
-        doc?.sheet?.render?.(true);
+        if (doc?.sheet) {
+          doc.sheet._entityDialogMode = 'create';
+          doc.sheet.render(true);
+        }
       }
     }, { signal });
   }

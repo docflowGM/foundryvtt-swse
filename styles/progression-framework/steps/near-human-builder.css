@@ -1,34 +1,27 @@
 /* ============================================================================
-   NEAR-HUMAN BUILDER — Holographic Datapad Interface (ENHANCED)
-   ============================================================================
-   Reference: Near-Human Customization datapad screen
-   3-column composition: baseline (left) | traits (center, dominant) | summary (right)
-   Visual language: hard-edged frames, BRIGHT cyan border glow, corner accents
-   Hierarchy: center column is primary focus, flanked by support panels
+   NEAR-HUMAN BUILDER — 3-column: Setup | Trait Picker | Review
+   Flow: left (configure) → center (pick) → right (detail + review)
    ============================================================================ */
 
 .progression-shell .prog-nh-builder {
   display: grid;
-  grid-template-columns: 220px 1fr 220px;
-  gap: 14px;
+  grid-template-columns: 210px 1fr 250px;
+  gap: 12px;
   height: 100%;
   padding: 14px;
   overflow: hidden;
-  /* Transparent — outer shell's panel-large.svg + frame-shell.svg is the authoritative frame.
-     Interior columns (.prog-nh-builder__baseline / __center / __summary) keep their own
-     background/border chrome — they are diegetic sub-panels, not the outer shell. */
   background: transparent;
   position: relative;
 }
 
-/* ===== COLUMN BASE STYLING — Holographic frame effects (ENHANCED GLOW) ===== */
+/* ── Column base ─────────────────────────────────────────────────────────── */
 
 .progression-shell .prog-nh-builder__baseline,
 .progression-shell .prog-nh-builder__center,
 .progression-shell .prog-nh-builder__summary {
   display: flex;
   flex-direction: column;
-  gap: var(--prog-space-sm);
+  gap: 10px;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -36,66 +29,27 @@
   padding: 14px;
 }
 
-/* BASELINE COLUMN — Left support panel (secondary) */
 .progression-shell .prog-nh-builder__baseline {
-  background: linear-gradient(180deg, rgba(6, 18, 32, 0.95), rgba(2, 10, 20, 0.98));
-  border: 1px solid rgba(100, 220, 255, 0.35);
-  box-shadow:
-    0 0 12px rgba(0, 200, 255, 0.08),
-    0 0 24px rgba(0, 160, 220, 0.04),
-    inset 0 0 10px rgba(0, 180, 255, 0.03);
+  background: linear-gradient(180deg, rgba(6,18,32,0.95), rgba(2,10,20,0.98));
+  border: 1px solid rgba(100,220,255,0.3);
+  box-shadow: 0 0 12px rgba(0,200,255,0.06), inset 0 0 10px rgba(0,180,255,0.02);
 }
 
-.progression-shell .prog-nh-builder__baseline::before {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(100, 220, 255, 0.15);
-  pointer-events: none;
-  border-radius: 1px;
-}
-
-/* CENTER COLUMN — Primary interaction area (VISUALLY DOMINANT with bright glow) */
 .progression-shell .prog-nh-builder__center {
-  background: linear-gradient(180deg, rgba(8, 22, 40, 0.96), rgba(4, 14, 28, 0.98));
-  border: 2px solid rgba(120, 230, 255, 0.6);
-  box-shadow:
-    0 0 24px rgba(0, 210, 255, 0.18),
-    0 0 48px rgba(0, 170, 220, 0.08),
-    0 0 2px rgba(120, 230, 255, 0.3) inset;
+  background: linear-gradient(180deg, rgba(8,22,40,0.96), rgba(4,14,28,0.98));
+  border: 2px solid rgba(120,230,255,0.55);
+  box-shadow: 0 0 24px rgba(0,210,255,0.14), 0 0 2px rgba(120,230,255,0.25) inset;
 }
 
-.progression-shell .prog-nh-builder__center::before {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(120, 230, 255, 0.15);
-  pointer-events: none;
-  border-radius: 1px;
-}
-
-/* SUMMARY COLUMN — Right support panel (secondary) */
 .progression-shell .prog-nh-builder__summary {
-  background: linear-gradient(180deg, rgba(6, 18, 32, 0.95), rgba(2, 10, 20, 0.98));
-  border: 1px solid rgba(100, 220, 255, 0.35);
-  box-shadow:
-    0 0 12px rgba(0, 200, 255, 0.08),
-    0 0 24px rgba(0, 160, 220, 0.04),
-    inset 0 0 10px rgba(0, 180, 255, 0.03);
+  background: linear-gradient(180deg, rgba(6,18,32,0.95), rgba(2,10,20,0.98));
+  border: 1px solid rgba(100,220,255,0.3);
+  box-shadow: 0 0 12px rgba(0,200,255,0.06), inset 0 0 10px rgba(0,180,255,0.02);
 }
 
-.progression-shell .prog-nh-builder__summary::before {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(100, 220, 255, 0.15);
-  pointer-events: none;
-  border-radius: 1px;
-}
-
-/* COLUMN TITLES — Strong, prominent hierarchy markers (BRIGHT GLOW) */
+/* Column titles */
 .progression-shell .prog-nh-builder__col-title {
-  margin: 0 0 var(--prog-space-sm) 0;
+  margin: 0 0 4px 0;
   padding-bottom: 10px;
   font-size: var(--prog-font-size-sm);
   font-family: var(--prog-font);
@@ -103,558 +57,562 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #00d4ff;
-  text-shadow:
-    0 0 12px rgba(0, 212, 255, 0.5),
-    0 0 6px rgba(0, 180, 255, 0.3),
-    0 0 2px rgba(0, 160, 220, 0.2);
-  border-bottom: 1px solid rgba(100, 220, 255, 0.3);
-}
-
-/* Baseline column */
-.progression-shell .prog-nh-baseline__list {
-  list-style: none;
-  margin: 0 0 var(--prog-space-sm) 0;
-  padding: 0;
-  font-size: var(--prog-font-size-xs);
+  text-shadow: 0 0 12px rgba(0,212,255,0.45), 0 0 5px rgba(0,180,255,0.25);
+  border-bottom: 1px solid rgba(100,220,255,0.25);
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 8px;
 }
 
-.progression-shell .prog-nh-baseline__list li {
-  text-shadow: var(--prog-text-shadow);
+/* Step number badge */
+.progression-shell .prog-nh-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0,180,255,0.2);
+  border: 1px solid rgba(0,212,255,0.5);
+  font-size: 10px;
+  font-weight: 800;
+  color: #00d4ff;
+  flex-shrink: 0;
+  text-shadow: none;
 }
 
-/* ===== LEFT COLUMN: HUMAN BASELINE & SACRIFICE ===== */
-
-.progression-shell .prog-nh-baseline__list li {
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  color: rgba(200, 230, 255, 0.9);
-  padding: 3px 0;
-  font-size: var(--prog-font-size-xs);
-}
+/* ── Left: sacrifice ─────────────────────────────────────────────────────── */
 
 .progression-shell .prog-nh-sacrifice {
-  margin-top: 12px;
   padding: 12px;
-  background: linear-gradient(180deg, rgba(0, 50, 90, 0.4), rgba(0, 30, 60, 0.5));
-  border: 1px solid rgba(100, 220, 255, 0.25);
+  background: linear-gradient(180deg, rgba(0,50,90,0.45), rgba(0,30,60,0.55));
+  border: 1px solid rgba(100,220,255,0.3);
   border-radius: 2px;
-  box-shadow: 0 0 10px rgba(0, 180, 255, 0.05);
 }
 
 .progression-shell .prog-nh-sacrifice__title {
-  margin: 0 0 10px 0;
+  margin: 0 0 6px 0;
   font-size: var(--prog-font-size-xs);
   font-weight: 700;
-  color: rgba(210, 240, 255, 1);
-  text-shadow:
-    0 0 8px rgba(0, 180, 255, 0.4),
-    0 0 4px rgba(0, 160, 220, 0.2);
+  color: rgba(220,245,255,1);
+  text-shadow: 0 0 6px rgba(0,180,255,0.35);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .progression-shell .prog-nh-sacrifice__help {
   margin: 0 0 10px 0;
-  font-size: var(--prog-font-size-xs);
-  color: rgba(160, 200, 255, 0.65);
+  font-size: 10px;
+  color: rgba(160,200,255,0.65);
   font-style: italic;
+  line-height: 1.4;
 }
 
 .progression-shell .prog-nh-sacrifice__option {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   font-size: var(--prog-font-size-xs);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   cursor: pointer;
-  color: rgba(200, 230, 255, 0.9);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  padding: 6px;
+  color: rgba(200,230,255,0.9);
+  padding: 7px 8px;
   border-radius: 2px;
+  border: 1px solid transparent;
   transition: all 100ms ease;
+}
+
+.progression-shell .prog-nh-sacrifice__option:last-child {
+  margin-bottom: 0;
 }
 
 .progression-shell .prog-nh-sacrifice__option:hover {
-  background: rgba(0, 180, 255, 0.1);
-  color: rgba(220, 245, 255, 1);
+  background: rgba(0,180,255,0.1);
+  border-color: rgba(100,220,255,0.2);
 }
 
-.progression-shell .prog-nh-sacrifice__option:hover input {
-  accent-color: #00d4ff;
+.progression-shell .prog-nh-sacrifice__option--unanswered {
+  border-color: rgba(100,220,255,0.15);
+  background: rgba(0,150,255,0.04);
 }
 
-.progression-shell .prog-nh-sacrifice__option input {
+.progression-shell .prog-nh-sacrifice__option input[type="radio"] {
   cursor: pointer;
-  accent-color: rgba(100, 220, 255, 0.7);
-  width: 16px;
-  height: 16px;
-  transition: accent-color 100ms ease;
+  accent-color: #00d4ff;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
-/* Center column — traits */
+.progression-shell .prog-nh-sacrifice__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+
+.progression-shell .prog-nh-sacrifice__text strong {
+  color: rgba(220,245,255,1);
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-nh-sacrifice__text em {
+  font-style: normal;
+  font-size: 10px;
+  color: rgba(150,190,255,0.6);
+}
+
+/* Baseline reference (subdued) */
+.progression-shell .prog-nh-baseline-ref {
+  padding: 10px;
+  background: rgba(0,20,40,0.3);
+  border: 1px solid rgba(100,220,255,0.15);
+  border-radius: 2px;
+}
+
+.progression-shell .prog-nh-baseline-ref__title {
+  margin: 0 0 8px 0;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(160,200,255,0.6);
+}
+
+.progression-shell .prog-nh-baseline__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progression-shell .prog-nh-baseline__list li {
+  font-size: 10px;
+  color: rgba(180,215,255,0.7);
+  padding: 2px 0;
+}
+
+/* Custom name (optional, bottom of left) */
+.progression-shell .prog-nh-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progression-shell .nh-custom-name {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(100,220,255,0.15);
+}
+
+.progression-shell .prog-nh-section__label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(190,225,255,0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.progression-shell .prog-nh-optional {
+  font-weight: 400;
+  text-transform: none;
+  color: rgba(140,180,255,0.5);
+  letter-spacing: 0;
+  font-style: italic;
+}
+
+.progression-shell .prog-nh-input {
+  appearance: none;
+  width: 100%;
+  padding: 7px 10px;
+  background: rgba(8,24,40,0.8);
+  border: 1px solid rgba(100,220,255,0.25);
+  border-radius: 2px;
+  color: rgba(200,230,255,0.95);
+  font-family: inherit;
+  font-size: var(--prog-font-size-xs);
+  box-sizing: border-box;
+  transition: border-color 100ms, box-shadow 100ms;
+}
+
+.progression-shell .prog-nh-input::placeholder { color: rgba(140,180,255,0.4); }
+
+.progression-shell .prog-nh-input:hover { border-color: rgba(150,240,255,0.45); }
+
+.progression-shell .prog-nh-input:focus {
+  outline: none;
+  border-color: rgba(150,240,255,0.75);
+  box-shadow: 0 0 12px rgba(0,210,255,0.15), 0 0 6px rgba(100,220,255,0.08);
+}
+
+/* ── Center: trait list ──────────────────────────────────────────────────── */
+
+.progression-shell .prog-nh-center-hint {
+  margin: 0;
+  font-size: 10px;
+  color: rgba(150,190,255,0.6);
+  font-style: italic;
+}
+
 .progression-shell .prog-nh-traits {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
 }
-
-.progression-shell .prog-nh-trait {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* ===== CENTER COLUMN: TRAIT SELECTION (BRIGHT, PROMINENT) ===== */
 
 .progression-shell .prog-nh-trait__btn {
   appearance: none;
-  background: linear-gradient(180deg, rgba(8, 24, 40, 0.9), rgba(4, 14, 28, 0.95));
-  border: 1px solid rgba(100, 220, 255, 0.35);
+  background: rgba(8,24,40,0.7);
+  border: 1px solid rgba(100,220,255,0.25);
   border-radius: 2px;
-  padding: 10px 12px;
-  color: rgba(200, 230, 255, 0.9);
+  padding: 8px 12px;
+  color: rgba(190,225,255,0.85);
   cursor: pointer;
   font-family: inherit;
   font-size: var(--prog-font-size-xs);
-  font-weight: 600;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all 120ms ease;
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.2);
-  position: relative;
+  transition: all 100ms ease;
+  text-align: left;
+  width: 100%;
 }
 
 .progression-shell .prog-nh-trait__btn:hover {
-  border-color: rgba(150, 240, 255, 0.6);
-  background: linear-gradient(180deg, rgba(12, 30, 48, 0.95), rgba(8, 20, 36, 0.98));
-  box-shadow:
-    0 0 16px rgba(0, 210, 255, 0.2),
-    0 0 8px rgba(100, 220, 255, 0.15);
-  color: rgba(220, 245, 255, 1);
+  border-color: rgba(150,240,255,0.5);
+  background: rgba(12,30,48,0.9);
+  color: rgba(220,245,255,1);
+  box-shadow: 0 0 10px rgba(0,210,255,0.12);
 }
 
-.progression-shell .prog-nh-trait__btn:focus {
-  outline: none;
-  border-color: rgba(150, 240, 255, 0.8);
-  box-shadow:
-    0 0 20px rgba(0, 220, 255, 0.3),
-    0 0 10px rgba(100, 220, 255, 0.2);
-}
-
-.progression-shell .prog-nh-trait--selected .prog-nh-trait__btn {
-  border-color: rgba(150, 240, 255, 0.85);
-  background: linear-gradient(180deg, rgba(0, 60, 100, 0.75), rgba(0, 40, 70, 0.85));
+.progression-shell .prog-nh-trait__btn--selected {
+  border-color: rgba(0,212,255,0.8);
+  background: linear-gradient(180deg, rgba(0,60,100,0.7), rgba(0,40,70,0.8));
   color: #00d4ff;
-  text-shadow:
-    0 0 8px rgba(0, 212, 255, 0.6),
-    0 0 4px rgba(0, 170, 255, 0.3);
-  box-shadow:
-    0 0 20px rgba(0, 212, 255, 0.3),
-    0 0 40px rgba(0, 170, 220, 0.12),
-    inset 0 0 12px rgba(0, 180, 255, 0.1);
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(0,212,255,0.5);
+  box-shadow: 0 0 16px rgba(0,212,255,0.2), inset 0 0 8px rgba(0,180,255,0.08);
 }
 
-/* Detail panel for selected trait (ENHANCED) */
-.progression-shell .prog-nh-trait__detail {
+.progression-shell .prog-nh-trait__name {
+  flex: 1;
+}
+
+.progression-shell .prog-nh-trait__icon {
+  font-size: 10px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-nh-trait__btn--selected .prog-nh-trait__icon {
+  opacity: 1;
+  color: #00d4ff;
+}
+
+/* ── Right: review panel ─────────────────────────────────────────────────── */
+
+/* Trait detail */
+.progression-shell .prog-nh-trait-detail-panel {
   padding: 12px;
-  margin-top: 6px;
-  background: linear-gradient(180deg, rgba(0, 60, 100, 0.5), rgba(0, 40, 70, 0.6));
-  border: 1px solid rgba(100, 220, 255, 0.3);
+  background: linear-gradient(180deg, rgba(0,55,95,0.5), rgba(0,35,65,0.6));
+  border: 1px solid rgba(100,220,255,0.35);
   border-radius: 2px;
+  box-shadow: inset 0 0 10px rgba(0,180,255,0.05);
+}
+
+.progression-shell .prog-nh-trait-detail-panel__name {
   font-size: var(--prog-font-size-xs);
-  color: rgba(210, 235, 255, 0.95);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  box-shadow:
-    inset 0 0 12px rgba(0, 180, 255, 0.06),
-    0 0 8px rgba(0, 180, 255, 0.05);
+  font-weight: 700;
+  color: #00d4ff;
+  text-shadow: 0 0 8px rgba(0,212,255,0.4);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.progression-shell .prog-nh-trait__detail p {
-  margin: 0 0 var(--prog-space-xs) 0;
-  line-height: 1.4;
+.progression-shell .prog-nh-trait-detail-panel__desc {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: rgba(200,230,255,0.88);
+  line-height: 1.45;
 }
 
-/* ===== ABILITY ADJUSTMENT CONTROLS (BRIGHT) ===== */
+.progression-shell .prog-nh-trait-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: var(--prog-font-size-xs);
+  color: rgba(130,170,220,0.5);
+  font-style: italic;
+  border: 1px dashed rgba(100,220,255,0.15);
+  border-radius: 2px;
+}
 
+.progression-shell .prog-nh-trait-empty .fas {
+  margin-right: 6px;
+}
+
+/* Ability adjustment controls */
 .progression-shell .prog-nh-ability-adj {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(100, 220, 255, 0.2);
+  border-top: 1px solid rgba(100,220,255,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progression-shell .prog-nh-ability-adj__hint {
+  font-size: 10px;
+  color: rgba(160,200,255,0.65);
+  font-style: italic;
+  margin-bottom: 2px;
 }
 
 .progression-shell .prog-nh-ability-adj__row {
-  display: grid;
-  grid-template-columns: 80px auto 28px 28px 28px;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 6px;
   font-size: var(--prog-font-size-xs);
-  padding: 5px 0;
 }
 
-.progression-shell .prog-nh-ability-adj__row > span:first-child {
+.progression-shell .prog-nh-ability-adj__label {
   font-weight: 600;
-  color: rgba(210, 240, 255, 0.95);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  color: rgba(200,230,255,0.9);
+  min-width: 36px;
+  font-size: 10px;
 }
 
-.progression-shell .prog-nh-ability-btn {
+.progression-shell .prog-nh-ability-adj__controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.progression-shell .nh-ability-btn {
   appearance: none;
-  background: linear-gradient(180deg, rgba(8, 24, 40, 0.8), rgba(4, 14, 28, 0.9));
-  border: 1px solid rgba(100, 220, 255, 0.3);
+  background: rgba(8,24,40,0.8);
+  border: 1px solid rgba(100,220,255,0.3);
   border-radius: 2px;
-  color: rgba(180, 220, 255, 0.75);
+  color: rgba(180,220,255,0.8);
   cursor: pointer;
-  padding: 4px 8px;
-  font-size: var(--prog-font-size-xs);
-  font-weight: 600;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
   transition: all 100ms ease;
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  box-shadow: 0 0 6px rgba(0, 180, 255, 0.03);
+  min-width: 28px;
 }
 
-.progression-shell .prog-nh-ability-btn:hover:not(:disabled) {
-  border-color: rgba(150, 240, 255, 0.5);
-  background: linear-gradient(180deg, rgba(12, 30, 48, 0.9), rgba(8, 20, 36, 0.95));
-  color: rgba(220, 245, 255, 0.95);
-  box-shadow:
-    0 0 12px rgba(0, 210, 255, 0.15),
-    0 0 6px rgba(100, 220, 255, 0.08);
+.progression-shell .nh-ability-btn:hover:not(:disabled) {
+  border-color: rgba(150,240,255,0.5);
+  color: rgba(220,245,255,0.95);
+  box-shadow: 0 0 8px rgba(0,210,255,0.15);
 }
 
-.progression-shell .prog-nh-ability-btn:disabled {
+.progression-shell .nh-ability-btn:disabled {
   opacity: 0.25;
   cursor: not-allowed;
 }
 
 .progression-shell .prog-nh-ability-adj__val {
   text-align: center;
-  min-width: 28px;
+  min-width: 26px;
   font-weight: 700;
   font-size: var(--prog-font-size-xs);
-  color: #00d4ff;
-  text-shadow:
-    0 0 8px rgba(0, 212, 255, 0.4),
-    0 0 4px rgba(0, 170, 255, 0.2);
 }
 
-/* ===== VARIANTS SECTION (BRIGHT, PROMINENT) ===== */
-
-.progression-shell .prog-nh-variants {
-  border-top: 1px solid rgba(100, 220, 255, 0.2);
+/* Secondary choice */
+.progression-shell .prog-nh-secondary-choice {
   margin-top: 10px;
   padding-top: 10px;
+  border-top: 1px solid rgba(100,220,255,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.progression-shell .prog-nh-variants h4 {
-  margin: 0 0 10px 0;
+.progression-shell .prog-nh-select {
+  appearance: none;
+  width: 100%;
+  padding: 7px 28px 7px 10px;
+  background: rgba(8,24,40,0.85);
+  border: 1px solid rgba(100,220,255,0.28);
+  border-radius: 2px;
+  color: rgba(200,230,255,0.95);
+  font-family: inherit;
   font-size: var(--prog-font-size-xs);
+  box-sizing: border-box;
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8"><polyline fill="none" stroke="%23a0c8ff" stroke-width="1.5" points="1,1 6,6 11,1"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+  transition: border-color 100ms, box-shadow 100ms;
+}
+
+.progression-shell .prog-nh-select:hover { border-color: rgba(150,240,255,0.45); }
+.progression-shell .prog-nh-select:focus {
+  outline: none;
+  border-color: rgba(150,240,255,0.75);
+  box-shadow: 0 0 12px rgba(0,210,255,0.15);
+}
+.progression-shell .prog-nh-select option {
+  background: rgba(8,24,40,0.98);
+  color: rgba(200,230,255,0.95);
+}
+
+/* Summary blocks */
+.progression-shell .prog-nh-summary-block {
+  padding: 10px;
+  background: rgba(0,20,40,0.35);
+  border: 1px solid rgba(100,220,255,0.2);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progression-shell .prog-nh-summary-block__title {
+  font-size: 10px;
   font-weight: 700;
-  color: rgba(210, 240, 255, 1);
-  text-shadow:
-    0 0 8px rgba(0, 180, 255, 0.4),
-    0 0 4px rgba(0, 160, 220, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #00d4ff;
+  text-shadow: 0 0 6px rgba(0,212,255,0.35);
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(100,220,255,0.15);
+  margin-bottom: 2px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.progression-shell .prog-nh-summary-block__row {
+  font-size: var(--prog-font-size-xs);
+  padding: 2px 0;
+}
+
+.progression-shell .prog-nh-summary-block__row--muted {
+  opacity: 0.65;
+  font-size: 10px;
+}
+
+.progression-shell .prog-nh-summary__attr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: var(--prog-font-size-xs);
+  padding: 2px 0;
+}
+
+.progression-shell .prog-nh-summary__attr-label {
+  color: rgba(170,205,255,0.8);
+  font-weight: 500;
+}
+
+.progression-shell .prog-nh-summary__attr-val {
+  font-weight: 700;
+  font-size: var(--prog-font-size-xs);
+  text-align: right;
+}
+
+.progression-shell .prog-nh-summary__attr-none {
+  font-size: 10px;
+  color: rgba(130,170,220,0.5);
+  font-style: italic;
+}
+
+/* Color coding */
+.progression-shell .prog-num--pos { color: #2cff6f; text-shadow: 0 0 6px rgba(44,255,111,0.4); }
+.progression-shell .prog-num--neg { color: #ff6060; text-shadow: 0 0 6px rgba(255,96,96,0.4); }
+.progression-shell .prog-num--zero { color: rgba(200,230,255,0.7); }
+
+/* Variants in right column */
+.progression-shell .prog-nh-variants-block {
+  /* inherits .prog-nh-summary-block */
 }
 
 .progression-shell .prog-nh-variants__hint {
-  font-size: var(--prog-font-size-xs);
-  font-weight: normal;
-  color: rgba(160, 190, 255, 0.7);
-  font-style: italic;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(140,180,255,0.6);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .progression-shell .prog-nh-variants__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
+  margin-top: 2px;
 }
-
-/* ===== VARIANT CHIPS (BRIGHT, PROMINENT) ===== */
 
 .progression-shell .prog-nh-variant-chip {
   appearance: none;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
+  padding: 5px 9px;
   border-radius: 2px;
-  font-size: var(--prog-font-size-xs);
+  font-size: 10px;
   font-weight: 600;
   font-family: var(--prog-font-body);
-  border: 1px solid rgba(100, 220, 255, 0.3);
-  color: rgba(180, 220, 255, 0.75);
-  background: linear-gradient(180deg, rgba(6, 18, 32, 0.6), rgba(2, 10, 20, 0.7));
+  border: 1px solid rgba(100,220,255,0.25);
+  color: rgba(170,210,255,0.75);
+  background: rgba(6,18,32,0.6);
   cursor: pointer;
   transition: all 100ms ease;
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
   white-space: nowrap;
-  box-shadow: 0 0 8px rgba(0, 180, 255, 0.04);
 }
 
 .progression-shell .prog-nh-variant-chip:hover {
-  border-color: rgba(150, 240, 255, 0.5);
-  color: rgba(220, 245, 255, 0.95);
-  background: linear-gradient(180deg, rgba(8, 24, 40, 0.75), rgba(4, 14, 28, 0.85));
-  box-shadow:
-    0 0 14px rgba(0, 210, 255, 0.15),
-    0 0 6px rgba(100, 220, 255, 0.1);
+  border-color: rgba(150,240,255,0.45);
+  color: rgba(220,245,255,0.95);
+  box-shadow: 0 0 10px rgba(0,210,255,0.12);
 }
 
 .progression-shell .prog-nh-variant-chip--active {
-  border-color: rgba(150, 240, 255, 0.75);
+  border-color: rgba(0,212,255,0.7);
   color: #00d4ff;
-  background: linear-gradient(180deg, rgba(0, 60, 100, 0.6), rgba(0, 40, 70, 0.7));
-  box-shadow:
-    0 0 16px rgba(0, 212, 255, 0.25),
-    0 0 8px rgba(100, 220, 255, 0.1),
-    inset 0 0 8px rgba(0, 180, 255, 0.1);
-  text-shadow:
-    0 0 8px rgba(0, 212, 255, 0.4),
-    0 0 4px rgba(0, 170, 255, 0.2);
+  background: rgba(0,55,90,0.6);
+  box-shadow: 0 0 12px rgba(0,212,255,0.18), inset 0 0 6px rgba(0,180,255,0.08);
+  text-shadow: 0 0 6px rgba(0,212,255,0.35);
 }
 
-/* ===== STATUS INDICATOR (BRIGHT, PROMINENT) ===== */
-
+/* Status bar — pinned to bottom of right column */
 .progression-shell .prog-nh-status {
-  border-top: 1px solid rgba(100, 220, 255, 0.2);
-  margin-top: 10px;
-  padding-top: 10px;
+  margin-top: auto;
+  padding: 10px 12px;
+  border-radius: 2px;
   font-size: var(--prog-font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-}
-
-.progression-shell .prog-nh-status__ready {
-  color: #2cff6f;
-  text-shadow:
-    0 0 12px rgba(44, 255, 111, 0.6),
-    0 0 6px rgba(44, 255, 111, 0.3);
-}
-
-.progression-shell .prog-nh-status__incomplete {
-  color: rgba(180, 200, 220, 0.85);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-}
-
-/* ===== SUMMARY COLUMN — Right panel (bright, legible) ===== */
-
-.progression-shell .prog-nh-summary__attr {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--prog-font-size-xs);
-  padding: 5px 0;
-}
-
-.progression-shell .prog-nh-summary__attr-label {
-  color: rgba(170, 200, 255, 0.8);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  font-weight: 500;
-}
-
-.progression-shell .prog-nh-summary__attr-val {
-  text-align: right;
-  font-weight: 700;
-  font-size: var(--prog-font-size-xs);
-  min-width: 40px;
-}
-
-/* Color coding for ability values (BRIGHT) */
-.progression-shell .prog-nh-summary__attr-val.prog-num--pos {
-  color: #2cff6f;
-  text-shadow:
-    0 0 8px rgba(44, 255, 111, 0.5),
-    0 0 4px rgba(44, 255, 111, 0.25);
-}
-
-.progression-shell .prog-nh-summary__attr-val.prog-num--neg {
-  color: #ff6060;
-  text-shadow:
-    0 0 8px rgba(255, 96, 96, 0.5),
-    0 0 4px rgba(255, 96, 96, 0.25);
-}
-
-.progression-shell .prog-nh-summary__attr-val.prog-num--zero {
-  color: rgba(200, 230, 255, 0.85);
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-}
-
-/* Summary section headers (BRIGHT) */
-.progression-shell .prog-nh-summary__section {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(100, 220, 255, 0.2);
-  font-size: var(--prog-font-size-xs);
-  font-weight: 700;
-  color: #00d4ff;
-  text-shadow:
-    0 0 8px rgba(0, 212, 255, 0.4),
-    0 0 4px rgba(0, 170, 255, 0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.progression-shell .prog-nh-summary__section:first-child {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
-}
-
-.progression-shell .prog-nh-summary__trait-desc {
-  font-size: var(--prog-font-size-xs);
-  color: rgba(150, 180, 255, 0.6);
-  margin-top: 2px;
-  font-style: italic;
-  line-height: 1.3;
-}
-
-/* ===== PHASE 2: CUSTOM NAME & SECONDARY CHOICE SECTIONS ===== */
-
-.progression-shell .prog-nh-section {
-  border-top: 1px solid rgba(100, 220, 255, 0.2);
-  margin-top: 10px;
-  padding-top: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(180,200,220,0.2);
+  background: rgba(0,20,40,0.4);
+  color: rgba(180,200,220,0.7);
 }
 
-/* Custom name input section */
-.progression-shell .nh-custom-name {
-  border-top: none;
-  margin-top: 0;
-  padding-top: 0;
+.progression-shell .prog-nh-status--ready {
+  border-color: rgba(44,255,111,0.5);
+  background: rgba(0,40,20,0.45);
+  color: #2cff6f;
+  text-shadow: 0 0 10px rgba(44,255,111,0.5);
+  box-shadow: 0 0 16px rgba(44,255,111,0.1);
 }
 
-.progression-shell .prog-nh-section__label {
-  display: block;
-  font-size: var(--prog-font-size-xs);
-  font-weight: 700;
-  color: rgba(210, 240, 255, 1);
-  text-shadow:
-    0 0 8px rgba(0, 180, 255, 0.4),
-    0 0 4px rgba(0, 160, 220, 0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 4px;
-}
-
-.progression-shell .prog-nh-input {
-  appearance: none;
-  width: 100%;
-  padding: 8px 10px;
-  background: linear-gradient(180deg, rgba(8, 24, 40, 0.8), rgba(4, 14, 28, 0.9));
-  border: 1px solid rgba(100, 220, 255, 0.3);
-  border-radius: 2px;
-  color: rgba(200, 230, 255, 0.95);
-  font-family: inherit;
-  font-size: var(--prog-font-size-xs);
-  box-sizing: border-box;
-  transition: all 100ms ease;
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  box-shadow: 0 0 6px rgba(0, 180, 255, 0.03);
-}
-
-.progression-shell .prog-nh-input::placeholder {
-  color: rgba(160, 190, 255, 0.5);
-}
-
-.progression-shell .prog-nh-input:hover {
-  border-color: rgba(150, 240, 255, 0.5);
-  background: linear-gradient(180deg, rgba(12, 30, 48, 0.9), rgba(8, 20, 36, 0.95));
-  box-shadow:
-    0 0 12px rgba(0, 210, 255, 0.15),
-    0 0 6px rgba(100, 220, 255, 0.08);
-}
-
-.progression-shell .prog-nh-input:focus {
-  outline: none;
-  border-color: rgba(150, 240, 255, 0.8);
-  color: rgba(220, 245, 255, 1);
-  box-shadow:
-    0 0 16px rgba(0, 210, 255, 0.2),
-    0 0 8px rgba(100, 220, 255, 0.1),
-    inset 0 0 6px rgba(0, 180, 255, 0.05);
-}
-
-/* Secondary choice select */
-.progression-shell .prog-nh-select {
-  appearance: none;
-  width: 100%;
-  padding: 8px 10px;
-  background: linear-gradient(180deg, rgba(8, 24, 40, 0.8), rgba(4, 14, 28, 0.9)) !important;
-  border: 1px solid rgba(100, 220, 255, 0.3) !important;
-  border-radius: 2px;
-  color: rgba(200, 230, 255, 0.95);
-  font-family: inherit;
-  font-size: var(--prog-font-size-xs);
-  box-sizing: border-box;
-  transition: all 100ms ease;
-  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
-  box-shadow: 0 0 6px rgba(0, 180, 255, 0.03) !important;
-  cursor: pointer;
-  padding-right: 24px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8"><path fill="%23c8e6ff" d="M1 1l5 5 5-5"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 12px;
-  padding-right: 28px;
-}
-
-.progression-shell .prog-nh-select:hover {
-  border-color: rgba(150, 240, 255, 0.5) !important;
-  background-color: rgba(12, 30, 48, 0.9) !important;
-  box-shadow:
-    0 0 12px rgba(0, 210, 255, 0.15),
-    0 0 6px rgba(100, 220, 255, 0.08) !important;
-  color: rgba(220, 245, 255, 0.95);
-}
-
-.progression-shell .prog-nh-select:focus {
-  outline: none;
-  border-color: rgba(150, 240, 255, 0.8) !important;
-  box-shadow:
-    0 0 16px rgba(0, 210, 255, 0.2),
-    0 0 8px rgba(100, 220, 255, 0.1),
-    inset 0 0 6px rgba(0, 180, 255, 0.05) !important;
-}
-
-.progression-shell .prog-nh-select option {
-  background: rgba(8, 24, 40, 0.95);
-  color: rgba(200, 230, 255, 0.95);
-}
-
-.progression-shell .nh-secondary-choice {
-  padding: 10px;
-  background: linear-gradient(180deg, rgba(0, 50, 90, 0.3), rgba(0, 30, 60, 0.4));
-  border: 1px solid rgba(100, 220, 255, 0.25);
-  border-radius: 2px;
-  margin-top: 6px;
-}
-
-.progression-shell .prog-nh-section__help {
-  font-size: var(--prog-font-size-xs);
-  color: rgba(160, 190, 255, 0.7);
-  font-style: italic;
-  margin: 4px 0 0 0;
-}
-
-/* Responsive: collapse to 1 column on narrow width */
+/* Responsive */
 @media (max-width: 900px) {
   .progression-shell .prog-nh-builder {
     grid-template-columns: 1fr;

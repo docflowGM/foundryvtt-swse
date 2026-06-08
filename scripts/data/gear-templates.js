@@ -6,6 +6,8 @@
  * hard mechanical mutation schemas can be layered later without changing keys.
  */
 
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+
 const minPlusPercent = (percent, minCredits) => ({ type: 'max-percent-or-flat', percent, minCredits });
 const percentOnly = (percent) => ({ type: 'percent', percent });
 
@@ -141,8 +143,8 @@ export const ITEM_TEMPLATE_CATALOG = {
     restriction: 'common',
     affectedAreas: ['stun-resistance', 'fortitude-bonus'],
     appliesTo(item) {
-      const fort = Number(item?.system?.equipmentBonusFort || item?.system?.fortitudeBonus || 0);
-      return (item?.type === 'armor' || item?.type === 'bodysuit') && fort > 0;
+      const armor = resolveArmorData(item);
+      return (item?.type === 'armor' || item?.type === 'bodysuit') && armor.fortitudeBonus > 0;
     }
   },
   quick_draw_weapon: {

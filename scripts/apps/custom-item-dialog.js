@@ -6,6 +6,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
+import { buildArmorSystemData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 function collectDialogFormData(form) {
   if (!form) return {};
@@ -230,8 +231,8 @@ export class CustomItemDialog {
 
               <div class="form-group">
                 <label>Equipment Bonus:</label>
-                <input type="number" name="equipmentBonus" value="0" placeholder="Equipment bonus to Reflex"/>
-                <small>Equipment bonus (stacks with armor)</small>
+                <input type="number" name="equipmentBonus" value="0" placeholder="Legacy equipment bonus"/>
+                <small>Legacy field preserved for old data; new armor defense reads use the armor resolver.</small>
               </div>
 
               <div class="form-group">
@@ -302,28 +303,27 @@ export class CustomItemDialog {
                 }
               }
 
+              const armorSystem = buildArmorSystemData({
+                armorType: formData.armorType || (options.shieldMode ? 'shield' : 'light'),
+                defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
+                fortitudeBonus: parseInt(formData.fortBonus, 10) || 0,
+                equipmentBonus: parseInt(formData.equipmentBonus, 10) || 0,
+                maxDexBonus,
+                armorCheckPenalty: parseInt(formData.armorCheckPenalty, 10) || 0,
+                speedPenalty: parseInt(formData.speedPenalty, 10) || 0,
+                weight: parseFloat(formData.weight) || 0,
+                cost: parseInt(formData.cost, 10) || 0,
+                upgradeSlots: parseInt(formData.upgradeSlots, 10) || 1,
+                installedUpgrades: [],
+                description: formData.description || '',
+                equipped: false
+              }, { shieldMode: !!options.shieldMode || formData.armorType === 'shield' });
+
               const itemData = createSafeItemData('armor', {
                 name: formData.name || (options.shieldMode ? 'Custom Shield' : 'Custom Armor'),
                 img: 'icons/equipment/chest/breastplate-cuirass-steel.webp',
                 shieldMode: options.shieldMode,
-                system: {
-                  armorType: formData.armorType || (options.shieldMode ? 'shield' : 'light'),
-                  defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
-                  equipmentBonus: parseInt(formData.equipmentBonus, 10) || 0,
-                  fortBonus: parseInt(formData.fortBonus, 10) || 0,
-                  reflexBonus: parseInt(formData.defenseBonus, 10) || 0,
-                  fortitudeBonus: parseInt(formData.fortBonus, 10) || 0,
-                  maxDexBonus: maxDexBonus,
-                  maxDex: maxDexBonus ?? 999,
-                  armorCheckPenalty: parseInt(formData.armorCheckPenalty, 10) || 0,
-                  speedPenalty: parseInt(formData.speedPenalty, 10) || 0,
-                  weight: parseFloat(formData.weight) || 0,
-                  cost: parseInt(formData.cost, 10) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots, 10) || 1,
-                  installedUpgrades: [],
-                  description: formData.description || '',
-                  equipped: false
-                }
+                system: armorSystem
               });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);

@@ -1,0 +1,665 @@
+{
+  "phase": "T22",
+  "scope": {
+    "request": "Core Force trees plus Force tradition trees because they affect the same Force-user actors.",
+    "coreTrees": [
+      "Alter",
+      "Control",
+      "Sense",
+      "Light Side",
+      "Dark Side",
+      "Force Item",
+      "Sith Alchemy"
+    ],
+    "traditionTrees": [
+      "Baran Do Sage",
+      "Matukai Adept",
+      "Jal Shey",
+      "Jensaarai Defender",
+      "Aingtii Monk",
+      "Disciple Of Twilight",
+      "Dathomiri Witch",
+      "Order of Shasa",
+      "Iron Knight",
+      "Believer Disciple",
+      "Bando Gora Captain"
+    ],
+    "treeIds": {
+      "Light Side": "001a438135e03588",
+      "Force Item": "01e443d93e47f9c4",
+      "Baran Do Sage": "3e807e87cac844ba",
+      "Disciple Of Twilight": "4da769d7c5f44232",
+      "Alter": "6ac3416fb6aada56",
+      "Believer Disciple": "92c32621101a11f9",
+      "Sith Alchemy": "a67faf2ae089ab5d",
+      "Iron Knight": "a7dc5adf97fd6a67",
+      "Dathomiri Witch": "ad16f3e5f4f7441b",
+      "Bando Gora Captain": "b7fb2b10740923f6",
+      "Matukai Adept": "ca65ba0c33cd4c7d",
+      "Order of Shasa": "d2e4cd882822dcf2",
+      "Control": "d3661aa9906bdc79",
+      "Sense": "d6b4331c0e31f7e3",
+      "Jal Shey": "db1964d1e1d14b5a",
+      "Dark Side": "de95d37c72b1c4cd",
+      "Jensaarai Defender": "f5c62e2e81f648aa",
+      "Aingtii Monk": "f8e7edab5f234e27"
+    }
+  },
+  "summary": {
+    "reviewed": 99,
+    "changed": 99,
+    "mods_removed": 86,
+    "effects_removed": 26,
+    "cards_added": 70,
+    "reaction_entries": 1,
+    "runtime_rules": 1,
+    "trees": {
+      "Light Side": {
+        "id": "001a438135e03588",
+        "talentCount": 4,
+        "changed": 4
+      },
+      "Force Item": {
+        "id": "01e443d93e47f9c4",
+        "talentCount": 10,
+        "changed": 10
+      },
+      "Baran Do Sage": {
+        "id": "3e807e87cac844ba",
+        "talentCount": 1,
+        "changed": 1
+      },
+      "Disciple Of Twilight": {
+        "id": "4da769d7c5f44232",
+        "talentCount": 1,
+        "changed": 1
+      },
+      "Alter": {
+        "id": "6ac3416fb6aada56",
+        "talentCount": 16,
+        "changed": 16
+      },
+      "Believer Disciple": {
+        "id": "92c32621101a11f9",
+        "talentCount": 5,
+        "changed": 5
+      },
+      "Sith Alchemy": {
+        "id": "a67faf2ae089ab5d",
+        "talentCount": 6,
+        "changed": 6
+      },
+      "Iron Knight": {
+        "id": "a7dc5adf97fd6a67",
+        "talentCount": 5,
+        "changed": 5
+      },
+      "Dathomiri Witch": {
+        "id": "ad16f3e5f4f7441b",
+        "talentCount": 3,
+        "changed": 3
+      },
+      "Bando Gora Captain": {
+        "id": "b7fb2b10740923f6",
+        "talentCount": 4,
+        "changed": 4
+      },
+      "Matukai Adept": {
+        "id": "ca65ba0c33cd4c7d",
+        "talentCount": 1,
+        "changed": 1
+      },
+      "Order of Shasa": {
+        "id": "d2e4cd882822dcf2",
+        "talentCount": 4,
+        "changed": 4
+      },
+      "Control": {
+        "id": "d3661aa9906bdc79",
+        "talentCount": 11,
+        "changed": 11
+      },
+      "Sense": {
+        "id": "d6b4331c0e31f7e3",
+        "talentCount": 14,
+        "changed": 14
+      },
+      "Jal Shey": {
+        "id": "db1964d1e1d14b5a",
+        "talentCount": 1,
+        "changed": 1
+      },
+      "Dark Side": {
+        "id": "de95d37c72b1c4cd",
+        "talentCount": 11,
+        "changed": 11
+      },
+      "Jensaarai Defender": {
+        "id": "f5c62e2e81f648aa",
+        "talentCount": 1,
+        "changed": 1
+      },
+      "Aingtii Monk": {
+        "id": "f8e7edab5f234e27",
+        "talentCount": 1,
+        "changed": 1
+      }
+    },
+    "talentTreeTagsNormalized": 9,
+    "talentTreeTagsNormalizedNames": [
+      "Light Side",
+      "Baran Do Sage",
+      "Disciple Of Twilight",
+      "Dathomiri Witch",
+      "Matukai Adept",
+      "Jal Shey",
+      "Dark Side",
+      "Jensaarai Defender",
+      "Aingtii Monk"
+    ]
+  },
+  "changedTalents": [
+    {
+      "name": "Hardiness",
+      "tree": "Believer Disciple",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Victorious Force Mastery",
+      "tree": "Bando Gora Captain",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Swift Power",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Greater Force Talisman",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Disciplined Strike",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Telekinetic Power",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Adept Spellcaster",
+      "tree": "Dathomiri Witch",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Focused Force Talisman",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Heal Droid",
+      "tree": "Iron Knight",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Aversion",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Dark Preservation",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Telekinetic Stability",
+      "tree": "Control",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Telepathic Link",
+      "tree": "Alter",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Waveform",
+      "tree": "Order of Shasa",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Cloak",
+      "tree": "Jensaarai Defender",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Instinctive Navigation",
+      "tree": "Sense",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Heightened Awareness",
+      "tree": "Sense",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Focused Attack",
+      "tree": "Light Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Feel the Force",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Empowered",
+      "tree": "Force Item",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Damage Reduction 10",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Fighter",
+      "tree": "Bando Gora Captain",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Telepathic Influence",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Believer Intuition",
+      "tree": "Believer Disciple",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Resist Enervation",
+      "tree": "Bando Gora Captain",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Aura of Freedom",
+      "tree": "Aingtii Monk",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Pilot",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Greater Focused Force Talisman",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Deception Awareness",
+      "tree": "Order of Shasa",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Sith Alchemy (craft)",
+      "tree": "Sith Alchemy",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Force Bond",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Progenitor's Call",
+      "tree": "Order of Shasa",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Empower Weapon",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Repair",
+      "tree": "Iron Knight",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Cloak of Shadows",
+      "tree": "Disciple Of Twilight",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Harmony",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Dark Presence",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Power of the Dark Side",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Move Massive Object",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Force Talisman",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Rapid Alchemy",
+      "tree": "Sith Alchemy",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Beast Trick",
+      "tree": "Control",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Bando Gora Surge",
+      "tree": "Bando Gora Captain",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Mask Presence",
+      "tree": "Iron Knight",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Illusions",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "High Impact",
+      "tree": "Believer Disciple",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Telekinetic Prodigy",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Force Exertion",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Defense Boost",
+      "tree": "Believer Disciple",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Suppression",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Meld",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Sith Reverence",
+      "tree": "Believer Disciple",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Surge of Light",
+      "tree": "Light Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Throw",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Masquerade",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Psychometry",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Dathomiri Hunter",
+      "tree": "Dathomiri Witch",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Lasting Ichor Item",
+      "tree": "Force Item",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Block",
+      "tree": "Sith Alchemy",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Battle Meditation",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Shift Sense",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Sith Alchemy Specialist",
+      "tree": "Sith Alchemy",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "The Will to Resist",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Indomitable Will",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Perception",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Recovery",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Attune Weapon",
+      "tree": "Force Item",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Wan-Shen Kata",
+      "tree": "Matukai Adept",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Focus",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Flow",
+      "tree": "Alter",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Dark Side Savant",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Droid Duelist",
+      "tree": "Iron Knight",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Consumed by Darkness",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Force Delay",
+      "tree": "Jal Shey",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Attuned",
+      "tree": "Light Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Transfer Essence",
+      "tree": "Dark Side",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Cause Mutation",
+      "tree": "Sith Alchemy",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Revenge",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Illusion Bond",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Influence Savant",
+      "tree": "Alter",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Primitive Block",
+      "tree": "Force Item",
+      "status": "reaction_engine_wired"
+    },
+    {
+      "name": "At Peace",
+      "tree": "Light Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Foresight",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Silicon Mind",
+      "tree": "Iron Knight",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Drain Knowledge",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Telekinetic Savant",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Link",
+      "tree": "Alter",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Binding Sickle",
+      "tree": "Dathomiri Witch",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Sith Alchemy",
+      "tree": "Sith Alchemy",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Suppress Force",
+      "tree": "Alter",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Force Reflexes",
+      "tree": "Sense",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Reference Book: Star Wars Saga Edition Starships of the Galaxy",
+      "tree": "Sense",
+      "status": "cleaned_manual_or_future_runtime"
+    },
+    {
+      "name": "Enhanced Danger Sense",
+      "tree": "Baran Do Sage",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Wrath of the Dark Side",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Dark Side Maelstrom",
+      "tree": "Dark Side",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Greater Weapon Focus (Fira)",
+      "tree": "Order of Shasa",
+      "status": "contextual_runtime_rule"
+    },
+    {
+      "name": "Channel Energy",
+      "tree": "Control",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Gauge Force Potential",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Motion of the Future",
+      "tree": "Sense",
+      "status": "combat_action_card"
+    }
+  ],
+  "notes": [
+    "This phase intentionally removes migrated always-on attack/defense/skill/damage modifiers from Force talents when the source text requires activation, a target, Force Points, Force power suite state, item creation, or encounter/ally context.",
+    "Primitive Block is wired into the existing ReactionEngine, analogous to Block/Deflect style attack-card reactions, but cumulative repeated-use penalties remain manual until reaction counters support scaling penalties.",
+    "Greater Weapon Focus (Fira) is the only direct passive runtime rule added; it is limited by weapon text and melee attack context.",
+    "Force Item/Talisman/Attune/Empower style talents are surfaced as action cards and explicitly not treated as passive bonuses on the actor because they require item creation/attunement state.",
+    "Talent tree tags were normalized so scoped core Force trees carry force and scoped tradition trees carry force + force-tradition for future filtering/classification."
+  ]
+}

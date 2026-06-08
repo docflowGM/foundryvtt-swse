@@ -16,6 +16,7 @@ import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-mai
 import { buildForceTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { activateForceUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-ui.js";
 import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
+import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { NpcReviewRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js";
@@ -642,6 +643,12 @@ export class SWSEV2NpcSheet extends
     super(document, options);
     this._shellSurface = 'home';
     this._shellSurfaceOptions = {};
+    ShellUiStatePreserver.install(this);
+  }
+
+  render(...args) {
+    this._shellUiStatePreserver?.capture?.(this.element, { surfaceId: this._shellSurface });
+    return super.render(...args);
   }
 
   async _prepareContext(options) {
@@ -824,6 +831,9 @@ export class SWSEV2NpcSheet extends
 
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
+
+    // Restore scroll, focus, and form-control values preserved before this render.
+    this._shellUiStatePreserver?.restore?.(this.element, { surfaceId: this._shellSurface });
 
     // Abort previous render's listeners to prevent duplicate event handlers
     this._renderAbort?.abort();

@@ -11,11 +11,11 @@
  * - Swim: affected
  * - Some KS checks: not affected
  *
- * Armor check penalty comes from:
- * - actor.system.derived.armor?.checkPenalty
- * or
- * - actor.system.armor?.checkPenalty
+ * Armor check penalty comes from the armor SSOT resolver when possible, with
+ * derived actor data retained as compatibility fallback.
  */
+
+import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 export function armorRule({ actor, skillKey }, result) {
   const skillDef = CONFIG.SWSE?.skills?.[skillKey] || {};
@@ -26,11 +26,11 @@ export function armorRule({ actor, skillKey }, result) {
     return result;
   }
 
-  // Get armor check penalty from actor
-  const armorCheckPenalty =
-    actor.system.derived?.armor?.checkPenalty ||
-    actor.system.armor?.checkPenalty ||
-    0;
+  // Get armor check penalty from equipped body armor through the armor SSOT.
+  const equippedArmor = actor?.items?.find?.(item => item?.type === "armor" && item?.system?.equipped && !isEnergyShieldItem(item));
+  const armorCheckPenalty = equippedArmor
+    ? resolveArmorData(equippedArmor).armorCheckPenalty
+    : actor.system.derived?.armor?.checkPenalty || actor.system.armor?.checkPenalty || 0;
 
   if (armorCheckPenalty !== 0) {
     result.penalties.push({

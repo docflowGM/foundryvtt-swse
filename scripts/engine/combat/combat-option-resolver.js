@@ -213,6 +213,11 @@ function actorItems(actor) {
   }
 }
 
+function asArray(value) {
+  if (value === undefined || value === null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
 function actorBAB(actor) {
   const value = Number(SchemaAdapters.getBAB(actor) ?? actor?.system?.attributes?.bab?.value ?? actor?.system?.bab ?? 0);
   return Number.isFinite(value) ? Math.max(0, value) : 0;
@@ -326,6 +331,16 @@ function weaponDamageText(weapon) {
 function targetText(context = {}) {
   const target = context?.target ?? context?.targetActor ?? null;
   const system = target?.system ?? {};
+  const itemNames = [];
+  try {
+    for (const item of Array.from(target?.items ?? [])) {
+      if (item?.name) itemNames.push(item.name);
+      if (item?.system?.slug) itemNames.push(item.system.slug);
+      if (item?.flags?.swse?.id) itemNames.push(item.flags.swse.id);
+    }
+  } catch (_err) {
+    // Target item data is optional in preroll contexts.
+  }
   const fields = [
     target?.type,
     target?.name,
@@ -336,11 +351,28 @@ function targetText(context = {}) {
     system.details?.creatureType,
     system.actorType,
     system.vehicleType,
-    ...(Array.isArray(system.traits) ? system.traits : [])
+    ...(Array.isArray(system.traits) ? system.traits : []),
+    ...itemNames
   ];
   return fields.map(value => normalizeKey(value)).filter(Boolean).join(" ");
 }
 
+function targetHasOwnedItem(context = {}, names = [], types = []) {
+  const target = context?.target ?? context?.targetActor ?? null;
+  const wanted = (Array.isArray(names) ? names : [names]).map(normalizeKey).filter(Boolean);
+  if (!target || !wanted.length) return false;
+  const allowedTypes = (Array.isArray(types) ? types : [types]).map(normalizeKey).filter(Boolean);
+  try {
+    return Array.from(target.items ?? []).some(item => {
+      if (!item) return false;
+      if (allowedTypes.length && !allowedTypes.includes(normalizeKey(item.type))) return false;
+      const itemText = [item.name, item.system?.slug, item.flags?.swse?.id].map(normalizeKey).join(" ");
+      return wanted.some(value => itemText.includes(value));
+    });
+  } catch (_err) {
+    return false;
+  }
+}
 function weaponMatchesGroup(weapon, groups = [], context = {}) {
   const wanted = (Array.isArray(groups) ? groups : [groups]).map(normalizeKey).filter(Boolean);
   if (!wanted.length) return false;
@@ -365,10 +397,45 @@ function textMatchesAny(haystack, values = []) {
   return wanted.some(value => text.includes(value));
 }
 
+function isNaturalWeapon(weapon) {
+  if (!weapon) return false;
+  if (weapon?.flags?.swse?.isNaturalWeapon === true || weapon?.flags?.swse?.naturalWeapon === true) return true;
+  const system = weapon?.system ?? {};
+  if (system.naturalWeapon === true || system.isNaturalWeapon === true) return true;
+  if (normalizeKey(system.source) === "species-natural-weapon") return true;
+  if (system.properties?.naturalWeapon === true || system.properties?.["natural-weapon"] === true) return true;
+  const text = [
+    weaponText(weapon),
+    system.source,
+    system.sourceType,
+    system.weaponFamily,
+    system.naturalWeaponType,
+    weapon?.name
+  ].map(value => normalizeKey(value)).filter(Boolean).join(" " );
+  return /natural-weapon|claw|bite|talon|tusk|horn|tail|slam|gore/.test(text);
+}
+
 function isUnarmedWeapon(weapon, context = {}) {
-  if (context.unarmed === true || context.attackFamily === "unarmed") return true;
+  if (context.unarmed === true || context.attackFamily === "unarmed" || context.naturalWeapon === true) return true;
+  if (isNaturalWeapon(weapon)) return true;
   const text = weaponText(weapon);
   return text.includes("unarmed") || text.includes("natural-weapon") || normalizeKey(weapon?.name).includes("unarmed");
+}
+
+function isAreaAttackContext(weapon, context = {}) {
+  if (context.areaAttack === true || context.isAreaAttack === true || context.attackMode === "area") return true;
+  const system = weapon?.system ?? {};
+  if (system.areaAttack === true || system.isAreaAttack === true || system.burst === true || system.splash === true) return true;
+  const text = [
+    weaponText(weapon),
+    system.attackType,
+    system.area,
+    system.damageType,
+    system.damage?.type,
+    system.traits?.join?.(" "),
+    system.properties?.join?.(" ")
+  ].map(value => normalizeKey(value)).filter(Boolean).join(" ");
+  return /area|burst|splash|cone|line|radius|explosive|grenade/.test(text);
 }
 
 function flattenChoiceValues(value, results = []) {
@@ -486,11 +553,15 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
     damageDiceStepBonus: 0,
     damageDieStepIncreases: 0,
     criticalDamageDieStepBonus: 0,
+    criticalThreatNaturalMin: null,
     criticalMultiplierMin: null,
+    targetEffectsOnHit: [],
     targetEffectsOnCritical: [],
     flags: {},
     breakdown: []
   };
+
+  const appliedStackingKeys = new Set();
 
   for (const item of actorItems(actor)) {
     const rules = item?.system?.abilityMeta?.rules;
@@ -507,10 +578,24 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
         }
         case "UNARMED_DAMAGE_STEP": {
           if (!isUnarmedWeapon(weapon, context)) continue;
+          if (weapon?.flags?.swse?.martialArtsDamageApplied === true) continue;
           const value = Number(rule.value ?? rule.steps ?? rule.params?.steps ?? 0);
           if (!Number.isFinite(value) || value === 0) continue;
           result.damageDieStepIncreases += value;
           result.breakdown.push({ label: item.name, value, type: "damageDieStepIncrease" });
+          break;
+        }
+        case "UNARMED_EXTRA_WEAPON_DICE": {
+          if (!isUnarmedWeapon(weapon, context)) continue;
+          if (weapon?.flags?.swse?.unarmedExtraWeaponDiceApplied === true) continue;
+          const stackingKey = String(rule.stackingKey || rule.stackKey || rule.id || "");
+          if (stackingKey && rule.stacking === "highest" && appliedStackingKeys.has(stackingKey)) continue;
+          const value = Number(rule.value ?? rule.dice ?? rule.extraDice ?? rule.params?.dice ?? 0);
+          if (!Number.isFinite(value) || value === 0) continue;
+          if (stackingKey && rule.stacking === "highest") appliedStackingKeys.add(stackingKey);
+          result.damageExtraWeaponDice += value;
+          result.damageDiceStepBonus += value;
+          result.breakdown.push({ label: rule.label || item.name, value, type: "damageExtraWeaponDice" });
           break;
         }
         case "UNARMED_DOES_NOT_PROVOKE_AOO": {
@@ -558,6 +643,61 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
           result.breakdown.push({ label: item.name, value, type: "criticalDamageDieStepBonus" });
           break;
         }
+        case "EXTEND_CRITICAL_RANGE": {
+          const params = rule.params ?? {};
+          const rawGroups = [
+            ...(Array.isArray(rule.weaponGroups) ? rule.weaponGroups : asArray(rule.weaponGroups)),
+            ...(Array.isArray(rule.groups) ? rule.groups : asArray(rule.groups)),
+            params.proficiency,
+            params.weaponGroup
+          ].filter(Boolean);
+          const expandedGroups = [];
+          for (const group of rawGroups) {
+            const key = normalizeKey(group);
+            if (!key) continue;
+            expandedGroups.push(key);
+            if (key.endsWith("-weapons")) expandedGroups.push(key.replace(/-weapons$/, ""));
+            if (key.endsWith("-weapon")) expandedGroups.push(key.replace(/-weapon$/, ""));
+          }
+          if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;
+          if (expandedGroups.length && !weaponMatchesGroup(weapon, expandedGroups, context)) continue;
+          const by = Number(rule.by ?? rule.value ?? params.by ?? 1);
+          if (!Number.isFinite(by) || by <= 0) continue;
+          const threshold = Math.max(2, 20 - by);
+          result.criticalThreatNaturalMin = result.criticalThreatNaturalMin
+            ? Math.min(result.criticalThreatNaturalMin, threshold)
+            : threshold;
+          result.breakdown.push({ label: rule.label || item.name, value: threshold, type: "criticalThreatNaturalMin" });
+          break;
+        }
+        case "CRITICAL_RIDER": {
+          if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;
+          if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, context)) continue;
+          if (rule.requiresAttackType && getAttackType(weapon, context) !== rule.requiresAttackType) continue;
+          const effects = Array.isArray(rule.targetEffectsOnCritical)
+            ? rule.targetEffectsOnCritical
+            : Array.isArray(rule.effects)
+              ? rule.effects
+              : [];
+          if (!effects.length) continue;
+          result.targetEffectsOnCritical.push(...effects.map(effect => ({ ...effect, sourceName: item.name, sourceRule: rule.id || rule.type })));
+          result.breakdown.push({ label: rule.label || item.name, value: 0, type: "criticalRider" });
+          break;
+        }
+        case "HIT_RIDER": {
+          if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;
+          if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, context)) continue;
+          if (rule.requiresAttackType && getAttackType(weapon, context) !== rule.requiresAttackType) continue;
+          const effects = Array.isArray(rule.targetEffectsOnHit)
+            ? rule.targetEffectsOnHit
+            : Array.isArray(rule.effects)
+              ? rule.effects
+              : [];
+          if (!effects.length) continue;
+          result.targetEffectsOnHit.push(...effects.map(effect => ({ ...effect, sourceName: item.name, sourceRule: rule.id || rule.type })));
+          result.breakdown.push({ label: rule.label || item.name, value: 0, type: "hitRider" });
+          break;
+        }
         case "WEAPON_CRITICAL_MULTIPLIER_MIN": {
           if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;
           if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, context)) continue;
@@ -580,6 +720,39 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
     result.breakdown.push(...(modifierRollBonuses.breakdown || []));
   }
 
+  return result;
+}
+
+function collectCombinedFeatModifiers(actor, weapon, context = {}) {
+  const result = { attackAbilityBonus: 0, breakdown: [], flags: {} };
+  if (!actor || !weapon) return result;
+
+  const weaponGroup = (weapon?.system?.weaponCategory ?? weapon?.system?.type ?? '').toLowerCase();
+  const alreadyCoveredByWF =
+    weaponGroup === 'light' || weaponGroup === 'light-melee' || weaponGroup === 'lightsaber' ||
+    weaponMatchesGroup(weapon, ['light', 'light-melee', 'lightsaber'], context);
+  if (alreadyCoveredByWF) return result;
+
+  const hasWF = actorItems(actor).some(
+    i => String(i?.type ?? '').toLowerCase() === 'feat' &&
+         String(i?.name ?? '').trim().toLowerCase() === 'weapon finesse'
+  );
+  if (!hasWF) return result;
+
+  if (!actorHasFeatSelectedChoiceMatchingWeapon(actor, ['weapon focus'], weapon, context)) return result;
+
+  const traits = Array.isArray(weapon?.system?.traits)
+    ? weapon.system.traits.map(t => String(t?.name ?? t ?? '').toLowerCase()) : [];
+  if (traits.includes('two-handed') || traits.includes('twohanded')) return result;
+  if (weaponGroup === 'heavy' || weaponGroup === 'vehicle') return result;
+
+  const delta = Math.max(0, actorAbilityMod(actor, 'dex') - actorAbilityMod(actor, 'str'));
+  if (!delta) return result;
+
+  result.attackAbilityBonus = delta;
+  result.flags._attackAbilitySubstitutionValue = delta;
+  result.flags._attackAbilitySubstitutionSource = 'Weapon Focus + Weapon Finesse (combined feat)';
+  result.breakdown.push({ label: 'Weapon Focus + Weapon Finesse (combined feat)', value: delta, type: 'attackAbilitySubstitution' });
   return result;
 }
 
@@ -647,6 +820,22 @@ function optionAllowedForWeapon(option, actor, weapon, context = {}) {
     return false;
   }
 
+  if (option.requiresTargetFeat && !targetHasOwnedItem(context, option.requiresTargetFeat, ['feat'])) {
+    return false;
+  }
+
+  if (option.requiresTargetTalent && !targetHasOwnedItem(context, option.requiresTargetTalent, ['talent'])) {
+    return false;
+  }
+
+  if (option.requiresTargetItem && !targetHasOwnedItem(context, option.requiresTargetItem)) {
+    return false;
+  }
+
+  if (option.requiresTargetText && !textMatchesAny(targetText(context), option.requiresTargetText)) {
+    return false;
+  }
+
   if (option.requiresOption) {
     const combat = context?.combatOptions ?? context?.attackOptions ?? {};
     if (!combat?.[option.requiresOption]) return false;
@@ -685,7 +874,7 @@ function optionAllowedForWeapon(option, actor, weapon, context = {}) {
     return false;
   }
 
-  if (option.requiresAreaAttack && context.areaAttack !== true && context.isAreaAttack !== true && weapon?.system?.areaAttack !== true && weapon?.system?.isAreaAttack !== true) {
+  if (option.requiresAreaAttack && !isAreaAttackContext(weapon, context)) {
     return false;
   }
 
@@ -821,6 +1010,15 @@ export class CombatOptionResolver {
         }
       }
       attack += getRangePenaltyAdjustment(option, options);
+      if (option.attackAbilityBonus) {
+        const abilityRule = option.attackAbilityBonus;
+        const ability = String(abilityRule.ability ?? abilityRule.key ?? 'str').toLowerCase().slice(0, 3);
+        const multiplier = Number(abilityRule.multiplier ?? 1) || 1;
+        const minimum = Number(abilityRule.minimum ?? 0) || 0;
+        const abilityValue = Math.max(minimum, actorAbilityMod(actor, ability) * multiplier);
+        if (Number.isFinite(abilityValue) && abilityValue !== 0) attack += abilityValue * value;
+      }
+
       if (attack) {
         result.attackBonus += attack;
         result.breakdown.push({ label: option.label, value: attack, type: "attack" });
@@ -830,6 +1028,8 @@ export class CombatOptionResolver {
       if (Number.isFinite(Number(option.damageModifier))) damage += Number(option.damageModifier) * value;
       if (option.damageModifierFormula === "value") damage += value;
       if (option.damageModifierFormula === "halfLevel") damage += Math.floor(actorLevel(actor) / 2) * value;
+      if (option.damageModifierFormula === "halfLevelMinusOne") damage += Math.max(0, Math.floor(actorLevel(actor) / 2) - 1) * value;
+      if (["level", "classLevel", "characterLevel", "heroicLevel", "actorLevel"].includes(option.damageModifierFormula)) damage += actorLevel(actor) * value;
       if (typeof option.damageModifierFormula === "string" && option.damageModifierFormula.startsWith("context.")) {
         const key = option.damageModifierFormula.slice("context.".length);
         const contextValue = Number(options?.[key] ?? options?.combatOptions?.[key] ?? options?.attackOptions?.[key] ?? 0);
@@ -916,10 +1116,25 @@ export class CombatOptionResolver {
     result.damageDiceStepBonus += ruleModifiers.damageDiceStepBonus || 0;
     result.damageDieStepIncreases += ruleModifiers.damageDieStepIncreases || 0;
     result.criticalDamageDieStepBonus += ruleModifiers.criticalDamageDieStepBonus || 0;
+    if (ruleModifiers.criticalThreatNaturalMin) {
+      result.criticalThreatNaturalMin = result.criticalThreatNaturalMin
+        ? Math.min(result.criticalThreatNaturalMin, ruleModifiers.criticalThreatNaturalMin)
+        : ruleModifiers.criticalThreatNaturalMin;
+    }
     result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, ruleModifiers.criticalMultiplierMin || 0) || null;
+    result.targetEffectsOnHit.push(...(ruleModifiers.targetEffectsOnHit || []));
     result.targetEffectsOnCritical.push(...(ruleModifiers.targetEffectsOnCritical || []));
     result.breakdown.push(...(ruleModifiers.breakdown || []));
     Object.assign(result.flags, ruleModifiers.flags || {});
+    // Combined-feat modifiers (cross-feat awareness; not encodable on a single item).
+    const combinedMods = collectCombinedFeatModifiers(actor, weapon, options);
+    const alreadySubstituted = Number(result.flags._attackAbilitySubstitutionValue || 0);
+    const combinedDelta = combinedMods.attackAbilityBonus || 0;
+    if (combinedDelta > alreadySubstituted) {
+      result.attackAbilityBonus += combinedDelta - alreadySubstituted;
+      result.breakdown.push(...(combinedMods.breakdown || []));
+      Object.assign(result.flags, combinedMods.flags || {});
+    }
 
     return result;
   }

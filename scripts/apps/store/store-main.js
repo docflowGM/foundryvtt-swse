@@ -42,6 +42,7 @@ import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/cus
 import { getRendarrLine } from "/systems/foundryvtt-swse/scripts/apps/store/dialogue/rendarr-dialogue.js";
 import { getRendarrPortraitPath } from "/systems/foundryvtt-swse/scripts/mentor/mentor-portrait-registry.js";
 import { resolveStoreDescription, getStoreCurrencySymbol } from "/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js";
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import {
   addItemToCart,
   addDroidToCart,
@@ -881,6 +882,21 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _viewFromItem(item) {
     const sys = safeSystem(item) ?? {};
+    const armor = item?.type === 'armor' ? resolveArmorData(item) : null;
+    const displaySystem = armor ? {
+      ...sys,
+      armorType: armor.armorType,
+      reflexBonus: armor.reflexBonus,
+      defenseBonus: armor.reflexBonus,
+      fortitudeBonus: armor.fortitudeBonus,
+      fortBonus: armor.fortitudeBonus,
+      maxDexBonus: armor.maxDexBonus,
+      maxDex: armor.maxDexBonus,
+      armorCheckPenalty: armor.armorCheckPenalty,
+      speedPenalty: armor.speedPenalty,
+      shieldRating: armor.shieldRating,
+      currentSR: armor.currentSR
+    } : sys;
     const rarityClass = item.rarityClass || getRarityClass(sys.availability);
     const storePolicy = summarizeStorePolicy(item);
     const finalCost = item.finalCost ?? getCostValue(item);
@@ -905,7 +921,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       rarityClass,
       rarityLabel: item.rarityLabel || getRarityLabel(rarityClass),
-      system: sys,
+      system: displaySystem,
       type: item.type,
       categoryKey: storeItemCategoryKey(item),
       subcategory: getStoreNavigationSubcategory(item),
@@ -1389,14 +1405,18 @@ export class SWSEStore extends BaseSWSEAppV2 {
     };
 
     if (itemType === 'armor') {
-      add('Type', sys.armorType || item.subcategory || 'Armor');
-      const reflexBonus = sys.defenseBonus ?? sys.reflexBonus;
-      const fortitudeBonus = sys.fortBonus ?? sys.fortitudeBonus;
-      add('Reflex Bonus', reflexBonus !== undefined && reflexBonus !== null ? `+${reflexBonus}` : '');
-      add('Fortitude Bonus', fortitudeBonus !== undefined && fortitudeBonus !== null ? `+${fortitudeBonus}` : '');
-      add('Max Dex', sys.maxDexBonus ?? sys.maxDex);
-      add('Armor Check', sys.armorCheckPenalty ?? sys.checkPenalty);
-      add('Speed Penalty', sys.speedPenalty);
+      const armor = resolveArmorData(item);
+      add('Type', armor.armorTypeLabel || item.subcategory || 'Armor');
+      add('Reflex Bonus', armor.reflexBonus !== undefined && armor.reflexBonus !== null ? `+${armor.reflexBonus}` : '');
+      add('Fortitude Bonus', armor.fortitudeBonus !== undefined && armor.fortitudeBonus !== null ? `+${armor.fortitudeBonus}` : '');
+      if (armor.isEnergyShield) {
+        add('Shield Rating', armor.shieldRating ? `SR ${armor.shieldRating}` : '—');
+        add('Current SR', armor.currentSR ?? 0);
+        add('Charges', `${armor.chargesCurrent}/${armor.chargesMax}`);
+      }
+      add('Max Dex', armor.maxDexLabel ?? 'Uncapped');
+      add('Armor Check', armor.armorCheckPenalty);
+      add('Speed Penalty', armor.speedPenalty);
       add('Weight', sys.weight);
       add('Source', sys.sourcebook);
     }

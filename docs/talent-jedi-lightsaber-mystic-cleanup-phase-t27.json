@@ -1,0 +1,470 @@
+{
+  "phase": "T27",
+  "title": "Jedi / lightsaber / Mystic leftover talent cleanup",
+  "scope": {
+    "trees": [
+      "Lightsaber Forms",
+      "Jedi Weapon Master",
+      "Melee Duelist",
+      "Defensive Duelist",
+      "Force Warrior",
+      "Mystic",
+      "Telepath",
+      "Jedi Consular",
+      "Jedi Sentinel",
+      "Jedi Shadow",
+      "Jedi Refugee",
+      "Dark Side Devotee",
+      "Sith"
+    ]
+  },
+  "summary": {
+    "talentDocumentsChanged": 105,
+    "talentTreesTagged": 13,
+    "legacyModifierRowsRemoved": 64,
+    "embeddedActiveEffectsRemoved": 21,
+    "combatActionCardsAddedOrRefreshed": 105,
+    "runtimeRulesAddedOrRefreshed": 12,
+    "reactionRegistryEntriesAddedOrRefreshed": 5
+  },
+  "implementationNotes": [
+    "This pass treats prior T17-T26 talent cleanup phases as applied and focuses on remaining Jedi/lightsaber/Mystic/Telepath/Sith adjacent leftovers.",
+    "Unsafe embedded Active Effects were removed from scoped talents and replaced with action/reference cards or explicitly safe metadata.",
+    "Force Persuasion no longer depends on embedded Active Effects: the derived skill calculator now treats Persuasion as trained and substitutes Use the Force when better, matching the existing Force Deception/Force Treatment pattern.",
+    "Vaapad, Sentinel Strike, Reap Retribution, Master of the Great Hunt, and Dark Scourge gained opt-in/contextual attack-option metadata where the existing resolver can support it.",
+    "Several reactions are now registered in owned talent metadata for the reaction-engine surface, but some require future post-hit/post-threshold event windows before they can auto-surface every time."
+  ],
+  "remainingLimitations": [
+    "Psychic Citadel is now a clean reference card instead of an unsafe Active Effect, but its class-level Will Defense formula still needs a class-specific-level resolver before it should become automatic.",
+    "Ataru and Master of Elegance require true damage ability substitution, not additive Dexterity damage; they remain reference cards until the damage formula can replace Strength cleanly.",
+    "Niman, Jar Kai, Makashi, Shii-Cho, Soresu, and Shoto Pin Block interact with Block/Deflect/Lightsaber Defense state and remain action/reference cards pending deeper Block/Deflect state mutation support.",
+    "Djem So, Defensive Roll, Visionary Attack, and Visionary Defense have reaction metadata, but require post-hit/post-miss/post-threshold event bridges to surface automatically."
+  ],
+  "changedTalents": [
+    {
+      "tree": "Sith",
+      "name": "Dark Healing"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Dual Weapon Flourish II"
+    },
+    {
+      "tree": "Mystic",
+      "name": "Closed Mind"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Recall"
+    },
+    {
+      "tree": "Mystic",
+      "name": "Esoteric Technique"
+    },
+    {
+      "tree": "Sith",
+      "name": "Dark Scourge"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Ataru"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Visionary Defense"
+    },
+    {
+      "tree": "Telepath",
+      "name": "Psychic Defenses"
+    },
+    {
+      "tree": "Sith",
+      "name": "Drain Force"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Dampen Presence"
+    },
+    {
+      "tree": "Jedi Refugee",
+      "name": "Jedi Network"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Gradual Resistance"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Visionary Attack"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Dark Retaliation"
+    },
+    {
+      "tree": "Telepath",
+      "name": "Perfect Telepathy"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Dark Side Scourge"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Consular's Wisdom"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Resist the Dark Side"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Channel Anger"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Embrace Dark Side"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Improved Consular's Vitality"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Steel Resolve"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Taint of the Dark Side"
+    },
+    {
+      "tree": "Jedi Refugee",
+      "name": "Cover Your Tracks"
+    },
+    {
+      "tree": "Telepath",
+      "name": "Telepathic Intruder"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Jar'Kai"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Dirty Tricks"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Single Weapon Flourish I"
+    },
+    {
+      "tree": "Jedi Weapon Master",
+      "name": "Improvised Weapon Master"
+    },
+    {
+      "tree": "Mystic",
+      "name": "Mystic Mastery"
+    },
+    {
+      "tree": "Jedi Refugee",
+      "name": "Force Veil"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Dual Weapon Flourish I"
+    },
+    {
+      "tree": "Telepath",
+      "name": "Psychic Citadel"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Rebuke the Dark"
+    },
+    {
+      "tree": "Jedi Weapon Master",
+      "name": "Twin Weapon Style"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Juyo"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Renew Vision"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Trakata"
+    },
+    {
+      "tree": "Jedi Weapon Master",
+      "name": "Combat Trance"
+    },
+    {
+      "tree": "Force Warrior",
+      "name": "Defensive Roll"
+    },
+    {
+      "tree": "Sith",
+      "name": "Affliction"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Niman"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Persistent Haze"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Adept Negotiator"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Demand Surrender"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Vaapad"
+    },
+    {
+      "tree": "Sith",
+      "name": "Dark Healing Field"
+    },
+    {
+      "tree": "Sith",
+      "name": "Sith Alchemy (create)"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Crippling Strike"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Clear Mind"
+    },
+    {
+      "tree": "Jedi Refugee",
+      "name": "Difficult to Sense"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Makashi"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Embrace the Dark Side"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Reap Retribution"
+    },
+    {
+      "tree": "Mystic",
+      "name": "Regimen Aptitude"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Dark Side Bane"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Master Negotiator"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Djem So"
+    },
+    {
+      "tree": "Sith",
+      "name": "Force Deception"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Adversary Lore"
+    },
+    {
+      "tree": "Jedi Weapon Master",
+      "name": "Shoto Pin Block"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "WatchCircle Initiate"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Soresu"
+    },
+    {
+      "tree": "Sith",
+      "name": "Improved Dark Healing"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Force of Will"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Single Weapon Flourish II"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Shii-Cho"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Improved Sentinel's Gambit"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Advantageous Strike"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Consular's Vitality"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Greater Dark Side Talisman"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Cleanse Mind"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Sokan"
+    },
+    {
+      "tree": "Jedi Weapon Master",
+      "name": "Twin Weapon Mastery"
+    },
+    {
+      "tree": "Telepath",
+      "name": "Mind Probe"
+    },
+    {
+      "tree": "Mystic",
+      "name": "Channel Vitality"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Sentinel Strike"
+    },
+    {
+      "tree": "Sith",
+      "name": "Dark Side Adept"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Know Weakness"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Dark Deception"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Force Persuasion"
+    },
+    {
+      "tree": "Sith",
+      "name": "Wicked Strike"
+    },
+    {
+      "tree": "Defensive Duelist",
+      "name": "Defensive Stance"
+    },
+    {
+      "tree": "Sith",
+      "name": "Dark Side Master"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Sentinel's Observation"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Sentinel's Gambit"
+    },
+    {
+      "tree": "Lightsaber Forms",
+      "name": "Shien"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Collective Visions"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Guiding Strikes"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Dark Side Sense"
+    },
+    {
+      "tree": "Defensive Duelist",
+      "name": "Steady Strike"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Dark Side Talisman"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Jedi Healer"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Master of the Great Hunt"
+    },
+    {
+      "tree": "Dark Side Devotee",
+      "name": "Channel Aggression"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Multiattack Proficiency (advanced melee)"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Force Haze"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Entreat Aid"
+    },
+    {
+      "tree": "Jedi Sentinel",
+      "name": "Unseen Eyes"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Out of Nowhere"
+    },
+    {
+      "tree": "Jedi Consular",
+      "name": "Aggressive Negotiator"
+    },
+    {
+      "tree": "Jedi Shadow",
+      "name": "Improved Sentinel Strike"
+    },
+    {
+      "tree": "Sith",
+      "name": "Stolen Form"
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Master of Elegance"
+    }
+  ],
+  "codeChanges": [
+    "DerivedCalculator now supports Force Persuasion by treating Persuasion as trained and substituting Use the Force when better, matching existing Force Deception and Force Treatment patterns.",
+    "ReactionEngine now recognizes Djem So, Defensive Roll, Defensive Stance, Visionary Attack, and Visionary Defense reaction keys plus post-hit/post-threshold condition gates.",
+    "ReactionRegistry now contains handler stubs/results for Djem So, Defensive Roll, Defensive Stance, Visionary Attack, and Visionary Defense."
+  ]
+}

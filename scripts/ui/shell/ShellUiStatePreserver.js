@@ -198,6 +198,17 @@ export class ShellUiStatePreserver {
       if (!key) continue;
       scroll.push({ key, top: el.scrollTop, left: el.scrollLeft });
     }
+    // Catch-all: capture any element currently scrolled that SCROLL_SELECTOR missed.
+    // Only stores elements with active scroll (scrollTop/Left > 0) — avoids scanning
+    // capacity-only-scrollable containers that haven't been touched by the user.
+    for (const el of root.querySelectorAll('*')) {
+      if (!(el instanceof HTMLElement)) continue;
+      if (el.scrollTop === 0 && el.scrollLeft === 0) continue;
+      const key = elementKey(el, root);
+      if (!key) continue;
+      if (scroll.some(s => s.key.key === key.key)) continue;
+      scroll.push({ key, top: el.scrollTop, left: el.scrollLeft });
+    }
 
     const controls = new Map(this.controlValuesBySurface.get(surfaceId) ?? []);
     if (activeKey && activeValue) controls.set(activeKey.key, { key: activeKey, value: activeValue });

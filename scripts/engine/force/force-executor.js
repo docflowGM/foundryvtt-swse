@@ -150,15 +150,23 @@ export class ForceExecutor {
         context: {
           powerId,
           powerName: power.name,
+          item: power,
+          itemId: powerId,
+          sourceItem: power,
           sourceItemId: powerId,
           itemName: power.name,
           category: 'force',
+          rollCategory: 'force',
           type: 'force-power',
+          forcePower: true,
           baseDC,
           baseBonus,
           customModifier,
           forceDescriptor: primaryDescriptor,
           forceDescriptors: descriptors,
+          descriptors,
+          tags: descriptors,
+          discipline: system.discipline ?? null,
           dcChart
         }
       });

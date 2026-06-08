@@ -1,0 +1,41 @@
+    <footer class="item-editor__footer swse-entity-dialog__footer" data-entity-footer-mode="{{entityDialog.mode}}">
+      {{#if entityDialog.isViewMode}}
+      <button type="button" class="swse-btn item-editor__footer-cancel close-btn">
+        Close
+      </button>
+
+      <div class="item-editor__footer-credits swse-entity-dialog__footer-status">
+        <span class="swse-entity-dialog__dirty" data-entity-dirty-indicator data-state="readonly">Read-only</span>
+        {{#if actorCredits}}<span>Credits: <strong>{{actorCredits}}</strong></span>{{/if}}
+      </div>
+
+      {{#if entityDialog.canEnterEdit}}
+      <button type="button" class="swse-btn swse-btn--primary entity-dialog-edit" title="Shortcut: E">
+        Edit
+      </button>
+      {{else}}
+      <button type="button" class="swse-btn swse-btn--primary close-btn">
+        Done
+      </button>
+      {{/if}}
+      {{else}}
+      <button type="button" class="swse-btn item-editor__footer-cancel entity-dialog-cancel">
+        Cancel
+      </button>
+
+      <div class="item-editor__footer-credits swse-entity-dialog__footer-status">
+        <span class="swse-entity-dialog__dirty" data-entity-dirty-indicator data-state="clean">No unsaved changes</span>
+        {{#if entityDialog.validation.hasIssues}}<span class="swse-entity-dialog__validation-pill">{{entityDialog.validation.count}} warning{{#unless (eq entityDialog.validation.count 1)}}s{{/unless}}</span>{{/if}}
+        {{#if actorCredits}}<span>Credits: <strong>{{actorCredits}}</strong></span>{{else}}<span class="credits-placeholder">No actor context</span>{{/if}}
+      </div>
+
+      <div class="swse-entity-dialog__footer-actions">
+        <button type="submit" class="swse-btn item-editor__footer-save" data-entity-save-mode="save" title="Shortcut: Ctrl/Cmd+S">
+          Save
+        </button>
+        <button type="submit" class="swse-btn swse-btn--primary item-editor__footer-confirm" data-entity-save-mode="save-close">
+          Save &amp; Close
+        </button>
+      </div>
+      {{/if}}
+    </footer>

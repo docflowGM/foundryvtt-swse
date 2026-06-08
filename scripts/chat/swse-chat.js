@@ -215,6 +215,37 @@ function receiptIconClass(sourceType = '') {
   }
 }
 
+
+
+function normalizeCombatStatusForChat(status = {}) {
+  const cover = String(status?.cover || 'none');
+  const defensiveMode = String(status?.defensiveMode || 'normal');
+  const coverLabels = {
+    none: 'No Cover',
+    partial: 'Partial Cover',
+    cover: 'Cover (+5 Reflex)',
+    improved: 'Enhanced Cover (+10 Reflex)',
+    total: 'Total Cover / Blocked'
+  };
+  const defensiveLabels = {
+    normal: 'Normal',
+    fightingDefensively: 'Fighting Defensively (+2 Reflex / -5 attacks)',
+    fullDefense: 'Full Defense (+5 Reflex / attacks locked)'
+  };
+  const chips = [];
+  if (cover !== 'none') chips.push({ label: coverLabels[cover] || cover, tone: cover === 'total' ? 'danger' : 'info' });
+  if (defensiveMode !== 'normal') chips.push({ label: defensiveLabels[defensiveMode] || defensiveMode, tone: defensiveMode === 'fullDefense' ? 'warning' : 'info' });
+  if (status?.prone === true) chips.push({ label: 'Prone (+5 vs ranged / -5 vs melee)', tone: 'warning' });
+  return {
+    cover,
+    defensiveMode,
+    prone: status?.prone === true,
+    coverLabel: coverLabels[cover] || coverLabels.none,
+    defensiveModeLabel: defensiveLabels[defensiveMode] || defensiveLabels.normal,
+    chips
+  };
+}
+
 function actorOwnerUserIds(actor, { includeGM = false } = {}) {
   const ids = new Set();
   if (actor?.ownership) {
@@ -567,6 +598,59 @@ export class SWSEChat {
       }
     });
   }
+
+
+
+  static buildCombatStatusCardData({ actor = null, status = {}, title = '', kind = 'status', note = '', declaration = null } = {}) {
+    const normalized = normalizeCombatStatusForChat(status);
+    const actorName = actor?.name || declaration?.actorName || 'Unknown Actor';
+    const isSafeZone = kind === 'safe-zone';
+    const defaultTitle = isSafeZone ? 'Safe Zone Declared' : 'Combat Status Declared';
+    const safeZoneLines = isSafeZone ? [
+      'No map geometry is automated by this card.',
+      'GM confirms the 4×4 Safe Zone placement and affected allies.',
+      'Allies who start their turn in the Safe Zone gain +2 Fortitude and +2 Will Defense.',
+      'Safe Zones cannot overlap another Safe Zone.'
+    ] : [];
+    return {
+      title: title || defaultTitle,
+      kind,
+      actorName,
+      actorUuid: actor?.uuid || '',
+      status: normalized,
+      chips: normalized.chips,
+      hasChips: normalized.chips.length > 0,
+      note: note || (isSafeZone ? 'This is a tactical declaration card. Resolve placement and affected tokens at the table.' : 'Current combat status declared for GM/player reference.'),
+      safeZoneLines,
+      isSafeZone,
+      round: game?.combat?.round ?? null,
+      turn: game?.combat?.turn ?? null
+    };
+  }
+
+  static async postCombatStatusCard({ actor = null, status = {}, title = '', kind = 'status', note = '', declaration = null, whisper = null, flags = {} } = {}) {
+    const data = this.buildCombatStatusCardData({ actor, status, title, kind, note, declaration });
+    const content = await foundry.applications.handlebars.renderTemplate(
+      'systems/foundryvtt-swse/templates/chat/combat-status-card.hbs',
+      data
+    );
+
+    return this.postHTML({
+      content,
+      actor,
+      whisper,
+      flags: {
+        ...flags,
+        swse: {
+          ...(flags?.swse || {}),
+          combatStatusCard: true,
+          combatStatusKind: kind,
+          actorUuid: actor?.uuid || ''
+        }
+      }
+    });
+  }
+
 
   static async postCombatBanner({ combat = null, round = null, turnName = '', actor = null, whisper = null } = {}) {
     const resolvedRound = Number.isFinite(Number(round)) ? Number(round) : Number(combat?.round ?? 0);

@@ -1,0 +1,62 @@
+<section class="item-editor__section swse-entity-dialog__prereq-editor">
+  <h3 class="item-editor__section-title">Prerequisites</h3>
+
+  <div class="form-field form-field--full">
+    <label>Prerequisite Text</label>
+    <textarea name="{{entityDialog.prereqEditor.rawField}}" rows="4">{{entityDialog.prereqEditor.rawText}}</textarea>
+    <p class="swse-entity-dialog__field-note">Raw text is preserved for compatibility. Structured clauses below are additive and save to <code>system.prereqClauses</code>.</p>
+  </div>
+
+  <div class="swse-entity-dialog__meta-strip swse-entity-dialog__meta-strip--prereq" data-prereq-status="{{entityDialog.prereqEditor.status}}">
+    <span>Structured: <strong>{{entityDialog.prereqEditor.clauseCount}}</strong></span>
+    <span>Evaluation: <strong>{{entityDialog.prereqEditor.statusLabel}}</strong></span>
+    {{#if entityDialog.prereqEditor.subjectAvailable}}
+      <span>Actor context: <strong>Available</strong></span>
+    {{else}}
+      <span>Actor context: <strong>None</strong></span>
+    {{/if}}
+  </div>
+
+  <div class="swse-entity-dialog__prereq-table" data-entity-array-list="system.prereqClauses">
+    <div class="swse-entity-dialog__prereq-row swse-entity-dialog__prereq-row--head">
+      <span>Kind</span><span>Key</span><span>Value</span><span>Label</span><span></span>
+    </div>
+    {{#each entityDialog.prereqEditor.clauses}}
+    <div class="swse-entity-dialog__prereq-row" data-entity-array-row data-entity-array-index="{{this.index}}">
+      <select name="system.prereqClauses.{{this.index}}.kind">
+        <option value="ability" {{#if (eq this.kind "ability")}}selected{{/if}}>Ability</option>
+        <option value="bab" {{#if (eq this.kind "bab")}}selected{{/if}}>BAB</option>
+        <option value="level" {{#if (eq this.kind "level")}}selected{{/if}}>Character Level</option>
+        <option value="class" {{#if (eq this.kind "class")}}selected{{/if}}>Class Level</option>
+        <option value="feat" {{#if (eq this.kind "feat")}}selected{{/if}}>Feat</option>
+        <option value="talent" {{#if (eq this.kind "talent")}}selected{{/if}}>Talent</option>
+        <option value="skill" {{#if (eq this.kind "skill")}}selected{{/if}}>Skill</option>
+        <option value="proficiency" {{#if (eq this.kind "proficiency")}}selected{{/if}}>Proficiency</option>
+        <option value="descriptor" {{#if (eq this.kind "descriptor")}}selected{{/if}}>Descriptor</option>
+        <option value="custom" {{#if (eq this.kind "custom")}}selected{{/if}}>GM / Custom</option>
+      </select>
+      <input type="text" name="system.prereqClauses.{{this.index}}.key" value="{{this.key}}" placeholder="str / Jedi / skill" />
+      <input type="text" name="system.prereqClauses.{{this.index}}.value" value="{{this.value}}" placeholder="13 / 5 / name" />
+      <input type="text" name="system.prereqClauses.{{this.index}}.label" value="{{this.label}}" placeholder="Display label" />
+      <button type="button" class="swse-entity-dialog__icon-btn" data-entity-array-remove title="Remove prerequisite">×</button>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="swse-entity-dialog__toolbar-row">
+    <button type="button" class="swse-btn swse-btn--small" data-entity-array-add="system.prereqClauses" data-entity-array-kind="prereq">+ Add Prerequisite</button>
+    <span class="swse-entity-dialog__field-note">Top-level structured clauses are treated as AND requirements. Custom clauses are GM-adjudicated.</span>
+  </div>
+
+  {{#if entityDialog.prereqEditor.evaluation.results.length}}
+  <div class="swse-entity-dialog__prereq-results">
+    {{#each entityDialog.prereqEditor.evaluation.results}}
+    <div class="swse-entity-dialog__prereq-result" data-status="{{this.status}}">
+      <strong>{{this.statusLabel}}</strong>
+      <span>{{this.display}}</span>
+      {{#if this.detail}}<em>{{this.detail}}</em>{{/if}}
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
+</section>

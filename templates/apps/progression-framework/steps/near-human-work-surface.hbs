@@ -1,121 +1,199 @@
 <div class="prog-nh-builder">
 
+  <!-- ───────────────────────────────── LEFT: SETUP ──────────────────────────────── -->
   <div class="prog-nh-builder__baseline">
-    <h3 class="prog-nh-builder__col-title">Human Baseline</h3>
-    <ul class="prog-nh-baseline__list">
-      <li class="prog-num--zero">+0 All Attributes</li>
-      <li class="prog-num--pos">+1 Bonus Starting General Feat at Level 1</li>
-      <li class="prog-num--pos">+1 Bonus Skill Training at Level 1</li>
-    </ul>
+    <h3 class="prog-nh-builder__col-title">
+      <span class="prog-nh-step-num">1</span>Setup
+    </h3>
 
-    <!-- NEW (Phase 2): Custom Near-Human Species Name -->
-    <div class="prog-nh-section nh-custom-name">
-      <label class="prog-nh-section__label">Custom Species Name (Optional)</label>
-      <input type="text" class="nh-custom-name-input prog-nh-input"
-             placeholder="e.g., Aurelian, Selkath-descended, Vesperi"
-             value="{{nearHuman.state.customName}}"
-             aria-label="Custom Near-Human species name">
-      <p class="prog-nh-section__help">Create a unique name for your Near-Human species variant.</p>
-    </div>
-
+    <!-- Sacrifice choice — FIRST required decision -->
     <div class="prog-nh-sacrifice">
-      <h4 class="prog-nh-sacrifice__title">Replacement</h4>
-      <p class="prog-nh-sacrifice__help">Choose which Human benefit to sacrifice</p>
-      <label class="prog-nh-sacrifice__option">
+      <h4 class="prog-nh-sacrifice__title">Replace Human Benefit</h4>
+      <p class="prog-nh-sacrifice__help">Pick which Human perk your Near-Human ancestry replaces with the chosen trait.</p>
+      <label class="prog-nh-sacrifice__option{{#unless nearHuman.state.sacrifice}} prog-nh-sacrifice__option--unanswered{{/unless}}">
         <input type="radio" class="nh-sacrifice-radio" name="nh-sacrifice" value="feat"
                {{#if (eq nearHuman.state.sacrifice "feat")}}checked{{/if}}>
-        Replace Bonus Feat
+        <span class="prog-nh-sacrifice__text">
+          <strong>Bonus General Feat</strong>
+          <em>Replace your Level 1 starting feat</em>
+        </span>
       </label>
-      <label class="prog-nh-sacrifice__option">
+      <label class="prog-nh-sacrifice__option{{#unless nearHuman.state.sacrifice}} prog-nh-sacrifice__option--unanswered{{/unless}}">
         <input type="radio" class="nh-sacrifice-radio" name="nh-sacrifice" value="skill"
                {{#if (eq nearHuman.state.sacrifice "skill")}}checked{{/if}}>
-        Replace Skill Training
+        <span class="prog-nh-sacrifice__text">
+          <strong>Bonus Skill Training</strong>
+          <em>Replace your Level 1 skill training</em>
+        </span>
       </label>
+    </div>
+
+    <!-- Baseline reference (subdued) -->
+    <div class="prog-nh-baseline-ref">
+      <h4 class="prog-nh-baseline-ref__title">Human Baseline</h4>
+      <ul class="prog-nh-baseline__list">
+        <li class="prog-num--zero">+0 All Attributes</li>
+        <li class="prog-num--pos">+1 Bonus Starting Feat</li>
+        <li class="prog-num--pos">+1 Bonus Skill Training</li>
+      </ul>
+    </div>
+
+    <!-- Custom name — optional, at the bottom -->
+    <div class="prog-nh-section nh-custom-name">
+      <label class="prog-nh-section__label" for="nh-custom-name-field">
+        Species Name <span class="prog-nh-optional">(optional)</span>
+      </label>
+      <input id="nh-custom-name-field"
+             type="text"
+             class="nh-custom-name-input prog-nh-input"
+             placeholder="e.g. Aurelian, Vesperi…"
+             value="{{nearHuman.state.customName}}"
+             aria-label="Custom Near-Human species name">
     </div>
   </div>
 
+  <!-- ─────────────────────────── CENTER: TRAIT PICKER ──────────────────────────── -->
   <div class="prog-nh-builder__center">
-    <h3 class="prog-nh-builder__col-title">Select One Near-Human Trait</h3>
-    <div class="prog-nh-traits" role="listbox">
+    <h3 class="prog-nh-builder__col-title">
+      <span class="prog-nh-step-num">2</span>Select Trait
+    </h3>
+    <p class="prog-nh-center-hint">Choose one Near-Human trait to replace the sacrificed benefit.</p>
+
+    <div class="prog-nh-traits" role="listbox" aria-label="Near-Human trait list">
       {{#each nearHuman.traitsData.traits}}
-        <div class="prog-nh-trait{{#if (eq id ../nearHuman.state.traitId)}} prog-nh-trait--selected{{/if}}">
-          <button class="prog-nh-trait__btn nh-trait-btn"
-                  data-trait-id="{{id}}" type="button">
-            {{name}}
-            <i class="fas fa-chevron-right"></i>
-          </button>
-          {{#if (eq id ../nearHuman.state.traitId)}}
-            <div class="prog-nh-trait__detail">
-              <p>{{description}}</p>
-              {{#if (eq id "abilityAdjustment")}}
-                <div class="prog-nh-ability-adj">
-                  {{#each ../nearHuman.builderSummary.abilityAdjustments}}
-                    <div class="prog-nh-ability-adj__row">
-                      <span>{{this.label}}</span>
-                      <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="-2" type="button">−2</button>
-                      <span class="prog-nh-ability-adj__val {{this.cssClass}}">
-                        {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
-                      </span>
-                      <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="2" type="button">+2</button>
-                    </div>
-                  {{/each}}
-                </div>
-              {{/if}}
-
-              <!-- NEW (Phase 2): Secondary Trait-Specific Choice Pickers -->
-              {{#if (eq id "climateAdaptation")}}
-                <div class="prog-nh-section nh-secondary-choice">
-                  <label class="prog-nh-section__label" for="climate-adapt-select">Select Climate Type</label>
-                  <select id="climate-adapt-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="climateAdaptation">
-                    <option value="">-- Choose climate --</option>
-                    <option value="freezing" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "freezing")}}selected{{/if}}>Freezing</option>
-                    <option value="rarefied" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "rarefied")}}selected{{/if}}>Rarefied Atmosphere</option>
-                    <option value="searing" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "searing")}}selected{{/if}}>Searing</option>
-                    <option value="smoky" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "smoky")}}selected{{/if}}>Smoky</option>
-                    <option value="tropical" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "tropical")}}selected{{/if}}>Tropical</option>
-                    <option value="watery" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "watery")}}selected{{/if}}>Watery</option>
-                  </select>
-                </div>
-              {{/if}}
-
-              {{#if (eq id "biotechAugmentation")}}
-                <div class="prog-nh-section nh-secondary-choice">
-                  <label class="prog-nh-section__label" for="biotech-select">Select Bio-Implant</label>
-                  <select id="biotech-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="biotechAugmentation">
-                    <option value="">-- Choose bio-implant --</option>
-                    <option value="armEnhancement" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "armEnhancement")}}selected{{/if}}>Arm Enhancement</option>
-                    <option value="legEnhancement" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "legEnhancement")}}selected{{/if}}>Leg Enhancement</option>
-                    <option value="organicProcessor" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "organicProcessor")}}selected{{/if}}>Organic Processor</option>
-                    <option value="sensoryUpgrade" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "sensoryUpgrade")}}selected{{/if}}>Sensory Upgrade</option>
-                  </select>
-                </div>
-              {{/if}}
-
-              {{#if (eq id "culturalCybernetics")}}
-                <div class="prog-nh-section nh-secondary-choice">
-                  <label class="prog-nh-section__label" for="cyber-select">Select Cybernetic Enhancement</label>
-                  <select id="cyber-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="culturalCybernetics">
-                    <option value="">-- Choose cybernetic --</option>
-                    <option value="armorPlating" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "armorPlating")}}selected{{/if}}>Armor Plating</option>
-                    <option value="combatInterface" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "combatInterface")}}selected{{/if}}>Combat Interface</option>
-                    <option value="neuralEnhancement" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "neuralEnhancement")}}selected{{/if}}>Neural Enhancement</option>
-                    <option value="reflex Booster" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "reflexBooster")}}selected{{/if}}>Reflex Booster</option>
-                  </select>
-                </div>
-              {{/if}}
-            </div>
-          {{/if}}
-        </div>
+        <button class="prog-nh-trait__btn nh-trait-btn
+                       {{#if (eq id ../nearHuman.state.traitId)}}prog-nh-trait__btn--selected{{/if}}"
+                data-trait-id="{{id}}" type="button"
+                aria-selected="{{#if (eq id ../nearHuman.state.traitId)}}true{{else}}false{{/if}}">
+          <span class="prog-nh-trait__name">{{name}}</span>
+          <i class="fas {{#if (eq id ../nearHuman.state.traitId)}}fa-check-circle{{else}}fa-chevron-right{{/if}} prog-nh-trait__icon"></i>
+        </button>
       {{/each}}
     </div>
+  </div>
 
-    <div class="prog-nh-variants">
-      <h4>Near-Human Variants <span class="prog-nh-variants__hint">Select up to 3 optional features.</span></h4>
+  <!-- ───────────────────────────── RIGHT: BUILD REVIEW ─────────────────────────── -->
+  <div class="prog-nh-builder__summary">
+    <h3 class="prog-nh-builder__col-title">
+      <span class="prog-nh-step-num">3</span>Review Build
+    </h3>
+
+    {{#if nearHuman.selectedTrait}}
+      <!-- Selected trait detail -->
+      <div class="prog-nh-trait-detail-panel">
+        <div class="prog-nh-trait-detail-panel__name">{{nearHuman.selectedTrait.name}}</div>
+        <p class="prog-nh-trait-detail-panel__desc">{{nearHuman.selectedTrait.description}}</p>
+
+        <!-- Ability Adjustment controls -->
+        {{#if (eq nearHuman.state.traitId "abilityAdjustment")}}
+          <div class="prog-nh-ability-adj">
+            <div class="prog-nh-ability-adj__hint">Set one attribute +2 and one −2.</div>
+            {{#each nearHuman.builderSummary.abilityAdjustments}}
+              <div class="prog-nh-ability-adj__row">
+                <span class="prog-nh-ability-adj__label">{{this.label}}</span>
+                <div class="prog-nh-ability-adj__controls">
+                  <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="-2" type="button">−2</button>
+                  <span class="prog-nh-ability-adj__val {{this.cssClass}}">
+                    {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
+                  </span>
+                  <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="2" type="button">+2</button>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        <!-- Secondary trait-specific choice pickers -->
+        {{#if (eq nearHuman.state.traitId "climateAdaptation")}}
+          <div class="prog-nh-secondary-choice">
+            <label class="prog-nh-section__label" for="climate-adapt-select">Climate Type</label>
+            <select id="climate-adapt-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="climateAdaptation">
+              <option value="">— Choose climate —</option>
+              <option value="freezing"  {{#if (eq nearHuman.state.traitChoices.climateAdaptation "freezing")}}selected{{/if}}>Freezing</option>
+              <option value="rarefied"  {{#if (eq nearHuman.state.traitChoices.climateAdaptation "rarefied")}}selected{{/if}}>Rarefied Atmosphere</option>
+              <option value="searing"   {{#if (eq nearHuman.state.traitChoices.climateAdaptation "searing")}}selected{{/if}}>Searing</option>
+              <option value="smoky"     {{#if (eq nearHuman.state.traitChoices.climateAdaptation "smoky")}}selected{{/if}}>Smoky</option>
+              <option value="tropical"  {{#if (eq nearHuman.state.traitChoices.climateAdaptation "tropical")}}selected{{/if}}>Tropical</option>
+              <option value="watery"    {{#if (eq nearHuman.state.traitChoices.climateAdaptation "watery")}}selected{{/if}}>Watery</option>
+            </select>
+          </div>
+        {{/if}}
+        {{#if (eq nearHuman.state.traitId "biotechAugmentation")}}
+          <div class="prog-nh-secondary-choice">
+            <label class="prog-nh-section__label" for="biotech-select">Bio-Implant</label>
+            <select id="biotech-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="biotechAugmentation">
+              <option value="">— Choose implant —</option>
+              <option value="armEnhancement"    {{#if (eq nearHuman.state.traitChoices.biotechAugmentation "armEnhancement")}}selected{{/if}}>Arm Enhancement</option>
+              <option value="legEnhancement"    {{#if (eq nearHuman.state.traitChoices.biotechAugmentation "legEnhancement")}}selected{{/if}}>Leg Enhancement</option>
+              <option value="organicProcessor"  {{#if (eq nearHuman.state.traitChoices.biotechAugmentation "organicProcessor")}}selected{{/if}}>Organic Processor</option>
+              <option value="sensoryUpgrade"    {{#if (eq nearHuman.state.traitChoices.biotechAugmentation "sensoryUpgrade")}}selected{{/if}}>Sensory Upgrade</option>
+            </select>
+          </div>
+        {{/if}}
+        {{#if (eq nearHuman.state.traitId "culturalCybernetics")}}
+          <div class="prog-nh-secondary-choice">
+            <label class="prog-nh-section__label" for="cyber-select">Cybernetic Enhancement</label>
+            <select id="cyber-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="culturalCybernetics">
+              <option value="">— Choose cybernetic —</option>
+              <option value="armorPlating"      {{#if (eq nearHuman.state.traitChoices.culturalCybernetics "armorPlating")}}selected{{/if}}>Armor Plating</option>
+              <option value="combatInterface"   {{#if (eq nearHuman.state.traitChoices.culturalCybernetics "combatInterface")}}selected{{/if}}>Combat Interface</option>
+              <option value="neuralEnhancement" {{#if (eq nearHuman.state.traitChoices.culturalCybernetics "neuralEnhancement")}}selected{{/if}}>Neural Enhancement</option>
+              <option value="reflexBooster"     {{#if (eq nearHuman.state.traitChoices.culturalCybernetics "reflexBooster")}}selected{{/if}}>Reflex Booster</option>
+            </select>
+          </div>
+        {{/if}}
+      </div>
+    {{else}}
+      <div class="prog-nh-trait-empty">
+        <i class="fas fa-arrow-left"></i>
+        Select a trait to see its details here.
+      </div>
+    {{/if}}
+
+    <!-- Ability attribute summary (only show non-zero rows) -->
+    {{#if nearHuman.state.traitId}}
+      <div class="prog-nh-summary-block">
+        <div class="prog-nh-summary-block__title">Attribute Changes</div>
+        {{#each nearHuman.builderSummary.abilityAdjustments}}
+          {{#if (ne this.value 0)}}
+            <div class="prog-nh-summary__attr">
+              <span class="prog-nh-summary__attr-label">{{this.label}}</span>
+              <span class="prog-nh-summary__attr-val {{this.cssClass}}">
+                {{#if (gt this.value 0)}}+{{this.value}}{{else}}{{this.value}}{{/if}}
+              </span>
+            </div>
+          {{/if}}
+        {{/each}}
+        {{#unless (some nearHuman.builderSummary.abilityAdjustments)}}
+          <div class="prog-nh-summary__attr-none">None</div>
+        {{/unless}}
+      </div>
+    {{/if}}
+
+    {{#if nearHuman.state.sacrifice}}
+      <div class="prog-nh-summary-block">
+        <div class="prog-nh-summary-block__title">Retained Benefit</div>
+        <div class="prog-num--pos prog-nh-summary-block__row">
+          {{#if (eq nearHuman.state.sacrifice "feat")}}+1 Bonus Skill Training{{else}}+1 Starting General Feat{{/if}}
+        </div>
+        <div class="prog-num--neg prog-nh-summary-block__row prog-nh-summary-block__row--muted">
+          {{#if (eq nearHuman.state.sacrifice "feat")}}−1 Starting General Feat{{else}}−1 Bonus Skill Training{{/if}}
+        </div>
+      </div>
+    {{/if}}
+
+    <!-- Optional variants -->
+    <div class="prog-nh-summary-block prog-nh-variants-block">
+      <div class="prog-nh-summary-block__title">
+        Variants
+        <span class="prog-nh-variants__hint">{{nearHuman.state.variants.length}}/3 selected</span>
+      </div>
       <div class="prog-nh-variants__chips">
         {{#each nearHuman.traitsData.variants}}
           <button class="prog-nh-variant-chip nh-variant-chip
                          {{#if (arrayIncludes ../nearHuman.state.variants id)}}prog-nh-variant-chip--active{{/if}}"
-                  data-variant-id="{{id}}" type="button">
+                  data-variant-id="{{id}}" type="button"
+                  title="{{description}}">
             <i class="{{#if (arrayIncludes ../nearHuman.state.variants id)}}fas fa-check-square{{else}}far fa-square{{/if}}"></i>
             {{name}}
           </button>
@@ -123,50 +201,14 @@
       </div>
     </div>
 
-    <div class="prog-nh-status">
+    <!-- Status — bottom of right column -->
+    <div class="prog-nh-status{{#if nearHuman.validation.isValid}} prog-nh-status--ready{{/if}}">
       {{#if nearHuman.validation.isValid}}
-        <span class="prog-nh-status__ready">Ready to Confirm</span>
+        <i class="fas fa-check-circle"></i> Ready to Confirm
       {{else}}
-        <span class="prog-nh-status__incomplete">Build in progress…</span>
+        <i class="fas fa-circle-notch fa-spin"></i> Build in progress…
       {{/if}}
     </div>
-  </div>
-
-  <div class="prog-nh-builder__summary">
-    <h3 class="prog-nh-builder__col-title">Final Summary</h3>
-
-    {{#each nearHuman.builderSummary.abilityAdjustments}}
-      <div class="prog-nh-summary__attr">
-        <span class="prog-nh-summary__attr-label">{{this.label}}</span>
-        <span class="prog-nh-summary__attr-val {{this.cssClass}}">
-          {{#if (gt this.value 0)}}+ {{this.value}}{{else if (lt this.value 0)}}− {{abs this.value}}{{else}}+ 0{{/if}}
-        </span>
-      </div>
-    {{/each}}
-
-    {{#if nearHuman.state.sacrifice}}
-      <div class="prog-nh-summary__section">Retained from Human</div>
-      <div class="prog-num--pos">
-        {{#if (eq nearHuman.state.sacrifice "feat")}}+1 Bonus Skill Training{{else}}+1 Starting General Feat{{/if}}
-      </div>
-      <div class="prog-nh-summary__section">Replaced Benefit</div>
-      <div class="prog-num--neg">
-        {{#if (eq nearHuman.state.sacrifice "feat")}}+1 Starting General Feat{{else}}+1 Bonus Skill Training{{/if}}
-        (Sacrificed)
-      </div>
-    {{/if}}
-
-    {{#if nearHuman.selectedTrait}}
-      <div class="prog-nh-summary__section">Selected Trait</div>
-      <div class="prog-num--pos">• {{nearHuman.selectedTrait.name}}</div>
-    {{/if}}
-
-    {{#if nearHuman.selectedVariants.length}}
-      <div class="prog-nh-summary__section">Variants</div>
-      {{#each nearHuman.selectedVariants}}
-        <div>• {{name}}</div>
-      {{/each}}
-    {{/if}}
   </div>
 
 </div>

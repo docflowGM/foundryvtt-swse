@@ -1,0 +1,664 @@
+{
+  "phase": "T23",
+  "title": "Noble / commander / social talent cleanup",
+  "scope": {
+    "request": "Noble / commander / social trees - Influence, Inspiration, Leadership, Military Tactics, Corporate Power, etc.",
+    "treeNames": [
+      "Influence",
+      "Inspiration",
+      "Leadership",
+      "Lineage",
+      "Military Tactics",
+      "Corporate Power",
+      "Fugitive Commander",
+      "Naval Officer",
+      "Sith Commander",
+      "Galactic Senator",
+      "Rebel Recruiter",
+      "Ideologue",
+      "Revolutionary",
+      "Gambling Leader",
+      "Squad Leader"
+    ],
+    "treeSummaries": [
+      {
+        "name": "Influence",
+        "id": "8375b9b26b679901",
+        "talentCount": 7,
+        "changed": 7
+      },
+      {
+        "name": "Inspiration",
+        "id": "72d32ebcbb607314",
+        "talentCount": 9,
+        "changed": 9
+      },
+      {
+        "name": "Leadership",
+        "id": "5964237d22681dc0",
+        "talentCount": 7,
+        "changed": 7
+      },
+      {
+        "name": "Lineage",
+        "id": "b5bb4154688c66ab",
+        "talentCount": 7,
+        "changed": 7
+      },
+      {
+        "name": "Military Tactics",
+        "id": "9253ace716c3e966",
+        "talentCount": 13,
+        "changed": 13
+      },
+      {
+        "name": "Corporate Power",
+        "id": "45c4007d09c01839",
+        "talentCount": 7,
+        "changed": 7
+      },
+      {
+        "name": "Fugitive Commander",
+        "id": "61b74c82cb56876c",
+        "talentCount": 6,
+        "changed": 6
+      },
+      {
+        "name": "Naval Officer",
+        "id": "057a978a7dc1d5a7",
+        "talentCount": 7,
+        "changed": 7
+      },
+      {
+        "name": "Sith Commander",
+        "id": "4d5ac20318ef56b6",
+        "talentCount": 4,
+        "changed": 4
+      },
+      {
+        "name": "Galactic Senator",
+        "id": "feb08c2834a447ab",
+        "talentCount": 1,
+        "changed": 1
+      },
+      {
+        "name": "Rebel Recruiter",
+        "id": "a2c6962521c29361",
+        "talentCount": 5,
+        "changed": 5
+      },
+      {
+        "name": "Ideologue",
+        "id": "d65a4816379802ee",
+        "talentCount": 5,
+        "changed": 5
+      },
+      {
+        "name": "Revolutionary",
+        "id": "e6a9c40b900847bd",
+        "talentCount": 1,
+        "changed": 1
+      },
+      {
+        "name": "Gambling Leader",
+        "id": "b7a1211d08826500",
+        "talentCount": 5,
+        "changed": 5
+      },
+      {
+        "name": "Squad Leader",
+        "id": "781feba15dc9e42f",
+        "talentCount": 4,
+        "changed": 4
+      }
+    ]
+  },
+  "summary": {
+    "reviewedTalentDocuments": 88,
+    "changedTalentDocuments": 88,
+    "combatActionCardsAdded": 77,
+    "reactionEntriesAdded": 1,
+    "defenseAbilityRulesAdded": 1,
+    "passiveOrFutureRuntimeTalentsReviewed": 13,
+    "removedLegacyModifierRows": 0,
+    "removedEmbeddedActiveEffects": 0,
+    "talentTreeTagsNormalized": 15
+  },
+  "implementationNotes": [
+    "This phase found little remaining static modifier/effect pollution in the selected trees; the main gap was missing player-facing action cards and runtime metadata.",
+    "Skill-backed social/tactics cards use the existing character sheet combat-action skill preroller when the action is just a check plus table-applied effect.",
+    "Ally aura, morale, condition-track, damage-redirection, follower, vehicle-command, and encounter-state effects remain truthful manual cards unless an existing runtime surface could apply them without guessing target state.",
+    "Intimidating Defense now grants a reaction key for incoming attack cards and rolls Persuasion against the attacker Will Defense; the resulting -5 attack penalty still needs GM/card adjudication because the current reaction bridge cannot retroactively recompute hit/miss.",
+    "Idealist now uses the existing defense ability-rule framework through talents, allowing Will Defense to use Charisma instead of Wisdom when it is better."
+  ],
+  "changedTalents": [
+    {
+      "name": "Competitive Drive",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Competitive Edge",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Corporate Clout",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Impose Confusion",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Impose Hesitation",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Willful Resolve",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Wrong Decision",
+      "tree": "Corporate Power",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Disciplined Trickery",
+      "tree": "Fugitive Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Group Perception",
+      "tree": "Fugitive Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Hasty Withdrawal",
+      "tree": "Fugitive Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Stalwart Subordinates",
+      "tree": "Fugitive Commander",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Stay in the Fight",
+      "tree": "Fugitive Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Stealthy Withdrawal",
+      "tree": "Fugitive Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Diplomatic Poise",
+      "tree": "Galactic Senator",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Assault Gambit",
+      "tree": "Gambling Leader",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Direct Fire",
+      "tree": "Gambling Leader",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Face the Foe",
+      "tree": "Gambling Leader",
+      "cards": 0,
+      "status": "reviewed"
+    },
+    {
+      "name": "Lead From the Front",
+      "tree": "Gambling Leader",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Luck Favors the Bold",
+      "tree": "Gambling Leader",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Idealist",
+      "tree": "Ideologue",
+      "cards": 0,
+      "status": "implemented_static_rule"
+    },
+    {
+      "name": "Instruction",
+      "tree": "Ideologue",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Know Your Enemy",
+      "tree": "Ideologue",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Known Dissident",
+      "tree": "Ideologue",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Lead by Example",
+      "tree": "Ideologue",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Allure",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Fluster",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Improved Weaken Resolve",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Intimidating Defense",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Presence",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Seducer",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Weaken Resolve",
+      "tree": "Influence",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Beloved",
+      "tree": "Inspiration",
+      "cards": 3,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Bolster",
+      "tree": "Inspiration",
+      "cards": 0,
+      "status": "reviewed"
+    },
+    {
+      "name": "Bolster Ally",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Ignite Fervor",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Inspire Confidence",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Inspire Haste",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Inspire Zeal",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Inspired",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Willpower",
+      "tree": "Inspiration",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Coordinate",
+      "tree": "Leadership",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Distant Command",
+      "tree": "Leadership",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Fearless Leader",
+      "tree": "Leadership",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Rally",
+      "tree": "Leadership",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Reactionary Attack",
+      "tree": "Leadership",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Trust",
+      "tree": "Leadership",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Unwavering Ally",
+      "tree": "Leadership",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Connections",
+      "tree": "Lineage",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Educated",
+      "tree": "Lineage",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Engineer",
+      "tree": "Lineage",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Influential Friends",
+      "tree": "Lineage",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Powerful Friends",
+      "tree": "Lineage",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Spontaneous Skill",
+      "tree": "Lineage",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Wealth",
+      "tree": "Lineage",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Assault Tactics",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Commander's Prerogative",
+      "tree": "Military Tactics",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Deployment Tactics",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Exploit Weakness",
+      "tree": "Military Tactics",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Field Tactics",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Grand Leader",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "One for the Team",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Outmaneuver",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Shift Defense I",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Shift Defense II",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Shift Defense III",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Tactical Edge",
+      "tree": "Military Tactics",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Uncanny Defense",
+      "tree": "Military Tactics",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Born Leader",
+      "tree": "Naval Officer",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Combined Fire",
+      "tree": "Naval Officer",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Combined Fire (Naval)",
+      "tree": "Naval Officer",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Fleet Deployment",
+      "tree": "Naval Officer",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Fleet Tactics",
+      "tree": "Naval Officer",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "It's a Trap",
+      "tree": "Naval Officer",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Legendary Commander",
+      "tree": "Naval Officer",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Bolstered Numbers",
+      "tree": "Rebel Recruiter",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Noble Sacrifice",
+      "tree": "Rebel Recruiter",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Recruit Enemy",
+      "tree": "Rebel Recruiter",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Stay in the Fight (Recruit)",
+      "tree": "Rebel Recruiter",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Team Recruiting",
+      "tree": "Rebel Recruiter",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Make an Example",
+      "tree": "Revolutionary",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Desperate Measures",
+      "tree": "Sith Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Focus Terror",
+      "tree": "Sith Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Incite Rage",
+      "tree": "Sith Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Power of Hatred",
+      "tree": "Sith Commander",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Commanding Officer",
+      "tree": "Squad Leader",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Coordinated Tactics",
+      "tree": "Squad Leader",
+      "cards": 0,
+      "status": "reviewed_manual_or_future_runtime"
+    },
+    {
+      "name": "Fire at Will",
+      "tree": "Squad Leader",
+      "cards": 1,
+      "status": "combat_action_card"
+    },
+    {
+      "name": "Squad Actions",
+      "tree": "Squad Leader",
+      "cards": 3,
+      "status": "combat_action_card"
+    }
+  ]
+}

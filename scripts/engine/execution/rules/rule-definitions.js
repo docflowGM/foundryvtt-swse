@@ -176,6 +176,17 @@ export const RULE_DEFINITIONS = Object.freeze({
     description: "Actor increases unarmed attack damage by the given number of die steps",
     required: ["steps"]
   },
+  [RULES.UNARMED_EXTRA_WEAPON_DICE]: {
+    params: {
+      value: "number"
+    },
+    description: "Actor adds extra weapon dice to unarmed or natural weapon damage",
+    required: ["value"]
+  },
+  [RULES.IGNORE_DAMAGE_REDUCTION_IF_OVERCOME]: {
+    params: null,
+    description: "Actor ignores target DR with unarmed or natural weapon damage when the damage exceeds the target DR value"
+  },
 
   // === SKILL PERMISSION (PARAM RULES) ===
   [RULES.TREAT_SKILL_AS_TRAINED]: {

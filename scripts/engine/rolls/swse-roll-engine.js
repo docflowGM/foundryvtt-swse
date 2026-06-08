@@ -82,6 +82,12 @@ function swseChatReactionGlyph(key = '') {
     forceReflection: '◆',
     force_reflection: '◆',
     evasion: '⟿',
+    unarmedParry: 'U',
+    unarmed_parry: 'U',
+    unarmedCounterstrike: 'U',
+    unarmed_counterstrike: 'U',
+    retaliationJab: 'R',
+    retaliation_jab: 'R',
     forcePoint: '✦',
     force_point: '✦',
     destinyPoint: '⬢',
@@ -121,6 +127,8 @@ function swseChatBuildReactionContext(actor, context = {}) {
         trigger: entry?.trigger ?? context.trigger ?? 'ON_ATTACK_DECLARED',
         available: entry?.available ?? entry?.allowed ?? entry?.isAvailable ?? true,
         sublabel: entry?.sublabel ?? entry?.subtitle ?? entry?.short ?? entry?.costLabel ?? '',
+        dc: entry?.dc ?? entry?.attackTotal ?? context.dc ?? '',
+        attackTotal: entry?.attackTotal ?? entry?.dc ?? context.dc ?? '',
         reason: entry?.reason ?? entry?.description ?? ''
       };
     }).filter(entry => entry.key),

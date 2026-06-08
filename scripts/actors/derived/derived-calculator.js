@@ -338,6 +338,7 @@ export class DerivedCalculator {
       const hasForceIntuition = this._hasTalentNamed(actor, 'Force Intuition');
       const hasForceDeception = this._hasTalentNamed(actor, 'Force Deception');
       const hasForceTreatment = this._hasTalentNamed(actor, 'Force Treatment');
+      const hasForcePersuasion = this._hasTalentNamed(actor, 'Force Persuasion');
 
       // Get occupation bonus from actor flags
       let occupationBonus = null;
@@ -427,7 +428,8 @@ export class DerivedCalculator {
           logicUpgradeSkillSwap ||
           (hasForceIntuition && skillKey === 'initiative') ||
           (hasForceDeception && skillKey === 'deception') ||
-          (hasForceTreatment && skillKey === 'treatInjury')
+          (hasForceTreatment && skillKey === 'treatInjury') ||
+          (hasForcePersuasion && skillKey === 'persuasion')
         ); // Standard mode: stored, feat-backed, or talent-backed training
         if (rankedMode) {
           const ranks = skill.ranks || 0;
@@ -437,7 +439,8 @@ export class DerivedCalculator {
             logicUpgradeSkillSwap ||
             (hasForceIntuition && skillKey === 'initiative') ||
             (hasForceDeception && skillKey === 'deception') ||
-            (hasForceTreatment && skillKey === 'treatInjury')
+            (hasForceTreatment && skillKey === 'treatInjury') ||
+            (hasForcePersuasion && skillKey === 'persuasion')
           ); // Derived trained status
         } else {
           // Standard mode: use traditional trained +5 bonus
@@ -591,6 +594,9 @@ export class DerivedCalculator {
       }
       if (hasForceTreatment) {
         applyUseTheForceSkillSubstitution('treatInjury', 'forceTreatmentSubstitution');
+      }
+      if (hasForcePersuasion) {
+        applyUseTheForceSkillSubstitution('persuasion', 'forcePersuasionSubstitution');
       }
 
       // Initiative is a skill in SWSE.  The early derived.initiative seed keeps

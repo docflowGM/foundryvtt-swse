@@ -1,0 +1,79 @@
+<section class="swse-entity-browser" aria-label="SWSE entity creator">
+  <header class="swse-entity-browser__header">
+    <div>
+      <div class="swse-entity-browser__eyebrow">SWSE · Entity Builder</div>
+      <h2>Create Entity</h2>
+      <p>{{modeLabel}}</p>
+    </div>
+    <div class="swse-entity-browser__meta">
+      <span>{{#if actorName}}Actor-owned{{else}}World item{{/if}}</span>
+      <span>Uses existing item schema</span>
+    </div>
+  </header>
+
+  <div class="swse-entity-browser__toolbar">
+    <label>
+      <span>Search entity types</span>
+      <input type="search" value="{{searchText}}" placeholder="weapon, shield, force, skill..." data-entity-browser-search />
+    </label>
+  </div>
+
+  <div class="swse-entity-browser__layout">
+    <aside class="swse-entity-browser__list" aria-label="Entity type picker">
+      <div class="swse-entity-browser__empty" data-entity-browser-dom-empty hidden>No entity types matched the current search.</div>
+      {{#if empty}}
+        <div class="swse-entity-browser__empty">No entity types matched the current search.</div>
+      {{else}}
+        {{#each groups}}
+          <section class="swse-entity-browser__group">
+            <h3>{{name}}</h3>
+            {{#each items}}
+              <button type="button" class="swse-entity-browser__type {{#if active}}active{{/if}} {{preview.kindClass}}" data-entity-browser-select="{{id}}">
+                <span class="swse-entity-browser__type-icon">{{icon}}</span>
+                <span>
+                  <strong>{{title}}</strong>
+                  <small>{{creates}}</small>
+                </span>
+              </button>
+            {{/each}}
+          </section>
+        {{/each}}
+      {{/if}}
+    </aside>
+
+    <main class="swse-entity-browser__preview {{selected.preview.kindClass}} {{selected.preview.accentClass}}" aria-label="Selected entity preview">
+      <div class="swse-entity-browser__preview-head">
+        <div class="swse-entity-browser__preview-icon">{{selected.icon}}</div>
+        <div>
+          <div class="swse-entity-browser__eyebrow">{{selected.group}}</div>
+          <h3>{{selected.title}}</h3>
+          <p>{{selected.summary}}</p>
+        </div>
+      </div>
+
+      <div class="swse-entity-browser__preview-body">
+        <div class="swse-entity-browser__preview-card">
+          <span class="swse-entity-browser__label">Creates</span>
+          <strong>{{selected.creates}}</strong>
+          <p>The new document opens immediately in the Entity Dialog shell using Create Draft mode.</p>
+        </div>
+        <div class="swse-entity-browser__preview-card">
+          <span class="swse-entity-browser__label">Connection rule</span>
+          <strong>Use the repo model</strong>
+          <p>This builder calls the existing safe item factory. It does not use the prototype's fake fields or create parallel item types.</p>
+        </div>
+        <div class="swse-entity-browser__preview-card">
+          <span class="swse-entity-browser__label">Search tags</span>
+          <div class="swse-entity-browser__chips">
+            {{#each selected.tags}}<span>{{this}}</span>{{/each}}
+          </div>
+        </div>
+      </div>
+
+      <footer class="swse-entity-browser__footer">
+        <button type="button" class="swse-btn swse-btn--ghost" data-entity-browser-close>Cancel</button>
+        <button type="button" class="swse-btn swse-btn--primary" data-entity-browser-create>Create {{selected.title}}</button>
+      </footer>
+    </main>
+  </div>
+</section>

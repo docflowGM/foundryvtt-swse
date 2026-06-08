@@ -178,9 +178,15 @@ export class CombatEngine {
     };
 
     /* APPLY COVER BONUS */
-    if (options.coverBonus !== undefined) {
+    const optionModifiers = CombatOptionResolver.collectAttackModifiers(attacker, weapon, options);
+    const suppressesCover = optionModifiers?.flags?.['suppresses.coverBonus'] === true
+      || optionModifiers?.flags?.['suppresses.cover'] === true;
+    if (options.coverBonus !== undefined && !suppressesCover) {
       context.modifiers.coverBonus = options.coverBonus;
       context.defenseValue += options.coverBonus;
+    } else if (options.coverBonus !== undefined && suppressesCover) {
+      context.modifiers.coverBonus = 0;
+      context.modifiers.suppressedCoverBonus = options.coverBonus;
     }
 
     /* PRE-HIT HOOK (Allow plugins to modify context) */

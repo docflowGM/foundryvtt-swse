@@ -1,0 +1,66 @@
+{{!--
+  SWSE Entity Dialog Shell
+
+  Production wrapper for item editing. This shell intentionally uses the
+  current item schema and SWSEItemSheet save pipeline; type-specific partials
+  decide presentation only.
+--}}
+
+<form class="{{cssClass}} sheet-item item-sheet-form swse-item-editor-form swse-entity-dialog {{entityDialog.accentClass}} {{entityDialog.kindClass}} {{entityDialog.bodyClass}} swse-entity-dialog--mode-{{entityDialog.mode}}" autocomplete="off" id="item-sheet-form" data-entity-kind="{{entityDialog.kind}}" data-item-type="{{item.type}}" data-entity-mode="{{entityDialog.mode}}" data-entity-dirty="{{entityDialog.isDirty}}">
+  <section class="swse-item-editor swse-entity-dialog__shell">
+
+    <div class="swse-entity-dialog__masthead" aria-label="Entity dialog header">
+      <div class="swse-entity-dialog__title-wrap">
+        <div class="swse-entity-dialog__eyebrow">SWSE · Entity Editor</div>
+        <div class="swse-entity-dialog__title">{{entityDialog.icon}} {{entityDialog.title}}</div>
+        <div class="swse-entity-dialog__subtitle">
+          <span>{{entityDialog.noun}}</span>
+          {{#if entityDialog.subtitle}}<span class="swse-entity-dialog__sep">·</span><span>{{entityDialog.subtitle}}</span>{{/if}}
+        </div>
+      </div>
+      <div class="swse-entity-dialog__status" aria-label="Dialog status">
+        {{entityDialog.modeStatus}}<br>
+        <span>{{entityDialog.modeLabel}}{{#if entityDialog.isDirty}} · Unsaved{{/if}}</span>
+        <div class="swse-entity-dialog__window-controls" aria-label="Window size controls">
+          <button type="button" class="entity-dialog-window-control" data-entity-window-mode="compact" title="Compact window">Compact</button>
+          <button type="button" class="entity-dialog-window-control" data-entity-window-mode="normal" title="Normal window">Normal</button>
+          <button type="button" class="entity-dialog-window-control" data-entity-window-mode="expanded" title="Expanded window">Expand</button>
+        </div>
+      </div>
+    </div>
+
+    {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/header.hbs}}
+    {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/tabs.hbs}}
+
+    <section class="item-editor__body swse-entity-dialog__body" data-entity-preserve-scroll="body">
+      <div class="tab {{#if (eq activeTab 'data')}}active{{/if}}" data-tab="data">
+        {{#if entityDialog.isWeapon}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-weapon.hbs}}
+        {{else if entityDialog.isShield}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-shield.hbs}}
+        {{else if entityDialog.isArmor}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-armor.hbs}}
+        {{else if entityDialog.isItem}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-item.hbs}}
+        {{else if entityDialog.isFeat}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-feat.hbs}}
+        {{else if entityDialog.isTalent}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-talent.hbs}}
+        {{else if entityDialog.isForcePower}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-force-power.hbs}}
+        {{else if entityDialog.isCustomSkill}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-custom-skill.hbs}}
+        {{else}}
+          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-unsupported.hbs}}
+        {{/if}}
+
+        {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/validation-panel.hbs}}
+      </div>
+
+      {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/description.hbs}}
+      {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/effects.hbs}}
+    </section>
+
+    {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/footer.hbs}}
+  </section>
+</form>

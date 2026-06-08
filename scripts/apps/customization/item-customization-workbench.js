@@ -20,6 +20,7 @@ import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/en
 import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
 import { TechSpecialistModificationService } from "/systems/foundryvtt-swse/scripts/engine/customization/tech-specialist-modification-service.js";
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
+import { isEnergyShieldItem as isCanonicalEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 const APP_ID = 'swse-item-customization-workbench';
 const CATEGORY_ORDER = [
@@ -139,18 +140,7 @@ function compactWorkbenchToken(value) {
 }
 
 function isEnergyShieldItem(item) {
-  if (!item || item.type !== 'armor') return false;
-  const system = getWorkbenchItemSystem(item);
-  const tokens = [
-    item.name,
-    system?.armorType,
-    system?.subtype,
-    system?.category,
-    system?.equipmentType,
-    system?.family,
-    system?.traits?.join?.(' ')
-  ].filter(Boolean).join(' ');
-  return /energy[_\s-]*shield|shield/i.test(tokens) && (system?.shieldRating !== undefined || /energy[_\s-]*shield/i.test(tokens));
+  return isCanonicalEnergyShieldItem(item);
 }
 
 const ENERGY_SHIELD_RULES = [
@@ -164,26 +154,25 @@ const ENERGY_SHIELD_RULES = [
 
 function getEnergyShieldRules(item) {
   const system = getWorkbenchItemSystem(item);
-  const sr = Number(system?.shieldRating ?? system?.sr ?? system?.currentSR ?? String(item?.name || '').match(/SR\s*(\d+)/i)?.[1] ?? 0) || 0;
+  const armor = resolveArmorData(item);
+  const sr = Number(armor.shieldRating || String(item?.name || '').match(/SR\s*(\d+)/i)?.[1] || 0) || 0;
   const table = ENERGY_SHIELD_RULES.find(row => row.sr === sr) || null;
-  const armorType = String(system?.armorProficiencyRequired || table?.proficiency || system?.armorType || 'Light').toLowerCase();
+  const armorType = String(armor.proficiencyRequired || table?.proficiency || 'Light').toLowerCase();
   const typeLabel = table?.type || (armorType.includes('heavy') ? 'Heavy Armor' : armorType.includes('medium') ? 'Medium Armor' : 'Light Armor');
   const proficiency = table?.proficiency || (typeLabel.split(' ')[0] || 'Light');
-  const maxDex = Number(system?.maxDexBonus ?? system?.maxDex ?? system?.limits?.maxDex ?? table?.maxDex);
-  const armorCheckPenalty = Number(system?.armorCheckPenalty ?? system?.limits?.checkPenalty ?? table?.armorCheckPenalty ?? 0) || 0;
-  const chargesMax = Number(system?.charges?.max ?? system?.maxCharges ?? 5) || 5;
-  const chargesCurrent = Number(system?.charges?.current ?? system?.charges?.value ?? chargesMax) || chargesMax;
+  const chargesMax = Number(armor.chargesMax || system?.maxCharges || 5) || 5;
+  const chargesCurrent = Number(armor.chargesCurrent || chargesMax) || chargesMax;
   return {
     sr,
     typeLabel,
     proficiency,
-    maxDex: Number.isFinite(maxDex) ? maxDex : null,
-    armorCheckPenalty,
-    cost: Number(system?.cost ?? system?.costNumeric ?? system?.economics?.cost ?? table?.cost ?? 0) || 0,
+    maxDex: armor.maxDexBonus,
+    armorCheckPenalty: armor.armorCheckPenalty,
+    cost: Number(armor.cost ?? table?.cost ?? 0) || 0,
     chargesCurrent,
     chargesMax,
-    activated: !!(system?.activated || system?.active || system?.currentSR > 0),
-    currentSR: Number(system?.currentSR ?? 0) || 0
+    activated: armor.activated,
+    currentSR: armor.currentSR
   };
 }
 

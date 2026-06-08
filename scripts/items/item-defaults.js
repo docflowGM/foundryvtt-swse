@@ -6,6 +6,9 @@
  * real stats. They should not perform rules math.
  */
 
+import { normalizeArmorSystemAliases } from './armor-data-resolver.js';
+import { normalizePrereqClauses } from '../dialogs/entity-dialog/prereq-engine.js';
+
 const SYSTEM_ID = 'foundryvtt-swse';
 
 function clone(value) {
@@ -70,6 +73,61 @@ function setNumberAtPath(object, path, fallback = 0, options = {}) {
   }
   const key = parts.at(-1);
   target[key] = toNumber(target[key], fallback, options);
+}
+
+function getAtPath(object, path) {
+  return String(path || '').split('.').reduce((target, part) => target?.[part], object);
+}
+
+function hasAtPath(object, path) {
+  const parts = String(path || '').split('.');
+  let target = object;
+  for (const part of parts) {
+    if (!target || typeof target !== 'object' || !(part in target)) return false;
+    target = target[part];
+  }
+  return true;
+}
+
+function setAtPath(object, path, value) {
+  const parts = String(path || '').split('.');
+  let target = object;
+  for (let i = 0; i < parts.length - 1; i += 1) {
+    const part = parts[i];
+    target[part] ??= {};
+    target = target[part];
+  }
+  target[parts.at(-1)] = value;
+}
+
+function objectToOrderedArray(value) {
+  if (Array.isArray(value)) return value;
+  if (!value || typeof value !== 'object') return [];
+  return Object.entries(value)
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([, entry]) => entry)
+    .filter((entry) => entry && typeof entry === 'object');
+}
+
+function normalizeTextList(value) {
+  if (Array.isArray(value)) return value.map((entry) => String(entry).trim()).filter(Boolean);
+  if (typeof value === 'string') return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+  return [];
+}
+
+function normalizeDcTable(value, { withDescription = false } = {}) {
+  return objectToOrderedArray(value).map((entry) => ({
+    dc: toNumber(entry?.dc, 0),
+    effect: String(entry?.effect ?? '').trim(),
+    ...(withDescription ? { description: String(entry?.description ?? '').trim() } : {})
+  })).filter((entry) => entry.dc > 0 || entry.effect || entry.description);
+}
+
+function normalizeSynergies(value) {
+  return objectToOrderedArray(value).map((entry) => ({
+    name: String(entry?.name ?? '').trim(),
+    bonus: String(entry?.bonus ?? '+2').trim() || '+2'
+  })).filter((entry) => entry.name || entry.bonus);
 }
 
 export const BLANK_ITEM_DEFAULTS = Object.freeze({
@@ -167,6 +225,7 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
 
   equipment: {
     category: 'gear',
+    quantity: 1,
     weight: 1,
     cost: 0,
     value: 0,
@@ -192,6 +251,12 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     special: '',
     normalText: '',
     bonusFeatFor: [],
+    choiceMeta: { required: false, repeatable: false, choiceKind: '', label: 'Choice', storagePath: '' },
+    prereqClauses: [],
+    selectedChoice: '',
+    executionModel: 'PASSIVE',
+    subType: 'STATE',
+    abilityMeta: { mechanicsMode: '', applicationScope: '' },
     uses: { current: 0, max: 0, perDay: false }
   },
 
@@ -203,6 +268,12 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     prerequisites: '',
     benefit: '',
     special: '',
+    choiceMeta: { required: false, choiceKind: '', label: 'Choice', storagePath: '' },
+    prereqClauses: [],
+    selectedChoice: '',
+    executionModel: 'PASSIVE',
+    subType: 'STATE',
+    abilityMeta: { mechanicsMode: '', applicationScope: '', staticSheetPolicy: '', implementedBy: '' },
     uses: { current: 0, max: 0, perEncounter: false, perDay: false },
     isCustom: true
   },
@@ -210,9 +281,12 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
   'force-power': {
     description: '',
     source: 'Manual',
+    sourcebook: 'Manual',
+    page: 0,
     level: 1,
     powerLevel: 1,
     discipline: 'general',
+    descriptor: [],
     useTheForce: 15,
     time: 'Standard Action',
     range: '6 squares',
@@ -221,11 +295,37 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     effect: '',
     special: '',
     tags: [],
+    dcChart: [],
+    maintainable: false,
     uses: { current: 1, max: 1 },
     inSuite: false,
     spent: false,
     discarded: false,
+    executionModel: 'FORCE_POWER',
     isCustom: true
+  },
+
+  skill: {
+    ability: 'cha',
+    classes: { Jedi: false, Noble: false, Scoundrel: false, Scout: false, Soldier: false },
+    type: 'skill',
+    category: 'skill',
+    description: '',
+    benefit: '',
+    special: '',
+    usageNotes: '',
+    source: 'Manual',
+    sourcebook: 'Manual',
+    page: 0,
+    tags: [],
+    trainedOnly: false,
+    armorCheckPenalty: false,
+    retry: true,
+    takeTen: true,
+    takeTwenty: false,
+    actionType: 'standard',
+    dcTable: [],
+    synergies: []
   },
 
   maneuver: {
@@ -249,6 +349,18 @@ const NUMERIC_PATHS = {
     ['value', 0],
     ['ammunition.current', 0],
     ['ammunition.max', 0],
+    ['ranges.pb.min', 0],
+    ['ranges.pb.max', 0],
+    ['ranges.pb.attackMod', 0],
+    ['ranges.short.min', 0],
+    ['ranges.short.max', 0],
+    ['ranges.short.attackMod', 0],
+    ['ranges.medium.min', 0],
+    ['ranges.medium.max', 0],
+    ['ranges.medium.attackMod', 0],
+    ['ranges.long.min', 0],
+    ['ranges.long.max', 0],
+    ['ranges.long.attackMod', 0],
     ['upgradeSlots', 1],
     ['templateCost', 0]
   ],
@@ -277,6 +389,7 @@ const NUMERIC_PATHS = {
     ['templateCost', 0]
   ],
   equipment: [
+    ['quantity', 1],
     ['weight', 1],
     ['cost', 0],
     ['value', 0],
@@ -295,8 +408,12 @@ const NUMERIC_PATHS = {
     ['level', 1],
     ['powerLevel', 1],
     ['useTheForce', 15],
+    ['page', 0],
     ['uses.current', 1],
     ['uses.max', 1]
+  ],
+  skill: [
+    ['page', 0]
   ],
   maneuver: [
     ['uses.current', 1],
@@ -330,6 +447,8 @@ export function createBlankItemData(type, overrides = {}) {
   if (safeType === 'armor') data.img = overrides.img || 'icons/svg/shield.svg';
   if (safeType === 'feat') data.img = overrides.img || 'icons/svg/book.svg';
   if (safeType === 'talent') data.img = overrides.img || 'icons/svg/aura.svg';
+  if (safeType === 'force-power') data.img = overrides.img || 'icons/svg/ray.svg';
+  if (safeType === 'skill') data.img = overrides.img || 'icons/svg/dice-target.svg';
 
   return data;
 }
@@ -353,8 +472,14 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
     merged.properties = merged.properties.split(',').map(part => part.trim()).filter(Boolean);
   }
 
-  if (typeof merged.tags === 'string') {
-    merged.tags = merged.tags.split(',').map(part => part.trim()).filter(Boolean);
+  merged.tags = normalizeTextList(merged.tags);
+
+  if (typeof merged.descriptor === 'string') {
+    merged.descriptor = normalizeTextList(merged.descriptor);
+  }
+
+  if (typeof merged.bonusFeatFor === 'string') {
+    merged.bonusFeatFor = normalizeTextList(merged.bonusFeatFor);
   }
 
   if (safeType === 'weapon') {
@@ -365,8 +490,36 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
   }
 
   if (safeType === 'armor') {
+    const normalizedArmor = normalizeArmorSystemAliases(merged);
+    Object.assign(merged, normalizedArmor);
     if (!['light', 'medium', 'heavy', 'shield'].includes(merged.armorType)) merged.armorType = 'light';
     if (!['', 'light', 'medium', 'heavy'].includes(merged.armorProficiencyRequired)) merged.armorProficiencyRequired = '';
+  }
+
+  if (safeType === 'feat' || safeType === 'talent') {
+    merged.prereqClauses = normalizePrereqClauses(merged.prereqClauses ?? merged.prerequisitesStructured?.conditions ?? merged.structuredPrerequisites?.conditions ?? []);
+  }
+
+  if (safeType === 'force-power') {
+    merged.dcChart = normalizeDcTable(merged.dcChart, { withDescription: true });
+    if (!merged.discipline) merged.discipline = normalizeTextList(merged.descriptor)[0] || 'general';
+  }
+
+  if (safeType === 'skill') {
+    const ability = String(merged.ability || 'cha').trim().toLowerCase().slice(0, 3);
+    merged.ability = ['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(ability) ? ability : 'cha';
+    merged.dcTable = normalizeDcTable(merged.dcTable);
+    merged.synergies = normalizeSynergies(merged.synergies);
+    merged.type = merged.type || 'skill';
+    merged.category = merged.category || 'skill';
+    merged.classes ??= {};
+    for (const className of ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier']) {
+      const value = merged.classes[className];
+      const text = String(value ?? '').trim().toLowerCase();
+      if (['true', 'yes', 'class', 'class skill'].includes(text)) merged.classes[className] = true;
+      else if (['false', 'no', 'none', ''].includes(text)) merged.classes[className] = false;
+      else merged.classes[className] = String(value);
+    }
   }
 
   if (['weapon', 'armor', 'equipment'].includes(safeType)) {
@@ -393,23 +546,34 @@ export function sanitizeItemSheetUpdate(item, submittedData = {}, form = null) {
   // the current item value above.
   for (const path of [
     'system.equipped',
+    'system.integrated',
     'system.autofire',
     'system.dualWielded',
     'system.wieldedTwoHanded',
     'system.armorProficiency',
-    'system.activated'
+    'system.activated',
+    'system.sizeIncreaseApplied',
+    'system.isPoweredArmor',
+    'system.container',
+    'system.choiceMeta.required',
+    'system.choiceMeta.repeatable',
+    'system.uses.perDay',
+    'system.uses.perEncounter',
+    'system.maintainable',
+    'system.inSuite',
+    'system.spent',
+    'system.discarded',
+    'system.trainedOnly',
+    'system.armorCheckPenalty',
+    'system.retry',
+    'system.takeTen',
+    'system.takeTwenty'
   ]) {
     if (!hasField(path)) continue;
     const systemPath = path.replace(/^system\./, '');
-    const parts = systemPath.split('.');
-    let target = system;
-    for (let i = 0; i < parts.length - 1; i += 1) {
-      target[parts[i]] ??= {};
-      target = target[parts[i]];
-    }
-    const key = parts.at(-1);
-    target[key] = normalizeBoolean(submittedSystem?.[key] ?? submittedSystem?.[systemPath] ?? target[key]);
-    if (!(systemPath in submittedSystem)) target[key] = false;
+    const submittedHasValue = hasAtPath(submittedSystem, systemPath);
+    const submittedValue = getAtPath(submittedSystem, systemPath);
+    setAtPath(system, systemPath, submittedHasValue ? normalizeBoolean(submittedValue) : false);
   }
 
   // If the user changes the type selector on an existing embedded item, do not

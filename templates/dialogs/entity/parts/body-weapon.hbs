@@ -1,0 +1,308 @@
+<section class="swse-entity-dialog__hero swse-entity-dialog__hero--weapon">
+  <div>
+    <div class="swse-entity-dialog__hero-kicker">Combat Profile</div>
+    <h3>{{item.name}}</h3>
+    <p>Weapon records use the existing weapon fields consumed by attack hydration, range profiles, customization, store, and combat cards. The dialog reads them through the weapon resolver so the body does not guess raw schema paths.</p>
+  </div>
+  <div class="swse-entity-dialog__stat-strip">
+    <div class="swse-entity-dialog__stat"><span>Branch</span><strong>{{entityDialog.weapon.branchLabel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Group</span><strong>{{entityDialog.weapon.categoryLabel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Damage</span><strong>{{entityDialog.weapon.damage}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Crit</span><strong>{{entityDialog.weapon.critText}}</strong></div>
+  </div>
+</section>
+
+<section class="item-editor__section swse-entity-dialog__callout swse-entity-dialog__callout--resolver">
+  <h3 class="item-editor__section-title">Weapon Data Source</h3>
+  <p class="swse-entity-dialog__hint">This editor uses the repo's existing weapon range resolver and current <code>system.*</code> fields. Changing Branch or Group re-renders the category list and hydrates range bands without creating a second weapon model.</p>
+</section>
+
+<div class="item-editor__grid item-editor__grid--two-col swse-entity-dialog__weapon-grid">
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Type & Profile</h3>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Branch</label>
+        <select name="system.meleeOrRanged" class="melee-or-ranged-select">
+          {{#each entityDialog.weapon.branchOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.branch this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+        <p class="swse-entity-dialog__field-note">Controls melee/ranged body sections and category filtering.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Weapon Group</label>
+        <select name="system.weaponCategory" class="weapon-category-select">
+          {{#each entityDialog.weapon.categoryOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.category this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+        <p class="swse-entity-dialog__field-note">Existing attack, feat, and range systems read this group.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Attack Attribute</label>
+        <select name="system.attackAttribute">
+          <option value="str" {{#if (eq entityDialog.weapon.attackAttribute "str")}}selected{{/if}}>Strength</option>
+          <option value="dex" {{#if (eq entityDialog.weapon.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
+          <option value="con" {{#if (eq entityDialog.weapon.attackAttribute "con")}}selected{{/if}}>Constitution</option>
+          <option value="int" {{#if (eq entityDialog.weapon.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
+          <option value="wis" {{#if (eq entityDialog.weapon.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
+          <option value="cha" {{#if (eq entityDialog.weapon.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Attack Bonus</label>
+        <input type="number" name="system.attackBonus" value="{{entityDialog.weapon.attackBonus}}" data-dtype="Number" />
+      </div>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Inventory & Workbench</h3>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Size</label>
+        <select name="system.size">
+          {{#each entityDialog.weapon.sizeOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.size this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Availability</label>
+        <select name="system.restriction">
+          {{#each entityDialog.weapon.availabilityOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.restriction this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Weight</label>
+        <input type="number" name="system.weight" value="{{entityDialog.weapon.weight}}" step="0.1" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Cost</label>
+        <input type="number" name="system.cost" value="{{entityDialog.weapon.cost}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Value</label>
+        <input type="number" name="system.value" value="{{entityDialog.weapon.value}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Upgrade Slots</label>
+        <input type="number" name="system.upgradeSlots" value="{{entityDialog.weapon.upgradeSlots}}" data-dtype="Number" />
+      </div>
+
+      <div class="form-field">
+        <label>Primary Template</label>
+        <input type="text" name="system.gearTemplate" value="{{entityDialog.weapon.gearTemplate}}" />
+      </div>
+
+      <div class="form-field">
+        <label>Secondary Template</label>
+        <input type="text" name="system.gearTemplateSecondary" value="{{entityDialog.weapon.gearTemplateSecondary}}" />
+      </div>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.equipped" {{#if entityDialog.weapon.equipped}}checked{{/if}} /> Equipped</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.integrated" {{#if entityDialog.weapon.integrated}}checked{{/if}} /> Integrated</label>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.dualWielded" {{#if entityDialog.weapon.dualWielded}}checked{{/if}} /> Dual Wielded</label>
+      {{#if entityDialog.weapon.isMelee}}
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.wieldedTwoHanded" {{#if entityDialog.weapon.wieldedTwoHanded}}checked{{/if}} /> Wielded Two-Handed</label>
+      {{/if}}
+    </div>
+  </section>
+</div>
+
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Attack & Damage</h3>
+
+  <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="form-field">
+      <label>Damage</label>
+      <input type="text" name="system.damage" value="{{entityDialog.weapon.damage}}" placeholder="e.g., 3d8" />
+    </div>
+
+    <div class="form-field">
+      <label>Damage Type</label>
+      <select name="system.damageType">
+        {{#each entityDialog.weapon.damageTypeOptions}}
+        <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.damageType this.value)}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label>Damage Bonus</label>
+      <select name="system.damageBonus">
+        {{#each entityDialog.weapon.damageBonusOptions}}
+        <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.damageBonus this.value)}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label>Critical Range</label>
+      <input type="text" name="system.criticalRange" value="{{entityDialog.weapon.criticalRange}}" placeholder="20 or 19-20" />
+    </div>
+
+    <div class="form-field">
+      <label>Critical Multiplier</label>
+      <input type="text" name="system.criticalMultiplier" value="{{entityDialog.weapon.criticalMultiplier}}" placeholder="x2" />
+    </div>
+
+    <div class="form-field">
+      <label>Range Text</label>
+      <input type="text" name="system.range" value="{{entityDialog.weapon.range}}" placeholder="Auto from range profile or manual override" />
+    </div>
+  </div>
+</section>
+
+{{#if entityDialog.weapon.isRanged}}
+<section class="item-editor__section item-editor__section--range-bands">
+  <h3 class="item-editor__section-title">Range Profile</h3>
+  <p class="item-editor__hint">Range profile data is hydrated from the existing weapon range resolver when Branch/Category changes. Manual band edits are still saved to the current <code>system.ranges</code> paths.</p>
+
+  <div class="item-editor__grid item-editor__grid--two-col swse-entity-dialog__range-profile-head">
+    <div class="form-field">
+      <label>Profile Slug</label>
+      <input type="text" name="system.rangeProfile" value="{{entityDialog.weapon.rangeProfile}}" placeholder="Auto" />
+    </div>
+    <div class="form-field">
+      <label>Profile Name</label>
+      <input type="text" name="system.rangeProfileName" value="{{entityDialog.weapon.rangeProfileName}}" placeholder="Auto" />
+    </div>
+  </div>
+
+  <div class="swse-range-band-grid swse-entity-dialog__range-bands">
+    <div class="swse-entity-dialog__range-band-head">Band</div>
+    <div class="swse-entity-dialog__range-band-head">Min</div>
+    <div class="swse-entity-dialog__range-band-head">Max</div>
+    <div class="swse-entity-dialog__range-band-head">Attack Mod</div>
+
+    <div class="swse-entity-dialog__range-band-name">Point Blank</div>
+    <input type="number" name="system.ranges.pb.min" value="{{entityDialog.weapon.ranges.pb.min}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.pb.max" value="{{entityDialog.weapon.ranges.pb.max}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.pb.attackMod" value="{{entityDialog.weapon.ranges.pb.attackMod}}" data-dtype="Number" />
+
+    <div class="swse-entity-dialog__range-band-name">Short</div>
+    <input type="number" name="system.ranges.short.min" value="{{entityDialog.weapon.ranges.short.min}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.short.max" value="{{entityDialog.weapon.ranges.short.max}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.short.attackMod" value="{{entityDialog.weapon.ranges.short.attackMod}}" data-dtype="Number" />
+
+    <div class="swse-entity-dialog__range-band-name">Medium</div>
+    <input type="number" name="system.ranges.medium.min" value="{{entityDialog.weapon.ranges.medium.min}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.medium.max" value="{{entityDialog.weapon.ranges.medium.max}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.medium.attackMod" value="{{entityDialog.weapon.ranges.medium.attackMod}}" data-dtype="Number" />
+
+    <div class="swse-entity-dialog__range-band-name">Long</div>
+    <input type="number" name="system.ranges.long.min" value="{{entityDialog.weapon.ranges.long.min}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.long.max" value="{{entityDialog.weapon.ranges.long.max}}" data-dtype="Number" />
+    <input type="number" name="system.ranges.long.attackMod" value="{{entityDialog.weapon.ranges.long.attackMod}}" data-dtype="Number" />
+  </div>
+</section>
+
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Ammunition & Ranged Visuals</h3>
+  <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="item-editor__col">
+      <div class="form-field">
+        <label>Ammunition Type</label>
+        <input type="text" name="system.ammunition.type" value="{{entityDialog.weapon.ammunition.type}}" placeholder="Power Pack, Slugs, Missile" />
+      </div>
+      <div class="item-editor__grid item-editor__grid--two-col">
+        <div class="form-field">
+          <label>Current</label>
+          <input type="number" name="system.ammunition.current" value="{{entityDialog.weapon.ammunition.current}}" data-dtype="Number" />
+        </div>
+        <div class="form-field">
+          <label>Max</label>
+          <input type="number" name="system.ammunition.max" value="{{entityDialog.weapon.ammunition.max}}" data-dtype="Number" />
+        </div>
+      </div>
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.autofire" {{#if entityDialog.weapon.autofire}}checked{{/if}} /> Autofire Capable</label>
+    </div>
+
+    <div class="item-editor__col">
+      <div class="form-field">
+        <label>Beam Style</label>
+        <select name="flags.swse.beamStyle">
+          <option value="laser" {{#if (eq item.flags.swse.beamStyle "laser")}}selected{{/if}}>Laser Line</option>
+          <option value="bolt" {{#if (eq item.flags.swse.beamStyle "bolt")}}selected{{/if}}>Energy Bolt</option>
+          <option value="heavy" {{#if (eq item.flags.swse.beamStyle "heavy")}}selected{{/if}}>Heavy Bolt</option>
+          <option value="pulse" {{#if (eq item.flags.swse.beamStyle "pulse")}}selected{{/if}}>Rapid Pulse</option>
+          <option value="ion" {{#if (eq item.flags.swse.beamStyle "ion")}}selected{{/if}}>Ion Stream</option>
+          <option value="plasma" {{#if (eq item.flags.swse.beamStyle "plasma")}}selected{{/if}}>Plasma Shot</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Bolt Color</label>
+        <select name="flags.swse.boltColor">
+          <option value="red" {{#if (eq item.flags.swse.boltColor "red")}}selected{{/if}}>Red</option>
+          <option value="green" {{#if (eq item.flags.swse.boltColor "green")}}selected{{/if}}>Green</option>
+          <option value="blue" {{#if (eq item.flags.swse.boltColor "blue")}}selected{{/if}}>Blue</option>
+          <option value="cyan" {{#if (eq item.flags.swse.boltColor "cyan")}}selected{{/if}}>Cyan</option>
+          <option value="orange" {{#if (eq item.flags.swse.boltColor "orange")}}selected{{/if}}>Orange</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Special Rules</h3>
+  <div class="form-field form-field--full">
+    <label>Special Effects</label>
+    <textarea name="system.specialEffects" rows="3">{{system.specialEffects}}</textarea>
+  </div>
+
+  <div class="form-field form-field--full">
+    <label>Properties (comma-separated)</label>
+    <input type="text" name="system.properties" value="{{entityDialog.weapon.propertiesText}}" placeholder="Stun, Accurate, Autofire" />
+  </div>
+</section>
+
+{{#if entityDialog.weapon.isLightsaber}}
+<section class="item-editor__section">
+  <h3 class="item-editor__section-title">Lightsaber Runtime</h3>
+
+  <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="form-field">
+      <label>Blade Color</label>
+      <select name="flags.swse.bladeColor">
+        {{#each bladeColorOptions}}
+        <option value="{{this.name}}" {{#if (eq ../item.flags.swse.bladeColor this.name)}}selected{{/if}}>{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-field form-field--checkbox">
+      <label>
+        <input type="checkbox" class="emit-light-toggle" {{#if item.flags.swse.emitLight}}checked{{/if}} />
+        Emit Blade Light
+      </label>
+    </div>
+  </div>
+
+  <div class="item-editor__button-row">
+    {{#if system.activated}}
+    <button type="button" class="swse-btn swse-btn--warn deactivate-lightsaber">Deactivate Lightsaber</button>
+    {{else}}
+    <button type="button" class="swse-btn swse-btn--action activate-lightsaber">Activate Lightsaber</button>
+    {{/if}}
+  </div>
+</section>
+{{/if}}

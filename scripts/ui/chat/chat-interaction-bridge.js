@@ -173,6 +173,8 @@ async function handleReactionButton(event, button, message) {
       messageId: button.dataset.swseMessageId || message?.id || null,
       eventId: button.dataset.swseEventId || button.closest('[data-swse-event-id]')?.dataset?.swseEventId || null,
       attackEventId: button.dataset.swseAttackEventId || null,
+      dc: Number(button.dataset.swseDc || button.dataset.dc || button.dataset.swseAttackTotal || 0) || null,
+      attackTotal: Number(button.dataset.swseAttackTotal || button.dataset.swseDc || 0) || null,
       reactionKey,
       attackerId: (attacker?.id ?? attackerId) || null,
       defenderId: (defender?.id ?? defenderId) || null,

@@ -1,0 +1,14 @@
+{{#if entityDialog.validation.hasIssues}}
+<section class="item-editor__section swse-entity-dialog__validation-panel" data-validation-count="{{entityDialog.validation.count}}">
+  <h3 class="item-editor__section-title">Validation Warnings</h3>
+  <div class="swse-entity-dialog__validation-list">
+    {{#each entityDialog.validation.issues}}
+    <div class="swse-entity-dialog__validation-issue" data-severity="{{this.severity}}">
+      <strong>{{this.path}}</strong>
+      <span>{{this.message}}</span>
+    </div>
+    {{/each}}
+  </div>
+  <p class="swse-entity-dialog__field-note">Warnings are advisory for homebrew/GM-authored entities. Save still uses the normal item sheet pipeline.</p>
+</section>
+{{/if}}

@@ -6,6 +6,7 @@
 import { SWSE } from "./scripts/core/config.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
+import { EntityCreateBrowser, openEntityCreateBrowser } from "./scripts/dialogs/entity-dialog/entity-create-browser.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
 import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
@@ -58,11 +59,15 @@ Hooks.once("init", async () => {
   game.swse = {
     data: SWSEData,
     SWSE: SWSE,
-    ActorEngine
+    ActorEngine,
+    EntityCreateBrowser,
+    openEntityCreateBrowser
   };
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.ActorEngine = ActorEngine;
+  globalThis.SWSE.EntityCreateBrowser = EntityCreateBrowser;
+  globalThis.SWSE.openEntityCreateBrowser = openEntityCreateBrowser;
 
   // -------------------------------
   // Document Classes

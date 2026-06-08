@@ -1888,3 +1888,64 @@
   font-family: var(--swse-chat-v2-mono);
   font-size: 11px;
 }
+
+/* Combat status / tactical declaration chat cards */
+.chat-message .swse-roll-card--combat-status[data-swse-chat-card-v2="true"] {
+  --rail: var(--swse-chat-v2-warning, #ffcf66);
+}
+
+.chat-message .swse-roll-card--safe-zone[data-swse-chat-card-v2="true"] {
+  --rail: var(--swse-chat-v2-success, #70f0a8);
+}
+
+.chat-message .swse-combat-status-chat-body {
+  display: grid;
+  gap: 8px;
+}
+
+.chat-message .swse-combat-status-chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chat-message .swse-combat-status-chat-chip {
+  border: 1px solid color-mix(in oklch, var(--rail) 55%, transparent);
+  background: color-mix(in oklch, var(--rail) 11%, transparent);
+  color: var(--swse-chat-v2-text, #eafcff);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 4px 7px;
+  text-transform: uppercase;
+}
+
+.chat-message .swse-combat-status-chat-chip.is-danger {
+  border-color: color-mix(in oklch, var(--swse-chat-v2-danger, #ff6565) 70%, transparent);
+  background: color-mix(in oklch, var(--swse-chat-v2-danger, #ff6565) 14%, transparent);
+}
+
+.chat-message .swse-combat-status-chat-chip.is-warning {
+  border-color: color-mix(in oklch, var(--swse-chat-v2-warning, #ffcf66) 70%, transparent);
+  background: color-mix(in oklch, var(--swse-chat-v2-warning, #ffcf66) 14%, transparent);
+}
+
+.chat-message .swse-combat-status-chat-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 10px;
+}
+
+.chat-message .swse-combat-status-chat-rules {
+  border-left: 2px solid color-mix(in oklch, var(--rail) 65%, transparent);
+  background: color-mix(in oklch, var(--rail) 7%, transparent);
+  padding: 7px 9px;
+}
+
+.chat-message .swse-combat-status-chat-rules p {
+  margin: 0 0 4px;
+}
+
+.chat-message .swse-combat-status-chat-rules p:last-child {
+  margin-bottom: 0;
+}
