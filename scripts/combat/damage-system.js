@@ -2,7 +2,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { buildDamageApplyOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
+import { buildDamageApplyOptions, finalizeDamagePacketForTarget } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 
 /**
  * SWSE Damage System (v13+)
@@ -56,17 +56,20 @@ export class DamageSystem {
       return null;
     }
 
-    const amount = Math.max(0, Number(packet.amount ?? 0));
-    if (!Number.isFinite(amount) || amount <= 0) {
-      ui.notifications.info(packet.disposition?.reason || 'No damage to apply.');
+    const targetPacket = finalizeDamagePacketForTarget(packet, actor);
+    const amount = Math.max(0, Number(targetPacket.amount ?? 0));
+    if (!Number.isFinite(amount) || amount <= 0 || targetPacket.disposition?.damageAllowed === false) {
+      ui.notifications.info(targetPacket.disposition?.reason || 'No damage to apply.');
       return null;
     }
 
-    const options = buildDamageApplyOptions(packet);
+    const options = buildDamageApplyOptions(targetPacket);
     try {
       const result = await actor.applyDamage(amount, options);
-      const typeLabel = packet.type && packet.type !== 'normal' ? ` ${packet.type}` : '';
-      ui.notifications.info(`${actor.name} takes ${amount}${typeLabel} damage.`);
+      const applied = Math.max(0, Number(result?.applied ?? amount) || 0);
+      const typeLabel = targetPacket.type && targetPacket.type !== 'normal' ? ` ${targetPacket.type}` : '';
+      const specialLabel = targetPacket.flags?.ionHpHalved ? ' (ion HP halved)' : '';
+      ui.notifications.info(`${actor.name} takes ${applied}${typeLabel} damage${specialLabel}.`);
       return result;
     } catch (err) {
       swseLogger.error(err);

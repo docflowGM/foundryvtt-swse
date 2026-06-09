@@ -1,4 +1,9 @@
 import { summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import {
+  applyTargetDamagePacketRules,
+  getDamageTargetCategory,
+  isIonEligibleDamageTarget
+} from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-rules.js";
 
 function idOf(doc) {
   return doc?.id ?? doc?._id ?? null;
@@ -46,21 +51,6 @@ function weaponDamageType(weapon = null) {
     ?? '';
   if (Array.isArray(value)) return value.find(Boolean) ?? '';
   return String(value ?? '').trim();
-}
-
-function targetCategory(target = null) {
-  const type = normalizeKey(target?.type ?? '');
-  const systemType = normalizeKey(target?.system?.type ?? target?.system?.vehicleType ?? target?.system?.creatureType ?? '');
-  const droidState = target?.system?.droidState;
-  if (type === 'droid' || droidState || target?.system?.isDroid === true) return 'droid';
-  if (type === 'vehicle' || ['vehicle', 'starship', 'speeder', 'walker'].includes(systemType)) return 'vehicle';
-  if (type === 'npc' || type === 'character') return 'organic';
-  return type || systemType || 'unknown';
-}
-
-function isIonEligibleTarget(target = null) {
-  const category = targetCategory(target);
-  return category === 'droid' || category === 'vehicle';
 }
 
 export function normalizeDamageWorkflowContext(workflowContext = null, extra = {}) {
@@ -173,34 +163,11 @@ export function shouldOfferDamageRoll(workflowContext = null, options = {}) {
   return true;
 }
 
-export function buildDamagePacket({
-  attacker = null,
-  target = null,
-  weapon = null,
-  amount = 0,
-  roll = null,
-  workflowContext = null,
-  options = {}
-} = {}) {
-  const rawAmount = Math.max(0, asNumber(amount ?? roll?.total, 0));
-  const context = normalizeDamageWorkflowContext(workflowContext ?? options.combatContext ?? options.workflowContext ?? null, {
-    ...options,
-    actor: attacker,
-    weapon,
-    target,
-    targetId: idOf(target) ?? options.targetId ?? null,
-    targetName: nameOf(target) ?? options.targetName ?? null,
-    damageType: options.damageType ?? weaponDamageType(weapon),
-    hit: options.hit ?? options.isHit ?? undefined,
-    isCritical: options.isCritical ?? undefined,
-    critMultiplier: options.critMultiplier ?? undefined
-  });
-  const disposition = resolveDamageDisposition(context, options);
+function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, disposition, type, options }) {
   const multiplier = asNumber(options.damageMultiplier ?? disposition.multiplier, disposition.multiplier);
   const appliedAmount = Math.max(0, Math.floor(rawAmount * multiplier));
-  const type = resolveDamagePacketType({ weapon, workflowContext: context, options });
-  const targetKind = targetCategory(target);
-  const ionEligible = type === 'ion' ? isIonEligibleTarget(target) : undefined;
+  const targetKind = getDamageTargetCategory(target);
+  const ionEligible = type === 'ion' ? isIonEligibleDamageTarget(target) : undefined;
   const source = options.source
     ?? context?.actionId
     ?? context?.actionName
@@ -213,6 +180,7 @@ export function buildDamagePacket({
     rawAmount,
     multiplier,
     type,
+    originalType: type,
     source,
     sourceActor: attacker ?? null,
     sourceActorId: idOf(attacker) ?? context?.actorId ?? options.attackerId ?? null,
@@ -262,6 +230,38 @@ export function buildDamagePacket({
   };
 }
 
+export function buildDamagePacket({
+  attacker = null,
+  target = null,
+  weapon = null,
+  amount = 0,
+  roll = null,
+  workflowContext = null,
+  options = {}
+} = {}) {
+  const rawAmount = Math.max(0, asNumber(amount ?? roll?.total, 0));
+  const context = normalizeDamageWorkflowContext(workflowContext ?? options.combatContext ?? options.workflowContext ?? null, {
+    ...options,
+    actor: attacker,
+    weapon,
+    target,
+    targetId: idOf(target) ?? options.targetId ?? null,
+    targetName: nameOf(target) ?? options.targetName ?? null,
+    damageType: options.damageType ?? weaponDamageType(weapon),
+    hit: options.hit ?? options.isHit ?? undefined,
+    isCritical: options.isCritical ?? undefined,
+    critMultiplier: options.critMultiplier ?? undefined
+  });
+  const disposition = resolveDamageDisposition(context, options);
+  const type = resolveDamagePacketType({ weapon, workflowContext: context, options });
+  const basePacket = buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, disposition, type, options });
+  return finalizeDamagePacketForTarget(basePacket, target);
+}
+
+export function finalizeDamagePacketForTarget(packet = {}, target = null) {
+  return applyTargetDamagePacketRules(packet, target);
+}
+
 export function buildDamageApplyOptions(packet = {}) {
   const safePacket = {
     ...packet,
@@ -286,6 +286,7 @@ export const DamagePacketBuilder = {
   resolveDamageDisposition,
   shouldOfferDamageRoll,
   buildDamagePacket,
+  finalizeDamagePacketForTarget,
   buildDamageApplyOptions
 };
 
