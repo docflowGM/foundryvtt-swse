@@ -1,0 +1,292 @@
+[
+  {
+    "id": "combat-engine-resolve-attack",
+    "path": "scripts/engine/combat/CombatEngine.js",
+    "currentRole": "Documented single attack/damage orchestration authority; used by enhanced combat wrapper and Coup de Grace, but not by all live sheet attack paths.",
+    "decision": "keep_and_register",
+    "futureRole": "registered attack-resolution/damage-application authority; may remain below a thin CombatWorkflowRegistry",
+    "canonicality": "declared_ssot_but_not_live_universal",
+    "risk": "If treated as already universal, live sheet paths will continue bypassing it and context will still split.",
+    "phase1Action": "Do not delete. Add a registry adapter or wrapper that can call it when the workflow requires target-applied attack resolution. Decide in Phase 1B whether to route all attacks into it immediately or first preserve context around rollAttack()."
+  },
+  {
+    "id": "combat-engine-execute-action",
+    "path": "scripts/engine/combat/CombatEngine.js::executeAction",
+    "currentRole": "Minimal fallback action executor for combat:N, item abilities, Poison/Malkite, species/actor abilities, and Coup de Grace index handling.",
+    "decision": "keep_as_legacy_fallback_not_primary_router",
+    "futureRole": "special-action fallback behind the workflow registry",
+    "canonicality": "partial",
+    "risk": "It is not currently broad enough to be the action-router SSOT.",
+    "phase1Action": "Phase 1B should route to it only for action types it actually owns; do not force all combat actions through it yet."
+  },
+  {
+    "id": "character-sheet-canonical-action-handler",
+    "path": "scripts/sheets/v2/character-sheet.js::_runCanonicalCombatAction",
+    "currentRole": "Strongest current live action router from the combat tab; routes full attacks, manual actions, attacks through Roll Configurator V2, skill actions, fallback engine/actor actions.",
+    "decision": "extract_pattern_then_thin_down",
+    "futureRole": "UI caller only; should delegate to CombatWorkflowRegistry after Phase 1B",
+    "canonicality": "live_practical_router_not_true_ssot",
+    "risk": "If left as the router, PC/NPC/follower/droid/vehicle paths will drift and sheet code will keep accumulating rules.",
+    "phase1Action": "Use it as the behavior inventory for the registry. Move routing decisions out of the sheet in small steps."
+  },
+  {
+    "id": "combat-actions-mapper",
+    "path": "scripts/combat/utils/combat-actions-mapper.js",
+    "currentRole": "Loads and normalizes combat action, extra skill use, ship combat action, and talent enhancement data.",
+    "decision": "keep_as_action_inventory_authority",
+    "futureRole": "normalized action record source for CombatWorkflowRegistry",
+    "canonicality": "inventory_ssot",
+    "risk": "Currently drops routing fields needed for later implementation phases.",
+    "phase1Action": "Preserve routing metadata and infer safe defaults without hardcoding final mechanics."
+  },
+  {
+    "id": "combat-action-data",
+    "path": "data/combat-actions.json and foundryvtt-swse.combat-actions pack",
+    "currentRole": "Source content for basic combat actions and action-cost notes.",
+    "decision": "keep_as_source_data",
+    "futureRole": "content/input source; not executable logic",
+    "canonicality": "data_source",
+    "risk": "Some records encode compound action costs as prose/type strings rather than explicit structured costs.",
+    "phase1Action": "Do not rewrite all data yet; allow mapper/registry to normalize into explicit action-cost objects."
+  },
+  {
+    "id": "action-engine-v2",
+    "path": "scripts/engine/combat/action/action-engine-v2.js",
+    "currentRole": "Pure action economy calculator.",
+    "decision": "keep_as_action_economy_ssot",
+    "futureRole": "only authority for action availability/consumption math",
+    "canonicality": "subsystem_ssot_with_raw_seams",
+    "risk": "Phase 0 found likely RAW substitution/full-round seams; if not hardened, every action-costed feature is suspect.",
+    "phase1Action": "Harden RAW logic in Phase 1B/1C, then route every spend through it."
+  },
+  {
+    "id": "action-economy-persistence",
+    "path": "scripts/engine/combat/action/action-economy-persistence.js",
+    "currentRole": "Stores and resets turn state on actor flags; tracks reactions and undo history.",
+    "decision": "keep_as_action_state_persistence_authority",
+    "futureRole": "single persistence layer for action economy state",
+    "canonicality": "subsystem_ssot",
+    "risk": "Bypass paths can mutate or ignore action state.",
+    "phase1Action": "Workflow registry should consume via ActionEngine and persist via this layer, not roll its own flags."
+  },
+  {
+    "id": "roll-config-v2",
+    "path": "scripts/rolls/roll-config.js",
+    "currentRole": "Live roll/preroll dialog that gathers attack options, target/range/cover/concealment/situational/resource choices.",
+    "decision": "keep_as_input_collection_authority",
+    "futureRole": "returns normalized CombatContext fragments",
+    "canonicality": "input_ui_ssot",
+    "risk": "Current option names and missing controls cause context drift.",
+    "phase1Action": "Do not replace. In Phase 2, normalize output through CombatContextBuilder."
+  },
+  {
+    "id": "attack-roll-function",
+    "path": "scripts/combat/rolls/attacks.js::rollAttack",
+    "currentRole": "Most capable sheet-facing attack roll implementation; computes attack bonuses, target defense, options, and chat/damage button payloads.",
+    "decision": "keep_as_attack_roll_authority_candidate",
+    "futureRole": "canonical attack roll function or adapter target underneath workflow registry",
+    "canonicality": "practical_attack_ssot_candidate",
+    "risk": "Direct callers bypass action routing and context preservation.",
+    "phase1Action": "Route attack actions to it through registry/context instead of direct sheet calls."
+  },
+  {
+    "id": "enhanced-rolls-swse-roll",
+    "path": "scripts/combat/rolls/enhanced-rolls.js",
+    "currentRole": "Legacy/static SWSERoll API used by many callers; wraps attack/damage/full attack style behavior.",
+    "decision": "keep_as_compatibility_adapter",
+    "futureRole": "adapter only; should call canonical workflow or canonical roll functions",
+    "canonicality": "legacy_adapter",
+    "risk": "If it remains an independent implementation, duplicate attack/damage behavior will persist.",
+    "phase1Action": "Do not delete. Mark direct imports as legacy consumers to migrate gradually."
+  },
+  {
+    "id": "combat-option-resolver",
+    "path": "scripts/engine/combat/combat-option-resolver.js",
+    "currentRole": "Feat/talent/attack-option modifier and legality resolver.",
+    "decision": "keep_as_attack_option_ssot",
+    "futureRole": "registered option resolver fed by normalized combat context",
+    "canonicality": "subsystem_ssot",
+    "risk": "Metadata cannot activate if context names are inconsistent or missing.",
+    "phase1Action": "Do not duplicate rules in the aggregator; feed this resolver correct context."
+  },
+  {
+    "id": "full-attack-executor",
+    "path": "scripts/engine/combat/full-attack-executor.js",
+    "currentRole": "Dedicated full attack/multiattack executor already used by character sheet when resolutionMode is fullAttack.",
+    "decision": "keep_as_full_attack_ssot",
+    "futureRole": "registered workflow for fullAttack resolutionMode",
+    "canonicality": "subsystem_ssot",
+    "risk": "If action records do not preserve fullAttack routing, multiattack support remains unreachable.",
+    "phase1Action": "Make registry route fullAttack actions here with preserved action package context."
+  },
+  {
+    "id": "damage-resolution-engine",
+    "path": "scripts/engine/combat/damage-resolution-engine.js",
+    "currentRole": "Pure damage resolution design: bonus HP, mitigation, HP, DT, CT, death/destroy/Force rescue result.",
+    "decision": "keep_as_future_damage_resolution_ssot",
+    "futureRole": "canonical calculation target once damage packets are introduced",
+    "canonicality": "designed_ssot_not_fully_wired",
+    "risk": "If bypassed by flat damage paths, Stun/Ion/Sonic/Evasion/Bonus HP semantics will stay unreliable.",
+    "phase1Action": "Do not force all damage through it in Phase 1A; preserve context now, migrate in damage-packet phase."
+  },
+  {
+    "id": "damage-engine",
+    "path": "scripts/engine/combat/damage-engine.js",
+    "currentRole": "Mutation-oriented damage applier using ActorEngine; simpler flat amount/type model.",
+    "decision": "keep_as_mutation_bridge_until_packet_phase",
+    "futureRole": "may become mutation bridge after DamageResolutionEngine calculates results",
+    "canonicality": "partial",
+    "risk": "Flat model cannot express special damage semantics.",
+    "phase1Action": "Register as current mutation path, but do not expand it with more one-off semantics."
+  },
+  {
+    "id": "damage-roll-function",
+    "path": "scripts/combat/rolls/damage.js",
+    "currentRole": "Weapon damage formula roller and passive damage bonus calculator.",
+    "decision": "keep_as_damage_formula_authority_candidate",
+    "futureRole": "formula-to-damage-packet builder or adapter",
+    "canonicality": "partial",
+    "risk": "Can drift from attack context unless called with preserved packet data.",
+    "phase1Action": "Keep; require chat damage buttons to pass context instead of reconstructing."
+  },
+  {
+    "id": "damage-system-ui",
+    "path": "scripts/combat/damage-system.js",
+    "currentRole": "Manual selected-token damage/healing/condition UI utility.",
+    "decision": "keep_as_manual_ui_tool",
+    "futureRole": "manual GM utility, not combat damage SSOT",
+    "canonicality": "manual_ui",
+    "risk": "Direct use can bypass workflow context.",
+    "phase1Action": "Do not route attack damage through it except explicit manual GM actions."
+  },
+  {
+    "id": "ammo-system",
+    "path": "scripts/engine/inventory/ammo-system.js",
+    "currentRole": "Reusable ammo spend/reload/current/max helper.",
+    "decision": "keep_as_ammo_ssot",
+    "futureRole": "ammo and reload authority for combat, gear, and roll dialogs",
+    "canonicality": "subsystem_ssot",
+    "risk": "Ammo UI and attack gating will diverge if each tab calculates separately.",
+    "phase1Action": "Register as resource workflow. Later obey trackBlasterCharges to hide all ammo UI when disabled."
+  },
+  {
+    "id": "combat-status-resolver",
+    "path": "scripts/combat/combat-status.js",
+    "currentRole": "Combat status/cover/prone/fight defensively/full defense style resolver and display helper.",
+    "decision": "keep_as_combat_status_display_and_derived_state_authority",
+    "futureRole": "reads canonical state records and returns defense/status view model",
+    "canonicality": "partial",
+    "risk": "If it also owns mutations while other paths own flags/effects, states will drift.",
+    "phase1Action": "Do not replace; make it a consumer of canonical state context."
+  },
+  {
+    "id": "current-condition-resolver",
+    "path": "scripts/engine/effects/current-condition-resolver.js",
+    "currentRole": "Aggregates current conditions/effects for UI/status readouts.",
+    "decision": "keep_as_effect_status_aggregator",
+    "futureRole": "summary/combat display feed",
+    "canonicality": "display_aggregator",
+    "risk": "Cannot be the mutation authority for combat states.",
+    "phase1Action": "Use for display only."
+  },
+  {
+    "id": "modifier-engine",
+    "path": "scripts/engine/effects/modifiers/ModifierEngine.js",
+    "currentRole": "Generic modifier collection/evaluation engine for domains such as attack, defense, bonus HP, etc.",
+    "decision": "keep_as_modifier_ssot",
+    "futureRole": "registered modifier source for attack/damage/state context",
+    "canonicality": "subsystem_ssot",
+    "risk": "Direct ad hoc bonuses in sheets bypass modifier governance.",
+    "phase1Action": "Context builder should pass domains/context into ModifierEngine rather than computing new duplicate bonuses."
+  },
+  {
+    "id": "second-wind-rules",
+    "path": "scripts/engine/combat/SecondWindRules.js",
+    "currentRole": "Second Wind eligibility/healing/limits rules authority.",
+    "decision": "keep_as_second_wind_ssot",
+    "futureRole": "registered workflow for secondWind/combatState actions",
+    "canonicality": "subsystem_ssot",
+    "risk": "Legacy second wind paths may bypass it.",
+    "phase1Action": "Route Catch a Second Wind through registry -> ActionEngine -> SecondWindRules."
+  },
+  {
+    "id": "grappling-system",
+    "path": "scripts/combat/systems/grappling-system.js",
+    "currentRole": "Enhanced grapple workflow skeleton with grab, grapple check, pin, escape, effects, and chat cards.",
+    "decision": "keep_as_grapple_workflow_ssot_candidate",
+    "futureRole": "registered grapple workflow after RAW fidelity cleanup",
+    "canonicality": "partial_with_rule_seams",
+    "risk": "Replacing it would waste existing work; trusting it unchanged would preserve RAW seams.",
+    "phase1Action": "Register as future workflow authority; do not expand until dedicated grapple phase."
+  },
+  {
+    "id": "houserule-grapple",
+    "path": "scripts/houserules/houserule-grapple.js",
+    "currentRole": "Variant/DC helper for grapple houserules.",
+    "decision": "keep_as_grapple_rules_helper_not_workflow",
+    "futureRole": "support helper called by grappling workflow if selected houserule requires it",
+    "canonicality": "helper",
+    "risk": "If used as workflow, it competes with SWSEGrappling.",
+    "phase1Action": "Do not call directly from UI."
+  },
+  {
+    "id": "healing-rules-and-houserule-healing",
+    "path": "scripts/houserules/adapters/HealingRules.js, scripts/houserules/houserule-healing.js, scripts/houserules/houserule-healing-skill-integration.js",
+    "currentRole": "Healing house-rule adapters and Treat Injury healing workflows.",
+    "decision": "keep_as_organic_healing_workflow_authority_candidate",
+    "futureRole": "registered healing workflow after action routing exists",
+    "canonicality": "partial",
+    "risk": "Healing as negative damage would break Treat Injury, gear, cooldowns, droids, and persistent conditions.",
+    "phase1Action": "Register later as healing workflow, not damage workflow."
+  },
+  {
+    "id": "actor-repair-engine",
+    "path": "scripts/engine/repair/actor-repair-engine.js",
+    "currentRole": "Actor repair helper/engine for droids or repair workflows.",
+    "decision": "keep_as_repair_workflow_authority_candidate",
+    "futureRole": "registered repair workflow for droids/devices/vehicles after action routing exists",
+    "canonicality": "partial",
+    "risk": "Organic healing paths may incorrectly repair droids if this is not separated.",
+    "phase1Action": "Register later as repair workflow."
+  },
+  {
+    "id": "reaction-engine-and-registry",
+    "path": "scripts/engine/combat/reactions/reaction-engine.js, scripts/engine/combat/reactions/reaction-registry.js",
+    "currentRole": "Reaction registry/engine for Block, Deflect, Negate Energy style reactions.",
+    "decision": "keep_as_reaction_ssot",
+    "futureRole": "registered reaction workflow consuming attack/damage context packets",
+    "canonicality": "subsystem_ssot",
+    "risk": "Reactions cannot make Sonic/Evasion/Deflect decisions without preserved packets.",
+    "phase1Action": "Keep; feed richer context later."
+  },
+  {
+    "id": "house-rule-service",
+    "path": "scripts/engine/system/HouseRuleService.js",
+    "currentRole": "Documented setting/house-rule access SSOT.",
+    "decision": "keep_as_houserule_ssot",
+    "futureRole": "all workflows read settings through this or its adapters",
+    "canonicality": "subsystem_ssot",
+    "risk": "Direct game.settings.get calls can disagree with defaults/adapters and governance warnings.",
+    "phase1Action": "Registry/context builder should use HouseRuleService. Direct sheet reads should be migrated gradually."
+  },
+  {
+    "id": "actor-engine",
+    "path": "scripts/governance/actor-engine/actor-engine.js",
+    "currentRole": "Governance mutation authority used by damage and sheet updates.",
+    "decision": "keep_as_mutation_ssot",
+    "futureRole": "single document mutation path underneath all combat workflows",
+    "canonicality": "mutation_ssot",
+    "risk": "Direct actor.update/item.update creates race conditions and bypasses governance.",
+    "phase1Action": "Aggregator should never mutate actor/item directly."
+  },
+  {
+    "id": "enhanced-combat-system-swsecombat",
+    "path": "scripts/combat/systems/enhanced-combat-system.js",
+    "currentRole": "Older UI adapter/wrapper around CombatEngine plus local card creation and damage helpers; globally exported as window.SWSECombat.",
+    "decision": "keep_as_legacy_adapter_then_deprecate_direct_use",
+    "futureRole": "compatibility adapter to workflow registry",
+    "canonicality": "legacy_adapter",
+    "risk": "It creates another attack/damage card path if treated as current authority.",
+    "phase1Action": "Do not delete. Mark as legacy caller to migrate behind registry."
+  }
+]

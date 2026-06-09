@@ -1,0 +1,145 @@
+[
+  {
+    "id": "damage-type-registry-drift",
+    "system": "damage-types",
+    "rule": "Damage types should have one canonical registry and UI vocabulary.",
+    "currentEvidence": "WeaponDataResolver, weapon-config-dialog, and old item sheet expose different damage type lists; Electrical is missing from main options and physical subtypes coexist with kinetic.",
+    "affectedFeatsTalents": ["Ion Resistance 10", "Ion Mastery", "Damage Conversion", "Negate Energy", "Deflect"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "stun-split-damage-packet",
+    "system": "stun-damage",
+    "rule": "Stun deals half HP damage to creatures and uses original pre-halved damage for Damage Threshold.",
+    "currentEvidence": "DamageResolutionEngine receives one damage number and one damageType string; ThresholdEngine has an isStun branch but no clear HP/threshold split packet.",
+    "affectedFeatsTalents": ["Bondar Crystal", "Stun weapons", "Damage Threshold effects"],
+    "automationBoundary": "automate",
+    "severity": "critical",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "stun-target-category-gating",
+    "system": "stun-damage",
+    "rule": "Stun affects creatures and does no damage to non-creature targets unless another rule says otherwise.",
+    "currentEvidence": "No reliable target category gate found in the core damage resolution path for Stun non-creature immunity.",
+    "affectedFeatsTalents": ["Stun weapons", "Bondar Crystal"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "ion-split-damage-packet",
+    "system": "ion-damage",
+    "rule": "Ion applies half HP damage but compares original Ion damage to Damage Threshold.",
+    "currentEvidence": "ThresholdEngine comment says caller must pass correct Ion damage; DamageResolutionEngine appears to use one damage number for mitigation, HP, and threshold.",
+    "affectedFeatsTalents": ["Ion Shielding", "Ion Resistance 10", "Ion Mastery", "Firkraan Crystal"],
+    "automationBoundary": "automate",
+    "severity": "critical",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "ion-target-eligibility",
+    "system": "ion-damage",
+    "rule": "Ion special CT/disable effects apply to droids, vehicles, electronic devices, and cybernetic creatures, not ordinary living creatures.",
+    "currentEvidence": "No reliable target category/cybernetic eligibility gate found in the core damage resolution path.",
+    "affectedFeatsTalents": ["Ion Shielding", "Ion Resistance 10", "Ion Mastery"],
+    "automationBoundary": "assist",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "fire-hazard-not-created",
+    "system": "fire-damage",
+    "rule": "Taking Fire damage causes the target to catch fire and creates a recurring Fire hazard until extinguished.",
+    "currentEvidence": "RecurringDamageAdapter displays pending recurring damage but is display-only; no canonical Fire damage to Burning hazard creation path found.",
+    "affectedFeatsTalents": ["Barab Ingot", "Fire weapons", "Fire hazards"],
+    "automationBoundary": "assist",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "acid-hazard-not-created",
+    "system": "acid-damage",
+    "rule": "Acid contact should create a recurring hazard until washed off or treated.",
+    "currentEvidence": "Acid exists as a damage type, but no canonical Acid hazard state/resolution path was found.",
+    "affectedFeatsTalents": ["Acid hazards", "Acid weapons/templates"],
+    "automationBoundary": "assist",
+    "severity": "medium",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "sonic-energy-alias-missing",
+    "system": "sonic-damage",
+    "rule": "Sonic damage is considered Energy damage in all ways.",
+    "currentEvidence": "Sonic exists as a damage type but no clear canonical countsAs/alias registry was found for mitigation or reactions.",
+    "affectedFeatsTalents": ["Negate Energy", "Energy resistance", "Sonic weapons"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "sonic-deflect-bypass",
+    "system": "sonic-damage",
+    "rule": "Ranged Sonic weapons cannot be Deflected by lightsabers.",
+    "currentEvidence": "ReactionRegistry.deflect has validDamageTypes null and no explicit Sonic exclusion found.",
+    "affectedFeatsTalents": ["Deflect", "Improved Deflect", "Redirect Shot", "Sonic weapons"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "sonic-mixed-damage-packet",
+    "system": "sonic-damage",
+    "rule": "Bonus Sonic damage may still apply even when the weapon's normal deflectable damage is deflected, if the attack would normally hit.",
+    "currentEvidence": "Damage rolls currently build one formula and one damageType; no packet-level deflectable/non-deflectable damage parts were found.",
+    "affectedFeatsTalents": ["Dragite Crystal", "Deflect", "Sonic weapon templates"],
+    "automationBoundary": "automate",
+    "severity": "critical",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "force-yuuzhan-vong-immunity-context",
+    "system": "force-damage",
+    "rule": "Yuuzhan Vong are immune to Force effects that target Will Defense.",
+    "currentEvidence": "Yuuzhan Vong trait text exists, but no core damage/effect gate was found that combines Force source, Will target, and Yuuzhan Vong species immunity.",
+    "affectedFeatsTalents": ["Yuuzhan Vong Force Immunity", "Force powers targeting Will", "Lambent Crystal"],
+    "automationBoundary": "assist",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "physical-damage-vocabulary-drift",
+    "system": "physical-damage-types",
+    "rule": "Bludgeoning, Piercing, and Slashing are distinct damage types, while the system heavily uses Kinetic as a broad bucket.",
+    "currentEvidence": "Pack inventory found both kinetic and specific physical types such as bludgeoning, piercing, and slashing.",
+    "affectedFeatsTalents": ["Damage Reduction", "natural weapon features", "weapon templates"],
+    "automationBoundary": "automate",
+    "severity": "medium",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "electrical-damage-type-missing",
+    "system": "electrical-damage",
+    "rule": "Electrical is a distinct damage type in the supplied damage type table.",
+    "currentEvidence": "Electrical/electricity was not present in the main weapon damage type option lists inspected.",
+    "affectedFeatsTalents": ["Electrical hazards", "shock locks", "power diffusion tunnels"],
+    "automationBoundary": "assist",
+    "severity": "medium",
+    "recommendedPhase": 9,
+    "fixNow": false
+  }
+]

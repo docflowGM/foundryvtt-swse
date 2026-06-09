@@ -202,10 +202,18 @@ export class DamageResolutionEngine {
       };
     }
 
-    // Apply mitigated damage to HP
+    // Apply mitigated damage to HP. Some packet rules (currently ion) keep the
+    // full incoming damage available for mitigation/threshold while reducing the
+    // final HP loss. This preserves ActorEngine as the mutation authority while
+    // allowing packet-level special damage semantics.
     const maxHP = system.hp?.max ?? 100;
-    result.damageToHP = mitigationResult.hpDamage;
-    result.hpAfter = Math.max(0, result.hpBefore - mitigationResult.hpDamage);
+    const hpDamageBeforeSpecial = Math.max(0, Number(mitigationResult.hpDamage) || 0);
+    const hpDamageMultiplierRaw = Number(options?.hpDamageMultiplier);
+    const hpDamageMultiplier = Number.isFinite(hpDamageMultiplierRaw) && hpDamageMultiplierRaw >= 0
+      ? hpDamageMultiplierRaw
+      : 1;
+    result.damageToHP = Math.max(0, Math.floor(hpDamageBeforeSpecial * hpDamageMultiplier));
+    result.hpAfter = Math.max(0, result.hpBefore - result.damageToHP);
 
     // Store mitigation details in result
     result.mitigation = {
@@ -213,6 +221,8 @@ export class DamageResolutionEngine {
       shield: mitigationResult.shield,
       damageReduction: mitigationResult.damageReduction,
       tempHP: mitigationResult.tempHP,
+      hpDamageBeforeSpecial,
+      hpDamageMultiplier,
       breakdown: mitigationResult.breakdown
     };
 
@@ -229,7 +239,10 @@ export class DamageResolutionEngine {
       result.thresholdTotal = thresholdData.total;
       result.thresholdBreakdown = thresholdData.breakdown;
 
-      const thresholdDamage = mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage;
+      const thresholdOverride = Number(options?.thresholdDamageOverride ?? options?.thresholdMeasuredDamage);
+      const thresholdDamage = Number.isFinite(thresholdOverride)
+        ? Math.max(0, thresholdOverride)
+        : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage);
       result.thresholdMeasuredDamage = thresholdDamage;
       result.thresholdRuleResult = ThresholdEngine.evaluateThreshold({
         target: actor,

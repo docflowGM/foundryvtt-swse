@@ -173,7 +173,6 @@
                 {{#each npcConcept.conditionSteps as |step|}}
                   <button type="button" class="swse-npc-combat-stat swse-v2-condition-step {{#if step.active}}is-active{{/if}}" data-step="{{step.value}}">
                     <span class="swse-npc-combat-stat__label">{{step.label}}</span>
-                    <strong class="swse-npc-combat-stat__value">{{#if step.active}}●{{else}}○{{/if}}</strong>
                   </button>
                 {{/each}}
               </div>

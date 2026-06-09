@@ -1,0 +1,311 @@
+[
+  {
+    "id": "ctx-burst-fire-single-target-not-area",
+    "system": "autofire-burst",
+    "severity": "critical",
+    "affectedFeatsTalents": [
+      "Burst Fire",
+      "Controlled Burst",
+      "Trigger Work",
+      "Hailfire",
+      "Autofire Assault",
+      "Autofire Sweep"
+    ],
+    "currentEvidence": "Burst Fire feat metadata correctly has ATTACK_OPTION burstFire with damageExtraWeaponDice 2, ammunitionCost 5, strengthPenaltyIfBelow 13, and nonStackingWith Deadeye/Rapid Shot. Older data/feat-combat-actions.json still labels Burst Fire as full-round, and legacy helper findings from 0D/0E suggested Burst Fire could inherit autofire half-on-miss behavior if routed through the wrong path.",
+    "ruleExpectation": "Burst Fire is a Standard Action single-target ranged attack option using autofire capability/mode. It is not an Area Attack, does not half-damage on miss, and Evasion does not apply.",
+    "contextNeeded": [
+      "attackMode: burstFire",
+      "singleTarget: true",
+      "areaAttack: false",
+      "halfDamageOnMiss: false",
+      "ammoCost: 5",
+      "extraWeaponDice: 2",
+      "nonStackingDamageOptions: deadeye, rapidShot"
+    ],
+    "automationBoundary": "automate attack/damage/ammo math; GM does not need to adjudicate area because there is no area",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-autofire-area-evasion-target-aware-damage",
+    "system": "autofire-area-damage",
+    "severity": "critical",
+    "affectedFeatsTalents": [
+      "Evasion",
+      "Vehicular Evasion",
+      "Autofire Assault",
+      "Autofire Sweep",
+      "Suppression Fire",
+      "Friendly Fire Avoidance",
+      "Targeted Area"
+    ],
+    "currentEvidence": "Evasion talent metadata says existing_runtime in enhanced-rolls area attack damage resolution, but 0D/0E identified fragmented damage context and unsafe legacy behavior. Attack-to-damage buttons do not preserve enough hit/miss/area/target context.",
+    "ruleExpectation": "Autofire is Standard Action area attack: -5 attack, Reflex per affected creature, full damage on hit, half on miss, no critical double damage. Evasion changes hit to half and miss to zero for area attacks only.",
+    "contextNeeded": [
+      "attackMode: autofire",
+      "areaAttack: true",
+      "gmManagedTargets: true",
+      "hitOutcomeByTarget",
+      "damageOnMiss: half",
+      "criticalDoublesDamage: false",
+      "targetHasEvasion"
+    ],
+    "automationBoundary": "assist/automate math once GM identifies targets; do not automate grid area or LoS",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-precise-shot-firing-into-melee-elusive-target",
+    "system": "ranged-attack-penalties",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Precise Shot",
+      "Elusive Target",
+      "Crossfire",
+      "Friendly Fire Avoidance",
+      "Meat Shield"
+    ],
+    "currentEvidence": "Precise Shot metadata suppresses firingIntoMeleePenalty, but 0C found no reliable source that applies the base -5 penalty. Elusive Target metadata is manualResolution, which matches user preference because it depends on enemy targeting and melee engagement context.",
+    "ruleExpectation": "Ranged/throwing into melee is -5 unless Precise Shot suppresses it. Elusive Target adds another -5 against the protected target when that target is fighting in melee; GM adjudicated checkbox/reminder is preferred.",
+    "contextNeeded": [
+      "firingIntoMelee: true",
+      "targetHasElusiveTarget: optional/manual",
+      "preciseShotSuppressed: true"
+    ],
+    "automationBoundary": "player checkbox for firing into melee; GM/manual checkbox or reminder for Elusive Target",
+    "recommendedPhase": 2,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-aim-deadeye-careful-shot-name-drift",
+    "system": "aim-context",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Careful Shot",
+      "Deadeye",
+      "Aiming Accuracy",
+      "Hunter's Mark",
+      "Debilitating Shot",
+      "Knockdown Shot",
+      "Sniping Master"
+    ],
+    "currentEvidence": "CombatOptionResolver expects context.aim === true for Careful Shot/Deadeye, while 0C found preroller context uses situational.aiming/charging. talent-enhancements.json also defines aim-triggered talent riders.",
+    "ruleExpectation": "Aimed state should be durable, action-economy backed, consumed by the next qualifying attack, and visible to attack options/talent riders.",
+    "contextNeeded": [
+      "aim: true",
+      "aimState: aimed",
+      "aimTarget optional/GM",
+      "consumeAimOnAttack: true"
+    ],
+    "automationBoundary": "automate state and math; GM adjudicates LoS/invalidating interruptions when not modeled",
+    "recommendedPhase": 5,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-charge-powerful-charging-fire-drift",
+    "system": "charge-context",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Powerful Charge",
+      "Charging Fire",
+      "Improved Charge",
+      "Deft Charge",
+      "Reckless Charge",
+      "Maniacal Charge",
+      "Slashing Charge",
+      "Centerbreaker Charge",
+      "Linebreaker Charge"
+    ],
+    "currentEvidence": "CombatOptionResolver expects context.charge === true. 0C found dialog context may use charging rather than charge. Defense penalties from charge-like options need persistent state handling.",
+    "ruleExpectation": "Charge context should wake charge-gated feats/talents while movement/path legality remains GM/table adjudicated.",
+    "contextNeeded": [
+      "charge: true",
+      "movementDeclared: true/manual",
+      "chargeDefensePenaltyState",
+      "attackType melee/ranged for Charging Fire"
+    ],
+    "automationBoundary": "automate roll/defense modifiers; GM adjudicates movement legality and route",
+    "recommendedPhase": 5,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-grapple-feats-state-machine",
+    "system": "grapple-state-machine",
+    "severity": "critical",
+    "affectedFeatsTalents": [
+      "Pin",
+      "Trip",
+      "Crush",
+      "Rancor Crush",
+      "Bone Crusher",
+      "Throw",
+      "Improved Grapple",
+      "Grappling Strike",
+      "Expert Grappler",
+      "Grabber",
+      "Entangler",
+      "Strong Grab"
+    ],
+    "currentEvidence": "Feat metadata has GRAPPLE_RIDER entries for Pin/Trip/Crush. 0F found enhanced grappling code exists but uses mismatched gates and state effects; feat-action-listeners has future comments for Rancor Crush/Bone Crusher rather than live hooks.",
+    "ruleExpectation": "Grab/Grapple/Pin are three distinct states with specific escape/action/defense effects. Pin/Trip feat gates allow immediate Grapple upgrade and riders. Attacker succeeds on meet-or-beat in opposed grapple checks.",
+    "contextNeeded": [
+      "grappleState: grabbed/grappled/pinned",
+      "hasPinOrTripGate",
+      "lastGrappleCheckResult",
+      "attackerWinsTie: true",
+      "lightOrNaturalWeaponException",
+      "pinnedLoseDexToReflex"
+    ],
+    "automationBoundary": "assist/automate state math where actors are known; GM adjudicates positioning and special edge cases",
+    "recommendedPhase": 6,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-full-attack-dual-multiattack-route",
+    "system": "full-attack-multiattack",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Double Attack",
+      "Triple Attack",
+      "Dual Weapon Mastery I",
+      "Dual Weapon Mastery II",
+      "Dual Weapon Mastery III",
+      "Two-Weapon Fighting",
+      "Multiattack Proficiency (pistols)",
+      "Multiattack Proficiency (rifles)",
+      "Hailfire",
+      "Twin Shot",
+      "Dash and Blast"
+    ],
+    "currentEvidence": "multi-attack.js and full-attack-executor.js are strong skeletons. 0I found combat action rows can route fullAttack, but action mapping may drop routing fields. Some metadata notes still say future picker/resolver for Multiattack Proficiency.",
+    "ruleExpectation": "Full Attack should be the canonical execution surface for dual/multiattack choices with weapon group choices and penalty reductions.",
+    "contextNeeded": [
+      "resolutionMode: fullAttack",
+      "primaryWeapon",
+      "offhandWeapon optional",
+      "selectedDoubleTripleGroup",
+      "dualWeaponMode",
+      "multiattackProficiencyGroup",
+      "attackSequenceSnapshot"
+    ],
+    "automationBoundary": "automate sequence/penalties; players/GM choose targets per attack",
+    "recommendedPhase": 3,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-melee-defense-fight-defensively-total-defense-persist",
+    "system": "defensive-options",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Melee Defense",
+      "Dodge",
+      "Mobility",
+      "Acrobatic Dodge",
+      "Duck and Cover",
+      "Advantageous Cover"
+    ],
+    "currentEvidence": "Melee Defense metadata produces defenseModifier untilStartOfNextTurn, but 0H found defensive option state persistence is split and Fight Defensively/Total Defense have parallel implementations with Acrobatics mismatch.",
+    "ruleExpectation": "Defensive combat options spend correct actions and create round-limited defense states. Fight Defensively is Standard Action RAW; Acrobatics trained raises +2/+5 to +5/+10.",
+    "contextNeeded": [
+      "combatDefenseMode",
+      "actionCost: standard unless houserule",
+      "acrobaticsTrained",
+      "attackPenaltyState",
+      "reflexDodgeBonusState",
+      "expiresStartNextTurn"
+    ],
+    "automationBoundary": "automate sheet-state/defense math; houserule controls alternate action costs",
+    "recommendedPhase": 8,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-reactions-block-deflect-sonic-mixed-damage",
+    "system": "reactions-deflect-damage-types",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Block",
+      "Deflect",
+      "Redirect Shot",
+      "Improved Redirect",
+      "Precise Redirect",
+      "Force Readiness",
+      "Sonic weapon/template effects",
+      "Lightsaber Evasion"
+    ],
+    "currentEvidence": "Reaction registry has Block/Deflect infrastructure. Some talent metadata still says manual mapping. 0G found Sonic requires packet-level handling because ranged Sonic cannot be Deflected and bonus Sonic damage may still apply after normal damage is deflected.",
+    "ruleExpectation": "Reactions should know attack type, weapon type, damage packets, cumulative Use the Force penalties, and whether Sonic prevents/partially bypasses Deflect.",
+    "contextNeeded": [
+      "reactionTriggerAttackSnapshot",
+      "damagePackets",
+      "canBeDeflected per packet",
+      "countsAsEnergy",
+      "reactionUsesSinceLastTurn",
+      "forceReadinessException"
+    ],
+    "automationBoundary": "automate prompts/checks when context exists; GM/manual fallback when attack snapshot lacks packet context",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-stun-ion-special-damage-target-gating",
+    "system": "special-damage",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Improved Stun",
+      "Set for Stun",
+      "Slowing Stun",
+      "Take Them Alive",
+      "Ion Shielding",
+      "Ion Mastery",
+      "Ion Resistance 10",
+      "Droid Hunter"
+    ],
+    "currentEvidence": "Threshold engine and damage-resolution-engine have some Stun/Ion hooks; 0G found current system still needs split damage packets and target category gating. Weapon state adapter has Stun/Ion mode card support but attack/damage context preservation is not complete.",
+    "ruleExpectation": "Stun/Ion HP damage is halved while DT checks use original damage. Stun applies to creatures; Ion special effects apply to droids, vehicles, electronics, and cybernetically enhanced creatures.",
+    "contextNeeded": [
+      "damageType: stun/ion",
+      "originalDamage",
+      "hpDamageMultiplier: 0.5",
+      "targetCategory",
+      "cyberneticEnhanced",
+      "dtUsesOriginalDamage"
+    ],
+    "automationBoundary": "automate math when target category known; GM fallback for cybernetics/electronics classification",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "ctx-healing-repair-bonus-hp-sources",
+    "system": "healing-repair",
+    "severity": "high",
+    "affectedFeatsTalents": [
+      "Extra Second Wind",
+      "Experienced Medic",
+      "Wilderness First Aid",
+      "Medical Team",
+      "Droidcraft",
+      "Expert Droid Repair",
+      "Battlefield Medic",
+      "Extra First Aid",
+      "Bolster Ally",
+      "Oath of Duty",
+      "Force Recovery",
+      "Force Repair",
+      "Heal Droid"
+    ],
+    "currentEvidence": "0J found Second Wind is strongest existing healing subsystem, but Treat Injury/repair/gear requirements are inconsistent and bonus HP needs a canonical model. Several feats/talents are metadata-only skill-use rules until gear/action/use workflows exist.",
+    "ruleExpectation": "Healing, repair, and bonus HP need separate packets: organic HP healing, droid/object repair via Mechanics, persistent condition removal, medpac/tool kit use, bonus HP highest-only stacking and encounter expiration.",
+    "contextNeeded": [
+      "healingPacketType",
+      "targetCategory",
+      "gearRequirement",
+      "actionCost/timeCost",
+      "oncePer24h keys",
+      "bonusHpSource/value/expiration",
+      "persistentConditionRemoval"
+    ],
+    "automationBoundary": "assist/automate common HP math; gear stubs until inventory use system is implemented",
+    "recommendedPhase": 10,
+    "fixNow": false
+  }
+]

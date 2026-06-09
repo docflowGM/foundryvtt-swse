@@ -1,5 +1,7 @@
 import { buildChatSvgContext, buildChatStateContext } from "/systems/foundryvtt-swse/scripts/chat/chat-svg-assets.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { buildDamagePacket, shouldOfferDamageRoll } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 
 
 function swseChatLabel(value = '') {
@@ -156,19 +158,99 @@ function swseChatBuildEventContext(context = {}, category = 'roll', reactionCont
 }
 
 
-function swseChatBuildAttackDamage(context = {}) {
+function boolString(value) {
+  if (value === true) return 'true';
+  if (value === false) return 'false';
+  return '';
+}
+
+function swseChatWorkflowSummary(context = {}, weapon = null, actor = null, extra = {}) {
+  const workflowContext = context.workflowContext ?? context.combatContext ?? null;
+  return summarizeCombatWorkflowContext(workflowContext, {
+    actor,
+    weapon,
+    target: context.target ?? null,
+    targetId: context.targetId ?? context.target?.id ?? null,
+    targetName: context.targetName ?? context.target?.name ?? null,
+    isCritical: context.isCritical === true || extra.isCritical === true,
+    critMultiplier: extra.critMultiplier ?? context.critMultiplier,
+    hit: context.success ?? context.passed ?? extra.hit ?? null,
+    damageType: context.damageType ?? extra.damageType ?? null
+  }) ?? {};
+}
+
+function swseChatDamageButtonContext(summary = {}, context = {}, weapon = null) {
+  const workflowAttack = summary.attack ?? {};
+  const workflowDamage = summary.damage ?? {};
+  const workflowResources = summary.resources ?? {};
+  return {
+    workflowId: summary.workflowId ?? '',
+    actionId: summary.actionId ?? context.actionId ?? '',
+    attackMode: workflowAttack.mode ?? context.attackMode ?? '',
+    contextTags: Array.isArray(summary.contextTags) ? summary.contextTags.join('|') : '',
+    isCritical: context.isCritical === true || workflowDamage.crit === true,
+    critMultiplier: Number(context.critMultiplier ?? workflowDamage.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2,
+    isHit: boolString(workflowDamage.hit ?? context.success ?? context.passed),
+    natural1: workflowDamage.natural1 === true,
+    natural20: workflowDamage.natural20 === true,
+    areaAttack: workflowAttack.isArea === true,
+    burstFire: workflowAttack.isBurstFire === true,
+    autofire: workflowAttack.isAutofire === true,
+    stun: workflowAttack.isStun === true,
+    ion: workflowAttack.isIon === true,
+    ammoCost: Number(workflowResources.ammoCost ?? 0) || 0
+  };
+}
+
+function swseChatBuildAttackDamage(context = {}, actor = null, weapon = null) {
   const damage = context.attackDamage ?? null;
   if (!damage || !Number.isFinite(Number(damage.total))) return null;
+  const rawAmount = Number(damage.total);
+  const workflowSummary = swseChatWorkflowSummary(context, weapon, actor, {
+    isCritical: damage.isCritical === true,
+    critMultiplier: damage.critMultiplier,
+    damageType: damage.damageType
+  });
+  const packet = buildDamagePacket({
+    attacker: actor,
+    target: context.target ?? null,
+    weapon,
+    amount: rawAmount,
+    workflowContext: workflowSummary,
+    options: {
+      ...context,
+      damageType: damage.damageType,
+      isCritical: damage.isCritical === true,
+      critMultiplier: Number(damage.critMultiplier ?? context.critMultiplier ?? 2) || 2
+    }
+  });
+  if (packet.disposition?.damageAllowed === false) return null;
+  const buttonContext = swseChatDamageButtonContext(packet.workflowContext ?? workflowSummary, context, weapon);
+  const workflowContextEncoded = encodeCombatWorkflowContext(packet.workflowContext ?? workflowSummary, {
+    actor,
+    weapon,
+    target: context.target ?? null,
+    targetId: damage.targetId ?? context.targetId ?? context.target?.id ?? null,
+    targetName: context.targetName ?? context.target?.name ?? null,
+    damageType: packet.type,
+    isCritical: damage.isCritical === true,
+    critMultiplier: packet.options?.critMultiplier ?? buttonContext.critMultiplier
+  });
   return {
-    total: Number(damage.total),
+    total: packet.amount,
+    rawTotal: rawAmount,
+    multiplier: packet.multiplier,
     formula: String(damage.formula ?? '').trim(),
-    damageType: String(damage.damageType ?? '').trim(),
-    actorId: String(damage.actorId ?? context.actorId ?? context.attackerId ?? '').trim(),
-    targetId: String(damage.targetId ?? context.targetId ?? '').trim(),
-    weaponId: String(damage.weaponId ?? context.weaponId ?? context.itemId ?? '').trim(),
+    damageType: String(packet.type ?? damage.damageType ?? '').trim(),
+    actorId: String(damage.actorId ?? context.actorId ?? context.attackerId ?? actor?.id ?? '').trim(),
+    targetId: String(damage.targetId ?? context.targetId ?? context.target?.id ?? packet.targetActorId ?? '').trim(),
+    weaponId: String(damage.weaponId ?? context.weaponId ?? context.itemId ?? weapon?.id ?? '').trim(),
     isCritical: damage.isCritical === true,
     critMultiplier: Number(damage.critMultiplier ?? context.critMultiplier ?? 2) || 2,
-    label: String(damage.label ?? 'Damage').trim() || 'Damage'
+    workflowContextEncoded,
+    ...buttonContext,
+    label: packet.multiplier === 0.5 ? 'Half Damage' : (String(damage.label ?? 'Damage').trim() || 'Damage'),
+    applyLabel: packet.multiplier === 0.5 ? `Apply Half Damage (${packet.amount})` : `Apply Damage (${packet.amount})`
   };
 }
 
@@ -177,13 +259,74 @@ function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = fal
   const weaponId = context.weaponId ?? context.itemId ?? weapon?.id ?? '';
   if (!weaponId || context.disableDamageAction === true) return null;
   const critMultiplier = Number(context.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2;
+  const workflowContext = context.workflowContext ?? context.combatContext ?? null;
+  const workflowSummary = swseChatWorkflowSummary(context, weapon, actor, {
+    isCritical: context.isCritical === true || isCritical === true,
+    critMultiplier,
+    hit: context.success ?? context.passed ?? null
+  });
+  if (!shouldOfferDamageRoll(workflowSummary, { defaultAllow: true })) return null;
+  const buttonContext = swseChatDamageButtonContext(workflowSummary, { ...context, isCritical: context.isCritical === true || isCritical === true }, weapon);
   return {
     actorId: context.actorId ?? context.attackerId ?? actor?.id ?? '',
     weaponId,
-    isCritical: context.isCritical === true || isCritical === true,
-    critMultiplier,
+    targetId: context.targetId ?? context.target?.id ?? workflowSummary.targetId ?? '',
+    ...buttonContext,
     twoHanded: context.twoHanded === true,
+    workflowContextEncoded: encodeCombatWorkflowContext(workflowSummary || workflowContext, {
+      actor,
+      weapon,
+      target: context.target ?? null,
+      targetId: context.targetId ?? context.target?.id ?? null,
+      targetName: context.targetName ?? context.target?.name ?? null,
+      isCritical: context.isCritical === true || isCritical === true,
+      critMultiplier,
+      hit: context.success ?? context.passed ?? null
+    }),
     label: context.damageActionLabel ?? `Roll Damage${(context.isCritical === true || isCritical === true) ? ` ×${critMultiplier}` : ''}`
+  };
+}
+
+function swseChatBuildDamageApplyAction(context = {}, actor = null, weapon = null, roll = null) {
+  if (context.showApplyDamageAction === false || context.disableApplyDamageAction === true) return null;
+  const total = Number(context.damageTotal ?? roll?.total);
+  if (!Number.isFinite(total)) return null;
+  const workflowSummary = swseChatWorkflowSummary(context, weapon, actor, {
+    isCritical: context.isCritical === true,
+    critMultiplier: context.critMultiplier,
+    damageType: context.damageType
+  });
+  const packet = buildDamagePacket({
+    attacker: actor,
+    target: context.target ?? null,
+    weapon,
+    amount: total,
+    roll,
+    workflowContext: workflowSummary,
+    options: context
+  });
+  if (packet.disposition?.damageAllowed === false || packet.amount <= 0) return null;
+  const buttonContext = swseChatDamageButtonContext(packet.workflowContext ?? workflowSummary, context, weapon);
+  return {
+    amount: packet.amount,
+    rawAmount: packet.rawAmount,
+    multiplier: packet.multiplier,
+    damageType: packet.type,
+    actorId: packet.sourceActorId ?? actor?.id ?? context.actorId ?? context.attackerId ?? '',
+    targetId: packet.targetActorId ?? context.targetId ?? context.target?.id ?? '',
+    weaponId: packet.weaponId ?? context.weaponId ?? context.itemId ?? weapon?.id ?? '',
+    workflowContextEncoded: encodeCombatWorkflowContext(packet.workflowContext ?? workflowSummary, {
+      actor,
+      weapon,
+      target: context.target ?? null,
+      targetId: packet.targetActorId ?? null,
+      targetName: packet.targetActorName ?? '',
+      damageType: packet.type,
+      isCritical: context.isCritical === true,
+      critMultiplier: context.critMultiplier
+    }),
+    ...buttonContext,
+    label: packet.multiplier === 0.5 ? `Apply Half Damage (${packet.amount})` : `Apply Damage (${packet.amount})`
   };
 }
 /**
@@ -248,8 +391,9 @@ export class SWSERollEngine {
     const forceTierGauge = category === 'force' ? swseChatBuildForceTierGauge(roll.total, safeContext) : [];
     const reactionContext = swseChatBuildReactionContext(actor, safeContext);
     const eventContext = swseChatBuildEventContext(safeContext, category, reactionContext);
-    const attackDamage = category === 'attack' ? swseChatBuildAttackDamage(safeContext) : null;
+    const attackDamage = category === 'attack' ? swseChatBuildAttackDamage(safeContext, actor, weapon) : null;
     const damageAction = category === 'attack' && !attackDamage ? swseChatBuildDamageAction(safeContext, weapon, isCritical, actor) : null;
+    const damageApplyAction = category === 'damage' ? swseChatBuildDamageApplyAction(safeContext, actor, weapon, roll) : null;
 
     return {
       chatSvg: buildChatSvgContext(),
@@ -296,7 +440,8 @@ export class SWSERollEngine {
       reactionContext,
       eventContext,
       attackDamage,
-      damageAction
+      damageAction,
+      damageApplyAction
     };
   }
 

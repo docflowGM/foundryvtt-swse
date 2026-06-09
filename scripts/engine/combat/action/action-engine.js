@@ -12,10 +12,10 @@
  * legacy consumers.
  *
  * RULES (SWSE Core Rules):
- * - One standard action + one move action per turn (equivalent to Full Round)
- * - Can degrade: Standard → Move → Swift (DOWNWARD ONLY, no upward conversion)
+ * - Full-Round consumes Standard + Move + Swift
+ * - Can substitute downward: Standard may become Move/Swift; Move may become Swift
  * - Swift actions can be taken repeatedly (up to 1 per turn typically)
- * - No upward conversion: Can't assemble Full from partial actions
+ * - No upward conversion: Move/Swift cannot become Standard
  * - No carry-over: Unused actions are lost
  */
 
@@ -81,7 +81,7 @@ function _v2ToLegacy(v2State, actorId = 'unknown', maxSwift = 1) {
 export class ActionEngine {
   /**
    * Initialize turn for an actor.
-   * Resets action economy to fresh state (one standard + one move).
+   * Resets action economy to fresh state (one standard + one move + one swift).
    *
    * @param {Actor} actor - Foundry actor object
    * @returns {TurnState} Fresh turn state
@@ -107,9 +107,9 @@ export class ActionEngine {
    * Check if requested action can be consumed from turn state.
    *
    * DEGRADATION RULES (SWSE Core):
-   * - Standard action: Can degrade to Move → Swift (downward only)
-   * - Move action: Can degrade to Swift (downward only)
-   * - Swift action: Cannot degrade (terminal action)
+   * - Standard action cannot be paid by Move or Swift.
+   * - Move action can be paid by Move or by sacrificing Standard.
+   * - Swift action can be paid by Swift, then by sacrificing Move or Standard.
    *
    * @param {TurnState} turnState - Current turn state
    * @param {ActionCost} requestedCost - Cost of requested action
@@ -127,11 +127,13 @@ export class ActionEngine {
     const v2State = _legacyToV2(turnState, turnState.maxSwiftActions);
 
     // Convert cost format
-    const v2Cost = {
-      standard: requestedCost.standard || 0,
-      move: requestedCost.move || 0,
-      swift: requestedCost.swift || 0
-    };
+    const v2Cost = requestedCost.fullRound
+      ? { fullRound: true, standard: 1, move: 1, swift: 1 }
+      : {
+          standard: requestedCost.standard || 0,
+          move: requestedCost.move || 0,
+          swift: requestedCost.swift || 0
+        };
 
     // Use V2 preview to check if this is allowed
     const previewResult = ActionEngineV2.previewConsume(v2State, v2Cost);
@@ -181,13 +183,7 @@ export class ActionEngine {
     if (cost) {
       v2Cost = cost;
     } else {
-      const costMap = {
-        standard: { standard: 1, move: 0, swift: 0 },
-        move: { standard: 0, move: 1, swift: 0 },
-        swift: { standard: 0, move: 0, swift: 1 },
-        full: { fullRound: true, standard: 0, move: 0, swift: 0 }
-      };
-      v2Cost = costMap[actionType] || costMap.standard;
+      v2Cost = ActionEngineV2.costForActionType(actionType);
     }
 
     // Consume using V2 engine

@@ -3,6 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
+import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 // CombatRollConfigDialog (Tactical Targeting Console) intentionally removed — deprecated, orphaned, pending deletion.
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
@@ -111,6 +112,7 @@ import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-
 import { EntityCreateBrowser } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/entity-create-browser.js";
 import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
 import { FullAttackExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js";
+import { CombatWorkflowRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
 import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
@@ -2920,6 +2922,8 @@ const forcePoints = [];
       const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
 
       const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+      actionEconomyTurnState = turnState;
+      actionEconomyEngine = ActionEngine;
       const state = ActionEngine.getVisualState(turnState);
       const breakdown = ActionEngine.getTooltipBreakdown(turnState);
       const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
@@ -2960,11 +2964,41 @@ const forcePoints = [];
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'combat-action';
     const normalizeActionEconomy = (value) => this._normalizeActionEconomyType(value || 'standard');
+    const economyViolationLabel = (code) => ({
+      FULL_ROUND_NOT_AVAILABLE: 'Full-round unavailable',
+      FULL_ROUND_ALREADY_USED: 'Full-round already used',
+      INSUFFICIENT_STANDARD: 'No standard action',
+      INSUFFICIENT_MOVE: 'No move action',
+      INSUFFICIENT_SWIFT: 'No swift action',
+      INSUFFICIENT_REACTION: 'No reaction available'
+    }[code] ?? String(code || 'Unavailable'));
+    const previewActionEconomy = (actionType, row = {}) => {
+      const normalized = normalizeActionEconomy(actionType);
+      if (!actionEconomyTurnState || row.spendAction === false || ['free', 'passive'].includes(normalized)) {
+        return { available: true, label: row.spendAction === false ? 'No action spent' : 'Available' };
+      }
+      if (normalized === 'reaction') {
+        const current = Number(actionEconomyTurnState.reactions?.current ?? 1) || 0;
+        return current > 0
+          ? { available: true, label: 'Available' }
+          : { available: false, label: 'No reaction available', violations: ['INSUFFICIENT_REACTION'] };
+      }
+      const cost = actionEconomyEngine?.costForActionType?.(normalized) ?? this._actionEconomyCostForType?.(normalized, actionEconomyEngine) ?? {};
+      const preview = actionEconomyEngine?.previewConsume?.(actionEconomyTurnState, cost) ?? { allowed: true, violations: [] };
+      return {
+        available: preview.allowed !== false,
+        label: preview.allowed === false ? economyViolationLabel(preview.violations?.[0]) : 'Available',
+        violations: preview.violations ?? [],
+        preview
+      };
+    };
     const registerAction = (grouped, action) => {
       const key = action.key || action.id || slugAction(action.name);
       const actionType = normalizeActionEconomy(action.actionType || action.type || action.action?.type || action.costType || 'standard');
       const relatedSkills = action.relatedSkills || action.system?.relatedSkills || [];
       const manualResolution = action.manualResolution === true || action.resolutionMode === 'manual' || action.resolutionMode === 'reference';
+      const economyPreview = previewActionEconomy(actionType, action);
+      const strictEconomy = actionEconomy?.enforcementMode === 'strict';
       const row = {
         key,
         id: key,
@@ -2975,14 +3009,22 @@ const forcePoints = [];
         actionType,
         type: actionType,
         cost: action.cost ?? action.actionCost ?? action.action?.cost ?? 1,
+        actionCost: action.actionCost ?? action.system?.actionCost ?? null,
         notes: action.notes || action.description || action.system?.notes || action.system?.description || '',
         description: action.description || action.notes || action.system?.description || action.system?.notes || '',
         relatedSkills,
         hasRelatedSkills: Array.isArray(relatedSkills) ? relatedSkills.length > 0 : !!relatedSkills,
         resources: action.resources || [],
+        contextTags: action.contextTags || action.tags || [],
+        automationBoundary: action.automationBoundary || action.boundary || null,
+        gmManaged: action.gmManaged === true,
         itemId: action.itemId || action.sourceItemId || '',
         executable: action.executable !== false,
         useLabel: action.useLabel || (manualResolution ? 'Use / Note' : 'Use'),
+        economyAvailable: economyPreview.available,
+        availabilityLabel: economyPreview.label,
+        economyViolations: economyPreview.violations ?? [],
+        disabled: action.executable !== false && action.spendAction !== false && strictEconomy && economyPreview.available === false,
         manualResolution,
         resolutionMode: action.resolutionMode || (manualResolution ? 'manual' : 'auto'),
         spendAction: action.spendAction !== false,
@@ -3075,12 +3117,15 @@ const forcePoints = [];
         const items = grouped[eco] || [];
         if (!items.length) continue;
         items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const availableCount = items.filter(item => item.economyAvailable !== false).length;
         combatActions.groups.push({
           key: eco,
           id: eco,
           economy: eco,
           label: economyLabel(eco),
           count: items.length,
+          availableCount,
+          availabilityLabel: actionEconomy ? `${availableCount}/${items.length} available` : 'Not tracking',
           actions: items,
           items,
           subgroups: [{
@@ -7030,7 +7075,219 @@ const forcePoints = [];
     };
   }
 
+  _createCombatWorkflowHandlers(options = {}) {
+    const routeLegacy = async (context) => this._runCanonicalCombatAction(context?.action?.id ?? context?.actionId, context?.action ?? {}, {
+      ...options,
+      __combatWorkflowRouted: true,
+      combatContext: context,
+      actionRecord: context?.action ?? null
+    });
+
+    return {
+      fullAttack: async (context) => this._executeFullAttackCombatWorkflow(context, options),
+      manual: async (context) => this._executeManualCombatWorkflow(context, options),
+      reference: async (context) => this._executeManualCombatWorkflow(context, options),
+      skillAction: async (context) => this._executeSkillActionCombatWorkflow(context, options),
+      attack: routeLegacy,
+      combatState: routeLegacy,
+      secondWind: routeLegacy,
+      grapple: routeLegacy,
+      aidAnother: routeLegacy,
+      ammoReload: async (context) => this._executeReloadCombatWorkflow(context, options),
+      actorItem: routeLegacy,
+      reaction: routeLegacy,
+      legacy: routeLegacy
+    };
+  }
+
+  async _executeFullAttackCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'full-attack';
+    const pkgFromId = {
+      'double-attack':       FULL_ATTACK_PACKAGES.DOUBLE_ATTACK,
+      'triple-attack':       FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
+      'two-weapon-fighting': FULL_ATTACK_PACKAGES.TWO_WEAPON,
+      'double-weapon-attack':FULL_ATTACK_PACKAGES.DOUBLE_WEAPON,
+    };
+    const requestedPackage =
+      actionData?.ruleData?.requestedPackage ??
+      pkgFromId[actionId] ??
+      FULL_ATTACK_PACKAGES.NORMAL;
+    const actionCostOverride = actionData?.cost ?? actionData?.actionCost ?? null;
+    return await FullAttackExecutor.execute(this.actor, {
+      requestedPackage,
+      actionCostOverride,
+      actionId,
+      actionName: actionData?.name ?? actionId,
+      actionData,
+      combatContext: context,
+      source: options?.source ?? context?.source?.invocation ?? "full-attack",
+      sourceElement: options?.sourceElement ?? context?.source?.element ?? null,
+      sheet: this
+    });
+  }
+
+  async _executeManualCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'manual-combat-action';
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? context?.source?.invocation ?? "ability-combat-action",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? null,
+        sourceType: actionData?.sourceType ?? null,
+        combatContext: context
+      });
+      if (!allowed) return null;
+    }
+
+    return await this._announceManualCombatAction(actionId, actionData, {
+      ...options,
+      combatContext: context,
+      actionType
+    });
+  }
+
+
+  async _executeReloadCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'reload';
+
+    if (!AmmoSystem.isTrackingEnabled()) {
+      ui?.notifications?.info?.('Ammunition tracking is disabled; reload does not need to be resolved.');
+      return { skipped: true, reason: 'ammo-tracking-disabled', actionId };
+    }
+
+    const weaponId = actionData?.weaponId ?? actionData?.itemId ?? context?.weaponId ?? null;
+    let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
+    if (!weapon) {
+      weapon = this.actor.items.find(i =>
+        ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped && AmmoSystem.weaponUsesAmmunition(i)
+      ) ?? null;
+    }
+
+    if (!weapon) {
+      ui?.notifications?.warn?.('No reloadable equipped weapon found.');
+      return null;
+    }
+
+    if (!AmmoSystem.weaponUsesAmmunition(weapon)) {
+      ui?.notifications?.warn?.(`${weapon.name} does not use tracked ammunition.`);
+      return null;
+    }
+
+    const currentAmmo = Number(weapon.system?.ammunition?.current ?? 0) || 0;
+    const maxAmmo = Number(weapon.system?.ammunition?.max ?? 0) || 0;
+    if (maxAmmo <= 0 || currentAmmo >= maxAmmo) {
+      ui?.notifications?.info?.(`${weapon.name} is already fully loaded.`);
+      return { skipped: true, reason: 'already-full', weaponId: weapon.id };
+    }
+
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    const allowed = await this._applyActionEconomy(actionType, {
+      source: options?.source ?? context?.source?.invocation ?? 'reload',
+      actionId,
+      actionName: actionData?.name ?? 'Reload',
+      combatContext: context
+    });
+    if (!allowed) return null;
+
+    const result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+    if (result?.success === false) {
+      ui?.notifications?.error?.(result.message || 'Reload failed.');
+      return null;
+    }
+
+    ui?.notifications?.info?.(result.message || `${weapon.name} reloaded.`);
+    try {
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<section class="swse-chat-card"><header><strong>${this.actor.name} reloads ${weapon.name}</strong></header><p>${result.message ?? 'Weapon reloaded.'}</p></section>`,
+        flags: { swse: { combatAction: 'reload', weaponId: weapon.id, workflowContext: context } }
+      });
+    } catch (err) {
+      console.warn('[SWSE] Failed to post reload chat card:', err);
+    }
+    return result;
+  }
+
+  async _executeSkillActionCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'skill-combat-action';
+    const skillKey = this._resolveCombatActionSkillKey(actionData);
+    if (!skillKey) {
+      return await this._runCanonicalCombatAction(actionId, actionData, {
+        ...options,
+        __combatWorkflowRouted: true,
+        combatContext: context,
+        actionRecord: actionData
+      });
+    }
+
+    const modResult = await showRollModifiersDialog({
+      title: `${actionData?.name ?? actionId} — ${this._labelSkillKey(skillKey)}`,
+      rollType: skillKey === 'useTheForce' ? 'force' : 'skill',
+      actor: this.actor,
+      skillKey,
+      sourceElement: options?.sourceElement ?? context?.source?.element ?? null,
+      sheet: this,
+      showCover: false,
+      showConcealment: false
+    });
+    if (modResult === null) return null;
+
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    const allowed = await this._applyActionEconomy(actionType, {
+      source: options?.source ?? context?.source?.invocation ?? "combat-action",
+      actionId,
+      actionName: actionData?.name ?? actionId,
+      skillKey,
+      combatContext: context
+    });
+    if (!allowed) return null;
+
+    const dc = this._extractCombatActionDc(actionData);
+    return await rollSkillCheck(this.actor, skillKey, {
+      ...modResult,
+      dc,
+      actionId,
+      actionData,
+      combatContext: context,
+      source: options?.source ?? context?.source?.invocation ?? "combat-action",
+      sourceElement: options?.sourceElement ?? context?.source?.element ?? null,
+      companionSource: options?.sourceElement ?? context?.source?.element ?? null,
+      sheet: this,
+      showRollCompanion: true
+    });
+  }
+
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
+    // Phase 1B: route combat actions through the thin workflow registry first.
+    // The registry owns normalization/context preservation, while this sheet
+    // method remains the legacy execution adapter for existing authorities.
+    if (options?.__combatWorkflowRouted !== true) {
+      const registry = CombatWorkflowRegistry.getDefault();
+      const result = await registry.execute({
+        actor: this.actor,
+        actionId,
+        actionData,
+        options,
+        sheet: this,
+        handlers: this._createCombatWorkflowHandlers(options)
+      });
+      if (result?.cancelled === true) return null;
+      return result?.payload ?? result;
+    }
+
+    if (options?.combatContext) {
+      actionData = {
+        ...actionData,
+        workflowContext: options.combatContext
+      };
+    }
+
     // --- Manual/reference ability action cards ---
     // Multi-action feats/talents often unlock named actions whose real effect
     // still needs table or future engine resolution. Surface and track the
@@ -7056,7 +7313,9 @@ const forcePoints = [];
         actionData,
         source: options?.source ?? "full-attack",
         sourceElement: options?.sourceElement ?? null,
-        sheet: this
+        sheet: this,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
+        actionRecord: options?.actionRecord ?? actionData ?? null
       });
     }
 
@@ -7111,22 +7370,40 @@ const forcePoints = [];
       });
       if (modResult === null) return null; // Cancelled — economy untouched
 
-      // 3. Now spend the economy
+      // 3. Preflight ammunition before action economy is spent. The roll path
+      // performs the actual spend/rollback through AmmoSystem.
+      const workflowForAmmo = options?.combatContext ?? actionData?.workflowContext ?? null;
+      const ammoCost = AmmoSystem.resolveAmmoCost({
+        weapon,
+        workflowContext: workflowForAmmo,
+        options: { ...modResult, actionData, actionId }
+      });
+      const ammoCheck = AmmoSystem.preflightAmmunition(this.actor, weapon, ammoCost, { ...modResult, actionData, actionId });
+      if (ammoCheck?.ok === false) {
+        ui?.notifications?.error?.(ammoCheck.message || `${weapon.name} does not have enough ammunition.`);
+        return null;
+      }
+
+      // 4. Now spend the economy
       const attackEconomyType = this._deriveCombatActionEconomyType(actionData);
       const allowed = await this._applyActionEconomy(attackEconomyType, {
         source: options?.source ?? "combat-action",
         actionId,
-        actionName: actionData?.name ?? actionId
+        actionName: actionData?.name ?? actionId,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
       });
       if (!allowed) return null;
 
-      // 4. Roll
+      // 5. Roll
       return await SWSERoll.rollAttack(this.actor, weapon, {
         ...modResult,
         source: options?.source ?? "combat-action",
         sourceElement: options?.sourceElement ?? null,
         sheet: this,
-        showRollCompanion: true
+        showRollCompanion: true,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
+        actionData,
+        actionId
       });
     }
 
@@ -7153,7 +7430,8 @@ const forcePoints = [];
         source: options?.source ?? "combat-action",
         actionId,
         actionName: actionData?.name ?? actionId,
-        skillKey
+        skillKey,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
       });
       if (!allowed) return null;
 
@@ -7177,7 +7455,8 @@ const forcePoints = [];
     const allowed = await this._applyActionEconomy(actionType, {
       source: options?.source ?? "combat-action",
       actionId,
-      actionName: actionData?.name ?? actionId
+      actionName: actionData?.name ?? actionId,
+      combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
     });
     if (!allowed) return null;
 
@@ -7185,7 +7464,9 @@ const forcePoints = [];
       actor: this.actor,
       actionId,
       ...actionData,
-      ...options
+      ...options,
+      combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
+      actionRecord: options?.actionRecord ?? actionData ?? null
     };
 
     try {
@@ -7444,6 +7725,20 @@ const forcePoints = [];
     return raw;
   }
 
+  _labelActionEconomyType(value) {
+    const normalized = this._normalizeActionEconomyType(value);
+    const labels = {
+      'full-round': 'Full-Round',
+      standard: 'Standard',
+      move: 'Move',
+      swift: 'Swift',
+      reaction: 'Reaction',
+      free: 'Free',
+      passive: 'Passive'
+    };
+    return labels[normalized] ?? String(value ?? 'Action');
+  }
+
   _deriveCombatActionEconomyType(actionData = {}) {
     return this._normalizeActionEconomyType(
       actionData?.cost ??
@@ -7452,6 +7747,70 @@ const forcePoints = [];
       actionData?.actionType ??
       "standard"
     );
+  }
+
+  _actionEconomyCostForType(actionType, Engine = null) {
+    const normalized = this._normalizeActionEconomyType(actionType);
+    if (Engine?.costForActionType) return Engine.costForActionType(normalized);
+    if (normalized === 'full-round') return { fullRound: true, standard: 1, move: 1, swift: 1 };
+    if (normalized === 'move') return { move: 1 };
+    if (normalized === 'swift') return { swift: 1 };
+    if (normalized === 'free' || normalized === 'reaction' || normalized === 'passive') return {};
+    return { standard: 1 };
+  }
+
+  _isActionEconomyPermitted(policyResult, engineResult) {
+    if (!policyResult) return engineResult?.allowed !== false;
+    if (policyResult === false) return false;
+    if (policyResult?.permitted === false) return false;
+    return true;
+  }
+
+  _notifyActionEconomyPolicy(policyResult, engineResult, actionType) {
+    const tooltip = policyResult?.uiState?.tooltip
+      ?? policyResult?.uiState?.message
+      ?? policyResult?.reason
+      ?? (Array.isArray(engineResult?.violations) && engineResult.violations.length ? engineResult.violations.join(', ') : null);
+    if (!tooltip) return;
+
+    const mode = policyResult?.mode ?? game?.settings?.get?.('foundryvtt-swse', 'actionEconomyMode') ?? 'loose';
+    if (policyResult?.permitted === false || mode === 'strict') {
+      ui?.notifications?.warn?.(tooltip);
+    } else if (engineResult?.allowed === false) {
+      ui?.notifications?.info?.(`${this._labelActionEconomyType(actionType)} economy warning: ${tooltip}`);
+    }
+  }
+
+  async _applyActionEconomyPolicy({ Policy, actor, result, actionType, metadata = {} } = {}) {
+    if (!Policy || !result) return result?.allowed !== false ? { permitted: true } : { permitted: false };
+
+    const actionName = metadata?.actionName ?? metadata?.sourceName ?? metadata?.source ?? actionType ?? 'action';
+
+    try {
+      // Phase 1D: canonical controller signature. The newer controller
+      // exposes MODE on the class and accepts a single options object.
+      if (Policy.MODE) {
+        return Policy.handle({
+          actor,
+          result,
+          actionName,
+          context: metadata,
+          gmOverride: metadata?.gmOverride === true
+        });
+      }
+
+      // Legacy controller signature.
+      return Policy.handle(result, {
+        actor,
+        actionType,
+        actionName,
+        metadata,
+        gmOverride: metadata?.gmOverride === true
+      });
+    } catch (err) {
+      console.warn('[SWSEV2CharacterSheet] Action policy check failed, continuing cautiously:', err);
+      return result?.allowed !== false ? { permitted: true } : { permitted: false, reason: err?.message ?? 'Action policy failed' };
+    }
   }
 
   async _applyActionEconomy(actionType, metadata = {}) {
@@ -7463,67 +7822,83 @@ const forcePoints = [];
     const { Persistence, Engine, Policy } = await this._resolveActionEconomyModules();
     if (!Persistence || !Engine) return true;
 
+    const normalizedType = this._normalizeActionEconomyType(actionType);
+    if (normalizedType === 'free' || normalizedType === 'passive') return true;
+
     const combatId = game.combat.id;
-    let turnState = Persistence.getTurnState?.(this.actor, combatId) ?? {};
+    const turnState = Persistence.getTurnState?.(this.actor, combatId) ?? Persistence.startTurn?.(this.actor) ?? {};
 
-    const payload = {
-      actor: this.actor,
-      combatId,
-      actionType,
-      turnState,
-      metadata
-    };
+    // Reactions are tracked separately from Standard/Move/Swift because SWSE
+    // reaction windows are not paid by degrading turn actions.
+    if (normalizedType === 'reaction') {
+      const current = Number(turnState?.reactions?.current ?? Persistence.getReactionMax?.(this.actor) ?? 1) || 0;
+      const reactionResult = current > 0
+        ? { allowed: true, turnState, consumed: { reaction: 1 }, violations: [] }
+        : { allowed: false, turnState, consumed: { reaction: 0 }, violations: ['INSUFFICIENT_REACTION'] };
+      const policyResult = await this._applyActionEconomyPolicy({
+        Policy,
+        actor: this.actor,
+        result: reactionResult,
+        actionType: normalizedType,
+        metadata
+      });
+      this._notifyActionEconomyPolicy(policyResult, reactionResult, normalizedType);
+      if (!this._isActionEconomyPermitted(policyResult, reactionResult)) return false;
 
-    try {
-      if (Policy?.wouldPermit && !Policy.wouldPermit(payload)) {
-        Policy.handle?.(payload);
-        return false;
+      if (reactionResult.allowed && typeof Persistence.spendReaction === 'function') {
+        await Persistence.spendReaction(this.actor, combatId, { ...metadata, actionType: normalizedType });
+        await this.requestSurfaceRender({ reason: 'action-economy-persist' });
       }
-
-      const policyResult = await Policy?.handle?.(payload);
-      if (policyResult === false || policyResult?.permitted === false) {
-        return false;
-      }
-    } catch (err) {
-      console.warn("[PHASE F] Action policy check failed, continuing cautiously:", err);
-    }
-
-    const costForType = (type) => {
-      const normalized = this._normalizeActionEconomyType(type);
-      if (normalized === 'full-round') return { fullRound: true };
-      if (normalized === 'move') return { move: 1 };
-      if (normalized === 'swift') return { swift: 1 };
-      if (normalized === 'free' || normalized === 'reaction' || normalized === 'passive') return {};
-      return { standard: 1 };
-    };
-
-    let nextState = null;
-    if (typeof Engine.consumeAction === "function") {
-      const result = await Engine.consumeAction(turnState, { actionType, metadata, cost: costForType(actionType) });
-      if (result === false || result?.allowed === false || result?.permitted === false) return false;
-      nextState = result?.turnState ?? result?.updatedTurnState ?? result;
-    } else if (typeof Engine.consume === "function") {
-      const result = Engine.consume(turnState, costForType(actionType));
-      if (result === false || result?.allowed === false || result?.permitted === false) {
-        ui?.notifications?.warn?.('That action is not available this turn.');
-        return false;
-      }
-      nextState = result?.turnState ?? result;
-    } else {
       return true;
     }
 
-    try {
-      if (typeof Persistence.setTurnState === "function") {
-        await Persistence.setTurnState(this.actor, combatId, nextState);
-      } else if (typeof Persistence.saveTurnState === "function") {
-        await Persistence.saveTurnState(this.actor, combatId, nextState);
-      } else if (typeof Persistence.updateTurnState === "function") {
-        await Persistence.updateTurnState(this.actor, combatId, nextState);
+    const cost = this._actionEconomyCostForType(normalizedType, Engine);
+    const result = typeof Engine.consume === 'function'
+      ? Engine.consume(turnState, cost)
+      : await Engine.consumeAction?.(turnState, { actionType: normalizedType, metadata, cost });
+
+    if (result === false) return false;
+    const engineResult = result?.allowed === undefined && result?.updatedTurnState
+      ? {
+          allowed: result.allowed !== false,
+          turnState: result.updatedTurnState,
+          violations: result.reason ? [result.reason] : [],
+          consumed: result.consumedCost ?? cost
+        }
+      : result;
+
+    const policyResult = await this._applyActionEconomyPolicy({
+      Policy,
+      actor: this.actor,
+      result: engineResult,
+      actionType: normalizedType,
+      metadata
+    });
+    this._notifyActionEconomyPolicy(policyResult, engineResult, normalizedType);
+    if (!this._isActionEconomyPermitted(policyResult, engineResult)) return false;
+
+    // In loose/none enforcement modes an over-spend can be permitted for table
+    // flow, but it must not corrupt the tracked turn state. Only commit legal
+    // consumption results.
+    if (engineResult?.allowed !== false) {
+      try {
+        if (typeof Persistence.commitConsumption === 'function') {
+          await Persistence.commitConsumption(this.actor, combatId, engineResult, {
+            ...metadata,
+            actionType: normalizedType,
+            cost
+          });
+        } else if (typeof Persistence.setTurnState === 'function') {
+          await Persistence.setTurnState(this.actor, combatId, engineResult.turnState ?? engineResult);
+        } else if (typeof Persistence.saveTurnState === 'function') {
+          await Persistence.saveTurnState(this.actor, combatId, engineResult.turnState ?? engineResult);
+        } else if (typeof Persistence.updateTurnState === 'function') {
+          await Persistence.updateTurnState(this.actor, combatId, engineResult.turnState ?? engineResult);
+        }
+        await this.requestSurfaceRender({ reason: 'action-economy-persist' });
+      } catch (err) {
+        console.warn('[SWSEV2CharacterSheet] Failed to persist action economy state:', err);
       }
-      await this.requestSurfaceRender({ reason: 'action-economy-persist' });
-    } catch (err) {
-      console.warn("[PHASE F] Failed to persist action economy state:", err);
     }
 
     return true;

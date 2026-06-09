@@ -1,0 +1,74 @@
+[
+  {
+    "id": "attack-result-wrapper-shape-mismatch",
+    "summary": "SWSERoll.rollAttack() treats canonicalRollAttack() return value partly like a Roll, but canonicalRollAttack() returns an attack result object with a nested Roll.",
+    "evidence": [
+      "enhanced-rolls.js imports canonicalRollAttack from combat/rolls/attacks.js",
+      "enhanced-rolls.js assigns const roll = await canonicalRollAttack(...) then reads roll.swseAttackContext and roll.dice",
+      "attacks.js rollAttack() returns attackResult { roll, total, atkBonus, isHit, isCritical, d20, ... }"
+    ],
+    "lostContext": ["d20 in wrapper", "targetReflex in wrapper", "isHit in wrapper", "crit/context history fields"],
+    "affectedSystems": ["attack history", "chat companion", "reroll outcome", "downstream event context"],
+    "severity": "critical",
+    "fixNow": false
+  },
+  {
+    "id": "chat-damage-button-thin-context",
+    "summary": "Damage buttons preserve only actor/weapon/crit/two-handed style data, not the full attack context snapshot.",
+    "evidence": [
+      "holo-roll.hbs .swse-roll-damage dataset contains actorId, weaponId, isCritical, critMultiplier, twoHanded",
+      "chat-interaction-bridge.js handleLegacyDamageRollButton passes only isCritical, critMultiplier, twoHanded, target"
+    ],
+    "lostContext": ["burstFire", "autofire", "areaAttack", "hit/miss", "stun", "ion", "evasion", "rapidShot", "deadeye", "firingIntoMelee", "ammoCost", "damageParts"],
+    "affectedSystems": ["damage roller", "damage application", "special damage", "ammo", "feat/talent riders"],
+    "severity": "critical",
+    "fixNow": false
+  },
+  {
+    "id": "combat-action-mapper-field-loss",
+    "summary": "CombatActionsMapper._normalizeAction() drops fields needed by the routing contract.",
+    "evidence": [
+      "_normalizeAction() returns key, name, actionType, cost, notes, relatedSkills, dc, outcome, when",
+      "sheet registerAction() can use resolutionMode, manualResolution, executable, ruleData, requiredContext, spendAction if present, but mapper may not pass them through"
+    ],
+    "lostContext": ["resolutionMode", "manualResolution", "executable", "ruleData", "requiredContext", "targetHint", "spendAction", "resources"],
+    "affectedSystems": ["combat action routing", "full attack", "manual/reference actions", "compound actions", "legality display"],
+    "severity": "high",
+    "fixNow": false
+  },
+  {
+    "id": "direct-attack-not-action-aware",
+    "summary": "Direct weapon attack cards always spend Standard Action and do not know named attack/action context unless added by the dialog.",
+    "evidence": [
+      "[data-action=roll-attack] handler calls _runCanonicalAttack()",
+      "_runCanonicalAttack() always applies action economy standard"
+    ],
+    "lostContext": ["full-round attack packages", "autofire action identity", "burst action identity", "charge action identity", "maneuver action identity"],
+    "affectedSystems": ["action economy", "attack option resolver", "combat UI legality"],
+    "severity": "high",
+    "fixNow": false
+  },
+  {
+    "id": "apply-damage-amount-only",
+    "summary": "Apply Damage only passes a number and threshold flag, not a damage packet.",
+    "evidence": [
+      "handleApplyDamageButton() calls DamageSystem.applyToSelected(amount, { checkThreshold: true })"
+    ],
+    "lostContext": ["damage type", "original pre-half damage", "damage parts", "target eligibility", "area hit/miss", "stun/ion rules", "fire/acid recurring hazards"],
+    "affectedSystems": ["threshold", "condition track", "stun", "ion", "hazards", "Evasion"],
+    "severity": "high",
+    "fixNow": false
+  },
+  {
+    "id": "legacy-combat-engine-secondary-path",
+    "summary": "CombatEngine/CombatExecutor contain full orchestration methods, but active sheet attack path appears to bypass them for normal weapon attacks.",
+    "evidence": [
+      "character-sheet.js normal attacks route to SWSERoll.rollAttack()",
+      "CombatEngine.resolveAttack() and CombatExecutor.executeAttack() exist separately"
+    ],
+    "lostContext": ["single source of truth clarity"],
+    "affectedSystems": ["future architecture", "vehicle/combat split", "damage application"],
+    "severity": "medium",
+    "fixNow": false
+  }
+]

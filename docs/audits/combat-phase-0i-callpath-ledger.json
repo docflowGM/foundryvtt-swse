@@ -1,0 +1,166 @@
+[
+  {
+    "id": "concept-attack-card-path",
+    "label": "Concept/v2 attack card",
+    "entryPoint": "templates/actors/character/v2/partials/attacks-panel.hbs [data-action=roll-attack]",
+    "handler": "scripts/sheets/v2/character-sheet.js roll-attack listener",
+    "dialog": "showRollModifiersDialog({ rollType: attack })",
+    "economy": "_runCanonicalAttack() spends standard before SWSERoll.rollAttack()",
+    "rollPath": "SWSERoll.rollAttack() -> canonicalRollAttack() -> SWSEChat.postRoll()",
+    "mutatesState": ["actionEconomy", "possible fighting-defensively effect", "combatAim consumed if locked"],
+    "chat": "templates/chat/holo-roll.hbs",
+    "seams": [
+      "Always standard action regardless of named attack mode unless entered through combat action row",
+      "Does not inherently carry Autofire/Burst/Disarm/Charge context",
+      "Damage button loses most attack context"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "legacy-attack-btn-path",
+    "label": "Legacy/other attack button",
+    "entryPoint": ".attack-btn[data-item-id]",
+    "handler": "scripts/sheets/v2/character-sheet.js delegated .attack-btn listener",
+    "dialog": "showRollModifiersDialog({ rollType: attack })",
+    "economy": "_runCanonicalAttack() spends standard before SWSERoll.rollAttack()",
+    "rollPath": "SWSERoll.rollAttack() -> canonicalRollAttack() -> SWSEChat.postRoll()",
+    "mutatesState": ["actionEconomy", "possible fighting-defensively effect", "combatAim consumed if locked"],
+    "chat": "templates/chat/holo-roll.hbs",
+    "seams": [
+      "Duplicate attack entry path",
+      "Same context loss as concept attack cards"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "combat-action-row-path",
+    "label": "Combat action row/button",
+    "entryPoint": "templates/actors/character/v2/partials/combat-actions-panel.hbs [data-action=swse-v2-use-action]",
+    "handler": "_resolveSheetCombatActionData() -> _runCanonicalCombatAction()",
+    "dialog": "Conditional: attack preroller, skill preroller, Aid Another dialog, or no dialog for manual/reference",
+    "economy": "Depends on branch; attack/skill spend after confirmation, manual spends before chat, Aim spends swift",
+    "rollPath": "Branch-specific: FullAttackExecutor, AidAnother, Aim, SWSERoll.rollAttack, rollSkillCheck, CombatEngine.executeAction, actor.useAction",
+    "mutatesState": ["actionEconomy", "combatAim for Aim", "possible actor.useAction side effects"],
+    "chat": "SWSEChat.postRoll or manual ChatMessage.create",
+    "seams": [
+      "Mapper drops routing fields",
+      "Name/text guessing determines attack path",
+      "Reference actions can become fake executable buttons",
+      "Compound cost handling is weak"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "full-attack-path",
+    "label": "Full Attack branch",
+    "entryPoint": "combat action with resolutionMode=fullAttack",
+    "handler": "_runCanonicalCombatAction() fullAttack branch",
+    "dialog": "FullAttackExecutor-specific setup if implemented there",
+    "economy": "Delegated to FullAttackExecutor; actionCostOverride available",
+    "rollPath": "FullAttackExecutor.execute()",
+    "mutatesState": ["actionEconomy if executor spends", "chat/roll results"],
+    "chat": "Executor-dependent",
+    "seams": [
+      "Only works if source action data preserves resolutionMode",
+      "Needs verification for Double Attack, Triple Attack, Two-Weapon, Double Weapon"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "aid-another-path",
+    "label": "Aid Another",
+    "entryPoint": "combat action id aid-another",
+    "handler": "_runAidAnotherCombatAction()",
+    "dialog": "Aid Another dialog: attack vs Reflex 10 or skill vs DC 10",
+    "economy": "Spends standard after dialog confirmation",
+    "rollPath": "rollSkillCheck() or SWSERoll.rollAttack() with manual targetContext",
+    "mutatesState": ["actionEconomy"],
+    "chat": "roll chat card",
+    "seams": [
+      "Does not apply/persist +2 aid bonus",
+      "Ally target is note-only"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "aim-path",
+    "label": "Aim",
+    "entryPoint": "combat action id aim",
+    "handler": "_runAimCombatAction()",
+    "dialog": "No dialog; posts manual action status",
+    "economy": "Spends swift each time",
+    "rollPath": "Next canonical rollAttack reads combatAim flag and consumes it",
+    "mutatesState": ["actor flag foundryvtt-swse.combatAim", "actionEconomy"],
+    "chat": "manual ChatMessage.create",
+    "seams": [
+      "Preroller also exposes Aiming checkbox",
+      "Aim is not target-bound",
+      "Intervening action invalidation is not enforced"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "chat-damage-button-path",
+    "label": "Damage roll from attack chat",
+    "entryPoint": "templates/chat/holo-roll.hbs .swse-roll-damage",
+    "handler": "scripts/ui/chat/chat-interaction-bridge.js handleLegacyDamageRollButton()",
+    "dialog": "No damage dialog from chat button",
+    "economy": "No action economy spend",
+    "rollPath": "SWSERoll.rollDamage() -> combat/rolls/damage.js rollDamage() -> SWSEChat.postRoll()",
+    "mutatesState": ["none directly"],
+    "chat": "damage roll chat card",
+    "seams": [
+      "Only carries actor, weapon, crit, twoHanded, target",
+      "Loses Burst Fire, Autofire, areaAttack, hit/miss, Stun/Ion, Evasion, Deadeye/Rapid Shot context"
+    ],
+    "severity": "critical"
+  },
+  {
+    "id": "apply-damage-path",
+    "label": "Apply damage from chat",
+    "entryPoint": ".swse-apply-damage-btn",
+    "handler": "scripts/ui/chat/chat-interaction-bridge.js handleApplyDamageButton()",
+    "dialog": "None",
+    "economy": "No action economy spend",
+    "rollPath": "DamageSystem.applyToSelected(amount, { checkThreshold: true })",
+    "mutatesState": ["selected target HP/threshold effects via DamageSystem"],
+    "chat": "DamageSystem-dependent",
+    "seams": [
+      "Amount-only application lacks damage packet semantics",
+      "No preserved Stun/Ion original damage, area hit/miss, Evasion, or target-specific context"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "reaction-path",
+    "label": "Reaction buttons from attack chat",
+    "entryPoint": "templates/chat/holo-roll.hbs reaction strip",
+    "handler": "scripts/ui/chat/chat-interaction-bridge.js handleReactionButton()",
+    "dialog": "ReactionEngine-dependent",
+    "economy": "ReactionEngine/ActionEconomyPersistence path if configured",
+    "rollPath": "ReactionEngine.resolveReaction()",
+    "mutatesState": ["reaction economy", "event/chat state if reaction engine updates it"],
+    "chat": "ReactionEngine-dependent",
+    "seams": [
+      "Depends on complete attack context",
+      "Sonic/Deflect and mixed packet cases need damage packet context"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "action-economy-path",
+    "label": "Action economy persistence",
+    "entryPoint": "_applyActionEconomy(actionType, metadata)",
+    "handler": "ActionPolicyController + ActionEngine + ActionEconomyPersistence",
+    "dialog": "None",
+    "economy": "Consumes action/reaction and stores actor flag foundryvtt-swse.actionEconomy",
+    "rollPath": "n/a",
+    "mutatesState": ["actor flags"],
+    "chat": "none directly",
+    "seams": [
+      "Depends on normalized action type text",
+      "Prior 0H action substitution/full-round RAW concerns remain"
+    ],
+    "severity": "high"
+  }
+]

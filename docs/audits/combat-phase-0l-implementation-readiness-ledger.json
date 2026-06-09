@@ -1,0 +1,178 @@
+[
+  {
+    "id": "action-routing-contract",
+    "category": "foundation",
+    "summary": "Combat action cards need explicit routing fields rather than sheet-side guessing.",
+    "automationBoundary": "automate",
+    "readiness": "ready_to_implement",
+    "recommendedPhase": 1,
+    "dependsOn": [],
+    "affectedSystems": ["combat actions", "combat tab", "action economy", "attack routing"],
+    "riskIfSkipped": "Manual/reference actions will keep becoming fake executable buttons and real attack actions will lose context."
+  },
+  {
+    "id": "action-economy-raw-hardening",
+    "category": "foundation",
+    "summary": "The action economy engine should enforce RAW substitution direction and full-round action cost before combat states spend actions.",
+    "automationBoundary": "automate",
+    "readiness": "ready_to_implement",
+    "recommendedPhase": 1,
+    "dependsOn": ["action-routing-contract"],
+    "affectedSystems": ["ActionEngine", "combat status", "Second Wind", "Recover", "Fight Defensively"],
+    "riskIfSkipped": "States and actions may spend impossible combinations, including full-round actions leaving swift actions available."
+  },
+  {
+    "id": "attack-context-builder",
+    "category": "foundation",
+    "summary": "Build a canonical attack context so Aim, Charge, Disarm, Autofire, Burst Fire, firing into melee, and weapon modes reach the resolver consistently.",
+    "automationBoundary": "automate",
+    "readiness": "ready_to_implement",
+    "recommendedPhase": 2,
+    "dependsOn": ["action-routing-contract"],
+    "affectedSystems": ["roll configurator", "rollAttack", "CombatOptionResolver", "chat cards"],
+    "riskIfSkipped": "Feat/talent metadata will remain unable to wake up because context names and storage are inconsistent."
+  },
+  {
+    "id": "chat-context-preservation",
+    "category": "foundation",
+    "summary": "Attack chat cards and damage buttons must preserve enough context for crits, area attacks, Burst Fire, Evasion, Stun, Ion, Sonic, and damage riders.",
+    "automationBoundary": "automate",
+    "readiness": "ready_to_implement",
+    "recommendedPhase": 2,
+    "dependsOn": ["attack-context-builder"],
+    "affectedSystems": ["attack chat cards", "damage buttons", "damage roller"],
+    "riskIfSkipped": "Rolls may be correct but damage will be wrong or incomplete."
+  },
+  {
+    "id": "damage-packet-model",
+    "category": "foundation",
+    "summary": "Damage should be represented as typed packets instead of flat labels to support Stun, Ion, Sonic, Fire, Acid, Evasion, and mixed damage.",
+    "automationBoundary": "automate",
+    "readiness": "design_first_then_implement",
+    "recommendedPhase": 3,
+    "dependsOn": ["chat-context-preservation"],
+    "affectedSystems": ["damage roller", "threshold handling", "Block/Deflect", "Evasion", "hazards"],
+    "riskIfSkipped": "Special damage rules will become one-off hacks and regressions will be likely."
+  },
+  {
+    "id": "full-attack-gateway",
+    "category": "combat option",
+    "summary": "Full Attack, Double Attack, Triple Attack, and dual weapon fighting should route through the existing full attack executor.",
+    "automationBoundary": "automate",
+    "readiness": "ready_after_phase_1_2",
+    "recommendedPhase": 3,
+    "dependsOn": ["action-routing-contract", "attack-context-builder"],
+    "affectedSystems": ["full attack executor", "combat actions", "multiattack feats"],
+    "riskIfSkipped": "Dual weapon and multiattack support will remain present in code but unreliable from the player-facing sheet."
+  },
+  {
+    "id": "autofire-gm-assisted",
+    "category": "combat option",
+    "summary": "Autofire should automate attack penalty and ammo but leave area placement and affected targets to the GM.",
+    "automationBoundary": "assist",
+    "readiness": "ready_after_context_damage_packet",
+    "recommendedPhase": 4,
+    "dependsOn": ["attack-context-builder", "damage-packet-model"],
+    "affectedSystems": ["Autofire", "ammo", "Evasion", "damage"],
+    "riskIfSkipped": "Autofire may either over-automate map details or under-automate rules-critical hit/miss damage behavior."
+  },
+  {
+    "id": "burst-fire-single-target",
+    "category": "combat option",
+    "summary": "Burst Fire must be modeled as a standard-action single-target attack, not an area attack and never half damage on miss.",
+    "automationBoundary": "automate",
+    "readiness": "ready_after_context_damage_packet",
+    "recommendedPhase": 4,
+    "dependsOn": ["attack-context-builder", "damage-packet-model"],
+    "affectedSystems": ["Burst Fire", "ammo", "damage riders"],
+    "riskIfSkipped": "Burst Fire can incorrectly inherit Autofire area behavior or Evasion interactions."
+  },
+  {
+    "id": "ammo-ui-and-reload",
+    "category": "resource",
+    "summary": "When ammo tracking is enabled, show shot pills, reload buttons, and ammo gates. When disabled, remove all ammo UI clutter.",
+    "automationBoundary": "automate",
+    "readiness": "ready_after_action_economy",
+    "recommendedPhase": 4,
+    "dependsOn": ["action-economy-raw-hardening"],
+    "affectedSystems": ["AmmoSystem", "combat tab", "gear tab", "attack dialog"],
+    "riskIfSkipped": "Players can select Burst/Autofire with insufficient shots or see irrelevant ammo controls when the houserule disables ammo counting."
+  },
+  {
+    "id": "stun-ion-special-damage",
+    "category": "damage semantics",
+    "summary": "Stun and Ion need half-HP damage packets with original damage retained for Damage Threshold checks and target-type gated effects.",
+    "automationBoundary": "automate",
+    "readiness": "ready_after_damage_packet",
+    "recommendedPhase": 5,
+    "dependsOn": ["damage-packet-model"],
+    "affectedSystems": ["damage roller", "threshold", "condition track", "target category"],
+    "riskIfSkipped": "Stun and Ion will behave like normal damage and condition effects will be wrong."
+  },
+  {
+    "id": "sonic-deflect-mixed-damage",
+    "category": "damage semantics",
+    "summary": "Sonic counts as Energy but ranged Sonic cannot be deflected, and mixed Sonic bonus damage needs packet-level handling.",
+    "automationBoundary": "automate",
+    "readiness": "ready_after_damage_packet",
+    "recommendedPhase": 5,
+    "dependsOn": ["damage-packet-model"],
+    "affectedSystems": ["Block/Deflect", "damage types", "weapon templates"],
+    "riskIfSkipped": "Lightsaber Deflect may incorrectly block or fail to block Sonic damage packets."
+  },
+  {
+    "id": "fight-defensively-total-defense",
+    "category": "combat state",
+    "summary": "Fight Defensively and Total Defense need RAW action cost, attack restriction, and Acrobatics-trained +5/+10 Reflex handling.",
+    "automationBoundary": "automate",
+    "readiness": "ready_after_action_economy",
+    "recommendedPhase": 5,
+    "dependsOn": ["action-economy-raw-hardening"],
+    "affectedSystems": ["CombatStatusResolver", "defense calculator", "combat tab"],
+    "riskIfSkipped": "Defense bonuses will be wrong and may be free toggles rather than action-costed choices."
+  },
+  {
+    "id": "grapple-state-machine",
+    "category": "combat state",
+    "summary": "Grabbed, Grappled, and Pinned need a RAW-safe state machine that preserves Pin/Trip gating, meet-beats, escape rules, and correct defense effects.",
+    "automationBoundary": "assist",
+    "readiness": "needs_dedicated_phase",
+    "recommendedPhase": 6,
+    "dependsOn": ["action-routing-contract", "attack-context-builder"],
+    "affectedSystems": ["grappling-system", "combat actions", "Active Effects", "status UI"],
+    "riskIfSkipped": "Grapple will remain one of the highest combat fidelity risks."
+  },
+  {
+    "id": "aid-another-apply-button",
+    "category": "support action",
+    "summary": "Aid Another should roll the attempt and provide an apply +2 button or pending bonus rather than only a chat result.",
+    "automationBoundary": "assist",
+    "readiness": "ready_after_routing",
+    "recommendedPhase": 7,
+    "dependsOn": ["action-routing-contract"],
+    "affectedSystems": ["AidAnotherDialog", "chat cards", "temporary bonuses"],
+    "riskIfSkipped": "Aid Another will remain informative but not useful mechanically."
+  },
+  {
+    "id": "healing-repair-packets",
+    "category": "healing repair",
+    "summary": "Healing, Bonus HP, Treat Injury, natural healing, droid repair, vehicle repair, and biotech repair need separate operation packets.",
+    "automationBoundary": "assist",
+    "readiness": "design_first_then_implement",
+    "recommendedPhase": 8,
+    "dependsOn": ["action-routing-contract"],
+    "affectedSystems": ["Second Wind", "Treat Injury", "Mechanics", "gear", "HP mutation"],
+    "riskIfSkipped": "Organic healing, droid repair, gear use, and Bonus HP will remain inconsistent."
+  },
+  {
+    "id": "npc-follower-reuse",
+    "category": "compatibility",
+    "summary": "NPC and follower sheets should consume the same combat routing and packets instead of getting a parallel implementation.",
+    "automationBoundary": "automate",
+    "readiness": "after_player_path_stabilizes",
+    "recommendedPhase": 9,
+    "dependsOn": ["action-routing-contract", "attack-context-builder", "damage-packet-model"],
+    "affectedSystems": ["npc sheet", "follower sheet", "combat tab"],
+    "riskIfSkipped": "The fixed player combat path will diverge from NPC/follower combat again."
+  }
+]
