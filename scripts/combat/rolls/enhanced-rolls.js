@@ -382,7 +382,7 @@ export class SWSERoll {
         : await this.promptForcePointUse(actor, 'attack roll');
       context.fpBonus = fpBonus;
 
-      const roll = await canonicalRollAttack(actor, weapon, {
+      const attackResult = await canonicalRollAttack(actor, weapon, {
         ...options,
         ...modifiers,
         target: context.target,
@@ -394,28 +394,34 @@ export class SWSERoll {
         showRollCompanion: options?.showRollCompanion !== false
       });
 
-      if (!roll) return null;
+      if (!attackResult) return null;
 
-      const attackContext = roll.swseAttackContext ?? {};
+      const rolled = attackResult.roll ?? attackResult;
+      const attackContext = attackResult.swseAttackContext ?? rolled.swseAttackContext ?? attackResult ?? {};
+      const d20 = attackResult.d20 ?? rolled?.dice?.[0]?.results?.[0]?.result ?? null;
       const result = {
-        roll,
-        d20: roll?.dice?.[0]?.results?.[0]?.result ?? null,
-        total: roll.total,
-        attackBonus: attackContext.attackBonus ?? null,
+        roll: rolled,
+        d20,
+        total: attackResult.total ?? rolled.total,
+        attackBonus: attackContext.attackBonus ?? attackResult.atkBonus ?? null,
         fpBonus,
-        isCritThreat: attackContext.isCritical === true,
-        isNat20: Number(roll?.dice?.[0]?.results?.[0]?.result ?? 0) === 20,
-        critConfirmed: attackContext.isCritical === true,
-        critMultiplier: attackContext.critMultiplier ?? Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, 2),
-        targetReflex: attackContext.targetDefenseValue ?? null,
-        isHit: attackContext.isHit ?? null,
+        isCritThreat: attackContext.isCritical === true || attackResult.isCritical === true,
+        isNat20: Number(d20 ?? 0) === 20,
+        critConfirmed: attackContext.isCritical === true || attackResult.isCritical === true,
+        critMultiplier: attackContext.critMultiplier ?? attackResult.critMultiplier ?? Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, 2),
+        targetReflex: attackContext.targetDefenseValue ?? attackResult.targetReflex ?? null,
+        isHit: attackContext.isHit ?? attackResult.isHit ?? null,
         coverBonus: attackContext.defenseAdjustment ?? 0,
+        workflowContext: attackResult.workflowContext ?? null,
+        actionId: attackResult.actionId ?? options.actionId ?? null,
+        actionData: attackResult.actionData ?? options.actionData ?? null,
+        canonicalResult: attackResult,
         modifiers,
         canonical: true
       };
 
       RollHistory.record({
-        roll,
+        roll: rolled,
         actor,
         type: 'attack',
         result: { isHit: result.isHit, isCrit: result.critConfirmed, targetReflex: result.targetReflex },
@@ -517,12 +523,14 @@ export class SWSERoll {
         return null;
       }
 
-      // Get ammunition info
+      // Get ammunition info. Ammo is enforced only when the Track Blaster
+      // Charges house rule is enabled and the weapon has an ammo pool.
       const ammo = weapon.system?.ammunition;
       const ammoRequired = options.burstFire ? 5 : 10;
       const currentAmmo = ammo?.current ?? 0;
+      const enforceAmmo = AmmoSystem.isTrackingEnabled() && AmmoSystem.weaponUsesAmmunition(weapon);
 
-      if (currentAmmo < ammoRequired) {
+      if (enforceAmmo && currentAmmo < ammoRequired) {
         ui.notifications.error(
           `${weapon.name} requires ${ammoRequired} shots but only has ${currentAmmo}.`
         );
@@ -689,8 +697,14 @@ export class SWSERoll {
         }
       }
 
-      // Consume ammunition via AmmoSystem
-      const ammoResult = await AmmoSystem.consumeAmmunition(actor, weapon, ammoRequired);
+      // Consume ammunition via AmmoSystem when the optional tracking rule is on.
+      const ammoResult = enforceAmmo
+        ? await AmmoSystem.consumeAmmunition(actor, weapon, ammoRequired)
+        : { success: true, skipped: true, newAmmo: currentAmmo, previousAmmo: currentAmmo, ammoConsumed: 0 };
+      if (ammoResult.success === false) {
+        ui.notifications.error(ammoResult.message || `${weapon.name} does not have enough ammunition.`);
+        return null;
+      }
       const newAmmo = ammoResult.newAmmo ?? currentAmmo;
 
       // Build HTML result
@@ -734,9 +748,9 @@ export class SWSERoll {
               ${options.braced && !options.burstFire ? ' <i title="Weapon is braced">(Braced)</i>' : ''}
               ${fpBonus ? `, FP +${fpBonus}` : ''}
             </div>
-            <div class="ammo-consumption">
+            ${enforceAmmo ? `<div class="ammo-consumption">
               Ammunition: ${currentAmmo} → ${newAmmo} (${ammoRequired} shots used)
-            </div>
+            </div>` : ''}
           </div>
 
           <div class="targets-header">

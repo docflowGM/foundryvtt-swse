@@ -976,6 +976,7 @@ export class CombatOptionResolver {
       damageDiceStepBonus: 0,
       damageExtraWeaponDice: 0,
       damageDieStepIncreases: 0,
+      ammunitionCost: 0,
       defenseModifiers: [],
       targetEffectsOnHit: [],
       criticalThreatNaturalMin: null,
@@ -1053,6 +1054,12 @@ export class CombatOptionResolver {
         result.damageExtraWeaponDice += extraWeaponDice;
         result.damageDiceStepBonus += extraWeaponDice;
         result.breakdown.push({ label: `${option.label} extra weapon dice`, value: extraWeaponDice, type: "damageExtraWeaponDice" });
+      }
+
+      const ammunitionCost = Number(option.ammunitionCost ?? option.ammoCost ?? 0) * value;
+      if (Number.isFinite(ammunitionCost) && ammunitionCost > 0) {
+        result.ammunitionCost += ammunitionCost;
+        result.breakdown.push({ label: `${option.label} ammunition`, value: ammunitionCost, type: "ammunitionCost" });
       }
 
       if (option.defenseModifier && value > 0) {

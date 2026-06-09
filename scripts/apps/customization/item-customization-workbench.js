@@ -1453,7 +1453,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
       case 'set-lightsaber-tab': {
         const tab = target?.dataset?.tab || 'crystal';
-        if ((tab === 'chassis' || tab === 'review') && !this._canChangeLightsaberChassis()) return;
+        const canChangeChassis = this._canChangeLightsaberChassis();
+        const allowedTabs = new Set(this._getLightsaberStepState({ canChangeChassis }).map(step => step.key));
+        if (!allowedTabs.has(tab)) return;
         this._lightsaber.activeTab = tab;
         this._lightsaber.inspectedComponent = null;
         await this._renderPreservingUi();
@@ -1532,28 +1534,6 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
 
-      case 'set-lightsaber-color': {
-        const key = target?.dataset?.key;
-        if (!key) return;
-        this._lightsaber.selectedBladeColor = key;
-        this._lightsaber.constructionResult = null;
-        this._lightsaber.activeTab = 'color';
-        this._lightsaber.inspectedComponent = { type: 'color', key };
-        this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
-        await this._renderPreservingUi();
-        return;
-      }
-
-      case 'open-lightsaber-color-modal': {
-        this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.add?.('open');
-        return;
-      }
-
-      case 'close-lightsaber-color-modal': {
-        this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
-        return;
-      }
-
       case 'set-lightsaber-check-mode': {
         if (target?.disabled || target?.classList?.contains?.('disabled')) return;
         const mode = target?.dataset?.key;
@@ -1567,6 +1547,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       case 'lightsaber-step-prev': {
         const tab = target?.dataset?.tab;
         if (tab) {
+          const canChangeChassis = this._canChangeLightsaberChassis();
+          const allowedTabs = new Set(this._getLightsaberStepState({ canChangeChassis }).map(step => step.key));
+          if (!allowedTabs.has(tab)) return;
           this._lightsaber.activeTab = tab;
           this._lightsaber.inspectedComponent = null;
           await this._renderPreservingUi();
@@ -1796,7 +1779,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.onRoot('click', '[data-action="set-lightsaber-tab"]', async (event, target) => {
       event.preventDefault();
       const tab = target.dataset.tab || 'crystal';
-      if ((tab === 'chassis' || tab === 'review') && !this._canChangeLightsaberChassis()) return;
+      const canChangeChassis = this._canChangeLightsaberChassis();
+      const allowedTabs = new Set(this._getLightsaberStepState({ canChangeChassis }).map(step => step.key));
+      if (!allowedTabs.has(tab)) return;
       this._lightsaber.activeTab = tab;
       this._lightsaber.inspectedComponent = null;
       await this._renderPreservingUi();
@@ -1873,28 +1858,6 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       await this._renderPreservingUi();
     });
 
-    this.onRoot('click', '[data-action="set-lightsaber-color"]', async (event, target) => {
-      event.preventDefault();
-      const key = target.dataset.key;
-      if (!key) return;
-      this._lightsaber.selectedBladeColor = key;
-      this._lightsaber.constructionResult = null;
-      this._lightsaber.activeTab = 'color';
-      this._lightsaber.inspectedComponent = { type: 'color', key };
-      this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
-      await this._renderPreservingUi();
-    });
-
-    this.onRoot('click', '[data-action="open-lightsaber-color-modal"]', (event) => {
-      event.preventDefault();
-      this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.add?.('open');
-    });
-
-    this.onRoot('click', '[data-action="close-lightsaber-color-modal"]', (event) => {
-      event.preventDefault();
-      this.element?.querySelector?.('[data-lightsaber-color-modal]')?.classList?.remove?.('open');
-    });
-
     this.onRoot('click', '[data-action="set-lightsaber-check-mode"]', async (event, target) => {
       event.preventDefault();
       if (target.disabled || target.classList.contains('disabled')) return;
@@ -1908,6 +1871,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       event.preventDefault();
       const tab = target.dataset.tab;
       if (!tab) return;
+      const canChangeChassis = this._canChangeLightsaberChassis();
+      const allowedTabs = new Set(this._getLightsaberStepState({ canChangeChassis }).map(step => step.key));
+      if (!allowedTabs.has(tab)) return;
       this._lightsaber.activeTab = tab;
       this._lightsaber.inspectedComponent = null;
       await this._renderPreservingUi();
@@ -2194,7 +2160,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
 
   _getLightsaberActiveTab(canChangeChassis = false) {
-    const allowed = new Set(['crystal', 'hilt', 'color']);
+    const allowed = new Set(['crystal', 'hilt']);
     if (canChangeChassis) {
       allowed.add('chassis');
       allowed.add('review');
@@ -2212,7 +2178,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       missing_force_sensitivity: 'Requires Force Sensitivity.',
       missing_lightsaber_proficiency: 'Requires Weapon Proficiency (Lightsabers).',
       insufficient_funds: 'Insufficient credits for the selected construction package.',
-      invalid_config: 'Select a valid chassis, crystal, hilt, and blade color configuration.',
+      invalid_config: 'Select a valid chassis, crystal, and hilt configuration.',
       incompatible_component: 'One or more selected components are incompatible.',
       roll_failed: 'The Use the Force check did not meet the construction DC.',
       construction_error: 'The construction engine could not complete the attempt.',
@@ -2243,13 +2209,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         { key: 'chassis', label: 'Chassis', number: 1, selected: !!this._lightsaber.selectedChassisId },
         { key: 'crystal', label: 'Crystal', number: 2, selected: !!this._lightsaber.selectedCrystalId },
         { key: 'hilt', label: 'Hilt', number: 3, selected: true },
-        { key: 'color', label: 'Blade Color', number: 4, selected: !!this._lightsaber.selectedBladeColor },
-        { key: 'review', label: 'Review', number: 5, selected: false }
+        { key: 'review', label: 'Review', number: 4, selected: false }
       ]
       : [
         { key: 'crystal', label: 'Crystal', number: 1, selected: !!this._lightsaber.selectedCrystalId },
-        { key: 'hilt', label: 'Hilt', number: 2, selected: true },
-        { key: 'color', label: 'Blade Color', number: 3, selected: !!this._lightsaber.selectedBladeColor }
+        { key: 'hilt', label: 'Hilt', number: 2, selected: true }
       ];
     const activeIndex = Math.max(0, steps.findIndex(step => step.key === activeTab));
     return steps.map((step, index) => ({
@@ -2335,23 +2299,40 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     await this.close();
   }
 
-  _buildLightsaberComponentIntel({ activeTab, chassis, crystal, accessories = [], colorOptions = [] } = {}) {
+  _buildBladeColorTextParts(rawColor = '') {
+    const text = String(rawColor || 'Varies');
+    const tokens = text.match(/[A-Za-z]+|[^A-Za-z]+/g) || [text];
+    return tokens.map((token) => {
+      const key = token.trim().toLowerCase();
+      const hex = key ? BLADE_COLOR_MAP[key] : null;
+      if (!hex) {
+        return {
+          label: token,
+          className: key === 'varies' ? 'ls-color-word ls-color-word--varies' : 'ls-color-word-separator',
+          style: ''
+        };
+      }
+      const safeKey = key.replace(/[^a-z0-9_-]/g, '');
+      return {
+        label: token,
+        className: `ls-color-word ls-color-word--${safeKey}`,
+        style: `--ls-word-color: ${hex};`
+      };
+    });
+  }
+
+  _buildLightsaberComponentIntel({ activeTab, chassis, crystal, accessories = [] } = {}) {
     const inspected = this._lightsaber.inspectedComponent;
-    const selectedColor = colorOptions.find(option => option.selected) || colorOptions[0] || null;
     let component = null;
     if (inspected?.type === 'crystal') component = this._findLightsaberCatalogOption('crystals', inspected.key);
     if (inspected?.type === 'accessory') component = this._findLightsaberCatalogOption('accessories', inspected.key);
     if (inspected?.type === 'chassis') component = this._findLightsaberCatalogOption('chassis', inspected.key);
-    if (inspected?.type === 'color') component = colorOptions.find(option => option.key === inspected.key) || selectedColor;
 
     let kind = 'Crystal';
     if (!component) {
       if (activeTab === 'hilt') {
         component = accessories[accessories.length - 1] || this._catalogs.accessories?.[0] || null;
         kind = 'Hilt Accessory';
-      } else if (activeTab === 'color') {
-        component = selectedColor;
-        kind = 'Blade Color';
       } else if (activeTab === 'chassis') {
         component = chassis;
         kind = 'Chassis';
@@ -2361,29 +2342,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
     } else if (inspected?.type === 'accessory') kind = 'Hilt Accessory';
     else if (inspected?.type === 'chassis') kind = 'Chassis';
-    else if (inspected?.type === 'color') kind = 'Blade Color';
     else kind = 'Kyber Crystal';
 
     if (!component) {
       return {
         kind: 'Selection Intel',
         name: 'No component selected',
-        description: 'Choose a crystal, hilt accessory, or blade color to inspect its effect here.',
+        description: 'Choose a crystal or hilt accessory to inspect its effect here.',
         fields: []
-      };
-    }
-
-    if (kind === 'Blade Color') {
-      return {
-        kind,
-        name: component.label || component.key || this._lightsaber.selectedBladeColor || 'Blade Color',
-        description: 'Blade color is a visual resonance pass. The available palette is governed by the selected crystal.',
-        colorHex: component.hex,
-        fields: [
-          { key: 'Color', value: component.label || component.key || '—' },
-          { key: 'Source', value: 'Selected crystal' },
-          { key: 'Cost', value: '0 cr' }
-        ]
       };
     }
 
@@ -2393,6 +2359,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const dc = Number(system.lightsaber?.buildDcModifier ?? system.baseBuildDc ?? component.buildDcModifier ?? 0) || 0;
     const slotCost = Number(system.lightsaber?.upgradeSlots ?? system.upgradeSlots ?? component.slotCost ?? 0) || 0;
     const bladeColor = system.lightsaber?.bladeColor || component.bladeColor || null;
+    const bladeColorParts = this._buildBladeColorTextParts(bladeColor || 'Varies');
     const selected = (kind === 'Kyber Crystal' && (component.id === this._lightsaber.selectedCrystalId || component._id === this._lightsaber.selectedCrystalId))
       || (kind === 'Hilt Accessory' && this._lightsaber.selectedAccessoryIds.includes(component.id))
       || (kind === 'Chassis' && (component.id === this._lightsaber.selectedChassisId || component.system?.chassisId === this._lightsaber.selectedChassisId));
@@ -2415,6 +2382,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       name: component.name || component.label || component.id || 'Component',
       description,
       selected,
+      bladeColorParts: kind === 'Kyber Crystal' ? bladeColorParts : null,
       fields
     };
   }
@@ -2491,7 +2459,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         category: 'lightsaber',
         subtitle: editItem ? 'tuning existing blade' : 'construct new blade',
         img: editItem?.img || chassis?.img,
-        description: this._stripHtml(chassis?.system?.description || chassis?.description) || 'Select a chassis, kyber crystal, blade color, and hilt accessories. The construction engine remains the authority for DC, cost, and final mutation.',
+        description: this._stripHtml(chassis?.system?.description || chassis?.description) || 'Select a chassis, kyber crystal, and hilt accessories. Blade color is now adjusted from the item edit sheet after construction.',
         stats: this._getLightsaberHeroStats({ editItem, chassis, preview, slotState, totalCost })
       },
       ...(await this._getLightsaberMentorContext(editItem)),
@@ -2503,7 +2471,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         activeTab,
         tabCrystal: activeTab === 'crystal',
         tabHilt: activeTab === 'hilt',
-        tabColor: activeTab === 'color',
+        tabColor: false,
         tabChassis: activeTab === 'chassis',
         tabReview: activeTab === 'review',
         tabs: steps,
@@ -2522,7 +2490,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         chassisLocked: !canChangeChassis,
         selectedChassisName: chassis?.name || 'Fixed Chassis',
         chassisLockReason: editItem
-          ? 'This is an existing/free lightsaber. Chassis construction is locked; tune the crystal, blade color, and hilt accessories instead.'
+          ? 'This is an existing/free lightsaber. Chassis construction is locked; tune the crystal and hilt accessories here; blade color now lives on the item edit sheet.'
           : (constructionSummary.reason || 'Full chassis construction unlocks at level 7 for eligible Force-sensitive lightsaber users.'),
         bladeHex,
         visualProfile: lightsaberVisualProfile,
@@ -2533,15 +2501,19 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           cost: Number(option.system?.baseCost ?? option.system?.cost ?? option.cost ?? 0) || 0,
           selected: option.id === this._lightsaber.selectedChassisId || option.system?.chassisId === this._lightsaber.selectedChassisId
         })),
-        crystals: this._catalogs.crystals.map(option => ({
-          ...option,
-          description: this._stripHtml(option.system?.description || option.description),
-          cost: Number(option.system?.cost ?? option.cost ?? 0) || 0,
-          rarity: option.system?.rarity || option.rarity || 'common',
-          bladeColor: option.system?.lightsaber?.bladeColor || option.bladeColor || 'Varies',
-          selected: option.id === this._lightsaber.selectedCrystalId,
-          incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberCrystalCompatible(option.id)
-        })),
+        crystals: this._catalogs.crystals.map(option => {
+          const bladeColor = option.system?.lightsaber?.bladeColor || option.bladeColor || 'Varies';
+          return {
+            ...option,
+            description: this._stripHtml(option.system?.description || option.description),
+            cost: Number(option.system?.cost ?? option.cost ?? 0) || 0,
+            rarity: option.system?.rarity || option.rarity || 'common',
+            bladeColor,
+            bladeColorParts: this._buildBladeColorTextParts(bladeColor),
+            selected: option.id === this._lightsaber.selectedCrystalId,
+            incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberCrystalCompatible(option.id)
+          };
+        }),
         accessories: this._catalogs.accessories.map(option => ({
           ...option,
           description: this._stripHtml(option.system?.description || option.description),
@@ -2564,6 +2536,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           crystalName: crystal?.name || 'No crystal selected',
           accessoryNames: selectedAccessories.map(accessory => accessory.name).join(', ') || 'None',
           bladeColor: this._lightsaber.selectedBladeColor || DEFAULT_BLADE_COLOR,
+          bladeColorParts: this._buildBladeColorTextParts(this._lightsaber.selectedBladeColor || DEFAULT_BLADE_COLOR),
           buildDc: preview?.finalDc ?? preview?.dc ?? '—',
           useTheForce: preview?.modifier ?? '—',
           take10: preview?.take10Total ?? '—',

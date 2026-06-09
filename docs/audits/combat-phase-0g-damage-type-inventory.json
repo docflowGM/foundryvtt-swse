@@ -1,0 +1,58 @@
+{
+  "audit": "combat-phase-0g",
+  "runtimeFilesChanged": false,
+  "inventoryNotes": [
+    "Counts are first-pass references from pack/data JSON and may include nested duplicate occurrences.",
+    "The purpose is to show vocabulary drift and where special semantics already appear in data, not to establish final canonical counts."
+  ],
+  "damageTypeOccurrences": {
+    "energy": 3304,
+    "kinetic": 2938,
+    "stun": 166,
+    "sonic": 46,
+    "ion": 43,
+    "fire": 31,
+    "slashing": 10,
+    "bludgeoning": 6,
+    "piercing": 6,
+    "cold": 4,
+    "sameasattack": 1,
+    "melee": 1,
+    "physical": 1,
+    "unholy": 1
+  },
+  "notableSourceExamples": {
+    "fire": ["Flamethrower", "Barab Ingot"],
+    "stun": ["Stun Grenade", "Stun Baton", "Bondar Crystal"],
+    "ion": ["Ion Pistol", "Ion Grenade", "Firkraan Crystal"],
+    "sonic": ["Sonic Disruptor", "Sonic Rifle", "Dragite Crystal", "Aurial Blaster"],
+    "bludgeoning": ["Unarmed/Natural Weapon", "Tail", "Cinnagaran gear template"],
+    "piercing": ["Bite", "Horns", "Tusks or Heavy Bite"],
+    "slashing": ["Claws", "Small Natural Weapon"],
+    "force": ["Force power/effect context", "Force Reflection reaction data"]
+  },
+  "uiTypeListsObserved": {
+    "WeaponDataResolver.WEAPON_DAMAGE_TYPE_OPTIONS": ["energy", "kinetic", "sonic", "ion", "fire", "cold", "acid", "force", "stun"],
+    "weapon-config-dialog.options.damageTypes": ["kinetic", "energy", "fire", "cold", "acid", "sonic", "force"],
+    "old-item-sheet-select": ["energy", "kinetic", "ion"]
+  },
+  "missingOrAmbiguousTypes": {
+    "electrical": "Supplied as a distinct damage type but not found in the main weapon damage type option lists.",
+    "bludgeoningPiercingSlashing": "Appear in data, but the UI/system vocabulary also uses kinetic as a broad bucket.",
+    "sonicCountsAsEnergy": "Sonic exists, but no canonical alias/countsAs relation was found.",
+    "mixedDamageParts": "No canonical multi-part damage packet found for Energy + Sonic, Energy + Slashing, or similar mixed cases."
+  },
+  "recommendedCanonicalRegistryShape": {
+    "acid": { "countsAs": ["acid"], "special": ["hazardRecurring"] },
+    "bludgeoning": { "countsAs": ["physical", "kinetic", "bludgeoning"], "special": [] },
+    "electrical": { "countsAs": ["electrical"], "special": [] },
+    "energy": { "countsAs": ["energy"], "special": [] },
+    "fire": { "countsAs": ["fire"], "special": ["triggersFireHazard"] },
+    "force": { "countsAs": ["force"], "special": ["mayTriggerSpeciesOrForceImmunity"] },
+    "ion": { "countsAs": ["ion"], "special": ["halfHpDamage", "thresholdUsesOriginal", "targetEligibility"] },
+    "piercing": { "countsAs": ["physical", "kinetic", "piercing"], "special": [] },
+    "slashing": { "countsAs": ["physical", "kinetic", "slashing"], "special": [] },
+    "sonic": { "countsAs": ["sonic", "energy"], "special": ["cannotBeDeflectedWhenRanged", "mixedDamageBypass"] },
+    "stun": { "countsAs": ["stun"], "special": ["halfHpDamage", "thresholdUsesOriginal", "creatureOnly"] }
+  }
+}

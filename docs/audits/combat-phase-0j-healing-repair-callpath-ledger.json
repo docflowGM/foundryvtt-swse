@@ -1,0 +1,189 @@
+[
+  {
+    "id": "second-wind-canonical-path",
+    "label": "Second Wind via v2 combat/summary UI",
+    "entryPoints": [
+      "scripts/components/combat-action-bar.js _secondWind()",
+      "scripts/sheets/v2/character-sheet.js second wind handlers",
+      "scripts/sheets/v2/character-sheet/misc-ui.js second wind handlers"
+    ],
+    "rulesAuthority": "scripts/engine/combat/SecondWindRules.js",
+    "mutationAuthority": "scripts/governance/actor-engine/actor-engine.js applySecondWind()",
+    "strengths": [
+      "Checks half-HP gate unless feat rules override",
+      "Checks encounter cap",
+      "Calculates max(floor(maxHP/4), Constitution score)",
+      "Consumes use and stores encounter flag",
+      "Routes feat/talent resource hooks through MetaResourceFeatResolver"
+    ],
+    "seams": [
+      "Legacy SWSEActor._onSecondWind() can bypass canonical SecondWindRules if still reachable",
+      "Some UI appears to display uses as /1 rather than computed max",
+      "Droid/nonheroic eligibility should be explicitly audited against Extra Second Wind"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "legacy-second-wind-path",
+    "label": "Legacy actor sheet Second Wind",
+    "entryPoints": ["scripts/swse-actor.js _onSecondWind(event)"],
+    "rulesAuthority": "Inline legacy logic",
+    "mutationAuthority": "Direct actor.update()",
+    "strengths": ["Simple HP cap and use decrement"],
+    "seams": [
+      "Uses stored system.secondWind.healing instead of recalculating RAW formula",
+      "Does not enforce half-HP gate in the inspected snippet",
+      "Does not enforce encounter cap",
+      "Bypasses ActorEngine.applySecondWind() hooks"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "generic-healing-dialog-path",
+    "label": "DamageSystem healing/repair dialog",
+    "entryPoints": ["scripts/combat/damage-system.js showHealingDialog()", "scripts/combat/damage-system.js healSelected()"],
+    "rulesAuthority": "User-entered amount",
+    "mutationAuthority": "Actor.applyHealing() -> ActorEngine.applyHealing()",
+    "strengths": [
+      "Uses common Actor.applyHealing wrapper",
+      "Displays repair language for droids"
+    ],
+    "seams": [
+      "isRepair option is not preserved through ActorBase.applyHealing() into ActorEngine.applyHealing()",
+      "No organic-vs-droid target gating at ActorEngine.applyHealing() except destroyed droid",
+      "No rule formula, action economy, gear requirement, cooldown, or check result"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "gm-combat-recovery-heal-repair-path",
+    "label": "GM Combat & Recovery Heal/Repair",
+    "entryPoints": ["scripts/holonet/subsystems/gm-combat-recovery-service.js executeActorAction()", "applyHitPointDeltaToActors()"],
+    "rulesAuthority": "GM console workflow selection and user-entered amount",
+    "mutationAuthority": "ActorEngine.applyHealing()",
+    "strengths": [
+      "Correctly separates organic Heal from Droid/Vehicle Repair at the GM UI/service layer",
+      "Refuses Heal on droids/vehicles and Repair on organics",
+      "Can repair disabled droids back to operational through ActorEngine.applyHealing()"
+    ],
+    "seams": [
+      "Fixed/manual amounts are not RAW First Aid or Mechanics Repair formulas",
+      "Gear requirements are not checked",
+      "Repair duration and self-repair penalty are not represented"
+    ],
+    "severity": "medium"
+  },
+  {
+    "id": "treat-injury-houserule-path",
+    "label": "HealingMechanics Treat Injury integration",
+    "entryPoints": ["scripts/houserules/houserule-healing-skill-integration.js", "scripts/houserules/houserule-healing.js"],
+    "rulesAuthority": "HealingRules adapter and HealingMechanics formulas",
+    "mutationAuthority": "Mostly ActorEngine.updateActor(); not consistently ActorEngine.applyHealing/applyDamage",
+    "strengths": [
+      "First Aid formula is mostly RAW-shaped",
+      "Long-Term Care cooldown exists",
+      "Surgery and Critical Care have methods",
+      "Uses meet-or-beat comparisons for DCs"
+    ],
+    "seams": [
+      "Healing skill integration is houserule-gated and may not be live by default",
+      "Targets only game.actors of type character in the dialog",
+      "Gear requirements/consumption are not enforced",
+      "Failure damage uses direct HP update rather than canonical damage packet",
+      "GM console Treat Injury workflows do not use the same formulas"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "gm-treat-injury-workflows",
+    "label": "GM Combat & Recovery Treat Injury workflows",
+    "entryPoints": ["GMCombatRecoveryService.performTreatInjury()"],
+    "rulesAuthority": "TREAT_INJURY_WORKFLOWS constants",
+    "mutationAuthority": "ActorEngine.applyHealing(); ActorEngine.updateActor() for flags/persistent flag",
+    "strengths": [
+      "Skips droids and vehicles for Treat Injury",
+      "Uses total >= DC success logic",
+      "Includes First Aid, Surgery, Critical Care, Long-Term Care, Revivify stubs"
+    ],
+    "seams": [
+      "First Aid amount defaults to fixed 5 rather than level + margin",
+      "Surgery amount defaults to fixed 10 rather than Con bonus x level",
+      "Critical Care default DC/amount do not match supplied rule",
+      "Long-Term Care marks a flag but does not compute rest bonus",
+      "Revivify heals 1 HP rather than explicitly setting unconscious-not-dead state"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "natural-healing-rest-path",
+    "label": "Natural Healing / rest recovery",
+    "entryPoints": ["GMHealingTrigger.triggerNaturalHealing()", "RecoveryMechanics.performRecovery()", "GMCombatRecoveryService.fullOrganicRecovery()"],
+    "rulesAuthority": "HealingRules recovery houserules",
+    "mutationAuthority": "RecoveryMechanics direct updateData via ActorEngine.updateActor(), or ActorEngine.applyHealing() in fullOrganicRecovery",
+    "strengths": [
+      "Droids and vehicles are excluded from rest recovery",
+      "Second Wind reset timing is houserule-aware"
+    ],
+    "seams": [
+      "RAW Natural Healing level-based formula is not the obvious default",
+      "Persistent conditions do not clearly block natural healing",
+      "Once-per-24-hour natural healing is not clearly tracked",
+      "Full organic recovery is a GM override, not RAW natural healing"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "mechanics-repair-path",
+    "label": "Droid/Object/Vehicle Repair",
+    "entryPoints": ["GMCombatRecoveryService.performRepairSkill()", "executeActorAction('repair')", "executeActorAction('repair-full')"],
+    "rulesAuthority": "REPAIR_WORKFLOWS constants plus GM-entered amount",
+    "mutationAuthority": "ActorEngine.applyHealing(); ActorEngine.setConditionStep() for some workflows",
+    "strengths": [
+      "Repair path is separated from organic Treat Injury in GM console",
+      "Droid/vehicle type gating exists",
+      "Disabled droid operational state is restored when HP becomes positive"
+    ],
+    "seams": [
+      "Droid repair should restore droid character level HP at DC 20 after 1 hour",
+      "Object/vehicle repair should restore 1d8 HP at DC 20 after 1 hour",
+      "Tool Kit requirement is not enforced",
+      "Self-repair -5 and vehicle condition penalties while onboard are not modeled",
+      "Objects are not clearly represented as repair targets"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "force-healing-path",
+    "label": "Force healing and drain-heal powers",
+    "entryPoints": ["data/force-powers.json", "ForcePowerEffectsEngine._buildHealingEffect()", "TalentEffectEngine Dark Healing plan builders"],
+    "rulesAuthority": "Force power/talent metadata",
+    "mutationAuthority": "Mixed: no-op for generic healing effects, direct HP mutations in Dark Healing plans",
+    "strengths": [
+      "Vital Transfer and drain-heal data exists",
+      "Dark Healing plans compute damage and source healing"
+    ],
+    "seams": [
+      "ForcePowerEffectsEngine healing builder returns no effect and no HP mutation",
+      "Dark Healing plans directly mutate HP rather than using canonical damage/heal packets",
+      "Target type and condition-removal rules for Force healing need explicit context"
+    ],
+    "severity": "high"
+  },
+  {
+    "id": "bonus-hp-path",
+    "label": "Bonus Hit Points / temporary buffer",
+    "entryPoints": ["ActorEngine.applyDamage()", "NobleTalentMechanics Bolster Ally", "various feat/talent metadata"],
+    "rulesAuthority": "DamageResolutionEngine plus talent/feat metadata",
+    "mutationAuthority": "ActorEngine.applyDamage(), talent mechanics direct temp/buffer updates",
+    "strengths": [
+      "Damage resolution can persist bonusHpAfter to system.hp.bonus",
+      "Bolster Ally exists as a mechanics path"
+    ],
+    "seams": [
+      "Need canonical stacking rule: multiple Bonus HP sources use the larger pool only",
+      "Need end-of-encounter cleanup",
+      "Need clear difference between SWSE Bonus HP and generic temp HP"
+    ],
+    "severity": "medium"
+  }
+]

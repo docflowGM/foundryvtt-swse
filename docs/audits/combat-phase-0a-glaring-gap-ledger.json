@@ -1,0 +1,118 @@
+[
+  {
+    "id": "phase0a-grapple-state-fidelity",
+    "system": "grapple",
+    "severity": "high",
+    "ruleBaseline": "Grabbed, Grappled, and Pinned are distinct states. Grabbed/Grappled restrict movement and impose -2 to most attacks; Pinned prevents actions and removes Dexterity bonus to Reflex.",
+    "currentEvidence": [
+      "scripts/combat/systems/grappling-system.js:56-60 checks Grabber/Entangler talents for grab penalty relief instead of Pin/Trip feats.",
+      "scripts/combat/systems/grappling-system.js:225-249 applies -5 Reflex to Grabbed/Grappled.",
+      "scripts/combat/systems/grappling-system.js:253-260 applies -10 Reflex and condition track override 5 to Pinned."
+    ],
+    "automationBoundary": "automate deterministic state flags and roll math; GM/player may still confirm targets and narrative positioning",
+    "affectedFeatsTalents": ["Pin", "Trip", "Crush", "Bone Crusher", "Rancor Crush", "Throw", "Grapple Resistance", "Multi-Grab", "Grab Back", "Improved Grapple"],
+    "recommendedSubphase": "0F",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-evasion-area-damage-route",
+    "system": "autofire/evasion",
+    "severity": "high",
+    "ruleBaseline": "Evasion modifies area attack damage for each defender: half damage on hit, no damage on miss; it does not apply to Burst Fire.",
+    "currentEvidence": [
+      "Evasion metadata claims existing runtime through enhanced-rolls.",
+      "scripts/sheets/v2/character-sheet.js:7342-7390 routes canonical combat attacks through SWSERoll.rollAttack.",
+      "scripts/combat/rolls/enhanced-rolls.js:643-651 checks Evasion on actor.items, which is the attacker in that function, not the target.",
+      "scripts/combat/rolls/enhanced-rolls.js:670-676 gives half damage on missed Burst Fire."
+    ],
+    "automationBoundary": "automate damage outcome math once GM/table identifies affected targets; do not automate template placement",
+    "affectedFeatsTalents": ["Evasion", "Improved Evasion", "Burst Fire", "Autofire Assault", "Autofire Sweep"],
+    "recommendedSubphase": "0E",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-aim-charge-context-mismatch",
+    "system": "attack-options",
+    "severity": "high",
+    "ruleBaseline": "Aim/Charge-gated feats should activate only when the attack context actually includes aim or charge.",
+    "currentEvidence": [
+      "scripts/engine/combat/combat-option-resolver.js requires context.aim/context.charge for Careful Shot, Deadeye, Powerful Charge, and Charging Fire.",
+      "scripts/rolls/roll-config.js:1130-1147 returns situational.aiming/situational.charging and a flat situationalBonus instead of top-level aim/charge."
+    ],
+    "automationBoundary": "automate math/context; GM manages legality of LoS/path/terrain",
+    "affectedFeatsTalents": ["Careful Shot", "Deadeye", "Powerful Charge", "Charging Fire"],
+    "recommendedSubphase": "0C",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-compound-action-costs",
+    "system": "action-economy",
+    "severity": "high",
+    "ruleBaseline": "Some actions require compound costs such as swift+standard or two swift actions.",
+    "currentEvidence": [
+      "data/combat-actions.json:102-119 models Autofire as swift + standard.",
+      "data/combat-actions.json:122-130 models Brace as 2 swift actions with cost 2.",
+      "scripts/sheets/v2/character-sheet.js derives a single economy type and checks cost before action type."
+    ],
+    "automationBoundary": "automate action budget spending; leave tactical legality to GM",
+    "affectedFeatsTalents": ["Autofire", "Brace Autofire-Only Weapon", "Mighty Swing", "Aim", "Recover"],
+    "recommendedSubphase": "0B",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-firing-into-melee-precise-shot",
+    "system": "ranged-attack-penalties",
+    "severity": "medium",
+    "ruleBaseline": "Shooting or throwing into melee applies -5 unless the attacker has Precise Shot.",
+    "currentEvidence": [
+      "scripts/engine/combat/combat-option-resolver.js models Precise Shot as suppressing firingIntoMeleePenalty.",
+      "scripts/combat/rolls/attacks.js computeAttackBonus does not visibly add firingIntoMeleePenalty."
+    ],
+    "automationBoundary": "assist: player/GM can mark target as in melee; automate penalty/suppression once marked",
+    "affectedFeatsTalents": ["Precise Shot"],
+    "recommendedSubphase": "0C",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-burst-fire-action-cost-conflict",
+    "system": "burst-fire",
+    "severity": "medium",
+    "ruleBaseline": "Burst Fire should be represented consistently as the correct attack/action type for SWSE rules and local project interpretation.",
+    "currentEvidence": [
+      "data/combat-actions.json:133-153 models Burst Fire as standard.",
+      "data/feat-combat-actions.json:550-558 models Burst Fire as full-round."
+    ],
+    "automationBoundary": "automate chosen action cost once source of truth is decided",
+    "affectedFeatsTalents": ["Burst Fire"],
+    "recommendedSubphase": "0B/0E",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-damage-context-preservation",
+    "system": "damage",
+    "severity": "high",
+    "ruleBaseline": "Damage must know whether the originating attack was critical, area, burst fire, rapid shot/strike, stun, charge, etc.",
+    "currentEvidence": [
+      "scripts/combat/rolls/damage.js:294-300 suppresses crit multiplication for area attacks only if area context reaches damage.",
+      "There are multiple weapon damage paths: scripts/combat/rolls/attacks.js and scripts/combat/rolls/damage.js."
+    ],
+    "automationBoundary": "automate deterministic damage math; GM decides affected targets/area inclusion",
+    "affectedFeatsTalents": ["Burst Fire", "Rapid Shot", "Rapid Strike", "Deadeye", "Mighty Swing", "Evasion"],
+    "recommendedSubphase": "0D",
+    "fixNow": false
+  },
+  {
+    "id": "phase0a-stun-special-damage",
+    "system": "stun-damage",
+    "severity": "medium",
+    "ruleBaseline": "Stun damage has special half-HP, pre-halved threshold, immunity, and unconsciousness rules.",
+    "currentEvidence": [
+      "data/combat-actions.json:762-773 includes Switch Weapon Mode as a swift action reminder.",
+      "DamageResolutionEngine accepts damageType stun for threshold evaluation, but full stun-specific behavior was not proven in Phase 0A."
+    ],
+    "automationBoundary": "automate target type immunity and damage/CT math once weapon mode is known",
+    "affectedFeatsTalents": ["Improved Stun", "Stunning Strike", "Set for Stun", "Unarmed Stun"],
+    "recommendedSubphase": "0D/0E",
+    "fixNow": false
+  }
+]

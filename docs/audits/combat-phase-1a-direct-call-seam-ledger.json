@@ -1,0 +1,82 @@
+[
+  {
+    "id": "sheet-router-is-practical-ssot",
+    "path": "scripts/sheets/v2/character-sheet.js::_runCanonicalCombatAction",
+    "issue": "The sheet currently performs routing decisions that should belong to a shared workflow authority.",
+    "severity": "high",
+    "whyItMatters": "PC/NPC/follower/droid/vehicle sheets and macros can drift if sheet code remains the combat router.",
+    "recommendedAlignment": "Create CombatWorkflowRegistry and make sheet call registry instead of branching through every workflow itself."
+  },
+  {
+    "id": "mapper-drops-routing-fields",
+    "path": "scripts/combat/utils/combat-actions-mapper.js::_normalizeAction",
+    "issue": "The mapper only returns a small subset of action fields and drops fields needed by the routing contract.",
+    "severity": "critical",
+    "whyItMatters": "Even if action data gains resolutionMode/gmManaged/executable fields, live UI cannot use them if the mapper discards them.",
+    "recommendedAlignment": "Preserve source fields and add derived safe defaults."
+  },
+  {
+    "id": "combat-engine-declared-but-not-universal",
+    "path": "scripts/engine/combat/CombatEngine.js and scripts/engine/combat/ARCHITECTURE.md",
+    "issue": "Architecture declares CombatEngine.resolveAttack as the attack SSOT, but many live paths call rollAttack/SWSERoll/FullAttackExecutor directly.",
+    "severity": "critical",
+    "whyItMatters": "Documentation and runtime behavior disagree, making fixes hard to place safely.",
+    "recommendedAlignment": "Keep CombatEngine registered as an authority, but put a thin workflow registry above all live entrypoints."
+  },
+  {
+    "id": "combat-engine-execute-action-too-narrow",
+    "path": "scripts/engine/combat/CombatEngine.js::executeAction",
+    "issue": "executeAction handles only a few special cases and is not broad enough to be the workflow router.",
+    "severity": "high",
+    "whyItMatters": "Routing all actions to it today would produce many unimplemented or no-op cases.",
+    "recommendedAlignment": "Use it as one registered fallback/special-action handler, not the registry itself."
+  },
+  {
+    "id": "direct-attack-callers",
+    "path": "multiple sheet/ui/app files calling SWSERoll.rollAttack or rollAttack directly",
+    "issue": "Many entrypoints bypass action routing, action economy, and normalized context.",
+    "severity": "high",
+    "whyItMatters": "Attack context is inconsistent by source button/sheet/app.",
+    "recommendedAlignment": "Migrate callers gradually to CombatWorkflowRegistry.execute({ resolutionMode: 'attack' })."
+  },
+  {
+    "id": "damage-authority-split",
+    "path": "DamageEngine, DamageResolutionEngine, rolls/damage.js, DamageSystem, actor.applyDamage",
+    "issue": "Damage formula, damage calculation, damage mutation, and manual damage UI are separate authorities without a shared packet contract.",
+    "severity": "critical",
+    "whyItMatters": "Stun/Ion/Sonic/Evasion/Burst Fire/crit context can be lost or interpreted differently.",
+    "recommendedAlignment": "Do not solve in Phase 1A; preserve attack-to-damage context now and merge through damage packet model later."
+  },
+  {
+    "id": "roll-config-context-fragmentation",
+    "path": "scripts/rolls/roll-config.js",
+    "issue": "The roll dialog gathers useful options but returns ad hoc field names and lacks a canonical context object.",
+    "severity": "high",
+    "whyItMatters": "Feat/talent metadata cannot wake up reliably when context names drift.",
+    "recommendedAlignment": "In Phase 2, make CombatContextBuilder normalize roll-dialog output before calling resolvers."
+  },
+  {
+    "id": "action-engine-raw-hardening-needed",
+    "path": "scripts/engine/combat/action/action-engine-v2.js",
+    "issue": "Existing action-economy authority has likely RAW seams from Phase 0H.",
+    "severity": "critical",
+    "whyItMatters": "Every action-costed combat mode depends on this math.",
+    "recommendedAlignment": "Keep it as SSOT but harden before relying on it for all combat action spending."
+  },
+  {
+    "id": "house-rule-direct-access",
+    "path": "sheet and subsystem direct game.settings.get calls",
+    "issue": "HouseRuleService is documented as SSOT, but direct settings reads remain in runtime paths.",
+    "severity": "medium",
+    "whyItMatters": "Defaults/adapters/governance can be bypassed, especially for ammo, action economy, fight defensively, healing, and condition track settings.",
+    "recommendedAlignment": "Use HouseRuleService/adapters in registry and gradually migrate direct calls."
+  },
+  {
+    "id": "legacy-global-wrappers",
+    "path": "window.SWSECombat, window.SWSEDamage, window.SWSEGrappling, window.CombatActionsMapper",
+    "issue": "Several systems are exposed globally for macros/legacy consumers.",
+    "severity": "medium",
+    "whyItMatters": "Legacy globals can keep bypassing the workflow registry after Phase 1B.",
+    "recommendedAlignment": "Keep globals for compatibility but make them call the registry or registered subsystem when touched later."
+  }
+]

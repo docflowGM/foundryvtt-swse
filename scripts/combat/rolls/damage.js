@@ -2,6 +2,8 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
@@ -231,6 +233,8 @@ function computeTalentDamageBonus(actor, context = {}) {
  * @param {Object} context - Optional context {target, isCritical, aimedThisTurn}
  */
 export async function rollDamage(actor, weapon, context = {}) {
+  const rollContext = mergeCombatWorkflowContextIntoRollOptions(context, context?.combatContext ?? context?.workflowContext ?? null);
+  const workflowContext = summarizeCombatWorkflowContext(rollContext.combatContext ?? null, { actor, weapon, target: rollContext.target, isCritical: rollContext.isCritical === true, critMultiplier: rollContext.critMultiplier });
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for damage roll.');
     return null;
@@ -245,12 +249,13 @@ export async function rollDamage(actor, weapon, context = {}) {
       const roll = await RollEngine.safeRoll(flatFormula);
       if (roll) {
         roll.swseDamageFormula = flatFormula;
-        if (context.suppressChat !== true) {
+        if (rollContext.suppressChat !== true) {
           await SWSEChat.postRoll({
           roll,
           actor,
           flavor: `${actor.name} — ${weapon.name} Damage`,
-          context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
+          flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
+          context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext }) }
         });
       }
       return roll;
@@ -261,11 +266,12 @@ export async function rollDamage(actor, weapon, context = {}) {
 
   const baseFormula = weapon.system?.damage ?? '1d6';
   const dmgBonus = computeDamageBonus(actor, weapon, {
-    forceTwoHanded: context.twoHanded || false
+    ...rollContext,
+    forceTwoHanded: rollContext.twoHanded || false
   });
 
   // Calculate talent-based damage bonuses
-  const talentContext = { ...context, weapon };
+  const talentContext = { ...rollContext, weapon };
   const talentBonus = computeTalentDamageBonus(actor, talentContext);
 
   // Build complete formula
@@ -278,13 +284,13 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
   // Add Force Point bonus if present
-  const fpBonus = context.fpBonus || 0;
+  const fpBonus = rollContext.fpBonus || 0;
   if (fpBonus !== 0) {
     formulaParts.push(fpBonus.toString());
   }
 
   // Add custom modifier if present
-  const customModifier = context.customModifier || 0;
+  const customModifier = rollContext.customModifier || 0;
   if (customModifier !== 0) {
     formulaParts.push(customModifier.toString());
   }
@@ -294,12 +300,12 @@ export async function rollDamage(actor, weapon, context = {}) {
   // RAW: confirmed critical hits multiply damage; area attacks do not deal
   // double damage on a critical. Extra critical-only bonuses are appended after
   // the multiplier so they do not get accidentally multiplied twice.
-  const critMultiplier = Number(context.critMultiplier ?? getRawCriticalMultiplier(weapon, 2)) || 2;
-  if (context.isCritical && !isAreaAttack(weapon, context) && critMultiplier > 1) {
+  const critMultiplier = Number(rollContext.critMultiplier ?? getRawCriticalMultiplier(weapon, 2)) || 2;
+  if (rollContext.isCritical && !isAreaAttack(weapon, rollContext) && critMultiplier > 1) {
     formula = `(${formula}) * ${critMultiplier}`;
   }
 
-  if (context.isCritical) {
+  if (rollContext.isCritical) {
     const critBonusFormula = getCriticalDamageBonus(actor, weapon);
     if (critBonusFormula) {
       formula = `${formula} + (${critBonusFormula})`;
@@ -313,7 +319,7 @@ export async function rollDamage(actor, weapon, context = {}) {
 
   // Build flavor text with breakdown
   let flavor = `${weapon.name} Damage`;
-  if (context.isCritical) {
+  if (rollContext.isCritical) {
     flavor += ` [CRITICAL]`;
   }
   if (talentBonus.breakdown.length > 0) {
@@ -331,18 +337,22 @@ export async function rollDamage(actor, weapon, context = {}) {
     ui.notifications.info(notification);
   }
 
-  if (context.suppressChat !== true) {
+  if (rollContext.suppressChat !== true) {
     await SWSEChat.postRoll({
       roll,
       actor,
       flavor,
+      flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
       context: {
         type: 'damage',
         weaponId: weapon.id,
         weapon,
-        isCritical: context.isCritical === true,
+        isCritical: rollContext.isCritical === true,
         critMultiplier,
-        damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? ''
+        workflowContext,
+        target: rollContext.target ?? null,
+        targetContext: rollContext.targetContext ?? null,
+        damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext })
       }
     });
   }

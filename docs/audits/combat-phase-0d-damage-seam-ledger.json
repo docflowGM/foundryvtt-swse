@@ -1,0 +1,134 @@
+[
+  {
+    "id": "damage-authority-split",
+    "system": "damage",
+    "rule": "Damage roll math should have one canonical authority.",
+    "currentEvidence": "Both scripts/combat/rolls/damage.js and scripts/combat/rolls/attacks.js export rollDamage implementations with different option handling.",
+    "affectedFeatsTalents": ["Burst Fire", "Rapid Shot", "Rapid Strike", "Deadeye", "Mighty Swing", "Power Attack"],
+    "automationBoundary": "architecture cleanup",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "chat-damage-context-loss",
+    "system": "chat_damage_buttons",
+    "rule": "Damage buttons must preserve attack option and target outcome context.",
+    "currentEvidence": "holo-roll damage buttons store actorId, weaponId, isCritical, critMultiplier, and twoHanded only.",
+    "affectedFeatsTalents": ["Burst Fire", "Rapid Shot", "Rapid Strike", "Deadeye", "Evasion", "Mighty Swing"],
+    "automationBoundary": "automate context preservation",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "area-critical-context-loss",
+    "system": "area_attacks",
+    "rule": "Area attacks do not deal double damage on a critical hit.",
+    "currentEvidence": "damage.js skips critical multiplication if area context survives, but chat damage buttons do not preserve areaAttack/autofire context.",
+    "affectedFeatsTalents": ["Evasion", "Burst Fire", "Autofire-related talents"],
+    "automationBoundary": "automate once context is preserved",
+    "severity": "high",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "evasion-area-damage-target-context",
+    "system": "area_damage",
+    "rule": "Evasion halves area damage on hit and negates area damage on miss.",
+    "currentEvidence": "Evasion metadata exists, but legacy autofire helper appears to inspect attacker items; canonical damage path lacks area hit/miss target context.",
+    "affectedFeatsTalents": ["Evasion", "Dedicated Protector Blast Shield-style effects"],
+    "automationBoundary": "automate after GM selects affected targets/outcome",
+    "severity": "critical",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "burst-fire-miss-half-damage",
+    "system": "burst_fire",
+    "rule": "Burst Fire is a single-target attack and should not deal half damage on a miss.",
+    "currentEvidence": "Legacy enhanced-rolls Burst Fire branch appears to label misses as half damage.",
+    "affectedFeatsTalents": ["Burst Fire"],
+    "automationBoundary": "automate",
+    "severity": "critical if live",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "burst-fire-extra-dice-context",
+    "system": "burst_fire",
+    "rule": "Burst Fire adds +2 weapon dice and consumes five shots when selected.",
+    "currentEvidence": "Burst Fire metadata has +2 dice and ammo cost, but chat damage buttons do not preserve the selected burstFire attack option context.",
+    "affectedFeatsTalents": ["Burst Fire"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "stun-half-hp-and-threshold",
+    "system": "stun_damage",
+    "rule": "Successful stun damage subtracts half damage from HP, compares original stun damage to DT, and moves -2 CT if it meets/exceeds DT.",
+    "currentEvidence": "DamageResolutionEngine treats damageType stun as a threshold flag, but stun special threshold behavior is gated by a disabled-by-default houserule and half-HP loss is not clearly applied.",
+    "affectedFeatsTalents": ["Stunning Strike", "stun weapons", "stun grenades"],
+    "automationBoundary": "automate",
+    "severity": "critical",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "stun-immunity",
+    "system": "stun_damage",
+    "rule": "Only creatures can be stunned; droids, vehicles, and objects are immune to stun damage.",
+    "currentEvidence": "Droid traits mention immunity, but DamageResolutionEngine/DamageMitigationManager do not clearly reject stun damage for droids, vehicles, or objects.",
+    "affectedFeatsTalents": ["stun weapons", "stun grenades", "droid traits"],
+    "automationBoundary": "automate",
+    "severity": "critical",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "minimum-one-damage",
+    "system": "damage",
+    "rule": "A hit always deals at least 1 point of damage even if penalties reduce damage below 1.",
+    "currentEvidence": "No clear floor-to-one enforcement was found in the primary damage formula or result handling.",
+    "affectedFeatsTalents": ["Power Attack", "Melee Defense", "conditional damage penalties"],
+    "automationBoundary": "automate",
+    "severity": "medium",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "firing-into-melee-checkbox",
+    "system": "ranged_attack_context",
+    "rule": "Shooting or throwing into melee applies -5 unless suppressed by Precise Shot.",
+    "currentEvidence": "Precise Shot suppresses firingIntoMeleePenalty in metadata, but the attack dialog does not expose a clear Firing into melee checkbox and the base penalty is not reliably applied.",
+    "affectedFeatsTalents": ["Precise Shot", "Elusive Target"],
+    "automationBoundary": "assist; GM/player checks the box",
+    "severity": "high",
+    "recommendedPhase": 2,
+    "fixNow": false
+  },
+  {
+    "id": "elusive-target-manual-adjudication",
+    "system": "ranged_attack_context",
+    "rule": "Elusive Target adds an additional -5 ranged attack penalty when the defender is fighting in melee, stacking with firing into melee.",
+    "currentEvidence": "Talent metadata already marks Elusive Target as manual; user confirmed this should remain GM adjudicated because map/engagement detection is too hard and too table-dependent.",
+    "affectedFeatsTalents": ["Elusive Target"],
+    "automationBoundary": "GM managed with optional checkbox/reminder",
+    "severity": "medium-high",
+    "recommendedPhase": 2,
+    "fixNow": false
+  },
+  {
+    "id": "mixed-damage-types",
+    "system": "damage_types",
+    "rule": "Mixed damage types should allow abilities keyed to one component to affect the whole simultaneous damage effect.",
+    "currentEvidence": "Some context builders support damageTypes arrays, but damage chat and mitigation paths often collapse to a single damageType string.",
+    "affectedFeatsTalents": ["Negate Energy", "DR/resistance effects", "mixed-type weapon riders"],
+    "automationBoundary": "automate later",
+    "severity": "medium",
+    "recommendedPhase": 9,
+    "fixNow": false
+  }
+]

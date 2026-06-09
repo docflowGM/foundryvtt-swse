@@ -307,16 +307,34 @@ export class CombatActionsMapper {
   // ---------------------------------------------------------------------------
 
   static _normalizeAction(item) {
+    const system = item.system ?? {};
     return {
-      key: item.system?.key ?? item._id,
+      id: system.id ?? system.key ?? item._id,
+      key: system.key ?? item._id,
       name: item.name,
-      actionType: item.system?.actionType,
-      cost: item.system?.cost,
-      notes: item.system?.notes,
-      relatedSkills: item.system?.relatedSkills ?? [],
-      dc: item.system?.dc,
-      outcome: item.system?.outcome,
-      when: item.system?.when
+      actionType: system.actionCost ?? system.actionType,
+      actionCost: system.actionCost ?? system.actionType,
+      actionTypeRaw: system.actionTypeRaw ?? system.action?.type ?? system.actionType,
+      cost: system.cost,
+      notes: system.notes,
+      description: system.description ?? system.notes,
+      relatedSkills: system.relatedSkills ?? [],
+      dc: system.dc,
+      outcome: system.outcome,
+      when: system.when,
+      resolutionMode: system.resolutionMode,
+      manualResolution: system.manualResolution,
+      gmManaged: system.gmManaged,
+      automationBoundary: system.automationBoundary,
+      executable: system.executable,
+      contextTags: system.contextTags ?? system.tags ?? [],
+      requiredContext: system.requiredContext ?? system.requirements ?? [],
+      resources: system.resources ?? system.resourceCosts ?? system.ammoConsumption ?? system.ammo_consumption ?? null,
+      ruleData: system.ruleData ?? {},
+      spendAction: system.spendAction,
+      houseruleGate: system.houseruleGate,
+      targetHint: system.targetHint,
+      isAttack: system.isAttack
     };
   }
 

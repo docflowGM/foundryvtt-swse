@@ -135,9 +135,11 @@ export class ActionPolicyController {
   static _violationLabel(code) {
     const labels = {
       FULL_ROUND_NOT_AVAILABLE: "full-round not available",
+      FULL_ROUND_ALREADY_USED: "full-round already used",
       INSUFFICIENT_STANDARD: "no standard action",
       INSUFFICIENT_MOVE: "no move action",
-      INSUFFICIENT_SWIFT: "no swift actions"
+      INSUFFICIENT_SWIFT: "no swift actions",
+      INSUFFICIENT_REACTION: "no reaction available"
     };
     return labels[code] ?? code;
   }

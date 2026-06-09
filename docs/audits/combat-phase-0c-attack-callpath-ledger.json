@@ -1,0 +1,94 @@
+[
+  {
+    "pathId": "character-sheet-weapon-attack",
+    "entryPoint": "scripts/sheets/v2/character-sheet.js::_runCanonicalAttack",
+    "callPath": [
+      "_applyActionEconomy('standard')",
+      "SWSERoll.rollAttack(actor, weapon, options)",
+      "enhanced-rolls.js facade",
+      "showRollModifiersDialog when requested",
+      "canonical rollAttack from attacks.js",
+      "SWSEChat.postRoll"
+    ],
+    "resultShape": "Potential drift: enhanced-rolls facade expects swseAttackContext on returned value, while canonical rollAttack returns attackResult object.",
+    "rulesCovered": ["BAB", "attack ability", "range penalty", "proficiency", "condition penalty", "target defense >= comparison"],
+    "rulesAtRisk": ["natural 1 auto-miss", "attack option context", "damage context preservation"],
+    "auditStatus": "usable but context-shape drift"
+  },
+  {
+    "pathId": "combat-action-attack-row",
+    "entryPoint": "scripts/sheets/v2/character-sheet.js::_runCanonicalCombatAction",
+    "callPath": [
+      "resolve actionData",
+      "infer isAttackAction",
+      "resolve weapon or virtual unarmed",
+      "showRollModifiersDialog",
+      "_applyActionEconomy(derived action type)",
+      "SWSERoll.rollAttack(actor, weapon, dialogResult)"
+    ],
+    "resultShape": "Dialog returns situational.aiming/charging but resolver expects aim/charge.",
+    "rulesCovered": ["manual target context", "cover target defense adjustment", "generic situational modifier", "combat options selected by dialog"],
+    "rulesAtRisk": ["Aim feats", "Charge feats", "Precise Shot penalty suppression", "Shooting/throwing into melee", "Maneuver-specific attack options"],
+    "auditStatus": "needs attack context builder"
+  },
+  {
+    "pathId": "full-attack-executor",
+    "entryPoint": "scripts/engine/combat/full-attack-executor.js::execute",
+    "callPath": [
+      "showFullAttackDialog",
+      "spend full-round economy",
+      "buildFullAttackSequence",
+      "for each attack: canonical rollAttack(... suppressChat:true)",
+      "post combined card with damage buttons"
+    ],
+    "resultShape": "Strong attack sequencing direction; damage buttons only preserve actor/weapon/crit/multiplier.",
+    "rulesCovered": ["multiattack penalties via sequence", "meets-beats via canonical rollAttack"],
+    "rulesAtRisk": ["damage option context", "area/crit preservation", "offhand/dual wield damage context"],
+    "auditStatus": "good attack routing, thin damage context"
+  },
+  {
+    "pathId": "chat-roll-damage-button",
+    "entryPoint": "scripts/ui/chat/chat-interaction-bridge.js::handleLegacyDamageRollButton / handleCombatDamageRollButton",
+    "callPath": [
+      "resolve actor from button/message",
+      "resolve weapon from actor/item id",
+      "SWSERoll.rollDamage(actor, weapon, limited options)",
+      "damage.js rollDamage"
+    ],
+    "resultShape": "Limited context: isCritical/critMultiplier/twoHanded/target only in legacy path; target only in combat path.",
+    "rulesCovered": ["basic damage formula", "critical flag if supplied"],
+    "rulesAtRisk": ["Burst Fire extra dice", "Rapid Shot/Rapid Strike extra die", "Deadeye", "Mighty Swing", "area attack critical suppression", "Evasion hit/miss handling"],
+    "auditStatus": "high risk"
+  },
+  {
+    "pathId": "legacy-autofire-helper",
+    "entryPoint": "scripts/combat/rolls/enhanced-rolls.js::rollAutofire",
+    "callPath": [
+      "validate autofire weapon",
+      "check ammo",
+      "roll attack once",
+      "loop provided targets",
+      "roll damage per target",
+      "apply local Evasion/half damage logic",
+      "consume ammo",
+      "post autofire card"
+    ],
+    "resultShape": "Appears self-contained and separate from canonical attack-result/damage-context flow.",
+    "rulesCovered": ["autofire penalty", "ammo cost", "target reflex comparison"],
+    "rulesAtRisk": ["undefined mode variable", "Evasion checked on attacker not target", "Burst Fire miss half damage", "area crit handling", "GM-managed target selection boundary"],
+    "auditStatus": "unsafe if live"
+  },
+  {
+    "pathId": "grapple-grab-attack",
+    "entryPoint": "scripts/combat/systems/grappling-system.js::attemptGrab",
+    "callPath": [
+      "build virtual unarmed grab weapon",
+      "SWSERoll.rollAttack(... combatOptions.grab)",
+      "if attackResult.isHit then apply grabbed / optional grapple upgrade"
+    ],
+    "resultShape": "Uses SWSERoll facade; therefore affected by facade return-shape drift.",
+    "rulesCovered": ["initial grab uses unarmed attack vs Reflex"],
+    "rulesAtRisk": ["Pin/Trip training gate", "grab penalty", "opposed grapple meets-beats", "state effects"],
+    "auditStatus": "defer to 0F, but attack path dependency flagged"
+  }
+]

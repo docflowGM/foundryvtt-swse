@@ -1,0 +1,780 @@
+[
+  {
+    "id": "006aadd0b05c4f47",
+    "name": "Second Wind",
+    "key": "second-wind",
+    "packActionType": "swift",
+    "rawActionType": "swift",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Once per encounter/day: if at or below half hp, heal 1/4 max HP or CON (whichever higher).",
+    "sheetNormalizedActionType": "swift",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "04c2483957f746f1",
+    "name": "Aid another",
+    "key": "aid-another",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Aid a skill or attack. Skill aid: DC 10 same skill to grant +2 to ally. Aid attack: attack vs Ref 10 to grant +2 to ally vs that target.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "skill-dc-result-application-required"
+    ]
+  },
+  {
+    "id": "0d42f429fb99489a",
+    "name": "Fight defensively",
+    "key": "fight-defensively",
+    "packActionType": "compound",
+    "rawActionType": "standard (or full-round variant)",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Standard: -5 attacks, +2 dodge to Ref (or +5 if trained in Acrobatics). Full-round no attacks: +5 dodge (+10 if trained).",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "acrobatics-defense-upgrade-required",
+      "hidden-from-lanes-compound",
+      "houserule-move-or-swift-cost-needed",
+      "raw-standard-cost-needs-routing"
+    ],
+    "phase0bAddendum": "RAW standard action; +2 Reflex/+5 if Acrobatics-trained; total defense/no attacks +5/+10 if Acrobatics-trained. Current sheet/status/effect paths do not consistently model this."
+  },
+  {
+    "id": "15751bbf082d41eb",
+    "name": "Attack (single)",
+    "key": "attack-(single)",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Normal attack; rate and damage depend on weapon. Melee 2\u2011handed uses STR\u00d72 to damage; improvised = -5 attack.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "attack-context-required"
+    ]
+  },
+  {
+    "id": "211db1bbb7774c56",
+    "name": "Charge",
+    "key": "charge",
+    "packActionType": "compound",
+    "rawActionType": "standard (move your speed, min 2 sq)",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Move in straight line; +2 competence to attack; take -2 Reflex until next turn; cannot take other actions after attack.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound",
+      "attack-context-required"
+    ]
+  },
+  {
+    "id": "27a24250494d4911",
+    "name": "Run",
+    "key": "run",
+    "packActionType": "full-round",
+    "rawActionType": "full-round",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Move 4\u00d7 speed (3\u00d7 if heavy armor), lose Dex bonus to Ref; can run for CON rounds, then Endurance checks.",
+    "sheetNormalizedActionType": "full-round",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "292906af5aeb4bb8",
+    "name": "Brace Autofire-Only Weapon",
+    "key": "brace-autofire-only-weapon",
+    "packActionType": "standard",
+    "rawActionType": "2 swift actions",
+    "cost": 2,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Autofire-only weapons only. Takes 2 Swift Actions immediately before making autofire attack. When braced, take -2 penalty instead of -5 on autofire attacks. Only Heavy Weapons, Rifles, and Pistols with Retractable Stock can be braced.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "raw-cost-misclassified-as-standard",
+      "multi-cost-not-modeled-by-economy"
+    ]
+  },
+  {
+    "id": "2b35595aa28a4e61",
+    "name": "Stand up from prone",
+    "key": "stand-up-from-prone",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Stand normally as move; trained in Acrobatics can DC15 to stand as swift.",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "359661de8cf642eb",
+    "name": "Switch Weapon Mode",
+    "key": "switch-weapon-mode",
+    "packActionType": "swift",
+    "rawActionType": "swift",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Some weapons have multiple modes (lethal/stun, single-shot/autofire, etc). Switching weapon modes takes a Swift Action.",
+    "sheetNormalizedActionType": "swift",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "3ab9945e306c460d",
+    "name": "Use Computer / Access information",
+    "key": "use-computer-/-access-information",
+    "packActionType": "compound",
+    "rawActionType": "varies (full-round/1 min/1 hr)",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Use Computer checks to access info: general 15 (1 min), specific 20 (10 min), private 25 (1 hr), secret 30 (1 day) when computer attitude allows.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound"
+    ]
+  },
+  {
+    "id": "451a442e35e74954",
+    "name": "Draw or Holster Weapon",
+    "key": "draw-or-holster-weapon",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Draw as move (or draw & activate if weapon requires activation and you are proficient). Drawing concealed weapons = standard.",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "483182b462b64492",
+    "name": "Aim",
+    "key": "aim",
+    "packActionType": "swift",
+    "rawActionType": "swift",
+    "cost": 2,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Ignore target's cover bonus to Reflex on next attack; lose aim if you lose LOS or take other action before attacking; provokes AoO.",
+    "sheetNormalizedActionType": "swift",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "499bf8b258e444a7",
+    "name": "Feint",
+    "key": "feint",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Deception vs target's Initiative to make target flat-footed vs your next attack. -5 vs non-humanoids/low INT.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "skill-dc-result-application-required"
+    ]
+  },
+  {
+    "id": "4c93f60c27f143f9",
+    "name": "Use the Force (example: Move Light Object / Breath Control)",
+    "key": "use-the-force-(example:-move-light-object-/-breath-control)",
+    "packActionType": "compound",
+    "rawActionType": "varies (move/standard/swift/full-round)",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "UtF powers often require trained UtF checks. Move Light Object: UtF DC10 (move action). Breath Control (UtF) DC15 to double hold-breath rounds.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound"
+    ]
+  },
+  {
+    "id": "56a1fb643faf494f",
+    "name": "Disarm",
+    "key": "disarm",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Melee attack at -10 (-15 if weapon held in more than 1 hand). Failure may provoke free attack against you.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "attack-context-required"
+    ]
+  },
+  {
+    "id": "61b7709ea27643b6",
+    "name": "Ready or Recovery actions for vehicles",
+    "key": "ready-or-recovery-actions-for-vehicles",
+    "packActionType": "standard",
+    "rawActionType": "varies (swift, 3 swifts)",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Vehicle actions include Raise/lower shields (swift), Recharge shields (3 swift w/ Mechanics DC20), regulate power (3 swifts Mechanics DC20).",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "raw-cost-misclassified-as-standard"
+    ]
+  },
+  {
+    "id": "6bb4a19b6c904691",
+    "name": "Grapple / Grab",
+    "key": "grapple-/-grab",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Unarmed attack to grab (-5). If hit, make opposed grapple checks (Grapple uses STR or DEX + BAB + size). Grappled target is denied movement and has -2 attack unless using light weapon.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "attack-context-required"
+    ]
+  },
+  {
+    "id": "6c383f92da594b5d",
+    "name": "Disengage / Withdraw",
+    "key": "disengage-/-withdraw",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Withdraw at half speed; treat first square as non-threatened; cannot withdraw if must move more than one square to exit threatened area.",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "6f93da95deda4fc9",
+    "name": "Burst Fire",
+    "key": "burst-fire",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Requires Burst Fire feat. Use autofire weapon against single target instead of area. Take -5 penalty on attack roll, deal +2 dice of weapon damage. Uses only 5 shots (half of normal 10). NOT an area attack, so Evasion talent cannot reduce damage.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "attack-context-required"
+    ]
+  },
+  {
+    "id": "779710a5097e40f5",
+    "name": "Snipe",
+    "key": "snipe",
+    "packActionType": "compound",
+    "rawActionType": "standard + move",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "From hiding: make ranged attack then hide again (Stealth check at -10 as move). Must be at least 2 squares away.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound"
+    ]
+  },
+  {
+    "id": "820a004b134a489a",
+    "name": "First Aid / Revivify / Treat Injury",
+    "key": "first-aid-/-revivify-/-treat-injury",
+    "packActionType": "compound",
+    "rawActionType": "full-round (first aid) / full-round (revivify)",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "First Aid (medpac) DC15 heal; Revivify DC25 (requires medkit) to revive within 1 round of death.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound",
+      "skill-dc-result-application-required"
+    ]
+  },
+  {
+    "id": "83f45226758c4a63",
+    "name": "Draw concealed item (conceal/seek)",
+    "key": "draw-concealed-item-(conceal/seek)",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "If concealed on self, drawing is standard and may be opposed by Perception.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "92c75539bb824a2a",
+    "name": "Escape bonds / Escape net",
+    "key": "escape-bonds-/-escape-net",
+    "packActionType": "compound",
+    "rawActionType": "standard / full-round",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Escape nets: Acrobatics DC15 as full-round; nets often require higher DC to escape as standard.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound"
+    ]
+  },
+  {
+    "id": "9da3df5c2ca64376",
+    "name": "Reload",
+    "key": "reload",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Reload is normally a move action and provokes AoO unless specified otherwise.",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "9e91064ad1d94a13",
+    "name": "Treat Poison",
+    "key": "treat-poison",
+    "packActionType": "full-round",
+    "rawActionType": "full-round",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Trained in Treat Injury only. Requires Medical Kit. Make a Treat Injury check; if result equals or exceeds the Poison's DC, you successfully detoxify the poison in the character's system and the patient no longer suffers any ill effects (including Persistent Conditions caused by the poison).",
+    "sheetNormalizedActionType": "full-round",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "skill-dc-result-application-required"
+    ]
+  },
+  {
+    "id": "a3bfdb508c364f9e",
+    "name": "Feign Haywire",
+    "key": "feign-haywire",
+    "packActionType": "full-round",
+    "rawActionType": "full-round",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Droids only. Pop open access panels, move erratically, make mechanical noises. Make Deception check vs Will Defense of all targets in line of sight. Success: target is Flat-Footed against you. Ends at end of your turn if you take any action. Targets no longer Flat-Footed after Deception ends.",
+    "sheetNormalizedActionType": "full-round",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "a69123586d6b4beb",
+    "name": "Create a Diversion to Hide",
+    "key": "create-a-diversion-to-hide",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Deception vs all targets' Will to allow a Stealth attempt while targets are aware. You must be able to reach hiding place with a move.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "skill-dc-result-application-required"
+    ]
+  },
+  {
+    "id": "a801c9e246df48dd",
+    "name": "Anticipate Enemy Strategy",
+    "key": "anticipate-enemy-strategy",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Trained in Knowledge (Tactics) only. Make Knowledge (Tactics) check vs target's Will Defense (or 10 + target's CL if no Will Defense). Success reveals target's likely next action, who they'll attack, where they'll move, or other strategies.",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "skill-dc-result-application-required"
+    ]
+  },
+  {
+    "id": "aa67e688789a482f",
+    "name": "Maiming Foes",
+    "key": "maiming-foes",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Declare intent to maim instead of kill. Make attack at -5 penalty. On hit, deal half damage. If attack reduces target to 0 HP, target is maimed but alive instead of dead.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "ae9b2e43edbf4f87",
+    "name": "Fall prone",
+    "key": "fall-prone",
+    "packActionType": "swift",
+    "rawActionType": "swift",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "If trained in Acrobatics DC15 you can fall prone as a free action; otherwise swift. Prone penalties apply.",
+    "sheetNormalizedActionType": "swift",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "aecbd8ed0e044a4d",
+    "name": "Tumble",
+    "key": "tumble",
+    "packActionType": "standard",
+    "rawActionType": "part of move",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Acrobatics DC15 to move through threatened squares without provoking AoO; each threatened square counts as 2 squares of movement.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "raw-cost-misclassified-as-standard"
+    ]
+  },
+  {
+    "id": "af1becba0e7242e9",
+    "name": "Coup de Grace",
+    "key": "coup-de-grace",
+    "packActionType": "full-round",
+    "rawActionType": "full-round",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Full-Round Action against a Helpless target. Can use melee weapon or ranged weapon if adjacent. Automatically scores a Critical Hit dealing double damage. Target reduced to 0 HP dies instantly. Unconscious or disabled defenders hit by Coup de Grace die instantly. Cannot use against vehicles or objects.",
+    "sheetNormalizedActionType": "full-round",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "af98e3a193d9475a",
+    "name": "Drop an item",
+    "key": "drop-an-item",
+    "packActionType": "swift",
+    "rawActionType": "swift",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Drop item into your space or adjacent square; free/simple.",
+    "sheetNormalizedActionType": "swift",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "b1805c02cc264a58",
+    "name": "Manipulate an item",
+    "key": "manipulate-an-item",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Pick up item (provokes AoO), load weapon (provokes AoO), open door, retrieve templates/apps/stored item (2 move actions, provokes AoO).",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "b42bef6e33914d65",
+    "name": "Ready an action (prepare)",
+    "key": "ready-an-action-(prepare)",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Specify a trigger and action (move/standard/swift). When trigger occurs you may take the readied action as a reaction; initiative changes to the time you used it.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "b783fccadc204385",
+    "name": "Activate an item",
+    "key": "activate-an-item",
+    "packActionType": "swift",
+    "rawActionType": "swift",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Start vehicle, turn on device, ignite lightsaber.",
+    "sheetNormalizedActionType": "swift",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "c5ded5cd3e5640b7",
+    "name": "Area Attack (burst/splash/cone)",
+    "key": "area-attack-(burst/splash/cone)",
+    "packActionType": "standard",
+    "rawActionType": "standard",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Compare attack roll (if >=10) to each target's Ref; hits full, misses half; natural 20 hits all; cannot aim for area attacks.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "d211aeaf3e124941",
+    "name": "Perception / Notice targets",
+    "key": "perception-/-notice-targets",
+    "packActionType": "compound",
+    "rawActionType": "reaction / standard",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Perception vs Stealth or passive size DCs; reaction to notice entering LOS. Reaction swift to retry failed Perception.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound"
+    ]
+  },
+  {
+    "id": "f8e90a119dc44bc1",
+    "name": "Recover",
+    "key": "recover",
+    "packActionType": "standard",
+    "rawActionType": "3 swift actions",
+    "cost": 3,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 0,
+    "notes": "Spend three Swift Actions in same round or across consecutive rounds to move +1 step up the Condition Track. Cannot use Recover while afflicted by a Persistent Condition.",
+    "sheetNormalizedActionType": "standard",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use",
+      "raw-cost-misclassified-as-standard",
+      "multi-cost-not-modeled-by-economy"
+    ]
+  },
+  {
+    "id": "f90a048c64864ba0",
+    "name": "Autofire",
+    "key": "autofire",
+    "packActionType": "compound",
+    "rawActionType": "swift + standard",
+    "cost": null,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Swift Action: Set weapon to Autofire mode. Standard Action: Target 2\u00d72 square area, make single attack roll at -5 penalty, compare to Reflex Defense of all creatures in area. Hits take full damage, misses take half damage. Consumes 10 shots/slugs (must have 10+ in weapon). Braced autofire-only weapons reduce penalty to -2.",
+    "sheetNormalizedActionType": "compound",
+    "renderedInCombatTabFromPack": false,
+    "sheetRenderedExecutableFromMapper": false,
+    "phase0bRiskTags": [
+      "hidden-from-lanes-compound",
+      "attack-context-required"
+    ]
+  },
+  {
+    "id": "fe2e23d417c54fcf",
+    "name": "Move your speed / Move action",
+    "key": "move-your-speed-/-move-action",
+    "packActionType": "move",
+    "rawActionType": "move",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 2,
+    "notes": "Move up to speed; diagonal counts as 2 squares; options include Balance (half speed), Climb (1/4 speed), Tumble (part of move with Acrobatics).",
+    "sheetNormalizedActionType": "move",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  },
+  {
+    "id": "fed30a577c394a45",
+    "name": "Full attack",
+    "key": "full-attack",
+    "packActionType": "full-round",
+    "rawActionType": "full-round",
+    "cost": 1,
+    "sourceExecutable": false,
+    "sourceToggleable": false,
+    "relatedSkillsCount": 1,
+    "notes": "Make multiple attacks; penalties apply to all attacks until next turn; two-weapon penalties apply.",
+    "sheetNormalizedActionType": "full-round",
+    "renderedInCombatTabFromPack": true,
+    "sheetRenderedExecutableFromMapper": true,
+    "phase0bRiskTags": [
+      "source-nonexecutable-but-sheet-renders-use"
+    ]
+  }
+]

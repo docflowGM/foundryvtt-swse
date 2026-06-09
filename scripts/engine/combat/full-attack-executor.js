@@ -24,6 +24,8 @@
  */
 
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
@@ -51,6 +53,46 @@ function _outcomeColor(result) {
   if (result.isHit === true) {return '#2a7;';}
   if (result.isHit === false) {return '#a33;';}
   return '#666;';
+}
+
+
+function _weaponKey(weapon) {
+  return weapon?.id ?? weapon?._id ?? weapon?.uuid ?? weapon?.name ?? '';
+}
+
+function _aggregateFullAttackAmmo(actor, sequence, options = {}) {
+  const byWeapon = new Map();
+  for (const attack of sequence?.attacks ?? []) {
+    const weapon = attack?.weapon;
+    if (!weapon) continue;
+    const amount = AmmoSystem.resolveAmmoCost({
+      weapon,
+      workflowContext: options.combatContext ?? null,
+      options: {
+        ...options,
+        sequencePenalty: attack.finalPenalty,
+        actionId: options.actionId ?? 'full-attack'
+      }
+    });
+    if (!amount) continue;
+    const key = _weaponKey(weapon);
+    const existing = byWeapon.get(key) ?? { actor, weapon, amount: 0 };
+    existing.amount += amount;
+    byWeapon.set(key, existing);
+  }
+  return [...byWeapon.values()];
+}
+
+async function _rollbackFullAttackAmmo(actor, spendResults = []) {
+  for (const spend of [...spendResults].reverse()) {
+    if (!spend?.spent) continue;
+    const weapon = actor?.items?.get?.(spend.weaponId) ?? null;
+    try {
+      await AmmoSystem.rollbackSpend(actor, weapon, spend);
+    } catch (err) {
+      console.warn('[FullAttackExecutor] Failed to rollback ammunition spend:', err);
+    }
+  }
 }
 
 /**
@@ -91,10 +133,51 @@ async function _postCombinedCard(actor, sequence, results, target) {
     const canRollDamage = res.isHit === true || res.isCritical === true;
     const weaponId = res.weaponId ?? res.weapon?.id ?? plan?.weapon?.id ?? '';
     const critMult = res.critMultiplier ?? 2;
+    const workflowSummary = summarizeCombatWorkflowContext(res.workflowContext ?? null, {
+      actor,
+      weapon: res.weapon ?? plan?.weapon ?? null,
+      target,
+      targetId: target?.id ?? null,
+      targetName: target?.name ?? null,
+      isCritical: res.isCritical === true,
+      critMultiplier: critMult,
+      hit: res.isHit ?? null,
+      natural1: Number(res.d20) === 1,
+      natural20: Number(res.d20) === 20
+    }) ?? {};
+    const workflowAttack = workflowSummary.attack ?? {};
+    const workflowDamage = workflowSummary.damage ?? {};
+    const workflowResources = workflowSummary.resources ?? {};
+    const workflowTags = Array.isArray(workflowSummary.contextTags) ? workflowSummary.contextTags.join('|') : '';
+    const workflowContextEncoded = encodeCombatWorkflowContext(res.workflowContext ?? null, {
+      actor,
+      weapon: res.weapon ?? plan?.weapon ?? null,
+      target,
+      targetId: target?.id ?? null,
+      targetName: target?.name ?? null,
+      isCritical: res.isCritical === true,
+      critMultiplier: critMult,
+      hit: res.isHit ?? null
+    });
     const damageBtn = canRollDamage && weaponId
       ? `<button type="button" class="btn swse-roll-damage"
                  data-actor-id="${actor.id}"
                  data-weapon-id="${weaponId}"
+                 data-target="${target?.id ?? ''}"
+                 data-workflow-id="${workflowSummary.workflowId ?? ''}"
+                 data-action-id="${workflowSummary.actionId ?? ''}"
+                 data-attack-mode="${workflowAttack.mode ?? ''}"
+                 data-context-tags="${workflowTags}"
+                 data-hit="${workflowDamage.hit ?? ''}"
+                 data-natural-1="${workflowDamage.natural1 === true}"
+                 data-natural-20="${workflowDamage.natural20 === true}"
+                 data-area-attack="${workflowAttack.isArea === true}"
+                 data-burst-fire="${workflowAttack.isBurstFire === true}"
+                 data-autofire="${workflowAttack.isAutofire === true}"
+                 data-stun="${workflowAttack.isStun === true}"
+                 data-ion="${workflowAttack.isIon === true}"
+                 data-ammo-cost="${Number(workflowResources.ammoCost ?? 0) || 0}"
+                 data-workflow-context="${workflowContextEncoded}"
                  data-is-crit="${res.isCritical === true}"
                  data-crit-mult="${critMult}"
                  style="margin-left:6px;padding:2px 7px;font-size:0.8em;cursor:pointer;
@@ -201,7 +284,18 @@ export class FullAttackExecutor {
       return null;
     }
 
-    // 2. Spend economy (full-round by default, overridable for "Full Attack as Standard Action" talents)
+    // 2. Preflight ammunition before spending action economy. Individual
+    // rollAttack() calls perform the actual spend with rollback support.
+    const ammoChecks = _aggregateFullAttackAmmo(actor, sequence, options);
+    for (const check of ammoChecks) {
+      const preflight = AmmoSystem.preflightAmmunition(actor, check.weapon, check.amount, options);
+      if (preflight?.ok === false) {
+        ui?.notifications?.error?.(preflight.message || `${check.weapon?.name ?? 'Weapon'} does not have enough ammunition.`);
+        return null;
+      }
+    }
+
+    // 3. Spend economy (full-round by default, overridable for "Full Attack as Standard Action" talents)
     const actionType = options.actionCostOverride ?? sequence.actionType ?? 'full-round';
     const sheet = options.sheet ?? null;
 
@@ -210,22 +304,26 @@ export class FullAttackExecutor {
         source: 'full-attack-executor',
         actionId:   options.actionId   ?? 'full-attack',
         actionName: options.actionName ?? sequence.packageType,
+        combatContext: options.combatContext ?? null,
       });
       if (!allowed) {return null;}
     }
 
-    // 3. Resolve shared target (first token target, or null)
+    // 4. Resolve shared target (first token target, or null)
     const target = options.target
       ?? game.user?.targets?.first?.()?.actor
       ?? null;
 
-    // 4. Roll each attack — suppressChat so we post one combined card
+    // 5. Roll each attack — suppressChat so we post one combined card
     const rollOptions = {
       suppressChat:    true,
       target,
       sourceElement:   options.sourceElement ?? null,
       sheet,
       showRollCompanion: false,
+      combatContext: options.combatContext ?? null,
+      actionData: options.actionData ?? null,
+      actionId: options.actionId ?? null,
       // Carry through any preroller modifiers the caller set
       customModifier:  options.customModifier  ?? 0,
       situationalBonus: options.situationalBonus ?? 0,
@@ -233,15 +331,25 @@ export class FullAttackExecutor {
     };
 
     const results = [];
+    const ammoSpends = [];
     for (const attack of sequence.attacks) {
       try {
         const result = await rollAttack(actor, attack.weapon, {
           ...rollOptions,
           sequencePenalty: attack.finalPenalty,
         });
-        if (result) {results.push(result);}
+        if (!result) {
+          await _rollbackFullAttackAmmo(actor, ammoSpends);
+          ui.notifications.warn('Full Attack stopped before all attacks resolved; ammunition was rolled back.');
+          return null;
+        }
+        if (result.ammoSpend?.spent) ammoSpends.push(result.ammoSpend);
+        results.push(result);
       } catch (err) {
+        await _rollbackFullAttackAmmo(actor, ammoSpends);
         console.error('[FullAttackExecutor] rollAttack failed for attack:', attack.label, err);
+        ui.notifications.error('Full Attack failed; ammunition was rolled back.');
+        return null;
       }
     }
 
@@ -250,7 +358,7 @@ export class FullAttackExecutor {
       return null;
     }
 
-    // 5. Post combined chat card
+    // 6. Post combined chat card
     await _postCombinedCard(actor, sequence, results, target);
 
     return results;
