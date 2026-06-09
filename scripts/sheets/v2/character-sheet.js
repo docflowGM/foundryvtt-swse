@@ -7031,6 +7031,131 @@ const forcePoints = [];
     };
   }
 
+  _createCombatWorkflowHandlers(options = {}) {
+    const routeLegacy = async (context) => this._runCanonicalCombatAction(context?.action?.id ?? context?.actionId, context?.action ?? {}, {
+      ...options,
+      __combatWorkflowRouted: true,
+      combatContext: context,
+      actionRecord: context?.action ?? null
+    });
+
+    return {
+      fullAttack: async (context) => this._executeFullAttackCombatWorkflow(context, options),
+      manual: async (context) => this._executeManualCombatWorkflow(context, options),
+      reference: async (context) => this._executeManualCombatWorkflow(context, options),
+      skillAction: async (context) => this._executeSkillActionCombatWorkflow(context, options),
+      attack: routeLegacy,
+      combatState: routeLegacy,
+      secondWind: routeLegacy,
+      grapple: routeLegacy,
+      aidAnother: routeLegacy,
+      ammoReload: routeLegacy,
+      actorItem: routeLegacy,
+      reaction: routeLegacy,
+      legacy: routeLegacy
+    };
+  }
+
+  async _executeFullAttackCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'full-attack';
+    const pkgFromId = {
+      'double-attack':       FULL_ATTACK_PACKAGES.DOUBLE_ATTACK,
+      'triple-attack':       FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
+      'two-weapon-fighting': FULL_ATTACK_PACKAGES.TWO_WEAPON,
+      'double-weapon-attack':FULL_ATTACK_PACKAGES.DOUBLE_WEAPON,
+    };
+    const requestedPackage =
+      actionData?.ruleData?.requestedPackage ??
+      pkgFromId[actionId] ??
+      FULL_ATTACK_PACKAGES.NORMAL;
+    const actionCostOverride = actionData?.cost ?? actionData?.actionCost ?? null;
+    return await FullAttackExecutor.execute(this.actor, {
+      requestedPackage,
+      actionCostOverride,
+      actionId,
+      actionName: actionData?.name ?? actionId,
+      actionData,
+      combatContext: context,
+      source: options?.source ?? context?.source?.invocation ?? "full-attack",
+      sourceElement: options?.sourceElement ?? context?.source?.element ?? null,
+      sheet: this
+    });
+  }
+
+  async _executeManualCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'manual-combat-action';
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? context?.source?.invocation ?? "ability-combat-action",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? null,
+        sourceType: actionData?.sourceType ?? null,
+        combatContext: context
+      });
+      if (!allowed) return null;
+    }
+
+    return await this._announceManualCombatAction(actionId, actionData, {
+      ...options,
+      combatContext: context,
+      actionType
+    });
+  }
+
+  async _executeSkillActionCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'skill-combat-action';
+    const skillKey = this._resolveCombatActionSkillKey(actionData);
+    if (!skillKey) {
+      return await this._runCanonicalCombatAction(actionId, actionData, {
+        ...options,
+        __combatWorkflowRouted: true,
+        combatContext: context,
+        actionRecord: actionData
+      });
+    }
+
+    const modResult = await showRollModifiersDialog({
+      title: `${actionData?.name ?? actionId} — ${this._labelSkillKey(skillKey)}`,
+      rollType: skillKey === 'useTheForce' ? 'force' : 'skill',
+      actor: this.actor,
+      skillKey,
+      sourceElement: options?.sourceElement ?? context?.source?.element ?? null,
+      sheet: this,
+      showCover: false,
+      showConcealment: false
+    });
+    if (modResult === null) return null;
+
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    const allowed = await this._applyActionEconomy(actionType, {
+      source: options?.source ?? context?.source?.invocation ?? "combat-action",
+      actionId,
+      actionName: actionData?.name ?? actionId,
+      skillKey,
+      combatContext: context
+    });
+    if (!allowed) return null;
+
+    const dc = this._extractCombatActionDc(actionData);
+    return await rollSkillCheck(this.actor, skillKey, {
+      ...modResult,
+      dc,
+      actionId,
+      actionData,
+      combatContext: context,
+      source: options?.source ?? context?.source?.invocation ?? "combat-action",
+      sourceElement: options?.sourceElement ?? context?.source?.element ?? null,
+      companionSource: options?.sourceElement ?? context?.source?.element ?? null,
+      sheet: this,
+      showRollCompanion: true
+    });
+  }
+
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
     // Phase 1B: route combat actions through the thin workflow registry first.
     // The registry owns normalization/context preservation, while this sheet
@@ -7043,80 +7168,7 @@ const forcePoints = [];
         actionData,
         options,
         sheet: this,
-        handlers: {
-          attack: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          fullAttack: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          skillAction: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          combatState: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          secondWind: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          grapple: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          aidAnother: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          ammoReload: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          actorItem: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          manual: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          reference: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          }),
-          legacy: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
-            ...options,
-            __combatWorkflowRouted: true,
-            combatContext: context,
-            actionRecord: context.action
-          })
-        }
+        handlers: this._createCombatWorkflowHandlers(options)
       });
       if (result?.cancelled === true) return null;
       return result?.payload ?? result;
@@ -7154,7 +7206,9 @@ const forcePoints = [];
         actionData,
         source: options?.source ?? "full-attack",
         sourceElement: options?.sourceElement ?? null,
-        sheet: this
+        sheet: this,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
+        actionRecord: options?.actionRecord ?? actionData ?? null
       });
     }
 
@@ -7224,7 +7278,10 @@ const forcePoints = [];
         source: options?.source ?? "combat-action",
         sourceElement: options?.sourceElement ?? null,
         sheet: this,
-        showRollCompanion: true
+        showRollCompanion: true,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
+        actionData,
+        actionId
       });
     }
 
@@ -7283,7 +7340,9 @@ const forcePoints = [];
       actor: this.actor,
       actionId,
       ...actionData,
-      ...options
+      ...options,
+      combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
+      actionRecord: options?.actionRecord ?? actionData ?? null
     };
 
     try {

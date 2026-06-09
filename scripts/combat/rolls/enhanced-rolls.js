@@ -411,6 +411,9 @@ export class SWSERoll {
         isHit: attackContext.isHit ?? null,
         coverBonus: attackContext.defenseAdjustment ?? 0,
         modifiers,
+        workflowContext: roll?.workflowContext ?? null,
+        actionId: roll?.actionId ?? options?.actionId ?? null,
+        actionData: roll?.actionData ?? options?.actionData ?? null,
         canonical: true
       };
 

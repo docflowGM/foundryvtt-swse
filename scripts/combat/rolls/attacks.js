@@ -22,6 +22,40 @@ function getTargetActorFromOptions(options = {}) {
   return options.target ?? game.user?.targets?.first?.()?.actor ?? null;
 }
 
+function summarizeCombatWorkflowContext(context = null) {
+  if (!context) return null;
+  const action = context.action ?? {};
+  const attack = context.attack ?? {};
+  const resources = context.resources ?? {};
+  const economy = context.economy ?? {};
+  return {
+    actionId: action.id ?? context.actionId ?? null,
+    actionName: action.name ?? null,
+    resolutionMode: action.resolutionMode ?? null,
+    actionType: action.actionType ?? null,
+    automationBoundary: context.automationBoundary ?? action.automationBoundary ?? null,
+    attack: {
+      mode: attack.mode ?? null,
+      isArea: attack.isArea === true,
+      isAutofire: attack.isAutofire === true,
+      isBurstFire: attack.isBurstFire === true,
+      isAiming: attack.isAiming === true,
+      isCharging: attack.isCharging === true,
+      isFiringIntoMelee: attack.isFiringIntoMelee === true,
+      maneuver: attack.maneuver ?? null,
+      defense: attack.defense ?? null
+    },
+    resources: {
+      ammoCost: Number(resources.ammoCost ?? 0) || 0,
+      enforceAmmo: resources.enforceAmmo === true
+    },
+    economy: {
+      spendAction: economy.spendAction !== false,
+      spent: economy.spent === true
+    }
+  };
+}
+
 function hasFightingDefensivelyEffect(actor) {
   return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
 }
@@ -362,6 +396,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
 
+  const workflowContext = summarizeCombatWorkflowContext(options.combatContext ?? null);
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
   const sequencePenalty = Number(options.sequencePenalty ?? 0);
   const atkBonus = computeAttackBonus(actor, weapon, null, options) + getFightingDefensivelyAttackPenalty(actor, options) + Number(options.customModifier || 0) + Number(options.situationalBonus || 0) + sequencePenalty;
@@ -392,11 +427,14 @@ export async function rollAttack(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
       weapon,
+      workflowContext,
+      actionId: options.actionId ?? workflowContext?.actionId ?? null,
+      actionName: workflowContext?.actionName ?? null,
       attackRerollOptions,
       target,
       targetName: resolvedTarget.targetName ?? target?.name ?? '',
@@ -438,6 +476,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
     reactionContext,
     attackRerollOptions,
+    workflowContext,
+    actionId: options.actionId ?? workflowContext?.actionId ?? null,
+    actionData: options.actionData ?? null,
     targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
     targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
   };

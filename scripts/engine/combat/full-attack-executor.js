@@ -226,6 +226,9 @@ export class FullAttackExecutor {
       sourceElement:   options.sourceElement ?? null,
       sheet,
       showRollCompanion: false,
+      combatContext: options.combatContext ?? null,
+      actionData: options.actionData ?? null,
+      actionId: options.actionId ?? null,
       // Carry through any preroller modifiers the caller set
       customModifier:  options.customModifier  ?? 0,
       situationalBonus: options.situationalBonus ?? 0,
