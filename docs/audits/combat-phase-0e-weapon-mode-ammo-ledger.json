@@ -1,0 +1,106 @@
+[
+  {
+    "id": "ammo-houserule-not-consumed-by-runtime",
+    "system": "ammo",
+    "rule": "Ammo counting should be ignored when the GM disables ammo tracking.",
+    "currentEvidence": "trackBlasterCharges setting exists in houserule-settings/manifest/presets, but AmmoSystem, roll-config, and inventory ammo displays do not appear to query it before enforcing/displaying ammo.",
+    "automationBoundary": "automate setting gate",
+    "severity": "high",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "attack-dialog-missing-ammo-gates",
+    "system": "attack dialog",
+    "rule": "Autofire requires 10 shots; Burst Fire requires 5 shots; attack options should grey out when ammo is insufficient and ammo tracking is enabled.",
+    "currentEvidence": "roll-config enables Autofire by weapon capability and Burst Fire by capability + feat, with no current/max ammo gate, reload control, or not-enough-shots warning.",
+    "automationBoundary": "automate when ammo tracking enabled",
+    "severity": "high",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "ammo-ui-not-shared-or-houserule-aware",
+    "system": "combat/gear ui",
+    "rule": "When ammo tracking is off, ammo UI should disappear completely. When on, Combat, Gear, and attack dialog should share ammo pills/reload controls.",
+    "currentEvidence": "Old v2 inventory templates show raw current/max ammo unconditionally when system.ammunition exists. Concept weapon cards do not show ammo UI. No shared ammo presenter found.",
+    "automationBoundary": "automate UI visibility",
+    "severity": "medium",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "reload-lacks-action-economy",
+    "system": "reload",
+    "rule": "Reload should spend proper action economy before refilling weapon ammo.",
+    "currentEvidence": "AmmoSystem.reloadWeapon can refill current ammo to max, but no reload button/action handler or action-economy spend was found.",
+    "automationBoundary": "automate action cost; GM-managed ammo source until inventory source authority exists",
+    "severity": "high",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "burst-fire-half-damage-on-miss-bug",
+    "system": "burst fire",
+    "rule": "Burst Fire is a single-target attack and does not deal half damage on a miss.",
+    "currentEvidence": "enhanced-rolls rollAutofire Burst Fire branch sets damageType half and halves final damage on miss.",
+    "affectedFeatsTalents": ["Burst Fire", "Evasion", "Deadeye", "Rapid Shot"],
+    "automationBoundary": "automate single-target Burst Fire; no area miss damage",
+    "severity": "critical",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "burst-fire-action-cost-conflict",
+    "system": "combat action metadata",
+    "rule": "Burst Fire should modify a single ranged attack; action metadata should not conflict.",
+    "currentEvidence": "data/combat-actions.json lists Burst Fire as standard action, while data/feat-combat-actions.json lists it as full-round action.",
+    "affectedFeatsTalents": ["Burst Fire"],
+    "automationBoundary": "data cleanup/routing contract",
+    "severity": "medium",
+    "recommendedPhase": 1,
+    "fixNow": false
+  },
+  {
+    "id": "autofire-capability-detection-inconsistent",
+    "system": "autofire",
+    "rule": "Weapon Autofire capability should come from canonical weapon data and should not treat stripped autofire as present.",
+    "currentEvidence": "roll-config and CombatOptionResolver check system.autofire/properties, but enhanced-rolls checks properties includes autofire OR strippedFeatures.autofire === true and misses system.autofire.",
+    "automationBoundary": "automate via single capability helper",
+    "severity": "high",
+    "recommendedPhase": 2,
+    "fixNow": false
+  },
+  {
+    "id": "autofire-evasion-target-context",
+    "system": "autofire/evasion",
+    "rule": "Evasion belongs to each target affected by an area attack, not the attacker.",
+    "currentEvidence": "enhanced-rolls rollAutofire checks actor.items for Evasion while iterating targetResults.",
+    "affectedFeatsTalents": ["Evasion", "Improved Evasion", "Deflect"],
+    "automationBoundary": "automate target talent lookup once damage context is canonical",
+    "severity": "high",
+    "recommendedPhase": 4,
+    "fixNow": false
+  },
+  {
+    "id": "stun-mode-selector-missing",
+    "system": "stun weapon mode",
+    "rule": "Weapons with stun setting should expose Lethal/Stun mode and preserve stun context into damage.",
+    "currentEvidence": "Damage type stun exists, Switch Weapon Mode action exists, and stun weapons exist in data, but no Lethal/Stun selector or current weapon mode pipeline was found in the attack dialog.",
+    "affectedFeatsTalents": ["stun attack bonuses", "stun damage talents", "stun threshold talents"],
+    "automationBoundary": "automate mode/context; apply damage effects carefully",
+    "severity": "high",
+    "recommendedPhase": 5,
+    "fixNow": false
+  },
+  {
+    "id": "colored-shot-pills-can-reuse-visual-profile",
+    "system": "weapon visuals",
+    "rule": "Ammo shot pills should use selected blaster bolt color for flair.",
+    "currentEvidence": "WeaponVisualProfileResolver already resolves boltColor from flags/system/defaults; weapon edit UI exposes flags.swse.boltColor.",
+    "automationBoundary": "reuse existing visual resolver",
+    "severity": "low",
+    "recommendedPhase": 4,
+    "fixNow": false
+  }
+]
