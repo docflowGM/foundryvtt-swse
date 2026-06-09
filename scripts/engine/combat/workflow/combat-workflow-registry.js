@@ -1,84 +1,74 @@
+import { normalizeCombatAction } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-action-normalizer.js";
+import { buildCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-builder.js";
+import { CombatWorkflowResult } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-result.js";
+
 /**
- * Combat Workflow Registry
+ * CombatWorkflowRegistry
  *
- * Thin router/orchestrator for Phase 1 combat realignment. It normalizes a
- * combat action, builds a durable context packet, then delegates to the legacy
- * authorities supplied by the sheet/app caller.
+ * Thin routing shim for sheet combat actions. It normalizes the action and
+ * preserves context, then delegates to the existing sheet/engine handlers.
  */
-
-import { buildCombatWorkflowContext } from './combat-context-builder.js';
-import { CombatWorkflowResult } from './combat-workflow-result.js';
-
-function normalizeRoute(value = '') {
-  const key = String(value ?? '').trim();
-  if (!key) return 'legacy';
-  const lower = key.toLowerCase();
-  if (lower === 'fullattack' || lower === 'full-attack') return 'fullAttack';
-  if (lower === 'skill' || lower === 'skillaction' || lower === 'skill-action') return 'skillAction';
-  if (lower === 'combatstate' || lower === 'combat-state') return 'combatState';
-  if (lower === 'secondwind' || lower === 'second-wind') return 'secondWind';
-  if (lower === 'reload' || lower === 'ammoreload' || lower === 'ammo-reload') return 'ammoReload';
-  if (lower === 'aidanother' || lower === 'aid-another') return 'aidAnother';
-  if (lower === 'reference') return 'reference';
-  if (lower === 'manual') return 'manual';
-  if (lower === 'attack') return 'attack';
-  if (lower === 'reaction') return 'reaction';
-  if (lower === 'grapple') return 'grapple';
-  return key;
-}
-
 export class CombatWorkflowRegistry {
   constructor() {
     this.handlers = new Map();
   }
 
   static getDefault() {
-    if (!globalThis.SWSECombatWorkflowRegistry) {
-      globalThis.SWSECombatWorkflowRegistry = new CombatWorkflowRegistry();
+    if (!globalThis.__swseCombatWorkflowRegistry) {
+      globalThis.__swseCombatWorkflowRegistry = new CombatWorkflowRegistry();
     }
-    return globalThis.SWSECombatWorkflowRegistry;
+    return globalThis.__swseCombatWorkflowRegistry;
   }
 
-  register(route, handler) {
-    if (!route || typeof handler !== 'function') return this;
-    this.handlers.set(normalizeRoute(route), handler);
+  register(mode, handler) {
+    if (!mode || typeof handler !== 'function') return this;
+    this.handlers.set(String(mode), handler);
     return this;
   }
 
-  getHandler(route, localHandlers = {}) {
-    const key = normalizeRoute(route);
-    return localHandlers?.[key]
+  getHandler(mode, providedHandlers = {}) {
+    const key = String(mode || 'legacy');
+    return providedHandlers?.[key]
       ?? this.handlers.get(key)
-      ?? localHandlers?.legacy
+      ?? providedHandlers?.legacy
       ?? this.handlers.get('legacy')
       ?? null;
   }
 
-  resolveRoute(context = {}) {
-    const action = context.action ?? {};
-    if (action.manualResolution === true) return action.resolutionMode === 'reference' ? 'reference' : 'manual';
-    return normalizeRoute(action.resolutionMode ?? context.resolutionMode ?? 'legacy');
-  }
-
   async execute({ actor = null, actionId = null, actionData = {}, options = {}, sheet = null, handlers = {} } = {}) {
-    const context = buildCombatWorkflowContext({ actor, actionId, actionData, options, sheet });
-    const route = this.resolveRoute(context);
-    const handler = this.getHandler(route, handlers);
+    const action = normalizeCombatAction(actionId, actionData);
+    if (action.executable === false) {
+      return CombatWorkflowResult.cancelled('combat-action-not-executable', { action });
+    }
+
+    const context = buildCombatWorkflowContext({ actor, action, actionId, options, sheet });
+    const mode = action.manualResolution === true
+      ? 'manual'
+      : (action.resolutionMode ?? 'legacy');
+    const handler = this.getHandler(mode, handlers);
 
     if (!handler) {
-      const error = new Error(`No combat workflow handler registered for route: ${route}`);
-      console.warn('[SWSE CombatWorkflowRegistry]', error.message, { route, context });
-      return CombatWorkflowResult.failure(error, context, { route });
+      return CombatWorkflowResult.failed(`No combat workflow handler for ${mode}`, { action, context });
     }
 
     try {
-      const payload = await handler(context, { route, registry: this });
-      if (payload === null || payload?.cancelled === true) return CombatWorkflowResult.cancelled(context);
-      return CombatWorkflowResult.success(payload, context, { route });
-    } catch (error) {
-      console.warn('[SWSE CombatWorkflowRegistry] Handler failed:', error);
-      globalThis.ui?.notifications?.error?.('Combat workflow failed. Check console for details.');
-      return CombatWorkflowResult.failure(error, context, { route });
+      const payload = await handler({
+        actor,
+        action,
+        actionId: action.id ?? actionId,
+        options,
+        sheet,
+        context,
+        workflowContext: context
+      });
+      if (payload?.cancelled === true) return CombatWorkflowResult.cancelled(payload.reason ?? 'handler-cancelled', { action, context, payload });
+      return CombatWorkflowResult.ok(payload, { action, context, mode });
+    } catch (err) {
+      console.error('[SWSE] Combat workflow execution failed:', err);
+      ui?.notifications?.error?.('Combat action failed. Check console for details.');
+      return CombatWorkflowResult.failed(err?.message ?? 'handler-failed', { action, context, error: err });
     }
   }
 }
+
+export default CombatWorkflowRegistry;

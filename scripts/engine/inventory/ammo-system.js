@@ -19,7 +19,158 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+
+function settingEnabled(key, fallback = false) {
+  try {
+    return game?.settings?.get?.(game.system?.id ?? 'foundryvtt-swse', key) ?? fallback;
+  } catch (_err) {
+    return fallback;
+  }
+}
+
+function asNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function normalizeKey(value = '') {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function hasTruthyOption(options = {}, key = '') {
+  return options?.[key] === true
+    || options?.combatOptions?.[key] === true
+    || options?.attackOptions?.[key] === true
+    || options?.combatOptions?.[key] === 1
+    || options?.attackOptions?.[key] === 1;
+}
+
+function weaponLooksRanged(weapon = null) {
+  const system = weapon?.system ?? {};
+  const fields = [
+    system.meleeOrRanged,
+    system.weaponRangeType,
+    system.weaponType,
+    system.weaponCategory,
+    system.category,
+    system.type,
+    system.range,
+    system.group,
+    system.weaponGroup,
+    weapon?.name
+  ].map(normalizeKey).filter(Boolean);
+  return fields.some(value => value.includes('ranged') || value.includes('pistol') || value.includes('rifle') || value.includes('blaster') || value.includes('bowcaster') || value.includes('slugthrower'));
+}
+
+function workflowTags(context = {}) {
+  return new Set((Array.isArray(context?.contextTags) ? context.contextTags : []).map(normalizeKey));
+}
+
 export class AmmoSystem {
+  /**
+   * Whether the optional blaster/ammunition tracking house rule is enabled.
+   * Kept here so combat callers use the ammunition SSOT rather than reading
+   * settings independently.
+   */
+  static isTrackingEnabled() {
+    return settingEnabled('trackBlasterCharges', false) === true;
+  }
+
+  /**
+   * Return true when this weapon has a configured ammunition pool.
+   */
+  static weaponUsesAmmunition(weapon) {
+    return asNumber(weapon?.system?.ammunition?.max, 0) > 0;
+  }
+
+  /**
+   * Resolve how many shots a workflow should spend.
+   * Priority: explicit workflow/action metadata → selected attack option →
+   * inferred ranged basic attack cost.
+   */
+  static resolveAmmoCost({ weapon = null, workflowContext = null, options = {}, optionModifiers = {} } = {}) {
+    const context = workflowContext ?? options?.combatContext ?? options?.workflowContext ?? {};
+    const tags = workflowTags(context);
+    const ruleData = context?.ruleData ?? options?.ruleData ?? {};
+    const resources = context?.resources ?? {};
+
+    const explicit = asNumber(
+      options.ammoCost
+      ?? resources.ammoCost
+      ?? context.ammoCost
+      ?? ruleData.ammoCost
+      ?? optionModifiers.ammunitionCost,
+      0
+    );
+    if (explicit > 0) return explicit;
+
+    if (hasTruthyOption(options, 'burstFire') || tags.has('burstfire') || tags.has('burst-fire') || context?.attack?.isBurstFire === true) return 5;
+    if (hasTruthyOption(options, 'autofire') || tags.has('autofire') || context?.attack?.isAutofire === true) return 10;
+
+    if (this.weaponUsesAmmunition(weapon) && weaponLooksRanged(weapon)) return 1;
+    return 0;
+  }
+
+  /**
+   * Non-mutating ammo preflight used before action economy is spent.
+   */
+  static preflightAmmunition(actor, weapon, amount = 1, options = {}) {
+    if (!this.isTrackingEnabled()) return { ok: true, tracked: false, skipped: true, reason: 'ammo-tracking-disabled', amount: 0 };
+    const required = Math.max(0, Math.floor(asNumber(amount, 0)));
+    if (!required) return { ok: true, tracked: false, skipped: true, reason: 'no-ammo-cost', amount: 0 };
+    if (!actor || !weapon) return { ok: false, tracked: true, reason: 'missing-actor-or-weapon', amount: required, message: 'Missing actor or weapon for ammunition check.' };
+    if (!this.weaponUsesAmmunition(weapon)) return { ok: true, tracked: false, skipped: true, reason: 'weapon-has-no-ammo-pool', amount: 0 };
+    const status = this.canUseWeapon(weapon, required);
+    return {
+      ok: status.hasAmmo === true,
+      tracked: true,
+      amount: required,
+      current: status.current,
+      max: asNumber(weapon?.system?.ammunition?.max, 0),
+      deficit: status.deficit,
+      message: status.message,
+      options
+    };
+  }
+
+  /**
+   * Mutating spend entry point for attack workflows. If a later part of the
+   * workflow throws, callers can pass the returned object to rollbackSpend().
+   */
+  static async spendForWorkflow(actor, weapon, { workflowContext = null, options = {}, optionModifiers = {} } = {}) {
+    const amount = this.resolveAmmoCost({ weapon, workflowContext, options, optionModifiers });
+    const preflight = this.preflightAmmunition(actor, weapon, amount, options);
+    if (!preflight.ok) return { success: false, ...preflight };
+    if (preflight.skipped || preflight.tracked === false) return { success: true, spent: false, ...preflight };
+
+    const result = await this.consumeAmmunition(actor, weapon, amount);
+    return {
+      success: result.success === true,
+      spent: result.success === true,
+      amount,
+      actorId: actor?.id ?? null,
+      weaponId: weapon?.id ?? weapon?._id ?? null,
+      previousAmmo: result.previousAmmo,
+      newAmmo: result.newAmmo,
+      message: result.message,
+      rollback: result.success === true
+        ? { actorId: actor?.id ?? null, weaponId: weapon?.id ?? weapon?._id ?? null, amount, previousAmmo: result.previousAmmo, newAmmo: result.newAmmo }
+        : null
+    };
+  }
+
+  /**
+   * Return ammunition after a failed attack workflow mutation. This caps at max
+   * ammo so reloads or manual edits made after the spend are not overfilled.
+   */
+  static async rollbackSpend(actor, weapon, spendResult = {}) {
+    if (!spendResult?.spent || !weapon) return { success: true, skipped: true };
+    const current = asNumber(weapon.system?.ammunition?.current, 0);
+    const max = asNumber(weapon.system?.ammunition?.max, 0);
+    const restoreTo = Math.min(max || Number.POSITIVE_INFINITY, asNumber(spendResult.previousAmmo, current + asNumber(spendResult.amount, 0)));
+    return this.setAmmunition(actor ?? weapon.actor, weapon, restoreTo);
+  }
+
   /**
    * Consume ammunition from a weapon
    * @param {Actor} actor - Actor using the weapon

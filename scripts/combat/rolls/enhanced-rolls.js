@@ -523,12 +523,14 @@ export class SWSERoll {
         return null;
       }
 
-      // Get ammunition info
+      // Get ammunition info. Ammo is enforced only when the Track Blaster
+      // Charges house rule is enabled and the weapon has an ammo pool.
       const ammo = weapon.system?.ammunition;
       const ammoRequired = options.burstFire ? 5 : 10;
       const currentAmmo = ammo?.current ?? 0;
+      const enforceAmmo = AmmoSystem.isTrackingEnabled() && AmmoSystem.weaponUsesAmmunition(weapon);
 
-      if (currentAmmo < ammoRequired) {
+      if (enforceAmmo && currentAmmo < ammoRequired) {
         ui.notifications.error(
           `${weapon.name} requires ${ammoRequired} shots but only has ${currentAmmo}.`
         );
@@ -695,8 +697,14 @@ export class SWSERoll {
         }
       }
 
-      // Consume ammunition via AmmoSystem
-      const ammoResult = await AmmoSystem.consumeAmmunition(actor, weapon, ammoRequired);
+      // Consume ammunition via AmmoSystem when the optional tracking rule is on.
+      const ammoResult = enforceAmmo
+        ? await AmmoSystem.consumeAmmunition(actor, weapon, ammoRequired)
+        : { success: true, skipped: true, newAmmo: currentAmmo, previousAmmo: currentAmmo, ammoConsumed: 0 };
+      if (ammoResult.success === false) {
+        ui.notifications.error(ammoResult.message || `${weapon.name} does not have enough ammunition.`);
+        return null;
+      }
       const newAmmo = ammoResult.newAmmo ?? currentAmmo;
 
       // Build HTML result
@@ -740,9 +748,9 @@ export class SWSERoll {
               ${options.braced && !options.burstFire ? ' <i title="Weapon is braced">(Braced)</i>' : ''}
               ${fpBonus ? `, FP +${fpBonus}` : ''}
             </div>
-            <div class="ammo-consumption">
+            ${enforceAmmo ? `<div class="ammo-consumption">
               Ammunition: ${currentAmmo} → ${newAmmo} (${ammoRequired} shots used)
-            </div>
+            </div>` : ''}
           </div>
 
           <div class="targets-header">

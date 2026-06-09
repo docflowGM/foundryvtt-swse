@@ -3,6 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
+import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 // CombatRollConfigDialog (Tactical Targeting Console) intentionally removed — deprecated, orphaned, pending deletion.
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
@@ -7092,7 +7093,7 @@ const forcePoints = [];
       secondWind: routeLegacy,
       grapple: routeLegacy,
       aidAnother: routeLegacy,
-      ammoReload: routeLegacy,
+      ammoReload: async (context) => this._executeReloadCombatWorkflow(context, options),
       actorItem: routeLegacy,
       reaction: routeLegacy,
       legacy: routeLegacy
@@ -7147,6 +7148,69 @@ const forcePoints = [];
       combatContext: context,
       actionType
     });
+  }
+
+
+  async _executeReloadCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'reload';
+
+    if (!AmmoSystem.isTrackingEnabled()) {
+      ui?.notifications?.info?.('Ammunition tracking is disabled; reload does not need to be resolved.');
+      return { skipped: true, reason: 'ammo-tracking-disabled', actionId };
+    }
+
+    const weaponId = actionData?.weaponId ?? actionData?.itemId ?? context?.weaponId ?? null;
+    let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
+    if (!weapon) {
+      weapon = this.actor.items.find(i =>
+        ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped && AmmoSystem.weaponUsesAmmunition(i)
+      ) ?? null;
+    }
+
+    if (!weapon) {
+      ui?.notifications?.warn?.('No reloadable equipped weapon found.');
+      return null;
+    }
+
+    if (!AmmoSystem.weaponUsesAmmunition(weapon)) {
+      ui?.notifications?.warn?.(`${weapon.name} does not use tracked ammunition.`);
+      return null;
+    }
+
+    const currentAmmo = Number(weapon.system?.ammunition?.current ?? 0) || 0;
+    const maxAmmo = Number(weapon.system?.ammunition?.max ?? 0) || 0;
+    if (maxAmmo <= 0 || currentAmmo >= maxAmmo) {
+      ui?.notifications?.info?.(`${weapon.name} is already fully loaded.`);
+      return { skipped: true, reason: 'already-full', weaponId: weapon.id };
+    }
+
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    const allowed = await this._applyActionEconomy(actionType, {
+      source: options?.source ?? context?.source?.invocation ?? 'reload',
+      actionId,
+      actionName: actionData?.name ?? 'Reload',
+      combatContext: context
+    });
+    if (!allowed) return null;
+
+    const result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+    if (result?.success === false) {
+      ui?.notifications?.error?.(result.message || 'Reload failed.');
+      return null;
+    }
+
+    ui?.notifications?.info?.(result.message || `${weapon.name} reloaded.`);
+    try {
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<section class="swse-chat-card"><header><strong>${this.actor.name} reloads ${weapon.name}</strong></header><p>${result.message ?? 'Weapon reloaded.'}</p></section>`,
+        flags: { swse: { combatAction: 'reload', weaponId: weapon.id, workflowContext: context } }
+      });
+    } catch (err) {
+      console.warn('[SWSE] Failed to post reload chat card:', err);
+    }
+    return result;
   }
 
   async _executeSkillActionCombatWorkflow(context = {}, options = {}) {
@@ -7306,7 +7370,21 @@ const forcePoints = [];
       });
       if (modResult === null) return null; // Cancelled — economy untouched
 
-      // 3. Now spend the economy
+      // 3. Preflight ammunition before action economy is spent. The roll path
+      // performs the actual spend/rollback through AmmoSystem.
+      const workflowForAmmo = options?.combatContext ?? actionData?.workflowContext ?? null;
+      const ammoCost = AmmoSystem.resolveAmmoCost({
+        weapon,
+        workflowContext: workflowForAmmo,
+        options: { ...modResult, actionData, actionId }
+      });
+      const ammoCheck = AmmoSystem.preflightAmmunition(this.actor, weapon, ammoCost, { ...modResult, actionData, actionId });
+      if (ammoCheck?.ok === false) {
+        ui?.notifications?.error?.(ammoCheck.message || `${weapon.name} does not have enough ammunition.`);
+        return null;
+      }
+
+      // 4. Now spend the economy
       const attackEconomyType = this._deriveCombatActionEconomyType(actionData);
       const allowed = await this._applyActionEconomy(attackEconomyType, {
         source: options?.source ?? "combat-action",
@@ -7316,7 +7394,7 @@ const forcePoints = [];
       });
       if (!allowed) return null;
 
-      // 4. Roll
+      // 5. Roll
       return await SWSERoll.rollAttack(this.actor, weapon, {
         ...modResult,
         source: options?.source ?? "combat-action",

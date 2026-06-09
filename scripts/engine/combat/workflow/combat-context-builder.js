@@ -1,80 +1,102 @@
-/**
- * Combat Context Builder
- *
- * Creates the transport context passed from combat-action UI into existing
- * combat authorities. This is intentionally a shim: it records intent and
- * routing metadata without owning rule math.
- */
+import { summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 
-import { normalizeCombatAction } from './combat-action-normalizer.js';
+function randomId() {
+  try {
+    return foundry?.utils?.randomID?.() ?? crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  } catch (_err) {
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+}
 
-function docId(doc) {
+function idOf(doc) {
   return doc?.id ?? doc?._id ?? null;
 }
 
-function docName(doc) {
-  return doc?.name ?? null;
+function asBool(value) {
+  return value === true;
 }
 
-function randomWorkflowId() {
-  return `swse-combat-${globalThis.foundry?.utils?.randomID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`;
+function lowerTags(action = {}) {
+  return new Set((Array.isArray(action.contextTags) ? action.contextTags : []).map(v => String(v ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-')));
 }
 
-function getTargetFromOptions(options = {}) {
-  return options.target ?? globalThis.game?.user?.targets?.first?.()?.actor ?? null;
+function attackModeFor(action = {}) {
+  const tags = lowerTags(action);
+  if (tags.has('autofire')) return 'autofire';
+  if (tags.has('burstfire') || tags.has('burst-fire')) return 'burstFire';
+  if (tags.has('areaattack') || tags.has('area-attack') || action.ruleData?.areaAttack === true) return 'area';
+  if (action.resolutionMode === 'attack') return 'single';
+  return null;
 }
 
-export function buildCombatWorkflowContext({ actor = null, actionId = null, actionData = {}, options = {}, sheet = null } = {}) {
-  const action = normalizeCombatAction(actionData, { actionId });
-  const target = getTargetFromOptions(options);
-  const weapon = options.weapon ?? options.item ?? (action.weaponId ? actor?.items?.get?.(action.weaponId) : null) ?? null;
+export function buildCombatWorkflowContext({ actor = null, action = {}, actionId = null, options = {}, sheet = null } = {}) {
+  const tags = lowerTags(action);
+  const ruleData = action.ruleData ?? {};
+  const resources = action.resources ?? {};
+  const weapon = options.weapon ?? options.item ?? null;
+  const target = options.target ?? globalThis.game?.user?.targets?.first?.()?.actor ?? null;
 
-  return {
+  const context = {
     schema: 'swse.combat.workflow.v1',
-    workflowId: options.workflowId ?? action.workflowId ?? randomWorkflowId(),
-    createdAt: new Date().toISOString(),
+    workflowId: options.workflowId ?? action.workflowId ?? randomId(),
     actor,
-    actorId: docId(actor),
-    actorName: docName(actor),
-    action,
-    actionId: action.id,
-    actionName: action.name,
-    resolutionMode: action.resolutionMode,
-    actionType: action.actionType,
-    automationBoundary: action.automationBoundary,
-    contextTags: Array.isArray(action.contextTags) ? [...action.contextTags] : [],
-    requiredContext: Array.isArray(action.requiredContext) ? [...action.requiredContext] : [],
-    resources: action.resources && typeof action.resources === 'object'
-      ? { ...action.resources }
-      : { value: action.resources ?? null, ammoCost: action.ruleData?.ammoCost ?? action.ammoCost ?? null },
-    ruleData: { ...(action.ruleData ?? {}) },
-    attack: {
-      mode: options.attackMode ?? action.attackMode ?? action.ruleData?.attackMode ?? null,
-      isArea: action.ruleData?.areaAttack === true || action.contextTags?.includes?.('areaAttack') || options.areaAttack === true,
-      isAutofire: action.contextTags?.includes?.('autofire') || options.autofire === true,
-      isBurstFire: action.contextTags?.includes?.('burstFire') || options.burstFire === true,
-      isAiming: action.contextTags?.includes?.('aim') || options.aim === true,
-      isCharging: action.contextTags?.includes?.('charge') || options.charge === true,
-      defense: options.defense ?? action.ruleData?.defense ?? null
+    actorId: idOf(actor),
+    actorName: actor?.name ?? '',
+    action: {
+      id: action.id ?? action.key ?? actionId ?? null,
+      key: action.key ?? action.id ?? actionId ?? null,
+      name: action.name ?? action.label ?? actionId ?? 'Combat Action',
+      resolutionMode: action.resolutionMode ?? null,
+      actionCost: action.actionCost ?? action.actionType ?? null,
+      actionType: action.actionType ?? action.actionCost ?? null,
+      automationBoundary: action.automationBoundary ?? null,
+      gmManaged: action.gmManaged === true,
+      manualResolution: action.manualResolution === true,
+      contextTags: Array.isArray(action.contextTags) ? action.contextTags : []
     },
+    actionId: action.id ?? action.key ?? actionId ?? null,
+    actionName: action.name ?? action.label ?? actionId ?? 'Combat Action',
+    resolutionMode: action.resolutionMode ?? null,
+    actionType: action.actionCost ?? action.actionType ?? null,
+    automationBoundary: action.automationBoundary ?? null,
+    contextTags: Array.isArray(action.contextTags) ? action.contextTags : [],
     weapon,
-    weaponId: docId(weapon) ?? action.weaponId ?? action.itemId ?? null,
-    weaponName: docName(weapon) ?? null,
+    weaponId: idOf(weapon) ?? options.weaponId ?? action.weaponId ?? null,
+    weaponName: weapon?.name ?? options.weaponName ?? action.weaponName ?? '',
     target,
-    targetId: docId(target) ?? options.targetId ?? null,
-    targetName: docName(target) ?? options.targetName ?? null,
-    source: {
-      invocation: options.source ?? 'combat-action',
-      element: options.sourceElement ?? null,
-      sheetClass: sheet?.constructor?.name ?? null
+    targetId: idOf(target) ?? options.targetId ?? null,
+    targetName: target?.name ?? options.targetName ?? '',
+    attack: {
+      mode: options.attackMode ?? attackModeFor(action),
+      isArea: asBool(options.areaAttack) || asBool(options.isAreaAttack) || tags.has('areaattack') || tags.has('area-attack') || ruleData.areaAttack === true,
+      isAutofire: asBool(options.autofire) || tags.has('autofire'),
+      isBurstFire: asBool(options.burstFire) || tags.has('burstfire') || tags.has('burst-fire'),
+      isAiming: asBool(options.aim) || asBool(options.aiming),
+      isCharging: asBool(options.charge) || asBool(options.charging) || tags.has('charge'),
+      isStun: asBool(options.stun) || ruleData.damageMode === 'stun' || ruleData.stun === true,
+      isIon: asBool(options.ion) || ruleData.ion === true,
+      damageMode: options.damageMode ?? ruleData.damageMode ?? null,
+      rangeBand: options.rangeBand ?? null,
+      maneuver: options.maneuver ?? null
+    },
+    resources: {
+      ...(resources ?? {}),
+      ammoCost: Number(options.ammoCost ?? resources?.ammoCost ?? ruleData.ammoCost ?? 0) || 0,
+      enforceAmmo: options.enforceAmmo === true || resources?.enforceAmmo === true
     },
     economy: {
-      spendAction: action.spendAction !== false,
-      requestedType: action.actionType
+      spendAction: action.spendAction !== false
     },
-    options: {
-      targetContext: options.targetContext ?? null,
-      source: options.source ?? null
+    ruleData,
+    source: {
+      invocation: options.source ?? 'combat-action',
+      sheetId: sheet?.id ?? null,
+      element: options.sourceElement ?? null
     }
   };
+
+  return summarizeCombatWorkflowContext(context, { actor, weapon, target });
 }
+
+export const CombatContextBuilder = { buildCombatWorkflowContext };
+export default CombatContextBuilder;

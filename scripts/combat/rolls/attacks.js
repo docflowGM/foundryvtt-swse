@@ -11,6 +11,7 @@ import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/r
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
+import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -367,6 +368,17 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? null, { actor, weapon });
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  const ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
+    workflowContext,
+    options: rollOptions,
+    optionModifiers
+  });
+  if (ammoSpend?.success === false) {
+    ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
+    return null;
+  }
+
+  try {
   const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
   const atkBonus = computeAttackBonus(actor, weapon, null, rollOptions) + getFightingDefensivelyAttackPenalty(actor, rollOptions) + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
 
@@ -479,7 +491,14 @@ export async function rollAttack(actor, weapon, options = {}) {
     workflowContext: damageWorkflowContext,
     actionId: attackResult.actionId
   };
+  attackResult.ammoSpend = ammoSpend;
   return attackResult;
+  } catch (err) {
+    if (ammoSpend?.spent) {
+      await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+    }
+    throw err;
+  }
 }
 
 /**
@@ -582,7 +601,18 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const atkBonus = computeAttackBonus(actor, weapon, null, options);
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
   const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
+  const workflowContext = summarizeCombatWorkflowContext(options.combatContext ?? options.workflowContext ?? null, { actor, weapon });
+  const ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
+    workflowContext,
+    options,
+    optionModifiers
+  });
+  if (ammoSpend?.success === false) {
+    ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
+    return null;
+  }
 
+  try {
   const rollFormula = `1d20 + ${atkBonus}`;
   const dmgBase = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
   const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
@@ -651,5 +681,11 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     }
   }
 
-  return { attack: attackRoll, damage: damageRoll };
+  return { attack: attackRoll, damage: damageRoll, ammoSpend };
+  } catch (err) {
+    if (ammoSpend?.spent) {
+      await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+    }
+    throw err;
+  }
 }

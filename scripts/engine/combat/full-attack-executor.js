@@ -25,6 +25,7 @@
 
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
@@ -52,6 +53,46 @@ function _outcomeColor(result) {
   if (result.isHit === true) {return '#2a7;';}
   if (result.isHit === false) {return '#a33;';}
   return '#666;';
+}
+
+
+function _weaponKey(weapon) {
+  return weapon?.id ?? weapon?._id ?? weapon?.uuid ?? weapon?.name ?? '';
+}
+
+function _aggregateFullAttackAmmo(actor, sequence, options = {}) {
+  const byWeapon = new Map();
+  for (const attack of sequence?.attacks ?? []) {
+    const weapon = attack?.weapon;
+    if (!weapon) continue;
+    const amount = AmmoSystem.resolveAmmoCost({
+      weapon,
+      workflowContext: options.combatContext ?? null,
+      options: {
+        ...options,
+        sequencePenalty: attack.finalPenalty,
+        actionId: options.actionId ?? 'full-attack'
+      }
+    });
+    if (!amount) continue;
+    const key = _weaponKey(weapon);
+    const existing = byWeapon.get(key) ?? { actor, weapon, amount: 0 };
+    existing.amount += amount;
+    byWeapon.set(key, existing);
+  }
+  return [...byWeapon.values()];
+}
+
+async function _rollbackFullAttackAmmo(actor, spendResults = []) {
+  for (const spend of [...spendResults].reverse()) {
+    if (!spend?.spent) continue;
+    const weapon = actor?.items?.get?.(spend.weaponId) ?? null;
+    try {
+      await AmmoSystem.rollbackSpend(actor, weapon, spend);
+    } catch (err) {
+      console.warn('[FullAttackExecutor] Failed to rollback ammunition spend:', err);
+    }
+  }
 }
 
 /**
@@ -243,7 +284,18 @@ export class FullAttackExecutor {
       return null;
     }
 
-    // 2. Spend economy (full-round by default, overridable for "Full Attack as Standard Action" talents)
+    // 2. Preflight ammunition before spending action economy. Individual
+    // rollAttack() calls perform the actual spend with rollback support.
+    const ammoChecks = _aggregateFullAttackAmmo(actor, sequence, options);
+    for (const check of ammoChecks) {
+      const preflight = AmmoSystem.preflightAmmunition(actor, check.weapon, check.amount, options);
+      if (preflight?.ok === false) {
+        ui?.notifications?.error?.(preflight.message || `${check.weapon?.name ?? 'Weapon'} does not have enough ammunition.`);
+        return null;
+      }
+    }
+
+    // 3. Spend economy (full-round by default, overridable for "Full Attack as Standard Action" talents)
     const actionType = options.actionCostOverride ?? sequence.actionType ?? 'full-round';
     const sheet = options.sheet ?? null;
 
@@ -257,12 +309,12 @@ export class FullAttackExecutor {
       if (!allowed) {return null;}
     }
 
-    // 3. Resolve shared target (first token target, or null)
+    // 4. Resolve shared target (first token target, or null)
     const target = options.target
       ?? game.user?.targets?.first?.()?.actor
       ?? null;
 
-    // 4. Roll each attack — suppressChat so we post one combined card
+    // 5. Roll each attack — suppressChat so we post one combined card
     const rollOptions = {
       suppressChat:    true,
       target,
@@ -279,15 +331,25 @@ export class FullAttackExecutor {
     };
 
     const results = [];
+    const ammoSpends = [];
     for (const attack of sequence.attacks) {
       try {
         const result = await rollAttack(actor, attack.weapon, {
           ...rollOptions,
           sequencePenalty: attack.finalPenalty,
         });
-        if (result) {results.push(result);}
+        if (!result) {
+          await _rollbackFullAttackAmmo(actor, ammoSpends);
+          ui.notifications.warn('Full Attack stopped before all attacks resolved; ammunition was rolled back.');
+          return null;
+        }
+        if (result.ammoSpend?.spent) ammoSpends.push(result.ammoSpend);
+        results.push(result);
       } catch (err) {
+        await _rollbackFullAttackAmmo(actor, ammoSpends);
         console.error('[FullAttackExecutor] rollAttack failed for attack:', attack.label, err);
+        ui.notifications.error('Full Attack failed; ammunition was rolled back.');
+        return null;
       }
     }
 
@@ -296,7 +358,7 @@ export class FullAttackExecutor {
       return null;
     }
 
-    // 5. Post combined chat card
+    // 6. Post combined chat card
     await _postCombinedCard(actor, sequence, results, target);
 
     return results;
