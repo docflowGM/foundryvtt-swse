@@ -1,0 +1,90 @@
+[
+  {
+    "id": "grapple-opposed-meets-beats",
+    "system": "grapple",
+    "rule": "Attacker should succeed when the opposed grapple check equals or exceeds the defender where the rule says attacker equals/exceeds.",
+    "currentEvidence": "SWSEGrappling.grappleCheck() uses atkRoll.total > defRoll.total and returns on ties.",
+    "affectedFeatsTalents": ["Pin", "Trip", "Crush", "Throw", "Rancor Crush", "Pincer", "Expert Grappler"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 6,
+    "fixNow": false
+  },
+  {
+    "id": "grapple-grabbed-reflex-penalty",
+    "system": "grapple",
+    "rule": "Grabbed targets cannot move and take -2 to attacks except natural/light weapons; no generic Reflex penalty is part of the baseline Grabbed state.",
+    "currentEvidence": "_applyState('grabbed') adds system.defenses.reflex.bonus = -5.",
+    "affectedFeatsTalents": ["Grabber", "Entangler", "Strong Grab", "Grab Back", "Multi-Grab"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 6,
+    "fixNow": false
+  },
+  {
+    "id": "grapple-pinned-condition-track-override",
+    "system": "grapple",
+    "rule": "Pinned prevents actions and removes Dex bonus to Reflex; Pin does not force the target to the bottom of the condition track by itself.",
+    "currentEvidence": "_applyState('pinned') adds -10 Reflex and overrides system.conditionTrack.current to 5.",
+    "affectedFeatsTalents": ["Pin", "Crush", "Rancor Crush", "Pincer", "Bone Crusher"],
+    "automationBoundary": "automate",
+    "severity": "critical",
+    "recommendedPhase": 6,
+    "fixNow": false
+  },
+  {
+    "id": "grapple-escape-state-specificity",
+    "system": "grapple",
+    "rule": "Escaping Grabbed, Grappled, and Pinned use different procedures.",
+    "currentEvidence": "escapeGrapple() uses the same opposed grappleCheck() path and clears both actors on success.",
+    "affectedFeatsTalents": ["Strong Grab", "Pincer", "Pin", "Trip"],
+    "automationBoundary": "assist",
+    "severity": "high",
+    "recommendedPhase": 6,
+    "fixNow": false
+  },
+  {
+    "id": "grapple-live-routing-unclear",
+    "system": "grapple",
+    "rule": "Visible combat actions should route to the canonical grapple state machine.",
+    "currentEvidence": "Combat action data has Grapple / Grab text but no clear resolutionMode/handler metadata linking to SWSEGrappling.attemptGrab().",
+    "affectedFeatsTalents": ["Grappling Strike", "Grab Back", "Pin", "Trip"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 1,
+    "fixNow": false
+  },
+  {
+    "id": "ion-original-vs-halved-damage",
+    "system": "ion-damage",
+    "rule": "Ion applies half damage to HP but compares original pre-halved Ion damage to Damage Threshold.",
+    "currentEvidence": "DamageResolutionEngine currently appears to resolve from one damage number; ThresholdEngine comment says caller must pass correct Ion damage value.",
+    "affectedFeatsTalents": ["Ion Shielding", "Ion Resistance 10", "Ion Mastery", "Ion Turret"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "ion-eligible-target-gating",
+    "system": "ion-damage",
+    "rule": "Special Ion CT/disable effects apply to droids, vehicles, electronic devices, and cybernetically enhanced creatures; not ordinary living creatures.",
+    "currentEvidence": "No reliable target category/cybernetic eligibility check found in the damage resolution path.",
+    "affectedFeatsTalents": ["Ion Shielding", "Ion Resistance 10", "Ion Mastery", "Ion Turret", "Damage Conversion"],
+    "automationBoundary": "assist",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  },
+  {
+    "id": "ion-baseline-two-step-threshold",
+    "system": "ion-damage",
+    "rule": "Eligible target moves -2 CT if original Ion damage equals/exceeds DT.",
+    "currentEvidence": "ThresholdEngine generic threshold starts ctShift at 1; capIonDamageCtToOneStep exists but baseline Ion two-step shift was not found.",
+    "affectedFeatsTalents": ["Ion Shielding"],
+    "automationBoundary": "automate",
+    "severity": "high",
+    "recommendedPhase": 9,
+    "fixNow": false
+  }
+]
