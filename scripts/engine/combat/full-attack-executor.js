@@ -24,6 +24,7 @@
  */
 
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { encodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
@@ -91,10 +92,22 @@ async function _postCombinedCard(actor, sequence, results, target) {
     const canRollDamage = res.isHit === true || res.isCritical === true;
     const weaponId = res.weaponId ?? res.weapon?.id ?? plan?.weapon?.id ?? '';
     const critMult = res.critMultiplier ?? 2;
+    const workflowContextEncoded = encodeCombatWorkflowContext(res.workflowContext ?? null, {
+      actor,
+      weapon: res.weapon ?? plan?.weapon ?? null,
+      target,
+      targetId: target?.id ?? null,
+      targetName: target?.name ?? null,
+      isCritical: res.isCritical === true,
+      critMultiplier: critMult,
+      hit: res.isHit ?? null
+    });
     const damageBtn = canRollDamage && weaponId
       ? `<button type="button" class="btn swse-roll-damage"
                  data-actor-id="${actor.id}"
                  data-weapon-id="${weaponId}"
+                 data-target="${target?.id ?? ''}"
+                 data-workflow-context="${workflowContextEncoded}"
                  data-is-crit="${res.isCritical === true}"
                  data-crit-mult="${critMult}"
                  style="margin-left:6px;padding:2px 7px;font-size:0.8em;cursor:pointer;

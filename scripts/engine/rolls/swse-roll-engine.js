@@ -1,5 +1,6 @@
 import { buildChatSvgContext, buildChatStateContext } from "/systems/foundryvtt-swse/scripts/chat/chat-svg-assets.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { encodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 
 
 function swseChatLabel(value = '') {
@@ -177,12 +178,24 @@ function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = fal
   const weaponId = context.weaponId ?? context.itemId ?? weapon?.id ?? '';
   if (!weaponId || context.disableDamageAction === true) return null;
   const critMultiplier = Number(context.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2;
+  const workflowContext = context.workflowContext ?? context.combatContext ?? null;
   return {
     actorId: context.actorId ?? context.attackerId ?? actor?.id ?? '',
     weaponId,
+    targetId: context.targetId ?? context.target?.id ?? '',
     isCritical: context.isCritical === true || isCritical === true,
     critMultiplier,
     twoHanded: context.twoHanded === true,
+    workflowContextEncoded: encodeCombatWorkflowContext(workflowContext, {
+      actor,
+      weapon,
+      target: context.target ?? null,
+      targetId: context.targetId ?? context.target?.id ?? null,
+      targetName: context.targetName ?? context.target?.name ?? null,
+      isCritical: context.isCritical === true || isCritical === true,
+      critMultiplier,
+      hit: context.success ?? context.passed ?? null
+    }),
     label: context.damageActionLabel ?? `Roll Damage${(context.isCritical === true || isCritical === true) ? ` ×${critMultiplier}` : ''}`
   };
 }

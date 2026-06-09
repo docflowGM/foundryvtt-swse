@@ -9,6 +9,7 @@ import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -20,40 +21,6 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 
 function getTargetActorFromOptions(options = {}) {
   return options.target ?? game.user?.targets?.first?.()?.actor ?? null;
-}
-
-function summarizeCombatWorkflowContext(context = null) {
-  if (!context) return null;
-  const action = context.action ?? {};
-  const attack = context.attack ?? {};
-  const resources = context.resources ?? {};
-  const economy = context.economy ?? {};
-  return {
-    actionId: action.id ?? context.actionId ?? null,
-    actionName: action.name ?? null,
-    resolutionMode: action.resolutionMode ?? null,
-    actionType: action.actionType ?? null,
-    automationBoundary: context.automationBoundary ?? action.automationBoundary ?? null,
-    attack: {
-      mode: attack.mode ?? null,
-      isArea: attack.isArea === true,
-      isAutofire: attack.isAutofire === true,
-      isBurstFire: attack.isBurstFire === true,
-      isAiming: attack.isAiming === true,
-      isCharging: attack.isCharging === true,
-      isFiringIntoMelee: attack.isFiringIntoMelee === true,
-      maneuver: attack.maneuver ?? null,
-      defense: attack.defense ?? null
-    },
-    resources: {
-      ammoCost: Number(resources.ammoCost ?? 0) || 0,
-      enforceAmmo: resources.enforceAmmo === true
-    },
-    economy: {
-      spendAction: economy.spendAction !== false,
-      spent: economy.spent === true
-    }
-  };
 }
 
 function hasFightingDefensivelyEffect(actor) {
@@ -391,23 +358,24 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
  * Roll an attack with a weapon using SWSE rules.
  */
 export async function rollAttack(actor, weapon, options = {}) {
+  const rollOptions = mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null);
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
 
-  const workflowContext = summarizeCombatWorkflowContext(options.combatContext ?? null);
-  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const sequencePenalty = Number(options.sequencePenalty ?? 0);
-  const atkBonus = computeAttackBonus(actor, weapon, null, options) + getFightingDefensivelyAttackPenalty(actor, options) + Number(options.customModifier || 0) + Number(options.situationalBonus || 0) + sequencePenalty;
+  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? null, { actor, weapon });
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
+  const atkBonus = computeAttackBonus(actor, weapon, null, rollOptions) + getFightingDefensivelyAttackPenalty(actor, rollOptions) + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
 
-  const targetContextOptions = optionModifiers.targetDefenseType && !options.targetContext
-    ? { ...options, targetContext: { defenseType: optionModifiers.targetDefenseType } }
-    : options;
-  const resolvedTarget = resolveTargetContext(targetContextOptions, getTargetActorFromOptions(options));
+  const targetContextOptions = optionModifiers.targetDefenseType && !rollOptions.targetContext
+    ? { ...rollOptions, targetContext: { defenseType: optionModifiers.targetDefenseType } }
+    : rollOptions;
+  const resolvedTarget = resolveTargetContext(targetContextOptions, getTargetActorFromOptions(rollOptions));
   const target = resolvedTarget.target;
   const targetReflex = resolvedTarget.defenseValue;
   const isHit = targetReflex != null ? roll.total >= targetReflex : null;
@@ -416,24 +384,38 @@ export async function rollAttack(actor, weapon, options = {}) {
   const isCritical = Number(d20) === 20 || (Number.isFinite(criticalThreshold) && criticalThreshold < 20 && Number(d20) >= criticalThreshold && isHit !== false);
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
-    ...options,
+    ...rollOptions,
     formula: rollFormula,
     weaponId: weapon.id,
     isHit,
     target
   });
 
-  if (!options.suppressChat) await SWSEChat.postRoll({
+  const damageWorkflowContext = summarizeCombatWorkflowContext(workflowContext, {
+    actor,
+    weapon,
+    target,
+    targetId: target?.id ?? null,
+    targetName: resolvedTarget.targetName ?? target?.name ?? '',
+    isCritical,
+    critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+    hit: isHit,
+    natural1: Number(d20) === 1,
+    natural20: Number(d20) === 20,
+    defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null
+  });
+
+  if (!rollOptions.suppressChat) await SWSEChat.postRoll({
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext: damageWorkflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
       weapon,
-      workflowContext,
-      actionId: options.actionId ?? workflowContext?.actionId ?? null,
+      workflowContext: damageWorkflowContext,
+      actionId: rollOptions.actionId ?? damageWorkflowContext?.actionId ?? null,
       actionName: workflowContext?.actionName ?? null,
       attackRerollOptions,
       target,
@@ -449,10 +431,10 @@ export async function rollAttack(actor, weapon, options = {}) {
       reactionContext,
       targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
       targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
-      sourceElement: options?.sourceElement ?? null,
-      companionSource: options?.companionSource ?? null,
-      sheet: options?.sheet ?? null,
-      showRollCompanion: options?.showRollCompanion !== false
+      sourceElement: rollOptions?.sourceElement ?? null,
+      companionSource: rollOptions?.companionSource ?? null,
+      sheet: rollOptions?.sheet ?? null,
+      showRollCompanion: rollOptions?.showRollCompanion !== false
     }
   });
 
@@ -476,9 +458,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
     reactionContext,
     attackRerollOptions,
-    workflowContext,
-    actionId: options.actionId ?? workflowContext?.actionId ?? null,
-    actionData: options.actionData ?? null,
+    workflowContext: damageWorkflowContext,
+    actionId: rollOptions.actionId ?? damageWorkflowContext?.actionId ?? null,
+    actionData: rollOptions.actionData ?? null,
     targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
     targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
   };
@@ -508,15 +490,17 @@ function computeDamageBonus(actor, weapon, context = {}) {
  * Roll damage for a weapon.
  */
 export async function rollDamage(actor, weapon, options = {}) {
+  const rollOptions = mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null);
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for damage roll.');
     return null;
   }
 
-  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
+  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? null, { actor, weapon, isCritical: rollOptions?.critical === true || rollOptions?.isCritical === true });
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  const dmgBonus = computeDamageBonus(actor, weapon, rollOptions) + (optionModifiers.damageBonus || 0);
 
-  const criticalStepBonus = (options?.critical === true || options?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
+  const criticalStepBonus = (rollOptions?.critical === true || rollOptions?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
   const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', (optionModifiers.damageDieStepIncreases ?? 0) + criticalStepBonus);
   const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
   const formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
@@ -527,7 +511,7 @@ export async function rollDamage(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Damage (${formula})`,
-    context: { type: 'damage', weaponId: weapon.id, weapon, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '', sourceElement: options?.sourceElement ?? null, companionSource: options?.companionSource ?? null, sheet: options?.sheet ?? null, showRollCompanion: options?.showRollCompanion !== false, targetContext: options?.targetContext ?? null }
+    context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '', sourceElement: rollOptions?.sourceElement ?? null, companionSource: rollOptions?.companionSource ?? null, sheet: rollOptions?.sheet ?? null, showRollCompanion: rollOptions?.showRollCompanion !== false, targetContext: rollOptions?.targetContext ?? null }
   });
 
   return roll;

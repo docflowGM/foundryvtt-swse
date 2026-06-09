@@ -9,6 +9,7 @@
 import { enhanceSWSEChatMessage } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-surface-enhancer.js";
 import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { decodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 
 let registered = false;
 
@@ -96,12 +97,16 @@ async function handleLegacyDamageRollButton(event, button, message) {
     return;
   }
 
+  const combatContext = decodeCombatWorkflowContext(button.dataset.workflowContext);
+  const target = actorFromId(button.dataset.target) || actorFromId(combatContext?.targetId) || null;
   const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
   await SWSERoll.rollDamage(actor, weapon, {
-    isCritical: button.dataset.isCrit === 'true',
-    critMultiplier: Number.parseInt(button.dataset.critMult, 10) || 2,
+    isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
+    critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
     twoHanded: button.dataset.twoHanded === 'true',
-    target: actorFromId(button.dataset.target) || null
+    target,
+    combatContext,
+    workflowContext: combatContext
   });
 }
 
@@ -118,8 +123,16 @@ async function handleCombatDamageRollButton(event, button) {
     return;
   }
 
+  const combatContext = decodeCombatWorkflowContext(button.dataset.workflowContext);
+  const resolvedTarget = target || actorFromId(combatContext?.targetId) || null;
   const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
-  await SWSERoll.rollDamage(attacker, weapon, { target });
+  await SWSERoll.rollDamage(attacker, weapon, {
+    target: resolvedTarget,
+    isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
+    critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
+    combatContext,
+    workflowContext: combatContext
+  });
 }
 
 async function handleApplyDamageButton(event, button) {
