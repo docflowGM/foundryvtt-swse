@@ -7311,7 +7311,8 @@ const forcePoints = [];
       const allowed = await this._applyActionEconomy(attackEconomyType, {
         source: options?.source ?? "combat-action",
         actionId,
-        actionName: actionData?.name ?? actionId
+        actionName: actionData?.name ?? actionId,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
       });
       if (!allowed) return null;
 
@@ -7351,7 +7352,8 @@ const forcePoints = [];
         source: options?.source ?? "combat-action",
         actionId,
         actionName: actionData?.name ?? actionId,
-        skillKey
+        skillKey,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
       });
       if (!allowed) return null;
 
@@ -7375,7 +7377,8 @@ const forcePoints = [];
     const allowed = await this._applyActionEconomy(actionType, {
       source: options?.source ?? "combat-action",
       actionId,
-      actionName: actionData?.name ?? actionId
+      actionName: actionData?.name ?? actionId,
+      combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
     });
     if (!allowed) return null;
 

@@ -44,6 +44,25 @@ function pruneObject(value) {
   return compact(value);
 }
 
+function asArray(value) {
+  if (Array.isArray(value)) return value;
+  if (value === null || value === undefined || value === '') return [];
+  return [value];
+}
+
+function uniqueStrings(values = []) {
+  return [...new Set(asArray(values).map(value => String(value ?? '').trim()).filter(Boolean))];
+}
+
+function summarizeRuleData(context = {}, action = {}, extra = {}) {
+  const ruleData = {
+    ...(context?.ruleData ?? {}),
+    ...(action?.ruleData ?? {}),
+    ...(extra?.ruleData ?? {})
+  };
+  return pruneObject(ruleData) ?? {};
+}
+
 function summarizeDamageContext(context = {}, extra = {}) {
   const damage = context?.damage ?? {};
   return pruneObject({
@@ -67,17 +86,30 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
   const attack = context.attack ?? {};
   const resources = context.resources ?? {};
   const economy = context.economy ?? {};
+  const ruleData = summarizeRuleData(context, action, extra);
   const target = extra.target ?? context.target ?? null;
   const actor = extra.actor ?? context.actor ?? context.sourceActor ?? null;
   const weapon = extra.weapon ?? context.weapon ?? null;
+  const contextTags = uniqueStrings([
+    ...asArray(context.contextTags),
+    ...asArray(action.contextTags),
+    ...asArray(extra.contextTags),
+    ...(extra.isArea ?? attack.isArea ?? context.isAreaAttack ?? context.areaAttack ?? ruleData.areaAttack ? ['areaAttack'] : []),
+    ...(extra.isAutofire ?? attack.isAutofire ?? context.autofire ? ['autofire'] : []),
+    ...(extra.isBurstFire ?? attack.isBurstFire ?? context.burstFire ? ['burstFire'] : []),
+    ...(extra.damageMode === 'stun' || context.damageMode === 'stun' || ruleData.damageMode === 'stun' ? ['stun'] : []),
+    ...(extra.ion === true || context.ion === true || ruleData.ion === true ? ['ion'] : [])
+  ]);
 
   const summary = {
     schema: 'swse.combat.workflow.v1',
+    workflowId: extra.workflowId ?? context.workflowId ?? action.workflowId ?? null,
     actionId: extra.actionId ?? action.id ?? context.actionId ?? null,
     actionName: extra.actionName ?? action.name ?? context.actionName ?? null,
     resolutionMode: extra.resolutionMode ?? action.resolutionMode ?? context.resolutionMode ?? null,
     actionType: extra.actionType ?? action.actionType ?? context.actionType ?? null,
     automationBoundary: extra.automationBoundary ?? context.automationBoundary ?? action.automationBoundary ?? null,
+    contextTags,
     actorId: extra.actorId ?? idOf(actor) ?? context.actorId ?? null,
     actorName: extra.actorName ?? nameOf(actor) ?? context.actorName ?? null,
     weaponId: extra.weaponId ?? idOf(weapon) ?? context.weaponId ?? null,
@@ -92,6 +124,9 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
       isAiming: asBool(extra.isAiming ?? attack.isAiming ?? context.aim ?? context.aiming),
       isCharging: asBool(extra.isCharging ?? attack.isCharging ?? context.charge ?? context.charging),
       isFiringIntoMelee: asBool(extra.isFiringIntoMelee ?? attack.isFiringIntoMelee ?? context.firingIntoMelee),
+      damageMode: extra.damageMode ?? attack.damageMode ?? context.damageMode ?? ruleData.damageMode ?? null,
+      isStun: asBool(extra.isStun ?? attack.isStun ?? context.stun ?? ruleData.stun ?? ruleData.damageMode === 'stun'),
+      isIon: asBool(extra.isIon ?? attack.isIon ?? context.ion ?? ruleData.ion),
       maneuver: extra.maneuver ?? attack.maneuver ?? context.maneuver ?? null,
       rangeBand: extra.rangeBand ?? attack.rangeBand ?? context.rangeBand ?? context.range ?? null,
       defense: extra.defense ?? attack.defense ?? context.defense ?? null
@@ -106,6 +141,7 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
       spendAction: (extra.spendAction ?? economy.spendAction ?? context.spendAction) !== false,
       spent: asBool(extra.economySpent ?? economy.spent ?? context.economySpent)
     },
+    ruleData,
     flags: Array.isArray(extra.flags ?? context.flags ?? context.contextFlags)
       ? [...(extra.flags ?? context.flags ?? context.contextFlags)].map(String)
       : []
@@ -151,6 +187,9 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     combatContext: workflowContext,
     workflowContext,
     actionId: options.actionId ?? workflowContext.actionId ?? null,
+    workflowId: options.workflowId ?? workflowContext.workflowId ?? null,
+    contextTags: options.contextTags ?? workflowContext.contextTags ?? [],
+    ruleData: options.ruleData ?? workflowContext.ruleData ?? {},
     attackMode: options.attackMode ?? attack.mode ?? null,
     aim: options.aim ?? attack.isAiming === true,
     charge: options.charge ?? attack.isCharging === true,
@@ -162,6 +201,9 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     maneuver: options.maneuver ?? attack.maneuver ?? null,
     rangeBand: options.rangeBand ?? attack.rangeBand ?? null,
     defense: options.defense ?? attack.defense ?? null,
+    damageMode: options.damageMode ?? attack.damageMode ?? null,
+    stun: options.stun ?? attack.isStun === true,
+    ion: options.ion ?? attack.isIon === true,
     isCritical: options.isCritical ?? damage.crit === true,
     critMultiplier: options.critMultiplier ?? damage.critMultiplier ?? undefined,
     ammoCost: options.ammoCost ?? resources.ammoCost ?? 0,

@@ -24,7 +24,7 @@
  */
 
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
-import { encodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
@@ -92,6 +92,22 @@ async function _postCombinedCard(actor, sequence, results, target) {
     const canRollDamage = res.isHit === true || res.isCritical === true;
     const weaponId = res.weaponId ?? res.weapon?.id ?? plan?.weapon?.id ?? '';
     const critMult = res.critMultiplier ?? 2;
+    const workflowSummary = summarizeCombatWorkflowContext(res.workflowContext ?? null, {
+      actor,
+      weapon: res.weapon ?? plan?.weapon ?? null,
+      target,
+      targetId: target?.id ?? null,
+      targetName: target?.name ?? null,
+      isCritical: res.isCritical === true,
+      critMultiplier: critMult,
+      hit: res.isHit ?? null,
+      natural1: Number(res.d20) === 1,
+      natural20: Number(res.d20) === 20
+    }) ?? {};
+    const workflowAttack = workflowSummary.attack ?? {};
+    const workflowDamage = workflowSummary.damage ?? {};
+    const workflowResources = workflowSummary.resources ?? {};
+    const workflowTags = Array.isArray(workflowSummary.contextTags) ? workflowSummary.contextTags.join('|') : '';
     const workflowContextEncoded = encodeCombatWorkflowContext(res.workflowContext ?? null, {
       actor,
       weapon: res.weapon ?? plan?.weapon ?? null,
@@ -107,6 +123,19 @@ async function _postCombinedCard(actor, sequence, results, target) {
                  data-actor-id="${actor.id}"
                  data-weapon-id="${weaponId}"
                  data-target="${target?.id ?? ''}"
+                 data-workflow-id="${workflowSummary.workflowId ?? ''}"
+                 data-action-id="${workflowSummary.actionId ?? ''}"
+                 data-attack-mode="${workflowAttack.mode ?? ''}"
+                 data-context-tags="${workflowTags}"
+                 data-hit="${workflowDamage.hit ?? ''}"
+                 data-natural-1="${workflowDamage.natural1 === true}"
+                 data-natural-20="${workflowDamage.natural20 === true}"
+                 data-area-attack="${workflowAttack.isArea === true}"
+                 data-burst-fire="${workflowAttack.isBurstFire === true}"
+                 data-autofire="${workflowAttack.isAutofire === true}"
+                 data-stun="${workflowAttack.isStun === true}"
+                 data-ion="${workflowAttack.isIon === true}"
+                 data-ammo-cost="${Number(workflowResources.ammoCost ?? 0) || 0}"
                  data-workflow-context="${workflowContextEncoded}"
                  data-is-crit="${res.isCritical === true}"
                  data-crit-mult="${critMult}"
@@ -223,6 +252,7 @@ export class FullAttackExecutor {
         source: 'full-attack-executor',
         actionId:   options.actionId   ?? 'full-attack',
         actionName: options.actionName ?? sequence.packageType,
+        combatContext: options.combatContext ?? null,
       });
       if (!allowed) {return null;}
     }

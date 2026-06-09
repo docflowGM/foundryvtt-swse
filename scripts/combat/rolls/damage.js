@@ -253,6 +253,7 @@ export async function rollDamage(actor, weapon, context = {}) {
           roll,
           actor,
           flavor: `${actor.name} — ${weapon.name} Damage`,
+          flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
           context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
         });
       }
@@ -340,6 +341,7 @@ export async function rollDamage(actor, weapon, context = {}) {
       roll,
       actor,
       flavor,
+      flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
       context: {
         type: 'damage',
         weaponId: weapon.id,

@@ -382,7 +382,7 @@ export class SWSERoll {
         : await this.promptForcePointUse(actor, 'attack roll');
       context.fpBonus = fpBonus;
 
-      const roll = await canonicalRollAttack(actor, weapon, {
+      const attackResult = await canonicalRollAttack(actor, weapon, {
         ...options,
         ...modifiers,
         target: context.target,
@@ -394,31 +394,34 @@ export class SWSERoll {
         showRollCompanion: options?.showRollCompanion !== false
       });
 
-      if (!roll) return null;
+      if (!attackResult) return null;
 
-      const attackContext = roll.swseAttackContext ?? {};
+      const rolled = attackResult.roll ?? attackResult;
+      const attackContext = attackResult.swseAttackContext ?? rolled.swseAttackContext ?? attackResult ?? {};
+      const d20 = attackResult.d20 ?? rolled?.dice?.[0]?.results?.[0]?.result ?? null;
       const result = {
-        roll,
-        d20: roll?.dice?.[0]?.results?.[0]?.result ?? null,
-        total: roll.total,
-        attackBonus: attackContext.attackBonus ?? null,
+        roll: rolled,
+        d20,
+        total: attackResult.total ?? rolled.total,
+        attackBonus: attackContext.attackBonus ?? attackResult.atkBonus ?? null,
         fpBonus,
-        isCritThreat: attackContext.isCritical === true,
-        isNat20: Number(roll?.dice?.[0]?.results?.[0]?.result ?? 0) === 20,
-        critConfirmed: attackContext.isCritical === true,
-        critMultiplier: attackContext.critMultiplier ?? Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, 2),
-        targetReflex: attackContext.targetDefenseValue ?? null,
-        isHit: attackContext.isHit ?? null,
+        isCritThreat: attackContext.isCritical === true || attackResult.isCritical === true,
+        isNat20: Number(d20 ?? 0) === 20,
+        critConfirmed: attackContext.isCritical === true || attackResult.isCritical === true,
+        critMultiplier: attackContext.critMultiplier ?? attackResult.critMultiplier ?? Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, 2),
+        targetReflex: attackContext.targetDefenseValue ?? attackResult.targetReflex ?? null,
+        isHit: attackContext.isHit ?? attackResult.isHit ?? null,
         coverBonus: attackContext.defenseAdjustment ?? 0,
+        workflowContext: attackResult.workflowContext ?? null,
+        actionId: attackResult.actionId ?? options.actionId ?? null,
+        actionData: attackResult.actionData ?? options.actionData ?? null,
+        canonicalResult: attackResult,
         modifiers,
-        workflowContext: roll?.workflowContext ?? null,
-        actionId: roll?.actionId ?? options?.actionId ?? null,
-        actionData: roll?.actionData ?? options?.actionData ?? null,
         canonical: true
       };
 
       RollHistory.record({
-        roll,
+        roll: rolled,
         actor,
         type: 'attack',
         result: { isHit: result.isHit, isCrit: result.critConfirmed, targetReflex: result.targetReflex },

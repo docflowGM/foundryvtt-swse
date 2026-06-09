@@ -79,6 +79,53 @@ function itemFromActor(actor, itemId) {
   return actor.items?.get?.(itemId) ?? actor.items?.find?.(item => item.id === itemId || item._id === itemId) ?? null;
 }
 
+function boolFromDataset(value) {
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  return null;
+}
+
+function mergeDamageButtonWorkflowContext(button, decoded = null) {
+  const context = decoded && typeof decoded === 'object' ? { ...decoded } : {};
+  const attack = { ...(context.attack ?? {}) };
+  const damage = { ...(context.damage ?? {}) };
+  const resources = { ...(context.resources ?? {}) };
+  const tags = new Set(Array.isArray(context.contextTags) ? context.contextTags : []);
+  for (const tag of String(button.dataset.contextTags || '').split('|')) {
+    if (tag.trim()) tags.add(tag.trim());
+  }
+
+  if (button.dataset.workflowId) context.workflowId = context.workflowId ?? button.dataset.workflowId;
+  if (button.dataset.actionId) context.actionId = context.actionId ?? button.dataset.actionId;
+  if (button.dataset.attackMode) attack.mode = attack.mode ?? button.dataset.attackMode;
+  if (button.dataset.target) context.targetId = context.targetId ?? button.dataset.target;
+
+  const hit = button.dataset.hit;
+  if (hit === 'true') damage.hit = true;
+  else if (hit === 'false') damage.hit = false;
+  else if (damage.hit === undefined) damage.hit = null;
+
+  damage.crit = boolFromDataset(button.dataset.isCrit) ?? damage.crit;
+  damage.natural1 = boolFromDataset(button.dataset.natural1) ?? damage.natural1;
+  damage.natural20 = boolFromDataset(button.dataset.natural20) ?? damage.natural20;
+  damage.critMultiplier = Number.parseInt(button.dataset.critMult, 10) || damage.critMultiplier || 2;
+
+  attack.isArea = boolFromDataset(button.dataset.areaAttack) ?? attack.isArea;
+  attack.isBurstFire = boolFromDataset(button.dataset.burstFire) ?? attack.isBurstFire;
+  attack.isAutofire = boolFromDataset(button.dataset.autofire) ?? attack.isAutofire;
+  attack.isStun = boolFromDataset(button.dataset.stun) ?? attack.isStun;
+  attack.isIon = boolFromDataset(button.dataset.ion) ?? attack.isIon;
+  resources.ammoCost = Number.parseInt(button.dataset.ammoCost, 10) || resources.ammoCost || 0;
+
+  return {
+    ...context,
+    contextTags: [...tags],
+    attack,
+    damage,
+    resources
+  };
+}
+
 async function handleLegacyDamageRollButton(event, button, message) {
   event.preventDefault();
   event.stopPropagation();
@@ -97,7 +144,7 @@ async function handleLegacyDamageRollButton(event, button, message) {
     return;
   }
 
-  const combatContext = decodeCombatWorkflowContext(button.dataset.workflowContext);
+  const combatContext = mergeDamageButtonWorkflowContext(button, decodeCombatWorkflowContext(button.dataset.workflowContext));
   const target = actorFromId(button.dataset.target) || actorFromId(combatContext?.targetId) || null;
   const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
   await SWSERoll.rollDamage(actor, weapon, {
@@ -123,7 +170,7 @@ async function handleCombatDamageRollButton(event, button) {
     return;
   }
 
-  const combatContext = decodeCombatWorkflowContext(button.dataset.workflowContext);
+  const combatContext = mergeDamageButtonWorkflowContext(button, decodeCombatWorkflowContext(button.dataset.workflowContext));
   const resolvedTarget = target || actorFromId(combatContext?.targetId) || null;
   const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
   await SWSERoll.rollDamage(attacker, weapon, {

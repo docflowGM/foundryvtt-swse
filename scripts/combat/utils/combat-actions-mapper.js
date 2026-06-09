@@ -309,98 +309,54 @@ export class CombatActionsMapper {
   static _normalizeAction(item) {
     const system = item.system ?? {};
     return {
+      id: system.id ?? system.key ?? item._id,
       key: system.key ?? item._id,
-      id: system.key ?? item._id,
       name: item.name,
-      actionType: system.actionType,
-      type: system.actionType,
+      actionType: system.actionCost ?? system.actionType,
+      actionCost: system.actionCost ?? system.actionType,
+      actionTypeRaw: system.actionTypeRaw ?? system.action?.type ?? system.actionType,
       cost: system.cost,
-      actionCost: system.actionCost ?? system.cost ?? null,
       notes: system.notes,
-      description: system.description ?? system.effect ?? system.notes ?? '',
+      description: system.description ?? system.notes,
       relatedSkills: system.relatedSkills ?? [],
       dc: system.dc,
       outcome: system.outcome,
       when: system.when,
-
-      // Phase 1B: preserve workflow/routing metadata for the combat
-      // orchestrator instead of flattening it away at the sheet layer.
-      resolutionMode: system.resolutionMode ?? null,
-      executable: system.executable ?? true,
-      manualResolution: system.manualResolution ?? false,
-      gmManaged: system.gmManaged ?? false,
-      automationBoundary: system.automationBoundary ?? null,
-      spendAction: system.spendAction ?? true,
+      resolutionMode: system.resolutionMode,
+      manualResolution: system.manualResolution,
+      gmManaged: system.gmManaged,
+      automationBoundary: system.automationBoundary,
+      executable: system.executable,
       contextTags: system.contextTags ?? system.tags ?? [],
-      requiredContext: system.requiredContext ?? [],
-      resources: system.resources ?? system.resourceCosts ?? [],
+      requiredContext: system.requiredContext ?? system.requirements ?? [],
+      resources: system.resources ?? system.resourceCosts ?? system.ammoConsumption ?? system.ammo_consumption ?? null,
       ruleData: system.ruleData ?? {},
-      sourceType: system.sourceType ?? item.type ?? 'combatAction',
-      sourceName: system.source ?? system.sourceName ?? 'Combat Action',
-      sourceActionId: system.sourceActionId ?? system.actionId ?? '',
-      sourceDocumentId: item._id ?? null,
-      sourcePath: system.sourcePath ?? null,
-      uiHint: system.uiHint ?? null,
-      raw: system
+      spendAction: system.spendAction,
+      houseruleGate: system.houseruleGate,
+      targetHint: system.targetHint,
+      isAttack: system.isAttack
     };
   }
 
   static _normalizeExtraUse(item) {
-    const system = item.system ?? {};
     return {
-      key: system.key ?? item._id,
-      id: system.key ?? item._id,
+      key: item.system?.key ?? item._id,
       name: item.name,
-      dc: system.dc,
-      time: system.time,
-      effect: system.effect,
-      actionType: system.actionType ?? system.time ?? null,
-      type: system.actionType ?? system.time ?? null,
-      resolutionMode: system.resolutionMode ?? 'skillAction',
-      executable: system.executable ?? true,
-      manualResolution: system.manualResolution ?? false,
-      gmManaged: system.gmManaged ?? false,
-      automationBoundary: system.automationBoundary ?? 'assist',
-      spendAction: system.spendAction ?? true,
-      contextTags: system.contextTags ?? system.tags ?? [],
-      requiredContext: system.requiredContext ?? [],
-      resources: system.resources ?? system.resourceCosts ?? [],
-      ruleData: system.ruleData ?? {},
-      sourceType: system.sourceType ?? item.type ?? 'extraskilluse',
-      sourceName: system.source ?? system.sourceName ?? 'Extra Skill Use',
-      sourceDocumentId: item._id ?? null,
-      raw: system
+      dc: item.system?.dc,
+      time: item.system?.time,
+      effect: item.system?.effect
     };
   }
 
   static _normalizeShipAction(item) {
-    const system = item.system ?? {};
     return {
-      key: system.key ?? item._id,
-      id: system.key ?? item._id,
+      key: item.system?.key ?? item._id,
       name: item.name,
-      actionType: system.actionType,
-      type: system.actionType,
-      cost: system.cost,
-      actionCost: system.actionCost ?? system.cost ?? null,
-      crewPosition: system.crewPosition,
-      notes: system.notes,
-      description: system.description ?? system.effect ?? system.notes ?? '',
-      relatedSkills: system.relatedSkills ?? [],
-      resolutionMode: system.resolutionMode ?? null,
-      executable: system.executable ?? true,
-      manualResolution: system.manualResolution ?? false,
-      gmManaged: system.gmManaged ?? false,
-      automationBoundary: system.automationBoundary ?? null,
-      spendAction: system.spendAction ?? true,
-      contextTags: system.contextTags ?? system.tags ?? [],
-      requiredContext: system.requiredContext ?? [],
-      resources: system.resources ?? system.resourceCosts ?? [],
-      ruleData: system.ruleData ?? {},
-      sourceType: system.sourceType ?? item.type ?? 'shipCombatAction',
-      sourceName: system.source ?? system.sourceName ?? 'Ship Combat Action',
-      sourceDocumentId: item._id ?? null,
-      raw: system
+      actionType: item.system?.actionType,
+      cost: item.system?.cost,
+      crewPosition: item.system?.crewPosition,
+      notes: item.system?.notes,
+      relatedSkills: item.system?.relatedSkills ?? []
     };
   }
 

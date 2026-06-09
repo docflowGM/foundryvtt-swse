@@ -464,6 +464,20 @@ export async function rollAttack(actor, weapon, options = {}) {
     targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
     targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
   };
+  roll.swseAttackContext = {
+    attackBonus: atkBonus,
+    sequencePenalty,
+    isHit,
+    isCritical,
+    natural1: Number(d20) === 1,
+    natural20: Number(d20) === 20,
+    critMultiplier: attackResult.critMultiplier,
+    targetDefenseValue: targetReflex,
+    targetDefenseType: resolvedTarget.defenseType ?? null,
+    defenseAdjustment: 0,
+    workflowContext: damageWorkflowContext,
+    actionId: attackResult.actionId
+  };
   return attackResult;
 }
 
@@ -511,6 +525,7 @@ export async function rollDamage(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Damage (${formula})`,
+    flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
     context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '', sourceElement: rollOptions?.sourceElement ?? null, companionSource: rollOptions?.companionSource ?? null, sheet: rollOptions?.sheet ?? null, showRollCompanion: rollOptions?.showRollCompanion !== false, targetContext: rollOptions?.targetContext ?? null }
   });
 

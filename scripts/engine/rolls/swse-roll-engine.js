@@ -1,6 +1,6 @@
 import { buildChatSvgContext, buildChatStateContext } from "/systems/foundryvtt-swse/scripts/chat/chat-svg-assets.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
-import { encodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 
 
 function swseChatLabel(value = '') {
@@ -179,12 +179,38 @@ function swseChatBuildDamageAction(context = {}, weapon = null, isCritical = fal
   if (!weaponId || context.disableDamageAction === true) return null;
   const critMultiplier = Number(context.critMultiplier ?? weapon?.system?.criticalMultiplier ?? weapon?.system?.critMultiplier ?? 2) || 2;
   const workflowContext = context.workflowContext ?? context.combatContext ?? null;
+  const workflowSummary = summarizeCombatWorkflowContext(workflowContext, {
+    actor,
+    weapon,
+    target: context.target ?? null,
+    targetId: context.targetId ?? context.target?.id ?? null,
+    targetName: context.targetName ?? context.target?.name ?? null,
+    isCritical: context.isCritical === true || isCritical === true,
+    critMultiplier,
+    hit: context.success ?? context.passed ?? null
+  }) ?? {};
+  const workflowAttack = workflowSummary.attack ?? {};
+  const workflowDamage = workflowSummary.damage ?? {};
+  const workflowResources = workflowSummary.resources ?? {};
   return {
     actorId: context.actorId ?? context.attackerId ?? actor?.id ?? '',
     weaponId,
-    targetId: context.targetId ?? context.target?.id ?? '',
-    isCritical: context.isCritical === true || isCritical === true,
+    targetId: context.targetId ?? context.target?.id ?? workflowSummary.targetId ?? '',
+    workflowId: workflowSummary.workflowId ?? '',
+    actionId: workflowSummary.actionId ?? context.actionId ?? '',
+    attackMode: workflowAttack.mode ?? context.attackMode ?? '',
+    contextTags: Array.isArray(workflowSummary.contextTags) ? workflowSummary.contextTags.join('|') : '',
+    isCritical: context.isCritical === true || isCritical === true || workflowDamage.crit === true,
     critMultiplier,
+    isHit: workflowDamage.hit ?? context.success ?? context.passed ?? '',
+    natural1: workflowDamage.natural1 === true,
+    natural20: workflowDamage.natural20 === true,
+    areaAttack: workflowAttack.isArea === true,
+    burstFire: workflowAttack.isBurstFire === true,
+    autofire: workflowAttack.isAutofire === true,
+    stun: workflowAttack.isStun === true,
+    ion: workflowAttack.isIon === true,
+    ammoCost: Number(workflowResources.ammoCost ?? 0) || 0,
     twoHanded: context.twoHanded === true,
     workflowContextEncoded: encodeCombatWorkflowContext(workflowContext, {
       actor,
