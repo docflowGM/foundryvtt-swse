@@ -2921,6 +2921,8 @@ const forcePoints = [];
       const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
 
       const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+      actionEconomyTurnState = turnState;
+      actionEconomyEngine = ActionEngine;
       const state = ActionEngine.getVisualState(turnState);
       const breakdown = ActionEngine.getTooltipBreakdown(turnState);
       const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
@@ -2961,11 +2963,41 @@ const forcePoints = [];
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'combat-action';
     const normalizeActionEconomy = (value) => this._normalizeActionEconomyType(value || 'standard');
+    const economyViolationLabel = (code) => ({
+      FULL_ROUND_NOT_AVAILABLE: 'Full-round unavailable',
+      FULL_ROUND_ALREADY_USED: 'Full-round already used',
+      INSUFFICIENT_STANDARD: 'No standard action',
+      INSUFFICIENT_MOVE: 'No move action',
+      INSUFFICIENT_SWIFT: 'No swift action',
+      INSUFFICIENT_REACTION: 'No reaction available'
+    }[code] ?? String(code || 'Unavailable'));
+    const previewActionEconomy = (actionType, row = {}) => {
+      const normalized = normalizeActionEconomy(actionType);
+      if (!actionEconomyTurnState || row.spendAction === false || ['free', 'passive'].includes(normalized)) {
+        return { available: true, label: row.spendAction === false ? 'No action spent' : 'Available' };
+      }
+      if (normalized === 'reaction') {
+        const current = Number(actionEconomyTurnState.reactions?.current ?? 1) || 0;
+        return current > 0
+          ? { available: true, label: 'Available' }
+          : { available: false, label: 'No reaction available', violations: ['INSUFFICIENT_REACTION'] };
+      }
+      const cost = actionEconomyEngine?.costForActionType?.(normalized) ?? this._actionEconomyCostForType?.(normalized, actionEconomyEngine) ?? {};
+      const preview = actionEconomyEngine?.previewConsume?.(actionEconomyTurnState, cost) ?? { allowed: true, violations: [] };
+      return {
+        available: preview.allowed !== false,
+        label: preview.allowed === false ? economyViolationLabel(preview.violations?.[0]) : 'Available',
+        violations: preview.violations ?? [],
+        preview
+      };
+    };
     const registerAction = (grouped, action) => {
       const key = action.key || action.id || slugAction(action.name);
       const actionType = normalizeActionEconomy(action.actionType || action.type || action.action?.type || action.costType || 'standard');
       const relatedSkills = action.relatedSkills || action.system?.relatedSkills || [];
       const manualResolution = action.manualResolution === true || action.resolutionMode === 'manual' || action.resolutionMode === 'reference';
+      const economyPreview = previewActionEconomy(actionType, action);
+      const strictEconomy = actionEconomy?.enforcementMode === 'strict';
       const row = {
         key,
         id: key,
@@ -2976,14 +3008,22 @@ const forcePoints = [];
         actionType,
         type: actionType,
         cost: action.cost ?? action.actionCost ?? action.action?.cost ?? 1,
+        actionCost: action.actionCost ?? action.system?.actionCost ?? null,
         notes: action.notes || action.description || action.system?.notes || action.system?.description || '',
         description: action.description || action.notes || action.system?.description || action.system?.notes || '',
         relatedSkills,
         hasRelatedSkills: Array.isArray(relatedSkills) ? relatedSkills.length > 0 : !!relatedSkills,
         resources: action.resources || [],
+        contextTags: action.contextTags || action.tags || [],
+        automationBoundary: action.automationBoundary || action.boundary || null,
+        gmManaged: action.gmManaged === true,
         itemId: action.itemId || action.sourceItemId || '',
         executable: action.executable !== false,
         useLabel: action.useLabel || (manualResolution ? 'Use / Note' : 'Use'),
+        economyAvailable: economyPreview.available,
+        availabilityLabel: economyPreview.label,
+        economyViolations: economyPreview.violations ?? [],
+        disabled: action.executable !== false && action.spendAction !== false && strictEconomy && economyPreview.available === false,
         manualResolution,
         resolutionMode: action.resolutionMode || (manualResolution ? 'manual' : 'auto'),
         spendAction: action.spendAction !== false,
@@ -3076,12 +3116,15 @@ const forcePoints = [];
         const items = grouped[eco] || [];
         if (!items.length) continue;
         items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const availableCount = items.filter(item => item.economyAvailable !== false).length;
         combatActions.groups.push({
           key: eco,
           id: eco,
           economy: eco,
           label: economyLabel(eco),
           count: items.length,
+          availableCount,
+          availabilityLabel: actionEconomy ? `${availableCount}/${items.length} available` : 'Not tracking',
           actions: items,
           items,
           subgroups: [{
@@ -7601,6 +7644,20 @@ const forcePoints = [];
     return raw;
   }
 
+  _labelActionEconomyType(value) {
+    const normalized = this._normalizeActionEconomyType(value);
+    const labels = {
+      'full-round': 'Full-Round',
+      standard: 'Standard',
+      move: 'Move',
+      swift: 'Swift',
+      reaction: 'Reaction',
+      free: 'Free',
+      passive: 'Passive'
+    };
+    return labels[normalized] ?? String(value ?? 'Action');
+  }
+
   _deriveCombatActionEconomyType(actionData = {}) {
     return this._normalizeActionEconomyType(
       actionData?.cost ??
@@ -7609,6 +7666,70 @@ const forcePoints = [];
       actionData?.actionType ??
       "standard"
     );
+  }
+
+  _actionEconomyCostForType(actionType, Engine = null) {
+    const normalized = this._normalizeActionEconomyType(actionType);
+    if (Engine?.costForActionType) return Engine.costForActionType(normalized);
+    if (normalized === 'full-round') return { fullRound: true, standard: 1, move: 1, swift: 1 };
+    if (normalized === 'move') return { move: 1 };
+    if (normalized === 'swift') return { swift: 1 };
+    if (normalized === 'free' || normalized === 'reaction' || normalized === 'passive') return {};
+    return { standard: 1 };
+  }
+
+  _isActionEconomyPermitted(policyResult, engineResult) {
+    if (!policyResult) return engineResult?.allowed !== false;
+    if (policyResult === false) return false;
+    if (policyResult?.permitted === false) return false;
+    return true;
+  }
+
+  _notifyActionEconomyPolicy(policyResult, engineResult, actionType) {
+    const tooltip = policyResult?.uiState?.tooltip
+      ?? policyResult?.uiState?.message
+      ?? policyResult?.reason
+      ?? (Array.isArray(engineResult?.violations) && engineResult.violations.length ? engineResult.violations.join(', ') : null);
+    if (!tooltip) return;
+
+    const mode = policyResult?.mode ?? game?.settings?.get?.('foundryvtt-swse', 'actionEconomyMode') ?? 'loose';
+    if (policyResult?.permitted === false || mode === 'strict') {
+      ui?.notifications?.warn?.(tooltip);
+    } else if (engineResult?.allowed === false) {
+      ui?.notifications?.info?.(`${this._labelActionEconomyType(actionType)} economy warning: ${tooltip}`);
+    }
+  }
+
+  async _applyActionEconomyPolicy({ Policy, actor, result, actionType, metadata = {} } = {}) {
+    if (!Policy || !result) return result?.allowed !== false ? { permitted: true } : { permitted: false };
+
+    const actionName = metadata?.actionName ?? metadata?.sourceName ?? metadata?.source ?? actionType ?? 'action';
+
+    try {
+      // Phase 1D: canonical controller signature. The newer controller
+      // exposes MODE on the class and accepts a single options object.
+      if (Policy.MODE) {
+        return Policy.handle({
+          actor,
+          result,
+          actionName,
+          context: metadata,
+          gmOverride: metadata?.gmOverride === true
+        });
+      }
+
+      // Legacy controller signature.
+      return Policy.handle(result, {
+        actor,
+        actionType,
+        actionName,
+        metadata,
+        gmOverride: metadata?.gmOverride === true
+      });
+    } catch (err) {
+      console.warn('[SWSEV2CharacterSheet] Action policy check failed, continuing cautiously:', err);
+      return result?.allowed !== false ? { permitted: true } : { permitted: false, reason: err?.message ?? 'Action policy failed' };
+    }
   }
 
   async _applyActionEconomy(actionType, metadata = {}) {
@@ -7620,67 +7741,83 @@ const forcePoints = [];
     const { Persistence, Engine, Policy } = await this._resolveActionEconomyModules();
     if (!Persistence || !Engine) return true;
 
+    const normalizedType = this._normalizeActionEconomyType(actionType);
+    if (normalizedType === 'free' || normalizedType === 'passive') return true;
+
     const combatId = game.combat.id;
-    let turnState = Persistence.getTurnState?.(this.actor, combatId) ?? {};
+    const turnState = Persistence.getTurnState?.(this.actor, combatId) ?? Persistence.startTurn?.(this.actor) ?? {};
 
-    const payload = {
-      actor: this.actor,
-      combatId,
-      actionType,
-      turnState,
-      metadata
-    };
+    // Reactions are tracked separately from Standard/Move/Swift because SWSE
+    // reaction windows are not paid by degrading turn actions.
+    if (normalizedType === 'reaction') {
+      const current = Number(turnState?.reactions?.current ?? Persistence.getReactionMax?.(this.actor) ?? 1) || 0;
+      const reactionResult = current > 0
+        ? { allowed: true, turnState, consumed: { reaction: 1 }, violations: [] }
+        : { allowed: false, turnState, consumed: { reaction: 0 }, violations: ['INSUFFICIENT_REACTION'] };
+      const policyResult = await this._applyActionEconomyPolicy({
+        Policy,
+        actor: this.actor,
+        result: reactionResult,
+        actionType: normalizedType,
+        metadata
+      });
+      this._notifyActionEconomyPolicy(policyResult, reactionResult, normalizedType);
+      if (!this._isActionEconomyPermitted(policyResult, reactionResult)) return false;
 
-    try {
-      if (Policy?.wouldPermit && !Policy.wouldPermit(payload)) {
-        Policy.handle?.(payload);
-        return false;
+      if (reactionResult.allowed && typeof Persistence.spendReaction === 'function') {
+        await Persistence.spendReaction(this.actor, combatId, { ...metadata, actionType: normalizedType });
+        await this.requestSurfaceRender({ reason: 'action-economy-persist' });
       }
-
-      const policyResult = await Policy?.handle?.(payload);
-      if (policyResult === false || policyResult?.permitted === false) {
-        return false;
-      }
-    } catch (err) {
-      console.warn("[PHASE F] Action policy check failed, continuing cautiously:", err);
-    }
-
-    const costForType = (type) => {
-      const normalized = this._normalizeActionEconomyType(type);
-      if (normalized === 'full-round') return { fullRound: true };
-      if (normalized === 'move') return { move: 1 };
-      if (normalized === 'swift') return { swift: 1 };
-      if (normalized === 'free' || normalized === 'reaction' || normalized === 'passive') return {};
-      return { standard: 1 };
-    };
-
-    let nextState = null;
-    if (typeof Engine.consumeAction === "function") {
-      const result = await Engine.consumeAction(turnState, { actionType, metadata, cost: costForType(actionType) });
-      if (result === false || result?.allowed === false || result?.permitted === false) return false;
-      nextState = result?.turnState ?? result?.updatedTurnState ?? result;
-    } else if (typeof Engine.consume === "function") {
-      const result = Engine.consume(turnState, costForType(actionType));
-      if (result === false || result?.allowed === false || result?.permitted === false) {
-        ui?.notifications?.warn?.('That action is not available this turn.');
-        return false;
-      }
-      nextState = result?.turnState ?? result;
-    } else {
       return true;
     }
 
-    try {
-      if (typeof Persistence.setTurnState === "function") {
-        await Persistence.setTurnState(this.actor, combatId, nextState);
-      } else if (typeof Persistence.saveTurnState === "function") {
-        await Persistence.saveTurnState(this.actor, combatId, nextState);
-      } else if (typeof Persistence.updateTurnState === "function") {
-        await Persistence.updateTurnState(this.actor, combatId, nextState);
+    const cost = this._actionEconomyCostForType(normalizedType, Engine);
+    const result = typeof Engine.consume === 'function'
+      ? Engine.consume(turnState, cost)
+      : await Engine.consumeAction?.(turnState, { actionType: normalizedType, metadata, cost });
+
+    if (result === false) return false;
+    const engineResult = result?.allowed === undefined && result?.updatedTurnState
+      ? {
+          allowed: result.allowed !== false,
+          turnState: result.updatedTurnState,
+          violations: result.reason ? [result.reason] : [],
+          consumed: result.consumedCost ?? cost
+        }
+      : result;
+
+    const policyResult = await this._applyActionEconomyPolicy({
+      Policy,
+      actor: this.actor,
+      result: engineResult,
+      actionType: normalizedType,
+      metadata
+    });
+    this._notifyActionEconomyPolicy(policyResult, engineResult, normalizedType);
+    if (!this._isActionEconomyPermitted(policyResult, engineResult)) return false;
+
+    // In loose/none enforcement modes an over-spend can be permitted for table
+    // flow, but it must not corrupt the tracked turn state. Only commit legal
+    // consumption results.
+    if (engineResult?.allowed !== false) {
+      try {
+        if (typeof Persistence.commitConsumption === 'function') {
+          await Persistence.commitConsumption(this.actor, combatId, engineResult, {
+            ...metadata,
+            actionType: normalizedType,
+            cost
+          });
+        } else if (typeof Persistence.setTurnState === 'function') {
+          await Persistence.setTurnState(this.actor, combatId, engineResult.turnState ?? engineResult);
+        } else if (typeof Persistence.saveTurnState === 'function') {
+          await Persistence.saveTurnState(this.actor, combatId, engineResult.turnState ?? engineResult);
+        } else if (typeof Persistence.updateTurnState === 'function') {
+          await Persistence.updateTurnState(this.actor, combatId, engineResult.turnState ?? engineResult);
+        }
+        await this.requestSurfaceRender({ reason: 'action-economy-persist' });
+      } catch (err) {
+        console.warn('[SWSEV2CharacterSheet] Failed to persist action economy state:', err);
       }
-      await this.requestSurfaceRender({ reason: 'action-economy-persist' });
-    } catch (err) {
-      console.warn("[PHASE F] Failed to persist action economy state:", err);
     }
 
     return true;
