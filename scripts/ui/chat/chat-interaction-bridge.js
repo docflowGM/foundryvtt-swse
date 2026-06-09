@@ -10,6 +10,7 @@ import { enhanceSWSEChatMessage } from "/systems/foundryvtt-swse/scripts/ui/chat
 import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { decodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { buildDamagePacket } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 
 let registered = false;
 
@@ -184,15 +185,44 @@ async function handleCombatDamageRollButton(event, button) {
 
 async function handleApplyDamageButton(event, button) {
   event.preventDefault();
+  event.stopPropagation();
 
-  const amount = Number.parseInt(button.dataset.amount, 10);
-  if (!Number.isFinite(amount)) {
+  const rawAmount = Number.parseInt(button.dataset.rawAmount || button.dataset.amount, 10);
+  if (!Number.isFinite(rawAmount)) {
     ui?.notifications?.warn?.('Damage amount could not be resolved.');
     return;
   }
 
+  const combatContext = mergeDamageButtonWorkflowContext(button, decodeCombatWorkflowContext(button.dataset.workflowContext));
+  const attacker = actorFromId(button.dataset.attacker || button.dataset.actorId || combatContext?.actorId);
+  const target = actorFromId(button.dataset.target) || actorFromId(combatContext?.targetId) || null;
+  const weapon = itemFromActor(attacker, button.dataset.weapon || button.dataset.weaponId || combatContext?.weaponId);
+  const packet = buildDamagePacket({
+    attacker,
+    target,
+    weapon,
+    amount: rawAmount,
+    workflowContext: combatContext,
+    options: {
+      damageType: button.dataset.damageType || combatContext?.damage?.damageType || undefined,
+      isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
+      critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
+      ammoCost: Number.parseInt(button.dataset.ammoCost, 10) || combatContext?.resources?.ammoCost || 0,
+      hit: button.dataset.hit === 'true' ? true : button.dataset.hit === 'false' ? false : combatContext?.damage?.hit
+    }
+  });
+
+  if (packet.disposition?.damageAllowed === false || packet.amount <= 0) {
+    ui?.notifications?.info?.(packet.disposition?.reason || 'This attack does not apply damage.');
+    return;
+  }
+
   const { DamageSystem } = await import('/systems/foundryvtt-swse/scripts/combat/damage-system.js');
-  await DamageSystem.applyToSelected(amount, { checkThreshold: true });
+  if (target) {
+    await DamageSystem.applyPacketToActor(target, packet);
+  } else {
+    await DamageSystem.applyPacketToSelected(packet);
+  }
 }
 
 async function handleReactionButton(event, button, message) {

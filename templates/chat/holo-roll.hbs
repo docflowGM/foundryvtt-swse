@@ -160,10 +160,59 @@
                 data-attacker="{{attackDamage.actorId}}"
                 data-target="{{attackDamage.targetId}}"
                 data-weapon="{{attackDamage.weaponId}}"
-                data-amount="{{attackDamage.total}}">
-          <span class="i">▸</span>Apply Damage
+                data-amount="{{attackDamage.total}}"
+                data-raw-amount="{{attackDamage.rawTotal}}"
+                data-damage-type="{{attackDamage.damageType}}"
+                data-workflow-id="{{attackDamage.workflowId}}"
+                data-action-id="{{attackDamage.actionId}}"
+                data-attack-mode="{{attackDamage.attackMode}}"
+                data-context-tags="{{attackDamage.contextTags}}"
+                data-hit="{{attackDamage.isHit}}"
+                data-natural-1="{{attackDamage.natural1}}"
+                data-natural-20="{{attackDamage.natural20}}"
+                data-area-attack="{{attackDamage.areaAttack}}"
+                data-burst-fire="{{attackDamage.burstFire}}"
+                data-autofire="{{attackDamage.autofire}}"
+                data-stun="{{attackDamage.stun}}"
+                data-ion="{{attackDamage.ion}}"
+                data-ammo-cost="{{attackDamage.ammoCost}}"
+                data-workflow-context="{{attackDamage.workflowContextEncoded}}"
+                data-is-crit="{{attackDamage.isCritical}}"
+                data-crit-mult="{{attackDamage.critMultiplier}}">
+          <span class="i">▸</span>{{attackDamage.applyLabel}}
         </button>
       </div>
+    </div>
+  {{/if}}
+
+  {{#if damageApplyAction}}
+    <div class="actions swse-damage-actions">
+      <button type="button"
+              class="btn swse-apply-damage-btn"
+              data-attacker="{{damageApplyAction.actorId}}"
+              data-target="{{damageApplyAction.targetId}}"
+              data-weapon="{{damageApplyAction.weaponId}}"
+              data-amount="{{damageApplyAction.amount}}"
+              data-raw-amount="{{damageApplyAction.rawAmount}}"
+              data-damage-type="{{damageApplyAction.damageType}}"
+              data-workflow-id="{{damageApplyAction.workflowId}}"
+              data-action-id="{{damageApplyAction.actionId}}"
+              data-attack-mode="{{damageApplyAction.attackMode}}"
+              data-context-tags="{{damageApplyAction.contextTags}}"
+              data-hit="{{damageApplyAction.isHit}}"
+              data-natural-1="{{damageApplyAction.natural1}}"
+              data-natural-20="{{damageApplyAction.natural20}}"
+              data-area-attack="{{damageApplyAction.areaAttack}}"
+              data-burst-fire="{{damageApplyAction.burstFire}}"
+              data-autofire="{{damageApplyAction.autofire}}"
+              data-stun="{{damageApplyAction.stun}}"
+              data-ion="{{damageApplyAction.ion}}"
+              data-ammo-cost="{{damageApplyAction.ammoCost}}"
+              data-workflow-context="{{damageApplyAction.workflowContextEncoded}}"
+              data-is-crit="{{damageApplyAction.isCritical}}"
+              data-crit-mult="{{damageApplyAction.critMultiplier}}">
+        <span class="i">▸</span>{{damageApplyAction.label}}
+      </button>
     </div>
   {{/if}}
 

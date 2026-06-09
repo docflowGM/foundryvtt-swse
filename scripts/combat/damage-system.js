@@ -2,6 +2,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { buildDamageApplyOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 
 /**
  * SWSE Damage System (v13+)
@@ -47,6 +48,42 @@ export class DamageSystem {
         ui.notifications.error('Failed to apply damage.');
       }
     }
+  }
+
+  static async applyPacketToActor(actor, packet = {}) {
+    if (!actor) {
+      ui.notifications.warn('No target actor found for damage application.');
+      return null;
+    }
+
+    const amount = Math.max(0, Number(packet.amount ?? 0));
+    if (!Number.isFinite(amount) || amount <= 0) {
+      ui.notifications.info(packet.disposition?.reason || 'No damage to apply.');
+      return null;
+    }
+
+    const options = buildDamageApplyOptions(packet);
+    try {
+      const result = await actor.applyDamage(amount, options);
+      const typeLabel = packet.type && packet.type !== 'normal' ? ` ${packet.type}` : '';
+      ui.notifications.info(`${actor.name} takes ${amount}${typeLabel} damage.`);
+      return result;
+    } catch (err) {
+      swseLogger.error(err);
+      ui.notifications.error('Failed to apply damage.');
+      return null;
+    }
+  }
+
+  static async applyPacketToSelected(packet = {}) {
+    const tokens = this._getSelectedTokens();
+    if (!tokens.length) {return null;}
+
+    const results = [];
+    for (const token of tokens) {
+      results.push(await this.applyPacketToActor(token.actor, packet));
+    }
+    return results;
   }
 
   static async healSelected(amount) {

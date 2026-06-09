@@ -3,6 +3,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
+import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
@@ -254,7 +255,7 @@ export async function rollDamage(actor, weapon, context = {}) {
           actor,
           flavor: `${actor.name} — ${weapon.name} Damage`,
           flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
-          context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? '' }
+          context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext }) }
         });
       }
       return roll;
@@ -351,7 +352,7 @@ export async function rollDamage(actor, weapon, context = {}) {
         workflowContext,
         target: rollContext.target ?? null,
         targetContext: rollContext.targetContext ?? null,
-        damageType: weapon.system?.damageType ?? weapon.system?.damage?.type ?? ''
+        damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext })
       }
     });
   }
