@@ -1,0 +1,134 @@
+[
+  {
+    "id": "healing-authority-split",
+    "system": "healing",
+    "rule": "HP restoration should cap at max HP and preserve target/source semantics.",
+    "currentEvidence": "ActorEngine.applyHealing is central, but HealingMechanics, DamageApp, GM service, Force/talent plans, and legacy sheet paths also update HP or call different wrappers.",
+    "affectedFeatures": ["First Aid", "Long-Term Care", "Surgery", "Critical Care", "Force healing", "Dark Healing", "GM Heal/Repair"],
+    "automationBoundary": "automate mutation, assist workflow context",
+    "severity": "critical",
+    "recommendedPhase": "healing-foundation",
+    "fixNow": false
+  },
+  {
+    "id": "treat-injury-gm-workflow-fixed-amounts",
+    "system": "treat-injury",
+    "rule": "First Aid heals character level plus margin over DC 15; Surgery heals Constitution bonus minimum 1 times level; Critical Care heals level plus margin over DC 20.",
+    "currentEvidence": "GMCombatRecoveryService TREAT_INJURY_WORKFLOWS use fixed default amounts like 5, 10, and 1.",
+    "affectedFeatures": ["First Aid", "Surgery", "Critical Care", "Revivify"],
+    "automationBoundary": "automate formula after GM/check input",
+    "severity": "high",
+    "recommendedPhase": "treat-injury-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "medical-gear-requirements-not-enforced",
+    "system": "gear",
+    "rule": "First Aid requires Medpac; Surgery requires Surgery Kit; Revivify and poison/disease/radiation treatment require Medical Kit; Repair requires Tool Kit.",
+    "currentEvidence": "Medical gear exists in equipment compendiums, but current healing/repair workflows do not reliably check or consume gear.",
+    "affectedFeatures": ["Medpac", "Medical Kit", "Surgery Kit", "Tool Kit", "First Aid", "Repair", "Revivify"],
+    "automationBoundary": "assist while gear is nominal; automate when gear tracking is enabled",
+    "severity": "high",
+    "recommendedPhase": "gear-stub-layer",
+    "fixNow": false
+  },
+  {
+    "id": "medpac-24h-and-consumption",
+    "system": "first-aid",
+    "rule": "A target can benefit from a Medpac/First Aid once per 24 hours, and the Medpac is expended even on failed checks.",
+    "currentEvidence": "HealingMechanics marks lastFirstAid, but GM workflow does not appear to honor that flag; item consumption is not implemented.",
+    "affectedFeatures": ["First Aid", "Medpac", "Extra First Aid", "Critical Care"],
+    "automationBoundary": "automate cooldown; assist/automate consumption based on gear tracking setting",
+    "severity": "high",
+    "recommendedPhase": "treat-injury-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "surgery-failure-damage-bypasses-damage-authority",
+    "system": "surgery",
+    "rule": "Surgery failure by 5 or more deals damage equal to Damage Threshold and can kill a 0 HP target unless Force Point rescue applies.",
+    "currentEvidence": "HealingMechanics.performSurgery directly computes newHP and uses updateActor rather than ActorEngine.applyDamage; DT source path may be noncanonical.",
+    "affectedFeatures": ["Perform Surgery", "Critical Care", "Force Point rescue", "Death rules"],
+    "automationBoundary": "automate through damage packet authority",
+    "severity": "critical",
+    "recommendedPhase": "treat-injury-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "natural-healing-raw-mismatch",
+    "system": "natural-healing",
+    "rule": "A living creature with 8 uninterrupted hours of rest heals character level HP, cannot naturally heal with persistent conditions, and only benefits once per 24 hours.",
+    "currentEvidence": "RecoveryMechanics is houserule-driven by hit die/custom formulas and does not clearly block persistent conditions or track a 24-hour natural-healing cooldown.",
+    "affectedFeatures": ["Natural Healing", "Long-Term Care", "Persistent Condition", "Rest"],
+    "automationBoundary": "automate if RAW recovery enabled; allow houserule replacement",
+    "severity": "high",
+    "recommendedPhase": "rest-recovery-rules",
+    "fixNow": false
+  },
+  {
+    "id": "droid-repair-formula-missing",
+    "system": "repair",
+    "rule": "DC 20 Mechanics after 1 hour repairs a damaged/Disabled Droid for HP equal to Droid character level and removes Persistent Conditions.",
+    "currentEvidence": "GM repair workflows use fixed amounts and ActorEngine.applyHealing; droid operational state restoration exists when HP becomes positive.",
+    "affectedFeatures": ["Repair", "Droid Expert", "Repairs on the Fly", "Expert Droid Repair", "Droid followers"],
+    "automationBoundary": "automate formula/check result; GM manage duration/facility unless tracked",
+    "severity": "high",
+    "recommendedPhase": "repair-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "object-vehicle-repair-formula-missing",
+    "system": "repair",
+    "rule": "DC 20 Mechanics after 1 hour repairs object/vehicle for 1d8 HP and removes Persistent Conditions; onboard vehicle CT penalties apply.",
+    "currentEvidence": "GM repair workflows support droid/vehicle repair but use fixed amounts and do not represent object repair or onboard CT penalties.",
+    "affectedFeatures": ["Vehicle repair", "Object repair", "Repairs on the Fly", "Droid/Vehicle sheets"],
+    "automationBoundary": "assist/automate formula; GM manage facility/location context",
+    "severity": "high",
+    "recommendedPhase": "repair-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "organic-healing-droid-repair-low-level-gate",
+    "system": "target-kind",
+    "rule": "Organic healing and droid/vehicle repair are different applications with different skills, gear, and target eligibility.",
+    "currentEvidence": "GM service gates Heal vs Repair, but ActorEngine.applyHealing itself only blocks destroyed droids and otherwise accepts HP restoration for any actor.",
+    "affectedFeatures": ["GM Heal", "GM Repair", "Treat Injury", "Mechanics Repair", "Droid rest exclusion"],
+    "automationBoundary": "preserve target-kind in workflow packet; low-level mutation can stay generic if higher-level gates are mandatory",
+    "severity": "medium",
+    "recommendedPhase": "healing-foundation",
+    "fixNow": false
+  },
+  {
+    "id": "force-healing-noop-path",
+    "system": "force-healing",
+    "rule": "Healing Force powers should apply HP/condition recovery according to their DC tiers.",
+    "currentEvidence": "ForcePowerEffectsEngine._buildHealingEffect returns [] with comment that healing powers heal HP when used; no visible HP mutation in that builder.",
+    "affectedFeatures": ["Vital Transfer", "Healing Boost", "Improved Healing Boost"],
+    "automationBoundary": "automate after force power result; GM pick target if needed",
+    "severity": "high",
+    "recommendedPhase": "force-healing-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "dark-healing-direct-hp-mutation",
+    "system": "drain-heal",
+    "rule": "Drain-heal effects combine damage dealt to target with healing to source and should preserve damage/healing context.",
+    "currentEvidence": "TalentEffectEngine Dark Healing plan builders calculate new HP values and mutations directly rather than routing target damage through damage resolution and source healing through healing authority.",
+    "affectedFeatures": ["Dark Healing", "Improved Dark Healing", "Dark Healing Field", "damage threshold", "bonus HP"],
+    "automationBoundary": "automate packet math; GM manage target legality when needed",
+    "severity": "high",
+    "recommendedPhase": "force-healing-workflows",
+    "fixNow": false
+  },
+  {
+    "id": "bonus-hp-stacking-cleanup",
+    "system": "bonus-hp",
+    "rule": "Bonus HP from multiple sources does not stack; use the larger pool and remove remaining Bonus HP at encounter end.",
+    "currentEvidence": "ActorEngine damage can track system.hp.bonus, and Bolster Ally/temp HP mechanics exist, but source comparison and encounter cleanup need verification.",
+    "affectedFeatures": ["Bolster Ally", "Massassi Duty Bound", "Shoulder to Shoulder", "Recover bonus HP effects"],
+    "automationBoundary": "automate",
+    "severity": "medium",
+    "recommendedPhase": "bonus-hp-model",
+    "fixNow": false
+  }
+]
