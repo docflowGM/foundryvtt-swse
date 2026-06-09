@@ -1,0 +1,132 @@
+[
+  {
+    "id": "standard-attack-damage-button",
+    "label": "Standard attack -> Roll Damage button",
+    "sourcePath": "scripts/combat/rolls/attacks.js -> SWSEChat.postRoll -> templates/chat/holo-roll.hbs -> scripts/ui/chat/chat-interaction-bridge.js -> scripts/combat/rolls/enhanced-rolls.js -> scripts/combat/rolls/damage.js",
+    "observedContextPreserved": [
+      "actorId",
+      "weaponId",
+      "isCritical",
+      "critMultiplier",
+      "twoHanded"
+    ],
+    "observedContextLostOrUnclear": [
+      "attack options selected",
+      "burstFire",
+      "rapidShot",
+      "deadeye",
+      "autofire",
+      "areaAttack",
+      "target hit/miss",
+      "target evasion",
+      "ammo cost",
+      "stun damage outcome",
+      "mixed damage types"
+    ],
+    "auditStatus": "high-risk context loss",
+    "fixNow": false
+  },
+  {
+    "id": "legacy-autofire-helper",
+    "label": "Enhanced rolls legacy Autofire/Burst Fire helper",
+    "sourcePath": "scripts/combat/rolls/enhanced-rolls.js::SWSERoll.rollAutofire",
+    "observedContextPreserved": [
+      "targets array when supplied",
+      "burstFire flag",
+      "braced flag",
+      "ammoRequired"
+    ],
+    "observedContextLostOrUnclear": [
+      "undefined mode reference for d20",
+      "Evasion appears checked on attacker rather than target",
+      "Burst Fire miss appears to assign half damage",
+      "manual GM area adjudication not cleanly separated from target list automation"
+    ],
+    "auditStatus": "critical if live; unsafe as canonical authority",
+    "fixNow": false
+  },
+  {
+    "id": "damage-roller-primary",
+    "label": "Primary weapon damage roller",
+    "sourcePath": "scripts/combat/rolls/damage.js::rollDamage",
+    "observedContextPreserved": [
+      "weapon base damage",
+      "half level",
+      "damage ability contribution",
+      "critical flag",
+      "crit multiplier",
+      "twoHanded when provided",
+      "target when provided"
+    ],
+    "observedContextLostOrUnclear": [
+      "CombatOptionResolver extra weapon dice for attack options",
+      "minimum 1 damage enforcement",
+      "area hit/miss transformation",
+      "Evasion target rule",
+      "stun half-HP rule",
+      "stun immunity for droids/vehicles/objects"
+    ],
+    "auditStatus": "strong base roller with missing tactical context",
+    "fixNow": false
+  },
+  {
+    "id": "alternate-damage-roller",
+    "label": "Alternate damage roller exported from attacks.js",
+    "sourcePath": "scripts/combat/rolls/attacks.js::rollDamage",
+    "observedContextPreserved": [
+      "CombatOptionResolver damage bonus",
+      "damageExtraWeaponDice",
+      "damageDiceStepBonus",
+      "critical damage die step bonus"
+    ],
+    "observedContextLostOrUnclear": [
+      "whether this is still a live path",
+      "relationship to damage.js canonical roller",
+      "same area/stun/Evasion gaps if context is not supplied"
+    ],
+    "auditStatus": "duplicate authority risk",
+    "fixNow": false
+  },
+  {
+    "id": "apply-damage-selected-tokens",
+    "label": "Chat Apply Damage button",
+    "sourcePath": "templates/chat/holo-roll.hbs -> scripts/ui/chat/chat-interaction-bridge.js::handleApplyDamageButton -> DamageSystem.applyToSelected -> actor.applyDamage -> ActorEngine.applyDamage -> DamageResolutionEngine.resolveDamage",
+    "observedContextPreserved": [
+      "numeric damage amount",
+      "selected target tokens"
+    ],
+    "observedContextLostOrUnclear": [
+      "original attack target",
+      "original attacker",
+      "weapon",
+      "damage type unless supplied by options elsewhere",
+      "area hit/miss outcome",
+      "stun original damage before halving",
+      "target evasion state"
+    ],
+    "auditStatus": "GM-friendly but context-light",
+    "fixNow": false
+  },
+  {
+    "id": "damage-resolution-engine",
+    "label": "Damage application and threshold resolution",
+    "sourcePath": "scripts/engine/combat/damage-resolution-engine.js",
+    "observedContextPreserved": [
+      "damage amount",
+      "damageType",
+      "source actor",
+      "weapon in options",
+      "SR/DR/temp HP mitigation",
+      "Damage Threshold comparison",
+      "condition track impact"
+    ],
+    "observedContextLostOrUnclear": [
+      "stun original damage before halving",
+      "area hit/miss outcome",
+      "target evasion rule",
+      "droid/vehicle/object stun immunity"
+    ],
+    "auditStatus": "good mutation/resolution backbone; needs upstream context",
+    "fixNow": false
+  }
+]
