@@ -2189,3 +2189,80 @@
   align-items: center;
   margin-top: 0.65rem;
 }
+
+/* Phase 4: Lightsaber blade color moved to item sheet --------------------------- */
+.swse-item-customization-workbench .ls-step[data-tab="color"],
+.swse-customization-stage .ls-step[data-tab="color"],
+.swse-item-customization-workbench [data-lightsaber-tab-panel="color"],
+.swse-customization-stage [data-lightsaber-tab-panel="color"],
+.swse-item-customization-workbench .ls-color-modal,
+.swse-customization-stage .ls-color-modal,
+.swse-item-customization-workbench .ls-color-open,
+.swse-customization-stage .ls-color-open {
+  display: none !important;
+}
+
+.swse-item-customization-workbench .ls-color-cta--readonly,
+.swse-customization-stage .ls-color-cta--readonly {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.swse-item-customization-workbench .ls-color-cta--readonly small,
+.swse-customization-stage .ls-color-cta--readonly small {
+  margin-left: auto;
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-item-customization-workbench .ls-color-name-strip,
+.swse-customization-stage .ls-color-name-strip {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+  color: var(--icw-dim);
+  white-space: normal;
+}
+
+.swse-item-customization-workbench .ls-color-text-tag,
+.swse-customization-stage .ls-color-text-tag {
+  color: var(--icw-dim);
+}
+
+.swse-item-customization-workbench .ls-color-word,
+.swse-customization-stage .ls-color-word {
+  color: var(--ls-word-color, var(--icw-cyan));
+  font-weight: 800;
+  text-shadow: 0 0 8px color-mix(in oklch, var(--ls-word-color, var(--icw-cyan)), transparent 45%);
+}
+
+.swse-item-customization-workbench .ls-color-word--white,
+.swse-customization-stage .ls-color-word--white,
+.swse-item-customization-workbench .ls-color-word--silver,
+.swse-customization-stage .ls-color-word--silver {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.42), 0 0 14px color-mix(in oklch, var(--ls-word-color, #c0c0c0), transparent 55%);
+}
+
+.swse-item-customization-workbench .ls-color-word--varies,
+.swse-customization-stage .ls-color-word--varies {
+  color: var(--icw-cyan);
+  text-shadow: 0 0 8px color-mix(in oklch, var(--icw-cyan), transparent 45%);
+}
+
+.swse-item-customization-workbench .ls-color-word-separator,
+.swse-customization-stage .ls-color-word-separator {
+  color: var(--icw-dim);
+  text-shadow: none;
+}
+
+.swse-item-customization-workbench .ls-color-name-strip--intel,
+.swse-customization-stage .ls-color-name-strip--intel {
+  margin: 6px 0 2px;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}

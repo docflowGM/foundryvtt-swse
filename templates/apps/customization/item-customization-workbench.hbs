@@ -139,7 +139,7 @@
               {{#if lightsaber.alreadyBuiltNotice}}
               <div class="ls-eligibility-banner built">
                 <strong>Lightsaber Already Constructed</strong>
-                <span>This actor already has a self-built lightsaber. Construction mode is hidden; tune the existing blade from the Crystal, Hilt, and Blade Color tabs.</span>
+                <span>This actor already has a self-built lightsaber. Construction mode is hidden; tune the crystal and hilt here, and use the item edit sheet for blade color.</span>
               </div>
               {{/if}}
 
@@ -175,7 +175,7 @@
                   <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{id}}" data-component-type="crystal" {{#if incompatible}}disabled{{/if}} title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
-                    <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag">{{bladeColor}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+                    <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag ls-color-text-tag">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
                   </button>
                   {{/each}}
                 </div>
@@ -198,20 +198,6 @@
               </section>
               {{/if}}
 
-              {{#if lightsaber.tabColor}}
-              <section class="ls-tab-panel" data-lightsaber-tab-panel="color">
-                <div class="panel-head compact"><span>Blade Color</span><span class="hint">reactive blade tint</span></div>
-                <div class="weapon-color-picker blade-color-grid ls-tab-color-grid" aria-label="Blade Color">
-                  {{#each lightsaber.colorOptions}}
-                  <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" data-lightsaber-inspect-type="color" data-lightsaber-inspect-key="{{key}}" data-component-type="color" title="{{label}}" aria-label="Blade color {{label}}">
-                    <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
-                    <span class="weapon-color-label">{{label}}</span>
-                  </button>
-                  {{/each}}
-                </div>
-              </section>
-              {{/if}}
-
               {{#if lightsaber.tabReview}}
               <section class="ls-tab-panel ls-tab-panel--review" data-lightsaber-tab-panel="review">
                 <div class="panel-head compact"><span>Review / Construct</span><span class="hint">engine-authorized</span></div>
@@ -219,7 +205,7 @@
                   <article><span>Chassis</span><strong>{{lightsaber.review.chassisName}}</strong></article>
                   <article><span>Crystal</span><strong>{{lightsaber.review.crystalName}}</strong></article>
                   <article><span>Hilt</span><strong>{{lightsaber.review.accessoryNames}}</strong></article>
-                  <article><span>Blade Color</span><strong>{{lightsaber.review.bladeColor}}</strong></article>
+                  <article><span>Blade Color</span><strong class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</strong></article>
                   <article><span>Damage</span><strong>{{lightsaber.review.damage}}</strong></article>
                   <article><span>Critical</span><strong>{{lightsaber.review.critical}}</strong></article>
                   <article><span>Damage Type</span><strong>{{lightsaber.review.damageType}}</strong></article>
@@ -261,7 +247,7 @@
               <div class="ls-wizard-nav">
                 {{#if lightsaber.navigation.previous}}<button type="button" class="action ghost" data-action="lightsaber-step-prev" data-tab="{{lightsaber.navigation.previous}}">← Back</button>{{/if}}
                 <span class="ls-wizard-rules"><span>24 hr uninterrupted</span><span>No Take 20</span><span>Use the Force</span></span>
-                {{#if lightsaber.navigation.next}}<button type="button" class="action primary" data-action="lightsaber-step-next" data-tab="{{lightsaber.navigation.next}}">{{#if lightsaber.tabColor}}Review →{{else}}Next →{{/if}}</button>{{/if}}
+                {{#if lightsaber.navigation.next}}<button type="button" class="action primary" data-action="lightsaber-step-next" data-tab="{{lightsaber.navigation.next}}">{{#if (eq lightsaber.navigation.next "review")}}Review →{{else}}Next →{{/if}}</button>{{/if}}
               </div>
             </section>
 
@@ -278,23 +264,9 @@
                   <span class="ls-crossguard ls-crossguard-a"></span>
                   <span class="ls-crossguard ls-crossguard-b"></span>
                 </div>
-                <div class="ls-color-cta" style="--blade-color: {{lightsaber.bladeHex}};">
-                  <span class="ls-color-current"><span class="ls-color-dot"></span> {{lightsaber.review.bladeColor}} blade</span>
-                  <button type="button" class="ls-color-open" data-action="open-lightsaber-color-modal">Choose Color</button>
-                </div>
-                <div class="ls-color-modal" data-lightsaber-color-modal aria-hidden="true">
-                  <div class="ls-color-modal__backdrop" data-action="close-lightsaber-color-modal"></div>
-                  <div class="ls-color-modal__panel panel">
-                    <div class="panel-head"><span>Choose Blade Color</span><button type="button" class="ls-color-close" data-action="close-lightsaber-color-modal">×</button></div>
-                    <div class="weapon-color-picker blade-color-grid" aria-label="Blade Color">
-                      {{#each lightsaber.colorOptions}}
-                      <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" title="{{label}}" aria-label="Blade color {{label}}">
-                        <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
-                        <span class="weapon-color-label">{{label}}</span>
-                      </button>
-                      {{/each}}
-                    </div>
-                  </div>
+                <div class="ls-color-cta ls-color-cta--readonly" style="--blade-color: {{lightsaber.bladeHex}};">
+                  <span class="ls-color-current"><span class="ls-color-dot"></span><span class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span> blade</span>
+                  <small>Color selection now lives on the item edit sheet.</small>
                 </div>
                 {{#unless lightsaber.showChassis}}
                 <div class="ls-locked-chassis-card ls-rail-lock-note">
@@ -309,6 +281,7 @@
                 <article class="rail-detail-card {{#if lightsaber.componentIntel.selected}}selected{{/if}}" {{#if lightsaber.componentIntel.colorHex}}style="--weapon-color: {{lightsaber.componentIntel.colorHex}}"{{/if}}>
                   <div class="rail-detail-top"><span>{{lightsaber.componentIntel.name}}</span><span>{{lightsaber.componentIntel.kind}}</span></div>
                   {{#if lightsaber.componentIntel.colorHex}}<div class="ls-intel-color-chip"><span></span>{{lightsaber.componentIntel.name}}</div>{{/if}}
+                  {{#if lightsaber.componentIntel.bladeColorParts}}<div class="ls-color-name-strip ls-color-name-strip--intel">{{#each lightsaber.componentIntel.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</div>{{/if}}
                   <dl class="rail-detail-fields">
                     <div><dt>Detail</dt><dd>{{lightsaber.componentIntel.description}}</dd></div>
                     {{#each lightsaber.componentIntel.fields}}
