@@ -183,6 +183,48 @@
           </div>
         </section>
 
+        <section class="swse-npc-card swse-npc-card--combat-actions">
+          <header class="swse-npc-card__header">
+            <div>
+              <h3 class="swse-section-title">Combat Actions</h3>
+              <p class="swse-npc-card__subhead">Executable SWSE action cards grouped by action economy.</p>
+            </div>
+          </header>
+          <div class="swse-npc-card__body swse-npc-combat-action-groups">
+            {{#if npcConcept.hasCombatActionGroups}}
+              {{#each npcConcept.combatActionGroups as |group|}}
+                <article class="swse-npc-combat-action-group" data-combat-action-group="{{group.key}}">
+                  <header class="swse-npc-combat-action-group__header">
+                    <strong>{{group.label}}</strong>
+                    <span>{{group.count}} entries</span>
+                  </header>
+                  <div class="swse-npc-combat-action-list">
+                    {{#each group.items as |item|}}
+                      <article class="swse-npc-combat-action-row" data-action-key="{{item.key}}" data-action-type="{{item.actionType}}">
+                        <div class="swse-npc-combat-action-row__copy">
+                          <strong class="swse-npc-combat-action-row__title">{{item.name}}</strong>
+                          {{#if item.description}}<small class="swse-npc-combat-action-row__description">{{item.description}}</small>{{/if}}
+                          {{#if item.resources.length}}
+                            <div class="swse-npc-action-row">
+                              {{#each item.resources as |resource|}}<span class="swse-npc-chip">{{resource}}</span>{{/each}}
+                            </div>
+                          {{/if}}
+                        </div>
+                        <div class="swse-npc-combat-action-row__actions">
+                          {{#if item.itemId}}<button type="button" class="swse-npc-mini-btn swse-v2-open-item" data-item-id="{{item.itemId}}">Inspect</button>{{/if}}
+                          {{#if item.executable}}<button type="button" class="swse-npc-mini-btn swse-npc-mini-btn--primary" data-action="swse-v2-use-action" data-action-id="{{item.key}}" data-action-type="{{item.actionType}}">{{item.useLabel}}</button>{{/if}}
+                        </div>
+                      </article>
+                    {{/each}}
+                  </div>
+                </article>
+              {{/each}}
+            {{else}}
+              <p class="swse-npc-empty-state">No grouped combat actions were found for this NPC.</p>
+            {{/if}}
+          </div>
+        </section>
+
         <div class="swse-npc-two-col-equal">
           <section class="swse-npc-card swse-npc-card--condition">
             <header class="swse-npc-card__header"><h3 class="swse-section-title">Condition Track</h3></header>
@@ -191,7 +233,7 @@
                 {{#each npcConcept.conditionSteps as |step|}}
                   <button type="button" class="swse-npc-combat-stat swse-v2-condition-step {{#if step.active}}is-active{{/if}}" data-step="{{step.value}}">
                     <span class="swse-npc-combat-stat__label">{{step.label}}</span>
-                    <strong class="swse-npc-combat-stat__value">{{#if step.active}}●{{else}}○{{/if}}</strong>
+                    <strong class="swse-npc-combat-stat__value">{{#if step.active}}Active{{else}}{{step.value}}{{/if}}</strong>
                   </button>
                 {{/each}}
               </div>
@@ -241,7 +283,7 @@
           <header class="swse-npc-card__header">
             <div>
               <h3 class="swse-section-title">Ability Scores</h3>
-              <p class="swse-npc-card__subhead">Conservative stat display; edit controls remain limited to safe direct fields.</p>
+              <p class="swse-npc-card__subhead">Edit base, species/template bonus, and temporary modifiers directly on NPCs you own.</p>
             </div>
           </header>
           <div class="swse-npc-card__body">
@@ -250,12 +292,15 @@
                 {{#each npcConcept.abilities as |ability|}}
                   <div class="swse-npc-ability-card {{#if ability.isPrimary}}primary{{/if}} {{#if ability.isLowest}}lowest{{/if}}">
                     <span class="swse-npc-ability-label">{{ability.abbr}}</span>
-                    {{#if ../editable}}
-                      <input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.base" value="{{ability.score}}" step="1">
-                    {{else}}
-                      <strong class="swse-npc-ability-score">{{ability.score}}</strong>
-                    {{/if}}
+                    <strong class="swse-npc-ability-score">{{ability.score}}</strong>
                     <span class="swse-npc-ability-mod {{ability.modifierClass}}">{{ability.mod}}</span>
+                    {{#if ../editable}}
+                      <div class="swse-npc-ability-edit-grid">
+                        <label><span>Base</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.base" value="{{ability.base}}" step="1"></label>
+                        <label><span>Bonus</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.racial" value="{{ability.racial}}" step="1"></label>
+                        <label><span>Temp</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.temp" value="{{ability.temp}}" step="1"></label>
+                      </div>
+                    {{/if}}
                   </div>
                 {{/each}}
               </div>

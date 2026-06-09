@@ -41,6 +41,7 @@ import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/f
 import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
+import { CombatStatusResolver } from "/systems/foundryvtt-swse/scripts/combat/combat-status.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
@@ -135,6 +136,184 @@ function setStoredSheetMode(actor, mode) {
   } catch (_err) {
     // localStorage may be unavailable in some embedded contexts; mode still works for this render.
   }
+}
+
+
+function toActionStateLabel(state, fallback = 'Available') {
+  const key = String(state || '').toLowerCase();
+  if (key === 'used' || key === 'spent' || key === 'unavailable') return 'Spent';
+  if (key === 'degraded') return 'Degraded';
+  if (key === 'readonly') return 'Read Only';
+  if (key === 'reference') return 'Reference';
+  return fallback;
+}
+
+function buildActionPips(count = 1, current = count) {
+  const max = Math.max(1, Number(count) || 1);
+  const onCount = Math.max(0, Math.min(max, Number(current) || 0));
+  return Array.from({ length: max }, (_unused, index) => ({ on: index < onCount }));
+}
+
+function buildSheetActionEconomyContext({ turnState = null, state = null, breakdown = [], enforcementMode = 'loose', active = false } = {}) {
+  const visual = state ?? {
+    full: 'available',
+    standard: 'available',
+    move: 'available',
+    swift: 'available'
+  };
+  const remaining = turnState?.remaining ?? {};
+  const reactions = turnState?.reactions ?? {};
+  const reactionMax = Math.max(1, Number(reactions.max ?? 1) || 1);
+  const reactionCurrent = active ? Math.max(0, Math.min(reactionMax, Number(reactions.current ?? reactionMax) || 0)) : reactionMax;
+  const freeStep = {
+    key: 'free',
+    label: 'Free',
+    cssClass: 'is-free is-available',
+    state: 'always',
+    stateLabel: 'Always',
+    canSpend: false,
+    infinite: true,
+    pips: [],
+    tooltip: 'Free actions are unlimited, subject to GM discretion.'
+  };
+
+  const actionSteps = [
+    { key: 'full-round', stateKey: 'full', label: 'Full-Round', fallbackAvailable: active ? ((remaining.standard ?? 1) > 0 && (remaining.move ?? 1) > 0) : true },
+    { key: 'standard', stateKey: 'standard', label: 'Standard', fallbackAvailable: active ? (remaining.standard ?? 1) > 0 : true },
+    { key: 'move', stateKey: 'move', label: 'Move', fallbackAvailable: active ? (remaining.move ?? 1) > 0 : true },
+    { key: 'swift', stateKey: 'swift', label: 'Swift', fallbackAvailable: active ? (remaining.swift ?? 1) > 0 : true }
+  ].map((step) => {
+    const stateValue = active ? (visual[step.stateKey] || (step.fallbackAvailable ? 'available' : 'used')) : 'reference';
+    const available = stateValue === 'available' || stateValue === 'degraded';
+    return {
+      key: step.key,
+      label: step.label,
+      state: stateValue,
+      cssClass: `is-${stateValue}${available ? ' is-available' : ' is-spent'}`,
+      stateLabel: active ? toActionStateLabel(stateValue) : 'Available',
+      canSpend: active && available,
+      infinite: false,
+      pips: buildActionPips(1, available ? 1 : 0),
+      tooltip: active ? `${step.label} action is ${toActionStateLabel(stateValue).toLowerCase()}.` : `${step.label} action is normally available on your turn.`
+    };
+  });
+
+  const reactionStep = {
+    key: 'reaction',
+    label: 'Reactions',
+    state: reactionCurrent > 0 ? 'available' : 'used',
+    cssClass: `is-reaction ${reactionCurrent > 0 ? 'is-available' : 'is-spent'}`,
+    stateLabel: active ? `${reactionCurrent} Left` : `${reactionMax} Left`,
+    canSpend: active && reactionCurrent > 0,
+    infinite: false,
+    pips: buildActionPips(reactionMax, reactionCurrent),
+    tooltip: active ? `${reactionCurrent} reaction(s) remaining this round.` : 'Reactions refresh on your turn.'
+  };
+
+  const summaryParts = [];
+  for (const step of actionSteps) {
+    if (!active || step.canSpend) summaryParts.push(step.label.replace('-Round', ''));
+  }
+  summaryParts.push('Free');
+  if (!active || reactionCurrent > 0) summaryParts.push(`RX ${reactionCurrent}`);
+
+  return {
+    active,
+    state: visual,
+    turnState,
+    breakdown: Array.isArray(breakdown) ? breakdown : [],
+    enforcementMode,
+    enforcementModeLabel: String(enforcementMode || 'loose').toUpperCase(),
+    steps: [...actionSteps, freeStep, reactionStep],
+    summary: summaryParts.length ? summaryParts.join(' · ') : 'No actions remaining',
+    canUndo: active && Array.isArray(turnState?.history) && turnState.history.length > 0,
+    canReset: active,
+    reactionCurrent,
+    reactionMax,
+    readOnlyReason: active ? '' : 'Reference mode: add this actor to the current combat tracker to spend actions.'
+  };
+}
+
+function buildCombatStatusViewModel(actor, { canEdit = true } = {}) {
+  const status = CombatStatusResolver.getStatus(actor);
+  const coverOptions = [
+    { value: 'none', label: 'None', bonusLabel: '—' },
+    { value: 'cover', label: 'Cover', bonusLabel: '+5 REF' },
+    { value: 'improved', label: 'Improved', bonusLabel: '+10 REF' },
+    { value: 'total', label: 'Total', bonusLabel: 'BLOCK' }
+  ].map((option) => ({ ...option, selected: status.cover === option.value }));
+
+  const defensiveModes = [
+    { value: 'normal', label: 'Normal', detail: 'No declared defensive stance' },
+    { value: 'fightingDefensively', label: 'Fight Defensively', detail: '+2 Ref · −5 attacks this turn' },
+    { value: 'fullDefense', label: 'Full Defense', detail: '+5 Ref · no attacks' }
+  ].map((mode) => ({ ...mode, active: status.defensiveMode === mode.value }));
+
+  return {
+    ...status,
+    canEdit,
+    coverOptions,
+    defensiveModes,
+    coverIsTotal: status.cover === 'total',
+    attackLocked: status.defensiveMode === 'fullDefense',
+    attackLockLabel: 'Full Defense is active. Attacks are locked until this mode is cleared or the GM overrides it.',
+    coverLabel: coverOptions.find((option) => option.selected)?.label || 'None',
+    defensiveModeLabel: defensiveModes.find((mode) => mode.active)?.label || 'Normal'
+  };
+}
+
+function formatSignedValue(value) {
+  const numeric = Number(value) || 0;
+  return numeric > 0 ? `+${numeric}` : String(numeric);
+}
+
+function buildEffectiveDefensesViewModel(actor, defensePanel = null) {
+  const defenses = Array.isArray(defensePanel?.defenses) ? defensePanel.defenses : [];
+  const mapDefenseType = (def) => {
+    const key = String(def?.key || def?.systemKey || '').toLowerCase();
+    if (key.startsWith('ref')) return 'reflex';
+    if (key.startsWith('will')) return 'will';
+    return 'fortitude';
+  };
+
+  const rows = defenses.map((def) => {
+    const defenseType = mapDefenseType(def);
+    const base = Number(def?.total ?? 10) || 10;
+    const resolved = CombatStatusResolver.resolveTargetDefense(actor, defenseType, base, { attackType: 'ranged' });
+    const chips = Array.isArray(resolved.mods) ? resolved.mods.map((mod) => ({
+      key: mod.key || 'mod',
+      label: mod.label || 'Modifier',
+      value: Number(mod.value) || 0,
+      valueLabel: mod.blocked ? '' : formatSignedValue(mod.value),
+      tone: mod.blocked ? 'danger' : (Number(mod.value) || 0) > 0 ? 'positive' : (Number(mod.value) || 0) < 0 ? 'negative' : 'neutral'
+    })) : [];
+
+    return {
+      key: def?.key || defenseType,
+      systemKey: def?.systemKey || defenseType,
+      label: def?.label || defenseType,
+      abbrev: def?.key?.toUpperCase?.() || def?.label || defenseType,
+      base,
+      effective: Number(resolved.value ?? base) || base,
+      adjustment: Number(resolved.adjustment ?? 0) || 0,
+      boosted: (Number(resolved.adjustment ?? 0) || 0) > 0,
+      blocked: resolved.blocked === true,
+      chips,
+      parts: [
+        { label: 'Base', value: 10, readonly: true },
+        { label: 'Heroic/Armor', value: Number(def?.levelContribution ?? 0) + Number(def?.armorBonus ?? 0), readonly: true },
+        { label: 'Ability', value: Number(def?.abilityMod ?? 0), readonly: true },
+        { label: 'Class', value: Number(def?.classDef ?? 0), path: def?.classBonusPath || '' },
+        { label: 'Misc', value: Number(def?.miscMod ?? 0), path: def?.miscPath || '' }
+      ].filter((part) => part.readonly || part.path),
+      canEdit: def?.canEdit !== false
+    };
+  });
+
+  return {
+    rows,
+    hasRows: rows.length > 0
+  };
 }
 
 function getDroidActorSize(actor) {
@@ -2912,7 +3091,7 @@ const forcePoints = [];
     const buildMode = actor.system?.buildMode ?? "normal";
 
     // Action Economy Context (for combat tab)
-    let actionEconomy = null;
+    let actionEconomy = buildSheetActionEconomyContext({ active: false });
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
       // Only show action economy if actor is in active combat
       const combatId = game.combat.id;
@@ -2924,18 +3103,23 @@ const forcePoints = [];
       const breakdown = ActionEngine.getTooltipBreakdown(turnState);
       const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
 
-      actionEconomy = {
+      actionEconomy = buildSheetActionEconomyContext({
+        turnState,
         state,
         breakdown,
-        enforcementMode
-      };
+        enforcementMode,
+        active: true
+      });
     }
 
     // Header Second Wind Context (always visible in header area)
-    const swUses = Number(system.secondWind?.uses) ?? 0;
-    const swMax = Number(system.secondWind?.max) ?? 1;
-    const swBaseHealing = Math.ceil((system.hp?.max ?? 1) * 0.25);
-    const swHealing = Number(system.secondWind?.healing) > 0 ? Number(system.secondWind?.healing) : swBaseHealing;
+    const swBaseHealing = Math.max(1, Math.ceil((Number(system.hp?.max ?? system.derived?.hp?.max ?? 1) || 1) * 0.25));
+    const swRawMax = Number(system.secondWind?.max);
+    const swMax = Math.max(1, Number.isFinite(swRawMax) && swRawMax > 0 ? swRawMax : 1);
+    const swRawUses = Number(system.secondWind?.uses);
+    const swUses = Math.max(0, Math.min(swMax, Number.isFinite(swRawUses) ? swRawUses : swMax));
+    const swRawHealing = Number(system.secondWind?.healing);
+    const swHealing = Number.isFinite(swRawHealing) && swRawHealing > 0 ? swRawHealing : swBaseHealing;
     const headerSecondWind = {
       canUse: swUses > 0,
       usesRemaining: swUses,
@@ -3313,6 +3497,7 @@ const forcePoints = [];
       'biographyPanel',
       'healthPanel',
       'defensePanel',
+      'secondWindPanel',
       'talentPanel',
       'featPanel',
       'racialAbilitiesPanel',
@@ -3551,6 +3736,9 @@ const forcePoints = [];
       }
     }
 
+    const combatStatus = buildCombatStatusViewModel(actor, { canEdit: this.isEditable });
+    const effectiveDefenses = buildEffectiveDefensesViewModel(actor, panelContexts.defensePanel);
+
     const conceptLayout = buildConceptSheetViewModel({
       ...context,
       ...panelContexts,
@@ -3559,6 +3747,8 @@ const forcePoints = [];
       chargenCompleted,
       buildMode,
       actionEconomy,
+      combatStatus,
+      effectiveDefenses,
       xpLevelReady,
       combat,
       combatActions,
@@ -3640,6 +3830,8 @@ const forcePoints = [];
       chargenCompleted,
       buildMode,
       actionEconomy,
+      combatStatus,
+      effectiveDefenses,
       xpLevelReady,
       derived,  // Complex computed stats (defenses, damage, etc.)
       // Phase 9: Tier-aware help system context
@@ -3784,7 +3976,7 @@ const forcePoints = [];
       cargoState
     });
 
-    let actionEconomy = null;
+    let actionEconomy = buildSheetActionEconomyContext({ active: false });
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
       try {
         const combatId = game.combat.id;
@@ -3794,7 +3986,13 @@ const forcePoints = [];
         const state = ActionEngine.getVisualState(turnState);
         const breakdown = ActionEngine.getTooltipBreakdown(turnState);
         const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
-        actionEconomy = { state, breakdown, enforcementMode };
+        actionEconomy = buildSheetActionEconomyContext({
+          turnState,
+          state,
+          breakdown,
+          enforcementMode,
+          active: true
+        });
       } catch (err) {
         swseLogger.warn('[SWSEV2CharacterSheet] Vehicle action economy context failed', {
           actorId: actor?.id,
@@ -5443,6 +5641,68 @@ const forcePoints = [];
         } catch (err) {
           // console.error('Failed to reset turn state:', err);
           ui?.notifications?.error?.('Failed to reset actions');
+        }
+      }, { signal });
+    });
+
+    // Action economy undo button
+    html.querySelectorAll('[data-action="swse-action-economy-undo"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        if (!game.combat) {
+          ui?.notifications?.warn?.('No active combat');
+          return;
+        }
+        try {
+          const { ActionEconomyPersistence } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js');
+          await ActionEconomyPersistence.undoLast?.(this.actor, game.combat.id);
+          await this.requestSurfaceRender({ reason: 'action-economy-undo' });
+        } catch (err) {
+          console.warn('[SWSEV2CharacterSheet] Failed to undo action economy step:', err);
+          ui?.notifications?.error?.('Failed to undo the last action economy step.');
+        }
+      }, { signal });
+    });
+
+    // Combat status controls: cover, prone, and defensive stance declarations.
+    html.querySelectorAll('[data-action="swse-combat-cover-option"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const cover = button.dataset.cover || 'none';
+        try {
+          await CombatStatusResolver.setStatus(this.actor, { cover, source: 'combat-tab-cover' });
+          await this.requestSurfaceRender({ reason: 'combat-status-cover' });
+        } catch (err) {
+          console.warn('[SWSEV2CharacterSheet] Failed to set combat cover:', err);
+          ui?.notifications?.error?.('Failed to update cover.');
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="swse-combat-defensive-mode"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const defensiveMode = button.dataset.mode || 'normal';
+        try {
+          await CombatStatusResolver.setStatus(this.actor, { defensiveMode, source: 'combat-tab-defense' });
+          await this.requestSurfaceRender({ reason: 'combat-status-defense' });
+        } catch (err) {
+          console.warn('[SWSEV2CharacterSheet] Failed to set defensive mode:', err);
+          ui?.notifications?.error?.('Failed to update defensive mode.');
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="swse-combat-toggle-prone"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        try {
+          const current = CombatStatusResolver.getStatus(this.actor);
+          await CombatStatusResolver.setStatus(this.actor, { prone: current.prone !== true, source: 'combat-tab-prone' });
+          await this.requestSurfaceRender({ reason: 'combat-status-prone' });
+        } catch (err) {
+          console.warn('[SWSEV2CharacterSheet] Failed to toggle prone:', err);
+          ui?.notifications?.error?.('Failed to update prone state.');
         }
       }, { signal });
     });
@@ -7488,6 +7748,17 @@ const forcePoints = [];
       console.warn("[PHASE F] Action policy check failed, continuing cautiously:", err);
     }
 
+    const normalizedActionType = this._normalizeActionEconomyType(actionType);
+    if (normalizedActionType === 'reaction' && typeof Persistence.spendReaction === 'function') {
+      const result = await Persistence.spendReaction(this.actor, combatId, metadata);
+      if (result === false || result?.allowed === false || result?.permitted === false) {
+        ui?.notifications?.warn?.('No reactions remaining this round.');
+        return false;
+      }
+      await this.requestSurfaceRender({ reason: 'action-economy-reaction' });
+      return true;
+    }
+
     const costForType = (type) => {
       const normalized = this._normalizeActionEconomyType(type);
       if (normalized === 'full-round') return { fullRound: true };
@@ -7498,23 +7769,26 @@ const forcePoints = [];
     };
 
     let nextState = null;
+    let consumeResult = null;
     if (typeof Engine.consumeAction === "function") {
-      const result = await Engine.consumeAction(turnState, { actionType, metadata, cost: costForType(actionType) });
-      if (result === false || result?.allowed === false || result?.permitted === false) return false;
-      nextState = result?.turnState ?? result?.updatedTurnState ?? result;
+      consumeResult = await Engine.consumeAction(turnState, { actionType, metadata, cost: costForType(actionType) });
+      if (consumeResult === false || consumeResult?.allowed === false || consumeResult?.permitted === false) return false;
+      nextState = consumeResult?.turnState ?? consumeResult?.updatedTurnState ?? consumeResult;
     } else if (typeof Engine.consume === "function") {
-      const result = Engine.consume(turnState, costForType(actionType));
-      if (result === false || result?.allowed === false || result?.permitted === false) {
+      consumeResult = Engine.consume(turnState, costForType(actionType));
+      if (consumeResult === false || consumeResult?.allowed === false || consumeResult?.permitted === false) {
         ui?.notifications?.warn?.('That action is not available this turn.');
         return false;
       }
-      nextState = result?.turnState ?? result;
+      nextState = consumeResult?.turnState ?? consumeResult;
     } else {
       return true;
     }
 
     try {
-      if (typeof Persistence.setTurnState === "function") {
+      if (typeof Persistence.commitConsumption === "function") {
+        await Persistence.commitConsumption(this.actor, combatId, { allowed: true, turnState: nextState }, { ...metadata, actionType: normalizedActionType });
+      } else if (typeof Persistence.setTurnState === "function") {
         await Persistence.setTurnState(this.actor, combatId, nextState);
       } else if (typeof Persistence.saveTurnState === "function") {
         await Persistence.saveTurnState(this.actor, combatId, nextState);

@@ -20,6 +20,10 @@ import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { NpcReviewRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js";
+import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
+import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
+import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
 
 
 const NPC_ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
@@ -96,16 +100,152 @@ function modClass(mod) {
   return 'mod--zero';
 }
 
+
+function readFiniteNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function normalizeAbilityCandidate(raw = {}, source = 'unknown') {
+  const base = readFiniteNumber(raw?.base ?? raw?.score ?? raw?.value) ?? 10;
+  const racial = readFiniteNumber(raw?.racial ?? raw?.species) ?? 0;
+  const enhancement = readFiniteNumber(raw?.enhancement ?? raw?.enhance) ?? 0;
+  const temp = readFiniteNumber(raw?.temp ?? raw?.temporary) ?? 0;
+  const explicitTotal = readFiniteNumber(raw?.total);
+  const total = explicitTotal ?? (base + racial + enhancement + temp);
+  const mod = readFiniteNumber(raw?.mod ?? raw?.modifier) ?? abilityMod(total);
+  const populated = raw && typeof raw === 'object' && Object.keys(raw).length > 0;
+  const nonDefault = populated && (base !== 10 || racial !== 0 || enhancement !== 0 || temp !== 0 || total !== 10 || mod !== 0);
+  return { source, base, racial, enhancement, temp, total, mod, populated, nonDefault };
+}
+
+function chooseAbilityCandidate(candidates = []) {
+  const populated = candidates.filter(candidate => candidate?.populated);
+  if (!populated.length) return normalizeAbilityCandidate({}, 'default');
+  const nonDefault = populated.filter(candidate => candidate.nonDefault);
+  if (nonDefault.length) return nonDefault[0];
+  return populated[0];
+}
+
+function isFollowerNpcActor(actor, context = {}) {
+  const system = actor?.system ?? {};
+  const profile = system.npcProfile ?? {};
+  return actor?.type === 'npc' && (
+    system.isFollower === true ||
+    system.progression?.isFollower === true ||
+    profile.kind === 'follower' ||
+    profile.legalProfile === 'follower' ||
+    context?.npcKind === 'follower' ||
+    actor?.flags?.swse?.follower?.isFollower === true ||
+    actor?.getFlag?.('foundryvtt-swse', 'isFollower') === true
+  );
+}
+
+function getFollowerSheetLevel(actor, context = {}) {
+  const ownerId = actor?.system?.npcProfile?.owner?.actorId || actor?.flags?.swse?.follower?.ownerId || null;
+  const owner = ownerId ? game?.actors?.get?.(String(ownerId).replace(/^Actor\./, '')) : null;
+  const ownerHeroicLevel = owner ? getHeroicLevel(owner) : 0;
+  const contextLevel = Number(context?.ownerHeroicLevel ?? context?.followerSummary?.ownerHeroicLevel ?? 0) || 0;
+  const actorLevel = Number(actor?.system?.level ?? actor?.system?.attributes?.level ?? 0) || 0;
+  return Math.max(0, ownerHeroicLevel || contextLevel || actorLevel);
+}
+
+function abilitySourceByKey(abilities = []) {
+  return Object.fromEntries((abilities || []).map(entry => [entry.key, entry]));
+}
+
+function defenseObjectValue(source, keys = []) {
+  for (const key of keys) {
+    const value = key.split('.').reduce((acc, part) => acc?.[part], source);
+    const n = readFiniteNumber(value);
+    if (n !== null) return n;
+  }
+  return null;
+}
+
+function buildFollowerDefenseValues(actor, context, abilityRows) {
+  if (!isFollowerNpcActor(actor, context)) return null;
+  const level = getFollowerSheetLevel(actor, context);
+  if (!level) return null;
+
+  const abilities = abilitySourceByKey(abilityRows);
+  const strMod = safeNumber(abilities.str?.rawMod ?? abilities.str?.modValue ?? abilities.str?.mod, 0);
+  const conMod = safeNumber(abilities.con?.rawMod ?? abilities.con?.modValue ?? abilities.con?.mod, 0);
+  const dexMod = safeNumber(abilities.dex?.rawMod ?? abilities.dex?.modValue ?? abilities.dex?.mod, 0);
+  const wisMod = safeNumber(abilities.wis?.rawMod ?? abilities.wis?.modValue ?? abilities.wis?.mod, 0);
+  const defenses = actor?.system?.defenses ?? {};
+  const templateBonus = actor?.system?.progression?.followerTemplateDefenseBonus ?? {};
+
+  const bonusFor = (canonical, aliases = []) => {
+    const paths = [
+      `${canonical}.bonus`,
+      `${canonical}.templateBonus`,
+      `${canonical}.misc.user.extra`,
+      ...aliases.flatMap(alias => [`${alias}.bonus`, `${alias}.templateBonus`, `${alias}.misc.user.extra`])
+    ];
+    const stored = defenseObjectValue(defenses, paths);
+    if (stored !== null) return stored;
+    return Number(templateBonus?.[canonical] ?? aliases.map(alias => templateBonus?.[alias]).find(value => value !== undefined) ?? 0) || 0;
+  };
+
+  const values = {
+    fort: 10 + level + Math.max(strMod, conMod) + bonusFor('fortitude', ['fort']),
+    ref: 10 + level + dexMod + bonusFor('reflex', ['ref']),
+    will: 10 + level + wisMod + bonusFor('will', [])
+  };
+  values.dt = defenseObjectValue(actor?.system ?? {}, ['damageThreshold.total', 'damageThreshold', 'derived.damage.threshold', 'derived.threshold.total']) ?? values.fort;
+  return values;
+}
+
+function formatDefenseDisplay(value, fallback = '—') {
+  const n = Number(value);
+  return Number.isFinite(n) ? String(n) : displayValue(value, fallback);
+}
+
+function normalizeActionEconomyType(value) {
+  const raw = String(value ?? '').toLowerCase().trim();
+  if (!raw) return 'standard';
+  if (raw.includes('full')) return 'full-round';
+  if (raw.includes('swift')) return 'swift';
+  if (raw.includes('move')) return 'move';
+  if (raw.includes('free')) return 'free';
+  if (raw.includes('reaction')) return 'reaction';
+  if (raw.includes('standard')) return 'standard';
+  return raw;
+}
+
+function economyLabel(value) {
+  return String(value || 'standard')
+    .split('-')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+function slugAction(value) {
+  return String(value || 'combat-action')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'combat-action';
+}
+
 function readNpcAbilitySource(system, key) {
   const attr = system?.attributes?.[key] ?? {};
+  const derived = system?.derived?.attributes?.[key] ?? {};
   const legacy = system?.abilities?.[key] ?? {};
-  const base = safeNumber(attr.base ?? attr.value ?? legacy.base ?? legacy.score ?? legacy.value, 10);
-  const racial = safeNumber(attr.racial ?? legacy.racial ?? legacy.species ?? 0, 0);
-  const temp = safeNumber(attr.temp ?? attr.temporary ?? legacy.temp ?? legacy.temporary ?? 0, 0);
-  const total = safeNumber(attr.total ?? legacy.total, base + racial + temp);
-  const mod = safeNumber(attr.mod ?? attr.modifier ?? legacy.mod ?? legacy.modifier, abilityMod(total));
-  return { base, racial, temp, total, mod };
+
+  // Current NPC/follower creation should write system.attributes, but older and
+  // beta-created followers can have default attributes at 10 while the real
+  // template/species ability score lives in the legacy system.abilities mirror.
+  // Pick the first populated non-default block, preferring canonical data when
+  // it has meaningful values and falling back to derived/legacy when canonical
+  // is only the schema default.
+  return chooseAbilityCandidate([
+    normalizeAbilityCandidate(attr, 'attributes'),
+    normalizeAbilityCandidate(derived, 'derived'),
+    normalizeAbilityCandidate(legacy, 'abilities')
+  ]);
 }
+
 
 export function buildNpcConceptAbilities(actor) {
   const system = actor?.system ?? {};
@@ -119,9 +259,12 @@ export function buildNpcConceptAbilities(actor) {
       abbr: key.toUpperCase(),
       base: source.base,
       racial: source.racial,
+      enhancement: source.enhancement,
       temp: source.temp,
       total: source.total,
       mod: source.mod,
+      modValue: source.mod,
+      source: source.source,
       modClass: modClass(source.mod),
       isPrimary: false,
       isSecondary: false,
@@ -233,6 +376,122 @@ function buildNpcConceptItemRow(item, typeOverride = null) {
   };
 }
 
+
+function normalizeNpcCombatAction(action, fallbackKey = '') {
+  const key = action.key || action.id || fallbackKey || slugAction(action.name);
+  const actionType = normalizeActionEconomyType(action.actionType || action.type || action.action?.type || action.costType || 'standard');
+  const relatedSkills = Array.isArray(action.relatedSkills) ? action.relatedSkills : [];
+  const manualResolution = action.manualResolution === true || action.resolutionMode === 'manual' || action.resolutionMode === 'reference';
+  return {
+    key,
+    id: key,
+    name: action.name || action.label || 'Combat Action',
+    sourceName: action.sourceName || action.source || action.system?.source || 'Combat Action',
+    actionType,
+    type: actionType,
+    cost: action.cost ?? action.actionCost ?? action.action?.cost ?? 1,
+    description: displayValue(action.description || action.notes || action.system?.description || action.system?.notes, ''),
+    resources: Array.isArray(action.resources) ? action.resources : [],
+    itemId: action.itemId || action.sourceItemId || '',
+    executable: action.executable !== false,
+    useLabel: action.useLabel || (manualResolution ? 'Use / Note' : (relatedSkills.length ? 'Roll / Use' : 'Use')),
+    manualResolution,
+    resolutionMode: action.resolutionMode || (manualResolution ? 'manual' : 'auto'),
+    spendAction: action.spendAction !== false,
+    relatedSkills
+  };
+}
+
+async function buildNpcCombatActions(actor) {
+  const grouped = {};
+  const lookup = {};
+  const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
+  const registerAction = (action, fallbackKey = '') => {
+    const row = normalizeNpcCombatAction(action, fallbackKey);
+    if (!grouped[row.actionType]) grouped[row.actionType] = [];
+    grouped[row.actionType].push(row);
+    lookup[row.key] = row;
+  };
+
+  try {
+    let loadedAny = false;
+    try {
+      await CombatActionsMapper.init?.();
+      const mappedActions = CombatActionsMapper.getAllCombatActions?.() || [];
+      mappedActions.forEach((action, index) => registerAction({
+        ...action,
+        key: action.key || `combat:${index}`,
+        sourceName: 'Combat Actions Compendium',
+        executable: action.executable !== false
+      }));
+      loadedAny = mappedActions.length > 0;
+    } catch (mapperErr) {
+      console.warn('[SWSE] NPC CombatActionsMapper unavailable, using JSON fallback:', mapperErr);
+    }
+
+    if (!loadedAny) {
+      const response = await fetch('/systems/foundryvtt-swse/data/combat-actions.json');
+      if (response.ok) {
+        const actionsData = await response.json();
+        actionsData.forEach((action, index) => registerAction({
+          key: `combat:${index}`,
+          name: action.name,
+          actionType: action.action?.type,
+          cost: action.action?.cost,
+          notes: action.notes,
+          description: action.notes,
+          relatedSkills: action.relatedSkills || [],
+          sourceName: 'Core Combat Action',
+          executable: true
+        }));
+      }
+    }
+
+    for (const item of actor?.items || []) {
+      if (item?.type !== 'combat-action') continue;
+      const isActorAbility = item.flags?.swse?.isSpeciesAbility === true
+        || item.flags?.swse?.isActorAbility === true
+        || item.system?.executionModel === 'actor-special-ability'
+        || item.system?.executionModel === 'species-activated-ability';
+      if (!isActorAbility) continue;
+      registerAction({
+        key: `item:${item.id}:use`,
+        itemId: item.id,
+        name: item.name,
+        actionType: item.system?.actionType ?? item.system?.speciesAbility?.actionType ?? 'standard',
+        cost: 1,
+        notes: item.system?.description ?? item.system?.speciesAbility?.description ?? '',
+        description: item.system?.description ?? item.system?.speciesAbility?.description ?? '',
+        relatedSkills: item.system?.relatedSkills ?? [],
+        sourceName: item.flags?.swse?.sourceSpecies ?? item.flags?.swse?.sourceName ?? item.system?.specialAbility?.sourceName ?? 'Special Ability',
+        executable: true,
+        useLabel: 'Use'
+      });
+    }
+
+    for (const action of AbilityCombatActionResolver.getActions(actor)) registerAction(action);
+    for (const action of CombinedFeatActionResolver.getActions(actor)) registerAction(action);
+  } catch (err) {
+    console.warn('[SWSE] Failed to build NPC combat actions:', err);
+  }
+
+  const groups = [];
+  for (const economy of economyOrder) {
+    const items = grouped[economy] || [];
+    if (!items.length) continue;
+    items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    groups.push({
+      key: economy,
+      id: economy,
+      economy,
+      label: economyLabel(economy),
+      count: items.length,
+      items
+    });
+  }
+  return { groups, lookup };
+}
+
 export function buildNpcConceptSheetContext(actor, context = {}) {
   const system = actor?.system ?? {};
   const derived = context?.derived ?? system?.derived ?? {};
@@ -268,17 +527,62 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
   const hpToneClass = hpPercent <= 25 ? 'low' : hpPercent <= 60 ? 'mid' : 'healthy';
 
   const defenseFallback = Object.fromEntries((play?.defenses ?? []).map(row => [String(row.key || row.label || '').toLowerCase(), row.value]));
-  const defenseValues = {
+
+  const abilityRows = Array.isArray(context?.abilitiesPanel?.abilities) && context.abilitiesPanel.abilities.length
+    ? context.abilitiesPanel.abilities.map(entry => ({
+        key: entry.key,
+        abbr: entry.abbr || String(entry.key || '').toUpperCase(),
+        label: entry.label || labelFromKey(entry.key),
+        base: safeNumber(entry.base, 10),
+        racial: safeNumber(entry.racial, 0),
+        enhancement: safeNumber(entry.enhancement, 0),
+        temp: safeNumber(entry.temp, 0),
+        score: displayValue(entry.total ?? entry.score ?? entry.base, '—'),
+        rawScore: safeNumber(entry.total ?? entry.score ?? entry.base, 10),
+        mod: formatSignedNpc(entry.mod, '—'),
+        rawMod: safeNumber(entry.mod, 0),
+        modValue: safeNumber(entry.mod, 0),
+        modifierClass: abilityModifierClass(entry.mod),
+        isPrimary: entry.isPrimary === true,
+        isLowest: entry.isLowest === true,
+        source: entry.source || ''
+      }))
+    : (play?.abilities ?? []).map(entry => ({
+        key: entry.key,
+        abbr: entry.label || String(entry.key || '').toUpperCase(),
+        label: entry.label || labelFromKey(entry.key),
+        base: safeNumber(entry.score, 10),
+        racial: 0,
+        enhancement: 0,
+        temp: 0,
+        score: displayValue(entry.score, '—'),
+        rawScore: safeNumber(entry.score, 10),
+        mod: displayValue(entry.mod, '—'),
+        rawMod: safeNumber(String(entry.mod || '').replace('+', ''), 0),
+        modValue: safeNumber(String(entry.mod || '').replace('+', ''), 0),
+        modifierClass: abilityModifierClass(String(entry.mod || '').replace('+', '')),
+        isPrimary: false,
+        isLowest: false,
+        source: 'play-statblock'
+      }));
+
+  const followerDefenseValues = buildFollowerDefenseValues(actor, context, abilityRows);
+  const defenseValues = followerDefenseValues ? {
+    ref: formatDefenseDisplay(followerDefenseValues.ref),
+    fort: formatDefenseDisplay(followerDefenseValues.fort),
+    will: formatDefenseDisplay(followerDefenseValues.will),
+    dt: formatDefenseDisplay(followerDefenseValues.dt)
+  } : {
     ref: displayValue(
-      derived?.defenses?.ref ?? derived?.defenses?.reflex ?? system?.defenses?.ref ?? system?.defenses?.reflex?.total ?? defenseFallback.reflex,
+      derived?.defenses?.ref?.total ?? derived?.defenses?.ref ?? derived?.defenses?.reflex?.total ?? derived?.defenses?.reflex ?? system?.defenses?.ref?.total ?? system?.defenses?.ref ?? system?.defenses?.reflex?.total ?? defenseFallback.reflex,
       '—'
     ),
     fort: displayValue(
-      derived?.defenses?.fort ?? derived?.defenses?.fortitude ?? system?.defenses?.fort ?? system?.defenses?.fortitude?.total ?? defenseFallback.fortitude,
+      derived?.defenses?.fort?.total ?? derived?.defenses?.fort ?? derived?.defenses?.fortitude?.total ?? derived?.defenses?.fortitude ?? system?.defenses?.fort?.total ?? system?.defenses?.fort ?? system?.defenses?.fortitude?.total ?? defenseFallback.fortitude,
       '—'
     ),
     will: displayValue(
-      derived?.defenses?.will ?? system?.defenses?.will?.total ?? system?.defenses?.will ?? defenseFallback.will,
+      derived?.defenses?.will?.total ?? derived?.defenses?.will ?? system?.defenses?.will?.total ?? system?.defenses?.will ?? defenseFallback.will,
       '—'
     ),
     dt: displayValue(
@@ -293,28 +597,6 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     { key: 'will', label: 'WILL', value: defenseValues.will },
     { key: 'dt', label: 'DT', value: defenseValues.dt }
   ];
-
-  const abilityRows = Array.isArray(context?.abilitiesPanel?.abilities) && context.abilitiesPanel.abilities.length
-    ? context.abilitiesPanel.abilities.map(entry => ({
-        key: entry.key,
-        abbr: entry.abbr || String(entry.key || '').toUpperCase(),
-        label: entry.label || labelFromKey(entry.key),
-        score: displayValue(entry.total ?? entry.score ?? entry.base, '—'),
-        mod: formatSignedNpc(entry.mod, '—'),
-        modifierClass: abilityModifierClass(entry.mod),
-        isPrimary: entry.isPrimary === true,
-        isLowest: entry.isLowest === true
-      }))
-    : (play?.abilities ?? []).map(entry => ({
-        key: entry.key,
-        abbr: entry.label || String(entry.key || '').toUpperCase(),
-        label: entry.label || labelFromKey(entry.key),
-        score: displayValue(entry.score, '—'),
-        mod: displayValue(entry.mod, '—'),
-        modifierClass: abilityModifierClass(String(entry.mod || '').replace('+', '')),
-        isPrimary: false,
-        isLowest: false
-      }));
 
   const skillRows = (play?.skills ?? []).map(skill => ({
     key: skill.key,
@@ -436,6 +718,8 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
       { label: 'Senses', value: play?.senses || displayValue(system?.senses, '—') },
       { label: 'DT', value: defenseValues.dt }
     ],
+    combatActionGroups: context?.npcCombatActions?.groups ?? [],
+    hasCombatActionGroups: Array.isArray(context?.npcCombatActions?.groups) && context.npcCombatActions.groups.length > 0,
     conditionSteps: [
       { label: 'Normal', value: '0', active: String(conditionCurrent) === '0' || conditionCurrent === '—' },
       { label: '-1', value: '-1', active: String(conditionCurrent) === '-1' },
@@ -778,6 +1062,16 @@ export class SWSEV2NpcSheet extends
       context.hpPercent = 0;
     }
 
+    try {
+      const npcCombatActions = await buildNpcCombatActions(actor);
+      context.npcCombatActions = { groups: npcCombatActions.groups };
+      this._npcCombatActionLookup = npcCombatActions.lookup;
+    } catch (err) {
+      console.warn('[SWSE] NPC combat actions unavailable:', err);
+      context.npcCombatActions = { groups: [] };
+      this._npcCombatActionLookup = {};
+    }
+
     context.npcConcept = buildNpcConceptSheetContext(actor, context);
 
     // Action Economy Context (for combat tab)
@@ -890,7 +1184,8 @@ export class SWSEV2NpcSheet extends
     for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        const step = Number(ev.currentTarget?.dataset?.step);
+        const rawStep = ev.currentTarget?.dataset?.step;
+        const step = rawStep === 'helpless' ? 5 : Number(rawStep);
         if (!Number.isFinite(step)) {return;}
         if (typeof this.actor.setConditionTrackStep === 'function') {
           await this.actor.setConditionTrackStep(step);
@@ -1111,15 +1406,14 @@ export class SWSEV2NpcSheet extends
     }
 
     // Action execution
-    for (const el of root.querySelectorAll('.swse-v2-use-action')) {
+    for (const el of root.querySelectorAll('.swse-v2-use-action, [data-action="swse-v2-use-action"]')) {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (!actionId) {return;}
-        if (typeof this.actor.useAction === 'function') {
-          await this.actor.useAction(actionId);
-        }
+        const actionData = this._resolveNpcCombatActionData(actionId, ev.currentTarget);
+        await this._runNpcCombatAction(actionId, actionData, { sourceElement: ev.currentTarget });
       }, { signal });
     }
 
@@ -1303,6 +1597,92 @@ export class SWSEV2NpcSheet extends
         ui.notifications.error(`Failed to update field: ${err.message}`);
       }
     }, { signal });
+  }
+
+
+  _resolveNpcCombatActionData(actionId, element = null) {
+    const key = String(actionId || '');
+    const fromSheet = this._npcCombatActionLookup?.[key] ?? null;
+    const row = element?.closest?.('[data-action-key], .swse-npc-combat-action-row');
+    const fromDataset = row ? {
+      key,
+      name: row.querySelector?.('.swse-npc-combat-action-row__title')?.textContent?.trim?.() || key,
+      actionType: row.dataset.actionType || element?.dataset?.actionType || 'standard',
+      type: row.dataset.actionType || element?.dataset?.actionType || 'standard',
+      description: row.querySelector?.('.swse-npc-combat-action-row__description')?.textContent?.trim?.() || ''
+    } : null;
+    return { ...(fromDataset || {}), ...(fromSheet || {}) };
+  }
+
+  _normalizeNpcActionEconomyType(value) {
+    return normalizeActionEconomyType(value);
+  }
+
+  async _applyNpcActionEconomy(actionType, metadata = {}) {
+    if (!game?.combat) return true;
+    const combatant = game.combat.combatants?.find?.(c => c.actor?.id === this.actor?.id);
+    if (!combatant) return true;
+
+    try {
+      const { ActionEconomyPersistence } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js');
+      const { ActionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js');
+      const combatId = game.combat.id;
+      const turnState = ActionEconomyPersistence.getTurnState?.(this.actor, combatId) ?? {};
+      const costForType = (type) => {
+        const normalized = normalizeActionEconomyType(type);
+        if (normalized === 'full-round') return { fullRound: true };
+        if (normalized === 'move') return { move: 1 };
+        if (normalized === 'swift') return { swift: 1 };
+        if (normalized === 'free' || normalized === 'reaction' || normalized === 'passive') return {};
+        return { standard: 1 };
+      };
+
+      let nextState = null;
+      if (typeof ActionEngine.consumeAction === 'function') {
+        const result = await ActionEngine.consumeAction(turnState, { actionType, metadata, cost: costForType(actionType) });
+        if (result === false || result?.allowed === false || result?.permitted === false) return false;
+        nextState = result?.turnState ?? result?.updatedTurnState ?? result;
+      } else if (typeof ActionEngine.consume === 'function') {
+        const result = ActionEngine.consume(turnState, costForType(actionType));
+        if (result === false || result?.allowed === false || result?.permitted === false) return false;
+        nextState = result?.turnState ?? result;
+      }
+
+      if (nextState && typeof ActionEconomyPersistence.setTurnState === 'function') {
+        await ActionEconomyPersistence.setTurnState(this.actor, combatId, nextState);
+      } else if (nextState && typeof ActionEconomyPersistence.saveTurnState === 'function') {
+        await ActionEconomyPersistence.saveTurnState(this.actor, combatId, nextState);
+      }
+    } catch (err) {
+      console.warn('[SWSE] NPC action economy update failed; continuing without spend.', err);
+    }
+    return true;
+  }
+
+  async _runNpcCombatAction(actionId, actionData = {}, options = {}) {
+    const actionType = normalizeActionEconomyType(actionData?.actionType ?? actionData?.type ?? 'standard');
+    const permitted = await this._applyNpcActionEconomy(actionType, {
+      source: 'npc-combat-action',
+      actionId,
+      actionName: actionData?.name || actionId
+    });
+    if (!permitted) {
+      ui?.notifications?.warn?.('That action is not available this turn.');
+      return null;
+    }
+
+    if (typeof this.actor.useAction === 'function') {
+      return await this.actor.useAction(actionId, { actionData, ...options });
+    }
+
+    const safeName = foundry.utils.escapeHTML(actionData?.name || actionId || 'Combat Action');
+    const safeType = foundry.utils.escapeHTML(economyLabel(actionType));
+    const safeDescription = foundry.utils.escapeHTML(actionData?.description || 'Resolve this action using its listed SWSE rules.');
+    await SWSEChat.postHTML({
+      actor: this.actor,
+      content: `<div class="swse-ability-chat-card"><h3>${safeName}</h3><p><strong>Action:</strong> ${safeType}</p><p>${safeDescription}</p></div>`
+    });
+    return null;
   }
 
   async _onClose(options) {

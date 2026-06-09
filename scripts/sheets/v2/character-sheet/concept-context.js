@@ -150,7 +150,7 @@ function getDerivedSkillMap(context) {
   return merged;
 }
 
-function buildStatusChips({ healthPanel, forceSensitive, inventoryPanel, armorSummaryPanel }) {
+function buildStatusChips({ healthPanel, secondWindPanel, forceSensitive, inventoryPanel, armorSummaryPanel }) {
   const chips = [];
   const condition = healthPanel?.currentConditionPenalty;
   const hp = healthPanel?.hp;
@@ -171,6 +171,17 @@ function buildStatusChips({ healthPanel, forceSensitive, inventoryPanel, armorSu
 
   if ((Number(healthPanel?.shield?.current) || 0) > 0) {
     chips.push({ label: `Shield ${healthPanel.shield.current}/${healthPanel.shield.max}`, tone: 'neutral' });
+  }
+
+  const swUses = Number(secondWindPanel?.uses);
+  const swMax = Number(secondWindPanel?.max);
+  if (Number.isFinite(swUses) || Number.isFinite(swMax)) {
+    const safeUses = Math.max(0, Number.isFinite(swUses) ? swUses : 0);
+    const safeMax = Math.max(1, Number.isFinite(swMax) && swMax > 0 ? swMax : 1);
+    chips.push({
+      label: `Second Wind ${safeUses}/${safeMax}`,
+      tone: safeUses > 0 ? 'ok' : 'warn'
+    });
   }
 
   if (forceSensitive) {
@@ -203,7 +214,11 @@ function buildCombatStatusStrip(context, combat) {
   const hasWeapons = asArray(combat?.attacks).length > 0;
   const hasArmor = !!context.armorSummaryPanel?.equippedArmor?.name;
   const secondWind = context.secondWindPanel ?? context.healthPanel?.secondWind ?? {};
-  const secondWindUsed = !!(secondWind.used || secondWind.isUsed || secondWind.spent);
+  const rawSwMax = Number(secondWind.max ?? secondWind.maximum ?? context.actor?.system?.secondWind?.max);
+  const rawSwUses = Number(secondWind.uses ?? secondWind.remaining ?? context.actor?.system?.secondWind?.uses);
+  const swMax = Math.max(1, Number.isFinite(rawSwMax) && rawSwMax > 0 ? rawSwMax : 1);
+  const swUses = Math.max(0, Math.min(swMax, Number.isFinite(rawSwUses) ? rawSwUses : swMax));
+  const secondWindUsed = swUses <= 0 || !!(secondWind.used || secondWind.isUsed || secondWind.spent);
 
   chips.push(conditionStep > 0
     ? { label: `CT ${conditionLabel}`, tone: conditionStep >= 3 ? 'danger' : 'warn', tooltip: 'ConditionTrack' }
@@ -215,8 +230,8 @@ function buildCombatStatusStrip(context, combat) {
 
   if (hpTemp > 0) chips.push({ label: `Temp HP +${hpTemp}`, tone: 'accent', tooltip: 'HitPoints' });
   chips.push(secondWindUsed
-    ? { label: 'Second Wind Used', tone: 'neutral', tooltip: 'SecondWind' }
-    : { label: 'Second Wind Ready', tone: 'ok', tooltip: 'SecondWind' });
+    ? { label: `Second Wind ${swUses}/${swMax}`, tone: 'neutral', tooltip: 'SecondWind' }
+    : { label: `Second Wind ${swUses}/${swMax}`, tone: 'ok', tooltip: 'SecondWind' });
   chips.push(hasArmor
     ? { label: 'Armor Equipped', tone: 'accent', tooltip: 'ReflexDefense' }
     : { label: 'No Armor', tone: 'neutral', tooltip: 'ReflexDefense' });
@@ -279,40 +294,100 @@ function buildInventoryGroups(inventoryPanel) {
     .filter((group) => group.hasEntries);
 }
 
-function buildActionGroups(combatActions) {
-  const normalizeItem = (item) => ({
-    key: item?.key || item?.id || '',
-    name: item?.name || 'Unnamed Action',
-    sourceName: item?.sourceName || item?.source || '',
-    actionType: item?.actionType || item?.type || '',
-    cost: item?.cost ?? '',
-    executable: item?.executable !== false,
-    useLabel: item?.useLabel || 'Use',
-    description: normalizeText(item?.description || item?.notes),
-    itemId: item?.itemId || '',
-    resources: asArray(item?.resources),
-    relatedSkills: asArray(item?.relatedSkills)
-  });
+function normalizeCombatActionLaneKey(value = '') {
+  const raw = String(value || '').toLowerCase().trim();
+  if (!raw) return 'free';
+  if (raw.includes('full')) return 'full-round';
+  if (raw.includes('standard')) return 'standard';
+  if (raw.includes('move')) return 'move';
+  if (raw.includes('swift')) return 'swift';
+  if (raw.includes('reaction') || raw === 'rx') return 'reaction';
+  if (raw.includes('free')) return 'free';
+  return raw.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'free';
+}
 
+function buildActionGroups(combatActions, actionEconomy = {}) {
+  const economySteps = new Map(asArray(actionEconomy?.steps).map((step) => [normalizeCombatActionLaneKey(step?.key || step?.label), step]));
+  const resolveAvailability = (laneKey) => {
+    const normalized = normalizeCombatActionLaneKey(laneKey);
+    if (normalized === 'free') {
+      return {
+        available: true,
+        className: 'is-available',
+        label: 'Unlimited',
+        tooltip: 'Free actions are unlimited, subject to GM discretion.'
+      };
+    }
+    const step = economySteps.get(normalized);
+    if (!actionEconomy?.active || !step) {
+      return {
+        available: true,
+        className: 'is-reference',
+        label: 'Reference',
+        tooltip: 'Add this actor to the combat tracker to spend actions from the sheet.'
+      };
+    }
+    const available = step.canSpend !== false && !String(step.state || '').toLowerCase().includes('used');
+    return {
+      available,
+      className: available ? 'is-available' : 'is-spent',
+      label: step.stateLabel || (available ? 'Available' : 'Spent'),
+      tooltip: step.tooltip || ''
+    };
+  };
+
+  const normalizeItem = (item, fallbackLaneKey = '') => {
+    const laneKey = normalizeCombatActionLaneKey(item?.actionType || item?.type || item?.cost || fallbackLaneKey);
+    const availability = resolveAvailability(laneKey);
+    const executable = item?.executable !== false;
+    return {
+      key: item?.key || item?.id || '',
+      name: item?.name || 'Unnamed Action',
+      sourceName: item?.sourceName || item?.source || '',
+      actionType: item?.actionType || item?.type || '',
+      laneKey,
+      cost: item?.cost ?? '',
+      executable,
+      economyAvailable: availability.available,
+      canUseNow: executable && availability.available,
+      unavailableReason: executable ? (availability.available ? '' : `${availability.label} action unavailable`) : 'This action cannot be used from the sheet.',
+      useLabel: item?.useLabel || 'Use',
+      description: normalizeText(item?.description || item?.notes),
+      itemId: item?.itemId || '',
+      resources: asArray(item?.resources),
+      relatedSkills: asArray(item?.relatedSkills)
+    };
+  };
+
+  const laneOrder = ['full-round', 'standard', 'move', 'swift', 'reaction', 'free'];
   return asArray(combatActions?.groups).map((group, index) => {
+    const groupKey = normalizeCombatActionLaneKey(group?.key || group?.id || group?.label || `actions-${index}`);
+    const availability = resolveAvailability(groupKey);
     const subgroups = asArray(group?.subgroups).map((subgroup) => ({
       label: subgroup?.label || 'Actions',
       count: Number(subgroup?.count) || 0,
-      items: asArray(subgroup?.items).map(normalizeItem)
+      items: asArray(subgroup?.items).map((item) => normalizeItem(item, groupKey))
     }));
-    const directItems = asArray(group?.items).map(normalizeItem);
+    const directItems = asArray(group?.items).map((item) => normalizeItem(item, groupKey));
     const flattenedItems = directItems.length
       ? directItems
       : subgroups.flatMap((subgroup) => subgroup.items);
 
     return {
-      key: group?.key || group?.id || String(group?.label || `actions-${index}`).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || `actions-${index}`,
+      key: groupKey,
+      sortIndex: laneOrder.includes(groupKey) ? laneOrder.indexOf(groupKey) : laneOrder.length + index,
       label: group?.label || 'Actions',
       count: Number(group?.count) || flattenedItems.length,
+      availabilityLabel: availability.label,
+      availabilityClass: availability.className,
+      availabilityTooltip: availability.tooltip,
+      isAvailable: availability.available,
       items: flattenedItems,
       subgroups
     };
-  }).filter((group) => group.items.length > 0 || group.subgroups.length > 0);
+  })
+    .filter((group) => group.items.length > 0 || group.subgroups.length > 0)
+    .sort((a, b) => a.sortIndex - b.sortIndex || a.label.localeCompare(b.label));
 }
 
 function buildAbilityTab(abilities) {
@@ -959,10 +1034,43 @@ export function buildConceptSheetViewModel(context = {}) {
   const hpValue = Number(context.healthPanel?.hp?.value) || 0;
   const hpMax = Number(context.healthPanel?.hp?.max) || 0;
   const hpTemp = Number(context.healthPanel?.hp?.temp) || 0;
+  const swUses = Number(context.secondWindPanel?.uses ?? 0) || 0;
+  const swMax = Math.max(1, Number(context.secondWindPanel?.max ?? 1) || 1);
+  const swHealing = Number(context.secondWindPanel?.healing ?? context.secondWindPanel?.totalHealing ?? 0) || 0;
+  const currentConditionCardCount = asArray(context.healthPanel?.currentConditions?.cards).length;
   const percentHp = hpMax > 0 ? Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100))) : 0;
   const skillCount = asArray(context.skillsPanel?.skills).length || Object.keys(context.derived?.skills ?? {}).length;
   const gearGroups = buildInventoryGroups(context.inventoryPanel);
-  const actionGroups = buildActionGroups(context.combatActions);
+  const actionGroups = buildActionGroups(context.combatActions, context.actionEconomy);
+  const actorItems = Array.from(actor?.items ?? []);
+  const itemById = new Map(actorItems.map((item) => [item.id, item]));
+  const buildAttackView = (attack = {}) => {
+    const weaponId = attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null;
+    const item = weaponId ? itemById.get(weaponId) : null;
+    const visualProfile = item ? WeaponVisualProfileResolver.resolve(item, { actor }) : null;
+    const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
+    const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
+    const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
+    const ammoMax = item?.system?.ammo?.max ?? item?.system?.ammunition?.max ?? item?.system?.charges?.max ?? attack?.ammoMax;
+    const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
+      ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
+      : '';
+    const damageType = normalizeText(attack?.damageType || item?.system?.damageType || item?.system?.weapon?.damageType || '');
+    return {
+      ...attack,
+      weaponId,
+      weaponName: attack?.weaponName ?? attack?.name ?? '',
+      weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
+      attackTotalClass: toSignedClass(attack?.attackTotal),
+      tags: asArray(attack?.tags),
+      rangeLabel,
+      ammoLabel,
+      damageType,
+      visualKind: visualProfile?.kind || '',
+      visualColorHex: railHex,
+      weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
+    };
+  };
   const virtualUnarmedLoadoutEntry = unarmedAttackEntry ? {
     ...unarmedAttackEntry,
     id: 'swse-virtual-unarmed',
@@ -1128,7 +1236,7 @@ export function buildConceptSheetViewModel(context = {}) {
       ],
       heroMetrics: [
         { label: 'Health', value: `${hpValue}/${hpMax || 0}`, valueClass: readinessClass },
-        { label: 'Skills', value: String(skillCount || 0), valueClass: 'mod--zero' },
+        { label: 'Effects', value: String(currentConditionCardCount || 0), valueClass: currentConditionCardCount ? 'mod--negative' : 'mod--zero' },
         { label: 'Attacks', value: String(attackEntries.length + (unarmedAttackEntry ? 1 : 0)), valueClass: 'mod--zero' },
         { label: 'Assets', value: String(relationshipEntries.length || 0), valueClass: 'mod--zero' }
       ],
@@ -1144,8 +1252,8 @@ export function buildConceptSheetViewModel(context = {}) {
       quickReadouts: [
         { label: 'Credits', value: credits.toLocaleString() },
         { label: 'XP', value: (Number(context.xpData?.total) || 0).toLocaleString() },
-        { label: 'Encumbrance', value: totalWeight > 0 ? `${totalWeight.toFixed(1)} kg` : 'Untracked' },
-        { label: 'Equipped', value: String(equippedEntries.length) }
+        { label: 'Second Wind', value: `${swUses}/${swMax}${swHealing ? ` · ${swHealing} HP` : ''}` },
+        { label: 'Effects', value: String(currentConditionCardCount || 0) }
       ],
       statusFeedEntries
     },
@@ -1161,18 +1269,17 @@ export function buildConceptSheetViewModel(context = {}) {
         { label: 'Speed', value: Number(context.speed) || 0, suffix: 'sq', valueClass: toSignedClass(0), tooltip: 'Speed' },
         { label: 'Damage Threshold', value: Number(context.derived?.damageThreshold) || 0, valueClass: toSignedClass((Number(context.derived?.damageThreshold) || 0) - 10), tooltip: 'DamageThreshold' }
       ],
-      attacks: attackEntries.map((attack) => ({
-        ...attack,
-        weaponId: attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null,
-        weaponName: attack?.weaponName ?? attack?.name ?? '',
-        weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
-        attackTotalClass: toSignedClass(attack?.attackTotal),
-        tags: asArray(attack?.tags)
-      })),
+      attacks: attackEntries.map(buildAttackView),
       unarmedAttack: unarmedAttackEntry ? {
         ...unarmedAttackEntry,
         attackTotalClass: toSignedClass(unarmedAttackEntry.attackTotal),
-        tags: asArray(unarmedAttackEntry.tags)
+        tags: asArray(unarmedAttackEntry.tags),
+        rangeLabel: unarmedAttackEntry.range || 'Melee',
+        ammoLabel: '',
+        damageType: 'Bludgeoning',
+        visualKind: 'unarmed',
+        visualColorHex: '',
+        weaponRailStyle: '--weapon-rail: rgba(99, 255, 180, 0.88);'
       } : null,
       hasAnyAttacks: attackEntries.length > 0 || !!unarmedAttackEntry,
       actionGroups,

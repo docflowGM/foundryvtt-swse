@@ -1,56 +1,37 @@
-<section class="swse-concept-panel swse-concept-panel--ledger swse-concept-panel--combat-actions">
+<section class="swse-concept-panel swse-concept-panel--combat-actions-compact">
   <header class="swse-concept-panel__header">
     <div>
       <h3 class="swse-concept-panel__title">Combat Actions</h3>
-      <p class="swse-concept-panel__hint">Executable combat actions organized by economy lane.</p>
+      <p class="swse-concept-panel__hint">Compact action console grouped by economy lane.</p>
     </div>
+    <span class="swse-concept-panel__eyebrow">Click to spend</span>
   </header>
 
   {{#if conceptLayout.combat.actionGroups.length}}
-    <div class="swse-concept-action-groups swse-concept-action-groups--combat" data-combat-actions-scroll>
+    <div class="swse-concept-action-board" data-combat-actions-board>
       {{#each conceptLayout.combat.actionGroups as |group|}}
-        <article class="swse-concept-action-group swse-concept-action-group--combat is-expanded" data-combat-action-group="{{group.key}}">
-          <button type="button"
-                  class="swse-concept-action-group__header swse-concept-action-group__toggle"
-                  data-action="toggle-combat-action-group"
-                  data-group="{{group.key}}"
-                  aria-expanded="true">
+        <article class="swse-concept-action-lane swse-action-lane--{{group.key}} {{group.availabilityClass}}" data-combat-action-group="{{group.key}}" title="{{group.availabilityTooltip}}">
+          <header class="swse-concept-action-lane__header">
             <strong>{{group.label}}</strong>
-            <span>{{group.count}} entries</span>
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-
-          <div class="swse-concept-action-group__body">
-            <div class="swse-concept-action-list">
-              {{#each group.items as |item|}}
-                <article class="swse-concept-action-row swse-concept-action-row--combat" data-action-key="{{item.key}}" data-action-type="{{item.actionType}}">
-                  <div class="swse-concept-action-row__copy">
-                    <strong>{{item.name}}</strong>
-                    {{#if item.descriptionHtml}}
-                      <small>{{{item.descriptionHtml}}}</small>
-                    {{else if item.description}}
-                      <small>{{item.description}}</small>
-                    {{/if}}
-                    {{#if item.resources.length}}
-                      <div class="swse-concept-ledger-row__meta">
-                        {{#each item.resources as |resource|}}
-                          <span>{{resource}}</span>
-                        {{/each}}
-                      </div>
-                    {{/if}}
-                  </div>
-
-                  <div class="swse-concept-action-row__actions">
-                    {{#if item.itemId}}
-                      <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{item.itemId}}">Inspect</button>
-                    {{/if}}
-                    {{#if item.executable}}
-                      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="swse-v2-use-action" data-action-id="{{item.key}}" data-action-type="{{item.actionType}}">{{item.useLabel}}</button>
-                    {{/if}}
-                  </div>
-                </article>
-              {{/each}}
-            </div>
+            <span>{{group.availabilityLabel}}</span>
+          </header>
+          <div class="swse-concept-action-lane__rows">
+            {{#each group.items as |item|}}
+              <button type="button"
+                      class="swse-concept-action-button {{#unless item.canUseNow}}is-disabled{{/unless}}"
+                      data-action="swse-v2-use-action"
+                      data-action-id="{{item.key}}"
+                      data-action-type="{{item.actionType}}"
+                      title="{{#if item.unavailableReason}}{{item.unavailableReason}}{{else}}{{item.description}}{{/if}}"
+                      {{#unless item.canUseNow}}disabled{{/unless}}>
+                <span class="swse-concept-action-button__icon" aria-hidden="true">◆</span>
+                <span class="swse-concept-action-button__copy">
+                  <strong>{{item.name}}</strong>
+                  {{#if item.description}}<small>{{item.description}}</small>{{/if}}
+                </span>
+                <span class="swse-concept-action-button__cost">{{#if item.actionType}}{{item.actionType}}{{else}}{{group.key}}{{/if}}</span>
+              </button>
+            {{/each}}
           </div>
         </article>
       {{/each}}

@@ -78,6 +78,31 @@
     </section>
   </div>
 
+
+
+  <div class="swse-concept-grid swse-concept-grid--two swse-concept-summary-state-grid">
+    <section class="swse-concept-panel swse-concept-panel--summary-effects">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Current Conditions &amp; Effects</h3>
+          <p class="swse-concept-panel__hint">Full active-effect feed moved here from Combat so the Summary tab acts as the live status dossier.</p>
+        </div>
+        <span class="swse-concept-panel__eyebrow">Live Status</span>
+      </header>
+
+      {{#if healthPanel.currentConditions.hasCards}}
+        {{> "systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs" currentConditions=healthPanel.currentConditions}}
+      {{else}}
+        <div class="swse-concept-empty-state swse-concept-empty-state--compact">
+          <span class="swse-concept-empty-state__eyebrow">Clear</span>
+          <strong>No active conditions or mechanical effects are currently impacting this actor.</strong>
+        </div>
+      {{/if}}
+    </section>
+
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/second-wind-panel.hbs"}}
+  </div>
+
   <section class="swse-concept-panel">
     <header class="swse-concept-panel__header">
       <div>

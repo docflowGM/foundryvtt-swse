@@ -20,6 +20,7 @@ import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
+import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
 export class ForceExecutor {
   /**
@@ -272,13 +273,19 @@ export class ForceExecutor {
       let powersToRecover = [];
 
       if (powerIds && powerIds.length > 0) {
-        // Recover specific powers
+        // Recover specific powers — spend a Force Point if the actor has one
+        const fpValue = SchemaAdapters.getForcePoints(actor);
+        if (fpValue <= 0) {
+          ui?.notifications?.warn?.('No Force Points left!');
+          return { success: false, error: 'No Force Points available' };
+        }
+        await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(Math.max(0, fpValue - 1)), {
+          source: 'force-power-fp-recover'
+        });
         powersToRecover = powerIds.map(id => actor.items.get(id)).filter(p => p && p.system?.discarded);
       } else {
-        // Recover all discarded force powers
-        powersToRecover = actor.items.filter(item =>
-          (item.type === "force-power" || item.type === "force-power") && item.system?.discarded
-        );
+        // Recover all discarded force powers (rest / natural 20)
+        powersToRecover = actor.items.filter(item => isForcePowerItem(item) && item.system?.discarded);
       }
 
       if (powersToRecover.length === 0) {

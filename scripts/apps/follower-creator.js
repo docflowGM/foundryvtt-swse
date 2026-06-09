@@ -291,12 +291,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 isFollower: true,
                 followerType: template.name,
                 race: speciesDoc?.name || '',
+                // system.attributes is canonical ability storage. Keep the
+                // legacy system.abilities mirror populated for old consumers,
+                // but do not put non-ability fields under attributes.
+                attributes: abilities,
                 abilities: abilities,
                 hp: hp,
                 baseAttackBonus: bab,
-                attributes: {
-                    damageThreshold: 0 // Will be calculated on prepare
-                },
+                damageThreshold: 0, // Will be calculated on prepare
                 progression: progressionData,
                 npcProfile: {
                     kind: 'follower',

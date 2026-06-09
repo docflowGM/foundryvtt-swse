@@ -815,7 +815,7 @@ async function swseResolveIntimidatingDefense(context = {}) {
       ? ` and equals or exceeds ${attacker?.name ?? 'the attacker'}'s Will Defense ${dc}; apply a -5 penalty to the incoming attack roll.`
       : ` against ${attacker?.name ?? 'the attacker'}'s Will Defense ${dc}; the attack penalty is not applied.`;
   } else {
-    message += '; compare the Persuasion check to the attacker's Will Defense, adding +5 if the attacker is higher level.';
+    message += '; compare the Persuasion check to the attacker\'s Will Defense, adding +5 if the attacker is higher level.';
   }
   if (higherLevelBonus) {
     message += ' The DC includes the +5 higher-level target bonus.';

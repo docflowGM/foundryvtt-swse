@@ -1,63 +1,46 @@
-<section class="swse-concept-panel swse-concept-panel--subledger">
-  <header class="swse-concept-panel__header">
+<section class="swse-concept-panel swse-concept-panel--action-economy-star" data-action-economy-star>
+  <header class="swse-concept-panel__header swse-concept-ae-star__header">
     <div>
       <h3 class="swse-concept-panel__title">Action Economy</h3>
-      <p class="swse-concept-panel__hint">Live turn-state telemetry from the combat action engine.</p>
+      <p class="swse-concept-panel__hint">Turn economy first: available actions unlock the compact combat console below.</p>
+    </div>
+    <div class="swse-concept-ae-star__mode">
+      <span>{{actionEconomy.enforcementModeLabel}}</span>
+      <small>{{#if actionEconomy.active}}Live Turn{{else}}Reference{{/if}}</small>
     </div>
   </header>
 
-  <div class="swse-concept-action-sequence" aria-label="Action substitution sequence">
-    <div class="swse-concept-action-sequence__rail">
-      <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--full swse-action-state-{{#if actionEconomy}}{{actionEconomy.state.full}}{{else}}reference{{/if}}">Full-Round Action</div>
-      <div class="swse-concept-action-sequence__arrow">↓</div>
-      <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--standard swse-action-state-{{#if actionEconomy}}{{actionEconomy.state.standard}}{{else}}reference{{/if}}">Standard Action</div>
-      <div class="swse-concept-action-sequence__arrow">↓</div>
-      <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--move swse-action-state-{{#if actionEconomy}}{{actionEconomy.state.move}}{{else}}reference{{/if}}">Move Action</div>
-      <div class="swse-concept-action-sequence__arrow">↓</div>
-      <div class="swse-concept-action-sequence__node swse-concept-action-sequence__node--swift swse-action-state-{{#if actionEconomy}}{{actionEconomy.state.swift}}{{else}}reference{{/if}}">Swift Action</div>
-    </div>
-    <p class="swse-concept-action-sequence__note">Each turn normally allows one Standard, one Move, and one Swift action. Higher actions may be exchanged down the chain; a Full-Round action consumes the round.</p>
+  <div class="swse-concept-ae-ladder" aria-label="Action economy availability">
+    <div class="swse-concept-ae-ladder__spine" aria-hidden="true"></div>
+    {{#each actionEconomy.steps as |step|}}
+      <div class="swse-concept-ae-step {{step.cssClass}}" data-ae-step="{{step.key}}" title="{{step.tooltip}}">
+        <span class="swse-concept-ae-step__diamond" aria-hidden="true"></span>
+        <strong>{{step.label}}</strong>
+        <div class="swse-concept-ae-step__pips">
+          {{#if step.infinite}}
+            <span class="swse-concept-ae-step__infinite">∞</span>
+          {{else}}
+            {{#each step.pips as |pip|}}
+              <i class="{{#if pip.on}}is-on{{/if}}" aria-hidden="true"></i>
+            {{/each}}
+          {{/if}}
+        </div>
+        <small>{{step.stateLabel}}</small>
+      </div>
+    {{/each}}
   </div>
 
-  {{#if actionEconomy}}
-    <div class="swse-concept-action-economy">
-      <div class="swse-concept-action-economy__nodes">
-        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.full}}">
-          <span>Full Round</span>
-          <strong>{{actionEconomy.state.full}}</strong>
-        </article>
-        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.standard}}">
-          <span>Standard</span>
-          <strong>{{actionEconomy.state.standard}}</strong>
-        </article>
-        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.move}}">
-          <span>Move</span>
-          <strong>{{actionEconomy.state.move}}</strong>
-        </article>
-        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.swift}}">
-          <span>Swift</span>
-          <strong>{{actionEconomy.state.swift}}</strong>
-        </article>
-      </div>
-
-      <div class="swse-concept-chip-row">
-        <span class="swse-concept-chip swse-concept-chip--neutral">Mode {{actionEconomy.enforcementMode}}</span>
-      </div>
-
-      <div class="swse-concept-list-stack">
-        {{#each actionEconomy.breakdown as |line|}}
-          <article class="swse-concept-simple-row swse-concept-simple-row--compact">
-            <div class="swse-concept-simple-row__copy">
-              <strong>{{line}}</strong>
-            </div>
-          </article>
-        {{/each}}
-      </div>
+  <footer class="swse-concept-ae-star__footer">
+    <div class="swse-concept-ae-star__remaining">
+      <span>Remaining:</span>
+      <strong>{{actionEconomy.summary}}</strong>
     </div>
-  {{else}}
-    <div class="swse-concept-empty-state">
-      <span class="swse-concept-empty-state__eyebrow">No active encounter</span>
-      <strong>Action economy appears when this actor is in the current combat tracker.</strong>
+    {{#if actionEconomy.readOnlyReason}}
+      <p>{{actionEconomy.readOnlyReason}}</p>
+    {{/if}}
+    <div class="swse-concept-ae-star__controls">
+      <button type="button" class="swse-concept-btn" data-action="swse-action-economy-undo" {{#unless actionEconomy.canUndo}}disabled{{/unless}}>Undo</button>
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="new-round" {{#unless actionEconomy.canReset}}disabled{{/unless}}>End Turn / Reset</button>
     </div>
-  {{/if}}
+  </footer>
 </section>

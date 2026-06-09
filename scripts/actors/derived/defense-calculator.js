@@ -31,6 +31,74 @@ function getActorFeatItems(actor) {
 }
 
 
+function isFollowerNpc(actor) {
+  const profile = actor?.system?.npcProfile ?? {};
+  return actor?.type === 'npc' && (
+    actor?.system?.isFollower === true ||
+    actor?.system?.progression?.isFollower === true ||
+    profile.kind === 'follower' ||
+    profile.legalProfile === 'follower' ||
+    actor?.flags?.swse?.follower?.isFollower === true ||
+    actor?.getFlag?.('foundryvtt-swse', 'isFollower') === true
+  );
+}
+
+function getFollowerDefenseLevel(actor, fallbackHeroicLevel = 0) {
+  if (!isFollowerNpc(actor)) return Number(fallbackHeroicLevel) || 0;
+
+  const ownerId = actor?.system?.npcProfile?.owner?.actorId || actor?.flags?.swse?.follower?.ownerId || null;
+  const owner = ownerId ? globalThis.game?.actors?.get?.(String(ownerId).replace(/^Actor\./, '')) : null;
+  const ownerHeroicLevel = owner ? getHeroicLevel(owner) : 0;
+  const storedFollowerLevel = Number(actor?.system?.level ?? actor?.system?.attributes?.level ?? 0) || 0;
+  return Math.max(0, ownerHeroicLevel || storedFollowerLevel || Number(fallbackHeroicLevel) || 0);
+}
+
+function readFiniteNumber(value, fallback = null) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function normalizeDefenseAbilityCandidate(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const base = readFiniteNumber(raw.base, null);
+  const racial = readFiniteNumber(raw.racial, 0) || 0;
+  const enhancement = readFiniteNumber(raw.enhancement, 0) || 0;
+  const temp = readFiniteNumber(raw.temp, 0) || 0;
+  const explicitTotal = readFiniteNumber(raw.total ?? raw.value ?? raw.score, null);
+  const score = explicitTotal ?? ((base ?? 10) + racial + enhancement + temp);
+  if (!Number.isFinite(score)) return null;
+  const hasPopulatedValue = explicitTotal !== null
+    || base !== null
+    || racial !== 0
+    || enhancement !== 0
+    || temp !== 0
+    || raw.mod !== undefined;
+  const isMeaningful = score !== 10 || racial !== 0 || enhancement !== 0 || temp !== 0;
+  return {
+    score,
+    mod: Math.floor((score - 10) / 2),
+    hasPopulatedValue,
+    isMeaningful
+  };
+}
+
+function resolveDefenseAbilityCandidate(actor, abilityKey) {
+  const key = String(abilityKey || '').toLowerCase().slice(0, 3);
+  const canonical = normalizeDefenseAbilityCandidate(actor?.system?.attributes?.[key]);
+  const legacy = normalizeDefenseAbilityCandidate(actor?.system?.abilities?.[key]);
+  const derived = normalizeDefenseAbilityCandidate(actor?.system?.derived?.attributes?.[key]);
+
+  // Existing beta followers may have schema-default system.attributes scores while
+  // their actual template/species scores live in system.abilities. Prefer a
+  // meaningful legacy/derived value over a blank canonical default so existing
+  // NPCs repair themselves on the next derived pass.
+  if (canonical?.isMeaningful) return canonical;
+  if (legacy?.isMeaningful) return legacy;
+  if (derived?.isMeaningful) return derived;
+  return canonical ?? legacy ?? derived ?? null;
+}
+
+
 function normalizeArmorCategory(value) {
   const raw = String(value || '').trim().toLowerCase();
   if (!raw) return '';
@@ -310,7 +378,8 @@ export class DefenseCalculator {
       return this._emptyResult();
     }
 
-    const heroicLevel = getHeroicLevel(actor) ?? 0;
+    const rawHeroicLevel = getHeroicLevel(actor) ?? 0;
+    const heroicLevel = getFollowerDefenseLevel(actor, rawHeroicLevel);
     const safeClassLevels = Array.isArray(classLevels) ? classLevels : [];
     const defensesState = actor.system?.defenses ?? {};
     const abilitiesState = actor.system?.abilities ?? {};
@@ -347,13 +416,8 @@ export class DefenseCalculator {
     const hasSecondSkin = actorHasTalent(actor, 'Second Skin');
 
     const getAbilityMod = (abilityKey, fallback = 0) => {
-      const key = String(abilityKey || '').toLowerCase();
-      // Always compute from canonical raw attributes — avoids stale system.derived.attributes.*.mod
-      // which is written AFTER DefenseCalculator runs in the same DerivedCalculator.computeAll pass.
-      const attr = (actor.system?.attributes ?? actor.system?.abilities ?? {})[key] ?? {};
-      const total = (attr.base ?? 10) + (attr.racial ?? 0) + (attr.enhancement ?? 0) + (attr.temp ?? 0);
-      if (!Number.isFinite(total)) return fallback;
-      return Math.floor((total - 10) / 2);
+      const candidate = resolveDefenseAbilityCandidate(actor, abilityKey);
+      return candidate ? candidate.mod : fallback;
     };
 
     const getMiscBonus = (defenseState) => {

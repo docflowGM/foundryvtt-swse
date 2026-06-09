@@ -1,0 +1,57 @@
+<section class="swse-concept-panel swse-concept-combat-status-panel" data-combat-status-panel>
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Combat Status</h3>
+      <p class="swse-concept-panel__hint">Player / GM selected status that feeds defense and attack math.</p>
+    </div>
+    <span class="swse-concept-panel__eyebrow">Live</span>
+  </header>
+
+  <div class="swse-concept-combat-status-grid">
+    <div class="swse-concept-status-block swse-concept-status-block--cover">
+      <div class="swse-concept-status-block__label">
+        <strong>Cover</strong>
+        <span>{{combatStatus.coverLabel}}</span>
+      </div>
+      <div class="swse-concept-cover-options">
+        {{#each combatStatus.coverOptions as |option|}}
+          <button type="button"
+                  class="swse-concept-cover-option {{#if option.selected}}is-active{{/if}}"
+                  data-action="swse-combat-cover-option"
+                  data-cover="{{option.value}}"
+                  {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
+            <span>{{option.label}}</span>
+            <small>{{option.bonusLabel}}</small>
+          </button>
+        {{/each}}
+      </div>
+      <p class="swse-concept-status-note">Cover is selected by the player or GM. The system does not calculate line of sight or token geometry.</p>
+    </div>
+
+    <div class="swse-concept-status-block swse-concept-status-block--conditions">
+      <div class="swse-concept-status-block__label">
+        <strong>Conditions</strong>
+        <span>{{combatStatus.defensiveModeLabel}}</span>
+      </div>
+      <div class="swse-concept-condition-button-grid">
+        <button type="button"
+                class="swse-concept-condition-button {{#if combatStatus.prone}}is-active{{/if}}"
+                data-action="swse-combat-toggle-prone"
+                {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+          <strong>Prone</strong>
+          <small>+5 vs ranged · −5 vs melee</small>
+        </button>
+        {{#each combatStatus.defensiveModes as |mode|}}
+          <button type="button"
+                  class="swse-concept-condition-button {{#if mode.active}}is-active{{/if}}"
+                  data-action="swse-combat-defensive-mode"
+                  data-mode="{{mode.value}}"
+                  {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
+            <strong>{{mode.label}}</strong>
+            <small>{{mode.detail}}</small>
+          </button>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</section>

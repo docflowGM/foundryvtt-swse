@@ -2174,3 +2174,127 @@ button.swse-npc-gear-name {
   border-color: rgba(112, 226, 255, 0.55);
   background: rgba(112, 226, 255, 0.16);
 }
+
+/* NPC combat actions and editable ability fields */
+.swse-npc-combat-action-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-npc-combat-action-group {
+  border: 1px solid var(--swse-npc-border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.swse-npc-combat-action-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--swse-npc-border);
+  background: rgba(0, 223, 255, 0.05);
+  color: var(--swse-npc-text);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-npc-combat-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.swse-npc-combat-action-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid rgba(0, 223, 255, 0.14);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-npc-combat-action-row__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.swse-npc-combat-action-row__title {
+  color: var(--swse-npc-text);
+  font-size: 11px;
+}
+
+.swse-npc-combat-action-row__description {
+  color: var(--swse-npc-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.swse-npc-combat-action-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.swse-npc-mini-btn {
+  border: 1px solid var(--swse-npc-border);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--swse-npc-text);
+  padding: 5px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.swse-npc-mini-btn--primary,
+.swse-npc-mini-btn:hover {
+  border-color: rgba(0, 223, 255, 0.36);
+  background: rgba(0, 223, 255, 0.08);
+}
+
+.swse-npc-ability-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  margin-top: 3px;
+}
+
+.swse-npc-ability-edit-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swse-npc-ability-edit-grid span {
+  color: var(--swse-npc-muted);
+  font-size: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.swse-npc-ability-edit-grid .swse-npc-ability-input {
+  min-width: 0;
+  padding: 3px;
+  font-size: 10px;
+}
+
+.swse-npc-combat-stat.is-active .swse-npc-combat-stat__value {
+  color: var(--swse-npc-pos);
+  font-size: 10px;
+  text-transform: uppercase;
+}

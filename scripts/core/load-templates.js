@@ -35,6 +35,8 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/character-record-header.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/combat-actions-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/combat-stats-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/combat-status-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/effective-defenses-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/custom-skills-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/dark-side-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs',
