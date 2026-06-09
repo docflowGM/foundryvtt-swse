@@ -111,6 +111,7 @@ import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-
 import { EntityCreateBrowser } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/entity-create-browser.js";
 import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
 import { FullAttackExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js";
+import { CombatWorkflowRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
 import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
@@ -7031,6 +7032,103 @@ const forcePoints = [];
   }
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
+    // Phase 1B: route combat actions through the thin workflow registry first.
+    // The registry owns normalization/context preservation, while this sheet
+    // method remains the legacy execution adapter for existing authorities.
+    if (options?.__combatWorkflowRouted !== true) {
+      const registry = CombatWorkflowRegistry.getDefault();
+      const result = await registry.execute({
+        actor: this.actor,
+        actionId,
+        actionData,
+        options,
+        sheet: this,
+        handlers: {
+          attack: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          fullAttack: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          skillAction: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          combatState: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          secondWind: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          grapple: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          aidAnother: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          ammoReload: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          actorItem: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          manual: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          reference: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          }),
+          legacy: async (context) => this._runCanonicalCombatAction(context.action.id, context.action, {
+            ...options,
+            __combatWorkflowRouted: true,
+            combatContext: context,
+            actionRecord: context.action
+          })
+        }
+      });
+      if (result?.cancelled === true) return null;
+      return result?.payload ?? result;
+    }
+
+    if (options?.combatContext) {
+      actionData = {
+        ...actionData,
+        workflowContext: options.combatContext
+      };
+    }
+
     // --- Manual/reference ability action cards ---
     // Multi-action feats/talents often unlock named actions whose real effect
     // still needs table or future engine resolution. Surface and track the
