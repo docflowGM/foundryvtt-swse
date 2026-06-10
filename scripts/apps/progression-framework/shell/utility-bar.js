@@ -32,8 +32,7 @@ export class UtilityBar {
     shell.utilityBarCollapsed = !shell.utilityBarCollapsed;
     await game.user.setFlag('foundryvtt-swse', 'utilityBarCollapsed', shell.utilityBarCollapsed);
 
-    const region = shell.element?.querySelector('[data-region="utility-bar"]');
-    if (region) region.setAttribute('data-collapsed', String(shell.utilityBarCollapsed));
+    return shell.render({ force: true });
   }
 
   /**

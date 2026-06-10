@@ -15,20 +15,20 @@
     <div class="prog-l1-survey-stage__dialogue-panel" data-phase="{{surveyPhase}}">
       <div class="prog-l1-survey-stage__header">
         <div>
-          <div class="prog-l1-survey-stage__eyebrow">{{#if surveyEyebrow}}{{surveyEyebrow}}{{else}}Level 1 Survey{{/if}}</div>
-          <h2 class="prog-l1-survey-stage__title">{{#if surveyTitle}}{{surveyTitle}}{{else}}{{#if surveyDefinition}}{{surveyDefinition.classDisplayName}} Intent Read{{else}}Intent Read{{/if}}{{/if}}</h2>
+          <div class="prog-l1-survey-stage__eyebrow">{{#if surveyEyebrow}}{{surveyEyebrow}}{{else}}{{localize "SWSE.Progression.Survey.Level1Survey"}}{{/if}}</div>
+          <h2 class="prog-l1-survey-stage__title">{{#if surveyTitle}}{{surveyTitle}}{{else}}{{#if surveyDefinition}}{{localize "SWSE.Progression.Survey.ClassIntentRead" class=surveyDefinition.classDisplayName}}{{else}}{{localize "SWSE.Progression.Survey.IntentRead"}}{{/if}}{{/if}}</h2>
           <div class="prog-l1-survey-stage__subtitle">
-            {{answeredCount}} / {{totalQuestions}} answered
+            {{localize "SWSE.Progression.Survey.AnsweredCount" answered=answeredCount total=totalQuestions}}
             {{#if hasSurveyQuestions}}
-              {{#if remainingCount}} · {{remainingCount}} remaining{{else}} · survey complete{{/if}}
+              {{#if remainingCount}} · {{localize "SWSE.Progression.Survey.Remaining" count=remainingCount}}{{else}} · {{localize "SWSE.Progression.Survey.Complete"}}{{/if}}
             {{else}}
-              · survey unavailable
+              · {{localize "SWSE.Progression.Survey.Unavailable"}}
             {{/if}}
           </div>
         </div>
 
         {{#if progressDots.length}}
-        <div class="prog-l1-survey-stage__progress" aria-label="Survey progress">
+        <div class="prog-l1-survey-stage__progress" aria-label="{{localize "SWSE.Progression.Survey.ProgressAria"}}">
           {{#each progressDots}}
           <span class="prog-l1-survey-stage__progress-dot {{#if isDone}}is-done{{/if}} {{#if isActive}}is-active{{/if}}"></span>
           {{/each}}
@@ -40,7 +40,7 @@
       <div class="prog-l1-survey-stage__dialogue-text is-intro" data-l1-survey-dialogue-text>{{introText}}</div>
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-back">
-          Return to Class
+          {{localize "SWSE.Progression.Survey.ReturnToClass"}}
         </button>
       </div>
       {{/if}}
@@ -49,14 +49,14 @@
       <div class="prog-l1-survey-stage__dialogue-text is-intro" data-l1-survey-dialogue-text>{{introText}}</div>
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-start">
-          {{#if beginLabel}}{{beginLabel}}{{else}}Begin Survey{{/if}}
+          {{#if beginLabel}}{{beginLabel}}{{else}}{{localize "SWSE.Progression.Survey.BeginSurvey"}}{{/if}}
         </button>
       </div>
       {{/if}}
 
       {{#if (eq surveyPhase "question")}}
       <div class="prog-l1-survey-stage__question-block">
-        <div class="prog-l1-survey-stage__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
+        <div class="prog-l1-survey-stage__question-kicker">{{localize "SWSE.Progression.Survey.QuestionOf" current=activeQuestionNumber total=totalQuestions}}</div>
         <div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{promptText}}</div>
       </div>
       <div class="prog-l1-survey-stage__choices">
@@ -84,13 +84,13 @@
 
       {{#if (eq surveyPhase "response")}}
       <div class="prog-l1-survey-stage__question-block">
-        <div class="prog-l1-survey-stage__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
+        <div class="prog-l1-survey-stage__question-kicker">{{localize "SWSE.Progression.Survey.QuestionOf" current=activeQuestionNumber total=totalQuestions}}</div>
         <div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{responseText}}</div>
       </div>
 
       {{#if selectedOption}}
       <div class="prog-l1-survey-stage__response-card">
-        <div class="prog-l1-survey-stage__response-label">Your answer</div>
+        <div class="prog-l1-survey-stage__response-label">{{localize "SWSE.Progression.Survey.YourAnswer"}}</div>
         <div class="prog-l1-survey-stage__response-choice">{{selectedOption.label}}</div>
         {{#if selectedOption.detailTags.length}}
         <div class="prog-l1-survey-stage__response-tags">
@@ -104,10 +104,10 @@
 
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-change-answer">
-          Change Answer
+          {{localize "SWSE.Progression.Survey.ChangeAnswer"}}
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-continue">
-          {{#if remainingCount}}Next Question{{else}}Complete Survey{{/if}}
+          {{#if remainingCount}}{{localize "SWSE.Progression.Survey.NextQuestion"}}{{else}}{{localize "SWSE.Progression.Survey.CompleteSurvey"}}{{/if}}
         </button>
       </div>
       {{/if}}
@@ -117,7 +117,7 @@
 
       {{#if topMatches.length}}
       <div class="prog-l1-survey-stage__reads">
-        <div class="prog-l1-survey-stage__reads-title">Current mentor read</div>
+        <div class="prog-l1-survey-stage__reads-title">{{localize "SWSE.Progression.Survey.CurrentMentorRead"}}</div>
         <div class="prog-l1-survey-stage__reads-list">
           {{#each topMatches}}
           <article class="prog-l1-survey-stage__read-card">
@@ -139,13 +139,13 @@
 
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-previous-question">
-          Review Previous Answer
+          {{localize "SWSE.Progression.Survey.ReviewPreviousAnswer"}}
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-retake">
-          Retake Survey
+          {{localize "SWSE.Progression.Survey.RetakeSurvey"}}
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-finish">
-          {{#if finishLabel}}{{finishLabel}}{{else}}Continue to Background{{/if}}
+          {{#if finishLabel}}{{finishLabel}}{{else}}{{localize "SWSE.Progression.Survey.ContinueToBackground"}}{{/if}}
         </button>
       </div>
       {{/if}}

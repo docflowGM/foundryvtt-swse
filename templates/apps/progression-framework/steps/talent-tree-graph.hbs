@@ -2,41 +2,41 @@
 <div class="talent-work-surface talent-stage-graph talent-planner-stage talent-planner-stage--{{viewMode}} talent-holomap-stage {{visualThemeClass}}">
   <div class="talent-graph-header talent-planner-header talent-planner-header--holomap">
     <div class="talent-graph-header__title-wrap">
-      <div class="talent-browser-header__eyebrow">// ACTIVE TREE</div>
+      <div class="talent-browser-header__eyebrow">{{localize "SWSE.Progression.Talent.Stage.ActiveTree"}}</div>
       <h3 class="talent-graph-header__title">
         <span class="talent-graph-header__sigil" aria-hidden="true">{{visualIcon}}</span>
         <span>{{selectedTreeName}}</span>
       </h3>
       <p class="talent-graph-header__subtitle">
-{{visualSignal}} · {{visualMotion}} · Drag the map to move. Scroll to zoom. Legal nodes glow when they can be activated.
+{{visualSignal}} · {{visualMotion}} · {{localize "SWSE.Progression.Talent.Stage.MapInstructions"}}
       </p>
     </div>
 
-    <div class="talent-planner-controls" role="toolbar" aria-label="Talent planner controls">
+    <div class="talent-planner-controls" role="toolbar" aria-label="{{localize "SWSE.Progression.Talent.Stage.PlannerControls"}}">
       <button class="talent-planner-control {{#if (eq viewMode "both")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="both" type="button">
-        <i class="fa-solid fa-table-columns"></i> Both
+        <i class="fa-solid fa-table-columns"></i> {{localize "SWSE.Progression.Talent.View.Both"}}
       </button>
       <button class="talent-planner-control {{#if (eq viewMode "list")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="list" type="button">
-        <i class="fa-solid fa-list"></i> List
+        <i class="fa-solid fa-list"></i> {{localize "SWSE.Progression.Talent.View.List"}}
       </button>
       <button class="talent-planner-control {{#if (eq viewMode "map")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="map" type="button">
-        <i class="fa-solid fa-sitemap"></i> Map
+        <i class="fa-solid fa-sitemap"></i> {{localize "SWSE.Progression.Talent.View.Map"}}
       </button>
-      <button class="talent-planner-control" data-action="fit-talent-tree" type="button" title="Fit the whole tree in the map panel">
-        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Fit
+      <button class="talent-planner-control" data-action="fit-talent-tree" type="button" title="{{localize "SWSE.Progression.Talent.Actions.FitTitle"}}">
+        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> {{localize "SWSE.Progression.Talent.Actions.Fit"}}
       </button>
-      <button class="talent-graph-header__exit-btn" data-action="exit-tree" type="button" title="Return to tree browser">
-        <i class="fa-solid fa-arrow-left"></i> Back to Trees
+      <button class="talent-graph-header__exit-btn" data-action="exit-tree" type="button" title="{{localize "SWSE.Progression.Talent.Actions.ReturnToTreeBrowser"}}">
+        <i class="fa-solid fa-arrow-left"></i> {{localize "SWSE.Progression.Talent.Actions.BackToTrees"}}
       </button>
     </div>
   </div>
 
   <div class="talent-planner-grid talent-planner-grid--holomap">
-    <section class="talent-choice-panel talent-choice-panel--holomap" data-prog-scroll-key="talent-choice-panel" aria-label="Talent choices">
+    <section class="talent-choice-panel talent-choice-panel--holomap" data-prog-scroll-key="talent-choice-panel" aria-label="{{localize "SWSE.Progression.Talent.Stage.TalentChoices"}}">
       <div class="talent-choice-panel__header">
         <div>
-          <h4>Available Choices</h4>
-          <p>{{slotProgress.progressLabel}} · {{slotProgress.remainingLabel}}{{#if recommendedTalentCount}} · {{recommendedTalentCount}} mentor suggestion{{#unless (eq recommendedTalentCount 1)}}s{{/unless}}{{/if}}</p>
+          <h4>{{localize "SWSE.Progression.Talent.Stage.AvailableChoices"}}</h4>
+          <p>{{slotProgress.progressLabel}} · {{slotProgress.remainingLabel}}{{#if recommendedTalentCount}} · {{#if (eq recommendedTalentCount 1)}}{{localize "SWSE.Progression.Talent.Stage.MentorSuggestionOne" count=recommendedTalentCount}}{{else}}{{localize "SWSE.Progression.Talent.Stage.MentorSuggestionMany" count=recommendedTalentCount}}{{/if}}{{/if}}</p>
         </div>
         {{#if selectedTalent}}
         <span class="talent-choice-panel__selected-pill"><i class="fa-solid fa-diamond"></i> {{selectedTalent.name}}</span>
@@ -45,7 +45,7 @@
 
       {{#if availableTalents}}
       <div class="talent-choice-section talent-choice-section--available">
-        <h5><i class="fa-solid fa-circle-check"></i> Legal Activations</h5>
+        <h5><i class="fa-solid fa-circle-check"></i> {{localize "SWSE.Progression.Talent.Stage.LegalActivations"}}</h5>
         <div class="talent-choice-list" data-prog-scroll-key="talent-choice-list">
           {{#each availableTalents}}
           <article class="talent-choice-card {{#if isFocused}}is-focused{{/if}} {{#if isSelected}}is-selected{{/if}}"
@@ -59,17 +59,17 @@
               <p>{{summary}}</p>
               <div class="talent-choice-card__meta">
                 {{#if isSuggestedTalent}}<span class="talent-choice-badge talent-choice-badge--suggested"><i class="fa-solid fa-star"></i> {{recommendationLabel}}</span>{{/if}}
-                <span class="talent-choice-badge talent-choice-badge--available">Legal</span>
-                {{#if isSelected}}<span class="talent-choice-badge talent-choice-badge--selected">Pending</span>{{/if}}
-                {{#if chosenElsewhere}}<span class="talent-choice-badge talent-choice-badge--locked">Already Picked</span>{{/if}}
-                {{#if isActorOwned}}<span class="talent-choice-badge talent-choice-badge--locked">Known</span>{{/if}}
+                <span class="talent-choice-badge talent-choice-badge--available">{{localize "SWSE.Progression.Common.Legal"}}</span>
+                {{#if isSelected}}<span class="talent-choice-badge talent-choice-badge--selected">{{localize "SWSE.Progression.Common.Pending"}}</span>{{/if}}
+                {{#if chosenElsewhere}}<span class="talent-choice-badge talent-choice-badge--locked">{{localize "SWSE.Progression.Talent.Stage.AlreadyPicked"}}</span>{{/if}}
+                {{#if isActorOwned}}<span class="talent-choice-badge talent-choice-badge--locked">{{localize "SWSE.Progression.Common.Known"}}</span>{{/if}}
               </div>
               {{#if recommendationReason}}
               <p class="talent-choice-card__recommendation">{{recommendationReason}}</p>
               {{/if}}
             </div>
             <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button">
-              {{#if isSelected}}Deselect{{else}}Activate{{/if}}
+              {{#if isSelected}}{{localize "SWSE.Progression.Common.Deselect"}}{{else}}{{localize "SWSE.Progression.Common.Activate"}}{{/if}}
             </button>
           </article>
           {{/each}}
@@ -79,7 +79,7 @@
 
       {{#if lockedTalents}}
       <details class="talent-choice-section talent-choice-section--locked" {{#unless availableTalents}}open{{/unless}}>
-        <summary class="talent-choice-section__summary"><i class="fa-solid fa-lock"></i> Locked / Future <span>{{lockedTalentCount}}</span></summary>
+        <summary class="talent-choice-section__summary"><i class="fa-solid fa-lock"></i> {{localize "SWSE.Progression.Talent.Stage.LockedFuture"}} <span>{{lockedTalentCount}}</span></summary>
         <div class="talent-choice-list" data-prog-scroll-key="talent-locked-list">
           {{#each lockedTalents}}
           <article class="talent-choice-card talent-choice-card--locked {{#if isFocused}}is-focused{{/if}}"
@@ -87,16 +87,16 @@
                    data-talent-id="{{id}}"
                    tabindex="0"
                    role="button"
-                   aria-label="Inspect locked talent {{name}}">
+                   aria-label="{{localize "SWSE.Progression.Talent.Stage.InspectLockedTalent" name=name}}">
             <div class="talent-choice-card__main">
               <h6>{{name}}</h6>
               <p>{{lockReason}}</p>
               <div class="talent-choice-card__meta">
-                <span class="talent-choice-badge talent-choice-badge--locked">Locked</span>
+                <span class="talent-choice-badge talent-choice-badge--locked">{{localize "SWSE.Progression.Common.Locked"}}</span>
               </div>
             </div>
             <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button" disabled>
-              Locked
+              {{localize "SWSE.Progression.Common.Locked"}}
             </button>
           </article>
           {{/each}}
@@ -108,20 +108,20 @@
         {{#unless lockedTalents}}
         <div class="talent-empty-state talent-empty-state--compact talent-empty-state--holomap">
           <i class="fa-solid fa-hexagon-exclamation"></i>
-          <p>No talents matched your current filters in this tree.</p>
+          <p>{{localize "SWSE.Progression.Talent.Empty.NoTalentsMatched"}}</p>
         </div>
         {{/unless}}
       {{/unless}}
     </section>
 
-    <section class="talent-map-panel talent-map-panel--holomap" data-prog-scroll-key="talent-map-panel" aria-label="Talent tree map">
+    <section class="talent-map-panel talent-map-panel--holomap" data-prog-scroll-key="talent-map-panel" aria-label="{{localize "SWSE.Progression.Talent.Stage.TalentTreeMap"}}">
       <div class="talent-map-panel__header">
         <div>
-          <h4>Tree Holomap</h4>
-          <p>Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.</p>
+          <h4>{{localize "SWSE.Progression.Talent.Stage.TreeHolomap"}}</h4>
+          <p>{{localize "SWSE.Progression.Talent.Stage.TreeHolomapInstructions"}}</p>
         </div>
-        <button class="talent-planner-control" data-action="center-talent-node" type="button" title="Refocus the selected or inspected node">
-          <i class="fa-solid fa-crosshairs"></i> Center
+        <button class="talent-planner-control" data-action="center-talent-node" type="button" title="{{localize "SWSE.Progression.Talent.Actions.CenterTitle"}}">
+          <i class="fa-solid fa-crosshairs"></i> {{localize "SWSE.Progression.Talent.Actions.Center"}}
         </button>
       </div>
 
@@ -134,19 +134,19 @@
       <div class="talent-graph-legend talent-graph-legend--holomap">
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--owned"></span>
-          <span class="talent-legend-label">Known</span>
+          <span class="talent-legend-label">{{localize "SWSE.Progression.Common.Known"}}</span>
         </div>
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--available"></span>
-          <span class="talent-legend-label">Legal</span>
+          <span class="talent-legend-label">{{localize "SWSE.Progression.Common.Legal"}}</span>
         </div>
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--pending"></span>
-          <span class="talent-legend-label">Pending</span>
+          <span class="talent-legend-label">{{localize "SWSE.Progression.Common.Pending"}}</span>
         </div>
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--blocked"></span>
-          <span class="talent-legend-label">Locked</span>
+          <span class="talent-legend-label">{{localize "SWSE.Progression.Common.Locked"}}</span>
         </div>
       </div>
     </section>

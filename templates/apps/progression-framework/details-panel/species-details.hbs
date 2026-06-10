@@ -1,5 +1,18 @@
 <div class="prog-species-details">
 
+  <div class="prog-species-details__actions prog-species-details__actions--top">
+    {{#if isNearHuman}}
+      <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">
+        <i class="fas fa-cogs"></i> Customize Near-Human
+      </button>
+    {{else}}
+      <button class="prog-btn prog-btn--primary" data-action="commit-item"
+              data-item-id="{{species.id}}" type="button">
+        <i class="fas fa-check"></i> Confirm {{species.name}}
+      </button>
+    {{/if}}
+  </div>
+
   {{!-- 1. Variant/default selector first, when this species has options --}}
   {{#if speciesVariants.length}}
     <section class="prog-species-details__section prog-species-details__variants">
@@ -172,17 +185,5 @@
     </section>
   {{/if}}
 
-  <div class="prog-species-details__actions">
-    {{#if isNearHuman}}
-      <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">
-        <i class="fas fa-cogs"></i> Customize Near-Human
-      </button>
-    {{else}}
-      <button class="prog-btn prog-btn--primary" data-action="commit-item"
-              data-item-id="{{species.id}}" type="button">
-        <i class="fas fa-check"></i> Confirm {{species.name}}
-      </button>
-    {{/if}}
-  </div>
 
 </div>

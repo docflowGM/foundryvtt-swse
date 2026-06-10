@@ -833,3 +833,17 @@
   border-color: oklch(0.86 0.20 145 / 0.62);
   background: oklch(0.26 0.12 160 / 0.22);
 }
+
+/* Beta UX: players commit species from the top of the detail rail. */
+.progression-shell .prog-species-details__actions--top {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  margin-top: 0;
+  margin-bottom: 8px;
+  padding: 0 0 8px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--sheet-bg-panel, #07131d) 96%, transparent),
+    color-mix(in srgb, var(--sheet-bg-panel, #07131d) 72%, transparent));
+  border-bottom: 1px solid color-mix(in srgb, var(--sheet-accent-primary, #00d8ff) 22%, transparent);
+}

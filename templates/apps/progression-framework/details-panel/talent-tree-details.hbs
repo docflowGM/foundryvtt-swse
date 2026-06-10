@@ -1,11 +1,11 @@
 <div class="talent-details-panel talent-details-panel--terminal talent-tree-details-panel--terminal {{visualThemeClass}}">
   <div class="talent-details__header">
-    <div class="talent-details__eyebrow">// TREE DOSSIER</div>
+    <div class="talent-details__eyebrow">{{localize "SWSE.Progression.Talent.Tree.TreeDossier"}}</div>
     <h2 class="talent-details__name">{{treeName}}</h2>
     <div class="talent-details__meta">
-      <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-nodes"></i> {{nodeCount}} Nodes</span>
+      <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-nodes"></i> {{localize "SWSE.Progression.Talent.Tree.Nodes" count=nodeCount}}</span>
       {{#if isSuggested}}
-      <span class="talent-meta-badge selected-badge"><i class="fa-solid fa-star"></i> Mentor Fit</span>
+      <span class="talent-meta-badge selected-badge"><i class="fa-solid fa-star"></i> {{localize "SWSE.Progression.Talent.Tree.MentorFit"}}</span>
       {{/if}}
       {{#if mentorRead.stanceLabel}}
       <span class="talent-meta-badge mentor-stance-badge mentor-stance-badge--{{mentorRead.stance}}"><i class="fa-solid fa-comment-dots"></i> {{mentorRead.stanceLabel}}</span>
@@ -18,17 +18,17 @@
   </div>
 
   <div class="talent-details__section talent-details__section--terminal">
-    <h3 class="talent-details__section-title">Detail</h3>
+    <h3 class="talent-details__section-title">{{localize "SWSE.Progression.Common.Detail"}}</h3>
     <p class="talent-details__description">{{summary}}</p>
   </div>
 
   {{#if mentorRead}}
   <div class="talent-details__section talent-details__section--terminal talent-details__section--mentor-read talent-details__section--mentor-read-{{mentorRead.stance}}">
-    <h3 class="talent-details__section-title">{{mentorRead.mentorName}}'s Read</h3>
+    <h3 class="talent-details__section-title">{{localize "SWSE.Progression.Talent.Tree.MentorReadTitle" mentor=mentorRead.mentorName}}</h3>
     <p class="talent-details__description talent-details__description--mentor">{{mentorRead.text}}</p>
     {{#if mentorRead.analysis}}
     <div class="talent-mentor-analysis">
-      <span class="talent-mentor-analysis__label">Tree Function</span>
+      <span class="talent-mentor-analysis__label">{{localize "SWSE.Progression.Talent.Tree.TreeFunction"}}</span>
       <p>{{mentorRead.analysis}}</p>
     </div>
     {{/if}}
@@ -37,8 +37,8 @@
 
   {{#if recommendationReason}}
   <div class="talent-details__section talent-details__section--terminal talent-details__section--recommendation">
-    <h3 class="talent-details__section-title">Suggestion Engine</h3>
-    <p class="talent-details__description"><strong>{{recommendationLabel}}</strong>{{#if recommendationTalentName}} · Leading legal talent: {{recommendationTalentName}}{{/if}}</p>
+    <h3 class="talent-details__section-title">{{localize "SWSE.Progression.Talent.Tree.SuggestionEngine"}}</h3>
+    <p class="talent-details__description"><strong>{{recommendationLabel}}</strong>{{#if recommendationTalentName}} · {{localize "SWSE.Progression.Talent.Tree.LeadingLegalTalent" talent=recommendationTalentName}}{{/if}}</p>
     <p class="talent-details__description">{{recommendationReason}}</p>
     {{#if recommendationReasons}}
     <ul class="talent-recommendation-reasons">
@@ -51,38 +51,38 @@
   {{/if}}
 
   <div class="talent-details__section talent-details__section--terminal">
-    <h3 class="talent-details__section-title">Build Read</h3>
+    <h3 class="talent-details__section-title">{{localize "SWSE.Progression.Talent.Tree.BuildRead"}}</h3>
     <p class="talent-details__description">{{statusText}}</p>
   </div>
 
   <div class="talent-tree-dossier-readouts">
     <div class="talent-tree-dossier-readout">
       <strong>{{nodeCount}}</strong>
-      <span>Talent Nodes</span>
+      <span>{{localize "SWSE.Progression.Talent.Tree.TalentNodes"}}</span>
     </div>
     <div class="talent-tree-dossier-readout">
       <strong>{{investmentCount}}</strong>
-      <span>Known / Pending</span>
+      <span>{{localize "SWSE.Progression.Talent.Tree.KnownPending"}}</span>
     </div>
     <div class="talent-tree-dossier-readout">
       <strong>{{slotTypeLabel}}</strong>
-      <span>Access</span>
+      <span>{{localize "SWSE.Progression.Common.Access"}}</span>
     </div>
     <div class="talent-tree-dossier-readout talent-tree-dossier-readout--legal">
       <strong>{{#if legalChoiceCount}}{{legalChoiceCount}}{{else}}0{{/if}}</strong>
-      <span>Legal Now</span>
+      <span>{{localize "SWSE.Progression.Talent.Tree.LegalNow"}}</span>
     </div>
   </div>
 
   <div class="talent-details__actions">
     <button class="action-btn select-btn" data-action="enter-tree" data-tree-id="{{treeId}}">
       <i class="fa-solid fa-diagram-project"></i>
-      Open Tree Holomap
+      {{localize "SWSE.Progression.Talent.Actions.OpenTreeHolomap"}}
     </button>
 
     <button class="action-btn mentor-btn" data-action="ask-mentor">
       <i class="fa-solid fa-brain"></i>
-      Ask Mentor
+      {{localize "SWSE.Progression.Common.AskMentor"}}
     </button>
   </div>
 </div>

@@ -112,7 +112,9 @@ export class SkillTrainingMechanics {
       }, {
         source: 'skill-training-add-points',
         meta: { guardKey: 'skill-training-add-points' },
-        render: false
+        render: false,
+        suppressAppRefresh: true,
+        skipRecalc: true
       });
       return true;
     } catch (err) {
@@ -165,7 +167,8 @@ export class SkillTrainingMechanics {
       }, {
         source: 'skill-training-spend-points',
         meta: { guardKey: 'skill-training-spend-points' },
-        render: false
+        render: false,
+        suppressAppRefresh: true
       });
 
       return {

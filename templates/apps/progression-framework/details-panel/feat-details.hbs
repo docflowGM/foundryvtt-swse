@@ -19,21 +19,21 @@
       <div class="feat-meta-badges">
         {{#if isSuggested}}
         <div class="meta-badge suggested-badge">
-          <i class="fa-solid fa-lightbulb"></i> Suggested
+          <i class="fa-solid fa-lightbulb"></i> {{localize "SWSE.Progression.Common.Suggested"}}
         </div>
         {{/if}}
         {{#if isGranted}}
         <div class="meta-badge repeatable-badge">
-          <i class="fa-solid fa-certificate"></i> Granted
+          <i class="fa-solid fa-certificate"></i> {{localize "SWSE.Progression.Common.Granted"}}
         </div>
         {{else}}{{#if isOwned}}
         <div class="meta-badge repeatable-badge">
-          <i class="fa-solid fa-check"></i> Owned
+          <i class="fa-solid fa-check"></i> {{localize "SWSE.Progression.Common.Owned"}}
         </div>
         {{/if}}{{/if}}
         {{#if isRepeatable}}
         <div class="meta-badge repeatable-badge">
-          <i class="fa-solid fa-repeat"></i> Repeatable
+          <i class="fa-solid fa-repeat"></i> {{localize "SWSE.Progression.Common.Repeatable"}}
         </div>
         {{/if}}
       </div>
@@ -42,14 +42,14 @@
 
   {{!-- Feat Category --}}
   <div class="feat-category-row">
-    <span class="row-label">Category:</span>
+    <span class="row-label">{{localize "SWSE.Progression.Feat.Details.Category"}}</span>
     <span class="category-value">{{category}}</span>
   </div>
 
   {{!-- Tags (from feat-buckets-and-subbuckets.json mapping) --}}
   {{#if uiBroadTags.length}}
   <div class="feat-tags-row">
-    <span class="row-label">Tags:</span>
+    <span class="row-label">{{localize "SWSE.Progression.Feat.Details.Tags"}}</span>
     <div class="feat-tags">
       {{#each uiBroadTags}}
       <span class="feat-tag-badge">{{this}}</span>
@@ -62,31 +62,31 @@
   <div class="feat-description-section">
     {{#if shortSummary}}
     <div class="feat-quick-summary">
-      <span class="row-label">Quick summary:</span>
+      <span class="row-label">{{localize "SWSE.Progression.Feat.Details.QuickSummary"}}</span>
       <span>{{shortSummary}}</span>
     </div>
     {{/if}}
-    <h3>Description</h3>
+    <h3>{{localize "SWSE.Progression.Common.Description"}}</h3>
     {{#if description}}
       <p class="feat-description">{{description}}</p>
     {{else}}
-      <p class="feat-description feat-description--unavailable">No description available.</p>
+      <p class="feat-description feat-description--unavailable">{{localize "SWSE.Progression.Common.NoDescriptionAvailable"}}</p>
     {{/if}}
   </div>
 
   {{!-- Prerequisites Section (text-only, no validation) --}}
   <div class="feat-prerequisites-section">
-    <h3>Prerequisites</h3>
+    <h3>{{localize "SWSE.Progression.Common.Prerequisites"}}</h3>
     {{#if prerequisiteLine}}
       <p class="feat-prerequisites">{{prerequisiteLine}}</p>
     {{else}}
-      <p class="feat-prerequisites feat-prerequisites--none">No prerequisites</p>
+      <p class="feat-prerequisites feat-prerequisites--none">{{localize "SWSE.Progression.Common.NoPrerequisites"}}</p>
     {{/if}}
   </div>
 
   {{#if missingPrerequisites.length}}
   <div class="feat-note unavailable-note feat-missing-prereqs">
-    <p><strong>Not met prerequisites:</strong></p>
+    <p><strong>{{localize "SWSE.Progression.Feat.Details.NotMetPrerequisites"}}</strong></p>
     <ul>
       {{#each missingPrerequisites}}
       <li>{{this}}</li>
@@ -97,7 +97,7 @@
 
   {{#if blockingReasons.length}}
   <div class="feat-note unavailable-note feat-blocking-reasons">
-    <p><strong>Other blockers:</strong></p>
+    <p><strong>{{localize "SWSE.Progression.Feat.Details.OtherBlockers"}}</strong></p>
     <ul>
       {{#each blockingReasons}}
       <li>{{this}}</li>
@@ -108,7 +108,7 @@
 
   {{#if unavailabilityReason}}
   <div class="feat-note unavailable-note">
-    <p><strong>Status:</strong> {{unavailabilityReason}}</p>
+    <p><strong>{{localize "SWSE.Progression.Common.Status"}}</strong> {{unavailabilityReason}}</p>
   </div>
   {{/if}}
 
@@ -117,31 +117,31 @@
     {{#if isSelected}}
     <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{feat.id}}">
       <i class="fa-solid fa-times-circle"></i>
-      Deselect
+      {{localize "SWSE.Progression.Common.Deselect"}}
     </button>
     {{else}}
     <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{feat.id}}" {{#unless isAvailable}}disabled title="{{unavailabilityReason}}"{{/unless}}>
       <i class="fa-solid fa-check-circle"></i>
-      {{#if isAvailable}}Choose This Feat{{else}}Unavailable{{/if}}
+      {{#if isAvailable}}{{localize "SWSE.Progression.Feat.Actions.ChooseThisFeat"}}{{else}}{{localize "SWSE.Progression.Common.Unavailable"}}{{/if}}
     </button>
     {{/if}}
 
     <button class="action-btn mentor-btn" data-action="ask-mentor">
       <i class="fa-solid fa-brain"></i>
-      Ask Mentor
+      {{localize "SWSE.Progression.Common.AskMentor"}}
     </button>
   </div>
 
   {{!-- Additional Notes --}}
   {{#if isSuggested}}
   <div class="feat-note suggested-note">
-    <p><strong>Why suggested:</strong> This feat synergizes well with your build and class.</p>
+    <p><strong>{{localize "SWSE.Progression.Feat.Details.WhySuggested"}}</strong> {{localize "SWSE.Progression.Feat.Details.WhySuggestedBody"}}</p>
   </div>
   {{/if}}
 
   {{#if isRepeatable}}
   <div class="feat-note repeatable-note">
-    <p><strong>Repeatable:</strong> You can select this feat multiple times if you have additional feat picks.</p>
+    <p><strong>{{localize "SWSE.Progression.Common.Repeatable"}}</strong> {{localize "SWSE.Progression.Feat.Details.RepeatableBody"}}</p>
   </div>
   {{/if}}
 

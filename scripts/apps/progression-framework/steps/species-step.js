@@ -1391,19 +1391,43 @@ export class SpeciesStep extends ProgressionStepPlugin {
    */
   async _buildSpeciesImgMap() {
     this._speciesImgMap = new Map();
+
+    const addImagePath = (key, filePath) => {
+      const rawKey = String(key || '').trim();
+      if (!rawKey || !filePath) return;
+      const normalizedKey = rawKey.toLowerCase();
+      this._speciesImgMap.set(normalizedKey, filePath);
+      this._speciesImgMap.set(normalizedKey.replace(/['’]/g, ''), filePath);
+      this._speciesImgMap.set(normalizedKey.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''), filePath);
+    };
+
     try {
-      // Prefer V13 API path; fall back to legacy global for compatibility
+      // Prefer V13 API path; fall back to legacy global for compatibility.
+      // Forge/hosted installs can refuse this browse, so a static manifest is
+      // loaded below as the reliable fallback.
       const FP = foundry.applications?.apps?.FilePicker ?? globalThis.FilePicker;
-      const result = await FP.browse('data', 'systems/foundryvtt-swse/assets/species');
-      for (const filePath of (result.files ?? [])) {
+      const result = await FP?.browse?.('data', 'systems/foundryvtt-swse/assets/species');
+      for (const filePath of (result?.files ?? [])) {
         const basename = filePath.split('/').pop();           // "Blood_Carver.webp"
         const namePart = basename
           .replace(/\.[^.]+$/, '')                            // strip extension → "Blood_Carver"
           .replace(/_/g, ' ');                                // underscores → spaces → "Blood Carver"
-        this._speciesImgMap.set(namePart.toLowerCase(), filePath);
+        addImagePath(namePart, filePath);
       }
     } catch (err) {
-      console.warn('SpeciesStep | Could not browse assets/species/:', err);
+      swseLogger.debug?.('SpeciesStep | FilePicker species image browse unavailable; using static image manifest fallback.', err);
+    }
+
+    try {
+      const res = await fetch('systems/foundryvtt-swse/data/species-image-manifest.json');
+      if (res.ok) {
+        const manifest = await res.json();
+        for (const [key, filePath] of Object.entries(manifest || {})) {
+          addImagePath(key, filePath);
+        }
+      }
+    } catch (err) {
+      swseLogger.debug?.('SpeciesStep | Could not load species image manifest fallback.', err);
     }
   }
 
@@ -1477,16 +1501,27 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   _resolveSpeciesImg(species) {
-    // Use existing img if it looks like real art (not a default Foundry icon)
+    if (!species) return null;
+
+    // Use existing img if it looks like real art (not a default Foundry icon).
     if (species.img
       && !species.img.includes('mystery-man')
       && !species.img.includes('icons/tokens')) {
       return species.img;
     }
-    // Look up by name in the scanned file map
-    const key = (species.name ?? '').toLowerCase();
-    if (this._speciesImgMap.has(key)) {
-      return this._speciesImgMap.get(key);
+
+    const candidates = [
+      species.name,
+      species.id,
+      species._id,
+      String(species.name || '').replace(/['’]/g, ''),
+      String(species.name || '').replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, ''),
+    ]
+      .filter(Boolean)
+      .map(key => String(key).toLowerCase());
+
+    for (const key of candidates) {
+      if (this._speciesImgMap.has(key)) return this._speciesImgMap.get(key);
     }
     return null;
   }

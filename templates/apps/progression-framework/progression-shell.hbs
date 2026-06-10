@@ -70,27 +70,26 @@
   ======================================================================= --}}
   {{#if hudTags}}
   {{> "systems/foundryvtt-swse/templates/components/hud.hbs"
-      title="CHARACTER CREATION"
+      title=(localize "SWSE.Progression.Shell.CharacterCreation")
       left=(array hudTags.modeTag hudTags.actorTag)
       right=(array hudTags.stageTag)
   }}
 
   <div class="prog-phase-banner">
-    <div class="prog-phase-banner__title">Training Matrix</div>
-    <div class="prog-phase-banner__subtitle">Mentor-guided progression pipeline · concept shell restoration pass</div>
+    <div class="prog-phase-banner__title">{{localize "SWSE.Progression.Shell.TrainingMatrix"}}</div>
+    <div class="prog-phase-banner__subtitle">{{localize "SWSE.Progression.Shell.TrainingMatrixSubtitle"}}</div>
   </div>
   {{/if}}
 
   {{!-- ======================================================================
     MAIN COLUMN — progress-rail (horizontal tabs) + utility-bar + content-row + action-footer
   ======================================================================= --}}
-  <div class="prog-main-column" data-progress-collapsed="{{progressRailCollapsed}}" data-utility-collapsed="{{utilityBarCollapsed}}">
+  <div class="prog-main-column">
 
     {{!-- ====================================================================
       PROGRESS RAIL — compact horizontal step progression
     ==================================================================== --}}
-    <div data-region="progress-rail"
-         data-collapsed="{{progressRailCollapsed}}">
+    <div data-region="progress-rail">
       {{{parts.progressRail}}}
     </div>{{!-- /progress-rail --}}
 
@@ -111,26 +110,15 @@
     {{!-- ====================================================================
       CONTENT ROW — summary-panel (left) + work-surface (center) + details-panel (right)
     ==================================================================== --}}
-    <div class="prog-content-row" data-summary-collapsed="{{summaryPanelCollapsed}}">
+    <div class="prog-content-row">
       <div class="prog-content-gridline prog-content-gridline--h"></div>
       <div class="prog-content-gridline prog-content-gridline--v"></div>
 
       {{!-- ==================================================================
         SUMMARY PANEL — left column, compact build snapshot
       ================================================================== --}}
-      <aside data-region="summary-panel"
-             data-collapsed="{{summaryPanelCollapsed}}">
+      <aside data-region="summary-panel">
 
-        <button class="prog-summary-panel__collapse swse-ui-button"
-                data-action="toggle-summary-panel"
-                type="button"
-                aria-expanded="{{#unless summaryPanelCollapsed}}true{{else}}false{{/unless}}"
-                title="{{#if summaryPanelCollapsed}}Expand summary rail{{else}}Collapse summary rail{{/if}}">
-          <i class="fas fa-chevron-{{#if summaryPanelCollapsed}}right{{else}}left{{/if}}"></i>
-          <span class="prog-summary-panel__collapse-text">Summary</span>
-        </button>
-
-        <div class="prog-summary-panel__body">
         {{#if summaryPanelHtml}}
           {{{summaryPanelHtml}}}
         {{else}}
@@ -140,7 +128,6 @@
             {{/if}}
           </div>
         {{/if}}
-        </div>
 
       </aside>{{!-- /summary-panel --}}
 
@@ -169,14 +156,14 @@
                 {{currentDescriptor.label}}
                 {{#if currentDescriptor.isConditional}}
                   <span class="prog-chip prog-chip--warning">
-                    Engine-Unlocked
+                    {{localize "SWSE.Progression.Shell.EngineUnlocked"}}
                   </span>
                 {{/if}}
               </div>
               <p class="prog-work-placeholder__hint">
-                Step {{add currentStepIndex 1}} of {{totalSteps}}
+                {{localize "SWSE.Progression.Shell.StepOf" current=(add currentStepIndex 1) total=totalSteps}}
                 {{#if currentDescriptor.isConditional}}
-                  — Unlocked by: {{currentDescriptor.unlockReason}}
+                  — {{localize "SWSE.Progression.Shell.UnlockedBy" reason=currentDescriptor.unlockReason}}
                 {{/if}}
               </p>
               {{#if lastError}}
@@ -186,7 +173,7 @@
                 </div>
               {{/if}}
             {{else}}
-              <p class="prog-work-placeholder__empty">No steps available.</p>
+              <p class="prog-work-placeholder__empty">{{localize "SWSE.Progression.Shell.NoStepsAvailable"}}</p>
             {{/if}}
           </div>
         {{/if}}

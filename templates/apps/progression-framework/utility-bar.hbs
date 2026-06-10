@@ -111,17 +111,17 @@
 
 
   <button class="prog-btn swse-ui-button prog-utility-bar__reset" data-action="reset-utility-filters" type="button">
-    Reset Filters
+    {{localize "SWSE.Progression.Utility.ResetFilters"}}
   </button>
 
   {{! Conditional step badge }}
   {{#if currentDescriptor.isConditional}}
-    <span class="prog-chip prog-chip--warning prog-utility-bar__conditional">Conditional</span>
+    <span class="prog-chip prog-chip--warning prog-utility-bar__conditional">{{localize "SWSE.Progression.Utility.Conditional"}}</span>
   {{/if}}
 
   {{! Collapse button — always visible, even when collapsed }}
   <button class="prog-utility-bar__collapse swse-ui-button" data-action="toggle-utility-bar" type="button"
-          title="{{#if utilityBarCollapsed}}Expand{{else}}Collapse{{/if}}">
+          title="{{#if utilityBarCollapsed}}{{localize "SWSE.Progression.Utility.Expand"}}{{else}}{{localize "SWSE.Progression.Utility.Collapse"}}{{/if}}">
     <i class="fas fa-chevron-{{#if utilityBarCollapsed}}down{{else}}up{{/if}}"></i>
   </button>
 </div>

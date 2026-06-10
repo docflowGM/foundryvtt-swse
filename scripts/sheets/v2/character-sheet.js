@@ -4564,13 +4564,21 @@ const forcePoints = [];
           if (path === "system.hp.value") {
             const max = foundry.utils.getProperty(this.actor, "system.hp.max") ?? 0;
             const clamped = Math.clamped(value, 0, max);
-            await ActorEngine.updateActor(this.actor, { [path]: clamped }, { source: 'character-sheet-hp-input' });
+            await ActorEngine.updateActor(this.actor, { [path]: clamped }, {
+              source: 'character-sheet-hp-input',
+              render: false,
+              suppressAppRefresh: true
+            });
             return;
           }
 
           // Temp HP: Clamp ≥ 0 only
           if (path === "system.hp.temp") {
-            await ActorEngine.updateActor(this.actor, { [path]: Math.max(0, value) }, { source: 'character-sheet-hp-input' });
+            await ActorEngine.updateActor(this.actor, { [path]: Math.max(0, value) }, {
+              source: 'character-sheet-hp-input',
+              render: false,
+              suppressAppRefresh: true
+            });
             return;
           }
 
@@ -4581,10 +4589,18 @@ const forcePoints = [];
             const current = foundry.utils.getProperty(this.actor, "system.hp.value") ?? 0;
             const newMax = Math.max(1, value);
             if (current > newMax) {
-              await ActorEngine.updateActor(this.actor, { "system.hp.value": newMax }, { source: 'character-sheet-hp-input' });
+              await ActorEngine.updateActor(this.actor, { "system.hp.value": newMax }, {
+                source: 'character-sheet-hp-input',
+                render: false,
+                suppressAppRefresh: true
+              });
             }
             // Trigger recomputation (will be overridden by actual class-based calc)
-            await ActorEngine.recomputeHP(this.actor);
+            await ActorEngine.recomputeHP(this.actor, {
+              source: 'character-sheet-hp-input',
+              render: false,
+              suppressAppRefresh: true
+            });
             return;
           }
         } catch (err) {
@@ -5050,6 +5066,11 @@ const forcePoints = [];
       const input = ev.target.closest(".ability-expanded input");
       if (!input) return;
 
+      // Change events already own direct field persistence.  Submitting again on
+      // blur caused duplicate ActorEngine writes and duplicate repaint requests
+      // for one ability edit.
+      if (isDirectFieldMutationPath(input.name)) return;
+
       const form = input.closest(".swse-character-sheet-form");
       if (form) {
         // swseLogger.debug('[PERSISTENCE] Ability input blur detected, submitting form');
@@ -5357,6 +5378,34 @@ const forcePoints = [];
       if (!button) return;
       ev.preventDefault();
       await ShellRouter.openSurface(this.actor, 'store');
+    }, { signal, capture: false });
+
+    // Manual refresh button: this is the explicit full recalc/repaint escape hatch.
+    // Ordinary field edits persist quietly and do not repaint every surface.
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest('[data-action="refresh-sheet"]');
+      if (!button) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      button.disabled = true;
+      const previousLabel = button.textContent;
+      button.textContent = 'Refreshing...';
+      try {
+        await ActorEngine.recalcAll(this.actor);
+        this.actor?.prepareData?.();
+        await this.requestSurfaceRender({
+          reason: 'manual-sheet-refresh',
+          surfaceId: this._shellSurface ?? 'sheet',
+          preserveUi: true
+        });
+        ui?.notifications?.info?.('Character sheet refreshed.');
+      } catch (err) {
+        swseLogger.error('[CharacterSheet] Manual refresh failed:', err);
+        ui?.notifications?.error?.(`Refresh failed: ${err?.message ?? err}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = previousLabel || 'Refresh';
+      }
     }, { signal, capture: false });
 
     // Character identity selection buttons (Class, Species, Background, Homeworld, Profession)

@@ -671,6 +671,13 @@ export const ActorEngine = {
       const shouldSuppressAppRefresh = Boolean(options?.suppressAppRefresh);
       if (shouldSuppressAppRefresh) {
         actor._swseSuppressAppRefreshDepth = Number(actor._swseSuppressAppRefreshDepth || 0) + 1;
+        // Foundry prepareData() can spawn async derived work after actor.update().
+        // Keep quiet field edits render-suppressed for a short grace window so
+        // those async recomputes do not repaint every open actor app anyway.
+        actor._swseSuppressAppRefreshUntil = Math.max(
+          Number(actor._swseSuppressAppRefreshUntil || 0),
+          Date.now() + Number(options?.suppressAppRefreshMs || 900)
+        );
       }
 
       try {
@@ -3797,8 +3804,9 @@ export const ActorEngine = {
           return 1; // Already at minimum, no update needed
         }
         await this.updateActor(actor, { 'system.hp.max': 1 }, {
+          ...options,
           isRecomputeHPCall: true,
-          meta: { guardKey: 'hp-recompute' }
+          meta: { ...(options.meta || {}), guardKey: 'hp-recompute' }
         });
         return 1;
       }
@@ -3873,8 +3881,9 @@ export const ActorEngine = {
       // isRecomputeHPCall flag bypasses HP write guard (see 4D enforcement)
       // meta.guardKey prevents updateActor hook from re-triggering
       await this.updateActor(actor, { 'system.hp.max': newHPMax }, {
+        ...options,
         isRecomputeHPCall: true,
-        meta: { guardKey: 'hp-recompute' }
+        meta: { ...(options.meta || {}), guardKey: 'hp-recompute' }
       });
 
       // Trigger DerivedCalculator to mirror HP if not called from hook (prevent recursion)

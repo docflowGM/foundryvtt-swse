@@ -364,8 +364,7 @@ export class MentorRail {
     shell.mentor.collapsed = shell.mentorCollapsed;
     await game.user.setFlag('foundryvtt-swse', 'mentorRailCollapsed', shell.mentorCollapsed);
 
-    const region = shell.element?.querySelector('[data-region="mentor-rail"]');
-    if (region) region.setAttribute('data-collapsed', String(shell.mentorCollapsed));
+    return shell.render({ force: true });
   }
 
   /**

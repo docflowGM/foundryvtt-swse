@@ -83,6 +83,12 @@ function emitFeatStepTrace(label, payload = {}) {
   }
 }
 
+function localizeProgressionText(key, data = null) {
+  const i18n = globalThis.game?.i18n;
+  if (!i18n) return key;
+  return data ? i18n.format(key, data) : i18n.localize(key);
+}
+
 const FEAT_TYPE_ICONS = {
   recommended: 'fa-star',
   general:     'fa-star',
@@ -339,7 +345,7 @@ export class FeatStep extends ProgressionStepPlugin {
       .map(feat => attachFeatIconPath(feat));
     this._catalogUnavailable = this._allFeats.length === 0;
     this._catalogUnavailableMessage = this._catalogUnavailable
-      ? 'The feat catalog did not hydrate from the Foundry compendium. This step is safe to skip, but feat choices will not be available until the feats pack registers.'
+      ? localizeProgressionText('SWSE.Progression.Feat.Messages.CatalogHydrationFailed')
       : '';
     if (this._catalogUnavailable) this._showAll = false;
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
@@ -498,10 +504,10 @@ export class FeatStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       if (!Array.isArray(this._allFeats) || this._allFeats.length === 0) {
         this._catalogUnavailable = true;
-        this._catalogUnavailableMessage = 'The feat catalog is unavailable because the feats compendium did not register. The step remains skippable so character creation can continue.';
+        this._catalogUnavailableMessage = localizeProgressionText('SWSE.Progression.Feat.Messages.CatalogUnavailableSkippable');
         this._showAll = false;
         this._noChoicesAvailable = true;
-        ui?.notifications?.warn?.('Feat catalog unavailable: no feats were loaded from the compendium. You can continue past this step.');
+        ui?.notifications?.warn?.(localizeProgressionText('SWSE.Progression.Feat.Messages.CatalogUnavailableWarning'));
         await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-catalog-unavailable' }) ?? shell?.render?.());
         return true;
       }
@@ -1008,7 +1014,7 @@ export class FeatStep extends ProgressionStepPlugin {
     // Add suggested group first. Suggestions are always legal/selectable feats.
     if (this._suggestedFeats.length > 0) {
       this._groupedFeats['suggested'] = {
-        label: 'Suggested for Your Build',
+        label: localizeProgressionText('SWSE.Progression.Feat.Groups.SuggestedForYourBuild'),
         icon: 'fa-star',
         feats: this._orderFeatsForTree(this._suggestedFeats),
         isSuggested: true,
@@ -1158,16 +1164,16 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _formatPrerequisiteLine(raw) {
-    if (!raw) return 'No prerequisites';
-    if (Array.isArray(raw)) return raw.map(r => typeof r === 'string' ? r : (r?.name || r?.type || JSON.stringify(r))).filter(Boolean).join(', ') || 'No prerequisites';
-    if (typeof raw === 'string') return raw.trim() || 'No prerequisites';
+    if (!raw) return localizeProgressionText('SWSE.Progression.Common.NoPrerequisites');
+    if (Array.isArray(raw)) return raw.map(r => typeof r === 'string' ? r : (r?.name || r?.type || JSON.stringify(r))).filter(Boolean).join(', ') || localizeProgressionText('SWSE.Progression.Common.NoPrerequisites');
+    if (typeof raw === 'string') return raw.trim() || localizeProgressionText('SWSE.Progression.Common.NoPrerequisites');
     if (typeof raw === 'object') {
       if (raw.raw) return this._formatPrerequisiteLine(raw.raw);
       if (raw.name) return String(raw.name);
       if (raw.type && raw.value != null) return `${raw.type}: ${raw.value}`;
       return Object.entries(raw).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join('/') : String(v)}`).join(', ');
     }
-    return 'No prerequisites';
+    return localizeProgressionText('SWSE.Progression.Common.NoPrerequisites');
   }
 
   _getCategoryIcon(category) {
@@ -1186,7 +1192,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const featName = String(feat?.name || '').trim().toLowerCase();
     const raw = String(text || '').trim();
     if (featName === 'weapon focus' && /proficient\s+with\s+(?:chosen|selected)\s+weapon/i.test(raw)) {
-      return 'Weapon Proficiency with chosen weapon group or exotic weapon';
+      return localizeProgressionText('SWSE.Progression.Feat.Messages.WeaponProficiencyChosenGroup');
     }
     return raw;
   }
@@ -1201,7 +1207,7 @@ export class FeatStep extends ProgressionStepPlugin {
    */
   _getPrerequisiteLine(feat) {
     const cleaned = this._formatChoicePrerequisiteText(feat, feat?.prerequisiteText || feat?.system?.prerequisite || '');
-    return cleaned || 'No prerequisite';
+    return cleaned || localizeProgressionText('SWSE.Progression.Common.NoPrerequisite');
   }
 
   /**
@@ -1489,10 +1495,10 @@ export class FeatStep extends ProgressionStepPlugin {
       requiredCount,
       remainingCount,
       isComplete,
-      progressLabel: `${selectedCount} of ${requiredCount} feat${requiredCount === 1 ? '' : 's'}`,
+      progressLabel: localizeProgressionText('SWSE.Progression.Feat.Progress.SelectedOfRequired', { selected: selectedCount, required: requiredCount }),
       remainingLabel: remainingCount > 0
-        ? `${remainingCount} feat${remainingCount === 1 ? '' : 's'} remaining`
-        : 'Complete',
+        ? localizeProgressionText('SWSE.Progression.Feat.Progress.Remaining', { count: remainingCount })
+        : localizeProgressionText('SWSE.Progression.Common.Complete'),
     };
 
     const isMulticlassStartingFeatSlot = this._isLevelupMulticlassStartingFeatSlot(context?.shell || context);
@@ -1673,7 +1679,7 @@ export class FeatStep extends ProgressionStepPlugin {
     }
 
     if (feat.isAvailable === false) {
-      ui.notifications?.warn?.(feat.unavailabilityReason || 'That feat is not currently available.');
+      ui.notifications?.warn?.(feat.unavailabilityReason || localizeProgressionText('SWSE.Progression.Feat.Messages.NotCurrentlyAvailable'));
       emitFeatStepTrace('ITEM_COMMIT_REJECTED_UNAVAILABLE', {
         featId: feat?._id || feat?.id || null,
         featName: feat?.name || null,
@@ -1696,7 +1702,7 @@ export class FeatStep extends ProgressionStepPlugin {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = currentSlotSelections;
         const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, {
-          title: `Choose: ${feat.name}`,
+          title: localizeProgressionText('SWSE.Progression.Feat.Messages.ChooseTitle', { feat: feat.name }),
           context: { pending: pendingForChoice }
         });
         if (!selectedChoice) {
@@ -1710,7 +1716,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
         const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, feat, selectedChoice, { pending: pendingForChoice });
         if (!choiceValidation.valid) {
-          ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || 'That feat choice is not currently legal.');
+          ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || localizeProgressionText('SWSE.Progression.Feat.Messages.ChoiceNotLegal'));
           emitFeatStepTrace('ITEM_COMMIT_REJECTED_FOR_CHOICE_LEGALITY', {
             featId,
             featName: feat?.name || null,
@@ -1734,7 +1740,7 @@ export class FeatStep extends ProgressionStepPlugin {
         };
         const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(shell.actor, candidateWithChoice, selectedChoicePending);
         if (!choiceAwareAssessment?.legal) {
-          const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || ['Feat prerequisites are not met for that selected choice.'];
+          const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || [localizeProgressionText('SWSE.Progression.Feat.Messages.PrereqsNotMetForChoice')];
           ui.notifications?.warn?.(reasons.join(' '));
           emitFeatStepTrace('ITEM_COMMIT_REJECTED_FOR_PREREQ_LEGALITY', {
             featId,
@@ -1761,7 +1767,7 @@ export class FeatStep extends ProgressionStepPlugin {
       nextSlotSelections = currentSlotSelections.filter(entry => String(entry?.id || entry?._id || entry?.name || '') !== String(featId));
     } else if (this._slotType === 'heroic' && requiredCount > 1) {
       if (currentSlotSelections.length >= requiredCount) {
-        ui.notifications?.warn?.(`You have already selected ${requiredCount} general feats. Remove one before choosing another.`);
+        ui.notifications?.warn?.(localizeProgressionText('SWSE.Progression.Feat.Messages.GeneralFeatLimit', { count: requiredCount }));
         return;
       }
       nextSlotSelections = nextSelection ? [...currentSlotSelections, nextSelection] : currentSlotSelections;
@@ -1827,21 +1833,21 @@ export class FeatStep extends ProgressionStepPlugin {
     let returnToSkills = false;
     try {
       const result = await SWSEDialogV2.wait({
-        title: 'Class Skills Updated',
+        title: localizeProgressionText('SWSE.Progression.Feat.Messages.ClassSkillsUpdatedTitle'),
         content: `
-          <p><strong>Force Sensitivity</strong> changes your class skill list.</p>
-          <p><strong>Use the Force</strong> is now a class skill for this character.</p>
-          <p>Would you like to return to Skill Selection now so you can rearrange your trained skills?</p>
+          <p><strong>Force Sensitivity</strong> ${localizeProgressionText('SWSE.Progression.Feat.Messages.ForceSensitivityChangesClassSkills')}</p>
+          <p><strong>Use the Force</strong> ${localizeProgressionText('SWSE.Progression.Feat.Messages.UseTheForceNowClassSkill')}</p>
+          <p>${localizeProgressionText('SWSE.Progression.Feat.Messages.ReturnToSkillsQuestion')}</p>
         `,
         buttons: {
           returnSkills: {
             icon: '<i class="fa-solid fa-arrow-left"></i>',
-            label: 'Return to Skills',
+            label: localizeProgressionText('SWSE.Progression.Feat.Actions.ReturnToSkills'),
             callback: () => 'return-skills',
           },
           stay: {
             icon: '<i class="fa-solid fa-check"></i>',
-            label: 'Stay Here',
+            label: localizeProgressionText('SWSE.Progression.Feat.Actions.StayHere'),
             callback: () => 'stay',
           },
         },
@@ -1871,12 +1877,12 @@ export class FeatStep extends ProgressionStepPlugin {
       ?? -1;
 
     if (!Number.isInteger(stepIndex) || stepIndex < 0) {
-      ui.notifications?.warn?.('The Skills step is not currently available.');
+      ui.notifications?.warn?.(localizeProgressionText('SWSE.Progression.Feat.Messages.SkillsStepUnavailable'));
       return;
     }
 
     if (stepIndex >= Number(shell?.currentStepIndex ?? 0)) {
-      ui.notifications?.warn?.('Skill Selection is not behind the current step in this progression flow.');
+      ui.notifications?.warn?.(localizeProgressionText('SWSE.Progression.Feat.Messages.SkillSelectionNotBehindCurrent'));
       return;
     }
 
@@ -2050,13 +2056,13 @@ export class FeatStep extends ProgressionStepPlugin {
     // Mode-aware default guidance
     if (this.isChargen(shell)) {
       return this._isDroidProgression
-        ? 'Choose feats that reinforce your chassis role package and complement your installed systems.'
-        : 'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
+        ? localizeProgressionText('SWSE.Progression.Feat.Mentor.DroidChargen')
+        : localizeProgressionText('SWSE.Progression.Feat.Mentor.Chargen');
     } else if (this.isLevelup(shell)) {
-      return 'As you gain experience, you may learn new techniques and abilities. Choose feats that enhance your path.';
+      return localizeProgressionText('SWSE.Progression.Feat.Mentor.LevelUp');
     }
 
-    return 'Select a feat wisely.';
+    return localizeProgressionText('SWSE.Progression.Feat.Mentor.Default');
   }
 
   getMentorMode() {
@@ -2076,7 +2082,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
     if (!this._noChoicesAvailable && selectedCount < requiredCount) {
       const remaining = requiredCount - selectedCount;
-      issues.push(`Select ${remaining} more feat${remaining === 1 ? '' : 's'}`);
+      issues.push(localizeProgressionText('SWSE.Progression.Feat.Validation.SelectMoreFeats', { count: remaining }));
     }
 
     return {
@@ -2094,7 +2100,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
     if (selectedCount < requiredCount) {
       const remaining = requiredCount - selectedCount;
-      return [`Select ${remaining} more ${this._slotType === 'class' ? 'Class' : 'General'} Feat${remaining === 1 ? '' : 's'}`];
+      return [localizeProgressionText('SWSE.Progression.Feat.Validation.SelectMoreTypedFeats', { count: remaining, type: this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Feat.Slot.Class') : localizeProgressionText('SWSE.Progression.Feat.Slot.General') })];
     }
     return [];
   }
@@ -2109,9 +2115,9 @@ export class FeatStep extends ProgressionStepPlugin {
     const selectedCount = (this._selectedFeatIds || []).length;
     const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
     if (selectedCount < requiredCount) {
-      const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
+      const slotTypeLabel = this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Feat.Slot.Class') : localizeProgressionText('SWSE.Progression.Feat.Slot.General');
       const remaining = requiredCount - selectedCount;
-      return `Choose ${remaining} more ${slotTypeLabel} Feat${remaining === 1 ? '' : 's'} to continue`;
+      return localizeProgressionText('SWSE.Progression.Feat.Progress.ChooseMoreToContinue', { count: remaining, type: slotTypeLabel });
     }
     return null;
   }
@@ -2123,11 +2129,11 @@ export class FeatStep extends ProgressionStepPlugin {
   getUtilityBarConfig() {
     return {
       mode: 'rich',
-      search: { enabled: true, placeholder: this._isDroidProgression ? 'Search droid feats…' : 'Search feats…' },
+      search: { enabled: true, placeholder: this._isDroidProgression ? localizeProgressionText('SWSE.Progression.Feat.Search.DroidPlaceholder') : localizeProgressionText('SWSE.Progression.Feat.Search.Placeholder') },
       // Type and tag filters are rendered inline in the work surface, not as utility-bar chips.
       sorts: [
-        { id: 'alpha-asc',  label: 'Name A→Z' },
-        { id: 'alpha-desc', label: 'Name Z→A' },
+        { id: 'alpha-asc',  label: localizeProgressionText('SWSE.Progression.Common.Sort.NameAZ') },
+        { id: 'alpha-desc', label: localizeProgressionText('SWSE.Progression.Common.Sort.NameZA') },
       ],
     };
   }
@@ -2151,15 +2157,15 @@ export class FeatStep extends ProgressionStepPlugin {
 
   getRemainingPicks() {
     if (this._noChoicesAvailable) {
-      const slotTypeLabel = this._slotType === 'class' ? 'Class Feat' : 'General Feat';
-      const reason = this._catalogUnavailable ? 'catalog unavailable' : 'no legal options';
+      const slotTypeLabel = this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Feat.Slot.ClassFeat') : localizeProgressionText('SWSE.Progression.Feat.Slot.GeneralFeat');
+      const reason = this._catalogUnavailable ? localizeProgressionText('SWSE.Progression.Feat.Slot.CatalogUnavailable') : localizeProgressionText('SWSE.Progression.Feat.Slot.NoLegalOptions');
       return [{ label: `${slotTypeLabel}: ${reason}`, count: 0, total: 0, selected: 0, isWarning: false }];
     }
 
     const selected = (this._selectedFeatIds || []).length;
     const total = Math.max(0, Number(this._requiredFeatCount || 0));
     return [{
-      label: this._slotType === 'class' ? 'Class Feat' : 'General Feat',
+      label: this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Feat.Slot.ClassFeat') : localizeProgressionText('SWSE.Progression.Feat.Slot.GeneralFeat'),
       count: Math.max(0, total - selected),
       total,
       selected,
@@ -2168,20 +2174,20 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getFooterConfig() {
-    const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
+    const slotTypeLabel = this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Feat.Slot.Class') : localizeProgressionText('SWSE.Progression.Feat.Slot.General');
 
     let statusText = '';
     if (this._noChoicesAvailable) {
       statusText = this._catalogUnavailable
-        ? `${slotTypeLabel} Feat: Catalog unavailable — safe to skip`
-        : `${slotTypeLabel} Feat: No legal options — safe to skip`;
+        ? localizeProgressionText('SWSE.Progression.Feat.Footer.CatalogUnavailableSafeToSkip', { type: slotTypeLabel })
+        : localizeProgressionText('SWSE.Progression.Feat.Footer.NoLegalOptionsSafeToSkip', { type: slotTypeLabel });
     } else if ((this._selectedFeatIds || []).length) {
       const selectedNames = (this._selectedFeatIds || [])
         .map(id => this._getFeat(id)?.name || id)
         .filter(Boolean);
-      statusText = `${slotTypeLabel} Feat: ${selectedNames.join(', ')}`;
+      statusText = localizeProgressionText('SWSE.Progression.Feat.Footer.Selected', { type: slotTypeLabel, names: selectedNames.join(', ') });
     } else {
-      statusText = `${slotTypeLabel} Feat not yet chosen`;
+      statusText = localizeProgressionText('SWSE.Progression.Feat.Footer.NotYetChosen', { type: slotTypeLabel });
     }
 
     const selectedCount = (this._selectedFeatIds || []).length;

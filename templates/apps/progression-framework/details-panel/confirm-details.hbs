@@ -91,14 +91,14 @@
     {{!-- FEATS DETAILS --}}
     {{#if (eq focusedSection "feats")}}
       <div class="prog-confirm-details__section">
-        <h3 class="prog-confirm-details__title">Feats Acquired</h3>
+        <h3 class="prog-confirm-details__title">{{localize "SWSE.Progression.Confirm.FeatsAcquired"}}</h3>
         <div class="prog-confirm-details__counts">
           <div class="prog-confirm-details__count-row">
-            <span class="prog-confirm-details__count-label">General Feats:</span>
+            <span class="prog-confirm-details__count-label">{{localize "SWSE.Progression.Confirm.GeneralFeats"}}</span>
             <span class="prog-confirm-details__count-value">{{summary.feats.general}}</span>
           </div>
           <div class="prog-confirm-details__count-row">
-            <span class="prog-confirm-details__count-label">Class Feats:</span>
+            <span class="prog-confirm-details__count-label">{{localize "SWSE.Progression.Confirm.ClassFeats"}}</span>
             <span class="prog-confirm-details__count-value">{{summary.feats.class}}</span>
           </div>
           <div class="prog-confirm-details__count-row" style="font-weight: bold;">
@@ -112,14 +112,14 @@
     {{!-- TALENTS DETAILS --}}
     {{#if (eq focusedSection "talents")}}
       <div class="prog-confirm-details__section">
-        <h3 class="prog-confirm-details__title">Talents Selected</h3>
+        <h3 class="prog-confirm-details__title">{{localize "SWSE.Progression.Confirm.TalentsSelected"}}</h3>
         <div class="prog-confirm-details__counts">
           <div class="prog-confirm-details__count-row">
-            <span class="prog-confirm-details__count-label">Heroic Talents:</span>
+            <span class="prog-confirm-details__count-label">{{localize "SWSE.Progression.Confirm.HeroicTalents"}}</span>
             <span class="prog-confirm-details__count-value">{{summary.talents.heroic}}</span>
           </div>
           <div class="prog-confirm-details__count-row">
-            <span class="prog-confirm-details__count-label">Class Talents:</span>
+            <span class="prog-confirm-details__count-label">{{localize "SWSE.Progression.Confirm.ClassTalents"}}</span>
             <span class="prog-confirm-details__count-value">{{summary.talents.class}}</span>
           </div>
           <div class="prog-confirm-details__count-row" style="font-weight: bold;">
@@ -203,24 +203,24 @@
     <div class="prog-confirm-details__empty">
       <div class="prog-confirm-details__readiness-header">
         <i class="fas fa-check-circle" aria-hidden="true"></i>
-        <h3>Build Review</h3>
+        <h3>{{localize "SWSE.Progression.Confirm.BuildReview"}}</h3>
       </div>
       {{#if readiness.blockingIssues.length}}
         <div class="prog-confirm-details__readiness-section">
-          <h4 class="prog-confirm-details__readiness-label prog-num--neg">Blocking Issues</h4>
+          <h4 class="prog-confirm-details__readiness-label prog-num--neg">{{localize "SWSE.Progression.Confirm.BlockingIssues"}}</h4>
           <ul class="prog-confirm-details__readiness-list">
             {{#each readiness.blockingIssues}}
               <li>{{this}}</li>
             {{/each}}
           </ul>
           <p class="prog-confirm-details__readiness-note">
-            Resolve these items to proceed to finalization.
+            {{localize "SWSE.Progression.Confirm.ResolveItems"}}
           </p>
         </div>
       {{/if}}
       {{#if readiness.warnings.length}}
         <div class="prog-confirm-details__readiness-section">
-          <h4 class="prog-confirm-details__readiness-label prog-num--neutral">Warnings</h4>
+          <h4 class="prog-confirm-details__readiness-label prog-num--neutral">{{localize "SWSE.Progression.Confirm.Warnings"}}</h4>
           <ul class="prog-confirm-details__readiness-list">
             {{#each readiness.warnings}}
               <li>{{this}}</li>
@@ -232,10 +232,10 @@
         <div class="prog-confirm-details__readiness-section">
           <p class="prog-confirm-details__readiness-success">
             <i class="fas fa-check-circle prog-num--pos" aria-hidden="true"></i>
-            All required build elements are complete.
+            {{localize "SWSE.Progression.Confirm.AllRequiredComplete"}}
           </p>
           <p class="prog-confirm-details__readiness-note">
-            Click on any section above to review details, or proceed to finalize your character.
+            {{localize "SWSE.Progression.Confirm.ReviewOrFinalize"}}
           </p>
         </div>
       {{/if}}

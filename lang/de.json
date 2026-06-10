@@ -183,12 +183,6 @@
       "DevMode": {
         "Name": "Entwicklermodus",
         "Hint": "Aktiviert detaillierte Fehlerprotokollierung und Stack-Traces für Debugging"
-      },
-      "Store": {
-        "RequireGMApproval": {
-          "Hint": "Wenn aktiviert, müssen benutzerdefinierte Droiden von einem SL genehmigt werden, bevor Credits abgezogen werden. Wenn deaktiviert, werden benutzerdefinierte Droiden sofort abgeschlossen.",
-          "Name": "SL-Genehmigung für benutzerdefinierte Droiden erforderlich"
-        }
       }
     },
     "Compendium": {
@@ -320,11 +314,7 @@
         "ConfirmVehiclePurchase": "Fahrzeug-Kauf Bestätigen",
         "BuildCustomDroid": "Benutzerdefinierten Droiden Bauen",
         "BuildCustomStarship": "Benutzerdefiniertes Raumschiff Bauen",
-        "CompletePurchase": "Kauf Abschließen",
-        "RequireGMApproval": {
-          "Hint": "Wenn aktiviert, müssen benutzerdefinierte Droiden von einem SL genehmigt werden, bevor Credits abgezogen werden. Wenn deaktiviert, werden benutzerdefinierte Droiden sofort abgeschlossen.",
-          "Name": "SL-Genehmigung für benutzerdefinierte Droiden erforderlich"
-        }
+        "CompletePurchase": "Kauf Abschließen"
       },
       "LevelUp": {
         "Title": "{name} Stufe Aufsteigen"
@@ -373,369 +363,327 @@
         "Breakdown": "Aufschlüsselung"
       }
     },
-    "ACTION": {
-      "CHAT": "An Chat senden",
-      "ROLL": "Würfeln",
-      "USE": "Benutzen"
-    },
-    "ACTOR": {
-      "TABS": {
-        "FEATS": "Vorzüge",
-        "RACIAL": "Speziesmerkmale",
-        "TALENTS": "Talente"
-      }
-    },
-    "CHARGEN": {
-      "NEAR_HUMAN": {
-        "ABILITY_HELP": "Passe die Attribute deiner nahezu menschlichen Abstammung an. Die endgültige Summe der Anpassungen muss 0 sein.",
-        "ABILITY_TITLE": "Attributsanpassungen",
-        "AVAILABLE_TRAITS": "Verfügbare Merkmale",
-        "DROP_HINT": "Ziehe Merkmale hierher, um sie auszuwählen.",
-        "INVALID": "Nahezu menschliche Herkunft ist unvollständig oder ungültig",
-        "NO_AVAILABLE": "Keine Merkmale verfügbar.",
-        "SACRIFICE_FEAT": "Zusätzlichen Vorzug opfern",
-        "SACRIFICE_HELP": "Du kannst grundlegende menschliche Vorteile opfern, um zusätzliche Plätze für nahezu menschliche Merkmale freizuschalten.",
-        "SACRIFICE_SKILL": "Zusätzliche ausgebildete Fertigkeit opfern",
-        "SACRIFICE_TITLE": "Opfer für nahezu menschliche Herkunft",
-        "SELECTED": "Ausgewählt",
-        "SELECTED_TRAITS": "Ausgewählte Merkmale",
-        "TOTAL": "Gesamt",
-        "TRAIT_SLOTS": "Merkmalsplätze",
-        "VALID": "Nahezu menschliche Herkunft gültig"
-      }
-    },
-    "CURRENCY": {
-      "SYMBOL": "cr"
-    },
-    "Chargen": {
-      "CancelContent": "Möchtest du wirklich abbrechen? Der gesamte Fortschritt geht verloren.",
-      "CancelTitle": "Charaktererstellung abbrechen"
-    },
-    "DIFFICULTY": {
-      "LABEL": "SW"
-    },
-    "Discovery": {
-      "Callout": {
-        "Dismiss": "Verstanden",
-        "actionPaletteFirstOpen": {
-          "Body": "Dies ist dein Schnellzugriffsmenü für Aktionen. Es passt sich Kampf- und Erzählsituationen an. Du kannst es an deinen Spielstil anpassen.",
-          "Title": "Aktionspalette"
+    "Progression": {
+      "Common": {
+        "Access": "Zugriff",
+        "Activate": "Aktivieren",
+        "AskMentor": "Mentor fragen",
+        "Benefit": "Vorteil",
+        "Categories": "Kategorien",
+        "Complete": "Abgeschlossen",
+        "Description": "Beschreibung",
+        "Deselect": "Abwählen",
+        "Detail": "Detail",
+        "Granted": "Gewährt",
+        "Known": "Bekannt",
+        "Legal": "Legal",
+        "Locked": "Gesperrt",
+        "NoDescriptionAvailable": "Keine Beschreibung verfügbar.",
+        "NoPrerequisite": "Keine Voraussetzung",
+        "NoPrerequisites": "Keine Voraussetzungen",
+        "Owned": "Besessen",
+        "Path": "Pfad",
+        "Pending": "Ausstehend",
+        "Recommended": "Empfohlen",
+        "Repeatable": "Wiederholbar",
+        "Reset": "Zurücksetzen",
+        "Selected": "Ausgewählt",
+        "Sort": {
+          "AZ": "A–Z",
+          "NameAZ": "Name A→Z",
+          "NameZA": "Name Z→A"
         },
-        "chargenNarrativeFirst": {
-          "Body": "Du kannst deinen Charakter über erzählerische Entscheidungen oder direkte mechanische Auswahl erstellen. Beide Wege erzeugen einen vollständig gültigen Charakter.",
-          "Title": "Charaktererstellungsmodi"
+        "Status": "Status:",
+        "Suggested": "Vorgeschlagen",
+        "Tip": "Tipp:",
+        "Unavailable": "Nicht verfügbar",
+        "Unlocks": "Schaltet frei",
+        "Available": "Verfügbar",
+        "Prerequisites": "Voraussetzungen"
+      },
+      "Confirm": {
+        "AllRequiredComplete": "Alle erforderlichen Bauelemente sind abgeschlossen.",
+        "BlockingIssues": "Blockierende Probleme",
+        "BuildReview": "Build-Prüfung",
+        "ClassFeats": "Klassen-Talente:",
+        "ClassTalents": "Klassen-Talente:",
+        "FeatsAcquired": "Erworbene Talente",
+        "GeneralFeats": "Allgemeine Talente:",
+        "HeroicTalents": "Heroische Talente:",
+        "ResolveItems": "Behebe diese Punkte, um zur Finalisierung fortzufahren.",
+        "ReviewOrFinalize": "Klicke oben auf einen Abschnitt, um Details zu prüfen, oder fahre mit der Finalisierung fort.",
+        "TalentsSelected": "Ausgewählte Begabungen",
+        "Warnings": "Warnungen"
+      },
+      "Feat": {
+        "Actions": {
+          "ChooseThisFeat": "Choose This Feat",
+          "ReturnToSkills": "Return to Skills",
+          "StayHere": "Stay Here"
         },
-        "gmSuggestionPanelFirst": {
-          "Body": "Dies sind beratende Hinweise auf Grundlage der aktuellen Begegnung. Nichts wird automatisch angewendet. Nutze sie nach eigenem Ermessen.",
-          "Title": "SL-Vorschläge"
+        "Details": {
+          "Category": "Category:",
+          "NotMetPrerequisites": "Not met prerequisites:",
+          "OtherBlockers": "Other blockers:",
+          "QuickSummary": "Quick summary:",
+          "RepeatableBody": "You can select this feat multiple times if you have additional feat picks.",
+          "Tags": "Tags:",
+          "WhySuggested": "Why suggested:",
+          "WhySuggestedBody": "This feat synergizes well with your build and class."
         },
-        "mentorTranslationFirst": {
-          "Body": "Mentorentext erscheint mit einem Aurebesh-Übersetzungseffekt. Klicke irgendwo auf den Text, um die Animation zu überspringen und sofort zu lesen.",
-          "Title": "Mentorendialog"
+        "Empty": {
+          "CatalogUnavailable": "Feat Catalog Unavailable",
+          "DisplayRulesDescription": "No feats meet this slot's current display rules.",
+          "NoAvailableFeats": "No Available Feats",
+          "NoFeatsInView": "No Feats in This View",
+          "NoFeatsInViewDescription": "Try another category, clear search, or toggle Show All to inspect locked options.",
+          "NoLegalStartingFeats": "No Legal Starting Feats",
+          "NoLegalStartingFeatsDescription": "No feat from this class's starting-feat pool currently meets your prerequisites.",
+          "NoMoreFeats": "No more Feats",
+          "NoSearchMatches": "No feats match “{query}” in the feat catalog.",
+          "SafeModeBrowserBody": "This feat step will not block character creation while the compendium is unavailable.",
+          "SafeModeContinueBody": "Continue is allowed so chargen does not soft-lock.",
+          "SafeModeLabel": "Safe mode:",
+          "SearchHint": "Try a shorter name, prerequisite, or tag.",
+          "ShowAllTip": "Enable \"Show All\" to inspect blocked feat prerequisites."
         },
-        "tacticalOverlayFirstOpen": {
-          "Body": "Schalte Kartenüberlagerungen für Reichweitenbänder, Bedrohungszonen und Positionsdaten ein. Jede Ebene kann separat umgeschaltet werden.",
-          "Title": "Taktische Überlagerung"
+        "Footer": {
+          "CatalogUnavailableSafeToSkip": "{type} Feat: Catalog unavailable — safe to skip",
+          "NoLegalOptionsSafeToSkip": "{type} Feat: No legal options — safe to skip",
+          "NotYetChosen": "{type} Feat not yet chosen",
+          "Selected": "{type} Feat: {names}"
+        },
+        "Groups": {
+          "SuggestedForYourBuild": "Suggested for Your Build"
+        },
+        "Messages": {
+          "CatalogHydrationFailed": "The feat catalog did not hydrate from the Foundry compendium. This step is safe to skip, but feat choices will not be available until the feats pack registers.",
+          "CatalogUnavailableSkippable": "The feat catalog is unavailable because the feats compendium did not register. The step remains skippable so character creation can continue.",
+          "CatalogUnavailableWarning": "Feat catalog unavailable: no feats were loaded from the compendium. You can continue past this step.",
+          "ChoiceNotLegal": "That feat choice is not currently legal.",
+          "ChooseTitle": "Choose: {feat}",
+          "ClassSkillsUpdatedTitle": "Class Skills Updated",
+          "ForceSensitivityChangesClassSkills": "changes your class skill list.",
+          "GeneralFeatLimit": "You have already selected {count} general feats. Remove one before choosing another.",
+          "NotCurrentlyAvailable": "That feat is not currently available.",
+          "PrereqsNotMetForChoice": "Feat prerequisites are not met for that selected choice.",
+          "ReturnToSkillsQuestion": "Would you like to return to Skill Selection now so you can rearrange your trained skills?",
+          "SkillSelectionNotBehindCurrent": "Skill Selection is not behind the current step in this progression flow.",
+          "SkillsStepUnavailable": "The Skills step is not currently available.",
+          "UseTheForceNowClassSkill": "is now a class skill for this character.",
+          "WeaponProficiencyChosenGroup": "Weapon Proficiency with chosen weapon group or exotic weapon"
+        },
+        "Progress": {
+          "ChooseMoreToContinue": "Choose {count} more {type} Feat(s) to continue",
+          "Remaining": "{count} feat(s) remaining",
+          "SelectedOfRequired": "{selected} of {required} feat(s)"
+        },
+        "Search": {
+          "DroidPlaceholder": "Search droid feats…",
+          "Placeholder": "Search feats…"
+        },
+        "Slot": {
+          "CatalogUnavailable": "catalog unavailable",
+          "Class": "Class",
+          "ClassFeat": "Class Feat",
+          "General": "General",
+          "GeneralFeat": "General Feat",
+          "NoLegalOptions": "no legal options"
+        },
+        "Work": {
+          "ClearSearchAndFilters": "Clear feat search and filters",
+          "CollapseCategories": "Collapse Categories",
+          "FeatCategories": "Feat categories",
+          "LegalOnly": "Legal Only",
+          "LegalStartingFeats": "Legal Starting Feats",
+          "SearchLabel": "Search: {query}",
+          "SearchResults": "Search Results",
+          "SearchResultsHint": "Only feats related to your search are shown here.",
+          "SelectInspectHint": "Select a feat to inspect it in the detail rail.",
+          "ShowCategories": "Show Categories",
+          "ShowingAll": "Showing All",
+          "ToggleShowAllTitle": "Toggle between legal selectable feats and the full hydrated feat browser"
+        },
+        "Mentor": {
+          "Chargen": "Wähle Talente, die deine Fähigkeiten stärken und deinen Spielstil prägen. Manche Talente passen besser zu deinem Build als andere.",
+          "Default": "Wähle ein Talent mit Bedacht.",
+          "DroidChargen": "Wähle Talente, die das Rollenpaket deines Chassis stärken und deine installierten Systeme ergänzen.",
+          "LevelUp": "Mit wachsender Erfahrung kannst du neue Techniken und Fähigkeiten lernen. Wähle Talente, die deinen Pfad verbessern."
+        },
+        "Validation": {
+          "SelectMoreFeats": "Wähle noch {count} Talent(e)",
+          "SelectMoreTypedFeats": "Wähle noch {count} {type}-Talent(e)"
         }
       },
-      "Settings": {
-        "DisableCallouts": {
-          "Hint": "Erstnutzungs-Hinweise deaktivieren, die beim ersten Öffnen von Funktionen erscheinen",
-          "Name": "Geführte Hinweise deaktivieren"
+      "Mentor": {
+        "AwaitingDecision": "Warte auf deine Entscheidung…",
+        "Collapse": "Mentor einklappen",
+        "Expand": "Mentor ausklappen",
+        "FallbackName": "Ol' Salty"
+      },
+      "Shell": {
+        "CharacterCreation": "CHARAKTERERSTELLUNG",
+        "EngineUnlocked": "Durch Engine freigeschaltet",
+        "NoStepsAvailable": "Keine Schritte verfügbar.",
+        "StepOf": "Schritt {current} von {total}",
+        "TrainingMatrix": "Trainingsmatrix",
+        "TrainingMatrixSubtitle": "Mentorgeführte Progressions-Pipeline · Wiederherstellung des Konzept-Shells",
+        "UnlockedBy": "Freigeschaltet durch: {reason}"
+      },
+      "Survey": {
+        "AnsweredCount": "{answered} / {total} answered",
+        "BeginSurvey": "Begin Survey",
+        "ChangeAnswer": "Change Answer",
+        "ClassIntentRead": "{class} Intent Read",
+        "Complete": "survey complete",
+        "CompleteSurvey": "Complete Survey",
+        "ContinueToBackground": "Continue to Background",
+        "CurrentMentorRead": "Current mentor read",
+        "IntentRead": "Intent Read",
+        "Level1Survey": "Level 1 Survey",
+        "NextQuestion": "Next Question",
+        "ProgressAria": "Survey progress",
+        "QuestionOf": "Question {current} of {total}",
+        "Remaining": "{count} remaining",
+        "RetakeSurvey": "Retake Survey",
+        "ReturnToClass": "Return to Class",
+        "ReviewPreviousAnswer": "Review Previous Answer",
+        "Unavailable": "survey unavailable",
+        "YourAnswer": "Your answer"
+      },
+      "Talent": {
+        "Actions": {
+          "ActivateThisTalent": "Activate This Talent",
+          "BackToTrees": "Back to Trees",
+          "Center": "Center",
+          "CenterTitle": "Refocus the selected or inspected node",
+          "DeselectPendingTalent": "Deselect Pending Talent",
+          "ExploreHolomap": "Explore Holomap",
+          "Fit": "Fit",
+          "FitTitle": "Fit the whole tree in the map panel",
+          "OpenTreeHolomap": "Open Tree Holomap",
+          "ReturnToTreeBrowser": "Return to tree browser"
         },
-        "DisableTooltips": {
-          "Hint": "Kontextbezogene Tooltips auf UI-Elementen deaktivieren",
-          "Name": "Entdeckungs-Tooltips deaktivieren"
+        "Details": {
+          "BuildAnalysisTerminal": "// BUILD ANALYSIS TERMINAL",
+          "MentorRead": "Mentor Read",
+          "RootNode": "Root node — no prerequisite talent chain.",
+          "NoRulesText": "Für diese Begabung wurde noch kein Regeltext definiert.",
+          "PartOfTree": "{talent} ist Teil des Begabungsbaums {tree}.",
+          "ThisTalent": "Diese Begabung"
         },
-        "DisableTour": {
-          "Hint": "Funktionsübersicht deaktivieren, die beim ersten Start erscheint",
-          "Name": "Erststart-Tour deaktivieren"
+        "Empty": {
+          "NoTalentsMatched": "No talents matched your current filters in this tree.",
+          "NoTreesAvailable": "No talent trees available in your current context."
+        },
+        "Footer": {
+          "BrowsingTrees": "Browsing Trees",
+          "NotYetChosen": "{type} Talent not yet chosen",
+          "Selected": "{type} Talent: {talent}",
+          "ViewingTree": "Viewing: {tree}"
+        },
+        "Search": {
+          "DroidTalentsPlaceholder": "Search droid talents…",
+          "DroidTreesPlaceholder": "Search droid talent trees…",
+          "TalentsPlaceholder": "Search talents…",
+          "TreesPlaceholder": "Search talent trees…"
+        },
+        "Slot": {
+          "Class": "Class",
+          "ClassTalent": "Class Talent",
+          "Heroic": "Heroic",
+          "HeroicTalent": "Heroic Talent"
+        },
+        "Stage": {
+          "ActiveTree": "// ACTIVE TREE",
+          "AlreadyPicked": "Already Picked",
+          "AvailableChoices": "Available Choices",
+          "ChooseTalentTree": "Choose a Talent Tree",
+          "ClassDisciplineHint": "Select a class-specific discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
+          "FocusTalentTree": "Focus talent tree {name}",
+          "HeroicDisciplineHint": "Select a heroic discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
+          "InspectLockedTalent": "Inspect locked talent {name}",
+          "KnownPendingCount": "{count} known/pending",
+          "LeadingPick": "Leading pick: {talent}",
+          "LockedFuture": "Locked / Future",
+          "MapInstructions": "Drag the map to move. Scroll to zoom. Legal nodes glow when they can be activated.",
+          "MentorLead": "Mentor lead: {talent}",
+          "MentorSuggestionMany": "{count} mentor suggestions",
+          "MentorSuggestionOne": "{count} mentor suggestion",
+          "PlannerControls": "Talent planner controls",
+          "QuickSummaryAria": "Talent tree quick summary",
+          "TalentChoices": "Talent choices",
+          "TalentCount": "{count} talents",
+          "TalentMatrix": "// TALENT MATRIX",
+          "TalentTreeMap": "Talent tree map",
+          "TreeHolomap": "Tree Holomap",
+          "TreeHolomapInstructions": "Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.",
+          "LegalActivations": "Legale Aktivierungen"
+        },
+        "Tree": {
+          "BuildRead": "Build Read",
+          "KnownPending": "Known / Pending",
+          "LeadingLegalTalent": "Leading legal talent: {talent}",
+          "LegalNow": "Legal Now",
+          "MentorFit": "Mentor Fit",
+          "MentorReadTitle": "{mentor}'s Read",
+          "Nodes": "{count} Nodes",
+          "SuggestionEngine": "Suggestion Engine",
+          "TalentNodes": "Talent Nodes",
+          "TalentTree": "Talent Tree",
+          "TreeDossier": "// TREE DOSSIER",
+          "TreeFunction": "Tree Function",
+          "FallbackSummary": "{tree} talent tree. Open the holomap to inspect legal talents and prerequisite paths.",
+          "StatusAvailable": "This discipline is available. Opening the holomap will reveal legal activations and locked future branches.",
+          "StatusMentorStrongFit": "Your mentor currently sees this tree as a strong fit. {talent} is the cleanest legal next pick from this tree.",
+          "StatusMomentum": "You already have momentum in this discipline. Opening the holomap will show the next legal branches.",
+          "ThisTree": "Dieser Baum"
+        },
+        "View": {
+          "Both": "Both",
+          "List": "List",
+          "Map": "Map"
+        },
+        "Mentor": {
+          "Chargen": "Begabungen definieren deinen Pfad. Wähle eine Disziplin, die zu deiner Vorstellung dieses Charakters passt.",
+          "Default": "Wähle eine Begabung, die dich definiert.",
+          "LevelUp": "Deine Begabungen wachsen mit der Erfahrung. Wähle eine neue Disziplin, um dich weiter zu spezialisieren."
+        },
+        "Messages": {
+          "ChoiceNotLegal": "Diese Begabungsauswahl ist derzeit nicht legal.",
+          "ChooseTitle": "Wählen: {talent}",
+          "PrereqsNotMetForChoice": "Die Voraussetzungen der Begabung sind für diese Auswahl nicht erfüllt."
+        },
+        "Recommendation": {
+          "GoodFit": "Gute Passung",
+          "InvestedPath": "Investierter Pfad",
+          "LegalOption": "Legale Option",
+          "NoLegalPicks": "Keine legalen Auswahlen",
+          "NoLegalPicksReason": "Dieser Baum hat für diesen Slot keine auswählbaren Begabungen und wird daher von der Empfehlungs-Engine nicht berücksichtigt.",
+          "NoSelectableTalentsLegalNow": "Derzeit sind keine auswählbaren Begabungen legal.",
+          "PriorityPath": "Prioritätspfad",
+          "ReasonAbility": "{name} leans into one of your stronger ability scores.",
+          "ReasonChain": "{name} continues a prerequisite chain you have already started.",
+          "ReasonClass": "{name} fits the class path you are currently pursuing.",
+          "ReasonLegalNow": "{name} is legal now and fits the current talent slot.",
+          "ReasonMeta": "{name} has a known synergy with your current build signals.",
+          "ReasonPrestige": "{name} supports a longer prestige or advanced path.",
+          "ReasonSkill": "{name} uses skills your character is already developing.",
+          "ReasonSpecies": "{name} lines up with your species or heritage signals.",
+          "ReasonWishlist": "{name} moves you toward something already marked as desirable for this build.",
+          "StrongestLegalPick": "{talent} is the strongest legal pick currently visible in this tree.",
+          "StrongFit": "Starke Passung",
+          "ThisChoice": "diese Wahl",
+          "TopPick": "Beste Wahl",
+          "TreeLegalCount": "{tree} has {count} legal talent(s) available for this slot."
         }
       },
-      "Tooltip": {
-        "AbilityModifier": {
-          "Body": "Aus dem Attributswert abgeleitet. Wird zu relevanten Würfen, Fertigkeiten und Verteidigungen addiert.",
-          "Title": "Attributsmodifikator"
-        },
-        "AbilityScore": {
-          "Body": "Der Rohwert. Der Modifikator (Wert minus 10, geteilt durch 2) wird auf Würfe angewendet.",
-          "Title": "Attributswert"
-        },
-        "Acrobatics": {
-          "Body": "Akrobatik umfasst Gleichgewicht, Abrollen, sichere Stürze, das Entkommen aus körperlichen Griffen und geschickte Bewegung. Nutze sie, wenn präzise Körperkontrolle wichtiger ist als rohe Stärke.",
-          "Title": "Akrobatik"
-        },
-        "ActionDisabled": {
-          "Body": "Diese Aktion kann im Moment nicht verwendet werden. Prüfe Voraussetzungen und verfügbare Ressourcen.",
-          "Title": "Aktion nicht verfügbar"
-        },
-        "ActionPalette": {
-          "Body": "Schnellzugriff auf häufige Kampf- und Erzählaktionen deines Charakters.",
-          "Title": "Aktionspalette"
-        },
-        "ActiveTalent": {
-          "Body": "Erfordert eine Aktion zur Nutzung. Prüfe die Talentbeschreibung für den Aktionstyp.",
-          "Title": "Aktives Talent"
-        },
-        "ArmorPenalty": {
-          "Body": "Diese Rüstung verursacht zusätzlich zum Rüstungsbonus eine Strafe auf die Reflexverteidigung und kann die Geschicklichkeit einschränken.",
-          "Title": "Rüstungsstrafe"
-        },
-        "AurebeshTranslation": {
-          "Body": "Text erscheint zuerst in Aurebesh und wird dann übersetzt. Klicke, um den Effekt zu überspringen.",
-          "Title": "Aurebesh-Übersetzung"
-        },
-        "BaseAttackBonus": {
-          "Body": "Wird zu Angriffswürfen addiert. Wird durch Klasse und Stufe bestimmt.",
-          "Title": "Grund-Angriffsbonus"
-        },
-        "CatchSecondWind": {
-          "Body": "Zweiter Atem fassen lässt einen heroischen Charakter nach schweren Verletzungen wieder Kraft sammeln. Es ist nur verfügbar, wenn er auf die Hälfte seiner Trefferpunkte oder weniger reduziert wurde, und kann einmal pro Tag verwendet werden.",
-          "Title": "Zweiter Atem fassen"
-        },
-        "ChargenClass": {
-          "Body": "Deine Klasse bestimmt Trefferpunkte, Verteidigungen, ausgebildete Fertigkeiten und Talentzugang.",
-          "Title": "Klasse"
-        },
-        "ChargenLockin": {
-          "Body": "Bestätigt deine Entscheidungen. Die meisten Auswahlen können nach der Erstellung noch angepasst werden.",
-          "Title": "Charakter abschließen"
-        },
-        "ChargenMentor": {
-          "Body": "Wähle einen Mentor, dessen Führung deine Charaktererstellung prägt.",
-          "Title": "Mentorenauswahl"
-        },
-        "ChargenNarrative": {
-          "Body": "Erstelle deinen Charakter über geführte erzählerische Entscheidungen statt durch manuelle Attributsauswahl.",
-          "Title": "Erzählmodus"
-        },
-        "ChargenRollMethod": {
-          "Body": "Wähle aus, wie Attributswerte erzeugt werden: Würfelwurf, Punktkauf oder Standardarray.",
-          "Title": "Methode für Attributswerte"
-        },
-        "ChargenSpecies": {
-          "Body": "Deine Spezies bestimmt Grundmerkmale, Attributsanpassungen und verfügbare Fähigkeiten.",
-          "Title": "Spezies"
-        },
-        "Charisma": {
-          "Body": "Charisma steht für Führungskraft, Ausstrahlung, Selbstvertrauen und die Fähigkeit, andere zu bewegen. Es ist nicht nur Aussehen, sondern die Stärke der persönlichen Präsenz eines Charakters.",
-          "Title": "Charisma"
-        },
-        "Climb": {
-          "Body": "Klettern wird genutzt, um schwierige Oberflächen wie Felswände, Gebäude, Leitern und Maschinen zu erklimmen. Es misst kontrollierte Aufwärtsbewegung durch Stärke und Griffkraft.",
-          "Title": "Klettern"
-        },
-        "ConditionTrack": {
-          "Body": "Verfolgt Strafen durch schwere Treffer. Jeder Schritt nach unten gibt eine kumulative Strafe von -1 auf alle Würfe und Verteidigungen.",
-          "Title": "Zustandsleiste"
-        },
-        "Constitution": {
-          "Body": "Konstitution beschreibt, wie gut ein Charakter Verletzungen, Erschöpfung und körperlicher Belastung widersteht. Sie ist ein zentrales Überlebensattribut, weil sie zur Durchhaltefähigkeit beiträgt.",
-          "Title": "Konstitution"
-        },
-        "DamageThreshold": {
-          "Body": "Die Schadensschwelle misst, wie viel Schaden ein einzelner Angriff verursachen muss, um dich ernsthaft zu beeinträchtigen. Selbst wenn du noch Trefferpunkte hast, kann ein ausreichend starker Treffer deine Effektivität sofort senken.",
-          "Title": "Schadensschwelle"
-        },
-        "DarkSideScore": {
-          "Body": "Der Dunkle-Seite-Wert verfolgt moralische und spirituelle Verderbnis durch böse Taten. Ein höherer Wert spiegelt stärkeren Einfluss der Dunklen Seite wider und kann schwerwiegende Folgen haben.",
-          "Title": "Dunkle-Seite-Wert"
-        },
-        "Deception": {
-          "Body": "Täuschung wird genutzt, um Lügen glaubwürdig erscheinen zu lassen, Verwirrung zu stiften, Absichten zu verbergen oder sich als jemand anderes auszugeben. Sie umfasst Bluffen, schnelles Reden, Verkleidung und gefälschte Beweise.",
-          "Title": "Täuschung"
-        },
-        "DestinyPoints": {
-          "Body": "Seltene Punkte, mit denen du automatisch bei einem Wurf erfolgreich sein oder besondere Schicksalseffekte auslösen kannst.",
-          "Title": "Schicksalspunkte"
-        },
-        "Dexterity": {
-          "Body": "Geschicklichkeit steht für feine Kontrolle, Reaktionsgeschwindigkeit und körperliche Präzision. Sie ist besonders wertvoll für Fernkampf, Ausweichbewegungen und Fahrzeugsteuerung.",
-          "Title": "Geschicklichkeit"
-        },
-        "Endurance": {
-          "Body": "Ausdauer misst Standhaftigkeit und Widerstandskraft unter Belastung. Nutze sie, wenn ein Charakter trotz Erschöpfung, Strapazen oder anderer körperlicher Extreme weitermachen muss.",
-          "Title": "Ausdauer"
-        },
-        "FlatFooted": {
-          "Body": "Verteidigung, wenn man überrascht wird. Enthält keine Geschicklichkeits- oder Ausweichboni.",
-          "Title": "Auf dem falschen Fuß"
-        },
-        "ForcePoints": {
-          "Body": "Machtpunkte stehen für die Fähigkeit eines Charakters, ungewöhnliche Hilfe zu nutzen, ob als Schicksal, Glück oder die Macht, die durch Lebewesen wirkt. Sie sind eine begrenzte Ressource, mit der wichtige Aktionen verbessert werden.",
-          "Title": "Machtpunkte"
-        },
-        "FortitudeDefense": {
-          "Body": "Widersteht körperlichen Effekten wie Gift und Betäubung. Basiert auf Klasse, Stufe und Konstitution.",
-          "Title": "Widerstandsverteidigung"
-        },
-        "GMPaletteMode": {
-          "Body": "Schaltet die Palette auf SL-Werkzeuge um: NSC-Erschaffung, Heilung und Zustandsverwaltung.",
-          "Title": "SL-Modus"
-        },
-        "GMSuggestion": {
-          "Body": "Beratender Hinweis aus der Vorschlagsmaschine. Wird nicht automatisch angewendet.",
-          "Title": "SL-Vorschlag"
-        },
-        "GatherInformation": {
-          "Body": "Informationen sammeln wird genutzt, um sich umzuhören, soziale Netzwerke zu nutzen und Hinweise aufzudecken. Es hilft, Gerüchte, öffentliche Gespräche, leise Geheimnisse und nützliche Kontakte zu finden.",
-          "Title": "Informationen sammeln"
-        },
-        "Grapple": {
-          "Body": "Wird für Greifen- und Ringkampfproben verwendet. Basiert auf GAB und Größenmodifikator.",
-          "Title": "Ringkampf"
-        },
-        "HitPoints": {
-          "Body": "Trefferpunkte messen, wie lange du im Kampf bleiben kannst. Sie spiegeln sowohl tatsächliche Verletzungsresistenz als auch Kampffertigkeit wider, etwa Ausweichen, Ablenken und das Abschwächen schwerer Treffer.",
-          "Title": "Trefferpunkte"
-        },
-        "Initiative": {
-          "Body": "Initiative bestimmt, wie schnell du reagierst, wenn die Handlung beginnt. Ein höheres Ergebnis bedeutet normalerweise, früher in der Runde zu handeln.",
-          "Title": "Initiative"
-        },
-        "Intelligence": {
-          "Body": "Intelligenz beschreibt, wie gut ein Charakter Systeme versteht, Probleme löst und ausgebildete Fachkenntnis entwickelt. Sie ist besonders nützlich für Charaktere, die auf breite technische oder akademische Fertigkeiten setzen.",
-          "Title": "Intelligenz"
-        },
-        "Jump": {
-          "Body": "Springen wird genutzt, um Gruben zu überwinden, Hindernisse zu überspringen und kontrollierte Sprünge auszuführen. Es spiegelt explosive Stärke und koordinierte Bewegung wider.",
-          "Title": "Springen"
-        },
-        "Knowledge": {
-          "Body": "Wissen steht für akademisches, berufliches oder technisches Lernen. Jedes Fachgebiet deckt ein anderes Wissensgebiet ab, daher hängt Erfolg davon ab, ob das Thema zu deiner Ausbildung passt.",
-          "Title": "Wissen"
-        },
-        "Mechanics": {
-          "Body": "Mechanik wird genutzt, um direkt mit Maschinen und technischer Hardware zu interagieren. Sie umfasst das Umgehen von Sicherheit, das Legen oder Entschärfen von Sprengsätzen und das Reparieren oder Verbessern beschädigter Ausrüstung und Droiden.",
-          "Title": "Mechanik"
-        },
-        "MentorDialogue": {
-          "Body": "Dein Mentor bietet Kontext und Vorschläge. Dies ist beratend, nicht verpflichtend.",
-          "Title": "Mentorenführung"
-        },
-        "PaletteMode": {
-          "Body": "Schaltet zwischen Kampfaktionen und Erkundungs- oder Erzählaktionen um.",
-          "Title": "Palettenmodus"
-        },
-        "PassiveTalent": {
-          "Body": "Immer aktiv. Keine Aktion erforderlich, um von diesem Talent zu profitieren.",
-          "Title": "Passives Talent"
-        },
-        "Perception": {
-          "Body": "Wahrnehmung wird genutzt, um Bedrohungen zu erkennen, verborgene Kreaturen oder Objekte zu entdecken und die Umgebung im Blick zu behalten. Sie spiegelt Aufmerksamkeit und Sinneswahrnehmung wider.",
-          "Title": "Wahrnehmung"
-        },
-        "Persuasion": {
-          "Body": "Überreden wird genutzt, um Zusammenarbeit zu gewinnen, Einstellungen zu beeinflussen und soziale Ergebnisse zu steuern. Es kann subtil und diplomatisch oder energisch und einschüchternd sein.",
-          "Title": "Überreden"
-        },
-        "Pilot": {
-          "Body": "Pilotieren regelt anspruchsvolle Fahrzeugsteuerung. Routineflüge erfordern möglicherweise keine Probe, aber Ausweichmanöver, Stunts und gefährliche Steuerung schon.",
-          "Title": "Pilotieren"
-        },
-        "ReflexDefense": {
-          "Body": "Ziel der meisten Angriffe. Basiert auf Klasse, Stufe, Geschicklichkeit oder Rüstungsbonus.",
-          "Title": "Reflexverteidigung"
-        },
-        "Ride": {
-          "Body": "Reiten wird genutzt, um Kreaturen als Reittiere zu führen, besonders in Bewegung oder unter Stress. Es spiegelt Gleichgewicht, Kontrolle und Koordination auf dem Reittier wider.",
-          "Title": "Reiten"
-        },
-        "SkillRoll": {
-          "Body": "Klicke, um diese Fertigkeit zu würfeln. Der Wurf addiert deinen Modifikator und Ausbildungsbonus.",
-          "Title": "Fertigkeitsprobe"
-        },
-        "SkillTrained": {
-          "Body": "Ausgebildete Fertigkeiten erhalten einen Bonus von +5 und können besondere Anwendungen freischalten, die untrainiert nicht verfügbar sind.",
-          "Title": "Ausgebildete Fertigkeit"
-        },
-        "Stealth": {
-          "Body": "Heimlichkeit wird genutzt, um Entdeckung durch Stille, Verbergen und vorsichtige Bewegung zu vermeiden. Sie unterstützt außerdem verdeckte Positionierung, Hinterhalte, Schüsse aus Deckung und Fingerfertigkeit.",
-          "Title": "Heimlichkeit"
-        },
-        "Strength": {
-          "Body": "Stärke beschreibt, wie viel körperliche Kraft ein Charakter einsetzen kann. Sie ist besonders wichtig bei direkter körperlicher Handlung und kraftbasierten Aufgaben im Nahbereich.",
-          "Title": "Stärke"
-        },
-        "Survival": {
-          "Body": "Überleben hilft Charakteren, raue Umgebungen zu durchqueren, Gefahrenzeichen zu verfolgen, Nahrung zu suchen, zu jagen und natürliche Gefahren zu erkennen. Es misst praktische Feldkenntnis.",
-          "Title": "Überleben"
-        },
-        "Swim": {
-          "Body": "Schwimmen wird genutzt, um Gewässer zu durchqueren, zu tauchen, sich über Wasser zu halten und sich in schwierigen Wasserbedingungen zu bewegen. Es steht für kontrollierte Bewegung im Wasser.",
-          "Title": "Schwimmen"
-        },
-        "TacticalOverlay": {
-          "Body": "Zeigt Reichweitenbänder, Bedrohungsbereiche und taktische Informationen auf der Karte.",
-          "Title": "Taktische Überlagerung"
-        },
-        "TreatInjury": {
-          "Body": "Verletzung behandeln umfasst Hilfe auf dem Schlachtfeld, medizinische Versorgung und Unterstützung bei der Erholung. Nutze sie, um Verbündete am Leben zu halten, Heilung zu verbessern und auf schädliche Zustände zu reagieren.",
-          "Title": "Verletzung behandeln"
-        },
-        "UsageLimit": {
-          "Body": "Diese Fähigkeit kann nur eine festgelegte Anzahl von Malen pro Begegnung oder pro Tag verwendet werden.",
-          "Title": "Begrenzte Nutzung"
-        },
-        "UseComputer": {
-          "Body": "Computer benutzen wird genutzt, um gesicherte Systeme zu bedienen, digitale Schutzmaßnahmen zu umgehen und mit komplexer computergesteuerter Technik zu interagieren. Es regelt technischen Zugriff in elektronischen Umgebungen.",
-          "Title": "Computer benutzen"
-        },
-        "UseTheForce": {
-          "Body": "Macht anwenden steht für die aktive Verbindung zur Macht im Spiel. Sie unterstützt ungewöhnliche Wahrnehmung, Erholung und andere machtgetriebene Handlungen und erfordert normalerweise Machtsensitivität, um ausgebildet zu werden.",
-          "Title": "Macht anwenden"
-        },
-        "WeaponAttack": {
-          "Body": "Klicke, um mit dieser Waffe einen Angriff gegen die Reflexverteidigung eines Ziels zu würfeln.",
-          "Title": "Angriffswurf"
-        },
-        "WeaponDamage": {
-          "Body": "Klicke, um nach einem erfolgreichen Angriff den Schaden dieser Waffe zu würfeln.",
-          "Title": "Schadenswurf"
-        },
-        "WillDefense": {
-          "Body": "Widersteht mentalen Effekten und Machtkräften. Basiert auf Klasse, Stufe und Weisheit.",
-          "Title": "Willensverteidigung"
-        },
-        "Wisdom": {
-          "Body": "Weisheit steht für Wahrnehmung, praktische Einsicht und Verbindung zur Umgebung. Sie beschreibt eher Aufmerksamkeit und gutes Urteilsvermögen als abstrakte Analyse.",
-          "Title": "Weisheit"
-        }
-      },
-      "Tour": {
-        "GM": {
-          "Item1": "Die taktische Überlagerung fügt Szenen Reichweiten- und Bedrohungsvisualisierung hinzu",
-          "Item2": "SL-Vorschläge bieten beratende Begegnungshinweise und sind niemals automatisch",
-          "Item3": "Szenenwerkzeuge und NSC-Verwaltung sind über die Seitenleiste und Palette verfügbar",
-          "Item4": "Alle Automatisierungen, wie Schadensschwelle und Zustandserholung, können in den Einstellungen umgeschaltet werden",
-          "Item5": "Entdeckungshinweise können in den Systemeinstellungen zurückgesetzt oder deaktiviert werden",
-          "Subtitle": "Dein SL-Werkzeugkasten enthält mehrere optionale Systeme. Nichts läuft, solange du es nicht aktivierst.",
-          "Title": "Willkommen bei Star Wars Saga Edition (SL-Werkzeuge)"
-        },
-        "GMHolopad": "SL-Holopad öffnen",
-        "Player": {
-          "Item1": "Charaktererstellung unterstützt sowohl erzählerische als auch mechanische Modi",
-          "Item2": "Die Aktionspalette bietet Schnellzugriff auf Kampf- und Erzählaktionen",
-          "Item3": "Mentoren können deine Entscheidungen während der Charaktererstellung begleiten",
-          "Item4": "Fahre mit der Maus über hervorgehobene UI-Elemente, um eine kurze Erklärung zu erhalten",
-          "Item5": "Alle geführten Hinweise können in deinen Client-Einstellungen ausgeschaltet werden",
-          "Subtitle": "Hier sind ein paar Dinge, die dir den Einstieg erleichtern. Alle Funktionen sind optional.",
-          "Title": "Willkommen bei Star Wars Saga Edition"
-        },
-        "Skip": "Überspringen"
+      "Utility": {
+        "Collapse": "Einklappen",
+        "Conditional": "Bedingt",
+        "Expand": "Ausklappen",
+        "ResetFilters": "Filter zurücksetzen"
       }
-    },
-    "LevelUp": {
-      "CancelContent": "Möchtest du wirklich abbrechen? Es werden keine Änderungen gespeichert.",
-      "CancelTitle": "Stufenaufstieg abbrechen"
-    },
-    "SheetLabel": {
-      "character": "Charakter",
-      "droid": "Droide",
-      "vehicle": "Fahrzeug"
-    },
-    "UNITS": {
-      "WEIGHT": "lb"
     }
   }
 }

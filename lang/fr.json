@@ -183,12 +183,6 @@
       "DevMode": {
         "Name": "Mode Développeur",
         "Hint": "Activer la journalisation détaillée des erreurs et les traces de pile pour le débogage"
-      },
-      "Store": {
-        "RequireGMApproval": {
-          "Hint": "Lorsque cette option est activée, les droïdes personnalisés doivent être approuvés par un MJ avant que les crédits soient déduits. Lorsqu'elle est désactivée, les droïdes personnalisés sont finalisés immédiatement.",
-          "Name": "Exiger l'approbation du MJ pour les droïdes personnalisés"
-        }
       }
     },
     "Compendium": {
@@ -320,11 +314,7 @@
         "ConfirmVehiclePurchase": "Confirmer l'Achat de Véhicule",
         "BuildCustomDroid": "Construire un Droïde Personnalisé",
         "BuildCustomStarship": "Construire un Vaisseau Spatial Personnalisé",
-        "CompletePurchase": "Finaliser l'Achat",
-        "RequireGMApproval": {
-          "Hint": "Lorsque cette option est activée, les droïdes personnalisés doivent être approuvés par un MJ avant que les crédits soient déduits. Lorsqu'elle est désactivée, les droïdes personnalisés sont finalisés immédiatement.",
-          "Name": "Exiger l'approbation du MJ pour les droïdes personnalisés"
-        }
+        "CompletePurchase": "Finaliser l'Achat"
       },
       "LevelUp": {
         "Title": "Monter de Niveau {name}"
@@ -373,369 +363,327 @@
         "Breakdown": "Détail"
       }
     },
-    "ACTION": {
-      "CHAT": "Envoyer au chat",
-      "ROLL": "Lancer",
-      "USE": "Utiliser"
-    },
-    "ACTOR": {
-      "TABS": {
-        "FEATS": "Dons",
-        "RACIAL": "Traits d'espèce",
-        "TALENTS": "Talents"
-      }
-    },
-    "CHARGEN": {
-      "NEAR_HUMAN": {
-        "ABILITY_HELP": "Ajustez les caractéristiques de votre lignée quasi humaine. Le total final des ajustements doit être égal à 0.",
-        "ABILITY_TITLE": "Ajustements de caractéristiques",
-        "AVAILABLE_TRAITS": "Traits disponibles",
-        "DROP_HINT": "Faites glisser les traits ici pour les sélectionner.",
-        "INVALID": "Origine quasi humaine incomplète ou invalide",
-        "NO_AVAILABLE": "Aucun trait disponible.",
-        "SACRIFICE_FEAT": "Sacrifier le don supplémentaire",
-        "SACRIFICE_HELP": "Vous pouvez sacrifier des avantages humains de base pour débloquer des emplacements supplémentaires de traits quasi humains.",
-        "SACRIFICE_SKILL": "Sacrifier la compétence formée supplémentaire",
-        "SACRIFICE_TITLE": "Sacrifices d'origine quasi humaine",
-        "SELECTED": "Sélectionné",
-        "SELECTED_TRAITS": "Traits sélectionnés",
-        "TOTAL": "Total",
-        "TRAIT_SLOTS": "Emplacements de traits",
-        "VALID": "Origine quasi humaine valide"
-      }
-    },
-    "CURRENCY": {
-      "SYMBOL": "cr"
-    },
-    "Chargen": {
-      "CancelContent": "Voulez-vous vraiment annuler ? Toute la progression sera perdue.",
-      "CancelTitle": "Annuler la création de personnage"
-    },
-    "DIFFICULTY": {
-      "LABEL": "ND"
-    },
-    "Discovery": {
-      "Callout": {
-        "Dismiss": "Compris",
-        "actionPaletteFirstOpen": {
-          "Body": "Voici votre menu d'actions en accès rapide. Il s'adapte aux contextes de combat et de narration. Vous pouvez le personnaliser selon votre style de jeu.",
-          "Title": "Palette d'actions"
+    "Progression": {
+      "Common": {
+        "Access": "Accès",
+        "Activate": "Activer",
+        "AskMentor": "Demander au mentor",
+        "Benefit": "Avantage",
+        "Categories": "Catégories",
+        "Complete": "Terminé",
+        "Description": "Description",
+        "Deselect": "Désélectionner",
+        "Detail": "Détail",
+        "Granted": "Accordé",
+        "Known": "Connu",
+        "Legal": "Valide",
+        "Locked": "Verrouillé",
+        "NoDescriptionAvailable": "Aucune description disponible.",
+        "NoPrerequisite": "Aucun prérequis",
+        "NoPrerequisites": "Aucun prérequis",
+        "Owned": "Possédé",
+        "Path": "Chemin",
+        "Pending": "En attente",
+        "Recommended": "Recommandé",
+        "Repeatable": "Répétable",
+        "Reset": "Réinitialiser",
+        "Selected": "Sélectionné",
+        "Sort": {
+          "AZ": "A–Z",
+          "NameAZ": "Nom A→Z",
+          "NameZA": "Nom Z→A"
         },
-        "chargenNarrativeFirst": {
-          "Body": "Vous pouvez créer votre personnage par des choix narratifs ou par une sélection mécanique directe. Les deux méthodes produisent un personnage entièrement valide.",
-          "Title": "Modes de création de personnage"
+        "Status": "Statut :",
+        "Suggested": "Suggéré",
+        "Tip": "Astuce :",
+        "Unavailable": "Indisponible",
+        "Unlocks": "Déverrouille",
+        "Available": "Disponible",
+        "Prerequisites": "Prérequis"
+      },
+      "Confirm": {
+        "AllRequiredComplete": "Tous les éléments obligatoires de création sont terminés.",
+        "BlockingIssues": "Problèmes bloquants",
+        "BuildReview": "Revue de création",
+        "ClassFeats": "Dons de classe :",
+        "ClassTalents": "Talents de classe :",
+        "FeatsAcquired": "Dons acquis",
+        "GeneralFeats": "Dons généraux :",
+        "HeroicTalents": "Talents héroïques :",
+        "ResolveItems": "Résolvez ces éléments pour passer à la finalisation.",
+        "ReviewOrFinalize": "Cliquez sur une section ci-dessus pour revoir les détails, ou finalisez votre personnage.",
+        "TalentsSelected": "Talents sélectionnés",
+        "Warnings": "Avertissements"
+      },
+      "Feat": {
+        "Actions": {
+          "ChooseThisFeat": "Choose This Feat",
+          "ReturnToSkills": "Return to Skills",
+          "StayHere": "Stay Here"
         },
-        "gmSuggestionPanelFirst": {
-          "Body": "Ce sont des indications consultatives basées sur la rencontre actuelle. Rien n'est appliqué automatiquement. Utilisez-les comme bon vous semble.",
-          "Title": "Suggestions du MJ"
+        "Details": {
+          "Category": "Category:",
+          "NotMetPrerequisites": "Not met prerequisites:",
+          "OtherBlockers": "Other blockers:",
+          "QuickSummary": "Quick summary:",
+          "RepeatableBody": "You can select this feat multiple times if you have additional feat picks.",
+          "Tags": "Tags:",
+          "WhySuggested": "Why suggested:",
+          "WhySuggestedBody": "This feat synergizes well with your build and class."
         },
-        "mentorTranslationFirst": {
-          "Body": "Le texte du mentor apparaît avec un effet de traduction depuis l'aurebesh. Cliquez n'importe où sur le texte pour ignorer l'animation et le lire immédiatement.",
-          "Title": "Dialogue du mentor"
+        "Empty": {
+          "CatalogUnavailable": "Feat Catalog Unavailable",
+          "DisplayRulesDescription": "No feats meet this slot's current display rules.",
+          "NoAvailableFeats": "No Available Feats",
+          "NoFeatsInView": "No Feats in This View",
+          "NoFeatsInViewDescription": "Try another category, clear search, or toggle Show All to inspect locked options.",
+          "NoLegalStartingFeats": "No Legal Starting Feats",
+          "NoLegalStartingFeatsDescription": "No feat from this class's starting-feat pool currently meets your prerequisites.",
+          "NoMoreFeats": "No more Feats",
+          "NoSearchMatches": "No feats match “{query}” in the feat catalog.",
+          "SafeModeBrowserBody": "This feat step will not block character creation while the compendium is unavailable.",
+          "SafeModeContinueBody": "Continue is allowed so chargen does not soft-lock.",
+          "SafeModeLabel": "Safe mode:",
+          "SearchHint": "Try a shorter name, prerequisite, or tag.",
+          "ShowAllTip": "Enable \"Show All\" to inspect blocked feat prerequisites."
         },
-        "tacticalOverlayFirstOpen": {
-          "Body": "Activez des superpositions de carte affichant les bandes de portée, les zones de menace et les données de positionnement. Chaque couche peut être activée indépendamment.",
-          "Title": "Superposition tactique"
+        "Footer": {
+          "CatalogUnavailableSafeToSkip": "{type} Feat: Catalog unavailable — safe to skip",
+          "NoLegalOptionsSafeToSkip": "{type} Feat: No legal options — safe to skip",
+          "NotYetChosen": "{type} Feat not yet chosen",
+          "Selected": "{type} Feat: {names}"
+        },
+        "Groups": {
+          "SuggestedForYourBuild": "Suggested for Your Build"
+        },
+        "Messages": {
+          "CatalogHydrationFailed": "The feat catalog did not hydrate from the Foundry compendium. This step is safe to skip, but feat choices will not be available until the feats pack registers.",
+          "CatalogUnavailableSkippable": "The feat catalog is unavailable because the feats compendium did not register. The step remains skippable so character creation can continue.",
+          "CatalogUnavailableWarning": "Feat catalog unavailable: no feats were loaded from the compendium. You can continue past this step.",
+          "ChoiceNotLegal": "That feat choice is not currently legal.",
+          "ChooseTitle": "Choose: {feat}",
+          "ClassSkillsUpdatedTitle": "Class Skills Updated",
+          "ForceSensitivityChangesClassSkills": "changes your class skill list.",
+          "GeneralFeatLimit": "You have already selected {count} general feats. Remove one before choosing another.",
+          "NotCurrentlyAvailable": "That feat is not currently available.",
+          "PrereqsNotMetForChoice": "Feat prerequisites are not met for that selected choice.",
+          "ReturnToSkillsQuestion": "Would you like to return to Skill Selection now so you can rearrange your trained skills?",
+          "SkillSelectionNotBehindCurrent": "Skill Selection is not behind the current step in this progression flow.",
+          "SkillsStepUnavailable": "The Skills step is not currently available.",
+          "UseTheForceNowClassSkill": "is now a class skill for this character.",
+          "WeaponProficiencyChosenGroup": "Weapon Proficiency with chosen weapon group or exotic weapon"
+        },
+        "Progress": {
+          "ChooseMoreToContinue": "Choose {count} more {type} Feat(s) to continue",
+          "Remaining": "{count} feat(s) remaining",
+          "SelectedOfRequired": "{selected} of {required} feat(s)"
+        },
+        "Search": {
+          "DroidPlaceholder": "Search droid feats…",
+          "Placeholder": "Search feats…"
+        },
+        "Slot": {
+          "CatalogUnavailable": "catalog unavailable",
+          "Class": "Class",
+          "ClassFeat": "Class Feat",
+          "General": "General",
+          "GeneralFeat": "General Feat",
+          "NoLegalOptions": "no legal options"
+        },
+        "Work": {
+          "ClearSearchAndFilters": "Clear feat search and filters",
+          "CollapseCategories": "Collapse Categories",
+          "FeatCategories": "Feat categories",
+          "LegalOnly": "Legal Only",
+          "LegalStartingFeats": "Legal Starting Feats",
+          "SearchLabel": "Search: {query}",
+          "SearchResults": "Search Results",
+          "SearchResultsHint": "Only feats related to your search are shown here.",
+          "SelectInspectHint": "Select a feat to inspect it in the detail rail.",
+          "ShowCategories": "Show Categories",
+          "ShowingAll": "Showing All",
+          "ToggleShowAllTitle": "Toggle between legal selectable feats and the full hydrated feat browser"
+        },
+        "Mentor": {
+          "Chargen": "Choisissez des dons qui renforcent vos capacités et définissent votre style de jeu. Certains dons conviennent mieux à votre création que d’autres.",
+          "Default": "Choisissez un don avec soin.",
+          "DroidChargen": "Choisissez des dons qui renforcent le rôle de votre châssis et complètent vos systèmes installés.",
+          "LevelUp": "En gagnant de l’expérience, vous pouvez apprendre de nouvelles techniques et capacités. Choisissez des dons qui renforcent votre voie."
+        },
+        "Validation": {
+          "SelectMoreFeats": "Sélectionnez encore {count} don(s)",
+          "SelectMoreTypedFeats": "Sélectionnez encore {count} don(s) de type {type}"
         }
       },
-      "Settings": {
-        "DisableCallouts": {
-          "Hint": "Désactiver les messages d'aide de première utilisation qui apparaissent lors de l'ouverture initiale des fonctionnalités",
-          "Name": "Désactiver les appels guidés"
+      "Mentor": {
+        "AwaitingDecision": "En attente de votre décision…",
+        "Collapse": "Replier le mentor",
+        "Expand": "Déplier le mentor",
+        "FallbackName": "Ol' Salty"
+      },
+      "Shell": {
+        "CharacterCreation": "CRÉATION DE PERSONNAGE",
+        "EngineUnlocked": "Déverrouillé par le moteur",
+        "NoStepsAvailable": "Aucune étape disponible.",
+        "StepOf": "Étape {current} sur {total}",
+        "TrainingMatrix": "Matrice d’entraînement",
+        "TrainingMatrixSubtitle": "Pipeline de progression guidé par mentor · restauration du shell conceptuel",
+        "UnlockedBy": "Déverrouillé par : {reason}"
+      },
+      "Survey": {
+        "AnsweredCount": "{answered} / {total} answered",
+        "BeginSurvey": "Begin Survey",
+        "ChangeAnswer": "Change Answer",
+        "ClassIntentRead": "{class} Intent Read",
+        "Complete": "survey complete",
+        "CompleteSurvey": "Complete Survey",
+        "ContinueToBackground": "Continue to Background",
+        "CurrentMentorRead": "Current mentor read",
+        "IntentRead": "Intent Read",
+        "Level1Survey": "Level 1 Survey",
+        "NextQuestion": "Next Question",
+        "ProgressAria": "Survey progress",
+        "QuestionOf": "Question {current} of {total}",
+        "Remaining": "{count} remaining",
+        "RetakeSurvey": "Retake Survey",
+        "ReturnToClass": "Return to Class",
+        "ReviewPreviousAnswer": "Review Previous Answer",
+        "Unavailable": "survey unavailable",
+        "YourAnswer": "Your answer"
+      },
+      "Talent": {
+        "Actions": {
+          "ActivateThisTalent": "Activate This Talent",
+          "BackToTrees": "Back to Trees",
+          "Center": "Center",
+          "CenterTitle": "Refocus the selected or inspected node",
+          "DeselectPendingTalent": "Deselect Pending Talent",
+          "ExploreHolomap": "Explore Holomap",
+          "Fit": "Fit",
+          "FitTitle": "Fit the whole tree in the map panel",
+          "OpenTreeHolomap": "Open Tree Holomap",
+          "ReturnToTreeBrowser": "Return to tree browser"
         },
-        "DisableTooltips": {
-          "Hint": "Désactiver les infobulles contextuelles sur les éléments de l'interface",
-          "Name": "Désactiver les infobulles de découverte"
+        "Details": {
+          "BuildAnalysisTerminal": "// BUILD ANALYSIS TERMINAL",
+          "MentorRead": "Mentor Read",
+          "RootNode": "Root node — no prerequisite talent chain.",
+          "NoRulesText": "Aucun texte de règles n’a encore été défini pour ce talent.",
+          "PartOfTree": "{talent} fait partie de l’arbre de talents {tree}.",
+          "ThisTalent": "Ce talent"
         },
-        "DisableTour": {
-          "Hint": "Désactiver l'aperçu des fonctionnalités qui apparaît au premier lancement",
-          "Name": "Désactiver la visite du premier lancement"
+        "Empty": {
+          "NoTalentsMatched": "No talents matched your current filters in this tree.",
+          "NoTreesAvailable": "No talent trees available in your current context."
+        },
+        "Footer": {
+          "BrowsingTrees": "Browsing Trees",
+          "NotYetChosen": "{type} Talent not yet chosen",
+          "Selected": "{type} Talent: {talent}",
+          "ViewingTree": "Viewing: {tree}"
+        },
+        "Search": {
+          "DroidTalentsPlaceholder": "Search droid talents…",
+          "DroidTreesPlaceholder": "Search droid talent trees…",
+          "TalentsPlaceholder": "Search talents…",
+          "TreesPlaceholder": "Search talent trees…"
+        },
+        "Slot": {
+          "Class": "Class",
+          "ClassTalent": "Class Talent",
+          "Heroic": "Heroic",
+          "HeroicTalent": "Heroic Talent"
+        },
+        "Stage": {
+          "ActiveTree": "// ACTIVE TREE",
+          "AlreadyPicked": "Already Picked",
+          "AvailableChoices": "Available Choices",
+          "ChooseTalentTree": "Choose a Talent Tree",
+          "ClassDisciplineHint": "Select a class-specific discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
+          "FocusTalentTree": "Focus talent tree {name}",
+          "HeroicDisciplineHint": "Select a heroic discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
+          "InspectLockedTalent": "Inspect locked talent {name}",
+          "KnownPendingCount": "{count} known/pending",
+          "LeadingPick": "Leading pick: {talent}",
+          "LockedFuture": "Locked / Future",
+          "MapInstructions": "Drag the map to move. Scroll to zoom. Legal nodes glow when they can be activated.",
+          "MentorLead": "Mentor lead: {talent}",
+          "MentorSuggestionMany": "{count} mentor suggestions",
+          "MentorSuggestionOne": "{count} mentor suggestion",
+          "PlannerControls": "Talent planner controls",
+          "QuickSummaryAria": "Talent tree quick summary",
+          "TalentChoices": "Talent choices",
+          "TalentCount": "{count} talents",
+          "TalentMatrix": "// TALENT MATRIX",
+          "TalentTreeMap": "Talent tree map",
+          "TreeHolomap": "Tree Holomap",
+          "TreeHolomapInstructions": "Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.",
+          "LegalActivations": "Activations valides"
+        },
+        "Tree": {
+          "BuildRead": "Build Read",
+          "KnownPending": "Known / Pending",
+          "LeadingLegalTalent": "Leading legal talent: {talent}",
+          "LegalNow": "Legal Now",
+          "MentorFit": "Mentor Fit",
+          "MentorReadTitle": "{mentor}'s Read",
+          "Nodes": "{count} Nodes",
+          "SuggestionEngine": "Suggestion Engine",
+          "TalentNodes": "Talent Nodes",
+          "TalentTree": "Talent Tree",
+          "TreeDossier": "// TREE DOSSIER",
+          "TreeFunction": "Tree Function",
+          "FallbackSummary": "{tree} talent tree. Open the holomap to inspect legal talents and prerequisite paths.",
+          "StatusAvailable": "This discipline is available. Opening the holomap will reveal legal activations and locked future branches.",
+          "StatusMentorStrongFit": "Your mentor currently sees this tree as a strong fit. {talent} is the cleanest legal next pick from this tree.",
+          "StatusMomentum": "You already have momentum in this discipline. Opening the holomap will show the next legal branches.",
+          "ThisTree": "Cet arbre"
+        },
+        "View": {
+          "Both": "Both",
+          "List": "List",
+          "Map": "Map"
+        },
+        "Mentor": {
+          "Chargen": "Les talents définissent votre voie. Choisissez une discipline qui correspond à votre vision de ce personnage.",
+          "Default": "Sélectionnez un talent qui vous définit.",
+          "LevelUp": "Vos talents grandissent avec l’expérience. Choisissez une nouvelle discipline pour vous spécialiser davantage."
+        },
+        "Messages": {
+          "ChoiceNotLegal": "Ce choix de talent n’est pas valide actuellement.",
+          "ChooseTitle": "Choisir : {talent}",
+          "PrereqsNotMetForChoice": "Les prérequis du talent ne sont pas remplis pour ce choix sélectionné."
+        },
+        "Recommendation": {
+          "GoodFit": "Bon ajustement",
+          "InvestedPath": "Voie investie",
+          "LegalOption": "Option valide",
+          "NoLegalPicks": "Aucun choix valide",
+          "NoLegalPicksReason": "Cet arbre n’a aucun talent sélectionnable pour l’emplacement actuel, il n’est donc pas pris en compte par le moteur de suggestions.",
+          "NoSelectableTalentsLegalNow": "Aucun talent sélectionnable n’est valide pour le moment.",
+          "PriorityPath": "Voie prioritaire",
+          "ReasonAbility": "{name} leans into one of your stronger ability scores.",
+          "ReasonChain": "{name} continues a prerequisite chain you have already started.",
+          "ReasonClass": "{name} fits the class path you are currently pursuing.",
+          "ReasonLegalNow": "{name} is legal now and fits the current talent slot.",
+          "ReasonMeta": "{name} has a known synergy with your current build signals.",
+          "ReasonPrestige": "{name} supports a longer prestige or advanced path.",
+          "ReasonSkill": "{name} uses skills your character is already developing.",
+          "ReasonSpecies": "{name} lines up with your species or heritage signals.",
+          "ReasonWishlist": "{name} moves you toward something already marked as desirable for this build.",
+          "StrongestLegalPick": "{talent} is the strongest legal pick currently visible in this tree.",
+          "StrongFit": "Très bon ajustement",
+          "ThisChoice": "ce choix",
+          "TopPick": "Meilleur choix",
+          "TreeLegalCount": "{tree} has {count} legal talent(s) available for this slot."
         }
       },
-      "Tooltip": {
-        "AbilityModifier": {
-          "Body": "Dérivé du score de caractéristique. Ajouté aux jets, compétences et défenses concernés.",
-          "Title": "Modificateur de caractéristique"
-        },
-        "AbilityScore": {
-          "Body": "Le score brut. Le modificateur (score moins 10, divisé par 2) est ce qui s'applique aux jets.",
-          "Title": "Score de caractéristique"
-        },
-        "Acrobatics": {
-          "Body": "Les Acrobaties couvrent l'équilibre, les roulades, les chutes sans danger, l'évasion d'entraves physiques et les mouvements agiles. Utilisez-les lorsque le contrôle précis du corps compte plus que la force brute.",
-          "Title": "Acrobaties"
-        },
-        "ActionDisabled": {
-          "Body": "Cette action ne peut pas être utilisée pour le moment. Vérifiez les prérequis et les ressources disponibles.",
-          "Title": "Action indisponible"
-        },
-        "ActionPalette": {
-          "Body": "Accès rapide aux actions courantes de combat, de narration et d'exploration.",
-          "Title": "Palette d'actions"
-        },
-        "ActiveTalent": {
-          "Body": "Ce talent requiert une activation. Vérifiez son action, son déclencheur ou ses limites d'utilisation.",
-          "Title": "Talent actif"
-        },
-        "ArmorPenalty": {
-          "Body": "Pénalité appliquée à certaines compétences lorsque l'armure gêne le mouvement.",
-          "Title": "Pénalité d'armure"
-        },
-        "AurebeshTranslation": {
-          "Body": "Le texte apparaît d'abord en aurebesh, puis se traduit. Cliquez pour ignorer l'effet.",
-          "Title": "Traduction depuis l'aurebesh"
-        },
-        "BaseAttackBonus": {
-          "Body": "Ajouté aux jets d'attaque. Déterminé par la classe et le niveau.",
-          "Title": "Bonus de base à l'attaque"
-        },
-        "CatchSecondWind": {
-          "Body": "Reprendre un second souffle permet à un personnage héroïque de se ressaisir après avoir été gravement blessé. Cela n'est disponible que lorsqu'il est réduit à la moitié de ses points de vie ou moins, et ne peut être utilisé qu'une fois par jour.",
-          "Title": "Reprendre un second souffle"
-        },
-        "ChargenClass": {
-          "Body": "Votre classe détermine les points de vie, les défenses, les compétences formées et l'accès aux talents.",
-          "Title": "Classe"
-        },
-        "ChargenLockin": {
-          "Body": "Confirme vos choix. La plupart des sélections peuvent encore être ajustées après la création.",
-          "Title": "Finaliser le personnage"
-        },
-        "ChargenMentor": {
-          "Body": "Choisissez un mentor dont les conseils façonnent votre expérience de création de personnage.",
-          "Title": "Sélection du mentor"
-        },
-        "ChargenNarrative": {
-          "Body": "Créez votre personnage au moyen de choix narratifs guidés plutôt que par une sélection manuelle des statistiques.",
-          "Title": "Mode narratif"
-        },
-        "ChargenRollMethod": {
-          "Body": "Choisissez comment générer les scores de caractéristiques : lancer les dés, achat par points ou tableau standard.",
-          "Title": "Méthode des scores de caractéristiques"
-        },
-        "ChargenSpecies": {
-          "Body": "Votre espèce détermine les traits de base, les ajustements de caractéristiques et les capacités disponibles.",
-          "Title": "Espèce"
-        },
-        "Charisma": {
-          "Body": "Le Charisme reflète le leadership, le magnétisme, l'assurance et la capacité à influencer les autres. Ce n'est pas seulement l'apparence ; c'est la force de la présence personnelle du personnage.",
-          "Title": "Charisme"
-        },
-        "Climb": {
-          "Body": "L'Escalade sert à gravir des surfaces difficiles comme des parois rocheuses, des bâtiments, des échelles et des machines. Elle mesure un mouvement ascendant contrôlé par la force et la prise.",
-          "Title": "Escalade"
-        },
-        "ConditionTrack": {
-          "Body": "Suit les pénalités dues aux coups violents. Chaque cran vers le bas applique un malus cumulatif de -1 à tous les jets et défenses.",
-          "Title": "Piste d'état"
-        },
-        "Constitution": {
-          "Body": "La Constitution reflète la capacité d'un personnage à supporter les blessures, la fatigue et les contraintes physiques. C'est une caractéristique centrale de survie, car elle contribue à l'endurance.",
-          "Title": "Constitution"
-        },
-        "DamageThreshold": {
-          "Body": "Le seuil de dégâts mesure la quantité de dégâts qu'une seule attaque doit infliger pour vous handicaper sérieusement. Même s'il vous reste des points de vie, un coup assez puissant peut réduire immédiatement votre efficacité.",
-          "Title": "Seuil de dégâts"
-        },
-        "DarkSideScore": {
-          "Body": "Le score du Côté Obscur suit la corruption morale et spirituelle causée par des actes maléfiques. Un score plus élevé reflète une plus grande influence du Côté Obscur et peut entraîner de graves conséquences.",
-          "Title": "Score du Côté Obscur"
-        },
-        "Deception": {
-          "Body": "La Tromperie sert à rendre les mensonges crédibles, créer la confusion, dissimuler ses intentions ou se faire passer pour quelqu'un d'autre. Elle couvre le bluff, le bagou, les déguisements et les fausses preuves.",
-          "Title": "Tromperie"
-        },
-        "DestinyPoints": {
-          "Body": "Points rares qui permettent de réussir automatiquement un jet ou de déclencher des effets spéciaux de destinée.",
-          "Title": "Points de destinée"
-        },
-        "Dexterity": {
-          "Body": "La Dextérité reflète le contrôle fin, la vitesse de réaction et la précision physique. Elle est particulièrement utile pour le combat à distance, les mouvements d'évitement et le pilotage des véhicules.",
-          "Title": "Dextérité"
-        },
-        "Endurance": {
-          "Body": "L'Endurance mesure la résistance et la résilience sous pression. Utilisez-la lorsqu'un personnage doit continuer malgré la fatigue, les épreuves ou d'autres extrêmes physiques.",
-          "Title": "Endurance"
-        },
-        "FlatFooted": {
-          "Body": "Défense lorsque vous êtes pris au dépourvu. N'inclut pas la Dextérité ni les bonus d'esquive.",
-          "Title": "Pris au dépourvu"
-        },
-        "ForcePoints": {
-          "Body": "Les Points de Force représentent la capacité d'un personnage à puiser dans une aide inhabituelle, qu'elle soit comprise comme le destin, la chance ou la Force agissant à travers les êtres vivants. Ce sont des ressources limitées utilisées pour améliorer les actions importantes.",
-          "Title": "Points de Force"
-        },
-        "FortitudeDefense": {
-          "Body": "Résiste aux effets physiques comme le poison et l'étourdissement. Basée sur la classe, le niveau et la Constitution.",
-          "Title": "Défense de Vigueur"
-        },
-        "GMPaletteMode": {
-          "Body": "Bascule la palette vers les outils de MJ : apparition de PNJ, soins et gestion de l'état.",
-          "Title": "Mode MJ"
-        },
-        "GMSuggestion": {
-          "Body": "Indication consultative du moteur de suggestions. Non appliquée automatiquement.",
-          "Title": "Suggestion du MJ"
-        },
-        "GatherInformation": {
-          "Body": "Collecte d'informations sert à se renseigner, exploiter les réseaux sociaux et découvrir des pistes. Elle aide à trouver des rumeurs, des conversations publiques, des secrets discrets et des contacts utiles.",
-          "Title": "Collecte d'informations"
-        },
-        "Grapple": {
-          "Body": "Utilisé pour les tests de saisie et de lutte. Basé sur le BBA et le modificateur de taille.",
-          "Title": "Lutte"
-        },
-        "HitPoints": {
-          "Body": "Les points de vie mesurent combien de temps vous pouvez rester dans le combat. Ils reflètent à la fois la tolérance aux blessures et l'habileté au combat, comme esquiver, dévier et transformer des coups solides en blessures moins graves.",
-          "Title": "Points de vie"
-        },
-        "Initiative": {
-          "Body": "L'Initiative détermine la rapidité avec laquelle vous réagissez lorsque l'action commence. Un résultat plus élevé signifie généralement agir plus tôt dans le round.",
-          "Title": "Initiative"
-        },
-        "Intelligence": {
-          "Body": "L'Intelligence reflète la capacité d'un personnage à comprendre les systèmes, résoudre les problèmes et développer une expertise formée. Elle est particulièrement utile aux personnages qui s'appuient sur des compétences techniques ou académiques étendues.",
-          "Title": "Intelligence"
-        },
-        "Jump": {
-          "Body": "Le Saut sert à franchir des fosses, passer par-dessus des obstacles et effectuer des bonds contrôlés. Il reflète la force explosive et la coordination des mouvements.",
-          "Title": "Saut"
-        },
-        "Knowledge": {
-          "Body": "Les Connaissances représentent un apprentissage académique, professionnel ou technique. Chaque domaine couvre un savoir différent ; la réussite dépend donc de la pertinence du sujet par rapport à votre formation.",
-          "Title": "Connaissances"
-        },
-        "Mechanics": {
-          "Body": "La Mécanique sert à interagir directement avec les machines et le matériel technique. Elle couvre le contournement de la sécurité, la pose ou le désamorçage d'explosifs, et la réparation ou l'amélioration d'équipement et de droïdes endommagés.",
-          "Title": "Mécanique"
-        },
-        "MentorDialogue": {
-          "Body": "Votre mentor fournit du contexte et des suggestions. C'est consultatif, pas obligatoire.",
-          "Title": "Conseils du mentor"
-        },
-        "PaletteMode": {
-          "Body": "Bascule entre les actions de combat et les actions narratives ou d'exploration.",
-          "Title": "Mode de palette"
-        },
-        "PassiveTalent": {
-          "Body": "Toujours actif. Aucune action n'est nécessaire pour bénéficier de ce talent.",
-          "Title": "Talent passif"
-        },
-        "Perception": {
-          "Body": "La Perception sert à détecter les menaces, repérer les créatures ou objets dissimulés et rester conscient de l'environnement. Elle reflète la vigilance et l'acuité sensorielle.",
-          "Title": "Perception"
-        },
-        "Persuasion": {
-          "Body": "La Persuasion sert à obtenir la coopération, façonner les attitudes et orienter les issues sociales. Elle peut être subtile et diplomatique ou ferme et intimidante.",
-          "Title": "Persuasion"
-        },
-        "Pilot": {
-          "Body": "Le Pilotage régit la maîtrise avancée des véhicules. Les trajets ordinaires peuvent ne pas exiger de test, mais les manœuvres d'évitement, les cascades et les contrôles dangereux oui.",
-          "Title": "Pilotage"
-        },
-        "ReflexDefense": {
-          "Body": "Cible de la plupart des attaques. Basée sur la classe, le niveau, la Dextérité ou le bonus d'armure.",
-          "Title": "Défense de Réflexes"
-        },
-        "Ride": {
-          "Body": "L'Équitation sert à contrôler les créatures utilisées comme montures, surtout en mouvement ou sous pression. Elle reflète l'équilibre, le contrôle et la coordination montée.",
-          "Title": "Équitation"
-        },
-        "SkillRoll": {
-          "Body": "Cliquez pour lancer cette compétence. Le jet ajoute votre modificateur et votre bonus de formation.",
-          "Title": "Test de compétence"
-        },
-        "SkillTrained": {
-          "Body": "Les compétences formées reçoivent un bonus de +5 et peuvent débloquer des utilisations spéciales indisponibles sans formation.",
-          "Title": "Compétence formée"
-        },
-        "Stealth": {
-          "Body": "La Discrétion sert à éviter la détection par le silence, la dissimulation et le mouvement prudent. Elle soutient aussi le positionnement caché, les embuscades, les tirs depuis un couvert et l'escamotage.",
-          "Title": "Discrétion"
-        },
-        "Strength": {
-          "Body": "La Force reflète la quantité de puissance physique qu'un personnage peut exercer. Elle est particulièrement importante pour les actions physiques directes et les tâches de puissance à courte portée.",
-          "Title": "Force"
-        },
-        "Survival": {
-          "Body": "La Survie aide les personnages à traverser des environnements hostiles, suivre les signes de danger, chercher de la nourriture, chasser et identifier les risques naturels. Elle mesure le savoir-faire pratique de terrain.",
-          "Title": "Survie"
-        },
-        "Swim": {
-          "Body": "La Natation sert à traverser l'eau, plonger, rester à flot et manœuvrer dans des conditions aquatiques difficiles. Elle représente le mouvement contrôlé dans l'eau.",
-          "Title": "Natation"
-        },
-        "TacticalOverlay": {
-          "Body": "Affiche les bandes de portée, les zones de menace et les informations tactiques sur la carte.",
-          "Title": "Superposition tactique"
-        },
-        "TreatInjury": {
-          "Body": "Premiers Soins couvre l'aide sur le champ de bataille, les soins médicaux et le soutien à la récupération. Utilisez cette compétence pour maintenir les alliés en vie, améliorer les soins et répondre aux états néfastes.",
-          "Title": "Premiers Soins"
-        },
-        "UsageLimit": {
-          "Body": "Cette capacité ne peut être utilisée qu'un nombre déterminé de fois par rencontre ou par jour.",
-          "Title": "Utilisation limitée"
-        },
-        "UseComputer": {
-          "Body": "Utilisation d'Ordinateur sert à exploiter des systèmes sécurisés, contourner des protections numériques et interagir avec une technologie complexe contrôlée par ordinateur. Elle régit l'accès technique dans les environnements électroniques.",
-          "Title": "Utilisation d'Ordinateur"
-        },
-        "UseTheForce": {
-          "Body": "Utiliser la Force représente la connexion active à la Force en jeu. Cette compétence soutient la perception inhabituelle, la récupération et d'autres actes guidés par la Force, et elle exige normalement Sensibilité à la Force pour être formée.",
-          "Title": "Utiliser la Force"
-        },
-        "WeaponAttack": {
-          "Body": "Cliquez pour lancer une attaque avec cette arme contre la Défense de Réflexes d'une cible.",
-          "Title": "Jet d'attaque"
-        },
-        "WeaponDamage": {
-          "Body": "Cliquez pour lancer les dégâts de cette arme après une attaque réussie.",
-          "Title": "Jet de dégâts"
-        },
-        "WillDefense": {
-          "Body": "Résiste aux effets mentaux et aux pouvoirs de la Force. Basée sur la classe, le niveau et la Sagesse.",
-          "Title": "Défense de Volonté"
-        },
-        "Wisdom": {
-          "Body": "La Sagesse reflète la perception, le discernement pratique et le lien avec l'environnement. Elle concerne davantage la conscience et le bon jugement que l'analyse abstraite.",
-          "Title": "Sagesse"
-        }
-      },
-      "Tour": {
-        "GM": {
-          "Item1": "La superposition tactique ajoute une visualisation des portées et des menaces aux scènes",
-          "Item2": "Les suggestions du MJ offrent des indications de rencontre consultatives, jamais automatiques",
-          "Item3": "Les outils de scène et la gestion des PNJ sont disponibles depuis la barre latérale et la palette",
-          "Item4": "Toutes les automatisations, comme le seuil de dégâts et la récupération d'état, peuvent être activées ou désactivées dans les paramètres",
-          "Item5": "Les aides de découverte peuvent être réinitialisées ou désactivées depuis les paramètres du système",
-          "Subtitle": "Votre boîte à outils de MJ comprend plusieurs systèmes optionnels. Rien ne fonctionne tant que vous ne l'activez pas.",
-          "Title": "Bienvenue dans Star Wars Saga Edition (outils de MJ)"
-        },
-        "GMHolopad": "Ouvrir l'holopad du MJ",
-        "Player": {
-          "Item1": "La création de personnage prend en charge les modes narratif et mécanique",
-          "Item2": "La palette d'actions donne un accès rapide aux actions de combat et de narration",
-          "Item3": "Les mentors peuvent guider vos choix pendant la création de personnage",
-          "Item4": "Survolez tout élément d'interface mis en évidence pour obtenir une explication rapide",
-          "Item5": "Toutes les aides guidées peuvent être désactivées dans vos paramètres client",
-          "Subtitle": "Voici quelques éléments pour vous aider à commencer. Toutes les fonctionnalités sont optionnelles.",
-          "Title": "Bienvenue dans Star Wars Saga Edition"
-        },
-        "Skip": "Ignorer"
+      "Utility": {
+        "Collapse": "Replier",
+        "Conditional": "Conditionnel",
+        "Expand": "Déplier",
+        "ResetFilters": "Réinitialiser les filtres"
       }
-    },
-    "LevelUp": {
-      "CancelContent": "Voulez-vous vraiment annuler ? Aucune modification ne sera enregistrée.",
-      "CancelTitle": "Annuler la montée de niveau"
-    },
-    "SheetLabel": {
-      "character": "Personnage",
-      "droid": "Droïde",
-      "vehicle": "Véhicule"
-    },
-    "UNITS": {
-      "WEIGHT": "lb"
     }
   }
 }

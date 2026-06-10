@@ -2664,3 +2664,116 @@
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__reset {
   display: none !important;
 }
+
+/* =============================================================================
+ * Beta fix: collapsed rails must leave no layout gutter.
+ * Collapsed top rails are fully removed from normal flow; the restore tray is
+ * overlay-only, so work/detail content immediately reclaims vertical space.
+ * ============================================================================= */
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"],
+.progression-shell [data-region="progress-rail"][data-collapsed="true"],
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] {
+  display: none !important;
+  flex: 0 0 0 !important;
+  flex-basis: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+.progression-shell .prog-collapsed-rail-tray {
+  position: absolute;
+  top: 10px;
+  right: 96px;
+  z-index: 85;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.progression-shell .prog-collapsed-rail-tray__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 3px 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  background: color-mix(in srgb, var(--sheet-bg-panel, #07131d) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sheet-accent-primary, #00d8ff) 44%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--sheet-accent-primary, #00d8ff) 18%, transparent);
+}
+
+.progression-shell .prog-content-row {
+  position: relative;
+}
+
+.progression-shell [data-region="summary-panel"][data-collapsed="true"] {
+  display: none !important;
+  flex: 0 0 0 !important;
+  flex-basis: 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+.progression-shell .prog-summary-restore {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 26px;
+  padding: 3px 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  background: color-mix(in srgb, var(--sheet-bg-panel, #07131d) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sheet-accent-primary, #00d8ff) 44%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--sheet-accent-primary, #00d8ff) 18%, transparent);
+}
+
+.progression-shell .prog-content-row[data-summary-collapsed="true"] [data-region="work-surface"] {
+  flex: 1 1 auto;
+}
+
+/* Species step readability/layout pass: give details more room and make the
+ * list a tighter chooser rather than a source-book table.
+ */
+.progression-shell[data-step-id="species"] [data-region="details-panel"] {
+  flex: 0 0 380px;
+  width: 380px;
+  min-width: 380px;
+  max-width: 380px;
+}
+
+.progression-shell[data-step-id="species"] .prog-species-row {
+  padding: 8px 10px;
+}
+
+.progression-shell[data-step-id="species"] .prog-species-row__content {
+  gap: 10px;
+}
+
+.progression-shell[data-step-id="species"] .prog-species-row__right,
+.progression-shell[data-step-id="species"] .prog-species-row__source {
+  display: none !important;
+}
+
+.progression-shell[data-step-id="species"] .prog-species-list {
+  gap: 8px;
+  padding: 6px;
+}

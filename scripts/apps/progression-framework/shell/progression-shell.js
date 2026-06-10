@@ -1948,6 +1948,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       progressRailCollapsed: this.progressRailCollapsed,
       utilityBarCollapsed: this.utilityBarCollapsed,
       summaryPanelCollapsed: this.summaryPanelCollapsed,
+      hasCollapsedTopRail: Boolean(this.mentorCollapsed || this.progressRailCollapsed || this.utilityBarCollapsed),
       utilityBarConfig,
 
       // Focus/selection
@@ -3037,14 +3038,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.stopPropagation?.();
     this.progressRailCollapsed = !this.progressRailCollapsed;
     await game?.user?.setFlag?.('foundryvtt-swse', 'progressRailCollapsed', this.progressRailCollapsed);
-
-    const region = this.element?.querySelector?.('[data-region="progress-rail"]');
-    if (region) region.setAttribute('data-collapsed', String(this.progressRailCollapsed));
-    const button = region?.querySelector?.('[data-action="toggle-progress-rail"]');
-    if (button) {
-      button.setAttribute('aria-expanded', String(!this.progressRailCollapsed));
-      button.setAttribute('title', this.progressRailCollapsed ? 'Expand step rail' : 'Collapse step rail');
-    }
+    return this.render({ force: true });
   }
 
   async _onToggleUtilityBar(event, target) {
@@ -3058,16 +3052,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.stopPropagation?.();
     this.summaryPanelCollapsed = !this.summaryPanelCollapsed;
     await game?.user?.setFlag?.('foundryvtt-swse', 'summaryPanelCollapsed', this.summaryPanelCollapsed);
-
-    const row = this.element?.querySelector?.('.prog-content-row');
-    if (row) row.setAttribute('data-summary-collapsed', String(this.summaryPanelCollapsed));
-    const region = this.element?.querySelector?.('[data-region="summary-panel"]');
-    if (region) region.setAttribute('data-collapsed', String(this.summaryPanelCollapsed));
-    const button = region?.querySelector?.('[data-action="toggle-summary-panel"]');
-    if (button) {
-      button.setAttribute('aria-expanded', String(!this.summaryPanelCollapsed));
-      button.setAttribute('title', this.summaryPanelCollapsed ? 'Expand summary rail' : 'Collapse summary rail');
-    }
+    return this.render({ force: true });
   }
 
   async _onAskMentor(event, target) {

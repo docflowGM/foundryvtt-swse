@@ -1,16 +1,16 @@
 {{!-- Talent Tree Browser (Stage 1) --}}
 <div class="talent-work-surface talent-stage-browser talent-holomap-browser">
   <div class="talent-browser-header talent-browser-header--holomap">
-    <div class="talent-browser-header__eyebrow">// TALENT MATRIX</div>
+    <div class="talent-browser-header__eyebrow">{{localize "SWSE.Progression.Talent.Stage.TalentMatrix"}}</div>
     <h3 class="talent-browser-title">
       <i class="fa-solid fa-sitemap"></i>
-      Choose a Talent Tree
+      {{localize "SWSE.Progression.Talent.Stage.ChooseTalentTree"}}
     </h3>
     <p class="talent-browser-hint">
       {{#if (eq slotType "class")}}
-      Select a class-specific discipline. Each card opens a tactical holomap of legal, known, and locked talents.
+      {{localize "SWSE.Progression.Talent.Stage.ClassDisciplineHint"}}
       {{else}}
-      Select a heroic discipline. Each card opens a tactical holomap of legal, known, and locked talents.
+      {{localize "SWSE.Progression.Talent.Stage.HeroicDisciplineHint"}}
       {{/if}}
     </p>
     <div class="talent-browser-signal-row" aria-hidden="true">
@@ -27,13 +27,13 @@
                data-tree-id="{{id}}"
                tabindex="0"
                role="button"
-               aria-label="Focus talent tree {{name}}">
+               aria-label="{{localize "SWSE.Progression.Talent.Stage.FocusTalentTree" name=name}}">
         <div class="talent-tree-card__backplate" aria-hidden="true"></div>
         <div class="talent-tree-card__scan" aria-hidden="true"></div>
         <div class="talent-tree-card__topline">
-          <span class="talent-tree-card__kicker">Talent Tree</span>
+          <span class="talent-tree-card__kicker">{{localize "SWSE.Progression.Talent.Tree.TalentTree"}}</span>
           {{#if isSuggested}}
-          <span class="talent-tree-card__recommendation"><i class="fa-solid fa-star"></i> Suggested</span>
+          <span class="talent-tree-card__recommendation"><i class="fa-solid fa-star"></i> {{localize "SWSE.Progression.Common.Suggested"}}</span>
           {{/if}}
         </div>
 
@@ -45,10 +45,10 @@
           </div>
         </div>
 
-        <div class="talent-tree-card__quickline" aria-label="Talent tree quick summary">
-          <span><strong>{{nodeCount}}</strong> talents</span>
-          {{#if investmentCount}}<span><strong>{{investmentCount}}</strong> known/pending</span>{{/if}}
-          {{#if recommendationTalentName}}<span>Mentor lead: {{recommendationTalentName}}</span>{{/if}}
+        <div class="talent-tree-card__quickline" aria-label="{{localize "SWSE.Progression.Talent.Stage.QuickSummaryAria"}}">
+          <span>{{localize "SWSE.Progression.Talent.Stage.TalentCount" count=nodeCount}}</span>
+          {{#if investmentCount}}<span>{{localize "SWSE.Progression.Talent.Stage.KnownPendingCount" count=investmentCount}}</span>{{/if}}
+          {{#if recommendationTalentName}}<span>{{localize "SWSE.Progression.Talent.Stage.MentorLead" talent=recommendationTalentName}}</span>{{/if}}
         </div>
 
         {{#if recommendationReason}}
@@ -58,13 +58,13 @@
           </span>
           <p>{{recommendationReason}}</p>
           {{#if recommendationTalentName}}
-          <small>Leading pick: {{recommendationTalentName}}</small>
+          <small>{{localize "SWSE.Progression.Talent.Stage.LeadingPick" talent=recommendationTalentName}}</small>
           {{/if}}
         </div>
         {{/if}}
 
         <button type="button" class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
-          <span>Explore Holomap</span>
+          <span>{{localize "SWSE.Progression.Talent.Actions.ExploreHolomap"}}</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
       </article>
@@ -73,7 +73,7 @@
     {{else}}
     <div class="talent-empty-state talent-empty-state--holomap">
       <i class="fa-solid fa-hexagon-exclamation"></i>
-      <p>No talent trees available in your current context.</p>
+      <p>{{localize "SWSE.Progression.Talent.Empty.NoTreesAvailable"}}</p>
     </div>
     {{/if}}
   </section>

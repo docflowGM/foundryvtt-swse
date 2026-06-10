@@ -13,7 +13,7 @@
         <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
              src="systems/foundryvtt-swse/assets/mentors/salty.png"
              alt=""
-             title="Ol' Salty"/>
+             title="{{localize "SWSE.Progression.Mentor.FallbackName"}}"/>
       {{/if}}
     </div>
   </div>{{!-- /portrait-zone --}}
@@ -28,7 +28,7 @@
     <div class="prog-mentor__dialogue-content">
       <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"
          data-mentor-text>
-        {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}Awaiting your decision…{{/if}}
+        {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}{{localize "SWSE.Progression.Mentor.AwaitingDecision"}}{{/if}}
       </p>
     </div>
   </div>
@@ -36,13 +36,13 @@
   {{! Ask Mentor button (only when enabled) }}
   {{#unless mentor.askMentorHidden}}
     <button class="prog-btn swse-ui-button prog-mentor__ask" data-action="ask-mentor" type="button">
-      Ask Mentor
+      {{localize "SWSE.Progression.Common.AskMentor"}}
     </button>
   {{/unless}}
 
   {{! Collapse button — always visible }}
   <button class="prog-mentor__collapse" data-action="toggle-mentor" type="button"
-          title="{{#if mentorCollapsed}}Expand mentor{{else}}Collapse mentor{{/if}}">
-    <i class="fas fa-chevron-{{#if mentorCollapsed}}down{{else}}up{{/if}}"></i>
+          title="{{#if mentorCollapsed}}{{localize "SWSE.Progression.Mentor.Expand"}}{{else}}{{localize "SWSE.Progression.Mentor.Collapse"}}{{/if}}">
+    <i class="fas fa-chevron-{{#if mentorCollapsed}}right{{else}}left{{/if}}"></i>
   </button>
 </div>

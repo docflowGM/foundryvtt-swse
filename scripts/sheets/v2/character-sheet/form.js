@@ -386,6 +386,9 @@ export async function handleFormSubmission(sheet, event) {
         });
       }
 
+      // Quiet field edit: persist the scoped dot-path update without repainting the
+      // whole sheet/shell. The edited input already has the new value; players can
+      // use the header Refresh button when they want a full recalc/reload pass.
       await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, scopedUpdate, {
         source: 'character-sheet-direct-field',
         meta: { guardKey: `direct-field:${explicitField.name}` },
@@ -394,7 +397,8 @@ export async function handleFormSubmission(sheet, event) {
       }), {
         reason: `character-sheet-direct-field:${explicitField.name}`,
         surfaceId: sheet?._shellSurface ?? sheet?.shellSurface ?? 'sheet',
-        preserveUi: true
+        preserveUi: true,
+        render: false
       });
 
       const refreshedActor = game.actors.get(currentActorId) ?? currentActor;
@@ -486,6 +490,8 @@ export async function handleFormSubmission(sheet, event) {
   // Update actor via ActorEngine
   try {
     SWSELogger.debug('[PERSISTENCE] Calling ActorEngine.updateActor...');
+    // Quiet broad submit fallback: still use ActorEngine, but do not repaint every
+    // open surface for normal form editing. Manual Refresh owns full reloads.
     await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, filtered, {
       source: 'character-sheet-form-submit',
       meta: { guardKey: 'character-sheet-form-submit' },
@@ -494,7 +500,8 @@ export async function handleFormSubmission(sheet, event) {
     }), {
       reason: 'character-sheet-form-submit',
       surfaceId: sheet?._shellSurface ?? sheet?.shellSurface ?? 'sheet',
-      preserveUi: true
+      preserveUi: true,
+      render: false
     });
     SWSELogger.debug('[PERSISTENCE] Form submission completed successfully');
 

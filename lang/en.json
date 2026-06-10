@@ -677,6 +677,328 @@
           "Item5": "Discovery hints can be reset or disabled from system settings"
         }
       }
+    },
+    "Progression": {
+      "Common": {
+        "Access": "Access",
+        "Activate": "Activate",
+        "AskMentor": "Ask Mentor",
+        "Benefit": "Benefit",
+        "Categories": "Categories",
+        "Complete": "Complete",
+        "Description": "Description",
+        "Deselect": "Deselect",
+        "Detail": "Detail",
+        "Granted": "Granted",
+        "Known": "Known",
+        "Legal": "Legal",
+        "Locked": "Locked",
+        "NoDescriptionAvailable": "No description available.",
+        "NoPrerequisite": "No prerequisite",
+        "NoPrerequisites": "No prerequisites",
+        "Owned": "Owned",
+        "Path": "Path",
+        "Pending": "Pending",
+        "Recommended": "Recommended",
+        "Repeatable": "Repeatable",
+        "Reset": "Reset",
+        "Selected": "Selected",
+        "Sort": {
+          "AZ": "A–Z",
+          "NameAZ": "Name A→Z",
+          "NameZA": "Name Z→A"
+        },
+        "Status": "Status:",
+        "Suggested": "Suggested",
+        "Tip": "Tip:",
+        "Unavailable": "Unavailable",
+        "Unlocks": "Unlocks",
+        "Available": "Available",
+        "Prerequisites": "Prerequisites"
+      },
+      "Confirm": {
+        "AllRequiredComplete": "All required build elements are complete.",
+        "BlockingIssues": "Blocking Issues",
+        "BuildReview": "Build Review",
+        "ClassFeats": "Class Feats:",
+        "ClassTalents": "Class Talents:",
+        "FeatsAcquired": "Feats Acquired",
+        "GeneralFeats": "General Feats:",
+        "HeroicTalents": "Heroic Talents:",
+        "ResolveItems": "Resolve these items to proceed to finalization.",
+        "ReviewOrFinalize": "Click on any section above to review details, or proceed to finalize your character.",
+        "TalentsSelected": "Talents Selected",
+        "Warnings": "Warnings"
+      },
+      "Feat": {
+        "Actions": {
+          "ChooseThisFeat": "Choose This Feat",
+          "ReturnToSkills": "Return to Skills",
+          "StayHere": "Stay Here"
+        },
+        "Details": {
+          "Category": "Category:",
+          "NotMetPrerequisites": "Not met prerequisites:",
+          "OtherBlockers": "Other blockers:",
+          "QuickSummary": "Quick summary:",
+          "RepeatableBody": "You can select this feat multiple times if you have additional feat picks.",
+          "Tags": "Tags:",
+          "WhySuggested": "Why suggested:",
+          "WhySuggestedBody": "This feat synergizes well with your build and class."
+        },
+        "Empty": {
+          "CatalogUnavailable": "Feat Catalog Unavailable",
+          "DisplayRulesDescription": "No feats meet this slot's current display rules.",
+          "NoAvailableFeats": "No Available Feats",
+          "NoFeatsInView": "No Feats in This View",
+          "NoFeatsInViewDescription": "Try another category, clear search, or toggle Show All to inspect locked options.",
+          "NoLegalStartingFeats": "No Legal Starting Feats",
+          "NoLegalStartingFeatsDescription": "No feat from this class's starting-feat pool currently meets your prerequisites.",
+          "NoMoreFeats": "No more Feats",
+          "NoSearchMatches": "No feats match “{query}” in the feat catalog.",
+          "SafeModeBrowserBody": "This feat step will not block character creation while the compendium is unavailable.",
+          "SafeModeContinueBody": "Continue is allowed so chargen does not soft-lock.",
+          "SafeModeLabel": "Safe mode:",
+          "SearchHint": "Try a shorter name, prerequisite, or tag.",
+          "ShowAllTip": "Enable \"Show All\" to inspect blocked feat prerequisites."
+        },
+        "Footer": {
+          "CatalogUnavailableSafeToSkip": "{type} Feat: Catalog unavailable — safe to skip",
+          "NoLegalOptionsSafeToSkip": "{type} Feat: No legal options — safe to skip",
+          "NotYetChosen": "{type} Feat not yet chosen",
+          "Selected": "{type} Feat: {names}"
+        },
+        "Groups": {
+          "SuggestedForYourBuild": "Suggested for Your Build"
+        },
+        "Messages": {
+          "CatalogHydrationFailed": "The feat catalog did not hydrate from the Foundry compendium. This step is safe to skip, but feat choices will not be available until the feats pack registers.",
+          "CatalogUnavailableSkippable": "The feat catalog is unavailable because the feats compendium did not register. The step remains skippable so character creation can continue.",
+          "CatalogUnavailableWarning": "Feat catalog unavailable: no feats were loaded from the compendium. You can continue past this step.",
+          "ChoiceNotLegal": "That feat choice is not currently legal.",
+          "ChooseTitle": "Choose: {feat}",
+          "ClassSkillsUpdatedTitle": "Class Skills Updated",
+          "ForceSensitivityChangesClassSkills": "changes your class skill list.",
+          "GeneralFeatLimit": "You have already selected {count} general feats. Remove one before choosing another.",
+          "NotCurrentlyAvailable": "That feat is not currently available.",
+          "PrereqsNotMetForChoice": "Feat prerequisites are not met for that selected choice.",
+          "ReturnToSkillsQuestion": "Would you like to return to Skill Selection now so you can rearrange your trained skills?",
+          "SkillSelectionNotBehindCurrent": "Skill Selection is not behind the current step in this progression flow.",
+          "SkillsStepUnavailable": "The Skills step is not currently available.",
+          "UseTheForceNowClassSkill": "is now a class skill for this character.",
+          "WeaponProficiencyChosenGroup": "Weapon Proficiency with chosen weapon group or exotic weapon"
+        },
+        "Progress": {
+          "ChooseMoreToContinue": "Choose {count} more {type} Feat(s) to continue",
+          "Remaining": "{count} feat(s) remaining",
+          "SelectedOfRequired": "{selected} of {required} feat(s)"
+        },
+        "Search": {
+          "DroidPlaceholder": "Search droid feats…",
+          "Placeholder": "Search feats…"
+        },
+        "Slot": {
+          "CatalogUnavailable": "catalog unavailable",
+          "Class": "Class",
+          "ClassFeat": "Class Feat",
+          "General": "General",
+          "GeneralFeat": "General Feat",
+          "NoLegalOptions": "no legal options"
+        },
+        "Work": {
+          "ClearSearchAndFilters": "Clear feat search and filters",
+          "CollapseCategories": "Collapse Categories",
+          "FeatCategories": "Feat categories",
+          "LegalOnly": "Legal Only",
+          "LegalStartingFeats": "Legal Starting Feats",
+          "SearchLabel": "Search: {query}",
+          "SearchResults": "Search Results",
+          "SearchResultsHint": "Only feats related to your search are shown here.",
+          "SelectInspectHint": "Select a feat to inspect it in the detail rail.",
+          "ShowCategories": "Show Categories",
+          "ShowingAll": "Showing All",
+          "ToggleShowAllTitle": "Toggle between legal selectable feats and the full hydrated feat browser"
+        },
+        "Mentor": {
+          "Chargen": "Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.",
+          "Default": "Select a feat wisely.",
+          "DroidChargen": "Choose feats that reinforce your chassis role package and complement your installed systems.",
+          "LevelUp": "As you gain experience, you may learn new techniques and abilities. Choose feats that enhance your path."
+        },
+        "Validation": {
+          "SelectMoreFeats": "Select {count} more feat(s)",
+          "SelectMoreTypedFeats": "Select {count} more {type} Feat(s)"
+        }
+      },
+      "Mentor": {
+        "AwaitingDecision": "Awaiting your decision…",
+        "Collapse": "Collapse mentor",
+        "Expand": "Expand mentor",
+        "FallbackName": "Ol' Salty"
+      },
+      "Shell": {
+        "CharacterCreation": "CHARACTER CREATION",
+        "EngineUnlocked": "Engine-Unlocked",
+        "NoStepsAvailable": "No steps available.",
+        "StepOf": "Step {current} of {total}",
+        "TrainingMatrix": "Training Matrix",
+        "TrainingMatrixSubtitle": "Mentor-guided progression pipeline · concept shell restoration pass",
+        "UnlockedBy": "Unlocked by: {reason}"
+      },
+      "Survey": {
+        "AnsweredCount": "{answered} / {total} answered",
+        "BeginSurvey": "Begin Survey",
+        "ChangeAnswer": "Change Answer",
+        "ClassIntentRead": "{class} Intent Read",
+        "Complete": "survey complete",
+        "CompleteSurvey": "Complete Survey",
+        "ContinueToBackground": "Continue to Background",
+        "CurrentMentorRead": "Current mentor read",
+        "IntentRead": "Intent Read",
+        "Level1Survey": "Level 1 Survey",
+        "NextQuestion": "Next Question",
+        "ProgressAria": "Survey progress",
+        "QuestionOf": "Question {current} of {total}",
+        "Remaining": "{count} remaining",
+        "RetakeSurvey": "Retake Survey",
+        "ReturnToClass": "Return to Class",
+        "ReviewPreviousAnswer": "Review Previous Answer",
+        "Unavailable": "survey unavailable",
+        "YourAnswer": "Your answer"
+      },
+      "Talent": {
+        "Actions": {
+          "ActivateThisTalent": "Activate This Talent",
+          "BackToTrees": "Back to Trees",
+          "Center": "Center",
+          "CenterTitle": "Refocus the selected or inspected node",
+          "DeselectPendingTalent": "Deselect Pending Talent",
+          "ExploreHolomap": "Explore Holomap",
+          "Fit": "Fit",
+          "FitTitle": "Fit the whole tree in the map panel",
+          "OpenTreeHolomap": "Open Tree Holomap",
+          "ReturnToTreeBrowser": "Return to tree browser"
+        },
+        "Details": {
+          "BuildAnalysisTerminal": "// BUILD ANALYSIS TERMINAL",
+          "MentorRead": "Mentor Read",
+          "RootNode": "Root node — no prerequisite talent chain.",
+          "NoRulesText": "No rules text has been defined for this talent yet.",
+          "PartOfTree": "{talent} is part of the {tree} talent tree.",
+          "ThisTalent": "This talent"
+        },
+        "Empty": {
+          "NoTalentsMatched": "No talents matched your current filters in this tree.",
+          "NoTreesAvailable": "No talent trees available in your current context."
+        },
+        "Footer": {
+          "BrowsingTrees": "Browsing Trees",
+          "NotYetChosen": "{type} Talent not yet chosen",
+          "Selected": "{type} Talent: {talent}",
+          "ViewingTree": "Viewing: {tree}"
+        },
+        "Search": {
+          "DroidTalentsPlaceholder": "Search droid talents…",
+          "DroidTreesPlaceholder": "Search droid talent trees…",
+          "TalentsPlaceholder": "Search talents…",
+          "TreesPlaceholder": "Search talent trees…"
+        },
+        "Slot": {
+          "Class": "Class",
+          "ClassTalent": "Class Talent",
+          "Heroic": "Heroic",
+          "HeroicTalent": "Heroic Talent"
+        },
+        "Stage": {
+          "ActiveTree": "// ACTIVE TREE",
+          "AlreadyPicked": "Already Picked",
+          "AvailableChoices": "Available Choices",
+          "ChooseTalentTree": "Choose a Talent Tree",
+          "ClassDisciplineHint": "Select a class-specific discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
+          "FocusTalentTree": "Focus talent tree {name}",
+          "HeroicDisciplineHint": "Select a heroic discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
+          "InspectLockedTalent": "Inspect locked talent {name}",
+          "KnownPendingCount": "{count} known/pending",
+          "LeadingPick": "Leading pick: {talent}",
+          "LockedFuture": "Locked / Future",
+          "MapInstructions": "Drag the map to move. Scroll to zoom. Legal nodes glow when they can be activated.",
+          "MentorLead": "Mentor lead: {talent}",
+          "MentorSuggestionMany": "{count} mentor suggestions",
+          "MentorSuggestionOne": "{count} mentor suggestion",
+          "PlannerControls": "Talent planner controls",
+          "QuickSummaryAria": "Talent tree quick summary",
+          "TalentChoices": "Talent choices",
+          "TalentCount": "{count} talents",
+          "TalentMatrix": "// TALENT MATRIX",
+          "TalentTreeMap": "Talent tree map",
+          "TreeHolomap": "Tree Holomap",
+          "TreeHolomapInstructions": "Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.",
+          "LegalActivations": "Legal Activations"
+        },
+        "Tree": {
+          "BuildRead": "Build Read",
+          "KnownPending": "Known / Pending",
+          "LeadingLegalTalent": "Leading legal talent: {talent}",
+          "LegalNow": "Legal Now",
+          "MentorFit": "Mentor Fit",
+          "MentorReadTitle": "{mentor}'s Read",
+          "Nodes": "{count} Nodes",
+          "SuggestionEngine": "Suggestion Engine",
+          "TalentNodes": "Talent Nodes",
+          "TalentTree": "Talent Tree",
+          "TreeDossier": "// TREE DOSSIER",
+          "TreeFunction": "Tree Function",
+          "FallbackSummary": "{tree} talent tree. Open the holomap to inspect legal talents and prerequisite paths.",
+          "StatusAvailable": "This discipline is available. Opening the holomap will reveal legal activations and locked future branches.",
+          "StatusMentorStrongFit": "Your mentor currently sees this tree as a strong fit. {talent} is the cleanest legal next pick from this tree.",
+          "StatusMomentum": "You already have momentum in this discipline. Opening the holomap will show the next legal branches.",
+          "ThisTree": "This tree"
+        },
+        "View": {
+          "Both": "Both",
+          "List": "List",
+          "Map": "Map"
+        },
+        "Mentor": {
+          "Chargen": "Talents define your path. Choose a discipline that resonates with your vision for this character.",
+          "Default": "Select a talent that defines you.",
+          "LevelUp": "Your talents grow with experience. Choose a new discipline to specialize further in your abilities."
+        },
+        "Messages": {
+          "ChoiceNotLegal": "That talent choice is not currently legal.",
+          "ChooseTitle": "Choose: {talent}",
+          "PrereqsNotMetForChoice": "Talent prerequisites are not met for that selected choice."
+        },
+        "Recommendation": {
+          "GoodFit": "Good Fit",
+          "InvestedPath": "Invested Path",
+          "LegalOption": "Legal Option",
+          "NoLegalPicks": "No Legal Picks",
+          "NoLegalPicksReason": "This tree has no selectable talents for the current slot, so it is not considered by the suggestion engine.",
+          "NoSelectableTalentsLegalNow": "No selectable talents are legal right now.",
+          "PriorityPath": "Priority Path",
+          "ReasonAbility": "{name} leans into one of your stronger ability scores.",
+          "ReasonChain": "{name} continues a prerequisite chain you have already started.",
+          "ReasonClass": "{name} fits the class path you are currently pursuing.",
+          "ReasonLegalNow": "{name} is legal now and fits the current talent slot.",
+          "ReasonMeta": "{name} has a known synergy with your current build signals.",
+          "ReasonPrestige": "{name} supports a longer prestige or advanced path.",
+          "ReasonSkill": "{name} uses skills your character is already developing.",
+          "ReasonSpecies": "{name} lines up with your species or heritage signals.",
+          "ReasonWishlist": "{name} moves you toward something already marked as desirable for this build.",
+          "StrongestLegalPick": "{talent} is the strongest legal pick currently visible in this tree.",
+          "StrongFit": "Strong Fit",
+          "ThisChoice": "this choice",
+          "TopPick": "Top Pick",
+          "TreeLegalCount": "{tree} has {count} legal talent(s) available for this slot."
+        }
+      },
+      "Utility": {
+        "Collapse": "Collapse",
+        "Conditional": "Conditional",
+        "Expand": "Expand",
+        "ResetFilters": "Reset Filters"
+      }
     }
   }
 }

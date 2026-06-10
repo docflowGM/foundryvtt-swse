@@ -9,7 +9,7 @@
       <div class="prog-progress-status prog-progress-status--complete">
         <i class="fas fa-check-circle"></i>
         <span class="prog-progress-label">{{slotProgress.progressLabel}}</span>
-        <span class="prog-badge prog-badge--complete">Complete</span>
+        <span class="prog-badge prog-badge--complete">{{localize "SWSE.Progression.Common.Complete"}}</span>
       </div>
     {{else}}
       <div class="prog-progress-status prog-progress-status--incomplete">
@@ -26,7 +26,7 @@
     <div class="group-header group-header--static">
       <div class="header-content">
         <i class="fa-solid fa-list-check group-icon"></i>
-        <h3 class="group-title">Legal Starting Feats</h3>
+        <h3 class="group-title">{{localize "SWSE.Progression.Feat.Work.LegalStartingFeats"}}</h3>
         <span class="feat-count-badge">{{flatFeatList.length}}</span>
       </div>
     </div>
@@ -49,7 +49,7 @@
         </div>
         <div class="feat-item-meta">
           {{#if feat.isSuggested}}
-          <span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Suggested</span>
+          <span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> {{localize "SWSE.Progression.Common.Suggested"}}</span>
           {{/if}}
           <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
         </div>
@@ -60,8 +60,8 @@
     {{#unless flatFeatList.length}}
     <div class="empty-message">
       <i class="fa-solid fa-hexagon-exclamation"></i>
-      <p class="empty-title">No Legal Starting Feats</p>
-      <p class="empty-description">No feat from this class's starting-feat pool currently meets your prerequisites.</p>
+      <p class="empty-title">{{localize "SWSE.Progression.Feat.Empty.NoLegalStartingFeats"}}</p>
+      <p class="empty-description">{{localize "SWSE.Progression.Feat.Empty.NoLegalStartingFeatsDescription"}}</p>
     </div>
     {{/unless}}
   </section>
@@ -72,16 +72,16 @@
       <button class="feat-filter-btn feat-show-all-toggle{{#if showAll}} is-open{{/if}}"
               data-action="toggle-show-all-feats" type="button"
               {{#if catalogUnavailable}}disabled aria-disabled="true"{{/if}}
-              title="{{#if catalogUnavailable}}{{catalogUnavailableMessage}}{{else}}Toggle between legal selectable feats and the full hydrated feat browser{{/if}}">
+              title="{{#if catalogUnavailable}}{{catalogUnavailableMessage}}{{else}}{{localize "SWSE.Progression.Feat.Work.ToggleShowAllTitle"}}{{/if}}">
         <i class="fa-solid {{#if showAll}}fa-eye{{else}}fa-eye-slash{{/if}}"></i>
-        <span>{{#if showAll}}Showing All{{else}}Legal Only{{/if}}</span>
+        <span>{{#if showAll}}{{localize "SWSE.Progression.Feat.Work.ShowingAll"}}{{else}}{{localize "SWSE.Progression.Feat.Work.LegalOnly"}}{{/if}}</span>
         <span class="feat-filter-active-count">{{#if showAll}}{{allFeatCount}}{{else}}{{legalFeatCount}}{{/if}}</span>
       </button>
 
       {{#if hasSearchQuery}}
       <span class="feat-browser-mode-pill feat-browser-mode-pill--search">
         <i class="fa-solid fa-magnifying-glass"></i>
-        Search: {{searchQueryLabel}}
+        {{localize "SWSE.Progression.Feat.Work.SearchLabel" query=searchQueryLabel}}
       </span>
       {{else}}
       <span class="feat-browser-mode-pill">
@@ -92,14 +92,14 @@
     </div>
 
     <div class="feat-browser-toolbar__right">
-      <button class="feat-filter-btn" data-action="reset-feat-browser" type="button" title="Clear feat search and filters">
+      <button class="feat-filter-btn" data-action="reset-feat-browser" type="button" title="{{localize "SWSE.Progression.Feat.Work.ClearSearchAndFilters"}}">
         <i class="fa-solid fa-rotate-left"></i>
-        <span>Reset</span>
+        <span>{{localize "SWSE.Progression.Common.Reset"}}</span>
       </button>
       {{#unless hasSearchQuery}}
       <button class="feat-filter-btn feat-category-collapse-toggle" data-action="toggle-feat-category-sidebar" type="button">
         <i class="fa-solid {{#if categorySidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
-        <span>{{#if categorySidebarCollapsed}}Show Categories{{else}}Collapse Categories{{/if}}</span>
+        <span>{{#if categorySidebarCollapsed}}{{localize "SWSE.Progression.Feat.Work.ShowCategories"}}{{else}}{{localize "SWSE.Progression.Feat.Work.CollapseCategories"}}{{/if}}</span>
       </button>
       {{/unless}}
     </div>
@@ -108,10 +108,10 @@
   <section class="feat-browser {{#if categorySidebarCollapsed}}feat-browser--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}feat-browser--search-mode{{/if}}">
     {{#unless hasSearchQuery}}
     {{#unless categorySidebarCollapsed}}
-    <aside class="feat-category-sidebar" aria-label="Feat categories">
+    <aside class="feat-category-sidebar" aria-label="{{localize "SWSE.Progression.Feat.Work.FeatCategories"}}">
       <div class="feat-category-sidebar__header">
-        <span>Categories</span>
-        <button class="feat-category-sidebar__collapse" data-action="toggle-feat-category-sidebar" type="button" title="Collapse categories">
+        <span>{{localize "SWSE.Progression.Common.Categories"}}</span>
+        <button class="feat-category-sidebar__collapse" data-action="toggle-feat-category-sidebar" type="button" title="{{localize "SWSE.Progression.Feat.Work.CollapseCategories"}}">
           <i class="fa-solid fa-chevron-left"></i>
         </button>
       </div>
@@ -137,8 +137,8 @@
       {{#if hasSearchQuery}}
       <header class="feat-results-pane__header feat-results-pane__header--search">
         <div>
-          <h3><i class="fa-solid fa-magnifying-glass"></i> Search Results</h3>
-          <p>Only feats related to your search are shown here.</p>
+          <h3><i class="fa-solid fa-magnifying-glass"></i> {{localize "SWSE.Progression.Feat.Work.SearchResults"}}</h3>
+          <p>{{localize "SWSE.Progression.Feat.Work.SearchResultsHint"}}</p>
         </div>
         <span class="feat-count-badge">{{searchResultCount}}</span>
       </header>
@@ -160,9 +160,9 @@
             <div class="feat-compact-row__line feat-compact-row__line--meta">
               <span class="feat-subcategory-pill">{{feat.searchCategoryLabel}}</span>
               {{#if feat.prerequisiteLine}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}</span>{{/if}}
-              {{#if feat.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
-              {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
-              {{#unless feat.isAvailable}}<span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>{{/unless}}
+              {{#if feat.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> {{localize "SWSE.Progression.Common.Recommended"}}</span>{{/if}}
+              {{#if feat.isGranted}}<span class="feat-owned-pill">{{localize "SWSE.Progression.Common.Granted"}}</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">{{localize "SWSE.Progression.Common.Owned"}}</span>{{/if}}{{/if}}
+              {{#unless feat.isAvailable}}<span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> {{localize "SWSE.Progression.Common.Unavailable"}}</span>{{/unless}}
             </div>
           </div>
           <div class="feat-compact-row__state">
@@ -174,15 +174,15 @@
       {{else}}
       <div class="feat-search-empty">
         <i class="fa-solid fa-radar"></i>
-        <span>No feats match “{{searchQueryLabel}}” in the feat catalog.</span>
-        <span class="feat-search-empty__hint">Try a shorter name, prerequisite, or tag.</span>
+        <span>{{localize "SWSE.Progression.Feat.Empty.NoSearchMatches" query=searchQueryLabel}}</span>
+        <span class="feat-search-empty__hint">{{localize "SWSE.Progression.Feat.Empty.SearchHint"}}</span>
       </div>
       {{/if}}
       {{else}}
       <header class="feat-results-pane__header">
         <div>
           <h3><i class="fa-solid {{activeCategoryIcon}}"></i> {{activeCategoryLabel}}</h3>
-          <p>Select a feat to inspect it in the detail rail.</p>
+          <p>{{localize "SWSE.Progression.Feat.Work.SelectInspectHint"}}</p>
         </div>
         <span class="feat-count-badge">{{activeCategoryCount}}</span>
       </header>
@@ -203,9 +203,9 @@
             </div>
             <div class="feat-compact-row__line feat-compact-row__line--meta">
               {{#if feat.prerequisiteLine}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{feat.prerequisiteLine}}</span>{{/if}}
-              {{#if feat.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
-              {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
-              {{#unless feat.isAvailable}}<span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>{{/unless}}
+              {{#if feat.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> {{localize "SWSE.Progression.Common.Recommended"}}</span>{{/if}}
+              {{#if feat.isGranted}}<span class="feat-owned-pill">{{localize "SWSE.Progression.Common.Granted"}}</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">{{localize "SWSE.Progression.Common.Owned"}}</span>{{/if}}{{/if}}
+              {{#unless feat.isAvailable}}<span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> {{localize "SWSE.Progression.Common.Unavailable"}}</span>{{/unless}}
             </div>
           </div>
           <div class="feat-compact-row__state">
@@ -218,12 +218,12 @@
       <div class="empty-message feat-browser-empty">
         <i class="fa-solid fa-hexagon-exclamation"></i>
         {{#if catalogUnavailable}}
-        <p class="empty-title">Feat Catalog Unavailable</p>
+        <p class="empty-title">{{localize "SWSE.Progression.Feat.Empty.CatalogUnavailable"}}</p>
         <p class="empty-description">{{catalogUnavailableMessage}}</p>
-        <p class="empty-hint"><strong>Safe mode:</strong> This feat step will not block character creation while the compendium is unavailable.</p>
+        <p class="empty-hint"><strong>{{localize "SWSE.Progression.Feat.Empty.SafeModeLabel"}}</strong> {{localize "SWSE.Progression.Feat.Empty.SafeModeBrowserBody"}}</p>
         {{else}}
-        <p class="empty-title">No Feats in This View</p>
-        <p class="empty-description">Try another category, clear search, or toggle Show All to inspect locked options.</p>
+        <p class="empty-title">{{localize "SWSE.Progression.Feat.Empty.NoFeatsInView"}}</p>
+        <p class="empty-description">{{localize "SWSE.Progression.Feat.Empty.NoFeatsInViewDescription"}}</p>
         {{/if}}
       </div>
       {{/if}}
@@ -236,13 +236,13 @@
     <div class="empty-message">
       <i class="fa-solid fa-hexagon-exclamation"></i>
       {{#if catalogUnavailable}}
-      <p class="empty-title">Feat Catalog Unavailable</p>
+      <p class="empty-title">{{localize "SWSE.Progression.Feat.Empty.CatalogUnavailable"}}</p>
       <p class="empty-description">{{catalogUnavailableMessage}}</p>
-      <p class="empty-hint"><strong>Safe mode:</strong> Continue is allowed so chargen does not soft-lock.</p>
+      <p class="empty-hint"><strong>{{localize "SWSE.Progression.Feat.Empty.SafeModeLabel"}}</strong> {{localize "SWSE.Progression.Feat.Empty.SafeModeContinueBody"}}</p>
       {{else}}
-      <p class="empty-title">No {{#if showAll}}more{{else}}Available{{/if}} Feats</p>
-      <p class="empty-description">No feats meet this slot's current display rules.</p>
-      <p class="empty-hint"><strong>Tip:</strong> Enable "Show All" to inspect blocked feat prerequisites.</p>
+      <p class="empty-title">{{#if showAll}}{{localize "SWSE.Progression.Feat.Empty.NoMoreFeats"}}{{else}}{{localize "SWSE.Progression.Feat.Empty.NoAvailableFeats"}}{{/if}}</p>
+      <p class="empty-description">{{localize "SWSE.Progression.Feat.Empty.DisplayRulesDescription"}}</p>
+      <p class="empty-hint"><strong>{{localize "SWSE.Progression.Common.Tip"}}</strong> {{localize "SWSE.Progression.Feat.Empty.ShowAllTip"}}</p>
       {{/if}}
     </div>
   </section>
