@@ -257,7 +257,7 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
     const finalPayload = toFoundryDotPathPayload(sanitized);
 
     if (Object.keys(finalPayload).length === 0) {
-      swseLogger.warn('applyActorUpdateAtomic: Payload reduced to empty after removing undefined values. Skipping update.', {
+      swseLogger.debug('applyActorUpdateAtomic: Payload reduced to empty after removing undefined values. Skipping update.', {
         actor: actor.name,
         actorId: actor.id
       });

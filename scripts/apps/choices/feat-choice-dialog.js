@@ -18,8 +18,21 @@ function optionKey(option, index = 0) {
   );
 }
 
+function humanizeChoiceToken(value) {
+  const text = String(value || '').trim();
+  if (!text || text === '[object Object]') return '';
+  return text
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
 function optionLabel(option) {
-  return String(option?.label || option?.name || option?.value || option?.id || 'Choice');
+  const direct = option?.label || option?.name || option?.displayName || option?.slug || option?.key || option?.value || option?.id;
+  const text = String(direct || '').trim();
+  if (!text || text === '[object Object]') return 'Choice';
+  return option?.label || option?.name || option?.displayName || humanizeChoiceToken(text);
 }
 
 function optionSource(option, { showSource = true } = {}) {

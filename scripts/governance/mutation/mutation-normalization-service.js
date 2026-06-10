@@ -115,13 +115,15 @@ export class MutationNormalizationService {
   static _normalizeClassPaths(flat) {
     const warnings = [];
 
-    if (flat['system.className'] && !flat['system.class']) {
+    const hasScalarClass = Object.prototype.hasOwnProperty.call(flat, 'system.class');
+
+    if (Object.prototype.hasOwnProperty.call(flat, 'system.className') && !hasScalarClass) {
       warnings.push(
         `[LEGACY] system.className write without system.class (deprecated scalar path)`
       );
     }
 
-    if (flat['system.classes'] && !flat['system.class']) {
+    if (Object.prototype.hasOwnProperty.call(flat, 'system.classes') && !hasScalarClass) {
       warnings.push(
         `[LEGACY] system.classes write without system.class (deprecated array path)`
       );

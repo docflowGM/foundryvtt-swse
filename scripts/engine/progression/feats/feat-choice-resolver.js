@@ -12,6 +12,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FeatDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-diagnostics.js";
+import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 
 const REGISTRY_PATH = 'systems/foundryvtt-swse/data/feat-choice-options.json';
 const DEFAULT_CHOICE_ROOT = 'system.selectedChoice';
@@ -92,6 +93,88 @@ function labelForSkill(key, fallback = '') {
   return SKILL_LABELS[normalized] || firstScalar(fallback, key)
     .replace(/_/g, ' ')
     .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function getSkillRegistryEntry(value) {
+  const token = firstScalar(value);
+  if (!token) return null;
+  const text = String(token).trim();
+  if (!text) return null;
+
+  try {
+    const candidates = [
+      SkillRegistry?.getById?.(text),
+      SkillRegistry?.byKey?.(text),
+      SkillRegistry?.get?.(text),
+    ];
+    const registryHit = candidates.find(Boolean);
+    if (registryHit) return registryHit;
+
+    const packIndex = globalThis.game?.packs?.get?.('foundryvtt-swse.skills')?.index;
+    const indexValues = packIndex?.contents || (typeof packIndex?.values === 'function' ? Array.from(packIndex.values()) : []);
+    const lower = text.toLowerCase();
+    const indexed = indexValues.find(entry => {
+      const ids = [entry?._id, entry?.id, entry?.name]
+        .map(candidate => String(candidate || '').trim().toLowerCase())
+        .filter(Boolean);
+      return ids.includes(lower);
+    });
+    if (indexed?.name) {
+      const key = stableKey(indexed.name);
+      return { id: indexed.id || indexed._id || key, _id: indexed._id || indexed.id || key, name: indexed.name, key };
+    }
+  } catch (_err) {
+    return null;
+  }
+  return null;
+}
+
+function canonicalSkillChoiceIdentity(keyLike, record = {}) {
+  const directKey = firstScalar(
+    record?.key,
+    record?.slug,
+    record?.system?.key,
+    record?.skillKey,
+    record?.skillId,
+    record?.skill,
+    record?.value?.key,
+    record?.value?.slug
+  );
+  const directLabel = firstScalar(
+    record?.label,
+    record?.name,
+    record?.displayName,
+    record?.system?.label,
+    record?.system?.name,
+    record?.value?.label,
+    record?.value?.name
+  );
+  const registryEntry = getSkillRegistryEntry(directKey)
+    || getSkillRegistryEntry(directLabel)
+    || getSkillRegistryEntry(keyLike)
+    || getSkillRegistryEntry(record?.id)
+    || getSkillRegistryEntry(record?._id);
+
+  const canonical = firstScalar(
+    registryEntry?.key,
+    directKey,
+    directLabel,
+    registryEntry?.name,
+    keyLike,
+    record?.id,
+    record?._id
+  );
+  const id = normalizeSkillChoiceKey(canonical);
+  const label = registryEntry?.name || labelForSkill(id, directLabel || canonical || keyLike);
+
+  return {
+    id,
+    value: id,
+    key: id,
+    slug: id,
+    label,
+    registryId: registryEntry?.id || registryEntry?._id || '',
+  };
 }
 
 function isTrainedSkillRecord(record) {
@@ -482,17 +565,21 @@ export class FeatChoiceResolver {
     const entries = new Map();
 
     const add = (keyLike, record = {}, source = 'actor', forceTrained = null) => {
-      const rawKey = firstScalar(keyLike, record?.key, record?.slug, record?.id, record?._id, record?.name, record?.label);
-      const id = normalizeSkillChoiceKey(rawKey);
+      const identity = canonicalSkillChoiceIdentity(keyLike, record);
+      const id = identity.id;
       if (!id) return;
       const trained = forceTrained === null ? isTrainedSkillRecord(record) : Boolean(forceTrained);
       const previous = entries.get(id) || {};
       entries.set(id, {
+        ...record,
         id,
         value: id,
-        label: previous.label || labelForSkill(id, firstScalar(record?.label, record?.name, rawKey)),
+        key: id,
+        slug: id,
+        label: previous.label || identity.label || labelForSkill(id, firstScalar(record?.label, record?.name, keyLike)),
         trained: Boolean(previous.trained || trained),
-        source: previous.source || source
+        source: previous.source || source,
+        sourceId: previous.sourceId || identity.registryId || (String(keyLike || '').trim() !== id ? String(keyLike || '').trim() : '')
       });
     };
 

@@ -1898,10 +1898,14 @@ _skillLookupKey(value) {
 
 _normalizeSkillRecord(skill) {
   if (!skill) return null;
-  const name = this._coerceDisplayName(skill.name || skill.label || skill.displayName || skill.id || skill._id || 'Unknown Skill');
-  const sourceKey = this._coerceSkillIdentity(skill.key || skill.slug || skill.system?.key || skill.id || skill._id || name);
+  const name = this._coerceDisplayName(skill.name || skill.label || skill.displayName || skill.system?.name || skill.id || skill._id || 'Unknown Skill');
+  // Skills compendium documents have opaque Foundry document IDs. Progression
+  // state and choice dialogs must use semantic skill slugs instead. Prefer the
+  // registry key/name before falling back to an opaque document id.
+  const sourceKey = this._coerceSkillIdentity(skill.key || skill.slug || skill.system?.key || skill.skillKey || skill.system?.slug || name || skill.id || skill._id);
   const key = this._skillLookupKey(sourceKey);
-  const id = skill.id || skill._id || key;
+  const documentId = skill.id || skill._id || '';
+  const id = key || documentId;
   const ability = String(skill.system?.ability || skill.ability || '').toLowerCase();
   const abilityLabel = this._abilityLabel(ability);
   const classSkills = skill.system?.classes || skill.classes || {};
@@ -1911,8 +1915,9 @@ _normalizeSkillRecord(skill) {
   return {
     ...skill,
     id,
-    _id: skill._id || id,
+    _id: key || skill._id || id,
     key,
+    sourceDocumentId: documentId && documentId !== id ? documentId : (skill.sourceDocumentId || null),
     name,
     ability,
     abilityLabel,

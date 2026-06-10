@@ -226,7 +226,20 @@ export function normalizeSkills(raw) {
         return;
       }
       if (value && typeof value === 'object') {
-        trainedList.push(value.key || value.id || value.skill || value.name || fallbackKey);
+        // Use semantic slugs/names before Foundry document IDs. Skill compendium
+        // IDs are opaque and must not become progression choice keys.
+        trainedList.push(
+          value.key
+          || value.slug
+          || value.system?.key
+          || value.skillKey
+          || value.skill
+          || value.name
+          || value.label
+          || fallbackKey
+          || value.id
+          || value._id
+        );
         return;
       }
       if (fallbackKey) trainedList.push(fallbackKey);

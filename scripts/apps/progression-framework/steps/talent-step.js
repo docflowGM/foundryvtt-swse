@@ -134,12 +134,6 @@ function isRepeatableTalentEntry(talent = {}) {
     || /may\s+be\s+selected\s+multiple\s+times/.test(text)
     || /taken\s+multiple\s+times/.test(text);
 }
-function localizeProgressionText(key, data = null) {
-  const i18n = globalThis.game?.i18n;
-  if (!i18n) return key;
-  return data ? i18n.format(key, data) : i18n.localize(key);
-}
-
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -923,9 +917,9 @@ export class TalentStep extends ProgressionStepPlugin {
           this._treeRecommendationById.set(tree?.id || tree?.name, {
             treeId: tree?.id || tree?.name,
             legalChoiceCount: 0,
-            label: localizeProgressionText('SWSE.Progression.Talent.Recommendation.NoLegalPicks'),
-            reason: localizeProgressionText('SWSE.Progression.Talent.Recommendation.NoLegalPicksReason'),
-            reasons: [localizeProgressionText('SWSE.Progression.Talent.Recommendation.NoSelectableTalentsLegalNow')],
+            label: 'No Legal Picks',
+            reason: 'This tree has no selectable talents for the current slot, so it is not considered by the suggestion engine.',
+            reasons: ['No selectable talents are legal right now.'],
             score: -1,
             isTopSuggestion: false,
           });
@@ -1086,12 +1080,12 @@ export class TalentStep extends ProgressionStepPlugin {
 
   _getRecommendationLabel(item, { rank = null } = {}) {
     const tier = this._getSuggestionTier(item);
-    if (rank === 1 && tier >= 1) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.TopPick');
-    if (tier >= 5) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.PriorityPath');
-    if (tier >= 4) return localizeProgressionText('SWSE.Progression.Common.Recommended');
-    if (tier >= 2) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.StrongFit');
-    if (tier >= 1) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.GoodFit');
-    return localizeProgressionText('SWSE.Progression.Talent.Recommendation.LegalOption');
+    if (rank === 1 && tier >= 1) return 'Top Pick';
+    if (tier >= 5) return 'Priority Path';
+    if (tier >= 4) return 'Recommended';
+    if (tier >= 2) return 'Strong Fit';
+    if (tier >= 1) return 'Good Fit';
+    return 'Legal Option';
   }
 
   _extractSuggestionReasons(item, fallback = []) {
@@ -1112,16 +1106,16 @@ export class TalentStep extends ProgressionStepPlugin {
 
   _humanizeSuggestionReasonCode(reasonCode, item = {}) {
     const code = String(reasonCode || '').toUpperCase();
-    const name = item?.name || localizeProgressionText('SWSE.Progression.Talent.Recommendation.ThisChoice');
-    if (code.includes('PRESTIGE')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonPrestige', { name });
-    if (code.includes('WISHLIST')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonWishlist', { name });
-    if (code.includes('META')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonMeta', { name });
-    if (code.includes('CHAIN')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonChain', { name });
-    if (code.includes('SPECIES')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonSpecies', { name });
-    if (code.includes('SKILL')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonSkill', { name });
-    if (code.includes('ABILITY')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonAbility', { name });
-    if (code.includes('CLASS')) return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonClass', { name });
-    return localizeProgressionText('SWSE.Progression.Talent.Recommendation.ReasonLegalNow', { name });
+    const name = item?.name || 'this choice';
+    if (code.includes('PRESTIGE')) return `${name} supports a longer prestige or advanced path.`;
+    if (code.includes('WISHLIST')) return `${name} moves you toward something already marked as desirable for this build.`;
+    if (code.includes('META')) return `${name} has a known synergy with your current build signals.`;
+    if (code.includes('CHAIN')) return `${name} continues a prerequisite chain you have already started.`;
+    if (code.includes('SPECIES')) return `${name} lines up with your species or heritage signals.`;
+    if (code.includes('SKILL')) return `${name} uses skills your character is already developing.`;
+    if (code.includes('ABILITY')) return `${name} leans into one of your stronger ability scores.`;
+    if (code.includes('CLASS')) return `${name} fits the class path you are currently pursuing.`;
+    return `${name} is legal now and fits the current talent slot.`;
   }
 
   _buildTreeRecommendation(tree, topTalent, rankedTalents = [], legalTalents = [], pendingData = {}) {
@@ -1132,8 +1126,8 @@ export class TalentStep extends ProgressionStepPlugin {
     const score = (topTier * 1000) + (topScore * 100) + Math.min(legalChoiceCount, 6) * 8 + investmentBonus;
     const label = this._getRecommendationLabel(topTalent);
     const fallback = [
-      topTalent?.name ? localizeProgressionText('SWSE.Progression.Talent.Recommendation.StrongestLegalPick', { talent: topTalent.name }) : null,
-      localizeProgressionText('SWSE.Progression.Talent.Recommendation.TreeLegalCount', { tree: tree?.name || localizeProgressionText('SWSE.Progression.Talent.Tree.ThisTree'), count: legalChoiceCount }),
+      topTalent?.name ? `${topTalent.name} is the strongest legal pick currently visible in this tree.` : null,
+      `${tree?.name || 'This tree'} has ${legalChoiceCount} legal talent${legalChoiceCount === 1 ? '' : 's'} available for this slot.`,
     ].filter(Boolean);
     const reasons = this._extractSuggestionReasons(topTalent, fallback);
     const treeWithRecommendation = {
@@ -1573,7 +1567,7 @@ export class TalentStep extends ProgressionStepPlugin {
           // Use canonical tree.id field (normalized trees always have this)
           id: tree.id,
           name: tree.name,
-          summary: this._truncateDisplayText(this._getTreeDescription(tree) || localizeProgressionText('SWSE.Progression.Talent.Tree.FallbackSummary', { tree: tree.name }), 160),
+          summary: this._truncateDisplayText(this._getTreeDescription(tree) || `${tree.name} talent tree. Open the holomap to inspect legal talents and prerequisite paths.`, 160),
           // Prefer audited membership count when available; compendium talentIds may be stale.
           nodeCount,
           investmentCount,
@@ -1582,8 +1576,8 @@ export class TalentStep extends ProgressionStepPlugin {
           isFocused: tree.id === this._focusedTreeId,
           // Determine slot type from context or fallback (normalized trees don't have classRestricted)
           slotType: cardSlotType,
-          slotTypeLabel: cardSlotType === 'class' ? localizeProgressionText('SWSE.Progression.Talent.Slot.Class') : localizeProgressionText('SWSE.Progression.Talent.Slot.Heroic'),
-          readinessLabel: treeRecommendation?.label || (isSuggested ? localizeProgressionText('SWSE.Progression.Talent.Tree.MentorFit') : (investmentCount > 0 ? localizeProgressionText('SWSE.Progression.Talent.Recommendation.InvestedPath') : localizeProgressionText('SWSE.Progression.Common.Available'))),
+          slotTypeLabel: cardSlotType === 'class' ? 'Class' : 'Heroic',
+          readinessLabel: treeRecommendation?.label || (isSuggested ? 'Mentor Fit' : (investmentCount > 0 ? 'Invested Path' : 'Available')),
           legalChoiceCount: treeRecommendation?.legalChoiceCount ?? null,
           recommendationRank: treeRecommendation?.rank || null,
           recommendationLabel: treeRecommendation?.label || '',
@@ -1776,7 +1770,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const benefit = this._getTalentBenefit(talent);
     const text = firstDisplayText(description, benefit, this._getTalentPrerequisiteText(talent));
     if (text) return text.length > 132 ? `${text.slice(0, 129).trim()}…` : text;
-    return localizeProgressionText('SWSE.Progression.Talent.Details.NoRulesText');
+    return 'No rules text has been defined for this talent yet.';
   }
 
   _buildPrerequisitePathForTalent(talent, nodeStates = {}) {
@@ -2150,7 +2144,7 @@ export class TalentStep extends ProgressionStepPlugin {
           tree,
           treeId: tree.id,
           treeName: tree.name,
-          summary: this._truncateDisplayText(this._getTreeDescription(tree) || localizeProgressionText('SWSE.Progression.Talent.Tree.FallbackSummary', { tree: tree.name }), 320),
+          summary: this._truncateDisplayText(this._getTreeDescription(tree) || `${tree.name} talent tree. Open the holomap to inspect legal talents and prerequisite paths.`, 320),
           nodeCount,
           investmentCount,
           isSuggested,
@@ -2160,7 +2154,7 @@ export class TalentStep extends ProgressionStepPlugin {
           recommendationTalentName: treeRecommendation?.topTalentName || '',
           recommendationReasons: treeRecommendation?.reasons || [],
           mentorRead,
-          slotTypeLabel: cardSlotType === 'class' ? localizeProgressionText('SWSE.Progression.Talent.Slot.Class') : localizeProgressionText('SWSE.Progression.Talent.Slot.Heroic'),
+          slotTypeLabel: cardSlotType === 'class' ? 'Class' : 'Heroic',
           visualKey: visual.key,
           visualIcon: visual.icon,
           visualRole: visual.role,
@@ -2168,10 +2162,10 @@ export class TalentStep extends ProgressionStepPlugin {
           visualSignal: visual.signal,
           visualThemeClass: visual.themeClass,
           statusText: isSuggested
-            ? localizeProgressionText('SWSE.Progression.Talent.Tree.StatusMentorStrongFit', { talent: treeRecommendation?.topTalentName || '' })
+            ? `Your mentor currently sees this tree as a strong fit. ${treeRecommendation?.topTalentName ? `${treeRecommendation.topTalentName} is the cleanest legal next pick from this tree.` : ''}`
             : (investmentCount > 0
-              ? localizeProgressionText('SWSE.Progression.Talent.Tree.StatusMomentum')
-              : localizeProgressionText('SWSE.Progression.Talent.Tree.StatusAvailable')),
+              ? 'You already have momentum in this discipline. Opening the holomap will show the next legal branches.'
+              : 'This discipline is available. Opening the holomap will reveal legal activations and locked future branches.'),
         },
       };
     }
@@ -2223,7 +2217,7 @@ export class TalentStep extends ProgressionStepPlugin {
       normalized.description,
       this._getTalentDescription(talent),
       mechanicalBenefit,
-      localizeProgressionText('SWSE.Progression.Talent.Details.PartOfTree', { talent: talent?.name || localizeProgressionText('SWSE.Progression.Talent.Details.ThisTalent'), tree: selectedTree?.name || localizeProgressionText('SWSE.Progression.Common.Selected') })
+      `${talent?.name || 'This talent'} is part of the ${selectedTree?.name || 'selected'} talent tree.`
     );
     const prerequisites = firstDisplayText(
       normalized.prerequisites ? normalized.prerequisites[0] : null,
@@ -2390,7 +2384,7 @@ export class TalentStep extends ProgressionStepPlugin {
           const pendingForChoice = this._buildPendingAbilityData(shell);
           pendingForChoice.selectedTalents = currentSelections;
           const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, talent, {
-            title: localizeProgressionText('SWSE.Progression.Talent.Messages.ChooseTitle', { talent: talent.name }),
+            title: `Choose: ${talent.name}`,
             context: { pending: pendingForChoice }
           });
           if (!selectedChoice) {
@@ -2404,7 +2398,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
           const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, talent, selectedChoice, { pending: pendingForChoice });
           if (!choiceValidation.valid) {
-            ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || localizeProgressionText('SWSE.Progression.Talent.Messages.ChoiceNotLegal'));
+            ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || 'That talent choice is not currently legal.');
             emitTalentStepTrace('ITEM_COMMIT_REJECTED_FOR_CHOICE_LEGALITY', {
               talentId,
               talentName: talent?.name || null,
@@ -2427,7 +2421,7 @@ export class TalentStep extends ProgressionStepPlugin {
             candidateChoice: selectedChoice
           });
           if (choiceAwareAssessment?.legal === false) {
-            const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || [localizeProgressionText('SWSE.Progression.Talent.Messages.PrereqsNotMetForChoice')];
+            const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || ['Talent prerequisites are not met for that selected choice.'];
             ui.notifications?.warn?.(reasons.join(' '));
             emitTalentStepTrace('ITEM_COMMIT_REJECTED_FOR_PREREQ_LEGALITY', {
               talentId,
@@ -2535,12 +2529,12 @@ export class TalentStep extends ProgressionStepPlugin {
 
     // Mode-aware default guidance
     if (this.isChargen(shell)) {
-      return localizeProgressionText('SWSE.Progression.Talent.Mentor.Chargen');
+      return 'Talents define your path. Choose a discipline that resonates with your vision for this character.';
     } else if (this.isLevelup(shell)) {
-      return localizeProgressionText('SWSE.Progression.Talent.Mentor.LevelUp');
+      return 'Your talents grow with experience. Choose a new discipline to specialize further in your abilities.';
     }
 
-    return localizeProgressionText('SWSE.Progression.Talent.Mentor.Default');
+    return 'Select a talent that defines you.';
   }
 
   getMentorMode() {
@@ -2580,7 +2574,7 @@ export class TalentStep extends ProgressionStepPlugin {
       if (this._stage === 'browser') {
         return 'Choose a talent tree to view available talents';
       } else {
-        const slotTypeLabel = this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Talent.Slot.Class') : localizeProgressionText('SWSE.Progression.Talent.Slot.Heroic');
+        const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';
         return `Select a ${slotTypeLabel} Talent to continue`;
       }
     }
@@ -2592,12 +2586,23 @@ export class TalentStep extends ProgressionStepPlugin {
   // Utility Bar
   // ---------------------------------------------------------------------------
 
+  _getTalentSearchPlaceholder() {
+    const isBrowser = this._stage === 'browser';
+    const slotLabel = this._slotType === 'class' ? 'class' : 'heroic';
+
+    if (this._isDroidProgression) {
+      return isBrowser ? 'Search droid talent trees…' : 'Search droid talents…';
+    }
+
+    return isBrowser ? `Search ${slotLabel} talent trees…` : `Search ${slotLabel} talents…`;
+  }
+
   getUtilityBarConfig() {
     return {
       mode: 'rich',
       search: { enabled: true, placeholder: this._getTalentSearchPlaceholder() },
       sorts: [
-        { id: 'alpha', label: localizeProgressionText('SWSE.Progression.Common.Sort.AZ') },
+        { id: 'alpha', label: 'A–Z' },
       ],
     };
   }
@@ -2617,7 +2622,7 @@ export class TalentStep extends ProgressionStepPlugin {
   getRemainingPicks() {
     const selected = this._selectedTalentId ? 1 : 0;
     return [{
-      label: this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Talent.Slot.ClassTalent') : localizeProgressionText('SWSE.Progression.Talent.Slot.HeroicTalent'),
+      label: this._slotType === 'class' ? 'Class Talent' : 'Heroic Talent',
       count: Math.max(0, 1 - selected),
       total: 1,
       selected,
@@ -2626,15 +2631,15 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   getFooterConfig() {
-    const slotTypeLabel = this._slotType === 'class' ? localizeProgressionText('SWSE.Progression.Talent.Slot.Class') : localizeProgressionText('SWSE.Progression.Talent.Slot.Heroic');
-    const stageName = this._stage === 'browser' ? localizeProgressionText('SWSE.Progression.Talent.Footer.BrowsingTrees') : localizeProgressionText('SWSE.Progression.Talent.Footer.ViewingTree', { tree: this._getTree(this._selectedTreeId)?.name || '...' });
+    const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';
+    const stageName = this._stage === 'browser' ? 'Browsing Trees' : `Viewing: ${this._getTree(this._selectedTreeId)?.name || '...'}`;
 
     let statusText = '';
     if (this._selectedTalentId) {
       const talent = this._getTalent(this._selectedTalentId);
-      statusText = localizeProgressionText('SWSE.Progression.Talent.Footer.Selected', { type: slotTypeLabel, talent: talent?.name || localizeProgressionText('SWSE.Progression.Common.Selected') });
+      statusText = `${slotTypeLabel} Talent: ${talent?.name || 'Selected'}`;
     } else {
-      statusText = localizeProgressionText('SWSE.Progression.Talent.Footer.NotYetChosen', { type: slotTypeLabel });
+      statusText = `${slotTypeLabel} Talent not yet chosen`;
     }
 
     return {

@@ -6488,31 +6488,41 @@ const forcePoints = [];
         });
       }
 
-      // Reset system fields to blank defaults
-      await mutateAndRepaint(this, () => ActorEngine.updateActor(actor, {
-        'system.level': 1,
-        'system.race': '',
-        'system.class': '',
-        'system.classes': [],
-        'system.xp.value': 0,
-        'system.hp.value': 0,
-        'system.hp.max': 0,
-        'system.credits': 0,
-        'system.forcePoints.value': 0,
-        'system.forcePoints.max': 0,
-        'system.progression': {},
-        'system.skills': {},
-        'system.attributes': {},
-        'system.abilities': {},
-        'system.languages': [],
-        'system.languageIds': [],
-        'flags.foundryvtt-swse': {}
+      // Reset system fields to blank defaults. Do not write system.hp.max here:
+      // ActorEngine.recomputeHP() is the sole HP-max writer and will restore the
+      // blank actor to its minimum legal max after class/items are removed.
+      await mutateAndRepaint(this, async () => {
+        await ActorEngine.updateActor(actor, {
+          'system.level': 1,
+          'system.race': '',
+          'system.class': '',
+          'system.classes': [],
+          'system.xp.value': 0,
+          'system.hp.value': 0,
+          'system.credits': 0,
+          'system.forcePoints.value': 0,
+          'system.forcePoints.max': 0,
+          'system.progression': {},
+          'system.skills': {},
+          'system.attributes': {},
+          'system.abilities': {},
+          'system.languages': [],
+          'system.languageIds': [],
+          'flags.foundryvtt-swse': {}
+        }, {
+          source: 'reset-character',
+          meta: { guardKey: 'reset-character' },
+          render: false,
+          suppressAppRefresh: true
+        });
+
+        await ActorEngine.recomputeHP(actor, {
+          source: 'reset-character-hp',
+          meta: { guardKey: 'reset-character-hp' },
+          render: false,
+          suppressAppRefresh: true
+        });
       }, {
-        source: 'reset-character',
-        meta: { guardKey: 'reset-character' },
-        render: false,
-        suppressAppRefresh: true
-      }), {
         reason: 'character-reset',
         surfaceId: this._shellSurface ?? 'sheet',
         preserveUi: true
