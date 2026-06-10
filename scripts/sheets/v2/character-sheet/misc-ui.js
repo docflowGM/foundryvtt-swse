@@ -10,6 +10,7 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
+import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 
 /**
  * Open mentor conversation dialog
@@ -52,6 +53,47 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
         else ui?.notifications?.warn?.(result?.reason ?? 'Temporary defense could not be applied.');
       } catch (err) {
         ui?.notifications?.error?.(`Temporary defense failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Recurring hazard/ongoing damage controls from the Current Conditions panel.
+  html.querySelectorAll('[data-action="remove-recurring-damage"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        const actor = sheet.actor;
+        if (!actor?.isOwner) {
+          ui?.notifications?.warn?.('You do not control this actor.');
+          return;
+        }
+        const instanceId = button.dataset.ruleId || button.dataset.effectId || null;
+        const result = await RecurringDamageEngine.removeRecurringDamage(actor, instanceId, { reason: 'removed' });
+        if (result?.removed?.length) ui?.notifications?.info?.('Recurring damage removed.');
+        else ui?.notifications?.warn?.('Recurring damage was not found.');
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.warn?.(`Failed to remove recurring damage: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="tick-recurring-damage-now"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        const actor = sheet.actor;
+        if (!actor?.isOwner) {
+          ui?.notifications?.warn?.('You do not control this actor.');
+          return;
+        }
+        const instanceId = button.dataset.ruleId || button.dataset.effectId || null;
+        const result = await RecurringDamageEngine.tickRecurringDamage(actor, { trigger: 'startOfTurn', instanceId, hook: 'manual-condition-panel' });
+        if (Array.isArray(result) && result.length) ui?.notifications?.info?.('Recurring damage ticked.');
+        else ui?.notifications?.warn?.('No matching recurring damage ticked.');
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.warn?.(`Failed to tick recurring damage: ${err.message}`);
       }
     }, { signal });
   });

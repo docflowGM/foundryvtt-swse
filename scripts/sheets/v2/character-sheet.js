@@ -39,6 +39,8 @@ import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
+import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
 import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
@@ -113,6 +115,7 @@ import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-
 import { EntityCreateBrowser } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/entity-create-browser.js";
 import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
 import { FullAttackExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js";
+import { SWSEGrappling } from "/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js";
 import { CombatWorkflowRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
 import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
@@ -3093,6 +3096,8 @@ const forcePoints = [];
     const buildMode = actor.system?.buildMode ?? "normal";
 
     // Action Economy Context (for combat tab)
+    let actionEconomyTurnState = null;
+    let actionEconomyEngine = null;
     let actionEconomy = buildSheetActionEconomyContext({ active: false });
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
       // Only show action economy if actor is in active combat
@@ -3218,6 +3223,21 @@ const forcePoints = [];
         ruleData: action.ruleData || null,
         isAttack: action.isAttack === true
       };
+      const grappleRestriction = GrappleStateEngine.evaluateAction(this.actor, row);
+      if (grappleRestriction?.restricted) {
+        row.grappleRestricted = true;
+        row.restrictionState = grappleRestriction.state ?? '';
+        row.restrictionLabel = grappleRestriction.label ?? '';
+        row.restrictionReason = grappleRestriction.reason ?? '';
+        row.availabilityLabel = grappleRestriction.allowed === false
+          ? (grappleRestriction.label ?? row.availabilityLabel)
+          : row.availabilityLabel;
+        if (grappleRestriction.allowed === false && row.executable !== false) {
+          row.disabled = true;
+          row.economyAvailable = false;
+          row.economyViolations = [...(row.economyViolations ?? []), `GRAPPLE_${String(grappleRestriction.state ?? 'RESTRICTED').toUpperCase()}`];
+        }
+      }
       if (!grouped[actionType]) grouped[actionType] = [];
       grouped[actionType].push(row);
       combatActionLookup[key] = row;
@@ -3249,16 +3269,17 @@ const forcePoints = [];
         if (response.ok) {
           const actionsData = await response.json();
           actionsData.forEach((action, index) => registerAction(grouped, {
-            key: `combat:${index}`,
+            ...action,
+            key: action.key || action.id || `combat:${index}`,
             name: action.name,
-            actionType: action.action?.type,
-            cost: action.action?.cost,
+            actionType: action.action?.type ?? action.actionType ?? action.type,
+            cost: action.action?.cost ?? action.cost,
             notes: action.notes,
-            description: action.notes,
+            description: action.description ?? action.notes,
             relatedSkills: action.relatedSkills || [],
             sourceName: 'Core Combat Action',
-            executable: true,
-            useLabel: action.relatedSkills?.length ? 'Roll / Use' : 'Use'
+            executable: action.executable !== false,
+            useLabel: action.executable === false ? 'Review' : (action.relatedSkills?.length ? 'Roll / Use' : 'Use')
           }));
         }
       }
@@ -3301,7 +3322,7 @@ const forcePoints = [];
         const items = grouped[eco] || [];
         if (!items.length) continue;
         items.sort((a, b) => String(a.name).localeCompare(String(b.name)));
-        const availableCount = items.filter(item => item.economyAvailable !== false).length;
+        const availableCount = items.filter(item => item.economyAvailable !== false && item.disabled !== true).length;
         combatActions.groups.push({
           key: eco,
           id: eco,
@@ -5727,7 +5748,12 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="swse-combat-defensive-mode"]').forEach(button => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
-        const defensiveMode = button.dataset.mode || 'normal';
+        const requestedMode = button.dataset.mode || 'normal';
+        const currentMode = CombatStatusResolver.getStatus(this.actor)?.defensiveMode ?? 'normal';
+        // Clicking the already-active mode deactivates back to normal
+        const defensiveMode = (requestedMode === currentMode && requestedMode !== 'normal')
+          ? 'normal'
+          : requestedMode;
         try {
           await CombatStatusResolver.setStatus(this.actor, { defensiveMode, source: 'combat-tab-defense' });
           await this.requestSurfaceRender({ reason: 'combat-status-defense' });
@@ -7271,6 +7297,16 @@ const forcePoints = [];
   async _runCanonicalAttack(weapon, options = {}) {
     if (!weapon) return null;
 
+    const grappleActionAllowed = await GrappleStateEngine.confirmAction(this.actor, {
+      id: options?.actionId ?? 'weapon-attack',
+      name: weapon?.name ?? 'Attack',
+      resolutionMode: 'attack',
+      isAttack: true,
+      itemId: weapon?.id ?? null,
+      weapon
+    }, { title: 'Confirm Grappled Attack' });
+    if (!grappleActionAllowed) return null;
+
     const allowed = await this._applyActionEconomy("standard", {
       source: options?.source ?? "attack",
       weaponId: weapon?.id ?? null,
@@ -7351,7 +7387,7 @@ const forcePoints = [];
       attack: routeLegacy,
       combatState: routeLegacy,
       secondWind: routeLegacy,
-      grapple: routeLegacy,
+      grapple: async (context) => this._executeGrappleCombatWorkflow(context, options),
       aidAnother: routeLegacy,
       ammoReload: async (context) => this._executeReloadCombatWorkflow(context, options),
       actorItem: routeLegacy,
@@ -7360,9 +7396,107 @@ const forcePoints = [];
     };
   }
 
+  _resolveCombatWorkflowTargetActor(context = {}, options = {}) {
+    const direct = options?.target?.actor ?? options?.target ?? context?.target?.actor ?? context?.target ?? null;
+    if (direct?.type) return direct;
+
+    const targetId = context?.targetId
+      ?? context?.target?.id
+      ?? context?.attack?.targetId
+      ?? context?.damage?.targetId
+      ?? context?.ruleData?.targetId
+      ?? null;
+    if (targetId) {
+      const byActor = game?.actors?.get?.(targetId);
+      if (byActor) return byActor;
+      const byToken = canvas?.tokens?.placeables?.find?.(token =>
+        token?.id === targetId || token?.document?.id === targetId || token?.actor?.id === targetId
+      );
+      if (byToken?.actor) return byToken.actor;
+    }
+
+    try {
+      const targets = Array.from(game?.user?.targets ?? []);
+      if (targets.length === 1) return targets[0]?.actor ?? null;
+      if (targets.length > 1) {
+        ui?.notifications?.warn?.('Select only one target for this grapple action.');
+        return null;
+      }
+    } catch (_err) {
+      // Canvas may be unavailable outside a scene; fall through to null.
+    }
+
+    return null;
+  }
+
+  async _executeGrappleCombatWorkflow(context = {}, options = {}) {
+    const actionData = context?.action ?? {};
+    const actionId = actionData?.id ?? context?.actionId ?? 'grapple';
+    const target = this._resolveCombatWorkflowTargetActor(context, options);
+
+    if (!target) {
+      ui?.notifications?.warn?.('Target one creature before using a grapple action.');
+      return null;
+    }
+
+    const actorId = this.actor?.id ?? this.actor?._id ?? null;
+    const targetId = target?.id ?? target?._id ?? null;
+    if (actorId && targetId && actorId === targetId) {
+      ui?.notifications?.warn?.('A creature cannot grapple itself.');
+      return null;
+    }
+
+    const mode = String(actionData?.ruleData?.grappleMode ?? '').trim().toLowerCase();
+    const legality = mode === 'release' || mode === 'escape'
+      ? GrappleLegalityEngine.validateTargetPair(this.actor, target)
+      : mode && mode !== 'grab'
+        ? GrappleLegalityEngine.validateExistingGrapple(this.actor, target, { ruleData: actionData?.ruleData ?? {} })
+        : GrappleLegalityEngine.validateInitiate(this.actor, target, { ruleData: actionData?.ruleData ?? {} });
+    if (!await GrappleLegalityEngine.confirm(legality, { actionName: actionData?.name ?? actionId })) return null;
+
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? context?.source?.invocation ?? 'grapple',
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        combatContext: context
+      });
+      if (!allowed) return null;
+    }
+
+    const nameText = String(`${actionId} ${actionData?.name ?? ''} ${actionData?.ruleData?.grappleMode ?? ''}`).toLowerCase();
+    const workflowOptions = {
+      ...options,
+      target,
+      actionId,
+      combatContext: context,
+      workflowContext: context,
+      ruleData: actionData?.ruleData ?? {},
+      grabPenalty: actionData?.ruleData?.grabAttackPenalty,
+      maxTargetSizeDelta: actionData?.ruleData?.maxTargetSizeDelta,
+      requiresReach: actionData?.ruleData?.requiresReach,
+      requiresFreeLimb: actionData?.ruleData?.requiresFreeLimb,
+      escapeMode: actionData?.ruleData?.escapeMode ?? options?.escapeMode ?? null,
+      promptEscapeMode: actionData?.ruleData?.promptEscapeMode ?? true,
+      skipLegalityConfirm: true
+    };
+
+    if (nameText.includes('release')) return await SWSEGrappling.releaseGrapple(this.actor, target, workflowOptions);
+    if (nameText.includes('escape')) return await SWSEGrappling.escapeGrapple(this.actor, target, workflowOptions);
+    if (nameText.includes('crush')) return await SWSEGrappling.crushPinnedOpponent(this.actor, target, workflowOptions);
+    if (nameText.includes('throw')) return await SWSEGrappling.throwGrappledOpponent(this.actor, target, workflowOptions);
+    if (nameText.includes('trip')) return await SWSEGrappling.tripGrappledOpponent(this.actor, target, workflowOptions);
+    if (nameText.includes('pin')) return await SWSEGrappling.attemptPin(this.actor, target, workflowOptions);
+    if (nameText.includes('check') || nameText.includes('opposed')) return await SWSEGrappling.grappleCheck(this.actor, target, workflowOptions);
+    return await SWSEGrappling.attemptGrab(this.actor, target, workflowOptions);
+  }
+
   async _executeFullAttackCombatWorkflow(context = {}, options = {}) {
     const actionData = context?.action ?? {};
     const actionId = actionData?.id ?? context?.actionId ?? 'full-attack';
+    const grappleActionAllowed = await GrappleStateEngine.confirmAction(this.actor, { ...actionData, id: actionId, key: actionId, resolutionMode: 'fullAttack' }, { title: 'Confirm Full Attack' });
+    if (!grappleActionAllowed) return null;
     const pkgFromId = {
       'double-attack':       FULL_ATTACK_PACKAGES.DOUBLE_ATTACK,
       'triple-attack':       FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
@@ -7547,6 +7681,9 @@ const forcePoints = [];
         workflowContext: options.combatContext
       };
     }
+
+    const grappleActionAllowed = await GrappleStateEngine.confirmAction(this.actor, { ...actionData, id: actionId, key: actionId }, { title: 'Confirm Grapple-Limited Action' });
+    if (!grappleActionAllowed) return null;
 
     // --- Manual/reference ability action cards ---
     // Multi-action feats/talents often unlock named actions whose real effect

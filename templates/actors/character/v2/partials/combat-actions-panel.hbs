@@ -44,6 +44,7 @@
                   <div class="action-name-section">
                     <span class="action-name">{{action.name}}</span>
                     <span class="action-cost-badge">{{action.type}}</span>
+                    {{#if action.grappleRestricted}}<span class="action-state-badge" title="{{action.restrictionReason}}">{{action.restrictionLabel}}</span>{{/if}}
                     {{#if action.disabled}}<span class="action-state-badge">{{action.availabilityLabel}}</span>{{/if}}
                   </div>
                   {{#if action.notes}}

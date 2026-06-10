@@ -223,7 +223,9 @@ export class DamageResolutionEngine {
       tempHP: mitigationResult.tempHP,
       hpDamageBeforeSpecial,
       hpDamageMultiplier,
-      breakdown: mitigationResult.breakdown
+      breakdown: mitigationResult.breakdown,
+      components: Array.isArray(mitigationResult.components) ? mitigationResult.components : [],
+      componentMitigation: mitigationResult.componentMitigation === true
     };
 
     /* ===================================================================
@@ -253,6 +255,22 @@ export class DamageResolutionEngine {
       });
 
       result.thresholdExceeded = result.thresholdRuleResult?.thresholdExceeded === true;
+
+      // RAW stun damage is not an optional house rule: compare full rolled stun
+      // damage to DT, halve only HP loss, and move the target two CT steps on
+      // a threshold hit. The existing stunThresholdRule setting is retained as
+      // a compatibility alias; this guard prevents double application when it
+      // is enabled.
+      if (damageType === 'stun' && result.thresholdExceeded && result.thresholdRuleResult?.addCTShift) {
+        const currentShift = Math.max(0, Number(result.thresholdRuleResult.totalCTShift ?? 0));
+        if (currentShift < 2) {
+          result.thresholdRuleResult.addCTShift(2 - currentShift, false, 'stun-threshold');
+        }
+        result.thresholdRuleResult.stunThreshold = true;
+        if (result.thresholdTotal > 0 && thresholdDamage >= result.thresholdTotal * 2) {
+          result.thresholdRuleResult.stunKnockout = true;
+        }
+      }
     } catch (err) {
       console.warn('DamageResolutionEngine: threshold calculation failed', err);
     }
@@ -293,6 +311,16 @@ export class DamageResolutionEngine {
       result.conditionDelta = thresholdShift;
       result.conditionAfter = Math.min(ConditionTrackRules.getConditionStepCap(), result.conditionBefore + thresholdShift);
       result.conditionPersistent = (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
+
+      if (damageType === 'stun' && result.thresholdRuleResult?.stunKnockout === true) {
+        result.stunKnockout = true;
+        result.unconscious = true;
+        result.dead = false;
+        result.destroyed = false;
+        result.forceRescueEligible = false;
+        result.conditionAfter = ConditionTrackRules.getConditionStepCap();
+        result.conditionDelta = Math.max(0, result.conditionAfter - result.conditionBefore);
+      }
     }
 
     /* ===================================================================
@@ -304,6 +332,16 @@ export class DamageResolutionEngine {
       result.disabled = actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle';
       result.conditionDelta = Math.max(0, ConditionTrackRules.getConditionStepCap() - result.conditionBefore);
       result.conditionAfter = ConditionTrackRules.getConditionStepCap(); // Bottom of the track / helpless or disabled
+
+      if (damageType === 'stun') {
+        result.stunKnockout = true;
+        result.unconscious = true;
+        result.disabled = false;
+        result.dead = false;
+        result.destroyed = false;
+        result.forceRescueEligible = false;
+        return result;
+      }
 
       if (result.thresholdExceeded) {
         const preventInstantDeath = result.thresholdRuleResult?.preventInstantDeath === true;

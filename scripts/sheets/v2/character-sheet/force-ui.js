@@ -280,7 +280,7 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         const result = await ForceExecutor.recoverForcePowers(sheet.actor);
         if (result?.success) {
           ui?.notifications?.info?.('All spent Force powers recovered.');
-          sheet.render?.(false);
+          sheet.render?.(true);
         } else {
           ui?.notifications?.warn?.(result?.error || 'No spent Force powers to recover.');
         }
@@ -487,6 +487,19 @@ export function activateForceUI(sheet, html, { signal } = {}) {
           }
         }
       }).render(true);
+    }, { signal });
+  });
+
+  // Force Suite: tradition selector
+  html.querySelectorAll('.fs-tradition-select').forEach(select => {
+    select.addEventListener('change', async (event) => {
+      const value = event.target.value;
+      try {
+        await sheet.actor.update({ 'system.forceTradition': value });
+        sheet.render?.(true);
+      } catch (err) {
+        ui?.notifications?.error?.(`Failed to update Force Tradition: ${err.message}`);
+      }
     }, { signal });
   });
 

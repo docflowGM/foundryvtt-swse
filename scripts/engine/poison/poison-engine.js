@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
+import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { PoisonRegistry, normalizePoisonKey } from './poison-registry.js';
@@ -15,7 +16,6 @@ export class PoisonEngine {
         try {
           const actor = this._actorFromCombatHook(...args);
           if (actor) {
-            await this.tickRecurringDamage(actor, { trigger: 'startOfTurn', hook });
             await this.tickPoisons(actor, { trigger: 'startOfTurn', hook });
           }
         } catch (err) {
@@ -338,9 +338,7 @@ export class PoisonEngine {
     if (!attacker || !target || !weapon || Number(damage || 0) <= 0) return null;
     if (!this._isJaggedWeapon(weapon)) return null;
     if (this._isNonLiving(target)) return { success: false, reason: 'Jagged Weapon only affects living creatures.' };
-    const current = Array.isArray(target.flags?.swse?.pendingRecurringDamage) ? [...target.flags.swse.pendingRecurringDamage] : [];
-    const instance = {
-      id: `jagged-${weapon.id || weapon._id || 'weapon'}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    const result = await RecurringDamageEngine.queueRecurringDamage(target, {
       key: 'jagged-weapon',
       name: 'Jagged Weapon',
       formula: '1d4',
@@ -351,33 +349,14 @@ export class PoisonEngine {
       sourceActorUuid: attacker.uuid || null,
       sourceItemId: weapon.id || null,
       sourceItemUuid: weapon.uuid || null,
-      createdAt: Date.now()
-    };
-    current.push(instance);
-    await ActorEngine.updateActor(target, { 'flags.swse.pendingRecurringDamage': current });
+      removalCondition: "Damage resolves at the start of the target's next turn."
+    }, { sourceActor: attacker, sourceItem: weapon, notify: false });
     await this._postUtilityChat(attacker, `<h2>Jagged Weapon</h2><p><strong>${escapeHtml(target.name)}</strong> will take 1d4 damage at the start of their next turn.</p>`);
-    return { success: true, instance };
+    return result;
   }
 
-  static async tickRecurringDamage(actor, { trigger = 'startOfTurn' } = {}) {
-    const pending = Array.isArray(actor?.flags?.swse?.pendingRecurringDamage) ? [...actor.flags.swse.pendingRecurringDamage] : [];
-    if (!pending.length) return [];
-    const results = [];
-    const remaining = [];
-    for (const instance of pending) {
-      if ((instance.trigger || 'startOfTurn') !== trigger) {
-        remaining.push(instance);
-        continue;
-      }
-      const roll = await new Roll(instance.formula || '1d4').evaluate({ async: true });
-      await DamageEngine.applyDamage(actor, roll.total, { damageType: instance.damageType || 'untyped', targetTempHP: true });
-      await this._postUtilityChat(actor, `<h2>${escapeHtml(instance.name || 'Recurring Damage')}</h2><p><strong>${escapeHtml(actor.name)}</strong> takes ${roll.total} damage.</p>`);
-      const left = Number(instance.remainingTriggers ?? 1) - 1;
-      if (left > 0) remaining.push({ ...instance, remainingTriggers: left, lastTriggeredAt: Date.now() });
-      results.push({ instance, roll });
-    }
-    await ActorEngine.updateActor(actor, { 'flags.swse.pendingRecurringDamage': remaining });
-    return results;
+  static async tickRecurringDamage(actor, { trigger = 'startOfTurn', instanceId = null, hook = null } = {}) {
+    return RecurringDamageEngine.tickRecurringDamage(actor, { trigger, instanceId, hook });
   }
 
   static async applyMalkitePoison({ sourceActor, targetActor, sourceItem = null } = {}) {

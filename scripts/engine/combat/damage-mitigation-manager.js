@@ -33,6 +33,7 @@
 import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/shield-mitigation-resolver.js";
 import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
+import { resolveComponentMitigation } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-mitigation.js";
 
 export class DamageMitigationManager {
   /**
@@ -74,9 +75,21 @@ export class DamageMitigationManager {
       ...(options && typeof options === 'object' ? options : {}),
       weapon,
       damageType,
+      damageTypes: options?.damageTypes ?? options?.damagePacket?.damageTypes ?? [damageType],
       sourceActor: sourceActor ?? attacker ?? options?.sourceActor ?? options?.attacker ?? null,
       attacker: attacker ?? sourceActor ?? options?.attacker ?? options?.sourceActor ?? null
     };
+
+    const componentResult = resolveComponentMitigation({
+      damage,
+      actor,
+      damageType,
+      weapon,
+      sourceActor,
+      attacker,
+      options: context
+    });
+    if (componentResult) return componentResult;
 
     const breakdown = [];
     let currentDamage = damage;

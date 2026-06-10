@@ -376,6 +376,86 @@ function weaponSupportsAutofire(weapon = {}) {
   return weapon?.system?.autofire === true || props.some(p => p.includes('autofire'));
 }
 
+function weaponDamageTypeKey(weapon = {}) {
+  const value = weapon?.system?.damageType
+    ?? weapon?.system?.damage?.type
+    ?? weapon?.system?.combat?.damage?.type
+    ?? '';
+  if (Array.isArray(value)) return value.map(v => String(v ?? '').toLowerCase()).join('/');
+  return String(value ?? '').toLowerCase();
+}
+
+function weaponHasStunSetting(weapon = {}) {
+  const system = weapon?.system ?? {};
+  if (!weapon) return false;
+  if (system.strippedFeatures?.stun === true) return false;
+  if (system.stun === true || system.hasStunSetting === true || system.canStun === true) return true;
+
+  const props = weaponProperties(weapon);
+  if (props.some(p => p.includes('stun'))) return true;
+
+  const damageType = weaponDamageTypeKey(weapon);
+  if (damageType.includes('stun')) return true;
+
+  // Most standard blasters have a stun setting, but older compendium rows do
+  // not consistently carry system.hasStunSetting. Infer only the safe obvious
+  // case: ranged energy weapons with blaster naming/category metadata.
+  const name = String(weapon.name ?? '').toLowerCase();
+  const categoryBlob = [
+    system.weaponCategory,
+    system.weaponType,
+    system.rangeProfile,
+    system.proficiency,
+    system.subcategory
+  ].map(v => String(v ?? '').toLowerCase()).join(' ');
+  const rangedEnergy = isRangedWeapon(weapon) && (damageType === 'energy' || damageType.includes('energy'));
+  return rangedEnergy && (name.includes('blaster') || /pistol|rifle|carbine/.test(categoryBlob));
+}
+
+function weaponIsStunOnly(weapon = {}) {
+  const damageType = weaponDamageTypeKey(weapon);
+  const props = weaponProperties(weapon);
+  if (!damageType.includes('stun')) return false;
+  if (damageType.includes('energy') || damageType.includes('kinetic') || damageType.includes('ion')) return false;
+  return !props.some(p => p.includes('lethal') || p.includes('stun setting'));
+}
+
+function buildDamageModeChoices(weapon = {}) {
+  if (!weapon) return [{ value: 'normal', label: 'Normal Damage', selected: true, disabled: false }];
+  const baseType = weaponDamageTypeKey(weapon);
+  const stunCapable = weaponHasStunSetting(weapon);
+  const stunOnly = weaponIsStunOnly(weapon);
+  const choices = [];
+
+  if (!stunOnly) {
+    choices.push({
+      value: 'normal',
+      label: baseType && baseType !== 'stun' ? `${swseLabelFromKey(baseType)} Damage` : 'Lethal / Normal Damage',
+      selected: true,
+      disabled: false
+    });
+  }
+
+  if (stunCapable || stunOnly) {
+    choices.push({
+      value: 'stun',
+      label: 'Stun Damage',
+      selected: stunOnly,
+      disabled: false
+    });
+  }
+
+  return choices.length ? choices : [{ value: 'normal', label: 'Normal Damage', selected: true, disabled: false }];
+}
+
+function swseLabelFromKey(value = '') {
+  return String(value || 'normal')
+    .replace(/[-_/]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
 function selectedTargetRows() {
   const targets = Array.from(game.user?.targets ?? []);
   return targets.map(token => ({
@@ -844,6 +924,9 @@ async function buildRollConfigModel(options = {}) {
     ranged,
     melee,
     supportsAutofire: weaponSupportsAutofire(weapon),
+    hasStunSetting: weaponHasStunSetting(weapon),
+    stunOnly: weaponIsStunOnly(weapon),
+    damageModeChoices: buildDamageModeChoices(weapon),
     hasBurstFire: actorHasNamedItem(actor, ['Burst Fire']),
     hasRapidShot: actorHasNamedItem(actor, ['Rapid Shot']),
     hasPowerAttack: actorHasNamedItem(actor, ['Power Attack']),
@@ -940,9 +1023,22 @@ function buildWeaponPanel(model) {
       <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.tripleStrike" ${model.hasTripleStrike ? '' : 'disabled'} /> <span><b>Triple Strike</b><small>${model.hasTripleStrike ? 'Full-round multiattack.' : 'Unlocks contextually later.'}</small></span></label>
     </div>` : '';
 
+  const modeChoices = Array.isArray(model.damageModeChoices) ? model.damageModeChoices : [];
+  const damageModePanel = (model.rollType === 'attack' || model.rollType === 'damage') && modeChoices.length
+    ? `<div class="swse-roll-config-subpanel"><h5>Damage Mode</h5>
+        <label>Mode
+          <select name="damageMode">
+            ${modeChoices.map(choice => `<option value="${escapeHTML(choice.value)}" ${choice.selected ? 'selected' : ''} ${choice.disabled ? 'disabled' : ''}>${escapeHTML(choice.label)}</option>`).join('')}
+          </select>
+        </label>
+        ${model.hasStunSetting ? `<p class="swse-roll-config-note">Stun mode halves HP loss, uses full rolled damage for Damage Threshold, and cannot affect stun-immune targets.</p>` : ''}
+      </div>`
+    : '';
+
   return `<section class="swse-roll-config-panel">
     <h4>Weapon Profile</h4>
     <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName)}</b><span>${model.ranged ? 'Ranged' : 'Melee'} · ${escapeHTML(model.weapon?.system?.weaponCategory ?? model.weapon?.system?.rangeProfileName ?? '')}</span></div>
+    ${damageModePanel}
     ${rangedPanel}${meleePanel}
     ${optionCards ? `<div class="swse-roll-config-subpanel"><h5>Unlocked Attack Options</h5>${optionCards}</div>` : ''}
   </section>`;
@@ -1111,10 +1207,14 @@ export async function showRollModifiersDialog(options = {}) {
               rangeBand: data.get('rangeBand') || null,
               label: targetMode === 'manual' ? 'Manual Target' : targetMode === 'none' ? 'GM adjudication' : ''
             };
+            const damageMode = data.get('damageMode') || (model.stunOnly ? 'stun' : 'normal');
             const result = {
               cover,
               concealment,
               customModifier,
+              damageMode,
+              stun: damageMode === 'stun',
+              damageType: damageMode === 'stun' ? 'stun' : undefined,
               useForcePoint: data.get('useForcePoint') === 'on',
               checkMode: data.get('checkMode') || 'roll',
               rollMode: data.get('rollMode') || '',

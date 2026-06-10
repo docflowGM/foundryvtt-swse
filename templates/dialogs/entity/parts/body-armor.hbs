@@ -116,6 +116,13 @@
         <label>Armor Check Penalty</label>
         <input type="number" name="system.armorCheckPenalty" value="{{entityDialog.armor.armorCheckPenalty}}" data-dtype="Number" />
       </div>
+
+      {{#if entityDialog.armor.isEnergyShield}}
+      <div class="form-field">
+        <label>Shield Color</label>
+        <input type="color" name="flags.swse.shieldColor" value="{{entityDialog.armor.shieldColorHex}}" />
+      </div>
+      {{/if}}
     </section>
     {{/unless}}
   </div>

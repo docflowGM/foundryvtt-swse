@@ -32,9 +32,49 @@ export const FeatureIndex = {
      * Load entire feature index from all compendiums
      * Call this once at system initialization
      */
+    /**
+     * Resolve a pack by preferred key with fallbacks.
+     * Strategy:
+     *   1. preferred key as provided (should be `${systemId}.name`)
+     *   2. `foundryvtt-swse.{packName}` hardcoded fallback
+     *   3. Scan packs owned by this system for metadata.name match
+     * @private
+     * @param {string} packName  e.g. "feats", "talents"
+     * @returns {CompendiumCollection|null}
+     */
+    _resolvePack(packName) {
+        const packs = game?.packs;
+        if (!packs) return null;
+        const systemId = game?.system?.id || 'foundryvtt-swse';
+
+        // Strategy 1
+        const primary = packs.get(`${systemId}.${packName}`);
+        if (primary) return primary;
+
+        // Strategy 2
+        const fallback = packs.get(`foundryvtt-swse.${packName}`);
+        if (fallback) {
+            SWSELogger.warn(`FeatureIndex: primary key "${systemId}.${packName}" not found; using fallback "foundryvtt-swse.${packName}"`);
+            return fallback;
+        }
+
+        // Strategy 3: scan
+        const scanned = [...packs.values()].find(p => {
+            const owner = p.metadata?.package ?? p.metadata?.id ?? p.collection?.split('.')[0];
+            return owner === systemId && p.metadata?.name === packName;
+        });
+        if (scanned) {
+            SWSELogger.warn(`FeatureIndex: resolved "${packName}" via scan → "${scanned.collection}"`);
+            return scanned;
+        }
+
+        return null;
+    },
+
     async buildIndex() {
         try {
             const startTime = performance.now();
+            const systemId = game?.system?.id || 'foundryvtt-swse';
 
             // Clear existing maps
             this.feats.clear();
@@ -43,14 +83,14 @@ export const FeatureIndex = {
             this.techniques.clear();
             this.secrets.clear();
 
-            // Load main packs
-            await this._loadPack('foundryvtt-swse.feats', this.feats);
-            await this._loadPack('foundryvtt-swse.talents', this.talents);
-            await this._loadPack('foundryvtt-swse.forcepowers', this.powers);
+            // Load main packs — use defensive resolver so a stale manifest doesn't silently break feats
+            await this._loadPack('feats', this.feats);
+            await this._loadPack('talents', this.talents);
+            await this._loadPack('forcepowers', this.powers);
 
             // Load optional packs (may not exist in all installations)
-            await this._tryLoadPack('foundryvtt-swse.forcetechniques', this.techniques);
-            await this._tryLoadPack('foundryvtt-swse.forcesecrets', this.secrets);
+            await this._tryLoadPack('forcetechniques', this.techniques);
+            await this._tryLoadPack('forcesecrets', this.secrets);
 
             this.isBuilt = true;
             this.buildTimestamp = Date.now();
@@ -66,6 +106,14 @@ export const FeatureIndex = {
                 classFeatures: this.classFeatures.size
             });
 
+            // Diagnostic: warn if any critical pack loaded 0 entries
+            if (this.feats.size === 0) {
+                const available = [...(game?.packs?.keys() ?? [])].filter(k => k.startsWith(systemId));
+                SWSELogger.warn(
+                    `FeatureIndex: feats loaded 0 entries. Available ${systemId} packs: ${available.join(', ') || '(none)'}`
+                );
+            }
+
         } catch (err) {
             SWSELogger.error('Failed to build FeatureIndex:', err);
             this.isBuilt = false;
@@ -73,28 +121,25 @@ export const FeatureIndex = {
     },
 
     /**
-     * Load items from a compendium into a Map
+     * Load items from a compendium into a Map (required pack — warns if missing)
      * @private
      */
-    async _loadPack(packId, map) {
+    async _loadPack(packName, map) {
+        const pack = this._resolvePack(packName);
+        if (!pack) {
+            SWSELogger.warn(`FeatureIndex: Missing pack "${packName}" (tried ${game?.system?.id ?? 'foundryvtt-swse'}.${packName} and fallbacks)`);
+            return;
+        }
         try {
-            const pack = game.packs.get(packId);
-            if (!pack) {
-                SWSELogger.warn(`FeatureIndex: Missing pack ${packId}`);
-                return;
-            }
-
             const docs = await pack.getDocuments();
             for (const doc of docs) {
                 if (doc.name) {
                     map.set(doc.name.toLowerCase(), doc);
                 }
             }
-
-            SWSELogger.log(`Loaded ${docs.length} items from ${packId}`);
-
+            SWSELogger.log(`FeatureIndex: Loaded ${docs.length} items from ${pack.collection}`);
         } catch (err) {
-            SWSELogger.error(`Failed to load pack ${packId}:`, err);
+            SWSELogger.error(`FeatureIndex: Failed to load pack "${pack.collection}":`, err);
         }
     },
 
@@ -102,22 +147,19 @@ export const FeatureIndex = {
      * Load optional packs without warnings if they don't exist
      * @private
      */
-    async _tryLoadPack(packId, map) {
+    async _tryLoadPack(packName, map) {
+        const pack = this._resolvePack(packName);
+        if (!pack) return; // Silent fail for optional packs
         try {
-            const pack = game.packs.get(packId);
-            if (!pack) {return;} // Silent fail for optional packs
-
             const docs = await pack.getDocuments();
             for (const doc of docs) {
                 if (doc.name) {
                     map.set(doc.name.toLowerCase(), doc);
                 }
             }
-
-            SWSELogger.log(`Loaded ${docs.length} optional items from ${packId}`);
-
+            SWSELogger.log(`FeatureIndex: Loaded ${docs.length} optional items from ${pack.collection}`);
         } catch (err) {
-            SWSELogger.warn(`Failed to load optional pack ${packId}:`, err);
+            SWSELogger.warn(`FeatureIndex: Failed to load optional pack "${pack.collection}":`, err);
         }
     },
 

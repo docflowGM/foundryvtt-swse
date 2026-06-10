@@ -4,6 +4,9 @@ import {
   getDamageTargetCategory,
   isIonEligibleDamageTarget
 } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-rules.js";
+import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
+import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { buildDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
 
 function idOf(doc) {
   return doc?.id ?? doc?._id ?? null;
@@ -54,7 +57,10 @@ function weaponDamageType(weapon = null) {
 }
 
 export function normalizeDamageWorkflowContext(workflowContext = null, extra = {}) {
-  return summarizeCombatWorkflowContext(workflowContext, extra) ?? summarizeCombatWorkflowContext(extra.combatContext ?? extra.workflowContext ?? null, extra) ?? null;
+  return summarizeCombatWorkflowContext(workflowContext, extra)
+    ?? summarizeCombatWorkflowContext(extra.combatContext ?? extra.workflowContext ?? null, extra)
+    ?? summarizeCombatWorkflowContext(extra, extra)
+    ?? null;
 }
 
 export function resolveDamagePacketType({ weapon = null, workflowContext = null, options = {} } = {}) {
@@ -173,6 +179,39 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
     ?? context?.actionName
     ?? idOf(weapon)
     ?? 'combat-damage';
+  const damageTypeContext = damageTypesFromContext({ weapon, workflowContext: context, options: { ...options, damageType: type } });
+  const components = buildDamageComponents({
+    rawAmount,
+    amount: appliedAmount,
+    type,
+    damageTypes: damageTypeContext.expanded,
+    originalDamageTypes: damageTypeContext.original,
+    source,
+    weapon,
+    workflowContext: context,
+    options
+  });
+  const hasMixedComponents = components.length > 1;
+  const recurringDamage = RecurringDamageEngine.recurringDamageSpecFromPacket({
+    type,
+    originalType: type,
+    damageTypes: damageTypeContext.expanded,
+    originalDamageTypes: damageTypeContext.original,
+    rawAmount,
+    amount: appliedAmount,
+    source,
+    sourceActor: attacker ?? null,
+    sourceActorId: idOf(attacker) ?? context?.actorId ?? options.attackerId ?? null,
+    sourceActorName: nameOf(attacker) ?? context?.actorName ?? '',
+    targetActorId: idOf(target) ?? context?.targetId ?? options.targetId ?? null,
+    targetActorName: nameOf(target) ?? context?.targetName ?? '',
+    targetCategory: targetKind,
+    weaponId: idOf(weapon) ?? context?.weaponId ?? options.weaponId ?? null,
+    weaponName: nameOf(weapon) ?? context?.weaponName ?? '',
+    workflowContext: context,
+    components,
+    options: { ...options, weapon, sourceActor: attacker ?? null }
+  }, options);
 
   return {
     schema: 'swse.damage.packet.v1',
@@ -181,6 +220,9 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
     multiplier,
     type,
     originalType: type,
+    damageTypes: damageTypeContext.expanded,
+    originalDamageTypes: damageTypeContext.original,
+    components,
     source,
     sourceActor: attacker ?? null,
     sourceActorId: idOf(attacker) ?? context?.actorId ?? options.attackerId ?? null,
@@ -192,6 +234,7 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
     weaponName: nameOf(weapon) ?? context?.weaponName ?? '',
     workflowContext: context,
     disposition,
+    recurringDamage,
     flags: {
       areaAttack: disposition.areaAttack === true,
       burstFire: disposition.burstFire === true,
@@ -201,6 +244,15 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
       stun: type === 'stun',
       ion: type === 'ion',
       ionEligible,
+      recurringDamage: Boolean(recurringDamage),
+      damageComponents: hasMixedComponents,
+      mixedDamage: hasMixedComponents,
+      componentCount: components.length,
+      damageTypes: damageTypeContext.expanded,
+      originalDamageTypes: damageTypeContext.original,
+      sonic: damageTypeContext.original.includes('sonic'),
+      force: damageTypeContext.expanded.includes('force'),
+      energy: damageTypeContext.expanded.includes('energy'),
       evasionApplies: context?.ruleData?.evasionApplies === true
     },
     resources: {
@@ -211,6 +263,8 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
       combatContext: context,
       workflowContext: context,
       damageType: type,
+      damageTypes: damageTypeContext.expanded,
+      originalDamageTypes: damageTypeContext.original,
       type,
       source,
       sourceActor: attacker ?? null,
@@ -224,6 +278,8 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
       stun: type === 'stun',
       ion: type === 'ion',
       ionEligible,
+      recurringDamage,
+      damageComponents: components,
       evasionApplies: context?.ruleData?.evasionApplies === true,
       ammoCost: asNumber(context?.resources?.ammoCost ?? options.ammoCost, 0)
     }
@@ -268,6 +324,13 @@ export function buildDamageApplyOptions(packet = {}) {
     sourceActor: undefined,
     options: undefined
   };
+  if (Array.isArray(safePacket.components)) {
+    safePacket.components = safePacket.components.map(component => ({
+      ...component,
+      sourceActor: undefined,
+      options: undefined
+    }));
+  }
   return {
     ...(packet.options ?? {}),
     damageType: packet.type ?? packet.options?.damageType ?? 'normal',
@@ -276,7 +339,8 @@ export function buildDamageApplyOptions(packet = {}) {
     sourceActor: packet.sourceActor ?? packet.options?.sourceActor ?? null,
     combatContext: packet.workflowContext ?? packet.options?.combatContext ?? null,
     workflowContext: packet.workflowContext ?? packet.options?.workflowContext ?? null,
-    damagePacket: safePacket
+    damagePacket: safePacket,
+    damageComponents: Array.isArray(packet.components) ? packet.components : []
   };
 }
 

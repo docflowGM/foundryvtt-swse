@@ -1,3 +1,6 @@
+import { applyDamageTypeProtectionToPacket, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { applyTargetComponentProtections } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
+
 function asArray(value) {
   if (Array.isArray(value)) return value;
   if (value === undefined || value === null || value === '') return [];
@@ -54,6 +57,10 @@ export function isIonEligibleDamageTarget(target = null) {
   return ['droid', 'vehicle', 'object', 'device'].includes(getDamageTargetCategory(target));
 }
 
+export function isStunEligibleDamageTarget(target = null) {
+  return getDamageTargetCategory(target) === 'organic';
+}
+
 export function getEvasionState(target = null) {
   const improved = asBool(target?.system?.improvedEvasion)
     || asBool(flagValue(target, 'traits.improvedEvasion'))
@@ -106,12 +113,51 @@ function baseDamageAmount(packet = {}) {
   return Math.max(0, Math.floor(rawAmount * multiplier));
 }
 
+function syncComponentAmounts(packet = {}, targetAmount = 0) {
+  if (!Array.isArray(packet.components) || !packet.components.length) return packet;
+  const amount = Math.max(0, asNumber(targetAmount, packet.amount ?? 0));
+  const current = packet.components.reduce((sum, component) => sum + Math.max(0, asNumber(component.amount, 0)), 0);
+  if (current === amount) return packet;
+
+  if (current <= 0) {
+    packet.components = packet.components.map((component, index) => ({
+      ...component,
+      amount: index === 0 ? amount : 0
+    }));
+    return packet;
+  }
+
+  let assigned = 0;
+  packet.components = packet.components.map((component, index) => {
+    const nextAmount = index === packet.components.length - 1
+      ? Math.max(0, amount - assigned)
+      : Math.max(0, Math.floor(asNumber(component.amount, 0) * (amount / current)));
+    assigned += nextAmount;
+    return { ...component, amount: nextAmount };
+  });
+  return packet;
+}
+
 export function applyTargetDamagePacketRules(packet = {}, target = null) {
   const next = clonePacket(packet);
   const rawAmount = Math.max(0, asNumber(next.rawAmount ?? next.amount, 0));
   next.targetCategory = getDamageTargetCategory(target);
   next.targetActorId = target?.id ?? target?._id ?? next.targetActorId ?? null;
   next.targetActorName = target?.name ?? next.targetActorName ?? '';
+
+  const typeContext = damageTypesFromContext({
+    weapon: next.options?.weapon ?? null,
+    workflowContext: next.workflowContext,
+    options: { ...(next.options ?? {}), damageType: next.type, damageTypes: next.damageTypes ?? next.flags?.damageTypes }
+  });
+  next.damageTypes = typeContext.expanded;
+  next.originalDamageTypes = typeContext.original;
+  next.flags.damageTypes = typeContext.expanded;
+  next.flags.originalDamageTypes = typeContext.original;
+  next.flags.sonic = typeContext.original.includes('sonic');
+  next.flags.energy = typeContext.expanded.includes('energy');
+  next.flags.force = typeContext.expanded.includes('force');
+  next.options.damageTypes = typeContext.expanded;
 
   let amount = baseDamageAmount(next);
   let multiplier = asNumber(next.multiplier ?? next.disposition?.multiplier, 1);
@@ -139,6 +185,39 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
   }
 
   const requestedType = normalizeKey(next.originalType ?? next.type ?? next.options?.type ?? next.options?.damageType ?? 'normal');
+
+  if (requestedType === 'stun') {
+    const eligible = target ? isStunEligibleDamageTarget(target) : undefined;
+    next.originalType = 'stun';
+    next.type = 'stun';
+    next.options.type = 'stun';
+    next.options.damageType = 'stun';
+    next.options.stun = true;
+    next.options.stunEligible = eligible;
+    next.flags.stun = true;
+    next.flags.stunEligible = eligible;
+
+    if (eligible === true || eligible === undefined) {
+      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
+      if (next.disposition?.damageAllowed !== false && amount > 0) {
+        next.options.thresholdDamageOverride = Math.max(0, asNumber(next.options.thresholdDamageOverride, amount));
+      }
+      next.options.stunNonlethal = true;
+      next.flags.stunHpHalved = true;
+      next.flags.stunThresholdUsesOriginalDamage = true;
+    } else {
+      amount = 0;
+      multiplier = 0;
+      next.disposition.damageAllowed = false;
+      next.disposition.multiplier = 0;
+      next.disposition.reason = `${target?.name ?? 'Target'} is immune to stun damage.`;
+      next.options.stunSuppressed = true;
+      next.flags.stunSuppressed = true;
+      next.flags.stunHpHalved = false;
+      next.flags.stunThresholdUsesOriginalDamage = false;
+    }
+  }
+
   if (requestedType === 'ion') {
     const eligible = target ? isIonEligibleDamageTarget(target) : undefined;
     next.originalType = 'ion';
@@ -172,12 +251,18 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
 
   next.amount = amount;
   next.multiplier = multiplier;
-  return next;
+  syncComponentAmounts(next, amount);
+  const protectedPacket = applyDamageTypeProtectionToPacket(next, target);
+  if (Array.isArray(protectedPacket.components) && protectedPacket.components.length > 1) {
+    return applyTargetComponentProtections(protectedPacket, target);
+  }
+  return protectedPacket;
 }
 
 export const DamagePacketRules = {
   getDamageTargetCategory,
   isIonEligibleDamageTarget,
+  isStunEligibleDamageTarget,
   getEvasionState,
   applyTargetDamagePacketRules
 };

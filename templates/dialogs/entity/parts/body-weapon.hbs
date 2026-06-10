@@ -19,49 +19,6 @@
 
 <div class="item-editor__grid item-editor__grid--two-col swse-entity-dialog__weapon-grid">
   <section class="item-editor__section">
-    <h3 class="item-editor__section-title">Type & Profile</h3>
-
-    <div class="item-editor__grid item-editor__grid--two-col">
-      <div class="form-field">
-        <label>Branch</label>
-        <select name="system.meleeOrRanged" class="melee-or-ranged-select">
-          {{#each entityDialog.weapon.branchOptions}}
-          <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.branch this.value)}}selected{{/if}}>{{this.label}}</option>
-          {{/each}}
-        </select>
-        <p class="swse-entity-dialog__field-note">Controls melee/ranged body sections and category filtering.</p>
-      </div>
-
-      <div class="form-field">
-        <label>Weapon Group</label>
-        <select name="system.weaponCategory" class="weapon-category-select">
-          {{#each entityDialog.weapon.categoryOptions}}
-          <option value="{{this.value}}" {{#if (eq ../entityDialog.weapon.category this.value)}}selected{{/if}}>{{this.label}}</option>
-          {{/each}}
-        </select>
-        <p class="swse-entity-dialog__field-note">Existing attack, feat, and range systems read this group.</p>
-      </div>
-
-      <div class="form-field">
-        <label>Attack Attribute</label>
-        <select name="system.attackAttribute">
-          <option value="str" {{#if (eq entityDialog.weapon.attackAttribute "str")}}selected{{/if}}>Strength</option>
-          <option value="dex" {{#if (eq entityDialog.weapon.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
-          <option value="con" {{#if (eq entityDialog.weapon.attackAttribute "con")}}selected{{/if}}>Constitution</option>
-          <option value="int" {{#if (eq entityDialog.weapon.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
-          <option value="wis" {{#if (eq entityDialog.weapon.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
-          <option value="cha" {{#if (eq entityDialog.weapon.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
-        </select>
-      </div>
-
-      <div class="form-field">
-        <label>Attack Bonus</label>
-        <input type="number" name="system.attackBonus" value="{{entityDialog.weapon.attackBonus}}" data-dtype="Number" />
-      </div>
-    </div>
-  </section>
-
-  <section class="item-editor__section">
     <h3 class="item-editor__section-title">Inventory & Workbench</h3>
 
     <div class="item-editor__grid item-editor__grid--two-col">
@@ -129,6 +86,23 @@
   <h3 class="item-editor__section-title">Attack & Damage</h3>
 
   <div class="item-editor__grid item-editor__grid--two-col">
+    <div class="form-field">
+      <label>Attack Attribute</label>
+      <select name="system.attackAttribute">
+        <option value="str" {{#if (eq entityDialog.weapon.attackAttribute "str")}}selected{{/if}}>Strength</option>
+        <option value="dex" {{#if (eq entityDialog.weapon.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
+        <option value="con" {{#if (eq entityDialog.weapon.attackAttribute "con")}}selected{{/if}}>Constitution</option>
+        <option value="int" {{#if (eq entityDialog.weapon.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
+        <option value="wis" {{#if (eq entityDialog.weapon.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
+        <option value="cha" {{#if (eq entityDialog.weapon.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label>Attack Bonus</label>
+      <input type="number" name="system.attackBonus" value="{{entityDialog.weapon.attackBonus}}" data-dtype="Number" />
+    </div>
+
     <div class="form-field">
       <label>Damage</label>
       <input type="text" name="system.damage" value="{{entityDialog.weapon.damage}}" placeholder="e.g., 3d8" />
@@ -249,13 +223,7 @@
 
       <div class="form-field">
         <label>Bolt Color</label>
-        <select name="flags.swse.boltColor">
-          <option value="red" {{#if (eq item.flags.swse.boltColor "red")}}selected{{/if}}>Red</option>
-          <option value="green" {{#if (eq item.flags.swse.boltColor "green")}}selected{{/if}}>Green</option>
-          <option value="blue" {{#if (eq item.flags.swse.boltColor "blue")}}selected{{/if}}>Blue</option>
-          <option value="cyan" {{#if (eq item.flags.swse.boltColor "cyan")}}selected{{/if}}>Cyan</option>
-          <option value="orange" {{#if (eq item.flags.swse.boltColor "orange")}}selected{{/if}}>Orange</option>
-        </select>
+        <input type="color" name="flags.swse.boltColor" value="{{entityDialog.weapon.boltColorHex}}" />
       </div>
     </div>
   </div>
@@ -282,11 +250,7 @@
   <div class="item-editor__grid item-editor__grid--two-col">
     <div class="form-field">
       <label>Blade Color</label>
-      <select name="flags.swse.bladeColor">
-        {{#each bladeColorOptions}}
-        <option value="{{this.name}}" {{#if (eq ../item.flags.swse.bladeColor this.name)}}selected{{/if}}>{{this.name}}</option>
-        {{/each}}
-      </select>
+      <input type="color" name="flags.swse.bladeColor" value="{{entityDialog.weapon.bladeColorHex}}" />
     </div>
 
     <div class="form-field form-field--checkbox">

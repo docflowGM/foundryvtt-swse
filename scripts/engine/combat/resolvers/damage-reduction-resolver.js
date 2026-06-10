@@ -117,17 +117,23 @@ function actorHasIgnoreDRIfOvercome(actor, weapon, context = {}) {
   return false;
 }
 
-function ruleMatchesDamageContext(rule, context = {}) {
-  const damageTypes = asArray(rule.damageTypes ?? rule.damageType ?? rule.types)
+function ruleDamageTypes(rule) {
+  return asArray(rule.damageTypes ?? rule.damageType ?? rule.types)
     .map(normalizeKey)
     .filter(Boolean);
+}
+
+function ruleMatchesDamageContext(rule, context = {}, { typedOnly = false, genericOnly = false } = {}) {
+  const damageTypes = ruleDamageTypes(rule);
+  if (typedOnly && !damageTypes.length) return false;
+  if (genericOnly && damageTypes.length) return false;
   if (!damageTypes.length) return true;
   const text = contextDamageText(context);
   if (!text) return false;
   return damageTypes.some(type => text.includes(type));
 }
 
-function collectItemDamageReduction(actor, context = {}) {
+function collectItemDamageReduction(actor, context = {}, filters = {}) {
   let value = 0;
   let source = '';
 
@@ -137,7 +143,7 @@ function collectItemDamageReduction(actor, context = {}) {
     for (const rule of rules) {
       const type = String(rule?.type ?? '').toUpperCase();
       if (type !== 'DAMAGE_REDUCTION' && type !== 'CONTEXTUAL_DAMAGE_REDUCTION') continue;
-      if (!ruleMatchesDamageContext(rule, context)) continue;
+      if (!ruleMatchesDamageContext(rule, context, filters)) continue;
 
       const amount = Number(rule.value ?? rule.amount ?? rule.damageReduction ?? 0);
       if (!Number.isFinite(amount) || amount <= value) continue;
@@ -195,20 +201,26 @@ export class DamageReductionResolver {
     let drValue = 0;
     let drSource = '';
 
+    const skipGenericDR = context.skipGenericDamageReduction === true || context.skipGenericDR === true;
+    const onlyTypedDR = context.onlyTypedDamageReduction === true || context.typedOnlyDamageReduction === true;
+    const onlyGenericDR = context.onlyGenericDamageReduction === true || context.genericOnlyDamageReduction === true;
+
     // DR can come from derived character/item aggregation or raw actor storage.
-    const derivedDR = Number(actor.system?.derived?.damageReduction?.highestValue ?? actor.system?.derived?.damageReduction?.all ?? actor.system?.derived?.damageReduction?.value ?? 0);
-    if (derivedDR > drValue) {
-      drValue = derivedDR;
-      drSource = `Derived DR (${drValue})`;
+    if (!skipGenericDR && !onlyTypedDR) {
+      const derivedDR = Number(actor.system?.derived?.damageReduction?.highestValue ?? actor.system?.derived?.damageReduction?.all ?? actor.system?.derived?.damageReduction?.value ?? 0);
+      if (derivedDR > drValue) {
+        drValue = derivedDR;
+        drSource = `Derived DR (${drValue})`;
+      }
+
+      const actorDR = Number(actor.system?.damageReduction ?? 0);
+      if (actorDR > drValue) {
+        drValue = actorDR;
+        drSource = `Actor DR (${drValue})`;
+      }
     }
 
-    const actorDR = Number(actor.system?.damageReduction ?? 0);
-    if (actorDR > drValue) {
-      drValue = actorDR;
-      drSource = `Actor DR (${drValue})`;
-    }
-
-    const itemDR = collectItemDamageReduction(actor, context);
+    const itemDR = collectItemDamageReduction(actor, context, { typedOnly: onlyTypedDR, genericOnly: onlyGenericDR });
     if (itemDR.value > drValue) {
       drValue = itemDR.value;
       drSource = itemDR.source || `Item DR (${drValue})`;

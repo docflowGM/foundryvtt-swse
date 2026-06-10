@@ -769,7 +769,11 @@ function normalizeForceFeature(entry, fallbackLabel) {
 
 export function buildForceTab(context) {
   const actor = context.actor;
-  const hand = asArray(context.forcePowersPanel?.hand).map((power) => normalizeForcePower(power, false));
+  const hand = asArray(context.forcePowersPanel?.hand).map((power) => {
+    const tags = power?.system?.tags ?? power?.tags ?? [];
+    const isLightsaberForm = Array.isArray(tags) ? tags.includes('lightsaber-form') : String(tags).includes('lightsaber-form');
+    return normalizeForcePower(power, false, isLightsaberForm ? { type: 'form' } : {});
+  });
   const discard = asArray(context.forcePowersPanel?.discard).map((power) => normalizeForcePower(power, true));
   const techniques = asArray(context.forcePowersPanel?.techniques).map((entry) => normalizeForceFeature(entry, 'Unnamed Technique'));
   const secrets = asArray(context.forcePowersPanel?.secrets).map((entry) => normalizeForceFeature(entry, 'Unnamed Secret'));
@@ -807,10 +811,33 @@ export function buildForceTab(context) {
     identity.species
   ].filter(Boolean).join(' · ');
 
+  const FORCE_TRADITION_OPTIONS = [
+    { value: '', label: 'Unaffiliated' },
+    { value: 'jedi-order', label: 'Jedi Order' },
+    { value: 'sith', label: 'Sith' },
+    { value: 'aing-tii', label: 'Aing-Tii Monks' },
+    { value: 'zeison-sha', label: 'Zeison Sha' },
+    { value: 'baran-do', label: 'Baran Do Sages' },
+    { value: 'matukai', label: 'Matukai' },
+    { value: 'witches-of-dathomir', label: 'Witches of Dathomir' },
+    { value: 'imperial-inquisitors', label: 'Imperial Inquisitors' },
+    { value: 'potentium', label: 'Potentium' },
+    { value: 'dark-side-adepts', label: 'Dark Side Adepts' }
+  ];
+  const forceTradition = String(
+    actor?.system?.forceTradition
+    ?? actor?.system?.progression?.forceTradition
+    ?? actor?.flags?.swse?.forceTradition
+    ?? ''
+  ).trim();
+
   const forceSuite = {
     actorName: actor?.name || 'Unknown Force User',
     actorSubtitle,
     utfTotal,
+    forceTradition,
+    forceTraditionOptions: FORCE_TRADITION_OPTIONS,
+    forceTraditionLabel: FORCE_TRADITION_OPTIONS.find((o) => o.value === forceTradition)?.label ?? (forceTradition || 'Unaffiliated'),
     forcePointsValue: Number(context.forcePointsValue) || 0,
     forcePointsMax: Number(context.forcePointsMax) || 0,
     destinyPointsValue: Number(context.destinyPointsValue) || 0,

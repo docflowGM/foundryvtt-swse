@@ -23,6 +23,8 @@ import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
+import { RecurringDamageEngine } from "./scripts/engine/combat/recurring-damage-engine.js";
+import { SWSEGrappling } from "./scripts/combat/systems/grappling-system.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { registerCompendiumDirectoryClickRepair } from "./scripts/core/compendium-directory-click-repair.js";
@@ -31,6 +33,9 @@ import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js
 import { initializeGames } from "./scripts/games/game-init.js";
 import { initSidebarIconFallback } from "./scripts/core/sidebar-icon-fallback.js";
 import { initSidebarIconDiagnostics, dumpSidebarIconState, watchSidebarIconMutations, auditSidebarIconCssRules, snapshotPhase } from "./scripts/core/sidebar-icon-diagnostics.js";
+import { FeatRegistry } from "./scripts/registries/feat-registry.js";
+import { FeatEffectRegistry } from "./scripts/engine/features/feat-effect-registry.js";
+import { FeatEffectApplier, initializeFeatEffectsHooks } from "./scripts/engine/features/feat-effect-applier.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -141,6 +146,18 @@ Hooks.once("init", async () => {
   initializeDiscoverySystem();
   initializeSentinelGovernance();
   registerCompendiumDirectoryClickRepair();
+  // -------------------------------
+  // Feat Effect Registry + lifecycle hooks
+  // Mechanical effect definitions formerly embedded in feat compendium items
+  // now live in data/feat-effects.json. FeatRegistry owns feat identity;
+  // FeatEffectRegistry owns feat mechanics; the applier reconciles generated
+  // ActiveEffects on actors that own the corresponding feats.
+  // -------------------------------
+  FeatEffectRegistry.initialize();
+  initializeFeatEffectsHooks();
+  globalThis.SWSE.FeatRegistry = FeatRegistry;
+  globalThis.SWSE.FeatEffectRegistry = FeatEffectRegistry;
+  globalThis.SWSE.FeatEffectApplier = FeatEffectApplier;
 
   // -------------------------------
   // Preload Templates
@@ -170,7 +187,9 @@ Hooks.once("ready", async () => {
   // Initialized in ready hook after all settings and systems are loaded
   // -------
   MutationInterceptor.initialize();
+  RecurringDamageEngine.initializeHooks();
   PoisonEngine.initializeHooks();
+  SWSEGrappling.init();
   await initializeHolonet();
   await initializeGames();
 

@@ -51,19 +51,26 @@ export class FeatRegistry {
     static _byName = new Map();             // lowercase name -> entry
     static _byCategory = new Map();         // category -> entry[]
     static _byTag = new Map();              // tag -> entry[]
+    static _fallbackDocsById = new Map();   // id -> JSONL-backed doc-like object
+    static _sourcePackKey = null;           // resolved pack key or fallback source
 
     /**
      * Initialize FeatRegistry from compendium
      * Call once during system ready hook
      */
     static async initialize() {
-        if (this._initialized) {
+        if (this._initialized && this._entries.length > 0) {
             SWSELogger.log('[FeatRegistry] Already initialized, skipping');
             return;
         }
 
+        if (this._initialized && this._entries.length === 0) {
+            SWSELogger.warn('[FeatRegistry] Registry was initialized with 0 feats; retrying with pack/fallback resolution.');
+        }
+
         try {
             const startTime = performance.now();
+            this._resetIndexes();
             await this._loadFromCompendium();
             const duration = (performance.now() - startTime).toFixed(2);
 
@@ -83,54 +90,179 @@ export class FeatRegistry {
      * @private
      */
     static async _loadFromCompendium() {
-        const systemId = game?.system?.id || 'foundryvtt-swse';
-        const packKey = `${systemId}.feats`;
+        const pack = this._resolveFeatsPack();
 
-        const pack = game?.packs?.get(packKey);
-        if (!pack) {
-            SWSELogger.warn(
-                `[FeatRegistry] Compendium pack "${packKey}" not found. Registry will be empty.`
-            );
+        if (pack) {
+            await this._loadDocumentsFromPack(pack);
             return;
         }
 
+        // No client-side fallback: Foundry forbids fetching pack DB files from
+        // browser JS (HTTP 403), so the only supported source is the registered
+        // LevelDB compendium resolved above. If we reach here the pack store is
+        // missing/empty and must be repaired on disk (rebuild packs/feats), not
+        // worked around at runtime.
+        const systemId = game?.system?.id || 'foundryvtt-swse';
+        const tried = this._getPackCandidateKeys(systemId).join(', ');
+        SWSELogger.warn(
+            `[FeatRegistry] Compendium pack not registered by Foundry. Tried pack keys: ${tried}. ` +
+            `Registry will be empty. This is a pack-store/install issue (the LevelDB pack at packs/feats is missing or empty); ` +
+            `rebuild the compendium on disk rather than expecting a client-side recovery path.\n` +
+            this._formatPackDiagnostics()
+        );
+    }
+
+    static async _loadDocumentsFromPack(pack) {
+        const packKey = pack?.collection || pack?.metadata?.id || `${pack?.metadata?.packageName}.${pack?.metadata?.name}`;
         try {
             const docs = await pack.getDocuments();
-
-            for (const doc of docs) {
-                if (!doc || !doc.name) {
-                    continue;
-                }
-
-                const entry = this._normalizeEntry(doc);
-                this._entries.push(entry);
-
-                // Index by id
-                this._byId.set(entry.id, entry);
-
-                // Index by name (lowercase for case-insensitive lookup)
-                this._byName.set(entry.name.toLowerCase(), entry);
-
-                // Index by category
-                if (entry.category) {
-                    if (!this._byCategory.has(entry.category)) {
-                        this._byCategory.set(entry.category, []);
-                    }
-                    this._byCategory.get(entry.category).push(entry);
-                }
-
-                // Index by tags
-                for (const tag of entry.tags) {
-                    if (!this._byTag.has(tag)) {
-                        this._byTag.set(tag, []);
-                    }
-                    this._byTag.get(tag).push(entry);
-                }
-            }
+            this._sourcePackKey = packKey || 'unknown-pack';
+            this._indexDocuments(docs, { fallback: false });
         } catch (err) {
             SWSELogger.error(`[FeatRegistry] Failed to load from pack "${packKey}":`, err);
             throw err;
         }
+    }
+
+    static _resetIndexes() {
+        this._entries = [];
+        this._byId.clear();
+        this._byName.clear();
+        this._byCategory.clear();
+        this._byTag.clear();
+        this._fallbackDocsById.clear();
+        this._sourcePackKey = null;
+    }
+
+    static _indexDocuments(docs, { fallback = false } = {}) {
+        for (const doc of docs || []) {
+            if (!doc || !doc.name) continue;
+
+            const entry = this._normalizeEntry(doc);
+            this._entries.push(entry);
+            this._byId.set(entry.id, entry);
+            this._byName.set(entry.name.toLowerCase(), entry);
+
+            if (fallback) {
+                this._fallbackDocsById.set(entry.id, doc);
+            }
+
+            if (entry.category) {
+                if (!this._byCategory.has(entry.category)) {
+                    this._byCategory.set(entry.category, []);
+                }
+                this._byCategory.get(entry.category).push(entry);
+            }
+
+            for (const tag of entry.tags) {
+                if (!this._byTag.has(tag)) {
+                    this._byTag.set(tag, []);
+                }
+                this._byTag.get(tag).push(entry);
+            }
+        }
+    }
+
+    static _resolveFeatsPack() {
+        const systemId = game?.system?.id || 'foundryvtt-swse';
+        const candidates = this._getPackCandidateKeys(systemId);
+
+        for (const key of candidates) {
+            const pack = game?.packs?.get?.(key);
+            if (pack) return pack;
+        }
+
+        const packs = Array.from(game?.packs?.values?.() || []);
+        return packs.find((pack) => {
+            const meta = pack?.metadata || {};
+            const packageName = String(meta.packageName || pack?.packageName || '');
+            const name = String(meta.name || pack?.collection?.split('.')?.pop?.() || '');
+            const label = String(meta.label || '');
+            const path = String(meta.path || '');
+            const collection = String(pack?.collection || meta.id || '');
+
+            if (packageName && packageName !== systemId && packageName !== 'foundryvtt-swse') return false;
+            return [name, label, path, collection].some((value) => /(^|[/._-])feats($|[._-]|\.db$)/i.test(value));
+        }) || null;
+    }
+
+    static _getPackCandidateKeys(systemId = game?.system?.id || 'foundryvtt-swse') {
+        return Array.from(new Set([
+            `${systemId}.feats`,
+            'foundryvtt-swse.feats',
+            `${systemId}.feat`,
+            'foundryvtt-swse.feat'
+        ].filter(Boolean)));
+    }
+
+    static _getFallbackPath() {
+        const systemId = game?.system?.id || 'foundryvtt-swse';
+        return `/systems/${systemId}/packs/feats.db`;
+    }
+
+    /**
+     * DISABLED. Foundry intentionally forbids direct browser fetches of pack DB
+     * files (packs/feats.db returns HTTP 403), so this was never a viable
+     * recovery path and only produced misleading 403 errors in the console.
+     * Feats must be loaded through the registered LevelDB compendium
+     * (game.packs.get("<system>.feats")). Retained as an inert no-op so any
+     * external callers keep working without re-introducing the forbidden fetch.
+     * @returns {Promise<Array>} always empty
+     */
+    static async _loadJsonlFallback() {
+        return [];
+    }
+
+    static _parseJsonlPack(text, path = 'packs/feats.db') {
+        const docs = [];
+        const lines = String(text || '').split(/\r?\n/);
+        for (let i = 0; i < lines.length; i += 1) {
+            const line = lines[i]?.trim();
+            if (!line) continue;
+            try {
+                const raw = JSON.parse(line);
+                if (!raw || !raw.name) continue;
+                docs.push(this._makeFallbackDocument(raw, path));
+            } catch (err) {
+                SWSELogger.warn(`[FeatRegistry] Skipped invalid feats fallback row ${i + 1} in ${path}:`, err);
+            }
+        }
+        return docs;
+    }
+
+    static _makeFallbackDocument(raw, path = 'packs/feats.db') {
+        const id = raw._id || raw.id || foundry?.utils?.randomID?.() || crypto?.randomUUID?.() || raw.name;
+        const data = foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw));
+        data._id = id;
+        data.id = id;
+        data.type = data.type || 'feat';
+        data.system = data.system || {};
+        data.effects = Array.isArray(data.effects) ? data.effects : [];
+        data.flags = data.flags || {};
+
+        return {
+            ...data,
+            _id: id,
+            id,
+            name: data.name,
+            type: data.type,
+            system: data.system,
+            effects: data.effects,
+            flags: data.flags,
+            img: data.img,
+            pack: 'foundryvtt-swse.feats',
+            uuid: `Compendium.foundryvtt-swse.feats.${id}`,
+            _source: data,
+            toObject() {
+                return foundry?.utils?.deepClone ? foundry.utils.deepClone(data) : JSON.parse(JSON.stringify(data));
+            }
+        };
+    }
+
+    static _formatPackDiagnostics() {
+        const allKeys = Array.from(game?.packs?.keys?.() || []);
+        const swseKeys = allKeys.filter((key) => key.startsWith(`${game?.system?.id || 'foundryvtt-swse'}.`) || key.startsWith('foundryvtt-swse.'));
+        return `Available SWSE pack keys (${swseKeys.length}): ${swseKeys.join(', ') || '(none)'}`;
     }
 
     /**
@@ -299,16 +431,27 @@ export class FeatRegistry {
 
     static async _getDocument(id) {
         if (!id) return null;
-        const systemId = game?.system?.id || 'foundryvtt-swse';
-        const packKey = `${systemId}.feats`;
-        const pack = game?.packs?.get(packKey);
-        if (!pack) return null;
-        try {
-            return await pack.getDocument(id);
-        } catch (err) {
-            SWSELogger.warn(`[FeatRegistry] Failed to fetch document ${id} from ${packKey}:`, err);
-            return null;
+        const pack = this._resolveFeatsPack();
+        const entry = this.getById(id);
+
+        if (pack) {
+            const packKey = pack?.collection || pack?.metadata?.id || 'foundryvtt-swse.feats';
+            try {
+                return await pack.getDocument(id);
+            } catch (err) {
+                SWSELogger.warn(`[FeatRegistry] Failed to fetch document ${id} from ${packKey}; checking fallback cache.`, err);
+            }
         }
+
+        return this._fallbackDocsById.get(id) || (entry ? this._makeFallbackDocument({
+            _id: entry.id,
+            name: entry.name,
+            type: 'feat',
+            img: entry.img,
+            system: entry.system || {},
+            effects: entry.effects || [],
+            flags: entry.flags || {}
+        }) : null);
     }
 
     static resolveEntry(ref) {

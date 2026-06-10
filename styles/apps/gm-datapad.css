@@ -8661,3 +8661,103 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
     grid-template-columns: 1fr;
   }
 }
+
+/* -------------------------------------------------------------------------
+   GM Holopad scroll/layout hardening
+   Expanded house-rules surfaces previously clipped their internal rule grid,
+   while compact windows allowed wide category cards to visually collide. Keep
+   the dock/header/footer fixed and give the rule grid one reliable scrollport.
+   ------------------------------------------------------------------------- */
+.swse-sheet-v2-shell--gm-datapad {
+  container-type: inline-size;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .swse-shell-surface-host {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-datapad-house-rules,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rules {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase6-command-header,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase6-command-strip,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-toolbar,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-empty,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-footer {
+  flex: 0 0 auto !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  align-items: start !important;
+  align-content: start !important;
+  grid-auto-flow: row !important;
+  grid-auto-rows: max-content !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(600px, 100%), 1fr)) !important;
+  padding: 0 10px 12px 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-category {
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: max-content !important;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-entry,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-category-header {
+  min-width: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-house-rule-control {
+  min-width: min(300px, 40%) !important;
+  max-width: min(380px, 44%) !important;
+}
+
+@container (max-width: 1180px) {
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-toolbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-entry {
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: stretch !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-house-rule-control {
+    justify-content: stretch !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-height: 760px) {
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase6-command-header,
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase6-command-strip,
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-toolbar {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-house-rules"] .gm-phase7-rule-grid {
+    gap: 10px !important;
+  }
+}

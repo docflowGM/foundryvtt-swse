@@ -341,6 +341,11 @@ export class FeatStep extends ProgressionStepPlugin {
     this._selectedFeatIds = existingFeats.map(feat => feat?.id || feat?._id || feat?.name).filter(Boolean);
     this._selectedFeatId = this._selectedFeatIds[0] || null;
     this._selectedFeatItem = existingFeats[0] || null;
+    // Auto-focus the committed feat so the detail panel shows on step enter
+    // without requiring the user to click again.
+    if (this._selectedFeatItem) {
+      this._focusedFeatId = this._selectedFeatItem._id || this._selectedFeatItem.id || this._selectedFeatId;
+    }
 
     emitFeatStepTrace('STEP_ENTER_START', {
       stepId: this.descriptor?.stepId || null,

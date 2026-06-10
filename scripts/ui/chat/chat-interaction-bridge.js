@@ -11,6 +11,9 @@ import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engi
 import { getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { decodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { buildDamagePacket } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
+import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
+import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
+import { decodeDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
 
 let registered = false;
 
@@ -25,6 +28,51 @@ function markBound(el, key) {
   if (el.dataset?.[marker] === 'true') return false;
   el.dataset[marker] = 'true';
   return true;
+}
+
+
+function userCanControlActor(actor) {
+  if (!actor) return false;
+  if (game?.user?.isGM) return true;
+  return actor.isOwner === true;
+}
+
+function labelForGrappleAction(action, button = null) {
+  const explicit = button?.dataset?.actionName || button?.textContent?.trim();
+  if (explicit) return explicit;
+  const labels = {
+    'grapple-check': 'Opposed Grapple',
+    pin: 'Attempt Pin',
+    trip: 'Trip Grappled Opponent',
+    throw: 'Throw Grappled Opponent',
+    crush: 'Crush Pinned Opponent',
+    escape: 'Escape Grapple',
+    release: 'Release Grapple'
+  };
+  return labels[action] ?? 'Grapple Action';
+}
+
+function actionCostForGrappleAction(action, button = null) {
+  const explicit = button?.dataset?.actionCost || button?.dataset?.actionType;
+  if (explicit) return explicit;
+  if (action === 'release') return 'free';
+  return 'standard';
+}
+
+async function spendGrappleActionEconomy(actor, target, action, button = null) {
+  const actionType = actionCostForGrappleAction(action, button);
+  const actionName = labelForGrappleAction(action, button);
+  return await ActionEconomyConsumption.spend(actor, actionType, {
+    source: 'chat-grapple-follow-through',
+    sourceName: actionName,
+    actionName,
+    grappleAction: action,
+    targetId: target?.id ?? target?._id ?? null,
+    targetName: target?.name ?? ''
+  }, {
+    gmOverride: button?.dataset?.gmOverride === 'true' || button?.dataset?.gmOverride === true,
+    notify: true
+  });
 }
 
 function actorFromId(id) {
@@ -106,6 +154,12 @@ function mergeDamageButtonWorkflowContext(button, decoded = null) {
   else if (hit === 'false') damage.hit = false;
   else if (damage.hit === undefined) damage.hit = null;
 
+  const buttonDamageTypes = String(button.dataset.damageTypes || '').split('|').map(v => v.trim()).filter(Boolean);
+  if (button.dataset.damageType) damage.damageType = damage.damageType ?? button.dataset.damageType;
+  if (buttonDamageTypes.length) damage.damageTypes = Array.from(new Set([...(Array.isArray(damage.damageTypes) ? damage.damageTypes : []), ...buttonDamageTypes]));
+  const buttonComponents = decodeDamageComponents(button.dataset.damageComponents || '');
+  if (buttonComponents.length) damage.damageComponents = buttonComponents;
+
   damage.crit = boolFromDataset(button.dataset.isCrit) ?? damage.crit;
   damage.natural1 = boolFromDataset(button.dataset.natural1) ?? damage.natural1;
   damage.natural20 = boolFromDataset(button.dataset.natural20) ?? damage.natural20;
@@ -152,6 +206,7 @@ async function handleLegacyDamageRollButton(event, button, message) {
     isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
     critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
     twoHanded: button.dataset.twoHanded === 'true',
+    damageComponents: combatContext?.damage?.damageComponents ?? decodeDamageComponents(button.dataset.damageComponents || ''),
     target,
     combatContext,
     workflowContext: combatContext
@@ -178,6 +233,7 @@ async function handleCombatDamageRollButton(event, button) {
     target: resolvedTarget,
     isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
     critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
+    damageComponents: combatContext?.damage?.damageComponents ?? decodeDamageComponents(button.dataset.damageComponents || ''),
     combatContext,
     workflowContext: combatContext
   });
@@ -205,6 +261,8 @@ async function handleApplyDamageButton(event, button) {
     workflowContext: combatContext,
     options: {
       damageType: button.dataset.damageType || combatContext?.damage?.damageType || undefined,
+      damageTypes: String(button.dataset.damageTypes || '').split('|').map(v => v.trim()).filter(Boolean),
+      damageComponents: combatContext?.damage?.damageComponents ?? decodeDamageComponents(button.dataset.damageComponents || ''),
       isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
       critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
       ammoCost: Number.parseInt(button.dataset.ammoCost, 10) || combatContext?.resources?.ammoCost || 0,
@@ -222,6 +280,59 @@ async function handleApplyDamageButton(event, button) {
     await DamageSystem.applyPacketToActor(target, packet);
   } else {
     await DamageSystem.applyPacketToSelected(packet);
+  }
+}
+
+async function handleGrappleActionButton(event, button) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const actor = actorFromId(button.dataset.actorId);
+  const target = actorFromId(button.dataset.targetId);
+  const action = String(button.dataset.grappleAction || '').trim().toLowerCase();
+
+  if (!actor || !target) {
+    ui?.notifications?.warn?.('Grapple action context could not be resolved.');
+    return;
+  }
+  if (!userCanControlActor(actor)) {
+    ui?.notifications?.warn?.(`You do not control ${actor.name ?? 'this actor'}.`);
+    return;
+  }
+
+  const checkLegality = action === 'release' || action === 'escape'
+    ? GrappleLegalityEngine.validateTargetPair(actor, target)
+    : action === 'grapple-check' || ['pin', 'trip', 'throw', 'crush'].includes(action)
+      ? GrappleLegalityEngine.validateExistingGrapple(actor, target)
+      : GrappleLegalityEngine.validateInitiate(actor, target);
+  if (!await GrappleLegalityEngine.confirm(checkLegality, { actionName: labelForGrappleAction(action, button) })) return;
+
+  const economy = await spendGrappleActionEconomy(actor, target, action, button);
+  if (economy?.permitted === false || economy?.allowed === false) return;
+
+  const { SWSEGrappling } = await import('/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js');
+  let result = null;
+  if (action === 'grapple-check') {
+    result = await SWSEGrappling.grappleCheck(actor, target, { actionId: 'grapple-check', actionType: economy.actionType, skipLegalityConfirm: true });
+  } else if (action === 'pin') {
+    result = await SWSEGrappling.attemptPin(actor, target, { actionId: 'pin', actionType: economy.actionType, skipLegalityConfirm: true });
+  } else if (['trip', 'throw', 'crush'].includes(action)) {
+    result = await SWSEGrappling.performAdvancedGrappleManeuver(actor, target, action, { actionId: `grapple-${action}`, actionType: economy.actionType, skipLegalityConfirm: true });
+  } else if (action === 'escape') {
+    result = await SWSEGrappling.escapeGrapple(actor, target, {
+      actionId: 'escape-grapple',
+      actionType: economy.actionType,
+      escapeMode: button.dataset.escapeMode || null,
+      skipLegalityConfirm: true
+    });
+  } else if (action === 'release') {
+    result = await SWSEGrappling.releaseGrapple(actor, target);
+  } else {
+    ui?.notifications?.warn?.('Unknown grapple action.');
+  }
+
+  if (!result && economy?.committed === true && typeof economy.rollback === 'function') {
+    await economy.rollback();
   }
 }
 
@@ -470,6 +581,7 @@ export class ChatInteractionBridge {
     bind(root, '.swse-roll-damage', 'LegacyDamage', handleLegacyDamageRollButton, message);
     bind(root, '.swse-roll-damage-btn', 'CombatDamage', handleCombatDamageRollButton, message);
     bind(root, '.swse-apply-damage-btn', 'ApplyDamage', handleApplyDamageButton, message);
+    bind(root, '.swse-grapple-action', 'GrappleAction', handleGrappleActionButton, message);
     bind(root, '[data-reaction], [data-swse-reaction-key]', 'Reaction', handleReactionButton, message);
     bind(root, '[data-holonet-action="open-thread"], [data-holonet-action="open-bulletin"], [data-holonet-action="open-record"]', 'HolonetOpenCard', handleHolonetCardAction, message);
     bind(root, '[data-holonet-action="accept-transfer"], [data-holonet-action="decline-transfer"], [data-holonet-action="pay-credit-request"], [data-holonet-action="decline-credit-request"], [data-holonet-action="accept-item-transfer"], [data-holonet-action="decline-item-transfer"], [data-holonet-action="accept-asset-transfer"], [data-holonet-action="decline-asset-transfer"]', 'HolonetMessageAction', handleHolonetMessageAction, message);

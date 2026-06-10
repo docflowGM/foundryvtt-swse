@@ -95,7 +95,7 @@
       "type": "standard",
       "cost": 1
     },
-    "notes": "Normal attack; rate and damage depend on weapon. Melee 2‑handed uses STR×2 to damage; improvised = -5 attack.",
+    "notes": "Normal attack; rate and damage depend on weapon. Melee 2\u2011handed uses STR\u00d72 to damage; improvised = -5 attack.",
     "relatedSkills": [
       {
         "skill": "Attack Roll",
@@ -158,7 +158,7 @@
       "type": "swift + standard",
       "cost": null
     },
-    "notes": "Swift Action: Set weapon to Autofire mode. Standard Action: Target 2×2 square area, make single attack roll at -5 penalty, compare to Reflex Defense of all creatures in area. Hits take full damage, misses take half damage. Consumes 10 shots/slugs (must have 10+ in weapon). Braced autofire-only weapons reduce penalty to -2.",
+    "notes": "Swift Action: Set weapon to Autofire mode. Standard Action: Target 2\u00d72 square area, make single attack roll at -5 penalty, compare to Reflex Defense of all creatures in area. Hits take full damage, misses take half damage. Consumes 10 shots/slugs (must have 10+ in weapon). Braced autofire-only weapons reduce penalty to -2.",
     "relatedSkills": [
       {
         "skill": "Attack Roll",
@@ -170,7 +170,7 @@
       }
     ],
     "type": "combatAction",
-    "notes_advanced": "Area attack covering 2×2 squares. Consumes 10 shots. Autofire-only weapons can be braced (2 swift actions) for -2 penalty instead of -5.",
+    "notes_advanced": "Area attack covering 2\u00d72 squares. Consumes 10 shots. Autofire-only weapons can be braced (2 swift actions) for -2 penalty instead of -5.",
     "resolutionMode": "attack",
     "actionCost": "standard",
     "automationBoundary": "assist",
@@ -503,10 +503,173 @@
       "opposedCheck"
     ],
     "requiredContext": [
-      "GM/player confirms legal grapple target and size/context"
+      "GM/player confirms legal grapple target and size/context",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
     ],
     "ruleData": {
-      "grabAttackPenalty": -5
+      "grabAttackPenalty": -5,
+      "maxTargetSizeDelta": 1,
+      "requiresReach": true,
+      "requiresFreeLimb": false
+    }
+  },
+  {
+    "name": "Grapple Check / Maintain Grapple",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Make the opposed grapple check after a grab or to maintain/control a grapple. Winner establishes or maintains the Grappled state.",
+    "relatedSkills": [
+      {
+        "skill": "Grapple (opposed)",
+        "dc": {
+          "type": "expression",
+          "value": "1d20 + BAB + best STR/DEX + size"
+        },
+        "outcome": "Winner controls the grapple state"
+      }
+    ],
+    "type": "combatAction",
+    "resolutionMode": "grapple",
+    "actionCost": "standard",
+    "automationBoundary": "assist",
+    "gmManaged": true,
+    "manualResolution": false,
+    "executable": true,
+    "contextTags": [
+      "grapple",
+      "opposedCheck",
+      "maintainGrapple"
+    ],
+    "requiredContext": [
+      "Target must be grabbed or involved in the grapple",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "check",
+      "maxTargetSizeDelta": 1,
+      "requiresExistingGrapple": true,
+      "requiresReach": false
+    }
+  },
+  {
+    "name": "Pin Grappled Opponent",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Requires the Pin feat. Make an opposed grapple check against a grappled opponent; if successful, the opponent becomes Pinned.",
+    "relatedSkills": [
+      {
+        "skill": "Grapple (opposed)",
+        "dc": {
+          "type": "expression",
+          "value": "1d20 + BAB + best STR/DEX + size"
+        },
+        "outcome": "Target becomes Pinned on success"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": [
+      "Pin feat",
+      "Both creatures are already Grappled"
+    ],
+    "resolutionMode": "grapple",
+    "actionCost": "standard",
+    "automationBoundary": "assist",
+    "gmManaged": true,
+    "manualResolution": false,
+    "executable": true,
+    "contextTags": [
+      "grapple",
+      "pin",
+      "opposedCheck"
+    ],
+    "requiredContext": [
+      "Target must already be grappled by this actor",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "pin",
+      "requiresFeat": "Pin",
+      "maxTargetSizeDelta": 1,
+      "requiresExistingGrapple": true,
+      "requiresReach": false,
+      "requiresTargetState": "grappled"
+    }
+  },
+  {
+    "name": "Escape Grapple",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Make an opposed Grapple check or Acrobatics check against the grappler's grapple check to escape. On success, both linked grapple states are cleared.",
+    "relatedSkills": [
+      {
+        "skill": "Grapple or Acrobatics",
+        "dc": {
+          "type": "opposed",
+          "target": "grappler's grapple check"
+        },
+        "outcome": "Escape and clear grapple state on success"
+      }
+    ],
+    "type": "combatAction",
+    "resolutionMode": "grapple",
+    "actionCost": "standard",
+    "automationBoundary": "assist",
+    "gmManaged": true,
+    "manualResolution": false,
+    "executable": true,
+    "contextTags": [
+      "acrobaticsOption",
+      "escape",
+      "grapple",
+      "opposedCheck"
+    ],
+    "requiredContext": [
+      "Target the grappler you are escaping from",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "escape",
+      "escapeModes": [
+        "grapple",
+        "acrobatics"
+      ],
+      "promptEscapeMode": true,
+      "maxTargetSizeDelta": 1
+    }
+  },
+  {
+    "name": "Release Grapple",
+    "action": {
+      "type": "free",
+      "cost": 0
+    },
+    "notes": "Voluntarily release a creature you are grabbing, grappling, or pinning. Clears the linked grapple state for the pair.",
+    "relatedSkills": [],
+    "type": "combatAction",
+    "resolutionMode": "grapple",
+    "actionCost": "free",
+    "automationBoundary": "automate",
+    "gmManaged": false,
+    "manualResolution": false,
+    "executable": true,
+    "spendAction": false,
+    "contextTags": [
+      "grapple",
+      "release"
+    ],
+    "requiredContext": [
+      "Target the creature you are releasing",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "release",
+      "maxTargetSizeDelta": 1
     }
   },
   {
@@ -646,7 +809,7 @@
       "type": "full-round",
       "cost": 1
     },
-    "notes": "Move 4× speed (3× if heavy armor), lose Dex bonus to Ref; can run for CON rounds, then Endurance checks.",
+    "notes": "Move 4\u00d7 speed (3\u00d7 if heavy armor), lose Dex bonus to Ref; can run for CON rounds, then Endurance checks.",
     "relatedSkills": [
       {
         "skill": "35df8faa4878f2c5",
@@ -1030,5 +1193,147 @@
       "Blaster Pistol (lethal/stun)",
       "Blaster Carbine (single-shot/autofire)"
     ]
+  },
+  {
+    "name": "Trip Grappled Opponent",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Requires Trip. Make an opposed grapple check against a creature you have Grappled; on success, the target becomes Prone. The grapple state remains until released or escaped.",
+    "relatedSkills": [
+      {
+        "skill": "Grapple (opposed)",
+        "dc": {
+          "type": "opposed",
+          "target": "target grapple check"
+        },
+        "outcome": "Target becomes Prone on success"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": [
+      "Trip feat",
+      "Both creatures are already Grappled"
+    ],
+    "resolutionMode": "grapple",
+    "actionCost": "standard",
+    "automationBoundary": "automate",
+    "gmManaged": false,
+    "manualResolution": false,
+    "executable": true,
+    "contextTags": [
+      "grapple",
+      "trip",
+      "opposedCheck",
+      "prone"
+    ],
+    "requiredContext": [
+      "Target must already be grappled by this actor",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "trip",
+      "requiresFeat": "Trip",
+      "appliesProne": true,
+      "maxTargetSizeDelta": 1,
+      "requiresExistingGrapple": true,
+      "requiresReach": false,
+      "requiresTargetState": "grappled"
+    }
+  },
+  {
+    "name": "Throw Grappled Opponent",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Requires Throw. Make an opposed grapple check against a creature you have Grappled; on success, deal unarmed/claw damage, release the grapple, and have the GM/player place the target up to 1 square beyond your reach.",
+    "relatedSkills": [
+      {
+        "skill": "Grapple (opposed)",
+        "dc": {
+          "type": "opposed",
+          "target": "target grapple check"
+        },
+        "outcome": "Target takes unarmed/claw damage and is moved by GM/player adjudication"
+      }
+    ],
+    "type": "combatAction",
+    "requirements": [
+      "Throw feat",
+      "Trip feat",
+      "Both creatures are already Grappled"
+    ],
+    "resolutionMode": "grapple",
+    "actionCost": "standard",
+    "automationBoundary": "assist",
+    "gmManaged": true,
+    "manualResolution": false,
+    "executable": true,
+    "contextTags": [
+      "grapple",
+      "throw",
+      "opposedCheck",
+      "forcedMovement",
+      "unarmedDamage"
+    ],
+    "requiredContext": [
+      "Target must already be grappled by this actor",
+      "GM/player confirms final thrown position",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "throw",
+      "requiresFeat": "Throw",
+      "damageFormula": "unarmedOrClaw",
+      "clearGrappleOnSuccess": true,
+      "gmMovement": true,
+      "maxTargetSizeDelta": 1,
+      "requiresExistingGrapple": true,
+      "requiresReach": false,
+      "requiresTargetState": "grappled"
+    }
+  },
+  {
+    "name": "Crush Pinned Opponent",
+    "action": {
+      "type": "standard",
+      "cost": 1
+    },
+    "notes": "Requires Crush. Deal unarmed/claw damage to a Pinned opponent. If the attacker also has Rancor Crush, the target moves -1 step down the Condition Track.",
+    "relatedSkills": [],
+    "type": "combatAction",
+    "requirements": [
+      "Crush feat",
+      "Target is Pinned"
+    ],
+    "resolutionMode": "grapple",
+    "actionCost": "standard",
+    "automationBoundary": "automate",
+    "gmManaged": false,
+    "manualResolution": false,
+    "executable": true,
+    "contextTags": [
+      "grapple",
+      "crush",
+      "pinned",
+      "unarmedDamage",
+      "conditionTrackOptional"
+    ],
+    "requiredContext": [
+      "Target must be Pinned by this actor",
+      "System checks encoded grapple size/reach legality where token/actor data is available; GM confirms ambiguous reach/limb cases"
+    ],
+    "ruleData": {
+      "grappleMode": "crush",
+      "requiresFeat": "Crush",
+      "damageFormula": "unarmedOrClaw",
+      "rancorCrushConditionStep": 1,
+      "maxTargetSizeDelta": 1,
+      "requiresExistingGrapple": true,
+      "requiresReach": false,
+      "requiresTargetState": "pinned"
+    }
   }
 ]

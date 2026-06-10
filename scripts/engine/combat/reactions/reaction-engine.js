@@ -18,6 +18,7 @@ import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scrip
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { damageTypesMatch, expandDamageTypeAliases, uniqueDamageTypes } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 function normalizeReactionKey(value) {
   const raw = String(value ?? "").trim();
@@ -219,17 +220,30 @@ export class ReactionEngine {
       }
     }
 
-    // Check damage type restrictions
-    if (conditions.validDamageTypes && Array.isArray(conditions.validDamageTypes)) {
-      if (conditions.validDamageTypes.length > 0) {
-        const attackDamageTypes = attackContext.damageTypes || [];
-        const hasValidType = conditions.validDamageTypes.some(dt =>
-          attackDamageTypes.includes(dt)
-        );
-        if (!hasValidType) {
-          return false;
-        }
+    // Check damage type restrictions. Use the shared damage-type vocabulary so
+    // e.g. sonic can count as energy for mitigation but still carry its original
+    // sonic tag for exclusions like Deflect.
+    const attackDamageTypes = expandDamageTypeAliases(uniqueDamageTypes([
+      attackContext.damageTypes,
+      attackContext.damageType,
+      attackContext.originalDamageTypes
+    ]));
+    const originalDamageTypes = uniqueDamageTypes(attackContext.originalDamageTypes ?? attackContext.damageTypes ?? attackContext.damageType);
+
+    if (conditions.validDamageTypes && Array.isArray(conditions.validDamageTypes) && conditions.validDamageTypes.length > 0) {
+      if (!damageTypesMatch(attackDamageTypes, conditions.validDamageTypes)) {
+        return false;
       }
+    }
+
+    if (conditions.excludedDamageTypes && Array.isArray(conditions.excludedDamageTypes) && conditions.excludedDamageTypes.length > 0) {
+      if (damageTypesMatch(originalDamageTypes, conditions.excludedDamageTypes)) {
+        return false;
+      }
+    }
+
+    if (conditions.rejectSonicDeflection === true && attackContext.sonicCannotBeDeflected === true) {
+      return false;
     }
 
     if (conditions.requiresFightingDefensively === true) {

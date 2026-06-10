@@ -73,6 +73,21 @@ function summarizeDamageContext(context = {}, extra = {}) {
     areaHitState: extra.areaHitState ?? damage.areaHitState ?? null,
     critMultiplier: asNumber(extra.critMultiplier ?? context.critMultiplier ?? damage.critMultiplier, 2),
     damageType: extra.damageType ?? context.damageType ?? damage.damageType ?? null,
+    damageTypes: uniqueStrings([
+      ...asArray(extra.damageTypes),
+      ...asArray(context.damageTypes),
+      ...asArray(damage.damageTypes),
+      ...asArray(extra.damageType ?? context.damageType ?? damage.damageType)
+    ]),
+    damageComponents: Array.isArray(extra.damageComponents)
+      ? extra.damageComponents
+      : Array.isArray(context.damageComponents)
+        ? context.damageComponents
+        : Array.isArray(damage.damageComponents)
+          ? damage.damageComponents
+          : Array.isArray(damage.components)
+            ? damage.components
+            : [],
     packets: Array.isArray(damage.packets) ? damage.packets : []
   }) ?? {};
 }
@@ -204,6 +219,9 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     damageMode: options.damageMode ?? attack.damageMode ?? null,
     stun: options.stun ?? attack.isStun === true,
     ion: options.ion ?? attack.isIon === true,
+    damageType: options.damageType ?? damage.damageType ?? undefined,
+    damageTypes: options.damageTypes ?? damage.damageTypes ?? [],
+    damageComponents: options.damageComponents ?? damage.damageComponents ?? [],
     isCritical: options.isCritical ?? damage.crit === true,
     critMultiplier: options.critMultiplier ?? damage.critMultiplier ?? undefined,
     ammoCost: options.ammoCost ?? resources.ammoCost ?? 0,

@@ -2,8 +2,9 @@
  * Recurring Damage Adapter
  *
  * Collects active recurring damage and hazard queues from the actor and displays as effect cards.
- * This is a display-only adapter: it reads existing pending recurring damage state and emits cards.
- * It does not resolve, consume, or mutate recurring damage entries.
+ * This remains the display adapter for the existing pendingRecurringDamage actor flag.
+ * RecurringDamageEngine owns queue/tick/remove mutation so poison, jagged weapons,
+ * fire/acid hazards, and future ongoing damage do not create parallel queues.
  */
 
 /**
@@ -58,7 +59,7 @@ function recurringDamageInstanceId(instance, index) {
  * @param {number} index - Index in pendingRecurringDamage array (for stable id fallback)
  * @returns {Object} Card object ready for display
  */
-function buildRecurringDamageCard(instance, index = 0) {
+function buildRecurringDamageCard(instance, index = 0, actor = null) {
   // Determine label
   const label = instance?.name || instance?.key || "Recurring Damage";
 
@@ -143,6 +144,9 @@ function buildRecurringDamageCard(instance, index = 0) {
   // Build stable, instance-aware ID
   const id = recurringDamageInstanceId(instance, index);
 
+  const actorId = actor?.id ?? actor?._id ?? null;
+  const instanceId = String(instance?.id ?? instance?._id ?? instance?.instanceId ?? instance?.key ?? index);
+
   return {
     id,
     label,
@@ -154,7 +158,23 @@ function buildRecurringDamageCard(instance, index = 0) {
     gmEnforced: false,
     mechanical: true,
     icon: null,
-    tags
+    tags,
+    actions: actorId ? [
+      {
+        id: "tick-recurring-damage-now",
+        label: "Tick Now",
+        dataAction: "tick-recurring-damage-now",
+        actorId,
+        ruleId: instanceId
+      },
+      {
+        id: "remove-recurring-damage",
+        label: "Remove",
+        dataAction: "remove-recurring-damage",
+        actorId,
+        ruleId: instanceId
+      }
+    ] : []
   };
 }
 
@@ -178,7 +198,7 @@ export class RecurringDamageAdapter {
       if (!instance || !instance.key) continue; // Skip invalid entries
 
       // Build card from instance
-      const card = buildRecurringDamageCard(instance, index);
+      const card = buildRecurringDamageCard(instance, index, actor);
 
       // Only add if we got a valid card
       if (card && card.id) {

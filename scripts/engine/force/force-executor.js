@@ -216,7 +216,7 @@ export class ForceExecutor {
       // Apply force power effects if successful
       let appliedEffects = [];
       if (success) {
-        appliedEffects = await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total);
+        appliedEffects = await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total, { target: options.target ?? options.targetActor ?? null });
       }
 
       // Generate rich concept chat message

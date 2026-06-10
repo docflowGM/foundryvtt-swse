@@ -57,11 +57,13 @@ export class ReactionRegistry {
       key: 'deflect',
       label: 'Deflect',
       trigger: 'ON_ATTACK_DECLARED',
-      description: 'Deflect ranged attack',
+      description: 'Deflect ranged energy attack; sonic attacks are energy but cannot be deflected.',
 
       conditions: {
         validAttackTypes: ['ranged'],
-        validDamageTypes: null,
+        validDamageTypes: ['energy'],
+        excludedDamageTypes: ['sonic'],
+        rejectSonicDeflection: true,
         requiresWeaponTag: null,
         requiresTalents: null,
         requiresDefense: null

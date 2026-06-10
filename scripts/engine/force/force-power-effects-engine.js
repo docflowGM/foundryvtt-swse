@@ -12,6 +12,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
+import { targetSuppressesForceEffect } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 export class ForcePowerEffectsEngine {
   /**
@@ -19,14 +20,32 @@ export class ForcePowerEffectsEngine {
    * @param {Actor} actor - The actor using the force power
    * @param {Item} powerItem - The force power item
    * @param {number} rollTotal - The total of the Use the Force roll
+   * @param {Object} [options] - Optional effect context
+   * @param {Actor} [options.target] - Target actor when the effect applies to someone other than the caster
    * @returns {Promise<Array>} Created ActiveEffect IDs
    */
-  static async applyPowerEffect(actor, powerItem, rollTotal) {
+  static async applyPowerEffect(actor, powerItem, rollTotal, options = {}) {
     if (!actor || !powerItem) {
       return [];
     }
 
     const powerName = powerItem.name;
+    const target = options.target ?? options.targetActor ?? actor;
+    const forceSuppression = targetSuppressesForceEffect({
+      target,
+      sourceItem: powerItem,
+      context: {
+        forcePower: true,
+        powerId: powerItem.id,
+        powerName,
+        tags: powerItem.system?.tags ?? powerItem.system?.descriptors ?? []
+      }
+    });
+    if (forceSuppression?.suppressed) {
+      ui?.notifications?.info?.(forceSuppression.reason);
+      SWSELogger.log(`SWSE | Force Power Effects | Suppressed ${powerName}: ${forceSuppression.reason}`);
+      return [];
+    }
 
     try {
       // Determine what effect to apply based on the power

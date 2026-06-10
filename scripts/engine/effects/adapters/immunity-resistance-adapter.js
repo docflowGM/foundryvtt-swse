@@ -7,6 +7,7 @@
  */
 
 import { actorItems } from "./effect-card-utils.js";
+import { collectDamageProtections } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 /**
  * Get species immunities from actor derived data.
@@ -344,6 +345,37 @@ function buildNpcResistanceCard(resistanceText) {
   };
 }
 
+function buildTypedProtectionCard(entry, index = 0) {
+  if (!entry?.type || !entry?.kind) return null;
+  const kind = String(entry.kind).toLowerCase() === 'resistance' ? 'resistance' : 'immunity';
+  const typeLabel = String(entry.type).replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const amount = Number(entry.amount) || 0;
+  const label = kind === 'resistance' && amount > 0
+    ? `${typeLabel} Resistance ${amount}`
+    : `${typeLabel} ${kind === 'resistance' ? 'Resistance' : 'Immunity'}`;
+  const source = entry.source || 'Protection';
+  return {
+    id: protectionCardId(kind, `${entry.type}-${amount}-${source}`, { type: 'typed-protection' }, index),
+    label,
+    type: 'buff',
+    severity: 'positive',
+    source,
+    text: kind === 'resistance'
+      ? `Actor has ${typeLabel.toLowerCase()} resistance${amount > 0 ? ` ${amount}` : ''}.`
+      : `Actor is immune to ${typeLabel.toLowerCase()} damage/effects.`,
+    details: [
+      kind === 'resistance'
+        ? `Reduces matching ${typeLabel.toLowerCase()} damage by ${amount}.`
+        : `Suppresses matching ${typeLabel.toLowerCase()} damage packets.`,
+      `Protection source: ${source}`
+    ],
+    gmEnforced: false,
+    mechanical: true,
+    icon: null,
+    tags: [kind, 'protection', 'typed-damage', entry.type]
+  };
+}
+
 export class ImmunityResistanceAdapter {
   /**
    * Collect tactically important protection effect entries.
@@ -437,6 +469,22 @@ export class ImmunityResistanceAdapter {
       }
     } catch (err) {
       console.warn("SWSE | ImmunityResistanceAdapter: NPC resistance collection failed", err);
+    }
+
+    // Collect generic typed protections from flags, Active Effects, and item metadata.
+    // Existing species/NPC cards stay above; this only surfaces sources that were
+    // previously invisible to players/GMs while the packet layer could use them.
+    try {
+      const visibleSources = new Set(['Actor', 'Actor Flag', 'Active Effect', 'Item']);
+      const typedProtections = collectDamageProtections(actor)
+        .filter(entry => entry?.type && entry?.kind)
+        .filter(entry => visibleSources.has(entry.source) || !['Species'].includes(entry.source));
+      typedProtections.forEach((entry, index) => {
+        const card = buildTypedProtectionCard(entry, index);
+        if (card) cards.push(card);
+      });
+    } catch (err) {
+      console.warn("SWSE | ImmunityResistanceAdapter: typed protection collection failed", err);
     }
 
     return cards;

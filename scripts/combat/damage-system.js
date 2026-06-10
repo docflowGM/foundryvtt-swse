@@ -3,6 +3,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { buildDamageApplyOptions, finalizeDamagePacketForTarget } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
+import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 
 /**
  * SWSE Damage System (v13+)
@@ -67,8 +68,26 @@ export class DamageSystem {
     try {
       const result = await actor.applyDamage(amount, options);
       const applied = Math.max(0, Number(result?.applied ?? amount) || 0);
+      if (targetPacket.recurringDamage && targetPacket.disposition?.damageAllowed !== false) {
+        await RecurringDamageEngine.queueRecurringDamage(actor, targetPacket.recurringDamage, {
+          packet: targetPacket,
+          sourceActor: targetPacket.sourceActor ?? options.sourceActor ?? null,
+          sourceItem: options.weapon ?? null,
+          notify: true
+        });
+      }
       const typeLabel = targetPacket.type && targetPacket.type !== 'normal' ? ` ${targetPacket.type}` : '';
-      const specialLabel = targetPacket.flags?.ionHpHalved ? ' (ion HP halved)' : '';
+      const specialLabel = targetPacket.flags?.ionHpHalved
+        ? ' (ion HP halved)'
+        : targetPacket.flags?.stunHpHalved
+          ? ' (stun HP halved)'
+          : targetPacket.flags?.forceImmuneTarget
+            ? ' (Force immunity)'
+            : targetPacket.flags?.damageImmunitySuppressed
+              ? ' (immunity)'
+              : result?.resolution?.mitigation?.componentMitigation === true
+                ? ' (component-aware mitigation)'
+                : '';
       ui.notifications.info(`${actor.name} takes ${applied}${typeLabel} damage${specialLabel}.`);
       return result;
     } catch (err) {

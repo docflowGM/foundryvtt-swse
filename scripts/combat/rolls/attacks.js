@@ -12,6 +12,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { damageContextForReaction, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -173,18 +174,16 @@ function resolveTargetContext(options = {}, fallbackTarget = null) {
 function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {
   if (!attacker || !defender) return null;
 
-  const weaponMode = String(weapon?.system?.meleeOrRanged ?? weapon?.system?.weaponRangeType ?? weapon?.system?.category ?? '').toLowerCase();
-  const attackType = weaponMode.includes('range') || weaponMode.includes('ranged') ? 'ranged' : 'melee';
-  const damageTypes = weapon?.system?.damageTypes
-    ?? weapon?.system?.damageType
-    ?? weapon?.system?.damage?.type
-    ?? [];
+  const damageContext = damageContextForReaction({ weapon });
 
   const available = ReactionEngine.getAvailableReactions(defender, {
     attacker,
     weapon,
-    attackType,
-    damageTypes: Array.isArray(damageTypes) ? damageTypes : [damageTypes].filter(Boolean),
+    attackType: damageContext.attackType,
+    damageType: damageContext.damageType,
+    damageTypes: damageContext.damageTypes,
+    originalDamageTypes: damageContext.originalDamageTypes,
+    sonicCannotBeDeflected: damageContext.sonicCannotBeDeflected,
     trigger: 'ON_ATTACK_DECLARED'
   });
 
@@ -197,7 +196,10 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     defenderId: defender.id,
     defenderName: defender.name,
     timerLabel: '6.0 s',
-    reason: `Incoming ${attackType} attack total ${attackTotal}.`,
+    reason: `Incoming ${damageContext.attackType} attack total ${attackTotal}.`,
+    damageType: damageContext.damageType,
+    damageTypes: damageContext.damageTypes,
+    originalDamageTypes: damageContext.originalDamageTypes,
     reactions: available.map(reaction => ({
       ...reaction,
       available: true,
@@ -366,7 +368,17 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
 
-  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? null, { actor, weapon });
+  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? rollOptions, {
+    actor,
+    weapon,
+    target: rollOptions.target ?? null,
+    targetId: rollOptions.targetId ?? rollOptions.targetContext?.actorId ?? null,
+    damageMode: rollOptions.damageMode ?? null,
+    damageType: rollOptions.damageType ?? null,
+    isStun: rollOptions.stun === true || rollOptions.damageMode === 'stun',
+    isIon: rollOptions.ion === true,
+    contextTags: rollOptions.damageMode === 'stun' || rollOptions.stun === true ? ['stun'] : []
+  });
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
   const ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
     workflowContext,
@@ -530,7 +542,17 @@ export async function rollDamage(actor, weapon, options = {}) {
     return null;
   }
 
-  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? null, { actor, weapon, isCritical: rollOptions?.critical === true || rollOptions?.isCritical === true });
+  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? rollOptions, {
+    actor,
+    weapon,
+    target: rollOptions.target ?? null,
+    isCritical: rollOptions?.critical === true || rollOptions?.isCritical === true,
+    damageMode: rollOptions.damageMode ?? null,
+    damageType: rollOptions.damageType ?? null,
+    isStun: rollOptions.stun === true || rollOptions.damageMode === 'stun',
+    isIon: rollOptions.ion === true,
+    contextTags: rollOptions.damageMode === 'stun' || rollOptions.stun === true ? ['stun'] : []
+  });
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
   const dmgBonus = computeDamageBonus(actor, weapon, rollOptions) + (optionModifiers.damageBonus || 0);
 

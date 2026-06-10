@@ -288,6 +288,7 @@ export function resolveArmorData(itemOrSystem = {}) {
     sizeIncreaseApplied: !!system?.sizeIncreaseApplied,
     isPoweredArmor: !!system?.isPoweredArmor,
     legacyEquipmentBonus: toNumber(system?.equipmentBonus, 0),
+    shieldColorHex: String((itemOrSystem ?? {}).flags?.swse?.shieldColor ?? '#00aaff').trim() || '#00aaff',
     armorTypeOptions: ARMOR_TYPE_OPTIONS,
     sizeOptions: ARMOR_SIZE_OPTIONS,
     availabilityOptions: ARMOR_AVAILABILITY_OPTIONS

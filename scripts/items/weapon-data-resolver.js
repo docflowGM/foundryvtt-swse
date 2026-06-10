@@ -190,6 +190,8 @@ export function resolveWeaponData(itemOrSystem = {}) {
     isRanged: branch === 'ranged',
     isMelee: branch !== 'ranged',
     isLightsaber: category === 'lightsaber',
+    bladeColorHex: String(itemOrSystem.flags?.swse?.bladeColor ?? '#4499ff').trim() || '#4499ff',
+    boltColorHex: String(itemOrSystem.flags?.swse?.boltColor ?? '#ff6600').trim() || '#ff6600',
     damageTypeOptions: WEAPON_DAMAGE_TYPE_OPTIONS,
     damageBonusOptions: WEAPON_DAMAGE_BONUS_OPTIONS,
     sizeOptions: WEAPON_SIZE_OPTIONS,

@@ -30,6 +30,17 @@
     </div>
     {{/if}}
 
+    <div class="mstat tradition">
+      <div>
+        <div class="ml">Force Tradition</div>
+        <select class="mv fs-tradition-select" data-action="set-force-tradition" name="system.forceTradition">
+          {{#each conceptLayout.force.forceSuite.forceTraditionOptions as |opt|}}
+          <option value="{{opt.value}}" {{#if (eq ../conceptLayout.force.forceSuite.forceTradition opt.value)}}selected{{/if}}>{{opt.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+
     <div class="suite-badge">◈ Force Suite</div>
   </section>
 
