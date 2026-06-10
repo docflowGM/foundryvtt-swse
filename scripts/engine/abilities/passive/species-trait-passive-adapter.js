@@ -165,6 +165,18 @@ export class SpeciesTraitPassiveAdapter {
 
   static _extractSkillBonuses(text) {
     const mods = [];
+    const lowerText = String(text || '').toLowerCase();
+
+    // Do not auto-promote conditional species skill text into static actor math.
+    // Examples: Zeltron Soothing Pheromones applies only to Persuasion checks
+    // made to Change Attitude, not to every Persuasion check.
+    if (/checks?\s+(made|used)\s+to\b/.test(lowerText)
+      || /checks?\s+against\b/.test(lowerText)
+      || /change\s+attitude/.test(lowerText)
+      || /sense\s+(deception|influence)/.test(lowerText)) {
+      return mods;
+    }
+
     const re = /([+-]\d+)\s+species\s+bonus\s+on\s+([^\.]+?)\s+checks?/gi;
     let m;
     while ((m = re.exec(text)) !== null) {

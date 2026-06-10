@@ -15,7 +15,7 @@ export class PassiveContractValidator {
    * Master validation entry point.
    * Validates ability structure and delegates to subtype-specific validators.
    *
-   * PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, RULE, and STATE subtypes.
+   * PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, RULE, STATE, and RESOURCE subtypes.
    *
    * @param {Object} ability - The ability item
    * @returns {boolean}
@@ -28,7 +28,7 @@ export class PassiveContractValidator {
     if (ability.system?.executionModel !== "PASSIVE") return false;
     if (!subType) throw new Error(`PASSIVE ability ${ability.name} missing subType`);
 
-    // PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, RULE, and STATE
+    // PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, RULE, STATE, and RESOURCE
     if (subType === PASSIVE_SUBTYPES.MODIFIER) {
       return this.validateModifier(meta);
     } else if (subType === 'DERIVED_OVERRIDE') {
@@ -37,10 +37,12 @@ export class PassiveContractValidator {
       return this.validateRule(meta);
     } else if (subType === PASSIVE_SUBTYPES.STATE) {
       return this.validateState(meta);
+    } else if (subType === PASSIVE_SUBTYPES.RESOURCE) {
+      return this.validateResource(meta);
     } else {
       throw new Error(
         `PASSIVE ${subType} not supported in Phase 4. ` +
-        `Supported: MODIFIER, DERIVED_OVERRIDE, RULE, STATE. Got: ${subType} on ${ability.name}`
+        `Supported: MODIFIER, DERIVED_OVERRIDE, RULE, STATE, RESOURCE. Got: ${subType} on ${ability.name}`
       );
     }
   }
@@ -186,6 +188,27 @@ export class PassiveContractValidator {
    * @returns {boolean}
    * @throws {Error}
    */
+
+  /**
+   * Validate RESOURCE subtype structure.
+   * RESOURCE passives are metadata/resource-rule declarations consumed by
+   * resource resolvers such as MetaResourceFeatResolver. They do not register a
+   * direct actor modifier during prepareData, so they are valid no-op passives
+   * as long as the item carries resourceRules or resource metadata.
+   *
+   * @param {Object} meta
+   * @returns {boolean}
+   */
+  static validateResource(meta) {
+    if (!meta || typeof meta !== 'object') return true;
+    const rules = meta.resourceRules;
+    if (rules === undefined || rules === null) return true;
+    if (typeof rules !== 'object' || Array.isArray(rules)) {
+      throw new Error('PASSIVE RESOURCE resourceRules must be an object when present');
+    }
+    return true;
+  }
+
   static validateState(meta) {
     // A large portion of the current data pack uses PASSIVE/STATE as a
     // metadata-only marker for rerolls, skill-use substitutions, attack options,

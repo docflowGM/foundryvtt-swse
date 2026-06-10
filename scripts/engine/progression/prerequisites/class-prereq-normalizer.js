@@ -185,6 +185,12 @@ const FEAT_FLAGS = {
     'Martial Arts Feat': 'martialArtsFeat'
 };
 
+
+function isScopedFeatPrerequisiteName(name) {
+    const text = String(name || '').trim();
+    return /^(Skill Focus|Weapon Focus|Weapon Proficiency|Armor Proficiency)\s*\(.+\)$/i.test(text);
+}
+
 /**
  * Convert feat names to their database IDs or flag checks.
  * Handles both specific feats (by ID) and flag-based feat groups.
@@ -210,8 +216,14 @@ function convertFeatNamesToIds(featNames) {
             }
         }
 
+        // Scoped feat prerequisites are validated by the choice-aware prerequisite
+        // evaluator. They intentionally remain semantic strings here.
+        if (isScopedFeatPrerequisiteName(name)) {
+            return name;
+        }
+
         // Fallback: return the name (shouldn't happen in normal operation)
-        console.warn(`[ClassPrereqNormalizer] Unknown feat: ${name}`);
+        console.debug?.(`[ClassPrereqNormalizer] Unknown feat: ${name}`);
         return name;
     });
 }

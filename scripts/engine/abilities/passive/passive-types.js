@@ -11,5 +11,6 @@ export const PASSIVE_SUBTYPES = {
   DERIVED_OVERRIDE: "DERIVED_OVERRIDE",
   AURA: "AURA",
   TRIGGERED: "TRIGGERED",
-  STATE: "STATE"  // PHASE 4: State-dependent predicates
+  STATE: "STATE",  // PHASE 4: State-dependent predicates
+  RESOURCE: "RESOURCE"  // Phase 7 metadata/resource rules (e.g. Force Boon)
 };

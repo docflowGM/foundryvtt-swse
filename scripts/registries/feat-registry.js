@@ -66,7 +66,7 @@ export class FeatRegistry {
         }
 
         if (this._initialized && this._entries.length === 0) {
-            SWSELogger.warn('[FeatRegistry] Registry was initialized with 0 feats; retrying with pack/fallback resolution.');
+            SWSELogger.debug('[FeatRegistry] Registry was initialized with 0 feats; retrying with pack/fallback resolution.');
         }
 
         try {
@@ -109,7 +109,7 @@ export class FeatRegistry {
             this._indexDocuments(fallbackDocs, { fallback: true });
             const systemId = game?.system?.id || 'foundryvtt-swse';
             const tried = this._getPackCandidateKeys(systemId).join(', ');
-            SWSELogger.warn(
+            SWSELogger.log(
                 `[FeatRegistry] Feats compendium was not registered by Foundry (tried ${tried}); ` +
                 `loaded ${fallbackDocs.length} feats from data/feat-catalog.json fallback instead.`
             );
@@ -166,7 +166,7 @@ export class FeatRegistry {
             if (fallbackDocs.length) {
                 this._sourcePackKey = 'data/feat-catalog.json';
                 this._indexDocuments(fallbackDocs, { fallback: true });
-                SWSELogger.warn(`[FeatRegistry] Loaded ${fallbackDocs.length} feats from data/feat-catalog.json because pack "${packKey}" is empty.`);
+                SWSELogger.log(`[FeatRegistry] Loaded ${fallbackDocs.length} feats from data/feat-catalog.json because pack "${packKey}" is empty.`);
             }
         } catch (err) {
             SWSELogger.error(`[FeatRegistry] Failed to load from pack "${packKey}":`, err);

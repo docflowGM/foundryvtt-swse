@@ -2470,3 +2470,197 @@
   border-top: 1px solid color-mix(in srgb, var(--swse-choice-accent) 26%, transparent);
   padding-top: 0.75rem;
 }
+
+/* =============================================================================
+ * Beta viewport controls: collapsible top and summary rails
+ * ============================================================================= */
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] {
+  flex-basis: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+}
+
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor-rail.swse-prog-mentor-rail {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  min-height: 28px !important;
+  height: 28px !important;
+  padding: 2px 8px !important;
+}
+
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__portrait-zone,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__portrait,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__identity,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__dialogue,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__ask {
+  display: none !important;
+}
+
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__collapse,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor-rail.swse-prog-mentor-rail .prog-mentor__collapse {
+  position: static !important;
+  margin-left: auto !important;
+  width: auto !important;
+  min-width: 26px !important;
+  height: 22px !important;
+  padding: 1px 7px !important;
+}
+
+.progression-shell [data-region="progress-rail"] {
+  transition: height var(--prog-transition-base), min-height var(--prog-transition-base), max-height var(--prog-transition-base), padding var(--prog-transition-base);
+}
+
+.progression-shell [data-region="progress-rail"][data-collapsed="true"] {
+  flex-basis: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 2px 8px !important;
+  overflow: hidden !important;
+}
+
+.progression-shell .prog-progress-rail {
+  flex-wrap: nowrap;
+}
+
+.progression-shell .prog-progress-rail__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.progression-shell .prog-progress-rail__current {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--prog-text-dim, rgba(210, 245, 255, 0.76));
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.progression-shell .prog-progress-rail__current span {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progression-shell .prog-progress-rail__current em {
+  color: var(--prog-accent, #64dcff);
+  font-style: normal;
+  opacity: 0.8;
+}
+
+.progression-shell .prog-progress-rail__collapse {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  line-height: 1.1;
+}
+
+.progression-shell [data-region="progress-rail"][data-collapsed="true"] .prog-progress-rail {
+  height: 100%;
+}
+
+.progression-shell [data-region="progress-rail"][data-collapsed="true"] .prog-progress-rail__header {
+  flex: 1 1 auto;
+}
+
+.progression-shell [data-region="progress-rail"][data-collapsed="true"] .prog-progress-rail__current {
+  display: flex;
+}
+
+.progression-shell [data-region="progress-rail"][data-collapsed="true"] .prog-progress-rail__list {
+  display: none !important;
+}
+
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] {
+  flex-basis: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__icon {
+  display: inline-flex !important;
+}
+
+.progression-shell [data-region="summary-panel"] {
+  transition: flex-basis var(--prog-transition-base), width var(--prog-transition-base), min-width var(--prog-transition-base), max-width var(--prog-transition-base);
+}
+
+.progression-shell .prog-summary-panel__collapse {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 24px;
+  margin: 4px 4px 0 auto;
+  padding: 2px 6px;
+  font-size: 0.68rem;
+}
+
+.progression-shell .prog-summary-panel__body {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.progression-shell [data-region="summary-panel"][data-collapsed="true"] {
+  display: flex !important;
+  flex: 0 0 30px !important;
+  width: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  background-color: #040b13;
+}
+
+.progression-shell [data-region="summary-panel"][data-collapsed="true"] .prog-summary-panel__body {
+  display: none !important;
+}
+
+.progression-shell [data-region="summary-panel"][data-collapsed="true"] .prog-summary-panel__collapse {
+  position: static;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  width: 100%;
+  min-height: 112px;
+  margin: 4px 0 0;
+  padding: 6px 2px;
+}
+
+.progression-shell [data-region="summary-panel"][data-collapsed="true"] .prog-summary-panel__collapse i {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 1400px) {
+  .progression-shell [data-region="summary-panel"][data-collapsed="true"] {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .progression-shell [data-region="summary-panel"] {
+    display: flex !important;
+  }
+}
+
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-field,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .swse-filter-field,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__reset {
+  display: none !important;
+}

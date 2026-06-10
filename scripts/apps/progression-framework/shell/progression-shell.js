@@ -91,7 +91,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'continue'(e, t)            { return this._onNextStep(e, t); }, // Splash screen continue button
       'skip-intro'(e, t)          { return this._onNextStep(e, t); }, // Skip intro splash, advance to next step
       'toggle-mentor'(e, t)       { return this._onToggleMentor(e, t); },
+      'toggle-progress-rail'(e, t) { return this._onToggleProgressRail(e, t); },
       'toggle-utility-bar'(e, t)  { return this._onToggleUtilityBar(e, t); },
+      'toggle-summary-panel'(e, t) { return this._onToggleSummaryPanel(e, t); },
       'ask-mentor'(e, t)          { return this._onAskMentor(e, t); },
       'next-step'(e, t)           { return this._onNextStep(e, t); },
       'previous-step'(e, t)       { return this._onPreviousStep(e, t); },
@@ -282,8 +284,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.lastCheckpointStepId = null;
 
     // Shell UI state
-    this.mentorCollapsed = false;
-    this.utilityBarCollapsed = false;
+    this.mentorCollapsed = Boolean(game?.user?.getFlag?.('foundryvtt-swse', 'mentorRailCollapsed') ?? false);
+    this.progressRailCollapsed = Boolean(game?.user?.getFlag?.('foundryvtt-swse', 'progressRailCollapsed') ?? false);
+    this.utilityBarCollapsed = Boolean(game?.user?.getFlag?.('foundryvtt-swse', 'utilityBarCollapsed') ?? false);
+    this.summaryPanelCollapsed = Boolean(game?.user?.getFlag?.('foundryvtt-swse', 'summaryPanelCollapsed') ?? false);
     this.talentTreeStage = 'browser'; // 'browser' | 'graph' — for talent two-stage flow
 
     // Step-scoped auto-advance state. Individual steps opt in via
@@ -1874,7 +1878,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       try {
         partsHtml.progressRail = await foundry.applications.handlebars.renderTemplate(
           'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
-          { stepProgress }
+          {
+            stepProgress,
+            currentDescriptor,
+            currentStepIndex: this.currentStepIndex,
+            totalSteps: this.steps.length,
+            progressRailCollapsed: this.progressRailCollapsed,
+          }
         );
       } catch (err) {
         console.error('[ProgressionShell] Failed to render progress-rail:', err);
@@ -1935,7 +1945,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Region states
       mentor: this.mentor,
       mentorCollapsed: this.mentorCollapsed,
+      progressRailCollapsed: this.progressRailCollapsed,
       utilityBarCollapsed: this.utilityBarCollapsed,
+      summaryPanelCollapsed: this.summaryPanelCollapsed,
       utilityBarConfig,
 
       // Focus/selection
@@ -3020,9 +3032,42 @@ export class ProgressionShell extends SWSEApplicationV2 {
     await this.mentorRail.toggle();
   }
 
+  async _onToggleProgressRail(event, target) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    this.progressRailCollapsed = !this.progressRailCollapsed;
+    await game?.user?.setFlag?.('foundryvtt-swse', 'progressRailCollapsed', this.progressRailCollapsed);
+
+    const region = this.element?.querySelector?.('[data-region="progress-rail"]');
+    if (region) region.setAttribute('data-collapsed', String(this.progressRailCollapsed));
+    const button = region?.querySelector?.('[data-action="toggle-progress-rail"]');
+    if (button) {
+      button.setAttribute('aria-expanded', String(!this.progressRailCollapsed));
+      button.setAttribute('title', this.progressRailCollapsed ? 'Expand step rail' : 'Collapse step rail');
+    }
+  }
+
   async _onToggleUtilityBar(event, target) {
-    event?.preventDefault();
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
     await this.utilityBar.toggle();
+  }
+
+  async _onToggleSummaryPanel(event, target) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    this.summaryPanelCollapsed = !this.summaryPanelCollapsed;
+    await game?.user?.setFlag?.('foundryvtt-swse', 'summaryPanelCollapsed', this.summaryPanelCollapsed);
+
+    const row = this.element?.querySelector?.('.prog-content-row');
+    if (row) row.setAttribute('data-summary-collapsed', String(this.summaryPanelCollapsed));
+    const region = this.element?.querySelector?.('[data-region="summary-panel"]');
+    if (region) region.setAttribute('data-collapsed', String(this.summaryPanelCollapsed));
+    const button = region?.querySelector?.('[data-action="toggle-summary-panel"]');
+    if (button) {
+      button.setAttribute('aria-expanded', String(!this.summaryPanelCollapsed));
+      button.setAttribute('title', this.summaryPanelCollapsed ? 'Expand summary rail' : 'Collapse summary rail');
+    }
   }
 
   async _onAskMentor(event, target) {

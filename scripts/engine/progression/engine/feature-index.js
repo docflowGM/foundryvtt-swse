@@ -136,7 +136,7 @@ export const FeatureIndex = {
                     }
                 }
                 if (docs.length) {
-                    SWSELogger.warn(`FeatureIndex: Missing feats pack; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
+                    SWSELogger.log(`FeatureIndex: Missing feats pack; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
                     return;
                 }
             }
@@ -152,7 +152,7 @@ export const FeatureIndex = {
             if (packName === 'feats' && !docs.length) {
                 docs = await this._loadFeatCatalogFallback();
                 if (docs.length) {
-                    SWSELogger.warn(`FeatureIndex: Pack "${pack.collection}" is empty; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
+                    SWSELogger.log(`FeatureIndex: Pack "${pack.collection}" is empty; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
                 }
             }
             for (const doc of docs) {

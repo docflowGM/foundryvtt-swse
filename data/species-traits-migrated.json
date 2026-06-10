@@ -14821,21 +14821,9 @@
     "inherits": null,
     "structuralTraits": [
       {
-        "id": "pheromones",
-        "name": "Pheromones",
-        "description": "A Zeltron gains a +5 species bonus on Persuasion checks.",
-        "rules": [
-          {
-            "type": "skillModifier",
-            "skillId": "persuasion",
-            "value": 5,
-            "bonusType": "species",
-            "when": {
-              "type": "always"
-            },
-            "id": "pheromones-rule-0"
-          }
-        ]
+        "id": "soothing-pheromones",
+        "name": "Soothing Pheromones",
+        "description": "A Zeltron gains a +5 Species bonus on Persuasion checks made to Change Attitude. This bonus does not apply to other Zeltrons."
       }
     ],
     "activatedAbilities": [],

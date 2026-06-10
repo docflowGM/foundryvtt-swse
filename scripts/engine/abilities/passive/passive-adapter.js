@@ -43,7 +43,7 @@ export class PassiveAdapter {
       return;
     }
 
-    // PHASE 4: Validate strict contract (supports MODIFIER, DERIVED_OVERRIDE, RULE)
+    // PHASE 4: Validate strict contract (supports MODIFIER, DERIVED_OVERRIDE, RULE, RESOURCE)
     PassiveContractValidator.validate(ability);
 
     // PHASE 4: Route to appropriate handler
@@ -56,10 +56,30 @@ export class PassiveAdapter {
       this.handleRule(actor, ability, ruleCollector);
     } else if (subType === PASSIVE_SUBTYPES.STATE) {
       this.handleState(actor, ability);
+    } else if (subType === PASSIVE_SUBTYPES.RESOURCE) {
+      this.handleResource(actor, ability);
     } else {
       throw new Error(
-        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE, STATE`
+        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE, STATE, RESOURCE`
       );
+    }
+  }
+
+  /**
+   * Handle RESOURCE subtype integration.
+   *
+   * RESOURCE passives intentionally do not create direct ModifierEngine entries.
+   * Their metadata is consumed by resource-specific resolvers (for example,
+   * Force Boon is read by MetaResourceFeatResolver when Force Point maxima are
+   * calculated). Registering as a no-op here prevents harmless resource feats
+   * from spamming actor prepare/update logs.
+   */
+  static handleResource(actor, ability) {
+    if (!actor || !ability) return;
+    actor._passiveResourceRules ??= {};
+    const rules = ability.system?.abilityMeta?.resourceRules;
+    if (rules && typeof rules === 'object') {
+      actor._passiveResourceRules[ability.id] = rules;
     }
   }
 

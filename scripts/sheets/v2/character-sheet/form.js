@@ -7,6 +7,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { mutateAndRepaint } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
 import { traceLog } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, isHydrationSensitivePath, recordHydrationMutation } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 
@@ -385,9 +386,15 @@ export async function handleFormSubmission(sheet, event) {
         });
       }
 
-      await ActorEngine.updateActor(currentActor, scopedUpdate, {
+      await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, scopedUpdate, {
         source: 'character-sheet-direct-field',
-        meta: { guardKey: `direct-field:${explicitField.name}` }
+        meta: { guardKey: `direct-field:${explicitField.name}` },
+        render: false,
+        suppressAppRefresh: true
+      }), {
+        reason: `character-sheet-direct-field:${explicitField.name}`,
+        surfaceId: sheet?._shellSurface ?? sheet?.shellSurface ?? 'sheet',
+        preserveUi: true
       });
 
       const refreshedActor = game.actors.get(currentActorId) ?? currentActor;
@@ -479,9 +486,15 @@ export async function handleFormSubmission(sheet, event) {
   // Update actor via ActorEngine
   try {
     SWSELogger.debug('[PERSISTENCE] Calling ActorEngine.updateActor...');
-    await ActorEngine.updateActor(currentActor, filtered, {
+    await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, filtered, {
       source: 'character-sheet-form-submit',
-      meta: { guardKey: 'character-sheet-form-submit' }
+      meta: { guardKey: 'character-sheet-form-submit' },
+      render: false,
+      suppressAppRefresh: true
+    }), {
+      reason: 'character-sheet-form-submit',
+      surfaceId: sheet?._shellSurface ?? sheet?.shellSurface ?? 'sheet',
+      preserveUi: true
     });
     SWSELogger.debug('[PERSISTENCE] Form submission completed successfully');
 

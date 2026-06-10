@@ -331,7 +331,7 @@ export class ForceRegistry {
           system
         }, type);
       }
-      SWSELogger.warn(`[ForceRegistry] Compendium pack "${packKey}" not found. Loaded ${powers.length} lightsaber form powers from data fallback.`);
+      SWSELogger.log(`[ForceRegistry] Compendium pack "${packKey}" not found. Loaded ${powers.length} lightsaber form powers from data fallback.`);
     } catch (err) {
       SWSELogger.warn(`[ForceRegistry] Compendium pack "${packKey}" not found and data fallback failed. Skipping.`, err);
     }

@@ -1,6 +1,23 @@
 {{!-- Chargen / progression step rail. Shows below the mentor rail and above utility controls. --}}
 <div class="prog-progress-rail" role="navigation" aria-label="Character creation steps">
-  <div class="prog-progress-rail__label">Progression Pipeline</div>
+  <div class="prog-progress-rail__header">
+    <div class="prog-progress-rail__label">Progression Pipeline</div>
+    <div class="prog-progress-rail__current">
+      {{#if currentDescriptor}}
+        <i class="fas {{currentDescriptor.icon}}" aria-hidden="true"></i>
+        <span>{{currentDescriptor.label}}</span>
+        <em>Step {{add currentStepIndex 1}}/{{totalSteps}}</em>
+      {{/if}}
+    </div>
+    <button class="prog-progress-rail__collapse swse-ui-button"
+            data-action="toggle-progress-rail"
+            type="button"
+            aria-expanded="{{#unless progressRailCollapsed}}true{{else}}false{{/unless}}"
+            title="{{#if progressRailCollapsed}}Expand step rail{{else}}Collapse step rail{{/if}}">
+      <i class="fas fa-chevron-{{#if progressRailCollapsed}}down{{else}}up{{/if}}"></i>
+      <span>{{#if progressRailCollapsed}}Show Steps{{else}}Hide Steps{{/if}}</span>
+    </button>
+  </div>
   <div class="prog-progress-rail__list" role="list">
     {{#each stepProgress}}
       <div role="button"

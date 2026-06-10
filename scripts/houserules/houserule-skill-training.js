@@ -6,6 +6,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -21,15 +22,30 @@ export class SkillTrainingMechanics {
    * Initialize training data on new actor
    * @param {Actor} actor - The actor being created
    */
-  static initializeActorTraining(actor) {
-    if (!SkillRules.skillTrainingEnabled()) {return;}
+  static async initializeActorTraining(actor) {
+    if (!SkillRules.skillTrainingEnabled() || !actor) {return;}
 
-    if (!actor.getFlag(NS, 'trainingPoints')) {
-      actor.setFlag(NS, 'trainingPoints', 0);
+    const update = {};
+    if (typeof actor.getFlag(NS, 'trainingPoints') === 'undefined') {
+      update[`flags.${NS}.trainingPoints`] = 0;
     }
 
-    if (!actor.getFlag(NS, 'skillTraining')) {
-      actor.setFlag(NS, 'skillTraining', {});
+    if (typeof actor.getFlag(NS, 'skillTraining') === 'undefined') {
+      update[`flags.${NS}.skillTraining`] = {};
+    }
+
+    if (!Object.keys(update).length) return;
+
+    try {
+      await ActorEngine.updateActor(actor, update, {
+        source: 'skill-training-initialize',
+        meta: { guardKey: 'skill-training-initialize' },
+        render: false,
+        suppressAppRefresh: true,
+        skipRecalc: true
+      });
+    } catch (err) {
+      SWSELogger.warn('Failed to initialize skill-training flags', err);
     }
   }
 
@@ -91,7 +107,13 @@ export class SkillTrainingMechanics {
 
     try {
       const current = this.getTrainingPoints(actor);
-      await actor.setFlag(NS, 'trainingPoints', current + points);
+      await ActorEngine.updateActor(actor, {
+        [`flags.${NS}.trainingPoints`]: current + points
+      }, {
+        source: 'skill-training-add-points',
+        meta: { guardKey: 'skill-training-add-points' },
+        render: false
+      });
       return true;
     } catch (err) {
       SWSELogger.error('Failed to add training points', err);
@@ -133,13 +155,18 @@ export class SkillTrainingMechanics {
     }
 
     try {
-      // Deduct points
-      await actor.setFlag(NS, 'trainingPoints', available - points);
-
-      // Add to skill training
-      const training = actor.getFlag(NS, 'skillTraining') || {};
+      const training = foundry?.utils?.duplicate?.(actor.getFlag(NS, 'skillTraining') || {})
+        ?? { ...(actor.getFlag(NS, 'skillTraining') || {}) };
       training[skillName] = (training[skillName] || 0) + points;
-      await actor.setFlag(NS, 'skillTraining', training);
+
+      await ActorEngine.updateActor(actor, {
+        [`flags.${NS}.trainingPoints`]: available - points,
+        [`flags.${NS}.skillTraining`]: training
+      }, {
+        source: 'skill-training-spend-points',
+        meta: { guardKey: 'skill-training-spend-points' },
+        render: false
+      });
 
       return {
         success: true,

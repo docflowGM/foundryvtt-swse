@@ -84,12 +84,13 @@
   {{!-- ======================================================================
     MAIN COLUMN — progress-rail (horizontal tabs) + utility-bar + content-row + action-footer
   ======================================================================= --}}
-  <div class="prog-main-column">
+  <div class="prog-main-column" data-progress-collapsed="{{progressRailCollapsed}}" data-utility-collapsed="{{utilityBarCollapsed}}">
 
     {{!-- ====================================================================
       PROGRESS RAIL — compact horizontal step progression
     ==================================================================== --}}
-    <div data-region="progress-rail">
+    <div data-region="progress-rail"
+         data-collapsed="{{progressRailCollapsed}}">
       {{{parts.progressRail}}}
     </div>{{!-- /progress-rail --}}
 
@@ -110,15 +111,26 @@
     {{!-- ====================================================================
       CONTENT ROW — summary-panel (left) + work-surface (center) + details-panel (right)
     ==================================================================== --}}
-    <div class="prog-content-row">
+    <div class="prog-content-row" data-summary-collapsed="{{summaryPanelCollapsed}}">
       <div class="prog-content-gridline prog-content-gridline--h"></div>
       <div class="prog-content-gridline prog-content-gridline--v"></div>
 
       {{!-- ==================================================================
         SUMMARY PANEL — left column, compact build snapshot
       ================================================================== --}}
-      <aside data-region="summary-panel">
+      <aside data-region="summary-panel"
+             data-collapsed="{{summaryPanelCollapsed}}">
 
+        <button class="prog-summary-panel__collapse swse-ui-button"
+                data-action="toggle-summary-panel"
+                type="button"
+                aria-expanded="{{#unless summaryPanelCollapsed}}true{{else}}false{{/unless}}"
+                title="{{#if summaryPanelCollapsed}}Expand summary rail{{else}}Collapse summary rail{{/if}}">
+          <i class="fas fa-chevron-{{#if summaryPanelCollapsed}}right{{else}}left{{/if}}"></i>
+          <span class="prog-summary-panel__collapse-text">Summary</span>
+        </button>
+
+        <div class="prog-summary-panel__body">
         {{#if summaryPanelHtml}}
           {{{summaryPanelHtml}}}
         {{else}}
@@ -128,6 +140,7 @@
             {{/if}}
           </div>
         {{/if}}
+        </div>
 
       </aside>{{!-- /summary-panel --}}
 

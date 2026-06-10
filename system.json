@@ -2,7 +2,7 @@
   "id": "foundryvtt-swse",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "3.1.2",
+  "version": "3.1.1",
   "compatibility": {
     "minimum": "12",
     "verified": "14"
@@ -22,7 +22,7 @@
   "discord": "https://discord.gg/Sdwd7CgmaJ",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v3.1.2/swse.zip",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v3.1.0/swse.zip",
   "esmodules": [
     "index.js"
   ],
@@ -148,12 +148,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -162,13 +162,18 @@
       "path": "lang/de.json"
     },
     {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json"
+    },
+    {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
   "socket": true,
-  "initiative": "1d20 + @derived.skills.initiative.total",
+  "initiative": "1d20 + @abilities.dex.mod + @initiative.misc",
   "grid": {
     "distance": 1.5,
     "units": "m"
@@ -223,7 +228,7 @@
       "label": "Feats",
       "type": "Item",
       "system": "foundryvtt-swse",
-      "path": "packs/feats.db"
+      "path": "packs/feat-catalog.db"
     },
     {
       "name": "forcepowers",
@@ -713,7 +718,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
       "range": {
         "min": 10,
         "max": 100,

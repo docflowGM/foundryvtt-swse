@@ -79,6 +79,13 @@ export function normalizeTalent(rawTalent, treeMap = null) {
         treeId = treeMap.talentToTree.get(rawTalent._id) || null;
     }
 
+    // Explicit compendium fallback: some legacy talent rows have a valid treeId
+    // but were not present in the tree's talentIds inverse index. Use it only
+    // when it matches a known tree document so we do not invent tree authority.
+    if (!treeId && sys.treeId && treeMap && treeMap.trees instanceof Map && treeMap.trees.has(sys.treeId)) {
+        treeId = sys.treeId;
+    }
+
     // Legacy fallback (only if inverse index missing)
     if (!treeId && treeName && treeMap && treeMap.trees instanceof Map) {
         const match = Array.from(treeMap.trees.values()).find(t =>

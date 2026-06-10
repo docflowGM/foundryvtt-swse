@@ -1106,62 +1106,26 @@ export class SWSEV2CharacterSheet extends
       await this._minimizeTabletWindow();
     }, { signal });
 
+    root.querySelectorAll('[data-action="tablet-minimize"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._minimizeTabletWindow();
+      }, { signal });
+    });
+
     this._wireTabletWindowDrag(root, signal);
     this._wireTabletWindowResize(root, signal);
     this._wireTabletScrollFallback(root, signal);
 
 
-    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      if (this._tabletExpanded) {
-        // Restore the rect the user had before expanding
-        const saved = this._preExpandRect;
-        if (saved) {
-          this.setPosition({ left: saved.left, top: saved.top, width: saved.width, height: saved.height });
-          const r = this.element;
-          if (r) {
-            const scale = saved.width / TABLET_BASE_WIDTH;
-            r.style.setProperty('--swse-tablet-scale', String(scale));
-            r.style.setProperty('--swse-tablet-scaled-width', `${saved.width}px`);
-            r.style.setProperty('--swse-tablet-scaled-height', `${saved.height}px`);
-          }
-          this._preExpandRect = null;
-        } else {
-          // Fallback: recalculate viewport-fit
-          this._tabletInitialPositionApplied = false;
-          this._applyTabletViewportFit();
-        }
-        this._tabletExpanded = false;
-      } else {
-        // Save current rect before expanding so retract can restore it
-        this._preExpandRect = {
-          left: Number(this.position?.left) || 0,
-          top: Number(this.position?.top) || 0,
-          width: Number(this.position?.width) || TABLET_BASE_WIDTH,
-          height: Number(this.position?.height) || TABLET_BASE_HEIGHT
-        };
-
-        // Maximize: fit to largest size possible in current viewport
-        // Only use 1.0 if viewport can fit it; otherwise use viewport-fit scale
-        const canFitFull = (window.innerWidth >= TABLET_BASE_WIDTH + TABLET_MARGIN) &&
-                           (window.innerHeight >= TABLET_BASE_HEIGHT + TABLET_MARGIN);
-
-        const scale = canFitFull ? TABLET_MAX_SCALE : this._getTabletViewportScale();
-        const width = Math.round(TABLET_BASE_WIDTH * scale);
-        const height = Math.round(TABLET_BASE_HEIGHT * scale);
-        const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
-        const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
-
-        this.setPosition({ width, height, left, top });
-        const r = this.element;
-        if (r) {
-          r.style.setProperty('--swse-tablet-scale', String(scale));
-          r.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
-          r.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
-        }
-        this._tabletExpanded = true;
-      }
-    }, { signal });
+    root.querySelectorAll('[data-action="tablet-expand"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        await this._toggleTabletExpanded();
+      }, { signal });
+    });
 
     root.querySelectorAll('[data-shell-action="return-to-sheet"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
@@ -1342,6 +1306,72 @@ export class SWSEV2CharacterSheet extends
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);
     }
+  }
+
+  /** Toggle the frameless datapad between its current size and the largest safe viewport fit. */
+  async _toggleTabletExpanded() {
+    try {
+      const root = this.element;
+      const appRoot = root?.closest?.('.application') || root;
+
+      if (this._tabletExpanded) {
+        const saved = this._preExpandRect;
+        if (saved) {
+          this.setPosition({ left: saved.left, top: saved.top, width: saved.width, height: saved.height });
+          const scale = Math.max(TABLET_MIN_SCALE, Math.min(TABLET_MAX_SCALE, saved.width / TABLET_BASE_WIDTH));
+          this._applyTabletSizingVars(root, scale, saved.width, saved.height);
+          this._preExpandRect = null;
+        } else {
+          this._tabletInitialPositionApplied = false;
+          this._applyTabletViewportFit();
+        }
+        this._tabletExpanded = false;
+      } else {
+        const rect = root?.getBoundingClientRect?.();
+        this._preExpandRect = {
+          left: Number(this.position?.left) || Math.max(0, Math.round(rect?.left || 0)),
+          top: Number(this.position?.top) || Math.max(0, Math.round(rect?.top || 0)),
+          width: Number(this.position?.width) || Math.max(TABLET_MIN_WIDTH, Math.round(rect?.width || TABLET_BASE_WIDTH)),
+          height: Number(this.position?.height) || Math.max(TABLET_MIN_HEIGHT, Math.round(rect?.height || TABLET_BASE_HEIGHT))
+        };
+
+        const availableWidth = Math.max(TABLET_MIN_WIDTH, window.innerWidth - TABLET_MARGIN);
+        const availableHeight = Math.max(TABLET_MIN_HEIGHT, window.innerHeight - TABLET_MARGIN);
+        const scale = Math.max(TABLET_MIN_SCALE, Math.min(
+          TABLET_MAX_SCALE,
+          availableWidth / TABLET_BASE_WIDTH,
+          availableHeight / TABLET_BASE_HEIGHT
+        ));
+        const width = Math.round(TABLET_BASE_WIDTH * scale);
+        const height = Math.round(TABLET_BASE_HEIGHT * scale);
+        const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
+        const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
+
+        this.setPosition({ width, height, left, top });
+        this._applyTabletSizingVars(root, scale, width, height);
+        this._tabletExpanded = true;
+      }
+
+      root?.classList?.toggle?.('swse-tablet-expanded', Boolean(this._tabletExpanded));
+      appRoot?.classList?.toggle?.('swse-tablet-expanded', Boolean(this._tabletExpanded));
+      root?.querySelectorAll?.('[data-action="tablet-expand"]')?.forEach(button => {
+        button.setAttribute('aria-pressed', String(Boolean(this._tabletExpanded)));
+        button.setAttribute('title', this._tabletExpanded ? 'Restore' : 'Expand');
+        button.setAttribute('aria-label', this._tabletExpanded ? 'Restore' : 'Expand');
+      });
+    } catch (err) {
+      swseLogger.warn('[SWSEV2CharacterSheet] Failed to toggle datapad expansion.', err);
+    }
+  }
+
+  _applyTabletSizingVars(root = this.element, scale, width, height) {
+    if (!root) return;
+    this._applyTabletMinimumSize(root);
+    root.style.setProperty('--swse-tablet-scale', String(scale));
+    root.style.setProperty('--swse-tablet-base-width', TABLET_BASE_WIDTH + 'px');
+    root.style.setProperty('--swse-tablet-base-height', TABLET_BASE_HEIGHT + 'px');
+    root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
+    root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
   }
 
   /** Minimize the frameless datapad from its custom top bezel. */
@@ -2094,12 +2124,7 @@ export class SWSEV2CharacterSheet extends
 
     const root = this.element;
     if (root) {
-      this._applyTabletMinimumSize(root);
-      root.style.setProperty('--swse-tablet-scale', String(scale));
-      root.style.setProperty('--swse-tablet-base-width', TABLET_BASE_WIDTH + 'px');
-      root.style.setProperty('--swse-tablet-base-height', TABLET_BASE_HEIGHT + 'px');
-      root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
-      root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
+      this._applyTabletSizingVars(root, scale, width, height);
     }
 
     this._tabletInitialPositionApplied = true;
@@ -3071,16 +3096,7 @@ export class SWSEV2CharacterSheet extends
       0
     ) || 0;
 
-    const grappleStrMod = Number(derived?.attributes?.str?.mod ?? system?.attributes?.str?.mod ?? system?.abilities?.str?.mod ?? 0) || 0;
-    const grappleHalfLevel = Number(derived?.identity?.halfLevel ?? Math.floor((Number(system?.level ?? derived?.identity?.level ?? 1) || 1) / 2)) || 0;
-    const grappleSizeTable = { fine: -16, diminutive: -12, tiny: -8, small: -4, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
-    const grappleSizeMod = grappleSizeTable[String(system?.size ?? system?.traits?.size ?? system?.droidSize ?? 'medium').toLowerCase()] ?? 0;
-    const grappleSpeciesMod = Number(system?.speciesCombatBonuses?.grapple ?? system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
-    const grappleFallback = bab + grappleStrMod + grappleHalfLevel + grappleSizeMod + grappleSpeciesMod;
-    const grappleCandidate = Number(derived.grappleBonus);
-    const grappleBonus = Number.isFinite(grappleCandidate) && (grappleCandidate !== 0 || grappleFallback === 0)
-      ? grappleCandidate
-      : grappleFallback;
+    const grappleBonus = Number(derived.grappleBonus ?? 0) || 0;
 const forcePoints = [];
     for (let i = 1; i <= fpMax; i++) {
       forcePoints.push({
@@ -6417,7 +6433,10 @@ const forcePoints = [];
       // Delete all embedded items
       const itemIds = actor.items.map(i => i.id);
       if (itemIds.length) {
-        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', itemIds);
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', itemIds, {
+          source: 'reset-character-items',
+          meta: { guardKey: 'reset-character-items' }
+        });
       }
 
       // Reset system fields to blank defaults
@@ -6439,7 +6458,16 @@ const forcePoints = [];
         'system.languages': [],
         'system.languageIds': [],
         'flags.foundryvtt-swse': {}
-      }, { source: 'reset-character' }), { reason: 'reset-character-to-blank', surfaceId: this._shellSurface });
+      }, {
+        source: 'reset-character',
+        meta: { guardKey: 'reset-character' },
+        render: false,
+        suppressAppRefresh: true
+      }), {
+        reason: 'character-reset',
+        surfaceId: this._shellSurface ?? 'sheet',
+        preserveUi: true
+      });
 
       // Return to chargen surface
       await this.setSurface('chargen', { source: 'reset', skipIntro: false });
