@@ -56,7 +56,7 @@ const SYSTEM_MANUAL_PAGES = [
     number: '04',
     title: 'Suggestion Engine',
     kicker: 'Guidance, Not Autopilot',
-    body: 'The suggestion engine listens to surveys and character history, but the player remains the author. Surveys throughout the character's life can strongly shape recommendations, while the player's actual choices matter even more.',
+    body: "The suggestion engine listens to surveys and character history, but the player remains the author. Surveys throughout the character's life can strongly shape recommendations, while the player's actual choices matter even more.",
     bullets: [
       'Surveys help the system understand goals, personality, methods, and story direction.',
       'Recommendations are strongest when they follow what the player has actually chosen at the table.',

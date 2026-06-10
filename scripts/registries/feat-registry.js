@@ -24,6 +24,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
+import { FeatPackSeeder, loadFeatCatalogDocuments } from "/systems/foundryvtt-swse/scripts/registries/feat-pack-seeder.js";
 
 /**
  * Internal normalized feat entry
@@ -106,18 +107,55 @@ export class FeatRegistry {
         const tried = this._getPackCandidateKeys(systemId).join(', ');
         SWSELogger.warn(
             `[FeatRegistry] Compendium pack not registered by Foundry. Tried pack keys: ${tried}. ` +
-            `Registry will be empty. This is a pack-store/install issue (the LevelDB pack at packs/feats is missing or empty); ` +
-            `rebuild the compendium on disk rather than expecting a client-side recovery path.\n` +
+            `Registry will be empty. This means Foundry did not register the manifest pack named "feats" for this served system. ` +
+            `Run SWSE.debug.featPacks() in the console for the full diagnostic snapshot.\n` +
             this._formatPackDiagnostics()
         );
+        await this.diagnosePackRegistration({ reason: 'FeatRegistry._loadFromCompendium missing pack', log: true });
     }
 
     static async _loadDocumentsFromPack(pack) {
         const packKey = pack?.collection || pack?.metadata?.id || `${pack?.metadata?.packageName}.${pack?.metadata?.name}`;
         try {
-            const docs = await pack.getDocuments();
-            this._sourcePackKey = packKey || 'unknown-pack';
-            this._indexDocuments(docs, { fallback: false });
+            let docs = await pack.getDocuments();
+
+            // v13 pack-repair path: Foundry may register foundryvtt-swse.feats but expose
+            // an empty migrated LevelDB store. When that happens on a GM client, seed the
+            // pack through Foundry's own document API from the sanitized served catalog,
+            // then reload the documents. Non-GM clients fall through to the read-only data
+            // catalog fallback below so chargen/level-up is not blocked.
+            if (!docs?.length) {
+                SWSELogger.warn(`[FeatRegistry] Pack "${packKey}" is registered but contains 0 documents; attempting sanitized catalog recovery.`);
+                const seedResult = await FeatPackSeeder.seedIfEmpty({
+                    pack,
+                    reason: 'FeatRegistry empty registered pack recovery'
+                });
+                if (seedResult?.ok) {
+                    docs = await pack.getDocuments();
+                }
+            }
+
+            if (docs?.length) {
+                const iconRepair = await FeatPackSeeder.repairIconsFromCatalog({
+                    pack,
+                    docs,
+                    reason: 'FeatRegistry registered pack icon sync'
+                });
+                if (iconRepair?.updated > 0) {
+                    docs = await pack.getDocuments();
+                }
+
+                this._sourcePackKey = packKey || 'unknown-pack';
+                this._indexDocuments(docs, { fallback: false });
+                return;
+            }
+
+            const fallbackDocs = await this._loadServedCatalogFallback();
+            if (fallbackDocs.length) {
+                this._sourcePackKey = 'data/feat-catalog.json';
+                this._indexDocuments(fallbackDocs, { fallback: true });
+                SWSELogger.warn(`[FeatRegistry] Loaded ${fallbackDocs.length} feats from data/feat-catalog.json because pack "${packKey}" is empty.`);
+            }
         } catch (err) {
             SWSELogger.error(`[FeatRegistry] Failed to load from pack "${packKey}":`, err);
             throw err;
@@ -200,6 +238,206 @@ export class FeatRegistry {
         return `/systems/${systemId}/packs/feats.db`;
     }
 
+
+    /**
+     * Build a high-signal diagnostic snapshot for the feats compendium registration path.
+     * This intentionally does not load feats from raw pack files; it only reports what
+     * Foundry declares/serves/registers so install-state failures are visible.
+     * @param {Object} [options]
+     * @param {string} [options.reason] diagnostic reason
+     * @param {boolean} [options.log=true] whether to emit the snapshot to the console
+     * @returns {Promise<Object>} diagnostic snapshot
+     */
+    static async diagnosePackRegistration(options = {}) {
+        const reason = options.reason || 'manual diagnostic';
+        const shouldLog = options.log !== false;
+        const systemId = game?.system?.id || 'foundryvtt-swse';
+        const packageName = game?.system?.packageName || game?.system?.id || systemId;
+        const candidateKeys = this._getPackCandidateKeys(systemId);
+        const registeredKeys = Array.from(game?.packs?.keys?.() || []);
+        const swseKeys = registeredKeys.filter((key) => key.startsWith(`${systemId}.`) || key.startsWith('foundryvtt-swse.'));
+        const registeredFeatLikeKeys = registeredKeys.filter((key) => /(^|[.])feat(s)?($|[._-])/i.test(key) || /feat/i.test(key));
+        const declaredPacks = this._getRuntimeDeclaredPackEntries();
+        const declaredFeatPacks = declaredPacks.filter((pack) => this._isFeatLikeManifestEntry(pack));
+        const declaredNeighbors = declaredPacks.filter((pack) => /feat|class|talent|species|background|language|force/i.test(`${pack.name || ''} ${pack.label || ''} ${pack.path || ''}`));
+        const missingDeclaredKeys = declaredPacks
+            .map((pack) => pack?.name ? `${systemId}.${pack.name}` : null)
+            .filter(Boolean)
+            .filter((key) => !registeredKeys.includes(key));
+        const duplicateDeclaredNames = this._findDuplicates(declaredPacks.map((pack) => pack?.name).filter(Boolean));
+        const duplicateDeclaredPaths = this._findDuplicates(declaredPacks.map((pack) => pack?.path).filter(Boolean));
+        const servedManifest = await this._fetchServedManifest(systemId);
+        const servedPacks = Array.isArray(servedManifest?.json?.packs) ? servedManifest.json.packs : [];
+        const servedFeatPacks = servedPacks.filter((pack) => this._isFeatLikeManifestEntry(pack));
+        const servedNeighborPacks = servedPacks.filter((pack) => /feat|class|talent|species|background|language|force/i.test(`${pack.name || ''} ${pack.label || ''} ${pack.path || ''}`));
+        const pathChecks = await this._probeDeclaredPackPaths(systemId, servedFeatPacks.length ? servedFeatPacks : declaredFeatPacks);
+
+        const snapshot = {
+            reason,
+            system: {
+                id: systemId,
+                packageName,
+                title: game?.system?.title || null,
+                version: game?.system?.version || null,
+                compatibility: game?.system?.compatibility || null
+            },
+            candidates: candidateKeys.map((key) => ({ key, registered: Boolean(game?.packs?.get?.(key)) })),
+            runtimeManifest: {
+                declaredCount: declaredPacks.length,
+                declaredFeatPacks,
+                declaredNeighbors,
+                duplicateDeclaredNames,
+                duplicateDeclaredPaths,
+                missingDeclaredKeys: missingDeclaredKeys.filter((key) => /feat|class|talent|species|background|language|force/i.test(key))
+            },
+            servedSystemJson: {
+                ok: servedManifest.ok,
+                status: servedManifest.status,
+                url: servedManifest.url,
+                error: servedManifest.error || null,
+                id: servedManifest.json?.id || null,
+                name: servedManifest.json?.name || null,
+                version: servedManifest.json?.version || null,
+                packCount: servedPacks.length,
+                featPacks: servedFeatPacks,
+                neighborPacks: servedNeighborPacks
+            },
+            registeredPacks: {
+                totalCount: registeredKeys.length,
+                swseCount: swseKeys.length,
+                featLikeKeys: registeredFeatLikeKeys,
+                swseKeys
+            },
+            staticPathProbes: pathChecks,
+            interpretation: this._interpretFeatPackDiagnostics({
+                candidateKeys,
+                registeredKeys,
+                declaredFeatPacks,
+                servedManifest,
+                servedFeatPacks,
+                pathChecks
+            })
+        };
+
+        if (shouldLog) {
+            SWSELogger.warn('[FeatRegistry] Feats pack registration diagnostic snapshot:', snapshot);
+        }
+
+        return snapshot;
+    }
+
+    static _getRuntimeDeclaredPackEntries() {
+        const packs = game?.system?.packs;
+        if (!packs) return [];
+        const raw = Array.isArray(packs)
+            ? packs
+            : packs instanceof Map
+                ? Array.from(packs.values())
+                : typeof packs === 'object'
+                    ? Object.values(packs)
+                    : [];
+        return raw.map((pack) => this._packManifestSummary(pack));
+    }
+
+    static _packManifestSummary(pack = {}) {
+        return {
+            name: pack?.name || pack?.metadata?.name || null,
+            label: pack?.label || pack?.metadata?.label || null,
+            type: pack?.type || pack?.metadata?.type || null,
+            system: pack?.system || pack?.metadata?.system || pack?.metadata?.packageName || null,
+            packageName: pack?.packageName || pack?.package || pack?.metadata?.packageName || pack?.metadata?.package || null,
+            path: pack?.path || pack?.metadata?.path || null,
+            ownership: pack?.ownership || pack?.metadata?.ownership || null,
+            flags: pack?.flags || pack?.metadata?.flags || null
+        };
+    }
+
+    static _isFeatLikeManifestEntry(pack = {}) {
+        return /(^|[/._-])feat(s)?($|[/._-]|\.db$)/i.test(`${pack.name || ''} ${pack.label || ''} ${pack.path || ''}`);
+    }
+
+    static _findDuplicates(values = []) {
+        const seen = new Set();
+        const dupes = new Set();
+        for (const value of values) {
+            const key = String(value || '').trim();
+            if (!key) continue;
+            if (seen.has(key)) dupes.add(key);
+            seen.add(key);
+        }
+        return Array.from(dupes);
+    }
+
+    static async _fetchServedManifest(systemId) {
+        const url = `/systems/${systemId}/system.json?swseFeatDiag=${Date.now()}`;
+        try {
+            const response = await fetch(url, { cache: 'no-store' });
+            let json = null;
+            let parseError = null;
+            try {
+                json = await response.clone().json();
+            } catch (err) {
+                parseError = err?.message || String(err);
+            }
+            return {
+                ok: response.ok,
+                status: response.status,
+                url,
+                json,
+                error: parseError
+            };
+        } catch (err) {
+            return {
+                ok: false,
+                status: null,
+                url,
+                json: null,
+                error: err?.message || String(err)
+            };
+        }
+    }
+
+    static async _probeDeclaredPackPaths(systemId, entries = []) {
+        const uniquePaths = Array.from(new Set((entries || []).map((entry) => entry?.path).filter(Boolean)));
+        const results = [];
+        for (const path of uniquePaths) {
+            const normalizedPath = String(path).replace(/^\/+/, '');
+            const url = `/systems/${systemId}/${normalizedPath}?swseFeatDiag=${Date.now()}`;
+            try {
+                const response = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+                results.push({ path, url, method: 'HEAD', ok: response.ok, status: response.status, statusText: response.statusText || '' });
+            } catch (err) {
+                results.push({ path, url, method: 'HEAD', ok: false, status: null, error: err?.message || String(err) });
+            }
+        }
+        return results;
+    }
+
+    static _interpretFeatPackDiagnostics({ candidateKeys, registeredKeys, declaredFeatPacks, servedManifest, servedFeatPacks, pathChecks }) {
+        const registeredCandidate = candidateKeys.find((key) => registeredKeys.includes(key));
+        if (registeredCandidate) {
+            return `A candidate key is registered (${registeredCandidate}); failure is probably in document loading, not pack registration.`;
+        }
+        if (!declaredFeatPacks.length && !servedFeatPacks.length) {
+            return 'The served runtime manifest does not declare a feats pack. Deploy/sync system.json from the current repo.';
+        }
+        if (servedManifest?.ok === false) {
+            return `Could not read served system.json (${servedManifest.status || servedManifest.error}); verify the system id/path that Foundry is serving.`;
+        }
+        if (servedFeatPacks.length && !declaredFeatPacks.length) {
+            return 'Served system.json declares feats, but game.system.packs does not expose it. Foundry may be using transformed/cached system metadata.';
+        }
+        const missingPath = (pathChecks || []).find((probe) => probe.status === 404);
+        if (missingPath) {
+            return `The served manifest declares a feats pack at ${missingPath.path}, but that path 404s. Deploy the pack file/folder with the manifest.`;
+        }
+        const forbiddenPath = (pathChecks || []).find((probe) => probe.status === 403);
+        if (forbiddenPath) {
+            return `The feats pack path exists but is protected from browser access (${forbiddenPath.status}); that is normal for pack files. Since Foundry still did not register it, inspect server-side pack migration/cache state.`;
+        }
+        return 'The served manifest appears to declare feats, but Foundry did not register foundryvtt-swse.feats. Suspect server-side pack migration/cache or package install-state; try a version bump/full reinstall or path cache-buster.';
+    }
+
     /**
      * DISABLED. Foundry intentionally forbids direct browser fetches of pack DB
      * files (packs/feats.db returns HTTP 403), so this was never a viable
@@ -211,6 +449,16 @@ export class FeatRegistry {
      */
     static async _loadJsonlFallback() {
         return [];
+    }
+
+    static async _loadServedCatalogFallback() {
+        try {
+            const rawDocs = await loadFeatCatalogDocuments();
+            return rawDocs.map((raw) => this._makeFallbackDocument(raw, 'data/feat-catalog.json'));
+        } catch (err) {
+            SWSELogger.warn('[FeatRegistry] Failed to load data/feat-catalog.json fallback:', err);
+            return [];
+        }
     }
 
     static _parseJsonlPack(text, path = 'packs/feats.db') {
@@ -295,6 +543,8 @@ export class FeatRegistry {
             raw: canonicalPrerequisite || system.prerequisite || system.prerequisites || null
         };
 
+        const img = doc.img || system.img || system.iconPath || system.assetIcon || 'icons/svg/upgrade.svg';
+
         // Create normalized entry
         return {
             id: doc._id,
@@ -308,6 +558,8 @@ export class FeatRegistry {
             requiresTraining: Boolean(system.requiresTraining),
             requiresProficiency: Boolean(system.requiresProficiency),
             source: system.source || null,
+            img,
+            iconPath: img,
             pack: doc.pack || 'unknown',
             system
         };

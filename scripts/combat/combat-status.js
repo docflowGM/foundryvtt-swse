@@ -48,6 +48,7 @@ export function normalizeCover(value) {
 
 export function normalizeDefensiveMode(value, raw = {}) {
   const key = String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+  if (key === 'normal' || key === 'none' || key === 'off' || key === 'clear' || key === 'no') return 'normal';
   if (key === 'fightingdefensively' || key === 'fightdefensively' || key === 'fightdef') return 'fightingDefensively';
   if (key === 'fulldefense' || key === 'fulldef') return 'fullDefense';
   if (raw?.fullDef === true || raw?.fullDefense === true) return 'fullDefense';
@@ -91,12 +92,18 @@ export const CombatStatusResolver = {
   async setStatus(actor, patch = {}) {
     if (!actor?.setFlag) return null;
     const current = this.getStatus(actor);
+    const resetConditions = patch.resetConditions === true
+      || patch.resetAll === true
+      || String(patch.defensiveMode ?? '').toLowerCase() === 'normal';
+    const rawForMode = resetConditions
+      ? { ...patch, fightDef: false, fullDef: false, fightingDefensively: false, fullDefense: false }
+      : { ...current, ...patch };
     const next = {
       ...current,
       ...patch,
       cover: normalizeCover(patch.cover ?? current.cover),
-      defensiveMode: normalizeDefensiveMode(patch.defensiveMode, { ...current, ...patch }),
-      prone: patch.prone ?? current.prone ?? false
+      defensiveMode: resetConditions ? 'normal' : normalizeDefensiveMode(patch.defensiveMode, rawForMode),
+      prone: resetConditions ? false : (patch.prone ?? current.prone ?? false)
     };
     next.fightDef = next.defensiveMode === 'fightingDefensively';
     next.fullDef = next.defensiveMode === 'fullDefense';

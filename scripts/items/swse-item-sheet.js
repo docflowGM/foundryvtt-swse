@@ -431,7 +431,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       limited: this.item?.limited ?? false,
       actorCredits: actorCredits,
       activeTab: this._entityDialogActiveTab || 'data', // Preserve selected entity tab across safe rerenders
-      bladeColorOptions: Object.entries(BLADE_COLOR_MAP).map(([name, hex]) => ({ name, hex })),
+      bladeColorOptions: Object.entries(BLADE_COLOR_MAP).map(([name, hex]) => ({ name, hex, label: name.charAt(0).toUpperCase() + name.slice(1) })),
       entityDialog: buildEntityDialogContext({
         item: itemData,
         system: systemData,

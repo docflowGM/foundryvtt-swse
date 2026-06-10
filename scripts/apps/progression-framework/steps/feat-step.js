@@ -296,6 +296,8 @@ export class FeatStep extends ProgressionStepPlugin {
     // UI state
     this._selectedFeatItem = null;       // The actual feat item for display
     this._noChoicesAvailable = false;     // safety net for zero-option steps
+    this._catalogUnavailable = false;     // true when FeatRegistry has no hydrated feat catalog
+    this._catalogUnavailableMessage = ''; // player-facing explanation for catalog outages
 
     // Mapping & filter state
     this._mapping = null;                // feat-buckets-and-subbuckets.json
@@ -335,6 +337,11 @@ export class FeatStep extends ProgressionStepPlugin {
     this._allFeats = (FeatRegistry.list?.() || [])
       .map(f => normalizeFeatRuntime(f, { mapping: this._mapping }))
       .map(feat => attachFeatIconPath(feat));
+    this._catalogUnavailable = this._allFeats.length === 0;
+    this._catalogUnavailableMessage = this._catalogUnavailable
+      ? 'The feat catalog did not hydrate from the Foundry compendium. This step is safe to skip, but feat choices will not be available until the feats pack registers.'
+      : '';
+    if (this._catalogUnavailable) this._showAll = false;
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
     this._requiredFeatCount = this._getRequiredFeatCount(shell);
     const existingFeats = this._getCommittedFeatsForSlot(shell);
@@ -489,10 +496,19 @@ export class FeatStep extends ProgressionStepPlugin {
 
     if (action === 'toggle-show-all-feats') {
       event?.preventDefault?.();
+      if (!Array.isArray(this._allFeats) || this._allFeats.length === 0) {
+        this._catalogUnavailable = true;
+        this._catalogUnavailableMessage = 'The feat catalog is unavailable because the feats compendium did not register. The step remains skippable so character creation can continue.';
+        this._showAll = false;
+        this._noChoicesAvailable = true;
+        ui?.notifications?.warn?.('Feat catalog unavailable: no feats were loaded from the compendium. You can continue past this step.');
+        await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-catalog-unavailable' }) ?? shell?.render?.());
+        return true;
+      }
       this._showAll = !this._showAll;
       this._refreshGroupedFeats();
       this._ensureActiveCategory();
-      shell?.render?.();
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-toggle' }) ?? shell?.render?.());
       return true;
     }
 
@@ -1520,6 +1536,8 @@ export class FeatStep extends ProgressionStepPlugin {
       showAll: this._showAll,
       legalFeatCount: this._legalFeats.length,
       allFeatCount: this._allFeats.length,
+      catalogUnavailable: !!this._catalogUnavailable,
+      catalogUnavailableMessage: this._catalogUnavailableMessage,
       slotType: this._slotType,
       orderedSelections,
       // PHASE 2 UX: Slot progress
@@ -1545,12 +1563,15 @@ export class FeatStep extends ProgressionStepPlugin {
   getSelection() {
     const selected = [...(this._selectedFeatIds || [])];
     const requiredCount = Math.max(0, Number(this._requiredFeatCount || 0));
-    const isComplete = selected.length >= requiredCount;
+    const skippedForNoChoices = !!this._noChoicesAvailable;
+    const isComplete = skippedForNoChoices || selected.length >= requiredCount;
     return {
       selected,
       count: selected.length,
-      required: requiredCount,
+      required: skippedForNoChoices ? 0 : requiredCount,
       isComplete,
+      skipped: skippedForNoChoices,
+      skipReason: this._catalogUnavailable ? 'feat-catalog-unavailable' : (skippedForNoChoices ? 'no-legal-feats' : null),
     };
   }
 
@@ -2131,7 +2152,8 @@ export class FeatStep extends ProgressionStepPlugin {
   getRemainingPicks() {
     if (this._noChoicesAvailable) {
       const slotTypeLabel = this._slotType === 'class' ? 'Class Feat' : 'General Feat';
-      return [{ label: `${slotTypeLabel}: no legal options`, count: 0, total: 0, selected: 0, isWarning: false }];
+      const reason = this._catalogUnavailable ? 'catalog unavailable' : 'no legal options';
+      return [{ label: `${slotTypeLabel}: ${reason}`, count: 0, total: 0, selected: 0, isWarning: false }];
     }
 
     const selected = (this._selectedFeatIds || []).length;
@@ -2150,7 +2172,9 @@ export class FeatStep extends ProgressionStepPlugin {
 
     let statusText = '';
     if (this._noChoicesAvailable) {
-      statusText = `${slotTypeLabel} Feat: No legal options — safe to skip`;
+      statusText = this._catalogUnavailable
+        ? `${slotTypeLabel} Feat: Catalog unavailable — safe to skip`
+        : `${slotTypeLabel} Feat: No legal options — safe to skip`;
     } else if ((this._selectedFeatIds || []).length) {
       const selectedNames = (this._selectedFeatIds || [])
         .map(id => this._getFeat(id)?.name || id)

@@ -154,6 +154,21 @@ function normalizeKey(value) {
     .toLowerCase();
 }
 
+function scalarText(value) {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "object") {
+    for (const key of ["value", "id", "key", "slug", "name", "label", "type"]) {
+      if (value[key] != null && value[key] !== value) return scalarText(value[key]);
+    }
+  }
+  return "";
+}
+
+function lowerScalar(value) {
+  return scalarText(value).trim().toLowerCase();
+}
+
 function camelize(value) {
   const key = normalizeKey(value);
   return key.replace(/-([a-z0-9])/g, (_m, c) => c.toUpperCase());
@@ -727,7 +742,7 @@ function collectCombinedFeatModifiers(actor, weapon, context = {}) {
   const result = { attackAbilityBonus: 0, breakdown: [], flags: {} };
   if (!actor || !weapon) return result;
 
-  const weaponGroup = (weapon?.system?.weaponCategory ?? weapon?.system?.type ?? '').toLowerCase();
+  const weaponGroup = lowerScalar(weapon?.system?.weaponCategory ?? weapon?.system?.type ?? '');
   const alreadyCoveredByWF =
     weaponGroup === 'light' || weaponGroup === 'light-melee' || weaponGroup === 'lightsaber' ||
     weaponMatchesGroup(weapon, ['light', 'light-melee', 'lightsaber'], context);

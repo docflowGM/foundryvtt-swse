@@ -1,0 +1,45 @@
+{
+  "source": "/mnt/data/feats.db",
+  "outputs": {
+    "sanitizedDb": "/mnt/data/feats.sanitized.db",
+    "repoFeatsDb": "/mnt/data/work_sanitize/foundryvtt-swse-main/packs/feats.db",
+    "repoFeatCatalogDb": "/mnt/data/work_sanitize/foundryvtt-swse-main/packs/feat-catalog.db",
+    "repoSystemJson": "/mnt/data/work_sanitize/foundryvtt-swse-main/system.json"
+  },
+  "documents": 414,
+  "validation": {
+    "jsonlParseErrors": 0,
+    "typeFeat": 414,
+    "missingIds": 0,
+    "duplicateIds": 0,
+    "embeddedEffects": 0,
+    "nonStringDescriptions": 0,
+    "nullCostNumeric": 0,
+    "rawImportRemaining": 0,
+    "missingSubtype": 0,
+    "missingSlug": 0,
+    "duplicateSlugs": 0,
+    "manifestChanged": true
+  },
+  "stats": {
+    "source_added_or_normalized": 414,
+    "prerequisites_added": 414,
+    "costNumeric_null_to_zero": 414,
+    "slug_added_or_normalized": 414,
+    "template_default_grantsActions_added": 414,
+    "template_default_grantsBonuses_added": 414,
+    "template_default_toggleable_added": 414,
+    "template_default_toggled_added": 414,
+    "template_default_variable_added": 414,
+    "template_default_variableValue_added": 414,
+    "template_default_archetype_added": 414,
+    "template_default_playstyle_added": 414,
+    "template_default_tier_added": 414,
+    "rawImport_removed": 68,
+    "description_non_string_normalized": 71,
+    "description_changed": 71,
+    "prerequisitesText_added": 68,
+    "subType_added_or_normalized": 11
+  },
+  "recommendation": "Use the changed-files zip with system.json name:\"feats\" path:\"packs/feat-catalog.db\" to test both sanitization and a stale pack-path cache bust. The runtime key remains foundryvtt-swse.feats."
+}

@@ -1,4 +1,21 @@
       <div class="tab {{#if (eq activeTab 'description')}}active{{/if}}" data-tab="description">
+        {{#if entityDialog.weapon.isLightsaber}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Lightsaber</h3>
+
+          <div class="item-editor__grid item-editor__grid--two-col">
+            <div class="form-field">
+              <label>Blade Color</label>
+              <select name="flags.swse.bladeColor">
+                {{#each bladeColorOptions as |opt|}}
+                  <option value="{{opt.name}}" {{#if (eq ../item.flags.swse.bladeColor opt.name)}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </section>
+        {{/if}}
+
         <section class="item-editor__section">
           <h3 class="item-editor__section-title">Description</h3>
 

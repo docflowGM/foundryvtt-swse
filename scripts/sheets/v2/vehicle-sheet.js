@@ -746,11 +746,8 @@ export class SWSEV2VehicleSheet extends
     for (const btn of root.querySelectorAll('[data-action="import-vehicle"]')) {
       btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        if (!this.actor) return;
-        VehicleImportWizard.create({
-          actor: this.actor,
-          callback: () => this.render()
-        });
+        ev.stopPropagation();
+        await this._openVehicleImportWizard();
       }, { signal });
     }
 
@@ -987,6 +984,20 @@ export class SWSEV2VehicleSheet extends
       el.classList.toggle("mod--negative", mod < 0);
       el.classList.toggle("mod--zero", mod === 0);
     });
+  }
+
+  async _openVehicleImportWizard() {
+    if (!this.actor) return null;
+    try {
+      return VehicleImportWizard.create({
+        actor: this.actor,
+        callback: () => this.render({ force: true })
+      });
+    } catch (err) {
+      console.error('[SWSEV2VehicleSheet] Failed to open vehicle import wizard:', err);
+      ui?.notifications?.error?.(`Failed to open vehicle import wizard: ${err.message}`);
+      return null;
+    }
   }
 
 

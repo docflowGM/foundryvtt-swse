@@ -16,6 +16,51 @@ import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+function numeric(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function getActorInitiativeSkillTotal(actor) {
+  const derivedSkills = actor?.system?.derived?.skills;
+  const fromList = Array.isArray(derivedSkills?.list)
+    ? derivedSkills.list.find(row => row?.key === 'initiative')
+    : null;
+  const candidates = [
+    derivedSkills?.initiative?.total,
+    fromList?.total,
+    actor?.system?.derived?.initiative?.total,
+    actor?.system?.derived?.initiative?.skillTotal,
+    actor?.system?.skills?.initiative?.total,
+    actor?.system?.skills?.initiative?.value
+  ];
+  for (const value of candidates) {
+    const n = Number(value);
+    if (Number.isFinite(n)) return n;
+  }
+
+  const skill = actor?.system?.skills?.initiative ?? {};
+  const abilityKey = skill.selectedAbility || skill.ability || 'dex';
+  const abilityMod = numeric(
+    actor?.system?.derived?.attributes?.[abilityKey]?.mod
+      ?? actor?.system?.abilities?.[abilityKey]?.mod,
+    0
+  );
+  const halfLevel = numeric(actor?.system?.derived?.identity?.halfLevel, Math.floor(numeric(actor?.system?.level, 1) / 2));
+  return abilityMod
+    + halfLevel
+    + (skill.trained ? 5 : 0)
+    + (skill.focused ? 5 : 0)
+    + numeric(skill.miscMod, 0);
+}
+
+function getInitiativeFormulaBonus(actor, options = {}) {
+  return getActorInitiativeSkillTotal(actor)
+    + numeric(options.customModifier, 0)
+    + numeric(options.situationalBonus, 0)
+    + numeric(options.modifier, 0);
+}
+
 export class SWSEInitiative {
 
   /* ------------------------------------------------------------------ */
@@ -152,13 +197,28 @@ export class SWSEInitiative {
   static async rollInitiative(actor, options = {}) {
     if (!actor) return { success: false, error: 'No actor provided' };
 
+    const initiativeBonus = getInitiativeFormulaBonus(actor, options);
+
     // === UNIFIED ROLL EXECUTION via RollCore ===
+    // Initiative is a SWSE skill. Use the already-derived Initiative skill total
+    // as the base bonus so trained/focused/misc/half-level/talent substitutions
+    // hydrate exactly like the Skills tab and Quick Stats panel.
     const rollResult = await RollCore.execute({
       actor,
       domain: 'initiative',
+      baseBonus: initiativeBonus,
       rollOptions: {
         baseDice: '1d20',
-        useForce: options.useForce || false
+        useForce: options.useForce || options.useForcePoint || false
+      },
+      rollData: actor?.getRollData?.() ?? {},
+      context: {
+        ...(options.context ?? {}),
+        type: 'initiative',
+        skillKey: 'initiative',
+        customModifier: numeric(options.customModifier, 0),
+        situationalBonus: numeric(options.situationalBonus, 0),
+        rollNote: options.rollNote ?? ''
       }
     });
 
@@ -167,47 +227,46 @@ export class SWSEInitiative {
       return rollResult;
     }
 
-    let total = rollResult.finalTotal;
+    const total = rollResult.finalTotal;
     const forceBonus = rollResult.forcePointBonus || 0;
     const usedForce = forceBonus > 0;
-    const baseMod = rollResult.modifierTotal;
 
-    // === FORCE POINT SPENDING (if used) ===
     if (usedForce) {
       const fp = actor.system.forcePoints?.value ?? 0;
       if (fp > 0) {
-        // Decrement Force Points through ActorEngine
         await ActorEngine.updateActor(actor, {
           'system.forcePoints.value': Math.max(0, fp - 1)
-        });
-
-        // Announce FP spend in chat
-        await ChatMessage.create({
-          speaker: ChatMessage.getSpeaker({ actor }),
-          content: `<em>${actor.name} spends a Force Point on Initiative (+${forceBonus})</em>`,
-          flags: { swse: { initiativeForcePowerSpent: true } }
         });
       }
     }
 
-    // === POST THE ROLL TO CHAT ===
+    let message = null;
     if (rollResult.roll) {
-      await SWSEChat.postRoll({
+      message = await SWSEChat.postRoll({
         roll: rollResult.roll,
         actor,
-        flavor: forceBonus > 0
-          ? `Initiative Roll — Force Point +${forceBonus}`
-          : 'Initiative Roll',
+        flavor: `${actor.name} Reacts!`,
+        rollMode: options.rollMode || null,
         flags: { swse: { rollType: 'initiative' }, core: { initiativeRoll: true } },
         context: {
           type: 'initiative',
+          label: 'Initiative',
+          skillKey: 'initiative',
+          baseBonus: initiativeBonus,
           forceBonus,
-          usedForce
+          usedForce,
+          customModifier: numeric(options.customModifier, 0),
+          situationalBonus: numeric(options.situationalBonus, 0),
+          totalLabel: 'Init',
+          typeChipLabel: 'Initiative',
+          sourceElement: options.sourceElement ?? null,
+          companionSource: options.companionSource ?? null,
+          sheet: options.sheet ?? null,
+          showRollCompanion: options.showRollCompanion !== false
         }
       });
     }
 
-    // === APPLY TO COMBAT TRACKER ===
     await this._applyInitiativeToCombat(actor, total);
 
     return {
@@ -215,7 +274,9 @@ export class SWSEInitiative {
       total,
       usedForce,
       forceBonus,
-      baseMod
+      baseMod: initiativeBonus,
+      message,
+      chatPosted: Boolean(message)
     };
   }
 
@@ -227,14 +288,18 @@ export class SWSEInitiative {
     if (!actor) return;
 
     // === USE RollCore WITH Take X OPTION ===
+    const initiativeBonus = getActorInitiativeSkillTotal(actor);
     const rollResult = await RollCore.execute({
       actor,
       domain: 'initiative',
+      baseBonus: initiativeBonus,
       rollOptions: {
         baseDice: '1d20',
         isTakeX: true,
         takeXValue: 10
-      }
+      },
+      rollData: actor?.getRollData?.() ?? {},
+      context: { type: 'initiative', skillKey: 'initiative' }
     });
 
     if (!rollResult.success) {

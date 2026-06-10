@@ -26,11 +26,21 @@
       <small>Cover can stack with either mode</small>
     </div>
     <div class="swse-defensive-mode-grid" role="group" aria-label="Defensive mode">
-      {{#each combatStatus.defensiveModes as |mode|}}
+      <button type="button"
+              class="swse-defensive-mode {{#if combatStatus.defensiveNormalMode.active}}is-active{{/if}}"
+              data-action="swse-combat-defensive-mode"
+              data-mode="normal"
+              data-mode-active="{{combatStatus.defensiveNormalMode.active}}"
+              {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+        <span>Normal</span>
+        <small>Clear prone and defensive stances</small>
+      </button>
+      {{#each combatStatus.defensiveStanceModes as |mode|}}
         <button type="button"
                 class="swse-defensive-mode {{#if mode.active}}is-active{{/if}}"
                 data-action="swse-combat-defensive-mode"
                 data-mode="{{mode.value}}"
+                data-mode-active="{{mode.active}}"
                 {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
           <span>{{mode.label}}</span>
           <small>{{mode.detail}}</small>
@@ -46,12 +56,12 @@
     <button type="button"
             class="swse-condition-toggle {{#if combatStatus.prone}}is-active{{/if}}"
             data-action="swse-combat-toggle-prone"
+            data-prone-active="{{combatStatus.prone}}"
             {{#unless combatStatus.canEdit}}disabled{{/unless}}>
       <span>Prone</span>
       <small>Conditional: ranged/melee dependent</small>
     </button>
   </div>
-
 
   <div class="swse-combat-status-section swse-combat-declaration-tools">
     <div class="swse-combat-status-heading">

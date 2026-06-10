@@ -71,7 +71,8 @@
     <div class="feat-browser-toolbar__left">
       <button class="feat-filter-btn feat-show-all-toggle{{#if showAll}} is-open{{/if}}"
               data-action="toggle-show-all-feats" type="button"
-              title="Toggle between legal selectable feats and the full hydrated feat browser">
+              {{#if catalogUnavailable}}disabled aria-disabled="true"{{/if}}
+              title="{{#if catalogUnavailable}}{{catalogUnavailableMessage}}{{else}}Toggle between legal selectable feats and the full hydrated feat browser{{/if}}">
         <i class="fa-solid {{#if showAll}}fa-eye{{else}}fa-eye-slash{{/if}}"></i>
         <span>{{#if showAll}}Showing All{{else}}Legal Only{{/if}}</span>
         <span class="feat-filter-active-count">{{#if showAll}}{{allFeatCount}}{{else}}{{legalFeatCount}}{{/if}}</span>
@@ -216,8 +217,14 @@
       {{else}}
       <div class="empty-message feat-browser-empty">
         <i class="fa-solid fa-hexagon-exclamation"></i>
+        {{#if catalogUnavailable}}
+        <p class="empty-title">Feat Catalog Unavailable</p>
+        <p class="empty-description">{{catalogUnavailableMessage}}</p>
+        <p class="empty-hint"><strong>Safe mode:</strong> This feat step will not block character creation while the compendium is unavailable.</p>
+        {{else}}
         <p class="empty-title">No Feats in This View</p>
         <p class="empty-description">Try another category, clear search, or toggle Show All to inspect locked options.</p>
+        {{/if}}
       </div>
       {{/if}}
       {{/if}}
@@ -228,9 +235,15 @@
   <section class="feat-group empty-state">
     <div class="empty-message">
       <i class="fa-solid fa-hexagon-exclamation"></i>
+      {{#if catalogUnavailable}}
+      <p class="empty-title">Feat Catalog Unavailable</p>
+      <p class="empty-description">{{catalogUnavailableMessage}}</p>
+      <p class="empty-hint"><strong>Safe mode:</strong> Continue is allowed so chargen does not soft-lock.</p>
+      {{else}}
       <p class="empty-title">No {{#if showAll}}more{{else}}Available{{/if}} Feats</p>
       <p class="empty-description">No feats meet this slot's current display rules.</p>
       <p class="empty-hint"><strong>Tip:</strong> Enable "Show All" to inspect blocked feat prerequisites.</p>
+      {{/if}}
     </div>
   </section>
   {{/unless}}

@@ -59,8 +59,9 @@ export class CombatExecutor {
         await this._generateAttackChatMessage(actor, actionData, result, options);
       }
 
-      // Spend Force Point if used
-      if (usedForce) {
+      // Spend Force Point if used. The SWSEInitiative authority spends it
+      // itself when a Force die is actually applied, so do not double-spend.
+      if (usedForce && result?.usedForce !== true) {
         const currentFP = SchemaAdapters.getForcePoints(actor);
         const plan = {
           update: {
@@ -111,11 +112,16 @@ export class CombatExecutor {
       // Execute initiative roll via CombatEngine
       const result = await CombatEngine.rollInitiative(actor, options);
 
-      // Generate chat message
-      await this._generateInitiativeChatMessage(actor, result);
+      // SWSEInitiative owns the canonical holo initiative chat card. Avoid
+      // posting the old duplicate executor card when the authority already
+      // produced a message.
+      if (result && result.chatPosted !== true) {
+        await this._generateInitiativeChatMessage(actor, result);
+      }
 
-      // Spend Force Point if used
-      if (usedForce) {
+      // Spend Force Point if used. The SWSEInitiative authority spends it
+      // itself when a Force die is actually applied, so do not double-spend.
+      if (usedForce && result?.usedForce !== true) {
         const currentFP = SchemaAdapters.getForcePoints(actor);
         const plan = {
           update: {

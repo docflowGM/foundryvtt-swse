@@ -14,6 +14,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { loadFeatCatalogDocuments } from "/systems/foundryvtt-swse/scripts/registries/feat-pack-seeder.js";
 
 export const FeatureIndex = {
     // Lookup maps - keyed by lowercase name for case-insensitive lookup
@@ -127,19 +128,37 @@ export const FeatureIndex = {
     async _loadPack(packName, map) {
         const pack = this._resolvePack(packName);
         if (!pack) {
-            SWSELogger.warn(`FeatureIndex: Missing pack "${packName}" (tried ${game?.system?.id ?? 'foundryvtt-swse'}.${packName} and fallbacks)`);
+            const extra = packName === 'feats'
+                ? '; run SWSE.debug.featPacks() for manifest/registration diagnostics'
+                : '';
+            SWSELogger.warn(`FeatureIndex: Missing pack "${packName}" (tried ${game?.system?.id ?? 'foundryvtt-swse'}.${packName} and fallbacks)${extra}`);
             return;
         }
         try {
-            const docs = await pack.getDocuments();
+            let docs = await pack.getDocuments();
+            if (packName === 'feats' && !docs.length) {
+                docs = await this._loadFeatCatalogFallback();
+                if (docs.length) {
+                    SWSELogger.warn(`FeatureIndex: Pack "${pack.collection}" is empty; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
+                }
+            }
             for (const doc of docs) {
                 if (doc.name) {
                     map.set(doc.name.toLowerCase(), doc);
                 }
             }
-            SWSELogger.log(`FeatureIndex: Loaded ${docs.length} items from ${pack.collection}`);
+            SWSELogger.log(`FeatureIndex: Loaded ${docs.length} items from ${pack.collection}${packName === 'feats' && docs.length ? ' / fallback-safe' : ''}`);
         } catch (err) {
             SWSELogger.error(`FeatureIndex: Failed to load pack "${pack.collection}":`, err);
+        }
+    },
+
+    async _loadFeatCatalogFallback() {
+        try {
+            return await loadFeatCatalogDocuments();
+        } catch (err) {
+            SWSELogger.warn('FeatureIndex: Failed to load data/feat-catalog.json fallback:', err);
+            return [];
         }
     },
 

@@ -56,7 +56,13 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
 
   static create(options = {}) {
     const app = new VehicleImportWizard(options);
-    app.render(true);
+    const renderResult = app.render({ force: true });
+    if (renderResult && typeof renderResult.catch === 'function') {
+      renderResult.catch((err) => {
+        console.error('[VehicleImportWizard] Failed to render import wizard:', err);
+        ui?.notifications?.error?.(`Failed to open vehicle import wizard: ${err.message}`);
+      });
+    }
     return app;
   }
 

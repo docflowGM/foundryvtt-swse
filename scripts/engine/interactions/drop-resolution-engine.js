@@ -31,6 +31,23 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 
 export class DropResolutionEngine {
   static _recentDropKeys = new Map();
+
+  /**
+   * Suppress rapid duplicate drops (e.g. double-fire on some browsers).
+   * Keyed by actor id + item uuid; entries expire after 1 second.
+   */
+  static _isDuplicateDropEvent(actor, dropData, normalized) {
+    const key = `${actor?.id}::${normalized?.document?.uuid ?? dropData?.uuid ?? dropData?.id ?? '?'}`;
+    const now = Date.now();
+    // Prune stale entries
+    for (const [k, t] of this._recentDropKeys) {
+      if (now - t > 1000) this._recentDropKeys.delete(k);
+    }
+    if (this._recentDropKeys.has(key)) return true;
+    this._recentDropKeys.set(key, now);
+    return false;
+  }
+
   /**
    * Main entry point: resolve drop to mutationPlan + UI feedback
    *
@@ -305,6 +322,35 @@ function handleClassFeature(actor, item) {
   return null;
 }
 
+function handleLanguage(actor, item) {
+  const langName = item.name ?? '';
+  if (!langName) return null;
+
+  // Deduplicate: skip if the actor already knows this language
+  const existing = actor.system?.languages ?? [];
+  const alreadyKnown = existing.some(l =>
+    (typeof l === 'string' ? l : l?.name ?? '')
+      .toLowerCase() === langName.toLowerCase()
+  );
+  if (alreadyKnown) {
+    console.debug(`Drop skipped: language "${langName}" already known`);
+    return null;
+  }
+
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'skills'
+  };
+}
+
+function handleWeaponUpgrade(actor, item) {
+  // Lightsaber crystals, accessories, and other weapon upgrades go to inventory
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'inventory'
+  };
+}
+
 function handleEquipment(actor, item) {
   // Equipment (generic) goes to inventory
   return {
@@ -443,15 +489,25 @@ function _createItemMutation(item) {
  * Returns { mutationPlan, uiTargetTab } or null
  */
 const DROP_RULES = {
+  // Core item types
   talent: handleTalent,
   feat: handleFeat,
   weapon: handleWeapon,
   armor: handleArmor,
   gear: handleGear,
   energyShield: handleEnergyShield,
-  forcePower: handleForcePower,
-  classFeature: handleClassFeature,
   equipment: handleEquipment,
+  weaponUpgrade: handleWeaponUpgrade,
+  // Force
+  forcePower: handleForcePower,       // legacy camelCase key (kept for safety)
+  'force-power': handleForcePower,    // actual pack type
+  'force-regimen': handleForcePower,  // treat regimens same as powers
+  // Language
+  language: handleLanguage,
+  // Identity
   species: handleSpecies,
-  class: handleClass
+  class: handleClass,
+  // Internal — not droppable
+  classFeature: handleClassFeature,
+  'class-feature': handleClassFeature,
 };

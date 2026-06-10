@@ -249,16 +249,20 @@ function buildCombatStatusViewModel(actor, { canEdit = true } = {}) {
   ].map((option) => ({ ...option, selected: status.cover === option.value }));
 
   const defensiveModes = [
-    { value: 'normal', label: 'Normal', detail: 'No declared defensive stance' },
+    { value: 'normal', label: 'Normal', detail: 'Clear prone and defensive stances' },
     { value: 'fightingDefensively', label: 'Fight Defensively', detail: '+2 Ref · −5 attacks this turn' },
     { value: 'fullDefense', label: 'Full Defense', detail: '+5 Ref · no attacks' }
   ].map((mode) => ({ ...mode, active: status.defensiveMode === mode.value }));
+  const defensiveNormalMode = defensiveModes.find((mode) => mode.value === 'normal') ?? defensiveModes[0];
+  const defensiveStanceModes = defensiveModes.filter((mode) => mode.value !== 'normal');
 
   return {
     ...status,
     canEdit,
     coverOptions,
     defensiveModes,
+    defensiveNormalMode,
+    defensiveStanceModes,
     coverIsTotal: status.cover === 'total',
     attackLocked: status.defensiveMode === 'fullDefense',
     attackLockLabel: 'Full Defense is active. Attacks are locked until this mode is cleared or the GM overrides it.',
@@ -307,10 +311,22 @@ function buildEffectiveDefensesViewModel(actor, defensePanel = null) {
       parts: [
         { label: 'Base', value: 10, readonly: true },
         { label: 'Heroic/Armor', value: Number(def?.levelContribution ?? 0) + Number(def?.armorBonus ?? 0), readonly: true },
-        { label: 'Ability', value: Number(def?.abilityMod ?? 0), readonly: true },
+        {
+          label: 'Ability', value: Number(def?.abilityMod ?? 0),
+          isSelect: true,
+          path: def?.abilityPath || '',
+          options: [
+            { value: 'str', label: 'STR' },
+            { value: 'dex', label: 'DEX' },
+            { value: 'con', label: 'CON' },
+            { value: 'int', label: 'INT' },
+            { value: 'wis', label: 'WIS' },
+            { value: 'cha', label: 'CHA' }
+          ].map(o => ({ ...o, selected: o.value === (def?.abilityKey ?? '') }))
+        },
         { label: 'Class', value: Number(def?.classDef ?? 0), path: def?.classBonusPath || '' },
         { label: 'Misc', value: Number(def?.miscMod ?? 0), path: def?.miscPath || '' }
-      ].filter((part) => part.readonly || part.path),
+      ].filter((part) => part.readonly || part.path || part.isSelect),
       canEdit: def?.canEdit !== false
     };
   });
@@ -5427,8 +5443,15 @@ const forcePoints = [];
     }, { signal });
 
     // Bind drop event to authoritative _onDrop handler
-    // This routes drops through DropResolutionEngine for unified item/actor handling
+    // This routes drops through DropResolutionEngine for unified item/actor handling.
+    // File drops (e.g. portrait images) are allowed to propagate to child handlers
+    // (PortraitUploadController) — only Foundry document drops are intercepted here.
     html.addEventListener("drop", (e) => {
+      if (e.dataTransfer?.files?.length) {
+        // Let file drops reach portrait dropzone handlers; just block browser default.
+        e.preventDefault();
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation?.();
@@ -5731,10 +5754,15 @@ const forcePoints = [];
     });
 
     // Combat status controls: cover, prone, and defensive stance declarations.
-    html.querySelectorAll('[data-action="swse-combat-cover-option"]').forEach(button => {
-      button.addEventListener('click', async (event) => {
+    // Uses event delegation on the root so listeners survive panel re-renders.
+    // Active state is read from data-mode-active / data-prone-active attributes
+    // (baked in at render time) rather than CSS classes to avoid stale reads.
+    html.addEventListener('click', async (event) => {
+      // Cover option
+      const coverBtn = event.target.closest('[data-action="swse-combat-cover-option"]');
+      if (coverBtn && !coverBtn.disabled) {
         event.preventDefault();
-        const cover = button.dataset.cover || 'none';
+        const cover = coverBtn.dataset.cover || 'none';
         try {
           await CombatStatusResolver.setStatus(this.actor, { cover, source: 'combat-tab-cover' });
           await this.requestSurfaceRender({ reason: 'combat-status-cover' });
@@ -5742,41 +5770,47 @@ const forcePoints = [];
           console.warn('[SWSEV2CharacterSheet] Failed to set combat cover:', err);
           ui?.notifications?.error?.('Failed to update cover.');
         }
-      }, { signal });
-    });
+        return;
+      }
 
-    html.querySelectorAll('[data-action="swse-combat-defensive-mode"]').forEach(button => {
-      button.addEventListener('click', async (event) => {
+      // Defensive mode (Normal / Fight Defensively / Full Defense)
+      const defBtn = event.target.closest('[data-action="swse-combat-defensive-mode"]');
+      if (defBtn && !defBtn.disabled) {
         event.preventDefault();
-        const requestedMode = button.dataset.mode || 'normal';
-        const currentMode = CombatStatusResolver.getStatus(this.actor)?.defensiveMode ?? 'normal';
-        // Clicking the already-active mode deactivates back to normal
-        const defensiveMode = (requestedMode === currentMode && requestedMode !== 'normal')
-          ? 'normal'
-          : requestedMode;
+        const requestedMode = defBtn.dataset.mode || 'normal';
+        const isAlreadyActive = defBtn.dataset.modeActive === 'true';
+        // Normal always resets all conditions (override reset for Prone + modes).
+        // Any other active button clicked again toggles back to normal.
+        const isReset = requestedMode === 'normal' || isAlreadyActive;
+        const resolvedMode = isReset ? 'normal' : requestedMode;
+        const patch = isReset
+          ? { defensiveMode: 'normal', prone: false, fightDef: false, fullDef: false, resetConditions: true, source: 'combat-tab-defense-reset' }
+          : { defensiveMode: resolvedMode, fightDef: resolvedMode === 'fightingDefensively', fullDef: resolvedMode === 'fullDefense', source: 'combat-tab-defense' };
         try {
-          await CombatStatusResolver.setStatus(this.actor, { defensiveMode, source: 'combat-tab-defense' });
+          await CombatStatusResolver.setStatus(this.actor, patch);
           await this.requestSurfaceRender({ reason: 'combat-status-defense' });
         } catch (err) {
           console.warn('[SWSEV2CharacterSheet] Failed to set defensive mode:', err);
           ui?.notifications?.error?.('Failed to update defensive mode.');
         }
-      }, { signal });
-    });
+        return;
+      }
 
-    html.querySelectorAll('[data-action="swse-combat-toggle-prone"]').forEach(button => {
-      button.addEventListener('click', async (event) => {
+      // Prone toggle
+      const proneBtn = event.target.closest('[data-action="swse-combat-toggle-prone"]');
+      if (proneBtn && !proneBtn.disabled) {
         event.preventDefault();
+        const isAlreadyProne = proneBtn.dataset.proneActive === 'true';
         try {
-          const current = CombatStatusResolver.getStatus(this.actor);
-          await CombatStatusResolver.setStatus(this.actor, { prone: current.prone !== true, source: 'combat-tab-prone' });
+          await CombatStatusResolver.setStatus(this.actor, { prone: !isAlreadyProne, source: 'combat-tab-prone' });
           await this.requestSurfaceRender({ reason: 'combat-status-prone' });
         } catch (err) {
           console.warn('[SWSEV2CharacterSheet] Failed to toggle prone:', err);
           ui?.notifications?.error?.('Failed to update prone state.');
         }
-      }, { signal });
-    });
+        return;
+      }
+    }, { signal });
 
     // ═════════════════════════════════════════════════════════════════
     // EXISTING COMBAT UI HANDLERS
@@ -7287,7 +7321,28 @@ const forcePoints = [];
       }
     }
 
-    return await CombatExecutor.executeInitiative(this.actor, { mode: "roll", ...options });
+    let rollOptions = { ...options };
+    if (options?.showDialog !== false && options?.skipModifierDialog !== true) {
+      const modResult = await showRollModifiersDialog({
+        title: 'Roll Initiative',
+        rollType: 'initiative',
+        actor: this.actor,
+        showCover: false,
+        showConcealment: false,
+        showForcePoint: true,
+        sourceElement: options?.sourceElement ?? null,
+        companionSource: options?.companionSource ?? options?.sourceElement ?? null,
+        sheet: this
+      });
+      if (modResult === null) return null;
+      rollOptions = {
+        ...rollOptions,
+        ...modResult,
+        useForce: modResult.useForcePoint === true
+      };
+    }
+
+    return await CombatExecutor.executeInitiative(this.actor, { mode: "roll", ...rollOptions });
   }
 
   async _runCanonicalSkillCheck(skillKey, options = {}) {
@@ -8307,6 +8362,10 @@ const forcePoints = [];
 
   async _onDrop(event) {
     event.preventDefault();
+
+    // File drops (images, etc.) are handled by PortraitUploadController on the
+    // portrait dropzone. They should not reach here — but guard just in case.
+    if (event.dataTransfer?.files?.length) return;
 
     // Extract drag data
     const data = TextEditor.getDragEventData(event);

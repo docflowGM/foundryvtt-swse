@@ -2266,3 +2266,166 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* Lightsaber workbench compact pass ------------------------------------------------
+   Reduces dead space in the saber forge without changing forge state or rules math. */
+.swse-item-customization-workbench .swse-customization-workarea,
+.swse-customization-stage .swse-customization-workarea {
+  grid-template-columns: minmax(188px, 238px) minmax(0, 1fr) !important;
+}
+
+.swse-item-customization-workbench .workbench-inventory,
+.swse-customization-stage .workbench-inventory {
+  padding: 10px !important;
+}
+
+.swse-item-customization-workbench .workbench-inventory .panel-head,
+.swse-customization-stage .workbench-inventory .panel-head {
+  margin-bottom: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+.swse-item-customization-workbench .search-row,
+.swse-customization-stage .search-row {
+  margin-bottom: 8px !important;
+}
+
+.swse-item-customization-workbench .inventory-item,
+.swse-customization-stage .inventory-item {
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  padding: 7px 8px !important;
+  align-items: center !important;
+}
+
+.swse-item-customization-workbench .inventory-icon,
+.swse-customization-stage .inventory-icon {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.swse-item-customization-workbench .inventory-name,
+.swse-customization-stage .inventory-name {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.swse-item-customization-workbench .inventory-subtitle,
+.swse-customization-stage .inventory-subtitle {
+  font-size: 8px !important;
+  line-height: 1.3 !important;
+}
+
+.swse-item-customization-workbench .inventory-meta,
+.swse-customization-stage .inventory-meta {
+  display: none !important;
+}
+
+.swse-item-customization-workbench .item-hero,
+.swse-customization-stage .item-hero {
+  padding: 10px 12px !important;
+}
+
+.swse-item-customization-workbench .hero-grid,
+.swse-customization-stage .hero-grid {
+  grid-template-columns: 92px minmax(0, 1fr) !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+}
+
+.swse-item-customization-workbench .hero-art,
+.swse-customization-stage .hero-art {
+  min-height: 92px !important;
+}
+
+.swse-item-customization-workbench .hero-description,
+.swse-customization-stage .hero-description {
+  margin-bottom: 8px !important;
+  font-size: 10px !important;
+  line-height: 1.35 !important;
+}
+
+.swse-item-customization-workbench .hero-stats,
+.swse-customization-stage .hero-stats {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.swse-item-customization-workbench .hero-stat,
+.swse-customization-stage .hero-stat {
+  padding: 5px 6px !important;
+}
+
+.swse-item-customization-workbench .hero-stat .key,
+.swse-customization-stage .hero-stat .key {
+  font-size: 7px !important;
+  letter-spacing: 0.18em !important;
+}
+
+.swse-item-customization-workbench .hero-stat .value,
+.swse-customization-stage .hero-stat .value {
+  font-size: 18px !important;
+}
+
+.swse-item-customization-workbench .workbench-detail > .lightsaber-workspace--tabs,
+.swse-customization-stage .workbench-detail > .lightsaber-workspace--tabs {
+  grid-template-columns: minmax(0, 1fr) minmax(285px, 350px) !important;
+  gap: 10px !important;
+}
+
+.swse-item-customization-workbench .ls-tab-card-grid,
+.swse-customization-stage .ls-tab-card-grid {
+  gap: 6px !important;
+}
+
+.swse-item-customization-workbench .ls-tab-card-grid .config-card,
+.swse-customization-stage .ls-tab-card-grid .config-card {
+  min-height: 54px !important;
+  padding: 8px !important;
+}
+
+.swse-item-customization-workbench .ls-tab-card-grid .card-tags,
+.swse-customization-stage .ls-tab-card-grid .card-tags {
+  margin-top: 4px !important;
+}
+
+.swse-item-customization-workbench .ls-eligibility-banner.ineligible,
+.swse-customization-stage .ls-eligibility-banner.ineligible,
+.swse-item-customization-workbench .ls-locked-chassis-card,
+.swse-customization-stage .ls-locked-chassis-card {
+  display: none !important;
+}
+
+.swse-item-customization-workbench .lightsaber-workspace--tabs .ls-blade-render,
+.swse-customization-stage .lightsaber-workspace--tabs .ls-blade-render {
+  min-height: 104px !important;
+  height: 104px !important;
+}
+
+.swse-item-customization-workbench .ls-color-cta--readonly,
+.swse-customization-stage .ls-color-cta--readonly {
+  min-height: 0 !important;
+  padding: 6px 8px !important;
+}
+
+.swse-item-customization-workbench .ls-color-cta--readonly small,
+.swse-customization-stage .ls-color-cta--readonly small {
+  font-size: 7px !important;
+  letter-spacing: 0.1em !important;
+}
+
+.swse-item-customization-workbench .ls-build-summary,
+.swse-customization-stage .ls-build-summary {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-item-customization-workbench .swse-customization-workarea,
+  .swse-customization-stage .swse-customization-workarea {
+    grid-template-columns: 1fr !important;
+  }
+}

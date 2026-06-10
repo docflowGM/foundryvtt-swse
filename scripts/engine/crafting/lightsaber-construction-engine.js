@@ -121,10 +121,20 @@ export class LightsaberConstructionEngine {
       getDocs('foundryvtt-swse.lightsaber-accessories')
     ]);
 
+    const dedupeByName = (arr) => {
+      const seen = new Set();
+      return arr.filter(i => {
+        const key = (i.name ?? '').toLowerCase().trim();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    };
+
     this._catalogCache = {
-      chassis: chassis.filter(i => this.isLightsaberItem(i) && i.system?.constructible === true).map(i => this.#summarizeOption(i)),
-      crystals: this.#withDefaultKyberCrystal(crystals),
-      accessories: accessories.filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'accessory').map(i => this.#summarizeOption(i))
+      chassis: dedupeByName(chassis.filter(i => this.isLightsaberItem(i) && i.system?.constructible === true)).map(i => this.#summarizeOption(i)),
+      crystals: this.#withDefaultKyberCrystal(dedupeByName(crystals)),
+      accessories: dedupeByName(accessories.filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'accessory')).map(i => this.#summarizeOption(i))
     };
     return this._catalogCache;
   }

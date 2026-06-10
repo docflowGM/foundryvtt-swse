@@ -12,6 +12,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { damageContextForReaction, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 // ============================================
@@ -395,7 +396,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   const atkBonus = computeAttackBonus(actor, weapon, null, rollOptions) + getFightingDefensivelyAttackPenalty(actor, rollOptions) + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
 
   const rollFormula = `1d20 + ${atkBonus}`;
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
+  const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
 
   const targetContextOptions = optionModifiers.targetDefenseType && !rollOptions.targetContext
     ? { ...rollOptions, targetContext: { defenseType: optionModifiers.targetDefenseType } }
@@ -561,7 +562,7 @@ export async function rollDamage(actor, weapon, options = {}) {
   const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
   const formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
+  const roll = await RollEngine.safeRoll(formula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage', context: { weaponId: weapon?.id ?? null } });
 
   await SWSEChat.postRoll({
     roll,
@@ -640,8 +641,8 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
   const dmgFormula = `${dmgBase}${dmgExtraDice} + ${dmgBonus}`;
 
-  const attackRoll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
-  const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(dmgFormula);
+  const attackRoll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
+  const damageRoll = await RollEngine.safeRoll(dmgFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage' });
 
   const atkTotal = attackRoll?.total;
   const dmgTotal = damageRoll?.total;

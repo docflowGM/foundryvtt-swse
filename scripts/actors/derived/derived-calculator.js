@@ -157,16 +157,24 @@ export class DerivedCalculator {
       // Derived computes totals and modifiers, written to system.derived.attributes.<key>
       updates['system.derived.attributes'] = {};
       const attributes = actor.system.attributes || actor.system.abilities || {};
+      const coerceAbilityNumber = (value, fallback = 0) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+      };
       for (const [key, ability] of Object.entries(attributes)) {
-        const total = (ability.base || 10) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0);
+        const base = coerceAbilityNumber(ability.base, 10);
+        const racial = coerceAbilityNumber(ability.racial ?? ability.species, 0);
+        const enhancement = coerceAbilityNumber(ability.enhancement ?? ability.misc, 0);
+        const temp = coerceAbilityNumber(ability.temp, 0);
+        const total = base + racial + enhancement + temp;
         const mod = Math.floor((total - 10) / 2);
         updates['system.derived.attributes'][key] = {
-          base: ability.base || 10,
-          racial: ability.racial || 0,
-          enhancement: ability.enhancement || 0,
-          temp: ability.temp || 0,
-          total: total,
-          mod: mod
+          base,
+          racial,
+          enhancement,
+          temp,
+          total,
+          mod
         };
       }
 

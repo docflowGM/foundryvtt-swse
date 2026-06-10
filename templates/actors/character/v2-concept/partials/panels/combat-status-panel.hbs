@@ -35,17 +35,28 @@
       </div>
       <div class="swse-concept-condition-button-grid">
         <button type="button"
+                class="swse-concept-condition-button {{#if combatStatus.defensiveNormalMode.active}}is-active{{/if}}"
+                data-action="swse-combat-defensive-mode"
+                data-mode="normal"
+                data-mode-active="{{combatStatus.defensiveNormalMode.active}}"
+                {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+          <strong>Normal</strong>
+          <small>Clear prone and defensive stances</small>
+        </button>
+        <button type="button"
                 class="swse-concept-condition-button {{#if combatStatus.prone}}is-active{{/if}}"
                 data-action="swse-combat-toggle-prone"
+                data-prone-active="{{combatStatus.prone}}"
                 {{#unless combatStatus.canEdit}}disabled{{/unless}}>
           <strong>Prone</strong>
           <small>+5 vs ranged · −5 vs melee</small>
         </button>
-        {{#each combatStatus.defensiveModes as |mode|}}
+        {{#each combatStatus.defensiveStanceModes as |mode|}}
           <button type="button"
                   class="swse-concept-condition-button {{#if mode.active}}is-active{{/if}}"
                   data-action="swse-combat-defensive-mode"
                   data-mode="{{mode.value}}"
+                  data-mode-active="{{mode.active}}"
                   {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
             <strong>{{mode.label}}</strong>
             <small>{{mode.detail}}</small>

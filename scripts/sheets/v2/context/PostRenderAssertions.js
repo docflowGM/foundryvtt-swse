@@ -149,6 +149,11 @@ export class PostRenderAssertions {
     // spam false positives or mask real errors during gear-tab hydration tests.
     const root = html?.querySelector?.(rootSelector);
     if (!root) {
+      const isConceptSheet = !!html?.querySelector?.('.swse-concept-body, .swse-concept-main, [data-concept-source="v2-concept"]');
+      if (isConceptSheet && ['healthPanel', 'defensePanel'].includes(panelKey)) {
+        this._debug(`${panelKey} legacy root (${rootSelector}) not present in concept sheet surface; skipped.`);
+        return;
+      }
       const activeTab = html?.querySelector?.('.tab.active[data-tab]');
       const activeTabId = activeTab?.dataset?.tab ?? null;
       const activeConceptGear = html?.querySelector?.('.tab.active[data-tab="gear"] .swse-concept-dashboard, .tab.active[data-tab="gear"] .swse-concept-panel--ledger');

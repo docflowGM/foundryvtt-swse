@@ -36,6 +36,8 @@ import { initSidebarIconDiagnostics, dumpSidebarIconState, watchSidebarIconMutat
 import { FeatRegistry } from "./scripts/registries/feat-registry.js";
 import { FeatEffectRegistry } from "./scripts/engine/features/feat-effect-registry.js";
 import { FeatEffectApplier, initializeFeatEffectsHooks } from "./scripts/engine/features/feat-effect-applier.js";
+import { FeatPackSeeder } from "./scripts/registries/feat-pack-seeder.js";
+import { RollEngine } from "./scripts/engine/roll-engine.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -52,6 +54,8 @@ Hooks.once("init", async () => {
   globalThis.SWSE ??= {};
   globalThis.SWSE.debug ??= {};
   globalThis.SWSE.debug.defenses = (actor) => DefenseCalculator.debugFor(actor);
+  globalThis.SWSE.debug.featPacks = (options = {}) => FeatRegistry.diagnosePackRegistration({ reason: 'manual SWSE.debug.featPacks()', ...options });
+  globalThis.SWSE.debug.seedFeatsPack = (options = {}) => FeatPackSeeder.seedIfEmpty({ reason: 'manual SWSE.debug.seedFeatsPack()', ...options });
 
   // Foundry v13+ namespaced references
   const { Actors, Items } = foundry.documents.collections;
@@ -65,12 +69,14 @@ Hooks.once("init", async () => {
     data: SWSEData,
     SWSE: SWSE,
     ActorEngine,
+    RollEngine,
     EntityCreateBrowser,
     openEntityCreateBrowser
   };
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.ActorEngine = ActorEngine;
+  globalThis.SWSE.RollEngine = RollEngine;
   globalThis.SWSE.EntityCreateBrowser = EntityCreateBrowser;
   globalThis.SWSE.openEntityCreateBrowser = openEntityCreateBrowser;
 

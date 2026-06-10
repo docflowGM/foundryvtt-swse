@@ -18,16 +18,28 @@
 
           <div class="swse-concept-defense-formula-strip">
             {{#each row.parts as |part|}}
-              {{#if part.readonly}}
-                <span class="swse-concept-defense-formula-chip">
+              {{#if part.isSelect}}
+                <label class="swse-concept-defense-formula-input swse-concept-defense-formula-input--select">
                   <small>{{part.label}}</small>
+                  <select name="{{part.path}}" {{#unless ../canEdit}}disabled{{/unless}}>
+                    {{#each part.options as |opt|}}
+                      <option value="{{opt.value}}" {{#if opt.selected}}selected{{/if}}>{{opt.label}}</option>
+                    {{/each}}
+                  </select>
                   <strong>{{numberFormat part.value decimals=0 sign=true}}</strong>
-                </span>
-              {{else}}
-                <label class="swse-concept-defense-formula-input">
-                  <span>{{part.label}}</span>
-                  <input type="number" name="{{part.path}}" value="{{part.value}}" {{#unless ../canEdit}}disabled{{/unless}}>
                 </label>
+              {{else}}
+                {{#if part.readonly}}
+                  <span class="swse-concept-defense-formula-chip">
+                    <small>{{part.label}}</small>
+                    <strong>{{numberFormat part.value decimals=0 sign=true}}</strong>
+                  </span>
+                {{else}}
+                  <label class="swse-concept-defense-formula-input">
+                    <span>{{part.label}}</span>
+                    <input type="number" name="{{part.path}}" value="{{part.value}}" {{#unless ../canEdit}}disabled{{/unless}}>
+                  </label>
+                {{/if}}
               {{/if}}
             {{/each}}
           </div>

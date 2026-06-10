@@ -101,6 +101,104 @@ function ownedItemReferences(ownerActor) {
   return refs;
 }
 
+function normalizeReferenceId(value) {
+  return normalizeId(value).replace(/^\s+|\s+$/g, '');
+}
+
+function candidateActorIdsFromValue(value) {
+  const ids = new Set();
+  const add = (candidate) => {
+    const id = normalizeReferenceId(candidate);
+    if (id) ids.add(id);
+  };
+
+  if (!value) return ids;
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      if (typeof entry === 'object') {
+        add(entry?.id ?? entry?.actorId ?? entry?.ownerActorId ?? entry?.uuid);
+      } else {
+        add(entry);
+      }
+    }
+    return ids;
+  }
+
+  if (typeof value === 'object') {
+    add(value.id ?? value.actorId ?? value.ownerActorId ?? value.uuid);
+    for (const key of ['ownerActorIds', 'accessActorIds', 'recipientActorIds']) {
+      for (const entry of asArray(value[key])) add(entry);
+    }
+    return ids;
+  }
+
+  add(value);
+  return ids;
+}
+
+function vehicleOwnerMatchesActor(vehicle, ownerActor) {
+  if (!vehicle || vehicle.type !== 'vehicle' || !ownerActor?.id) return false;
+  const system = vehicle.system ?? {};
+  const flags = vehicle.flags ?? {};
+  const sysOwner = system.owner;
+  const assetOwnership = system.assetOwnership ?? {};
+  const storeAcquisition = system.storeAcquisition ?? {};
+  const grantFlag = flags['foundryvtt-swse']?.assetGrant ?? flags.swse?.assetGrant ?? {};
+  const storeFlag = flags['foundryvtt-swse']?.storeAcquisition ?? flags.swse?.storeAcquisition ?? {};
+
+  const ids = new Set();
+  for (const value of [
+    system.ownedByActorId,
+    system.ownerActorId,
+    system.ownerId,
+    system.ownerUuid,
+    system.ownedBy,
+    storeAcquisition.ownerActorId,
+    assetOwnership.primaryOwnerActorId,
+    grantFlag.primaryOwnerActorId,
+    storeFlag.ownerActorId,
+    sysOwner
+  ]) {
+    for (const id of candidateActorIdsFromValue(value)) ids.add(id);
+  }
+
+  for (const id of asArray(assetOwnership.ownerActorIds)) ids.add(normalizeReferenceId(id));
+  for (const id of asArray(assetOwnership.accessActorIds)) ids.add(normalizeReferenceId(id));
+  for (const id of asArray(grantFlag.recipientActorIds)) ids.add(normalizeReferenceId(id));
+
+  ids.delete('');
+  if (ids.has(ownerActor.id)) return true;
+
+  const ownerName = String(ownerActor.name || '').trim().toLowerCase();
+  const names = [
+    system.ownedByActorName,
+    system.ownerActorName,
+    system.ownerName,
+    typeof sysOwner === 'string' ? sysOwner : sysOwner?.name,
+    assetOwnership.primaryOwnerActorName,
+    storeAcquisition.ownerActorName,
+    storeFlag.ownerActorName
+  ].map(value => String(value || '').trim().toLowerCase()).filter(Boolean);
+  return !!ownerName && names.includes(ownerName);
+}
+
+function ownedVehicleReferencesFromActorOwnership(ownerActor) {
+  if (!ownerActor?.id) return [];
+  return asArray(game?.actors?.contents ?? game?.actors ?? [])
+    .filter(actor => vehicleOwnerMatchesActor(actor, ownerActor))
+    .map(actor => ({
+      id: actor.id,
+      actorId: actor.id,
+      uuid: actor.uuid || `Actor.${actor.id}`,
+      name: actor.name,
+      img: actor.img,
+      type: 'vehicle',
+      source: 'vehicle-owner-link',
+      role: 'vehicle',
+      ownerActorId: ownerActor.id
+    }));
+}
+
 function followerSlotReferences(ownerActor) {
   const refs = [];
   for (const slot of asArray(ownerActor?.getFlag?.('foundryvtt-swse', 'followerSlots'))) {
@@ -159,7 +257,8 @@ function collectOwnedEntries(ownerActor, mode) {
     ...asArray(system.relationships),
     ...asArray(ownerActor?.getFlag?.('foundryvtt-swse', 'followers')),
     ...followerSlotReferences(ownerActor),
-    ...ownedItemReferences(ownerActor)
+    ...ownedItemReferences(ownerActor),
+    ...ownedVehicleReferencesFromActorOwnership(ownerActor)
   ];
 
   const seen = new Set();
