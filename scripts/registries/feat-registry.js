@@ -98,20 +98,32 @@ export class FeatRegistry {
             return;
         }
 
-        // No client-side fallback: Foundry forbids fetching pack DB files from
-        // browser JS (HTTP 403), so the only supported source is the registered
-        // LevelDB compendium resolved above. If we reach here the pack store is
-        // missing/empty and must be repaired on disk (rebuild packs/feats), not
-        // worked around at runtime.
+        // P0 fail-safe: if Foundry does not register the feats compendium, do not
+        // let chargen/level-up lose the feat catalog. The served JSON catalog is
+        // the same sanitized source used by the compendium seeder, so it is a
+        // safe read-only enumeration fallback. This avoids the previous hard
+        // failure where a manifest/cache/pack-path seam produced 0 feats.
+        const fallbackDocs = await this._loadServedCatalogFallback();
+        if (fallbackDocs.length) {
+            this._sourcePackKey = 'data/feat-catalog.json';
+            this._indexDocuments(fallbackDocs, { fallback: true });
+            const systemId = game?.system?.id || 'foundryvtt-swse';
+            const tried = this._getPackCandidateKeys(systemId).join(', ');
+            SWSELogger.warn(
+                `[FeatRegistry] Feats compendium was not registered by Foundry (tried ${tried}); ` +
+                `loaded ${fallbackDocs.length} feats from data/feat-catalog.json fallback instead.`
+            );
+            return;
+        }
+
         const systemId = game?.system?.id || 'foundryvtt-swse';
         const tried = this._getPackCandidateKeys(systemId).join(', ');
         SWSELogger.warn(
-            `[FeatRegistry] Compendium pack not registered by Foundry. Tried pack keys: ${tried}. ` +
-            `Registry will be empty. This means Foundry did not register the manifest pack named "feats" for this served system. ` +
-            `Run SWSE.debug.featPacks() in the console for the full diagnostic snapshot.\n` +
+            `[FeatRegistry] Compendium pack not registered by Foundry and data/feat-catalog.json fallback failed. ` +
+            `Tried pack keys: ${tried}. Registry will be empty. Run SWSE.debug.featPacks() in the console for diagnostics.\n` +
             this._formatPackDiagnostics()
         );
-        await this.diagnosePackRegistration({ reason: 'FeatRegistry._loadFromCompendium missing pack', log: true });
+        await this.diagnosePackRegistration({ reason: 'FeatRegistry._loadFromCompendium missing pack and fallback failed', log: true });
     }
 
     static async _loadDocumentsFromPack(pack) {

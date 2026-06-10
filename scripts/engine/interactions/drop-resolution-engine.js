@@ -322,24 +322,36 @@ function handleClassFeature(actor, item) {
   return null;
 }
 
+function _displayName(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value.trim();
+  return String(value.name ?? value.label ?? value.id ?? '').trim();
+}
+
+function _normalizeKey(value) {
+  return _displayName(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 function handleLanguage(actor, item) {
-  const langName = item.name ?? '';
+  const langName = item.name ?? item.system?.name ?? item.system?.label ?? '';
   if (!langName) return null;
 
-  // Deduplicate: skip if the actor already knows this language
-  const existing = actor.system?.languages ?? [];
-  const alreadyKnown = existing.some(l =>
-    (typeof l === 'string' ? l : l?.name ?? '')
-      .toLowerCase() === langName.toLowerCase()
-  );
+  // Known languages live on actor.system.languages. Dropping a language should
+  // update that known-language list, not create an inert inventory item.
+  const existing = Array.isArray(actor.system?.languages) ? actor.system.languages : [];
+  const alreadyKnown = existing.some(l => _normalizeKey(l) === _normalizeKey(langName));
   if (alreadyKnown) {
     console.debug(`Drop skipped: language "${langName}" already known`);
     return null;
   }
 
   return {
-    mutationPlan: _createItemMutation(item),
-    uiTargetTab: 'skills'
+    mutationPlan: {
+      update: {
+        'system.languages': [...existing.map(_displayName).filter(Boolean), langName]
+      }
+    },
+    uiTargetTab: 'overview'
   };
 }
 
@@ -374,6 +386,8 @@ function handleSpecies(actor, item) {
     mutationPlan: {
       update: {
         'system.race': speciesName,
+        'system.species': speciesName,
+        'system.speciesCustomName': '',
         'flags.foundryvtt-swse.species.id': item.id ?? item._id ?? null,
         'flags.foundryvtt-swse.species.name': speciesName,
         'flags.foundryvtt-swse.species.img': item.img ?? null,
@@ -390,39 +404,69 @@ function handleSpecies(actor, item) {
  * - Increments system.level and updates system.progression.classLevels.
  */
 function handleClass(actor, item) {
-  const className = item.name ?? item.system?.class_name ?? '';
-  const classId = item.system?.classId ?? item.id ?? item._id ?? '';
+  const className = item.name ?? item.system?.class_name ?? item.system?.name ?? '';
+  const classKey = _normalizeKey(className);
+  const classId = _normalizeKey(item.system?.classId ?? item.system?.id ?? className) || classKey;
   if (!className) {
     console.warn('Drop rejected: class item has no name');
     return null;
   }
 
-  const currentLevel = Number(actor.system?.level ?? 1) || 1;
-  const newLevel = currentLevel + 1;
-
-  // Find existing class item on the actor
-  const existingClassItem = actor.items.find(i =>
-    i.type === 'class' && (
-      i.system?.classId === classId ||
-      i.name === className
-    )
-  );
-
-  const existingClassLevel = Number(existingClassItem?.system?.level ?? 0) || 0;
-  const newClassLevel = existingClassLevel + 1;
-
-  // Build updated classLevels array
   const existingClassLevels = Array.isArray(actor.system?.progression?.classLevels)
     ? actor.system.progression.classLevels
     : [];
+  const matchingProgressionEntries = existingClassLevels.filter(entry =>
+    _normalizeKey(entry?.class) === classKey || _normalizeKey(entry?.classId) === classId
+  );
+  const existingProgressionEntry = matchingProgressionEntries[0] ?? null;
+
+  const currentLevel = Math.max(
+    Number(actor.system?.level ?? 0) || 0,
+    existingClassLevels.reduce((sum, entry) => sum + (Number(entry?.level ?? 0) || 0), 0),
+    1
+  );
+  const newLevel = currentLevel + 1;
+
+  // Find existing class item on the actor by stable semantic identity. Do not
+  // key primarily on dropped compendium document IDs; they differ from owned IDs
+  // and can create duplicate "Jedi 3 / Jedi 4" style tracks.
+  const existingClassItem = actor.items.find(i =>
+    i.type === 'class' && (
+      _normalizeKey(i.system?.classId) === classId ||
+      _normalizeKey(i.name) === classKey
+    )
+  );
+
+  const existingClassLevel = Math.max(
+    Number(existingClassItem?.system?.level ?? 0) || 0,
+    ...matchingProgressionEntries.map(entry => Number(entry?.level ?? 0) || 0),
+    0
+  );
+  const newClassLevel = existingClassLevel + 1;
+
   const updatedClassLevels = (() => {
-    const byId = new Map(existingClassLevels.map(e => [e.classId ?? e.class, e]));
-    byId.set(classId || className, {
-      class: className,
-      classId: classId || className,
+    const replacement = {
+      ...(existingProgressionEntry ?? {}),
+      class: existingProgressionEntry?.class || className,
+      classId: existingProgressionEntry?.classId || classId,
       level: newClassLevel
-    });
-    return Array.from(byId.values());
+    };
+    const rows = [];
+    let inserted = false;
+    for (const entry of existingClassLevels) {
+      const matches = _normalizeKey(entry?.class) === classKey || _normalizeKey(entry?.classId) === classId;
+      if (!matches) {
+        rows.push(entry);
+        continue;
+      }
+      // Collapse duplicate rows for the same class into one canonical row.
+      if (!inserted) {
+        rows.push(replacement);
+        inserted = true;
+      }
+    }
+    if (!inserted) rows.push(replacement);
+    return rows;
   })();
 
   const mutationPlan = {
@@ -431,7 +475,7 @@ function handleClass(actor, item) {
       'system.progression.classLevels': updatedClassLevels,
       'system.progression.lastLeveledClass': {
         characterLevel: newLevel,
-        classId: classId || className,
+        classId,
         className,
         classLevel: newClassLevel,
         timestamp: new Date().toISOString()
@@ -442,17 +486,21 @@ function handleClass(actor, item) {
   if (existingClassItem) {
     mutationPlan.updateEmbedded = [{
       _id: existingClassItem.id,
-      update: { 'system.level': newClassLevel }
+      update: {
+        'system.level': newClassLevel,
+        'system.classId': existingClassItem.system?.classId || classId
+      }
     }];
   } else {
+    const source = item.toObject?.() ?? item;
     mutationPlan.createEmbedded = [{
       type: 'Item',
       data: {
-        ...item.toObject(),
+        ...source,
         system: {
-          ...(item.toObject?.()?.system ?? {}),
+          ...(source.system ?? {}),
           level: 1,
-          classId: classId || className
+          classId
         }
       }
     }];

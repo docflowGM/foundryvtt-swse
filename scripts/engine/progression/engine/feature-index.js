@@ -128,8 +128,21 @@ export const FeatureIndex = {
     async _loadPack(packName, map) {
         const pack = this._resolvePack(packName);
         if (!pack) {
+            if (packName === 'feats') {
+                const docs = await this._loadFeatCatalogFallback();
+                for (const doc of docs) {
+                    if (doc.name) {
+                        map.set(doc.name.toLowerCase(), doc);
+                    }
+                }
+                if (docs.length) {
+                    SWSELogger.warn(`FeatureIndex: Missing feats pack; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
+                    return;
+                }
+            }
+
             const extra = packName === 'feats'
-                ? '; run SWSE.debug.featPacks() for manifest/registration diagnostics'
+                ? '; data/feat-catalog.json fallback also failed; run SWSE.debug.featPacks() for manifest/registration diagnostics'
                 : '';
             SWSELogger.warn(`FeatureIndex: Missing pack "${packName}" (tried ${game?.system?.id ?? 'foundryvtt-swse'}.${packName} and fallbacks)${extra}`);
             return;

@@ -18,6 +18,7 @@ import { GrappleLegalityEngine } from '/systems/foundryvtt-swse/scripts/engine/c
 import { CombatStatusResolver } from '/systems/foundryvtt-swse/scripts/combat/combat-status.js';
 import { DamageSystem } from '/systems/foundryvtt-swse/scripts/combat/damage-system.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { getEffectiveHalfLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 
 function swseNormalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -653,11 +654,12 @@ export class SWSEGrappling {
     const dex = Number(SchemaAdapters.getAbilityMod(actor, 'dex') ?? 0) || 0;
     const ability = context.useDex === true ? dex : Math.max(str, dex);
     const sizeMod = this._sizeMod(actor.system?.size ?? actor.system?.traits?.size ?? actor.system?.droidSize);
+    const halfLevel = Number(getEffectiveHalfLevel(actor) ?? 0) || 0;
 
     const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
     const speciesGrapple = Number(speciesCombat.grapple ?? 0) || 0;
 
-    let bonus = bab + ability + sizeMod + speciesGrapple;
+    let bonus = bab + ability + halfLevel + sizeMod + speciesGrapple;
     bonus += swseTalentGrappleBonus(actor, context.mode);
 
     if (context.mode === 'resistGrapple') {

@@ -178,7 +178,7 @@ export class SWSEInitiative {
    * @returns {number}
    */
   static _getInitMod(combatant) {
-    return combatant.actor?.system?.skills?.initiative?.total ?? 0;
+    return getActorInitiativeSkillTotal(combatant.actor);
   }
 
   /* ------------------------------------------------------------------ */
@@ -197,7 +197,14 @@ export class SWSEInitiative {
   static async rollInitiative(actor, options = {}) {
     if (!actor) return { success: false, error: 'No actor provided' };
 
+    const checkMode = String(options.checkMode ?? options.mode ?? 'roll').toLowerCase();
+    if (checkMode === 'take20') {
+      ui?.notifications?.warn?.('Take 20 is not allowed on Initiative rolls.');
+      return { success: false, error: 'Take 20 is not allowed on Initiative rolls.' };
+    }
+
     const initiativeBonus = getInitiativeFormulaBonus(actor, options);
+    const isTake10 = checkMode === 'take10';
 
     // === UNIFIED ROLL EXECUTION via RollCore ===
     // Initiative is a SWSE skill. Use the already-derived Initiative skill total
@@ -209,13 +216,16 @@ export class SWSEInitiative {
       baseBonus: initiativeBonus,
       rollOptions: {
         baseDice: '1d20',
-        useForce: options.useForce || options.useForcePoint || false
+        useForce: !isTake10 && (options.useForce || options.useForcePoint || false),
+        isTakeX: isTake10,
+        takeXValue: 10
       },
       rollData: actor?.getRollData?.() ?? {},
       context: {
         ...(options.context ?? {}),
         type: 'initiative',
         skillKey: 'initiative',
+        checkMode: isTake10 ? 'take10' : 'roll',
         customModifier: numeric(options.customModifier, 0),
         situationalBonus: numeric(options.situationalBonus, 0),
         rollNote: options.rollNote ?? ''
@@ -240,18 +250,24 @@ export class SWSEInitiative {
       }
     }
 
+    let chatRoll = rollResult.roll;
+    if (!chatRoll && rollResult.isTakeX) {
+      chatRoll = await new Roll(rollResult.formula).evaluate({ async: true });
+    }
+
     let message = null;
-    if (rollResult.roll) {
+    if (chatRoll) {
       message = await SWSEChat.postRoll({
-        roll: rollResult.roll,
+        roll: chatRoll,
         actor,
-        flavor: `${actor.name} Reacts!`,
+        flavor: isTake10 ? `${actor.name} Takes 10 on Initiative!` : `${actor.name} Reacts!`,
         rollMode: options.rollMode || null,
-        flags: { swse: { rollType: 'initiative' }, core: { initiativeRoll: true } },
+        flags: { swse: { rollType: 'initiative', checkMode: isTake10 ? 'take10' : 'roll' }, core: { initiativeRoll: true } },
         context: {
           type: 'initiative',
-          label: 'Initiative',
+          label: isTake10 ? 'Initiative — Take 10' : 'Initiative',
           skillKey: 'initiative',
+          checkMode: isTake10 ? 'take10' : 'roll',
           baseBonus: initiativeBonus,
           forceBonus,
           usedForce,
@@ -270,11 +286,13 @@ export class SWSEInitiative {
     await this._applyInitiativeToCombat(actor, total);
 
     return {
-      roll: rollResult.roll,
+      success: true,
+      roll: chatRoll,
       total,
       usedForce,
       forceBonus,
       baseMod: initiativeBonus,
+      checkMode: isTake10 ? 'take10' : 'roll',
       message,
       chatPosted: Boolean(message)
     };
@@ -284,45 +302,8 @@ export class SWSEInitiative {
    * Take 10 on initiative: result = 10 + modifier via RollCore
    * @param {Actor} actor
    */
-  static async take10Initiative(actor) {
-    if (!actor) return;
-
-    // === USE RollCore WITH Take X OPTION ===
-    const initiativeBonus = getActorInitiativeSkillTotal(actor);
-    const rollResult = await RollCore.execute({
-      actor,
-      domain: 'initiative',
-      baseBonus: initiativeBonus,
-      rollOptions: {
-        baseDice: '1d20',
-        isTakeX: true,
-        takeXValue: 10
-      },
-      rollData: actor?.getRollData?.() ?? {},
-      context: { type: 'initiative', skillKey: 'initiative' }
-    });
-
-    if (!rollResult.success) {
-      swseLogger.error('[SWSEInitiative] Take 10 failed:', rollResult.error);
-      return;
-    }
-
-    const result = rollResult.finalTotal;
-
-    // === ANNOUNCE IN CHAT ===
-    const content = `<div class="swse-initiative-take10">
-      <strong>${actor.name}</strong> takes 10 on Initiative: <strong>${result}</strong>
-      <span style="opacity:0.7;">(10 + ${rollResult.modifierTotal})</span>
-    </div>`;
-
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content,
-      flavor: 'Initiative — Take 10'
-    });
-
-    // === APPLY TO COMBAT TRACKER ===
-    await this._applyInitiativeToCombat(actor, result);
+  static async take10Initiative(actor, options = {}) {
+    return this.rollInitiative(actor, { ...options, checkMode: 'take10', useForce: false, useForcePoint: false });
   }
 
   /**

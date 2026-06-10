@@ -223,7 +223,7 @@
       "label": "Feats",
       "type": "Item",
       "system": "foundryvtt-swse",
-      "path": "packs/feat-catalog.db"
+      "path": "packs/feats.db"
     },
     {
       "name": "forcepowers",

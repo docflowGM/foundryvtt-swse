@@ -495,8 +495,10 @@ export function activateForceUI(sheet, html, { signal } = {}) {
     select.addEventListener('change', async (event) => {
       const value = event.target.value;
       try {
-        await sheet.actor.update({ 'system.forceTradition': value });
-        sheet.render?.(true);
+        await mutateAndRepaint(sheet, () => ActorEngine.updateActor(sheet.actor, { 'system.forceTradition': value }), {
+          reason: 'force-tradition-change',
+          surfaceId: 'force'
+        });
       } catch (err) {
         ui?.notifications?.error?.(`Failed to update Force Tradition: ${err.message}`);
       }

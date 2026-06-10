@@ -3071,7 +3071,16 @@ export class SWSEV2CharacterSheet extends
       0
     ) || 0;
 
-    const grappleBonus = Number(derived.grappleBonus ?? 0) || 0;
+    const grappleStrMod = Number(derived?.attributes?.str?.mod ?? system?.attributes?.str?.mod ?? system?.abilities?.str?.mod ?? 0) || 0;
+    const grappleHalfLevel = Number(derived?.identity?.halfLevel ?? Math.floor((Number(system?.level ?? derived?.identity?.level ?? 1) || 1) / 2)) || 0;
+    const grappleSizeTable = { fine: -16, diminutive: -12, tiny: -8, small: -4, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
+    const grappleSizeMod = grappleSizeTable[String(system?.size ?? system?.traits?.size ?? system?.droidSize ?? 'medium').toLowerCase()] ?? 0;
+    const grappleSpeciesMod = Number(system?.speciesCombatBonuses?.grapple ?? system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
+    const grappleFallback = bab + grappleStrMod + grappleHalfLevel + grappleSizeMod + grappleSpeciesMod;
+    const grappleCandidate = Number(derived.grappleBonus);
+    const grappleBonus = Number.isFinite(grappleCandidate) && (grappleCandidate !== 0 || grappleFallback === 0)
+      ? grappleCandidate
+      : grappleFallback;
 const forcePoints = [];
     for (let i = 1; i <= fpMax; i++) {
       forcePoints.push({
@@ -6408,11 +6417,11 @@ const forcePoints = [];
       // Delete all embedded items
       const itemIds = actor.items.map(i => i.id);
       if (itemIds.length) {
-        await actor.deleteEmbeddedDocuments('Item', itemIds);
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', itemIds);
       }
 
       // Reset system fields to blank defaults
-      await actor.update({
+      await mutateAndRepaint(this, () => ActorEngine.updateActor(actor, {
         'system.level': 1,
         'system.race': '',
         'system.class': '',
@@ -6430,7 +6439,7 @@ const forcePoints = [];
         'system.languages': [],
         'system.languageIds': [],
         'flags.foundryvtt-swse': {}
-      }, { source: 'reset-character' });
+      }, { source: 'reset-character' }), { reason: 'reset-character-to-blank', surfaceId: this._shellSurface });
 
       // Return to chargen surface
       await this.setSurface('chargen', { source: 'reset', skipIntro: false });

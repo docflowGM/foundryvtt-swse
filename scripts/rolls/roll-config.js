@@ -721,18 +721,26 @@ function getRollIcon(model) {
 }
 
 function getTake10State(model) {
-  const attackLike = model.rollType === 'attack' || model.rollType === 'damage' || model.rollType === 'initiative';
-  const forceLike = model.rollType === 'force' || model.rollType === 'force-power' || model.skillKey === 'useTheForce';
+  const rollType = String(model.rollType || '').toLowerCase();
+  const attackLike = rollType === 'attack' || rollType === 'damage';
+  const initiative = rollType === 'initiative';
+  const forceLike = rollType === 'force' || rollType === 'force-power' || model.skillKey === 'useTheForce';
   return {
-    available: !attackLike && !forceLike,
-    note: attackLike ? 'Unavailable for attack, damage, and initiative rolls.' : forceLike ? 'Usually unavailable for active Force power use in combat.' : 'Available when the character is not threatened or distracted.'
+    available: initiative ? true : (!attackLike && !forceLike),
+    note: initiative
+      ? 'Available for initiative checks. Take 20 is not available.'
+      : attackLike
+        ? 'Unavailable for attack and damage rolls.'
+        : forceLike
+          ? 'Usually unavailable for active Force power use in combat.'
+          : 'Available when the character is not threatened or distracted.'
   };
 }
 
 function buildCheckModeCards(model) {
   const base = Number(model.baseTotal ?? 0) || 0;
   const take10 = getTake10State(model);
-  const take20Available = take10.available && model.rollType !== 'ability';
+  const take20Available = take10.available && model.rollType !== 'ability' && model.rollType !== 'initiative';
   return `<section class="swse-roll-config-panel swse-roll-config-panel--checks">
     <h4>Check Mode</h4>
     <input type="hidden" name="checkMode" value="roll" data-rcd-check-mode />
@@ -1162,14 +1170,14 @@ export async function showRollModifiersDialog(options = {}) {
               <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
               <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
             </div>
-            <div class="swse-roll-config-subpanel">
+            ${rollType !== 'initiative' ? `<div class="swse-roll-config-subpanel">
               <h5>Quick Toggles</h5>
               <label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aiming</b><small>+2 attack when the action applies.</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="higherGround" /> <span><b>Higher Ground</b><small>+1 when applicable.</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank</b><small>+1 attack/damage in close range.</small></span></label>
-            </div>
+            </div>` : ''}
           </section>
         </main>
         ${buildRollPreviewRail(model)}

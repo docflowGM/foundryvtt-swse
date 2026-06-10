@@ -99,9 +99,11 @@ export class CombatExecutor {
    */
   static async executeInitiative(actor, options = {}) {
     try {
-      // Check Force Point
+      // Check Force Point. Take 10 initiative never spends a Force Point;
+      // SWSEInitiative also ignores Force Points for the Take 10 execution path.
+      const isTake10Initiative = String(options.checkMode ?? options.mode ?? '').toLowerCase() === 'take10';
       let usedForce = false;
-      if (options.useForce) {
+      if (!isTake10Initiative && options.useForce) {
         const fpValue = SchemaAdapters.getForcePoints(actor);
         if (fpValue <= 0) {
           throw new Error("No Force Points available");

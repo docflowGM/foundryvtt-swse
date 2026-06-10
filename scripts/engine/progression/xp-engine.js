@@ -116,12 +116,9 @@ export function computeXpDerived(actor, system) {
 
   const progressionLevel = getTotalLevel(actor);
 
-  if (progressionLevel > 0 && xpLevel !== progressionLevel) {
-    console.warn(
-      `SWSE XP | Level mismatch for "${actor.name}": ` +
-      `XP-derived level ${xpLevel} vs progression level ${progressionLevel}`
-    );
-  }
+  // XP and progression level can intentionally diverge when XP leveling is
+  // disabled, during chargen, or while beta actors are being edited manually.
+  // Keep derived XP data available without noisy console warnings.
 
   system.derived.xp = {
     total: totalXP,

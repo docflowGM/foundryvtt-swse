@@ -230,6 +230,9 @@ export class ShellMutationGuard {
     if (!isShellStack(stack)) return;
     if (isActorEngineStack(stack)) return;
 
+    const documentName = String(document?.documentName ?? document?.constructor?.documentName ?? document?.constructor?.name ?? '');
+    if (documentName === 'Token' || documentName === 'TokenDocument') return;
+
     const docName = document?.name ?? document?.constructor?.name ?? label;
     emitWarning(
       logger,

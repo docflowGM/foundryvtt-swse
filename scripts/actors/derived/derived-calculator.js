@@ -137,6 +137,7 @@ export class DerivedCalculator {
         adjustment: 0 // Adjustments are part of ActorEngine.recomputeHP, not derived
       };
       const bab = await BABCalculator.calculate(classLevels, { adjustment: babAdjustment });
+      const halfLevel = getEffectiveHalfLevel(actor);
       const defenses = await DefenseCalculator.calculate(actor, classLevels, { adjustments: defenseAdjustments });
 
       // Build update object (all writes go to system.derived.*)
@@ -225,10 +226,10 @@ export class DerivedCalculator {
       // Grapple Bonus Derived (BAB + STR + Size + Species bonuses)
       // ========================================
       const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
-      const sizeTable = { 'fine': -8, 'diminutive': -4, 'tiny': -2, 'small': -1, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
-      const sizeMod = sizeTable[String(actor.system?.size || 'medium').toLowerCase()] || 0;
-      const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
-      const grappleBonus = bab.total + strMod + sizeMod + speciesGrapple;
+      const sizeTable = { 'fine': -16, 'diminutive': -12, 'tiny': -8, 'small': -4, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
+      const sizeMod = sizeTable[String(actor.system?.size ?? actor.system?.traits?.size ?? actor.system?.droidSize ?? 'medium').toLowerCase()] || 0;
+      const speciesGrapple = Number(actor.system?.speciesCombatBonuses?.grapple ?? actor.system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
+      const grappleBonus = Number(bab || 0) + strMod + halfLevel + sizeMod + speciesGrapple;
       updates['system.derived.grappleBonus'] = grappleBonus;
 
       // Defenses
@@ -340,7 +341,6 @@ export class DerivedCalculator {
       // Half-level is derived from the level-split authority, not a persisted system field.
       // system.halfLevel can be absent/stale during Foundry prepareData/update cycles,
       // which caused trained skills to miss the +1 at level 2 and similar level-up flows.
-      const halfLevel = getEffectiveHalfLevel(actor);
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
       const hasForceIntuition = this._hasTalentNamed(actor, 'Force Intuition');

@@ -1,5 +1,45 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
+import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
+
+function numeric(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function getInitiativeSkillTotal(actor) {
+  const derivedSkills = actor?.system?.derived?.skills;
+  const fromList = Array.isArray(derivedSkills?.list)
+    ? derivedSkills.list.find(row => row?.key === 'initiative')
+    : null;
+  const candidates = [
+    derivedSkills?.initiative?.total,
+    fromList?.total,
+    actor?.system?.derived?.initiative?.total,
+    actor?.system?.derived?.initiative?.skillTotal,
+    actor?.system?.skills?.initiative?.total,
+    actor?.system?.skills?.initiative?.value
+  ];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n)) return n;
+  }
+
+  const skill = actor?.system?.skills?.initiative ?? {};
+  const abilityKey = skill.selectedAbility || skill.ability || 'dex';
+  const abilityMod = numeric(
+    actor?.system?.derived?.attributes?.[abilityKey]?.mod
+      ?? actor?.system?.attributes?.[abilityKey]?.mod
+      ?? actor?.system?.abilities?.[abilityKey]?.mod,
+    0
+  );
+  const halfLevel = numeric(actor?.system?.derived?.identity?.halfLevel, Math.floor(numeric(actor?.system?.level, 1) / 2));
+  return abilityMod
+    + halfLevel
+    + (skill.trained ? 5 : 0)
+    + (skill.focused ? 5 : 0)
+    + numeric(skill.miscMod, 0);
+}
 
 /**
  * SWSE Combat Document (v13+) — PHASE 1 CONSOLIDATED
@@ -24,7 +64,7 @@ export class SWSECombatDocument extends Combat {
     const actor = combatant.actor;
     if (!actor) {return '1d20';}
 
-    let initTotal = actor.system.skills?.initiative?.total ?? 0;
+    let initTotal = getInitiativeSkillTotal(actor);
 
     // Add vehicle size modifier if this is a vehicle
     if (actor.type === 'vehicle') {
@@ -74,8 +114,19 @@ export class SWSECombatDocument extends Combat {
    *   - Posts to chat
    *   - Handles Force Points
    */
-  async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
+  async rollInitiative(ids, options = {}) {
     ids = typeof ids === 'string' ? [ids] : ids;
+
+    const {
+      formula = null,
+      updateTurn = true,
+      messageOptions = {},
+      showDialog = true,
+      skipModifierDialog = false,
+      ...rollOptions
+    } = options ?? {};
+
+    let rolledAny = false;
 
     for (const id of ids) {
       const combatant = this.combatants.get(id);
@@ -84,11 +135,34 @@ export class SWSECombatDocument extends Combat {
       const actor = combatant.actor;
       if (!actor) {continue;}
 
+      let dialogOptions = {};
+      if (showDialog !== false && skipModifierDialog !== true) {
+        const modResult = await showRollModifiersDialog({
+          title: 'Roll Initiative',
+          rollType: 'initiative',
+          actor,
+          showCover: false,
+          showConcealment: false,
+          showForcePoint: true,
+          sourceElement: null,
+          companionSource: null,
+          showRollCompanion: true
+        });
+        if (modResult === null) continue;
+        dialogOptions = modResult;
+      }
+
       /* DELEGATE ALL INITIATIVE ORCHESTRATION TO COMBATENGINE */
-      await CombatEngine.rollInitiative(actor, { useForce: false });
+      const result = await CombatEngine.rollInitiative(actor, {
+        ...rollOptions,
+        ...dialogOptions,
+        useForce: dialogOptions.useForcePoint === true || rollOptions.useForce === true || rollOptions.useForcePoint === true,
+        showRollCompanion: true
+      });
+      rolledAny = rolledAny || result?.success !== false;
     }
 
-    if (updateTurn && this.round === 0) {
+    if (rolledAny && updateTurn && this.round === 0) {
       await this.startCombat();
     }
 

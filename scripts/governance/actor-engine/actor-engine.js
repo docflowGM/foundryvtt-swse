@@ -685,7 +685,7 @@ export const ActorEngine = {
             throw new Error(`[GUARD] actor is not an Actor instance: ${actor.constructor.name}`);
           }
           if (actor !== game.actors?.get?.(actor.id)) {
-            SWSELogger.warn(`[GUARD] actor reference diverged from world actor before atomic update`, {
+            SWSELogger.debug(`[GUARD] actor reference diverged from world actor before atomic update`, {
               actorId: actor.id,
               actorName: actor.name
             });

@@ -12,6 +12,8 @@ import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
 import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
 import { SWSEV2BaseActor } from "./scripts/actors/v2/base-actor.js";
+import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
+import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
@@ -38,6 +40,7 @@ import { FeatEffectRegistry } from "./scripts/engine/features/feat-effect-regist
 import { FeatEffectApplier, initializeFeatEffectsHooks } from "./scripts/engine/features/feat-effect-applier.js";
 import { FeatPackSeeder } from "./scripts/registries/feat-pack-seeder.js";
 import { RollEngine } from "./scripts/engine/roll-engine.js";
+import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -84,6 +87,9 @@ Hooks.once("init", async () => {
   // Document Classes
   // -------------------------------
   CONFIG.Actor.documentClass = SWSEV2BaseActor;
+  CONFIG.Combat.documentClass = SWSECombatDocument;
+  CONFIG.Combatant.documentClass = SWSECombatant;
+  registerTokenNameSyncHooks();
 
   // -------------------------------
   // Sheet Registration
