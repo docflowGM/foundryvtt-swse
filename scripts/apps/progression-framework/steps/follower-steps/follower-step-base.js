@@ -8,6 +8,7 @@
 
 import { ProgressionStepPlugin } from '../step-plugin-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 
 const TEMPLATE_ABILITY_OPTIONS = Object.freeze({
   aggressive: ['str', 'con'],
@@ -56,7 +57,73 @@ export class FollowerStepBase extends ProgressionStepPlugin {
       startingCredits: draft.startingCredits ?? persistentChoices.startingCredits ?? null,
       startingCreditsMode: draft.startingCreditsMode ?? persistentChoices.startingCreditsMode ?? null,
       startingCreditsFormula: draft.startingCreditsFormula ?? persistentChoices.startingCreditsFormula ?? null,
+      fixedFollowerProfile: draft.fixedFollowerProfile ?? persistentChoices.fixedFollowerProfile ?? null,
     };
+  }
+
+  getFollowerGrantConfig(shell) {
+    const ctx = shell?.progressionSession?.dependencyContext || {};
+    return getFollowerTalentConfig(ctx.slotTalentName, { treeId: ctx.slotTalentTreeId })
+      || getFollowerTalentConfig(ctx.slotTalentName)
+      || null;
+  }
+
+  getFixedFollowerProfile(shell) {
+    const cfg = this.getFollowerGrantConfig(shell);
+    return cfg?.fixedFollowerProfile
+      || shell?.progressionSession?.draftSelections?.fixedFollowerProfile
+      || shell?.progressionSession?.dependencyContext?.persistentChoices?.fixedFollowerProfile
+      || null;
+  }
+
+  hasFixedFollowerProfile(shell) {
+    return !!this.getFixedFollowerProfile(shell);
+  }
+
+  usesFixedFollowerAbilities(shell) {
+    const profile = this.getFixedFollowerProfile(shell);
+    return profile?.fixedAbilityScores === true || profile?.noTemplateAbilityBonus === true;
+  }
+
+  applyFixedFollowerProfileDefaults(shell) {
+    if (!shell?.progressionSession) return null;
+    const cfg = this.getFollowerGrantConfig(shell);
+    const profile = cfg?.fixedFollowerProfile;
+    if (!profile) return null;
+
+    const draft = shell.progressionSession.draftSelections = shell.progressionSession.draftSelections || {};
+    draft.fixedFollowerProfile = structuredClone(profile);
+    draft.followerKind = profile.followerKind || draft.followerKind || 'living';
+    draft.speciesName = profile.speciesName || draft.speciesName || null;
+    draft.speciesId = profile.speciesId || null;
+    draft.species = {
+      id: profile.id,
+      name: profile.speciesName,
+      speciesType: profile.speciesType,
+      size: profile.size,
+      speed: profile.speed,
+      movement: profile.movement
+    };
+    draft.speciesSelection = draft.species;
+    draft.droidConfig = null;
+    if (profile.noTemplateAbilityBonus || profile.fixedAbilityScores) draft.abilityChoice = null;
+    if (profile.noStartingCredits || cfg?.noStartingCredits) {
+      draft.startingCredits = 0;
+      draft.startingCreditsMode = 'none';
+      draft.startingCreditsFormula = null;
+    }
+    if (profile.skipBackground || cfg?.skipBackground) {
+      draft.backgroundChoice = null;
+      draft.backgroundSelection = null;
+      draft.background = null;
+    }
+    if (profile.skipLanguages || cfg?.skipLanguages) {
+      draft.languageChoices = [];
+      draft.followerLanguages = [];
+      draft.languages = [];
+    }
+    shell.progressionSession.lastModifiedAt = Date.now();
+    return profile;
   }
 
   _extractSkillChoices(skills) {

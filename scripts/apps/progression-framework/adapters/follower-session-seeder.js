@@ -11,9 +11,44 @@
 import { swseLogger } from '../../../utils/logger.js';
 import { getHeroicLevel } from '../../../actors/derived/level-split.js';
 import { computeFollowerAdvancementPlan } from './follower-advancer.js';
+import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 
 function _isFollowerSlot(slot) {
   return !slot?.dependentKind || slot.dependentKind === 'follower';
+}
+
+function _applyFollowerTalentDefaults(choices = {}, cfg = null) {
+  const next = { ...(choices || {}) };
+  const profile = cfg?.fixedFollowerProfile || null;
+  if (!profile) return next;
+
+  next.fixedFollowerProfile = structuredClone(profile);
+  next.followerKind = profile.followerKind || next.followerKind || 'living';
+  next.speciesName = profile.speciesName || next.speciesName || null;
+  next.speciesId = profile.speciesId || null;
+  next.speciesSelection = {
+    id: profile.id,
+    name: profile.speciesName,
+    speciesType: profile.speciesType,
+    size: profile.size,
+    speed: profile.speed,
+    movement: profile.movement
+  };
+  next.abilityChoice = profile.noTemplateAbilityBonus ? null : next.abilityChoice ?? null;
+  next.droidConfig = null;
+  if (profile.noStartingCredits || cfg?.noStartingCredits) {
+    next.startingCredits = 0;
+    next.startingCreditsMode = 'none';
+    next.startingCreditsFormula = null;
+  }
+  if (profile.skipBackground || cfg?.skipBackground) {
+    next.backgroundChoice = null;
+    next.backgroundSelection = null;
+  }
+  if (profile.skipLanguages || cfg?.skipLanguages) {
+    next.languageChoices = [];
+  }
+  return next;
 }
 
 /**
@@ -84,6 +119,12 @@ export async function seedFollowerSession(session, ownerActor, slotId = null, ex
     const currentFollowerLevel = existingFollower?.system?.level || 0;
     const advancementPlan = computeFollowerAdvancementPlan(currentFollowerLevel, ownerHeroicLevel);
 
+    const talentContext = { treeId: targetSlot.talentTreeId || null };
+    const talentConfig = getFollowerTalentConfig(targetSlot.talentName, talentContext) || getFollowerTalentConfig(targetSlot.talentName);
+    const existingPersistentChoices = existingFollower?.system?.progression?.followerChoices || {};
+    const persistentChoices = _applyFollowerTalentDefaults(existingPersistentChoices, talentConfig);
+    const profile = talentConfig?.fixedFollowerProfile || persistentChoices.fixedFollowerProfile || null;
+
     // Seed the dependency context
     session.dependencyContext = {
       ownerActorId: ownerActor.id,
@@ -91,10 +132,11 @@ export async function seedFollowerSession(session, ownerActor, slotId = null, ex
       slotId: targetSlot.id,
       slotTalentName: targetSlot.talentName,
       slotTalentItemId: targetSlot.talentItemId,
+      slotTalentTreeId: targetSlot.talentTreeId || null,
       templateChoices: targetSlot.templateChoices || [],
       templateType: existingFollower?.system?.progression?.followerTemplate || existingFollower?.flags?.swse?.follower?.templateType || null,
-      speciesName: existingFollower?.system?.race || null,
-      persistentChoices: existingFollower?.system?.progression?.followerChoices || {},
+      speciesName: profile?.speciesName || existingFollower?.system?.race || null,
+      persistentChoices,
       existingFollowerId: existingFollower?.id || null,
       isNewFollower: advancementPlan.isNewFollower,
       currentFollowerLevel,

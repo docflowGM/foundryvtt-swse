@@ -496,8 +496,7 @@ function parseNpcStatblockSkillLines(rawSkills = []) {
   const result = {};
   const rows = Array.isArray(rawSkills)
     ? rawSkills
-    : (typeof rawSkills === 'string' ? rawSkills.split(/[,;
-]+/) : []);
+    : (typeof rawSkills === 'string' ? rawSkills.split(/[,;\n]+/) : []);
   for (const row of rows) {
     const text = String(row ?? '').replace(/ /g, ' ').trim();
     if (!text) continue;
@@ -1940,6 +1939,21 @@ export class SWSEV2NpcSheet extends
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       root.classList.toggle('swse-tablet-expanded');
+    }, { signal });
+
+    root.querySelector('[data-action="add-npc-weapon"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      try {
+        const created = await this.actor.createEmbeddedDocuments('Item', [{
+          name: 'New Attack',
+          type: 'weapon',
+          system: {}
+        }]);
+        if (created?.[0]) created[0].sheet?.render(true);
+      } catch (err) {
+        console.error('Failed to create NPC weapon:', err);
+        ui?.notifications?.error?.(`Could not add attack: ${err.message}`);
+      }
     }, { signal });
   }
 

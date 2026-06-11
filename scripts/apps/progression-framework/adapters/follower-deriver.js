@@ -54,6 +54,48 @@ function normalizeAbilityMap(raw) {
   return out;
 }
 
+function getFixedFollowerProfile(persistentChoices = {}) {
+  const profile = persistentChoices?.fixedFollowerProfile || null;
+  return profile && typeof profile === 'object' ? profile : null;
+}
+
+function normalizeFixedAbilityScores(profile = null) {
+  const raw = profile?.abilityScores || null;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const out = {};
+  for (const key of ABILITY_KEYS) {
+    const value = Number(raw[key]);
+    if (!Number.isFinite(value)) return null;
+    out[key] = value;
+  }
+  return out;
+}
+
+function buildAbilitySetFromScores(scores) {
+  const abilities = {};
+  for (const key of ABILITY_KEYS) {
+    abilities[key] = { base: Number(scores[key] ?? 10), mod: 0 };
+  }
+  return recalcAbilityMods(abilities);
+}
+
+function applyProfileDefenseBonuses(defenses, profile = null) {
+  if (!profile) return;
+  applyDefenseBonus(defenses, profile.naturalArmorBonus, 'natural-armor');
+  applyDefenseBonus(defenses, profile.sizeDefensePenalty, 'size');
+  applyDefenseBonus(defenses, profile.defenseBonus, 'special-template');
+}
+
+function getProfileBab(profile = null, level = 1) {
+  if (!profile) return null;
+  const index = Math.min(Math.max(0, Number(level || 1) - 1), 19);
+  if (Array.isArray(profile.babProgression) && profile.babProgression[index] !== undefined) {
+    return Number(profile.babProgression[index] || 0);
+  }
+  if (profile.babProgressionMode === 'beast') return Number(level || 1);
+  return null;
+}
+
 function parseAbilityText(text) {
   const out = {};
   const source = String(text || '');
@@ -133,6 +175,15 @@ function extractSpeciesAbilityMods(persistentChoices = {}, speciesRecord = null)
 }
 
 function extractSpeciesMovement(persistentChoices = {}, speciesRecord = null) {
+  const profile = getFixedFollowerProfile(persistentChoices);
+  if (profile) {
+    return {
+      speed: profile.speed ?? null,
+      movement: profile.movement ?? (profile.speed ? { walk: Number(profile.speed) } : null),
+      size: profile.size ?? null
+    };
+  }
+
   const selection = persistentChoices.speciesSelection || {};
   const system = selection.speciesData?.system || selection.system || {};
   const pendingDoc = persistentChoices.pendingSpeciesContext?.identity?.doc || {};
@@ -182,6 +233,11 @@ async function buildBaseAbilities(templateType, template, persistentChoices = {}
     cha: { base: 10, mod: 0 }
   };
 
+  const fixedScores = normalizeFixedAbilityScores(getFixedFollowerProfile(persistentChoices));
+  if (fixedScores) {
+    return buildAbilitySetFromScores(fixedScores);
+  }
+
   if (isDroid) {
     const key = persistentChoices?.droidConfig?.abilityChoice;
     if (key && key !== 'con' && abilities[key]) abilities[key].base += 2;
@@ -230,6 +286,7 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
 
   const speciesRecord = await resolveSpeciesRecord(speciesName);
   const choices = { ...persistentChoices, speciesName, templateType, __templates: templates };
+  const fixedProfile = getFixedFollowerProfile(choices);
   const abilities = await buildBaseAbilities(templateType, template, choices, speciesRecord);
   const speciesProfile = extractSpeciesMovement(choices, speciesRecord);
 
@@ -240,6 +297,7 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
   };
 
   applyDefenseBonus(defenses, template.defenseBonus, 'template');
+  applyProfileDefenseBonuses(defenses, fixedProfile);
 
   const humanBonus = choices.humanTemplateBonus;
   if (humanBonus?.bonusType === 'defense') {
@@ -258,8 +316,8 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
   const conMod = abilities.con?.mod || 0;
   const hpValue = Math.max(1, 10 + level + conMod);
   const hp = { max: hpValue, value: hpValue };
-  const bab = template.babProgression?.[Math.min(level - 1, 19)] ?? 0;
-  const damageThreshold = defenses.fort.total + Number(template.damageThresholdBonus || 0);
+  const bab = getProfileBab(fixedProfile, level) ?? template.babProgression?.[Math.min(level - 1, 19)] ?? 0;
+  const damageThreshold = defenses.fort.total + Number(template.damageThresholdBonus || 0) + Number(fixedProfile?.damageThresholdBonus || 0);
   const grappleBonus = abilities.str.mod;
 
   swseLogger.log('[FollowerDeriver] Derived follower stats', {
@@ -268,6 +326,7 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
     bab,
     templateType,
     speciesName,
+    fixedProfile: fixedProfile?.id || null,
     speciesAbilityMods: extractSpeciesAbilityMods(choices, speciesRecord)
   });
 
@@ -282,8 +341,12 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
     grappleBonus,
     template,
     templateType,
-    speciesName,
+    speciesName: fixedProfile?.speciesName || speciesName,
     speciesProfile,
+    fixedProfile,
+    naturalWeapons: fixedProfile?.naturalWeapons || [],
+    skillPenalties: fixedProfile?.skillPenalties || {},
+    ruleNotes: fixedProfile?.ruleNotes || [],
     persistentChoices: choices
   };
 }
@@ -391,10 +454,12 @@ export async function getFollowerDerivationContext(session, ownerActor, existing
     ...(draft.startingCreditsFormula !== undefined ? { startingCreditsFormula: draft.startingCreditsFormula } : {})
   };
 
+  const fixedProfile = getFixedFollowerProfile(persistentChoices);
   const templateType = persistentChoices.templateType
     || existingFollower?.system?.progression?.followerTemplate
     || session.dependencyContext.templateType;
-  const speciesName = persistentChoices.speciesName
+  const speciesName = fixedProfile?.speciesName
+    || persistentChoices.speciesName
     || existingFollower?.system?.race
     || session.dependencyContext.speciesName;
   const template = templates[templateType];
@@ -416,12 +481,13 @@ export async function getFollowerDerivationContext(session, ownerActor, existing
 
 export async function deriveFollowerStateForApply(targetHeroicLevel, speciesName, templateType, persistentChoices) {
   const derivedStats = await deriveFollowerStats(targetHeroicLevel, speciesName, templateType, persistentChoices);
+  const fixedProfile = derivedStats.fixedProfile || getFixedFollowerProfile(persistentChoices);
   const isDroid = persistentChoices?.droidConfig?.isDroid === true || String(speciesName || '').toLowerCase().includes('droid');
-  const size = isDroid ? persistentChoices?.droidConfig?.size : derivedStats.speciesProfile?.size;
-  const speed = isDroid ? persistentChoices?.droidConfig?.speed : derivedStats.speciesProfile?.speed;
+  const size = isDroid ? persistentChoices?.droidConfig?.size : (fixedProfile?.size || derivedStats.speciesProfile?.size);
+  const speed = isDroid ? persistentChoices?.droidConfig?.speed : (fixedProfile?.speed || derivedStats.speciesProfile?.speed);
   const movement = isDroid
     ? { walk: persistentChoices?.droidConfig?.speed || 6 }
-    : (derivedStats.speciesProfile?.movement || (speed ? { walk: Number(speed) } : undefined));
+    : (fixedProfile?.movement || derivedStats.speciesProfile?.movement || (speed ? { walk: Number(speed) } : undefined));
 
   return {
     level: derivedStats.level,
@@ -430,14 +496,20 @@ export async function deriveFollowerStateForApply(targetHeroicLevel, speciesName
     hp: derivedStats.hp,
     baseAttackBonus: derivedStats.bab,
     damageThreshold: derivedStats.damageThreshold,
-    race: speciesName,
+    race: fixedProfile?.speciesName || speciesName,
+    fixedFollowerProfile: fixedProfile || null,
+    creatureKind: fixedProfile?.creatureKind || null,
+    naturalWeapons: derivedStats.naturalWeapons || [],
+    skillPenalties: derivedStats.skillPenalties || {},
+    ruleNotes: derivedStats.ruleNotes || [],
     ...(size ? { size } : {}),
     ...(speed ? { speed: Number(speed) } : {}),
     ...(movement ? { movement } : {}),
     progression: {
       followerChoices: derivedStats.persistentChoices,
       followerTemplate: templateType,
-      isFollower: true
+      isFollower: true,
+      fixedFollowerProfile: fixedProfile || null
     }
   };
 }

@@ -34,6 +34,7 @@
   </div>
 
   {{#unless isDroid}}
+  {{#unless usesFixedAbilities}}
     {{#each templates}}
       {{#if selected}}
         <div class="follower-template-ability-strip">
@@ -50,5 +51,12 @@
         </div>
       {{/if}}
     {{/each}}
+  {{/unless}}
+  {{#if usesFixedAbilities}}
+    <div class="follower-template-ability-strip">
+      <h4>{{fixedProfile.speciesName}} Ability Scores</h4>
+      <p>{{fixedProfile.speciesName}} followers use fixed ability scores from their special follower template. Choose only the follower role package.</p>
+    </div>
+  {{/if}}
   {{/unless}}
 </div>

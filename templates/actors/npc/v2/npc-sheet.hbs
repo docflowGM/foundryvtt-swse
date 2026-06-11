@@ -160,7 +160,10 @@
               <h3 class="swse-section-title">{{localize "SWSE.ActorUI.Attacks"}}</h3>
               <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.WeaponNaturalAndStatblockAttacks"}}</p>
             </div>
-            <div class="swse-npc-badges"><span class="swse-npc-badge">BAB {{npcConcept.babDisplay}}</span></div>
+            <div class="swse-npc-badges">
+              <span class="swse-npc-badge">BAB {{npcConcept.babDisplay}}</span>
+              <button type="button" class="swse-npc-mini-btn swse-npc-mini-btn--primary" data-action="add-npc-weapon">+ Add Attack</button>
+            </div>
           </header>
           <div class="swse-npc-card__body swse-npc-attack-list">
             {{#if npcConcept.hasAttacks}}
@@ -175,6 +178,14 @@
                     <span>Damage {{attack.damage}}</span>
                   </div>
                   {{#if attack.notes}}<p class="swse-npc-attack-notes">{{attack.notes}}</p>{{/if}}
+                  <div class="swse-npc-attack-actions">
+                    {{#if attack.canRollAttack}}
+                      <button type="button" class="swse-npc-mini-btn swse-npc-mini-btn--primary" data-action="roll-npc-statblock-attack" data-item-id="{{attack.itemId}}" data-attack-bonus="{{attack.attack}}" data-attack-name="{{attack.name}}">Roll</button>
+                    {{/if}}
+                    {{#if attack.itemId}}
+                      <button type="button" class="swse-npc-mini-btn swse-v2-open-item" data-item-id="{{attack.itemId}}">Edit</button>
+                    {{/if}}
+                  </div>
                 </article>
               {{/each}}
             {{else}}

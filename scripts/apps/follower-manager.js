@@ -3,6 +3,8 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+const AKK_DOG_FIXED_PROFILE_ID = 'akk-dog-follower';
+
 /**
  * Follower Manager - Handles follower enhancements and bonuses.
  *
@@ -39,6 +41,27 @@ export class FollowerManager {
             benefit: 'toughness-feat',
             featName: 'Toughness',
             description: 'Each of your Followers gains the Toughness feat.'
+        },
+        'Akk Dog Attack Training': {
+            prerequisite: 'Akk Dog Master',
+            benefit: 'akk-dog-feat',
+            featName: 'Powerful Charge',
+            targetFilter: 'akk-dog',
+            description: 'Your Akk Dog Follower gains the Powerful Charge feat. Other followers are not affected.'
+        },
+        "Akk Dog Trainer's Actions": {
+            prerequisite: 'Akk Dog Master',
+            benefit: 'akk-dog-actions',
+            targetFilter: 'akk-dog',
+            tacticalActions: ['Attack in Concert', 'Fall Upon Prey', 'Paired Maul'],
+            description: 'You can use Akk Dog-specific follower actions on your turn. These actions require your Akk Dog Follower and do not apply to other followers.'
+        },
+        'Protective Reaction': {
+            prerequisite: 'Akk Dog Master',
+            benefit: 'akk-dog-protective-reaction',
+            targetFilter: 'akk-dog',
+            tacticalActions: ['Protective Reaction'],
+            description: 'When an enemy adjacent to your Akk Dog Follower targets you with an attack, that enemy provokes an Attack of Opportunity from your Akk Dog Follower.'
         },
         'Coordinated Tactics': {
             prerequisite: 'Commanding Officer',
@@ -117,6 +140,42 @@ export class FollowerManager {
             .filter(item => item?.type === 'talent' && this.isEnhancementTalent(item.name));
     }
 
+    static _getFixedProfileId(follower) {
+        return follower?.flags?.swse?.follower?.fixedFollowerProfileId
+            || follower?.system?.npcProfile?.fixedProfileId
+            || follower?.system?.progression?.fixedFollowerProfile?.id
+            || follower?.flags?.swse?.fixedFollowerProfile?.id
+            || follower?.getFlag?.('foundryvtt-swse', 'fixedFollowerProfile')?.id
+            || null;
+    }
+
+    static _isAkkDogFollower(follower) {
+        if (!follower) return false;
+        if (this._getFixedProfileId(follower) === AKK_DOG_FIXED_PROFILE_ID) return true;
+        const fixedSpecies = follower?.flags?.swse?.follower?.fixedSpeciesName
+            || follower?.system?.npcProfile?.speciesType
+            || follower?.system?.race
+            || follower?.system?.species?.name
+            || '';
+        const creatureKind = follower?.flags?.swse?.follower?.creatureKind
+            || follower?.system?.npcProfile?.creatureKind
+            || follower?.system?.progression?.creatureKind
+            || '';
+        return String(fixedSpecies).toLowerCase() === 'akk dog'
+            && String(creatureKind || 'beast').toLowerCase() === 'beast';
+    }
+
+    static _matchesEnhancementTarget(follower, enhancement = {}) {
+        const targetFilter = String(enhancement?.targetFilter || 'all').toLowerCase();
+        if (!targetFilter || targetFilter === 'all' || targetFilter === 'followers') return true;
+        if (targetFilter === 'akk-dog' || targetFilter === AKK_DOG_FIXED_PROFILE_ID) return this._isAkkDogFollower(follower);
+        return true;
+    }
+
+    static _filterFollowersForEnhancement(followers, enhancement = {}) {
+        return (followers || []).filter(follower => this._matchesEnhancementTarget(follower, enhancement));
+    }
+
     /**
      * Reconcile owner talent state into current followers and owner flags.
      * Used on world ready to repair actors that gained these talents before hooks were wired.
@@ -170,9 +229,16 @@ export class FollowerManager {
         const enhancement = this.ENHANCEMENT_TALENTS[talent?.name];
         if (!owner || !enhancement) return;
 
-        const followers = options.targetFollower
+        const candidateFollowers = options.targetFollower
             ? [options.targetFollower].filter(Boolean)
             : FollowerCreator.getFollowers(owner);
+        const followers = this._filterFollowersForEnhancement(candidateFollowers, enhancement);
+
+        // When applying already-owned enhancements to a newly created follower,
+        // target-filtered talents must not mark or mutate the wrong follower.
+        if (options.targetFollower && candidateFollowers.length > 0 && followers.length === 0) {
+            return;
+        }
 
         switch (enhancement.benefit) {
             case 'point-blank-shot':
@@ -181,6 +247,17 @@ export class FollowerManager {
                 await this.addFeatToAllFollowers(followers, enhancement.featName, talent, owner, options);
                 if (!options.silent && followers.length > 0) {
                     ui.notifications.info(`All followers gained ${enhancement.featName}!`);
+                }
+                break;
+
+            case 'akk-dog-feat':
+                await this.addFeatToAllFollowers(followers, enhancement.featName, talent, owner, options);
+                if (!options.silent) {
+                    if (followers.length > 0) {
+                        ui.notifications.info(`Your Akk Dog Follower gained ${enhancement.featName}!`);
+                    } else if (!options.targetFollower) {
+                        ui.notifications.info(`${talent.name} will apply when you create or link your Akk Dog Follower.`);
+                    }
                 }
                 break;
 
@@ -201,8 +278,13 @@ export class FollowerManager {
             case 'shared-notoriety':
             case 'frighten':
             case 'fear-me':
+            case 'akk-dog-actions':
+            case 'akk-dog-protective-reaction':
                 // These are tactical abilities that don't directly mutate follower stats.
-                await this.addTacticalAbility(owner, talent, enhancement, options);
+                await this.addTacticalAbility(owner, talent, enhancement, {
+                    ...options,
+                    targetFollowers: followers
+                });
                 break;
         }
     }
@@ -295,6 +377,21 @@ export class FollowerManager {
             await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', tacticalAbilities);
         }
 
+        const details = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilityDetails') || {};
+        const existing = details[talent.name] || {};
+        details[talent.name] = {
+            ...existing,
+            talentName: talent.name,
+            talentItemId: talent.id ?? existing.talentItemId ?? null,
+            benefit: enhancement?.benefit || existing.benefit || null,
+            targetFilter: enhancement?.targetFilter || existing.targetFilter || 'all',
+            targetFollowerIds: (options.targetFollowers || []).map(follower => follower.id).filter(Boolean),
+            tacticalActions: Array.isArray(enhancement?.tacticalActions) ? Array.from(enhancement.tacticalActions) : [],
+            description: enhancement?.description || existing.description || '',
+            grantedAt: existing.grantedAt || Date.now()
+        };
+        await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilityDetails', details);
+
         if (!options.silent) {
             ui.notifications.info(`Gained tactical ability: ${talent.name}!`);
         }
@@ -317,8 +414,11 @@ export class FollowerManager {
             case 'point-blank-shot':
             case 'toughness-feat':
             case 'coordinated-attack-feat':
-                await this.removeFeatFromAllFollowers(followers, enhancement.featName, talent, owner);
+            case 'akk-dog-feat': {
+                const targetFollowers = this._filterFollowersForEnhancement(followers, enhancement);
+                await this.removeFeatFromAllFollowers(targetFollowers, enhancement.featName, talent, owner);
                 break;
+            }
 
             case 'speed-bonus': {
                 const currentBonuses = owner.getFlag('foundryvtt-swse', 'followerSpeedBonuses') || {};
@@ -339,10 +439,17 @@ export class FollowerManager {
             case 'wealth-of-allies':
             case 'shared-notoriety':
             case 'frighten':
-            case 'fear-me': {
+            case 'fear-me':
+            case 'akk-dog-actions':
+            case 'akk-dog-protective-reaction': {
                 const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
                 const nextAbilities = tacticalAbilities.filter(name => name !== talent.name);
                 await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', nextAbilities);
+                const details = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilityDetails') || {};
+                if (details[talent.name]) {
+                    delete details[talent.name];
+                    await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilityDetails', details);
+                }
                 break;
             }
         }
@@ -396,6 +503,18 @@ export class FollowerManager {
         const nextTacticalAbilities = tacticalAbilities.filter(name => !this.isEnhancementTalent(name) || ownedNames.has(name));
         if (nextTacticalAbilities.length !== tacticalAbilities.length) {
             await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', nextTacticalAbilities);
+        }
+
+        const details = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilityDetails') || {};
+        let detailsChanged = false;
+        for (const key of Object.keys(details)) {
+            if (this.isEnhancementTalent(key) && !ownedNames.has(key)) {
+                delete details[key];
+                detailsChanged = true;
+            }
+        }
+        if (detailsChanged) {
+            await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilityDetails', details);
         }
     }
 

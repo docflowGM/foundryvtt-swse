@@ -6609,60 +6609,64 @@ const forcePoints = [];
   }
 
   /**
-   * Show a two-option dialog when the player clicks Add Feat / Add Talent.
-   * - "Pick from Compendium" → opens the progression feat/talent step inline
-   * - "Add Custom" → creates a blank item and opens its sheet for editing
+   * Show a two-option Add Feat / Add Talent chooser.
+   * Uses the system AppV2 dialog shim; the "Pick from Compendium" branch launches
+   * the inline progression shell as a single-step direct-add surface, not level-up.
    */
   async _showAddAbilityDialog(itemType) {
     const label = itemType === 'feat' ? 'Feat' : 'Talent';
     const stepId = itemType === 'feat' ? 'general-feat' : 'general-talent';
+    const domain = itemType === 'feat' ? 'feats' : 'talents';
 
-    return new Promise((resolve) => {
-      new Dialog({
-        title: `Add ${label}`,
-        content: `
-          <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,.75);">
-            How would you like to add a ${label.toLowerCase()}?
-          </p>`,
-        buttons: {
-          legal: {
-            icon: '<i class="fa-solid fa-book-open"></i>',
-            label: `Pick from Compendium`,
-            callback: async () => {
-              try {
-                await this.setSurface('progression', {
-                  source: 'sheet',
-                  stepId,
-                  currentStep: stepId,
-                  mode: 'freeAdd'
-                });
-                await this.requestSurfaceRender({ reason: `${itemType}-step-launch`, surfaceId: 'progression' });
-              } catch (err) {
-                swseLogger.error(`[CharacterSheet] ${label} step launch failed:`, err);
-              }
-              resolve();
-            }
-          },
-          custom: {
-            icon: '<i class="fa-solid fa-pen"></i>',
-            label: `Add Custom ${label}`,
-            callback: async () => {
-              await this._createAndOpenBlankItem(itemType);
-              resolve();
-            }
-          },
-          cancel: {
-            icon: '<i class="fa-solid fa-times"></i>',
-            label: 'Cancel',
-            callback: () => resolve()
-          }
+    const choice = await SWSEDialogV2.wait({
+      title: `Add ${label}`,
+      content: `
+        <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,.75);">
+          How would you like to add a ${label.toLowerCase()}?
+        </p>`,
+      buttons: {
+        legal: {
+          icon: '<i class="fa-solid fa-book-open"></i>',
+          label: 'Pick from Compendium'
         },
-        default: 'legal'
-      }, {
-        classes: ['swse', 'swse-dialog'],
-        width: 340
-      }).render(true);
+        custom: {
+          icon: '<i class="fa-solid fa-pen"></i>',
+          label: `Add Custom ${label}`
+        },
+        cancel: {
+          icon: '<i class="fa-solid fa-times"></i>',
+          label: 'Cancel'
+        }
+      },
+      default: 'legal'
+    }, {
+      classes: ['swse', 'swse-dialog'],
+      width: 340
     });
+
+    if (choice === 'custom') {
+      await this._createAndOpenBlankItem(itemType);
+      return;
+    }
+
+    if (choice !== 'legal') return;
+
+    try {
+      await this.setSurface('progression', {
+        source: 'sheet-direct-add',
+        stepId,
+        targetStep: stepId,
+        currentStep: stepId,
+        skipIntro: true,
+        singleStep: true,
+        singleStepDomain: domain,
+        directAdd: true
+      });
+      await this.requestSurfaceRender({ reason: `${itemType}-direct-add-step-launch`, surfaceId: 'progression' });
+    } catch (err) {
+      swseLogger.error(`[CharacterSheet] ${label} direct-add step launch failed:`, err);
+      ui?.notifications?.error?.(`Failed to open ${label.toLowerCase()} picker: ${err?.message || err}`);
+    }
   }
 
   /**
@@ -8391,8 +8395,8 @@ const forcePoints = [];
       ...actionData,
       name: actionData?.name ?? 'Aim',
       sourceName: actionData?.sourceName ?? 'Combat Action',
-      notes: actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.',
-      description: actionData?.description || actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.'
+      notes: actionData?.notes || `The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.`,
+      description: actionData?.description || actionData?.notes || `The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.`
     }, {
       ...options,
       actionType: swiftCount > 1 ? `${swiftCount} Swift Actions` : 'swift'

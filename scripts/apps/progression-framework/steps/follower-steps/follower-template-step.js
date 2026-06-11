@@ -41,16 +41,22 @@ export class FollowerTemplateStep extends FollowerStepBase {
     this._focusedTemplate = null;
     this._abilityChoice = null;
     this._isDroid = false;
+    this._fixedProfile = null;
+    this._usesFixedAbilities = false;
   }
 
   async onStepEnter(shell) {
     try {
       this._templates = await this.getFollowerTemplates();
+      this._fixedProfile = this.applyFixedFollowerProfileDefaults(shell) || this.getFixedFollowerProfile(shell);
+      this._usesFixedAbilities = !!(this._fixedProfile?.fixedAbilityScores || this._fixedProfile?.noTemplateAbilityBonus);
       const choices = this.getFollowerChoices(shell);
       this._selectedTemplate = choices.templateType || null;
       this._focusedTemplate = this._selectedTemplate || null;
-      this._abilityChoice = choices.abilityChoice || this.getDefaultTemplateAbility(this._selectedTemplate);
       this._isDroid = this.isDroidFollowerChoice(choices);
+      this._abilityChoice = (this._isDroid || this._usesFixedAbilities)
+        ? null
+        : (choices.abilityChoice || this.getDefaultTemplateAbility(this._selectedTemplate));
       swseLogger.log('[FollowerTemplateStep] Entered, available templates:', Object.keys(this._templates));
     } catch (err) {
       swseLogger.error('[FollowerTemplateStep] Error entering step:', err);
@@ -66,6 +72,8 @@ export class FollowerTemplateStep extends FollowerStepBase {
       focusedTemplate: this._focusedTemplate,
       isDroid: this._isDroid,
       abilityChoice: this._abilityChoice,
+      usesFixedAbilities: this._usesFixedAbilities,
+      fixedProfile: this._fixedProfile,
     };
   }
 
@@ -120,7 +128,9 @@ export class FollowerTemplateStep extends FollowerStepBase {
         img: meta.img || template.img || 'icons/svg/mystery-man.svg',
         profileQuote: meta.quote || template.description || 'A reliable hand when the job goes sideways.',
         skillText: meta.skillText || (id === 'utility' ? 'Choose one trained skill' : 'Trained Skill: Endurance'),
-        attributeText: this._isDroid ? 'Droid +2 comes from chassis selection' : (meta.attributeText || `Choose +${template.abilityBonus || 2}: ${abilityOptions.map(a => a.toUpperCase()).join(' or ')}`),
+        attributeText: this._usesFixedAbilities
+          ? `${this._fixedProfile?.speciesName || 'This follower'} uses fixed ability scores`
+          : (this._isDroid ? 'Droid +2 comes from chassis selection' : (meta.attributeText || `Choose +${template.abilityBonus || 2}: ${abilityOptions.map(a => a.toUpperCase()).join(' or ')}`)),
         description: template.description || 'Follower template',
         selected,
         focused,
@@ -145,7 +155,7 @@ export class FollowerTemplateStep extends FollowerStepBase {
     this._focusedTemplate = templateType;
     this.saveFollowerChoice(shell, 'templateType', templateType);
 
-    if (this._isDroid) {
+    if (this._isDroid || this._usesFixedAbilities) {
       this.saveFollowerChoice(shell, 'abilityChoice', null);
       this._abilityChoice = null;
     } else {
@@ -164,6 +174,10 @@ export class FollowerTemplateStep extends FollowerStepBase {
     this.saveFollowerChoice(shell, 'followerSkills', automaticSkills);
 
     this._focusTemplate(shell, templateType, { render: false });
+    if (this._fixedProfile) {
+      this.applyFixedFollowerProfileDefaults(shell);
+    }
+
     swseLogger.log('[FollowerTemplateStep] Selected template:', { templateType, abilityChoice: this._abilityChoice, automaticSkills });
     shell.render();
   }
@@ -173,7 +187,7 @@ export class FollowerTemplateStep extends FollowerStepBase {
     if (!item) return this.renderDetailsPanelEmptyState();
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/follower-template-details.hbs',
-      data: { template: item, isDroid: this._isDroid }
+      data: { template: item, isDroid: this._isDroid, usesFixedAbilities: this._usesFixedAbilities, fixedProfile: this._fixedProfile }
     };
   }
 
@@ -182,19 +196,20 @@ export class FollowerTemplateStep extends FollowerStepBase {
       ui?.notifications?.warn?.('Please select a template for your follower.');
       return false;
     }
-    if (!this._isDroid && !this._abilityChoice) {
+    if (!this._isDroid && !this._usesFixedAbilities && !this._abilityChoice) {
       ui?.notifications?.warn?.('Choose the follower template ability bonus.');
       return false;
     }
     this.saveFollowerChoice(shell, 'templateType', this._selectedTemplate);
-    this.saveFollowerChoice(shell, 'abilityChoice', this._isDroid ? null : this._abilityChoice);
+    this.saveFollowerChoice(shell, 'abilityChoice', (this._isDroid || this._usesFixedAbilities) ? null : this._abilityChoice);
+    if (this._fixedProfile) this.applyFixedFollowerProfileDefaults(shell);
     return true;
   }
 
   validate() {
     const errors = [];
     if (!this._selectedTemplate) errors.push('Select a follower template.');
-    if (!this._isDroid && this._selectedTemplate && !this._abilityChoice) errors.push('Choose the template ability bonus.');
+    if (!this._isDroid && !this._usesFixedAbilities && this._selectedTemplate && !this._abilityChoice) errors.push('Choose the template ability bonus.');
     return { isValid: errors.length === 0, errors, warnings: [] };
   }
 
@@ -224,6 +239,7 @@ export class FollowerTemplateStep extends FollowerStepBase {
   }
 
   getMentorContext() {
+    if (this._usesFixedAbilities) return 'This follower uses fixed template traits. Pick only the role package: aggressive, defensive, or utility.';
     return 'Templates set the follower role. Pick the job this ally was trained to do, then choose the ability bonus the template allows.';
   }
 }

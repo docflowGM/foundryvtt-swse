@@ -30,6 +30,7 @@ import { SWSEGrappling } from "./scripts/combat/systems/grappling-system.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { registerCompendiumDirectoryClickRepair } from "./scripts/core/compendium-directory-click-repair.js";
+import { registerCompendiumPackRegistrationRepair } from "./scripts/core/compendium-pack-registration-repair.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 import { initializeGames } from "./scripts/games/game-init.js";
@@ -157,6 +158,7 @@ Hooks.once("init", async () => {
   initializeSceneControls();
   initializeDiscoverySystem();
   initializeSentinelGovernance();
+  registerCompendiumPackRegistrationRepair();
   registerCompendiumDirectoryClickRepair();
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks

@@ -39,10 +39,16 @@ export class FollowerFeatStep extends FollowerStepBase {
       const templates = await this.getFollowerTemplates();
       const template = templates[this._templateType] || {};
       const slotTalentName = shell?.progressionSession?.dependencyContext?.slotTalentName;
-      const talentConfig = getFollowerTalentConfig(slotTalentName);
+      const slotTalentTreeId = shell?.progressionSession?.dependencyContext?.slotTalentTreeId
+        || shell?.progressionSession?.dependencyContext?.talentTreeId
+        || shell?.progressionSession?.draftSelections?.slotTalentTreeId
+        || null;
+      const fixedProfile = choices.fixedFollowerProfile || null;
+      const talentConfig = getFollowerTalentConfig(slotTalentName, { treeId: slotTalentTreeId });
+      const suppressBaseFeat = fixedProfile?.suppressBaseFollowerFeat === true || talentConfig?.suppressBaseFollowerFeat === true;
 
       this._grantedFeats = this._uniqueFeats([
-        'Weapon Proficiency (Simple Weapons)',
+        ...(suppressBaseFeat ? [] : ['Weapon Proficiency (Simple Weapons)']),
         ...(template.feats || []),
         ...(talentConfig?.additionalFeats || [])
       ]);
@@ -91,7 +97,7 @@ export class FollowerFeatStep extends FollowerStepBase {
   }
 
   _renderFeatSelection() {
-    const grantedHtml = (this._grantedFeats.length ? this._grantedFeats : ['Weapon Proficiency (Simple Weapons)'])
+    const grantedHtml = (this._grantedFeats.length ? this._grantedFeats : [])
       .map(feat => `
         <div class="follower-feat-item granted">
           <span class="feat-name">${feat}</span>

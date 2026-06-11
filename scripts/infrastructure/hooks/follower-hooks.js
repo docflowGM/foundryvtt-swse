@@ -1,4 +1,4 @@
-import { FOLLOWER_TALENT_CONFIG } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
+import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FollowerManager } from "/systems/foundryvtt-swse/scripts/apps/follower-manager.js";
 import { MinionManager } from "/systems/foundryvtt-swse/scripts/apps/minion-manager.js";
@@ -54,14 +54,19 @@ function _filledSlotsForTalent(slots, talentName) {
 }
 
 function _buildSlot(talentItem, cfg) {
+  const fixedProfile = cfg?.fixedFollowerProfile || null;
   return {
     id: _randomId(),
     talentName: talentItem.name,
     talentItemId: talentItem.id,
+    talentTreeId: talentItem.system?.treeId || null,
     templateChoices: cfg?.templateChoices ?? [],
     dependentKind: cfg?.dependentKind ?? 'follower',
     minionLevelOffset: cfg?.minionLevelOffset ?? null,
     minionLevelLabel: cfg?.minionLevelLabel ?? null,
+    fixedFollowerProfileId: fixedProfile?.id || null,
+    fixedSpeciesName: fixedProfile?.speciesName || null,
+    noStartingCredits: cfg?.noStartingCredits === true || fixedProfile?.noStartingCredits === true,
     createdActorId: null,
     createdAt: Date.now()
   };
@@ -138,12 +143,12 @@ export async function reconcileFollowerEnhancementsForActor(actor) {
 export async function reconcileFollowerSlotsForActor(actor) {
   if (!_isFollowerOwnerActor(actor)) return [];
 
-  const talents = Array.from(actor.items || []).filter(item => item.type === 'talent' && FOLLOWER_TALENT_CONFIG[item.name]);
+  const talents = Array.from(actor.items || []).filter(item => item.type === 'talent' && getFollowerTalentConfig(item.name, item));
   const slots = _getSlots(actor).map(slot => ({ ...slot }));
   let changed = false;
 
   for (const talent of talents) {
-    const cfg = FOLLOWER_TALENT_CONFIG[talent.name];
+    const cfg = getFollowerTalentConfig(talent.name, talent);
     const max = Number(cfg?.maxCount ?? 0);
     const existingForItem = slots.filter(slot => slot.talentItemId === talent.id);
     const existingForTalent = slots.filter(slot => slot.talentName === talent.name);
@@ -163,8 +168,26 @@ export async function reconcileFollowerSlotsForActor(actor) {
         slot.talentName = talent.name;
         changed = true;
       }
+      if (!slot.talentTreeId && talent.system?.treeId) {
+        slot.talentTreeId = talent.system.treeId;
+        changed = true;
+      }
       if (!slot.dependentKind) {
         slot.dependentKind = cfg?.dependentKind ?? 'follower';
+        changed = true;
+      }
+      const fixedProfile = cfg?.fixedFollowerProfile || null;
+      if ((slot.fixedFollowerProfileId || null) !== (fixedProfile?.id || null)) {
+        slot.fixedFollowerProfileId = fixedProfile?.id || null;
+        changed = true;
+      }
+      if ((slot.fixedSpeciesName || null) !== (fixedProfile?.speciesName || null)) {
+        slot.fixedSpeciesName = fixedProfile?.speciesName || null;
+        changed = true;
+      }
+      const noStartingCredits = cfg?.noStartingCredits === true || fixedProfile?.noStartingCredits === true;
+      if (slot.noStartingCredits !== noStartingCredits) {
+        slot.noStartingCredits = noStartingCredits;
         changed = true;
       }
       if (slot.minionLevelOffset === undefined && cfg?.minionLevelOffset !== undefined) {
@@ -218,7 +241,7 @@ export function initializeFollowerHooks() {
       await MinionManager.applyTalent(actor, item);
     }
 
-    const cfg = FOLLOWER_TALENT_CONFIG[item.name];
+    const cfg = getFollowerTalentConfig(item.name, item);
     if (!cfg) return;
 
     const slots = _getSlots(actor);
@@ -251,7 +274,7 @@ export function initializeFollowerHooks() {
       await MinionManager.removeTalent(actor, item);
     }
 
-    const cfg = FOLLOWER_TALENT_CONFIG[item.name];
+    const cfg = getFollowerTalentConfig(item.name, item);
     if (!cfg) return;
 
     const slots = _getSlots(actor);

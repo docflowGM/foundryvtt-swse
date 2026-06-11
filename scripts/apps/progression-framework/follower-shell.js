@@ -12,6 +12,7 @@ import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
+import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
@@ -117,14 +118,70 @@ export class FollowerShell extends ProgressionShell {
 
     if (this.dependencyContext && this.progressionSession) {
       this.progressionSession.dependencyContext = this.dependencyContext;
+      this._applyFixedFollowerDefaults();
     }
 
     swseLogger.log('[FollowerShell] Created for owner:', this.ownerActor?.name);
   }
 
+  _getFollowerTalentConfig() {
+    const ctx = this.progressionSession?.dependencyContext || this.dependencyContext || {};
+    return getFollowerTalentConfig(ctx.slotTalentName, { treeId: ctx.slotTalentTreeId })
+      || getFollowerTalentConfig(ctx.slotTalentName)
+      || null;
+  }
+
+  _getFixedFollowerProfile() {
+    const cfg = this._getFollowerTalentConfig();
+    return cfg?.fixedFollowerProfile
+      || this.progressionSession?.draftSelections?.fixedFollowerProfile
+      || this.progressionSession?.dependencyContext?.persistentChoices?.fixedFollowerProfile
+      || null;
+  }
+
+  _applyFixedFollowerDefaults() {
+    const profile = this._getFixedFollowerProfile();
+    if (!profile || !this.progressionSession) return null;
+    const cfg = this._getFollowerTalentConfig();
+    const draft = this.progressionSession.draftSelections = this.progressionSession.draftSelections || {};
+    draft.fixedFollowerProfile = structuredClone(profile);
+    draft.followerKind = profile.followerKind || draft.followerKind || 'living';
+    draft.speciesName = profile.speciesName || draft.speciesName || null;
+    draft.speciesId = profile.speciesId || null;
+    draft.species = {
+      id: profile.id,
+      name: profile.speciesName,
+      speciesType: profile.speciesType,
+      size: profile.size,
+      speed: profile.speed,
+      movement: profile.movement
+    };
+    draft.speciesSelection = draft.species;
+    draft.droidConfig = null;
+    if (profile.noTemplateAbilityBonus || profile.fixedAbilityScores) draft.abilityChoice = null;
+    if (profile.noStartingCredits || cfg?.noStartingCredits) {
+      draft.startingCredits = 0;
+      draft.startingCreditsMode = 'none';
+      draft.startingCreditsFormula = null;
+    }
+    if (profile.skipBackground || cfg?.skipBackground) {
+      draft.backgroundChoice = null;
+      draft.backgroundSelection = null;
+      draft.background = null;
+    }
+    if (profile.skipLanguages || cfg?.skipLanguages) {
+      draft.languageChoices = [];
+      draft.followerLanguages = [];
+      draft.languages = [];
+    }
+    this.progressionSession.lastModifiedAt = Date.now();
+    return profile;
+  }
+
   async _initializeSteps() {
     if (this.dependencyContext && this.progressionSession) {
       this.progressionSession.dependencyContext = this.dependencyContext;
+      this._applyFixedFollowerDefaults();
       swseLogger.log('[FollowerShell] Seeded session with dependency context:', {
         ownerActorId: this.dependencyContext.ownerActorId,
         slotId: this.dependencyContext.slotId,
@@ -132,6 +189,15 @@ export class FollowerShell extends ProgressionShell {
     }
 
     await super._initializeSteps();
+  }
+
+  async _initializeFirstStep() {
+    this._applyFixedFollowerDefaults();
+    const firstApplicable = this._findNextApplicableStep?.(0);
+    if (firstApplicable >= 0 && firstApplicable !== this.currentStepIndex) {
+      this.currentStepIndex = firstApplicable;
+    }
+    return super._initializeFirstStep();
   }
 
   static async open(actor = null, mode = 'follower', options = {}) {
@@ -199,11 +265,22 @@ export class FollowerShell extends ProgressionShell {
 
 
   _shouldSkipFollowerStep(stepId) {
+    this._applyFixedFollowerDefaults();
     const draft = this.progressionSession?.draftSelections || {};
     const templateType = String(draft.templateType || '').toLowerCase();
+    const fixedProfile = this._getFixedFollowerProfile();
+    const cfg = this._getFollowerTalentConfig();
     const isDroid = draft.followerKind === 'droid'
       || draft.droidConfig?.isDroid === true
       || String(draft.speciesName || '').toLowerCase() === 'droid';
+
+    if (fixedProfile) {
+      if (stepId === 'follower-origin') return cfg?.skipOriginSelection !== false;
+      if (stepId === 'species') return true;
+      if (stepId === 'droid-builder') return true;
+      if (stepId === 'background') return fixedProfile.skipBackground !== false;
+      if (stepId === 'languages') return fixedProfile.skipLanguages !== false;
+    }
 
     // Droid followers do not use the organic species browser. They route into
     // the shared droid systems builder instead.
@@ -253,11 +330,13 @@ export class FollowerShell extends ProgressionShell {
   }
 
   _getMissingFollowerRequirements() {
+    this._applyFixedFollowerDefaults();
     const draft = this._getFollowerDraftSelections();
     const missing = [];
+    const fixedProfile = this._getFixedFollowerProfile();
     const isDroid = draft.followerKind === 'droid' || draft.droidConfig?.isDroid === true || String(draft.speciesName || '').toLowerCase() === 'droid';
 
-    if (!draft.followerKind) missing.push('Choose Living Being or Droid.');
+    if (!fixedProfile && !draft.followerKind) missing.push('Choose Living Being or Droid.');
     if (isDroid) {
       if (!draft.droidConfig?.isDroid) missing.push('Configure the droid follower chassis.');
       if (!draft.droidConfig?.droidSystems && !draft.droid?.droidSystems) missing.push('Configure the droid follower systems.');
@@ -266,7 +345,7 @@ export class FollowerShell extends ProgressionShell {
       missing.push('Choose a follower species.');
     }
     if (!draft.templateType) missing.push('Choose a follower template.');
-    if (!isDroid && draft.templateType && !draft.abilityChoice) missing.push('Choose the template ability bonus.');
+    if (!fixedProfile && !isDroid && draft.templateType && !draft.abilityChoice) missing.push('Choose the template ability bonus.');
 
     return missing;
   }

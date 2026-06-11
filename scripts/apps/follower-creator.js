@@ -467,10 +467,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     static async _applyTemplateFeats(follower, template, followerData) {
         const appliedFeats = [];
 
-        // All followers get Weapon Proficiency (Simple Weapons)
-        const baseFeat = 'Weapon Proficiency (Simple Weapons)';
-        if (await this._addFeatByName(follower, baseFeat)) {
-            appliedFeats.push(baseFeat);
+        // All standard followers get Weapon Proficiency (Simple Weapons).
+        // Fixed-profile followers such as Akk Dogs can suppress this base humanoid grant.
+        const fixedProfile = this._getFixedFollowerProfileFromChoices(followerData || {}, { persistentChoices: followerData || {} });
+        if (fixedProfile?.suppressBaseFollowerFeat !== true) {
+            const baseFeat = 'Weapon Proficiency (Simple Weapons)';
+            if (await this._addFeatByName(follower, baseFeat)) {
+                appliedFeats.push(baseFeat);
+            }
         }
 
         // Add template-specific feats
@@ -620,6 +624,181 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             || null;
     }
 
+    static _getGrantingTalentTreeIdFromMutation(followerMutation = {}) {
+        return followerMutation.talentTreeId
+            || followerMutation.slotTalentTreeId
+            || followerMutation.grantingTalentTreeId
+            || followerMutation.persistentChoices?.talentTreeId
+            || followerMutation.persistentChoices?.slotTalentTreeId
+            || followerMutation.persistentChoices?.grantingTalentTreeId
+            || null;
+    }
+
+    static _clonePlain(value) {
+        if (value === null || value === undefined) return value;
+        try {
+            return structuredClone(value);
+        } catch (_err) {
+            try {
+                return JSON.parse(JSON.stringify(value));
+            } catch (_jsonErr) {
+                return value;
+            }
+        }
+    }
+
+    static _getFollowerGrantConfig(followerMutation = {}, persistentChoices = {}) {
+        const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation)
+            || persistentChoices?.grantingTalentName
+            || null;
+        if (!grantingTalentName) return null;
+        const treeId = this._getGrantingTalentTreeIdFromMutation(followerMutation)
+            || persistentChoices?.slotTalentTreeId
+            || persistentChoices?.talentTreeId
+            || persistentChoices?.grantingTalentTreeId
+            || null;
+        return getFollowerTalentConfig(grantingTalentName, { treeId })
+            || getFollowerTalentConfig(grantingTalentName, persistentChoices)
+            || null;
+    }
+
+    static _getFixedFollowerProfileFromChoices(persistentChoices = {}, followerMutation = {}) {
+        const profile = persistentChoices?.fixedFollowerProfile
+            || followerMutation?.followerState?.fixedFollowerProfile
+            || followerMutation?.fixedFollowerProfile
+            || this._getFollowerGrantConfig(followerMutation, persistentChoices)?.fixedFollowerProfile
+            || null;
+        return profile && typeof profile === 'object' ? profile : null;
+    }
+
+    static _usesNoStartingCredits(persistentChoices = {}, followerMutation = {}) {
+        const profile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
+        const cfg = this._getFollowerGrantConfig(followerMutation, persistentChoices);
+        return profile?.noStartingCredits === true || cfg?.noStartingCredits === true;
+    }
+
+    static _resolveProfileAbilityModifier(follower, profile = null, abilityKey = 'str') {
+        const key = String(abilityKey || 'str').toLowerCase().slice(0, 3);
+        const ability = follower?.system?.attributes?.[key] || follower?.system?.abilities?.[key] || null;
+        const score = Number(
+            ability?.base
+            ?? ability?.score
+            ?? ability?.value
+            ?? profile?.abilityScores?.[key]
+            ?? 10
+        );
+        return Math.floor(((Number.isFinite(score) ? score : 10) - 10) / 2);
+    }
+
+    static _buildNaturalWeaponItemData(weapon = {}, profile = null, follower = null, grantMetadata = null) {
+        const attackAbility = String(weapon.attackAttribute || weapon.ability || 'str').toLowerCase().slice(0, 3);
+        const damageDice = String(weapon.damage || weapon.damageDice || '1d6').trim() || '1d6';
+        const damageMod = this._resolveProfileAbilityModifier(follower, profile, weapon.damageAbility || attackAbility);
+        const damageFormula = `${damageDice}${damageMod >= 0 ? '+' : ''}${damageMod}`;
+        const profileId = profile?.id || null;
+        const description = String(weapon.description || 'Natural weapon attack granted by follower template.');
+
+        return {
+            name: String(weapon.name || 'Natural Weapons'),
+            type: 'weapon',
+            img: weapon.img || 'icons/creatures/claws/claw-bear-paw-swipe-brown.webp',
+            system: {
+                damage: damageFormula,
+                damageBonus: `${damageMod >= 0 ? '+' : ''}${damageMod}`,
+                damageType: String(weapon.damageType || 'slashing').toLowerCase(),
+                attackBonus: Number(weapon.attackBonus || 0),
+                attackAttribute: attackAbility,
+                range: weapon.range || 'melee',
+                meleeOrRanged: 'melee',
+                ranged: false,
+                weight: Number(weapon.weight || 0),
+                cost: Number(weapon.cost || 0),
+                equipped: true,
+                proficient: true,
+                description: description.startsWith('<') ? description : `<p>${description}</p>`,
+                properties: this._uniqueList([...this._choiceArray(weapon.properties), 'Natural']),
+                weaponProperties: { isLight: false, isTwoHanded: false },
+                ammunition: { type: 'none', current: 0, max: 0 },
+                weaponCategory: weapon.weaponCategory || 'natural',
+                proficiency: weapon.proficiency || 'natural',
+                subcategory: weapon.subcategory || 'natural',
+                specialEffects: weapon.specialEffects || '',
+                rangeProfile: weapon.rangeProfile || 'melee',
+                combat: {
+                    attack: { ability: attackAbility, bonus: Number(weapon.attackBonus || 0) },
+                    damage: {
+                        dice: damageDice,
+                        bonus: damageMod,
+                        formula: damageFormula,
+                        type: String(weapon.damageType || 'slashing').toLowerCase(),
+                        ability: String(weapon.damageAbility || attackAbility).toLowerCase().slice(0, 3)
+                    }
+                }
+            },
+            flags: {
+                swse: {
+                    followerNaturalWeapon: true,
+                    sourceFixedFollowerProfile: profileId,
+                    grantedByTalent: grantMetadata || null
+                }
+            }
+        };
+    }
+
+    static async _upsertFixedProfileNaturalWeapons(follower, profile = null, grantMetadata = null) {
+        const weapons = Array.isArray(profile?.naturalWeapons) ? profile.naturalWeapons : [];
+        if (!follower || !weapons.length) return [];
+
+        const applied = [];
+        for (const weapon of weapons) {
+            const itemData = this._buildNaturalWeaponItemData(weapon, profile, follower, grantMetadata);
+            const existing = Array.from(follower.items || []).find(item => item?.type === 'weapon' && (
+                item.flags?.swse?.followerNaturalWeapon === true
+                || item.flags?.swse?.sourceFixedFollowerProfile === profile?.id
+                || item.name === itemData.name
+            ));
+
+            try {
+                if (existing?.id) {
+                    await ActorEngine.updateEmbeddedDocuments(follower, 'Item', [{ _id: existing.id, ...itemData }], {
+                        source: 'FollowerCreator.upsertNaturalWeapon'
+                    });
+                } else {
+                    await ActorEngine.createEmbeddedDocuments(follower, 'Item', [itemData], {
+                        source: 'FollowerCreator.upsertNaturalWeapon'
+                    });
+                }
+                applied.push(itemData.name);
+            } catch (err) {
+                swseLogger.warn('[FollowerCreator] Failed to apply fixed-profile natural weapon:', err);
+            }
+        }
+        return applied;
+    }
+
+    static _applyFixedProfileActorUpdates(materialUpdates, profile = null) {
+        if (!profile) return;
+        materialUpdates['system.race'] = profile.speciesName || materialUpdates['system.race'];
+        materialUpdates['system.size'] = profile.size || materialUpdates['system.size'];
+        if (profile.speed !== undefined && profile.speed !== null) materialUpdates['system.speed'] = Number(profile.speed);
+        if (profile.movement) materialUpdates['system.movement'] = this._clonePlain(profile.movement);
+        materialUpdates['system.npcProfile.creatureKind'] = profile.creatureKind || null;
+        materialUpdates['system.npcProfile.speciesType'] = profile.speciesType || null;
+        materialUpdates['system.npcProfile.fixedProfileId'] = profile.id || null;
+        materialUpdates['system.npcProfile.traitNotes'] = Array.isArray(profile.ruleNotes) ? Array.from(profile.ruleNotes) : [];
+        materialUpdates['system.progression.fixedFollowerProfile'] = this._clonePlain(profile);
+        materialUpdates['system.progression.creatureKind'] = profile.creatureKind || null;
+        materialUpdates['system.progression.naturalWeapons'] = this._clonePlain(profile.naturalWeapons || []);
+        materialUpdates['system.progression.skillPenalties'] = this._clonePlain(profile.skillPenalties || {});
+        materialUpdates['system.progression.ruleNotes'] = Array.isArray(profile.ruleNotes) ? Array.from(profile.ruleNotes) : [];
+        materialUpdates['system.progression.carryCapacityMultiplier'] = profile.carryCapacityMultiplier ?? null;
+        materialUpdates['flags.swse.follower.fixedFollowerProfileId'] = profile.id || null;
+        materialUpdates['flags.swse.follower.fixedSpeciesName'] = profile.speciesName || null;
+        materialUpdates['flags.swse.follower.creatureKind'] = profile.creatureKind || null;
+        materialUpdates['flags.swse.follower.noStartingCredits'] = profile.noStartingCredits === true;
+        materialUpdates['flags.swse.fixedFollowerProfile'] = this._clonePlain(profile);
+    }
+
     static _resolveFollowerName(owner, templateType, persistentChoices = {}) {
         const explicitName = String(persistentChoices?.followerName || '').trim();
         if (explicitName) return explicitName.replace(/\s+/g, ' ');
@@ -644,7 +823,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         const template = templates[templateType] || {};
         const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
         const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
-        const grantingTalentConfig = getFollowerTalentConfig(grantingTalentName);
+        const grantingTalentConfig = this._getFollowerGrantConfig(followerMutation, persistentChoices);
+        const fixedProfile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
+        const noStartingCredits = this._usesNoStartingCredits(persistentChoices, followerMutation);
+        const skipLanguages = fixedProfile?.skipLanguages === true || grantingTalentConfig?.skipLanguages === true;
+        const skipBackground = fixedProfile?.skipBackground === true || grantingTalentConfig?.skipBackground === true;
+        const suppressBaseFollowerFeat = fixedProfile?.suppressBaseFollowerFeat === true || grantingTalentConfig?.suppressBaseFollowerFeat === true;
         const grantMetadata = grantingTalentName ? {
             source: 'follower-granting-talent',
             ownerId: owner?.id ?? null,
@@ -666,7 +850,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             .concat(this._choiceArray(humanBonusFeat));
 
         const featsToApply = this._uniqueList([
-            'Weapon Proficiency (Simple Weapons)',
+            ...(suppressBaseFollowerFeat ? [] : ['Weapon Proficiency (Simple Weapons)']),
             ...(template.feats || []),
             ...featChoices,
             ...(grantingTalentConfig?.additionalFeats || [])
@@ -697,7 +881,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             }
         }
 
-        const languageChoices = this._uniqueList(persistentChoices.languageChoices || []);
+        const languageChoices = skipLanguages ? [] : this._uniqueList(persistentChoices.languageChoices || []);
         if (languageChoices.length) {
             const existingLanguages = Array.isArray(follower.system?.languages) ? follower.system.languages : [];
             await ActorEngine.updateActor(follower, {
@@ -705,10 +889,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             }, { source: 'FollowerCreator.materializeFollowerLanguages' });
         }
 
-        const backgroundChoice = persistentChoices.backgroundSelection?.name
+        const backgroundChoice = skipBackground ? null : (
+            persistentChoices.backgroundSelection?.name
             || persistentChoices.backgroundSelection?.id
             || persistentChoices.backgroundChoice
-            || null;
+            || null
+        );
 
         const materialUpdates = {
             'system.progression.feats': appliedFeats,
@@ -723,6 +909,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             'flags.swse.follower.grantingTalent': grantingTalentName,
             'flags.swse.follower.grantingTalentItemId': grantingTalentItemId
         };
+
+        this._applyFixedProfileActorUpdates(materialUpdates, fixedProfile);
 
         if (persistentChoices.droidConfig?.isDroid) {
             const droidConfig = persistentChoices.droidConfig;
@@ -742,13 +930,18 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             materialUpdates['system.progression.droidConfig.lostCredits'] = droidCredits.lost;
             materialUpdates['system.credits'] = 0;
             materialUpdates['flags.foundryvtt-swse.isDroid'] = true;
+        } else if (noStartingCredits) {
+            materialUpdates['system.credits'] = 0;
+            materialUpdates['system.progression.startingCredits'] = 0;
+            materialUpdates['system.progression.startingCreditMode'] = 'none';
         } else if (persistentChoices.startingCredits !== undefined && persistentChoices.startingCredits !== null) {
             materialUpdates['system.credits'] = Number(persistentChoices.startingCredits || 0);
         }
 
         await ActorEngine.updateActor(follower, materialUpdates, { source: 'FollowerCreator.materializeFollowerProgression' });
+        const naturalWeapons = await this._upsertFixedProfileNaturalWeapons(follower, fixedProfile, grantMetadata);
 
-        return { feats: appliedFeats, trainedSkills, languages: languageChoices };
+        return { feats: appliedFeats, trainedSkills, languages: languageChoices, naturalWeapons };
     }
 
     /**
@@ -948,6 +1141,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             } = followerMutation;
             const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
             const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
+            const fixedProfile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
+            const noStartingCredits = this._usesNoStartingCredits(persistentChoices, followerMutation);
+            const resolvedSpeciesName = fixedProfile?.speciesName || speciesName;
             const droidConfig = persistentChoices?.droidConfig?.isDroid ? persistentChoices.droidConfig : null;
             const isDroidFollower = !!droidConfig;
             const droidSystems = isDroidFollower ? this._resolveFollowerDroidSystems(droidConfig) : undefined;
@@ -960,18 +1156,18 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 type: 'npc',
                 system: {
                     level: targetHeroicLevel ?? followerState.level,
-                    race: speciesName,
+                    race: resolvedSpeciesName,
                     isFollower: true,
                     isDroid: isDroidFollower,
                     noConstitution: isDroidFollower,
                     droidSize: droidConfig?.size || null,
-                    size: droidConfig?.size || followerState.size || undefined,
-                    speed: droidConfig?.speed || followerState.speed || undefined,
-                    movement: isDroidFollower ? { walk: droidConfig?.speed || 6 } : (followerState.movement || undefined),
+                    size: droidConfig?.size || fixedProfile?.size || followerState.size || undefined,
+                    speed: droidConfig?.speed || fixedProfile?.speed || followerState.speed || undefined,
+                    movement: isDroidFollower ? { walk: droidConfig?.speed || 6 } : (fixedProfile?.movement || followerState.movement || undefined),
                     attributes: followerState.abilities,
                     abilities: followerState.abilities,
                     hp: followerState.hp,
-                    credits: isDroidFollower ? 0 : Number(persistentChoices?.startingCredits || 0),
+                    credits: (isDroidFollower || noStartingCredits) ? 0 : Number(persistentChoices?.startingCredits || 0),
                     droidSystems,
                     droidCredits,
                     baseAttackBonus: followerState.baseAttackBonus ?? followerState.bab,
@@ -979,10 +1175,17 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         followerChoices: persistentChoices,
                         followerTemplate: templateType,
                         followerName,
+                        fixedFollowerProfile: fixedProfile ? this._clonePlain(fixedProfile) : null,
+                        creatureKind: fixedProfile?.creatureKind || null,
+                        noStartingCredits,
                         isFollower: true
                     },
                     npcProfile: {
                         kind: 'follower',
+                        creatureKind: fixedProfile?.creatureKind || null,
+                        speciesType: fixedProfile?.speciesType || null,
+                        fixedProfileId: fixedProfile?.id || null,
+                        traitNotes: Array.isArray(fixedProfile?.ruleNotes) ? Array.from(fixedProfile.ruleNotes) : [],
                         owner: {
                             actorId: owner.id,
                             talent: grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : null
@@ -999,12 +1202,17 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                             followerName,
                             grantingTalent: grantingTalentName,
                             grantingTalentItemId,
-                            isFollower: true
+                            isFollower: true,
+                            fixedFollowerProfileId: fixedProfile?.id || null,
+                            fixedSpeciesName: fixedProfile?.speciesName || null,
+                            creatureKind: fixedProfile?.creatureKind || null,
+                            noStartingCredits
                         }
                     },
                     'foundryvtt-swse': {
                         isFollower: true,
                         isDroid: isDroidFollower,
+                        fixedFollowerProfile: fixedProfile ? this._clonePlain(fixedProfile) : null,
                         npcLevelUp: {
                             mode: 'statblock'
                         }
@@ -1020,7 +1228,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             }
 
             // Apply species (if needed)
-            if (speciesName) {
+            if (speciesName && !fixedProfile?.noSpeciesSelection) {
                 try {
                     const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(speciesName);
                     if (speciesDoc) {
@@ -1093,6 +1301,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 targetHeroicLevel
             } = followerMutation;
 
+            const fixedProfile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
+            const noStartingCredits = this._usesNoStartingCredits(persistentChoices, followerMutation);
+            const resolvedSpeciesName = fixedProfile?.speciesName || speciesName;
+
             // Update follower state with canonical paths and explicit dot paths.
             // system.attributes is canonical ability storage (system.abilities is a read-only mirror).
             // system.hp.max requires isRecomputeHPCall; split object to avoid broad replacement.
@@ -1102,10 +1314,18 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 'system.hp.max': followerState.hp?.max,
                 'system.hp.value': followerState.hp?.value,
                 'system.isFollower': true,
+                'system.race': resolvedSpeciesName,
                 'system.baseAttackBonus': followerState.baseAttackBonus ?? followerState.bab,
                 'system.progression.followerChoices': persistentChoices,
                 'system.progression.followerTemplate': templateType,
                 'system.progression.isFollower': true,
+                'system.progression.fixedFollowerProfile': fixedProfile ? this._clonePlain(fixedProfile) : null,
+                'system.progression.creatureKind': fixedProfile?.creatureKind || null,
+                'system.progression.noStartingCredits': noStartingCredits,
+                'system.npcProfile.creatureKind': fixedProfile?.creatureKind || null,
+                'system.npcProfile.speciesType': fixedProfile?.speciesType || null,
+                'system.npcProfile.fixedProfileId': fixedProfile?.id || null,
+                'system.npcProfile.traitNotes': Array.isArray(fixedProfile?.ruleNotes) ? Array.from(fixedProfile.ruleNotes) : [],
                 ...(String(persistentChoices?.followerName || '').trim() ? {
                     name: String(persistentChoices.followerName).trim(),
                     'system.progression.followerName': String(persistentChoices.followerName).trim(),
@@ -1115,7 +1335,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 'flags.swse.follower.ownerId': follower.flags?.swse?.follower?.ownerId || followerMutation.ownerActorId,
                 'flags.swse.follower.templateType': templateType,
                 'flags.swse.follower.isFollower': true,
-                'flags.foundryvtt-swse.isFollower': true
+                'flags.swse.follower.fixedFollowerProfileId': fixedProfile?.id || null,
+                'flags.swse.follower.fixedSpeciesName': fixedProfile?.speciesName || null,
+                'flags.swse.follower.creatureKind': fixedProfile?.creatureKind || null,
+                'flags.swse.follower.noStartingCredits': noStartingCredits,
+                'flags.swse.fixedFollowerProfile': fixedProfile ? this._clonePlain(fixedProfile) : null,
+                'flags.foundryvtt-swse.isFollower': true,
+                'flags.foundryvtt-swse.fixedFollowerProfile': fixedProfile ? this._clonePlain(fixedProfile) : null
             };
             // Remove undefined hp fields to avoid writing null into schema
             if (updateData['system.hp.max'] === undefined) delete updateData['system.hp.max'];
@@ -1143,9 +1369,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 updateData['system.credits'] = 0;
                 updateData['flags.foundryvtt-swse.isDroid'] = true;
             } else {
-                if (followerState.size) updateData['system.size'] = followerState.size;
-                if (followerState.speed) updateData['system.speed'] = followerState.speed;
-                if (followerState.movement) updateData['system.movement'] = followerState.movement;
+                if (fixedProfile?.size || followerState.size) updateData['system.size'] = fixedProfile?.size || followerState.size;
+                if (fixedProfile?.speed || followerState.speed) updateData['system.speed'] = Number(fixedProfile?.speed || followerState.speed);
+                if (fixedProfile?.movement || followerState.movement) updateData['system.movement'] = this._clonePlain(fixedProfile?.movement || followerState.movement);
+                if (noStartingCredits) updateData['system.credits'] = 0;
             }
 
             // Apply defense updates

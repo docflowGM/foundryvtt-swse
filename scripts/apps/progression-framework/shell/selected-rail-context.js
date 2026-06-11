@@ -235,15 +235,17 @@ export class SelectedRailContext {
       });
     };
 
+    const fixedProfile = draft.fixedFollowerProfile || session?.dependencyContext?.persistentChoices?.fixedFollowerProfile || null;
     add('Kind', draft.followerKind ? String(draft.followerKind).charAt(0).toUpperCase() + String(draft.followerKind).slice(1) : null, 'follower-origin');
-    add('Species', draft.speciesName || draft.species?.name, 'species');
+    add('Species', draft.speciesName || fixedProfile?.speciesName || draft.species?.name, 'species');
+    add('Fixed Profile', fixedProfile ? `${fixedProfile.speciesName || 'Fixed follower'}${fixedProfile.speciesType ? ` (${fixedProfile.speciesType})` : ''}` : null, 'follower-template');
     add('Template', draft.templateType ? String(draft.templateType).charAt(0).toUpperCase() + String(draft.templateType).slice(1) : null, 'follower-template');
-    add('Template Ability', draft.abilityChoice ? `+2 ${String(draft.abilityChoice).toUpperCase()}` : null, 'follower-template');
+    if (!fixedProfile?.noTemplateAbilityBonus) add('Template Ability', draft.abilityChoice ? `+2 ${String(draft.abilityChoice).toUpperCase()}` : null, 'follower-template');
     add('Droid Ability', draft.droidConfig?.abilityChoice ? `+2 ${String(draft.droidConfig.abilityChoice).toUpperCase()}` : null, 'follower-template');
     add('Background', draft.backgroundChoice || draft.background?.name || draft.background?.id, 'background');
     add('Skills', draft.skillChoices || draft.followerSkills, 'skills');
     add('Languages', draft.languageChoices || draft.followerLanguages, 'languages');
-    add('Credits', draft.startingCredits !== undefined && draft.startingCredits !== null ? `${draft.startingCredits} cr` : null, 'summary');
+    add('Credits', fixedProfile?.noStartingCredits ? '0 cr (fixed)' : (draft.startingCredits !== undefined && draft.startingCredits !== null ? `${draft.startingCredits} cr` : null), 'summary');
 
     return items.length ? {
       id: 'follower-build',

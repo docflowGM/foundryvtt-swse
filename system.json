@@ -323,7 +323,14 @@
       "label": "Feats",
       "type": "Item",
       "system": "foundryvtt-swse",
-      "path": "packs/feat-catalog.db"
+      "path": "packs/feats.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      },
+      "private": false
     },
     {
       "name": "forcepowers",
@@ -358,7 +365,14 @@
       "label": "Lightsaber Form Powers",
       "type": "Item",
       "system": "foundryvtt-swse",
-      "path": "packs/lightsaberformpowers.db"
+      "path": "packs/lightsaberformpowers.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      },
+      "private": false
     },
     {
       "name": "forceregimens",
@@ -695,7 +709,8 @@
         "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      }
+      },
+      "private": false
     },
     {
       "name": "nonheroic",
@@ -708,7 +723,8 @@
         "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      }
+      },
+      "private": false
     },
     {
       "name": "sample-active-abilities",

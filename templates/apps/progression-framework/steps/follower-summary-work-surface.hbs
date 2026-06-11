@@ -14,6 +14,7 @@
         <div class="prog-summary-delta-row"><span>Owner</span><strong>{{ownerName}}</strong></div>
         <div class="prog-summary-delta-row"><span>Owner Heroic Level</span><strong>{{ownerHeroicLevel}}</strong></div>
         <div class="prog-summary-delta-row"><span>Species / Chassis</span><strong>{{choices.speciesName}}</strong></div>
+        {{#if fixedProfile}}<div class="prog-summary-delta-row"><span>Fixed Profile</span><strong>{{fixedProfile.speciesName}} • {{fixedProfile.speciesType}}</strong></div>{{/if}}
         <div class="prog-summary-delta-row"><span>Template</span><strong>{{templateDisplay}}</strong></div>
         {{#if choices.abilityChoice}}<div class="prog-summary-delta-row"><span>Template Ability</span><strong>+2 {{abilityChoiceLabel}}</strong></div>{{/if}}
         {{#if droidConfig}}<div class="prog-summary-delta-row"><span>Droid Chassis</span><strong>{{droidConfig.size}} • Speed {{droidConfig.speed}} • +2 {{droidAbilityChoiceLabel}}</strong></div>{{/if}}
@@ -21,23 +22,61 @@
       </div>
     </div>
 
+    {{#if fixedProfile}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-paw"></i> Akk Dog Template Traits</span></div>
+      <div class="prog-summary-delta-grid">
+        <div class="prog-summary-delta-row"><span>Creature Type</span><strong>{{fixedProfile.speciesType}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Size</span><strong>{{fixedProfile.size}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Speed</span><strong>{{fixedProfile.speed}} squares</strong></div>
+        {{#if fixedProfile.carryCapacityMultiplier}}<div class="prog-summary-delta-row"><span>Carrying Capacity</span><strong>x{{fixedProfile.carryCapacityMultiplier}}</strong></div>{{/if}}
+      </div>
+      {{#if fixedProfile.naturalWeapons}}
+      <div class="prog-items-list">
+        {{#each fixedProfile.naturalWeapons}}
+          <div class="prog-item-entry"><i class="fas fa-fist-raised"></i> <strong>{{this.name}}:</strong> {{this.damage}} {{this.damageType}} + STR</div>
+        {{/each}}
+      </div>
+      {{/if}}
+      {{#if fixedProfile.ruleNotes}}
+      <div class="prog-items-list">
+        {{#each fixedProfile.ruleNotes}}
+          <div class="prog-item-entry"><i class="fas fa-info-circle"></i> {{this}}</div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
     <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card prog-finalization-card">
-      <div class="prog-section-header"><span><i class="fas fa-coins"></i> {{#if droidConfig}}Droid Chassis Budget{{else}}Starting Credits{{/if}}</span></div>
+      <div class="prog-section-header"><span><i class="fas fa-coins"></i> {{#if noStartingCredits}}No Starting Credits{{else}}{{#if droidConfig}}Droid Chassis Budget{{else}}Starting Credits{{/if}}{{/if}}</span></div>
       <div class="prog-finalization-status {{#if creditsResolved}}is-resolved{{else}}is-required{{/if}}">
-        <span>{{#if creditsResolved}}Resolved{{else}}Required{{/if}}</span>
-        <strong>{{#if creditsResolved}}{{choices.startingCredits}} cr{{else}}{{#if droidConfig}}Roll droid chassis budget{{else}}Roll or take max credits{{/if}}{{/if}}</strong>
+        {{#if noStartingCredits}}
+          <span>Fixed</span>
+          <strong>0 cr</strong>
+        {{else}}
+          <span>{{#if creditsResolved}}Resolved{{else}}Required{{/if}}</span>
+          <strong>{{#if creditsResolved}}{{choices.startingCredits}} cr{{else}}{{#if droidConfig}}Roll droid chassis budget{{else}}Roll or take max credits{{/if}}{{/if}}</strong>
+        {{/if}}
       </div>
       <div class="prog-summary-delta-grid">
-        <div class="prog-summary-delta-row"><span>Owner Base Class</span><strong>{{#if creditModel.className}}{{creditModel.className}}{{else}}Unknown{{/if}}</strong></div>
-        <div class="prog-summary-delta-row"><span>Formula</span><strong>{{#if creditModel.formula}}{{creditModel.formula}}{{else}}No formula found{{/if}}</strong></div>
-        <div class="prog-summary-delta-row"><span>Maximum</span><strong>{{#if creditModel.max}}{{creditModel.max}} cr{{else}}0 cr{{/if}}</strong></div>
+        {{#if noStartingCredits}}
+          <div class="prog-summary-delta-row"><span>Source</span><strong>{{#if fixedProfile.speciesName}}{{fixedProfile.speciesName}}{{else}}Fixed follower{{/if}} template</strong></div>
+          <div class="prog-summary-delta-row"><span>Credits</span><strong>0 cr</strong></div>
+        {{else}}
+          <div class="prog-summary-delta-row"><span>Owner Base Class</span><strong>{{#if creditModel.className}}{{creditModel.className}}{{else}}Unknown{{/if}}</strong></div>
+          <div class="prog-summary-delta-row"><span>Formula</span><strong>{{#if creditModel.formula}}{{creditModel.formula}}{{else}}No formula found{{/if}}</strong></div>
+          <div class="prog-summary-delta-row"><span>Maximum</span><strong>{{#if creditModel.max}}{{creditModel.max}} cr{{else}}0 cr{{/if}}</strong></div>
+        {{/if}}
       </div>
+      {{#unless noStartingCredits}}
       {{#unless creditsResolved}}
       {{#unless droidConfig}}
       <div class="prog-finalization-actions">
         <button type="button" class="prog-finalization-btn prog-finalization-btn--primary take-max-credits-btn"><i class="fas fa-arrow-up-short-wide"></i> Take Max</button>
         <button type="button" class="prog-finalization-btn roll-credits-btn"><i class="fas fa-dice-d20"></i> Roll Starting Credits</button>
       </div>
+      {{/unless}}
       {{/unless}}
       {{/unless}}
       {{#if droidBudget}}

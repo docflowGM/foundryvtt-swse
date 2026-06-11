@@ -19,13 +19,24 @@ export class FollowerConfirmStep extends FollowerStepBase {
     this._ownerActor = null;
     this._ownerHeroicLevel = null;
     this._creditModel = null;
+    this._fixedProfile = null;
+    this._noStartingCredits = false;
   }
 
   async onStepEnter(shell) {
     try {
       this._lastShell = shell || null;
       this._ownerActor = this.getOwnerActor(shell);
+      this.applyFixedFollowerProfileDefaults(shell);
       this._followerChoices = this.getFollowerChoices(shell);
+      this._fixedProfile = this.getFixedFollowerProfile(shell);
+      this._noStartingCredits = this._fixedProfile?.noStartingCredits === true || this.getFollowerGrantConfig(shell)?.noStartingCredits === true;
+      if (this._noStartingCredits) {
+        this.saveFollowerChoice(shell, 'startingCredits', 0);
+        this.saveFollowerChoice(shell, 'startingCreditsMode', 'none');
+        this.saveFollowerChoice(shell, 'startingCreditsFormula', null);
+        this._followerChoices = this.getFollowerChoices(shell);
+      }
 
       if (!this._ownerActor || !this._followerChoices.speciesName || !this._followerChoices.templateType) {
         swseLogger.warn('[FollowerConfirmStep] Missing owner, species, or template');
@@ -33,7 +44,9 @@ export class FollowerConfirmStep extends FollowerStepBase {
       }
 
       this._ownerHeroicLevel = getHeroicLevel(this._ownerActor) || 1;
-      this._creditModel = await this.getOwnerStartingCreditModel(this._ownerActor);
+      this._creditModel = this._noStartingCredits
+        ? { className: this._fixedProfile?.speciesName || 'Fixed follower template', formula: null, max: 0, average: 0 }
+        : await this.getOwnerStartingCreditModel(this._ownerActor);
 
       this._derivedStats = await deriveFollowerStats(
         this._ownerHeroicLevel,
@@ -56,7 +69,10 @@ export class FollowerConfirmStep extends FollowerStepBase {
     const shell = context?.shell || this._lastShell || null;
     if (shell) {
       this._lastShell = shell;
+      this.applyFixedFollowerProfileDefaults(shell);
       this._followerChoices = this.getFollowerChoices(shell);
+      this._fixedProfile = this.getFixedFollowerProfile(shell);
+      this._noStartingCredits = this._fixedProfile?.noStartingCredits === true || this.getFollowerGrantConfig(shell)?.noStartingCredits === true;
     }
 
     const choices = this._followerChoices || {};
@@ -66,6 +82,8 @@ export class FollowerConfirmStep extends FollowerStepBase {
       : 'Unknown';
     const droidConfig = choices.droidConfig?.isDroid ? choices.droidConfig : null;
     const droidBudget = droidConfig ? this._getDroidBudgetSummary(choices, droidConfig) : null;
+    const fixedProfile = this._fixedProfile || choices.fixedFollowerProfile || stats?.fixedProfile || null;
+    const noStartingCredits = this._noStartingCredits || fixedProfile?.noStartingCredits === true;
 
     const ownerName = this._ownerActor?.name || shell?.ownerActor?.name || shell?.actor?.name || 'Owner';
     const fallbackFollowerName = this._buildFallbackFollowerName(ownerName, choices.templateType);
@@ -82,13 +100,15 @@ export class FollowerConfirmStep extends FollowerStepBase {
       creditModel: this._creditModel || null,
       droidConfig,
       droidBudget,
+      fixedProfile,
+      noStartingCredits,
       abilityRows: this._formatAbilityRows(stats?.abilities || {}),
-      combatStats: this._formatCombatStats(stats, templateDisplay),
+      combatStats: this._formatCombatStats(stats, templateDisplay, fixedProfile),
       defenseRows: this._formatDefenseRows(stats?.defenses || {}),
       selectedOptions: this._formatSelectedOptions(choices),
       abilityChoiceLabel: choices.abilityChoice ? String(choices.abilityChoice).toUpperCase() : '',
       droidAbilityChoiceLabel: droidConfig?.abilityChoice ? String(droidConfig.abilityChoice).toUpperCase() : '',
-      creditsResolved: choices.startingCredits !== null && choices.startingCredits !== undefined,
+      creditsResolved: noStartingCredits || (choices.startingCredits !== null && choices.startingCredits !== undefined),
     };
   }
 
@@ -102,7 +122,7 @@ export class FollowerConfirmStep extends FollowerStepBase {
   async afterRender(shell, workSurfaceEl) {
     try {
       if (!workSurfaceEl) return;
-      this._attachCreditListeners(shell, workSurfaceEl);
+      if (!this._noStartingCredits) this._attachCreditListeners(shell, workSurfaceEl);
       this._attachNameListeners(shell, workSurfaceEl);
     } catch (err) {
       swseLogger.error('[FollowerConfirmStep] Error wiring summary controls:', err);
@@ -136,12 +156,15 @@ export class FollowerConfirmStep extends FollowerStepBase {
     }));
   }
 
-  _formatCombatStats(stats, templateDisplay) {
+  _formatCombatStats(stats, templateDisplay, fixedProfile = null) {
     if (!stats) return [];
+    const babHelp = fixedProfile?.creatureKind === 'beast'
+      ? 'Beast progression from fixed follower profile'
+      : `${templateDisplay} progression`;
     return [
       { label: 'Hit Points', value: stats.hp?.max ?? '—', help: '10 + owner heroic level + CON modifier' },
-      { label: 'Base Attack Bonus', value: stats.bab ?? stats.baseAttackBonus ?? '—', help: `${templateDisplay} progression` },
-      { label: 'Damage Threshold', value: stats.damageThreshold ?? '—', help: 'Fortitude + template bonuses' },
+      { label: 'Base Attack Bonus', value: stats.bab ?? stats.baseAttackBonus ?? '—', help: babHelp },
+      { label: 'Damage Threshold', value: stats.damageThreshold ?? '—', help: 'Fortitude + template/profile bonuses' },
       { label: 'Grapple', value: `${Number(stats.grappleBonus || 0) >= 0 ? '+' : ''}${Number(stats.grappleBonus || 0)}`, help: 'Strength modifier' },
     ];
   }
@@ -158,6 +181,8 @@ export class FollowerConfirmStep extends FollowerStepBase {
 
   _formatSelectedOptions(choices = {}) {
     const rows = [];
+    const fixedProfile = this._fixedProfile || choices.fixedFollowerProfile || null;
+    if (fixedProfile) rows.push({ label: 'Fixed Profile', value: `${fixedProfile.speciesName || 'Fixed follower'}${fixedProfile.speciesType ? ` (${fixedProfile.speciesType})` : ''}`, icon: 'fa-paw' });
     if (choices.speciesName) rows.push({ label: 'Species', value: choices.speciesName, icon: 'fa-dna' });
     if (choices.templateType) rows.push({ label: 'Template', value: choices.templateType.charAt(0).toUpperCase() + choices.templateType.slice(1), icon: 'fa-id-card' });
     if (choices.abilityChoice) rows.push({ label: 'Template Ability', value: `+2 ${String(choices.abilityChoice).toUpperCase()}`, icon: 'fa-dumbbell' });
@@ -166,6 +191,8 @@ export class FollowerConfirmStep extends FollowerStepBase {
     if (Array.isArray(choices.skillChoices) && choices.skillChoices.length) rows.push({ label: 'Trained Skills', value: choices.skillChoices.join(', '), icon: 'fa-book-open' });
     if (Array.isArray(choices.languageChoices) && choices.languageChoices.length) rows.push({ label: 'Languages', value: choices.languageChoices.join(', '), icon: 'fa-language' });
     if (Array.isArray(choices.featChoices) && choices.featChoices.length) rows.push({ label: 'Feats', value: choices.featChoices.join(', '), icon: 'fa-star' });
+    if (Array.isArray(fixedProfile?.naturalWeapons) && fixedProfile.naturalWeapons.length) rows.push({ label: 'Natural Weapons', value: fixedProfile.naturalWeapons.map(weapon => weapon.name || 'Natural Weapon').join(', '), icon: 'fa-fist-raised' });
+    if (Array.isArray(fixedProfile?.ruleNotes) && fixedProfile.ruleNotes.length) rows.push({ label: 'Profile Rules', value: fixedProfile.ruleNotes.join(' '), icon: 'fa-circle-info' });
     return rows;
   }
 
@@ -291,6 +318,7 @@ export class FollowerConfirmStep extends FollowerStepBase {
   }
 
   _attachCreditListeners(shell, container) {
+    if (this._noStartingCredits) return;
     container.querySelector('.take-max-credits-btn')?.addEventListener('click', event => {
       event.preventDefault();
       const value = Number(this._creditModel?.max || 0);
@@ -346,7 +374,15 @@ export class FollowerConfirmStep extends FollowerStepBase {
     }
 
     const choices = this.getFollowerChoices(shell);
-    if (this._creditModel?.formula && (choices.startingCredits === null || choices.startingCredits === undefined)) {
+    const fixedProfile = this.getFixedFollowerProfile(shell) || choices.fixedFollowerProfile || null;
+    const noStartingCredits = fixedProfile?.noStartingCredits === true || this.getFollowerGrantConfig(shell)?.noStartingCredits === true;
+    if (noStartingCredits) {
+      choices.startingCredits = 0;
+      this.saveFollowerChoice(shell, 'startingCredits', 0);
+      this.saveFollowerChoice(shell, 'startingCreditsMode', 'none');
+      this.saveFollowerChoice(shell, 'startingCreditsFormula', null);
+    }
+    if (!noStartingCredits && this._creditModel?.formula && (choices.startingCredits === null || choices.startingCredits === undefined)) {
       ui?.notifications?.warn?.('Resolve follower starting credits by taking max or rolling.');
       return false;
     }

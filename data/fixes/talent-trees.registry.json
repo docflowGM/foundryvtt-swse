@@ -1304,9 +1304,12 @@
   {
     "id": "korunnai-adept",
     "displayName": "Korunnai Adept",
-    "talentCount": 1,
+    "talentCount": 4,
     "talents": [
-      "Akk Dog Master"
+      "Akk Dog Master",
+      "Akk Dog Trainer's Actions",
+      "Akk Dog Attack Training",
+      "Protective Reaction"
     ]
   },
   {
@@ -1457,7 +1460,7 @@
       "Ignore Damage Reduction",
       "Teras Kasi Basics",
       "Teras Kasi Mastery",
-      "Teräs Käsi Basics",
+      "Ter\u00e4s K\u00e4si Basics",
       "Unarmed Counterstrike",
       "Unarmed Parry"
     ]

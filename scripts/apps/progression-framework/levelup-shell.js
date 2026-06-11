@@ -127,15 +127,29 @@ export class LevelupShell extends ProgressionShell {
       // Convert active node IDs to StepDescriptors with plugins wired
       let descriptors = mapNodesToDescriptors(activeNodeIds);
 
-      // Suite-maintenance launches may intentionally target steps that are normally
-      // conditional. Inject the target descriptor so sheet buttons/reselection never
-      // fall back to a legacy picker when the active-step computer has no pending
-      // entitlement yet.
-      const requestedStep = this.options?.targetStep || this.options?.currentStep || null;
-      if (['force-powers', 'starship-maneuvers'].includes(requestedStep)
+      // Sheet maintenance launches may intentionally target steps that are normally
+      // conditional or entitlement-gated. Inject the target descriptor so sheet
+      // buttons/reselection never fall back to a full level-up route when there is
+      // no pending entitlement yet. Single-step direct-add uses only the requested
+      // picker so it cannot mutate level, class, HP, or any unrelated level-up data.
+      const requestedStep = this.options?.targetStep || this.options?.currentStep || this.options?.stepId || null;
+      const injectableSteps = new Set([
+        'force-powers',
+        'starship-maneuvers',
+        'general-feat',
+        'class-feat',
+        'general-talent',
+        'class-talent'
+      ]);
+      if (injectableSteps.has(requestedStep)
         && !descriptors.some((descriptor) => descriptor.stepId === requestedStep)) {
         const injected = mapNodesToDescriptors([requestedStep]);
         descriptors = [...descriptors, ...injected.filter(Boolean)];
+      }
+
+      if (this.options?.singleStep === true && requestedStep) {
+        const single = descriptors.find((descriptor) => descriptor?.stepId === requestedStep);
+        if (single) descriptors = [single];
       }
 
       if (descriptors.length === 0) {

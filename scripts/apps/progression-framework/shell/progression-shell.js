@@ -2752,6 +2752,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return false;
     }
 
+    if (this._singleStepMode === true && this._inlineSurfaceAdapter?._completeSingleStepSelection) {
+      swseLogger.debug('[ProgressionShell] Completing one-off sheet selection instead of advancing level-up flow', { stepId, source });
+      await this._inlineSurfaceAdapter._completeSingleStepSelection(event, null);
+      return true;
+    }
+
     const configuredDelay = Number(readiness.config?.delayMs ?? 0);
     const delayMs = Number.isFinite(configuredDelay) ? Math.max(0, configuredDelay) : 0;
     const token = ++this._autoAdvanceToken;

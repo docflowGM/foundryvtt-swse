@@ -58,7 +58,13 @@ export class ProgressionSurfaceAdapter {
     const key = `${actor.id}-${mode}`;
 
     const existing = this._registry.get(key);
-    if (existing?._ready) {
+    const requestedStep = options?.targetStep || options?.currentStep || options?.stepId || null;
+    const needsSingleStepRebuild = existing?._ready
+      && options?.singleStep === true
+      && requestedStep
+      && !existing._app?.steps?.some?.((descriptor) => descriptor?.stepId === requestedStep);
+
+    if (existing?._ready && !needsSingleStepRebuild) {
       existing._shellHost = shellHost;
       if (existing._app) {
         existing._app._singleStepMode = options?.singleStep === true;
@@ -66,6 +72,11 @@ export class ProgressionSurfaceAdapter {
       }
       await existing._navigateToRequestedStep(options);
       return existing;
+    }
+
+    if (existing && needsSingleStepRebuild) {
+      existing._destroy();
+      this._registry.delete(key);
     }
 
     const adapter = new ProgressionSurfaceAdapter(shellHost, actor.id, mode);

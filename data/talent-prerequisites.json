@@ -392,5 +392,35 @@
         ]
       }
     ]
+  },
+  "Akk Dog Trainer's Actions": {
+    "type": "all",
+    "conditions": [
+      {
+        "type": "talent",
+        "name": "Akk Dog Master",
+        "id": "akk-dog-master"
+      }
+    ]
+  },
+  "Akk Dog Attack Training": {
+    "type": "all",
+    "conditions": [
+      {
+        "type": "talent",
+        "name": "Akk Dog Master",
+        "id": "akk-dog-master"
+      }
+    ]
+  },
+  "Protective Reaction": {
+    "type": "all",
+    "conditions": [
+      {
+        "type": "talent",
+        "name": "Akk Dog Master",
+        "id": "akk-dog-master"
+      }
+    ]
   }
 }
